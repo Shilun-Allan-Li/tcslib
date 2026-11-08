@@ -555,14 +555,6 @@ def yaoB (inLen outLen m : PolyExpr) (A' : NUPPT) (n : ℕ) :
     ((A'.runAt n (List.ofFn ((blocksE (m.eval n) (outLen.eval n)).symm ys)) r).drop
       (j * inLen.eval n))
 
-/-- The defining equation of `yaoB`: `yaoB inLen outLen m A' n = fun ys r j => padTrue (inLen.eval n) ((A'.runAt n (List.ofFn ((blocksE (m.eval n) (outLen.eval n)).symm ys)) r).drop (j * inLen.eval n))`. -/
-theorem yaoB_def (inLen outLen m : PolyExpr) (A' : NUPPT) (n : ℕ) :
-    yaoB inLen outLen m A' n =
-      (fun ys r j => padTrue (inLen.eval n)
-      ((A'.runAt n (List.ofFn ((blocksE (m.eval n) (outLen.eval n)).symm ys)) r).drop
-        (j * inLen.eval n)) :
-        (Fin (m.eval n) → Fin (outLen.eval n) → Bool) → A'.Coins n → (Fin (m.eval n) → Fin (inLen.eval n) → Bool)) := rfl
-
 /-- The defining equation of `yaoB`: block `j` of the total inverter's answer is
 `padTrue (inLen n) ((A'(1^n, ys; r)).drop (j · inLen n))`. -/
 theorem yaoB_apply (inLen outLen m : PolyExpr) (A' : NUPPT) (n : ℕ)

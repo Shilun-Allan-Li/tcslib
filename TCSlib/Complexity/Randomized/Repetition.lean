@@ -325,7 +325,8 @@ theorem StateLoop.polyTimeComputable_stateIterate {start step out : List Bool �
     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step)
     (hout : PolyTimeComputable out) (B : PolyExpr) :
     PolyTimeComputable fun x =>
-      out ((StateLoop.gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x))) := by
+      out ((StateLoop.gstep step B)^[(pairEncode x (start x)).length]
+          (pairEncode x (start x))) := by
   have hF := polyTimeComputable_iterate (StateLoop.gstep_poly hstep B) .var (StateLoop.gstepBound B)
     (fun w i _ => StateLoop.length_gstep_iterate_le step B w i)
   simp only [PolyExpr.eval_var] at hF
@@ -394,14 +395,13 @@ theorem polyTimeComputable_iterateEmit {g emit : List Bool → List Bool}
 [PS10, Algorithm 89.6] and of the next-bit predictor).
 
 **Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
-`Complexity.StateLoop.MajLoop`) with `R := var` on the state `⟨rest, ⟨1^{#true}, 1^{#false}⟩⟩`
-from `⟨w, ⟨[], []⟩⟩`: each step drops the first bit of `rest` (`Complexity.polyTimeComputable_tail`) and
-appends a token to the counter of its value (`polyTimeComputable_headD`,
-`polyTimeComputable_ite`), so after `i ≤ |w|` rounds the state is
-`⟨w.drop i, ⟨1^{#true (w.take i)}, 1^{#false (w.take i)}⟩⟩` (`MajLoop.orbit_eq`); `acc` is the
-emptiness test on `rest`, first `true` at round `|w|`; `out` is the length test
-`|1 :: 1^{#false}| ≤ |1^{#true}|` (`polyTimeComputable_lenLe`), which is the verdict since
-`|w| < 2 #true ↔ #false + 1 ≤ #true` (`List.count_true_add_count_false`). States have length
+`Complexity.StateLoop.MajLoop`) with `R := var` on the state `⟨rest, ⟨1^{#true}, 1^{#false}⟩⟩` from
+`⟨w, ⟨[], []⟩⟩`: each step drops the first bit of `rest` (`Complexity.polyTimeComputable_tail`) and
+appends a token to the counter of its value (`polyTimeComputable_headD`, `polyTimeComputable_ite`),
+so after `i ≤ |w|` rounds the state is `⟨w.drop i, ⟨1^{#true (w.take i)}, 1^{#false (w.take i)}⟩⟩`
+(`MajLoop.orbit_eq`); `acc` is the emptiness test on `rest`, first `true` at round `|w|`; `out` is
+the length test `|1 :: 1^{#false}| ≤ |1^{#true}|` (`polyTimeComputable_lenLe`), which is the verdict
+since `|w| < 2 #true ↔ #false + 1 ≤ #true` (`List.count_true_add_count_false`). States have length
 at most `5|w| + 4`. -/
 theorem polyTimeComputable_majority :
     PolyTimeComputable fun w => [decide (w.length < 2 * w.count true)] := by
@@ -420,12 +420,13 @@ hard-core-bit mask of [PS10, Algorithm 104.3]).
 **Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
 `Complexity.StateLoop.XorLoop`) with `R := var` on the state `⟨a', ⟨b', c⟩⟩` from
 `⟨fst z, ⟨snd z, []⟩⟩`: each step drops the heads of `a'`, `b'` and appends their xor to `c`
-(`Complexity.polyTimeComputable_tail`, `polyTimeComputable_headD`, `BinArith.polyTimeComputable_xor`), so after
-`i ≤ min |a| |b|` rounds the state is `⟨a.drop i, ⟨b.drop i, (zipWith xor a b).take i⟩⟩`
-(`XorLoop.orbit_eq`, by `List.take_succ` and `List.getElem?_zipWith`); `acc` is "one of `a'`,
-`b'` is empty" (`polyTimeComputable_isNil`, `polyTimeComputable_or`), first `true` at round
-`min |a| |b| = |zipWith xor a b|` (`List.length_zipWith`), where `out` returns `c`. States have
-length at most `5|z| + 4` (`length_pair_components_le`). -/
+(`Complexity.polyTimeComputable_tail`, `polyTimeComputable_headD`,
+`BinArith.polyTimeComputable_xor`), so after `i ≤ min |a| |b|` rounds the state is
+`⟨a.drop i, ⟨b.drop i, (zipWith xor a b).take i⟩⟩` (`XorLoop.orbit_eq`, by `List.take_succ` and
+`List.getElem?_zipWith`); `acc` is "one of `a'`, `b'` is empty" (`polyTimeComputable_isNil`,
+`polyTimeComputable_or`), first `true` at round `min |a| |b| = |zipWith xor a b|`
+(`List.length_zipWith`), where `out` returns `c`. States have length at most `5|z| + 4`
+(`length_pair_components_le`). -/
 theorem polyTimeComputable_pairXor :
     PolyTimeComputable fun z => List.zipWith xor (pairFstD z) (pairSndD z) := by
   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by
@@ -446,16 +447,15 @@ theorem polyTimeComputable_pairXor :
 polynomial-time computable (the test `f(z_i) = y` of [PS10, Algorithm 38.5] and every
 verification step of the reductions).
 
-**Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in
-`Complexity.StateLoop.EqLoop`) with `R := var` on the state `⟨a', ⟨b', flag⟩⟩` from
-`⟨fst z, ⟨snd z, []⟩⟩`: each step drops the heads of `a'`, `b'` and sets `flag := [true]` if
-they differ (`polyTimeComputable_ite` on `BinArith.polyTimeComputable_xor`), so after `i ≤ min |a| |b|`
-rounds the state is `⟨a.drop i, ⟨b.drop i, flag⟩⟩` with `flag = []` iff `a.take i = b.take i`
-(`EqLoop.orbit_eq`, `EqLoop.flag_succ`); `acc` is `XorLoop.acc` ("one of `a'`, `b'` is
-empty"), first `true` at round `min |a| |b|`, where `out` is the conjunction of the three
-emptiness tests `a' = [] ∧ b' = [] ∧ flag = []` (`polyTimeComputable_and`), i.e. `a = b`
-(`EqLoop.verdict_eq`: equal lengths and equal prefixes). States have length at most
-`5|z| + 5`. -/
+**Proof sketch.** State loop (`polyTimeComputable_stateFind`, data in `Complexity.StateLoop.EqLoop`)
+with `R := var` on the state `⟨a', ⟨b', flag⟩⟩` from `⟨fst z, ⟨snd z, []⟩⟩`: each step drops the
+heads of `a'`, `b'` and sets `flag := [true]` if they differ (`polyTimeComputable_ite` on
+`BinArith.polyTimeComputable_xor`), so after `i ≤ min |a| |b|` rounds the state is
+`⟨a.drop i, ⟨b.drop i, flag⟩⟩` with `flag = []` iff `a.take i = b.take i` (`EqLoop.orbit_eq`,
+`EqLoop.flag_succ`); `acc` is `XorLoop.acc` ("one of `a'`, `b'` is empty"), first `true` at round
+`min |a| |b|`, where `out` is the conjunction of the three emptiness tests
+`a' = [] ∧ b' = [] ∧ flag = []` (`polyTimeComputable_and`), i.e. `a = b` (`EqLoop.verdict_eq`: equal
+lengths and equal prefixes). States have length at most `5|z| + 5`. -/
 theorem polyTimeComputable_pairEq :
     PolyTimeComputable fun z => [decide (pairFstD z = pairSndD z)] := by
   have hN : ∀ z, XorLoop.rounds z ≤ PolyExpr.var.eval z.length := by

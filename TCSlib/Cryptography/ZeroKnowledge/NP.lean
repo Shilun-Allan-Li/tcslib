@@ -344,7 +344,8 @@ private theorem outV_pullback_honest (π : Protocol) (f : List Bool → List Boo
         (Prod.map (coinTrunc (coinLen_le_coinLen_pullback π.P f w hx))
           (coinTrunc (coinLen_le_coinLen_pullback π.V f (fun _ z => z) hx)) r) := by
   rw [Protocol.pullback_outV]
-  simp only [Protocol.outV_eq, Protocol.transcriptWith_eq, Protocol.pullback, Prod.map_fst, Prod.map_snd]
+  simp only [Protocol.outV_eq, Protocol.transcriptWith_eq, Protocol.pullback, Prod.map_fst,
+      Prod.map_snd]
   rw [ofFn_coinTrunc_of_eq _ (Strategy.coinLen_pullback π.P f w hx).symm,
     ofFn_coinTrunc_of_eq _ (Strategy.coinLen_pullback π.V f (fun _ z => z) hx).symm,
     exec_pullback, ← hx]
@@ -542,7 +543,8 @@ theorem LevinReduction.zk {L L' : Language Bool} {R R' : List Bool → List Bool
         · -- the view of `V*'` in `π` re-encodes to the view of `V'` in the pulled-back protocol
           rw [distinguisherL_lift hD' hφx hDle]
           congr 2
-          simp only [Protocol.viewV_eq, Protocol.transcriptWith_eq, Protocol.withV_P, Protocol.withV_V,
+          simp only [Protocol.viewV_eq, Protocol.transcriptWith_eq, Protocol.withV_P,
+              Protocol.withV_V,
             Protocol.withV_rounds, Protocol.withV_verifierFirst, Protocol.pullback, Prod.map_fst, Prod.map_snd,
             postView_encode]
           rw [ofFn_coinTrunc_of_eq _ hPeq, ofFn_coinTrunc]

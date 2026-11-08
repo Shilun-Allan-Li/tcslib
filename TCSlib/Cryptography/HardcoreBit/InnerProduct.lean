@@ -106,11 +106,6 @@ def glPad (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool
     β × (Fin n → Bool) :=
   (f z.1, z.2)
 
-/-- The defining equation of `glPad`: `glPad f z = (f z.1, z.2)`. -/
-theorem glPad_def (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) :
-    glPad f z =
-      (f z.1, z.2) := rfl
-
 /-- The defining equation of `glPad`: `glPad f (x, r) = (f x, r)`. -/
 theorem glPad_apply (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) :
     glPad f z = (f z.1, z.2) := rfl

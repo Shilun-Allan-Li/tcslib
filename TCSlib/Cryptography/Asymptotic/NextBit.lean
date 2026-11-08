@@ -558,18 +558,18 @@ negated once more if `flip n`. The position is read off the prefix length `|t| =
 the sign is hard-wired, and the identity holds at every position (restated so at gate 03c,
 finding 2: no choice of position is needed where `ℓ(n) = 0`).
 
-**Proof sketch.** The raw function on the layout `⟨⟨⟨1^n, y⟩, ⟨D.advice n, [flip n]⟩⟩, r⟩`
-cuts `r` into `u := r.take (ℓ n)` and `c := r.drop (ℓ n)` (`polyTimeComputable_pairTakePoly`/
+**Proof sketch.** The raw function on the layout `⟨⟨⟨1^n, y⟩, ⟨D.advice n, [flip n]⟩⟩, r⟩` cuts `r`
+into `u := r.take (ℓ n)` and `c := r.drop (ℓ n)` (`polyTimeComputable_pairTakePoly`/
 `pairDropPoly ℓ` on `⟨1^n, r⟩`), forms `w := y ++ u.drop |y|` (`pairDropPoly var` on `⟨y, u⟩`,
 `PolyTimeComputable.append`), runs `D.output` on `layout 1^n w (D.advice n) c`
-(`NUPPT.polyTimeComputable_output`, `polyTimeComputable_layout`), tests the verdict against
-`[true]` (`polyTimeComputable_pairEq`), reads `u_{|y|}` as the head of `u.drop |y|` and the sign
-as the head of the advice's second component (`polyTimeComputable_headD`), and combines them
-(`polyTimeComputable_ite`, `polyTimeComputable_not`, `BinArith.polyTimeComputable_xor`). `A := ofPolyTime` of
-it with coins `add ℓ D.coins` and advice bound `2·D.adv + 3` (`length_pairEncode`); the coin
-split is `Fin.appendEquiv` composed with `finCongr`, and the identity is `runAtL_ofPolyTime`,
-the projection identities of the layout, `List.take_left'`/`List.drop_left'`,
-`ofFn_completePrefix` and `headD_drop_ofFn`. -/
+(`NUPPT.polyTimeComputable_output`, `polyTimeComputable_layout`), tests the verdict against `[true]`
+(`polyTimeComputable_pairEq`), reads `u_{|y|}` as the head of `u.drop |y|` and the sign as the head
+of the advice's second component (`polyTimeComputable_headD`), and combines them
+(`polyTimeComputable_ite`, `polyTimeComputable_not`, `BinArith.polyTimeComputable_xor`).
+`A := ofPolyTime` of it with coins `add ℓ D.coins` and advice bound `2·D.adv + 3`
+(`length_pairEncode`); the coin split is `Fin.appendEquiv` composed with `finCongr`, and the
+identity is `runAtL_ofPolyTime`, the projection identities of the layout,
+`List.take_left'`/`List.drop_left'`, `ofFn_completePrefix` and `headD_drop_ofFn`. -/
 private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : ℕ → Bool) :
     ∃ (A : NUPPT) (e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n),
       ∀ n (i : Fin (ℓ.eval n)) (t : Fin i → Bool) (u : Fin (ℓ.eval n) → Bool) (c : D.Coins n),
@@ -640,9 +640,11 @@ private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : �
   have hofn : List.ofFn (e n (u, c)) = List.ofFn u ++ List.ofFn c := by
     rw [← List.ofFn_fin_append]
     exact (List.ofFn_congr (hlen n).symm (Fin.append u c)).symm
-  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, nextBitPred]
+  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+      hofn, nextBitPred]
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq,
+  simp [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+      NUPPT.inCoins_eq,
     NUPPT.runAtL_eq, List.take_left', List.drop_left', ofFn_completePrefix]
   split_ifs <;> cases u i <;> cases flip n <;> rfl
 
@@ -886,7 +888,8 @@ private theorem exists_nextBitDistMachine {ℓ : PolyExpr} (A : NUPPT) (k : ℕ 
   refine ⟨NUPPT.ofPolyTime hG A.coins _
     (fun n => pairEncode (A.advice n) (List.replicate (k n) true)) hadv, rfl, fun n y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq,
+  simp [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+      NUPPT.inCoins_eq,
     NUPPT.runAtL_eq]
 
 /-- **Soundness of the next-bit test, asymptotic form** (the converse of
@@ -959,7 +962,8 @@ theorem Ensemble.Pseudorandom.nextBitUnpredictable {ℓ : PolyExpr} {X : Ensembl
   have hid : ∀ (t : Fin (ℓ.eval n) → Bool) (r : A.Coins n),
       Dm.distinguisher n (ℓ.eval n) t (e n r) = nextBitDist j₀ (A.predictor n j₀) t r := by
     intro t r
-    simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn, nextBitDist, NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+    simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn,
+        nextBitDist, NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
       headD_drop_ofFn, ofFn_prefixOf]
     simp
   have hadv : prgAdv (X.X n) (Dm.distinguisher n (ℓ.eval n)) = |ε n| := by

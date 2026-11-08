@@ -309,9 +309,7 @@ theorem expF_injective {i : List Bool} (h : ExpValid i) : Function.Injective (ex
   rw [orderOf_expUnit h] at h3
   have hx : x.val < dlM i := lt_of_lt_of_eq (ZMod.val_lt x) (expOrd_of_valid h)
   have hy : y.val < dlM i := lt_of_lt_of_eq (ZMod.val_lt y) (expOrd_of_valid h)
-  apply ZMod.val_injective
-  unfold Nat.ModEq at h3
-  rwa [Nat.mod_eq_of_lt hx, Nat.mod_eq_of_lt hy] at h3
+  exact ZMod.val_injective _ (h3.eq_of_lt_of_lt hx hy)
 
 /-! ## Instance generators and the discrete-log experiment -/
 

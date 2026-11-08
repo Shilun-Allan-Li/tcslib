@@ -251,10 +251,12 @@ def multiCom (Com : List Bool → List Bool) {q n m : ℕ} (v : Fin q → Fin n 
     (r : Fin q → Fin m → Bool) : List Bool :=
   Strategy.encodeMsgs (List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))))
 
-/-- The defining equation of `multiCom`: `multiCom Com v r = Strategy.encodeMsgs (List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))))`. -/
+/-- The defining equation of `multiCom`: `multiCom Com v r = Strategy.encodeMsgs
+(List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))))`. -/
 theorem multiCom_def (Com : List Bool → List Bool) {q n m : ℕ} (v : Fin q → Fin n → Bool) (r : Fin q → Fin m → Bool) :
     (multiCom Com v r : List Bool) =
-      (Strategy.encodeMsgs (List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))))) := rfl
+      (Strategy.encodeMsgs
+          (List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))))) := rfl
 
 /-- The advice bound of the multi-value hiding reduction: `3 q(n) (2 C (2n + 3 + ℓ(n))^c + 2) + 2`,
 where `C (|x|+1)^c` bounds `|Com x|` — the length of the pair `⟨pre_n, suf_n⟩` of the two

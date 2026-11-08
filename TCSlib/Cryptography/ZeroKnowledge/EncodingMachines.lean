@@ -175,7 +175,8 @@ the head (`polyTimeComputable_headD`). -/
 theorem getBit_poly {h : List Bool → List Bool} (hh : PolyTimeComputable h) {f : List Bool → ℕ}
     (hf : PolyTimeComputable fun x => List.replicate (f x) true) :
     PolyTimeComputable fun x => [(h x).getD (f x) false] := by
-  convert polyTimeComputable_headD.comp ((polyTimeComputable_pairDropPoly .var).comp (hf.pairEncode hh))
+  convert polyTimeComputable_headD.comp ((polyTimeComputable_pairDropPoly .var).comp
+      (hf.pairEncode hh))
     using 1
   funext x
   simp [List.headD_eq_head?_getD, List.head?_drop, List.getD_eq_getElem?_getD]
@@ -314,11 +315,11 @@ test of `⟨1^i, z⟩` and the bound `len z` is a unary function, then
 `z ↦ 1^{firstIdx (p z) (len z)}` is polynomial-time computable.
 
 **Proof sketch.** Instance of `Complexity.polyTimeComputable_iterateFind` on the counter step
-`cstep` from `⟨[], z⟩`, whose orbit is `⟨1^i, z⟩` (`cstep_iterate`) and polynomially bounded
-for every word (`cstep_horbit`), with the acceptance test `len z ≤ i ∨ p z i`
-(`Complexity.StateLoop.lenLe_comp`, `polyTimeComputable_or`), the payload `1^i` (the first projection), and
-the round polynomial `C (n+1)^c` bounding `len` (`PolyTimeComputable.output_length_le`). The
-loop's `List.find?` returns `firstIdx (p z) (len z)` by
+`cstep` from `⟨[], z⟩`, whose orbit is `⟨1^i, z⟩` (`cstep_iterate`) and polynomially bounded for
+every word (`cstep_horbit`), with the acceptance test `len z ≤ i ∨ p z i`
+(`Complexity.StateLoop.lenLe_comp`, `polyTimeComputable_or`), the payload `1^i` (the first
+projection), and the round polynomial `C (n+1)^c` bounding `len`
+(`PolyTimeComputable.output_length_le`). The loop's `List.find?` returns `firstIdx (p z) (len z)` by
 `Complexity.StateLoop.find?_range_eq_some`: below it both disjuncts fail (`firstIdx_min`,
 `firstIdx_le`), at it one holds (`q_firstIdx`, or `len z ≤ firstIdx` on exhaustion). -/
 theorem polyTimeComputable_firstIdx {p : List Bool → ℕ → Bool}
@@ -512,7 +513,8 @@ def step (upd : List Bool → List Bool) (w : List Bool) : List Bool :=
 def acc (N : List Bool → ℕ) (w : List Bool) : Bool :=
   decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)
 
-/-- The defining equation of `acc`: `acc N w = decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)`. -/
+/-- The defining equation of `acc`: `acc N w = decide
+(N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)`. -/
 theorem acc_def (N : List Bool → ℕ) (w : List Bool) :
     acc N w =
       (decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)) := rfl

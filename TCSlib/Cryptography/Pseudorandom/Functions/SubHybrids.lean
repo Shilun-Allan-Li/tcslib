@@ -101,7 +101,8 @@ noncomputable def challengeStream {q : ℕ} (G : S → V) (j : ℕ) (z : V)
     (W : (Fin q → S) × (Fin q → V)) : ℕ → V :=
   fun k => if k < j then extendStream W.2 k else if k = j then z else G (extendStream W.1 k)
 
-/-- The defining equation of `challengeStream`: `challengeStream G j z W = fun k => if k < j then extendStream W.2 k else if k = j then z else G (extendStream W.1 k)`. -/
+/-- The defining equation of `challengeStream`: `challengeStream G j z W = fun k => if k < j then
+extendStream W.2 k else if k = j then z else G (extendStream W.1 k)`. -/
 theorem challengeStream_def {q : ℕ} (G : S → V) (j : ℕ) (z : V) (W : (Fin q → S) × (Fin q → V)) :
     (challengeStream G j z W : ℕ → V) =
       (fun k => if k < j then extendStream W.2 k else if k = j then z else G (extendStream W.1 k) :

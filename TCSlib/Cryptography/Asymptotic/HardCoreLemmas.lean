@@ -296,10 +296,12 @@ theorem owpPredPost_poly : PolyTimeComputable owpPredPost := by
     simp
   have hσ : PolyTimeComputable fun v : List Bool =>
       [(NUPPT.inAdvice (pairFstD v)).headD false] :=
-    polyTimeComputable_headD.comp (NUPPT.polyTimeComputable_inAdvice.comp polyTimeComputable_pairFstD)
+    polyTimeComputable_headD.comp (NUPPT.polyTimeComputable_inAdvice.comp
+        polyTimeComputable_pairFstD)
   have hflip : PolyTimeComputable fun v : List Bool =>
       [(NUPPT.inCoins (pairFstD v)).headD false] :=
-    polyTimeComputable_headD.comp (NUPPT.polyTimeComputable_inCoins.comp polyTimeComputable_pairFstD)
+    polyTimeComputable_headD.comp (NUPPT.polyTimeComputable_inCoins.comp
+        polyTimeComputable_pairFstD)
   have hite : PolyTimeComputable fun v : List Bool =>
       [if pairSndD v = [true] then (NUPPT.inAdvice (pairFstD v)).headD false
         else !(NUPPT.inAdvice (pairFstD v)).headD false] := by
@@ -711,10 +713,10 @@ theorem invProbOpt_glPad_le (𝓕 : FunFamily) (A : NUPPT) (n : ℕ) :
   have hpair := (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)).injective
     (show Fin.appendEquiv _ _ (HardcoreBit.glPad (𝓕.f n) (x'', r'')) =
       Fin.appendEquiv _ _ (HardcoreBit.glPad (𝓕.f n) (x, r)) from hfx')
-  simp only [HardcoreBit.glPad_def, Prod.mk.injEq] at hpair
+  simp only [HardcoreBit.glPad_apply, Prod.mk.injEq] at hpair
   refine ⟨x'', ?_, hpair.1⟩
   rw [glPadInvMachine_runAt A 𝓕.inLen n _ r c _ (ofFn_appendEquiv r c)]
-  simp only [HardcoreBit.glPad_def] at hx'
+  simp only [HardcoreBit.glPad_apply] at hx'
   rw [ofFn_appendEquiv, ofFn_appendEquiv] at hx'
   rw [hx', take_ofFn_append]
 
@@ -974,11 +976,13 @@ def glPadSampleFun (z : List Bool) : List Bool :=
 theorem glPadSampleFun_def (z : List Bool) :
     glPadSampleFun F z =
       (pairEncode
-      (F.sample.output (NUPPT.layout (NUPPT.inParam z) (NUPPT.inArg z) []
-        ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).take
-          (F.sample.coins.eval (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length))))
-      ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).drop
-        (F.sample.coins.eval (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length))) := rfl
+        (F.sample.output (NUPPT.layout (NUPPT.inParam z) (NUPPT.inArg z) []
+          ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).take
+            (F.sample.coins.eval
+                (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length))))
+        ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).drop
+          (F.sample.coins.eval
+              (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length))) := rfl
 
 /-- The raw sampler of the padded collection is polynomial-time (pairing calculus,
 `polyTimeComputable_pairTakePoly`/`pairDropPoly`, the sampler's own output function). -/

@@ -364,7 +364,8 @@ theorem pushesUniform_of_card_fiber_le {Ω γ : Type*} [Fintype Ω] [Fintype γ]
 def bitsToNat {k : ℕ} (b : Fin k → Bool) : ℕ :=
   (List.ofFn b).foldl (fun a c => 2 * a + (if c then 1 else 0)) 0
 
-/-- The defining equation of `bitsToNat`: `bitsToNat b = (List.ofFn b).foldl (fun a c => 2 * a + (if c then 1 else 0)) 0`. -/
+/-- The defining equation of `bitsToNat`: `bitsToNat b = (List.ofFn b).foldl
+(fun a c => 2 * a + (if c then 1 else 0)) 0`. -/
 theorem bitsToNat_def {k : ℕ} (b : Fin k → Bool) :
     (bitsToNat b : ℕ) =
       ((List.ofFn b).foldl (fun a c => 2 * a + (if c then 1 else 0)) 0) := rfl
@@ -457,7 +458,8 @@ theorem two_pow_size_le_two_mul {m : ℕ} (hm : 0 < m) : 2 ^ Nat.size m ≤ 2 * 
 def uniformFromBits (m k : ℕ) (b : Fin k → Bool) : Option (Fin m) :=
   if h : bitsToNat b < m then some ⟨_, h⟩ else none
 
-/-- The defining equation of `uniformFromBits`: `uniformFromBits m k b = if h : bitsToNat b < m then some ⟨_, h⟩ else none`. -/
+/-- The defining equation of `uniformFromBits`: `uniformFromBits m k b = if h : bitsToNat b < m then
+some ⟨_, h⟩ else none`. -/
 theorem uniformFromBits_def (m k : ℕ) (b : Fin k → Bool) :
     uniformFromBits m k b =
       (if h : bitsToNat b < m then some ⟨_, h⟩ else none) := rfl
@@ -656,7 +658,8 @@ theorem statClose_firstHit [DecidableEq α] [Nonempty α] (T : ℕ) {d : α} (hd
   simp only [uprob_true, if_true, and_true] at htot
   have hideal : uprob (fun e : {a // E a} => S e.val) =
       ((univ.filter fun a => E a ∧ S a).card : ℝ) / (univ.filter E).card := by
-    rw [uprob_def, Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter E S), Nat.card_eq_fintype_card,
+    rw [uprob_def, Nat.card_congr (Equiv.subtypeSubtypeEquivSubtypeInter E S),
+        Nat.card_eq_fintype_card,
       Fintype.card_subtype, Fintype.card_subtype]
   rw [h1, hideal]
   -- arithmetic: with `N = |E|`, `M = |E ∩ S|`, `q N = 1 - f`, the difference is `f ([d ∈ S] - M/N)`
@@ -700,7 +703,8 @@ position `i ∈ [m]` of [PS10, Theorem 35.1] and of the residues of [PS10, §2.6
 def rejectionSample (m k T : ℕ) (b : Fin T → Fin k → Bool) : Option (Fin m) :=
   (List.finRange T).findSome? fun t => uniformFromBits m k (b t)
 
-/-- The defining equation of `rejectionSample`: `rejectionSample m k T b = (List.finRange T).findSome? fun t => uniformFromBits m k (b t)`. -/
+/-- The defining equation of `rejectionSample`: `rejectionSample m k T b =
+(List.finRange T).findSome? fun t => uniformFromBits m k (b t)`. -/
 theorem rejectionSample_def (m k T : ℕ) (b : Fin T → Fin k → Bool) :
     rejectionSample m k T b =
       ((List.finRange T).findSome? fun t => uniformFromBits m k (b t)) := rfl

@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
 import TCSlib.Cryptography.Asymptotic.HardCoreLoops
+import TCSlib.Programs.Util.List
 
 set_option maxHeartbeats 0
 set_option relaxedAutoImplicit false
@@ -73,13 +74,8 @@ theorem filter_betaOf {k : ℕ} (j : Fin (2 ^ k - 1)) :
 
 /-- The number of `true`s of an encoded string is the cardinality of its support. -/
 theorem count_true_ofFn {M : ℕ} (v : Fin M → Bool) :
-    (List.ofFn v).count true = #(univ.filter fun j : Fin M => v j = true) := by
-  rw [Finset.card_filter]
-  induction M with
-  | zero => simp
-  | succ M ih =>
-    rw [List.ofFn_succ, List.count_cons, ih (fun j => v j.succ), Fin.sum_univ_succ]
-    cases v 0 <;> simp [add_comm]
+    (List.ofFn v).count true = #(univ.filter fun j : Fin M => v j = true) :=
+  List.count_ofFn v true
 
 /-! ## The voting loop -/
 
@@ -202,15 +198,20 @@ theorem entry_poly : PolyTimeComputable entry :=
 /-- The vote of a round is polynomial-time (`ipFun`, `selXorFun`, `A.output` on the layout,
 the verdict test `polyTimeComputable_pairEq`). 
 
-**Proof sketch.** The bit `B_L` is `polyTimeComputable_headD` after `ipFun_poly`; the query is the pairing of `pY` with the XOR (`zipXor_poly`) of `selXorFun` and the unit vector; `A.output` on the layout is `A.polyTimeComputable_output` after `polyTimeComputable_layout`; the verdict test is `polyTimeComputable_pairEq`; the two bits are combined by `BinArith.polyTimeComputable_xor`. -/
+**Proof sketch.** The bit `B_L` is `polyTimeComputable_headD` after `ipFun_poly`; the query is the
+pairing of `pY` with the XOR (`zipXor_poly`) of `selXorFun` and the unit vector; `A.output` on the
+layout is `A.polyTimeComputable_output` after `polyTimeComputable_layout`; the verdict test is
+`polyTimeComputable_pairEq`; the two bits are combined by `BinArith.polyTimeComputable_xor`. -/
 theorem vote_poly (A : NUPPT) : PolyTimeComputable fun w => [vote A w] := by
   have hβ : PolyTimeComputable fun w => pairSndD (entry w) :=
     polyTimeComputable_pairSndD.comp entry_poly
   have hB : PolyTimeComputable fun w => [(ipFun (pairEncode (pairSndD (entry w)) (pb w))).headD false] :=
-    PolyTimeComputable.comp' polyTimeComputable_headD (PolyTimeComputable.comp' ipFun_poly (hβ.pairEncode pb_poly))
+    PolyTimeComputable.comp' polyTimeComputable_headD (PolyTimeComputable.comp' ipFun_poly
+        (hβ.pairEncode pb_poly))
   have hq : PolyTimeComputable fun w => pairEncode (pY w) (List.zipWith xor
       (selXorFun (pairEncode (pairEncode (pum w) (pairSndD (entry w))) (ps w))) (pairFstD (entry w))) :=
-    pY_poly.pairEncode (zipXor_poly (PolyTimeComputable.comp' selXorFun_poly ((pum_poly.pairEncode hβ).pairEncode ps_poly))
+    pY_poly.pairEncode (zipXor_poly
+        (PolyTimeComputable.comp' selXorFun_poly ((pum_poly.pairEncode hβ).pairEncode ps_poly))
       (polyTimeComputable_pairFstD.comp entry_poly))
   have hans : PolyTimeComputable fun w => A.output (NUPPT.layout (pu w)
       (pairEncode (pY w) (List.zipWith xor
@@ -234,7 +235,8 @@ theorem step_poly (A : NUPPT) : PolyTimeComputable (step A) := by
         (pairEncode ((pcs w).drop (pur w).length) (pvotes w ++ [vote A w])) :=
     (dropLen_poly (pum_poly.pairEncode puk_poly) ptbl_poly).pairEncode
       ((dropLen_poly pur_poly pcs_poly).pairEncode (pvotes_poly.append (vote_poly A)))
-  have htest : PolyTimeComputable fun w => [decide (ptbl w = [])] := polyTimeComputable_isNil.comp ptbl_poly
+  have htest : PolyTimeComputable fun w => [decide (ptbl w = [])] :=
+    polyTimeComputable_isNil.comp ptbl_poly
   convert polyTimeComputable_ite htest polyTimeComputable_pairSndD hbody using 1
   funext w
   simp only [step, decide_eq_true_eq]
@@ -338,7 +340,7 @@ theorem orbit_eq (t : ℕ) (ht : t ≤ m * (2 ^ k - 1)) :
     have ht' : t < m * (2 ^ k - 1) := ht
     rw [orbit_succ, ih (Nat.le_of_succ_le ht)]
     have hne : (glTable m k).drop (t * (2 * m + 2 + k)) ≠ [] := by
-      rw [Ne, List.drop_eq_nil_iff, glTable, length_blocksStr]
+      rw [ne_eq, List.drop_eq_nil_iff, glTable, length_blocksStr]
       intro h
       have : (t + 1) * (2 * m + 2 + k) ≤ m * (2 ^ k - 1) * (2 * m + 2 + k) :=
         Nat.mul_le_mul_right _ ht'
@@ -605,7 +607,8 @@ theorem ur_poly (A : NUPPT) : PolyTimeComputable (ur A) := by
 /-- The projection `ukm` is polynomial-time. -/
 theorem ukm_poly (mP : PolyExpr) : PolyTimeComputable (ukm mP) := by
   unfold ukm
-  exact PolyTimeComputable.comp' (g := unaryMulFun) unaryMulFun_poly (uk_poly.pairEncode (um_poly mP))
+  exact PolyTimeComputable.comp' (g := unaryMulFun) unaryMulFun_poly (uk_poly.pairEncode
+      (um_poly mP))
 /-- The projection `cs₁` is polynomial-time. -/
 theorem cs₁_poly (mP : PolyExpr) : PolyTimeComputable (cs₁ mP) :=
   takeLen_poly (ukm_poly mP) NUPPT.polyTimeComputable_inCoins

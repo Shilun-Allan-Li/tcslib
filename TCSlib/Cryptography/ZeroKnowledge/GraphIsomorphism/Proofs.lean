@@ -94,7 +94,8 @@ def encInstance {n : ℕ} (G₀ G₁ : Graph n) : List Bool := pairEncode (encGr
 /-- Shadow of `TCSlib.Cryptography.instanceVertexCount`. -/
 def instanceVertexCount (x : List Bool) : ℕ := Nat.sqrt (pairFstD x).length
 
-/-- The defining equation of `instanceVertexCount`: `instanceVertexCount x = Nat.sqrt (pairFstD x).length`. -/
+/-- The defining equation of `instanceVertexCount`:
+`instanceVertexCount x = Nat.sqrt (pairFstD x).length`. -/
 theorem instanceVertexCount_def (x : List Bool) :
     instanceVertexCount x =
       (Nat.sqrt (pairFstD x).length) := rfl
@@ -113,8 +114,9 @@ def wellFormedInstance (x : List Bool) : Bool :=
 /-- The defining equation of `wellFormedInstance` (its body, unfolded once). -/
 theorem wellFormedInstance_def (x : List Bool) :
     wellFormedInstance x =
-      (decide ((pairDecode x).isSome ∧ (pairFstD x).length = instanceVertexCount x * instanceVertexCount x ∧
-      (pairSndD x).length = instanceVertexCount x * instanceVertexCount x)) := rfl
+      (decide ((pairDecode x).isSome ∧ (pairFstD x).length = instanceVertexCount x *
+          instanceVertexCount x ∧
+        (pairSndD x).length = instanceVertexCount x * instanceVertexCount x)) := rfl
 
 /-- Shadow of `TCSlib.Cryptography.instanceVertices`. -/
 def instanceVertices (N : ℕ) : ℕ := Nat.sqrt ((N - 2) / 3)
@@ -442,11 +444,12 @@ def ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) : List B
   NUPPT.layout (List.replicate x.length true)
     (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r
 
-/-- The defining equation of `ilayout`: `ilayout x z hist r = NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r`. -/
+/-- The defining equation of `ilayout`: `ilayout x z hist r = NUPPT.layout
+(List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r`. -/
 theorem ilayout_def (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     ilayout x z hist r =
       (NUPPT.layout (List.replicate x.length true)
-      (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r) := rfl
+        (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r) := rfl
 
 /-- A strategy whose next-message function is a polynomial-time function `F` of the machine
 layout `ilayout x z hist r = ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, msgs⟩⟩, []⟩, r⟩` is efficient:
@@ -467,7 +470,8 @@ theorem gniProtocol_outV (P' : Strategy) (x y z : List Bool) (r : gniProtocol.Ex
     gniProtocol.outV P' x y z r =
       gniVerifier.next x z (List.ofFn r.2)
         [P'.next x y (List.ofFn r.1) [gniVerifier.next x z (List.ofFn r.2) []]] := by
-  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, gniProtocol, exec_zero, exec_succ, moverIsV_def]
+  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, gniProtocol, exec_zero, exec_succ,
+      moverIsV_def]
 
 /-- The verdict of the graph isomorphism protocol against a prover `P'`: the verifier's output
 on the two messages `H` and `γ` of `P'`, the second being its reply to the challenge. -/
@@ -476,7 +480,8 @@ theorem giProtocol_outV (P' : Strategy) (x y z : List Bool) (r : giProtocol.Exec
       giVerifier.next x z (List.ofFn r.2)
         [P'.next x y (List.ofFn r.1) [],
           P'.next x y (List.ofFn r.1) [giVerifier.next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]] := by
-  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, giProtocol, exec_zero, exec_succ, moverIsV_def]
+  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, giProtocol, exec_zero, exec_succ,
+      moverIsV_def]
 
 /-- The first message of the graph non-isomorphism verifier on an encoded instance:
 `σ(G_b)` for the first coin `b` and `σ` sampled from the remaining coins. -/

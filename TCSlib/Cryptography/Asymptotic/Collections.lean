@@ -772,7 +772,8 @@ private def owfRawStr (u r : List Bool) : List Bool :=
 `NUPPT.polyTimeComputable_layout`, `NUPPT.polyTimeComputable_output`). -/
 private theorem owfIndexStr_poly :
     PolyTimeComputable fun z => G.owfIndexStr (pairFstD z) (pairSndD z) :=
-  PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp' G.gen.polyTimeComputable_output
+  PolyTimeComputable.comp' polyTimeComputable_pairFstD (PolyTimeComputable.comp'
+      G.gen.polyTimeComputable_output
     (NUPPT.polyTimeComputable_layout polyTimeComputable_pairFstD (polyTimeComputable_const [])
       (polyTimeComputable_const []) (polyTimeComputable_pairTakePoly G.gen.coins)))
 
@@ -786,7 +787,8 @@ private theorem owfRawStr_poly :
     PolyTimeComputable.comp' G.sample.polyTimeComputable_output
       (NUPPT.polyTimeComputable_layout polyTimeComputable_pairFstD G.owfIndexStr_poly
         (polyTimeComputable_const []) (polyTimeComputable_pairDropPoly G.gen.coins))
-  G.owfIndexStr_poly.pairEncode (PolyTimeComputable.comp' G.eval_poly (G.owfIndexStr_poly.pairEncode hw))
+  G.owfIndexStr_poly.pairEncode (PolyTimeComputable.comp' G.eval_poly
+      (G.owfIndexStr_poly.pairEncode hw))
 
 /-- On `u = 1^n` and the encoded coins `r₁ ++ r₂`, the index computation is `index n r₁`
 (`Gen` is uniform, so its advice is `[]`; the cut at `gen.coins n` is `List.take_left'`). -/

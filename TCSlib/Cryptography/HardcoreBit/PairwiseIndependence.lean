@@ -235,7 +235,8 @@ are `true`, `false` otherwise (ties go to `false`). -/
 def majority {κ : Type*} [Fintype κ] (v : κ → Bool) : Bool :=
   decide (Fintype.card κ < 2 * #{i | v i = true})
 
-/-- The defining equation of `majority`: `majority v = decide (Fintype.card κ < 2 * #{i | v i = true})`. -/
+/-- The defining equation of `majority`: `majority v = decide
+(Fintype.card κ < 2 * #{i | v i = true})`. -/
 theorem majority_def {κ : Type*} [Fintype κ] (v : κ → Bool) :
     (majority v : Bool) =
       (decide (Fintype.card κ < 2 * #{i | v i = true})) := rfl

@@ -750,7 +750,8 @@ cost `h+k+q₀+2q+P+2q′+19`, with the symbols defined in the delivery report. 
 def universalBlockBound (c : EffectiveMachineCode) (α : List Bool) : ℕ :=
   3 * (c.decode α).serialize.length + 5 * ((c.decode α).numStates + 1) + 20
 
-/-- The defining equation of `universalBlockBound`: `universalBlockBound c α = 3 * (c.decode α).serialize.length + 5 * ((c.decode α).numStates + 1) + 20`. -/
+/-- The defining equation of `universalBlockBound`: `universalBlockBound c α = 3 *
+(c.decode α).serialize.length + 5 * ((c.decode α).numStates + 1) + 20`. -/
 theorem universalBlockBound_def (c : EffectiveMachineCode) (α : List Bool) :
     universalBlockBound c α =
       (3 * (c.decode α).serialize.length + 5 * ((c.decode α).numStates + 1) + 20) := rfl

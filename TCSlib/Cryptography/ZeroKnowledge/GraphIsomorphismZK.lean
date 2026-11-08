@@ -484,7 +484,9 @@ def giSimCoins (V' : Strategy) : PolyExpr :=
 
 /-- The coin polynomial evaluates to `|x|` blocks of `giSimBlockLen V' |x|` bits. -/
 theorem giSimCoins_eval (V' : Strategy) (N : ℕ) : (giSimCoins V').eval N = N * giSimBlockLen V' N := by
-  simp [giSimCoins, giSimBlockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_normal, PolyExpr.normal_def, Strategy.coinLen_eq]
+  simp [giSimCoins, giSimBlockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_normal, PolyExpr.normal_def,
+          Strategy.coinLen_eq]
 
 /-- One attempt of the string simulator [PS10, Algorithm 123.4] on `(x, z)` with the coin
 block `c = b' :: (permutation coins ++ V'`'s tape)`: `H := π(G_{b'})` for `π := samplePerm n`,

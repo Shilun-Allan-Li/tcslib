@@ -120,7 +120,8 @@ noncomputable def openStr (w : List Bool) : List Bool :=
 noncomputable def proverStr (w : List Bool) : List Bool :=
   if argM w = [] then commitStr Com ℓ w else if mOf w = 0 then [] else openStr ℓ w
 
-/-- The defining equation of `proverStr`: `proverStr w = if argM w = [] then commitStr Com ℓ w else if mOf w = 0 then [] else openStr ℓ w`. -/
+/-- The defining equation of `proverStr`: `proverStr w = if argM w = [] then commitStr Com ℓ w else
+if mOf w = 0 then [] else openStr ℓ w`. -/
 theorem proverStr_def (w : List Bool) :
     proverStr Com ℓ w =
       (if argM w = [] then commitStr Com ℓ w else if mOf w = 0 then [] else openStr ℓ w) := rfl
@@ -194,7 +195,8 @@ theorem openStr_poly : PolyTimeComputable (openStr ℓ) := by
 
 /-- The honest prover of one iteration is polynomial-time when `Com` is. -/
 theorem proverStr_poly (hCom : PolyTimeComputable Com) : PolyTimeComputable (proverStr Com ℓ) := by
-  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp argM_poly) (commitStr_poly Com ℓ hCom)
+  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp argM_poly)
+    (commitStr_poly Com ℓ hCom)
     (polyTimeComputable_ite (eqTest_poly mOf_poly (unaryConst_poly 0)) (polyTimeComputable_const [])
       (openStr_poly ℓ))
   exact ptc_congr h fun w => by simp only [proverStr, decide_eq_true_eq, Function.comp_apply]
@@ -232,22 +234,23 @@ noncomputable def checkStr (L n m : ℕ) (x com opn : List Bool) (e : ℕ) : Boo
 theorem checkStr_def (L n m : ℕ) (x com opn : List Bool) (e : ℕ) :
     checkStr Com L n m x com opn e =
       (let j := nthTrue x (n * n) (e % m)
-    let a := colorVal (pairFstD (pairFstD opn)) 0
-    let ri := pairSndD (pairFstD opn)
-    let b := colorVal (pairFstD (pairSndD opn)) 0
-    let rj := pairSndD (pairSndD opn)
-    decide (ri.length = L ∧ rj.length = L ∧
-      Com (pairEncode (padTo n (encColorOfVal a)) ri) = pairFstD (pairSndD^[j / n] com) ∧
-      Com (pairEncode (padTo n (encColorOfVal b)) rj) = pairFstD (pairSndD^[j % n] com) ∧ a ≠ b)) := rfl
+        let a := colorVal (pairFstD (pairFstD opn)) 0
+        let ri := pairSndD (pairFstD opn)
+        let b := colorVal (pairFstD (pairSndD opn)) 0
+        let rj := pairSndD (pairSndD opn)
+        decide (ri.length = L ∧ rj.length = L ∧
+          Com (pairEncode (padTo n (encColorOfVal a)) ri) = pairFstD (pairSndD^[j / n] com) ∧
+          Com (pairEncode (padTo n (encColorOfVal b)) rj) =
+            pairFstD (pairSndD^[j % n] com) ∧ a ≠ b)) := rfl
 
 /-- The check is polynomial-time in its (polynomial-time, unary) components.
 
-**Proof sketch.** The edge position `j = nthTrue x (n²) (e mod m)` is unary by `modNum_poly`
-and `nthTrue_poly`, its endpoints `j / n`, `j mod n` by `divNum_poly`, `modNum_poly`; the two
-colours by `colorVal_poly` and the randomness by the pair projections. The five conjuncts are
-`eqTest_poly` on the randomness lengths, `polyTimeComputable_pairEq` of `Com` on the padded
-openings against the selected commitments (`padTo_poly`, `iterSnd_poly`), and `polyTimeComputable_not` of
-`eqTest_poly` on the colours, combined by `polyTimeComputable_and`. -/
+**Proof sketch.** The edge position `j = nthTrue x (n²) (e mod m)` is unary by `modNum_poly` and
+`nthTrue_poly`, its endpoints `j / n`, `j mod n` by `divNum_poly`, `modNum_poly`; the two colours by
+`colorVal_poly` and the randomness by the pair projections. The five conjuncts are `eqTest_poly` on
+the randomness lengths, `polyTimeComputable_pairEq` of `Com` on the padded openings against the
+selected commitments (`padTo_poly`, `iterSnd_poly`), and `polyTimeComputable_not` of `eqTest_poly`
+on the colours, combined by `polyTimeComputable_and`. -/
 theorem checkStr_poly (hCom : PolyTimeComputable Com)
     {L n m : List Bool → ℕ} (hL : PolyTimeComputable fun w => List.replicate (L w) true)
     (hn : PolyTimeComputable fun w => List.replicate (n w) true)
@@ -298,9 +301,9 @@ noncomputable def verdictStr (w : List Bool) : Bool :=
 theorem verdictStr_def (w : List Bool) :
     verdictStr Com ℓ w =
       (decide (argX w = (argX w).take (nOf w * nOf w)) &&
-      (decide (mOf w = 0) || (decide (2 ≤ nOf w) &&
-        checkStr Com (LOf ℓ w) (nOf w) (mOf w) (argX w) (pairFstD (argM w))
-          (pairFstD (pairSndD (argM w))) (eOf w)))) := rfl
+        (decide (mOf w = 0) || (decide (2 ≤ nOf w) &&
+          checkStr Com (LOf ℓ w) (nOf w) (mOf w) (argX w) (pairFstD (argM w))
+            (pairFstD (pairSndD (argM w))) (eOf w)))) := rfl
 
 /-- The verdict is polynomial-time when `Com` is. -/
 theorem verdictStr_poly (hCom : PolyTimeComputable Com) :
@@ -327,16 +330,19 @@ noncomputable def verifierStr (w : List Bool) : List Bool :=
 theorem verifierStr_def (w : List Bool) :
     verifierStr Com ℓ w =
       (if argM w = [] then [false]
-    else if pairSndD (argM w) = [] then List.replicate (eOf w) true
-    else if pairSndD (pairSndD (argM w)) = [] then [verdictStr Com ℓ w]
-    else [false]) := rfl
+        else if pairSndD (argM w) = [] then List.replicate (eOf w) true
+        else if pairSndD (pairSndD (argM w)) = [] then [verdictStr Com ℓ w]
+        else [false]) := rfl
 
 /-- The verifier of one iteration is polynomial-time when `Com` is. -/
 theorem verifierStr_poly (hCom : PolyTimeComputable Com) : PolyTimeComputable (verifierStr Com ℓ) := by
-  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp argM_poly) (polyTimeComputable_const [false])
-    (polyTimeComputable_ite (polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp argM_poly)) eOf_poly
+  have h := polyTimeComputable_ite (polyTimeComputable_isNil.comp argM_poly)
+    (polyTimeComputable_const [false])
+    (polyTimeComputable_ite
+        (polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp argM_poly)) eOf_poly
       (polyTimeComputable_ite
-        (polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp argM_poly)))
+        (polyTimeComputable_isNil.comp
+            (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp argM_poly)))
         (verdictStr_poly Com ℓ hCom) (polyTimeComputable_const [false])))
   exact ptc_congr h fun w => by simp only [verifierStr, decide_eq_true_eq, Function.comp_apply]
 
@@ -366,13 +372,13 @@ noncomputable def proverRepStr (w : List Bool) : List Bool :=
 theorem proverRepStr_def (w : List Bool) :
     proverRepStr Com ℓ w =
       (let h := histLen (argM w)
-    let c := proverCoinsOf ℓ (argX w).length
-    if h / 2 < nOf w * mOf w then
-      proverStr Com ℓ (NUPPT.layout (List.replicate (argX w).length true)
-        (pairEncode (pairEncode (argX w) (argZ w))
-          (if h % 2 = 0 then [] else pairEncode (pairFstD (pairSndD^[h - 1] (argM w))) []))
-        [] (((NUPPT.inCoins w).drop (h / 2 * c)).take c))
-    else []) := rfl
+        let c := proverCoinsOf ℓ (argX w).length
+        if h / 2 < nOf w * mOf w then
+          proverStr Com ℓ (NUPPT.layout (List.replicate (argX w).length true)
+            (pairEncode (pairEncode (argX w) (argZ w))
+              (if h % 2 = 0 then [] else pairEncode (pairFstD (pairSndD^[h - 1] (argM w))) []))
+            [] (((NUPPT.inCoins w).drop (h / 2 * c)).take c))
+        else []) := rfl
 
 /-- The prover of the repeated protocol is polynomial-time when `Com` is.
 
@@ -437,11 +443,13 @@ noncomputable def checkRep (w : List Bool) (t : ℕ) : Bool :=
   checkStr Com (LOf ℓ w) (nOf w) (mOf w) (argX w) (pairFstD (pairSndD^[2 * t] (argM w)))
     (pairFstD (pairSndD^[2 * t + 1] (argM w))) (eRep w t)
 
-/-- The defining equation of `checkRep`: `checkRep w t = checkStr Com (LOf ℓ w) (nOf w) (mOf w) (argX w) (pairFstD (pairSndD^[2 * t] (argM w))) (pairFstD (pairSndD^[2 * t + 1] (argM w))) (eRep w t)`. -/
+/-- The defining equation of `checkRep`: `checkRep w t = checkStr Com (LOf ℓ w) (nOf w) (mOf w)
+(argX w) (pairFstD (pairSndD^[2 * t] (argM w))) (pairFstD (pairSndD^[2 * t + 1] (argM w)))
+(eRep w t)`. -/
 theorem checkRep_def (w : List Bool) (t : ℕ) :
     checkRep Com ℓ w t =
       (checkStr Com (LOf ℓ w) (nOf w) (mOf w) (argX w) (pairFstD (pairSndD^[2 * t] (argM w)))
-      (pairFstD (pairSndD^[2 * t + 1] (argM w))) (eRep w t)) := rfl
+        (pairFstD (pairSndD^[2 * t + 1] (argM w))) (eRep w t)) := rfl
 
 /-- The iteration checks are polynomial-time in `⟨1^t, w⟩` when `Com` is. -/
 theorem checkRep_poly (hCom : PolyTimeComputable Com) :
@@ -466,8 +474,8 @@ noncomputable def verdictRepStr (w : List Bool) : Bool :=
 theorem verdictRepStr_def (w : List Bool) :
     verdictRepStr Com ℓ w =
       (decide (argX w = (argX w).take (nOf w * nOf w)) &&
-      (decide (mOf w = 0) || (decide (2 ≤ nOf w) &&
-        decide (firstIdx (fun t => !checkRep Com ℓ w t) (nOf w * mOf w) = nOf w * mOf w)))) := rfl
+        (decide (mOf w = 0) || (decide (2 ≤ nOf w) &&
+          decide (firstIdx (fun t => !checkRep Com ℓ w t) (nOf w * mOf w) = nOf w * mOf w)))) := rfl
 
 /-- The repeated verdict is polynomial-time when `Com` is. -/
 theorem verdictRepStr_poly (hCom : PolyTimeComputable Com) :
@@ -493,9 +501,10 @@ noncomputable def verifierRepStr (w : List Bool) : List Bool :=
 theorem verifierRepStr_def (w : List Bool) :
     verifierRepStr Com ℓ w =
       (let h := histLen (argM w)
-    if h % 2 = 1 then (if h / 2 < nOf w * mOf w then List.replicate (eRep w (h / 2)) true else [])
-    else if h = 2 * ((argX w).length * (argX w).length) then [verdictRepStr Com ℓ w]
-    else []) := rfl
+        if h % 2 = 1 then
+          (if h / 2 < nOf w * mOf w then List.replicate (eRep w (h / 2)) true else [])
+        else if h = 2 * ((argX w).length * (argX w).length) then [verdictRepStr Com ℓ w]
+        else []) := rfl
 
 /-- The verifier of the repeated protocol is polynomial-time when `Com` is. -/
 theorem verifierRepStr_poly (hCom : PolyTimeComputable Com) :

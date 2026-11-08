@@ -212,11 +212,12 @@ def multicopyRed (X : σ → γ) (Y : τ → γ) (t k : ℕ) (D : (Fin t → γ)
   fun z c => D (fun i => if (i : ℕ) < k then Y (c.1.2 i) else if (i : ℕ) = k then z
     else X (c.1.1 i)) c.2
 
-/-- The defining equation of `multicopyRed`: `multicopyRed X Y t k D = fun z c => D (fun i => if (i : ℕ) < k then Y (c.1.2 i) else if (i : ℕ) = k then z else X (c.1.1 i)) c.2`. -/
+/-- The defining equation of `multicopyRed`: `multicopyRed X Y t k D = fun z c => D
+(fun i => if (i : ℕ) < k then Y (c.1.2 i) else if (i : ℕ) = k then z else X (c.1.1 i)) c.2`. -/
 theorem multicopyRed_def (X : σ → γ) (Y : τ → γ) (t k : ℕ) (D : (Fin t → γ) → ρ → Bool) :
     multicopyRed X Y t k D =
       (fun z c => D (fun i => if (i : ℕ) < k then Y (c.1.2 i) else if (i : ℕ) = k then z
-      else X (c.1.1 i)) c.2 :
+        else X (c.1.1 i)) c.2 :
         γ → ((Fin t → σ) × (Fin t → τ)) × ρ → Bool) := rfl
 
 /-- The zeroth hybrid is the `t`-product of `X`. -/

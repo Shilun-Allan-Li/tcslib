@@ -266,7 +266,8 @@ theorem acceptProb_reparam_advice {σ : Type*} [Fintype σ] {A D : NUPPT} {φ : 
     X (D.distinguisher (φ m) k)]
   congr 1
   funext z c
-  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hA, take_ofFn_coinsEquiv]
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hA,
+      take_ofFn_coinsEquiv]
 
 /-! ### The machine of Lemma 71.5 -/
 
@@ -307,7 +308,8 @@ theorem exists_pushRed (M D : NUPPT) (ℓ' : PolyExpr) :
   refine ⟨NUPPT.ofPolyTime hF (.add M.coins D.coins) _
     (fun n => NUPPT.combineAdvice (M.advice n) (D.advice n)) hadv, rfl, fun n y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+  simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inParam_eq,
+      NUPPT.inArg_eq,
     NUPPT.inAdvice_eq, NUPPT.inCoins_eq]
 
 /-- The acceptance probability of the machine of `exists_pushRed` on a sampler `X` is the
@@ -327,7 +329,8 @@ theorem acceptProb_pushRed {σ : Type*} [Fintype σ] {M D B : NUPPT} {ℓ' : Pol
       (D.distinguisher n (ℓ'.eval n))]
   congr 1
   funext z c
-  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hB, take_ofFn_coinsEquiv, drop_ofFn_coinsEquiv,
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hB,
+      take_ofFn_coinsEquiv, drop_ofFn_coinsEquiv,
     padL]
 
 /-! ### Negligible functions and syntactic polynomials -/
@@ -380,23 +383,14 @@ theorem finProdFinEquiv_symm_mk {q ℓ : ℕ} (i : Fin q) (j : Fin ℓ) (h : i *
     finProdFinEquiv.symm (⟨i * ℓ + j, h⟩ : Fin (q * ℓ)) = (i, j) := by
   rw [Equiv.symm_apply_eq]
   ext
-  simp [finProdFinEquiv]
+  simp [finProdFinEquiv_apply_val]
   ring
 
 /-- The `i`-th chunk of `s` bits of the string of a `q·s`-bit word is its block `i`. -/
 theorem take_drop_ofFn_blocks {q s : ℕ} (w : Fin (q * s) → Bool) (i : ℕ) (hi : i < q) :
     ((List.ofFn w).drop (i * s)).take s = List.ofFn (blocks q s w ⟨i, hi⟩) := by
-  have hle : i * s + s ≤ q * s := by
-    rw [← Nat.succ_mul]
-    exact Nat.mul_le_mul_right s hi
-  refine List.ext_getElem ?_ fun j h₁ h₂ => ?_
-  · simp only [List.length_take, List.length_drop, List.length_ofFn]
-    omega
-  · simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn, blocks_apply]
-    congr 1
-    ext
-    simp [finProdFinEquiv]
-    ring
+  rw [blocks_eq]
+  exact FunFamily.take_drop_ofFn_blocks w ⟨i, hi⟩
 
 /-- The string of `(blocks q ℓ).symm V` is the concatenation of the `q` block strings
 (`List.ofFn_mul`). -/
@@ -609,9 +603,11 @@ def step (w : List Bool) : List Bool :=
 /-- The step is polynomial-time (`Complexity.polyTimeComputable_pairDropPoly` on `⟨u, rX⟩`,
 `⟨u, rY⟩`). -/
 theorem step_poly : PolyTimeComputable (step sX sY) := by
-  convert st_poly p₁_poly (PolyTimeComputable.comp' (StateLoop.cons_poly true) p₂_poly) p₃_poly p₄_poly
+  convert st_poly p₁_poly (PolyTimeComputable.comp' (StateLoop.cons_poly true)
+      p₂_poly) p₃_poly p₄_poly
     (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly sX) (p₁_poly.pairEncode p₅_poly))
-    (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly sY) (p₁_poly.pairEncode p₆_poly)) using 1
+    (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly sY)
+        (p₁_poly.pairEncode p₆_poly)) using 1
   funext w
   simp [step]
 
@@ -760,7 +756,8 @@ theorem copiesSampler_poly {SX SY : List Bool → List Bool} (hSX : PolyTimeComp
     PolyTimeComputable (copiesSampler SX SY sX sY ℓ t) := by
   convert PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly (.mul t ℓ))
     (NUPPT.polyTimeComputable_inParam.pairEncode
-      (PolyTimeComputable.comp' (CopiesLoop.loopOut_poly sX sY SX SY ℓ t hSX hSY) (copiesInit_poly sX t))) using 1
+      (PolyTimeComputable.comp' (CopiesLoop.loopOut_poly sX sY SX SY ℓ t hSX hSY)
+          (copiesInit_poly sX t))) using 1
   funext w
   simp [copiesSampler]
 
@@ -820,7 +817,8 @@ theorem exists_copiesRed (D : NUPPT) {SX SY : List Bool → List Bool} (hSX : Po
       List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY) := by
     rw [List.drop_left']
     simp
-  simp only [copiesSampler, copiesInit, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
+  simp only [copiesSampler, copiesInit, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq,
+      NUPPT.advInput_eq,
     pairFstD_pairEncode, pairSndD_pairEncode, hX', hY']
   rw [CopiesLoop.loopOut_st]
   set F : ℕ → List Bool := fun i =>

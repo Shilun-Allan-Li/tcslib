@@ -189,8 +189,8 @@ theorem giStep_poly : PolyTimeComputable giStep := by
         (hsel.pairEncode (polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp hM))))).pairEncode
       (polyTimeComputable_pairFstD.comp hM))) fun st => by simp
   exact hS.pairEncode ((polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp hM)).pairEncode
-    ((((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
-      polyTimeComputable_tail).comp hC).pairEncode (polyTimeComputable_and (polyTimeComputable_headD.comp hB) hcheck)))
+    (((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp hC).pairEncode
+        (polyTimeComputable_and (polyTimeComputable_headD.comp hB) hcheck)))
 
 /-- The scan after `k` rounds from the input `⟨u, ⟨S, ⟨M, ⟨R, [b]⟩⟩⟩⟩`: the static data, the
 remaining messages (two peeled per round), the remaining coins and the conjunction of the first

@@ -228,7 +228,8 @@ theorem length_encInstance {n : ℕ} (G₀ G₁ : Graph n) : (encInstance G₀ G
 component (the `n` of `decGraph`). -/
 def instanceVertexCount (x : List Bool) : ℕ := Nat.sqrt (pairFstD x).length
 
-/-- The defining equation of `instanceVertexCount`: `instanceVertexCount x = Nat.sqrt (pairFstD x).length`. -/
+/-- The defining equation of `instanceVertexCount`:
+`instanceVertexCount x = Nat.sqrt (pairFstD x).length`. -/
 theorem instanceVertexCount_def (x : List Bool) :
     instanceVertexCount x =
       (Nat.sqrt (pairFstD x).length) := rfl
@@ -366,10 +367,12 @@ trials per position), read from the tape by `coinTable`; the identity on failure
 noncomputable def samplePerm (n : ℕ) (r : List Bool) : Equiv.Perm (Fin n) :=
   (permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1
 
-/-- The defining equation of `samplePerm`: `samplePerm n r = (permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1`. -/
+/-- The defining equation of `samplePerm`: `samplePerm n r = (permFromCoins n (permBits n)
+(permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1`. -/
 theorem samplePerm_def (n : ℕ) (r : List Bool) :
     samplePerm n r =
-      ((permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1) := rfl
+      ((permFromCoins n (permBits n) (permTrials n)
+          (coinTable n (permTrials n) (permBits n) r)).getD 1) := rfl
 
 /-- The number of tape bits consumed by `samplePerm n`: `n · permTrials n · permBits n`
 (`= 2n³ · Nat.size n`).

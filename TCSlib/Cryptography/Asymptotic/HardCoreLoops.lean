@@ -13,14 +13,14 @@ set_option autoImplicit false
 /-!
 # State loops for the hard-core predicate theorems
 
-The loop machines behind the Goldreich–Levin theorem [PS10, Theorem 87.3], run by the guarded
-state iteration `Complexity.StateLoop.polyTimeComputable_stateIterate` of
-`Randomized/Repetition.lean` (an instance of `Complexity.polyTimeComputable_iterate` on the
-length-guarded step `Complexity.StateLoop.gstep`): the block encoding `blocksStr` of a tuple of equal-length bit
-strings, the **selective block XOR** `selXorFun` computing `⊕_{t : β_t = 1} s_t` on
-`⟨⟨1^m, β⟩, s⟩` — the subset XOR `S_L` of [PS10, Algorithm 89.6] and, with one-bit blocks, the
-inner product `⟨x, r⟩` of [PS10, Fact 88.4] (`ipFun`) — and unary halving `1^n ↦ 1^{⌊n/2⌋}`
-(`unaryHalf`, for the balanced permutation of `Asymptotic/HardCorePermutation.lean`).
+The loop machines behind the Goldreich–Levin theorem [PS10, Theorem 87.3], run by the guarded state
+iteration `Complexity.StateLoop.polyTimeComputable_stateIterate` of `Randomized/Repetition.lean` (an
+instance of `Complexity.polyTimeComputable_iterate` on the length-guarded step
+`Complexity.StateLoop.gstep`): the block encoding `blocksStr` of a tuple of equal-length bit
+strings, the **selective block XOR** `selXorFun` computing `⊕_{t : β_t = 1} s_t` on `⟨⟨1^m, β⟩, s⟩`
+— the subset XOR `S_L` of [PS10, Algorithm 89.6] and, with one-bit blocks, the inner product
+`⟨x, r⟩` of [PS10, Fact 88.4] (`ipFun`) — and unary halving `1^n ↦ 1^{⌊n/2⌋}` (`unaryHalf`, for the
+balanced permutation of `Asymptotic/HardCorePermutation.lean`).
 
 Each loop is specified by the closed form of its orbit on well-formed inputs
 (`SelXor.orbit_eq`), its stabilisation (`SelXor.orbit_stable`) and the length bound that
@@ -214,7 +214,10 @@ theorem start_poly : PolyTimeComputable start :=
 /-- The step is polynomial-time (`polyTimeComputable_ite` on the emptiness test, the FP
 toolkit of `Complexity.StateLoop`, `takeLen_poly`/`dropLen_poly` and `zipXor_poly`). 
 
-**Proof sketch.** The branch on `β' = []` is `polyTimeComputable_ite` with `polyTimeComputable_isNil`; the body pairs `Complexity.polyTimeComputable_tail` with the dropped block (`dropLen_poly`) and the conditional XOR (`polyTimeComputable_ite` on `polyTimeComputable_headD`, `zipXor_poly` with `takeLen_poly`). -/
+**Proof sketch.** The branch on `β' = []` is `polyTimeComputable_ite` with
+`polyTimeComputable_isNil`; the body pairs `Complexity.polyTimeComputable_tail` with the dropped
+block (`dropLen_poly`) and the conditional XOR (`polyTimeComputable_ite` on
+`polyTimeComputable_headD`, `zipXor_poly` with `takeLen_poly`). -/
 theorem step_poly : PolyTimeComputable step := by
   have hβ : PolyTimeComputable fun w => pairFstD (pairSndD w) :=
     polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD
@@ -224,7 +227,8 @@ theorem step_poly : PolyTimeComputable step := by
     polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
   have hacc : PolyTimeComputable fun w => pairSndD (pairSndD (pairSndD w)) :=
     polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)
-  have htest : PolyTimeComputable fun w => [decide (pairFstD (pairSndD w) = [])] := polyTimeComputable_isNil.comp hβ
+  have htest : PolyTimeComputable fun w => [decide (pairFstD (pairSndD w) = [])] :=
+    polyTimeComputable_isNil.comp hβ
   have hhead : PolyTimeComputable fun w => [(pairFstD (pairSndD w)).headD false] :=
     polyTimeComputable_headD.comp hβ
   have hbody : PolyTimeComputable fun w =>
@@ -234,8 +238,8 @@ theorem step_poly : PolyTimeComputable step := by
             List.zipWith xor (pairSndD (pairSndD (pairSndD w)))
               ((pairFstD (pairSndD (pairSndD w))).take (pairFstD (pairFstD (pairFstD w))).length)
           else pairSndD (pairSndD (pairSndD w)))) :=
-    (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
-      polyTimeComputable_tail).comp hβ).pairEncode ((dropLen_poly hu hs).pairEncode
+    ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+        hβ).pairEncode ((dropLen_poly hu hs).pairEncode
       (polyTimeComputable_ite hhead (zipXor_poly hacc (takeLen_poly hu hs)) hacc))
   convert polyTimeComputable_ite htest polyTimeComputable_pairSndD hbody using 1
   funext w
@@ -270,7 +274,7 @@ theorem orbit_eq (m : ℕ) {k : ℕ} (β : Fin k → Bool) (s : Fin k → Fin m 
     unfold step
     simp only [pairFstD_pairEncode, pairSndD_pairEncode, input, List.length_replicate]
     have hne : (List.ofFn β).drop i ≠ [] := by
-      rw [Ne, List.drop_eq_nil_iff, List.length_ofFn]; omega
+      rw [ne_eq, List.drop_eq_nil_iff, List.length_ofFn]; omega
     rw [if_neg hne, List.tail_drop, List.drop_drop,
       List.drop_eq_getElem_cons (i := i) (l := List.ofFn β) (by rw [List.length_ofFn]; exact hi'),
       List.headD_cons, List.getElem_ofFn, take_drop_blocksStr s ⟨i, hi'⟩]

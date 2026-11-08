@@ -198,13 +198,13 @@ private theorem fac_natToList_one (k : ℕ) : natToList k 1 = (List.replicate k 
 private theorem fac_ofFn_halves (n : ℕ) (x : Fin (2 * n) → Bool) :
     (List.ofFn x).take n = List.ofFn (FunFamily.blocks 2 n x 0) ∧
       (List.ofFn x).drop n = List.ofFn (FunFamily.blocks 2 n x 1) := by
-  have h : List.ofFn x = List.ofFn (FunFamily.blocks 2 n x 0) ++ List.ofFn (FunFamily.blocks 2 n x 1) := by
-    conv_lhs => rw [← (FunFamily.blocks 2 n).symm_apply_apply x]
-    rw [FunFamily.ofFn_blocks_symm, List.ofFn_succ, List.ofFn_succ, List.ofFn_zero]
-    simp only [List.flatten_cons, List.flatten_nil, List.append_nil]
-    rfl
-  rw [h]
-  exact ⟨List.take_left' (List.length_ofFn), List.drop_left' (List.length_ofFn)⟩
+  have h0 := FunFamily.take_drop_ofFn_blocks x 0
+  have h1 := FunFamily.take_drop_ofFn_blocks x 1
+  have hlen : ((List.ofFn x).drop n).length ≤ n := by
+    simp only [List.length_drop, List.length_ofFn]; omega
+  rw [Fin.val_zero, zero_mul, List.drop_zero] at h0
+  rw [Fin.val_one, one_mul, List.take_of_length_le hlen] at h1
+  exact ⟨h0, h1⟩
 
 /-- The test "the word reads as `1`" by two comparisons with the numeral `[true]` (`H.le`). -/
 private theorem fac_polyTimeComputable_isOne (H : ArithmeticFP) {g : List Bool → List Bool}
@@ -1155,18 +1155,6 @@ theorem polyTimeComputable_samplePrimeL (hP : PolyTimeComputable primeStr) :
       rfl
     · rw [if_neg (by simpa using hb)]
 
-/-- The `T` blocks of `n` bits of a coin string as a bijection: `fac_chunkEquiv T n r = chunk T n r`
-(`chunk` is `r` read through `finProdFinEquiv`, `chunk_apply`). -/
-private noncomputable def fac_chunkEquiv (T n : ℕ) : (Fin (T * n) → Bool) ≃ (Fin T → Fin n → Bool) where
-  toFun := chunk T n
-  invFun xs k := xs (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2
-  left_inv r := by
-    funext k
-    simp only [chunk_apply, Prod.mk.eta, Equiv.apply_symm_apply]
-  right_inv xs := by
-    funext t i
-    simp only [chunk_apply, Equiv.symm_apply_apply]
-
 /-- `(1 − 1/(2n))^{2n²} ≤ e^{−n} ≤ (1/2)^n` (`one_sub_one_div_pow_le_exp_neg`,
 `exp_neg_le_half_pow`): the failure bound of `SamplePrime` with `2n²` trials. -/
 private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
@@ -1184,8 +1172,8 @@ private theorem fac_one_sub_pow_le_half_pow (n : ℕ) (hn : 2 ≤ n) :
 **Proof sketch.** On `List.ofFn r` the padding returns `r` (`padFin_ofFn`) and the value is
 `bitsToNat ((samplePrime n (2n²) (chunk r)).getD ⟦2⟧_n)` (`bitsToNat_eq_listToNat`). The fallback
 reads as the prime `2`, so `statClose_samplePrime` applies to uniform blocks, carried to `ℕ` by
-`StatClose.map bitsToNat`; `chunk` is a bijection (`fac_chunkEquiv`, `comp_equiv_left`), the
-uniform prime string is the uniform element of `Π_n` (`bitsEquiv`, `comp_equiv_right`), and
+`StatClose.map bitsToNat`; `chunk` is the block bijection (`chunk_eq_blocks`, `comp_equiv_left`),
+the uniform prime string is the uniform element of `Π_n` (`bitsEquiv`, `comp_equiv_right`), and
 `(1 − 1/(2n))^{2n²} ≤ (1/2)^n` (`fac_one_sub_pow_le_half_pow`). -/
 private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
     StatClose (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r)))
@@ -1194,7 +1182,7 @@ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
   have hd : (bitsToNat (natToBits n 2)).Prime := by
     rw [bitsToNat_natToBits h2]; exact Nat.prime_two
   have h0 := ((statClose_samplePrime n (2 * n ^ 2) hn hd).map bitsToNat).comp_equiv_left
-    (fac_chunkEquiv (2 * n ^ 2) n)
+    (FunFamily.blocks (2 * n ^ 2) n)
   let e2 : Primes n ≃ {b : Fin n → Bool // (bitsToNat b).Prime} :=
     (Equiv.subtypeEquiv (bitsEquiv n) (fun b => by rw [bitsEquiv_val])).symm
   have h1 := h0.comp_equiv_right e2
@@ -1205,12 +1193,11 @@ private theorem fac_statClose_samplePrimeL (n : ℕ) (hn : 2 ≤ n) :
     show ((bitsEquiv n) ((bitsEquiv n).symm p.1)).val = _
     rw [Equiv.apply_symm_apply]
   have hX : (fun r : Fin (2 * n ^ 2 * n) → Bool => listToNat (samplePrimeL n (List.ofFn r))) =
-      fun r => bitsToNat ((samplePrime n (2 * n ^ 2) (fac_chunkEquiv (2 * n ^ 2) n r)).getD
+      fun r => bitsToNat ((samplePrime n (2 * n ^ 2) (FunFamily.blocks (2 * n ^ 2) n r)).getD
         (natToBits n 2)) := by
     funext r
     unfold samplePrimeL
-    rw [padFin_ofFn, ← bitsToNat_eq_listToNat]
-    rfl
+    rw [padFin_ofFn, ← bitsToNat_eq_listToNat, chunk_eq_blocks]
   rw [hX, ← hY]
   exact h1.mono (fac_one_sub_pow_le_half_pow n hn)
 

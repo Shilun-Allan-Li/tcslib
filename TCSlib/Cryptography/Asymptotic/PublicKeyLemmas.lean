@@ -297,7 +297,8 @@ theorem hybridPre_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E)
   have h := hpk.pairEncode (hT₁.append (hc.pairEncode hT₂))
   convert h using 1
   funext y
-  simp only [hybridPre, blockState_def, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
+  simp only [hybridPre, blockState_def, Function.comp_apply, pairFstD_pairEncode,
+      pairSndD_pairEncode,
     PolyExpr.eval_var]
 
 /-- **The hybrid machine** of the single ⇒ multi-message and bitwise theorems
@@ -549,11 +550,13 @@ def singleDist (Gen Enc : NUPPT) (n Lc : ℕ) (msg : Fin Lc → Bool) :
   fun r => pairEncode (pairFstD (Gen.runAt n [] r.1))
     (Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2)
 
-/-- The defining equation of `singleDist`: `singleDist Gen Enc n Lc msg = fun r => pairEncode (pairFstD (Gen.runAt n [] r.1)) (Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2)`. -/
+/-- The defining equation of `singleDist`: `singleDist Gen Enc n Lc msg = fun r => pairEncode
+(pairFstD (Gen.runAt n [] r.1))
+(Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2)`. -/
 theorem singleDist_def (Gen Enc : NUPPT) (n Lc : ℕ) (msg : Fin Lc → Bool) :
     singleDist Gen Enc n Lc msg =
       (fun r => pairEncode (pairFstD (Gen.runAt n [] r.1))
-      (Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2) :
+        (Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2) :
         Gen.Coins n × Enc.Coins n → List Bool) := rfl
 
 /-- The multi-encryption sampler `{(pk, sk) ← Gen(1^n) : ⟨pk, ⟨Enc(1^n, ⟨pk, m_0⟩), …⟩⟩}` on `N`
@@ -694,7 +697,8 @@ theorem exists_hybridBound (Gen Enc D : NUPPT) (hEnc : Enc.Uniform) (K L : PolyE
       simp only [multiDist]
       congr 3
       exact funext fun i => absurd i.isLt (by omega)
-    simp only [distAdv_def, acceptProb_def, hmm, sub_self, abs_zero, hK, Nat.cast_zero, zero_mul, le_refl]
+    simp only [distAdv_def, acceptProb_def, hmm, sub_self, abs_zero, hK, Nat.cast_zero, zero_mul,
+        le_refl]
   obtain ⟨hj, hjmax⟩ := hjN n hK
   -- the maximal planting advantage is the advantage of the machine `B`
   have hmach : ∀ msg : Fin (L.eval n) → Bool,
@@ -730,7 +734,8 @@ def tdpPredFun (D : NUPPT) (flip : Bool) (z : List Bool) : List Bool :=
       (NUPPT.inAdvice z) (NUPPT.inCoins z).tail) = [true]))) flip]
 
 /-- The raw predictor is polynomial-time (`polyTimeComputable_headD`, `Complexity.polyTimeComputable_tail`,
-`polyTimeComputable_pairEq` for the verdict, `BinArith.polyTimeComputable_xor`/`polyTimeComputable_not`). -/
+`polyTimeComputable_pairEq` for the verdict,
+`BinArith.polyTimeComputable_xor`/`polyTimeComputable_not`). -/
 theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredFun D flip) := by
   have hc : PolyTimeComputable fun z => [(NUPPT.inCoins z).headD false] :=
     polyTimeComputable_headD.comp NUPPT.polyTimeComputable_inCoins
@@ -738,8 +743,9 @@ theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredF
     NUPPT.polyTimeComputable_inParam
     ((polyTimeComputable_pairFstD.comp NUPPT.polyTimeComputable_inArg).pairEncode
       ((polyTimeComputable_pairSndD.comp NUPPT.polyTimeComputable_inArg).pairEncode hc))
-    NUPPT.polyTimeComputable_inAdvice (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
-      polyTimeComputable_tail).comp NUPPT.polyTimeComputable_inCoins))
+    NUPPT.polyTimeComputable_inAdvice
+      ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+        NUPPT.polyTimeComputable_inCoins))
   have hv : PolyTimeComputable fun z => [decide (D.output (NUPPT.layout (NUPPT.inParam z)
       (pairEncode (pairFstD (NUPPT.inArg z))
         (pairEncode (pairSndD (NUPPT.inArg z)) [(NUPPT.inCoins z).headD false]))
@@ -748,7 +754,8 @@ theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredF
       using 1
     funext z
     simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
-  exact BinArith.polyTimeComputable_xor (BinArith.polyTimeComputable_xor hc (polyTimeComputable_not hv))
+  exact BinArith.polyTimeComputable_xor (BinArith.polyTimeComputable_xor hc
+      (polyTimeComputable_not hv))
     (polyTimeComputable_const [flip])
 
 /-- **The predictor machine** `A_flip` of [PS10, Theorem 104.4, proof]: `D`'s advice, coins
@@ -776,7 +783,8 @@ theorem tdpPredictor_runAtL (D : NUPPT) (flip : Bool) (n : ℕ) (i y : List Bool
       [xor (xor c (!decide (D.runAtL n (pairEncode i (pairEncode y [c])) ρ = [true]))) flip] := by
   unfold tdpPredictor
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [tdpPredFun, NUPPT.inCoins_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.advInput_eq,
+  simp [tdpPredFun, NUPPT.inCoins_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+      NUPPT.advInput_eq,
     NUPPT.layout_eq, NUPPT.runAtL_eq]
 
 /-- The coins of the predictor machine: the bit `c` followed by the coins of `D`. -/

@@ -380,7 +380,8 @@ theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComp
       · exact congrArg some (ModuleHost.hostTM_tm_q₀ M (K + 1) hk (hostCtrl M K) (hostRet M)
           (ModuleHost.entry M 0))
       funext i z
-      simp [MultiTapeTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_workTapes, Cfg.init_workTapePos, Cfg.init_output, Cfg.ofWords_def, stateWord_eq]
+      simp [MultiTapeTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_workTapes,
+          Cfg.init_workTapePos, Cfg.init_output, Cfg.ofWords_def, stateWord_eq]
     change H.tm.runFrom (Cfg.ofWords (input := x) (ModuleHost.entry M 0) (stateWord (K + 1) []))
       (2 * x.length + 2) = Cfg.ofWords (hostRet M 0) (stateWord (K + 1) x) at hcEnd
     rw [hostRet_zero] at hcEnd

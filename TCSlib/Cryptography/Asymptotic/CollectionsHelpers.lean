@@ -148,7 +148,8 @@ theorem ofFn_splitCoins_fst (a b : ℕ) (r : Fin (a + b) → Bool) :
   · simp only [List.length_ofFn] at h₁
     rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_take,
       List.getElem_ofFn]
-    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst, Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_castAdd, Fin.coe_castLE]
+    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+        Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_castAdd, Fin.coe_castLE]
 
 /-- The second half of `splitCoins a b r` is the encoding of `r` after its first `a` bits. -/
 theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
@@ -158,7 +159,8 @@ theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
   · simp only [List.length_ofFn] at h₁
     rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_drop,
       List.getElem_ofFn]
-    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst, Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_natAdd]
+    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst,
+        Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_natAdd]
 
 /-- The encoding of the coin string assembled from two halves is the concatenation of the
 encodings of the halves. -/

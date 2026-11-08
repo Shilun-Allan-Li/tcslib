@@ -74,12 +74,6 @@ variable {α β ρ : Type*} [Fintype α] [DecidableEq β] [Fintype ρ] {q : ℕ}
 def prodFun (f : α → β) (q : ℕ) (xs : Fin q → α) : Fin q → β :=
   fun i => f (xs i)
 
-/-- The defining equation of `prodFun`: `prodFun f q xs = fun i => f (xs i)`. -/
-theorem prodFun_def (f : α → β) (q : ℕ) (xs : Fin q → α) :
-    prodFun f q xs =
-      (fun i => f (xs i) :
-        Fin q → β) := rfl
-
 omit [Fintype α] [DecidableEq β] in
 /-- The defining equation of `prodFun`: `prodFun f q xs i = f (xs i)`. -/
 theorem prodFun_apply (f : α → β) (q : ℕ) (xs : Fin q → α) (i : Fin q) :
@@ -114,11 +108,12 @@ def yaoInverter [Inhabited α] (f : α → β) (B : (Fin q → β) → ρ → (F
   fun y cs => (List.finRange T).foldr
     (fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default
 
-/-- The defining equation of `yaoInverter`: `yaoInverter f B T = fun y cs => (List.finRange T).foldr (fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default`. -/
+/-- The defining equation of `yaoInverter`: `yaoInverter f B T = fun y cs => (List.finRange T).foldr
+(fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default`. -/
 theorem yaoInverter_def [Inhabited α] (f : α → β) (B : (Fin q → β) → ρ → (Fin q → α)) (T : ℕ) :
     yaoInverter f B T =
       (fun y cs => (List.finRange T).foldr
-      (fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default :
+        (fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default :
         β → (Fin T → Fin q × (Fin q → α) × ρ) → α) := rfl
 
 /-- The probability, over the coins of one iteration, that `yaoTry` inverts `f(x)`.

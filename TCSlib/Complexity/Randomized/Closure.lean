@@ -244,8 +244,10 @@ theorem exists_compParam (A : NUPPT) {pre post : List Bool → List Bool}
       ∀ n y r, B.runAtL n y r =
         post (pairEncode (List.replicate n true) (A.runAtL n (pre (advInput n y)) r)) := by
   have hF := PolyTimeComputable.comp' hpost (polyTimeComputable_inParam.pairEncode
-    (PolyTimeComputable.comp' A.polyTimeComputable_output (polyTimeComputable_layout polyTimeComputable_inParam
-      (PolyTimeComputable.comp' hpre (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
+    (PolyTimeComputable.comp' A.polyTimeComputable_output
+        (polyTimeComputable_layout polyTimeComputable_inParam
+      (PolyTimeComputable.comp' hpre
+          (polyTimeComputable_inParam.pairEncode polyTimeComputable_inArg))
       polyTimeComputable_inAdvice polyTimeComputable_inCoins)))
   refine ⟨ofPolyTime hF A.coins A.adv A.advice A.advice_length, coins_ofPolyTime _ _ _ _ _,
     adv_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
@@ -328,7 +330,8 @@ theorem exists_reparam_advice (A : NUPPT) (φ : ℕ → ℕ) (p : PolyExpr)
   have hF := PolyTimeComputable.comp' A.polyTimeComputable_output
     (polyTimeComputable_layout hw polyTimeComputable_inArg
       (PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_inAdvice)
-      (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly A.coins) (hw.pairEncode polyTimeComputable_inCoins)))
+      (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly A.coins)
+          (hw.pairEncode polyTimeComputable_inCoins)))
   have hadv : ∀ n, (pairEncode (List.replicate (φ n) true) (A.advice (φ n))).length ≤
       (PolyExpr.add (.add (.mul (.const 2) p) (.const 2)) (A.adv.subst p)).eval n := fun n => by
     rw [length_pairEncode, List.length_replicate]
@@ -360,7 +363,8 @@ theorem exists_withAdvice (A : NUPPT) (β : ℕ → List Bool) (b : PolyExpr)
     (polyTimeComputable_layout polyTimeComputable_inParam
       (polyTimeComputable_inArg.pairEncode
         (PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_inAdvice))
-      (PolyTimeComputable.comp' polyTimeComputable_pairFstD polyTimeComputable_inAdvice) polyTimeComputable_inCoins)
+      (PolyTimeComputable.comp' polyTimeComputable_pairFstD
+          polyTimeComputable_inAdvice) polyTimeComputable_inCoins)
   have hadv : ∀ n, (pairEncode (A.advice n) (β n)).length ≤
       (PolyExpr.add (.add (.mul (.const 2) A.adv) (.const 2)) b).eval n := fun n => by
     rw [length_pairEncode]
@@ -390,8 +394,10 @@ theorem exists_split (A : NUPPT) (p : PolyExpr) :
   have hcut := polyTimeComputable_inParam.pairEncode polyTimeComputable_inCoins
   have hF := PolyTimeComputable.comp' A.polyTimeComputable_output
     (polyTimeComputable_layout polyTimeComputable_inParam
-      (polyTimeComputable_inArg.pairEncode (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly p) hcut))
-      polyTimeComputable_inAdvice (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly p) hcut))
+      (polyTimeComputable_inArg.pairEncode
+          (PolyTimeComputable.comp' (polyTimeComputable_pairTakePoly p) hcut))
+      polyTimeComputable_inAdvice (PolyTimeComputable.comp' (polyTimeComputable_pairDropPoly p)
+          hcut))
   refine ⟨ofPolyTime hF (.add p A.coins) A.adv A.advice A.advice_length,
     coins_ofPolyTime _ _ _ _ _, advice_ofPolyTime _ _ _ _ _, fun n y r => ?_⟩
   rw [runAtL_ofPolyTime]
@@ -453,7 +459,8 @@ theorem Computes.polyTimeComputable {A : NUPPT} {f : List Bool → List Bool} (h
     (h : A.Computes f) :
     PolyTimeComputable fun z => f (advInput (pairFstD z).length (pairSndD z)) := by
   have hF := PolyTimeComputable.comp' A.polyTimeComputable_output
-    (polyTimeComputable_layout (PolyTimeComputable.comp' polyTimeComputable_unary polyTimeComputable_pairFstD)
+    (polyTimeComputable_layout
+        (PolyTimeComputable.comp' polyTimeComputable_unary polyTimeComputable_pairFstD)
       polyTimeComputable_pairSndD (polyTimeComputable_const [])
       (PolyTimeComputable.comp' (polyTimeComputable_unaryPoly A.coins) polyTimeComputable_pairFstD))
   convert hF using 1

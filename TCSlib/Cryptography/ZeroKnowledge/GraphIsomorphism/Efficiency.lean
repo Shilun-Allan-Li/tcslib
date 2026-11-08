@@ -168,7 +168,8 @@ theorem wellFormed_poly : PolyTimeComputable fun x => [wellFormedInstance x] := 
   have h2 := polyTimeComputable_lenEq.comp (polyTimeComputable_pairSndD.pairEncode hsq)
   have h := polyTimeComputable_and pairValid_poly (polyTimeComputable_and h1 h2)
   refine ptc_congr h fun x => ?_
-  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode, pairSndD_pairEncode,
+  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode,
+      pairSndD_pairEncode,
     List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var, Bool.decide_and, Bool.decide_eq_true]
 
 /-! ### Padding a graph word to a given vertex count -/
@@ -235,7 +236,8 @@ theorem relabelAt_replicate (n : ℕ) (w p : List Bool) :
 string (`samplePerm` at `√|w|`). -/
 noncomputable def sampleStr (w r : List Bool) : List Bool := encPerm (samplePerm (Nat.sqrt w.length) r)
 
-/-- The defining equation of `sampleStr`: `sampleStr w r = encPerm (samplePerm (Nat.sqrt w.length) r)`. -/
+/-- The defining equation of `sampleStr`: `sampleStr w r = encPerm
+(samplePerm (Nat.sqrt w.length) r)`. -/
 theorem sampleStr_def (w r : List Bool) :
     sampleStr w r =
       (encPerm (samplePerm (Nat.sqrt w.length) r)) := rfl
@@ -452,14 +454,15 @@ theorem Riso_decidable : ∃ T : List Bool → Bool, PolyTimeComputable (fun z =
 /-- The honest prover of the graph isomorphism protocol is efficient (D8)
 [PS10, Proposition 120.7] (Inf-4.2).
 
-**Proof sketch.** `efficient_of_polyTime` with the layout function: message `1` is
-`relabel_poly` of `G₀` by the sampled permutation (`piStr_poly`), message `3` is
-`mulInvStr_poly` on `⟨encPerm π, y⟩` or `encPerm π` according to the challenge bit
-(`polyTimeComputable_ite`), the case split on `msgs = []` by `polyTimeComputable_isNil`. The equation with
-`giProver.next` is checked on the two shapes of the history (`giProver_next_nil'`,
-`giProver_next_cons'`) with `relabelAt_replicate`, `decPerm_encPerm`, `mulInvStr_encPerm`. -/
+**Proof sketch.** `efficient_of_polyTime` with the layout function: message `1` is `relabel_poly` of
+`G₀` by the sampled permutation (`piStr_poly`), message `3` is `mulInvStr_poly` on `⟨encPerm π, y⟩`
+or `encPerm π` according to the challenge bit (`polyTimeComputable_ite`), the case split on
+`msgs = []` by `polyTimeComputable_isNil`. The equation with `giProver.next` is checked on the two
+shapes of the history (`giProver_next_nil'`, `giProver_next_cons'`) with `relabelAt_replicate`,
+`decPerm_encPerm`, `mulInvStr_encPerm`. -/
 theorem giProver_efficient : giProver.Efficient := by
-  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] := polyTimeComputable_isNil.comp argM_poly
+  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] :=
+    polyTimeComputable_isNil.comp argM_poly
   have hbit : PolyTimeComputable fun w => [(pairFstD (argM w)).headD false] :=
     polyTimeComputable_headD.comp (polyTimeComputable_pairFstD.comp argM_poly)
   have hF₁ := relabel_poly w₀_poly piStr_poly
@@ -488,18 +491,20 @@ theorem giProver_efficient : giProver.Efficient := by
 /-- The verifier of the graph isomorphism protocol is efficient (D8) [PS10, Definition 116.1
 for Proposition 120.7] (Inf-4.2).
 
-**Proof sketch.** `efficient_of_polyTime`: the challenge is the first coin (`coinBit_poly`),
-the verdict conjoins the well-formedness test (`wellFormed_poly`) with `relabel_poly` of `G_b`
-by `γ` compared with `H` (`polyTimeComputable_pairEq`); the number of messages is read off the
-nesting of `msgs` by `polyTimeComputable_isNil` tests. The equation with `giVerifier.next` is checked on the
-four shapes of the history (`giVerifier_next_nil'`, `giVerifier_next_one`,
-`giVerifier_next_two'`, `giVerifier_next_long'`). -/
+**Proof sketch.** `efficient_of_polyTime`: the challenge is the first coin (`coinBit_poly`), the
+verdict conjoins the well-formedness test (`wellFormed_poly`) with `relabel_poly` of `G_b` by `γ`
+compared with `H` (`polyTimeComputable_pairEq`); the number of messages is read off the nesting of
+`msgs` by `polyTimeComputable_isNil` tests. The equation with `giVerifier.next` is checked on the
+four shapes of the history (`giVerifier_next_nil'`, `giVerifier_next_one`, `giVerifier_next_two'`,
+`giVerifier_next_long'`). -/
 theorem giVerifier_efficient : giVerifier.Efficient := by
-  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] := polyTimeComputable_isNil.comp argM_poly
+  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] :=
+    polyTimeComputable_isNil.comp argM_poly
   have hnil₂ : PolyTimeComputable fun w => [decide (pairSndD (argM w) = [])] :=
     polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp argM_poly)
   have hnil₃ : PolyTimeComputable fun w => [decide (pairSndD (pairSndD (argM w)) = [])] :=
-    polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp (polyTimeComputable_pairSndD.comp argM_poly))
+    polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp
+        (polyTimeComputable_pairSndD.comp argM_poly))
   have hH : PolyTimeComputable fun w => pairFstD (argM w) := polyTimeComputable_pairFstD.comp argM_poly
   have hγ : PolyTimeComputable fun w => pairFstD (pairSndD (argM w)) :=
     polyTimeComputable_pairFstD.comp (polyTimeComputable_pairSndD.comp argM_poly)
@@ -545,18 +550,22 @@ the permutation sampled from the coins after the first (`sampleStr_poly` on
 (`wellFormed_poly`). The equation with `gniVerifier.next` is checked on the three shapes of
 the history (`gniVerifier_next_nil'`, `gniVerifier_next_one`, `gniVerifier_next_long'`). -/
 theorem gniVerifier_efficient : gniVerifier.Efficient := by
-  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] := polyTimeComputable_isNil.comp argM_poly
+  have hnil : PolyTimeComputable fun w => [decide (argM w = [])] :=
+    polyTimeComputable_isNil.comp argM_poly
   have hnil₂ : PolyTimeComputable fun w => [decide (pairSndD (argM w) = [])] :=
     polyTimeComputable_isNil.comp (polyTimeComputable_pairSndD.comp argM_poly)
   have hσ : PolyTimeComputable fun w => sampleStr (pairFstD (argX w)) (NUPPT.inCoins w).tail :=
-    ptc_congr (sampleStr_poly.comp (w₀_poly.pairEncode (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
-      polyTimeComputable_tail).comp NUPPT.polyTimeComputable_inCoins)))
+    ptc_congr (sampleStr_poly.comp
+        (w₀_poly.pairEncode
+            ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp
+                NUPPT.polyTimeComputable_inCoins)))
       fun w => by simp
   have hF₀ := relabel_poly selGraph_poly hσ
   have hbit : PolyTimeComputable fun w =>
       [decide ([(pairFstD (argM w)).headD false] = [(NUPPT.inCoins w).headD false])] :=
     ptc_congr (polyTimeComputable_pairEq.comp
-      ((polyTimeComputable_headD.comp (polyTimeComputable_pairFstD.comp argM_poly)).pairEncode coinBit_poly))
+      ((polyTimeComputable_headD.comp (polyTimeComputable_pairFstD.comp argM_poly)).pairEncode
+          coinBit_poly))
       fun w => by simp
   have hwf : PolyTimeComputable fun w => [wellFormedInstance (argX w)] := wellFormed_poly.comp argX_poly
   have hverdict := polyTimeComputable_and hwf hbit

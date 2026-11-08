@@ -330,7 +330,8 @@ noncomputable def ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputa
     (hα : ∀ n, (advice n).length ≤ adv.eval n) : NUPPT where
   M := Classical.choose ((polyTimeComputable_iff f).1 hf)
   Ct := Classical.choose (Classical.choose_spec ((polyTimeComputable_iff f).1 hf))
-  ct := Classical.choose (Classical.choose_spec (Classical.choose_spec ((polyTimeComputable_iff f).1 hf)))
+  ct := Classical.choose (Classical.choose_spec
+      (Classical.choose_spec ((polyTimeComputable_iff f).1 hf)))
   coins := coins
   adv := adv
   advice := advice
@@ -389,7 +390,8 @@ noncomputable def ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTime
     (coins : PolyExpr) : NUPPT :=
   ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)
 
-/-- The defining equation of `ofPolyTimeUniform`: `ofPolyTimeUniform hf coins = ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)`. -/
+/-- The defining equation of `ofPolyTimeUniform`: `ofPolyTimeUniform hf coins = ofPolyTime hf coins
+(.const 0) (fun _ => []) (fun _ => by simp)`. -/
 theorem ofPolyTimeUniform_def {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr) :
     (ofPolyTimeUniform hf coins : NUPPT) =
       (ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)) := rfl

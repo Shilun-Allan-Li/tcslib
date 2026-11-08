@@ -163,7 +163,8 @@ def mergeAt {m ℓ : ℕ} (p : Fin m × Fin m) (a b : Fin m → Fin ℓ → Bool
     Fin m → Fin ℓ → Bool :=
   fun i => if i = p.1 ∨ i = p.2 then a i else b i
 
-/-- The defining equation of `mergeAt`: `mergeAt p a b = fun i => if i = p.1 ∨ i = p.2 then a i else b i`. -/
+/-- The defining equation of `mergeAt`: `mergeAt p a b = fun i => if i = p.1 ∨ i = p.2 then a i else
+b i`. -/
 theorem mergeAt_def {m ℓ : ℕ} (p : Fin m × Fin m) (a b : Fin m → Fin ℓ → Bool) :
     (mergeAt p a b : Fin m → Fin ℓ → Bool) =
       (fun i => if i = p.1 ∨ i = p.2 then a i else b i :

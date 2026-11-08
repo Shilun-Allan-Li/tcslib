@@ -158,7 +158,8 @@ lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}
 def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
     Action k Bool S := ⟨m, fun _ => (none, 0), none, q⟩
 
-/-- The defining equation of `controlAction`: `controlAction m q = ⟨m, fun _ => (none, 0), none, q⟩`. -/
+/-- The defining equation of `controlAction`:
+`controlAction m q = ⟨m, fun _ => (none, 0), none, q⟩`. -/
 theorem controlAction_def {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
     (controlAction m q : Action k Bool S) =
       (⟨m, fun _ => (none, 0), none, q⟩) := rfl

@@ -334,7 +334,8 @@ theorem attemptStr_ofFn (V' : Strategy) {n : ℕ} (G₀ G₁ : Graph n) (z : Lis
         (simAttempt G₀ G₁ (vstar V' (encInstance G₀ G₁) z)
           ((samplePerm n (List.ofFn (blockFields _ _ g).1.1), (blockFields _ _ g).1.2),
             (blockFields _ _ g).2)) := by
-  simp only [attemptStr_def, instanceG₀_def, instanceG₁_def, instanceVertexCount_def, headD_ofFn_block,
+  simp only [attemptStr_def, instanceG₀_def, instanceG₁_def, instanceVertexCount_def,
+      headD_ofFn_block,
     drop_one_take_ofFn_block, drop_ofFn_block]
   rw [show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _,
     show pairSndD (encInstance G₀ G₁) = encGraph G₁ from pairSndD_pairEncode _ _]

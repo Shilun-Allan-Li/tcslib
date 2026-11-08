@@ -555,7 +555,8 @@ theorem Ensemble.Indist.copies {ℓ : PolyExpr} {X Y : Ensemble ℓ} (h : X.Indi
           (t.eval n) (k n) (D' n) z c := by
       intro z c
       rw [he]
-      simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, EnsembleLemmas.ofFn_coinsEquiv, hB,
+      simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+          EnsembleLemmas.ofFn_coinsEquiv, hB,
         multicopyRed_def, hD']
     have hdist : ∀ Z : Ensemble ℓ, acceptProb (Z.X n) (B.distinguisher n (ℓ.eval n)) =
         acceptProb (Z.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)) := by

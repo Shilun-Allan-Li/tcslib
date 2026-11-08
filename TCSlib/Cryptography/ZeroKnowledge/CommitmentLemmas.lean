@@ -389,8 +389,7 @@ def step (w : List Bool) : List Bool := st (p₁ w) (p₂ w).tail ((p₃ w).drop
 /-- The step is polynomial-time (`Complexity.polyTimeComputable_tail`,
 `Complexity.polyTimeComputable_pairDropPoly` on `⟨u, rs⟩`). -/
 theorem step_poly : PolyTimeComputable step := by
-  convert st_poly p₁_poly (((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
-      polyTimeComputable_tail).comp p₂_poly)
+  convert st_poly p₁_poly ((polyTimeComputable_tail.congr fun _ => List.drop_one.symm).comp p₂_poly)
     ((polyTimeComputable_pairDropPoly .var).comp (p₁_poly.pairEncode p₃_poly)) using 1
   funext w
   simp [step]
@@ -438,8 +437,9 @@ def emit (w : List Bool) : List Bool :=
 `PolyTimeComputable.append`). -/
 theorem emit_poly (hF : PolyTimeComputable F) (hH : PolyTimeComputable H) :
     PolyTimeComputable (emit F H) := by
-  convert polyTimeComputable_ite (polyTimeComputable_isNil.comp p₂_poly) (polyTimeComputable_const [])
-    ((hF.comp arg_poly).append (BinArith.polyTimeComputable_xor (polyTimeComputable_headD.comp p₂_poly)
+  convert polyTimeComputable_ite (polyTimeComputable_isNil.comp p₂_poly)
+      (polyTimeComputable_const []) ((hF.comp arg_poly).append
+        (BinArith.polyTimeComputable_xor (polyTimeComputable_headD.comp p₂_poly)
       (polyTimeComputable_headD.comp (hH.comp arg_poly)))) using 1
   funext w
   simp [emit]
@@ -492,7 +492,7 @@ theorem emit_init_of_lt {v r : List Bool} {i : ℕ} (hi : i < v.length) :
       [xor (v.getD i false) ((H (NUPPT.advInput v.length (List.ofFn (EnsembleLemmas.blocks
         v.length v.length (padFin (v.length * v.length) r) ⟨i, hi⟩)))).headD false)] := by
   have hne : v.drop i ≠ [] := by
-    rw [Ne, List.drop_eq_nil_iff]
+    rw [ne_eq, List.drop_eq_nil_iff]
     omega
   have hblock : ((EnsembleLemmas.padL (v.length * v.length) r).drop (i * v.length)).take v.length =
       List.ofFn (EnsembleLemmas.blocks v.length v.length (padFin (v.length * v.length) r) ⟨i, hi⟩) :=

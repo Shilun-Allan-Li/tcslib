@@ -6,6 +6,7 @@ Authors: TCSlib contributors
 import TCSlib.Cryptography.Candidates.DiscreteLog
 import TCSlib.Cryptography.NumberTheory.QuadraticResidues
 import TCSlib.Cryptography.HardcoreBit.PairwiseIndependence
+import TCSlib.Programs.Util.List
 import Mathlib.NumberTheory.LegendreSymbol.Basic
 import Mathlib.GroupTheory.SpecificGroups.Cyclic
 
@@ -125,9 +126,7 @@ theorem expo_injective {g : (ZMod p)ˣ} (hg : IsGenerator g) : Function.Injectiv
   intro x y h
   have h1 := pow_eq_pow_iff_modEq.1 h
   rw [hg.orderOf_eq] at h1
-  apply ZMod.val_injective
-  unfold Nat.ModEq at h1
-  rwa [Nat.mod_eq_of_lt (ZMod.val_lt x), Nat.mod_eq_of_lt (ZMod.val_lt y)] at h1
+  exact ZMod.val_injective _ (h1.eq_of_lt_of_lt (ZMod.val_lt x) (ZMod.val_lt y))
 
 /-- **Exponentiation by a generator is a bijection `Z_{p−1} → Z_p^*`** (the discrete-log
 collection is a collection of permutations, [PS10, p. 53]). -/
@@ -1113,7 +1112,8 @@ public fixed-round state loop `Complexity.StateLoop.polyTimeComputable_stateIter
 private theorem dlb_stateIterate_poly {start step : List Bool → List Bool}
     (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step) (B : PolyExpr) :
     PolyTimeComputable fun x =>
-      pairSndD ((StateLoop.gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x))) :=
+      pairSndD ((StateLoop.gstep step B)^[(pairEncode x (start x)).length]
+          (pairEncode x (start x))) :=
   StateLoop.polyTimeComputable_stateIterate hstart hstep polyTimeComputable_pairSndD B
 
 /-! ### The fixed data of the inverter's loops -/
@@ -1269,8 +1269,9 @@ private theorem dlb_iStep_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_iSte
   have hRest : PolyTimeComputable dlb_iRest := dlb_drop_poly (PolyTimeComputable.comp' dlb_fuA_poly hF) hCs1
   have hvote := dlb_vote_poly S A H hF hR hS hA
   have hnil := PolyTimeComputable.comp' polyTimeComputable_isNil hC
-  have hnew := (PolyTimeComputable.comp' ((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
-      polyTimeComputable_tail) hC).pairEncode (hRest.pairEncode (hvote.append hV))
+  have hnew := (PolyTimeComputable.comp'
+      (polyTimeComputable_tail.congr fun _ => List.drop_one.symm) hC).pairEncode
+    (hRest.pairEncode (hvote.append hV))
   exact dlb_ite_poly hnil polyTimeComputable_pairSndD hnew
 
 private theorem dlb_iStart_poly : PolyTimeComputable dlb_iStart :=
@@ -1387,8 +1388,8 @@ private theorem dlb_oStep_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_oSte
   have hcs := PolyTimeComputable.comp' polyTimeComputable_pairFstD
     (PolyTimeComputable.comp' polyTimeComputable_pairSndD (dlb_oFin_poly S A H))
   have hnew := (dlb_oNext_poly S A H).pairEncode ((hnq.append dlb_oAcc_poly).pairEncode
-    ((PolyTimeComputable.comp' ((funext fun _ => List.drop_one : (fun w : List Bool => w.drop 1) = List.tail) ▸
-      polyTimeComputable_tail) dlb_oCnt_poly).pairEncode hcs))
+    ((PolyTimeComputable.comp' (polyTimeComputable_tail.congr fun _ => List.drop_one.symm)
+        dlb_oCnt_poly).pairEncode hcs))
   exact dlb_ite_poly hnil polyTimeComputable_pairSndD hnew
 
 private theorem dlb_outer_poly (H : ArithmeticFP) : PolyTimeComputable (dlb_outer S A) :=
@@ -1939,16 +1940,6 @@ end RoundSem
 
 /-! ### Bits and counts -/
 
-/-- The number of `true`s in `List.ofFn v` is the number of indices where `v` is `true`. -/
-private theorem dlb_count_ofFn {M : ℕ} (v : Fin M → Bool) :
-    (List.ofFn v).count true = #(univ.filter fun j : Fin M => v j = true) := by
-  rw [Finset.card_filter]
-  induction M with
-  | zero => simp
-  | succ M ih =>
-    rw [List.ofFn_succ, List.count_cons, ih (fun j => v j.succ), Fin.sum_univ_succ]
-    cases v 0 <;> simp [add_comm]
-
 /-- **The majority of an odd number of votes is the strict majority**: for `|κ|` odd,
 `majority v = [|κ| < 2·#{v = true}]`, read off `HardcoreBit.two_mul_card_le_of_majority_ne`
 (ties cannot occur). -/
@@ -2089,7 +2080,7 @@ parity bit `[y ∉ QR_p]` (`dlb_oStep_cons`, `dlb_qrF_eq`, `dlb_rootF_eq`, `dlb_
 **Proof sketch.** `dlb_oStep_cons` performs the round on strings; Euler's test is
 `[y ∈ QR_p]` (`dlb_qrF_eq`) and the root is `⟦dlRoot g y⟧_n` (`dlb_rootF_eq`). Each vote is the
 `majOracle` vote on the decoded coins (`dlb_vote_dec`), so the votes are `List.ofFn` of those
-votes, whose count of `true`s is the cardinality of the agreeing trials (`dlb_count_ofFn`); with
+votes, whose count of `true`s is the cardinality of the agreeing trials (`List.count_ofFn`); with
 `ℓ` odd the strict-majority test is `HardcoreBit.majority` (`dlb_majority_eq_of_odd`). In the
 other branch `p − ⟦root⟧` is the numeral of `−root` (`subStr_pairEncode`,
 `ZMod.val_neg_of_ne_zero`). -/
@@ -2128,7 +2119,7 @@ private theorem dlb_oStep_round (hp2 : p ≠ 2) (hpn : p < 2 ^ n) (hodd : ℓ % 
       2 * ((List.ofFn bs).map fun b => dlb_vote (fullDLCollection H G).sample A f
       (natToList n ((dlRoot g y : (ZMod p)ˣ) : ZMod p).val) (List.ofFn b.1) (List.ofFn b.2)).count true) =
       majOracle g (dlb_Ai A n i p) ℓ (dlRoot g y) (dlb_idealRound H G A n i e bs) := by
-    rw [hvotes, List.length_ofFn, dlb_count_ofFn]
+    rw [hvotes, List.length_ofFn, List.count_ofFn]
     unfold majOracle
     rw [dlb_majority_eq_of_odd _ (by rw [Fintype.card_fin]; exact hodd), Fintype.card_fin]
   rw [hmaj]

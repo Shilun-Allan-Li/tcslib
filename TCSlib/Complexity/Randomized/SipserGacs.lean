@@ -80,12 +80,14 @@ def shiftOrVerifier (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
   (List.range (k x.length)).any fun i =>
     M x (List.zipWith xor v ((u.drop (i * p x.length)).take (p x.length)))
 
-/-- The defining equation of `shiftOrVerifier`: `shiftOrVerifier M p k = fun x u v => (List.range (k x.length)).any fun i => M x (List.zipWith xor v ((u.drop (i * p x.length)).take (p x.length)))`. -/
+/-- The defining equation of `shiftOrVerifier`: `shiftOrVerifier M p k = fun x u v =>
+(List.range (k x.length)).any fun i => M x
+(List.zipWith xor v ((u.drop (i * p x.length)).take (p x.length)))`. -/
 theorem shiftOrVerifier_def (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
     shiftOrVerifier M p k =
       (fun x u v =>
-    (List.range (k x.length)).any fun i =>
-      M x (List.zipWith xor v ((u.drop (i * p x.length)).take (p x.length))) :
+        (List.range (k x.length)).any fun i =>
+          M x (List.zipWith xor v ((u.drop (i * p x.length)).take (p x.length))) :
         List Bool → List Bool → List Bool → Bool) := rfl
 
 /-- `E` recognizes the shifted-OR construction: from an efficient Boolean

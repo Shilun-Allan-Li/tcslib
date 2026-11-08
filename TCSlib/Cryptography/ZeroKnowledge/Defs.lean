@@ -614,7 +614,7 @@ theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → P
         Function.comp_apply, Equiv.symm_symm, Equiv.curry_apply, Function.curry_apply]
       congr 1
       ext
-      simp [finProdFinEquiv]
+      simp [finProdFinEquiv_apply_val]
       ring
   have hatt : ∀ (r : S'.Coins x.length) (t : ℕ) (ht : t < x.length),
       attempt S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) t =

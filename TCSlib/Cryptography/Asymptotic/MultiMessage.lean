@@ -202,7 +202,7 @@ theorem uprob_not_injective_le :
   have h1 : uprob (fun r : Fin (q + 1) → Fin n → Bool => ¬ Function.Injective r) ≤
       uprob (fun r : Fin (q + 1) → Fin n → Bool => ∃ p ∈ S, r p.1 = r p.2) := by
     refine uprob_mono fun r hr => ?_
-    simp only [Function.Injective, not_forall] at hr
+    rw [Function.not_injective_iff] at hr
     obtain ⟨i, j, hij, hne⟩ := hr
     rcases lt_or_gt_of_ne hne with h | h
     · exact ⟨(i, j), by simp [S, h], hij⟩

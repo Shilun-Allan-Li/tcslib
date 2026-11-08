@@ -63,7 +63,8 @@ theorem decodeNat_nil : decodeNat [] = none := rfl
 /-- `decodeNat` on `false :: r`: `decodeNat (false :: r) = some (0, r)`. -/
 theorem decodeNat_false_cons (r : List Bool) : decodeNat (false :: r) = some (0, r) := rfl
 
-/-- `decodeNat` on `true :: r`: `decodeNat (true :: r) = (decodeNat r).map fun p => (p.1 + 1, p.2)`. -/
+/-- `decodeNat` on `true :: r`: `decodeNat (true :: r) = (decodeNat r).map fun p => (p.1 + 1, p.2)`.
+-/
 theorem decodeNat_true_cons (r : List Bool) :
     decodeNat (true :: r) = (decodeNat r).map fun p => (p.1 + 1, p.2) := rfl
 

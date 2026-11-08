@@ -102,7 +102,8 @@ the output bit at (0-indexed) position `i` is the bit of `G(S_i)` and the final 
 def prgExt (G : S → Bool × S) (l : ℕ) : S → (Fin l → Bool) × S :=
   fun s => (fun i => (G ((prgStep G)^[i] s)).1, (prgStep G)^[l] s)
 
-/-- The defining equation of `prgExt`: `prgExt G l = fun s => (fun i => (G ((prgStep G)^[i] s)).1, (prgStep G)^[l] s)`. -/
+/-- The defining equation of `prgExt`: `prgExt G l = fun s =>
+(fun i => (G ((prgStep G)^[i] s)).1, (prgStep G)^[l] s)`. -/
 theorem prgExt_def (G : S → Bool × S) (l : ℕ) :
     prgExt G l =
       (fun s => (fun i => (G ((prgStep G)^[i] s)).1, (prgStep G)^[l] s) :

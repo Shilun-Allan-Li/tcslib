@@ -193,7 +193,9 @@ private lemma stop_clean (C : FinTM Bool) (entry exit : C.State)
   rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
   have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
   rw [hflag, show C.tm.runFrom c t = _ from he]
-  simp [MultiTapeTM.step_def, stopTM, stopCfg, Cfg.ofWords_def, FinTM.controlAction_def, Action.apply_state, Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos]
+  simp [MultiTapeTM.step_def, stopTM, stopCfg, Cfg.ofWords_def, FinTM.controlAction_def,
+      Action.apply_state, Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos,
+          Action.apply_inputPos]
 
 /-- **The clean-module contract.** `Clean M result emit B` says: the module `M` has at least one
 work tape (`0 < M.k`), and for every native input `x` and argument `arg`, the run of `M` from the
@@ -389,9 +391,11 @@ private lemma pad_apply {k K : ℕ} {S : Type} {x : List Bool}
     (padAction (K := K) a).apply (padCfg c) = padCfg (a.apply c) := by
   refine Cfg.ext rfl rfl ?_ ?_ rfl
   · funext i z
-    by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply_state, Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, h]
+    by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply_state, Action.apply_output,
+        Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, h]
   · funext i
-    by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply_state, Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, h]
+    by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply_state, Action.apply_output,
+        Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, h]
 
 /-- The padded module runs in lockstep with the module. -/
 private lemma pad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
@@ -546,7 +550,7 @@ theorem host_call {C : Type} [Fintype C] [DecidableEq C] {n : ℕ} (M : Fin n �
     have hl := hg v hv
     cases hs : ((M i).tm.runFrom c v).state with
     | none => exact False.elim (hl hs)
-    | some s => simp [emitCfg, padCfg, hs, emb]
+    | some s => simp [emitCfg_state, padCfg, hs, emb]
   · rw [hrun t (Nat.le_refl _), show (M i).tm.runFrom c t = _ from he]
     exact host_seam M K ret i hp x result pre out q none
 

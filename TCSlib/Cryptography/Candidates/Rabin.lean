@@ -2793,7 +2793,7 @@ theorem blumSampler_spec (H : ArithmeticFP) (n : ℕ) (r : (blumGen H).Coins n)
       v ^ 2 % (R.z.p * R.z.q) := by
     rw [rabinIndexOf, length_natToList]; exact listToNat_natToList (hlt.trans R.z.mul_lt)
   have hcop : Nat.Coprime (v ^ 2 % (R.z.p * R.z.q)) (R.z.p * R.z.q) := by
-    rw [Nat.Coprime, ← Nat.gcd_rec]
+    rw [Nat.coprime_iff_gcd_eq_one, ← Nat.gcd_rec]
     exact (Nat.Coprime.pow_left 2 hv.2).symm
   rw [hval, listToNat_rabinIndexOf]
   set w := natToList (rabinIndexOf _ R).length (v ^ 2 % (R.z.p * R.z.q))
@@ -3132,11 +3132,11 @@ private theorem rabin_coins_blumGen (H : ArithmeticFP) :
 generator's index of a probability `Pr[Q i]` differs from the average at the uniform distinct
 Blum pair by at most `2e^{-n} + 4n/2^n`, in both directions.
 
-**Proof sketch.** Split the generator's coins into the two prime segments
-(`rabin_genCoinsEquiv`, `HardcoreBit.uexp_comp_equiv`); the index is `rabin_idx` of the
-selection `rabin_X` (`rabinBlumTrapdoor_index`, `rabin_genIndex`, fallback `(3, 7)`); the pair law
-(`rabin_pairLaw` with `rabin_card_blum`) and `uexp_le_of_statClose` applied to it and to its symmetric
-give both inequalities. -/
+**Proof sketch.** Split the generator's coins into the two prime segments (`rabin_genCoinsEquiv`,
+`HardcoreBit.uexp_comp_equiv`); the index is `rabin_idx` of the selection `rabin_X`
+(`rabinBlumTrapdoor_index`, `rabin_genIndex`, fallback `(3, 7)`); the pair law (`rabin_pairLaw` with
+`rabin_card_blum`) and `uexp_le_of_statClose` applied to it and to its symmetric give both
+inequalities. -/
 private theorem rabin_blum_uexp (H : ArithmeticFP) (hD : BlumDensity) {n : ℕ} (hn : 3 ≤ n)
     (Aux : List Bool → Type) [∀ c, Fintype (Aux c)] [∀ c, Nonempty (Aux c)] (Q : ∀ c, Aux c → Prop) :
     |uexp (fun r : (rabinBlumTrapdoor H).toCollection.gen.Coins n =>

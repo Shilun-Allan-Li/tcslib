@@ -332,13 +332,15 @@ def raceVerifier (M₁ M₂ : List Bool → List Bool → Bool) (p₁ : ℕ → 
   else if M₂ x (r.drop (p₁ x.length)) then some false
   else none
 
-/-- The defining equation of `raceVerifier`: `raceVerifier M₁ M₂ p₁ = fun x r => if M₁ x (r.take (p₁ x.length)) then some true else if M₂ x (r.drop (p₁ x.length)) then some false else none`. -/
+/-- The defining equation of `raceVerifier`: `raceVerifier M₁ M₂ p₁ = fun x r => if M₁ x
+(r.take (p₁ x.length)) then some true else if M₂ x (r.drop (p₁ x.length)) then some false else
+none`. -/
 theorem raceVerifier_def (M₁ M₂ : List Bool → List Bool → Bool) (p₁ : ℕ → ℕ) :
     raceVerifier M₁ M₂ p₁ =
       (fun x r =>
-    if M₁ x (r.take (p₁ x.length)) then some true
-    else if M₂ x (r.drop (p₁ x.length)) then some false
-    else none :
+        if M₁ x (r.take (p₁ x.length)) then some true
+        else if M₂ x (r.drop (p₁ x.length)) then some false
+        else none :
         List Bool → List Bool → Option Bool) := rfl
 
 /-- The `k`-fold repetition of a verifier with majority vote, on randomness
@@ -351,14 +353,16 @@ def majorityVerifier (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) 
     M x ((r.drop (i * p n)).take (p n))
   k n < 2 * votes
 
-/-- The defining equation of `majorityVerifier`: `majorityVerifier M p k = fun x r => let n := x.length let votes := (List.range (k n)).countP fun i => M x ((r.drop (i * p n)).take (p n)) k n < 2 * votes`. -/
+/-- The defining equation of `majorityVerifier`: with `n = |x|`, `majorityVerifier M p k x r`
+holds when `k n < 2 · votes`, `votes` the number of the `k n` blocks
+`(r.drop (i * p n)).take (p n)` that `M x` accepts. -/
 theorem majorityVerifier_def (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
     majorityVerifier M p k =
       (fun x r =>
-    let n := x.length
-    let votes := (List.range (k n)).countP fun i =>
-      M x ((r.drop (i * p n)).take (p n))
-    k n < 2 * votes :
+        let n := x.length
+        let votes := (List.range (k n)).countP fun i =>
+          M x ((r.drop (i * p n)).take (p n))
+        k n < 2 * votes :
         List Bool → List Bool → Bool) := rfl
 
 /-- `E` can race two of its Boolean verifiers on a polynomial split point
@@ -386,12 +390,13 @@ def anyVerifier (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
   (List.range (k x.length)).any fun i =>
     M x ((r.drop (i * p x.length)).take (p x.length))
 
-/-- The defining equation of `anyVerifier`: `anyVerifier M p k = fun x r => (List.range (k x.length)).any fun i => M x ((r.drop (i * p x.length)).take (p x.length))`. -/
+/-- The defining equation of `anyVerifier`: `anyVerifier M p k = fun x r =>
+(List.range (k x.length)).any fun i => M x ((r.drop (i * p x.length)).take (p x.length))`. -/
 theorem anyVerifier_def (M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) :
     anyVerifier M p k =
       (fun x r =>
-    (List.range (k x.length)).any fun i =>
-      M x ((r.drop (i * p x.length)).take (p x.length)) :
+        (List.range (k x.length)).any fun i =>
+          M x ((r.drop (i * p x.length)).take (p x.length)) :
         List Bool → List Bool → Bool) := rfl
 
 /-- `E` can repeat a Boolean verifier a polynomial number of times, on blocks

@@ -477,7 +477,8 @@ theorem step_eq (E : List Bool → List Bool)
       rw [vstr_def, hnf, hlook, if_pos hmem]
       simp
     rw [noteQuery_of_mem hmem]
-    simp only [step_def, hist'_def, tbl'_def, cnt'_def, hnf, Bool.false_eq_true, if_false, hist_eq, tbl_eq,
+    simp only [step_def, hist'_def, tbl'_def, cnt'_def, hnf, Bool.false_eq_true, if_false, hist_eq,
+        tbl_eq,
       cnt_eq, rnd_eq, hquery, hans _ hv]
     simp only [encState, histEnc_append_single, List.replicate_succ]
   · have hnf : notFound D q (pairEncode (rawInput d) (encState d s t)) = true := by
@@ -488,7 +489,8 @@ theorem step_eq (E : List Bool → List Bool)
       rw [noteQuery_of_not_mem hmem, List.idxOf_append_of_notMem hmem, List.idxOf_cons_self,
         Nat.add_zero]
     rw [hidx, noteQuery_of_not_mem hmem]
-    simp only [step_def, hist'_def, tbl'_def, cnt'_def, hnf, if_true, hist_eq, tbl_eq, cnt_eq, rnd_eq, hquery,
+    simp only [step_def, hist'_def, tbl'_def, cnt'_def, hnf, if_true, hist_eq, tbl_eq, cnt_eq,
+        rnd_eq, hquery,
       hans _ hv, hpfx, fresh_eq d s t E hG hk]
     simp only [encState, histEnc_append_single, List.replicate_succ, tblOf_append_single,
       zero_add, tblEnc_append_single, List.length_append, List.length_singleton]
@@ -585,7 +587,8 @@ theorem length_encState_pureAt_le {t : ℕ} (ht : t ≤ q.eval n) :
   refine le_trans ?_ ((bound q).eval_mono (le_length_rawInput d))
   rw [length_encState]
   have hlen := pureAt_length d hi t
-  simp only [bound_def, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+  simp only [bound_def, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const,
+      PolyExpr.eval_var]
   have hA : (pureAt d hi t).1.length ≤ q.eval n := by omega
   have hB : (pureAt d hi t).2.length ≤ q.eval n := by omega
   have h1 : (pureAt d hi t).1.length * (6 * n + 6) ≤ q.eval n * (6 * n + 6) :=
@@ -765,7 +768,8 @@ theorem ggmRedMachine_distinguisher {E : List Bool → List Bool} (hE : PolyTime
   have hdist : (ggmRedMachine hE D q i j).distinguisher n (2 * n) z c =
       decide ([concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], [])] =
         [true]) := by
-    rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, runAt_ggmRedMachine, hraw, rawFun_rawInput d E hG hi]
+    rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, runAt_ggmRedMachine, hraw,
+        rawFun_rawInput d E hG hi]
   have hrhs : ggmBitsDist G (fun r => buildTreeQ (fun hist => D.runAt n (histEnc hist) r)
       (q.eval n) []) (q.eval n) ⟨i n, hi⟩ ⟨j n, hj⟩ z (W, r) =
         concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], []) := rfl

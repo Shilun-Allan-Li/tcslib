@@ -144,8 +144,9 @@ theorem exists_glBitCollEvaluator (F : Collection) :
         H (pairEncode i (pairEncode (F.encD i x) (List.ofFn ρ))) =
           [HardcoreBit.ip (padFin L (F.encD i x)) ρ] := by
   refine ⟨fun w => ipFun (pairEncode (padToLen (pairSndD w)) (pairSndD (pairSndD w))),
-    PolyTimeComputable.comp' (g := ipFun) ipFun_poly ((PolyTimeComputable.comp' (g := padToLen) padToLen_poly polyTimeComputable_pairSndD).pairEncode
-      (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)), fun i x L ρ => ?_⟩
+    PolyTimeComputable.comp' (g := ipFun) ipFun_poly
+      ((PolyTimeComputable.comp' (g := padToLen) padToLen_poly polyTimeComputable_pairSndD).pairEncode
+        (polyTimeComputable_pairSndD.comp polyTimeComputable_pairSndD)), fun i x L ρ => ?_⟩
   simp only [pairSndD_pairEncode, padToLen_pairEncode_ofFn, ipFun_ofFn]
 
 /-- The inner product is invariant under transport along an equality of lengths (private copy

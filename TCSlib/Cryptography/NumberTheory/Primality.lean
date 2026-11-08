@@ -7,6 +7,7 @@ import TCSlib.Cryptography.NumberTheory.Chebyshev
 import TCSlib.Complexity.Randomized.PPT
 import TCSlib.Complexity.Randomized.Repetition
 import TCSlib.Complexity.Randomized.Closure
+import TCSlib.Cryptography.Asymptotic.Adversary
 import Mathlib.Data.Nat.Factorization.Basic
 import Mathlib.FieldTheory.Finite.Basic
 import Mathlib.GroupTheory.Perm.Cycle.Type
@@ -312,9 +313,9 @@ private theorem exists_unit_pow_ne {N : ℕ} [NeZero N] (hodd : Odd N) {n₁ n�
   have hkcop : Nat.Coprime k N := by
     rw [← hN, Nat.coprime_mul_iff_right]
     constructor
-    · rw [Nat.Coprime, hk₁.gcd_eq]
+    · rw [Nat.coprime_iff_gcd_eq_one, hk₁.gcd_eq]
       exact Nat.Coprime.coprime_dvd_right hd₁ (ZMod.val_coe_unit_coprime v)
-    · rw [Nat.Coprime, hk₂.gcd_eq]
+    · rw [Nat.coprime_iff_gcd_eq_one, hk₂.gcd_eq]
       exact Nat.gcd_one_left _
   have hπ₁ : ZMod.castHom hd₁ (ZMod n₁) (k : ZMod N) =
       ZMod.castHom hd₁ (ZMod n₁) (v : ZMod N) := by
@@ -457,7 +458,7 @@ def millerRabin (N t : ℕ) (α : Fin t → Fin (N - 1)) : Bool :=
 /-- A base `i + 1` with `i < N − 1` is a nonzero residue. -/
 private theorem base_ne_zero {N : ℕ} (hN : 2 ≤ N) (i : Fin (N - 1)) :
     (((i : ℕ) + 1 : ℕ) : ZMod N) ≠ 0 := by
-  rw [Ne, ZMod.natCast_eq_zero_iff]
+  rw [ne_eq, ZMod.natCast_eq_zero_iff]
   intro h
   have := Nat.le_of_dvd (by omega) h
   have := i.2
@@ -708,6 +709,11 @@ theorem chunk_apply (T n : ℕ) (r : Fin (T * n) → Bool) (t : Fin T) (i : Fin 
   ext
   simp [finProdFinEquiv_apply_val, Nat.mul_comm, Nat.add_comm]
 
+/-- `chunk` is the canonical Bool block bijection of `Asymptotic/Adversary.lean`:
+`chunk T n r = FunFamily.blocks T n r` (`chunk_apply`, `FunFamily.blocks_apply`). -/
+theorem chunk_eq_blocks (T n : ℕ) (r : Fin (T * n) → Bool) : chunk T n r = FunFamily.blocks T n r :=
+  funext fun t => funext fun i => by rw [chunk_apply, FunFamily.blocks_apply]
+
 /-! #### The `SamplePrime` state loop -/
 
 /-- The step of the `SamplePrime` loop on the state word `⟨1^n, s⟩`: discard the first `n`
@@ -778,13 +784,7 @@ private theorem length_spStep_iterate_le (x : List Bool) (i : ℕ) :
 /-- Block `t` of the coin layout `chunk` is the `t`-th `n`-bit segment of the coin list. -/
 private theorem ofFn_chunk {T n : ℕ} (r : Fin (T * n) → Bool) (t : Fin T) :
     List.ofFn (chunk T n r t) = ((List.ofFn r).drop (t * n)).take n := by
-  have ht : ((t : ℕ) + 1) * n ≤ T * n := Nat.mul_le_mul_right n t.2
-  rw [Nat.add_mul, one_mul] at ht
-  apply List.ext_getElem
-  · simp only [List.length_ofFn, List.length_take, List.length_drop]
-    omega
-  · intro i h1 h2
-    simp [chunk]
+  rw [chunk_eq_blocks, FunFamily.take_drop_ofFn_blocks]
 
 /-- `firstHit` returns the first draw satisfying `E` (induction on the number of draws,
 `List.finRange_succ`). -/

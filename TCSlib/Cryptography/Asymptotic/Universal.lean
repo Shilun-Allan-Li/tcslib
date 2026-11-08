@@ -437,7 +437,8 @@ theorem fUniversal_easy (c : EffectiveMachineCode) (hc : CanonizerExp c) :
       padStr univOutLen (pairFstD z) (fUniversalStr c (pairSndD z)) := by
     have h := PolyTimeComputable.comp' (polyTimeComputable_padStr univOutLen)
       (polyTimeComputable_pairFstD.pairEncode
-        (PolyTimeComputable.comp' (polyTimeComputable_fUniversalStr c hc) polyTimeComputable_pairSndD))
+        (PolyTimeComputable.comp' (polyTimeComputable_fUniversalStr c hc)
+            polyTimeComputable_pairSndD))
     convert h using 1
     funext z
     simp
@@ -871,7 +872,8 @@ theorem fUniversal_hard (c : EffectiveMachineCode) (hc : CanonizerExp c)
       (pairEncode (pairSndD (pairFstD w)) (true :: pairSndD w)) := by
     have h := PolyTimeComputable.comp' (polyTimeComputable_padStr univOutLen)
       ((PolyTimeComputable.comp' polyTimeComputable_pairFstD polyTimeComputable_pairFstD).pairEncode
-        ((PolyTimeComputable.comp' polyTimeComputable_pairSndD polyTimeComputable_pairFstD).pairEncode
+        ((PolyTimeComputable.comp' polyTimeComputable_pairSndD
+            polyTimeComputable_pairFstD).pairEncode
           (PolyTimeComputable.comp' (StateLoop.cons_poly true) polyTimeComputable_pairSndD)))
     convert h using 1
     funext w

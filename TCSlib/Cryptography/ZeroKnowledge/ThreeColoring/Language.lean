@@ -169,7 +169,8 @@ edge and makes the graph non-colourable, as it should. -/
 def edgeList {n : ℕ} (G : Graph n) : List (Fin n × Fin n) :=
   (List.finRange n ×ˢ List.finRange n).filter fun p => G p.1 p.2
 
-/-- The defining equation of `edgeList`: `edgeList G = (List.finRange n ×ˢ List.finRange n).filter fun p => G p.1 p.2`. -/
+/-- The defining equation of `edgeList`: `edgeList G = (List.finRange n ×ˢ List.finRange n).filter
+fun p => G p.1 p.2`. -/
 theorem edgeList_def {n : ℕ} (G : Graph n) :
     (edgeList G : List (Fin n × Fin n)) =
       ((List.finRange n ×ˢ List.finRange n).filter fun p => G p.1 p.2) := rfl
@@ -332,7 +333,8 @@ position `t k + j`), the first accepted value in `Fin m` (`rejectionSample`, D10
 def sampleIdx (m k T : ℕ) (r : List Bool) : Option (Fin m) :=
   rejectionSample m k T fun t j => r.getD (t * k + j) false
 
-/-- The defining equation of `sampleIdx`: `sampleIdx m k T r = rejectionSample m k T fun t j => r.getD (t * k + j) false`. -/
+/-- The defining equation of `sampleIdx`: `sampleIdx m k T r = rejectionSample m k T fun t j =>
+r.getD (t * k + j) false`. -/
 theorem sampleIdx_def (m k T : ℕ) (r : List Bool) :
     sampleIdx m k T r =
       (rejectionSample m k T fun t j => r.getD (t * k + j) false) := rfl
@@ -352,7 +354,8 @@ the identity on failure (D10). -/
 noncomputable def samplePerm3 (T : ℕ) (r : List Bool) : Equiv.Perm (Fin 3) :=
   ((sampleIdx 6 3 T r).map perm3Equiv).getD 1
 
-/-- The defining equation of `samplePerm3`: `samplePerm3 T r = ((sampleIdx 6 3 T r).map perm3Equiv).getD 1`. -/
+/-- The defining equation of `samplePerm3`: `samplePerm3 T r =
+((sampleIdx 6 3 T r).map perm3Equiv).getD 1`. -/
 theorem samplePerm3_def (T : ℕ) (r : List Bool) :
     samplePerm3 T r =
       (((sampleIdx 6 3 T r).map perm3Equiv).getD 1) := rfl
@@ -364,7 +367,8 @@ failure (D10). -/
 def sampleEdgeIdx (m T : ℕ) (r : List Bool) : ℕ :=
   ((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0
 
-/-- The defining equation of `sampleEdgeIdx`: `sampleEdgeIdx m T r = ((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0`. -/
+/-- The defining equation of `sampleEdgeIdx`: `sampleEdgeIdx m T r =
+((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0`. -/
 theorem sampleEdgeIdx_def (m T : ℕ) (r : List Bool) :
     sampleEdgeIdx m T r =
       (((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0) := rfl

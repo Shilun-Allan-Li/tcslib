@@ -266,8 +266,10 @@ theorem decodeNat_eq (w : List Bool) :
   | nil => rfl
   | cons b w ih =>
     cases b
-    · simp [BoolCircuit.decodeNat_nil, BoolCircuit.decodeNat_false_cons, BoolCircuit.decodeNat_true_cons]
-    · simp only [BoolCircuit.decodeNat_nil, BoolCircuit.decodeNat_false_cons, BoolCircuit.decodeNat_true_cons, ih, uHead_true_cons, uRest_true_cons, hasFalse_cons,
+    · simp [BoolCircuit.decodeNat_nil, BoolCircuit.decodeNat_false_cons,
+        BoolCircuit.decodeNat_true_cons]
+    · simp only [BoolCircuit.decodeNat_nil, BoolCircuit.decodeNat_false_cons,
+        BoolCircuit.decodeNat_true_cons, ih, uHead_true_cons, uRest_true_cons, hasFalse_cons,
         Bool.not_true, Bool.false_or, List.length_cons]
       split <;> simp
 
@@ -533,7 +535,7 @@ theorem polyTimeComputable_chunkW : PolyTimeComputable chunkW := by
     by_cases hr : pairFstD (pairSndD d) = []
     · simp [chunkStep, isNilB_def, hr]
     rcases pair_cases d with ⟨-, h2⟩ | h
-    · simp [h2, pairFstD_eq, pairDecode] at hr
+    · simp [h2, pairFstD_eq, pairDecode_nil] at hr
     obtain ⟨c, S, rfl⟩ : ∃ c S, d = pairEncode c S := ⟨_, _, h⟩
     simp only [pairSndD_pairEncode] at hr
     rcases pair_cases S with ⟨h1, -⟩ | hS

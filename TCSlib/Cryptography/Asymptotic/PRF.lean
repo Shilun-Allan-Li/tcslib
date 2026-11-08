@@ -251,9 +251,9 @@ string `x`) nor a two-bit verdict word `[true, b]` decodes to the verdict `false
 `decodeOracleMove_pairEncode_false_of_length_ne` and `decodeOracleMove_true_two` this covers every
 word, for every `ℓ₁`.
 
-**Proof sketch.** Along the match of `decodeOracleMove`: a decoding `pairDecode w = some ([false], x)`
-gives `w = ⟨[false], x⟩` (`eq_pairEncode_of_pairDecode`), excluded; the word `[true, b]` is
-excluded; the remaining branch is `.ret false`. -/
+**Proof sketch.** Along the match of `decodeOracleMove`: a decoding
+`pairDecode w = some ([false], x)` gives `w = ⟨[false], x⟩` (`eq_pairEncode_of_pairDecode`),
+excluded; the word `[true, b]` is excluded; the remaining branch is `.ret false`. -/
 theorem decodeOracleMove_of_ne (ℓ₁ : ℕ) {w : List Bool} (hq : ∀ x, w ≠ pairEncode [false] x)
     (hv : ∀ b, w ≠ [true, b]) : decodeOracleMove ℓ₁ w = .ret false := by
   unfold decodeOracleMove

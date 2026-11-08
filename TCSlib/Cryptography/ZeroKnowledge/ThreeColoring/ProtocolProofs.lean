@@ -244,7 +244,8 @@ theorem colVerifier_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) (x 
     rw [verifierStr_def, if_neg c1, if_neg c2, if_pos c3]
     show [decide _] = [verdictStr Com ℓ (ilayout x z [com, opn] r)]
     refine congrArg (fun b => [b]) ?_
-    rw [verdictStr_def, nOf_ilayout, mOf_ilayout, LOf_ilayout, eOf_ilayout, argX_ilayout, argM_ilayout,
+    rw [verdictStr_def, nOf_ilayout, mOf_ilayout, LOf_ilayout, eOf_ilayout, argX_ilayout,
+        argM_ilayout,
       Strategy.encodeMsgs_cons, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil, pairFstD_pairEncode,
       pairSndD_pairEncode, pairFstD_pairEncode, Bool.decide_and, Bool.decide_or, Bool.decide_and,
       Bool.decide_eq_true, Bool.decide_eq_true, colWellFormed, encGraph_decGraph_eq_take]
@@ -332,7 +333,8 @@ theorem colVerifierRep_next_eq (Com : List Bool → List Bool) (ℓ : PolyExpr) 
     by_cases h3 : hist.length = 2 * (x.length * x.length)
     · rw [if_pos h3, if_pos h3]
       refine congrArg (fun b => [b]) ?_
-      rw [verdictRepStr_def, nOf_ilayout, mOf_ilayout, argX_ilayout, Bool.decide_and, Bool.decide_or,
+      rw [verdictRepStr_def, nOf_ilayout, mOf_ilayout, argX_ilayout, Bool.decide_and,
+          Bool.decide_or,
         Bool.decide_and, Bool.decide_eq_true, colWellFormed, encGraph_decGraph_eq_take]
       by_cases hm : edgeCount (decGraph x).2 = 0
       · simp [hm]

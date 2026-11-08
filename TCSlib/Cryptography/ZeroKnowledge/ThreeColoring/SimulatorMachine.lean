@@ -296,7 +296,8 @@ theorem vIdx_poly (hX : PolyTimeComputable X) {B : List Bool → List Bool}
     refine ptc_congr ((polyTimeComputable_pairDropPoly .var).comp
       ((unaryPolyOf_poly (.pow (.add .var (.const 1)) 2) (unaryLength_poly hX)).pairEncode hB))
       fun w => ?_
-    simp [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_normal]
+    simp [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul,
+        PolyExpr.eval_pow, PolyExpr.eval_normal]
   exact sampleNum_poly (unaryConst_poly 6) (unaryConst_poly 3) (unaryLength_poly hX) hdrop
     (unaryConst_poly 8) (fun _ => by norm_num)
 

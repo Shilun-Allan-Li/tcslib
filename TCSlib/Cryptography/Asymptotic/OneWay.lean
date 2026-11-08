@@ -699,7 +699,7 @@ theorem weak_to_strong {𝓕 : FunFamily} (h : FunFamily.WeakOneWay 𝓕) :
         (OneWay.prodFun (𝓕.f n) ((yaoBlocks qw).eval n) xs) r =
         FunFamily.blocks ((yaoBlocks qw).eval n) (𝓕.inLen.eval n) x'' := by
       funext j
-      simp only [OneWay.yaoB_def]
+      simp only [OneWay.yaoB_apply]
       rw [hx'', OneWay.padTrue_drop_ofFn]
       rfl
     rw [hyB]
@@ -786,7 +786,8 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
     rw [NUPPT.runAt_eq]
     show (NUPPT.ofPolyTime hG _ _ _ _).runAtL n _ _ = _
     rw [NUPPT.runAtL_ofPolyTime]
-    simp only [Function.comp_apply, NUPPT.advInput_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+    simp only [Function.comp_apply, NUPPT.advInput_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+        NUPPT.inAdvice_eq,
       NUPPT.inCoins_eq, NUPPT.layout_eq, pairFstD_pairEncode, pairSndD_pairEncode, hofn,
       PolyExpr.eval_mul, PolyExpr.eval_const, List.length_replicate]
     have h2 : (List.ofFn (xs 0) ++ List.ofFn (xs 1)).length = 2 * ℓ := by simp; ring
@@ -816,7 +817,7 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
   simp only [B', Option.map_eq_some_iff] at hxs'
   obtain ⟨x'', hx'', rfl⟩ := hxs'
   rw [NUPPT.inverter_eq_some_iff, ofFn_blocks_two_symm, Function.update_self,
-    Function.update_of_ne (by decide), OneWay.prodFun_def] at hx''
+    Function.update_of_ne (by decide), OneWay.prodFun_apply] at hx''
   rw [NUPPT.inverter_eq_some_iff, hrun, hx'']
   have hblk := OneWay.ofFn_block_eq_take_drop x'' 0
   simp only [Fin.val_zero, Nat.zero_mul, List.drop_zero] at hblk

@@ -497,12 +497,6 @@ private theorem take_ofFn_castLE {n k : ℕ} (h : k ≤ n) (z : Fin n → Bool) 
   simp only [List.getElem_take, List.getElem_ofFn]
   rfl
 
-/-- The `k` bits after the first `a` of an encoded string. -/
-private theorem take_drop_ofFn {n a k : ℕ} (h : a + k ≤ n) (z : Fin n → Bool) :
-    ((List.ofFn z).drop a).take k = List.ofFn fun j : Fin k => z ⟨a + j, by omega⟩ := by
-  refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
-  simp only [List.getElem_take, List.getElem_drop, List.getElem_ofFn]
-
 /-- **The encoding of `g_n(z)`**: `f_{⌊n/2⌋}` of the first block followed by the remaining bits
 of `z`. -/
 theorem PermFamily.ofFn_glHalf_f (P : PermFamily) (n : ℕ) (z : Fin n → Bool) :
@@ -532,7 +526,8 @@ theorem PermFamily.glHalf_easy (P : PermFamily) {F : List Bool → List Bool}
   refine ⟨fun w => F (pairEncode (unaryHalf (pairFstD w))
       ((pairSndD w).take (unaryHalf (pairFstD w)).length)) ++
       (pairSndD w).drop (unaryHalf (pairFstD w)).length,
-    (PolyTimeComputable.comp' hF (huh.pairEncode (takeLen_poly huh polyTimeComputable_pairSndD))).append
+    (PolyTimeComputable.comp' hF
+        (huh.pairEncode (takeLen_poly huh polyTimeComputable_pairSndD))).append
       (dropLen_poly huh polyTimeComputable_pairSndD), fun n z => ?_⟩
   have hFx' : ∀ n (x : Fin n → Bool),
       F (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (P.f n x) := hFx

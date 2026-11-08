@@ -392,7 +392,7 @@ theorem sampleUnitL_spec {N k B T : ℕ} {r : List Bool} {v : ℕ} (h : sampleUn
 (`Nat.gcd_rec`). -/
 private theorem rsa_one_mod_spec {N : ℕ} (hN : 0 < N) : 1 % N < N ∧ Nat.Coprime (1 % N) N := by
   refine ⟨Nat.mod_lt _ hN, ?_⟩
-  rw [Nat.Coprime, ← Nat.gcd_rec]
+  rw [Nat.coprime_iff_gcd_eq_one, ← Nat.gcd_rec]
   exact Nat.gcd_one_right N
 
 /-- **The total unit sampler gives a unit**: for `0 < N`, the value
@@ -2046,7 +2046,6 @@ theorem rsaFromFactorStep_correct {n : ℕ} (z : DistinctPrimes n) {s : List Boo
     rw [hpq.2]; exact he
   have hed : e * ((e : ZMod ((listToNat s - 1) * (z.p * z.q / listToNat s - 1)))⁻¹).val ≡ 1
       [MOD Nat.totient (z.p * z.q)] := by
-    unfold Nat.ModEq
     rw [← hpq.2]
     exact mul_inv_val_modEq e _ he'
   set d := ((e : ZMod ((listToNat s - 1) * (z.p * z.q / listToNat s - 1)))⁻¹).val

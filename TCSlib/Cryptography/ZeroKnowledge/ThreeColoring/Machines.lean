@@ -223,11 +223,12 @@ def ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) : List B
   NUPPT.layout (List.replicate x.length true)
     (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r
 
-/-- The defining equation of `ilayout`: `ilayout x z hist r = NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r`. -/
+/-- The defining equation of `ilayout`: `ilayout x z hist r = NUPPT.layout
+(List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r`. -/
 theorem ilayout_def (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     ilayout x z hist r =
       (NUPPT.layout (List.replicate x.length true)
-      (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r) := rfl
+        (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r) := rfl
 
 /-- A strategy whose next-message function is a polynomial-time function `F` of the machine
 layout `ilayout x z hist r` is efficient: `NUPPT.ofPolyTimeUniform` of `F` with the strategy's
@@ -528,8 +529,7 @@ theorem map_product_finRange (n : ℕ) :
         (fun p : Fin n × Fin n => ((finProdFinEquiv p : Fin (n * n)) : ℕ)) =
       List.range (n * n) := by
   rw [← flatMap_range_mul n n]
-  show (List.product (List.finRange n) (List.finRange n)).map _ = _
-  unfold List.product
+  show ((List.finRange n).flatMap fun u => (List.finRange n).map (Prod.mk u)).map _ = _
   rw [List.map_flatMap]
   conv_rhs => rw [← List.map_coe_finRange n, List.flatMap_map]
   congr 1
