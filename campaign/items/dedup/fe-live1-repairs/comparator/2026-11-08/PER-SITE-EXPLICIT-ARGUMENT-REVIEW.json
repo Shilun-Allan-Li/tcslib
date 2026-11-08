@@ -1,0 +1,250 @@
+{
+  "complete_target_sha256": "a7547431d45490a8a0e8c12b35ea5fad949b66775853389363a7003761067c10",
+  "review_scope": "Entire original doc/header/body, all tactic arguments and definitional changes, not only edited hunks",
+  "all_raw_tactic_closing_lines_uncapped": [
+    {
+      "target_line": 13,
+      "actual_owner_line": 7190,
+      "text": "  dsimp only"
+    },
+    {
+      "target_line": 19,
+      "actual_owner_line": 7196,
+      "text": "    simpa only [arg, List.append_nil] using"
+    },
+    {
+      "target_line": 23,
+      "actual_owner_line": 7200,
+      "text": "  change a ≤ 2 * arg.length + 4 + clCmpTM.k * (3 * arg.length + 7) at ha"
+    },
+    {
+      "target_line": 24,
+      "actual_owner_line": 7201,
+      "text": "  change A.tm.runFrom (A.tm.initCfg arg) (a + (2 * clCmpSize w + 2)) ="
+    },
+    {
+      "target_line": 37,
+      "actual_owner_line": 7214,
+      "text": "  rw [init, clCmp_run] at he"
+    },
+    {
+      "target_line": 44,
+      "actual_owner_line": 7221,
+      "text": "    dsimp only [result, clPreparedCfg]"
+    },
+    {
+      "target_line": 45,
+      "actual_owner_line": 7222,
+      "text": "    rw [clPlacedCfg_eq]"
+    },
+    {
+      "target_line": 58,
+      "actual_owner_line": 7235,
+      "text": "    change Action.mk (act.mapState id).inputTape (act.mapState id).workTapes"
+    },
+    {
+      "target_line": 63,
+      "actual_owner_line": 7240,
+      "text": "    rw [Action.mapState_inputTape, hw, Action.mapState_output,"
+    },
+    {
+      "target_line": 69,
+      "actual_owner_line": 7246,
+      "text": "      change clA5CompareTM.tm.tr q inp work = (A.tm.tr q inp work).mapState id"
+    },
+    {
+      "target_line": 71,
+      "actual_owner_line": 7248,
+      "text": "      | inl q => rw [actionid]; rfl"
+    },
+    {
+      "target_line": 74,
+      "actual_owner_line": 7251,
+      "text": "        | inl q => rw [actionid]; rfl"
+    },
+    {
+      "target_line": 77,
+      "actual_owner_line": 7254,
+      "text": "          | inl q => rw [actionid]; rfl"
+    },
+    {
+      "target_line": 82,
+      "actual_owner_line": 7259,
+      "text": "    · rw [Cfg.mapState_state, Option.map_id]"
+    },
+    {
+      "target_line": 86,
+      "actual_owner_line": 7263,
+      "text": "      rw [Cfg.mapState_workTapes]"
+    },
+    {
+      "target_line": 88,
+      "actual_owner_line": 7265,
+      "text": "      rw [Cfg.mapState_workTapePos]"
+    },
+    {
+      "target_line": 90,
+      "actual_owner_line": 7267,
+      "text": "  change clA5CompareTM.tm.runFrom ((A.tm.initCfg arg).mapState id) t ="
+    },
+    {
+      "target_line": 92,
+      "actual_owner_line": 7269,
+      "text": "  rw [mapid, hr, mapid] at run"
+    },
+    {
+      "target_line": 94,
+      "actual_owner_line": 7271,
+      "text": "    rw [MultiTapeTM.initCfg_eq, MultiTapeTM.initCfg_eq]"
+    },
+    {
+      "target_line": 96,
+      "actual_owner_line": 7273,
+      "text": "  rw [hi] at run"
+    },
+    {
+      "target_line": 99,
+      "actual_owner_line": 7276,
+      "text": "      dsimp only [result, clPreparedCfg]"
+    },
+    {
+      "target_line": 100,
+      "actual_owner_line": 7277,
+      "text": "      rw [clPlacedCfg_eq]"
+    },
+    {
+      "target_line": 102,
+      "actual_owner_line": 7279,
+      "text": "    rw [MultiTapeTM.step_of_some fields.1]"
+    },
+    {
+      "target_line": 103,
+      "actual_owner_line": 7280,
+      "text": "    change (Action.mk 0 (fun _ => (none, 0)) (some b) none).apply result = _"
+    },
+    {
+      "target_line": 105,
+      "actual_owner_line": 7282,
+      "text": "    · rw [Action.apply_state]"
+    },
+    {
+      "target_line": 106,
+      "actual_owner_line": 7283,
+      "text": "    · rw [Action.apply_inputPos, moveInputPos_zero]"
+    },
+    {
+      "target_line": 108,
+      "actual_owner_line": 7285,
+      "text": "      rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq,"
+    },
+    {
+      "target_line": 111,
+      "actual_owner_line": 7288,
+      "text": "      rw [Action.apply_workTapePos]"
+    },
+    {
+      "target_line": 112,
+      "actual_owner_line": 7289,
+      "text": "      change result.workTapePos i + (0 : ℤ) = result.workTapePos i"
+    },
+    {
+      "target_line": 114,
+      "actual_owner_line": 7291,
+      "text": "    · rw [Action.apply_output, fields.2]"
+    },
+    {
+      "target_line": 118,
+      "actual_owner_line": 7295,
+      "text": "    simpa using clCmpVerdict_spec w"
+    },
+    {
+      "target_line": 121,
+      "actual_owner_line": 7298,
+      "text": "    rw [MultiTapeTM.runFrom_succ_eq_step', run, finish]"
+    },
+    {
+      "target_line": 123,
+      "actual_owner_line": 7300,
+      "text": "  rw [hb] at hc"
+    },
+    {
+      "target_line": 125,
+      "actual_owner_line": 7302,
+      "text": "  change a ≤ 2 * arg.length + 4 + 4 * (3 * arg.length + 7) at ha"
+    },
+    {
+      "target_line": 126,
+      "actual_owner_line": 7303,
+      "text": "  change t + 1 ≤ 35 * (arg.length + 1)"
+    }
+  ],
+  "sites": [
+    {
+      "site": "initial prepared comparator configuration",
+      "old_read": "Cfg.ofWords ... := rfl",
+      "repair": "Cfg.ext plus all five existing Cfg.ofWords field equations",
+      "scope": "Same source input, q0, four words, input head1, work heads0 and empty output. Own clCmpCfg/clCmpTM reduce; foreign ofWords remains sealed."
+    },
+    {
+      "site": "first completed verdict and strict cut",
+      "old_read": "clFirst positive-time route with explicit seamCompTM simplification; add/iterate absorption guard",
+      "repair": "exists_first_entry_of_fixed with P(q):=∃v:Bool,q=ret v, actual idle for both verdicts and exact hend; hcut supplies every strict-prefix exclusion",
+      "scope": "Public contract did not require positive t. No API or theorem statement changed; both verdicts and complete endpoint remain."
+    },
+    {
+      "site": "result state/output fields",
+      "old_read": "implicit record conversion through placed/prepared configuration",
+      "repair": "Own clPreparedCfg/result plus existing own clPlacedCfg_eq theorem",
+      "scope": "Complete field values read through the own published helper statement; its prior proof stays unsealed context and is not newly cleared."
+    },
+    {
+      "site": "local actionid helper",
+      "old_read": "delta Action.mapState",
+      "repair": "Action constructor eta; mapState_inputTape/workTapes/output/state equations; pointwise work function; Option.map_id; Core rfl",
+      "scope": "Existing local helper header retained. No private generic API added. No foreign definition named as a reduction argument."
+    },
+    {
+      "site": "state-map guarded run",
+      "old_read": "own source/host transition comparison",
+      "repair": "Existing MultiTapeTM.runFrom_mapState_of_agreeOn retained, now with canonical P-cut; own host transition data matched by cases",
+      "scope": "Function.Embedding.refl/id are Core values and reductions, not passed as definition-unfold arguments."
+    },
+    {
+      "site": "local configuration mapid helper",
+      "old_read": "simp [Cfg.mapState]",
+      "repair": "Cfg.ext plus mapState_state/inputPos/workTapes/workTapePos/output, Option.map_id and funext",
+      "scope": "CfgFacts is absent from existing import closure and was not imported/used. All field readers already visible from StateRenaming."
+    },
+    {
+      "site": "host initialized configuration equality",
+      "old_read": "initCfg equality by rfl",
+      "repair": "Two existing MultiTapeTM.initCfg_eq rewrites, then own table q0 equality by rfl",
+      "scope": "Adds Cfg.init to fresh observed guard set. Both Cfg.init/initCfg definition-unfold rows are removed for the seal/controls; no new reader or API."
+    },
+    {
+      "site": "single final emitting step",
+      "old_read": "definitional step change; simp [Action.apply]",
+      "repair": "step_of_some with existing result state, Action.apply_state/inputPos/workTapes/workTapePos/output, Cfg.workTapeSymbols_eq, moveInputPos_zero, Option.getD_none and Function.update_eq_self",
+      "scope": "Exact state none/output[b], every work tape/head/input field retained. Core record/zero/list reductions use rfl, no foreign explicit unfolding."
+    },
+    {
+      "site": "arithmetic verdict and deadline",
+      "old_read": "unchanged existing comparator semantics/budget assembly",
+      "repair": "Existing clCmpVerdict_spec, Bool.eq_iff_iff, computesInTime_iff, runFrom_succ_eq_step and monotonicity retained",
+      "scope": "Same bit decide(sum equality) and35*(arg.length+1). No new mathematical fill."
+    }
+  ],
+  "no_explicit_foreign_TCS_or_Core_Mathlib_definition_argument_remaining": true,
+  "same_owner_definitions_and_local_facts_permitted": true,
+  "Core_Mathlib_arguments_are_theorem_readers": [
+    "List.append_nil",
+    "List.mem_ofFn.mpr",
+    "Option.map_id",
+    "Option.getD_none",
+    "Function.update_eq_self",
+    "Bool.eq_iff_iff",
+    "add_zero"
+  ],
+  "projection_and_abbreviation_opacity_not_claimed": true,
+  "earlier_other_local_theorem_proof_values_unsealed_boundary_explicit": true
+}

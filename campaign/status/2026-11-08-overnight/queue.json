@@ -1,5 +1,5 @@
 {
-  "utc": "2026-11-08T19:01:55.608668+00:00",
+  "utc": "2026-11-08T19:19:53.646326+00:00",
   "campaign_lean": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
   "records_checkpoint": "94f6e87de950472928eb9d0c5eb970e70e824638",
   "auditors": "Codex, selected by Seyoon for morning batch",
@@ -11,8 +11,8 @@
       "pr": 241,
       "slug": "fe-live1-cleanup",
       "branch": "codex/ab34-fe-live1",
-      "head": "d64dff4fbef865d815c6a561ce8037ea1bae07a2",
-      "status": "External HOLD: one valid major for exposed foreign-definition reads; one portable-integrity minor corrected for next packet; mechanical repairs active; not yet clear to merge"
+      "head": "5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd",
+      "status": "Comparator reader repair pushed; remaining idle/InputLength major fronts and final replay/follow-up pending; not yet clear to merge"
     },
     {
       "gate": 122,
@@ -236,11 +236,42 @@
   "approved_reader_prerequisite": {
     "gate": 129,
     "pr": 251,
-    "head": "1d35e812ce12059b87066d8680748e46553a9137",
+    "head": "0201e3c420f5bdef94a67b80cee08a1673f2c3fb",
     "auditor": "Codex",
     "source_only_three_readers": true,
-    "replay": "394 running",
-    "clear_to_merge": false
+    "replay": "nread4 fresh wholeMAC8/394 running; nread3 superseded invalid",
+    "clear_to_merge": false,
+    "canonical_action_reader": "controlAction_def"
   },
-  "gate122_governance_major": "M1: exposed shared121 step reads plus seven held operational/type-boundary fronts remain unacknowledged; selected13 technicalPASS preserved"
+  "gate122_governance_major": "M1: exposed shared121 step reads plus seven held operational/type-boundary fronts remain unacknowledged; selected13 technicalPASS preserved",
+  "gate121_comparator_repair": {
+    "utc": "2026-11-08T19:11:14.102866+00:00",
+    "pr": 241,
+    "gate": 121,
+    "before": "d64dff4fbef865d815c6a561ce8037ea1bae07a2",
+    "head": "5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd",
+    "repair": "clA5Compare_compute body only",
+    "patch_SHA256": "2caebf7e52cd3d3377ffd559ea9910999a078398336ed94fab39bcc547584ebf",
+    "candidate_owner_SHA256": "8e82beef8217e3817fac301e0c8f7c0326ba7098ac7b790507b7dd265d893710",
+    "all91_payloads_verified": true,
+    "new_API_import_header_def_attribute": false,
+    "native_owner_and_full18head_target_seal36pairs_actual": true,
+    "checks_at_dispatched_source_plus_exact_patch_transported_to_identical_pushed_source": true,
+    "new_Lean_run_by_root": false,
+    "full_downstream_replay_or_screen": false,
+    "gate_closed": false,
+    "source_merged": false
+  },
+  "reader_name_alignment": {
+    "utc": "2026-11-08T19:15:45.933944+00:00",
+    "before": "1d35e812ce12059b87066d8680748e46553a9137",
+    "head": "0201e3c420f5bdef94a67b80cee08a1673f2c3fb",
+    "user_ruling": "Reuse controlAction_def (Recommended)",
+    "only_approved_name_alignment": true,
+    "exact_declaration_shared_with_PS10": true,
+    "other_two_reader_sources_unchanged": true,
+    "old_nread3_partial_invalid_never_reused": true,
+    "new_complete_replay": "nread4",
+    "source_merged": false
+  }
 }

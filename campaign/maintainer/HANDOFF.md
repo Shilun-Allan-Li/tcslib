@@ -125,7 +125,7 @@ Three earlier user decision fronts remain pending; the separate three-reader pro
   hypothetical patch and actual native/sealed/22-pair evidence are in
   campaign/items/dedup/inputlength-reader-proposal/2026-11-08/. Seyoon approved exactly
   these three non-simp APIs; RULING.md records the answer. Source-only PR#251/gate129
-  is open, source`1d35e812ce12059b87066d8680748e46553a9137`, full394 replay active. Consumer proof remains separate; no source merge.
+  is open, source`0201e3c420f5bdef94a67b80cee08a1673f2c3fb`, fresh nread4/394 replay active. Seyoon additionally approved exact shared-name alignment to controlAction_def; the old-name119 proposal is historical. Stopped nread3 is invalid/not reused. Consumer proof remains separate; no source merge.
 
 A bounded continuation triage records42 dispositions/25 source bindings at final-eight
 source. Exact matches are already in these PRs; remaining inspected targets need reader,
@@ -135,8 +135,8 @@ debt retains its exact kinds/owner/window, after MIG1 and before further SAT/Har
 
 Next: Seyoon may merge the six cleared PRs. Rebind each subsequent source merge
 to the actual campaign and apply the standing replay-validity rule or whole-overlay replay.
-Continue existing-reader121 repairs and precise122 held-front disposition; ask for the
-approved reader gate129 to dispatch when full evidence passes. Preserve reports verbatim and pause
+Continue existing-reader121 repairs and precise122 held-front disposition; prepare
+approved reader gate129 for Codex dispatch when complete evidence passes. Preserve reports verbatim and pause
 other unresolved design fronts. No new fill dispatch follows from an audit PASS.
 
 ### Machine and preservation constraints

@@ -1,0 +1,106 @@
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -7202,29 +7202,43 @@
+     clPreparedCfg clCmpTM arg (clFields (List.ofFn w)).length
+       (clCmpTM.tm.runFrom (Cfg.ofWords (input := arg) clCmpTM.tm.q₀ w) (2 * clCmpSize w + 2)) at he
+   have init : Cfg.ofWords (input := arg) clCmpTM.tm.q₀ w =
+-      clCmpCfg arg 1 (.inl (false, false, true)) w 0 := rfl
++      clCmpCfg arg 1 (.inl (false, false, true)) w 0 := by
++    apply Cfg.ext
++    · exact Cfg.ofWords_state _ _
++    · exact Cfg.ofWords_inputPos _ _
++    · funext i
++      exact Cfg.ofWords_workTapes _ _ i
++    · funext i
++      exact Cfg.ofWords_workTapePos _ _ i
++    · exact Cfg.ofWords_output _ _
+   rw [init, clCmp_run] at he
+   let result := clPreparedCfg clCmpTM arg (clFields (List.ofFn w)).length (clCmpCfg arg 1 (.inr (.inr b)) w 0)
+   have hend : A.tm.runFrom (A.tm.initCfg arg) (a + (2 * clCmpSize w + 2)) = result := he
+   have idle (v : Bool) (cfg : Cfg A.k Bool A.State arg) (hc : cfg.state = some (ret v)) :
+       A.tm.step cfg = cfg := clPrepared_idle clCmpTM (.inr (.inr v))
+         (by intros; rfl) cfg hc
+-  obtain ⟨t, ht, hp, hf, hr⟩ := clFirst A.tm _ result (ret b)
+-    (a + (2 * clCmpSize w + 2)) hend rfl (by simp [A, clPreparedTM, seamCompTM, ret]) (idle b)
++  have resultState : result.state = some (ret b) := by
++    dsimp only [result, clPreparedCfg]
++    rw [clPlacedCfg_eq]
++    rfl
++  obtain ⟨t, ht, hcut, hr⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    A.tm (fun q => ∃ v : Bool, q = ret v) (A.tm.initCfg arg) result
++    (a + (2 * clCmpSize w + 2))
++    (by
++      rintro cfg ⟨q, hq, v, rfl⟩
++      exact idle v cfg hq)
++    ⟨ret b, resultState, b, rfl⟩ hend
+   have guard : ∀ j < t, ∀ v, (A.tm.runFrom (A.tm.initCfg arg) j).state ≠ some (ret v) := by
+     intro j hj v hv
+-    have stay := Function.iterate_fixed (idle v _ hv) (t - j)
+-    change A.tm.runFrom (A.tm.runFrom (A.tm.initCfg arg) j) (t - j) =
+-      A.tm.runFrom (A.tm.initCfg arg) j at stay
+-    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega), hr] at stay
+-    have hstate := congrArg Cfg.state stay
+-    change some (ret b) = _ at hstate
+-    rw [hv] at hstate
+-    have hb : b = v := Sum.inr.inj (Sum.inr.inj (Sum.inr.inj (Option.some.inj hstate)))
+-    exact hf j hj (by rw [hb]; exact hv)
++    exact hcut j hj ⟨ret v, hv, v, rfl⟩
+   have actionid (act : Action A.k Bool A.State) : Action.mapState id act = act := by
+-    delta Action.mapState
+-    simp only [Option.map_id]
++    change Action.mk (act.mapState id).inputTape (act.mapState id).workTapes
++      (act.mapState id).output (act.mapState id).state = act
++    have hw : (act.mapState id).workTapes = act.workTapes := by
++      funext i
++      exact Action.mapState_workTapes id act i
++    rw [Action.mapState_inputTape, hw, Action.mapState_output,
++      Action.mapState_state, Option.map_id]
+     rfl
+   have run := MultiTapeTM.runFrom_mapState_of_agreeOn A.tm clA5CompareTM.tm (Function.Embedding.refl _)
+     (fun q => ∀ v, q ≠ ret v) (by
+@@ -7241,16 +7255,41 @@
+           | inr v => exact False.elim (hq v rfl))
+     (A.tm.initCfg arg) t (by intro j hj q hq v heq; subst q; exact guard j hj v hq)
+   have mapid (cfg : Cfg A.k Bool A.State arg) : cfg.mapState id = cfg := by
+-    cases cfg
+-    simp [Cfg.mapState]
++    apply Cfg.ext
++    · rw [Cfg.mapState_state, Option.map_id]
++      rfl
++    · exact Cfg.mapState_inputPos id cfg
++    · funext i z
++      rw [Cfg.mapState_workTapes]
++    · funext i
++      rw [Cfg.mapState_workTapePos]
++    · exact Cfg.mapState_output id cfg
+   change clA5CompareTM.tm.runFrom ((A.tm.initCfg arg).mapState id) t =
+     (A.tm.runFrom (A.tm.initCfg arg) t).mapState id at run
+   rw [mapid, hr, mapid] at run
+-  have hi : A.tm.initCfg arg = clA5CompareTM.tm.initCfg arg := rfl
++  have hi : A.tm.initCfg arg = clA5CompareTM.tm.initCfg arg := by
++    rw [MultiTapeTM.initCfg_eq, MultiTapeTM.initCfg_eq]
++    rfl
+   rw [hi] at run
+   have finish : clA5CompareTM.tm.step result = {result with state := none, output := [b]} := by
++    have fields : result.state = some (ret b) ∧ result.output = [] := by
++      dsimp only [result, clPreparedCfg]
++      rw [clPlacedCfg_eq]
++      exact ⟨rfl, rfl⟩
++    rw [MultiTapeTM.step_of_some fields.1]
+     change (Action.mk 0 (fun _ => (none, 0)) (some b) none).apply result = _
+-    simp [Action.apply, show result.output = [] from rfl]
++    apply Cfg.ext
++    · rw [Action.apply_state]
++    · rw [Action.apply_inputPos, moveInputPos_zero]
++    · funext i
++      rw [Action.apply_workTapes, Option.getD_none, Cfg.workTapeSymbols_eq,
++        Function.update_eq_self]
++    · funext i
++      rw [Action.apply_workTapePos]
++      change result.workTapePos i + (0 : ℤ) = result.workTapePos i
++      exact add_zero _
++    · rw [Action.apply_output, fields.2]
++      rfl
+   have hb : b = decide (clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) := by
+     apply Bool.eq_iff_iff.mpr
+     simpa using clCmpVerdict_spec w
