@@ -165,3 +165,8 @@ publication checks and pins remain separate root-owned actions.
 an intentionally absent campaign source path instead of its PR Git blob; the corrected
 mixed lookup verifies new Lean source at audited HEAD and records files at the records
 pin. No frozen input, library source, proof check, replay or copy comparison was altered.
+
+The first publication precheck also caught four historical Mathlib text captures
+skipped by Git's nested `.lake` ignore. They are explicitly tracked in the final
+records pin, with exact original-manifest hashes in the shared record-completeness
+receipt. No source, frozen input or successful validation result was changed.

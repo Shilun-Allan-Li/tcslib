@@ -139,3 +139,15 @@ The full157 result/static0/35 and all source/AX/control limits above remain thei
 actual executions. Reproduction-tools supplies the checking helpers, exact committed
 lean-toolchain/lake-manifest and sanitized environment example. Later records-only changes
 have no Lean delta from MAC8; later source merges require the standing current-tree check.
+
+## Record-completeness correction and replacement
+
+The original816-section prompt is **VOID**. A publication precheck on a later packet
+revealed that Git had skipped50 FE rawQA `.lean.txt` captures under literal `.claude`
+paths, plus8 historical Mathlib captures under `.lake` in Ladner records. Every byte
+matches its existing frozen manifest/total map. The original FE bundle’s complete
+encoded QA archives already preserved all50 FE sources losslessly; the skipped raw
+copies are now also explicitly tracked at the replacement records pin. No source,
+proof boundary, replay, metadata or current33 comparison changed. The correction
+receipt under campaign/status/2026-11-08-overnight/ lists every exact path/hash/binding.
+This replacement uses that complete records tree and the same actual Lean source.

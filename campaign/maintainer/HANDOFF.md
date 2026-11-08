@@ -23,8 +23,8 @@ No overnight source PR is merged. Next free gate: **129**;128 is reserved for La
 
 | PR | Gate | Pushed source HEAD | Current state |
 |---|---:|---|---|
-| #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
-| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|FH10 plus3 mandatory BLIVE companions/8 owners;5 fresh+8 source-exact retained targets,23heads/46pairs and QA pass; actual153 tail fromwholeFH10/222 PASS/static0/31; final44 comparison running |
+| #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`| Earlier816 promptVOID; exact record-capture correction/replacement preparing; source checks unchanged |
+| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|FH10 plus3 mandatory BLIVE companions/8 owners;5 fresh+8 source-exact retained targets,23heads/46pairs and QA pass; actual153 tail fromwholeFH10/222 PASS/static0/31; final44 PASS:0new19gone4scorechanges;23dispositions preparing |
 | #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
@@ -46,7 +46,6 @@ Complete source/records/exchange bindings, bundle SHA/counts and the exact paste
 are in `campaign/status/2026-11-08-overnight/DISPATCH.md` and each gate’s
 `publication.json`/`prompt.md`. The maintainer publishes artifacts; Seyoon dispatches.
 
-- Gate121: 816sections/79431795bytes/SHA`cb9b9f37ac69c3b723954bfee63b42112683ab9b04a978085adb0dcf3b3dcb6c`; prompt issued in chat.
 - Gate123: 373sections/15573692bytes/SHA`057363ca1d75034d026280cadc56350d0ebbf89f59144b4a94c72e552e070fb0`; prompt issued in chat.
 - Gate124: 670sections/23947361bytes/SHA`79ca4ad99603e960e8eca889c637779b88e955991aa3a50f3e7f5efe97011f5e`; prompt issued in chat.
 - Gate125: 291sections/16566759bytes/SHA`431f8d4119cc69b4554308ed17575b434f73f3d4216be44d4db83f534556ede5`; prompt issued in chat.
@@ -112,7 +111,7 @@ Three actual Seyoon questions remain **pending**, never inferred approved from e
 
 1. All source replays are complete and pass. Use the published prompt index for completed
    packets and preserve every changed-pair disposition. Finish any remaining publication.
-2. Finish FH13 finalHEAD44 and packet122; Ladner49 and packet777/peer31 are complete,
+2. Finish FH13 changed-pair review and packet122; Ladner49 and packet777/peer31 are complete,
    awaiting final128 publication.
    Live outputs: `/private/tmp/ab34-fh13-screen44` and
    `/private/tmp/ab34-late-context-screen` (completed BASE/Nat48/Ladner49).
