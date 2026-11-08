@@ -9,6 +9,11 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**Gate119closure update:** CodexR2 PASS0/0/0/17 independently verified; allnotes accepted,
+no source repair/new ruling. Currentclean prospective merge equals passedF1Lean;401/static77
+replay valid. **Clear to merge: #234.** Non-draft/readiness update verified complete. Await Seyoon's merge,
+then scopedMIG119 integration/checks; this gate does not clear #233.
+
 **Resume supplement (2026-11-08UTC):** the later relocation interrupted the model/agents.
 Native/check results below survived. F6 fresh23 BASE passed1113decl/647rows/172081chars;
 HEAD had zero output/no exit receipt and a stale78950 screen lock. Process/session inspection

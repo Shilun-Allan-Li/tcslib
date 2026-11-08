@@ -1,3 +1,38 @@
+# Gate119 resolutions — CLOSED PASS0/0/0/17
+
+Round2 Codex findings accepted after independent review. Verbatim report16007bytes,
+SHA256 `347c5dce214326bc41defed4f5b69a05a67883add872e69fa52a761da24a562d`. All17notes are dispositioned below; no blocker/major/minor remains.
+Source `f1ca767a10551960faf36ad9c8ff17bea3a2d88c` is unchanged. Current campaign Lean equals the passed comparison
+base and a clean prospective merge exactly equals candidateLean, so actualmfup2
+PASS401/static0/77 remains valid; no fresh replay is claimed. Exacttree/merge evidence:
+`review/round2-closure/current-readiness.json`. Independent review and full note maps:
+`review/round2-return-review/`. FE-LIVE-1 implementation remains scheduled, not retired.
+
+| Round2 note | Disposition |
+| --- | --- |
+| 1 | Accepted: explicit FE-LIVE-1 resolves the prior major; scheduled cleanup stays open. |
+| 2 | Accepted:14declaration lower bound includes canonical1; no exhaustive census/threshold waiver. |
+| 3 | Accepted:703sections/215JSON and old640partition authenticated at immutable mixed pins. |
+| 4 | Accepted:exact5-file/public259→262 source delta; unrelated source frozen. |
+| 5 | Accepted:exact zero-work-space equations for all inputs/times; no computation premise. |
+| 6 | Accepted:arbitrary-model fixed-live-stop first entry with exact full endpoint. |
+| 7 | Accepted:time-zero/arbitrary-data/undecidable-predicate cases as source reasoning, not new Lean. |
+| 8 | Accepted:whole-configuration fixedness retained; state-only absorption is insufficient. |
+| 9 | Accepted:exact initialized per-tape redirect cardinality for all times/both haltOn values. |
+| 10 | Accepted:1043-byte approved public-reader body adoption, distinct from removed1013-byte body. |
+| 11 | Accepted:opaque raw-index header limitation remains explicit; actual theorem use passes. |
+| 12 | Accepted:68exact paired controls and bounded owner/consumer Rule10 scope. |
+| 13 | Accepted:3778→3782compiler delta; sharedAX exact;12inheritedsorry closures unchanged. |
+| 14 | Accepted:401/-j4/static0/77 replay remains valid; mfup1 remains incomplete. |
+| 15 | Accepted:complete bounded screens/search/lint evidence; no blanket semantic clearance. |
+| 16 | Accepted:inert15-change proposal;5live-stop and7first-None uses distinct;#233still awaits integration/gate118. |
+| 17 | Accepted:independent audit/review is data validation; no new native/snapshot/whole-book check inferred. |
+
+## Earlier round1 dispositions — historical
+
+The following pending-audit wording predates returned round2PASS. The closure above governs
+current status; prior findings/packet/ruling bytes stay preserved.
+
 # Gate119 resolutions — returned round1 and explicit ruling
 
 **Not yet clear to merge: #234.** Returned verdict HOLD0/1/0/16; the one debt major now

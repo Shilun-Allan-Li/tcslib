@@ -1,3 +1,12 @@
+# Gate119 — CLOSED PASS0/0/0/17
+
+All17Codex round2 notes accepted after independent review; no blocker/major/minor remains.
+SourceF1 unchanged; mfup2 PASS401/static0/77 remains current and prospective merged Lean
+exactly matches the checked candidate. GitHub reports mergeable/clean. **Clear to merge: #234.** Non-draft transition is verified complete; Seyoon merges. FE-LIVE-1 cleanup remains scheduled; #233 is not
+cleared by this prerequisite gate.
+
+## Historical receipt/publication/validation states
+
 # Gate119 — round2 PASS received, independent return review underway
 
 **Not yet clear to merge: #234.** Round2 report is preserved verbatim as findings-r2.md:
