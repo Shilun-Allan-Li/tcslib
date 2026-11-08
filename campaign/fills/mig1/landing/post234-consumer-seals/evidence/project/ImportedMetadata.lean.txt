@@ -1,0 +1,67 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Simulation
+
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let simpSet ← liftTermElabM getSimpTheorems
+  let specs : List (Name × String) := [
+    (`TCSlib.Complexity.TuringMachine.Build.Catalog, "computesFunInTime_pairDup_spaceUsed"),
+    (`TCSlib.Complexity.TuringMachine.Build.Catalog, "computesFunInTime_incFixed_spaceUsed"),
+    (`TCSlib.Complexity.TuringMachine.Build.Loop, "emCall_right_endpoint"),
+    (`TCSlib.Complexity.TuringMachine.Build.Loop, "emCall_first_entry"),
+    (`TCSlib.Complexity.TuringMachine.Build.Loop, "emCall_eval_first"),
+    (`TCSlib.Complexity.TuringMachine.Build.Primitives, "splitEmbed_cut"),
+    (`TCSlib.Complexity.TuringMachine.Build.Primitives, "splitBody_count"),
+    (`TCSlib.Complexity.TuringMachine.Build.Primitives, "emitter_first_entry"),
+    (`TCSlib.Complexity.TuringMachine.Build.Primitives, "lenStart"),
+    (`TCSlib.Complexity.TuringMachine.Build.Primitives, "fwdMap_launch"),
+    (`TCSlib.Complexity.TuringMachine.Build.Primitives, "catalogFirstEntry"),
+    (`TCSlib.Complexity.TuringMachine.Build.Wrappers, "timed_start"),
+    (`TCSlib.Complexity.TuringMachine.Composition, "condTM_start"),
+    (`TCSlib.Complexity.TuringMachine.Simulation, "bufferedComp_start")]
+  let homeOf := fun (n : Name) => match env.getModuleIdxFor? n with
+    | some i => env.header.moduleNames[i.toNat]!
+    | none => Name.anonymous
+  for (home, short) in specs do
+    let found := env.constants.toList.filter fun (n, _) =>
+      homeOf n == home && n.toString.endsWith ("." ++ short)
+    unless found.length == 1 do throwError "target multiplicity {short}: {found.length}"
+    let root := found.head!.1
+    logInfo m!"ROOT|{root}|{home}"
+    for (n, ci) in env.constants.toList do
+      unless root.isPrefixOf n do continue
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      logInfo m!"AX|{n}|{(axs.qsort Name.lt).toList}"
+      let mut todo := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+      let mut seen : Array Name := #[]
+      while !todo.isEmpty do
+        let d := todo.back!
+        todo := todo.pop
+        if seen.contains d then continue
+        seen := seen.push d
+        let owner := homeOf d
+        match env.find? d with
+        | some (.thmInfo ti) =>
+          if (`TCSlib).isPrefixOf owner then
+            todo := todo ++ ti.type.getUsedConstants
+        | some (.defnInfo di) =>
+          if owner == home then
+            todo := todo ++ di.type.getUsedConstants ++ di.value.getUsedConstants
+          else if (`TCSlib).isPrefixOf owner then
+            let hint := match di.hints with
+              | .abbrev => "abbrev" | .opaque => "opaque" | .regular _ => "regular"
+            let row := Json.mkObj [("root",toJson root.toString),("selected",toJson n.toString),
+              ("sourceHome",toJson home.toString),("definition",toJson d.toString),
+              ("definitionHome",toJson owner.toString),("kernelHint",toJson hint),
+              ("reducibility",toJson (reprStr (getReducibilityStatusCore env d))),
+              ("simpLemma",toJson (simpSet.isLemma (.decl d))),
+              ("simpUnfold",toJson (simpSet.toUnfold.contains d))]
+            logInfo m!"FOREIGN_DEF|{row.compress}"
+        | _ => pure ()
+  logInfo "COMPLETE|14 target roots; no theorem value rendered"

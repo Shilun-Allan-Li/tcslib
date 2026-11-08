@@ -1,0 +1,216 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -119,7 +119,7 @@
+ `Turing.FinTM.computesFunInTime_*_spaceUsed` (P1–P15 as realized,
+ including the threaded-map row with its payload space hypothesis); and
+ the control-layer rows `Turing.capture_visitedByTapeHead` (W1),
+-`Turing.FinTM.redirectTM_spaceUsedByTape` (W2),
++`Turing.FinTM.redirectTM_spaceUsedByTape` (W2, imported from `Build/Wrappers`),
+ `Turing.FinTM.computesFunInTime_cond_spaceUsed` (W3), and
+ `Turing.FinTM.exists_loopTM_spaceUsed` (L).
+ 
+@@ -2227,8 +2227,9 @@
+ encoder runs in constant work-tape space: both passes re-read the input
+ tape, nothing is buffered.
+ 
+-**Proof sketch.** The witness `Turing.pairDiagTM` (time `Turing.pairDiagTM_computes`) has no work tapes
+-(`k = 0`), so `spaceUsed` is identically `0`. -/
++**Proof sketch.** Retain the witness `Turing.pairDiagTM` and the time coefficient from
++`Turing.pairDiagTM_computes`. The published `Turing.pairDiagTM_spaceUsed` gives zero space
++directly, so the existing constant-space witness bounds it. -/
+ theorem computesFunInTime_pairDup_spaceUsed :
+     ∃ (M : FinTM Bool) (c : ℕ),
+       M.ComputesFunInTime (fun x => pairEncode x x)
+@@ -2328,8 +2329,9 @@
+ runs in constant work-tape space: it validates and emits from two native
+ input scans with the carry resident in control.
+ 
+-**Proof sketch.** The existing witness `incFixedTM` has no work tapes
+-(`k = 0`), so `spaceUsed` is identically `0`. -/
++**Proof sketch.** Retain the existing witness `Turing.FinTM.incFixedTM` and its time coefficient.
++The published `Turing.FinTM.incFixedTM_spaceUsed` gives zero space directly, so the existing
++constant-space witness bounds it. -/
+ theorem computesFunInTime_incFixed_spaceUsed :
+     ∃ (M : FinTM Bool) (c : ℕ),
+       M.ComputesFunInTime (fun x => (incFixed x).getD [])
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -2998,10 +2998,10 @@
+ 
+ /-- A timed evaluator reaches the actual first source halt, with no earlier
+ visit to the live return state and with the exact complete capture buffer.
+-**Proof sketch.** Take the least halting time justified by totality. Absorption
+-identifies the output there with the specified output at the deadline. Apply
+-captured virtual lockstep through that time and through every earlier prefix.
+-The deadline is used only for the inequality, never as a native clock. -/
++**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the first source halt and
++complete configuration equality with the supplied deadline. This equality transports the specified
++output unchanged. Apply captured virtual lockstep through that halt and every earlier prefix; the
++deadline supplies only an inequality, never a native clock. -/
+ private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
+     (hM : M.ComputesInTime s out T) :
+     ∃ t ≤ T, ∃ b,
+@@ -3614,9 +3614,9 @@
+ 
+ /-- A phase with an absorbing return state can be cut at its actual first
+ return while retaining its complete configuration endpoint.
+-**Proof sketch.** Choose the least return-state visit. Absorption identifies
+-its configuration with the known bounded endpoint. The bound proves existence
+-and bounds the first visit; it is never used to dispatch native control. -/
++**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_entry_of_fixed` to the same stop
++predicate and complete absorbing-configuration hypothesis. The public contract supplies the
++first-entry cut and the exact bounded endpoint. -/
+ private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
+     (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
+     (c d : Cfg k Bool S w) (T : ℕ)
+@@ -3789,10 +3789,10 @@
+ 
+ /-- Right-boundary normalization preserves the entire completed source
+ configuration, not just its output. This retains the tracked cleanup witnesses.
+-**Proof sketch.** Choose the actual first source halt. The native right scan
+-then costs at most `|x|+2`; absorb only the completed run to the advertised
+-budget. Source absorption identifies its work tapes with those at the original
+-deadline, including when that deadline exceeds the actual halt. -/
++**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` to retain the completed source
++configuration and strict earlier-time liveness. The native right scan then costs at most `|x|+2`;
++absorb only that completed run to the advertised budget. The public complete endpoint equality
++retains the work tapes at the original deadline. -/
+ private lemma emCall_right_endpoint (M : FinTM Bool) (x : List Bool) (T : ℕ)
+     (hc : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
+     (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (T + x.length + 2) =
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -1823,9 +1823,10 @@
+ 
+ /-- A completed generator is captured without physical output, then its
+ last cell and the first physical input cell are exposed for comparison.
+-**Proof sketch.** Use the least source halting time to discharge `capture_run`'s
+-liveness guard. One step moves the capture head left; quantitative rewind
+-restores the input head while preserving the completed generator bank. -/
++**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` to supply the strict liveness guard
++to `Turing.capture_run` and to transport the specified output through complete configuration
++equality. One native step moves the capture head left; quantitative rewind restores the input head
++while preserving the completed generator bank. -/
+ private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
+     (hM : M.ComputesInTime x w T) :
+     ∃ t ≤ T + x.length + 4, ∃ c : Cfg M.k Bool M.State x,
+@@ -3442,10 +3443,11 @@
+ with the complete validating/buffering/emission endpoint, so no payload
+ work is hidden in the administrative time bound.
+ 
+-**Proof sketch.** Choose the first time the absorbing setup view enters a virtual payload state.
+-Guarded setup agreement identifies every real prefix through that time. Absorption identifies
+-this first-entry configuration with the already bounded final setup configuration, retaining the
+-same linear bound. -/
++**Proof sketch.** The existing stationary-setup contract at one step proves that every
++virtual-payload stop configuration is fixed. Apply
++`Turing.MultiTapeTM.exists_first_entry_of_fixed` to that stop predicate and the bounded setup
++endpoint. Guarded setup agreement then identifies every operational prefix through the returned
++first entry, with the same complete endpoint and linear bound. -/
+ private lemma fwdMap_launch (M : FinTM Bool) (x a b : List Bool)
+     (hd : pairDecode x = some (a, b)) :
+     ∃ u ≤ 5 * (x.length + 1),
+@@ -4475,8 +4477,8 @@
+ 
+ /-- A run reaching an absorbing control state has a least such entry, and its
+ configuration at that first entry is already the final configuration.
+-**Proof sketch.** Choose the least hit. Absorption makes its entire suffix
+-constant, so the bounded endpoint identifies the first-hit configuration. -/
++**Proof sketch.** Specialize `Turing.MultiTapeTM.exists_first_entry_of_fixed` to equality with the
++selected control state, then project its predicate cut to the required singleton-state cut. -/
+ private lemma catalogFirstEntry {k : ℕ} {S : Type} {w : List Bool}
+     (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : ℕ)
+     (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)
+@@ -4678,10 +4680,10 @@
+ 
+ /-- Cut an absorbing source phase at its first terminal control state and
+ embed the entire prefix into a disjoint host phase.
+-**Proof sketch.** Take the least terminal visit. Absorption identifies its
+-configuration with the known endpoint. Induct on the prefix length using
+-transition agreement only before that visit; every mapped control state,
+-including a halted state, is different from the host anchor. -/
++**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_entry_of_fixed` with the supplied stop
++predicate, fixed-step hypothesis and complete endpoint. Induct on the host prefix using transition
++agreement only before the returned strict cut; every mapped control state, including a halted
++state, stays away from the host anchor. -/
+ private lemma splitEmbed_cut {k : ℕ} {S H : Type} {w : List Bool}
+     (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
+     (emb : S → H) (anchor : H) (stop : S → Prop) [DecidablePred stop]
+@@ -4889,9 +4891,10 @@
+ 
+ /-- Counted evaluation reaches its first source halt; every prefix remains
+ in a count or check state and therefore cannot revisit the round anchor.
+-**Proof sketch.** Choose the least source halt and remove its constant halted
+-suffix. Apply the counted correspondence to every prefix through that halt;
+-its control image is disjoint from the anchor, including the return state. -/
++**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_halt` to the arbitrary source bank, then
++compose its complete endpoint equality with the supplied counted-run endpoint. Apply the counted
++correspondence to every prefix through that halt; its control image is disjoint from the anchor,
++including the return state. -/
+ private lemma splitBody_count (M : FinTM Bool) (start : M.State) (w s : List Bool)
+     (out : List Bool) (T : ℕ)
+     (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :
+@@ -5874,9 +5877,9 @@
+ 
+ /-- A phase with an absorbing return state can be cut at its actual first
+ return while retaining its complete configuration endpoint.
+-**Proof sketch.** Choose the least return-state visit. Absorption identifies
+-its configuration with the known bounded endpoint. The bound proves existence
+-and bounds the first visit; it is never used to dispatch native control. -/
++**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_entry_of_fixed` to the same stop
++predicate and complete absorbing-configuration hypothesis. The public contract supplies the
++first-entry cut and the exact bounded endpoint. -/
+ private lemma emitter_first_entry {k : ℕ} {S : Type} {w : List Bool}
+     (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
+     (c d : Cfg k Bool S w) (T : ℕ)
+--- a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+@@ -714,10 +714,10 @@
+ 
+ /-- A singleton-output decider reaches the selected branch's genuine
+ initial configuration in at most twice its budget plus five steps.
+-**Proof sketch.** Choose the first source halt, which is within the supplied
+-budget. Capture until that halt, read the singleton in two steps, and rewind
+-in at most the current input position plus two. The head-position bound
+-charges this rewind to the decider's elapsed steps, not the input length. -/
++**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the first source halt within
++budget and its exact completed singleton output. Capture until that halt, read the singleton in
++two steps, and rewind in at most the current input position plus two. Charge this rewind to the
++decider's elapsed steps using the head-position bound. -/
+ private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T : ℕ)
+     (hD : D.ComputesInTime x [b] T) :
+     ∃ a ≤ 2 * T + 5, ∃ (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+--- a/TCSlib/Complexity/TuringMachine/Composition.lean
++++ b/TCSlib/Complexity/TuringMachine/Composition.lean
+@@ -672,10 +672,10 @@
+ /-- A completed singleton controller computation reaches the selected branch's
+ fresh initial configuration after a finite prefix.
+ 
+-**Proof sketch.** Choose the first halting time of `D` and use controller lockstep.
+-Output uniqueness identifies its completed output with `[b]`, so the register is
+-`some b`, including when that bit was emitted early. Rewind from the resulting
+-input position; the branch tapes and real output have remained untouched. -/
++**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the strict source liveness cut
++and complete configuration equality with the given deadline. Transport the completed output `[b]`
++along that equality, then apply controller lockstep and rewind. The branch tapes and physical
++output stay untouched. -/
+ private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
+     (hD : ∃ t, D.ComputesInTime x [b] t) :
+     ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -1192,10 +1192,10 @@
+ /-- Any completed first computation reaches the second phase within
+ `t₁ + |y| + 2` steps, with a fresh second work block and virtual input `y`.
+ 
+-**Proof sketch.** Choose the first halting time, which is at most `t₁`.
+-First-phase lockstep reaches its completed configuration, and determinism
+-identifies the output with `y`. The exact rewind lemma supplies `|y| + 2` more
+-steps, retaining the first block and parked native input head. -/
++**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the first halt by `t₁` and
++transport the complete output `y` from the deadline. First-phase lockstep reaches that completed
++configuration; the exact rewind lemma supplies `|y| + 2` more steps while retaining the first
++block and parked native input head. -/
+ lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)
+     (h₁ : M₁.ComputesInTime x y t₁) :
+     ∃ (a : ℕ) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)

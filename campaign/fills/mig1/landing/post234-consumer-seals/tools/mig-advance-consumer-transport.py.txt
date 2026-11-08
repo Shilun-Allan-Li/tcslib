@@ -1,0 +1,49 @@
+"""Scoped private candidate revision after the v3 preparation assertion."""
+from pathlib import Path
+import shutil,re,json
+V=Path('/private/tmp/mig-post234-consumer-validation')
+P=V/'proposed-v4';shutil.copytree(V/'proposed-v3',P)
+def update(rel,name,old,new):
+    p=P/(rel+'.txt');s=p.read_text()
+    m=re.search(r'(?m)^(?:private )?(?:theorem|lemma) '+re.escape(name)+r'\b',s);assert m
+    e=re.search(r'(?m)^(?:/--|(?:private )?(?:theorem|lemma|def|instance|structure|inductive)\b|end\b|namespace\b)',s[m.end():])
+    en=m.end()+e.start() if e else len(s);part=s[m.start():en]
+    assert part.count(old)==1,(name,old,part.count(old))
+    newpart=part.replace(old,new,1);p.write_text(s[:m.start()]+newpart+s[en:])
+W='TCSlib/Complexity/TuringMachine/Build/Wrappers.lean'
+C='TCSlib/Complexity/TuringMachine/Composition.lean'
+qp='''(show M₁.State ⊕ M₂.State from by
+      simpa only [branchTM_State] using (branchTM M₁ M₂ b).tm.q₀)'''
+update(W,'timed_start','''    (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))''','''    (some (.inr (.inr (.inr '''+qp+'''))))''')
+update(C,'condTM_start','''    (some (.inr (.inr (branchTM M₁ M₂ b).tm.q₀)))''','''    (some (.inr (.inr '''+qp+''')))''')
+update(W,'timed_start','''      simpa only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one] using''','''      simpa only [c, MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one] using''')
+update(W,'timed_start','''      timed_read D M₁ M₂ c b hs ho, hr]
+    rfl''','''      timed_read D M₁ M₂ c b hs ho, hr]
+    apply Cfg.ext
+    · simp only [timedBranchCfg, leftCfg_state, rightCfg_state,
+        MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some, id_eq,
+        branchTM_k, branchTM_State]
+    · simp only [timedBranchCfg, leftCfg_inputPos, rightCfg_inputPos,
+        MultiTapeTM.initCfg_eq, Cfg.init_inputPos, branchTM_k, branchTM_State]
+    · rfl
+    · rfl
+    · rfl''')
+update(C,'condTM_start','''  rw [MultiTapeTM.runFrom_add, hrun, hr]
+  rfl''','''  rw [MultiTapeTM.runFrom_add, hrun, hr]
+  apply Cfg.ext
+  · simp only [rightCfg_state, MultiTapeTM.initCfg_eq, Cfg.init_state,
+      Option.map_some, branchTM_k, branchTM_State]
+  · simp only [rightCfg_inputPos, MultiTapeTM.initCfg_eq, Cfg.init_inputPos,
+      branchTM_k, branchTM_State]
+  · funext i z
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp only [controlCfg, rightCfg_workTapes, Fin.addCases_left, Fin.addCases_right,
+        MultiTapeTM.initCfg_eq, Cfg.init_workTapes, branchTM_k, branchTM_State]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp only [controlCfg, rightCfg_workTapePos, Fin.addCases_left, Fin.addCases_right,
+        MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, branchTM_k, branchTM_State]
+  · simp only [controlCfg, rightCfg_output, MultiTapeTM.initCfg_eq, Cfg.init_output,
+      branchTM_k, branchTM_State]''')
+print(json.dumps(dict(generation='v4',source='f631647190998272127fcd37b7a5d1e61fac4f3f',
+                     private_headers=2,body_targets=6,source_unchanged=True)))

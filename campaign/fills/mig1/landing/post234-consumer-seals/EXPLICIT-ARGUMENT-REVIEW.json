@@ -1,0 +1,939 @@
+{
+  "result": "PASS",
+  "forms": [
+    "change",
+    "rw",
+    "show",
+    "simp",
+    "simpa"
+  ],
+  "rows": [
+    {
+      "target": "Turing.FinTM.computesFunInTime_pairDup_spaceUsed",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "tactic": "rw",
+      "block_line": 9,
+      "args": "pairDiagTM_spaceUsed",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.computesFunInTime_incFixed_spaceUsed",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "tactic": "rw",
+      "block_line": 8,
+      "args": "incFixedTM_spaceUsed",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "change",
+      "block_line": 10,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "rw",
+      "block_line": 11,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "simp",
+      "block_line": 16,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_state, emCallRightCfg,\n        Option.map_some, Option.getD_some",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "simp",
+      "block_line": 19,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_inputPos, emCallRightCfg",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "simp",
+      "block_line": 21,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_workTapes, emCallRightCfg",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "simp",
+      "block_line": 23,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, emCallRightCfg",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "simp",
+      "block_line": 24,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_output, emCallRightCfg",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "rw",
+      "block_line": 29,
+      "args": "hi, MultiTapeTM.runFrom_add, hr",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "rw",
+      "block_line": 32,
+      "args": "show T + x.length + 2 = (t + r) + (T + x.length + 2 - (t + r)) by omega,\n    MultiTapeTM.runFrom_add, hrun, MultiTapeTM.runFrom_of_halt _ (by rfl), hcT",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_right_endpoint",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "show",
+      "block_line": 32,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_eval_first",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "rw",
+      "block_line": 17,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_eval_first",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "rw",
+      "block_line": 20,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_eval_first",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "rw",
+      "block_line": 23,
+      "args": "VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_eval_first",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "simp",
+      "block_line": 24,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_eval_first",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "rw",
+      "block_line": 31,
+      "args": "hr'",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_eval_first",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "simp",
+      "block_line": 35,
+      "args": "emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state, hs",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.emCall_eval_first",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "tactic": "simp",
+      "block_line": 36,
+      "args": "Option.map",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 18,
+      "args": "MultiTapeTM.runFrom_zero",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 21,
+      "args": "MultiTapeTM.runFrom_succ_eq_step', ih (by omega),\n        MultiTapeTM.runFrom_succ_eq_step'",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "change",
+      "block_line": 24,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 28,
+      "args": "Cfg.mapState_state, hz, Option.map_none",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 29,
+      "args": "host.step_of_halt hm, tm.step_of_halt hz",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 33,
+      "args": "Cfg.mapState_state, hz, Option.map_some",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 37,
+      "args": "Cfg.inputSymbol_of_zero (hp.trans h0), Cfg.inputSymbol_of_zero h0",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 39,
+      "args": "Cfg.inputSymbol_of_end (by rw [hp]; exact he), Cfg.inputSymbol_of_end he",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 39,
+      "args": "hp",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 42,
+      "args": "inputSymbolInner (z.inputPos.val - 1) (by rw [hp]; omega) (by omega),\n                inputSymbolInner (cfg := z) (z.inputPos.val - 1) (by omega) (by omega)",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 42,
+      "args": "hp",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 46,
+      "args": "Cfg.workTapeSymbols_eq, Cfg.mapState_workTapes, Cfg.mapState_workTapePos,\n            Cfg.workTapeSymbols_eq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 48,
+      "args": "host.step_of_some hm, tm.step_of_some hz, hin, hw, hagree q hn",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 50,
+      "args": "hp t (le_refl _), he",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 52,
+      "args": "hp j hj",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 54,
+      "args": "Cfg.mapState_state, hs",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitEmbed_cut",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simpa",
+      "block_line": 55,
+      "args": "Cfg.mapState_state, hs",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitBody_count",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 12,
+      "args": "hT",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitBody_count",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 19,
+      "args": "hp t (le_refl _), he",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitBody_count",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 21,
+      "args": "hp j hj",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.splitBody_count",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 22,
+      "args": "splitCountCfg, hq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "change",
+      "block_line": 13,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 14,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "change",
+      "block_line": 17,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 18,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 24,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_state, captureCfg_state,\n        Option.map_some, Option.getD_some",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 27,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_inputPos, captureCfg_inputPos",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 29,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_workTapes, captureCfg_workTapes,\n        Cfg.init_output, List.nil_append, bufferTape_nil",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 31,
+      "args": "Cfg.init_workTapes",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 34,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, captureCfg_workTapePos,\n          dif_pos hi",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 36,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, captureCfg_workTapePos,\n          dif_neg hi, Cfg.init_output, List.nil_append, List.length_nil, Nat.cast_zero",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 38,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_output, captureCfg_output",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 41,
+      "args": "hinit",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 49,
+      "args": "captureCfg_state, hs, Option.map_none, Option.getD_none",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 50,
+      "args": "MultiTapeTM.step_of_some hstate",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 52,
+      "args": "Action.apply_state",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 54,
+      "args": "pairCountTM, ret, lenAction, Action.apply_inputPos,\n        captureCfg_inputPos, ready, moveInputPos_zero",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 57,
+      "args": "pairCountTM, ret, lenAction, Action.apply_workTapes,\n        Cfg.workTapeSymbols_eq, Option.getD_none, Function.update_eq_self",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 59,
+      "args": "captureCfg_workTapes, ready, lenCfg, List.nil_append",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 61,
+      "args": "Action.apply_workTapePos",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 63,
+      "args": "pairCountTM, ret, lenAction, captureCfg_workTapePos, ready, lenCfg, hi,\n          sub_eq_add_neg",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 65,
+      "args": "Action.apply_output, captureCfg_output",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 66,
+      "args": "pairCountTM, ret, lenAction, captureCfg_output, ready, lenCfg",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "change",
+      "block_line": 71,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 74,
+      "args": "MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 75,
+      "args": "MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.lenStart",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 76,
+      "args": "hback, hr",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.fwdMap_launch",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 10,
+      "args": "hd",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.fwdMap_launch",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 15,
+      "args": "hr, hq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.fwdMap_launch",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simpa",
+      "block_line": 17,
+      "args": "MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.fwdMap_launch",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "simp",
+      "block_line": 22,
+      "args": "fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.fwdMap_launch",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "tactic": "rw",
+      "block_line": 34,
+      "args": "hprefix u (le_refl _)",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "show",
+      "block_line": 5,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "simpa",
+      "block_line": 6,
+      "args": "branchTM_k, branchTM_State",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "simpa",
+      "block_line": 9,
+      "args": "branchTM_k, branchTM_State",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "simpa",
+      "block_line": 11,
+      "args": "branchTM_State",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "simpa",
+      "block_line": 13,
+      "args": "branchInit, branchStart, branchTM_k, branchTM_State",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "change",
+      "block_line": 15,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "change",
+      "block_line": 23,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "rw",
+      "block_line": 24,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "change",
+      "block_line": 27,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "rw",
+      "block_line": 28,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "rw",
+      "block_line": 32,
+      "args": "timed_control_init",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "simpa",
+      "block_line": 41,
+      "args": "c, MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "change",
+      "block_line": 43,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "rw",
+      "block_line": 45,
+      "args": "MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,\n      timed_read D M₁ M₂ c b hs ho, hr",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "simp",
+      "block_line": 48,
+      "args": "timedBranchCfg, leftCfg_state, rightCfg_state,\n        hbranchInit, Cfg.init_state, Option.map_some, id_eq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.timed_start",
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "tactic": "simp",
+      "block_line": 50,
+      "args": "timedBranchCfg, leftCfg_inputPos, rightCfg_inputPos,\n        hbranchInit, Cfg.init_inputPos",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "show",
+      "block_line": 5,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simpa",
+      "block_line": 6,
+      "args": "branchTM_k, branchTM_State",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simpa",
+      "block_line": 9,
+      "args": "branchTM_k, branchTM_State",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simpa",
+      "block_line": 11,
+      "args": "branchTM_State",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simpa",
+      "block_line": 13,
+      "args": "branchInit, branchStart, branchTM_k, branchTM_State",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "change",
+      "block_line": 15,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "change",
+      "block_line": 24,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "rw",
+      "block_line": 25,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "change",
+      "block_line": 28,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "rw",
+      "block_line": 29,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 33,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_state, controlCfg, Cfg.init_output",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 35,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_inputPos, controlCfg",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 38,
+      "args": "controlCfg, Fin.addCases_left, Fin.addCases_right,\n          MultiTapeTM.initCfg_eq, Cfg.init_workTapes",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 42,
+      "args": "controlCfg, Fin.addCases_left, Fin.addCases_right,\n          MultiTapeTM.initCfg_eq, Cfg.init_workTapePos",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 44,
+      "args": "MultiTapeTM.initCfg_eq, Cfg.init_output, controlCfg",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "rw",
+      "block_line": 47,
+      "args": "hi",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 53,
+      "args": "controlCfg, hstop, hout",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "rw",
+      "block_line": 55,
+      "args": "MultiTapeTM.runFrom_add, hrun, hr",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 57,
+      "args": "rightCfg_state, hbranchInit, Cfg.init_state, Option.map_some",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 58,
+      "args": "rightCfg_inputPos, hbranchInit, Cfg.init_inputPos",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 61,
+      "args": "controlCfg, rightCfg_workTapes, Fin.addCases_left, Fin.addCases_right,\n        hbranchInit, Cfg.init_workTapes",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 65,
+      "args": "controlCfg, rightCfg_workTapePos, Fin.addCases_left, Fin.addCases_right,\n        hbranchInit, Cfg.init_workTapePos",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.condTM_start",
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "tactic": "simp",
+      "block_line": 67,
+      "args": "controlCfg, rightCfg_output, hbranchInit, Cfg.init_output",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.bufferedComp_start",
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "tactic": "change",
+      "block_line": 13,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.bufferedComp_start",
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "tactic": "rw",
+      "block_line": 14,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.bufferedComp_start",
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "tactic": "change",
+      "block_line": 17,
+      "args": "",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.bufferedComp_start",
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "tactic": "rw",
+      "block_line": 18,
+      "args": "heq",
+      "ordinary_foreign_arguments": []
+    },
+    {
+      "target": "Turing.FinTM.bufferedComp_start",
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "tactic": "rw",
+      "block_line": 21,
+      "args": "MultiTapeTM.runFrom_add, bufferedFirstCfg_init,\n    bufferedFirstCfg_run M₁ M₂ _ t hlive",
+      "ordinary_foreign_arguments": []
+    }
+  ],
+  "ordinary_foreign_definition_arguments": [],
+  "manual_notes": [
+    "Option.map is non-TCSlib; allowed ordinary Option reader in Loop.",
+    "Same-home definitions and local lets/hypotheses are permitted and remain unguarded.",
+    "All other-file TCSlib objects are mentioned in types/change/show or read through public equations.",
+    "The first filter missed simpa; the final scan includes simpa and retained timed_start failure evidence."
+  ]
+}

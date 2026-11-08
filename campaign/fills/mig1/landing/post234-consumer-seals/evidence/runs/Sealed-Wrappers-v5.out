@@ -1,0 +1,235 @@
+SEAL_ACTIVE|timed_start|21
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:773:4: error: unsolved goals
+case refine_2.state
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hs : c.state = none
+ho : c.output = [b]
+hcap : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.timedControlCfg M₁ M₂ c
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (Sum.inr
+                (have this := (M₁.branchTM M₂ b).tm.q₀;
+                this)))),
+      inputPos := 1, workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes,
+      workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos, output := (D.timedReadyCfg M₁ M₂ c b).output }
+⊢ some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))) =
+    Option.map id (Option.map (fun s => Sum.inr (Sum.inr (Sum.inr s))) (MultiTapeTM.initCfg x).state)
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:775:4: error: unsolved goals
+case refine_2.inputPos
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hs : c.state = none
+ho : c.output = [b]
+hcap : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.timedControlCfg M₁ M₂ c
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (Sum.inr
+                (have this := (M₁.branchTM M₂ b).tm.q₀;
+                this)))),
+      inputPos := 1, workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes,
+      workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos, output := (D.timedReadyCfg M₁ M₂ c b).output }
+⊢ 1 = (MultiTapeTM.initCfg x).inputPos
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:777:6: error: Tactic `rfl` failed: The left-hand side
+  { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }.workTapes
+is not definitionally equal to the right-hand side
+  (D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b).workTapes
+
+case refine_2.workTapes
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := ⋯
+hs : c.state = none
+ho : c.output = [b]
+hcap : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.timedControlCfg M₁ M₂ c
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (Sum.inr
+                (have this := (M₁.branchTM M₂ b).tm.q₀;
+                this)))),
+      inputPos := 1, workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes,
+      workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos, output := (D.timedReadyCfg M₁ M₂ c b).output }
+⊢ { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+        workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+        output := (D.timedReadyCfg M₁ M₂ c b).output }.workTapes =
+    (D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b).workTapes
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:778:6: error: Tactic `rfl` failed: The left-hand side
+  { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }.workTapePos
+is not definitionally equal to the right-hand side
+  (D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b).workTapePos
+
+case refine_2.workTapePos
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := ⋯
+hs : c.state = none
+ho : c.output = [b]
+hcap : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.timedControlCfg M₁ M₂ c
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (Sum.inr
+                (have this := (M₁.branchTM M₂ b).tm.q₀;
+                this)))),
+      inputPos := 1, workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes,
+      workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos, output := (D.timedReadyCfg M₁ M₂ c b).output }
+⊢ { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+        workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+        output := (D.timedReadyCfg M₁ M₂ c b).output }.workTapePos =
+    (D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b).workTapePos
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:779:6: error: Tactic `rfl` failed: The left-hand side
+  { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }.output
+is not definitionally equal to the right-hand side
+  (D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b).output
+
+case refine_2.output
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := ⋯
+hs : c.state = none
+ho : c.output = [b]
+hcap : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.timedControlCfg M₁ M₂ c
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (Sum.inr
+                (have this := (M₁.branchTM M₂ b).tm.q₀;
+                this)))),
+      inputPos := 1, workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes,
+      workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos, output := (D.timedReadyCfg M₁ M₂ c b).output }
+⊢ { state := some (Sum.inr (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀))), inputPos := 1,
+        workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+        output := (D.timedReadyCfg M₁ M₂ c b).output }.output =
+    (D.timedBranchCfg M₁ M₂ (MultiTapeTM.initCfg x) c.workTapes c.workTapePos b).output
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:774:8: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [timedBranchCfg, leftCfg_state, rightCfg_state, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵Cfg.init_state, Option.map_some]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:774:32: warning: This simp argument is unused:
+  Cfg.init_state
+
+Hint: Omit it from the simp argument list.
+  simp only [timedBranchCfg, leftCfg_state, rightCfg_state, MultiTapeTM.initCfg_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵i̵n̵i̵t̵_̵s̵t̵a̵t̵e̵,̵ ̵Option.map_some]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:774:48: warning: This simp argument is unused:
+  Option.map_some
+
+Hint: Omit it from the simp argument list.
+  simp only [timedBranchCfg, leftCfg_state, rightCfg_state, MultiTapeTM.initCfg_eq,
+  ̲  ̲ ̲ ̲ ̲ ̲C̵f̵g̵.̵i̵n̵i̵t̵_̵s̵t̵a̵t̵e̵,̵ ̵O̵p̵t̵i̵o̵n̵.̵m̵a̵p̵_̵s̵o̵m̵e̵]̵C̲f̲g̲.̲i̲n̲i̲t̲_̲s̲t̲a̲t̲e̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:776:8: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [timedBranchCfg, leftCfg_inputPos, rightCfg_inputPos, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵Cfg.init_inputPos]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v5.lean:776:32: warning: This simp argument is unused:
+  Cfg.init_inputPos
+
+Hint: Omit it from the simp argument list.
+  simp only [timedBranchCfg, leftCfg_inputPos, rightCfg_inputPos, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵C̵f̵g̵.̵i̵n̵i̵t̵_̵i̵n̵p̵u̵t̵P̵o̵s̵]̵M̲u̲l̲t̲i̲T̲a̲p̲e̲T̲M̲.̲i̲n̲i̲t̲C̲f̲g̲_̲e̲q̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+LOCAL_ROOT|timed_start|_private.Sealed_Wrappers_v5.0.Turing.FinTM.timed_start
+LOCAL_AX|{"axioms":["propext","sorryAx","Classical.choice","Quot.sound"],"name":"_private.Sealed_Wrappers_v5.0.Turing.FinTM.timed_start","short":"timed_start"}
+LOCAL_AX|{"axioms":["propext","Quot.sound"],"name":"_private.Sealed_Wrappers_v5.0.Turing.FinTM.timed_start._proof_1_1","short":"timed_start"}
+SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Build.Wrappers|1

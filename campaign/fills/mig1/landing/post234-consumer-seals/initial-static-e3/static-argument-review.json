@@ -1,0 +1,830 @@
+{
+  "source": "e3ae4d5975c200c64af3dca810d4f35f4eefcce6",
+  "changes": [
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "emCall_eval_first",
+      "old_sha256": "2f313804f2a4c1d0188310409d95e7079a383b63a950fb30b741e9936fcd39ff",
+      "new_sha256": "3a87acc33c3bbe743250d08250c3a343321c94ec4b83dcb8a870d6a21c1af1fc"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "emCall_eval_first",
+      "old_sha256": "728992e97960e0db8c44f5f931e743b676a70ad99a68d0644a80a444ec83adfa",
+      "new_sha256": "8a9d9d50520e5fc8d4d355864157ddbad51055d42150bacf9ceb08b823c11864"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "lenStart",
+      "old_sha256": "ae01178e5954a8f76d9130fc1ed3c85333b3e8c584be620ca187ab73f9fb1762",
+      "new_sha256": "7160c2094bdd037c1ac5c54937728cc4d868a255afa5e6f048777b1222c4d740"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "lenStart",
+      "old_sha256": "be5eb3cce61709bb0589a0a6e44d94d2996247af344b8a06a87059477c7163ed",
+      "new_sha256": "3fd104dd937d5d3415fda9fed5181fd30b864f05217b9fa1fe74e29ca1926b7d"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "splitEmbed_cut",
+      "old_sha256": "d496831e950670770b5ca44627d7006522f16aa344adde667129cf7a5a765509",
+      "new_sha256": "92c30f7a838edd080f8500c46b39deb58e88e9a3528dad7dd90eb4d994a087dd"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "splitEmbed_cut",
+      "old_sha256": "fe2ccf57dc3ead2e84e8b6e5b9a510fbc00879cf235ed7b3517a31b2e45ac427",
+      "new_sha256": "d8d5d3c1189b10101711d51fce72dcc90179e17092fcff462114756756d024b0"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "splitEmbed_cut",
+      "old_sha256": "fd9fcb8a2c39ab5715a3ac8349e020df51594ac49ae078ff47f17634c1ef049f",
+      "new_sha256": "4ed1cf1ec810a3a40383b97f2c0d516f95ffb7cc68c760b522a761084520dc0d"
+    }
+  ],
+  "targets": [
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.FinTM.computesFunInTime_pairDup_spaceUsed",
+      "generation": "actual-e3",
+      "sha256": "d0df824766171b6002fe5f7bdf3224e1fd918f0abd63959d64cd190ba8a997d1",
+      "rewrite_lines": [
+        {
+          "line": 9,
+          "text": "    rw [pairDiagTM_spaceUsed]; omega\u27e9"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.FinTM.computesFunInTime_pairDup_spaceUsed",
+      "generation": "proposed",
+      "sha256": "d0df824766171b6002fe5f7bdf3224e1fd918f0abd63959d64cd190ba8a997d1",
+      "rewrite_lines": [
+        {
+          "line": 9,
+          "text": "    rw [pairDiagTM_spaceUsed]; omega\u27e9"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.FinTM.computesFunInTime_incFixed_spaceUsed",
+      "generation": "actual-e3",
+      "sha256": "794f3c29c291cfb7d5f9a23399353a7c2d6f22268dbd5cfbf83c23f81b614da4",
+      "rewrite_lines": [
+        {
+          "line": 8,
+          "text": "    rw [incFixedTM_spaceUsed]; omega\u27e9"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.FinTM.computesFunInTime_incFixed_spaceUsed",
+      "generation": "proposed",
+      "sha256": "794f3c29c291cfb7d5f9a23399353a7c2d6f22268dbd5cfbf83c23f81b614da4",
+      "rewrite_lines": [
+        {
+          "line": 8,
+          "text": "    rw [incFixedTM_spaceUsed]; omega\u27e9"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_right_endpoint",
+      "generation": "actual-e3",
+      "sha256": "7a862c86a219ed628685a2498260af11b0da8c15b0a9c60add938fd1c05be742",
+      "rewrite_lines": [
+        {
+          "line": 10,
+          "text": "    change (M.tm.runFrom (M.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 11,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 19,
+          "text": "    rw [hi, MultiTapeTM.runFrom_add, hr]"
+        },
+        {
+          "line": 22,
+          "text": "  rw [show T + x.length + 2 = (t + r) + (T + x.length + 2 - (t + r)) by omega,"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_right_endpoint",
+      "generation": "proposed",
+      "sha256": "7a862c86a219ed628685a2498260af11b0da8c15b0a9c60add938fd1c05be742",
+      "rewrite_lines": [
+        {
+          "line": 10,
+          "text": "    change (M.tm.runFrom (M.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 11,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 19,
+          "text": "    rw [hi, MultiTapeTM.runFrom_add, hr]"
+        },
+        {
+          "line": 22,
+          "text": "  rw [show T + x.length + 2 = (t + r) + (T + x.length + 2 - (t + r)) by omega,"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_first_entry",
+      "generation": "actual-e3",
+      "sha256": "1348e5c7c7465794b55125a35b12c6e4c4637bc7e23d97d01f5f0a2725219f6d",
+      "rewrite_lines": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_first_entry",
+      "generation": "proposed",
+      "sha256": "1348e5c7c7465794b55125a35b12c6e4c4637bc7e23d97d01f5f0a2725219f6d",
+      "rewrite_lines": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_eval_first",
+      "generation": "actual-e3",
+      "sha256": "9e4656aa3da76f11e5fe1621ca67976722c937de728d0e1c57ca81cdcba54738",
+      "rewrite_lines": [
+        {
+          "line": 17,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 20,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 23,
+          "text": "    simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]"
+        },
+        {
+          "line": 30,
+          "text": "  rw [hr']"
+        },
+        {
+          "line": 34,
+          "text": "    dsimp only [emCallEvalCfg, captureCfg, bufferedSecondCfg]"
+        },
+        {
+          "line": 35,
+          "text": "    rw [hs]"
+        },
+        {
+          "line": 36,
+          "text": "    simp"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_eval_first",
+      "generation": "proposed",
+      "sha256": "1b19f1c600dd06789ab8bf24eb760a58224546fa8a926eed13d0acc4091547cc",
+      "rewrite_lines": [
+        {
+          "line": 17,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 20,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 23,
+          "text": "    rw [VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]"
+        },
+        {
+          "line": 24,
+          "text": "    simp"
+        },
+        {
+          "line": 31,
+          "text": "  rw [hr']"
+        },
+        {
+          "line": 35,
+          "text": "    simp only [emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state,"
+        },
+        {
+          "line": 37,
+          "text": "    simp"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitEmbed_cut",
+      "generation": "actual-e3",
+      "sha256": "fb1070a8a5a2e47c51bc1b1bf49ed693d2234fed01b73b813e2987369d5d45f7",
+      "rewrite_lines": [
+        {
+          "line": 21,
+          "text": "      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),"
+        },
+        {
+          "line": 24,
+          "text": "      change host.step (z.mapState emb) = (tm.step z).mapState emb"
+        },
+        {
+          "line": 26,
+          "text": "      | none => simp [MultiTapeTM.step, Cfg.mapState, hz]"
+        },
+        {
+          "line": 29,
+          "text": "        simp only [MultiTapeTM.step, Cfg.mapState, hz, Option.map_some]"
+        },
+        {
+          "line": 30,
+          "text": "        rw [hagree q hn]"
+        },
+        {
+          "line": 32,
+          "text": "  refine \u27e8t, ht, by rw [hp t (le_refl _), he], ?_\u27e9"
+        },
+        {
+          "line": 34,
+          "text": "  rw [hp j hj]"
+        },
+        {
+          "line": 36,
+          "text": "  | none => simp [Cfg.mapState, hs]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitEmbed_cut",
+      "generation": "proposed",
+      "sha256": "2586c051901fd4f1e1220c5a2d59928d5f0f56de54f2c6e16e2a95f4b933af3e",
+      "rewrite_lines": [
+        {
+          "line": 18,
+          "text": "    | zero => intro hj; simp only [MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 21,
+          "text": "      rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),"
+        },
+        {
+          "line": 24,
+          "text": "      change host.step (z.mapState emb) = (tm.step z).mapState emb"
+        },
+        {
+          "line": 28,
+          "text": "          simp only [Cfg.mapState_state, hz, Option.map_none]"
+        },
+        {
+          "line": 29,
+          "text": "        rw [host.step_of_halt hm, tm.step_of_halt hz]"
+        },
+        {
+          "line": 33,
+          "text": "          simp only [Cfg.mapState_state, hz, Option.map_some]"
+        },
+        {
+          "line": 35,
+          "text": "          Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])"
+        },
+        {
+          "line": 38,
+          "text": "          rw [Cfg.workTapeSymbols_eq, Cfg.mapState_workTapes, Cfg.mapState_workTapePos,"
+        },
+        {
+          "line": 40,
+          "text": "        rw [host.step_of_some hm, tm.step_of_some hz, hin, hw, hagree q hn]"
+        },
+        {
+          "line": 42,
+          "text": "  refine \u27e8t, ht, by rw [hp t (le_refl _), he], ?_\u27e9"
+        },
+        {
+          "line": 44,
+          "text": "  rw [hp j hj]"
+        },
+        {
+          "line": 46,
+          "text": "  | none => simp [Cfg.mapState_state, hs]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitBody_count",
+      "generation": "actual-e3",
+      "sha256": "0c5d5547b5f83d5cb3058daade5724528d456c4f35ad6cebe7a1d93a3baa49a7",
+      "rewrite_lines": [
+        {
+          "line": 12,
+          "text": "  have hhalt : (M.tm.runFrom c T).state = none := by rw [hT]; rfl"
+        },
+        {
+          "line": 19,
+          "text": "  \u00b7 rw [hp t (le_refl _), he]"
+        },
+        {
+          "line": 21,
+          "text": "    rw [hp j hj]"
+        },
+        {
+          "line": 22,
+          "text": "    cases hq : (M.tm.runFrom c j).state <;> simp [splitCountCfg, hq]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.splitBody_count",
+      "generation": "proposed",
+      "sha256": "0c5d5547b5f83d5cb3058daade5724528d456c4f35ad6cebe7a1d93a3baa49a7",
+      "rewrite_lines": [
+        {
+          "line": 12,
+          "text": "  have hhalt : (M.tm.runFrom c T).state = none := by rw [hT]; rfl"
+        },
+        {
+          "line": 19,
+          "text": "  \u00b7 rw [hp t (le_refl _), he]"
+        },
+        {
+          "line": 21,
+          "text": "    rw [hp j hj]"
+        },
+        {
+          "line": 22,
+          "text": "    cases hq : (M.tm.runFrom c j).state <;> simp [splitCountCfg, hq]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitter_first_entry",
+      "generation": "actual-e3",
+      "sha256": "c9cea7b74fd63d5b7a847b28b1c8457c1053fed7900739ea318df3340d9abd4e",
+      "rewrite_lines": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitter_first_entry",
+      "generation": "proposed",
+      "sha256": "c9cea7b74fd63d5b7a847b28b1c8457c1053fed7900739ea318df3340d9abd4e",
+      "rewrite_lines": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.lenStart",
+      "generation": "actual-e3",
+      "sha256": "cfeb5d0cfe51b6bfc04da694dffe1a7d32336aabc3e81032c02a3a6edfd92bde",
+      "rewrite_lines": [
+        {
+          "line": 13,
+          "text": "    change (M.tm.runFrom (M.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 14,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 17,
+          "text": "    change (M.tm.runFrom (M.tm.initCfg x) t).output = w"
+        },
+        {
+          "line": 18,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 24,
+          "text": "    \u00b7 funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]"
+        },
+        {
+          "line": 25,
+          "text": "    \u00b7 funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]"
+        },
+        {
+          "line": 28,
+          "text": "    rw [hinit]"
+        },
+        {
+          "line": 35,
+          "text": "    have hstate : (captureCfg emb ret [] [] c).state = some ret := by simp [captureCfg, hs]"
+        },
+        {
+          "line": 36,
+          "text": "    simp only [MultiTapeTM.step, hstate]"
+        },
+        {
+          "line": 43,
+          "text": "        simp [pairCountTM, ret, lenAction, Action.apply, captureCfg, ready, lenCfg, hi,"
+        },
+        {
+          "line": 50,
+          "text": "  \u00b7 change r \u2264 c.inputPos.val + 2 at hrle"
+        },
+        {
+          "line": 53,
+          "text": "  \u00b7 rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap]"
+        },
+        {
+          "line": 54,
+          "text": "    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 55,
+          "text": "    rw [hback, hr]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.lenStart",
+      "generation": "proposed",
+      "sha256": "182c310461e100afa4242868fa5cea95ca5dbad47457f51ee0c6d336bc6183a8",
+      "rewrite_lines": [
+        {
+          "line": 13,
+          "text": "    change (M.tm.runFrom (M.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 14,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 17,
+          "text": "    change (M.tm.runFrom (M.tm.initCfg x) t).output = w"
+        },
+        {
+          "line": 18,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 24,
+          "text": "    \u00b7 simp only [MultiTapeTM.initCfg_eq, Cfg.init_state, captureCfg_state,"
+        },
+        {
+          "line": 26,
+          "text": "    \u00b7 simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, captureCfg_inputPos]"
+        },
+        {
+          "line": 28,
+          "text": "      simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, captureCfg_workTapes,"
+        },
+        {
+          "line": 31,
+          "text": "      simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, captureCfg_workTapePos,"
+        },
+        {
+          "line": 33,
+          "text": "    \u00b7 simp only [MultiTapeTM.initCfg_eq, Cfg.init_output, captureCfg_output]"
+        },
+        {
+          "line": 36,
+          "text": "    rw [hinit]"
+        },
+        {
+          "line": 44,
+          "text": "      simp only [captureCfg_state, hs, Option.map_none, Option.getD_none]"
+        },
+        {
+          "line": 45,
+          "text": "    rw [MultiTapeTM.step_of_some hstate]"
+        },
+        {
+          "line": 47,
+          "text": "    \u00b7 simp [pairCountTM, ret, lenAction, Action.apply_state, ready, lenCfg]"
+        },
+        {
+          "line": 51,
+          "text": "      simp [pairCountTM, ret, lenAction, Action.apply_workTapes,"
+        },
+        {
+          "line": 56,
+          "text": "        simp [pairCountTM, ret, lenAction, Action.apply_workTapePos,"
+        },
+        {
+          "line": 58,
+          "text": "    \u00b7 simp [pairCountTM, ret, lenAction, Action.apply_output,"
+        },
+        {
+          "line": 64,
+          "text": "  \u00b7 change r \u2264 c.inputPos.val + 2 at hrle"
+        },
+        {
+          "line": 67,
+          "text": "  \u00b7 rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap]"
+        },
+        {
+          "line": 68,
+          "text": "    simp only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]"
+        },
+        {
+          "line": 69,
+          "text": "    rw [hback, hr]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_launch",
+      "generation": "actual-e3",
+      "sha256": "714979dec7d4eb243f07c6ac9583783ddc70aec4e462ca48dd687695cf0c96a6",
+      "rewrite_lines": [
+        {
+          "line": 10,
+          "text": "  simp only [hd] at he"
+        },
+        {
+          "line": 15,
+          "text": "    have hentered : fwdMapEntered M z := \u27e8q, tag, by rw [hr, hq]\u27e9"
+        },
+        {
+          "line": 22,
+          "text": "    simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]"
+        },
+        {
+          "line": 34,
+          "text": "  rw [hprefix u (le_refl _)]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_launch",
+      "generation": "proposed",
+      "sha256": "714979dec7d4eb243f07c6ac9583783ddc70aec4e462ca48dd687695cf0c96a6",
+      "rewrite_lines": [
+        {
+          "line": 10,
+          "text": "  simp only [hd] at he"
+        },
+        {
+          "line": 15,
+          "text": "    have hentered : fwdMapEntered M z := \u27e8q, tag, by rw [hr, hq]\u27e9"
+        },
+        {
+          "line": 22,
+          "text": "    simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]"
+        },
+        {
+          "line": 34,
+          "text": "  rw [hprefix u (le_refl _)]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.catalogFirstEntry",
+      "generation": "actual-e3",
+      "sha256": "77e8e3e0b0e6a5ce1ba6284926c56cf35411f754998fbb9f37f987c67ccd11c6",
+      "rewrite_lines": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.catalogFirstEntry",
+      "generation": "proposed",
+      "sha256": "77e8e3e0b0e6a5ce1ba6284926c56cf35411f754998fbb9f37f987c67ccd11c6",
+      "rewrite_lines": []
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "name": "Turing.FinTM.timed_start",
+      "generation": "actual-e3",
+      "sha256": "1e5cb88a55df8dad3d0607152f56a9c4b984345274bc8fcf72b20ca5e0176089",
+      "rewrite_lines": [
+        {
+          "line": 12,
+          "text": "    change (D.tm.runFrom (D.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 13,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 16,
+          "text": "    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]"
+        },
+        {
+          "line": 17,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 21,
+          "text": "    rw [timed_control_init]"
+        },
+        {
+          "line": 32,
+          "text": "    change r \u2264 c.inputPos.val + 2 at hrle"
+        },
+        {
+          "line": 34,
+          "text": "  \u00b7 rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "name": "Turing.FinTM.timed_start",
+      "generation": "proposed",
+      "sha256": "1e5cb88a55df8dad3d0607152f56a9c4b984345274bc8fcf72b20ca5e0176089",
+      "rewrite_lines": [
+        {
+          "line": 12,
+          "text": "    change (D.tm.runFrom (D.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 13,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 16,
+          "text": "    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]"
+        },
+        {
+          "line": 17,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 21,
+          "text": "    rw [timed_control_init]"
+        },
+        {
+          "line": 32,
+          "text": "    change r \u2264 c.inputPos.val + 2 at hrle"
+        },
+        {
+          "line": 34,
+          "text": "  \u00b7 rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "name": "Turing.FinTM.condTM_start",
+      "generation": "actual-e3",
+      "sha256": "d106b2747b4eefb13503e85c0a2a57a14fb2821aebe4b2fa450c5e154da85d39",
+      "rewrite_lines": [
+        {
+          "line": 13,
+          "text": "    change (D.tm.runFrom (D.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 14,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 17,
+          "text": "    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]"
+        },
+        {
+          "line": 18,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 23,
+          "text": "      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]"
+        },
+        {
+          "line": 25,
+          "text": "      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]"
+        },
+        {
+          "line": 28,
+          "text": "    rw [hi]"
+        },
+        {
+          "line": 34,
+          "text": "    (controlCfg D M\u2081 M\u2082 cf) (by simp [controlCfg, hstop, hout])"
+        },
+        {
+          "line": 36,
+          "text": "  rw [MultiTapeTM.runFrom_add, hrun, hr]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "name": "Turing.FinTM.condTM_start",
+      "generation": "proposed",
+      "sha256": "d106b2747b4eefb13503e85c0a2a57a14fb2821aebe4b2fa450c5e154da85d39",
+      "rewrite_lines": [
+        {
+          "line": 13,
+          "text": "    change (D.tm.runFrom (D.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 14,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 17,
+          "text": "    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]"
+        },
+        {
+          "line": 18,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 23,
+          "text": "      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]"
+        },
+        {
+          "line": 25,
+          "text": "      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]"
+        },
+        {
+          "line": 28,
+          "text": "    rw [hi]"
+        },
+        {
+          "line": 34,
+          "text": "    (controlCfg D M\u2081 M\u2082 cf) (by simp [controlCfg, hstop, hout])"
+        },
+        {
+          "line": 36,
+          "text": "  rw [MultiTapeTM.runFrom_add, hrun, hr]"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "name": "Turing.FinTM.bufferedComp_start",
+      "generation": "actual-e3",
+      "sha256": "bdafb545dc2f4ba6e8c61d54d5dc0c5b7cc7522ee04069a34938c2eeace1b137",
+      "rewrite_lines": [
+        {
+          "line": 13,
+          "text": "    change (M\u2081.tm.runFrom (M\u2081.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 14,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 17,
+          "text": "    change (M\u2081.tm.runFrom (M\u2081.tm.initCfg x) t).output = y"
+        },
+        {
+          "line": 18,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 21,
+          "text": "  rw [MultiTapeTM.runFrom_add, bufferedFirstCfg_init,"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "name": "Turing.FinTM.bufferedComp_start",
+      "generation": "proposed",
+      "sha256": "bdafb545dc2f4ba6e8c61d54d5dc0c5b7cc7522ee04069a34938c2eeace1b137",
+      "rewrite_lines": [
+        {
+          "line": 13,
+          "text": "    change (M\u2081.tm.runFrom (M\u2081.tm.initCfg x) t).state = none"
+        },
+        {
+          "line": 14,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 17,
+          "text": "    change (M\u2081.tm.runFrom (M\u2081.tm.initCfg x) t).output = y"
+        },
+        {
+          "line": 18,
+          "text": "    rw [heq]"
+        },
+        {
+          "line": 21,
+          "text": "  rw [MultiTapeTM.runFrom_add, bufferedFirstCfg_init,"
+        }
+      ]
+    }
+  ],
+  "modified_targets": 3,
+  "modified_files": 2,
+  "published_equations_only_proposed": true,
+  "native_context": "WAITING: invalid native1 NOT USED; root freshMAC5 native2 pending",
+  "no_source_or_Git_changes": true,
+  "NOT_RUN": [
+    "Lean",
+    "seals",
+    "controls",
+    "metadata"
+  ]
+}

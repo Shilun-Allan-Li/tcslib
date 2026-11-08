@@ -1,0 +1,17 @@
+import TCSlib.Complexity.TuringMachine.Configuration
+open Lean Elab Command Meta in
+run_cmd do
+  let s ← liftTermElabM getSimpTheorems
+  logInfo m!"SCOPE|before|{s.isLemma (.decl ``Turing.Cfg.init)}|{s.toUnfold.contains ``Turing.Cfg.init}"
+section
+attribute [local irreducible] Turing.Cfg.init
+attribute [-simp] Turing.Cfg.init
+open Lean Elab Command Meta in
+run_cmd do
+  let s ← liftTermElabM getSimpTheorems
+  logInfo m!"SCOPE|during|{s.isLemma (.decl ``Turing.Cfg.init)}|{s.toUnfold.contains ``Turing.Cfg.init}|{reprStr (getReducibilityStatusCore (← getEnv) ``Turing.Cfg.init)}"
+end
+open Lean Elab Command Meta in
+run_cmd do
+  let s ← liftTermElabM getSimpTheorems
+  logInfo m!"SCOPE|after|{s.isLemma (.decl ``Turing.Cfg.init)}|{s.toUnfold.contains ``Turing.Cfg.init}|{reprStr (getReducibilityStatusCore (← getEnv) ``Turing.Cfg.init)}"

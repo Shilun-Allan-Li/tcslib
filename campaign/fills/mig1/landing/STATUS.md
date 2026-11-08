@@ -1,3 +1,13 @@
+# MIG-1 — final post-#234 landing validation
+
+**Not yet clear to merge: #233.** Final pushed source`eaecd6b2afd992ead0844fa5f351eaf143fd1d1c` consumes the merged#230/#234 APIs; original17+2 externally delivered proofs are retained, with only3unchangedRAM admissions. The reviewed six reader-body repairs and two explicitly approved kernel-equivalent private transports are applied, as is the final Core-reader correction.
+
+Actualnative3 PASS12 on wholeMAC5, with all895input/output objects bound. Fourteen full-header/body consumer seals and232 paired controls pass in their recorded scopes; the final Loop correction is separately resealed with40fresh exact paired controls. Old Core unfolding clearance is explicitly superseded. These are bounded checks, not a global legacy seal.
+
+Freshfull394 MMIG3 replay and fresh25HEAD comparison run; BASE25 is frozen1702candidates. FullcurrentHEAD compiled accounting/AX/sourceQA remain before the selectedCodex gate118 can be prepared. Both prerequisite PRs are merged. Older validation/status generations below retain their historical pins. Nextfree121.
+
+## Historical pre-#234 checkpoint
+
 # MIG-1 landing state
 
 **Not yet clear to merge: #233.** Clean pushed draft `lean/mig1-mega-landing` at

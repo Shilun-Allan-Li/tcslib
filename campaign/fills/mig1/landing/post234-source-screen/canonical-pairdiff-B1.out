@@ -1,0 +1,20 @@
+head pairs 615; union of earlier 622; new at head 6; earlier-only 13
+  NEW   Wrappers.lean::timedCondTM_spaceUsed  reproduces  Wrappers.lean::redirectTM_spaceUsedByTape: 114/172 = 66%
+  NEW   Simulation.lean::branchTM_spaceUsed  reproduces  Wrappers.lean::redirectTM_spaceUsedByTape: 111/172 = 65%
+  NEW   Composition.lean::condTM_start  reproduces  Wrappers.lean::timed_start: 1027/1771 = 58%
+  NEW   Primitives.lean::computesFunInTime_pairDup  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 71/127 = 56%
+  NEW   Encoding.lean::computesFunInTime_pairEncode_diag  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 71/127 = 56%
+  NEW   Primitives.lean::lenStart  reproduces  Loop.lean::emCall_right_endpoint: 574/1122 = 51%
+  GONE  Primitives.lean::emitter_first_entry  reproduces  Primitives.lean::catalogFirstEntry: 327/375 = 87%
+  GONE  Loop.lean::emCall_first_entry  reproduces  Primitives.lean::catalogFirstEntry: 327/375 = 87%
+  GONE  Primitives.lean::catalogFirstEntry  reproduces  Primitives.lean::emitter_first_entry: 327/403 = 81%
+  GONE  Primitives.lean::catalogFirstEntry  reproduces  Loop.lean::emCall_first_entry: 327/403 = 81%
+  GONE  Catalog.lean::computesFunInTime_pairDup_spaceUsed  reproduces  Catalog.lean::computesFunInTime_incFixed_spaceUsed: 97/129 = 75%
+  GONE  Primitives.lean::splitEmbed_cut  reproduces  Seam.lean::seamReleaseTM_step_inr: 93/135 = 69%
+  GONE  Primitives.lean::splitEmbed_cut  reproduces  Seam.lean::seamComp_step_right: 93/135 = 69%
+  GONE  Wrappers.lean::timedCondTM_spaceUsed  reproduces  Catalog.lean::redirectTM_spaceUsedByTape: 114/172 = 66%
+  GONE  Composition.lean::condTM_start  reproduces  Simulation.lean::rightCfg_apply: 125/192 = 65%
+  GONE  Simulation.lean::branchTM_spaceUsed  reproduces  Catalog.lean::redirectTM_spaceUsedByTape: 111/172 = 65%
+  GONE  Catalog.lean::computesFunInTime_incFixed_spaceUsed  reproduces  Catalog.lean::computesFunInTime_pairDup_spaceUsed: 97/152 = 64%
+  GONE  Primitives.lean::splitEmbed_cut  reproduces  Primitives.lean::emitter_first_entry: 221/403 = 55%
+  GONE  Primitives.lean::splitEmbed_cut  reproduces  Loop.lean::emCall_first_entry: 221/403 = 55%

@@ -1,0 +1,12 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -3037,7 +3037,8 @@
+   | none => exact False.elim (hlive j hj hs)
+   | some q =>
+     simp only [emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state, hs]
+-    simp [Option.map]
++    intro h
++    cases h
+ 
+ /-- A contiguous visited interval, marked independently of the simulated data.
+ The bounds are proof data; the cleaner reads only the marker tape. -/

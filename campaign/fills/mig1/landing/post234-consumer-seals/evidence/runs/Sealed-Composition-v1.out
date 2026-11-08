@@ -1,0 +1,30 @@
+SEAL_ACTIVE|condTM_start|18
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:696:8: error: Type mismatch
+  rightCfg (fun q => ?m.26) (MultiTapeTM.initCfg x) tapes heads
+has type
+  Cfg (D.k + (M₁.branchTM M₂ b).k) Bool ?m.23 x
+but is expected to have type
+  Cfg (D.condTM M₁ M₂).k Bool (D.condTM M₁ M₂).State x
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:696:27: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.inr` could not be determined
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:712:33: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.184 = ?m.184
+but is expected to have type
+  (MultiTapeTM.initCfg x).output = (D.controlCfg M₁ M₂ (MultiTapeTM.initCfg x)).output
+in the application
+  Cfg.ext ?m.177 ?m.180 ?m.181 ?m.182 rfl
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:723:22: error: Application type mismatch: The argument
+  (M₁.branchTM M₂ b).tm.q₀
+has type
+  (M₁.branchTM M₂ b).State
+but is expected to have type
+  M₁.State ⊕ M₂.State
+in the application
+  Sum.inr (M₁.branchTM M₂ b).tm.q₀
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:779:8: warning: declaration uses 'sorry'
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:863:7: error: unexpected token 'matches'; expected '(', ':=', 'rec', '|', identifier or term
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v1.lean:859:0: error: don't know how to synthesize placeholder
+context:
+case m
+⊢ Type

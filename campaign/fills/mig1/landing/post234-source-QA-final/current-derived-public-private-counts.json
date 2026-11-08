@@ -1,0 +1,115 @@
+{
+  "public_counts": {
+    "base": 386,
+    "head": 383,
+    "historical_final": 381,
+    "historical_API": 384
+  },
+  "private_counts": {
+    "base": 1080,
+    "head": 766,
+    "historical_final": 766,
+    "historical_API": 1080
+  },
+  "current_public_added": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.pairMapSndTM",
+      "private": false,
+      "kind": "def"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.pairMapSndTM_computes",
+      "private": false,
+      "kind": "theorem"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.pairMapSndTM_spaceUsed",
+      "private": false,
+      "kind": "theorem"
+    }
+  ],
+  "current_public_removed": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.transferTM_run",
+      "private": false,
+      "kind": "theorem"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.copyTM_run",
+      "private": false,
+      "kind": "theorem"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.clearTM_run",
+      "private": false,
+      "kind": "theorem"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.compareTM_run",
+      "private": false,
+      "kind": "theorem"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.incrementTM_run_succ",
+      "private": false,
+      "kind": "theorem"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.incrementTM_run_overflow",
+      "private": false,
+      "kind": "theorem"
+    }
+  ],
+  "current_private_header_changes": [
+    {
+      "path": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "name": "Complexity.counter_count",
+      "private": true,
+      "kind": "lemma",
+      "before": "private lemma counter_count (x : List Bool) : ∀ i (hi : i ≤ x.length),\n    ∃ t, t + 2 * i.bits.count true ≤ 4 * i ∧\n      FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) t =\n        counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits []",
+      "after": "private lemma counter_count (x : List Bool) : ∀ i (hi : i ≤ x.length),\n    ∃ t, t + 2 * i.bits.count true ≤ 4 * i ∧\n      FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) t =\n        counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits [] ∧\n      ∀ u ≤ t, ∀ j : Fin 1,\n        (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) u).workTapePos j ∈\n          Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.loopHost_contracts",
+      "private": true,
+      "kind": "lemma",
+      "before": "private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)\n    (Inv : List Bool → List Bool → Prop)\n    (stepF : List Bool → List Bool → List Bool)\n    (acceptF : List Bool → List Bool → Bool)\n    (out : List Bool → List Bool → List Bool) (findMode : Bool)\n    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)\n    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)\n    (hInv0 : ∀ x : List Bool, Inv x (s0 x))\n    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))\n    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,\n      (∀ t' < t,\n        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧\n      body.tm.runFrom (body.tm.initCfg x) t =\n        Cfg.ofWords anchor (stateWord body.k (s0 x)))\n    (hround : ∀ (x s : List Bool), Inv x s →\n      ∃ t, 0 < t ∧ t ≤ T x.length ∧\n        (∀ t', 0 < t' → t' < t →\n          (body.tm.runFrom\n            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state\n              ≠ some anchor) ∧\n        if acceptF x s then\n          (body.tm.runFrom\n            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state\n              = none ∧\n          (body.tm.runFrom\n            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output\n              = out x s\n        else\n          body.tm.runFrom\n            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =\n              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :\n    ∃ c : ℕ, ∀ x : List Bool,\n      ∃ (cfg : ℕ → Cfg (loopHostTM body F anchor findMode).k Bool\n          (loopHostTM body F anchor findMode).State x) (startup : ℕ),\n        startup ≤ c * (T x.length + 1) ∧\n        (loopHostTM body F anchor findMode).tm.runFrom\n          ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧\n        (∀ i ≤ R x.length, (cfg i).output = []) ∧\n        (cfg (R x.length + 1)).state = none ∧\n        (cfg (R x.length + 1)).output = (if findMode then [] else [false]) ∧\n        (∀ i ≤ R x.length, ∃ t ≤ c * (T x.length + 1),\n          if acceptF x ((stepF x)^[i] (s0 x)) then\n            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧\n            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =\n              (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])\n          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1))",
+      "after": "private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)\n    (Inv : List Bool → List Bool → Prop)\n    (stepF : List Bool → List Bool → List Bool)\n    (acceptF : List Bool → List Bool → Bool)\n    (out : List Bool → List Bool → List Bool) (findMode : Bool)\n    (s0 : List Bool → List Bool) (R T : ℕ → ℕ)\n    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T)\n    (hInv0 : ∀ x : List Bool, Inv x (s0 x))\n    (hInvStep : ∀ (x s : List Bool), Inv x s → Inv x (stepF x s))\n    (hstart : ∀ x : List Bool, ∃ t ≤ T x.length,\n      (∀ t' < t,\n        (body.tm.runFrom (body.tm.initCfg x) t').state ≠ some anchor) ∧\n      body.tm.runFrom (body.tm.initCfg x) t =\n        Cfg.ofWords anchor (stateWord body.k (s0 x)))\n    (hround : ∀ (x s : List Bool), Inv x s →\n      ∃ t, 0 < t ∧ t ≤ T x.length ∧\n        (∀ t', 0 < t' → t' < t →\n          (body.tm.runFrom\n            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t').state\n              ≠ some anchor) ∧\n        if acceptF x s then\n          (body.tm.runFrom\n            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state\n              = none ∧\n          (body.tm.runFrom\n            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output\n              = out x s\n        else\n          body.tm.runFrom\n            (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =\n              Cfg.ofWords anchor (stateWord body.k (stepF x s))) :\n    ∀ x : List Bool,\n      ∃ (cfg : ℕ → Cfg (loopHostTM body F anchor findMode).k Bool\n          (loopHostTM body F anchor findMode).State x) (startup : ℕ),\n        startup ≤ 10 * (T x.length + 1) ∧\n        (loopHostTM body F anchor findMode).tm.runFrom\n          ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧\n        (∀ i ≤ R x.length, (cfg i).output = []) ∧\n        (cfg (R x.length + 1)).state = none ∧\n        (cfg (R x.length + 1)).output = (if findMode then [] else [false]) ∧\n        (∀ i ≤ R x.length, ∃ t ≤ 10 * (T x.length + 1),\n          if acceptF x ((stepF x)^[i] (s0 x)) then\n            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧\n            ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =\n              (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])\n          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) ∧\n        (∀ i ≤ R x.length, ∀ j,\n          -(T x.length : ℤ) ≤ (cfg i).workTapePos j ∧\n          (cfg i).workTapePos j ≤ T x.length) ∧\n        (∀ j, -((T x.length + 10 * (T x.length + 1) : ℕ) : ℤ) ≤\n          (cfg (R x.length + 1)).workTapePos j ∧\n          (cfg (R x.length + 1)).workTapePos j ≤\n            (T x.length + 10 * (T x.length + 1) : ℕ))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.loopHost_prepare",
+      "private": true,
+      "kind": "lemma",
+      "before": "private lemma loopHost_prepare (body F : FinTM Bool) (anchor : body.State) (forward : Bool)\n    (findMode : Bool) (R T : ℕ → ℕ)\n    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T) (x : List Bool) :\n    ∃ (c : Cfg F.k Bool F.State x) (t : ℕ),\n      c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧\n      (loopHostM body F anchor forward findMode).tm.runFrom\n        ((loopHostM body F anchor forward findMode).tm.initCfg x) t = loopReady body F c",
+      "after": "private lemma loopHost_prepare (body F : FinTM Bool) (anchor : body.State) (forward : Bool)\n    (findMode : Bool) (R T : ℕ → ℕ)\n    (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T) (x : List Bool) :\n    ∃ (c : Cfg F.k Bool F.State x) (t : ℕ),\n      c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧\n      (loopHostM body F anchor forward findMode).tm.runFrom\n        ((loopHostM body F anchor forward findMode).tm.initCfg x) t = loopReady body F c ∧\n      ∀ i, -(T x.length : ℤ) ≤ c.workTapePos i ∧ c.workTapePos i ≤ T x.length"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "name": "Turing.FinTM.timed_start",
+      "private": true,
+      "kind": "lemma",
+      "before": "private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T : ℕ)\n    (hD : D.ComputesInTime x [b] T) :\n    ∃ a ≤ 2 * T + 5, ∃ (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),\n      (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) a =\n        timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads b",
+      "after": "private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T : ℕ)\n    (hD : D.ComputesInTime x [b] T) :\n    ∃ a ≤ 2 * T + 5, ∃ (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),\n      (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) a =\n        timedBranchCfg D M₁ M₂ (show Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x from by\n          simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)) tapes heads b"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "name": "Turing.FinTM.condTM_start",
+      "private": true,
+      "kind": "lemma",
+      "before": "private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)\n    (hD : ∃ t, D.ComputesInTime x [b] t) :\n    ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),\n      (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =\n        rightCfg (fun q => .inr (.inr q)) ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads",
+      "after": "private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)\n    (hD : ∃ t, D.ComputesInTime x [b] t) :\n    ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),\n      (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =\n        rightCfg (fun q => .inr (.inr q)) (show Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x from by\n          simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)) tapes heads"
+    }
+  ],
+  "scope": "Actual complete current twelve-owner parse, computed before authorized-set assertions; source counts only, not compiled/generated census."
+}

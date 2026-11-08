@@ -1,0 +1,373 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -2237,7 +2237,7 @@
+         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+   ⟨pairDiagTM, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+     (pairDiagTM_computes x).mono (by omega), fun x t => by
+-    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
++    rw [pairDiagTM_spaceUsed]; omega⟩
+ 
+ /-- **P8 space row, threaded length check** (design
+ §12 R3; annotates `Turing.FinTM.computesFunInTime_pairLenCheck`). The
+@@ -2337,7 +2337,7 @@
+       ∀ (x : List Bool) (t : ℕ),
+         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+   ⟨incFixedTM, 3, (computesFunInTime_iff _ _ _).mpr incFixedTM_computes, fun x t => by
+-    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
++    rw [incFixedTM_spaceUsed]; omega⟩
+ 
+ /-- **Threaded-map space row** (design §12 R3;
+ annotates `Turing.FinTM.computesFunInTime_pairMapSnd`, the round-2
+--- a/TCSlib/Complexity/TuringMachine/Build/Loop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Loop.lean
+@@ -3015,14 +3015,14 @@
+           emCallEvalCfg (w := w) M (M.tm.runFrom (M.tm.initCfg s) t) b 1 := by
+   classical
+   have hspec := (computesInTime_iff M s out T).mp hM
+-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg s) t).state = none := ⟨T, hspec.1⟩
+-  let t := Nat.find hex
+-  have ht : t ≤ T := Nat.find_min' hex hspec.1
+-  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := Nat.find_spec hex
+-  have hlive : ∀ j < t, (M.tm.runFrom (M.tm.initCfg s) j).state ≠ none :=
+-    fun j hj => Nat.find_min hex hj
+-  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out :=
+-    ((computesInTime_iff M s _ t).mpr ⟨hh, rfl⟩).output_unique hM
++  obtain ⟨t, ht, hlive, heq⟩ :=
++    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg s) hspec.1
++  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := by
++    rw [heq]
++    exact hspec.1
++  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out := by
++    rw [heq]
++    exact hspec.2
+   have htag : VirtualTag (M.tm.initCfg s).inputPos true := by
+     simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]
+   obtain ⟨b, hb, hr⟩ := emCall_eval_run M (M.tm.initCfg s) true htag
+@@ -3624,17 +3624,7 @@
+     (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+     ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+       tm.runFrom c t = d := by
+-  classical
+-  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩
+-  let t := Nat.find hh
+-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
+-  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
+-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
+-    Function.iterate_fixed (hfix _ hs) _
+-  have he := tm.runFrom_add c t (T - t)
+-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
+-  exact he.symm
++  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+ 
+ /-- Each tracked tape's native cleanup can dispatch at its actual positive
+ first return with the exact blank endpoint, never at the analysis deadline.
+@@ -3808,16 +3798,16 @@
+     (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (T + x.length + 2) =
+       emCallRightScan M (M.tm.runFrom (M.tm.initCfg x) T) none x.length (le_refl _) := by
+   classical
+-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hc⟩
+-  let t := Nat.find hex
++  obtain ⟨t, ht, hlive, heq⟩ :=
++    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hc
+   let c := M.tm.runFrom (M.tm.initCfg x) t
+-  have ht : t ≤ T := Nat.find_min' hex hc
+-  have hs : c.state = none := Nat.find_spec hex
+-  have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := by
+-    rw [show T = t + (T - t) by omega, MultiTapeTM.runFrom_add,
+-      MultiTapeTM.runFrom_of_halt _ hs]
++  have hs : c.state = none := by
++    change (M.tm.runFrom (M.tm.initCfg x) t).state = none
++    rw [heq]
++    exact hc
++  have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := heq.symm
+   have hi : (emCallRightTM M).tm.initCfg x = emCallRightCfg M (M.tm.initCfg x) := rfl
+-  have hr := emCall_right_run M (M.tm.initCfg x) t (fun j hj => Nat.find_min hex hj)
++  have hr := emCall_right_run M (M.tm.initCfg x) t hlive
+   obtain ⟨r, hrle, hfinish⟩ := emCall_right_finish M c hs
+   have hrun : (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (t + r) =
+       emCallRightScan M c none x.length (le_refl _) := by
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -1833,14 +1833,18 @@
+       (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =
+         lenCfg M c (some (.inr (.inr none))) 0 (by omega) c.output.length := by
+   classical
+-  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
+-    ⟨T, ((computesInTime_iff _ _ _ _).mp hM).1⟩
+-  let t := Nat.find hh
++  have hspec := (computesInTime_iff M x w T).mp hM
++  obtain ⟨t, ht, hlive, heq⟩ :=
++    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hspec.1
+   let c := M.tm.runFrom (M.tm.initCfg x) t
+-  have ht : t ≤ T := Nat.find_min' hh ((computesInTime_iff _ _ _ _).mp hM).1
+-  have hs : c.state = none := Nat.find_spec hh
+-  have hc : M.ComputesInTime x c.output t := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+-  have ho : c.output = w := hc.output_unique hM
++  have hs : c.state = none := by
++    change (M.tm.runFrom (M.tm.initCfg x) t).state = none
++    rw [heq]
++    exact hspec.1
++  have ho : c.output = w := by
++    change (M.tm.runFrom (M.tm.initCfg x) t).output = w
++    rw [heq]
++    exact hspec.2
+   let emb : M.State → (pairCountTM M).State := Sum.inl
+   let ret : (pairCountTM M).State := .inr (.inl 0)
+   have hinit : (pairCountTM M).tm.initCfg x = captureCfg emb ret [] [] (M.tm.initCfg x) := by
+@@ -1851,7 +1855,7 @@
+       captureCfg emb ret [] [] c := by
+     rw [hinit]
+     exact capture_run M.tm (pairCountTM M).tm emb ret (fun _ _ _ => rfl)
+-      [] [] _ t (fun s hst => Nat.find_min hh hst)
++      [] [] _ t hlive
+   let ready : Cfg (M.k + 1) Bool (pairCountTM M).State x :=
+     {lenCfg M c (some (.inr (.inl 1))) 0 (by omega) c.output.length with
+       inputPos := c.inputPos}
+@@ -3452,29 +3456,31 @@
+   classical
+   obtain ⟨t, ht, he⟩ := fwdMap_setup M x
+   simp only [hd] at he
+-  have hex : ∃ u, fwdMapEntered M
+-      ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) u) := by
+-    refine ⟨t, M.tm.q₀, true, ?_⟩
+-    rw [he]
++  let stop : FwdMapState M.State → Prop := fun r => ∃ q tag, r = .run q tag
++  have hfix : ∀ z : Cfg (1 + (1 + M.k)) Bool (FwdMapState M.State) x,
++      (∃ r, z.state = some r ∧ stop r) → (fwdMapTM M false).tm.step z = z := by
++    rintro z ⟨r, hr, q, tag, hq⟩
++    have hentered : fwdMapEntered M z := ⟨q, tag, by rw [hr, hq]⟩
++    have hs := fwdMapSetup_stationary M z hentered 1
++    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using hs
++  have hdstop : ∃ r,
++      (fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
++        (pairEncode a [])).state = some r ∧ stop r := by
++    refine ⟨.run M.tm.q₀ true, ?_, M.tm.q₀, true, rfl⟩
+     simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
+-  let u := Nat.find hex
+-  have hu : u ≤ t := Nat.find_min' hex (by
+-    rw [he]
+-    refine ⟨M.tm.q₀, true, ?_⟩
+-    simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some])
++  obtain ⟨u, hu, hcut, hefirst⟩ := MultiTapeTM.exists_first_entry_of_fixed
++    (fwdMapTM M false).tm stop ((fwdMapTM M false).tm.initCfg x)
++    (fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
++      (pairEncode a [])) t hfix hdstop he
+   have hg : ∀ v < u, ¬fwdMapEntered M
+-      ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v) :=
+-    fun v hv => Nat.find_min hex hv
++      ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v) := by
++    rintro v hv ⟨q, tag, hq⟩
++    exact hcut v hv ⟨.run q tag, hq, q, tag, rfl⟩
+   have hprefix (v : ℕ) (hv : v ≤ u) := fwdMapSetup_run M x v
+     (fun w hw => hg w (by omega))
+   refine ⟨u, hu.trans ht, ?_, hprefix⟩
+   rw [hprefix u (le_refl _)]
+-  have hs := fwdMapSetup_stationary M _ (Nat.find_spec hex) (t - u)
+-  have hh : (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) t =
+-      (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) u := by
+-    rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
+-    exact hs
+-  rw [← hh, he]
++  exact hefirst
+ 
+ /-- A malformed encoding never reaches a payload state, since such a setup
+ state would remain live forever. Hence its entire operational trajectory
+@@ -4476,17 +4482,15 @@
+     (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)
+     (hd : d.state = some q) (hT : tm.runFrom c T = d) :
+     ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some q) ∧ tm.runFrom c t = d := by
+-  classical
+-  have hh : ∃ t, (tm.runFrom c t).state = some q := ⟨T, by rw [hT, hd]⟩
+-  let t := Nat.find hh
+-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT, hd])
+-  have hs : (tm.runFrom c t).state = some q := Nat.find_spec hh
+-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
+-    Function.iterate_fixed (hfix _ hs) _
+-  have he := tm.runFrom_add c t (T - t)
+-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
+-  exact he.symm
++  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed tm (fun r => r = q) c d T
++    (by
++      rintro z ⟨r, hz, hr⟩
++      subst r
++      exact hfix z hz)
++    ⟨q, hd, rfl⟩ hT
++  refine ⟨t, ht, ?_, he⟩
++  intro j hj hq
++  exact hcut j hj ⟨q, hq, rfl⟩
+ 
+ /-- The cleanup's return seam is absorbing, so its exact restoration can be
+ exported with positive duration and no earlier return-state visit. -/
+@@ -4690,16 +4694,8 @@
+     ∃ t ≤ T, host.runFrom (c.mapState emb) t = d.mapState emb ∧
+       splitSafe host anchor (c.mapState emb) t := by
+   classical
+-  have hex : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q :=
+-    ⟨T, by rw [hT]; exact hd⟩
+-  let t := Nat.find hex
+-  have ht : t ≤ T := Nat.find_min' hex (by rw [hT]; exact hd)
+-  have he : tm.runFrom c t = d := by
+-    have hh := tm.runFrom_add c t (T - t)
+-    have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
+-      Function.iterate_fixed (hfix _ (Nat.find_spec hex)) _
+-    rw [Nat.add_sub_of_le ht, hT, hconst] at hh
+-    exact hh.symm
++  obtain ⟨t, ht, hcut, he⟩ :=
++    MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+   have hp : ∀ j ≤ t, host.runFrom (c.mapState emb) j = (tm.runFrom c j).mapState emb := by
+     intro j
+     induction j with
+@@ -4713,7 +4709,7 @@
+       cases hz : z.state with
+       | none => simp [MultiTapeTM.step, Cfg.mapState, hz]
+       | some q =>
+-        have hn : ¬stop q := fun hq => Nat.find_min hex (by omega) ⟨q, hz, hq⟩
++        have hn : ¬stop q := fun hq => hcut j (by omega) ⟨q, hz, hq⟩
+         simp only [MultiTapeTM.step, Cfg.mapState, hz, Option.map_some]
+         rw [hagree q hn]
+         rfl
+@@ -4907,16 +4903,12 @@
+   classical
+   let c := splitBank M s (some start) []
+   let d := splitBank M s none out
+-  have hh : ∃ t, (M.tm.runFrom c t).state = none := ⟨T, by rw [hT]; rfl⟩
+-  let t := Nat.find hh
+-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; rfl)
+-  have he : M.tm.runFrom c t = d := by
+-    have h := M.tm.runFrom_add c t (T - t)
+-    rw [Nat.add_sub_of_le ht, hT, M.tm.runFrom_of_halt _ (Nat.find_spec hh)] at h
+-    exact h.symm
++  have hhalt : (M.tm.runFrom c T).state = none := by rw [hT]; rfl
++  obtain ⟨t, ht, hlive, heq⟩ := MultiTapeTM.exists_first_halt M.tm c hhalt
++  have he : M.tm.runFrom c t = d := heq.trans hT
+   have hp (j : ℕ) (hj : j ≤ t) := splitCount_run M.tm (splitBodyTM M start).tm
+     SplitBodyState.count SplitBodyState.check (fun _ _ _ _ => rfl) w s c j
+-    (fun l hl => Nat.find_min hh (by omega))
++    (fun l hl => hlive l (by omega))
+   refine ⟨t, ht, ?_, ?_⟩
+   · rw [hp t (le_refl _), he]
+   · intro j hj
+@@ -5892,17 +5884,7 @@
+     (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
+     ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
+       tm.runFrom c t = d := by
+-  classical
+-  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩
+-  let t := Nat.find hh
+-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
+-  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
+-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
+-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
+-    Function.iterate_fixed (hfix _ hs) _
+-  have he := tm.runFrom_add c t (T - t)
+-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
+-  exact he.symm
++  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
+ 
+ /-- The silent comparator reaches its exact endpoint on its first visit to
+ either Boolean return state, after a positive number of steps.
+--- a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+@@ -724,18 +724,22 @@
+       (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) a =
+         timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads b := by
+   classical
+-  have hh : ∃ t, (D.tm.runFrom (D.tm.initCfg x) t).state = none :=
+-    ⟨T, ((computesInTime_iff _ _ _ _).mp hD).1⟩
+-  let t := Nat.find hh
++  have hspec := (computesInTime_iff D x [b] T).mp hD
++  obtain ⟨t, ht, hlive, heq⟩ :=
++    MultiTapeTM.exists_first_halt D.tm (D.tm.initCfg x) hspec.1
+   let c := D.tm.runFrom (D.tm.initCfg x) t
+-  have ht : t ≤ T := Nat.find_min' hh ((computesInTime_iff _ _ _ _).mp hD).1
+-  have hs : c.state = none := Nat.find_spec hh
+-  have hc : D.ComputesInTime x c.output t := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+-  have ho : c.output = [b] := hc.output_unique hD
++  have hs : c.state = none := by
++    change (D.tm.runFrom (D.tm.initCfg x) t).state = none
++    rw [heq]
++    exact hspec.1
++  have ho : c.output = [b] := by
++    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]
++    rw [heq]
++    exact hspec.2
+   have hcap : (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) t =
+       timedControlCfg D M₁ M₂ c := by
+     rw [timed_control_init]
+-    exact timed_capture D M₁ M₂ _ t (fun s hst => Nat.find_min hh hst)
++    exact timed_capture D M₁ M₂ _ t hlive
+   obtain ⟨r, hrle, hr⟩ := timed_rewind (timedCondTM D M₁ M₂).tm
+     (.inr (.inr (.inl (b, false)))) (.inr (.inr (.inl (b, true))))
+     (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))
+--- a/TCSlib/Complexity/TuringMachine/Composition.lean
++++ b/TCSlib/Complexity/TuringMachine/Composition.lean
+@@ -683,14 +683,18 @@
+         rightCfg (fun q => .inr (.inr q)) ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads := by
+   classical
+   obtain ⟨tD, hDc⟩ := hD
+-  have hh : ∃ t, (D.tm.runFrom (D.tm.initCfg x) t).state = none :=
+-    ⟨tD, ((computesInTime_iff D x [b] tD).mp hDc).1⟩
+-  let t := Nat.find hh
++  have hspec := (computesInTime_iff D x [b] tD).mp hDc
++  obtain ⟨t, _ht, hlive, heq⟩ :=
++    MultiTapeTM.exists_first_halt D.tm (D.tm.initCfg x) hspec.1
+   let cf := D.tm.runFrom (D.tm.initCfg x) t
+-  have hstop : cf.state = none := Nat.find_spec hh
+-  have hc : D.ComputesInTime x cf.output t :=
+-    (computesInTime_iff D x cf.output t).mpr ⟨hstop, rfl⟩
+-  have hout : cf.output = [b] := hc.output_unique hDc
++  have hstop : cf.state = none := by
++    change (D.tm.runFrom (D.tm.initCfg x) t).state = none
++    rw [heq]
++    exact hspec.1
++  have hout : cf.output = [b] := by
++    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]
++    rw [heq]
++    exact hspec.2
+   have hi : (condTM D M₁ M₂).tm.initCfg x = controlCfg D M₁ M₂ (D.tm.initCfg x) := by
+     refine Cfg.ext rfl rfl ?_ ?_ rfl
+     · funext i
+@@ -700,7 +704,7 @@
+   have hrun : (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
+       controlCfg D M₁ M₂ cf := by
+     rw [hi]
+-    exact controlCfg_run D M₁ M₂ (D.tm.initCfg x) t (fun s hs => Nat.find_min hh hs)
++    exact controlCfg_run D M₁ M₂ (D.tm.initCfg x) t hlive
+   obtain ⟨r, hr⟩ := rewind_from_any (condTM D M₁ M₂).tm
+     (.inl (none, some b)) (.inr (.inl (some b)))
+     (some (.inr (.inr (branchTM M₁ M₂ b).tm.q₀)))
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -1203,18 +1203,21 @@
+       (bufferedCompTM M₁ M₂).tm.runFrom ((bufferedCompTM M₁ M₂).tm.initCfg x) a =
+         bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg y) true p tapes heads := by
+   classical
+-  have hh : ∃ t, (M₁.tm.runFrom (M₁.tm.initCfg x) t).state = none :=
+-    ⟨t₁, ((computesInTime_iff M₁ x y t₁).mp h₁).1⟩
+-  let t := Nat.find hh
++  have hspec := (computesInTime_iff M₁ x y t₁).mp h₁
++  obtain ⟨t, ht, hlive, heq⟩ :=
++    MultiTapeTM.exists_first_halt M₁.tm (M₁.tm.initCfg x) hspec.1
+   let c := M₁.tm.runFrom (M₁.tm.initCfg x) t
+-  have hs : c.state = none := Nat.find_spec hh
+-  have ht : t ≤ t₁ := Nat.find_min' hh ((computesInTime_iff M₁ x y t₁).mp h₁).1
+-  have hc : M₁.ComputesInTime x c.output t :=
+-    (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+-  have ho : c.output = y := hc.output_unique h₁
++  have hs : c.state = none := by
++    change (M₁.tm.runFrom (M₁.tm.initCfg x) t).state = none
++    rw [heq]
++    exact hspec.1
++  have ho : c.output = y := by
++    change (M₁.tm.runFrom (M₁.tm.initCfg x) t).output = y
++    rw [heq]
++    exact hspec.2
+   refine ⟨t + (y.length + 2), c.inputPos, c.workTapes, c.workTapePos, by omega, ?_⟩
+   rw [MultiTapeTM.runFrom_add, bufferedFirstCfg_init,
+-    bufferedFirstCfg_run M₁ M₂ _ t (fun s hs => Nat.find_min hh hs)]
++    bufferedFirstCfg_run M₁ M₂ _ t hlive]
+   have hf := bufferedFirstCfg_rewind M₁ M₂ c hs
+   cases ho
+   exact hf

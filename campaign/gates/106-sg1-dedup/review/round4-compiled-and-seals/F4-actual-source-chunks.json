@@ -1,0 +1,34 @@
+[
+  {
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "name": "sat_live_prefix",
+    "start_line": 3903,
+    "header": "/-- Live endpoints force earlier module states to be live by\n`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/\nprivate lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)\n    (ht : (tm.runFrom c t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom c u).state ≠ none ",
+    "body": "  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht\n",
+    "chunk": "sat_live_prefix.actual-chunk.lean.txt",
+    "imports": [
+      "TCSlib.Complexity.Formulas.CNFEncoding",
+      "TCSlib.Complexity.ClassNP.NP",
+      "TCSlib.Complexity.ClassNP.Reductions",
+      "Mathlib.Tactic.FinCases",
+      "Mathlib.Data.List.MinMax"
+    ]
+  },
+  {
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_live_prefix",
+    "start_line": 6228,
+    "header": "/-- Live endpoints force earlier module states to be live by\n`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/\nprivate lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)\n    (ht : (tm.runFrom c t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom c u).state ≠ none ",
+    "body": "  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht\n",
+    "chunk": "clA5_live_prefix.actual-chunk.lean.txt",
+    "imports": [
+      "TCSlib.Complexity.ClassNP.PolyTimeBlockLoop",
+      "TCSlib.Complexity.ClassNP.PolyTimePrefix",
+      "TCSlib.Complexity.ClassNP.SAT",
+      "TCSlib.Complexity.ClassNP.TMSAT",
+      "TCSlib.Complexity.TuringMachine.Robustness.Oblivious",
+      "TCSlib.Complexity.CookLevin.Snapshot",
+      "TCSlib.Complexity.TuringMachine.Build.Seam"
+    ]
+  }
+]

@@ -1,0 +1,20 @@
+SEAL_ACTIVE|condTM_start|18
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v2.lean:696:8: error: Type mismatch
+  rightCfg (fun q => ?m.26) (MultiTapeTM.initCfg x) tapes heads
+has type
+  Cfg (D.k + (M₁.branchTM M₂ b).k) Bool ?m.23 x
+but is expected to have type
+  Cfg (D.condTM M₁ M₂).k Bool (D.condTM M₁ M₂).State x
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v2.lean:696:27: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.inr` could not be determined
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v2.lean:731:22: error: Application type mismatch: The argument
+  (M₁.branchTM M₂ b).tm.q₀
+has type
+  (M₁.branchTM M₂ b).State
+but is expected to have type
+  M₁.State ⊕ M₂.State
+in the application
+  Sum.inr (M₁.branchTM M₂ b).tm.q₀
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v2.lean:787:8: warning: declaration uses 'sorry'
+LOCAL_ROOT|condTM_start|_private.Sealed_Composition_v2.0.Turing.FinTM.condTM_start
+LOCAL_AX|{"axioms":["propext","sorryAx","Classical.choice","Quot.sound"],"name":"_private.Sealed_Composition_v2.0.Turing.FinTM.condTM_start","short":"condTM_start"}
+SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Composition|1

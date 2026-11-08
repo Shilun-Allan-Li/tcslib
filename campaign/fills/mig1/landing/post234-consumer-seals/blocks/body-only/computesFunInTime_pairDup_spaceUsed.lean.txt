@@ -1,0 +1,18 @@
+/-- **P14 space row, pair duplication** (design §12
+R3; annotates `Turing.FinTM.computesFunInTime_pairDup`). The duplication
+encoder runs in constant work-tape space: both passes re-read the input
+tape, nothing is buffered.
+
+**Proof sketch.** Retain the witness `Turing.pairDiagTM` and the time coefficient from
+`Turing.pairDiagTM_computes`. The published `Turing.pairDiagTM_spaceUsed` gives zero space
+directly, so the existing constant-space witness bounds it. -/
+theorem computesFunInTime_pairDup_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => pairEncode x x)
+        (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+  ⟨pairDiagTM, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
+    (pairDiagTM_computes x).mono (by omega), fun x t => by
+    rw [pairDiagTM_spaceUsed]; omega⟩
+

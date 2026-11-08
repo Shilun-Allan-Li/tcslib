@@ -1,0 +1,9 @@
+"""Run our already generated probes sequentially; never parallelize own Lean."""
+from pathlib import Path
+import json,subprocess,sys
+v=Path('/private/tmp/mig-post234-consumer-validation')
+for job in json.loads((v/('seal-build-'+sys.argv[1])/'jobs.json').read_text()):
+    p=subprocess.run(['python3','-I','/private/tmp/mig-run-consumer-validation.py',job['label'],job['filename']],stdout=subprocess.PIPE,stderr=subprocess.STDOUT)
+    (v/'runs'/(job['label']+'-driver.out')).write_bytes(p.stdout)
+    run=json.loads((v/'runs'/(job['label']+'-run.json')).read_text())
+    print(json.dumps({k:run[k] for k in ['exit','errors','warnings','sorry_warnings','seconds']}|dict(label=job['label'])),flush=True)

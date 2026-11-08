@@ -1,0 +1,68 @@
+import TCSlib.Complexity.Formulas.CNFEncoding
+import TCSlib.Complexity.ClassNP.NP
+import TCSlib.Complexity.ClassNP.Reductions
+import Mathlib.Tactic.FinCases
+import Mathlib.Data.List.MinMax
+import Lean
+set_option maxHeartbeats 0
+section F4ControlScope
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible] Turing.moveInputPos Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step
+open Lean Elab Command Meta in
+elab "#g106_r4_sat_controls" : command => do
+  let names : List Name := [`Turing.moveInputPos, `Turing.Action.apply, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.step]
+  let mut index := 0
+  for n in names do
+    let some (.defnInfo di) := (← getEnv).find? n | throwError "not a definition {n}"
+    for mode in ["point", "abstract"] do
+      index := index + 1
+      let pair ← liftTermElabM do
+        let levels := di.levelParams.map Level.param
+        let head := mkConst n levels
+        let solve := fun (lhs rhs : Expr) => do
+          let goalType ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar goalType
+          try
+            goal.mvarId!.refl
+            let value ← instantiateMVars goal
+            pure (some (← instantiateMVars goalType, value))
+          catch ex =>
+            logInfo m!"CONTROL|{n}|{mode}|FAIL"
+            logError m!"RFL_CONTROL|{n}|{mode}|{ex.toMessageData}"
+            pure none
+        if mode == "abstract" then
+          solve head di.value
+        else
+          forallTelescope di.type fun xs resultType => do
+            let mut lhs := mkAppN head xs
+            let mut rhs := (mkAppN di.value xs).headBeta
+            -- Projection goals are distinct from the complete equation even for nullary data.
+            match resultType.getAppFn with
+            | .const ``Turing.FinTM _ =>
+              lhs := mkProj ``Turing.FinTM 0 lhs
+              rhs := mkProj ``Turing.FinTM 0 rhs
+            | .const ``Turing.Cfg _ =>
+              lhs := mkProj ``Turing.Cfg 0 lhs
+              rhs := mkProj ``Turing.Cfg 0 rhs
+            | .const ``Turing.MultiTapeTM _ =>
+              lhs := mkProj ``Turing.MultiTapeTM 0 lhs
+              rhs := mkProj ``Turing.MultiTapeTM 0 rhs
+            | .const ``Turing.Action _ =>
+              lhs := mkProj ``Turing.Action 0 lhs
+              rhs := mkProj ``Turing.Action 0 rhs
+            | _ => pure ()
+            match ← solve lhs rhs with
+            | none => pure none
+            | some (type, value) =>
+              pure (some (← mkForallFVars xs type, ← mkLambdaFVars xs value))
+      match pair with
+      | none => pure ()
+      | some (type, value) =>
+        let declName := Name.mkSimple s!"G106R4SATRflControl_{index}_{mode}"
+        liftCoreM <| addDecl (.thmDecl {
+          name := declName, levelParams := di.levelParams, type := type, value := value })
+        logInfo m!"CONTROL|{n}|{mode}|PASS|kernelChecked={declName}"
+
+#g106_r4_sat_controls
+
+end F4ControlScope

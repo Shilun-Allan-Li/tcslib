@@ -1,0 +1,1 @@
+The metadata-export preparation failed with one missing Repr ReducibilityHints instance. No matcher value was exported; no owner/source failure occurred. v2 manually reflects the three hints constructors using the same strategy as the trusted inventory. Entire failed source/receipt/raw archive retained.

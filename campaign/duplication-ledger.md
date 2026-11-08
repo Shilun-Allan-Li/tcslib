@@ -1653,11 +1653,19 @@ uses its existing shared equation. Short constructor/field-reader packages alrea
 canonical API; their remaining source similarity is disclosed rather than converted into a
 new blanket exception.
 
-**Still open:** the exact first-entry twin (`emCall_first_entry`/`emitter_first_entry`) awaits
-the approved shared absorbing-stop API, now being implemented/gated separately as gate119. The two constant-space reader gaps and
-redirect-space public-home exception are separate gate holds. No new debt is acknowledged here,
-and the older SAT/Hardness scheduled-kind rulings are not extended to these leaves. Final
-retirement accounting is updated only after the gated PR merges.
+**Current candidate update (post-#234):** gate119 is closed and its prerequisite merged.
+Five fixed-LIVE-stop consumers now call the shared Finite theorem; seven distinct first-None
+consumers call the existing first-halt theorem. The two constant-space leaves consume the
+merged zero-space facts. The exact redirect-space theorem remains once in Wrappers and its
+Catalog duplicate is removed. Six additional body readers and the two explicitly approved
+kernel-equivalent private header transports are implemented; the final Core-reader correction
+has its own native/seal evidence. These former interface HOLDs are resolved in candidate#233,
+not retired on the campaign branch. Current dispositions and limits are in
+`campaign/fills/mig1/landing/factoring-dispositions-post234.md`.
+
+No new debt is acknowledged; the SAT/Hardness kind rulings are not extended to these leaves.
+Full source/screen/accounting checks pass at the candidate; current replay and gate118 remain
+open. Final retirement accounting changes only after Seyoon merges the gated PR.
 
 ## FE-LIVE-1 — fixed-live-stop first-entry proofs (Seyoon, 2026-11-08 UTC)
 
@@ -1720,3 +1728,22 @@ maintainer evidence. See fills/f6/landing/seam-step-repoint-preflight,
 seam-step-repoint-applied, replay-mf62 and source-screen23-resumed. Each kind is proposed
 retired only on #235 merge. This bounded enumeration/inspection is not whole-library absence
 or a generic duplication exception; inherited source candidates retain their own dispositions.
+
+
+## BLIVE-REUSE-1 — backward liveness (proposed retirement in #215)
+
+Canonical contract: Turing.MultiTapeTM.runFrom_state_ne_none_of_le (Finite), any alphabet/state,
+arbitrary start and live endpoint at t imply liveness at every u≤t. Gate106R3F4 confirmed
+sat_live_prefix and clA5_live_prefix as exactBool specializations with copied five-line proofs.
+The old live-prefix record is a watch; sevenSG1 kinds and FE-LIVE-1 do not acknowledge this fact.
+
+Both privateheaders remain; implementations now directly cite the canonical theorem at078263a7.
+No new API/import/statement/machine/debt permission. Same-kind inspection covers84 conservative
+declaration candidates plus inline/contrapositive/time-split closings in all5touchedfiles; only
+these2 implementations were identified. CounterLoop already cites the public theorem. FirstNone
+selection, fixedLIVE-stop entry and post-halt head-bound tails have different contracts.
+Full source chunks/line/hash/dispositions: gate106/review/round3-return-review/.
+
+Retired only on #215merge. These names are already in the affected-name unions; no new member
+or threshold crossing is added. Other watches stay unacknowledged. This is bounded mechanical
+reuse, not global absence, exhaustive accounting or retention permission.

@@ -1,0 +1,254 @@
+SEAL_ACTIVE|condTM_start|18
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:739:2: error: unsolved goals
+case state
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+tD : ℕ
+hDc : D.ComputesInTime x [b] tD
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).output = [b]
+t : ℕ
+_ht : t ≤ tD
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD
+cf : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hstop : cf.state = none
+hout : cf.output = [b]
+hi : MultiTapeTM.initCfg x = D.controlCfg M₁ M₂ (MultiTapeTM.initCfg x)
+hrun : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.controlCfg M₁ M₂ cf
+r : ℕ
+hr :
+  MultiTapeTM.runFrom (D.controlCfg M₁ M₂ cf) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (have this := (M₁.branchTM M₂ b).tm.q₀;
+              this))),
+      inputPos := 1, workTapes := (D.controlCfg M₁ M₂ cf).workTapes, workTapePos := (D.controlCfg M₁ M₂ cf).workTapePos,
+      output := (D.controlCfg M₁ M₂ cf).output }
+⊢ some (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀)) =
+    Option.map (fun q => Sum.inr (Sum.inr q)) (MultiTapeTM.initCfg x).state
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:741:2: error: unsolved goals
+case inputPos
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+tD : ℕ
+hDc : D.ComputesInTime x [b] tD
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).output = [b]
+t : ℕ
+_ht : t ≤ tD
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD
+cf : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hstop : cf.state = none
+hout : cf.output = [b]
+hi : MultiTapeTM.initCfg x = D.controlCfg M₁ M₂ (MultiTapeTM.initCfg x)
+hrun : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.controlCfg M₁ M₂ cf
+r : ℕ
+hr :
+  MultiTapeTM.runFrom (D.controlCfg M₁ M₂ cf) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (have this := (M₁.branchTM M₂ b).tm.q₀;
+              this))),
+      inputPos := 1, workTapes := (D.controlCfg M₁ M₂ cf).workTapes, workTapePos := (D.controlCfg M₁ M₂ cf).workTapePos,
+      output := (D.controlCfg M₁ M₂ cf).output }
+⊢ 1 = (MultiTapeTM.initCfg x).inputPos
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:743:2: error: unsolved goals
+case workTapes.h.h.refine_2
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+tD : ℕ
+hDc : D.ComputesInTime x [b] tD
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).output = [b]
+t : ℕ
+_ht : t ≤ tD
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD
+cf : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hstop : cf.state = none
+hout : cf.output = [b]
+hi : MultiTapeTM.initCfg x = D.controlCfg M₁ M₂ (MultiTapeTM.initCfg x)
+hrun : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.controlCfg M₁ M₂ cf
+r : ℕ
+hr :
+  MultiTapeTM.runFrom (D.controlCfg M₁ M₂ cf) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (have this := (M₁.branchTM M₂ b).tm.q₀;
+              this))),
+      inputPos := 1, workTapes := (D.controlCfg M₁ M₂ cf).workTapes, workTapePos := (D.controlCfg M₁ M₂ cf).workTapePos,
+      output := (D.controlCfg M₁ M₂ cf).output }
+i : Fin (D.condTM M₁ M₂).k
+z : ℤ
+j : Fin (M₁.k + M₂.k)
+⊢ none = (MultiTapeTM.initCfg x).workTapes j z
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:747:2: error: unsolved goals
+case workTapePos.h.refine_2
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+tD : ℕ
+hDc : D.ComputesInTime x [b] tD
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).output = [b]
+t : ℕ
+_ht : t ≤ tD
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD
+cf : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hstop : cf.state = none
+hout : cf.output = [b]
+hi : MultiTapeTM.initCfg x = D.controlCfg M₁ M₂ (MultiTapeTM.initCfg x)
+hrun : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.controlCfg M₁ M₂ cf
+r : ℕ
+hr :
+  MultiTapeTM.runFrom (D.controlCfg M₁ M₂ cf) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (have this := (M₁.branchTM M₂ b).tm.q₀;
+              this))),
+      inputPos := 1, workTapes := (D.controlCfg M₁ M₂ cf).workTapes, workTapePos := (D.controlCfg M₁ M₂ cf).workTapePos,
+      output := (D.controlCfg M₁ M₂ cf).output }
+i : Fin (D.condTM M₁ M₂).k
+j : Fin (M₁.k + M₂.k)
+⊢ 0 = (MultiTapeTM.initCfg x).workTapePos j
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:751:2: error: unsolved goals
+case output
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+tD : ℕ
+hDc : D.ComputesInTime x [b] tD
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).output = [b]
+t : ℕ
+_ht : t ≤ tD
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD
+cf : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hstop : cf.state = none
+hout : cf.output = [b]
+hi : MultiTapeTM.initCfg x = D.controlCfg M₁ M₂ (MultiTapeTM.initCfg x)
+hrun : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.controlCfg M₁ M₂ cf
+r : ℕ
+hr :
+  MultiTapeTM.runFrom (D.controlCfg M₁ M₂ cf) r =
+    {
+      state :=
+        some
+          (Sum.inr
+            (Sum.inr
+              (have this := (M₁.branchTM M₂ b).tm.q₀;
+              this))),
+      inputPos := 1, workTapes := (D.controlCfg M₁ M₂ cf).workTapes, workTapePos := (D.controlCfg M₁ M₂ cf).workTapePos,
+      output := (D.controlCfg M₁ M₂ cf).output }
+⊢ [] = (MultiTapeTM.initCfg x).output
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:739:31: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [rightCfg_state, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵Cfg.init_state, Option.map_some, branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:739:55: warning: This simp argument is unused:
+  Cfg.init_state
+
+Hint: Omit it from the simp argument list.
+  simp only [rightCfg_state, MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t̵_̵s̵t̵a̵t̵e̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵Option.map_some, branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:740:6: warning: This simp argument is unused:
+  Option.map_some
+
+Hint: Omit it from the simp argument list.
+  simp only [rightCfg_state, MultiTapeTM.initCfg_eq, Cfg.init_state, O̵p̵t̵i̵o̵n̵.̵m̵a̵p̵_̵s̵o̵m̵e̵,̵ ̵branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:741:34: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [rightCfg_inputPos, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵Cfg.init_inputPos, branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:741:58: warning: This simp argument is unused:
+  Cfg.init_inputPos
+
+Hint: Omit it from the simp argument list.
+  simp only [rightCfg_inputPos, MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t̵_̵i̵n̵p̵u̵t̵P̵o̵s̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:746:8: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [controlCfg, rightCfg_workTapes, Fin.addCases_left, Fin.addCases_right,
+          M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵Cfg_̵e̵q̵,̵ ̵C̵f̵g̵.init_workTapes, branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:746:32: warning: This simp argument is unused:
+  Cfg.init_workTapes
+
+Hint: Omit it from the simp argument list.
+  simp only [controlCfg, rightCfg_workTapes, Fin.addCases_left, Fin.addCases_right,
+          MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵s̵,̵ ̵branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:750:8: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [controlCfg, rightCfg_workTapePos, Fin.addCases_left, Fin.addCases_right,
+          M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵Cfg_̵e̵q̵,̵ ̵C̵f̵g̵.init_workTapePos, branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:750:32: warning: This simp argument is unused:
+  Cfg.init_workTapePos
+
+Hint: Omit it from the simp argument list.
+  simp only [controlCfg, rightCfg_workTapePos, Fin.addCases_left, Fin.addCases_right,
+          MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t̵_̵w̵o̵r̵k̵T̵a̵p̵e̵P̵o̵s̵,̵ ̵branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:751:44: warning: This simp argument is unused:
+  MultiTapeTM.initCfg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [controlCfg, rightCfg_output, M̵u̵l̵t̵i̵T̵a̵p̵e̵T̵M̵.̵i̵n̵i̵t̵C̵f̵g̵_̵e̵q̵,̵ ̵Cfg.init_output, branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Composition_v4.lean:751:68: warning: This simp argument is unused:
+  Cfg.init_output
+
+Hint: Omit it from the simp argument list.
+  simp only [controlCfg, rightCfg_output, MultiTapeTM.initCfg_eq, C̵f̵g̵.̵i̵n̵i̵t̵_̵o̵u̵t̵p̵u̵t̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵branchTM_k, branchTM_State]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+LOCAL_ROOT|condTM_start|_private.Sealed_Composition_v4.0.Turing.FinTM.condTM_start
+LOCAL_AX|{"axioms":["propext","sorryAx","Classical.choice","Quot.sound"],"name":"_private.Sealed_Composition_v4.0.Turing.FinTM.condTM_start","short":"condTM_start"}
+SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Composition|1

@@ -1,0 +1,140 @@
+{
+  "base": "750987d674899d97db3c73c7278c891fa8772b40",
+  "head": "078263a74fe90b92aa6228cf20e43726138afbe6",
+  "merged_API": "bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c",
+  "scope": "Only six actual upstream-only BASE pair additions and their four pre-existing private endpoints in the exact named25. No broad search or fresh debt ruling.",
+  "raw_rows": [
+    {
+      "a": "Finite.lean::exists_first_entry_of_fixed",
+      "b": "Catalog.lean::f2_catalogFirstEntry",
+      "shared": 249,
+      "denominator": 375,
+      "printed_percent": 66,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Finite.lean::exists_first_entry_of_fixed",
+      "b": "Loop.lean::emCall_first_entry",
+      "shared": 341,
+      "denominator": 403,
+      "printed_percent": 85,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Finite.lean::exists_first_entry_of_fixed",
+      "b": "Primitives.lean::catalogFirstEntry",
+      "shared": 249,
+      "denominator": 375,
+      "printed_percent": 66,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Finite.lean::exists_first_entry_of_fixed",
+      "b": "Primitives.lean::emitter_first_entry",
+      "shared": 341,
+      "denominator": 403,
+      "printed_percent": 85,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Loop.lean::emCall_first_entry",
+      "b": "Finite.lean::exists_first_entry_of_fixed",
+      "shared": 341,
+      "denominator": 515,
+      "printed_percent": 66,
+      "kind": "proof",
+      "cross_file": true
+    },
+    {
+      "a": "Primitives.lean::emitter_first_entry",
+      "b": "Finite.lean::exists_first_entry_of_fixed",
+      "shared": 341,
+      "denominator": 515,
+      "printed_percent": 66,
+      "kind": "proof",
+      "cross_file": true
+    }
+  ],
+  "private_sites": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "name": "Turing.FinTM.f2_catalogFirstEntry",
+      "head_equals_base_entire_chunk": true,
+      "sha256": "48aa5a4f7860e0a582fca03c1c8eabda1f5c77ae0565c35057ff6507150a6c8f",
+      "canonical_mapping": {
+        "stop": "fun s => s=q",
+        "fixedness": "hfix applied after extracting z.state=some q from an existential witness and singleton equality",
+        "endpoint": "hd supplies d.state=some q; hT is exact whole-config equality",
+        "earlier_cut": "not exists live singleton is equivalent to state != some q",
+        "time": "t≤T; zero allowed"
+      },
+      "full_chunk": "/-- A run reaching an absorbing control state has a least such entry, and its\nconfiguration at that first entry is already the final configuration.\n**Proof sketch.** Choose the least hit. Absorption makes its entire suffix\nconstant, so the bounded endpoint identifies the first-hit configuration. -/\nprivate lemma f2_catalogFirstEntry {k : ℕ} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : ℕ)\n    (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)\n    (hd : d.state = some q) (hT : tm.runFrom c T = d) :\n    ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some q) ∧ tm.runFrom c t = d := by\n  classical\n  have hh : ∃ t, (tm.runFrom c t).state = some q := ⟨T, by rw [hT, hd]⟩\n  let t := Nat.find hh\n  have ht : t ≤ T := Nat.find_min' hh (by rw [hT, hd])\n  have hs : (tm.runFrom c t).state = some q := Nat.find_spec hh\n  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩\n  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=\n    Function.iterate_fixed (hfix _ hs) _\n  have he := tm.runFrom_add c t (T - t)\n  rw [Nat.add_sub_of_le ht, hT, hconst] at he\n  exact he.symm",
+      "disposition": "Existing FE-LIVE-1 by-kind scheduled debt; unchanged upstream/private context, outside the five SG1 PR files. No new acceptance and no F4 equivalence."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.catalogFirstEntry",
+      "head_equals_base_entire_chunk": true,
+      "sha256": "0500f39270b1dce5f61aa25f40eb9bbb50339f4ffa886c2bca3ab7bcf2376a36",
+      "canonical_mapping": {
+        "stop": "fun s => s=q",
+        "fixedness": "hfix applied after extracting z.state=some q from an existential witness and singleton equality",
+        "endpoint": "hd supplies d.state=some q; hT is exact whole-config equality",
+        "earlier_cut": "not exists live singleton is equivalent to state != some q",
+        "time": "t≤T; zero allowed"
+      },
+      "full_chunk": "/-- A run reaching an absorbing control state has a least such entry, and its\nconfiguration at that first entry is already the final configuration.\n**Proof sketch.** Choose the least hit. Absorption makes its entire suffix\nconstant, so the bounded endpoint identifies the first-hit configuration. -/\nprivate lemma catalogFirstEntry {k : ℕ} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : ℕ)\n    (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)\n    (hd : d.state = some q) (hT : tm.runFrom c T = d) :\n    ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some q) ∧ tm.runFrom c t = d := by\n  classical\n  have hh : ∃ t, (tm.runFrom c t).state = some q := ⟨T, by rw [hT, hd]⟩\n  let t := Nat.find hh\n  have ht : t ≤ T := Nat.find_min' hh (by rw [hT, hd])\n  have hs : (tm.runFrom c t).state = some q := Nat.find_spec hh\n  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩\n  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=\n    Function.iterate_fixed (hfix _ hs) _\n  have he := tm.runFrom_add c t (T - t)\n  rw [Nat.add_sub_of_le ht, hT, hconst] at he\n  exact he.symm",
+      "disposition": "Existing FE-LIVE-1 by-kind scheduled debt; unchanged upstream/private context, outside the five SG1 PR files. No new acceptance and no F4 equivalence."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.emitter_first_entry",
+      "head_equals_base_entire_chunk": true,
+      "sha256": "f5a58a4f07979dc827a678fbb9099975bf35224ddeb6a5be1170d95f3fccbf53",
+      "canonical_mapping": {
+        "stop": "the exact supplied stop : S→Prop",
+        "fixedness": "hfix is the canonical every-config whole-configuration fixedness premise verbatim",
+        "endpoint": "same hd and hT, not state-only endpoint",
+        "earlier_cut": "same strict earlier negated stop predicate",
+        "extra_parameter": "DecidablePred stop is surplus to canonical classical theorem, not a stronger conclusion",
+        "time": "t≤T; zero allowed"
+      },
+      "full_chunk": "/-- A phase with an absorbing return state can be cut at its actual first\nreturn while retaining its complete configuration endpoint.\n**Proof sketch.** Choose the least return-state visit. Absorption identifies\nits configuration with the known bounded endpoint. The bound proves existence\nand bounds the first visit; it is never used to dispatch native control. -/\nprivate lemma emitter_first_entry {k : ℕ} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]\n    (c d : Cfg k Bool S w) (T : ℕ)\n    (hfix : ∀ z : Cfg k Bool S w, (∃ q, z.state = some q ∧ stop q) → tm.step z = z)\n    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :\n    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧\n      tm.runFrom c t = d := by\n  classical\n  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩\n  let t := Nat.find hh\n  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)\n  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh\n  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩\n  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=\n    Function.iterate_fixed (hfix _ hs) _\n  have he := tm.runFrom_add c t (T - t)\n  rw [Nat.add_sub_of_le ht, hT, hconst] at he\n  exact he.symm",
+      "disposition": "Existing FE-LIVE-1 by-kind scheduled debt; unchanged upstream/private context, outside the five SG1 PR files. No new acceptance and no F4 equivalence."
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "name": "Turing.FinTM.emCall_first_entry",
+      "head_equals_base_entire_chunk": true,
+      "sha256": "c88dc900cd454ca037db7ee828bc058e7daebdaf54c954f09d84b716b0fb6f4a",
+      "canonical_mapping": {
+        "stop": "the exact supplied stop : S→Prop",
+        "fixedness": "hfix is the canonical every-config whole-configuration fixedness premise verbatim",
+        "endpoint": "same hd and hT, not state-only endpoint",
+        "earlier_cut": "same strict earlier negated stop predicate",
+        "extra_parameter": "DecidablePred stop is surplus to canonical classical theorem, not a stronger conclusion",
+        "time": "t≤T; zero allowed"
+      },
+      "full_chunk": "/-- A phase with an absorbing return state can be cut at its actual first\nreturn while retaining its complete configuration endpoint.\n**Proof sketch.** Choose the least return-state visit. Absorption identifies\nits configuration with the known bounded endpoint. The bound proves existence\nand bounds the first visit; it is never used to dispatch native control. -/\nprivate lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}\n    (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]\n    (c d : Cfg k Bool S w) (T : ℕ)\n    (hfix : ∀ z : Cfg k Bool S w, (∃ q, z.state = some q ∧ stop q) → tm.step z = z)\n    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :\n    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧\n      tm.runFrom c t = d := by\n  classical\n  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩\n  let t := Nat.find hh\n  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)\n  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh\n  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩\n  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=\n    Function.iterate_fixed (hfix _ hs) _\n  have he := tm.runFrom_add c t (T - t)\n  rw [Nat.add_sub_of_le ht, hT, hconst] at he\n  exact he.symm",
+      "disposition": "Existing FE-LIVE-1 by-kind scheduled debt; unchanged upstream/private context, outside the five SG1 PR files. No new acceptance and no F4 equivalence."
+    }
+  ],
+  "canonical_full_chunk": "/-- A run ending in a designated live stop state first enters the stop states by its deadline,\nand that first entry is already the final configuration, provided every stop configuration is\nfixed by one step.\n\n**Proof sketch.** Choose the least stop-state time with `Nat.find`. Minimality gives the\nstrict earlier-time cut. The fixed-step hypothesis keeps every subsequent configuration equal\nto that first entry; `runFrom_add` then identifies it with the given final configuration. -/\ntheorem exists_first_entry_of_fixed {k : ℕ} {Symbol State : Type*}\n    {input : List Symbol} (tm : MultiTapeTM k Symbol State)\n    (stop : State → Prop) (c d : Cfg k Symbol State input) (T : ℕ)\n    (hfix : ∀ z : Cfg k Symbol State input,\n      (∃ q, z.state = some q ∧ stop q) → tm.step z = z)\n    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :\n    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧\n      tm.runFrom c t = d := by\n  classical\n  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q :=\n    ⟨T, by rw [hT]; exact hd⟩\n  let t := Nat.find hh\n  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)\n  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh\n  have hfixed : tm.step (tm.runFrom c t) = tm.runFrom c t := hfix _ hs\n  have hconst (n : ℕ) : tm.runFrom (tm.runFrom c t) n = tm.runFrom c t := by\n    induction n with\n    | zero => exact runFrom_zero\n    | succ n ih => rw [runFrom_succ_eq_step, hfixed]; exact ih\n  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩\n  have he := tm.runFrom_add c t (T - t)\n  rw [Nat.add_sub_of_le ht, hT, hconst] at he\n  exact he.symm",
+  "existing_user_ruling": {
+    "recorded_utc": "2026-11-08T01:05:27.630068+00:00",
+    "user_answer": "Accept this scheduled debt (Recommended)",
+    "family": "FE-LIVE-1",
+    "scope": "Existing fixed-live-stop first-entry proofs anywhere in TCSlib, including singleton, predicate, initial-exclusion positive-time and inline specializations; full-configuration fixedness, bounded earliest entry, strict earlier cut and exact endpoint.",
+    "owner": "maintainer(Codex)",
+    "window": "Staged MIG conversions in #233 before gate118; remaining existing instances in next12.2c consolidation after active MIG-1 and before further SAT/Hardness fills.",
+    "limits": "No None-halt extension, nonabsorbing visit, state-only absorption, new API/import/statement, or future-copy permission.",
+    "source": "f1ca767a10551960faf36ad9c8ff17bea3a2d88c",
+    "finding_sha256": "663dda3e98a0dca66162492f7319996babb2ec815159980a1e62bde6cda8a0c4",
+    "status": "ACKNOWLEDGED by Seyoon; implementation and follow-up audit remain open"
+  },
+  "interpretation": "Six directed edges represent four private endpoint proofs and one canonical original, with two reverse edges. The canonical public theorem is now merged at bf64/current750. All four retained sites require whole-configuration fixedness in a designated LIVE stop; they are not None-halt/F4 live-prefix facts. Their existing next12.2c after active MIG and before further SAT/Hardness fills schedule remains in force. Root owns canonical ledger/publication. No blanket acceptance of other candidates."
+}

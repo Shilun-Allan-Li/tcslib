@@ -1,0 +1,62 @@
+[
+  {
+    "source": "theorem t (c : Cfg (input := x)) : c = c := by rfl",
+    "header": "theorem t (c : Cfg (input := x)) : c = c:=",
+    "body": "by rfl",
+    "pass_": true
+  },
+  {
+    "source": "theorem t : let x := 0; x=x := by rfl",
+    "header": "theorem t : let x := 0; x=x:=",
+    "body": "by rfl",
+    "pass_": true
+  },
+  {
+    "source": "theorem t : let a := let b := 0; b; a=a := by rfl",
+    "header": "theorem t : let a := let b := 0; b; a=a:=",
+    "body": "by rfl",
+    "pass_": true
+  },
+  {
+    "source": "theorem t :\n  let hp : True := by\n    have := True.intro\n    assumption\n  True := by\n  exact hp",
+    "header": "theorem t :\n  let hp : True := by\n    have := True.intro\n    assumption\n  True:=",
+    "body": "by\n  exact hp",
+    "pass_": true
+  },
+  {
+    "source": "theorem t :\n  let hp : True := by\n    have h : True := by\n      have q := True.intro\n      exact q\n    exact h\n  True := by\n  exact hp",
+    "header": "theorem t :\n  let hp : True := by\n    have h : True := by\n      have q := True.intro\n      exact q\n    exact h\n  True:=",
+    "body": "by\n  exact hp",
+    "pass_": true
+  },
+  {
+    "source": "theorem t :\n  letI : Inhabited Nat := by\n    have x := 0\n    exact ⟨x⟩\n  True := by\n  trivial",
+    "header": "theorem t :\n  letI : Inhabited Nat := by\n    have x := 0\n    exact ⟨x⟩\n  True:=",
+    "body": "by\n  trivial",
+    "pass_": true
+  },
+  {
+    "source": "theorem t :\n  let hp : True := by have h := True.intro; exact h\n  True := by\n  exact hp",
+    "header": "theorem t :\n  let hp : True := by have h := True.intro; exact h\n  True:=",
+    "body": "by\n  exact hp",
+    "pass_": true
+  },
+  {
+    "source": "/-- := false -/\ntheorem t : True := by trivial",
+    "header": "/-- := false -/\ntheorem t : True:=",
+    "body": "by trivial",
+    "pass_": true
+  },
+  {
+    "source": "theorem t : ∀ x : ℤ,\n  |x| ≤ |x| := by intro x; exact le_rfl",
+    "header": "theorem t : ∀ x : ℤ,\n  |x| ≤ |x|:=",
+    "body": "by intro x; exact le_rfl",
+    "pass_": true
+  },
+  {
+    "source": "theorem t (h : P (x := y)) :\n  let a := 0\n  ∀ x : ℤ, |x| ≤ |x| := by intros; exact le_rfl",
+    "header": "theorem t (h : P (x := y)) :\n  let a := 0\n  ∀ x : ℤ, |x| ≤ |x|:=",
+    "body": "by intros; exact le_rfl",
+    "pass_": true
+  }
+]

@@ -1,0 +1,18 @@
+/-- **P11 space row, fixed-width increment** (design
+§12 R3; annotates `Turing.FinTM.computesFunInTime_incFixed`; the
+string-function counterpart of `Turing.incrementTM`). The incrementer
+runs in constant work-tape space: it validates and emits from two native
+input scans with the carry resident in control.
+
+**Proof sketch.** Retain the existing witness `Turing.FinTM.incFixedTM` and its time coefficient.
+The published `Turing.FinTM.incFixedTM_spaceUsed` gives zero space directly, so the existing
+constant-space witness bounds it. -/
+theorem computesFunInTime_incFixed_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => (incFixed x).getD [])
+        (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
+  ⟨incFixedTM, 3, (computesFunInTime_iff _ _ _).mpr incFixedTM_computes, fun x t => by
+    rw [incFixedTM_spaceUsed]; omega⟩
+

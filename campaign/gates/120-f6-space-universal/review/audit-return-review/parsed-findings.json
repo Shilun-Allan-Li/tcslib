@@ -1,0 +1,162 @@
+[
+  {
+    "id": "120-01",
+    "severity": "note",
+    "location": "Repository and gate120 packet",
+    "claim": "The immutable input and its current/historical partition verify.",
+    "evidence": "Audited exchange `0eb0d599d7b28882280de09ae85a819b21338afc`, source `073baa518700adc3d4b241cb48d2c78401549309`, records `e8196b1020b6be7c1b0894ecd92d8352f951dbb9`, against merged base `bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c`. Independently verified SHA-256 `99f4988aa4fc305953e7c67a71554c5d7c2b047fb3e1716f3bc58bcfd2cf542d`, 89,719,807 bytes, all 1,762 ordered sections against exact Git-tree blobs, both canonical/exchange indexes, 606 JSON sections and 30 empty sections. All 43 lossless substitutions, 25 binary aliases and 14 foundation manifests reconcile. Independently reconstructed the original 624-section bundle at its exact 8,707,327 bytes/SHA-256 `8fa482702846898f7fa04c4e1b0aa012300b4febaa6385ee8caa869cf14740be`.",
+    "proposed_fix": "None. The gate README correctly qualifies the older introduction."
+  },
+  {
+    "id": "120-02",
+    "severity": "note",
+    "location": "`TCSlib/Complexity/SpaceComplexity/Hierarchy.lean` · `space_universal`; model definitions",
+    "claim": "The literal target has the intended quantifiers and work-space meaning.",
+    "evidence": "Mathematical restatement: `∃ SU : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, C>0 ∧ ∀ s,x,output,t`, a decoded computation on `x` halted by `t` with exactly `output` and source space at most `s` implies `∃ t'`, the same output and halt by `t'` for `SU` on `pairEncode (Nat.bits s) (pairEncode α x)`, using at most `C*s` work cells. `SU` precedes every code; `C` precedes every run parameter. Space sums distinct visited head positions on each work tape over times `0,…,t`; input and append-only output storage are excluded. No canonical-code, decision-output, clock, input-length addend or overrun/converse condition is inserted.",
+    "proposed_fix": "None."
+  },
+  {
+    "id": "120-03",
+    "severity": "note",
+    "location": "`Hierarchy.lean` · complete source freeze",
+    "claim": "Exactly the authorized source change occurred.",
+    "evidence": "Independent Git-tree comparison finds only Hierarchy changed among all 1,003 Lean paths. Its SHA-256 is `550c59f38193d19156d215c6e7d6ef5f005a11a5bd3182c6cc443ba25790b8a3`; the literal target-header hash remains `89d2609a76de64f38283e2d9cf7338791aa451a7e08a46fb02f07eb182f5f62f`. Independent comment-aware comparison preserves every old executable token outside the target body, including imports, headers, order and other proofs. Source declarations remain 4 public; private declarations increase 43→61 by exactly 18 private theorems. No new definition, instance, axiom or generic private host appears.",
+    "proposed_fix": "None."
+  },
+  {
+    "id": "120-04",
+    "severity": "note",
+    "location": "`review/post234-context-review/fresh-validation/` · complete owner inventory",
+    "claim": "Current supplied compiler accounting covers authored and generated constants without omissions.",
+    "evidence": "Independently decompressed and parsed both complete native outputs and reconciled CENSUS/ALLAX/PUBLICAX records: 138→193 owner constants, 125→180 theorems, 13→13 definitions, 133→179 private, 5→14 nonprivate, and 4→4 nonprivate/noninternal. The 55 additions are exactly 18 authored private proofs, 28 private generated descendants and 9 internal target descendants. Every shared raw type/metadata row agrees; only the target loses `sorryAx`. All 193 current closures and the complete 56-member target/F6 subset have only the standard axioms or subsets; the target has exactly `propext`, `Classical.choice`, `Quot.sound`.",
+    "proposed_fix": "None. These are reconciled supplied Lean executions, not an auditor kernel rerun."
+  },
+  {
+    "id": "120-05",
+    "severity": "note",
+    "location": "`Hierarchy.lean` · `f6_full_embed`, `f6_mapState_mk`, `f6_seam`",
+    "claim": "The small assembly helpers consume published contracts.",
+    "evidence": "Read all three complete proofs. Identity embedding applies `embedEmitCfg_eq`; literal relabelling applies `Cfg.mapState_eq_of_fields`; the seam now directly applies the exact `seamCompTM_step`. Compared the complete older `Inclusions.b2b_embed_refl`: the new helper is permitted consumer layout specialization of the published reconstruction contract, without rebuilding an embedding host or ledger. The producer's proposed `embedEmitCfg_refl` remains unapproved proposal data and is not assumed.",
+    "proposed_fix": "None; no new API or debt ruling is required by these proofs."
+  },
+  {
+    "id": "120-06",
+    "severity": "note",
+    "location": "`Hierarchy.lean:131` · `f6_native_halt`",
+    "claim": "The native startup supplies an actual first-None-halt witness.",
+    "evidence": "The public startup endpoint/cut is composed with the authorized one-step stationary silent halt leaf. The dispatch reaches a live leaf at `T+1`; public backward liveness covers earlier times, and the next step halts at `T+2`. The full endpoint retains installed table/state tapes, all work heads at zero, input position 1 and empty output. This is distinct from an absorbing live-stop contract.",
+    "proposed_fix": "None."
+  },
+  {
+    "id": "120-07",
+    "severity": "note",
+    "location": "`Hierarchy.lean` · `f6_header`, `f6_hosted`",
+    "claim": "Physical header preparation and the hosted live return have their actual witnesses.",
+    "evidence": "The first header is physically scanned and its ruler rewound through `headerRulerTM_run`. The hosted start is identified field by field, including the complete bank, ruler, input position and tag-false premise. H5's halt/liveness clauses establish a genuine first host halt; `embedEmitRetTM_run` converts it into the live return with a strict cut at that same time. The proof does not assume H5 preserves an arbitrary injected live-exit cut.",
+    "proposed_fix": "None."
+  },
+  {
+    "id": "120-08",
+    "severity": "note",
+    "location": "`Hierarchy.lean` · `f6_ruler_moves`, `f6_scan`, `f6_prefix`",
+    "claim": "All six prefix phases, five dispatches and the header-linear bound are constructed.",
+    "evidence": "Read all three proofs. Skip ends one cell past the ruler; the empty-word left walk corrects that extra cell. The second scan uses the general nonblank-prefix ruler theorem, extending the existing ruler, followed by the final rewind. All six endpoints and first-return cuts feed the five public seams. The resulting bound is `T ≤ CH*(ℓ+1)*(T₀+2)+4*ℓ+11`, with prefix space at most `(K+4)*(T+1)`, including time-zero cells. The endpoint has the ruler last, all heads zero, empty output and physical input position `ℓ+1`.",
+    "proposed_fix": "None."
+  },
+  {
+    "id": "120-09",
+    "severity": "note",
+    "location": "`Hierarchy.lean:652` · `f6_loop`",
+    "claim": "The loop proves the required ledger separately for every physical tape.",
+    "evidence": "`forwardLoop_forward` supplies the first source halt and the complete later halted endpoint, preserving arbitrary output. The mirror's visited set is bounded through the public `visitedByTapeHead_mono`; both auxiliaries are individually confined to `[-D,D]`; every idle bank tape visits its singleton start cell; the last ruler visits only `[-1,ℓ]`, including both boundary blanks. Their cardinality bounds are respectively source space, `2*D+1`, 1 and `ℓ+2`, all below the actual common budget `s+(2*D+1)+ℓ+3`.",
+    "proposed_fix": "None. No arbitrary-host total-space assumption replaces the ledger."
+  },
+  {
+    "id": "120-10",
+    "severity": "note",
+    "location": "`Hierarchy.lean` · `f6_last_ruler_layout`, six `f6_cast_*` lemmas, `f6_final_seam`",
+    "claim": "The final seam consumes the actual full-bank layout and all OWN premises.",
+    "evidence": "Read the layout proof, all six transports (`init_run`, `init_space`, `cfg_state`, `cfg_mapState`, `cfg_embedding`, `back_embedding`) and the final seam. Public embedding/presentation fields identify the complete configuration, beyond tape-count equality. Equality induction transports the entire bank into the zero-outer startup-loop contract. Actual prefix run, live exit, strict cut, prefix bound and all per-tape loop bounds discharge `aRun`, `aCut`, `hcfg`, `hB`, `hloop`; the final dispatch costs one step and the space bound is `B+(K+4)*S`.",
+    "proposed_fix": "None."
+  },
+  {
+    "id": "120-11",
+    "severity": "note",
+    "location": "`Hierarchy.lean:989` · final `space_universal` proof",
+    "claim": "The exact positive code-dependent constant closes the addend-free target.",
+    "evidence": "`CodeTM.toFinTM_eq` supplies the actual bundled/raw conversion. The public one-tape lower bound gives `1≤s`, and `length_bits_le_self` absorbs the combined headers into `(2*α.length+6)*s`. Reviewed the definitions of `a,p,q,C` and each step `hLa`, `hT1`, `hB'`, `hS'`, `he`: the prefix and entire physical bank are absorbed into the displayed `C*s`; `C` is positive and chosen before `s,x,output,t`. Independently checked 73,728 supplementary arithmetic boundary cases; these numerical checks supplement the symbolic argument.",
+    "proposed_fix": "None."
+  },
+  {
+    "id": "120-12",
+    "severity": "note",
+    "location": "`space_universal` · adversarial instances",
+    "claim": "Concrete small-space, output and boundary cases agree with the target.",
+    "evidence": "Paper instantiations checked via encodings of finite one-work-tape machines: (1) a stationary silent one-step halter on empty input has space 1 and output `[]`; (2) a stationary three-step emitter of `[true,false,true]`, supplied with a later horizon such as 100, must retain that entire output; (3) a fixed machine copying arbitrarily long input to output while its work head stays at zero has space 1, so no input/output-length addend is available. The proof handles all three. It also covers `α=[]` without a well-formedness premise; `s=0` cannot satisfy the source-space hypothesis, even though `bits 0=[]` still gives a positive physical header.",
+    "proposed_fix": "None. These are semantic checks, not new Lean executions."
+  },
+  {
+    "id": "120-13",
+    "severity": "note",
+    "location": "`fresh-validation/` · owner seals and paired controls",
+    "claim": "The effective rule-10 evidence matches the current complete source.",
+    "evidence": "Independently removed only instrumentation and recovered the exact current owner, including all 19 guarded docs/headers/bodies. Every scope retains the same 35 ordinary TCSlib guards plus `Nat.bits`, with the three specified simp removals. Inspected all new named `simp`/`rw`/`dsimp` arguments and `change`/reflexive closings; no prohibited named foreign-definition unfolding was found. Independently reconciled all 72 uniquely named kernel-positive control records and all 72 exact intended negative `rfl` identities/errors, with expected exit 1 and no sorry warnings. Controls use default transparency without an unsafe override.",
+    "proposed_fix": "None. Supplied owner-native/scoped executions pass in 7.578/6.151 seconds."
+  },
+  {
+    "id": "120-14",
+    "severity": "note",
+    "location": "Seal exclusions · Fintype diagnostics",
+    "claim": "The declared opacity limitations remain real and bounded.",
+    "evidence": "Fourteen projection/abbreviation exclusions remain separate. The two regular `instFintypeRewindPhase`/`instFintypeSeekPhase` controls close on both sides and therefore do not establish effective opacity. The fresh 6.061-second diagnostic retains exactly two arbitrary local Fintype binders, two inference identities and all 19 guards; its output is conditional evidence, not the frozen target header or an actual-instance opacity/proof-value-equivalence certificate. The large historical proof-value rendering was independently stream-hashed, not semantically reviewed.",
+    "proposed_fix": "Preserve these limits; no blanket opacity conclusion follows."
+  },
+  {
+    "id": "120-15",
+    "severity": "note",
+    "location": "Merged #234 · `Finite`, `Encoding`, `Primitives`, `Wrappers`, `Catalog`",
+    "claim": "The current API context creates no additional mechanical F6 repoint.",
+    "evidence": "Read the complete five-home diff and exact new contracts. Fixed-LIVE-stop first entry requires whole-configuration fixedness and does not replace the native None-halt/host-return argument; source first-None-halt is already obtained publicly. Neither zero-tape canonical machine nor redirect occurs in the F6 construction. The moved redirect theorem retains its public statement. Current F6 proof bytes are unchanged after the actual campaign merge; prospective MIG implementations are not assumed.",
+    "proposed_fix": "None. FE-LIVE-1 retains its existing owner, cleanup window and exclusions."
+  },
+  {
+    "id": "120-16",
+    "severity": "note",
+    "location": "`landing/source-screen23-post234/expanded25/` · reuse and debt",
+    "claim": "The fresh full25 comparison supports its bounded disposition.",
+    "evidence": "Independently matched all 50 plaintext source captures to exact Git blobs and reconciled 1,454→1,455 directed rows, 477,526→477,688 shared characters, with no lost or changed retained measurements. All current rows are indexed/classified; the five concrete merged-API BASE rows retain their bounded dispositions. The sole new pair is `f6_native_halt`→`UniversalK.ss_inputRewind_done` (162/321): complete-body comparison shows a public stationary-action reading for a None-halt leaf versus the old absorbing-live-run induction. No additional exact re-derivation was identified in the new or same-kind inline proof readings.",
+    "proposed_fix": "None. Lexical scores, inherited rows and overlapping file weights are not a global semantic-copy census or new debt acceptance."
+  },
+  {
+    "id": "120-17",
+    "severity": "note",
+    "location": "`landing/replay-mf63/`; whole MAC5 adoption",
+    "claim": "The supplied current replay is the actual two-module post-#234 replay.",
+    "evidence": "Independently verified its manifest, prechecks, exact Hierarchy→SpaceComplexity order, two exit-0/error-0/sorry-0 rows, two effective-j4 launches and static 0/0. All 895 MAC5 adoption entries equal MF63 inputs and the fresh BASE map; all 895 outputs equal the fresh HEAD map, with only Hierarchy's object changed. Before/after maps agree. The whole baseline was adopted from the passed #234 tree, not spliced. MFUP2's inherited 401-module/static-77 history and pre-#234 MF61/MF62 are distinct from this current two-module result.",
+    "proposed_fix": "None. No current full229 or campaign-wide zero-admission claim is justified or made."
+  },
+  {
+    "id": "120-18",
+    "severity": "note",
+    "location": "Producer delivery and landing history",
+    "claim": "Original delivery, repairs and process deviations remain distinguishable.",
+    "evidence": "Independently checked all three ZIPs for duplicate/unsafe paths, symlinks, CRCs and SHA256SUMS; reconstructed checkpoints and all six final patches exactly, reproducing original source SHA-256 `2898ca226bd7152a439d57c4e20341a48594e524fc93f8a4299654273bae43fa`. Compared the delivered/current files: two prose corrections and the two documented public-API repoints account for the landing difference. Reconciled all 229 producer summary rows/raw logs: exit 0, zero errors, 21 inherited sorry warnings. D1–D6, the two unlocked reduced prescreens, bare-Lean producer tooling and lack of explicit producer j4 enforcement remain disclosed historical limitations.",
+    "proposed_fix": "None. Producer completion and earlier executions are not relabelled as current maintainer execution or an audit verdict."
+  },
+  {
+    "id": "120-19",
+    "severity": "note",
+    "location": "Attribution, proof sketches and full25 lints",
+    "claim": "Current prose/sketches describe the proved route; inherited lint findings remain disclosed.",
+    "evidence": "All nontrivial new proofs have adjacent readable sketches and use the stated mathematical/library attribution. The corrected prose distinguishes scanning the budget encoding from interpreting its value and states `(K+4)*(T+1)` explicitly. Supplied fresh lints retain 115 style findings and campaign 0 FAIL/26 WARN/30 INFO on each side; the private-count INFO change is explicit. File size and inherited public-text labels are not newly waived. No authenticated published-edition chapter-4 exercise text is supplied; I do not claim a fresh AB09 edition/page fidelity audit.",
+    "proposed_fix": "None within this proof-landing gate; retain the attribution and lint limitations."
+  },
+  {
+    "id": "120-20",
+    "severity": "note",
+    "location": "Auditor execution and verdict scope",
+    "claim": "This audit found no blocking, major or minor defect in the scoped landing.",
+    "evidence": "I read all 18 new private proofs, the final proof, their actual model/public contracts, current evidence and relevant historical dispositions; ran independent Python integrity, Git binding, freeze, archive/patch reconstruction, raw accounting/control reconciliation and arithmetic checks. All seven current job requests/receipts/raw archives reconcile, including fresh BASE/HEAD accounting. **NOT RUN by me:** Lean/kernel elaboration, managed replays, the full v3 comparison or repository lint CLIs. Their execution results above are supplied evidence; no delivered script or payload Lean was executed, and no source was repaired.",
+    "proposed_fix": "None. PASS applies to the frozen gate120 proof landing, not merge authorization or clearance of unrelated admissions/debt."
+  }
+]

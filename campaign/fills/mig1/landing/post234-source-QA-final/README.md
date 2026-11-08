@@ -1,0 +1,17 @@
+# MIG final current source QA
+
+PASS for the complete twelve-owner source scope at HEAD `eaecd6b2afd992ead0844fa5f351eaf143fd1d1c` against current BASE `e8196b1020b6be7c1b0894ecd92d8352f951dbb9` (Lean=merged #234). No Lean, source/Git/cache modification or gate clearance is claimed here.
+
+The actual current parse yields **386→383 public and1080→766 private source declarations**. Exactly the three gated pairMapSnd exports are added and the six named canonical rows removed. Every surviving public complete header, home, visibility, kind and relative order is frozen. These counts were derived from current full sources before matching the authorized sets; old384→381 counts remain historical.
+
+All48 full sources are retained (current BASE/HEAD and historical API/B1 over all12 owners), with full blob/hash/byte receipts. Runtime/data declarations in current BASE match historical API exactly; current HEAD matches historical B1 exactly. All9 original private moves are reverified modulo the approved rename, and only the2 pre-existing final inj' Prop-proof fields differ. Gated forwarding machine/table/header equality, full attribute commands and only the2 existing approved imports are checked directly. WordSize's entire code is unchanged.
+
+The current BASE comparison has five private-header exceptions: the prior counter_count/loopHost_contracts/loopHost_prepare expressions and the2 newly approved condTM_start/timed_start transports. Both new complete old/new forall headers match the exact frozen equality-probe types; the approval receipt names the exact patch SHA. Selected historical input/output/exit/hash evidence is independently verified as data in approval-context. Its former 'pending' proposal prose is historical and superseded by the copied user approval. No equivalence probe was rerun here.
+
+All17 target admissions are filled; the3 RAM residual headers/bodies remain literal. The actual current changed-proof-root list is **153=66 public+87 private**, versus historical144. Exact progression is10 newly changed roots and1 former Catalog redirect root removed because that published row is now baseline-owned. These are changed source roots, not new declarations or compiler auxiliaries. Full owner/name/privacy/kind/line/header/body/chunk hashes are in proof-roots-current.json.
+
+The10 proof-header controls include named assignments, result-local proof-valued lets/letI and leading absolute-value bars. All common public headers and the2 approved private complete headers were checked without altering raw v3 extraction or scores.
+
+The full25 lint packet lives in the sibling post234-source-screen folder. The apparent fwdMap_move/timed_read_heads sketch additions are precise header-counting heuristics: actual tactic bodies have19 and18 lines, with existing accurate routine explanations. Full current chunks, old/current body identity, exact counts and optional discretionary sketches are in lint-proof-body-disposition.json. Wrappers' size is disclosed under the existing frozen-home permission. No source change is proposed.
+
+The first analysis attempt passed. A second successful run only renamed an inherited R4 metadata field to describe current MIG reader-repair scope; the first successful code/stdout/receipt is preserved. Parent owns current native3, full replay, compiled accounting, external gate and publication. The concurrently executed final25 screen has separate actual receipts and is not a source-QA proof.

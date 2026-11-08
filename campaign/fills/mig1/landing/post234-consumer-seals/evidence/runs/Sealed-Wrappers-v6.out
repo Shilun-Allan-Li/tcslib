@@ -1,0 +1,34 @@
+SEAL_ACTIVE|timed_start|21
+/private/tmp/mig-post234-consumer-validation/project/Sealed_Wrappers_v6.lean:781:4: error: unsolved goals
+case refine_2.state
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+T : ℕ
+hD : D.ComputesInTime x [b] T
+branchInit : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x := MultiTapeTM.initCfg x
+branchStart : M₁.State ⊕ M₂.State := (M₁.branchTM M₂ b).tm.q₀
+hbranchInit : branchInit = Cfg.init branchStart x
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T).output = [b]
+t : ℕ
+ht : t ≤ T
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T
+c : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hs : c.state = none
+ho : c.output = [b]
+hcap : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.timedControlCfg M₁ M₂ c
+r : ℕ
+hrle : r ≤ ↑(D.timedReadyCfg M₁ M₂ c b).inputPos + 2
+hr :
+  MultiTapeTM.runFrom (D.timedReadyCfg M₁ M₂ c b) r =
+    { state := some (Sum.inr (Sum.inr (Sum.inr branchStart))), inputPos := 1,
+      workTapes := (D.timedReadyCfg M₁ M₂ c b).workTapes, workTapePos := (D.timedReadyCfg M₁ M₂ c b).workTapePos,
+      output := (D.timedReadyCfg M₁ M₂ c b).output }
+⊢ some (Sum.inr (Sum.inr (Sum.inr branchStart))) = some (id (Sum.inr (Sum.inr (Sum.inr branchStart))))
+LOCAL_ROOT|timed_start|_private.Sealed_Wrappers_v6.0.Turing.FinTM.timed_start
+LOCAL_AX|{"axioms":["propext","sorryAx","Classical.choice","Quot.sound"],"name":"_private.Sealed_Wrappers_v6.0.Turing.FinTM.timed_start","short":"timed_start"}
+LOCAL_AX|{"axioms":["propext","Quot.sound"],"name":"_private.Sealed_Wrappers_v6.0.Turing.FinTM.timed_start._proof_1_1","short":"timed_start"}
+SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Build.Wrappers|1

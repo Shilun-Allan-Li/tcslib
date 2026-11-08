@@ -1,0 +1,214 @@
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.RAMSimulation.WordSize
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Finite
+import Lean
+/-! Read-only source-root/descendant/direct-citation probe. No theorem proof value is
+rendered; value expressions are inspected only for their direct referenced constant names. -/
+set_option maxHeartbeats 0
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let requested : List (String × String × Bool) := [
+    ("TCSlib.Complexity.ClassP.TimeConstructible", "Complexity.counter_count", true),
+    ("TCSlib.Complexity.ClassP.TimeConstructible", "Complexity.counter_emit_start", true),
+    ("TCSlib.Complexity.ClassP.TimeConstructible", "Complexity.counter_halt", true),
+    ("TCSlib.Complexity.ClassP.TimeConstructible", "Complexity.timeConstructible_id", false),
+    ("TCSlib.Complexity.ClassP.TimeConstructible", "Turing.FinTM.lengthBitsTM_computes", false),
+    ("TCSlib.Complexity.ClassP.TimeConstructible", "Turing.FinTM.lengthBitsTM_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.Cfg.ofWords_copy_endpoint", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.Cfg.ofWords_transfer_endpoint", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_cond_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_const_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_id_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_incFixed_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_lengthBits_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_pairConcat_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_pairDup_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_pairEncodeFixed_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_pairFst_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_pairLenCheck_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_pairSnd_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_pairValid_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_polyBits_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_polyUnary_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_prepend_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_splitSolve_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.computesFunInTime_stripLast_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.exists_loopTM_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.FinTM.pairExtract_space_row", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.catalog_buffer_clip", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.catalog_increment_framed", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.catalog_ofWords_with_tapes", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.incrementTM_run_overflow_ofCfg", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Catalog", "Turing.incrementTM_run_succ_ofCfg", false),
+    ("TCSlib.Complexity.TuringMachine.Build.CertShell", "Turing.cert_prepare_exists", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.emCall_bank_embed", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.emCall_bank_final", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.emCall_bank_initial", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.emCall_eval_first", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.emCall_first_entry", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.emCall_right_endpoint", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.emitLoopTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.exists_emitLoopTM", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.exists_loopCfgTM", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.exists_loopFindTM", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.exists_loopTM", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loopCall_heads", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loopHostTM_contracts", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loopHostTM_decides", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loopHostTM_finds", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loopHostTM_spaceUsed_le_budget", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loopHost_contracts", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loopHost_input_rewind", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loopHost_prepare", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loop_computes_of_startup", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.loop_first_halt", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.seamed_space", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Loop", "Turing.FinTM.segment_heads", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.appendBitTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.bufferReplay_run", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.catalogFirstEntry", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.computesFunInTime_appendBit", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.computesFunInTime_pairDup", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.computesFunInTime_pairMapSnd", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.computesFunInTime_unaryToken", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_admin_frame", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_bank_frame", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_body_erase", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_body_erase_left", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_body_erase_right", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_index_injective", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_left_frame", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_pair_frame", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_prepare_rewind_bank", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_prepare_rewind_candidate", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_prepare_rewind_suffix", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_prepare_run", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_right_frame", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterP2_small_frame", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitterSplit_find", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.emitter_first_entry", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.extract_replay", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMapCfg_read", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMapSetup_head_step", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMapSetup_heads", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMapSetup_run", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMapSetup_stationary", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMapSetup_step", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMapVirtual_run", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMapVirtual_step", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_back", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_backA", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_backB", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_block", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_emit", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_finish", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_first", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_launch", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_move", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_parse", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_reject", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_setup", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_space", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.fwdMap_suffix", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.lenStart", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.pairMapSndTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.pairMapSndTM_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.polyHeads_bounds", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.polyUnaryTM_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.poly_space", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.poly_step", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.rawStrip_replay", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.splitBody_count", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.splitBody_rewind", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.splitEmbed_cut", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.splitFind_eq", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.splitOrbit_find", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.splitRestore_run", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Primitives", "Turing.FinTM.unaryTokenTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Build.VirtualInput", "Turing.vhostEmitTM_runFrom", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.computesFunInTime_cond", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.redirectTM_spaceUsedByTape", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timedCondTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timedCondTM_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timedReadyCfg_workTapePos", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timedReady_dispatch", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timed_branch_heads", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timed_control_heads", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timed_ledger", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timed_read_heads", true),
+    ("TCSlib.Complexity.TuringMachine.Build.Wrappers", "Turing.FinTM.timed_start", true),
+    ("TCSlib.Complexity.TuringMachine.CodeSimulator", "Turing.MachineFormat.canonPreserveInstall", true),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.computesFunInTime_comp", false),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.computesFunInTime_id", false),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.computesFunInTime_ifEq", false),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.condTM_branch_run", true),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.condTM_computes_iff", false),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.condTM_start", true),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.exists_comp_on_image", false),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.exists_comp_partial", false),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.exists_cond", false),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.idTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Composition", "Turing.FinTM.ifEqTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Encoding", "Turing.computesFunInTime_pairEncode_diag", false),
+    ("TCSlib.Complexity.TuringMachine.Encoding", "Turing.pairDiagTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.branchTM_computes", false),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.branchTM_initCfg_false", true),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.branchTM_initCfg_true", true),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.branchTM_spaceUsed", false),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.bufferedComp_start", false),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.bufferedSecondCfg_run", false),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.rewind_first_step", true),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.rewind_from_any", false),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.rewind_heads", false),
+    ("TCSlib.Complexity.TuringMachine.Simulation", "Turing.FinTM.timed_rewind", false)
+  ]
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .thmInfo _ => "theorem" | .defnInfo _ => "definition" | .opaqueInfo _ => "opaque"
+    | .axiomInfo _ => "axiom" | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+    | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+  for (owner, sourceName, priv) in requested do
+    let matches := env.constants.toList.filter fun (n, _) =>
+      isPrivateName n == priv && (n.toString == sourceName || n.toString.endsWith ("." ++ sourceName)) &&
+      match env.getModuleIdxFor? n with
+      | some i => env.header.moduleNames[i.toNat]!.toString == owner
+      | none => false
+    unless matches.length == 1 do
+      throwError "source root {owner}/{sourceName} private={priv} has {matches.length} matches"
+    let (root, rootCI) := matches.head!
+    unless kind rootCI == "theorem" do throwError "source proof root is not a theorem {root}"
+    logInfo m!"ROOTMAP|{(Json.mkObj [("source_name", toJson sourceName),
+      ("compiled_name", toJson root.toString), ("owner", toJson owner),
+      ("private", toJson priv), ("kind", toJson (kind rootCI))]).compress}"
+    let descendants := env.constants.toList.filter fun (n, _) => root.isPrefixOf n
+    for (n, ci) in descendants.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+      let some i := env.getModuleIdxFor? n | throwError "source descendant lacks owner {n}"
+      let home := env.header.moduleNames[i.toNat]!
+      let ax ← liftCoreM <| Lean.collectAxioms n
+      logInfo m!"ROOTDESC|{(Json.mkObj [("root", toJson root.toString),
+        ("name", toJson n.toString), ("owner", toJson home.toString),
+        ("kind", toJson (kind ci)), ("private", toJson (isPrivateName n)),
+        ("internal", toJson n.isInternalDetail),
+        ("axioms", toJson ((ax.qsort Name.lt).toList.map Name.toString))]).compress}"
+      for (part, expr) in [("type", ci.type)] ++ (ci.value?.map (fun e => [("value", e)])).getD [] do
+        for c in expr.getUsedConstants.qsort Name.lt do
+          let some j := env.getModuleIdxFor? c | continue
+          let mod := env.header.moduleNames[j.toNat]!
+          unless (`TCSlib).isPrefixOf mod do continue
+          let some cinfo := env.find? c | throwError "referenced constant absent {c}"
+          logInfo m!"CITED|{(Json.mkObj [("root", toJson root.toString),
+            ("descendant", toJson n.toString), ("part", toJson part),
+            ("name", toJson c.toString), ("owner", toJson mod.toString),
+            ("kind", toJson (kind cinfo)), ("private", toJson (isPrivateName c))]).compress}"
+  logInfo m!"ROOTCOMPLETE|{requested.length}"

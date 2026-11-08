@@ -1,0 +1,38 @@
+SEAL_ACTIVE|condTM_start|18
+/private/tmp/mig-post234-consumer-validation/project/BranchShapeOpen_Composition_v1.lean:737:2: error: Tactic `rfl` failed: The left-hand side
+  { state := some (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀)), inputPos := 1,
+    workTapes := (D.controlCfg M₁ M₂ cf).workTapes, workTapePos := (D.controlCfg M₁ M₂ cf).workTapePos,
+    output := (D.controlCfg M₁ M₂ cf).output }
+is not definitionally equal to the right-hand side
+  rightCfg (fun q => Sum.inr (Sum.inr q)) (MultiTapeTM.initCfg x) cf.workTapes cf.workTapePos
+
+D M₁ M₂ : FinTM Bool
+x : List Bool
+b : Bool
+tD : ℕ
+hDc : D.ComputesInTime x [b] tD
+hspec :
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).state = none ∧
+    (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD).output = [b]
+t : ℕ
+_ht : t ≤ tD
+hlive : ∀ v < t, ¬(MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).Halted
+heq : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = MultiTapeTM.runFrom (MultiTapeTM.initCfg x) tD
+cf : Cfg D.k Bool D.State x := MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t
+hstop : cf.state = none
+hout : cf.output = [b]
+hi : MultiTapeTM.initCfg x = D.controlCfg M₁ M₂ (MultiTapeTM.initCfg x)
+hrun : MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = D.controlCfg M₁ M₂ cf
+r : ℕ
+hr :
+  MultiTapeTM.runFrom (D.controlCfg M₁ M₂ cf) r =
+    { state := some (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀)), inputPos := 1,
+      workTapes := (D.controlCfg M₁ M₂ cf).workTapes, workTapePos := (D.controlCfg M₁ M₂ cf).workTapePos,
+      output := (D.controlCfg M₁ M₂ cf).output }
+⊢ { state := some (Sum.inr (Sum.inr (M₁.branchTM M₂ b).tm.q₀)), inputPos := 1,
+      workTapes := (D.controlCfg M₁ M₂ cf).workTapes, workTapePos := (D.controlCfg M₁ M₂ cf).workTapePos,
+      output := (D.controlCfg M₁ M₂ cf).output } =
+    rightCfg (fun q => Sum.inr (Sum.inr q)) (MultiTapeTM.initCfg x) cf.workTapes cf.workTapePos
+LOCAL_ROOT|condTM_start|_private.BranchShapeOpen_Composition_v1.0.Turing.FinTM.condTM_start
+LOCAL_AX|{"axioms":["propext","sorryAx","Classical.choice","Quot.sound"],"name":"_private.BranchShapeOpen_Composition_v1.0.Turing.FinTM.condTM_start","short":"condTM_start"}
+SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Composition|1

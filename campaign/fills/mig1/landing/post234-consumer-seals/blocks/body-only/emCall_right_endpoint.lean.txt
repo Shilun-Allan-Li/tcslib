@@ -1,0 +1,40 @@
+/-- Right-boundary normalization preserves the entire completed source
+configuration, not just its output. This retains the tracked cleanup witnesses.
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` to retain the completed source
+configuration and strict earlier-time liveness. The native right scan then costs at most `|x|+2`;
+absorb only that completed run to the advertised budget. The public complete endpoint equality
+retains the work tapes at the original deadline. -/
+private lemma emCall_right_endpoint (M : FinTM Bool) (x : List Bool) (T : ℕ)
+    (hc : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
+    (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (T + x.length + 2) =
+      emCallRightScan M (M.tm.runFrom (M.tm.initCfg x) T) none x.length (le_refl _) := by
+  classical
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hc
+  let c := M.tm.runFrom (M.tm.initCfg x) t
+  have hs : c.state = none := by
+    change (M.tm.runFrom (M.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hc
+  have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := heq.symm
+  have hi : (emCallRightTM M).tm.initCfg x = emCallRightCfg M (M.tm.initCfg x) := by
+    apply Cfg.ext
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_state, emCallRightCfg,
+        Option.map_some, Option.getD_some]
+      rfl
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, emCallRightCfg]
+    · funext i z
+      simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, emCallRightCfg]
+    · funext i
+      simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, emCallRightCfg]
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_output, emCallRightCfg]
+  have hr := emCall_right_run M (M.tm.initCfg x) t hlive
+  obtain ⟨r, hrle, hfinish⟩ := emCall_right_finish M c hs
+  have hrun : (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (t + r) =
+      emCallRightScan M c none x.length (le_refl _) := by
+    rw [hi, MultiTapeTM.runFrom_add, hr]
+    exact hfinish
+  have hle : t + r ≤ T + x.length + 2 := by omega
+  rw [show T + x.length + 2 = (t + r) + (T + x.length + 2 - (t + r)) by omega,
+    MultiTapeTM.runFrom_add, hrun, MultiTapeTM.runFrom_of_halt _ (by rfl), hcT]
+

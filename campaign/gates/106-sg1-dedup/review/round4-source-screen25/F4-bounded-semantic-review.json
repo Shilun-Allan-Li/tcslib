@@ -1,0 +1,116 @@
+{
+  "source_head": "078263a74fe90b92aa6228cf20e43726138afbe6",
+  "scope": "Bounded exact liveness/halt public-API and equivalent propagation forms in the five PR files; candidate enumeration, not a whole-library absence claim.",
+  "enumeration_input_sha256": "0553dd4e96b05fadf16e0867e2b50c6821406a649b505da3c373d474ec525376",
+  "conclusion": "Both exact F4 specializations are direct public citations; no additional re-derivation of this specific contract was identified in these seven hits. No global absence/debt clearance.",
+  "rows": [
+    {
+      "name": "Complexity.sat_first_halt",
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "status": "Existing separately recorded FH-1 first-None selection",
+      "contract_mapping": "The premise is a halted endpoint, and Nat.find selects an earliest None-state time plus full endpoint equality (and positivity/output refinements). Canonical exists_first_halt is the corresponding public first-None fact. The actual three names occur in the existing FH-1 ledger table. This is a retained acknowledged/scheduled kind, not an additional F4 live-endpoint proof or a new acknowledgment.",
+      "hit_lines": [
+        {
+          "line": 697,
+          "text": "  rw [Nat.add_sub_of_le ht, MultiTapeTM.runFrom_of_halt _ hs] at he"
+        }
+      ],
+      "full_chunk_sha256": "766fb27272c383b30f8cfdd1df2c08cca368b67b18ad9e56839ed2ef11c35bc8"
+    },
+    {
+      "name": "Complexity.sat_call_first_halt",
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "status": "Existing separately recorded FH-1 first-None selection",
+      "contract_mapping": "The premise is a halted endpoint, and Nat.find selects an earliest None-state time plus full endpoint equality (and positivity/output refinements). Canonical exists_first_halt is the corresponding public first-None fact. The actual three names occur in the existing FH-1 ledger table. This is a retained acknowledged/scheduled kind, not an additional F4 live-endpoint proof or a new acknowledgment.",
+      "hit_lines": [
+        {
+          "line": 3767,
+          "text": "    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]"
+        }
+      ],
+      "full_chunk_sha256": "1abd39c98d9c09fd730f558ef9e4c9b43894ac6954c2a1e568c4852d60bd10d7"
+    },
+    {
+      "name": "Complexity.sat_live_prefix",
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "status": "F4 fixed by direct citation",
+      "contract_mapping": "Instantiate public MultiTapeTM.runFrom_state_ne_none_of_le with Bool, the same k/S/x/t and arbitrary start c; the live endpoint hypothesis ht and entire forall u≤t conclusion are exact. Forwarding header remains.",
+      "hit_lines": [
+        {
+          "line": 3904,
+          "text": "`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/"
+        },
+        {
+          "line": 3909,
+          "text": "  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht"
+        }
+      ],
+      "full_chunk_sha256": "b5e6e744202e3ceaada43d687301b6e344465d817287c9278d2e1cc6905df931"
+    },
+    {
+      "name": "Complexity.clA5_call_first_halt",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "status": "Existing separately recorded FH-1 first-None selection",
+      "contract_mapping": "The premise is a halted endpoint, and Nat.find selects an earliest None-state time plus full endpoint equality (and positivity/output refinements). Canonical exists_first_halt is the corresponding public first-None fact. The actual three names occur in the existing FH-1 ledger table. This is a retained acknowledged/scheduled kind, not an additional F4 live-endpoint proof or a new acknowledgment.",
+      "hit_lines": [
+        {
+          "line": 6132,
+          "text": "    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]"
+        }
+      ],
+      "full_chunk_sha256": "0aca520d26bdf9fd44ef6f6e260197131d465e2257e308ec3ccce88a2ce43ea7"
+    },
+    {
+      "name": "Complexity.clA5_live_prefix",
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "status": "F4 fixed by direct citation",
+      "contract_mapping": "Instantiate public MultiTapeTM.runFrom_state_ne_none_of_le with Bool, the same k/S/x/t and arbitrary start c; the live endpoint hypothesis ht and entire forall u≤t conclusion are exact. Forwarding header remains.",
+      "hit_lines": [
+        {
+          "line": 6229,
+          "text": "`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/"
+        },
+        {
+          "line": 6234,
+          "text": "  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht"
+        }
+      ],
+      "full_chunk_sha256": "60be8d25f6abc7821578cf1919ad56e46b687b310197b37230c2393912aaa1b5"
+    },
+    {
+      "name": "Turing.expandTM_run_ofCfg",
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "status": "Existing direct public live-prefix citation",
+      "contract_mapping": "The local live hypothesis is obtained by the exact public runFrom_state_ne_none_of_le theorem; no proof reconstruction of backward liveness remains at the hit.",
+      "hit_lines": [
+        {
+          "line": 1777,
+          "text": "    have live := MultiTapeTM.runFrom_state_ne_none_of_le M (counterLoopOrbit M τ c r)"
+        }
+      ],
+      "full_chunk_sha256": "67f66a9c530b8aa215ca5fb22758b05aca38cbfdcca7f9a8ebc7c4bde1e98e39"
+    },
+    {
+      "name": "Turing.FinTM.dg_all_inputs",
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "status": "Distinct post-halt workTapePos bound transport",
+      "contract_mapping": "The branch v>u rewrites the run as u+(v-u), uses the known endpoint span.1 and public runFrom_of_halt to reuse both coordinate inequalities from span.2 u. The target is a work-tape head interval for arbitrary v, not liveness before a live endpoint. Public runFrom_output_eq_of_halt only supplies an output equality, not workTapePos; no exact packaged per-field interval theorem was exposed by these hits.",
+      "hit_lines": [
+        {
+          "line": 2156,
+          "text": "      rw [he, MultiTapeTM.runFrom_add, span.1, MultiTapeTM.runFrom_of_halt _ hf]"
+        }
+      ],
+      "full_chunk_sha256": "9b5c9943684e77dd0875b25682680393a06b4cb53ce39e05ba1085e802e7e514"
+    }
+  ],
+  "canonical_full_chunks": {
+    "Turing.MultiTapeTM.runFrom_state_ne_none_of_le": "/-- A run that is still live at time `t` was live at every time `u ≤ t`: the halting\nconfiguration of the model is absorbing [AB09, §1.2].\n\n**Proof sketch.** A halt at some `u ≤ t` would, by `runFrom_add` and `runFrom_of_halt`,\nmake the configuration at `t` equal to the halted one at `u`. -/\ntheorem runFrom_state_ne_none_of_le (tm : MultiTapeTM k Symbol State)\n    (cfg : Cfg k Symbol State input) (t : ℕ) (ht : (tm.runFrom cfg t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom cfg u).state ≠ none := by\n  intro u hu hh\n  have he : tm.runFrom cfg t = tm.runFrom cfg u := by\n    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]\n  exact ht (by rw [he]; exact hh)",
+    "Turing.MultiTapeTM.exists_first_halt": "/-- **First halt**: if a run from `cfg` has halted by time `t`, then it halts first at\nsome `u ≤ t` — live at every earlier time, and already in the very configuration it\noccupies at `t`, halting being absorbing [AB09, §1.2]. This is the guard-discharge form\nconsumed by the lockstep contracts whose hypothesis is liveness before the halting time\n(`Turing.capture_run`, `Turing.emit_run`).\n\n**Proof sketch.** Take `u` least with a halted configuration (`Nat.find`). Minimality\ngives liveness below `u`; since `u ≤ t`, `runFrom_add` and `runFrom_of_halt` identify the\nconfigurations at `u` and at `t`. -/\ntheorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)\n    {t : ℕ} (h : (tm.runFrom cfg t).state = none) :\n    ∃ u ≤ t, (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧\n      tm.runFrom cfg u = tm.runFrom cfg t := by\n  classical\n  have hex : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, h⟩\n  have hle : Nat.find hex ≤ t := Nat.find_min' hex h\n  refine ⟨Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_⟩\n  rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,\n    MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]",
+    "Turing.MultiTapeTM.exists_first_entry_of_fixed": "/-- A run ending in a designated live stop state first enters the stop states by its deadline,\nand that first entry is already the final configuration, provided every stop configuration is\nfixed by one step.\n\n**Proof sketch.** Choose the least stop-state time with `Nat.find`. Minimality gives the\nstrict earlier-time cut. The fixed-step hypothesis keeps every subsequent configuration equal\nto that first entry; `runFrom_add` then identifies it with the given final configuration. -/\ntheorem exists_first_entry_of_fixed {k : ℕ} {Symbol State : Type*}\n    {input : List Symbol} (tm : MultiTapeTM k Symbol State)\n    (stop : State → Prop) (c d : Cfg k Symbol State input) (T : ℕ)\n    (hfix : ∀ z : Cfg k Symbol State input,\n      (∃ q, z.state = some q ∧ stop q) → tm.step z = z)\n    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :\n    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧\n      tm.runFrom c t = d := by\n  classical\n  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q :=\n    ⟨T, by rw [hT]; exact hd⟩\n  let t := Nat.find hh\n  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)\n  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh\n  have hfixed : tm.step (tm.runFrom c t) = tm.runFrom c t := hfix _ hs\n  have hconst (n : ℕ) : tm.runFrom (tm.runFrom c t) n = tm.runFrom c t := by\n    induction n with\n    | zero => exact runFrom_zero\n    | succ n ih => rw [runFrom_succ_eq_step, hfixed]; exact ih\n  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩\n  have he := tm.runFrom_add c t (T - t)\n  rw [Nat.add_sub_of_le ht, hT, hconst] at he\n  exact he.symm"
+  },
+  "ledger_context": [
+    "peTM.exists_first_halt` (FH-1's public form) | 0 | **2** | **11.1%** | Sources |\n| `ClassNP/EXP.lean` | 153 | 0 | 1 (FH-1): `enumCont_first_halt` | **1** | **0.7%** | FH-1, to retire (`backlog.md`) |\n| `ClassNP/SAT.lean` | 282 | 0 | 2 (FH-1): `sat_first_halt`, `sat_call_first_halt` | **2** | **0.7%** | FH-1 |\n| `CookLevin/Hardness.lean` | 545 | 0 | 1 (FH-1): `clA5_call_first_halt` | **1** (was 0) | **0.2%** | FH-1 |\n| `Build/Catalog.lean`, `Build/Loop.lean` | 428, 194 | — | FH-1: `f2_loop_first_halt`, `f2_splitCount_firstHalt` (Catalog); `loop_first_halt` (Loop) | unchanged | — | `loop_first_halt` and `f2_loop_first_halt` are a 341/341 twin pair, already counted in the Loop→Catalog family. `f2_splitCount_firstHalt` is in the F2A-22 inventory; whether it is one of Catalog's 318 members or one of the 20 F2A nonmembers is settled by the FH-1 retirement census |\n\nThe FH-1 copies predate the public form. B1 adds no copies, so no file\ngains a copy in this epoch and none crosses one fifth.\n\n**Exclusions** (screen hits that are not members, with their dispositions\nin `audits/b1-integration.md`, accepted by gate note 17):\n\n- `uw_tail` (Relativization) → E3 `OracleNDTM.stepWith_eq_of_ne_qQuery`\n  (OracleNondeterministic), 57%. Glue: shared citations of the\n  fixed-choice step bridge.\n- `uw_scan_step` → `uw_false_step` (Relativization, in-file), 71%. Glue:\n  the shared `uw_step_scan` call line. It is also uncounted under the\n  in-file convention.\n- `Catalog.f2_loopBody_step` → `queryTM_init` (Classes), 54%. The\n  configuration-equality idiom; no machine argument is shared.\n- `runFrom_ofMultiTapeTM` → `runFrom_plainEmptyOracle` (Oracle, in-file),\n  53%. A screen artifact: both declarations are unchanged (gate note 18).\n\nSo Relativization, Classes and OracleNondeterministic have no members.\n`OracleNondeterministic`'s private blank-cell bound moved to `Oracle.lean`\nas the public `queryString_length_le_of_blank` (C1-P1). Both consumers cite\nit, so no copy remains (gate note 8).\n\n#",
+    "ibrary absence\nor a generic duplication exception; inherited source candidates retain their own dispositions.\n\n\n## BLIVE-REUSE-1 — backward liveness (proposed retirement in #215)\n\nCanonical contract: Turing.MultiTapeTM.runFrom_state_ne_none_of_le (Finite), any alphabet/state,\narbitrary start and live endpoint at t imply liveness at every u≤t. Gate106R3F4 confirmed\nsat_live_prefix and clA5_live_prefix as exactBool specializations with copied five-line proofs.\nThe old live-prefix record is a watch; sevenSG1 kinds and FE-LIVE-1 do not acknowledge this fact.\n\nBoth privateheaders remain; implementations now directly cite the canonical theorem at078263a7.\nNo new API/import/statement/machine/debt permission. Same-kind inspection covers84 conservative\ndeclaration candidates plus inline/contrapositive/time-split closings in all5touchedfiles; only\nthese2 implementations were identified. CounterLoop already cites the public theorem. FirstNone\nselection, fixedLIVE-stop entry and post-halt head-bound tails have different contracts.\nFull source chunks/line/hash/dispositions: gate106/review/round3-return-review/.\n\nRetired only on #215merge. These names are already in the affected-name unions; no new member\nor threshold crossing is added. Other watches stay unacknowledged. This is bounded mechanical\nreuse, not global absence, exhaustive accounting or retention permission.\n"
+  ]
+}

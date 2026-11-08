@@ -1,0 +1,87 @@
+from pathlib import Path
+import hashlib,json,re
+W=Path('/private/tmp/mig-post234-core-reader-repair')
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+OLD=R/'campaign/fills/mig1/landing/post234-consumer-seals'
+MAP=json.loads((OLD/'API-BINDINGS-INPUT.json').read_text())['consumer_mappings']
+CHANGED={'emCall_eval_first','emCall_right_endpoint','lenStart','splitEmbed_cut','timed_start','condTM_start'}
+actual={f:(W/'actual-ea1c51'/(f+'.txt')).read_text() for f in {x['file'] for x in MAP}}
+proposed=actual.copy();proposed['TCSlib/Complexity/TuringMachine/Build/Loop.lean']=(W/'project/CoreRepair_Loop_native_v1.lean').read_text()
+rows=[];heads=set();samehome={}
+def bounds(s,n):
+    m=re.search(r'(?m)^(?:private )?(?:theorem|lemma) '+re.escape(n)+r'\b',s);assert m
+    e=re.search(r'(?m)^(?:/--|(?:private )?(?:theorem|lemma|def|instance|structure|inductive)\b|end\b|namespace\b)',s[m.end():]);en=m.end()+e.start() if e else len(s)
+    return m.start(),en
+def split_args(s):
+    args=[];depth=0;st=0
+    for i,c in enumerate(s):
+        if c in '([{':depth+=1
+        elif c in ')]}':depth-=1
+        elif c==',' and depth==0:args.append(s[st:i]);st=i+1
+    args.append(s[st:]);return args
+for target in MAP:
+    f=target['file'];n=target['name'].split('.')[-1]
+    samehome[f]=re.findall(r'(?m)^(?:private )?(?:noncomputable )?(?:def|abbrev)\s+([A-Za-z_][A-Za-z_0-9.\u0080-\uffff\']*)',actual[f])
+    for generation,sources in [('actual-ea1c51',actual),('proposed',proposed)]:
+        st,en=bounds(sources[f],n);block=sources[f][st:en]
+        for m in re.finditer(r'\b(simp_all|simp_rw|simpa|simp|erw|rw|dsimp|unfold)\b',block):
+            pos=m.end()
+            while pos<len(block) and block[pos].isspace():pos+=1
+            if block.startswith('only',pos):
+                pos+=4
+                while pos<len(block) and block[pos].isspace():pos+=1
+            args=''
+            if pos<len(block) and block[pos]=='[':
+                depth=1;e=pos+1
+                while depth:
+                    if block[e]=='[':depth+=1
+                    if block[e]==']':depth-=1
+                    e+=1
+                args=block[pos+1:e-1]
+            elif m.group(1)=='unfold':args=block[pos:block.find('\n',pos) if '\n' in block[pos:] else len(block)]
+            for arg in split_args(args):
+                arg=arg.strip()
+                if not arg:continue
+                h=re.match(r"(?:←\s*|-\s*)?([A-Za-z_][A-Za-z_0-9']*(?:\.[A-Za-z_][A-Za-z_0-9']*)*)",arg)
+                head=h.group(1) if h else None
+                if head and head!='show':heads.add(head)
+                rows.append(dict(target=target['name'],file=f,changed_target=n in CHANGED,generation=generation,
+                                 tactic=m.group(1),block_line=block[:m.start()].count('\n')+1,arg=arg,head=head))
+(W/'argument-source-inventory.json').write_text(json.dumps(dict(rows=rows,heads=sorted(heads),samehome_definitions=samehome,
+  scope='all14 consumer declarations, including every six changed proof body and both approved private headers',
+  no_Core_or_Mathlib_definition_exception=True),indent=2)+'\n')
+imports=''.join('import '+f[:-5].replace('/','.')+'\n' for f in sorted(actual))
+entries=[]
+for head in sorted(heads):
+    candidates=['`'+head,'(`Turing).append `'+head,'(`Turing.FinTM).append `'+head]
+    if head.startswith(('host.step_of_','tm.step_of_')):candidates.append('`Turing.MultiTapeTM.'+head.split('.')[-1])
+    entries.append('("'+head+'", ['+', '.join(candidates)+'])')
+code=imports+'''
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let specs : List (String × List Name) := [SPECS]
+  for (spelling,candidates) in specs do
+    let mut found : Array Name := #[]
+    for n in candidates do
+      if (env.find? n).isSome && !found.contains n then found := found.push n
+    if found.isEmpty then
+      logInfo m!"ARG_UNRESOLVED|{spelling}"
+    else
+      for n in found do
+        let some ci := env.find? n | throwError "lost name"
+        let kind := match ci with
+          | .thmInfo _ => "theorem" | .defnInfo _ => "definition"
+          | .axiomInfo _ => "axiom" | .opaqueInfo _ => "opaque"
+          | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+          | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+        let home := match env.getModuleIdxFor? n with
+          | some i => env.header.moduleNames[i.toNat]!.toString
+          | none => "local"
+        let row := Json.mkObj [("spelling",toJson spelling),("name",toJson n.toString),
+          ("kind",toJson kind),("home",toJson home)]
+        logInfo m!"ARG_KIND|{row.compress}"
+  logInfo "ARG_COMPLETE|all explicit rewrite/unfold heads; no theorem value rendered"
+'''.replace('SPECS',',\n    '.join(entries))
+(W/'project/CoreArgKinds_v1.lean').write_text(code)
+print(json.dumps(dict(heads=len(heads),argument_rows=len(rows),changed_targets=len(CHANGED),all_14_scope=True)))

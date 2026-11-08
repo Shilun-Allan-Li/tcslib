@@ -1,0 +1,188 @@
+diff --git a/TCSlib/Complexity/ClassNP/SAT.lean b/TCSlib/Complexity/ClassNP/SAT.lean
+index 00701cefd..a1e156389 100644
+--- a/TCSlib/Complexity/ClassNP/SAT.lean
++++ b/TCSlib/Complexity/ClassNP/SAT.lean
+@@ -3900,15 +3900,13 @@ private lemma satStop_step (C : FinTM Bool) (entry exit : C.State)
+     simp only [satStopTM, hq, ↓reduceIte]
+     rfl
+ 
+-/-- Live endpoints force every earlier module state to be live. -/
++/-- Live endpoints force earlier module states to be live by
++`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
+ private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}
+     (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
+     (ht : (tm.runFrom c t).state ≠ none) :
+     ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
+-  intro u hu hh
+-  have he : tm.runFrom c t = tm.runFrom c u := by
+-    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+-  exact ht (by rw [he]; exact hh)
++  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
+ 
+ /-- Stop a clean call one silent step after its certified first positive exit.
+ **Proof sketch.** Induct on prefixes, keeping the release flag false only at
+diff --git a/TCSlib/Complexity/CookLevin/Hardness.lean b/TCSlib/Complexity/CookLevin/Hardness.lean
+index 04828f7da..433d0ce6e 100644
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -6225,15 +6225,13 @@ private lemma clA5Stop_step (C : FinTM Bool) (entry exit : C.State)
+     simp only [clA5StopTM, hq, ↓reduceIte]
+     rfl
+ 
+-/-- Live endpoints force every earlier module state to be live. -/
++/-- Live endpoints force earlier module states to be live by
++`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
+ private lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}
+     (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
+     (ht : (tm.runFrom c t).state ≠ none) :
+     ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
+-  intro u hu hh
+-  have he : tm.runFrom c t = tm.runFrom c u := by
+-    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+-  exact ht (by rw [he]; exact hh)
++  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
+ 
+ /-- Stop a clean call one silent step after its certified first positive exit.
+ **Proof sketch.** Induct on prefixes, keeping the release flag false only at
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+index d900b690e..cac399b0a 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Catalog.lean
+@@ -10467,29 +10467,6 @@ private lemma catalog_redirect_run (M : FinTM Bool) (haltOn : Bool) (x : List Bo
+     (M.tm.initCfg x) t
+ 
+ 
+-/-- **W2 space row** (design §12 R3, decision 12.3;
+-annotates `Turing.FinTM.redirectTM` beside its
+-`redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs
+-no space, per tape and exactly: the redirected machine's tape actions are
+-the source's verbatim, before and after the source halt.
+-
+-**Proof sketch.** `redirect_run`'s configuration correspondence preserves
+-work tapes and heads at every time (the live loop is stationary and the
+-simulation phase copies the source's tape actions), so the two head
+-trajectories coincide pointwise and the visited images agree. -/
+-theorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)
+-    (x : List Bool) (t : ℕ) (i : Fin M.k) :
+-    (redirectTM M haltOn).tm.spaceUsedByTape
+-        ((redirectTM M haltOn).tm.initCfg x) t i
+-      = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
+-  unfold MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead
+-  congr 1
+-  apply Finset.image_congr
+-  intro u _
+-  dsimp only
+-  rw [catalog_redirect_run]
+-  rfl
+-
+ /-- Pad the decider with the fresh branch tapes. The added tapes are idle,
+ so the public left-block simulation supplies its complete run invariant. -/
+ private def f2_timedPadTM (D : FinTM Bool) (r : ℕ) : MultiTapeTM (D.k + r) Bool D.State where
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+index 37165dcf8..af1b70fb8 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Primitives.lean
+@@ -504,6 +504,12 @@ def incFixedTM : FinTM Bool where
+           | some b => ⟨.pos, fun j => j.elim0, some b, some 3⟩
+           | none => ⟨0, fun j => j.elim0, none, none⟩ }
+ 
++/-- The fixed-width incrementer uses zero work space on every input at every time,
++because it has no work tapes. -/
++theorem incFixedTM_spaceUsed (x : List Bool) (t : ℕ) :
++    incFixedTM.tm.spaceUsed (incFixedTM.tm.initCfg x) t = 0 := by
++  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
++
+ /-- **The incrementer's time**. On every input the incrementer halts within `3·(|x| + 1)` steps with
+ output `(incFixed x).getD []`.
+ 
+diff --git a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+index af54cbd62..e3573774d 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+@@ -502,6 +502,26 @@ theorem redirectTM_runFrom (M : FinTM Bool) (haltOn : Bool) (x : List Bool) (t :
+   rcases c with ⟨q, p, tapes, heads, out⟩
+   cases q <;> rfl
+ 
++/-- **W2 space row** (design §12 R3, decision 12.3;
++annotates `Turing.FinTM.redirectTM` beside its
++`redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs
++no space, per tape and exactly: the redirected machine's tape actions are
++the source's verbatim, before and after the source halt.
++
++**Proof sketch.** `redirect_run`'s configuration correspondence preserves
++work tapes and heads at every time (the live loop is stationary and the
++simulation phase copies the source's tape actions), so the two head
++trajectories coincide pointwise and the visited images agree. -/
++theorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)
++    (x : List Bool) (t : ℕ) (i : Fin M.k) :
++    (redirectTM M haltOn).tm.spaceUsedByTape
++        ((redirectTM M haltOn).tm.initCfg x) t i
++      = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by
++  rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]
++  congr 1
++  ext p
++  simp only [MultiTapeTM.mem_visitedByTapeHead_iff, (redirectTM_runFrom M haltOn x _).2.2.2.1]
++
+ /-- Pad the decider with the fresh branch tapes. The added tapes are idle,
+ so the public left-block simulation supplies its complete run invariant. -/
+ private def timedPadTM (D : FinTM Bool) (r : ℕ) : MultiTapeTM (D.k + r) Bool D.State where
+diff --git a/TCSlib/Complexity/TuringMachine/Encoding.lean b/TCSlib/Complexity/TuringMachine/Encoding.lean
+index c1d171e6f..184022251 100644
+--- a/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ b/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -340,6 +340,13 @@ def pairDiagTM : FinTM Bool where
+           | some b => ⟨.pos, fun i => i.elim0, some b, some 5⟩
+           | none => ⟨.zero, fun i => i.elim0, none, none⟩ }
+ 
++/-- The diagonal pairing machine uses zero work-tape space on every input at every time.
++It has no work tapes, so `Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero` applies.
++[AB09, §4.1] -/
++theorem pairDiagTM_spaceUsed (x : List Bool) (t : ℕ) :
++    pairDiagTM.tm.spaceUsed (pairDiagTM.tm.initCfg x) t = 0 := by
++  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
++
+ /-- A pairing-machine configuration, with its vacuous work-tape fields suppressed. -/
+ private def pairDiagCfg (x : List Bool) (q : Option (Fin 6))
+     (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin 6) x :=
+diff --git a/TCSlib/Complexity/TuringMachine/Finite.lean b/TCSlib/Complexity/TuringMachine/Finite.lean
+index 86af30059..405f6d71f 100644
+--- a/TCSlib/Complexity/TuringMachine/Finite.lean
++++ b/TCSlib/Complexity/TuringMachine/Finite.lean
+@@ -226,6 +226,37 @@ theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol
+   rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+     MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
+ 
++/-- A run ending in a designated live stop state first enters the stop states by its deadline,
++and that first entry is already the final configuration, provided every stop configuration is
++fixed by one step.
++
++**Proof sketch.** Choose the least stop-state time with `Nat.find`. Minimality gives the
++strict earlier-time cut. The fixed-step hypothesis keeps every subsequent configuration equal
++to that first entry; `runFrom_add` then identifies it with the given final configuration. -/
++theorem exists_first_entry_of_fixed {k : ℕ} {Symbol State : Type*}
++    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
++    (stop : State → Prop) (c d : Cfg k Symbol State input) (T : ℕ)
++    (hfix : ∀ z : Cfg k Symbol State input,
++      (∃ q, z.state = some q ∧ stop q) → tm.step z = z)
++    (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
++    ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
++      tm.runFrom c t = d := by
++  classical
++  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q :=
++    ⟨T, by rw [hT]; exact hd⟩
++  let t := Nat.find hh
++  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
++  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
++  have hfixed : tm.step (tm.runFrom c t) = tm.runFrom c t := hfix _ hs
++  have hconst (n : ℕ) : tm.runFrom (tm.runFrom c t) n = tm.runFrom c t := by
++    induction n with
++    | zero => exact runFrom_zero
++    | succ n ih => rw [runFrom_succ_eq_step, hfixed]; exact ih
++  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
++  have he := tm.runFrom_add c t (T - t)
++  rw [Nat.add_sub_of_le ht, hT, hconst] at he
++  exact he.symm
++
+ /-- **A new initial state changes no run** (the core specification API, user 2026-10-16; its
+ gate, finding 1): the machine `{ tm with q₀ := q }` has `tm`'s transition table, so from every
+ configuration it takes `tm`'s run, `({ tm with q₀ := q }).runFrom cfg t = tm.runFrom cfg t`.

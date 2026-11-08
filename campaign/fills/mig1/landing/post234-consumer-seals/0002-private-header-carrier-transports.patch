@@ -1,0 +1,24 @@
+--- a/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/Wrappers.lean
+@@ -722,7 +722,8 @@
+     (hD : D.ComputesInTime x [b] T) :
+     ∃ a ≤ 2 * T + 5, ∃ (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+       (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) a =
+-        timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads b := by
++        timedBranchCfg D M₁ M₂ (show Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x from by
++          simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)) tapes heads b := by
+   classical
+   let branchInit : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x := by
+     simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)
+--- a/TCSlib/Complexity/TuringMachine/Composition.lean
++++ b/TCSlib/Complexity/TuringMachine/Composition.lean
+@@ -680,7 +680,8 @@
+     (hD : ∃ t, D.ComputesInTime x [b] t) :
+     ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+       (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
+-        rightCfg (fun q => .inr (.inr q)) ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads := by
++        rightCfg (fun q => .inr (.inr q)) (show Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x from by
++          simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)) tapes heads := by
+   classical
+   let branchInit : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x := by
+     simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)

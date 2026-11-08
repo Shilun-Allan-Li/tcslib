@@ -1,0 +1,65 @@
+[
+  {
+    "name": "named_argument",
+    "source": "theorem t (c : Cfg (input := x)) : c = c := by rfl",
+    "expected": "theorem t (c : Cfg (input := x)) : c = c :=",
+    "actual": "theorem t (c : Cfg (input := x)) : c = c :=",
+    "passed": true
+  },
+  {
+    "name": "simple_type_let",
+    "source": "theorem t : let arg := [true]; arg = arg := by rfl",
+    "expected": "theorem t : let arg := [true]; arg = arg :=",
+    "actual": "theorem t : let arg := [true]; arg = arg :=",
+    "passed": true
+  },
+  {
+    "name": "nested_type_let",
+    "source": "theorem t : let a := let b := 0; b; a = a := by rfl",
+    "expected": "theorem t : let a := let b := 0; b; a = a :=",
+    "actual": "theorem t : let a := let b := 0; b; a = a :=",
+    "passed": true
+  },
+  {
+    "name": "structure_where",
+    "source": "structure Example where\n n : Nat",
+    "expected": "structure Example",
+    "actual": "structure Example",
+    "passed": true
+  },
+  {
+    "name": "proof_let_have_inline",
+    "source": "theorem t :\n  let hp : 1 < 2 := by\n    have := Nat.zero_lt_one; omega\n  1 < 2 := by\n  exact hp",
+    "expected": "theorem t : let hp : 1 < 2 := by have := Nat.zero_lt_one; omega 1 < 2 :=",
+    "actual": "theorem t : let hp : 1 < 2 := by have := Nat.zero_lt_one; omega 1 < 2 :=",
+    "passed": true
+  },
+  {
+    "name": "proof_let_have_nested",
+    "source": "theorem t :\n  let hp : 1 < 2 := by\n    have h : 0 < 1 := by\n      have q := Nat.zero_lt_one\n      exact q\n    omega\n  let x := 2\n  x = x := by\n  rfl",
+    "expected": "theorem t : let hp : 1 < 2 := by have h : 0 < 1 := by have q := Nat.zero_lt_one exact q omega let x := 2 x = x :=",
+    "actual": "theorem t : let hp : 1 < 2 := by have h : 0 < 1 := by have q := Nat.zero_lt_one exact q omega let x := 2 x = x :=",
+    "passed": true
+  },
+  {
+    "name": "proof_letI",
+    "source": "theorem t :\n  letI : Inhabited Nat := by\n    have x := 0\n    exact ⟨x⟩\n  True := by\n  trivial",
+    "expected": "theorem t : letI : Inhabited Nat := by have x := 0 exact ⟨x⟩ True :=",
+    "actual": "theorem t : letI : Inhabited Nat := by have x := 0 exact ⟨x⟩ True :=",
+    "passed": true
+  },
+  {
+    "name": "proof_let_same_line_have",
+    "source": "theorem t :\n  let hp : True := by have h := True.intro; exact h\n  True := by\n  exact hp",
+    "expected": "theorem t : let hp : True := by have h := True.intro; exact h True :=",
+    "actual": "theorem t : let hp : True := by have h := True.intro; exact h True :=",
+    "passed": true
+  },
+  {
+    "name": "comments_nested_binders",
+    "source": "/-- := by fake -/\ntheorem t (x : {n : Nat // n = n}) :\n  let hp : True := by\n    -- := fake\n    have h := True.intro\n    exact h\n  True := by\n  exact hp",
+    "expected": "theorem t (x : {n : Nat // n = n}) : let hp : True := by have h := True.intro exact h True :=",
+    "actual": "theorem t (x : {n : Nat // n = n}) : let hp : True := by have h := True.intro exact h True :=",
+    "passed": true
+  }
+]

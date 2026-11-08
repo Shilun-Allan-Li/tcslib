@@ -1,0 +1,60 @@
+"""Final independent data/hash audit. No Lean, Git mutation, or delivered-code execution."""
+from pathlib import Path
+import ast,datetime,hashlib,json
+P=Path('/private/tmp/mig-post234-consumer-seals-final')
+sha=lambda b:hashlib.sha256(b).hexdigest()
+summary=json.loads((P/'SUMMARY.json').read_text());checks=json.loads((P/'FINAL-CHECKS.json').read_text())
+assert summary['targets']==14 and summary['selected_roots_and_descendants']==31
+assert sum(len(x['targets']) for x in checks['full_seals'])==14
+assert sum(x['guards'] for x in checks['full_seals'])==116
+assert len(checks['selected_AX'])==31
+assert all(set(x['axioms'])<={'propext','Classical.choice','Quot.sound'} for x in checks['selected_AX'])
+assert len(checks['strict_controls']['corruption_tests'])==9
+assert all(x['rejected'] for x in checks['strict_controls']['corruption_tests'])
+for row in json.loads((P/'EVIDENCE-COPY-RECEIPTS.json').read_text()):
+    data=(P/row['packet']).read_bytes();assert len(data)==row['bytes'] and sha(data)==row['sha256']
+for row in json.loads((P/'RUN-INDEX.json').read_text()):
+    run=json.loads((P/row['result']).read_text());data=(P/row['input']).read_bytes();raw=(P/row['raw']).read_bytes()
+    assert sha(data)==run['input_sha256'] and sha(raw)==run['output_sha256'] and len(raw)==run['output_bytes']
+for row in json.loads((P/'SOURCE-BINDINGS.json').read_text()):
+    data=(P/'api-home-sources'/(row['path']+'.txt')).read_bytes();assert sha(data)==row['sha256'] and len(data)==row['bytes']
+for row in json.loads((P/'PATCH-ROUNDTRIPS.json').read_text()):
+    data=(P/row['patch']).read_bytes();assert sha(data)==row['sha256'] and len(data)==row['bytes']
+    assert row['forward_exact'] and row['reverse_exact']
+for record in checks['original_proposed_header_equalities']:
+    assert record['exact_binders'] and 'complete forall theorem types' in record['identity']
+
+# Include the last two own assembly programs as review data, with full stdlib provenance.
+meta=json.loads((P/'TOOL-PROVENANCE.json').read_text())
+for p in [Path('/private/tmp/mig-write-consumer-seal-report.py'),Path('/private/tmp/mig-finalize-consumer-manifest.py')]:
+    b=p.read_bytes();(P/'tools'/(p.name+'.txt')).write_bytes(b)
+    t=ast.parse(b);imports=sorted({a.name.split('.')[0] for n in ast.walk(t) if isinstance(n,ast.Import) for a in n.names}|{n.module.split('.')[0] for n in ast.walk(t) if isinstance(n,ast.ImportFrom)})
+    meta['own_scripts'].append(dict(path=str(p),bytes=len(b),sha256=sha(b),imports=imports,stdlib_only=True,execution='python3 -I'))
+(P/'TOOL-PROVENANCE.json').write_text(json.dumps(meta,ensure_ascii=False,indent=2)+'\n')
+f=P/'README.md';s=f.read_text().replace('The actual pushed source remains','The evaluated pushed source pin is');f.write_text(s)
+receipt=dict(result='PASS',utc=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    all_executed_input_and_raw_hashes_verified=True,all_copy_receipts_exact=True,
+    all_TCSlib_source_bindings_from_pinned_git_objects=True,all_three_patch_roundtrips_exact=True,
+    complete_14_target_full_header_body_guard_pass=True,all_31_selected_AXIOMS_standard=True,
+    zero_changed_region_warnings=True,all_895_context_objects_unchanged=True,
+    controls_232_pairs_effective=True,synthetic_corruptions_rejected=9,
+    archived_scripts_executed_from_packet=False,source_Git_or_cache_mutation=False,
+    literal_private_header_approval='PENDING USER / ROOT',merge_status='Not yet clear to merge: #233')
+(P/'ASSEMBLY-QA.json').write_text(json.dumps(receipt,indent=2)+'\n')
+files=[]
+for p in sorted(P.rglob('*')):
+    if not p.is_file():continue
+    assert p.suffix not in ['.lean','.olean','.py','.sh']
+    b=p.read_bytes();b.decode('utf-8')
+    files.append(dict(path=p.relative_to(P).as_posix(),bytes=len(b),sha256=sha(b)))
+manifest=dict(format='all payload files UTF-8, byte-exact; no caps',source=summary['source'],
+              files=files,payload_files=len(files),payload_bytes=sum(x['bytes'] for x in files),
+              manifest_self_reference='MANIFEST.json and MANIFEST.sha256 excluded from this JSON list; SHA manifest includes JSON, excludes only itself')
+(P/'MANIFEST.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2)+'\n')
+listed=files+[dict(path='MANIFEST.json',bytes=(P/'MANIFEST.json').stat().st_size,sha256=sha((P/'MANIFEST.json').read_bytes()))]
+(P/'MANIFEST.sha256').write_text(''.join(x['sha256']+'  '+x['path']+'\n' for x in sorted(listed,key=lambda x:x['path'])))
+actual={p.relative_to(P).as_posix() for p in P.rglob('*') if p.is_file()}
+assert actual=={x['path'] for x in listed}|{'MANIFEST.sha256'}
+for x in listed:assert sha((P/x['path']).read_bytes())==x['sha256']
+print(json.dumps(dict(packet=str(P),files=len(actual),payload_bytes=manifest['payload_bytes'],
+                     MANIFEST_sha256=sha((P/'MANIFEST.sha256').read_bytes()),result='PASS')))

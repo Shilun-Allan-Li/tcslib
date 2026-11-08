@@ -1,0 +1,911 @@
+diff --git a/TCSlib/Complexity/ClassNP/SAT.lean b/TCSlib/Complexity/ClassNP/SAT.lean
+index f110ca6d5..a1e156389 100644
+--- a/TCSlib/Complexity/ClassNP/SAT.lean
++++ b/TCSlib/Complexity/ClassNP/SAT.lean
+@@ -2713,56 +2713,32 @@ private lemma satPair_computes (M : FinTM Bool) (f : List Bool → List Bool) (T
+ original input as a pair. -/
+ private lemma sat_pt_pair_input {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
+     PolyTimeComputable (fun x => pairEncode (f x) x) := by
+-  obtain ⟨M, C, e, hM⟩ := hf
+-  refine ⟨satPairTM M, 4 * C + 10, e + 1, fun x => (satPair_computes M f _ hM x).mono ?_⟩
+-  have he : (x.length + 1) ^ e ≤ (x.length + 1) ^ (e + 1) :=
+-    Nat.pow_le_pow_right (Nat.succ_pos _) (by omega)
+-  have h1 : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
+-    simpa using Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 ≤ e + 1 by omega)
+-  have ht := Nat.mul_le_mul_left (4 * C) he
+-  dsimp only
+-  calc
+-    _ = 4 * C * (x.length + 1) ^ e + 2 * x.length + 8 := by ring
+-    _ ≤ 4 * C * (x.length + 1) ^ (e + 1) + 10 * (x.length + 1) ^ (e + 1) := by omega
+-    _ = _ := by ring
++  exact PolyTimeComputable.pairEncode hf polyTimeComputable_id
+ 
+-/-- Mapping a paired payload by a polynomial-time function preserves
+-polynomial time, by the audited data-retaining catalog constructor. -/
++/-- The published threaded-map closure preserves the first field while applying a
++polynomial-time function to the payload, with empty output on malformed pairs. -/
+ private lemma sat_pt_mapSnd {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+     PolyTimeComputable (fun z => match pairDecode z with
+       | some (a, b) => pairEncode a (g b)
+       | none => []) := by
+-  obtain ⟨M, C, e, hM⟩ := hg
+-  obtain ⟨N, K, hN⟩ := FinTM.computesFunInTime_pairMapSnd hM
+-    (by intro a b hab; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))
+-  refine ⟨N, K * (C + 1), e + 1, fun x => (hN x).mono ?_⟩
+-  have he : (x.length + 1) ^ e ≤ (x.length + 1) ^ (e + 1) :=
+-    Nat.pow_le_pow_right (Nat.succ_pos _) (by omega)
+-  have h1 : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
+-    simpa using Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 ≤ e + 1 by omega)
+-  calc
+-    _ ≤ K * ((C + 1) * (x.length + 1) ^ (e + 1)) := by
+-      apply Nat.mul_le_mul_left
+-      calc
+-        _ ≤ (x.length + 1) ^ (e + 1) + C * (x.length + 1) ^ (e + 1) :=
+-          Nat.add_le_add h1 (Nat.mul_le_mul_left C he)
+-        _ = _ := by ring
+-    _ = _ := by ring
++  have he : Complexity.pairMapSnd g = (fun z => match pairDecode z with
++      | some (a, b) => pairEncode a (g b)
++      | none => []) := funext (Complexity.pairMapSnd.eq_1 g)
++  rw [← he]
++  exact PolyTimeComputable.pairMapSnd hg
+ 
+ /-- Independently computed fields can be paired without losing the original
+ input needed by the second computation. -/
+ private lemma sat_pt_pair {f g : List Bool → List Bool}
+     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+     PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
+-  simpa only [Function.comp_def, pairDecode_pairEncode] using
+-    (sat_pt_mapSnd hg).comp (sat_pt_pair_input hf)
++  exact PolyTimeComputable.pairEncode hf hg
+ 
+ /-- Independently computed word fragments can be concatenated in polynomial time. -/
+ private lemma sat_pt_append {f g : List Bool → List Bool}
+     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+     PolyTimeComputable (fun x => f x ++ g x) := by
+-  simpa only [Function.comp_def, pairDecode_pairEncode] using
+-    (sat_pt_linear _ FinTM.computesFunInTime_pairConcat).comp (sat_pt_pair hf hg)
++  exact PolyTimeComputable.append hf hg
+ 
+ /-- Pure semantics for a finite one-way word transducer with at most one
+ emitted bit per input bit and one optional final bit. -/
+@@ -2842,16 +2818,7 @@ private lemma satMap_poly {S : Type} [Fintype S] [DecidableEq S]
+ 
+ /-- Replacing every bit by `true` computes the exact unary input length. -/
+ private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by
+-  have h := satMap_poly (S := Unit) (fun _ _ => ()) (fun _ _ => some true) (fun _ => none) ()
+-  have he (x : List Bool) :
+-      satMapWord (fun (_ : Unit) _ => ()) (fun _ _ => some true) (fun _ => none) () x =
+-        List.replicate x.length true := by
+-    induction x with
+-    | nil => rfl
+-    | cons b r ih => simpa [satMapWord, List.replicate_succ] using congrArg (true :: ·) ih
+-  convert h using 1
+-  funext x
+-  exact (he x).symm
++  exact polyTimeComputable_unary
+ 
+ /-- Removing the first bit is a two-state finite transduction. -/
+ private lemma sat_pt_tail : PolyTimeComputable List.tail := by
+@@ -3933,15 +3900,13 @@ private lemma satStop_step (C : FinTM Bool) (entry exit : C.State)
+     simp only [satStopTM, hq, ↓reduceIte]
+     rfl
+ 
+-/-- Live endpoints force every earlier module state to be live. -/
++/-- Live endpoints force earlier module states to be live by
++`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
+ private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}
+     (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
+     (ht : (tm.runFrom c t).state ≠ none) :
+     ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
+-  intro u hu hh
+-  have he : tm.runFrom c t = tm.runFrom c u := by
+-    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+-  exact ht (by rw [he]; exact hh)
++  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
+ 
+ /-- Stop a clean call one silent step after its certified first positive exit.
+ **Proof sketch.** Induct on prefixes, keeping the release flag false only at
+@@ -4079,12 +4044,16 @@ private lemma sat_guard_add {k : ℕ} {S : Type} {x : List Bool}
+     (he : tm.runFrom c a = d)
+     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
+     ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
+-  intro v hv
+-  by_cases h : v < a
+-  · exact ha v h
+-  · have hva : a ≤ v := by omega
+-    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
+-    exact hb (v - a) (by omega)
++  have h₁ : Turing.Segment tm {some anchor} (fun _ => True) c d a :=
++    (Turing.segment_iff tm {some anchor} (fun _ => True) c d a).mpr
++      ⟨he, fun v hv hm => ha v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
++  have h₂ : Turing.Segment tm {some anchor} (fun _ => True) d (tm.runFrom d b) b :=
++    (Turing.segment_iff tm {some anchor} (fun _ => True) d (tm.runFrom d b) b).mpr
++      ⟨rfl, fun v hv hm => hb v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
++  have h := (Turing.segment_iff tm {some anchor} (fun _ => True) c (tm.runFrom d b)
++    (a + b)).mp (Turing.Segment.trans h₁ h₂)
++  intro v hv hm
++  exact h.2.1 v hv (Set.mem_singleton_iff.mpr hm)
+ 
+ /-- Uniform clean-module contract: a first halt with a prescribed replacement
+ word and emitted chunk, over every untouched native input. -/
+diff --git a/TCSlib/Complexity/ClassNP/Tautology.lean b/TCSlib/Complexity/ClassNP/Tautology.lean
+index 9afa11c62..43f4b62bf 100644
+--- a/TCSlib/Complexity/ClassNP/Tautology.lean
++++ b/TCSlib/Complexity/ClassNP/Tautology.lean
+@@ -9,6 +9,7 @@ import TCSlib.Complexity.ClassNP.CoNP
+ import TCSlib.Complexity.ClassNP.Reductions
+ import TCSlib.Complexity.CookLevin.Hardness
+ import TCSlib.Complexity.TuringMachine.Build.Primitives
++import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+ import Mathlib.Data.Sigma.Basic
+ 
+ set_option maxHeartbeats 0
+@@ -1044,31 +1045,15 @@ private lemma taut_machine_split (z : List Bool) :
+     omega
+ 
+ /-- Quantitative buffered composition with a second-stage contract only on
+-the actual first-stage image (the proved epoch-2 TMSAT precedent).
++the actual first-stage image.
+ 
+-**Proof sketch.** Capture the first stage's complete output, rewind it, and
+-relocate the second run through the public simulation contract. At most one
+-bit is captured per first-stage step. The second budget remains a function
+-of the original input, exactly as supplied by its image contract. -/
++**Proof sketch.** Apply the public image-composition theorem with the two
++given machine contracts and their original-input time budgets. -/
+ private lemma taut_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+     (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+     (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+     ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2*T₁ n+T₂ n+2) := by
+-  refine ⟨FinTM.bufferedCompTM M U, ?_⟩
+-  intro x
+-  obtain ⟨a, p, tapes, heads, ha, hstart⟩ :=
+-    FinTM.bufferedComp_start M U x (f x) (T₁ x.length) (hM x)
+-  have hlen : (f x).length ≤ T₁ x.length := by
+-    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hM x)).2
+-    simpa only [ho] using M.tm.output_length_le x (T₁ x.length)
+-  obtain ⟨b, _, hr⟩ := FinTM.bufferedSecondCfg_run M U (U.tm.initCfg (f x)) true
+-    (by simp [FinTM.VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (T₂ x.length)
+-  have hu := (FinTM.computesInTime_iff _ _ _ _).mp (hU x)
+-  have hbase : (FinTM.bufferedCompTM M U).ComputesInTime x (g x) (a+T₂ x.length) := by
+-    apply (FinTM.computesInTime_iff _ _ _ _).mpr
+-    rw [MultiTapeTM.runFrom_add, hstart, hr]
+-    exact ⟨by simpa only [FinTM.bufferedSecondCfg, Option.map_eq_none_iff] using hu.1, hu.2⟩
+-  exact hbase.mono (by dsimp only; omega)
++  exact FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU
+ 
+ /-- The verifier is polynomial-time: P10's cubic split followed by the
+ linear syntax/evaluation machine, combined with buffered output.
+@@ -1284,33 +1269,31 @@ private def tautDualSegment {x : List Bool}
+   tautDualTM.tm.runFrom c t = d ∧
+     ∀ j < t, (tautDualTM.tm.runFrom c j).state ≠ some .anchor
+ 
++/-- `tautDualSegment` is the segment layer at the transducer's parameters: the segment
++(`Turing.Segment`) of `tautDualTM.tm` with the anchor forbidden and no head relation.
++Consecutive segments compose, without hiding an earlier anchor visit, by
++`Turing.Segment.trans` through this bridge. -/
++private lemma tautDualSegment_iff_segment {x : List Bool}
++    (c d : Cfg 0 Bool TautDualControl x) (t : ℕ) :
++    tautDualSegment c d t ↔ Segment tautDualTM.tm {some .anchor} (fun _ => True) c d t := by
++  rw [Turing.segment_iff]
++  exact ⟨fun h => ⟨h.1, h.2, fun _ _ => trivial⟩, fun h => ⟨h.1, h.2.1⟩⟩
++
+ /-- A zero-length segment has no strict prefix. -/
+ private lemma tautDual_segment_zero {x : List Bool} (c : Cfg 0 Bool TautDualControl x) :
+     tautDualSegment c c 0 := by
+-  exact ⟨rfl, by intro j hj; omega⟩
++  rw [tautDualSegment_iff_segment]
++  exact Segment.zero trivial
+ 
+ /-- A single non-anchor transition is a first-return segment. -/
+ private lemma tautDual_segment_one {x : List Bool} (c d : Cfg 0 Bool TautDualControl x)
+     (h : tautDualTM.tm.step c = d) (hq : c.state ≠ some .anchor) :
+     tautDualSegment c d 1 := by
+-  refine ⟨h, ?_⟩
+-  intro j hj
+-  have : j = 0 := by omega
+-  subst j
+-  exact hq
+-
+-/-- Consecutive exact segments compose without hiding an earlier anchor visit. -/
+-private lemma tautDual_segment_add {x : List Bool}
+-    {c d e : Cfg 0 Bool TautDualControl x} {a b : ℕ}
+-    (h : tautDualSegment c d a) (h' : tautDualSegment d e b) :
+-    tautDualSegment c e (a+b) := by
+-  refine ⟨by rw [MultiTapeTM.runFrom_add, h.1, h'.1], ?_⟩
+-  intro j hj
+-  by_cases ha : j < a
+-  · exact h.2 j ha
+-  · have he : j = a + (j-a) := by omega
+-    rw [he, MultiTapeTM.runFrom_add, h.1]
+-    exact h'.2 (j-a) (by omega)
++  rw [tautDualSegment_iff_segment]
++  have hseg := Segment.one (M := tautDualTM.tm) (F := {some .anchor})
++    (P := fun _ => True) (a := c)
++    (by simpa only [Set.mem_singleton_iff] using hq) trivial trivial
++  simpa only [h] using hseg
+ 
+ /-- A silent syntax pass consumes exactly the suffix length and preserves
+ physical output. Its endpoint records the complete inherited scanner state.
+@@ -1348,9 +1331,11 @@ private lemma tautDual_scan (r : List Bool) :
+       simpa using moveInputPos_pos_of_ne_right
+         (⟨pre.length+1, by simp [hx]; omega⟩ : Fin (x.length+2))
+         (by simp [hx])
+-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
++    have h1 := (tautDualSegment_iff_segment ..).1
++      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
+     simpa only [List.length_cons, List.foldl_cons, Nat.add_comm] using
+-      tautDual_segment_add h1 (ih x (pre ++ [b]) out (tautSyntaxStep q b) hx')
++      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
++        (ih x (pre ++ [b]) out (tautSyntaxStep q b) hx')))
+ 
+ /-- The emitting pass copies one native bit per transition, using exactly
+ `tautDualScan`; the arbitrary output prefix is preserved in chronological order.
+@@ -1388,11 +1373,12 @@ private lemma tautDual_copy (r : List Bool) :
+       simpa using moveInputPos_pos_of_ne_right
+         (⟨pre.length+1, by simp [hx]; omega⟩ : Fin (x.length+2))
+         (by simp [hx])
+-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
++    have h1 := (tautDualSegment_iff_segment ..).1
++      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
+     simpa only [List.length_cons, List.foldl_cons, Nat.add_comm, tautDualScan,
+       List.append_assoc, List.singleton_append] using
+-      tautDual_segment_add h1
+-        (ih x (pre ++ [b]) (out ++ [tautDualBit q b]) (tautSyntaxStep q b) hx')
++      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
++        (ih x (pre ++ [b]) (out ++ [tautDualBit q b]) (tautSyntaxStep q b) hx')))
+ 
+ /-- A left scan starts inside the native input, reaches the actual left blank,
+ and returns to position one. It stays silent and never returns early.
+@@ -1432,8 +1418,11 @@ private lemma tautDual_rewind (x out : List Bool) (finish : Bool) :
+       congr 1
+       simpa using moveInputPos_neg_of_ne_left
+         (⟨p+1, by omega⟩ : Fin (x.length+2)) (by simp)
+-    have h1 := tautDual_segment_one _ _ hs (by simp [tautDualCfg])
+-    simpa only [Nat.add_comm] using tautDual_segment_add h1 (ih (by omega))
++    have h1 := (tautDualSegment_iff_segment ..).1
++      (tautDual_segment_one _ _ hs (by simp [tautDualCfg]))
++    simpa only [Nat.add_comm] using
++      (tautDualSegment_iff_segment ..).2 (h1.trans ((tautDualSegment_iff_segment ..).1
++        (ih (by omega))))
+ 
+ /-- The post-copy right-blank transition begins a silent final rewind. -/
+ private lemma tautDual_copy_end (x out : List Bool) (q : TautSyntax) :
+@@ -1479,8 +1468,8 @@ private lemma tautDual_valid (x : List Bool)
+   have hclose := tautDual_copy_end x (tautDualScan .formula x)
+     (x.foldl tautSyntaxStep .formula)
+   have hreturn := tautDual_rewind x (tautDualScan .formula x) true x.length (by omega)
+-  have h := tautDual_segment_add (tautDual_segment_add (tautDual_segment_add
+-    (tautDual_segment_add (tautDual_segment_add hscan hend) hback) hcopy) hclose) hreturn
++  rw [tautDualSegment_iff_segment] at hscan hend hback hcopy hclose hreturn ⊢
++  have h := ((((hscan.trans hend).trans hback).trans hcopy).trans hclose).trans hreturn
+   convert h using 1
+   omega
+ 
+@@ -1509,7 +1498,8 @@ private lemma tautDual_invalid (x : List Bool)
+         (⟨x.length+1, by omega⟩ : Fin (x.length+2)) (by simp)
+     · simp [tautDualCfg]
+   have hreturn := tautDual_rewind x [false] true x.length (by omega)
+-  have h := tautDual_segment_add (tautDual_segment_add hscan hend) hreturn
++  rw [tautDualSegment_iff_segment] at hscan hend hreturn ⊢
++  have h := (hscan.trans hend).trans hreturn
+   convert h using 1
+   omega
+ 
+diff --git a/TCSlib/Complexity/CookLevin/Hardness.lean b/TCSlib/Complexity/CookLevin/Hardness.lean
+index 0998d738c..433d0ce6e 100644
+--- a/TCSlib/Complexity/CookLevin/Hardness.lean
++++ b/TCSlib/Complexity/CookLevin/Hardness.lean
+@@ -3,6 +3,8 @@ Copyright (c) 2026 Seyoon Ragavan. All rights reserved.
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
++import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
++import TCSlib.Complexity.ClassNP.PolyTimePrefix
+ import TCSlib.Complexity.ClassNP.SAT
+ import TCSlib.Complexity.ClassNP.TMSAT
+ import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+@@ -620,74 +622,44 @@ private lemma clNPVerifier {L : Language Bool} (hL : L ∈ NP) :
+   obtain ⟨M, c, A, d, hc, hA, hd, ho, hM⟩ := clObliviousVerifier hV
+   exact ⟨C, e, V, M, c, A, d, hcert, hc, hA, hd, ho, hM⟩
+ 
+-/-- Linear catalog contracts in the polynomial-time normal form. This and
+-the next two assembly lemmas locally repeat the public-catalog construction
+-used in `ClassNP/TMSAT.lean`; no foreign private declaration is referenced. -/
++/-- Linear-time computation is polynomial-time, by
++`Complexity.polyTimeComputable_of_linear`. -/
+ private lemma clNative_linear (f : List Bool → List Bool)
+     (h : ∃ (M : FinTM Bool) (a : ℕ),
+       M.ComputesFunInTime f (fun n => a * (n + 1))) : PolyTimeComputable f := by
+-  obtain ⟨M, a, hM⟩ := h
+-  exact ⟨M, a, 1, by simpa only [Nat.pow_one] using hM⟩
++  exact polyTimeComputable_of_linear h
+ 
+-/-- Payload maps retain the first field, including its exact bytes. The
+-linear scan and the computed payload both fit the displayed polynomial. -/
++/-- Threaded payload mapping preserves polynomial time, including malformed inputs,
++by `Complexity.PolyTimeComputable.pairMapSnd`. -/
+ private lemma clNative_map {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+     PolyTimeComputable (fun z => match pairDecode z with
+       | some (a, b) => pairEncode a (g b)
+       | none => []) := by
+-  obtain ⟨G, C, e, hG⟩ := hg
+-  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_pairMapSnd hG
+-    (by intro m n h; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))
+-  refine ⟨M, a * (C + 1), e + 1, fun x => (hM x).mono ?_⟩
+-  have hlin : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
+-    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos x.length)
+-      (show 1 ≤ e + 1 by omega)
+-  have hp := Nat.mul_le_mul_left C
+-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (Nat.le_succ e))
+-  calc
+-    _ ≤ a * ((x.length + 1) ^ (e + 1) + C * (x.length + 1) ^ (e + 1)) :=
+-      Nat.mul_le_mul_left a (Nat.add_le_add hlin hp)
+-    _ = _ := by ring
++  have he : Complexity.pairMapSnd g = (fun z => match pairDecode z with
++      | some (a, b) => pairEncode a (g b)
++      | none => []) := funext (Complexity.pairMapSnd.eq_1 g)
++  rw [← he]
++  exact PolyTimeComputable.pairMapSnd hg
+ 
+-/-- Two separately computed fields can be paired while preserving the
+-original input needed by both computations.
+-**Proof sketch.** Use the audited retained-request construction: compute
+-the first field paired with an empty payload, retain the original input,
+-then compute the second field from the retained input. Pair concatenation
+-and projection remove the administrative layers. All scans and simulations
+-are the native public catalog machines, with their proved runtime bounds. -/
++/-- Two separately computed polynomial-time fields can be paired on their shared
++input, by `Complexity.PolyTimeComputable.pairEncode`. -/
+ private lemma clNative_pair {f g : List Bool → List Bool}
+     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+     PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
+-  have hd := clNative_linear _ FinTM.computesFunInTime_pairDup
+-  have hp := clNative_linear _ FinTM.computesFunInTime_pairFst
+-  have hs := clNative_linear _ FinTM.computesFunInTime_pairSnd
+-  have hc := clNative_linear _ FinTM.computesFunInTime_pairConcat
+-  have hz := clNative_linear _ (FinTM.computesFunInTime_const [])
+-  have hH := ((clNative_map hz).comp hd).comp hf
+-  have hS := (clNative_map hH).comp hd
+-  have hT := ((clNative_map (hg.comp hp)).comp hd).comp hS
+-  convert hs.comp (hc.comp hT) using 1
+-  funext x
+-  simp only [Function.comp_apply, pairDecode_pairEncode, Option.map_some, Option.getD_some]
+-  have he (a b c : List Bool) : pairEncode a b ++ c = pairEncode a (b ++ c) := by
+-    simp [pairEncode, List.append_assoc]
+-  rw [he, he]
+-  simp [pairDecode_pairEncode]
++  exact PolyTimeComputable.pairEncode hf hg
+ 
+-/-- Concatenating computed fields uses the validated native pair scanner. -/
++/-- Concatenating polynomial-time field computations preserves polynomial time,
++by `Complexity.PolyTimeComputable.append`. -/
+ private lemma clNative_append {f g : List Bool → List Bool}
+     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+     PolyTimeComputable (fun x => f x ++ g x) := by
+-  simpa only [Function.comp_def, pairDecode_pairEncode] using
+-    (clNative_linear _ FinTM.computesFunInTime_pairConcat).comp (clNative_pair hf hg)
++  exact PolyTimeComputable.append hf hg
+ 
+-/-- The exact certificate polynomial is computed in unary, including zero
+-coefficient and zero degree. Its value is never replaced by a majorant. -/
++/-- The exact unary polynomial `1^(C * (|x| + 1)^e)` is polynomial-time computable,
++by `Complexity.polyTimeComputable_polyUnary`. -/
+ private lemma clNative_unary (C e : ℕ) :
+     PolyTimeComputable (fun x => List.replicate (C * (x.length + 1) ^ e) true) := by
+-  obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_polyUnary C e
+-  exact ⟨M, a, e + 1, hM⟩
++  exact polyTimeComputable_polyUnary C e
+ 
+ /-- Replace each native input bit by a fixed bit, with no work tapes.
+ The boundary transition halts silently, so length zero is included. -/
+@@ -6253,15 +6225,13 @@ private lemma clA5Stop_step (C : FinTM Bool) (entry exit : C.State)
+     simp only [clA5StopTM, hq, ↓reduceIte]
+     rfl
+ 
+-/-- Live endpoints force every earlier module state to be live. -/
++/-- Live endpoints force earlier module states to be live by
++`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
+ private lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}
+     (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
+     (ht : (tm.runFrom c t).state ≠ none) :
+     ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
+-  intro u hu hh
+-  have he : tm.runFrom c t = tm.runFrom c u := by
+-    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
+-  exact ht (by rw [he]; exact hh)
++  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
+ 
+ /-- Stop a clean call one silent step after its certified first positive exit.
+ **Proof sketch.** Induct on prefixes, keeping the release flag false only at
+@@ -6398,12 +6368,16 @@ private lemma clA5_guard_add {k : ℕ} {S : Type} {x : List Bool}
+     (he : tm.runFrom c a = d)
+     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
+     ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
+-  intro v hv
+-  by_cases h : v < a
+-  · exact ha v h
+-  · have hva : a ≤ v := by omega
+-    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
+-    exact hb (v - a) (by omega)
++  have h₁ : Turing.Segment tm {some anchor} (fun _ => True) c d a :=
++    (Turing.segment_iff tm {some anchor} (fun _ => True) c d a).mpr
++      ⟨he, fun v hv hm => ha v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
++  have h₂ : Turing.Segment tm {some anchor} (fun _ => True) d (tm.runFrom d b) b :=
++    (Turing.segment_iff tm {some anchor} (fun _ => True) d (tm.runFrom d b) b).mpr
++      ⟨rfl, fun v hv hm => hb v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
++  have h := (Turing.segment_iff tm {some anchor} (fun _ => True) c (tm.runFrom d b)
++    (a + b)).mp (Turing.Segment.trans h₁ h₂)
++  intro v hv hm
++  exact h.2.1 v hv (Set.mem_singleton_iff.mpr hm)
+ 
+ /-- Uniform clean-module contract: a first halt with a prescribed replacement
+ word and emitted chunk, over every untouched native input. -/
+@@ -6648,47 +6622,22 @@ private lemma clA5Startup (M : FinTM Bool) (C e c A d : ℕ) :
+ 
+ /-- A fixed word is emitted from finite control. -/
+ private lemma clA5_pt_const (w : List Bool) : PolyTimeComputable (fun _ => w) := by
+-  exact clNative_linear _ (FinTM.computesFunInTime_const w)
+-
+-/-- Polynomial-time branches on the original input, using W3's captured
+-single-bit decision. All three budgets fit their maximum degree.
++  exact polyTimeComputable_const w
+ 
+-**Proof sketch.** Use the audited conditional constructor on the three witnessing machines. Bound each
+-monomial by the common maximum exponent and absorb the constructor overhead into one
+-coefficient. -/
++/-- Polynomial-time branching on a polynomial-time bit preserves polynomial time,
++by `Complexity.polyTimeComputable_ite`. -/
+ private lemma clA5_pt_cond {p : List Bool → Bool} {f g : List Bool → List Bool}
+     (hp : PolyTimeComputable (fun x => [p x]))
+     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+     PolyTimeComputable (fun x => if p x then f x else g x) := by
+-  obtain ⟨P, A, a, hP⟩ := hp
+-  obtain ⟨F, B, b, hF⟩ := hf
+-  obtain ⟨G, C, c, hG⟩ := hg
+-  obtain ⟨M, K, hM⟩ := FinTM.computesFunInTime_cond hP hF hG
+-  let e := max a (max b c)
+-  refine ⟨M, K * (A + B + C + 1), e, fun x => (hM x).mono ?_⟩
+-  have ha := Nat.mul_le_mul_left A
+-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show a ≤ e by exact Nat.le_max_left _ _))
+-  have hb := Nat.mul_le_mul_left B
+-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show b ≤ e by omega))
+-  have hc := Nat.mul_le_mul_left C
+-    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show c ≤ e by omega))
+-  have h1 : 1 ≤ (x.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)
+-  simp only [Nat.succ_eq_add_one] at ha hb hc
+-  calc
+-    _ ≤ K * ((A + B + C + 1) * (x.length + 1) ^ e) :=
+-      Nat.mul_le_mul_left K (by simp only [Nat.add_mul, Nat.one_mul]; omega)
+-    _ = _ := by ring
+-
++  exact polyTimeComputable_ite hp hf hg
+ 
+ /-- Short-circuit conjunction preserves the order of two polynomial tests. -/
+ private lemma clA5_pt_and {p q : List Bool → Bool}
+     (hp : PolyTimeComputable (fun x => [p x]))
+     (hq : PolyTimeComputable (fun x => [q x])) :
+     PolyTimeComputable (fun x => [p x && q x]) := by
+-  have h := clA5_pt_cond hp hq (clA5_pt_const [false])
+-  convert h using 1
+-  funext x
+-  cases p x <;> rfl
++  exact polyTimeComputable_and hp hq
+ 
+ /-- Pure semantics for a finite one-way word transducer with at most one
+ emitted bit per input bit and one optional final bit. -/
+@@ -6865,72 +6814,42 @@ private lemma clA5Iter_shrinking {f s : List Bool → List Bool} {N : List Bool
+   simp only [one_mul]
+   omega
+ 
+-/-- Removing a computed unary number of leading bits is an actual sequence
+-of native tail calls. Each call is charged even after the word becomes empty. -/
++/-- Removing as many leading bits as the length of a computed word is polynomial-time.
++**Proof sketch.** Pair the length word first and the payload second, apply the public
++prefix remover, and read its result through its equation and the public pair projections. -/
+ private lemma clA5Drop_native {s u : List Bool → List Bool}
+     (hs : PolyTimeComputable s) (hu : PolyTimeComputable u) :
+     PolyTimeComputable (fun x => (s x).drop (u x).length) := by
+-  have h := clA5Iter_shrinking clA5_pt_tail hs ((clNative_fill true).comp hu)
+-    (fun w => by simp [List.length_tail])
+-  convert h using 1
+-  funext x
+-  symm
+-  induction (u x).length with
+-  | zero => rfl
+-  | succ j ih =>
+-    rw [Function.iterate_succ_apply', ih]
+-    simp [List.tail_drop]
+-
+-/-- Both decoded field components are bounded by the complete source word,
+-including malformed input and an empty default. This is a storage estimate.
+-**Proof sketch.** Strong induction on input length handles each two-bit
+-parser prefix; recursive branches consume two bits before the smaller call.
+-This local induction avoids generating an imported public induction theorem. -/
++  have h := polyTimeComputable_dropPrefixByLength.comp (hu.pairEncode hs)
++  have he : (PrefixByLength.drop ∘ (fun x => pairEncode (u x) (s x))) =
++      (fun x => (s x).drop (u x).length) := by
++    funext x
++    rw [Function.comp_apply, PrefixByLength.drop.eq_1,
++      pairFstD_pairEncode, pairSndD_pairEncode]
++  rw [he] at h
++  exact h
++
++/-- Both decoded components are bounded by their complete source word, with empty
++defaults on malformed input.
++**Proof sketch.** Split the decode once. On success, reconstruct the encoded pair
++and apply `length_pair_components_le` through the public projection equations;
++failure gives two empty words. -/
+ private lemma clA5Pair_sizes (w : List Bool) :
+     (clHeaderField 0 w).length ≤ w.length ∧ (clHeaderTail 1 w).length ≤ w.length := by
+-  have haux : ∀ n, ∀ w : List Bool, w.length = n → ∀ a b,
+-      pairDecode w = some (a, b) → a.length + b.length ≤ w.length := by
+-    intro n
+-    induction n using Nat.strong_induction_on with
+-    | h n ih =>
+-      intro w hn a b he
+-      cases w with
+-      | nil => simp [pairDecode] at he
+-      | cons c w =>
+-        cases w with
+-        | nil => cases c <;> simp [pairDecode] at he
+-        | cons d rest =>
+-          have hsmall : rest.length < n := by simp only [List.length_cons] at hn; omega
+-          have ihrest := ih rest.length hsmall rest rfl
+-          cases c <;> cases d
+-          · cases hd : pairDecode rest with
+-            | none => simp [pairDecode, hd] at he
+-            | some p =>
+-              have hp := ihrest p.1 p.2 hd
+-              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
+-              rcases he with ⟨rfl, rfl⟩
+-              simp only [List.length_cons]
+-              omega
+-          · simp only [pairDecode, Option.some.injEq, Prod.mk.injEq] at he
+-            rcases he with ⟨rfl, rfl⟩
+-            simp only [List.length_nil, List.length_cons, zero_add]
+-            omega
+-          · simp [pairDecode] at he
+-          · cases hd : pairDecode rest with
+-            | none => simp [pairDecode, hd] at he
+-            | some p =>
+-              have hp := ihrest p.1 p.2 hd
+-              simp only [pairDecode, hd, Option.map_some, Option.some.injEq, Prod.mk.injEq] at he
+-              rcases he with ⟨rfl, rfl⟩
+-              simp only [List.length_cons]
+-              omega
+-  have h (w : List Bool) := haux w.length w rfl
++  change (((pairDecode w).map Prod.fst).getD []).length ≤ w.length ∧
++    (((pairDecode w).map Prod.snd).getD []).length ≤ w.length
+   cases hd : pairDecode w with
+-  | none => simp [clHeaderField, clHeaderTail, hd]
++  | none =>
++    simp only [Option.map_none, Option.getD_none, List.length_nil]
++    exact ⟨Nat.zero_le _, Nat.zero_le _⟩
+   | some p =>
+-    have hp := h w p.1 p.2 hd
+-    simp only [clHeaderField, clHeaderTail, hd, Option.map_some, Option.getD_some]
+-    omega
++    rcases p with ⟨a, b⟩
++    have heq := eq_pairEncode_of_pairDecode w a b hd
++    have hbound := length_pair_components_le w
++    have hab : 2 * a.length + b.length ≤ w.length := by
++      simpa only [heq, pairFstD_pairEncode, pairSndD_pairEncode] using hbound
++    simp only [Option.map_some, Option.getD_some]
++    constructor <;> omega
+ 
+ /-- Variable field access is a genuine unary-counted sequence of the native
+ pair-tail projection, followed by the native pair-first projection. -/
+@@ -6957,15 +6876,17 @@ private lemma clA5Times_native {f : List Bool → ℕ}
+   | succ k ih =>
+     simpa only [Nat.succ_mul, List.replicate_add] using clNative_append ih hf
+ 
+-/-- Unary comparison is charged subtraction followed by the actual finite
+-empty-word test; no numeric oracle enters the transition table. -/
++/-- Unary comparison is polynomial-time by comparing the lengths of a reversed pair
++of the two unary words, using `Complexity.polyTimeComputable_lenLe`. -/
+ private lemma clA5Le_native {f g : List Bool → ℕ}
+     (hf : PolyTimeComputable (fun x => List.replicate (f x) true))
+     (hg : PolyTimeComputable (fun x => List.replicate (g x) true)) :
+     PolyTimeComputable (fun x => [decide (f x ≤ g x)]) := by
+-  have h := clA5_pt_eq (clA5Drop_native hf hg) []
+-  simpa only [List.length_replicate, List.drop_replicate, List.replicate_eq_nil_iff,
+-    Nat.sub_eq_zero_iff_le] using h
++  have h := polyTimeComputable_lenLe.comp (hg.pairEncode hf)
++  convert h using 1
++  funext x
++  simp only [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode,
++    List.length_replicate]
+ 
+ /-- A fixed finite template is serialized natively whenever each of its
+ finitely many unary wire indices is native. The variable-index cost is
+diff --git a/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean b/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+index aa6a9f591..b2beab0b2 100644
+--- a/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
++++ b/TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean
+@@ -827,34 +827,25 @@ private def counterSpan {k : ℕ} {Γ S : Type} {x : List Γ}
+     Finset.Icc (cp - 1) (cp + (width : ℤ))) ∧
+   (∀ u ≤ t, R (fun j => (H.runFrom z u).workTapePos j.castSucc))
+ 
+-/-- Adjacent segments concatenate their cuts and trajectory bounds.
+-**Proof sketch.** Split a queried time at the first segment's length and
+-use run addition on the suffix. The two head-vector relations imply the
+-requested relation separately. -/
+-private lemma counter_span_append {k : ℕ} {Γ S : Type} {x : List Γ}
++/-- `counterSpan` is the segment layer at the counter loop's parameters: the segment
++(`Turing.Segment`) from `z` to its run endpoint over both exits, whose head relation puts the
++counter head in its interval and the body heads in `R`. Concatenation and weakening are
++`Turing.Segment.trans` and `Turing.Segment.mono` through this bridge. -/
++private lemma counterSpan_iff_segment {k : ℕ} {Γ S : Type} {x : List Γ}
+     (H : MultiTapeTM (k + 1) Γ (CounterLoopState S))
+-    (z : Cfg (k + 1) Γ (CounterLoopState S) x) (s t : ℕ) (cp : ℤ) (width : ℕ)
+-    (R₁ R₂ R : (Fin k → ℤ) → Prop)
+-    (h₁ : counterSpan H z s cp width R₁)
+-    (h₂ : counterSpan H (H.runFrom z s) t cp width R₂)
+-    (hr₁ : ∀ p, R₁ p → R p) (hr₂ : ∀ p, R₂ p → R p) :
+-    counterSpan H z (s + t) cp width R := by
+-  have suffix (u : ℕ) (hu : s ≤ u) :
+-      H.runFrom z u = H.runFrom (H.runFrom z s) (u - s) := by
+-    rw [← H.runFrom_add, Nat.add_sub_of_le hu]
+-  refine ⟨?_, ?_, ?_⟩
+-  · intro u hu
+-    by_cases hs : u < s
+-    · exact h₁.1 u hs
+-    · rw [suffix u (by omega)]; exact h₂.1 (u - s) (by omega)
+-  · intro u hu
+-    by_cases hs : u ≤ s
+-    · exact h₁.2.1 u hs
+-    · rw [suffix u (by omega)]; exact h₂.2.1 (u - s) (by omega)
+-  · intro u hu
+-    by_cases hs : u ≤ s
+-    · exact hr₁ _ (h₁.2.2 u hs)
+-    · rw [suffix u (by omega)]; exact hr₂ _ (h₂.2.2 (u - s) (by omega))
++    (z : Cfg (k + 1) Γ (CounterLoopState S) x) (t : ℕ) (cp : ℤ) (width : ℕ)
++    (R : (Fin k → ℤ) → Prop) :
++    counterSpan H z t cp width R ↔
++      Segment H {some .done, some .escape}
++        (fun p => p (Fin.last k) ∈ Finset.Icc (cp - 1) (cp + (width : ℤ)) ∧
++          R fun j => p j.castSucc)
++        z (H.runFrom z t) t := by
++  rw [Turing.segment_iff]
++  exact ⟨fun ⟨hc, hh, hr⟩ => ⟨rfl, fun u hu hm => Or.elim hm (hc u hu).1 (hc u hu).2,
++      fun u hu => ⟨hh u hu, hr u hu⟩⟩,
++    fun ⟨_, hc, hp⟩ =>
++      ⟨fun u hu => ⟨fun h => hc u hu (Or.inl h), fun h => hc u hu (Or.inr h)⟩,
++        fun u hu => (hp u hu).1, fun u hu => (hp u hu).2⟩⟩
+ 
+ /-- A width-preserving overwrite of just the counter word interval. -/
+ private def counterPatch {Γ : Type} (ct : ℤ → Option Γ) (cp : ℤ) (w : List Γ) : ℤ → Option Γ :=
+@@ -1293,10 +1284,15 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
+     have rs : counterSpan (counterLoopTMVia e M a exit)
+         (counterLoopCfg (some (.dec .run)) cn pn cp) (cost + τ cn) cp w.length
+         (fun p => ∃ u ≤ τ cn, ∀ j, p j = (M.runFrom cn u).workTapePos j) := by
+-      apply counter_span_append _ _ cost (τ cn) cp w.length _ _ _
+-        (by simpa only [List.length_map, wn, counterWord_length] using ds) (by rw [debit]; exact bs)
+-      · intro p hp; exact ⟨0, Nat.zero_le _, by simpa using hp⟩
+-      · exact fun _ h => h
++      have h₁ : counterSpan (counterLoopTMVia e M a exit)
++          (counterLoopCfg (some (.dec .run)) cn pn cp) cost cp w.length
++          (fun p => ∀ j, p j = cn.workTapePos j) := by
++        simpa only [List.length_map, wn, counterWord_length] using ds
++      have s₁ := (counterSpan_iff_segment ..).1 h₁
++      rw [debit] at s₁
++      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, debit]
++      refine (s₁.mono subset_rfl ?_).trans ((counterSpan_iff_segment ..).1 bs)
++      exact fun p hp => ⟨hp.1, 0, Nat.zero_le _, by simpa using hp.2⟩
+     have time : (∑ r ∈ Finset.range (n + 1), τ (counterLoopOrbit M τ c r)) +
+         counterOverhead w (n + 1) =
+         ((∑ r ∈ Finset.range n, τ (counterLoopOrbit M τ c r)) + counterOverhead w n) +
+@@ -1308,17 +1304,18 @@ private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableE
+     refine ⟨?_, ?_⟩
+     · rw [MultiTapeTM.runFrom_add, before, round]
+       rfl
+-    · apply counter_span_append _ _ _ (cost + τ cn) cp w.length _ _ _ span
+-        (by rw [before]; exact rs)
+-      · intro p hp
+-        obtain ⟨r, u, hr, heads⟩ := hp
+-        refine ⟨r, u, Or.inl ?_, heads⟩
++    · have s₁ := (counterSpan_iff_segment ..).1 span
++      rw [before] at s₁
++      rw [counterSpan_iff_segment, MultiTapeTM.runFrom_add, before]
++      refine (s₁.mono subset_rfl ?_).trans
++        (((counterSpan_iff_segment ..).1 rs).mono subset_rfl ?_)
++      · rintro p ⟨hc, r, u, hr, heads⟩
++        refine ⟨hc, r, u, Or.inl ?_, heads⟩
+         rcases hr with ⟨hr, hu⟩ | ⟨rfl, rfl⟩
+         · exact ⟨by omega, hu⟩
+         · exact ⟨by omega, Nat.zero_le _⟩
+-      · intro p hp
+-        obtain ⟨u, hu, heads⟩ := hp
+-        exact ⟨n, u, Or.inl ⟨by omega, hu⟩, heads⟩
++      · rintro p ⟨hc, u, hu, heads⟩
++        exact ⟨hc, n, u, Or.inl ⟨by omega, hu⟩, heads⟩
+ 
+ /-- The rich-alphabet counter host returns after all rounds
+ (design §12.8a, R8.0b), with exact time, first-exit and both head trajectories.
+@@ -1402,9 +1399,14 @@ theorem counterLoopTMVia_run_done {k : ℕ} {Γ S : Type} [DecidableEq S] [Decid
+   rw [time]
+   refine ⟨?_, ?_⟩
+   · rw [MultiTapeTM.runFrom_add, before, debit]
+-  · exact counter_span_append _ _ _ _ cp w.length _ _ _ span
+-      (by rw [before]; simpa only [width] using ds) (fun _ h => h)
+-      (fun p hp => ⟨d, 0, Or.inr ⟨rfl, rfl⟩, by simpa using hp⟩)
++  · rw [width, ← before] at ds
++    have s := ((counterSpan_iff_segment ..).1 span).trans
++      (((counterSpan_iff_segment ..).1 ds).mono subset_rfl fun p hp =>
++        ⟨hp.1, d, 0, Or.inr ⟨rfl, rfl⟩, by simpa using hp.2⟩)
++    rw [← MultiTapeTM.runFrom_add] at s
++    exact (counterSpan_iff_segment (R := fun p => ∃ r u,
++      ((r < d ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = d ∧ u = 0)) ∧
++        ∀ j, p j = (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j) ..).2 s
+ 
+ /-- The rich-alphabet counter host takes an early body exit
+ (design §12.8a, R8.0b), with exact time, first-exit and both head trajectories.
+@@ -1866,6 +1868,7 @@ theorem counterLoopTMVia_done_witness {S : Type} [DecidableEq S] [DecidableEq Γ
+       (counterLoopCfg (some .done) (roundOrbit M τ c d)
+         (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ) then some (e true) else ct q) cp)
+       (∑ r ∈ Finset.range d, τ (roundOrbit M τ c r) + counterOverhead w (d + 1)) := by
++    rw [Turing.segment_iff]
+     refine ⟨hrun, fun t ht hm => ?_, fun t ht => ⟨hctr t ht, hbody t ht⟩⟩
+     rcases hm with hm | hm
+     · exact (hcut t ht).1 hm
+@@ -1956,6 +1959,7 @@ theorem counterLoopTMVia_escape_witness {S : Type} [DecidableEq S] [DecidableEq
+         (fun q => if cp ≤ q ∧ q < cp + (w.length : ℤ)
+           then FinTM.bufferTape ((counterWord w (r₀ + 1)).map e) (q - cp) else ct q) cp)
+       (∑ r ∈ Finset.range (r₀ + 1), τ (roundOrbit M τ c r) + counterOverhead w (r₀ + 1)) := by
++    rw [Turing.segment_iff]
+     refine ⟨hrun, fun t ht hm => ?_, fun t ht => ⟨hctr t ht, hbody t ht⟩⟩
+     rcases hm with hm | hm
+     · exact (hcut t ht).1 hm
+@@ -2227,6 +2231,7 @@ theorem RoundContract.counterLoopDone_traj {S : Type} [DecidableEq S] [Decidable
+           (hpre r hr)]
+         exact (hp.2 r hr).2⟩)
+   rw [← hd, counterLoopCfg_body] at hseg
++  rw [Turing.segment_iff] at hseg
+   exact (hseg.2.2 u hu).2
+ 
+ /-- **The escaping counter loop's contract keeps the shared witness**: as
+@@ -2254,6 +2259,7 @@ theorem RoundContract.counterLoopEscape_traj {S : Type} [DecidableEq S] [Decidab
+     (counterLoopBody a d) p.2.1 (d.workTapes (Fin.last k)) (d.workTapePos (Fin.last k)) hw
+     p.2.2 hr₀ (fun r hr => R.orbit_round p.1 _ hc _ hpre hret r (by omega)) hexit
+   rw [← hd, counterLoopCfg_body] at hseg
++  rw [Turing.segment_iff] at hseg
+   exact (hseg.2.2 u hu).2
+ 
+ end Turing
+diff --git a/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean b/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
+index c808c107a..560e6cb05 100644
+--- a/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
++++ b/TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean
+@@ -13,6 +13,7 @@ import Mathlib.Data.Sigma.Basic
+ import TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction
+ import TCSlib.Complexity.TuringMachine.Sweep
+ import TCSlib.Complexity.TuringMachine.StateRenaming
++import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+ 
+ set_option maxHeartbeats 0
+ set_option relaxedAutoImplicit false
+@@ -1184,20 +1185,15 @@ private def DGSpan {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)
+   tm.runFrom c t = d ∧ ∀ u ≤ t,
+     lo ≤ (tm.runFrom c u).workTapePos 0 ∧ (tm.runFrom c u).workTapePos 0 ≤ hi
+ 
+-/-- Concatenating contained runs preserves containment at every physical time.
+-**Proof sketch.** A prefix ends either in the first run or at a uniquely
+-specified offset in the second; the equality at the join handles the latter. -/
+-private lemma dgSpan_add {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+-    {c d e : Cfg 1 A Q x} {s t : ℕ} {lo hi : ℤ}
+-    (h₁ : DGSpan tm c d s lo hi) (h₂ : DGSpan tm d e t lo hi) :
+-    DGSpan tm c e (s + t) lo hi := by
+-  refine ⟨by rw [MultiTapeTM.runFrom_add, h₁.1, h₂.1], ?_⟩
+-  intro u hu
+-  by_cases h : u ≤ s
+-  · exact h₁.2 u h
+-  · have he : u = s + (u - s) := by omega
+-    rw [he, MultiTapeTM.runFrom_add, h₁.1]
+-    exact h₂.2 (u - s) (by omega)
++/-- `DGSpan` is the segment layer with nothing forbidden: the segment (`Turing.Segment`) of
++`tm` whose head relation keeps the one work head in `[lo, hi]`. Concatenating contained runs,
++which preserves containment at every physical time, is `Turing.Segment.trans` through this
++bridge. -/
++private lemma dgSpan_iff_segment {A Q : Type} {x : List A} (tm : MultiTapeTM 1 A Q)
++    (c d : Cfg 1 A Q x) (t : ℕ) (lo hi : ℤ) :
++    DGSpan tm c d t lo hi ↔ Segment tm ∅ (fun p => lo ≤ p 0 ∧ p 0 ≤ hi) c d t := by
++  rw [Turing.segment_iff]
++  exact ⟨fun h => ⟨h.1, fun _ _ hm => hm, h.2⟩, fun h => ⟨h.1, h.2.2⟩⟩
+ 
+ /-- A single transition has only its two endpoints as prefixes. -/
+ private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+@@ -1205,14 +1201,11 @@ private lemma dgSpan_one {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+     (hc : lo ≤ c.workTapePos 0 ∧ c.workTapePos 0 ≤ hi)
+     (hd : lo ≤ d.workTapePos 0 ∧ d.workTapePos 0 ≤ hi) :
+     DGSpan tm c d 1 lo hi := by
+-  have hr : tm.runFrom c 1 = d := by simpa using h
+-  refine ⟨hr, ?_⟩
+-  intro u hu
+-  have he : u = 0 ∨ u = 1 := by omega
+-  rcases he with rfl | rfl
+-  · simpa using hc
+-  · rw [hr]
+-    exact hd
++  rw [dgSpan_iff_segment]
++  have hseg := Segment.one (M := tm) (F := ∅)
++    (P := fun p => lo ≤ p 0 ∧ p 0 ≤ hi) (a := c)
++    (fun hmem => hmem) hc (by rw [h]; exact hd)
++  simpa only [h] using hseg
+ 
+ /-- The canonical boundary configuration uses the received interleaved zone,
+ with the source read position interpreted on the native, unretracted input. -/
+@@ -1286,8 +1279,9 @@ private lemma dgSpan_generate_left {A Q : Type} {x : List A}
+ private lemma dgSpan_mono {A Q : Type} {x : List A} {tm : MultiTapeTM 1 A Q}
+     {c d : Cfg 1 A Q x} {t : ℕ} {lo hi lo' hi' : ℤ}
+     (h : DGSpan tm c d t lo hi) (hl : lo' ≤ lo) (hr : hi ≤ hi') :
+-    DGSpan tm c d t lo' hi' :=
+-  ⟨h.1, fun u hu => ⟨hl.trans (h.2 u hu).1, (h.2 u hu).2.trans hr⟩⟩
++    DGSpan tm c d t lo' hi' := by
++  rw [dgSpan_iff_segment] at h ⊢
++  exact h.mono subset_rfl fun p hp => ⟨hl.trans hp.1, hp.2.trans hr⟩
+ 
+ /-- Initialization on every native input stays in the origin block and its
+ two boundary cells. It uses the generic writer and reverse-sweep APIs.
+@@ -1374,7 +1368,8 @@ private lemma dg_init {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+     (show (-1 : ℤ) ≤ (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ∧
+       (dgStart M a₀ (M.tm.initCfg (x.map (dgRetract a₀))) 0 1 (-1)).workTapePos 0 ≤ M.k by
+         dsimp [dgStart, sweepRevCfg]; omega)
+-  have h := dgSpan_add (dgSpan_add (dgSpan_add hgen hturn) hback) hlast
++  rw [dgSpan_iff_segment] at hgen hturn hback hlast
++  have h := (dgSpan_iff_segment ..).2 (((hgen.trans hturn).trans hback).trans hlast)
+   simpa only [show M.k + 1 + M.k + 1 = 2 * M.k + 2 by omega] using h
+ 
+ /-- The delegated right-row writer has the exact generic prefix ledger. -/
+@@ -1490,7 +1485,8 @@ private lemma dg_collect {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+     rw [h]
+     have hu' : (u : ℤ) ≤ (n : ℤ) * M.k := by exact_mod_cast hu
+     constructor <;> omega
+-  exact dgSpan_add first scan
++  exact (dgSpan_iff_segment ..).2
++    (((dgSpan_iff_segment ..).1 first).trans ((dgSpan_iff_segment ..).1 scan))
+ 
+ /-- The delegated right-boundary turn performs precisely one native source
+ input/output action. Retraction is used for the scanned symbol only.
+@@ -1626,7 +1622,8 @@ private lemma dg_turn_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+   have h₃ := dgSpan_one ht
+     (show z - 1 ≤ z + (M.k : ℤ) ∧ z + (M.k : ℤ) ≤ z + M.k by omega)
+     (show z - 1 ≤ z + (M.k : ℤ) - 1 ∧ z + (M.k : ℤ) - 1 ≤ z + M.k by omega)
+-  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
++  rw [dgSpan_iff_segment] at h₁ h₂ h₃
++  have h := (dgSpan_iff_segment ..).2 ((h₁.trans h₂).trans h₃)
+   simpa only [show 1 + M.k + 1 = M.k + 2 by omega, List.tail_nil] using h
+ 
+ /-- The received stationary write identity also permits a halted successor.
+@@ -1717,7 +1714,8 @@ private lemma dg_end_with_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+   have h₃ := dgSpan_one last
+     (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
+     (show z - (M.k : ℤ) ≤ z - M.k ∧ z - (M.k : ℤ) ≤ z by omega)
+-  have h := dgSpan_add (dgSpan_add h₁ h₂) h₃
++  rw [dgSpan_iff_segment] at h₁ h₂ h₃
++  have h := (dgSpan_iff_segment ..).2 ((h₁.trans h₂).trans h₃)
+   simpa only [show 1 + M.k + 1 = M.k + 2 by omega] using h
+ 
+ /-- The demand-grown left row is precisely the next source row. Its payloads
+@@ -1889,7 +1887,9 @@ private lemma dg_step {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+       simpa only [written, dgStart, Bool.toNat_true, Nat.one_mul, Int.natCast_one,
+         one_mul, tapeZone, show a - 1 + 1 = a by omega, List.map_append,
+         List.append_assoc, V, put, act, show 1 + (M.k + 1) = M.k + 2 by omega] using h
+-  have h := dgSpan_add (dgSpan_add (dgSpan_add hcollect hdispatch) hwrite) hfinish
++  rw [dgSpan_iff_segment] at hcollect hdispatch hwrite hfinish
++  have h := (dgSpan_iff_segment ..).2
++    (((hcollect.trans hdispatch).trans hwrite).trans hfinish)
+   simpa only [dgCost, MultiTapeTM.step, hs, act] using h
+ 
+ /-- The represented coordinate interval contains the source heads and support,
+@@ -2105,7 +2105,8 @@ private lemma dg_simulate {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+     refine ⟨a - left.toNat, n + right.toNat + left.toNat,
+       u + dgCost M.k n left right, w', ?_, ?_⟩
+     · exact Nat.add_le_add htime (dgCost_le M.k t n hk w.size left right)
+-    · exact dgSpan_add (dgSpan_mono hspan hlower hupper) hcycle
++    · exact (dgSpan_iff_segment ..).2 (((dgSpan_iff_segment ..).1
++        (dgSpan_mono hspan hlower hupper)).trans ((dgSpan_iff_segment ..).1 hcycle))
+ 
+ /-- The demand-grown witness computes on every native word after finite-control
+ retraction, with both resource bounds at that word's unchanged length.

@@ -1,0 +1,267 @@
+"""Data-only SG1 R4 preparation. No Git, Lean, screens, or delivered-code execution."""
+from pathlib import Path
+from collections import Counter
+import ast,base64,datetime,gzip,hashlib,io,json,re
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+GR='campaign/gates/106-sg1-dedup';G=R/GR
+OWN=GR+'/review/round4-publication-preparation'
+W=Path('/private/tmp/sg1-r4-publication-preparation');P=W/'payload'
+HEAD='078263a74fe90b92aa6228cf20e43726138afbe6';BASE='750987d674899d97db3c73c7278c891fa8772b40';MAC5='bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c'
+CANON=GR+'/pack-r4.md';LIMIT=100*1024*1024
+sha=lambda b:hashlib.sha256(b).hexdigest()
+blob=lambda b:hashlib.sha1(b'blob '+str(len(b)).encode()+b'\0'+b).hexdigest()
+def put(rel,b):
+ p=P/rel;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b.encode() if isinstance(b,str) else b)
+def jw(rel,x):put(rel,json.dumps(x,ensure_ascii=False,indent=2)+'\n')
+cache={};source_map={};source_rows=[]
+for side,pin in [('base',BASE),('head',HEAD)]:
+ cap=json.loads((G/('review/round4-source-screen25/'+side+'-capture.json')).read_text());assert cap['commit']==pin and len(cap['files'])==25
+ for x in cap['files']:
+  rel=GR+'/review/round4-source-screen25/inputs/'+side+'/'+x['path']+'.txt';b=(R/rel).read_bytes()
+  assert len(b)==x['bytes'] and sha(b)==x['sha256'] and blob(b)==x['blob']
+  source_rows.append(dict(side=side,source=pin,path=x['path'],capture=rel,bytes=len(b),sha256=sha(b),blob=blob(b)))
+  if side=='head':source_map[x['path']]=b
+assert len(source_map)==25
+def read(path):
+ if path in cache:return cache[path]
+ if path==CANON:b=(P/'canonical-pack-r4-draft.md').read_bytes()
+ elif path.startswith('TCSlib/'):
+  assert path in source_map,path;b=source_map[path]
+ elif path.startswith(OWN+'/'):b=(P/path[len(OWN)+1:]).read_bytes()
+ else:b=(R/path).read_bytes()
+ cache[path]=b;return b
+
+frozen=[]
+specs=[('review/round4-source-screen25','0c564f72a6245450c02880727c7e212c1f430ed07a580bbeac7e73c96e94d4e9'),
+ ('review/round4-compiled-and-seals','85ec04b3ccfea9f215299c498df190f37ffbd0310bd3de625457393c63b76948'),
+ ('evidence/replay-msg8','19199930c6b65de22c7b941edd82a63654971e750aafcff43e0c3caa2a642314'),
+ ('review/round3-return-review',None),('review/round3-render-peer-qa',None)]
+for rel,expected in specs:
+ folder=G/rel;mp=folder/'MANIFEST.json';b=mp.read_bytes()
+ if expected:assert sha(b)==expected,(rel,sha(b))
+ data=json.loads(b);rows=data if isinstance(data,list) else data['files']
+ for x in rows:
+  b=(folder/x['path']).read_bytes();assert len(b)==x['bytes'] and sha(b)==x['sha256'],(rel,x['path'])
+ actual=[p.relative_to(folder).as_posix() for p in sorted(folder.rglob('*')) if p.is_file()]
+ # Every extra is explicit self/index bookkeeping, never a capped payload listing.
+ extra=sorted(set(actual)-{x['path'] for x in rows})
+ assert all(x in ['MANIFEST.json','SHA256SUMS','SHA256SUMS.txt','EVIDENCE-FILES.txt'] for x in extra),(rel,extra)
+ frozen.append(dict(folder=GR+'/'+rel,manifest_sha256=sha(mp.read_bytes()),payloads=len(rows),all_files=len(actual),extra=extra,all_payload_hashes_exact=True))
+
+oldlist=(G/'BUNDLE-FILES-r3.txt').read_bytes();oldpaths=oldlist.decode().splitlines();assert len(oldpaths)==1614 and len(set(oldpaths))==1614
+assert sha(oldlist)=='0883f4f71652f2f43732de57e71d3cb1bfb151c34fda4394c196535b032ac518'
+put('R3-1614-prefix.txt',oldlist)
+logical=[];seen=set()
+def add(path):
+ if path not in seen:seen.add(path);logical.append(path)
+add(CANON)
+for path in oldpaths:add(path)
+assert logical[1:1615]==oldpaths
+for path in source_map:add(path)
+for rel in ['BUNDLE-FILES-r3.txt','bundle-input-index-r3.json','dispatch-r3.json','publication-r3.json','publication-r3-preflight.json','findings-r3.md','findings-r3-receipt.json','resolutions-r3.md','agent-choice-r4.json']:
+ add(GR+'/'+rel)
+for rel in ['review/round3-return-review','review/round3-render-peer-qa','review/round4-live-prefix-repair','review/round4-source-screen25','review/round4-compiled-and-seals','evidence/replay-msg8','review/round4-root-accounting-check']:
+ for p in sorted((G/rel).rglob('*')):
+  if p.is_file():add(p.relative_to(R).as_posix())
+for path in ['policy.md','workflow.md','campaign/standards/TEMPLATE.md','campaign/standards/fill-environment-addendum.md','campaign/maintainer/START-HERE.md','campaign/maintainer/WORKFLOW.md','campaign/maintainer/HANDOFF.md','campaign/duplication-ledger.md','campaign/backlog.md','campaign/items/roadmap3/PLAN.md','devtools/seyoon/graph.py','devtools/seyoon/mkbundle-mixed.py']:
+ add(path)
+
+# Recover the exact issued bytes, including every formerly mutable mixed-pin section.
+issued=Path('/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/wt-xch/arora-barak-ch3-4/outbox/gates/106-sg1-dedup-r3-gate/106-sg1-dedup-r3-bundle.md').read_bytes()
+assert len(issued)==100861434 and sha(issued)=='104d4805fc8e1b53fdc8aa1e8ac7e611b09034398f46887fdc0be4d4e7aeb5d8'
+idx=json.loads((G/'bundle-input-index-r3.json').read_text());assert len(idx['files'])==1614
+headers=list(re.finditer(rb'(?m)^## ===== (.+) =====\n\n',issued));assert len(headers)==1614
+rebuild=hashlib.sha256();rebuild_bytes=0;history=[];protected_history=set()
+prologue=issued[:headers[0].start()]
+if prologue:put('issued-r3-prologue.txt',prologue);add(OWN+'/issued-r3-prologue.txt');rebuild.update(prologue);rebuild_bytes+=len(prologue)
+def segment(path,b):
+ b=b+(b'' if b.endswith(b'\n') else b'\n')
+ if path.endswith(('.lean','.py')):b=b'```\n'+b+b'```\n'
+ return ('## ===== '+path+' =====\n\n').encode()+b
+for i,(x,h) in enumerate(zip(idx['files'],headers)):
+ path=h.group(1).decode();assert path==oldpaths[i]==x['path']
+ rendered=issued[h.end():h.end()+x['rendered_body_bytes']];assert sha(rendered)==x['rendered_body_sha256']
+ c=rendered[4:-4] if path.endswith(('.lean','.py')) else rendered
+ raw=c[:x['bytes']];assert len(raw)==x['bytes'] and sha(raw)==x['sha256']
+ current=read(path);unchanged=current==raw
+ canonical=(path in ['campaign/backlog.md','campaign/duplication-ledger.md','campaign/items/roadmap3/PLAN.md']
+  or path.startswith(('campaign/maintainer/','campaign/standards/','devtools/','scripts/'))
+  or '/' not in path or (path.startswith(GR+'/') and '/' not in path[len(GR)+1:]))
+ if unchanged and not canonical:binding=path
+ else:
+  rel='issued-r3-changed/'+str(i+1).zfill(4)+'-'+Path(path).name+'.txt';put(rel,raw);binding=OWN+'/'+rel;add(binding)
+  if canonical:protected_history.add(binding)
+ chunk=segment(path,raw)+(b'\n' if i<1613 else b'');rebuild.update(chunk);rebuild_bytes+=len(chunk)
+ history.append(dict(ordinal=i+1,path=path,issued_pin=x['pin'],issued_blob=x['blob'],bytes=len(raw),sha256=sha(raw),
+  current_sha256=sha(current),issued_bytes_binding=binding,unchanged_issued_bytes=unchanged,canonical_issued_snapshot=canonical))
+assert rebuild_bytes==len(issued) and rebuild.hexdigest()==sha(issued)
+del issued
+jw('issued-r3-reconstruction.json',dict(bundle_sha256=rebuild.hexdigest(),bundle_bytes=rebuild_bytes,rows=history,
+ exact_all1614_rebuild=True,changed_paths=sum(not x['unchanged_issued_bytes'] for x in history)))
+
+# The old40→31 payloads and three binary equivalents remain byte complete.
+oldreceipt=json.loads((G/'review/round3-final-packet/encoding-receipt.json').read_text());oldchecks=[]
+for x in oldreceipt['transforms']:
+ b=read(x['encoding_path']);assert sha(b)==x['encoded_utf8_sha256'] and len(b)==x['encoded_utf8_bytes']
+ z=base64.b64decode(b,validate=False);assert sha(z)==x['gzip_sha256'] and len(z)==x['gzip_bytes'];raw=gzip.decompress(z)
+ assert sha(raw)==x['original']['sha256'] and len(raw)==x['original']['bytes'];raw.decode('utf-8')
+ oldchecks.append(dict(original=x['original'],encoding_path=x['encoding_path'],complete_roundtrip=True))
+assert len(oldchecks)==40 and len({x['encoding_path'] for x in oldchecks})==31
+for x in oldreceipt['binary_gzip_equivalents']:
+ z=base64.b64decode(read(x['represented_by']),validate=False);assert len(z)==x['bytes'] and sha(z)==x['sha256']
+jw('inherited-r3-alias-verification.json',dict(originals=40,encodings=31,transforms=oldchecks,binary_companions=oldreceipt['binary_gzip_equivalents'],all_complete=True))
+
+current_archive=json.loads((G/'review/round4-compiled-and-seals/archive-verification.json').read_text());binary={};archivechecks=[]
+for x in current_archive['archives']:
+ folder=GR+'/review/round4-compiled-and-seals/';gp=folder+x['gzip'];carrier=folder+x['base64'];z=read(gp);b=read(carrier)
+ assert len(z)==x['gzip_bytes'] and sha(z)==x['gzip_sha256'] and len(b)==x['base64_bytes'] and sha(b)==x['base64_sha256']
+ assert base64.b64decode(b,validate=False)==z
+ raw=gzip.decompress(z);assert len(raw)==x['raw_bytes'] and sha(raw)==x['raw_sha256'];raw.decode('utf-8')
+ binary[gp]=carrier;archivechecks.append(dict(**x,all_bytes_and_CRC_verified=True))
+assert len(binary)==18
+jw('current-18-archive-verification.json',dict(archives=archivechecks,total_raw_bytes=sum(x['raw_bytes'] for x in archivechecks),all_complete=True))
+jw('current-source-bindings.json',dict(files=source_rows,all50_bytes_SHA_and_Git_blob_hashes_exact=True,
+ root_TCSlib_binding='all25 root paths use current078 HEAD captures; never records-worktree Lean bytes',
+ head=HEAD,source_comparison_base=BASE,compiled_base=MAC5,base_full1003_Lean_equivalence_receipt=GR+'/review/round4-compiled-and-seals/mixed-pin-source-bindings.json'))
+jw('immutable-evidence-checks.json',dict(folders=frozen,root_check_complete_files=2,live_repair_complete_files=4,
+ no_Git_Lean_screens_or_delivered_script_execution=True))
+
+# Exact graph/clean copies and static helper dependency inspection, without executing any input.
+deps=[]
+for name,sourcepath in [('graph.py','devtools/seyoon/graph.py'),('clean.py',GR+'/review/round4-source-screen25/tools/clean.py.txt')]:
+ b=(R/sourcepath).read_bytes();put('tools/'+name+'.txt',b)
+ t=ast.parse(b);im=sorted({a.name.split('.')[0] for n in ast.walk(t) if isinstance(n,ast.Import) for a in n.names}|{n.module.split('.')[0] for n in ast.walk(t) if isinstance(n,ast.ImportFrom)})
+ deps.append(dict(path=sourcepath,sha256=sha(b),imports=im,copy=OWN+'/tools/'+name+'.txt'))
+msg8graph=(G/'evidence/replay-msg8/graph.py.txt').read_bytes()
+jw('tool-dependencies.json',dict(helpers=deps,actual_MSG8_graph_sha256=sha(msg8graph),
+ actual_MSG8_graph_matches_records_helper=msg8graph==(R/'devtools/seyoon/graph.py').read_bytes(),
+ actual_replay_helpers_supplied_in_full=GR+'/evidence/replay-msg8/',
+ actual_source_screen_helpers_supplied_in_full=GR+'/review/round4-source-screen25/tools/',
+ own_builder_stdlib_only=True,inputs_treated_as_data=True))
+for f in ['/private/tmp/sg1-r4-write-pack.py','/private/tmp/sg1-r4-build-inputs.py']:put('tools/'+Path(f).name+'.txt',Path(f).read_bytes())
+
+# Every physical file is retained logically; only rendering substitutes complete representations.
+protected=set(source_map)|{x['capture'] for x in source_rows}|protected_history
+byhash={};mappings=[];physical=[];physical_seen=set();encoded_by_raw={};own_prefix=OWN+'/'
+def emit(path):
+ if path not in physical_seen:physical_seen.add(path);physical.append(path)
+def encode(b):
+ key=(len(b),sha(b))
+ if key in encoded_by_raw:return encoded_by_raw[key]
+ out=io.BytesIO()
+ with gzip.GzipFile(fileobj=out,mode='wb',filename='',mtime=0,compresslevel=9) as gz:gz.write(b)
+ z=out.getvalue();data=base64.encodebytes(z)
+ header=(f'# Lossless data payload\ncodec: gzip+base64\nraw-bytes: {len(b)}\nraw-sha256: {sha(b)}\ngzip-bytes: {len(z)}\ngzip-sha256: {sha(z)}\nbase64:\n').encode()
+ carrier=header+data
+ rel='encodings/'+sha(b)+'.gz.base64.txt';put(rel,carrier);path=OWN+'/'+rel
+ assert gzip.decompress(base64.b64decode(carrier.split(b'base64:\n',1)[1]))==b
+ info=dict(path=path,codec='gzip+base64',gzip_bytes=len(z),gzip_sha256=sha(z),encoded_bytes=len(carrier),encoded_sha256=sha(carrier))
+ encoded_by_raw[key]=info;return info
+def map_one(path,admin=False):
+ if any(x['path']==path for x in mappings):return
+ b=read(path);key=(len(b),sha(b));is_protected=path in protected
+ row=dict(path=path,bytes=len(b),sha256=sha(b),binding_source=HEAD if path.startswith('TCSlib/') else ('prospective records candidate' if path==CANON else 'records/frozen capture'))
+ if path in binary:
+  carrier=binary[path];entry=next(x for x in mappings if x['path']==carrier) if any(x['path']==carrier for x in mappings) else None
+  if entry is None:
+   map_one(carrier);entry=mappings[-1]
+  row.update(render_path=entry['render_path'],codec='base64 of original gzip bytes',carrier=carrier,binary=True)
+ else:
+  b.decode('utf-8')
+  if not is_protected and not admin and key in byhash:
+   info=byhash[key];row.update(render_path=info['render_path'],codec=info['codec'],exact_content_alias=True)
+  else:
+   info=None
+   # Existing gzip/Base64 carriers already hold complete compressed data; keep their bytes.
+   compressible=not is_protected and not admin and len(b)>=98304 and not path.endswith('.md') and not ('.gz.' in path and ('b64' in path or 'base64' in path))
+   if compressible:
+    candidate=encode(b)
+    if candidate['encoded_bytes']<len(b)*0.9:info=candidate
+   if info:row.update(render_path=info['path'],codec=info['codec'],encoding=info)
+   else:row.update(render_path=path,codec='identity UTF8')
+   if not admin:byhash.setdefault(key,dict(render_path=row['render_path'],codec=row['codec']))
+  emit(row['render_path'])
+ mappings.append(row)
+for path in logical:map_one(path)
+assert all(any(x['path']==path and x['render_path']==path and x['codec']=='identity UTF8' for x in mappings) for path in protected)
+used_encodings={x['render_path'] for x in mappings}
+for p in (P/'encodings').glob('*.txt'):
+ if OWN+'/'+p.relative_to(P).as_posix() not in used_encodings:p.unlink()
+
+# Own bookkeeping is plain UTF8 and explicitly self-excluded only where hashes would recurse.
+admins=['README.md','R3-1614-prefix.txt','canonical-pack-r4-draft.md','canonical-pack-r4.patch','bundle-intro-r4-draft.md','prompt-r4-draft.md',
+ 'BUNDLE-FILES-r4-draft.txt','BUNDLE-FILES-r4-full-prefix-draft.txt','ORDERED-LOGICAL-INPUTS.txt',
+ 'external-input-inventory.json','encoding-receipt-r4.json','issued-r3-reconstruction.json','current-source-bindings.json',
+ 'immutable-evidence-checks.json','inherited-r3-alias-verification.json','current-18-archive-verification.json','tool-dependencies.json',
+ 'publication-bindings-pending.json','QA.json','MANIFEST.json','SHA256SUMS']
+for p in sorted(P.rglob('*')):
+ if p.is_file() and p.relative_to(P).as_posix() not in admins:add(OWN+'/'+p.relative_to(P).as_posix())
+for rel in admins:add(OWN+'/'+rel)
+# Add own payloads to the physical list directly; aliases already emitted are not duplicated.
+for path in logical:
+ if path.startswith(own_prefix) and path not in {x['path'] for x in mappings}:emit(path)
+put('BUNDLE-FILES-r4-draft.txt','\n'.join(physical)+'\n')
+put('BUNDLE-FILES-r4-full-prefix-draft.txt','\n'.join(logical)+'\n');put('ORDERED-LOGICAL-INPUTS.txt','\n'.join(logical)+'\n')
+jw('external-input-inventory.json',dict(source=HEAD,records='ROOT_FINAL_BINDING_PENDING',rows=mappings,
+ own_bookkeeping='own paths are bound by MANIFEST.json/SHA256SUMS, excluding those two self manifests',
+ current_TCS_root_paths=25,current_plaintext_captures=50,canonical_pack_prospective_path=CANON))
+jw('encoding-receipt-r4.json',dict(mappings=[x for x in mappings if x['codec']!='identity UTF8' or x.get('exact_content_alias')],
+ old_logical_scope_preserved=1614,old40to31_verified=True,current18_binary_verified=True,
+ no_caps_or_truncation=True,all_inverse_roundtrips_verified=True,
+ decode='gzip+base64 carriers: split at base64: newline, decode ASCII, gzip-decompress. Existing binary carriers: base64-decode original gzip bytes. Exact-content aliases preserve the identical full bytes. Follow carrier mapping before decoding a nested original format.'))
+jw('publication-bindings-pending.json',dict(complete_current_evidence=True,source=HEAD,comparison=BASE,compiled_BASE=MAC5,
+ records='ROOT_FINAL_RECORDS_COMMIT',exchange='ROOT_FINAL_EXCHANGE_COMMIT',bundle='ROOT_FINAL_RENDER_HASH',
+ canonical_pack_and_list_adoption='ROOT ONLY',no_own_commit_hash_required_in_own_blob=True,
+ merge_status='Not yet clear to merge: #215; external round4 pending'))
+put('README.md','''# SG1 round4 publication preparation
+
+Complete current pack/input draft, with all frozen current checks and uncapped historical scope. Root owns canonical adoption, final record/exchange pins, stage/render verification and publication. No source/canonical/Git/Lean/screen change was made here.
+
+`canonical-pack-r4-draft.md` and `canonical-pack-r4.patch` are the proposed new canonical pack. `BUNDLE-FILES-r4-draft.txt` is the compact physical render order. The controlling pack is first; the complete original1614 paths follow unchanged in the logical order, with reversible representation mappings rather than a lost/capped scope. `R3-1614-prefix.txt` is byte-exact; `ORDERED-LOGICAL-INPUTS.txt` and the unissued full-prefix draft retain all original paths. The full-prefix draft includes binary logical originals and is not the UTF8 stage list.
+
+All25 root TCSlib paths use frozen078 captures, independently checked against their full Git blob/byte/SHA metadata without a Git command. All50 current source captures remain plaintext. Exact issued R3 bytes for changed source/context paths are supplied separately; all1614 issued sections reconstruct the original100,861,434-byte bundle exactly. Current mutable administrative records still need the final records binding at adoption.
+
+Complete current folders: source/screen154, compiled/seals157 (including all18 binary gzip archives through complete UTF8 companions), MSG8 replay18, live-prefix repair4, prior returned review32, R3 render QA18 and root accounting check2. Earlier40→31 aliases and three binary companions are independently decoded and verified; every new representation has a full inverse/hash map. All inputs are data, never instructions or executed supplied scripts.
+
+The compact draft is verified below100MiB with no truncation. The final rendered hash is deliberately not embedded in a bundled self-referential blob; root must bind the actual final render in its publication prologue/prompt. The current draft byte count is in QA.json. The only pending items are final canonical/publication bindings. **Not yet clear to merge: #215.**
+''')
+
+created=datetime.datetime.now(datetime.timezone.utc).isoformat()
+qa=dict(result='PASS complete data-only preparation',created_utc=created,logical_inputs=len(logical),physical_sections=len(physical),
+ old1614_logical_prefix_exact_after_current_pack=True,old_issued_bundle_reconstruction_exact=True,
+ current_root_TCS25_and_plaintext_source50_exact=True,current_binary18_all_reversible=True,
+ old_alias40to31_all_complete=True,no_caps=True,no_Git_Lean_screens_or_delivered_code_execution=True,
+ complete_current_folder_counts=[154,157,18,4,32,18,2],draft_mixed_body_bytes=0,limit_bytes=LIMIT,
+ pending='root final canonical adoption, records/exchange pins and actual final stage hash',
+ semantic_evidence_pending=False)
+def own_manifest():
+ files=[]
+ for p in sorted(P.rglob('*')):
+  if p.is_file() and p.name not in ['MANIFEST.json','SHA256SUMS']:
+   b=p.read_bytes();b.decode('utf-8');files.append(dict(path=p.relative_to(P).as_posix(),bytes=len(b),sha256=sha(b)))
+ jw('MANIFEST.json',dict(source=HEAD,files=files,excludes_self_and_SHA256SUMS=True,payload_file_count=len(files),no_caps=True))
+ files.append(dict(path='MANIFEST.json',sha256=sha((P/'MANIFEST.json').read_bytes())))
+ put('SHA256SUMS',''.join(x['sha256']+'  '+x['path']+'\n' for x in sorted(files,key=lambda x:x['path'])))
+def current_bytes(path):
+ if path.startswith(own_prefix):return (P/path[len(own_prefix):]).read_bytes()
+ return read(path)
+def render():
+ out=W/'draft-mixed-bundle.md';h=hashlib.sha256();total=0
+ with out.open('wb') as f:
+  for i,path in enumerate(physical):
+   b=segment(path,current_bytes(path))+(b'\n' if i+1<len(physical) else b'');f.write(b);h.update(b);total+=len(b)
+ return total,h.hexdigest()
+for attempt in range(6):
+ jw('QA.json',qa);own_manifest();n,digest=render()
+ if n==qa['draft_mixed_body_bytes']:break
+ qa['draft_mixed_body_bytes']=n
+else:raise AssertionError('size metadata did not converge')
+assert n+len((P/'bundle-intro-r4-draft.md').read_bytes())+4096<LIMIT,n
+# Every own physical file has a logical representation; no manifest listing is capped.
+ownpaths={OWN+'/'+p.relative_to(P).as_posix() for p in P.rglob('*') if p.is_file()}
+assert ownpaths<=set(logical),ownpaths-set(logical)
+assert set(physical)<=set(logical)|{x['render_path'] for x in mappings}
+for path in physical:current_bytes(path).decode('utf-8')
+print(json.dumps(dict(folder=str(P),logical_inputs=len(logical),physical_sections=len(physical),draft_bytes=n,
+ draft_sha256=digest,manifest_sha256=sha((P/'MANIFEST.json').read_bytes()),SHA256SUMS_sha256=sha((P/'SHA256SUMS').read_bytes()),
+ old_changed_sections=sum(not x['unchanged_issued_bytes'] for x in history),under100MiB=True)))

@@ -1,0 +1,360 @@
+[
+  {
+    "owner": "TCSlib.Complexity.TuringMachine.Build.Catalog",
+    "source_sha256": "accec25d04d52b9476bd697246a44dade906099bcb91a745a3a408b58f516d98",
+    "sealed_sha256": "507e1b0bbd06c87848c92fa706635b9db74f1d7a5b6ff05c81a254cbc470c453",
+    "removal_sha256": "accec25d04d52b9476bd697246a44dade906099bcb91a745a3a408b58f516d98",
+    "roundtrip_exact": true,
+    "guards": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.Cfg.inputSymbol",
+      "Turing.Cfg.workTapeSymbols",
+      "Turing.FinTM.Computes",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.incFixedTM",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.MultiTapeTM.spaceUsedByTape",
+      "Turing.MultiTapeTM.step",
+      "Turing.MultiTapeTM.visitedByTapeHead",
+      "Turing.incFixed",
+      "Turing.moveInputPos",
+      "Turing.pairDiagTM",
+      "Turing.pairEncode"
+    ],
+    "model_default_simps_disabled": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.MultiTapeTM.initCfg"
+    ],
+    "masks": [
+      {
+        "name": "Turing.FinTM.computesFunInTime_pairDup_spaceUsed",
+        "doc_start": 111275,
+        "decl_start": 111741,
+        "end": 112145,
+        "source_line": 2233,
+        "block_sha256": "0ffecf980715d5999afc1950ef1c262aedd3b2c78f41ebfc1bfafb5cfc4c7502",
+        "prefix": "\nsection MIGPost234Seal_computesFunInTime_pairDup_spaceUsed\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.incFixedTM Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.incFixed Turing.moveInputPos Turing.pairDiagTM Turing.pairEncode\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.incFixedTM, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.incFixed, `Turing.moveInputPos, `Turing.pairDiagTM, `Turing.pairEncode] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|computesFunInTime_pairDup_spaceUsed|18\"\n\n",
+        "suffix": "\nend MIGPost234Seal_computesFunInTime_pairDup_spaceUsed\n\n"
+      },
+      {
+        "name": "Turing.FinTM.computesFunInTime_incFixed_spaceUsed",
+        "doc_start": 116384,
+        "decl_start": 116922,
+        "end": 117300,
+        "source_line": 2335,
+        "block_sha256": "467059c5aabbede3bd0c9ee37c8fac2869c1b9cfb93adc0e1fa70e26ab4dce37",
+        "prefix": "\nsection MIGPost234Seal_computesFunInTime_incFixed_spaceUsed\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.incFixedTM Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.incFixed Turing.moveInputPos Turing.pairDiagTM Turing.pairEncode\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.incFixedTM, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.incFixed, `Turing.moveInputPos, `Turing.pairDiagTM, `Turing.pairEncode] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|computesFunInTime_incFixed_spaceUsed|18\"\n\n",
+        "suffix": "\nend MIGPost234Seal_computesFunInTime_incFixed_spaceUsed\n\n"
+      }
+    ],
+    "metadata_appendix": "\nopen Lean Elab Command in\nrun_cmd do\n  let env \u2190 getEnv\n  let shorts : List String := [\"computesFunInTime_pairDup_spaceUsed\", \"computesFunInTime_incFixed_spaceUsed\"]\n  for short in shorts do\n    let found := env.constants.toList.filter fun (n, _) =>\n      (env.getModuleIdxFor? n).isNone && n.toString.endsWith (\".\" ++ short)\n    unless found.length == 1 do throwError \"local target multiplicity {short}: {found.length}\"\n    let root := found.head!.1\n    logInfo m!\"LOCAL_ROOT|{short}|{root}\"\n    for (n, _) in env.constants.toList do\n      unless root.isPrefixOf n do continue\n      let axs \u2190 liftCoreM <| Lean.collectAxioms n\n      let row := Json.mkObj [(\"short\", toJson short),(\"name\", toJson n.toString),\n        (\"axioms\", toJson ((axs.qsort Name.lt).toList.map Name.toString))]\n      logInfo m!\"LOCAL_AX|{row.compress}\"\n  logInfo \"SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Build.Catalog|2\"\n"
+  },
+  {
+    "owner": "TCSlib.Complexity.TuringMachine.Build.Loop",
+    "source_sha256": "36e7286e9b8950dd66aa77dd5edc6d4c48ce119b36693b37f3664956fb16243a",
+    "sealed_sha256": "aea889d4af9c7ef59a9c784456463c97f686a9b1de200d9b49520482d5f45bbd",
+    "removal_sha256": "36e7286e9b8950dd66aa77dd5edc6d4c48ce119b36693b37f3664956fb16243a",
+    "roundtrip_exact": true,
+    "guards": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.Cfg.inputSymbol",
+      "Turing.Cfg.workTapeSymbols",
+      "Turing.FinTM.Computes",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.VirtualTag",
+      "Turing.FinTM.bufferedCompTM",
+      "Turing.FinTM.bufferedSecondCfg",
+      "Turing.FinTM.controlAction",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.MultiTapeTM.spaceUsedByTape",
+      "Turing.MultiTapeTM.step",
+      "Turing.MultiTapeTM.visitedByTapeHead",
+      "Turing.captureAction",
+      "Turing.captureCfg",
+      "Turing.moveInputPos"
+    ],
+    "model_default_simps_disabled": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.MultiTapeTM.initCfg"
+    ],
+    "masks": [
+      {
+        "name": "Turing.FinTM.emCall_right_endpoint",
+        "doc_start": 201555,
+        "decl_start": 202043,
+        "end": 203776,
+        "source_line": 3796,
+        "block_sha256": "f6ddcf2c6636e2e5c6a681305be44a4e29b8ac20f525f6daaa789a09dc85c513",
+        "prefix": "\nsection MIGPost234Seal_emCall_right_endpoint\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.VirtualTag Turing.FinTM.bufferedCompTM Turing.FinTM.bufferedSecondCfg Turing.FinTM.controlAction Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.VirtualTag, `Turing.FinTM.bufferedCompTM, `Turing.FinTM.bufferedSecondCfg, `Turing.FinTM.controlAction, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|emCall_right_endpoint|20\"\n\n",
+        "suffix": "\nend MIGPost234Seal_emCall_right_endpoint\n\n"
+      },
+      {
+        "name": "Turing.FinTM.emCall_first_entry",
+        "doc_start": 192484,
+        "decl_start": 192851,
+        "end": 193357,
+        "source_line": 3620,
+        "block_sha256": "ed0e9081107624337c6291eb1f22dd0fc0c3418a378a06b8890ce67a976238eb",
+        "prefix": "\nsection MIGPost234Seal_emCall_first_entry\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.VirtualTag Turing.FinTM.bufferedCompTM Turing.FinTM.bufferedSecondCfg Turing.FinTM.controlAction Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.VirtualTag, `Turing.FinTM.bufferedCompTM, `Turing.FinTM.bufferedSecondCfg, `Turing.FinTM.controlAction, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|emCall_first_entry|20\"\n\n",
+        "suffix": "\nend MIGPost234Seal_emCall_first_entry\n\n"
+      },
+      {
+        "name": "Turing.FinTM.emCall_eval_first",
+        "doc_start": 160802,
+        "decl_start": 161304,
+        "end": 162938,
+        "source_line": 3005,
+        "block_sha256": "97d62a09b967a139f0c5f386cb6c8d10cd460da3a6dee288ca29a87c06d3e575",
+        "prefix": "\nsection MIGPost234Seal_emCall_eval_first\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.VirtualTag Turing.FinTM.bufferedCompTM Turing.FinTM.bufferedSecondCfg Turing.FinTM.controlAction Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.VirtualTag, `Turing.FinTM.bufferedCompTM, `Turing.FinTM.bufferedSecondCfg, `Turing.FinTM.controlAction, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|emCall_eval_first|20\"\n\n",
+        "suffix": "\nend MIGPost234Seal_emCall_eval_first\n\n"
+      }
+    ],
+    "metadata_appendix": "\nopen Lean Elab Command in\nrun_cmd do\n  let env \u2190 getEnv\n  let shorts : List String := [\"emCall_right_endpoint\", \"emCall_first_entry\", \"emCall_eval_first\"]\n  for short in shorts do\n    let found := env.constants.toList.filter fun (n, _) =>\n      (env.getModuleIdxFor? n).isNone && n.toString.endsWith (\".\" ++ short)\n    unless found.length == 1 do throwError \"local target multiplicity {short}: {found.length}\"\n    let root := found.head!.1\n    logInfo m!\"LOCAL_ROOT|{short}|{root}\"\n    for (n, _) in env.constants.toList do\n      unless root.isPrefixOf n do continue\n      let axs \u2190 liftCoreM <| Lean.collectAxioms n\n      let row := Json.mkObj [(\"short\", toJson short),(\"name\", toJson n.toString),\n        (\"axioms\", toJson ((axs.qsort Name.lt).toList.map Name.toString))]\n      logInfo m!\"LOCAL_AX|{row.compress}\"\n  logInfo \"SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Build.Loop|3\"\n"
+  },
+  {
+    "owner": "TCSlib.Complexity.TuringMachine.Build.Primitives",
+    "source_sha256": "94129e0937d9043fd105f87dbbfdf4e54d913e11b22aa5316e0dff40efce993f",
+    "sealed_sha256": "94a3604121c92ff0b16ec11bab20c8378d3a6425434e75613e0d4902a9850419",
+    "removal_sha256": "94129e0937d9043fd105f87dbbfdf4e54d913e11b22aa5316e0dff40efce993f",
+    "roundtrip_exact": true,
+    "guards": [
+      "Turing.Action.apply",
+      "Turing.Action.mapState",
+      "Turing.Cfg.init",
+      "Turing.Cfg.inputSymbol",
+      "Turing.Cfg.mapState",
+      "Turing.Cfg.workTapeSymbols",
+      "Turing.FinTM.Computes",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.bufferTape",
+      "Turing.FinTM.controlAction",
+      "Turing.FinTM.tapeBlocks",
+      "Turing.FinTM.virtualMove",
+      "Turing.FinTM.virtualNextTag",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.MultiTapeTM.spaceUsedByTape",
+      "Turing.MultiTapeTM.step",
+      "Turing.MultiTapeTM.visitedByTapeHead",
+      "Turing.captureAction",
+      "Turing.captureCfg",
+      "Turing.moveInputPos",
+      "Turing.pairDecode",
+      "Turing.pairEncode"
+    ],
+    "model_default_simps_disabled": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.MultiTapeTM.initCfg"
+    ],
+    "masks": [
+      {
+        "name": "Turing.FinTM.splitEmbed_cut",
+        "doc_start": 239850,
+        "decl_start": 240306,
+        "end": 243185,
+        "source_line": 4703,
+        "block_sha256": "167721b00bd030b8968f169f96368526c7dd8e46e8b2ef2abd334e4035d73c8f",
+        "prefix": "\nsection MIGPost234Seal_splitEmbed_cut\nattribute [local irreducible] Turing.Action.apply Turing.Action.mapState Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.FinTM.tapeBlocks Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos Turing.pairDecode Turing.pairEncode\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Action.mapState, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.mapState, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.tapeBlocks, `Turing.FinTM.virtualMove, `Turing.FinTM.virtualNextTag, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos, `Turing.pairDecode, `Turing.pairEncode] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|splitEmbed_cut|25\"\n\n",
+        "suffix": "\nend MIGPost234Seal_splitEmbed_cut\n\n"
+      },
+      {
+        "name": "Turing.FinTM.splitBody_count",
+        "doc_start": 251416,
+        "decl_start": 251887,
+        "end": 253112,
+        "source_line": 4932,
+        "block_sha256": "77194e1789f58992172af16d1ee82f508798549639d59c795568dfecd9bd69f4",
+        "prefix": "\nsection MIGPost234Seal_splitBody_count\nattribute [local irreducible] Turing.Action.apply Turing.Action.mapState Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.FinTM.tapeBlocks Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos Turing.pairDecode Turing.pairEncode\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Action.mapState, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.mapState, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.tapeBlocks, `Turing.FinTM.virtualMove, `Turing.FinTM.virtualNextTag, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos, `Turing.pairDecode, `Turing.pairEncode] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|splitBody_count|25\"\n\n",
+        "suffix": "\nend MIGPost234Seal_splitBody_count\n\n"
+      },
+      {
+        "name": "Turing.FinTM.emitter_first_entry",
+        "doc_start": 305168,
+        "decl_start": 305535,
+        "end": 306042,
+        "source_line": 5917,
+        "block_sha256": "6558973dfc1fed6bf7287c159f46feba42d67ce543a0e408bb8adb98c6982eb2",
+        "prefix": "\nsection MIGPost234Seal_emitter_first_entry\nattribute [local irreducible] Turing.Action.apply Turing.Action.mapState Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.FinTM.tapeBlocks Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos Turing.pairDecode Turing.pairEncode\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Action.mapState, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.mapState, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.tapeBlocks, `Turing.FinTM.virtualMove, `Turing.FinTM.virtualNextTag, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos, `Turing.pairDecode, `Turing.pairEncode] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|emitter_first_entry|25\"\n\n",
+        "suffix": "\nend MIGPost234Seal_emitter_first_entry\n\n"
+      },
+      {
+        "name": "Turing.FinTM.lenStart",
+        "doc_start": 93221,
+        "decl_start": 93704,
+        "end": 97187,
+        "source_line": 1830,
+        "block_sha256": "d5f0a1b3c54e2718f73a11d1553863724285cbc551d2de4383486d984e251cad",
+        "prefix": "\nsection MIGPost234Seal_lenStart\nattribute [local irreducible] Turing.Action.apply Turing.Action.mapState Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.FinTM.tapeBlocks Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos Turing.pairDecode Turing.pairEncode\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Action.mapState, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.mapState, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.tapeBlocks, `Turing.FinTM.virtualMove, `Turing.FinTM.virtualNextTag, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos, `Turing.pairDecode, `Turing.pairEncode] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|lenStart|25\"\n\n",
+        "suffix": "\nend MIGPost234Seal_lenStart\n\n"
+      },
+      {
+        "name": "Turing.FinTM.fwdMap_launch",
+        "doc_start": 176946,
+        "decl_start": 177604,
+        "end": 179535,
+        "source_line": 3467,
+        "block_sha256": "ce81489faa86bf777433888ac649d6a5ea23968c8b7234b4fe8ad69599dd3d67",
+        "prefix": "\nsection MIGPost234Seal_fwdMap_launch\nattribute [local irreducible] Turing.Action.apply Turing.Action.mapState Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.FinTM.tapeBlocks Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos Turing.pairDecode Turing.pairEncode\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Action.mapState, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.mapState, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.tapeBlocks, `Turing.FinTM.virtualMove, `Turing.FinTM.virtualNextTag, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos, `Turing.pairDecode, `Turing.pairEncode] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|fwdMap_launch|25\"\n\n",
+        "suffix": "\nend MIGPost234Seal_fwdMap_launch\n\n"
+      },
+      {
+        "name": "Turing.FinTM.catalogFirstEntry",
+        "doc_start": 229820,
+        "decl_start": 230162,
+        "end": 230768,
+        "source_line": 4498,
+        "block_sha256": "99d032814f183573c7d5469bf9f9f8b2850af5cb29ce40c8053b59bf0926f94e",
+        "prefix": "\nsection MIGPost234Seal_catalogFirstEntry\nattribute [local irreducible] Turing.Action.apply Turing.Action.mapState Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.FinTM.tapeBlocks Turing.FinTM.virtualMove Turing.FinTM.virtualNextTag Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.captureAction Turing.captureCfg Turing.moveInputPos Turing.pairDecode Turing.pairEncode\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Action.mapState, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.mapState, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.tapeBlocks, `Turing.FinTM.virtualMove, `Turing.FinTM.virtualNextTag, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.captureAction, `Turing.captureCfg, `Turing.moveInputPos, `Turing.pairDecode, `Turing.pairEncode] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|catalogFirstEntry|25\"\n\n",
+        "suffix": "\nend MIGPost234Seal_catalogFirstEntry\n\n"
+      }
+    ],
+    "metadata_appendix": "\nopen Lean Elab Command in\nrun_cmd do\n  let env \u2190 getEnv\n  let shorts : List String := [\"splitEmbed_cut\", \"splitBody_count\", \"emitter_first_entry\", \"lenStart\", \"fwdMap_launch\", \"catalogFirstEntry\"]\n  for short in shorts do\n    let found := env.constants.toList.filter fun (n, _) =>\n      (env.getModuleIdxFor? n).isNone && n.toString.endsWith (\".\" ++ short)\n    unless found.length == 1 do throwError \"local target multiplicity {short}: {found.length}\"\n    let root := found.head!.1\n    logInfo m!\"LOCAL_ROOT|{short}|{root}\"\n    for (n, _) in env.constants.toList do\n      unless root.isPrefixOf n do continue\n      let axs \u2190 liftCoreM <| Lean.collectAxioms n\n      let row := Json.mkObj [(\"short\", toJson short),(\"name\", toJson n.toString),\n        (\"axioms\", toJson ((axs.qsort Name.lt).toList.map Name.toString))]\n      logInfo m!\"LOCAL_AX|{row.compress}\"\n  logInfo \"SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Build.Primitives|6\"\n"
+  },
+  {
+    "owner": "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+    "source_sha256": "1e1fb0b11cfc7ff61245220676d5a35d1a40261c10e71fdaffa14114856e1a3a",
+    "sealed_sha256": "beabf46d851c4c82d8c15893e82bdad23840ce5362510f60af788b1a27df8857",
+    "removal_sha256": "1e1fb0b11cfc7ff61245220676d5a35d1a40261c10e71fdaffa14114856e1a3a",
+    "roundtrip_exact": true,
+    "guards": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.Cfg.inputSymbol",
+      "Turing.Cfg.workTapeSymbols",
+      "Turing.FinTM.Computes",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.branchTM",
+      "Turing.FinTM.bufferTape",
+      "Turing.FinTM.controlAction",
+      "Turing.FinTM.leftAction",
+      "Turing.FinTM.leftCfg",
+      "Turing.FinTM.rightAction",
+      "Turing.FinTM.rightCfg",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.MultiTapeTM.spaceUsedByTape",
+      "Turing.MultiTapeTM.step",
+      "Turing.MultiTapeTM.visitedByTapeHead",
+      "Turing.moveInputPos"
+    ],
+    "model_default_simps_disabled": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.MultiTapeTM.initCfg"
+    ],
+    "masks": [
+      {
+        "name": "Turing.FinTM.timed_start",
+        "doc_start": 36961,
+        "decl_start": 37441,
+        "end": 39268,
+        "source_line": 721,
+        "block_sha256": "1e361e66d681e6d32cacf7775b661fd68b8c3a06450a637006860154dfdb4312",
+        "prefix": "\nsection MIGPost234Seal_timed_start\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.branchTM Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.leftCfg Turing.FinTM.rightAction Turing.FinTM.rightCfg Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.moveInputPos\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.branchTM, `Turing.FinTM.bufferTape, `Turing.FinTM.controlAction, `Turing.FinTM.leftAction, `Turing.FinTM.leftCfg, `Turing.FinTM.rightAction, `Turing.FinTM.rightCfg, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.moveInputPos] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|timed_start|21\"\n\n",
+        "suffix": "\nend MIGPost234Seal_timed_start\n\n"
+      }
+    ],
+    "metadata_appendix": "\nopen Lean Elab Command in\nrun_cmd do\n  let env \u2190 getEnv\n  let shorts : List String := [\"timed_start\"]\n  for short in shorts do\n    let found := env.constants.toList.filter fun (n, _) =>\n      (env.getModuleIdxFor? n).isNone && n.toString.endsWith (\".\" ++ short)\n    unless found.length == 1 do throwError \"local target multiplicity {short}: {found.length}\"\n    let root := found.head!.1\n    logInfo m!\"LOCAL_ROOT|{short}|{root}\"\n    for (n, _) in env.constants.toList do\n      unless root.isPrefixOf n do continue\n      let axs \u2190 liftCoreM <| Lean.collectAxioms n\n      let row := Json.mkObj [(\"short\", toJson short),(\"name\", toJson n.toString),\n        (\"axioms\", toJson ((axs.qsort Name.lt).toList.map Name.toString))]\n      logInfo m!\"LOCAL_AX|{row.compress}\"\n  logInfo \"SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Build.Wrappers|1\"\n"
+  },
+  {
+    "owner": "TCSlib.Complexity.TuringMachine.Composition",
+    "source_sha256": "828f74a74ee1055723d3f15a75f0f5943990c5ba1e08d8c432b7bb863e05bf61",
+    "sealed_sha256": "0ce78b80f36de47af0a021563d2ea179a52cb1cdf89f991204b97637f17651c2",
+    "removal_sha256": "828f74a74ee1055723d3f15a75f0f5943990c5ba1e08d8c432b7bb863e05bf61",
+    "roundtrip_exact": true,
+    "guards": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.Cfg.inputSymbol",
+      "Turing.Cfg.workTapeSymbols",
+      "Turing.FinTM.Computes",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.FinTM.branchTM",
+      "Turing.FinTM.controlAction",
+      "Turing.FinTM.rightAction",
+      "Turing.FinTM.rightCfg",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.MultiTapeTM.spaceUsedByTape",
+      "Turing.MultiTapeTM.step",
+      "Turing.MultiTapeTM.visitedByTapeHead",
+      "Turing.moveInputPos"
+    ],
+    "model_default_simps_disabled": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.MultiTapeTM.initCfg"
+    ],
+    "masks": [
+      {
+        "name": "Turing.FinTM.condTM_start",
+        "doc_start": 36393,
+        "decl_start": 36838,
+        "end": 39078,
+        "source_line": 679,
+        "block_sha256": "530ba82f85ddb1bc332ebfe12221eb2ecfcee1824cfdbf4f1333ccd04b129636",
+        "prefix": "\nsection MIGPost234Seal_condTM_start\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.FinTM.branchTM Turing.FinTM.controlAction Turing.FinTM.rightAction Turing.FinTM.rightCfg Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.moveInputPos\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.FinTM.branchTM, `Turing.FinTM.controlAction, `Turing.FinTM.rightAction, `Turing.FinTM.rightCfg, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.moveInputPos] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|condTM_start|18\"\n\n",
+        "suffix": "\nend MIGPost234Seal_condTM_start\n\n"
+      }
+    ],
+    "metadata_appendix": "\nopen Lean Elab Command in\nrun_cmd do\n  let env \u2190 getEnv\n  let shorts : List String := [\"condTM_start\"]\n  for short in shorts do\n    let found := env.constants.toList.filter fun (n, _) =>\n      (env.getModuleIdxFor? n).isNone && n.toString.endsWith (\".\" ++ short)\n    unless found.length == 1 do throwError \"local target multiplicity {short}: {found.length}\"\n    let root := found.head!.1\n    logInfo m!\"LOCAL_ROOT|{short}|{root}\"\n    for (n, _) in env.constants.toList do\n      unless root.isPrefixOf n do continue\n      let axs \u2190 liftCoreM <| Lean.collectAxioms n\n      let row := Json.mkObj [(\"short\", toJson short),(\"name\", toJson n.toString),\n        (\"axioms\", toJson ((axs.qsort Name.lt).toList.map Name.toString))]\n      logInfo m!\"LOCAL_AX|{row.compress}\"\n  logInfo \"SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Composition|1\"\n"
+  },
+  {
+    "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+    "source_sha256": "a3f7f5dc651c162d7f2a94bd9c02e0dbf57141f018b010414819381d51f62992",
+    "sealed_sha256": "2616a7d36378b05bbf58332bdcb9e1cf397502cb779b9e1a6ff8b492db19d3dd",
+    "removal_sha256": "a3f7f5dc651c162d7f2a94bd9c02e0dbf57141f018b010414819381d51f62992",
+    "roundtrip_exact": true,
+    "guards": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.Cfg.inputSymbol",
+      "Turing.Cfg.workTapeSymbols",
+      "Turing.FinTM.Computes",
+      "Turing.FinTM.ComputesFunInTime",
+      "Turing.FinTM.ComputesInTime",
+      "Turing.MultiTapeTM.initCfg",
+      "Turing.MultiTapeTM.runFrom",
+      "Turing.MultiTapeTM.spaceUsed",
+      "Turing.MultiTapeTM.spaceUsedByTape",
+      "Turing.MultiTapeTM.step",
+      "Turing.MultiTapeTM.visitedByTapeHead",
+      "Turing.moveInputPos"
+    ],
+    "model_default_simps_disabled": [
+      "Turing.Action.apply",
+      "Turing.Cfg.init",
+      "Turing.MultiTapeTM.initCfg"
+    ],
+    "masks": [
+      {
+        "name": "Turing.FinTM.bufferedComp_start",
+        "doc_start": 58729,
+        "decl_start": 59196,
+        "end": 60297,
+        "source_line": 1199,
+        "block_sha256": "9362bd3a65e13b1d76da633d76a1a00fcfbb3c3261c2ac38ed3036cb1b11d74f",
+        "prefix": "\nsection MIGPost234Seal_bufferedComp_start\nattribute [local irreducible] Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.FinTM.Computes Turing.FinTM.ComputesFunInTime Turing.FinTM.ComputesInTime Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.moveInputPos\nattribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg\nopen Lean Elab Command Meta in\nrun_cmd do\n  let env \u2190 getEnv\n  let simpSet \u2190 liftTermElabM getSimpTheorems\n  for n in ([`Turing.Action.apply, `Turing.Cfg.init, `Turing.Cfg.inputSymbol, `Turing.Cfg.workTapeSymbols, `Turing.FinTM.Computes, `Turing.FinTM.ComputesFunInTime, `Turing.FinTM.ComputesInTime, `Turing.MultiTapeTM.initCfg, `Turing.MultiTapeTM.runFrom, `Turing.MultiTapeTM.spaceUsed, `Turing.MultiTapeTM.spaceUsedByTape, `Turing.MultiTapeTM.step, `Turing.MultiTapeTM.visitedByTapeHead, `Turing.moveInputPos] : List Name) do\n    unless getReducibilityStatusCore env n == .irreducible do throwError \"ineffective guard {n}\"\n    if simpSet.isLemma (.decl n) || simpSet.toUnfold.contains n then throwError \"remaining default simp {n}\"\n  logInfo \"SEAL_ACTIVE|bufferedComp_start|14\"\n\n",
+        "suffix": "\nend MIGPost234Seal_bufferedComp_start\n\n"
+      }
+    ],
+    "metadata_appendix": "\nopen Lean Elab Command in\nrun_cmd do\n  let env \u2190 getEnv\n  let shorts : List String := [\"bufferedComp_start\"]\n  for short in shorts do\n    let found := env.constants.toList.filter fun (n, _) =>\n      (env.getModuleIdxFor? n).isNone && n.toString.endsWith (\".\" ++ short)\n    unless found.length == 1 do throwError \"local target multiplicity {short}: {found.length}\"\n    let root := found.head!.1\n    logInfo m!\"LOCAL_ROOT|{short}|{root}\"\n    for (n, _) in env.constants.toList do\n      unless root.isPrefixOf n do continue\n      let axs \u2190 liftCoreM <| Lean.collectAxioms n\n      let row := Json.mkObj [(\"short\", toJson short),(\"name\", toJson n.toString),\n        (\"axioms\", toJson ((axs.qsort Name.lt).toList.map Name.toString))]\n      logInfo m!\"LOCAL_AX|{row.compress}\"\n  logInfo \"SEAL_COMPLETE|TCSlib.Complexity.TuringMachine.Simulation|1\"\n"
+  }
+]

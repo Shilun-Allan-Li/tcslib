@@ -1,0 +1,113 @@
+"""Static mechanical reader proposals only; no Lean or source writes."""
+from pathlib import Path
+import datetime,difflib,hashlib,json,re,subprocess
+R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4')
+OUT=Path('/private/tmp/mig-post234-consumer-seals-static-v1');OUT.mkdir(exist_ok=False)
+PIN='e3ae4d5975c200c64af3dca810d4f35f4eefcce6'
+MAP=json.loads((R/'campaign/fills/mig1/landing/post234-integration-preparation/API-BINDINGS.json').read_text())['consumer_mappings']
+git=lambda *a:subprocess.run(['git','-C',str(R),*a],stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=True).stdout
+sha=lambda b:hashlib.sha256(b).hexdigest()
+def write(n,b):p=OUT/n;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(b)
+def chunk(s,name):
+ m=re.search(r'(?m)^(?:private )?(?:theorem|lemma) '+re.escape(name)+r'\b',s);assert m
+ e=re.search(r'(?m)^(?:/--|(?:private )?(?:theorem|lemma|def|instance|structure|inductive)\b|end\b|namespace\b)',s[m.end():]);end=m.end()+e.start() if e else len(s)
+ return s[m.start():end]
+sources={f:git('show',PIN+':'+f).decode() for f in sorted({x['file'] for x in MAP})}
+after=sources.copy();changes=[]
+def replace_target(rel,name,old,new):
+ before=chunk(after[rel],name);assert before.count(old)==1
+ proposed=before.replace(old,new,1);assert before[:before.index(':=')+2]==proposed[:proposed.index(':=')+2]
+ assert after[rel].count(before)==1;after[rel]=after[rel].replace(before,proposed,1)
+ changes.append(dict(file=rel,name=name,old_sha256=sha(old.encode()),new_sha256=sha(new.encode())))
+LOOP='TCSlib/Complexity/TuringMachine/Build/Loop.lean'
+PRIM='TCSlib/Complexity/TuringMachine/Build/Primitives.lean'
+replace_target(LOOP,'emCall_eval_first','''    simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]''','''    rw [VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
+    simp''')
+replace_target(LOOP,'emCall_eval_first','''    dsimp only [emCallEvalCfg, captureCfg, bufferedSecondCfg]
+    rw [hs]
+    simp''','''    simp only [emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state,
+      hs, Option.map_some, Option.getD_some]
+    simp''')
+replace_target(PRIM,'lenStart','''    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
+    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]''','''    apply Cfg.ext
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_state, captureCfg_state,
+        Option.map_some, Option.getD_some]
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, captureCfg_inputPos]
+    · funext i
+      simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, captureCfg_workTapes,
+        Cfg.init_output, bufferTape_nil]
+    · funext i
+      simp [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, captureCfg_workTapePos,
+        Cfg.init_output]
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_output, captureCfg_output]''')
+replace_target(PRIM,'lenStart','''    have hstate : (captureCfg emb ret [] [] c).state = some ret := by simp [captureCfg, hs]
+    simp only [MultiTapeTM.step, hstate]
+    apply Cfg.ext
+    · rfl
+    · exact moveInputPos_zero _
+    · rfl
+    · funext i
+      by_cases hi : i.val < M.k <;>
+        simp [pairCountTM, ret, lenAction, Action.apply, captureCfg, ready, lenCfg, hi,
+          sub_eq_add_neg]
+    · rfl''','''    have hstate : (captureCfg emb ret [] [] c).state = some ret := by
+      simp only [captureCfg_state, hs, Option.map_none, Option.getD_none]
+    rw [MultiTapeTM.step_of_some hstate]
+    apply Cfg.ext
+    · simp [pairCountTM, ret, lenAction, Action.apply_state, ready, lenCfg]
+    · simpa [pairCountTM, ret, lenAction, Action.apply_inputPos,
+        captureCfg_inputPos, ready] using moveInputPos_zero c.inputPos
+    · funext i z
+      simp [pairCountTM, ret, lenAction, Action.apply_workTapes,
+        Cfg.workTapeSymbols_eq, Function.update_eq_self, captureCfg_workTapes,
+        ready, lenCfg]
+    · funext i
+      by_cases hi : i.val < M.k <;>
+        simp [pairCountTM, ret, lenAction, Action.apply_workTapePos,
+          captureCfg_workTapePos, ready, lenCfg, hi, sub_eq_add_neg]
+    · simp [pairCountTM, ret, lenAction, Action.apply_output,
+        captureCfg_output, ready, lenCfg]''')
+replace_target(PRIM,'splitEmbed_cut','''    | zero => intro hj; rfl''','''    | zero => intro hj; simp only [MultiTapeTM.runFrom_zero]''')
+replace_target(PRIM,'splitEmbed_cut','''      cases hz : z.state with
+      | none => simp [MultiTapeTM.step, Cfg.mapState, hz]
+      | some q =>
+        have hn : ¬stop q := fun hq => hcut j (by omega) ⟨q, hz, hq⟩
+        simp only [MultiTapeTM.step, Cfg.mapState, hz, Option.map_some]
+        rw [hagree q hn]
+        rfl''','''      cases hz : z.state with
+      | none =>
+        have hm : (z.mapState emb).state = none := by
+          simp only [Cfg.mapState_state, hz, Option.map_none]
+        rw [host.step_of_halt hm, tm.step_of_halt hz]
+      | some q =>
+        have hn : ¬stop q := fun hq => hcut j (by omega) ⟨q, hz, hq⟩
+        have hm : (z.mapState emb).state = some (emb q) := by
+          simp only [Cfg.mapState_state, hz, Option.map_some]
+        have hin : (z.mapState emb).inputSymbol = z.inputSymbol :=
+          Cfg.inputSymbol_congr _ _ (by rw [Cfg.mapState_inputPos])
+        have hw : (z.mapState emb).workTapeSymbols = z.workTapeSymbols := by
+          funext i
+          rw [Cfg.workTapeSymbols_eq, Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+            Cfg.workTapeSymbols_eq]
+        rw [host.step_of_some hm, tm.step_of_some hz, hin, hw, hagree q hn]
+        exact Cfg.mapState_apply emb _ z''')
+replace_target(PRIM,'splitEmbed_cut','''  | none => simp [Cfg.mapState, hs]
+  | some q => simpa [Cfg.mapState, hs] using haway q''','''  | none => simp [Cfg.mapState_state, hs]
+  | some q => simpa [Cfg.mapState_state, hs] using haway q''')
+for rel,s in sources.items():
+ write('source-e3/'+rel+'.txt',s.encode());write('proposed-readers-e3/'+rel+'.txt',after[rel].encode())
+patch=''.join(''.join(difflib.unified_diff(sources[f].splitlines(keepends=True),after[f].splitlines(keepends=True),fromfile='a/'+f,tofile='b/'+f)) for f in sources if sources[f]!=after[f])
+write('proposed-reader-repairs.patch',patch.encode())
+rows=[]
+for item in MAP:
+ rel=item['file'];name=item['name'].split('.')[-1]
+ for label,contents in [('actual-e3',sources),('proposed',after)]:
+  text=chunk(contents[rel],name);write('target-blocks/'+label+'/'+name+'.lean.txt',text.encode())
+  args=[dict(line=i,text=line) for i,line in enumerate(text.splitlines(),1) if re.search(r'\b(?:simp|simp_all|simp_rw|rw|unfold|dsimp|change|show)\b',line)]
+  rows.append(dict(file=rel,name=item['name'],generation=label,sha256=sha(text.encode()),rewrite_lines=args))
+write('static-argument-review.json',(json.dumps(dict(source=PIN,changes=changes,targets=rows,
+    modified_targets=3,modified_files=2,published_equations_only_proposed=True,
+    native_context='WAITING: invalid native1 NOT USED; root freshMAC5 native2 pending',
+    no_source_or_Git_changes=True,NOT_RUN=['Lean','seals','controls','metadata']),indent=2)+'\n').encode())
+print(json.dumps(dict(output=str(OUT),source=PIN,modified_targets=3,modified_files=2,patch_sha256=sha(patch.encode()),native_NOT_RUN=True),indent=2))
