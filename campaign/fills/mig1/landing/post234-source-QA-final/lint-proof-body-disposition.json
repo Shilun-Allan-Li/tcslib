@@ -1,0 +1,64 @@
+{
+  "rows": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "name": "Turing.FinTM.fwdMap_move",
+      "stages": {
+        "historical_final": {
+          "declaration_line": 2770,
+          "header_lines": 8,
+          "by_and_body_lines": 20,
+          "tactic_body_lines": 19,
+          "nonempty_tactic_body_lines": 19,
+          "full_chunk": "/-- Administrative actions with no writes only change the two buffer heads,\ncontrol, input position, and the physical output. -/\nprivate lemma fwdMap_move (M : FinTM Bool) (x : List Bool)\n    (q q' : Option (FwdMapState M.State)) (p : Fin (x.length + 2))\n    (a b : List Bool) (ha hb : ℤ) (out : List Bool)\n    (mi ma mb : SignType) (emit : Option Bool) :\n    (fwdMapAct M mi (none, ma) (none, mb) emit q').apply\n      (fwdMapCfg M x q p a b ha hb out) =\n      fwdMapCfg M x q' (moveInputPos p mi) a b (ha + ma.cast) (hb + mb.cast)\n        (out ++ emit.toList) := by\n  refine Cfg.ext ?_ ?_ ?_ ?_ ?_\n  · rw [Action.apply_state]\n    rfl\n  · rw [Action.apply_inputPos]\n    rfl\n  · funext i\n    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]\n    refine Fin.addCases (fun j => ?_) (fun j => ?_) i\n    · simp [fwdMapAct, fwdMapCfg]\n    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>\n        simp [fwdMapAct, fwdMapCfg]\n  · funext i\n    rw [Action.apply_workTapePos]\n    refine Fin.addCases (fun j => ?_) (fun j => ?_) i\n    · simp [fwdMapAct, fwdMapCfg]\n    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>\n        simp [fwdMapAct, fwdMapCfg]\n  · rw [Action.apply_output]\n    rfl\n\n",
+          "body_sha256": "7afc28cb6f09eeb50d7dc038af4e53a8d0d642710ebc421887b4c7bc1eb54fb4",
+          "body_token_sha256": "48126934253480f2361268c62b6bdf5ca835b540875139873d3bb8939962dc9e"
+        },
+        "head": {
+          "declaration_line": 2802,
+          "header_lines": 8,
+          "by_and_body_lines": 20,
+          "tactic_body_lines": 19,
+          "nonempty_tactic_body_lines": 19,
+          "full_chunk": "/-- Administrative actions with no writes only change the two buffer heads,\ncontrol, input position, and the physical output. -/\nprivate lemma fwdMap_move (M : FinTM Bool) (x : List Bool)\n    (q q' : Option (FwdMapState M.State)) (p : Fin (x.length + 2))\n    (a b : List Bool) (ha hb : ℤ) (out : List Bool)\n    (mi ma mb : SignType) (emit : Option Bool) :\n    (fwdMapAct M mi (none, ma) (none, mb) emit q').apply\n      (fwdMapCfg M x q p a b ha hb out) =\n      fwdMapCfg M x q' (moveInputPos p mi) a b (ha + ma.cast) (hb + mb.cast)\n        (out ++ emit.toList) := by\n  refine Cfg.ext ?_ ?_ ?_ ?_ ?_\n  · rw [Action.apply_state]\n    rfl\n  · rw [Action.apply_inputPos]\n    rfl\n  · funext i\n    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]\n    refine Fin.addCases (fun j => ?_) (fun j => ?_) i\n    · simp [fwdMapAct, fwdMapCfg]\n    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>\n        simp [fwdMapAct, fwdMapCfg]\n  · funext i\n    rw [Action.apply_workTapePos]\n    refine Fin.addCases (fun j => ?_) (fun j => ?_) i\n    · simp [fwdMapAct, fwdMapCfg]\n    · refine Fin.addCases (fun j => ?_) (fun j => ?_) j <;>\n        simp [fwdMapAct, fwdMapCfg]\n  · rw [Action.apply_output]\n    rfl\n\n",
+          "body_sha256": "7afc28cb6f09eeb50d7dc038af4e53a8d0d642710ebc421887b4c7bc1eb54fb4",
+          "body_token_sha256": "48126934253480f2361268c62b6bdf5ca835b540875139873d3bb8939962dc9e"
+        }
+      },
+      "assessment": "Header-counting lint heuristic; actual current tactic body is below the >20-line threshold. Existing doc states the argument and this routine field/case proof has no missing algorithm explanation identified. Legacy lineage alone is not used as an exemption.",
+      "optional_discretionary_sketch": "Use configuration extensionality and the published action-field equations. Split tape indices into the source bank and two buffer tapes; no writes preserve tape contents, while the two buffer heads move by their specified signs.",
+      "source_proposal_required": false
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "name": "Turing.FinTM.timed_read_heads",
+      "stages": {
+        "historical_final": {
+          "declaration_line": 865,
+          "header_lines": 5,
+          "by_and_body_lines": 19,
+          "tactic_body_lines": 18,
+          "nonempty_tactic_body_lines": 18,
+          "full_chunk": "/-- The mandatory back/read pair preserves both machine banks and moves\nonly the singleton capture head from one to zero. -/\nprivate lemma timed_read_heads (D M₁ M₂ : FinTM Bool) {x : List Bool}\n    (c : Cfg D.k Bool D.State x) (b : Bool) (hs : c.state = none) (ho : c.output = [b]) :\n    ∀ u ≤ 2, ∃ z : ℤ, 0 ≤ z ∧ z ≤ 1 ∧\n      ((timedCondTM D M₁ M₂).tm.runFrom (timedControlCfg D M₁ M₂ c) u).workTapePos =\n        timedHeads D M₁ M₂ c.workTapePos (fun _ => 0) z := by\n  intro u hu\n  have hu : u = 0 ∨ u = 1 ∨ u = 2 := by omega\n  rcases hu with rfl | rfl | rfl\n  · refine ⟨1, by omega, by omega, ?_⟩\n    simpa [ho] using timed_control_heads D M₁ M₂ c\n  · refine ⟨0, by omega, by omega, ?_⟩\n    have hstate : (timedControlCfg D M₁ M₂ c).state = some (.inr (.inl false)) := by\n      simp only [timedControlCfg, captureCfg_state, leftCfg_state, hs,\n        Option.map_none, Option.getD_none]\n    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,\n      MultiTapeTM.step_of_some hstate]\n    funext i\n    rw [Action.apply_workTapePos, timed_control_heads]\n    refine Fin.addCases (fun j => ?_) (fun j => ?_) i\n    · simp [timedCondTM, timedHeads, j.isLt]\n    · simp [timedCondTM, timedHeads, ho]\n  · refine ⟨0, by omega, by omega, ?_⟩\n    rw [timed_read D M₁ M₂ c b hs ho, timedReadyCfg_workTapePos]\n\n",
+          "body_sha256": "a9294729cb6f2d5ef5b5e30c82b2bfc1948fc6027ddeb699509b05db5fd18377",
+          "body_token_sha256": "0088a2fd8cfb14837c7fce8ee6b2c7631ab6b5805c83ef9a6504737e2b9c8a0d"
+        },
+        "head": {
+          "declaration_line": 907,
+          "header_lines": 5,
+          "by_and_body_lines": 19,
+          "tactic_body_lines": 18,
+          "nonempty_tactic_body_lines": 18,
+          "full_chunk": "/-- The mandatory back/read pair preserves both machine banks and moves\nonly the singleton capture head from one to zero. -/\nprivate lemma timed_read_heads (D M₁ M₂ : FinTM Bool) {x : List Bool}\n    (c : Cfg D.k Bool D.State x) (b : Bool) (hs : c.state = none) (ho : c.output = [b]) :\n    ∀ u ≤ 2, ∃ z : ℤ, 0 ≤ z ∧ z ≤ 1 ∧\n      ((timedCondTM D M₁ M₂).tm.runFrom (timedControlCfg D M₁ M₂ c) u).workTapePos =\n        timedHeads D M₁ M₂ c.workTapePos (fun _ => 0) z := by\n  intro u hu\n  have hu : u = 0 ∨ u = 1 ∨ u = 2 := by omega\n  rcases hu with rfl | rfl | rfl\n  · refine ⟨1, by omega, by omega, ?_⟩\n    simpa [ho] using timed_control_heads D M₁ M₂ c\n  · refine ⟨0, by omega, by omega, ?_⟩\n    have hstate : (timedControlCfg D M₁ M₂ c).state = some (.inr (.inl false)) := by\n      simp only [timedControlCfg, captureCfg_state, leftCfg_state, hs,\n        Option.map_none, Option.getD_none]\n    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero,\n      MultiTapeTM.step_of_some hstate]\n    funext i\n    rw [Action.apply_workTapePos, timed_control_heads]\n    refine Fin.addCases (fun j => ?_) (fun j => ?_) i\n    · simp [timedCondTM, timedHeads, j.isLt]\n    · simp [timedCondTM, timedHeads, ho]\n  · refine ⟨0, by omega, by omega, ?_⟩\n    rw [timed_read D M₁ M₂ c b hs ho, timedReadyCfg_workTapePos]\n\n",
+          "body_sha256": "a9294729cb6f2d5ef5b5e30c82b2bfc1948fc6027ddeb699509b05db5fd18377",
+          "body_token_sha256": "0088a2fd8cfb14837c7fce8ee6b2c7631ab6b5805c83ef9a6504737e2b9c8a0d"
+        }
+      },
+      "assessment": "Header-counting lint heuristic; actual current tactic body is below the >20-line threshold. Existing doc states the argument and this routine field/case proof has no missing algorithm explanation identified. Legacy lineage alone is not used as an exemption.",
+      "optional_discretionary_sketch": "Split u≤2 into zero, one and two. Use the initial control-head equation at zero, one native step and the tape-bank cases at one, and the published two-step read and ready-head equations at two.",
+      "source_proposal_required": false
+    }
+  ],
+  "Wrappers_size": "Existing explicit monolithic freeze; reported, no split/design/source change.",
+  "no_source_change": true
+}

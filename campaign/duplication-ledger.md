@@ -1653,11 +1653,19 @@ uses its existing shared equation. Short constructor/field-reader packages alrea
 canonical API; their remaining source similarity is disclosed rather than converted into a
 new blanket exception.
 
-**Still open:** the exact first-entry twin (`emCall_first_entry`/`emitter_first_entry`) awaits
-the approved shared absorbing-stop API, now being implemented/gated separately as gate119. The two constant-space reader gaps and
-redirect-space public-home exception are separate gate holds. No new debt is acknowledged here,
-and the older SAT/Hardness scheduled-kind rulings are not extended to these leaves. Final
-retirement accounting is updated only after the gated PR merges.
+**Current candidate update (post-#234):** gate119 is closed and its prerequisite merged.
+Five fixed-LIVE-stop consumers now call the shared Finite theorem; seven distinct first-None
+consumers call the existing first-halt theorem. The two constant-space leaves consume the
+merged zero-space facts. The exact redirect-space theorem remains once in Wrappers and its
+Catalog duplicate is removed. Six additional body readers and the two explicitly approved
+kernel-equivalent private header transports are implemented; the final Core-reader correction
+has its own native/seal evidence. These former interface HOLDs are resolved in candidate#233,
+not retired on the campaign branch. Current dispositions and limits are in
+`campaign/fills/mig1/landing/factoring-dispositions-post234.md`.
+
+No new debt is acknowledged; the SAT/Hardness kind rulings are not extended to these leaves.
+Full source/screen/accounting checks pass at the candidate; current replay and gate118 remain
+open. Final retirement accounting changes only after Seyoon merges the gated PR.
 
 ## FE-LIVE-1 — fixed-live-stop first-entry proofs (Seyoon, 2026-11-08 UTC)
 

@@ -1,0 +1,25 @@
+import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+import TCSlib.Complexity.ClassNP.PolyTimePrefix
+import TCSlib.Complexity.ClassNP.SAT
+import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.TuringMachine.Robustness.Oblivious
+import TCSlib.Complexity.CookLevin.Snapshot
+import TCSlib.Complexity.TuringMachine.Build.Seam
+import Lean
+set_option maxHeartbeats 0
+open Turing
+namespace Complexity
+section F4Forwarder
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+attribute [local irreducible] Turing.moveInputPos Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.step
+/-- Live endpoints force earlier module states to be live by
+`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
+private lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
+    (ht : (tm.runFrom c t).state ≠ none) :
+    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
+  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
+
+#print axioms clA5_live_prefix
+end F4Forwarder
+end Complexity

@@ -1,0 +1,22 @@
+# Current post-#234 factoring and reader dispositions
+
+**Not yet clear to merge: #233 — gate118 and the full current replay remain open.** Source `eaecd6b2afd992ead0844fa5f351eaf143fd1d1c` includes both merged prerequisite PRs. This supplements the historical factoring-dispositions-final.md; its former interface HOLDs are resolved in the candidate source, not retired on the campaign branch.
+
+| Scope | Current implementation | Limit |
+| --- | --- | --- |
+| T1–T5 and T2b | The previously reviewed rewind, mirror/buffer replay, bank-boundary, terminal/canonical/framed factoring and six authorized public-row retirements remain. Runtime data matches the prior candidate; the two existing injectivity Prop-field exceptions remain explicit. | Original partial producer reports and all failed probes remain historical, not replaced by maintainer results. |
+| Fixed LIVE-stop first entry | Five consumer proofs now call the merged arbitrary-predicate full-configuration fixed-entry theorem in Finite. | They preserve the full endpoint and strict earlier cut. FE-LIVE-1's wider existing-family cleanup remains scheduled; this is no future-copy permission. |
+| First None halt | Seven consumer proofs call the pre-existing public first-halt theorem. | None-halt selection is distinct from fixed LIVE-stop entry and from backward liveness. |
+| T6 zero-space leaves | Catalog's pair-diagonal and fixed-increment constant-space proofs call the exact merged zero-space facts in Encoding and Primitives. | Both complete consumer scopes pass their recorded strong seals. No hidden machine tape-count reading or new tape-count API is introduced. |
+| Redirect-space home | The exact existing theorem occurs once in Wrappers, beside its machine/run contract; Catalog's duplicate is removed. | Name and complete statement remain the approved ones. Fresh arbitrary raw-index headers are outside this contract. |
+| Six reader-body repairs | Initial configurations, captured/embedded fields, steps and runs are read through existing published equations. | Both private condTM_start/timed_start headers use the explicitly user-approved carrier transports; their complete old/new types are kernel equal. No extra public API/import/machine change. |
+| Core reader correction | The final Loop proof eliminates an impossible constructor equality after public field rewrites. | The earlier allowance for explicit Option.map unfolding was wrong and is superseded by the separate frozen correction; earlier records stay intact. |
+| T7 | The three generic equal-time drivers use Mathlib's invariant iterator; recorded concrete-instance scaffold comparisons remain individually classified. | No blanket host/duplication exception, global semantic absence claim or new debt acknowledgment follows. |
+
+Current full12 source QA derives public386→383/private1080→766, exactly the already-gated +3/-6 exports, five authorized private header exceptions, unchanged executable data/import scope and17 original admissions filled. The two additional forwarding proofs are complete; RAM3 stays unchanged. Actual native3 passes12 owners from a whole MAC5 clone.
+
+Current compiled accounting is5701→4416 primary-owner constants, with separate Finite59 unchanged. Among380 shared authored nonprivate declarations,375 raw types are exact and five have fresh kernel-checked ordinary-matcher transports. All94 raw differences are separately classified; no blanket nonprivate rawtype equality is claimed. The154 conservative roots plus234 descendants are standard-or-subset. The full current394 replay remains separately tracked, not inferred from this accounting.
+
+The full25 source comparison is1702→615 directed candidates:58new,1145gone,30changed, with every HEAD row classified. Scores, repeated public-call text and overlapping weights are not counts of semantic copies. All new lint findings have exact scope/body-length or frozen-size dispositions; no claim of zero inherited style findings is made.
+
+The generated rewind matcher's ineffective opacity control and the old materialization/home diagnostics remain bounded limitations. Recorded14 whole-header/body consumer scopes and232 paired controls, plus the final three-target Loop/40-control supplement, pass in their pinned contexts. No global legacy seal or theorem-proof-value equality is asserted. Retirement and cumulative per-family accounting change only after Seyoon merges the gated PR.

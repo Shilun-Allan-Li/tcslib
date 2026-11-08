@@ -1,0 +1,88 @@
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.RAMSimulation.WordSize
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+import TCSlib.Complexity.TuringMachine.Build.CertShell
+import TCSlib.Complexity.TuringMachine.Build.Loop
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.VirtualInput
+import TCSlib.Complexity.TuringMachine.Build.Wrappers
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+import TCSlib.Complexity.TuringMachine.Composition
+import TCSlib.Complexity.TuringMachine.Encoding
+import TCSlib.Complexity.TuringMachine.Simulation
+import TCSlib.Complexity.TuringMachine.Finite
+import Lean
+
+set_option maxHeartbeats 0
+open Lean Elab Command Meta
+private def metadataNames (ns : List Name) : Json := toJson (ns.map Name.toString)
+private def metadataHint (h : ReducibilityHints) : String :=
+  match h with
+  | .opaque => "opaque" | .abbrev => "abbrev" | .regular height => s!"regular:{height.toNat}"
+private def metadataSpecific (ci : ConstantInfo) : Json :=
+  match ci with
+  | .defnInfo d => Json.mkObj [("hints", toJson (metadataHint d.hints)), ("safety", toJson (reprStr d.safety)), ("all", metadataNames d.all)]
+  | .thmInfo d => Json.mkObj [("all", metadataNames d.all)]
+  | .opaqueInfo d => Json.mkObj [("all", metadataNames d.all)]
+  | .inductInfo d => Json.mkObj [("all", metadataNames d.all), ("ctors", metadataNames d.ctors),
+      ("numParams", toJson d.numParams), ("numIndices", toJson d.numIndices), ("numNested", toJson d.numNested),
+      ("isRec", toJson d.isRec), ("isReflexive", toJson d.isReflexive)]
+  | .ctorInfo d => Json.mkObj [("induct", toJson d.induct.toString), ("cidx", toJson d.cidx),
+      ("numParams", toJson d.numParams), ("numFields", toJson d.numFields)]
+  | .recInfo d => Json.mkObj [("all", metadataNames d.all), ("numParams", toJson d.numParams),
+      ("numIndices", toJson d.numIndices), ("numMotives", toJson d.numMotives), ("numMinors", toJson d.numMinors),
+      ("k", toJson d.k), ("rules", toJson (d.rules.map fun r => Json.mkObj
+        [("ctor", toJson r.ctor.toString), ("nfields", toJson r.nfields), ("rhs_repr", toJson (reprStr r.rhs))]))]
+  | .quotInfo d => Json.mkObj [("kind", toJson (match d.kind with
+      | .type => "type" | .ctor => "constructor" | .lift => "lift" | .ind => "ind"))]
+  | .axiomInfo _ => Json.mkObj []
+private def metadataInlineName (k : Compiler.InlineAttributeKind) : String :=
+  match k with
+  | .inline => "inline" | .noinline => "noinline" | .macroInline => "macro_inline"
+  | .inlineIfReduce => "inline_if_reduce" | .alwaysInline => "always_inline"
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let envAfter ← getEnv
+  unless env.constants.toList.length == envAfter.constants.toList.length do
+    throwError "getSimpTheorems changed the environment population"
+  let owners : List Name := [`TCSlib.Complexity.ClassP.TimeConstructible, `TCSlib.Complexity.RAMSimulation.WordSize, `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.CertShell, `TCSlib.Complexity.TuringMachine.Build.Loop, `TCSlib.Complexity.TuringMachine.Build.Primitives, `TCSlib.Complexity.TuringMachine.Build.VirtualInput, `TCSlib.Complexity.TuringMachine.Build.Wrappers, `TCSlib.Complexity.TuringMachine.CodeSimulator, `TCSlib.Complexity.TuringMachine.Composition, `TCSlib.Complexity.TuringMachine.Encoding, `TCSlib.Complexity.TuringMachine.Simulation, `TCSlib.Complexity.TuringMachine.Finite]
+  let owned := env.constants.toList.filterMap fun (n, ci) =>
+    match env.getModuleIdxFor? n with
+    | some i =>
+      let owner := env.header.moduleNames[i.toNat]!
+      if owners.contains owner then some (n, ci, owner) else none
+    | none => none
+  for (n, ci, _) in owned.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    let info := Json.mkObj [("levelParams", metadataNames ci.levelParams), ("unsafe", toJson ci.isUnsafe),
+      ("partial", toJson ci.isPartial), ("specific", metadataSpecific ci)]
+    let instancePrio ← liftCoreM <| getInstancePriority? n
+    let instanceKind ← liftCoreM <| getInstanceAttrKind? n
+    let attrs := Json.mkObj [("simp", toJson (simp.isLemma (.decl n))),
+      ("simp_inverse", toJson (simp.isLemma (.decl n true true))), ("simp_unfold", toJson (simp.toUnfold.contains n)),
+      ("reducibility", toJson (reprStr (getReducibilityStatusCore env n))), ("protected", toJson (isProtected env n)),
+      ("instance_priority", toJson instancePrio), ("instance_kind", toJson (instanceKind.map toString)),
+      ("class", toJson (isClass env n)), ("noncomputable", toJson (isNoncomputable env n)),
+      ("inline", toJson ((Compiler.getInlineAttribute? env n).map metadataInlineName)), ("match_pattern", toJson (hasMatchPatternAttribute env n))]
+    logInfo m!"CI|{n}|{info.compress}"
+    logInfo m!"ATTR|{n}|{attrs.compress}"
+  logInfo m!"CICOMPLETE|constants={owned.length}|simp_environment_unchanged=true"
+
+run_cmd do
+  let env ← getEnv
+  let simp ← liftTermElabM getSimpTheorems
+  let owners : List Name := [`TCSlib.Complexity.ClassP.TimeConstructible, `TCSlib.Complexity.RAMSimulation.WordSize, `TCSlib.Complexity.TuringMachine.Build.Catalog, `TCSlib.Complexity.TuringMachine.Build.CertShell, `TCSlib.Complexity.TuringMachine.Build.Loop, `TCSlib.Complexity.TuringMachine.Build.Primitives, `TCSlib.Complexity.TuringMachine.Build.VirtualInput, `TCSlib.Complexity.TuringMachine.Build.Wrappers, `TCSlib.Complexity.TuringMachine.CodeSimulator, `TCSlib.Complexity.TuringMachine.Composition, `TCSlib.Complexity.TuringMachine.Encoding, `TCSlib.Complexity.TuringMachine.Simulation, `TCSlib.Complexity.TuringMachine.Finite]
+  let rules : Array SimpTheorem :=
+    (simp.pre.foldValues (fun (a : Array SimpTheorem) s => a.push s) #[]) ++
+    (simp.post.foldValues (fun (a : Array SimpTheorem) s => a.push s) #[])
+  for s in rules do
+    if let .decl n phase inv := s.origin then
+      if let some idx := env.getModuleIdxFor? n then
+        if owners.contains env.header.moduleNames[idx.toNat]! then
+          let row := Json.mkObj [("phase", toJson phase), ("inverse", toJson inv), ("priority", toJson s.priority),
+            ("post", toJson s.post), ("perm", toJson s.perm), ("rfl", toJson s.rfl),
+            ("levelParams", metadataNames s.levelParams.toList),
+            ("proof_head_constant", toJson (s.proof.getAppFn.constName?.map Name.toString)),
+            ("proof_used_constants", metadataNames s.proof.getUsedConstants.toList)]
+          logInfo m!"SIMP_RULE|{n}|{row.compress}"
+  logInfo "SIMPCOMPLETE"
