@@ -1,9 +1,7 @@
-# Gate 123 — ch7-run
+# Gate123 — ch7 public run-law forwards
 
-PREPARING for morning Codex audit; NOT DISPATCHED; no verdict.
+STAGED INPUT; publication in progress; NOT DISPATCHED; no verdict.
 
-**Not yet clear to merge: #243 — final validation/packet and external audit pending.**
+**Not yet clear to merge: #243 — external Codex audit pending.**
 
-Pushed source `7c4b1a3e15b800cc4a98624f71a3b27458a41340`; campaign Lean `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / whole MAC8.
-
-Source remains a separate existing-API/header/import-preserving mechanical family.
+Actual80/0/static0/31; full5-declaration6-head seal/12 paired controls; exact5-root ABI; actual33-file0-new-pair comparison. Source/records/exchange publication binding is completed separately.
