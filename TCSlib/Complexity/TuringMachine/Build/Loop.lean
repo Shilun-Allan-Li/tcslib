@@ -100,8 +100,8 @@ validated this budget strategy (finding 4, second half).
 * `Turing.FinTM.callTM` — the clean call, with its anchors `callEntry`, `callExit`,
   `callTM_k_pos` and its run `callTM_run`.
 
-`callTM_k_pos` and `callTM_run` are proved; the five loop specs are sorried until the
-fill F-C.
+All are proved; the existential rows `exists_loopCfgTM`, `exists_loopTM`, `exists_loopFindTM`
+and `exists_emitLoopTM` are corollaries of the specs at coefficient `10`.
 
 ## References
 
@@ -110,22 +110,12 @@ fill F-C.
   the folklore engine of the enumeration and diagonalization arguments,
   §2.1 / §3.1–3.2.)
 
-**Fill checkpoint (batch L).** `loop_run` is proved. The three finite-machine
-exports are derived from the single admitted private `loopHost_contracts`.
-The concrete controller, source-body simulation, fixed-width counter,
-input rewind, capture instances, payload replay, and both terminal summation
-lemmas are supplied below. Controller-level phase assembly and its uniform
-budget remain the continuation frontier; this file is not an admission-free
-completion of the loop combinators.
-
-**Fill completion (batch L2).** The historical checkpoint above is now
-closed: the actual fuel, startup, body-return, counter, and payload phases
-are proved and assembled in `loopHost_contracts`, with uniform coefficient
-`loopHost_bound = 10`. The canonical seams retain the completed fuel residue
-and fixed-width debit iterates. Underflow and its final emission are inside
-the last rejecting segment; an accepting last candidate has an arbitrary
-unreachable rejection terminal. The entire file has no admissions, including
-the capture helpers now that batch W's `capture_run` proof is integrated.
+The concrete controller assembles the completed fuel, startup, body-return,
+counter and payload phases in `loopHost_contracts`, with uniform coefficient
+`loopHost_bound = 10`. Canonical seams retain the fuel residue and fixed-width
+debit iterates. Underflow and its final emission belong to the last rejecting
+segment; an accepting last candidate has an arbitrary unreachable rejection
+terminal. The capture helpers consume the proved `capture_run` contract.
 -/
 
 namespace Turing
@@ -200,29 +190,20 @@ namespace Turing.FinTM
 
 /-- Replace a possibly padded halting-time witness by its first halt,
 retaining the entire endpoint configuration.
-**Proof sketch.** Choose the least halting time. Minimality supplies the
-strict liveness guard; the absorbing-halt law identifies its endpoint
-with the original, possibly later, witness. -/
+**Proof sketch.** The first halt `Turing.MultiTapeTM.exists_first_halt` gives the least
+halting time with its liveness guard and endpoint; it is positive because the starting
+configuration is live. -/
 private lemma loop_first_halt {k : ℕ} {S : Type*} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)
     (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :
     ∃ u, 0 < u ∧ u ≤ t ∧
       (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
       (tm.runFrom cfg u).state = none ∧ tm.runFrom cfg u = tm.runFrom cfg t := by
-  classical
-  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩
-  have hu := Nat.find_spec h
-  have hle := Nat.find_min' h hhalt
-  refine ⟨Nat.find h, ?_, hle, ?_, hu, ?_⟩
-  · by_contra hn
-    have hz : Nat.find h = 0 := by omega
-    rw [hz, MultiTapeTM.runFrom_zero] at hu
-    exact hstart hu
-  · intro v hv
-    exact Nat.find_min h hv
-  · symm
-    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
-      MultiTapeTM.runFrom_of_halt _ hu]
+  obtain ⟨u, hut, hlive, he⟩ := MultiTapeTM.exists_first_halt tm cfg hhalt
+  have hu : (tm.runFrom cfg u).state = none := by rw [he]; exact hhalt
+  refine ⟨u, Nat.pos_of_ne_zero fun hz => hstart ?_, hut, hlive, hu, he⟩
+  rw [hz, MultiTapeTM.runFrom_zero] at hu
+  exact hu
 
 /-- The declared invariant holds at each orbit word, including unreachable
 rounds after an earlier acceptance. -/
@@ -254,41 +235,6 @@ private lemma loop_output_length_le {k : ℕ} {S : Type*} {x : List Bool}
   | succ t ih =>
     rw [MultiTapeTM.runFrom_succ_eq_step']
     exact (stepBound _).trans (by omega)
-
-/-- The input rewind has a bound in its starting position, so it can be
-charged to the preceding run without scanning the entire input.
-**Proof sketch.** Take the mandatory first left move and apply the proved
-`rewind_scan` at the resulting position. Its exact scan time is position
-plus one; the first left move never increases position. -/
-private lemma loop_rewind_bounded {k : ℕ} {S : Type} {x : List Bool}
-    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
-    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
-    (hscan : ∀ inp work, tm.tr scan inp work =
-      match inp with
-      | some _ => controlAction .neg (some scan)
-      | none => controlAction .pos dest)
-    (cfg : Cfg k Bool S x) (hs : cfg.state = some start) :
-    ∃ t ≤ cfg.inputPos.val + 2,
-      tm.runFrom cfg t = {cfg with state := dest, inputPos := 1} := by
-  have hstep : tm.step cfg =
-      {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
-    unfold MultiTapeTM.step
-    rw [hs]
-    dsimp only
-    rw [hstart, controlAction_apply]
-  let c := tm.step cfg
-  have hc : c.state = some scan := by simp only [c, hstep]
-  have hp : c.inputPos.val ≤ x.length := by
-    simp only [c, hstep, moveInputPos_neg_val]
-    have := cfg.inputPos.isLt
-    omega
-  refine ⟨1 + (c.inputPos.val + 1), ?_, ?_⟩
-  · simp only [c, hstep, moveInputPos_neg_val]
-    omega
-  · rw [MultiTapeTM.runFrom_add]
-    have hfirst : tm.runFrom cfg 1 = c := rfl
-    rw [hfirst, rewind_scan tm scan dest hscan c hc hp]
-    simp only [c, hstep]
 
 /-- Fixed-width little-endian decrement and its success flag. Underflow
 sets the existing cells to true and returns false, without extending the word. -/
@@ -712,7 +658,7 @@ private lemma loopHost_input_rewind (body F : FinTM Bool) (anchor : body.State) 
     ∃ t ≤ cfg.inputPos.val + 2,
       (loopHostM body F anchor forward findMode).tm.runFrom cfg t =
         {cfg with state := some (.inr (.inl (true, (body.tm.q₀, false)))), inputPos := 1} := by
-  apply loop_rewind_bounded (loopHostM body F anchor forward findMode).tm
+  apply timed_rewind (loopHostM body F anchor forward findMode).tm
     (.inr (.inr 4)) (.inr (.inr 5)) (.some (.inr (.inl (true, (body.tm.q₀, false)))))
     ?_ ?_ cfg hs
   · intro inp work
@@ -1259,21 +1205,27 @@ private lemma loopFuelCaptured_frame (body F : FinTM Bool) {x : List Bool}
           simp [loopFrame, hbf, Nat.ne_of_lt b.isLt]
 
 /-- Fuel execution, setup, and input rewind reach prepared body startup
-within `5*T+7` steps, retaining the actual fuel endpoint.
+within `5*T+7` steps, retaining the actual fuel endpoint, whose work heads lie
+within `T |x|` of the origin.
 **Proof sketch.** Replace the supplied padded fuel run by its first halt,
 relocate it twice, and capture it in the actual host. Setup costs `3L+4`,
 where `L ≤ T`; the input rewind costs at most the first run's displacement
-plus two, hence at most `T+3`. No bound in the input length is used. -/
+plus two, hence at most `T+3`. No bound in the input length is used. The fuel
+endpoint is the run at the first halting time `u ≤ T |x|` from the initial
+configuration, whose heads are at the origin, and each step moves a head by at
+most one cell (`Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`). -/
 private lemma loopHost_prepare (body F : FinTM Bool) (anchor : body.State) (forward : Bool)
     (findMode : Bool) (R T : ℕ → ℕ)
     (hF : F.ComputesFunInTime (fun x => Nat.bits (R x.length)) T) (x : List Bool) :
     ∃ (c : Cfg F.k Bool F.State x) (t : ℕ),
       c.state = none ∧ c.output = Nat.bits (R x.length) ∧ t ≤ 5 * T x.length + 7 ∧
       (loopHostM body F anchor forward findMode).tm.runFrom
-        ((loopHostM body F anchor forward findMode).tm.initCfg x) t = loopReady body F c := by
-  obtain ⟨space, hhalt, hout, hspace⟩ := hF x
+        ((loopHostM body F anchor forward findMode).tm.initCfg x) t = loopReady body F c ∧
+      ∀ i, -(T x.length : ℤ) ≤ c.workTapePos i ∧ c.workTapePos i ≤ T x.length := by
+  obtain ⟨hhalt, hout⟩ := (computesInTime_iff _ _ _ _).mp ((computesFunInTime_iff _ _ _).mp hF x)
   obtain ⟨u, hu, hut, hlive, huh, hue⟩ :=
-    loop_first_halt F.tm (F.tm.initCfg x) (T x.length) (by simp [MultiTapeTM.initCfg, Cfg.init]) hhalt
+    loop_first_halt F.tm (F.tm.initCfg x) (T x.length)
+      (by rw [MultiTapeTM.initCfg_eq, Cfg.init_state]; exact Option.some_ne_none _) hhalt
   let c := F.tm.runFrom (F.tm.initCfg x) u
   have hc : c.state = none := huh
   have ho : c.output = Nat.bits (R x.length) := by dsimp only [c]; rw [hue]; exact hout
@@ -1284,7 +1236,9 @@ private lemma loopHost_prepare (body F : FinTM Bool) (anchor : body.State) (forw
     · rw [loopFuel_run]; rfl
     · intro v hv
       rw [loopFuel_run]
-      simpa [Cfg.Halted, loopFuelCfg, rightCfg] using hlive v hv
+      have live : (F.tm.runFrom (F.tm.initCfg x) v).state ≠ none := hlive v hv
+      change (loopFuelCfg body F (F.tm.runFrom (F.tm.initCfg x) v)).state ≠ none
+      simpa only [loopFuelCfg, rightCfg_state, Option.map_id] using live
   let prepared := loopFrame body F (loopFuelCaptured body F c)
     (some (.inr (.inr 4))) c.inputPos (bufferTape []) (bufferTape c.output)
     (bufferTape []) 0 0 []
@@ -1294,13 +1248,27 @@ private lemma loopHost_prepare (body F : FinTM Bool) (anchor : body.State) (forw
     exact loopHost_fuel_setup body F anchor forward findMode _ _ _ _ _
   obtain ⟨v, hv, hrew⟩ := loopHost_input_rewind body F anchor forward findMode prepared rfl
   have hw : c.output.length ≤ T x.length := by rw [ho]; exact loop_fuel_width F R T hF x
-  have hp : c.inputPos.val ≤ 1 + u := MultiTapeTM.timed_input_bound (tm := F.tm) (F.tm.initCfg x) u
-  refine ⟨c, u + (3 * c.output.length + 4) + v, hc, ho, ?_, ?_⟩
+  have hp : c.inputPos.val ≤ 1 + u := by
+    have h := MultiTapeTM.timed_input_bound (tm := F.tm) (F.tm.initCfg x) u
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_inputPos] at h
+    change (F.tm.runFrom (F.tm.initCfg x) u).inputPos.val ≤ 1 + u
+    rw [MultiTapeTM.initCfg_eq]
+    simpa only [Fin.val_one, Nat.add_comm] using h
+  refine ⟨c, u + (3 * c.output.length + 4) + v, hc, ho, ?_, ?_, ?_⟩
   · change v ≤ c.inputPos.val + 2 at hv
     omega
   · rw [MultiTapeTM.runFrom_add,
       MultiTapeTM.runFrom_add (a := u) (b := 3 * c.output.length + 4), hcap, hsetup, hrew]
     rfl
+  · intro i
+    have h := Finset.mem_Icc.mp
+      (MultiTapeTM.workTapePos_runFrom_mem_Icc F.tm (F.tm.initCfg x) u i)
+    have h0 : (F.tm.initCfg x).workTapePos i = 0 := by
+      rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    rw [h0] at h
+    change -(T x.length : ℤ) ≤ (F.tm.runFrom (F.tm.initCfg x) u).workTapePos i ∧
+      (F.tm.runFrom (F.tm.initCfg x) u).workTapePos i ≤ T x.length
+    omega
 
 /-- The stopped body's padded source configuration, preserving the counter
 word and the complete fuel residue through every call. -/
@@ -2063,14 +2031,41 @@ private lemma loopHost_round (body F : FinTM Bool) (anchor : body.State)
     rw [MultiTapeTM.runFrom_add, hcap]
     exact hfinish
 
-/-- The audit's single maximum: startup coefficient nine, body coefficient
+/-- At a canonical call, only the retained fuel bank can be displaced.
+All body, flag, counter and capture heads are at zero.
+**Proof sketch.** Split the tape index: the capture tape, the body bank and
+the counter tape of a canonical call are at the origin by construction, and
+the fuel bank carries the given fuel configuration's heads. -/
+private lemma loopCall_heads (body F : FinTM Bool) (anchor : body.State)
+    (x s word : List Bool) (fuel : Cfg F.k Bool F.State x) (B : ℕ)
+    (hf : ∀ i, -(B : ℤ) ≤ fuel.workTapePos i ∧ fuel.workTapePos i ≤ B) :
+    ∀ i, -(B : ℤ) ≤ (loopCall body F anchor false
+        (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel).workTapePos i ∧
+      (loopCall body F anchor false
+        (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel).workTapePos i ≤ B := by
+  intro i
+  refine Fin.lastCases ?_ (fun j => ?_) i
+  · simp [loopCall, captureCfg_workTapePos, loopBodyPadded, leftCfg_output, loopBodyCfg, Cfg.ofWords_workTapePos,
+      Cfg.ofWords_output]
+  · simp only [loopCall, captureCfg_workTapePos, Fin.coe_castSucc, dif_pos j.isLt]
+    change -(B : ℤ) ≤ (loopBodyPadded body F anchor
+        (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel).workTapePos j ∧
+      (loopBodyPadded body F anchor
+        (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel).workTapePos j ≤ B
+    simp only [loopBodyPadded, leftCfg_workTapePos]
+    refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+    · simp [Fin.addCases_left, loopBodyCfg, Cfg.ofWords_workTapePos]
+    · simp only [Fin.addCases_right]
+      refine Fin.addCases (fun j => ?_) (fun j => ?_) j
+      · simp only [Fin.addCases_left]
+        omega
+      · simpa only [Fin.addCases_right] using hf j
+
+/-- The controller's uniform maximum: startup coefficient nine, body coefficient
 three, counter coefficient two, and dispatch allowance five. -/
 private def loopHost_bound : ℕ := max 1 (max 9 (3 + 2 + 5))
 
 /-- Configuration contracts for the concrete controller in both output modes.
-**Continuation frontier: unproved.** The public corollaries below are conditional
-on this one machine-construction obligation; this is not a closed batch.
-
 **Proof sketch.** Run the relocated fuel source to its first halt using
 `loopHost_fuel_capture`. Phases 0--5 copy and retain its binary fuel, clear
 the capture tape, and rewind the two work heads and the input head. Run
@@ -2083,12 +2078,17 @@ Phase 7 either emits/replays that payload or starts the width-bounded
 borrow. The host performs the counter borrow and rewind
 in phases 8--10. Final zero underflow and phase 11 belong to the
 last rejecting segment. If the last candidate accepts, choose any halted
-false/empty terminal. Sum the phase constants with the audit's maximum
-ledger. The missing proof is precisely the controller-level lifting and
-assembly of these phase contracts, including startup and replay bounds. -/
-/- Batch L2 closure: the preceding continuation docstring is retained as
-historical evidence. Its listed obligations are discharged below by the phase
-lemmas and the canonical family; there is no remaining construction admission. -/
+false/empty terminal. Sum the phase constants with the controller's maximum
+ledger. This assembles the controller-level phase contracts, including the
+startup and replay bounds.
+
+The coefficient is explicit, `10 = loopHost_bound`, and two head clauses are
+included: every candidate seam `cfg i`, `i ≤ R |x|`, has its work heads within
+`T |x|` of the origin (`loopCall_heads` with the fuel-head clause of
+`loopHost_prepare`), and the terminal `cfg (R |x| + 1)` within
+`T |x| + 10·(T |x| + 1)`: either the halted copy of the next seam, after an
+accepting last candidate, or the last segment's endpoint, at most
+`10·(T |x| + 1)` steps from a seam. The space budget uses both. -/
 private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
     (stepF : List Bool → List Bool → List Bool)
@@ -2120,31 +2120,41 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
           body.tm.runFrom
             (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t =
               Cfg.ofWords anchor (stateWord body.k (stepF x s))) :
-    ∃ c : ℕ, ∀ x : List Bool,
+    ∀ x : List Bool,
       ∃ (cfg : ℕ → Cfg (loopHostTM body F anchor findMode).k Bool
           (loopHostTM body F anchor findMode).State x) (startup : ℕ),
-        startup ≤ c * (T x.length + 1) ∧
+        startup ≤ 10 * (T x.length + 1) ∧
         (loopHostTM body F anchor findMode).tm.runFrom
           ((loopHostTM body F anchor findMode).tm.initCfg x) startup = cfg 0 ∧
         (∀ i ≤ R x.length, (cfg i).output = []) ∧
         (cfg (R x.length + 1)).state = none ∧
         (cfg (R x.length + 1)).output = (if findMode then [] else [false]) ∧
-        (∀ i ≤ R x.length, ∃ t ≤ c * (T x.length + 1),
+        (∀ i ≤ R x.length, ∃ t ≤ 10 * (T x.length + 1),
           if acceptF x ((stepF x)^[i] (s0 x)) then
             ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).state = none ∧
             ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =
               (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])
-          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) := by
+          else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) ∧
+        (∀ i ≤ R x.length, ∀ j,
+          -(T x.length : ℤ) ≤ (cfg i).workTapePos j ∧
+          (cfg i).workTapePos j ≤ T x.length) ∧
+        (∀ j, -((T x.length + 10 * (T x.length + 1) : ℕ) : ℤ) ≤
+          (cfg (R x.length + 1)).workTapePos j ∧
+          (cfg (R x.length + 1)).workTapePos j ≤
+            (T x.length + 10 * (T x.length + 1) : ℕ)) := by
   classical
-  refine ⟨loopHost_bound, ?_⟩
   intro x
-  obtain ⟨fuel, ftime, hfh, hfo, hft, hprepare⟩ :=
+  obtain ⟨fuel, ftime, hfh, hfo, hft, hprepare, hfuel⟩ :=
     loopHost_prepare body F anchor false findMode R T hF x
   obtain ⟨btime, hbt, hbguard, hbend⟩ := hstart x
   let words (i : ℕ) := (fun w => (loopDebit w).1)^[i] (Nat.bits (R x.length))
   let orbit (i : ℕ) := (stepF x)^[i] (s0 x)
   let candidate (i : ℕ) := loopCall body F anchor false
     (Cfg.ofWords (input := x) anchor (stateWord body.k (orbit i))) true none (words i) fuel
+  have hheads (i : ℕ) (j) :
+      -(T x.length : ℤ) ≤ (candidate i).workTapePos j ∧
+      (candidate i).workTapePos j ≤ T x.length :=
+    loopCall_heads body F anchor x (orbit i) (words i) fuel (T x.length) hfuel j
   have hwidth (i : ℕ) : (words i).length ≤ T x.length := by
     dsimp only [words]
     rw [loopDebit_iterate_length]
@@ -2206,9 +2216,23 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
     · exact ⟨rfl, rfl⟩
     · rename_i ha
       simpa only [ha, Bool.false_eq_true, ↓reduceIte, Nat.lt_irrefl] using hlast.2
+  have hterminalheads (j) :
+      -((T x.length + loopHost_bound * (T x.length + 1) : ℕ) : ℤ) ≤
+        terminal.workTapePos j ∧
+      terminal.workTapePos j ≤ (T x.length + loopHost_bound * (T x.length + 1) : ℕ) := by
+    dsimp only [terminal]
+    split
+    · have h := hheads (R x.length + 1) j
+      dsimp only
+      omega
+    · have hd := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc
+        (loopHostTM body F anchor findMode).tm (candidate (R x.length)) (time (R x.length)) j)
+      have hs := hheads (R x.length) j
+      have ht := (htime (R x.length) (le_refl _)).1
+      omega
   let cfg (i : ℕ) := if i ≤ R x.length then candidate i else terminal
   have hcfg (i : ℕ) (hi : i ≤ R x.length) : cfg i = candidate i := if_pos hi
-  refine ⟨cfg, ftime + (btime + 2), ?_, ?_, ?_, ?_, ?_, ?_⟩
+  refine ⟨cfg, ftime + (btime + 2), ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
   · change ftime + (btime + 2) ≤ 10 * (T x.length + 1)
     omega
   · rw [hcfg 0 (Nat.zero_le _), MultiTapeTM.runFrom_add, hprepare,
@@ -2216,7 +2240,7 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
     simp only [candidate, words, orbit, Function.iterate_zero_apply, hfo]
   · intro i hi
     rw [hcfg i hi]
-    rfl
+    simp only [candidate, loopCall, captureCfg_output]
   · simpa only [cfg, if_neg (by omega : ¬R x.length + 1 ≤ R x.length)] using hterminal.1
   · simpa only [cfg, if_neg (by omega : ¬R x.length + 1 ≤ R x.length)] using hterminal.2
   · intro i hi
@@ -2235,6 +2259,86 @@ private lemma loopHost_contracts (body F : FinTM Bool) (anchor : body.State)
         subst i
         rw [show cfg (R x.length + 1) = terminal from if_neg (by omega)]
         simp only [terminal, ha, Bool.false_eq_true, ↓reduceIte]
+  · intro i hi j
+    rw [hcfg i hi]
+    exact hheads i j
+  · intro j
+    rw [show cfg (R x.length + 1) = terminal from if_neg (by omega)]
+    exact hterminalheads j
+
+/-- Uniform seam positions and segment lengths confine the complete loop,
+including an accepting halt and all stationary later times. No round count
+occurs in the interval: every next segment restarts at a bounded seam.
+**Proof sketch.** Induction on the number of seams `N`. Within the first segment
+a head moves at most one cell per step from a seam of radius `H`, so it stays
+within `H + B`; an early halt is absorbing; otherwise continue from the next
+seam. With no seams left, the halted terminal is stationary. -/
+private lemma segment_heads {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (cfg : ℕ → Cfg k Bool S x) (N B H : ℕ)
+    (hseam : ∀ j < N, ∀ i, -(H : ℤ) ≤ (cfg j).workTapePos i ∧
+      (cfg j).workTapePos i ≤ H)
+    (hend : (cfg N).state = none)
+    (hterminal : ∀ i, -((H + B : ℕ) : ℤ) ≤ (cfg N).workTapePos i ∧
+      (cfg N).workTapePos i ≤ (H + B : ℕ))
+    (hsegment : ∀ j < N, ∃ u ≤ B,
+      (tm.runFrom (cfg j) u).state = none ∨ tm.runFrom (cfg j) u = cfg (j + 1)) :
+    ∀ t i, -((H + B : ℕ) : ℤ) ≤ (tm.runFrom (cfg 0) t).workTapePos i ∧
+      (tm.runFrom (cfg 0) t).workTapePos i ≤ (H + B : ℕ) := by
+  induction N generalizing cfg with
+  | zero =>
+    intro t i
+    rw [MultiTapeTM.runFrom_of_halt _ hend]
+    exact hterminal i
+  | succ N ih =>
+    intro t i
+    obtain ⟨u, hu, he⟩ := hsegment 0 (by omega)
+    have hs := hseam 0 (by omega) i
+    have hp (v : ℕ) (hv : v ≤ B) :
+        -((H + B : ℕ) : ℤ) ≤ (tm.runFrom (cfg 0) v).workTapePos i ∧
+        (tm.runFrom (cfg 0) v).workTapePos i ≤ (H + B : ℕ) := by
+      have hh := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc tm (cfg 0) v i)
+      omega
+    by_cases ht : t ≤ u
+    · exact hp t (ht.trans hu)
+    · rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
+      rcases he with he | he
+      · rw [MultiTapeTM.runFrom_of_halt _ he]
+        exact hp u hu
+      · rw [he]
+        exact ih (fun j => cfg (j + 1))
+          (fun j hj => hseam (j + 1) (by omega)) hend hterminal
+          (fun j hj => hsegment (j + 1) (by omega)) (t - u) i
+
+/-- A bounded startup followed by reusable seams has all-time space linear
+in the common segment budget, independently of the number of rounds.
+**Proof sketch.** Up to `startup ≤ B` steps a head is within `B` of the origin;
+afterwards `segment_heads` applies from `cfg 0`. Every head then stays within
+`H + B` of its origin start, and `Turing.MultiTapeTM.spaceUsed_le_of_abs_le`
+converts the common radius into space. -/
+private lemma seamed_space (M : FinTM Bool) (x : List Bool)
+    (cfg : ℕ → Cfg M.k Bool M.State x) (N B H startup : ℕ)
+    (hstart : startup ≤ B) (hinit : M.tm.runFrom (M.tm.initCfg x) startup = cfg 0)
+    (hseam : ∀ j < N, ∀ i, -(H : ℤ) ≤ (cfg j).workTapePos i ∧
+      (cfg j).workTapePos i ≤ H)
+    (hend : (cfg N).state = none)
+    (hterminal : ∀ i, -((H + B : ℕ) : ℤ) ≤ (cfg N).workTapePos i ∧
+      (cfg N).workTapePos i ≤ (H + B : ℕ))
+    (hsegment : ∀ j < N, ∃ u ≤ B,
+      (M.tm.runFrom (cfg j) u).state = none ∨ M.tm.runFrom (cfg j) u = cfg (j + 1))
+    (t : ℕ) : M.tm.spaceUsed (M.tm.initCfg x) t ≤ M.k * (2 * (H + B) + 1) := by
+  have h0 (i : Fin M.k) : (M.tm.initCfg x).workTapePos i = 0 := by
+    rw [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+  apply MultiTapeTM.spaceUsed_le_of_abs_le M.tm (M.tm.initCfg x) t (H + B)
+  intro u _ i
+  rw [h0, sub_zero, abs_le]
+  by_cases hu : u ≤ startup
+  · have hp := Finset.mem_Icc.mp
+      (MultiTapeTM.workTapePos_runFrom_mem_Icc M.tm (M.tm.initCfg x) u i)
+    rw [h0, zero_sub, zero_add] at hp
+    push_cast
+    omega
+  · rw [show u = startup + (u - startup) by omega, MultiTapeTM.runFrom_add, hinit]
+    exact_mod_cast segment_heads M.tm cfg N B H hseam hend hterminal hsegment (u - startup) i
 
 /-- **The loop host's configuration contract**. Given a fuel machine for `Nat.bits (R |x|)` within
 `T`, an invariant `Inv` that holds at `s0 x` and is preserved by `stepF`, a body startup that
@@ -2248,8 +2352,8 @@ and, for each round `i ≤ R |x|`, a segment of at most `10·(T |x| + 1)` steps 
 `[true]` (the round's output in find mode) if orbit point `i` is accepted, and otherwise reaches
 `cfg (i + 1)`. The coefficient `10` is today's `loopHost_bound`.
 
-**Proof sketch.** Today's private `loopHost_contracts`, whose proof opens with
-`refine ⟨loopHost_bound, ?_⟩`, `loopHost_bound = max 1 (max 9 (3 + 2 + 5)) = 10`: the fuel phase and
+**Proof sketch.** The private `loopHost_contracts`, with coefficient
+`loopHost_bound = max 1 (max 9 (3 + 2 + 5)) = 10`, without its two head clauses: the fuel phase and
 the body startup give the startup (`loopHost_prepare`, `loopHost_start`); each segment is one
 captured body round followed by a debit and rewind of the counter, whose width never exceeds `T |x|`
 (`loop_fuel_width`), so every phase costs a constant multiple of `T |x| + 1` (`loopHost_round`); the
@@ -2300,7 +2404,11 @@ theorem loopHostTM_contracts (body F : FinTM Bool) (anchor : body.State)
             ((loopHostTM body F anchor findMode).tm.runFrom (cfg i) t).output =
               (if findMode then out x ((stepF x)^[i] (s0 x)) else [true])
           else (loopHostTM body F anchor findMode).tm.runFrom (cfg i) t = cfg (i + 1)) := by
-  sorry
+  intro x
+  obtain ⟨cfg, startup, hs, hinit, hout, hend, hterm, hseg, -, -⟩ :=
+    loopHost_contracts body F anchor Inv stepF acceptF out findMode s0 R T hF hInv0 hInvStep
+      hstart hround x
+  exact ⟨cfg, startup, hs, hinit, hout, hend, hterm, hseg⟩
 
 /-- **The configuration-level loop combinator** (added per round-2 finding 1 — the final-answer conclusion below cannot
 discharge a configuration contract: the round-2 audit exhibits a machine
@@ -2374,9 +2482,11 @@ theorem exists_loopCfgTM (body F : FinTM Bool) (anchor : body.State)
             (E.tm.runFrom (cfg i) t).state = none ∧
             (E.tm.runFrom (cfg i) t).output = [true]
           else E.tm.runFrom (cfg i) t = cfg (i + 1)) := by
-  obtain ⟨c, hc⟩ := loopHost_contracts body F anchor Inv stepF acceptF
-    (fun _ _ => [true]) false s0 R T hF hInv0 hInvStep hstart hround
-  exact ⟨loopHostTM body F anchor false, c, by simpa using hc⟩
+  refine ⟨loopHostTM body F anchor false, 10, fun x => ?_⟩
+  obtain ⟨cfg, startup, hs, hinit, hout, hend, hterm, hseg⟩ :=
+    loopHostTM_contracts body F anchor Inv stepF acceptF (fun _ _ => [true]) false s0 R T hF
+      hInv0 hInvStep hstart hround x
+  exact ⟨cfg, startup, hs, hinit, hout, hend, by simpa using hterm, by simpa using hseg⟩
 
 /-- Summation with an already-halted exhaustion terminal. Unlike `loop_run`,
 this lemma requires no empty output at that terminal and charges no final
@@ -2418,13 +2528,34 @@ private lemma loop_halted_run {k : ℕ} {S : Type*} {x : List Bool}
       · rw [MultiTapeTM.runFrom_add, hc]
         simpa [hany, hb] using hout
 
+/-- A bounded startup followed by a halted segment yields a computation in time
+`B * (N + 1)` when startup costs at most `B` and the segment costs at most `N * B`.
+
+**Proof sketch.** Compose the two runs with `MultiTapeTM.runFrom_add`, read the halt and
+output with `computesInTime_iff`, and enlarge the summed time by `ComputesInTime.mono`. -/
+private theorem loop_computes_of_startup (M : FinTM Bool) (x output : List Bool)
+    (c : Cfg M.k Bool M.State x) (startup t B N : ℕ)
+    (hs : startup ≤ B) (hinit : M.tm.runFrom (M.tm.initCfg x) startup = c)
+    (ht : t ≤ N * B) (hhalt : (M.tm.runFrom c t).state = none)
+    (hout : (M.tm.runFrom c t).output = output) :
+    M.ComputesInTime x output (B * (N + 1)) := by
+  have hrun := M.tm.runFrom_add (M.tm.initCfg x) startup t
+  rw [hinit] at hrun
+  have hcompute : M.ComputesInTime x output (startup + t) := by
+    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+    · rw [hrun]; exact hhalt
+    · rw [hrun]; exact hout
+  apply hcompute.mono
+  calc startup + t ≤ B + N * B := Nat.add_le_add hs ht
+    _ = B * (N + 1) := by rw [Nat.mul_succ, Nat.mul_comm N, Nat.add_comm]
+
 /-- **The decision loop's time**. Under the hypotheses of `loopHostTM_contracts` with accepting
 output `[true]`, the host in decision mode outputs `[true]` if some orbit point
 `(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted, and `[false]` otherwise, within
 `10·(T n + 1)·(R n + 2)` steps.
 
-**Proof sketch.** The body of today's `exists_loopTM` with `c = 10`: the contract family's startup
-and at most `R |x| + 1` segments sum, by the private already-halted-terminal summation lemma
+**Proof sketch.** The contract family of `loopHostTM_contracts` (output `[true]`): its startup and
+at most `R |x| + 1` segments sum, by the already-halted-terminal summation lemma
 `loop_halted_run`, to at most `10·(T |x| + 1) + (R |x| + 1)·10·(T |x| + 1)` steps. -/
 theorem loopHostTM_decides (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
@@ -2460,7 +2591,17 @@ theorem loopHostTM_decides (body F : FinTM Bool) (anchor : body.State)
       (fun x => [(List.range (R x.length + 1)).any
         fun i => acceptF x ((stepF x)^[i] (s0 x))])
       (fun n => 10 * (T n + 1) * (R n + 2)) := by
-  sorry
+  refine (computesFunInTime_iff _ _ _).mpr fun x => ?_
+  let E := loopHostTM body F anchor false
+  obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments⟩ :=
+    loopHostTM_contracts body F anchor Inv stepF acceptF (fun _ _ => [true]) false s0 R T hF
+      hInv0 hInvStep hstart hround x
+  obtain ⟨t, ht, hhalt, houtput⟩ := loop_halted_run E.tm cfg
+    (fun i => acceptF x ((stepF x)^[i] (s0 x))) (10 * (T x.length + 1))
+    (R x.length + 1) ⟨hend, by simpa using hout⟩
+    (fun j hj => by simpa using hsegments j (by omega))
+  exact loop_computes_of_startup E x _ (cfg 0) startup t
+    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt houtput
 
 /-- **The decision loop combinator** (repaired per
 round-1 findings 1, 2, and 4 — see the module docstring). Hypotheses:
@@ -2480,7 +2621,8 @@ Conclusion: one finite machine answers, within a constant multiple of
 `(T |x| + 1) · (R |x| + 2)`, whether some orbit point
 `(stepF x)^[i] (s0 x)` with `i ≤ R |x|` is accepted.
 
-At fill time this is a corollary of `exists_loopCfgTM` through an
+It is `Turing.FinTM.loopHostTM_decides` at the witness `loopHostTM` with
+`c = 10`, which sums the configuration contract through an
 already-halted-terminal summation lemma — the frozen `Turing.loop_run`
 additionally requires an empty-output terminal, which the exported
 `[false]` terminal is not (round-3 finding R3-1) — with startup absorbed
@@ -2537,29 +2679,9 @@ theorem exists_loopTM (body F : FinTM Bool) (anchor : body.State)
       E.ComputesFunInTime
         (fun x => [(List.range (R x.length + 1)).any
           fun i => acceptF x ((stepF x)^[i] (s0 x))])
-        (fun n => c * (T n + 1) * (R n + 2)) := by
-  obtain ⟨E, c, hc⟩ := exists_loopCfgTM body F anchor Inv stepF acceptF s0 R T
-    hF hInv0 hInvStep hstart hround
-  refine ⟨E, c, fun x => ?_⟩
-  obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments⟩ := hc x
-  obtain ⟨t, ht, hhalt, houtput⟩ := loop_halted_run E.tm cfg
-    (fun i => acceptF x ((stepF x)^[i] (s0 x))) (c * (T x.length + 1))
-    (R x.length + 1) ⟨hend, hout⟩ (fun j hj => hsegments j (by omega))
-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
-  rw [hinit] at hrun
-  have hcompute : E.ComputesInTime x
-      [(List.range (R x.length + 1)).any
-        (fun i => acceptF x ((stepF x)^[i] (s0 x)))] (startup + t) := by
-    refine ⟨_, ?_, ?_, rfl⟩
-    · rw [hrun]; exact hhalt
-    · rw [hrun]; exact houtput
-  apply hcompute.mono
-  calc startup + t ≤ c * (T x.length + 1) +
-        (R x.length + 1) * (c * (T x.length + 1)) := Nat.add_le_add hs ht
-    _ = c * (T x.length + 1) * (R x.length + 2) := by
-      rw [Nat.mul_comm (R x.length + 1)]
-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
-      omega
+        (fun n => c * (T n + 1) * (R n + 2)) :=
+  ⟨loopHostTM body F anchor false, 10,
+    loopHostTM_decides body F anchor Inv stepF acceptF s0 R T hF hInv0 hInvStep hstart hround⟩
 
 /-- The first accepting segment returns its own payload; an already-halted
 empty-output terminal supplies exhaustion.
@@ -2604,8 +2726,9 @@ private lemma loop_find_run {k : ℕ} {S : Type*} {x : List Bool}
 outputs `out x s` for the first accepted orbit point `s = (stepF x)^[i] (s0 x)` with `i ≤ R |x|`,
 and `[]` if there is none, within `10·(T n + 1)·(R n + 2)` steps.
 
-**Proof sketch.** The body of today's `exists_loopFindTM` with `c = 10`: sum the contract family's
-segments with the private first-accept summation lemma `loop_find_run`. -/
+**Proof sketch.** Sum the contract family of `loopHostTM_contracts` (find mode) with the
+first-accept summation lemma `loop_find_run`: startup plus at most `R |x| + 1` segments of at most
+`10·(T |x| + 1)` steps each. -/
 theorem loopHostTM_finds (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
     (stepF : List Bool → List Bool → List Bool)
@@ -2643,20 +2766,29 @@ theorem loopHostTM_finds (body F : FinTM Bool) (anchor : body.State)
         | some i => out x ((stepF x)^[i] (s0 x))
         | none => [])
       (fun n => 10 * (T n + 1) * (R n + 2)) := by
-  sorry
+  refine (computesFunInTime_iff _ _ _).mpr fun x => ?_
+  let E := loopHostTM body F anchor true
+  obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments⟩ :=
+    loopHostTM_contracts body F anchor Inv stepF acceptF out true s0 R T hF hInv0 hInvStep
+      hstart hround x
+  obtain ⟨t, ht, hhalt, houtput⟩ := loop_find_run E.tm cfg
+    (fun i => acceptF x ((stepF x)^[i] (s0 x)))
+    (fun i => out x ((stepF x)^[i] (s0 x))) (10 * (T x.length + 1)) (R x.length + 1)
+    ⟨hend, by simpa using hout⟩
+    (fun j hj => by simpa using hsegments j (by omega))
+  exact loop_computes_of_startup E x _ (cfg 0) startup t
+    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt houtput
 
 /-- **The loop host's space budget**. Under the hypotheses of `loopHostTM_contracts`, in either
 mode, at every time the host has visited at most `23·k·(T |x| + 1)` work cells, where `k` is its
 tape count: space is bounded by the per-round time budget and does not grow with the number of
 rounds `R |x|`.
 
-**Proof sketch.** The space half of Catalog's private `f2_exists_loopFind_space`, which uses no
-find-mode fact: the extended contract `f2_loopHost_contracts` (it replaces `loopHost_contracts`,
-moved and re-targeted) also bounds every seam's heads by `T |x|` and the terminal's by
-`T |x| + 10·(T |x| + 1)`; each segment lasts at most `10·(T |x| + 1)` steps, so by `f2_seamed_space`
-(moved, with `f2_segment_heads` and `f2_space_radius`) every head stays within
-`T |x| + 10·(T |x| + 1)` of the origin at every time, and each tape visits at most
-`2·(11·T |x| + 10) + 1 ≤ 23·(T |x| + 1)` cells. -/
+**Proof sketch.** The contract `loopHost_contracts` also bounds every seam's heads by `T |x|` and
+the terminal's by `T |x| + 10·(T |x| + 1)`; each segment lasts at most `10·(T |x| + 1)` steps, so
+by `seamed_space` (with `segment_heads`) every head stays within `T |x| + 10·(T |x| + 1)` of the
+origin at every time, and each tape visits at most `2·(11·T |x| + 10) + 1 ≤ 23·(T |x| + 1)` cells.
+No find-mode fact is used, and the number of rounds `R |x|` does not appear. -/
 theorem loopHostTM_spaceUsed_le_budget (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
     (stepF : List Bool → List Bool → List Bool)
@@ -2692,7 +2824,24 @@ theorem loopHostTM_spaceUsed_le_budget (body F : FinTM Bool) (anchor : body.Stat
     (loopHostTM body F anchor findMode).tm.spaceUsed
         ((loopHostTM body F anchor findMode).tm.initCfg x) t
       ≤ 23 * (loopHostTM body F anchor findMode).k * (T x.length + 1) := by
-  sorry
+  let E := loopHostTM body F anchor findMode
+  obtain ⟨cfg, startup, hs, hinit, _, hend, _, hsegments, hheads, hterminal⟩ :=
+    loopHost_contracts body F anchor Inv stepF acceptF out findMode s0 R T hF hInv0
+      hInvStep hstart hround x
+  have h := seamed_space E x cfg (R x.length + 1) (10 * (T x.length + 1))
+    (T x.length) startup hs hinit (fun j hj => hheads j (by omega)) hend hterminal
+    (by
+      intro j hj
+      obtain ⟨u, hu, he⟩ := hsegments j (by omega)
+      refine ⟨u, hu, ?_⟩
+      split at he
+      · exact Or.inl he.1
+      · exact Or.inr he) t
+  have hb : 2 * (T x.length + 10 * (T x.length + 1)) + 1 ≤ 23 * (T x.length + 1) := by omega
+  calc
+    _ ≤ E.k * (23 * (T x.length + 1)) := h.trans (Nat.mul_le_mul_left _ hb)
+    _ = 23 * E.k * (T x.length + 1) := by
+      rw [Nat.mul_assoc, Nat.mul_left_comm]
 
 /-- **The result-bearing loop combinator** (added per
 round-1 finding 3 — the decision form exposes only a Boolean, which cannot
@@ -2748,34 +2897,9 @@ theorem exists_loopFindTM (body F : FinTM Bool) (anchor : body.State)
             (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
           | some i => out x ((stepF x)^[i] (s0 x))
           | none => [])
-        (fun n => c * (T n + 1) * (R n + 2)) := by
-  obtain ⟨c, hc⟩ := loopHost_contracts body F anchor Inv stepF acceptF out true s0 R T
-    hF hInv0 hInvStep hstart hround
-  let E := loopHostTM body F anchor true
-  refine ⟨E, c, fun x => ?_⟩
-  obtain ⟨cfg, startup, hs, hinit, _, hend, hout, hsegments⟩ := hc x
-  obtain ⟨t, ht, hhalt, houtput⟩ := loop_find_run E.tm cfg
-    (fun i => acceptF x ((stepF x)^[i] (s0 x)))
-    (fun i => out x ((stepF x)^[i] (s0 x))) (c * (T x.length + 1)) (R x.length + 1)
-    ⟨hend, by simpa using hout⟩
-    (fun j hj => by simpa using hsegments j (by omega))
-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
-  rw [hinit] at hrun
-  have hcompute : E.ComputesInTime x
-      (match (List.range (R x.length + 1)).find?
-          (fun i => acceptF x ((stepF x)^[i] (s0 x))) with
-        | some i => out x ((stepF x)^[i] (s0 x))
-        | none => []) (startup + t) := by
-    refine ⟨_, ?_, ?_, rfl⟩
-    · rw [hrun]; exact hhalt
-    · rw [hrun]; exact houtput
-  apply hcompute.mono
-  calc startup + t ≤ c * (T x.length + 1) +
-        (R x.length + 1) * (c * (T x.length + 1)) := Nat.add_le_add hs ht
-    _ = c * (T x.length + 1) * (R x.length + 2) := by
-      rw [Nat.mul_comm (R x.length + 1)]
-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
-      omega
+        (fun n => c * (T n + 1) * (R n + 2)) :=
+  ⟨loopHostTM body F anchor true, 10, loopHostTM_finds body F anchor Inv stepF acceptF out s0 R T
+    hF hInv0 hInvStep hstart hround⟩
 
 /-! ### Clean-call phase machinery
 
@@ -2874,10 +2998,10 @@ private lemma emCall_eval_initial (M : FinTM Bool) (w s : List Bool) :
 
 /-- A timed evaluator reaches the actual first source halt, with no earlier
 visit to the live return state and with the exact complete capture buffer.
-**Proof sketch.** Take the least halting time justified by totality. Absorption
-identifies the output there with the specified output at the deadline. Apply
-captured virtual lockstep through that time and through every earlier prefix.
-The deadline is used only for the inequality, never as a native clock. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the first source halt and
+complete configuration equality with the supplied deadline. This equality transports the specified
+output unchanged. Apply captured virtual lockstep through that halt and every earlier prefix; the
+deadline supplies only an inequality, never a native clock. -/
 private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
     (hM : M.ComputesInTime s out T) :
     ∃ t ≤ T, ∃ b,
@@ -2891,16 +3015,17 @@ private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
           emCallEvalCfg (w := w) M (M.tm.runFrom (M.tm.initCfg s) t) b 1 := by
   classical
   have hspec := (computesInTime_iff M s out T).mp hM
-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg s) t).state = none := ⟨T, hspec.1⟩
-  let t := Nat.find hex
-  have ht : t ≤ T := Nat.find_min' hex hspec.1
-  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := Nat.find_spec hex
-  have hlive : ∀ j < t, (M.tm.runFrom (M.tm.initCfg s) j).state ≠ none :=
-    fun j hj => Nat.find_min hex hj
-  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out :=
-    ((computesInTime_iff M s _ t).mpr ⟨hh, rfl⟩).output_unique hM
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg s) hspec.1
+  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := by
+    rw [heq]
+    exact hspec.1
+  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out := by
+    rw [heq]
+    exact hspec.2
   have htag : VirtualTag (M.tm.initCfg s).inputPos true := by
-    simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]
+    rw [VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
+    simp
   obtain ⟨b, hb, hr⟩ := emCall_eval_run M (M.tm.initCfg s) true htag
     (1 : Fin (w.length + 2)) t hlive
   refine ⟨t, ht, b, hb, hh, hout, ?_, hr⟩
@@ -2911,9 +3036,9 @@ private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
   cases hs : (M.tm.runFrom (M.tm.initCfg s) j).state with
   | none => exact False.elim (hlive j hj hs)
   | some q =>
-    dsimp only [emCallEvalCfg, captureCfg, bufferedSecondCfg]
-    rw [hs]
-    simp
+    simp only [emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state, hs]
+    intro h
+    cases h
 
 /-- A contiguous visited interval, marked independently of the simulated data.
 The bounds are proof data; the cleaner reads only the marker tape. -/
@@ -3490,9 +3615,9 @@ private lemma emCall_track_clearable (M : FinTM Bool) (x w : List Bool)
 
 /-- A phase with an absorbing return state can be cut at its actual first
 return while retaining its complete configuration endpoint.
-**Proof sketch.** Choose the least return-state visit. Absorption identifies
-its configuration with the known bounded endpoint. The bound proves existence
-and bounds the first visit; it is never used to dispatch native control. -/
+**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_entry_of_fixed` to the same stop
+predicate and complete absorbing-configuration hypothesis. The public contract supplies the
+first-entry cut and the exact bounded endpoint. -/
 private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
     (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
     (c d : Cfg k Bool S w) (T : ℕ)
@@ -3500,17 +3625,7 @@ private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
     (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
     ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
       tm.runFrom c t = d := by
-  classical
-  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
-  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
-    Function.iterate_fixed (hfix _ hs) _
-  have he := tm.runFrom_add c t (T - t)
-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
-  exact he.symm
+  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
 
 /-- Each tracked tape's native cleanup can dispatch at its actual positive
 first return with the exact blank endpoint, never at the analysis deadline.
@@ -3675,25 +3790,35 @@ private lemma emCall_right_finish (M : FinTM Bool) {x : List Bool}
 
 /-- Right-boundary normalization preserves the entire completed source
 configuration, not just its output. This retains the tracked cleanup witnesses.
-**Proof sketch.** Choose the actual first source halt. The native right scan
-then costs at most `|x|+2`; absorb only the completed run to the advertised
-budget. Source absorption identifies its work tapes with those at the original
-deadline, including when that deadline exceeds the actual halt. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` to retain the completed source
+configuration and strict earlier-time liveness. The native right scan then costs at most `|x|+2`;
+absorb only that completed run to the advertised budget. The public complete endpoint equality
+retains the work tapes at the original deadline. -/
 private lemma emCall_right_endpoint (M : FinTM Bool) (x : List Bool) (T : ℕ)
     (hc : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
     (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (T + x.length + 2) =
       emCallRightScan M (M.tm.runFrom (M.tm.initCfg x) T) none x.length (le_refl _) := by
   classical
-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hc⟩
-  let t := Nat.find hex
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hc
   let c := M.tm.runFrom (M.tm.initCfg x) t
-  have ht : t ≤ T := Nat.find_min' hex hc
-  have hs : c.state = none := Nat.find_spec hex
-  have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := by
-    rw [show T = t + (T - t) by omega, MultiTapeTM.runFrom_add,
-      MultiTapeTM.runFrom_of_halt _ hs]
-  have hi : (emCallRightTM M).tm.initCfg x = emCallRightCfg M (M.tm.initCfg x) := rfl
-  have hr := emCall_right_run M (M.tm.initCfg x) t (fun j hj => Nat.find_min hex hj)
+  have hs : c.state = none := by
+    change (M.tm.runFrom (M.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hc
+  have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := heq.symm
+  have hi : (emCallRightTM M).tm.initCfg x = emCallRightCfg M (M.tm.initCfg x) := by
+    apply Cfg.ext
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_state, emCallRightCfg,
+        Option.map_some, Option.getD_some]
+      rfl
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, emCallRightCfg]
+    · funext i z
+      simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, emCallRightCfg]
+    · funext i
+      simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, emCallRightCfg]
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_output, emCallRightCfg]
+  have hr := emCall_right_run M (M.tm.initCfg x) t hlive
   obtain ⟨r, hrle, hfinish⟩ := emCall_right_finish M c hs
   have hrun : (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (t + r) =
       emCallRightScan M c none x.length (le_refl _) := by
@@ -4283,6 +4408,50 @@ private def emCallBankFrame (M : FinTM Bool) (emit : Bool) (x arg cap : List Boo
     (fun i => if i.val < j then fun _ => none else bufferTape [true])
     (fun i => if i.val < j then 0 else (M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)
 
+/-- Embedding one cleaner into a bank frame realizes any target cleaned prefix that
+agrees with the original prefix away from the selected bank. The cleaner supplies exactly
+the target bank's three tapes and common head, and its state supplies the target control.
+
+**Proof sketch.** Apply `embedEmitCfg_mapState_eq`. The selected-bank equation is the
+three-slot layout equation. Off the selection, the two administrative slots agree directly;
+every other bank agrees because its cleaned-prefix membership is unchanged. -/
+private lemma emCall_bank_embed (M : FinTM Bool) (emit : Bool)
+    (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) (j : ℕ) (q : Fin 4)
+    (hrest : ∀ l : Fin M.k, l ≠ i → (l.val < i.val ↔ l.val < j)) :
+    let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))
+    emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun s => .inr (.inl (i.castSucc, s)))
+      frame.workTapes frame.workTapePos
+      (emCallClearCfg x 1 q
+        (if i.val < j then fun _ => none else
+          (M.tm.runFrom (M.tm.initCfg arg) T).workTapes i)
+        (if i.val < j then fun _ => none else
+          emCallSpan (emCallLo M arg T i) (emCallHi M arg T i))
+        (if i.val < j then fun _ => none else bufferTape [true])
+        (if i.val < j then 0 else (M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) =
+      emCallBankFrame M emit x arg cap T j (.inr (.inl (i.castSucc, q))) := by
+  dsimp only
+  simp only [emCallEmbeddedCfg]
+  refine embedEmitCfg_mapState_eq _ _ _ _ [] _ _ ?_ ?_ ?_ ?_ ?_
+  · simp only [emCallClearCfg, emCallBankFrame, emCallFrame, Option.map_some]
+  · rfl
+  · rfl
+  · intro r
+    fin_cases r <;> constructor <;>
+      simp [emCallClearCfg, emCallBankFrame, emCallFrame, emCallTripleEmbedding,
+        emCall_layout_triple]
+  · intro k hk
+    rcases emCall_layout_cases M k with h | h | ⟨l, r, h⟩
+    · subst k
+      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_pair]
+    · subst k
+      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_pair]
+    · subst k
+      have he : l ≠ i := by
+        intro he
+        subst l
+        exact hk ⟨r, rfl⟩
+      constructor <;> simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hrest l he]
+
 /-- Embedding one cleaner at the current bank reproduces the full bank frame.
 Every other bank and both administrative tapes are retained exactly.
 **Proof sketch.** Extensionality reduces the claim to individual tape slots.
@@ -4297,79 +4466,8 @@ private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool)
         (emCallSpan (emCallLo M arg T i) (emCallHi M arg T i)) (bufferTape [true])
         ((M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) = frame := by
   dsimp only
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · funext j
-    simp only [emCallEmbeddedCfg, Cfg.mapState]
-    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
-    · subst j
-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).1
-      · rfl
-    · subst j
-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).1
-      · rfl
-    · subst j
-      by_cases he : l = i
-      · subst l
-        change (embedEmitCfg _ _ _ [] _).workTapes ((emCallTripleEmbedding M i) r) = _
-        rw [embedEmitCfg_selected_tape]
-        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
-        fin_cases r <;> simp
-      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
-            (by rintro ⟨r', hr⟩
-                have h := congrArg (emCallTripleSelect M i) hr
-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
-                cases h)).1
-        · rfl
-  · funext j
-    simp only [emCallEmbeddedCfg, Cfg.mapState]
-    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
-    · subst j
-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).2
-      · rfl
-    · subst j
-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).2
-      · rfl
-    · subst j
-      by_cases he : l = i
-      · subst l
-        change (embedEmitCfg _ _ _ [] _).workTapePos ((emCallTripleEmbedding M i) r) = _
-        rw [embedEmitCfg_selected_pos]
-        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
-        fin_cases r <;> simp
-      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
-            (by rintro ⟨r', hr⟩
-                have h := congrArg (emCallTripleSelect M i) hr
-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
-                cases h)).2
-        · rfl
+  simpa only [Nat.lt_irrefl, ↓reduceIte] using
+    emCall_bank_embed M emit x arg cap T i i.val 0 (fun _ _ => Iff.rfl)
 
 /-- The cleaner's complete blank endpoint enlarges the cleaned bank prefix
 by exactly one, while retaining every inactive tape and head.
@@ -4384,83 +4482,11 @@ private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool)
       (emCallClearCfg x 1 3 (fun _ => none) (fun _ => none) (fun _ => none) 0) =
       emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.castSucc, 3))) := by
   dsimp only
-  refine Cfg.ext rfl rfl ?_ ?_ rfl
-  · funext j
-    simp only [emCallEmbeddedCfg, Cfg.mapState]
-    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
-    · subst j
-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 0)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).1
-      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
-    · subst j
-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallPairIndex M 1)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).1
-      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
-    · subst j
-      by_cases he : l = i
-      · subst l
-        change (embedEmitCfg _ _ _ [] _).workTapes ((emCallTripleEmbedding M i) r) = _
-        rw [embedEmitCfg_selected_tape]
-        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
-        fin_cases r <;> simp
-      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapes (emCallTripleIndex M l r)
-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
-            (by rintro ⟨r', hr⟩
-                have h := congrArg (emCallTripleSelect M i) hr
-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
-                cases h)).1
-        · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
-          have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
-          simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
-  · funext j
-    simp only [emCallEmbeddedCfg, Cfg.mapState]
-    rcases emCall_layout_cases M j with h | h | ⟨l, r, h⟩
-    · subst j
-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 0)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 0)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).2
-      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
-    · subst j
-      trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallPairIndex M 1)
-      · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallPairIndex M 1)
-          (by rintro ⟨r', hr⟩
-              have h := congrArg (emCallTripleSelect M i) hr
-              change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-              simp only [emCall_triple_inverse, emCall_triple_pair] at h
-              cases h)).2
-      · simp [emCallBankFrame, emCallFrame, emCall_layout_pair]
-    · subst j
-      by_cases he : l = i
-      · subst l
-        change (embedEmitCfg _ _ _ [] _).workTapePos ((emCallTripleEmbedding M i) r) = _
-        rw [embedEmitCfg_selected_pos]
-        simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, emCallClearCfg]
-        fin_cases r <;> simp
-      · trans (emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0)))).workTapePos (emCallTripleIndex M l r)
-        · exact ((embedEmitTM_frame (emCallTripleEmbedding M i) emCallClearTM.tm _ _ [] _ 0).1 (emCallTripleIndex M l r)
-            (by rintro ⟨r', hr⟩
-                have h := congrArg (emCallTripleSelect M i) hr
-                change emCallTripleSelect M i (emCallTripleIndex M i r') = _ at h
-                simp only [emCall_triple_inverse, emCall_triple_other, if_neg he] at h
-                cases h)).2
-        · have hi : l.val ≠ i.val := fun h => he (Fin.ext h)
-          have hiff : l.val < i.val + 1 ↔ l.val < i.val := by omega
-          simp only [emCallBankFrame, emCallFrame, emCall_layout_triple, hiff]
+  simpa only [Nat.lt_succ_self, ↓reduceIte] using
+    emCall_bank_embed M emit x arg cap T i (i.val + 1) 3 (by
+      intro l hl
+      have hi : l.val ≠ i.val := fun h => hl (Fin.ext h)
+      omega)
 
 /-- One native bank-cleaning segment, including its dispatch to the next
 bank, costs at most six source deadlines plus eight. Dispatch occurs at the
@@ -4989,11 +5015,10 @@ startup, and rounds that advance to the stepped seam in positive time at most `T
 exactly `emitF x s`), the emitting loop outputs the concatenation of
 `emitF x ((stepF x)^[i] (s0 x))` over `i = 0, …, R |x|` within `10·(T n + 1)·(R n + 2)` steps.
 
-**Proof sketch.** The body of today's `exists_emitLoopTM`, which fixes `c = 10`: the fuel
-preparation and the body startup take at most `10·(T |x| + 1)` steps (`loopHost_prepare`,
-`loopHost_start`); each round, its anchor stop and its debit take at most `10·(T |x| + 1)`
-(`emLoopHost_round`); the prefix-summation lemma `emLoop_sum` concatenates the `R |x| + 1` chunks.
--/
+**Proof sketch.** The fuel preparation and the body startup take at most `10·(T |x| + 1)` steps
+(`loopHost_prepare`, `loopHost_start`); each round, its anchor stop and its debit take at most
+`10·(T |x| + 1)` (`emLoopHost_round`); the prefix-summation lemma `emLoop_sum` concatenates the
+`R |x| + 1` chunks. -/
 theorem emitLoopTM_computes (body F : FinTM Bool) (anchor : body.State)
     (Inv : List Bool → List Bool → Prop)
     (stepF emitF : List Bool → List Bool → List Bool)
@@ -5020,7 +5045,57 @@ theorem emitLoopTM_computes (body F : FinTM Bool) (anchor : body.State)
       (fun x => (List.range (R x.length + 1)).flatMap
         (fun i => emitF x ((stepF x)^[i] (s0 x))))
       (fun n => 10 * (T n + 1) * (R n + 2)) := by
-  sorry
+  refine (computesFunInTime_iff _ _ _).mpr fun x => ?_
+  let E := emitLoopTM body F anchor
+  obtain ⟨fuel, ftime, hfh, hfo, hft, hprepare, -⟩ :=
+    loopHost_prepare body F anchor true true R T hF x
+  obtain ⟨btime, hbt, hbguard, hbend⟩ := hstart x
+  let words (i : ℕ) := (fun w => (loopDebit w).1)^[i] (Nat.bits (R x.length))
+  let orbit (i : ℕ) := (stepF x)^[i] (s0 x)
+  let candidate (i : ℕ) := loopCall body F anchor false
+    (Cfg.ofWords (input := x) anchor (stateWord body.k (orbit i))) true none (words i) fuel
+  have hwidth (i : ℕ) : (words i).length ≤ T x.length := by
+    dsimp only [words]
+    rw [loopDebit_iterate_length]
+    exact loop_fuel_width F R T hF x
+  have hsuccess (i : ℕ) (hi : i ≤ R x.length) :
+      (loopDebit (words i)).2 = true ↔ i < R x.length := by
+    rw [loopDebit_success]
+    dsimp only [words]
+    rw [loopDebit_iterate_value _ _ hi]
+    omega
+  have hsegments : ∀ i < R x.length + 1, ∃ t ≤ 10 * (T x.length + 1),
+      if i + 1 < R x.length + 1 then
+        E.tm.runFrom (candidate i) t = {candidate (i + 1) with output := emitF x (orbit i)}
+      else
+        (E.tm.runFrom (candidate i) t).state = none ∧
+        (E.tm.runFrom (candidate i) t).output = emitF x (orbit i) := by
+    intro i hi
+    obtain ⟨t, htpos, ht, hguard, hend⟩ := hround x (orbit i)
+      (loop_orbit_inv Inv stepF s0 hInv0 hInvStep x i)
+    obtain ⟨v, hv, hsegment⟩ := emLoopHost_round body F anchor
+      (orbit i) (stepF x (orbit i)) (emitF x (orbit i)) (words i) fuel t htpos hguard hend
+    refine ⟨v, ?_, ?_⟩
+    · have hw := hwidth i
+      omega
+    · simpa only [E, candidate, words, orbit, Function.iterate_succ_apply',
+        hsuccess i (by omega), Nat.add_lt_add_iff_right] using hsegment
+  let startup := ftime + (btime + 2)
+  have hs : startup ≤ 10 * (T x.length + 1) := by dsimp only [startup]; omega
+  have hinit : E.tm.runFrom (E.tm.initCfg x) startup = candidate 0 := by
+    rw [MultiTapeTM.runFrom_add, hprepare,
+      loopHost_start body F anchor true true (s0 x) btime fuel hbguard hbend]
+    simp only [candidate, words, orbit, Function.iterate_zero_apply, hfo]
+  obtain ⟨t, ht, hhalt, houtput⟩ := emLoop_sum E.tm candidate
+    (fun i => emitF x (orbit i)) (10 * (T x.length + 1)) (R x.length + 1)
+    (by intro j hj; simp only [candidate, loopCall, captureCfg_output]) hsegments (by omega) []
+  have hclean : {candidate 0 with output := []} = candidate 0 := by
+    refine Cfg.ext rfl rfl rfl rfl ?_
+    simp only [candidate, loopCall, captureCfg_output]
+  rw [hclean] at hhalt houtput
+  exact loop_computes_of_startup E x _ (candidate 0) startup t
+    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt
+    (by simpa only [List.nil_append, orbit] using houtput)
 
 /-- **E1, the emitting loop** (design §11; customers:
 the Cook-Levin clause-group emitter (4A), 3B-cont's streaming reduction
@@ -5088,68 +5163,9 @@ theorem exists_emitLoopTM (body F : FinTM Bool) (anchor : body.State)
       E.ComputesFunInTime
         (fun x => (List.range (R x.length + 1)).flatMap
           (fun i => emitF x ((stepF x)^[i] (s0 x))))
-        (fun n => c * (T n + 1) * (R n + 2)) := by
-  let E := emLoopHost body F anchor true
-  refine ⟨E, 10, fun x => ?_⟩
-  obtain ⟨fuel, ftime, hfh, hfo, hft, hprepare⟩ :=
-    loopHost_prepare body F anchor true true R T hF x
-  obtain ⟨btime, hbt, hbguard, hbend⟩ := hstart x
-  let words (i : ℕ) := (fun w => (loopDebit w).1)^[i] (Nat.bits (R x.length))
-  let orbit (i : ℕ) := (stepF x)^[i] (s0 x)
-  let candidate (i : ℕ) := loopCall body F anchor false
-    (Cfg.ofWords (input := x) anchor (stateWord body.k (orbit i))) true none (words i) fuel
-  have hwidth (i : ℕ) : (words i).length ≤ T x.length := by
-    dsimp only [words]
-    rw [loopDebit_iterate_length]
-    exact loop_fuel_width F R T hF x
-  have hsuccess (i : ℕ) (hi : i ≤ R x.length) :
-      (loopDebit (words i)).2 = true ↔ i < R x.length := by
-    rw [loopDebit_success]
-    dsimp only [words]
-    rw [loopDebit_iterate_value _ _ hi]
-    omega
-  have hsegments : ∀ i < R x.length + 1, ∃ t ≤ 10 * (T x.length + 1),
-      if i + 1 < R x.length + 1 then
-        E.tm.runFrom (candidate i) t = {candidate (i + 1) with output := emitF x (orbit i)}
-      else
-        (E.tm.runFrom (candidate i) t).state = none ∧
-        (E.tm.runFrom (candidate i) t).output = emitF x (orbit i) := by
-    intro i hi
-    obtain ⟨t, htpos, ht, hguard, hend⟩ := hround x (orbit i)
-      (loop_orbit_inv Inv stepF s0 hInv0 hInvStep x i)
-    obtain ⟨v, hv, hsegment⟩ := emLoopHost_round body F anchor
-      (orbit i) (stepF x (orbit i)) (emitF x (orbit i)) (words i) fuel t htpos hguard hend
-    refine ⟨v, ?_, ?_⟩
-    · have hw := hwidth i
-      omega
-    · simpa only [E, candidate, words, orbit, Function.iterate_succ_apply',
-        hsuccess i (by omega), Nat.add_lt_add_iff_right] using hsegment
-  let startup := ftime + (btime + 2)
-  have hs : startup ≤ 10 * (T x.length + 1) := by dsimp only [startup]; omega
-  have hinit : E.tm.runFrom (E.tm.initCfg x) startup = candidate 0 := by
-    rw [MultiTapeTM.runFrom_add, hprepare,
-      loopHost_start body F anchor true true (s0 x) btime fuel hbguard hbend]
-    simp only [candidate, words, orbit, Function.iterate_zero_apply, hfo]
-  obtain ⟨t, ht, hhalt, houtput⟩ := emLoop_sum E.tm candidate
-    (fun i => emitF x (orbit i)) (10 * (T x.length + 1)) (R x.length + 1)
-    (fun _ _ => rfl) hsegments (by omega) []
-  have hclean : {candidate 0 with output := []} = candidate 0 := rfl
-  rw [hclean] at hhalt houtput
-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
-  rw [hinit] at hrun
-  have hcompute : E.ComputesInTime x
-      ((List.range (R x.length + 1)).flatMap (fun i => emitF x ((stepF x)^[i] (s0 x))))
-      (startup + t) := by
-    refine ⟨_, ?_, ?_, rfl⟩
-    · rw [hrun]; exact hhalt
-    · rw [hrun]; simpa only [List.nil_append, orbit] using houtput
-  apply hcompute.mono
-  calc startup + t ≤ 10 * (T x.length + 1) +
-        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
-    _ = 10 * (T x.length + 1) * (R x.length + 2) := by
-      rw [Nat.mul_comm (R x.length + 1)]
-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
-      omega
+        (fun n => c * (T n + 1) * (R n + 2)) :=
+  ⟨emitLoopTM body F anchor, 10,
+    emitLoopTM_computes body F anchor Inv stepF emitF s0 R T hF hInv0 hInvStep hstart hround⟩
 
 /-- **The clean call's run**. If `M` halts on `arg` with output `cap` within `T` steps, then from
 the entry seam holding `arg`, over any native input `x`, the clean call first enters its exit state

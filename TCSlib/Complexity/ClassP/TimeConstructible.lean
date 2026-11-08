@@ -53,8 +53,7 @@ budget as an explicit extra input and needs no constructibility hypothesis.
 * `Complexity.timeConstructible_id` — the identity function is time constructible,
   restoring [AB09]'s example under the repaired definition.
 * `Turing.FinTM.lengthBitsTM_computes`, `Turing.FinTM.lengthBitsTM_spaceUsed` — the
-  counter's time `5 · (n + 1)` and space `5 · (Nat.size |x| + 1)` (MIG-1; sorried until
-  the fill F-A).
+  counter's time `5 · (n + 1)` and space `5 · (Nat.size |x| + 1)`.
 
 ## References
 
@@ -343,36 +342,67 @@ private lemma counter_increment (x : List Bool) (i : ℕ) (hi : i < x.length)
   exact counter_rewind x ⟨i + 2, by omega⟩ (counterInc bs) (counterCarry bs)
     (counterInc_length bs).2
 
-/-- The counting invariant carries a nonnegative potential of twice the popcount.
+/-- The counting invariant carries a nonnegative potential of twice the popcount, and every
+head position of the elapsed run lies within twice one plus the final input length's binary
+width of the origin.
 **Proof sketch.** Initially both elapsed time and potential are zero. An increment
 with `r` cleared bits costs `2r + 2` steps and changes the potential by `2 - 2r`.
 Thus elapsed time plus potential increases by exactly four per input symbol.
-The semantic invariant records the exact canonical binary word and head positions. -/
+The semantic invariant records the exact canonical binary word and head positions.
+Each increment starts at the origin and lasts `2r + 2 ≤ 2 · (Nat.size |x| + 1)` steps, since the
+carry length is at most the counter's binary width, which is monotone in the count; the
+time-derived head envelope (`Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc`) bounds the head
+during the current increment. -/
 private lemma counter_count (x : List Bool) : ∀ i (hi : i ≤ x.length),
     ∃ t, t + 2 * i.bits.count true ≤ 4 * i ∧
       FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) t =
-        counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits [] := by
+        counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits [] ∧
+      ∀ u ≤ t, ∀ j : Fin 1,
+        (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) u).workTapePos j ∈
+          Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ) := by
   intro i
   induction i with
   | zero =>
     intro hi
-    refine ⟨0, by simp, ?_⟩
-    apply Cfg.ext
-    · rfl
-    · rfl
-    · funext j z
-      simp [MultiTapeTM.initCfg, counterCfg, counterTape]
-    · rfl
-    · rfl
+    refine ⟨0, by simp, ?_, ?_⟩
+    · rw [MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq]
+      apply Cfg.ext
+      · rw [Cfg.init_state]
+        rfl
+      · rw [Cfg.init_inputPos]
+        rfl
+      · funext j z
+        rw [Cfg.init_workTapes]
+        simp only [counterCfg, counterTape, Nat.zero_bits, List.getElem?_nil, ite_self]
+      · funext j
+        rw [Cfg.init_workTapePos]
+        rfl
+      · rw [Cfg.init_output]
+        rfl
+    · intro u hu j
+      rw [show u = 0 by omega, MultiTapeTM.runFrom_zero, MultiTapeTM.initCfg_eq,
+        Cfg.init_workTapePos, Finset.mem_Icc]
+      omega
   | succ i ih =>
     intro hi
-    obtain ⟨t, ht, hc⟩ := ih (by omega)
-    refine ⟨t + 2 * counterCarry i.bits + 2, ?_, ?_⟩
+    obtain ⟨t, ht, hc, hb⟩ := ih (by omega)
+    refine ⟨t + (2 * counterCarry i.bits + 2), ?_, ?_, ?_⟩
     · have hp := counterInc_potential i.bits
       rw [counterInc_bits] at hp
       omega
-    · rw [show t + 2 * counterCarry i.bits + 2 = t + (2 * counterCarry i.bits + 2) by omega,
-        MultiTapeTM.runFrom_add, hc, counter_increment x i (by omega), counterInc_bits]
+    · rw [MultiTapeTM.runFrom_add, hc, counter_increment x i (by omega), counterInc_bits]
+    · intro u hu j
+      by_cases hut : u ≤ t
+      · exact hb u hut j
+      · rw [show u = t + (u - t) by omega, MultiTapeTM.runFrom_add, hc]
+        have hp := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc
+          FinTM.lengthBitsTM.tm (counterCfg x 0 ⟨i + 1, by omega⟩ 0 i.bits []) (u - t) j)
+        have hcarry := (counterInc_length i.bits).2
+        rw [counterInc_bits, Nat.size_eq_bits_len] at hcarry
+        have hwidth := Nat.size_le_size hi
+        change 0 - ((u - t : ℕ) : ℤ) ≤ _ ∧ _ ≤ 0 + ((u - t : ℕ) : ℤ) at hp
+        rw [Finset.mem_Icc]
+        constructor <;> omega
 
 /-- The emit phase appends exactly the stored prefix, one bit per step.
 **Proof sketch.** Induct on the emitted length, using the nonblank cell at each
@@ -422,29 +452,110 @@ private lemma counter_emit (x : List Bool) (p : Fin (x.length + 2)) (bs : List B
     ↓reduceIte, hw]
   simp [Action.apply, counterCfg]
 
+/-- Reading the blank after the input, the count state enters emission without moving.
+
+**Proof sketch.** The input head is at `|x| + 1`, so the input symbol is the right blank; the count
+state's transition on a blank changes only the state. -/
+private lemma counter_emit_start (x : List Bool) :
+    FinTM.lengthBitsTM.tm.step (counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []) =
+      counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] := by
+  have hin : (counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []).inputSymbol = none :=
+    Cfg.inputSymbol_of_end rfl
+  rw [MultiTapeTM.step_of_some rfl, hin]
+  apply Cfg.ext
+  · rw [Action.apply_state]
+    rfl
+  · rw [Action.apply_inputPos]
+    exact moveInputPos_zero _
+  · funext j
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    exact Function.update_eq_self _ _
+  · funext j
+    rw [Action.apply_workTapePos]
+    rfl
+  · rw [Action.apply_output]
+    rfl
+
+/-- After counting, entering emission and emitting the stored word, the counter is halted with
+output `Nat.bits |x|` at time `t + 1 + (|Nat.bits |x|| + 1)`, where `t` is the counting time. -/
+private lemma counter_halt (x : List Bool) (t : ℕ)
+    (hc : FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) t =
+      counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []) :
+    FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) (t + 1) =
+        counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] ∧
+      FinTM.lengthBitsTM.ComputesInTime x x.length.bits
+        ((t + 1) + (x.length.bits.length + 1)) := by
+  have hstart : FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) (t + 1) =
+      counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', hc, counter_emit_start]
+  have he := counter_emit x ⟨x.length + 1, by omega⟩ x.length.bits
+  refine ⟨hstart, (FinTM.computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩⟩
+  · rw [MultiTapeTM.runFrom_add, hstart]
+    exact he.1
+  · rw [MultiTapeTM.runFrom_add, hstart]
+    exact he.2
+
 /-- **The length counter's time**. The counter computes `x ↦ Nat.bits |x|` within `5·(n + 1)` steps.
 [AB09, §1.3]
 
-**Proof sketch.** The body of today's `timeConstructible_id`, which `f2_counter_computes` copies:
-with twice the number of `true` counter bits as potential, elapsed time plus potential is at most
-`4n` after `n` increments (the private `counter_count`); entering emission and the final halt add
-two steps, and the emitted word, of length at most `n`, costs one step per bit. -/
+**Proof sketch.** With twice the number of `true` counter bits as potential, elapsed time plus
+potential is at most `4n` after `n` increments (`counter_count`); entering emission and the final
+halt add two steps, and the emitted word, of length at most `n`, costs one step per bit
+(`counter_halt`). -/
 theorem _root_.Turing.FinTM.lengthBitsTM_computes : FinTM.lengthBitsTM.ComputesFunInTime
     (fun x => Nat.bits x.length) (fun n => 5 * (n + 1)) := by
-  sorry
+  refine (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_
+  obtain ⟨t, ht, hc, -⟩ := counter_count x x.length (le_refl _)
+  apply (counter_halt x t hc).2.mono
+  have hl := Turing.length_bits_le_self x.length
+  change (t + 1) + (x.length.bits.length + 1) ≤ 5 * (x.length + 1)
+  omega
 
 /-- **The length counter's space**. At every time, the counter's work tape has visited at most
 `5·(Nat.size |x| + 1)` cells: logarithmic space.
 
-**Proof sketch.** Catalog's `f2_counter_space`: every counting round returns the head to the
-origin, a carry walks at most the counter's binary width, which never exceeds `Nat.size |x|`,
-and emission walks the stored word once, so at every time the head stays in an interval of at
-most `5·(Nat.size |x| + 1)` cells (the head ledger `f2_counter_heads`, from the increment
-ledger `f2_counter_count_space`). -/
+**Proof sketch.** Every counting round returns the head to the origin and a carry walks at most
+the counter's binary width, which never exceeds `Nat.size |x|` (`counter_count`); emission walks
+the stored word once, and after the halt nothing moves. So at every time the head stays in the
+interval `[-2·(Nat.size |x| + 1), 2·(Nat.size |x| + 1)]`, which has at most
+`5·(Nat.size |x| + 1)` cells. -/
 theorem _root_.Turing.FinTM.lengthBitsTM_spaceUsed (x : List Bool) (t : ℕ) :
     FinTM.lengthBitsTM.tm.spaceUsed (FinTM.lengthBitsTM.tm.initCfg x) t ≤
       5 * (Nat.size x.length + 1) := by
-  sorry
+  obtain ⟨t₀, -, hc, hb⟩ := counter_count x x.length (le_refl _)
+  obtain ⟨hstart, hdone⟩ := counter_halt x t₀ hc
+  let T := t₀ + 1 + (x.length.bits.length + 1)
+  have hhalt : (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) T).state =
+      none := ((FinTM.computesInTime_iff _ _ _ _).mp hdone).1
+  -- Before the halt: the counting ledger, then the emission walk from the origin.
+  have hpre (v : ℕ) (hv : v ≤ T) (j : Fin 1) :
+      (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) v).workTapePos j ∈
+        Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ) := by
+    by_cases hvt : v ≤ t₀
+    · exact hb v hvt j
+    · rw [show v = (t₀ + 1) + (v - (t₀ + 1)) by omega, MultiTapeTM.runFrom_add, hstart]
+      have hp := Finset.mem_Icc.mp (MultiTapeTM.workTapePos_runFrom_mem_Icc
+        FinTM.lengthBitsTM.tm (counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [])
+        (v - (t₀ + 1)) j)
+      change 0 - ((v - (t₀ + 1) : ℕ) : ℤ) ≤ _ ∧ _ ≤ 0 + ((v - (t₀ + 1) : ℕ) : ℤ) at hp
+      have hlen := Nat.size_eq_bits_len x.length
+      dsimp only [T] at hv
+      rw [Finset.mem_Icc]
+      constructor <;> omega
+  -- After the halt the configuration is frozen.
+  have hall (u : ℕ) (j : Fin 1) :
+      (FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) u).workTapePos j ∈
+        Finset.Icc (-(2 * (Nat.size x.length + 1) : ℤ)) (2 * (Nat.size x.length + 1) : ℤ) := by
+    by_cases hu : u ≤ T
+    · exact hpre u hu j
+    · rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+        MultiTapeTM.runFrom_of_halt _ hhalt]
+      exact hpre T (le_refl _) j
+  rw [MultiTapeTM.spaceUsed_eq_sum]
+  change (∑ i : Fin 1, _) ≤ _
+  rw [Fin.sum_univ_one]
+  exact (MultiTapeTM.spaceUsedByTape_le_card_Icc _ _ t (0 : Fin 1) _ _
+    fun u _ => hall u 0).trans (by omega)
 
 /-- The identity function is time constructible. [AB09, §1.3 examples]
 
@@ -461,30 +572,8 @@ each bit to the output tape (`O(log n)` steps) and halts. The total is at most
 potential: elapsed time plus potential is at most `4n` after `n` increments.
 Entering emission and its final halting transition add two steps; the output length
 is at most `n`, so `c = 5` suffices. -/
-theorem timeConstructible_id : TimeConstructible id := by
-  refine ⟨fun n => le_refl n, 5, by decide, FinTM.lengthBitsTM, fun x => ?_⟩
-  obtain ⟨t, ht, hc⟩ := counter_count x x.length (le_refl _)
-  have hs : FinTM.lengthBitsTM.tm.step
-      (counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []) =
-      counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] := by
-    have hin : (counterCfg x 0 ⟨x.length + 1, by omega⟩ 0 x.length.bits []).inputSymbol =
-        none := by simp [Cfg.inputSymbol, counterCfg]
-    unfold MultiTapeTM.step
-    change (FinTM.lengthBitsTM.tm.tr (0 : Fin 4) _ _).apply _ = _
-    rw [hin]
-    apply Cfg.ext <;> simp [FinTM.lengthBitsTM, Action.apply, counterCfg]
-  have hstart : FinTM.lengthBitsTM.tm.runFrom (FinTM.lengthBitsTM.tm.initCfg x) (t + 1) =
-      counterCfg x 3 ⟨x.length + 1, by omega⟩ 0 x.length.bits [] := by
-    rw [MultiTapeTM.runFrom_succ_eq_step', hc, hs]
-  have he := counter_emit x ⟨x.length + 1, by omega⟩ x.length.bits
-  have hbase : FinTM.lengthBitsTM.ComputesInTime x x.length.bits
-      ((t + 1) + (x.length.bits.length + 1)) := by
-    refine ⟨_, ?_, ?_, rfl⟩
-    · rw [MultiTapeTM.runFrom_add, hstart]; exact he.1
-    · rw [MultiTapeTM.runFrom_add, hstart]; exact he.2
-  apply hbase.mono
-  have hl := Turing.length_bits_le_self x.length
-  change (t + 1) + (x.length.bits.length + 1) ≤ 5 * (x.length + 1)
-  omega
+theorem timeConstructible_id : TimeConstructible id :=
+  ⟨fun n => le_refl n, 5, by decide, FinTM.lengthBitsTM,
+    (FinTM.computesFunInTime_iff _ _ _).mp FinTM.lengthBitsTM_computes⟩
 
 end Complexity

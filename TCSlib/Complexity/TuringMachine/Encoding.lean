@@ -76,8 +76,7 @@ self-delimiting pairing used by the universal machine.
   `(2^j·m).bits = 0^j ++ m.bits` and its case `m = 1` (CH34-D4).
 * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
   computable in linear time (the only code computation the `HALT` reduction needs).
-  Its witness's spec is `Turing.pairDiagTM_computes` (MIG-1; sorried until the fill
-  F-A).
+  Its witness's spec is `Turing.pairDiagTM_computes`.
 * `Turing.FinTM.toCodeTM_computesInTime_iff` — the code normal form halts with the same
   outputs at the same times (MIG-1).
 * `Turing.exists_codeTM` — every one-work-tape binary machine is equivalent to a
@@ -506,12 +505,13 @@ private lemma pairDiag_run (x : List Bool) :
 /-- **The diagonal pairing machine's time**. On input `α` the diagonal pairing machine halts within
 `4|α| + 5` steps with output `pairEncode α α`.
 
-**Proof sketch.** The `have h` of today's `computesFunInTime_pairEncode_diag`, from the private
-`pairDiag_run`: the doubling pass takes `2|α|` steps, the two separator steps and the first left
-move `3`, the rewind `|α| + 1`, the copy `|α|`, and the halting transition `1`. -/
+**Proof sketch.** The run lemma `pairDiag_run` gives the whole configuration at step `4|α| + 5`:
+the doubling pass takes `2|α|` steps, the two separator steps and the first left move `3`, the
+rewind `|α| + 1`, the copy `|α|`, and the halting transition `1`; that configuration is halted
+with output `pairEncode α α`. -/
 theorem pairDiagTM_computes (x : List Bool) :
-    pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) := by
-  sorry
+    pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) :=
+  (FinTM.computesInTime_iff _ _ _ _).mpr ⟨by rw [pairDiag_run]; rfl, by rw [pairDiag_run]; rfl⟩
 
 /-- The diagonal pairing `α ↦ pairEncode α α` — the self-application input of the
 `HALT` reduction [AB09, proof of Theorem 1.11] — is computable in linear time. This
@@ -532,12 +532,8 @@ pass), absorbed as `c * (n + 1)`. -/
 theorem computesFunInTime_pairEncode_diag :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun α => pairEncode α α) fun n => c * (n + 1) := by
-  refine ⟨pairDiagTM, 6, fun x => ?_⟩
-  have h : pairDiagTM.ComputesInTime x (pairEncode x x) (4 * x.length + 5) := by
-    refine ⟨_, ?_, ?_, rfl⟩
-    · rw [pairDiag_run]; rfl
-    · rw [pairDiag_run]; rfl
-  exact h.mono (by change 4 * x.length + 5 ≤ 6 * (x.length + 1); omega)
+  refine ⟨pairDiagTM, 6, (FinTM.computesFunInTime_iff _ _ _).mpr fun x => ?_⟩
+  exact (pairDiagTM_computes x).mono (by omega)
 
 section Serialize
 
