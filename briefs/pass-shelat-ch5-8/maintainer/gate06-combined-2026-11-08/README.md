@@ -129,6 +129,20 @@ not make the latter canonical links. The fresh R2 must retain them separately;
 no closure or waiver follows from such spelling. These are review-index limits,
 not changes to the native source. Earlier inputs and all rows stay preserved.
 
+The [corrected R2 failure preflight](failure-review-preflight-r2.md) is frozen,
+independently reviewed and [backed up completely](rule10-failure-checkpoint-r2/checkpoint-manifest.json)
+(ZIP SHA2567078df79c6c080b38d1d64f4bf7ba5c2ba95ac53120e3b71280fc79a8e4a6a57;
+4114 files/346,787,363 raw bytes including all own preparation history).
+It fixes the three wrong inline-attribute labels, five source envelopes and the
+absolute-value header split, preserving all115 keys/145+7 diagnostics/230 original
+byte witnesses. It gives114 complete lexical source comparisons; the match-type
+boundary of GI.unaryMul_poly remains unresolved. All21 complete conservative
+contexts differ. Exact historical links are now2, with146 separately retained
+noncanonical spelling candidates. None grants actual identity or an inherited
+failure waiver. Runtime helper copies are byte-identical and unexecuted; future
+actual59 attachments use raw source lines and full native component registries.
+No Lean source or compiler protocol changed for these tooling corrections.
+
 The user merges accepted Lean through PRs into cryptography/pass-shelat-ch2-4.
 Existing #248 remains draft/deferred; its cleanup code is not in this source.
 
