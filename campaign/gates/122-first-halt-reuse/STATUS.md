@@ -1,9 +1,7 @@
 # Gate122
 
-Final publication binding in progress; no external audit dispatched.
+External Codex findings received verbatim; maintainer review in progress.
 
-**Not yet clear to merge: #242 — external audit pending.**
+**Not yet clear to merge: #242 — review/current-tree disposition pending.**
 
-Source `f3c8c050ef98375bc237c72bde74f83d33833374`; actual153PASS/static0/31. Full current source comparison and all
-changed-pair dispositions are complete in the frozen review inputs. Six Ladner mathematical
-proof holes remain when applicable; no new mathematical fill is commissioned here.
+No mathematical fill, debt acknowledgment or source change follows from the report itself.

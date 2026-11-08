@@ -7,25 +7,36 @@ on the Mac first. Read `WORKFLOW.md` (beside this file) first; it holds the stan
 long-form state is in `campaign/backlog.md`, and the duplication debt in
 `campaign/duplication-ledger.md`.
 
-## 0. Current state (2026-11-08T17:46:20.116153+00:00; authoritative)
+## 0. Current state (2026-11-08T17:53:35.171994+00:00; authoritative)
 
 Seyoon merged #233, authorized overnight preparation while keeping mathematical holes
 for fills, and selected **Codex for all morning audits**. On returning, Seyoon confirmed
-dispatch of the seven prompts already sent. Root builds/reviews/publishes; Seyoon alone
+dispatch of all eight current prompts. Root builds/reviews/publishes; Seyoon alone
 dispatches external agents, rules on design/debt and merges. Every source PR below is
 **Not yet clear to merge**; dispatch and internal peer review do not close an external gate.
 
 Campaign Lean remains `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / **whole MAC8**:895 objects and1003 tracked Lean blobs.
 All subsequent campaign pushes are records only. #215/#222/#223/#228/#229/#230/#233/#234/#235
 are merged; the eight overnight source PRs remain unmerged. Next free gate:**129**.
-All own Lean and copy-screen jobs are complete. No mathematical fill was self-dispatched.
+The prior replay/copy-screen jobs are complete. A bounded hypothetical Scan-reader proposal is now being prepared; its validation must retain actual fresh receipts. No mathematical fill was self-dispatched.
+
+### Audit returns now under review
+
+All eight external reports are received verbatim with hashes in each gate/findings.md
+and status/audit-intake/. Gate121 is HOLD:1 major for exposed unacknowledged imported-definition
+reads and1 portable-integrity minor. Gate127 is PASS with1 records pointer minor, corrected
+in the current context record. Gates122/123/124/125/126/128 report clean PASS. Root and
+parallel subagents are checking findings and current replay validity; no gate is closed yet.
+The eight original shared-drop files remain untouched. Root is preparing existing-reader
+repairs for121 and a bounded hypothetical Scan transition reader, without adopting public
+API or inferring a debt acknowledgment. Six mathematical holes remain in Ladner.
 
 ### Eight current source PRs
 
 | PR | Gate | Pushed source HEAD | Checks and current status |
 |---|---:|---|---|
 | #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`|9 first-entry proofs;157/static0/35,50 selected types exact,22pairs;33screen8new5gone/all13dispositioned; Dispatched; Codex findings pending |
-| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|10 first-halt +3 mandatory backwards-live proofs;222→153/static0/31,13types,23heads/46pairs;44screen0new19gone4scores/all23reviewed; Final publication binding in progress |
+| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|10 first-halt +3 mandatory backwards-live proofs;222→153/static0/31,13types,23heads/46pairs;44screen0new19gone4scores/all23reviewed; Dispatched; Codex findings pending |
 | #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`|5 public run-law forwards;80/static0/31,12pairs;33screen0new2gone; Dispatched; Codex findings pending |
 | #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`|3 SafeRun closures +1 private bridge;80/static0/31,14pairs;33screen0new0gone; Dispatched; Codex findings pending |
 | #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`|2 Hardness head/tail forwards;26/static0/0,30pairs;33screen0new10gone; Dispatched; Codex findings pending |
@@ -46,6 +57,7 @@ pin, SHA/section count and user dispatch confirmation. Immutable exchange README
 publication-time status; these records show subsequent dispatches.
 
 - Gate121: 817sections/SHA`12bbc82fc917ea24b73dab33d6351c897618a09111ee5595d692283bfa7ed821`; dispatch confirmed; findings pending.
+- Gate122: 1527sections/SHA`168b30616d27f5c2112f7ad1cfe06342b301a2825c96a48ba37ae7af30898381`; dispatch confirmed; findings pending.
 - Gate123: 373sections/SHA`057363ca1d75034d026280cadc56350d0ebbf89f59144b4a94c72e552e070fb0`; dispatch confirmed; findings pending.
 - Gate124: 670sections/SHA`79ca4ad99603e960e8eca889c637779b88e955991aa3a50f3e7f5efe97011f5e`; dispatch confirmed; findings pending.
 - Gate125: 291sections/SHA`431f8d4119cc69b4554308ed17575b434f73f3d4216be44d4db83f534556ede5`; dispatch confirmed; findings pending.

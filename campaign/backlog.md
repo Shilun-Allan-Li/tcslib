@@ -1075,8 +1075,8 @@ existing next12.2c owner/window, before further SAT/Hardness fills.
 Eight separate draft source PRs are open: #241–#247 for mechanical proof families and
 #249 for the approved Ladner17-declaration skeleton with6 mathematical holes. Gates121–128
 are reserved; nextfree129. All individual and final prospective integration replays and
-source comparisons pass. Seven current Codex prompts are confirmed dispatched; the final
-first-halt packet/peer is complete and its publication binding is finishing. Every PR is
+source comparisons pass. All eight current Codex prompts are confirmed dispatched; external findings
+are pending. Every PR is
 **Not yet clear to merge** until external gate closure and current-tree validation.
 Use HANDOFF§0, queue.json and DISPATCH.md for current exact bindings/status; data-only
 record repairs do not alter Lean source or execution evidence.
