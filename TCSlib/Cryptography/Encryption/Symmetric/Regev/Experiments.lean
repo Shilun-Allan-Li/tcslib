@@ -18,9 +18,9 @@ set_option autoImplicit false
 
 ## Main results
 
-`acceptProb_uniform_shift` states that codepoint translation hides a fixed plaintext
-in the ideal uniform experiment. `distAdv_encrypt_le` states the two-reduction bound.
-Both are statement-phase obligations, at fixed parameters and without running-time claims.
+`acceptProb_uniform_shift` proves that codepoint translation hides a fixed plaintext
+in the ideal uniform experiment. `distAdv_encrypt_le` proves the two-reduction bound.
+Both results are at fixed parameters and make no running-time claims.
 
 ## References
 
@@ -63,7 +63,10 @@ theorem encryptDist_eq_shift_sample (P : Parameters) (χ : Noise)
     (r : Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
       ((Fin P.dimension → ZMod P.modulus) × (Fin P.samples → χ.Coins))) :
     encryptDist P χ μ r = shift P μ (LWE.sample P χ r) := by
-  sorry
+  apply Prod.ext
+  · rw [encryptDist_fst, shift_fst, LWE.sample_fst]
+  · funext i
+    rw [encryptDist_snd, shift_snd, LWE.sample_snd, Pi.add_apply]
 
 /-- Translating a uniform value vector by a fixed message's codepoints preserves
 every distinguisher's acceptance probability [Wu24, Lecture 21, ideal hybrid].
@@ -77,7 +80,29 @@ theorem acceptProb_uniform_shift (P : Parameters) (μ : Fin P.samples → Bool)
     acceptProb (shift P μ) D =
       acceptProb (id : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
         (Fin P.samples → ZMod P.modulus)) → _) D := by
-  sorry
+  let e : (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) ≃
+      (Matrix (Fin P.samples) (Fin P.dimension) (ZMod P.modulus) ×
+      (Fin P.samples → ZMod P.modulus)) :=
+    { toFun := shift P μ
+      invFun := fun c => (c.1, c.2 - fun i => LWE.BitEncoding.codepoint P (μ i))
+      left_inv := by
+        intro c
+        apply Prod.ext
+        · exact shift_fst P μ c
+        · change (shift P μ c).2 - (fun i => LWE.BitEncoding.codepoint P (μ i)) = c.2
+          funext i
+          rw [Pi.sub_apply, shift_snd, Pi.add_apply, add_sub_cancel_right]
+      right_inv := by
+        intro c
+        apply Prod.ext
+        · exact shift_fst P μ _
+        · funext i
+          rw [shift_snd, Pi.add_apply]
+          change (c.2 i - LWE.BitEncoding.codepoint P (μ i)) +
+            LWE.BitEncoding.codepoint P (μ i) = c.2 i
+          exact sub_add_cancel _ _ }
+  exact acceptProb_comp_equiv e id D
 
 /-- Distinguishing two fixed plaintexts' encryptions is bounded by the sum of two
 DLWE distinguishing advantages with those plaintext translations
@@ -95,6 +120,18 @@ theorem distAdv_encrypt_le (P : Parameters) (χ : Noise)
     distAdv (encryptDist P χ μ₀) (encryptDist P χ μ₁) D ≤
       LWE.decisionAdvantage P χ (fun c r => D (shift P μ₀ c) r) +
       LWE.decisionAdvantage P χ (fun c r => D (shift P μ₁ c) r) := by
-  sorry
+  have hreal (μ : Fin P.samples → Bool) :
+      acceptProb (encryptDist P χ μ) D =
+        acceptProb (LWE.sample P χ) (fun c r => D (shift P μ c) r) := by
+    simp only [acceptProb_def, encryptDist_eq_shift_sample]
+  have hideal (μ : Fin P.samples → Bool) :
+      acceptProb id (fun c r => D (shift P μ c) r) = acceptProb id D := by
+    simpa only [acceptProb_def, id_eq] using acceptProb_uniform_shift P μ D
+  simp only [LWE.decisionAdvantage_eq, distAdv_def]
+  rw [hideal μ₀, hideal μ₁, ← hreal μ₀, ← hreal μ₁]
+  calc
+    _ ≤ |acceptProb (encryptDist P χ μ₀) D - acceptProb id D| +
+        |acceptProb id D - acceptProb (encryptDist P χ μ₁) D| := abs_sub_le _ _ _
+    _ = _ := by rw [abs_sub_comm (acceptProb id D)]
 
 end TCSlib.Cryptography.Encryption.Symmetric.Regev

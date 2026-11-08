@@ -18,8 +18,8 @@ set_option autoImplicit false
 
 ## Main results
 
-`collisionProbability_le_successProbability` states the direct collision-to-SIS bound.
-It is a statement-phase obligation, without a running-time restriction or generic CRH API.
+`collisionProbability_le_successProbability` proves the direct collision-to-SIS bound,
+without a running-time restriction or generic CRH API.
 
 ## References
 
@@ -72,6 +72,10 @@ theorem collisionProbability_le_successProbability (P : Parameters)
     collisionProbability P find ≤
       TCSlib.Cryptography.SIS.successProbability P
         (fun A r => some (collisionDifference P (find A r).1 (find A r).2)) := by
-  sorry
+  rw [collisionProbability_eq, TCSlib.Cryptography.SIS.successProbability_eq]
+  apply uprob_mono
+  intro r h
+  exact collisionDifference_isSolution P r.1 (find r.1 r.2).1 (find r.1 r.2).2
+    h.1 h.2 hbound
 
 end TCSlib.Cryptography.Hashing.SIS

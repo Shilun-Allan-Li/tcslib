@@ -20,7 +20,7 @@ set_option autoImplicit false
 
 ## Main results
 
-The distance statements and `decode_codepoint_add` are statement-phase obligations.
+The distance lemmas and `decode_codepoint_add` are proved below.
 The last theorem gives perfect decoding under the strict separation condition
 `2 * B < q / 2`, with natural-number division.
 
@@ -61,7 +61,7 @@ theorem distance_eq (P : Parameters) (x y : ZMod P.modulus) :
 `ZMod.natAbs_valMinAbs_neg` lemma. -/
 theorem distance_symm (P : Parameters) (x y : ZMod P.modulus) :
     distance P x y = distance P y x := by
-  sorry
+  rw [distance_eq, distance_eq, ← neg_sub x y, ZMod.natAbs_valMinAbs_neg]
 
 /-- Circular distance satisfies the triangle inequality.
 
@@ -69,14 +69,16 @@ theorem distance_symm (P : Parameters) (x y : ZMod P.modulus) :
 `ZMod.natAbs_valMinAbs_add_le`, then the integer absolute-value triangle inequality. -/
 theorem distance_triangle (P : Parameters) (x y z : ZMod P.modulus) :
     distance P x z ≤ distance P x y + distance P y z := by
-  sorry
+  rw [distance_eq, distance_eq, distance_eq, ← sub_add_sub_cancel x y z]
+  exact (ZMod.natAbs_valMinAbs_add_le (x - y) (y - z)).trans
+    (Int.natAbs_add_le _ _)
 
 /-- Adding the same residue to both arguments preserves circular distance.
 
 **Proof sketch.** Cancel the common translation in the difference and read `distance_eq`. -/
 theorem distance_add_right (P : Parameters) (x y a : ZMod P.modulus) :
     distance P (x + a) (y + a) = distance P x y := by
-  sorry
+  rw [distance_eq, distance_eq, add_sub_add_right_eq_sub]
 
 /-- The two bit codepoints have circular distance `floor(q/2)`
 [Wu24, Definition 20.5, exact separation].
@@ -85,7 +87,10 @@ theorem distance_add_right (P : Parameters) (x y a : ZMod P.modulus) :
 `ZMod.natAbs_valMinAbs_neg` if the subtraction has the opposite sign. -/
 theorem distance_codepoints (P : Parameters) :
     distance P (codepoint P false) (codepoint P true) = P.modulus / 2 := by
-  sorry
+  rw [codepoint_eq, codepoint_eq]
+  simp only [Bool.false_eq_true, if_false, if_true]
+  rw [distance_eq, zero_sub, ZMod.natAbs_valMinAbs_neg,
+    ZMod.valMinAbs_natCast_of_le_half (le_refl _), Int.natAbs_natCast]
 
 /-- Reducing an integer error modulo the modulus cannot increase its distance
 from zero beyond its original natural absolute value.
@@ -94,7 +99,9 @@ from zero beyond its original natural absolute value.
 `ZMod.natAbs_min_of_le_div_two` to compare the minimal lift with the given integer. -/
 theorem distance_intCast_zero_le (P : Parameters) (e : ℤ) :
     distance P (e : ZMod P.modulus) 0 ≤ e.natAbs := by
-  sorry
+  rw [distance_eq, sub_zero]
+  exact ZMod.natAbs_min_of_le_div_two P.modulus _ e
+    (ZMod.coe_valMinAbs _) (ZMod.natAbs_valMinAbs_le _)
 
 /-- Decode to true precisely when the true codepoint is strictly nearer;
 equidistant inputs decode to false [Wu24, Definition 20.5, specified tie convention]. -/
@@ -116,6 +123,20 @@ codepoint is uniquely nearer, so the tie rule is immaterial for valid encryption
 theorem decode_codepoint_add (P : Parameters) (B : ℕ) (b : Bool) (e : ℤ)
     (he : e.natAbs ≤ B) (hsep : 2 * B < P.modulus / 2) :
     decode P (codepoint P b + (e : ZMod P.modulus)) = b := by
-  sorry
+  have herr : distance P (codepoint P b + (e : ZMod P.modulus)) (codepoint P b) ≤ B := by
+    calc
+      _ = distance P (e : ZMod P.modulus) 0 := by
+        simpa only [zero_add, add_comm] using
+          distance_add_right P (e : ZMod P.modulus) 0 (codepoint P b)
+      _ ≤ e.natAbs := distance_intCast_zero_le P e
+      _ ≤ B := he
+  have htri := distance_triangle P (codepoint P false)
+    (codepoint P b + (e : ZMod P.modulus)) (codepoint P true)
+  rw [distance_codepoints, distance_symm P (codepoint P false)] at htri
+  cases b
+  · rw [decode_eq]
+    exact decide_eq_false (by omega)
+  · rw [decode_eq]
+    exact decide_eq_true (by omega)
 
 end TCSlib.Cryptography.LWE.BitEncoding

@@ -19,8 +19,8 @@ set_option autoImplicit false
 
 ## Main results
 
-The statement-phase obligations bound the difference's squared norm, turn a collision
-into an SIS solution, and give cardinal compression and solution existence by pigeonhole.
+The theorems bound the difference's squared norm, turn a collision into an SIS
+solution, and prove cardinal compression and solution existence by pigeonhole.
 
 ## References
 
@@ -69,7 +69,13 @@ theorem collisionDifference_apply (P : Parameters) (x y : Fin P.columns → Bool
 would agree at each coordinate. The two Boolean cases recover equality of the inputs. -/
 theorem collisionDifference_ne_zero (P : Parameters) (x y : Fin P.columns → Bool)
     (hxy : x ≠ y) : collisionDifference P x y ≠ 0 := by
-  sorry
+  intro h
+  apply hxy
+  funext i
+  have hi := congrFun h i
+  rw [collisionDifference_apply] at hi
+  change ((x i).toNat : ℤ) - ((y i).toNat : ℤ) = 0 at hi
+  cases hx : x i <;> cases hy : y i <;> simp_all
 
 /-- The squared Euclidean norm of a binary-input difference is at most the number
 of columns [Pei16, observations after Equation (4.1.1)].
@@ -78,7 +84,13 @@ of columns [Pei16, observations after Equation (4.1.1)].
 most one. Sum the inequalities over the finite column index. -/
 theorem collisionDifference_sqNorm_le (P : Parameters) (x y : Fin P.columns → Bool) :
     (∑ i, collisionDifference P x y i ^ 2) ≤ (P.columns : ℤ) := by
-  sorry
+  calc
+    _ ≤ ∑ _ : Fin P.columns, (1 : ℤ) := by
+      apply Finset.sum_le_sum
+      intro i _
+      rw [collisionDifference_apply]
+      cases x i <;> cases y i <;> decide
+    _ = (P.columns : ℤ) := by simp
 
 /-- A collision between distinct binary inputs yields an SIS solution whenever the
 squared-norm budget covers the column count [Pei16, observations after Equation (4.1.1)].
@@ -91,7 +103,17 @@ theorem collisionDifference_isSolution (P : Parameters)
     (x y : Fin P.columns → Bool) (hxy : x ≠ y) (hhash : hash P A x = hash P A y)
     (hbound : P.columns ≤ P.sqNormBound) :
     IsSolution P A (collisionDifference P x y) := by
-  sorry
+  rw [TCSlib.Cryptography.SIS.isSolution_iff]
+  refine ⟨collisionDifference_ne_zero P x y hxy,
+    (collisionDifference_sqNorm_le P x y).trans (Int.ofNat_le.mpr hbound), ?_⟩
+  have hcast :
+      (fun i => (collisionDifference P x y i : ZMod P.modulus)) =
+        (fun i => ((x i).toNat : ZMod P.modulus)) -
+          (fun i => ((y i).toNat : ZMod P.modulus)) := by
+    funext i
+    rw [Pi.sub_apply, collisionDifference_apply, Int.cast_sub, Int.cast_natCast,
+      Int.cast_natCast]
+  rw [hcast, Matrix.mulVec_sub, ← hash_eq P A x, ← hash_eq P A y, hhash, sub_self]
 
 /-- The full binary domain is strictly larger than the modular-vector codomain
 when `q^dimension < 2^columns` [Pei16, observations after Equation (4.1.1)].
@@ -102,7 +124,8 @@ theorem cardinal_compression (P : Parameters)
     (hcompress : P.modulus ^ P.dimension < 2 ^ P.columns) :
     Fintype.card (Fin P.dimension → ZMod P.modulus) <
       Fintype.card (Fin P.columns → Bool) := by
-  sorry
+  simpa only [Fintype.card_fun, Fintype.card_fin, Fintype.card_bool, ZMod.card]
+    using hcompress
 
 /-- Every public matrix has a binary collision when the binary domain is larger
 than the modular codomain [Pei16, observations after Equation (4.1.1)].
@@ -114,7 +137,12 @@ theorem exists_collision (P : Parameters)
     (A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus))
     (hcompress : P.modulus ^ P.dimension < 2 ^ P.columns) :
     ∃ x y : Fin P.columns → Bool, x ≠ y ∧ hash P A x = hash P A y := by
-  sorry
+  classical
+  have hn : ¬ Function.Injective (hash P A) := fun h =>
+    (Nat.not_le_of_gt (cardinal_compression P hcompress))
+      (Fintype.card_le_of_injective _ h)
+  obtain ⟨x, y, heq, hne⟩ := Function.not_injective_iff.mp hn
+  exact ⟨x, y, hne, heq⟩
 
 /-- Compression and a sufficiently large norm budget guarantee an SIS solution
 for every matrix [Pei16, observations after Equation (4.1.1)]. This is existence,
@@ -125,6 +153,8 @@ theorem exists_solution (P : Parameters)
     (A : Matrix (Fin P.dimension) (Fin P.columns) (ZMod P.modulus))
     (hcompress : P.modulus ^ P.dimension < 2 ^ P.columns)
     (hbound : P.columns ≤ P.sqNormBound) : ∃ z, IsSolution P A z := by
-  sorry
+  obtain ⟨x, y, hxy, hhash⟩ := exists_collision P A hcompress
+  exact ⟨collisionDifference P x y,
+    collisionDifference_isSolution P A x y hxy hhash hbound⟩
 
 end TCSlib.Cryptography.Hashing.SIS
