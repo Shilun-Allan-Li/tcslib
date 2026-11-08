@@ -1,0 +1,10 @@
+
+/-- SAT has a polynomial-time verifier whose certificate has exactly one more bit
+than the instance. This records the explicit certificate size of `SAT_mem_NP`.
+[AB09, §2.1] -/
+theorem SAT_exists_linear_verifier :
+    ∃ V : Language Bool, V ∈ P ∧
+      ∀ x : List Bool, x ∈ SAT ↔
+        ∃ u : List Bool, u.length = x.length + 1 ∧ x ++ u ∈ V := by
+  exact ⟨satVerifier false, satVerifier_of_poly false satVerdict_false_poly,
+    sat_verifier_equiv⟩
