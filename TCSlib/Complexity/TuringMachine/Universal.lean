@@ -2516,16 +2516,13 @@ private lemma timedCapture_start (M : FinTM Bool) (clock : Fin M.k) (x : List Bo
       (timedCaptureTM M clock).tm.runFrom ((timedCaptureTM M clock).tm.initCfg x) t =
         timedCapturedCfg M clock (M.tm.runFrom (M.tm.initCfg x) T) := by
   classical
-  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, h⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh h
-  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh
-  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := by
-    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le ht
-    rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs]
+  obtain ⟨t, ht, hlive, hcut⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) h
+  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
+    (congrArg Cfg.state hcut).trans h
+  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := hcut.symm
   refine ⟨t + 1, by omega, ?_⟩
   rw [MultiTapeTM.runFrom_succ_eq_step', timedCapture_init,
-    timedCapture_run M clock _ t (fun s hs => Nat.find_min hh hs),
+    timedCapture_run M clock _ t hlive,
     timedCapture_transfer M clock _ hs, he]
 
 

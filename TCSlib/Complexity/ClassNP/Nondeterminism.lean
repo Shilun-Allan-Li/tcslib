@@ -1433,22 +1433,22 @@ private lemma b2_unary_first (M : FinTM Bool) (f : ℕ → List Bool) (T : ℕ �
       ∀ s < τ x.length, ((b2UnaryTM M).tm.runFrom
         ((b2UnaryTM M).tm.initCfg x) s).state ≠ none := by
   classical
-  have hex (n : ℕ) : ∃ t, (M.tm.runFrom
-      (M.tm.initCfg (List.replicate n true)) t).state = none :=
-    ⟨T n, ((computesInTime_iff _ _ _ _).mp (hM n)).1⟩
-  refine ⟨fun n => Nat.find (hex n), fun x => ?_⟩
-  have hh := Nat.find_spec (hex x.length)
-  have ht := Nat.find_min' (hex x.length)
-    ((computesInTime_iff _ _ _ _).mp (hM x.length)).1
-  have ho := M.tm.runFrom_output_eq_of_halt
-    (M.tm.initCfg (List.replicate x.length true)) ht hh
+  choose τ hτle hτlive hτeq using fun n : ℕ =>
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg (List.replicate n true))
+      (((computesInTime_iff _ _ _ _).mp (hM n)).1)
+  refine ⟨τ, fun x => ?_⟩
+  have hh : (M.tm.runFrom (M.tm.initCfg (List.replicate x.length true))
+      (τ x.length)).state = none :=
+    (congrArg Cfg.state (hτeq x.length)).trans
+      ((computesInTime_iff _ _ _ _).mp (hM x.length)).1
+  have ho := congrArg Cfg.output (hτeq x.length)
   have hc : M.ComputesInTime (List.replicate x.length true) (f x.length)
-      (Nat.find (hex x.length)) := (computesInTime_iff _ _ _ _).mpr
-    ⟨hh, ho.symm.trans ((computesInTime_iff _ _ _ _).mp (hM x.length)).2⟩
-  refine ⟨ht, b2_unary_computes M x _ _ hc, fun s hs hh' => ?_⟩
+      (τ x.length) := (computesInTime_iff _ _ _ _).mpr
+    ⟨hh, ho.trans ((computesInTime_iff _ _ _ _).mp (hM x.length)).2⟩
+  refine ⟨hτle x.length, b2_unary_computes M x _ _ hc, fun s hs hh' => ?_⟩
   have hr := congrArg Cfg.state (b2_unary_run M ((b2UnaryTM M).tm.initCfg x) s)
   rw [b2_unary_initial] at hr
-  exact Nat.find_min (hex x.length) hs (hr.symm.trans hh')
+  exact hτlive x.length s hs (hr.symm.trans hh')
 
 /-- The host's four disjoint tape banks: scheduler, assembled input, verifier,
 and verifier output. Each machine bank has a private final buffer slot. -/
@@ -2082,19 +2082,18 @@ private lemma b2_verify_timed (S V : FinTM Bool) {x : List Bool}
       (b2VerifyCfg S V (V.tm.initCfg y) true p tapes heads)
     out.state = none ∧ out.output = [b] := by
   classical
-  have hex : ∃ t, (V.tm.runFrom (V.tm.initCfg y) t).state = none :=
-    ⟨T, ((computesInTime_iff _ _ _ _).mp hV).1⟩
-  let t := Nat.find hex
+  obtain ⟨t, ht, hlive, heq⟩ := MultiTapeTM.exists_first_halt V.tm (V.tm.initCfg y)
+    (((computesInTime_iff _ _ _ _).mp hV).1)
   let c := V.tm.runFrom (V.tm.initCfg y) t
-  have ht : t ≤ T := Nat.find_min' hex ((computesInTime_iff _ _ _ _).mp hV).1
-  have hc : c.state = none := Nat.find_spec hex
+  have hc : c.state = none :=
+    (congrArg Cfg.state heq).trans ((computesInTime_iff _ _ _ _).mp hV).1
   have hcomp : V.ComputesInTime y c.output t :=
     (computesInTime_iff _ _ _ _).mpr ⟨hc, rfl⟩
   have ho : c.output = [b] := hcomp.output_unique hV
   have hp : (w.take t).length = t := List.length_take_of_le (by omega)
   obtain ⟨tag, _, hr⟩ := b2_verify_run S V (V.tm.initCfg y) true
     (by simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]) p tapes heads (w.take t)
-    (fun s hs => Nat.find_min hex (show s < t from hp ▸ hs))
+    (fun s hs => hlive s (show s < t from hp ▸ hs))
   rw [hp] at hr
   have hlen : 0 < (w.drop t).length := by rw [List.length_drop]; omega
   cases hd : w.drop t with

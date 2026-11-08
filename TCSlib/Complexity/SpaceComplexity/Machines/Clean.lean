@@ -323,21 +323,26 @@ theorem cleanTM_run (M : MultiTapeTM k Bool S) (q₁ q : S) (V : List Bool) (T :
   classical
   -- the machine `M` with start state `q`, to use the results stated for `initCfg`
   set M' : MultiTapeTM k Bool S := { M with q₀ := q } with hM'
-  have hinit : M'.initCfg V = Cfg.init q V := rfl
-  have hrun : ∀ t, M'.runFrom (Cfg.init q V) t = M.runFrom (Cfg.init q V) t := fun _ => rfl
-  have hex : ∃ t, (M.runFrom (Cfg.init q V) t).state = none := ⟨T, hT⟩
-  set T0 := Nat.find hex with hT0def
-  have hT0 : (M.runFrom (Cfg.init q V) T0).state = none := Nat.find_spec hex
-  have hT0le : T0 ≤ T := Nat.find_min' hex hT
-  have hlive : ∀ t < T0, (M.runFrom (Cfg.init q V) t).state ≠ none :=
-    fun t ht => Nat.find_min hex ht
-  have hfinT : M.runFrom (Cfg.init q V) T = M.runFrom (Cfg.init q V) T0 := by
-    rw [show T = T0 + (T - T0) by omega, MultiTapeTM.runFrom_add,
-      MultiTapeTM.runFrom_of_halt _ hT0]
+  have hinit : M'.initCfg V = Cfg.init q V := MultiTapeTM.initCfg_with_q₀ M q V
+  have hrun : ∀ t, M'.runFrom (Cfg.init q V) t = M.runFrom (Cfg.init q V) t :=
+    fun t => MultiTapeTM.runFrom_with_q₀ M q (Cfg.init q V) t
+  obtain ⟨T0, hT0le, hlive, hcut⟩ :=
+    MultiTapeTM.exists_first_halt M (Cfg.init q V) hT
+  have hT0 : (M.runFrom (Cfg.init q V) T0).state = none :=
+    (congrArg Cfg.state hcut).trans hT
+  have hfinT : M.runFrom (Cfg.init q V) T = M.runFrom (Cfg.init q V) T0 := hcut.symm
+  have hvisit (t : ℕ) (j : Fin k) :
+      M'.visitedByTapeHead (M'.initCfg V) t j =
+        M.visitedByTapeHead (Cfg.init q V) t j := by
+    apply Finset.ext
+    intro z
+    simp only [MultiTapeTM.mem_visitedByTapeHead_iff, hinit, hrun]
   -- positions of `M` stay in `[-(s-1), s-1]`
   have hvis : ∀ j (z : ℤ), z ∈ M.visitedByTapeHead (Cfg.init q V) T0 j → |z| + 1 ≤ s := by
     intro j z hz
-    have h1 := MultiTapeTM.abs_pos_lt_card_visited M' V T0 j (z := z) hz
+    have h1 := MultiTapeTM.abs_pos_lt_card_visited M' V T0 j (z := z)
+      (by rw [hvisit T0 j]; exact hz)
+    rw [hvisit T0 j] at h1
     have h2 := Finset.card_le_card (MultiTapeTM.visitedByTapeHead_mono M (Cfg.init q V) hT0le j)
     have h3 := hs j
     change |z| < ((M.visitedByTapeHead (Cfg.init q V) T0 j).card : ℤ) at h1
@@ -346,13 +351,14 @@ theorem cleanTM_run (M : MultiTapeTM k Bool S) (q₁ q : S) (V : List Bool) (T :
   have hsim : ∀ t ≤ T0, (cleanTM M q₁).runFrom (simCfg M q V 0) t = simCfg M q V t := by
     intro t
     induction t with
-    | zero => intro _; rfl
+    | zero => intro _; simp only [MultiTapeTM.runFrom_zero]
     | succ t ih =>
       intro ht
       rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega), sim_step_clean M q₁ q V t
         (hlive t (by omega))]
-  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 :=
-    init_step M q₁ q V
+  have hstart : (cleanTM M q₁).runFrom (Cfg.init (.init q) V) 1 = simCfg M q V 0 := by
+    simpa only [MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero] using
+      init_step M q₁ q V
   -- the interval data of every tape at the halt
   set c := M.runFrom (Cfg.init q V) T0 with hc
   have htape : ∀ j : Fin k, ∃ a b : ℤ, a ≤ 0 ∧ 0 ≤ b ∧ -(s : ℤ) ≤ a - 1 ∧ b + 1 ≤ s ∧
@@ -378,8 +384,10 @@ theorem cleanTM_run (M : MultiTapeTM k Bool S) (q₁ q : S) (V : List Bool) (T :
       funext z
       simp only [markSet, markI, hU]
     · intro z hz
-      have := MultiTapeTM.mem_visited_of_ne_none M' V T0 j z hz
-      exact (hU z).mp this
+      have hmem := MultiTapeTM.mem_visited_of_ne_none M' V T0 j z
+        (by rw [hinit, hrun]; exact hz)
+      rw [hvisit T0 j] at hmem
+      exact (hU z).mp hmem
   have hstg0 : simCfg M q V T0 = stg 0 c.inputPos c.workTapes
       (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output := by
     simp only [simCfg, stg, stSt, simSt, ← hc, hT0, Nat.not_lt_zero, ↓reduceIte]

@@ -308,24 +308,25 @@ theorem startup {T : ℕ} (hS : S.ComputesInTime x (List.replicate m true) T)
         (hostTM S A loop).runWith w ((hostTM S A loop).initCfg x) =
           runCfg m (A.tm.initCfg x) 0 sT sP := by
   classical
-  have hex : ∃ t, (S.tm.runFrom (S.tm.initCfg x) t).state = none :=
-    ⟨T, ((FinTM.computesInTime_iff _ _ _ _).mp hS).1⟩
-  have htS : Nat.find hex ≤ T := Nat.find_min' hex ((FinTM.computesInTime_iff _ _ _ _).mp hS).1
-  obtain ⟨cS, hcSdef⟩ : ∃ c, c = S.tm.runFrom (S.tm.initCfg x) (Nat.find hex) := ⟨_, rfl⟩
-  have hcS : cS.state = none := hcSdef ▸ Nat.find_spec hex
+  obtain ⟨t, htS, hlive, hcut⟩ := MultiTapeTM.exists_first_halt S.tm (S.tm.initCfg x)
+    (((FinTM.computesInTime_iff _ _ _ _).mp hS).1)
+  obtain ⟨cS, hcSdef⟩ : ∃ c, c = S.tm.runFrom (S.tm.initCfg x) t := ⟨_, rfl⟩
+  have hcS : cS.state = none := by
+    rw [hcSdef, hcut]
+    exact ((FinTM.computesInTime_iff _ _ _ _).mp hS).1
   have hout : cS.output = List.replicate m true := by
-    rw [hcSdef]
-    exact ((FinTM.computesInTime_iff _ _ _ _).mpr ⟨Nat.find_spec hex, rfl⟩).output_unique hS
-  refine ⟨Nat.find hex + (m + 2), by omega, cS.workTapes, cS.workTapePos, fun w hw => ?_⟩
-  have ht : (w.take (Nat.find hex)).length = Nat.find hex := List.length_take_of_le (by omega)
-  have hboot := boot_run (A := A) (loop := loop) (S.tm.initCfg x) (w.take (Nat.find hex))
-    (fun t h => Nat.find_min hex (by omega))
+    rw [hcSdef, hcut]
+    exact ((FinTM.computesInTime_iff _ _ _ _).mp hS).2
+  refine ⟨t + (m + 2), by omega, cS.workTapes, cS.workTapePos, fun w hw => ?_⟩
+  have ht : (w.take t).length = t := List.length_take_of_le (by omega)
+  have hboot := boot_run (A := A) (loop := loop) (S.tm.initCfg x) (w.take t)
+    (fun t h => hlive t (by omega))
   rw [ht, ← hcSdef] at hboot
-  rw [initCfg_eq_bootCfg, ← List.take_append_drop (Nat.find hex) w, NDTM.runWith_append, hboot]
+  rw [initCfg_eq_bootCfg, ← List.take_append_drop t w, NDTM.runWith_append, hboot]
   have hb : bootCfg (A := A) cS = hostCfg (some .rew) cS.inputPos cS.workTapes cS.workTapePos
       (fun _ _ => none) (fun _ => 0) (yard m) m [] := by
     simp [bootCfg, hcS, hout]
-  rw [hb, rewind_run m _ _ _ _ _ (w.drop (Nat.find hex)) (by simp; omega),
+  rw [hb, rewind_run m _ _ _ _ _ (w.drop t) (by simp; omega),
     moveInputPos_inLeft cS.inputPos (by have := cS.inputPos.isLt; omega)]
   rfl
 

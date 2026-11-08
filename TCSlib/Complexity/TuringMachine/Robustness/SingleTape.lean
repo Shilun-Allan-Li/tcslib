@@ -932,16 +932,13 @@ theorem one_work_tape {Γ : Type} [Fintype Γ] [DecidableEq Γ]
       sweepTM M, 9 * M.k + 6, rfl, ?_⟩
     intro x
     obtain ⟨hhalt, hout⟩ := (computesInTime_iff M x (f x) (T x.length)).mp (hM x)
-    have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T x.length, hhalt⟩
-    let τ := Nat.find hex
-    have hτ : (M.tm.runFrom (M.tm.initCfg x) τ).state = none := Nat.find_spec hex
-    have ht : τ ≤ T x.length := Nat.find_min' hex hhalt
-    have hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg x) t).state ≠ none :=
-      fun _ h => Nat.find_min hex h
+    obtain ⟨τ, ht, hlive, hcut⟩ :=
+      MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hhalt
+    have hτ : (M.tm.runFrom (M.tm.initCfg x) τ).state = none :=
+      (congrArg Cfg.state hcut).trans hhalt
     have hrun := sweep_run_to_halt M (Nat.pos_of_ne_zero hk) x τ hlive τ (le_refl _)
-    have houtτ : (M.tm.runFrom (M.tm.initCfg x) τ).output = f x := by
-      have h := M.tm.runFrom_output_eq_of_halt (M.tm.initCfg x) ht hτ
-      exact h.symm.trans hout
+    have houtτ : (M.tm.runFrom (M.tm.initCfg x) τ).output = f x :=
+      (congrArg Cfg.output hcut).trans hout
     have hc : (sweepTM M).ComputesInTime (x.map (sweepEmbed Γ M.k))
         ((f x).map (sweepEmbed Γ M.k)) (sweepTime M.k τ) := by
       apply (computesInTime_iff _ _ _ _).mpr
@@ -2126,15 +2123,13 @@ private lemma dg_all_inputs {Γ : Type} [Fintype Γ] [DecidableEq Γ]
       (9 * M.k + 6) * (S x.length + 1) := by
   let y := x.map (dgRetract a₀)
   obtain ⟨hhalt, hout⟩ := (computesInTime_iff M y (f y) (T y.length)).mp (hM y)
-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg y) t).state = none := ⟨T y.length, hhalt⟩
-  let τ := Nat.find hex
-  have hτ : (M.tm.runFrom (M.tm.initCfg y) τ).state = none := Nat.find_spec hex
-  have htime : τ ≤ T y.length := Nat.find_min' hex hhalt
-  have hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg y) t).state ≠ none :=
-    fun _ h => Nat.find_min hex h
+  obtain ⟨τ, htime, hlive, hcut⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg y) hhalt
+  have hτ : (M.tm.runFrom (M.tm.initCfg y) τ).state = none :=
+    (congrArg Cfg.state hcut).trans hhalt
   obtain ⟨a, n, u, window, hu, span⟩ := dg_simulate M hk a₀ x τ hlive τ (le_refl _)
   have houtτ : (M.tm.runFrom (M.tm.initCfg y) τ).output = f y :=
-    (M.tm.runFrom_output_eq_of_halt (M.tm.initCfg y) htime hτ).symm.trans hout
+    (congrArg Cfg.output hcut).trans hout
   let final := dgStart M a₀ (M.tm.runFrom (M.tm.initCfg y) τ) a n (a * M.k - 1)
   have hf : final.state = none := by
     change (M.tm.runFrom (M.tm.initCfg y) τ).state.map _ = none

@@ -595,16 +595,13 @@ lemma universalCapture_start {S : Type} [Fintype S] [DecidableEq S]
       (universalCaptureTM M D).tm.runFrom ((universalCaptureTM M D).tm.initCfg x) t =
         universalCapturedCfg M D (M.tm.runFrom (M.tm.initCfg x) T) := by
   classical
-  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, h⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh h
-  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hh
-  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := by
-    obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le ht
-    rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs]
+  obtain ⟨t, ht, hlive, hcut⟩ := MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) h
+  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
+    (congrArg Cfg.state hcut).trans h
+  have he : M.tm.runFrom (M.tm.initCfg x) T = M.tm.runFrom (M.tm.initCfg x) t := hcut.symm
   refine ⟨t + 1, by omega, ?_⟩
   rw [MultiTapeTM.runFrom_succ_eq_step', universalCapture_init,
-    universalCapture_run M D _ t (fun s hs => Nat.find_min hh hs),
+    universalCapture_run M D _ t hlive,
     universalCapture_transfer M D _ hs, he]
 
 /-- Prefix-only startup with the actual canonical table on a work tape. The

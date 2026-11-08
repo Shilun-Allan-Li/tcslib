@@ -512,12 +512,11 @@ lemma clockTM_setup (x s : List Bool) (tK : ℕ) (hK : K.ComputesInTime x s tK) 
       (clockTM K W).tm.runFrom ((clockTM K W).tm.initCfg x) a =
         ctrCfg K W (some (.dec W.tm.q₀ .empty)) (W.tm.initCfg x) (bufferTape s) 0 kt kh [] := by
   classical
-  have hh : ∃ t, (K.tm.runFrom (K.tm.initCfg x) t).state = none :=
-    ⟨tK, ((computesInTime_iff K x s tK).mp hK).1⟩
-  let t := Nat.find hh
+  obtain ⟨t, ht, hlive, hcut⟩ := MultiTapeTM.exists_first_halt K.tm (K.tm.initCfg x)
+    (((computesInTime_iff K x s tK).mp hK).1)
   let c := K.tm.runFrom (K.tm.initCfg x) t
-  have hs : c.state = none := Nat.find_spec hh
-  have ht : t ≤ tK := Nat.find_min' hh ((computesInTime_iff K x s tK).mp hK).1
+  have hs : c.state = none :=
+    (congrArg Cfg.state hcut).trans ((computesInTime_iff K x s tK).mp hK).1
   have hc : K.ComputesInTime x c.output t := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
   have ho : c.output = s := hc.output_unique hK
   -- the input rewind
@@ -533,7 +532,7 @@ lemma clockTM_setup (x s : List Bool) (tK : ℕ) (hK : K.ComputesInTime x s tK) 
     rw [ho] at *
     omega
   · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, kCfg_init,
-      kCfg_run K W _ t (fun s hs => Nat.find_min hh hs), kCfg_rewind K W c hs, hrun, ← ho]
+      kCfg_run K W _ t hlive, kCfg_rewind K W c hs, hrun, ← ho]
     rfl
 
 end Complexity.TimeHierarchy
