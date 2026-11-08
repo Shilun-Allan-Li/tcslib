@@ -159,6 +159,13 @@ lemma emit_halts {k : ℕ} {S : Type} {x : List Bool}
 def controlAction {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
     Action k Bool S := ⟨m, fun _ => (none, 0), none, q⟩
 
+/-- A control action has the requested input movement and successor state,
+with no work-tape writes or head movement and no output symbol. -/
+theorem controlAction_eq {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    controlAction (k := k) m q =
+      (⟨m, fun _ => (none, 0), none, q⟩ : Action k Bool S) := by
+  rfl
+
 /-- Read position `i + 1` as the optional `i`-th input symbol, including the
 right boundary. -/
 lemma inputSymbol_at {k : ℕ} {S : Type} {x : List Bool}

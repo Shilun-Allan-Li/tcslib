@@ -547,6 +547,17 @@ def inputFoldTM {Γ : Type*} {A : Type} (k : ℕ) (δ : A → Γ → A) (a₀ : 
       | none => inputMoveAction 1 (.done a)
     | .done a => inputMoveAction 0 (.done a)
 
+/-- In the backward phase the native fold moves left across an input symbol;
+at the left blank it moves right and enters the completed phase, preserving
+the accumulator. The work-tape reads do not affect this transition. -/
+theorem inputFoldTM_tr_bwd {Γ : Type*} {A : Type} (k : ℕ)
+    (δ : A → Γ → A) (a₀ a : A) (inp : Option Γ) (work : Fin k → Option Γ) :
+    (inputFoldTM k δ a₀).tr (.bwd a) inp work =
+      (match inp with
+       | some _ => inputMoveAction (-1) (.bwd a)
+       | none => inputMoveAction 1 (.done a)) := by
+  rfl
+
 /-- The native fold's forward accumulator and input position after `r` reads. -/
 private def scanFoldF {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
     (δ : A → Γ → A) (a₀ : A) (d : Cfg k Γ (ScanPhase A) x) (r : ℕ) :

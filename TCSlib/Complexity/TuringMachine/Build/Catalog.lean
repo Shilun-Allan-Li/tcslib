@@ -2566,6 +2566,13 @@ def inputMoveAction {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State
     Action k Symbol State :=
   ⟨inp, fun _ => (none, 0), none, some q⟩
 
+/-- An input-only action has the requested input movement and live successor,
+with no work-tape writes or head movement and no output symbol. -/
+theorem inputMoveAction_eq {k : ℕ} {Symbol State : Type*} (inp : SignType) (q : State) :
+    inputMoveAction (k := k) (Symbol := Symbol) inp q =
+      (⟨inp, fun _ => (none, 0), none, some q⟩ : Action k Symbol State) := by
+  rfl
+
 /-- **One step of a non-writing one-tape action** (design §12.8a). If the machine's table
 gives `Turing.tapeAction i inp none m q'` at the current state and reads, one step moves
 the input head by `inp` and head `i` by `m`, enters `q'`, and changes nothing else.
