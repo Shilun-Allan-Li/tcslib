@@ -54,7 +54,7 @@ def main():
 
     check_exchange()
     if args.check_only:
-        print("Clean own draft and private publisher; 101 frozen sources and seven payload hashes pass.")
+        print(f"Clean own draft and private publisher; {len(record['source_files'])} frozen sources and {len(record['files'])} payload hashes pass.")
         return
 
     def gh(*values):

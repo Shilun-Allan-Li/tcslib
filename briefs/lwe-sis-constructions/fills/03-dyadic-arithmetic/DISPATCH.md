@@ -1,4 +1,4 @@
-# Dyadic scalar proof audit: prepared, not dispatched
+# Historical first local preparation, superseded before publication
 
 This is a separate proof job requiring a fresh user choice of Codex or Claude.
 The completed statement audit does not select its reviewer. The user publishes
@@ -43,3 +43,7 @@ future sampler/matrix/primitive consumer obligations remain open.
 
 **Not yet clear to merge — proof-audit selection/publication/dispatch,
 source-policy work, applicable landing checks and user approval remain.**
+
+This first local preparation is superseded only to correct the publication
+helper status label from its static 101 to the actual dynamic source count.
+All 102 hashes were already checked; Lean source and native evidence are unchanged.
