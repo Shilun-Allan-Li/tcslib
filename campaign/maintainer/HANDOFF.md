@@ -29,7 +29,7 @@ No overnight source PR is merged. Next free gate: **129**;128 is reserved for La
 | #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #246 |126|`48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
-| #247 |127|`e16049ad20823b3e6abba171e328489746062080`|full canonOffset_spec now reads Nat.bit and codeBitsNat via equations;23 PASS/static0/0, private metadata exact,2 foreign TCS heads+Nat.bit/6pairs; actual48 screen0new0gone0scores; final512-payload packet prepared/publication peer pending |
+| #247 |127|`e16049ad20823b3e6abba171e328489746062080`| Complete verified Codex packet; actual source checks/replay pass; **Ready to dispatch** |
 | #249 |128|`1096e50b4e105392737ec52939b1db0cdbd9316d`|approved Ladner statement skeleton,17 declarations/6 mathematical holes;2 PASS/static0/6,895→896;17 AX records,whole9-head guard/18pairs/6 edge probes and QA pass;49 screen queued |
 
 All source branches use `codex/`; fresh exact heads/status are in
@@ -51,6 +51,7 @@ are in `campaign/status/2026-11-08-overnight/DISPATCH.md` and each gate’s
 - Gate124: 670sections/23947361bytes/SHA`79ca4ad99603e960e8eca889c637779b88e955991aa3a50f3e7f5efe97011f5e`; prompt issued in chat.
 - Gate125: 291sections/16566759bytes/SHA`431f8d4119cc69b4554308ed17575b434f73f3d4216be44d4db83f534556ede5`; prompt issued in chat.
 - Gate126: 261sections/15532664bytes/SHA`8b8ae13401e9af863bc2decdbac810283657def59e269e8caf52df4f2be0bd0c`; prompt issued in chat.
+- Gate127: 615sections/33386462bytes/SHA`acf98cfe3e58d5122487ab7fb6a64efde25a07b308cae98a623c687789f8633a`; prompt issued in chat.
 
 Original gate123359-section/SHA7fa prompt is **VOID**. Its later unissued SHA607f revision
 and gate125's unissued SHAb526 are superseded history. Use only each current publication.
