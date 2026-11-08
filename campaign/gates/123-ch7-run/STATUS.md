@@ -1,7 +1,7 @@
 # Gate123
 
-PUBLICATION CORRECTION IN PROGRESS; old prompt VOID; not dispatched.
+**Ready to dispatch: Codex gate123 for #243.**
 
-**Not yet clear to merge: #243 — corrected bundle and external audit pending.**
+**Not yet clear to merge: #243 — external audit not dispatched/closed.**
 
-Source/replay/ABI/seal/screen checks remain passed. Add independent MAC8 adoption anchors and actual helper inputs, then rebuild/verify and reissue the entire prompt.
+Verified published373-section bundle; full immutable pins/SHA/bytes are publication.json andprompt.md. Earlier359-section gate123 prompt is VOID; use only current373-section replacement.
