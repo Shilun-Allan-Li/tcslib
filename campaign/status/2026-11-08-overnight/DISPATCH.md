@@ -109,9 +109,9 @@ content in your reply.
 
 ## Still preparing
 
-- Gate121/#241: current33 copy comparison pending; nine-proof source/replay/metadata checks pass.
-- Gate122/#242: thirteen-target source now adopted; current153tail and final44comparison pending. Ten-root generation stays historical.
-- Gate127/#247: current48 copy comparison pending; final reader source/replay/full target checks pass.
+- Gate121/#241: current33 complete (8new/5gone, all13 dispositioned); final canonical packet prepared, publication pending.
+- Gate122/#242: thirteen-target source adopted; current153tail PASS/static0/31; final44comparison pending. Ten-root generation stays historical.
+- Gate127/#247: current48 complete (0new/0gone/0scores); final512-payload packet prepared, publication peer/binding pending.
 - Gate128/#249: current49 copy comparison pending; approved statement skeleton with six holes and reading/replay checks pass.
 
 The three paused API/import questions are recorded in HANDOFF§0; elapsed time is not approval. The original359-section gate123 prompt is VOID. Use only the full current replacement above.

@@ -1,0 +1,15 @@
+private lemma clCmp_idle {x : List Bool} (c : Cfg 4 Bool clCmpTM.State x)
+    (b : Bool) (hc : c.state = some (.inr (.inr b))) : clCmpTM.tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  change (FinTM.controlAction 0 (some (.inr (.inr b)))).apply c = c
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all
+
+/-- The native comparator returns at its first observed completion, within
+its scan bound, with the correct arithmetic verdict and all four heads restored.
+**Proof sketch.** Apply the public fixed-stop first-entry theorem with both
+completed verdicts in its stop predicate. It preserves the exact arithmetic
+verdict and all read-only words. The disjoint initial phase excludes zero
+duration. -/

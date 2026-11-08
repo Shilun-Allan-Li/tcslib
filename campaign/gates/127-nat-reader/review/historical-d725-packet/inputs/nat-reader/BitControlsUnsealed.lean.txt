@@ -1,0 +1,5 @@
+import TCSlib.Complexity.TuringMachine.CodeSimulator
+-- CONTROL bit_delta
+example (b : Bool) (n : ℕ) : Nat.bit b n = cond b (2 * n + 1) (2 * n) := rfl
+-- CONTROL bit_true_equation
+example (n : ℕ) : Nat.bit true n = 2 * n + 1 := rfl

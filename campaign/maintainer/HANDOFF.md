@@ -1,4 +1,4 @@
-# Handoff: the ch. 3–4 maintainer session moves to a cloud VM
+# Arora–Barak ch. 3–4 maintainer handoff
 
 Ruled by the user on 2026-11-04: the campaign moves to a cloud machine like the Pass–Shelat line,
 with the exchange in the `arora-barak-ch3-4/` folder of the orphan branch
@@ -23,13 +23,13 @@ No overnight source PR is merged. Next free gate: **129**;128 is reserved for La
 
 | PR | Gate | Pushed source HEAD | Current state |
 |---|---:|---|---|
-| #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`|9 FE helpers/4 owners; actual157 PASS/static0/35,50 selected exact types/all owned AX standard,9 full proof boundaries/22pairs; current33 screen pending |
-| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|FH10 plus3 mandatory BLIVE companions/8 owners;5 fresh+8 source-exact retained targets,23heads/46pairs and QA pass; actual153 tail fromwholeFH10/222 and final44 comparison running |
+| #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`|9 FE helpers/4 owners; actual157 PASS/static0/35,50 selected exact types/all owned AX standard,9 full proof boundaries/22pairs; current33 completed:2433/2110/462920,8new5gone,all13 deltas dispositioned; publication preparing |
+| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|FH10 plus3 mandatory BLIVE companions/8 owners;5 fresh+8 source-exact retained targets,23heads/46pairs and QA pass; actual153 tail fromwholeFH10/222 PASS/static0/31; final44 comparison running |
 | #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`|5 public run-law forwards;80 PASS/static0/31, full5 proof boundaries/12pairs and33 screen complete; **Ready to dispatch** |
 | #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`|3 public SafeRun closures plus1 private bridge;80 PASS/static0/31,4 full boundaries/14pairs, public3 exact/private1 standard,33 screen0new0gone; **Ready to dispatch** |
 | #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`|2 private Hardness head/tail closures;26 PASS/static0/0,2 exact types/30pairs,33 screen0new10gone; **Ready to dispatch** |
 | #246 |126|`48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`|1 local hinit reader;18 PASS/static0/0,3 public consumers exact, abstract hinit3guards/6pairs,33 screen0new1gone; **Ready to dispatch** |
-| #247 |127|`e16049ad20823b3e6abba171e328489746062080`|full canonOffset_spec now reads Nat.bit and codeBitsNat via equations;23 PASS/static0/0, private metadata exact,2 foreign TCS heads+Nat.bit/6pairs; new48 screen queued |
+| #247 |127|`e16049ad20823b3e6abba171e328489746062080`|full canonOffset_spec now reads Nat.bit and codeBitsNat via equations;23 PASS/static0/0, private metadata exact,2 foreign TCS heads+Nat.bit/6pairs; actual48 screen0new0gone0scores; final512-payload packet prepared/publication peer pending |
 | #249 |128|`1096e50b4e105392737ec52939b1db0cdbd9316d`|approved Ladner statement skeleton,17 declarations/6 mathematical holes;2 PASS/static0/6,895→896;17 AX records,whole9-head guard/18pairs/6 edge probes and QA pass;49 screen queued |
 
 All source branches use `codex/`; fresh exact heads/status are in
@@ -65,16 +65,24 @@ logs, input/output maps, all compiled source captures, source maps and local mer
 1. NJ1:local`50998b88fda9f5c9ae949735b70bc4c14b3a19fe`, full257 PASS/static0/45, whole895;
    initial seven heads, before the final CodeParser reader repair.
 2. NJ2:local`651c031dc8b571393ed54efff36b96245277a192`,23 PASS/static0/0 from the ENTIRE passed NJ1,
-   whole895; all seven current cleanup heads.
+   whole895; seven heads before the later FH13 live-prefix companions.
 3. NJ3:local`a3424c8d1469b4375d76b9b99b67cd34fe447d66`,2 PASS/static0/6 from the ENTIRE passed NJ2,
-   output896; all eight current source heads including Ladner.
+   output896; eight heads including Ladner, before the later FH13 companions.
 
 All input trees are unchanged and physically hash verified; no snapshot composition.
 Local validation merge commits are not pushed campaign merges. NJ2's raw generic log header
 keeps an old MAC8 label; its separate erratum and actual request/895 input maps identify NJ1.
-Current #242 companion repairs have advanced source to f3c8. Fresh current-seven/current-eight
-tails run from the whole NJ2/NJ3 respectively; their pending results must not be inferred from
-this prior chain. Do not adopt a campaign snapshot until Seyoon's actual merged Lean blobs match it.
+Current #242 companion repairs advanced source to f3c8. Both fresh complete-input tails pass:
+
+4. NJ4:local`eb7c317ee9a5f947c3cf22e8f1f66529015f87d2`,153 PASS/static0/31 from the ENTIRE passed NJ2,
+   output895; all seven final cleanup heads.
+5. NJ5:local`b9e76f4c9db3049e6e56b838715aedc945abd258`,154 PASS/static0/37 from the ENTIRE passed NJ3,
+   output896; all eight final heads. Six additional warnings are the intended Ladner holes.
+
+The lineage branches NJ2→NJ4 and NJ3→NJ5; no NJ3→NJ4 composition. Full compiled-source
+captures, actual static/log results, raw local commit/tree objects and all physical output
+hashes are preserved. No source PR is merged or externally cleared by these replays.
+Do not adopt a campaign snapshot until Seyoon's actual merged Lean blobs match it.
 
 ### Ladner and paused decisions
 
@@ -102,27 +110,26 @@ Three actual Seyoon questions remain **pending**, never inferred approved from e
 
 ### Running work and ordered continuation
 
-1. Finish the current #242153-module tail and current-seven/current-eight tails, keeping whole
-   inputs. All three BLIVE companions are source-bound/checked; preserve FH10/e0b/43 results
-   as historical. Final comparison is fresh BASE44/HEAD44 including Encoding/pairEncode.
-2. Finish serialized copy screens and packets121/122/127/128. Live outputs are
-   `/private/tmp/ab34-fe9-screen`, `/private/tmp/ab34-fh10-screen`, and
-   `/private/tmp/ab34-late-context-screen` (BASE/Nat48;Ladner49). Late original47 waiter was
-   stopped before any screen and archived with a wait-only disposition; it is not a failure.
+1. All source replays are now complete and pass. Finish publication121/127 using the
+   completed current33/current48 results; preserve every changed-pair disposition.
+2. Finish serialized final44 BASE/HEAD for FH13 and49 HEAD for Ladner, then packets122/128.
+   Live outputs: `/private/tmp/ab34-fh13-screen44` and
+   `/private/tmp/ab34-late-context-screen` (completed BASE/Nat48;Ladner49 queued).
+   The earlier47 waiter was stopped before execution and is wait-only history.
 3. Adopt frozen complete peer inputs, stage/verify/publish each Codex bundle, issue its full
-   prompt, and record that no user dispatch/merge is implied. Keep all new copy deltas scoped.
+   prompt, and record that no user dispatch/merge is implied. Keep all copy deltas scoped.
 4. On Seyoon's return, dispatch gates, review findings with subagents in parallel, fix majors
    or obtain the required ruling, then give **Clear to merge** only after gate closure and a
    current merged-tree replay/validity check. Preserve incoming Markdown verbatim.
 
-Local3 Lean slots/machine5, nice10/j4 and one global screen lock still bind. Three current
-root tails are running under that local budget. Use only leanelab/leanelab-o; never lake build. Every shell sources S/env.sh;
-Python only-I. Use whole APFS clones and unlink module outputs before compilation.
+Local3 Lean slots/machine5, nice10/j4 and one global screen lock still bind. No maintainer
+Lean job is running. Use only leanelab/leanelab-o; never lake build. Every shell sources
+S/env.sh; Python only-I. Use whole APFS clones and unlink outputs before compilation.
 
 R=`/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4`;S is the original
 `tcslib-scratch`. S/wt-hk→R;wt-xch→shared exchange;wt-camp→appab34-campaign-current;
 wt-restart-reader→oldappab34-campaign;wt-night-joint→appab34-overnight-joint;
-wt-ladner-statements→appab34-ladner-statements. All have the main package link.
+wt-ladner-statements→appab34-ladner-statements;wt-night-all8→appab34-overnight-all8. All have the main package link.
 Records push direct with fetch/rebase; exchange only our AB subtree, pull/rebase before
 push, no force. Preserve unrelated exchange untracked files and R's preexisting118 static
 folder. Main's untracked3sumapsp_example.lean must stay SHA

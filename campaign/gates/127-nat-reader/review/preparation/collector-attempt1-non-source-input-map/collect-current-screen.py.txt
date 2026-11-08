@@ -1,0 +1,19 @@
+from pathlib import Path
+import json,hashlib,re,shutil,sys
+O=Path('/private/tmp/ab34-gate127-reader-repair-draft');L=Path('/private/tmp/ab34-late-context-screen');h=lambda p:hashlib.sha256(p.read_bytes()).hexdigest();req=json.loads((L/'REQUEST.json').read_text());assert h(L/'REQUEST.json')==h(O/'screen/REQUEST.json') and len(req['population_common48'])==48
+p=L/'RESULTS.json'
+if not p.exists():print('CURRENT48_BASE_NAT_RESULTS_PENDING_NO_SCREEN_PASS_CLAIM');sys.exit(0)
+rows=json.loads(p.read_text());found={r['side']:r for r in rows}
+if not all(k in found for k in ['BASE','NAT']):print('CURRENT48_PARTIAL_RESULTS_ONLY_WAITING_NAT_NO_FREEZE');sys.exit(0)
+for side,key in [('BASE','BASE'),('HEAD','NAT')]:
+ row=found[key];assert row['exit']==0 and row['population']==48 and row['source_unchanged'] and row['source']==req['exports'][key]['source'];raw=L/(key+'.txt');assert h(raw)==row['sha256'];shutil.copy2(raw,O/'screen'/(side+'.txt'));(O/'screen'/(side+'-RESULT.json')).write_text(json.dumps(row,indent=2)+'\n')
+ for rel,sha in req['exports'][key]['sha256'].items():assert h(O/'source'/side/(rel+'.txt'))==sha
+if (L/'NAT-pairdiff.txt').exists():shutil.copy2(L/'NAT-pairdiff.txt',O/'screen/root-NAT-pairdiff.txt')
+shutil.copy2(p,O/'screen/RESULTS-observed.json');tool=L/'exports/NAT/scripts/copy-text-screen-v3.py';T=O/'screen/tool';T.mkdir(exist_ok=True);shutil.copy2(tool,T/tool.name);assert tool.read_bytes()==(L/'exports/BASE/scripts/copy-text-screen-v3.py').read_bytes()
+pat=re.compile(r'^\s+(\S+::\S+)\s+reproduces\s+(\S+::\S+): (\d+)/(\d+) = (\d+)%',re.M)
+def parse(p):
+ matches=pat.findall(p.read_text());x={(a,b):{'target':a,'source':b,'matched_chars':int(n),'source_chars':int(d),'percent':int(q)} for a,b,n,d,q in matches};assert len(matches)==len(x);return x
+A=parse(O/'screen/BASE.txt');B=parse(O/'screen/HEAD.txt');delta={'source_base':req['base'],'source_head':req['Nat_source'],'exact_same_source_population':48,'BASE_directed_pairs':len(A),'HEAD_directed_pairs':len(B),'new':[B[k] for k in sorted(B.keys()-A.keys())],'gone':[A[k] for k in sorted(A.keys()-B.keys())],'persistent':len(A.keys()&B.keys()),'directed_identity':'target,source; not ratio','no_global_semantic_absence_claim':True,'tool_sha256':h(T/tool.name),'BASE_raw_sha256':h(O/'screen/BASE.txt'),'HEAD_raw_sha256':h(O/'screen/HEAD.txt'),'all_actual48_source_SHA_maps_match_captures':True,'Ladner_absence_actual_tool_args_explicit_no_fake_empty_file':True};(O/'screen/pair-delta.json').write_text(json.dumps(delta,indent=2)+'\n');print(json.dumps(delta,indent=2))
+if not delta['new'] and not delta['gone']:
+ counts=[int(re.match(r'declarations screened: (\d+);',(O/'screen'/(side+'.txt')).read_text().splitlines()[0]).group(1)) for side in ['BASE','HEAD']];(O/'screen/pair-dispositions.json').write_text(json.dumps({'all_new_pairs':[],'all_BASE_only_pairs':[],'all_new_rows_dispositioned':True,'new_pair_count':0,'BASE_only_pair_count':0,'filtered_extraction_counts_BASE_HEAD':counts,'counts_not_source_interface_counts':True,'scope':'Exact same48 source files only; no global semantic absence or debt retirement; full raw stdout retains persistent ratios/order.'},indent=2)+'\n');print('ALL_NEW_ROWS_DISPOSITIONED_ZERO_NEW_ZERO_GONE')
+else:print('EXACT_NEW_OR_BASEONLY_ROWS_REQUIRE_SOURCE_INSPECTION_BEFORE_FREEZE')

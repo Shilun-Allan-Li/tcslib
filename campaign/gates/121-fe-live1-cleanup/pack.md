@@ -1,7 +1,7 @@
 # Gate121: nine fixed-live first-entry readers
 
-Prepared for Codex audit; publication remains pending the actual current33-file comparison.
-**Not yet clear to merge: #241 — final comparison/publication and external audit pending.**
+Prepared for Codex audit with the completed actual current33-file comparison.
+**Not yet clear to merge: #241 — external audit pending.**
 PR https://github.com/Shilun-Allan-Li/tcslib/pull/241; branch codex/ab34-fe-live1.
 BASE `9b5dcf46408db681bcbc721930ef2203fa6bc47d`/whole MAC8; source `d64dff4fbef865d815c6a561ce8037ea1bae07a2`. Final records/exchange/bundle bindings
 will be supplied by the exchange README and complete issued prompt. Frozen preparation
@@ -58,22 +58,52 @@ The recorded FE-LIVE-1 kind covers existing singleton/predicate, initial-exclusi
 
 Only these nine enumerated instances retire on merge. Wider FE-LIVE-1, the seven SG1 retention kinds, first-None and other separately tracked families retain their recorded scope/owner/schedule. No global absence or family retirement is claimed. Complete ledger/backlog/maintainer context is supplied at the observed draft-input records pin; root must bind final records.
 
-## Fresh lints and scheduled screen
+## Fresh lints and completed current33 screen
 
 Actual command/exit receipts exist for both phases. A retained adapter calls the unchanged canonical campaign-lint functions on exactly four owners with check8b: **exit 0 / 0; 0 FAIL / 4 WARN** each. Three size warnings and EXP's three named public-definition reading warnings are inherited, not newly accepted.
 
 Direct canonical style lint actually exits **1 / 1**, **65 → 64 findings**. Every HEAD finding identity exists at BASE after normalizing only source locations and line/proof-length counts. There is no new identity; enumCont_first_anchor's missing-sketch finding disappears. Every literal row and uncapped comparison key is supplied. These are not clean style exits or a waiver of inherited defects. File size alone is not a split/delay driver under the standing ruling.
 
-The scheduled screen population is exactly **33 files**, fully captured at both phases. Original BASE is exact 9b5 with the same helper/population: **2,433 declarations / 2,107 pairs / 463,236 reproduced chars**, actual exit 0. Every BASE pair endpoint maps to full source and original position. HEAD's lexical capture preparation also indexes 2,433 eligible declarations; **this is not HEAD screen execution**.
+The actual screen population is exactly **33 files**, fully captured at both phases.
+BASE is exact 9b5 with the same helper/population: **2,433 eligible declarations /
+2,107 directed pairs / 463,236 reproduced chars**, actual exit0. Current d64 HEAD
+actually completes exit0 with **2,433 eligible declarations / 2,110 directed pairs /
+462,920 reproduced chars**. Its full stdout SHA256 is
+`0502ff9353118de579beb9302b16b4d54cdb43a7ffa6936a205697551e8ac026`.
+The newly executed request and all66 literal Git source bindings identify d64;
+equality of this raw stdout with the old a93 result is not used to infer execution.
+The source was unchanged throughout the current execution.
 
-**New d64 HEAD 33-file screen and pairdiff: ROOT PENDING.** Old a93 export121/screen121 remains immutable/historical and is not substituted. This preparer started no screen. Root will run the NEW export/request under the shared screen lock and add full result, command/exit, hashes, counts, pairdiff and dispositions before Ready. Additional validation context is explicitly classified and not represented as screened. There is no whole-library copy-absence claim.
+`screen-completion/` supplies the actual command/request/exit/result, full stdout,
+pairdiff/tool, all66 source captures and uncapped endpoint maps, 33 selected literal
+spans, 30 complete endpoint captures, acknowledgment bindings and every disposition.
+There are **8 new / 5 BASE-only directed pairs; all2,102 persistent ratios are exact,
+with0 changed scores**. Every one of the13 changed pairs is source-reviewed in
+`screen-completion/all13-pair-dispositions.md` and its JSON companion.
+
+Three new Hardness caller-to-clFirst rows are canonical call/result glue plus
+individually retained pre-existing positive-time exclusions. The five new InputCall
+rows share the public zero-action movement/control equations and done-configuration
+identity glue with unchanged old Hardness idle proofs. Their shared zero-action
+fixedness step is separately bound from the terminal negative-movement field goal.
+No donor machine, search, counter, bank or dispatcher implementation is copied.
+The old donor idle proofs retain their existing step unfolds outside the nine
+changed targets: they gain no opacity exemption, new acknowledgment or retirement.
+The five gone edges lose the replaced least-time/minimality/endpoint reproofs.
+
+The numerical comparison is bounded to this population and directional filter;
+all unchanged historical scores are preserved, without claiming a semantic audit
+of every old pair or global proof-family absence. Complete source-based dispositions
+preserve the exact accepted FE-LIVE-1 schedule and its exclusions. The original
+a93 export121/screen121 remains immutable history; it substitutes for no current
+d64 execution. Additional context is classified rather than represented as screened.
 
 ## Specific audit questions
 
 1. Verify literal endpoint, stop predicate, deadline and positivity preservation in all nine calls, without weakened guards or hidden new hypotheses.
 2. Check source freeze, the exact 50-type selection, 64-public-auxiliary exclusion bound and every uncapped disposition/AX row. Do not promote fingerprint matches to exact private-type equality.
 3. Review full ordinary-definition scopes and effective controls, exact transport and the Hardness prefix limit. Search inline steps and explicit definition arguments as well as whole statements. Imported theorem proof values are not a consumer obligation.
-4. Review the forthcoming exact-population screen/pairdiff cumulatively against the ledger. Flag uncatalogued copies or imported-definition debt at required severity; no baseline-restoration exemption or new waiver follows.
+4. Review the completed exact-population screen/pairdiff cumulatively against the ledger. Flag uncatalogued copies or imported-definition debt at required severity; no baseline-restoration exemption or new waiver follows.
 5. Check at least three concrete edge cases in unchanged specifications: T=0/possible first time 0; empty native input/boundary heads; and k=0 or zero width/count where hypotheses permit. Keep actual positivity premises. Distinguish source reasoning from executed checks; do not fill mathematics.
 
 Use the supplied policy, workflow, TEMPLATE and maintainer rules. This audits trusted statements/definitions/debt, not existing tactic correctness. No new definition or sorried owner theorem is introduced. The 35 inherited downstream admissions are replay accounting, not a commissioned fill. No blanket approval.

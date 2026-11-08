@@ -1,9 +1,7 @@
-# Gate 127 — nat-reader
+# Gate127
 
-PREPARING for morning Codex audit; NOT DISPATCHED; no verdict.
+Publication in progress; no external audit dispatched.
 
-**Not yet clear to merge: #247 — final validation/packet and external audit pending.**
+**Not yet clear to merge: #247 — external audit pending.**
 
-Pushed source `d725e9fa76c81623e95c350250853bec511ddc3c`; campaign Lean `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / whole MAC8.
-
-Source remains a separate existing-API/header/import-preserving mechanical family.
+Source `e16049ad20823b3e6abba171e328489746062080`; actual23/0/static0/0.
