@@ -9,8 +9,12 @@ debt kinds remain acknowledged, not extended by these mechanical fixes.
 Fresh source-pinned chained replays passed: MSG5full329/static0/66; MSG6Hardness26/static0/0;
 MSG7Tautology+ClassNP2/static0/0. Each uses a whole complete predecessor copy and enforced
 Lean4.25 -j4/nice10/slot locking. The prior63-head25-file screen actually passed and is
-historical after the Taut change. Fresh final79-head25-file screen and final compiledHEAD
-comparison are still required before issue; Codex round3 is selected, not dispatched.
+historical after the Taut change. Final79 full25 HEAD screen PASSED:2013→1995candidates/646340→645729characters;
+all35delta rows are dispositioned. Complete final compiler comparison7101→7063 preserves
+all1351nonprivate metadata/type/AX rows and168owned simp rules;43changed/replacement roots
+and93descendants are standardAX, nine inherited Primitives sorry closures unchanged.
+Codex round3 candidate is complete and undergoing independent peer review before final
+canonical adoption/render/publication. It is selected, not yet dispatched.
 
 Actual Taut native/scoped14-definition seal/28 paired controls PASS; the previous sixteen
 root/encoding scopes and standardAX evidence retain their exact source pins. The source

@@ -1,0 +1,23 @@
+@Complexity.f6_prefix : ∀ [hF6Rewind : Fintype Turing.RewindPhase] [hF6Seek : Fintype Turing.SeekPhase]
+  (c : Turing.EffectiveMachineCode),
+  ∃ K P x x A finish C,
+    ∀ (α : List Bool),
+      ∃ T₀,
+        ∀ (u x : List Bool),
+          let ℓ := 2 * u.length + 2 + (2 * α.length + 2);
+          let z := Turing.pairEncode u (Turing.pairEncode α x);
+          have hp := ⋯;
+          ∃ T ≤ C * (ℓ + 1) * (T₀ + 2) + 4 * ℓ + 11,
+            Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg z) T =
+                { state := some finish, inputPos := ⟨ℓ + 1, hp⟩,
+                  workTapes := fun i =>
+                    Fin.lastCases (motive := fun x => ℤ → Option Bool) (Turing.FinTM.bufferTape (List.replicate ℓ true))
+                      (fun j =>
+                        if j = 1 then Turing.FinTM.bufferTape (Turing.tableBitsK (c.decode α).tm.tr)
+                        else
+                          if j = 2 then fun p => Turing.FinTM.bufferTape (Turing.unaryFin (c.decode α).tm.q₀) (p - 2)
+                          else fun x => none)
+                      i,
+                  workTapePos := fun x => 0, output := [] } ∧
+              ∀ v < T, (Turing.MultiTapeTM.runFrom (Turing.MultiTapeTM.initCfg z) v).state ≠ some finish
+'Complexity.space_universal' depends on axioms: [propext, Classical.choice, Quot.sound]

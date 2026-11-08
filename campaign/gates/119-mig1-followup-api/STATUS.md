@@ -1,3 +1,12 @@
+# Gate119 — round2 PASS received, independent return review underway
+
+**Not yet clear to merge: #234.** Round2 report is preserved verbatim as findings-r2.md:
+PASS0blockers/0majors/0minors/17notes. Independent return review and canonical per-note
+closure records are underway; source is unchanged atf1 and passedmfup2 context still applies.
+Original findings/packets/rulings remain immutable. This receipt is not yet gate closure.
+
+## Prior publication and validation history
+
 # Gate119 — Codex round2 Ready to dispatch
 
 **Not yet clear to merge: #234.** Round1 findings are preserved verbatim and independently

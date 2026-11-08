@@ -1,0 +1,233 @@
+{
+  "head": "79e7c63a6bfa5f002663924f5c7d4e72db705026",
+  "touched_files": [
+    "TCSlib/Complexity/ClassNP/SAT.lean",
+    "TCSlib/Complexity/ClassNP/Tautology.lean",
+    "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+    "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean"
+  ],
+  "public_statement": "theorem exists_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool) (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁) (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) : ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) :=",
+  "public_home": "TCSlib/Complexity/TuringMachine/Composition.lean",
+  "method": "All five full sources: literal operational/image hooks, complete depth-aware signature shape, client call and inline closing inspection. Raw rg output retained separately. Candidate enumeration plus inspection, not a semantic exhaustiveness claim.",
+  "exact_raw_contract_members": 2,
+  "new_raw_rederivations_eligible_for_mechanical_repoint": 0,
+  "candidates": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.sat_comp_on_image",
+      "header": "private lemma sat_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool) (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁) (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) : ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) :=",
+      "shape_candidate": true,
+      "hooks": [
+        "FinTM.exists_comp_on_image",
+        "sat_comp_on_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": true,
+      "source": "/-- Composition of a function machine with a machine correct on its image\n(`FinTM.exists_comp_on_image`). -/\nprivate lemma sat_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)\n    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)\n    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :\n    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2 * T₁ n + T₂ n + 2) :=\n  FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU",
+      "source_sha256": "ab9f6bc6b055f436a049b6270925191120038d47daaff23731bcd12818bd5bc8",
+      "disposition": "Same raw contract, ALREADY a direct citation of FinTM.exists_comp_on_image. Retain compatibility name/header; no repair needed for this member."
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.satSafeValue_poly",
+      "header": "private lemma satSafeValue_poly : PolyTimeComputable (fun z => [satSafeValue z]) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "FinTM.exists_comp_on_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- The evaluator is polynomial on all safe requests.\n\n**Proof sketch.** Use the evaluator only on the serialized inputs certified by\n`satSafe_spec`. The request emitter's own output bound majorizes their lengths;\nthe original-input composition contract preserves the budget's argument. -/\nprivate lemma satSafeValue_poly : PolyTimeComputable (fun z => [satSafeValue z]) := by\n  obtain ⟨E, A, hE⟩ := satEval_computes\n  obtain ⟨M, C, e, hM⟩ := sat_pipeline_poly.2.2.2\n  have heval (z : List Bool) : E.ComputesInTime (satSafe z) [satSafeValue z]\n      (A * (C * (z.length + 1) ^ e + 1)) := by\n    obtain ⟨φ, u, hrequest, hvars, hvalue⟩ := satSafe_spec z\n    have h := hE φ u hvars\n    rw [← hrequest, hvalue] at h\n    have hlen : (satSafe z).length ≤ C * (z.length + 1) ^ e := by\n      have hout := ((FinTM.computesInTime_iff _ _ _ _).mp (hM z)).2\n      simpa only [hout] using M.tm.output_length_le z (C * (z.length + 1) ^ e)\n    exact h.mono (Nat.mul_le_mul_left A (by omega))\n  obtain ⟨N, hN⟩ := FinTM.exists_comp_on_image M E satSafe (fun z => [satSafeValue z])\n    (fun n => C * (n + 1) ^ e) (fun n => A * (C * (n + 1) ^ e + 1)) hM heval\n  refine ⟨N, 2 * C + A * (C + 1) + 2, e, fun z => (hN z).mono ?_⟩\n  have hp : 1 ≤ (z.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)\n  have ha : A ≤ A * (z.length + 1) ^ e := by\n    simpa using Nat.mul_le_mul_left A hp\n  dsimp only\n  simp only [Nat.add_mul, Nat.mul_add, Nat.mul_one, Nat.mul_assoc]\n  omega",
+      "source_sha256": "b43ad6cf357cc11447c2651abb774aaa587197209d0296a10ff8121e5ec1753e",
+      "disposition": "Inline call ALREADY uses the public raw on-image existential theorem; surrounding client arithmetic/computation is not another implementation of that raw theorem."
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.sat_pt_numVars",
+      "header": "private lemma sat_pt_numVars : PolyTimeComputable (fun x => List.replicate (CNF.decode x).numVars true) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "sat_comp_on_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- The exact unary fresh cursor is polynomial-time computable on all strings.\n**Proof sketch.** Canonicalize before running the intercepted maximum pass.\nThe canonical word has length at most `n+1`; compose on that certified image,\nso no behavior of the maximum machine on malformed input is assumed. -/\nprivate lemma sat_pt_numVars : PolyTimeComputable (fun x => List.replicate (CNF.decode x).numVars true) := by\n  obtain ⟨M, C, e, hM⟩ := satStreamCanonical_poly\n  have hu (x : List Bool) : satMaxTM.ComputesInTime (satStreamCanonical x)\n      (List.replicate (CNF.decode x).numVars true) (4 * (x.length + 1) + 6) := by\n    rw [satStreamCanonical_spec]\n    apply (satMax_computes (CNF.decode x)).mono\n    have hl : (CNF.serialize (CNF.decode x)).length ≤ x.length + 1 := by\n      rw [← satStreamCanonical_spec]\n      unfold satStreamCanonical\n      split <;> simp <;> omega\n    omega\n  obtain ⟨N, hN⟩ := sat_comp_on_image M satMaxTM satStreamCanonical\n    (fun x => List.replicate (CNF.decode x).numVars true)\n    (fun n => C * (n + 1) ^ e) (fun n => 4 * (n + 1) + 6) hM hu\n  refine ⟨N, 2 * C + 12, e + 1, fun x => (hN x).mono ?_⟩\n  have he := Nat.mul_le_mul_left (2 * C)\n    (Nat.pow_le_pow_right (Nat.succ_pos x.length) (show e ≤ e + 1 by omega))\n  have h1 : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by\n    simpa using Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 ≤ e + 1 by omega)\n  simp only [Nat.succ_eq_add_one] at he\n  dsimp only\n  calc\n    _ = 2 * C * (x.length + 1) ^ e + 4 * (x.length + 1) + 8 := by ring\n    _ ≤ 2 * C * (x.length + 1) ^ (e + 1) + 12 * (x.length + 1) ^ (e + 1) := by omega\n    _ = _ := by ring",
+      "source_sha256": "5d5fa4a83236db3796965ae5112f0daf081b59dd122f1416c7e6db70d345139d",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "Complexity.sat_pt_drop",
+      "header": "private lemma sat_pt_drop : PolyTimeComputable (fun z => (satStreamSnd z).drop (satStreamFst z).length) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "sat_comp_on_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- Suffix extraction is polynomial on every word, with malformed pair\ninputs interpreted through the two empty-default projections.\n**Proof sketch.** Re-encode the two projections, then use the native dropper\nonly on that valid-pair image. The re-encoder's proved output bound pays for\nthe linear dropper run and gives a polynomial original-input envelope. -/\nprivate lemma sat_pt_drop : PolyTimeComputable\n    (fun z => (satStreamSnd z).drop (satStreamFst z).length) := by\n  let f (z : List Bool) := pairEncode (satStreamFst z) (satStreamSnd z)\n  obtain ⟨M, C, e, hM⟩ := sat_pt_pair sat_pt_fields.1 sat_pt_fields.2\n  have hlen (z : List Bool) : (f z).length ≤ C * (z.length + 1) ^ e := by\n    have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hM z)).2\n    simpa only [ho, f] using M.tm.output_length_le z (C * (z.length + 1) ^ e)\n  have hu (z : List Bool) : satDropTM.ComputesInTime (f z)\n      ((satStreamSnd z).drop (satStreamFst z).length) (3 * (C * (z.length + 1) ^ e + 1)) :=\n    (satDrop_computes _ _).mono (Nat.mul_le_mul_left 3 (Nat.add_le_add_right (hlen z) 1))\n  obtain ⟨N, hN⟩ := sat_comp_on_image M satDropTM f\n    (fun z => (satStreamSnd z).drop (satStreamFst z).length)\n    (fun n => C * (n + 1) ^ e) (fun n => 3 * (C * (n + 1) ^ e + 1)) hM hu\n  refine ⟨N, 5 * C + 5, e, fun z => (hN z).mono ?_⟩\n  have h1 : 1 ≤ (z.length + 1) ^ e := Nat.one_le_pow _ _ (Nat.succ_pos _)\n  dsimp only\n  calc\n    _ = 5 * C * (z.length + 1) ^ e + 5 := by ring\n    _ ≤ 5 * C * (z.length + 1) ^ e + 5 * (z.length + 1) ^ e := by omega\n    _ = _ := by ring",
+      "source_sha256": "2c784c7f70bcca7cca62cdc6d5b8a50ff8884ca36760f16cd3eadd54fc889b81",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "name": "Complexity.taut_comp_on_image",
+      "header": "private lemma taut_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool) (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁) (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) : ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2*T₁ n+T₂ n+2) :=",
+      "shape_candidate": true,
+      "hooks": [
+        "FinTM.exists_comp_on_image",
+        "taut_comp_on_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": true,
+      "source": "/-- Quantitative buffered composition with a second-stage contract only on\nthe actual first-stage image.\n\n**Proof sketch.** Apply the public image-composition theorem with the two\ngiven machine contracts and their original-input time budgets. -/\nprivate lemma taut_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)\n    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)\n    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :\n    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2*T₁ n+T₂ n+2) := by\n  exact FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU",
+      "source_sha256": "f92ce1c4524f1a6c054bde9bf4defd3f57acebf2e8af07f16e794dd6e02e35e6",
+      "disposition": "Same raw contract, NOW a direct public citation after the mechanical79 repair. Header/name/budget preserved; the duplicated raw implementation is removed in the candidate and retires on merge. This source-only check is not another Lean elaboration."
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "name": "Complexity.taut_verifier_mem_P",
+      "header": "private lemma taut_verifier_mem_P : tautVerifier ∈ P :=",
+      "shape_candidate": false,
+      "hooks": [
+        "taut_comp_on_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- The verifier is polynomial-time: P10's cubic split followed by the\nlinear syntax/evaluation machine, combined with buffered output.\n\n**Proof sketch.** Let the library split constant be `A`. The image contract\ncosts at most `40*(n+1)`, and buffered composition costs at most\n`2*A*(n+1)^3+40*(n+1)+2`, bounded by `(2*A+42)*(n+1)^3`.\nThe singleton output is exactly the verifier-language indicator. -/\nprivate lemma taut_verifier_mem_P : tautVerifier ∈ P := by\n  classical\n  obtain ⟨S, A, hS⟩ := FinTM.computesFunInTime_splitSolve 1 1\n  have hsplit : S.ComputesFunInTime tautSplit (fun n => A*(n+1)^3) := by\n    convert hS using 1\n    funext z\n    unfold tautSplit\n    cases solveSplit 1 1 z.length <;> rfl\n  obtain ⟨N, hN⟩ := taut_comp_on_image S tautTM tautSplit (fun z => [tautVerifierBit z])\n    (fun n => A*(n+1)^3) (fun n => 40*(n+1)) hsplit taut_machine_split\n  have hind (z : List Bool) : MultiTapeTM.indicator tautVerifier z = tautVerifierBit z := by\n    unfold MultiTapeTM.indicator\n    split\n    · rename_i h\n      exact (show tautVerifierBit z = true from h).symm\n    · rename_i h\n      have hb : tautVerifierBit z ≠ true := h\n      exact (Bool.eq_false_iff.mpr hb).symm\n  refine mem_P_iff.mpr ⟨2*A+42, 3, N, fun z => ?_⟩\n  change N.ComputesInTime z [MultiTapeTM.indicator tautVerifier z] _\n  rw [hind]\n  apply (hN z).mono\n  have hlin : z.length+1 ≤ (z.length+1)^3 := by\n    simpa only [Nat.pow_one] using Nat.pow_le_pow_right (Nat.succ_pos z.length)\n      (show 1 ≤ 3 by omega)\n  have hone : 1 ≤ (z.length+1)^3 := Nat.one_le_pow _ _ (Nat.succ_pos _)\n  change 2*(A*(z.length+1)^3)+40*(z.length+1)+2 ≤ (2*A+42)*(z.length+1)^3\n  calc\n    _ ≤ 2*(A*(z.length+1)^3)+40*(z.length+1)^3+2*(z.length+1)^3 := by omega\n    _ = _ := by ring",
+      "source_sha256": "bb3a59bf9db119c4c17518a3a059163317d43b55ea5bc79a8e8302127545bf5a",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clQueryCode_machine",
+      "header": "private lemma clQueryCode_machine {l : ℕ} (pos neg : Fin l) (hne : pos ≠ neg) : ∃ (Q : FinTM Bool) (c e : ℕ), ∀ (row : ℕ → Fin l → List Bool) (target : Fin 2 → List Bool) (N W U : ℕ) (tail : List Bool), (∀ s < N, ∀ i, (row s i).length ≤ W) → (∀ i, (target i).length ≤ W) → (∀ i, (clQueryWords l target (clRows row N ++ tail) N i).length ≤ U) → let arg := clFields (List.ofFn (clQueryWords l target (clRows row N ++ tail) N)) ++ [] Q.ComputesInTime arg (clLastCode ((List.range N).map (fun s => clMatchFlag pos neg (row s) target))) (2 * (2 * arg.length + 9 + (l + 5) * (3 * U + 7) + N * (l * (5 * W + 7) + 2 * W + 7)) + c * (N + 1) ^ e + 2) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "FinTM.bufferedCompTM",
+        "FinTM.bufferedCompTM_computesInTime"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- The last marked source time is returned by one native transducer with\nall flag generation, reverse search and binary output work in its bound.\nOnly canonical query inputs are promised; later callers must establish them. -/\nprivate lemma clQueryCode_machine {l : ℕ} (pos neg : Fin l) (hne : pos ≠ neg) :\n    ∃ (Q : FinTM Bool) (c e : ℕ),\n      ∀ (row : ℕ → Fin l → List Bool) (target : Fin 2 → List Bool) (N W U : ℕ) (tail : List Bool),\n        (∀ s < N, ∀ i, (row s i).length ≤ W) →\n        (∀ i, (target i).length ≤ W) →\n        (∀ i, (clQueryWords l target (clRows row N ++ tail) N i).length ≤ U) →\n        let arg := clFields (List.ofFn (clQueryWords l target (clRows row N ++ tail) N)) ++ []\n        Q.ComputesInTime arg\n          (clLastCode ((List.range N).map (fun s => clMatchFlag pos neg (row s) target)))\n          (2 * (2 * arg.length + 9 + (l + 5) * (3 * U + 7) +\n            N * (l * (5 * W + 7) + 2 * W + 7)) + c * (N + 1) ^ e + 2) := by\n  obtain ⟨L, c, e, hL⟩ := clLastCode_native\n  refine ⟨FinTM.bufferedCompTM (clQueryFlagsTM pos neg) L, c, e, ?_⟩\n  intro row target N W U tail hRow hTarget hWords\n  have hQ := clQueryFlags_compute pos neg hne row target N W U tail hRow hTarget hWords\n  have h := FinTM.bufferedCompTM_computesInTime (clQueryFlagsTM pos neg) L hQ\n    (hL ((List.range N).map (fun s => clMatchFlag pos neg (row s) target)))\n  have hlen : ((List.range N).map (fun s => clMatchFlag pos neg (row s) target)).length ≤\n      2 * (clFields (List.ofFn (clQueryWords l target (clRows row N ++ tail) N)) ++ []).length +\n        9 + (l + 5) * (3 * U + 7) + N * (l * (5 * W + 7) + 2 * W + 7) := by\n    rw [← ((FinTM.computesInTime_iff _ _ _ _).mp hQ).2]\n    exact (clQueryFlagsTM pos neg).tm.output_length_le _ _\n  apply h.mono\n  simp only [List.length_map, List.length_range] at hlen ⊢\n  omega",
+      "source_sha256": "0d5a90de8f6e2d1b857cb1224da41dbf6d4b0cad2495137e8007c169e9db6681",
+      "disposition": "Already applies published operational buffered-composition computation result in a client machine/class proof. No second matching raw existential reconstruction found in this source block."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clNative_image",
+      "header": "private lemma clNative_image {f g : List Bool → List Bool} (hf : PolyTimeComputable f) (B : FinTM Bool) (b r : ℕ) (hB : ∀ x, B.ComputesInTime (f x) (g x) (b * ((f x).length + 1) ^ r)) : PolyTimeComputable g :=",
+      "shape_candidate": false,
+      "hooks": [
+        "FinTM.bufferedCompTM",
+        "FinTM.bufferedCompTM_computesInTime",
+        "clNative_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- Polynomial composition needs correctness of the second machine only\non the actual image of the first. Its native startup still uses the public\nbuffered composition, and the complete intermediate word is charged.\n**Proof sketch.** Bound the produced word by the first runtime. Substitute\nthat size into the second monomial, increase both exponents to their common\nproduct bound, and apply the per-input buffered-composition ledger. -/\nprivate lemma clNative_image {f g : List Bool → List Bool} (hf : PolyTimeComputable f)\n    (B : FinTM Bool) (b r : ℕ)\n    (hB : ∀ x, B.ComputesInTime (f x) (g x) (b * ((f x).length + 1) ^ r)) :\n    PolyTimeComputable g := by\n  obtain ⟨A, a, d, hA⟩ := hf\n  refine ⟨FinTM.bufferedCompTM A B, 2 * a + b * (a + 1) ^ r + 2, d * (r + 1), ?_⟩\n  intro x\n  have hc := FinTM.bufferedCompTM_computesInTime A B (hA x) (hB x)\n  apply hc.mono\n  have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hA x)).2\n  have hlen : (f x).length ≤ a * (x.length + 1) ^ d := by\n    simpa only [ho] using A.tm.output_length_le x (a * (x.length + 1) ^ d)\n  have hpos : 1 ≤ (x.length + 1) ^ d := Nat.one_le_pow d _ (by omega)\n  have hword : (f x).length + 1 ≤ (a + 1) * (x.length + 1) ^ d := by rw [Nat.add_mul, Nat.one_mul]; omega\n  have hpow := Nat.pow_le_pow_left hword r\n  rw [Nat.mul_pow, ← Nat.pow_mul] at hpow\n  have hd := Nat.pow_le_pow_right (Nat.succ_pos x.length)\n    (show d ≤ d * (r + 1) by rw [Nat.mul_add, Nat.mul_one]; omega)\n  have hdr := Nat.pow_le_pow_right (Nat.succ_pos x.length)\n    (show d * r ≤ d * (r + 1) by rw [Nat.mul_add, Nat.mul_one]; omega)\n  have hm := Nat.mul_le_mul_left ((a + 1) ^ r) hdr\n  have hcost := Nat.mul_le_mul_left b (hpow.trans hm)\n  have hfirst := Nat.mul_le_mul_left (2 * a) hd\n  have hlast : 1 ≤ (x.length + 1) ^ (d * (r + 1)) := Nat.one_le_pow _ _ (by omega)\n  calc\n    _ ≤ 2 * (a * (x.length + 1) ^ d) + b * ((f x).length + 1) ^ r + 2 := by\n      dsimp only\n      omega\n    _ ≤ (2 * a) * (x.length + 1) ^ (d * (r + 1)) +\n        (b * (a + 1) ^ r) * (x.length + 1) ^ (d * (r + 1)) +\n        2 * (x.length + 1) ^ (d * (r + 1)) := by\n      exact Nat.add_le_add (Nat.add_le_add\n        (by simpa only [Nat.mul_assoc] using hfirst)\n        (by simpa only [Nat.mul_assoc] using hcost)) (Nat.mul_le_mul_left 2 hlast)\n    _ = _ := by ring",
+      "source_sha256": "186f0e1092bbe9dd6edf87cbdde1ae53c0962c2b77830192e890b0be95ef05c9",
+      "disposition": "Different CLASS-level polynomial packaging: second machine correct only on f image with budget measured at |f x|. Already uses published bufferedCompTM computation fact; remaining witness/majorant packaging is not the same raw existential contract, not covered automatically by seven retention kinds, and not proved an unavoidable new API."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clRecords_native",
+      "header": "private lemma clRecords_native (M : FinTM Bool) (C e c A d : ℕ) : PolyTimeComputable (fun x => let m := x.length + C * (x.length + 1) ^ e let T := c * (A * (m + 1) ^ d + 1) ^ 2 clRecords M (List.replicate m false) (T + 1)) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "clNative_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- The inclusive trajectory is a native polynomial-time output of the\noriginal instance, not merely a prepared recorder configuration.\n**Proof sketch.** Consume the sealed arithmetic header and its native\nlayout producer, then run the bounded actual recorder/replay on that exact\nimage. The per-image composition theorem pays for the full header, every\nload/reset, recording, capture and output replay. -/\nprivate lemma clRecords_native (M : FinTM Bool) (C e c A d : ℕ) :\n    PolyTimeComputable (fun x =>\n      let m := x.length + C * (x.length + 1) ^ e\n      let T := c * (A * (m + 1) ^ d + 1) ^ 2\n      clRecords M (List.replicate m false) (T + 1)) := by\n  apply clNative_image (clRecordArgument_native M C e c A d) (clRecordOutputTM M)\n    (10 + 10 * ((clRecTM M).k + 4) + (8 * clRecFields M + 7)) 2\n  intro x\n  rw [clHeaderLayout_exact]\n  simpa only [List.append_nil] using clRecordOutput_quadratic M\n    (List.replicate (x.length + C * (x.length + 1) ^ e) false)\n    (c * (A * (x.length + C * (x.length + 1) ^ e + 1) ^ d + 1) ^ 2)\n    (fun i : Fin 4 => if i = 0 then x else if i = 1 then (C * (x.length + 1) ^ e).bits\n      else if i = 2 then (x.length + C * (x.length + 1) ^ e).bits\n      else (c * (A * (x.length + C * (x.length + 1) ^ e + 1) ^ d + 1) ^ 2).bits)",
+      "source_sha256": "fa8fd0417e9633d280305cefd309c23ed66b946565e2f6b4b60301b4a893a409",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clTrajectory_native",
+      "header": "private lemma clTrajectory_native (M : FinTM Bool) (y : List Bool → List Bool) (T : List Bool → ℕ) (hy : PolyTimeComputable y) (hT : PolyTimeComputable (fun x => List.replicate (T x) true)) : PolyTimeComputable (fun x => clRecords M (y x) (T x + 1)) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "clNative_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- General trajectory production consumes the same banked recorder for\nevery native reference input and unary horizon; no recomputed semantics\nor unbounded numeric conversion is used. -/\nprivate lemma clTrajectory_native (M : FinTM Bool) (y : List Bool → List Bool)\n    (T : List Bool → ℕ) (hy : PolyTimeComputable y)\n    (hT : PolyTimeComputable (fun x => List.replicate (T x) true)) :\n    PolyTimeComputable (fun x => clRecords M (y x) (T x + 1)) := by\n  apply clNative_image (clRecordWords_native M y T hy hT) (clRecordOutputTM M)\n    (10 + 10 * ((clRecTM M).k + 4) + (8 * clRecFields M + 7)) 2\n  intro x\n  simpa only [List.append_nil] using clRecordOutput_quadratic M (y x) (T x) (fun _ => [])",
+      "source_sha256": "70b1b698583d0b5c83ead7fa1b505cf4a77666cf4f948a3585551a3afc8086d8",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clFinalCount_native",
+      "header": "private lemma clFinalCount_native (M : FinTM Bool) (i : Fin (clRecFields M)) (y : List Bool → List Bool) (T : List Bool → ℕ) (hy : PolyTimeComputable y) (hT : PolyTimeComputable (fun x => List.replicate (T x) true)) : PolyTimeComputable (fun x => (clCounts M (y x) (T x) i).bits) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "clNative_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- Each final counter field is a native function of the original query\ninput. Keeping the time unary avoids any unsupported exponential clock. -/\nprivate lemma clFinalCount_native (M : FinTM Bool) (i : Fin (clRecFields M))\n    (y : List Bool → List Bool) (T : List Bool → ℕ) (hy : PolyTimeComputable y)\n    (hT : PolyTimeComputable (fun x => List.replicate (T x) true)) :\n    PolyTimeComputable (fun x => (clCounts M (y x) (T x) i).bits) := by\n  apply clNative_image (clRecordWords_native M y T hy hT) (clCountOutputTM M i)\n    (10 + 10 * ((clRecTM M).k + 4) + (8 * clRecFields M + 7)) 2\n  intro x\n  simpa only [List.append_nil] using clCountOutput_quadratic M i (y x) (T x) (fun _ => [])",
+      "source_sha256": "58e5d44871eaac2ab1050428041ca7f207f0fe14e246aeafe302a93f713c85d7",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clSearch_native",
+      "header": "private lemma clSearch_native (M : FinTM Bool) (pos neg : Fin (clRecFields M)) (hne : pos ≠ neg) (y : List Bool → List Bool) (T : List Bool → ℕ) (hy : PolyTimeComputable y) (hT : PolyTimeComputable (fun x => List.replicate (T x) true)) : PolyTimeComputable (fun x => clLastCode ((List.range (T x)).map (fun s => clMatchFlag pos neg (fun i => (clCounts M (y x) s i).bits) (clSearchTarget M (y x) (T x) pos neg)))) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "clNative_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- The native last-visit query closes on every supplied native source and\nunary time producer, with a total polynomial ledger on its original input.\n**Proof sketch.** Build a canonical query by native recording and field\npacking. The prefix scanner consumes exactly the first `T` rows of the\ninclusive `T+1` trajectory. Counts have elapsed width at most `T`; the\nargument contains its unary clock and every query word. The uniform query\nbound therefore applies, and native per-image composition charges all\nargument construction, comparisons, reverse search and output. -/\nprivate lemma clSearch_native (M : FinTM Bool) (pos neg : Fin (clRecFields M))\n    (hne : pos ≠ neg) (y : List Bool → List Bool) (T : List Bool → ℕ)\n    (hy : PolyTimeComputable y)\n    (hT : PolyTimeComputable (fun x => List.replicate (T x) true)) :\n    PolyTimeComputable (fun x => clLastCode ((List.range (T x)).map (fun s =>\n      clMatchFlag pos neg (fun i => (clCounts M (y x) s i).bits)\n        (clSearchTarget M (y x) (T x) pos neg)))) := by\n  obtain ⟨Q, c, e, hQ⟩ := clQueryCode_machine pos neg hne\n  apply clNative_image (clSearchArg_native M pos neg y T hy hT) Q\n    (100 * (clRecFields M + 10) + c) (e + 2)\n  intro x\n  let row := fun s i => (clCounts M (y x) s i).bits\n  let target := clSearchTarget M (y x) (T x) pos neg\n  let words := clQueryWords (clRecFields M) target (clRecords M (y x) (T x + 1)) (T x)\n  let arg := clSearchArg M (y x) (T x) pos neg\n  have hW : ∀ i, (words i).length ≤ arg.length := by\n    intro i\n    exact clFields_width (List.ofFn words) (words i) (List.mem_ofFn.mpr ⟨i, rfl⟩)\n  have hN : T x ≤ arg.length := by\n    have hh := hW (Fin.natAdd (clRecFields M) (3 : Fin 5))\n    simpa [words, clQueryWords, -Fin.natAdd_eq_addNat] using hh\n  have hRow : ∀ s < T x, ∀ i, (row s i).length ≤ arg.length := by\n    intro s hs i\n    exact (clElapsed_width _ s (clCounts_bound M (y x) s i)).trans (by omega)\n  have hTarget : ∀ i, (target i).length ≤ arg.length := by\n    intro i\n    fin_cases i <;> simp only [target, clSearchTarget, clTwo, ↓reduceIte]\n    · exact (clElapsed_width _ (T x) (clCounts_bound M (y x) (T x) pos)).trans hN\n    · exact (clElapsed_width _ (T x) (clCounts_bound M (y x) (T x) neg)).trans hN\n  have hstream : clRows row (T x) ++ clFields (List.ofFn (row (T x))) =\n      clRecords M (y x) (T x + 1) := by\n    rw [← clRows, clRows_records]\n  have hw : ∀ i, (clQueryWords (clRecFields M) target\n      (clRows row (T x) ++ clFields (List.ofFn (row (T x)))) (T x) i).length ≤ arg.length := by\n    rw [hstream]\n    exact hW\n  have hc := hQ row target (T x) arg.length arg.length\n    (clFields (List.ofFn (row (T x)))) hRow hTarget hw\n  dsimp only at hc\n  rw [hstream, List.append_nil] at hc\n  exact hc.mono (clQuery_budget (clRecFields M) arg.length (T x) c e hN)",
+      "source_sha256": "696ad878feeab1f0dc1e4034c38103c44973df6834648e7476f6e61760a81124",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clVisitRows_native",
+      "header": "private lemma clVisitRows_native (M : FinTM Bool) (C e c A d : ℕ) : PolyTimeComputable (fun x => clVisitRows M C e x (clProducerHorizon C e c A d x.length + 1)) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "clNative_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- The complete ordered last-visit table is produced from native original\ninput with a total polynomial bound; no outer-loop seam remains assumed.\n**Proof sketch.** Start with the retained instance and empty table. Obtain\nan actual clean call for the whole native row step, including its search,\nappend and cleanup. Native field packing supplies that call's initial words\nand an exact `T+1` unary clock. Run the actual repetition controller, whose\ninvariant bounds all intermediate state words quadratically in the encoded\nargument. Its ledger pays for parsing, every call and dispatch, and final\nphysical output. Native projection then returns precisely the stored rows. -/\nprivate lemma clVisitRows_native (M : FinTM Bool) (C e c A d : ℕ) :\n    PolyTimeComputable (fun x => clVisitRows M C e x (clProducerHorizon C e c A d x.length + 1)) := by\n  obtain ⟨W, entry, exit, a, r, hk, hcall⟩ := clVisitStep_cleanCall M C e\n  let N := fun x : List Bool => clProducerHorizon C e c A d x.length + 1\n  let s := fun x => clVisitState x 0 []\n  have hs : PolyTimeComputable s := by\n    simpa [s, clVisitState] using clNative_pair polyTimeComputable_id\n      (clNative_linear _ (FinTM.computesFunInTime_const (pairEncode [] [])))\n  have hN : PolyTimeComputable (fun x => List.replicate (N x) true) := clProducerClock_native C e c A d\n  let K := 8 + 8 * M.k\n  have hstate : PolyTimeComputable (fun x => clVisitState x (N x) (clVisitRows M C e x (N x))) := by\n    apply clNative_image (clRepeatArgument_native W s N hs hN) (clRepeatOutputTM W entry exit hk)\n      (13 + 7 * (W.k + 1) + a * (K + 1) ^ r + K) (2 * r + 3)\n    intro x\n    let arg := clFields (List.ofFn (clRepeatWords W (s x) (N x)))\n    have hn : N x ≤ arg.length := by\n      have hh := clFields_width (List.ofFn (clRepeatWords W (s x) (N x)))\n        (clRepeatWords W (s x) (N x) (Fin.natAdd W.k (0 : Fin 1)))\n        (List.mem_ofFn.mpr ⟨_, rfl⟩)\n      simpa only [clRepeatWords, Fin.addCases_right, List.length_replicate] using hh\n    have hx : x.length ≤ arg.length := by\n      have hh := clFields_width (List.ofFn (clRepeatWords W (s x) (N x)))\n        (clRepeatWords W (s x) (N x) (Fin.castAdd 1 ⟨0, hk⟩))\n        (List.mem_ofFn.mpr ⟨_, rfl⟩)\n      have hss : (s x).length ≤ arg.length := by\n        simpa only [clRepeatWords, Fin.addCases_left, stateWord, if_pos rfl] using hh\n      have hlen : x.length ≤ (s x).length := by simp [s, clVisitState, pairEncode]; omega\n      exact hlen.trans hss\n    have hsize := clVisitState_size M C e x (N x) arg.length hx hn\n    have hc := clRepeatOutput_compute W entry exit hk (clVisitStep M C e) a r hcall\n      (s x) (N x) (K * (arg.length + 1) ^ 2) hsize\n    dsimp only at hc\n    rw [List.append_nil, clVisitStep_orbit] at hc\n    exact hc.mono (clRepeat_budget arg.length (N x) (W.k + 1) K a r hn)\n  have h := (clHeaderTail_native 2).comp hstate\n  simpa [Function.comp_def, clHeaderTail, clVisitState, pairDecode_pairEncode, N] using h",
+      "source_sha256": "faec396be0c1424f7210763ae1233b7a24c9367d9e695a41382d73aadc9bcb32",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clA5Iter_native",
+      "header": "private lemma clA5Iter_native {f s : List Bool → List Bool} {N : List Bool → ℕ} (hf : PolyTimeComputable f) (hs : PolyTimeComputable s) (hN : PolyTimeComputable (fun x => List.replicate (N x) true)) (K : ℕ) (hb : ∀ x j, j ≤ N x → (f^[j] (s x)).length ≤ K * ((s x).length + N x + 1) ^ 2) : PolyTimeComputable (fun x => f^[N x] (s x)) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "clNative_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- Any native transition with a quadratic orbit-size invariant can be\niterated a native unary number of times in polynomial time.\n**Proof sketch.** The inherited positive clean-call bridge supplies each\niteration. Its real unary host charges every call, dispatch, loader and replay.\nThe actual encoded argument bounds both the initial word and the unary clock;\nthe supplied orbit bound is therefore covered by the inherited loop ledger. -/\nprivate lemma clA5Iter_native {f s : List Bool → List Bool} {N : List Bool → ℕ}\n    (hf : PolyTimeComputable f) (hs : PolyTimeComputable s)\n    (hN : PolyTimeComputable (fun x => List.replicate (N x) true))\n    (K : ℕ) (hb : ∀ x j, j ≤ N x →\n      (f^[j] (s x)).length ≤ K * ((s x).length + N x + 1) ^ 2) :\n    PolyTimeComputable (fun x => f^[N x] (s x)) := by\n  obtain ⟨W, entry, exit, a, d, hk, hcall⟩ := clNative_cleanCall hf\n  apply clNative_image (clRepeatArgument_native W s N hs hN)\n    (clRepeatOutputTM W entry exit hk)\n    (13 + 7 * (W.k + 1) + a * (4 * K + 1) ^ d + 4 * K) (2 * d + 3)\n  intro x\n  let arg := clFields (List.ofFn (clRepeatWords W (s x) (N x)))\n  have hslen : (s x).length ≤ arg.length := by\n    simpa [arg, clRepeatWords, stateWord] using clFields_width\n      (List.ofFn (clRepeatWords W (s x) (N x))) (s x)\n      (List.mem_ofFn.mpr ⟨Fin.castAdd 1 ⟨0, hk⟩, by simp only [clRepeatWords, Fin.addCases_left, stateWord, Fin.val_mk, if_pos rfl, if_pos True.intro]⟩)\n  have hnlen : N x ≤ arg.length := by\n    simpa [arg, clRepeatWords, -Fin.natAdd_eq_addNat] using clFields_width\n      (List.ofFn (clRepeatWords W (s x) (N x))) (List.replicate (N x) true)\n      (List.mem_ofFn.mpr ⟨Fin.natAdd W.k (0 : Fin 1), by simp [clRepeatWords]⟩)\n  have horbit : ∀ j ≤ N x, (f^[j] (s x)).length ≤ 4 * K * (arg.length + 1) ^ 2 := by\n    intro j hj\n    calc\n      _ ≤ K * ((s x).length + N x + 1) ^ 2 := hb x j hj\n      _ ≤ K * (2 * (arg.length + 1)) ^ 2 := Nat.mul_le_mul_left K\n        (Nat.pow_le_pow_left (by omega) 2)\n      _ = _ := by ring\n  have h := clRepeatOutput_compute W entry exit hk f a d hcall (s x) (N x)\n    (4 * K * (arg.length + 1) ^ 2) horbit\n  dsimp only at h\n  rw [List.append_nil] at h\n  exact h.mono (clRepeat_budget arg.length (N x) (W.k + 1) (4 * K) a d hnlen)",
+      "source_sha256": "226e5750847d0cd6b5e5eef9007caab19ef75edf0d92df2761dddaec8cc9df9b",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "Complexity.clA5EqNum_native",
+      "header": "private lemma clA5EqNum_native {f g : List Bool → List Bool} (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) : PolyTimeComputable (fun x => [decide (clNum (f x) = clNum (g x))]) :=",
+      "shape_candidate": false,
+      "hooks": [
+        "clNative_image"
+      ],
+      "private": true,
+      "exact_raw_signature_after_name_visibility_whitespace": false,
+      "source": "/-- Native equality of two binary natural-number words, using the actual\nbanked four-word arithmetic comparator with its other two words empty. -/\nprivate lemma clA5EqNum_native {f g : List Bool → List Bool}\n    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :\n    PolyTimeComputable (fun x => [decide (clNum (f x) = clNum (g x))]) := by\n  let w : List Bool → Fin 4 → List Bool := fun x i =>\n    if i = 0 then f x else if i = 2 then g x else []\n  have hw : PolyTimeComputable (fun x => clFields (List.ofFn (w x))) := by\n    have h := clNative_fields [f, (fun _ => []), g, (fun _ => [])]\n      (by intro h hh; simp only [List.mem_cons, List.not_mem_nil, or_false] at hh\n          rcases hh with rfl | rfl | rfl | rfl\n          · exact hf\n          · exact clA5_pt_const []\n          · exact hg\n          · exact clA5_pt_const [])\n    simpa [w, List.ofFn_succ, List.ofFn_zero] using h\n  apply clNative_image hw clA5CompareTM 35 1\n  intro x\n  simpa [w, clNum, Nat.pow_one] using clA5Compare_compute (w x)",
+      "source_sha256": "7ce09cf56045772be531beea55a47ed568c046f8d8eeae38c49a1bb765c12455",
+      "disposition": "Client use of sat_comp_on_image, taut_comp_on_image or clNative_image, rather than a separate raw-contract rederivation; full source retained for inspection."
+    }
+  ],
+  "no_Lean_or_source_changes": true
+}

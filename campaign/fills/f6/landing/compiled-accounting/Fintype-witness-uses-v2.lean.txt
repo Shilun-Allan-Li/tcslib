@@ -1,0 +1,35 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let home := `TCSlib.Complexity.SpaceComplexity.Hierarchy
+  let some idx := env.getModuleIdx? home | throwError "owner import missing"
+  let names : List Name := [`Turing.instFintypeRewindPhase, `Turing.instFintypeSeekPhase]
+  for n in names do
+    let some ci := env.find? n | throwError "missing instance {n}"
+    let row := Json.mkObj [("name", toJson n.toString),
+      ("typeExpr", toJson (reprStr ci.type)),
+      ("valueExpr", toJson (ci.value?.map reprStr)),
+      ("reducibility", toJson (reprStr (getReducibilityStatusCore env n))),
+      ("instance", toJson (Meta.isInstanceCore env n)),
+      ("private", toJson (isPrivateName n)), ("internal", toJson n.isInternalDetail)]
+    logInfo m!"FINTYPEMETA|{row.compress}"
+  let mut matchCount := 0
+  for (n, ci) in env.constants.toList do
+    if env.getModuleIdxFor? n != some idx then continue
+    let tu := ci.type.getUsedConstants
+    let vu := (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut found := false
+    for target in names do
+      if tu.contains target || vu.contains target then
+        found := true
+        logInfo m!"INSTUSE|{n}|{target}|inType={tu.contains target}|inValue={vu.contains target}"
+    if found then
+      matchCount := matchCount + 1
+      let row := Json.mkObj [("name", toJson n.toString),
+        ("typeExpr", toJson (reprStr ci.type)), ("valueExpr", toJson (ci.value?.map reprStr)),
+        ("allDirectTypeConstantNames", toJson (tu.toList.map Name.toString)),
+        ("allDirectValueConstantNames", toJson (vu.toList.map Name.toString))]
+      logInfo m!"FINTYPEUSEVALUE|{row.compress}"
+  logInfo m!"FINTYPECOMPLETE|{matchCount}"

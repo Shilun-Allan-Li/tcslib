@@ -9,6 +9,15 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**Resume supplement (2026-11-08UTC):** the later relocation interrupted the model/agents.
+Native/check results below survived. F6 fresh23 BASE passed1113decl/647rows/172081chars;
+HEAD had zero output/no exit receipt and a stale78950 screen lock. Process/session inspection
+found no remaining job; an independent HEAD-only rerun is being prepared with exactBASE
+adoption and retained interrupted evidence. Do not relabel that attempt a pass. Gate119R2
+returned PASS0/0/0/17 and is being independently reviewed for closure. SG1 final79 full25
+screen and complete compiler comparison are finished; its1539-section candidate awaits
+peerQA/final rendering/publication. No source has changed during relocation.
+
 **Resumed after relocation.** Current campaign snapshot remains complete mac4 / #230 merge;
 records may advance without Lean changes. Latest received audit is gate119 HOLD0/1/0/16,
 now independently reviewed and explicitly acknowledged as FE-LIVE-1 by Seyoon. Exact owner/
@@ -18,8 +27,10 @@ unchanged and its401/static0/77 replay remains valid. **Not yet clear to merge: 
 
 F6 final is present and independently reviewed as COMPLETE candidate. The six Claude patches
 are imported with original authorship into draft#235 at `f72a807e2376a2b986675c992745d6affc23b96f`; fresh owner check
-passes0errors/0sorries after a public-lemma repoint and two sketch fixes. Full229 replay,
-unfiltered compiledAX census and final23-source comparisons/seals are in progress. Codex
+passes0errors/0sorries after a public-lemma repoint and two sketch fixes. Full229 replay
+PASSED0failures/static0/21; all193ownedAXstandard and19scoped/72pairedcontrols pass, with
+two ineffective Fintype controls disclosed and a separate passing arbitrary-witness diagnostic.
+All229 native1/mf61 artifact hashes match. Final23-source BASE/HEAD comparisons are running. Codex
 gate120 selected, not issued. **Not yet clear to merge: #235.**
 
 SG1 final pushed source is `79e7c63a6bfa5f002663924f5c7d4e72db705026`. Exact Taut raw on-image repoint passes actual

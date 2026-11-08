@@ -5,7 +5,9 @@ checksums/source/patch/bundle review classifies it as a COMPLETE proof candidate
 remaining OWN/API prerequisite. Review/final-2026-11-08/ preserves evidence and limitations.
 Six patches imported with Claude authorship; Codex mechanical monotonicity/sketch fixes give
 clean pushed source `f72a807e2376a2b986675c992745d6affc23b96f`. Fresh Hierarchy native check passes0errors/0sorry.
-Full229 replay, full compiler/ALLAX/seals and23-source comparisons are underway. Codex
+Full229 replay PASSED0failures/static0/21 inherited admissions; currentowner0sorries/all193AXstandard.
+Scoped19sections/72pairedcontrols pass with disclosed Fintype limits and passing arbitrary-witness
+diagnostic. All229 native1/mf61 fingerprints match. Fresh23-source BASE/HEAD comparisons are running. Codex
 landing audit selected; gate120 reserved, not issued. Producer results remain producer evidence.
 
 ## Immutable fill dispatch and prior checkpoints
