@@ -835,9 +835,11 @@ private def dla_blockPos {k B T : ℕ} (hkB : k ≤ B) (p : Fin T × Fin k) : Fi
 /-- Distinct (block, bit) pairs sit at distinct coin positions (`finProdFinEquiv` and
 `Fin.castLE` are injective). -/
 private theorem dla_blockPos_injective {k B T : ℕ} (hkB : k ≤ B) :
-    Function.Injective (dla_blockPos (T := T) hkB) := fun p p' h =>
-  Prod.ext (congrArg Prod.fst (finProdFinEquiv.injective h))
-    (Fin.castLE_injective hkB (congrArg Prod.snd (finProdFinEquiv.injective h)))
+    Function.Injective (dla_blockPos (T := T) hkB) := fun p p' h => by
+  have h' := finProdFinEquiv.injective (show finProdFinEquiv (p.1, Fin.castLE hkB p.2) =
+    finProdFinEquiv (p'.1, Fin.castLE hkB p'.2) from h)
+  rw [Prod.mk.injEq] at h'
+  exact Prod.ext h'.1 (Fin.castLE_injective hkB h'.2)
 
 /-- The `k`-bit prefix of block `t` of a coin string, read off the list: for `t < T` and
 `k ≤ B`, `((List.ofFn r).drop (t · B)).take k = List.ofFn (fun j => r (t · B + j))`. -/
@@ -851,7 +853,7 @@ private theorem dla_take_drop_ofFn {k B T : ℕ} (hkB : k ≤ B) (r : Fin (T * B
       _ ≤ T * B := Nat.mul_le_mul_right _ this
   rw [ofFn_drop_take r _ k hlen]
   refine congrArg List.ofFn (funext fun j => congrArg r (Fin.ext ?_))
-  simp only [dla_blockPos, Fin.val_mk, finProdFinEquiv_apply_val, Fin.coe_castLE]
+  simp only [dla_blockPos, finProdFinEquiv_apply_val, Fin.coe_castLE]
   ring
 
 /-- **Block rejection sampling is close to uniform on `E`** (lemma C4 of the chapter 2
