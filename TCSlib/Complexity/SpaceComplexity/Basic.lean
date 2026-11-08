@@ -46,6 +46,10 @@ shape of [AB09, Fig. 4.1]:
 
 ## Main results
 
+* `Turing.FinTM.computesInSpace_iff`, `Complexity.logSpace_eq` — the definitions of
+  `ComputesInSpace` and `logSpace` as an equivalence and an equation.
+* `Turing.FinTM.decidesInSpace_iff`, `Complexity.mem_SPACE_iff`, `Complexity.LOGSPACE_eq` —
+  the definitions of `DecidesInSpace`, `SPACE` and `LOGSPACE`, unfolded.
 * `Complexity.SPACE.mono` — `SPACE` is monotone in the space bound.
 * `Complexity.SPACE.mono_const` — `SPACE` absorbs constant factors (added 2026-10-10).
 * `Turing.FinTM.computesInSpace_zero_of_k_eq_zero` — no work tapes, zero space (added
@@ -101,10 +105,26 @@ def ComputesInSpace (M : FinTM Bool) (f : List Bool → List Bool) (s : ℕ → 
   ∀ x : List Bool, ∃ t, M.ComputesInTime x (f x) t ∧
     M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length
 
+/-- **Computing in space, unfolded**: `M` computes `f` in space `s` exactly when on every input
+`x` there is a time `t` at which `M` has halted with output `f x`
+(`Turing.FinTM.ComputesInTime`), having visited at most `s |x|` work-tape cells by then. -/
+theorem computesInSpace_iff (M : FinTM Bool) (f : List Bool → List Bool) (s : ℕ → ℕ) :
+    M.ComputesInSpace f s ↔
+      ∀ x : List Bool, ∃ t, M.ComputesInTime x (f x) t ∧
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ s x.length :=
+  Iff.rfl
+
 /-- The machine `M` decides `L` in space `s`: it computes the indicator `[x ∈ L]` (a
 one-bit output) in space `s`. [AB09, Def 4.1] -/
 def DecidesInSpace (M : FinTM Bool) (L : Language Bool) (s : ℕ → ℕ) : Prop :=
   M.ComputesInSpace (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) s
+
+/-- **Deciding in space, unfolded**: `M` decides `L` in space `s` exactly when it computes the
+one-bit indicator `x ↦ [x ∈ L]` in space `s`. -/
+theorem decidesInSpace_iff (M : FinTM Bool) (L : Language Bool) (s : ℕ → ℕ) :
+    M.DecidesInSpace L s ↔
+      M.ComputesInSpace (fun x => [MultiTapeTM.indicator (L : Set (List Bool)) x]) s :=
+  Iff.rfl
 
 /-- A space bound can be weakened. -/
 theorem ComputesInSpace.mono {M : FinTM Bool} {f : List Bool → List Bool} {s s' : ℕ → ℕ}
@@ -138,6 +158,12 @@ constant `c`. -/
 def SPACE (s : ℕ → ℕ) : Set (Language Bool) :=
   {L | ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L fun n => c * s n}
 
+/-- **Membership in `SPACE`, unfolded**: `L ∈ SPACE s` exactly when some machine decides `L` in
+space `c · s` for some constant `c`. -/
+theorem mem_SPACE_iff {s : ℕ → ℕ} {L : Language Bool} :
+    L ∈ SPACE s ↔ ∃ (c : ℕ) (M : FinTM Bool), M.DecidesInSpace L fun n => c * s n :=
+  Iff.rfl
+
 /-- `SPACE` is monotone in the space bound. -/
 theorem SPACE.mono {s₁ s₂ : ℕ → ℕ} (h : ∀ n, s₁ n ≤ s₂ n) : SPACE s₁ ⊆ SPACE s₂ := by
   rintro L ⟨c, M, hM⟩
@@ -161,10 +187,16 @@ theorem SPACE.mono_const {s₁ s₂ : ℕ → ℕ} {a : ℕ} (h : ∀ n, s₁ n 
 convention `s(n) ≥ log n` of [AB09, p. 79]. -/
 def logSpace (n : ℕ) : ℕ := Nat.log 2 n + 1
 
+/-- The logarithmic bound's formula: `logSpace n = Nat.log 2 n + 1`. -/
+theorem logSpace_eq (n : ℕ) : logSpace n = Nat.log 2 n + 1 := rfl
+
 /-- **The class `L`** [AB09, Def 4.5]: `L = SPACE(log n)`, the languages decidable by a
 machine visiting `O(log n)` work-tape cells. (Named `LOGSPACE` to keep the letter `L` free
 for language variables.) -/
 def LOGSPACE : Set (Language Bool) := SPACE logSpace
+
+/-- `LOGSPACE` is `SPACE logSpace`. -/
+theorem LOGSPACE_eq : LOGSPACE = SPACE logSpace := rfl
 
 /-- The language `{⟨x, i⟩ | p x i}`, the pair encoded as `Turing.pairEncode x (Nat.bits i)`
 (index in little-endian binary). The shape of the two languages of [AB09, Def 4.16]. -/

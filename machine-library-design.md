@@ -280,7 +280,7 @@ frozen §9 decisions:
   until validity is known** — the output-silence discipline reappears at
   the primitive level (extractors, strip, increment's overflow detection).
 
-## 9b. Round-2 repairs (2026-10-03, after `audits/ch1-infra-findings.md`)
+## 9b. Round-2 repairs (2026-10-03, after `campaign/gates/ch1-infra/findings.md`)
 
 The round-1 audit refuted `exists_loopTM` (blocker: a zero-step identity
 "advance" made the hypotheses vacuous while the conclusion violated the
@@ -330,7 +330,7 @@ retained components. **P10 narrowing recorded**: the implemented search is
 the fixed length-equation search, not the catalog's supplied-predicate
 search; the general form is `exists_loopFindTM` itself.
 
-## 9c. Round-3 repairs (2026-10-03, after `audits/ch1-infra-r2-findings.md`)
+## 9c. Round-3 repairs (2026-10-03, after `campaign/gates/ch1-infra/findings-r2.md`)
 
 Round 2 passed the redesigned loops, P13/P14/C1, and the §9b tables, and
 discharged both round-1 refutations; its one major (finding 1) showed the
@@ -539,7 +539,7 @@ Spec surface: **five sorried contracts** (`Turing.emit_run`,
 (`solveSplitWith`, `unaryTokenSplit`). Convention's module-docstring
 vocabulary bullets extend at fill time (append-only).
 
-## 11b. Round-2 repairs (2026-10-05, after `audits/emitter-infra-findings.md`)
+## 11b. Round-2 repairs (2026-10-05, after `campaign/gates/emitter-infra/findings.md`)
 
 Round 1: **0 blockers, 2 majors, 3 minors** — no false statement among
 the five contracts; both majors are adequacy obligations, repaired here.
@@ -625,7 +625,7 @@ the five contracts; both majors are adequacy obligations, repaired here.
 Spec surface after round 2: **seven sorried contracts** (round 1's five
 plus the two bridges), two transformers, two vocabulary definitions.
 
-## 11c. Round-3 repairs (2026-10-05, after `audits/emitter-infra-r2-findings.md`)
+## 11c. Round-3 repairs (2026-10-05, after `campaign/gates/emitter-infra/findings-r2.md`)
 
 Round 2: **0 blockers, 2 majors, 1 minor** — round-1 findings 3–5 closed;
 the bridge construction and the 3B normalization validated (r2 findings
@@ -678,7 +678,7 @@ schedule); the two cumulative majors repaired here.
      to the fixed family order.
    Certification of this mapping against the phase-4 round-2
    boundary-check table is round 3's business — that table
-   (`audits/ch2-phase4-reaudit-findings.md`) rides in the r3 bundle,
+   (`campaign/gates/ch2-phase4-reaudit/findings.md`) rides in the r3 bundle,
    and the 4A brief inherits it verbatim per the standing rule.
 3. **P17 cross-reference (r2 finding 3, minor).** §11a item 1 now
    carries an explicit supersession marker pointing at §11b item 6;
@@ -697,10 +697,10 @@ Spec surface after round 3: unchanged in count — **seven sorried
 contracts** (the two bridges now carrying `0 < C.k`), two transformers,
 two vocabulary definitions.
 
-## 11d. Gate close (2026-10-05, after `audits/emitter-infra-r3-findings.md`)
+## 11d. Gate close (2026-10-05, after `campaign/gates/emitter-infra/findings-r3.md`)
 
 Round 3: **0 blockers, 0 majors, 1 minor, 4 notes — GATE CLOSED**
-(`audits/emitter-infra-resolutions.md`). Both cumulative majors
+(`campaign/gates/emitter-infra/resolutions.md`). Both cumulative majors
 discharged: the positive-tape bridges export the data interface (the
 auditor's projection-table derivation), and §11c's 4A mapping is
 certified against the inherited boundary table, including the exact
@@ -867,7 +867,7 @@ docstring drops the tag.
 
 ### 12.5 Round-1 audit repairs (2026-10-09)
 
-The §12 statement-gate round 1 (`audits/routine-infra-findings.md`: 0
+The §12 statement-gate round 1 (`campaign/gates/routine-infra/findings.md`: 0
 blockers, 4 majors) drove four repairs, landed with the round-2 pack:
 
 * **R1 → the returning embeddings** `embedSilentRetTM`/`embedEmitRetTM`
@@ -903,7 +903,7 @@ tape; the other is a scratch tape that starts and ends as the unary level word.
 Their staging, cleanup and binary navigation counter therefore all run at
 **displaced heads beside unrelated data**, where no canonical contract applies.
 
-ZF-A2 (`audits/zone-agent-reports/f1-A2-REPORT.md`) showed the gap concretely,
+ZF-A2 (`campaign/fills/zone/reports/f1-A2-REPORT.md`) showed the gap concretely,
 with a kernel-checked regression. On a valid three-level carrier, a bare transfer
 from a displaced head reads past the word's end and erases a cell that belongs
 to the next zone. The cure is a delimited word: blanks at relative positions
@@ -951,11 +951,11 @@ on concrete configurations with displaced heads, a nonblank outer frame and the
 edge cases (`w = []`, `p = 0`, all-`true` overflow). The exact final
 configuration, the no-earlier-exit clause and the trajectory were compared:
 63 cases, all pass, and a wrong-time negative control fails
-(`audits/evidence/s12-framed/`).
+(`campaign/gates/s12-framed/evidence/`).
 
 ### 12.7 Counter-driven loops (design, 2026-10-10, after ZF-B3's escalation; decisions 12.7.1–12.7.6 taken by the user the same day)
 
-**The gap.** ZF-B3 (`audits/zone-agent-reports/f1-B3-REPORT.md`,
+**The gap.** ZF-B3 (`campaign/fills/zone/reports/f1-B3-REPORT.md`,
 `f1-B3-CONTINUATION.md`) stopped on two shared-interface requests:
 
 - a public fixed-width **decrement** routine with a framed contract;
@@ -1097,11 +1097,11 @@ definitions and 10 sorried theorems. The refinements made while drafting:
 - **The counter value** is Mathlib's `Nat.ofDigits 2 (w.map Bool.toNat)`,
   written inline; no new value function is defined.
 
-The executed pre-ship check is `audits/evidence/s12-counter/`, and the gate
-pack is `audits/s12-counter-{pack,bundle}.md`.
+The executed pre-ship check is `campaign/gates/s12-counter/evidence/`, and the gate
+pack is `campaign/gates/s12-counter/{pack,bundle}.md`.
 
 **Statement gate CLOSED (round 1, 2026-10-10: 0 blockers, 0 majors, 1 minor,
-5 notes; `audits/s12-counter-findings.md`).** No false theorem and no missing
+5 notes; `campaign/gates/s12-counter/findings.md`).** No false theorem and no missing
 soundness hypothesis. Three notes correct or extend this design:
 
 - **SC-4: two continuations need a public prefix lemma.** Two `seamCompTM`
@@ -1560,7 +1560,7 @@ multi-track discipline.
 
 ### 12.8a Statement draft for the rich-alphabet design (2026-10-10)
 
-*Recorded from the S1 agent's draft. Its probe is `audits/evidence/s12-8/S128StatementsProbe.lean.txt`; run by the maintainer against the G1 side-branch tree it gives 0 errors and 12 sorry warnings, one per statement left to the fill. Maintainer decisions O1, O4, O5, O6 and the user's O2, O3, O7 are recorded at the end (§8).*
+*Recorded from the S1 agent's draft. Its probe is `campaign/items/s12-8/S128StatementsProbe.lean.txt`; run by the maintainer against the G1 side-branch tree it gives 0 errors and 12 sorry warnings, one per statement left to the fill. Maintainer decisions O1, O4, O5, O6 and the user's O2, O3, O7 are recorded at the end (§8).*
 
 *Landed as statements on 2026-10-11, branch `integrate/s12-8-statements`: §8 lists the landed names, which supersede the draft's below where they differ, the changes from the draft, the R8.0b target signatures, and the open questions for the statement gate.*
 
@@ -1989,8 +1989,8 @@ merged at `b28e22ea`). Every machine and carrier is a real definition. Every
 contract is sorried with a proof sketch, except the two results already
 proved, which keep their proofs: `seamCompTM_runFrom_left`, promoted verbatim,
 and `cfgRecord_length`. There are 25 new sorries. Records:
-`audits/logs/s12-8-statements-*` and
-`audits/evidence/s12-8/S128StatementsPreship.lean.txt`.
+`campaign/gates/s12-8-statements/logs/` and
+`campaign/items/s12-8/S128StatementsPreship.lean.txt`.
 
 | Row | File | Landed declarations | Contract |
 |---|---|---|---|
@@ -2119,7 +2119,7 @@ agent.
 #### 9. Statement gate, round 1: decisions and repairs (2026-10-11)
 
 Round 1 failed with 0 blockers, 1 major, 7 minors and 39 notes
-(`audits/s12-8-statements-findings.md`).
+(`campaign/gates/s12-8-statements/findings.md`).
 
 **Decisions** (user, the auditor's recommendations, on the open questions
 of §8):
@@ -2281,7 +2281,7 @@ five rows, R8.5c, and three small additions the rows and their consumers need.
 | adapter, fieldsCopy and append | the Catalog Part-3 fill (delivered, PR #42) |
 | template, init and valid | R8.5c and R8.6 |
 
-Evidence: `audits/evidence/wave1-statements/S128bStatementsProbe.lean.txt`, which runs the design's
+Evidence: `campaign/gates/wave1-statements/evidence/S128bStatementsProbe.lean.txt`, which runs the design's
 executed checks against the landed definitions.
 
 ### 12.9 Oracle-machine rows (landed 2026-10-11 with epoch B1; `Build/OracleCall.lean`)
@@ -2327,7 +2327,7 @@ statement gate:
 - the dispatch host.
 
 The draft headline statement, `FinOracleTM.exists_plain_simulation`, is recorded in
-`audits/b1-integration.md`. **Designed and stated in §12.10** (2026-10-11).
+`campaign/fills/b1/integration/b1-integration.md`. **Designed and stated in §12.10** (2026-10-11).
 
 ### 12.10 Oracle-call simulation (statements landed 2026-10-11; design W2, route and homes accepted by the user)
 
@@ -2407,7 +2407,7 @@ go to the statement gate.
 6. **Sequencing.** W2-S and W2-C can be filled at once; W2-V's sorried dependency is gone.
 
 **Mirrors, factored** (disclosed at landing; factored in round 2 of the wave-1 statement gate,
-2026-10-11, user decision; `audits/wave1-statements-resolutions.md`):
+2026-10-11, user decision; `campaign/gates/wave1-statements/resolutions.md`):
 - W2-0 and the private invariants `runFrom_workTapes_invariant` (`Oracle.lean`) and
   `runWith_headBlank` (`OracleNondeterministic.lean`) now all specialize the promoted
   `OracleTM.step_radius`/`OracleTM.runFrom_radius` (`Oracle.lean`).
@@ -2418,7 +2418,7 @@ go to the statement gate.
 - `mem_iff_exists_choiceOut` and `Nondeterminism.lean`'s acceptance argument share
   `choiceBudget_le` and `run_take_of_halted` (`ChoiceWords.lean`).
 
-**Consumers** (derived in `audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt`):
+**Consumers** (derived in `campaign/gates/wave1-statements/evidence/S1210StatementsProbe.lean.txt`):
 - `POracle_eq_P_of_mem_P`, which rests on W2-S alone;
 - `NPOracle_EXPCOM_subset_EXP`, the summit;
 - `baker_gill_solovay`.
@@ -2483,7 +2483,7 @@ reuse it under different hosts.
   laws are the two bridges.
 
 The two assemblies are a forced mirror pair, as their target structures are. Both are
-assembled from H1 in `audits/evidence/wave1-statements/B5aStatementsProbe.lean.txt`, resting only on the
+assembled from H1 in `campaign/gates/wave1-statements/evidence/B5aStatementsProbe.lean.txt`, resting only on the
 two contracts. **NDCodes is not an instance:** ND codes denote NDTMs and need no interpreter.
 A separate small parse-layer rider can handle them.
 
@@ -2748,10 +2748,10 @@ a consumer needing the buffer or bank elsewhere composes with R1. One
 shared hosting core; `silent`/`emit` flavors per 12.4; the tag lives in
 the transported control state (the `a2_MapState.run q tag` precedent).
 
-### 13b. A-S1 gate close (2026-10-09, after `audits/vhost-infra-findings.md`)
+### 13b. A-S1 gate close (2026-10-09, after `campaign/gates/vhost-infra/findings.md`)
 
 Round-1 **PASS, 0 blockers / 0 majors / 2 minors**; loop summary
-`audits/vhost-infra-resolutions.md`. Minor sweep recorded here per the
+`campaign/gates/vhost-infra/resolutions.md`. Minor sweep recorded here per the
 audit's proposed fix (A-S1-2): the Z1 rider's promised **`ofWords`
 transport form is supplied by specialization** of the four delivered
 selected-tape projections (instantiate `c := Cfg.ofWords …`); no
@@ -2771,7 +2771,7 @@ carrier; heterogeneous `clSlot_run`-style sites first transport
 (R1 + state renaming), then agree — a public guarded
 configuration-transport theorem is a possible later export, not promised.
 
-### 13c. A-S2 round-1 repairs (2026-10-09, after `audits/zone-infra-findings.md`)
+### 13c. A-S2 round-1 repairs (2026-10-09, after `campaign/gates/zone-infra/findings.md`)
 
 The A-S2 statement gate returned **FAIL: 1 blocker, 1 major, 2 minors**;
 repairs landed with the round-2 pack:
@@ -3029,7 +3029,7 @@ codes and the two-tape universal machine, Thm 3.1 follows at `f log f`.
    the space rows, the compare contracts, and everything about `incrementTM`
    stay Bool-specific. The generalized definitions instantiate at `Bool`.
 
-The G1 brief is `briefs/s13d-g1-generalize.md`.
+The G1 brief is `campaign/fills/s13d/briefs/s13d-g1-generalize.md`.
 
 **Scope (user, 2026-10-12; §16b item 5).** G2–G4 and the Hennie–Stearns assembly stay in this
 campaign. They follow MIG-0b, so that their rows are stated as `Contract`s from the start.
@@ -3054,9 +3054,9 @@ and head envelopes. Overfitting entered one level up, where every theorem got
 its own private host, because the briefs' ground rule 1 made new helpers
 private by default:
 - NP ⊆ PSPACE's evaluation host (`SpaceComplexity/Inclusions.lean`, about 70
-  privates), S1b's BFS and windowed pieces (private by `briefs/ch34-s1b.md`,
+  privates), S1b's BFS and windowed pieces (private by `campaign/fills/ch34/briefs/ch34-s1b.md`,
   which lists three promotion candidates), B4 membership's assignment walker
-  (private by `briefs/ch34-b4-mem.md`), and Cook–Levin's machine-to-formula
+  (private by `campaign/fills/ch34/briefs/ch34-b4-mem.md`), and Cook–Levin's machine-to-formula
   kit (private in `CookLevin/Hardness.lean`);
 - four configuration encodings (`coreCode`, `cfgRecord`, B4a's bit rows,
   Cook–Levin's snapshot blocks) and three reachability notions (configuration
@@ -3074,8 +3074,8 @@ and a statement gate before a second consumer is briefed.
 |---|---|---|---|
 | 0 | **Framed-contract structure**: machine, entry/exit states, precondition, endpoint as a function of the start configuration, time, no-earlier-exit cut, head envelope; sequencing, phase host, R1 embedding, lift and counter loop as structure-to-structure theorems, space derived | to design; **requirements revised by §16** (exact time and cut first-class) | every host below; removes the inline restatements of the delimited-word precondition |
 | H1 | **AND/OR evaluator**: a depth-first odometer over a path word of per-depth records with node kinds (AND/OR), a pluggable leaf-verdict module with its own framed contract, short-circuit semantics as a pure function; space = path + leaf + O(1) | **reconciled 2026-10-14:** the machine form exists, received: `LogProg.TQBFARM` (H13e) proves `TQBF_mem_PSPACE` by a depth-first walk with the assignment as a stack register (accepted exception). The private pure core in `TQBF.lean`'s `b4m*` appendix is dead and is deleted by the payback PR (D6); MIG-22 is moot. The general AND/OR evaluator remains to be designed; its contract gate decides between this machine and §15's language. *(Was: the pure core private in B4 membership's partial; language first, user 2026-10-12.)* | `TQBF_mem_PSPACE` (served by H13e); Savitch (served by H13a for polynomial `S`; midpoint records as digits); NP ⊆ PSPACE (re-derivation); `ClassPSPACE/Games.lean`'s game values; backtracking in the §15 layer |
-| H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | **the complete step block is proved, private, in B5a H1's continuation (fills-7):** `h1RoundTM k`, one finite machine per `k` whose control does not depend on the state count, with `h1Round_effect` (`0 < T ≤ 50·(\|table\| + 1)`, strict interior, silent, head envelope). **Promoted (2026-10-14, H2-M, PR #88):** public in `Build/StepBlock.lean` as `Turing.StepBlock.roundTM`, with `roundTM_effect`, under the round-2 names (backlog F7-1(a)). **H2-L, its loop form, landed (2026-10-14, PR #94):** `Build/StepBlockLoop.lean`, `Turing.StepBlock.loopTM`/`hostedLoopTM` with `loopTM_run`, `hostedLoopTM_run`, `hostedLoop_read` (H1 harvest gate, CLOSED). **H2-F, its forwarding (unclocked) loop form (2026-10-15; U2 statement gate CLOSED, PASS 0/0/2; PR #102):** `Build/StepBlockForward.lean`, `Turing.StepBlock.forwardLoopCfg` (defined) and `Turing.StepBlock.exists_forwardLoopTM` (sorried): a macro-step `Turing.Lockstep` of any `k`-tape table through `forwardLoopCfg`, emissions forwarded, per-step cost `0 < cost ≤ 50·(\|tableBitsK\| + 1) + C`, and a per-head space ledger (mirrored heads within the source's visited cells, the two auxiliary heads within that bound); its own module so that the clocked form's consumers (`CodeSimulator`) do not depend on it (user, 2026-10-15) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; H2-F: U2-U (`exists_selfUniversalK`), U2-E (`universalK`), B6's `U₀` at `k = 1`, U-1; C1 (unchanged, at `k = 3`, through the replay machine `NDTM.replayTM`); EXPCOM |
-| H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's partial (radius phase, records-to-runs bridge, the general-`S` count). S1b stopped (fills-6); B6's window route is the next consumer (adopted, §16b item 3). **B6's hosts landed (PR #92, 2026-10-14):** `Build/WindowRun` and `SpaceComplexity/WindowClock` state its public contracts, sorried for B6's fills. S1b's remaining private block is dead, and the payback PR deletes it. See H9 for the received configuration count | B6 (the window route; gated, `audits/b6-hosts-statements-findings.md`); Savitch and NL = coNL (served by H13a and H13b); S1b (stopped) |
+| H2 | **Step block**: one simulated transition of a `k`-tape coded table, relation-level, with per-round time `B·(\|table\| + 1)` and a head envelope | **the complete step block is proved, private, in B5a H1's continuation (fills-7):** `h1RoundTM k`, one finite machine per `k` whose control does not depend on the state count, with `h1Round_effect` (`0 < T ≤ 50·(\|table\| + 1)`, strict interior, silent, head envelope). **Promoted (2026-10-14, H2-M, PR #88):** public in `Build/StepBlock.lean` as `Turing.StepBlock.roundTM`, with `roundTM_effect`, under the round-2 names (backlog F7-1(a)). **H2-L, its loop form, landed (2026-10-14, PR #94):** `Build/StepBlockLoop.lean`, `Turing.StepBlock.loopTM`/`hostedLoopTM` with `loopTM_run`, `hostedLoopTM_run`, `hostedLoop_read` (H1 harvest gate, CLOSED). **H2-F, its forwarding (unclocked) loop form (2026-10-15; U2 statement gate CLOSED, PASS 0/0/2; PR #102):** `Build/StepBlockForward.lean`, `Turing.StepBlock.forwardLoopCfg` (defined) and `Turing.StepBlock.exists_forwardLoopTM` (**proved**, 2026-10-16, the H2-F fill, landed by PR #114: the round block released into a phase host with a forwarding leaf, per-step cost `T + 3` live and `T + 2` at a halt, `C = 3`): a macro-step `Turing.Lockstep` of any `k`-tape table through `forwardLoopCfg`, emissions forwarded, per-step cost `0 < cost ≤ 50·(\|tableBitsK\| + 1) + C`, and a per-head space ledger (mirrored heads within the source's visited cells, the two auxiliary heads within that bound); its own module so that the clocked form's consumers (`CodeSimulator`) do not depend on it (user, 2026-10-15) | H1 (`exists_uniformSimulator`); U-1; B6's self-application universal; H2-F: U2-U (`exists_selfUniversalK`), U2-E (`universalK`), B6's `U₀` at `k = 1`, U-1; C1 (unchanged, at `k = 3`, through the replay machine `NDTM.replayTM`); EXPCOM |
+| H3 | **Windowed runner**: run a fixed machine on a windowed record, exiting on window exit, simulated halt, or a configuration-count clock | parts exist privately in S1b's partial (radius phase, records-to-runs bridge, the general-`S` count). S1b stopped (fills-6); B6's window route is the next consumer (adopted, §16b item 3). **B6's hosts landed (PR #92, 2026-10-14):** `Build/WindowRun` and `SpaceComplexity/WindowClock` state its public contracts, sorried for B6's fills. S1b's remaining private block is dead, and the payback PR deletes it. See H9 for the received configuration count | B6 (the window route; gated, `campaign/gates/13-b6-hosts-statements/findings.md`); Savitch and NL = coNL (served by H13a and H13b); S1b (stopped) |
 | H4 | **Search over a graph presented by rows** (enumerate, equality, adjacency, start, target), visited table, BFS | **reconciled 2026-10-14:** built at ARM level for `NSPACE ⊆ DTIME(2^O(S))` (H12, received, accepted exception); MIG-19 is moot. The general search over row-presented graphs remains to be designed (H10's code languages are a row presentation). *(Was: not built; language first, MIG-19.)* | `NL ⊆ P` and `NSPACE ⊆ DTIME(2^O(S))` (served by H12); Immerman–Szelepcsényi counting (served by H13b); `PATH ∈ P`; §15 graph algorithms |
 | H5 | **Input devices** behind one interface: native, buffered (Z1, exists), unary marker, binary position (from `exists_inputSeekTM`), computed input | partial | B6 / `space_universal`; U-1 and H2 (backlog); C1 |
 | H6 | **Machine-to-formula kit**: closed-form variable indexing, snapshot-keyed local gates, ordered emission by `exists_emitLoopTM`, Tseitin on `Std.Sat.CNF ℕ` correct for every prefix assignment | pattern private in `CookLevin/Hardness.lean`; B4a's codec is non-uniform (its orderings range over index types depending on `n` and `s`, and its public statement is `∀ n s, ∃ …`). **B4a is restated in place over this kit's indexing** (user, 2026-10-12; §16b item 2) | TQBF hardness (served instead by H13f's route: the uniform tableau, Tseitin after the prefix); Cook–Levin deduplication; later machine-to-formula reductions. B4a's restatement (§16b item 2) has no consumer while RD-2's fills are held |
@@ -3089,7 +3089,7 @@ and a statement gate before a second consumer is briefed.
 
 **The received ARM machinery, H7–H13** (registered 2026-10-14: the ARM fill gate's round 2,
 finding 5; user decision 3). The rows' public contracts, with file and line, are in
-`audits/evidence/arm-fill/r2/registry-rows.md`. Its lines are at `e831b5b0`, with one correction:
+`campaign/fills/arm/evidence/arm-fill/r2/registry-rows.md`. Its lines are at `e831b5b0`, with one correction:
 `vword_whole₁` is at `Logspace/InputAccess.lean:93`, not 90.
 - **Accepted exception.** Their first uses, the consumers named above, all inside the delivery
   `8c23f3bc`, are an accepted exception to *hosts come first*: they were not statement-gated
@@ -3099,7 +3099,7 @@ finding 5; user decision 3). The rows' public contracts, with file and line, are
 - **Named consumers** are direct importers and named transitive users, marked as such.
 - **Generic forms** are ARM-2's direction (backlog §1 ARM-2), designed with Hydroxyi.
 
-**C1's hosts (landed 2026-10-14, PR #87; gate `audits/c1-hosts-statements-findings.md`).** The
+**C1's hosts (landed 2026-10-14, PR #87; gate `campaign/gates/12-c1-hosts-statements/findings.md`).** The
 nondeterministic phase host `NDTM.phaseHostND` (`Build/NDHost`), the choice writer `ndWriterTM`
 (an H5 device), the window copier `exists_inputWindowCopyTM` (`Build/InputWindow`), the
 interpreter core `R` = `exists_ndInterpreterCore` (`NDCodeSimulator`) and the exhaustive decider
@@ -3116,8 +3116,8 @@ four more reachability notions, each with its own consumer: `WalkLe`, `SavitchAR
 bridges them (2026-10-14).
 
 **Work in flight when the rule was adopted.** No in-flight brief is withdrawn.
-B4 membership and B5a H1 received addenda (`briefs/ch34-b4-mem-addendum-1.md`,
-`briefs/b5a-fill-h1-addendum-1.md`): their hosts stay private for now, as
+B4 membership and B5a H1 received addenda (`campaign/fills/ch34/briefs/ch34-b4-mem-addendum-1.md`,
+`campaign/fills/b5a/briefs/b5a-fill-h1-addendum-1.md`): their hosts stay private for now, as
 their ownership requires, but are written generic, with self-contained
 statements, and listed as promotion candidates. They and S1b's candidates are
 promoted, by PR and gate, before any second consumer is briefed.
@@ -3407,7 +3407,7 @@ gate, finding 3):
 - `Lang/Renumber.lean` (procedure relocation), a candidate for the compiler extensions;
 - `Machine/Footprint.lean` (read/write footprints), a candidate input to stage 2's space bound. The files are
 generated by `scripts/vendor_afm26/` from upstream plus a recorded list of changes. The
-per-file diff is `audits/evidence/programs-vendor/upstream-to-vendored.diff`, and the file map is
+per-file diff is `campaign/gates/programs-vendor/evidence/upstream-to-vendored.diff`, and the file map is
 `.../file-map.md`.
 
 **Local modifications** (listed in each file's header):
@@ -3432,15 +3432,15 @@ per-file diff is `audits/evidence/programs-vendor/upstream-to-vendored.diff`, an
 - The style lint reports 0 FAIL and 0 WARN over the 45 files. The vendored files are registered
   as such.
 - The user-run replay compiles each module separately, in dependency order
-  (`audits/evidence/programs-vendor/replay-order.txt`). Its first run found one import gap.
+  (`campaign/gates/programs-vendor/evidence/replay-order.txt`). Its first run found one import gap.
   `Util/Index` uses a Batteries lemma that upstream reaches through its imports at Mathlib v4.33
   and ours does not; 16 modules failed with it. The fix is an added
   `import Batteries.Data.Nat.Lemmas`, listed in the file's header.
 - The concatenated check had masked that gap: its union of all files' imports contained the
   lemma. A per-module closure check now elaborates each of the 46 modules and facades in exactly
   its own import environment (`scripts/vendor_afm26/closurecheck.py`), and all 46 are clean
-  (`audits/logs/programs-vendor-closure-check.log`).
-- **Replay passed** (user-run, at `155255ed`; `audits/logs/programs-vendor-replay.log`). All 47
+  (`campaign/gates/programs-vendor/logs/programs-vendor-closure-check.log`).
+- **Replay passed** (user-run, at `155255ed`; `campaign/gates/programs-vendor/logs/programs-vendor-replay.log`). All 47
   entries are clean, with 0 errors and no `sorry` warnings: the 42 modules, the four facades and
   `ComputationalModels`. The resumed run rebuilt the 17 modules that had failed and skipped the 30
   that were already clean.
@@ -3520,9 +3520,9 @@ simulation, and threading the input through the RAM's run calculus.
 
 A maintainer sub-agent drafted the statements, and the maintainer re-elaborated them: 0 errors;
 the only warnings are `sorry`s. They are evidence, not landed files:
-`audits/evidence/stage2/Stage2Draft.lean.txt` (723 lines),
-`audits/evidence/stage2/ExtensionsDraft.lean.txt` (415 lines), and the notes
-`audits/evidence/stage2/NOTES.md`.
+`campaign/items/stage2/Stage2Draft.lean.txt` (723 lines),
+`campaign/items/stage2/ExtensionsDraft.lean.txt` (415 lines), and the notes
+`campaign/items/stage2/NOTES.md`.
 
 **Stage 2 (PROG-4).** It is drafted in two forms:
 - `exists_simulation`, deterministic;
@@ -3579,7 +3579,7 @@ nondeterministic contract variant that §16 lists as later.
 `Exec` indices are added in place (option A), the word size is `WordSizeComputable` with its two
 bridges, `emit` appends "nonzero", and the footprint counts touched cells.
 
-**Statement gate (2026-10-13):** `audits/stage2-statements-pack.md`. The maintainer re-elaborated
+**Statement gate (2026-10-13):** `campaign/gates/10-stage2-statements/pack.md`. The maintainer re-elaborated
 the landing form (0 errors; the only warnings are `sorry`s). It differs from the drafts in:
 - **homes:** the wrapper in a new `Programs/WordRAM/Extended.lean`, below the compiler, because
   after PROG-2 the compiler emits `XInstr`; PROG-3's compiler-level statements as local
@@ -3590,7 +3590,7 @@ the landing form (0 errors; the only warnings are `sorry`s). It differs from the
 - **footprints of at most `3n` cells**, so that `mem_P_of_decides` drops its cell bound;
 - **the slice lemma and its space companion are stated** (`NDSlice`). The slice lemma is
   already proved, with a pointwise form of the same hypothesis, in C1's host draft
-  (`audits/evidence/c1/C1HostsDraft.lean.txt`, `Turing.NDTM.runWith_eq_fixChoice_runFrom`); the
+  (`campaign/items/c1/C1HostsDraft.lean.txt`, `Turing.NDTM.runWith_eq_fixChoice_runFrom`); the
   stage-2 pack does not say so. One copy lands, in `Nondeterministic.lean`, with C1's proof under
   the gated statement (maintainer note, 2026-10-13). **Both are proved** since C1's landing
   (PR #87, 2026-10-14);
@@ -3598,7 +3598,7 @@ the landing form (0 errors; the only warnings are `sorry`s). It differs from the
   `List XInstr` at the sites the pack lists.
 
 **Gate CLOSED** (round 1, 2026-10-14: 0 blockers / 0 majors / 4 minors;
-`audits/stage2-statements-findings.md`, resolutions `audits/stage2-statements-resolutions.md`).
+`campaign/gates/10-stage2-statements/findings.md`, resolutions `campaign/gates/10-stage2-statements/resolutions.md`).
 The homes, the namespace `WordRAM` and `initMem` are approved. PROG-3's compiler-level statements
 (B1, B2) may land now, with their extended forms re-gated at PROG-2, or with PROG-2. The
 auditor prefers `acceptProb` in a Complexity-side module. Next: the landing PR.
@@ -3737,7 +3737,7 @@ statement change and no extra hypothesis, on the standard three axioms. So is th
 proved the rest: the frames layer (the `SameOutside` lemmas are nearly definitional),
 `clearTM_contract_frames` (the footprint is exactly where the endpoint writes blanks), `release`
 and `branch`. **The whole MIG-0a draft is proved: 843 lines, 0 errors, 0 warnings**
-(`audits/evidence/mig0/Contract-draft.lean.txt`).
+(`campaign/items/mig0/Contract-draft.lean.txt`).
 
 Further observations from the fit tests:
 - **Liveness is a lemma.** A contract's run is live strictly before its time, from the cut and
@@ -3764,8 +3764,8 @@ The test found two missing public exports, both additive:
   deferred to MIG-0b;
 - **MIG-0b:** revised after the gate's round 1, below.
 
-**MIG-0a gate, round 1** (2026-10-12: 0 blockers, 1 major, 5 minors; `audits/mig0a-findings.md`,
-resolutions `audits/mig0a-resolutions.md`). No proved statement was found false. The major is
+**MIG-0a gate, round 1** (2026-10-12: 0 blockers, 1 major, 5 minors; `campaign/gates/04-mig0a/findings.md`,
+resolutions `campaign/gates/04-mig0a/resolutions.md`). No proved statement was found false. The major is
 about the migration interface: a first-exit `Contract` does not directly replace three kinds of
 existing specification, so the direct-replacement claims of MIG-12 and MIG-15 were wrong.
 - **Segments.** `CfgRecord`'s `RecordRun` is a fixed-length run that avoids a forbidden verdict
@@ -3794,7 +3794,7 @@ dependent migration:
    `CounterLoop` is no longer in its closure, but `Loop` still is, through `Catalog`. The core
    part needs only the machine core, apart from `MultiTapeTM.spaceUsedByTape_le_card_Icc`, which
    lives in `Catalog` and moves down first. **Revised by MIG-0b round 2** (2026-10-13;
-   `audits/mig0b-r2-pack.md`, NOTES-r2 §3):
+   `campaign/gates/15-mig0b/pack-r2.md`, NOTES-r2 §3):
    - `spaceUsedByTape_le_card_Icc` and `workTapePos_runFrom_mem_Icc` move to `Finite` (not
      `Deterministic`);
    - `runFrom_mapState_of_agreeOn` moves to `StateRenaming`, which then imports `Simulation`;
@@ -3818,7 +3818,7 @@ dependent migration:
 
 MIG-0a's round 2 audits the corrected records and the documentation repairs; no statement or proof
 of the file changes. **Round 2 closed the gate** (2026-10-13, 0 blockers / 0 majors / 1 minor;
-`audits/mig0a-r2-findings.md`). Its acceptance obligations for MIG-0b's statement gate:
+`campaign/gates/04-mig0a/findings-r2.md`). Its acceptance obligations for MIG-0b's statement gate:
 - the segment layer keeps zero-length segments, the inclusive envelope and the actual
   configuration seam (`RecordRun`'s shape);
 - `counterSpan` is a segment property (no entry or endpoint constraint; it admits time zero, which
@@ -3832,7 +3832,7 @@ of the file changes. **Round 2 closed the gate** (2026-10-13, 0 blockers / 0 maj
 - the joint-trajectory property holds for general segments, and keeps the counter loop's single
   shared round and time witness for all body heads, its exact endpoints, bounds and liveness.
 
-**MIG-0b gate, round 1** (2026-10-13; `audits/mig0b-findings.md`): **0 blockers / 2 majors /
+**MIG-0b gate, round 1** (2026-10-13; `campaign/gates/15-mig0b/findings.md`): **0 blockers / 2 majors /
 4 minors, gate open.** The segment, round and trajectory layers meet round 2's acceptance
 obligations above, and no proved statement is false. Both majors concern the landing plan:
 - the planned split strands private helpers (`mem_hull_left`, `mem_hull_right`,
@@ -3841,7 +3841,7 @@ obligations above, and no proved statement is false. Both majors concern the lan
   polymorphic `seamRelease_run_pos` it replaces.
 
 **Round 2 CLOSED the gate** (2026-10-14: 0 blockers / 0 majors / 3 minors;
-`audits/mig0b-r2-findings.md`). Round 2 (`audits/mig0b-r2-pack.md`, re-run at `1781a230`): a real
+`campaign/gates/15-mig0b/findings-r2.md`). Round 2 (`campaign/gates/15-mig0b/pack-r2.md`, re-run at `1781a230`): a real
 split, cut-checked without the fit namespace; the polymorphic release; and the minors (an
 entry-compatibility lemma for `Contract.lockstep`, the release's wording, the alphabet admission's
 sketch and reference, and records).
@@ -3884,8 +3884,8 @@ payback PR deletes them (backlog §1 ARM-1).
    - Hardness also needs Tseitin on `Std.Sat.CNF ℕ`, correct for every prefix assignment.
    - Whether the `ψᵢ` emitter is a machine (H6) or a program with `emit` is decided with B4
      hardness's design.
-   - **Designed (2026-10-12):** `audits/evidence/rd2/RD2-design.md`, with a sorried statement draft,
-     `audits/evidence/rd2/RD2Draft.lean.txt`. The draft elaborates with 0 errors and 36 sorries;
+   - **Designed (2026-10-12):** `campaign/items/rd2/RD2-design.md`, with a sorried statement draft,
+     `campaign/items/rd2/RD2Draft.lean.txt`. The draft elaborates with 0 errors and 36 sorries;
      11 of its theorems are proved. It proposes:
      - the H6 kit as `Complexity.FormulaKit`: block variables, a truth-table gate template with
        closed-form wires, ledgers, and emission over `polyTimeComputable_emitIter`;
@@ -3905,12 +3905,12 @@ payback PR deletes them (backlog §1 ARM-1).
      - **The ψ emitter is a machine,** on H6 and the polynomial-time closure algebra.
      - The transition gates are truth-table templates, as in Cook–Levin.
 
-     **Statement gate (2026-10-13):** `audits/rd2-statements-pack.md`. The landing form drops the
+     **Statement gate (2026-10-13):** `campaign/gates/11-rd2-statements/pack.md`. The landing form drops the
      Tseitin instance (decision 4), and adds 17 theorems: the kit's cost ledger, so that the
      private twins merge; the fragment and gate emission forms; unary index arithmetic, because
      the codec divides by `2s + 1`; and the port contract. The prefix-truth lemmas are proved.
      **CLOSED** (round 1, 2026-10-14: PASS, 0 blockers / 0 majors / 2 minors;
-     `audits/rd2-statements-findings.md`). Next: the landing PR, then RD-2a and RD-2b.
+     `campaign/gates/11-rd2-statements/findings.md`). Next: the landing PR, then RD-2a and RD-2b.
 3. **B6 takes the window route, and `space_universal` is restated forward-only.**
    - **The window route.** `space_hierarchy`'s diagonalizer runs one fixed self-simulating
      universal machine `U₀` inside a window of radius `a·g(n)`, on the configuration-record rows,
@@ -3942,10 +3942,10 @@ payback PR deletes them (backlog §1 ARM-1).
      optional early body exit plus clock exhaustion, so H3 can merge halt and window exit into the
      early escape and tell them apart afterwards from the retained record (the RD-3 gate, minor 3).
    - **RD-3's statement gate passed** (2026-10-13, 0 blockers / 0 majors / 4 minors;
-     `audits/b6-restatement-findings.md`). `space_universal` keeps its `+ logSpace |x|` addend for
+     `campaign/gates/05-b6-restatement/findings.md`). `space_universal` keeps its `+ logSpace |x|` addend for
      now; the auditor's addend-free `C·s` route (a bounded-prefix input device, a unary ruler of
      the header's length) is to be decided when H5 is gated.
-   - **Host statements drafted (2026-10-13):** `audits/evidence/b6hosts/` (design note, and the
+   - **Host statements drafted (2026-10-13):** `campaign/items/b6hosts/` (design note, and the
      draft `B6HostsDraft.lean.txt`: 0 errors, 10 sorried machine contracts, 43 declarations
      proved). It contains:
      - **H3:** a pure specification `windowRun` with three exits; a step clock shared with C1,
@@ -3964,7 +3964,7 @@ payback PR deletes them (backlog §1 ARM-1).
      configuration-count runner and its bound go to a new `SpaceComplexity/WindowClock.lean`, so
      that `Build/WindowRun.lean` imports nothing from `SpaceComplexity`; the contracts are gated
      as `∃` statements, with named machines at fill time.
-   - **Statement gate (2026-10-13):** `audits/b6-hosts-statements-pack.md`. Changes from the
+   - **Statement gate (2026-10-13):** `campaign/gates/13-b6-hosts-statements/pack.md`. Changes from the
      draft:
      - the ruler host is a block simulation (H2-S round 1, finding 2);
      - `U₀`'s sketch uses the reset-output invariant (finding 4);
@@ -3973,7 +3973,7 @@ payback PR deletes them (backlog §1 ARM-1).
        unchanged, so C1's pack only re-points its citation at landing;
      - window containment and the B6 summary instance move to `WindowClock`.
    - **CLOSED** (2026-10-14: PASS, 0 blockers / 0 majors / 5 minors;
-     `audits/b6-hosts-statements-findings.md`). The step clock keeps `+2`; the runner stays
+     `campaign/gates/13-b6-hosts-statements/findings.md`). The step clock keeps `+2`; the runner stays
      clock-agnostic. Next: the landing PR.
    - The shortcut through a space ledger for the time hierarchy's `diagSim` is not taken.
    - The restatement and the re-routed sketches go through a statement gate.

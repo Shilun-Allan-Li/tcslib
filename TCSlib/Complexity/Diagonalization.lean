@@ -8,6 +8,7 @@ import TCSlib.Complexity.Diagonalization.EXPCOM
 import TCSlib.Complexity.Diagonalization.Relativization
 import TCSlib.Complexity.Diagonalization.NotTimeConstructible
 import TCSlib.Complexity.Diagonalization.NTimeHierarchy
+import TCSlib.Complexity.Diagonalization.NTimeDiagonalizer
 
 /-!
 # Diagonalization: relativization and its limits
@@ -37,8 +38,11 @@ non-time-constructible function `Complexity.exists_not_timeConstructible`
   that is not time-constructible
 - `Diagonalization.NTimeHierarchy`: the clocked universal NDTM at linear
   overhead ([AB09, Exercise 2.6]), the exponential deterministic evaluator,
-  the linear coded normal form, and [AB09, Theorem 3.2] with its positive
-  form and the `NTIME(n+1) ⊊ NTIME((n+1)²)` showcase
+  and [AB09, Theorem 3.2] with its positive form and the
+  `NTIME(n+1) ⊊ NTIME((n+1)²)` showcase (the linear coded normal form is in
+  `ClassNP.NDNormalForm`)
+- `Diagonalization.NTimeDiagonalizer`: the lazy diagonalizer of Theorem 3.2,
+  its stages (the ladder, the schedule, the stage query) and its two contracts
 
 ## References
 

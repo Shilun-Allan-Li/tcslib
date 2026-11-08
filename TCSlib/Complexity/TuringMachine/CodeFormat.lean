@@ -27,6 +27,8 @@ This factors the one- and two-work-tape constructions of [AB09, §1.4].
 * `Turing.CodeFormat.decode_serialize_pad` — padded decoding recovers the machine.
 * `Turing.CodeFormat.canonical_eq` — scanning computes its canonical serialization.
 * `Turing.CodeFormat.numStates_decode_le` — the guarded decoded-size bound.
+* `Turing.actionBitsK_eq`, `Turing.codeSkipActionK_append` — a record's fields, and skipping it
+  (the ND inventory API, round 2; gate 37, finding 1).
 
 ## References
 
@@ -46,6 +48,14 @@ def actionBitsK {k n : ℕ} (a : Action k Bool (Fin (n + 1))) : List Bool :=
     (List.finRange k).flatMap
       (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
     optBoolBits a.output ++ optStateBits a.state
+
+/-- **A record's fields** (the ND inventory API, round 2; gate 37, finding 1): the input move,
+each work tape's write and move in tape order, the output, the successor state. [AB09, §1.4] -/
+theorem actionBitsK_eq {k n : ℕ} (a : Action k Bool (Fin (n + 1))) :
+    actionBitsK a = signBits a.inputTape ++
+      (List.finRange k).flatMap
+        (fun i => optOptBoolBits (a.workTapes i).1 ++ signBits (a.workTapes i).2) ++
+      optBoolBits a.output ++ optStateBits a.state := rfl
 
 /-- Read an optional work-tape write and its head move. [AB09, §1.4] -/
 def codeReadWork (xs : List Bool) :
@@ -142,6 +152,16 @@ lemma codeEraseActionK (k n : ℕ) (xs : List Bool) :
   rw [← codeEraseOutput p.2, ← codeErase_bind]
   congr 1; funext p
   simpa only [Option.map_eq_bind, Function.comp_def] using codeEraseState (n + 1) p.2
+
+/-- **Skipping a serialized record leaves its suffix** (the ND inventory API, round 2; gate 37,
+finding 1): `codeSkipActionK k n (actionBitsK a ++ xs) = some xs`. [AB09, §1.4]
+
+**Proof sketch.** The skipper is the reader with its result erased (`codeEraseActionK`), and the
+reader recovers `a` with the suffix `xs` (`codeReadActionK_append`). -/
+theorem codeSkipActionK_append {k n : ℕ} (a : Action k Bool (Fin (n + 1))) (xs : List Bool) :
+    codeSkipActionK k n (actionBitsK a ++ xs) = some xs := by
+  rw [← codeEraseActionK, codeReadActionK_append]
+  rfl
 
 /-- Every `k`-work-tape record has at least `4 * k + 5` bits. [AB09, §1.4]
 

@@ -74,6 +74,9 @@ deterministic embedding `DTIME ⊆ NTIME`.
 * `Turing.FinTM.toFinNDTM_haltsWithin_and_accepts_iff` — its per-input content, a
   deterministic decider run nondeterministically (shared with `SPACE ⊆ NSPACE`;
   added 2026-10-10).
+* `Turing.FinNDTM.acceptsWithin_iff`, `Turing.FinNDTM.decidesInTime_iff`,
+  `Complexity.mem_NTIME_iff` — the three definitions unfolded (the ND inventory API, C1's
+  pre-ship inventory, 2026-10-17).
 * `Complexity.NTIME_eq_empty_of_exists_zero` — a vanishing time bound gives the empty
   class, as for `DTIME`.
 
@@ -94,6 +97,15 @@ def AcceptsWithin (N : FinNDTM Bool) (x : List Bool) (t : ℕ) : Prop :=
   ∃ w : List Bool, w.length = t ∧
     (N.tm.runWith w (N.tm.initCfg x)).state = none ∧
     (N.tm.runWith w (N.tm.initCfg x)).output = [true]
+
+/-- **Acceptance, unfolded** (the ND inventory API, 2026-10-17): `N.AcceptsWithin x t` holds iff
+some choice word `w` of length `t` leaves the run from `N.tm.initCfg x` halted with output
+`[true]`. -/
+theorem acceptsWithin_iff {N : FinNDTM Bool} {x : List Bool} {t : ℕ} :
+    N.AcceptsWithin x t ↔ ∃ w : List Bool, w.length = t ∧
+      (N.tm.runWith w (N.tm.initCfg x)).state = none ∧
+      (N.tm.runWith w (N.tm.initCfg x)).output = [true] :=
+  Iff.rfl
 
 /-- Acceptance is monotone in the branch length: an accepting branch stays accepting
 when the choice word is extended.
@@ -119,6 +131,14 @@ non-members alike), and `x ∈ L` exactly when some such branch accepts.
 def DecidesInTime (N : FinNDTM Bool) (L : Language Bool) (T : ℕ → ℕ) : Prop :=
   ∀ x : List Bool,
     N.tm.HaltsWithin x (T x.length) ∧ (x ∈ L ↔ N.AcceptsWithin x (T x.length))
+
+/-- **Nondeterministic decision, unfolded** (the ND inventory API, 2026-10-17):
+`N.DecidesInTime L T` holds iff on every input `x` every branch of length `T |x|` halts and
+`x ∈ L ↔ N.AcceptsWithin x (T |x|)`. -/
+theorem decidesInTime_iff {N : FinNDTM Bool} {L : Language Bool} {T : ℕ → ℕ} :
+    N.DecidesInTime L T ↔ ∀ x : List Bool,
+      N.tm.HaltsWithin x (T x.length) ∧ (x ∈ L ↔ N.AcceptsWithin x (T x.length)) :=
+  Iff.rfl
 
 end Turing.FinNDTM
 
@@ -173,6 +193,12 @@ decides it within `c · T n` steps on inputs of length `n`, in the sense of
 `Turing.FinNDTM.DecidesInTime`. [AB09, Definition 2.5] -/
 def NTIME (T : ℕ → ℕ) : Set (Language Bool) :=
   {L | ∃ (c : ℕ) (N : FinNDTM Bool), N.DecidesInTime L fun n => c * T n}
+
+/-- **Membership in `NTIME`, unfolded** (the ND inventory API, 2026-10-17): `L ∈ NTIME T` iff some
+machine `N` decides `L` within `c · T n` for some constant `c`. -/
+theorem mem_NTIME_iff {T : ℕ → ℕ} {L : Language Bool} :
+    L ∈ NTIME T ↔ ∃ (c : ℕ) (N : FinNDTM Bool), N.DecidesInTime L fun n => c * T n :=
+  Iff.rfl
 
 /-- `NTIME` is monotone in the time bound.
 

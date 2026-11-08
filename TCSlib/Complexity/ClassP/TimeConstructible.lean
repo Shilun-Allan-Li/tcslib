@@ -49,6 +49,7 @@ budget as an explicit extra input and needs no constructibility hypothesis.
 
 ## Main results
 
+* `Complexity.timeConstructible_iff` — the definition as an equivalence.
 * `Complexity.timeConstructible_id` — the identity function is time constructible,
   restoring [AB09]'s example under the repaired definition.
 * `Turing.FinTM.lengthBitsTM_computes`, `Turing.FinTM.lengthBitsTM_spaceUsed` — the
@@ -74,6 +75,15 @@ def TimeConstructible (T : ℕ → ℕ) : Prop :=
   (∀ n, n ≤ T n) ∧
   ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool, ∀ x : List Bool,
     M.ComputesInTime x (T x.length).bits (c * (T x.length + 1))
+
+/-- **Time constructibility, unfolded**: `T` is time constructible exactly when `n ≤ T n` for
+every `n` and, for some constant `c > 0`, some machine computes `(T |x|).bits` on every input `x`
+within `c · (T |x| + 1)` steps. -/
+theorem timeConstructible_iff (T : ℕ → ℕ) :
+    TimeConstructible T ↔
+      (∀ n, n ≤ T n) ∧ ∃ c : ℕ, 0 < c ∧ ∃ M : FinTM Bool, ∀ x : List Bool,
+        M.ComputesInTime x (T x.length).bits (c * (T x.length + 1)) :=
+  Iff.rfl
 
 /-- Increment a little-endian binary word, extending it on overflow. -/
 private def counterInc : List Bool → List Bool

@@ -21,12 +21,10 @@ universal machine of `Complexity.space_hierarchy`'s window route (`machine-libra
 §16b item 3): a public row built from H2's step block and H5's native device, not a private host
 of that proof (`policy.md` §1, *Hosts come first*).
 
-**Status: statement gate passed 2026-10-14** (round 1, 0/0/5;
-`audits/b6-hosts-statements-findings.md`). Both statements are the `k = 1` cases of the
-`k`-generic `Turing.exists_selfStartupTMK` and `Turing.exists_selfUniversalK`
-(`TuringMachine/UniversalK.lean`, U2 statement gate pending; user decision (a), 2026-10-14), and
-are proved from them here, with their statements unchanged; the construction, its sketch and its
-fill are the generic ones.
+**Status: proved.** Both statements are the `k = 1` cases of the `k`-generic
+`Turing.exists_selfStartupTMK` and `Turing.exists_selfUniversalK`
+(`TuringMachine/UniversalK.lean`), and are proved from them here, with their statements
+unchanged; the construction, its sketch and its fill are the generic ones.
 
 ## Design
 

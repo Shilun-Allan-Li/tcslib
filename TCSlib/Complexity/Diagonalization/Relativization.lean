@@ -955,11 +955,10 @@ does not relativize.
 `Complexity.exists_oracle_ne` — were `P^B = NP^B`, its `U_B ∈ NP^B` and
 `U_B ∉ P^B` would collide.
 
-**Fill appendix (maintainer).** Exactly the sketch, as derived in
-`audits/evidence/wave1-statements/S1210StatementsProbe.lean.txt`. It is proved modulo the
-`EXPCOM` identity, which rests on B5's summit and `EXP ⊆ P^EXPCOM`, and modulo
-`exists_uniformMachineCode` (B5a), on which the language `EXPCOM` itself rests through
-`Complexity.expCode`. The `B` half (`Complexity.exists_oracle_ne`) is admission-free. -/
+**Dependencies.** The `A` half rests on `Complexity.POracle_EXPCOM_eq_NPOracle_EXPCOM`, which
+follows from `Complexity.NPOracle_EXPCOM_eq_EXP` and `Complexity.POracle_EXPCOM_eq_EXP`, and on
+`Turing.exists_uniformMachineCode`, on which the language `EXPCOM` itself rests through
+`Complexity.expCode`. Both halves are proved in full. -/
 theorem baker_gill_solovay :
     (∃ A : Language Bool, POracle A = NPOracle A) ∧
     ∃ B : Language Bool, POracle B ≠ NPOracle B := by

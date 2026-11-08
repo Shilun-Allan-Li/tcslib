@@ -74,8 +74,9 @@ P16–P18, `splitSolveWith`) stay lazy until a space consumer appears.
 
 The alphabet-generic rows of the rich-alphabet design
 (`machine-library-design.md` §12.8a): the framed compare (R8.1), the seek
-family over blank-separated fields (R8.3) with its field-layout vocabulary,
-and the two-pass transducer scan `Turing.scanTM` (R8.2). The scan is the G2
+family over blank-separated fields (R8.3) with its field-layout vocabulary, the
+lockstep walk `Turing.walkTM` (R8.3b, §13d G4's ruler; `Turing.skipTM` is its one-tape
+instance), and the two-pass transducer scan `Turing.scanTM` (R8.2). The scan is the G2
 core of the §13d revision: fold, in-place map, head-mark shifts and carry
 odometers are its instances, as pure identities of `Turing.scanResult`, so
 one framed contract and one trace serve them all.
@@ -101,6 +102,11 @@ one framed contract and one trace serve them all.
   `Turing.scanTM`, and the instance steps `Turing.scanKeep`,
   `Turing.scanFold`, `Turing.scanMap`, `Turing.scanShift`,
   `Turing.scanCarry`.
+* `Turing.compareStop` — the compare's stop, the length of the two words' common prefix
+  (MIG-11a, user 2026-10-16), with `Turing.compareStop_eq`, `Turing.compareStop_cons_cons`,
+  `Turing.compareStop_spec`, `Turing.compareStop_unique` and `Turing.compareStop_le`; the framed
+  compare at that exact time, `Turing.compareTM_run_stop_ofCfg`, of which
+  `Turing.compareTM_run_ofCfg` is now a corollary.
 
 ## Main results
 
@@ -121,7 +127,8 @@ Part 3 (proved): `Turing.fieldsTape_field`;
 `Turing.seekStartTM_run_ofCfg`; `Turing.scanTM_run_ofCfg`; and the instance
 identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
 `Turing.scanResult_shiftRight`, `Turing.scanResult_shiftLeft`,
-`Turing.scanResult_carry`.
+`Turing.scanResult_carry`, and the identity scan `Turing.scanResult_keep_keep` (the
+brief-inventory API, round 3).
 
 * `Turing.Cfg.ofWords_copy_endpoint`, `Turing.Cfg.ofWords_transfer_endpoint` (MIG-1):
   the framed copy and transfer endpoints started at a canonical seam `Cfg.ofWords q w`
@@ -131,6 +138,10 @@ identities `Turing.scanResult_fold`, `Turing.scanResult_map`,
   (2026-10-13; it was here from `Build/Zone.lean` for B4, 2026-10-12).
 * `Turing.FinTM.rewind_scan_heads`, `Turing.FinTM.rewind_heads` — the rewind head
   bounds — moved on to `TuringMachine/Simulation` at MIG-1 stage S (2026-10-14).
+* `Turing.joinFields_nil`, `Turing.joinFields_singleton`, `Turing.fieldsTape_of_nonneg`,
+  `Turing.fieldsTape_of_neg`, `Turing.fieldsTape_of_length_le`, `Turing.fieldsTape_nil`,
+  `Turing.fieldOffset_zero` — the field layout's base and boundary facts, the specification
+  API (user, 2026-10-16).
 
 ## References
 
@@ -175,20 +186,39 @@ deriving DecidableEq, Fintype
 
 variable {k : ℕ} {x : List Bool}
 
-/-- **R3, transfer** (design §12; [Bon26]). Move the word stored on tape
-`src` to tape `dst`: a forward pass copies cell by cell (both heads in
-lockstep), the turn at the source's right blank starts the return pass,
-which erases the source on the way back, and the overshoot to the left
-blank steps right into the live `done` anchor with both heads at the
-origin. -/
-def transferTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symbol SweepPhase where
+/-! ### §13d G2 — mapped sweeps, the cross-tape rows beside the scan
+
+The one-tape core of G2 is the scan `Turing.scanTM` above (decision Q7, 2026-10-11). The two
+rows below move **one component** of each cell across tapes, which whole-symbol copying cannot
+do: they read each source cell through `extract : Symbol → Δ` and write
+`merge (destination cell) (extract source cell)` into the destination, where the destination
+cell may be blank (`merge : Option Symbol → Δ → Symbol`). **The tables are written once**: the
+plain rows `Turing.transferTM` and `Turing.copyTM` are *defined* as these rows at the identity
+map (`extract := id`, `merge := fun _ s => s`, and for the transfer the blank residue), so they
+are definitional instances (`Turing.copyMapTM_plain`, `Turing.transferMapTM_plain`, by `rfl`).
+The mapped framed rows share the two-pass sweep trace `Turing.catalog_trace_run` that every
+sweep row cites (one trace per routine family, as §12.6 established), through one trace lemma:
+the copy is the transfer with the identity residue `some`, whose return pass writes back what it
+reads (`Turing.copyMapTM_run_ofCfg`). (Landing: this
+block is inserted before `Turing.transferTM`; in the gate unit it follows the plain rows.) -/
+
+/-- **§13d G2, the mapped copy** (design §13d, G2; [Bon26], the copy row's shape). Copy the word
+stored on tape `src` onto tape `dst` through a map. For distinct tapes (`src ≠ dst`, the
+hypothesis of the framed theorem) the forward pass reads each source cell `γ` and the
+destination cell `c` under the destination head (`c` may be blank), writes
+`merge c (extract γ)` there, and moves both heads right; the source's right blank turns both
+heads; the return pass, guided by the intact source, brings both back; the left blank steps them
+right into the live `done` anchor. The source is then never written. `Turing.copyTM` is this row
+at `extract := id` and `merge := fun _ s => s`. -/
+def copyMapTM {Symbol : Type*} {Δ : Type*} (k : ℕ) (src dst : Fin k) (extract : Symbol → Δ)
+    (merge : Option Symbol → Δ → Symbol) : MultiTapeTM k Symbol SweepPhase where
   q₀ := .sweep
   tr := fun q _ w =>
     match q with
     | .sweep =>
       match w src with
       | some b =>
-        ⟨0, fun j => if j = dst then (some (some b), SignType.pos)
+        ⟨0, fun j => if j = dst then (some (some (merge (w dst) (extract b))), SignType.pos)
             else if j = src then (none, SignType.pos) else (none, 0),
           none, some .sweep⟩
       | none =>
@@ -197,7 +227,37 @@ def transferTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symb
     | .rewind =>
       match w src with
       | some _ =>
-        ⟨0, fun j => if j = src then (some none, SignType.neg)
+        ⟨0, fun j => if j = src ∨ j = dst then (none, SignType.neg)
+            else (none, 0), none, some .rewind⟩
+      | none =>
+        ⟨0, fun j => if j = src ∨ j = dst then (none, SignType.pos)
+            else (none, 0), none, some .done⟩
+    | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
+
+/-- **§13d G2, the mapped transfer** (design §13d, G2; [Bon26], the transfer row's shape). As
+`Turing.copyMapTM` (again for `src ≠ dst`), except that the return pass also rewrites each source
+cell `γ` to its residue `rest γ` (`none` blanks it). With a residue that keeps a cell's other
+components (the per-track case), the source word stays a delimited word. `Turing.transferTM` is
+this row at `extract := id`, `merge := fun _ s => s` and `rest := fun _ => none`. -/
+def transferMapTM {Symbol : Type*} {Δ : Type*} (k : ℕ) (src dst : Fin k) (extract : Symbol → Δ)
+    (merge : Option Symbol → Δ → Symbol) (rest : Symbol → Option Symbol) :
+    MultiTapeTM k Symbol SweepPhase where
+  q₀ := .sweep
+  tr := fun q _ w =>
+    match q with
+    | .sweep =>
+      match w src with
+      | some b =>
+        ⟨0, fun j => if j = dst then (some (some (merge (w dst) (extract b))), SignType.pos)
+            else if j = src then (none, SignType.pos) else (none, 0),
+          none, some .sweep⟩
+      | none =>
+        ⟨0, fun j => if j = src ∨ j = dst then (none, SignType.neg)
+            else (none, 0), none, some .rewind⟩
+    | .rewind =>
+      match w src with
+      | some b =>
+        ⟨0, fun j => if j = src then (some (rest b), SignType.neg)
             else if j = dst then (none, SignType.neg) else (none, 0),
           none, some .rewind⟩
       | none =>
@@ -205,32 +265,23 @@ def transferTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symb
             else (none, 0), none, some .done⟩
     | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
 
+/-- **R3, transfer** (design §12; [Bon26]). Move the word stored on tape
+`src` to tape `dst`: a forward pass copies cell by cell (both heads in
+lockstep), the turn at the source's right blank starts the return pass,
+which erases the source on the way back, and the overshoot to the left
+blank steps right into the live `done` anchor with both heads at the
+origin. Its table is the mapped transfer's
+(`Turing.transferMapTM`, §13d G2) at the identity map with the blank residue. -/
+def transferTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symbol SweepPhase :=
+  transferMapTM k src dst id (fun _ s => s) (fun _ => none)
+
 /-- **R3, copy** (design §12; [Bon26]; the A3 chain's `3|w| + 3` row).
 Copy the word stored on tape `src` onto tape `dst`, keeping the source:
 the same two-pass sweep as `Turing.transferTM` without the erasure on the
-return pass. -/
-def copyTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symbol SweepPhase where
-  q₀ := .sweep
-  tr := fun q _ w =>
-    match q with
-    | .sweep =>
-      match w src with
-      | some b =>
-        ⟨0, fun j => if j = dst then (some (some b), SignType.pos)
-            else if j = src then (none, SignType.pos) else (none, 0),
-          none, some .sweep⟩
-      | none =>
-        ⟨0, fun j => if j = src ∨ j = dst then (none, SignType.neg)
-            else (none, 0), none, some .rewind⟩
-    | .rewind =>
-      match w src with
-      | some _ =>
-        ⟨0, fun j => if j = src ∨ j = dst then (none, SignType.neg)
-            else (none, 0), none, some .rewind⟩
-      | none =>
-        ⟨0, fun j => if j = src ∨ j = dst then (none, SignType.pos)
-            else (none, 0), none, some .done⟩
-    | .done => ⟨0, fun _ => (none, 0), none, some .done⟩
+return pass. Its table is the mapped copy's (`Turing.copyMapTM`, §13d G2) at the identity
+map. -/
+def copyTM {Symbol : Type*} (k : ℕ) (src dst : Fin k) : MultiTapeTM k Symbol SweepPhase :=
+  copyMapTM k src dst id (fun _ s => s)
 
 /-- **R3, clear** (design §12; [Bon26]; P12's engine, the A3 chain's
 `2|w| + 2` row, and the frozen §3 scratch discipline's supporting
@@ -517,166 +568,254 @@ private lemma catalog_clear_trace {Symbol : Type*} {x : List Symbol} (i : Fin k)
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · apply Cfg.ext <;> simp [MultiTapeTM.step, clearTM, Action.apply]
 
-/-- Copy and transfer share the framed forward phase: only the destination
-prefix has been overwritten; both selected heads have the same relative offset. -/
-private def catalogCopyF {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (w : List Symbol)
-    (d : Cfg k Symbol SweepPhase x) (r : ℕ) : Cfg k Symbol SweepPhase x :=
+/-- The framed forward phase of the mapped copy and transfer: after `r` forward steps the
+destination interval `[pos, pos + r)` holds the row's written values `v q`, every other cell is
+the start's, and both selected heads have moved `r` cells. For the mapped rows `v q` is `merge`
+of the cell's original content and the extracted source symbol (the trace lemmas below). -/
+private def catalogSweepF {Symbol : Type*} {x : List Symbol} (src dst : Fin k)
+    (v : ℤ → Option Symbol) (d : Cfg k Symbol SweepPhase x) (r : ℕ) :
+    Cfg k Symbol SweepPhase x :=
   { d with state := some .sweep
            workTapes := fun j q =>
-             if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (r : ℤ)
-               then FinTM.bufferTape w (q - d.workTapePos j) else d.workTapes j q
+             if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (r : ℤ) then v q
+             else d.workTapes j q
            workTapePos := fun j =>
              d.workTapePos j + if j = src ∨ j = dst then (r : ℤ) else 0 }
 
-/-- Copy returns over the complete destination interval without further writes. -/
-private def catalogCopyR {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (w : List Symbol)
-    (d : Cfg k Symbol SweepPhase x) (r : ℕ) : Cfg k Symbol SweepPhase x :=
-  { catalogCopyF src dst w d w.length with
+/-- The return phase over the complete written destination interval of length `L`, without
+further writes; the heads are `r - 1` cells along. -/
+private def catalogSweepR {Symbol : Type*} {x : List Symbol} (src dst : Fin k)
+    (v : ℤ → Option Symbol) (d : Cfg k Symbol SweepPhase x) (L r : ℕ) :
+    Cfg k Symbol SweepPhase x :=
+  { catalogSweepF src dst v d L with
       state := some .rewind
       workTapePos := fun j =>
         d.workTapePos j + if j = src ∨ j = dst then (r : ℤ) - 1 else 0 }
 
-/-- Transfer's return erases exactly the already-crossed source suffix and
-preserves the complete copied destination interval and both outer frames. -/
-private def catalogTransferR {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (w : List Symbol)
-    (d : Cfg k Symbol SweepPhase x) (r : ℕ) : Cfg k Symbol SweepPhase x :=
-  { catalogCopyR src dst w d r with
+/-- The transfer's return phase: as `catalogSweepR`, with the already-crossed source suffix
+`[pos + r, pos + L)` rewritten to the residue values `u q`. -/
+private def catalogSweepResidueR {Symbol : Type*} {x : List Symbol} (src dst : Fin k)
+    (v u : ℤ → Option Symbol) (d : Cfg k Symbol SweepPhase x) (L r : ℕ) :
+    Cfg k Symbol SweepPhase x :=
+  { catalogSweepR src dst v d L r with
       workTapes := fun j q =>
-        if j = src ∧ d.workTapePos j + (r : ℤ) ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
-          then none else (catalogCopyR src dst w d r).workTapes j q }
+        if j = src ∧ d.workTapePos j + (r : ℤ) ≤ q ∧ q < d.workTapePos j + (L : ℤ) then u q
+        else (catalogSweepR src dst v d L r).workTapes j q }
 
-/-- The common forward transition copies exactly the next original source symbol. -/
-private lemma catalog_copy_forward {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
-    (w : List Symbol) (d : Cfg k Symbol SweepPhase x)
-    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p)
-    (r : ℕ) (hr : r < w.length) :
-    (copyTM k src dst).step (catalogCopyF src dst w d r) =
-      catalogCopyF src dst w d (r + 1) := by
-  have hs : (catalogCopyF src dst w d r).workTapeSymbols src = some w[r] := by
-    simp [catalogCopyF, Cfg.workTapeSymbols, hne,
-      hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
-  change ((copyTM k src dst).tr .sweep _ _).apply _ = _
-  simp only [copyTM, hs]
-  apply Cfg.ext <;> simp [Action.apply, catalogCopyF]
-  · funext j
-    by_cases hj : j = dst
-    · subst j
-      simpa using catalog_write_take (d.workTapes dst) (d.workTapePos dst) w r hr
-    · by_cases hs : j = src <;> simp [hj, hs, hne, Ne.symm hne]
-  · funext j
-    by_cases hd : j = dst <;> by_cases hs : j = src <;>
-      simp [hd, hs, hne, SignType.cast] <;> omega
+/-- **The trajectory clauses of a framed two-pass row, from its trace.** If the forward family is
+in the `sweep` phase with the touched heads `r` cells along, the return family is in the `rewind`
+phase with them `r - 1` cells along, and the exit configuration is in `done` with the start's
+heads, then the run is not at `done` before `2L + 2`, and up to then every touched head stays
+within one cell of its interval `[pos, pos + L)` while every other head is fixed.
 
-/-- Copy's exact framed phase invariant. **Proof sketch.** The shared forward
-step writes one destination cell. Both delimiter turns and the entire return
-pass are read-only; the unchanged source window supplies every branch decision. -/
-private lemma catalog_copy_trace {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
-    (w : List Symbol) (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep)
-    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
-      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) (t : ℕ) :
-    (copyTM k src dst).runFrom d t =
-      catalogTrace (catalogCopyF src dst w d) (catalogCopyR src dst w d)
-        { d with state := some .done
-                 workTapes := (catalogCopyF src dst w d w.length).workTapes } w.length t := by
-  have h0 : catalogCopyF src dst w d 0 = d := by
-    apply Cfg.ext <;> simp [catalogCopyF, hstate]
-    funext j q
-    split_ifs <;> simp_all <;> omega
-  conv_lhs => rw [← h0]
-  apply catalog_trace_run
-  · exact catalog_copy_forward src dst hne w d hw
-  · have hs : (catalogCopyF src dst w d w.length).workTapeSymbols src = none := by
-      simp [catalogCopyF, Cfg.workTapeSymbols, hne,
-        hw w.length (by omega) (by omega)]
-    change ((copyTM k src dst).tr .sweep _ _).apply _ = _
-    simp only [copyTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogCopyF, catalogCopyR]
-    all_goals
-      funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
-  · intro r hr
-    have hs : (catalogCopyR src dst w d (r + 1)).workTapeSymbols src = some w[r] := by
-      simp [catalogCopyR, catalogCopyF, Cfg.workTapeSymbols, hne,
-        hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
-    change ((copyTM k src dst).tr .rewind _ _).apply _ = _
-    simp only [copyTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogCopyR, catalogCopyF]
-    all_goals
-      funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
-  · have hs : (catalogCopyR src dst w d 0).workTapeSymbols src = none := by
-      simpa [catalogCopyR, catalogCopyF, Cfg.workTapeSymbols, hne] using
-        hw (-1) (by omega) (by omega)
-    change ((copyTM k src dst).tr .rewind _ _).apply _ = _
-    simp only [copyTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogCopyR, catalogCopyF]
-    all_goals
-      funext j
-      split_ifs <;> simp_all [SignType.cast] <;> omega
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, copyTM, Action.apply]
+**Proof sketch.** Rewrite the run by the trace and split at the forward endpoint, the return
+endpoint and the exit: the state is `sweep`, `rewind` or (only from `2L + 2` on) `done`, and the
+head offset is `t`, `2L + 1 - t - 1` or `0`. -/
+private lemma catalog_trace_clauses {Symbol : Type*} {x : List Symbol}
+    (M : MultiTapeTM k Symbol SweepPhase) (d : Cfg k Symbol SweepPhase x)
+    (touched : Fin k → Prop) [DecidablePred touched] (F R : ℕ → Cfg k Symbol SweepPhase x)
+    (D : Cfg k Symbol SweepPhase x) (L : ℕ)
+    (htrace : ∀ t, M.runFrom d t = catalogTrace F R D L t)
+    (hF : ∀ r, (F r).state = some .sweep ∧
+      ∀ j, (F r).workTapePos j = d.workTapePos j + if touched j then (r : ℤ) else 0)
+    (hR : ∀ r, (R r).state = some .rewind ∧
+      ∀ j, (R r).workTapePos j = d.workTapePos j + if touched j then (r : ℤ) - 1 else 0)
+    (hD : D.state = some .done ∧ D.workTapePos = d.workTapePos) :
+    (∀ t < 2 * L + 2, (M.runFrom d t).state ≠ some .done) ∧
+    (∀ (j : Fin k) (t : ℕ), t ≤ 2 * L + 2 →
+      if touched j then
+        (M.runFrom d t).workTapePos j ∈
+          Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (L : ℤ))
+      else (M.runFrom d t).workTapePos j = d.workTapePos j) := by
+  constructor
+  · intro t ht
+    rw [htrace]
+    unfold catalogTrace
+    split_ifs with h1 h2
+    · rw [(hF t).1]; simp
+    · rw [(hR _).1]; simp
+    · omega
+  · intro j t ht
+    rw [htrace]
+    unfold catalogTrace
+    by_cases hj : touched j
+    · rw [if_pos hj, Finset.mem_Icc]
+      split_ifs with h1 h2
+      · rw [(hF t).2 j, if_pos hj]; omega
+      · rw [(hR _).2 j, if_pos hj]; omega
+      · rw [hD.2]; omega
+    · rw [if_neg hj]
+      split_ifs with h1 h2
+      · rw [(hF t).2 j, if_neg hj]; simp
+      · rw [(hR _).2 j, if_neg hj]; simp
+      · rw [hD.2]
 
-/-- Transfer's exact framed phase invariant. **Proof sketch.** Reuse copy's
-forward transition. On return each source write extends the erased suffix by
-one cell, leaving the next read unchanged. The two delimiter cells are never
+/-- **The mapped copy is the mapped transfer with the identity residue.** With `rest := some`
+the transfer's return pass writes back, at each source cell it leaves, the symbol it has just read
+there, which changes nothing; every other transition of the two tables is the same. So the two
+machines take the same step from every configuration.
+
+**Proof sketch.** Unfold one step and split on the phase and the scanned source cell. Only the
+`rewind` phase over a nonblank source cell differs, where the transfer's write is
+`Function.update` of the tape at the head with the cell's own content. -/
+private lemma copyMapTM_step_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol} (src dst : Fin k)
+    (extract : Symbol → Δ) (merge : Option Symbol → Δ → Symbol)
+    (c : Cfg k Symbol SweepPhase x) :
+    (copyMapTM k src dst extract merge).step c =
+      (transferMapTM k src dst extract merge some).step c := by
+  unfold MultiTapeTM.step
+  cases hq : c.state with
+  | none => rfl
+  | some q =>
+    cases q with
+    | sweep => rfl
+    | done => rfl
+    | rewind =>
+      cases hb : c.workTapeSymbols src with
+      | none => simp only [copyMapTM, transferMapTM, hb]
+      | some b =>
+        have hc : c.workTapes src (c.workTapePos src) = some b := hb
+        simp only [copyMapTM, transferMapTM, hb]
+        apply Cfg.ext <;> simp only [Action.apply]
+        · funext j
+          by_cases hs : j = src
+          · subst hs
+            simp only [true_or, if_true]
+            rw [← hc, Function.update_eq_self]
+          · by_cases hd : j = dst
+            · subst hd; simp [hs]
+            · simp [hs, hd]
+        · funext j
+          by_cases hs : j = src
+          · simp [hs]
+          · by_cases hd : j = dst
+            · subst hd; simp [hs]
+            · simp [hs, hd]
+
+/-- The runs of the mapped copy are those of the mapped transfer with the identity residue
+(`copyMapTM_step_eq`, iterated). -/
+private lemma copyMapTM_runFrom_eq {Symbol : Type*} {Δ : Type*} {x : List Symbol}
+    (src dst : Fin k) (extract : Symbol → Δ) (merge : Option Symbol → Δ → Symbol)
+    (d : Cfg k Symbol SweepPhase x) (t : ℕ) :
+    (copyMapTM k src dst extract merge).runFrom d t =
+      (transferMapTM k src dst extract merge some).runFrom d t := by
+  unfold MultiTapeTM.runFrom
+  rw [show (copyMapTM k src dst extract merge).step (input := x) =
+      (transferMapTM k src dst extract merge some).step from
+    funext (copyMapTM_step_eq src dst extract merge)]
+
+/-- **The mapped transfer's exact framed phase invariant.** The run from a sweep-phase start whose
+source tape carries `w` delimited at its head is, at every time, the two-pass trace whose forward
+phase writes `merge c (extract w[s])` at destination offset `s` (`c` the cell's original content)
+and whose return rewrites each source cell to its residue `rest w[s]` as the head leaves it, with
+the exit at `2|w| + 2`. At the identity map with the blank residue it is the plain transfer's
+trace; with the identity residue `some` it is the mapped copy's (`copyMapTM_runFrom_eq`).
+
+**Proof sketch.** `Turing.catalog_trace_run` with `catalogSweepF` and `catalogSweepResidueR`, in
+the plain transfer's shape: the forward phase is the mapped copy's (the two tables agree on the
+`sweep` phase); on return each source write extends the rewritten suffix by one cell and leaves
+the next read unchanged, since the cell read is still original (the forward pass never writes the
+source, and the return pass writes a cell only as it leaves it); the two delimiter cells are never
 written, so the final entry restores both original head positions. -/
-private lemma catalog_transfer_trace {Symbol : Type*} {x : List Symbol} (src dst : Fin k) (hne : src ≠ dst)
-    (w : List Symbol) (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep)
+private lemma catalog_transferMap_trace {Symbol : Type*} {Δ : Type*} {x : List Symbol}
+    (src dst : Fin k) (hne : src ≠ dst) (extract : Symbol → Δ)
+    (merge : Option Symbol → Δ → Symbol) (rest : Symbol → Option Symbol) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some .sweep)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
       d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) (t : ℕ) :
-    (transferTM k src dst).runFrom d t =
-      catalogTrace (catalogCopyF src dst w d) (catalogTransferR src dst w d)
+    (transferMapTM k src dst extract merge rest).runFrom d t =
+      catalogTrace
+        (catalogSweepF src dst (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+          fun γ => merge (d.workTapes dst q) (extract γ)) d)
+        (catalogSweepResidueR src dst (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+          fun γ => merge (d.workTapes dst q) (extract γ))
+          (fun q => (FinTM.bufferTape w (q - d.workTapePos src)).bind rest) d w.length)
         { d with state := some .done
-                 workTapes := (catalogTransferR src dst w d 0).workTapes } w.length t := by
-  have h0 : catalogCopyF src dst w d 0 = d := by
-    apply Cfg.ext <;> simp [catalogCopyF, hstate]
+                 workTapes := (catalogSweepResidueR src dst
+                   (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+                     fun γ => merge (d.workTapes dst q) (extract γ))
+                   (fun q => (FinTM.bufferTape w (q - d.workTapePos src)).bind rest)
+                   d w.length 0).workTapes }
+        w.length t := by
+  have h0 : catalogSweepF src dst
+      (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+        fun γ => merge (d.workTapes dst q) (extract γ)) d 0 = d := by
+    apply Cfg.ext <;> simp [catalogSweepF, hstate]
     funext j q
     split_ifs <;> simp_all <;> omega
   conv_lhs => rw [← h0]
   apply catalog_trace_run
   · intro r hr
-    exact catalog_copy_forward src dst hne w d hw r hr
-  · have hs : (catalogCopyF src dst w d w.length).workTapeSymbols src = none := by
-      simp [catalogCopyF, Cfg.workTapeSymbols, hne,
-        hw w.length (by omega) (by omega)]
-    change ((transferTM k src dst).tr .sweep _ _).apply _ = _
-    simp only [transferTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogCopyF, catalogCopyR, catalogTransferR]
+    have hs : (catalogSweepF src dst
+        (fun q => (FinTM.bufferTape w (q - d.workTapePos dst)).map
+          fun γ => merge (d.workTapes dst q) (extract γ)) d r).workTapeSymbols src = some w[r] := by
+      simp [catalogSweepF, Cfg.workTapeSymbols, hne,
+        hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
+    change ((transferMapTM k src dst extract merge rest).tr .sweep _ _).apply _ = _
+    simp only [transferMapTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogSweepF]
     · funext j
-      by_cases hj : j = src <;> by_cases hd : j = dst <;>
-        simp [hj, hd, hne, Ne.symm hne]
+      by_cases hj : j = dst
+      · subst j
+        simp only [if_true, true_and, or_true]
+        funext q
+        rw [Function.update_apply]
+        by_cases hq : q = d.workTapePos dst + r
+        · subst hq
+          simp [Cfg.workTapeSymbols, FinTM.bufferTape, List.getElem?_eq_getElem hr]
+        · rw [if_neg hq]
+          split_ifs <;> simp_all <;> omega
+      · by_cases hs' : j = src <;> simp [hj, hs', hne]
+    · funext j
+      by_cases hd : j = dst <;> by_cases hs : j = src <;>
+        simp [hd, hs, hne, SignType.cast] <;> omega
+  · have hs : ∀ v : ℤ → Option Symbol,
+        (catalogSweepF src dst v d w.length).workTapeSymbols src = none := by
+      intro v
+      simp [catalogSweepF, Cfg.workTapeSymbols, hne, hw w.length (by omega) (by omega)]
+    change ((transferMapTM k src dst extract merge rest).tr .sweep _ _).apply _ = _
+    simp only [transferMapTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogSweepF, catalogSweepR, catalogSweepResidueR]
+    · funext j
+      by_cases hj : j = src <;> by_cases hd : j = dst <;> simp [hj, hd, hne, Ne.symm hne]
       all_goals
         funext q
         split_ifs <;> simp_all <;> omega
     · funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
   · intro r hr
-    have hs : (catalogTransferR src dst w d (r + 1)).workTapeSymbols src = some w[r] := by
-      simp [catalogTransferR, catalogCopyR, catalogCopyF, Cfg.workTapeSymbols, hne,
+    have hs : ∀ v u : ℤ → Option Symbol,
+        (catalogSweepResidueR src dst v u d w.length (r + 1)).workTapeSymbols src =
+          some w[r] := by
+      intro v u
+      simp [catalogSweepResidueR, catalogSweepR, catalogSweepF, Cfg.workTapeSymbols, hne,
         hw r (by omega) (by omega), List.getElem?_eq_getElem hr]
-    change ((transferTM k src dst).tr .rewind _ _).apply _ = _
-    simp only [transferTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogTransferR, catalogCopyR, catalogCopyF]
+    change ((transferMapTM k src dst extract merge rest).tr .rewind _ _).apply _ = _
+    simp only [transferMapTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]
     · funext j
       by_cases hj : j = src
       · subst j
         simp only [ite_true, true_and]
         funext q
         simp only [Function.update_apply]
-        split_ifs <;> simp_all [hne] <;> omega
+        split_ifs <;>
+          simp_all [FinTM.bufferTape] <;> omega
       · by_cases hd : j = dst <;> simp [hj, hd, hne, Ne.symm hne]
     · funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
-  · have hs : (catalogTransferR src dst w d 0).workTapeSymbols src = none := by
-      simpa [catalogTransferR, catalogCopyR, catalogCopyF, Cfg.workTapeSymbols, hne] using
+  · have hs : ∀ v u : ℤ → Option Symbol,
+        (catalogSweepResidueR src dst v u d w.length 0).workTapeSymbols src = none := by
+      intro v u
+      simpa [catalogSweepResidueR, catalogSweepR, catalogSweepF, Cfg.workTapeSymbols, hne] using
         hw (-1) (by omega) (by omega)
-    change ((transferTM k src dst).tr .rewind _ _).apply _ = _
-    simp only [transferTM, hs]
-    apply Cfg.ext <;> simp [Action.apply, catalogTransferR, catalogCopyR, catalogCopyF]
+    change ((transferMapTM k src dst extract merge rest).tr .rewind _ _).apply _ = _
+    simp only [transferMapTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogSweepResidueR, catalogSweepR, catalogSweepF]
     all_goals
       funext j
       split_ifs <;> simp_all [SignType.cast] <;> omega
-  · apply Cfg.ext <;> simp [MultiTapeTM.step, transferTM, Action.apply]
+  · apply Cfg.ext <;> simp [MultiTapeTM.step, transferMapTM, Action.apply]
 
 /-- The first unequal or terminating cells occur after a common nonblank
 prefix, and equality at those terminating cells is precisely word equality.
@@ -724,6 +863,80 @@ private def catalogCompareR {Symbol : Type*} {x : List Symbol} (fst snd : Fin k)
   { d with
     state := some (.rewind v)
     workTapePos := fun j => d.workTapePos j + if j = fst ∨ j = snd then (r : ℤ) - 1 else 0 }
+
+/-- **The compare's stop** (MIG-11a, user 2026-10-16): the number of leading positions at which `u`
+and `v` hold the same symbol, before the first position where they differ or either word ends,
+`compareStop u v = |takeWhile (fun p => p.1 = p.2) (zip u v)|`. The framed compare
+(`Turing.compareTM_run_stop_ofCfg`) reads exactly this many cells forward. -/
+def compareStop {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) : ℕ :=
+  ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length
+
+/-- The compare's stop as an equation:
+`compareStop u v = ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length` (MIG-11a, user
+2026-10-16). -/
+theorem compareStop_eq {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
+    compareStop u v = ((u.zip v).takeWhile fun p => decide (p.1 = p.2)).length :=
+  rfl
+
+/-- The stop on two nonempty words: one more than the tails' stop when the heads agree, `0`
+otherwise, `compareStop (a :: u) (b :: v) = if a = b then compareStop u v + 1 else 0` (MIG-11a, user
+2026-10-16). -/
+theorem compareStop_cons_cons {Symbol : Type*} [DecidableEq Symbol] (a b : Symbol)
+    (u v : List Symbol) :
+    compareStop (a :: u) (b :: v) = if a = b then compareStop u v + 1 else 0 := by
+  unfold compareStop
+  by_cases h : a = b <;> simp [List.zip_cons_cons, h]
+
+/-- **The stop's characterization** (MIG-11a, user 2026-10-16): below `compareStop u v` both words
+hold the same symbol, and at it they do not (they differ, or one has ended).
+
+**Proof sketch.** Induction on `u`: an empty word stops at `0`; two heads that agree add one to the
+tails' stop, and two that differ stop at `0`. -/
+theorem compareStop_spec {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
+    (∀ r < compareStop u v, ∃ b, u[r]? = some b ∧ v[r]? = some b) ∧
+      ¬∃ b, u[compareStop u v]? = some b ∧ v[compareStop u v]? = some b := by
+  induction u generalizing v with
+  | nil => simp [compareStop]
+  | cons a u ih =>
+    cases v with
+    | nil => simp [compareStop]
+    | cons b v =>
+      rw [compareStop_cons_cons]
+      by_cases hab : a = b
+      · subst hab
+        obtain ⟨h1, h2⟩ := ih v
+        simp only [if_true]
+        refine ⟨fun r hr => ?_, ?_⟩
+        · cases r with
+          | zero => exact ⟨a, rfl, rfl⟩
+          | succ r => simpa using h1 r (by omega)
+        · simpa using h2
+      · simp only [hab, if_false]
+        refine ⟨fun r hr => absurd hr (Nat.not_lt_zero _), ?_⟩
+        rintro ⟨c, hc1, hc2⟩
+        simp at hc1 hc2
+        exact hab (hc1.trans hc2.symm)
+
+/-- **The stop is the unique such position** (MIG-11a, user 2026-10-16): a position below which both
+words hold the same symbol and at which they do not is `compareStop u v`.
+
+**Proof sketch.** By `Turing.compareStop_spec`, a smaller position contradicts its own second
+clause, and a larger one the stop's. -/
+theorem compareStop_unique {Symbol : Type*} [DecidableEq Symbol] {u v : List Symbol} {d : ℕ}
+    (h1 : ∀ r < d, ∃ b, u[r]? = some b ∧ v[r]? = some b)
+    (h2 : ¬∃ b, u[d]? = some b ∧ v[d]? = some b) : d = compareStop u v := by
+  obtain ⟨c1, c2⟩ := compareStop_spec u v
+  rcases Nat.lt_trichotomy d (compareStop u v) with h | h | h
+  · exact absurd (c1 d h) h2
+  · exact h
+  · exact absurd (h1 _ h) c2
+
+/-- The stop is at most either word's length: `compareStop u v ≤ min |u| |v|` (MIG-11a, user
+2026-10-16). -/
+theorem compareStop_le {Symbol : Type*} [DecidableEq Symbol] (u v : List Symbol) :
+    compareStop u v ≤ min u.length v.length := by
+  unfold compareStop
+  exact (List.takeWhile_sublist _).length_le.trans (by simp)
 
 /-- Comparison's exact framed invariant at a first differing or blank position.
 Proof sketch: the delimited common prefix supplies both passes' reads. The stopping
@@ -1013,6 +1226,125 @@ Times are exact. For increment the time is carry-sensitive, so a counter's
 total cost can be summed geometrically.
 -/
 
+/-- The plain copy is the mapped copy at the identity map: `Turing.copyTM` is
+`Turing.copyMapTM` with `extract := id` and `merge := fun _ s => s`, definitionally (at landing,
+by `Turing.copyTM`'s definition). -/
+theorem copyMapTM_plain {Symbol : Type*} (k : ℕ) (src dst : Fin k) :
+    copyMapTM k src dst (id : Symbol → Symbol) (fun _ s => s) = copyTM k src dst :=
+  rfl
+
+/-- The plain transfer is the mapped transfer at the identity map with the blank residue,
+definitionally (at landing, by `Turing.transferTM`'s definition). -/
+theorem transferMapTM_plain {Symbol : Type*} (k : ℕ) (src dst : Fin k) :
+    transferMapTM k src dst (id : Symbol → Symbol) (fun _ s => s) (fun _ => none) =
+      transferTM k src dst :=
+  rfl
+
+/-- **§13d G2, the mapped transfer, framed** (design §13d, G2, in the §12.6 shape). As
+`Turing.copyMapTM_run_ofCfg`, except that in addition the source interval `[pos, pos + |w|)`
+holds, at offset `r`, the residue `rest w[r]` at the exit. At the identity map with the blank
+residue this is `Turing.transferTM_run_ofCfg`.
+
+**Proof sketch.** The shared mapped trace `catalog_transferMap_trace`, by
+`Turing.catalog_trace_run` over the value-parametric sweep families: the forward pass writes at
+offset `r` the `merge` of the original destination cell and the extracted source cell, updating
+the written prefix inline; on the way back each source cell is read while still original (the
+forward pass never writes the source, and the return pass writes a cell only as it leaves it),
+rewritten to its residue, and left; the left delimiter, never written, supplies the entry step.
+The no-earlier-exit and head clauses are `catalog_trace_clauses`. -/
+theorem transferMapTM_run_ofCfg {Symbol : Type*} {Δ : Type*} {k : ℕ} {x : List Symbol}
+    (src dst : Fin k) (hne : src ≠ dst) (extract : Symbol → Δ)
+    (merge : Option Symbol → Δ → Symbol) (rest : Symbol → Option Symbol) (w : List Symbol)
+    (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) :
+    (transferMapTM k src dst extract merge rest).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some SweepPhase.done
+          workTapes := fun j q =>
+            if j = src ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then (FinTM.bufferTape w (q - d.workTapePos j)).bind rest
+            else if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then (FinTM.bufferTape w (q - d.workTapePos j)).map
+                fun γ => merge (d.workTapes j q) (extract γ)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * w.length + 2,
+        ((transferMapTM k src dst extract merge rest).runFrom d t).state ≠
+          some SweepPhase.done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if j = src ∨ j = dst then
+          ((transferMapTM k src dst extract merge rest).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((transferMapTM k src dst extract merge rest).runFrom d t).workTapePos j =
+          d.workTapePos j) := by
+  have htr := catalog_transferMap_trace src dst hne extract merge rest w d hstate hw
+  refine ⟨?_, catalog_trace_clauses _ d (fun j => j = src ∨ j = dst) _ _ _ w.length htr
+    (fun _ => ⟨rfl, fun _ => rfl⟩) (fun _ => ⟨rfl, fun _ => rfl⟩) ⟨rfl, rfl⟩⟩
+  rw [htr]
+  simp only [catalogTrace, show ¬2 * w.length + 2 ≤ w.length by omega,
+    show ¬2 * w.length + 2 ≤ 2 * w.length + 1 by omega, if_false]
+  congr 1
+  funext j q
+  by_cases hs : j = src
+  · subst hs; simp [catalogSweepResidueR, catalogSweepR, catalogSweepF, hne]
+  · by_cases hd : j = dst
+    · subst hd; simp [catalogSweepResidueR, catalogSweepR, catalogSweepF, hs]
+    · simp [catalogSweepResidueR, catalogSweepR, catalogSweepF, hs, hd]
+
+/-- **§13d G2, the mapped copy, framed** (design §13d, G2, in the §12.6 shape). From any
+configuration in the sweep phase whose source tape carries the word `w` delimited by blanks at
+relative positions `-1` and `|w|`, the mapped copy reaches `done` at exactly `2|w| + 2` and not
+earlier. At that point the destination interval `[pos, pos + |w|)` holds, at offset `r`,
+`merge c (extract w[r])`, where `c` is that destination cell's **original** content (possibly
+blank); every other cell, the head positions, the native input position and the output are
+unchanged. Up to the exit both touched heads stay within one cell of their word interval and
+every other head is fixed. At the identity map this is `Turing.copyTM_run_ofCfg`.
+
+**Proof sketch.** The mapped copy is the mapped transfer with the identity residue `some`: that
+transfer's return pass writes back exactly what it reads (`copyMapTM_step_eq`), so the two runs
+agree (`copyMapTM_runFrom_eq`), and this is `Turing.transferMapTM_run_ofCfg` at `rest := some`,
+with `o.bind some = o` restoring the source interval. That row's shared trace writes, at offset
+`r`, the `merge` of the original destination cell: the forward pass reads it before writing it
+and never revisits it. The routine never branches on the destination, which is why its old
+contents are arbitrary. -/
+theorem copyMapTM_run_ofCfg {Symbol : Type*} {Δ : Type*} {k : ℕ} {x : List Symbol}
+    (src dst : Fin k) (hne : src ≠ dst) (extract : Symbol → Δ)
+    (merge : Option Symbol → Δ → Symbol) (w : List Symbol) (d : Cfg k Symbol SweepPhase x)
+    (hstate : d.state = some SweepPhase.sweep)
+    (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
+      d.workTapes src (d.workTapePos src + p) = FinTM.bufferTape w p) :
+    (copyMapTM k src dst extract merge).runFrom d (2 * w.length + 2) =
+        { d with
+          state := some SweepPhase.done
+          workTapes := fun j q =>
+            if j = dst ∧ d.workTapePos j ≤ q ∧ q < d.workTapePos j + (w.length : ℤ)
+              then (FinTM.bufferTape w (q - d.workTapePos j)).map
+                fun γ => merge (d.workTapes j q) (extract γ)
+            else d.workTapes j q } ∧
+      (∀ t < 2 * w.length + 2,
+        ((copyMapTM k src dst extract merge).runFrom d t).state ≠ some SweepPhase.done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * w.length + 2 →
+        if j = src ∨ j = dst then
+          ((copyMapTM k src dst extract merge).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
+        else ((copyMapTM k src dst extract merge).runFrom d t).workTapePos j =
+          d.workTapePos j) := by
+  obtain ⟨h1, h2, h3⟩ := transferMapTM_run_ofCfg src dst hne extract merge some w d hstate hw
+  simp only [← copyMapTM_runFrom_eq] at h1 h2 h3
+  refine ⟨h1.trans ?_, h2, h3⟩
+  congr 1
+  funext j q
+  by_cases hs : j = src
+  · subst hs
+    simp only [hne, false_and, if_false]
+    split_ifs with hq
+    · rw [show ∀ o : Option Symbol, o.bind some = o from fun o => by cases o <;> rfl,
+        ← hw (q - d.workTapePos j) (by omega) (by omega)]
+      congr 1
+      omega
+    · rfl
+  · simp [hs]
+
 /-- **Transfer, framed** (design §12.6). From any
 configuration in the sweep phase whose source tape carries the word `w`
 delimited by blanks at relative positions `-1` and `|w|`, the transfer
@@ -1035,7 +1367,8 @@ fixed outer frame and the two start coordinates. The forward pass takes `|w|`
 steps copying source to destination in lockstep without touching the source.
 The source's right delimiter turns both heads in one step. The rewind takes
 `|w|` steps erasing exactly the source interior. The left delimiter supplies
-the final entry step. -/
+the final entry step. Formally the row is `Turing.transferMapTM_run_ofCfg` at the identity
+map with the blank residue (§13d G2: one trace family serves both). -/
 theorem transferTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src dst : Fin k)
     (hne : src ≠ dst) (w : List Symbol) (d : Cfg k Symbol SweepPhase x)
     (hstate : d.state = some SweepPhase.sweep)
@@ -1058,18 +1391,10 @@ theorem transferTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src d
           ((transferTM k src dst).runFrom d t).workTapePos j ∈
             Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
         else ((transferTM k src dst).runFrom d t).workTapePos j = d.workTapePos j) := by
-  constructor
-  · rw [catalog_transfer_trace src dst hne w d hstate hw]
-    simp [catalogTrace, catalogCopyF, catalogTransferR, catalogCopyR, show ¬2 * w.length + 2 ≤ w.length by omega]
-  · constructor
-    · intro t ht
-      rw [catalog_transfer_trace src dst hne w d hstate hw]
-      simp only [catalogTrace]
-      split_ifs <;> simp_all [catalogCopyF, catalogTransferR, catalogCopyR] <;> omega
-    · intro j t ht
-      rw [catalog_transfer_trace src dst hne w d hstate hw]
-      simp only [catalogTrace]
-      split_ifs <;> simp_all [catalogCopyF, catalogTransferR, catalogCopyR, Finset.mem_Icc] <;> omega
+  obtain ⟨h1, h2, h3⟩ :=
+    transferMapTM_run_ofCfg src dst hne id (fun _ s => s) (fun _ => none) w d hstate hw
+  refine ⟨h1.trans ?_, h2, h3⟩
+  apply Cfg.ext <;> simp
 
 /-- **The transfer endpoint from a canonical seam**. If `src ≠ dst` and the destination word of the
 seam `Cfg.ofWords q w` is empty, then the framed transfer endpoint of `Turing.transferTM_run_ofCfg`
@@ -1124,7 +1449,8 @@ unchanged. This specializes to `Turing.copyTM_run`.
 
 **Proof sketch.** The transfer's trace without the erasure. The rewind is
 guided by the intact source word, whose left delimiter at `-1` is the first
-blank met moving left. -/
+blank met moving left. Formally the row is `Turing.copyMapTM_run_ofCfg` at the identity map
+(§13d G2: one trace family serves both). -/
 theorem copyTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src dst : Fin k)
     (hne : src ≠ dst) (w : List Symbol) (d : Cfg k Symbol SweepPhase x)
     (hstate : d.state = some SweepPhase.sweep)
@@ -1144,18 +1470,9 @@ theorem copyTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src dst :
           ((copyTM k src dst).runFrom d t).workTapePos j ∈
             Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (w.length : ℤ))
         else ((copyTM k src dst).runFrom d t).workTapePos j = d.workTapePos j) := by
-  constructor
-  · rw [catalog_copy_trace src dst hne w d hstate hw]
-    simp [catalogTrace, catalogCopyF, catalogCopyR, show ¬2 * w.length + 2 ≤ w.length by omega]
-  · constructor
-    · intro t ht
-      rw [catalog_copy_trace src dst hne w d hstate hw]
-      simp only [catalogTrace]
-      split_ifs <;> simp_all [catalogCopyF, catalogCopyR] <;> omega
-    · intro j t ht
-      rw [catalog_copy_trace src dst hne w d hstate hw]
-      simp only [catalogTrace]
-      split_ifs <;> simp_all [catalogCopyF, catalogCopyR, Finset.mem_Icc] <;> omega
+  obtain ⟨h1, h2, h3⟩ := copyMapTM_run_ofCfg src dst hne id (fun _ s => s) w d hstate hw
+  refine ⟨h1.trans ?_, h2, h3⟩
+  apply Cfg.ext <;> simp
 
 /-- **The copy endpoint from a canonical seam**. If the destination word of the seam
 `Cfg.ofWords q w` is empty, then the framed copy endpoint of `Turing.copyTM_run_ofCfg` started there
@@ -1198,7 +1515,8 @@ interval. This specializes to `Turing.clearTM_run`.
 
 **Proof sketch.** The forward pass walks right over the intact word in `|w|`
 steps, the right delimiter turns the head in one step, the rewind erases the
-interior in `|w|` steps, and the left delimiter supplies the entry step. -/
+interior in `|w|` steps, and the left delimiter supplies the entry step. The
+no-earlier-exit and head clauses are the shared `catalog_trace_clauses`. -/
 theorem clearTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k) (w : List Symbol)
     (d : Cfg k Symbol SweepPhase x) (hstate : d.state = some SweepPhase.sweep)
     (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) →
@@ -1220,15 +1538,9 @@ theorem clearTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin 
   constructor
   · rw [catalog_clear_trace i w d hstate hw]
     simp [catalogTrace, catalogClearF, catalogClearR, show ¬2 * w.length + 2 ≤ w.length by omega]
-  · constructor
-    · intro t ht
-      rw [catalog_clear_trace i w d hstate hw]
-      simp only [catalogTrace]
-      split_ifs <;> simp_all [catalogClearF, catalogClearR] <;> omega
-    · intro j t ht
-      rw [catalog_clear_trace i w d hstate hw]
-      simp only [catalogTrace]
-      split_ifs <;> simp_all [catalogClearF, catalogClearR, Finset.mem_Icc] <;> omega
+  · exact catalog_trace_clauses (clearTM k i) d (· = i) _ _ _ w.length
+      (catalog_clear_trace i w d hstate hw) (fun _ => ⟨rfl, fun _ => rfl⟩)
+      (fun _ => ⟨rfl, fun _ => rfl⟩) ⟨rfl, rfl⟩
 
 /-- **Increment, framed success with exact carry cost** (design §12.6).
 Let the delimited word `w` on tape `i` have a successor at its
@@ -1418,19 +1730,21 @@ theorem transferTM_spaceUsedByTape (k : ℕ) (src dst : Fin k)
       (Cfg.ofWords (input := x) .sweep w) t j ≤ (w src).length + 2 := by
     apply catalog_space_bound
     intro u
-    rw [catalog_transfer_trace src dst hne (w src) (Cfg.ofWords .sweep w) rfl
-      (by intro p _ _; simp [Cfg.ofWords])]
+    rw [← transferMapTM_plain, catalog_transferMap_trace src dst hne id (fun _ s => s)
+      (fun _ => none) (w src) (Cfg.ofWords .sweep w) rfl (by intro p _ _; simp [Cfg.ofWords])]
     simp only [catalogTrace]
-    split_ifs <;> simp only [catalogCopyF, catalogTransferR, catalogCopyR, catalogCfg, Cfg.ofWords] <;>
+    split_ifs <;>
+      simp only [catalogSweepF, catalogSweepResidueR, catalogSweepR, Cfg.ofWords] <;>
       (try split_ifs) <;> omega
   refine ⟨hb src, hb dst, ?_⟩
   intro j hs hd
   apply catalog_space_one
   intro u
-  rw [catalog_transfer_trace src dst hne (w src) (Cfg.ofWords .sweep w) rfl
-      (by intro p _ _; simp [Cfg.ofWords])]
+  rw [← transferMapTM_plain, catalog_transferMap_trace src dst hne id (fun _ s => s)
+    (fun _ => none) (w src) (Cfg.ofWords .sweep w) rfl (by intro p _ _; simp [Cfg.ofWords])]
   simp only [catalogTrace]
-  split_ifs <;> simp [catalogCopyF, catalogTransferR, catalogCopyR, catalogCfg, Cfg.ofWords, hs, hd]
+  split_ifs <;>
+    simp [catalogSweepF, catalogSweepResidueR, catalogSweepR, Cfg.ofWords, hs, hd]
 
 /-- **Copy, the run contract** (design §12 R3;
 [Bon26]; the A3 `3|w| + 3` row). From the seam with word `w src` on the
@@ -1489,19 +1803,21 @@ theorem copyTM_spaceUsedByTape (k : ℕ) (src dst : Fin k) (hne : src ≠ dst)
       (Cfg.ofWords (input := x) .sweep w) t j ≤ (w src).length + 2 := by
     apply catalog_space_bound
     intro u
-    rw [catalog_copy_trace src dst hne (w src) (Cfg.ofWords .sweep w) rfl
-      (by intro p _ _; simp [Cfg.ofWords])]
+    rw [← copyMapTM_plain, copyMapTM_runFrom_eq, catalog_transferMap_trace src dst hne id
+      (fun _ s => s) some (w src) (Cfg.ofWords .sweep w) rfl (by intro p _ _; simp [Cfg.ofWords])]
     simp only [catalogTrace]
-    split_ifs <;> simp only [catalogCopyF, catalogCopyR, catalogCfg, Cfg.ofWords] <;>
+    split_ifs <;>
+      simp only [catalogSweepF, catalogSweepResidueR, catalogSweepR, Cfg.ofWords] <;>
       (try split_ifs) <;> omega
   refine ⟨hb src, hb dst, ?_⟩
   intro j hs hd
   apply catalog_space_one
   intro u
-  rw [catalog_copy_trace src dst hne (w src) (Cfg.ofWords .sweep w) rfl
-      (by intro p _ _; simp [Cfg.ofWords])]
+  rw [← copyMapTM_plain, copyMapTM_runFrom_eq, catalog_transferMap_trace src dst hne id
+    (fun _ s => s) some (w src) (Cfg.ofWords .sweep w) rfl (by intro p _ _; simp [Cfg.ofWords])]
   simp only [catalogTrace]
-  split_ifs <;> simp [catalogCopyF, catalogCopyR, catalogCfg, Cfg.ofWords, hs, hd]
+  split_ifs <;>
+    simp [catalogSweepF, catalogSweepResidueR, catalogSweepR, Cfg.ofWords, hs, hd]
 
 /-- **Clear, the run contract** (design §12 R3;
 [Bon26]; the A3 `2|w| + 2` row, P12's engine). From the seam with word
@@ -11467,6 +11783,48 @@ start. The empty layout has offset `0` there, not `1`. -/
 def fieldOffset {Γ : Type*} (fs : List (List Γ)) (j : ℕ) : ℕ :=
   ((fs.take j).map (·.length + 1)).sum
 
+/-! #### The layout's base and boundary facts (the specification API, user 2026-10-16)
+
+Consumers read the layout through these equations, not by unfolding its definitions. -/
+
+/-- **The empty layout** (the specification API): no cells. -/
+theorem joinFields_nil {Γ : Type*} : joinFields ([] : List (List Γ)) = [] := by
+  simp [joinFields, List.intercalate]
+
+/-- **A one-field layout** (the specification API): the field's cells. -/
+theorem joinFields_singleton {Γ : Type*} (u : List Γ) : joinFields [u] = u.map some := by
+  simp [joinFields, List.intercalate]
+
+/-- **The layout tape inside its range** (the specification API): from cell `0` on, the
+layout's cells, blank past its end. -/
+theorem fieldsTape_of_nonneg {Γ : Type*} (fs : List (List Γ)) {z : ℤ} (hz : 0 ≤ z) :
+    fieldsTape fs z = ((joinFields fs)[z.toNat]?).join := by
+  simp [fieldsTape, hz]
+
+/-- **The layout tape left of the origin** (the specification API): blank at every negative
+cell. -/
+theorem fieldsTape_of_neg {Γ : Type*} (fs : List (List Γ)) {z : ℤ} (hz : z < 0) :
+    fieldsTape fs z = none := by
+  simp [fieldsTape, not_le.mpr hz]
+
+/-- **The layout tape past its end** (the specification API): blank from cell
+`|joinFields fs|` on.
+
+**Proof sketch.** The cell is nonnegative, and its index is past the list. -/
+theorem fieldsTape_of_length_le {Γ : Type*} (fs : List (List Γ)) {z : ℤ}
+    (hz : ((joinFields fs).length : ℤ) ≤ z) : fieldsTape fs z = none := by
+  have h0 : 0 ≤ z := le_trans (Int.natCast_nonneg _) hz
+  rw [fieldsTape_of_nonneg fs h0, List.getElem?_eq_none (by omega)]
+  rfl
+
+/-- **The empty layout's tape** (the specification API): blank everywhere. -/
+theorem fieldsTape_nil {Γ : Type*} (z : ℤ) : fieldsTape ([] : List (List Γ)) z = none := by
+  simp [fieldsTape, joinFields_nil]
+
+/-- **The first field's offset** (the specification API): field `0` starts at cell `0`. -/
+theorem fieldOffset_zero {Γ : Type*} (fs : List (List Γ)) : fieldOffset fs 0 = 0 := by
+  simp [fieldOffset]
+
 /-- **The field layout, one field at a time** (§12.8 fill): two or more fields are the first
 field, a separator, and the layout of the rest. -/
 theorem joinFields_cons_cons {Γ : Type*} (u v : List Γ) (fs : List (List Γ)) :
@@ -11603,6 +11961,47 @@ theorem fieldsTape_field {Γ : Type*} (fs : List (List Γ)) (j : ℕ) (hj : j < 
 
 /-! ### R8.1 — the framed compare -/
 
+/-- **R8.1, compare, framed, at its exact time** (MIG-11a, user 2026-10-16): as
+`Turing.compareTM_run_ofCfg`, with the stop named. From the working phase, with `u` and `v`
+delimited at the heads of `fst` and `snd`, the compare reaches `done (decide (u = v))` at exactly
+`2 · compareStop u v + 2`, with no verdict earlier and nothing written; the two heads stay within
+`[pos - 1, pos + compareStop u v]` and every other head is fixed.
+
+**Proof sketch.** The shared framed trace at the stop of `catalog_compare_stop`, which is
+`Turing.compareStop u v` by `Turing.compareStop_unique`. -/
+theorem compareTM_run_stop_ofCfg {Symbol : Type*} [DecidableEq Symbol] {k : ℕ}
+    {x : List Symbol} (fst snd : Fin k) (hne : fst ≠ snd) (u v : List Symbol)
+    (d : Cfg k Symbol FlagPhase x) (hstate : d.state = some FlagPhase.run)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+      d.workTapes fst (d.workTapePos fst + p) = FinTM.bufferTape u p)
+    (hv : ∀ p : ℤ, -1 ≤ p → p ≤ (v.length : ℤ) →
+      d.workTapes snd (d.workTapePos snd + p) = FinTM.bufferTape v p) :
+    (compareTM k fst snd).runFrom d (2 * compareStop u v + 2) =
+        { d with state := some (FlagPhase.done (decide (u = v))) } ∧
+      (∀ t < 2 * compareStop u v + 2, ∀ b,
+        ((compareTM k fst snd).runFrom d t).state ≠ some (FlagPhase.done b)) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ 2 * compareStop u v + 2 →
+        if j = fst ∨ j = snd then
+          ((compareTM k fst snd).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (compareStop u v : ℤ))
+        else ((compareTM k fst snd).runFrom d t).workTapePos j = d.workTapePos j) := by
+  -- D2: the shared framed trace also covers aliased tape indices.
+  have _ := hne
+  obtain ⟨δ, hδ, hp, hs, he⟩ := catalog_compare_stop u v
+  rw [← compareStop_unique hp hs]
+  refine ⟨?_, ?_, ?_⟩
+  · rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+    simp [catalogTrace, show ¬2 * δ + 2 ≤ δ by omega]
+  · intro t ht b
+    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [catalogCompareF, catalogCompareR]
+    omega
+  · intro j t ht
+    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
+    simp only [catalogTrace]
+    split_ifs <;> simp_all [catalogCompareF, catalogCompareR, Finset.mem_Icc] <;> omega
+
 /-- **R8.1, compare, framed** (design §12.8a; the generic form of
 `Turing.compareTM_run`). From any configuration in the working phase whose
 tapes `fst` and `snd` carry delimited words `u` and `v` at their heads, the
@@ -11638,21 +12037,8 @@ theorem compareTM_run_ofCfg {Symbol : Type*} [DecidableEq Symbol] {k : ℕ} {x :
             ((compareTM k fst snd).runFrom d t).workTapePos j ∈
               Finset.Icc (d.workTapePos j - 1) (d.workTapePos j + (δ : ℤ))
           else ((compareTM k fst snd).runFrom d t).workTapePos j = d.workTapePos j) := by
-  -- D2: the shared framed trace also covers aliased tape indices.
-  have _ := hne
-  obtain ⟨δ, hδ, hp, hs, he⟩ := catalog_compare_stop u v
-  refine ⟨δ, hδ, ?_, ?_, ?_⟩
-  · rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
-    simp [catalogTrace, show ¬2 * δ + 2 ≤ δ by omega]
-  · intro t ht b
-    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
-    simp only [catalogTrace]
-    split_ifs <;> simp_all [catalogCompareF, catalogCompareR]
-    omega
-  · intro j t ht
-    rw [catalog_compare_trace fst snd u v d hstate hu hv δ hδ hp hs he]
-    simp only [catalogTrace]
-    split_ifs <;> simp_all [catalogCompareF, catalogCompareR, Finset.mem_Icc] <;> omega
+  exact ⟨compareStop u v, compareStop_le u v,
+    compareTM_run_stop_ofCfg fst snd hne u v d hstate hu hv⟩
 
 /-! ### R8.3 — the seek family -/
 
@@ -11721,6 +12107,125 @@ def skipTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SeekPha
       | none => tapeAction i 0 none .pos .done
     | q => inputMoveAction 0 q
 
+/-! #### R8.3b — the lockstep walk (design §13d, G4's ruler; user 2026-10-15)
+
+The G4 zone rows (`Build/ZoneRebalance`) move the zoned head by a measured distance and leave it
+there: to cross home to the mirror zone, to stand on a slot at an offset inside a zone, and to
+start a write-back at an offset. The measure is a word on the scratch tape, the ruler. No other
+row does this: the mapped copy and transfer move their heads in lockstep but return them, and the
+seek family moves one head (the G4 hosts survey, `audits/evidence/s13d/g4-hosts/`). The walk
+moves a set of heads together over the word under one of them and one cell past its delimiter,
+in either direction, writing nothing. `Turing.skipTM` is its one-tape rightward instance: the
+two tables coincide (`Turing.skipTM_eq_walkTM`). -/
+
+/-- **R8.3b, the lockstep walk** (design §13d, G4). While tape `src` reads a nonblank cell, move
+every head in `moved` one cell in direction `dir`; at the first blank move them once more and stop
+in `done`. Nothing is written and the input head stays. Phases `run` and `done`; the others are
+stationary and unused. -/
+def walkTM {Symbol : Type*} (k : ℕ) (src : Fin k) (moved : Fin k → Prop) [DecidablePred moved]
+    (dir : SignType) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run =>
+      match w src with
+      | some _ => ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some .run⟩
+      | none => ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some .done⟩
+    | q => inputMoveAction 0 q
+
+/-- **The skip is the one-tape rightward walk**: `Turing.skipTM`'s table is the walk's with
+`moved := (· = i)` and `dir := .pos`. -/
+theorem skipTM_eq_walkTM {Symbol : Type*} (k : ℕ) (i : Fin k) :
+    (skipTM k i : MultiTapeTM k Symbol SeekPhase) = walkTM k i (· = i) .pos :=
+  rfl
+
+/-- **R8.3b, the lockstep walk, framed** (design §13d, G4). Let `src` be among the moved tapes,
+and let tape `src` hold the word `w` read along `dir` from its head: the cell `p` steps along holds
+`w`'s letter `p` for `p < |w|`, and the cell `|w|` steps along is blank. Then the walk reaches
+`done` at exactly `|w| + 1` and not earlier, with every moved head `|w| + 1` cells along `dir` and
+nothing else changed. The cells under the other moved heads are never read, so they are
+arbitrary: the walk carries those heads by the ruler `w`. At every time `t` up to the exit each
+moved head is exactly `t` cells along, and every other head is fixed. At `dir = 0` the hypothesis
+forces `w = []`. At `moved := (· = i)` and `dir := .pos` this is `Turing.skipTM_run_ofCfg`.
+
+**Proof sketch.** The forward configurations are `d` in `run` with every moved head `r` cells
+along, for `r ≤ |w|`: one step per nonblank cell of `w`, and at the blank one more step into
+`done`, which is stationary. `Turing.catalog_trace_run` with the stationary return family
+`fun _ => D` gives the run, and the three clauses are read off it. -/
+theorem walkTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src : Fin k)
+    (moved : Fin k → Prop) [DecidablePred moved] (hsrc : moved src) (dir : SignType)
+    (w : List Symbol) (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hw : ∀ p : ℕ, p ≤ w.length →
+      d.workTapes src (d.workTapePos src + (dir : ℤ) * p) = FinTM.bufferTape w p) :
+    (walkTM k src moved dir).runFrom d (w.length + 1) =
+        { d with
+          state := some .done
+          workTapePos := fun j =>
+            d.workTapePos j + if moved j then (dir : ℤ) * ((w.length + 1 : ℕ) : ℤ) else 0 } ∧
+      (∀ t < w.length + 1, ((walkTM k src moved dir).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ w.length + 1 →
+        ((walkTM k src moved dir).runFrom d t).workTapePos j =
+          d.workTapePos j + if moved j then (dir : ℤ) * (t : ℤ) else 0) := by
+  let M := walkTM (Symbol := Symbol) k src moved dir
+  let F := fun r : ℕ => ({ d with
+    workTapePos := fun j => d.workTapePos j + if moved j then (dir : ℤ) * (r : ℤ) else 0 } :
+      Cfg k Symbol SeekPhase x)
+  let D : Cfg k Symbol SeekPhase x := { d with
+    state := some .done
+    workTapePos := fun j =>
+      d.workTapePos j + if moved j then (dir : ℤ) * ((w.length + 1 : ℕ) : ℤ) else 0 }
+  have h0 : F 0 = d := by
+    apply Cfg.ext <;> simp [F]
+  -- one step of a `run` configuration whose table entry moves the moved heads into `q`
+  have hstep (r : ℕ) (q : SeekPhase)
+      (htr : M.tr .run (F r).inputSymbol (F r).workTapeSymbols =
+        ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some q⟩) :
+      M.step (F r) = { F (r + 1) with state := some q } := by
+    have hst : (F r).state = some .run := hstate
+    simp only [MultiTapeTM.step, hst, htr]
+    apply Cfg.ext
+    · rfl
+    · simp [Action.apply, F, moveInputPos_zero]
+    · funext j
+      by_cases hj : moved j <;> simp [Action.apply, F, hj]
+    · funext j
+      by_cases hj : moved j
+      · simp only [Action.apply, F, hj, if_true]
+        push_cast
+        ring
+      · simp [Action.apply, F, hj]
+    · simp [Action.apply, F]
+  have hsym (r : ℕ) : (F r).workTapeSymbols src = d.workTapes src
+      (d.workTapePos src + (dir : ℤ) * (r : ℤ)) := by
+    simp [F, Cfg.workTapeSymbols, hsrc]
+  have hF (r : ℕ) (hr : r < w.length) : M.step (F r) = F (r + 1) := by
+    have hs : (F r).workTapeSymbols src = some w[r] := by
+      rw [hsym, hw r (by omega)]
+      simp [FinTM.bufferTape, List.getElem?_eq_getElem hr]
+    rw [hstep r .run (by simp only [M, walkTM, hs])]
+    apply Cfg.ext <;> simp [F, hstate]
+  have hexit : M.step (F w.length) = D := by
+    have hs : (F w.length).workTapeSymbols src = none := by
+      rw [hsym, hw w.length le_rfl]
+      simp [FinTM.bufferTape]
+    exact (hstep w.length .done (by simp only [M, walkTM, hs])).trans rfl
+  have hD : M.step D = D := by
+    rw [step_of_inputMoveAction M D 0 rfl rfl, moveInputPos_zero]
+  have h (t : ℕ) : M.runFrom d t = if t ≤ w.length then F t else D := by
+    rw [← h0]
+    simpa [catalogTrace] using
+      catalog_trace_run M F (fun _ => D) D w.length hF hexit (fun _ _ => hD) hD hD t
+  refine ⟨?_, fun t ht => ?_, fun j t ht => ?_⟩
+  · rw [h, if_neg (by omega)]
+  · rw [h, if_pos (by omega)]
+    simp [F, hstate]
+  · rw [h]
+    by_cases ht' : t ≤ w.length
+    · simp only [if_pos ht', F]
+    · have : t = w.length + 1 := by omega
+      subst this
+      simp only [if_neg ht', D]
+
 /-- **R8.3, skip, framed** (design §12.8a). If tape `i` holds the word `w`
 from its head, with a blank right delimiter at relative position `|w|`, the
 skip reaches `done` at exactly `|w| + 1` and not earlier, with the head of
@@ -11729,8 +12234,9 @@ needed, and the cells beyond the delimiter are arbitrary. Up to the exit the
 head of tape `i` stays within `[pos, pos + |w| + 1]`, and every other head is
 fixed.
 
-**Proof sketch.** Induct on the cells of `w`: each nonblank cell is one
-right step in `run`. The delimiter is one more right step into `done`. -/
+**Proof sketch.** The skip is the one-tape rightward walk (`Turing.skipTM_eq_walkTM`), so this
+is `Turing.walkTM_run_ofCfg` at `moved := (· = i)`, `dir := .pos`, with the moved head's exact
+position read as its interval. -/
 theorem skipTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
     (w : List Symbol) (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
     (hw : ∀ p : ℤ, 0 ≤ p → p ≤ (w.length : ℤ) →
@@ -11746,46 +12252,23 @@ theorem skipTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k
           ((skipTM k i).runFrom d t).workTapePos j ∈
             Finset.Icc (d.workTapePos j) (d.workTapePos j + w.length + 1)
         else ((skipTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
-  let F := fun r : ℕ => catalogSeekCfg i d .run r
-  let D : Cfg k Symbol SeekPhase x := { d with
-    state := some .done
-    workTapePos := Function.update d.workTapePos i (d.workTapePos i + w.length + 1) }
-  have h0 : F 0 = d := by
-    apply Cfg.ext <;> simp [F, catalogSeekCfg, hstate]
-  have hF (r : ℕ) (hr : r < w.length) : (skipTM k i).step (F r) = F (r + 1) := by
-    have hs : (F r).workTapeSymbols i = some w[r] := by
-      simpa [F, catalogSeekCfg, Cfg.workTapeSymbols, List.getElem?_eq_getElem hr] using
-        hw r (by omega) (by omega)
-    dsimp only [F] at hs
-    simpa [F, SignType.pos_eq_one] using catalog_seek_step (skipTM k i) i d
-      .run .run r .pos (by simp only [skipTM, hs])
-  have hexit : (skipTM k i).step (F w.length) = D := by
-    have hs : (F w.length).workTapeSymbols i = none := by
-      simpa [F, catalogSeekCfg, Cfg.workTapeSymbols] using hw w.length (by omega) (by omega)
-    dsimp only [F] at hs
-    have h := catalog_seek_step (skipTM k i) i d .run .done w.length .pos
-      (by simp only [skipTM, hs])
-    simpa [F, D, catalogSeekCfg, SignType.pos_eq_one, add_assoc] using h
-  have hD : (skipTM k i).step D = D := by
-    rw [step_of_inputMoveAction (skipTM k i) D 0 rfl rfl, moveInputPos_zero]
-  have result := catalog_pass_contract (skipTM k i) F D w.length hF hexit hD
-    (fun c => c.state ≠ some .done)
-    (fun c => ∀ j : Fin k, if j = i then
-      c.workTapePos j ∈ Finset.Icc (d.workTapePos j) (d.workTapePos j + w.length + 1)
-      else c.workTapePos j = d.workTapePos j)
-    (by intro r _; simp [F, catalogSeekCfg])
-    (by
-      intro r hr j
-      rcases eq_or_ne j i with rfl | hj
-      · simp [F, catalogSeekCfg, Finset.mem_Icc]; omega
-      · simp [F, catalogSeekCfg, hj])
-    (by
-      intro j
-      rcases eq_or_ne j i with rfl | hj
-      · simp [D, Finset.mem_Icc]; omega
-      · simp [D, hj])
-  rw [h0] at result
-  exact ⟨result.1, result.2.1, fun j t ht => result.2.2 t ht j⟩
+  obtain ⟨h1, h2, h3⟩ := walkTM_run_ofCfg i (· = i) rfl .pos w d hstate
+    (fun p hp => by simpa using hw p (by omega) (by omega))
+  rw [skipTM_eq_walkTM]
+  refine ⟨h1.trans ?_, h2, fun j t ht => ?_⟩
+  · apply Cfg.ext <;> try rfl
+    funext j
+    by_cases hj : j = i
+    · subst hj
+      simp
+      ring
+    · simp [hj]
+  · rw [h3 j t ht]
+    by_cases hj : j = i
+    · subst hj
+      simp [Finset.mem_Icc]
+      omega
+    · simp [hj]
 
 /-- **R8.3, skip back** (design §12.8a). The inverse of `Turing.skipTM`: from
 the first cell of a field, move the head of tape `i` to the first cell of the
@@ -12668,6 +13151,22 @@ theorem scanResult_fold {A Γ : Type*} (δ : A → Γ → A) (a₀ : A) (w : Lis
     (fun _ => rfl) ?_ a₀ w
   intro b γ l r hr
   simp only [scanFold, List.foldl_cons, hr]
+
+/-- **Scan instance, identity** (the brief-inventory API, round 3; user 2026-10-17): the scan by
+the identity step both ways returns its state and word unchanged,
+`scanResult scanKeep scanKeep a₀ w = (a₀, w)`.
+
+**Proof sketch.** The identity step is the fold by the constant update, so
+`Turing.scanResult_fold` gives `(w.foldl (fun b _ => b) a₀, w)`, and that fold is `a₀`. -/
+theorem scanResult_keep_keep {A Γ : Type*} (a₀ : A) (w : List Γ) :
+    scanResult scanKeep scanKeep a₀ w = (a₀, w) := by
+  have hf : ∀ b : A, w.foldl (fun b (_ : Γ) => b) b = b := by
+    induction w with
+    | nil => exact fun _ => rfl
+    | cons γ w ih => exact fun b => ih b
+  have h := scanResult_fold (fun b (_ : Γ) => b) a₀ w
+  rw [hf] at h
+  exact h
 
 /-- **Scan instance, in-place map** (design §12.8a, R8.2). The scan by the map
 step and the identity return rewrites the word to `w.map f`, with the state

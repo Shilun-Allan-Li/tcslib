@@ -7,6 +7,7 @@ import TCSlib.Complexity.ClassNP.NTIME
 import TCSlib.Complexity.ClassNP.EXP
 import TCSlib.Complexity.TuringMachine.Simulation
 import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.WordTests
 import TCSlib.Complexity.TuringMachine.ChoiceWords
 import Mathlib.Tactic.FinCases
 
@@ -3970,39 +3971,13 @@ private lemma a3n_poly_eq {f g : List Bool → List Bool}
 
 /-- Equality with an entire fixed answer is a polynomial-time bit test. -/
 private lemma a3n_poly_fixed_eq (w : List Bool) :
-    PolyTimeComputable (fun x => [decide (x = w)]) := by
-  have h := a3n_poly_linear (FinTM.computesFunInTime_ifEq w [true] [false])
-  convert h using 1
-  funext x
-  by_cases hx : x = w <;> simp [hx]
+    PolyTimeComputable (fun x => [decide (x = w)]) :=
+  a3n_poly_linear (FinTM.computesFunInTime_decideEq w)
 
-/-- A fixed-width increment never successfully returns the empty word. -/
-private lemma a3n_inc_nonempty (w : List Bool) : incFixed w ≠ some [] := by
-  cases w with
-  | nil => simp [incFixed]
-  | cons b w => cases b <;> cases h : incFixed w <;> simp [incFixed, h]
-
-/-- Overflow is exactly the all-true unary shape, including length zero. -/
-private lemma a3n_inc_none (w : List Bool) :
-    incFixed w = none ↔ w = List.replicate w.length true := by
-  induction w with
-  | nil => simp [incFixed]
-  | cons b w ih => cases b <;> simp [incFixed, List.replicate_succ, ih]
-
-/-- The exact all-true shape is decided by P11 overflow and whole-word equality. -/
+/-- The exact all-true shape is a polynomial-time bit test. -/
 private lemma a3n_poly_unary :
-    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) := by
-  have h := (a3n_poly_fixed_eq []).comp (a3n_poly_linear FinTM.computesFunInTime_incFixed)
-  convert h using 1
-  funext x
-  have he : (incFixed x).getD [] = [] ↔ x = List.replicate x.length true := by
-    rw [← a3n_inc_none]
-    cases hi : incFixed x with
-    | none => simp
-    | some w =>
-      have hw : w ≠ [] := by intro hw; subst w; exact a3n_inc_nonempty x hi
-      simp [hw]
-  simp only [Function.comp_apply, he]
+    PolyTimeComputable (fun x => [decide (x = List.replicate x.length true)]) :=
+  a3n_poly_linear FinTM.computesFunInTime_allTrue
 
 /-- A successful parser returns the unique original pair encoding.
 The proof follows the aligned two-bit grammar, without identifying parse

@@ -57,8 +57,9 @@ sites.
   (the initial state is not the halting state).
 * `Turing.MultiTapeTM.output_length_le`, `Turing.MultiTapeTM.output_prefix` — raw-layer
   output lemmas (at most one symbol is emitted per step, and output only grows), stated
-  here rather than in the vendored `Deterministic.lean` to keep the vendored files
-  unmodified.
+  here rather than in the vendored `Deterministic.lean` to keep the vendored files close
+  to upstream (the specification API's equations sit beside their definitions there; the
+  vendored headers list them).
 * `Turing.MultiTapeTM.spaceUsed_le_mul_succ` — a run of `t` steps visits at most
   `k · (t + 1)` cells (shared by the space inclusions of chapter 4; added 2026-10-10).
 
@@ -72,8 +73,15 @@ sites.
 * `Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc` — a head confined to an integer interval
   visits at most its cardinality (moved from `Build/Catalog` at MIG-0b's layering split, for
   the contract core, 2026-10-13).
+* `Turing.MultiTapeTM.spaceUsed_le_of_abs_le` — if every work head stays within `r` cells of
+  its start, the run uses at most `k · (2r + 1)` cells.
 * `Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc` — after `u` steps every work head lies
   within `u` cells of its start (MIG-0b, 2026-10-13).
+* `Turing.MultiTapeTM.runFrom_with_q₀`, `Turing.MultiTapeTM.initCfg_with_q₀` — a machine
+  restarted at another initial state runs as before, from `Cfg.init` at that state (the core
+  specification API's gate, finding 1).
+* `Turing.FinTM.computesFunInTime_iff` — computing a function in time, input by input (the
+  core specification API's gate, finding 2).
 
 ## References
 
@@ -87,7 +95,8 @@ namespace Turing
 ### Raw-layer output and space lemmas
 
 Additions on top of the vendored files (kept here so the vendored `Deterministic.lean`
-stays byte-comparable with upstream).
+stays close to upstream; the specification API's equations are the exception, beside their
+definitions).
 -/
 
 namespace MultiTapeTM
@@ -217,6 +226,22 @@ theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol 
   rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
     MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]
 
+/-- **A new initial state changes no run** (the core specification API, user 2026-10-16; its
+gate, finding 1): the machine `{ tm with q₀ := q }` has `tm`'s transition table, so from every
+configuration it takes `tm`'s run, `({ tm with q₀ := q }).runFrom cfg t = tm.runFrom cfg t`.
+A consumer restarts a machine whose initial state it does not read (for example
+`Complexity.LogProg.cleanTM`) at a state of its choice, without unfolding the machine. -/
+theorem runFrom_with_q₀ (tm : MultiTapeTM k Symbol State) (q : State)
+    (cfg : Cfg k Symbol State input) (t : ℕ) :
+    ({ tm with q₀ := q } : MultiTapeTM k Symbol State).runFrom cfg t = tm.runFrom cfg t :=
+  rfl
+
+/-- **The initial configuration at a new initial state** (the core specification API; its
+gate, finding 1): `({ tm with q₀ := q }).initCfg x = Cfg.init q x`. -/
+theorem initCfg_with_q₀ (tm : MultiTapeTM k Symbol State) (q : State) (x : List Symbol) :
+    ({ tm with q₀ := q } : MultiTapeTM k Symbol State).initCfg x = Cfg.init q x :=
+  rfl
+
 end MultiTapeTM
 
 /-- A multi-tape Turing machine over the alphabet `Option Symbol` bundled with a finite
@@ -256,6 +281,16 @@ every input. [AB09, Definition 1.3: "M computes f in T(n)-time"] -/
 def ComputesFunInTime (M : FinTM Symbol) (f : List Symbol → List Symbol) (T : ℕ → ℕ) : Prop :=
   ∀ input : List Symbol, M.ComputesInTime input (f input) (T input.length)
 
+/-- **Computing a function in time, input by input** (the core specification API, user
+2026-10-16; its gate, finding 2): `M` computes `f` in time `T` exactly when, on every input
+`x`, it halts within `T |x|` steps with `f x` on its output tape,
+`M.ComputesFunInTime f T ↔ ∀ x, M.ComputesInTime x (f x) (T |x|)`. With
+`Turing.FinTM.computesInTime_iff` this reads a function computation off the runs. -/
+theorem computesFunInTime_iff (M : FinTM Symbol) (f : List Symbol → List Symbol)
+    (T : ℕ → ℕ) :
+    M.ComputesFunInTime f T ↔ ∀ input, M.ComputesInTime input (f input) (T input.length) :=
+  Iff.rfl
+
 /-- The machine `M`, over alphabet `Γ`, computes the string function `f` on `α`-strings
 *via* the symbol embedding `e : α ↪ Γ`: on every input `x.map e` it halts within
 `T |x|` steps with `(f x).map e` on its output tape. This is how a machine over a
@@ -264,6 +299,15 @@ the alphabet-robustness results [AB09, §1.3.1]. -/
 def ComputesFunInTimeVia {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)
     (f : List α → List α) (T : ℕ → ℕ) : Prop :=
   ∀ x : List α, M.ComputesInTime (x.map e) ((f x).map e) (T x.length)
+
+/-- **Computing via an embedding, input by input** (the core specification API): `M` computes
+`f` via `e` in time `T` exactly when, on every `x`, it halts on `x.map e` within `T |x|` steps
+with `(f x).map e` on its output tape. -/
+theorem computesFunInTimeVia_iff {α Γ : Type} (M : FinTM Γ) (e : α ↪ Γ)
+    (f : List α → List α) (T : ℕ → ℕ) :
+    M.ComputesFunInTimeVia e f T ↔
+      ∀ x : List α, M.ComputesInTime (x.map e) ((f x).map e) (T x.length) :=
+  Iff.rfl
 
 /-- The machine `M` *computes* the string function `f`, with no time constraint: on
 every input it eventually halts with `f input` on the output tape. This is the notion
@@ -274,6 +318,13 @@ related by `Turing.FinTM.ComputesFunInTime.computes` (below) and
 (in `TCSlib.Complexity.Uncomputability.Computable`). -/
 def Computes (M : FinTM Symbol) (f : List Symbol → List Symbol) : Prop :=
   ∀ input : List Symbol, ∃ t, M.ComputesInTime input (f input) t
+
+/-- **Computing a function, input by input** (the core specification API): `M` computes `f`
+exactly when, on every input `x`, it halts after some number of steps with `f x` on its output
+tape. -/
+theorem computes_iff (M : FinTM Symbol) (f : List Symbol → List Symbol) :
+    M.Computes f ↔ ∀ input, ∃ t, M.ComputesInTime input (f input) t :=
+  Iff.rfl
 
 /-- Halting is absorbing, so a time bound can be weakened: if `M` produces `output`
 within `t` steps it also does so within any `t' ≥ t` steps.
@@ -378,6 +429,30 @@ theorem MultiTapeTM.spaceUsedByTape_le_card_Icc {k : ℕ} {Symbol State : Type*}
       obtain ⟨u, hu, rfl⟩ := Finset.mem_image.mp hp
       exact h u (by simpa only [Finset.mem_range, Nat.lt_succ_iff] using hu))
     _ = _ := Int.card_Icc lo hi
+
+/-- **A common head radius bounds the space**: if up to time `t` every work head stays within `r`
+cells of its starting position, the run visits at most `2r + 1` cells on each work tape, hence
+at most `k · (2r + 1)` cells in all.
+
+**Proof sketch.** Each head stays in the integer interval of radius `r` around its start, which
+has `2r + 1` cells (`Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc`); sum over the tapes
+(`Turing.MultiTapeTM.spaceUsed_eq_sum`). -/
+theorem MultiTapeTM.spaceUsed_le_of_abs_le {k : ℕ} {Symbol State : Type*}
+    {input : List Symbol} (tm : MultiTapeTM k Symbol State)
+    (d : Cfg k Symbol State input) (t r : ℕ)
+    (h : ∀ u ≤ t, ∀ j, |(tm.runFrom d u).workTapePos j - d.workTapePos j| ≤ (r : ℤ)) :
+    tm.spaceUsed d t ≤ k * (2 * r + 1) := by
+  rw [MultiTapeTM.spaceUsed_eq_sum]
+  calc
+    ∑ j, tm.spaceUsedByTape d t j ≤ ∑ _j : Fin k, (2 * r + 1) := by
+      refine Finset.sum_le_sum fun j _ => ?_
+      have hb := tm.spaceUsedByTape_le_card_Icc d t j (d.workTapePos j - r)
+        (d.workTapePos j + r) fun u hu => by
+          have he := abs_le.mp (h u hu j)
+          rw [Finset.mem_Icc]
+          constructor <;> omega
+      omega
+    _ = k * (2 * r + 1) := by simp
 
 end Turing
 

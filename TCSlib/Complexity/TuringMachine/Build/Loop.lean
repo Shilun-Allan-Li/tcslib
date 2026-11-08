@@ -135,6 +135,13 @@ a loop body's seam configurations. -/
 def stateWord (k : ℕ) (s : List Bool) : Fin k → List Bool :=
   fun i => if (i : ℕ) = 0 then s else []
 
+/-- Tape `0` holds the state word and every other tape is blank:
+`stateWord k s i = if i = 0 then s else []` (the specification API, the briefs' pre-ship
+inventories, 2026-10-16). -/
+theorem stateWord_eq (k : ℕ) (s : List Bool) (i : Fin k) :
+    stateWord k s i = if (i : ℕ) = 0 then s else [] :=
+  rfl
+
 /-- **The loop summation lemma** (the generic form of
 the enumerator's proved `enumLoop_run`, which is the harvest template;
 round-1 audit verdict: Pass, including `N = 0`).

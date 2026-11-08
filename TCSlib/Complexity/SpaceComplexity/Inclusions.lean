@@ -918,9 +918,13 @@ private theorem b2b_setup_capture (MV MI MP : FinTM Bool) (x y : List Bool)
       | inl a => rfl
       | inr a => exact False.elim (hcut u hu (by simpa using hq)))
   have hinit : d₀.mapState (Sigma.mk B2bHostPhase.setup) =
-      (b2b_host MV MI MP).tm.initCfg x := rfl
+      (b2b_host MV MI MP).tm.initCfg x := by
+    rw [MultiTapeTM.initCfg_eq, show (b2b_host MV MI MP).tm.q₀ =
+      ⟨.setup, Sum.inl (.init MP.tm.q₀)⟩ from phaseHostTM_q₀ _ _ _]
+    rfl
+  rw [← hinit]
   refine ⟨T + 1, p, ?_, ?_⟩
-  · simpa only [hinit, b2b_host, b2b_dispatch_retag, d₁, Cfg.mapState, Cfg.init,
+  · simpa only [b2b_host, b2b_dispatch_retag, d₁, Cfg.mapState, Cfg.init,
       Option.map_some] using hp.2
   · intro u hu j
     change |((phaseHostTM (b2b_hostPhases MV MI MP)
@@ -1900,13 +1904,9 @@ private theorem b2b_trial_run (MV MI MP : FinTM Bool) (x u : List Bool)
       | inr q => exact False.elim (hvCut t ht (by simpa using hq)))
   have hpz (t : ℕ) : H.runFrom (z.mapState (Sigma.mk B2bTestPhase.verdict)) t =
       ((b2b_testPhases MV MI MP .verdict).runFrom z t).mapState
-        (Sigma.mk B2bTestPhase.verdict) := by
-    apply MultiTapeTM.runFrom_mapState_of_agreeOn
-      (b2b_testPhases MV MI MP .verdict) H
-      ⟨Sigma.mk B2bTestPhase.verdict, sigma_mk_injective⟩ (fun _ => True)
-    · intro q _ inp work
-      simp [H, b2b_testTM, phaseHostTM, b2b_testRedirect]
-    · intros; trivial
+        (Sigma.mk B2bTestPhase.verdict) :=
+    phaseHostTM_run_le (b2b_testPhases MV MI MP) ⟨.anchor, ()⟩ (b2b_testRedirect MV MI)
+      .verdict z t (fun _ _ _ _ => rfl) t le_rfl
   let A := 1 + (I + 1)
   let B := A + (R + 1)
   let C := B + (2 * u.length + 2 + 1)
@@ -2241,15 +2241,9 @@ private theorem b2b_round_run (MV MI MP : FinTM Bool) (x u v : List Bool)
     | done b' =>
       exact False.elim ((htCut t htt).2 b' hq)
   have hprefix (t : ℕ) (htt : t ≤ T) : H.runFrom d t =
-      ((b2b_testTM MV MI MP).runFrom c t).mapState (Sigma.mk B2bBodyPhase.test) := by
-    refine MultiTapeTM.runFrom_mapState_of_agreeOn (b2b_testTM MV MI MP) H
-      ⟨(fun q => (⟨B2bBodyPhase.test, q⟩ : Σ j, b2b_bodyState MV MI j)),
-        by intro q q' h; simpa using h⟩
-      (fun q => b2b_bodyRedirect MV MI .test q = none) ?_ c t ?_
-    · intro q hq inp work
-      simp [H, b2b_bodyTM, phaseHostTM, hq, b2b_bodyPhases]
-    · intro r hr q hq
-      exact hguard r (by omega) q hq
+      ((b2b_testTM MV MI MP).runFrom c t).mapState (Sigma.mk B2bBodyPhase.test) :=
+    phaseHostTM_run_le (b2b_bodyPhases MV MI MP) ⟨.test, ⟨.anchor, ()⟩⟩
+      (b2b_bodyRedirect MV MI) .test c T hguard t htt
   cases b with
   | true =>
     refine ⟨T, hT, ?_, ?_, ?_⟩
@@ -2318,14 +2312,9 @@ private theorem b2b_finish_answer (MV MI MP : FinTM Bool) {x : List Bool} (b : B
   let H := (b2b_host MV MI MP).tm
   let M := b2b_answerTM (b2b_tapeCount MV.k MI.k MP.k + 1) b
   have hp (t : ℕ) : H.runFrom (c.mapState (Sigma.mk (B2bHostPhase.answer b))) t =
-      (M.runFrom c t).mapState (Sigma.mk (B2bHostPhase.answer b)) := by
-    refine MultiTapeTM.runFrom_mapState_of_agreeOn M H
-      ⟨(fun q => (⟨B2bHostPhase.answer b, q⟩ : Σ j, b2b_hostState MV MI MP j)),
-        by intro q q' h
-           exact @sigma_mk_injective B2bHostPhase (b2b_hostState MV MI MP)
-             (B2bHostPhase.answer b) q q' h⟩ (fun _ => True) ?_ c t (by intros; trivial)
-    intro q _ inp work
-    rfl
+      (M.runFrom c t).mapState (Sigma.mk (B2bHostPhase.answer b)) :=
+    phaseHostTM_run_le (b2b_hostPhases MV MI MP) _ (b2b_hostRedirect MV MI MP)
+      (.answer b) c t (fun _ _ _ _ => rfl) t le_rfl
   obtain ⟨hh, ho⟩ := b2b_answer_run b c hc
   refine ⟨?_, ?_, ?_⟩
   · rw [hp]
