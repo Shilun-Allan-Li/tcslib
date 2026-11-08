@@ -1,9 +1,9 @@
-# Gate119 — round1 HOLD, ruling recorded; Codex follow-up preparing
+# Gate119 — Codex round2 Ready to dispatch
 
 **Not yet clear to merge: #234.** Round1 findings are preserved verbatim and independently
 reviewed (HOLD0/1/0/16). Seyoon acknowledged the fixed-live-stop kind FE-LIVE-1 with explicit
 owner/window. All17 findings have dispositions in resolutions.md; no API source correction
-was required. Codex round2 is selected, not dispatched. Actual source/replay remains the
+was required. Codex round2 is Ready to dispatch, not yet confirmed dispatched. Actual source/replay remains the
 frozen passed f1/mfup2 generation below. Next free121; F6 gate120 reserved.
 
 ## Prior validation and immutable issued packet
@@ -30,3 +30,11 @@ No permanent-debt waiver or completed migration is inferred.
 passed rebuild/archive verification and is published at exchange `8d58d0cf63be3fdd24bbb929d859562972c17931`.
 SHA256 `60a0b7ca5095ee1c619c4343aa59f1010054bcefaa39daec08bb91de89ef8a0e`. Exact pins and pasteable prompt are in
 dispatch.json/prompt.md. Seyoon confirmed dispatch in chat; audit open. Next free120.
+
+## Published round2 packet
+
+**Ready to dispatch: gate119 round2 (Codex).**703sections,79,315,563bytes,
+SHA256 `1f14e6f2a9bba9e6fe7b575bb9a546d6a89c7457c79b30d677ffb0ff19da36b3`. Exact immutable source/records/exchange pins, complete
+checks and pasteable prompt are in dispatch-r2.json/publication-r2.json/prompt-r2.md.
+All703sections match pinned Git bytes;215JSON parse, both empty sections retained,
+rebuild and Git-archive comparison pass. No new elaboration or gate closure is claimed.

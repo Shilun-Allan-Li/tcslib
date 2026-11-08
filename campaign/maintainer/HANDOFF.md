@@ -12,7 +12,8 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 **Resumed after relocation.** Current campaign snapshot remains complete mac4 / #230 merge;
 records may advance without Lean changes. Latest received audit is gate119 HOLD0/1/0/16,
 now independently reviewed and explicitly acknowledged as FE-LIVE-1 by Seyoon. Exact owner/
-window and all dispositions are recorded; Codex round2 selected, preparing. #234 source is
+window and all dispositions are recorded; **Codex round2 Ready to dispatch** (703sections,
+verified/published, prompt-r2.md), not yet confirmed dispatched. #234 source is
 unchanged and its401/static0/77 replay remains valid. **Not yet clear to merge: #234.**
 
 F6 final is present and independently reviewed as COMPLETE candidate. The six Claude patches
