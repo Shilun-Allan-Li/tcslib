@@ -1,0 +1,137 @@
+{
+ "head": "03ead73ab38e74621800367c072f6fd3f0f70991",
+ "ancestor": "1aa5506f58f77c215e56d24311ec33bd931cacf1",
+ "replay": {
+  "affected": 581,
+  "records": 636,
+  "failures_or_mismatch": [],
+  "all_pass_at_head_bytes": true
+ },
+ "unaffected": {
+  "count": 454,
+  "source_changed_since_ancestor": []
+ },
+ "checks_log": "/workspace/cp2/evidence/logs/final-delta/modules/audits/pass-shelat/Checks.log",
+ "checks_axioms": {
+  "multisets_equal": true,
+  "base_records": 367,
+  "head_records": 367,
+  "head_sorryAx": [
+   "Complexity.NUPPT.decides_of_decidesWithAdviceInTime",
+   "TCSlib.Cryptography.exists_canonizerExp",
+   "TCSlib.Cryptography.lemma_64_3",
+   "TCSlib.Cryptography.theorem_63_1"
+  ]
+ },
+ "c3_controls": {
+  "pos_rows": [
+   [
+    "C3",
+    "_current",
+    "cp2_c3_pos",
+    "Turing.pairDecode.eq_def",
+    "TCSlib.Complexity.TuringMachine.Encoding",
+    "Turing.pairDecode",
+    "TCSlib.Complexity.TuringMachine.Encoding"
+   ]
+  ],
+  "neg_rows": [],
+  "pass": true
+ },
+ "controls": {
+  "unsealed_errors": [],
+  "sealed_harness_errors": [],
+  "sealed_eof": true,
+  "negatives_failing_at_site": {
+   "N1": [
+    "Type mismatch"
+   ],
+   "N2": [
+    "'show' tactic failed, pattern"
+   ],
+   "N3": [
+    "Type mismatch"
+   ],
+   "N4": [
+    "Tactic `rfl` failed: The left-hand side"
+   ],
+   "N5": [
+    "Application type mismatch: The argument"
+   ],
+   "N6": [
+    "Type mismatch"
+   ],
+   "N7": [
+    "Tactic `rcases` failed: `h : PolyTimeComputable f` is not an inductive datatype"
+   ]
+  },
+  "sealed_errors_off_site": [],
+  "pass": true
+ },
+ "seal_standard_final": {
+  "files": 98,
+  "valid": 98,
+  "requests": 95177,
+  "active": 94468,
+  "already_irreducible": 709,
+  "files_failing": 41,
+  "failing_declarations": 225,
+  "error_diagnostics": 321,
+  "notation_unsealed": [
+   "-- CP2 notation left unsealed (standing rule): Complexity.PolyExpr.eval, Complexity.PolyExpr.eval._sunfold, Complexity.PolyExpr.eval.match_1",
+   "-- CP2 notation left unsealed (standing rule): none in closure"
+  ]
+ },
+ "seal_strict_final": {
+  "files": 98,
+  "valid": 98,
+  "requests": 95408,
+  "active": 94699,
+  "already_irreducible": 709,
+  "files_failing": 56,
+  "failing_declarations": 348,
+  "error_diagnostics": 515,
+  "notation_unsealed": [
+   ""
+  ]
+ },
+ "seal_strict_baseline": {
+  "files": 98,
+  "valid": 98,
+  "requests": 90740,
+  "active": 90031,
+  "already_irreducible": 709,
+  "files_failing": 80,
+  "failing_declarations": 501,
+  "error_diagnostics": 688,
+  "notation_unsealed": [
+   ""
+  ]
+ },
+ "seal_standard_j2": {
+  "files": 98,
+  "valid": 98,
+  "requests": 95177,
+  "active": 94468,
+  "already_irreducible": 709,
+  "files_failing": 73,
+  "failing_declarations": 365,
+  "error_diagnostics": 476,
+  "notation_unsealed": [
+   "-- CP2 notation left unsealed (standing rule): Complexity.PolyExpr.eval, Complexity.PolyExpr.eval._sunfold, Complexity.PolyExpr.eval.match_1",
+   "-- CP2 notation left unsealed (standing rule): none in closure"
+  ]
+ },
+ "explicit_scan": {
+  "summary": {
+   "LOCAL_OR_UNRESOLVED": 2713,
+   "THEOREM_OR_OTHER": 10776,
+   "OWN_DEF": 1738,
+   "SIMPROC": 7,
+   "OWN_DEF?AMBIGUOUS": 45,
+   "THEOREM_OR_OTHER?AMBIGUOUS": 87,
+   "LOCAL_BINDER": 1
+  },
+  "foreign_or_core_defs": []
+ }
+}

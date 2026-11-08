@@ -608,10 +608,7 @@ inversion probability is `𝓕.invProbAt (withIndexParam A) n` (`toCollection_in
 negligible by `h.hard`. -/
 theorem StrongOneWay.toCollection_oneWay (h : 𝓕.StrongOneWay) :
     (𝓕.toCollection F hF hspec).OneWay where
-  sampleClose := ⟨fun _ => 0, fun c => ⟨1, fun n hn => by
-      rw [abs_zero]
-      exact one_div_pos.mpr (pow_pos (Nat.cast_pos.mpr hn) c)⟩,
-    toCollection_sampleClose 𝓕 F hF hspec⟩
+  sampleClose := ⟨fun _ => 0, negligible_zero, toCollection_sampleClose 𝓕 F hF hspec⟩
   hard A := by
     simpa only [toCollection_invProbAt] using h.hard A.withIndexParam
 
@@ -619,7 +616,7 @@ theorem StrongOneWay.toCollection_oneWay (h : 𝓕.StrongOneWay) :
 [PS10, Theorem 42.2 ⇐]: the collection `toCollection` built from the evaluator of `h.easy`. -/
 theorem StrongOneWay.exists_collection_oneWay {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
     ∃ G : Collection, G.OneWay := by
-  obtain ⟨F, hF, hspec⟩ := h.easy
+  obtain ⟨F, hF, hspec⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
   exact ⟨_, FunFamily.StrongOneWay.toCollection_oneWay 𝓕 F hF hspec h⟩
 
 end FunFamily
@@ -796,16 +793,17 @@ private theorem owfIndexStr_eq (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample
     G.owfIndexStr (List.replicate n true) (List.ofFn r₁ ++ List.ofFn r₂) = G.index n r₁ := by
   simp only [owfIndexStr, Collection.index, NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq,
     NUPPT.advInput_eq]
-  rw [List.length_replicate, List.take_left' (by simp [NUPPT.coinLen_eq]), G.gen_uniform n]
+  rw [List.length_replicate, List.take_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq]),
+    (NUPPT.uniform_iff G.gen).1 G.gen_uniform n]
 
 /-- On `u = 1^n` and the encoded coins `r₁ ++ r₂`, the raw string of `g` is `owfRaw n r₁ r₂`
 (`Sample` is uniform; the cut at `gen.coins n` is `List.drop_left'`). -/
 private theorem owfRawStr_eq (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) :
     G.owfRawStr (List.replicate n true) (List.ofFn r₁ ++ List.ofFn r₂) = G.owfRaw n r₁ r₂ := by
   unfold owfRawStr owfRaw
-  rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by simp [NUPPT.coinLen_eq])]
+  rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq])]
   simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
-  rw [G.sample_uniform n]
+  rw [(NUPPT.uniform_iff G.sample).1 G.sample_uniform n]
 
 /-- **`g` is easy to compute** [PS10, Theorem 42.2 ⇒, "`g` is easy"]: the evaluator on
 `⟨1^n, r⟩` pads `owfRawStr 1^n r ++ [true]` to `L n` bits (`polyTimeComputable_padStr`);

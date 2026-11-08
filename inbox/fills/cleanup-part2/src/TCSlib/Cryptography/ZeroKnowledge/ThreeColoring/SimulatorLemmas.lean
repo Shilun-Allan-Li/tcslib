@@ -415,7 +415,7 @@ theorem statClose_truncAttempts [Nonempty W] (att : W → Option α) (view : U �
       (1 - θ) * uprob (fun u => T (view u)))
     (N : ℕ) :
     StatClose (truncAttempts att N) (fun u => some (view u)) (θ ^ N) :=
-  fun T => abs_uprob_truncAttempts_sub_le att view hθ hnone hsome N T
+  (statClose_iff _ _ _).2 fun T => abs_uprob_truncAttempts_sub_le att view hθ hnone hsome N T
 
 end Truncation
 

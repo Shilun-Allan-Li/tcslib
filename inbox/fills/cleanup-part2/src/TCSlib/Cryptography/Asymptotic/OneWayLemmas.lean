@@ -134,7 +134,7 @@ def bitListToNat (l : List Bool) : ℕ := l.foldl (fun a c => 2 * a + (if c then
 
 /-- `bitsToNat` is `bitListToNat` of the encoding. -/
 theorem bitsToNat_eq_bitListToNat {k : ℕ} (b : Fin k → Bool) : bitsToNat b = bitListToNat (List.ofFn b) :=
-  rfl
+  bitsToNat_def b
 
 /-- Reading one more bit: `bitListToNat (l ++ [c]) = 2 · bitListToNat l + c`. -/
 theorem bitListToNat_append_singleton (l : List Bool) (c : Bool) :
@@ -197,7 +197,7 @@ theorem invProbOpt_prodFun_le_yaoTryOpt {α β ρ : Type*} [Fintype α] [Nonempt
   refine le_trans ?_ (le_of_eq h.symm)
   apply uprob_mono
   rintro ⟨xs, r⟩ ⟨xs', hxs', hf⟩
-  exact ⟨xs' i, by simp [hxs'], congrFun hf i⟩
+  exact ⟨xs' i, by simp [hxs'], by simpa only [prodFun_apply] using congrFun hf i⟩
 
 /-! ### Loop bridges -/
 
@@ -281,7 +281,7 @@ theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ
       (N * δ) := by
   induction N with
   | zero =>
-    intro T
+    refine (statClose_iff _ _ _).2 fun T => ?_
     have hX : ∀ c : Fin 0 → σ, (fun t => X (c t)) = (fun t : Fin 0 => t.elim0) :=
       fun c => funext fun t => t.elim0
     have hY : ∀ c : Fin 0 → τ, (fun t => Y (c t)) = (fun t : Fin 0 => t.elim0) :=
@@ -327,7 +327,7 @@ theorem polyTimeComputable_unaryMulPair :
   obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
   have h : PolyTimeComputable (fun z => match pairDecode z with
       | some (u, v) => List.replicate (u.length * v.length) true
-      | none => []) := ⟨M, c, 2, hM⟩
+      | none => []) := (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
   convert h using 1
   funext z
   cases hz : pairDecode z with
@@ -859,7 +859,7 @@ theorem exists_posMachine : ∃ Pm : List Bool → List Bool, PolyTimeComputable
     simp only [PosLoop.unum, PosLoop.uM, PosLoop.trial, PosLoop.rest, PosLoop.ukk,
       pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate]
     rw [← ofFn_block_eq_take_drop pb' t, hUspec]
-    · rfl
+    · rw [bitsToNat_eq_bitListToNat]
     · rw [List.length_append, List.length_replicate]
       have := bitsToNat_lt fun j => pb' (finProdFinEquiv (t, j))
       rw [bitsToNat_eq_bitListToNat] at this

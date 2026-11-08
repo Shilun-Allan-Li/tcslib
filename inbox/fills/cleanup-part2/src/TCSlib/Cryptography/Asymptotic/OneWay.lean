@@ -334,7 +334,9 @@ theorem WorstCaseOneWayLit.toParam {𝓕 : FunFamily} (hinj : Function.Injective
       B.coinLen n + (B.coinLen (𝓕.outLen.eval n) - B.coinLen n) := by
     have h1 : A.coinLen (𝓕.outLen.eval n) = B.coinLen (𝓕.outLen.eval n) := by
       simp only [NUPPT.coinLen_eq, hAc, PolyExpr.eval_subst, PolyExpr.eval_var]
-    have h2 : B.coinLen n ≤ B.coinLen (𝓕.outLen.eval n) := B.coins.eval_mono (hle n)
+    have h2 : B.coinLen n ≤ B.coinLen (𝓕.outLen.eval n) := by
+      rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
+      exact B.coins.eval_mono (hle n)
     omega
   let e : B.Coins n × (Fin (B.coinLen (𝓕.outLen.eval n) - B.coinLen n) → Bool) ≃
       A.Coins (𝓕.outLen.eval n) :=
@@ -452,6 +454,9 @@ theorem Easy.prod {𝓕 : FunFamily} (h : 𝓕.Easy) (q : PolyExpr) : (𝓕.prod
   rw [NUPPT.advInput_eq, hspec, prod_f, ofFn_blocks_symm]
   congr 2
   funext i
+  have hb : (fun j => x (finProdFinEquiv (i, j))) = blocks (q.eval n) (𝓕.inLen.eval n) x i :=
+    funext fun j => (blocks_apply _ _ x i j).symm
+  rw [OneWay.prodFun_apply, ← NUPPT.advInput_eq, hb]
   exact hFx n (blocks (q.eval n) (𝓕.inLen.eval n) x i)
 
 end FunFamily
@@ -505,7 +510,7 @@ theorem invProb_prodFun_le_yaoTry {α β ρ : Type*} [Fintype α] [Nonempty α] 
   rw [h]
   apply uprob_mono
   rintro ⟨xs, r⟩ hxs
-  exact congrFun hxs i
+  simpa only [prodFun_apply] using congrFun hxs i
 
 end OneWay
 
@@ -527,7 +532,7 @@ private theorem eventually_poly_mul_two_pow_lt_one (p : PolyExpr) :
           mul_le_mul_of_nonneg_right (h1.trans (mul_le_mul_of_nonneg_left h2 (by positivity)))
             (by positivity)
       _ = ((C * 2 ^ e : ℕ) : ℝ) * ((n : ℝ) ^ e * (2 : ℝ)⁻¹ ^ n) := by push_cast; ring
-  obtain ⟨n₀, h⟩ := hμ 0
+  obtain ⟨n₀, h⟩ := (negligible_iff _).1 hμ 0
   refine ⟨n₀, fun n hn => lt_of_le_of_lt (le_abs_self _) ?_⟩
   simpa using h n hn
 
@@ -672,7 +677,7 @@ theorem weak_to_strong {𝓕 : FunFamily} (h : FunFamily.WeakOneWay 𝓕) :
   obtain ⟨F, hF, hFx⟩ := h.easy
   have hFe_spec : ∀ n (a : Fin (𝓕.inLen.eval n) → Bool),
       F (pairEncode (List.replicate n true) (List.ofFn a)) = List.ofFn (𝓕.f n a) :=
-    fun n a => hFx n a
+    fun n a => by simpa only [NUPPT.advInput_eq] using hFx n a
   have hm : ∀ n, 1 ≤ n → 0 < (yaoBlocks qw).eval n := fun n hn => yaoBlocks_pos qw hqw hn
   -- the reduction machine of Algorithm 38.5
   obtain ⟨A, hA⟩ := OneWay.exists_yaoReduction 𝓕.inLen 𝓕.outLen (yaoBlocks qw) (yaoRounds qw c)
@@ -701,7 +706,7 @@ theorem weak_to_strong {𝓕 : FunFamily} (h : FunFamily.WeakOneWay 𝓕) :
       funext j
       simp only [OneWay.yaoB_apply]
       rw [hx'', OneWay.padTrue_drop_ofFn]
-      rfl
+      exact funext fun k => (FunFamily.blocks_apply _ _ x'' j k).symm
     rw [hyB]
     exact hf
   -- the parameter instantiation and the reduction's bound
@@ -769,7 +774,8 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
   set ℓ := 𝓕.inLen.eval n with hℓ
   set f := 𝓕.f n with hf
   -- the coin bijection `(xs, r') ↦ ⟨xs⟩ ++ r'`
-  have hlen : 2 * ℓ + A'.coinLen n = A.coinLen n := rfl
+  have hlen : 2 * ℓ + A'.coinLen n = A.coinLen n := by
+    simp only [A, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTime]; rfl
   let e : (Fin 2 → Fin ℓ → Bool) × A'.Coins n ≃ A.Coins n :=
     (Equiv.prodCongr (FunFamily.blocks 2 ℓ).symm (Equiv.refl _)).trans
       ((Fin.appendEquiv _ _).trans (Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)))
@@ -795,8 +801,7 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
       List.drop_left' (by simp only [List.length_ofFn]; try exact hℓ)]
     have := hFx n (xs 1)
     simp only [NUPPT.advInput_eq] at this
-    rw [this]
-    rfl
+    rw [this, NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.advInput_eq]
   -- the planting bound
   let B' : (Fin 2 → Fin (𝓕.outLen.eval n) → Bool) → A'.Coins n → Option (Fin 2 → Fin ℓ → Bool) :=
     fun ys r => (A'.inverter n (2 * ℓ) (2 * 𝓕.outLen.eval n)
@@ -822,7 +827,7 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
   have hblk := OneWay.ofFn_block_eq_take_drop x'' 0
   simp only [Fin.val_zero, Nat.zero_mul, List.drop_zero] at hblk
   rw [← hblk]
-  rfl
+  exact congrArg List.ofFn (funext fun j => (FunFamily.blocks_apply _ _ x'' 0 j).symm)
 
 /-- **Strong implies weak** (sanity, [PS10, §2.2, the remark after Definition 28.4]): a strong
 one-way function is a weak one-way function with `q = 2`.
@@ -831,7 +836,7 @@ one-way function is a weak one-way function with `q = 2`.
 all `n ≥ max n₀ 2`. -/
 theorem FunFamily.StrongOneWay.weak {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) : 𝓕.WeakOneWay := by
   refine ⟨h.easy, .const 2, fun _ => by simp, fun A => ?_⟩
-  obtain ⟨n₀, hn₀⟩ := h.hard A 1
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (h.hard A) 1
   refine ⟨max n₀ 2, fun n hn => ?_⟩
   have h1 := hn₀ n (le_of_max_le_left hn)
   have hn2 : (2 : ℝ) ≤ n := by exact_mod_cast le_of_max_le_right hn
@@ -844,7 +849,7 @@ theorem FunFamily.StrongOneWay.weak {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
 argument projection, no coins). -/
 private theorem exists_runAt_eq_arg : ∃ A : NUPPT, ∀ n y (r : A.Coins n), A.runAt n y r = y :=
   ⟨NUPPT.ofPolyTimeUniform NUPPT.polyTimeComputable_inArg (.const 0), fun n y r => by
-    rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
+    rw [NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform, NUPPT.advInput_eq, ← NUPPT.layout_eq]
     exact NUPPT.inArg_layout _ _ _ _⟩
 
 /-- **A machine that returns its argument inverts the identity with probability one**: if
@@ -879,7 +884,7 @@ fails at `c = 0`. -/
 theorem not_strongOneWay_id : ¬ FunFamily.StrongOneWay (FunFamily.ofString id .var) := by
   intro h
   obtain ⟨A, hA⟩ := exists_runAt_eq_arg
-  obtain ⟨n₀, hn₀⟩ := h.hard A 0
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (h.hard A) 0
   have := hn₀ n₀ le_rfl
   simp [FunFamily.invProbAt_ofString_id_eq_one hA] at this
 

@@ -1,0 +1,2133 @@
+{
+ "added": [
+  {
+   "name": "BoolCircuit.decodeNat_false_cons",
+   "header": "(r : List Bool) : decodeNat (false :: r) = some (0, r)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+   "line": 64
+  },
+  {
+   "name": "BoolCircuit.decodeNat_nil",
+   "header": ": decodeNat [] = none",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+   "line": 61
+  },
+  {
+   "name": "BoolCircuit.decodeNat_true_cons",
+   "header": "(r : List Bool) : decodeNat (true :: r) = (decodeNat r).map fun p => (p.1 + 1, p.2)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+   "line": 68
+  },
+  {
+   "name": "BoolCircuit.encodeNat_def",
+   "header": "(k : ℕ) : encodeNat k = (List.replicate k true ++ [false])",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/CircuitComplexity/UnaryCode.lean",
+   "line": 49
+  },
+  {
+   "name": "Complexity.BinArith.beq_def",
+   "header": "(z : List Bool) : beq z = (decide (bitsVal (pairFstD z) = bitsVal (pairSndD z)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassP/BinaryArith/AddSub.lean",
+   "line": 193
+  },
+  {
+   "name": "Complexity.BinArith.encWords_def",
+   "header": "(L : List (List Bool)) : encWords L = (L.flatMap (fun w => pairEncode w []))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassP/BinaryArith/Words.lean",
+   "line": 52
+  },
+  {
+   "name": "Complexity.NUPPT.computes_iff",
+   "header": "(f : List Bool → List Bool) : A.Computes f ↔ ∀ n y (r : A.Coins n), A.runAt n y r = f (advInput n y)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/PPT.lean",
+   "line": 324
+  },
+  {
+   "name": "Complexity.NUPPT.inverter_def",
+   "header": "(A : NUPPT) (n ℓ m : ℕ) (y : Fin m → Bool) (r : A.Coins n) : A.inverter n ℓ m y r = decodeFin ℓ (A.runAt n (List.ofFn y) r)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 190
+  },
+  {
+   "name": "Complexity.NUPPT.ofPolyTimeUniform_def",
+   "header": "{f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr) : (ofPolyTimeUniform hf coins : NUPPT) = (ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/PPT.lean",
+   "line": 404
+  },
+  {
+   "name": "Complexity.NUPPT.runLit_eq",
+   "header": "(y : List Bool) (r : A.Coins y.length) : A.runLit y r = A.runAt y.length y r",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/PPT.lean",
+   "line": 288
+  },
+  {
+   "name": "Complexity.NUPPT.timeBound_def",
+   "header": "(m : ℕ) : timeBound A m = (A.Ct * (m + 1) ^ A.ct)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/PPT.lean",
+   "line": 162
+  },
+  {
+   "name": "Complexity.PPT.toNUPPT_mk",
+   "header": "(A : NUPPT) (h : A.Uniform) : toNUPPT ⟨A, h⟩ = A",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/PPT.lean",
+   "line": 466
+  },
+  {
+   "name": "Complexity.P_def",
+   "header": ": P = (⋃ c : ℕ, DTIME fun n => n ^ c + 1)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassP/P.lean",
+   "line": 60
+  },
+  {
+   "name": "Complexity.PolyExpr.normal_def",
+   "header": "(C c : ℕ) : normal C c = (mul (const C) (pow (add var (const 1)) c))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/PolyExpr.lean",
+   "line": 111
+  },
+  {
+   "name": "Complexity.PrefixByLength.drop_def",
+   "header": "(z : List Bool) : drop z = ((pairSndD z).drop (pairFstD z).length)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+   "line": 60
+  },
+  {
+   "name": "Complexity.PrefixByLength.take_def",
+   "header": "(z : List Bool) : take z = ((pairSndD z).take (pairFstD z).length)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+   "line": 50
+  },
+  {
+   "name": "Complexity.StateLoop.polyTimeComputable_stateIterate",
+   "header": "{start step out : List Bool → List Bool} (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step) (hout : PolyTimeComputable out) (B : PolyExpr) : PolyTimeComputable fun x => out ((StateLoop.gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Repetition.lean",
+   "line": 324
+  },
+  {
+   "name": "Complexity.blockAt_def",
+   "header": "(a k : ℕ) (z : List Bool) (i : ℕ) : blockAt a k z i = (((pairSndD z).drop (i * (a * ((pairFstD z).length + 1) ^ k))).take (a * ((pairFstD z).length + 1) ^ k))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockTests.lean",
+   "line": 64
+  },
+  {
+   "name": "Complexity.isNilB_def",
+   "header": "(w : List Bool) : isNilB w = (decide (w = []))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+   "line": 293
+  },
+  {
+   "name": "Complexity.polyBound_iff",
+   "header": "(p : ℕ → ℕ) : PolyBound p ↔ ∃ C c : ℕ, ∀ n, p n ≤ C * (n + 1) ^ c",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+   "line": 67
+  },
+  {
+   "name": "Complexity.polyTimeComputable_iff",
+   "header": "(f : List Bool → List Bool) : PolyTimeComputable f ↔ ∃ (M : FinTM Bool) (C c : ℕ), M.ComputesFunInTime f fun n => C * (n + 1) ^ c",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+   "line": 79
+  },
+  {
+   "name": "Complexity.polyTimeReducible_iff",
+   "header": "(L L' : Language Bool) : PolyTimeReducible L L' ↔ ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L'",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/ClassNP/Reductions.lean",
+   "line": 60
+  },
+  {
+   "name": "Language.inPPoly_iff_inSIZE",
+   "header": "(L : Language Bool) : L.InPPoly ↔ ∃ a k : ℕ, L.InSIZE (fun n => a * (n + 1) ^ k)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/CircuitComplexity/PPoly.lean",
+   "line": 78
+  },
+  {
+   "name": "Language.inSIZE_iff",
+   "header": "(T : ℕ → ℕ) (L : Language Bool) : L.InSIZE T ↔ ∃ C : BoolCircuit.DAGCircuitFamily, C.HasFaninTwo ∧ (∀ n, (C.circuit n).size ≤ T n) ∧ C.language = L",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/CircuitComplexity/PPoly.lean",
+   "line": 67
+  },
+  {
+   "name": "Randomized.anyVerifier_def",
+   "header": "(M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) : anyVerifier M p k = (fun x r => (List.range (k x.length)).any fun i => M x ((r.drop (i * p x.length)).take (p x.length)) : List Bool → List Bool → Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 407
+  },
+  {
+   "name": "Randomized.boolVerifier_def",
+   "header": "(M : List Bool → List Bool → Bool) : boolVerifier M = (fun x r => some (M x r) : List Bool → List Bool → Option Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 276
+  },
+  {
+   "name": "Randomized.closedUnderAnswerIs_iff",
+   "header": ": ClosedUnderAnswerIs E ↔ ∀ M b, E.Eff M → E.Eff (boolVerifier fun x r => M x r = some b)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 390
+  },
+  {
+   "name": "Randomized.closedUnderAny_iff",
+   "header": ": ClosedUnderAny E ↔ ∀ M a k a' k', E.Eff (boolVerifier M) → E.Eff (boolVerifier (anyVerifier M (polyLen a k) (polyLen a' k')))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 436
+  },
+  {
+   "name": "Randomized.closedUnderMajority_iff",
+   "header": ": ClosedUnderMajority E ↔ ∀ M a k a' k', E.Eff (boolVerifier M) → E.Eff (boolVerifier (majorityVerifier M (polyLen a k) (polyLen a' k')))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 423
+  },
+  {
+   "name": "Randomized.closedUnderNot_iff",
+   "header": ": ClosedUnderNot E ↔ ∀ M, E.Eff (boolVerifier M) → E.Eff (boolVerifier fun x r => !(M x r))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 448
+  },
+  {
+   "name": "Randomized.closedUnderRace_iff",
+   "header": ": ClosedUnderRace E ↔ ∀ M₁ M₂ a k, E.Eff (boolVerifier M₁) → E.Eff (boolVerifier M₂) → E.Eff (raceVerifier M₁ M₂ (polyLen a k))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 377
+  },
+  {
+   "name": "Randomized.closedUnderShiftOr_iff",
+   "header": ": ClosedUnderShiftOr E ↔ ∀ M a k a' k', E.Eff (boolVerifier M) → E.EffTwoWitness (shiftOrVerifier M (polyLen a k) (polyLen a' k'))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/SipserGacs.lean",
+   "line": 117
+  },
+  {
+   "name": "Randomized.inPi2_iff",
+   "header": "(L : Language Bool) : InPi2 E L ↔ InSigma2 E Lᶜ",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/SipserGacs.lean",
+   "line": 84
+  },
+  {
+   "name": "Randomized.inSigma2_iff",
+   "header": "(L : Language Bool) : InSigma2 E L ↔ ∃ (N : List Bool → List Bool → List Bool → Bool) (a₁ k₁ a₂ k₂ : ℕ), E.EffTwoWitness N ∧ ∀ x : List Bool, x ∈ L ↔ ∃ u : List Bool, u.length = polyLen a₁ k₁ x.length ∧ ∀ v : List Bool, v.length = polyLen a₂ k₂ x.length → N x u v = true",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/SipserGacs.lean",
+   "line": 70
+  },
+  {
+   "name": "Randomized.majorityVerifier_def",
+   "header": "(M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) : majorityVerifier M p k = (fun x r => let n := x.length let votes := (List.range (k n)).countP fun i => M x ((r.drop (i * p n)).take (p n)) k n < 2 * votes : List Bool → List Bool → Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 359
+  },
+  {
+   "name": "Randomized.polyLen_def",
+   "header": "(a k : ℕ) : polyLen a k = (fun n => a * (n + 1) ^ k : ℕ → ℕ)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 251
+  },
+  {
+   "name": "Randomized.raceVerifier_def",
+   "header": "(M₁ M₂ : List Bool → List Bool → Bool) (p₁ : ℕ → ℕ) : raceVerifier M₁ M₂ p₁ = (fun x r => if M₁ x (r.take (p₁ x.length)) then some true else if M₂ x (r.drop (p₁ x.length)) then some false else none : List Bool → List Bool → Option Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Classes.lean",
+   "line": 338
+  },
+  {
+   "name": "Randomized.shiftOrVerifier_def",
+   "header": "(M : List Bool → List Bool → Bool) (p k : ℕ → ℕ) : shiftOrVerifier M p k = (fun x u v => (List.range (k x.length)).any fun i => M x (List.zipWith xor v ((u.drop (i * p x.length)).take (p x.length))) : List Bool → List Bool → List Bool → Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/SipserGacs.lean",
+   "line": 100
+  },
+  {
+   "name": "Randomized.verifierHasCircuits_iff",
+   "header": "(M : List Bool → List Bool → Bool) (p : ℕ → ℕ) : VerifierHasCircuits M p ↔ ∃ a k : ℕ, ∀ (n : ℕ) (r : List Bool), r.length = p n → ∃ D : DAGCircuit n, D.IsWellFormed ∧ D.IsFaninTwo ∧ D.size ≤ a * (n + 1) ^ k ∧ ∀ v : Fin n → Bool, D.eval v = M (List.ofFn v) r",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Adleman.lean",
+   "line": 73
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.argX_eq",
+   "header": "(w : List Bool) : argX w = pairFstD (pairFstD (NUPPT.inArg w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean",
+   "line": 249
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.checkRep_def",
+   "header": "(w : List Bool) (t : ℕ) : checkRep Com ℓ w t = (checkStr Com (LOf ℓ w) (nOf w) (mOf w) (argX w) (pairFstD (pairSndD^[2 * t] (argM w))) (pairFstD (pairSndD^[2 * t + 1] (argM w))) (eRep w t))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 450
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.checkStr_def",
+   "header": "(L n m : ℕ) (x com opn : List Bool) (e : ℕ) : checkStr Com L n m x com opn e = (let j := nthTrue x (n * n) (e % m) let a := colorVal (pairFstD (pairFstD opn)) 0 let ri := pairSndD (pairFstD opn) let b := colorVal (pairFstD (pairSndD opn)) 0 let rj := pairSndD (pairSndD opn) decide (ri.length = L ∧ rj.length = L ∧ Com (pairEncode (padTo n (encColorOfVal a)) ri) = pairFstD (pairSndD^[j / n] com) ∧ Com (pairEncode (padTo n (encColorOfVal b)) rj) = pairFstD (pairSndD^[j % n] com) ∧ a ≠ b))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 235
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.ilayout_def",
+   "header": "(x z : List Bool) (hist : List (List Bool)) (r : List Bool) : ilayout x z hist r = (NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Machines.lean",
+   "line": 228
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.proverCoinsOf_def",
+   "header": "(N : ℕ) : proverCoinsOf ℓ N = (3 * N + N * ℓ.eval N)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 355
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.proverRepStr_def",
+   "header": "(w : List Bool) : proverRepStr Com ℓ w = (let h := histLen (argM w) let c := proverCoinsOf ℓ (argX w).length if h / 2 < nOf w * mOf w then proverStr Com ℓ (NUPPT.layout (List.replicate (argX w).length true) (pairEncode (pairEncode (argX w) (argZ w)) (if h % 2 = 0 then [] else pairEncode (pairFstD (pairSndD^[h - 1] (argM w))) [])) [] (((NUPPT.inCoins w).drop (h / 2 * c)).take c)) else [])",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 373
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.proverStr_def",
+   "header": "(w : List Bool) : proverStr Com ℓ w = (if argM w = [] then commitStr Com ℓ w else if mOf w = 0 then [] else openStr ℓ w)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 126
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.verdictRepStr_def",
+   "header": "(w : List Bool) : verdictRepStr Com ℓ w = (decide (argX w = (argX w).take (nOf w * nOf w)) && (decide (mOf w = 0) || (decide (2 ≤ nOf w) && decide (firstIdx (fun t => !checkRep Com ℓ w t) (nOf w * mOf w) = nOf w * mOf w))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 475
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.verdictStr_def",
+   "header": "(w : List Bool) : verdictStr Com ℓ w = (decide (argX w = (argX w).take (nOf w * nOf w)) && (decide (mOf w = 0) || (decide (2 ≤ nOf w) && checkStr Com (LOf ℓ w) (nOf w) (mOf w) (argX w) (pairFstD (argM w)) (pairFstD (pairSndD (argM w))) (eOf w))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 302
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.verifierRepStr_def",
+   "header": "(w : List Bool) : verifierRepStr Com ℓ w = (let h := histLen (argM w) if h % 2 = 1 then (if h / 2 < nOf w * mOf w then List.replicate (eRep w (h / 2)) true else []) else if h = 2 * ((argX w).length * (argX w).length) then [verdictRepStr Com ℓ w] else [])",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 502
+  },
+  {
+   "name": "TCSlib.Cryptography.ColMachines.verifierStr_def",
+   "header": "(w : List Bool) : verifierStr Com ℓ w = (if argM w = [] then [false] else if pairSndD (argM w) = [] then List.replicate (eOf w) true else if pairSndD (pairSndD (argM w)) = [] then [verdictStr Com ℓ w] else [false])",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean",
+   "line": 331
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimLemmas.mergeAt_def",
+   "header": "{m ℓ : ℕ} (p : Fin m × Fin m) (a b : Fin m → Fin ℓ → Bool) : (mergeAt p a b : Fin m → Fin ℓ → Bool) = (fun i => if i = p.1 ∨ i = p.2 then a i else b i : Fin m → Fin ℓ → Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorLemmas.lean",
+   "line": 168
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.attemptNum_def",
+   "header": "(Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy) (x z blk : List Bool) : attemptNum Com ℓ V' x z blk = (if mE x = 0 then some (View.encode ⟨x, z, rVStr ℓ x blk, [comStr Com ℓ x blk (fun _ => 0), []]⟩) else if (V'.next x z (rVStr ℓ x blk) [comStr Com ℓ x blk (colorNum x blk)]).length % mE x = eIdx x blk then some (View.encode ⟨x, z, rVStr ℓ x blk, [comStr Com ℓ x blk (colorNum x blk), opnStr ℓ x blk]⟩) else none)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 618
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.colorA_def",
+   "header": "(v : ℕ) : colorA v = (if h : v < 6 then (pair6Equiv ⟨v, h⟩).1.1 else 0)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 244
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.colorB_def",
+   "header": "(v : ℕ) : colorB v = (if h : v < 6 then (pair6Equiv ⟨v, h⟩).1.2 else 1)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 254
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.colorNum_def",
+   "header": "(x blk : List Bool) (i : ℕ) : colorNum x blk i = (if i = kPos x blk / nV x then colorA (vIdx x blk) else if i = kPos x blk % nV x then colorB (vIdx x blk) else 0)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 574
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.countBits_def",
+   "header": "(x : List Bool) (k : ℕ) : countBits x k = (((List.range k).filter fun j => x.getD j false).length)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 340
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.eIdx_def",
+   "header": "(x blk : List Bool) : eIdx x blk = (sampleEdgeIdx (mE x) x.length blk)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 542
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.polyTimeComputable_next",
+   "header": "{V' : Strategy} (hV' : V'.Efficient) {X Z R C : List Bool → List Bool} (hX : PolyTimeComputable X) (hZ : PolyTimeComputable Z) (hR : PolyTimeComputable R) (hC : PolyTimeComputable C) : PolyTimeComputable fun w => V'.next (X w) (Z w) (R w) [C w]",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean",
+   "line": 449
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.rVStr_def",
+   "header": "(ℓ : PolyExpr) (x blk : List Bool) : rVStr ℓ x blk = (blk.drop (baseR x + x.length * ℓ.eval x.length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 595
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.rrStr_def",
+   "header": "(ℓ : PolyExpr) (x blk : List Bool) (i : ℕ) : rrStr ℓ x blk i = (EnsembleLemmas.padL (ℓ.eval (nV x)) (blk.drop (baseR x + i * ℓ.eval (nV x))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 562
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.sampleNum_def",
+   "header": "(m k T : ℕ) (r : List Bool) : sampleNum m k T r = (if trialIdx m k T r 0 < T then blockVal r (trialIdx m k T r 0 * k) k else m)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 196
+  },
+  {
+   "name": "TCSlib.Cryptography.ColSimMachine.sim_def",
+   "header": "(Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy) (x z r : List Bool) : sim Com ℓ V' x z r = (let B := (blockPoly ℓ V').eval x.length let att : ℕ → Option (List Bool) := fun t => attemptStr Com ℓ V' x z (colCoinSlice B t r) if edgeCount (decGraph x).2 = 0 then (att 0).getD [] else ((List.range (colIterations x)).findSome? att).getD [])",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorNumeric.lean",
+   "line": 125
+  },
+  {
+   "name": "TCSlib.Cryptography.Collection.glPadSampleFun_def",
+   "header": "(z : List Bool) : glPadSampleFun F z = (pairEncode (F.sample.output (NUPPT.layout (NUPPT.inParam z) (NUPPT.inArg z) [] ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).take (F.sample.coins.eval (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length)))) ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).drop (F.sample.coins.eval (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+   "line": 994
+  },
+  {
+   "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.acc_def",
+   "header": "(N : List Bool → ℕ) (w : List Bool) : acc N w = (decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+   "line": 518
+  },
+  {
+   "name": "TCSlib.Cryptography.EncodingMachines.CountLoop.out_def",
+   "header": "(w : List Bool) : out w = (pairSndD (pairSndD w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/EncodingMachines.lean",
+   "line": 526
+  },
+  {
+   "name": "TCSlib.Cryptography.EnsembleLemmas.blocks_eq",
+   "header": "(q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+   "line": 368
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.acc_def",
+   "header": "(w : List Bool) : acc D q w = (!(isQ D q w) || decide ((unQ q w).length ≤ (rnd w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 876
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.advD_def",
+   "header": "(w : List Bool) : advD w = (pairSndD (NUPPT.inAdvice (inX w)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 595
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.ans_def",
+   "header": "(w : List Bool) : ans E D q w = (ggmEval E (pairEncode (lab E D q w) ((query D q w).drop (unI w).length).tail))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 838
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.bound_def",
+   "header": ": bound q = (.add (.mul q (.add (.mul (.const 28) .var) (.const 27))) (.const 6))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 897
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.chal_def",
+   "header": "(w : List Bool) : chal w = (NUPPT.inArg (inX w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 571
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.cnt'_def",
+   "header": "(w : List Bool) : cnt' D q w = (if notFound D q w then true :: cnt w else cnt w)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 818
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.cnt_def",
+   "header": "(w : List Bool) : cnt w = (pairFstD (pairSndD (pairSndD (inS w))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 667
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.coinsAll_def",
+   "header": "(w : List Bool) : coinsAll w = (NUPPT.inCoins (inX w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 603
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.coinsD_def",
+   "header": "(w : List Bool) : coinsD q w = ((coinsRest q w).drop ((PolyExpr.mul q (.mul (.const 2) .var)).eval (paramU w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 643
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.coinsRest_def",
+   "header": "(w : List Bool) : coinsRest q w = ((coinsAll w).drop ((PolyExpr.mul q .var).eval (paramU w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 623
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.eqJ_def",
+   "header": "(w : List Bool) : eqJ w = (decide ((cnt w).length = (unJ w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 767
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.fresh_def",
+   "header": "(w : List Bool) : fresh E q w = (if ltJ w then ((pairs q w).drop (mul2 w).length).take (un2 w).length else if eqJ w then chal w else E (((seeds q w).drop (mul1 w).length).take (paramU w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 779
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.hist'_def",
+   "header": "(w : List Bool) : hist' E D q w = (hist w ++ pairEncode (pairEncode (query D q w) (ans E D q w)) [])",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 848
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.hist_def",
+   "header": "(w : List Bool) : hist w = (pairFstD (inS w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 651
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.inS_def",
+   "header": "(w : List Bool) : inS w = (pairSndD w)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 555
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.inX_def",
+   "header": "(w : List Bool) : inX w = (pairFstD w)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 547
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.isQ_def",
+   "header": "(w : List Bool) : isQ D q w = (decide (pairFstD (move D q w) = [false]) && decide ((pairSndD (move D q w)).length = (paramU w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 696
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.lab_def",
+   "header": "(w : List Bool) : lab E D q w = (selHalf (((query D q w).drop (unI w).length).headD false) (paramU w) (vstr E D q w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 828
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.look_def",
+   "header": "(w : List Bool) : look D q w = (lookup (pairEncode (pfx D q w) (tbl w)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 721
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.ltJ_def",
+   "header": "(w : List Bool) : ltJ w = (!decide ((unJ w).length ≤ (cnt w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 759
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.move_def",
+   "header": "(w : List Bool) : move D q w = (D.output (NUPPT.layout (paramU w) (hist w) (advD w) (coinsD q w)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 685
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.mul1_def",
+   "header": "(w : List Bool) : mul1 w = (List.replicate ((paramU w).length * (cnt w).length) true)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 741
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.mul2_def",
+   "header": "(w : List Bool) : mul2 w = (List.replicate ((un2 w).length * (cnt w).length) true)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 751
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.notFound_def",
+   "header": "(w : List Bool) : notFound D q w = (decide (look D q w = []))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 789
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.out_def",
+   "header": "(w : List Bool) : out D q w = (if isQ D q w then [false] else [verdictOf (move D q w)])",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 885
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.pairs_def",
+   "header": "(w : List Bool) : pairs q w = ((coinsRest q w).take ((PolyExpr.mul q (.mul (.const 2) .var)).eval (paramU w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 633
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.paramU_def",
+   "header": "(w : List Bool) : paramU w = (NUPPT.inParam (inX w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 563
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.pfx_def",
+   "header": "(w : List Bool) : pfx D q w = ((query D q w).take (unI w).length)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 713
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.query_def",
+   "header": "(w : List Bool) : query D q w = (pairSndD (move D q w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 705
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.rawFun_def",
+   "header": ": rawFun E D q = (stateLoopFun start (step E D q) (acc D q) (out D q) q (bound q))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 907
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.rnd_def",
+   "header": "(w : List Bool) : rnd w = (pairSndD (pairSndD (pairSndD (inS w))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 675
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.seeds_def",
+   "header": "(w : List Bool) : seeds q w = ((coinsAll w).take ((PolyExpr.mul q .var).eval (paramU w).length))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 613
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.step_def",
+   "header": "(w : List Bool) : step E D q w = (pairEncode (hist' E D q w) (pairEncode (tbl' E D q w) (pairEncode (cnt' D q w) (true :: rnd w))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 858
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.tbl'_def",
+   "header": "(w : List Bool) : tbl' E D q w = (if notFound D q w then tbl w ++ pairEncode (pairEncode (pfx D q w) (fresh E q w)) [] else tbl w)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 809
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.tbl_def",
+   "header": "(w : List Bool) : tbl w = (pairFstD (pairSndD (inS w)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 659
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.un2_def",
+   "header": "(w : List Bool) : un2 w = (List.replicate ((PolyExpr.mul (.const 2) .var).eval (paramU w).length) true)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 731
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.unI_def",
+   "header": "(w : List Bool) : unI w = (pairFstD (pairFstD (NUPPT.inAdvice (inX w))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 579
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.unJ_def",
+   "header": "(w : List Bool) : unJ w = (pairSndD (pairFstD (NUPPT.inAdvice (inX w))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 587
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.unQ_def",
+   "header": "(w : List Bool) : unQ q w = (List.replicate (q.eval (paramU w).length) true)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 867
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.vstr_def",
+   "header": "(w : List Bool) : vstr E D q w = (if notFound D q w then fresh E q w else pairSndD (look D q w))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReduction.lean",
+   "line": 799
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.blocksEquiv_eq",
+   "header": "(m c : ℕ) : blocksEquiv m c = (FunFamily.blocks m c).symm",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean",
+   "line": 236
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.coinSlice_def",
+   "header": "(c i : ℕ) (r : List Bool) : coinSlice c i r = ((r.drop (i * c)).take c)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 208
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.decGraphAt_apply",
+   "header": "(n : ℕ) (w : List Bool) (u v : Fin n) : decGraphAt n w u v = w.getD (finProdFinEquiv (u, v)) false",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 98
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.decGraph_eq_decGraphAt",
+   "header": "(w : List Bool) : decGraph w = ⟨Nat.sqrt w.length, decGraphAt (Nat.sqrt w.length) w⟩",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 104
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.encInstance_eq",
+   "header": "{n : ℕ} (G₀ G₁ : Graph n) : encInstance G₀ G₁ = pairEncode (encGraph G₀) (encGraph G₁)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 113
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.giProtocolRep_P",
+   "header": ": giProtocolRep.P = giProverRep",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 367
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.giProtocolRep_V",
+   "header": ": giProtocolRep.V = giVerifierRep",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 370
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.giProtocolRep_rounds",
+   "header": ": giProtocolRep.rounds = .mul (.const 4) .var",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 373
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.giProtocolRep_verifierFirst",
+   "header": ": giProtocolRep.verifierFirst = false",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 376
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.giProtocol_P",
+   "header": ": giProtocol.P = giProver",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 306
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.giProtocol_V",
+   "header": ": giProtocol.V = giVerifier",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 309
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.giProverRep_next",
+   "header": "(x y r : List Bool) (hist : List (List Bool)) : giProverRep.next x y r hist = if hist.length % 2 = 0 then encGraph (permGraph (instanceG₀ x) (samplePerm (instanceVertexCount x) (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r))) else encPerm (if (hist.getLastD []).headD false then samplePerm (instanceVertexCount x) (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r) * (decPerm (instanceVertexCount x) y)⁻¹ else samplePerm (instanceVertexCount x) (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 325
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.giVerifierRep_next",
+   "header": "(x z r : List Bool) (hist : List (List Bool)) : giVerifierRep.next x z r hist = if hist.length % 2 = 1 then [r.getD (hist.length / 2) false] else if hist.length < 2 * x.length then [] else [decide (wellFormedInstance x = true ∧ ∀ j : Fin x.length, encGraph (permGraph (if r.getD j false then instanceG₁ x else instanceG₀ x) (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) = hist.getD (2 * j) [])]",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 350
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.gniProtocolRep_V",
+   "header": ": gniProtocolRep.V = gniVerifierRep",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 270
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.gniProtocol_P",
+   "header": ": gniProtocol.P = gniProver",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 244
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.gniProtocol_V",
+   "header": ": gniProtocol.V = gniVerifier",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 247
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.gniProver_next",
+   "header": "(x y r : List Bool) (hist : List (List Bool)) : gniProver.next x y r hist = [decide (¬ Isomorphic (instanceG₀ x) (decGraphAt (instanceVertexCount x) (hist.getLastD [])))]",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 220
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.ilayout_def",
+   "header": "(x z : List Bool) (hist : List (List Bool)) (r : List Bool) : ilayout x z hist r = (NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 566
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.instanceG₀_def",
+   "header": "(x : List Bool) : instanceG₀ x = decGraphAt _ (pairFstD x)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 131
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.instanceG₁_def",
+   "header": "(x : List Bool) : instanceG₁ x = decGraphAt _ (pairSndD x)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 139
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.instanceVertexCount_def",
+   "header": "(x : List Bool) : instanceVertexCount x = (Nat.sqrt (pairFstD x).length)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 122
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.isomorphic_iff",
+   "header": "{n : ℕ} (G₀ G₁ : Graph n) : Isomorphic G₀ G₁ ↔ ∃ σ : Equiv.Perm (Fin n), permGraph G₀ σ = G₁",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 84
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.mem_Liso_iff",
+   "header": "(x : List Bool) : x ∈ Liso ↔ ∃ (n : ℕ) (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)), x = pairEncode (encGraph G₀) (encGraph G₁) ∧ permGraph G₀ σ = G₁",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 163
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.mem_Lniso_iff",
+   "header": "(x : List Bool) : x ∈ Lniso ↔ ∃ (n : ℕ) (G₀ G₁ : Graph n), x = pairEncode (encGraph G₀) (encGraph G₁) ∧ ¬ Isomorphic G₀ G₁",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 172
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.prefixLE_apply",
+   "header": "{m : ℕ} {α : Type*} (b : Fin m → α) (i : Fin m) (j : Fin (i + 1)) : prefixLE b i j = b (Fin.castLE i.isLt j)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean",
+   "line": 88
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.prefixLT_apply",
+   "header": "{m : ℕ} {α : Type*} (b : Fin m → α) (i : Fin m) (j : Fin i) : prefixLT b i j = b (Fin.castLE i.isLt.le j)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Concrete.lean",
+   "line": 79
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.riso_iff",
+   "header": "(x y : List Bool) : Riso x y ↔ ∃ (n : ℕ) (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)), x = pairEncode (encGraph G₀) (encGraph G₁) ∧ y = encPerm σ ∧ permGraph G₀ σ = G₁",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 183
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.samplePerm_def",
+   "header": "(n : ℕ) (r : List Bool) : samplePerm n r = (permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 194
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.sampleStr_def",
+   "header": "(w r : List Bool) : sampleStr w r = (encPerm (samplePerm (Nat.sqrt w.length) r))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean",
+   "line": 245
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.wellFormedInstance_def",
+   "header": "(x : List Bool) : wellFormedInstance x = (decide ((pairDecode x).isSome ∧ (pairFstD x).length = instanceVertexCount x * instanceVertexCount x ∧ (pairSndD x).length = instanceVertexCount x * instanceVertexCount x))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean",
+   "line": 148
+  },
+  {
+   "name": "TCSlib.Cryptography.GIZK.attemptStr_def",
+   "header": "(V' : Strategy) (x z c : List Bool) : attemptStr V' x z c = (let n := instanceVertexCount x let b' := c.headD false let π := samplePerm n ((c.drop 1).take ((x.length + 1) ^ 2)) let rV := c.drop (1 + (x.length + 1) ^ 2) let H := encGraph (permGraph (if b' then instanceG₁ x else instanceG₀ x) π) if (V'.next x z rV [H]).headD false = b' then some (View.encode ⟨x, z, rV, [H, encPerm π]⟩) else none)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean",
+   "line": 117
+  },
+  {
+   "name": "TCSlib.Cryptography.HardcoreBit.ip_def",
+   "header": "(x r : Fin n → Bool) : ip x r = (∑ i, x i * r i)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/HardcoreBit/InnerProduct.lean",
+   "line": 66
+  },
+  {
+   "name": "TCSlib.Cryptography.HardcoreBit.majority_def",
+   "header": "{κ : Type*} [Fintype κ] (v : κ → Bool) : (majority v : Bool) = (decide (Fintype.card κ < 2 * #{i | v i = true}))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/HardcoreBit/PairwiseIndependence.lean",
+   "line": 240
+  },
+  {
+   "name": "TCSlib.Cryptography.HardcoreBit.secProb_def",
+   "header": "(f : (Fin n → Bool) → β) (A : β × (Fin n → Bool) → ρ → Bool) (x : Fin n → Bool) : secProb f A x = uprob fun z : (Fin n → Bool) × ρ => A (f x, z.1) z.2 = ip x z.1",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/HardcoreBit/InnerProduct.lean",
+   "line": 136
+  },
+  {
+   "name": "TCSlib.Cryptography.OneWay.blocksE_eq",
+   "header": "(q ℓ : ℕ) : blocksE q ℓ = FunFamily.blocks q ℓ",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+   "line": 67
+  },
+  {
+   "name": "TCSlib.Cryptography.OneWay.yaoInverter_def",
+   "header": "[Inhabited α] (f : α → β) (B : (Fin q → β) → ρ → (Fin q → α)) (T : ℕ) : yaoInverter f B T = (fun y cs => (List.finRange T).foldr (fun t acc => if f (yaoTry f B y (cs t)) = y then yaoTry f B y (cs t) else acc) default : β → (Fin T → Fin q × (Fin q → α) × ρ) → α)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/OneWayFunctions/Amplification.lean",
+   "line": 113
+  },
+  {
+   "name": "TCSlib.Cryptography.PrivateKeyScheme.singleMessageSecure_iff",
+   "header": "(S : PrivateKeyScheme) : S.SingleMessageSecure ↔ ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (m₀ m₁ : Fin n → Bool), distAdv (S.encDist n m₀) (S.encDist n m₁) (D.distinguisherL n) ≤ ε n",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Encryption.lean",
+   "line": 189
+  },
+  {
+   "name": "TCSlib.Cryptography.bitsToNat_def",
+   "header": "{k : ℕ} (b : Fin k → Bool) : (bitsToNat b : ℕ) = ((List.ofFn b).foldl (fun a c => 2 * a + (if c then 1 else 0)) 0)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+   "line": 369
+  },
+  {
+   "name": "TCSlib.Cryptography.blockEncFun_def",
+   "header": "(E : List Bool → List Bool) (L B : PolyExpr) (x : List Bool) : blockEncFun E L B x = ((List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean",
+   "line": 115
+  },
+  {
+   "name": "TCSlib.Cryptography.blockList_succ",
+   "header": "(E : List Bool → List Bool) (L B : ℕ) (u pk : List Bool) (k : ℕ) (m r : List Bool) : blockList E L B u pk (k + 1) m r = if m = [] then [] else E (NUPPT.layout u (pairEncode pk (m.take L)) [] (r.take B)) :: blockList E L B u pk k (m.drop L) (r.drop B)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean",
+   "line": 135
+  },
+  {
+   "name": "TCSlib.Cryptography.blockList_zero",
+   "header": "(E : List Bool → List Bool) (L B : ℕ) (u pk m r : List Bool) : blockList E L B u pk 0 m r = []",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean",
+   "line": 128
+  },
+  {
+   "name": "TCSlib.Cryptography.blockState_def",
+   "header": "(u pk m r : List Bool) : blockState u pk m r = (pairEncode u (pairEncode pk (pairEncode m r)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean",
+   "line": 85
+  },
+  {
+   "name": "TCSlib.Cryptography.blocksEquivX_apply",
+   "header": "(q ℓ : ℕ) {X : Type*} (x : Fin (q * ℓ) → X) (i : Fin q) (j : Fin ℓ) : blocksEquivX q ℓ X x i j = x (finProdFinEquiv (i, j))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 150
+  },
+  {
+   "name": "TCSlib.Cryptography.blocksEquiv_eq",
+   "header": "(q ℓ : ℕ) : blocksEquiv q ℓ = FunFamily.blocks q ℓ",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+   "line": 74
+  },
+  {
+   "name": "TCSlib.Cryptography.blocksStr_def",
+   "header": "{k m : ℕ} (s : Fin k → Fin m → Bool) : (blocksStr s : List Bool) = (List.ofFn ((blocksEquiv k m).symm s))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+   "line": 87
+  },
+  {
+   "name": "TCSlib.Cryptography.challengeStream_def",
+   "header": "{q : ℕ} (G : S → V) (j : ℕ) (z : V) (W : (Fin q → S) × (Fin q → V)) : (challengeStream G j z W : ℕ → V) = (fun k => if k < j then extendStream W.2 k else if k = j then z else G (extendStream W.1 k) : ℕ → V)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Pseudorandom/Functions/SubHybrids.lean",
+   "line": 106
+  },
+  {
+   "name": "TCSlib.Cryptography.coe_finCastEquiv",
+   "header": "{a b : ℕ} (h : a = b) : ⇑(finCastEquiv h) = fun f j => f (Fin.cast h.symm j)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+   "line": 108
+  },
+  {
+   "name": "TCSlib.Cryptography.coinSlice_def",
+   "header": "(c i : ℕ) (r : List Bool) : coinSlice c i r = ((r.drop (i * c)).take c)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+   "line": 449
+  },
+  {
+   "name": "TCSlib.Cryptography.copies_def",
+   "header": "(t : ℕ) (X : σ → γ) : copies t X = (fun s i => X (s i) : (Fin t → σ) → Fin t → γ)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean",
+   "line": 190
+  },
+  {
+   "name": "TCSlib.Cryptography.decColor_def",
+   "header": "(w : List Bool) : decColor w = (decColoring 1 w 0)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 301
+  },
+  {
+   "name": "TCSlib.Cryptography.decColoring_val_eq",
+   "header": "(n : ℕ) (w : List Bool) (i : Fin n) : ((decColoring n w i : Fin 3) : ℕ) = (2 * (w.getD (finProdFinEquiv (i, (0 : Fin 2))) false).toNat + (w.getD (finProdFinEquiv (i, (1 : Fin 2))) false).toNat) % 3",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+   "line": 308
+  },
+  {
+   "name": "TCSlib.Cryptography.decGraph_def",
+   "header": "(w : List Bool) : decGraph w = (⟨Nat.sqrt w.length, fun u v => w.getD (finProdFinEquiv (u, v)) false⟩)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+   "line": 143
+  },
+  {
+   "name": "TCSlib.Cryptography.decGraph_fst",
+   "header": "(w : List Bool) : (decGraph w).1 = Nat.sqrt w.length",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+   "line": 148
+  },
+  {
+   "name": "TCSlib.Cryptography.decGraph_snd_apply",
+   "header": "(w : List Bool) (u v : Fin (decGraph w).1) : (decGraph w).2 u v = w.getD (finProdFinEquiv (u, v)) false",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+   "line": 152
+  },
+  {
+   "name": "TCSlib.Cryptography.decPerm_def",
+   "header": "(n : ℕ) (w : List Bool) : decPerm n w = (by classical exact if h : Function.Bijective (fun i : Fin n => (Fin.find (fun j : Fin n => w.getD (finProdFinEquiv (i, j)) false = true)).getD i) then Equiv.ofBijective _ h else 1)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+   "line": 198
+  },
+  {
+   "name": "TCSlib.Cryptography.decodeFin_eq_some_iff",
+   "header": "(ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) : decodeFin ℓ w = some x ↔ w = List.ofFn x",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 122
+  },
+  {
+   "name": "TCSlib.Cryptography.decodeOracleMove_of_ne",
+   "header": "(ℓ₁ : ℕ) {w : List Bool} (hq : ∀ x, w ≠ pairEncode [false] x) (hv : ∀ b, w ≠ [true, b]) : decodeOracleMove ℓ₁ w = .ret false",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/PRF.lean",
+   "line": 257
+  },
+  {
+   "name": "TCSlib.Cryptography.decodeOracleMove_pairEncode_false_of_length_ne",
+   "header": "(ℓ₁ : ℕ) {x : List Bool} (hx : x.length ≠ ℓ₁) : decodeOracleMove ℓ₁ (pairEncode [false] x) = .ret false",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/PRF.lean",
+   "line": 241
+  },
+  {
+   "name": "TCSlib.Cryptography.decodeOracleMove_pairEncode_ofFn",
+   "header": "(ℓ₁ : ℕ) (x : Fin ℓ₁ → Bool) : decodeOracleMove ℓ₁ (pairEncode [false] (List.ofFn x)) = .query x",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/PRF.lean",
+   "line": 235
+  },
+  {
+   "name": "TCSlib.Cryptography.edgeAt_def",
+   "header": "{n : ℕ} (G : Graph n) (e : ℕ) : (edgeAt G e : Option (Fin n × Fin n)) = ((edgeList G)[e % edgeCount G]?)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 216
+  },
+  {
+   "name": "TCSlib.Cryptography.edgeList_def",
+   "header": "{n : ℕ} (G : Graph n) : (edgeList G : List (Fin n × Fin n)) = ((List.finRange n ×ˢ List.finRange n).filter fun p => G p.1 p.2)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 178
+  },
+  {
+   "name": "TCSlib.Cryptography.edgeOf_eq",
+   "header": "{n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) : edgeOf G e = (edgeList G).get e",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 197
+  },
+  {
+   "name": "TCSlib.Cryptography.encColor_def",
+   "header": "(a : Fin 3) : encColor a = (encColoring fun _ : Fin 1 => a)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 293
+  },
+  {
+   "name": "TCSlib.Cryptography.encGraph_def",
+   "header": "{n : ℕ} (G : Graph n) : (encGraph G : List Bool) = (List.ofFn fun k : Fin (n * n) => G (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Encoding.lean",
+   "line": 131
+  },
+  {
+   "name": "TCSlib.Cryptography.extendStream_def",
+   "header": "{O : Type*} [Nonempty O] {q : ℕ} (W : Fin q → O) : (extendStream W : ℕ → O) = (fun k => if h : k < q then W ⟨k, h⟩ else Classical.arbitrary O : ℕ → O)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Pseudorandom/Functions/LazySampling.lean",
+   "line": 200
+  },
+  {
+   "name": "TCSlib.Cryptography.finCastEquiv_apply",
+   "header": "{a b : ℕ} (h : a = b) (f : Fin a → Bool) (j : Fin b) : finCastEquiv h f j = f (Fin.cast h.symm j)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+   "line": 103
+  },
+  {
+   "name": "TCSlib.Cryptography.glPadDecode_def",
+   "header": "(F : Collection) (i : List Bool) (L : ℕ) (w : List Bool) : glPadDecode F i L w = match pairDecode w with",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+   "line": 762
+  },
+  {
+   "name": "TCSlib.Cryptography.instanceG₀_def",
+   "header": "(x : List Bool) : instanceG₀ x = (decGraphAt _ (pairFstD x))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+   "line": 241
+  },
+  {
+   "name": "TCSlib.Cryptography.instanceG₁_def",
+   "header": "(x : List Bool) : instanceG₁ x = (decGraphAt _ (pairSndD x))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+   "line": 249
+  },
+  {
+   "name": "TCSlib.Cryptography.instanceVertexCount_def",
+   "header": "(x : List Bool) : instanceVertexCount x = (Nat.sqrt (pairFstD x).length)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+   "line": 233
+  },
+  {
+   "name": "TCSlib.Cryptography.moverIsV_def",
+   "header": "(vFirst : Bool) (k : ℕ) : moverIsV vFirst k = (if vFirst then decide (k % 2 = 0) else decide (k % 2 = 1))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Interaction.lean",
+   "line": 239
+  },
+  {
+   "name": "TCSlib.Cryptography.multiCom_def",
+   "header": "(Com : List Bool → List Bool) {q n m : ℕ} (v : Fin q → Fin n → Bool) (r : Fin q → Fin m → Bool) : (multiCom Com v r : List Bool) = (Strategy.encodeMsgs (List.ofFn fun i => Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i)))))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Commitment.lean",
+   "line": 256
+  },
+  {
+   "name": "TCSlib.Cryptography.multicopyRed_def",
+   "header": "(X : σ → γ) (Y : τ → γ) (t k : ℕ) (D : (Fin t → γ) → ρ → Bool) : multicopyRed X Y t k D = (fun z c => D (fun i => if (i : ℕ) < k then Y (c.1.2 i) else if (i : ℕ) = k then z else X (c.1.1 i)) c.2 : γ → ((Fin t → σ) × (Fin t → τ)) × ρ → Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean",
+   "line": 218
+  },
+  {
+   "name": "TCSlib.Cryptography.ofFn_drop_take",
+   "header": "{L : ℕ} (b : Fin L → Bool) (a k : ℕ) (h : a + k ≤ L) : ((List.ofFn b).drop a).take k = List.ofFn fun i : Fin k => b ⟨a + i, by have := i.isLt; omega⟩",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean",
+   "line": 210
+  },
+  {
+   "name": "TCSlib.Cryptography.owpPredPre_def",
+   "header": "(w : List Bool) : owpPredPre w = (NUPPT.inArg w ++ NUPPT.inAdvice w)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+   "line": 286
+  },
+  {
+   "name": "TCSlib.Cryptography.padColor_def",
+   "header": "(n : ℕ) (a : Fin 3) : padColor n a = (padFin n (encColor a))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 315
+  },
+  {
+   "name": "TCSlib.Cryptography.padFin_apply",
+   "header": "(ℓ : ℕ) (w : List Bool) (i : Fin ℓ) : padFin ℓ w i = w.getD i false",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 103
+  },
+  {
+   "name": "TCSlib.Cryptography.padFin_def",
+   "header": "(ℓ : ℕ) (w : List Bool) : padFin ℓ w = (fun i => w.getD i false : Fin ℓ → Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 97
+  },
+  {
+   "name": "TCSlib.Cryptography.permBits_eq",
+   "header": "(n : ℕ) : permBits n = Nat.size n",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Permutations.lean",
+   "line": 435
+  },
+  {
+   "name": "TCSlib.Cryptography.permFailBound_def",
+   "header": "(n : ℕ) : permFailBound n = (n * (2 : ℝ)⁻¹ ^ n)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+   "line": 391
+  },
+  {
+   "name": "TCSlib.Cryptography.permTrials_eq",
+   "header": "(n : ℕ) : permTrials n = 2 * n * n",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Permutations.lean",
+   "line": 445
+  },
+  {
+   "name": "TCSlib.Cryptography.prgExt_def",
+   "header": "(G : S → Bool × S) (l : ℕ) : prgExt G l = (fun s => (fun i => (G ((prgStep G)^[i] s)).1, (prgStep G)^[l] s) : S → (Fin l → Bool) × S)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Pseudorandom/Generators.lean",
+   "line": 107
+  },
+  {
+   "name": "TCSlib.Cryptography.rejectionSample_def",
+   "header": "(m k T : ℕ) (b : Fin T → Fin k → Bool) : rejectionSample m k T b = ((List.finRange T).findSome? fun t => uniformFromBits m k (b t))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+   "line": 708
+  },
+  {
+   "name": "TCSlib.Cryptography.sampleEdgeIdx_def",
+   "header": "(m T : ℕ) (r : List Bool) : sampleEdgeIdx m T r = (((sampleIdx m (Nat.size m) T r).map Fin.val).getD 0)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 381
+  },
+  {
+   "name": "TCSlib.Cryptography.sampleIdx_def",
+   "header": "(m k T : ℕ) (r : List Bool) : sampleIdx m k T r = (rejectionSample m k T fun t j => r.getD (t * k + j) false)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 347
+  },
+  {
+   "name": "TCSlib.Cryptography.samplePerm3_def",
+   "header": "(T : ℕ) (r : List Bool) : samplePerm3 T r = (((sampleIdx 6 3 T r).map perm3Equiv).getD 1)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 368
+  },
+  {
+   "name": "TCSlib.Cryptography.samplePerm_def",
+   "header": "(n : ℕ) (r : List Bool) : samplePerm n r = ((permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean",
+   "line": 372
+  },
+  {
+   "name": "TCSlib.Cryptography.singleDist_def",
+   "header": "(Gen Enc : NUPPT) (n Lc : ℕ) (msg : Fin Lc → Bool) : singleDist Gen Enc n Lc msg = (fun r => pairEncode (pairFstD (Gen.runAt n [] r.1)) (Enc.runAt n (pairEncode (pairFstD (Gen.runAt n [] r.1)) (List.ofFn msg)) r.2) : Gen.Coins n × Enc.Coins n → List Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean",
+   "line": 556
+  },
+  {
+   "name": "TCSlib.Cryptography.splitPair_apply",
+   "header": "(a b : ℕ) (ρ : Type*) (z : (Fin (a + b) → Bool) × ρ) : splitPair a b ρ z = ((Fin.appendEquiv a b).symm z.1, z.2)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+   "line": 971
+  },
+  {
+   "name": "TCSlib.Cryptography.splitPair_symm_apply",
+   "header": "(a b : ℕ) (ρ : Type*) (z : ((Fin a → Bool) × (Fin b → Bool)) × ρ) : (splitPair a b ρ).symm z = (Fin.appendEquiv a b z.1, z.2)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean",
+   "line": 975
+  },
+  {
+   "name": "TCSlib.Cryptography.threeColorable_iff",
+   "header": "{n : ℕ} (G : Graph n) : ThreeColorable G ↔ ∃ c, ProperColoring G c",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean",
+   "line": 107
+  },
+  {
+   "name": "TCSlib.Cryptography.uexp_le_of_statClose",
+   "header": "{σ τ γ : Type*} [Fintype σ] [Fintype τ] [Fintype γ] [DecidableEq γ] {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ) (Aux : γ → Type) [∀ c, Fintype (Aux c)] [∀ c, Nonempty (Aux c)] (Q : ∀ c, Aux c → Prop) : uexp (fun s => uprob (Q (X s))) ≤ uexp (fun t => uprob (Q (Y t))) + δ",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+   "line": 284
+  },
+  {
+   "name": "TCSlib.Cryptography.unaryHalf_def",
+   "header": "(u : List Bool) : unaryHalf u = (List.replicate (u.length / 2) true)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+   "line": 392
+  },
+  {
+   "name": "TCSlib.Cryptography.uniformFromBits_def",
+   "header": "(m k : ℕ) (b : Fin k → Bool) : uniformFromBits m k b = (if h : bitsToNat b < m then some ⟨_, h⟩ else none)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Sampling.lean",
+   "line": 463
+  },
+  {
+   "name": "TCSlib.InformationTheory.FinDist.collision_def",
+   "header": "(p : FinDist α) : collision p = (∑ a, p a ^ 2)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/InformationTheory/FinDist.lean",
+   "line": 121
+  },
+  {
+   "name": "TCSlib.InformationTheory.hashPair_eq",
+   "header": "(f : S → α → β) (X : FinDist α) : hashPair f X = FinDist.map (fun p => (p.1, f p.1 p.2)) (FinDist.prod (uniform S) X)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/InformationTheory/LeftoverHash.lean",
+   "line": 59
+  },
+  {
+   "name": "TCSlib/Cryptography/Asymptotic/Ensembles.lean::TCSlib.Cryptography.Ensemble.blocks_eq",
+   "header": "private (q ℓ : ℕ) : blocks q ℓ = FunFamily.blocks q ℓ",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Asymptotic/Ensembles.lean",
+   "line": 218
+  },
+  {
+   "name": "TCSlib/Cryptography/Candidates/Factoring.lean::TCSlib.Cryptography.Candidates.fac_chunk_eq_blocks",
+   "header": "private (T n : ℕ) (r : Fin (T * n) → Bool) : chunk T n r = FunFamily.blocks T n r",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Candidates/Factoring.lean",
+   "line": 1162
+  },
+  {
+   "name": "Turing.Cfg.ofWords_def",
+   "header": "{input : List Bool} (q : State) (w : Fin k → List Bool) : (Cfg.ofWords q w : Cfg k Bool State input) = (⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+   "line": 88
+  },
+  {
+   "name": "Turing.CodeTM.serialize_def",
+   "header": "(M : CodeTM) : CodeTM.serialize M = (pairEncode (Nat.bits M.numStates) (unaryFin M.tm.q₀ ++ (List.finRange (M.numStates + 1)).flatMap fun q => ([none, some false, some true] : List (Option Bool)).flatMap fun inp => ([none, some false, some true] : List (Option Bool)).flatMap fun w => actionBits (M.tm.tr q inp fun _ => w)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+   "line": 659
+  },
+  {
+   "name": "Turing.FinTM.controlAction_def",
+   "header": "{k : ℕ} {S : Type} (m : SignType) (q : Option S) : (controlAction m q : Action k Bool S) = (⟨m, fun _ => (none, 0), none, q⟩)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+   "line": 163
+  },
+  {
+   "name": "Turing.MultiTapeTM.indicator_def",
+   "header": "{α : Type*} (L : Set α) : (indicator L : α → Bool) = (fun x => if x ∈ L then true else false : α → Bool)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+   "line": 475
+  },
+  {
+   "name": "Turing.actionBits_def",
+   "header": "{n : ℕ} (a : Action 1 Bool (Fin (n + 1))) : (actionBits a : List Bool) = (signBits a.inputTape ++ optOptBoolBits (a.workTapes 0).1 ++ signBits (a.workTapes 0).2 ++ optBoolBits a.output ++ optStateBits a.state)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+   "line": 637
+  },
+  {
+   "name": "Turing.emitCfg_inputPos",
+   "header": "{input : List Bool} (emb : S → H) (ret : H) (pre : List Bool) (c : Cfg k Bool S input) : (emitCfg emb ret pre c).inputPos = c.inputPos",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+   "line": 260
+  },
+  {
+   "name": "Turing.emitCfg_output",
+   "header": "{input : List Bool} (emb : S → H) (ret : H) (pre : List Bool) (c : Cfg k Bool S input) : (emitCfg emb ret pre c).output = pre ++ c.output",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+   "line": 275
+  },
+  {
+   "name": "Turing.emitCfg_state",
+   "header": "{input : List Bool} (emb : S → H) (ret : H) (pre : List Bool) (c : Cfg k Bool S input) : (emitCfg emb ret pre c).state = some ((c.state.map emb).getD ret)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+   "line": 254
+  },
+  {
+   "name": "Turing.emitCfg_workTapePos",
+   "header": "{input : List Bool} (emb : S → H) (ret : H) (pre : List Bool) (c : Cfg k Bool S input) : (emitCfg emb ret pre c).workTapePos = c.workTapePos",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+   "line": 270
+  },
+  {
+   "name": "Turing.emitCfg_workTapes",
+   "header": "{input : List Bool} (emb : S → H) (ret : H) (pre : List Bool) (c : Cfg k Bool S input) : (emitCfg emb ret pre c).workTapes = c.workTapes",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+   "line": 265
+  },
+  {
+   "name": "Turing.pairDecode_nil",
+   "header": ": pairDecode [] = none",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+   "line": 153
+  },
+  {
+   "name": "Turing.splitAtLastTrue_of_dropWhile_eq_false_cons",
+   "header": "{v rest : List Bool} (h : v.reverse.dropWhile (fun b => !b) = false :: rest) : splitAtLastTrue v = none",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+   "line": 155
+  },
+  {
+   "name": "Turing.splitAtLastTrue_of_dropWhile_eq_nil",
+   "header": "{v : List Bool} (h : v.reverse.dropWhile (fun b => !b) = []) : splitAtLastTrue v = none",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+   "line": 149
+  },
+  {
+   "name": "Turing.splitAtLastTrue_of_dropWhile_eq_true_cons",
+   "header": "{v rest : List Bool} (h : v.reverse.dropWhile (fun b => !b) = true :: rest) : splitAtLastTrue v = some rest.reverse",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/Build/Convention.lean",
+   "line": 142
+  },
+  {
+   "name": "Turing.universalBlockBound_def",
+   "header": "(c : EffectiveMachineCode) (α : List Bool) : universalBlockBound c α = (3 * (c.decode α).serialize.length + 5 * ((c.decode α).numStates + 1) + 20)",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/TuringMachine/UniversalBlock.lean",
+   "line": 755
+  }
+ ],
+ "removed": [
+  {
+   "name": "Complexity.StateLoop.headBit_poly",
+   "header": ": PolyTimeComputable fun w => [w.headD false]",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+   "line": 95
+  },
+  {
+   "name": "Complexity.StateLoop.isNil_poly",
+   "header": ": PolyTimeComputable fun w => [decide (w = [])]",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+   "line": 117
+  },
+  {
+   "name": "Complexity.StateLoop.length_pairFstD_add_pairSndD_le",
+   "header": "(z : List Bool) : (pairFstD z).length + (pairSndD z).length ≤ z.length",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+   "line": 146
+  },
+  {
+   "name": "Complexity.StateLoop.not_poly",
+   "header": "{p : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x]) : PolyTimeComputable fun x => [!p x]",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+   "line": 123
+  },
+  {
+   "name": "Complexity.StateLoop.or_poly",
+   "header": "{p q : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x]) (hq : PolyTimeComputable fun x => [q x]) : PolyTimeComputable fun x => [p x || q x]",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+   "line": 131
+  },
+  {
+   "name": "Complexity.StateLoop.tail_poly",
+   "header": ": PolyTimeComputable List.tail",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+   "line": 105
+  },
+  {
+   "name": "Complexity.StateLoop.xor_poly",
+   "header": "{p q : List Bool → Bool} (hp : PolyTimeComputable fun x => [p x]) (hq : PolyTimeComputable fun x => [q x]) : PolyTimeComputable fun x => [xor (p x) (q x)]",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/Build/StateLoop.lean",
+   "line": 138
+  },
+  {
+   "name": "TCSlib.Cryptography.GGMRed.decodeFin_eq_some_iff",
+   "header": "(ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) : decodeFin ℓ w = some x ↔ w = List.ofFn x",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/GGMReductionEval.lean",
+   "line": 163
+  },
+  {
+   "name": "TCSlib.Cryptography.negligible_const_zero",
+   "header": ": Negligible (fun _ => (0 : ℝ))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/Defs.lean",
+   "line": 262
+  },
+  {
+   "name": "TCSlib.Cryptography.polyTimeComputable_stateIterate",
+   "header": "{start step out : List Bool → List Bool} (hstart : PolyTimeComputable start) (hstep : PolyTimeComputable step) (hout : PolyTimeComputable out) (B : PolyExpr) : PolyTimeComputable fun x => out ((gstep step B)^[(pairEncode x (start x)).length] (pairEncode x (start x)))",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+   "line": 70
+  },
+  {
+   "name": "TCSlib/Complexity/Randomized/Closure.lean::Complexity.NUPPT.ptc_comp",
+   "header": "private {g f : List Bool → List Bool} (hg : PolyTimeComputable g) (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z)",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Complexity/Randomized/Closure.lean",
+   "line": 189
+  },
+  {
+   "name": "TCSlib/Cryptography/Asymptotic/Adversary.lean::TCSlib.Cryptography.forall_of_uprob_eq_one",
+   "header": "private {Ω : Type*} [Fintype Ω] {p : Ω → Prop} (h : uprob p = 1) (ω : Ω) : p ω",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 216
+  },
+  {
+   "name": "TCSlib/Cryptography/Asymptotic/Collections.lean::TCSlib.Cryptography.Collection.ptc_comp",
+   "header": "private {g f : List Bool → List Bool} (hg : PolyTimeComputable g) (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z)",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Asymptotic/Collections.lean",
+   "line": 772
+  },
+  {
+   "name": "TCSlib/Cryptography/Asymptotic/Collections.lean::TCSlib.Cryptography.FunFamily.decodeFin_eq_some_iff",
+   "header": "private {ℓ : ℕ} (w : List Bool) (x' : Fin ℓ → Bool) : decodeFin ℓ w = some x' ↔ w = List.ofFn x'",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Asymptotic/Collections.lean",
+   "line": 571
+  },
+  {
+   "name": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean::TCSlib.Cryptography.EnsembleLemmas.ptc_comp",
+   "header": "private {g f : List Bool → List Bool} (hg : PolyTimeComputable g) (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z)",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+   "line": 175
+  },
+  {
+   "name": "TCSlib/Cryptography/Asymptotic/Universal.lean::TCSlib.Cryptography.ptc_comp",
+   "header": "private {g f : List Bool → List Bool} (hg : PolyTimeComputable g) (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z)",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Asymptotic/Universal.lean",
+   "line": 346
+  },
+  {
+   "name": "TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean::TCSlib.Cryptography.ptc_comp",
+   "header": "private {g f : List Bool → List Bool} (hg : PolyTimeComputable g) (hf : PolyTimeComputable f) : PolyTimeComputable fun z => g (f z)",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean",
+   "line": 66
+  },
+  {
+   "name": "TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean::TCSlib.Cryptography.Candidates.dlb_count_ofFn",
+   "header": "private {M : ℕ} (v : Fin M → Bool) : (List.ofFn v).count true = #(univ.filter fun j : Fin M => v j = true)",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean",
+   "line": 1946
+  },
+  {
+   "name": "TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean::TCSlib.Cryptography.Candidates.dlb_cut",
+   "header": "private {n κ : ℕ} (hκ : κ ≤ n) : (Fin n → Bool) ≃ (Fin κ → Bool) × (Fin (n - κ) → Bool)",
+   "kind": "def",
+   "private": true,
+   "path": "TCSlib/Cryptography/Candidates/DiscreteLogHardcore.lean",
+   "line": 2448
+  },
+  {
+   "name": "TCSlib/Cryptography/Candidates/Factoring.lean::TCSlib.Cryptography.Candidates.fac_chunkEquiv",
+   "header": "private noncomputable (T n : ℕ) : (Fin (T * n) → Bool) ≃ (Fin T → Fin n → Bool)",
+   "kind": "def",
+   "private": true,
+   "path": "TCSlib/Cryptography/Candidates/Factoring.lean",
+   "line": 1170
+  },
+  {
+   "name": "TCSlib/Cryptography/Candidates/RSA.lean::TCSlib.Cryptography.Candidates.rsa_uprob_pi_eval",
+   "header": "private (A : NUPPT) (n : ℕ) (c : DistinctPrimes n) (Q : rsa_Aux A n c → Prop) : uprob (fun ω : (z : DistinctPrimes n) → rsa_Aux A n z => Q (ω c)) = uprob Q",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Candidates/RSA.lean",
+   "line": 1893
+  },
+  {
+   "name": "TCSlib/Cryptography/Candidates/Rabin.lean::TCSlib.Cryptography.Candidates.rabin_uexp_le",
+   "header": "private {σ τ γ : Type*} [Fintype σ] [Fintype τ] [Fintype γ] [DecidableEq γ] {X : σ → γ} {Y : τ → γ} {δ : ℝ} (h : StatClose X Y δ) (Aux : γ → Type) [∀ c, Fintype (Aux c)] [∀ c, Nonempty (Aux c)] (Q : ∀ c, Aux c → Prop) : uexp (fun s => uprob (Q (X s))) ≤ uexp (fun t => uprob (Q (Y t))) + δ",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Candidates/Rabin.lean",
+   "line": 1641
+  },
+  {
+   "name": "TCSlib/Cryptography/Games/BitCodec.lean::TCSlib.Cryptography.Games.eq_ofFn_of_decodeFin",
+   "header": "private {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool} (h : decodeFin ℓ w = some x) : w = List.ofFn x",
+   "kind": "theorem",
+   "private": true,
+   "path": "TCSlib/Cryptography/Games/BitCodec.lean",
+   "line": 218
+  }
+ ],
+ "header_changed": [
+  {
+   "name": "TCSlib.Cryptography.FunFamily.blocks_apply",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 165,
+   "base": "(q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) : blocks q ℓ x i j = x (finProdFinEquiv (i, j))",
+   "head": "(q ℓ : ℕ) (x : Fin (q * ℓ) → Bool) (i : Fin q) (j : Fin ℓ) : FunFamily.blocks q ℓ x i j = x (finProdFinEquiv (i, j))"
+  },
+  {
+   "name": "TCSlib.Cryptography.FunFamily.blocks_symm_apply",
+   "kind": "theorem",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 170,
+   "base": "(q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) : (blocks q ℓ).symm t k = t k.divNat k.modNat",
+   "head": "(q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (k : Fin (q * ℓ)) : (FunFamily.blocks q ℓ).symm t k = t k.divNat k.modNat"
+  }
+ ],
+ "body_changed": [
+  {
+   "name": "Complexity.NUPPT.ofPolyTime",
+   "kind": "def",
+   "private": false,
+   "path": "TCSlib/Complexity/Randomized/PPT.lean",
+   "line": 337,
+   "base_body": "where M := Classical.choose hf Ct := Classical.choose (Classical.choose_spec hf) ct := Classical.choose (Classical.choose_spec (Classical.choose_spec hf)) coins := coins adv := adv advice := advice advice_length := hα halts := fun z => ⟨f z, Classical.choose_spec (Classical.choose_spec (Classical.choose_spec hf)) z⟩",
+   "head_body": "where M := Classical.choose ((polyTimeComputable_iff f).1 hf) Ct := Classical.choose (Classical.choose_spec ((polyTimeComputable_iff f).1 hf)) ct := Classical.choose (Classical.choose_spec (Classical.choose_spec ((polyTimeComputable_iff f).1 hf))) coins := coins adv := adv advice := advice advice_length := hα halts := fun z => ⟨f z, (FinTM.computesFunInTime_iff _ _ _).1 (Classical.choose_spec (Cla"
+  },
+  {
+   "name": "TCSlib.Cryptography.EnsembleLemmas.blocks",
+   "kind": "def",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/EnsemblesLemmas.lean",
+   "line": 364,
+   "base_body": ":= (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)",
+   "head_body": ":= FunFamily.blocks q ℓ"
+  },
+  {
+   "name": "TCSlib.Cryptography.FunFamily.blocks",
+   "kind": "def",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "line": 161,
+   "base_body": ":= (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)",
+   "head_body": ":= blocksEquivX q ℓ Bool"
+  },
+  {
+   "name": "TCSlib.Cryptography.GI.blocksEquiv",
+   "kind": "def",
+   "private": false,
+   "path": "TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRep.lean",
+   "line": 231,
+   "base_body": ":= (Equiv.curry (Fin m) (Fin c) Bool).symm.trans (Equiv.arrowCongr finProdFinEquiv (Equiv.refl Bool))",
+   "head_body": ":= (FunFamily.blocks m c).symm"
+  },
+  {
+   "name": "TCSlib.Cryptography.OneWay.blocksE",
+   "kind": "def",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/OneWayYao.lean",
+   "line": 63,
+   "base_body": ":= (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)",
+   "head_body": ":= FunFamily.blocks q ℓ"
+  },
+  {
+   "name": "TCSlib.Cryptography.blocksEquiv",
+   "kind": "def",
+   "private": false,
+   "path": "TCSlib/Cryptography/Asymptotic/HardCoreLoops.lean",
+   "line": 70,
+   "base_body": ":= (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)",
+   "head_body": ":= FunFamily.blocks q ℓ"
+  },
+  {
+   "name": "TCSlib/Cryptography/Asymptotic/Ensembles.lean::TCSlib.Cryptography.Ensemble.blocks",
+   "kind": "def",
+   "private": true,
+   "path": "TCSlib/Cryptography/Asymptotic/Ensembles.lean",
+   "line": 214,
+   "base_body": ":= (Equiv.arrowCongr finProdFinEquiv.symm (Equiv.refl Bool)).trans (Equiv.curry _ _ _)",
+   "head_body": ":= FunFamily.blocks q ℓ"
+  },
+  {
+   "name": "TCSlib/Cryptography/Candidates/Concrete.lean::TCSlib.Cryptography.Candidates.dla_blockPos",
+   "kind": "def",
+   "private": true,
+   "path": "TCSlib/Cryptography/Candidates/Concrete.lean",
+   "line": 832,
+   "base_body": ":= ⟨p.1.val * B + p.2.val, by have h1 := p.1.2 have h2 := p.2.2 calc p.1.val * B + p.2.val < p.1.val * B + B := by omega _ = (p.1.val + 1) * B := by ring _ ≤ T * B := Nat.mul_le_mul_right _ h1⟩",
+   "head_body": ":= finProdFinEquiv (p.1, Fin.castLE hkB p.2)"
+  },
+  {
+   "name": "TCSlib/Cryptography/NumberTheory/Primality.lean::TCSlib.Cryptography.NumberTheory.powOneSubgroup",
+   "kind": "def",
+   "private": true,
+   "path": "TCSlib/Cryptography/NumberTheory/Primality.lean",
+   "line": 214,
+   "base_body": "where carrier := {x | x ^ m = 1} mul_mem' := by intro a b ha hb simp only [Set.mem_setOf_eq] at * rw [mul_pow, ha, hb, one_mul] one_mem' := by simp inv_mem' := by intro a ha simp only [Set.mem_setOf_eq] at * rw [inv_pow, ha, inv_one]",
+   "head_body": ":= (powMonoidHom m).ker"
+  }
+ ],
+ "moved": [
+  {
+   "name": "Complexity.PPT.ofPolyTime",
+   "kind": "def",
+   "private": false,
+   "from": "TCSlib/Complexity/Randomized/NonUniform.lean",
+   "to": "TCSlib/Complexity/Randomized/PPT.lean",
+   "header_unchanged": true
+  },
+  {
+   "name": "Complexity.PPT.toNUPPT",
+   "kind": "def",
+   "private": false,
+   "from": "TCSlib/Complexity/Randomized/NonUniform.lean",
+   "to": "TCSlib/Complexity/Randomized/PPT.lean",
+   "header_unchanged": true
+  },
+  {
+   "name": "Complexity.PPT.toNUPPT_ofPolyTime",
+   "kind": "theorem",
+   "private": false,
+   "from": "TCSlib/Complexity/Randomized/NonUniform.lean",
+   "to": "TCSlib/Complexity/Randomized/PPT.lean",
+   "header_unchanged": true
+  },
+  {
+   "name": "Complexity.PPT.uniform",
+   "kind": "theorem",
+   "private": false,
+   "from": "TCSlib/Complexity/Randomized/NonUniform.lean",
+   "to": "TCSlib/Complexity/Randomized/PPT.lean",
+   "header_unchanged": true
+  },
+  {
+   "name": "TCSlib.Cryptography.FunFamily.blocks",
+   "kind": "def",
+   "private": false,
+   "from": "TCSlib/Cryptography/Asymptotic/OneWay.lean",
+   "to": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "header_unchanged": true
+  },
+  {
+   "name": "TCSlib.Cryptography.FunFamily.blocks_apply",
+   "kind": "theorem",
+   "private": false,
+   "from": "TCSlib/Cryptography/Asymptotic/OneWay.lean",
+   "to": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "header_unchanged": false
+  },
+  {
+   "name": "TCSlib.Cryptography.FunFamily.blocks_symm_apply",
+   "kind": "theorem",
+   "private": false,
+   "from": "TCSlib/Cryptography/Asymptotic/OneWay.lean",
+   "to": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "header_unchanged": false
+  },
+  {
+   "name": "TCSlib.Cryptography.blocksEquivX",
+   "kind": "def",
+   "private": false,
+   "from": "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean",
+   "to": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "header_unchanged": true
+  },
+  {
+   "name": "TCSlib.Cryptography.blocksEquivX_symm_apply",
+   "kind": "theorem",
+   "private": false,
+   "from": "TCSlib/Cryptography/Asymptotic/HardCoreGL.lean",
+   "to": "TCSlib/Cryptography/Asymptotic/Adversary.lean",
+   "header_unchanged": true
+  }
+ ],
+ "summary": {
+  "added": 219,
+  "removed": 23,
+  "header_changed": 2,
+  "body_changed": 9,
+  "moved": 9
+ },
+ "summary_public": {
+  "added": 217,
+  "removed": 10,
+  "header_changed": 2,
+  "body_changed": 6,
+  "moved": 9
+ }
+}

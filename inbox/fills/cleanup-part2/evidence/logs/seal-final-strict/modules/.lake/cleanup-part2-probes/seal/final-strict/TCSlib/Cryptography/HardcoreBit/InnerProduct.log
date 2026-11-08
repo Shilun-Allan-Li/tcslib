@@ -1,0 +1,32 @@
+START 2026-11-08T09:33:03.811618+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/HardcoreBit/InnerProduct
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/HardcoreBit/InnerProduct.lean sha256=035bd5edcc033a793376c22061017f1bc6a25d8f273d53fed68863de16b9325f
+CP2-SEAL chunk=0 requested=15 active=15 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:217:9: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.100
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:281:36: error: Application type mismatch: The argument
+  h
+has type
+  predProb (glPad f) glBit A = 1
+but is expected to have type
+  uprob ?m.29 = 1
+in the application
+  forall_of_uprob_eq_one h
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/HardcoreBit/InnerProduct.lean:280:88: error: unsolved goals
+n : ℕ
+β : Type u_1
+ρ : Type u_3
+inst✝ : Fintype ρ
+f : (Fin n → Bool) → β
+A : β × (Fin n → Bool) → ρ → Bool
+h : predProb (glPad f) glBit A = 1
+⊢ invProb (glPad f) (perfectInverter A) = 1
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/HardcoreBit/InnerProduct): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/HardcoreBit/InnerProduct): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/HardcoreBit/InnerProduct): no fresh .olean produced
+
+END 2026-11-08T09:33:06.684384+00:00 RC 1 elapsed=2.9s pid=17674 maxrss=2517348KiB

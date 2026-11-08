@@ -1,0 +1,56 @@
+START 2026-11-08T07:38:03.809804+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP.lean sha256=c504cfe345b96908a9d55ef1ee01750164c24710bb162ca173f327a8398707a8
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=200 active=200 already=0
+CP2-SEAL chunk=9 requested=200 active=200 already=0
+CP2-SEAL chunk=10 requested=200 active=200 already=0
+CP2-SEAL chunk=11 requested=29 active=29 already=0
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2746:9: error: Invalid `⟨...⟩` notation: The expected type `(S.pullback f g p).Efficient` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2747:2: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2775:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+μ : ℕ → ℝ
+hμ : Negligible μ
+φ : ℕ → ℕ
+hφ : ∀ (N : ℕ), N ≤ φ N
+⊢ Negligible fun N => μ (φ N)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2922:44: error: Application type mismatch: The argument
+  le_rfl
+has type
+  ?m.253 ≤ ?m.253
+but is expected to have type
+  { next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coinLen
+      (f x).length ≤
+    P'.coinLen x.length
+in the application
+  coinTrunc ⋯
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2985:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+L L' : Language Bool
+R R' : List Bool → List Bool → Prop
+f : List Bool → List Bool
+w : List Bool → List Bool → List Bool
+p : PolyExpr
+h : LevinReduction L L' R R' f w p
+π : Protocol
+hzk : ZK π R'
+⊢ ZK (π.pullback f w p) R
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/NP): no fresh .olean produced
+
+END 2026-11-08T07:38:30.214045+00:00 RC 1 elapsed=26.4s pid=20971 maxrss=2876588KiB

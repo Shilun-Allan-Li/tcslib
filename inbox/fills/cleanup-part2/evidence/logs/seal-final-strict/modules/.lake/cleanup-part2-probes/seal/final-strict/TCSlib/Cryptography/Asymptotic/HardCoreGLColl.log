@@ -1,0 +1,71 @@
+START 2026-11-08T09:40:33.661585+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreGLColl
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean sha256=a54c9a7956ea8aa4f8b0dc5a557fa30f51242261e27906badfbc815a75c14ef4
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=22 active=22 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:1807:29: error: Application type mismatch: The argument
+  fun x => false
+has type
+  Fin 0 → Bool
+but is expected to have type
+  Fin ((PolyExpr.const 0).eval n) → Bool
+in the application
+  NUPPT.runAt_wrap (glMachine (A.precomp collPre_poly) mP K k hk) glCollPre_poly glCollPost_poly ?m.23 ?m.24 ?m.25
+    (PolyExpr.const 0) n ?m.28 rfl fun x => false
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:1804:99: error: unsolved goals
+A : NUPPT
+mP K : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), 2 ^ k n ≤ K.eval n
+n : ℕ
+i y rs : List Bool
+c : (glMachine (A.precomp collPre_poly) mP K k hk).Coins n
+r' : (glCollMachine A mP K k hk).Coins n
+hr' : List.ofFn r' = List.ofFn c
+⊢ ((glMachine (A.precomp collPre_poly) mP K k hk).wrap glCollPre_poly glCollPost_poly (fun x => []) (PolyExpr.const 0)
+          glCollMachine._proof_1 (PolyExpr.const 0)).runAt
+      n (pairEncode i (pairEncode y rs)) r' =
+    pairEncode ((glMachine (A.precomp collPre_poly) mP K k hk).runAt n (pairEncode i y) c) rs
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreGLColl.lean:1848:41: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  (NUPPT.wrap ?A ?hpre ?hpost ?β ?b ?hβ ?p).coins
+in the target expression
+  ((glMachine (A.precomp collPre_poly) mP K k hk).wrap glCollPre_poly glCollPost_poly (fun x => []) (PolyExpr.const 0)
+            glCollMachine._proof_1 (PolyExpr.const 0)).coins.eval
+      n =
+    (glCoins mP K (A.precomp collPre_poly)).eval n
+
+F : Collection
+mP K : PolyExpr
+k : ℕ → ℕ
+hk : ∀ (n : ℕ), 2 ^ k n ≤ K.eval n
+A : NUPPT
+n : ℕ
+i : List Bool
+L : ℕ
+hL : L = mP.eval n
+hM : 0 < 2 ^ k n - 1 ∨ mP.eval n = 0
+henc : ∀ (x : F.D i), (F.encD i x).length = mP.eval n
+hrec :
+  ∀ (y : List Bool) (g : HardcoreBit.GuessCoins (mP.eval n) (k n) ((A.precomp collPre_poly).Coins n)),
+    HardcoreBit.guessRecover (fun p c => A.distinguisherL n (pairEncode i (pairEncode p.1 (List.ofFn p.2))) c) (k n) y
+        ((HardcoreBit.guessCoinsCongr (k n) (A.precomp_coinsEquiv collPre_poly n)) g) =
+      HardcoreBit.guessRecover (glPredictorOf (A.precomp collPre_poly) n (mP.eval n) fun y => pairEncode i y) (k n) y g
+⊢ ((glMachine (A.precomp collPre_poly) mP K k hk).wrap glCollPre_poly glCollPost_poly (fun x => []) (PolyExpr.const 0)
+            glCollMachine._proof_1 (PolyExpr.const 0)).coins.eval
+      n =
+    (glCoins mP K (A.precomp collPre_poly)).eval n
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreGLColl): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreGLColl): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreGLColl): no fresh .olean produced
+
+END 2026-11-08T09:40:54.260283+00:00 RC 1 elapsed=20.6s pid=18906 maxrss=2766428KiB

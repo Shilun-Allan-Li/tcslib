@@ -1,0 +1,336 @@
+START 2026-11-08T09:34:23.721936+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean sha256=5aec5bc6788d45ebb0380eace215358133a0b49d24682beaf3e77d8efdc3a48e
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=69 active=69 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1203:79: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  (ofString f p).inLen.eval n = n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1224:95: error: Application type mismatch: The argument
+  x
+has type
+  Fin ((q.mul 𝓕.inLen).eval n) → Bool
+but is expected to have type
+  Fin (q.eval n * 𝓕.inLen.eval n) → Bool
+in the application
+  (blocks (q.eval n) (𝓕.inLen.eval n)) x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1340:63: error: Application type mismatch: The argument
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((ofString f p).inLen.eval n) → Bool
+in the application
+  (ofString f p).f n x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1340:87: error: unsolved goals
+f : List Bool → List Bool
+p : PolyExpr
+hf : LengthRegular f p
+n : ℕ
+x : Fin n → Bool
+hlen : (f (List.ofFn x)).length = p.eval n
+i : ℕ
+h₁ : i < (List.ofFn ((ofString f p).f n sorry)).length
+h₂ : i < (f (List.ofFn x)).length
+⊢ (f (List.ofFn (sorry ())))[i]?.getD false = (f (List.ofFn x))[i]
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1343:46: warning: This simp argument is unused:
+  List.getElem?_eq_getElem h₂
+
+Hint: Omit it from the simp argument list.
+  simp [ofString, List.getD_eq_getElem?_getD,̵ ̵L̵i̵s̵t̵.̵g̵e̵t̵E̵l̵e̵m̵?̵_̵e̵q̵_̵g̵e̵t̵E̵l̵e̵m̵ ̵h̵₂̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1349:23: error: Application type mismatch: The argument
+  x
+has type
+  Fin ((ofString f p).inLen.eval n) → Bool
+but is expected to have type
+  Fin n → Bool
+in the application
+  ofFn_ofString_f hf n x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1352:74: error: Application type mismatch: The argument
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((ofString id PolyExpr.var).inLen.eval n) → Bool
+in the application
+  (ofString id PolyExpr.var).f n x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1352:78: error: Type mismatch
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((ofString id PolyExpr.var).outLen.eval n) → Bool
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1385:19: error: Application type mismatch: The argument
+  x
+has type
+  Fin (q.eval n * 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin ((𝓕.prod q).inLen.eval n) → Bool
+in the application
+  (𝓕.prod q).f n x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1385:23: error: Type mismatch
+  (blocks (q.eval n) (𝓕.outLen.eval n)).symm
+    (OneWay.prodFun (𝓕.f n) (q.eval n) ((blocks (q.eval n) (𝓕.inLen.eval n)) x))
+has type
+  Fin (q.eval n * 𝓕.outLen.eval n) → Bool
+but is expected to have type
+  Fin ((𝓕.prod q).outLen.eval n) → Bool
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1404:2: error: Tactic `apply` failed: could not unify the conclusion of `@funext`
+  ?f = ?g
+with the goal
+  ((Fin ((𝓕.prod q).inLen.eval n) → Bool) × A.Coins n) = ((Fin (q.eval n * 𝓕.inLen.eval n) → Bool) × A.Coins n)
+
+Note: The full type of `@funext` is
+  ∀ {α : Sort ?u.58672} {β : α → Sort ?u.58671} {f g : (x : α) → β x}, (∀ (x : α), f x = g x) → f = g
+
+case h.e_1
+𝓕 : FunFamily
+q : PolyExpr
+A : NUPPT
+n : ℕ
+⊢ ((Fin ((𝓕.prod q).inLen.eval n) → Bool) × A.Coins n) = ((Fin (q.eval n * 𝓕.inLen.eval n) → Bool) × A.Coins n)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1431:25: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  F' (pairEncode (List.replicate ?n true) (List.ofFn ?x))
+in the target expression
+  F' (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn ((𝓕.prod q).f n x)
+
+𝓕 : FunFamily
+q : PolyExpr
+F : List Bool → List Bool
+hF : PolyTimeComputable F
+hFx : ∀ (n : ℕ) (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)
+F' : List Bool → List Bool
+hF' : PolyTimeComputable F'
+hspec :
+  ∀ (n : ℕ) (x : Fin (q.eval n * 𝓕.inLen.eval n) → Bool),
+    F' (pairEncode (List.replicate n true) (List.ofFn x)) =
+      (List.ofFn fun i =>
+          F (pairEncode (List.replicate n true) (List.ofFn fun j => x (finProdFinEquiv (i, j))))).flatten
+n : ℕ
+x : Fin ((𝓕.prod q).inLen.eval n) → Bool
+⊢ F' (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn ((𝓕.prod q).f n x)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1455:2: error: Type mismatch
+  rfl
+has type
+  ?m.13 = ?m.13
+but is expected to have type
+  (yaoBlocks q).eval n = 2 * (n * q.eval n)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1459:73: error: Type mismatch
+  rfl
+has type
+  ?m.21 = ?m.21
+but is expected to have type
+  (yaoRounds q c).eval n = 2 * (n * ((yaoBlocks q).eval n * n ^ c))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1755:61: error: Tactic `rfl` failed: The left-hand side
+  2 * ℓ + A'.coins.eval n
+is not definitionally equal to the right-hand side
+  (((PolyExpr.const 2).mul 𝓕.inLen).add A'.coins).eval n
+
+𝓕 : FunFamily
+h : 𝓕.StrongOneWay
+F : List Bool → List Bool
+hF : PolyTimeComputable F
+hFx : ∀ (n : ℕ) (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)
+A' : NUPPT
+hcut : PolyTimeComputable fun x => pairEncode (NUPPT.inParam x) (NUPPT.inCoins x)
+hxs :
+  PolyTimeComputable
+    ((fun z => List.take (((PolyExpr.const 2).mul 𝓕.inLen).eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+      pairEncode (NUPPT.inParam x) (NUPPT.inCoins x))
+hr' :
+  PolyTimeComputable
+    ((fun z => List.drop (((PolyExpr.const 2).mul 𝓕.inLen).eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+      pairEncode (NUPPT.inParam x) (NUPPT.inCoins x))
+hy2 :
+  PolyTimeComputable
+    ((fun z => List.drop (𝓕.inLen.eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+      pairEncode (NUPPT.inParam x)
+        (((fun z => List.take (((PolyExpr.const 2).mul 𝓕.inLen).eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+            pairEncode (NUPPT.inParam x) (NUPPT.inCoins x))
+          x))
+hv :
+  PolyTimeComputable
+    (F ∘ fun x =>
+      pairEncode (NUPPT.inParam x)
+        (((fun z => List.drop (𝓕.inLen.eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+            pairEncode (NUPPT.inParam x)
+              (((fun z => List.take (((PolyExpr.const 2).mul 𝓕.inLen).eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+                  pairEncode (NUPPT.inParam x) (NUPPT.inCoins x))
+                x))
+          x))
+hout :
+  PolyTimeComputable
+    (A'.output ∘ fun z =>
+      NUPPT.layout (NUPPT.inParam z)
+        (NUPPT.inArg z ++
+          (F ∘ fun x =>
+              pairEncode (NUPPT.inParam x)
+                (((fun z => List.drop (𝓕.inLen.eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+                    pairEncode (NUPPT.inParam x)
+                      (((fun z => List.take (((PolyExpr.const 2).mul 𝓕.inLen).eval (pairFstD z).length) (pairSndD z)) ∘
+                          fun x => pairEncode (NUPPT.inParam x) (NUPPT.inCoins x))
+                        x))
+                  x))
+            z)
+        (NUPPT.inAdvice z)
+        (((fun z => List.drop (((PolyExpr.const 2).mul 𝓕.inLen).eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+            pairEncode (NUPPT.inParam x) (NUPPT.inCoins x))
+          z))
+hG :
+  PolyTimeComputable
+    ((fun z => List.take (𝓕.inLen.eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+      pairEncode (NUPPT.inParam x)
+        ((A'.output ∘ fun z =>
+            NUPPT.layout (NUPPT.inParam z)
+              (NUPPT.inArg z ++
+                (F ∘ fun x =>
+                    pairEncode (NUPPT.inParam x)
+                      (((fun z => List.drop (𝓕.inLen.eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+                          pairEncode (NUPPT.inParam x)
+                            (((fun z =>
+                                  List.take (((PolyExpr.const 2).mul 𝓕.inLen).eval (pairFstD z).length) (pairSndD z)) ∘
+                                fun x => pairEncode (NUPPT.inParam x) (NUPPT.inCoins x))
+                              x))
+                        x))
+                  z)
+              (NUPPT.inAdvice z)
+              (((fun z => List.drop (((PolyExpr.const 2).mul 𝓕.inLen).eval (pairFstD z).length) (pairSndD z)) ∘ fun x =>
+                  pairEncode (NUPPT.inParam x) (NUPPT.inCoins x))
+                z))
+          x))
+A : NUPPT := NUPPT.ofPolyTime hG (((PolyExpr.const 2).mul 𝓕.inLen).add A'.coins) A'.adv A'.advice ⋯
+n : ℕ
+x✝ : n ≥ 0
+ℓ : ℕ := 𝓕.inLen.eval n
+hℓ : ℓ = 𝓕.inLen.eval n
+f : (Fin (𝓕.inLen.eval n) → Bool) → Fin (𝓕.outLen.eval n) → Bool := 𝓕.f n
+hf : f = 𝓕.f n
+⊢ 2 * ℓ + A'.coins.eval n = (((PolyExpr.const 2).mul 𝓕.inLen).add A'.coins).eval n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1787:4: error: Type mismatch
+  FunFamily.invProbAt_prod_eq 𝓕 (PolyExpr.const 2) A' n
+has type
+  (𝓕.prod (PolyExpr.const 2)).invProbAt A' n =
+    invProbOpt (OneWay.prodFun (𝓕.f n) ((PolyExpr.const 2).eval n)) fun ys r =>
+      Option.map (⇑(FunFamily.blocks ((PolyExpr.const 2).eval n) (𝓕.inLen.eval n)))
+        (A'.inverter n ((PolyExpr.const 2).eval n * 𝓕.inLen.eval n) ((PolyExpr.const 2).eval n * 𝓕.outLen.eval n)
+          ((FunFamily.blocks ((PolyExpr.const 2).eval n) (𝓕.outLen.eval n)).symm ys) r)
+but is expected to have type
+  (𝓕.prod (PolyExpr.const 2)).invProbAt A' n = invProbOpt (OneWay.prodFun f 2) B'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1840:8: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1841:5: warning: unused variable `hA`
+
+Note: This linter can be disabled with `set_option linter.unusedVariables false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1891:8: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1917:9: error: Type mismatch
+  P.f n
+has type
+  (Fin n → Bool) ≃ (Fin n → Bool)
+but is expected to have type
+  (Fin (PolyExpr.var.eval n) → Bool) → Fin (PolyExpr.var.eval n) → Bool
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1931:2: error: Type mismatch
+  (FunFamily.easy_iff P.toFunFamily).mp hP.easy
+has type
+  ∃ F,
+    PolyTimeComputable F ∧
+      ∀ (n : ℕ) (x : Fin (P.toFunFamily.inLen.eval n) → Bool),
+        F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.toFunFamily.f n x)
+but is expected to have type
+  ∃ F, PolyTimeComputable F ∧ ∀ (n : ℕ) (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1935:22: error: Application type mismatch: The argument
+  x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin (P.toFunFamily.inLen.eval n) → Bool
+in the application
+  P.toFunFamily.f n x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1935:26: error: Type mismatch
+  (P.f n) x
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin (P.toFunFamily.outLen.eval n) → Bool
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1934:2: error: Cannot add `simp` attribute to `toFunFamily_f`: It is not a proposition nor a definition (to unfold)
+
+Note: The `[simp]` attribute can be added to lemmas that should be automatically used by the simplifier and to definitions that the simplifier should automatically unfold
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1939:38: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  P.toFunFamily.inLen.eval n = n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1943:39: error: Type mismatch
+  rfl
+has type
+  ?m.3 = ?m.3
+but is expected to have type
+  P.toFunFamily.outLen.eval n = n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1947:66: error: Type mismatch
+  Equiv.refl ?m.1
+has type
+  ?m.1 ≃ ?m.1
+but is expected to have type
+  (Fin (P.toFunFamily.inLen.eval n) → Bool) ≃ (Fin n → Bool)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1951:67: error: Type mismatch
+  Equiv.refl ?m.1
+has type
+  ?m.1 ≃ ?m.1
+but is expected to have type
+  (Fin (P.toFunFamily.outLen.eval n) → Bool) ≃ (Fin n → Bool)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1953:0: error: Not a definitional equality: the left-hand side
+  List.ofFn ((P.toFunFamily_domEquiv n) x)
+is not definitionally equal to the right-hand side
+  List.ofFn x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1956:60: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  List.ofFn ((P.toFunFamily_domEquiv n) x) = List.ofFn x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1958:0: error: Not a definitional equality: the left-hand side
+  List.ofFn ((P.toFunFamily_domEquiv n).symm x)
+is not definitionally equal to the right-hand side
+  List.ofFn x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1960:67: error: Type mismatch
+  rfl
+has type
+  ?m.10 = ?m.10
+but is expected to have type
+  List.ofFn ((P.toFunFamily_domEquiv n).symm x) = List.ofFn x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1962:0: error: Not a definitional equality: the left-hand side
+  List.ofFn ((P.toFunFamily_codEquiv n) y)
+is not definitionally equal to the right-hand side
+  List.ofFn y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1965:60: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  List.ofFn ((P.toFunFamily_codEquiv n) y) = List.ofFn y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1967:0: error: Not a definitional equality: the left-hand side
+  (P.toFunFamily_codEquiv n) (P.toFunFamily.f n x)
+is not definitionally equal to the right-hand side
+  (P.f n) ((P.toFunFamily_domEquiv n) x)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay.lean:1970:91: error: Type mismatch
+  rfl
+has type
+  ?m.6 = ?m.6
+but is expected to have type
+  (P.toFunFamily_codEquiv n) (P.toFunFamily.f n x) = (P.f n) ((P.toFunFamily_domEquiv n) x)
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/OneWay): no fresh .olean produced
+
+END 2026-11-08T09:34:42.186528+00:00 RC 1 elapsed=18.5s pid=17966 maxrss=2716896KiB

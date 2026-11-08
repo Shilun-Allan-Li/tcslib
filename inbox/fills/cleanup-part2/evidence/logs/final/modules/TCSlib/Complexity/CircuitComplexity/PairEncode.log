@@ -1,0 +1,38 @@
+START 2026-11-08T07:52:00.891799+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Complexity/CircuitComplexity/PairEncode
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Complexity/CircuitComplexity/PairEncode.lean sha256=a86d91a56c7e8e912d6aabc542c816a4e22814df8ade00925a32f2032c98d185
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:117:4: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:129:41: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:180:10: warning: try 'simp' instead of 'simpa'
+
+Note: This linter can be disabled with `set_option linter.unnecessarySimpa false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:178:27: warning: This simp argument is unused:
+  hs
+
+Hint: Omit it from the simp argument list.
+  simp [inputGate, h̵s̵,̵ ̵DAGGate.FaninTwo, DAGGate.WellFormed]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:189:63: warning: This simp argument is unused:
+  Nat.add_assoc
+
+Hint: Omit it from the simp argument list.
+  simp [DAGCircuit.size, DAGCircuit.bufferInputs, inputBuffer,̵ ̵N̵a̵t̵.̵a̵d̵d̵_̵a̵s̵s̵o̵c̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/CircuitComplexity/PairEncode.lean:241:64: warning: This simp argument is unused:
+  Fin.coe_cast
+
+Hint: Omit it from the simp argument list.
+  simp [List.getElem_ofFn, vectorOfList, List.get_eq_getElem,̵ ̵F̵i̵n̵.̵c̵o̵e̵_̵c̵a̵s̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-08T07:52:02.434955+00:00 RC 0 elapsed=1.5s pid=30049 maxrss=1761092KiB

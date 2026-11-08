@@ -1,0 +1,82 @@
+START 2026-11-08T09:53:31.312735+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean sha256=da36c24740e08fdad78f4700fd42ab93b2a75af9cb36fbd37d73d07ea75eab6d
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=200 active=200 already=0
+CP2-SEAL chunk=9 requested=200 active=200 already=0
+CP2-SEAL chunk=10 requested=200 active=200 already=0
+CP2-SEAL chunk=11 requested=32 active=32 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2650:15: error: Type mismatch
+  le_rfl
+has type
+  ?m.24 ≤ ?m.24
+but is expected to have type
+  x✝ ≤ PolyExpr.var.eval x✝
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2748:9: error: Invalid `⟨...⟩` notation: The expected type `(S.pullback f g p).Efficient` is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2749:2: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2777:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+μ : ℕ → ℝ
+hμ : Negligible μ
+φ : ℕ → ℕ
+hφ : ∀ (N : ℕ), N ≤ φ N
+⊢ Negligible fun N => μ (φ N)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2852:76: error: Application type mismatch: The argument
+  r
+has type
+  (π.pullback f w p).ExecCoins P' x
+but is expected to have type
+  (Fin
+        ({ next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coins.eval
+          (f x).length) →
+      Bool) ×
+    (Fin ((π.V.pullback f (fun x z => z) p).coinLen x.length) → Bool)
+in the application
+  Prod.map (coinTrunc ⋯) (coinTrunc ⋯) r
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2854:62: error: Type mismatch
+  Strategy.coinLen_eq ?m.41 ?m.42
+has type
+  Strategy.coinLen ?m.41 ?m.42 = (Strategy.coins ?m.41).eval ?m.42
+but is expected to have type
+  { next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coinLen
+      (f x).length =
+    P'.coinLen x.length
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2924:44: error: Application type mismatch: The argument
+  le_rfl
+has type
+  ?m.253 ≤ ?m.253
+but is expected to have type
+  { next := fun x_1 x_2 r hist => P'.next x [] r hist, coins := PolyExpr.const (P'.coinLen x.length) }.coinLen
+      (f x).length ≤
+    P'.coinLen x.length
+in the application
+  coinTrunc ⋯
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP.lean:2987:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+L L' : Language Bool
+R R' : List Bool → List Bool → Prop
+f : List Bool → List Bool
+w : List Bool → List Bool → List Bool
+p : PolyExpr
+h : LevinReduction L L' R R' f w p
+π : Protocol
+hzk : ZK π R'
+⊢ ZK (π.pullback f w p) R
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/NP): no fresh .olean produced
+
+END 2026-11-08T09:53:57.748853+00:00 RC 1 elapsed=26.4s pid=20785 maxrss=2874516KiB

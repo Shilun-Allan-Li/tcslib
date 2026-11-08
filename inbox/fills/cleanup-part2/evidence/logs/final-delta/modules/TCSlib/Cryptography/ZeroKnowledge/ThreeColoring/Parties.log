@@ -1,0 +1,15 @@
+START 2026-11-08T10:09:38.035186+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean sha256=a5827ee4c2f6c67cb202e0c6e4e48687d0f472218d681d85d177d2c917982923
+TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Parties.lean:203:73: warning: This simp argument is unused:
+  Function.comp_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [proverStr, decide_eq_true_eq,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-08T10:09:41.920545+00:00 RC 0 elapsed=3.9s pid=26950 maxrss=2648616KiB

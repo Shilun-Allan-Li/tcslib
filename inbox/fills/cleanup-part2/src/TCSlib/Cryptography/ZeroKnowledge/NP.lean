@@ -150,7 +150,7 @@ structure LevinReduction (L L' : Language Bool) (R R' : List Bool → List Bool 
 theorem LevinReduction.polyTimeReducible {L L' : Language Bool} {R R' : List Bool → List Bool → Prop}
     {f : List Bool → List Bool} {w : List Bool → List Bool → List Bool} {p : PolyExpr}
     (h : LevinReduction L L' R R' f w p) : PolyTimeReducible L L' :=
-  ⟨f, h.f_poly, h.mem_iff⟩
+  (polyTimeReducible_iff L L').2 ⟨f, h.f_poly, h.mem_iff⟩
 
 /-- Sanity: the identity is a Levin reduction of `(L, R)` to itself. -/
 theorem LevinReduction.refl (L : Language Bool) (R : List Bool → List Bool → Prop) :
@@ -250,7 +250,7 @@ theorem Strategy.pullback_efficient {S : Strategy} (hS : S.Efficient) {f : List 
     (hf : PolyTimeComputable f) {g : List Bool → List Bool → List Bool}
     (hg : PolyTimeComputable fun z => g (pairFstD z) (pairSndD z)) {p : PolyExpr}
     (hx : ∀ x, (f x).length = p.eval x.length) : (S.pullback f g p).Efficient := by
-  obtain ⟨A, hA, hc, hnext⟩ := hS
+  obtain ⟨A, hA, hc, hnext⟩ := (Strategy.efficient_iff S).1 hS
   have hpre : PolyTimeComputable fun y =>
       pairEncode (pairEncode (f (pairFstD (pairFstD y)))
         (g (pairFstD (pairFstD y)) (pairSndD (pairFstD y)))) (pairSndD y) :=

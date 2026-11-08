@@ -1,0 +1,31 @@
+START 2026-11-08T09:10:59.320401+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Collections
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Collections.lean sha256=acfa226ab5029af5723c7ff267e82d63239db7bd7f5610dc0f3be559f0bf6024
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=128 active=128 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Collections.lean:1601:6: error: Type mismatch
+  fun s => some s
+has type
+  ?m.45 → Option ?m.45
+but is expected to have type
+  (𝓕.toCollection F hF hspec).sample.Coins i.length → Option ((𝓕.toCollection F hF hspec).D i)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Collections.lean:2070:6: warning: This simp argument is unused:
+  Equiv.refl_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [Pev, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵E̵q̵u̵i̵v̵.̵r̵e̵f̵l̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Collections): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Collections): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Collections): no fresh .olean produced
+
+END 2026-11-08T09:11:13.659992+00:00 RC 1 elapsed=14.3s pid=14132 maxrss=2696604KiB

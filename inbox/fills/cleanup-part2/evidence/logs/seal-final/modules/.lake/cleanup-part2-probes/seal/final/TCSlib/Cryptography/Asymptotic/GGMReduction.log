@@ -1,0 +1,63 @@
+START 2026-11-08T09:18:31.376973+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction.lean sha256=b437530fcfbb50b72c56754646b9b179b24bf58a700d9c07b254f84974f5d69c
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=199 already=1
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=135 active=135 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction.lean:2006:2: error: Type mismatch
+  PolyTimeComputable.comp hF hpre
+has type
+  PolyTimeComputable
+    ((fun x =>
+        match List.find? (fun i => acc ((StateLoop.gstep step B)^[i] x)) (List.range (R.eval x.length + 1)) with
+        | some i => out ((StateLoop.gstep step B)^[i] x)
+        | none => []) ∘
+      fun x => pairEncode x (start x))
+but is expected to have type
+  PolyTimeComputable (stateLoopFun start step acc out R B)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction.lean:2107:50: error: Type mismatch
+  rfl
+has type
+  ?m.97 = ?m.97
+but is expected to have type
+  pairSndD [] = []
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction.lean:2129:2: error: Type mismatch
+  polyTimeComputable_iterateFind lookStep_poly lookAcc_poly lookOut_poly PolyExpr.var
+    (PolyExpr.var.add (PolyExpr.const 2)) fun v k x => ?m.9
+has type
+  PolyTimeComputable fun x =>
+    match List.find? (fun i => lookAcc (lookStep^[i] x)) (List.range (PolyExpr.var.eval x.length + 1)) with
+    | some i => lookOut (lookStep^[i] x)
+    | none => []
+but is expected to have type
+  PolyTimeComputable lookup
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction.lean:2146:8: error: Tactic `rfl` failed: The left-hand side
+  pairEncode p (pairSndD (tblEnc []))
+is not definitionally equal to the right-hand side
+  pairEncode p (tblEnc [])
+
+p : List Bool
+k : ℕ
+⊢ pairEncode p (pairSndD (tblEnc [])) = pairEncode p (tblEnc [])
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction.lean:2628:23: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun z =>
+    match pairDecode z with
+    | some (u, v) => List.replicate (u.length * v.length) true
+    | none => []
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/GGMReduction): no fresh .olean produced
+
+END 2026-11-08T09:18:49.905669+00:00 RC 1 elapsed=18.5s pid=15237 maxrss=2761312KiB

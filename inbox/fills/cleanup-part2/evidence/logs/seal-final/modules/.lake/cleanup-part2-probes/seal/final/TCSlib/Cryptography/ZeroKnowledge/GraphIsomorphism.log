@@ -1,0 +1,128 @@
+START 2026-11-08T09:23:53.920848+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean sha256=74d24c7dc5f9a311a62ee7aa4227835656559e725c61f362d95de393f317ce77
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=61 active=61 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:1407:87: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  (decGraph w).snd = decGraphAt (decGraph w).fst w
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:1547:4: error: Type mismatch
+  GI.Riso_decidable
+has type
+  ∃ T, (PolyTimeComputable fun z => [T z]) ∧ ∀ (x y : List Bool), T (pairEncode x y) = true ↔ GI.Riso x y
+but is expected to have type
+  ∃ T, (PolyTimeComputable fun z => [T z]) ∧ ∀ (x y : List Bool), T (pairEncode x y) = true ↔ Riso x y
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:1594:55: error: Type mismatch
+  rfl
+has type
+  ?m.77 = ?m.77
+but is expected to have type
+  permCoinLen n = n * (2 * n * n) * permBits n
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2076:51: error: Type mismatch
+  GI.giProver_efficient
+has type
+  GI.giProver.Efficient
+but is expected to have type
+  giProver.Efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2086:55: error: Type mismatch
+  GI.giVerifier_efficient
+has type
+  GI.giVerifier.Efficient
+but is expected to have type
+  giVerifier.Efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2092:57: error: Type mismatch
+  GI.gniVerifier_efficient
+has type
+  GI.gniVerifier.Efficient
+but is expected to have type
+  gniVerifier.Efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2098:63: error: Type mismatch
+  GI.gniVerifierRep_efficient
+has type
+  GI.gniVerifierRep.Efficient
+but is expected to have type
+  gniVerifierRep.Efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2103:57: error: Type mismatch
+  GI.giProverRep_efficient
+has type
+  GI.giProverRep.Efficient
+but is expected to have type
+  giProverRep.Efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2109:61: error: Type mismatch
+  GI.giVerifierRep_efficient
+has type
+  GI.giVerifierRep.Efficient
+but is expected to have type
+  giVerifierRep.Efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2136:29: error: Application type mismatch: The argument
+  gniVerifier_efficient
+has type
+  gniVerifier.Efficient
+but is expected to have type
+  GI.gniVerifier.Efficient
+in the application
+  GI.gni_interactiveProofErr gniVerifier_efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2155:26: error: Application type mismatch: The argument
+  gniVerifierRep_efficient
+has type
+  gniVerifierRep.Efficient
+but is expected to have type
+  GI.gniVerifierRep.Efficient
+in the application
+  GI.gni_interactiveProof gniVerifierRep_efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2162:59: error: Type mismatch
+  GI.giProver_length_le x y r hist
+has type
+  (GI.giProver.next x y r hist).length ≤ x.length
+but is expected to have type
+  (giProtocol.P.next x y r hist).length ≤ PolyExpr.var.eval x.length
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2167:59: error: Type mismatch
+  GI.giProverRep_length_le x y r hist
+has type
+  (GI.giProverRep.next x y r hist).length ≤ x.length
+but is expected to have type
+  (giProtocolRep.P.next x y r hist).length ≤ PolyExpr.var.eval x.length
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2173:60: error: Type mismatch
+  GI.gniProver_length_le x y r hist
+has type
+  (GI.gniProver.next x y r hist).length ≤ 1
+but is expected to have type
+  (gniProtocol.P.next x y r hist).length ≤ (PolyExpr.const 1).eval x.length
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2174:61: error: Type mismatch
+  GI.gniProver_length_le x y r hist
+has type
+  (GI.gniProver.next x y r hist).length ≤ 1
+but is expected to have type
+  (gniProtocolRep.P.next x y r hist).length ≤ (PolyExpr.const 1).eval x.length
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2193:32: error: Application type mismatch: The argument
+  giProver_efficient
+has type
+  giProver.Efficient
+but is expected to have type
+  GI.giProver.Efficient
+in the application
+  GI.gi_efficientProverProofErr giProver_efficient
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism.lean:2210:33: error: Application type mismatch: The argument
+  giProverRep_efficient
+has type
+  giProverRep.Efficient
+but is expected to have type
+  GI.giProverRep.Efficient
+in the application
+  GI.gi_rep_efficientProverProof giProverRep_efficient
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism): no fresh .olean produced
+
+END 2026-11-08T09:24:09.453930+00:00 RC 1 elapsed=15.5s pid=16110 maxrss=2728332KiB

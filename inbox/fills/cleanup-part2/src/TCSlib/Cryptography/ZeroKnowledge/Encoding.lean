@@ -144,6 +144,14 @@ theorem decGraph_def (w : List Bool) :
     decGraph w =
       (⟨Nat.sqrt w.length, fun u v => w.getD (finProdFinEquiv (u, v)) false⟩) := rfl
 
+/-- The vertex count of the decoded graph: `(decGraph w).1 = ⌊√|w|⌋`. -/
+theorem decGraph_fst (w : List Bool) : (decGraph w).1 = Nat.sqrt w.length := rfl
+
+/-- The adjacency of the decoded graph: entry `(u, v)` is bit `finProdFinEquiv (u, v)` of `w`
+(default `false`). -/
+theorem decGraph_snd_apply (w : List Bool) (u v : Fin (decGraph w).1) :
+    (decGraph w).2 u v = w.getD (finProdFinEquiv (u, v)) false := rfl
+
 /-- An encoded graph on `n` vertices has `n²` bits. -/
 @[simp] theorem length_encGraph {n : ℕ} (G : Graph n) : (encGraph G).length = n * n := by
   simp [encGraph]
@@ -294,6 +302,14 @@ default `false` and combined modulo `3`. -/
 def decColoring (n : ℕ) (w : List Bool) : Fin n → Fin 3 := fun i =>
   ⟨(2 * (w.getD (finProdFinEquiv (i, (0 : Fin 2))) false).toNat +
       (w.getD (finProdFinEquiv (i, (1 : Fin 2))) false).toNat) % 3, Nat.mod_lt _ (by norm_num)⟩
+
+/-- The value of `decColoring n w i`: `(2 b₀ + b₁) mod 3` from the bits `b₀, b₁` of vertex `i`
+at `finProdFinEquiv (i, 0)` and `finProdFinEquiv (i, 1)`. -/
+theorem decColoring_val_eq (n : ℕ) (w : List Bool) (i : Fin n) :
+    ((decColoring n w i : Fin 3) : ℕ) =
+      (2 * (w.getD (finProdFinEquiv (i, (0 : Fin 2))) false).toNat +
+        (w.getD (finProdFinEquiv (i, (1 : Fin 2))) false).toNat) % 3 :=
+  rfl
 
 /-- An encoded colouring of `n` vertices has `2n` bits. -/
 @[simp] theorem length_encColoring {n : ℕ} (c : Fin n → Fin 3) :
@@ -514,7 +530,8 @@ bound threaded through the block-value loops of the permutation sampler. -/
 theorem two_pow_size_le_two_mul_succ (n : ℕ) : 2 ^ Nat.size n ≤ 2 * n + 1 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp
-  · exact (two_pow_permBits_le hn).trans (Nat.le_succ _)
+  · rw [← permBits_eq]
+    exact (two_pow_permBits_le hn).trans (Nat.le_succ _)
 
 /-! ### Polynomial-time string operations of the honest parties (Inf-4.2) -/
 
@@ -706,7 +723,7 @@ theorem polyTimeComputable_encPermFromCoins :
     rw [decide_eq_decide, Fin.ext_iff,
       permFromCoins_getD_val (r := pairSndD (pairSndD w))
         (b := coinTable n (permTrials n) (permBits n) (pairSndD (pairSndD w))) (fun _ _ _ => rfl)]
-    rfl
+    rw [permBits_eq, permTrials_eq]
   · rw [encPerm_getD_of_le _ (not_lt.1 hlt)]
 
 end TCSlib.Cryptography

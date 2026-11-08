@@ -184,6 +184,13 @@ def SingleMessageSecure (S : PrivateKeyScheme) : Prop :=
   ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (m₀ m₁ : Fin n → Bool),
     distAdv (S.encDist n m₀) (S.encDist n m₁) (D.distinguisherL n) ≤ ε n
 
+/-- The defining property of `SingleMessageSecure`: every distinguisher has a negligible bound
+`ε` on its advantage between the encryptions of any two messages. -/
+theorem singleMessageSecure_iff (S : PrivateKeyScheme) : S.SingleMessageSecure ↔
+    ∀ D : NUPPT, ∃ ε : ℕ → ℝ, Negligible ε ∧ ∀ n (m₀ m₁ : Fin n → Bool),
+      distAdv (S.encDist n m₀) (S.encDist n m₁) (D.distinguisherL n) ≤ ε n :=
+  Iff.rfl
+
 /-- The encoding of a list of strings as a nested pair `⟨c₀, ⟨c₁, ⟨…, []⟩⟩⟩` (the tuple of
 ciphertexts of [PS10, Definition 93.1]). -/
 def encodeList : List (List Bool) → List Bool
@@ -355,11 +362,9 @@ theorem distAdv_padXor_le {σ ρ : Type*} [Fintype σ] [Fintype ρ] {n L : ℕ} 
     distAdv (fun s => padXor h m₀ (G s)) (fun s => padXor h m₁ (G s)) D ≤
       prgAdv G (fun t r => D (padXor h m₀ t) r) + prgAdv G (fun t r => D (padXor h m₁ t) r) := by
   have e := acceptProb_padXor h m₀ m₁ D
-  change |acceptProb (fun s => padXor h m₀ (G s)) D - acceptProb (fun s => padXor h m₁ (G s)) D| ≤
-    |acceptProb (fun s => padXor h m₀ (G s)) D - acceptProb (fun p => padXor h m₀ p) D| +
-    |acceptProb (fun s => padXor h m₁ (G s)) D - acceptProb (fun p => padXor h m₁ p) D|
-  rw [← e, abs_sub_comm (acceptProb (fun s => padXor h m₁ (G s)) D)]
-  exact abs_sub_le _ _ _
+  simp only [prgAdv_eq, distAdv_def, acceptProb_def, id_eq] at e ⊢
+  rw [← e]
+  exact (abs_sub_le _ _ _).trans_eq (congrArg _ (abs_sub_comm _ _))
 
 /-! ### The scheme of [PS10, Algorithm 92.1] -/
 
@@ -510,14 +515,16 @@ private theorem prgAdv_eq_of_runAtL {n L : ℕ} (h : n ≤ L) {B D : NUPPT} (hc 
       prgAdv G (B.distinguisher n L) := by
   simp only [prgAdv_eq, distAdv_def]
   have e₁ : acceptProb G (B.distinguisher n L) =
-      acceptProb (fun s => List.ofFn (G s)) (B.distinguisherL n) := rfl
+      acceptProb (fun s => List.ofFn (G s)) (B.distinguisherL n) := by
+    simp only [acceptProb_def, NUPPT.distinguisher_eq]
   have e₂ : acceptProb id (B.distinguisher n L) =
-      acceptProb (fun t : Fin L → Bool => List.ofFn t) (B.distinguisherL n) := rfl
+      acceptProb (fun t : Fin L → Bool => List.ofFn t) (B.distinguisherL n) := by
+    simp only [acceptProb_def, NUPPT.distinguisher_eq, id_eq]
   rw [e₁, e₂,
     acceptProb_distinguisherL_congr hc n _ (fun s => List.ofFn (padXor h m (G s)))
       (fun s r => hB (G s) r),
     acceptProb_distinguisherL_congr hc n _ (fun t => List.ofFn (padXor h m t)) (fun t r => hB t r)]
-  rfl
+  simp only [acceptProb_def, id_eq]
 
 /-- **[PS10, Theorem 92.2]: the scheme of Algorithm 92.1 is single-message secure** when `G`
 is a pseudorandom generator.
@@ -578,15 +585,16 @@ theorem prgScheme_singleMessageSecure (P : PRG) (hP : P.Secure) (F : List Bool �
     rfl
   -- the negligible bound: the two PRG advantages of `B₀`, `B₁`
   refine ⟨fun n => prgAdv (P.G n) (B₀.distinguisher n (P.stretch.eval n)) +
-    prgAdv (P.G n) (B₁.distinguisher n (P.stretch.eval n)), (hP.2 B₀).add (hP.2 B₁),
+    prgAdv (P.G n) (B₁.distinguisher n (P.stretch.eval n)),
+    (((PRG.secure_iff P).1 hP).2 B₀).add (((PRG.secure_iff P).1 hP).2 B₁),
     fun n m₀ m₁ => ?_⟩
   refine (hμ n (m₀, m₁)).trans ?_
   simp only [distAdv_def]
   rw [acceptProb_prgScheme_encDist, acceptProb_prgScheme_encDist,
     ← prgAdv_eq_of_runAtL (P.expands n).le (hB₀c.trans hD'c) (μ n).1 (P.G n) (hrun B₀ _ hB₀ n),
     ← prgAdv_eq_of_runAtL (P.expands n).le (hB₁c.trans hD'c) (μ n).2 (P.G n) (hrun B₁ _ hB₁ n)]
-  exact distAdv_padXor_le (P.expands n).le (P.G n) (μ n).1 (μ n).2
-    (fun t r => D.distinguisherL n (List.ofFn t) r)
+  exact (distAdv_def _ _ _).symm.trans_le (distAdv_padXor_le (P.expands n).le (P.G n) (μ n).1
+    (μ n).2 (fun t r => D.distinguisherL n (List.ofFn t) r))
 
 /-! ### Deterministic schemes are not multi-message secure [PS10, Theorem 94.2] -/
 
@@ -642,7 +650,7 @@ theorem not_multiMessageSecure_of_deterministic (S : PrivateKeyScheme) (hS : S.D
   intro hsec
   obtain ⟨ε, hε, hD⟩ :=
     hsec (NUPPT.ofPolyTimeUniform polyTimeComputable_firstTwoEqFun (.const 0)) (.const 1)
-  obtain ⟨n₀, hn₀⟩ := hε 1
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff ε).1 hε 1
   -- the parameter `n = n₀ + 1 ≥ 1` at which `ε n < 1`
   have hεn : |ε (n₀ + 1)| < 1 := by
     have h := hn₀ (n₀ + 1) (Nat.le_succ n₀)

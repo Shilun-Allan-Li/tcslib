@@ -132,8 +132,9 @@ exponentiation. -/
 theorem polyTimeComputable_sliceTake (a k : ℕ) :
     PolyTimeComputable (sliceTake a k) := by
   have hu : PolyTimeComputable
-      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) :=
-    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
+      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) := by
+    rw [polyLen_def]
+    exact (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
   have henc : PolyTimeComputable (fun z => Turing.pairEncode
       (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=
     PolyTimeComputable.pairEncode hu polyTimeComputable_pairSndD
@@ -155,8 +156,9 @@ theorem polyTimeComputable_sliceTake (a k : ℕ) :
 theorem polyTimeComputable_sliceDrop (a k : ℕ) :
     PolyTimeComputable (sliceDrop a k) := by
   have hu : PolyTimeComputable
-      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) :=
-    (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
+      (fun z => List.replicate (polyLen a k (pairFstD z).length) true) := by
+    rw [polyLen_def]
+    exact (polyTimeComputable_polyUnary a k).comp polyTimeComputable_pairFstD
   have henc : PolyTimeComputable (fun z => Turing.pairEncode
       (List.replicate (polyLen a k (pairFstD z).length) true) (pairSndD z)) :=
     PolyTimeComputable.pairEncode hu polyTimeComputable_pairSndD
@@ -182,6 +184,7 @@ intersection of the complement of that preimage with the preimage of `M₂`'s
 (`polyTimeComputable_sliceTake`/`_sliceDrop`).  The off-pair freedom in the
 efficiency notion lets us use these preimages verbatim. -/
 theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
+  refine (closedUnderRace_iff _).2 ?_
   rintro M₁ M₂ a k ⟨V₁, _, hV₁, _, hM₁⟩ ⟨V₂, _, hV₂, _, hM₂⟩
   refine ⟨sliceTake a k ⁻¹' V₁,
     {z | z ∈ (sliceTake a k ⁻¹' V₁)ᶜ ∧ z ∈ sliceDrop a k ⁻¹' V₂},
@@ -217,6 +220,7 @@ theorem polyTimeModel_closedUnderRace : ClosedUnderRace polyTimeModel := by
 Boolean verifier is its complement (`Complexity.compl_mem_P`). -/
 theorem polyTimeModel_closedUnderAnswerIs :
     ClosedUnderAnswerIs polyTimeModel := by
+  refine (closedUnderAnswerIs_iff _).2 ?_
   rintro M b ⟨V₁, V₀, hV₁, hV₀, hM⟩
   cases b
   · refine ⟨V₀, V₀ᶜ, hV₀, compl_mem_P hV₀, fun x r => ?_⟩
@@ -250,6 +254,7 @@ freedom in the efficiency notion lets us use these sets verbatim. -/
 theorem polyTimeModel_closedUnderMajority :
     ClosedUnderMajority polyTimeModel := by
   classical
+  refine (closedUnderMajority_iff _).2 ?_
   rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩
   have hblock := mem_P_of_blockMajority hV₁ a k a' k'
   refine ⟨_, _, hblock, compl_mem_P hblock, fun x r => ?_⟩
@@ -305,6 +310,7 @@ theorem polyTimeModel_closedUnderMajority :
 the set of pairs some of whose random blocks puts the re-paired input in
 `M`'s `some true`-language, and the `some false`-set is its complement. -/
 theorem polyTimeModel_closedUnderAny : ClosedUnderAny polyTimeModel := by
+  refine (closedUnderAny_iff _).2 ?_
   classical
   rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩
   have hblock := mem_P_of_blockAny hV₁ a k a' k'
@@ -344,6 +350,7 @@ theorem polyTimeModel_closedUnderAny : ClosedUnderAny polyTimeModel := by
 /-- Polynomial time is closed under negating the verifier's answer.
 **Proof.** Swap the two witnessing `P`-languages. -/
 theorem polyTimeModel_closedUnderNot : ClosedUnderNot polyTimeModel := by
+  refine (closedUnderNot_iff _).2 ?_
   rintro M ⟨V₁, V₀, hV₁, hV₀, hM⟩
   refine ⟨V₀, V₁, hV₀, hV₁, fun x r => ?_⟩
   have h := hM x r
@@ -364,6 +371,7 @@ XOR-shifted block-OR closure `Complexity.mem_P_of_blockXorAny` at `M`'s
 theorem polyTimeModel_closedUnderShiftOr :
     ClosedUnderShiftOr polyTimeModel := by
   classical
+  refine (closedUnderShiftOr_iff _).2 ?_
   rintro M a k a' k' ⟨V₁, _, hV₁, _, hM⟩
   have hblock := mem_P_of_blockXorAny hV₁ a k a' k'
   refine ⟨_, hblock, fun x u v => ?_⟩
@@ -411,9 +419,10 @@ theorem polyTimeModel_verifierHasCircuits :
       VerifierHasCircuits M (polyLen a k) := by
   classical
   rintro M a k ⟨V₁, V₀, hV₁, hV₀, hM⟩
-  have hPoly : V₁.InPPoly := Complexity.P_subset_PPoly hV₁
-  obtain ⟨b, j, F, hF, hSize, hLanguage⟩ := hPoly
-  refine ⟨b * (a + 3) ^ j + 1, (k + 1) * (j + 1), fun n r hr => ?_⟩
+  have hPoly : V₁.InPPoly := (BoolCircuit.mem_PPoly_iff _).1 (Complexity.P_subset_PPoly hV₁)
+  obtain ⟨b, j, hbj⟩ := (Language.inPPoly_iff_inSIZE _).1 hPoly
+  obtain ⟨F, hF, hSize, hLanguage⟩ := (Language.inSIZE_iff _ _).1 hbj
+  refine (verifierHasCircuits_iff _ _).2 ⟨b * (a + 3) ^ j + 1, (k + 1) * (j + 1), fun n r hr => ?_⟩
   let ell := 2 * n + 2 + r.length
   let C := F.circuit ell
   let D : BoolCircuit.DAGCircuit n := BoolCircuit.DAGCircuit.pairEncode r C
@@ -489,7 +498,8 @@ theorem inSigma2_polyTimeModel_iff (L : Language Bool) :
     InSigma2 polyTimeModel L ↔ L ∈ SigmaP 2 := by
   classical
   constructor
-  · rintro ⟨N, a₁, k₁, a₂, k₂, ⟨V, hV, hN⟩, hiff⟩
+  · intro hS2
+    obtain ⟨N, a₁, k₁, a₂, k₂, ⟨V, hV, hN⟩, hiff⟩ := (inSigma2_iff _ _).1 hS2
     have h₁ : PolyHierarchy.UnaryPT
         (fun y : List Bool => polyLen a₁ k₁ y.length) := by
       have h := PolyHierarchy.unaryPT_poly a₁ k₁ polyTimeComputable_id
@@ -517,7 +527,7 @@ theorem inSigma2_polyTimeModel_iff (L : Language Bool) :
     exact hmem
   · intro hL
     obtain ⟨C, c, V, hV, hiff⟩ := mem_SigmaP_two_iff_exists_forall.mp hL
-    refine ⟨fun x u v =>
+    refine (inSigma2_iff _ _).2 ⟨fun x u v =>
         decide (Turing.pairEncode (Turing.pairEncode x u) v ∈ V),
       C, c, C, c,
       ⟨V, hV, fun x u v => by rw [decide_eq_true_eq]⟩, fun x => ?_⟩
@@ -556,6 +566,6 @@ theorem sipser_gacs_polyTime {L : Language Bool}
     polyTimeModel_closedUnderMajority polyTimeModel_closedUnderNot
     polyTimeModel_closedUnderShiftOr hL
   exact ⟨(inSigma2_polyTimeModel_iff L).mp h1,
-    (inSigma2_polyTimeModel_iff Lᶜ).mp h2⟩
+    compl_mem_SigmaP_iff.mp ((inSigma2_polyTimeModel_iff Lᶜ).mp ((inPi2_iff _ _).1 h2))⟩
 
 end Randomized

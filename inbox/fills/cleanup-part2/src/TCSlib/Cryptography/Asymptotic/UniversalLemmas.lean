@@ -188,8 +188,8 @@ theorem polyTimeComputable_logMarker :
 theorem polyTimeComputable_univBudget :
     PolyTimeComputable fun y : List Bool => Nat.bits ((y.length + 1) ^ 3) := by
   obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_polyBits 1 3
-  refine ⟨M, a, 4, fun y => ?_⟩
-  simpa using hM y
+  refine (polyTimeComputable_iff _).2 ⟨M, a, 4, ?_⟩
+  simpa using hM
 
 /-! ## Serialization lengths of coded machines -/
 
@@ -197,7 +197,7 @@ theorem polyTimeComputable_univBudget :
 code (output length is at most the number of steps). -/
 theorem length_serialize_decode_le (c : EffectiveMachineCode) (α : List Bool) :
     (c.decode α).serialize.length ≤ c.canonizerTime α.length := by
-  have h := c.canonizer_computes α
+  have h := (FinTM.computesFunInTime_iff _ _ _).1 c.canonizer_computes α
   obtain ⟨-, ho⟩ := (FinTM.computesInTime_iff _ _ _ _).mp h
   have ho' : (c.canonizer.tm.runFrom (c.canonizer.tm.initCfg α) (c.canonizerTime α.length)).output =
       (c.decode α).serialize := ho

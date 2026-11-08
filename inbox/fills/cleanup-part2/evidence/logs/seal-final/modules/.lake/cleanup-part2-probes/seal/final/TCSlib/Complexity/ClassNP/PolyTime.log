@@ -1,0 +1,59 @@
+START 2026-11-08T09:05:55.048857+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean sha256=ed75d85abad8699f5a2139aca1da1081b204d0da6e5a3e9b35a8280213aea65b
+CP2-SEAL chunk=0 requested=75 active=75 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean:192:19: error: Application type mismatch: The argument
+  fun x => ?m.30
+has type
+  (x : ?m.28) → ?m.31 x
+but is expected to have type
+  M.ComputesFunInTime id fun n => C * (n + 1) ^ 1
+in the application
+  Exists.intro 1 fun x => ?m.30
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean:192:29: error: Function expected at
+  hM
+but this term has type
+  M.ComputesFunInTime id fun n => C * (n + 1)
+
+Note: Expected a function because this term is being applied to the argument
+  x
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean:193:2: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean:208:55: error: Function expected at
+  hM
+but this term has type
+  M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+
+Note: Expected a function because this term is being applied to the argument
+  x
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean:205:73: error: unsolved goals
+f : List Bool → List Bool
+M : FinTM Bool
+C c : ℕ
+hM : M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+x : List Bool
+⊢ (f x).length ≤ C * (x.length + 1) ^ c
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean:271:4: error: Application type mismatch: The argument
+  fun x => ?m.150
+has type
+  (x : ?m.148) → ?m.151 x
+but is expected to have type
+  M.ComputesFunInTime (g ∘ f) fun n => a * (C + C' * (C + 1) ^ c' + 1) * (n + 1) ^ max c (c * c')
+in the application
+  Exists.intro (max c (c * c')) fun x => ?m.150
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean:271:14: error: Function expected at
+  hM
+but this term has type
+  M.ComputesFunInTime (g ∘ f) fun n => a * (C * (n + 1) ^ c + C' * (C * (n + 1) ^ c + 1) ^ c' + 1)
+
+Note: Expected a function because this term is being applied to the argument
+  x
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime.lean:272:2: error: No goals to be solved
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/ClassNP/PolyTime): no fresh .olean produced
+
+END 2026-11-08T09:05:56.911433+00:00 RC 1 elapsed=1.9s pid=12874 maxrss=1703568KiB

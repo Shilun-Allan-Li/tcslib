@@ -1,0 +1,71 @@
+START 2026-11-08T10:00:04.213782+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/controls/ControlsSealed
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/controls/ControlsSealed.lean sha256=28b47c498fdf2933194387ebc66cc2140fe909496e51859abb489b9b7e1ddc13
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=118 active=118 already=0
+.lake/cleanup-part2-probes/controls/ControlsSealed.lean:599:45: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  pairDecode [] = none
+.lake/cleanup-part2-probes/controls/ControlsSealed.lean:603:2: error: 'show' tactic failed, pattern
+  some ([], z) = some ([], z)
+is not definitionally equal to target
+  pairDecode (false :: true :: z) = some ([], z)
+.lake/cleanup-part2-probes/controls/ControlsSealed.lean:607:34: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  pairDecode [] = none
+.lake/cleanup-part2-probes/controls/ControlsSealed.lean:621:2: error: Tactic `rfl` failed: The left-hand side
+  match z with
+  | false :: false :: rest => Option.map (fun p => (false :: p.1, p.2)) (pairDecode rest)
+  | true :: true :: rest => Option.map (fun p => (true :: p.1, p.2)) (pairDecode rest)
+  | false :: true :: rest => some ([], rest)
+  | x => none
+is not definitionally equal to the right-hand side
+  match z with
+  | false :: false :: rest => Option.map (fun p => (false :: p.1, p.2)) (pairDecode rest)
+  | true :: true :: rest => Option.map (fun p => (true :: p.1, p.2)) (pairDecode rest)
+  | false :: true :: rest => some ([], rest)
+  | x => none
+
+z : List Bool
+⊢ (match z with
+    | false :: false :: rest => Option.map (fun p => (false :: p.1, p.2)) (pairDecode rest)
+    | true :: true :: rest => Option.map (fun p => (true :: p.1, p.2)) (pairDecode rest)
+    | false :: true :: rest => some ([], rest)
+    | x => none) =
+    match z with
+    | false :: false :: rest => Option.map (fun p => (false :: p.1, p.2)) (pairDecode rest)
+    | true :: true :: rest => Option.map (fun p => (true :: p.1, p.2)) (pairDecode rest)
+    | false :: true :: rest => some ([], rest)
+    | x => none
+.lake/cleanup-part2-probes/controls/ControlsSealed.lean:624:65: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  pairDecode [] = none
+in the application
+  ⟨[], ⋯⟩
+.lake/cleanup-part2-probes/controls/ControlsSealed.lean:629:56: error: Type mismatch
+  rfl
+has type
+  ?m.19 = ?m.19
+but is expected to have type
+  (emitCfg emb ret pre c).output = pre ++ c.output
+.lake/cleanup-part2-probes/controls/ControlsSealed.lean:634:9: error: Tactic `rcases` failed: `h : PolyTimeComputable f` is not an inductive datatype
+CP2-CONTROLS-EOF
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/controls/ControlsSealed): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/controls/ControlsSealed): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/controls/ControlsSealed): no fresh .olean produced
+
+END 2026-11-08T10:00:13.626606+00:00 RC 1 elapsed=9.4s pid=21513 maxrss=1813796KiB

@@ -54,6 +54,12 @@ noncomputable def hashPair (f : S → α → β) (X : FinDist α) : FinDist (S �
   FinDist.map (fun p => (p.1, f p.1 p.2)) (FinDist.prod (uniform S) X)
 
 omit [DecidableEq α] [Nonempty β] in
+/-- The defining equation of `hashPair`: the image of `uniform S × X` under
+`(s, x) ↦ (s, f s x)`. -/
+theorem hashPair_eq (f : S → α → β) (X : FinDist α) :
+    hashPair f X = FinDist.map (fun p => (p.1, f p.1 p.2)) (FinDist.prod (uniform S) X) := rfl
+
+omit [DecidableEq α] [Nonempty β] in
 theorem hashPair_apply (f : S → α → β) (X : FinDist α) (s : S) (y : β) :
     hashPair f X (s, y)
       = (Fintype.card S : ℝ)⁻¹ * ∑ x ∈ univ.filter (fun x => f s x = y), X x := by

@@ -63,6 +63,10 @@ through length arithmetic). Class definitions use explicit formulas instead. -/
 def PolyBound (p : ℕ → ℕ) : Prop :=
   ∃ C c : ℕ, ∀ n, p n ≤ C * (n + 1) ^ c
 
+/-- The defining property of `PolyBound`: `PolyBound p ↔ ∃ C c, ∀ n, p n ≤ C · (n + 1)^c`. -/
+theorem polyBound_iff (p : ℕ → ℕ) : PolyBound p ↔ ∃ C c : ℕ, ∀ n, p n ≤ C * (n + 1) ^ c :=
+  Iff.rfl
+
 /-- A function on binary strings is *polynomial-time computable* when some finite
 binary-alphabet machine computes it within `C · (n + 1)^c` steps on inputs of
 length `n` — the function class FP implicit throughout [AB09, ch. 2]. -/

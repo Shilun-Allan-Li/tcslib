@@ -1,0 +1,18 @@
+START 2026-11-08T08:11:50.667647+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Complexity/TuringMachine/CounterProgInput
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Complexity/TuringMachine/CounterProgInput.lean sha256=770149e2d34e7c038bda2fd99fb881c42239ed2606b891d2993cb359377d7ed3
+TCSlib/Complexity/TuringMachine/CounterProgInput.lean:65:34: warning: This simp argument is unused:
+  shiftInput
+
+Hint: Omit it from the simp argument list.
+  simp [s̵h̵i̵f̵t̵I̵n̵p̵u̵t̵,̵ ̵Nat.add_assoc]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Complexity/TuringMachine/CounterProgInput.lean:61:4: warning: 'all_goals try rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+
+END 2026-11-08T08:11:51.856388+00:00 RC 0 elapsed=1.2s pid=2193 maxrss=1752176KiB

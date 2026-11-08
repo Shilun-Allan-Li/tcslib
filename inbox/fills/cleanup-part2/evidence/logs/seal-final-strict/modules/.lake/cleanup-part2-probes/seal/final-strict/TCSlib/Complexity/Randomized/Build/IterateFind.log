@@ -1,0 +1,160 @@
+START 2026-11-08T09:30:28.442786+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean sha256=f63216ed8dc4e237de7633c6a8804ace1230395c1e30e2a29ca662f71dd26239
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=166 active=166 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:991:26: error(lean.unknownIdentifier): Unknown constant `Turing.FinTM.State.inl`
+
+Note: Inferred this name from the expected resulting type of `.inl`:
+  H.State
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:991:26: error(lean.invalidDottedIdent): Invalid dotted identifier notation: The expected type of `.inl`
+  H.State
+is not of the form `C ...` or `... → C ...` where C is a constant
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1009:68: error: Application type mismatch: The argument
+  0
+has type
+  Fin 2
+but is expected to have type
+  (M 0).State
+in the application
+  ModuleHost.host_call M (K + 1) hk (hostCtrl M K) (hostRet M) (ModuleHost.entry M 0) 0 ?m.1187 x [] x [] [] 0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1011:31: error: Type mismatch
+  Cfg.ofWords (ModuleHost.entry M 0) (stateWord (K + 1) [])
+has type
+  Cfg (K + 1) Bool (ModuleHost.State ?m.1234 M) ?m.1233
+but is expected to have type
+  Cfg H.k Bool H.State x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1018:50: error: Application type mismatch: The argument
+  ModuleHost.entry M 0
+has type
+  ModuleHost.State ?m.1269 M
+but is expected to have type
+  H.State
+in the application
+  Cfg.ofWords (ModuleHost.entry M 0)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1019:27: error: Type mismatch
+  Cfg.ofWords (hostRet M 0) (stateWord (K + 1) x)
+has type
+  Cfg (K + 1) Bool (ModuleHost.State (Fin 3) M) ?m.1296
+but is expected to have type
+  Cfg H.k Bool H.State x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1062:50: error: Application type mismatch: The argument
+  ModuleHost.entry M 2
+has type
+  ModuleHost.State ?m.1540 M
+but is expected to have type
+  H.State
+in the application
+  Cfg.ofWords (ModuleHost.entry M 2)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1063:30: error: Type mismatch
+  Cfg.ofWords (hostRet M 2) (stateWord (K + 1) (verdictWord acc (pairEncode x s)))
+has type
+  Cfg (K + 1) Bool (ModuleHost.State (Fin 3) M) ?m.1553
+but is expected to have type
+  Cfg H.k Bool H.State x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1168:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+g : List Bool → List Bool
+hg : PolyTimeComputable g
+acc : List Bool → Bool
+hacc : PolyTimeComputable fun s => [acc s]
+out : List Bool → List Bool
+hout : PolyTimeComputable out
+R P : PolyExpr
+horbit : ∀ (x : List Bool), ∀ i ≤ R.eval x.length, (g^[i] x).length ≤ P.eval x.length
+S : FinTM Bool
+aS dS : ℕ
+hS : ModuleHost.Clean S (fun x => pairEncode x x) (fun x => []) fun n => aS * (n + 1) ^ dS
+V : FinTM Bool
+aV dV : ℕ
+hV : ModuleHost.Clean V (verdictWord acc) (fun x => []) fun n => aV * (n + 1) ^ dV
+I : FinTM Bool
+aI dI : ℕ
+hI : ModuleHost.Clean I (stepWord g P) (fun x => []) fun n => aI * (n + 1) ^ dI
+E : FinTM Bool
+aE dE : ℕ
+hE : ModuleHost.Clean E id (outWord out) fun n => aE * (n + 1) ^ dE
+hbits : PolyTimeComputable fun x => (R.eval x.length).bits
+F : FinTM Bool
+aF dF : ℕ
+hF : F.ComputesFunInTime (fun x => (R.eval x.length).bits) fun n => aF * (n + 1) ^ dF
+M : Fin 5 → FinTM Bool :=
+  fun i =>
+    match ↑i with
+    | 0 => copyTM
+    | 1 => S
+    | 2 => V
+    | 3 => I
+    | x => E
+K : ℕ := S.k + V.k + I.k + E.k
+hk : ∀ (i : Fin 5), (M i).k ≤ K + 1
+H : FinTM Bool := hostTM M K hk
+anchor : H.State := sorry
+hclean :
+  ∀ (i : Fin 5) (f g : List Bool → List Bool) (B : ℕ → ℕ),
+    ModuleHost.Clean (M i) f g B →
+      ∀ (x arg pre : List Bool),
+        ∃ t,
+          0 < t ∧
+            t ≤ B arg.length ∧
+              (∀ v < t,
+                  ∀ (c : Fin 3),
+                    (MultiTapeTM.runFrom
+                          (have __src := Cfg.ofWords (ModuleHost.entry M i) (stateWord (K + 1) arg);
+                          { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+                            workTapePos := __src.workTapePos, output := pre })
+                          v).state ≠
+                      some (Sum.inl c)) ∧
+                MultiTapeTM.runFrom
+                    (have __src := Cfg.ofWords (ModuleHost.entry M i) (stateWord (K + 1) arg);
+                    { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+                      workTapePos := __src.workTapePos, output := pre })
+                    t =
+                  have __src := Cfg.ofWords (hostRet M i) (stateWord (K + 1) (f arg));
+                  { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+                    workTapePos := __src.workTapePos, output := pre ++ g arg }
+D : ℕ := dS + dV + dI + dE + dF + 1
+A : ℕ := aS + aV + aI + aE + aF + 5
+pow : ℕ → ℕ := fun n => (2 * n + 2 + P.eval n + 5) ^ D
+T : ℕ → ℕ := fun n => A * pow n
+hpow : ∀ (n : ℕ), n + 1 ≤ pow n
+hstart :
+  ∀ (x : List Bool),
+    ∃ t ≤ T x.length,
+      (∀ v < t, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) v).state ≠ some anchor) ∧
+        MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t = Cfg.ofWords anchor (stateWord H.k (pairEncode x x))
+hround :
+  ∀ (x w : List Bool),
+    Inv P x w →
+      ∃ t,
+        0 < t ∧
+          t ≤ T x.length ∧
+            (∀ (t' : ℕ),
+                0 < t' → t' < t → (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord H.k w)) t').state ≠ some anchor) ∧
+              if acc (pairSndD w) = true then
+                (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord H.k w)) t).state = none ∧
+                  (MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord H.k w)) t).output = out (pairSndD w)
+              else
+                MultiTapeTM.runFrom (Cfg.ofWords anchor (stateWord H.k w)) t =
+                  Cfg.ofWords anchor (stateWord H.k (step g P x w))
+⊢ F.ComputesFunInTime (fun x => (R.eval x.length).bits) T
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1184:9: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun x =>
+    match
+      List.find? (fun i => acc (pairSndD ((step g P x)^[i] (pairEncode x x)))) (List.range (R.eval x.length + 1)) with
+    | some i => out (pairSndD ((step g P x)^[i] (pairEncode x x)))
+    | none => []
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind.lean:1185:2: error: No goals to be solved
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/Randomized/Build/IterateFind): no fresh .olean produced
+
+END 2026-11-08T09:30:40.487192+00:00 RC 1 elapsed=12.0s pid=17100 maxrss=1876172KiB

@@ -1,0 +1,62 @@
+From 03ead73ab38e74621800367c072f6fd3f0f70991 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 8 Nov 2026 10:05:02 +0000
+Subject: [PATCH 13/13] cleanup-part2: repair the three foreign reads the X1
+ block relocation created in unchanged consumer blocks
+ (HardCoreGL.glBlocks_apply via blocksEquivX_symm_apply;
+ OneWayYao.pushesUniform_pbOf and the yaoRaw' block step via
+ blocksE_apply/blocksE_eq and FunFamily.blocks_apply)
+
+---
+ TCSlib/Cryptography/Asymptotic/HardCoreGL.lean |  5 ++++-
+ TCSlib/Cryptography/Asymptotic/OneWayYao.lean  | 11 +++++++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean b/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean
+index 5d75cec62..24fd200d1 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreGL.lean
+@@ -821,7 +821,10 @@ noncomputable def glBlocks (A : NUPPT) (n m k : ℕ) (c : Fin m → HardcoreBit.
+ /-- The call block of the round `p` is `c p.divNat L_{p.modNat}`. -/
+ @[simp] theorem glBlocks_apply (A : NUPPT) (n m k : ℕ) (c : Fin m → HardcoreBit.NESubset k → A.Coins n)
+     (p : Fin (m * (2 ^ k - 1))) :
+-    glBlocks A n m k c p = c p.divNat ((nesubsetEquiv k).symm p.modNat) := rfl
++    glBlocks A n m k c p = c p.divNat ((nesubsetEquiv k).symm p.modNat) := by
++  unfold glBlocks
++  rw [blocksEquivX_symm_apply]
++  rfl
+ 
+ /-- The encoding of the coins `(s, b, c)` with unread coins `ex`:
+ `s ‖ b ‖ blocks ‖ ex`. -/
+diff --git a/TCSlib/Cryptography/Asymptotic/OneWayYao.lean b/TCSlib/Cryptography/Asymptotic/OneWayYao.lean
+index ddd00c765..4909d55bc 100644
+--- a/TCSlib/Cryptography/Asymptotic/OneWayYao.lean
++++ b/TCSlib/Cryptography/Asymptotic/OneWayYao.lean
+@@ -521,7 +521,12 @@ theorem pushesUniform_pbOf {n M kk : ℕ} (h : n * kk ≤ n * M) :
+   have h₁ : HardcoreBit.PushesUniform fun a : Fin (n * M) → Bool => (e₁ a).1 :=
+     (HardcoreBit.pushesUniform_equiv e₁).comp HardcoreBit.pushesUniform_fst
+   have h₂ := h₁.comp (HardcoreBit.pushesUniform_equiv (blocksE n kk))
+-  convert h₂ using 1
++  have hfun : pbOf (M := M) h = fun ω => blocksE n kk (e₁ ω).1 := by
++    funext ω t j
++    rw [blocksE_apply]
++    rfl
++  rw [hfun]
++  exact h₂
+ 
+ /-- The typed coins of a round read off the raw round coins: the position by rejection, the
+ fresh inputs as `m` blocks of `k` bits, and the coins of `A'`. -/
+@@ -806,7 +811,9 @@ theorem yaoRaw'_layout (y : Fin (D.outLen.eval n) → Bool)
+     rw [ρPEquiv_ofFn]
+     conv_lhs => rw [← List.take_append_drop ((ρP D).eval n) ((List.ofFn r).drop (i * (ρP D).eval n))]
+     congr 1
+-    exact (ofFn_block_eq_take_drop r ⟨i, h⟩).symm
++    rw [blocksE_eq]
++    exact (ofFn_block_eq_take_drop r ⟨i, h⟩).symm.trans
++      (congrArg List.ofFn (funext fun j => (FunFamily.blocks_apply _ _ r ⟨i, h⟩ j).symm))
+   have hacc : ∀ i : ℕ, acc D ((g D)^[i] x₀) =
+       if h : i < T.eval n + 1 then
+         decide (f (yaoTry f (yaoB D.inLen D.outLen D.m D.A' n) y (sampleAll T n hM r ⟨i, h⟩)) = y)
+-- 
+2.43.0
+

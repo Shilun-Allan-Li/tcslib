@@ -1,0 +1,76 @@
+From 669f3c929e481feaa49d27cfd7b694fbe46de25f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 8 Nov 2026 07:41:21 +0000
+Subject: [PATCH 11/13] cleanup-part2: proof sketches for three proofs the J
+ repairs lengthened past 20 lines (owpPredPost_poly, PermFamily.glHalf_easy,
+ tdpPredFun_poly); docstrings only
+
+---
+ TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean     |  8 +++++++-
+ .../Cryptography/Asymptotic/HardCorePermutation.lean   | 10 +++++++++-
+ TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean    |  9 ++++++++-
+ 3 files changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+index e24bac6a4..1709fe9a8 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean
+@@ -299,7 +299,13 @@ theorem owpPredPre_poly : PolyTimeComputable owpPredPre :=
+ 
+ /-- The post-processing of the predictor is polynomial-time (`polyTimeComputable_pairEq` for
+ the verdict test, `polyTimeComputable_headD` for the two bits, `polyTimeComputable_ite`,
+-`BinArith.polyTimeComputable_xor`). -/
++`BinArith.polyTimeComputable_xor`).
++
++**Proof sketch.** On `v = ⟨w, out⟩` the verdict bit `[out = [true]]` is `polyTimeComputable_pairEq`
++against the constant `[true]`; the advice bit `σ` and the coin bit `flip` are heads of the
++advice and coin projections of `w` (`polyTimeComputable_headD`); the selected bit
++`if out = [true] then σ else !σ` is `polyTimeComputable_ite` with `polyTimeComputable_not`;
++the output is its `xor` with `flip` (`BinArith.polyTimeComputable_xor`). -/
+ theorem owpPredPost_poly : PolyTimeComputable owpPredPost := by
+   have htest : PolyTimeComputable fun v : List Bool => [decide (pairSndD v = [true])] := by
+     convert polyTimeComputable_pairEq.comp
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean b/TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean
+index ecdd3181b..831321068 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCorePermutation.lean
+@@ -522,7 +522,15 @@ theorem PermFamily.ofFn_glHalf_f (P : PermFamily) (n : ℕ) (z : Fin n → Bool)
+ 
+ /-- **The balanced permutation is easy to compute** from an evaluator `F` of `f` on `⟨1^n, x⟩`:
+ on `⟨1^n, z⟩` halve the parameter (`unaryHalf`), cut `z` after `⌊n/2⌋` bits, apply `F` to the
+-first block at parameter `⌊n/2⌋` and copy the rest. -/
++first block at parameter `⌊n/2⌋` and copy the rest.
++
++**Proof sketch.** The evaluator `w ↦ F ⟨1^{⌊n/2⌋}, z.take ⌊n/2⌋⟩ ++ z.drop ⌊n/2⌋` is
++polynomial-time (`unaryHalf_poly`, `takeLen_poly`, `dropLen_poly`). On `⟨1^n, ofFn z⟩` the
++input of the family is read through its domain equivalence (`toFunFamily_domEquiv_ofFn`) and
++the output through its range equivalence (`toFunFamily_codEquiv_ofFn`,
++`toFunFamily_f_domEquiv`); the first block is `ofFn` of the restriction of `z`
++(`take_ofFn_castLE`), where `F` computes `f (⌊n/2⌋)`, and `ofFn_glHalf_f` is the same
++concatenation. -/
+ theorem PermFamily.glHalf_easy (P : PermFamily) {F : List Bool → List Bool}
+     (hF : PolyTimeComputable F)
+     (hFx : ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x)) :
+diff --git a/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean b/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean
+index 661771b70..b5404eeb4 100644
+--- a/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean
+@@ -735,7 +735,14 @@ def tdpPredFun (D : NUPPT) (flip : Bool) (z : List Bool) : List Bool :=
+ 
+ /-- The raw predictor is polynomial-time (`polyTimeComputable_headD`, `Complexity.polyTimeComputable_tail`,
+ `polyTimeComputable_pairEq` for the verdict,
+-`BinArith.polyTimeComputable_xor`/`polyTimeComputable_not`). -/
++`BinArith.polyTimeComputable_xor`/`polyTimeComputable_not`).
++
++**Proof sketch.** The first coin `c` is the head of the coin projection; `D` runs on the
++layout with argument `⟨fst y, ⟨snd y, [c]⟩⟩`, the advice and the remaining coins (the tail,
++`polyTimeComputable_tail` through `List.drop_one`), which is `D.polyTimeComputable_output`
++after `NUPPT.polyTimeComputable_layout`; the verdict `[D's output = [true]]` is
++`polyTimeComputable_pairEq`; the output `c ⊕ ¬verdict ⊕ flip` is two
++`BinArith.polyTimeComputable_xor` with `polyTimeComputable_not` and a constant. -/
+ theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredFun D flip) := by
+   have hc : PolyTimeComputable fun z => [(NUPPT.inCoins z).headD false] :=
+     polyTimeComputable_headD.comp NUPPT.polyTimeComputable_inCoins
+-- 
+2.43.0
+

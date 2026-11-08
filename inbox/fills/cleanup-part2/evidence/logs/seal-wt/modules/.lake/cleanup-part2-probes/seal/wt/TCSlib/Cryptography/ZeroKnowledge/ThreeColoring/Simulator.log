@@ -1,0 +1,209 @@
+START 2026-11-08T07:05:25.027146+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean sha256=13fbf20886981db15ab2144c4826dd9ea3633446d31a7553ff9094f3cd7d2c18
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=200 active=200 already=0
+CP2-SEAL chunk=9 requested=129 active=129 already=0
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:2406:4: error: 'show' tactic failed, pattern
+  (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e then
+        some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r, colOpen (fun i => π (c i)) r (edgeOf G e))
+      else none) =
+      none ↔
+    ?m.120
+is not definitionally equal to target
+  colSimAttemptH Com ℓn G c V ((attemptCoinsEquiv (edgeCount G) (Fin n → Fin ℓn → Bool) ρ).symm (((π, r), ρ₀), e)) =
+      none ↔
+    ¬edgeIdxOfMsg (edgeCount G)
+          (V (colCommit Com n ℓn (fun i => (((π, r), ρ₀), e).1.1.1 (c i)) (((π, r), ρ₀), e).1.1.2)
+            (((π, r), ρ₀), e).1.2) =
+        ↑(((π, r), ρ₀), e).2
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:2445:4: error: 'show' tactic failed, pattern
+  (∃ v,
+      (if edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e then
+            some (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r, colOpen (fun i => π (c i)) r (edgeOf G e))
+          else none) =
+          some v ∧
+        T v) ↔
+    edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀) = ↑e ∧
+      T
+        (ρ₀, colCommit Com n ℓn (fun i => π (c i)) r,
+          match edgeAt G (edgeIdxOfMsg (edgeCount G) (V (colCommit Com n ℓn (fun i => π (c i)) r) ρ₀)) with
+          | some p => colOpen (fun i => π (c i)) r p
+          | none => [])
+is not definitionally equal to target
+  (∃ v,
+      colSimAttemptH Com ℓn G c V ((attemptCoinsEquiv (edgeCount G) (Fin n → Fin ℓn → Bool) ρ).symm (((π, r), ρ₀), e)) =
+          some v ∧
+        T v) ↔
+    edgeIdxOfMsg (edgeCount G)
+          (V (colCommit Com n ℓn (fun i => (((π, r), ρ₀), e).1.1.1 (c i)) (((π, r), ρ₀), e).1.1.2)
+            (((π, r), ρ₀), e).1.2) =
+        ↑(((π, r), ρ₀), e).2 ∧
+      T (colRealView Com ℓn G c V (((π, r), ρ₀), e).1)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:2501:2: error: Type mismatch
+  statClose_truncAttempts (colSimAttemptH Com ℓn G c V) (colRealView Com ℓn G c V) hθ
+    (uprob_colSimAttemptH_none Com ℓn G hm c V)
+    (fun T =>
+      Eq.mpr
+        (id
+          (congrArg (fun _a => _a = (1 - (1 - 1 / ↑(edgeCount G))) * uprob fun u => T (colRealView Com ℓn G c V u))
+            (uprob_colSimAttemptH_some Com ℓn G hm c V T)))
+        ((fun {α β γ} [HMul α β γ] a a_1 e_a =>
+            Eq.rec (motive := fun a_2 e_a => ∀ (a_3 a_4 : β), a_3 = a_4 → a * a_3 = a_2 * a_4)
+              (fun a_2 a_3 e_a => e_a ▸ Eq.refl (a * a_2)) e_a)
+          (1 / ↑(edgeCount G)) (1 - (1 - 1 / ↑(edgeCount G)))
+          (Mathlib.Tactic.Ring.of_eq
+            (Mathlib.Tactic.Ring.div_congr
+              (Mathlib.Tactic.Ring.cast_pos (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+              (Mathlib.Tactic.Ring.atom_pf ↑(edgeCount G))
+              (Mathlib.Tactic.Ring.div_pf
+                (Mathlib.Tactic.Ring.inv_single
+                  (Mathlib.Tactic.Ring.inv_mul (Eq.refl (↑(edgeCount G))⁻¹)
+                    (Mathlib.Meta.NormNum.IsNat.to_raw_eq
+                      (Mathlib.Meta.NormNum.IsNNRat.to_isNat
+                        (Mathlib.Meta.NormNum.isNNRat_inv_pos
+                          (Mathlib.Meta.NormNum.IsNat.to_isNNRat (Mathlib.Meta.NormNum.IsNat.of_raw ℝ 1)))))
+                    (Mathlib.Tactic.Ring.mul_pf_right (↑(edgeCount G))⁻¹ (Nat.rawCast 1)
+                      (Mathlib.Tactic.Ring.one_mul (Nat.rawCast 1)))))
+                (Mathlib.Tactic.Ring.add_mul
+                  (Mathlib.Tactic.Ring.mul_add
+                    (Mathlib.Tactic.Ring.mul_pf_right (↑(edgeCount G))⁻¹ (Nat.rawCast 1)
+                      (Mathlib.Tactic.Ring.one_mul (Nat.rawCast 1)))
+                    (Mathlib.Tactic.Ring.mul_zero (Nat.rawCast 1))
+                    (Mathlib.Tactic.Ring.add_pf_add_zero ((↑(edgeCount G))⁻¹ ^ Nat.rawCast 1 * Nat.rawCast 1 + 0)))
+                  (Mathlib.Tactic.Ring.zero_mul ((↑(edgeCount G))⁻¹ ^ Nat.rawCast 1 * Nat.rawCast 1 + 0))
+                  (Mathlib.Tactic.Ring.add_pf_add_zero ((↑(edgeCount G))⁻¹ ^ Nat.rawCast 1 * Nat.rawCast 1 + 0)))))
+            (Mathlib.Tactic.Ring.sub_congr
+              (Mathlib.Tactic.Ring.cast_pos (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+              (Mathlib.Tactic.Ring.sub_congr
+                (Mathlib.Tactic.Ring.cast_pos (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+                (Mathlib.Tactic.Ring.div_congr
+                  (Mathlib.Tactic.Ring.cast_pos (Mathlib.Meta.NormNum.isNat_ofNat ℝ Nat.cast_one))
+                  (Mathlib.Tactic.Ring.atom_pf ↑(edgeCount G))
+                  (Mathlib.Tactic.Ring.div_pf
+                    (Mathlib.Tactic.Ring.inv_single
+                      (Mathlib.Tactic.Ring.inv_mul (Eq.refl (↑(edgeCount G))⁻¹)
+                        (Mathlib.Meta.NormNum.IsNat.to_raw_eq
+                          (Mathlib.Meta.NormNum.IsNNRat.to_isNat
+                            (Mathlib.Meta.NormNum.isNNRat_inv_pos
+                              (Mathlib.Meta.NormNum.IsNat.to_isNNRat (Mathlib.Meta.NormNum.IsNat.of_raw ℝ 1)))))
+                        (Mathlib.Tactic.Ring.mul_pf_right (↑(edgeCount G))⁻¹ (Nat.rawCast 1)
+                          (Mathlib.Tactic.Ring.one_mul (Nat.rawCast 1)))))
+                    (Mathlib.Tactic.Ring.add_mul
+                      (Mathlib.Tactic.Ring.mul_add
+                        (Mathlib.Tactic.Ring.mul_pf_right (↑(edgeCount G))⁻¹ (Nat.rawCast 1)
+                          (Mathlib.Tactic.Ring.one_mul (Nat.rawCast 1)))
+                        (Mathlib.Tactic.Ring.mul_zero (Nat.rawCast 1))
+                        (Mathlib.Tactic.Ring.add_pf_add_zero ((↑(edgeCount G))⁻¹ ^ Nat.rawCast 1 * Nat.rawCast 1 + 0)))
+                      (Mathlib.Tactic.Ring.zero_mul ((↑(edgeCount G))⁻¹ ^ Nat.rawCast 1 * Nat.rawCast 1 + 0))
+                      (Mathlib.Tactic.Ring.add_pf_add_zero ((↑(edgeCount G))⁻¹ ^ Nat.rawCast 1 * Nat.rawCast 1 + 0)))))
+                (Mathlib.Tactic.Ring.sub_pf
+                  (Mathlib.Tactic.Ring.neg_add
+                    (Mathlib.Tactic.Ring.neg_mul (↑(edgeCount G))⁻¹ (Nat.rawCast 1)
+                      (Mathlib.Tactic.Ring.neg_one_mul
+                        (Mathlib.Meta.NormNum.IsInt.to_raw_eq
+                          (Mathlib.Meta.NormNum.isInt_mul (Eq.refl HMul.hMul)
+                            (Mathlib.Meta.NormNum.IsInt.of_raw ℝ (Int.negOfNat 1))
+                            (Mathlib.Meta.NormNum.IsNat.to_isInt (Mathlib.Meta.NormNum.IsNat.of_raw ℝ 1))
+                            (Eq.refl (Int.negOfNat 1))))))
+                    Mathlib.Tactic.Ring.neg_zero)
+                  (Mathlib.Tactic.Ring.add_pf_add_lt (Nat.rawCast 1)
+                    (Mathlib.Tactic.Ring.add_pf_zero_add
+                      ((↑(edgeCount G))⁻¹ ^ Nat.rawCast 1 * (Int.negOfNat 1).rawCast + 0)))))
+              (Mathlib.Tactic.Ring.sub_pf
+                (Mathlib.Tactic.Ring.neg_add
+                  (Mathlib.Tactic.Ring.neg_one_mul
+                    (Mathlib.Meta.NormNum.IsInt.to_raw_eq
+                      (Mathlib.Meta.NormNum.isInt_mul (Eq.refl HMul.hMul)
+                        (Mathlib.Meta.NormNum.IsInt.of_raw ℝ (Int.negOfNat 1))
+                        (Mathlib.Meta.NormNum.IsNat.to_isInt (Mathlib.Meta.NormNum.IsNat.of_raw ℝ 1))
+                        (Eq.refl (Int.negOfNat 1)))))
+                  (Mathlib.Tactic.Ring.neg_add
+                    (Mathlib.Tactic.Ring.neg_mul (↑(edgeCount G))⁻¹ (Nat.rawCast 1)
+                      (Mathlib.Tactic.Ring.neg_one_mul
+                        (Mathlib.Meta.NormNum.IsNat.to_raw_eq
+                          (Mathlib.Meta.NormNum.IsInt.to_isNat
+                            (Mathlib.Meta.NormNum.isInt_mul (Eq.refl HMul.hMul)
+                              (Mathlib.Meta.NormNum.IsInt.of_raw ℝ (Int.negOfNat 1))
+                              (Mathlib.Meta.NormNum.IsInt.of_raw ℝ (Int.negOfNat 1)) (Eq.refl (Int.ofNat 1)))))))
+                    Mathlib.Tactic.Ring.neg_zero))
+                (Mathlib.Tactic.Ring.add_pf_add_overlap_zero
+                  (Mathlib.Meta.NormNum.IsInt.to_isNat
+                    (Mathlib.Meta.NormNum.isInt_add (Eq.refl HAdd.hAdd)
+                      (Mathlib.Meta.NormNum.IsNat.to_isInt (Mathlib.Meta.NormNum.IsNat.of_raw ℝ 1))
+                      (Mathlib.Meta.NormNum.IsInt.of_raw ℝ (Int.negOfNat 1)) (Eq.refl (Int.ofNat 0))))
+                  (Mathlib.Tactic.Ring.add_pf_zero_add ((↑(edgeCount G))⁻¹ ^ Nat.rawCast 1 * Nat.rawCast 1 + 0))))))
+          (uprob fun w => T (colRealView Com ℓn G c V w)) (uprob fun u => T (colRealView Com ℓn G c V u))
+          (Eq.refl (uprob fun w => T (colRealView Com ℓn G c V w)))))
+    N
+has type
+  StatClose (truncAttempts (colSimAttemptH Com ℓn G c V) N) (fun u => some (colRealView Com ℓn G c V u))
+    ((1 - 1 / ↑(edgeCount G)) ^ N)
+but is expected to have type
+  StatClose (colSimTruncH Com ℓn G c V N) (fun w => some (colRealView Com ℓn G c V w)) ((1 - 1 / ↑(edgeCount G)) ^ N)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:2593:4: error: 'show' tactic failed, pattern
+  ?m.105 =
+    Strategy.encodeMsgs
+      (List.ofFn fun i =>
+        Com (pairEncode (List.ofFn (padColor n (simColorsW p ep.2 c i))) (List.ofFn (mergeAt p w.1.2 r' i))))
+is not definitionally equal to target
+  Strategy.encodeMsgs
+      (List.ofFn fun i =>
+        if i = p.1 ∨ i = p.2 then Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+        else msgAt (multiCom Com (fun i => padColor n (simColorsW p ep.2 c i)) r') ↑i) =
+    colCommit Com n ℓn (simColorsW p ep.2 c) (mergeAt p w.1.2 r')
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:2644:4: error: 'show' tactic failed, pattern
+  ?m.103 =
+    Strategy.encodeMsgs
+      (List.ofFn fun i => Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (mergeAt p w.1.2 r' i))))
+is not definitionally equal to target
+  Strategy.encodeMsgs
+      (List.ofFn fun i =>
+        if i = p.1 ∨ i = p.2 then Com (pairEncode (List.ofFn (padColor n (ep.2 (c i)))) (List.ofFn (w.1.2 i)))
+        else msgAt (multiCom Com (fun i => padColor n (ep.2 (c i))) r') ↑i) =
+    colCommit Com n ℓn (fun i => ep.2 (c i)) (mergeAt p w.1.2 r')
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:2861:16: error: Application type mismatch: The argument
+  hc
+has type
+  S.coins = ColSimMachine.simCoins ℓ V'
+but is expected to have type
+  S.coins = colSimCoins ℓ V'
+in the application
+  And.intro hc
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:2861:52: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.68 = ?m.68
+but is expected to have type
+  ColSimMachine.sim Com ℓ V' x z (List.ofFn r) = colSim Com ℓ V' x z (List.ofFn r)
+in the application
+  Eq.trans (hsim x z r) rfl
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:3332:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+μ : ℕ → ℝ
+hμ : Negligible μ
+⊢ Negligible fun N => μ N.sqrt
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator.lean:3789:19: error: Application type mismatch: The argument
+  colVerifier_efficient hC.easy ℓ
+has type
+  (colVerifier Com ℓ).Efficient
+but is expected to have type
+  (colProtocol Com ℓ).V.Efficient
+in the application
+  ZK.hvzk (colVerifier_efficient hC.easy ℓ)
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Simulator): no fresh .olean produced
+
+END 2026-11-08T07:05:50.640237+00:00 RC 1 elapsed=25.6s pid=14328 maxrss=2973528KiB

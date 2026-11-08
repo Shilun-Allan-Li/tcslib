@@ -1,0 +1,17 @@
+START 2026-11-08T08:49:09.130678+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean sha256=9db844f6e2d02dd81d589529e91f58291dc9498c609b188841c8db75b9510fa9
+TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK.lean:488:44: warning: This simp argument is unused:
+  PolyExpr.eval_normal
+
+Hint: Omit it from the simp argument list.
+  simp [giSimCoins, giSimBlockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add,
+       ̵ ̵PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.e̵v̵a̵l̵_̵normal,̵ ̵P̵o̵l̵y̵E̵x̵p̵r̵.̵n̵o̵r̵m̵a̵l̵_def,
+  ̵  ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵ ̵Strategy.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-08T08:49:13.602563+00:00 RC 0 elapsed=4.5s pid=9193 maxrss=2625968KiB

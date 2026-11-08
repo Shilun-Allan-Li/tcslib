@@ -1,0 +1,135 @@
+START 2026-11-08T06:49:33.166146+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean sha256=c804d6c6bf4e1894aaec21ac21608e46bd2665bdffdce8d2abd8b0098082429b
+CP2-SEAL chunk=0 requested=200 active=183 already=17
+CP2-SEAL chunk=1 requested=200 active=199 already=1
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=168 active=168 already=0
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1856:2: error: Type mismatch: After simplification, term
+  polyTimeComputable_takePrefixByLength
+ has type
+  PolyTimeComputable PrefixByLength.take
+but is expected to have type
+  PolyTimeComputable takePrefixByLen
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1864:2: error: Type mismatch: After simplification, term
+  polyTimeComputable_dropPrefixByLength
+ has type
+  PolyTimeComputable PrefixByLength.drop
+but is expected to have type
+  PolyTimeComputable dropPrefixByLen
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1969:6: error: 'show' tactic failed, pattern
+  some (decide (M x r = some false)) = some true ↔ ?m.95
+is not definitionally equal to target
+  boolVerifier (fun x r => decide (M x r = some false)) x r = some true ↔ Turing.pairEncode x r ∈ V₀
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1972:6: error: 'show' tactic failed, pattern
+  some (decide (M x r = some false)) = some false ↔ ?m.102
+is not definitionally equal to target
+  boolVerifier (fun x r => decide (M x r = some false)) x r = some false ↔ Turing.pairEncode x r ∈ V₀ᶜ
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1979:6: error: 'show' tactic failed, pattern
+  some (decide (M x r = some true)) = some true ↔ ?m.133
+is not definitionally equal to target
+  boolVerifier (fun x r => decide (M x r = some true)) x r = some true ↔ Turing.pairEncode x r ∈ V₁
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:1982:6: error: 'show' tactic failed, pattern
+  some (decide (M x r = some true)) = some false ↔ ?m.140
+is not definitionally equal to target
+  boolVerifier (fun x r => decide (M x r = some true)) x r = some false ↔ Turing.pairEncode x r ∈ V₁ᶜ
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2035:6: error: Type mismatch
+  congrArg some (hmem.mp hw)
+has type
+  some (majorityVerifier M (polyLen a k) (polyLen a' k') x r) = some true
+but is expected to have type
+  boolVerifier (majorityVerifier M (polyLen a k) (polyLen a' k')) x r = some true
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2044:17: error: Type mismatch
+  congrArg some hb
+has type
+  some (majorityVerifier M (polyLen a k) (polyLen a' k') x r) = some false
+but is expected to have type
+  boolVerifier (majorityVerifier M (polyLen a k) (polyLen a' k')) x r = some false
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2078:6: error: Type mismatch
+  congrArg some (hmem.mp hw)
+has type
+  some (anyVerifier M (polyLen a k) (polyLen a' k') x r) = some true
+but is expected to have type
+  boolVerifier (anyVerifier M (polyLen a k) (polyLen a' k')) x r = some true
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2087:17: error: Type mismatch
+  congrArg some hb
+has type
+  some (anyVerifier M (polyLen a k) (polyLen a' k') x r) = some false
+but is expected to have type
+  boolVerifier (anyVerifier M (polyLen a k) (polyLen a' k')) x r = some false
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2170:54: error: Function expected at
+  hF
+but this term has type
+  F.HasFaninTwo
+
+Note: Expected a function because this term is being applied to the argument
+  ell
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2171:13: error: Invalid projection: Expected a value whose type is a structure
+  hD
+has type
+  D.IsFaninTwo
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2260:15: error: Invalid `⟨...⟩` notation: The expected type
+  qStep true (polyLen a₁ k₁ y.length) fun U => altQuant V (polyLen a₂ k₂ y.length) false 1 (id (Turing.pairEncode y U))
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2261:8: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2263:15: error: Tactic `rcases` failed: `a✝ : qStep true (polyLen a₁ k₁ y.length) fun U =>
+  altQuant V (polyLen a₂ k₂ y.length) false 1 (id (Turing.pairEncode y U))` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2267:4: error: Type mismatch
+  hmem
+has type
+  {y |
+      qStep true (polyLen a₁ k₁ y.length) fun U =>
+        altQuant V (polyLen a₂ k₂ y.length) (!true) 1 (id (Turing.pairEncode y U))} ∈
+    altClass true (1 + 1)
+but is expected to have type
+  {y |
+      qStep true (polyLen a₁ k₁ y.length) fun U =>
+        altQuant V (polyLen a₂ k₂ y.length) false 1 (id (Turing.pairEncode y U))} ∈
+    SigmaP 2
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2277:17: error: Application type mismatch: The argument
+  hu
+has type
+  u.length = C * (x.length + 1) ^ c
+but is expected to have type
+  u.length = polyLen C c x.length
+in the application
+  And.intro hu
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2279:19: error: Application type mismatch: The argument
+  hv
+has type
+  v.length = polyLen C c x.length
+but is expected to have type
+  v.length = C * (x.length + 1) ^ c
+in the application
+  hall v hv
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2281:17: error: Application type mismatch: The argument
+  hu
+has type
+  u.length = polyLen C c x.length
+but is expected to have type
+  u.length = C * (x.length + 1) ^ c
+in the application
+  And.intro hu
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel.lean:2282:23: error: Application type mismatch: The argument
+  hv
+has type
+  v.length = C * (x.length + 1) ^ c
+but is expected to have type
+  v.length = polyLen C c x.length
+in the application
+  hall v hv
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Complexity/Randomized/PolyTimeModel): no fresh .olean produced
+
+END 2026-11-08T06:49:54.668168+00:00 RC 1 elapsed=21.5s pid=11102 maxrss=2124928KiB

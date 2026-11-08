@@ -1,0 +1,185 @@
+START 2026-11-08T09:45:11.913160+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean sha256=0a278834bd03ae7b76f8db1438b0ae33ed8c24d4e8eaa88f60688db186e37c2f
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=114 active=114 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:1900:20: warning: This simp argument is unused:
+  Equiv.prodComm_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, E̵q̵u̵i̵v̵.̵p̵r̵o̵d̵C̵o̵m̵m̵_̵a̵p̵p̵l̵y̵,̵ ̵Prod.map_apply, Prod.fst_swap, Prod.snd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:1900:42: warning: This simp argument is unused:
+  Prod.map_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.m̵a̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵P̵r̵o̵d̵.̵fst_swap, Prod.snd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:1900:58: warning: This simp argument is unused:
+  Prod.fst_swap
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.f̵st̵_̵s̵w̵a̵p̵,̵ ̵P̵r̵o̵d̵.̵s̵nd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:1900:73: warning: This simp argument is unused:
+  Prod.snd_swap
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.fst_swap, P̵r̵o̵d̵.̵s̵n̵d̵_̵s̵w̵a̵p̵,̵ ̵id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:1900:88: warning: This simp argument is unused:
+  id_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [e, pairHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.fst_swap, Prod.snd_swap,̵ ̵i̵d̵_̵e̵q̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:1956:73: error: Type mismatch
+  rfl
+has type
+  ?m.55 = ?m.55
+but is expected to have type
+  (multiAdvBound ℓ q C c).eval n = 3 * (q.eval n * (2 * (C * (2 * n + 3 + ℓ.eval n) ^ c) + 2)) + 2
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2000:71: error: Type mismatch
+  rfl
+has type
+  ?m.221 = ?m.221
+but is expected to have type
+  distAdv (fun r => multiCom Com v r) (fun r => multiCom Com v' r) (D.distinguisherL n) =
+    distAdv (pairTuple (cm v)) (pairTuple (cm v')) D'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2199:69: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  owpComLen.eval n = n * n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2218:89: error: Application type mismatch: The argument
+  r
+has type
+  Fin (owpComLen.eval n) → Bool
+but is expected to have type
+  Fin (n * n) → Bool
+in the application
+  (FunFamily.blocks n n) r
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2288:15: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.155 ↔ ?m.155
+but is expected to have type
+  owpPredictorSnoc D flip (f x✝.1) x✝.2 = h x✝.1 ↔
+    owpPredictor (fun z r => D (e z) r) flip
+        (owpPair f
+          ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+      h ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2292:4: error: Tactic `rfl` failed: The left-hand side
+  acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r
+is not definitionally equal to the right-hand side
+  acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+n : ℕ
+f : (Fin n → Bool) ≃ (Fin n → Bool)
+h : (Fin n → Bool) → Bool
+D : (Fin (n + 1) → Bool) → ρ → Bool
+e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+    right_inv := ⋯ }
+h1 :
+  ∀ (flip : Bool),
+    predProb (⇑f) h (owpPredictorSnoc D flip) =
+      predProb (owpPair f) (fun w => h w.1) (owpPredictor (fun z r => D (e z) r) flip)
+⊢ (acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) (h z.1)) D
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2296:4: error: Tactic `rfl` failed: The left-hand side
+  acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r
+is not definitionally equal to the right-hand side
+  acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+n : ℕ
+f : (Fin n → Bool) ≃ (Fin n → Bool)
+h : (Fin n → Bool) → Bool
+D : (Fin (n + 1) → Bool) → ρ → Bool
+e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+    right_inv := ⋯ }
+h1 :
+  ∀ (flip : Bool),
+    predProb (⇑f) h (owpPredictorSnoc D flip) =
+      predProb (owpPair f) (fun w => h w.1) (owpPredictor (fun z r => D (e z) r) flip)
+h0 : (acceptProb (owpGen f fun w => h w.1) fun z r => D (e z) r) = acceptProb (bitCom f h false) D
+⊢ (acceptProb (owpGenNot f fun w => h w.1) fun z r => D (e z) r) = acceptProb (fun z => Fin.snoc (f z.1) !h z.1) D
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2374:16: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2404:4: warning: 'rfl' tactic does nothing
+
+Note: This linter can be disabled with `set_option linter.unusedTactic false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2535:4: error: Tactic `rfl` failed: The left-hand side
+  List.ofFn
+    (Fin.snoc ((P.f v.length) ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))
+      (v.getD i false ^^
+        h v.length ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩)))
+is not definitionally equal to the right-hand side
+  List.ofFn (T ⟨i, hi⟩)
+
+P : PermFamily
+h : (n : ℕ) → (Fin n → Bool) → Bool
+F H : List Bool → List Bool
+hFx : ∀ (n : ℕ) (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+hHx : ∀ (n : ℕ) (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]
+w v r : List Bool
+n : ℕ := v.length
+hn : n = v.length
+T : Fin n → Fin (n + 1) → Bool := owpCom P h n (padFin n v) ((FunFamily.blocks n n) (padFin (n * n) r))
+hT : T = owpCom P h n (padFin n v) ((FunFamily.blocks n n) (padFin (n * n) r))
+E : ℕ → List Bool := fun i => ComLoop.emit F H (ComLoop.step^[i] (ComLoop.init (pairEncode v r)))
+hE : E = fun i => ComLoop.emit F H (ComLoop.step^[i] (ComLoop.init (pairEncode v r)))
+i : ℕ
+hi : i < n
+⊢ List.ofFn
+      (Fin.snoc ((P.f v.length) ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))
+        (v.getD i false ^^
+          h v.length ((EnsembleLemmas.blocks v.length v.length) (padFin (v.length * v.length) r) ⟨i, hi⟩))) =
+    List.ofFn (T ⟨i, hi⟩)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2536:76: error: Type mismatch
+  rfl
+has type
+  ?m.136 = ?m.136
+but is expected to have type
+  FunFamily.blocks n (n + 1) = EnsembleLemmas.blocks n (n + 1)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean:2567:33: error: Application type mismatch: The argument
+  hFx
+has type
+  ∀ (n : ℕ) (x : Fin (P.toFunFamily.inLen.eval n) → Bool),
+    F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.toFunFamily.f n x)
+but is expected to have type
+  ∀ (n : ℕ) (x : Fin n → Bool), ?m.107 (NUPPT.advInput n (List.ofFn x)) = List.ofFn ((P.f n) x)
+in the application
+  owpComStr_eq_loopOut P h hFx
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Commitment): no fresh .olean produced
+
+END 2026-11-08T09:45:31.384194+00:00 RC 1 elapsed=19.5s pid=19559 maxrss=2777752KiB

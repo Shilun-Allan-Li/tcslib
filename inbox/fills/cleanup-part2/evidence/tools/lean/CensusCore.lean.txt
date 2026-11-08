@@ -80,7 +80,9 @@ syntax (name := cp2c3Cmd) "#cp2c3 " "[" ident,* "]" : command
   let env ← getEnv
   let mut rows : Array String := #[]
   let mut roots := 0
-  for (n, _) in env.constants.map₁.toList do
+  -- imported constants (`map₁`) and this file's own (`map₂`, home `_current`, used by the C3
+  -- metadata controls); a census lists only imported owned modules, so its rows are unchanged
+  for (n, _) in env.constants.toList do
     let h := cp2Home env n
     unless mods.contains h do continue
     roots := roots + 1

@@ -1,0 +1,60 @@
+START 2026-11-08T09:11:13.847037+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean sha256=233dda9df77067ac0e00581a309703222d4ec56106a32947648e3ad4430ee696
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=87 active=87 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean:1108:4: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.100 = ?m.100
+but is expected to have type
+  (NUPPT.ofPolyTime hF (A.coins.subst p)
+        (((((PolyExpr.const 4).mul p).add (PolyExpr.const 6)).add ((PolyExpr.const 2).mul (A.adv.subst p))).add b)
+        (fun m => pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m))) (β m)) hadv).coins =
+    A.coins.subst p
+in the application
+  And.intro rfl
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean:1156:4: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.102 = ?m.102
+but is expected to have type
+  (NUPPT.ofPolyTime hF (A.coins.subst p)
+        (((((PolyExpr.const 4).mul p).add (PolyExpr.const 6)).add ((PolyExpr.const 2).mul (A.adv.subst p))).add b)
+        (fun m => pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m))) (β m)) hadv).coins =
+    A.coins.subst p
+in the application
+  And.intro rfl
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean:1204:83: error: Tactic `rfl` failed: The left-hand side
+  (signBits SignType.zero).length
+is not definitionally equal to the right-hand side
+  2
+
+case zero
+⊢ (signBits SignType.zero).length = 2
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean:1204:83: error: Tactic `rfl` failed: The left-hand side
+  (signBits SignType.neg).length
+is not definitionally equal to the right-hand side
+  2
+
+case neg
+⊢ (signBits SignType.neg).length = 2
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean:1204:83: error: Tactic `rfl` failed: The left-hand side
+  (signBits SignType.pos).length
+is not definitionally equal to the right-hand side
+  2
+
+case pos
+⊢ (signBits SignType.pos).length = 2
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalLemmas): no fresh .olean produced
+
+END 2026-11-08T09:11:27.472385+00:00 RC 1 elapsed=13.6s pid=14168 maxrss=2662088KiB

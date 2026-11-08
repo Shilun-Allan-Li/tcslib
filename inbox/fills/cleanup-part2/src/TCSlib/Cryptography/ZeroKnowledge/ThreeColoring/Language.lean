@@ -103,6 +103,10 @@ instance {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) : Decidable (ProperColori
 /-- A graph is 3-colourable when it has a proper 3-colouring [PS10, §4.7] (Def-124.f, typed). -/
 def ThreeColorable {n : ℕ} (G : Graph n) : Prop := ∃ c, ProperColoring G c
 
+/-- The defining property of `ThreeColorable`: `G` has a proper 3-colouring. -/
+theorem threeColorable_iff {n : ℕ} (G : Graph n) : ThreeColorable G ↔ ∃ c, ProperColoring G c :=
+  Iff.rfl
+
 /-- The graph of a Mathlib simple graph on `Fin n` as a Boolean relation. -/
 def Graph.ofSimpleGraph {n : ℕ} (H : SimpleGraph (Fin n)) [DecidableRel H.Adj] : Graph n :=
   fun u v => decide (H.Adj u v)
@@ -188,6 +192,10 @@ theorem mem_edgeList_iff {n : ℕ} (G : Graph n) (p : Fin n × Fin n) :
 
 /-- The edge of index `e : Fin |E|`. -/
 def edgeOf {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) : Fin n × Fin n := (edgeList G).get e
+
+/-- The defining equation of `edgeOf`: `edgeOf G e = (edgeList G).get e`. -/
+theorem edgeOf_eq {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) : edgeOf G e = (edgeList G).get e :=
+  rfl
 
 /-- The endpoints of `edgeOf G e` are adjacent. -/
 theorem edgeOf_adj {n : ℕ} (G : Graph n) (e : Fin (edgeCount G)) :
@@ -313,6 +321,7 @@ theorem encColor_getD_ne {a b : Fin 3} (hab : a ≠ b) :
     (encColor a).getD 0 false ≠ (encColor b).getD 0 false ∨
       (encColor a).getD 1 false ≠ (encColor b).getD 1 false := by
   revert a b
+  simp only [encColor_def, encColoring_eq]
   decide
 
 /-- Padding to `n ≥ 2` bits is injective on colours. -/

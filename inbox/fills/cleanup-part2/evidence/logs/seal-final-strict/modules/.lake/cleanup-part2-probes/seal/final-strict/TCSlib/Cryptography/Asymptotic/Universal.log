@@ -1,0 +1,185 @@
+START 2026-11-08T09:37:54.218539+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean sha256=58920345c0632fc2b4eef189436428ec887a82e7d36fb3e7cb1fcbb0e6870f9f
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=121 active=121 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1382:85: error: Type mismatch
+  hs
+has type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).state =
+    none
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).state =
+    none
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1383:85: error: Type mismatch
+  ho
+has type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).output =
+    out
+but is expected to have type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).output =
+    out
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1394:74: error: Application type mismatch: The argument
+  hs
+has type
+  (MultiTapeTM.runFrom (@MultiTapeTM.initCfg 1 (Fin ((c.decode α).numStates + 1)) Bool (c.decode α).tm x) t).state =
+    none
+but is expected to have type
+  (MultiTapeTM.runFrom
+        (@MultiTapeTM.initCfg (c.decode α).toFinTM.k (c.decode α).toFinTM.State Bool (c.decode α).toFinTM.tm x)
+        t).state =
+    none
+in the application
+  And.intro hs
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1473:89: error: Type mismatch
+  rfl
+has type
+  ?m.36 = ?m.36
+but is expected to have type
+  univOutLen.eval n = 2 * n + 3 + (n + 1) ^ 3
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1509:2: error: Type mismatch
+  ofFn_padFin_eq_take p w
+has type
+  List.ofFn (padFin p w) = List.take p (w ++ List.replicate p false)
+but is expected to have type
+  (List.ofFn fun i => w.getD (↑i) false) = List.take p (w ++ List.replicate p false)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1553:8: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1981:37: error: Application type mismatch: The argument
+  g
+has type
+  (m : ℕ) → (Fin m → Bool) → Fin (L.eval m) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (L.eval n) → Bool
+in the application
+  { inLen := PolyExpr.var, outLen := L, f := g }
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1994:60: error: Application type mismatch: The argument
+  e (w.1, w.2.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n (e (w.1, w.2.1))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:1995:49: error: Application type mismatch: The argument
+  e (w.1, w.2.1)
+has type
+  Fin n → Bool
+but is expected to have type
+  Fin ((fUniversal c).inLen.eval n) → Bool
+in the application
+  (fUniversal c).f n (e (w.1, w.2.1))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:2000:58: error: Application type mismatch: The argument
+  e
+has type
+  (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin n → Bool)
+but is expected to have type
+  (Fin (Nat.log 2 n) → Bool) × (Fin (n - Nat.log 2 n) → Bool) ≃ (Fin ((fUniversal c).inLen.eval n) → Bool)
+in the application
+  e.prodCongr
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:2002:38: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.342 ↔ ?m.342
+but is expected to have type
+  Invert w ↔
+    ∃ x',
+      A.runAt n (List.ofFn ((fUniversal c).f n (e' w).1)) (e' w).2 = List.ofFn x' ∧
+        (fUniversal c).f n x' = (fUniversal c).f n (e' w).1
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:2164:40: error: Application type mismatch: The argument
+  g
+has type
+  (n : ℕ) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (L.eval n) → Bool
+but is expected to have type
+  (m : ℕ) → (Fin m → Bool) → Fin (PolyExpr.eval ?m.782 m) → Bool
+in the application
+  invProbAt_reduction_ge c g
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal.lean:2073:74: error: unsolved goals
+c : EffectiveMachineCode
+hc : CanonizerExp c
+A : NUPPT
+L : PolyExpr
+Mg : CodeTM
+c₀ : ℕ
+g : (n : ℕ) → (Fin (PolyExpr.var.eval n) → Bool) → Fin (L.eval n) → Bool
+hsow : { inLen := PolyExpr.var, outLen := L, f := g }.StrongOneWay
+hMg :
+  ∀ (n : ℕ) (x : Fin ({ inLen := PolyExpr.var, outLen := L, f := g }.inLen.eval n) → Bool),
+    Mg.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn ({ inLen := PolyExpr.var, outLen := L, f := g }.f n x))
+      (c₀ * ({ inLen := PolyExpr.var, outLen := L, f := g }.inLen.eval n + 1) ^ 2)
+hcon : ∀ (n₀ : ℕ), ∃ n ≥ n₀, 1 - 1 / ↑n ^ 3 < (fUniversal c).invProbAt A n
+α₀ : List Bool := c.encode Mg
+hα₀ : α₀ = c.encode Mg
+K : ℕ
+hK : 2 ^ α₀.length = K
+N₀ : ℕ := K + c₀ + 4
+hN₀ : N₀ = K + c₀ + 4
+good : ℕ → Prop := fun n => N₀ ≤ n ∧ 1 - 1 / ↑n ^ 3 < (fUniversal c).invProbAt A n
+φ : ℕ → ℕ := fun m => if h : ∃ n, good n ∧ n - Nat.log 2 n = m then h.choose else 0
+hφ : ∀ (m : ℕ), φ m ≤ ((PolyExpr.const 2).mul PolyExpr.var).eval m
+hφ_spec : ∀ (m : ℕ), (∃ n, good n ∧ n - Nat.log 2 n = m) → good (φ m) ∧ φ m - Nat.log 2 (φ m) = m
+code : ℕ → List Bool := fun n => α₀ ++ List.replicate (Nat.log 2 n - α₀.length) true
+hcode_len : ∀ (n : ℕ), N₀ ≤ n → (code n).length = Nat.log 2 n
+hcode_dec : ∀ (n : ℕ), c.decode (code n) = Mg
+hcode_le : ∀ (n : ℕ), (code n).length ≤ α₀.length + n
+β : ℕ → List Bool := fun m => pairEncode (List.replicate (φ m) true) (code (φ m))
+hβ :
+  ∀ (m : ℕ),
+    (β m).length ≤
+      ((((PolyExpr.const 6).mul PolyExpr.var).add (PolyExpr.const 2)).add (PolyExpr.const α₀.length)).eval m
+hpre :
+  PolyTimeComputable fun w =>
+    padStr univOutLen (pairFstD (pairFstD w)) (pairEncode (pairSndD (pairFstD w)) (true :: pairSndD w))
+B : NUPPT
+hBc : B.coins = A.coins.subst ((PolyExpr.const 2).mul PolyExpr.var)
+hB :
+  ∀ (m : ℕ) (y r : List Bool),
+    B.runAtL m y r =
+      univArg
+        (A.runAtL (φ m)
+          (padStr univOutLen (pairFstD (pairFstD (pairEncode (β m) y)))
+            (pairEncode (pairSndD (pairFstD (pairEncode (β m) y))) (true :: pairSndD (pairEncode (β m) y))))
+          (List.take (A.coinLen (φ m)) r))
+hB' :
+  ∀ (m : ℕ) (y r : List Bool),
+    B.runAtL m y r =
+      univArg
+        (A.runAtL (φ m) (padStr univOutLen (List.replicate (φ m) true) (pairEncode (code (φ m)) (true :: y)))
+          (List.take (A.coinLen (φ m)) r))
+m₀ n : ℕ
+hn : n ≥ max (2 * m₀) N₀
+hgood : 1 - 1 / ↑n ^ 3 < (fUniversal c).invProbAt A n
+hNn : N₀ ≤ n
+hmn : 2 * m₀ ≤ n
+hgoodn : good n
+hgood' : good (φ (n - Nat.log 2 n))
+hφm : φ (n - Nat.log 2 n) - Nat.log 2 (φ (n - Nat.log 2 n)) = n - Nat.log 2 n
+hlog : 2 * Nat.log 2 n ≤ n
+hm₀ : m₀ ≤ n - Nat.log 2 n
+hn'N : N₀ ≤ φ (n - Nat.log 2 n)
+hcoins : A.coinLen (φ (n - Nat.log 2 n)) ≤ B.coinLen (φ (n - Nat.log 2 n) - Nat.log 2 (φ (n - Nat.log 2 n)))
+hrun :
+  ∀ (y r : List Bool),
+    B.runAtL (φ (n - Nat.log 2 n) - Nat.log 2 (φ (n - Nat.log 2 n))) y r =
+      univArg
+        (A.runAtL (φ (n - Nat.log 2 n))
+          (padStr univOutLen (List.replicate (φ (n - Nat.log 2 n)) true)
+            (pairEncode (code (φ (n - Nat.log 2 n))) (true :: y)))
+          (List.take (A.coinLen (φ (n - Nat.log 2 n))) r))
+⊢ 1 / ↑(n - Nat.log 2 n) ^ 1 ≤ |{ inLen := PolyExpr.var, outLen := L, f := g }.invProbAt B (n - Nat.log 2 n)|
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Universal): no fresh .olean produced
+
+END 2026-11-08T09:38:12.506675+00:00 RC 1 elapsed=18.3s pid=18484 maxrss=2749108KiB

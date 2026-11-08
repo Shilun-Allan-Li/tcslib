@@ -1,0 +1,25 @@
+START 2026-11-08T09:19:51.549794+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/MultiMessage
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/MultiMessage.lean sha256=c19bbc2adb6efb674f9cc75d16255c76d92d243d886a3c488079ebec414e5112
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=199 already=1
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=99 active=99 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/MultiMessage.lean:2332:8: warning: This simp argument is unused:
+  prfDecFun
+
+Hint: Omit it from the simp argument list.
+  simp [̵p̵r̵f̵D̵e̵c̵F̵u̵n̵,̵ ̵F̵u̵n̵c̵t̵i̵o̵n̵.̵c̵o̵m̵p̵_̵a̵p̵p̵l̵y̵]̵[̲F̲u̲n̲c̲t̲i̲o̲n̲.̲c̲o̲m̲p̲_̲a̲p̲p̲l̲y̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+CP2-EOF
+
+END 2026-11-08T09:20:11.143298+00:00 RC 0 elapsed=19.6s pid=15480 maxrss=2788068KiB

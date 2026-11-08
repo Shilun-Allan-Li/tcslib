@@ -1,0 +1,23 @@
+START 2026-11-08T08:50:17.295069+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/Asymptotic/HardCore
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/Asymptotic/HardCore.lean sha256=3f89bc532aa042d6cf97a3f31a87e1e00d8e3d786fbe4f0590312eb998d8624f
+TCSlib/Cryptography/Asymptotic/HardCore.lean:782:49: warning: This simp argument is unused:
+  splitPair_symm_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, glInverter, splitPair_apply, s̵p̵l̵i̵t̵P̵a̵i̵r̵_̵s̵y̵m̵m̵_̵a̵p̵p̵l̵y̵,̵ ̵Equiv.coe_fn_mk, Equiv.symm_apply_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+TCSlib/Cryptography/Asymptotic/HardCore.lean:782:71: warning: This simp argument is unused:
+  Equiv.coe_fn_mk
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, glInverter, splitPair_apply, splitPair_symm_apply, Equiv.c̵o̵e̵_̵f̵n̵_̵m̵k̵,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵E̵q̵u̵i̵v̵.̵symm_apply_apply]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-08T08:50:21.593773+00:00 RC 0 elapsed=4.3s pid=9630 maxrss=2642036KiB

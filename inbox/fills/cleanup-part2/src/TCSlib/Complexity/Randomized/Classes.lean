@@ -372,12 +372,24 @@ def ClosedUnderRace : Prop :=
   ∀ M₁ M₂ a k, E.Eff (boolVerifier M₁) → E.Eff (boolVerifier M₂) →
     E.Eff (raceVerifier M₁ M₂ (polyLen a k))
 
+/-- The defining property of `ClosedUnderRace`: `E` races any two of its Boolean verifiers on a
+polynomial split point. -/
+theorem closedUnderRace_iff : ClosedUnderRace E ↔ ∀ M₁ M₂ a k, E.Eff (boolVerifier M₁) →
+    E.Eff (boolVerifier M₂) → E.Eff (raceVerifier M₁ M₂ (polyLen a k)) :=
+  Iff.rfl
+
 /-- `E` can turn a zero-error verifier into the Boolean verifier answering
 "did it output `some b`?" (closure of polynomial time under postprocessing
 the output). -/
 def ClosedUnderAnswerIs : Prop :=
   ∀ M b, E.Eff M →
     E.Eff (boolVerifier fun x r => M x r = some b)
+
+/-- The defining property of `ClosedUnderAnswerIs`: every efficient verifier `M` gives the
+efficient Boolean verifier `fun x r => M x r = some b`. -/
+theorem closedUnderAnswerIs_iff : ClosedUnderAnswerIs E ↔
+    ∀ M b, E.Eff M → E.Eff (boolVerifier fun x r => M x r = some b) :=
+  Iff.rfl
 
 /-- The `k`-fold repetition of a verifier accepting if *any* repetition
 accepts, on randomness split into `k` blocks of length `p(|x|)`: the
@@ -406,6 +418,12 @@ def ClosedUnderMajority : Prop :=
   ∀ M a k a' k', E.Eff (boolVerifier M) →
     E.Eff (boolVerifier (majorityVerifier M (polyLen a k) (polyLen a' k')))
 
+/-- The defining property of `ClosedUnderMajority`: the polynomial majority repetition of an
+efficient Boolean verifier is efficient. -/
+theorem closedUnderMajority_iff : ClosedUnderMajority E ↔ ∀ M a k a' k', E.Eff (boolVerifier M) →
+    E.Eff (boolVerifier (majorityVerifier M (polyLen a k) (polyLen a' k'))) :=
+  Iff.rfl
+
 /-- `E` can repeat a Boolean verifier a polynomial number of times, on blocks
 of polynomial length, and accept if any repetition accepts (closure of
 polynomial time under polynomial repetition with an `OR`). -/
@@ -413,11 +431,23 @@ def ClosedUnderAny : Prop :=
   ∀ M a k a' k', E.Eff (boolVerifier M) →
     E.Eff (boolVerifier (anyVerifier M (polyLen a k) (polyLen a' k')))
 
+/-- The defining property of `ClosedUnderAny`: the polynomial `OR`-repetition of an efficient
+Boolean verifier is efficient. -/
+theorem closedUnderAny_iff : ClosedUnderAny E ↔ ∀ M a k a' k', E.Eff (boolVerifier M) →
+    E.Eff (boolVerifier (anyVerifier M (polyLen a k) (polyLen a' k'))) :=
+  Iff.rfl
+
 /-- `E` can negate a Boolean verifier's answer (closure of polynomial time
 under complementation of the output). -/
 def ClosedUnderNot : Prop :=
   ∀ M, E.Eff (boolVerifier M) →
     E.Eff (boolVerifier fun x r => !(M x r))
+
+/-- The defining property of `ClosedUnderNot`: the negation of an efficient Boolean verifier is
+efficient. -/
+theorem closedUnderNot_iff : ClosedUnderNot E ↔
+    ∀ M, E.Eff (boolVerifier M) → E.Eff (boolVerifier fun x r => !(M x r)) :=
+  Iff.rfl
 
 end Constructions
 

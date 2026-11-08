@@ -1,20 +1,369 @@
 # Fill `cleanup-part2` — REPORT
 
-**Status: CHECKPOINT 1 (milestones 1–2 complete; J/N inherited reads: explicit lists and C3 clear for
-consumers, definitional reads in progress).** Checkpoint 0 (environment and baseline) follows below.
+**Status: FINAL DELIVERY — PARTIAL, not final-complete.** Milestones 0–2 and the E/F/K/L items
+are complete. The frozen final head `03ead73ab` passes the full affected replay, `TCSlib` and
+`audits/pass-shelat/Checks`. Its axioms and admissions equal the baseline. The explicit-list and
+C3 channels are clear for every consumer file, and the sensitivity and C3 controls pass.
+
+The J/N inherited-read ledger is **not** closed: **173 of the 509 work keys (152 of the 764
+historical rows) still fail the whole-file seal**. Each one is listed with its exact
+diagnostic, class and next step. Checkpoints 1 and 0 follow at the end as history.
 
 ## Identity
 
 | item | value |
 |---|---|
-| issue pack | `exchange/pass-shelat-ch5-8` at `5b1d70d558542bf491680b4b9ee2379038bbfd3f`, `outbox/fills/cleanup-part2/`; `SHA256SUMS` SHA-256 `078baef661c1152179603b7f1495000fc7287c47164f6fc06baf7b7c855c3e37` (matches the dispatch), all 298 entries OK |
-| attachment manifests | `inputs/DELIVERY-MANIFEST.json` `994c8dc0…`, `inputs/INPUTS-MANIFEST.json` `31252c05…`, `external-bootstrap-r1/DELIVERY-MANIFEST.json` `70dd1a40…`, `environment-tools/MANIFEST.json` `40006423…`, `environment-tools/RUNBOOK.md` `4102e174…` — all equal to the brief's pins |
-| records snapshot (dispatch) | `0a874231cd3eaa370132970fbf6f5882f5b66e47` on `cryptography/pass-shelat-ch2-4` (cited by the dispatch; not needed for any check) |
-| source ancestor | `1aa5506f58f77c215e56d24311ec33bd931cacf1`; `TCSlib/` tree `6ea8b3246478524165b3226c935b12a73853f47b` (verified) |
-| fill branch | local `fill/cleanup-part2` in the own clone `/workspace/cp2/src`, created at the ancestor; never rebased/merged; never pushed |
-| worker | one Claude session, no subagents or delegated workers |
+| issue pack | `exchange/pass-shelat-ch5-8`, `outbox/fills/cleanup-part2/`. Pins verified at checkpoint 0: `SHA256SUMS` `078baef6…`, 298/298 OK; manifests `994c8dc0…`, `31252c05…`, `70dd1a40…`, `40006423…`; RUNBOOK `4102e174…` |
+| source ancestor | `1aa5506f58f77c215e56d24311ec33bd931cacf1` (TCSlib tree `6ea8b324…`) |
+| **final head** | **`03ead73ab38e74621800367c072f6fd3f0f70991`** on the local branch `fill/cleanup-part2`; never pushed, rebased or merged |
+| patch series | `patches/0001…0013`: the whole `git format-patch 1aa5506f5..03ead73ab` (13 commits) |
+| changed paths | 122 `.lean` files, all in `inputs/owned-files.txt`. 26 of them are provider-only files, changed by pure insertion (no baseline line deleted or modified). No file was added or deleted |
+| `src/` | final bytes of all 221 owned paths at `03ead73ab` |
+| worker | one Claude session; no subagents or delegated workers |
 
-## Checkpoint 1: milestones 1–2 and the first inherited-read batches
+## Commits
+
+| commit | content |
+|---|---|
+| `a8a8055ce` | Milestones 1–2: canonical block/decoder/state-iterate/average/strategy-next interfaces; DL9–DL17; G7/G10/G18/G25; five M keys; E/F/K/L; PPT relocation |
+| `34b2f2566` | J batch 1: explicit foreign-definition reads now go through owner readers; Core/Mathlib definitions in simp/rw lists now go through their lemmas |
+| `9bcb223ca` | J batch 2a: residual explicit entries; G23 (`List.count_ofFn`); M `card_QR_prime`/`sq_pow_div_four_succ`; DL17 tail bridges; line wrapping |
+| `4138d7b7b` | J batch 2b: G13 windows, with no new general window claims |
+| `f79962995`, `2cff020c8`, `51c245389` | Fixes from the 2a/2b development pass (the checkpoint 1 head) |
+| `b37d89d59` | J batch 2c: predicate/field/case readers beside owners, and consumer repairs through them (39 files) |
+| `59541f413` | J batch 2d: RSA, Rabin, DiscreteLog, Generators, both Encryption files, HardCoreGLColl/Permutation, SimulatorLemmas, ColMachines, Parties |
+| `49e1a868d` | J batch 2e: NextBit, OneWay, Collections(+Helpers), Universal*, Indistinguishability, BlockEncryptor, Encoding, GI Proofs/Efficiency/Soundness, GIZK Simulator, 3COL Language/Protocol/ProtocolProofs, Commitment, HardCore, NP, Extractors |
+| `669f3c929` | Proof sketches for three proofs the repairs lengthened past 20 lines (docstrings only) |
+| `ea37eb57c` | SoundnessRepGI now reads `Fin.init` in a `show` step instead of a `rw` list entry. Found by the final explicit pre-scan |
+| `03ead73ab` | **Final head.** Repairs three foreign reads that the X1 block relocation created in unchanged consumer blocks (`HardCoreGL.glBlocks_apply`, `OneWay.pushesUniform_pbOf`, the `yaoRaw'` block step). Found by comparing the strict seal of the head with the strict seal of the base |
+
+## Work packages: status
+
+| package | status |
+|---|---|
+| A (DL9/G13, DL10, DL11/G22, DL13, DL14, DL15) | done (routes as at checkpoint 1; see the history section) |
+| B (DL17) | done |
+| C | verification only: the PPT readers exist and Closure uses them; nothing added |
+| D (PRF `decodeOracleMove` readers), E (NonUniform import), F (four orbit zero cases) | done |
+| N (G7, G10, G18, G25; `distAdv_sunglassRed`) | done. `distAdv_sunglassRed` reads `distAdv_def`, and Indistinguishability passes the final seal |
+| M (seven keys) | done |
+| K/L (Defs D8, ModuleHost envelope, `transcriptWith_eq`/`outV_eq` docs) | done (doc-only; headers and proofs byte-identical) |
+| **J/N inherited reads** | **partial.** Explicit-list channel: 446/446 historical unfold rows closed (444 repaired, 2 removed by exact mapping); 0 foreign TCSlib and 0 Core/Mathlib definitions remain in any consumer list. C3 channel: 53/53 eqn-term rows closed; 0 consumer C3 pairs. Seal channel: 112 rows repaired, 1 removed, 152 open |
+| Milestone 4 (frozen final verification) | done at `03ead73ab` (below) |
+
+## Old→new map and public exceptions
+
+The complete source-level map is in `evidence/maps/old-new-map-final.md`, built by
+`tools/surface_diff.py` + `tools/surface_map.py` (raw data: `evidence/logs/surface-final.json`).
+It covers the 221 owned files from `1aa5506f5` to `03ead73ab`.
+
+| change | all | public only |
+|---|---|---|
+| added | 219 | 217 |
+| removed | 23 | 10 |
+| moved | 9 | 9 |
+| definition bodies changed | 9 | 6 |
+| headers changed | 2 | 2 |
+
+The removed, moved, body-changed and header-changed sets are **identical to checkpoint 1**, and
+each item lies on the exception list (X1–X5, X7, X8, X10, X11), as recorded there. The two
+header changes are namespace respellings only. Since checkpoint 1, the only changes are added
+ordinary readers (58) and proof repairs.
+
+The readers added since checkpoint 1 are each an `rfl`/`Iff.rfl` equation, iff, field or case
+reader beside an existing owner:
+
+* **Providers** (X12, pure insertion):
+  * PPoly `Language.inSIZE_iff`, `inPPoly_iff_inSIZE`
+  * PolyTime `polyBound_iff`; Reductions `polyTimeReducible_iff`
+  * Adleman `verifierHasCircuits_iff`
+  * Classes `closedUnder{AnswerIs,Any,Majority,Not,Race}_iff`
+  * SipserGacs `inSigma2_iff`, `inPi2_iff`, `closedUnderShiftOr_iff`
+  * Convention `splitAtLastTrue_of_dropWhile_eq_nil`/`_false_cons`
+  * Wrappers `emitCfg_inputPos`/`_workTapes`/`_workTapePos`/`_output`
+  * Adversary `padFin_apply`; InnerProduct `secProb_def`
+  * GI Concrete `prefixLT_apply`/`prefixLE_apply`; LeftoverHash `hashPair_eq`
+* **Consumer owners:**
+  * PPT `runLit_eq`, `computes_iff`
+  * Encryption `singleMessageSecure_iff`
+  * HardCoreLemmas `finCastEquiv_apply`, `coe_finCastEquiv`
+  * Permutations `permTrials_eq`
+  * Encoding `decColoring_val_eq`, `decGraph_fst`, `decGraph_snd_apply`
+  * Language `edgeOf_eq`, `threeColorable_iff`; ColMachines `argX_eq`
+  * GI Proofs: `decGraphAt_apply`, `decGraph_eq_decGraphAt`, `encInstance_eq`, `instanceG₀_def`/`instanceG₁_def`, `samplePerm_def`, `isomorphic_iff`, `mem_Liso_iff`, `mem_Lniso_iff`, `riso_iff`, `gniProver_next`, `giProverRep_next`, `giVerifierRep_next`, `giProtocol_P`/`_V`, `gniProtocol_P`/`_V`, `gniProtocolRep_V`, `giProtocolRep_P`/`_V`/`_rounds`/`_verifierFirst`
+
+None carries `@[simp]`. No PR #232 reader inventory was supplied, so the worker cannot name the
+counterparts; the maintainer reconciles them at landing.
+
+## Final verification at `03ead73ab`
+
+### Native replay, root and Checks
+
+* **Full affected replay at `ea37eb57c`** (`tools/replay_affected.sh final`;
+  `evidence/logs/replay-final.log`, `checks-final.jsonl`, per-module logs under `logs/final/`).
+  * The changed modules plus all their transitive importers, including facades, in the current
+    topological order (`order-final.txt`, `affected-final.txt`): **581/581 PASS**, then `TCSlib`
+    and `audits/pass-shelat/Checks` PASS.
+  * 07:45:53Z–09:00:43Z, uninterrupted. 4,459 s of checks; peak RSS 4,619,264 KiB
+    (`Build/ZoneRebalance`); slowest `ClassP/BinaryArith/DetMod` at 1,012.6 s.
+  * A first launch at `669f3c929` was stopped by the worker after 21 modules, when the explicit
+    pre-scan found the `Fin.init` entry. It is kept as `*-final-attempt1-STOPPED*`.
+* **Delta replay for `ea37eb57c..03ead73ab`** (`tools/chain_delta.sh`; `chain-delta.log`,
+  `checks-final-delta.jsonl`, `logs/final-delta/`).
+  * Two changed modules and their 49 transitive importers (`affected-final-delta.txt`):
+    **51/51 PASS**, then `TCSlib` PASS and Checks PASS (115.5 s, 3,602 MiB).
+  * The other 530 affected modules have byte-identical sources and prerequisites at both heads.
+* **Reconciliation** (`tools/final_post.py`, `evidence/logs/final-summary.json`):
+  * For every one of the 581 affected modules, plus root and Checks, the last record is PASS,
+    with rc 0, 0 parsed errors, a fresh nonempty object, and a source SHA-256 equal to the file
+    at `03ead73ab`.
+  * The 454 unaffected modules have the same source as at the ancestor and import no changed
+    module, so their baseline objects stand.
+  * PFR environment: unchanged since checkpoint 0. The 31 external modules and the guarded
+    `<tree>/PFR` alias are as recorded there, and every local check used the ordinary PATH.
+
+### Axioms and admissions
+
+* **Checks `#print axioms`** (`axioms-checks-final-vs-baseline.json`): 367 records at both ends;
+  the multisets are **equal**. The same 4 records carry `sorryAx`.
+* **Census of all stored constants** of the 221 owned modules (`evidence/census/final/`).
+  * Probe `FinalCensus3` PASS. It was rerun after every head change and is byte-identical to the
+    runs at `ea37eb57c`.
+  * 20,018 identities (baseline 19,932): 180 exist only at the base, 266 only at the head, and
+    13 moved home. These are the map's removals, moves and additions, with their generated
+    auxiliaries (`census-axioms-final-vs-baseline.json`).
+  * **29 = 29 `sorryAx` identities, the same set.** No added identity carries `sorryAx`, and no
+    claim gained an admitted dependency.
+  * Standard-axiom changes on exactly the 5 identities explained at checkpoint 1:
+    * `dla_blockPos`, `dla_blockPos_injective`, `dla_take_drop_ofFn` and
+      `ColZK.ofFn_take_drop` gain `Classical.choice` (Mathlib `finProdFinEquiv`/`castLE` facts).
+    * `units_val_mem` loses it.
+* **Lexical admissions** (`tools/admissions.py`; `admissions-final.json`,
+  `admissions-final-vs-baseline.json`): 510 `sorry` + 1 `sorryAx`. The per-(path, declaration,
+  token) multiset **equals the ancestor's**. Positions differ only by line shifts.
+
+### C3 and the C3 metadata controls
+
+* **C3**: 102 baseline pairs → **34** at the head; 68 removed, 0 added
+  (`c3-final-vs-baseline.json`).
+  * All 34 have roots in 12 provider-only files (circuits, NP, TMSAT, Padding, MathlibBridge,
+    Chebyshev, Programs/Util/List). Their proofs may not change.
+  * **No consumer root references a foreign generated equation.**
+* **C3 metadata controls** (`evidence/probes/C3Controls.source.txt`, output
+  `evidence/census/c3controls/c3.tsv`). They run the census collector `#cp2c3` over the probe's
+  own constants. **PASS:**
+  * `cp2_c3_pos` (value `(pairDecode.eq_def []).trans rfl`) gives exactly the row
+    `C3 _current cp2_c3_pos Turing.pairDecode.eq_def …Encoding Turing.pairDecode …Encoding`.
+  * `cp2_c3_neg` (the published reader `pairDecode_nil`) gives none.
+  * For this, the collector's root enumeration was widened from imported constants to all
+    constants (`env.constants.toList`). The earlier version is kept as
+    `CensusCore-v-final-attempt1.lean.txt`. Its first control run found 0 roots, because
+    current-file constants are not in `map₁`.
+  * The census rerun with the widened collector is byte-identical in all four tables.
+
+### Whole-file seals
+
+Sources: `seal-final.json`, `seal-final-strict.json`, `seal-final-summary.json`; probe sources
+in `evidence/probes/seal-final{,-strict}-probes.tar.xz`.
+
+* Every seal checks the same 98 files (97 consumers plus the provider `ClassNP/PolyTime`) at
+  the final census closure.
+* **98/98 harnesses are valid in both variants**: every request installed, EOF reached, no
+  harness diagnostic.
+* Standard variant: 95,177 requests (94,468 active, 709 already irreducible). Strict variant:
+  95,408 requests.
+* After the last commit, the two files it changed were resealed at `03ead73ab` in both variants.
+  The other 96 probe sources are byte-identical at both heads. The superseded entries are kept as
+  `seal-final{,-strict}-at-ea37eb57c.json`.
+
+| variant | head failing declarations (diagnostics, files) | comparison |
+|---|---|---|
+| **standard** (the standing rule: `PolyExpr.eval` with its matcher/`_sunfold` left unsealed) | **225 (321, 41 files)** | checkpoint 1: 365 (476, 73) |
+| **strict** (`PolyExpr.eval` sealed too; the baseline's variant) | **348 (515, 56 files)** | **baseline: 501 (688, 80)**; 153 baseline failures no longer fail; **0 declarations fail at the head that did not fail at the base** (`seal-strict-final-vs-baseline.json`) |
+
+### Sensitivity controls (the 11-control family)
+
+`tools/lean/Controls.lean.txt`; probes `ControlsUnsealed.source.txt` and
+`ControlsSealed.source.txt`; logs under `logs/controls-final2/`. The sealed probe is PPT's census
+closure, with the same notation rule: 518 requests, 3 notation names excluded. **PASS:**
+
+* Unsealed: 0 errors.
+* Sealed: no harness error, EOF reached. Each negative N1–N7 fails exactly at its `CP2-SITE`
+  line, with no other error:
+  * N1 `rfl` conversion
+  * N2 `show` conversion
+  * N3 anonymous `example`
+  * N4 generated matcher
+  * N5 definition body
+  * N6 field of a structure-valued foreign definition
+  * N7 destructuring a foreign predicate
+* Positives P1–P4 pass sealed: published case reader, field reader, predicate reader, and
+  `PolyExpr.eval` notation.
+* N4 was redesigned after its first run. The first form (a matcher applied to a constructor
+  discriminant, `Controls-attempt1.source.txt`) is reduced by `whnfCore` without delta, so it
+  passed both ways and was no seal control. The new N4 compares the foreign matcher with a local
+  one on a free discriminant.
+
+### Explicit-source review
+
+`tools/explicit_scan.py` with the final name table: `explicit-scan-final.json`, 15,367 items in
+the 97 consumer files. It finds **0 foreign TCSlib definitions and 0 Core/Mathlib definitions**
+in any simp/rw/unfold/dsimp/delta list. The 7 builtin simprocs and one `let`-bound local are
+correctly classified. The final pre-scan found one Mathlib `Fin.init` entry, now repaired in
+`ea37eb57c`.
+
+### Style
+
+`evidence/logs/style/`: repository `style_lint.py` on the 122 changed files, and the campaign
+lint `TCSlib` plain and `--check8b`, each run at base and head.
+
+* FAIL counts are equal (1,238 at both ends). WARN: plain 673 → 663, check8b 725 → 715. Check 8
+  lists shrank because readers were added.
+* **New findings, reported separately:** four fill-owned files now pass 1,000 lines. All growth
+  comes from the added readers and repairs. They are recorded per file under the standing size
+  rule, and none is split:
+
+  | file | base lines | head lines |
+  |---|---|---|
+  | `GGMReduction` | 880 | 1,106 |
+  | `HardCoreLemmas` | 999 | 1,056 |
+  | `ZeroKnowledge/GraphIsomorphism.lean` | 993 | 1,026 |
+  | `ThreeColoring/Machines` | 997 | 1,007 |
+
+* Three proofs that the repairs lengthened past 20 lines received proof sketches (`669f3c929`).
+  No other new finding.
+
+## Dispositions (764 historical rows, 509 work keys)
+
+Built by `tools/dispositions.py` from the final evidence alone. Outputs:
+`evidence/maps/dispositions-final.json` (with every open key's diagnostics),
+`dispositions-keys.tsv` and `dispositions-rows.tsv`.
+
+**How each channel is decided.**
+
+* **Seal channels** (HIST_SEAL, GATE06/GATE08/S2 seal, G06_C2 `show`): does the key's
+  declaration have an error in its file's standard-variant seal? The strict variant is
+  recorded beside it.
+* **Explicit channels** (HIST_UNFOLD, G06_C1, J_CORE_FUNCTION_COMP): does a foreign or
+  Core/Mathlib definition remain in the declaration's lists?
+* **C3 channels**: is the (module, root, equation) pair present in the final C3 census?
+* For any key, a seal failure of its declaration counts as open, whatever the key's channel.
+* Canonical names come from the head source (namespace tracking) and are verified against the
+  census; 0 are unresolved.
+* A key whose declaration moved is checked at its new home. The four PPT relocations are such
+  keys.
+
+| | repaired / verified at final | removed (exact mapping) | open | total |
+|---|---|---|---|---|
+| **509 keys** | **333** | 3 | **173** | 509 |
+| 764 rows: unfold channel | 444 | 2 | 0 | 446 |
+| 764 rows: eqn-term channel | 53 | 0 | 0 | 53 |
+| 764 rows: seal channel | 112 | 1 | **152** | 265 |
+
+**Removed by exact mapping.**
+
+* `FunFamily.decodeFin_eq_some_iff` (Collections) and `GGMRed.decodeFin_eq_some_iff` were
+  replaced by the public `TCSlib.Cryptography.decodeFin_eq_some_iff` (X4).
+* `negligible_const_zero` was replaced by `negligible_zero` (X4).
+
+**The seven reader-repair candidate rows**: 217, 547, 560, 562, 648, 746 and 750 were rechecked
+freshly and are all repaired and verified at final. So are 546 (the PublicKeyLemmas duplicate,
+now the public `abs_uexp_sub_le`), and 561/745 (the `distAdv_le_statDist` explicit and generated
+references).
+
+**Open keys by class.** Classes come from `tools/classify_residual.py`. It applies mechanical
+rules to the full diagnostic texts, per failing declaration (`evidence/maps/residual-final.json`
+and `.md`).
+
+| class | keys | rows | meaning / next step |
+|---|---|---|---|
+| E_API_INLINE_MATCH | 5 | 3 | Blocked: see E-API 1 below |
+| OPEN_TYPED_COINS | 42 | 40 | The coin or seed type of a constructed machine or structure (`.Coins n`, `ExecCoins`, `.σ n`, `Fin (… .coinLen n)`) is identified with a concrete type by conversion. Repairable through the published equivalences (`NUPPT.coinsCongr`, `coinsEquivPoly`, `coinsEquiv_ofPolyTime*`, `…_domEquiv`). **Not done** |
+| OPEN_MACHINE_INTERNALS | 2 | 2 | Machine-model internals (ModuleHost `stopCfg`/`padTM`/`emitCfg` configurations; the `CodeTM.toFinTM` state type). Not analysed further: it is open whether ordinary field/run readers suffice |
+| OPEN_INCOMPLETE | 124 | 107 | Other definitional reads: `rfl`/`show`/`change` through a foreign body, applying or destructuring a foreign predicate, Decidable instances left stale by `dsimp` with rfl readers. Repairable with existing or ordinary owner readers. **Not done** |
+
+Beyond the keys, the head seal has **52 further failing declarations**. These are witnessed
+same-consumer observations; `residual-final.json` lists each with its diagnostics. Three are
+in the provider `ClassNP/PolyTime` (class PROVIDER_FROZEN: `polyTimeComputable_id`,
+`PolyTimeComputable.output_length_le`, `PolyTimeComputable.comp`).
+
+## Escalations
+
+**E-API 1: provider contracts stated over an inline `match`.**
+
+* **Affected contracts:**
+  * `Turing.FinTM.computesFunInTime_unaryMul` (provider `Randomized/Primitives`)
+  * `computesFunInTime_stripLast`, `computesFunInTime_pairLenCheck` and
+    `computesFunInTime_pairMapSnd` (provider `Build/Primitives`)
+  * `Complexity.polyTimeComputable_iterateFind` (consumer `Repetition`, public header frozen)
+* **Why this blocks the consumer:** each contract states its function as an anonymous
+  `match pairDecode z with …` or `match (List.range …).find? … with …`. A consumer's
+  `PolyTimeComputable`/`ComputesFunInTime` goal for its own named function can be identified
+  with the contract's function in only two ways:
+  * by unfolding the contract's compiler-generated matcher, which is sealed;
+  * by using that matcher's generated equations (`…match_1.eq_*`), which is a C3 bypass.
+
+  No ordinary reader can expose an anonymous matcher, so this is not reader work.
+* **Blocked declarations:**
+  * `EncodingMachines.unaryMul_poly`, `OneWayLemmas.polyTimeComputable_unaryMulPair`,
+    `GGMRed.unaryMul_poly`, `GI.unaryMul_poly` (EfficiencyRep)
+  * `PolyTimePairing.polyTimeComputable_unary`, `polyTimeComputable_lenLe` (and
+    `PolyTimeComputable.pairMapSnd`)
+  * `OneWay.YaoMachine.yaoRaw_poly`, `GGMRed.stateLoopFun_poly`, `GGMRed.lookup_poly`
+  * `IterateFind.polyTimeComputable_find`, which also has machine-internal reads
+* **Needed contracts:** the same contracts stated over match-free or named functions with
+  complete case readers. Examples:
+  * `fun z => List.replicate ((pairFstD z).length * (pairSndD z).length) true` for `unaryMul`.
+    It agrees with the match on every input, since `pairFstD`/`pairSndD` are `[]` on non-pairs.
+  * A named `iterateFind g acc out R` with `_some`/`_none` readers.
+
+  These are new non-reader provider theorems. For `polyTimeComputable_iterateFind` it would be
+  a second public statement next to a frozen header. Neither is authorized here.
+
+**E-FREEZE 1: provider `ClassNP/PolyTime`.**
+
+* `polyTimeComputable_id`, `PolyTimeComputable.output_length_le` and `PolyTimeComputable.comp`
+  apply a `ComputesFunInTime` hypothesis as a function.
+* The repair goes through `Turing.FinTM.computesFunInTime_iff`. It is a proof edit in a
+  provider-only file, which the role forbids. Only the reader `polyBound_iff` was added there.
+
+**No E-RES, E-BASE or E-TRUE.**
+
+## Commands and resources
+
+* One Lean process at a time, always. `scripts/lean_check_tree.sh` runs through the
+  wrapper `tools/chk.py`, under the ordinary PATH, in the one tree.
+* `tools/chain_final.sh`: replay, census, controls, standard and strict seals;
+  07:45–09:54Z.
+* `tools/chain_final2.sh`: census rerun, C3 controls, controls; 09:54–10:00Z.
+* `tools/chain_delta.sh`: delta replay, root/Checks, census, reseal of the two files;
+  10:05–10:19Z.
+* `tools/final_post.py`: comparisons, explicit scan, classification, dispositions.
+* Census ≈ 295–315 s at 3.1 GiB. Seals ≈ 24 min per variant.
+* Development probes (`tools/sealwt.py`, phase `seal-wt`, logs under `logs/seal-wt/`) are
+  development evidence only.
+
+## Limits
+
+* **Not final-complete:**
+  * 173 work keys (152 rows) and 52 further declarations still fail the standard seal.
+  * The E-API and E-FREEZE items above need maintainer decisions.
+  * The remaining OPEN classes are repairable within the authorized routes, but this session
+    did not finish them.
+* **Classification of open failures** is mechanical, from diagnostic texts. Except where a fix
+  was attempted, a declaration's first diagnostic can hide later ones in the same tactic block.
+  Fixing a first error often uncovered further reads, as in Universal, GIZK Simulator and
+  HardCore.
+* **Seal coverage:** the standard variant is the campaign rule. The strict variant is reported
+  for a like-for-like comparison with the checkpoint-0 baseline. Instances and reducible
+  abbreviations are not sealed: the attribute cannot seal them, and they are notation under
+  policy.
+* **Overwritten log:** the per-module seal logs of the two resealed files at `ea37eb57c` were
+  replaced by the `03ead73ab` logs at the same path. Their records remain in
+  `checks-seal-final*.jsonl`, and their summaries in `seal-final*-at-ea37eb57c.json`.
+* **PR #232:** its reader counterparts are not reconciled. No inventory was supplied.
+
+## History: checkpoint 1 (exchange `8b133945`, fill head `51c245389`)
 
 ### Commits in this delivery (fill branch `fill/cleanup-part2`, never pushed)
 
@@ -231,7 +580,7 @@ NonUniform, PolyTimePairing, PolyTimeModel, Loops, Machines, HardCore, OneWay, O
 SoundnessRepGI, Efficiency, …). It is checked next, file by file with sealed probes, then
 replayed.
 
-## Checkpoint 0: environment and baseline (complete)
+## History: checkpoint 0 — environment and baseline (complete)
 
 ### Mode, paths and preflight
 
@@ -345,12 +694,12 @@ replayed.
   Core/Mathlib definition entries in simp/rw/unfold/dsimp/delta lists; 381 of the foreign ones
   have an existing owner reader (`<name>_def`/`_eq`).
 
-## Work state at checkpoint 0 (historical)
+### Work state at checkpoint 0 (historical)
 
 At checkpoint 0 the milestone-1/2 changes were drafted but not yet checked; they are commit
 `a8a8055ce` of checkpoint 1.
 
-## Limits of this checkpoint
+### Limits of checkpoint 1 (historical)
 
 * The definitional-read channel is open: 365 failing declarations at the head under the standard
   seal (294 of the 506 named keys). Their per-key/per-row dispositions (764 original rows) are not
@@ -363,7 +712,10 @@ At checkpoint 0 the milestone-1/2 changes were drafted but not yet checked; they
 * Sensitivity controls, the C3 metadata controls, the style/campaign lints and the per-row
   disposition ledger are final-delivery items, not run at this checkpoint.
 
-**Ready for review as checkpoint 1 — all commissioned interface/deduplication/Mathlib/doc targets
-implemented and compiled with root and Checks passing (Checks axioms equal to the baseline, no
-admission change, C3 clear for consumers); limitation: the inherited definitional-read repairs
-(J/N seal channel) are in progress and no per-row disposition ledger is delivered yet.**
+**Final delivery — PARTIAL, not final-complete. At `03ead73ab`, all commissioned interface,
+deduplication, Mathlib and doc targets are implemented. The full affected replay, root and Checks
+pass. Axioms, admissions and C3 (no consumer pairs) are clean against the baseline, and all
+controls pass. Limitation: the J/N seal channel is still open for 173 of the 509 work keys
+(152 rows) and 52 further same-consumer declarations, with one E-API (inline-match provider
+contracts) and one E-FREEZE (provider `ClassNP/PolyTime`) escalation. This is not merge
+clearance.**

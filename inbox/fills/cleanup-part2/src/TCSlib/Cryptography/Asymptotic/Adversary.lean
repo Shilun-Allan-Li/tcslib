@@ -99,6 +99,10 @@ theorem padFin_def (ℓ : ℕ) (w : List Bool) :
       (fun i => w.getD i false :
         Fin ℓ → Bool) := rfl
 
+/-- Bit `i` of `padFin ℓ w` is bit `i` of `w`, default `false`. -/
+theorem padFin_apply (ℓ : ℕ) (w : List Bool) (i : Fin ℓ) : padFin ℓ w i = w.getD i false :=
+  rfl
+
 /-- Decoding the encoding of an `ℓ`-bit string returns it. -/
 theorem decodeFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : decodeFin ℓ (List.ofFn x) = some x := by
   simp [decodeFin]
@@ -259,6 +263,7 @@ bridge from `invProbOpt` to the concrete `invProb` [Gar26, Definition 2.1]. -/
 theorem invProbOpt_le_invProb {α β ρ : Type*} [Fintype α] [Fintype ρ] [Inhabited α] (f : α → β)
     (A : β → ρ → Option α) :
     invProbOpt f A ≤ invProb f (fun y r => (A y r).getD default) := by
+  rw [invProbOpt_def, invProb_def]
   refine uprob_mono ?_
   rintro ⟨x, r⟩ ⟨x', hx', hf⟩
   simp [hx', hf]
@@ -290,6 +295,7 @@ one is the whole space, `HardcoreBit.forall_of_uprob_eq_one`.) -/
 theorem _root_.Complexity.NUPPT.computes_iff_uprob (A : NUPPT) (f : List Bool → List Bool) :
     A.Computes f ↔
       ∀ n y, uprob (fun r : A.Coins n => A.runAt n y r = f (NUPPT.advInput n y)) = 1 := by
+  rw [NUPPT.computes_iff]
   constructor
   · intro h n y
     have hp : (fun r : A.Coins n => A.runAt n y r = f (NUPPT.advInput n y)) = fun _ => True :=

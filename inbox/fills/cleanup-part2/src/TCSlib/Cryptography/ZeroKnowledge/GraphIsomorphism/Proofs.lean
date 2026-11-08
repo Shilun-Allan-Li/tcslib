@@ -80,6 +80,11 @@ open Complexity Turing Finset
 /-- Shadow of `TCSlib.Cryptography.Isomorphic` (Def-117.e). -/
 def Isomorphic {n : ℕ} (G₀ G₁ : Graph n) : Prop := ∃ σ : Equiv.Perm (Fin n), permGraph G₀ σ = G₁
 
+/-- The defining property of `Isomorphic`: some vertex permutation maps `G₀` to `G₁`. -/
+theorem isomorphic_iff {n : ℕ} (G₀ G₁ : Graph n) :
+    Isomorphic G₀ G₁ ↔ ∃ σ : Equiv.Perm (Fin n), permGraph G₀ σ = G₁ :=
+  Iff.rfl
+
 /-- Shadow of the decidability instance of `Isomorphic`. -/
 instance {n : ℕ} (G₀ G₁ : Graph n) : Decidable (Isomorphic G₀ G₁) := by
   unfold Isomorphic
@@ -88,8 +93,26 @@ instance {n : ℕ} (G₀ G₁ : Graph n) : Decidable (Isomorphic G₀ G₁) := b
 /-- Shadow of `TCSlib.Cryptography.decGraphAt`. -/
 def decGraphAt (n : ℕ) (w : List Bool) : Graph n := fun u v => w.getD (finProdFinEquiv (u, v)) false
 
+/-- The defining equation of `decGraphAt`: entry `(u, v)` is bit `finProdFinEquiv (u, v)` of `w`
+(default `false`). -/
+theorem decGraphAt_apply (n : ℕ) (w : List Bool) (u v : Fin n) :
+    decGraphAt n w u v = w.getD (finProdFinEquiv (u, v)) false :=
+  rfl
+
+/-- The total graph decoder is `decGraphAt` on `⌊√|w|⌋` vertices:
+`decGraph w = ⟨⌊√|w|⌋, decGraphAt ⌊√|w|⌋ w⟩` (`decGraph_def`). -/
+theorem decGraph_eq_decGraphAt (w : List Bool) :
+    decGraph w = ⟨Nat.sqrt w.length, decGraphAt (Nat.sqrt w.length) w⟩ := by
+  rw [decGraph_def]
+  rfl
+
 /-- Shadow of `TCSlib.Cryptography.encInstance`. -/
 def encInstance {n : ℕ} (G₀ G₁ : Graph n) : List Bool := pairEncode (encGraph G₀) (encGraph G₁)
+
+/-- The defining equation of `encInstance`: the pair of the two graph encodings. -/
+theorem encInstance_eq {n : ℕ} (G₀ G₁ : Graph n) :
+    encInstance G₀ G₁ = pairEncode (encGraph G₀) (encGraph G₁) :=
+  rfl
 
 /-- Shadow of `TCSlib.Cryptography.instanceVertexCount`. -/
 def instanceVertexCount (x : List Bool) : ℕ := Nat.sqrt (pairFstD x).length
@@ -103,8 +126,18 @@ theorem instanceVertexCount_def (x : List Bool) :
 /-- Shadow of `TCSlib.Cryptography.instanceG₀`. -/
 def instanceG₀ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairFstD x)
 
+/-- The defining equation of `instanceG₀`: the first graph read on `instanceVertexCount x`
+vertices from `pairFstD x`. -/
+theorem instanceG₀_def (x : List Bool) : instanceG₀ x = decGraphAt _ (pairFstD x) :=
+  rfl
+
 /-- Shadow of `TCSlib.Cryptography.instanceG₁`. -/
 def instanceG₁ (x : List Bool) : Graph (instanceVertexCount x) := decGraphAt _ (pairSndD x)
+
+/-- The defining equation of `instanceG₁`: the second graph read on `instanceVertexCount x`
+vertices from `pairSndD x`. -/
+theorem instanceG₁_def (x : List Bool) : instanceG₁ x = decGraphAt _ (pairSndD x) :=
+  rfl
 
 /-- Shadow of `TCSlib.Cryptography.wellFormedInstance`. -/
 def wellFormedInstance (x : List Bool) : Bool :=
@@ -126,18 +159,41 @@ def Liso : Language Bool :=
   {x | ∃ (n : ℕ) (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)),
     x = pairEncode (encGraph G₀) (encGraph G₁) ∧ permGraph G₀ σ = G₁}
 
+/-- Membership in `Liso`: `x` encodes a pair of isomorphic graphs `σ(G₀) = G₁`. -/
+theorem mem_Liso_iff (x : List Bool) : x ∈ Liso ↔ ∃ (n : ℕ) (G₀ G₁ : Graph n)
+    (σ : Equiv.Perm (Fin n)), x = pairEncode (encGraph G₀) (encGraph G₁) ∧ permGraph G₀ σ = G₁ :=
+  Iff.rfl
+
 /-- Shadow of `TCSlib.Cryptography.Lniso` (Def-118.a). -/
 def Lniso : Language Bool :=
   {x | ∃ (n : ℕ) (G₀ G₁ : Graph n), x = pairEncode (encGraph G₀) (encGraph G₁) ∧ ¬ Isomorphic G₀ G₁}
+
+/-- Membership in `Lniso`: `x` encodes two non-isomorphic graphs on the same vertex set. -/
+theorem mem_Lniso_iff (x : List Bool) : x ∈ Lniso ↔ ∃ (n : ℕ) (G₀ G₁ : Graph n),
+    x = pairEncode (encGraph G₀) (encGraph G₁) ∧ ¬ Isomorphic G₀ G₁ :=
+  Iff.rfl
 
 /-- Shadow of `TCSlib.Cryptography.Riso` (Def-118.a). -/
 def Riso (x y : List Bool) : Prop :=
   ∃ (n : ℕ) (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)),
     x = pairEncode (encGraph G₀) (encGraph G₁) ∧ y = encPerm σ ∧ permGraph G₀ σ = G₁
 
+/-- The defining property of `Riso`: `x` encodes `(G₀, G₁)` and `y` encodes an isomorphism
+`σ(G₀) = G₁`. -/
+theorem riso_iff (x y : List Bool) : Riso x y ↔ ∃ (n : ℕ) (G₀ G₁ : Graph n)
+    (σ : Equiv.Perm (Fin n)),
+    x = pairEncode (encGraph G₀) (encGraph G₁) ∧ y = encPerm σ ∧ permGraph G₀ σ = G₁ :=
+  Iff.rfl
+
 /-- Shadow of `TCSlib.Cryptography.samplePerm` (D10). -/
 noncomputable def samplePerm (n : ℕ) (r : List Bool) : Equiv.Perm (Fin n) :=
   (permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1
+
+/-- The defining equation of `samplePerm`: the permutation decoded from the coin table, the
+identity on failure. -/
+theorem samplePerm_def (n : ℕ) (r : List Bool) : samplePerm n r =
+    (permFromCoins n (permBits n) (permTrials n) (coinTable n (permTrials n) (permBits n) r)).getD 1 :=
+  rfl
 
 /-- Shadow of `TCSlib.Cryptography.permCoinLen`. -/
 def permCoinLen (n : ℕ) : ℕ := n * permTrials n * permBits n
@@ -159,6 +215,13 @@ def gniProver : Strategy where
   next x _ _ hist :=
     [decide (¬ Isomorphic (instanceG₀ x) (decGraphAt (instanceVertexCount x) (hist.getLastD [])))]
 
+/-- The next-message function of `gniProver`: the bit `¬ (G₀ ≅ H)` for the last graph `H`
+received, read on `instanceVertexCount x` vertices. -/
+theorem gniProver_next (x y r : List Bool) (hist : List (List Bool)) :
+    gniProver.next x y r hist =
+      [decide (¬ Isomorphic (instanceG₀ x) (decGraphAt (instanceVertexCount x) (hist.getLastD [])))] :=
+  rfl
+
 /-- Shadow of `TCSlib.Cryptography.gniVerifier` [PS10, Protocol 118.3]. -/
 noncomputable def gniVerifier : Strategy where
   coins := .add (.const 1) (.normal 1 2)
@@ -176,6 +239,12 @@ noncomputable def gniProtocol : Protocol where
   V := gniVerifier
   rounds := .const 2
   verifierFirst := true
+
+/-- The prover of `gniProtocol` is `gniProver`. -/
+theorem gniProtocol_P : gniProtocol.P = gniProver := rfl
+
+/-- The verifier of `gniProtocol` is `gniVerifier`. -/
+theorem gniProtocol_V : gniProtocol.V = gniVerifier := rfl
 
 /-- Shadow of `TCSlib.Cryptography.gniVerifierRep`. -/
 noncomputable def gniVerifierRep : Strategy where
@@ -196,6 +265,9 @@ noncomputable def gniProtocolRep : Protocol where
   V := gniVerifierRep
   rounds := .mul (.const 2) .var
   verifierFirst := true
+
+/-- The verifier of `gniProtocolRep` is `gniVerifierRep`. -/
+theorem gniProtocolRep_V : gniProtocolRep.V = gniVerifierRep := rfl
 
 /-- Shadow of `TCSlib.Cryptography.giProver` [PS10, Protocol 120.6]. -/
 noncomputable def giProver : Strategy where
@@ -230,6 +302,12 @@ noncomputable def giProtocol : Protocol where
   rounds := .const 3
   verifierFirst := false
 
+/-- The prover of `giProtocol` is `giProver`. -/
+theorem giProtocol_P : giProtocol.P = giProver := rfl
+
+/-- The verifier of `giProtocol` is `giVerifier`. -/
+theorem giProtocol_V : giProtocol.V = giVerifier := rfl
+
 /-- Shadow of `TCSlib.Cryptography.giProverRep`. -/
 noncomputable def giProverRep : Strategy where
   coins := .mul .var (.normal 1 2)
@@ -239,6 +317,21 @@ noncomputable def giProverRep : Strategy where
     let π := samplePerm n (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r)
     if hist.length % 2 = 0 then encGraph (permGraph (instanceG₀ x) π)
     else encPerm (if (hist.getLastD []).headD false then π * σ⁻¹ else π)
+
+/-- The next-message function of `giProverRep`: with
+`π = samplePerm n (coinSlice (|x|+1)² ⌊|hist|/2⌋ r)` and `n = instanceVertexCount x`, the graph
+`π(G₀)` on an even history, else `encPerm (π σ⁻¹)` or `encPerm π` by the latest challenge,
+`σ = decPerm n y`. -/
+theorem giProverRep_next (x y r : List Bool) (hist : List (List Bool)) :
+    giProverRep.next x y r hist =
+      if hist.length % 2 = 0 then
+        encGraph (permGraph (instanceG₀ x) (samplePerm (instanceVertexCount x)
+          (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r)))
+      else encPerm (if (hist.getLastD []).headD false then
+          samplePerm (instanceVertexCount x) (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r) *
+            (decPerm (instanceVertexCount x) y)⁻¹
+        else samplePerm (instanceVertexCount x) (coinSlice ((x.length + 1) ^ 2) (hist.length / 2) r)) :=
+  rfl
 
 /-- Shadow of `TCSlib.Cryptography.giVerifierRep`. -/
 noncomputable def giVerifierRep : Strategy where
@@ -251,12 +344,36 @@ noncomputable def giVerifierRep : Strategy where
       encGraph (permGraph (if r.getD j false then instanceG₁ x else instanceG₀ x)
         (decPerm n (hist.getD (2 * j + 1) []))) = hist.getD (2 * j) [])]
 
+/-- The next-message function of `giVerifierRep`: the challenge `r_{⌊|hist|/2⌋}` on an odd
+history, the empty message on an even history shorter than `2|x|`, else the verdict
+`[x well formed ∧ ∀ j < |x|, γ_j(G_{b_j}) = H_j]`. -/
+theorem giVerifierRep_next (x z r : List Bool) (hist : List (List Bool)) :
+    giVerifierRep.next x z r hist =
+      if hist.length % 2 = 1 then [r.getD (hist.length / 2) false]
+      else if hist.length < 2 * x.length then []
+      else [decide (wellFormedInstance x = true ∧ ∀ j : Fin x.length,
+        encGraph (permGraph (if r.getD j false then instanceG₁ x else instanceG₀ x)
+          (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) = hist.getD (2 * j) [])] :=
+  rfl
+
 /-- Shadow of `TCSlib.Cryptography.giProtocolRep` (Prot-120.6). -/
 noncomputable def giProtocolRep : Protocol where
   P := giProverRep
   V := giVerifierRep
   rounds := .mul (.const 4) .var
   verifierFirst := false
+
+/-- The prover of `giProtocolRep` is `giProverRep`. -/
+theorem giProtocolRep_P : giProtocolRep.P = giProverRep := rfl
+
+/-- The verifier of `giProtocolRep` is `giVerifierRep`. -/
+theorem giProtocolRep_V : giProtocolRep.V = giVerifierRep := rfl
+
+/-- `giProtocolRep` runs `4|x|` rounds. -/
+theorem giProtocolRep_rounds : giProtocolRep.rounds = .mul (.const 4) .var := rfl
+
+/-- In `giProtocolRep` the prover moves first. -/
+theorem giProtocolRep_verifierFirst : giProtocolRep.verifierFirst = false := rfl
 
 /-! ### Bounded prover messages (ruling G3-3 of gate 03) -/
 
@@ -417,7 +534,7 @@ theorem encInstance_mem_Lniso_iff {n : ℕ} (G₀ G₁ : Graph n) :
 theorem decGraph_eq_of_sqrt {w : List Bool} {n : ℕ} (h : Nat.sqrt w.length = n) :
     decGraph w = ⟨n, decGraphAt n w⟩ := by
   subst h
-  rfl
+  exact decGraph_eq_decGraphAt w
 
 /-- The decoding of the empty word is the identity permutation (the default row search
 returns the row index). -/
@@ -457,10 +574,11 @@ layout `ilayout x z hist r = ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, msgs⟩⟩, []⟩,
 computing it (`NUPPT.runAtL_ofPolyTimeUniform`). -/
 theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool} (hF : PolyTimeComputable F)
     (h : ∀ x z r hist, S.next x z r hist = F (ilayout x z hist r)) : S.Efficient :=
-  ⟨NUPPT.ofPolyTimeUniform hF S.coins, NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
+  (Strategy.efficient_iff S).2 ⟨NUPPT.ofPolyTimeUniform hF S.coins,
+    NUPPT.ofPolyTimeUniform_uniform hF _, (NUPPT.coins_ofPolyTimeUniform hF S.coins).symm,
     fun x z r hist => by
-      rw [h, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform]
-      rfl⟩
+      rw [h, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, ilayout_def, NUPPT.layout_eq,
+        NUPPT.advInput_eq]⟩
 
 /-! ### Transcripts of the single-iteration protocols -/
 
@@ -689,6 +807,7 @@ theorem statClose_samplePerm_long {n c : ℕ} (h : permCoinLen n ≤ c) :
     StatClose (fun t : Fin c → Bool => samplePerm n (List.ofFn t))
       (id : Equiv.Perm (Fin n) → Equiv.Perm (Fin n)) (permFailBound n) := by
   have := (statClose_samplePerm n).comp_pushesUniform (pushesUniform_castLE h)
+  rw [statClose_iff] at this ⊢
   intro T
   have hT := this T
   simpa only [samplePerm_ofFn_castLE h] using hT
@@ -696,7 +815,9 @@ theorem statClose_samplePerm_long {n c : ℕ} (h : permCoinLen n ≤ c) :
 /-- Shadow of `permCoinLen_le`: the sampler fits in `(N + 1)²` bits once `2n² ≤ N`. -/
 theorem permCoinLen_le {n N : ℕ} (h : 2 * (n * n) ≤ N) : permCoinLen n ≤ (N + 1) ^ 2 := by
   have hnn : n * n ≤ N := le_trans (Nat.le_mul_of_pos_left (n * n) two_pos) h
-  calc permCoinLen n = n * (2 * n * n) * permBits n := rfl
+  calc permCoinLen n = n * (2 * n * n) * permBits n := by
+        unfold permCoinLen
+        rw [permTrials_eq]
     _ ≤ n * (2 * n * n) * n := Nat.mul_le_mul_left _ (permBits_le n)
     _ = (2 * (n * n)) * (n * n) := by ring
     _ ≤ N * N := Nat.mul_le_mul h hnn

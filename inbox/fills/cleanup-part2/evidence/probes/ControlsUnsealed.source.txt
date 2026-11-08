@@ -1,0 +1,69 @@
+import TCSlib.Complexity.Randomized.PolyExpr
+
+/-! cleanup-part2 sensitivity controls (evidence probe; not library source).
+
+Same import as `TCSlib/Complexity/Randomized/PPT.lean`, so the whole-file seal of PPT's census
+closure (every non-instance, non-reducible TCSlib definition of the import closure, matchers
+included, the standing-rule notation `PolyExpr.eval` left unsealed) applies verbatim.
+Negatives `cp2_N*` must elaborate unsealed and fail sealed exactly at their marked proof site;
+positives `cp2_P*` must elaborate in both. -/
+
+open Turing Complexity
+
+-- N1 ordinary conversion: a `rfl` theorem through a foreign data definition
+theorem cp2_N1_rfl : pairDecode [] = none := rfl -- CP2-SITE N1
+
+-- N2 ordinary conversion through `show`
+theorem cp2_N2_show (z : List Bool) : pairDecode (false :: true :: z) = some ([], z) := by
+  show some ([], z) = some ([], z) -- CP2-SITE N2
+  rfl
+
+-- N3 anonymous command
+example : pairDecode [] = none := rfl -- CP2-SITE N3
+
+-- N4 generated matcher: after the unfolding equation the goal compares the foreign definition's
+-- compiler-generated matcher with this file's own matcher on a free discriminant; closing it needs
+-- the foreign matcher's body (delta), which is what the seal must block. (A matcher applied to a
+-- constructor discriminant is reduced by `whnfCore` without delta, so it is no seal control;
+-- the first attempt used that form and is retained as `Controls-attempt1.source.txt`.)
+theorem cp2_N4_matcher (z : List Bool) :
+    pairDecode z = (match z with
+      | false :: false :: rest => (pairDecode rest).map fun p => (false :: p.1, p.2)
+      | true :: true :: rest => (pairDecode rest).map fun p => (true :: p.1, p.2)
+      | false :: true :: rest => some ([], rest)
+      | _ => none) := by
+  rw [pairDecode.eq_def]
+  rfl -- CP2-SITE N4
+
+-- N5 definition-body sensitivity: a data definition whose body needs the foreign body
+def cp2_N5_body : {l : List Bool // pairDecode l = none} := ⟨[], rfl⟩ -- CP2-SITE N5
+
+-- N6 field of a structure-valued foreign definition by conversion
+theorem cp2_N6_field {k : ℕ} {S H : Type} {input : List Bool} (emb : S → H) (ret : H)
+    (pre : List Bool) (c : Cfg k Bool S input) :
+    (emitCfg emb ret pre c).output = pre ++ c.output := rfl -- CP2-SITE N6
+
+-- N7 destructuring a foreign predicate definition
+theorem cp2_N7_pred (f : List Bool → List Bool) (h : PolyTimeComputable f) :
+    ∃ M : FinTM Bool, M = M := by
+  obtain ⟨M, -⟩ := h -- CP2-SITE N7
+  exact ⟨M, rfl⟩
+
+-- P1 the published case reader
+theorem cp2_P1_reader : pairDecode [] = none := pairDecode_nil
+
+-- P2 the published field reader
+theorem cp2_P2_field {k : ℕ} {S H : Type} {input : List Bool} (emb : S → H) (ret : H)
+    (pre : List Bool) (c : Cfg k Bool S input) :
+    (emitCfg emb ret pre c).output = pre ++ c.output := emitCfg_output emb ret pre c
+
+-- P3 the published predicate reader
+theorem cp2_P3_iff (f : List Bool → List Bool) (h : PolyTimeComputable f) :
+    ∃ M : FinTM Bool, M = M := by
+  obtain ⟨M, -⟩ := (polyTimeComputable_iff f).1 h
+  exact ⟨M, rfl⟩
+
+-- P4 standing-rule notation: `PolyExpr.eval` is never sealed
+theorem cp2_P4_notation : (PolyExpr.var.add (PolyExpr.const 1)).eval 3 = 4 := rfl
+
+run_cmd Lean.logInfo "CP2-CONTROLS-EOF"

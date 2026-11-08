@@ -1,0 +1,157 @@
+START 2026-11-08T09:28:02.598441+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean sha256=b6cf7e21ce502fe2c0a24e88bd5466dfa8669a2aa7039d86d5cf376b31c47c8f
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=200 active=200 already=0
+CP2-SEAL chunk=9 requested=110 active=110 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2359:31: error: Application type mismatch: The argument
+  LE.le.trans (length_pairSndD_le (pairFstD (pairFstD ?m.23)))
+    (LE.le.trans (length_pairFstD_le (pairFstD ?m.23)) (length_pairFstD_le ?m.23))
+has type
+  (pairSndD (pairFstD (pairFstD ?m.23))).length ≤ List.length ?m.23
+but is expected to have type
+  (NUPPT.inArg w).length ≤ w.length
+in the application
+  LE.le.trans (length_pairFstD_le (NUPPT.inArg w))
+    (LE.le.trans (length_pairSndD_le (pairFstD (pairFstD ?m.23)))
+      (LE.le.trans (length_pairFstD_le (pairFstD ?m.23)) (length_pairFstD_le ?m.23)))
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2382:2: error: Type mismatch
+  truncate_poly hdrop hB
+has type
+  PolyTimeComputable fun x =>
+    List.take ((blockPoly ℓ V').eval (X x).length) (List.drop (T x * (blockPoly ℓ V').eval (X x).length) (R x))
+but is expected to have type
+  PolyTimeComputable fun w => colCoinSlice ((blockPoly ℓ V').eval (X w).length) (T w) (R w)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2387:2: error: Type mismatch
+  unarySqrt_poly (unaryLength_poly hX)
+has type
+  PolyTimeComputable fun x => List.replicate (X x).length.sqrt true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (nV (X w)) true
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2392:2: error: Type mismatch
+  countBits_poly hX (unaryMul_poly (nV_poly hX) (nV_poly hX))
+has type
+  PolyTimeComputable fun z => List.replicate (countBits (X z) (nV (X z) * nV (X z))) true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (mE (X w)) true
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2397:2: error: Type mismatch
+  unaryAdd_poly (unaryPolyOf_poly ((PolyExpr.var.add (PolyExpr.const 1)).pow 2) (unaryLength_poly hX))
+    (unaryMul_poly (unaryConst_poly 3) (unaryLength_poly hX))
+has type
+  PolyTimeComputable fun x =>
+    List.replicate (((PolyExpr.var.add (PolyExpr.const 1)).pow 2).eval (X x).length + 3 * (X x).length) true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (baseR (X w)) true
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2425:2: error: Type mismatch
+  sampleNum_poly (unaryConst_poly 6) (unaryConst_poly 3) (unaryLength_poly hX) hdrop (unaryConst_poly 8) fun x =>
+    Mathlib.Meta.NormNum.isNat_le_true
+      (Mathlib.Meta.NormNum.isNat_pow (Eq.refl HPow.hPow) (Mathlib.Meta.NormNum.isNat_ofNat ℕ (Eq.refl 2))
+        (Mathlib.Meta.NormNum.isNat_ofNat ℕ (Eq.refl 3))
+        (Mathlib.Meta.NormNum.IsNatPowT.run Mathlib.Meta.NormNum.IsNatPowT.bit1))
+      (Mathlib.Meta.NormNum.isNat_ofNat ℕ (Eq.refl 8)) (Eq.refl true)
+has type
+  PolyTimeComputable fun z =>
+    List.replicate (sampleNum 6 3 (X z).length (List.drop (((X z).length + 1) ^ 2) (B z))) true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (vIdx (X w) (B w)) true
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2423:69: warning: This simp argument is unused:
+  PolyExpr.eval_mul
+
+Hint: Omit it from the simp argument list.
+  simp [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, P̵o̵l̵y̵E̵x̵p̵r̵.̵e̵v̵a̵l̵_̵m̵u̵l̵,̵PolyExpr.eval_pow,
+        PolyExpr.eval_normal]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2424:27: warning: This simp argument is unused:
+  PolyExpr.eval_normal
+
+Hint: Omit it from the simp argument list.
+  simp [PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul,
+        P̵o̵l̵y̵E̵x̵p̵r̵.̵e̵v̵a̵l̵_̵p̵o̵w̵,̵ ̵P̵o̵l̵y̵E̵x̵p̵r̵.̵e̵v̵a̵l̵_̵n̵o̵r̵m̵a̵l̵]̵P̲o̲l̲y̲E̲x̲p̲r̲.̲e̲v̲a̲l̲_̲p̲o̲w̲]̲
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2444:2: error: Type mismatch
+  polyTimeComputable_firstIdx hp (unaryMul_poly (nV_poly hX) (nV_poly hX))
+has type
+  PolyTimeComputable fun z =>
+    List.replicate
+      (firstIdx (fun k => (X z).getD k false && decide (countBits (X z) k = eIdx (X z) (B z))) (nV (X z) * nV (X z)))
+      true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (kPos (X w) (B w)) true
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2526:2: error: Type mismatch
+  PolyTimeComputable.pairEncode
+    (PolyTimeComputable.comp hCom (PolyTimeComputable.pairEncode hpad (rrStr_poly ℓ hX hB hI)))
+    (polyTimeComputable_const [])
+has type
+  PolyTimeComputable fun x =>
+    pairEncode
+      ((Com ∘ fun x => pairEncode (EnsembleLemmas.padL (nV (X x)) (encColor (c x (I x)))) (rrStr ℓ (X x) (B x) (I x)))
+        x)
+      []
+but is expected to have type
+  PolyTimeComputable fun w => chunk Com ℓ (X w) (B w) (c w) (I w)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2541:27: error: Type mismatch
+  LE.le.trans (Nat.sqrt_le_self (X w).length) (LE.le.trans (hXle w) (Nat.le_succ w.length))
+has type
+  (X w).length.sqrt ≤ w.length.succ
+but is expected to have type
+  nV (X w) ≤ w.length + 1
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2552:27: error: Type mismatch
+  LE.le.trans (Nat.sqrt_le_self (X w).length) (LE.le.trans (hXle w) (Nat.le_succ w.length))
+has type
+  (X w).length.sqrt ≤ w.length.succ
+but is expected to have type
+  nV (X w) ≤ w.length + 1
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2600:2: error: Type mismatch
+  PolyTimeComputable.pairEncode
+    (PolyTimeComputable.pairEncode (colorStr_poly hX hB (p1_poly hX hB)) (rrStr_poly ℓ hX hB (p1_poly hX hB)))
+    (PolyTimeComputable.pairEncode (colorStr_poly hX hB (p2_poly hX hB)) (rrStr_poly ℓ hX hB (p2_poly hX hB)))
+has type
+  PolyTimeComputable fun x =>
+    pairEncode
+      (pairEncode (encColor (colorNum (X x) (B x) (kPos (X x) (B x) / nV (X x))))
+        (rrStr ℓ (X x) (B x) (kPos (X x) (B x) / nV (X x))))
+      (pairEncode (encColor (colorNum (X x) (B x) (kPos (X x) (B x) % nV (X x))))
+        (rrStr ℓ (X x) (B x) (kPos (X x) (B x) % nV (X x))))
+but is expected to have type
+  PolyTimeComputable fun w => opnStr ℓ (X w) (B w)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2608:2: error: Type mismatch
+  PolyTimeComputable.pairEncode (PolyTimeComputable.pairEncode hX hZ)
+    (PolyTimeComputable.pairEncode hRv
+      (PolyTimeComputable.pairEncode hC (PolyTimeComputable.pairEncode hO (polyTimeComputable_const []))))
+has type
+  PolyTimeComputable fun x =>
+    pairEncode (pairEncode (X x) (Z x)) (pairEncode (Rv x) (pairEncode (C x) (pairEncode (O x) [])))
+but is expected to have type
+  PolyTimeComputable fun w => { x := X w, z := Z w, r := Rv w, received := [C w, O w] }.encode
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2697:61: error: Type mismatch
+  edgeCount_eq_countBits ?m.41
+has type
+  edgeCount (decGraph ?m.41).snd = countBits ?m.41 ((decGraph ?m.41).fst * (decGraph ?m.41).fst)
+but is expected to have type
+  edgeCount (decGraph (simX w)).snd = mE (simX w)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine.lean:2756:91: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.44 = ?m.44
+but is expected to have type
+  (NUPPT.ofPolyTimeUniform hF (simCoins ℓ V')).coins = simCoins ℓ V'
+in the application
+  And.intro rfl
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/SimulatorMachine): no fresh .olean produced
+
+END 2026-11-08T09:28:25.486409+00:00 RC 1 elapsed=22.9s pid=16647 maxrss=2825696KiB

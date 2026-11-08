@@ -1,0 +1,134 @@
+START 2026-11-08T09:05:57.066804+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean sha256=19f6845b89340c8ca3df88daca3d65e226b13a34d9912101b12843c4cbb76873
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=36 active=36 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:443:4: error: Tactic `rfl` failed: The left-hand side
+  { inputTape := (C.tm.tr q (stopCfg b c).inputSymbol (stopCfg b c).workTapeSymbols).inputTape,
+        workTapes := (C.tm.tr q (stopCfg b c).inputSymbol (stopCfg b c).workTapeSymbols).workTapes,
+        output := (C.tm.tr q (stopCfg b c).inputSymbol (stopCfg b c).workTapeSymbols).output,
+        state :=
+          Option.map (fun x => (true, x))
+            (C.tm.tr q (stopCfg b c).inputSymbol (stopCfg b c).workTapeSymbols).state }.apply
+    (stopCfg b c)
+is not definitionally equal to the right-hand side
+  stopCfg true ((C.tm.tr q c.inputSymbol c.workTapeSymbols).apply c)
+
+case some
+C : FinTM Bool
+entry exit : C.State
+x : List Bool
+b : Bool
+c : Cfg C.k Bool C.State x
+hlive : c.state ≠ none
+hg : b = true → c.state ≠ some exit
+q : C.State
+hs : c.state = some q
+hq : ¬(b = true ∧ q = exit)
+hs' : (stopCfg b c).state = some (b, q)
+⊢ { inputTape := (C.tm.tr q (stopCfg b c).inputSymbol (stopCfg b c).workTapeSymbols).inputTape,
+          workTapes := (C.tm.tr q (stopCfg b c).inputSymbol (stopCfg b c).workTapeSymbols).workTapes,
+          output := (C.tm.tr q (stopCfg b c).inputSymbol (stopCfg b c).workTapeSymbols).output,
+          state :=
+            Option.map (fun x => (true, x))
+              (C.tm.tr q (stopCfg b c).inputSymbol (stopCfg b c).workTapeSymbols).state }.apply
+      (stopCfg b c) =
+    stopCfg true ((C.tm.tr q c.inputSymbol c.workTapeSymbols).apply c)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:466:23: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom (stopCfg false c) 0
+is not definitionally equal to the right-hand side
+  stopCfg (decide (0 ≠ 0)) (MultiTapeTM.runFrom c 0)
+
+case zero
+C : FinTM Bool
+entry exit : C.State
+x arg result out : List Bool
+t : ℕ
+ht : 0 < t
+hg : ∀ (v : ℕ), 0 < v → v < t → (MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) v).state ≠ some exit
+he :
+  MultiTapeTM.runFrom (Cfg.ofWords entry (stateWord C.k arg)) t =
+    let __src := Cfg.ofWords exit (stateWord C.k result);
+    { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+      output := out }
+c : Cfg C.k Bool C.State x := Cfg.ofWords entry (stateWord C.k arg)
+hl : ∀ u ≤ t, (MultiTapeTM.runFrom c u).state ≠ none
+a✝ : 0 ≤ t
+⊢ MultiTapeTM.runFrom (stopCfg false c) 0 = stopCfg (decide (0 ≠ 0)) (MultiTapeTM.runFrom c 0)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:475:93: error: Type mismatch
+  rfl
+has type
+  ?m.216 = ?m.216
+but is expected to have type
+  Cfg.ofWords (false, entry) (stateWord C.k arg) = stopCfg false c
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:603:9: error: Tactic `rcases` failed: `hf : PolyTimeComputable f` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:627:9: error: Tactic `rcases` failed: `hf : PolyTimeComputable f` is not an inductive datatype
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:675:31: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.36 = ?m.36
+but is expected to have type
+  ((padAction a).apply (padCfg c)).output = (padCfg (a.apply c)).output
+in the application
+  Cfg.ext ?m.29 ?m.32 ?m.33 ?m.34 rfl
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:699:4: error: 'change' tactic failed, pattern
+  (padAction (M.tm.tr q c.inputSymbol ?m.173)).apply ?m.178 = ?m.180
+is not definitionally equal to target
+  ((padTM M K hk).tm.tr q (padCfg c).inputSymbol (padCfg c).workTapeSymbols).apply (padCfg c) =
+    padCfg ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:708:21: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.42 = ?m.42
+but is expected to have type
+  (padCfg
+        (let __src := Cfg.ofWords q (stateWord k w);
+        { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+          workTapePos := __src.workTapePos, output := out })).inputPos =
+    (let __src := Cfg.ofWords q (stateWord K w);
+      { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+        workTapePos := __src.workTapePos, output := out }).inputPos
+in the application
+  Cfg.ext ?m.40 rfl
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:781:31: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.80 = ?m.80
+but is expected to have type
+  (emitCfg (fun s => Sum.inr ⟨i, s⟩) (ret i) pre
+        (padCfg
+          (let __src := Cfg.ofWords q (stateWord (M i).k w);
+          { state := state, inputPos := __src.inputPos, workTapes := __src.workTapes, workTapePos := __src.workTapePos,
+            output := out }))).output =
+    (let __src := Cfg.ofWords ((Option.map (fun s => Sum.inr ⟨i, s⟩) state).getD (ret i)) (stateWord K w);
+      { state := __src.state, inputPos := __src.inputPos, workTapes := __src.workTapes,
+        workTapePos := __src.workTapePos, output := pre ++ out }).output
+in the application
+  Cfg.ext ?m.73 ?m.76 ?m.77 ?m.78 rfl
+.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost.lean:819:4: error: Type mismatch: After simplification, term
+  host_seam M K ret i hp x arg pre [] (M i).tm.q₀ (some (M i).tm.q₀)
+ has type
+  emitCfg (fun s => Sum.inr ⟨i, s⟩) (ret i) pre
+      (padCfg
+        { state := some (M i).tm.q₀, inputPos := (Cfg.ofWords (M i).tm.q₀ (stateWord (M i).k arg)).inputPos,
+          workTapes := (Cfg.ofWords (M i).tm.q₀ (stateWord (M i).k arg)).workTapes,
+          workTapePos := (Cfg.ofWords (M i).tm.q₀ (stateWord (M i).k arg)).workTapePos, output := [] }) =
+    { state := (Cfg.ofWords (Sum.inr ⟨i, (M i).tm.q₀⟩) (stateWord K arg)).state,
+      inputPos := (Cfg.ofWords (Sum.inr ⟨i, (M i).tm.q₀⟩) (stateWord K arg)).inputPos,
+      workTapes := (Cfg.ofWords (Sum.inr ⟨i, (M i).tm.q₀⟩) (stateWord K arg)).workTapes,
+      workTapePos := (Cfg.ofWords (Sum.inr ⟨i, (M i).tm.q₀⟩) (stateWord K arg)).workTapePos, output := pre }
+but is expected to have type
+  emitCfg (fun s => Sum.inr ⟨i, s⟩) (ret i) pre (padCfg (Cfg.ofWords (M i).tm.q₀ (stateWord (M i).k arg))) =
+    { state := (Cfg.ofWords (Sum.inr ⟨i, (M i).tm.q₀⟩) (stateWord K arg)).state,
+      inputPos := (Cfg.ofWords (Sum.inr ⟨i, (M i).tm.q₀⟩) (stateWord K arg)).inputPos,
+      workTapes := (Cfg.ofWords (Sum.inr ⟨i, (M i).tm.q₀⟩) (stateWord K arg)).workTapes,
+      workTapePos := (Cfg.ofWords (Sum.inr ⟨i, (M i).tm.q₀⟩) (stateWord K arg)).workTapePos, output := pre }
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Complexity/TuringMachine/Build/ModuleHost): no fresh .olean produced
+
+END 2026-11-08T09:06:01.427332+00:00 RC 1 elapsed=4.4s pid=12897 maxrss=1808200KiB

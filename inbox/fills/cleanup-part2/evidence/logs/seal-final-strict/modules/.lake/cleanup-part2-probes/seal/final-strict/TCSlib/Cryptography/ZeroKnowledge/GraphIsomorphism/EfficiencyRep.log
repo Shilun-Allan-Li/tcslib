@@ -1,0 +1,89 @@
+START 2026-11-08T09:46:47.025955+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean sha256=013af37fba27eaa07be2f3bd889f1f6319e90c9a5e281a0dd81c4d266733b0a0
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=188 active=188 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:1170:4: error: Tactic `rfl` failed: The left-hand side
+  (pairSndD []).length
+is not definitionally equal to the right-hand side
+  [].length
+
+case inl
+⊢ (pairSndD []).length ≤ [].length
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:1184:50: error: Type mismatch
+  iterate_pairSndD_nil k
+has type
+  pairSndD^[k] [] = []
+but is expected to have type
+  pairSndD^[k] (pairSndD []) = []
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:1190:11: error: Tactic `rfl` failed: The left-hand side
+  pairSndD (Strategy.encodeMsgs [])
+is not definitionally equal to the right-hand side
+  Strategy.encodeMsgs (List.drop 1 [])
+
+case nil
+⊢ pairSndD (Strategy.encodeMsgs []) = Strategy.encodeMsgs (List.drop 1 [])
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:1304:14: error: Type mismatch
+  (peelSteps_spec f stop hdec w).right.right
+has type
+  peelSteps f stop w ≤ w.length
+but is expected to have type
+  peelSteps f stop w ≤ PolyExpr.var.eval w.length
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:1410:63: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.31 = ?m.31
+but is expected to have type
+  pairSndD [] = []
+in the application
+  Eq.mp decide_eq_false_iff_not._simp_1 hw rfl
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:1449:8: error: Invalid `⟨...⟩` notation: The expected type
+  PolyTimeComputable fun z =>
+    match pairDecode z with
+    | some (u, v) => List.replicate (u.length * v.length) true
+    | none => []
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:1506:15: error: Type mismatch
+  length_pairFstD_le x₀
+has type
+  (pairFstD x₀).length ≤ x₀.length
+but is expected to have type
+  (fun x₀ => (pairFstD x₀).length) x₀ ≤ PolyExpr.var.eval x₀.length
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep.lean:1714:2: error: 'show' tactic failed, pattern
+  (if hist.length < x.length then ?m.76 else ?m.77) = ?m.79
+is not definitionally equal to target
+  gniVerifierRep.next x z r hist =
+    if decide (msgCount (argM (ilayout x z hist r)) < (NUPPT.inParam (ilayout x z hist r)).length) = true then
+      relabelAt (List.replicate (vcount (ilayout x z hist r)) true)
+        (if
+            (coinSlice (gniBlock.eval (NUPPT.inParam (ilayout x z hist r)).length)
+                    (msgCount (argM (ilayout x z hist r))) (NUPPT.inCoins (ilayout x z hist r))).headD
+                false =
+              true then
+          pairSndD (argX (ilayout x z hist r))
+        else pairFstD (argX (ilayout x z hist r)))
+        (sampleStr (pairFstD (argX (ilayout x z hist r)))
+          (coinSlice (gniBlock.eval (NUPPT.inParam (ilayout x z hist r)).length) (msgCount (argM (ilayout x z hist r)))
+              (NUPPT.inCoins (ilayout x z hist r))).tail)
+    else
+      [wellFormedInstance (argX (ilayout x z hist r)) &&
+          decide
+            (∀ j < (NUPPT.inParam (ilayout x z hist r)).length,
+              (pairFstD (pairSndD^[j] (argM (ilayout x z hist r)))).headD false =
+                (List.drop (j * gniBlock.eval (NUPPT.inParam (ilayout x z hist r)).length)
+                      (NUPPT.inCoins (ilayout x z hist r))).headD
+                  false)]
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRep): no fresh .olean produced
+
+END 2026-11-08T09:47:02.296806+00:00 RC 1 elapsed=15.3s pid=19853 maxrss=2702944KiB

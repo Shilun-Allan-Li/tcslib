@@ -63,10 +63,11 @@ open Complexity Turing Finset
 `decide (¬ G₀ ≅ K)`. -/
 theorem gniProver_next_encGraph {n : ℕ} (G₀ G₁ K : Graph n) (y r : List Bool) :
     gniProver.next (encInstance G₀ G₁) y r [encGraph K] = [decide (¬ Isomorphic G₀ K)] := by
+  rw [gniProver_next, instanceG₀_def,
+    show pairFstD (encInstance G₀ G₁) = encGraph G₀ by rw [encInstance_eq, pairFstD_pairEncode]]
   show [decide (¬ Isomorphic
-    (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+    (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (encGraph G₀))
     (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (encGraph K)))] = _
-  rw [show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _]
   generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
   rw [instanceVertexCount_encInstance] at hm
   subst hm
@@ -175,18 +176,21 @@ malformed `x` is rejected outright (`gniVerifier_next_one`); a well-formed `x �
 verdict being a single bit (`gni_outV_eq`, `uprob_not`). -/
 theorem gni_interactiveProofErr (hV : gniVerifier.Efficient) :
     InteractiveProofErr gniProtocol Lniso (fun N => 1 / 2 + permFailBound (instanceVertices N)) where
-  efficientV := hV
+  efficientV := by
+    rw [gniProtocol_V]
+    exact hV
   complete := by
     refine ⟨.const 1, ?_⟩
-    rintro x ⟨n, G₀, G₁, rfl, hni⟩
+    intro x hx
+    obtain ⟨n, G₀, G₁, rfl, hni⟩ := (mem_Lniso_iff x).1 hx
     exact ⟨[], gniProver_length_le _ [], fun z => gni_complete hni [] z⟩
   sound := by
     intro x hx P' z
     by_cases hwf : wellFormedInstance x = true
     · obtain ⟨n, G₀, G₁, rfl⟩ := exists_eq_encInstance_of_wellFormed hwf
-      obtain ⟨σ₀, hσ⟩ : Isomorphic G₀ G₁ := by
+      obtain ⟨σ₀, hσ⟩ := (isomorphic_iff G₀ G₁).1 (by
         by_contra hni
-        exact hx ((encInstance_mem_Lniso_iff G₀ G₁).2 hni)
+        exact hx ((encInstance_mem_Lniso_iff G₀ G₁).2 hni))
       have hacc := gni_accept_le hσ P' [] z
       have hnot : ∀ r : gniProtocol.ExecCoins P' (encInstance G₀ G₁),
           gniProtocol.outV P' (encInstance G₀ G₁) [] z r = [false] ↔
@@ -302,10 +306,13 @@ bounds the acceptance probability, the verdict being a single bit (`gi_outV_eq`,
 `uprob_not`). -/
 theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Efficient) :
     EfficientProverProofErr giProtocol Liso Riso (fun _ => 1 / 2) where
-  efficientV := hV
+  efficientV := by
+    rw [giProtocol_V]
+    exact hV
   complete := by
     refine ⟨.var, ?_⟩
-    rintro x ⟨n, G₀, G₁, σ, rfl, hσ⟩
+    intro x hx
+    obtain ⟨n, G₀, G₁, σ, rfl, hσ⟩ := (mem_Liso_iff x).1 hx
     exact ⟨encPerm σ, giProver_length_le _ _, fun z => gi_complete hσ z⟩
   sound := by
     intro x hx P' z
@@ -327,11 +334,15 @@ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Ef
         simp [hwf]
       rw [HardcoreBit.uprob_eq_one_of_forall hall]
       norm_num
-  efficientP := hP
-  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ =>
-    giProver_length_le x y r hist⟩
+  efficientP := by
+    rw [giProtocol_P]
+    exact hP
+  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => by
+    rw [giProtocol_P]
+    exact giProver_length_le x y r hist⟩
   completeWitness := by
-    rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
+    intro x y hxy z
+    obtain ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ := (riso_iff x y).1 hxy
     exact gi_complete hσ z
 
 end TCSlib.Cryptography.GI

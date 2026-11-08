@@ -1,0 +1,124 @@
+START 2026-11-08T09:11:27.683375+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean sha256=8a7b633fc4897cdd885e647679a7fbca61f44969d962e85c41ac6b14f018219a
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=157 active=157 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:1190:67: error: Type mismatch
+  fun z => ?m.5
+has type
+  (z : ?m.3) → ?m.6 z
+but is expected to have type
+  FunFamily.LengthRegular (gStr F ℓ d) ((PolyExpr.const 2).mul PolyExpr.var)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:1191:2: error: `simp` made no progress
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:1200:35: error: Type mismatch
+  rfl
+has type
+  ?m.5 = ?m.5
+but is expected to have type
+  (family F ℓ d).inLen = PolyExpr.var
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:1230:8: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:1380:53: error: Type mismatch
+  PolyExpr.eval_mono A'.coins hm
+has type
+  A'.coins.eval m ≤ A'.coins.eval (p.eval n)
+but is expected to have type
+  A'.coinLen m ≤ A'.coinLen (p.eval n)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:1413:4: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob ?p
+in the target expression
+  (uprob fun z =>
+      ∃ x',
+        A'.runAt m (List.ofFn ((family F 𝓕.inLen d).f m z.1)) z.2 = List.ofFn x' ∧
+          (family F 𝓕.inLen d).f m x' = (family F 𝓕.inLen d).f m z.1) ≤
+    uprob fun z => ∃ x', A.runAt n (List.ofFn (𝓕.f n z.1)) z.2 = List.ofFn x' ∧ 𝓕.f n x' = 𝓕.f n z.1
+
+𝓕 : FunFamily
+F : List Bool → List Bool
+hFx : ∀ (n : ℕ) (x : Fin (𝓕.inLen.eval n) → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (𝓕.f n x)
+d : ℕ
+A' A : NUPPT
+n m : ℕ
+hnu : nu d m = n
+hℓ : 𝓕.inLen.eval n ≤ m
+hL : 𝓕.outLen.eval n ≤ m
+p : PolyExpr
+hm : m ≤ p.eval n
+hAc : A.coins = p.add (A'.coins.subst p)
+hA :
+  ∀ (y r : List Bool),
+    A.runAtL n y r =
+      List.take (𝓕.inLen.eval n)
+        (A'.runAtL m
+          (padStr ((PolyExpr.const 2).mul PolyExpr.var) (List.replicate m true)
+            (List.take (m - 𝓕.inLen.eval n) (List.take (p.eval n) r) ++ y))
+          (List.take (A'.coinLen m) (List.drop (p.eval n) r)))
+hcast₁ : 𝓕.inLen.eval n + (m - 𝓕.inLen.eval n) = m
+e : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (m - 𝓕.inLen.eval n) → Bool) ≃ (Fin m → Bool) :=
+  (Fin.appendEquiv (𝓕.inLen.eval n) (m - 𝓕.inLen.eval n)).trans ((finCongr hcast₁).arrowCongr (Equiv.refl Bool))
+hofn :
+  ∀ (q : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (m - 𝓕.inLen.eval n) → Bool)),
+    List.ofFn (e q) = List.ofFn q.1 ++ List.ofFn q.2
+hc₁ : A'.coinLen m ≤ A'.coinLen (p.eval n)
+hcast₂ : m - 𝓕.inLen.eval n + (p.eval n - (m - 𝓕.inLen.eval n)) = p.eval n
+hcast₃ : A'.coinLen m + (A'.coinLen (p.eval n) - A'.coinLen m) = A'.coinLen (p.eval n)
+hcast₄ : p.eval n + A'.coinLen (p.eval n) = A.coinLen n
+eA : (Fin (m - 𝓕.inLen.eval n) → Bool) × (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool) ≃ (Fin (p.eval n) → Bool) :=
+  (splitCoins (m - 𝓕.inLen.eval n) (p.eval n - (m - 𝓕.inLen.eval n))).symm.trans
+    ((finCongr hcast₂).arrowCongr (Equiv.refl Bool))
+eR : A'.Coins m × (Fin (A'.coinLen (p.eval n) - A'.coinLen m) → Bool) ≃ (Fin (A'.coinLen (p.eval n)) → Bool) :=
+  (splitCoins (A'.coinLen m) (A'.coinLen (p.eval n) - A'.coinLen m)).symm.trans
+    ((finCongr hcast₃).arrowCongr (Equiv.refl Bool))
+eC : ((Fin (m - 𝓕.inLen.eval n) → Bool) × (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool)) ×
+    A'.Coins m × (Fin (A'.coinLen (p.eval n) - A'.coinLen m) → Bool) ≃
+  A.Coins n :=
+  (eA.prodCongr eR).trans
+    ((splitCoins (p.eval n) (A'.coinLen (p.eval n))).symm.trans ((finCongr hcast₄).arrowCongr (Equiv.refl Bool)))
+hofnC :
+  ∀
+    (q :
+      ((Fin (m - 𝓕.inLen.eval n) → Bool) × (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool)) ×
+        A'.Coins m × (Fin (A'.coinLen (p.eval n) - A'.coinLen m) → Bool)),
+    List.ofFn (eC q) = List.ofFn q.1.1 ++ List.ofFn q.1.2 ++ (List.ofFn q.2.1 ++ List.ofFn q.2.2)
+eArr : (((Fin (𝓕.inLen.eval n) → Bool) × (Fin (m - 𝓕.inLen.eval n) → Bool)) × A'.Coins m) ×
+    (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool) × (Fin (A'.coinLen (p.eval n) - A'.coinLen m) → Bool) ≃
+  (Fin (𝓕.inLen.eval n) → Bool) ×
+    ((Fin (m - 𝓕.inLen.eval n) → Bool) × (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool)) ×
+      A'.Coins m × (Fin (A'.coinLen (p.eval n) - A'.coinLen m) → Bool) :=
+  (Equiv.prodProdProdComm ((Fin (𝓕.inLen.eval n) → Bool) × (Fin (m - 𝓕.inLen.eval n) → Bool)) (A'.Coins m)
+        (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool) (Fin (A'.coinLen (p.eval n) - A'.coinLen m) → Bool)).trans
+    (((Equiv.prodAssoc (Fin (𝓕.inLen.eval n) → Bool) (Fin (m - 𝓕.inLen.eval n) → Bool)
+              (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool)).prodCongr
+          (Equiv.refl (A'.Coins m × (Fin (A'.coinLen (p.eval n) - A'.coinLen m) → Bool)))).trans
+      (Equiv.prodAssoc (Fin (𝓕.inLen.eval n) → Bool)
+        ((Fin (m - 𝓕.inLen.eval n) → Bool) × (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool))
+        (A'.Coins m × (Fin (A'.coinLen (p.eval n) - A'.coinLen m) → Bool))))
+⊢ (uprob fun z =>
+      ∃ x',
+        A'.runAt m (List.ofFn ((family F 𝓕.inLen d).f m z.1)) z.2 = List.ofFn x' ∧
+          (family F 𝓕.inLen d).f m x' = (family F 𝓕.inLen d).f m z.1) ≤
+    uprob fun z => ∃ x', A.runAt n (List.ofFn (𝓕.f n z.1)) z.2 = List.ofFn x' ∧ 𝓕.f n x' = 𝓕.f n z.1
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean:1614:4: error: Application type mismatch: The argument
+  quadraticCode_of_linear hlin
+has type
+  ∃ Mc c₀,
+    ∀ (m : ℕ) (x : Fin ((family F 𝓕.inLen d).inLen.eval m) → Bool),
+      Mc.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn ((family F 𝓕.inLen d).f m x)) (c₀ * (m + 1) ^ 2)
+but is expected to have type
+  ∃ M c₀,
+    ∀ (n : ℕ) (x : Fin ((family F 𝓕.inLen d).inLen.eval n) → Bool),
+      M.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn ((family F 𝓕.inLen d).f n x))
+        (c₀ * ((family F 𝓕.inLen d).inLen.eval n + 1) ^ 2)
+in the application
+  ⟨strongOneWay hFx hd h hdom₁ hlin, quadraticCode_of_linear hlin⟩
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/UniversalPadding): no fresh .olean produced
+
+END 2026-11-08T09:11:42.140981+00:00 RC 1 elapsed=14.5s pid=14203 maxrss=2707964KiB

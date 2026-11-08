@@ -80,8 +80,9 @@ theorem uexp_sum {ι : Type*} (s : Finset ι) (f : ι → Ω → ℝ) :
   rw [sum_comm]
 
 /-- Averages are monotone. -/
-theorem uexp_mono {f g : Ω → ℝ} (h : ∀ ω, f ω ≤ g ω) : uexp f ≤ uexp g :=
-  div_le_div_of_nonneg_right (sum_le_sum fun ω _ => h ω) (Nat.cast_nonneg _)
+theorem uexp_mono {f g : Ω → ℝ} (h : ∀ ω, f ω ≤ g ω) : uexp f ≤ uexp g := by
+  rw [uexp_def, uexp_def]
+  exact div_le_div_of_nonneg_right (sum_le_sum fun ω _ => h ω) (Nat.cast_nonneg _)
 
 /-- Relabelling by a bijection preserves averages. -/
 theorem uexp_comp_equiv (e : Ω ≃ α) (F : α → ℝ) : uexp (fun ω => F (e ω)) = uexp F := by

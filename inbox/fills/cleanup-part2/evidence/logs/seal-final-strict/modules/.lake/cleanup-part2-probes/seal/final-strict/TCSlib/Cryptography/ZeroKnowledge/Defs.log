@@ -1,0 +1,135 @@
+START 2026-11-08T09:45:31.579990+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean sha256=51704e50555473e90d0021f8c283e58f2dc817a7e9eae8ade690fbd5f693075e
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=50 active=50 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1245:4: error: Application type mismatch: The argument
+  fun x y z x_1 T => ?m.30
+has type
+  (x y z : List Bool) → (x_1 : R x y) → (T : ?m.31 x y z x_1) → ?m.32 x y z x_1 T
+but is expected to have type
+  ∀ (x y z : List Bool),
+    R x y →
+      StatClose
+        (fun r => (({ P := P, V := V, rounds := PolyExpr.const 0, verifierFirst := b }.withV V').viewV x y z r).encode)
+        ((NUPPT.ofPolyTimeUniform hF V'.coins).simulate x z) ((fun x => 0) x.length)
+in the application
+  ⟨NUPPT.ofPolyTimeUniform_uniform hF V'.coins, fun x y z x_1 T => ?m.30⟩
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1246:2: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1348:4: error: Type mismatch
+  unaryPoly_comp S.coins hpar
+has type
+  PolyTimeComputable fun x => List.replicate (S.coins.eval (NUPPT.inParam (pairSndD x)).length) true
+but is expected to have type
+  PolyTimeComputable fun u => List.replicate (S.coinLen (NUPPT.inParam (pairSndD u)).length) true
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1394:6: error: Tactic `rfl` failed: The left-hand side
+  retry S (pairEncode (pairEncode (NUPPT.advInput x.length (pairEncode x z)) []) (List.ofFn r))
+is not definitionally equal to the right-hand side
+  retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+
+S : NUPPT
+x z : List Bool
+r : (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.var.mul S.coins)).Coins x.length
+⊢ retry S (pairEncode (pairEncode (NUPPT.advInput x.length (pairEncode x z)) []) (List.ofFn r)) =
+    retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1392:41: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.43 = ?m.43
+but is expected to have type
+  (NUPPT.ofPolyTimeUniform ⋯ (PolyExpr.var.mul S.coins)).coins = PolyExpr.var.mul S.coins
+in the application
+  And.intro rfl
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1467:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+Ω : Type u_1
+τ : Type u_2
+inst✝⁴ : Fintype Ω
+inst✝³ : DecidableEq Ω
+inst✝² : Nonempty Ω
+inst✝¹ : Fintype τ
+E : Ω → Prop
+inst✝ : DecidablePred E
+g : Ω → List Bool
+Y : τ → List Bool
+d₀ : List Bool
+habort : (uprob fun ω => ¬E ω) ≤ 1 / 2
+hcond : ∀ (T : List Bool → Prop), (uprob fun t => T (Y t)) * uprob E = uprob fun ω => E ω ∧ T (g ω)
+K : ℕ
+⊢ StatClose Y (fun ws => (Option.map g (firstHit E ws)).getD d₀) (2⁻¹ ^ K)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1583:89: error: Invalid rewrite argument: Expected an equality or iff proof or definition name, but `hSu` is a proof of
+  S.Uniform
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1595:71: error: Application type mismatch: The argument
+  r
+has type
+  (π.withV V').ExecCoins π.P x
+but is expected to have type
+  (π.withV V').ExecCoins (π.withV V').P x
+in the application
+  (π.withV V').viewV x y z r
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1597:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+π : Protocol
+R : List Bool → List Bool → Prop
+h : PerfectZKAbort π R
+V' : Strategy
+hV' : V'.Efficient
+S : NUPPT
+hSu : S.Uniform
+hS :
+  ∀ (x y z : List Bool),
+    R x y →
+      (uprob fun r => S.simulate x z r = []) ≤ 1 / 2 ∧
+        ∀ (T : List Bool → Prop),
+          ((uprob fun r => T ((π.withV V').viewV x y z r).encode) * uprob fun r => S.simulate x z r ≠ []) =
+            uprob fun r => S.simulate x z r ≠ [] ∧ T (S.simulate x z r)
+S' : NUPPT
+hS'u : S'.Uniform
+hS'c : S'.coins = PolyExpr.var.mul S.coins
+hS' :
+  ∀ (x z : List Bool) (r : S'.Coins x.length),
+    S'.simulate x z r = retry S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r))
+x y z : List Bool
+hxy : R x y
+habort : (uprob fun r => S.simulate x z r = []) ≤ 1 / 2
+hcond :
+  ∀ (T : List Bool → Prop),
+    ((uprob fun r => T ((π.withV V').viewV x y z r).encode) * uprob fun r => S.simulate x z r ≠ []) =
+      uprob fun r => S.simulate x z r ≠ [] ∧ T (S.simulate x z r)
+hlen : S'.coinLen x.length = x.length * S.coinLen x.length
+e : S'.Coins x.length ≃ (Fin x.length → S.Coins x.length) :=
+  (((finCongr hlen).arrowCongr (Equiv.refl Bool)).trans (finProdFinEquiv.symm.arrowCongr (Equiv.refl Bool))).trans
+    (Equiv.curry (Fin x.length) (Fin (S.coinLen x.length)) Bool)
+hblock :
+  ∀ (r : S'.Coins x.length) (t : ℕ) (ht : t < x.length),
+    List.take (S.coinLen x.length) (List.drop (t * S.coinLen x.length) (List.ofFn r)) = List.ofFn (e r ⟨t, ht⟩)
+hatt :
+  ∀ (r : S'.Coins x.length) (t : ℕ) (ht : t < x.length),
+    attempt S (NUPPT.layout (List.replicate x.length true) (pairEncode x z) [] (List.ofFn r)) t =
+      S.simulate x z (e r ⟨t, ht⟩)
+heq :
+  ∀ (r : S'.Coins x.length),
+    S'.simulate x z r = (Option.map (S.simulate x z) (firstHit (fun ω => S.simulate x z ω ≠ []) (e r))).getD []
+key :
+  StatClose (fun r => ((π.withV V').viewV x y z sorry).encode)
+    (fun t => (Option.map (S.simulate x z) (firstHit (fun ω => S.simulate x z ω ≠ []) (e t))).getD []) (2⁻¹ ^ x.length)
+⊢ StatClose (fun r => ((π.withV V').viewV x y z r).encode) (S'.simulate x z) ((fun n => 2⁻¹ ^ n) x.length)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs.lean:1627:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+a : ℝ
+ha : 1 < a
+C : ℕ
+hC : 0 < C
+⊢ Negligible fun N => a⁻¹ ^ (N / C).sqrt
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/Defs): no fresh .olean produced
+
+END 2026-11-08T09:45:44.958670+00:00 RC 1 elapsed=13.4s pid=19601 maxrss=2665428KiB

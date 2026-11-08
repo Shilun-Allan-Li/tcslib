@@ -1,0 +1,183 @@
+START 2026-11-08T09:40:54.472948+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean sha256=0e09c1abe5e127f5c2fbbf8af8b46e1b443652bec5f840ee47ebea4cbc27df84
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=29 active=29 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1721:6: error: Application type mismatch: The argument
+  (NUPPT.coinsEquiv_ofPolyTimeUniform ⋯ (F.sample.coins.add m) n) s
+has type
+  Fin ((F.sample.coins.add m).eval n) → Bool
+but is expected to have type
+  Fin (F.sample.coins.eval n + m.eval n) → ?m.274
+in the application
+  Equiv.surjective (Fin.appendEquiv (F.sample.coins.eval n) (m.eval n))
+    ((NUPPT.coinsEquiv_ofPolyTimeUniform (glPadSampleFun_poly F) (F.sample.coins.add m) n) s)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1778:69: error: Function expected at
+  F.sample_uniform
+but this term has type
+  F.sample.Uniform
+
+Note: Expected a function because this term is being applied to the argument
+  n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1775:102: error: unsolved goals
+F : Collection
+m : PolyExpr
+henc : ∀ (n : ℕ) (r : F.gen.Coins n) (x : F.D (F.index n r)), (F.encD (F.index n r) x).length = m.eval n
+n : ℕ
+i r : List Bool
+⊢ (NUPPT.ofPolyTime ⋯ (F.sample.coins.add m) (PolyExpr.const 0) (fun x => []) ⋯).output
+      (pairEncode
+        (pairEncode (pairEncode (List.replicate n true) i)
+          ((NUPPT.ofPolyTime ⋯ (F.sample.coins.add m) (PolyExpr.const 0) (fun x => []) ⋯).advice n))
+        r) =
+    pairEncode
+      (F.sample.output
+        (pairEncode (pairEncode (pairEncode (List.replicate n true) i) (F.sample.advice n))
+          (List.take (F.sample.coins.eval n) r)))
+      (List.drop (F.sample.coins.eval n) r)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1776:66: warning: This simp argument is unused:
+  NUPPT.output_ofPolyTime
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, N̵U̵P̵P̵T̵.̵o̵u̵t̵p̵u̵t̵_̵o̵f̵P̵o̵l̵y̵T̵i̵m̵e̵,̵
+  ̵ ̵ ̵ ̵ ̵glPadSampleFun_def,
+  ̲  ̲ ̲ ̲NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+      pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+      NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1777:4: warning: This simp argument is unused:
+  glPadSampleFun_def
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+      g̵l̵P̵a̵d̵S̵a̵m̵p̵l̵e̵F̵u̵n̵_̵d̵e̵f̵,̵ ̵NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+      pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+      NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1777:24: warning: This simp argument is unused:
+  NUPPT.inParam_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+      glPadSampleFun_def, NUPPT.inP̵a̵r̵a̵m̵_̵e̵q̵,̵ ̵N̵U̵P̵P̵T̵.̵i̵n̵Arg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+      pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+      NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1777:42: warning: This simp argument is unused:
+  NUPPT.inArg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+      glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inA̵r̵g̵_̵e̵q̵,̵ ̵N̵U̵P̵P̵T̵.̵i̵n̵Coins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+      pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+      NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1777:58: warning: This simp argument is unused:
+  NUPPT.inCoins_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+      glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.i̵n̵C̵o̵i̵n̵s̵_̵e̵q̵,̵ ̵N̵U̵P̵P̵T̵.̵advInput_eq, NUPPT.layout_eq,
+      pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+      NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1777:95: warning: This simp argument is unused:
+  NUPPT.layout_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+      glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, ̵N̵U̵P̵P̵T̵.̵l̵a̵y̵o̵u̵t̵_̵e̵q̵,̵
+      pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+      NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1778:4: warning: This simp argument is unused:
+  pairFstD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+      glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, ̵N̵U̵P̵P̵T̵.̵l̵a̵y̵o̵u̵t̵_̵e̵q̵,̵
+      p̵N̲U̲P̲P̲T̲.̲l̲ai̵r̵F̵s̵t̵D̵_̵p̵a̵i̵r̵E̵n̵c̵y̲od̵u̲t̲_̲eq̲, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+      NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1778:25: warning: This simp argument is unused:
+  pairSndD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+      glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
+  ̲  ̲ ̲ ̲NUPPT.layout_eq,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode, p̵a̵i̵r̵S̵n̵d̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵ ̵List.length_replicate, F.sample_uniform n,
+      NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1778:46: warning: This simp argument is unused:
+  List.length_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [glPad, NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+      glPadSampleFun_def, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
+  ̲  ̲ ̲ ̲NUPPT.layout_eq,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode, pairSndD_pairEncode, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵,̵ ̵F.sample_uniform n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1956:9: error: Invalid `⟨...⟩` notation: The expected type
+  (F.glPad m henc).HardCore F.glBit
+is not an inductive type
+
+Note: This notation can only be used when the expected type is an inductive type with a single constructor
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:1957:2: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:2020:33: error: Application type mismatch: The argument
+  h
+has type
+  P.OneWay
+but is expected to have type
+  P.OneWay
+in the application
+  Collection.OneWay.glPad m henc h
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:2026:42: error: Application type mismatch: The argument
+  h
+has type
+  P.OneWay
+but is expected to have type
+  P.OneWay
+in the application
+  Collection.OneWay.glPad_hardCore m henc h
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:2084:33: error: Application type mismatch: The argument
+  h
+has type
+  T.OneWay
+but is expected to have type
+  T.OneWay
+in the application
+  Collection.OneWay.glPad m henc h
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection.lean:2093:42: error: Application type mismatch: The argument
+  h
+has type
+  T.OneWay
+but is expected to have type
+  T.OneWay
+in the application
+  Collection.OneWay.glPad_hardCore m henc h
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCoreCollection): no fresh .olean produced
+
+END 2026-11-08T09:41:13.503416+00:00 RC 1 elapsed=19.0s pid=19014 maxrss=2706828KiB

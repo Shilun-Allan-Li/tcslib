@@ -343,12 +343,13 @@ theorem polyTimeComputable_find {g : List Bool → List Bool} (hg : PolyTimeComp
   obtain ⟨V, aV, dV, hV⟩ := ModuleHost.clean_install (verdictWord_poly hacc)
   obtain ⟨I, aI, dI, hI⟩ := ModuleHost.clean_install (stepWord_poly hg P)
   obtain ⟨E, aE, dE, hE⟩ := ModuleHost.clean_emit (outWord_poly hout)
-  obtain ⟨F, aF, dF, hF⟩ : PolyTimeComputable fun x => Nat.bits (R.eval x.length) := by
+  have hbits : PolyTimeComputable fun x => Nat.bits (R.eval x.length) := by
     have h := (polyTimeComputable_of_linear FinTM.computesFunInTime_lengthBits).comp
       (polyTimeComputable_unaryPoly R)
     convert h using 1
     funext x
     simp
+  obtain ⟨F, aF, dF, hF⟩ := (polyTimeComputable_iff _).1 hbits
   let M : Fin 5 → FinTM Bool := fun i => match i.val with
     | 0 => copyTM | 1 => S | 2 => V | 3 => I | _ => E
   let K := S.k + V.k + I.k + E.k

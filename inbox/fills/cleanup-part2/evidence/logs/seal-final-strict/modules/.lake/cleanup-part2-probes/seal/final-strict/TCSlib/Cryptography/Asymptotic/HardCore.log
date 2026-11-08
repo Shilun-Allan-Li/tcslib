@@ -1,0 +1,462 @@
+START 2026-11-08T09:41:32.878676+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean sha256=386a2839aefd86b1b2434640852c79318a3bfa016a972a26cdf997f3140bab13
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=46 active=46 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1881:11: error: typeclass instance problem is stuck, it is often due to metavariables
+  Nonempty ?m.68
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1902:7: error: Type mismatch
+  G
+has type
+  (n : ℕ) → (Fin n → Bool) → Fin (n + 1) → Bool
+but is expected to have type
+  (n : ℕ) → (Fin n → Bool) → Fin ((PolyExpr.var.add (PolyExpr.const 1)).eval n) → Bool
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1903:15: error: Type mismatch
+  Nat.lt_succ_self n
+has type
+  n < n.succ
+but is expected to have type
+  n < (PolyExpr.var.add (PolyExpr.const 1)).eval n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1911:48: error: Type mismatch
+  G n s
+has type
+  Fin (n + 1) → Bool
+but is expected to have type
+  Fin ((oneBit G).stretch.eval n) → Bool
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1923:2: error: Tactic `rfl` failed: The left-hand side
+  (∃ F, PolyTimeComputable F ∧ ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn ((oneBit G).G n s)) ∧
+    ∀ (D : NUPPT), Negligible fun n => prgAdv ((oneBit G).G n) (D.distinguisher n ((oneBit G).stretch.eval n))
+is not definitionally equal to the right-hand side
+  (∃ F, PolyTimeComputable F ∧ ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)) ∧
+    ∀ (D : NUPPT), Negligible fun n => prgAdv (G n) (D.distinguisher n (n + 1))
+
+G : (n : ℕ) → (Fin n → Bool) → Fin (n + 1) → Bool
+⊢ ((∃ F, PolyTimeComputable F ∧ ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn ((oneBit G).G n s)) ∧
+      ∀ (D : NUPPT), Negligible fun n => prgAdv ((oneBit G).G n) (D.distinguisher n ((oneBit G).stretch.eval n))) ↔
+    (∃ F, PolyTimeComputable F ∧ ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)) ∧
+      ∀ (D : NUPPT), Negligible fun n => prgAdv (G n) (D.distinguisher n (n + 1))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1934:2: error: Type mismatch
+  Equiv.refl ?m.8
+has type
+  ?m.8 ≃ ?m.8
+but is expected to have type
+  (Fin ((owpGenPRG P h).stretch.eval n) → Bool) ≃ (Fin (n + 1) → Bool)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1936:0: error: Not a definitional equality: the left-hand side
+  (owpGenPRG_outEquiv P h n) ((owpGenPRG P h).G n s)
+is not definitionally equal to the right-hand side
+  Fin.snoc ((P.f n) s) (h n s)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1939:85: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  (owpGenPRG_outEquiv P h n) ((owpGenPRG P h).G n s) = Fin.snoc ((P.f n) s) (h n s)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1941:0: error: Not a definitional equality: the left-hand side
+  List.ofFn ((owpGenPRG_outEquiv P h n) y)
+is not definitionally equal to the right-hand side
+  List.ofFn y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1945:60: error: Type mismatch
+  rfl
+has type
+  ?m.9 = ?m.9
+but is expected to have type
+  List.ofFn ((owpGenPRG_outEquiv P h n) y) = List.ofFn y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1949:59: error: Application type mismatch: The argument
+  i.castSucc
+has type
+  Fin (n + 1)
+but is expected to have type
+  Fin ((owpGenPRG P h).stretch.eval n)
+in the application
+  (owpGenPRG P h).G n s i.castSucc
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1949:85: error: unsolved goals
+P : PermFamily
+h : (n : ℕ) → (Fin n → Bool) → Bool
+n : ℕ
+s : Fin n → Bool
+i : Fin n
+⊢ sorry () n s (sorry ()) = (P.f n) s i
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1950:19: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1954:47: error: Application type mismatch: The argument
+  Fin.last n
+has type
+  Fin (n + 1)
+but is expected to have type
+  Fin ((owpGenPRG P h).stretch.eval n)
+in the application
+  (owpGenPRG P h).G n s (Fin.last n)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1954:71: error: unsolved goals
+P : PermFamily
+h : (n : ℕ) → (Fin n → Bool) → Bool
+n : ℕ
+s : Fin n → Bool
+⊢ sorry () n s (sorry ()) = h n s
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:1955:19: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2008:15: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.185 ↔ ?m.185
+but is expected to have type
+  owpPredictorSnoc D flip (f x✝.1) x✝.2 = B x✝.1 ↔
+    owpPredictor (fun z r => D (e z) r) flip
+        (owpPair f
+          ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1)
+        ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).2 =
+      B ({ toFun := fun z => ((z.1, ()), z.2), invFun := fun z => (z.1.1, z.2), left_inv := ⋯, right_inv := ⋯ } x✝).1.1
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2014:4: error: Tactic `rfl` failed: The left-hand side
+  |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D|
+is not definitionally equal to the right-hand side
+  |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|
+
+ρ : Type u_1
+inst✝¹ : Fintype ρ
+inst✝ : Nonempty ρ
+n : ℕ
+f : (Fin n → Bool) ≃ (Fin n → Bool)
+B : (Fin n → Bool) → Bool
+D : (Fin (n + 1) → Bool) → ρ → Bool
+e : (Fin n → Bool) × Unit × Bool ≃ (Fin (n + 1) → Bool) :=
+  { toFun := fun z => Fin.snoc z.1 z.2.2, invFun := fun t => (Fin.init t, (), t (Fin.last n)), left_inv := ⋯,
+    right_inv := ⋯ }
+flip : Bool
+hflip :
+  predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip) =
+    1 / 2 + prgAdv (owpGen f fun w => B w.1) fun z r => D (e z) r
+h1 :
+  predProb (⇑f) B (owpPredictorSnoc D flip) =
+    predProb (owpPair f) (fun w => B w.1) (owpPredictor (fun z r => D (e z) r) flip)
+⊢ |acceptProb (fun z => Fin.snoc (f z.1) (B z.1)) D - acceptProb id D| =
+    |acceptProb (fun s => e (owpGen f (fun w => B w.1) s)) D - acceptProb id D|
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2048:29: error: Application type mismatch: The argument
+  exists_owpGenEvaluator P h hF hH hFx hHx
+has type
+  ∃ E, PolyTimeComputable E ∧ ∀ (n : ℕ) (s : Fin n → Bool), E (List.ofFn s) = List.ofFn (Fin.snoc ((P.f n) s) (h n s))
+but is expected to have type
+  ∃ F, PolyTimeComputable F ∧ ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn ((owpGenPRG P h).G n s)
+in the application
+  (PRG.easy_iff (owpGenPRG P h)).mpr (exists_owpGenEvaluator P h hF hH hFx hHx)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2065:2: error: 'show' tactic failed, pattern
+  |prgAdv (fun s => Fin.snoc ((P.f n) s) (h n s)) (D.distinguisher n (n + 1))| ≤ |ε n|
+is not definitionally equal to target
+  |prgAdv ((owpGenPRG P h).G n) (D.distinguisher n ((owpGenPRG P h).stretch.eval n))| ≤ |ε n|
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2112:90: error: Type mismatch
+  rfl
+has type
+  ?m.20 = ?m.20
+but is expected to have type
+  (expand G ℓ hℓ).G n s i = G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2148:2: error: Tactic `rfl` failed: The left-hand side
+  |acceptProb.{u_4, u_1, u_2} (fun s => (X s).1) D - acceptProb (fun z => id z.1) D|
+is not definitionally equal to the right-hand side
+  |(acceptProb.{u_4, u_1, max u_2 u_3} X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|
+
+σ : Type u_1
+γ : Type u_2
+δ : Type u_3
+ρ : Type u_4
+inst✝⁴ : Fintype σ
+inst✝³ : Fintype γ
+inst✝² : Fintype δ
+inst✝¹ : Nonempty δ
+inst✝ : Fintype ρ
+X : σ → γ × δ
+D : γ → ρ → Bool
+⊢ |acceptProb (fun s => (X s).1) D - acceptProb (fun z => id z.1) D| =
+    |(acceptProb X fun z r => D z.1 r) - acceptProb id fun z r => D z.1 r|
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2210:77: error: Type mismatch
+  hFs
+has type
+  ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn ((PRG.oneBit G).G n s)
+but is expected to have type
+  ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2213:61: error: Tactic `rfl` failed: The left-hand side
+  List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)
+is not definitionally equal to the right-hand side
+  List.ofFn ((PRG.expand G ℓ hℓ).G n s)
+
+G : (n : ℕ) → (Fin n → Bool) → Fin (n + 1) → Bool
+ℓ : PolyExpr
+hℓ : ∀ (n : ℕ), n < ℓ.eval n
+hE1 : (PRG.oneBit G).Easy
+hsec :
+  ∀ (D : NUPPT), Negligible fun n => prgAdv ((PRG.oneBit G).G n) (D.distinguisher n ((PRG.oneBit G).stretch.eval n))
+F : List Bool → List Bool
+hF : PolyTimeComputable F
+hFs : ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn ((PRG.oneBit G).G n s)
+hFs' : ∀ (n : ℕ) (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s)
+E : List Bool → List Bool
+hE : PolyTimeComputable E
+hEs :
+  ∀ (n : ℕ) (s : Fin n → Bool),
+    E (List.ofFn s) = List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)
+n : ℕ
+s : Fin n → Bool
+⊢ (List.ofFn fun i => G n ((fun x => Fin.init (G n x))^[↑i] s) (Fin.last n)) = List.ofFn ((PRG.expand G ℓ hℓ).G n s)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2222:6: error: Type mismatch
+  hsec (expandRedMachine D hF ℓ k hk)
+has type
+  Negligible fun n =>
+    prgAdv ((PRG.oneBit G).G n) ((expandRedMachine D hF ℓ k hk).distinguisher n ((PRG.oneBit G).stretch.eval n))
+but is expected to have type
+  Negligible fun n => prgAdv (G n) ((expandRedMachine D hF ℓ k hk).distinguisher n (n + 1))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2226:38: error: Application type mismatch: The argument
+  Fin.appendEquiv (ℓ.eval n) (D.coinLen n)
+has type
+  (Fin (ℓ.eval n) → ?m.204) × (Fin (D.coinLen n) → ?m.204) ≃ (Fin (ℓ.eval n + D.coinLen n) → ?m.204)
+but is expected to have type
+  (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ (expandRedMachine D hF ℓ k hk).Coins n
+in the application
+  prgAdv_coins_equiv (G n) ((expandRedMachine D hF ℓ k hk).distinguisher n (n + 1))
+    (expandRed (G n) (ℓ.eval n) (k n) (D.distinguisher n (ℓ.eval n))) (Fin.appendEquiv (ℓ.eval n) (D.coinLen n))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2237:42: error: Type mismatch
+  abs_nonneg ?m.302
+has type
+  0 ≤ |?m.302|
+but is expected to have type
+  0 ≤ prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2255:15: error: Type mismatch
+  Nat.lt_succ_of_le (hℓ n)
+has type
+  n < (ℓ.eval n).succ
+but is expected to have type
+  n < (ℓ.add (PolyExpr.const 1)).eval n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2264:16: error: Type mismatch
+  Nat.lt_succ_of_le (hℓ n)
+has type
+  n < (ℓ.eval n).succ
+but is expected to have type
+  n < (ℓ.add (PolyExpr.const 1)).eval n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2270:6: error: 'show' tactic failed, pattern
+  Fin.init (Fin.snoc ((P.f n) x) (h n x)) = (P.f n) x
+is not definitionally equal to target
+  prgStep (oneBitStep fun x => Fin.snoc ((P.f n) x) (h n x)) x = (P.f n) x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2280:8: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2299:89: error: Application type mismatch: The argument
+  z
+has type
+  Fin ((𝓕.inLen.add 𝓕.inLen).eval n) → Bool
+but is expected to have type
+  Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool
+in the application
+  (Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2304:89: error: Application type mismatch: The argument
+  z
+has type
+  Fin (𝓕.glPad.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool
+in the application
+  (Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2312:89: error: Application type mismatch: The argument
+  y
+has type
+  Fin (𝓕.glPad.outLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool
+in the application
+  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)).symm y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2315:93: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  𝓕.glPad.inLen.eval n = 𝓕.inLen.eval n + 𝓕.inLen.eval n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2319:64: error: Type mismatch
+  rfl
+has type
+  ?m.7 = ?m.7
+but is expected to have type
+  𝓕.glPad.outLen.eval n = 𝓕.outLen.eval n + 𝓕.inLen.eval n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2325:2: error: Type mismatch
+  Equiv.refl ?m.5
+has type
+  ?m.5 ≃ ?m.5
+but is expected to have type
+  (Fin (𝓕.glPad.inLen.eval n) → Bool) ≃ (Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2331:2: error: Type mismatch
+  Equiv.refl ?m.5
+has type
+  ?m.5 ≃ ?m.5
+but is expected to have type
+  (Fin (𝓕.glPad.outLen.eval n) → Bool) ≃ (Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2333:0: error: Not a definitional equality: the left-hand side
+  List.ofFn ((𝓕.glPad_inEquiv n) z)
+is not definitionally equal to the right-hand side
+  List.ofFn z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2335:53: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  List.ofFn ((𝓕.glPad_inEquiv n) z) = List.ofFn z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2337:0: error: Not a definitional equality: the left-hand side
+  List.ofFn ((𝓕.glPad_inEquiv n).symm z)
+is not definitionally equal to the right-hand side
+  List.ofFn z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2339:60: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  List.ofFn ((𝓕.glPad_inEquiv n).symm z) = List.ofFn z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2341:0: error: Not a definitional equality: the left-hand side
+  List.ofFn ((𝓕.glPad_outEquiv n) y)
+is not definitionally equal to the right-hand side
+  List.ofFn y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2343:54: error: Type mismatch
+  rfl
+has type
+  ?m.8 = ?m.8
+but is expected to have type
+  List.ofFn ((𝓕.glPad_outEquiv n) y) = List.ofFn y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2345:0: error: Not a definitional equality: the left-hand side
+  List.ofFn ((𝓕.glPad_outEquiv n).symm y)
+is not definitionally equal to the right-hand side
+  List.ofFn y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2347:61: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  List.ofFn ((𝓕.glPad_outEquiv n).symm y) = List.ofFn y
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2351:16: error: Application type mismatch: The argument
+  Fin.append x r
+has type
+  Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.glPad.inLen.eval n) → Bool
+in the application
+  𝓕.glPad.f n (Fin.append x r)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2351:35: error: Type mismatch
+  Fin.append (𝓕.f n x) r
+has type
+  Fin (𝓕.outLen.eval n + 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.glPad.outLen.eval n) → Bool
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2352:7: error: Type mismatch
+  (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))
+      (HardcoreBit.glPad (𝓕.f n)
+        ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm
+          ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)) (x, r)))) =
+    ?m.29
+has type
+  Prop
+of sort `Type` but is expected to have type
+  Sort u_1
+of sort `Type u_1`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2359:14: error: Application type mismatch: The argument
+  Fin.append x r
+has type
+  Fin (𝓕.inLen.eval n + 𝓕.inLen.eval n) → Bool
+but is expected to have type
+  Fin (𝓕.glPad.inLen.eval n) → Bool
+in the application
+  𝓕.glBit n (Fin.append x r)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2366:8: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2386:8: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype (((Fin (𝓕.inLen.eval n) → ?m.45) × (Fin (𝓕.inLen.eval n) → ?m.45)) × ρ)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2398:2: error: Type mismatch
+  uprob_eq_of_equiv (splitPair (𝓕.inLen.eval n) (𝓕.inLen.eval n) γ) fun z => ?m.27
+has type
+  uprob ?m.24 = uprob ?m.25
+but is expected to have type
+  (uprob fun z => 𝓕.glPad.f n (𝓕.glInverter n R (𝓕.glPad.f n z.1) z.2) = 𝓕.glPad.f n z.1) =
+    uprob fun z =>
+      HardcoreBit.glPad (𝓕.f n) (HardcoreBit.glInverter R (HardcoreBit.glPad (𝓕.f n) z.1) z.2) =
+        HardcoreBit.glPad (𝓕.f n) z.1
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2413:14: error: Tactic `rfl` failed: The left-hand side
+  HardcoreBit.glPad (𝓕.f n) z
+is not definitionally equal to the right-hand side
+  ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z
+
+case h
+𝓕 : FunFamily
+n : ℕ
+hf : Function.Bijective (𝓕.f n)
+z : (Fin (𝓕.inLen.eval n) → Bool) × (Fin (𝓕.inLen.eval n) → Bool)
+⊢ HardcoreBit.glPad (𝓕.f n) z = ((Equiv.ofBijective (𝓕.f n) hf).prodCongr (Equiv.refl (Fin (𝓕.inLen.eval n) → Bool))) z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2414:2: error: 'show' tactic failed, pattern
+  Function.Bijective fun z =>
+    (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))
+      (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z))
+is not definitionally equal to target
+  Function.Bijective (𝓕.glPad.f n)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2440:61: error: Application type mismatch: The argument
+  z
+has type
+  Fin (𝓕.glPad.inLen.eval n) → Bool
+but is expected to have type
+  Fin (?m.57 + ?m.58) → ?m.56
+in the application
+  Equiv.surjective (Fin.appendEquiv ?m.57 ?m.58) z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2445:4: error: Type mismatch
+  invProbOpt_glPad_le 𝓕 A n
+has type
+  invProbOpt
+      (fun z =>
+        (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))
+          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))
+      (A.inverter n (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) ≤
+    invProbOpt (𝓕.f n) ((glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n))
+but is expected to have type
+  𝓕.glPad.invProbAt A n ≤ 𝓕.invProbAt (glPadInvMachine A 𝓕.inLen) n
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2481:61: error: Application type mismatch: The argument
+  z
+has type
+  Fin (𝓕.glPad.inLen.eval n) → Bool
+but is expected to have type
+  Fin (?m.34 + ?m.35) → ?m.33
+in the application
+  Equiv.surjective (Fin.appendEquiv ?m.34 ?m.35) z
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2511:36: error: Application type mismatch: The argument
+  hpred
+has type
+  1 / 2 + 1 / ↑n ^ c ≤
+    predProb (HardcoreBit.glPad (𝓕.f n)) HardcoreBit.glBit fun y r =>
+      A.predictor n (𝓕.glPad.outLen.eval n)
+        ((𝓕.glPad_outEquiv n).symm ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y)) r
+but is expected to have type
+  1 / 2 + 1 / ↑n ^ c ≤
+    predProb (HardcoreBit.glPad (𝓕.f n)) HardcoreBit.glBit fun y c =>
+      A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c
+in the application
+  HardcoreBit.invProb_guessInverter (𝓕.f n)
+    (fun y c =>
+      A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)
+    hε (glK_real 𝓕.inLen c n hn1) hpred
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore.lean:2515:6: error: Type mismatch
+  invProbOpt_glFam_eq 𝓕 A K (glK 𝓕.inLen c) (two_pow_glK_le 𝓕.inLen c) n (glK_pos_or 𝓕.inLen c n hn1)
+has type
+  invProbOpt
+      (fun z =>
+        (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n))
+          (HardcoreBit.glPad (𝓕.f n) ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).symm z)))
+      ((glFamMachine (A.precomp concatPre_poly) 𝓕.inLen 𝓕.outLen K (glK 𝓕.inLen c) ⋯).inverter n
+        (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) =
+    invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.guessInverter
+        (fun y c =>
+          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)
+        (glK 𝓕.inLen c n))
+but is expected to have type
+  𝓕.glPad.invProbAt B n =
+    invProb (HardcoreBit.glPad (𝓕.f n))
+      (HardcoreBit.guessInverter
+        (fun y c =>
+          A.predictor n (𝓕.outLen.eval n + 𝓕.inLen.eval n) ((Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)) y) c)
+        (glK 𝓕.inLen c n))
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/HardCore): no fresh .olean produced
+
+END 2026-11-08T09:41:53.323759+00:00 RC 1 elapsed=20.4s pid=19097 maxrss=2756464KiB

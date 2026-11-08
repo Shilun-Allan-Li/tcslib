@@ -98,6 +98,17 @@ def finCastEquiv {a b : ℕ} (h : a = b) : (Fin a → Bool) ≃ (Fin b → Bool)
   left_inv _ := rfl
   right_inv _ := rfl
 
+/-- The forward reader of `finCastEquiv`: bit `j` of the transported string is bit
+`Fin.cast h.symm j` of `f`. -/
+theorem finCastEquiv_apply {a b : ℕ} (h : a = b) (f : Fin a → Bool) (j : Fin b) :
+    finCastEquiv h f j = f (Fin.cast h.symm j) :=
+  rfl
+
+/-- The function of `finCastEquiv h`: `f ↦ (j ↦ f (Fin.cast h.symm j))`. -/
+theorem coe_finCastEquiv {a b : ℕ} (h : a = b) :
+    ⇑(finCastEquiv h) = fun f j => f (Fin.cast h.symm j) :=
+  rfl
+
 /-- Transport along an equality of lengths does not change the encoding. -/
 theorem ofFn_finCastEquiv {a b : ℕ} (h : a = b) (f : Fin a → Bool) :
     List.ofFn (finCastEquiv h f) = List.ofFn f :=
@@ -166,7 +177,8 @@ noncomputable def wrap (A : NUPPT) {pre post : List Bool → List Bool}
 @[simp] theorem coins_wrap (A : NUPPT) {pre post : List Bool → List Bool}
     (hpre : PolyTimeComputable pre) (hpost : PolyTimeComputable post) (β : ℕ → List Bool)
     (b : PolyExpr) (hβ : ∀ n, (β n).length ≤ b.eval n) (p : PolyExpr) :
-    (A.wrap hpre hpost β b hβ p).coins = .add p A.coins := rfl
+    (A.wrap hpre hpost β b hβ p).coins = .add p A.coins :=
+  NUPPT.coins_ofPolyTime _ _ _ _ _
 
 /-- **The coins of the one-call wrapper**: the published equivalence `(A.wrap …).Coins n ≃
 {0,1}^{p(n) + |A's coins at n|}` (data coins, then `A`'s coins; `finCongr` along the coin count). -/
@@ -287,7 +299,13 @@ theorem owpPredPre_poly : PolyTimeComputable owpPredPre :=
 
 /-- The post-processing of the predictor is polynomial-time (`polyTimeComputable_pairEq` for
 the verdict test, `polyTimeComputable_headD` for the two bits, `polyTimeComputable_ite`,
-`BinArith.polyTimeComputable_xor`). -/
+`BinArith.polyTimeComputable_xor`).
+
+**Proof sketch.** On `v = ⟨w, out⟩` the verdict bit `[out = [true]]` is `polyTimeComputable_pairEq`
+against the constant `[true]`; the advice bit `σ` and the coin bit `flip` are heads of the
+advice and coin projections of `w` (`polyTimeComputable_headD`); the selected bit
+`if out = [true] then σ else !σ` is `polyTimeComputable_ite` with `polyTimeComputable_not`;
+the output is its `xor` with `flip` (`BinArith.polyTimeComputable_xor`). -/
 theorem owpPredPost_poly : PolyTimeComputable owpPredPost := by
   have htest : PolyTimeComputable fun v : List Bool => [decide (pairSndD v = [true])] := by
     convert polyTimeComputable_pairEq.comp
@@ -793,7 +811,7 @@ theorem statClose_glPadSampler (F : Collection) (m : PolyExpr) (S : NUPPT)
   let e : F.sample.Coins n × (Fin L → Bool) ≃ S.Coins n :=
     (Fin.appendEquiv _ _).trans (finCastEquiv hlen)
   have h0 : StatClose (fun s : Fin L → Bool => s) (fun s : Fin L → Bool => s) 0 := StatClose.refl _
-  have h1 := ((hclose n r).prod h0).map
+  have h1 := (((F.sampleClose_iff δ).1 hclose n r).prod h0).map
     (fun z : Option (F.D (F.index n r)) × (Fin L → Bool) => z.1.map fun x => (x, z.2))
   rw [add_zero] at h1
   have h2 := h1.comp_equiv_left e.symm
@@ -908,7 +926,7 @@ noncomputable def reparam (A : NUPPT) (p : PolyExpr) : NUPPT :=
 
 /-- The coin polynomial of the parameter-change machine is `A.coins.subst p`. -/
 @[simp] theorem coins_reparam (A : NUPPT) (p : PolyExpr) : (A.reparam p).coins = A.coins.subst p :=
-  rfl
+  NUPPT.coins_ofPolyTime _ _ _ _ _
 
 /-- The parameter-change machine at `n` behaves as `A` at `p(n)`. -/
 theorem runAtL_reparam (A : NUPPT) (p : PolyExpr) (n : ℕ) (y r : List Bool) :
@@ -1004,7 +1022,7 @@ theorem glPadSample_runAt (m : PolyExpr) (n : ℕ) (i : List Bool)
         ((List.ofFn s).drop (F.sample.coinLen n)) := by
   simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
     glPadSampleFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
-    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
+    pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
     NUPPT.coinLen_eq, NUPPT.runAtL_eq]
 
 end Collection

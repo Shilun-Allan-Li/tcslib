@@ -92,7 +92,7 @@ theorem unaryMul_poly {f g : List Bool → ℕ}
   obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
   have hmul : PolyTimeComputable (fun z => match pairDecode z with
       | some (u, v) => List.replicate (u.length * v.length) true
-      | none => []) := ⟨M, c, 2, hM⟩
+      | none => []) := (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
   convert hmul.comp (hf.pairEncode hg) using 1
   funext x
   simp [pairDecode_pairEncode]

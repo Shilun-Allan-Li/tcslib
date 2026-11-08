@@ -323,7 +323,7 @@ theorem yao_amplification_exp [Inhabited α] [NeZero q] [Nonempty ρ] (f : α �
     (hμ : μ₀ ≤ invProb (prodFun f q) B) :
     1 - α' / 2 - Real.exp (-n) ≤ invProb f (yaoInverter f B T) := by
   have hq0 : (0 : ℝ) < q := Nat.cast_pos.mpr (Nat.pos_of_ne_zero (NeZero.ne q))
-  have hμ1 : μ₀ ≤ 1 := hμ.trans (uprob_le_one _)
+  have hμ1 : μ₀ ≤ 1 := hμ.trans (by rw [invProb_def]; exact uprob_le_one _)
   have hexp : 0 < Real.exp (-n) := Real.exp_pos _
   have hμ0 : 0 < μ₀ := by linarith
   set θ := μ₀ / (2 * q) with hθ

@@ -1,0 +1,120 @@
+START 2026-11-08T09:26:14.713752+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean sha256=c92dfe04d4a14da842e898dc07bb047facf25bd8bf369fd198ba27a854912d2d
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=57 active=57 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:2030:53: error: Tactic `rfl` failed: The left-hand side
+  Strategy.encodeMsgs []
+is not definitionally equal to the right-hand side
+  []
+
+Com : List Bool → List Bool
+ℓ : PolyExpr
+x y r : List Bool
+⊢ Strategy.encodeMsgs [] = []
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:2074:55: error: Tactic `rfl` failed: The left-hand side
+  Strategy.encodeMsgs []
+is not definitionally equal to the right-hand side
+  []
+
+Com : List Bool → List Bool
+ℓ : PolyExpr
+x z r : List Bool
+⊢ Strategy.encodeMsgs [] = []
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:2081:6: error: Tactic `rfl` failed: The left-hand side
+  Strategy.encodeMsgs []
+is not definitionally equal to the right-hand side
+  []
+
+Com : List Bool → List Bool
+ℓ : PolyExpr
+x z r com : List Bool
+c1 : argM (ilayout x z [com] r) ≠ []
+⊢ Strategy.encodeMsgs [] = []
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:2083:4: error: Tactic `rfl` failed: The left-hand side
+  (colVerifier Com ℓ).next x z r [com]
+is not definitionally equal to the right-hand side
+  List.replicate (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length r) true
+
+case cons.nil
+Com : List Bool → List Bool
+ℓ : PolyExpr
+x z r com : List Bool
+c1 : argM (ilayout x z [com] r) ≠ []
+c2 : pairSndD (argM (ilayout x z [com] r)) = []
+⊢ (colVerifier Com ℓ).next x z r [com] = List.replicate (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length r) true
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:2093:6: error: Tactic `rfl` failed: The left-hand side
+  Strategy.encodeMsgs []
+is not definitionally equal to the right-hand side
+  []
+
+Com : List Bool → List Bool
+ℓ : PolyExpr
+x z r com opn : List Bool
+c1 : argM (ilayout x z [com, opn] r) ≠ []
+c2 : pairSndD (argM (ilayout x z [com, opn] r)) ≠ []
+⊢ Strategy.encodeMsgs [] = []
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:2148:6: error: Tactic `rfl` failed: The left-hand side
+  proverStr Com ℓ
+    (NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x y) (Strategy.encodeMsgs [])) []
+      (List.take (proverCoinsOf ℓ x.length) (List.drop (hist.length / 2 * proverCoinsOf ℓ x.length) r)))
+is not definitionally equal to the right-hand side
+  proverStr Com ℓ
+    (NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x y) []) []
+      (List.take (proverCoinsOf ℓ x.length) (List.drop (hist.length / 2 * proverCoinsOf ℓ x.length) r)))
+
+case pos
+Com : List Bool → List Bool
+ℓ : PolyExpr
+x y r : List Bool
+hist : List (List Bool)
+hlast : hist.getLastD [] = pairFstD (pairSndD^[hist.length - 1] (Strategy.encodeMsgs hist))
+hcoin : (colProver Com ℓ).coinLen x.length = proverCoinsOf ℓ x.length
+h1 : hist.length / 2 < (decGraph x).fst * edgeCount (decGraph x).snd
+h2 : hist.length % 2 = 0
+⊢ proverStr Com ℓ
+      (NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x y) (Strategy.encodeMsgs [])) []
+        (List.take (proverCoinsOf ℓ x.length) (List.drop (hist.length / 2 * proverCoinsOf ℓ x.length) r))) =
+    proverStr Com ℓ
+      (NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x y) []) []
+        (List.take (proverCoinsOf ℓ x.length) (List.drop (hist.length / 2 * proverCoinsOf ℓ x.length) r)))
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean:2180:6: error: Tactic `rfl` failed: The left-hand side
+  edgeMsg
+    (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length
+      (List.take ((x.length + 1) ^ 2) (List.drop (hist.length / 2 * (x.length + 1) ^ 2) r)))
+is not definitionally equal to the right-hand side
+  List.replicate
+    (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length
+      (List.take ((x.length + 1) ^ 2) (List.drop (hist.length / 2 * (x.length + 1) ^ 2) r)))
+    true
+
+case pos
+Com : List Bool → List Bool
+ℓ : PolyExpr
+x z r : List Bool
+hist : List (List Bool)
+h1 : hist.length % 2 = 1
+h2 : hist.length / 2 < (decGraph x).fst * edgeCount (decGraph x).snd
+⊢ edgeMsg
+      (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length
+        (List.take ((x.length + 1) ^ 2) (List.drop (hist.length / 2 * (x.length + 1) ^ 2) r))) =
+    List.replicate
+      (sampleEdgeIdx (edgeCount (decGraph x).snd) x.length
+        (List.take ((x.length + 1) ^ 2) (List.drop (hist.length / 2 * (x.length + 1) ^ 2) r)))
+      true
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs): no fresh .olean produced
+
+END 2026-11-08T09:26:34.979690+00:00 RC 1 elapsed=20.3s pid=16428 maxrss=2789628KiB

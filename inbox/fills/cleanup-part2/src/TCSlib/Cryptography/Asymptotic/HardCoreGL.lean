@@ -821,7 +821,10 @@ noncomputable def glBlocks (A : NUPPT) (n m k : ℕ) (c : Fin m → HardcoreBit.
 /-- The call block of the round `p` is `c p.divNat L_{p.modNat}`. -/
 @[simp] theorem glBlocks_apply (A : NUPPT) (n m k : ℕ) (c : Fin m → HardcoreBit.NESubset k → A.Coins n)
     (p : Fin (m * (2 ^ k - 1))) :
-    glBlocks A n m k c p = c p.divNat ((nesubsetEquiv k).symm p.modNat) := rfl
+    glBlocks A n m k c p = c p.divNat ((nesubsetEquiv k).symm p.modNat) := by
+  unfold glBlocks
+  rw [blocksEquivX_symm_apply]
+  rfl
 
 /-- The encoding of the coins `(s, b, c)` with unread coins `ex`:
 `s ‖ b ‖ blocks ‖ ex`. -/

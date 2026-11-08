@@ -266,7 +266,7 @@ theorem not_hardCore_const (𝓕 : FunFamily) (b : Bool) : ¬ HardCore 𝓕 (fun
         NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def,
       NUPPT.output_ofPolyTime]
     cases b <;> simp
-  obtain ⟨n₀, hn₀⟩ := hε 1
+  obtain ⟨n₀, hn₀⟩ := (negligible_iff ε).1 hε 1
   have h1 := h (max n₀ 2)
   rw [hone] at h1
   have h2 := hn₀ (max n₀ 2) (le_max_left _ _)
@@ -588,11 +588,12 @@ with `c : M.Coins n ≃ (Fin (ℓ n) → Bool) × D.Coins n` (`Fin.appendEquiv`)
 theorem prg_expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ : PolyExpr)
     (hℓ : ∀ n, n < ℓ.eval n) (h : (PRG.oneBit G).Secure) : (PRG.expand G ℓ hℓ).Secure := by
   rw [PRG.secure_iff] at h ⊢
-  obtain ⟨⟨F, hF, hFs⟩, hsec⟩ := h
+  obtain ⟨hE1, hsec⟩ := h
+  obtain ⟨F, hF, hFs⟩ := (PRG.easy_iff _).1 hE1
   have hFs' : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s) := hFs
   refine ⟨?_, fun D => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := exists_expandEvaluator G hFs' hF ℓ
-    exact ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
+    exact (PRG.easy_iff _).2 ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
   · have hk : ∀ n, ∃ k < ℓ.eval n,
         prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n)) /
           ℓ.eval n ≤
@@ -815,10 +816,10 @@ definitionally): `𝓕.glPad.invProbAt A n ≤ 𝓕.invProbAt B n` by `invProbAt
 `x' ‖ r'` satisfies `f(x') ‖ r' = f(x) ‖ r` then `f(x') = f(x)`, `Fin.append` injective in
 its first argument); then `Negligible.mono` with `h.hard B`. -/
 theorem StrongOneWay.glPad {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) : 𝓕.glPad.StrongOneWay := by
-  obtain ⟨F, hF, hFx⟩ := h.easy
+  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
   refine ⟨?_, fun A => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := exists_glPadEvaluator 𝓕 hF hFx
-    refine ⟨E, hE, fun n z => ?_⟩
+    refine (FunFamily.easy_iff _).2 ⟨E, hE, fun n z => ?_⟩
     obtain ⟨⟨x, r⟩, rfl⟩ := (Fin.appendEquiv _ _).surjective z
     show E (NUPPT.advInput n (List.ofFn (Fin.append x r))) = List.ofFn (𝓕.glPad.f n (Fin.append x r))
     rw [List.ofFn_fin_append, hEs, glPad_f, List.ofFn_fin_append]
@@ -874,7 +875,7 @@ theorem StrongOneWay.glPad_hardCore {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
       (two_pow_glK_le 𝓕.inLen c) with hB
     have hBneg := (h.glPad).hard B
     obtain ⟨C, d, hCd⟩ := K.eval_le
-    obtain ⟨n₀, hn₀⟩ := hBneg (c + d + 1)
+    obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 hBneg (c + d + 1)
     obtain ⟨n, hn, hgap⟩ := hc (max n₀ (max 1 (4 * C * 2 ^ d)))
     have hn1 : 1 ≤ n := le_of_max_le_left (le_of_max_le_right hn)
     have hnC : 4 * C * 2 ^ d ≤ n := le_of_max_le_right (le_of_max_le_right hn)

@@ -1,0 +1,64 @@
+START 2026-11-08T09:38:12.643290+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean sha256=f73e96ec22210e92ca6c734c98a5a895a769dfd6a1b9e30fb2b48fd0950e7a44
+CP2-SEAL chunk=0 requested=14 active=14 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:228:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.copies_def`:
+  [Fintype σ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype σ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:256:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.multicopyRed_def`:
+  [Fintype σ]
+  [Fintype τ]
+  [Fintype ρ]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype σ] [Fintype τ] [Fintype ρ] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:318:20: warning: This simp argument is unused:
+  Equiv.prodComm_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [e, multicopyHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, E̵q̵u̵i̵v̵.̵p̵r̵o̵d̵C̵o̵m̵m̵_̵a̵p̵p̵l̵y̵,̵ ̵Prod.map_apply, Prod.fst_swap, Prod.snd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:318:42: warning: This simp argument is unused:
+  Prod.map_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [e, multicopyHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.m̵a̵p̵_̵a̵p̵p̵l̵y̵,̵ ̵P̵r̵o̵d̵.̵fst_swap, Prod.snd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:318:58: warning: This simp argument is unused:
+  Prod.fst_swap
+
+Hint: Omit it from the simp argument list.
+  simp only [e, multicopyHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.f̵st̵_̵s̵w̵a̵p̵,̵ ̵P̵r̵o̵d̵.̵s̵nd_swap, id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:318:73: warning: This simp argument is unused:
+  Prod.snd_swap
+
+Hint: Omit it from the simp argument list.
+  simp only [e, multicopyHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.fst_swap, P̵r̵o̵d̵.̵s̵n̵d̵_̵s̵w̵a̵p̵,̵ ̵id_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean:318:88: warning: This simp argument is unused:
+  id_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [e, multicopyHybrid, Function.update_apply, Fin.ext_iff, Equiv.prodCongr_apply,
+      Equiv.coe_refl, Equiv.prodComm_apply, Prod.map_apply, Prod.fst_swap, Prod.snd_swap,̵ ̵i̵d̵_̵e̵q̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+CP2-EOF
+
+END 2026-11-08T09:38:15.244964+00:00 RC 0 elapsed=2.6s pid=18524 maxrss=2514736KiB

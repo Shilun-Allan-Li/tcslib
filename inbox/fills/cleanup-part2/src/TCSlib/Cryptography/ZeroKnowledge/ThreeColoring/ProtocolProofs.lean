@@ -374,7 +374,7 @@ theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTim
 theorem two_le_of_edge {n : ℕ} {G : Graph n} {c : Fin n → Fin 3} (hc : ProperColoring G c)
     (hm : 0 < edgeCount G) : 2 ≤ n := by
   have hne : (edgeOf G ⟨0, hm⟩).1 ≠ (edgeOf G ⟨0, hm⟩).2 :=
-    fun h => hc _ _ (edgeOf_adj G ⟨0, hm⟩) (by rw [h])
+    fun h => (ProperColoring_iff G c).1 hc _ _ (edgeOf_adj G ⟨0, hm⟩) (by rw [h])
   have h1 := (edgeOf G ⟨0, hm⟩).1.isLt
   have h2 := (edgeOf G ⟨0, hm⟩).2.isLt
   by_contra hlt

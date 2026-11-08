@@ -1,0 +1,180 @@
+START 2026-11-08T09:14:37.723059+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean sha256=1852855025bfc8d2f452f7344fff7a7d0e43f8bca449682ee0f3161db0a1d1c4
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=125 active=125 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1487:2: error: Type mismatch
+  rfl
+has type
+  ?m.25 = ?m.25
+but is expected to have type
+  (copies t X).X n s i = X.X n (s (finProdFinEquiv.symm i).1) (finProdFinEquiv.symm i).2
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1532:76: error: Type mismatch
+  abs_nonneg ?m.131
+has type
+  0 ≤ |?m.131|
+but is expected to have type
+  0 ≤ distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n))
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1593:20: error: Type mismatch
+  abs_sub_comm ?m.35 ?m.36
+has type
+  |?m.35 - ?m.36| = |?m.36 - ?m.35|
+but is expected to have type
+  distAdv (Y.X n) (X.X n) (D.distinguisher n (ℓ.eval n)) = distAdv (X.X n) (Y.X n) (D.distinguisher n (ℓ.eval n))
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1662:4: error: Type mismatch
+  PolyExpr.eval_mono D.coins (hle n)
+has type
+  D.coins.eval n ≤ D.coins.eval (ℓ.eval n)
+but is expected to have type
+  D.coinLen n ≤ D.coinLen (ℓ.eval n)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1706:16: error: Application type mismatch: The argument
+  h
+has type
+  |acceptProb (X 0) D - acceptProb (X m) D| / ↑m ≤ |acceptProb (X i) D - acceptProb (X (i + 1)) D|
+but is expected to have type
+  distAdv (X 0) (X m) D / ↑m ≤ distAdv (X i) (X (i + 1)) D
+in the application
+  ⟨hi, h⟩
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1718:30: error: Application type mismatch: The argument
+  abs_nonneg ?m.63
+has type
+  0 ≤ |?m.63|
+but is expected to have type
+  0 ≤ distAdv (Y.X n) (Z.X n) (D.distinguisher n (ℓ.eval n))
+in the application
+  add_nonneg ?m.57 (abs_nonneg ?m.63)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1775:13: error: typeclass instance problem is stuck, it is often due to metavariables
+  Fintype ?m.136
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1810:41: error: unsolved goals
+ℓ : PolyExpr
+X Y : Ensemble ℓ
+h : X.Indist Y
+t sX : PolyExpr
+SX : List Bool → List Bool
+hSX : PolyTimeComputable SX
+hXc : ∀ (n : ℕ), StatClose (fun r => padFin (ℓ.eval n) (SX (NUPPT.advInput n (List.ofFn r)))) (X.X n) 0
+sY : PolyExpr
+SY : List Bool → List Bool
+hSY : PolyTimeComputable SY
+hYc : ∀ (n : ℕ), StatClose (fun r => padFin (ℓ.eval n) (SY (NUPPT.advInput n (List.ofFn r)))) (Y.X n) 0
+D : NUPPT
+D' : (n : ℕ) → (Fin (t.eval n) → Fin (ℓ.eval n) → Bool) → D.Coins n → Bool
+hD' :
+  ∀ (n : ℕ) (v : Fin (t.eval n) → Fin (ℓ.eval n) → Bool) (r : D.Coins n),
+    D' n v r = D.distinguisher n ((t.mul ℓ).eval n) ((EnsembleLemmas.blocks (t.eval n) (ℓ.eval n)).symm v) r
+hadv :
+  ∀ (n : ℕ),
+    distAdv ((Ensemble.copies t X).X n) ((Ensemble.copies t Y).X n) (D.distinguisher n ((t.mul ℓ).eval n)) =
+      distAdv (Cryptography.copies (t.eval n) (X.X n)) (Cryptography.copies (t.eval n) (Y.X n)) (D' n)
+k : ℕ → ℕ
+hk :
+  ∀ (n : ℕ),
+    k n ≤ t.eval n ∧
+      (0 < t.eval n →
+        k n < t.eval n ∧
+          distAdv (Cryptography.copies (t.eval n) (X.X n)) (Cryptography.copies (t.eval n) (Y.X n)) (D' n) /
+              ↑(t.eval n) ≤
+            distAdv (X.X n) (Y.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n)))
+B : NUPPT
+hBc : B.coins = ((t.mul sX).add (t.mul sY)).add D.coins
+hB :
+  ∀ (n : ℕ) (z : Fin (ℓ.eval n) → Bool) (cX : Fin (t.eval n) → Fin (sX.eval n) → Bool)
+    (cY : Fin (t.eval n) → Fin (sY.eval n) → Bool) (cD : List Bool),
+    B.runAtL n (List.ofFn z)
+        (List.ofFn ((EnsembleLemmas.blocks (t.eval n) (sX.eval n)).symm cX) ++
+            List.ofFn ((EnsembleLemmas.blocks (t.eval n) (sY.eval n)).symm cY) ++
+          cD) =
+      D.runAtL n
+        (List.ofFn
+          ((EnsembleLemmas.blocks (t.eval n) (ℓ.eval n)).symm fun i =>
+            if ↑i < k n then padFin (ℓ.eval n) (SY (NUPPT.advInput n (List.ofFn (cY i))))
+            else if ↑i = k n then z else padFin (ℓ.eval n) (SX (NUPPT.advInput n (List.ofFn (cX i))))))
+        cD
+n : ℕ
+hlen : B.coinLen n = t.eval n * sX.eval n + t.eval n * sY.eval n + D.coinLen n
+e : ((Fin (t.eval n) → Fin (sX.eval n) → Bool) × (Fin (t.eval n) → Fin (sY.eval n) → Bool)) × D.Coins n ≃ B.Coins n
+he :
+  ∀ (c : ((Fin (t.eval n) → Fin (sX.eval n) → Bool) × (Fin (t.eval n) → Fin (sY.eval n) → Bool)) × D.Coins n),
+    e c =
+      (EnsembleLemmas.coinsEquiv hlen)
+        ((EnsembleLemmas.coinsEquiv ⋯)
+            ((EnsembleLemmas.blocks (t.eval n) (sX.eval n)).symm c.1.1,
+              (EnsembleLemmas.blocks (t.eval n) (sY.eval n)).symm c.1.2),
+          c.2)
+z : Fin (ℓ.eval n) → Bool
+c : ((Fin (t.eval n) → Fin (sX.eval n) → Bool) × (Fin (t.eval n) → Fin (sY.eval n) → Bool)) × D.Coins n
+⊢ decide
+      (D.runAtL n
+          (List.ofFn
+            ((EnsembleLemmas.blocks (t.eval n) (ℓ.eval n)).symm fun i =>
+              if ↑i < k n then padFin (ℓ.eval n) (SY (NUPPT.advInput n (List.ofFn (c.1.2 i))))
+              else if ↑i = k n then z else padFin (ℓ.eval n) (SX (NUPPT.advInput n (List.ofFn (c.1.1 i))))))
+          (List.ofFn c.2) =
+        [true]) =
+    decide
+      (D.runAtL n
+          (List.ofFn
+            ((EnsembleLemmas.blocks (t.eval n) (ℓ.eval n)).symm fun i =>
+              if ↑i < k n then padFin (ℓ.eval n) (SY (NUPPT.advInput n (List.ofFn (c.1.2 i))))
+              else if ↑i = k n then z else padFin (ℓ.eval n) (SX (NUPPT.advInput n (List.ofFn (c.1.1 i))))))
+          (List.ofFn c.2) =
+        [true])
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1842:43: error: Application type mismatch: The argument
+  abs_nonneg ?m.671
+has type
+  0 ≤ |?m.671|
+but is expected to have type
+  0 ≤ distAdv (X.X n) (Y.X n) (multicopyRed (X.X n) (Y.X n) (t.eval n) (k n) (D' n))
+in the application
+  mul_nonneg (Nat.cast_nonneg (t.eval n)) (abs_nonneg ?m.671)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1845:57: error: Type mismatch
+  abs_nonneg ?m.704
+has type
+  0 ≤ |?m.704|
+but is expected to have type
+  0 ≤ distAdv ((Ensemble.copies t X).X n) ((Ensemble.copies t Y).X n) (D.distinguisher n ((t.mul ℓ).eval n))
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1889:4: error: Tactic `rfl` failed: The left-hand side
+  uprob fun c => D (X₁ c.1.2) c.2 = true
+is not definitionally equal to the right-hand side
+  acceptProb (fun z => X₁ z.2) D
+
+ℓ : ℕ
+σ₀ : Type u_1
+σ₁ : Type u_2
+ρ : Type u_3
+inst✝⁵ : Fintype σ₀
+inst✝⁴ : Fintype σ₁
+inst✝³ : Fintype ρ
+inst✝² : Nonempty σ₀
+inst✝¹ : Nonempty σ₁
+inst✝ : Nonempty ρ
+X₀ : σ₀ → Fin ℓ → Bool
+X₁ : σ₁ → Fin ℓ → Bool
+D : (Fin ℓ → Bool) → ρ → Bool
+hA : (uprob fun c => D (X₀ c.1.1) c.2 = false) = 1 - acceptProb X₀ D
+⊢ (uprob fun c => D (X₁ c.1.2) c.2 = true) = acceptProb (fun z => X₁ z.2) D
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1922:10: error: typeclass instance problem is stuck, it is often due to metavariables
+  AddGroup ?m.128
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles.lean:1928:4: error: Type mismatch
+  predict_eq (X₀.X n) (X₁.X n) (A.distinguisher n (ℓ.eval n))
+has type
+  (uprob fun z => A.distinguisher n (ℓ.eval n) (if z.1.1 = true then X₁.X n z.1.2.2 else X₀.X n z.1.2.1) z.2 = z.1.1) =
+    1 / 2 +
+      (acceptProb (X₁.X n) (A.distinguisher n (ℓ.eval n)) - acceptProb (X₀.X n) (A.distinguisher n (ℓ.eval n))) / 2
+but is expected to have type
+  (uprob fun z => A.predictor n (ℓ.eval n) (mixEnsemble X₀ X₁ n z.1).2 z.2 = (mixEnsemble X₀ X₁ n z.1).1) =
+    1 / 2 +
+      (acceptProb (X₁.X n) (A.distinguisher n (ℓ.eval n)) - acceptProb (X₀.X n) (A.distinguisher n (ℓ.eval n))) / 2
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/Ensembles): no fresh .olean produced
+
+END 2026-11-08T09:14:53.503578+00:00 RC 1 elapsed=15.8s pid=14718 maxrss=2726528KiB

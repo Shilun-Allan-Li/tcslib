@@ -1,0 +1,73 @@
+START 2026-11-08T09:51:10.567903+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean sha256=5ac483f7661f9bf6410abadd6258007697b9209d797588bf56e5a036b6739891
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=200 active=200 already=0
+CP2-SEAL chunk=8 requested=200 active=200 already=0
+CP2-SEAL chunk=9 requested=61 active=61 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2645:2: error: Type mismatch
+  ColProofs.colProver_efficient hCom ℓ
+has type
+  (ColProofs.colProver Com ℓ).Efficient
+but is expected to have type
+  (colProver Com ℓ).Efficient
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2660:2: error: Type mismatch
+  ColProofs.colVerifier_efficient hCom ℓ
+has type
+  (ColProofs.colVerifier Com ℓ).Efficient
+but is expected to have type
+  (colVerifier Com ℓ).Efficient
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2667:2: error: Type mismatch
+  ColProofs.colProverRep_efficient hCom ℓ
+has type
+  (ColProofs.colProverRep Com ℓ).Efficient
+but is expected to have type
+  (colProverRep Com ℓ).Efficient
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2675:2: error: Type mismatch
+  ColProofs.colVerifierRep_efficient hCom ℓ
+has type
+  (ColProofs.colVerifierRep Com ℓ).Efficient
+but is expected to have type
+  (colVerifierRep Com ℓ).Efficient
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2707:41: error: Type mismatch
+  Nat.sqrt_le_self ?m.54
+has type
+  Nat.sqrt ?m.54 ≤ ?m.54
+but is expected to have type
+  (decGraph x).fst ≤ x.length
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2824:96: error: Type mismatch
+  rfl
+has type
+  ?m.32 = ?m.32
+but is expected to have type
+  (colProtocol Com ℓ).outV P' x y z r =
+    (colVerifier Com ℓ).next x z (List.ofFn r.2)
+      [P'.next x y (List.ofFn r.1) [],
+        P'.next x y (List.ofFn r.1) [(colVerifier Com ℓ).next x z (List.ofFn r.2) [P'.next x y (List.ofFn r.1) []]]]
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2868:2: error: Type mismatch
+  he
+has type
+  colVerify Com (ℓ.eval n) G (↑e) com (opn ↑e) = true
+but is expected to have type
+  colVerify Com (ℓ.eval n) G (↑(((ColProofs.finOneEquiv (edgeCount G)) e).1 0)) com
+      (opn ↑(challengesUpTo ((ColProofs.finOneEquiv (edgeCount G)) e).1 0 (Fin.last ↑0))) =
+    true
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean:2931:8: error: 'show' tactic failed, pattern
+  x.length * (edgeCount G).size ≤ 1 * (x.length + 1) ^ 2
+is not definitionally equal to target
+  x.length * (edgeCount G).size ≤ (colVerifier Com ℓ).coinLen x.length
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol): no fresh .olean produced
+
+END 2026-11-08T09:51:33.469016+00:00 RC 1 elapsed=22.9s pid=20512 maxrss=2896864KiB

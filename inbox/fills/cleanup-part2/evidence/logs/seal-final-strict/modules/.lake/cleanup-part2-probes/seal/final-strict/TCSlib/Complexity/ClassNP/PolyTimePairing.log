@@ -1,0 +1,76 @@
+START 2026-11-08T09:29:50.036110+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing.lean sha256=99769636ef335cf5dc2f3053c8546a27a2fb119b83a9c6ae15f1eb5bed6c5b84
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=93 active=93 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing.lean:661:13: error: Type mismatch
+  FinTM.ComputesInTime.mono
+    ((FinTM.computesFunInTime_iff M
+          (fun z =>
+            match pairDecode z with
+            | some (a, b) => pairEncode a (g b)
+            | none => [])
+          fun n => K * (n + 1 + C * (n + 1) ^ c)).mp
+      hM x)
+    ?m.107
+has type
+  M.ComputesInTime x
+    (match pairDecode x with
+    | some (a, b) => pairEncode a (g b)
+    | none => [])
+    ?m.106
+but is expected to have type
+  M.ComputesInTime x (Complexity.pairMapSnd g x) (K * (C + 1) * (x.length + 1) ^ (c + 1))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing.lean:662:2: error: No goals to be solved
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing.lean:735:49: error: Application type mismatch: The argument
+  hM
+has type
+  M.ComputesFunInTime
+    (fun x =>
+      match pairDecode x with
+      | some (a, v) =>
+        match splitAtLastTrue v with
+        | some u => pairEncode a u
+        | none => []
+      | none => [])
+    fun n => c * (n + 1) ^ 2
+but is expected to have type
+  M.ComputesFunInTime
+    (fun x =>
+      match pairDecode x with
+      | some (a, v) =>
+        match splitAtLastTrue v with
+        | some u => pairEncode a u
+        | none => []
+      | none => [])
+    fun n => c * (n + 1) ^ 2
+in the application
+  Exists.intro 2 hM
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing.lean:896:49: error: Application type mismatch: The argument
+  hM
+has type
+  M.ComputesFunInTime
+    (fun x =>
+      [match pairDecode x with
+        | some (a, b) => decide (b.length ≤ 1 * (a.length + 1) ^ 1)
+        | none => false])
+    fun n => a * (n + 1) ^ (1 + 1)
+but is expected to have type
+  M.ComputesFunInTime
+    (fun x =>
+      [match pairDecode x with
+        | some (a, b) => decide (b.length ≤ 1 * (a.length + 1) ^ 1)
+        | none => false])
+    fun n => a * (n + 1) ^ 2
+in the application
+  Exists.intro 2 hM
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Complexity/ClassNP/PolyTimePairing): no fresh .olean produced
+
+END 2026-11-08T09:29:59.179706+00:00 RC 1 elapsed=9.1s pid=16973 maxrss=1856432KiB

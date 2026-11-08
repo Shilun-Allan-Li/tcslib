@@ -1,0 +1,158 @@
+START 2026-11-08T07:02:28.938155+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean sha256=18d0a7cb465abca9a28d4859b1fe6b45419bcf4dedce735081af9abcf691d376
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=108 active=108 already=0
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1381:28: error: Application type mismatch: The argument
+  h
+has type
+  permCoinLen n ≤ c
+but is expected to have type
+  n * permTrials n * permBits n ≤ c
+in the application
+  coinTable_ofFn_castLE h
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1390:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+n c : ℕ
+h : permCoinLen n ≤ c
+this : StatClose (fun ω => samplePerm n (List.ofFn fun i => ω (Fin.castLE h i))) id (permFailBound n)
+⊢ StatClose (fun t => samplePerm n (List.ofFn t)) id (permFailBound n)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1409:10: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+case zero
+σ : Type u_1
+τ : Type u_2
+γ : Type u_3
+inst✝¹ : Fintype σ
+inst✝ : Fintype τ
+X : σ → γ
+Y : τ → γ
+δ : ℝ
+h : StatClose X Y δ
+⊢ StatClose (fun s t => X (s t)) (fun u t => Y (u t)) (↑0 * δ)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1578:59: error: Type mismatch
+  pairFstD_pairEncode ?m.72 ?m.73
+has type
+  pairFstD (pairEncode ?m.72 ?m.73) = ?m.72
+but is expected to have type
+  pairFstD (encInstance G₀ G₁) = encGraph G₀
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1574:39: error: unsolved goals
+V' : Strategy
+n : ℕ
+G₀ G₁ : Graph n
+z : List Bool
+g : Fin (1 + ((encInstance G₀ G₁).length + 1) ^ 2 + V'.coinLen (encInstance G₀ G₁).length) → Bool
+⊢ (if
+        (V'.next (encInstance G₀ G₁) z (List.ofFn fun j => g ⟨1 + ((encInstance G₀ G₁).length + 1) ^ 2 + ↑j, ⋯⟩)
+                [encGraph
+                    (permGraph
+                      (if g ⟨0, ⋯⟩ = true then
+                        decGraphAt (pairFstD (encInstance G₀ G₁)).length.sqrt (pairSndD (encInstance G₀ G₁))
+                      else decGraphAt (pairFstD (encInstance G₀ G₁)).length.sqrt (pairFstD (encInstance G₀ G₁)))
+                      (samplePerm (pairFstD (encInstance G₀ G₁)).length.sqrt
+                        (List.ofFn fun i => g ⟨1 + ↑i, ⋯⟩)))]).headD
+            false =
+          g ⟨0, ⋯⟩ then
+      some
+        { x := encInstance G₀ G₁, z := z, r := List.ofFn fun j => g ⟨1 + ((encInstance G₀ G₁).length + 1) ^ 2 + ↑j, ⋯⟩,
+            received :=
+              [encGraph
+                  (permGraph
+                    (if g ⟨0, ⋯⟩ = true then
+                      decGraphAt (pairFstD (encInstance G₀ G₁)).length.sqrt (pairSndD (encInstance G₀ G₁))
+                    else decGraphAt (pairFstD (encInstance G₀ G₁)).length.sqrt (pairFstD (encInstance G₀ G₁)))
+                    (samplePerm (pairFstD (encInstance G₀ G₁)).length.sqrt (List.ofFn fun i => g ⟨1 + ↑i, ⋯⟩))),
+                encPerm
+                  (samplePerm (pairFstD (encInstance G₀ G₁)).length.sqrt (List.ofFn fun i => g ⟨1 + ↑i, ⋯⟩))] }.encode
+    else none) =
+    Option.map (encView V' (encInstance G₀ G₁) z)
+      (simAttempt G₀ G₁ (vstar V' (encInstance G₀ G₁) z)
+        ((samplePerm n
+              (List.ofFn
+                (blockFields (((encInstance G₀ G₁).length + 1) ^ 2) (V'.coinLen (encInstance G₀ G₁).length) g).1.1),
+            (blockFields (((encInstance G₀ G₁).length + 1) ^ 2) (V'.coinLen (encInstance G₀ G₁).length) g).1.2),
+          (blockFields (((encInstance G₀ G₁).length + 1) ^ 2) (V'.coinLen (encInstance G₀ G₁).length) g).2))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1625:2: error: 'show' tactic failed, pattern
+  encGraph
+      (permGraph (decGraph (pairFstD (encInstance G₀ G₁))).snd
+        (samplePerm (decGraph (pairFstD (encInstance G₀ G₁))).fst r)) =
+    ?m.16
+is not definitionally equal to target
+  giProver.next (encInstance G₀ G₁) y r [] = encGraph (permGraph G₀ (samplePerm n r))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1634:2: error: 'show' tactic failed, pattern
+  encPerm
+      (if ((m :: h).headD []).headD false = true then
+        samplePerm (decGraph (pairFstD (encInstance G₀ G₁))).fst r *
+          (decPerm (decGraph (pairFstD (encInstance G₀ G₁))).fst (encPerm σ))⁻¹
+      else samplePerm (decGraph (pairFstD (encInstance G₀ G₁))).fst r) =
+    ?m.42
+is not definitionally equal to target
+  giProver.next (encInstance G₀ G₁) (encPerm σ) r (m :: h) =
+    encPerm (if m.headD false = true then samplePerm n r * σ⁻¹ else samplePerm n r)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1738:8: error: Tactic `introN` failed: There are no additional binders or `let` bindings in the goal to introduce
+
+V' : Strategy
+n : ℕ
+G₀ G₁ : Graph n
+z : List Bool
+hP' : permCoinLen n ≤ ((encInstance G₀ G₁).length + 1) ^ 2
+hnM : n ≤ (encInstance G₀ G₁).length
+hs :
+  StatClose (fun z => ((samplePerm n (List.ofFn z.1.1), z.1.2), z.2)) (fun z => ((id z.1.1, z.1.2), z.2))
+    (permFailBound n + 0 + 0)
+hpi :
+  StatClose (fun s t => ((samplePerm n (List.ofFn (s t).1.1), (s t).1.2), (s t).2))
+    (fun u t => ((id (u t).1.1, (u t).1.2), (u t).2)) (↑n * (permFailBound n + 0 + 0))
+hΨ :
+  HardcoreBit.PushesUniform
+    (readBlocks (((encInstance G₀ G₁).length + 1) ^ 2) (V'.coinLen (encInstance G₀ G₁).length)
+      (encInstance G₀ G₁).length n hnM)
+h3 :
+  StatClose
+    (fun s =>
+      (Option.map (encView V' (encInstance G₀ G₁) z)
+            (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t =>
+              ((samplePerm n
+                    (List.ofFn
+                      (readBlocks (((encInstance G₀ G₁).length + 1) ^ 2) (V'.coinLen (encInstance G₀ G₁).length)
+                            (encInstance G₀ G₁).length n hnM s t).1.1),
+                  (readBlocks (((encInstance G₀ G₁).length + 1) ^ 2) (V'.coinLen (encInstance G₀ G₁).length)
+                        (encInstance G₀ G₁).length n hnM s t).1.2),
+                (readBlocks (((encInstance G₀ G₁).length + 1) ^ 2) (V'.coinLen (encInstance G₀ G₁).length)
+                    (encInstance G₀ G₁).length n hnM s t).2))).getD
+        [])
+    (fun t =>
+      (Option.map (encView V' (encInstance G₀ G₁) z)
+            (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n fun t_1 =>
+              ((id (t t_1).1.1, (t t_1).1.2), (t t_1).2))).getD
+        [])
+    (↑n * (permFailBound n + 0 + 0))
+⊢ StatClose
+    (fun c =>
+      (Option.map (encView V' (encInstance G₀ G₁) z) (simTrunc G₀ G₁ (vstar V' (encInstance G₀ G₁) z) n c)).getD [])
+    (fun r => sim V' (encInstance G₀ G₁) z (List.ofFn r)) (↑n * (permFailBound n + 0 + 0))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1789:56: error: Type mismatch
+  Nat.sqrt_le_sqrt hN
+has type
+  Nat.sqrt 8 ≤ N.sqrt
+but is expected to have type
+  (N / 4).sqrt ≤ instanceVertices N
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness.lean:1795:40: error: Type mismatch
+  LE.le.trans (Nat.sqrt_le_self 1) hN
+has type
+  Nat.sqrt 1 ≤ N
+but is expected to have type
+  instanceVertices N ≤ N
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Closeness): no fresh .olean produced
+
+END 2026-11-08T07:02:44.991082+00:00 RC 1 elapsed=16.1s pid=13894 maxrss=2706056KiB

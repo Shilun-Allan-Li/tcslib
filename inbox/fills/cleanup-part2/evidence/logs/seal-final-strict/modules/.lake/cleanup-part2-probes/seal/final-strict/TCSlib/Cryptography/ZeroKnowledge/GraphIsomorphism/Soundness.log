@@ -1,0 +1,73 @@
+START 2026-11-08T09:47:18.707602+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean sha256=b7dfd7bfb44d782d9ca77af018ababa9e0ece2d6de796dbf3701b1a9f0144918
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=173 active=173 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:1267:15: error: Application type mismatch: The argument
+  gniProver_length_le ?m.78 []
+has type
+  ∀ (r : List Bool) (hist : List (List Bool)), (gniProver.next ?m.78 [] r hist).length ≤ 1
+but is expected to have type
+  ∀ (r : List Bool) (hist : List (List Bool)),
+    (gniProtocol.P.next (pairEncode (encGraph G₀) (encGraph G₁)) [] r hist).length ≤
+      (PolyExpr.const 1).eval (pairEncode (encGraph G₀) (encGraph G₁)).length
+in the application
+  And.intro (gniProver_length_le ?m.78 [])
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:1267:50: error: Type mismatch
+  gni_complete hni [] z
+has type
+  (uprob fun (r : gniProtocol.ExecCoins gniProver (encInstance G₀ G₁)) =>
+      gniProtocol.outV gniProver (encInstance G₀ G₁) [] z r = [true]) =
+    1
+but is expected to have type
+  (uprob fun (r : gniProtocol.ExecCoins gniProtocol.P (pairEncode (encGraph G₀) (encGraph G₁))) =>
+      gniProtocol.outV gniProtocol.P (pairEncode (encGraph G₀) (encGraph G₁)) [] z r = [true]) =
+    1
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:1397:22: error: Application type mismatch: The argument
+  giProver_length_le ?m.96 ?m.97
+has type
+  ∀ (r : List Bool) (hist : List (List Bool)), (giProver.next ?m.96 ?m.97 r hist).length ≤ List.length ?m.96
+but is expected to have type
+  ∀ (r : List Bool) (hist : List (List Bool)),
+    (giProtocol.P.next (pairEncode (encGraph G₀) (encGraph G₁)) (encPerm σ) r hist).length ≤
+      PolyExpr.var.eval (pairEncode (encGraph G₀) (encGraph G₁)).length
+in the application
+  And.intro (giProver_length_le ?m.96 ?m.97)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:1397:55: error: Type mismatch
+  gi_complete hσ z
+has type
+  (uprob fun (r : giProtocol.ExecCoins giProver (encInstance G₀ G₁)) =>
+      giProtocol.outV giProver (encInstance G₀ G₁) (encPerm σ) z r = [true]) =
+    1
+but is expected to have type
+  (uprob fun (r : giProtocol.ExecCoins giProtocol.P (pairEncode (encGraph G₀) (encGraph G₁))) =>
+      giProtocol.outV giProtocol.P (pairEncode (encGraph G₀) (encGraph G₁)) (encPerm σ) z r = [true]) =
+    1
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:1423:4: error: Type mismatch
+  giProver_length_le x y r hist
+has type
+  (giProver.next x y r hist).length ≤ x.length
+but is expected to have type
+  (giProver.next x y r hist).length ≤ PolyExpr.var.eval x.length
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean:1427:4: error: Type mismatch
+  gi_complete hσ z
+has type
+  (uprob fun (r : giProtocol.ExecCoins giProver (encInstance G₀ G₁)) =>
+      giProtocol.outV giProver (encInstance G₀ G₁) (encPerm σ) z r = [true]) =
+    1
+but is expected to have type
+  (uprob fun (r : giProtocol.ExecCoins giProtocol.P (pairEncode (encGraph G₀) (encGraph G₁))) =>
+      giProtocol.outV giProtocol.P (pairEncode (encGraph G₀) (encGraph G₁)) (encPerm σ) z r = [true]) =
+    1
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness): no fresh .olean produced
+
+END 2026-11-08T09:47:34.531018+00:00 RC 1 elapsed=15.8s pid=19929 maxrss=2705536KiB

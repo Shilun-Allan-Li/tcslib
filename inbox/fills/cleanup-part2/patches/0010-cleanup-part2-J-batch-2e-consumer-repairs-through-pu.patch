@@ -1,0 +1,867 @@
+From 49e1a868d4a45794f73e7d560f03e6d18dc5be8c Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 8 Nov 2026 07:39:31 +0000
+Subject: [PATCH 10/13] cleanup-part2 J batch 2e: consumer repairs through
+ public readers (NextBit, OneWay, Collections, CollectionsHelpers, Universal*,
+ Indistinguishability, BlockEncryptor, Encoding, GI
+ Proofs/Efficiency/Soundness, GIZK Simulator, ThreeColoring
+ Language/Protocol/ProtocolProofs, Commitment, HardCore, NP, Extractors);
+ readers permTrials_eq, hashPair_eq, polyTimeReducible_iff,
+ threeColorable_iff, GI
+ isomorphic_iff/mem_Lniso_iff/gniProver_next/(g)niProtocol_P/_V/gniProtocolRep_V
+
+---
+ TCSlib/Complexity/ClassNP/Reductions.lean     |  7 +++
+ .../Asymptotic/BlockEncryptor.lean            | 10 ++--
+ .../Cryptography/Asymptotic/Collections.lean  | 14 +++---
+ .../Asymptotic/CollectionsHelpers.lean        |  4 +-
+ TCSlib/Cryptography/Asymptotic/HardCore.lean  |  4 +-
+ TCSlib/Cryptography/Asymptotic/NextBit.lean   | 37 +++++++++++----
+ TCSlib/Cryptography/Asymptotic/OneWay.lean    | 14 ++++--
+ .../Cryptography/Asymptotic/Permutations.lean |  3 ++
+ TCSlib/Cryptography/Asymptotic/Universal.lean |  7 +--
+ .../Asymptotic/UniversalLemmas.lean           |  6 +--
+ .../Asymptotic/UniversalPadding.lean          | 13 +++---
+ .../Pseudorandom/Indistinguishability.lean    |  9 ++--
+ .../ZeroKnowledge/Commitment.lean             |  2 +-
+ .../Cryptography/ZeroKnowledge/Encoding.lean  |  5 +-
+ .../GraphIsomorphism/Efficiency.lean          | 11 +++--
+ .../GraphIsomorphism/Proofs.lean              | 46 +++++++++++++++++--
+ .../GraphIsomorphism/Soundness.lean           | 35 +++++++++-----
+ .../GraphIsomorphismZK/Simulator.lean         |  2 +-
+ TCSlib/Cryptography/ZeroKnowledge/NP.lean     |  4 +-
+ .../ZeroKnowledge/ThreeColoring/Language.lean |  5 ++
+ .../ZeroKnowledge/ThreeColoring/Protocol.lean | 14 ++++--
+ .../ThreeColoring/ProtocolProofs.lean         |  2 +-
+ TCSlib/InformationTheory/Extractors.lean      |  5 +-
+ TCSlib/InformationTheory/LeftoverHash.lean    |  6 +++
+ 24 files changed, 185 insertions(+), 80 deletions(-)
+
+diff --git a/TCSlib/Complexity/ClassNP/Reductions.lean b/TCSlib/Complexity/ClassNP/Reductions.lean
+index 0225e2050..771805b0f 100644
+--- a/TCSlib/Complexity/ClassNP/Reductions.lean
++++ b/TCSlib/Complexity/ClassNP/Reductions.lean
+@@ -55,6 +55,13 @@ string `x`. -/
+ def PolyTimeReducible (L L' : Language Bool) : Prop :=
+   ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L'
+ 
++/-- The defining property of `PolyTimeReducible`: some polynomial-time `f` has
++`x ∈ L ↔ f x ∈ L'` for every `x`. -/
++theorem polyTimeReducible_iff (L L' : Language Bool) :
++    PolyTimeReducible L L' ↔
++      ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L' :=
++  Iff.rfl
++
+ @[inherit_doc] scoped infix:50 " ≤ₚ " => PolyTimeReducible
+ 
+ /-- Karp reducibility is reflexive [AB09, Exercise 2.9]: the identity reduces
+diff --git a/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean b/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean
+index c7fddc478..43d3daa10 100644
+--- a/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean
++++ b/TCSlib/Cryptography/Asymptotic/BlockEncryptor.lean
+@@ -60,7 +60,9 @@ open PrivateKeyScheme (encodeList)
+ theorem encodeList_eq_flatMap (l : List (List Bool)) :
+     encodeList l = l.flatMap fun c => pairEncode c [] := by
+   induction l with
+-  | nil => rfl
++  | nil =>
++    rw [PrivateKeyScheme.encodeList_nil]
++    rfl
+   | cons c cs ih => simp [PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons, ih,
+       pairEncode_eq]
+ 
+@@ -150,10 +152,12 @@ theorem blockEmit_blockState (E : List Bool → List Bool) (L B : PolyExpr) (u p
+   simp [blockEmit, blockState, List.length_eq_zero_iff]
+ 
+ /-- The projections of the empty word are empty. -/
+-private theorem pairFstD_nil : pairFstD [] = [] := rfl
++private theorem pairFstD_nil : pairFstD [] = [] :=
++  pairFstD_of_pairDecode_eq_none Turing.pairDecode_nil
+ 
+ /-- The projections of the empty word are empty. -/
+-private theorem pairSndD_nil : pairSndD [] = [] := rfl
++private theorem pairSndD_nil : pairSndD [] = [] :=
++  pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil
+ 
+ /-- The block `⟨c, []⟩` followed by a tuple is the tuple extended by `c`. -/
+ theorem pairEncode_nil_append (c w : List Bool) :
+diff --git a/TCSlib/Cryptography/Asymptotic/Collections.lean b/TCSlib/Cryptography/Asymptotic/Collections.lean
+index c21eff904..79f100e6f 100644
+--- a/TCSlib/Cryptography/Asymptotic/Collections.lean
++++ b/TCSlib/Cryptography/Asymptotic/Collections.lean
+@@ -608,10 +608,7 @@ inversion probability is `𝓕.invProbAt (withIndexParam A) n` (`toCollection_in
+ negligible by `h.hard`. -/
+ theorem StrongOneWay.toCollection_oneWay (h : 𝓕.StrongOneWay) :
+     (𝓕.toCollection F hF hspec).OneWay where
+-  sampleClose := ⟨fun _ => 0, fun c => ⟨1, fun n hn => by
+-      rw [abs_zero]
+-      exact one_div_pos.mpr (pow_pos (Nat.cast_pos.mpr hn) c)⟩,
+-    toCollection_sampleClose 𝓕 F hF hspec⟩
++  sampleClose := ⟨fun _ => 0, negligible_zero, toCollection_sampleClose 𝓕 F hF hspec⟩
+   hard A := by
+     simpa only [toCollection_invProbAt] using h.hard A.withIndexParam
+ 
+@@ -619,7 +616,7 @@ theorem StrongOneWay.toCollection_oneWay (h : 𝓕.StrongOneWay) :
+ [PS10, Theorem 42.2 ⇐]: the collection `toCollection` built from the evaluator of `h.easy`. -/
+ theorem StrongOneWay.exists_collection_oneWay {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) :
+     ∃ G : Collection, G.OneWay := by
+-  obtain ⟨F, hF, hspec⟩ := h.easy
++  obtain ⟨F, hF, hspec⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
+   exact ⟨_, FunFamily.StrongOneWay.toCollection_oneWay 𝓕 F hF hspec h⟩
+ 
+ end FunFamily
+@@ -796,16 +793,17 @@ private theorem owfIndexStr_eq (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample
+     G.owfIndexStr (List.replicate n true) (List.ofFn r₁ ++ List.ofFn r₂) = G.index n r₁ := by
+   simp only [owfIndexStr, Collection.index, NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq,
+     NUPPT.advInput_eq]
+-  rw [List.length_replicate, List.take_left' (by simp [NUPPT.coinLen_eq]), G.gen_uniform n]
++  rw [List.length_replicate, List.take_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq]),
++    (NUPPT.uniform_iff G.gen).1 G.gen_uniform n]
+ 
+ /-- On `u = 1^n` and the encoded coins `r₁ ++ r₂`, the raw string of `g` is `owfRaw n r₁ r₂`
+ (`Sample` is uniform; the cut at `gen.coins n` is `List.drop_left'`). -/
+ private theorem owfRawStr_eq (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) :
+     G.owfRawStr (List.replicate n true) (List.ofFn r₁ ++ List.ofFn r₂) = G.owfRaw n r₁ r₂ := by
+   unfold owfRawStr owfRaw
+-  rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by simp [NUPPT.coinLen_eq])]
++  rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by rw [List.length_ofFn, NUPPT.coinLen_eq])]
+   simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
+-  rw [G.sample_uniform n]
++  rw [(NUPPT.uniform_iff G.sample).1 G.sample_uniform n]
+ 
+ /-- **`g` is easy to compute** [PS10, Theorem 42.2 ⇒, "`g` is easy"]: the evaluator on
+ `⟨1^n, r⟩` pads `owfRawStr 1^n r ++ [true]` to `L n` bits (`polyTimeComputable_padStr`);
+diff --git a/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean b/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean
+index ef9f07b5d..128cfc1cf 100644
+--- a/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean
++++ b/TCSlib/Cryptography/Asymptotic/CollectionsHelpers.lean
+@@ -109,7 +109,9 @@ theorem _root_.Complexity.NUPPT.length_runAt_le (A : NUPPT) (n : ℕ) (y : List
+   apply Nat.mul_le_mul_left
+   apply Nat.pow_le_pow_left
+   have := A.advice_length n
+-  simp only [length_pairEncode, NUPPT.length_advInput, List.length_ofFn, NUPPT.coinLen_eq]
++  have hr : (List.ofFn r).length = A.coins.eval n := by
++    rw [List.length_ofFn, NUPPT.coinLen_eq]
++  simp only [length_pairEncode, NUPPT.length_advInput, hr]
+   omega
+ 
+ /-- The syntactic polynomial bounding `|A(1^n, y)|` when `|y| ≤ Y(n)` (`length_runAt_le`). -/
+diff --git a/TCSlib/Cryptography/Asymptotic/HardCore.lean b/TCSlib/Cryptography/Asymptotic/HardCore.lean
+index 65cb8685d..3284c2c31 100644
+--- a/TCSlib/Cryptography/Asymptotic/HardCore.lean
++++ b/TCSlib/Cryptography/Asymptotic/HardCore.lean
+@@ -593,7 +593,7 @@ theorem prg_expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ
+   have hFs' : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s) := hFs
+   refine ⟨?_, fun D => ?_⟩
+   · obtain ⟨E, hE, hEs⟩ := exists_expandEvaluator G hFs' hF ℓ
+-    exact ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
++    exact (PRG.easy_iff _).2 ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
+   · have hk : ∀ n, ∃ k < ℓ.eval n,
+         prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n)) /
+           ℓ.eval n ≤
+@@ -819,7 +819,7 @@ theorem StrongOneWay.glPad {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) : 𝓕.glP
+   obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
+   refine ⟨?_, fun A => ?_⟩
+   · obtain ⟨E, hE, hEs⟩ := exists_glPadEvaluator 𝓕 hF hFx
+-    refine ⟨E, hE, fun n z => ?_⟩
++    refine (FunFamily.easy_iff _).2 ⟨E, hE, fun n z => ?_⟩
+     obtain ⟨⟨x, r⟩, rfl⟩ := (Fin.appendEquiv _ _).surjective z
+     show E (NUPPT.advInput n (List.ofFn (Fin.append x r))) = List.ofFn (𝓕.glPad.f n (Fin.append x r))
+     rw [List.ofFn_fin_append, hEs, glPad_f, List.ofFn_fin_append]
+diff --git a/TCSlib/Cryptography/Asymptotic/NextBit.lean b/TCSlib/Cryptography/Asymptotic/NextBit.lean
+index 71dea3a88..31cd355cc 100644
+--- a/TCSlib/Cryptography/Asymptotic/NextBit.lean
++++ b/TCSlib/Cryptography/Asymptotic/NextBit.lean
+@@ -632,7 +632,8 @@ private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : 
+     have := D.advice_length n
+     omega
+   let A := NUPPT.ofPolyTime hF (.add ℓ D.coins) _ (fun n => pairEncode (D.advice n) [flip n]) hadv
+-  have hlen : ∀ n, A.coinLen n = ℓ.eval n + D.coinLen n := fun n => rfl
++  have hlen : ∀ n, A.coinLen n = ℓ.eval n + D.coinLen n := fun n => by
++    simp only [A, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTime, PolyExpr.eval_add]
+   let e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n := fun n =>
+     (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)).trans
+       (Equiv.arrowCongr (finCongr (hlen n).symm) (Equiv.refl Bool))
+@@ -716,7 +717,9 @@ theorem Ensemble.NextBitUnpredictable.pseudorandom {ℓ : PolyExpr} {X : Ensembl
+   · obtain ⟨n, hn, hpn⟩ := hinf n₀
+     refine ⟨n, hn, ?_⟩
+     have hppos : (0 : ℝ) < p.eval n := by exact_mod_cast hp n
+-    have h0 : 0 ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) := abs_nonneg _
++    have h0 : 0 ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) := by
++      rw [prgAdv_eq, distAdv_def]
++      exact abs_nonneg _
+     rw [abs_of_nonneg h0] at hpn
+     -- on the infinite set `ℓ(n) > 0`: at `ℓ(n) = 0` the advantage is `0`
+     have hℓn : 0 < ℓ.eval n := by
+@@ -798,7 +801,14 @@ theorem Ensemble.uniform_nextBitUnpredictable (ℓ : PolyExpr) :
+     (Ensemble.uniform ℓ).NextBitUnpredictable := by
+   intro A
+   refine ⟨fun _ => 0, negligible_zero, fun n i => ?_⟩
+-  rw [show (Ensemble.uniform ℓ).X n = id from rfl, nextBitProb_id]
++  have hrel : nextBitProb ((Ensemble.uniform ℓ).X n) i (A.predictor n i) =
++      nextBitProb (id : (Fin (ℓ.eval n) → Bool) → Fin (ℓ.eval n) → Bool) i (A.predictor n i) := by
++    unfold nextBitProb
++    rw [← uprob_comp_equiv ((Equiv.cast (Ensemble.uniform_σ ℓ n)).prodCongr (Equiv.refl _))]
++    refine congrArg uprob (funext fun z => ?_)
++    simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_apply, id_eq,
++      Ensemble.uniform_X, Equiv.cast_apply, cast_cast, cast_eq]
++  rw [hrel, nextBitProb_id]
+   simp
+ 
+ /-- The distinguisher built from a next-bit predictor `A` at position `i`: accept the string
+@@ -886,11 +896,17 @@ private theorem exists_nextBitDistMachine {ℓ : PolyExpr} (A : NUPPT) (k : ℕ
+     have := hk n
+     omega
+   refine ⟨NUPPT.ofPolyTime hG A.coins _
+-    (fun n => pairEncode (A.advice n) (List.replicate (k n) true)) hadv, rfl, fun n y r => ?_⟩
++    (fun n => pairEncode (A.advice n) (List.replicate (k n) true)) hadv, NUPPT.coins_ofPolyTime ..,
++    fun n y r => ?_⟩
+   rw [NUPPT.runAtL_ofPolyTime]
+-  simp [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+-      NUPPT.inCoins_eq,
+-    NUPPT.runAtL_eq]
++  refine congrArg (fun b : Bool => [b]) (decide_eq_decide.2 ?_)
++  refine Iff.of_eq (congrArg₂ (fun a b : Bool => [a] = [b]) (decide_eq_decide.2 ?_) ?_)
++  · simp only [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
++      NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.runAtL_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++      List.length_replicate]
++  · simp only [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
++      NUPPT.inAdvice_eq, NUPPT.inCoins_eq, pairFstD_pairEncode, pairSndD_pairEncode,
++      List.length_replicate]
+ 
+ /-- **Soundness of the next-bit test, asymptotic form** (the converse of
+ [PS10, Theorem 75.4], implicit in the text's "a pseudorandom distribution needs to pass all
+@@ -962,9 +978,10 @@ theorem Ensemble.Pseudorandom.nextBitUnpredictable {ℓ : PolyExpr} {X : Ensembl
+   have hid : ∀ (t : Fin (ℓ.eval n) → Bool) (r : A.Coins n),
+       Dm.distinguisher n (ℓ.eval n) t (e n r) = nextBitDist j₀ (A.predictor n j₀) t r := by
+     intro t r
+-    simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn,
+-        nextBitDist, NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
+-      headD_drop_ofFn, ofFn_prefixOf]
++    rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn]
++    unfold nextBitDist
++    rw [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
++      ofFn_prefixOf, headD_drop_ofFn]
+     simp
+   have hadv : prgAdv (X.X n) (Dm.distinguisher n (ℓ.eval n)) = |ε n| := by
+     rw [← hspec, ← prgAdv_nextBitDist (X.X n) j₀ (A.predictor n j₀)]
+diff --git a/TCSlib/Cryptography/Asymptotic/OneWay.lean b/TCSlib/Cryptography/Asymptotic/OneWay.lean
+index 4b7f16938..864180a01 100644
+--- a/TCSlib/Cryptography/Asymptotic/OneWay.lean
++++ b/TCSlib/Cryptography/Asymptotic/OneWay.lean
+@@ -334,7 +334,9 @@ theorem WorstCaseOneWayLit.toParam {𝓕 : FunFamily} (hinj : Function.Injective
+       B.coinLen n + (B.coinLen (𝓕.outLen.eval n) - B.coinLen n) := by
+     have h1 : A.coinLen (𝓕.outLen.eval n) = B.coinLen (𝓕.outLen.eval n) := by
+       simp only [NUPPT.coinLen_eq, hAc, PolyExpr.eval_subst, PolyExpr.eval_var]
+-    have h2 : B.coinLen n ≤ B.coinLen (𝓕.outLen.eval n) := B.coins.eval_mono (hle n)
++    have h2 : B.coinLen n ≤ B.coinLen (𝓕.outLen.eval n) := by
++      rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
++      exact B.coins.eval_mono (hle n)
+     omega
+   let e : B.Coins n × (Fin (B.coinLen (𝓕.outLen.eval n) - B.coinLen n) → Bool) ≃
+       A.Coins (𝓕.outLen.eval n) :=
+@@ -452,6 +454,9 @@ theorem Easy.prod {𝓕 : FunFamily} (h : 𝓕.Easy) (q : PolyExpr) : (𝓕.prod
+   rw [NUPPT.advInput_eq, hspec, prod_f, ofFn_blocks_symm]
+   congr 2
+   funext i
++  have hb : (fun j => x (finProdFinEquiv (i, j))) = blocks (q.eval n) (𝓕.inLen.eval n) x i :=
++    funext fun j => (blocks_apply _ _ x i j).symm
++  rw [OneWay.prodFun_apply, ← NUPPT.advInput_eq, hb]
+   exact hFx n (blocks (q.eval n) (𝓕.inLen.eval n) x i)
+ 
+ end FunFamily
+@@ -701,7 +706,7 @@ theorem weak_to_strong {𝓕 : FunFamily} (h : FunFamily.WeakOneWay 𝓕) :
+       funext j
+       simp only [OneWay.yaoB_apply]
+       rw [hx'', OneWay.padTrue_drop_ofFn]
+-      rfl
++      exact funext fun k => (FunFamily.blocks_apply _ _ x'' j k).symm
+     rw [hyB]
+     exact hf
+   -- the parameter instantiation and the reduction's bound
+@@ -796,8 +801,7 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
+       List.drop_left' (by simp only [List.length_ofFn]; try exact hℓ)]
+     have := hFx n (xs 1)
+     simp only [NUPPT.advInput_eq] at this
+-    rw [this]
+-    rfl
++    rw [this, NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.advInput_eq]
+   -- the planting bound
+   let B' : (Fin 2 → Fin (𝓕.outLen.eval n) → Bool) → A'.Coins n → Option (Fin 2 → Fin ℓ → Bool) :=
+     fun ys r => (A'.inverter n (2 * ℓ) (2 * 𝓕.outLen.eval n)
+@@ -823,7 +827,7 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
+   have hblk := OneWay.ofFn_block_eq_take_drop x'' 0
+   simp only [Fin.val_zero, Nat.zero_mul, List.drop_zero] at hblk
+   rw [← hblk]
+-  rfl
++  exact congrArg List.ofFn (funext fun j => (FunFamily.blocks_apply _ _ x'' 0 j).symm)
+ 
+ /-- **Strong implies weak** (sanity, [PS10, §2.2, the remark after Definition 28.4]): a strong
+ one-way function is a weak one-way function with `q = 2`.
+diff --git a/TCSlib/Cryptography/Asymptotic/Permutations.lean b/TCSlib/Cryptography/Asymptotic/Permutations.lean
+index 50c3cd28f..4177415ce 100644
+--- a/TCSlib/Cryptography/Asymptotic/Permutations.lean
++++ b/TCSlib/Cryptography/Asymptotic/Permutations.lean
+@@ -441,6 +441,9 @@ probability at most `n · 2^{-n}` (`uprob_permFromCoins_none_le_two_pow`) (D10).
+ **Repair (run-3 audit P2-1):** the frozen `n` trials per position gave no negligible bound. -/
+ def permTrials (n : ℕ) : ℕ := 2 * n * n
+ 
++/-- The defining equation of `permTrials`: `permTrials n = 2 * n * n`. -/
++theorem permTrials_eq (n : ℕ) : permTrials n = 2 * n * n := rfl
++
+ /-- `n ≤ 2^{permBits n}`: the range of every position fits in the trial bits
+ (`Nat.lt_size_self`). -/
+ theorem le_two_pow_permBits (n : ℕ) : n ≤ 2 ^ permBits n := (Nat.lt_size_self n).le
+diff --git a/TCSlib/Cryptography/Asymptotic/Universal.lean b/TCSlib/Cryptography/Asymptotic/Universal.lean
+index 5a6b15df8..c47460863 100644
+--- a/TCSlib/Cryptography/Asymptotic/Universal.lean
++++ b/TCSlib/Cryptography/Asymptotic/Universal.lean
+@@ -382,7 +382,7 @@ by `PolyExpr.eval_le`. -/
+ theorem polyTimeComputable_clockedAnswer (c : EffectiveMachineCode) (hc : CanonizerExp c) :
+     PolyTimeComputable fun y : List Bool =>
+       clockedAnswer c (univCode y) (univArg y) ((y.length + 1) ^ 3) := by
+-  obtain ⟨M, C, d, hM⟩ := polyTimeComputable_univInput
++  obtain ⟨M, C, d, hM⟩ := (polyTimeComputable_iff _).1 polyTimeComputable_univInput
+   obtain ⟨U, hU⟩ := exists_univ_computes c
+   obtain ⟨p, hp⟩ := exists_univCoeff_le c hc
+   have hU' : ∀ y : List Bool, U.ComputesInTime
+@@ -394,7 +394,8 @@ theorem polyTimeComputable_clockedAnswer (c : EffectiveMachineCode) (hc : Canoni
+     (fun n => p.eval n * ((n + 1) ^ 3 + 1) ^ 2) hM hU'
+   obtain ⟨C', c', hC'⟩ := PolyExpr.eval_le (.add (.add (.mul (.const 2) (.normal C d))
+     (.mul p (.pow (.add (.pow (.add .var (.const 1)) 3) (.const 1)) 2))) (.const 2))
+-  refine ⟨N, C', c', fun y => (hN y).mono ?_⟩
++  refine (polyTimeComputable_iff _).2 ⟨N, C', c', (FinTM.computesFunInTime_iff _ _ _).2 fun y =>
++    ((FinTM.computesFunInTime_iff _ _ _).1 hN y).mono ?_⟩
+   have h := hC' y.length
+   simpa [PolyExpr.eval_normal] using h
+ 
+@@ -442,7 +443,7 @@ theorem fUniversal_easy (c : EffectiveMachineCode) (hc : CanonizerExp c) :
+     convert h using 1
+     funext z
+     simp
+-  refine ⟨_, hF, fun n x => ?_⟩
++  refine (FunFamily.easy_iff _).2 ⟨_, hF, fun n x => ?_⟩
+   simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
+   rw [ofFn_fUniversal_f]
+   simp [padStr_eq]
+diff --git a/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean b/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean
+index ce5b8ab5e..de75887e9 100644
+--- a/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean
++++ b/TCSlib/Cryptography/Asymptotic/UniversalLemmas.lean
+@@ -188,8 +188,8 @@ theorem polyTimeComputable_logMarker :
+ theorem polyTimeComputable_univBudget :
+     PolyTimeComputable fun y : List Bool => Nat.bits ((y.length + 1) ^ 3) := by
+   obtain ⟨M, a, hM⟩ := FinTM.computesFunInTime_polyBits 1 3
+-  refine ⟨M, a, 4, fun y => ?_⟩
+-  simpa using hM y
++  refine (polyTimeComputable_iff _).2 ⟨M, a, 4, ?_⟩
++  simpa using hM
+ 
+ /-! ## Serialization lengths of coded machines -/
+ 
+@@ -197,7 +197,7 @@ theorem polyTimeComputable_univBudget :
+ code (output length is at most the number of steps). -/
+ theorem length_serialize_decode_le (c : EffectiveMachineCode) (α : List Bool) :
+     (c.decode α).serialize.length ≤ c.canonizerTime α.length := by
+-  have h := c.canonizer_computes α
++  have h := (FinTM.computesFunInTime_iff _ _ _).1 c.canonizer_computes α
+   obtain ⟨-, ho⟩ := (FinTM.computesInTime_iff _ _ _ _).mp h
+   have ho' : (c.canonizer.tm.runFrom (c.canonizer.tm.initCfg α) (c.canonizerTime α.length)).output =
+       (c.decode α).serialize := ho
+diff --git a/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean b/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
+index 0f1e84258..4c4a47654 100644
+--- a/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
++++ b/TCSlib/Cryptography/Asymptotic/UniversalPadding.lean
+@@ -173,10 +173,10 @@ theorem easy_of_linear {F : List Bool → List Bool} {ℓ : PolyExpr} {d : ℕ}
+     (h : ∃ (M' : FinTM Bool) (c' : ℕ), M'.ComputesFunInTime (gStr F ℓ d) fun m => c' * (m + 1)) :
+     (family F ℓ d).Easy := by
+   have hg : PolyTimeComputable (gStr F ℓ d) := polyTimeComputable_of_linear h
+-  refine ⟨fun z => gStr F ℓ d (pairSndD z), hg.comp polyTimeComputable_pairSndD, fun m x => ?_⟩
+-  rw [ofFn_family_f]
+-  show gStr F ℓ d (pairSndD (pairEncode (List.replicate m true) (List.ofFn x))) = _
+-  rw [pairSndD_pairEncode]
++  refine (FunFamily.easy_iff _).2
++    ⟨fun z => gStr F ℓ d (pairSndD z), hg.comp polyTimeComputable_pairSndD, fun m x => ?_⟩
++  rw [ofFn_family_f, NUPPT.advInput_eq]
++  exact congrArg (gStr F ℓ d) (pairSndD_pairEncode _ _)
+ 
+ /-- **`g'` is computable by a coded machine in quadratic time** from a linear-time multitape
+ evaluator: `Turing.FinTM.one_work_tape_binary` gives a one-work-tape binary machine within
+@@ -461,7 +461,7 @@ theorem strongOneWay (h : 𝓕.StrongOneWay) {n₁ : ℕ}
+       rw [hA, hB]
+       simp [β]
+     -- the contradiction with the one-wayness of `𝓕` at degree `d e + 1`
+-    obtain ⟨n₀, hn₀⟩ := h.hard A (d * e + 1)
++    obtain ⟨n₀, hn₀⟩ := (negligible_iff _).1 (h.hard A) (d * e + 1)
+     obtain ⟨m, hm, hgm⟩ := he (max (max n₀ (2 ^ (d * e))) 1 ^ d + n₁ ^ d + 1)
+     have hNd : max (max n₀ (2 ^ (d * e))) 1 ^ d ≤ m := by omega
+     have hN : max (max n₀ (2 ^ (d * e))) 1 ≤ nu d m := le_nu hd hNd
+@@ -525,7 +525,8 @@ theorem exists_family (h : ∃ 𝓕 : FunFamily, 𝓕.StrongOneWay) :
+         M.toFinTM.ComputesInTime (List.ofFn x) (List.ofFn (𝓖.f n x))
+           (c₀ * (𝓖.inLen.eval n + 1) ^ 2) := by
+   obtain ⟨𝓕, h⟩ := h
+-  obtain ⟨F, ⟨M, C, c, hM⟩, hFx⟩ := h.easy
++  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
++  obtain ⟨M, C, c, hM⟩ := (polyTimeComputable_iff F).1 hF
+   obtain ⟨d, n₁, hd, hdom⟩ := exists_pow_dominates
+     (.add (.add 𝓕.inLen 𝓕.outLen)
+       ((PolyExpr.normal C c).subst (.add (.mul (.const 2) .var) (.add (.const 2) 𝓕.inLen))))
+diff --git a/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean b/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean
+index b2a9f7f3c..8cc6d1916 100644
+--- a/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean
++++ b/TCSlib/Cryptography/Pseudorandom/Indistinguishability.lean
+@@ -90,8 +90,9 @@ feeds `P z c` to `D` accepts a sample of `X` with the probability that `D` accep
+ of the composite sampler `(s, c) ↦ P (X s) c`. -/
+ theorem acceptProb_bind (X : σ → γ) (P : γ → κ → δ) (D : δ → ρ → Bool) :
+     acceptProb X (fun z (c : κ × ρ) => D (P z c.1) c.2) =
+-      acceptProb (fun s : σ × κ => P (X s.1) s.2) D :=
+-  uprob_eq_of_equiv (Equiv.prodAssoc σ κ ρ).symm fun _ => Iff.rfl
++      acceptProb (fun s : σ × κ => P (X s.1) s.2) D := by
++  simp only [acceptProb_def]
++  exact uprob_eq_of_equiv (Equiv.prodAssoc σ κ ρ).symm fun _ => Iff.rfl
+ 
+ /-- Overwriting one coordinate of a uniform tuple with an independent uniform value leaves
+ the tuple uniform: a sampler fed `update u k x` for uniform `x` and `u` accepts with the
+@@ -138,8 +139,8 @@ theorem distAdv_sunglassRed (P : γ → κ → δ) (X : σ → γ) (Y : τ → 
+ `D ∘ P` has the advantage between `X` and `Y` that `D` has between `P ∘ X` and `P ∘ Y`.
+ [Gar26, Lemma 3.2]. -/
+ theorem distAdv_comp (P : γ → δ) (X : σ → γ) (Y : τ → γ) (D : δ → ρ → Bool) :
+-    distAdv X Y (fun z r => D (P z) r) = distAdv (fun s => P (X s)) (fun s => P (Y s)) D :=
+-  rfl
++    distAdv X Y (fun z r => D (P z) r) = distAdv (fun s => P (X s)) (fun s => P (Y s)) D := by
++  simp only [distAdv_def, acceptProb_def]
+ 
+ /-! ### Mixing over an index -/
+ 
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean b/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean
+index c31b0721c..609422ef3 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Commitment.lean
+@@ -874,7 +874,7 @@ theorem owpComStr_polyTimeComputable (P : PermFamily) (h : ∀ n, (Fin n → Boo
+     (hH : ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
+       ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]) :
+     PolyTimeComputable (owpComStr P h) := by
+-  obtain ⟨F, hF, hFx⟩ := hF
++  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff _).1 hF
+   obtain ⟨H, hH, hHx⟩ := hH
+   convert (CommitmentLemmas.ComLoop.loopOut_poly F H hF hH).comp
+     CommitmentLemmas.ComLoop.init_poly using 1
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean b/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean
+index 66219f674..1bd1c0a8e 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/Encoding.lean
+@@ -530,7 +530,8 @@ bound threaded through the block-value loops of the permutation sampler. -/
+ theorem two_pow_size_le_two_mul_succ (n : ℕ) : 2 ^ Nat.size n ≤ 2 * n + 1 := by
+   rcases Nat.eq_zero_or_pos n with rfl | hn
+   · simp
+-  · exact (two_pow_permBits_le hn).trans (Nat.le_succ _)
++  · rw [← permBits_eq]
++    exact (two_pow_permBits_le hn).trans (Nat.le_succ _)
+ 
+ /-! ### Polynomial-time string operations of the honest parties (Inf-4.2) -/
+ 
+@@ -722,7 +723,7 @@ theorem polyTimeComputable_encPermFromCoins :
+     rw [decide_eq_decide, Fin.ext_iff,
+       permFromCoins_getD_val (r := pairSndD (pairSndD w))
+         (b := coinTable n (permTrials n) (permBits n) (pairSndD (pairSndD w))) (fun _ _ _ => rfl)]
+-    rfl
++    rw [permBits_eq, permTrials_eq]
+   · rw [encPerm_getD_of_le _ (not_lt.1 hlt)]
+ 
+ end TCSlib.Cryptography
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean
+index 42df7f127..fc267f34c 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Efficiency.lean
+@@ -168,9 +168,11 @@ theorem wellFormed_poly : PolyTimeComputable fun x => [wellFormedInstance x] :=
+   have h2 := polyTimeComputable_lenEq.comp (polyTimeComputable_pairSndD.pairEncode hsq)
+   have h := polyTimeComputable_and pairValid_poly (polyTimeComputable_and h1 h2)
+   refine ptc_congr h fun x => ?_
+-  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode,
+-      pairSndD_pairEncode,
+-    List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var, Bool.decide_and, Bool.decide_eq_true]
++  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, PolyExpr.eval_mul,
++    PolyExpr.eval_var]
++  congr 1
++  rw [Bool.eq_iff_iff, wellFormedInstance_def, decide_eq_true_eq]
++  simp only [instanceVertexCount_def, Bool.and_eq_true, decide_eq_true_eq]
+ 
+ /-! ### Padding a graph word to a given vertex count -/
+ 
+@@ -261,7 +263,8 @@ theorem mulInvStr_encPerm {n : ℕ} (π : Equiv.Perm (Fin n)) (y : List Bool) :
+ (the shared `polyTimeComputable_encPermFromCoins` of `ZeroKnowledge/Encoding.lean`, whose
+ vertex count `(decGraph w).1` is `√|w|`). -/
+ theorem sampleStr_poly : PolyTimeComputable fun z => sampleStr (pairFstD z) (pairSndD z) :=
+-  polyTimeComputable_encPermFromCoins
++  polyTimeComputable_encPermFromCoins.congr fun z => by
++    rw [sampleStr_def, samplePerm_def, TCSlib.Cryptography.decGraph_fst]
+ 
+ /-- The permutation product is polynomial-time (`polyTimeComputable_encPermMulInv`). -/
+ theorem mulInvStr_poly : PolyTimeComputable fun z => mulInvStr (pairFstD z) (pairSndD z) :=
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
+index d6a6c40b1..c4928db2d 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Proofs.lean
+@@ -80,6 +80,11 @@ open Complexity Turing Finset
+ /-- Shadow of `TCSlib.Cryptography.Isomorphic` (Def-117.e). -/
+ def Isomorphic {n : ℕ} (G₀ G₁ : Graph n) : Prop := ∃ σ : Equiv.Perm (Fin n), permGraph G₀ σ = G₁
+ 
++/-- The defining property of `Isomorphic`: some vertex permutation maps `G₀` to `G₁`. -/
++theorem isomorphic_iff {n : ℕ} (G₀ G₁ : Graph n) :
++    Isomorphic G₀ G₁ ↔ ∃ σ : Equiv.Perm (Fin n), permGraph G₀ σ = G₁ :=
++  Iff.rfl
++
+ /-- Shadow of the decidability instance of `Isomorphic`. -/
+ instance {n : ℕ} (G₀ G₁ : Graph n) : Decidable (Isomorphic G₀ G₁) := by
+   unfold Isomorphic
+@@ -163,6 +168,11 @@ theorem mem_Liso_iff (x : List Bool) : x ∈ Liso ↔ ∃ (n : ℕ) (G₀ G₁ :
+ def Lniso : Language Bool :=
+   {x | ∃ (n : ℕ) (G₀ G₁ : Graph n), x = pairEncode (encGraph G₀) (encGraph G₁) ∧ ¬ Isomorphic G₀ G₁}
+ 
++/-- Membership in `Lniso`: `x` encodes two non-isomorphic graphs on the same vertex set. -/
++theorem mem_Lniso_iff (x : List Bool) : x ∈ Lniso ↔ ∃ (n : ℕ) (G₀ G₁ : Graph n),
++    x = pairEncode (encGraph G₀) (encGraph G₁) ∧ ¬ Isomorphic G₀ G₁ :=
++  Iff.rfl
++
+ /-- Shadow of `TCSlib.Cryptography.Riso` (Def-118.a). -/
+ def Riso (x y : List Bool) : Prop :=
+   ∃ (n : ℕ) (G₀ G₁ : Graph n) (σ : Equiv.Perm (Fin n)),
+@@ -205,6 +215,13 @@ def gniProver : Strategy where
+   next x _ _ hist :=
+     [decide (¬ Isomorphic (instanceG₀ x) (decGraphAt (instanceVertexCount x) (hist.getLastD [])))]
+ 
++/-- The next-message function of `gniProver`: the bit `¬ (G₀ ≅ H)` for the last graph `H`
++received, read on `instanceVertexCount x` vertices. -/
++theorem gniProver_next (x y r : List Bool) (hist : List (List Bool)) :
++    gniProver.next x y r hist =
++      [decide (¬ Isomorphic (instanceG₀ x) (decGraphAt (instanceVertexCount x) (hist.getLastD [])))] :=
++  rfl
++
+ /-- Shadow of `TCSlib.Cryptography.gniVerifier` [PS10, Protocol 118.3]. -/
+ noncomputable def gniVerifier : Strategy where
+   coins := .add (.const 1) (.normal 1 2)
+@@ -223,6 +240,12 @@ noncomputable def gniProtocol : Protocol where
+   rounds := .const 2
+   verifierFirst := true
+ 
++/-- The prover of `gniProtocol` is `gniProver`. -/
++theorem gniProtocol_P : gniProtocol.P = gniProver := rfl
++
++/-- The verifier of `gniProtocol` is `gniVerifier`. -/
++theorem gniProtocol_V : gniProtocol.V = gniVerifier := rfl
++
+ /-- Shadow of `TCSlib.Cryptography.gniVerifierRep`. -/
+ noncomputable def gniVerifierRep : Strategy where
+   coins := .mul .var (.add (.const 1) (.normal 1 2))
+@@ -243,6 +266,9 @@ noncomputable def gniProtocolRep : Protocol where
+   rounds := .mul (.const 2) .var
+   verifierFirst := true
+ 
++/-- The verifier of `gniProtocolRep` is `gniVerifierRep`. -/
++theorem gniProtocolRep_V : gniProtocolRep.V = gniVerifierRep := rfl
++
+ /-- Shadow of `TCSlib.Cryptography.giProver` [PS10, Protocol 120.6]. -/
+ noncomputable def giProver : Strategy where
+   coins := .normal 1 2
+@@ -276,6 +302,12 @@ noncomputable def giProtocol : Protocol where
+   rounds := .const 3
+   verifierFirst := false
+ 
++/-- The prover of `giProtocol` is `giProver`. -/
++theorem giProtocol_P : giProtocol.P = giProver := rfl
++
++/-- The verifier of `giProtocol` is `giVerifier`. -/
++theorem giProtocol_V : giProtocol.V = giVerifier := rfl
++
+ /-- Shadow of `TCSlib.Cryptography.giProverRep`. -/
+ noncomputable def giProverRep : Strategy where
+   coins := .mul .var (.normal 1 2)
+@@ -502,7 +534,7 @@ theorem encInstance_mem_Lniso_iff {n : ℕ} (G₀ G₁ : Graph n) :
+ theorem decGraph_eq_of_sqrt {w : List Bool} {n : ℕ} (h : Nat.sqrt w.length = n) :
+     decGraph w = ⟨n, decGraphAt n w⟩ := by
+   subst h
+-  rfl
++  exact decGraph_eq_decGraphAt w
+ 
+ /-- The decoding of the empty word is the identity permutation (the default row search
+ returns the row index). -/
+@@ -542,10 +574,11 @@ layout `ilayout x z hist r = ⟨⟨⟨1^{|x|}, ⟨⟨x, z⟩, msgs⟩⟩, []⟩,
+ computing it (`NUPPT.runAtL_ofPolyTimeUniform`). -/
+ theorem efficient_of_polyTime (S : Strategy) {F : List Bool → List Bool} (hF : PolyTimeComputable F)
+     (h : ∀ x z r hist, S.next x z r hist = F (ilayout x z hist r)) : S.Efficient :=
+-  ⟨NUPPT.ofPolyTimeUniform hF S.coins, NUPPT.ofPolyTimeUniform_uniform hF _, rfl,
++  (Strategy.efficient_iff S).2 ⟨NUPPT.ofPolyTimeUniform hF S.coins,
++    NUPPT.ofPolyTimeUniform_uniform hF _, (NUPPT.coins_ofPolyTimeUniform hF S.coins).symm,
+     fun x z r hist => by
+-      rw [h, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform]
+-      rfl⟩
++      rw [h, Strategy.ofNUPPT_next, NUPPT.runAtL_ofPolyTimeUniform, ilayout_def, NUPPT.layout_eq,
++        NUPPT.advInput_eq]⟩
+ 
+ /-! ### Transcripts of the single-iteration protocols -/
+ 
+@@ -774,6 +807,7 @@ theorem statClose_samplePerm_long {n c : ℕ} (h : permCoinLen n ≤ c) :
+     StatClose (fun t : Fin c → Bool => samplePerm n (List.ofFn t))
+       (id : Equiv.Perm (Fin n) → Equiv.Perm (Fin n)) (permFailBound n) := by
+   have := (statClose_samplePerm n).comp_pushesUniform (pushesUniform_castLE h)
++  rw [statClose_iff] at this ⊢
+   intro T
+   have hT := this T
+   simpa only [samplePerm_ofFn_castLE h] using hT
+@@ -781,7 +815,9 @@ theorem statClose_samplePerm_long {n c : ℕ} (h : permCoinLen n ≤ c) :
+ /-- Shadow of `permCoinLen_le`: the sampler fits in `(N + 1)²` bits once `2n² ≤ N`. -/
+ theorem permCoinLen_le {n N : ℕ} (h : 2 * (n * n) ≤ N) : permCoinLen n ≤ (N + 1) ^ 2 := by
+   have hnn : n * n ≤ N := le_trans (Nat.le_mul_of_pos_left (n * n) two_pos) h
+-  calc permCoinLen n = n * (2 * n * n) * permBits n := rfl
++  calc permCoinLen n = n * (2 * n * n) * permBits n := by
++        unfold permCoinLen
++        rw [permTrials_eq]
+     _ ≤ n * (2 * n * n) * n := Nat.mul_le_mul_left _ (permBits_le n)
+     _ = (2 * (n * n)) * (n * n) := by ring
+     _ ≤ N * N := Nat.mul_le_mul h hnn
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
+index 60bdb7b79..2a1bf3d19 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/Soundness.lean
+@@ -63,10 +63,11 @@ open Complexity Turing Finset
+ `decide (¬ G₀ ≅ K)`. -/
+ theorem gniProver_next_encGraph {n : ℕ} (G₀ G₁ K : Graph n) (y r : List Bool) :
+     gniProver.next (encInstance G₀ G₁) y r [encGraph K] = [decide (¬ Isomorphic G₀ K)] := by
++  rw [gniProver_next, instanceG₀_def,
++    show pairFstD (encInstance G₀ G₁) = encGraph G₀ by rw [encInstance_eq, pairFstD_pairEncode]]
+   show [decide (¬ Isomorphic
+-    (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
++    (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (encGraph G₀))
+     (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (encGraph K)))] = _
+-  rw [show pairFstD (encInstance G₀ G₁) = encGraph G₀ from pairFstD_pairEncode _ _]
+   generalize hm : instanceVertexCount (encInstance G₀ G₁) = m
+   rw [instanceVertexCount_encInstance] at hm
+   subst hm
+@@ -175,18 +176,21 @@ malformed `x` is rejected outright (`gniVerifier_next_one`); a well-formed `x 
+ verdict being a single bit (`gni_outV_eq`, `uprob_not`). -/
+ theorem gni_interactiveProofErr (hV : gniVerifier.Efficient) :
+     InteractiveProofErr gniProtocol Lniso (fun N => 1 / 2 + permFailBound (instanceVertices N)) where
+-  efficientV := hV
++  efficientV := by
++    rw [gniProtocol_V]
++    exact hV
+   complete := by
+     refine ⟨.const 1, ?_⟩
+-    rintro x ⟨n, G₀, G₁, rfl, hni⟩
++    intro x hx
++    obtain ⟨n, G₀, G₁, rfl, hni⟩ := (mem_Lniso_iff x).1 hx
+     exact ⟨[], gniProver_length_le _ [], fun z => gni_complete hni [] z⟩
+   sound := by
+     intro x hx P' z
+     by_cases hwf : wellFormedInstance x = true
+     · obtain ⟨n, G₀, G₁, rfl⟩ := exists_eq_encInstance_of_wellFormed hwf
+-      obtain ⟨σ₀, hσ⟩ : Isomorphic G₀ G₁ := by
++      obtain ⟨σ₀, hσ⟩ := (isomorphic_iff G₀ G₁).1 (by
+         by_contra hni
+-        exact hx ((encInstance_mem_Lniso_iff G₀ G₁).2 hni)
++        exact hx ((encInstance_mem_Lniso_iff G₀ G₁).2 hni))
+       have hacc := gni_accept_le hσ P' [] z
+       have hnot : ∀ r : gniProtocol.ExecCoins P' (encInstance G₀ G₁),
+           gniProtocol.outV P' (encInstance G₀ G₁) [] z r = [false] ↔
+@@ -302,10 +306,13 @@ bounds the acceptance probability, the verdict being a single bit (`gi_outV_eq`,
+ `uprob_not`). -/
+ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Efficient) :
+     EfficientProverProofErr giProtocol Liso Riso (fun _ => 1 / 2) where
+-  efficientV := hV
++  efficientV := by
++    rw [giProtocol_V]
++    exact hV
+   complete := by
+     refine ⟨.var, ?_⟩
+-    rintro x ⟨n, G₀, G₁, σ, rfl, hσ⟩
++    intro x hx
++    obtain ⟨n, G₀, G₁, σ, rfl, hσ⟩ := (mem_Liso_iff x).1 hx
+     exact ⟨encPerm σ, giProver_length_le _ _, fun z => gi_complete hσ z⟩
+   sound := by
+     intro x hx P' z
+@@ -327,11 +334,15 @@ theorem gi_efficientProverProofErr (hP : giProver.Efficient) (hV : giVerifier.Ef
+         simp [hwf]
+       rw [HardcoreBit.uprob_eq_one_of_forall hall]
+       norm_num
+-  efficientP := hP
+-  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ =>
+-    giProver_length_le x y r hist⟩
++  efficientP := by
++    rw [giProtocol_P]
++    exact hP
++  boundedP := ⟨.var, (Protocol.proverBounded_iff _ _ _).2 fun x y r hist _ => by
++    rw [giProtocol_P]
++    exact giProver_length_le x y r hist⟩
+   completeWitness := by
+-    rintro x y ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ z
++    intro x y hxy z
++    obtain ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ := (riso_iff x y).1 hxy
+     exact gi_complete hσ z
+ 
+ end TCSlib.Cryptography.GI
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
+index e7f14fe9c..2fec9803c 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean
+@@ -268,7 +268,7 @@ the permutation word is `polyTimeComputable_encPermFromCoins` on `⟨fst x, coin
+ theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
+     PolyTimeComputable (fun u => [(attemptAt V' (pairSndD u) (pairFstD u).length).isSome]) ∧
+     PolyTimeComputable (fun u => (attemptAt V' (pairSndD u) (pairFstD u).length).getD []) := by
+-  obtain ⟨A, hA, -, hnext⟩ := hV'
++  obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff V').1 hV'
+   have hx : PolyTimeComputable fun u => simX (pairSndD u) := simX_poly.comp polyTimeComputable_pairSndD
+   have hz : PolyTimeComputable fun u => simZ (pairSndD u) := simZ_poly.comp polyTimeComputable_pairSndD
+   have hr : PolyTimeComputable fun u => simR (pairSndD u) := simR_poly.comp polyTimeComputable_pairSndD
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/NP.lean b/TCSlib/Cryptography/ZeroKnowledge/NP.lean
+index 873f13041..efd66e597 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/NP.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/NP.lean
+@@ -150,7 +150,7 @@ structure LevinReduction (L L' : Language Bool) (R R' : List Bool → List Bool
+ theorem LevinReduction.polyTimeReducible {L L' : Language Bool} {R R' : List Bool → List Bool → Prop}
+     {f : List Bool → List Bool} {w : List Bool → List Bool → List Bool} {p : PolyExpr}
+     (h : LevinReduction L L' R R' f w p) : PolyTimeReducible L L' :=
+-  ⟨f, h.f_poly, h.mem_iff⟩
++  (polyTimeReducible_iff L L').2 ⟨f, h.f_poly, h.mem_iff⟩
+ 
+ /-- Sanity: the identity is a Levin reduction of `(L, R)` to itself. -/
+ theorem LevinReduction.refl (L : Language Bool) (R : List Bool → List Bool → Prop) :
+@@ -250,7 +250,7 @@ theorem Strategy.pullback_efficient {S : Strategy} (hS : S.Efficient) {f : List
+     (hf : PolyTimeComputable f) {g : List Bool → List Bool → List Bool}
+     (hg : PolyTimeComputable fun z => g (pairFstD z) (pairSndD z)) {p : PolyExpr}
+     (hx : ∀ x, (f x).length = p.eval x.length) : (S.pullback f g p).Efficient := by
+-  obtain ⟨A, hA, hc, hnext⟩ := hS
++  obtain ⟨A, hA, hc, hnext⟩ := (Strategy.efficient_iff S).1 hS
+   have hpre : PolyTimeComputable fun y =>
+       pairEncode (pairEncode (f (pairFstD (pairFstD y)))
+         (g (pairFstD (pairFstD y)) (pairSndD (pairFstD y)))) (pairSndD y) :=
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
+index e7b545988..909b6bfbc 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Language.lean
+@@ -103,6 +103,10 @@ instance {n : ℕ} (G : Graph n) (c : Fin n → Fin 3) : Decidable (ProperColori
+ /-- A graph is 3-colourable when it has a proper 3-colouring [PS10, §4.7] (Def-124.f, typed). -/
+ def ThreeColorable {n : ℕ} (G : Graph n) : Prop := ∃ c, ProperColoring G c
+ 
++/-- The defining property of `ThreeColorable`: `G` has a proper 3-colouring. -/
++theorem threeColorable_iff {n : ℕ} (G : Graph n) : ThreeColorable G ↔ ∃ c, ProperColoring G c :=
++  Iff.rfl
++
+ /-- The graph of a Mathlib simple graph on `Fin n` as a Boolean relation. -/
+ def Graph.ofSimpleGraph {n : ℕ} (H : SimpleGraph (Fin n)) [DecidableRel H.Adj] : Graph n :=
+   fun u v => decide (H.Adj u v)
+@@ -317,6 +321,7 @@ theorem encColor_getD_ne {a b : Fin 3} (hab : a ≠ b) :
+     (encColor a).getD 0 false ≠ (encColor b).getD 0 false ∨
+       (encColor a).getD 1 false ≠ (encColor b).getD 1 false := by
+   revert a b
++  simp only [encColor_def, encColoring_eq]
+   decide
+ 
+ /-- Padding to `n ≥ 2` bits is injective on colours. -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+index a63962479..e4931eee0 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/Protocol.lean
+@@ -178,7 +178,7 @@ theorem colVerify_honest (Com : List Bool → List Bool) {n ℓn : ℕ} {G : Gra
+   rw [hp]
+   simp only [colOpen, pairFstD_pairEncode, pairSndD_pairEncode, decColor_encColor,
+     List.length_ofFn, decide_eq_true_eq]
+-  refine ⟨trivial, trivial, ?_, ?_, fun h => hc _ _ hadj (π.injective h)⟩
++  refine ⟨trivial, trivial, ?_, ?_, fun h => (ProperColoring_iff G c).1 hc _ _ hadj (π.injective h)⟩
+   · rw [colCommit, multiCom_def, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
+   · rw [colCommit, multiCom_def, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
+ 
+@@ -236,7 +236,8 @@ theorem exists_bad_edge {n : ℕ} {G : Graph n} (hG : ¬ ThreeColorable G)
+       ct (edgeOf G e).1 = ct (edgeOf G e).2 := by
+   by_contra hcon
+   push_neg at hcon
+-  refine hG ⟨fun i => (ct i).getD 0, fun u v huv heq => ?_⟩
++  refine hG ((threeColorable_iff G).2
++    ⟨fun i => (ct i).getD 0, (ProperColoring_iff G _).2 fun u v huv heq => ?_⟩)
+   obtain ⟨e, he⟩ := exists_edgeOf_eq G huv
+   obtain ⟨h1, h2, h3⟩ := hcon e
+   simp only [he] at h1 h2 h3
+@@ -965,15 +966,18 @@ theorem col_efficientProverProofErr {Com : List Bool → List Bool} {ℓ : PolyE
+   complete := by
+     obtain ⟨B, hB, -⟩ := colProtocol_proverBounded hC R3COL
+     refine ⟨B, fun x hx => ?_⟩
+-    obtain ⟨y, n, G, c, rfl, rfl, hc⟩ := (mem_L3COL_iff x).1 hx
++    obtain ⟨y, hy⟩ := (mem_L3COL_iff x).1 hx
++    obtain ⟨n, G, c, rfl, rfl, hc⟩ := (R3COL_iff _ _).1 hy
+     exact ⟨encColoring c,
+-      fun r hist => (Protocol.proverBounded_iff _ _ _).1 hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
++      fun r hist => (Protocol.proverBounded_iff _ _ _).1 hB _ _ r hist
++        ((R3COL_iff _ _).2 ⟨n, G, c, rfl, rfl, hc⟩),
+       fun z => HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r⟩
+   sound := fun x hx P' z => colProtocol_sound hC x hx P' z
+   efficientP := colProver_efficient hC.easy ℓ
+   boundedP := (colProtocol_proverBounded hC R3COL).imp fun _ h => h.1
+   completeWitness := by
+-    rintro x y ⟨n, G, c, rfl, rfl, hc⟩ z
++    intro x y hxy z
++    obtain ⟨n, G, c, rfl, rfl, hc⟩ := (R3COL_iff x y).1 hxy
+     exact HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r
+ 
+ /-! ### The `n|E|`-fold protocol: the parties unfolded -/
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
+index 45016770b..ff2f87abb 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/ThreeColoring/ProtocolProofs.lean
+@@ -374,7 +374,7 @@ theorem colVerifierRep_efficient {Com : List Bool → List Bool} (hCom : PolyTim
+ theorem two_le_of_edge {n : ℕ} {G : Graph n} {c : Fin n → Fin 3} (hc : ProperColoring G c)
+     (hm : 0 < edgeCount G) : 2 ≤ n := by
+   have hne : (edgeOf G ⟨0, hm⟩).1 ≠ (edgeOf G ⟨0, hm⟩).2 :=
+-    fun h => hc _ _ (edgeOf_adj G ⟨0, hm⟩) (by rw [h])
++    fun h => (ProperColoring_iff G c).1 hc _ _ (edgeOf_adj G ⟨0, hm⟩) (by rw [h])
+   have h1 := (edgeOf G ⟨0, hm⟩).1.isLt
+   have h2 := (edgeOf G ⟨0, hm⟩).2.isLt
+   by_contra hlt
+diff --git a/TCSlib/InformationTheory/Extractors.lean b/TCSlib/InformationTheory/Extractors.lean
+index 9e13d468c..e28e39db5 100644
+--- a/TCSlib/InformationTheory/Extractors.lean
++++ b/TCSlib/InformationTheory/Extractors.lean
+@@ -101,7 +101,7 @@ theorem abs_probTrue_sub_le_statDist (p q : FinDist α) (D : α → Bool) :
+   have hc : ∑ a ∈ univ.filter (fun a => ¬ D a = true), (p a - q a)
+       = -∑ a ∈ univ.filter (fun a => D a = true), (p a - q a) := by linarith
+   rw [hc, abs_neg] at h2
+-  have hd : statDist p q = (1 / 2) * ∑ a, |p a - q a| := rfl
++  have hd : statDist p q = (1 / 2) * ∑ a, |p a - q a| := statDist_eq p q
+   linarith
+ 
+ /-- **The optimal distinguisher attains statistical distance.** If every test has advantage at
+@@ -134,7 +134,7 @@ theorem statDist_le_of_epsClose {ε : ℝ} {p q : FinDist α} (h : EpsClose ε p
+       simp only [mem_filter, mem_univ, true_and, decide_eq_true_eq] at ha
+       linarith
+   rw [abs_of_nonneg hnn] at key
+-  have hd : statDist p q = (1 / 2) * ∑ a, |p a - q a| := rfl
++  have hd : statDist p q = (1 / 2) * ∑ a, |p a - q a| := statDist_eq p q
+   linarith
+ 
+ /-- **`ε`-closeness is a statistical-distance bound.** `p ≈_ε q` in the distinguisher form of
+@@ -216,6 +216,7 @@ theorem IsStrongExtractor.isExtractor_seeded [DecidableEq S] [DecidableEq α] [D
+     (h : IsStrongExtractor C ε f) :
+     IsExtractor (seededSources (S := S) C) ε (fun p : S × α => (p.1, f p.1 p.2)) := by
+   rintro Y ⟨X, hX, rfl⟩
++  rw [← hashPair_eq]
+   exact h X hX
+ 
+ /-- **The leftover hash lemma as an extractor.** A universal hash family `f : S → α → β` is a
+diff --git a/TCSlib/InformationTheory/LeftoverHash.lean b/TCSlib/InformationTheory/LeftoverHash.lean
+index 694552bb5..6038b82fb 100644
+--- a/TCSlib/InformationTheory/LeftoverHash.lean
++++ b/TCSlib/InformationTheory/LeftoverHash.lean
+@@ -53,6 +53,12 @@ value alone — is what makes a universal family a *strong* extractor. [Vad12, T
+ noncomputable def hashPair (f : S → α → β) (X : FinDist α) : FinDist (S × β) :=
+   FinDist.map (fun p => (p.1, f p.1 p.2)) (FinDist.prod (uniform S) X)
+ 
++omit [DecidableEq α] [Nonempty β] in
++/-- The defining equation of `hashPair`: the image of `uniform S × X` under
++`(s, x) ↦ (s, f s x)`. -/
++theorem hashPair_eq (f : S → α → β) (X : FinDist α) :
++    hashPair f X = FinDist.map (fun p => (p.1, f p.1 p.2)) (FinDist.prod (uniform S) X) := rfl
++
+ omit [DecidableEq α] [Nonempty β] in
+ theorem hashPair_apply (f : S → α → β) (X : FinDist α) (s : S) (y : β) :
+     hashPair f X (s, y)
+-- 
+2.43.0
+

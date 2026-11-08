@@ -21,9 +21,17 @@ theorem cp2_N2_show (z : List Bool) : pairDecode (false :: true :: z) = some ([]
 -- N3 anonymous command
 example : pairDecode [] = none := rfl -- CP2-SITE N3
 
--- N4 generated matcher: the unfolding equation is used, the compiler-generated matcher reduction
--- is what the seal must block
-theorem cp2_N4_matcher (z : List Bool) : pairDecode (false :: true :: z) = some ([], z) := by
+-- N4 generated matcher: after the unfolding equation the goal compares the foreign definition's
+-- compiler-generated matcher with this file's own matcher on a free discriminant; closing it needs
+-- the foreign matcher's body (delta), which is what the seal must block. (A matcher applied to a
+-- constructor discriminant is reduced by `whnfCore` without delta, so it is no seal control;
+-- the first attempt used that form and is retained as `Controls-attempt1.source.txt`.)
+theorem cp2_N4_matcher (z : List Bool) :
+    pairDecode z = (match z with
+      | false :: false :: rest => (pairDecode rest).map fun p => (false :: p.1, p.2)
+      | true :: true :: rest => (pairDecode rest).map fun p => (true :: p.1, p.2)
+      | false :: true :: rest => some ([], rest)
+      | _ => none) := by
   rw [pairDecode.eq_def]
   rfl -- CP2-SITE N4
 

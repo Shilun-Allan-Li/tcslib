@@ -129,7 +129,9 @@ theorem polyTimeComputable_forLoop {f : List Bool → List Bool} (hf : PolyTimeC
     PolyTimeComputable (forLoop f) := by
   have hstep : PolyTimeComputable (forStep f) := by
     unfold forStep
-    exact polyTimeComputable_ite (polyTimeComputable_isNil.comp polyTimeComputable_pairFstD)
+    exact polyTimeComputable_ite (by
+        simpa only [Function.comp_def, isNilB_def] using
+          polyTimeComputable_isNil.comp polyTimeComputable_pairFstD)
       polyTimeComputable_id
       ((polyTimeComputable_tail.comp polyTimeComputable_pairFstD).pairEncode
         (hf.comp polyTimeComputable_pairSndD))
@@ -219,13 +221,13 @@ def hasFalse (w : List Bool) : Bool := (w.map not).any id
 /-- The `uHead` transducer emits nothing once off. -/
 private theorem transduce_head_false (w : List Bool) : transduce headδ headO false w = [] := by
   induction w with
-  | nil => rfl
+  | nil => exact transduce_nil _ _ _
   | cons b w ih => simp [transduce_nil, transduce_cons, headδ, headO, ih]
 
 /-- The `uRest` transducer copies everything once on. -/
 private theorem transduce_rest_true (w : List Bool) : transduce restδ restO true w = w := by
   induction w with
-  | nil => rfl
+  | nil => exact transduce_nil _ _ _
   | cons b w ih => simp [transduce_nil, transduce_cons, restδ, restO, ih]
 
 /-- `uHead` on `0w` is empty. -/
@@ -245,10 +247,10 @@ private theorem transduce_rest_true (w : List Bool) : transduce restδ restO tru
   simp [uRest, transduce_nil, transduce_cons, restδ, restO]
 
 /-- `uHead []` is empty. -/
-@[simp] theorem uHead_nil : uHead [] = [] := rfl
+@[simp] theorem uHead_nil : uHead [] = [] := transduce_nil _ _ _
 
 /-- `uRest []` is empty. -/
-@[simp] theorem uRest_nil : uRest [] = [] := rfl
+@[simp] theorem uRest_nil : uRest [] = [] := transduce_nil _ _ _
 
 /-- `hasFalse` on a cons. -/
 @[simp] theorem hasFalse_cons (b : Bool) (w : List Bool) :
@@ -263,7 +265,7 @@ theorem decodeNat_eq (w : List Bool) :
     BoolCircuit.decodeNat w =
       if hasFalse w then some ((uHead w).length, uRest w) else none := by
   induction w with
-  | nil => rfl
+  | nil => rw [BoolCircuit.decodeNat_nil]; rfl
   | cons b w ih =>
     cases b
     · simp [BoolCircuit.decodeNat_nil, BoolCircuit.decodeNat_false_cons,
@@ -342,7 +344,7 @@ theorem polyTimeComputable_hasFalse : PolyTimeComputable (fun w => [hasFalse w])
       transduce (σ := Unit) (fun _ _ => ()) (fun _ b => some !b) () w = w.map not := by
     intro w
     induction w with
-    | nil => rfl
+    | nil => exact transduce_nil _ _ _
     | cons b w ih => simp [transduce_nil, transduce_cons, ih]
   convert polyTimeComputable_any.comp hneg using 1
   funext w
@@ -361,7 +363,9 @@ theorem iterate_pairSndD_encWords (L : List (List Bool)) (j : ℕ) :
   | succ j ih =>
     rw [Function.iterate_succ_apply]
     cases L with
-    | nil => exact iterate_pairSndD_nil j
+    | nil =>
+      rw [List.drop_nil, encWords_nil, pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil]
+      exact iterate_pairSndD_nil j
     | cons w L => simp [ih]
 
 /-- **Lookup**: `getW ⟨J, [w₀, …]⟩ = w_{|J|}` (`[]` past the end). -/
@@ -370,7 +374,7 @@ theorem getW_pairEncode (J : List Bool) (L : List (List Bool)) :
   rw [getW, forLoop_pairEncode, pairSndD_pairEncode, iterate_pairSndD_encWords,
     List.getD_eq_getElem?_getD, ← List.head?_drop]
   cases L.drop J.length with
-  | nil => rfl
+  | nil => rw [encWords_nil, pairFstD_of_pairDecode_eq_none Turing.pairDecode_nil]; rfl
   | cons w L' => simp
 
 /-- Lookup in a list of binary numbers: the value of the entry, `0` past the end. -/
@@ -522,7 +526,9 @@ theorem polyTimeComputable_chunkW : PolyTimeComputable chunkW := by
   have hcr := polyTimeComputable_pairFstD.pairEncode polyTimeComputable_slot2
   have hs : PolyTimeComputable chunkStep := by
     unfold chunkStep
-    exact polyTimeComputable_ite (polyTimeComputable_isNil.comp polyTimeComputable_slot2)
+    exact polyTimeComputable_ite (by
+        simpa only [Function.comp_def, isNilB_def] using
+          polyTimeComputable_isNil.comp polyTimeComputable_slot2)
       polyTimeComputable_id (polyTimeComputable_pairFstD.pairEncode
         ((polyTimeComputable_dropPrefixByLength.comp hcr).pairEncode
           (polyTimeComputable_slot3.append
@@ -535,7 +541,7 @@ theorem polyTimeComputable_chunkW : PolyTimeComputable chunkW := by
     by_cases hr : pairFstD (pairSndD d) = []
     · simp [chunkStep, isNilB_def, hr]
     rcases pair_cases d with ⟨-, h2⟩ | h
-    · simp [h2, pairFstD_eq, pairDecode_nil] at hr
+    · simp [h2, pairFstD_eq, Turing.pairDecode_nil] at hr
     obtain ⟨c, S, rfl⟩ : ∃ c S, d = pairEncode c S := ⟨_, _, h⟩
     simp only [pairSndD_pairEncode] at hr
     rcases pair_cases S with ⟨h1, -⟩ | hS

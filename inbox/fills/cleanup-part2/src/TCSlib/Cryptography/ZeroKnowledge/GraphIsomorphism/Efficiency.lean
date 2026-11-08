@@ -168,9 +168,11 @@ theorem wellFormed_poly : PolyTimeComputable fun x => [wellFormedInstance x] := 
   have h2 := polyTimeComputable_lenEq.comp (polyTimeComputable_pairSndD.pairEncode hsq)
   have h := polyTimeComputable_and pairValid_poly (polyTimeComputable_and h1 h2)
   refine ptc_congr h fun x => ?_
-  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode,
-      pairSndD_pairEncode,
-    List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var, Bool.decide_and, Bool.decide_eq_true]
+  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, PolyExpr.eval_mul,
+    PolyExpr.eval_var]
+  congr 1
+  rw [Bool.eq_iff_iff, wellFormedInstance_def, decide_eq_true_eq]
+  simp only [instanceVertexCount_def, Bool.and_eq_true, decide_eq_true_eq]
 
 /-! ### Padding a graph word to a given vertex count -/
 
@@ -198,7 +200,9 @@ theorem getD_padSq (n : ℕ) (w : List Bool) {k : ℕ} (hk : k < n * n) :
 
 /-- Padding does not change the decoded graph on `n` vertices. -/
 theorem decGraphAt_padSq (n : ℕ) (w : List Bool) : decGraphAt n (padSq n w) = decGraphAt n w :=
-  funext fun u => funext fun v => getD_padSq n w (finProdFinEquiv (u, v)).isLt
+  funext fun u => funext fun v => by
+    rw [decGraphAt_apply, decGraphAt_apply]
+    exact getD_padSq n w (finProdFinEquiv (u, v)).isLt
 
 /-- `w ↦ 0^{|w|}` is polynomial-time (`polyTimeComputable_pairXor` on `⟨w, w⟩`). -/
 theorem zeros_poly : PolyTimeComputable fun w => List.replicate w.length false :=
@@ -259,7 +263,8 @@ theorem mulInvStr_encPerm {n : ℕ} (π : Equiv.Perm (Fin n)) (y : List Bool) :
 (the shared `polyTimeComputable_encPermFromCoins` of `ZeroKnowledge/Encoding.lean`, whose
 vertex count `(decGraph w).1` is `√|w|`). -/
 theorem sampleStr_poly : PolyTimeComputable fun z => sampleStr (pairFstD z) (pairSndD z) :=
-  polyTimeComputable_encPermFromCoins
+  polyTimeComputable_encPermFromCoins.congr fun z => by
+    rw [sampleStr_def, samplePerm_def, TCSlib.Cryptography.decGraph_fst]
 
 /-- The permutation product is polynomial-time (`polyTimeComputable_encPermMulInv`). -/
 theorem mulInvStr_poly : PolyTimeComputable fun z => mulInvStr (pairFstD z) (pairSndD z) :=
@@ -434,13 +439,19 @@ theorem risoTest_iff (x y : List Bool) : risoTest (pairEncode x y) = true ↔ Ri
   constructor
   · rintro ⟨hwf, hlen, hperm, hgraph⟩
     obtain ⟨n, G₀, G₁, rfl⟩ := exists_eq_encInstance_of_wellFormed hwf
-    have h0 : pairFstD (encInstance G₀ G₁) = encGraph G₀ := pairFstD_pairEncode _ _
-    have h1 : pairSndD (encInstance G₀ G₁) = encGraph G₁ := pairSndD_pairEncode _ _
+    have h0 : pairFstD (encInstance G₀ G₁) = encGraph G₀ := by
+      rw [encInstance_eq]; exact pairFstD_pairEncode _ _
+    have h1 : pairSndD (encInstance G₀ G₁) = encGraph G₁ := by
+      rw [encInstance_eq]; exact pairSndD_pairEncode _ _
     rw [h0, length_encGraph] at hlen
     rw [h0, h1, graphTest_encGraph, decide_eq_true_eq] at hgraph
-    exact ⟨n, G₀, G₁, decPerm n y, rfl, eq_encPerm_of_permTest hlen hperm, encGraph_injective n hgraph⟩
-  · rintro ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩
-    refine ⟨wellFormedInstance_encInstance G₀ G₁, by simp, permTest_encPerm σ, ?_⟩
+    exact (riso_iff _ _).2
+      ⟨n, G₀, G₁, decPerm n y, encInstance_eq G₀ G₁, eq_encPerm_of_permTest hlen hperm,
+        encGraph_injective n hgraph⟩
+  · intro hxy
+    obtain ⟨n, G₀, G₁, σ, rfl, rfl, hσ⟩ := (riso_iff _ _).1 hxy
+    refine ⟨by rw [← encInstance_eq]; exact wellFormedInstance_encInstance G₀ G₁, by simp,
+      permTest_encPerm σ, ?_⟩
     rw [pairFstD_pairEncode, pairSndD_pairEncode, graphTest_encGraph, decPerm_encPerm, hσ]
     exact decide_eq_true rfl
 
@@ -479,13 +490,12 @@ theorem giProver_efficient : giProver.Efficient := by
     rw [giProver_next_nil']
     simp only [argM_ilayout, Strategy.encodeMsgs_nil, decide_true, if_true, vcount_ilayout,
       argX_ilayout, inCoins_ilayout]
-    rw [relabelAt_replicate, sampleStr, decPerm_encPerm]
-    rfl
+    rw [relabelAt_replicate, sampleStr, decPerm_encPerm, decGraph_eq_decGraphAt]
   | cons m h =>
     rw [giProver_next_cons']
     simp only [argM_ilayout, Strategy.encodeMsgs_cons, Turing.pairEncode_ne_nil, decide_false,
       Bool.false_eq_true, if_false, pairFstD_pairEncode, argX_ilayout, inCoins_ilayout, argZ_ilayout]
-    rw [sampleStr, mulInvStr_encPerm]
+    rw [sampleStr, mulInvStr_encPerm, decGraph_eq_decGraphAt]
     split_ifs <;> rfl
 
 /-- The verifier of the graph isomorphism protocol is efficient (D8) [PS10, Definition 116.1
@@ -534,7 +544,7 @@ theorem giVerifier_efficient : giVerifier.Efficient := by
       decide_false, Bool.false_eq_true, if_false, pairSndD_pairEncode, pairFstD_pairEncode,
       decide_true, if_true, vcount_ilayout, argX_ilayout, inCoins_ilayout,
       Bool.decide_and, Bool.decide_eq_true]
-    rw [relabelAt_replicate]
+    rw [relabelAt_replicate, decGraph_eq_decGraphAt]
     split_ifs <;> rfl
   · rw [giVerifier_next_long']
     simp only [argM_ilayout, Strategy.encodeMsgs_cons, Turing.pairEncode_ne_nil, decide_false,
@@ -577,7 +587,7 @@ theorem gniVerifier_efficient : gniVerifier.Efficient := by
   · rw [gniVerifier_next_nil']
     simp only [argM_ilayout, Strategy.encodeMsgs_nil, decide_true, if_true,
       vcount_ilayout, argX_ilayout, inCoins_ilayout, List.drop_one]
-    rw [relabelAt_replicate, sampleStr, decPerm_encPerm]
+    rw [relabelAt_replicate, sampleStr, decPerm_encPerm, instanceVertexCount_def]
     split_ifs <;> rfl
   · rw [gniVerifier_next_one]
     simp only [argM_ilayout, Strategy.encodeMsgs_cons, Strategy.encodeMsgs_nil,

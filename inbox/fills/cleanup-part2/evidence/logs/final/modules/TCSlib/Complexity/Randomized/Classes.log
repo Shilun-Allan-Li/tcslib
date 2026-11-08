@@ -1,0 +1,18 @@
+START 2026-11-08T07:47:46.120896+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Complexity/Randomized/Classes
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Complexity/Randomized/Classes.lean sha256=19925a98a0d6ff8d5d6281ab823d9624c837826dc7da6f17504974790dd843c9
+TCSlib/Complexity/Randomized/Classes.lean:573:59: warning: Used `tac1 <;> tac2` where `(tac1; tac2)` would suffice
+
+Note: This linter can be disabled with `set_option linter.unnecessarySeqFocus false`
+TCSlib/Complexity/Randomized/Classes.lean:1289:35: warning: This simp argument is unused:
+  hp
+
+Hint: Omit it from the simp argument list.
+  simp ̵[̵h̵p̵]̵
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+
+END 2026-11-08T07:47:51.668396+00:00 RC 0 elapsed=5.5s pid=28009 maxrss=1955912KiB

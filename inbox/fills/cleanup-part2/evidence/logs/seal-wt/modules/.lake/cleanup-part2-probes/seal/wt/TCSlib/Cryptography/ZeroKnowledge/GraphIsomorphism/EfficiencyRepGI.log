@@ -1,0 +1,97 @@
+START 2026-11-08T07:00:55.320337+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean sha256=40f472980a986a89484fcac3a0b4a31c5a4c013bf3e3512eb0adf803d8cb9393
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=1 active=1 already=0
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:1251:2: error: 'show' tactic failed, pattern
+  (if hist.length % 2 = 0 then ?m.65 else ?m.66) = ?m.68
+is not definitionally equal to target
+  giProverRep.next x z r hist =
+    if
+        decide
+            ((fun v => pairSndD (pairSndD v))^[halfCount (argM (ilayout x z hist r))] (argM (ilayout x z hist r)) =
+              []) =
+          true then
+      relabelAt (List.replicate (vcount (ilayout x z hist r)) true) (pairFstD (argX (ilayout x z hist r)))
+        (sampleStr (pairFstD (argX (ilayout x z hist r)))
+          (coinSlice (giBlock.eval (NUPPT.inParam (ilayout x z hist r)).length) (halfCount (argM (ilayout x z hist r)))
+            (NUPPT.inCoins (ilayout x z hist r))))
+    else
+      if
+          (pairFstD (pairSndD^[lastSteps (argM (ilayout x z hist r))] (argM (ilayout x z hist r)))).headD false =
+            true then
+        mulInvStr
+          (sampleStr (pairFstD (argX (ilayout x z hist r)))
+            (coinSlice (giBlock.eval (NUPPT.inParam (ilayout x z hist r)).length)
+              (halfCount (argM (ilayout x z hist r))) (NUPPT.inCoins (ilayout x z hist r))))
+          (argZ (ilayout x z hist r))
+      else
+        sampleStr (pairFstD (argX (ilayout x z hist r)))
+          (coinSlice (giBlock.eval (NUPPT.inParam (ilayout x z hist r)).length) (halfCount (argM (ilayout x z hist r)))
+            (NUPPT.inCoins (ilayout x z hist r)))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:1437:27: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.126 ↔ ?m.126
+but is expected to have type
+  encGraph
+        (permGraph (if false = true then instanceG₁ x else instanceG₀ x)
+          (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) =
+      hist.getD (2 * j) [] ↔
+    encGraph
+        (permGraph (decGraphAt (pairFstD x).length.sqrt (if false = true then pairSndD x else pairFstD x))
+          (decPerm (pairFstD x).length.sqrt (hist.getD (2 * j + 1) []))) =
+      hist.getD (2 * j) []
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:1437:27: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.126 ↔ ?m.126
+but is expected to have type
+  encGraph
+        (permGraph (if true = true then instanceG₁ x else instanceG₀ x)
+          (decPerm (instanceVertexCount x) (hist.getD (2 * j + 1) []))) =
+      hist.getD (2 * j) [] ↔
+    encGraph
+        (permGraph (decGraphAt (pairFstD x).length.sqrt (if true = true then pairSndD x else pairFstD x))
+          (decPerm (pairFstD x).length.sqrt (hist.getD (2 * j + 1) []))) =
+      hist.getD (2 * j) []
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI.lean:1453:2: error: 'show' tactic failed, pattern
+  (if hist.length % 2 = 1 then ?m.47 else if hist.length < 2 * x.length then ?m.61 else ?m.62) = ?m.64
+is not definitionally equal to target
+  giVerifierRep.next x z r hist =
+    if
+        (decide
+            ¬(fun v => pairSndD (pairSndD v))^[halfCount (argM (ilayout x z hist r))] (argM (ilayout x z hist r)) =
+                []) =
+          true then
+      [(List.drop (halfCount (argM (ilayout x z hist r))) (NUPPT.inCoins (ilayout x z hist r))).headD false]
+    else
+      if
+          decide
+              (msgCount (argM (ilayout x z hist r)) <
+                ((PolyExpr.const 2).mul PolyExpr.var).eval (NUPPT.inParam (ilayout x z hist r)).length) =
+            true then
+        []
+      else
+        [wellFormedInstance (argX (ilayout x z hist r)) &&
+            decide
+              (∀ j < (NUPPT.inParam (ilayout x z hist r)).length,
+                relabelAt (List.replicate (vcount (ilayout x z hist r)) true)
+                    (if (List.drop j (NUPPT.inCoins (ilayout x z hist r))).headD false = true then
+                      pairSndD (argX (ilayout x z hist r))
+                    else pairFstD (argX (ilayout x z hist r)))
+                    (pairFstD (pairSndD ((fun v => pairSndD (pairSndD v))^[j] (argM (ilayout x z hist r))))) =
+                  pairFstD ((fun v => pairSndD (pairSndD v))^[j] (argM (ilayout x z hist r))))]
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/EfficiencyRepGI): no fresh .olean produced
+
+END 2026-11-08T07:01:09.594441+00:00 RC 1 elapsed=14.3s pid=13676 maxrss=2668212KiB

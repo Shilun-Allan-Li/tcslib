@@ -1,0 +1,110 @@
+START 2026-11-08T07:45:30.301979+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean sha256=2282ba5cafa603615545132e3728cbeed06824a2d42b235e9536f5e55a184a04
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=3 active=3 already=0
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1331:91: error: Type mismatch
+  pairSndD_pairEncode ?m.75 ?m.76
+has type
+  pairSndD (pairEncode ?m.75 ?m.76) = ?m.76
+but is expected to have type
+  pairSndD (encInstance G₀ G₁) = encGraph G₁
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1328:36: error: unsolved goals
+n : ℕ
+G₀ G₁ : Graph n
+z r : List Bool
+hist : List (List Bool)
+h1 : hist.length % 2 ≠ 1
+h2 : ¬hist.length < 2 * (encInstance G₀ G₁).length
+⊢ [decide
+        (∀ (j : Fin (encInstance G₀ G₁).length),
+          encGraph
+              (permGraph
+                (if r.getD (↑j) false = true then
+                  decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairSndD (encInstance G₀ G₁))
+                else decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+                (decPerm (instanceVertexCount (encInstance G₀ G₁)) (hist.getD (2 * ↑j + 1) []))) =
+            hist.getD (2 * ↑j) [])] =
+    [decide
+        (∀ (j : Fin (encInstance G₀ G₁).length),
+          encGraph (permGraph (bif r.getD (↑j) false then G₁ else G₀) (decPerm n (hist.getD (2 * ↑j + 1) []))) =
+            hist.getD (2 * ↑j) [])]
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1345:103: error: Type mismatch
+  pairFstD_pairEncode ?m.59 ?m.60
+has type
+  pairFstD (pairEncode ?m.59 ?m.60) = ?m.59
+but is expected to have type
+  pairFstD (encInstance G₀ G₁) = encGraph G₀
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1344:84: error: unsolved goals
+n : ℕ
+G₀ G₁ : Graph n
+y r : List Bool
+hist : List (List Bool)
+h : hist.length % 2 = 0
+⊢ encGraph
+      (permGraph (decGraphAt (instanceVertexCount (encInstance G₀ G₁)) (pairFstD (encInstance G₀ G₁)))
+        (samplePerm (instanceVertexCount (encInstance G₀ G₁))
+          (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r))) =
+    encGraph (permGraph G₀ (samplePerm n (coinSlice (((encInstance G₀ G₁).length + 1) ^ 2) (hist.length / 2) r)))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1555:2: error: 'show' tactic failed, pattern
+  permGraph (bif (List.ofFn b).getD (↑i) false then G₁ else G₀)
+        (decPerm n
+          (P'.next ?m.244 y (List.ofFn r₁)
+            (PsOf (fun k => (List.ofFn b).getD k false) ↑i ++ [[(List.ofFn b).getD (↑i) false]]))) =
+      decGraphAt n (P'.next ?m.262 y (List.ofFn r₁) (PsOf (fun k => (List.ofFn b).getD k false) ↑i)) ↔
+    permGraph (bif b i then G₁ else G₀) (γfun P' (encInstance G₀ G₁) y i (prefixLE b i) r₁) =
+      Hfun P' (encInstance G₀ G₁) y i (prefixLT b i) r₁
+is not definitionally equal to target
+  permGraph (bif (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD (↑i) false then G₁ else G₀)
+        (decPerm n
+          (P'.next (encInstance G₀ G₁) y (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).1)
+            (PsOf (fun k => (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD k false) ↑i ++
+              [[(List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD (↑i) false]]))) =
+      decGraphAt n
+        (P'.next (encInstance G₀ G₁) y (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).1)
+          (PsOf (fun k => (List.ofFn ((giRepCoins P' (encInstance G₀ G₁)) (b, r₁)).2).getD k false) ↑i)) ↔
+    permGraph (bif (b, r₁).1 i then G₁ else G₀) (γfun P' (encInstance G₀ G₁) y i (prefixLE (b, r₁).1 i) (b, r₁).2) =
+      Hfun P' (encInstance G₀ G₁) y i (prefixLT (b, r₁).1 i) (b, r₁).2
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1575:22: error: Application type mismatch: The argument
+  giProverRep_length_le ?m.81 ?m.82
+has type
+  ∀ (r : List Bool) (hist : List (List Bool)), (giProverRep.next ?m.81 ?m.82 r hist).length ≤ List.length ?m.81
+but is expected to have type
+  ∀ (r : List Bool) (hist : List (List Bool)),
+    (giProtocolRep.P.next (pairEncode (encGraph G₀) (encGraph G₁)) (encPerm σ) r hist).length ≤
+      PolyExpr.var.eval (pairEncode (encGraph G₀) (encGraph G₁)).length
+in the application
+  And.intro (giProverRep_length_le ?m.81 ?m.82)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1575:58: error: Type mismatch
+  giRep_complete hσ z
+has type
+  (uprob fun (r : giProtocolRep.ExecCoins giProverRep (encInstance G₀ G₁)) =>
+      giProtocolRep.outV giProverRep (encInstance G₀ G₁) (encPerm σ) z r = [true]) =
+    1
+but is expected to have type
+  (uprob fun (r : giProtocolRep.ExecCoins giProtocolRep.P (pairEncode (encGraph G₀) (encGraph G₁))) =>
+      giProtocolRep.outV giProtocolRep.P (pairEncode (encGraph G₀) (encGraph G₁)) (encPerm σ) z r = [true]) =
+    1
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean:1610:4: error: Type mismatch
+  giRep_complete hσ z
+has type
+  (uprob fun (r : giProtocolRep.ExecCoins giProverRep (encInstance G₀ G₁)) =>
+      giProtocolRep.outV giProverRep (encInstance G₀ G₁) (encPerm σ) z r = [true]) =
+    1
+but is expected to have type
+  (uprob fun (r : giProtocolRep.ExecCoins giProtocolRep.P (pairEncode (encGraph G₀) (encGraph G₁))) =>
+      giProtocolRep.outV giProtocolRep.P (pairEncode (encGraph G₀) (encGraph G₁)) (encPerm σ) z r = [true]) =
+    1
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI): no fresh .olean produced
+
+END 2026-11-08T07:45:47.137643+00:00 RC 1 elapsed=16.8s pid=25220 maxrss=2710684KiB

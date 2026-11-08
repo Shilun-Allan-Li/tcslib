@@ -89,15 +89,15 @@ theorem trialBit_correct [Nonempty ρ] (f : (Fin n → Bool) → β)
   -- each call is right with probability `secProb f A x`
   have h1 : uprob (fun w : (Fin n → Bool) × ρ × ρ => A (f x, w.1) w.2.1 = ip x w.1) =
       secProb f A x :=
-    ((pushesUniform_id (Ω := Fin n → Bool)).prodMap
+    (((pushesUniform_id (Ω := Fin n → Bool)).prodMap
       (pushesUniform_fst (α := ρ) (β := ρ))).uprob_eq
-      (fun z : (Fin n → Bool) × ρ => A (f x, z.1) z.2 = ip x z.1)
+      (fun z : (Fin n → Bool) × ρ => A (f x, z.1) z.2 = ip x z.1)).trans (secProb_def f A x).symm
   have h2 : uprob (fun w : (Fin n → Bool) × ρ × ρ =>
       A (f x, w.1 + Pi.single i true) w.2.2 = ip x (w.1 + Pi.single i true)) =
       secProb f A x :=
-    ((pushesUniform_xor (Pi.single i true)).prodMap
+    (((pushesUniform_xor (Pi.single i true)).prodMap
       (pushesUniform_snd (α := ρ) (β := ρ))).uprob_eq
-      (fun z : (Fin n → Bool) × ρ => A (f x, z.1) z.2 = ip x z.1)
+      (fun z : (Fin n → Bool) × ρ => A (f x, z.1) z.2 = ip x z.1)).trans (secProb_def f A x).symm
   -- both calls right implies the trial is right
   have hboth : ∀ w : (Fin n → Bool) × ρ × ρ, A (f x, w.1) w.2.1 = ip x w.1 →
       A (f x, w.1 + Pi.single i true) w.2.2 = ip x (w.1 + Pi.single i true) →

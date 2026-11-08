@@ -1,0 +1,27 @@
+START 2026-11-08T10:07:18.080734+00:00
+CMD bash scripts/lean_check_tree.sh TCSlib/Cryptography/Candidates/ElGamal
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/TCSlib/Cryptography/Candidates/ElGamal.lean sha256=6d90bbb78b60e644eb4fe63c10a9f7ca35a4d30019a54bc558995b773e52df31
+TCSlib/Cryptography/Candidates/ElGamal.lean:115:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_ne_two`:
+  hp
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Candidates/ElGamal.lean:120:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.five_le_safe`:
+  hp
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+TCSlib/Cryptography/Candidates/ElGamal.lean:125:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.Candidates.safe_half`:
+  hp
+  hq
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit hp hq in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+
+END 2026-11-08T10:07:26.499409+00:00 RC 0 elapsed=8.4s pid=26275 maxrss=2936480KiB

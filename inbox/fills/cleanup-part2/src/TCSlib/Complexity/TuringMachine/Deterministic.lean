@@ -193,15 +193,6 @@ lemma step_of_halt {cfg : Cfg k Symbol State input} (h : cfg.state = none) :
   unfold step
   rw [h]
 
-/-- The defining equation of `step`: a halted configuration stays, a live one at state `q`
-applies the transition table's action for the scanned symbols,
-`tm.step cfg = match cfg.state with | none => cfg | some q =>
-(tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg`. -/
-theorem step_def (cfg : Cfg k Symbol State input) :
-    tm.step cfg = match cfg.state with
-      | none => cfg
-      | some q => (tm.tr q cfg.inputSymbol cfg.workTapeSymbols).apply cfg := rfl
-
 /-- **A live step applies the chosen action** (the brief-inventory API, round 3; the round-2
 gate's finding 1): at a live state `q` one step applies the transition table's action for the
 scanned symbols, `cfg.state = some q →`

@@ -1,0 +1,203 @@
+START 2026-11-08T06:55:28.026944+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean sha256=794d0d172f13aea9194ea4dbbc8965225693542dbbc19eaf9aa6b21e688f7b80
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=122 active=122 already=0
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:1838:6: error: Application type mismatch: The argument
+  Fin.appendEquiv 1 (D.coinLen n)
+has type
+  (Fin 1 → ?m.54) × (Fin (D.coinLen n) → ?m.54) ≃ (Fin (1 + D.coinLen n) → ?m.54)
+but is expected to have type
+  (Fin 1 → Bool) × D.Coins n ≃ (owpPredMachine D flip).Coins n
+in the application
+  ((Equiv.funUnique (Fin 1) Bool).symm.prodCongr (Equiv.refl (D.Coins n))).trans (Fin.appendEquiv 1 (D.coinLen n))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2189:4: error: Application type mismatch: The argument
+  uprob_comp_equiv
+    ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) ?m.79
+has type
+  (uprob fun a =>
+      ?m.79
+        (((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) a)) =
+    uprob ?m.79
+but is expected to have type
+  uprob ?m.65 =
+    uprob fun z =>
+      ∃ x',
+        (glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n) (𝓕.f n z.1) z.2 = some x' ∧
+          𝓕.f n x' = 𝓕.f n z.1
+in the application
+  Eq.trans
+    (uprob_comp_equiv (Equiv.prodAssoc (Fin (𝓕.inLen.eval n) → Bool) (Fin (𝓕.inLen.eval n) → Bool) (A.Coins n)) ?m.65)
+    (uprob_comp_equiv
+      ((Equiv.refl (Fin (𝓕.inLen.eval n) → Bool)).prodCongr (Fin.appendEquiv (𝓕.inLen.eval n) (A.coinLen n))) ?m.79)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2276:4: error: 'show' tactic failed, pattern
+  F.sample.coinLen n + L = S.coins.eval n
+is not definitionally equal to target
+  F.sample.coinLen n + L = S.coinLen n
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2359:4: error: Application type mismatch: The argument
+  uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) ?m.102
+has type
+  (uprob fun a => ?m.102 (((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) a)) =
+    uprob ?m.102
+but is expected to have type
+  uprob ?m.88 =
+    uprob fun z =>
+      ∃ x',
+        F.decD (F.index n r)
+              ((glPadCollInvMachine A m).runAt n (pairEncode (F.index n r) (F.f (F.index n r) z.1)) z.2) =
+            some x' ∧
+          F.f (F.index n r) x' = F.f (F.index n r) z.1
+in the application
+  Eq.trans (uprob_comp_equiv (Equiv.prodAssoc (F.D (F.index n r)) (Fin (m.eval n) → Bool) (A.Coins n)) ?m.88)
+    (uprob_comp_equiv ((Equiv.refl (F.D (F.index n r))).prodCongr (Fin.appendEquiv (m.eval n) (A.coinLen n))) ?m.102)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2489:53: error: unsolved goals
+F : Collection
+m : PolyExpr
+n : ℕ
+i : List Bool
+s : (NUPPT.ofPolyTimeUniform ⋯ (F.sample.coins.add m)).Coins n
+⊢ (NUPPT.ofPolyTime ⋯ (F.sample.coins.add m) (PolyExpr.const 0) (fun x => []) ⋯).runAt n i s =
+    pairEncode
+      (F.sample.output
+        (pairEncode (pairEncode (pairEncode (List.replicate n true) i) [])
+          (List.take (F.sample.coins.eval n) (List.ofFn s))))
+      (List.drop (F.sample.coins.eval n) (List.ofFn s))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2490:13: warning: This simp argument is unused:
+  NUPPT.runAt_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.r̵u̵n̵A̵t̵_̵e̵q̵,̵ ̵N̵U̵P̵P̵T̵.̵ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun, NUPPT.inParam_eq,
+  ̲  ̲ ̲ ̲NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2490:58: warning: This simp argument is unused:
+  NUPPT.output_ofPolyTime
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, N̵U̵P̵P̵T̵.̵o̵u̵t̵p̵u̵t̵_̵o̵f̵P̵o̵l̵y̵T̵i̵m̵e̵,̵
+  ̵ ̵ ̵ ̵ ̵glPadSampleFun, NUPPT.inParam_eq,
+  ̲  ̲ ̲ ̲NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2491:4: warning: This simp argument is unused:
+  glPadSampleFun
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵g̵l̵P̵a̵d̵S̵a̵m̵p̵l̵e̵F̵u̵n̵,̵ ̵NUPPT.inParam_eq,
+  ̲  ̲ ̲ ̲NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2491:20: warning: This simp argument is unused:
+  NUPPT.inParam_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲ N̵U̵P̵P̵T̵.̵i̵n̵P̵a̵r̵a̵m̵_̵e̵q̵,̵  ̲ ̲NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2491:38: warning: This simp argument is unused:
+  NUPPT.inArg_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam_eq, NUPPT.inA̵r̵g̵_̵e̵q̵,̵ ̵N̵U̵P̵P̵T̵.̵i̵n̵Coins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2491:54: warning: This simp argument is unused:
+  NUPPT.inCoins_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.i̵n̵C̵o̵i̵n̵s̵_̵e̵q̵,̵ ̵N̵U̵P̵P̵T̵.̵advInput_eq, NUPPT.layout_eq,
+  ̵  ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2491:91: warning: This simp argument is unused:
+  NUPPT.layout_eq
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, N̵U̵P̵P̵T̵.̵l̵a̵y̵o̵u̵t̵_̵e̵q̵,̵
+  ̵ ̵ ̵ ̵ ̵pairFstD_pairEncode,
+  ̲  ̲ ̲ ̲pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2492:4: warning: This simp argument is unused:
+  pairFstD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime, glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+      p̵a̵i̵r̵F̵s̵t̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵ ̵pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n, NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2492:25: warning: This simp argument is unused:
+  pairSndD_pairEncode
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+      pairFstD_pairEncode, p̵a̵i̵r̵S̵n̵d̵D̵_̵p̵a̵i̵r̵E̵n̵c̵o̵d̵e̵,̵ ̵List.length_replicate, F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas.lean:2492:46: warning: This simp argument is unused:
+  List.length_replicate
+
+Hint: Omit it from the simp argument list.
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  ̵  ̵ ̵ ̵glPadSampleFun,
+  ̲  ̲ ̲ ̲NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
+      pairFstD_pairEncode, pairSndD_pairEncode, L̵i̵s̵t̵.̵l̵e̵n̵g̵t̵h̵_̵r̵e̵p̵l̵i̵c̵a̵t̵e̵,̵ ̵F.sample_uniform.advice_eq n,
+  ̵  ̵ ̵ ̵NUPPT.coinLen_eq,
+  ̲  ̲ ̲ ̲NUPPT.runAtL_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/Asymptotic/HardCoreLemmas): no fresh .olean produced
+
+END 2026-11-08T06:55:45.994553+00:00 RC 1 elapsed=18.0s pid=12627 maxrss=2753580KiB

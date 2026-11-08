@@ -1,0 +1,16 @@
+START 2026-11-08T09:14:31.347056+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Pseudorandom/Generators
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Pseudorandom/Generators.lean sha256=dc3ec6a83f01ecd12dbaa8695d7dd2689d22229edc6662562078d726ddcf9368
+CP2-SEAL chunk=0 requested=21 active=21 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Pseudorandom/Generators.lean:153:0: warning: automatically included section variable(s) unused in theorem `TCSlib.Cryptography.prgExt_def`:
+  [Fintype S]
+consider restructuring your `variable` declarations so that the variables are not in scope or explicitly omit them:
+  omit [Fintype S] in theorem ...
+
+Note: This linter can be disabled with `set_option linter.unusedSectionVars false`
+CP2-EOF
+
+END 2026-11-08T09:14:34.187293+00:00 RC 0 elapsed=2.8s pid=14669 maxrss=2523712KiB

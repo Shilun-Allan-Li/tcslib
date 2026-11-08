@@ -1,0 +1,569 @@
+START 2026-11-08T07:38:30.398764+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean sha256=37be4078436eee464c8836551fba561ad5fa48c9de0eed70789eeedd4f9a6bad
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=97 active=97 already=0
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1319:44: warning: This simp argument is unused:
+  PolyExpr.eval_normal
+
+Hint: Omit it from the simp argument list.
+  simp [blockPoly, blockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_pow, P̵o̵l̵y̵E̵x̵p̵r̵.̵e̵v̵a̵l̵_̵n̵o̵r̵m̵a̵l̵,̵ ̵PolyExpr.normal_def, Strategy.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1329:44: warning: This simp argument is unused:
+  PolyExpr.eval_normal
+
+Hint: Omit it from the simp argument list.
+  simp [simCoins, blockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add,
+      PolyExpr.eval_mul, PolyExpr.eval_pow, P̵o̵l̵y̵E̵x̵p̵r̵.̵e̵v̵a̵l̵_̵n̵o̵r̵m̵a̵l̵,̵ ̵PolyExpr.normal_def, Strategy.coinLen_eq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1408:34: error: Type mismatch
+  getD_padSq n w (finProdFinEquiv (u, v)).isLt
+has type
+  (padSq n w).getD (↑(finProdFinEquiv (u, v))) false = w.getD (↑(finProdFinEquiv (u, v))) false
+but is expected to have type
+  decGraphAt n (padSq n w) u v = decGraphAt n w u v
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1427:2: error: Tactic `rfl` failed: The left-hand side
+  decGraph w
+is not definitionally equal to the right-hand side
+  ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+
+w : List Bool
+⊢ decGraph w = ⟨w.length.sqrt, decGraphAt w.length.sqrt w⟩
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1516:4: error: Type mismatch
+  truncate_poly hdrop hL
+has type
+  PolyTimeComputable fun x =>
+    List.take (blockLen V' (simX (pairSndD x)).length)
+      (List.drop ((pairFstD x).length * blockLen V' (simX (pairSndD x)).length) (simR (pairSndD x)))
+but is expected to have type
+  PolyTimeComputable fun u => coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1547:4: error: Type mismatch
+  unarySqrt_poly (unaryLength_poly (PolyTimeComputable.comp polyTimeComputable_pairFstD hx))
+has type
+  PolyTimeComputable fun x => List.replicate ((pairFstD ∘ fun u => simX (pairSndD u)) x).length.sqrt true
+but is expected to have type
+  PolyTimeComputable fun u => List.replicate (instanceVertexCount (simX (pairSndD u))) true
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1556:4: error: Tactic `rfl` failed: The left-hand side
+  encPerm
+    (samplePerm (instanceVertexCount (simX (pairSndD u)))
+      (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+        (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))
+is not definitionally equal to the right-hand side
+  encPerm
+    ((permFromCoins (decGraph (pairFstD (simX (pairSndD u)))).fst
+          (permBits (decGraph (pairFstD (simX (pairSndD u)))).fst)
+          (permTrials (decGraph (pairFstD (simX (pairSndD u)))).fst)
+          (coinTable (decGraph (pairFstD (simX (pairSndD u)))).fst
+            (permTrials (decGraph (pairFstD (simX (pairSndD u)))).fst)
+            (permBits (decGraph (pairFstD (simX (pairSndD u)))).fst)
+            (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+              (List.drop 1
+                (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))).getD
+      1)
+
+V' : Strategy
+hV' : V'.Efficient
+A : NUPPT
+hA : A.Uniform
+hnext : ∀ (x z r : List Bool) (hist : List (List Bool)), V'.next x z r hist = (Strategy.ofNUPPT A).next x z r hist
+hx : PolyTimeComputable fun u => simX (pairSndD u)
+hz : PolyTimeComputable fun u => simZ (pairSndD u)
+hr : PolyTimeComputable fun u => simR (pairSndD u)
+ht : PolyTimeComputable fun u => List.replicate (pairFstD u).length true
+hL : PolyTimeComputable fun u => List.replicate (blockLen V' (simX (pairSndD u)).length) true
+hdrop :
+  PolyTimeComputable fun u =>
+    List.drop ((pairFstD u).length * blockLen V' (simX (pairSndD u)).length) (simR (pairSndD u))
+hc :
+  PolyTimeComputable fun u => coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))
+hb :
+  PolyTimeComputable fun u =>
+    [(coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false]
+hP : PolyTimeComputable fun u => List.replicate (((simX (pairSndD u)).length + 1) ^ 2) true
+hpc :
+  PolyTimeComputable fun u =>
+    List.take (((simX (pairSndD u)).length + 1) ^ 2)
+      (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))
+hrV :
+  PolyTimeComputable fun u =>
+    List.drop (1 + ((simX (pairSndD u)).length + 1) ^ 2)
+      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))
+hn : PolyTimeComputable fun u => List.replicate (instanceVertexCount (simX (pairSndD u))) true
+this :
+  PolyTimeComputable
+    ((fun z =>
+        encPerm
+          ((permFromCoins (decGraph (pairFstD z)).fst (permBits (decGraph (pairFstD z)).fst)
+                (permTrials (decGraph (pairFstD z)).fst)
+                (coinTable (decGraph (pairFstD z)).fst (permTrials (decGraph (pairFstD z)).fst)
+                  (permBits (decGraph (pairFstD z)).fst) (pairSndD z))).getD
+            1)) ∘
+      fun x =>
+      pairEncode ((pairFstD ∘ fun u => simX (pairSndD u)) x)
+        (List.take (((simX (pairSndD x)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD x)).length) (pairFstD x).length (simR (pairSndD x))))))
+u : List Bool
+⊢ encPerm
+      (samplePerm (instanceVertexCount (simX (pairSndD u)))
+        (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))) =
+    encPerm
+      ((permFromCoins (decGraph (pairFstD (simX (pairSndD u)))).fst
+            (permBits (decGraph (pairFstD (simX (pairSndD u)))).fst)
+            (permTrials (decGraph (pairFstD (simX (pairSndD u)))).fst)
+            (coinTable (decGraph (pairFstD (simX (pairSndD u)))).fst
+              (permTrials (decGraph (pairFstD (simX (pairSndD u)))).fst)
+              (permBits (decGraph (pairFstD (simX (pairSndD u)))).fst)
+              (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+                (List.drop 1
+                  (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))).getD
+        1)
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1574:18: error: Tactic `rfl` failed: The left-hand side
+  encGraph
+    (permGraph (instanceG₁ (simX (pairSndD u)))
+      (samplePerm (instanceVertexCount (simX (pairSndD u)))
+        (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))))
+is not definitionally equal to the right-hand side
+  encGraph
+    (permGraph (decGraphAt (instanceVertexCount (simX (pairSndD u))) (pairSndD (simX (pairSndD u))))
+      (samplePerm (instanceVertexCount (simX (pairSndD u)))
+        (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))))
+
+case pos
+V' : Strategy
+hV' : V'.Efficient
+A : NUPPT
+hA : A.Uniform
+hnext : ∀ (x z r : List Bool) (hist : List (List Bool)), V'.next x z r hist = (Strategy.ofNUPPT A).next x z r hist
+hx : PolyTimeComputable fun u => simX (pairSndD u)
+hz : PolyTimeComputable fun u => simZ (pairSndD u)
+hr : PolyTimeComputable fun u => simR (pairSndD u)
+ht : PolyTimeComputable fun u => List.replicate (pairFstD u).length true
+hL : PolyTimeComputable fun u => List.replicate (blockLen V' (simX (pairSndD u)).length) true
+hdrop :
+  PolyTimeComputable fun u =>
+    List.drop ((pairFstD u).length * blockLen V' (simX (pairSndD u)).length) (simR (pairSndD u))
+hc :
+  PolyTimeComputable fun u => coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))
+hb :
+  PolyTimeComputable fun u =>
+    [(coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false]
+hP : PolyTimeComputable fun u => List.replicate (((simX (pairSndD u)).length + 1) ^ 2) true
+hpc :
+  PolyTimeComputable fun u =>
+    List.take (((simX (pairSndD u)).length + 1) ^ 2)
+      (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))
+hrV :
+  PolyTimeComputable fun u =>
+    List.drop (1 + ((simX (pairSndD u)).length + 1) ^ 2)
+      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))
+hn : PolyTimeComputable fun u => List.replicate (instanceVertexCount (simX (pairSndD u))) true
+hπ :
+  PolyTimeComputable fun u =>
+    encPerm
+      (samplePerm (instanceVertexCount (simX (pairSndD u)))
+        (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))
+hGb :
+  PolyTimeComputable fun u =>
+    if
+        (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false =
+          true then
+      pairSndD (simX (pairSndD u))
+    else pairFstD (simX (pairSndD u))
+this :
+  PolyTimeComputable
+    ((fun z =>
+        encGraph
+          (permGraph (decGraphAt (pairFstD z).length (pairFstD (pairSndD z)))
+            (decPerm (pairFstD z).length (pairSndD (pairSndD z))))) ∘
+      fun x =>
+      pairEncode (List.replicate (instanceVertexCount (simX (pairSndD x))) true)
+        (pairEncode
+          (if
+              (coinSlice (blockLen V' (simX (pairSndD x)).length) (pairFstD x).length (simR (pairSndD x))).headD false =
+                true then
+            pairSndD (simX (pairSndD x))
+          else pairFstD (simX (pairSndD x)))
+          (encPerm
+            (samplePerm (instanceVertexCount (simX (pairSndD x)))
+              (List.take (((simX (pairSndD x)).length + 1) ^ 2)
+                (List.drop 1
+                  (coinSlice (blockLen V' (simX (pairSndD x)).length) (pairFstD x).length (simR (pairSndD x)))))))))
+u : List Bool
+h✝ : (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false = true
+⊢ encGraph
+      (permGraph (instanceG₁ (simX (pairSndD u)))
+        (samplePerm (instanceVertexCount (simX (pairSndD u)))
+          (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+            (List.drop 1
+              (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))) =
+    encGraph
+      (permGraph (decGraphAt (instanceVertexCount (simX (pairSndD u))) (pairSndD (simX (pairSndD u))))
+        (samplePerm (instanceVertexCount (simX (pairSndD u)))
+          (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+            (List.drop 1
+              (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1574:18: error: Tactic `rfl` failed: The left-hand side
+  encGraph
+    (permGraph (instanceG₀ (simX (pairSndD u)))
+      (samplePerm (instanceVertexCount (simX (pairSndD u)))
+        (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))))
+is not definitionally equal to the right-hand side
+  encGraph
+    (permGraph (decGraphAt (instanceVertexCount (simX (pairSndD u))) (pairFstD (simX (pairSndD u))))
+      (samplePerm (instanceVertexCount (simX (pairSndD u)))
+        (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))))
+
+case neg
+V' : Strategy
+hV' : V'.Efficient
+A : NUPPT
+hA : A.Uniform
+hnext : ∀ (x z r : List Bool) (hist : List (List Bool)), V'.next x z r hist = (Strategy.ofNUPPT A).next x z r hist
+hx : PolyTimeComputable fun u => simX (pairSndD u)
+hz : PolyTimeComputable fun u => simZ (pairSndD u)
+hr : PolyTimeComputable fun u => simR (pairSndD u)
+ht : PolyTimeComputable fun u => List.replicate (pairFstD u).length true
+hL : PolyTimeComputable fun u => List.replicate (blockLen V' (simX (pairSndD u)).length) true
+hdrop :
+  PolyTimeComputable fun u =>
+    List.drop ((pairFstD u).length * blockLen V' (simX (pairSndD u)).length) (simR (pairSndD u))
+hc :
+  PolyTimeComputable fun u => coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))
+hb :
+  PolyTimeComputable fun u =>
+    [(coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false]
+hP : PolyTimeComputable fun u => List.replicate (((simX (pairSndD u)).length + 1) ^ 2) true
+hpc :
+  PolyTimeComputable fun u =>
+    List.take (((simX (pairSndD u)).length + 1) ^ 2)
+      (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))
+hrV :
+  PolyTimeComputable fun u =>
+    List.drop (1 + ((simX (pairSndD u)).length + 1) ^ 2)
+      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))
+hn : PolyTimeComputable fun u => List.replicate (instanceVertexCount (simX (pairSndD u))) true
+hπ :
+  PolyTimeComputable fun u =>
+    encPerm
+      (samplePerm (instanceVertexCount (simX (pairSndD u)))
+        (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))
+hGb :
+  PolyTimeComputable fun u =>
+    if
+        (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false =
+          true then
+      pairSndD (simX (pairSndD u))
+    else pairFstD (simX (pairSndD u))
+this :
+  PolyTimeComputable
+    ((fun z =>
+        encGraph
+          (permGraph (decGraphAt (pairFstD z).length (pairFstD (pairSndD z)))
+            (decPerm (pairFstD z).length (pairSndD (pairSndD z))))) ∘
+      fun x =>
+      pairEncode (List.replicate (instanceVertexCount (simX (pairSndD x))) true)
+        (pairEncode
+          (if
+              (coinSlice (blockLen V' (simX (pairSndD x)).length) (pairFstD x).length (simR (pairSndD x))).headD false =
+                true then
+            pairSndD (simX (pairSndD x))
+          else pairFstD (simX (pairSndD x)))
+          (encPerm
+            (samplePerm (instanceVertexCount (simX (pairSndD x)))
+              (List.take (((simX (pairSndD x)).length + 1) ^ 2)
+                (List.drop 1
+                  (coinSlice (blockLen V' (simX (pairSndD x)).length) (pairFstD x).length (simR (pairSndD x)))))))))
+u : List Bool
+h✝ : ¬(coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false = true
+⊢ encGraph
+      (permGraph (instanceG₀ (simX (pairSndD u)))
+        (samplePerm (instanceVertexCount (simX (pairSndD u)))
+          (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+            (List.drop 1
+              (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))) =
+    encGraph
+      (permGraph (decGraphAt (instanceVertexCount (simX (pairSndD u))) (pairFstD (simX (pairSndD u))))
+        (samplePerm (instanceVertexCount (simX (pairSndD u)))
+          (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+            (List.drop 1
+              (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1589:40: error: Type mismatch
+  hA
+has type
+  A.Uniform
+but is expected to have type
+  ∀ (k : ℕ), A.advice k = []
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1592:4: error: Tactic `rfl` failed: The left-hand side
+  A.output
+    (NUPPT.layout (List.replicate (simX (pairSndD u)).length true)
+      (pairEncode (pairEncode (simX (pairSndD u)) (simZ (pairSndD u)))
+        (Strategy.encodeMsgs
+          [encGraph
+              (permGraph
+                (if
+                    (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+                        false =
+                      true then
+                  instanceG₁ (simX (pairSndD u))
+                else instanceG₀ (simX (pairSndD u)))
+                (samplePerm (instanceVertexCount (simX (pairSndD u)))
+                  (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+                    (List.drop 1
+                      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length
+                        (simR (pairSndD u)))))))]))
+      []
+      (List.drop (1 + ((simX (pairSndD u)).length + 1) ^ 2)
+        (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))
+is not definitionally equal to the right-hand side
+  (A.output ∘ fun z =>
+      NUPPT.layout (((fun x => List.replicate x.length true) ∘ fun u => simX (pairSndD u)) z)
+        (pairEncode (pairEncode (simX (pairSndD z)) (simZ (pairSndD z)))
+          (pairEncode
+            (encGraph
+              (permGraph
+                (if
+                    (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z))).headD
+                        false =
+                      true then
+                  instanceG₁ (simX (pairSndD z))
+                else instanceG₀ (simX (pairSndD z)))
+                (samplePerm (instanceVertexCount (simX (pairSndD z)))
+                  (List.take (((simX (pairSndD z)).length + 1) ^ 2)
+                    (List.drop 1
+                      (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z))))))))
+            []))
+        []
+        (List.drop (1 + ((simX (pairSndD z)).length + 1) ^ 2)
+          (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z)))))
+    u
+
+V' : Strategy
+hV' : V'.Efficient
+A : NUPPT
+hA : A.Uniform
+hnext : ∀ (x z r : List Bool) (hist : List (List Bool)), V'.next x z r hist = (Strategy.ofNUPPT A).next x z r hist
+hx : PolyTimeComputable fun u => simX (pairSndD u)
+hz : PolyTimeComputable fun u => simZ (pairSndD u)
+hr : PolyTimeComputable fun u => simR (pairSndD u)
+ht : PolyTimeComputable fun u => List.replicate (pairFstD u).length true
+hL : PolyTimeComputable fun u => List.replicate (blockLen V' (simX (pairSndD u)).length) true
+hdrop :
+  PolyTimeComputable fun u =>
+    List.drop ((pairFstD u).length * blockLen V' (simX (pairSndD u)).length) (simR (pairSndD u))
+hc :
+  PolyTimeComputable fun u => coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))
+hb :
+  PolyTimeComputable fun u =>
+    [(coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false]
+hP : PolyTimeComputable fun u => List.replicate (((simX (pairSndD u)).length + 1) ^ 2) true
+hpc :
+  PolyTimeComputable fun u =>
+    List.take (((simX (pairSndD u)).length + 1) ^ 2)
+      (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))
+hrV :
+  PolyTimeComputable fun u =>
+    List.drop (1 + ((simX (pairSndD u)).length + 1) ^ 2)
+      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))
+hn : PolyTimeComputable fun u => List.replicate (instanceVertexCount (simX (pairSndD u))) true
+hπ :
+  PolyTimeComputable fun u =>
+    encPerm
+      (samplePerm (instanceVertexCount (simX (pairSndD u)))
+        (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+          (List.drop 1 (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))
+hGb :
+  PolyTimeComputable fun u =>
+    if
+        (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false =
+          true then
+      pairSndD (simX (pairSndD u))
+    else pairFstD (simX (pairSndD u))
+hH :
+  PolyTimeComputable fun u =>
+    encGraph
+      (permGraph
+        (if
+            (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD false =
+              true then
+          instanceG₁ (simX (pairSndD u))
+        else instanceG₀ (simX (pairSndD u)))
+        (samplePerm (instanceVertexCount (simX (pairSndD u)))
+          (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+            (List.drop 1
+              (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))))
+hlay :
+  PolyTimeComputable fun z =>
+    NUPPT.layout (((fun x => List.replicate x.length true) ∘ fun u => simX (pairSndD u)) z)
+      (pairEncode (pairEncode (simX (pairSndD z)) (simZ (pairSndD z)))
+        (pairEncode
+          (encGraph
+            (permGraph
+              (if
+                  (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z))).headD
+                      false =
+                    true then
+                instanceG₁ (simX (pairSndD z))
+              else instanceG₀ (simX (pairSndD z)))
+              (samplePerm (instanceVertexCount (simX (pairSndD z)))
+                (List.take (((simX (pairSndD z)).length + 1) ^ 2)
+                  (List.drop 1
+                    (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z))))))))
+          []))
+      []
+      (List.drop (1 + ((simX (pairSndD z)).length + 1) ^ 2)
+        (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z))))
+this :
+  PolyTimeComputable
+    (A.output ∘ fun z =>
+      NUPPT.layout (((fun x => List.replicate x.length true) ∘ fun u => simX (pairSndD u)) z)
+        (pairEncode (pairEncode (simX (pairSndD z)) (simZ (pairSndD z)))
+          (pairEncode
+            (encGraph
+              (permGraph
+                (if
+                    (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z))).headD
+                        false =
+                      true then
+                  instanceG₁ (simX (pairSndD z))
+                else instanceG₀ (simX (pairSndD z)))
+                (samplePerm (instanceVertexCount (simX (pairSndD z)))
+                  (List.take (((simX (pairSndD z)).length + 1) ^ 2)
+                    (List.drop 1
+                      (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z))))))))
+            []))
+        []
+        (List.drop (1 + ((simX (pairSndD z)).length + 1) ^ 2)
+          (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z)))))
+hadv : ∀ (k : ℕ), A.advice k = []
+u : List Bool
+⊢ A.output
+      (NUPPT.layout (List.replicate (simX (pairSndD u)).length true)
+        (pairEncode (pairEncode (simX (pairSndD u)) (simZ (pairSndD u)))
+          (Strategy.encodeMsgs
+            [encGraph
+                (permGraph
+                  (if
+                      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+                          false =
+                        true then
+                    instanceG₁ (simX (pairSndD u))
+                  else instanceG₀ (simX (pairSndD u)))
+                  (samplePerm (instanceVertexCount (simX (pairSndD u)))
+                    (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+                      (List.drop 1
+                        (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length
+                          (simR (pairSndD u)))))))]))
+        []
+        (List.drop (1 + ((simX (pairSndD u)).length + 1) ^ 2)
+          (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))) =
+    (A.output ∘ fun z =>
+        NUPPT.layout (((fun x => List.replicate x.length true) ∘ fun u => simX (pairSndD u)) z)
+          (pairEncode (pairEncode (simX (pairSndD z)) (simZ (pairSndD z)))
+            (pairEncode
+              (encGraph
+                (permGraph
+                  (if
+                      (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z))).headD
+                          false =
+                        true then
+                    instanceG₁ (simX (pairSndD z))
+                  else instanceG₀ (simX (pairSndD z)))
+                  (samplePerm (instanceVertexCount (simX (pairSndD z)))
+                    (List.take (((simX (pairSndD z)).length + 1) ^ 2)
+                      (List.drop 1
+                        (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length
+                          (simR (pairSndD z))))))))
+              []))
+          []
+          (List.drop (1 + ((simX (pairSndD z)).length + 1) ^ 2)
+            (coinSlice (blockLen V' (simX (pairSndD z)).length) (pairFstD z).length (simR (pairSndD z)))))
+      u
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1622:64: error: Type mismatch
+  rfl
+has type
+  ?m.877 = ?m.877
+but is expected to have type
+  { x := simX (pairSndD u), z := simZ (pairSndD u),
+        r :=
+          List.drop (1 + ((simX (pairSndD u)).length + 1) ^ 2)
+            (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))),
+        received :=
+          [encGraph
+              (permGraph
+                (if
+                    (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+                        false =
+                      true then
+                  instanceG₁ (simX (pairSndD u))
+                else instanceG₀ (simX (pairSndD u)))
+                (samplePerm (instanceVertexCount (simX (pairSndD u)))
+                  (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+                    (List.drop 1
+                      (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))),
+            encPerm
+              (samplePerm (instanceVertexCount (simX (pairSndD u)))
+                (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+                  (List.drop 1
+                    (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length
+                      (simR (pairSndD u))))))] }.encode =
+    pairEncode (pairEncode (simX (pairSndD u)) (simZ (pairSndD u)))
+      (pairEncode
+        (List.drop (1 + ((simX (pairSndD u)).length + 1) ^ 2)
+          (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))
+        (pairEncode
+          (encGraph
+            (permGraph
+              (if
+                  (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))).headD
+                      false =
+                    true then
+                instanceG₁ (simX (pairSndD u))
+              else instanceG₀ (simX (pairSndD u)))
+              (samplePerm (instanceVertexCount (simX (pairSndD u)))
+                (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+                  (List.drop 1
+                    (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u))))))))
+          (pairEncode
+            (encPerm
+              (samplePerm (instanceVertexCount (simX (pairSndD u)))
+                (List.take (((simX (pairSndD u)).length + 1) ^ 2)
+                  (List.drop 1
+                    (coinSlice (blockLen V' (simX (pairSndD u)).length) (pairFstD u).length (simR (pairSndD u)))))))
+            [])))
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1681:4: error: Type mismatch
+  unarySqrt_poly (unaryLength_poly (PolyTimeComputable.comp polyTimeComputable_pairFstD simX_poly))
+has type
+  PolyTimeComputable fun x => List.replicate ((pairFstD ∘ simX) x).length.sqrt true
+but is expected to have type
+  PolyTimeComputable fun w => List.replicate (instanceVertexCount (simX w)) true
+.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator.lean:1700:89: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.42 = ?m.42
+but is expected to have type
+  (NUPPT.ofPolyTimeUniform hF (simCoins V')).coins = simCoins V'
+in the application
+  And.intro rfl
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/wt/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphismZK/Simulator): no fresh .olean produced
+
+END 2026-11-08T07:38:45.153307+00:00 RC 1 elapsed=14.8s pid=21061 maxrss=2680300KiB

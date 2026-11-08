@@ -1,0 +1,137 @@
+START 2026-11-08T09:20:28.482992+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean sha256=682e4169ea0cc0f779ca99f30bbd6e98c61f507e54daa3885689d886108bb8f7
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=200 active=200 already=0
+CP2-SEAL chunk=6 requested=200 active=200 already=0
+CP2-SEAL chunk=7 requested=100 active=100 already=0
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:1940:6: error: Type mismatch
+  abs_nonneg ?m.61
+has type
+  0 ≤ |?m.61|
+but is expected to have type
+  0 ≤ distAdv (S.pkEncDist n false) (S.pkEncDist n true) (D.distinguisherL n)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:1948:6: error: Type mismatch
+  Eq.le (abs_sub_comm ?m.167 ?m.168)
+has type
+  |?m.167 - ?m.168| ≤ |?m.168 - ?m.167|
+but is expected to have type
+  distAdv (S.pkEncDist n true) (S.pkEncDist n false) (D.distinguisherL n) ≤
+    distAdv (S.pkEncDist n false) (S.pkEncDist n true) (D.distinguisherL n)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:1961:4: error: Application type mismatch: The argument
+  PolyTimeComputable.pairEncode NUPPT.polyTimeComputable_inParam
+    (PolyTimeComputable.pairEncode (PolyTimeComputable.comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg)
+      (PolyTimeComputable.pairEncode
+        (PolyTimeComputable.comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+        NUPPT.polyTimeComputable_inCoins))
+has type
+  PolyTimeComputable fun x =>
+    pairEncode (NUPPT.inParam x)
+      (pairEncode ((pairFstD ∘ NUPPT.inArg) x) (pairEncode ((pairSndD ∘ NUPPT.inArg) x) (NUPPT.inCoins x)))
+but is expected to have type
+  PolyTimeComputable fun z =>
+    blockState (NUPPT.inParam z) (pairFstD (NUPPT.inArg z)) (pairSndD (NUPPT.inArg z)) (NUPPT.inCoins z)
+in the application
+  PolyTimeComputable.comp (blockEncFun_poly (NUPPT.polyTimeComputable_output S.enc) (PolyExpr.const 1) S.enc.coins)
+    (PolyTimeComputable.pairEncode NUPPT.polyTimeComputable_inParam
+      (PolyTimeComputable.pairEncode
+        (PolyTimeComputable.comp polyTimeComputable_pairFstD NUPPT.polyTimeComputable_inArg)
+        (PolyTimeComputable.pairEncode
+          (PolyTimeComputable.comp polyTimeComputable_pairSndD NUPPT.polyTimeComputable_inArg)
+          NUPPT.polyTimeComputable_inCoins)))
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:2005:2: error: Tactic `rfl` failed: The left-hand side
+  S.enc.output (NUPPT.layout (List.replicate n true) (pairEncode pk [m i]) [] (coinBlock (S.enc.coins.eval n) (↑i) r))
+is not definitionally equal to the right-hand side
+  S.enc.output
+    (pairEncode (pairEncode (NUPPT.advInput n (pairEncode pk [m i])) []) (coinBlock (S.enc.coinLen n) (↑i) r))
+
+case e_a
+S : BitPublicKeyScheme
+n : ℕ
+pk : List Bool
+m : Fin n → Bool
+r : List Bool
+i : Fin n
+⊢ S.enc.output (NUPPT.layout (List.replicate n true) (pairEncode pk [m i]) [] (coinBlock (S.enc.coins.eval n) (↑i) r)) =
+    S.enc.output
+      (pairEncode (pairEncode (NUPPT.advInput n (pairEncode pk [m i])) []) (coinBlock (S.enc.coinLen n) (↑i) r))
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:2226:45: error: Application type mismatch: The argument
+  hBε n (fun x => false) fun x => false
+has type
+  distAdv (S.pkEncDist n fun x => false) (S.pkEncDist n fun x => false) (B.distinguisherL n) ≤ ε n
+but is expected to have type
+  |?m.190| ≤ ε n
+in the application
+  LE.le.trans (abs_nonneg ?m.190) (hBε n (fun x => false) fun x => false)
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:2202:28: error: unsolved goals
+S : PublicKeyScheme
+h : S.Secure
+D : NUPPT
+q : PolyExpr
+μ : (n : ℕ) → (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool)
+hμ :
+  ∀ (n : ℕ) (p' : (Fin (q.eval n + 1) → Fin n → Bool) × (Fin (q.eval n + 1) → Fin n → Bool)),
+    distAdv (S.pkMultiEncDist n (q.eval n) p'.1) (S.pkMultiEncDist n (q.eval n) p'.2) (D.distinguisherL n) ≤
+      distAdv (S.pkMultiEncDist n (q.eval n) (μ n).1) (S.pkMultiEncDist n (q.eval n) (μ n).2) (D.distinguisherL n)
+B : NUPPT
+hB :
+  ∀ (n : ℕ) (ε : ℝ),
+    0 ≤ ε →
+      (∀ (msg msg' : Fin (PolyExpr.var.eval n) → Bool),
+          distAdv (singleDist S.gen S.enc n (PolyExpr.var.eval n) msg)
+              (singleDist S.gen S.enc n (PolyExpr.var.eval n) msg') (B.distinguisherL n) ≤
+            ε) →
+        distAdv (multiDist S.gen S.enc n ((q.add (PolyExpr.const 1)).eval n) (PolyExpr.var.eval n) (μ n).1)
+            (multiDist S.gen S.enc n ((q.add (PolyExpr.const 1)).eval n) (PolyExpr.var.eval n) (μ n).2)
+            (D.distinguisherL n) ≤
+          ↑((q.add (PolyExpr.const 1)).eval n) * ε
+ε : ℕ → ℝ
+hε : Negligible ε
+hBε : ∀ (n : ℕ) (m₀ m₁ : Fin n → Bool), distAdv (S.pkEncDist n m₀) (S.pkEncDist n m₁) (B.distinguisherL n) ≤ ε n
+n : ℕ
+m m' : Fin (q.eval n + 1) → Fin n → Bool
+⊢ distAdv (S.pkMultiEncDist n (q.eval n) (μ n).1) (S.pkMultiEncDist n (q.eval n) (μ n).2) (D.distinguisherL n) ≤
+    (fun n => ↑((q.add (PolyExpr.const 1)).eval n) * ε n) n
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:2464:87: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.47 ↔ ?m.47
+but is expected to have type
+  pkPredictor D flip (f x✝.1) x✝.2 = B x✝.1 ↔
+    owpPredictor (fun v r => D (v.1, v.2.2) r) flip
+        (owpPair f (((Equiv.prodPUnit α).symm.prodCongr (Equiv.refl (Bool × ρ))) x✝).1)
+        (((Equiv.prodPUnit α).symm.prodCongr (Equiv.refl (Bool × ρ))) x✝).2 =
+      B (((Equiv.prodPUnit α).symm.prodCongr (Equiv.refl (Bool × ρ))) x✝).1.1
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:2472:82: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.45 ↔ ?m.45
+but is expected to have type
+  D ((owpGen f (fun w => B w.1) x✝.1).1, (owpGen f (fun w => B w.1) x✝.1).2.2) x✝.2 = true ↔
+    D (f (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).1, B (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).1)
+        (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).2 =
+      true
+.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey.lean:2480:82: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.45 ↔ ?m.45
+but is expected to have type
+  D ((owpGenNot f (fun w => B w.1) x✝.1).1, (owpGenNot f (fun w => B w.1) x✝.1).2.2) x✝.2 = true ↔
+    D
+        (f (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).1,
+          !B (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).1)
+        (((Equiv.prodPUnit α).prodCongr (Equiv.refl ρ)) x✝).2 =
+      true
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final/TCSlib/Cryptography/Asymptotic/PublicKey): no fresh .olean produced
+
+END 2026-11-08T09:20:48.437299+00:00 RC 1 elapsed=20.0s pid=15560 maxrss=2778660KiB

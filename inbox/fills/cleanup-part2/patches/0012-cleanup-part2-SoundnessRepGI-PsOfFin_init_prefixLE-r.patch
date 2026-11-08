@@ -1,0 +1,28 @@
+From ea37eb57c28710271e41533d528309a6d7d00519 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 8 Nov 2026 07:45:53 +0000
+Subject: [PATCH 12/13] cleanup-part2: SoundnessRepGI PsOfFin_init_prefixLE
+ reads Fin.init by a show step (Mathlib definitions are never passed to rw)
+
+---
+ .../ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean        | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
+index 6125226dd..8d67cf268 100644
+--- a/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
++++ b/TCSlib/Cryptography/ZeroKnowledge/GraphIsomorphism/SoundnessRepGI.lean
+@@ -154,7 +154,9 @@ theorem PsOfFin_init_prefixLE {m : ℕ} (b : Fin m → Bool) (i : Fin m) :
+     PsOfFin (Fin.init (prefixLE b i)) = PsOf (fun k => (List.ofFn b).getD k false) i := by
+   unfold PsOfFin
+   refine PsOf_congr i fun k hk => ?_
+-  rw [dif_pos hk, getD_ofFn_lt' b (by omega), Fin.init, prefixLE_apply]
++  rw [dif_pos hk, getD_ofFn_lt' b (by omega)]
++  show prefixLE b i (Fin.castSucc _) = _
++  rw [prefixLE_apply]
+   rfl
+ 
+ /-- The last challenge of a prefix `b_0, …, b_i` is `b_i`. -/
+-- 
+2.43.0
+

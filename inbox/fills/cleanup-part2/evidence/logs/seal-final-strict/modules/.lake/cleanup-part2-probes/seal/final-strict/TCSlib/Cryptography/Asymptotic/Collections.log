@@ -1,0 +1,232 @@
+START 2026-11-08T09:34:55.448371+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean sha256=a91ed9d445b94e7ea908987f95880c74b577aa6508faa56b2642de40c8008f38
+CP2-SEAL chunk=0 requested=200 active=200 already=0
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=131 active=131 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1603:6: error: Type mismatch
+  fun s => some s
+has type
+  ?m.45 → Option ?m.45
+but is expected to have type
+  (𝓕.toCollection F hF hspec).sample.Coins i.length → Option ((𝓕.toCollection F hF hspec).D i)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1761:86: error: Application type mismatch: The argument
+  r
+has type
+  Fin ((G.gen.coins.add G.sample.coins).eval n) → Bool
+but is expected to have type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+in the application
+  (G.owfCoinsEquiv n) r
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1762:76: error: Application type mismatch: The argument
+  r
+has type
+  Fin ((G.gen.coins.add G.sample.coins).eval n) → Bool
+but is expected to have type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+in the application
+  (G.owfCoinsEquiv n) r
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1861:86: error: Application type mismatch: The argument
+  x
+has type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+but is expected to have type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+in the application
+  (G.owfCoinsEquiv n) x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1862:88: error: Application type mismatch: The argument
+  x
+has type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+but is expected to have type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+in the application
+  (G.owfCoinsEquiv n) x
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1862:97: error: unsolved goals
+G : Collection
+L : PolyExpr
+hF : PolyTimeComputable fun z => padStr L (pairFstD z) (G.owfRawStr (pairFstD z) (pairSndD z) ++ [true])
+n : ℕ
+x : Fin ((G.owfFamily L).inLen.eval n) → Bool
+⊢ List.ofFn x = List.ofFn sorry
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1864:74: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1970:8: error: Application type mismatch: The argument
+  (G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))
+has type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+but is expected to have type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+in the application
+  (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1972:30: error: Application type mismatch: The argument
+  (G.owfCoinsEquiv n).symm z'
+has type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+but is expected to have type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+in the application
+  (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm z')
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1974:10: error: Application type mismatch: The argument
+  (G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))
+has type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+but is expected to have type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+in the application
+  (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1990:63: error: Application type mismatch: The argument
+  h
+has type
+  True
+but is expected to have type
+  padFin (L.eval n)
+      (G.owfRaw n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) z').1
+          ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) z').2 ++
+        [true]) =
+    padFin (L.eval n) (G.owfRaw n r₁ r₂ ++ [true])
+in the application
+  padFin_append_true_injective
+    (hL n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) z').1
+      ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) z').2)
+    (hL n r₁ r₂) h
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2006:12: error: Application type mismatch: The argument
+  (G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂))
+has type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+but is expected to have type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+in the application
+  (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, r₂)))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2007:87: error: unsolved goals
+G : Collection
+L : PolyExpr
+hL : G.OutLenBound L
+A' : NUPPT
+n : ℕ
+r₁ : G.gen.Coins n
+r₂ : G.sample.Coins n
+ρ : A'.Coins n
+z' : Fin (G.gen.coinLen n + G.sample.coinLen n) → Bool
+hz' : A'.runAt n (List.ofFn ((G.owfFamily L).f n sorry)) ρ = List.ofFn z'
+hg : (G.owfFamily L).f n sorry = (G.owfFamily L).f n sorry
+x : G.D (G.index n r₁)
+hx1 : G.decD (G.index n r₁) (G.sample.runAt n (G.index n r₁) r₂) = some x
+hx2 : G.eval (pairEncode (G.index n r₁) (G.sample.runAt n (G.index n r₁) r₂)) = G.f (G.index n r₁) x
+hraw : G.owfRaw n r₁ r₂ = pairEncode (G.index n r₁) (G.f (G.index n r₁) x)
+hg' :
+  G.owfRaw n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) z').1
+      ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) z').2 =
+    G.owfRaw n r₁ r₂
+hidx : G.index n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) z').1 = G.index n r₁
+hev :
+  G.eval
+      (pairEncode (G.index n r₁)
+        (G.sample.runAt n (G.index n r₁) ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) z').2)) =
+    G.f (G.index n r₁) x
+⊢ List.ofFn (padFin (L.eval n) (G.owfRaw n r₁ r₂ ++ [true])) =
+    List.ofFn
+      (padFin (L.eval n)
+        (G.owfRaw n ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) ((G.owfCoinsEquiv n) sorry)).1
+            ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)) ((G.owfCoinsEquiv n) sorry)).2 ++
+          [true]))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1989:15: warning: declaration uses 'sorry'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:1989:26: warning: This simp argument is unused:
+  Equiv.apply_symm_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [owfFamily,̵ ̵E̵q̵u̵i̵v̵.̵a̵p̵p̵l̵y̵_̵s̵y̵m̵m̵_̵a̵p̵p̵l̵y̵] at h
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2008:28: warning: This simp argument is unused:
+  Equiv.apply_symm_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [owfFamily,̵ ̵E̵q̵u̵i̵v̵.̵a̵p̵p̵l̵y̵_̵s̵y̵m̵m̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2031:10: error: Application type mismatch: The argument
+  (G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))
+has type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+but is expected to have type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+in the application
+  (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2036:12: error: Application type mismatch: The argument
+  (G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))
+has type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+but is expected to have type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+in the application
+  (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2050:10: error: Application type mismatch: The argument
+  (G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))
+has type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+but is expected to have type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+in the application
+  (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2055:12: error: Application type mismatch: The argument
+  (G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1))
+has type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+but is expected to have type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+in the application
+  (G.owfFamily L).f n ((G.owfCoinsEquiv n).symm ((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm (r₁, v.1)))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2061:73: error: Application type mismatch: The argument
+  w
+has type
+  Fin ((G.owfFamily L).inLen.eval n) → Bool
+but is expected to have type
+  Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool
+in the application
+  (G.owfCoinsEquiv n) w
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2072:6: warning: This simp argument is unused:
+  Equiv.refl_apply
+
+Hint: Omit it from the simp argument list.
+  simp only [Pev, Option.some.injEq, exists_eq_left', Equiv.prodCongr_apply,̵
+  ̵ ̵ ̵ ̵ ̵ ̵ ̵E̵q̵u̵i̵v̵.̵r̵e̵f̵l̵_̵a̵p̵p̵l̵y̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections.lean:2092:6: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  uprob ?p
+in the target expression
+  (uprob fun z =>
+      ∃ x',
+        A'.runAt n (List.ofFn ((G.owfFamily L).f n z.1)) z.2 = List.ofFn x' ∧
+          (G.owfFamily L).f n x' = (G.owfFamily L).f n z.1) ≤
+    G.invProbAt (G.collInverter L A') n + δ n
+
+G : Collection
+L : PolyExpr
+hL : G.OutLenBound L
+A' : NUPPT
+δ : ℕ → ℝ
+hδ : G.SampleClose δ
+n : ℕ
+this : Nonempty (G.gen.Coins n)
+e : G.gen.Coins n × G.sample.Coins n × A'.Coins n ≃
+  (Fin (G.gen.coins.eval n + G.sample.coins.eval n) → Bool) × A'.Coins n :=
+  (Equiv.prodAssoc (G.gen.Coins n) (G.sample.Coins n) (A'.Coins n)).symm.trans
+    (((splitCoins (G.gen.coinLen n) (G.sample.coinLen n)).symm.trans (G.owfCoinsEquiv n).symm).prodCongr
+      (Equiv.refl (A'.Coins n)))
+⊢ (uprob fun z =>
+      ∃ x',
+        A'.runAt n (List.ofFn ((G.owfFamily L).f n z.1)) z.2 = List.ofFn x' ∧
+          (G.owfFamily L).f n x' = (G.owfFamily L).f n z.1) ≤
+    G.invProbAt (G.collInverter L A') n + δ n
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/Collections): no fresh .olean produced
+
+END 2026-11-08T09:35:10.967129+00:00 RC 1 elapsed=15.5s pid=18040 maxrss=2693824KiB

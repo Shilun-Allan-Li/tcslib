@@ -1,0 +1,184 @@
+START 2026-11-08T09:44:17.387589+00:00
+CMD bash scripts/lean_check_tree.sh .lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas
+CWD /workspace/cp2/src
+TCSLIB_OLEANS /workspace/cp2/src/.lake/cleanup-part2-oleans
+PATH /root/.elan/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+SOURCE /workspace/cp2/src/.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean sha256=5070ffb8000cd50b8533b166d9fee5426d218d78b2c41a4e08250fa974e5b595
+CP2-SEAL chunk=0 requested=200 active=182 already=18
+CP2-SEAL chunk=1 requested=200 active=200 already=0
+CP2-SEAL chunk=2 requested=200 active=200 already=0
+CP2-SEAL chunk=3 requested=200 active=200 already=0
+CP2-SEAL chunk=4 requested=200 active=200 already=0
+CP2-SEAL chunk=5 requested=178 active=178 already=0
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:1486:15: warning: This simp argument is unused:
+  blockList_zero
+
+Hint: Omit it from the simp argument list.
+  simp only [̵b̵l̵o̵c̵k̵L̵i̵s̵t̵_̵z̵e̵r̵o̵,̵ ̵b̵l̵o̵c̵k̵L̵i̵s̵t̵_̵s̵u̵c̵c̵,̵[̲b̲l̲o̲c̲k̲L̲i̲s̲t̲_̲s̲u̲c̲c̲,̲ hne, if_false, List.cons.injEq]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:1525:2: error: Tactic `rfl` failed: The left-hand side
+  Enc.output
+    (NUPPT.layout (List.replicate n true) (pairEncode pk (List.ofFn (msg i))) [] (coinBlock (Enc.coins.eval n) (↑i) r))
+is not definitionally equal to the right-hand side
+  Enc.output
+    (pairEncode (pairEncode (NUPPT.advInput n (pairEncode pk (List.ofFn (msg i)))) [])
+      (coinBlock (Enc.coinLen n) (↑i) r))
+
+Enc : NUPPT
+hEnc : Enc.Uniform
+L : PolyExpr
+n : ℕ
+hL : 0 < L.eval n
+pk : List Bool
+k : ℕ
+msg : Fin k → Fin (L.eval n) → Bool
+r : List Bool
+hk : k ≤ (blockState (List.replicate n true) pk (List.ofFn fun i => List.ofFn (msg i)).flatten r).length
+i : Fin k
+⊢ Enc.output
+      (NUPPT.layout (List.replicate n true) (pairEncode pk (List.ofFn (msg i))) []
+        (coinBlock (Enc.coins.eval n) (↑i) r)) =
+    Enc.output
+      (pairEncode (pairEncode (NUPPT.advInput n (pairEncode pk (List.ofFn (msg i)))) [])
+        (coinBlock (Enc.coinLen n) (↑i) r))
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:1938:82: error: Type mismatch
+  rfl
+has type
+  ?m.352 = ?m.352
+but is expected to have type
+  distAdv (fun z => pairEncode (P z.1) (encodeList (List.ofFn fun i => E (P z.1) (m i) (z.2 i))))
+      (fun z => pairEncode (P z.1) (encodeList (List.ofFn fun i => E (P z.1) (m' i) (z.2 i)))) Dst =
+    distAdv (fun z => (P z.1, fun i => E (P z.1) (m i) (z.2 i))) (fun z => (P z.1, fun i => E (P z.1) (m' i) (z.2 i)))
+      fun w r' => Dst (pairEncode w.1 (encodeList (List.ofFn w.2))) r'
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:2014:81: error: unsolved goals
+Gen Enc D : NUPPT
+hEnc : Enc.Uniform
+K L : PolyExpr
+m m' : (n : ℕ) → Fin (K.eval n) → Fin (L.eval n) → Bool
+term : (n : ℕ) → Fin (K.eval n) → ℝ :=
+  fun n j =>
+    distAdv (singleDist Gen Enc n (L.eval n) (m n j)) (singleDist Gen Enc n (L.eval n) (m' n j))
+      (hybridAdv Enc D n (K.eval n) (L.eval n) (m n) (m' n) ↑j)
+jN : ℕ → ℕ
+hjN : ∀ (n : ℕ), 0 < K.eval n → ∃ (hj : jN n < K.eval n), ∀ (jf : Fin (K.eval n)), term n jf ≤ term n ⟨jN n, hj⟩
+B : NUPPT
+hBc : B.coins = (K.mul Enc.coins).add D.coins
+hB :
+  ∀ (n : ℕ),
+    jN n < K.eval n →
+      0 < L.eval n →
+        ∀ (pk c : List Bool) (v : Fin (K.eval n) → Enc.Coins n) (ρ : D.Coins n),
+          B.runAtL n (pairEncode pk c) (List.ofFn ((coinBlocks (K.eval n) (Enc.coinLen n)) v) ++ List.ofFn ρ) =
+            D.runAtL n
+              (pairEncode pk
+                (encodeList
+                  (List.ofFn fun i =>
+                    if ↑i < jN n then Enc.runAt n (pairEncode pk (List.ofFn (m' n i))) (v i)
+                    else if ↑i = jN n then c else Enc.runAt n (pairEncode pk (List.ofFn (m n i))) (v i))))
+              (List.ofFn ρ)
+n : ℕ
+ε : ℝ
+hε : 0 ≤ ε
+hsingle :
+  ∀ (msg msg' : Fin (L.eval n) → Bool),
+    distAdv (singleDist Gen Enc n (L.eval n) msg) (singleDist Gen Enc n (L.eval n) msg') (B.distinguisherL n) ≤ ε
+hL : L.eval n > 0
+hK : K.eval n > 0
+hj : jN n < K.eval n
+hjmax : ∀ (jf : Fin (K.eval n)), term n jf ≤ term n ⟨jN n, hj⟩
+msg : Fin (L.eval n) → Bool
+r : Gen.Coins n
+s : Enc.Coins n
+v : Fin (K.eval n) → Enc.Coins n
+ρ : D.Coins n
+⊢ decide
+      (D.runAtL n
+          (pairEncode (pairFstD (Gen.runAtL n [] (List.ofFn r)))
+            (encodeList
+              (List.ofFn fun i =>
+                if ↑i < jN n then
+                  Enc.runAtL n (pairEncode (pairFstD (Gen.runAtL n [] (List.ofFn r))) (List.ofFn (m' n i)))
+                    (List.ofFn (v i))
+                else
+                  if ↑i = jN n then
+                    Enc.runAtL n (pairEncode (pairFstD (Gen.runAtL n [] (List.ofFn r))) (List.ofFn msg)) (List.ofFn s)
+                  else
+                    Enc.runAtL n (pairEncode (pairFstD (Gen.runAtL n [] (List.ofFn r))) (List.ofFn (m n i)))
+                      (List.ofFn (v i)))))
+          (List.ofFn ρ) =
+        [true]) =
+    decide
+      (D.runAtL n
+          (pairEncode (pairFstD (Gen.runAtL n [] (List.ofFn r)))
+            (encodeList
+              (List.ofFn fun i =>
+                if ↑i < jN n then
+                  Enc.runAtL n (pairEncode (pairFstD (Gen.runAtL n [] (List.ofFn r))) (List.ofFn (m' n i)))
+                    (List.ofFn (v i))
+                else
+                  if ↑i = jN n then
+                    Enc.runAtL n (pairEncode (pairFstD (Gen.runAtL n [] (List.ofFn r))) (List.ofFn msg)) (List.ofFn s)
+                  else
+                    Enc.runAtL n (pairEncode (pairFstD (Gen.runAtL n [] (List.ofFn r))) (List.ofFn (m n i)))
+                      (List.ofFn (v i)))))
+          (List.ofFn ρ) =
+        [true])
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:2022:4: error: Type mismatch
+  hsingle ?m.345 ?m.346
+has type
+  distAdv (singleDist Gen Enc n (L.eval n) ?m.345) (singleDist Gen Enc n (L.eval n) ?m.346) (B.distinguisherL n) ≤ ε
+but is expected to have type
+  |acceptProb (singleDist Gen Enc n (L.eval n) (m n ⟨jN n, hj⟩)) (B.distinguisherL n) -
+        acceptProb (singleDist Gen Enc n (L.eval n) (m' n ⟨jN n, hj⟩)) (B.distinguisherL n)| ≤
+    ε
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:2097:96: error: unsolved goals
+D : NUPPT
+flip : Bool
+n : ℕ
+i y : List Bool
+c : Bool
+ρ : List Bool
+⊢ decide
+      (D.output
+          (pairEncode (pairEncode (pairEncode (List.replicate n true) (pairEncode i (pairEncode y [c]))) (D.advice n))
+            ρ) =
+        [true]) =
+    decide
+      (D.output
+          (pairEncode (pairEncode (pairEncode (List.replicate n true) (pairEncode i (pairEncode y [c]))) (D.advice n))
+            ρ) =
+        [true])
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:2140:51: error: unsolved goals
+case e_p.h
+α : Type u_1
+inst✝ : Fintype α
+D : NUPPT
+flip : Bool
+n : ℕ
+i : List Bool
+f : α → α
+h : α → Bool
+enc : α → List Bool
+x : α
+c : Bool
+ρ : D.Coins n
+⊢ ((c ^^ !decide (D.runAtL n (pairEncode i (pairEncode (enc (f x)) [c])) (List.ofFn ρ) = [true]) ^^ flip) = h x) =
+    (((if decide (D.runAtL n (pairEncode i (pairEncode (enc (f x)) [c])) (List.ofFn ρ) = [true]) = true then c
+        else !c) ^^
+        flip) =
+      h x)
+.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas.lean:2146:83: warning: This simp argument is unused:
+  ite_eq_xor_not
+
+Hint: Omit it from the simp argument list.
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply, NUPPT.distinguisherL_eq,
+      NUPPT.runAt_eq, ofFn_predCoins, tdpPredictor_runAtL, decide_singleton_eq_true,̵ ̵i̵t̵e̵_̵e̵q̵_̵x̵o̵r̵_̵n̵o̵t̵]
+
+Note: This linter can be disabled with `set_option linter.unusedSimpArgs false`
+CP2-EOF
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas): lean exited with status 1
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas): error diagnostics reported
+FAIL(.lake/cleanup-part2-probes/seal/final-strict/TCSlib/Cryptography/Asymptotic/PublicKeyLemmas): no fresh .olean produced
+
+END 2026-11-08T09:44:33.170694+00:00 RC 1 elapsed=15.8s pid=19440 maxrss=2742964KiB

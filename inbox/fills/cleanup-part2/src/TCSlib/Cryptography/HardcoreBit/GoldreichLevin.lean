@@ -156,7 +156,7 @@ theorem idealTrial_correct (f : (Fin n → Bool) → β) (A : β × (Fin n → B
     rw [ip_add, ip_single]
     apply propext
     cases A (f x, z.1 + Pi.single i true) z.2 <;> cases ip x z.1 <;> cases x i <;> decide
-  rw [hev]
+  rw [hev, secProb_def]
   exact ((pushesUniform_xor (Pi.single i true)).prodMap
     (pushesUniform_id (Ω := ρ))).uprob_eq
     (fun z : (Fin n → Bool) × ρ => A (f x, z.1) z.2 = ip x z.1)
