@@ -9,7 +9,7 @@ complete axiom inventory, fourteen-body freeze comparison and scoped style check
 There are zero owned admissions and 17 inherited warnings. All 284 owned constants
 and nine backing machine contracts use only standard axioms. The only added
 constant is a disclosed compiler arithmetic auxiliary. The statement audit passes
-0/0/0/3; Codex is selected for the separate proof audit, with dispatch pending. Evidence and
+0/0/0/3, and the separate Codex proof audit also passes 0/0/0/3. Evidence and
 execution limits are under `briefs/lwe-sis-constructions/fills/02-encoding-adapters/`.
 No whole-root build or primitive-security completion is claimed.
 

@@ -5,7 +5,7 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
-All five scoped gates pass 0/0/0/3, including the construction-core proof
+All six scoped gates pass 0/0/0/3, including the construction-core proof
 report supplied as a user paste. All 31 core obligations are proved, with 263
 owned constants free of sorryAx. Their code and records stay fixed on #237;
 source-policy and relevant landing checks remain open for #236/#237.
@@ -20,8 +20,9 @@ compiler arithmetic auxiliary disclosed. Its statement audit passes 0/0/0/3.
 Draft PR
 [#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238) and exchange input
 `a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4` are remotely verified; findings
-pass 0/0/0/3. Codex is selected for the subsequent proof review; publication and
-user dispatch remain pending. Definitions/signatures and issued inputs remain frozen.
+pass 0/0/0/3. The subsequent Codex proof audit also passes 0/0/0/3 at exchange
+`228c265d642013da76afa6cec976eaf11a8eb1b9`. Its report is preserved verbatim
+from the user paste; definitions/signatures and issued inputs remain frozen.
 
 See `fills/02-encoding-adapters/` for the current proof-review preparation and
 `gates/04-encoding-adapters/` for the passing statement gate;
@@ -119,6 +120,6 @@ acquisition is now complete for Pei16/Wu24, with exact hashes and version checks
 ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
-**Not yet clear to merge — all five earlier scoped gates pass. The adapter proof
-gate, source ingestion/matching and relevant integration checks remain open.
+**Not yet clear to merge — all six scoped gates pass. Source ingestion/matching
+and relevant integration checks remain open.
 The user approves and merges PRs.**

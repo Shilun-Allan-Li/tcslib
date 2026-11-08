@@ -1,4 +1,13 @@
-# Encoding-adapter proof review: Codex selected, not dispatched
+# Encoding-adapter proof review: dispatched and passed
+
+The user supplied the completed Codex report: PASS 0/0/0/3. GitHub verifies
+PR #238's published head `3350700f054ba07b31bcf23cab9f590afd998e28` and the
+exact exchange input `228c265d642013da76afa6cec976eaf11a8eb1b9`.
+The filled source, records, bundle hash and section count below are unchanged.
+See `audits/lwe-sis-adapter-proofs-{findings,resolutions}.md` and the separate
+`proof-intake-r1.json`. No native rerun, push or merge is performed by intake.
+
+## Historical selection and prepared handoff
 
 The user freshly selected **Codex** for this proof gate. This is a separate
 external job from the completed adapter statement audit. Publication and user

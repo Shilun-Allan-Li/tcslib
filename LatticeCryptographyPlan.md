@@ -96,9 +96,11 @@ paste. All 14 audited theorem bodies are now filled at
 `b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`, with the trusted surface fixed.
 A fresh 93-module sweep and 284-constant standard-axiom inventory pass, including
 one disclosed arithmetic compiler auxiliary; all 100 other frozen paths are
-unchanged. The separate adapter proof audit is prepared, with Codex freshly
-selected; client publication and user dispatch remain pending. Source-policy
-and integration remain open.
+unchanged. The separate adapter proof audit now passes 0/0/0/3 at exchange
+`228c265d642013da76afa6cec976eaf11a8eb1b9`. Its full pasted report and separate
+dispositions are preserved under `audits/`; no proof correction is required.
+Source-policy and integration remain open. The next owned statement slice is
+scalar dyadic arithmetic using the proved encoders and existing public machines.
 
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
@@ -415,3 +417,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 (Pacific) | Adapter statement audit PASS 0/0/0/3 at `6eec97be8f54d9990340900a5595dab32fb477f5`; retained the complete pasted report and rechecked 101 frozen sources plus 199/174/106/86/82/9 nested evidence entries. Prepared an undispatched source-validation scope covering 143 declarations, 19 modules and all 196 raw PDF pages. | Only the 14 audited adapter theorem bodies enter fill on PR #238; source-policy, proof audit and integration remain open |
 | 2026-11-07 (Pacific) | Filled all 14 audited adapter proofs at `b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`; 20 declarations and trusted surface fixed, 100 other frozen paths unchanged. Fresh 93-module sweep (194.383 s), 284 owned constants and nine backing contracts only standard axioms, scoped style 0/2/19. One arithmetic compiler auxiliary disclosed; nine development runs retain two failures. | Separate proof-review preparation on existing PR #238; fresh worker choice/user dispatch, source-policy and landing obligations remain; no push or merge |
 | 2026-11-08 (UTC) | User freshly selects Codex for the separate adapter proof audit. The 1009-section bundle, filled source and bundled-record pins remain fixed. | Codex selected; client publication and user dispatch pending; no code change or merge |
+| 2026-11-08 (UTC) | User supplies the adapter proof report: PASS 0/0/0/3. Published PR #238 head `3350700f054ba07b31bcf23cab9f590afd998e28` and exchange `228c265d642013da76afa6cec976eaf11a8eb1b9` verified; rehashed all 101 sources and 146/199/174/106/86/82/9 nested evidence entries. All 14 proofs close their scoped gate. | No repair/native rerun/merge; scalar arithmetic may enter its next owned statement gate; N01–N03 and user integration remain open |
