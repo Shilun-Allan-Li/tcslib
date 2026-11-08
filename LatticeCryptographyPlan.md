@@ -284,10 +284,15 @@ zero new admissions and the same 17 inherited warnings. All 166 elaborated const
 use only standard axioms. The full library root has not been swept. Original statement
 evidence is unchanged; the proof fill has its own source freeze and evidence.
 
-Shell fetch/push remains blocked by DNS. The user published the earlier topic snapshot
-and statement audit inputs; both are remotely verified. The proof update uses a fresh
-PR branch and awaits client publication. Connector PR creation returns HTTP 403,
-`Resource not accessible by integration`; no PR or proof-review dispatch is claimed yet.
+Shell fetch/push remains blocked by DNS, and connector PR creation previously returned
+HTTP 403. The user completed client publication: draft
+[PR #236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) targets the campaign
+base from `cryptography/lwe-sis-encoding-proofs`, and Codex reviewed the exchange
+input at `ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. The returned representation-proof
+audit passes with 0 blockers, 0 majors, 0 minors and 3 continuing notes. Its report
+is preserved verbatim under `audits/lwe-sis-encoding-proofs-findings.md`; the separate
+resolutions close only this proof gate. Source archival and relevant integration
+checks remain open. The earlier published topic ref and all issued snapshots are unchanged.
 
 ## Decision log
 
@@ -312,3 +317,5 @@ PR branch and awaits client publication. Connector PR creation returns HTTP 403,
 | 2026-11-07 | User freshly selects Codex for representation-proof review at `lwe-sis-constructions/outbox/gates/01-encoding-proofs-r1/`: GitHub inputs, Markdown output in chat, user dispatch only. | Selected; publication/dispatch pending |
 | 2026-11-07 | Shell GitHub/source-host access still fails DNS. Connector draft-PR creation returns HTTP 403, `Resource not accessible by integration`. | Client publication required; no PR claimed yet |
 | 2026-11-07 | To enforce user-approved Lean updates, continue the verified proof fill on fresh PR branch `cryptography/lwe-sis-encoding-proofs`, from source commit `893e921bf2afeca293be9da9d495613bb1486796`, targeting the original campaign base. Leave the published `cryptography/lwe-sis-constructions` ref unchanged. Only the own checkout is switched. | Active PR route |
+| 2026-11-08 | Client publication remotely verified: draft PR #236 at `aaf4d1d3ea2e5113b6f53c3fedd9b5d47e852de1`, targeting the campaign base. User dispatched Codex against exchange `ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. | Supersedes earlier publication/dispatch pending status |
+| 2026-11-08 | Representation-proof report received verbatim, SHA-256 `21783a113298e880cfb7cc272607c787b0bf908cbaac9e23a646236e8bfb4857`. PASS 0 blockers / 0 majors / 0 minors / 3 continuing notes. Intake reverified all 63 frozen source files, 86 current evidence hashes, 82 historical hashes and 5 exchange-gate hashes; no Lean or pin change. | Proof gate closed; N01–N03 retained; no merge approval |

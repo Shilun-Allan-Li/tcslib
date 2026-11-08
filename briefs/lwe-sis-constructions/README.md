@@ -9,6 +9,13 @@ The phase-0 statement audit passed with 0 blockers, 0 majors, 0 minors and 3 not
 The report is retained verbatim under `audits/lwe-sis-phase0-findings.md`, with its
 dispositions in `audits/lwe-sis-phase0-resolutions.md`.
 
+The representation-proof audit also passed with 0 blockers, 0 majors, 0 minors
+and the same 3 continuing notes. Its verbatim report is
+`audits/lwe-sis-encoding-proofs-findings.md`; its gate closure and retained
+obligations are in `audits/lwe-sis-encoding-proofs-resolutions.md`. No Lean repair
+was required. Maintainer intake reverified all 63 frozen source files and the
+current, historical and exchange checksums; it did not rerun native checks.
+
 All 14 audited representation lemmas are now proved at
 `893e921bf2afeca293be9da9d495613bb1486796`: modular vector/matrix lengths and
 injectivity, LWE/SIS challenge lengths and faithfulness, signed SIS decoding completeness,
@@ -50,18 +57,22 @@ is still three root imports, isolated in export commit
 owner APIs, pins, other campaigns' records and other maintainers' checkouts are unchanged.
 Builds use only the own pinned packages and scratch objects; root native/cache jobs are serial.
 
-The user freshly selected Codex for proof review. Inputs are prepared under
+The user selected and dispatched Codex for proof review. Inputs were published under
 `lwe-sis-constructions/outbox/gates/01-encoding-proofs-r1/` on the orphan exchange;
-Codex returns Markdown in chat and the user dispatches the job. The separate sparse
-publisher clone changes only this namespace, leaving the shared exchange checkout,
-index and original inbox report alone. The previous statement input is published at
-exchange `09d1456efacded71850c84497db5c8d1f65ab0a0`.
+the exact audited exchange commit is
+`ebe777ba3bf904f6a6909aaf8b931fcb0c53f358`. Codex returned Markdown in chat.
+The separate sparse publisher clone changes only this namespace, leaving the shared
+exchange checkout, index and original inbox reports alone. The previous statement
+input is published at exchange `09d1456efacded71850c84497db5c8d1f65ab0a0`.
 
-The remote topic branch currently contains the earlier foundation snapshot. The proof
-update awaits client publication: shell GitHub access fails DNS, and connector PR creation
-returns HTTP 403. No PR or completed proof-review dispatch is claimed. Source PDF
-archival/ingestion and the future sampler/profile/machine obligations remain open under
-N01–N03. Live source checks do not close archival provenance.
+Draft PR [#236](https://github.com/Shilun-Allan-Li/tcslib/pull/236) is published
+from `cryptography/lwe-sis-encoding-proofs` to the campaign target; its head before
+this records-only intake is `aaf4d1d3ea2e5113b6f53c3fedd9b5d47e852de1`.
+The earlier `cryptography/lwe-sis-constructions` ref remains unchanged at
+`2c37f3f486822a52f4a9e337c6b742e995ebb118`. Client publication resolved the earlier
+connector/DNS block; historical preparation records remain unchanged. Source PDF
+archival/ingestion, landing checks and future sampler/profile/machine obligations
+remain open under N01–N03. Live source checks do not close archival provenance.
 
-**Not yet clear to merge — statements and all representation proofs pass; external
-proof review, source archival and user-controlled integration remain open.**
+**Not yet clear to merge — statement and representation-proof gates pass; source
+archival and relevant integration checks remain open. The user approves merges.**
