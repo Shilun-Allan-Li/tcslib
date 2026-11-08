@@ -632,7 +632,8 @@ private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : �
     have := D.advice_length n
     omega
   let A := NUPPT.ofPolyTime hF (.add ℓ D.coins) _ (fun n => pairEncode (D.advice n) [flip n]) hadv
-  have hlen : ∀ n, A.coinLen n = ℓ.eval n + D.coinLen n := fun n => rfl
+  have hlen : ∀ n, A.coinLen n = ℓ.eval n + D.coinLen n := fun n => by
+    simp only [A, NUPPT.coinLen_eq, NUPPT.coins_ofPolyTime, PolyExpr.eval_add]
   let e : ∀ n, (Fin (ℓ.eval n) → Bool) × D.Coins n ≃ A.Coins n := fun n =>
     (Fin.appendEquiv (ℓ.eval n) (D.coinLen n)).trans
       (Equiv.arrowCongr (finCongr (hlen n).symm) (Equiv.refl Bool))
@@ -716,7 +717,9 @@ theorem Ensemble.NextBitUnpredictable.pseudorandom {ℓ : PolyExpr} {X : Ensembl
   · obtain ⟨n, hn, hpn⟩ := hinf n₀
     refine ⟨n, hn, ?_⟩
     have hppos : (0 : ℝ) < p.eval n := by exact_mod_cast hp n
-    have h0 : 0 ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) := abs_nonneg _
+    have h0 : 0 ≤ prgAdv (X.X n) (D.distinguisher n (ℓ.eval n)) := by
+      rw [prgAdv_eq, distAdv_def]
+      exact abs_nonneg _
     rw [abs_of_nonneg h0] at hpn
     -- on the infinite set `ℓ(n) > 0`: at `ℓ(n) = 0` the advantage is `0`
     have hℓn : 0 < ℓ.eval n := by
@@ -798,7 +801,14 @@ theorem Ensemble.uniform_nextBitUnpredictable (ℓ : PolyExpr) :
     (Ensemble.uniform ℓ).NextBitUnpredictable := by
   intro A
   refine ⟨fun _ => 0, negligible_zero, fun n i => ?_⟩
-  rw [show (Ensemble.uniform ℓ).X n = id from rfl, nextBitProb_id]
+  have hrel : nextBitProb ((Ensemble.uniform ℓ).X n) i (A.predictor n i) =
+      nextBitProb (id : (Fin (ℓ.eval n) → Bool) → Fin (ℓ.eval n) → Bool) i (A.predictor n i) := by
+    unfold nextBitProb
+    rw [← uprob_comp_equiv ((Equiv.cast (Ensemble.uniform_σ ℓ n)).prodCongr (Equiv.refl _))]
+    refine congrArg uprob (funext fun z => ?_)
+    simp only [Equiv.prodCongr_apply, Prod.map_fst, Prod.map_snd, Equiv.refl_apply, id_eq,
+      Ensemble.uniform_X, Equiv.cast_apply, cast_cast, cast_eq]
+  rw [hrel, nextBitProb_id]
   simp
 
 /-- The distinguisher built from a next-bit predictor `A` at position `i`: accept the string
@@ -886,11 +896,17 @@ private theorem exists_nextBitDistMachine {ℓ : PolyExpr} (A : NUPPT) (k : ℕ 
     have := hk n
     omega
   refine ⟨NUPPT.ofPolyTime hG A.coins _
-    (fun n => pairEncode (A.advice n) (List.replicate (k n) true)) hadv, rfl, fun n y r => ?_⟩
+    (fun n => pairEncode (A.advice n) (List.replicate (k n) true)) hadv, NUPPT.coins_ofPolyTime ..,
+    fun n y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
-      NUPPT.inCoins_eq,
-    NUPPT.runAtL_eq]
+  refine congrArg (fun b : Bool => [b]) (decide_eq_decide.2 ?_)
+  refine Iff.of_eq (congrArg₂ (fun a b : Bool => [a] = [b]) (decide_eq_decide.2 ?_) ?_)
+  · simp only [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+      NUPPT.inAdvice_eq, NUPPT.inCoins_eq, NUPPT.runAtL_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate]
+  · simp only [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+      NUPPT.inAdvice_eq, NUPPT.inCoins_eq, pairFstD_pairEncode, pairSndD_pairEncode,
+      List.length_replicate]
 
 /-- **Soundness of the next-bit test, asymptotic form** (the converse of
 [PS10, Theorem 75.4], implicit in the text's "a pseudorandom distribution needs to pass all
@@ -962,9 +978,10 @@ theorem Ensemble.Pseudorandom.nextBitUnpredictable {ℓ : PolyExpr} {X : Ensembl
   have hid : ∀ (t : Fin (ℓ.eval n) → Bool) (r : A.Coins n),
       Dm.distinguisher n (ℓ.eval n) t (e n r) = nextBitDist j₀ (A.predictor n j₀) t r := by
     intro t r
-    simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn,
-        nextBitDist, NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
-      headD_drop_ofFn, ofFn_prefixOf]
+    rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn]
+    unfold nextBitDist
+    rw [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
+      ofFn_prefixOf, headD_drop_ofFn]
     simp
   have hadv : prgAdv (X.X n) (Dm.distinguisher n (ℓ.eval n)) = |ε n| := by
     rw [← hspec, ← prgAdv_nextBitDist (X.X n) j₀ (A.predictor n j₀)]

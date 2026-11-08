@@ -55,6 +55,13 @@ string `x`. -/
 def PolyTimeReducible (L L' : Language Bool) : Prop :=
   ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L'
 
+/-- The defining property of `PolyTimeReducible`: some polynomial-time `f` has
+`x ∈ L ↔ f x ∈ L'` for every `x`. -/
+theorem polyTimeReducible_iff (L L' : Language Bool) :
+    PolyTimeReducible L L' ↔
+      ∃ f : List Bool → List Bool, PolyTimeComputable f ∧ ∀ x, x ∈ L ↔ f x ∈ L' :=
+  Iff.rfl
+
 @[inherit_doc] scoped infix:50 " ≤ₚ " => PolyTimeReducible
 
 /-- Karp reducibility is reflexive [AB09, Exercise 2.9]: the identity reduces

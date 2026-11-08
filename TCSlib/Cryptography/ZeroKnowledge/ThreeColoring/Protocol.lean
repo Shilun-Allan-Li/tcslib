@@ -178,7 +178,7 @@ theorem colVerify_honest (Com : List Bool → List Bool) {n ℓn : ℕ} {G : Gra
   rw [hp]
   simp only [colOpen, pairFstD_pairEncode, pairSndD_pairEncode, decColor_encColor,
     List.length_ofFn, decide_eq_true_eq]
-  refine ⟨trivial, trivial, ?_, ?_, fun h => hc _ _ hadj (π.injective h)⟩
+  refine ⟨trivial, trivial, ?_, ?_, fun h => (ProperColoring_iff G c).1 hc _ _ hadj (π.injective h)⟩
   · rw [colCommit, multiCom_def, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
   · rw [colCommit, multiCom_def, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
 
@@ -236,7 +236,8 @@ theorem exists_bad_edge {n : ℕ} {G : Graph n} (hG : ¬ ThreeColorable G)
       ct (edgeOf G e).1 = ct (edgeOf G e).2 := by
   by_contra hcon
   push_neg at hcon
-  refine hG ⟨fun i => (ct i).getD 0, fun u v huv heq => ?_⟩
+  refine hG ((threeColorable_iff G).2
+    ⟨fun i => (ct i).getD 0, (ProperColoring_iff G _).2 fun u v huv heq => ?_⟩)
   obtain ⟨e, he⟩ := exists_edgeOf_eq G huv
   obtain ⟨h1, h2, h3⟩ := hcon e
   simp only [he] at h1 h2 h3
@@ -965,15 +966,18 @@ theorem col_efficientProverProofErr {Com : List Bool → List Bool} {ℓ : PolyE
   complete := by
     obtain ⟨B, hB, -⟩ := colProtocol_proverBounded hC R3COL
     refine ⟨B, fun x hx => ?_⟩
-    obtain ⟨y, n, G, c, rfl, rfl, hc⟩ := (mem_L3COL_iff x).1 hx
+    obtain ⟨y, hy⟩ := (mem_L3COL_iff x).1 hx
+    obtain ⟨n, G, c, rfl, rfl, hc⟩ := (R3COL_iff _ _).1 hy
     exact ⟨encColoring c,
-      fun r hist => (Protocol.proverBounded_iff _ _ _).1 hB _ _ r hist ⟨n, G, c, rfl, rfl, hc⟩,
+      fun r hist => (Protocol.proverBounded_iff _ _ _).1 hB _ _ r hist
+        ((R3COL_iff _ _).2 ⟨n, G, c, rfl, rfl, hc⟩),
       fun z => HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r⟩
   sound := fun x hx P' z => colProtocol_sound hC x hx P' z
   efficientP := colProver_efficient hC.easy ℓ
   boundedP := (colProtocol_proverBounded hC R3COL).imp fun _ h => h.1
   completeWitness := by
-    rintro x y ⟨n, G, c, rfl, rfl, hc⟩ z
+    intro x y hxy z
+    obtain ⟨n, G, c, rfl, rfl, hc⟩ := (R3COL_iff x y).1 hxy
     exact HardcoreBit.uprob_eq_one_of_forall fun r => colProtocol_outV_honest hc z r
 
 /-! ### The `n|E|`-fold protocol: the parties unfolded -/

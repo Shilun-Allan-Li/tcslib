@@ -268,7 +268,7 @@ the permutation word is `polyTimeComputable_encPermFromCoins` on `⟨fst x, coin
 theorem attemptAt_poly (V' : Strategy) (hV' : V'.Efficient) :
     PolyTimeComputable (fun u => [(attemptAt V' (pairSndD u) (pairFstD u).length).isSome]) ∧
     PolyTimeComputable (fun u => (attemptAt V' (pairSndD u) (pairFstD u).length).getD []) := by
-  obtain ⟨A, hA, -, hnext⟩ := hV'
+  obtain ⟨A, hA, -, hnext⟩ := (Strategy.efficient_iff V').1 hV'
   have hx : PolyTimeComputable fun u => simX (pairSndD u) := simX_poly.comp polyTimeComputable_pairSndD
   have hz : PolyTimeComputable fun u => simZ (pairSndD u) := simZ_poly.comp polyTimeComputable_pairSndD
   have hr : PolyTimeComputable fun u => simR (pairSndD u) := simR_poly.comp polyTimeComputable_pairSndD

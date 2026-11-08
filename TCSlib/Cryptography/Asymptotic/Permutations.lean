@@ -441,6 +441,9 @@ probability at most `n · 2^{-n}` (`uprob_permFromCoins_none_le_two_pow`) (D10).
 **Repair (run-3 audit P2-1):** the frozen `n` trials per position gave no negligible bound. -/
 def permTrials (n : ℕ) : ℕ := 2 * n * n
 
+/-- The defining equation of `permTrials`: `permTrials n = 2 * n * n`. -/
+theorem permTrials_eq (n : ℕ) : permTrials n = 2 * n * n := rfl
+
 /-- `n ≤ 2^{permBits n}`: the range of every position fits in the trial bits
 (`Nat.lt_size_self`). -/
 theorem le_two_pow_permBits (n : ℕ) : n ≤ 2 ^ permBits n := (Nat.lt_size_self n).le

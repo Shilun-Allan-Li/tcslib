@@ -593,7 +593,7 @@ theorem prg_expand (G : ∀ n, (Fin n → Bool) → (Fin (n + 1) → Bool)) (ℓ
   have hFs' : ∀ n (s : Fin n → Bool), F (List.ofFn s) = List.ofFn (G n s) := hFs
   refine ⟨?_, fun D => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := exists_expandEvaluator G hFs' hF ℓ
-    exact ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
+    exact (PRG.easy_iff _).2 ⟨E, hE, fun n s => by rw [hEs]; rfl⟩
   · have hk : ∀ n, ∃ k < ℓ.eval n,
         prgAdv (fun s => (prgExt (oneBitStep (G n)) (ℓ.eval n) s).1) (D.distinguisher n (ℓ.eval n)) /
           ℓ.eval n ≤
@@ -819,7 +819,7 @@ theorem StrongOneWay.glPad {𝓕 : FunFamily} (h : 𝓕.StrongOneWay) : 𝓕.glP
   obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff 𝓕).1 h.easy
   refine ⟨?_, fun A => ?_⟩
   · obtain ⟨E, hE, hEs⟩ := exists_glPadEvaluator 𝓕 hF hFx
-    refine ⟨E, hE, fun n z => ?_⟩
+    refine (FunFamily.easy_iff _).2 ⟨E, hE, fun n z => ?_⟩
     obtain ⟨⟨x, r⟩, rfl⟩ := (Fin.appendEquiv _ _).surjective z
     show E (NUPPT.advInput n (List.ofFn (Fin.append x r))) = List.ofFn (𝓕.glPad.f n (Fin.append x r))
     rw [List.ofFn_fin_append, hEs, glPad_f, List.ofFn_fin_append]

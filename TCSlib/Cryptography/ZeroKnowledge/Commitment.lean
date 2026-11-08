@@ -874,7 +874,7 @@ theorem owpComStr_polyTimeComputable (P : PermFamily) (h : ∀ n, (Fin n → Boo
     (hH : ∃ H : List Bool → List Bool, PolyTimeComputable H ∧
       ∀ n (x : Fin n → Bool), H (NUPPT.advInput n (List.ofFn x)) = [h n x]) :
     PolyTimeComputable (owpComStr P h) := by
-  obtain ⟨F, hF, hFx⟩ := hF
+  obtain ⟨F, hF, hFx⟩ := (FunFamily.easy_iff _).1 hF
   obtain ⟨H, hH, hHx⟩ := hH
   convert (CommitmentLemmas.ComLoop.loopOut_poly F H hF hH).comp
     CommitmentLemmas.ComLoop.init_poly using 1

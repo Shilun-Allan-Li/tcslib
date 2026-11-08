@@ -382,7 +382,7 @@ by `PolyExpr.eval_le`. -/
 theorem polyTimeComputable_clockedAnswer (c : EffectiveMachineCode) (hc : CanonizerExp c) :
     PolyTimeComputable fun y : List Bool =>
       clockedAnswer c (univCode y) (univArg y) ((y.length + 1) ^ 3) := by
-  obtain ⟨M, C, d, hM⟩ := polyTimeComputable_univInput
+  obtain ⟨M, C, d, hM⟩ := (polyTimeComputable_iff _).1 polyTimeComputable_univInput
   obtain ⟨U, hU⟩ := exists_univ_computes c
   obtain ⟨p, hp⟩ := exists_univCoeff_le c hc
   have hU' : ∀ y : List Bool, U.ComputesInTime
@@ -394,7 +394,8 @@ theorem polyTimeComputable_clockedAnswer (c : EffectiveMachineCode) (hc : Canoni
     (fun n => p.eval n * ((n + 1) ^ 3 + 1) ^ 2) hM hU'
   obtain ⟨C', c', hC'⟩ := PolyExpr.eval_le (.add (.add (.mul (.const 2) (.normal C d))
     (.mul p (.pow (.add (.pow (.add .var (.const 1)) 3) (.const 1)) 2))) (.const 2))
-  refine ⟨N, C', c', fun y => (hN y).mono ?_⟩
+  refine (polyTimeComputable_iff _).2 ⟨N, C', c', (FinTM.computesFunInTime_iff _ _ _).2 fun y =>
+    ((FinTM.computesFunInTime_iff _ _ _).1 hN y).mono ?_⟩
   have h := hC' y.length
   simpa [PolyExpr.eval_normal] using h
 
@@ -442,7 +443,7 @@ theorem fUniversal_easy (c : EffectiveMachineCode) (hc : CanonizerExp c) :
     convert h using 1
     funext z
     simp
-  refine ⟨_, hF, fun n x => ?_⟩
+  refine (FunFamily.easy_iff _).2 ⟨_, hF, fun n x => ?_⟩
   simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
   rw [ofFn_fUniversal_f]
   simp [padStr_eq]

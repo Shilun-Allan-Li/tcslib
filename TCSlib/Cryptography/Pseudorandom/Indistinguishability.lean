@@ -90,8 +90,9 @@ feeds `P z c` to `D` accepts a sample of `X` with the probability that `D` accep
 of the composite sampler `(s, c) ↦ P (X s) c`. -/
 theorem acceptProb_bind (X : σ → γ) (P : γ → κ → δ) (D : δ → ρ → Bool) :
     acceptProb X (fun z (c : κ × ρ) => D (P z c.1) c.2) =
-      acceptProb (fun s : σ × κ => P (X s.1) s.2) D :=
-  uprob_eq_of_equiv (Equiv.prodAssoc σ κ ρ).symm fun _ => Iff.rfl
+      acceptProb (fun s : σ × κ => P (X s.1) s.2) D := by
+  simp only [acceptProb_def]
+  exact uprob_eq_of_equiv (Equiv.prodAssoc σ κ ρ).symm fun _ => Iff.rfl
 
 /-- Overwriting one coordinate of a uniform tuple with an independent uniform value leaves
 the tuple uniform: a sampler fed `update u k x` for uniform `x` and `u` accepts with the
@@ -138,8 +139,8 @@ theorem distAdv_sunglassRed (P : γ → κ → δ) (X : σ → γ) (Y : τ → �
 `D ∘ P` has the advantage between `X` and `Y` that `D` has between `P ∘ X` and `P ∘ Y`.
 [Gar26, Lemma 3.2]. -/
 theorem distAdv_comp (P : γ → δ) (X : σ → γ) (Y : τ → γ) (D : δ → ρ → Bool) :
-    distAdv X Y (fun z r => D (P z) r) = distAdv (fun s => P (X s)) (fun s => P (Y s)) D :=
-  rfl
+    distAdv X Y (fun z r => D (P z) r) = distAdv (fun s => P (X s)) (fun s => P (Y s)) D := by
+  simp only [distAdv_def, acceptProb_def]
 
 /-! ### Mixing over an index -/
 

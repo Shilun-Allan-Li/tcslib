@@ -60,7 +60,9 @@ open PrivateKeyScheme (encodeList)
 theorem encodeList_eq_flatMap (l : List (List Bool)) :
     encodeList l = l.flatMap fun c => pairEncode c [] := by
   induction l with
-  | nil => rfl
+  | nil =>
+    rw [PrivateKeyScheme.encodeList_nil]
+    rfl
   | cons c cs ih => simp [PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons, ih,
       pairEncode_eq]
 
@@ -150,10 +152,12 @@ theorem blockEmit_blockState (E : List Bool → List Bool) (L B : PolyExpr) (u p
   simp [blockEmit, blockState, List.length_eq_zero_iff]
 
 /-- The projections of the empty word are empty. -/
-private theorem pairFstD_nil : pairFstD [] = [] := rfl
+private theorem pairFstD_nil : pairFstD [] = [] :=
+  pairFstD_of_pairDecode_eq_none Turing.pairDecode_nil
 
 /-- The projections of the empty word are empty. -/
-private theorem pairSndD_nil : pairSndD [] = [] := rfl
+private theorem pairSndD_nil : pairSndD [] = [] :=
+  pairSndD_of_pairDecode_eq_none Turing.pairDecode_nil
 
 /-- The block `⟨c, []⟩` followed by a tuple is the tuple extended by `c`. -/
 theorem pairEncode_nil_append (c w : List Bool) :

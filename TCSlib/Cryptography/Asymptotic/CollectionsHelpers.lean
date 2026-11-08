@@ -109,7 +109,9 @@ theorem _root_.Complexity.NUPPT.length_runAt_le (A : NUPPT) (n : ℕ) (y : List 
   apply Nat.mul_le_mul_left
   apply Nat.pow_le_pow_left
   have := A.advice_length n
-  simp only [length_pairEncode, NUPPT.length_advInput, List.length_ofFn, NUPPT.coinLen_eq]
+  have hr : (List.ofFn r).length = A.coins.eval n := by
+    rw [List.length_ofFn, NUPPT.coinLen_eq]
+  simp only [length_pairEncode, NUPPT.length_advInput, hr]
   omega
 
 /-- The syntactic polynomial bounding `|A(1^n, y)|` when `|y| ≤ Y(n)` (`length_runAt_le`). -/

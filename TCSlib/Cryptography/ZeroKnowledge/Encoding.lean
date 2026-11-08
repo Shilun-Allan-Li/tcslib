@@ -530,7 +530,8 @@ bound threaded through the block-value loops of the permutation sampler. -/
 theorem two_pow_size_le_two_mul_succ (n : ℕ) : 2 ^ Nat.size n ≤ 2 * n + 1 := by
   rcases Nat.eq_zero_or_pos n with rfl | hn
   · simp
-  · exact (two_pow_permBits_le hn).trans (Nat.le_succ _)
+  · rw [← permBits_eq]
+    exact (two_pow_permBits_le hn).trans (Nat.le_succ _)
 
 /-! ### Polynomial-time string operations of the honest parties (Inf-4.2) -/
 
@@ -722,7 +723,7 @@ theorem polyTimeComputable_encPermFromCoins :
     rw [decide_eq_decide, Fin.ext_iff,
       permFromCoins_getD_val (r := pairSndD (pairSndD w))
         (b := coinTable n (permTrials n) (permBits n) (pairSndD (pairSndD w))) (fun _ _ _ => rfl)]
-    rfl
+    rw [permBits_eq, permTrials_eq]
   · rw [encPerm_getD_of_le _ (not_lt.1 hlt)]
 
 end TCSlib.Cryptography

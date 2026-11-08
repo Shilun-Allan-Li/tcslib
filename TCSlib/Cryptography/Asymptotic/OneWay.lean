@@ -334,7 +334,9 @@ theorem WorstCaseOneWayLit.toParam {𝓕 : FunFamily} (hinj : Function.Injective
       B.coinLen n + (B.coinLen (𝓕.outLen.eval n) - B.coinLen n) := by
     have h1 : A.coinLen (𝓕.outLen.eval n) = B.coinLen (𝓕.outLen.eval n) := by
       simp only [NUPPT.coinLen_eq, hAc, PolyExpr.eval_subst, PolyExpr.eval_var]
-    have h2 : B.coinLen n ≤ B.coinLen (𝓕.outLen.eval n) := B.coins.eval_mono (hle n)
+    have h2 : B.coinLen n ≤ B.coinLen (𝓕.outLen.eval n) := by
+      rw [NUPPT.coinLen_eq, NUPPT.coinLen_eq]
+      exact B.coins.eval_mono (hle n)
     omega
   let e : B.Coins n × (Fin (B.coinLen (𝓕.outLen.eval n) - B.coinLen n) → Bool) ≃
       A.Coins (𝓕.outLen.eval n) :=
@@ -452,6 +454,9 @@ theorem Easy.prod {𝓕 : FunFamily} (h : 𝓕.Easy) (q : PolyExpr) : (𝓕.prod
   rw [NUPPT.advInput_eq, hspec, prod_f, ofFn_blocks_symm]
   congr 2
   funext i
+  have hb : (fun j => x (finProdFinEquiv (i, j))) = blocks (q.eval n) (𝓕.inLen.eval n) x i :=
+    funext fun j => (blocks_apply _ _ x i j).symm
+  rw [OneWay.prodFun_apply, ← NUPPT.advInput_eq, hb]
   exact hFx n (blocks (q.eval n) (𝓕.inLen.eval n) x i)
 
 end FunFamily
@@ -701,7 +706,7 @@ theorem weak_to_strong {𝓕 : FunFamily} (h : FunFamily.WeakOneWay 𝓕) :
       funext j
       simp only [OneWay.yaoB_apply]
       rw [hx'', OneWay.padTrue_drop_ofFn]
-      rfl
+      exact funext fun k => (FunFamily.blocks_apply _ _ x'' j k).symm
     rw [hyB]
     exact hf
   -- the parameter instantiation and the reduction's bound
@@ -796,8 +801,7 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
       List.drop_left' (by simp only [List.length_ofFn]; try exact hℓ)]
     have := hFx n (xs 1)
     simp only [NUPPT.advInput_eq] at this
-    rw [this]
-    rfl
+    rw [this, NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.advInput_eq]
   -- the planting bound
   let B' : (Fin 2 → Fin (𝓕.outLen.eval n) → Bool) → A'.Coins n → Option (Fin 2 → Fin ℓ → Bool) :=
     fun ys r => (A'.inverter n (2 * ℓ) (2 * 𝓕.outLen.eval n)
@@ -823,7 +827,7 @@ theorem strong_prod_two {𝓕 : FunFamily} (h : FunFamily.StrongOneWay 𝓕) :
   have hblk := OneWay.ofFn_block_eq_take_drop x'' 0
   simp only [Fin.val_zero, Nat.zero_mul, List.drop_zero] at hblk
   rw [← hblk]
-  rfl
+  exact congrArg List.ofFn (funext fun j => (FunFamily.blocks_apply _ _ x'' 0 j).symm)
 
 /-- **Strong implies weak** (sanity, [PS10, §2.2, the remark after Definition 28.4]): a strong
 one-way function is a weak one-way function with `q = 2`.

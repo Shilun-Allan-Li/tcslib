@@ -168,9 +168,11 @@ theorem wellFormed_poly : PolyTimeComputable fun x => [wellFormedInstance x] := 
   have h2 := polyTimeComputable_lenEq.comp (polyTimeComputable_pairSndD.pairEncode hsq)
   have h := polyTimeComputable_and pairValid_poly (polyTimeComputable_and h1 h2)
   refine ptc_congr h fun x => ?_
-  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode,
-      pairSndD_pairEncode,
-    List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var, Bool.decide_and, Bool.decide_eq_true]
+  simp only [pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, PolyExpr.eval_mul,
+    PolyExpr.eval_var]
+  congr 1
+  rw [Bool.eq_iff_iff, wellFormedInstance_def, decide_eq_true_eq]
+  simp only [instanceVertexCount_def, Bool.and_eq_true, decide_eq_true_eq]
 
 /-! ### Padding a graph word to a given vertex count -/
 
@@ -261,7 +263,8 @@ theorem mulInvStr_encPerm {n : ℕ} (π : Equiv.Perm (Fin n)) (y : List Bool) :
 (the shared `polyTimeComputable_encPermFromCoins` of `ZeroKnowledge/Encoding.lean`, whose
 vertex count `(decGraph w).1` is `√|w|`). -/
 theorem sampleStr_poly : PolyTimeComputable fun z => sampleStr (pairFstD z) (pairSndD z) :=
-  polyTimeComputable_encPermFromCoins
+  polyTimeComputable_encPermFromCoins.congr fun z => by
+    rw [sampleStr_def, samplePerm_def, TCSlib.Cryptography.decGraph_fst]
 
 /-- The permutation product is polynomial-time (`polyTimeComputable_encPermMulInv`). -/
 theorem mulInvStr_poly : PolyTimeComputable fun z => mulInvStr (pairFstD z) (pairSndD z) :=
