@@ -1,3 +1,5 @@
-# Gate118 — current validation complete; final publication preparing
+# Gate118 — Ready to dispatch
 
-**Not yet clear to merge: #233 — external gate118 open.** Pushed55df includes mergedF6; actualMMIG4 PASS2/static0/0 from wholeMMIG3, whose full394/0/static60 remains atEAecd/MAC5. Native3/compiled/source/screen/scoped checks and exact context-reuse pass. Independent packet QA has only the corrected4017primary/4076combined scope wording. Final two-part mixed-Git render/publication next; not yet dispatched.
+**Ready to dispatch: Codex gate118.** Both verified parts published at exchange15dde3b91c9e6cbfefba6e11ea44545a42125068, total6006sections; exactsource55df/records331/partSHAs and prompt in publication.json/prompt.md. Both rebuild/archive/rootGit verifications pass; all1316JSON parse. ActualMMIG4 PASS2/static0/0 chains from wholeMMIG3, full394 remainsactualEAecd/MAC5. Userdispatch not yet confirmed.
+
+**Not yet clear to merge: #233 — externalgate118 open.**

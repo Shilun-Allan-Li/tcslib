@@ -1,3 +1,5 @@
-# Gate106 round4 — final verified publication preparing
+# Gate106 round4 — Ready to dispatch
 
-**Not yet clear to merge: #215 — Codex round4 open.** Current pushedb129 includes mergedF6; actualMSG9 PASS2/static0/0 chains from wholeMSG8, whose full329/0/static66 remains at078/MAC5. Exactsource25/owner-import contexts are preserved. Complete current source/compiler/seal checks and independent compact-packet peer review pass. Final mixed-Git render and publication next; not yet dispatched.
+**Ready to dispatch: Codex gate106 round4.** Published verified1696-section/79,398,827-byte packet at exchange81676b42e758176389c19bcf470c6c5dcfd2a228. Exactsourceb129/records331/SHA379675 and issuedprompt are in publication-r4.json/prompt-r4.md. ActualMSG9 PASS2/static0/0 and exact prior context reuse bind mergedF6; full329 remainsat078/MAC5. User dispatch not yet confirmed.
+
+**Not yet clear to merge: #215 — round4 audit open.**

@@ -9,6 +9,15 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**LATEST relocation checkpoint: both Codex audit prompts published/issued; no own Lean/screen jobs remain.**
+
+- #235 is MERGED atdf4341236e04a861e65e29d58b35a713f14c819c. Gate120CLOSED PASS0/0/0/20; exact wholeMF63→MAC6 adoption895 objects, no newelaboration/splice.
+- **Ready to dispatch: Codex gate106 round4 for #215.** Sourceb12902832c67210acd737d87d2d0c761bd5b35eb, records331e68b99c4287232394920e74eed222151f7280, exchange81676b42e758176389c19bcf470c6c5dcfd2a228. Published1696sections/79,398,827bytes/SHA3796750f950d279b92f6ab522b6f75b0b6c622f4a14ac015f85a74c252cf60a7. Exactprompt-r4.md/publication-r4.json/dispatch-r4.json saved; userdispatch notyetconfirmed. ActualMSG9PASS2/static0/0 wholeMSG8tail; priorfull329/static66 retains078/MAC5. **Not yet clear to merge: #215 — auditopen.**
+- **Ready to dispatch: Codex gate118 for #233.** Source55df52da9754f04b0c71646df29f83f33ec3aa52, same records331, exchange15dde3b91c9e6cbfefba6e11ea44545a42125068. Publishedtwo parts3296+2710sections (6006total),96,671,506/87,986,691bytes; exactSHAs inpublication.json andprompt.md. All1316JSON parsed, everyphysicalsectionGit-bound; bothrebuild/archivePASS0problems. ActualMMIG4PASS2/static0/0 wholeMMIG3tail; priorfull394/static60 retainsEAecd/MAC5. Exactsource/importcontexts preserved. **Not yet clear to merge: #233 — gate118open.**
+
+BothPRs remainatpushedcurrentheads; sourcePRmerges onlybySeyoon. All code/snapshots/inputs/peerreviews/promptrecords are checkpointed. Next: recorduserdispatchconfirmation, await/findingsMD, reviewincomingauditswithsubagentsinparallel, handlefindingsandcurrentmerged-treevalidity. No newdecisionpending. Nextfree121. Earlier checkpoints below are historical and must not override this one.
+
+
 **LATEST: #235 merged; MAC6 adopted. Final current audit publication running.**
 
 Seyoon merged#235 atdf4341236e04a861e65e29d58b35a713f14c819c, all1003Leanblobs exactly073; wholeMF63 renamedMAC6/895hashes preserved, no newelaboration/splice. Gate120CLOSED PASS0/0/0/20.
