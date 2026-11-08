@@ -28,6 +28,20 @@ proposal is still unapplied; these adapters do not require it.
 
 ## Publication and review
 
+The user dispatched **Codex**. Draft PR
+[#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238) targets the central
+branch, with published head `a3eb3627f3b26b78613a41367221788057ca4142`.
+The exact published exchange input is
+`a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4`.
+`dispatch-receipt.json` records the GitHub metadata checks and rechecked local
+101-source/199-evidence/7-payload hashes. The returned statement report now passes
+0/0/0/3; it is preserved under `audits/` with separate dispositions. The issued
+bundle remains unchanged, and the next fill changes only the 14 audited theorem
+bodies against this Lean/root freeze. The earlier preparation receipt
+`review-publication.json` retains its historical pre-publication status.
+
+### Historical preparation and publication command
+
 The pack is `audits/lwe-sis-adapter-statements-pack.md`. The prepared input belongs
 under `lwe-sis-constructions/outbox/gates/04-encoding-adapters-r1/` on the orphan
 exchange. `build_review.py` assembles source/records-pinned inputs; it neither
@@ -52,7 +66,8 @@ campaign ref, and never operates on the shared exchange checkout/index.
 
 The auditor reads GitHub directly and returns
 `lwe-sis-adapter-statements-findings.md` as Markdown in chat. No ZIP is required.
-Codex is selected; no dispatch or remote publication is claimed yet.
+The preparation text above predates publication. The dispatch receipt records
+the current status; do not rerun publication to acknowledge this dispatch.
 
-**Not yet clear to merge — the adapter statement gate and proof fill remain,
+**Not yet clear to merge — the adapter statement gate passes; proof fill remains,
 alongside retained source-policy/landing obligations and user PR approval.**

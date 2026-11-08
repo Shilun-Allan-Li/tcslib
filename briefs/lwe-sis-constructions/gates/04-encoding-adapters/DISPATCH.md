@@ -1,7 +1,24 @@
-# Encoding-adapter statement audit: Codex selected
+# Encoding-adapter statement audit: Codex dispatched
 
-The user selected **Codex** for this new statement audit. No dispatch or remote
-publication is claimed yet. The completed construction-core proof audit is a
+The user reported dispatch. GitHub confirms draft PR
+[#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238), published head
+`a3eb3627f3b26b78613a41367221788057ca4142`, targeting
+`cryptography/lwe-sis-constructions`. The published exchange input is
+`a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4`; the source, bundled records and
+bundle identities below are unchanged. The returned statement report passes
+0/0/0/3; see `audits/lwe-sis-adapter-statements-{findings,resolutions}.md`.
+
+The separate `dispatch-receipt.json` records the checks. All 101 source hashes,
+199 evidence checksums and seven local payload hashes pass. Remote PR/README/
+checksum/index metadata were read; this intake did not rehash the entire remote
+bundle or rerun Lean. The statement gate now permits only the subsequent audited
+proof fill; the issued review packet stays fixed. This intake launches no
+external job and performs no merge.
+
+## Historical prepared handoff
+
+The user selected **Codex** for this new statement audit. At preparation time,
+dispatch and remote publication were pending. The completed construction-core proof audit is a
 different, closed job.
 
 | Item | Prepared identity |

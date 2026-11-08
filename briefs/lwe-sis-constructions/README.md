@@ -5,7 +5,7 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
-All four earlier scoped gates pass 0/0/0/3, including the construction-core proof
+All five scoped gates pass 0/0/0/3, including the construction-core proof
 report supplied as a user paste. All 31 core obligations are proved, with 263
 owned constants free of sorryAx. Their code and records stay fixed on #237;
 source-policy and relevant landing checks remain open for #236/#237.
@@ -16,8 +16,11 @@ branch `cryptography/lwe-sis-adapter-statements`, source
 explicitly admitted obligations; only its three complete defining equations
 are proved. A fresh 93-module sweep passes; all 263 old constants are unchanged,
 and nine consumed machine contracts have only standard axioms. Its statement
-audit is prepared and Codex is selected; publication/dispatch remain unclaimed.
-No new remote PR is claimed yet.
+audit is dispatched to Codex. Draft PR
+[#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238) and exchange input
+`a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4` are remotely verified; findings
+now pass 0/0/0/3. Only the 14 audited theorem bodies may be filled next;
+definitions/signatures and issued review inputs remain frozen.
 
 See `gates/04-encoding-adapters/` for the current review packet and
 `progress.md` for the campaign pulse. The one Encoding facade edit is in a
