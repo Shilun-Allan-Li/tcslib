@@ -5,18 +5,17 @@ Scope, sources, parameter decisions, directories and gates are in
 
 ## Current checkpoint
 
-Publication and user dispatch are now verified. Draft PR
-[#237](https://github.com/Shilun-Allan-Li/tcslib/pull/237) is published at
-`1b148307150a0b0a08dd80d68c54ba2db95de13c`; both it and #236 target the central
-LWE/SIS branch. The Codex statement-audit input is exchange
-`90d652e19508262b3bd81234260d0585aaf8e0a0`, with the unchanged 400-section
-bundle and source/records pins. The gate's `dispatch-receipt.json` records the
-verification. The audit is running; its Lean surface remains frozen.
+The construction-core statement audit passes with 0 blockers, 0 majors,
+0 minors and 3 continuing notes. The report is preserved verbatim at
+`audits/lwe-sis-core-statements-findings.md`, with dispositions in
+`audits/lwe-sis-core-statements-resolutions.md`. Intake reverified the frozen
+source, policies, pins and current/prior/exchange checksums without changing
+Lean or running a new native check. The scoped 31-proof fill can now begin
+on existing PR #237, preserving the audited definitions and statements.
 
-Independent records-only source and machine-adapter preparation is under
-`continuation/`. Raw local PDF extraction is complete, but validation/matching
-and the proposed two-tag registry change remain unexecuted. No additional
-external job or proof fill was launched.
+Independent source and machine-adapter preparation is under `continuation/`.
+Raw local PDF extraction is complete, but validation/matching and the proposed
+two-tag registry change remain unexecuted. No new external job is dispatched.
 
 The central integration branch is `cryptography/lwe-sis-constructions`. Audited
 Lean changes go through PRs into that branch for the user's approval and merge.
@@ -28,8 +27,8 @@ The construction-core statement draft contains eight new mathematical modules,
 62 source declarations and 31 direct admissions: sample schedules, modular
 parsers, bit decoding, direct Regev symmetric encryption and its concrete
 security bound, and SIS hashing/collision bounds with a dyadic profile. A fresh
-68-module sweep passes. These are statement skeletons awaiting their own gate;
-the proofs, efficient machines and existing primitive bridges remain future work.
+68-module sweep passes. The statement gate passes;
+the 31 proofs, efficient machines and existing primitive bridges remain open.
 See `gates/02-construction-core/` for scope, evidence and publication instructions.
 
 The phase-0 statement audit passed with 0 blockers, 0 majors, 0 minors and 3 notes.
@@ -106,6 +105,6 @@ acquisition is now complete for Pei16/Wu24, with exact hashes and version checks
 ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
-**Not yet clear to merge — the foundation gates pass; the construction-core
-statement gate, source ingestion/matching and relevant integration checks remain
-open. The user approves and merges PRs into the central LWE/SIS branch.**
+**Not yet clear to merge — the foundation and construction-core statement gates
+pass; the construction-core proof gate, source ingestion/matching and relevant
+integration checks remain open. The user approves and merges PRs.**

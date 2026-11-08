@@ -1,12 +1,12 @@
 # Construction-core statement gate
 
-Current status: the user dispatched Codex. PR #237 is published at
-`1b148307150a0b0a08dd80d68c54ba2db95de13c`; both it and #236 target the central
-LWE/SIS branch. The exact input is exchange
-`90d652e19508262b3bd81234260d0585aaf8e0a0`. See `dispatch-receipt.json` for
-verification. The source remains frozen; findings are pending. The publication
-instructions below document the completed handoff and should not be taken as
-a request to redispatch the running review.
+Current status: the Codex audit passes with 0 blockers, 0 majors, 0 minors and
+3 continuing notes. The verbatim report is
+`audits/lwe-sis-core-statements-findings.md`; dispositions are in the sibling
+`lwe-sis-core-statements-resolutions.md`. `intake-r1.json` records integrity
+verification. The statement gate is closed for the scoped 31-proof fill on
+existing PR #237. Definitions and statements stay frozen. The publication
+instructions below document the completed handoff; do not redispatch it.
 
 The eight mathematical modules are frozen at
 `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`, on top of audited dependency
@@ -16,9 +16,9 @@ central branch **`cryptography/lwe-sis-constructions`**.
 
 [REPORT.md](REPORT.md) records the scope, exact inventories, native evidence and
 continuing obligations. The external pack is
-`audits/lwe-sis-core-statements-pack.md`. There are 31 explicit admissions; no
-nontrivial proof fill has begun. The prior foundation gates pass, but do not approve
-this new statement surface.
+`audits/lwe-sis-core-statements-pack.md`. At the reviewed freeze there are 31 explicit admissions. The
+statement audit now approves this surface for proof fill; it does not certify
+the unfilled proofs or later security endpoints.
 
 The fresh sweep covers 68 modules, with zero errors, 31 new admission warnings and
 17 inherited warnings. The final probe reconciles 62 source declarations and 90 new
@@ -59,5 +59,5 @@ reviewer kickoff. Auditors read GitHub directly and return
 The external pack remains vendor-neutral and frozen; the selected reviewer is
 recorded by the explicit client flag/kickoff, not inferred from an older job.
 
-**Not yet clear to merge — the Codex statement audit is dispatched and findings
-are pending. The audited Lean surface remains frozen.**
+**Not yet clear to merge — the statement gate passes; proof fill and its audit,
+source-policy work, integration checks and user approval remain outstanding.**
