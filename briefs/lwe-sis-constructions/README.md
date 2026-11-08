@@ -15,7 +15,9 @@ The fresh serial 68-module sweep passes with zero owned admissions and the same
 no sorryAx; seven compiler auxiliaries are explicitly inventoried. Freeze and
 style checks pass. `fills/01-construction-core/` contains the evidence, report
 and proof-audit handoff. The user has dispatched that audit; GitHub verifies
-the published draft and immutable exchange input. Findings are pending.
+the published draft and immutable exchange input. The returned proof audit now
+passes 0/0/0/3; its pasted report is preserved verbatim under `audits/`, with
+separate resolutions and an intake receipt. No proof correction is required.
 
 Independent source and machine-adapter preparation is under `continuation/`.
 Raw local PDF extraction is complete, but validation/matching and the proposed
@@ -35,7 +37,7 @@ The construction-core statement draft contains eight new mathematical modules,
 parsers, bit decoding, direct Regev symmetric encryption and its concrete
 security bound, and SIS hashing/collision bounds with a dyadic profile. A fresh
 68-module sweep passes. The statement gate passes;
-the proof audit, efficient machines and existing primitive bridges remain open.
+the efficient machines and existing primitive bridges remain open.
 See `gates/02-construction-core/` for the statement gate and
 `fills/01-construction-core/` for the current proof handoff.
 
@@ -114,5 +116,5 @@ ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
 **Not yet clear to merge — the foundation and construction-core statement gates
-pass; the construction-core proof gate, source ingestion/matching and relevant
-integration checks remain open. The user approves and merges PRs.**
+pass, including the construction-core proof gate. Source ingestion/matching and
+relevant integration checks remain open. The user approves and merges PRs.**

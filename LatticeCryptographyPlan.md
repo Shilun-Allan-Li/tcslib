@@ -54,7 +54,9 @@ The user has now dispatched the proof audit at exchange
 `aaeb9b3764e7fa3c2d4f3e93905e8654ea1786f5`, source
 `690217cc1aaefe411158808a8b0797fd887a8abc`, bundled records
 `42a400a1b88eecf9172a91ba287894450c72f9b0`. GitHub verifies the publication
-metadata. The Lean/root and issued input packet remain frozen while findings are pending.
+metadata. The returned construction-core proof audit now passes 0/0/0/3; the
+pasted report and separate gate resolutions are preserved under `audits/`. No
+proof repair was needed, and the issued input packet remains unchanged.
 
 ## Current construction-core proof phase
 
@@ -76,7 +78,8 @@ machine/primitive-security endpoint is claimed.
 Independent records-only source/adapter/PKE preflight lives under
 `briefs/lwe-sis-constructions/continuation/proof-audit/`. Its exact proposed
 shared probability-reader patch is unapplied and needs user coordination before
-implementation. No new Lean phase starts while the proof gate remains open.
+implementation. The next owned adapter statement phase may now proceed after
+this scoped proof gate; source-policy and user integration remain open.
 
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
@@ -387,3 +390,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 | Codex construction-core statement audit PASS 0/0/0/3 at `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf`; report preserved verbatim and intake checks reconciled. No statement repair. Fill the 31 theorem bodies on existing PR #237; keep definitions/signatures fixed. | Scoped statement gate closed; proof gate and N01–N03 remain open |
 | 2026-11-07 | Filled all 31 audited construction-core proofs at `690217cc1aaefe411158808a8b0797fd887a8abc` on existing PR #237; 62 declarations/definitions/signatures fixed. Fresh 68-module sweep, 263-constant axiom probe, freeze and scoped style checks pass; no shared API/export/pin edit. | Proof audit not yet selected; N01–N03 and user integration remain open |
 | 2026-11-07 | User reports construction-core proof audit dispatched; GitHub metadata verifies code head `d4db3f832f5a4b98e8ecfde79f7fcb04977b956e` and exchange `aaeb9b3764e7fa3c2d4f3e93905e8654ea1786f5`. Independent records compare nine primary PDF pages, identify existing dyadic sampling/width-normalization hosts, and prepare an unapplied two-reader proposal plus quantitative PKE preflight. | Proof input frozen; no new Lean/API/native/external job or merge |
+| 2026-11-07 | User supplies construction-core proof report as Markdown paste: PASS 0/0/0/3. Preserved the entire report body, verified 76 source files and all 174/106/86/82/5 nested evidence entries, and closed only this proof gate. No Lean repair, native rerun or merge. | Next owned adapter statement draft authorized by gate; N01–N03 and user integration remain open |

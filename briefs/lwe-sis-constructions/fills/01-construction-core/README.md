@@ -20,10 +20,12 @@ new `.lake/core-fill-final-oleans` tree. Checks ran one module at a time through
 
 ## Proof review
 
-Current status: the user dispatched the proof audit. GitHub verifies the code
-head/central target and gate metadata at exchange
-`aaeb9b3764e7fa3c2d4f3e93905e8654ea1786f5`. See `dispatch-receipt.json`.
-The frozen Lean/root and packet are unchanged. Do not redispatch this running job.
+Current status: the user delivered a PASS report, with 0 blockers, 0 majors,
+0 minors and 3 continuing notes. The pasted report is preserved verbatim under
+`audits/lwe-sis-core-proofs-findings.md`; its separate resolutions close this
+scoped proof gate. `intake-r1.json` records the source/checksum verification.
+No Lean repair or native rerun was required. The issued input stays unchanged.
+The command below documents the completed handoff; no redispatch is requested.
 
 The vendor-neutral pack is `audits/lwe-sis-core-proofs-pack.md`. The prepared
 GitHub input belongs under the owned orphan-exchange namespace
@@ -47,5 +49,5 @@ pushes to a central/campaign branch, and never uses the shared exchange checkout
 Auditors read GitHub directly and return `lwe-sis-core-proofs-findings.md` as
 Markdown in chat. No ZIP is required. The command above documents the completed handoff, not a redispatch request.
 
-**Not yet clear to merge — the proof audit, source-policy work, relevant landing
-checks and user approval remain open.**
+**Not yet clear to merge — the proof gate passes; source-policy work, relevant
+landing checks and user approval remain open.**
