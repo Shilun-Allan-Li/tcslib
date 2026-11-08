@@ -52,3 +52,16 @@ GitHub and returns Markdown in chat. No ZIP, automatic dispatch or merge occurs.
 **Not yet clear to merge — this proof gate, seventy remaining admissions,
 shared-owner dispositions, source-policy work, landing checks and user approval
 remain.**
+
+## Returned proof audit
+
+The original preparation above is retained. Publication is verified at exchange
+`8efc0e669ed3ed004616c4aab81317ebf5fa17e6`; the scoped Codex proof review passes
+0/0/1/4. F02 is the stale Flat overview, corrected at
+`af54d28f6d412bc56844e7371e2b0b9b394c494c` with unchanged code and a passing
+module/style check. No proof repair is required. See the complete findings,
+separate resolutions and `intake-r1/` receipts. The 31-proof gate is closed;
+seventy other admissions, N01–N04 and user integration remain. Current publication
+preparation now lives under `../../continuation/landing-source-policy/`.
+
+**Not yet clear to merge — source-policy and landing work remain.**
