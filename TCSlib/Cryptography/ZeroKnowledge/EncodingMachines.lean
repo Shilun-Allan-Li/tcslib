@@ -212,7 +212,7 @@ theorem cstep_iterate (c z : List Bool) (i : ℕ) :
 theorem length_cstep_iterate_le (x : List Bool) (i : ℕ) :
     (cstep^[i] x).length ≤ 2 * i + 2 * x.length + 2 := by
   cases i with
-  | zero => simp only [Function.iterate_zero, id]; omega
+  | zero => simp only [Function.iterate_zero, id_eq]; omega
   | succ i =>
     rw [Function.iterate_succ_apply,
       show cstep x = pairEncode (true :: pairFstD x) (pairSndD x) from rfl, cstep_iterate,
@@ -512,8 +512,18 @@ def step (upd : List Bool → List Bool) (w : List Bool) : List Bool :=
 def acc (N : List Bool → ℕ) (w : List Bool) : Bool :=
   decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)
 
+/-- The defining equation of `acc`: `acc N w = decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)`. -/
+theorem acc_def (N : List Bool → ℕ) (w : List Bool) :
+    acc N w =
+      (decide (N (pairFstD w) ≤ (pairFstD (pairSndD w)).length)) := rfl
+
 /-- The output on `⟨x, ⟨cnt, s⟩⟩`: the state `s`. -/
 def out (w : List Bool) : List Bool := pairSndD (pairSndD w)
+
+/-- The defining equation of `out`: `out w = pairSndD (pairSndD w)`. -/
+theorem out_def (w : List Bool) :
+    out w =
+      (pairSndD (pairSndD w)) := rfl
 
 /-- The initial state word is polynomial-time. -/
 theorem start_poly {init : List Bool → List Bool} (hinit : PolyTimeComputable init) :

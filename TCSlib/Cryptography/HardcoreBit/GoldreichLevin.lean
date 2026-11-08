@@ -137,7 +137,7 @@ theorem guessRecover_correct_guess (f : (Fin n → Bool) → β)
     (s : Fin k → Fin n → Bool) (cs : Fin n → NESubset k → ρ) :
     guessRecover A k (f x) (s, fun ℓ => ip x (s ℓ), cs) = idealRecover f A x s cs := by
   funext i
-  simp only [guessRecover, idealRecover, subsetSum, ip_sum]
+  simp only [guessRecover, idealRecover, subsetSum_eq, ip_sum]
 
 /-- For a good `x` (`secProb f A x ≥ 1/2 + ε/2`), each trial of the ideal procedure,
 `⟨x, a⟩ ⊕ A(f(x) ‖ a ⊕ eᵢ)` for uniform `a` and coins, is right with probability at

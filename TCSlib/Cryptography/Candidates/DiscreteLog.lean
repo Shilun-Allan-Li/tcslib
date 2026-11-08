@@ -492,7 +492,7 @@ theorem expGenFun_poly {V : List Bool → Prop} (G : ExpGroupGen V) : PolyTimeCo
       (NUPPT.polyTimeComputable_inParam.pairEncode (polyTimeComputable_const (List.replicate G.n₀ true)))
     convert h using 1
     funext z
-    simp [Function.comp, pairFstD_pairEncode, pairSndD_pairEncode]
+    simp [Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
   have hf : PolyTimeComputable fun z =>
       pairEncode (G.gen.output (NUPPT.layout (NUPPT.inParam z) [] [] (NUPPT.inCoins z))) [] :=
     (G.gen.polyTimeComputable_output.comp (NUPPT.polyTimeComputable_layout

@@ -163,6 +163,12 @@ def mergeAt {m ℓ : ℕ} (p : Fin m × Fin m) (a b : Fin m → Fin ℓ → Bool
     Fin m → Fin ℓ → Bool :=
   fun i => if i = p.1 ∨ i = p.2 then a i else b i
 
+/-- The defining equation of `mergeAt`: `mergeAt p a b = fun i => if i = p.1 ∨ i = p.2 then a i else b i`. -/
+theorem mergeAt_def {m ℓ : ℕ} (p : Fin m × Fin m) (a b : Fin m → Fin ℓ → Bool) :
+    (mergeAt p a b : Fin m → Fin ℓ → Bool) =
+      (fun i => if i = p.1 ∨ i = p.2 then a i else b i :
+        Fin m → Fin ℓ → Bool) := rfl
+
 /-- `mergeAt` at the first endpoint. -/
 theorem mergeAt_fst {m ℓ : ℕ} (p : Fin m × Fin m) (a b : Fin m → Fin ℓ → Bool) :
     mergeAt p a b p.1 = a p.1 := by
@@ -199,7 +205,7 @@ theorem mergeAt_self {m ℓ : ℕ} (p : Fin m × Fin m) (a : Fin m → Fin ℓ �
 theorem msgAt_multiCom (Com : List Bool → List Bool) {q n ℓ : ℕ} (v : Fin q → Fin n → Bool)
     (r : Fin q → Fin ℓ → Bool) (i : Fin q) :
     msgAt (multiCom Com v r) i = Com (pairEncode (List.ofFn (v i)) (List.ofFn (r i))) := by
-  rw [multiCom, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
+  rw [multiCom_def, msgAt_encodeMsgs _ _ (by simp), List.getElem_ofFn]
 
 /-! ### The two coin involutions of the hybrid argument -/
 
@@ -518,7 +524,8 @@ theorem acceptProb_hybGen_planted (H Wa : AttemptCoins m (Fin n → Fin ℓ → 
     (ep : Fin m × Equiv.Perm (Fin 3))
     (hPl : ∀ r' w, Pl (X r') w = A' ((ep, mergeAt p w.1.2 r'), w.2)) :
     acceptProb X (fun cv z => hybGen H Wa k (Pl cv) D z) = hybAcc H Wa k A' D ep := by
-  unfold acceptProb hybAcc
+  unfold hybAcc
+  simp only [acceptProb_def]
   rw [← uprob_mergeAt k p ep
     (fun z : (Fin N → AttemptCoins m (Fin n → Fin ℓ → Bool) τ) × ρ' =>
       hybGen H Wa k A' D z = true)]

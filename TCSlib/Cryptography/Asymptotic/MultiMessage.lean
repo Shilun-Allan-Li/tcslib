@@ -104,7 +104,7 @@ theorem eval_chainTree {I O α : Type} (g : I → O) :
     funext j
     refine Fin.cases ?_ (fun j => ?_) j
     · simp
-    · simp [Fin.tail]
+    · simp [Fin.tail_def]
 
 /-- A chain of `k` queries makes at most `k` queries. -/
 theorem boundedBy_chainTree {I O α : Type} :
@@ -405,7 +405,7 @@ theorem polyTimeComputable_prfEncFun {E : List Bool → List Bool} (hE : PolyTim
           NUPPT.polyTimeComputable_inCoins))))
   convert h using 1
   funext z
-  simp [prfEncFun, Function.comp]
+  simp [prfEncFun, Function.comp_apply]
 
 /-- The well-formedness test of `Dec` is polynomial-time: two length comparisons
 (`Complexity.polyTimeComputable_lenEq`). -/
@@ -416,7 +416,7 @@ theorem polyTimeComputable_prfDecWF : PolyTimeComputable (fun z => [prfDecWF z])
     convert polyTimeComputable_lenEq.comp (hg.pairEncode NUPPT.polyTimeComputable_inParam)
       using 1
     funext z
-    simp [Function.comp]
+    simp [Function.comp_apply]
   exact polyTimeComputable_and
     (hl _ ((polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD).comp
       NUPPT.polyTimeComputable_inArg))
@@ -437,7 +437,7 @@ theorem polyTimeComputable_prfDecFun {E : List Bool → List Bool} (hE : PolyTim
           NUPPT.polyTimeComputable_inArg))))
   convert h using 1
   funext z
-  simp [prfDecFun, Function.comp]
+  simp [prfDecFun, Function.comp_apply]
 
 /-- The activation of the encryption machine on `⟨k, w⟩` with coins `r` is
 `⟨r, w ⊕ E(⟨k, r⟩)⟩`. -/

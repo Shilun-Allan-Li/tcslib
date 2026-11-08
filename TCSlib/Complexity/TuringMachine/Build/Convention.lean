@@ -83,6 +83,11 @@ def Cfg.ofWords {input : List Bool} (q : State) (w : Fin k → List Bool) :
     Cfg k Bool State input :=
   ⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩
 
+/-- The defining equation of `Cfg.ofWords`: `Cfg.ofWords q w = ⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩`. -/
+theorem Cfg.ofWords_def {input : List Bool} (q : State) (w : Fin k → List Bool) :
+    (Cfg.ofWords q w : Cfg k Bool State input) =
+      (⟨some q, 1, fun i => FinTM.bufferTape (w i), fun _ => 0, []⟩) := rfl
+
 /-- A machine's genuine initial configuration is the seam configuration at
 its start state with every tape word empty: `Cfg.init` has blank tapes and
 `Turing.FinTM.bufferTape [] = fun _ => none`. This is the lemma that lets a

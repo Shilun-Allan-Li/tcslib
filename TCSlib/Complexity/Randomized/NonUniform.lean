@@ -94,7 +94,7 @@ theorem runLit_eq_runAtL (y : List Bool) (r : A.Coins y.length) :
 /-- A uniform machine runs on the layout `⟨⟨⟨1^n, y⟩, []⟩, r⟩`: the advice slot is empty. -/
 theorem Uniform.runAtL_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) (y r : List Bool) :
     A.runAtL n y r = A.output (pairEncode (pairEncode (advInput n y) []) r) := by
-  simp [runAtL, h n]
+  simp [NUPPT.runAtL_eq, h.advice_eq n]
 
 /-- A uniform machine runs on the layout `⟨⟨⟨1^n, y⟩, []⟩, r⟩` (typed coins). -/
 theorem Uniform.runAt_eq {A : NUPPT} (h : A.Uniform) (n : ℕ) (y : List Bool) (r : A.Coins n) :

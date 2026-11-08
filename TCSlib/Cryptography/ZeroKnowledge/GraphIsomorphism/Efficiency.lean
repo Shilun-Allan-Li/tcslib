@@ -168,7 +168,7 @@ theorem wellFormed_poly : PolyTimeComputable fun x => [wellFormedInstance x] := 
   have h2 := polyTimeComputable_lenEq.comp (polyTimeComputable_pairSndD.pairEncode hsq)
   have h := polyTimeComputable_and pairValid_poly (polyTimeComputable_and h1 h2)
   refine ptc_congr h fun x => ?_
-  simp only [wellFormedInstance, instanceVertexCount, pairFstD_pairEncode, pairSndD_pairEncode,
+  simp only [wellFormedInstance_def, instanceVertexCount_def, pairFstD_pairEncode, pairSndD_pairEncode,
     List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var, Bool.decide_and, Bool.decide_eq_true]
 
 /-! ### Padding a graph word to a given vertex count -/
@@ -235,6 +235,11 @@ theorem relabelAt_replicate (n : ℕ) (w p : List Bool) :
 string (`samplePerm` at `√|w|`). -/
 noncomputable def sampleStr (w r : List Bool) : List Bool := encPerm (samplePerm (Nat.sqrt w.length) r)
 
+/-- The defining equation of `sampleStr`: `sampleStr w r = encPerm (samplePerm (Nat.sqrt w.length) r)`. -/
+theorem sampleStr_def (w r : List Bool) :
+    sampleStr w r =
+      (encPerm (samplePerm (Nat.sqrt w.length) r)) := rfl
+
 /-- The product `π σ⁻¹` of the permutations decoded from `p` and `y` on `√|p|` points, as a
 string (the function of `polyTimeComputable_encPermMulInv`). -/
 noncomputable def mulInvStr (p y : List Bool) : List Bool :=
@@ -290,27 +295,27 @@ def vcount (w : List Bool) : ℕ := Nat.sqrt (pairFstD (argX w)).length
 /-- The common input of a layout. -/
 @[simp] theorem argX_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     argX (ilayout x z hist r) = x := by
-  simp [argX, ilayout]
+  simp [argX, ilayout_def]
 
 /-- The auxiliary input of a layout. -/
 @[simp] theorem argZ_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     argZ (ilayout x z hist r) = z := by
-  simp [argZ, ilayout]
+  simp [argZ, ilayout_def]
 
 /-- The encoded messages of a layout. -/
 @[simp] theorem argM_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     argM (ilayout x z hist r) = Strategy.encodeMsgs hist := by
-  simp [argM, ilayout]
+  simp [argM, ilayout_def]
 
 /-- The coins of a layout. -/
 @[simp] theorem inCoins_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     NUPPT.inCoins (ilayout x z hist r) = r := by
-  simp [ilayout]
+  simp [ilayout_def]
 
 /-- The unary parameter of a layout. -/
 @[simp] theorem inParam_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
     NUPPT.inParam (ilayout x z hist r) = List.replicate x.length true := by
-  simp [ilayout]
+  simp [ilayout_def]
 
 /-- The vertex count of a layout. -/
 @[simp] theorem vcount_ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :

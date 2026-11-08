@@ -195,6 +195,12 @@ an arbitrary fixed value and are never read by trees making at most `q` queries.
 noncomputable def extendStream {O : Type*} [Nonempty O] {q : ℕ} (W : Fin q → O) : ℕ → O :=
   fun k => if h : k < q then W ⟨k, h⟩ else Classical.arbitrary O
 
+/-- The defining equation of `extendStream`: `extendStream W = fun k => if h : k < q then W ⟨k, h⟩ else Classical.arbitrary O`. -/
+theorem extendStream_def {O : Type*} [Nonempty O] {q : ℕ} (W : Fin q → O) :
+    (extendStream W : ℕ → O) =
+      (fun k => if h : k < q then W ⟨k, h⟩ else Classical.arbitrary O :
+        ℕ → O) := rfl
+
 namespace QueryTree
 
 variable {I : Type*} {O : Type*} {α : Type*} [DecidableEq I]

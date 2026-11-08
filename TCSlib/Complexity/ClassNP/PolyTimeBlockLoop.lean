@@ -289,6 +289,11 @@ def blockDone : List Bool := pairEncode [] []
 `Complexity.polyTimeComputable_ite` consumes. -/
 def isNilB (w : List Bool) : Bool := decide (w = [])
 
+/-- The defining equation of `isNilB`: `isNilB w = decide (w = [])`. -/
+theorem isNilB_def (w : List Bool) :
+    isNilB w =
+      (decide (w = [])) := rfl
+
 /-- Keeping only the head symbol is polynomial-time computable.
 **Proof sketch.** `w.take 1` is the length-gated take
 `Complexity.PrefixByLength.take` applied to `Turing.pairEncode [true] w`. -/

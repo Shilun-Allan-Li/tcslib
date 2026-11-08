@@ -126,10 +126,20 @@ position `finProdFinEquiv (u, v) = u * n + v`). -/
 def encGraph {n : ℕ} (G : Graph n) : List Bool :=
   List.ofFn fun k : Fin (n * n) => G (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2
 
+/-- The defining equation of `encGraph`: `encGraph G = List.ofFn fun k : Fin (n * n) => G (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2`. -/
+theorem encGraph_def {n : ℕ} (G : Graph n) :
+    (encGraph G : List Bool) =
+      (List.ofFn fun k : Fin (n * n) => G (finProdFinEquiv.symm k).1 (finProdFinEquiv.symm k).2) := rfl
+
 /-- The total decoding of a graph: the number of vertices is `Nat.sqrt` of the length, the
 entries are read with default `false`. -/
 def decGraph (w : List Bool) : Σ n, Graph n :=
   ⟨Nat.sqrt w.length, fun u v => w.getD (finProdFinEquiv (u, v)) false⟩
+
+/-- The defining equation of `decGraph`: `decGraph w = ⟨Nat.sqrt w.length, fun u v => w.getD (finProdFinEquiv (u, v)) false⟩`. -/
+theorem decGraph_def (w : List Bool) :
+    decGraph w =
+      (⟨Nat.sqrt w.length, fun u v => w.getD (finProdFinEquiv (u, v)) false⟩) := rfl
 
 /-- An encoded graph on `n` vertices has `n²` bits. -/
 @[simp] theorem length_encGraph {n : ℕ} (G : Graph n) : (encGraph G).length = n * n := by
@@ -172,6 +182,15 @@ noncomputable def decPerm (n : ℕ) (w : List Bool) : Equiv.Perm (Fin n) := by
   exact if h : Function.Bijective (fun i : Fin n =>
       (Fin.find (fun j : Fin n => w.getD (finProdFinEquiv (i, j)) false = true)).getD i)
     then Equiv.ofBijective _ h else 1
+
+/-- The defining equation of `decPerm` (its body, unfolded once). -/
+theorem decPerm_def (n : ℕ) (w : List Bool) :
+    decPerm n w =
+      (by
+    classical
+    exact if h : Function.Bijective (fun i : Fin n =>
+        (Fin.find (fun j : Fin n => w.getD (finProdFinEquiv (i, j)) false = true)).getD i)
+      then Equiv.ofBijective _ h else 1) := rfl
 
 /-- An encoded permutation of `Fin n` has `n²` bits. -/
 @[simp] theorem length_encPerm {n : ℕ} (π : Equiv.Perm (Fin n)) : (encPerm π).length = n * n := by

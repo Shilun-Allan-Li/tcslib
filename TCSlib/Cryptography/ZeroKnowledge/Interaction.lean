@@ -234,6 +234,11 @@ it moves first, at the odd ones otherwise. -/
 def moverIsV (vFirst : Bool) (k : ℕ) : Bool :=
   if vFirst then decide (k % 2 = 0) else decide (k % 2 = 1)
 
+/-- The defining equation of `moverIsV`: `moverIsV vFirst k = if vFirst then decide (k % 2 = 0) else decide (k % 2 = 1)`. -/
+theorem moverIsV_def (vFirst : Bool) (k : ℕ) :
+    moverIsV vFirst k =
+      (if vFirst then decide (k % 2 = 0) else decide (k % 2 = 1)) := rfl
+
 /-- With the verifier first, it moves at the even positions. -/
 @[simp] theorem moverIsV_true (k : ℕ) : moverIsV true k = decide (k % 2 = 0) := rfl
 

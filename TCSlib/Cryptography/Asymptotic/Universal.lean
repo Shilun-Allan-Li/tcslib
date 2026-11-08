@@ -336,7 +336,7 @@ theorem exists_univCoeff_le (c : EffectiveMachineCode) (hc : CanonizerExp c) :
   have hb := length_bits_le_self (c.decode α).numStates
   have hq := (c.decode α).tm.q₀.isLt
   have hk : α.length ≤ n := hα ▸ Nat.log_le_self 2 n
-  simp only [univCoeff, universalBlockBound]
+  simp only [univCoeff, universalBlockBound_def]
   omega
 
 /-! ## The evaluator machine of `f_universal` -/
@@ -442,9 +442,9 @@ theorem fUniversal_easy (c : EffectiveMachineCode) (hc : CanonizerExp c) :
     funext z
     simp
   refine ⟨_, hF, fun n x => ?_⟩
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode]
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode]
   rw [ofFn_fUniversal_f]
-  simp [padStr]
+  simp [padStr_eq]
 
 /-! ## Lemma 64.3: a strong one-way function computable in quadratic time -/
 
@@ -578,7 +578,7 @@ theorem claim_65_2 {Ω : Type*} [Fintype Ω] [Nonempty Ω] (Invert PickG : Ω �
 theorem uprob_fiber_le_card_mul {α β : Type*} [Fintype α] [Fintype β] (E : α × β → Prop)
     (a : α) : uprob (fun b => E (a, b)) ≤ Fintype.card α * uprob E := by
   haveI : Nonempty α := ⟨a⟩
-  rw [uprob_prod, uexp]
+  rw [uprob_prod, uexp_def]
   have hcard : (Fintype.card α : ℝ) ≠ 0 := by exact_mod_cast Fintype.card_ne_zero
   rw [mul_div_cancel₀ _ hcard]
   exact Finset.single_le_sum (f := fun a' => uprob fun b => E (a', b))
@@ -897,7 +897,7 @@ theorem fUniversal_hard (c : EffectiveMachineCode) (hc : CanonizerExp c)
   have hcoins : A.coinLen (φ (n - Nat.log 2 n)) ≤
       B.coinLen (φ (n - Nat.log 2 n) - Nat.log 2 (φ (n - Nat.log 2 n))) := by
     rw [hφm]
-    simp only [NUPPT.coinLen, hBc, PolyExpr.eval_subst]
+    simp only [NUPPT.coinLen_eq, hBc, PolyExpr.eval_subst]
     exact A.coins.eval_mono (hφ _)
   have hrun : ∀ y (r : List Bool),
       B.runAtL (φ (n - Nat.log 2 n) - Nat.log 2 (φ (n - Nat.log 2 n))) y r =

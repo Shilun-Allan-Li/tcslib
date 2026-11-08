@@ -484,7 +484,7 @@ def giSimCoins (V' : Strategy) : PolyExpr :=
 
 /-- The coin polynomial evaluates to `|x|` blocks of `giSimBlockLen V' |x|` bits. -/
 theorem giSimCoins_eval (V' : Strategy) (N : ℕ) : (giSimCoins V').eval N = N * giSimBlockLen V' N := by
-  simp [giSimCoins, giSimBlockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+  simp [giSimCoins, giSimBlockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_normal, PolyExpr.normal_def, Strategy.coinLen_eq]
 
 /-- One attempt of the string simulator [PS10, Algorithm 123.4] on `(x, z)` with the coin
 block `c = b' :: (permutation coins ++ V'`'s tape)`: `H := π(G_{b'})` for `π := samplePerm n`,
@@ -568,7 +568,7 @@ theorem gi_statZK : ∃ δ : ℕ → ℝ, Negligible δ ∧ StatZK giProtocol Ri
   rw [show x = encInstance G₀ G₁ from hx, hy]
   have hm : S.coinLen (encInstance G₀ G₁).length =
       (encInstance G₀ G₁).length * GIZK.blockLen V' (encInstance G₀ G₁).length := by
-    rw [NUPPT.coinLen, hc, giSimCoins_eval]
+    rw [NUPPT.coinLen_eq, hc, giSimCoins_eval]
     rfl
   have key := GIZK.statClose_real_sim V' G₀ G₁ σ z
     (statClose_giSimTrunc hσ (GIZK.vstar V' (encInstance G₀ G₁) z) n) _ hm

@@ -155,7 +155,7 @@ private lemma stop_step (C : FinTM Bool) (entry exit : C.State)
   | some q =>
     have hq : ¬(b = true ∧ q = exit) := by
       rintro ⟨hb, rfl⟩; exact hg hb hs
-    simp only [MultiTapeTM.step, stopCfg, hs, Option.map_some]
+    simp only [MultiTapeTM.step_def, stopCfg, hs, Option.map_some]
     simp only [stopTM, hq, ↓reduceIte]
     rfl
 
@@ -175,7 +175,7 @@ private lemma stop_clean (C : FinTM Bool) (entry exit : C.State)
       {Cfg.ofWords (true, exit) (stateWord C.k result) with state := none, output := out} := by
   let c := Cfg.ofWords (input := x) entry (stateWord C.k arg)
   have hl := live_prefix C.tm c t
-    (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords])
+    (by rw [show C.tm.runFrom c t = _ from he]; simp [Cfg.ofWords_def])
   have hp : ∀ v, v ≤ t → (stopTM C entry exit).tm.runFrom (stopCfg false c) v =
       stopCfg (decide (v ≠ 0)) (C.tm.runFrom c v) := by
     intro v
@@ -193,7 +193,7 @@ private lemma stop_clean (C : FinTM Bool) (entry exit : C.State)
   rw [hi, MultiTapeTM.runFrom_succ_eq_step', hp t (Nat.le_refl _)]
   have hflag : decide (t ≠ 0) = true := by simp [Nat.ne_of_gt ht]
   rw [hflag, show C.tm.runFrom c t = _ from he]
-  simp [MultiTapeTM.step, stopTM, stopCfg, Cfg.ofWords, FinTM.controlAction, Action.apply]
+  simp [MultiTapeTM.step_def, stopTM, stopCfg, Cfg.ofWords_def, FinTM.controlAction_def, Action.apply_state, Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos]
 
 /-- **The clean-module contract.** `Clean M result emit B` says: the module `M` has at least one
 work tape (`0 < M.k`), and for every native input `x` and argument `arg`, the run of `M` from the
@@ -277,9 +277,9 @@ private lemma clean_stop (C : FinTM Bool) (entry exit : C.State)
   have hs := stop_clean C entry exit x arg (result arg) (emit arg) t ht hg he
   obtain ⟨u, hu, hut, hguard, hend⟩ := first_halt (stopTM C entry exit).tm
     (Cfg.ofWords (input := x) (false, entry) (stateWord C.k arg)) (t + 1)
-    (by simp [Cfg.ofWords]) (by rw [hs])
+    (by simp [Cfg.ofWords_def]) (by rw [hs])
   refine ⟨u, hu, by dsimp only; omega, hguard, ?_⟩
-  simpa only [stopTM, Cfg.ofWords] using hend.trans hs
+  simpa only [stopTM, Cfg.ofWords_def] using hend.trans hs
 
 /-- The bridge overhead `c (A (n+1)^d + n + len + 1) + 1`, with the output length
 `len ≤ A (n+1)^d`, fits the single monomial `(c (2A + 1) + 1)(n+1)^{d+1}`.
@@ -389,9 +389,9 @@ private lemma pad_apply {k K : ℕ} {S : Type} {x : List Bool}
     (padAction (K := K) a).apply (padCfg c) = padCfg (a.apply c) := by
   refine Cfg.ext rfl rfl ?_ ?_ rfl
   · funext i z
-    by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply, h]
+    by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply_state, Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, h]
   · funext i
-    by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply, h]
+    by_cases h : i.val < k <;> simp [padAction, padCfg, Action.apply_state, Action.apply_output, Action.apply_workTapes, Action.apply_workTapePos, Action.apply_inputPos, h]
 
 /-- The padded module runs in lockstep with the module. -/
 private lemma pad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
@@ -400,13 +400,13 @@ private lemma pad_run (M : FinTM Bool) (K : ℕ) (hk : M.k ≤ K)
   apply MultiTapeTM.runFrom_comm_of_step
   intro c
   cases hs : c.state with
-  | none => simp [MultiTapeTM.step, padCfg, hs]
+  | none => simp [MultiTapeTM.step_def, padCfg, hs]
   | some q =>
     have hw : (fun i : Fin M.k => (padCfg (K := K) c).workTapeSymbols
         ⟨i.val, Nat.lt_of_lt_of_le i.isLt hk⟩) = c.workTapeSymbols := by
-      funext i; simp [padCfg, Cfg.workTapeSymbols, i.isLt]
+      funext i; simp [padCfg, Cfg.workTapeSymbols_eq, i.isLt]
     have hstate : (padCfg (K := K) c).state = some q := hs
-    simp only [MultiTapeTM.step, hstate, hs]
+    simp only [MultiTapeTM.step_def, hstate, hs]
     change (padAction (M.tm.tr q c.inputSymbol _)).apply _ = _
     rw [hw]
     exact pad_apply _ _
@@ -419,11 +419,11 @@ private lemma pad_seam {k K : ℕ} {S : Type} {x : List Bool}
   refine Cfg.ext rfl rfl ?_ ?_ rfl
   · funext i z
     by_cases hi : i.val < k
-    · simp [padCfg, Cfg.ofWords, stateWord, hi]
+    · simp [padCfg, Cfg.ofWords_def, stateWord_eq, hi]
     · have hn : i.val ≠ 0 := by omega
-      simp [padCfg, Cfg.ofWords, stateWord, hi, hn, FinTM.bufferTape]
+      simp [padCfg, Cfg.ofWords_def, stateWord_eq, hi, hn, FinTM.bufferTape_eq]
   · funext i
-    simp [padCfg, Cfg.ofWords]
+    simp [padCfg, Cfg.ofWords_def]
 
 /-! ### The host -/
 

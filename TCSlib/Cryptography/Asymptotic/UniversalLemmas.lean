@@ -111,8 +111,8 @@ theorem _root_.Complexity.NUPPT.exists_reparam_pre_post (A : NUPPT) (φ : ℕ �
     (fun m => pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m))) (β m)) hadv,
     rfl, fun m y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAtL, NUPPT.advInput, NUPPT.coinLen, NUPPT.layout, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins]
+  simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+    NUPPT.inCoins_eq]
 
 /-- **Parameter change with advice-dependent pre- and post-processing**: as
 `exists_reparam_pre_post`, but the post-processing also reads the advice: `B(1^m, y; r) =
@@ -157,8 +157,8 @@ theorem _root_.Complexity.NUPPT.exists_reparam_pre_post_adv (A : NUPPT) (φ : �
     (fun m => pairEncode (pairEncode (List.replicate (φ m) true) (A.advice (φ m))) (β m)) hadv,
     rfl, fun m y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAtL, NUPPT.advInput, NUPPT.coinLen, NUPPT.layout, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins]
+  simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+    NUPPT.inCoins_eq]
 
 /-! ## The split marker and the budget of Algorithm 64.2 -/
 
@@ -207,7 +207,7 @@ theorem length_signBits (s : SignType) : (signBits s).length = 2 := by cases s <
 /-- The serialization of a transition record has at least two bits (its sign field). -/
 theorem two_le_length_actionBits {n : ℕ} (a : Action 1 Bool (Fin (n + 1))) :
     2 ≤ (actionBits a).length := by
-  simp only [actionBits, List.length_append, length_signBits]
+  simp only [actionBits_def, List.length_append, length_signBits]
   omega
 
 /-- A `flatMap` whose pieces are all nonempty is at least as long as the index list. -/
@@ -232,7 +232,7 @@ theorem numStates_add_one_le_length_serialize (M : CodeTM) :
     omega
   have h2 := length_le_length_flatMap (List.finRange (M.numStates + 1)) _ h1
   rw [List.length_finRange] at h2
-  rw [CodeTM.serialize, length_pairEncode, List.length_append]
+  rw [CodeTM.serialize_def, length_pairEncode, List.length_append]
   omega
 
 /-! ## Arithmetic and list facts -/

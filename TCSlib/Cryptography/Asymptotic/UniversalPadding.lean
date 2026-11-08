@@ -268,7 +268,8 @@ theorem padStr_eq_gStr {n m : ℕ} (hnu : nu d m = n) (hℓ : 𝓕.inLen.eval n 
   have hlen : (List.ofFn b ++ List.ofFn a).length = m := by
     simp only [List.length_append, List.length_ofFn]
     omega
-  unfold padStr gStr
+  unfold gStr
+  simp only [padStr_eq]
   rw [raw_eq hFx hnu hℓ b a, hlen]
   simp
 
@@ -315,7 +316,7 @@ theorem invProbAt_family_le (A' A : NUPPT) {n m : ℕ} (hnu : nu d m = n)
   have hcast₃ : A'.coinLen m + (A'.coinLen (p.eval n) - A'.coinLen m) = A'.coinLen (p.eval n) := by
     omega
   have hcast₄ : p.eval n + A'.coinLen (p.eval n) = A.coinLen n := by
-    simp [NUPPT.coinLen, hAc, PolyExpr.eval_subst]
+    simp [NUPPT.coinLen_eq, hAc, PolyExpr.eval_subst]
   let eA : (Fin (m - 𝓕.inLen.eval n) → Bool) × (Fin (p.eval n - (m - 𝓕.inLen.eval n)) → Bool) ≃
       (Fin (p.eval n) → Bool) :=
     (splitCoins _ _).symm.trans (Equiv.arrowCongr (finCongr hcast₂) (Equiv.refl Bool))

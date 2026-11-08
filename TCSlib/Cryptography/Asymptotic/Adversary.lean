@@ -93,6 +93,12 @@ theorem decodeFin_eq (ℓ : ℕ) (w : List Bool) :
 samplers, where no failure is possible). -/
 def padFin (ℓ : ℕ) (w : List Bool) : Fin ℓ → Bool := fun i => w.getD i false
 
+/-- The defining equation of `padFin`: `padFin ℓ w = fun i => w.getD i false`. -/
+theorem padFin_def (ℓ : ℕ) (w : List Bool) :
+    padFin ℓ w =
+      (fun i => w.getD i false :
+        Fin ℓ → Bool) := rfl
+
 /-- Decoding the encoding of an `ℓ`-bit string returns it. -/
 theorem decodeFin_ofFn {ℓ : ℕ} (x : Fin ℓ → Bool) : decodeFin ℓ (List.ofFn x) = some x := by
   simp [decodeFin]
@@ -175,6 +181,11 @@ def _root_.Complexity.NUPPT.inverter (A : NUPPT) (n ℓ m : ℕ) :
     (Fin m → Bool) → A.Coins n → Option (Fin ℓ → Bool) :=
   fun y r => decodeFin ℓ (A.runAt n (List.ofFn y) r)
 
+/-- The defining equation of `NUPPT.inverter`: the output of `A(1^n, y; r)` decoded as an
+`ℓ`-bit string, `A.inverter n ℓ m y r = decodeFin ℓ (A.runAt n (List.ofFn y) r)`. -/
+theorem _root_.Complexity.NUPPT.inverter_def (A : NUPPT) (n ℓ m : ℕ) (y : Fin m → Bool)
+    (r : A.Coins n) : A.inverter n ℓ m y r = decodeFin ℓ (A.runAt n (List.ofFn y) r) := rfl
+
 /-- The literal inverter `A(y)` of [PS10, Definition 26.1]: activation at parameter `|y| = m`
 (the text gives the adversary `f(x)` only; the `1^{|y|}` prefix carries no information). -/
 def _root_.Complexity.NUPPT.inverterLit (A : NUPPT) (ℓ m : ℕ) :
@@ -255,7 +266,8 @@ theorem invProbOpt_le_invProb {α β ρ : Type*} [Fintype α] [Fintype ρ] [Inha
 /-- A total inverter has the same probability under both conventions. -/
 theorem invProbOpt_some {α β ρ : Type*} [Fintype α] [Fintype ρ] (f : α → β) (A : β → ρ → α) :
     invProbOpt f (fun y r => some (A y r)) = invProb f A := by
-  unfold invProbOpt invProb
+  unfold invProbOpt
+  simp only [invProb_def]
   congr 1
   funext z
   simp

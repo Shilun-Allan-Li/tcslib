@@ -58,6 +58,12 @@ def blockAt (a k : ℕ) (z : List Bool) (i : ℕ) : List Bool :=
   ((pairSndD z).drop (i * (a * ((pairFstD z).length + 1) ^ k))).take
     (a * ((pairFstD z).length + 1) ^ k)
 
+/-- The defining equation of `blockAt`: `blockAt a k z i = ((pairSndD z).drop (i * (a * ((pairFstD z).length + 1) ^ k))).take (a * ((pairFstD z).length + 1) ^ k)`. -/
+theorem blockAt_def (a k : ℕ) (z : List Bool) (i : ℕ) :
+    blockAt a k z i =
+      (((pairSndD z).drop (i * (a * ((pairFstD z).length + 1) ^ k))).take
+      (a * ((pairFstD z).length + 1) ^ k)) := rfl
+
 /-! #### The OR-flag block loop -/
 
 namespace BlockLoop

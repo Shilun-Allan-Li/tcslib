@@ -45,12 +45,27 @@ namespace BoolCircuit
 /-- The unary code `1ᵏ0` of a natural number: `k` `true`s terminated by a `false`. -/
 def encodeNat (k : ℕ) : List Bool := List.replicate k true ++ [false]
 
+/-- The defining equation of `encodeNat`: `encodeNat k = List.replicate k true ++ [false]`. -/
+theorem encodeNat_def (k : ℕ) :
+    encodeNat k =
+      (List.replicate k true ++ [false]) := rfl
+
 /-- Read a unary number `1ᵏ0` (`BoolCircuit.encodeNat`) off the front of a string,
 returning it and the rest; `none` if the string ends before the terminating `0`. -/
 def decodeNat : List Bool → Option (ℕ × List Bool)
   | [] => none
   | false :: r => some (0, r)
   | true :: r => (decodeNat r).map fun p => (p.1 + 1, p.2)
+
+/-- `decodeNat` on the empty word: `decodeNat [] = none`. -/
+theorem decodeNat_nil : decodeNat [] = none := rfl
+
+/-- `decodeNat` on `false :: r`: `decodeNat (false :: r) = some (0, r)`. -/
+theorem decodeNat_false_cons (r : List Bool) : decodeNat (false :: r) = some (0, r) := rfl
+
+/-- `decodeNat` on `true :: r`: `decodeNat (true :: r) = (decodeNat r).map fun p => (p.1 + 1, p.2)`. -/
+theorem decodeNat_true_cons (r : List Bool) :
+    decodeNat (true :: r) = (decodeNat r).map fun p => (p.1 + 1, p.2) := rfl
 
 /-- Reading back a unary code returns its number and the untouched rest. -/
 theorem decodeNat_encodeNat (k : ℕ) (r : List Bool) :

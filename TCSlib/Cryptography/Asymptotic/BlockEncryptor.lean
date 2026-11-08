@@ -61,20 +61,25 @@ theorem encodeList_eq_flatMap (l : List (List Bool)) :
     encodeList l = l.flatMap fun c => pairEncode c [] := by
   induction l with
   | nil => rfl
-  | cons c cs ih => simp [encodeList, ih, pairEncode]
+  | cons c cs ih => simp [PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons, ih, pairEncode_eq]
 
 /-- A tuple encoding is at least as long as the tuple. -/
 theorem length_le_length_encodeList (l : List (List Bool)) :
     l.length ≤ (encodeList l).length := by
   induction l with
   | nil => simp
-  | cons c cs ih => simp only [encodeList, length_pairEncode, List.length_cons]; omega
+  | cons c cs ih => simp only [PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons, length_pairEncode, List.length_cons]; omega
 
 /-! ## The iterated block encryptor and decryptor -/
 
 /-- The state word `⟨u, ⟨pk, ⟨m, r⟩⟩⟩` of the block encryptor: unary parameter `u`, public key
 `pk`, remaining message `m`, remaining coins `r`. -/
 def blockState (u pk m r : List Bool) : List Bool := pairEncode u (pairEncode pk (pairEncode m r))
+
+/-- The defining equation of `blockState`: `blockState u pk m r = pairEncode u (pairEncode pk (pairEncode m r))`. -/
+theorem blockState_def (u pk m r : List Bool) :
+    blockState u pk m r =
+      (pairEncode u (pairEncode pk (pairEncode m r))) := rfl
 
 /-- One step of the block encryptor: drop `L(|u|)` message bits and `B(|u|)` coins. -/
 def blockStep (L B : PolyExpr) (w : List Bool) : List Bool :=
@@ -100,6 +105,11 @@ emissions along `|x| + 1` steps — the nested-pair tuple of the encryptions of 
 def blockEncFun (E : List Bool → List Bool) (L B : PolyExpr) (x : List Bool) : List Bool :=
   (List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x)
 
+/-- The defining equation of `blockEncFun`: `blockEncFun E L B x = (List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x)`. -/
+theorem blockEncFun_def (E : List Bool → List Bool) (L B : PolyExpr) (x : List Bool) :
+    blockEncFun E L B x =
+      ((List.range (x.length + 1)).flatMap fun i => blockEmit E L B ((blockStep L B)^[i] x)) := rfl
+
 /-- The ideal list of block encryptions with fuel `k`: `[]` once the message is empty. -/
 def blockList (E : List Bool → List Bool) (L B : ℕ) (u pk : List Bool) :
     ℕ → List Bool → List Bool → List (List Bool)
@@ -107,6 +117,20 @@ def blockList (E : List Bool → List Bool) (L B : ℕ) (u pk : List Bool) :
   | k + 1, m, r => if m = [] then [] else
       E (NUPPT.layout u (pairEncode pk (m.take L)) [] (r.take B)) ::
         blockList E L B u pk k (m.drop L) (r.drop B)
+
+/-- `blockList` with no fuel: `blockList E L B u pk 0 m r = []`. -/
+theorem blockList_zero (E : List Bool → List Bool) (L B : ℕ) (u pk m r : List Bool) :
+    blockList E L B u pk 0 m r = [] := rfl
+
+/-- `blockList` with fuel `k + 1`: `[]` on the empty message, otherwise the encryption of the first
+`L` bits with the first `B` coins followed by the list of the rest:
+`blockList E L B u pk (k + 1) m r = if m = [] then [] else
+E (layout u ⟨pk, m.take L⟩ [] (r.take B)) :: blockList E L B u pk k (m.drop L) (r.drop B)`. -/
+theorem blockList_succ (E : List Bool → List Bool) (L B : ℕ) (u pk : List Bool) (k : ℕ)
+    (m r : List Bool) :
+    blockList E L B u pk (k + 1) m r = if m = [] then [] else
+      E (NUPPT.layout u (pairEncode pk (m.take L)) [] (r.take B)) ::
+        blockList E L B u pk k (m.drop L) (r.drop B) := rfl
 
 /-- Unfolding: the step on a state word. -/
 theorem blockStep_blockState (L B : PolyExpr) (u pk m r : List Bool) :
@@ -130,7 +154,7 @@ private theorem pairSndD_nil : pairSndD [] = [] := rfl
 /-- The block `⟨c, []⟩` followed by a tuple is the tuple extended by `c`. -/
 theorem pairEncode_nil_append (c w : List Bool) :
     pairEncode c [] ++ w = pairEncode c w := by
-  simp [pairEncode]
+  simp [pairEncode_eq]
 
 /-- **Unfolding of the block encryptor** on a state word: with `k` rounds and a message of at
 most `k · L(|u|)` bits (`L(|u|) > 0`), the concatenated emissions are the nested-pair tuple of
@@ -152,20 +176,20 @@ theorem blockEncFun_spec (E : List Bool → List Bool) (L B : PolyExpr) (u pk : 
     intro m r hm
     have hm0 : m = [] := List.length_eq_zero_iff.mp (by simpa using hm)
     subst hm0
-    simp [blockEmit_blockState, blockList, encodeList]
+    simp [blockEmit_blockState, blockList, PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons]
   | succ k ih =>
     intro m r hm
     rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map]
-    simp only [Function.iterate_zero, id, Function.iterate_succ_apply, blockStep_blockState]
+    simp only [Function.iterate_zero, id_eq, Function.iterate_succ_apply, blockStep_blockState]
     by_cases hm0 : m = []
     · subst hm0
       simp only [List.drop_nil]
       rw [ih [] (r.drop (B.eval u.length)) (by simp)]
-      simp [blockEmit_blockState, blockList, encodeList]
+      simp [blockEmit_blockState, blockList, PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons]
     · rw [ih (m.drop (L.eval u.length)) (r.drop (B.eval u.length)) (by
         rw [List.length_drop, Nat.add_mul, one_mul] at *
         omega)]
-      simp only [blockEmit_blockState, hm0, if_false, blockList, encodeList]
+      simp only [blockEmit_blockState, hm0, if_false, blockList, PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons]
       exact pairEncode_nil_append _ _
 
 /-- A step grows a word by at most six symbols (an invalid word collapses to the empty state).
@@ -178,7 +202,7 @@ private theorem length_blockStep_le (L B : PolyExpr) (w : List Bool) :
       2 * (pairFstD z).length + 2 + (pairSndD z).length = z.length := by
     intro z
     cases hz : pairDecode z with
-    | none => exact Or.inl ⟨by simp [pairFstD, hz], by simp [pairSndD, hz]⟩
+    | none => exact Or.inl ⟨by simp [pairFstD_eq, hz], by simp [pairSndD_eq, hz]⟩
     | some p =>
       obtain ⟨a, b⟩ := p
       rw [eq_pairEncode_of_pairDecode z a b hz]
@@ -221,7 +245,7 @@ theorem blockStep_poly (L B : PolyExpr) : PolyTimeComputable (blockStep L B) := 
       ((polyTimeComputable_pairDropPoly B).comp (hu.pairEncode hr))))
   convert h using 1
   funext w
-  simp [blockStep, blockState, Function.comp]
+  simp [blockStep, blockState, Function.comp_apply]
 
 /-- The block emission is polynomial-time for a polynomial-time `E`
 (`polyTimeComputable_ite`, `polyTimeComputable_lenLe`, `polyTimeComputable_pairTakePoly`,
@@ -242,7 +266,7 @@ theorem blockEmit_poly {E : List Bool → List Bool} (hE : PolyTimeComputable E)
   have h := polyTimeComputable_ite hp (polyTimeComputable_const []) hbody
   convert h using 1
   funext w
-  simp only [blockEmit, Function.comp, pairFstD_pairEncode, pairSndD_pairEncode]
+  simp only [blockEmit, Function.comp_apply, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- **The block encryptor is polynomial-time**: an instance of
 `Complexity.polyTimeComputable_iterateEmit` with `R := var` rounds and the orbit bound
@@ -293,36 +317,36 @@ theorem decListFun_spec (Dc : List Bool → List Bool) (sk : List Bool) :
     intro l hl
     have hl0 : l = [] := List.length_eq_zero_iff.mp (by simpa using hl)
     subst hl0
-    simp [decListEmit, encodeList]
+    simp [decListEmit, PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons]
   | succ k ih =>
     intro l hl
     rw [List.range_succ_eq_map, List.flatMap_cons, List.flatMap_map]
-    simp only [Function.iterate_zero, id, Function.iterate_succ_apply]
+    simp only [Function.iterate_zero, id_eq, Function.iterate_succ_apply]
     cases l with
     | nil =>
       have hstep : decListStep (pairEncode sk (encodeList [])) = pairEncode sk (encodeList []) := by
-        simp [decListStep, encodeList, pairSndD_nil]
+        simp [decListStep, PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons, pairSndD_nil]
       rw [hstep, ih [] (by simp)]
-      simp [decListEmit, encodeList]
+      simp [decListEmit, PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons]
     | cons c cs =>
       have hstep : decListStep (pairEncode sk (encodeList (c :: cs))) = pairEncode sk (encodeList cs) := by
-        simp [decListStep, encodeList]
+        simp [decListStep, PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons]
       rw [hstep, ih cs (by simpa using hl)]
-      simp [decListEmit, encodeList, length_pairEncode]
+      simp [decListEmit, PrivateKeyScheme.encodeList_nil, PrivateKeyScheme.encodeList_cons, length_pairEncode]
 
 /-- The tuple decryptor's step grows a word by at most two symbols. -/
 private theorem length_decListStep_le (w : List Bool) : (decListStep w).length ≤ w.length + 2 := by
   simp only [decListStep, length_pairEncode]
   cases hz : pairDecode w with
   | none =>
-    simp [pairFstD, pairSndD, hz, pairDecode]
+    simp [pairFstD_eq, pairSndD_eq, hz, pairDecode]
   | some p =>
     obtain ⟨a, b⟩ := p
     rw [eq_pairEncode_of_pairDecode w a b hz]
     simp only [pairFstD_pairEncode, pairSndD_pairEncode, length_pairEncode]
     have : (pairSndD b).length ≤ b.length := by
       cases hb : pairDecode b with
-      | none => simp [pairSndD, hb]
+      | none => simp [pairSndD_eq, hb]
       | some p' =>
         obtain ⟨a', b'⟩ := p'
         rw [eq_pairEncode_of_pairDecode b a' b' hb]

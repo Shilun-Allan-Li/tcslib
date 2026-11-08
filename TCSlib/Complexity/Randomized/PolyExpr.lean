@@ -107,6 +107,11 @@ def subst : PolyExpr → PolyExpr → PolyExpr
 time bounds of `Complexity.PolyTimeComputable`. -/
 def normal (C c : ℕ) : PolyExpr := mul (const C) (pow (add var (const 1)) c)
 
+/-- The defining equation of `normal`: `normal C c = mul (const C) (pow (add var (const 1)) c)`. -/
+theorem normal_def (C c : ℕ) :
+    normal C c =
+      (mul (const C) (pow (add var (const 1)) c)) := rfl
+
 /-- Evaluating a constant. -/
 @[simp] theorem eval_const (c n : ℕ) : (const c).eval n = c := rfl
 

@@ -307,7 +307,7 @@ theorem predProb_glHalf_even {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ
   rw [predProb_def, predProb_def]
   refine uprob_eq_of_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl ρ)) fun z => ?_
   obtain ⟨z, r⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id]
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq]
   rw [PermFamily.glHalf_f_even, glHalfBit_even]
 
 /-- **Inversion experiments at even length**: inverting `g_{m+m}` is inverting `glPad f` at
@@ -319,7 +319,7 @@ theorem invProb_glHalf_even {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
   rw [invProb_def, invProb_def]
   refine uprob_eq_of_equiv ((P.glPad_inEquiv m).symm.prodCongr (Equiv.refl ρ)) fun z => ?_
   obtain ⟨z, r⟩ := z
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id,
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq,
     PermFamily.glHalf_f_even, Equiv.apply_symm_apply]
   exact (P.glPad_outEquiv m).apply_eq_iff_eq
 
@@ -416,7 +416,7 @@ theorem predProb_glHalf_odd {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : ℕ)
     (((P.glPad_inEquiv m).prodCongr (Equiv.refl (Bool × ρ))).trans (snocCoins m ρ))
     fun w => ?_).symm
   obtain ⟨z, e, c⟩ := w
-  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id,
+  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq,
     snocCoins, Equiv.coe_fn_mk]
   rw [PermFamily.glHalf_f_odd, glHalfBit_odd P, Equiv.symm_apply_apply]
 
@@ -443,7 +443,7 @@ theorem invProb_glHalf_odd_le {ρ : Type*} [Fintype ρ] (P : PermFamily) (m : �
   refine uprob_mono fun w hw => ?_
   obtain ⟨z, e, c⟩ := w
   simp only [snocCoins, Equiv.coe_fn_mk, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl,
-    id, PermFamily.glHalf_f_odd, Equiv.apply_symm_apply] at hw ⊢
+    id_eq, PermFamily.glHalf_f_odd, Equiv.apply_symm_apply] at hw ⊢
   have hw' : P.glHalf.f (m + m + 1)
       (Fin.snoc (Fin.init (A (Fin.snoc (P.glPad_outEquiv m
           (P.toFunFamily.glPad.f m ((P.glPad_inEquiv m).symm z))) e) c))
@@ -536,7 +536,7 @@ theorem PermFamily.glHalf_easy (P : PermFamily) {F : List Bool → List Bool}
       (dropLen_poly huh polyTimeComputable_pairSndD), fun n z => ?_⟩
   have hFx' : ∀ n (x : Fin n → Bool),
       F (pairEncode (List.replicate n true) (List.ofFn x)) = List.ofFn (P.f n x) := hFx
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf_def,
     List.length_replicate]
   rw [take_ofFn_castLE (Nat.div_le_self n 2), hFx', PermFamily.toFunFamily_f]
   exact (P.ofFn_glHalf_f n z).symm
@@ -552,7 +552,7 @@ theorem glHalfBit_easy : ∃ H : List Bool → List Bool, PolyTimeComputable H �
       (((pairSndD w).drop (unaryHalf (pairFstD w)).length).take (unaryHalf (pairFstD w)).length)),
     PolyTimeComputable.comp' ipFun_poly ((takeLen_poly huh polyTimeComputable_pairSndD).pairEncode
       (takeLen_poly huh (dropLen_poly huh polyTimeComputable_pairSndD))), fun n z => ?_⟩
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf,
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, unaryHalf_def,
     List.length_replicate]
   rw [take_ofFn_castLE (Nat.div_le_self n 2), take_drop_ofFn (by omega), ipFun_ofFn]
   rfl
@@ -615,7 +615,7 @@ private theorem glHalfOddInv_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : Bo
     (.const 0) (fun _ => by simp) (.const 1) m y rfl (fun _ => e)
     (NUPPT.reparamCoins A oddParam m c) (oddCoins A m glHalfInvPost_poly (e, c))
     (ofFn_oddCoins A m glHalfInvPost_poly e c)]
-  simp only [glHalfInvPost, owpPredPre, pairSndD_pairEncode, pairFstD_pairEncode,
+  simp only [glHalfInvPost, owpPredPre_def, pairSndD_pairEncode, pairFstD_pairEncode,
     NUPPT.inArg_layout, NUPPT.inAdvice_layout, NUPPT.runAt_reparam]
   rfl
 
@@ -629,7 +629,7 @@ private theorem glHalfOddPred_runAt (A : NUPPT) (m : ℕ) (y : List Bool) (e : B
     (fun _ => []) (.const 0) (fun _ => by simp) (.const 1) m y rfl (fun _ => e)
     (NUPPT.reparamCoins A oddParam m c) (oddCoins A m polyTimeComputable_pairSndD (e, c))
     (ofFn_oddCoins A m polyTimeComputable_pairSndD e c)]
-  simp only [owpPredPre, pairSndD_pairEncode, NUPPT.inArg_layout, NUPPT.inAdvice_layout,
+  simp only [owpPredPre_def, pairSndD_pairEncode, NUPPT.inArg_layout, NUPPT.inAdvice_layout,
     NUPPT.runAt_reparam]
   rfl
 

@@ -62,6 +62,11 @@ variable {n : ℕ} {β γ ρ : Type*} [Fintype γ] [Fintype ρ]
 Boolean ring `Bool` (XOR of the ANDs). [Gar26, Theorem 2.3], the bit `B(x, r)`. -/
 def ip (x r : Fin n → Bool) : Bool := ∑ i, x i * r i
 
+/-- The defining equation of `ip`: `ip x r = ∑ i, x i * r i`. -/
+theorem ip_def (x r : Fin n → Bool) :
+    ip x r =
+      (∑ i, x i * r i) := rfl
+
 /-- The inner product is additive in its second argument: `⟨x, s ⊕ t⟩ = ⟨x, s⟩ ⊕ ⟨x, t⟩`. -/
 theorem ip_add (x s t : Fin n → Bool) : ip x (s + t) = ip x s + ip x t := by
   simp only [ip, Pi.add_apply, mul_add, sum_add_distrib]
@@ -101,6 +106,11 @@ def glPad (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool
     β × (Fin n → Bool) :=
   (f z.1, z.2)
 
+/-- The defining equation of `glPad`: `glPad f z = (f z.1, z.2)`. -/
+theorem glPad_def (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) :
+    glPad f z =
+      (f z.1, z.2) := rfl
+
 /-- The defining equation of `glPad`: `glPad f (x, r) = (f x, r)`. -/
 theorem glPad_apply (f : (Fin n → Bool) → β) (z : (Fin n → Bool) × (Fin n → Bool)) :
     glPad f z = (f z.1, z.2) := rfl
@@ -130,7 +140,8 @@ noncomputable def secProb (f : (Fin n → Bool) → β) (A : β × (Fin n → Bo
 probabilities `secProb f A x`. -/
 theorem predProb_glPad_eq (f : (Fin n → Bool) → β) (A : β × (Fin n → Bool) → ρ → Bool) :
     predProb (glPad f) glBit A = uexp (secProb f A) := by
-  unfold predProb secProb
+  rw [predProb_def]
+  unfold secProb
   have h := uprob_prod
     (fun z : (Fin n → Bool) × ((Fin n → Bool) × ρ) => A (f z.1, z.2.1) z.2.2 = ip z.1 z.2.1)
   simp only at h
@@ -234,7 +245,7 @@ theorem invProb_perfectInverter (f : (Fin n → Bool) → β) (A : β × (Fin n 
         A (glPad f z.1) z.2 = glBit z.1) = 0 := by
       classical
       rw [uprob_eq_card_filter]; simp
-    unfold predProb at h
+    simp only [predProb_def] at h
     rw [this] at h
     exact zero_ne_one h
   refine le_antisymm (uprob_le_one _) ?_

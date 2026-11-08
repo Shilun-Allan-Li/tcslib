@@ -287,7 +287,7 @@ dependent product of subtypes, `Equiv.subtypePiEquivPi`, `Nat.card_pi`). -/
 theorem uprob_pi_forall_dep {ι α : Type*} [Fintype ι] [DecidableEq ι] [Fintype α]
     (P : ι → α → Prop) :
     uprob (fun xs : ι → α => ∀ i, P i (xs i)) = ∏ i, uprob (P i) := by
-  unfold uprob
+  simp only [uprob_def]
   rw [Nat.card_congr (Equiv.subtypePiEquivPi (p := P)), Nat.card_pi, Fintype.card_fun,
     ← Finset.card_univ (α := ι), ← Finset.prod_const, Nat.cast_prod, Nat.cast_prod,
     Finset.prod_div_distrib]

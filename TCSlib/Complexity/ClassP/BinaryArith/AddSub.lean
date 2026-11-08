@@ -188,6 +188,11 @@ def le (z : List Bool) : Bool := decide (bitsVal (pairFstD z) ≤ bitsVal (pairS
 /-- The test `fst = snd` on the values of the components of `z`. -/
 def beq (z : List Bool) : Bool := decide (bitsVal (pairFstD z) = bitsVal (pairSndD z))
 
+/-- The defining equation of `beq`: `beq z = decide (bitsVal (pairFstD z) = bitsVal (pairSndD z))`. -/
+theorem beq_def (z : List Bool) :
+    beq z =
+      (decide (bitsVal (pairFstD z) = bitsVal (pairSndD z))) := rfl
+
 /-- `lt` on encoded numbers is `<`. -/
 @[simp] theorem lt_pairEncode (a b : ℕ) :
     lt (pairEncode (Nat.bits a) (Nat.bits b)) = decide (a < b) := by simp [lt, bitsVal_bits]

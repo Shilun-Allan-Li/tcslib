@@ -327,7 +327,7 @@ theorem acceptProb_nextBitHybrid_mix {σ ρ : Type*} [Fintype σ] [Fintype ρ] {
     (X : σ → Fin ℓ → Bool) (i : Fin ℓ) (D : (Fin ℓ → Bool) → ρ → Bool) :
     acceptProb (nextBitHybrid X i) D =
       (acceptProb (nextBitHybrid X (i + 1)) D + acceptProb (nextBitHybridFlip X i) D) / 2 := by
-  unfold acceptProb
+  simp only [acceptProb_def]
   rw [uprob_split_bit i (fun s => X s i) (fun z => D (nextBitHybrid X i z.1) z.2 = true)]
   have hA : uprob (fun z : (σ × (Fin ℓ → Bool)) × ρ =>
       D (nextBitHybrid X i (z.1.1, Function.update z.1.2 i (X z.1.1 i))) z.2 = true) =
@@ -391,7 +391,7 @@ theorem nextBitProb_nextBitPred_false {σ ρ : Type*} [Fintype σ] [Fintype ρ] 
   have hA : uprob (fun z : (σ × (Fin ℓ → Bool)) × ρ =>
       nextBitPred D i false (prefixOf i (X z.1.1)) (Function.update z.1.2 i (X z.1.1 i), z.2) =
         X z.1.1 i) = acceptProb (nextBitHybrid X (i + 1)) D := by
-    unfold acceptProb
+    simp only [acceptProb_def]
     apply OneWay.uprob_congr
     intro z
     simp only [nextBitPred, completePrefix_prefixOf_eq, nextBitHybrid_update_eq,
@@ -400,7 +400,7 @@ theorem nextBitProb_nextBitPred_false {σ ρ : Type*} [Fintype σ] [Fintype ρ] 
   have hB : uprob (fun z : (σ × (Fin ℓ → Bool)) × ρ =>
       nextBitPred D i false (prefixOf i (X z.1.1)) (Function.update z.1.2 i (!X z.1.1 i), z.2) =
         X z.1.1 i) = 1 - acceptProb (nextBitHybridFlip X i) D := by
-    unfold acceptProb
+    simp only [acceptProb_def]
     rw [← uprob_not]
     apply OneWay.uprob_congr
     intro z
@@ -440,7 +440,7 @@ theorem nextBitProb_nextBitPred_true {σ ρ : Type*} [Fintype σ] [Fintype ρ] [
 private theorem prgAdv_eq_abs_nextBitHybrid {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty σ]
     {ℓ : ℕ} (X : σ → Fin ℓ → Bool) (D : (Fin ℓ → Bool) → ρ → Bool) :
     prgAdv X D = |acceptProb (nextBitHybrid X 0) D - acceptProb (nextBitHybrid X ℓ) D| := by
-  unfold prgAdv distAdv
+  simp only [prgAdv_eq, distAdv_def]
   rw [acceptProb_nextBitHybrid_zero, acceptProb_nextBitHybrid_self, abs_sub_comm]
 
 /-- **No advantage on the empty string**: if `ℓ = 0`, then every distinguisher `D` has PRG
@@ -540,7 +540,7 @@ probability (`uprob_comp_equiv` on the coin factor of the sample space). -/
 private theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
     (X : σ → γ) (e : ρ ≃ ρ') (D : γ → ρ' → Bool) (D' : γ → ρ → Bool)
     (h : ∀ x r, D x (e r) = D' x r) : acceptProb X D = acceptProb X D' := by
-  unfold acceptProb
+  simp only [acceptProb_def]
   rw [← uprob_comp_equiv (Equiv.prodCongr (Equiv.refl σ) e)]
   apply OneWay.uprob_congr
   intro z
@@ -640,10 +640,10 @@ private theorem exists_nextBitPredMachine (ℓ : PolyExpr) (D : NUPPT) (flip : �
   have hofn : List.ofFn (e n (u, c)) = List.ofFn u ++ List.ofFn c := by
     rw [← List.ofFn_fin_append]
     exact (List.ofFn_congr (hlen n).symm (Fin.append u c)).symm
-  simp only [NUPPT.predictor, NUPPT.distinguisher, NUPPT.runAt_eq, hofn, nextBitPred]
+  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, nextBitPred]
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.advInput, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.runAtL, List.take_left', List.drop_left', ofFn_completePrefix]
+  simp [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq,
+    NUPPT.runAtL_eq, List.take_left', List.drop_left', ofFn_completePrefix]
   split_ifs <;> cases u i <;> cases flip n <;> rfl
 
 /-- **Completeness of the next-bit test** [PS10, Theorem 75.4]: if the ensemble `{X_n}` over
@@ -783,7 +783,7 @@ theorem nextBitProb_id {ρ : Type*} [Fintype ρ] [Nonempty ρ] {ℓ : ℕ} (i : 
     rw [← uprob_comp_equiv e]
     apply OneWay.uprob_congr
     intro z
-    simp only [e, Equiv.coe_fn_mk, id, hprefix, Function.update_self]
+    simp only [e, Equiv.coe_fn_mk, id_eq, hprefix, Function.update_self]
     cases A (fun j => z.1 (Fin.castLE i.isLt.le j)) z.2 <;> cases z.1 i <;> simp
   unfold nextBitProb
   rw [uprob_not] at hflip
@@ -811,7 +811,8 @@ def nextBitDist {ρ : Type*} {ℓ : ℕ} (i : Fin ℓ) (A : (Fin i → Bool) →
 theorem acceptProb_nextBitDist {σ ρ : Type*} [Fintype σ] [Fintype ρ] {ℓ : ℕ}
     (X : σ → Fin ℓ → Bool) (i : Fin ℓ) (A : (Fin i → Bool) → ρ → Bool) :
     acceptProb X (nextBitDist i A) = nextBitProb X i A := by
-  unfold acceptProb nextBitProb nextBitDist prefixOf
+  unfold nextBitProb nextBitDist prefixOf
+  simp only [acceptProb_def]
   apply OneWay.uprob_congr
   intro z
   simp
@@ -823,7 +824,7 @@ pseudorandom sampler has no predictor with noticeable next-bit advantage. -/
 theorem prgAdv_nextBitDist {σ ρ : Type*} [Fintype σ] [Fintype ρ] [Nonempty ρ] {ℓ : ℕ}
     (X : σ → Fin ℓ → Bool) (i : Fin ℓ) (A : (Fin i → Bool) → ρ → Bool) :
     prgAdv X (nextBitDist i A) = |nextBitProb X i A - 1 / 2| := by
-  unfold prgAdv distAdv
+  simp only [prgAdv_eq, distAdv_def]
   rw [acceptProb_nextBitDist, acceptProb_nextBitDist, nextBitProb_id]
 
 /-- **The next-bit statistical test as a machine**: for a predictor machine `A` and positions
@@ -885,8 +886,8 @@ private theorem exists_nextBitDistMachine {ℓ : PolyExpr} (A : NUPPT) (k : ℕ 
   refine ⟨NUPPT.ofPolyTime hG A.coins _
     (fun n => pairEncode (A.advice n) (List.replicate (k n) true)) hadv, rfl, fun n y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.advInput, NUPPT.layout, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice, NUPPT.inCoins,
-    NUPPT.runAtL]
+  simp [NUPPT.advInput_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq, NUPPT.inCoins_eq,
+    NUPPT.runAtL_eq]
 
 /-- **Soundness of the next-bit test, asymptotic form** (the converse of
 [PS10, Theorem 75.4], implicit in the text's "a pseudorandom distribution needs to pass all
@@ -935,7 +936,7 @@ theorem Ensemble.Pseudorandom.nextBitUnpredictable {ℓ : PolyExpr} {X : Ensembl
     · exact h.choose.isLt.le
     · exact Nat.zero_le _
   obtain ⟨Dm, hc, hDm⟩ := exists_nextBitDistMachine A k hk
-  have hlen : ∀ n, A.coinLen n = Dm.coinLen n := fun n => by simp only [NUPPT.coinLen, hc]
+  have hlen : ∀ n, A.coinLen n = Dm.coinLen n := fun n => by simp only [NUPPT.coinLen_eq, hc]
   let e : ∀ n, A.Coins n ≃ Dm.Coins n := fun n =>
     Equiv.arrowCongr (finCongr (hlen n)) (Equiv.refl Bool)
   have hofn : ∀ n (r : A.Coins n), List.ofFn (e n r) = List.ofFn r := fun n r =>
@@ -958,12 +959,12 @@ theorem Ensemble.Pseudorandom.nextBitUnpredictable {ℓ : PolyExpr} {X : Ensembl
   have hid : ∀ (t : Fin (ℓ.eval n) → Bool) (r : A.Coins n),
       Dm.distinguisher n (ℓ.eval n) t (e n r) = nextBitDist j₀ (A.predictor n j₀) t r := by
     intro t r
-    simp only [NUPPT.distinguisher, NUPPT.runAt_eq, hofn, hDm, hkn, nextBitDist, NUPPT.predictor,
+    simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hDm, hkn, nextBitDist, NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq,
       headD_drop_ofFn, ofFn_prefixOf]
     simp
   have hadv : prgAdv (X.X n) (Dm.distinguisher n (ℓ.eval n)) = |ε n| := by
     rw [← hspec, ← prgAdv_nextBitDist (X.X n) j₀ (A.predictor n j₀)]
-    unfold prgAdv distAdv
+    simp only [prgAdv_eq, distAdv_def]
     rw [acceptProb_coins_equiv (X.X n) (e n) _ (nextBitDist j₀ (A.predictor n j₀)) hid,
       acceptProb_coins_equiv id (e n) _ (nextBitDist j₀ (A.predictor n j₀)) hid]
   rw [hadv, abs_of_nonneg (abs_nonneg _)]

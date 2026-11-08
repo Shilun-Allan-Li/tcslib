@@ -473,7 +473,7 @@ theorem glMajFun_blocksStr {m M : ℕ} (hM : 0 < M ∨ m = 0) (W : Fin m → Fin
   refine List.ext_getElem (by simp) fun j hj₁ hj₂ => ?_
   simp only [List.getElem_map, List.getElem_range, List.getElem_ofFn]
   rw [take_drop_blocksStr W ⟨j, by simpa using hj₂⟩, List.length_ofFn, count_true_ofFn,
-    HardcoreBit.majority, Fintype.card_fin]
+    HardcoreBit.majority_def, Fintype.card_fin]
 
 /-- Unary multiplication `⟨1^a, 1^b⟩ ↦ 1^{ab}` as a string function
 (`Turing.FinTM.computesFunInTime_unaryMul`). -/
@@ -739,8 +739,8 @@ theorem glMachine_runAt (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : �
   rw [NUPPT.runAtL_ofPolyTime]
   unfold glRawFun
   simp only [GLRaw.uM, GLRaw.adv, GLRaw.α, GLRaw.uk, GLRaw.tbl, GLRaw.um, GLRaw.ur, GLRaw.ukm,
-    GLRaw.cs₁, GLRaw.r₁, GLRaw.cb, GLRaw.cs₂, NUPPT.inParam, NUPPT.inArg, NUPPT.inAdvice,
-    NUPPT.inCoins, NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, glAdvice,
+    GLRaw.cs₁, GLRaw.r₁, GLRaw.cb, GLRaw.cs₂, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inAdvice_eq,
+    NUPPT.inCoins_eq, NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, glAdvice,
     List.length_replicate, unaryMulFun_pairEncode, hr]
   have h1 : (blocksStr s ++ List.ofFn b ++ blocksStr cs ++ ex).take (k n * mP.eval n) = blocksStr s := by
     simp only [List.append_assoc]
@@ -758,7 +758,7 @@ theorem glMachine_runAt (A : NUPPT) (mP K : PolyExpr) (k : ℕ → ℕ) (hk : �
   rw [hin, glVotesFun_wfInput]
   have hW : List.ofFn (GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs) =
       blocksStr fun i j => GLLoop.wfVote A n (mP.eval n) (k n) Y s b cs (finProdFinEquiv (i, j)) := by
-    unfold blocksStr
+    simp only [blocksStr_def]
     congr 1
     funext p
     rw [blocksEquiv_symm_apply]
@@ -783,7 +783,7 @@ theorem two_pow_size_le (x : ℕ) : 2 ^ Nat.size x ≤ 2 * x + 1 := by
 theorem majority_comp_equiv {κ κ' : Type*} [Fintype κ] [Fintype κ'] (σ : κ' ≃ κ) (v : κ → Bool) :
     HardcoreBit.majority (fun x => v (σ x)) = HardcoreBit.majority v := by
   classical
-  unfold HardcoreBit.majority
+  simp only [HardcoreBit.majority_def]
   have hcard : #(univ.filter fun x => v (σ x) = true) = #(univ.filter fun y => v y = true) := by
     rw [← Finset.card_map σ.toEmbedding]
     congr 1
@@ -830,7 +830,7 @@ theorem ofFn_glCoinsEquiv (A : NUPPT) (n m k Q : ℕ)
       blocksStr g.1 ++ List.ofFn g.2.1 ++ blocksStr (glBlocks A n m k g.2.2) ++ List.ofFn ex := by
   obtain ⟨s, b, c⟩ := g
   simp only [glCoinsEquiv, Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl,
-    id]
+    id_eq]
   rw [ofFn_finCastEquiv, ofFn_appendEquiv, ofFn_appendEquiv, ofFn_appendEquiv]
   simp only [List.append_assoc]
   rfl

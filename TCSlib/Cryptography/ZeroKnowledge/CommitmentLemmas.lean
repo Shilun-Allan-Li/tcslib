@@ -78,7 +78,7 @@ theorem exists_abs_uexp_le {κ : Type*} [Fintype κ] [Nonempty κ] (f : κ → �
     ∃ c₀, |uexp f| ≤ |f c₀| := by
   have hcard : (0 : ℝ) < Fintype.card κ := Nat.cast_pos.2 Fintype.card_pos
   have hsum : ∑ _c : κ, |uexp f| ≤ ∑ c, |f c| := by
-    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, uexp, abs_div, abs_of_pos hcard,
+    rw [Finset.sum_const, Finset.card_univ, nsmul_eq_mul, uexp_def, abs_div, abs_of_pos hcard,
       mul_div_cancel₀ _ hcard.ne']
     exact Finset.abs_sum_le_sum_abs _ _
   obtain ⟨c₀, -, hc₀⟩ := Finset.exists_le_of_sum_le Finset.univ_nonempty hsum
@@ -90,7 +90,7 @@ regrouping the sample space). -/
 theorem acceptProb_eq_uexp_fst {σ γ κ ρ : Type*} [Fintype σ] [Fintype κ] [Fintype ρ]
     (X : σ → γ) (D : γ → κ × ρ → Bool) :
     acceptProb X D = uexp fun c₀ => acceptProb X fun z c => D z (c₀, c) := by
-  unfold acceptProb
+  simp only [acceptProb_def]
   refine ((uprob_comp_equiv (EnsembleLemmas.swapAux κ σ ρ)
     fun z : σ × (κ × ρ) => D (X z.1) z.2 = true).symm.trans ?_)
   rw [uprob_prod]
@@ -111,10 +111,10 @@ theorem exists_fixCoins {σ τ γ κ ρ : Type*} [Fintype σ] [Fintype τ] [Fint
   obtain ⟨c₀, hc₀⟩ := exists_abs_uexp_le fun c₀ : κ =>
     acceptProb X (fun z c => D z (c₀, c)) - acceptProb Y (fun z c => D z (c₀, c))
   refine ⟨c₀, ?_⟩
-  unfold distAdv
+  simp only [distAdv_def]
   rw [acceptProb_eq_uexp_fst X D, acceptProb_eq_uexp_fst Y D]
   convert hc₀ using 2
-  rw [uexp, uexp, uexp, ← sub_div, Finset.sum_sub_distrib]
+  rw [uexp_def, uexp_def, uexp_def, ← sub_div, Finset.sum_sub_distrib]
 
 /-- The distinguishing advantage is symmetric in the two distributions. -/
 theorem distAdv_comm {σ τ γ ρ : Type*} [Fintype σ] [Fintype τ] [Fintype ρ] (X : σ → γ) (Y : τ → γ)
@@ -131,26 +131,26 @@ theorem acceptProb_distinguisher_of_runAtL {σ : Type*} [Fintype σ] {B D : NUPP
     (hrun : ∀ y r, B.runAtL n y r = D.runAtL n (g y) r) :
     acceptProb X (B.distinguisher n m) =
       acceptProb X fun z c => D.distinguisherL n (g (List.ofFn z)) c := by
-  have hlen : D.coinLen n = B.coinLen n := by simp [NUPPT.coinLen, hc]
+  have hlen : D.coinLen n = B.coinLen n := by simp [NUPPT.coinLen_eq, hc]
   let e : D.Coins n ≃ B.Coins n := Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)
   rw [← EnsembleLemmas.acceptProb_coins_equiv e]
   congr 1
   funext z c
   have hofn : List.ofFn (e c) = List.ofFn c := (List.ofFn_congr hlen c).symm
-  simp only [NUPPT.distinguisher, NUPPT.distinguisherL, NUPPT.runAt_eq, hofn, hrun]
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hrun]
 
 /-- As `acceptProb_distinguisher_of_runAtL`, for untyped samples. -/
 theorem acceptProb_distinguisherL_of_runAtL {σ : Type*} [Fintype σ] {B D : NUPPT}
     (hc : B.coins = D.coins) {n : ℕ} (X : σ → List Bool) (g : List Bool → List Bool)
     (hrun : ∀ y r, B.runAtL n y r = D.runAtL n (g y) r) :
     acceptProb X (B.distinguisherL n) = acceptProb X fun z c => D.distinguisherL n (g z) c := by
-  have hlen : D.coinLen n = B.coinLen n := by simp [NUPPT.coinLen, hc]
+  have hlen : D.coinLen n = B.coinLen n := by simp [NUPPT.coinLen_eq, hc]
   let e : D.Coins n ≃ B.Coins n := Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)
   rw [← EnsembleLemmas.acceptProb_coins_equiv e]
   congr 1
   funext z c
   have hofn : List.ofFn (e c) = List.ofFn c := (List.ofFn_congr hlen c).symm
-  simp only [NUPPT.distinguisherL, NUPPT.runAt_eq, hofn, hrun]
+  simp only [NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hrun]
 
 /-! ### Splitting a tuple at a position -/
 
@@ -232,7 +232,7 @@ theorem encodeMsgs_append (L M : List (List Bool)) :
     Strategy.encodeMsgs (L ++ M) = Strategy.encodeMsgs L ++ Strategy.encodeMsgs M := by
   induction L with
   | nil => rfl
-  | cons m L ih => simp [ih, pairEncode, List.append_assoc]
+  | cons m L ih => simp [ih, pairEncode_eq, List.append_assoc]
 
 /-- The encoding of a history of messages of length `≤ M` has length at most
 `|L| · (2M + 2)` (`length_pairEncode`). -/
@@ -498,7 +498,7 @@ theorem emit_init_of_lt {v r : List Bool} {i : ℕ} (hi : i < v.length) :
       List.ofFn (EnsembleLemmas.blocks v.length v.length (padFin (v.length * v.length) r) ⟨i, hi⟩) :=
     EnsembleLemmas.take_drop_ofFn_blocks (padFin (v.length * v.length) r) i hi
   simp only [init, pairFstD_pairEncode, pairSndD_pairEncode, iterate_step, List.length_replicate,
-    emit, arg, p₁_st, p₂_st, p₃_st, hne, if_false, hblock, NUPPT.advInput, headD_drop]
+    emit, arg, p₁_st, p₂_st, p₃_st, hne, if_false, hblock, NUPPT.advInput_eq, headD_drop]
 
 end ComLoop
 

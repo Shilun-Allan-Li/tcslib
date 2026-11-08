@@ -1689,7 +1689,7 @@ private theorem rsa_inner_le (H : ArithmeticFP) (A : NUPPT) {n : ℕ} (hn : 2 �
   rw [← uprob_comp_equiv (Equiv.prodCongr φ.symm (Equiv.refl (A.Coins n)))]
   apply uprob_mono
   rintro ⟨u, ω⟩ h
-  simp only [Equiv.prodCongr_apply, Prod.map, Equiv.refl_apply, rsaCollection_f,
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.refl_apply, rsaCollection_f,
     rsaCollection_decD] at h ⊢
   obtain ⟨x', hx', hf⟩ := h
   rw [Option.map_eq_some_iff] at hx'

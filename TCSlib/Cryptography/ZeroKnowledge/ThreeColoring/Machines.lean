@@ -123,19 +123,19 @@ theorem polyTimeComputable_loopState' {upd init : List Bool → List Bool}
         false := by
     intro x i hi
     rw [CountLoop.orbit_eq]
-    simp [CountLoop.acc, hi]
+    simp [CountLoop.acc_def, hi]
   have hlast : ∀ x, CountLoop.acc N
       (pairEncode x (orbit (CountLoop.start init) (CountLoop.step upd) x (N x))) = true := by
     intro x
     rw [CountLoop.orbit_eq]
-    simp [CountLoop.acc]
+    simp [CountLoop.acc_def]
   have h := EncodingMachines.polyTimeComputable_stateFind (CountLoop.start_poly hinit)
     (CountLoop.step_poly hupd) (CountLoop.acc_poly hN) CountLoop.out_poly (PolyExpr.normal C c) _ N
     hNR hbound hfirst hlast
   convert h using 1
   funext x
   rw [CountLoop.orbit_eq]
-  simp [CountLoop.out]
+  simp [CountLoop.out_def]
 
 /-- Emitting `E i` at the indices `i < L` of `List.range N` gives the concatenation of the
 `E i` over `i < min N L` (`EncodingMachines.flatMap_range_ite_eq` for arbitrary chunks). -/
@@ -222,6 +222,12 @@ theorem iterSnd_poly {s : List Bool → List Bool} (hs : PolyTimeComputable s)
 def ilayout (x z : List Bool) (hist : List (List Bool)) (r : List Bool) : List Bool :=
   NUPPT.layout (List.replicate x.length true)
     (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r
+
+/-- The defining equation of `ilayout`: `ilayout x z hist r = NUPPT.layout (List.replicate x.length true) (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r`. -/
+theorem ilayout_def (x z : List Bool) (hist : List (List Bool)) (r : List Bool) :
+    ilayout x z hist r =
+      (NUPPT.layout (List.replicate x.length true)
+      (pairEncode (pairEncode x z) (Strategy.encodeMsgs hist)) [] r) := rfl
 
 /-- A strategy whose next-message function is a polynomial-time function `F` of the machine
 layout `ilayout x z hist r` is efficient: `NUPPT.ofPolyTimeUniform` of `F` with the strategy's
@@ -329,7 +335,7 @@ theorem ofFn_getD_add (r : List Bool) (b L : ℕ) :
   rw [← ofFn_padFin]
   congr 1
   funext j
-  simp [padFin, List.getD_eq_getElem?_getD, List.getElem?_drop]
+  simp [padFin_def, List.getD_eq_getElem?_getD, List.getElem?_drop]
 
 /-! ### Counting set bits -/
 
@@ -540,7 +546,7 @@ theorem map_edgeList {n : ℕ} (G : Graph n) (x : List Bool)
     (edgeList G).map (fun p : Fin n × Fin n => ((finProdFinEquiv p : Fin (n * n)) : ℕ)) =
       (List.range (n * n)).filter (fun j => x.getD j false) := by
   rw [← map_product_finRange, List.filter_map]
-  unfold edgeList
+  simp only [edgeList_def]
   congr 1
   apply List.filter_congr
   rintro ⟨u, v⟩ _
@@ -591,7 +597,7 @@ theorem encGraph_decGraph_eq_take (x : List Bool) :
       rw [List.length_take] at h2
       omega
     rw [List.getElem_take]
-    simp only [encGraph, List.getElem_ofFn]
+    simp only [encGraph_def, List.getElem_ofFn]
     show x.getD (finProdFinEquiv (finProdFinEquiv.symm ⟨i, _⟩)) false = x[i]
     rw [Equiv.apply_symm_apply, List.getD_eq_getElem?_getD, List.getElem?_eq_getElem hi,
       Option.getD_some]
@@ -626,7 +632,7 @@ theorem bitsToNat_eq_natOfBits (s : List Bool) (b : ℕ) :
   | 0 => rfl
   | k + 1 => by
     have ih := bitsToNat_eq_natOfBits s b k
-    unfold bitsToNat at ih ⊢
+    simp only [bitsToNat_def] at ih ⊢
     rw [List.ofFn_succ_last, List.foldl_append, List.foldl_cons, List.foldl_nil]
     simp only [Fin.coe_castSucc]
     rw [ih, natOfBits_succ]
@@ -712,12 +718,12 @@ trial. -/
 theorem map_val_sampleIdx (m k T : ℕ) (s : List Bool) :
     (sampleIdx m k T s).map Fin.val =
       if firstTrial s m k T < T then some (natOfBits s (firstTrial s m k T * k) k) else none := by
-  unfold sampleIdx rejectionSample
+  simp only [sampleIdx_def, rejectionSample_def]
   rw [List.map_findSome?]
   apply findSome?_finRange_eq (q := fun t => decide (natOfBits s (t * k) k < m))
     (v := fun t => natOfBits s (t * k) k)
   intro t
-  simp only [Function.comp, uniformFromBits, bitsToNat_eq_natOfBits]
+  simp only [Function.comp_apply, uniformFromBits_def, bitsToNat_eq_natOfBits]
   split_ifs with h1 h2 h2
   · rfl
   · exact absurd h1 (by simpa using h2)
@@ -788,7 +794,7 @@ theorem tableOfIdx_perm3Equiv (i : Fin 6) : tableOfIdx i = permTable (perm3Equiv
 theorem permTable_samplePerm3 (T : ℕ) (s : List Bool) :
     permTable (samplePerm3 T s) = tableOfIdx (sampleVal s 6 3 T 6) := by
   rw [← map_val_sampleIdx_getD]
-  unfold samplePerm3
+  simp only [samplePerm3_def]
   cases sampleIdx 6 3 T s with
   | none => simp [tableOfIdx]
   | some i =>
@@ -857,7 +863,7 @@ theorem decColoring_val (n : ℕ) (y : List Bool) (u : Fin n) :
 
 /-- `decColor` numerically. -/
 theorem decColor_val (w : List Bool) : ((decColor w : Fin 3) : ℕ) = colorVal w 0 := by
-  rw [decColor, decColoring_val]
+  rw [decColor_def, decColoring_val]
   rfl
 
 /-- The colour value of a vertex is polynomial-time in unary. -/
@@ -894,7 +900,7 @@ theorem encColorOfVal_poly {a : List Bool → ℕ}
 
 /-- A pair is the pair with empty second component followed by the second component. -/
 theorem pairEncode_eq_append_nil (a b : List Bool) : pairEncode a b = pairEncode a [] ++ b := by
-  simp [pairEncode]
+  simp [pairEncode_eq]
 
 /-- An encoded message list is the concatenation of the self-delimiting messages
 `pairEncode m []`. -/
@@ -932,7 +938,7 @@ theorem encodeMsgs_eq_nil_iff (hist : List (List Bool)) :
     Strategy.encodeMsgs hist = [] ↔ hist = [] := by
   cases hist with
   | nil => simp
-  | cons m h => simp [pairEncode]
+  | cons m h => simp [pairEncode_eq]
 
 /-- A history is no longer than its encoding. -/
 theorem length_le_length_encodeMsgs (hist : List (List Bool)) :
@@ -989,7 +995,7 @@ theorem encodeMsgs_ofFn_eq_flatMap {n : ℕ} (f : Fin n → List Bool) (F : ℕ 
 /-- With at least one edge, `edgeAt G e` is the edge of index `e mod |E|`. -/
 theorem edgeAt_eq_some_of_pos {n : ℕ} (G : Graph n) (hm : 0 < edgeCount G) (e : ℕ) :
     edgeAt G e = some (edgeOf G ⟨e % edgeCount G, Nat.mod_lt _ hm⟩) := by
-  unfold edgeAt
+  simp only [edgeAt_def]
   rw [List.getElem?_eq_getElem (Nat.mod_lt _ hm)]
   rfl
 

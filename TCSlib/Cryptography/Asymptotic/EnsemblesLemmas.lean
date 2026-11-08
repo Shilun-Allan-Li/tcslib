@@ -93,7 +93,7 @@ theorem acceptProb_coins_fst [Nonempty κ] (X : σ → γ) (D : γ → ρ → Bo
 /-- Negating the verdict complements the acceptance probability. -/
 theorem acceptProb_not [Nonempty σ] [Nonempty ρ] (X : σ → γ) (D : γ → ρ → Bool) :
     acceptProb X (fun z c => !(D z c)) = 1 - acceptProb X D := by
-  unfold acceptProb
+  simp only [acceptProb_def]
   rw [← uprob_not]
   congr 1
   funext w
@@ -165,7 +165,7 @@ theorem length_padL (k : ℕ) (a : List Bool) : (padL k a).length = k := List.le
 theorem padL_eq (k : ℕ) (a : List Bool) : padL k a = (a ++ List.replicate k false).take k := by
   refine List.ext_getElem ?_ fun i h₁ h₂ => ?_
   · simp [padL]
-  · simp only [padL, List.getElem_ofFn, padFin, List.getD_eq_getElem?_getD, List.getElem_take,
+  · simp only [padL, List.getElem_ofFn, padFin_def, List.getD_eq_getElem?_getD, List.getElem_take,
       List.getElem_append]
     split_ifs with h
     · simp [List.getElem?_eq_getElem h]
@@ -223,13 +223,13 @@ theorem acceptProb_negRed {σ : Type*} [Fintype σ] [Nonempty σ] {B D : NUPPT} 
     (hB : ∀ n y r, B.runAtL n y r = if D.runAtL n y r = [true] then [false] else [true])
     (n m : ℕ) (X : σ → Fin m → Bool) :
     acceptProb X (B.distinguisher n m) = 1 - acceptProb X (D.distinguisher n m) := by
-  have hlen : D.coinLen n = B.coinLen n := by simp [NUPPT.coinLen, hBc]
+  have hlen : D.coinLen n = B.coinLen n := by simp [NUPPT.coinLen_eq, hBc]
   let e : D.Coins n ≃ B.Coins n := Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)
   rw [← acceptProb_coins_equiv e, ← acceptProb_not]
   congr 1
   funext z c
   have hofn : List.ofFn (e c) = List.ofFn c := (List.ofFn_congr hlen c).symm
-  simp only [NUPPT.distinguisher, NUPPT.runAt_eq, hofn, hB]
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hB]
   split_ifs <;> simp_all
 
 /-! ### Parameter changes -/
@@ -241,13 +241,13 @@ theorem acceptProb_reparam {σ : Type*} [Fintype σ] {B D : NUPPT} {p : PolyExpr
     (n m : ℕ) (X : σ → Fin m → Bool) :
     acceptProb X (B.distinguisher n m) = acceptProb X (D.distinguisher (p.eval n) m) := by
   have hlen : D.coinLen (p.eval n) = B.coinLen n := by
-    simp [NUPPT.coinLen, hBc, PolyExpr.eval_subst]
+    simp [NUPPT.coinLen_eq, hBc, PolyExpr.eval_subst]
   let e : D.Coins (p.eval n) ≃ B.Coins n := Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)
   rw [← acceptProb_coins_equiv e]
   congr 1
   funext z c
   have hofn : List.ofFn (e c) = List.ofFn c := (List.ofFn_congr hlen c).symm
-  simp only [NUPPT.distinguisher, NUPPT.runAt_eq, hofn, hB]
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hofn, hB]
 
 /-- The acceptance probability of `NUPPT.exists_reparam_advice D φ p` at parameter `m` is that
 of `D` at parameter `φ m`: the unread coins are an independent uniform factor
@@ -259,14 +259,14 @@ theorem acceptProb_reparam_advice {σ : Type*} [Fintype σ] {A D : NUPPT} {φ : 
     acceptProb X (A.distinguisher m k) = acceptProb X (D.distinguisher (φ m) k) := by
   have hlen : A.coinLen m = D.coinLen (φ m) + (D.coinLen (p.eval m) - D.coinLen (φ m)) := by
     have : A.coinLen m = D.coinLen (p.eval m) := by
-      simp [NUPPT.coinLen, hAc, PolyExpr.eval_subst]
+      simp [NUPPT.coinLen_eq, hAc, PolyExpr.eval_subst]
     omega
   rw [← acceptProb_coins_equiv (coinsEquiv hlen)]
   conv_rhs => rw [← acceptProb_coins_fst (κ := Fin (D.coinLen (p.eval m) - D.coinLen (φ m)) → Bool)
     X (D.distinguisher (φ m) k)]
   congr 1
   funext z c
-  simp only [NUPPT.distinguisher, NUPPT.runAt_eq, hA, take_ofFn_coinsEquiv]
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hA, take_ofFn_coinsEquiv]
 
 /-! ### The machine of Lemma 71.5 -/
 
@@ -307,8 +307,8 @@ theorem exists_pushRed (M D : NUPPT) (ℓ' : PolyExpr) :
   refine ⟨NUPPT.ofPolyTime hF (.add M.coins D.coins) _
     (fun n => NUPPT.combineAdvice (M.advice n) (D.advice n)) hadv, rfl, fun n y r => ?_⟩
   rw [NUPPT.runAtL_ofPolyTime]
-  simp [NUPPT.runAtL, NUPPT.advInput, NUPPT.coinLen, NUPPT.layout, NUPPT.inParam, NUPPT.inArg,
-    NUPPT.inAdvice, NUPPT.inCoins]
+  simp [NUPPT.runAtL_eq, NUPPT.advInput_eq, NUPPT.coinLen_eq, NUPPT.layout_eq, NUPPT.inParam_eq, NUPPT.inArg_eq,
+    NUPPT.inAdvice_eq, NUPPT.inCoins_eq]
 
 /-- The acceptance probability of the machine of `exists_pushRed` on a sampler `X` is the
 acceptance probability of `D` on the pushed sampler `(s, c) ↦ padFin (ℓ' n) (M(1^n, X s; c))`
@@ -321,13 +321,13 @@ theorem acceptProb_pushRed {σ : Type*} [Fintype σ] {M D B : NUPPT} {ℓ' : Pol
     acceptProb X (B.distinguisher n m) =
       acceptProb (fun z : σ × M.Coins n => padFin (ℓ'.eval n) (M.runAt n (List.ofFn (X z.1)) z.2))
         (D.distinguisher n (ℓ'.eval n)) := by
-  have hlen : B.coinLen n = M.coinLen n + D.coinLen n := by simp [NUPPT.coinLen, hBc]
+  have hlen : B.coinLen n = M.coinLen n + D.coinLen n := by simp [NUPPT.coinLen_eq, hBc]
   rw [← acceptProb_coins_equiv (coinsEquiv hlen),
     ← acceptProb_bind X (fun t c => padFin (ℓ'.eval n) (M.runAt n (List.ofFn t) c))
       (D.distinguisher n (ℓ'.eval n))]
   congr 1
   funext z c
-  simp only [NUPPT.distinguisher, NUPPT.runAt_eq, hB, take_ofFn_coinsEquiv, drop_ofFn_coinsEquiv,
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq, hB, take_ofFn_coinsEquiv, drop_ofFn_coinsEquiv,
     padL]
 
 /-! ### Negligible functions and syntactic polynomials -/
@@ -458,14 +458,14 @@ theorem statClose_copies {κ σ γ : Type*} [Fintype κ] [Fintype σ] {X' : κ �
         fun f => Fin.cons (X' ((consSplit κ t) f).1) (copies t X' ((consSplit κ t) f).2) := by
       funext f i
       refine Fin.cases ?_ (fun j => ?_) i
-      · simp [copies, consSplit]
-      · simp [copies, consSplit, Fin.tail]
+      · simp [copies_def, consSplit]
+      · simp [copies_def, consSplit, Fin.tail_def]
     have h2 : copies (t + 1) X =
         fun f => Fin.cons (X ((consSplit σ t) f).1) (copies t X ((consSplit σ t) f).2) := by
       funext f i
       refine Fin.cases ?_ (fun j => ?_) i
-      · simp [copies, consSplit]
-      · simp [copies, consSplit, Fin.tail]
+      · simp [copies_def, consSplit]
+      · simp [copies_def, consSplit, Fin.tail_def]
     rw [h1, h2]
     exact e
 
@@ -590,7 +590,7 @@ malformed words). -/
 theorem two_mul_length_pairFstD_add_le (z : List Bool) :
     2 * (pairFstD z).length + (pairSndD z).length ≤ z.length := by
   cases h : pairDecode z with
-  | none => simp [pairFstD, pairSndD, h]
+  | none => simp [pairFstD_eq, pairSndD_eq, h]
   | some ab =>
     obtain ⟨a, b⟩ := ab
     have hz := eq_pairEncode_of_pairDecode z a b h
@@ -803,8 +803,8 @@ theorem exists_copiesRed (D : NUPPT) {SX SY : List Bool → List Bool} (hSX : Po
       List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY)).length =
       (NUPPT.ofPolyTimeUniform (copiesSampler_poly hSX hSY sX sY ℓ t)
         (.add (.mul t sX) (.mul t sY))).coinLen n := by
-    simp [NUPPT.coinLen]
-  rw [List.take_left' hlen, List.drop_left' hlen, id, pairSndD_pairEncode]
+    simp [NUPPT.coinLen_eq]
+  rw [List.take_left' hlen, List.drop_left' hlen, id_eq, pairSndD_pairEncode]
   congr 1
   rw [NUPPT.runAtL_ofPolyTimeUniform]
   -- the sampler function on the layout
@@ -820,7 +820,7 @@ theorem exists_copiesRed (D : NUPPT) {SX SY : List Bool → List Bool} (hSX : Po
       List.ofFn ((blocks (t.eval n) (sY.eval n)).symm cY) := by
     rw [List.drop_left']
     simp
-  simp only [copiesSampler, copiesInit, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput,
+  simp only [copiesSampler, copiesInit, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq,
     pairFstD_pairEncode, pairSndD_pairEncode, hX', hY']
   rw [CopiesLoop.loopOut_st]
   set F : ℕ → List Bool := fun i =>

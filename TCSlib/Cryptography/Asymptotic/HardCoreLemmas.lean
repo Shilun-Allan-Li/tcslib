@@ -196,7 +196,7 @@ theorem runAtL_wrap (A : NUPPT) {pre post : List Bool → List Bool}
           (r.drop (p.eval n)))) := by
   unfold wrap
   rw [runAtL_ofPolyTime]
-  simp [wrapFun, runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [wrapFun, runAtL_eq, advInput_eq, layout_eq, inParam_eq, inArg_eq, inAdvice_eq, inCoins_eq]
 
 /-- The typed activation of the one-call wrapper on coins `r` that split as `a ++ c`: the
 data coins `a` (`p(n)` bits) and the coins `c` of `A`. (Stated for any coin string `r` whose
@@ -225,7 +225,7 @@ probabilities. -/
 theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] [Fintype ρ']
     (X : σ → γ) (D : γ → ρ → Bool) (D' : γ → ρ' → Bool) (e : ρ' ≃ ρ)
     (h : ∀ x c, D x (e c) = D' x c) : acceptProb X D = acceptProb X D' := by
-  unfold acceptProb
+  simp only [acceptProb_def]
   rw [← uprob_comp_equiv ((Equiv.refl σ).prodCongr e)]
   exact OneWay.uprob_congr fun z => by simp [h]
 
@@ -233,7 +233,7 @@ theorem acceptProb_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype ρ] 
 theorem prgAdv_coins_equiv {σ γ ρ ρ' : Type*} [Fintype σ] [Fintype γ] [Fintype ρ] [Fintype ρ']
     (G : σ → γ) (D : γ → ρ → Bool) (D' : γ → ρ' → Bool) (e : ρ' ≃ ρ)
     (h : ∀ x c, D x (e c) = D' x c) : prgAdv G D = prgAdv G D' := by
-  unfold prgAdv distAdv
+  simp only [prgAdv_eq, distAdv_def]
   rw [acceptProb_coins_equiv G D D' e h, acceptProb_coins_equiv id D D' e h]
 
 /-- Reindexing the coins of a predictor by a bijection does not change prediction
@@ -241,7 +241,7 @@ probabilities. -/
 theorem predProb_coins_equiv {α β ρ ρ' : Type*} [Fintype α] [Fintype ρ] [Fintype ρ']
     (f : α → β) (B : α → Bool) (A : β → ρ → Bool) (A' : β → ρ' → Bool) (e : ρ' ≃ ρ)
     (h : ∀ y c, A y (e c) = A' y c) : predProb f B A = predProb f B A' := by
-  unfold predProb
+  simp only [predProb_def]
   rw [← uprob_comp_equiv ((Equiv.refl α).prodCongr e)]
   exact OneWay.uprob_congr fun z => by simp [h]
 
@@ -263,12 +263,17 @@ theorem exists_owpGenEvaluator (P : PermFamily) (h : ∀ n, (Fin n → Bool) →
     fun n s => ?_⟩
   have h1 := hFx n s
   have h2 := hHx n s
-  simp only [NUPPT.advInput, List.length_ofFn] at h1 h2 ⊢
+  simp only [NUPPT.advInput_eq, List.length_ofFn] at h1 h2 ⊢
   rw [h1, h2, ofFn_snoc_eq]
 
 /-- The pre-processing of the predictor of [PS10, Theorem 79.4]: on the view
 `⟨⟨⟨1^n, y⟩, [σ]⟩, [flip]⟩` form the distinguisher's input `y ++ [σ]`. -/
 def owpPredPre (w : List Bool) : List Bool := NUPPT.inArg w ++ NUPPT.inAdvice w
+
+/-- The defining equation of `owpPredPre`: `owpPredPre w = NUPPT.inArg w ++ NUPPT.inAdvice w`. -/
+theorem owpPredPre_def (w : List Bool) :
+    owpPredPre w =
+      (NUPPT.inArg w ++ NUPPT.inAdvice w) := rfl
 
 /-- The post-processing of the predictor of [PS10, Theorem 79.4]: on `⟨view, answer⟩` output
 `[xor (if answer = [true] then σ else !σ) flip]`. -/
@@ -318,14 +323,15 @@ theorem owpPredMachine_predictor (D : NUPPT) (flip : ℕ → Bool) (n : ℕ) (y 
     (hr : List.ofFn r = [σ] ++ List.ofFn c) :
     (owpPredMachine D flip).predictor n n y r =
       xor (if D.distinguisher n (n + 1) (Fin.snoc y σ) c then σ else !σ) (flip n) := by
-  unfold owpPredMachine NUPPT.predictor NUPPT.distinguisher
+  unfold owpPredMachine
+  simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq]
   rw [NUPPT.runAt_wrap D owpPredPre_poly owpPredPost_poly (fun n => [flip n]) (.const 1)
     (fun _ => by simp) (.const 1) n (List.ofFn y) (m := 1) rfl (fun _ => σ) c r
     (by rw [hr]; rfl)]
   have h1 : List.ofFn (fun _ : Fin 1 => σ) = [σ] := by simp [List.ofFn_succ]
   simp only [owpPredPost, owpPredPre, pairSndD_pairEncode, pairFstD_pairEncode,
     NUPPT.inArg_layout, NUPPT.inAdvice_layout, NUPPT.inCoins_layout, h1, List.headD_cons]
-  rw [← ofFn_snoc_eq, NUPPT.runAt_eq]
+  simp only [← ofFn_snoc_eq, NUPPT.runAt_eq]
   by_cases hD : D.runAtL n (List.ofFn (Fin.snoc y σ)) (List.ofFn c) = [true]
   · simp only [hD, if_true, decide_true]
     cases σ <;> cases flip n <;> rfl
@@ -345,7 +351,7 @@ theorem owpPredMachine_predProb (D : NUPPT) (flip : ℕ → Bool) {n : ℕ}
       (Fin.appendEquiv 1 (D.coinLen n))) fun y c => ?_
   obtain ⟨σ, c⟩ := c
   refine owpPredMachine_predictor D flip n y σ c _ ?_
-  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id]
+  simp only [Equiv.trans_apply, Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq]
   exact (ofFn_appendEquiv ((Equiv.funUnique (Fin 1) Bool).symm σ) c).trans
     (congrArg (· ++ List.ofFn c) (by simp [List.ofFn_succ]))
 
@@ -608,7 +614,8 @@ theorem expandRedMachine_distinguisher (D : NUPPT) (hF : PolyTimeComputable F) (
       D.distinguisher n (ℓ.eval n) (fun i => if (i : ℕ) < k n then a i
         else if (i : ℕ) = k n then T (Fin.last n)
         else G n ((fun x => Fin.init (G n x))^[i - k n - 1] (Fin.init T)) (Fin.last n)) c := by
-  unfold expandRedMachine NUPPT.distinguisher
+  unfold expandRedMachine
+  simp only [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq]
   rw [NUPPT.runAt_wrap D (expandRedPre_poly hF ℓ) polyTimeComputable_pairSndD _ _ _ ℓ n
     (List.ofFn T) rfl a c r hr, pairSndD_pairEncode, expandRedPre_layout G hFs ℓ n (k n) (hk n) T a]
 
@@ -637,9 +644,9 @@ theorem exists_glPadEvaluator (𝓕 : FunFamily) {F : List Bool → List Bool}
       (pairSndD w).drop (𝓕.inLen.eval (pairFstD w).length),
     (hF.comp (polyTimeComputable_pairFstD.pairEncode (polyTimeComputable_pairTakePoly 𝓕.inLen))).append
       (polyTimeComputable_pairDropPoly 𝓕.inLen), fun n x r => ?_⟩
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
     take_ofFn_append, drop_ofFn_append]
-  rw [← NUPPT.advInput, hFx]
+  rw [← NUPPT.advInput_eq, hFx]
 
 /-- The post-processing of the padding inverter of [PS10, Theorem 87.3]: on `⟨view, answer⟩`
 keep the first `|r|` bits of the answer, `r` the coin head of the view (the string `x'` of the
@@ -687,7 +694,7 @@ theorem invProbOpt_glPad_le (𝓕 : FunFamily) (A : NUPPT) (n : ℕ) :
       (A.inverter n (𝓕.inLen.eval n + 𝓕.inLen.eval n) (𝓕.outLen.eval n + 𝓕.inLen.eval n)) ≤
     invProbOpt (𝓕.f n)
       ((glPadInvMachine A 𝓕.inLen).inverter n (𝓕.inLen.eval n) (𝓕.outLen.eval n)) := by
-  unfold invProbOpt
+  simp only [invProbOpt_def]
   refine le_of_eq_of_le (uprob_comp_equiv
     ((Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).prodCongr (Equiv.refl (A.Coins n))) _).symm ?_
   refine le_of_le_of_eq ?_ ((uprob_comp_equiv
@@ -697,17 +704,17 @@ theorem invProbOpt_glPad_le (𝓕 : FunFamily) (A : NUPPT) (n : ℕ) :
   refine uprob_mono fun w hw => ?_
   obtain ⟨⟨x, r⟩, c⟩ := w
   obtain ⟨x', hx', hfx'⟩ := hw
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id, Equiv.symm_apply_apply,
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq, Equiv.symm_apply_apply,
     Equiv.prodAssoc_apply, NUPPT.inverter_eq_some_iff] at hx' hfx' ⊢
   obtain ⟨⟨x'', r''⟩, rfl⟩ := (Fin.appendEquiv (𝓕.inLen.eval n) (𝓕.inLen.eval n)).surjective x'
   simp only [Equiv.symm_apply_apply] at hfx' hx'
   have hpair := (Fin.appendEquiv (𝓕.outLen.eval n) (𝓕.inLen.eval n)).injective
     (show Fin.appendEquiv _ _ (HardcoreBit.glPad (𝓕.f n) (x'', r'')) =
       Fin.appendEquiv _ _ (HardcoreBit.glPad (𝓕.f n) (x, r)) from hfx')
-  simp only [HardcoreBit.glPad, Prod.mk.injEq] at hpair
+  simp only [HardcoreBit.glPad_def, Prod.mk.injEq] at hpair
   refine ⟨x'', ?_, hpair.1⟩
   rw [glPadInvMachine_runAt A 𝓕.inLen n _ r c _ (ofFn_appendEquiv r c)]
-  simp only [HardcoreBit.glPad] at hx'
+  simp only [HardcoreBit.glPad_def] at hx'
   rw [ofFn_appendEquiv, ofFn_appendEquiv] at hx'
   rw [hx', take_ofFn_append]
 
@@ -729,6 +736,16 @@ def glPadDecode (F : Collection) (i : List Bool) (L : ℕ) (w : List Bool) :
     | some x, some r => some (x, r)
     | _, _ => none
   | none => none
+
+/-- The defining equation of `glPadDecode`: decode `w` as a pair `⟨a, b⟩`, then `a` by `F.decD i`
+and `b` as an `L`-bit string; `none` if any step fails. -/
+theorem glPadDecode_def (F : Collection) (i : List Bool) (L : ℕ) (w : List Bool) :
+    glPadDecode F i L w =
+      match pairDecode w with
+      | some (a, b) => match F.decD i a, decodeFin L b with
+        | some x, some r => some (x, r)
+        | _, _ => none
+      | none => none := rfl
 
 /-- Decoding `⟨a, ofFn s⟩`: the first component decoded by `decD i`, paired with `s`. -/
 theorem glPadDecode_pairEncode_ofFn (F : Collection) (i : List Bool) {L : ℕ} (a : List Bool)
@@ -845,7 +862,7 @@ theorem glPad_invProbAt_le (F : Collection) (m : PolyExpr) (A : NUPPT) (n : ℕ)
           pairEncode (F.f (F.index n r) x'.1) (List.ofFn x'.2) =
             pairEncode (F.f (F.index n r) z.1.1) (List.ofFn z.1.2)) ≤
     F.invProbAt (glPadCollInvMachine A m) n := by
-  unfold Collection.invProbAt
+  simp only [Collection.invProbAt_eq]
   refine OneWay.uexp_mono fun r => ?_
   refine le_of_eq_of_le (uprob_comp_equiv
     (((Equiv.refl (F.D (F.index n r))).prodCongr (finCastEquiv (hL r).symm)).prodCongr
@@ -857,7 +874,7 @@ theorem glPad_invProbAt_le (F : Collection) (m : PolyExpr) (A : NUPPT) (n : ℕ)
   refine uprob_mono fun w hw => ?_
   obtain ⟨⟨x, ρ⟩, c⟩ := w
   obtain ⟨⟨x', ρ'⟩, hx', hfx'⟩ := hw
-  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id, Equiv.prodAssoc_apply,
+  simp only [Equiv.prodCongr_apply, Prod.map_apply, Equiv.coe_refl, id_eq, Equiv.prodAssoc_apply,
     ofFn_finCastEquiv] at hx' hfx' ⊢
   have hf : F.f (F.index n r) x' = F.f (F.index n r) x := by
     have := congrArg pairDecode hfx'
@@ -896,12 +913,12 @@ theorem runAtL_reparam (A : NUPPT) (p : PolyExpr) (n : ℕ) (y r : List Bool) :
     (A.reparam p).runAtL n y r = A.runAtL (p.eval n) y r := by
   unfold reparam
   rw [runAtL_ofPolyTime]
-  simp [runAtL, advInput, layout, inParam, inArg, inAdvice, inCoins]
+  simp [runAtL_eq, advInput_eq, layout_eq, inParam_eq, inArg_eq, inAdvice_eq, inCoins_eq]
 
 /-- The number of coins of the parameter-change machine at `n` is that of `A` at `p(n)`. -/
 theorem coinLen_reparam (A : NUPPT) (p : PolyExpr) (n : ℕ) :
     (A.reparam p).coinLen n = A.coinLen (p.eval n) := by
-  simp [coinLen, PolyExpr.eval_subst]
+  simp [coinLen_eq, PolyExpr.eval_subst]
 
 /-- The coins of `A` at `p(n)` as the coins of the parameter-change machine at `n`. -/
 noncomputable def reparamCoins (A : NUPPT) (p : PolyExpr) (n : ℕ) :
@@ -930,6 +947,14 @@ def splitPair (a b : ℕ) (ρ : Type*) :
   left_inv z := Prod.ext ((Fin.appendEquiv a b).apply_symm_apply z.1) rfl
   right_inv z := Prod.ext ((Fin.appendEquiv a b).symm_apply_apply z.1) rfl
 
+/-- The forward map of `splitPair`: `splitPair a b ρ z = ((Fin.appendEquiv a b).symm z.1, z.2)`. -/
+theorem splitPair_apply (a b : ℕ) (ρ : Type*) (z : (Fin (a + b) → Bool) × ρ) :
+    splitPair a b ρ z = ((Fin.appendEquiv a b).symm z.1, z.2) := rfl
+
+/-- The inverse of `splitPair`: `(splitPair a b ρ).symm z = (Fin.appendEquiv a b z.1, z.2)`. -/
+theorem splitPair_symm_apply (a b : ℕ) (ρ : Type*) (z : ((Fin a → Bool) × (Fin b → Bool)) × ρ) :
+    (splitPair a b ρ).symm z = (Fin.appendEquiv a b z.1, z.2) := rfl
+
 namespace Collection
 
 variable (F : Collection)
@@ -944,6 +969,16 @@ def glPadSampleFun (z : List Bool) : List Bool :=
         (F.sample.coins.eval (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length))))
     ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).drop
       (F.sample.coins.eval (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length))
+
+/-- The defining equation of `glPadSampleFun` (its body, unfolded once). -/
+theorem glPadSampleFun_def (z : List Bool) :
+    glPadSampleFun F z =
+      (pairEncode
+      (F.sample.output (NUPPT.layout (NUPPT.inParam z) (NUPPT.inArg z) []
+        ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).take
+          (F.sample.coins.eval (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length))))
+      ((pairSndD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).drop
+        (F.sample.coins.eval (pairFstD (pairEncode (NUPPT.inParam z) (NUPPT.inCoins z))).length))) := rfl
 
 /-- The raw sampler of the padded collection is polynomial-time (pairing calculus,
 `polyTimeComputable_pairTakePoly`/`pairDropPoly`, the sampler's own output function). -/
@@ -963,10 +998,10 @@ theorem glPadSample_runAt (m : PolyExpr) (n : ℕ) (i : List Bool)
     (NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m)).runAt n i s =
       pairEncode (F.sample.runAtL n i ((List.ofFn s).take (F.sample.coinLen n)))
         ((List.ofFn s).drop (F.sample.coinLen n)) := by
-  simp only [NUPPT.runAt, NUPPT.ofPolyTimeUniform, NUPPT.output_ofPolyTime,
-    glPadSampleFun, NUPPT.inParam, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput, NUPPT.layout,
+  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+    glPadSampleFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform n,
-    NUPPT.coinLen, NUPPT.runAtL]
+    NUPPT.coinLen_eq, NUPPT.runAtL_eq]
 
 end Collection
 

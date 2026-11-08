@@ -207,7 +207,7 @@ theorem Strategy.coinLen_pullback (S : Strategy) (f : List Bool → List Bool)
     (g : List Bool → List Bool → List Bool) {p : PolyExpr} {x : List Bool}
     (hx : (f x).length = p.eval x.length) :
     (S.pullback f g p).coinLen x.length = S.coinLen (f x).length := by
-  simp [Strategy.pullback, Strategy.coinLen, PolyExpr.eval_subst, hx]
+  simp [Strategy.pullback, Strategy.coinLen_eq, PolyExpr.eval_subst, hx]
 
 /-- The protocol for `L` obtained from a protocol `π` for `L'` and a reduction `(f, w)`
 [PS10, §4.7, Theorem 124.1, step 2]: `P(x, y) := P'(f x, w x y)`, `V(x, z) := V'(f x, z)`,
@@ -231,7 +231,7 @@ theorem Protocol.pullback_outV (π : Protocol) (f : List Bool → List Bool)
       π.V.next (f x) z (List.ofFn r.2)
         (exec P' (π.V.pullback f (fun _ z => z) p) π.verifierFirst x y z (List.ofFn r.1)
           (List.ofFn r.2) (π.rounds.eval (p.eval x.length))).2 := by
-  simp [Protocol.outV, Protocol.transcriptWith, Protocol.pullback, Strategy.pullback,
+  simp [Protocol.outV_eq, Protocol.transcriptWith_eq, Protocol.pullback, Strategy.pullback,
     PolyExpr.eval_subst]
 
 /-- A pulled-back strategy is efficient when the original is and `f`, `g` are
@@ -264,7 +264,7 @@ theorem Strategy.pullback_efficient {S : Strategy} (hS : S.Efficient) {f : List 
   · rw [Strategy.ofNUPPT_next, hC, hB]
     show S.next (f x) (g x z) r hist = _
     rw [hnext, Strategy.ofNUPPT_next, ← hx x]
-    simp only [id, pairFstD_pairEncode, pairSndD_pairEncode]
+    simp only [id_eq, pairFstD_pairEncode, pairSndD_pairEncode]
 
 /-- **Bounded prover messages transfer along a Levin reduction** with bound `B.subst p`
 (ruling G3-3 of gate 03): the pulled-back prover runs `π.P` on `(f x, w x y)`, `R x y` gives
@@ -344,7 +344,7 @@ private theorem outV_pullback_honest (π : Protocol) (f : List Bool → List Boo
         (Prod.map (coinTrunc (coinLen_le_coinLen_pullback π.P f w hx))
           (coinTrunc (coinLen_le_coinLen_pullback π.V f (fun _ z => z) hx)) r) := by
   rw [Protocol.pullback_outV]
-  simp only [Protocol.outV, Protocol.transcriptWith, Protocol.pullback, Prod.map]
+  simp only [Protocol.outV_eq, Protocol.transcriptWith_eq, Protocol.pullback, Prod.map_fst, Prod.map_snd]
   rw [ofFn_coinTrunc_of_eq _ (Strategy.coinLen_pullback π.P f w hx).symm,
     ofFn_coinTrunc_of_eq _ (Strategy.coinLen_pullback π.V f (fun _ z => z) hx).symm,
     exec_pullback, ← hx]
@@ -365,7 +365,7 @@ private theorem outV_pullback_cheat (π : Protocol) (f : List Bool → List Bool
   have hc : (⟨fun _ _ r hist => P'.next x [] r hist, .const (P'.coinLen x.length)⟩ :
       Strategy).coinLen (f x).length = P'.coinLen x.length := Strategy.coinLen_eq _ _
   rw [Protocol.pullback_outV]
-  simp only [Protocol.outV_eq, Protocol.transcriptWith_eq, Prod.map]
+  simp only [Protocol.outV_eq, Protocol.transcriptWith_eq, Prod.map_fst, Prod.map_snd]
   rw [ofFn_coinTrunc_of_eq _ hc,
     ofFn_coinTrunc_of_eq _ (Strategy.coinLen_pullback π.V f (fun _ z => z) hx).symm,
     exec_pullback_cheat, ← hx]
@@ -523,7 +523,7 @@ theorem LevinReduction.zk {L L' : Language Bool} {R R' : List Bool → List Bool
   have hxle : x.length ≤ (f x).length := by rw [hlen]; exact h.le_eval _
   have hφx : φ (f x).length = x.length := by rw [hlen]; exact hφp _
   have hDle : D.coinLen x.length ≤ D'.coinLen (f x).length := by
-    simp only [NUPPT.coinLen, hD'c]
+    simp only [NUPPT.coinLen_eq, hD'c]
     exact D.coins.eval_mono hxle
   have hVle : V'.coinLen x.length ≤ (liftVerifier V').coinLen (f x).length := by
     rw [liftVerifier_coinLen]
@@ -531,7 +531,7 @@ theorem LevinReduction.zk {L L' : Language Bool} {R R' : List Bool → List Bool
   have hPeq : (π.P.pullback f w p).coinLen x.length = π.P.coinLen (f x).length :=
     Strategy.coinLen_pullback π.P f w hlen
   have hSeq : S.coinLen x.length = S'.coinLen (f x).length := by
-    simp only [NUPPT.coinLen, hSc, PolyExpr.eval_subst, hlen]
+    simp only [NUPPT.coinLen_eq, hSc, PolyExpr.eval_subst, hlen]
   calc distAdv (fun r => (((π.pullback f w p).withV V').viewV x y z r).encode) (S.simulate x z)
         (D.distinguisherL x.length)
       = distAdv (fun r => ((π.withV (liftVerifier V')).viewV (f x) (w x y) (pairEncode x z) r).encode)
@@ -542,11 +542,11 @@ theorem LevinReduction.zk {L L' : Language Bool} {R R' : List Bool → List Bool
         · -- the view of `V*'` in `π` re-encodes to the view of `V'` in the pulled-back protocol
           rw [distinguisherL_lift hD' hφx hDle]
           congr 2
-          simp only [Protocol.viewV, Protocol.transcriptWith, Protocol.withV_P, Protocol.withV_V,
-            Protocol.withV_rounds, Protocol.withV_verifierFirst, Protocol.pullback, Prod.map,
+          simp only [Protocol.viewV_eq, Protocol.transcriptWith_eq, Protocol.withV_P, Protocol.withV_V,
+            Protocol.withV_rounds, Protocol.withV_verifierFirst, Protocol.pullback, Prod.map_fst, Prod.map_snd,
             postView_encode]
           rw [ofFn_coinTrunc_of_eq _ hPeq, ofFn_coinTrunc]
-          simp only [PolyExpr.eval_subst, ← hlen, Strategy.coinLen]
+          simp only [PolyExpr.eval_subst, ← hlen, Strategy.coinLen_eq]
           congr 2
           refine congrArg Prod.snd (exec_congr ?_ ?_ _ _)
           · intro _
@@ -556,7 +556,7 @@ theorem LevinReduction.zk {L L' : Language Bool} {R R' : List Bool → List Bool
         · -- the simulator for `V'` is `postView` of the simulator for `V*'`
           rw [distinguisherL_lift hD' hφx hDle]
           congr 2
-          simp only [NUPPT.simulate, NUPPT.runAt_eq, hS, pairFstD_pairEncode]
+          simp only [NUPPT.simulate_eq, NUPPT.runAt_eq, hS, pairFstD_pairEncode]
           rw [ofFn_coinTrunc_of_eq _ hSeq, ← hlen]
     _ ≤ ε' (f x).length := key
     _ = ε' (p.eval x.length) := by rw [hlen]

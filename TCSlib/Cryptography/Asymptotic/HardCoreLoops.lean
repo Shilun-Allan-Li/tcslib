@@ -83,6 +83,11 @@ theorem blocksEquiv_symm_apply (q ℓ : ℕ) (t : Fin q → Fin ℓ → Bool) (p
 def blocksStr {k m : ℕ} (s : Fin k → Fin m → Bool) : List Bool :=
   List.ofFn ((blocksEquiv k m).symm s)
 
+/-- The defining equation of `blocksStr`: `blocksStr s = List.ofFn ((blocksEquiv k m).symm s)`. -/
+theorem blocksStr_def {k m : ℕ} (s : Fin k → Fin m → Bool) :
+    (blocksStr s : List Bool) =
+      (List.ofFn ((blocksEquiv k m).symm s)) := rfl
+
 /-- The length of the block encoding. -/
 @[simp] theorem length_blocksStr {k m : ℕ} (s : Fin k → Fin m → Bool) :
     (blocksStr s).length = k * m := List.length_ofFn
@@ -361,7 +366,7 @@ theorem ipFun_poly : PolyTimeComputable ipFun := by
 /-- `⟨x, r⟩ = ∑_{t : x_t = 1} r_t` in the Boolean ring `Bool`. -/
 theorem ip_eq_sum_filter {k : ℕ} (x r : Fin k → Bool) :
     HardcoreBit.ip x r = ∑ t ∈ univ.filter (fun t : Fin k => x t = true), r t := by
-  rw [HardcoreBit.ip, Finset.sum_filter]
+  rw [HardcoreBit.ip_def, Finset.sum_filter]
   refine Finset.sum_congr rfl fun t _ => ?_
   cases x t <;> cases r t <;> rfl
 
@@ -379,13 +384,18 @@ theorem ipFun_ofFn {k : ℕ} (x r : Fin k → Bool) :
 /-- Unary halving `1^n ↦ 1^{⌊n/2⌋}`. -/
 def unaryHalf (u : List Bool) : List Bool := List.replicate (u.length / 2) true
 
+/-- The defining equation of `unaryHalf`: `unaryHalf u = List.replicate (u.length / 2) true`. -/
+theorem unaryHalf_def (u : List Bool) :
+    unaryHalf u =
+      (List.replicate (u.length / 2) true) := rfl
+
 /-- Unary halving is polynomial-time: the block map with blocks of two symbols and the constant
 emission `[true]` (`Complexity.polyTimeComputable_blockMap`) emits one `true` per full block. -/
 theorem unaryHalf_poly : PolyTimeComputable unaryHalf := by
   convert (polyTimeComputable_blockMap (.const 2) (polyTimeComputable_const [true])).comp
     ((polyTimeComputable_const []).pairEncode polyTimeComputable_id) using 1
   funext u
-  simp only [Function.comp_apply, pairSndD_pairEncode, PolyExpr.eval_const, unaryHalf, id]
+  simp only [Function.comp_apply, pairSndD_pairEncode, PolyExpr.eval_const, unaryHalf, id_eq]
   rw [← List.map_eq_flatMap, List.map_const', List.length_range]
 
 end TCSlib.Cryptography

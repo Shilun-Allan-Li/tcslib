@@ -121,6 +121,14 @@ noncomputable def sim (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Str
   if edgeCount (decGraph x).2 = 0 then (att 0).getD []
   else ((List.range (colIterations x)).findSome? att).getD []
 
+/-- The defining equation of `sim` (its body, unfolded once). -/
+theorem sim_def (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy) (x z r : List Bool) :
+    sim Com ℓ V' x z r =
+      (let B := (blockPoly ℓ V').eval x.length
+    let att : ℕ → Option (List Bool) := fun t => attemptStr Com ℓ V' x z (colCoinSlice B t r)
+    if edgeCount (decGraph x).2 = 0 then (att 0).getD []
+    else ((List.range (colIterations x)).findSome? att).getD []) := rfl
+
 /-! ### The numeric model of the rejection samplers -/
 
 /-- The `k` bits of the tape from position `base` read as a number: `bitsToNat` of the block
@@ -183,6 +191,11 @@ first accepted trial (the first `t < T` whose `k`-bit block reads below `m`), an
 noncomputable def sampleNum (m k T : ℕ) (r : List Bool) : ℕ :=
   if trialIdx m k T r 0 < T then blockVal r (trialIdx m k T r 0 * k) k else m
 
+/-- The defining equation of `sampleNum`: `sampleNum m k T r = if trialIdx m k T r 0 < T then blockVal r (trialIdx m k T r 0 * k) k else m`. -/
+theorem sampleNum_def (m k T : ℕ) (r : List Bool) :
+    sampleNum m k T r =
+      (if trialIdx m k T r 0 < T then blockVal r (trialIdx m k T r 0 * k) k else m) := rfl
+
 /-- **The rejection sampler is its numeric model**: `sampleIdx m k T r` is `some` of the
 numeric sample when it is below `m` and `none` otherwise.
 
@@ -225,9 +238,19 @@ theorem sampleEdgeIdx_eq (m T : ℕ) (r : List Bool) :
 colour of the default pair, when the sample is out of range). -/
 noncomputable def colorA (v : ℕ) : Fin 3 := if h : v < 6 then (pair6Equiv ⟨v, h⟩).1.1 else 0
 
+/-- The defining equation of `colorA`: `colorA v = if h : v < 6 then (pair6Equiv ⟨v, h⟩).1.1 else 0`. -/
+theorem colorA_def (v : ℕ) :
+    colorA v =
+      (if h : v < 6 then (pair6Equiv ⟨v, h⟩).1.1 else 0) := rfl
+
 /-- The second colour of the sampled pair as a function of the numeric sample (`1` when the
 sample is out of range). -/
 noncomputable def colorB (v : ℕ) : Fin 3 := if h : v < 6 then (pair6Equiv ⟨v, h⟩).1.2 else 1
+
+/-- The defining equation of `colorB`: `colorB v = if h : v < 6 then (pair6Equiv ⟨v, h⟩).1.2 else 1`. -/
+theorem colorB_def (v : ℕ) :
+    colorB v =
+      (if h : v < 6 then (pair6Equiv ⟨v, h⟩).1.2 else 1) := rfl
 
 /-- The first colour of the sampled pair is `colorA` of the numeric sample. -/
 theorem sampleColorPair_fst (T : ℕ) (r : List Bool) :
@@ -308,6 +331,11 @@ theorem finRange_product_eq (n : ℕ) :
 /-- The number of set bits among the first `k` positions of a word (`|E|` of the decoded graph
 for `k = n²`). -/
 def countBits (x : List Bool) (k : ℕ) : ℕ := ((List.range k).filter fun j => x.getD j false).length
+
+/-- The defining equation of `countBits`: `countBits x k = ((List.range k).filter fun j => x.getD j false).length`. -/
+theorem countBits_def (x : List Bool) (k : ℕ) :
+    countBits x k =
+      (((List.range k).filter fun j => x.getD j false).length) := rfl
 
 /-- The edge list of the decoded graph is the list of set-bit positions of the adjacency
 word, read as pairs through `finProdFinEquiv.symm` (`finRange_product_eq`,
@@ -506,6 +534,11 @@ def mE (x : List Bool) : ℕ := countBits x (nV x * nV x)
 /-- The sampled edge index of an attempt. -/
 noncomputable def eIdx (x blk : List Bool) : ℕ := sampleEdgeIdx (mE x) x.length blk
 
+/-- The defining equation of `eIdx`: `eIdx x blk = sampleEdgeIdx (mE x) x.length blk`. -/
+theorem eIdx_def (x blk : List Bool) :
+    eIdx x blk =
+      (sampleEdgeIdx (mE x) x.length blk) := rfl
+
 /-- The numeric colour-pair sample of an attempt. -/
 noncomputable def vIdx (x blk : List Bool) : ℕ :=
   sampleNum 6 3 x.length (blk.drop ((x.length + 1) ^ 2))
@@ -520,11 +553,22 @@ def baseR (x : List Bool) : ℕ := (x.length + 1) ^ 2 + 3 * x.length
 noncomputable def rrStr (ℓ : PolyExpr) (x blk : List Bool) (i : ℕ) : List Bool :=
   EnsembleLemmas.padL (ℓ.eval (nV x)) (blk.drop (baseR x + i * ℓ.eval (nV x)))
 
+/-- The defining equation of `rrStr`: `rrStr ℓ x blk i = EnsembleLemmas.padL (ℓ.eval (nV x)) (blk.drop (baseR x + i * ℓ.eval (nV x)))`. -/
+theorem rrStr_def (ℓ : PolyExpr) (x blk : List Bool) (i : ℕ) :
+    rrStr ℓ x blk i =
+      (EnsembleLemmas.padL (ℓ.eval (nV x)) (blk.drop (baseR x + i * ℓ.eval (nV x)))) := rfl
+
 /-- The simulator's colour of vertex `i` in numeric form: the sampled pair at the endpoints of
 the sampled edge, `0` elsewhere. -/
 noncomputable def colorNum (x blk : List Bool) (i : ℕ) : Fin 3 :=
   if i = kPos x blk / nV x then colorA (vIdx x blk)
   else if i = kPos x blk % nV x then colorB (vIdx x blk) else 0
+
+/-- The defining equation of `colorNum`: `colorNum x blk i = if i = kPos x blk / nV x then colorA (vIdx x blk) else if i = kPos x blk % nV x then colorB (vIdx x blk) else 0`. -/
+theorem colorNum_def (x blk : List Bool) (i : ℕ) :
+    colorNum x blk i =
+      (if i = kPos x blk / nV x then colorA (vIdx x blk)
+    else if i = kPos x blk % nV x then colorB (vIdx x blk) else 0) := rfl
 
 /-- The encoded commitment of vertex `i` to the colour `c i`. -/
 noncomputable def chunk (Com : List Bool → List Bool) (ℓ : PolyExpr) (x blk : List Bool)
@@ -539,6 +583,11 @@ noncomputable def comStr (Com : List Bool → List Bool) (ℓ : PolyExpr) (x blk
 /-- The tape handed to `V'`. -/
 def rVStr (ℓ : PolyExpr) (x blk : List Bool) : List Bool :=
   blk.drop (baseR x + x.length * ℓ.eval x.length)
+
+/-- The defining equation of `rVStr`: `rVStr ℓ x blk = blk.drop (baseR x + x.length * ℓ.eval x.length)`. -/
+theorem rVStr_def (ℓ : PolyExpr) (x blk : List Bool) :
+    rVStr ℓ x blk =
+      (blk.drop (baseR x + x.length * ℓ.eval x.length)) := rfl
 
 /-- The opening message in numeric form. -/
 noncomputable def opnStr (ℓ : PolyExpr) (x blk : List Bool) : List Bool :=
@@ -557,6 +606,16 @@ noncomputable def attemptNum (Com : List Bool → List Bool) (ℓ : PolyExpr) (V
       eIdx x blk then
     some (View.encode ⟨x, z, rVStr ℓ x blk, [comStr Com ℓ x blk (colorNum x blk), opnStr ℓ x blk]⟩)
   else none
+
+/-- The defining equation of `attemptNum` (its body, unfolded once). -/
+theorem attemptNum_def (Com : List Bool → List Bool) (ℓ : PolyExpr) (V' : Strategy) (x z blk : List Bool) :
+    attemptNum Com ℓ V' x z blk =
+      (if mE x = 0 then
+      some (View.encode ⟨x, z, rVStr ℓ x blk, [comStr Com ℓ x blk (fun _ => 0), []]⟩)
+    else if (V'.next x z (rVStr ℓ x blk) [comStr Com ℓ x blk (colorNum x blk)]).length % mE x =
+        eIdx x blk then
+      some (View.encode ⟨x, z, rVStr ℓ x blk, [comStr Com ℓ x blk (colorNum x blk), opnStr ℓ x blk]⟩)
+    else none) := rfl
 
 /-- The commitment message of the typed attempt is the numeric commitment message. -/
 theorem colCommit_eq_comStr (Com : List Bool → List Bool) (ℓ : PolyExpr) (x blk : List Bool)

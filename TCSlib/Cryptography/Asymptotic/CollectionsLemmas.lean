@@ -100,7 +100,7 @@ theorem ofFn_padFin_eq_take (ℓ : ℕ) (w : List Bool) :
   · simp only [List.length_ofFn] at h₁
     rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_take,
       List.getElem_append]
-    simp only [padFin, List.getD_eq_getElem?_getD]
+    simp only [padFin_def, List.getD_eq_getElem?_getD]
     split_ifs with h₃
     · simp [List.getElem?_eq_getElem h₃]
     · simp [List.getElem?_eq_none_iff.mpr (not_lt.mp h₃)]

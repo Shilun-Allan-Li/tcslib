@@ -298,7 +298,7 @@ theorem perfectZK_zeroRounds (P V : Strategy) (b : Bool) (R : List Bool → List
         T (pairEncode (pairEncode x z) (pairEncode (List.ofFn ρ) []))) := by
     refine OneWay.uprob_congr fun ρ => ?_
     rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-    simp [NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+    simp [NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
   simp only [h2]
   rw [abs_nonpos_iff, sub_eq_zero]
   exact h1
@@ -460,7 +460,7 @@ theorem firstHit_map_getD_eq {α β : Type*} (E : α → Prop) [DecidablePred E]
       rw [hq j (hj.trans h)] at this
       exact absurd (decide_eq_true hE) (by rw [this]; decide)
     have hsome : firstHit E xs = some (xs ⟨i, h⟩) := by
-      unfold firstHit
+      simp only [firstHit_eq]
       rw [List.findSome?_eq_some_iff]
       refine ⟨(List.finRange K).take i, ⟨i, h⟩, (List.finRange K).drop (i + 1), ?_, ?_, ?_⟩
       · have hlen : i < (List.finRange K).length := by simpa using h
@@ -594,7 +594,7 @@ theorem PerfectZKAbort.statZK {π : Protocol} {R : List Bool → List Bool → P
   refine ⟨S', hS'u, fun x y z hxy => ?_⟩
   obtain ⟨habort, hcond⟩ := hS x y z hxy
   have hlen : S'.coinLen x.length = x.length * S.coinLen x.length := by
-    simp only [NUPPT.coinLen, hS'c, PolyExpr.eval_mul, PolyExpr.eval_var]
+    simp only [NUPPT.coinLen_eq, hS'c, PolyExpr.eval_mul, PolyExpr.eval_var]
   -- the tape of `S'` as `|x|` blocks of `S.coinLen |x|` coins
   let e : S'.Coins x.length ≃ (Fin x.length → S.Coins x.length) :=
     ((Equiv.arrowCongr (finCongr hlen) (Equiv.refl Bool)).trans

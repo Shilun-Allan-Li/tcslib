@@ -153,7 +153,7 @@ theorem exists_glBitEvaluator (iP : PolyExpr) :
       ((pairSndD w).drop (iP.eval (pairFstD w).length))),
     PolyTimeComputable.comp' ipFun_poly ((polyTimeComputable_pairTakePoly iP).pairEncode
       (polyTimeComputable_pairDropPoly iP)), fun n x r => ?_⟩
-  simp only [NUPPT.advInput, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
+  simp only [NUPPT.advInput_eq, pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate,
     take_ofFn_append, drop_ofFn_append, ipFun_ofFn]
 
 /-! ## The inversion probability of the family inverter -/

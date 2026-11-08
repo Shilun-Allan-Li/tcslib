@@ -88,7 +88,7 @@ def blockPoly (V' : Strategy) : PolyExpr := .add (.add (.const 1) (.normal 1 2))
 
 /-- `blockPoly` evaluates to `blockLen`. -/
 theorem blockPoly_eval (V' : Strategy) (N : ℕ) : (blockPoly V').eval N = blockLen V' N := by
-  simp [blockPoly, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+  simp [blockPoly, blockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_normal, PolyExpr.normal_def, Strategy.coinLen_eq]
 
 /-- Shadow of `giSimCoins`: `|x|` blocks of `blockLen V' |x|` bits. -/
 def simCoins (V' : Strategy) : PolyExpr :=
@@ -96,7 +96,7 @@ def simCoins (V' : Strategy) : PolyExpr :=
 
 /-- The coin polynomial evaluates to `N` blocks of `blockLen V' N` bits. -/
 theorem simCoins_eval (V' : Strategy) (N : ℕ) : (simCoins V').eval N = N * blockLen V' N := by
-  simp [simCoins, blockLen, PolyExpr.eval, PolyExpr.normal, Strategy.coinLen]
+  simp [simCoins, blockLen, PolyExpr.eval_const, PolyExpr.eval_var, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_pow, PolyExpr.eval_normal, PolyExpr.normal_def, Strategy.coinLen_eq]
 
 /-- Shadow of `giSimAttemptStr`: one attempt of [PS10, Algorithm 123.4] on the coin block
 `c = b' :: (permutation coins ++ V'`'s tape)`. -/
@@ -108,6 +108,17 @@ noncomputable def attemptStr (V' : Strategy) (x z c : List Bool) : Option (List 
   let H := encGraph (permGraph (if b' then instanceG₁ x else instanceG₀ x) π)
   if (V'.next x z rV [H]).headD false = b' then some (View.encode ⟨x, z, rV, [H, encPerm π]⟩)
   else none
+
+/-- The defining equation of `attemptStr` (its body, unfolded once). -/
+theorem attemptStr_def (V' : Strategy) (x z c : List Bool) :
+    attemptStr V' x z c =
+      (let n := instanceVertexCount x
+    let b' := c.headD false
+    let π := samplePerm n ((c.drop 1).take ((x.length + 1) ^ 2))
+    let rV := c.drop (1 + (x.length + 1) ^ 2)
+    let H := encGraph (permGraph (if b' then instanceG₁ x else instanceG₀ x) π)
+    if (V'.next x z rV [H]).headD false = b' then some (View.encode ⟨x, z, rV, [H, encPerm π]⟩)
+    else none) := rfl
 
 /-- Shadow of `giSim`: up to `n = instanceVertexCount x` attempts on consecutive coin blocks,
 the first successful view, or `[]`. -/
@@ -459,6 +470,6 @@ theorem exists_simulator (V' : Strategy) (hV' : V'.Efficient) :
   refine ⟨NUPPT.ofPolyTimeUniform hF (simCoins V'), NUPPT.ofPolyTimeUniform_uniform _ _, rfl, ?_⟩
   intro x z r
   rw [NUPPT.simulate_eq, NUPPT.runAt_eq, NUPPT.runAtL_ofPolyTimeUniform]
-  simp [simX, simZ, simR, NUPPT.inArg, NUPPT.inCoins, NUPPT.advInput]
+  simp [simX, simZ, simR, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq]
 
 end TCSlib.Cryptography.GIZK

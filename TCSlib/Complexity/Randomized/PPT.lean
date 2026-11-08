@@ -158,6 +158,11 @@ variable (A : NUPPT)
 /-- The running-time budget of `A` on inputs of length `m`: `Ct * (m + 1) ^ ct`. -/
 def timeBound (m : ℕ) : ℕ := A.Ct * (m + 1) ^ A.ct
 
+/-- The defining equation of `timeBound`: `timeBound m = A.Ct * (m + 1) ^ A.ct`. -/
+theorem timeBound_def (m : ℕ) :
+    timeBound A m =
+      (A.Ct * (m + 1) ^ A.ct) := rfl
+
 /-- The number of coins of `A` at parameter `n`. -/
 def coinLen (n : ℕ) : ℕ := A.coins.eval n
 
@@ -383,6 +388,11 @@ theorem runAtL_ofPolyTime {f : List Bool → List Bool} (hf : PolyTimeComputable
 noncomputable def ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
     (coins : PolyExpr) : NUPPT :=
   ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)
+
+/-- The defining equation of `ofPolyTimeUniform`: `ofPolyTimeUniform hf coins = ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)`. -/
+theorem ofPolyTimeUniform_def {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr) :
+    (ofPolyTimeUniform hf coins : NUPPT) =
+      (ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)) := rfl
 
 /-- `ofPolyTimeUniform hf coins` is uniform. -/
 theorem ofPolyTimeUniform_uniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)

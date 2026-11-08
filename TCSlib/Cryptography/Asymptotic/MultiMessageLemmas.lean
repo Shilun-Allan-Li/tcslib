@@ -421,7 +421,7 @@ theorem polyTimeComputable_preFun : PolyTimeComputable preFun := by
       (polyTimeComputable_pairFstD.comp polyTimeComputable_pairSndD))
   convert h using 1
   funext y
-  simp [preFun, Function.comp]
+  simp [preFun, Function.comp_apply]
 
 /-- The history slot of the post-processor's argument `⟨⟨⟨H, ρ⟩, ⟨M, u⟩⟩, a⟩`. -/
 def postHist (z : List Bool) : List Bool := pairFstD (pairFstD (pairFstD (NUPPT.inArg z)))
@@ -679,7 +679,7 @@ theorem exists_queryChain_nuppt (D : NUPPT) (q : PolyExpr)
     simp only at hC₂'
     rw [hC₂', hC, hD₁len, List.take_of_length_le hclen.le, List.drop_of_length_le hclen.le, hD₁,
       NUPPT.runAtL_ofPolyTimeUniform]
-    simp only [NUPPT.layout_eq, NUPPT.advInput_eq, NUPPT.runAt_eq, id]
+    simp only [NUPPT.layout_eq, NUPPT.advInput_eq, NUPPT.runAt_eq, id_eq]
   -- the canonical history along the points `ρ` against the oracle `g`
   let ρ' : ℕ → Fin n → Bool := fun i => if h : i < q.eval n + 1 then ρ ⟨i, h⟩ else fun _ => false
   let hist : ℕ → List ((Fin n → Bool) × (Fin n → Bool)) :=

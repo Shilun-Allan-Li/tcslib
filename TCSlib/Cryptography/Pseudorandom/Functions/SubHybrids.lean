@@ -101,6 +101,12 @@ noncomputable def challengeStream {q : ℕ} (G : S → V) (j : ℕ) (z : V)
     (W : (Fin q → S) × (Fin q → V)) : ℕ → V :=
   fun k => if k < j then extendStream W.2 k else if k = j then z else G (extendStream W.1 k)
 
+/-- The defining equation of `challengeStream`: `challengeStream G j z W = fun k => if k < j then extendStream W.2 k else if k = j then z else G (extendStream W.1 k)`. -/
+theorem challengeStream_def {q : ℕ} (G : S → V) (j : ℕ) (z : V) (W : (Fin q → S) × (Fin q → V)) :
+    (challengeStream G j z W : ℕ → V) =
+      (fun k => if k < j then extendStream W.2 k else if k = j then z else G (extendStream W.1 k) :
+        ℕ → V) := rfl
+
 /-- The PRG distinguisher built from the oracle adversary `A` [Gar26, proof of
 Theorem 3.3, the outer adversary `B`]. On a challenge `z ∈ V` and coins
 `((W₀, W₁), r)` with `W₀ : Fin q → S`, `W₁ : Fin q → V`, it runs `A` once on coins `r`,

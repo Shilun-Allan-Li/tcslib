@@ -122,7 +122,7 @@ theorem concrete_iterate :
   | t + 1, b, s, hq => by
     rw [show t + 1 + b = (t + b) + 1 by omega, concrete_succ, Function.iterate_succ_apply]
     obtain ⟨x, hx⟩ := hq 0 (Nat.succ_pos t)
-    simp only [Function.iterate_zero, id] at hx
+    simp only [Function.iterate_zero, id_eq] at hx
     rw [hx]
     exact concrete_iterate t b _ fun t' ht' => by
       have := hq (t' + 1) (by omega)
@@ -164,12 +164,12 @@ theorem queryOf_eq_some_iff (ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) :
     queryOf ℓ w = some x ↔ pairDecode w = some ([false], List.ofFn x) := by
   constructor
   · intro h
-    unfold queryOf at h
+    simp only [queryOf_eq] at h
     split at h
     next x' hx' => rw [hx', (decodeFin_eq_some_iff ℓ x' x).1 h]
     next => simp at h
   · intro h
-    unfold queryOf
+    simp only [queryOf_eq]
     rw [h]
     exact decodeFin_ofFn x
 
@@ -177,7 +177,7 @@ theorem queryOf_eq_some_iff (ℓ : ℕ) (w : List Bool) (x : Fin ℓ → Bool) :
 theorem ofFn_padFin_of_length {ℓ : ℕ} {w : List Bool} (h : w.length = ℓ) :
     List.ofFn (padFin ℓ w) = w := by
   refine List.ext_getElem (by simp [h]) fun k hk₁ hk₂ => ?_
-  simp [padFin, List.getElem?_eq_getElem hk₂]
+  simp [padFin_def, List.getElem?_eq_getElem hk₂]
 
 /-- A machine output is a query iff its first component is `[false]` and its second has
 length `ℓ`. -/
@@ -186,13 +186,13 @@ theorem exists_queryOf_iff (ℓ : ℕ) (w : List Bool) :
   constructor
   · rintro ⟨x, hx⟩
     rw [queryOf_eq_some_iff] at hx
-    simp [pairFstD, pairSndD, hx]
+    simp [pairFstD_eq, pairSndD_eq, hx]
   · rintro ⟨h1, h2⟩
     cases hd : pairDecode w with
-    | none => simp [pairFstD, hd] at h1
+    | none => simp [pairFstD_eq, hd] at h1
     | some ab =>
       obtain ⟨a, b⟩ := ab
-      simp only [pairFstD, pairSndD, hd, Option.map_some, Option.getD_some] at h1 h2
+      simp only [pairFstD_eq, pairSndD_eq, hd, Option.map_some, Option.getD_some] at h1 h2
       subst h1
       exact ⟨padFin ℓ b, (queryOf_eq_some_iff ℓ w _).2 (by rw [hd, ofFn_padFin_of_length h2])⟩
 
@@ -200,7 +200,7 @@ theorem exists_queryOf_iff (ℓ : ℕ) (w : List Bool) :
 theorem pairSndD_of_queryOf {ℓ : ℕ} {w : List Bool} {x : Fin ℓ → Bool}
     (h : queryOf ℓ w = some x) : pairSndD w = List.ofFn x := by
   rw [queryOf_eq_some_iff] at h
-  simp [pairSndD, h]
+  simp [pairSndD_eq, h]
 
 /-! ## Evaluation on the genuine input -/
 
@@ -287,39 +287,39 @@ theorem length_encState (s : PureState n (Fin d.i → Bool)) (t : ℕ) :
 
 /-- The length of the raw input is at least `n`. -/
 theorem le_length_rawInput : n ≤ (rawInput d).length := by
-  simp only [rawInput, NUPPT.layout, length_pairEncode, List.length_replicate]
+  simp only [rawInput, NUPPT.layout_eq, length_pairEncode, List.length_replicate]
   omega
 
 variable (s : PureState n (Fin d.i → Bool)) (t : ℕ)
 
 /-- The parameter slot of the encoded state word. -/
 theorem paramU_eq : paramU (pairEncode (rawInput d) (encState d s t)) = List.replicate n true := by
-  simp [paramU, inX, rawInput]
+  simp [paramU_def, inX_def, rawInput]
 
 /-- The challenge slot of the encoded state word. -/
 theorem chal_eq : chal (pairEncode (rawInput d) (encState d s t)) = List.ofFn d.z := by
-  simp [chal, inX, rawInput]
+  simp [chal_def, inX_def, rawInput]
 
 /-- The level index of the encoded state word. -/
 theorem unI_eq : unI (pairEncode (rawInput d) (encState d s t)) = List.replicate d.i true := by
-  simp [unI, inX, rawInput]
+  simp [unI_def, inX_def, rawInput]
 
 /-- The sub-hybrid index of the encoded state word. -/
 theorem unJ_eq : unJ (pairEncode (rawInput d) (encState d s t)) = List.replicate d.j true := by
-  simp [unJ, inX, rawInput]
+  simp [unJ_def, inX_def, rawInput]
 
 /-- `D`'s advice in the encoded state word. -/
 theorem advD_eq : advD (pairEncode (rawInput d) (encState d s t)) = D.advice n := by
-  simp [advD, inX, rawInput]
+  simp [advD_def, inX_def, rawInput]
 
 /-- The coins of the encoded state word. -/
 theorem coinsAll_eq : coinsAll (pairEncode (rawInput d) (encState d s t)) = coinStr d := by
-  simp [coinsAll, inX, rawInput]
+  simp [coinsAll_def, inX_def, rawInput]
 
 /-- The seeds of the encoded state word. -/
 theorem seeds_eq : seeds q (pairEncode (rawInput d) (encState d s t)) =
     List.ofFn ((FunFamily.blocks (q.eval n) n).symm d.W.1) := by
-  rw [seeds, coinsAll_eq, paramU_eq, coinStr]
+  rw [seeds_def, coinsAll_eq, paramU_eq, coinStr]
   simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var]
   exact List.take_left' List.length_ofFn
 
@@ -327,75 +327,75 @@ theorem seeds_eq : seeds q (pairEncode (rawInput d) (encState d s t)) =
 theorem coinsRest_eq : coinsRest q (pairEncode (rawInput d) (encState d s t)) =
     List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) ++
       List.ofFn d.r := by
-  rw [coinsRest, coinsAll_eq, paramU_eq, coinStr]
+  rw [coinsRest_def, coinsAll_eq, paramU_eq, coinStr]
   simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_var]
   exact List.drop_left' List.length_ofFn
 
 /-- The pairs of the encoded state word. -/
 theorem pairs_eq : pairs q (pairEncode (rawInput d) (encState d s t)) =
     List.ofFn ((FunFamily.blocks (q.eval n) (2 * n)).symm fun k => splitHalves.symm (d.W.2 k)) := by
-  rw [pairs, coinsRest_eq, paramU_eq]
+  rw [pairs_def, coinsRest_eq, paramU_eq]
   simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   exact List.take_left' List.length_ofFn
 
 /-- `D`'s coins in the encoded state word. -/
 theorem coinsD_eq : coinsD q (pairEncode (rawInput d) (encState d s t)) = List.ofFn d.r := by
-  rw [coinsD, coinsRest_eq, paramU_eq]
+  rw [coinsD_def, coinsRest_eq, paramU_eq]
   simp only [List.length_replicate, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   exact List.drop_left' List.length_ofFn
 
 /-- The history of the encoded state word. -/
 theorem hist_eq : hist (pairEncode (rawInput d) (encState d s t)) = histEnc s.1 := by
-  simp [hist, inS, encState]
+  simp [hist_def, inS_def, encState]
 
 /-- The table of the encoded state word. -/
 theorem tbl_eq : tbl (pairEncode (rawInput d) (encState d s t)) =
     tblEnc (tblOf (valStr d) s.2 0) := by
-  simp [tbl, inS, encState]
+  simp [tbl_def, inS_def, encState]
 
 /-- The table size of the encoded state word. -/
 theorem cnt_eq : cnt (pairEncode (rawInput d) (encState d s t)) =
     List.replicate s.2.length true := by
-  simp [cnt, inS, encState]
+  simp [cnt_def, inS_def, encState]
 
 /-- The round counter of the encoded state word. -/
 theorem rnd_eq : rnd (pairEncode (rawInput d) (encState d s t)) = List.replicate t true := by
-  simp [rnd, inS, encState]
+  simp [rnd_def, inS_def, encState]
 
 /-- The move of the machine on the encoded state is `D`'s move on the history. -/
 theorem move_eq : move D q (pairEncode (rawInput d) (encState d s t)) = nextQ d s.1 := by
-  rw [move, paramU_eq, hist_eq, advD_eq, coinsD_eq]
+  rw [move_def, paramU_eq, hist_eq, advD_eq, coinsD_eq]
   rfl
 
 /-- The query test of the machine is the query test of the pure state. -/
 theorem isQ_iff : isQ D q (pairEncode (rawInput d) (encState d s t)) = true ↔ IsQ (nextQ d) s := by
-  rw [isQ, move_eq, paramU_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq,
+  rw [isQ_def, move_eq, paramU_eq, Bool.and_eq_true, decide_eq_true_eq, decide_eq_true_eq,
     List.length_replicate, IsQ, exists_queryOf_iff]
 
 /-- The stopping test on the encoded state. -/
 theorem acc_eq : acc D q (pairEncode (rawInput d) (encState d s t)) =
     (!isQ D q (pairEncode (rawInput d) (encState d s t)) || decide (q.eval n ≤ t)) := by
-  rw [acc, unQ, paramU_eq, rnd_eq]
+  rw [acc_def, unQ_def, paramU_eq, rnd_eq]
   simp only [List.length_replicate]
 
 /-- The output on the encoded state. -/
 theorem out_eq : out D q (pairEncode (rawInput d) (encState d s t)) =
     if isQ D q (pairEncode (rawInput d) (encState d s t)) then [false]
     else [verdictOf (nextQ d s.1)] := by
-  rw [out, move_eq]
+  rw [out_def, move_eq]
 
 /-- The unary offset of the next seed. -/
 theorem mul1_length : (mul1 (pairEncode (rawInput d) (encState d s t))).length = n * s.2.length := by
-  simp [mul1, paramU_eq, cnt_eq]
+  simp [mul1_def, paramU_eq, cnt_eq]
 
 /-- The unary string `1^{2n}` of the encoded state word. -/
 theorem un2_length : (un2 (pairEncode (rawInput d) (encState d s t))).length = 2 * n := by
-  simp [un2, paramU_eq]
+  simp [un2_def, paramU_eq]
 
 /-- The unary offset of the next pair. -/
 theorem mul2_length :
     (mul2 (pairEncode (rawInput d) (encState d s t))).length = (2 * n) * s.2.length := by
-  simp [mul2, un2_length, cnt_eq]
+  simp [mul2_def, un2_length, cnt_eq]
 
 /-- **The fresh value is the stored value of the next distinct prefix:** on the encoded state
 with `|L| < q(n)`, `fresh` computes `valStr |L|`.
@@ -409,15 +409,15 @@ theorem fresh_eq (E : List Bool → List Bool)
     (hG : ∀ s : Fin n → Bool, E (List.ofFn s) = List.ofFn (d.G s)) (hk : s.2.length < q.eval n) :
     fresh E q (pairEncode (rawInput d) (encState d s t)) = valStr d s.2.length := by
   have hlt : ltJ (pairEncode (rawInput d) (encState d s t)) = decide (s.2.length < d.j) := by
-    simp only [ltJ, unJ_eq, cnt_eq, List.length_replicate, ← decide_not, not_le]
+    simp only [ltJ_def, unJ_eq, cnt_eq, List.length_replicate, ← decide_not, not_le]
   have heq : eqJ (pairEncode (rawInput d) (encState d s t)) = decide (s.2.length = d.j) := by
-    simp [eqJ, unJ_eq, cnt_eq]
+    simp [eqJ_def, unJ_eq, cnt_eq]
   have hstream : ∀ (k : ℕ) (hk : k < q.eval n), stream d k =
       if k < d.j then d.W.2 ⟨k, hk⟩ else if k = d.j then splitHalves d.z
         else splitHalves (d.G (d.W.1 ⟨k, hk⟩)) := by
     intro k hk
-    simp [stream, challengeStream, extendStream, hk]
-  rw [fresh, hlt, heq, valStr, hstream _ hk]
+    simp [stream, challengeStream_def, extendStream_def, hk]
+  rw [fresh_def, hlt, heq, valStr, hstream _ hk]
   by_cases h1 : s.2.length < d.j
   · rw [if_pos (by simpa using h1), if_pos h1, pairs_eq, mul2_length, un2_length,
       drop_take_ofFn_blocks (q.eval n) (2 * n) _ hk, Equiv.apply_symm_apply]
@@ -445,13 +445,13 @@ theorem step_eq (E : List Bool → List Bool)
       encState d (pureStep (nextQ d) (prefMap d) (ansMap d hi) (stream d) s) (t + 1) := by
   classical
   have hquery : query D q (pairEncode (rawInput d) (encState d s t)) = List.ofFn x := by
-    rw [query, move_eq, pairSndD_of_queryOf hx]
+    rw [query_def, move_eq, pairSndD_of_queryOf hx]
   have hpfx : pfx D q (pairEncode (rawInput d) (encState d s t)) = List.ofFn (prefixAt x d.i) := by
-    rw [pfx, hquery, unI_eq, List.length_replicate, ofFn_prefixAt x hi.le]
+    rw [pfx_def, hquery, unI_eq, List.length_replicate, ofFn_prefixAt x hi.le]
   have hlook : look D q (pairEncode (rawInput d) (encState d s t)) =
       if prefixAt x d.i ∈ s.2 then pairEncode [] (valStr d (s.2.idxOf (prefixAt x d.i)))
       else [] := by
-    rw [look, hpfx, tbl_eq, lookup_tblOf]
+    rw [look_def, hpfx, tbl_eq, lookup_tblOf]
   have hbit : ((List.ofFn x).drop d.i).headD false = x ⟨d.i, hi⟩ := by
     rw [List.drop_eq_getElem_cons (by simpa using hi), List.headD_cons, List.getElem_ofFn]
   have hrest : ((List.ofFn x).drop d.i).tail = (List.ofFn x).drop (d.i + 1) := List.tail_drop
@@ -459,7 +459,7 @@ theorem step_eq (E : List Bool → List Bool)
       ans E D q (pairEncode (rawInput d) (encState d s t)) =
         List.ofFn (ansMap d hi x (stream d k)) := by
     intro k hv
-    rw [ans, lab, hv, hquery, unI_eq, List.length_replicate, hbit, hrest, paramU_eq, valStr,
+    rw [ans_def, lab_def, hv, hquery, unI_eq, List.length_replicate, hbit, hrest, paramU_eq, valStr,
       selHalf_ofFn _ (List.length_replicate ..) _, Equiv.apply_symm_apply, ggmEval_ofFn_walk hG,
       ansMap, ggmFrom_eq_walk]
   have hpure : pureStep (nextQ d) (prefMap d) (ansMap d hi) (stream d) s =
@@ -471,24 +471,24 @@ theorem step_eq (E : List Bool → List Bool)
   rw [hpure]
   by_cases hmem : prefixAt x d.i ∈ s.2
   · have hnf : notFound D q (pairEncode (rawInput d) (encState d s t)) = false := by
-      simp [notFound, hlook, hmem, Turing.pairEncode_ne_nil]
+      simp [notFound_def, hlook, hmem, Turing.pairEncode_ne_nil]
     have hv : vstr E D q (pairEncode (rawInput d) (encState d s t)) =
         valStr d (s.2.idxOf (prefixAt x d.i)) := by
-      rw [vstr, hnf, hlook, if_pos hmem]
+      rw [vstr_def, hnf, hlook, if_pos hmem]
       simp
     rw [noteQuery_of_mem hmem]
-    simp only [step, hist', tbl', cnt', hnf, Bool.false_eq_true, if_false, hist_eq, tbl_eq,
+    simp only [step_def, hist'_def, tbl'_def, cnt'_def, hnf, Bool.false_eq_true, if_false, hist_eq, tbl_eq,
       cnt_eq, rnd_eq, hquery, hans _ hv]
     simp only [encState, histEnc_append_single, List.replicate_succ]
   · have hnf : notFound D q (pairEncode (rawInput d) (encState d s t)) = true := by
-      simp [notFound, hlook, hmem]
+      simp [notFound_def, hlook, hmem]
     have hv : vstr E D q (pairEncode (rawInput d) (encState d s t)) = valStr d s.2.length := by
-      rw [vstr, hnf, if_pos rfl, fresh_eq d s t E hG hk]
+      rw [vstr_def, hnf, if_pos rfl, fresh_eq d s t E hG hk]
     have hidx : (noteQuery s.2 (prefixAt x d.i)).idxOf (prefixAt x d.i) = s.2.length := by
       rw [noteQuery_of_not_mem hmem, List.idxOf_append_of_notMem hmem, List.idxOf_cons_self,
         Nat.add_zero]
     rw [hidx, noteQuery_of_not_mem hmem]
-    simp only [step, hist', tbl', cnt', hnf, if_true, hist_eq, tbl_eq, cnt_eq, rnd_eq, hquery,
+    simp only [step_def, hist'_def, tbl'_def, cnt'_def, hnf, if_true, hist_eq, tbl_eq, cnt_eq, rnd_eq, hquery,
       hans _ hv, hpfx, fresh_eq d s t E hG hk]
     simp only [encState, histEnc_append_single, List.replicate_succ, tblOf_append_single,
       zero_add, tblEnc_append_single, List.length_append, List.length_singleton]
@@ -585,7 +585,7 @@ theorem length_encState_pureAt_le {t : ℕ} (ht : t ≤ q.eval n) :
   refine le_trans ?_ ((bound q).eval_mono (le_length_rawInput d))
   rw [length_encState]
   have hlen := pureAt_length d hi t
-  simp only [bound, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
+  simp only [bound_def, PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   have hA : (pureAt d hi t).1.length ≤ q.eval n := by omega
   have hB : (pureAt d hi t).2.length ≤ q.eval n := by omega
   have h1 : (pureAt d hi t).1.length * (6 * n + 6) ≤ q.eval n * (6 * n + 6) :=
@@ -626,7 +626,7 @@ theorem rawFun_rawInput :
     exact length_encState_pureAt_le d hi (ht.trans hNq)
   have hNR : firstRound d E hG hi ≤ q.eval (rawInput d).length :=
     hNq.trans (q.eval_mono (le_length_rawInput d))
-  rw [rawFun, stateLoopFun_eval start (step E D q) (acc D q) (out D q) q (bound q) (rawInput d)
+  rw [rawFun_def, stateLoopFun_eval start (step E D q) (acc D q) (out D q) q (bound q) (rawInput d)
     (firstRound d E hG hi) hNR hbound hfirst hlast, horbN, out_eq]
   have hconc : concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], []) =
       concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n - firstRound d E hG hi)
@@ -765,7 +765,7 @@ theorem ggmRedMachine_distinguisher {E : List Bool → List Bool} (hE : PolyTime
   have hdist : (ggmRedMachine hE D q i j).distinguisher n (2 * n) z c =
       decide ([concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], [])] =
         [true]) := by
-    rw [NUPPT.distinguisher, runAt_ggmRedMachine, hraw, rawFun_rawInput d E hG hi]
+    rw [NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, runAt_ggmRedMachine, hraw, rawFun_rawInput d E hG hi]
   have hrhs : ggmBitsDist G (fun r => buildTreeQ (fun hist => D.runAt n (histEnc hist) r)
       (q.eval n) []) (q.eval n) ⟨i n, hi⟩ ⟨j n, hj⟩ z (W, r) =
         concrete (nextQ d) (prefMap d) (ansMap d hi) (stream d) (q.eval n) ([], []) := rfl

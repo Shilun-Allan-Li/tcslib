@@ -102,11 +102,11 @@ theorem _root_.Complexity.NUPPT.length_runAt_le (A : NUPPT) (n : ℕ) (y : List 
     (A.runAt n y r).length ≤
       A.Ct * (8 * n + 14 + 4 * y.length + 2 * A.adv.eval n + A.coins.eval n + 1) ^ A.ct := by
   refine (A.output_length_le _).trans ?_
-  unfold NUPPT.timeBound
+  simp only [NUPPT.timeBound_def]
   apply Nat.mul_le_mul_left
   apply Nat.pow_le_pow_left
   have := A.advice_length n
-  simp only [length_pairEncode, NUPPT.length_advInput, List.length_ofFn, NUPPT.coinLen]
+  simp only [length_pairEncode, NUPPT.length_advInput, List.length_ofFn, NUPPT.coinLen_eq]
   omega
 
 /-- The syntactic polynomial bounding `|A(1^n, y)|` when `|y| ≤ Y(n)` (`length_runAt_le`). -/
@@ -148,7 +148,7 @@ theorem ofFn_splitCoins_fst (a b : ℕ) (r : Fin (a + b) → Bool) :
   · simp only [List.length_ofFn] at h₁
     rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_take,
       List.getElem_ofFn]
-    simp [splitCoins, Equiv.sumArrowEquivProdArrow, Fin.castAdd, Fin.castLE]
+    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst, Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_castAdd, Fin.coe_castLE]
 
 /-- The second half of `splitCoins a b r` is the encoding of `r` after its first `a` bits. -/
 theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
@@ -158,7 +158,7 @@ theorem ofFn_splitCoins_snd (a b : ℕ) (r : Fin (a + b) → Bool) :
   · simp only [List.length_ofFn] at h₁
     rw [List.get_eq_getElem, List.get_eq_getElem, List.getElem_ofFn, List.getElem_drop,
       List.getElem_ofFn]
-    simp [splitCoins, Equiv.sumArrowEquivProdArrow, Fin.natAdd]
+    simp [splitCoins, Equiv.sumArrowEquivProdArrow_apply_fst, Equiv.sumArrowEquivProdArrow_apply_snd, Fin.coe_natAdd]
 
 /-- The encoding of the coin string assembled from two halves is the concatenation of the
 encodings of the halves. -/
@@ -175,7 +175,7 @@ namespace Collection
 theorem ofFn_padFin_of_le {ℓ : ℕ} {w : List Bool} (hw : w.length ≤ ℓ) :
     List.ofFn (padFin ℓ w) = w ++ List.replicate (ℓ - w.length) false := by
   refine List.ext_getElem (by simp; omega) fun j hj₁ hj₂ => ?_
-  simp only [List.getElem_ofFn, padFin, List.getD_eq_getElem?_getD]
+  simp only [List.getElem_ofFn, padFin_def, List.getD_eq_getElem?_getD]
   rw [List.getElem_append]
   split_ifs with h
   · rw [List.getElem?_eq_getElem h]

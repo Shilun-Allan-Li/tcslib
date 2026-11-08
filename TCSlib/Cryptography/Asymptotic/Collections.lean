@@ -275,7 +275,8 @@ theorem encD_injective (F : Collection) (i : List Bool) : Function.Injective (F.
 
 /-- The inversion probability is nonnegative. -/
 theorem invProbAt_nonneg (F : Collection) (A : NUPPT) (n : ℕ) : 0 ≤ F.invProbAt A n := by
-  unfold invProbAt uexp
+  unfold invProbAt
+  simp only [uexp_def]
   exact div_nonneg (Finset.sum_nonneg fun r _ => uprob_nonneg _) (Nat.cast_nonneg _)
 
 /-- The inversion probability is at most one. -/
@@ -791,16 +792,17 @@ private theorem owfRawStr_poly :
 (`Gen` is uniform, so its advice is `[]`; the cut at `gen.coins n` is `List.take_left'`). -/
 private theorem owfIndexStr_eq (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) :
     G.owfIndexStr (List.replicate n true) (List.ofFn r₁ ++ List.ofFn r₂) = G.index n r₁ := by
-  unfold owfIndexStr Collection.index NUPPT.runAt NUPPT.layout NUPPT.advInput
-  rw [List.length_replicate, List.take_left' (by simp [NUPPT.coinLen]), G.gen_uniform n]
+  simp only [owfIndexStr, Collection.index, NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq,
+    NUPPT.advInput_eq]
+  rw [List.length_replicate, List.take_left' (by simp [NUPPT.coinLen_eq]), G.gen_uniform n]
 
 /-- On `u = 1^n` and the encoded coins `r₁ ++ r₂`, the raw string of `g` is `owfRaw n r₁ r₂`
 (`Sample` is uniform; the cut at `gen.coins n` is `List.drop_left'`). -/
 private theorem owfRawStr_eq (n : ℕ) (r₁ : G.gen.Coins n) (r₂ : G.sample.Coins n) :
     G.owfRawStr (List.replicate n true) (List.ofFn r₁ ++ List.ofFn r₂) = G.owfRaw n r₁ r₂ := by
   unfold owfRawStr owfRaw
-  rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by simp [NUPPT.coinLen])]
-  unfold NUPPT.runAt NUPPT.layout NUPPT.advInput
+  rw [owfIndexStr_eq, List.length_replicate, List.drop_left' (by simp [NUPPT.coinLen_eq])]
+  simp only [NUPPT.runAt_eq, NUPPT.runAtL_eq, NUPPT.layout_eq, NUPPT.advInput_eq]
   rw [G.sample_uniform n]
 
 /-- **`g` is easy to compute** [PS10, Theorem 42.2 ⇒, "`g` is easy"]: the evaluator on

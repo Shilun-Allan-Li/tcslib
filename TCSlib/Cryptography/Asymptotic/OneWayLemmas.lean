@@ -190,7 +190,7 @@ theorem invProbOpt_prodFun_le_yaoTryOpt {α β ρ : Type*} [Fintype α] [Nonempt
     invProbOpt (prodFun f q) B ≤
       invProbOpt f fun y (c : (Fin q → α) × ρ) =>
         (B (Function.update (prodFun f q c.1) i y) c.2).map fun xs => xs i := by
-  unfold invProbOpt
+  simp only [invProbOpt_def]
   have h := uprob_update (α := α) (ρ := ρ) i fun xs r =>
     ∃ x', (B (prodFun f q xs) r).map (fun xs => xs i) = some x' ∧ f x' = f (xs i)
   simp only [prodFun_update, Function.update_self] at h
@@ -252,7 +252,7 @@ theorem flatMap_range_ite_eq_flatten_ofFn (E : ℕ → List Bool) {Q R : ℕ} (h
     rw [List.ofFn_eq_map, List.flatMap_def, ← List.map_coe_finRange, List.map_map]
     congr 1
     refine List.map_congr_left fun t _ => ?_
-    simp only [Function.comp]
+    simp only [Function.comp_apply]
     rw [if_neg (not_le.2 t.2)]
   obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le h
   induction d with
@@ -300,14 +300,14 @@ theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ
       funext t
       refine Fin.cases ?_ (fun t => ?_) t
       · simp
-      · simp [Fin.tail]
+      · simp [Fin.tail_def]
     have keyY : ∀ c : Fin (N + 1) → τ,
         (Fin.cons (Y (c 0)) (fun t => Y (Fin.tail c t)) : Fin (N + 1) → γ) = fun t => Y (c t) := by
       intro c
       funext t
       refine Fin.cases ?_ (fun t => ?_) t
       · simp
-      · simp [Fin.tail]
+      · simp [Fin.tail_def]
     have hδ : ((N + 1 : ℕ) : ℝ) * δ = δ + N * δ := by push_cast; ring
     rw [hδ]
     convert hp2 using 1
@@ -331,7 +331,7 @@ theorem polyTimeComputable_unaryMulPair :
   convert h using 1
   funext z
   cases hz : pairDecode z with
-  | none => simp [pairFstD, pairSndD, hz]
+  | none => simp [pairFstD_eq, pairSndD_eq, hz]
   | some p =>
     obtain ⟨u, v⟩ := p
     have := eq_pairEncode_of_pairDecode z u v hz
@@ -777,7 +777,7 @@ theorem length_pairEncode_pairFstD_le (v s : List Bool) (hs : s.length ≤ (pair
     (pairEncode (pairFstD v) s).length ≤ max v.length 2 := by
   cases hv : pairDecode v with
   | none =>
-    simp only [pairFstD, pairSndD, hv, Option.map_none, Option.getD_none, List.length_nil,
+    simp only [pairFstD_eq, pairSndD_eq, hv, Option.map_none, Option.getD_none, List.length_nil,
       nonpos_iff_eq_zero, List.length_eq_zero_iff] at hs ⊢
     subst hs
     simp [length_pairEncode]
@@ -820,7 +820,7 @@ end PosLoop
 /-- A trial succeeds iff its value is below `m`. -/
 theorem isSome_uniformFromBits {m k : ℕ} (b : Fin k → Bool) :
     (uniformFromBits m k b).isSome = decide (bitsToNat b < m) := by
-  unfold uniformFromBits
+  simp only [uniformFromBits_def]
   split_ifs with h <;> simp [h]
 
 /-- **The position sampler** [PS10, Algorithm 38.5, "`i ← [m]`", by rejection (D10)]: a
@@ -897,7 +897,7 @@ theorem exists_posMachine : ∃ Pm : List Bool → List Bool, PolyTimeComputable
   have hrs : rejectionSample M kk n (fun t j => pb' (finProdFinEquiv (t, j))) =
       ((List.finRange n).find? fun t => decide (bitsToNat (fun j => pb' (finProdFinEquiv (t, j))) < M)).bind
         fun t => uniformFromBits M kk fun j => pb' (finProdFinEquiv (t, j)) := by
-    unfold rejectionSample
+    simp only [rejectionSample_def]
     rw [findSome?_eq_bind_find?]
     congr 2
     funext t
@@ -911,7 +911,7 @@ theorem exists_posMachine : ∃ Pm : List Bool → List Bool, PolyTimeComputable
       simpa using List.find?_some hf
     simp only [Option.map_some, Option.bind_some]
     rw [hunum]
-    unfold uniformFromBits
+    simp only [uniformFromBits_def]
     rw [dif_pos ht]
     rfl
 

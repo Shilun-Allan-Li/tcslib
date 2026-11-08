@@ -766,7 +766,7 @@ word `x`, not only for well-formed state words). -/
 private theorem length_spStep_iterate_le (x : List Bool) (i : ℕ) :
     (spStep^[i] x).length ≤ 2 * x.length + 2 := by
   cases i with
-  | zero => simp only [Function.iterate_zero, id]; omega
+  | zero => simp only [Function.iterate_zero, id_eq]; omega
   | succ i =>
     induction i with
     | zero => exact length_spStep_le x

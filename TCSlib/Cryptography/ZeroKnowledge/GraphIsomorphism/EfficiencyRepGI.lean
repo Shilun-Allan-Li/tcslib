@@ -122,9 +122,9 @@ theorem giProverRep_efficient : giProverRep.Efficient := by
     inCoins_ilayout, argX_ilayout, argZ_ilayout, vcount_ilayout, giBlock_eval, decide_eq_true_eq,
     lastMsg_encodeMsgs]
   by_cases hev : hist.length % 2 = 0
-  · rw [if_pos hev, if_pos hev, relabelAt_replicate, sampleStr, decPerm_encPerm]
+  · rw [if_pos hev, if_pos hev, relabelAt_replicate, sampleStr_def, decPerm_encPerm]
     rfl
-  · rw [if_neg hev, if_neg hev, sampleStr, mulInvStr_encPerm]
+  · rw [if_neg hev, if_neg hev, sampleStr_def, mulInvStr_encPerm]
     split_ifs <;> rfl
 
 /-! ### The verifier of the `|x|`-fold graph isomorphism protocol -/
@@ -252,7 +252,7 @@ theorem giIter_bound (x₀ : List Bool) (k : ℕ) :
   simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · have := length_pairSndD_le x₀
-    simp only [Function.iterate_zero, id]
+    simp only [Function.iterate_zero, id_eq]
     omega
   · obtain ⟨b, hb⟩ := giIter_shape x₀ k hk
     rw [hb, length_pairEncode, length_pairEncode, length_pairEncode, List.length_singleton]

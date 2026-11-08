@@ -112,7 +112,7 @@ theorem PolyTimeComputable.pairMapSnd {g : List Bool → List Bool}
 /-- Appending to a pair appends to its second component. -/
 private lemma pairEncode_append (a b c : List Bool) :
     pairEncode a b ++ c = pairEncode a (b ++ c) := by
-  simp [pairEncode, List.append_assoc]
+  simp [pairEncode_eq, List.append_assoc]
 
 /-- **Pairing two polynomial-time functions is polynomial-time**: if `f` and `g` are
 polynomial-time computable, so is `x ↦ pairEncode (f x) (g x)`.
@@ -176,7 +176,7 @@ theorem polyTimeComputable_unary :
   have hs := polyTimeComputable_of_linear FinTM.computesFunInTime_pairSnd
   convert hs.comp (hstrip.comp hpair) using 1
   funext x
-  simp only [Function.comp_apply, id, pairDecode_pairEncode, Nat.pow_one, Nat.one_mul,
+  simp only [Function.comp_apply, id_eq, pairDecode_pairEncode, Nat.pow_one, Nat.one_mul,
     splitAtLastTrue_replicate_succ, Option.map_some, Option.getD_some]
 
 /-- **FP is closed under concatenation**: if `f` and `g` are polynomial-time computable,

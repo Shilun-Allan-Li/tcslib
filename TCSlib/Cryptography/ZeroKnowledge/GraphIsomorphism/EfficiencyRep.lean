@@ -59,7 +59,7 @@ open Complexity Turing Complexity.StateLoop
 theorem length_pairSndD_lt {w : List Bool} (h : w ≠ []) : (pairSndD w).length < w.length := by
   cases hw : pairDecode w with
   | none =>
-    simp only [pairSndD, hw, Option.map_none, Option.getD_none, List.length_nil]
+    simp only [pairSndD_eq, hw, Option.map_none, Option.getD_none, List.length_nil]
     exact List.length_pos_of_ne_nil h
   | some ab =>
     obtain ⟨a, b⟩ := ab
@@ -365,7 +365,7 @@ theorem coinSlice_poly (p : PolyExpr) {u i r : List Bool → List Bool} (hu : Po
   have hdrop : PolyTimeComputable fun w => (r w).drop ((i w).length * p.eval (u w).length) :=
     ptc_congr ((polyTimeComputable_pairDropPoly .var).comp (hic.pairEncode hr)) fun w => by simp
   refine ptc_congr ((polyTimeComputable_pairTakePoly p).comp (hu.pairEncode hdrop)) fun w => ?_
-  simp [coinSlice]
+  simp [coinSlice_def]
 
 /-! ### Iterating a step a unary number of times -/
 
@@ -529,7 +529,7 @@ theorem gniIter_bound (x₀ : List Bool) (k : ℕ) :
   simp only [PolyExpr.eval_add, PolyExpr.eval_mul, PolyExpr.eval_const, PolyExpr.eval_var]
   rcases Nat.eq_zero_or_pos k with rfl | hk
   · have := length_pairSndD_le x₀
-    simp only [Function.iterate_zero, id]
+    simp only [Function.iterate_zero, id_eq]
     omega
   · obtain ⟨b, hb⟩ := gniIter_shape x₀ k hk
     rw [hb, length_pairEncode, length_pairEncode, List.length_singleton]
@@ -581,7 +581,7 @@ theorem gni_verdict_iff (hist : List (List Bool)) (r : List Bool) (N c : ℕ) (h
         (r.drop (j * c)).headD false := by
   rw [Fin.forall_iff]
   refine forall_congr' fun j => forall_congr' fun _ => ?_
-  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinSlice, headD_take hc, Fin.val_mk,
+  rw [iterate_pairSndD_encodeMsgs, Strategy.pairFstD_encodeMsgs, coinSlice_def, headD_take hc, Fin.val_mk,
     getD_eq_headD_drop]
 
 /-- The verifier of the `|x|`-fold graph non-isomorphism protocol is efficient (D8) (Inf-4.2).
@@ -611,7 +611,7 @@ theorem gniVerifierRep_efficient : gniVerifierRep.Efficient := by
   simp only [argM_ilayout, msgCount_encodeMsgs, inParam_ilayout, List.length_replicate, inCoins_ilayout,
     argX_ilayout, vcount_ilayout, gniBlock_eval, decide_eq_true_eq]
   by_cases hlt : hist.length < x.length
-  · rw [if_pos hlt, if_pos hlt, relabelAt_replicate, sampleStr, decPerm_encPerm, List.drop_one]
+  · rw [if_pos hlt, if_pos hlt, relabelAt_replicate, sampleStr_def, decPerm_encPerm, List.drop_one]
     split_ifs <;> rfl
   · rw [if_neg hlt, if_neg hlt, Bool.decide_and, Bool.decide_eq_true]
     congr 2
