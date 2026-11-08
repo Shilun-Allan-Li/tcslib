@@ -2713,56 +2713,32 @@ private lemma satPair_computes (M : FinTM Bool) (f : List Bool → List Bool) (T
 original input as a pair. -/
 private lemma sat_pt_pair_input {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
     PolyTimeComputable (fun x => pairEncode (f x) x) := by
-  obtain ⟨M, C, e, hM⟩ := hf
-  refine ⟨satPairTM M, 4 * C + 10, e + 1, fun x => (satPair_computes M f _ hM x).mono ?_⟩
-  have he : (x.length + 1) ^ e ≤ (x.length + 1) ^ (e + 1) :=
-    Nat.pow_le_pow_right (Nat.succ_pos _) (by omega)
-  have h1 : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
-    simpa using Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 ≤ e + 1 by omega)
-  have ht := Nat.mul_le_mul_left (4 * C) he
-  dsimp only
-  calc
-    _ = 4 * C * (x.length + 1) ^ e + 2 * x.length + 8 := by ring
-    _ ≤ 4 * C * (x.length + 1) ^ (e + 1) + 10 * (x.length + 1) ^ (e + 1) := by omega
-    _ = _ := by ring
+  exact PolyTimeComputable.pairEncode hf polyTimeComputable_id
 
-/-- Mapping a paired payload by a polynomial-time function preserves
-polynomial time, by the audited data-retaining catalog constructor. -/
+/-- The published threaded-map closure preserves the first field while applying a
+polynomial-time function to the payload, with empty output on malformed pairs. -/
 private lemma sat_pt_mapSnd {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun z => match pairDecode z with
       | some (a, b) => pairEncode a (g b)
       | none => []) := by
-  obtain ⟨M, C, e, hM⟩ := hg
-  obtain ⟨N, K, hN⟩ := FinTM.computesFunInTime_pairMapSnd hM
-    (by intro a b hab; exact Nat.mul_le_mul_left C (Nat.pow_le_pow_left (by omega) e))
-  refine ⟨N, K * (C + 1), e + 1, fun x => (hN x).mono ?_⟩
-  have he : (x.length + 1) ^ e ≤ (x.length + 1) ^ (e + 1) :=
-    Nat.pow_le_pow_right (Nat.succ_pos _) (by omega)
-  have h1 : x.length + 1 ≤ (x.length + 1) ^ (e + 1) := by
-    simpa using Nat.pow_le_pow_right (Nat.succ_pos x.length) (show 1 ≤ e + 1 by omega)
-  calc
-    _ ≤ K * ((C + 1) * (x.length + 1) ^ (e + 1)) := by
-      apply Nat.mul_le_mul_left
-      calc
-        _ ≤ (x.length + 1) ^ (e + 1) + C * (x.length + 1) ^ (e + 1) :=
-          Nat.add_le_add h1 (Nat.mul_le_mul_left C he)
-        _ = _ := by ring
-    _ = _ := by ring
+  have he : Complexity.pairMapSnd g = (fun z => match pairDecode z with
+      | some (a, b) => pairEncode a (g b)
+      | none => []) := funext (Complexity.pairMapSnd.eq_1 g)
+  rw [← he]
+  exact PolyTimeComputable.pairMapSnd hg
 
 /-- Independently computed fields can be paired without losing the original
 input needed by the second computation. -/
 private lemma sat_pt_pair {f g : List Bool → List Bool}
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => pairEncode (f x) (g x)) := by
-  simpa only [Function.comp_def, pairDecode_pairEncode] using
-    (sat_pt_mapSnd hg).comp (sat_pt_pair_input hf)
+  exact PolyTimeComputable.pairEncode hf hg
 
 /-- Independently computed word fragments can be concatenated in polynomial time. -/
 private lemma sat_pt_append {f g : List Bool → List Bool}
     (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
     PolyTimeComputable (fun x => f x ++ g x) := by
-  simpa only [Function.comp_def, pairDecode_pairEncode] using
-    (sat_pt_linear _ FinTM.computesFunInTime_pairConcat).comp (sat_pt_pair hf hg)
+  exact PolyTimeComputable.append hf hg
 
 /-- Pure semantics for a finite one-way word transducer with at most one
 emitted bit per input bit and one optional final bit. -/
@@ -2842,16 +2818,7 @@ private lemma satMap_poly {S : Type} [Fintype S] [DecidableEq S]
 
 /-- Replacing every bit by `true` computes the exact unary input length. -/
 private lemma sat_pt_unaryLength : PolyTimeComputable (fun x => List.replicate x.length true) := by
-  have h := satMap_poly (S := Unit) (fun _ _ => ()) (fun _ _ => some true) (fun _ => none) ()
-  have he (x : List Bool) :
-      satMapWord (fun (_ : Unit) _ => ()) (fun _ _ => some true) (fun _ => none) () x =
-        List.replicate x.length true := by
-    induction x with
-    | nil => rfl
-    | cons b r ih => simpa [satMapWord, List.replicate_succ] using congrArg (true :: ·) ih
-  convert h using 1
-  funext x
-  exact (he x).symm
+  exact polyTimeComputable_unary
 
 /-- Removing the first bit is a two-state finite transduction. -/
 private lemma sat_pt_tail : PolyTimeComputable List.tail := by
@@ -3933,15 +3900,13 @@ private lemma satStop_step (C : FinTM Bool) (entry exit : C.State)
     simp only [satStopTM, hq, ↓reduceIte]
     rfl
 
-/-- Live endpoints force every earlier module state to be live. -/
+/-- Live endpoints force earlier module states to be live by
+`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
 private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
     (ht : (tm.runFrom c t).state ≠ none) :
     ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
-  intro u hu hh
-  have he : tm.runFrom c t = tm.runFrom c u := by
-    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
-  exact ht (by rw [he]; exact hh)
+  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
 
 /-- Stop a clean call one silent step after its certified first positive exit.
 **Proof sketch.** Induct on prefixes, keeping the release flag false only at
@@ -4079,12 +4044,16 @@ private lemma sat_guard_add {k : ℕ} {S : Type} {x : List Bool}
     (he : tm.runFrom c a = d)
     (hb : ∀ v < b, (tm.runFrom d v).state ≠ some anchor) :
     ∀ v < a + b, (tm.runFrom c v).state ≠ some anchor := by
-  intro v hv
-  by_cases h : v < a
-  · exact ha v h
-  · have hva : a ≤ v := by omega
-    rw [← Nat.add_sub_of_le hva, MultiTapeTM.runFrom_add, he]
-    exact hb (v - a) (by omega)
+  have h₁ : Turing.Segment tm {some anchor} (fun _ => True) c d a :=
+    (Turing.segment_iff tm {some anchor} (fun _ => True) c d a).mpr
+      ⟨he, fun v hv hm => ha v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
+  have h₂ : Turing.Segment tm {some anchor} (fun _ => True) d (tm.runFrom d b) b :=
+    (Turing.segment_iff tm {some anchor} (fun _ => True) d (tm.runFrom d b) b).mpr
+      ⟨rfl, fun v hv hm => hb v hv (Set.mem_singleton_iff.mp hm), fun _ _ => True.intro⟩
+  have h := (Turing.segment_iff tm {some anchor} (fun _ => True) c (tm.runFrom d b)
+    (a + b)).mp (Turing.Segment.trans h₁ h₂)
+  intro v hv hm
+  exact h.2.1 v hv (Set.mem_singleton_iff.mpr hm)
 
 /-- Uniform clean-module contract: a first halt with a prescribed replacement
 word and emitted chunk, over every untouched native input. -/
