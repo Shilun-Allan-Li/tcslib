@@ -1,0 +1,13 @@
+/-- From an actual scheduler halt, `|x++u|+2` transitions install the
+relocated verifier. The guessed suffix is already appended to the preserved
+prefix, so assembly needs only a rewind and dispatch. -/
+private lemma b2_assembly (S V : FinTM Bool) {x : List Bool}
+    (c : Cfg S.k Bool S.State x) (hc : c.state = none) (u w : List Bool)
+    (hw : w.length = (x ++ u).length + 2) :
+    (b2Host S V).tm.runWith w (b2GuessCfg S V c u) =
+      b2VerifyCfg S V (V.tm.initCfg (x ++ u)) true c.inputPos c.workTapes c.workTapePos := by
+  cases w with
+  | nil => simp at hw
+  | cons bit w =>
+    rw [NDTM.runWith_cons, b2_guess_return S V c hc]
+    exact b2_ready_run S V c (x ++ u) (x ++ u).length (le_refl _) w (by simpa using hw)

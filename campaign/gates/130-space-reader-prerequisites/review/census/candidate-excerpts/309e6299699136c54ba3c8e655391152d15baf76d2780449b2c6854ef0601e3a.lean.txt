@@ -1,0 +1,19 @@
+/-- One successful copy step writes the scanned bit, advances both heads and emits nothing. -/
+private theorem iw_body_copy {z : List Bool} (c : Cfg 1 Bool Bool z) (b : Bool)
+    (hc : c.state = some false) (hb : c.inputSymbol = some b) :
+    iw_body.runFrom c 1 =
+      { c with
+        state := some false, inputPos := moveInputPos c.inputPos 1,
+        workTapes := fun i => Function.update (c.workTapes i) (c.workTapePos i) (some b),
+        workTapePos := fun i => c.workTapePos i + 1 } := by
+  rw [iw_one iw_body c false hc]
+  simp only [iw_body, Bool.false_eq_true, if_false, hb]
+  apply Cfg.ext
+  · rw [Action.apply_state]
+  · rw [Action.apply_inputPos]
+  · funext i
+    simp only [Action.apply_workTapes, Option.getD_some]
+  · funext i
+    simp only [Action.apply_workTapePos, SignType.coe_one]
+  · rw [Action.apply_output]
+    exact List.append_nil _

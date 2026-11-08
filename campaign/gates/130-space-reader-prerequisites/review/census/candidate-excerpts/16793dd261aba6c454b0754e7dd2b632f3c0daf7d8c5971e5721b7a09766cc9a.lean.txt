@@ -1,0 +1,15 @@
+/-- After recording the horizon row, the exhausted clock dispatches
+silently to a live return. No extra source transition can occur. -/
+private lemma clRec_stop (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (b : Bool) (n : Fin (clRecFields M) → ℕ)
+    (record : List Bool) (T : ℕ) :
+    (clRecTM M).tm.step
+      (clRecCfg M (x := x) (.inr (.inl (c.state, b))) c n record T T) =
+      clRecCfg M (x := x) (.inr (.inr (.inr (.inr ())))) c n record T T := by
+  have hr : (clRecCfg M (x := x) (.inr (.inl (c.state, b))) c n record T T).workTapeSymbols
+      (clRecClockIndex M) = none := by
+    simp [clRecCfg, clRecClockIndex, Cfg.workTapeSymbols, -Fin.natAdd_eq_addNat]
+  change ((clRecTM M).tm.tr (.inr (.inl (c.state, b))) _ _).apply _ = _
+  simp only [clRecTM, hr, if_true]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  rfl

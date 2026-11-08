@@ -1,0 +1,10 @@
+/-- The restored endpoint of the same test; no second trajectory argument is needed. -/
+private theorem rd_test_return {z : List Bool} (ℓ : ℕ) (d : Cfg 1 Bool rd_State z)
+    (hd : d.state = some (.inl ())) (hℓ : 0 < ℓ) (hp : ℓ ≤ d.inputPos.val)
+    (hr : ∀ p : ℤ, -1 ≤ p → p ≤ (ℓ : ℤ) →
+      d.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape (List.replicate ℓ true) p) :
+    rd_test.runFrom d (2 * ℓ + 2) =
+      { d with state := some (.inr (rd_verdict d ℓ, true)) } := by
+  rw [rd_run ℓ d hd hℓ hp hr _ le_rfl]
+  simp only [rd_trace, if_neg (show ¬2 * ℓ + 2 ≤ ℓ by omega),
+    if_neg (show ¬2 * ℓ + 2 ≤ 2 * ℓ + 1 by omega), rd_cfg, Nat.sub_zero, add_zero]

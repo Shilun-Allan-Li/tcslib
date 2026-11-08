@@ -1,0 +1,16 @@
+/-- The hardcoded comparator, followed by the chosen fixed-word emission chain. -/
+private def ifEqTM (w₀ u v : List Bool) : FinTM Bool where
+  k := 0
+  State := Fin (w₀.length + 1) ⊕ (Fin (u.length + 1) ⊕ Fin (v.length + 1))
+  tm :=
+    { q₀ := .inl 0
+      tr := fun q inp _ => match q with
+        | .inl i =>
+          if h : i.val < w₀.length then
+            if inp = some w₀[i.val] then
+              controlAction .pos (some (.inl ⟨i.val + 1, by omega⟩))
+            else controlAction 0 (some (.inr (.inr 0)))
+          else if inp = none then controlAction 0 (some (.inr (.inl 0)))
+            else controlAction 0 (some (.inr (.inr 0)))
+        | .inr (.inl i) => emitAction u (fun j => .inr (.inl j)) i
+        | .inr (.inr i) => emitAction v (fun j => .inr (.inr j)) i }

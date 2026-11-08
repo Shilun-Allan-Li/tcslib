@@ -1,0 +1,16 @@
+/-- A stationary or forward administrative action preserves all work tapes;
+its last-head movement subtracts one precisely when consuming a cell. -/
+private lemma f2_lenAction_apply (M : FinTM Bool) {x : List Bool}
+    (c : Cfg M.k Bool M.State x) (q q' : Option (f2_pairCountTM M).State)
+    (i j r s : ℕ) (hi : i ≤ x.length) (hj : j ≤ x.length)
+    (m d : SignType) (b : Option Bool)
+    (hm : moveInputPos (⟨i + 1, by omega⟩ : Fin (x.length + 2)) m = ⟨j + 1, by omega⟩)
+    (hd : (r : ℤ) - 1 + d.cast = (s : ℤ) - 1) :
+    (f2_lenAction M m d b q').apply (f2_lenCfg M c q i hi r) =
+      {f2_lenCfg M c q' j hj s with output := b.toList} := by
+  refine Cfg.ext rfl hm ?_ ?_ rfl
+  · rfl
+  · funext k
+    by_cases hk : k.val < M.k
+    · simp [f2_lenAction, f2_lenCfg, Action.apply, hk]
+    · simpa [f2_lenAction, f2_lenCfg, Action.apply, hk] using hd

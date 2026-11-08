@@ -1,0 +1,86 @@
+/-- The native suffix test decides `List.all id`, silently and without changing any work
+tape or work head. It reaches its first Boolean exit in at most the remaining length plus one.
+
+**Proof sketch.** Induct on the remaining suffix length. Blank accepts and false rejects
+in one step. A true cell advances by the public input-only action law, after which the
+induction hypothesis applies to the tail. The inherited native-suffix lemma supplies both
+the lookup and the new suffix. -/
+private lemma canonSuffix_run {m : ℕ} {x : List Bool} (d : Cfg m Bool (Option Bool) x)
+    (state : d.state = some none) (positive : 1 ≤ d.inputPos.val) :
+    ∃ t ≤ (x.drop (d.inputPos.val - 1)).length + 1,
+      ((canonSuffixTM m).runFrom d t).state =
+        some (some ((x.drop (d.inputPos.val - 1)).all id)) ∧
+      ((canonSuffixTM m).runFrom d t).output = d.output ∧
+      ((canonSuffixTM m).runFrom d t).workTapes = d.workTapes ∧
+      ((canonSuffixTM m).runFrom d t).workTapePos = d.workTapePos ∧
+      ∀ u < t, ∀ bit, ((canonSuffixTM m).runFrom d u).state ≠ some (some bit) := by
+  generalize hn : (x.drop (d.inputPos.val - 1)).length = n
+  induction n using Nat.strong_induction_on generalizing d with
+  | h n ih =>
+    let p := d.inputPos.val - 1
+    have pos : d.inputPos.val = p + 1 := by dsimp [p]; omega
+    have range : p ≤ x.length := by have := d.inputPos.isLt; omega
+    obtain ⟨read, advance⟩ := canonNativeSuffix d p pos range
+    have stop (bit : Bool) (v : Option Bool)
+        (hv : d.inputSymbol = v)
+        (htr : (canonSuffixTM m).tr none v d.workTapeSymbols =
+          inputMoveAction 0 (some bit))
+        (value : (x.drop p).all id = bit) :
+        ∃ t ≤ n + 1,
+          ((canonSuffixTM m).runFrom d t).state = some (some ((x.drop p).all id)) ∧
+          ((canonSuffixTM m).runFrom d t).output = d.output ∧
+          ((canonSuffixTM m).runFrom d t).workTapes = d.workTapes ∧
+          ((canonSuffixTM m).runFrom d t).workTapePos = d.workTapePos ∧
+          ∀ u < t, ∀ b, ((canonSuffixTM m).runFrom d u).state ≠ some (some b) := by
+      have step : (canonSuffixTM m).runFrom d 1 =
+          { d with state := some (some bit), inputPos := moveInputPos d.inputPos 0 } :=
+        step_of_inputMoveAction (canonSuffixTM m) d 0 state (by rw [hv]; exact htr)
+      refine ⟨1, by omega, ?_, ?_, ?_, ?_, ?_⟩
+      · rw [step, value]
+      · rw [step]
+      · rw [step]
+      · rw [step]
+      · intro u hu b
+        have zero : u = 0 := by omega
+        subst u
+        simp [state]
+    cases tail : x.drop p with
+    | nil =>
+      rw [← tail]
+      apply stop true none (by rw [read, tail]; rfl) rfl
+      simp [tail]
+    | cons bit ys =>
+      rw [← tail]
+      cases bit with
+      | false =>
+        apply stop false (some false) (by rw [read, tail]; rfl) rfl
+        simp [tail]
+      | true =>
+        let e : Cfg m Bool (Option Bool) x :=
+          { d with state := some none, inputPos := moveInputPos d.inputPos 1 }
+        have step : (canonSuffixTM m).runFrom d 1 = e :=
+          step_of_inputMoveAction _ _ _ state (by simp [canonSuffixTM, read, tail])
+        obtain ⟨moved, rest⟩ := advance true ys tail
+        have newPos : e.inputPos.val = p + 2 := moved
+        have newTail : x.drop (e.inputPos.val - 1) = ys := by
+          rw [newPos]
+          simpa using rest
+        have smaller : ys.length < n := by
+          change (x.drop p).length = n at hn
+          rw [tail] at hn
+          simp only [List.length_cons] at hn
+          omega
+        obtain ⟨t, budget, done, silent, tapes, heads, cuts⟩ :=
+          ih ys.length smaller e rfl (by omega) (by rw [newTail])
+        refine ⟨1 + t, by omega, ?_, ?_, ?_, ?_, ?_⟩
+        · rw [MultiTapeTM.runFrom_add, step, done, newTail]
+          simp [tail]
+        · rw [MultiTapeTM.runFrom_add, step]; exact silent
+        · rw [MultiTapeTM.runFrom_add, step]; exact tapes
+        · rw [MultiTapeTM.runFrom_add, step]; exact heads
+        · intro u hu bit
+          cases u with
+          | zero => simp [state]
+          | succ u =>
+            rw [show u + 1 = 1 + u by omega, MultiTapeTM.runFrom_add, step]
+            exact cuts u (by omega) bit

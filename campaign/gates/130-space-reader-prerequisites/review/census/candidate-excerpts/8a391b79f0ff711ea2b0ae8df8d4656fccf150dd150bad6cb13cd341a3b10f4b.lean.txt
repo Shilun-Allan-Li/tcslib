@@ -1,0 +1,81 @@
+/-- **One record of the input's replay.** From a record boundary, with the record on tape `0`
+from its head, the input instance reads the record in `2k + 4` steps, at no exit before. At a
+live control whose decoded input claim is the cell under the native input head, it performs the
+recomputed input move, its head on tape `0` is one cell past the record, and it is at the next
+record boundary, or passes if the record is end-flagged; otherwise it rejects.
+
+**Proof sketch.** The first `2k + 3` steps read the record's first bits. At the last bit the
+parser completes the record, and the leaf's table, read at the control's state and at the native
+input cell (which depends on the input head only), is a one-tape action: a move of the input head
+and of the head of tape `0`, or a stationary rejection. -/
+private theorem nf_leaf_record_in (N : FinNDTM Bool) {x : List Bool}
+    (d : Cfg 2 Bool (nf_LeafSt N) x) (rec : Fin (2 * N.k + 4) → Bool) (ctl : nf_Control N)
+    (hst : d.state = some (.read ((0, fun _ => none), ctl)))
+    (hA : ∀ p : Fin (2 * N.k + 4), d.workTapes 0 (d.workTapePos 0 + (p.val : ℤ)) = some (rec p)) :
+    (∀ u < 2 * N.k + 4, ∀ s, ((nf_leaf N none).runFrom d u).state = some s →
+      nf_leafExit N s = none) ∧
+    (∀ q, ctl.1 = some q → nf_decode N.k (fun p => some (rec p)) 0 = d.inputSymbol →
+      (nf_leaf N none).runFrom d (2 * N.k + 4) = { d with
+        state := some (if rec ⟨2 * N.k + 3, by omega⟩ then .pass
+          else .read ((0, fun _ => none), nf_complete N (fun p => some (rec p)) ctl))
+        inputPos := moveInputPos d.inputPos (nf_act N (fun p => some (rec p)) q).inputTape
+        workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 4 : ℕ)) }) ∧
+    ((ctl.1 = none ∨ nf_decode N.k (fun p => some (rec p)) 0 ≠ d.inputSymbol) →
+      ((nf_leaf N none).runFrom d (2 * N.k + 4)).state = some .rej) := by
+  have hpre := nf_leaf_prefix N none d rec ctl hst hA
+  refine ⟨fun u hu s hs => ?_, ?_⟩
+  · rw [hpre u hu] at hs
+    cases hs
+    rfl
+  set σ := (List.ofFn fun i : Fin (2 * N.k + 3) => rec ⟨i.val, by omega⟩).foldl
+    (nf_sweepStep N) ((0, fun _ => none), ctl) with hσ
+  obtain ⟨h1, h2, h3, h4⟩ := nf_prefix_last N rec ctl σ hσ
+  set c : Cfg 2 Bool (nf_LeafSt N) x := { d with
+      state := some (.read σ)
+      workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 : ℕ)) }
+    with hc
+  have hrun : (nf_leaf N none).runFrom d (2 * N.k + 4) = (nf_leaf N none).step c := by
+    rw [show 2 * N.k + 4 = (2 * N.k + 3) + 1 from rfl, MultiTapeTM.runFrom_succ_eq_step',
+      hpre (2 * N.k + 3) (by omega)]
+  have hsym : c.workTapeSymbols 0 = some (rec ⟨2 * N.k + 3, by omega⟩) := by
+    rw [Cfg.workTapeSymbols_eq]
+    show d.workTapes 0 (Function.update d.workTapePos 0 (d.workTapePos 0 + (2 * N.k + 3 : ℕ)) 0) = _
+    rw [Function.update_self]
+    exact hA ⟨2 * N.k + 3, by omega⟩
+  have hinp : c.inputSymbol = d.inputSymbol := nf_inputSymbol_congr c d rfl
+  refine ⟨fun q hq hdec => ?_, fun hbad => ?_⟩
+  · rw [hrun, step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) 0 _ 1 rfl (by
+      simp only [nf_leaf]
+      rw [if_pos h1, h2, hq]
+      dsimp only
+      rw [hsym, Option.getD_some, h3, hinp, if_pos hdec])]
+    apply Cfg.ext
+    · show some (if rec ⟨2 * N.k + 3, by omega⟩ then nf_LeafSt.pass
+        else nf_LeafSt.read (nf_sweepStep N σ (rec ⟨2 * N.k + 3, by omega⟩))) = _
+      rw [h4]
+    · rfl
+    · rfl
+    · funext i
+      by_cases hi : i = 0
+      · subst hi
+        simp only [hc, Function.update_self, SignType.coe_one]
+        push_cast
+        ring
+      · simp only [hc, Function.update_of_ne hi]
+    · rfl
+  · rw [hrun]
+    rcases hbad with hn | hdec
+    · rw [step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl (by
+        simp only [nf_leaf]
+        rw [if_pos h1, h2, hn])]
+    · cases hq : ctl.1 with
+      | none =>
+        rw [step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl (by
+          simp only [nf_leaf]
+          rw [if_pos h1, h2, hq])]
+      | some q =>
+        rw [step_of_tapeAction_move (nf_leaf N none) c (q := .read σ) (q' := .rej) 0 0 0 rfl (by
+          simp only [nf_leaf]
+          rw [if_pos h1, h2, hq]
+          dsimp only
+          rw [hsym, Option.getD_some, h3, hinp, if_neg hdec])]

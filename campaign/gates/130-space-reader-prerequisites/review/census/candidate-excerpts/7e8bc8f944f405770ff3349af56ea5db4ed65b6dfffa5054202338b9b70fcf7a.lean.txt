@@ -1,0 +1,90 @@
+/-- The final buffer phases erase the code and put its head at zero. The empty code uses
+its one fixed virtual position, so the machine does not depend on the input suffix.
+
+**Proof sketch.** A nonempty buffer has a symbol at zero, so the leaf does not move. On an
+empty buffer, the fixed position is zero or one and the conditional step restores zero.
+The catalog clear then erases the word interval; outside that interval the public buffer
+formula is already blank. Compose by the framed seam and its first-return theorem. -/
+private theorem ss_bufferClear_run {n : ℕ} (i : Fin n) (emptyPos : ℕ)
+    (he : emptyPos ≤ 1) (α : List Bool) (p : ℕ) (hp : α = [] → p = emptyPos)
+    {z : List Bool} (d : Cfg n Bool Bool z) (hstate : d.state = some false)
+    (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = if α = [] then (p : ℤ) - 1 else 0) :
+    (ss_bufferClear n i emptyPos).runFrom (d.mapState Sum.inl) (2 * α.length + 4) =
+      ⟨some (Sum.inr .done), d.inputPos,
+        Function.update d.workTapes i (fun _ => none),
+        Function.update d.workTapePos i 0, d.output⟩ ∧
+      ∀ u < 2 * α.length + 4,
+        ((ss_bufferClear n i emptyPos).runFrom (d.mapState Sum.inl) u).state ≠
+          some (Sum.inr .done) := by
+  let mv : SignType := if emptyPos = 0 then .pos else 0
+  let a : Cfg n Bool Bool z :=
+    { d with
+      state := some true
+      workTapePos := Function.update d.workTapePos i
+        (d.workTapePos i + if d.workTapeSymbols i = none then (mv : ℤ) else 0) }
+  obtain ⟨hr, hc⟩ := ss_bufferLeaf_run i mv d hstate
+  change (ss_bufferLeaf n i mv).runFrom d 1 = a at hr
+  have haheads : a.workTapePos = Function.update d.workTapePos i 0 := by
+    have hm : d.workTapePos i +
+        (if d.workTapeSymbols i = none then (mv : ℤ) else 0) = 0 := by
+      rw [Cfg.workTapeSymbols_eq, hbuf, hpos]
+      by_cases ha : α = []
+      · rw [if_pos ha, hp ha]
+        subst α
+        simp only [FinTM.bufferTape_nil, ite_true]
+        by_cases h : emptyPos = 0
+        · simp only [mv, if_pos h, SignType.pos_eq_one, SignType.coe_one, h, Nat.cast_zero]
+          omega
+        · have h1 : emptyPos = 1 := by omega
+          simp only [mv, if_neg h, SignType.coe_zero, h1, Nat.cast_one]
+          omega
+      · rw [if_neg ha]
+        cases α with
+        | nil => exact False.elim (ha rfl)
+        | cons x xs =>
+          rw [show (0 : ℤ) = (0 : ℕ) by rfl, FinTM.bufferTape_nat]
+          simp only [List.getElem?_cons_zero, reduceCtorEq, if_false, Nat.cast_zero,
+            add_zero]
+    dsimp only [a]
+    rw [hm]
+  let b := a.mapState (fun _ => SweepPhase.sweep)
+  have hbstate : b.state = some .sweep := by
+    rw [Cfg.mapState_state]
+    rfl
+  have hbpos : b.workTapePos i = 0 := by
+    rw [Cfg.mapState_workTapePos, haheads, Function.update_self]
+  have hbbuf : b.workTapes i = FinTM.bufferTape α := by
+    funext q
+    rw [Cfg.mapState_workTapes]
+    exact congrFun hbuf q
+  obtain ⟨hs, hscut, _⟩ := clearTM_run_ofCfg i α b hbstate (by
+    intro q _ _
+    rw [hbbuf, hbpos, zero_add])
+  have hrun := seamCompTM_run_ofCfg (ss_bufferLeaf n i mv) true (clearTM n i)
+    .sweep hr rfl hc hs
+  have hcut := seamCompTM_firstReturn_ofCfg (ss_bufferLeaf n i mv) true (clearTM n i)
+    .sweep .done hr rfl hc hs rfl hscut
+  have ht : 1 + 1 + (2 * α.length + 2) = 2 * α.length + 4 := by omega
+  rw [ht] at hrun hcut
+  refine ⟨hrun.trans ?_, hcut⟩
+  apply Cfg.ext
+  · rw [Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Cfg.mapState_workTapes]
+    by_cases hj : j = i
+    · subst j
+      simp only [hbpos, zero_add, Function.update_self, true_and]
+      by_cases hq : 0 ≤ q ∧ q < (α.length : ℤ)
+      · rw [if_pos hq]
+      · rw [if_neg hq, hbbuf, FinTM.bufferTape_eq]
+        by_cases hq0 : 0 ≤ q
+        · rw [if_pos hq0, List.getElem?_eq_none (by omega)]
+        · rw [if_neg hq0]
+    · simp only [hj, false_and, if_false, Function.update_of_ne hj]
+      rw [Cfg.mapState_workTapes]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, haheads]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]

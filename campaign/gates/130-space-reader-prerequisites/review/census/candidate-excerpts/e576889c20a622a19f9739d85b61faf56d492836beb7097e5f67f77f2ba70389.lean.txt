@@ -1,0 +1,18 @@
+/-- **R8.5a, the input copier** (design §12.8a). Copy the native input onto
+tape `i` from its head, the two heads moving right in lockstep, then walk both
+heads back together, guided by the input tape's left end marker. The phases are
+the sweep alphabet's: `sweep` copies, `rewind` returns, and `done` is the live
+exit anchor. The destination needs no left delimiter. -/
+def inputCopyTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SweepPhase where
+  q₀ := .sweep
+  tr := fun q inp _ =>
+    match q with
+    | .sweep =>
+      match inp with
+      | some s => tapeAction i 1 (some (some s)) .pos .sweep
+      | none => tapeAction i (-1) none .neg .rewind
+    | .rewind =>
+      match inp with
+      | some _ => tapeAction i (-1) none .neg .rewind
+      | none => tapeAction i 1 none .pos .done
+    | .done => inputMoveAction 0 .done

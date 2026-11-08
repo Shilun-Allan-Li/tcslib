@@ -1,0 +1,84 @@
+from pathlib import Path
+import json,hashlib,re,subprocess,datetime
+O=Path(__file__).parent;pin=json.loads((O/'PIN.json').read_text());W=Path(pin['source_worktree']);ROOT=Path('/private/tmp/ab34-nspace5-replay')
+def sha(b):return hashlib.sha256(b).hexdigest()
+def read(p):return json.loads(p.read_text())
+def write(n,x):f=O/n;f.parent.mkdir(parents=True,exist_ok=True);f.write_text(json.dumps(x,indent=2,ensure_ascii=False)+'\n')
+def marked(label,marker):
+ raw=(O/'probes'/label/'attempt-01/raw.out').read_text()
+ return [json.loads(s.split('|',1)[1]) for s in raw.splitlines() if s.startswith(marker+'|')]
+def raw(label):return (O/'probes'/label/'attempt-01/raw.out').read_bytes()
+def result(label):return read(O/'probes'/label/'attempt-01/result.json')
+M=marked('metadata-first','PRODUCER_METADATA');M2=marked('metadata-second','PRODUCER_METADATA');assert M==M2 and len(M)==5 and raw('metadata-first')==raw('metadata-second')
+heads=read(O/'HEADERS5.json');guard_inputs=read(O/'GUARD-INPUTS.json');zero=read(O/'ZERO-HEAD-DISPOSITIONS.json');union=read(O/'ORDINARY-UNION.json')
+assert len(heads)==5 and len(guard_inputs)==2 and len(zero)==3
+expected_names=['Turing.MultiTapeTM.ConfigCount.core_eq','Turing.ClockHost.bootCfg_of_halt','Turing.ClockHost.runCfg_initCfg','Turing.FinTM.sweepRevCfg_state','Turing.FinTM.sweepRevCfg_output']
+assert [r['name'] for r in M]==expected_names
+assert all(not r['simp'] and not r['unfold'] and r['simp_unfold_thms'] is None for r in M)
+assert all(set(r['axioms'])<={'propext','Classical.choice','Quot.sound'} for r in M)
+assert [len([d for d in r['foreign_definitions'] if d['ordinary']]) for r in M]==[0,1,3,0,0]
+assert all(not r['selected_generated_proofs_traversed'] for r in M)
+source_change=[]
+for rel in pin['owner_compile_order']:
+ current=(O/'source/HEAD'/str(rel+'.txt')).read_text();base=(O/'source/BASE'/str(rel+'.txt')).read_text();recovered=current
+ for h in heads:
+  if h['owner']!=rel:continue
+  assert recovered.count(h['full_literal_chunk'])==1
+  recovered=recovered.replace(h['full_literal_chunk'],'')
+ assert recovered==base,('outside approved declarations changed',rel)
+ source_change.append({'path':rel,'BASE_sha256':sha(base.encode()),'HEAD_sha256':sha(current.encode()),'HEAD_minus_exact_new_declarations_equals_BASE':True,'all_old_headers_imports_definitions_attributes_and_bodies_literal_exact':True,'new_public_theorems':[h['name'] for h in heads if h['owner']==rel]})
+for g,label in zip(guard_inputs,['guard-boot','guard-run']):
+ code=(O/g['source_capture']).read_bytes();assert sha(code)==g['source_sha256']
+ original=(O/'source/HEAD'/str(g['owner']+'.txt')).read_text();h=next(h for h in heads if h['name']==g['name'])
+ assert code.decode().count(h['full_literal_chunk'])==1 and code.decode().startswith(original[:h['start']])
+ assert result(label)['exit']==0 and result(label)['errors']==0 and result(label)['sorry_warnings']==0
+ witness=[s for s in raw(label).decode().splitlines() if s.startswith('PRODUCER_GUARD_OK|')];assert len(witness)==1
+ _,gid,states=witness[0].split('|',2);states=json.loads(states)
+ assert int(gid)==g['id'] and [d['name'] for d in states]==g['heads'] and all(d['irreducible'] and not d['definition_simp_unfold'] for d in states)
+# The only source/options difference in the control fixtures is the one local seal attribute.
+native=(O/'controls/Native.lean.txt').read_text();sealed=(O/'controls/Sealed.lean.txt').read_text();seal='attribute [local irreducible] '+' '.join(sorted(d['name'] for d in union))+'\n';assert sealed.count(seal)==1 and sealed.replace(seal,'')==native
+ng=marked('controls-native','CONTROL_GOAL');sg=marked('controls-sealed','CONTROL_GOAL');assert len(ng)==len(sg)==6 and ng==sg
+assert len({(r['name'],r['mode']) for r in ng})==6
+assert {r['mode'] for r in ng}=={'point','abstract'}
+np=[s for s in raw('controls-native').decode().splitlines() if s.startswith('CONTROL|')];sp=[s for s in raw('controls-sealed').decode().splitlines() if s.startswith('CONTROL|')]
+assert len(np)==len(sp)==6 and all('|PASS|kernelChecked=ProducerControl_' in s for s in np) and all(s.endswith('|FAIL') for s in sp)
+assert result('controls-native')['exit']==0 and result('controls-native')['errors']==0
+assert result('controls-sealed')['exit']==1 and result('controls-sealed')['errors']==6
+assert raw('controls-sealed').count(b'CONTROL_RFL|')==6
+nd=marked('controls-native','CONTROL_DEFINITION');sd=marked('controls-sealed','CONTROL_DEFINITION');bd=marked('foreign-identities-BASE','FOREIGN_DEFINITION');assert len(nd)==len(sd)==len(bd)==3
+identities=[]
+for d in union:
+ n=d['name'];baseline=next(x for x in bd if x['name']==n);positive=next(x for x in nd if x['name']==n);negative=next(x for x in sd if x['name']==n)
+ keys=['name','type_Expr','value_Expr','universes']
+ assert all({k:d[k] for k in keys}=={k:x[k] for k in keys} for x in [baseline,positive,negative])
+ assert all(d[k]==baseline[k] for k in ['owner','ordinary','projection','kernel_hints','reducibility','simp','unfold'])
+ rel=d['owner'].replace('.','/')+'.lean';base_ref=pin['base_MAC8_source'];head_ref=pin['source_head'];a=subprocess.check_output(['git','-C',str(W),'show',base_ref+':'+rel]);b=subprocess.check_output(['git','-C',str(W),'show',head_ref+':'+rel]);assert a==b==(W/rel).read_bytes()
+ dest=O/'foreign-source'/str(rel+'.txt');dest.parent.mkdir(parents=True,exist_ok=True);dest.write_bytes(b)
+ identities.append({'name':n,'owner':d['owner'],'full_type_Expr':d['type_Expr'],'full_value_Expr':d['value_Expr'],'universes':d['universes'],'BASE_MAC8_vs_HEAD_metadata_vs_positive_vs_negative_full_literal_identity':True,'source_unchanged_BASE_HEAD':True,'source_sha256':sha(b)})
+write('FOREIGN-DEFINITION-IDENTITIES3.json',identities)
+# Resolve every nonlocal explicit rw/simp argument from the full five producer bodies.
+arguments=marked('explicit-arguments','EXPLICIT_ARGUMENT');expected=read(O/'EXPLICIT-ARGUMENT-SOURCE-REVIEW.json')['resolved_nonlocal_arguments_expected'];assert len(arguments)==len(expected)==11
+for item in expected:
+ actual=next(d for d in arguments if d['name']==item['name'])
+ if item['classification']=='owned definition':assert actual['kind']=='definition' and actual['owner']=='TCSlib.Complexity.TuringMachine.Build.NDClockHost'
+ else:assert actual['kind']=='theorem'
+write('EXPLICIT-ARGUMENT-RESOLUTION.json',{'all_expected_names_resolved':True,'full_query_rows':arguments,'all_foreign_nonlocal_arguments_are_published_theorems':True,'foreign_definition_explicit_arguments':[],'Core_Mathlib_definition_explicit_arguments':[],'same_owner_definitions_allowed':['Turing.ClockHost.bootCfg','Turing.ClockHost.runCfg','Turing.capOf'],'local_equality_hypotheses':['hc','hw','hp']})
+receipts=[]
+for p in sorted((O/'probes').glob('*/attempt-*/result.json')):
+ r=read(p);request=read(p.with_name('request.json'));assert all(r[k]==v for k,v in request.items());rawdata=p.with_name('raw.out').read_bytes();src=p.with_name('source.lean.txt').read_bytes();assert sha(src)==r['source_sha256'] and sha(rawdata)==r['raw_sha256'] and len(rawdata)==r['raw_bytes'];assert r['actual_nice10_observed'] and r['localcap']==3 and r['machinecap']==5 and r['one_own_Lean'];assert r['sorry_warnings']==0
+ expected_exit=1 if r['label']=='controls-sealed' else 0;assert r['exit']==expected_exit
+ receipts.append({'path':str(p.relative_to(O)),**r,'expected_exit':expected_exit,'actual_raw_and_source_receipts_match':True})
+assert len(receipts)==8
+native_result=read(O/'native/RESULT.json');assert native_result['pass'] and native_result['actual_complete_owner_modules']==3 and native_result['actual_selected_producer_facts']==5
+for row in read(O/'native/module-results.json'):
+ assert row['pass'] and row['exit']==0 and row['errors']==0 and row['sorry_warnings']==0 and row['observed_Lean_processes'] and all(s['nice']>=10 for s in row['observed_Lean_processes'])
+ assert sha((O/'native'/str(row['module']+'.log')).read_bytes())==row['raw_sha256']
+def objects(path):return {str(f.relative_to(path)):sha(f.read_bytes()) for f in sorted(path.rglob('*.olean'))}
+original=objects(Path(pin['whole_input_snapshot']));output=objects(Path(pin['whole_output_snapshot']));assert len(original)==len(output)==895
+assert original==read(O/'INPUT895-MAC8-before.json')==read(ROOT/'input-before.json')
+assert output==read(O/'native/OUTPUT895.json')
+write('INPUT895-MAC8-final.json',original);write('OUTPUT895-HEAD-final.json',output)
+source=read(O/'SOURCE1003-HEAD-before.json');assert subprocess.check_output(['git','-C',str(W),'rev-parse','HEAD']).decode().strip()==pin['source_head'];assert all(sha((W/n).read_bytes())==v['sha256'] for n,v in source.items())
+write('SOURCE-FREEZE5.json',{'source_head':pin['source_head'],'base_MAC8_source':pin['base_MAC8_source'],'all1003_source_bytes_Git_bound_and_unchanged':True,'exact5_public_theorem_additions':source_change,'no_old_declaration_body_statement_name_import_definition_attribute_change':True,'no_consumer_proof_adoption':True})
+write('CHECKS.json',{'utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'source_head':pin['source_head'],'actual_private_native3':native_result,'fresh_metadata_queries':2,'fresh_metadata_raw_byte_exact':True,'fresh_metadata_bytes_each':len(raw('metadata-first')),'fresh_metadata_sha256':sha(raw('metadata-first')),'selected_roots':[{k:r[k] for k in ['name','owner','type_Expr','universes','type_pretty','axioms','simp','unfold','simp_unfold_thms']} for r in M],'ordinary_foreign_footprint_counts':[0,1,3,0,0],'full_proof_and_own_helper_values_traversed':True,'selected_generated_auxiliary_proofs':0,'other_theorem_proof_values_stopped_at_full_types':True,'foreign_definition_RHS_recorded_not_traversed':True,'guards':guard_inputs,'zero_head_producers_native_metadata_only_no_vacuous_seals':[d['name'] for d in zero],'effective_control_pairs':6,'ordinary_foreign_heads':3,'control_goals_full_literal_exact_except_seal':True,'native6_all_kernel_checked':True,'sealed6_all_expected_rfl_failures':True,'BASE_HEAD_and_control_foreign_type_value_universe_identity':True,'full_source_explicit_argument_review_complete':True,'all8_probe_receipts':receipts,'original_and_output_whole895_physically_unchanged_after_probes':True,'all1003_current_source_bytes_unchanged':True,'no_full335_replay_claim':True,'no_previous_consumer_execution_relabelled':True,'no_source_Git_records_exchange_mutation':True,'no_new_API_or_status_or_merge_decision':True,'no_copy_screen_started':True,'no_received_script_executed':True})
+print('PRODUCER5_ALL_ACTUAL_EVIDENCE_CHECKS_PASS',flush=True)

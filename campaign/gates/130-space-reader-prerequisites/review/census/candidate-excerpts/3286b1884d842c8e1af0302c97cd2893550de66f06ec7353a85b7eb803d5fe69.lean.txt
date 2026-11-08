@@ -1,0 +1,137 @@
+/-- A completed source gives a complete body round, including acceptance,
+rejection, positive duration, and anchor exclusion over every strict interior
+step. The bound explicitly includes all dispatches, rewinds, and emission.
+**Proof sketch.** Depart the anchor in one step. Concatenate safe preparation,
+counting, decision, and rewind traces. Equality accepts and emits native
+slices. Inequality dispatches to the exact scratch restoration, followed by
+one explicit return to the anchor. All intermediate states belong to disjoint
+phases; the only anchor step is the final rejecting transition. -/
+private lemma splitBody_round (M : FinTM Bool) (start : M.State) (w s out : List Bool)
+    (T : ℕ) (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :
+    ∃ t, 0 < t ∧ t ≤ T + 5 * s.length + 3 * w.length + 20 ∧
+      (∀ j, 0 < j → j < t →
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) j).state ≠ some .anchor) ∧
+      if decide (s.length + out.length = w.length) then
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t).state = none ∧
+        ((splitBodyTM M start).tm.runFrom
+          (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t).output =
+            pairEncode (w.take s.length) (w.drop s.length)
+      else (splitBodyTM M start).tm.runFrom
+        (Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) s)) t =
+          Cfg.ofWords .anchor (stateWord (M.k + 1) (splitStep w s)) := by
+  let tm := (splitBodyTM M start).tm
+  let z : Cfg (M.k + 1) Bool (SplitBodyState M.State) w :=
+    Cfg.ofWords .anchor (stateWord (M.k + 1) s)
+  let p : Cfg (M.k + 1) Bool (SplitBodyState M.State) w :=
+    Cfg.ofWords (.prepare (0, false)) (stateWord (M.k + 1) s)
+  let d := splitCountCfg SplitBodyState.count SplitBodyState.check w s (splitBank M s none out)
+  let ok := decide (s.length + out.length = w.length)
+  let c : Cfg (M.k + 1) Bool (Fin 3) w :=
+    ⟨some 0, splitPos w (s.length + out.length),
+      Fin.cases (bufferTape s) (fun _ => catalogPolyTape (s.length + 1)),
+      Fin.cases 0 (fun _ => 0), []⟩
+  let r : Cfg (M.k + 1) Bool (SplitBodyState M.State) w :=
+    ({c with state := some (2 : Fin 3), inputPos := 1} : Cfg (M.k + 1) Bool (Fin 3) w).mapState
+    (SplitBodyState.rewind (S := M.State) ok)
+  have hdepart : tm.runFrom z 1 = p := by
+    rw [MultiTapeTM.runFrom_one]
+    change (controlAction 0 (some (.prepare (0, false)))).apply z = p
+    rw [controlAction_apply, moveInputPos_zero]
+    rfl
+  obtain ⟨a, ha, hprep, hpreps⟩ := splitBody_prepare M start w s
+  obtain ⟨b, hb, hcount, hcounts⟩ := splitBody_count M start w s out T hT
+  obtain ⟨h1, hs1⟩ := splitSafe_join tm .anchor p _ d (a + 1) b hprep hpreps hcount hcounts
+  have hcheck : tm.step d = c.mapState (SplitBodyState.rewind ok) := by
+    unfold MultiTapeTM.step
+    change (controlAction 0 (some (.rewind
+      (!decide (w.length < s.length + out.length) && d.inputSymbol.isNone) 0))).apply d = _
+    rw [controlAction_apply, moveInputPos_zero]
+    have hok := splitCount_accept SplitBodyState.count SplitBodyState.check w s
+      (splitBank M s none out)
+    change (!decide (w.length < s.length + out.length) && d.inputSymbol.isNone) = ok at hok
+    rw [hok]
+    rfl
+  obtain ⟨hcheck', hchecks⟩ := splitSafe_one tm .anchor d _ hcheck
+    (by simp [d, splitCountCfg, splitBank]) (by simp [c, Cfg.mapState])
+  obtain ⟨h2, hs2⟩ := splitSafe_join tm .anchor p d _ (a + 1 + b) 1 h1 hs1 hcheck' hchecks
+  obtain ⟨v, hv, hrew, hrews⟩ := splitBody_rewind M start w ok c rfl
+  obtain ⟨h3, hs3⟩ := splitSafe_join tm .anchor p _ r (a + 1 + b + 1) v h2 hs2 hrew hrews
+  have hv' : v ≤ w.length + 3 := by
+    have hp : c.inputPos.val ≤ w.length + 1 := by simp [c, splitPos]
+    omega
+  by_cases hok : s.length + out.length = w.length
+  · have hs : s.length ≤ w.length := by omega
+    let ec := splitEmitCfg M.k w s (some 0) 0 0 []
+    let ed := splitEmitCfg M.k w s none w.length s.length
+      (pairEncode (w.take s.length) (w.drop s.length))
+    have hdispatch : tm.step r = ec.mapState SplitBodyState.emit := by
+      simp only [r, c, Cfg.mapState, Option.map_some, MultiTapeTM.step,
+        tm, splitBodyTM, ↓reduceIte, ok, hok, decide_true]
+      rw [controlAction_apply, moveInputPos_zero]
+      refine Cfg.ext rfl ?_ rfl rfl rfl
+      simp [ec, splitEmitCfg, splitPos]
+    obtain ⟨hd, hds⟩ := splitSafe_one tm .anchor r _ hdispatch
+      (by simp [r, Cfg.mapState]) (by simp [ec, Cfg.mapState, splitEmitCfg])
+    obtain ⟨h4, hs4⟩ := splitSafe_join tm .anchor p r _ (a + 1 + b + 1 + v) 1 h3 hs3 hd hds
+    have transport (j : ℕ) : tm.runFrom (ec.mapState SplitBodyState.emit) j =
+        ((splitEmitTM M.k).tm.runFrom ec j).mapState SplitBodyState.emit :=
+      MultiTapeTM.runFrom_mapState_of_agreeOn (splitEmitTM M.k).tm tm
+        ⟨SplitBodyState.emit, by intro a b h; exact SplitBodyState.emit.inj h⟩
+        (fun _ => True) (fun _ _ _ _ => rfl) ec j (by intros; trivial)
+    have hemit : tm.runFrom (ec.mapState SplitBodyState.emit) (s.length + w.length + 3) =
+        ed.mapState SplitBodyState.emit := by
+      rw [transport]
+      exact congrArg (Cfg.mapState SplitBodyState.emit) (splitEmit_run M.k w s hs)
+    have hemits : splitSafe tm .anchor (ec.mapState SplitBodyState.emit) (s.length + w.length + 3) := by
+      intro j hj
+      rw [transport]
+      cases hq : ((splitEmitTM M.k).tm.runFrom ec j).state <;> simp [Cfg.mapState, hq]
+    obtain ⟨h5, hs5⟩ := splitSafe_join tm .anchor p _ _ (a + 1 + b + 1 + v + 1)
+      (s.length + w.length + 3) h4 hs4 hemit hemits
+    let u := a + 1 + b + 1 + v + 1 + (s.length + w.length + 3)
+    have hend : tm.runFrom z (1 + u) = ed.mapState SplitBodyState.emit := by
+      rw [MultiTapeTM.runFrom_add, hdepart]; exact h5
+    refine ⟨1 + u, by omega, by dsimp [u]; omega, ?_, ?_⟩
+    · intro j hj hjt
+      change (tm.runFrom z j).state ≠ _
+      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+      exact hs5 (j - 1) (by dsimp [u] at hjt; omega)
+    · simp only [hok, decide_true, ↓reduceIte]
+      change (tm.runFrom z (1 + u)).state = none ∧ _
+      rw [hend]
+      exact ⟨rfl, rfl⟩
+  · let rc := (splitRestoreScan M.k w s 0).mapState (SplitBodyState.restore (S := M.State))
+    have hdispatch : tm.step r = rc := by
+      simp only [r, c, Cfg.mapState, Option.map_some, MultiTapeTM.step,
+        tm, splitBodyTM, ↓reduceIte, ok, hok, decide_false, Bool.false_eq_true]
+      rw [controlAction_apply, moveInputPos_zero]
+      refine Cfg.ext ?_ ?_ ?_ ?_ rfl
+      · simp [rc, splitRestoreScan, Cfg.mapState]
+      · simp [rc, splitRestoreScan, Cfg.mapState, splitPos]
+      · funext i
+        refine Fin.cases ?_ (fun l => ?_) i
+        · rfl
+        · funext z; simp [rc, splitRestoreScan, Cfg.mapState, splitScratch, catalogPolyTape]
+      · funext i
+        refine Fin.cases ?_ (fun l => ?_) i <;> rfl
+    obtain ⟨hd, hds⟩ := splitSafe_one tm .anchor r rc hdispatch
+      (by simp [r, Cfg.mapState]) (by simp [rc, Cfg.mapState, splitRestoreScan])
+    obtain ⟨h4, hs4⟩ := splitSafe_join tm .anchor p r rc (a + 1 + b + 1 + v) 1 h3 hs3 hd hds
+    obtain ⟨l, hl, hrest, hrests⟩ := splitBody_restore M start w s
+    obtain ⟨h5, hs5⟩ := splitSafe_join tm .anchor p rc _ (a + 1 + b + 1 + v + 1) l h4 hs4 hrest hrests
+    let u := a + 1 + b + 1 + v + 1 + l
+    have hreturn : tm.step (Cfg.ofWords (.restore (4, false)) (stateWord (M.k + 1) (splitStep w s))) =
+        Cfg.ofWords (input := w) .anchor (stateWord (M.k + 1) (splitStep w s)) := by
+      change (controlAction 0 (some (SplitBodyState.anchor (S := M.State)))).apply _ = _
+      rw [controlAction_apply, moveInputPos_zero]
+      rfl
+    refine ⟨1 + u + 1, by omega, by dsimp [u]; omega, ?_, ?_⟩
+    · intro j hj hjt
+      change (tm.runFrom z j).state ≠ _
+      rw [show j = 1 + (j - 1) by omega, MultiTapeTM.runFrom_add, hdepart]
+      exact hs5 (j - 1) (by dsimp [u] at hjt; omega)
+    · simp only [hok, decide_false, Bool.false_eq_true, ↓reduceIte]
+      change tm.runFrom z (1 + u + 1) = _
+      rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_add, hdepart, h5, hreturn]

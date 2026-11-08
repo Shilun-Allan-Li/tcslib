@@ -1,3 +1,3 @@
 **Not yet clear to merge: #252.**
 
-Five explicitly approved non-simp readers are pushed at `04b0b07d4ea836f52cb645f480b67cdc9e99ea59`. Codex is selected for gate130. Actual335-module wholeMAC8 replay is running; fresh producer metadata/guards, current branch census and QA are in progress. No audit prompt issued, gate closure, consumer adoption or source merge.
+Five explicitly approved non-simp facts are pushed. Fresh actual producer3 native checks pass without warnings/admissions;5 full metadata captures are byte-equal in two executions, footprints0/1/3/0/0 with6 effective paired control identities. Fresh587-ref/391-head bounded census and1035 complete candidate dispositions are frozen. The full335 replay is still running; QA53 is queued behind the global129 screen. No external prompt, gate closure, source merge or consumer-patch adoption.

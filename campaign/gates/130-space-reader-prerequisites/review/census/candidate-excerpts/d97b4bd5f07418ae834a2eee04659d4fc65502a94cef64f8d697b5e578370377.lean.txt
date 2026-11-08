@@ -1,0 +1,37 @@
+/-- After consuming a prefix, the scanner stores its even-parity bit, points
+to the next input position, and has emitted nothing.
+
+**Proof sketch.** Induct on the prefix length. The initial state records
+zero true bits. Reading the next bit preserves or toggles parity, advances
+the head once, and emits nothing. The prefix-count update is the count of
+an appended singleton; residues modulo two justify the toggle. -/
+private theorem evenScanTM_prefix (x : List Bool) (j : ℕ) (hj : j ≤ x.length) :
+    (evenScanTM.tm.runFrom (evenScanTM.tm.initCfg x) j).state =
+        some (decide ((x.take j).count true % 2 = 0)) ∧
+      (evenScanTM.tm.runFrom (evenScanTM.tm.initCfg x) j).inputPos.val = j + 1 ∧
+      (evenScanTM.tm.runFrom (evenScanTM.tm.initCfg x) j).output = [] := by
+  induction j with
+  | zero => simp [evenScanTM]
+  | succ j ih =>
+    obtain ⟨hq, hp, ho⟩ := ih (by omega)
+    have hlt : j < x.length := by omega
+    have hs := FinTM.inputSymbol_at
+      (evenScanTM.tm.runFrom (evenScanTM.tm.initCfg x) j) j (by omega) hp
+    rw [List.getElem?_eq_getElem hlt] at hs
+    rw [MultiTapeTM.runFrom_succ_eq_step']
+    unfold MultiTapeTM.step
+    rw [hq]
+    simp only [evenScanTM, hs, FinTM.controlAction, Action.apply]
+    refine ⟨?_, ?_, ?_⟩
+    · rw [List.take_succ_eq_append_getElem hlt, List.count_append]
+      cases x[j] with
+      | false => simp
+      | true =>
+        have hm := Nat.mod_lt ((x.take j).count true) (by decide : 0 < 2)
+        by_cases he : (x.take j).count true % 2 = 0
+        · simp [Nat.add_mod, he]
+        · have he' : (x.take j).count true % 2 = 1 := by omega
+          simp [Nat.add_mod, he']
+    · rw [moveInputPos_pos_of_ne_right _ (by omega)]
+      simpa using hp
+    · simpa using ho

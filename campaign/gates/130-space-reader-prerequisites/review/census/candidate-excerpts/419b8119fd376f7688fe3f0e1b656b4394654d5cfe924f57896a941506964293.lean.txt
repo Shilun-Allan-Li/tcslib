@@ -1,0 +1,45 @@
+/-- Two native clean modules form a positive first-return round. Emission
+preserves the protected word; cursor installation preserves the emitted prefix.
+This also covers an empty chunk and a stationary saturated cursor.
+**Proof sketch.** Dispatch once from the fresh anchor, forward the complete
+first-halting emit call, then forward the complete install call. All earlier
+states remain in their tagged module summands, and the full endpoint of each
+call restores every scratch tape and head. -/
+private lemma clA5Round (S J E I : FinTM Bool) (emit next : List Bool → List Bool)
+    (BE BI : ℕ → ℕ) (hE : CLA5Clean E id emit BE) (hI : CLA5Clean I next (fun _ => []) BI)
+    (x w : List Bool) :
+    let bank := clA5Modules S J E I
+    let H := clA5HostTM bank (1 + S.k + J.k + E.k + I.k) (clA5Modules_bound S J E I)
+    ∃ t, 0 < t ∧ t ≤ 1 + BE w.length + BI w.length ∧
+      (∀ v, 0 < v → v < t → (H.tm.runFrom
+        (Cfg.ofWords (input := x) (.inl ()) (stateWord H.k w)) v).state ≠ some (.inl ())) ∧
+      H.tm.runFrom (Cfg.ofWords (input := x) (.inl ()) (stateWord H.k w)) t =
+        {Cfg.ofWords (.inl ()) (stateWord H.k (next w)) with output := emit w} := by
+  dsimp only
+  let bank := clA5Modules S J E I
+  let K := 1 + S.k + J.k + E.k + I.k
+  let H := clA5HostTM bank K (clA5Modules_bound S J E I)
+  have dispatch : H.tm.step (Cfg.ofWords (input := x) (.inl ()) (stateWord K w)) =
+      Cfg.ofWords (clA5HostEntry bank 3) (stateWord K w) := by
+    change (FinTM.controlAction 0 (some (clA5HostEntry bank 3))).apply _ = _
+    simp [FinTM.controlAction, Action.apply, Cfg.ofWords]
+    exact ⟨rfl, rfl⟩
+  obtain ⟨te, hep, heb, heg, he⟩ := clA5Host_clean bank K (clA5Modules_bound S J E I) 3
+    id emit BE (by simpa [bank, clA5Modules] using hE) x w []
+  change H.tm.runFrom (Cfg.ofWords (input := x) (clA5HostEntry bank 3) (stateWord K w)) te =
+    {Cfg.ofWords (clA5HostEntry bank 4) (stateWord K w) with output := emit w} at he
+  obtain ⟨ti, hip, hib, hig, hi⟩ := clA5Host_clean bank K (clA5Modules_bound S J E I) 4
+    next (fun _ => []) BI (by simpa [bank, clA5Modules] using hI) x w (emit w)
+  change H.tm.runFrom
+    {Cfg.ofWords (input := x) (clA5HostEntry bank 4) (stateWord K w) with output := emit w} ti =
+    {Cfg.ofWords (.inl ()) (stateWord K (next w)) with output := emit w ++ []} at hi
+  rw [List.append_nil] at hi
+  have guard := clA5_guard_add H.tm (.inl ()) _ _ te ti heg he hig
+  refine ⟨(te + ti) + 1, by omega, by omega, ?_, ?_⟩
+  · intro v hv hvt
+    change (H.tm.runFrom (Cfg.ofWords (input := x) (.inl ()) (stateWord K w)) v).state ≠ _
+    rw [show v = (v - 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, dispatch]
+    exact guard (v - 1) (by omega)
+  · change H.tm.runFrom (Cfg.ofWords (input := x) (.inl ()) (stateWord K w)) ((te + ti) + 1) = _
+    rw [MultiTapeTM.runFrom_succ_eq_step, dispatch, MultiTapeTM.runFrom_add, he, hi]
+    rfl

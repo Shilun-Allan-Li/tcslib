@@ -1,0 +1,48 @@
+/-- **The skipper's endpoint** (`h1Skip_run`): started from the reader's
+initial state on a record of `a`, the skipper reaches the live exit `done a.state.isSome` after
+exactly the record's length plus one dispatch step, with only the table head changed, advanced
+by the record's length.
+
+**Proof sketch.** Use the reader's prefix read and the public phase dispatch, then the
+successor-field endpoint. The two head advances add to the full record length, including its
+variable unary tail. -/
+lemma recordSkipTM_run {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (RecordState k) x)
+    (a : Action k Bool (Fin (n + 1)))
+    (hq : d.state = some (recordTM k).q₀)
+    (hw : ∀ (r : ℕ) (hr : r < (actionBitsK a).length),
+      d.workTapes (tableTape k) (d.workTapePos (tableTape k) + r) =
+        some ((actionBitsK a)[r]'hr)) :
+    (recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) ((actionBitsK a).length + 1) =
+      { d.mapState (fun _ => (⟨true, SuccPhase.done a.state.isSome⟩ : Σ b, SkipPh k b)) with
+        workTapePos := Function.update d.workTapePos (tableTape k)
+          (d.workTapePos (tableTape k) + (actionBitsK a).length) } := by
+  obtain ⟨bits, hb, hlen, hread, hfield⟩ := actionBitsK_reads d a hw
+  let tail : Cfg (k + 2) Bool SuccPhase x :=
+    (readCfg d bits (recordWidth k) le_rfl).mapState (fun _ => .tag)
+  have htail : ∀ (r : ℕ) (hr : r < (optStateBits a.state).length),
+      tail.workTapes (tableTape k) (tail.workTapePos (tableTape k) + r) =
+        some ((optStateBits a.state)[r]'hr) := by
+    intro r hr
+    simpa only [tail, Cfg.mapState, readCfg, Function.update_self] using hfield r hr
+  have dispatch := (recordSkipTM_fixed d bits hq hread).2
+  have he : (recordSkipTM k).runFrom (d.mapState (Sigma.mk false)) (recordWidth k + 1) =
+      tail.mapState (Sigma.mk true) := by
+    exact dispatch
+  rw [show (actionBitsK a).length + 1 = recordWidth k + 1 + (optStateBits a.state).length by
+    omega,
+    MultiTapeTM.runFrom_add, he, recordSkipTM_tail,
+    succFieldTM_run _ _ (Ne.symm (summary_ne_table k)) false tail a.state (by rfl) htail]
+  apply Cfg.ext
+  · simp [succFieldCfg, tail, Cfg.mapState, readCfg, hq]
+  · rfl
+  · simp [succFieldCfg, tail, Cfg.mapState, afterTag, readCfg]
+  · funext j
+    by_cases hj : j = tableTape k
+    · subst j
+      rw [hlen]
+      cases a.state <;>
+        simp [succFieldCfg, afterTag, tail, Cfg.mapState, readCfg, optStateBits,
+          unaryFin, Nat.cast_add, add_assoc] ; omega
+    · simp [succFieldCfg, afterTag, tail, Cfg.mapState, readCfg, hj]
+  · rfl

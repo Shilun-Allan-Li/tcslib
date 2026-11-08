@@ -1,0 +1,58 @@
+/-- **Space-bounded halting computations are short** [AB09, §4.1.1]: if `M` has halted on
+`x` with output `w` by time `t`, having visited at most `s` work cells, then it has halted
+with output `w` by time `configBound M |x| s`.
+
+**Proof sketch.** Let `T ≤ t` be the first halting time. Up to time `t` every head lies in
+`[-s, s]` (`abs_pos_lt_card_visited`: the visited cells of a tape form an interval around
+`0`, of size at most the space used) and so does every nonblank cell
+(`mem_visited_of_ne_none`). Hence the cores at times `< T` have pairwise distinct
+(`core_injOn`) codes in a finite type of size `configBound M |x| s`, so `T` is at most
+that size; the output is frozen after `T`. -/
+theorem ComputesInTime.of_spaceUsed_le {M : FinTM Bool} {x w : List Bool} {t s : ℕ}
+    (h : M.ComputesInTime x w t) (hs : M.tm.spaceUsed (M.tm.initCfg x) t ≤ s) :
+    M.ComputesInTime x w (M.configBound x.length s) := by
+  classical
+  rw [computesInTime_iff] at h ⊢
+  obtain ⟨hhalt, hout⟩ := h
+  obtain ⟨T, hTt, hmin, heq⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hhalt
+  have hT : (M.tm.runFrom (M.tm.initCfg x) T).state = none :=
+    (congrArg Cfg.state heq).trans hhalt
+  -- bounds on heads and nonblank cells up to time `t`
+  have hbound : ∀ t' ≤ t, ∀ i, |(M.tm.runFrom (M.tm.initCfg x) t').workTapePos i| ≤ s ∧
+      ∀ z, (M.tm.runFrom (M.tm.initCfg x) t').workTapes i z ≠ none → |z| ≤ s := by
+    intro t' ht' i
+    have hcard : (M.tm.visitedByTapeHead (M.tm.initCfg x) t i).card ≤ s :=
+      (M.tm.spaceUsedByTape_le_spaceUsed _ t i).trans hs
+    have hmem : ∀ z ∈ M.tm.visitedByTapeHead (M.tm.initCfg x) t i, |z| ≤ s := fun z hz =>
+      ((M.tm.abs_pos_lt_card_visited x t i hz).trans_le (by exact_mod_cast hcard)).le
+    refine ⟨hmem _ ?_, fun z hz => hmem z ?_⟩
+    · simp only [visitedByTapeHead, Finset.mem_image, Finset.mem_range]
+      exact ⟨t', by omega, rfl⟩
+    · exact M.tm.visitedByTapeHead_mono _ ht' i (M.tm.mem_visited_of_ne_none x t' i z hz)
+  -- injectivity of the code map on times before `T`
+  have hinj : Set.InjOn (fun t' => coreCode s (M.tm.runFrom (M.tm.initCfg x) t'))
+      (Finset.range T : Set ℕ) := by
+    intro a ha b hb hab
+    simp only [Finset.coe_range, Set.mem_Iio] at ha hb
+    have hc := coreCode_inj s (hbound a (by omega)) (hbound b (by omega)) hab
+    by_contra hne
+    rcases Nat.lt_or_gt_of_ne hne with h' | h'
+    · exact core_injOn M.tm _ T hT hmin h' hb hc
+    · exact core_injOn M.tm _ T hT hmin h' ha hc.symm
+  have hcardT : T ≤ M.configBound x.length s := by
+    have := Finset.card_le_card_of_injOn _ (fun a _ => Finset.mem_univ _) hinj
+    simp only [Finset.card_range, Finset.card_univ, Fintype.card_prod, Fintype.card_option,
+      Fintype.card_fin, Fintype.card_pi, Finset.prod_const, Fintype.card_bool] at this
+    rw [← pow_mul, Nat.mul_comm (2 * s + 1) M.k] at this
+    refine this.trans (le_of_eq ?_)
+    simp only [configBound]
+    ring
+  have hfin : M.tm.runFrom (M.tm.initCfg x) (M.configBound x.length s) =
+      M.tm.runFrom (M.tm.initCfg x) T := by
+    rw [show M.configBound x.length s = T + (M.configBound x.length s - T) by omega,
+      runFrom_add, runFrom_of_halt _ hT]
+  have hfin' : M.tm.runFrom (M.tm.initCfg x) t = M.tm.runFrom (M.tm.initCfg x) T :=
+    heq.symm
+  rw [hfin]
+  exact ⟨hT, by rw [← hfin']; exact hout⟩

@@ -1,0 +1,40 @@
+private def fwdMapTM (M : FinTM Bool) (forward : Bool) : FinTM Bool where
+  k := 1 + (1 + M.k)
+  State := FwdMapState M.State
+  tm := {
+    q₀ := .parse none
+    tr := fun q inp work =>
+      let act := fwdMapAct M
+      let first := work (Fin.castAdd (1 + M.k) (0 : Fin 1))
+      let second := work (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1)))
+      match q with
+      | .parse none => match inp with
+        | none => act 0 (none, 0) (none, 0) none none
+        | some b => act .pos (none, 0) (none, 0) none (some (.parse (some b)))
+      | .parse (some b) => match inp with
+        | none => act 0 (none, 0) (none, 0) none none
+        | some d => if b = d then
+            act .pos (some (some b), .pos) (none, 0) none (some (.parse none))
+          else if b then act .pos (none, 0) (none, 0) none none
+          else act .pos (none, .neg) (none, 0) none (some .copyB)
+      | .copyB => match inp with
+        | some b => act .pos (none, 0) (some (some b), .pos) none (some .copyB)
+        | none => act 0 (none, 0) (none, .neg) none (some .backB)
+      | .backB => match second with
+        | some _ => act 0 (none, 0) (none, .neg) none (some .backB)
+        | none => act 0 (none, 0) (none, .pos) none (some .backA)
+      | .backA => match first with
+        | some _ => act 0 (none, .neg) (none, 0) none (some .backA)
+        | none => act 0 (none, .pos) (none, 0) none (some .emitA)
+      | .emitA => match first with
+        | some b => act 0 (none, 0) (none, 0) (some b) (some (.emitAgain b))
+        | none => act 0 (none, 0) (none, 0) (some false) (some .separator)
+      | .emitAgain b => act 0 (none, .pos) (none, 0) (some b) (some .emitA)
+      | .separator => act 0 (none, 0) (none, 0) (some true) (some (.run M.tm.q₀ true))
+      | .run q b => if forward then
+          let a := M.tm.tr q second (fun i => work (Fin.natAdd 1 (Fin.natAdd 1 i)))
+          let m := virtualMove b second a.inputTape
+          ⟨0, tapeBlocks (fun _ => (none, 0)) (none, m) a.workTapes,
+            a.output, a.state.map (fun q => .run q (virtualNextTag b m))⟩
+        else controlAction 0 (some (.run q b)) }
+-- @shim end

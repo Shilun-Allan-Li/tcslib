@@ -1,0 +1,18 @@
+/-- Capture a machine's emissions on an additional table tape, then transfer
+control to a four-tape interpreter. The interpreter sees the original physical
+input, not a virtual copy of it. Its other three tapes initially remain blank. -/
+def universalCaptureTM {S : Type} [Fintype S] [DecidableEq S]
+    (M : FinTM Bool) (D : MultiTapeTM 4 Bool S) : FinTM Bool where
+  k := M.k + (1 + 3)
+  State := Option M.State ⊕ S
+  tm :=
+    { q₀ := .inl (some M.tm.q₀)
+      tr := fun q inp work => match q with
+        | .inl (some q) =>
+          let a := M.tm.tr q inp (fun i => work (Fin.castAdd 4 i))
+          ⟨a.inputTape, tapeBlocks a.workTapes
+            (a.output.map some, if a.output = none then 0 else .pos)
+            (fun _ => (none, 0)), none, some (.inl a.state)⟩
+        | .inl none => controlAction 0 (some (.inr D.q₀))
+        | .inr q => rightAction M.k Sum.inr
+            (D.tr q inp (fun i => work (Fin.natAdd M.k i))) }

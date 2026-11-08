@@ -1,0 +1,17 @@
+/-- Two-tape scratch reset: preserve stream and cursor, scan the target to
+its right blank, erase back to its left blank, and return at target zero. -/
+private def clWipeTM : FinTM Bool where
+  k := 2
+  State := Fin 3
+  tm := {
+    q₀ := 0
+    tr := fun q _ work =>
+      if q = 0 then
+        if work 1 = none then
+          ⟨0, clTwo (none, 0) (none, .neg), none, some 1⟩
+        else ⟨0, clTwo (none, 0) (none, .pos), none, some 0⟩
+      else if q = 1 then
+        if work 1 = none then
+          ⟨0, clTwo (none, 0) (none, .pos), none, some 2⟩
+        else ⟨0, clTwo (none, 0) (some none, .neg), none, some 1⟩
+      else FinTM.controlAction 0 (some q) }

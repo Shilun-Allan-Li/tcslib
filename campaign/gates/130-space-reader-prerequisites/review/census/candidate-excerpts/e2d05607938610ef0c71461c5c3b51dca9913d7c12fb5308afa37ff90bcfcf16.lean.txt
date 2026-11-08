@@ -1,0 +1,15 @@
+/-- **The successor-field walker**: walk an already canonized successor field (a halt tag
+`false`, or `true` followed by a unary state word `1^q 0`) under the head of tape `src`; when
+`copy` is true, also copy the unary word to tape `dst`. It validates nothing.
+(`h1SuccTM`.) No catalog leaf walks a bit-terminated, non-blank-delimited word. -/
+def succFieldTM {m : ℕ} (src dst : Fin m) (copy : Bool) :
+    MultiTapeTM m Bool SuccPhase where
+  q₀ := .tag
+  tr := fun q _ w => match q with
+    | .tag => tapeAction src 0 none .pos
+        (if w src = some true then .unary else .done false)
+    | .unary =>
+        ⟨0, fun j => if j = src then (none, .pos)
+          else if copy = true ∧ j = dst then (some (w src), .pos) else (none, 0),
+          none, some (if w src = some true then .unary else .done true)⟩
+    | .done b => inputMoveAction 0 (.done b)

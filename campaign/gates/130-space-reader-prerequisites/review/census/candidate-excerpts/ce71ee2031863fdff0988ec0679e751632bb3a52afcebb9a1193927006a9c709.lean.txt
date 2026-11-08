@@ -1,0 +1,38 @@
+/-- The delegated right-boundary turn performs precisely one native source
+input/output action. Retraction is used for the scanned symbol only.
+**Proof sketch.** Decode the current native read using `dgInput_read`, then
+apply the received write-and-turn zipper identity and commute the symbol map
+with the optional output append. -/
+private lemma dg_turn {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) {x : List (SweepAlphabet Γ M.k)}
+    (c : Cfg M.k Γ M.State (x.map (dgRetract a₀))) (q : M.State)
+    (s : Fin M.k → Option Γ × Bool) (hs : (fun i => (s i).1) = c.workTapeSymbols)
+    (z : ℤ) (l r : List (Option (SweepAlphabet Γ M.k))) :
+    (dgTM M a₀).tm.step
+      (sweepCfg (some (.inl (.growRight q s ⟨M.k, by omega⟩))) (dgPos a₀ c.inputPos) z
+        l r (c.output.map (sweepEmbed Γ M.k))) =
+      sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))
+        (dgPos a₀ ((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).inputPos) (z - 1)
+        (some sweepBoundary :: r.tail) l
+        (((M.tm.tr q c.inputSymbol c.workTapeSymbols).apply c).output.map (sweepEmbed Γ M.k)) := by
+  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepCfg (some (.inl (.growRight q s ⟨M.k, by omega⟩))) (dgPos a₀ c.inputPos) z
+      l r (c.output.map (sweepEmbed Γ M.k))
+  let act := M.tm.tr q c.inputSymbol c.workTapeSymbols
+  have hi : sweepInput (k := M.k) (d.inputSymbol.map (fun b => Sum.inl (dgRetract a₀ b))) =
+      c.inputSymbol := (dg_native a₀ d.inputSymbol).trans (dgInput_read a₀ c d rfl)
+  change ((dgTM M a₀).tm.tr (.inl (.growRight q s ⟨M.k, by omega⟩))
+    d.inputSymbol d.workTapeSymbols).apply d = _
+  simp only [dgTM, sweepTM, lt_self_iff_false, ↓reduceDIte]
+  rw [hi, hs]
+  change (⟨act.inputTape, fun _ => (some (some sweepBoundary), .neg), act.output.map Sum.inl,
+    some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false)))⟩ :
+    Action 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k)).apply
+      (sweepCfg (some (.inl (.growRight q s ⟨M.k, by omega⟩))) (dgPos a₀ c.inputPos) z
+        l r (c.output.map (sweepEmbed Γ M.k))) = _
+  rw [sweep_turn_left, dgPos_move]
+  have ho : c.output.map (sweepEmbed Γ M.k) ++ (act.output.map Sum.inl).toList =
+      (act.apply c).output.map (sweepEmbed Γ M.k) := by
+    cases he : act.output <;> simp [Action.apply, he, List.map_append, sweepEmbed]
+  rw [ho]
+  rfl

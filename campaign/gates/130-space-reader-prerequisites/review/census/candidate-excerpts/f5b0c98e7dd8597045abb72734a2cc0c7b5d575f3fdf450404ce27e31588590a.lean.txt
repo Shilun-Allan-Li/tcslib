@@ -1,0 +1,34 @@
+/-- **Startup** [AB09, §7.4.2]: if the yardstick machine `S` computes `1^m` on `x` within `T`
+steps and `|x| ≤ m`, then for some `s₀ ≤ T + m + 2`, every coin word of length `s₀` leads the
+host to the first attempt, with `A` at its initial configuration.
+
+**Proof sketch.** Run `S` to its first halt `t_S ≤ T` (boot), where the yardstick tape holds
+its output `1^m` with the head at `m`; then rewind in `m + 2` steps. -/
+theorem startup {T : ℕ} (hS : S.ComputesInTime x (List.replicate m true) T)
+    (hm : x.length ≤ m) :
+    ∃ s₀ ≤ T + m + 2, ∃ (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ),
+      ∀ w : List Bool, w.length = s₀ →
+        (hostTM S A loop).runWith w ((hostTM S A loop).initCfg x) =
+          runCfg m (A.tm.initCfg x) 0 sT sP := by
+  classical
+  obtain ⟨t, htS, hlive, hcut⟩ := MultiTapeTM.exists_first_halt S.tm (S.tm.initCfg x)
+    (((FinTM.computesInTime_iff _ _ _ _).mp hS).1)
+  obtain ⟨cS, hcSdef⟩ : ∃ c, c = S.tm.runFrom (S.tm.initCfg x) t := ⟨_, rfl⟩
+  have hcS : cS.state = none := by
+    rw [hcSdef, hcut]
+    exact ((FinTM.computesInTime_iff _ _ _ _).mp hS).1
+  have hout : cS.output = List.replicate m true := by
+    rw [hcSdef, hcut]
+    exact ((FinTM.computesInTime_iff _ _ _ _).mp hS).2
+  refine ⟨t + (m + 2), by omega, cS.workTapes, cS.workTapePos, fun w hw => ?_⟩
+  have ht : (w.take t).length = t := List.length_take_of_le (by omega)
+  have hboot := boot_run (A := A) (loop := loop) (S.tm.initCfg x) (w.take t)
+    (fun t h => hlive t (by omega))
+  rw [ht, ← hcSdef] at hboot
+  rw [initCfg_eq_bootCfg, ← List.take_append_drop t w, NDTM.runWith_append, hboot]
+  have hb : bootCfg (A := A) cS = hostCfg (some .rew) cS.inputPos cS.workTapes cS.workTapePos
+      (fun _ _ => none) (fun _ => 0) (yard m) m [] := by
+    simp [bootCfg, hcS, hout]
+  rw [hb, rewind_run m _ _ _ _ _ (w.drop t) (by simp; omega),
+    moveInputPos_inLeft cS.inputPos (by have := cS.inputPos.isLt; omega)]
+  rfl

@@ -1,0 +1,24 @@
+/-- When no head crosses the left boundary, the return phase ends there,
+including when the source action halts. No extra block is written. -/
+private lemma dg_end_without_growth {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (a₀ : Γ) (q : M.State) (inp : Option Γ)
+    (reads : Fin M.k → Option Γ) (right : Fin M.k → Bool)
+    (hc : dgCross (M.tm.tr q inp reads) right .neg = false)
+    {x : List (SweepAlphabet Γ M.k)} (p : Fin (x.length + 2))
+    (out : List (SweepAlphabet Γ M.k)) (z : ℤ)
+    (l : List (Option (SweepAlphabet Γ M.k))) :
+    DGSpan (dgTM M a₀).tm
+      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)
+      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))
+        p z l [some sweepBoundary] out) 1 z z := by
+  refine dgSpan_one ?_ (by change z ≤ z ∧ z ≤ z; omega)
+    (by change z ≤ z ∧ z ≤ z; omega)
+  let d : Cfg 1 (SweepAlphabet Γ M.k) (DGState Γ M.State M.k) x :=
+    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out
+  have hw : d.workTapeSymbols = fun _ => some sweepBoundary := by
+    funext i
+    exact sweepTape_read (-z) l _
+  change ((dgTM M a₀).tm.tr (.inl (.write q inp reads right)) d.inputSymbol d.workTapeSymbols).apply d = _
+  rw [hw]
+  simp only [dgTM, sweepBoundary, hc, Bool.false_eq_true, ↓reduceIte]
+  exact sweepRevCfg_stay _ _ _ _ _ _ _

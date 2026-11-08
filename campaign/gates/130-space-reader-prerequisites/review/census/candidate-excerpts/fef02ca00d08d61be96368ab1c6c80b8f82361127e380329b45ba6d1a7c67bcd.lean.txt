@@ -1,0 +1,37 @@
+/-- Bounded repeated clean calls consume exactly the unary number of
+iterations, then return silently with the entire final state word.
+**Proof sketch.** Induct over the executed clock prefix. At each stage the
+actual clean-call contract supplies a positive first return; the native round
+charges it and both dispatches. The final blank clock executes one silent
+completion transition. Every call starts from the full restored seam. -/
+private lemma clRepeat_complete (C : FinTM Bool) (entry exit : C.State)
+    (f : List Bool → List Bool) (x s : List Bool) (N B : ℕ)
+    (hcall : ∀ j < N, ∃ t ≤ B, 0 < t ∧
+      (∀ r, 0 < r → r < t →
+        (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k (f^[j] s))) r).state ≠ some exit) ∧
+      C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k (f^[j] s))) t =
+        Cfg.ofWords exit (stateWord C.k (f (f^[j] s)))) :
+    ∃ t ≤ N * (B + 2) + 1,
+      (clRepeatTM C entry exit).tm.runFrom (clRepeatCfg C entry exit x (.inl 0) s N 0) t =
+        clRepeatCfg C entry exit x (.inl 2) (f^[N] s) N N := by
+  have hpref : ∀ j ≤ N, ∃ t ≤ j * (B + 2),
+      (clRepeatTM C entry exit).tm.runFrom (clRepeatCfg C entry exit x (.inl 0) s N 0) t =
+        clRepeatCfg C entry exit x (.inl 0) (f^[j] s) N j := by
+    intro j
+    induction j with
+    | zero => intro hj; exact ⟨0, by simp, rfl⟩
+    | succ j ih =>
+      intro hj
+      obtain ⟨a, ha, he⟩ := ih (by omega)
+      obtain ⟨b, hb, hp, hf, hr⟩ := hcall j (by omega)
+      refine ⟨a + (b + 2), ?_, ?_⟩
+      · rw [Nat.succ_mul]; omega
+      · rw [MultiTapeTM.runFrom_add, he, clRepeat_round C entry exit x _ _ N j b (by omega) hp hf hr,
+          Function.iterate_succ_apply']
+  obtain ⟨a, ha, he⟩ := hpref N le_rfl
+  refine ⟨a + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', he]
+  change ((clRepeatTM C entry exit).tm.tr (.inl 0) _ _).apply _ = _
+  simp only [clRepeatTM, if_true, clRepeatCfg, Cfg.workTapeSymbols,
+    Fin.addCases_right, FinTM.bufferTape_nat, List.getElem?_replicate, Nat.lt_irrefl, if_false]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]

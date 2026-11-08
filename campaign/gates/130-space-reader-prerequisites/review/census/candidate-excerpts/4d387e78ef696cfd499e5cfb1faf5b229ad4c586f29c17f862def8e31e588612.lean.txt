@@ -1,0 +1,49 @@
+/-- Native reverse host. Administrative states copy the input, rewind its
+physical head, and rewind the assembled buffer. The scheduler reads the
+normalized physical input; its emissions append choices to the copied input.
+The verifier uses only its own bank and the guarded virtual assembly input.
+Both tables are definitionally identical outside live guessing states. -/
+private def b2Host (S V : FinTM Bool) : FinNDTM Bool where
+  k := (S.k + 1) + (V.k + 1)
+  State := Fin 3 ⊕ (Option S.State ⊕ (Option V.State × Bool × Option Bool))
+  tm :=
+    { q₀ := .inl 0
+      tr := fun bit q inp work => match q with
+        | .inl q =>
+          if q = 0 then
+            match inp with
+            | some b =>
+              ⟨1, b2Slots S V (fun _ => (none, 0)) (some (some b), 1)
+                (fun _ => (none, 0)) (none, 0), none, some (.inl 0)⟩
+            | none => controlAction (-1) (some (.inl 1))
+          else if q = 1 then
+            match inp with
+            | some _ => controlAction (-1) (some (.inl 1))
+            | none => controlAction 1 (some (.inr (.inl (some S.tm.q₀))))
+          else
+            let inp := work (Fin.castAdd (V.k + 1) (Fin.last S.k))
+            ⟨0, b2Slots S V (fun _ => (none, 0))
+              (none, if inp.isSome then -1 else 1)
+              (fun _ => (none, 0)) (none, 0), none,
+              some (if inp.isSome then .inl 2
+                else .inr (.inr (some V.tm.q₀, true, none)))⟩
+        | .inr (.inl q) => match q with
+          | none =>
+            ⟨0, b2Slots S V (fun _ => (none, 0)) (none, -1)
+              (fun _ => (none, 0)) (none, 0), none, some (.inl 2)⟩
+          | some q =>
+            leftAction (V.k + 1) (fun q => .inr (.inl q))
+              ((contGuessTM (b2UnaryTM S)).tm.tr bit (some q) inp
+                (fun i => work (Fin.castAdd (V.k + 1) i)))
+        | .inr (.inr (q, tag, summary)) => match q with
+          | none =>
+            ⟨0, fun _ => (none, 0), some (decide (summary = some true)), none⟩
+          | some q =>
+            let inp := work (Fin.castAdd (V.k + 1) (Fin.last S.k))
+            let a := V.tm.tr q inp
+              (fun i => work (Fin.natAdd (S.k + 1) i.castSucc))
+            let m := virtualMove tag inp a.inputTape
+            ⟨0, b2Slots S V (fun _ => (none, 0)) (none, m) a.workTapes
+              (a.output.map some, if a.output.isSome then 1 else 0), none,
+              some (.inr (.inr (a.state, virtualNextTag tag m,
+                captureEmission summary a.output)))⟩ }

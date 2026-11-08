@@ -1,0 +1,12 @@
+/-- A copier write appends exactly one bit at the record head. -/
+private lemma clCopy_write (x : List Bool) (q q' : Fin 5) (p : Fin (x.length + 2))
+    (z : ℤ) (w record : List Bool) (b : Bool) (d : SignType) :
+    (⟨0, clTwo (none, d) (some (some b), .pos), none, some q'⟩ : Action 2 Bool (Fin 5)).apply
+      (clCopyCfg x q p z w record) = clCopyCfg x q' p (z + d) w (record ++ [b]) := by
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ ?_ rfl
+  · funext i
+    fin_cases i
+    · rfl
+    · exact (FinTM.bufferTape_append record b).symm
+  · funext i
+    fin_cases i <;> simp [clTwo, clCopyCfg, Action.apply]

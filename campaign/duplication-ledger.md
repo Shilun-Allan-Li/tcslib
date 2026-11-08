@@ -1837,3 +1837,12 @@ retirement is not yet recorded. Ladner is a statement skeleton with six direct h
 Gate121 remains HOLD for exposed foreign-definition reads; gate122 selected13 PASS
 does not dispose of exposed held fronts by BASE restoration. No blanket Rule10
 acknowledgment, generic host permission or existing family scope extension is inferred.
+
+
+## Approved reader prerequisites and six staged operational repairs (2026-11-08)
+
+PR#251/gate129 adds the three explicitly approved non-simp readers (including the exact shared controlAction_def name) and repairs six exposed old proof bodies through existing equations: controlAction_apply, step_of_tapeAction_move/write, step_of_inputMoveAction, walkTM_run_ofCfg and private scan_fold_trace. They consume live-step, action-field and input-symbol equations instead of re-deriving those readings. All old headers/imports/definitions remain exact. Four selected closures add existing standard Classical.choice dependencies, with no new axiom/admission. Current source/certificate and closing-form candidates are retained in gate129. This is a scoped staged implementation change; only actual merge retires these six inspected implementations, not every operational proof anywhere in TCSlib.
+
+The wider complete closing-form census retains 39 source candidate chunks/69 raw lines. Unselected operational proofs and the foreign owner proof of published Action.apply_workTapes are not certified or acknowledged by the selected6 guard. Its possible exact owner-home move is being assessed separately and needs a human home ruling. Other candidates needing public readers, imports or statement decisions remain held. No legacy Rule10 exemption, future-copy permission or all-owner/global absence follows. Existing debt kinds/owner/window stay exact.
+
+PR#252/gate130 contains only the five explicitly approved core/NDClockHost/Sweep readers. Hypothetical MARMTime/Startup/SingleTape consumer repairs are independent feasibility evidence, not landed implementations or family retirements. No consumer source was adopted, mathematical hole filled or source gate closed.

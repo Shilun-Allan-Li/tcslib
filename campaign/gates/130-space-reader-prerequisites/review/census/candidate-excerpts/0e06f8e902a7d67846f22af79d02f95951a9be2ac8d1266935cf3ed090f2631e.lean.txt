@@ -1,0 +1,43 @@
+/-- Every setup action leaves each payload work head fixed. -/
+private lemma fwdMapSetup_head_step (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (1 + (1 + M.k)) Bool (FwdMapState M.State) x) (i : Fin M.k) :
+    ((fwdMapTM M false).tm.step c).workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) =
+      c.workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) := by
+  have ha (q : FwdMapState M.State) (inp : Option Bool)
+      (work : Fin (1 + (1 + M.k)) → Option Bool) :
+      (((fwdMapTM M false).tm.tr q inp work).apply c).workTapePos
+          (Fin.natAdd 1 (Fin.natAdd 1 i)) =
+        c.workTapePos (Fin.natAdd 1 (Fin.natAdd 1 i)) := by
+    cases q with
+    | parse pending =>
+      cases pending with
+      | none => cases inp <;> simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
+      | some b =>
+        cases inp with
+        | none => simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
+        | some d =>
+          by_cases he : b = d
+          · simp [fwdMapTM, he, fwdMapAct, Action.apply_workTapePos]
+          · cases b <;> simp [fwdMapTM, he, fwdMapAct, Action.apply_workTapePos]
+    | copyB => cases inp <;> simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
+    | backB =>
+      cases h : work (Fin.natAdd 1 (Fin.castAdd M.k (0 : Fin 1))) <;>
+        simp only [fwdMapTM, h, fwdMapAct, Action.apply_workTapePos,
+          tapeBlocks_right, SignType.coe_zero, add_zero]
+    | backA =>
+      cases h : work (Fin.castAdd (1 + M.k) (0 : Fin 1)) <;>
+        simp only [fwdMapTM, h, fwdMapAct, Action.apply_workTapePos,
+          tapeBlocks_right, SignType.coe_zero, add_zero]
+    | emitA =>
+      cases h : work (Fin.castAdd (1 + M.k) (0 : Fin 1)) <;>
+        simp only [fwdMapTM, h, fwdMapAct, Action.apply_workTapePos,
+          tapeBlocks_right, SignType.coe_zero, add_zero]
+    | emitAgain b => simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
+    | separator => simp [fwdMapTM, fwdMapAct, Action.apply_workTapePos]
+    | run q tag =>
+      simp only [fwdMapTM, Bool.false_eq_true, ↓reduceIte, controlAction_apply]
+  cases hs : c.state with
+  | none => rw [MultiTapeTM.step_of_halt hs]
+  | some q =>
+    rw [MultiTapeTM.step_of_some hs]
+    exact ha q _ _

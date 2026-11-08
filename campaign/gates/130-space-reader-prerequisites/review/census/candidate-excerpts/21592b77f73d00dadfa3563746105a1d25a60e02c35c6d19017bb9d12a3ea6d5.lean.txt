@@ -1,0 +1,14 @@
+/-- Equality of the finite rows recovers the input content. -/
+private theorem codecRowOf_input_eq (M : FinTM Bool) (n s : ℕ)
+    (x y : List Bool) (hx : x.length = n) (hy : y.length = n)
+
+  constructor
+  · intro h
+    apply Prod.ext
+
+    · apply MultiTapeTM.ConfigCount.coreCode_inj s hc.core_bounds hd.core_bounds
+      apply Prod.ext (congrArg CodecRow.state h)
+      apply Prod.ext
+      · apply Fin.ext
+
+`Complexity.QBF.decode`. -/

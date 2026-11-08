@@ -1,0 +1,4 @@
+private lemma seam_stationary_apply {Symbol : Type*} {x : List Symbol} (c : Cfg k Symbol S₁ x) (q : S₁) :
+    (Action.mk 0 (fun _ => (none, 0)) none (some q)).apply c =
+      { c with state := some q } := by
+  simp [Action.apply]

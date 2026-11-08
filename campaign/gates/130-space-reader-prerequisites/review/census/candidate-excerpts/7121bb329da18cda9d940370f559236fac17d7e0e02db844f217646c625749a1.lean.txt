@@ -1,0 +1,18 @@
+/-- Actual native four-word comparator. It scans all words in lockstep,
+compares addition columns, and rewinds all four heads to zero. No word is
+modified and nothing is physically emitted. -/
+private def clCmpTM : FinTM Bool where
+  k := 4
+  State := (Bool × Bool × Bool) ⊕ (Bool ⊕ Bool)
+  tm := {
+    q₀ := .inl (false, false, true)
+    tr := fun q _ work => match q with
+      | .inl r =>
+        if ∀ i, work i = none then
+          ⟨0, fun _ => (none, .neg), none, some (.inr (.inl (clCmpVerdict r)))⟩
+        else ⟨0, fun _ => (none, .pos), none, some (.inl (clCmpUpdate r work))⟩
+      | .inr (.inl b) =>
+        if ∀ i, work i = none then
+          ⟨0, fun _ => (none, .pos), none, some (.inr (.inr b))⟩
+        else ⟨0, fun _ => (none, .neg), none, some (.inr (.inl b))⟩
+      | .inr (.inr _) => FinTM.controlAction 0 (some q) }

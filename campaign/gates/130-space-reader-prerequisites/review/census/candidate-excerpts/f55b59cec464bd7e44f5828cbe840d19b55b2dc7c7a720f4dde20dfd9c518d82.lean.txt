@@ -1,0 +1,85 @@
+/-- The whole live-source native cycle, including empty input, ends at apply dispatch.
+It reads the source's input symbol, restores the arbitrary host input position and output,
+and leaves only B nonblank. The work radius depends only on the position-word width.
+**Proof sketch.** Width one takes the already proved empty-input clear. Otherwise join
+fuel/probe/save, recorded seek/read, and complement/borrow/restore/clear. The probe flag
+identifies the original right boundary; the shared digit decoder supplies both seeks. -/
+private theorem recordStep_live_native {k : ℕ} {Q T S : Type}
+    [DecidableEq Q] [DecidableEq T] [DecidableEq S]
+    (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T)
+    (seek : MultiTapeTM 2 Bool S) (start finish : S) (C : ℕ)
+    (hseek : RecordStepSeekSpec seek start finish C) {x : List Bool}
+    (c : Cfg k Bool Q x)
+    (d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (x.map (RecSym.digitEmb Q T)))
+    (data : RecordStepData k Q T) (live : data.state ≠ none)
+    (width : data.widthOne = decide (posWidth x.length = 1))
+    (blank : ∀ z, d.workTapes 2 z = none) :
+    ∃ (b : Bool) (t : ℕ), t ≤ 20 * (C + 1) * (posWidth x.length + x.length + 1) ∧
+      RecordRun (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) d.workTapePos
+        ((C + 1) * (posWidth x.length + 1))
+        (recordStepSnapshot d (recordStepReadExit data) 0
+          ((binDigits (posWidth x.length) c.inputPos.val).map (RecSym.digitEmb Q T))
+          ((binDigits (posWidth x.length) c.inputPos.val).map (RecSym.digitEmb Q T)))
+        (recordStepSnapshot d (recordStepApply M {data with nativeRight := b, input := c.inputSymbol}) 0
+          ((binDigits (posWidth x.length) c.inputPos.val).map (RecSym.digitEmb Q T)) []) t := by
+  let e := RecSym.digitEmb Q T
+  let W := posWidth x.length
+  let w := binDigits W c.inputPos.val
+  have len : w.length = W := by simp [w, binDigits]
+  have small : W + 1 ≤ (C + 1) * (W + 1) := Nat.le_mul_of_pos_left _ (by omega)
+  by_cases empty : x.length = 0
+  · have one : data.widthOne = true := by
+      rw [width, decide_eq_true_eq]
+      exact (recordStep_width_one x.length).mpr empty
+    have inp : c.inputSymbol = none := by
+      apply (recordStep_input_blank c).mpr
+      have h := c.inputPos.isLt
+      omega
+    have run := recordStep_empty_run M upd seek start finish d (w.map e) data live one
+    refine ⟨data.nativeRight, 2 * W + 3, ?_, ?_⟩
+    · have hC : 1 ≤ C + 1 := by omega
+      change 2 * W + 3 ≤ 20 * (C + 1) * (W + x.length + 1)
+      nlinarith
+    · have widened := recordRun_mono (r' := (C + 1) * (W + 1)) run (by simpa only [List.length_map, len] using small)
+      simpa [inp, len, w, W, e] using widened
+  · have hx : 0 < x.length := by omega
+    have wide : data.widthOne = false := by
+      rw [width, decide_eq_false_iff_not]
+      exact fun h => empty ((recordStep_width_one x.length).mp h)
+    obtain ⟨b, q, tp, hb, hq, hqx, htp, prep⟩ := recordStep_prepare_native M upd seek start finish d w data
+      live wide hx (by simpa [len, W] using record_pos_lt x.length)
+    have hcp : c.inputPos.val ≤ x.length + 1 := by have := c.inputPos.isLt; omega
+    have hdp : d.inputPos.val ≤ x.length + 1 := by
+      have := d.inputPos.isLt
+      simp only [List.length_map] at this
+      omega
+    have hv : Nat.ofDigits 2 (w.map Bool.toNat) = c.inputPos.val :=
+      record_digits_value W _ (lt_of_le_of_lt hcp (record_pos_lt x.length))
+    let data' := {data with nativeRight := b, input := c.inputSymbol}
+    let saved := (counterWord (List.replicate w.length true) (q + 1)).map e
+    obtain ⟨ts, hts, read⟩ := recordStep_seek_read M upd seek start finish C c w
+      (hseek _ w hv hcp) {d with inputPos := 0} blank saved {data with nativeRight := b}
+    have restored : d.inputPos.val = if data'.nativeRight then q + 1 else q := by
+      cases b
+      · simpa [data'] using hq.symm
+      · have hd : d.inputPos.val = x.length + 1 := by simpa using hb.symm
+        simpa [data', hq] using hd
+    obtain ⟨tr, htr, restore⟩ := recordStep_restore_native M upd seek start finish C hseek d
+      (Fin.cast (by simp) c.inputPos) (w.map e) data' W q blank
+      (lt_of_le_of_lt (by omega : q + 1 ≤ x.length + 1) (record_pos_lt x.length)) restored
+    have prep' := recordRun_mono (r' := (C + 1) * (W + 1)) prep (by simpa only [List.length_map, len] using small)
+    have read' := recordRun_mono (r' := (C + 1) * (W + 1)) read (by
+      rw [len]
+      exact Nat.mul_le_mul_right (W + 1) (by omega : C ≤ C + 1))
+    have first := recordRun_trans prep' read'
+    have total := recordRun_trans first (by
+      simpa [data', saved, len, recordStepSnapshot, e] using restore)
+    refine ⟨b, tp + ts + tr, ?_, ?_⟩
+    · change tp ≤ 6 * w.length + 5 * x.length + 12 at htp
+      change ts ≤ C * (w.length + 0 + c.inputPos.val + 1) + 3 at hts
+      change tr ≤ C * (W + c.inputPos.val + d.inputPos.val + 1) + 6 * W + 10 at htr
+      rw [len] at htp hts
+      change tp + ts + tr ≤ 20 * (C + 1) * (W + x.length + 1)
+      nlinarith
+    · simpa [w, W, e, data', recordStepSnapshot] using total

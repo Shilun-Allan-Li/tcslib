@@ -1,0 +1,13 @@
+/-- **R8.3, skip** (design §12.8a). Move the head of tape `i` right over the
+word under it and one cell past its right delimiter, writing nothing. In the
+field layout this moves from the first cell of a field to the first cell of
+the next. Phases `run` and `done`; the others are stationary and unused. -/
+def skipTM {Symbol : Type*} (k : ℕ) (i : Fin k) : MultiTapeTM k Symbol SeekPhase where
+  q₀ := .run
+  tr := fun q _ w =>
+    match q with
+    | .run =>
+      match w i with
+      | some _ => tapeAction i 0 none .pos .run
+      | none => tapeAction i 0 none .pos .done
+    | q => inputMoveAction 0 q

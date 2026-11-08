@@ -1,0 +1,4 @@
+/-- The core of a configuration: everything but the output tape. -/
+def core (c : Cfg k Bool S x) :
+    Option S × Fin (x.length + 2) × (Fin k → ℤ → Option Bool) × (Fin k → ℤ) :=
+  (c.state, c.inputPos, c.workTapes, c.workTapePos)

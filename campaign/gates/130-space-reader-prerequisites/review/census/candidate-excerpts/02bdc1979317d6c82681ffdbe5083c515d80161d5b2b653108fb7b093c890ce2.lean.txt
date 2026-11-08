@@ -1,0 +1,24 @@
+/-- Selected source cells and the unselected ambient frame determine the
+entire embedded configuration.
+**Proof sketch.** Use the two selected-tape exports on the image and the R1
+frame contract at time zero off the image. State, input and output are the
+remaining three configuration fields. -/
+private lemma emitterP2_frame {k l : ℕ} {S H : Type} {x : List Bool}
+    (q : S) (index : Fin k ↪ Fin l) (emb : S → H)
+    (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ)
+    (c : Cfg k Bool S x) (d : Cfg l Bool H x)
+    (hs : c.state.map emb = d.state) (hi : c.inputPos = d.inputPos)
+    (ho : c.output = d.output)
+    (selected : ∀ i, c.workTapes i = d.workTapes (index i) ∧
+      c.workTapePos i = d.workTapePos (index i))
+    (frame : ∀ j, j ∉ Set.range index → tapes j = d.workTapes j ∧ heads j = d.workTapePos j) :
+    (embedEmitCfg index tapes heads [] c).mapState emb = d := by
+  have fields (j : Fin l) :
+      (embedEmitCfg index tapes heads [] c).workTapes j = d.workTapes j ∧
+      (embedEmitCfg index tapes heads [] c).workTapePos j = d.workTapePos j := by
+    by_cases hj : j ∈ Set.range index
+    · obtain ⟨i, rfl⟩ := hj
+      simpa only [embedEmitCfg_selected_tape, embedEmitCfg_selected_pos] using selected i
+    · obtain ⟨ht, hp⟩ := (embedEmitTM_frame index ⟨q, fun _ _ _ => controlAction 0 none⟩ tapes heads [] c 0).1 j hj
+      exact ⟨ht.trans (frame j hj).1, hp.trans (frame j hj).2⟩
+  exact Cfg.ext hs hi (funext fun j => (fields j).1) (funext fun j => (fields j).2) ho

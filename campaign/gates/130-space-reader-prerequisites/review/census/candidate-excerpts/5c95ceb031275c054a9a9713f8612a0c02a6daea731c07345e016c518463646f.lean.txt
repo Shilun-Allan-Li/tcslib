@@ -1,0 +1,12 @@
+lemma rewind_from_any {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work =
+      match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some start) :
+    ∃ t, tm.runFrom cfg t = {cfg with state := dest, inputPos := 1} := by
+  obtain ⟨hstep, hp⟩ := rewind_first_step tm start scan hstart cfg hs
+  refine ⟨(moveInputPos cfg.inputPos .neg).val + 1 + 1, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step, hstep, rewind_scan tm scan dest hscan _ rfl hp]

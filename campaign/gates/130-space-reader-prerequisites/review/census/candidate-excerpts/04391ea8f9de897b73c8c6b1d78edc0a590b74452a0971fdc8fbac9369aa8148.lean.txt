@@ -1,0 +1,46 @@
+/-- Exhausting the countdown emits exactly its numerical value, with arbitrary
+already-emitted output retained. Each round dispatches at the actual debit
+return, then emits once or halts; the budget is only an upper bound.
+**Proof sketch.** Strong induction on counter value. A successful fixed-width
+debit lowers the value by one and preserves width. Its return transition
+emits one symbol. Underflow proves value zero and halts without emission. -/
+private lemma a2_countdown (x : List Bool) (p : Fin (x.length + 2)) (n : ℕ) :
+    ∀ (u out : List Bool), a2Value u = n →
+    ∃ t ≤ (n + 1) * (2 * u.length + 3),
+      (a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl none) 0 u) t).state = none ∧
+      (a2DebitTM.tm.runFrom (a2DebitCfg out x p (.inl none) 0 u) t).output =
+        out ++ List.replicate n true := by
+  induction n using Nat.strong_induction_on with
+  | h n ih =>
+    intro u out hv
+    obtain ⟨hb, hr⟩ := a2Borrow_correct out x p u
+    have hd := a2Debit_value u
+    cases hs : (a2Debit u).2 with
+    | false =>
+      simp only [hs, Bool.false_eq_true, ↓reduceIte] at hd
+      have hn : n = 0 := hv.symm.trans hd
+      rw [hn]
+      refine ⟨(2 * a2BorrowPos u + 2) + 1, by omega, ?_⟩
+      rw [MultiTapeTM.runFrom_add, hr]
+      simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg, a2DebitTM,
+        hs, controlAction, Action.apply]
+    | true =>
+      simp only [hs, ↓reduceIte] at hd
+      have hlt : a2Value (a2Debit u).1 < n := by omega
+      obtain ⟨t, ht, hh, ho⟩ := ih _ hlt (a2Debit u).1 (out ++ [true]) rfl
+      have hstep : a2DebitTM.tm.runFrom
+          (a2DebitCfg out x p (.inr true) 0 (a2Debit u).1) 1 =
+          a2DebitCfg (out ++ [true]) x p (.inl none) 0 (a2Debit u).1 := by
+        refine Cfg.ext rfl (moveInputPos_zero p) rfl ?_ rfl
+        funext i; simp [MultiTapeTM.runFrom, MultiTapeTM.step, a2DebitCfg,
+          a2DebitTM, Action.apply]
+      refine ⟨(2 * a2BorrowPos u + 2) + 1 + t, ?_, ?_⟩
+      · rw [a2Debit_length] at ht
+        have he : n = a2Value (a2Debit u).1 + 1 := by omega
+        rw [he, Nat.add_mul, Nat.one_mul]
+        omega
+      · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hr, hs, hstep]
+        refine ⟨hh, ?_⟩
+        rw [ho, List.append_assoc]
+        have he : n = a2Value (a2Debit u).1 + 1 := by omega
+        simp [he, List.replicate_succ]

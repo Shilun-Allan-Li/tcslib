@@ -1,0 +1,54 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+attribute [local irreducible] Turing.tapeAction
+
+namespace F6LayoutPreship
+open Turing
+
+/-- An elementary native correction leaf moves only the last work head left once.
+The machine is fixed before the input/configuration; no payload is copied.
+
+**Proof sketch.** Use the published tape-move step equation and the public zero/succ
+run equations. The initial label is false and the fresh endpoint label is true. -/
+theorem last_ruler_correction (K : ℕ) :
+    ∃ C : MultiTapeTM (K + 4) Bool Bool, C.q₀ = false ∧
+      ∀ (z : List Bool) (d : Cfg (K + 4) Bool Bool z), d.state = some false →
+        C.runFrom d 1 = {d with
+          state := some true
+          workTapePos := Function.update d.workTapePos (Fin.last (K + 3))
+            (d.workTapePos (Fin.last (K + 3)) - 1)} ∧
+        (∀ u < 1, (C.runFrom d u).state ≠ some true) ∧
+        (∀ ℓ : ℕ, d.workTapePos (Fin.last (K + 3)) = (ℓ : ℤ) + 1 →
+          (C.runFrom d 1).workTapePos (Fin.last (K + 3)) = (ℓ : ℤ)) := by
+  classical
+  let C : MultiTapeTM (K + 4) Bool Bool :=
+    ⟨false, fun _ _ _ => tapeAction (Fin.last (K + 3)) 0 none (-1) true⟩
+  refine ⟨C, rfl, fun z d hs => ?_⟩
+  have hr : C.runFrom d 1 = {d with
+      state := some true
+      workTapePos := Function.update d.workTapePos (Fin.last (K + 3))
+        (d.workTapePos (Fin.last (K + 3)) - 1)} := by
+    rw [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero]
+    have hstep := step_of_tapeAction_move C d (Fin.last (K + 3)) 0 (-1) hs rfl
+    simpa only [moveInputPos_zero, SignType.coe_neg, SignType.coe_one, sub_eq_add_neg]
+      using hstep
+  refine ⟨hr, ?_, ?_⟩
+  · intro u hu
+    have hu0 : u = 0 := by omega
+    subst u
+    rw [MultiTapeTM.runFrom_zero, hs]
+    exact fun h => Bool.noConfusion (Option.some.inj h)
+  · intro ℓ hℓ
+    rw [hr]
+    change Function.update d.workTapePos (Fin.last (K + 3))
+      (d.workTapePos (Fin.last (K + 3)) - 1) (Fin.last (K + 3)) = (ℓ : ℤ)
+    rw [Function.update_self, hℓ]
+    omega
+
+end F6LayoutPreship
+#print axioms F6LayoutPreship.last_ruler_correction

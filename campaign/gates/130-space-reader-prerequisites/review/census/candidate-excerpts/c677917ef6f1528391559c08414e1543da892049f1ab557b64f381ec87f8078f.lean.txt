@@ -1,0 +1,6 @@
+/-- The attempt-phase configuration: `A`'s configuration on its bank, its output captured, and
+the yardstick head at `j`. -/
+def runCfg (a : Cfg A.k Bool A.State x) (j : ℤ) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x :=
+  hostCfg (some (.run a.state (capOf a.output))) a.inputPos sT sP a.workTapes a.workTapePos
+    (yard m) j []

@@ -1,0 +1,89 @@
+/-- The recorded seek and stationary Read, composed with their two host dispatches.
+The observed symbol is exactly the source configuration's input symbol, while D and the
+record frame survive intact and Cs is restored blank by the public seek contract.
+**Proof sketch.** Apply the rich seek transport to B/Cs, then the native Read contract.
+Input-symbol lifting and decoding identify the observation at the recorded position;
+the seek radius covers both phases since Read keeps every work head fixed. -/
+private theorem recordStep_seek_read {k : ℕ} {Q T S : Type}
+    [DecidableEq Q] [DecidableEq T] [DecidableEq S]
+    (M : MultiTapeTM k Bool Q) (upd : T → Option Bool → T)
+    (seek : MultiTapeTM 2 Bool S) (start finish : S) (C : ℕ) {x : List Bool}
+    (c : Cfg k Bool Q x) (w : List Bool)
+    (hspec : ∀ a : Cfg 2 Bool S x, a.state = some start →
+      (∀ z : ℤ, -1 ≤ z → z ≤ (w.length : ℤ) →
+        a.workTapes 0 (a.workTapePos 0 + z) = FinTM.bufferTape w z) →
+      (∀ z, a.workTapes 1 z = none) →
+      ∃ t ≤ C * (w.length + a.inputPos.val + c.inputPos.val + 1),
+        (∀ u < t, (seek.runFrom a u).state ≠ some finish) ∧
+        (∀ u ≤ t, ∀ j, |(seek.runFrom a u).workTapePos j - a.workTapePos j| ≤
+          ((C * (w.length + 1) : ℕ) : ℤ)) ∧
+        (seek.runFrom a t).state = some finish ∧ (seek.runFrom a t).inputPos.val = c.inputPos.val ∧
+        (seek.runFrom a t).workTapes = a.workTapes ∧
+        (seek.runFrom a t).workTapePos = a.workTapePos ∧ (seek.runFrom a t).output = a.output)
+    (d : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (x.map (RecSym.digitEmb Q T)))
+    (blank : ∀ z, d.workTapes 2 z = none) (saved : List (RecSym Q T)) (data : RecordStepData k Q T) :
+    ∃ t ≤ C * (w.length + d.inputPos.val + c.inputPos.val + 1) + 3,
+      RecordRun (recordStepMachine M upd seek start finish)
+        (recordStepVerdict true) (recordStepVerdict false) d.workTapePos (C * (w.length + 1))
+        (recordStepSnapshot d (⟨⟨.seek, data⟩, start⟩ : RecordStepControl k Q T S) 0
+          (w.map (RecSym.digitEmb Q T)) saved)
+        (recordStepSnapshot {d with inputPos := Fin.cast (by simp) c.inputPos}
+          (⟨⟨.complement, {data with input := c.inputSymbol}⟩, .fwd ()⟩ : RecordStepControl k Q T S) 0
+          (w.map (RecSym.digitEmb Q T)) saved) t := by
+  let e := RecSym.digitEmb Q T
+  let a := recordStepSnapshot d start 0 (w.map e) saved
+  let d' : Cfg 4 (RecSym Q T) (RecordStepControl k Q T S) (x.map e) :=
+    {d with inputPos := Fin.cast (by simp) c.inputPos}
+  have dig : ∀ i z γ, a.workTapes (recordStepSeekBank false i) z = some γ → ∃ b, γ = e b := by
+    intro i z γ h
+    fin_cases i
+    · change FinTM.bufferTape (w.map e) (z - d.workTapePos 1) = some γ at h
+      rw [FinTM.bufferTape_map] at h
+      cases hz : FinTM.bufferTape w (z - d.workTapePos 1) with
+      | none => simp [hz] at h
+      | some b => exact ⟨b, by simpa [hz] using h.symm⟩
+    · simp [a, recordStepSnapshot, recordStepSeekBank, blank] at h
+  obtain ⟨ts, hts, esCut, esHeads, es⟩ := recordStep_seek_transport seek start finish C
+    c.inputPos.val w (by have := c.inputPos.isLt; omega) hspec (recordStepSeekBank false) a rfl dig
+    (by intro z _ _; simp [a, recordStepSnapshot, recordStepSeekBank, e])
+    (by intro z; simp [a, recordStepSnapshot, recordStepSeekBank, blank])
+  have ps := recordStep_phase_run M upd seek start finish ⟨.seek, data⟩
+    (by intro b h; cases h) a (recordStepSnapshot d' finish 0 (w.map e) saved) ts
+    (by
+      refine es.trans ?_
+      apply Cfg.ext <;> rfl) finish rfl
+    (⟨⟨.read, data⟩, none⟩ : RecordStepControl k Q T S)
+    (by simp [recordStepNext])
+    (by
+      intro u hu q hq
+      have hn : q ≠ finish := by intro he; subst q; exact esCut u hu hq
+      simp [recordStepNext, hn])
+    d.workTapePos (C * (w.length + 1)) (by
+      intro u hu j
+      simpa [a, recordStepSnapshot] using esHeads u hu j)
+  let r := recordStepSnapshot d' (none : Option (Option Bool)) 0 (w.map e) saved
+  have input : r.inputSymbol.bind (decodeBool e) = c.inputSymbol := by
+    change (c.liftSymbols e).inputSymbol.bind (decodeBool e) = c.inputSymbol
+    rw [Cfg.liftSymbols_inputSymbol]
+    cases c.inputSymbol <;> simp [decodeBool_apply]
+  obtain ⟨er, cr⟩ := recordStep_read_run r rfl
+  have fixed (u : ℕ) : (recordStepRead.runFrom r u).workTapePos = r.workTapePos :=
+    (recordStep_native_frame recordStepRead (fun _ _ => 0)
+      (fun _ inp => some (inp.bind (decodeBool e))) (by intro q inp work; rfl) r u).2.1
+  have pr := recordStep_phase_run M upd seek start finish ⟨.read, data⟩
+    (by intro b h; cases h) r (recordStepSnapshot d' (some c.inputSymbol) 0 (w.map e) saved) 1
+    (by
+      change r.inputSymbol.bind (decodeBool (RecSym.digitEmb Q T)) = c.inputSymbol at input
+      rw [input] at er
+      exact er) (some c.inputSymbol) rfl
+    (⟨⟨.complement, {data with input := c.inputSymbol}⟩, .fwd ()⟩ : RecordStepControl k Q T S) rfl
+    (by intro u hu q hq; cases q with
+        | some v => exact (cr u hu v hq).elim
+        | none => rfl)
+    d.workTapePos (C * (w.length + 1)) (by
+      intro u hu j
+      change |(recordStepRead.runFrom r u).workTapePos j - d.workTapePos j| ≤ _
+      rw [fixed u]
+      simp [r, d', recordStepSnapshot])
+  refine ⟨(ts + 1) + (1 + 1), by change ts ≤ C * (w.length + d.inputPos.val + c.inputPos.val + 1) at hts; omega, ?_⟩
+  simpa [a, r, d', Cfg.mapState, recordStepSnapshot] using recordRun_trans ps pr

@@ -1,0 +1,7 @@
+/-- **The code depends only on the configuration-graph vertex** `coreSum`. -/
+theorem cfgWord_congr {s : ℕ} {C D : Cfg N.k Bool N.State x}
+    (h : NDTM.coreSum C = NDTM.coreSum D) : cfgWord s C = cfgWord s D := by
+  have hi : C.inputPos = D.inputPos := by
+    simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core, Prod.mk.injEq] at h
+    exact h.1.2.1
+  simp only [cfgWord, cellOf_congr h, hi]

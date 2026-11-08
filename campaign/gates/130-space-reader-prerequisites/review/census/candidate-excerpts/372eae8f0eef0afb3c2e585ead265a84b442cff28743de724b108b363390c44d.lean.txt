@@ -1,0 +1,13 @@
+/-- The all-returned bank is absorbing on the entire configuration. -/
+private lemma clBank_idle {l : ℕ} {x : List Bool}
+    (c : Cfg (clBankTM l).k Bool (clBankTM l).State x)
+    (hc : c.state = some (fun _ => some (0 : Fin 4))) :
+    (clBankTM l).tm.step c = c := by
+  unfold MultiTapeTM.step
+  rw [hc]
+  refine Cfg.ext hc.symm (moveInputPos_zero _) ?_ ?_ ?_
+  · funext i
+    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]
+  · funext i
+    simp [clBankTM, clBankPart, clCountTM, FinTM.controlAction, Action.apply]
+  · simp [clBankTM, Action.apply]

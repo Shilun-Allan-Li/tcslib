@@ -1,0 +1,88 @@
+import TCSlib.Complexity.TuringMachine.Build.Catalog
+
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+
+/-! Gate 55 review controls for `RewindSealFull`. Section `Unsealed`: the ten controls hold
+(0 errors expected). Section `IrreducibleOnly`: with the irreducibility line alone, C10 (`simp`
+through `Action.apply`'s simp-tagged equation) still holds: irreducibility does not stop it.
+Section `RewindSeal`: the probe's seal, byte-identical; each of the ten controls must fail
+(10 errors expected, all in that section). -/
+
+namespace Turing
+
+variable {k : ℕ} {Symbol State : Type*} {x : List Symbol}
+
+section Unsealed
+/-- C1 `tapeAction` -/
+example (i : Fin k) (q : State) : (tapeAction (Symbol := Symbol) i 0 none 0 q).state = some q :=
+  rfl
+/-- C2 `inputMoveAction` -/
+example (q : State) : (inputMoveAction (k := k) (Symbol := Symbol) 0 q).state = some q := rfl
+/-- C3 `FinTM.bufferTape` (the pack's control) -/
+example (u : List Symbol) : FinTM.bufferTape u (-1) = none := rfl
+/-- C4 `MultiTapeTM.step` -/
+example (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) :
+    M.step { c with state := none } = { c with state := none } := rfl
+/-- C5 `MultiTapeTM.runFrom` -/
+example (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) : M.runFrom c 0 = c := rfl
+/-- C6 `Cfg.workTapeSymbols` -/
+example (c : Cfg k Symbol State x) (i : Fin k) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := rfl
+/-- C7 `Cfg.inputSymbol` -/
+example (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    ({ c with inputPos := 0 } : Cfg 1 Bool Unit []).inputSymbol = none := rfl
+/-- C8 `moveInputPos` -/
+example : moveInputPos (0 : Fin 2) 0 = 0 := rfl
+/-- C9 `Action.apply`, by definitional unfolding -/
+example (a : Action k Symbol State) (c : Cfg k Symbol State x) : (a.apply c).state = a.state :=
+  rfl
+/-- C10 `Action.apply`, through its simp-tagged equation lemma -/
+example (a : Action k Symbol State) (c : Cfg k Symbol State x) :
+    (a.apply c).output = c.output ++ a.output.toList := by simp
+end Unsealed
+
+section IrreducibleOnly
+attribute [local irreducible] Turing.tapeAction Turing.inputMoveAction Turing.FinTM.bufferTape
+  Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.workTapeSymbols
+  Turing.Cfg.inputSymbol Turing.moveInputPos Turing.Action.apply
+/-- C10 under irreducibility alone: still proved by `simp`. -/
+example (a : Action k Symbol State) (c : Cfg k Symbol State x) :
+    (a.apply c).output = c.output ++ a.output.toList := by simp
+end IrreducibleOnly
+
+section RewindSeal
+attribute [local irreducible] Turing.tapeAction Turing.inputMoveAction Turing.FinTM.bufferTape
+  Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.Cfg.workTapeSymbols
+  Turing.Cfg.inputSymbol Turing.moveInputPos Turing.Action.apply
+attribute [-simp] Turing.Action.apply
+
+/-- C1 `tapeAction` -/
+example (i : Fin k) (q : State) : (tapeAction (Symbol := Symbol) i 0 none 0 q).state = some q :=
+  rfl
+/-- C2 `inputMoveAction` -/
+example (q : State) : (inputMoveAction (k := k) (Symbol := Symbol) 0 q).state = some q := rfl
+/-- C3 `FinTM.bufferTape` (the pack's control) -/
+example (u : List Symbol) : FinTM.bufferTape u (-1) = none := rfl
+/-- C4 `MultiTapeTM.step` -/
+example (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) :
+    M.step { c with state := none } = { c with state := none } := rfl
+/-- C5 `MultiTapeTM.runFrom` -/
+example (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) : M.runFrom c 0 = c := rfl
+/-- C6 `Cfg.workTapeSymbols` -/
+example (c : Cfg k Symbol State x) (i : Fin k) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := rfl
+/-- C7 `Cfg.inputSymbol` -/
+example (c : Cfg 1 Bool Unit ([] : List Bool)) :
+    ({ c with inputPos := 0 } : Cfg 1 Bool Unit []).inputSymbol = none := rfl
+/-- C8 `moveInputPos` -/
+example : moveInputPos (0 : Fin 2) 0 = 0 := rfl
+/-- C9 `Action.apply`, by definitional unfolding -/
+example (a : Action k Symbol State) (c : Cfg k Symbol State x) : (a.apply c).state = a.state :=
+  rfl
+/-- C10 `Action.apply`, through its simp-tagged equation lemma -/
+example (a : Action k Symbol State) (c : Cfg k Symbol State x) :
+    (a.apply c).output = c.output ++ a.output.toList := by simp
+end RewindSeal
+
+end Turing

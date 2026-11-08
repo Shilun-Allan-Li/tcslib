@@ -1,0 +1,36 @@
+/-- The complete preparation transducer reaches the loader's blank-target
+entry from its own native `initCfg`. No initial work-tape word is assumed.
+**Proof sketch.** Lift the native input copier into the final stream slot,
+leaving all field targets blank. At its first completed return both heads
+are canonical. One silent dispatch enters the row loader. -/
+private lemma clPrepare_start (l : ℕ) (x : List Bool) :
+    ∃ t ≤ 2 * x.length + 3,
+      (clPrepareTM l).tm.runFrom ((clPrepareTM l).tm.initCfg x) t =
+      (clLoadCfg x 1 0 (.inl 0) (fun _ : Fin l => []) x 0).mapState Sum.inr := by
+  obtain ⟨t, ht, _, hf, he⟩ := clInput_first x
+  have lift := clPlaced_run clInputTM.tm (clPrepareTM l).tm (clPrepareSelect l) Sum.inl (by intro a b h; cases h; rfl) (fun q => q ≠ (2 : Fin 3))
+    (fun _ hq _ _ => if_neg hq)
+    (fun _ _ => none) (fun _ => 0) (clInputTM.tm.initCfg x) t
+    (by intro j hj q hq heq; subst q; exact hf j hj hq)
+  rw [he] at lift
+  have start : clPlacedCfg (clPrepareSelect l) Sum.inl
+      (fun _ _ => none) (fun _ => 0) (clInputTM.tm.initCfg x) =
+      (clPrepareTM l).tm.initCfg x := by
+    apply Cfg.ext <;> simp [MultiTapeTM.initCfg, Cfg.init, clInputTM, clPrepareTM]
+    all_goals
+      funext i
+      refine Fin.addCases ?_ ?_ i <;> intro i <;> simp [clPrepareSelect]
+  have run := (congrArg (fun z => (clPrepareTM l).tm.runFrom z t) start).symm.trans lift
+  have step : (clPrepareTM l).tm.step
+      (clPlacedCfg (clPrepareSelect l) Sum.inl (fun _ _ => none) (fun _ => 0)
+        (Cfg.ofWords (input := x) (2 : Fin 3) (fun _ : Fin 1 => x))) =
+      (clLoadCfg x 1 0 (.inl 0) (fun _ : Fin l => []) x 0).mapState Sum.inr := by
+    change (FinTM.controlAction 0 (some (Sum.inr (0, .inl 0) : (clPrepareTM l).State))).apply _ = _
+    rw [FinTM.controlAction_apply, moveInputPos_zero]
+    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    all_goals
+      funext i
+      refine Fin.addCases ?_ ?_ i <;> intro i <;>
+        simp [clPrepareSelect, clLoadCfg, Cfg.mapState, Cfg.ofWords]
+  refine ⟨t + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', run, step]

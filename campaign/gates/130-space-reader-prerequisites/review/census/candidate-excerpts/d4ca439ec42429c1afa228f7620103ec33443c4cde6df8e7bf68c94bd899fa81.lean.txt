@@ -1,0 +1,30 @@
+/-- Pairwise-distinct vertices of windowed configurations number at most the
+configuration bound. [AB09, Claim 4.4(1)]
+
+**Proof sketch.** Pair the received finite core code with the three-element
+summary code. Windowedness supplies exactly the hypotheses of `coreCode_inj`.
+The resulting injection has a finite codomain of the displayed cardinality. -/
+private theorem count_windowed_vertices (N : FinNDTM Bool) (x : List Bool) (s t : ℕ)
+    (cs : ℕ → Cfg N.k Bool N.State x)
+    (window : ∀ j ≤ t, InWindow s (cs j))
+    (distinct : Set.InjOn (fun j => NDTM.coreSum (cs j)) (Finset.range (t + 1))) :
+    t + 1 ≤ N.configBound x.length s := by
+  classical
+  let code j :=
+    (MultiTapeTM.ConfigCount.coreCode s (cs j), outSummaryCode (outSummary (cs j).output))
+  have injective : Set.InjOn code (Finset.range (t + 1)) := by
+    intro a ha b hb eqcode
+    apply distinct ha hb
+    apply Prod.ext
+    · exact MultiTapeTM.ConfigCount.coreCode_inj s
+        (window a (Nat.le_of_lt_succ (Finset.mem_range.mp ha)))
+        (window b (Nat.le_of_lt_succ (Finset.mem_range.mp hb)))
+        (congrArg Prod.fst eqcode)
+    · exact outSummaryCode_injective (congrArg Prod.snd eqcode)
+  have card := Finset.card_le_card_of_injOn code (fun j _ => Finset.mem_univ (code j)) injective
+  simp only [Finset.card_range, Finset.card_univ, Fintype.card_prod, Fintype.card_option,
+    Fintype.card_fin, Fintype.card_pi, Finset.prod_const, Fintype.card_bool] at card
+  rw [← pow_mul, Nat.mul_comm (2 * s + 1) N.k] at card
+  convert card using 1
+  simp only [configBound]
+  ring

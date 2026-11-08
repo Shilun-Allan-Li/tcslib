@@ -1,0 +1,37 @@
+/-- Store one complete row inside the recorder and dispatch to its clock
+test. All source storage and the logical clock are unchanged throughout
+this administrative segment.
+**Proof sketch.** Relocate the row controller into the counter and record bank, framing the unary clock and the entire represented source. Its first completion contains the extended record; one control-only transition enters the clock test. -/
+private lemma clRec_copy (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (b : Bool) (n : Fin (clRecFields M) → ℕ)
+    (record : List Bool) (T t W : ℕ) (hW : ∀ i, (n i).bits.length ≤ W) :
+    ∃ s ≤ clRecFields M * (3 * W + 4) + 1,
+      (clRecTM M).tm.runFrom
+        (clRecCfg M (x := x) (.inl (c.state, b, (0, 0))) c n record T t) s =
+      clRecCfg M (x := x) (.inr (.inl (c.state, b))) c n
+        (record ++ clRowPrefix (fun i => (n i).bits) (clRecFields M)) T t := by
+  obtain ⟨s, hs, _, hf, he⟩ := clRow_first (by dsimp [clRecFields]; omega) x 1
+    (fun i => (n i).bits) record W hW
+  let start := clRecCfg M (x := x) (.inl (c.state, b, (0, 0))) c n record T t
+  let record' := record ++ clRowPrefix (fun i => (n i).bits) (clRecFields M)
+  have lift := clSlot_run (clRowTM (clRecFields M)).tm (clRecTM M).tm
+    (clRecRowIndex M) (clRecRowSelect M) (clRecRow_inverse M)
+    (fun r => (Sum.inl (c.state, b, r) : clRecState M))
+    (fun r => r ≠ (Fin.last (clRecFields M), (0 : Fin 5)))
+    (by intro r hr inp work; simp only [clRecTM, if_neg hr])
+    start.workTapes start.workTapePos
+    (clRowCfg x 1 0 0 (fun i => (n i).bits) record) s
+    (by intro j hj q hq heq; subst q; exact hf j hj hq)
+  rw [he] at lift
+  have hend := (clRec_row_inactive M c b n record record' T t
+    (0, 0) (Fin.last (clRecFields M), 0)
+    (clRowCfg x 1 (Fin.last (clRecFields M)) 0 (fun i => (n i).bits) record')).trans
+      (clRec_row_frame M c b n record' T t (Fin.last (clRecFields M)) 0)
+  have run : (clRecTM M).tm.runFrom start s =
+      clRecCfg M (x := x) (.inl (c.state, b, (Fin.last (clRecFields M), 0))) c n record' T t :=
+    (congrArg (fun z => (clRecTM M).tm.runFrom z s)
+      (clRec_row_frame M c b n record T t 0 0)).symm.trans (lift.trans hend)
+  refine ⟨s + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', run]
+  simp only [MultiTapeTM.step, clRecCfg, clRecTM, if_true]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]

@@ -1,0 +1,6 @@
+/-- The transition table of the transducer machine: on a bit, emit, move right and change
+state; on the right blank, halt. -/
+def transducerTr (δ : σ → Bool → σ) (o : σ → Bool → Option Bool) :
+    σ → Option Bool → (Fin 0 → Option Bool) → Action 0 Bool σ
+  | q, some b, _ => ⟨.pos, fun _ => (none, 0), o q b, some (δ q b)⟩
+  | _, none, _ => ⟨0, fun _ => (none, 0), none, none⟩

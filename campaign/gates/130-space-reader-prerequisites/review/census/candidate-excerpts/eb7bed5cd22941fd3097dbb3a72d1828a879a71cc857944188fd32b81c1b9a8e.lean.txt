@@ -1,0 +1,7 @@
+/-- `run_run` from the yardstick's first mark. -/
+theorem run_run_zero (a : Cfg A.k Bool A.State x) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (u : List Bool) (hu : u.length ≤ m) :
+    (hostTM S A loop).runWith u (runCfg m a 0 sT sP) =
+      runCfg m (A.tm.runWith u a) u.length sT sP := by
+  have := run_run (loop := loop) m a 0 sT sP u (by omega)
+  simpa using this

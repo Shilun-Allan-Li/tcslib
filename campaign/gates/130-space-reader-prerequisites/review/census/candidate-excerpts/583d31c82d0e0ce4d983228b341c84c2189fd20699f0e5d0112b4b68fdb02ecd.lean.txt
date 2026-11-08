@@ -1,0 +1,18 @@
+/-- Selecting a bank component recovers precisely that cleaner's transition,
+including all three independently positioned work heads. -/
+private lemma emitterBank_part {k : ℕ} {w : List Bool} (p : Fin (w.length + 2))
+    (c : Fin k → Cfg 3 Bool (Fin 4) w) (i : Fin k) :
+    emitterBankPart (fun i => (c i).state) (emitterBankCfg p c).workTapeSymbols i =
+      match (c i).state with
+      | none => controlAction 0 none
+      | some q => emitterClearTM.tm.tr q (c i).inputSymbol (c i).workTapeSymbols := by
+  have hw : emitterBankSymbols (emitterBankCfg p c).workTapeSymbols i =
+      (c i).workTapeSymbols := by
+    funext j
+    fin_cases j <;>
+      simp [emitterBankSymbols, emitterBankCfg, emitterSlots, Cfg.workTapeSymbols,
+        -Fin.natAdd_eq_addNat]
+  unfold emitterBankPart
+  rw [hw]
+  dsimp only
+  cases hs : (c i).state <;> rfl

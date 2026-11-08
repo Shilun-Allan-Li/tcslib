@@ -1,0 +1,9 @@
+/-- A header scan that writes one ruler mark per input cell. No public row writes a ruler
+of the doubled header's length. States zero, one and two read aligned pairs; three returns. -/
+private def uk_scanTM {k : ℕ} (i : Fin k) : MultiTapeTM k Bool (Fin 4) where
+  q₀ := 0
+  tr := fun q b _ =>
+    if q = 3 then inputMoveAction 0 3
+    else tapeAction i .pos (some (some true)) .pos
+      (if q = 0 then if b = some false then 1 else 2
+       else if q = 1 ∧ b = some true then 3 else 0)

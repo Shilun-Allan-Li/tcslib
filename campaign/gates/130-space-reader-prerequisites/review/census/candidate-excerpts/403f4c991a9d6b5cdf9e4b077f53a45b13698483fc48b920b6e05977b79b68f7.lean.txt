@@ -1,0 +1,25 @@
+/-- Identify a forwarding configuration by its selected bank and ambient
+frame, using only the public R1 projections. -/
+private theorem rt_embed_matches {Γ S : Type*} {m k : ℕ} {x : List Γ}
+    (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Γ S)
+    (tapes : Fin k → ℤ → Option Γ) (heads : Fin k → ℤ) (pre : List Γ)
+    (a : Cfg m Γ S x) (d : Cfg k Γ S x)
+    (state : a.state = d.state) (input : a.inputPos = d.inputPos)
+    (bank : ∀ i, a.workTapes i = d.workTapes (ι i))
+    (positions : ∀ i, a.workTapePos i = d.workTapePos (ι i))
+    (outside : ∀ j, j ∉ Set.range ι → tapes j = d.workTapes j ∧ heads j = d.workTapePos j)
+    (output : pre ++ a.output = d.output) : embedEmitCfg ι tapes heads pre a = d := by
+  apply Cfg.ext
+  · exact state
+  · exact input
+  · funext j
+    rcases em (j ∈ Set.range ι) with ⟨i, rfl⟩ | off
+    · rw [embedEmitCfg_selected_tape]; exact bank i
+    · exact (((embedEmitTM_frame ι M tapes heads pre a 0).1 j off).1).trans
+        (outside j off).1
+  · funext j
+    rcases em (j ∈ Set.range ι) with ⟨i, rfl⟩ | off
+    · rw [embedEmitCfg_selected_pos]; exact positions i
+    · exact (((embedEmitTM_frame ι M tapes heads pre a 0).1 j off).2).trans
+        (outside j off).2
+  · exact output

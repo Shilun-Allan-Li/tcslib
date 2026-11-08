@@ -1,0 +1,9 @@
+/-- Acceptance depends only on the configuration-graph vertex. -/
+theorem accepting_congr {C D : Cfg N.k Bool N.State x} (h : NDTM.coreSum C = NDTM.coreSum D) :
+    Accepting C ↔ Accepting D := by
+  have hs : C.state = D.state := by
+    have := congrArg (fun z => z.1.1) h
+    simpa [NDTM.coreSum, MultiTapeTM.ConfigCount.core] using this
+  have ho : outSummary C.output = outSummary D.output := congrArg Prod.snd h
+  unfold Accepting
+  rw [hs, ← outSummary_eq_accept_iff, ← outSummary_eq_accept_iff, ho]

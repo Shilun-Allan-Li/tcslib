@@ -1,0 +1,39 @@
+/-- Reconstruct the selected digit bank through the public R1 selected-tape and frame facts.
+**Proof sketch.** Selected cells decode and re-encode because they are digits or blanks.
+Unselected cells and heads are the time-zero frame of the supplied lifted row. -/
+private theorem recordStep_restrict {K m : ℕ} {Γ S : Type} [DecidableEq Γ]
+    (R : MultiTapeTM m Bool S) (e : Bool ↪ Γ) (ι : Fin m ↪ Fin K) {x : List Bool}
+    (d : Cfg K Γ S (x.map e))
+    (hdig : ∀ i p γ, d.workTapes (ι i) p = some γ → ∃ b, γ = e b) :
+    d = embedEmitCfg ι d.workTapes d.workTapePos d.output
+      (Cfg.liftSymbols e (⟨d.state, Fin.cast (by simp) d.inputPos,
+        fun i p => (d.workTapes (ι i) p).bind (decodeBool e),
+        fun i => d.workTapePos (ι i), []⟩ : Cfg m Bool S x)) := by
+  let c : Cfg m Bool S x := ⟨d.state, Fin.cast (by simp) d.inputPos,
+    fun i p => (d.workTapes (ι i) p).bind (decodeBool e),
+    fun i => d.workTapePos (ι i), []⟩
+  have frame := (embedEmitTM_frame ι (R.liftSymbols e)
+    d.workTapes d.workTapePos d.output (c.liftSymbols e) 0).1
+  apply Cfg.ext
+  · rfl
+  · apply Fin.ext; rfl
+  · funext j
+    by_cases h : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := h
+      rw [embedEmitCfg_selected_tape]
+      funext p
+      change d.workTapes (ι i) p =
+        ((d.workTapes (ι i) p).bind (decodeBool e)).map e
+      cases hp : d.workTapes (ι i) p with
+      | none => rfl
+      | some γ =>
+        obtain ⟨b, rfl⟩ := hdig i p γ hp
+        simp [decodeBool_apply]
+    · exact (frame j h).1.symm
+  · funext j
+    by_cases h : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := h
+      rw [embedEmitCfg_selected_pos]
+      rfl
+    · exact (frame j h).2.symm
+  · simp [embedEmitCfg, Cfg.liftSymbols]

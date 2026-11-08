@@ -1,0 +1,33 @@
+/-- A selected, canonized record executes its fixed action fields in exactly
+`4k + 5` physical steps. The table head then points at its successor field.
+The equality includes the native-input movement, all mirrored writes/moves,
+the finite summary update, and preservation of the physical output prefix.
+
+**Proof sketch.** Apply the prefix trace at its full width. Its finite buffer
+is the record's fixed prefix, so `h1Payload_correct` identifies the public
+reader's result. The next transition executes that payload silently. -/
+private lemma h1Record_execute {k n : ℕ} {x : List Bool}
+    (d : Cfg (k + 2) Bool (h1RecordState k) x)
+    (a : Action k Bool (Fin (n + 1))) (bits : Fin (h1RecordWidth k) → Bool)
+    (hq : d.state = some (h1RecordTM k).q₀)
+    (hw : ∀ i : Fin (h1RecordWidth k),
+      d.workTapes (h1TableTape k) (d.workTapePos (h1TableTape k) + i.val) = some (bits i))
+    (hbits : List.ofFn bits = (actionBitsK a).take (h1RecordWidth k)) :
+    (h1RecordTM k).runFrom d (h1RecordWidth k + 1) =
+      (h1ApplyPayload (⟨a.inputTape, a.workTapes, a.output, none⟩ : Action k Bool (Fin 1))
+        (d.workTapeSymbols (h1SummaryTape k))).apply
+        (h1ReadCfg d bits (h1RecordWidth k) le_rfl) := by
+  rw [MultiTapeTM.runFrom_succ_eq_step', h1Record_read d bits hq hw _ le_rfl]
+  have hbuf : (fun i : Fin (h1RecordWidth k) =>
+      if i.val < h1RecordWidth k then bits i else false) = bits := by
+    funext i
+    exact if_pos i.isLt
+  have hne := h1Summary_ne_table k
+  have hs : (h1ReadCfg d bits (h1RecordWidth k) le_rfl).workTapeSymbols
+      (h1SummaryTape k) = d.workTapeSymbols (h1SummaryTape k) := by
+    simp [h1ReadCfg, Cfg.workTapeSymbols, hne]
+  simp only [MultiTapeTM.step, h1ReadCfg, h1RecordTM, lt_self_iff_false,
+    hbuf, h1Payload_correct a bits hbits]
+  change (h1ApplyPayload _
+    ((h1ReadCfg d bits (h1RecordWidth k) le_rfl).workTapeSymbols (h1SummaryTape k))).apply _ = _
+  rw [hs]

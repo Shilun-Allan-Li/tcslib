@@ -1,0 +1,15 @@
+/-- A renamed configuration equals any target that shares its four data fields and carries
+the renamed state, read field by field through the renaming's published equations. -/
+private theorem recordStep_mapState_eq {K : ℕ} {Γ S S' : Type} {x : List Γ}
+    (c : Cfg K Γ S x) (f : S → S') (d : Cfg K Γ S' x)
+    (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
+    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
+    (ho : c.output = d.output) : c.mapState f = d := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, hs]
+  · rw [Cfg.mapState_inputPos, hi]
+  · funext j q
+    rw [Cfg.mapState_workTapes, hw]
+  · funext j
+    rw [Cfg.mapState_workTapePos, hp]
+  · rw [Cfg.mapState_output, ho]

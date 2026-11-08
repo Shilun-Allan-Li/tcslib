@@ -1,0 +1,16 @@
+/-- **A renamed configuration, field by field.** Renaming the states of `c` by `f` gives any
+configuration `d` that has `c`'s input head, tapes, work heads and output and whose state is `c`'s
+state renamed.
+
+**Proof sketch.** Compare the five fields through the state-renaming equations
+(`Turing.Cfg.mapState_state` and the others). -/
+theorem Cfg.mapState_eq_of_fields {k : ℕ} {Γ S S' : Type*} {x : List Γ} (c : Cfg k Γ S x)
+    (f : S → S') (d : Cfg k Γ S' x) (hs : c.state.map f = d.state) (hi : c.inputPos = d.inputPos)
+    (hw : c.workTapes = d.workTapes) (hp : c.workTapePos = d.workTapePos)
+    (ho : c.output = d.output) : c.mapState f = d := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, hs]
+  · rw [Cfg.mapState_inputPos, hi]
+  · funext j p; rw [Cfg.mapState_workTapes, hw]
+  · funext j; rw [Cfg.mapState_workTapePos, hp]
+  · rw [Cfg.mapState_output, ho]

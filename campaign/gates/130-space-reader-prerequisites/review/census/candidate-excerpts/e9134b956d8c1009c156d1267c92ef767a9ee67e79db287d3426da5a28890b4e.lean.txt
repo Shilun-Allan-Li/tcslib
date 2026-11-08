@@ -1,0 +1,37 @@
+/-- The public seam-layout machine redistributes a canonical serialization from its right
+blank, at one time chosen before the input and the ambient configuration.
+
+**Proof sketch.** Instantiate the layout contract with the state-count bits, unary initial
+state, and transition table. The published serialization and unary-word equations identify
+its source word and its two output words. -/
+private theorem ss_serialized_layout (n : ℕ) (src tbl sm : Fin n)
+    (hst : src ≠ tbl) (hss : src ≠ sm) (hts : tbl ≠ sm) :
+    ∃ (Q : Type) (_ : Fintype Q) (_ : DecidableEq Q) (L : MultiTapeTM n Bool Q)
+      (entry done : Q) (C : ℕ),
+      ∀ {k m : ℕ} (M : MultiTapeTM k Bool (Fin (m + 1))),
+        ∃ T ≤ C * ((serializeK M).length + 1),
+          ∀ {z : List Bool} (d : Cfg n Bool Q z),
+            d.state = some entry →
+            d.workTapes src = FinTM.bufferTape (serializeK M) →
+            d.workTapePos src = (serializeK M).length →
+            d.workTapes tbl = (fun _ => none) → d.workTapePos tbl = 0 →
+            d.workTapes sm = (fun _ => none) → d.workTapePos sm = 0 →
+            (L.runFrom d T).state = some done ∧
+            (L.runFrom d T).inputPos = d.inputPos ∧
+            (L.runFrom d T).workTapes =
+              Function.update (Function.update (Function.update d.workTapes src
+                (fun _ => none)) tbl (FinTM.bufferTape (tableBitsK M.tr)))
+                sm (fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2)) ∧
+            (L.runFrom d T).workTapePos =
+              Function.update (Function.update (Function.update d.workTapePos src 0) tbl 0)
+                sm 0 ∧
+            (∀ u ≤ T, (L.runFrom d u).output = d.output) ∧
+            ∀ u < T, (L.runFrom d u).state ≠ some done := by
+  obtain ⟨Q, hQ, hD, L, entry, done, C, hL⟩ := exists_seamLayoutTM n src tbl sm hst hss hts
+  refine ⟨Q, hQ, hD, L, entry, done, C, ?_⟩
+  intro k m M
+  have hw := serializeK_eq M
+  rw [unaryFin_eq] at hw
+  have h := hL m.bits (tableBitsK M.tr) M.q₀.val (serializeK M).length (by rw [← hw])
+  rw [← hw] at h
+  simpa only [← unaryFin_eq M.q₀] using h

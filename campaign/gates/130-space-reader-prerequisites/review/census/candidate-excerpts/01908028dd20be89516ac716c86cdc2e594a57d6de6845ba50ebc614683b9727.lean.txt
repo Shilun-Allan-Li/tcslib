@@ -1,0 +1,27 @@
+/-- Rejection cleanup is embedded up to its absorbing return, so its exact
+restoration and the no-anchor property hold simultaneously in the body.
+**Proof sketch.** Apply the exact restoration run and cut at its absorbing
+false-flag return. Its host control remains in the restore phase; the final
+transition to the anchor is accounted for separately by the round proof. -/
+private lemma f2_splitBody_restore (M : FinTM Bool) (start : M.State) (w s : List Bool) :
+    ∃ t ≤ 2 * s.length + w.length + 5,
+      (f2_splitBodyTM M start).tm.runFrom
+        ((f2_splitRestoreScan M.k w s 0).mapState f2_SplitBodyState.restore) t =
+        Cfg.ofWords (.restore (4, false)) (stateWord (M.k + 1) (f2_splitStep w s)) ∧
+      f2_splitSafe (f2_splitBodyTM M start).tm .anchor
+        ((f2_splitRestoreScan M.k w s 0).mapState f2_SplitBodyState.restore) t := by
+  obtain ⟨T, hT, he⟩ := f2_splitRestore_run M.k w s
+  obtain ⟨t, ht, hend, hsafe⟩ := f2_splitEmbed_cut (f2_splitRestoreTM M.k).tm
+    (f2_splitBodyTM M start).tm f2_SplitBodyState.restore .anchor (fun q => q = (4, false))
+    (by intro q; simp)
+    (by
+      rintro z ⟨q, hz, rfl⟩
+      simp only [MultiTapeTM.step, hz]
+      change (controlAction 0 (some (4, false))).apply z = z
+      rw [controlAction_apply, moveInputPos_zero]
+      cases z; simp_all)
+    (by intro q hq inp work; simp [f2_splitBodyTM, hq])
+    (f2_splitRestoreScan M.k w s 0)
+    (Cfg.ofWords (4, false) (stateWord (M.k + 1) (f2_splitStep w s))) T
+    ⟨_, rfl, rfl⟩ he
+  exact ⟨t, ht.trans hT, hend, hsafe⟩

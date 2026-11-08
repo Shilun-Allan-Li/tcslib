@@ -1,0 +1,12 @@
+/-- Replace each input symbol by a zero bit, then append a fixed binary word.
+The scanner and fixed emission chain use no work tapes. -/
+private def e3ShiftTM (w : List Bool) : FinTM Bool where
+  k := 0
+  State := Unit ⊕ Fin (w.length + 1)
+  tm := {
+    q₀ := .inl ()
+    tr := fun q inp _ => match q with
+      | .inl _ => match inp with
+        | some _ => ⟨.pos, fun i => i.elim0, some false, some (.inl ())⟩
+        | none => controlAction 0 (some (.inr 0))
+      | .inr i => emitAction w Sum.inr i }

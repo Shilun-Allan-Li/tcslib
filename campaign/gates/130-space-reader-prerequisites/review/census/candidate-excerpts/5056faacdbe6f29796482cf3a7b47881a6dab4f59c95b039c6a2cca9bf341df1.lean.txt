@@ -1,0 +1,16 @@
+/-- Transition table of the prefix-duplication machine (no work tapes): scan and emit
+aligned pairs while they are doubled bits, rewind the input head, then copy the
+whole input to the output. -/
+def preTr (q : PreState) (inp : Option Bool) (_work : Fin 0 → Option Bool) :
+    Action 0 Bool PreState :=
+  match q, inp with
+  | .scan0, some b => ⟨.pos, fun _ => (none, 0), some b, some (.scan1 b)⟩
+  | .scan0, none => controlAction 0 (some .rwStart)
+  | .scan1 b, some b' =>
+    ⟨.pos, fun _ => (none, 0), some b', some (if b = b' then .scan0 else .rwStart)⟩
+  | .scan1 _, none => controlAction 0 (some .rwStart)
+  | .rwStart, _ => controlAction .neg (some .rwScan)
+  | .rwScan, some _ => controlAction .neg (some .rwScan)
+  | .rwScan, none => controlAction .pos (some .copy)
+  | .copy, some b => ⟨.pos, fun _ => (none, 0), some b, some .copy⟩
+  | .copy, none => ⟨0, fun _ => (none, 0), none, none⟩

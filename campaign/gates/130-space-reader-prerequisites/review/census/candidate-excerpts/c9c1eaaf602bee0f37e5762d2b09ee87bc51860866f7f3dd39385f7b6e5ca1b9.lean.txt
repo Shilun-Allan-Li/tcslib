@@ -1,0 +1,38 @@
+/-- Capture the certificate extractor, rewind, and evaluate a previously
+validated doubled formula. No physical output occurs before the verdict.
+Unary index walks and their rewinds take linear time in the literal encoding.
+[AB09, Theorem 2.10, membership] -/
+private def satEvalTM (M : FinTM Bool) : FinTM Bool where
+  k := M.k + 1
+  State := M.State ⊕ SatEvalControl
+  tm := {
+    q₀ := .inl M.tm.q₀
+    tr := fun s inp work => match s with
+    | .inl q => captureAction Sum.inl (.inr (.inl 0))
+        (M.tm.tr q inp fun i => work i.castSucc)
+    | .inr (.inl q) => match q.val with
+      | 0 => FinTM.controlAction .neg (some (.inr (.inl 1)))
+      | 1 => match inp with
+        | some _ => FinTM.controlAction .neg (some (.inr (.inl 1)))
+        | none => FinTM.controlAction .pos (some (.inr (.inl 2)))
+      | 2 => satEvalAction M 0 .neg none (some (.inl 3))
+      | _ => match work (Fin.last M.k) with
+        | some _ => satEvalAction M 0 .neg none (some (.inl 3))
+        | none => satEvalAction M 0 .pos none (some (satEvalQ 0 true false false))
+    | .inr (.inr (q, a, c, skip)) =>
+      if skip then satEvalAction M .pos 0 none (some (satEvalQ q a c false))
+      else if q = 4 then
+        match work (Fin.last M.k) with
+        | some _ => satEvalAction M 0 .neg none (some (satEvalQ 4 a c false))
+        | none => satEvalAction M 0 .pos none (some (satEvalQ 1 a c false))
+      else match inp with
+        | none => satEvalAction M 0 0 (some false) none
+        | some b => match q.val with
+          | 0 => if b then satEvalAction M .pos 0 none (some (satEvalQ 1 a false true))
+            else satEvalAction M 0 0 (some a) none
+          | 1 => if b then satEvalAction M .pos 0 none (some (satEvalQ 2 a c true))
+            else satEvalAction M .pos 0 none (some (satEvalQ 0 (a && c) false true))
+          | 2 => if b then satEvalAction M .pos .pos none (some (satEvalQ 2 a c true))
+            else satEvalAction M .pos 0 none (some (satEvalQ 3 a c true))
+          | _ => satEvalAction M .pos 0 none
+              (some (satEvalQ 4 a (c || decide (work (Fin.last M.k) = some b)) true)) }

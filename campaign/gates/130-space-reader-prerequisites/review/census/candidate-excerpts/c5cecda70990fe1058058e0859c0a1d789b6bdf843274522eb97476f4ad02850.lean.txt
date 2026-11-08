@@ -1,0 +1,12 @@
+/-- **The input rewind**: a left step, then left while the input head reads a symbol, then one
+step right at the left blank. -/
+private def xr_inRewindTM (K : ℕ) : MultiTapeTM K Bool xr_St where
+  q₀ := .start
+  tr := fun q inp _ =>
+    match q with
+    | .start => FinTM.controlAction .neg (some .run)
+    | .run =>
+      match inp with
+      | some _ => FinTM.controlAction .neg (some .run)
+      | none => FinTM.controlAction .pos (some (.done true))
+    | q => xr_stay q

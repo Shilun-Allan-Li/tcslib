@@ -1,0 +1,262 @@
+/-- The unary core consumes a bounded unary field and then clears its scratch counter.
+It preserves the other tape, every head, and the output, with a linear time bound.
+
+**Proof sketch.** Split the suffix at its first false cell or right blank. Apply the
+public countdown contract to the one-cell orbit, test the stopping cell, and clear the
+residual word at its unchanged width. Public phase-host hprefix equations give the strict
+exit cuts. No countdown or phase-host transition is re-proved. -/
+private lemma canonUnaryCore_run {x : List Bool} (w : List Bool)
+    (d : Cfg 2 Bool (Sigma canonUnaryPhase) x)
+    (hs : d.state = some ⟨none, .dec .run⟩) (positive : 1 ≤ d.inputPos.val)
+    (counter : d.workTapes 1 = FinTM.bufferTape w) (home : d.workTapePos 1 = 0) :
+    ∃ t ≤ 12 * (x.length + w.length + 1),
+      (canonUnaryCore.runFrom d t).state = some
+        ⟨some (some (codeSkipFin (counterValue w + 1)
+          (x.drop (d.inputPos.val - 1))).isSome), .done⟩ ∧
+      (canonUnaryCore.runFrom d t).output = d.output ∧
+      (∀ u < t, ∀ b,
+        (canonUnaryCore.runFrom d u).state ≠ some ⟨some (some b), .done⟩) ∧
+      (canonUnaryCore.runFrom d t).workTapes =
+        Function.update d.workTapes 1 (FinTM.bufferTape []) ∧
+      (canonUnaryCore.runFrom d t).workTapePos = d.workTapePos ∧
+      ∀ ys, codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1)) = some ys →
+        (canonUnaryCore.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  let p := d.inputPos.val - 1
+  have pos : d.inputPos.val = p + 1 := by dsimp [p]; omega
+  have range : p ≤ x.length := by have := d.inputPos.isLt; omega
+  obtain ⟨r, rest, parts, stop⟩ := canonTruePrefix (x.drop p)
+  have size : x.length = p + r + rest.length := by
+    have lengths := congrArg List.length parts
+    simp only [List.length_drop, List.length_append, List.length_replicate] at lengths
+    omega
+  have fits : p + r ≤ x.length := by omega
+  have lookup (i : ℕ) : x[p + i]? = (List.replicate r true ++ rest)[i]? := by
+    rw [← parts]
+    simp only [List.getElem?_drop]
+  have hprefix (i : ℕ) (hi : i < r) : x[p + i]? = some true := by
+    rw [lookup]
+    simp [List.getElem?_append, hi]
+  have last : x[p + r]? = rest.head? := by
+    rw [lookup]
+    simp [List.getElem?_append]
+    cases rest <;> rfl
+  have stopped : x[p + r]? ≠ some true := by
+    rw [last]
+    rcases stop with rfl | ⟨ys, rfl⟩ <;> simp
+  let start : Cfg 2 Bool (CounterLoopState (Option Bool)) x :=
+    d.mapState (fun _ => .dec .run)
+  let body := counterLoopBody (some true) start
+  have startState : start.state = some (.dec .run) := by simp [start, Cfg.mapState, hs]
+  have layout : counterLoopCfg (some (.dec .run)) body (FinTM.bufferTape w) 0 = start := by
+    rw [← startState]
+    rw [← counter, ← home]
+    exact counterLoopCfg_body (some true) start
+  obtain ⟨l, boundL, v, q, width, which, runL, cutL⟩ :=
+    canonUnaryLoop body rfl p r pos fits hprefix stopped w
+  rw [layout] at runL cutL
+  let afterLoop := (canonUnaryFamily none).runFrom start l
+  have loopEq : afterLoop = _ := runL
+  have stateL : afterLoop.state = some q := by rw [loopEq]; rfl
+  have first := phaseHostTM_run canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext
+    none start afterLoop l rfl q stateL ⟨some none, none⟩
+    (by simp [canonUnaryNext, which]) (by
+      intro u hu s state
+      have noDone : s ≠ .done := fun eq => (cutL u hu).1 (state.trans (congrArg some eq))
+      have noEscape : s ≠ .escape := fun eq => (cutL u hu).2
+        (state.trans (congrArg some eq))
+      simp [canonUnaryNext, noDone, noEscape])
+  have startEq : start.mapState (Sigma.mk none) = d := by
+    apply Cfg.ext <;> simp [start, Cfg.mapState, hs]
+  rw [startEq] at first
+  let cellStart : Cfg 2 Bool (Option Bool) x := afterLoop.mapState (fun _ => none)
+  have cellState : cellStart.state = some none := by simp [cellStart, Cfg.mapState, stateL]
+  let bit := decide (cellStart.inputSymbol = some false)
+  let afterCell := (canonCellTM 2 false).step cellStart
+  have cellEq : afterCell = _ := canonCell_step false cellStart none cellState
+  have stateT : afterCell.state = some (some bit) := by rw [cellEq]
+  have second := phaseHostTM_run canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext
+    (some none) cellStart afterCell 1 rfl (some bit) stateT
+    ⟨some (some bit), .sweep⟩ rfl (by
+      intro u hu s state
+      have zero : u = 0 := by omega
+      subst u
+      have eq : s = none := (Option.some.inj (cellState.symm.trans state)).symm
+      subst s
+      rfl)
+  have cellJoin : afterLoop.mapState (fun _ => (⟨some none, none⟩ : Sigma canonUnaryPhase)) =
+      cellStart.mapState (Sigma.mk (some none)) := by
+    simp [cellStart, Cfg.mapState, Option.map_map, Function.comp_def]
+  rw [← cellJoin] at second
+  let clearStart : Cfg 2 Bool SweepPhase x := afterCell.mapState (fun _ => .sweep)
+  have clearState : clearStart.state = some .sweep := by simp [clearStart, Cfg.mapState, stateT]
+  have clearWord : clearStart.workTapes 1 = FinTM.bufferTape v ∧
+      clearStart.workTapePos 1 = 0 := by
+    change afterCell.workTapes 1 = _ ∧ afterCell.workTapePos 1 = _
+    rw [cellEq]
+    change afterLoop.workTapes 1 = _ ∧ afterLoop.workTapePos 1 = _
+    rw [loopEq]
+    simp only [counter_cfg_eq]
+    change Fin.lastCases (motive := fun _ : Fin 2 => ℤ → Option Bool)
+      (FinTM.bufferTape v) body.workTapes (Fin.last 1) = _ ∧
+      Fin.lastCases (motive := fun _ : Fin 2 => ℤ) 0 body.workTapePos (Fin.last 1) = _
+    simp only [Fin.lastCases_last, and_self]
+  have clearing := clearTM_run_ofCfg (1 : Fin 2) v clearStart clearState
+    (by intro z _ _; rw [clearWord.1, clearWord.2]; simp)
+  let c := 2 * v.length + 2
+  let afterClear := (clearTM 2 (1 : Fin 2)).runFrom clearStart c
+  have clearEq : afterClear = _ := clearing.1
+  have stateC : afterClear.state = some .done := by rw [clearEq]
+  have third := phaseHostTM_run canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext
+    (some (some bit)) clearStart afterClear c rfl .done stateC
+    ⟨some (some bit), .done⟩ (by rfl) (by
+      intro u hu s state
+      have notDone : s ≠ .done := fun eq =>
+        clearing.2.1 u hu (state.trans (congrArg some eq))
+      simp [canonUnaryNext, notDone])
+  have clearJoin : afterCell.mapState
+      (fun _ => (⟨some (some bit), .sweep⟩ : Sigma canonUnaryPhase)) =
+      clearStart.mapState (Sigma.mk (some (some bit))) := by
+    simp [clearStart, Cfg.mapState, Option.map_map, Function.comp_def]
+  let duration := (l + 1) + 2 + c
+  have whole : canonUnaryCore.runFrom d duration =
+      afterClear.mapState (Sigma.mk (some (some bit))) := by
+    change (phaseHostTM canonUnaryFamily ⟨none, .dec .run⟩ canonUnaryNext).runFrom d _ = _
+    rw [MultiTapeTM.runFrom_add d (l + 1 + 2) c,
+      MultiTapeTM.runFrom_add d (l + 1) 2, first.2, second.2, clearJoin,
+      third.1 c le_rfl]
+  have position : cellStart.inputPos.val = p + min (counterValue w) r + 1 := by
+    change afterLoop.inputPos.val = _
+    rw [loopEq]
+    rfl
+  have read : cellStart.inputSymbol = x[p + min (counterValue w) r]? :=
+    FinTM.inputSymbol_at cellStart _
+      (by have := Nat.min_le_right (counterValue w) r; omega) position
+  have field := canonUnaryField (counterValue w) r rest stop
+  rw [← parts] at field
+  have verdict : (codeSkipFin (counterValue w + 1) (x.drop p)).isSome = bit := by
+    rw [field]
+    dsimp only [bit]
+    rw [read]
+    by_cases enough : r ≤ counterValue w
+    · rw [if_pos enough, Nat.min_eq_right enough, last]
+      rcases stop with rfl | ⟨ys, rfl⟩ <;> rfl
+    · rw [if_neg enough, Nat.min_eq_left (by omega), hprefix _ (by omega)]
+      rfl
+  have tapes : afterClear.workTapes = Function.update d.workTapes 1 (FinTM.bufferTape []) := by
+    rw [clearEq]
+    funext j z
+    fin_cases j
+    · change clearStart.workTapes 0 z = d.workTapes 0 z
+      change afterCell.workTapes 0 z = _
+      rw [cellEq]
+      change afterLoop.workTapes 0 z = _
+      rw [loopEq]
+      change Fin.lastCases (motive := fun _ : Fin 2 => ℤ → Option Bool)
+        (FinTM.bufferTape v) body.workTapes (0 : Fin 1).castSucc z = _
+      rw [Fin.lastCases_castSucc]
+      rfl
+    · simp only [FinTM.bufferTape_nil]
+      change (if (1 : Fin 2) = 1 ∧ clearStart.workTapePos 1 ≤ z ∧
+        z < clearStart.workTapePos 1 + (v.length : ℤ) then none
+        else clearStart.workTapes 1 z) = none
+      rw [clearWord.1, clearWord.2]
+      simp only [true_and, zero_add]
+      split_ifs with inside
+      · rfl
+      · by_cases nonneg : 0 ≤ z
+        · simp [FinTM.bufferTape, nonneg,
+            List.getElem?_eq_none (show v.length ≤ z.toNat by omega)]
+        · simp [FinTM.bufferTape, nonneg]
+  have heads : afterClear.workTapePos = d.workTapePos := by
+    rw [clearEq]
+    change afterCell.workTapePos = _
+    rw [cellEq]
+    change afterLoop.workTapePos = _
+    rw [loopEq]
+    funext j
+    fin_cases j
+    · change Fin.lastCases (motive := fun _ : Fin 2 => ℤ)
+        0 body.workTapePos (0 : Fin 1).castSucc = _
+      rw [Fin.lastCases_castSucc]
+      rfl
+    · change Fin.lastCases (motive := fun _ : Fin 2 => ℤ) 0 body.workTapePos (Fin.last 1) = _
+      rw [Fin.lastCases_last]
+      exact home.symm
+  have output : afterClear.output = d.output := by
+    rw [clearEq]
+    change afterCell.output = _
+    rw [cellEq]
+    change afterLoop.output = _
+    rw [loopEq]
+    rfl
+  refine ⟨duration, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · dsimp [duration, c]
+    rw [width]
+    omega
+  · rw [whole]
+    change Option.map (fun s : SweepPhase =>
+      (⟨some (some bit), s⟩ : Sigma canonUnaryPhase)) afterClear.state = _
+    rw [stateC]
+    change some (⟨some (some bit), SweepPhase.done⟩ : Sigma canonUnaryPhase) =
+      some ⟨some (some (codeSkipFin (counterValue w + 1) (x.drop p)).isSome), .done⟩
+    rw [verdict]
+  · rw [whole]
+    exact output
+  · intro u hu b
+    by_cases early : u ≤ l
+    · rw [first.1 u early]
+      intro eq
+      obtain ⟨s, _, bad⟩ := Option.map_eq_some_iff.mp eq
+      have impossible := congrArg Sigma.fst bad
+      cases impossible
+    · have index : u = l + 1 + (u - (l + 1)) := by omega
+      rw [index, MultiTapeTM.runFrom_add, first.2]
+      by_cases middle : u - (l + 1) ≤ 1
+      · rw [second.1 _ middle]
+        intro eq
+        obtain ⟨s, _, bad⟩ := Option.map_eq_some_iff.mp eq
+        have impossible := congrArg Sigma.fst bad
+        cases impossible
+      · have tailIndex : u - (l + 1) = 2 + (u - (l + 1) - 2) := by omega
+        rw [tailIndex, MultiTapeTM.runFrom_add, second.2, clearJoin,
+          third.1 _ (by dsimp [duration] at hu; omega)]
+        intro eq
+        obtain ⟨s, state, tag⟩ := Option.map_eq_some_iff.mp eq
+        have equalBits : bit = b := by
+          have e := congrArg Sigma.fst tag
+          exact Option.some.inj (Option.some.inj e)
+        subst b
+        have same : s = .done := eq_of_heq (Sigma.mk.inj_iff.mp tag).2
+        exact clearing.2.1 _ (by dsimp [duration, c] at *; omega)
+          (state.trans (congrArg some same))
+  · rw [whole]
+    exact tapes
+  · rw [whole]
+    exact heads
+  · intro ys accepted
+    change codeSkipFin (counterValue w + 1) (x.drop p) = some ys at accepted
+    rw [field] at accepted
+    have enough : r ≤ counterValue w := by
+      by_contra small
+      simp [small] at accepted
+    rw [if_pos enough] at accepted
+    rcases stop with rfl | ⟨tail, rfl⟩
+    · cases accepted
+    · have same : tail = ys := Option.some.inj accepted
+      subst ys
+      have value : cellStart.inputSymbol = some false := by
+        rw [read, Nat.min_eq_right enough, last]
+        rfl
+      rw [whole, clearEq]
+      change afterCell.inputPos.val = _
+      rw [cellEq]
+      simp only [value, if_true]
+      have beforeEnd : cellStart.inputPos.val ≠ x.length + 1 := by
+        intro eq
+        simp only [List.length_cons, Nat.min_eq_right enough] at size position
+        omega
+      change (moveInputPos cellStart.inputPos SignType.pos).val = _
+      rw [moveInputPos_pos_of_ne_right _ beforeEnd]
+      change cellStart.inputPos.val + 1 = x.length + 1 - tail.length
+      simp only [List.length_cons, Nat.min_eq_right enough] at size position
+      omega

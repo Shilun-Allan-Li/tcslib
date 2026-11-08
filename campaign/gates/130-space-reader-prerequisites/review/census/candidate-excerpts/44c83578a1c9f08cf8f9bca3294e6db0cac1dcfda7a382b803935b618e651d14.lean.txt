@@ -1,0 +1,5 @@
+/-- The boot-phase configuration: `S` on its bank, its output on the yardstick tape. -/
+def bootCfg (c : Cfg S.k Bool S.State x) :
+    Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x :=
+  hostCfg (some ((c.state.map ClockPhase.boot).getD ClockPhase.rew)) c.inputPos c.workTapes
+    c.workTapePos (fun _ _ => none) (fun _ => 0) (bufferTape c.output) c.output.length []

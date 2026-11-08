@@ -1,0 +1,101 @@
+/-- Comparison invariant: the first `i` symbols match, and the head is at `i + 1`.
+
+**Proof sketch.** Induct on the number of remaining comparison symbols. A matching
+symbol advances the invariant. A mismatch selects the second emission chain. With
+no symbols remaining, the boundary blank selects the first chain and an extra
+symbol selects the second. The emission-chain lemma supplies the remaining time. -/
+private lemma ifEq_run (w₀ u v x : List Bool) : ∀ (r i : ℕ) (hlen : w₀.length = i + r), i ≤ x.length → x.take i = w₀.take i →
+    ∀ (cfg : Cfg 0 Bool (ifEqTM w₀ u v).State x),
+      cfg.state = some (.inl ⟨i, by omega⟩) → cfg.inputPos.val = i + 1 → cfg.output = [] →
+      ∃ t, t ≤ r + max u.length v.length + 2 ∧
+        ((ifEqTM w₀ u v).tm.runFrom cfg t).state = none ∧
+        ((ifEqTM w₀ u v).tm.runFrom cfg t).output = if x = w₀ then u else v := by
+  intro r
+  induction r with
+  | zero =>
+    intro i hlen hix hprefix cfg hs hp ho
+    have hi : ¬i < w₀.length := by omega
+    have hsym := inputSymbol_at cfg i hix hp
+    by_cases he : x = w₀
+    · subst x
+      have hb : w₀[i]? = none := List.getElem?_eq_none_iff.mpr (by omega)
+      have hstep : (ifEqTM w₀ u v).tm.step cfg =
+          (controlAction 0 (some (.inr (.inl 0)))).apply cfg := by
+        unfold MultiTapeTM.step
+        rw [hs]
+        simp only [ifEqTM, hsym, dif_neg hi, hb, ite_true]
+      have hs' : ((ifEqTM w₀ u v).tm.step cfg).state = some (.inr (.inl 0)) := by
+        rw [hstep]
+        rfl
+      have ho' : ((ifEqTM w₀ u v).tm.step cfg).output = [] := by
+        simp [hstep, controlAction, Action.apply, ho]
+      have hf := ifEq_finish w₀ u v w₀ true _ hs' ho'
+      refine ⟨u.length + 1 + 1, by omega, ?_⟩
+      rw [MultiTapeTM.runFrom_succ_eq_step]
+      simpa only [Bool.cond_true, if_pos rfl] using hf
+    · have hx : i < x.length := by
+        by_contra hh
+        have hxt : x.take i = x := List.take_of_length_le (by omega)
+        have hwt : w₀.take i = w₀ := List.take_of_length_le (by omega)
+        exact he (by rw [← hxt, ← hwt]; exact hprefix)
+      have hb : x[i]? = some x[i] := List.getElem?_eq_getElem hx
+      have hstep : (ifEqTM w₀ u v).tm.step cfg =
+          (controlAction 0 (some (.inr (.inr 0)))).apply cfg := by
+        unfold MultiTapeTM.step
+        rw [hs]
+        simp only [ifEqTM, hsym, dif_neg hi, hb, Option.some_ne_none, ite_false]
+      have hs' : ((ifEqTM w₀ u v).tm.step cfg).state = some (.inr (.inr 0)) := by
+        rw [hstep]
+        rfl
+      have ho' : ((ifEqTM w₀ u v).tm.step cfg).output = [] := by
+        simp [hstep, controlAction, Action.apply, ho]
+      have hf := ifEq_finish w₀ u v x false _ hs' ho'
+      refine ⟨v.length + 1 + 1, by omega, ?_⟩
+      rw [MultiTapeTM.runFrom_succ_eq_step]
+      simpa only [Bool.cond_false, if_neg he] using hf
+  | succ r ih =>
+    intro i hlen hix hprefix cfg hs hp ho
+    have hi : i < w₀.length := by omega
+    have hsym := inputSymbol_at cfg i hix hp
+    by_cases hm : x[i]? = some w₀[i]
+    · obtain ⟨hx, hbit⟩ := List.getElem?_eq_some_iff.mp hm
+      have hstep : (ifEqTM w₀ u v).tm.step cfg =
+          (controlAction .pos (some (.inl ⟨i + 1, by omega⟩))).apply cfg := by
+        unfold MultiTapeTM.step
+        rw [hs]
+        simp only [ifEqTM, hsym, dif_pos hi, hm, ite_true]
+      have hs' : ((ifEqTM w₀ u v).tm.step cfg).state =
+          some (.inl ⟨i + 1, by omega⟩) := by rw [hstep]; rfl
+      have hp' : ((ifEqTM w₀ u v).tm.step cfg).inputPos.val = (i + 1) + 1 := by
+        rw [hstep]
+        change (moveInputPos cfg.inputPos .pos).val = i + 1 + 1
+        rw [moveInputPos_pos_of_ne_right _ (by omega)]
+        simp only
+        omega
+      have ho' : ((ifEqTM w₀ u v).tm.step cfg).output = [] := by
+        simp [hstep, controlAction, Action.apply, ho]
+      have hprefix' : x.take (i + 1) = w₀.take (i + 1) := by
+        rw [List.take_succ, List.take_succ, hprefix, hm, List.getElem?_eq_getElem hi]
+      obtain ⟨t, ht, htstate, htout⟩ := ih (i + 1) (by omega) (by omega) hprefix'
+        ((ifEqTM w₀ u v).tm.step cfg) hs' hp' ho'
+      refine ⟨t + 1, by omega, ?_⟩
+      rw [MultiTapeTM.runFrom_succ_eq_step]
+      exact ⟨htstate, htout⟩
+    · have he : x ≠ w₀ := by
+        intro he
+        subst x
+        exact hm (List.getElem?_eq_getElem hi)
+      have hstep : (ifEqTM w₀ u v).tm.step cfg =
+          (controlAction 0 (some (.inr (.inr 0)))).apply cfg := by
+        unfold MultiTapeTM.step
+        rw [hs]
+        simp only [ifEqTM, hsym, dif_pos hi, if_neg hm]
+      have hs' : ((ifEqTM w₀ u v).tm.step cfg).state = some (.inr (.inr 0)) := by
+        rw [hstep]
+        rfl
+      have ho' : ((ifEqTM w₀ u v).tm.step cfg).output = [] := by
+        simp [hstep, controlAction, Action.apply, ho]
+      have hf := ifEq_finish w₀ u v x false _ hs' ho'
+      refine ⟨v.length + 1 + 1, by omega, ?_⟩
+      rw [MultiTapeTM.runFrom_succ_eq_step]
+      simpa only [Bool.cond_false, if_neg he] using hf

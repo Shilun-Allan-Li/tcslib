@@ -1,0 +1,18 @@
+/-- The fresh exit control is an absorbing silent state, on every tape
+configuration, so cutting at first exit preserves the entire endpoint. -/
+private lemma emCall_exit_fixed (M : FinTM Bool) (emit : Bool) (x : List Bool)
+    (z : Cfg (emCallTM M emit).k Bool (emCallTM M emit).State x)
+    (hz : z.state = some (.inr (.inr (5 : Fin 6)))) :
+    (emCallTM M emit).tm.step z = z := by
+  have ha : ∀ inp work, (emCallTM M emit).tm.tr (.inr (.inr 5)) inp work =
+      controlAction 0 (some (.inr (.inr 5))) := by
+    intro inp work
+    dsimp only [emCallTM, emCallFinishTM, emCallAction, controlAction]
+    congr 1
+    funext i
+    cases emCallPairSelect M i <;> rfl
+  unfold MultiTapeTM.step
+  simp only [hz]
+  rw [ha, controlAction_apply, moveInputPos_zero]
+  cases z
+  simp_all

@@ -1,0 +1,215 @@
+/-- The handoff of the guess-then-run host over any writer, given the writer's run on the
+word's stream segment: from the setup's dispatch, `m + 1` bits reach `done` with the `m` bits
+written from the head and the head after them, and no shorter prefix reaches `done`. Both
+writers' contracts give this hypothesis.
+
+**Proof sketch.** Split the word into the setup's `TP` bits and a dispatch bit, the writer's
+`m + 1` bits and a dispatch bit, the step right's bit and a dispatch bit, and the rewind's `m + 3`
+bits and a dispatch bit. Each phase is one application of `Turing.NDTM.phaseHostND_run`: the
+setup's branch is its run (`Turing.MultiTapeTM.toNDTM_runWith`), with no redirect before `TP`;
+the writer's branch is the hypothesis, whose second clause is the guard; the step right is
+`Turing.skipTM_run_ofCfg` over the empty word (the cell after the stream is blank); the rewind is
+`Turing.skipBackTM_run_ofCfg` over the stream (the cells before and after it are blank). Each
+phase's endpoint, renamed (`Turing.Cfg.mapState_mapState`), is the next phase's start; the last is
+the entry configuration, by the renaming's field equations. -/
+private theorem gr_handoff {k : ℕ} {SP SQ Q : Type} [DecidableEq SP] [DecidableEq SQ]
+    (P : MultiTapeTM k Bool SP) (pexit : SP) (j : Fin k) (q₀ : Q) (δ : Q → Bool → Q)
+    (stop : Q → Bool) (bounded : Bool) (V : MultiTapeTM k Bool SQ) (qentry acc rej : SQ)
+    {z : List Bool} (TP : ℕ) (cP : Cfg k Bool SP z)
+    (hP : P.runFrom (P.initCfg z) TP = cP) (hPexit : cP.state = some pexit)
+    (hPfirst : ∀ u < TP, (P.runFrom (P.initCfg z) u).state ≠ some pexit)
+    (m : ℕ) (hend : cP.workTapes j (cP.workTapePos j + m) = none)
+    (hleft : cP.workTapes j (cP.workTapePos j - 1) = none)
+    (w : List Bool) (hw : w.length = TP + 2 * m + 9)
+    (hW : (ndWriterTM k j q₀ δ stop bounded).runWith ((w.drop (TP + 1)).take (m + 1))
+        (cP.mapState (fun _ => NDWriterState.run q₀)) =
+      ⟨some .done, cP.inputPos, Function.update cP.workTapes j (fun p =>
+          if cP.workTapePos j ≤ p ∧ p < cP.workTapePos j + m then
+            FinTM.bufferTape ((w.drop (TP + 1)).take m) (p - cP.workTapePos j)
+          else cP.workTapes j p),
+        Function.update cP.workTapePos j (cP.workTapePos j + m), cP.output⟩)
+    (hWg : ∀ u < m + 1, ((ndWriterTM k j q₀ δ stop bounded).runWith
+        (((w.drop (TP + 1)).take (m + 1)).take u)
+        (cP.mapState (fun _ => NDWriterState.run q₀))).state ≠ some .done) :
+    (guessCtlRunTM P pexit j q₀ δ stop bounded V qentry acc rej).runWith w
+        ((guessCtlRunTM P pexit j q₀ δ stop bounded V qentry acc rej).initCfg z) =
+      (guessRunCfg cP j ((w.drop (TP + 1)).take m) qentry).mapState
+        (Sigma.mk GuessRunPhase.run) := by
+  classical
+  -- the five segments of the word
+  obtain ⟨a₁, b₁, r₁, rfl, ha₁⟩ := guessRun_split TP w (by omega)
+  have hr₁ : r₁.length = 2 * m + 8 := by simp [ha₁] at hw; omega
+  obtain ⟨a₂, b₂, r₂, rfl, ha₂⟩ := guessRun_split (m + 1) r₁ (by omega)
+  have hr₂ : r₂.length = m + 6 := by simp at hr₁; omega
+  obtain ⟨a₃, b₃, r₃, rfl, ha₃⟩ := guessRun_split 1 r₂ (by omega)
+  have hr₃ : r₃.length = m + 4 := by simp at hr₂; omega
+  obtain ⟨a₄, b₄, r₄, rfl, ha₄⟩ := guessRun_split (m + 3) r₃ (by omega)
+  have hr₄ : r₄ = [] := by simp at hr₃; exact List.eq_nil_of_length_eq_zero (by omega)
+  subst hr₄
+  have hpre : ∀ i ≤ m + 1, ((a₁ ++ [b₁] ++ (a₂ ++ [b₂] ++ (a₃ ++ [b₃] ++ (a₄ ++ [b₄] ++ []))))
+      |>.drop (TP + 1) |>.take i) = a₂.take i := by
+    intro i hi
+    rw [List.drop_left' (by simp [ha₁])]
+    rw [List.append_assoc, List.append_assoc, List.take_append_of_le_length (by omega)]
+  rw [hpre m (by omega)]
+  have hW' := hW
+  rw [hpre (m + 1) le_rfl, List.take_of_length_le (show a₂.length ≤ m + 1 by omega),
+    hpre m (by omega)] at hW'
+  have hWg' : ∀ u < m + 1, ((ndWriterTM k j q₀ δ stop bounded).runWith (a₂.take u)
+      (cP.mapState (fun _ => NDWriterState.run q₀))).state ≠ some .done := fun u hu => by
+    have := hWg u hu
+    rwa [hpre (m + 1) le_rfl, List.take_of_length_le (show a₂.length ≤ m + 1 by omega)] at this
+  set s := a₂.take m with hs_def
+  have hslen : s.length = m := by simp [s, ha₂]
+  set M := guessCtlRunPhases P j q₀ δ stop bounded V
+  set red := guessCtlRunRed pexit q₀ qentry acc rej
+  have hN : guessCtlRunTM P pexit j q₀ δ stop bounded V qentry acc rej =
+      NDTM.phaseHostND M ⟨.pre, P.q₀⟩ red := rfl
+  rw [hN]
+  set H := NDTM.phaseHostND M ⟨GuessRunPhase.pre, P.q₀⟩ red with hH
+  have hinit : H.initCfg z = (P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre) := by
+    rw [NDTM.initCfg_eq, MultiTapeTM.initCfg_eq]
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, Cfg.init_state, Cfg.init_state, Option.map_some]
+      rfl
+    · rw [Cfg.mapState_inputPos, Cfg.init_inputPos, Cfg.init_inputPos]
+    · funext i p
+      rw [Cfg.mapState_workTapes, Cfg.init_workTapes, Cfg.init_workTapes]
+    · funext i
+      rw [Cfg.mapState_workTapePos, Cfg.init_workTapePos, Cfg.init_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.init_output, Cfg.init_output]
+  -- phase 1: the setup, then one dispatch
+  have h1 : H.runWith (a₁ ++ [b₁]) ((P.initCfg z).mapState (Sigma.mk GuessRunPhase.pre)) =
+      cP.mapState (fun _ =>
+        (⟨.guess, NDWriterState.run q₀⟩ : Σ i, GuessRunPhase.CtlState SP SQ Q i)) := by
+    refine (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.pre (P.initCfg z) cP a₁ ?_
+      pexit hPexit _ ?_ ?_ b₁).2
+    · show P.toNDTM.runWith a₁ (P.initCfg z) = cP
+      rw [MultiTapeTM.toNDTM_runWith, ha₁, hP]
+    · show (if pexit = pexit then _ else none) = _
+      simp
+    · intro u hu s' hs'
+      change (P.toNDTM.runWith (a₁.take u) (P.initCfg z)).state = some s' at hs'
+      rw [MultiTapeTM.toNDTM_runWith, List.length_take, Nat.min_eq_left hu.le] at hs'
+      have hne := hPfirst u (by omega)
+      show (if s' = pexit then _ else none) = none
+      rw [if_neg]
+      rintro rfl
+      exact hne hs'
+  -- phase 2: the controller-stopped writer, then one dispatch
+  let cW : Cfg k Bool (NDWriterState Q) z := cP.mapState (fun _ => NDWriterState.run q₀)
+  have hcW : cP.mapState (fun _ =>
+      (⟨.guess, NDWriterState.run q₀⟩ : Σ i, GuessRunPhase.CtlState SP SQ Q i)) =
+      cW.mapState (Sigma.mk GuessRunPhase.guess) := by
+    rw [Cfg.mapState_mapState]; rfl
+  -- the writer's endpoint, named, through the renaming's field equations
+  let tW : ℤ → Option Bool := fun p =>
+    if cP.workTapePos j ≤ p ∧ p < cP.workTapePos j + (m : ℤ) then
+      FinTM.bufferTape s (p - cP.workTapePos j)
+    else cP.workTapes j p
+  let cW' : Cfg k Bool (NDWriterState Q) z :=
+    ⟨some .done, cP.inputPos, Function.update cP.workTapes j tW,
+      Function.update cP.workTapePos j (cP.workTapePos j + m), cP.output⟩
+  have hX : (ndWriterTM k j q₀ δ stop bounded).runWith a₂ cW = cW' := hW'
+  have h2 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.guess cW cW' a₂ hX
+    NDWriterState.done rfl ⟨.skip, SeekPhase.run⟩ rfl (by
+      intro u hu s' hs'
+      cases s' with
+      | done => exact absurd hs' (hWg' u (by omega))
+      | run _ => rfl) b₂).2
+  -- phase 3: one step right, onto the cell after the stream's right blank, then one dispatch
+  let cS : Cfg k Bool SeekPhase z := cW'.mapState (fun _ => SeekPhase.run)
+  have hcS : cW'.mapState (fun _ =>
+      (⟨.skip, SeekPhase.run⟩ : Σ i, GuessRunPhase.CtlState SP SQ Q i)) =
+      cS.mapState (Sigma.mk GuessRunPhase.skip) := by
+    rw [Cfg.mapState_mapState]; rfl
+  have hS := skipTM_run_ofCfg (x := z) j ([] : List Bool) cS
+    (by simp only [cS, Cfg.mapState_state]; rfl) (by
+    intro p h0 h1
+    have hp : p = 0 := by simp at h1; omega
+    subst hp
+    simp [cS, cW', tW, Cfg.mapState_workTapes, Cfg.mapState_workTapePos, hend])
+  let cS' : Cfg k Bool SeekPhase z :=
+    { cS with
+      state := some .done
+      workTapePos := Function.update cS.workTapePos j
+        (cS.workTapePos j + ([] : List Bool).length + 1) }
+  have h3 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.skip cS cS' a₃ (by
+      show (skipTM k j).toNDTM.runWith a₃ cS = cS'
+      rw [MultiTapeTM.toNDTM_runWith, ha₃]
+      exact hS.1)
+    SeekPhase.done rfl ⟨.back, SeekPhase.run⟩ rfl (by
+      intro u hu s' hs'
+      change ((skipTM k j).toNDTM.runWith (a₃.take u) cS).state = some s' at hs'
+      rw [MultiTapeTM.toNDTM_runWith] at hs'
+      have hne := hS.2.1 (a₃.take u).length (by simp; omega)
+      cases s' with
+      | done => exact absurd hs' hne
+      | run => rfl
+      | gap => rfl
+      | back => rfl) b₃).2
+  -- phase 4: the rewind over the guessed stream, then one dispatch into the deterministic run
+  let cB : Cfg k Bool SeekPhase z := cS'.mapState (fun _ => SeekPhase.run)
+  have hcB : cS'.mapState (fun _ =>
+      (⟨.back, SeekPhase.run⟩ : Σ i, GuessRunPhase.CtlState SP SQ Q i)) =
+      cB.mapState (Sigma.mk GuessRunPhase.back) := by
+    rw [Cfg.mapState_mapState]; rfl
+  have hBpos : cB.workTapePos j = cP.workTapePos j + m + 1 := by
+    simp [cB, cS', cS, cW', Cfg.mapState_inputPos, Cfg.mapState_workTapePos,
+      Cfg.mapState_output]
+  have hB := skipBackTM_run_ofCfg (x := z) j s cB
+    (by simp only [cB, Cfg.mapState_state]; rfl) (by
+    intro p h0 h1
+    rw [hBpos, hslen]
+    have harg : cP.workTapePos j + m + 1 - m - 1 + p = cP.workTapePos j + p := by ring
+    rw [harg]
+    simp only [cB, cS', cS, cW', Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+      Function.update_self]
+    simp only [tW]
+    by_cases hin : 0 ≤ p ∧ p < (m : ℤ)
+    · rw [if_pos (by omega)]
+      congr 1
+      ring
+    · rw [if_neg (by omega)]
+      rw [hslen] at h1
+      rcases (show p = -1 ∨ p = (m : ℤ) by omega) with rfl | rfl
+      · rw [FinTM.bufferTape_left, ← hleft]
+        congr 1
+      · rw [hend, FinTM.bufferTape_nat, List.getElem?_eq_none (by omega)])
+  let cB' : Cfg k Bool SeekPhase z :=
+    { cB with
+      state := some .done
+      workTapePos := Function.update cB.workTapePos j (cB.workTapePos j - s.length - 1) }
+  have h4 := (NDTM.phaseHostND_run M ⟨.pre, P.q₀⟩ red GuessRunPhase.back cB cB' a₄ (by
+      show (skipBackTM k j).toNDTM.runWith a₄ cB = cB'
+      rw [MultiTapeTM.toNDTM_runWith, ha₄, ← hslen]
+      exact hB.1)
+    SeekPhase.done rfl ⟨.run, qentry⟩ rfl (by
+      intro u hu s' hs'
+      change ((skipBackTM k j).toNDTM.runWith (a₄.take u) cB).state = some s' at hs'
+      rw [MultiTapeTM.toNDTM_runWith] at hs'
+      have hne := hB.2.1 (a₄.take u).length (by simp; omega)
+      cases s' with
+      | done => exact absurd hs' hne
+      | run => rfl
+      | gap => rfl
+      | back => rfl) b₄).2
+  -- the chain
+  rw [hinit, NDTM.runWith_append, h1, hcW, NDTM.runWith_append, h2]
+  erw [hcS]
+  rw [NDTM.runWith_append, h3]
+  erw [hcB]
+  rw [List.append_nil, h4]
+  apply Cfg.ext
+  · simp only [cB', Cfg.mapState_state, guessRunCfg_state, Option.map_some]
+  · simp only [cB', cB, cS', cS, cW', Cfg.mapState_inputPos, guessRunCfg_inputPos]
+  · funext i p
+    simp only [cB', cB, cS', cS, cW', tW, Cfg.mapState_workTapes, guessRunCfg_workTapes, hslen]
+  · funext i
+    simp only [cB', cB, cS', cS, cW', Cfg.mapState_workTapePos, guessRunCfg_workTapePos,
+      Function.update_apply, hslen, List.length_nil]
+    split_ifs with h
+    · subst h
+      omega
+    · rfl
+  · simp only [cB', cB, cS', cS, cW', Cfg.mapState_output, guessRunCfg_output]

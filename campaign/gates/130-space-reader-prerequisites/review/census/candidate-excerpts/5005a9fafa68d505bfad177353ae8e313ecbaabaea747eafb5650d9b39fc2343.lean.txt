@@ -1,0 +1,20 @@
+/-- From a halted budget configuration, the counter rewind takes exactly
+`|s| + 2` steps, where `s` is the budget word. -/
+lemma kCfg_rewind {x : List Bool} (c : Cfg K.k Bool K.State x) (hs : c.state = none) :
+    (clockTM K W).tm.runFrom (kCfg K W c) (c.output.length + 2) =
+      ctrCfg K W (some .iStart) ⟨none, c.inputPos, fun _ _ => none, fun _ => 0, []⟩
+        (bufferTape c.output) 0 c.workTapes c.workTapePos [] := by
+  have hstep : (clockTM K W).tm.step (kCfg K W c) =
+      cScanCfg K W c.output c.inputPos c.workTapes c.workTapePos c.output.length := by
+    rw [clockTM_step_some K W _ (.kRun none) (by simp [kCfg, hs])]
+    simp only [clockTr]
+    have he : kCfg K W c = ctrCfg K W (some (.kRun none))
+        ⟨none, c.inputPos, fun _ _ => none, fun _ => 0, []⟩ (bufferTape c.output)
+        c.output.length c.workTapes c.workTapePos [] := by
+      refine Cfg.ext (by simp [kCfg, ctrCfg, hs]) rfl rfl rfl rfl
+    rw [he, ctrAction_apply]
+    simp only [cScanCfg]
+    congr 1
+  rw [show c.output.length + 2 = (c.output.length + 1) + 1 by omega,
+    MultiTapeTM.runFrom_succ_eq_step, hstep]
+  exact cScanCfg_run K W c.output c.inputPos c.workTapes c.workTapePos _ (le_refl _)

@@ -1,0 +1,15 @@
+/-- Validation visits only the existing origin of each work head, independently
+of input length and of whether syntax succeeds. -/
+private theorem b4mValidation_space {k : ℕ} {x : List Bool}
+    (d : Cfg k Bool (ScanPhase b4mSyntaxState) x)
+    (hs : d.state = some (.fwd (.inl none))) (hi : d.inputPos = 1) :
+    (inputFoldTM k b4mSyntaxStep (.inl none)).spaceUsed d (2 * x.length + 2) ≤ k := by
+  have hheads := (inputFoldTM_run_ofCfg b4mSyntaxStep (.inl none) d hs hi).2.2
+  calc
+    _ ≤ ∑ j : Fin k, 1 := Finset.sum_le_sum (fun j _ => by
+      have h := MultiTapeTM.spaceUsedByTape_le_card_Icc
+        (inputFoldTM k b4mSyntaxStep (.inl none)) d (2 * x.length + 2) j
+        (d.workTapePos j) (d.workTapePos j)
+        (fun u hu => by simp [hheads j u hu])
+      simpa using h)
+    _ = k := by simp

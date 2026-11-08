@@ -1,0 +1,37 @@
+/-- Before the timeout, a host step is a step of `A` under the same coin.
+
+**Proof sketch.** `Y` reads a mark. If `A` has halted, only `Y` moves; otherwise the host applies
+`A`'s action on its bank, and the captured summary follows `capOf_append`. -/
+theorem run_step (b : Bool) (a : Cfg A.k Bool A.State x) (j : ℕ) (hj : j < m)
+    (sT : Fin S.k → ℤ → Option Bool) (sP : Fin S.k → ℤ) :
+    (hostTM S A loop).stepWith b (runCfg m a j sT sP) =
+      runCfg m (A.tm.stepWith b a) ((j + 1 : ℕ) : ℤ) sT sP := by
+  have hY : (runCfg (S := S) (A := A) m a j sT sP).workTapeSymbols yI = some true := by
+    simp only [runCfg, hostCfg_symbols_yI]
+    exact yard_of_lt (by omega) (by omega)
+  cases hq : a.state with
+  | none =>
+    have hst : (runCfg (S := S) m a j sT sP).state = some (.run none (capOf a.output)) := by
+      simp [runCfg, hostCfg, hq]
+    rw [NDTM.stepWith_of_state _ b hst, NDTM.stepWith_of_halt hq]
+    simp only [hostTM, clockTr, hY]
+    unfold runCfg
+    rw [apply_hostCfg, hq]
+    host_congr
+  | some qa =>
+    have hst : (runCfg (S := S) m a j sT sP).state = some (.run (some qa) (capOf a.output)) := by
+      simp [runCfg, hostCfg, hq]
+    rw [NDTM.stepWith_of_state _ b hst, NDTM.stepWith_of_state A.tm b hq]
+    have hsym : (fun i => (runCfg (S := S) m a j sT sP).workTapeSymbols (aI i)) =
+        a.workTapeSymbols := funext fun i => by simp [runCfg, hostCfg, Cfg.workTapeSymbols]
+    have hin : (runCfg (S := S) m a j sT sP).inputSymbol = a.inputSymbol := rfl
+    simp only [hostTM, clockTr, hY]
+    rw [hsym, hin]
+    unfold runCfg
+    rw [apply_hostCfg]
+    have hst' : ((A.tm.tr b qa a.inputSymbol a.workTapeSymbols).apply a).state =
+        (A.tm.tr b qa a.inputSymbol a.workTapeSymbols).state := rfl
+    rw [hst', show ((A.tm.tr b qa a.inputSymbol a.workTapeSymbols).apply a).output =
+      a.output ++ (A.tm.tr b qa a.inputSymbol a.workTapeSymbols).output.toList from rfl,
+      capOf_append]
+    host_congr

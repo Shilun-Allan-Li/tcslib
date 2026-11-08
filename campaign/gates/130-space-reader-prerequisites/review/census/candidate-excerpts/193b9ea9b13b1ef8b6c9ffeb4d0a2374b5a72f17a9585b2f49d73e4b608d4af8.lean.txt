@@ -1,0 +1,35 @@
+/-- **One phase of the host.** If phase `i`, started at `s₀` over the tapes `tp` and heads `hd`,
+reaches `c'` in `T` steps, `c'` is in a state `s'` that the table redirects to `q'`, and no earlier
+state is redirected, then the host, started at `⟨i, s₀⟩` over the same tapes, reaches `c'`'s tapes
+and heads in state `q'` in `T + 1` steps. -/
+private theorem xr_phase_step {N : FinNDTM Bool} (C : xr_Clock N) {z : List Bool} (i : xr_I N.k)
+    (s₀ : xr_PhSt C i) (ip : Fin (z.length + 2)) (tp : Fin (N.k + 2 + 2) → ℤ → Option Bool)
+    (hd : Fin (N.k + 2 + 2) → ℤ) (T : ℕ) (c' : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z)
+    (h : (xr_M C i).runFrom ⟨some s₀, ip, tp, hd, []⟩ T = c') (s' : xr_PhSt C i)
+    (hs' : c'.state = some s') (hout : c'.output = []) (q' : Σ i, xr_PhSt C i)
+    (hred : xr_red C i s' = some q')
+    (hguard : ∀ u < T, ∀ s, ((xr_M C i).runFrom ⟨some s₀, ip, tp, hd, []⟩ u).state = some s →
+      xr_red C i s = none) :
+    (xr_host C).runFrom ⟨some ⟨i, s₀⟩, ip, tp, hd, []⟩ (T + 1) =
+      ⟨some q', c'.inputPos, c'.workTapes, c'.workTapePos, []⟩ := by
+  have hstart : (⟨some ⟨i, s₀⟩, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (Σ i, xr_PhSt C i) z) =
+      (⟨some s₀, ip, tp, hd, []⟩ : Cfg (N.k + 2 + 2) Bool (xr_PhSt C i) z).mapState
+        (Sigma.mk i) := by
+    apply Cfg.ext
+    · rw [Cfg.mapState_state]; rfl
+    · rw [Cfg.mapState_inputPos]
+    · funext j p; rw [Cfg.mapState_workTapes]
+    · funext j; rw [Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output]
+  have hhost := (phaseHostTM_run (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C) i _
+    c' T h s' hs' q' hred hguard).2
+  rw [hstart]
+  show (phaseHostTM (xr_M C) ⟨(.copy, false, false), SweepPhase.sweep⟩ (xr_red C)).runFrom _
+    (T + 1) = _
+  rw [hhost]
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, hs']; rfl
+  · rw [Cfg.mapState_inputPos]
+  · funext j p; rw [Cfg.mapState_workTapes]
+  · funext j; rw [Cfg.mapState_workTapePos]
+  · rw [Cfg.mapState_output, hout]

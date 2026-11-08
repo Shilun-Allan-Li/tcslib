@@ -1,0 +1,39 @@
+/-- The suffix-copy phase preserves all work tapes and copies native bits
+verbatim, including the empty suffix and its final blank-reading halt.
+**Proof sketch.** Induct on the remaining suffix while allowing arbitrary
+already-copied prefix and output. The nonempty case copies one native bit;
+the empty case reads the right blank and halts without an extra emission. -/
+private lemma splitEmit_suffix (k : ℕ) (w s rest : List Bool) :
+    ∀ pre out h, w = pre ++ rest → (splitEmitTM k).tm.runFrom
+      (splitEmitCfg k w s (some 3) pre.length h out) (rest.length + 1) =
+      splitEmitCfg k w s none w.length h (out ++ rest) := by
+  induction rest with
+  | nil =>
+    intro pre out h hw
+    have he : w = pre := by simpa using hw
+    clear hw
+    subst w
+    simp only [List.append_nil, List.length_nil, MultiTapeTM.runFrom_one]
+    have hr := splitPos_read pre (splitEmitCfg k pre s (some 3) pre.length h out) pre.length rfl
+    simp only [Nat.lt_irrefl, ↓reduceDIte] at hr
+    unfold MultiTapeTM.step
+    change ((splitEmitTM k).tm.tr (3 : Fin 4) _ _).apply _ = _
+    rw [hr]
+    simp [splitEmitTM, controlAction, splitEmitCfg]
+  | cons b rest ih =>
+    intro pre out h hw
+    have hread : (splitEmitCfg k w s (some 3) pre.length h out).inputSymbol = some b := by
+      rw [splitPos_read w _ pre.length rfl]
+      simp [hw]
+    have hstep : (splitEmitTM k).tm.step (splitEmitCfg k w s (some 3) pre.length h out) =
+        splitEmitCfg k w s (some 3) (pre ++ [b]).length h (out ++ [b]) := by
+      unfold MultiTapeTM.step
+      change ((splitEmitTM k).tm.tr (3 : Fin 4) _ _).apply _ = _
+      rw [hread]
+      refine Cfg.ext rfl ?_ rfl ?_ rfl
+      · simpa only [List.length_append, List.length_singleton] using splitPos_succ w pre.length
+      · funext i; simp [splitEmitTM, Action.apply, splitEmitCfg]
+    simp only [List.length_cons]
+    rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+    simpa only [List.append_assoc, List.singleton_append] using
+      ih (pre ++ [b]) (out ++ [b]) h (by simpa [List.append_assoc] using hw)

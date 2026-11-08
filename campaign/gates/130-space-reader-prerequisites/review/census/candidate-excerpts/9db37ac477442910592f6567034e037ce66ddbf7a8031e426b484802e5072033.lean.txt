@@ -1,0 +1,13 @@
+theorem probe_outputSymbol_congr (M : MultiTapeTM k Bool S) {c d : Cfg k Bool S x}
+    (h : MultiTapeTM.ConfigCount.core c = MultiTapeTM.ConfigCount.core d) :
+    M.outputSymbol c = M.outputSymbol d := by
+  simp only [MultiTapeTM.ConfigCount.core, Prod.mk.injEq] at h
+  obtain ⟨hs, hi, hw, hp⟩ := h
+  have hsym : c.inputSymbol = d.inputSymbol := by unfold Cfg.inputSymbol; simp only [hi]
+  have hws : c.workTapeSymbols = d.workTapeSymbols := by
+    funext i; simp only [Cfg.workTapeSymbols, hw, hp]
+  unfold MultiTapeTM.outputSymbol
+  rw [hs, hsym, hws]
+
+example (c : Cfg k Bool S x) :
+    coreSum c = (MultiTapeTM.ConfigCount.core c, outSummary c.output) := rfl

@@ -1,0 +1,11 @@
+/-- The halt state halts without emitting: from the seam at `inl 2` holding `w` with output `o`,
+one step reaches the same seam with control `none` and output `o`. -/
+theorem host_halt (M : Fin 5 → FinTM Bool) (K : ℕ) (hk : ∀ i, (M i).k ≤ K + 1)
+    (x w o : List Bool) :
+    (hostTM M K hk).tm.step
+        {Cfg.ofWords (input := x) (.inl 2) (stateWord (K + 1) w) with output := o} =
+      {Cfg.ofWords (input := x) (.inl 2 : ModuleHost.State (Fin 3) M) (stateWord (K + 1) w)
+        with state := none, output := o} := by
+  rw [ModuleHost.hostTM_step_inl _ _ _ _ _ _ _ 2 rfl]
+  change (FinTM.controlAction 0 none).apply _ = _
+  rw [FinTM.controlAction_apply, moveInputPos_zero]

@@ -1,0 +1,76 @@
+/-- **Two phases chained: A's return after the input replay.** From A's head on the blank after
+the stream `s` (A holding `s` from cell `0`), the verifier's phases `aFwd none` (`skipTM` at
+`w := []`) and `aBack none` (`skipBackTM` at `u := s`) bring A's head to cell `0` and redirect to
+the next tape's replay, or the verdict, in `|s| + 6` steps, with the tapes, B's head, the input
+head and the output unchanged. -/
+private theorem nfc_aReturn (N : FinNDTM Bool) {SL : Type}
+    (L : Option (Fin N.k) → MultiTapeTM 2 Bool SL) (exit : SL → Option Bool) {x : List Bool}
+    (s : List Bool) (c : Cfg 2 Bool SeekPhase x) (hst : c.state = some .run)
+    (hpos : c.workTapePos 0 = s.length)
+    (htape : ∀ p, c.workTapes 0 p = FinTM.bufferTape s p) :
+    ∃ c₃ : Cfg 2 Bool SeekPhase x,
+      (nfcV N L exit).runFrom
+          ((c : Cfg 2 Bool (NfcSt N SL (NfcPh.aFwd none)) x).mapState (Sigma.mk (NfcPh.aFwd none)))
+          (s.length + 6) = c₃.mapState (fun _ => nfcAfter N L none) ∧
+        c₃.workTapePos 0 = 0 ∧ c₃.workTapePos 1 = c.workTapePos 1 ∧ c₃.workTapes = c.workTapes ∧
+        c₃.inputPos = c.inputPos ∧ c₃.output = c.output := by
+  -- phase `aFwd none`: one step right, over the blank
+  have hw : ∀ p : ℤ, 0 ≤ p → p ≤ (([] : List Bool).length : ℤ) →
+      c.workTapes 0 (c.workTapePos 0 + p) = FinTM.bufferTape [] p := by
+    intro p h0 h1
+    simp only [List.length_nil, Nat.cast_zero] at h1
+    obtain rfl : p = 0 := le_antisymm h1 h0
+    rw [htape, hpos, add_zero, FinTM.bufferTape_nat, FinTM.bufferTape_nil, List.getElem?_eq_none
+      (le_refl _)]
+  obtain ⟨h1, h2, -⟩ := skipTM_run_ofCfg (k := 2) (0 : Fin 2) [] c hst hw
+  set c₁ : Cfg 2 Bool SeekPhase x := { c with
+      state := some .done
+      workTapePos := Function.update c.workTapePos 0 (c.workTapePos 0 + ([] : List Bool).length + 1) }
+    with hc₁
+  obtain ⟨-, hA⟩ := phaseHostTM_run (nfcM N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nfcRed N L exit) (NfcPh.aFwd none) (c := c) (c' := c₁) (([] : List Bool).length + 1) h1
+    SeekPhase.done rfl ⟨.aBack none, .run⟩ rfl (by
+      intro u hu q hq
+      obtain rfl : u = 0 := by simp at hu; omega
+      rw [MultiTapeTM.runFrom_zero, hst] at hq
+      cases hq
+      rfl)
+  -- the redirected configuration is phase `aBack none`'s start
+  have hre := nfc_retag (N := N) (SL := SL) (i₀ := NfcPh.aFwd none) (c₁ : Cfg 2 Bool (NfcSt N SL
+    (NfcPh.aFwd none)) x) (NfcPh.aBack none) SeekPhase.run (by simp [hc₁])
+  set c₂ : Cfg 2 Bool SeekPhase x := { c₁ with state := some .run } with hc₂
+  -- phase `aBack none`: back over the stream to cell `0`
+  have hu : ∀ p : ℤ, -1 ≤ p → p ≤ (s.length : ℤ) →
+      c₂.workTapes 0 (c₂.workTapePos 0 - s.length - 1 + p) = FinTM.bufferTape s p := by
+    intro p _ _
+    simp only [hc₂, hc₁, Function.update_self, List.length_nil, Nat.cast_zero, hpos]
+    rw [htape]
+    congr 1
+    ring
+  obtain ⟨h3, h4, -⟩ := skipBackTM_run_ofCfg (k := 2) (0 : Fin 2) s c₂ rfl hu
+  set c₃ : Cfg 2 Bool SeekPhase x := { c₂ with
+      state := some .done
+      workTapePos := Function.update c₂.workTapePos 0 (c₂.workTapePos 0 - s.length - 1) }
+    with hc₃
+  obtain ⟨-, hB⟩ := phaseHostTM_run (nfcM N L) ⟨.ctl, ScanPhase.fwd (nf_sweepInit N)⟩
+    (nfcRed N L exit) (NfcPh.aBack none) (c := c₂) (c' := c₃) (s.length + 3) h3
+    SeekPhase.done rfl (nfcAfter N L none) rfl (by
+      intro u hu q hq
+      cases q with
+      | done => exact absurd hq (h4 u hu)
+      | run => rfl
+      | gap => rfl
+      | back => rfl)
+  refine ⟨c₃, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · have e : s.length + 6 = (([] : List Bool).length + 1 + 1) + (s.length + 3 + 1) := by simp; omega
+    rw [e, MultiTapeTM.runFrom_add]
+    unfold nfcV
+    rw [hA, hre]
+    exact hB
+  · simp only [hc₃, hc₂, hc₁, Function.update_self, List.length_nil, Nat.cast_zero, hpos]
+    ring
+  · simp only [hc₃, hc₂, hc₁]
+    rw [Function.update_of_ne (by decide), Function.update_of_ne (by decide)]
+  · simp only [hc₃, hc₂, hc₁]
+  · simp only [hc₃, hc₂, hc₁]
+  · simp only [hc₃, hc₂, hc₁]

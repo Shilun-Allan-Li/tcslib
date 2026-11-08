@@ -1,0 +1,34 @@
+/-- The input rewind has a bound in its starting position, so it can be
+charged to the preceding run without scanning the entire input.
+**Proof sketch.** Take the mandatory first left move and apply the proved
+`rewind_scan` at the resulting position. Its exact scan time is position
+plus one; the first left move never increases position. -/
+private lemma f2_loop_rewind_bounded {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start scan : S) (dest : Option S)
+    (hstart : ∀ inp work, tm.tr start inp work = controlAction .neg (some scan))
+    (hscan : ∀ inp work, tm.tr scan inp work =
+      match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest)
+    (cfg : Cfg k Bool S x) (hs : cfg.state = some start) :
+    ∃ t ≤ cfg.inputPos.val + 2,
+      tm.runFrom cfg t = {cfg with state := dest, inputPos := 1} := by
+  have hstep : tm.step cfg =
+      {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
+    unfold MultiTapeTM.step
+    rw [hs]
+    dsimp only
+    rw [hstart, controlAction_apply]
+  let c := tm.step cfg
+  have hc : c.state = some scan := by simp only [c, hstep]
+  have hp : c.inputPos.val ≤ x.length := by
+    simp only [c, hstep, moveInputPos_neg_val]
+    have := cfg.inputPos.isLt
+    omega
+  refine ⟨1 + (c.inputPos.val + 1), ?_, ?_⟩
+  · simp only [c, hstep, moveInputPos_neg_val]
+    omega
+  · rw [MultiTapeTM.runFrom_add]
+    have hfirst : tm.runFrom cfg 1 = c := rfl
+    rw [hfirst, rewind_scan tm scan dest hscan c hc hp]
+    simp only [c, hstep]

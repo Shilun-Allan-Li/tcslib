@@ -1,0 +1,17 @@
+/-- The dispatch's rewrap: a live configuration with its control replaced by the next phase's
+tagged entry is the next phase's configuration, tagged — provided the two agree on every field
+but the control. -/
+private lemma sl_rewrap {k : ℕ} {x : List Bool} {S : Type} {i' : sl_Key}
+    (c : Cfg k Bool S x) (c₂ : Cfg k Bool (sl_Ph i') x) (ent : sl_Ph i') (st₀ : S)
+    (hc : c.state = some st₀) (hstate : c₂.state = some ent) (hin : c.inputPos = c₂.inputPos)
+    (hw : c.workTapes = c₂.workTapes) (hp : c.workTapePos = c₂.workTapePos)
+    (ho : c.output = c₂.output) :
+    c.mapState (fun _ => (⟨i', ent⟩ : (j : sl_Key) × sl_Ph j)) = c₂.mapState (Sigma.mk i') := by
+  apply Cfg.ext
+  · rw [Cfg.mapState_state, Cfg.mapState_state, hc, hstate, Option.map_some, Option.map_some]
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, hin]
+  · funext j p
+    rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, hw]
+  · funext j
+    rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, hp]
+  · rw [Cfg.mapState_output, Cfg.mapState_output, ho]

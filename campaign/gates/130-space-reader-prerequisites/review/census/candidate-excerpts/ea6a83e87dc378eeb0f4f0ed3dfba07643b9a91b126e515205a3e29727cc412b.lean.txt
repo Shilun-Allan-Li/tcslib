@@ -1,0 +1,53 @@
+/-- The native recorder executes one source transition and its full signed
+counter update, then dispatches to the next row-copy state. Record and clock
+contents and heads are framed throughout this segment.
+**Proof sketch.** Execute the source action before testing for the tracker anchor, then lift the tracker through its strictly interior bank phases. Its completed return restores all counter heads and preserves the stored record and clock; charge the final dispatch into row copying. -/
+private lemma clRec_advance (M : FinTM Bool) {x y : List Bool}
+    (c : Cfg M.k Bool M.State y) (b : Bool) (hb : FinTM.VirtualTag c.inputPos b)
+    (n : Fin (clRecFields M) → ℕ) (record : List Bool) (T t W : ℕ)
+    (hW : ∀ i, (n i).bits.length ≤ W) :
+    ∃ s ≤ 2 * W + 5, ∃ b', FinTM.VirtualTag (M.tm.step c).inputPos b' ∧
+      (clRecTM M).tm.runFrom
+        (clRecCfg M (x := x) (.inr (.inr (.inl (c.state, b)))) c n record T t) s =
+      clRecCfg M (x := x) (.inl ((M.tm.step c).state, b', (0, 0))) (M.tm.step c)
+        (clAdvance (clMoves M c.state b c.inputSymbol c.workTapeSymbols) n) record T t := by
+  obtain ⟨s, hs, hp, hf, b', hb', he⟩ := clTrack_round M (x := x) c b hb n W hW
+  let n' := clAdvance (clMoves M c.state b c.inputSymbol c.workTapeSymbols) n
+  let frame := clRecCfg M (x := x) (.inr (.inr (.inr (.inl (c.state, b, none))))) c n record T t
+  let emb := fun r => (Sum.inr (.inr (.inr (.inl r))) : clRecState M)
+  let start := clTrackCfg M (x := x) c b n
+  have release := clSlot_release (clTrackTM M).tm (clRecTM M).tm
+    (clRecTrackIndex M) (clRecTrackSelect M) (clRecTrack_inverse M) emb
+    (.inr (.inr (.inl (c.state, b)))) (c.state, b, none)
+    (by intro inp work; rfl) frame.workTapes frame.workTapePos start rfl
+  have rframe := clRec_track_frame M (x := x) c b n record T t
+  rw [rframe] at release
+  change (clRecTM M).tm.step
+    (clRecCfg M (x := x) (.inr (.inr (.inl (c.state, b)))) c n record T t) = _ at release
+  have lift := clSlot_run (clTrackTM M).tm (clRecTM M).tm
+    (clRecTrackIndex M) (clRecTrackSelect M) (clRecTrack_inverse M) emb
+    (fun r => r.2.2 ≠ none)
+    (by intro r hr inp work; simp only [clRecTM, emb, if_neg hr])
+    frame.workTapes frame.workTapePos ((clTrackTM M).tm.step start) (s - 1)
+    (by
+      intro j hj q hq
+      have hv := hf (j + 1) (by omega) (by omega)
+      rw [MultiTapeTM.runFrom_succ_eq_step] at hv
+      obtain ⟨u, tag, qs, hu⟩ := hv
+      have hqq : q = (u, tag, some qs) := Option.some.inj (hq.symm.trans hu)
+      rw [hqq]
+      simp)
+  have run : (clRecTM M).tm.runFrom
+      (clRecCfg M (x := x) (.inr (.inr (.inl (c.state, b)))) c n record T t) s =
+      clSlotCfg (clRecTrackSelect M) emb frame.workTapes frame.workTapePos
+        (clTrackCfg M (x := x) (M.tm.step c) b' n') := by
+    rw [show s = (s - 1) + 1 by omega, MultiTapeTM.runFrom_succ_eq_step, release, lift]
+    rw [← MultiTapeTM.runFrom_succ_eq_step, Nat.sub_add_cancel hp, he]
+  have hend := (clRec_track_inactive M c (M.tm.step c) b b' n n' record T t
+    (clTrackCfg M (x := x) (M.tm.step c) b' n')).trans
+      (clRec_track_frame M (x := x) (M.tm.step c) b' n' record T t)
+  have run' := run.trans hend
+  refine ⟨s + 1, by omega, b', hb', ?_⟩
+  rw [MultiTapeTM.runFrom_succ_eq_step', run']
+  simp only [MultiTapeTM.step, clRecCfg, clRecTM, if_true]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]

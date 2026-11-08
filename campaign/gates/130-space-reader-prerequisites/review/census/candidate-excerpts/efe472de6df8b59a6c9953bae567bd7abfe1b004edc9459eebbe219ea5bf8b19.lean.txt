@@ -1,0 +1,12 @@
+/-- **Attempt run**: before the timeout, the host runs `A` under the same coins. -/
+theorem run_run (a : Cfg A.k Bool A.State x) (j : ℕ) (sT : Fin S.k → ℤ → Option Bool)
+    (sP : Fin S.k → ℤ) (u : List Bool) (hj : j + u.length ≤ m) :
+    (hostTM S A loop).runWith u (runCfg m a j sT sP) =
+      runCfg m (A.tm.runWith u a) ((j + u.length : ℕ) : ℤ) sT sP := by
+  induction u generalizing a j with
+  | nil => rfl
+  | cons b u ih =>
+    simp only [List.length_cons] at hj ⊢
+    rw [NDTM.runWith_cons, NDTM.runWith_cons, run_step m b a j (by omega), ih _ _ (by omega)]
+    congr 2
+    omega

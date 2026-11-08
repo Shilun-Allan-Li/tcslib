@@ -1,0 +1,7 @@
+/-- The cell values depend only on the configuration-graph vertex. -/
+lemma cellOf_congr {s : ℕ} {C D : Cfg N.k Bool N.State x} (h : NDTM.coreSum C = NDTM.coreSum D) :
+    cellOf s C = cellOf s D := by
+  simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core, Prod.mk.injEq] at h
+  obtain ⟨⟨hs, -, hw, hp⟩, ho⟩ := h
+  funext j
+  simp only [cellOf, hs, hw, hp, ho]

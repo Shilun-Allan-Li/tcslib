@@ -1,0 +1,36 @@
+/-- The leaf's complete run: from its entry at any positive input position `p`, it parks at
+exactly `p + 1` with the input head at `1`, every work tape, work head and the output
+unchanged, and the parking state is not visited earlier.
+
+**Proof sketch.** The unconditional first left move lands the scan at `p − 1 ≤ |x|`; the
+scanning trajectory parks after `p` more steps. Strictly before, the state is the entry or the
+scanning one. -/
+private theorem ic_rewind_leaf_run {k : ℕ} {x : List Bool} (cfg : Cfg k Bool (Fin 3) x)
+    (hs : cfg.state = some 0) (hp : 1 ≤ cfg.inputPos.val) :
+    (ic_rewindLeafTM k).runFrom cfg (cfg.inputPos.val + 1) =
+        { cfg with state := some 2, inputPos := 1 } ∧
+      ∀ u < cfg.inputPos.val + 1,
+        ((ic_rewindLeafTM k).runFrom cfg u).state ≠ some 2 := by
+  have hstep : (ic_rewindLeafTM k).step cfg =
+      { cfg with state := some 1, inputPos := moveInputPos cfg.inputPos .neg } := by
+    rw [MultiTapeTM.step_of_some hs]
+    simp only [ic_rewindLeafTM, ↓reduceIte]
+    exact FinTM.controlAction_apply cfg .neg (some 1)
+  have hval : (moveInputPos cfg.inputPos .neg).val = cfg.inputPos.val - 1 :=
+    FinTM.moveInputPos_neg_val cfg.inputPos
+  have hlen : cfg.inputPos.val - 1 ≤ x.length := by
+    have := cfg.inputPos.isLt
+    omega
+  obtain ⟨hrun, hstay⟩ := ic_rewind_scan (cfg.inputPos.val - 1) ((ic_rewindLeafTM k).step cfg)
+    (by rw [hstep]) (by rw [hstep]; exact hval) hlen
+  have htime : cfg.inputPos.val + 1 = cfg.inputPos.val - 1 + 1 + 1 := by omega
+  refine ⟨?_, ?_⟩
+  · rw [htime, MultiTapeTM.runFrom_succ_eq_step, hrun, hstep]
+  · intro u hu
+    cases u with
+    | zero =>
+      rw [MultiTapeTM.runFrom_zero, hs]
+      simp
+    | succ u =>
+      rw [MultiTapeTM.runFrom_succ_eq_step, hstay u (by omega)]
+      simp

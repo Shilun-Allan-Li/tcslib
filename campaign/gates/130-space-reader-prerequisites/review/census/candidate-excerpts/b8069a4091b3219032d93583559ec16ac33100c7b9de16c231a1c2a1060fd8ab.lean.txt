@@ -1,0 +1,6 @@
+/-- A stationary, silent, write-free action changes only the control field. -/
+private lemma seam_stationary_apply (c : Cfg k Bool S₁ x) (q : S₁) :
+
+    (Action.mk 0 (fun _ => (none, 0)) none (some q)).apply c =
+      { c with state := some q } := by
+  simp [Action.apply]

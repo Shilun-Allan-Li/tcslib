@@ -1,0 +1,11 @@
+/-- *Fit:* the local `hframe` of `Loop`'s `emCall_exit_fixed` (`Build/Loop.lean:4554`), with the
+private `emCallEmbeddedCfg` unfolded (`Build/Loop.lean:3535`: the forwarding transport followed by
+a state map) and the call's types made generic: the host `z` at the relabelled exit is the
+embedding of its own selected bank `c`. -/
+theorem emCall_hframe {m l : ℕ} {S H : Type} {x : List Bool} (index : Fin m ↪ Fin l)
+    (emb : S → H) (s : S) (z : Cfg l Bool H x) (hz : z.state = some (emb s)) :
+    (embedEmitCfg index z.workTapes z.workTapePos []
+      (⟨some s, z.inputPos, fun i => z.workTapes (index i), fun i => z.workTapePos (index i),
+        z.output⟩ : Cfg m Bool S x)).mapState emb = z :=
+  embedEmitCfg_mapState_eq index emb _ _ [] _ z hz.symm rfl rfl (fun _ => ⟨rfl, rfl⟩)
+    (fun _ _ => ⟨rfl, rfl⟩)

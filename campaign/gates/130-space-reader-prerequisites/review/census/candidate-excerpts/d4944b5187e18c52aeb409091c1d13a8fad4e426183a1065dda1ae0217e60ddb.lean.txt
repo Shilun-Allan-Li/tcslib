@@ -1,0 +1,29 @@
+private def emitterP2PrepareTM : FinTM Bool where
+  k := 3
+  State := Fin 9 × Bool
+  tm := {
+    q₀ := (0, false)
+    tr := fun q inp work => match q.1.val with
+      | 0 => match work 0 with
+        | some b => ⟨.pos, fun i =>
+            (if i = 1 then some (some b) else none, if i = 2 then 0 else .pos),
+            none, some (0, q.2 || inp.isNone)⟩
+        | none => controlAction 0 (some (1, q.2))
+      | 1 => match inp with
+        | some b => ⟨.pos, fun i =>
+            (if i = 2 then some (some b) else none, if i = 2 then .pos else 0),
+            none, some (1, q.2)⟩
+        | none => controlAction 0 (some (2, q.2))
+      | 2 => ⟨0, fun i => (none, if i = 2 then 0 else .neg), none, some (3, q.2)⟩
+      | 3 => match work 0 with
+        | some _ => ⟨0, fun i => (none, if i = 2 then 0 else .neg), none, some (3, q.2)⟩
+        | none => ⟨0, fun i => (none, if i = 2 then 0 else .pos), none, some (4, q.2)⟩
+      | 4 => ⟨0, fun i => (none, if i = 2 then .neg else 0), none, some (5, q.2)⟩
+      | 5 => match work 2 with
+        | some _ => ⟨0, fun i => (none, if i = 2 then .neg else 0), none, some (5, q.2)⟩
+        | none => ⟨0, fun i => (none, if i = 2 then .pos else 0), none, some (6, q.2)⟩
+      | 6 => controlAction .neg (some (7, q.2))
+      | 7 => match inp with
+        | some _ => controlAction .neg (some (7, q.2))
+        | none => controlAction .pos (some (8, q.2))
+      | _ => controlAction 0 (some (8, q.2)) }

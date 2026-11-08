@@ -1,0 +1,21 @@
+/-- The finite block controller advances one cell without writing or emitting.
+The input-only action law supplies all unchanged configuration fields. -/
+private lemma guardBlock_step (b : ℕ) (x : List Bool) (u j : ℕ)
+    (hu : u < b + 1) (hj : j < x.length) (out : List Bool) :
+    (guardBlockTM b).step (guardCfg b x (guardPhase b u) j (by omega) out) =
+      guardCfg b x (guardPhase b (u + 1)) (j + 1) (by omega) out := by
+  have hr := inputSymbolInner
+    (cfg := guardCfg b x (guardPhase b u) j (by omega) out) j (by dsimp [guardCfg]; omega) hj
+  rw [step_of_inputMoveAction (guardBlockTM b) _ (q' := guardPhase b (u + 1)) 1 rfl (by
+    change (if (guardCfg b x (guardPhase b u) j (by omega) out).inputSymbol.isSome then
+      inputMoveAction 1 (guardPhase b (u % (b + 1) + 1)) else inputMoveAction 0 none) = _
+    rw [hr]
+    simp only [Option.isSome_some, if_true, Nat.mod_eq_of_lt hu])]
+  apply Cfg.ext_zero_tapes
+  · rfl
+  · apply Fin.ext
+    change (moveInputPos (guardCfg b x (guardPhase b u) j (by omega) out).inputPos
+      SignType.pos).val = j + 1 + 1
+    rw [moveInputPos_pos_of_ne_right _ (by dsimp [guardCfg]; omega)]
+    rfl
+  · rfl

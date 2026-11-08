@@ -1,0 +1,110 @@
+/-- A framed record test followed by its opposite-bit emitter halts, and inherits the test's
+head envelope. This also covers a halted record whose summary is not singleton true.
+
+**Proof sketch.** The two-exit run theorem selects the one-step emitter. The public branching
+contract combines the test's certified interval with the emitter's stationary heads; the hull
+is the test's original interval. -/
+private lemma sph_verdict_run {k : ℕ} {Q P : Type} [DecidableEq P]
+    {ys : List (RecSym Q (Fin 3))} (R : MultiTapeTM k (RecSym Q (Fin 3)) P)
+    (entry yes no : P) (hne : yes ≠ no) (d : Cfg k (RecSym Q (Fin 3)) P ys)
+    (hd : d.state = some entry) (b : Bool) (t B : ℕ)
+    (hr : R.runFrom d t = {d with state := some (if b then yes else no)})
+    (hcut : ∀ u < t, (R.runFrom d u).state ≠ some yes ∧ (R.runFrom d u).state ≠ some no)
+    (henv : ∀ u ≤ t, ∀ j, |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤ (B : ℤ)) :
+    (sphVerdictTM R yes no).runFrom ((d.mapState Sum.inl).mapState Sum.inl) (t + 2) =
+        { state := none
+          inputPos := d.inputPos
+          workTapes := d.workTapes
+          workTapePos := d.workTapePos
+          output := d.output ++ [RecSym.digit (!b)] } ∧
+      ∀ u ≤ t + 2, ∀ j,
+        |((sphVerdictTM R yes no).runFrom
+          ((d.mapState Sum.inl).mapState Sum.inl) u).workTapePos j -
+          d.workTapePos j| ≤ (B : ℤ) := by
+  classical
+  let d' := {d with state := some (if b then yes else no)}
+  let d₀ := (d.mapState (Sum.inl : P → P ⊕ Unit)).mapState
+    (Sum.inl : P ⊕ Unit → (P ⊕ Unit) ⊕ Unit)
+  let C₀ : Contract R entry {some yes, some no} Unit ys :=
+    { pre := fun _ a => a = d
+      time := fun _ _ => t
+      post := fun _ _ => d'
+      lo := fun _ _ j => d.workTapePos j - B
+      hi := fun _ _ j => d.workTapePos j + B
+      run := by intro _ a _ ha; subst a; exact hr
+      exit_mem := by
+        intro _ _ _ _
+        cases b
+        · exact Set.mem_insert_of_mem _ (Set.mem_singleton _)
+        · exact Set.mem_insert _ _
+      cut := by
+        intro _ a _ ha u hu
+        subst a
+        simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
+        exact hcut u hu
+      env := by
+        intro _ a _ ha u hu j
+        subst a
+        exact Contract.mem_Icc_of_abs_le (henv u hu j) }
+  let C := Contract.branch hne C₀ (sphEmitContract (RecSym.digit false) ys)
+    (sphEmitContract (RecSym.digit true) ys) (fun _ => ()) (fun _ => ())
+    (fun _ _ _ _ _ => True.intro) (fun _ _ _ _ _ => True.intro)
+  have hd₀ : d₀.state = some (Sum.inl (Sum.inl entry)) := by
+    rw [Cfg.mapState_state, Cfg.mapState_state, hd]
+    rfl
+  have hp : C.pre () d₀ := by
+    rw [Contract.branch_pre]
+    change (d₀.mapState fun _ => entry) = d
+    apply Cfg.ext
+    · rw [Cfg.mapState_state, hd₀, hd]; rfl
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext j p
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+  have htime : C.time () d₀ = t + 2 := by
+    rw [Contract.branch_time]
+    dsimp only [C₀, sphEmitContract]
+    rw [ite_self]
+  refine ⟨?_, ?_⟩
+  · obtain ⟨hy, hn⟩ := seamCompTM₂_run_ofCfg R yes no hne
+      (sphEmitTM k (RecSym.digit false)) () (sphEmitTM k (RecSym.digit true)) () hr hcut
+    have ht : t + 2 = t + 1 + 1 := by omega
+    rw [ht]
+    cases b
+    · have h := hn rfl 1
+      rw [(sph_emit_run (RecSym.digit true) _
+        (by rw [Cfg.mapState_state]; rfl)).1] at h
+      rw [h]
+      apply Cfg.ext
+      · rw [Cfg.mapState_state]; rfl
+      · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+      · funext j p
+        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output, Cfg.mapState_output]
+        rfl
+    · have h := hy rfl 1
+      rw [(sph_emit_run (RecSym.digit false) _
+        (by rw [Cfg.mapState_state]; rfl)).1] at h
+      rw [h]
+      apply Cfg.ext
+      · rw [Cfg.mapState_state, Cfg.mapState_state]; rfl
+      · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+      · funext j p
+        rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+      · funext j
+        rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+      · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+        rfl
+  · intro u hu j
+    have h := C.env () d₀ hd₀ hp u (htime.symm ▸ hu) j
+    rw [Contract.branch_lo, Contract.branch_hi] at h
+    dsimp only [C₀, sphEmitContract] at h
+    simp only [Cfg.mapState_workTapePos, ite_self] at h
+    dsimp only [d'] at h
+    rw [min_eq_left (by omega), max_eq_left (by omega), Finset.mem_Icc] at h
+    dsimp only [d₀, sphVerdictTM] at h ⊢
+    exact abs_le.mpr ⟨by omega, by omega⟩

@@ -1,0 +1,22 @@
+/-- The rejection cleanup preserves all candidate bits, appends only within
+the input-length range, clears every unary scratch tape, and restores heads.
+State 4 is an absorbing return seam, suitable for a first-return embedding. -/
+private def f2_splitRestoreTM (k : ℕ) : FinTM Bool where
+  k := k + 1
+  State := Fin 5 × Bool
+  tm := {
+    q₀ := (0, false)
+    tr := fun q inp work => match q.1.val with
+      | 0 => match work 0 with
+        | some _ => ⟨.pos, Fin.cases (none, .pos) (fun _ => (some none, .pos)),
+            none, some (0, q.2 || inp.isNone)⟩
+        | none => ⟨0, Fin.cases (if q.2 then (none, .neg) else (some (some true), .neg))
+            (fun _ => (some none, .neg)), none, some (1, false)⟩
+      | 1 => match work 0 with
+        | some _ => ⟨0, fun _ => (none, .neg), none, some (1, false)⟩
+        | none => ⟨0, fun _ => (none, .pos), none, some (2, false)⟩
+      | 2 => controlAction .neg (some (3, false))
+      | 3 => match inp with
+        | some _ => controlAction .neg (some (3, false))
+        | none => controlAction .pos (some (4, false))
+      | _ => controlAction 0 (some (4, false)) }

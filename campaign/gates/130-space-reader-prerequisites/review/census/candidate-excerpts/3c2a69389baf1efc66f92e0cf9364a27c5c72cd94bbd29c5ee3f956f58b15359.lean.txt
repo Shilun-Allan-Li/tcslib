@@ -1,0 +1,33 @@
+/-- Skip one complete serialized record at exact cost.
+
+**Proof sketch.** Concatenate the eight fixed-field transitions and the unary
+tail scan. The record grammar identifies their total with the record length. -/
+private lemma timedCut_skip_record {x : List Bool} {n : ℕ}
+    (base : Cfg 4 Bool UniversalControl x) (dest : Option (Fin 9)) (rem : Fin 9)
+    (table : List Bool) (state : ℤ → Option Bool) (sp : ℤ)
+    (a : Action 1 Bool (Fin (n + 1))) (l r : List Bool)
+    (ht : table = l ++ universalRecordBits a ++ r) :
+    timedCutInterpreter.runFrom
+      (universalEvalCfg base (.skipFixed dest rem 0) table l.length state sp)
+      (universalRecordBits a).length =
+    universalEvalCfg base
+      (if h : rem.val = 0 then universalSkipDone dest
+        else .skipFixed dest ⟨rem.val - 1, by omega⟩ 0)
+      table (l.length + (universalRecordBits a).length) state sp := by
+  have hlen : (universalRecordBits a).length = 8 + (universalNextOnes a.state + 1) := by
+    rw [universal_record_shape]
+    simp only [List.length_append, List.length_ofFn, List.length_replicate,
+      List.length_cons, List.length_nil]
+    omega
+  have hfixed := timedCut_skip_fixed base dest rem table state sp 7 0 l.length rfl
+  have hunary := timedCut_skip_unary base dest rem table state sp
+    (universalNextOnes a.state) (l ++ List.ofFn (universalActionBits a)) r
+    (by simpa [universal_record_shape, List.append_assoc] using ht)
+  rw [hlen, MultiTapeTM.runFrom_add]
+  have hf : timedCutInterpreter.runFrom
+      (universalEvalCfg base (.skipFixed dest rem 0) table l.length state sp) 8 =
+      universalEvalCfg base (.skipUnary dest rem) table (l.length + 8) state sp := by
+    simpa only [Nat.cast_ofNat, Int.add_assoc, show (7 : ℤ) + 1 = 8 from rfl] using hfixed
+  rw [hf]
+  simpa only [List.length_append, List.length_ofFn, Nat.cast_add, Nat.cast_ofNat,
+    Int.add_assoc] using hunary

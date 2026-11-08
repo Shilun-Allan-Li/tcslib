@@ -1,0 +1,18 @@
+/-- Probe sketch of the seek's private rewind table, in `timed_rewind`'s required shape. -/
+def probeRewindTM (k : ℕ) : MultiTapeTM k Bool ProbeRw where
+  q₀ := .start
+  tr := fun q inp _ =>
+    match q with
+    | .start => FinTM.controlAction .neg (some .scan)
+    | .scan =>
+      match inp with
+      | some _ => FinTM.controlAction .neg (some .scan)
+      | none => FinTM.controlAction .pos (some .left)
+    | .left => FinTM.controlAction .neg (some .done)
+    | .done => FinTM.controlAction 0 (some .done)
+
+example {k : ℕ} {x : List Bool} (c : Cfg k Bool ProbeRw x) (hs : c.state = some .start) :
+    ∃ r ≤ c.inputPos.val + 2,
+      (probeRewindTM k).runFrom c r = {c with state := some .left, inputPos := 1} :=
+  FinTM.timed_rewind (probeRewindTM k) .start .scan (some .left) (fun _ _ => rfl)
+    (fun inp _ => by cases inp <;> rfl) c hs

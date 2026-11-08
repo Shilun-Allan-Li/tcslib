@@ -1,0 +1,54 @@
+/-- The leaf's scanning trajectory: from the scanning state at input position `j ≤ |x|`, the
+parking state is reached at exactly `j + 1`, with only the control and the input head changed,
+and the state stays the scanning one strictly before.
+
+**Proof sketch.** Induct on the position. At zero the input symbol is the left blank, so one
+right move parks. At a successor the symbol exists; one left move reduces the position. -/
+private theorem ic_rewind_scan {k : ℕ} {x : List Bool} :
+    ∀ (j : ℕ) (cfg : Cfg k Bool (Fin 3) x), cfg.state = some 1 →
+      cfg.inputPos.val = j → j ≤ x.length →
+      (ic_rewindLeafTM k).runFrom cfg (j + 1) =
+          { cfg with state := some 2, inputPos := 1 } ∧
+        ∀ u ≤ j, ((ic_rewindLeafTM k).runFrom cfg u).state = some 1 := by
+  intro j
+  induction j with
+  | zero =>
+    intro cfg hs hj _
+    have hz : cfg.inputPos = 0 := Fin.ext hj
+    have hstep : (ic_rewindLeafTM k).step cfg =
+        { cfg with state := some 2, inputPos := moveInputPos cfg.inputPos .pos } := by
+      rw [MultiTapeTM.step_of_some hs, Cfg.inputSymbol_of_zero hz]
+      simp only [ic_rewindLeafTM, Fin.reduceEq, ↓reduceIte]
+      exact FinTM.controlAction_apply cfg .pos (some 2)
+    have hm : moveInputPos cfg.inputPos .pos = 1 := by
+      apply Fin.ext
+      rw [hz, moveInputPos_pos_of_ne_right _ (by simp)]
+      simp
+    refine ⟨?_, ?_⟩
+    · show (ic_rewindLeafTM k).step cfg = _
+      rw [hstep, hm]
+    · intro u hu
+      obtain rfl : u = 0 := by omega
+      exact hs
+  | succ j ih =>
+    intro cfg hs hj hlen
+    have hsym : cfg.inputSymbol = some (x[j]'(by omega)) :=
+      inputSymbolInner j (by omega) (by omega)
+    have hstep : (ic_rewindLeafTM k).step cfg =
+        { cfg with state := some 1, inputPos := moveInputPos cfg.inputPos .neg } := by
+      rw [MultiTapeTM.step_of_some hs, hsym]
+      simp only [ic_rewindLeafTM, Fin.reduceEq, ↓reduceIte]
+      exact FinTM.controlAction_apply cfg .neg (some 1)
+    have hpos : (moveInputPos cfg.inputPos .neg).val = j := by
+      rw [FinTM.moveInputPos_neg_val]
+      omega
+    obtain ⟨hrun, hstay⟩ := ih ((ic_rewindLeafTM k).step cfg)
+      (by rw [hstep]) (by rw [hstep]; exact hpos) (by omega)
+    refine ⟨?_, ?_⟩
+    · rw [MultiTapeTM.runFrom_succ_eq_step, hrun, hstep]
+    · intro u hu
+      cases u with
+      | zero => exact hs
+      | succ u =>
+        rw [MultiTapeTM.runFrom_succ_eq_step]
+        exact hstay u (by omega)

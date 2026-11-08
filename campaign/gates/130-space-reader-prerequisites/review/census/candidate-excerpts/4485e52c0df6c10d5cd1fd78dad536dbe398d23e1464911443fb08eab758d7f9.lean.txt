@@ -1,0 +1,13 @@
+private def emitterP2EraseTM : FinTM Bool where
+  k := 1
+  State := Fin 3
+  tm := {
+    q₀ := 0
+    tr := fun q _ work => match q.val with
+      | 0 => match work 0 with
+        | some _ => ⟨0, fun _ => (none, .pos), none, some 0⟩
+        | none => ⟨0, fun _ => (none, .neg), none, some 1⟩
+      | 1 => match work 0 with
+        | some _ => ⟨0, fun _ => (some none, .neg), none, some 1⟩
+        | none => ⟨0, fun _ => (none, .pos), none, some 2⟩
+      | _ => controlAction 0 (some 2) }

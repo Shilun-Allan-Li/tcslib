@@ -1,0 +1,44 @@
+/-- A source query reaches the full-host copy/call entry after its redirect
+and the inherited preparation segment, costing at most displacement plus five.
+
+**Proof sketch.** The source query takes one public phase redirect. Identify
+the resulting administration view by `oracleSource_localView`, then relocate
+`oraclePrepare` and use its guard in `oracleHost_dispatch`, including the
+second redirect into the service phase. -/
+private theorem oracleHost_prepare (M : FinOracleTM Bool) (C : FinTM Bool)
+    (hc : 0 < C.k) (en ex : C.State) {x : List Bool}
+    (c : Cfg (M.k + 1) Bool M.State x) (side : Bool)
+    (hq : c.state = some M.tm.qQuery)
+    (hb : oracleSide (c.workTapePos (OracleTM.queryTapeIdx M.k)) side) :
+    ∃ t ≤ (c.workTapePos (OracleTM.queryTapeIdx M.k)).natAbs + 5,
+      (oracleHost M C hc en ex).tm.runFrom (oracleStableCfg M C c side) t =
+        (oracleDispatchCfg M C hc c side
+          (oracleReadyCfg (c.workTapes (OracleTM.queryTapeIdx M.k))
+            (c.workTapePos (OracleTM.queryTapeIdx M.k)) side [] .copy c.inputPos c.output)).mapState
+          (fun _ => ⟨.service, Sum.inl SweepPhase.sweep⟩) := by
+  let f := c.workTapes (OracleTM.queryTapeIdx M.k)
+  let p := c.workTapePos (OracleTM.queryTapeIdx M.k)
+  obtain ⟨t, ht, hprep, hcut⟩ := oraclePrepare f p side hb c.inputPos c.output
+  have first := (phaseHostTM_run (oraclePhases M C hc en) ⟨.dispatch, .boot⟩
+    (oracleRedirect M C ex) .source (oracleSourceCfg M C c side)
+    (oracleSourceCfg M C c side) 0 rfl (M.tm.qQuery, side)
+    (by simp [oracleSourceCfg, embedEmitCfg, oracleShadowCfg, hq])
+    ⟨.dispatch, .bookmark side⟩ (by simp [oracleRedirect])
+    (by intro u hu; omega)).2
+  have admin := oracleHost_dispatch M C hc en ex
+    (oracleSourceCfg M C c side).workTapes (oracleSourceCfg M C c side).workTapePos
+    (oracleLocalCfg f p (.bookmark side) c.inputPos c.output)
+    (oracleReadyCfg f p side [] .copy c.inputPos c.output) t hprep .copy rfl
+    ⟨.service, Sum.inl SweepPhase.sweep⟩ rfl (by
+      intro u hu s hs
+      rcases hcut u hu with he | he | he <;>
+        have hsame := Option.some.inj (hs.symm.trans he) <;>
+        subst s <;> trivial)
+  have localView := congrArg
+    (Cfg.mapState (Sigma.mk (β := oraclePhaseState M C) OraclePhase.dispatch))
+    (oracleSource_localView M C hc c side (.bookmark side) (by simp [hq]))
+  simp only [Cfg.mapState, Option.map_map, Function.comp_def] at localView
+  refine ⟨1 + (t + 1), by dsimp [p] at ht; omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add]
+  exact (congrArg (fun d => (oracleHost M C hc en ex).tm.runFrom d (t + 1))
+    (first.trans localView.symm)).trans admin

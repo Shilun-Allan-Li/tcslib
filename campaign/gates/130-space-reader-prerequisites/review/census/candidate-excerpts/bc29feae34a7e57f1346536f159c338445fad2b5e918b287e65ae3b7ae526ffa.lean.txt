@@ -1,0 +1,66 @@
+/-- Transport a framed seek and its full first-return/radius contract to a selected digit
+bank in the rich record host. Only native position and control change at the endpoint;
+all rich frame cells and the arbitrary output prefix are restored.
+**Proof sketch.** Decode the two selected tapes, apply the supplied public seek contract,
+and use `recordStep_transport` for every prefix. Its time-zero instance identifies the
+unchanged frame at the endpoint. Selected heads use the seek bound and unselected heads
+are fixed by the public embedding layout. -/
+private theorem recordStep_seek_transport {Q T S : Type} [DecidableEq Q] [DecidableEq T]
+    (seek : MultiTapeTM 2 Bool S) (start finish : S) (C : ℕ) {x : List Bool}
+    (p : ℕ) (w : List Bool) (hpx : p ≤ x.length + 1)
+    (hspec : ∀ c : Cfg 2 Bool S x, c.state = some start →
+      (∀ z : ℤ, -1 ≤ z → z ≤ (w.length : ℤ) →
+        c.workTapes 0 (c.workTapePos 0 + z) = FinTM.bufferTape w z) →
+      (∀ z, c.workTapes 1 z = none) →
+      ∃ t ≤ C * (w.length + c.inputPos.val + p + 1),
+        (∀ u < t, (seek.runFrom c u).state ≠ some finish) ∧
+        (∀ u ≤ t, ∀ j, |(seek.runFrom c u).workTapePos j - c.workTapePos j| ≤
+          ((C * (w.length + 1) : ℕ) : ℤ)) ∧
+        (seek.runFrom c t).state = some finish ∧ (seek.runFrom c t).inputPos.val = p ∧
+        (seek.runFrom c t).workTapes = c.workTapes ∧
+        (seek.runFrom c t).workTapePos = c.workTapePos ∧ (seek.runFrom c t).output = c.output)
+    (ι : Fin 2 ↪ Fin 4)
+    (d : Cfg 4 (RecSym Q T) S (x.map (RecSym.digitEmb Q T)))
+    (hd : d.state = some start)
+    (hdig : ∀ i z γ, d.workTapes (ι i) z = some γ → ∃ b, γ = (RecSym.digitEmb Q T) b)
+    (hw : ∀ z : ℤ, -1 ≤ z → z ≤ (w.length : ℤ) →
+      d.workTapes (ι 0) (d.workTapePos (ι 0) + z) = FinTM.bufferTape (w.map (RecSym.digitEmb Q T)) z)
+    (hblank : ∀ z, d.workTapes (ι 1) z = none) :
+    ∃ t ≤ C * (w.length + d.inputPos.val + p + 1),
+      (∀ u < t, ((embedEmitTM ι (seek.liftSymbols (RecSym.digitEmb Q T))).runFrom d u).state ≠ some finish) ∧
+      (∀ u ≤ t, ∀ j,
+        |((embedEmitTM ι (seek.liftSymbols (RecSym.digitEmb Q T))).runFrom d u).workTapePos j -
+          d.workTapePos j| ≤ ((C * (w.length + 1) : ℕ) : ℤ)) ∧
+      (embedEmitTM ι (seek.liftSymbols (RecSym.digitEmb Q T))).runFrom d t =
+        {d with state := some finish, inputPos := ⟨p, by simp; omega⟩} := by
+  let e := RecSym.digitEmb Q T
+  let c : Cfg 2 Bool S x := ⟨d.state, Fin.cast (by simp) d.inputPos,
+    (fun i z => (d.workTapes (ι i) z).bind (decodeBool e)), (fun i => d.workTapePos (ι i)), []⟩
+  obtain ⟨t, ht, cut, heads, state, pos, tapes, positions, output⟩ := hspec c hd
+    (by
+      intro z hz hu
+      change (d.workTapes (ι 0) (d.workTapePos (ι 0) + z)).bind (decodeBool e) = _
+      rw [hw z hz hu]
+      exact FinTM.bufferTape_map_decode e w z)
+    (by intro z; simp [c, hblank])
+  have row : seek.runFrom c t = {c with state := some finish, inputPos := ⟨p, by omega⟩} :=
+    Cfg.ext state (Fin.ext pos) tapes positions output
+  refine ⟨t, ht, ?_, ?_, ?_⟩
+  · intro u hu
+    rw [recordStep_transport seek e ι d hdig u]
+    rw [embedEmitCfg_state, Cfg.liftSymbols_state]
+    exact cut u hu
+  · intro u hu j
+    rw [recordStep_transport seek e ι d hdig u]
+    by_cases hj : j ∈ Set.range ι
+    · obtain ⟨i, rfl⟩ := hj
+      rw [embedEmitCfg_selected_pos, Cfg.liftSymbols_workTapePos]
+      exact heads u hu i
+    · have hf := ((embedEmitTM_frame ι (seek.liftSymbols e) d.workTapes d.workTapePos d.output
+        ((seek.runFrom c u).liftSymbols e) 0).1 j hj).2
+      rw [MultiTapeTM.runFrom_zero] at hf
+      rw [hf]
+      simp only [sub_self, abs_zero]
+      exact_mod_cast Nat.zero_le (C * (w.length + 1))
+  · rw [recordStep_transport seek e ι d hdig t, row]
+    exact recordStep_embed_update e ι d hdig (some finish) ⟨p, by omega⟩

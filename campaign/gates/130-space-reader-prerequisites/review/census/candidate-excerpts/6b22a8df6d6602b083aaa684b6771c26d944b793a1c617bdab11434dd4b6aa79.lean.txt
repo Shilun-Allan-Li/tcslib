@@ -1,0 +1,26 @@
+/-- A native all-earlier-row matcher. Each completed comparison stores one
+flag in source-time order. The clock is tested before loading, so exactly
+its length of rows is inspected; the row at the target time is excluded. -/
+private def clMatchTM {l : ℕ} (pos neg : Fin l) : FinTM Bool where
+  k := l + 5
+  State := clMatchState l
+  tm := {
+    q₀ := .inl ()
+    tr := fun q inp work => match q with
+      | .inl _ =>
+        if work (Fin.natAdd l (3 : Fin 5)) = none then
+          FinTM.controlAction 0 (some (.inr (.inr (.inr ()))))
+        else FinTM.controlAction 0 (some (.inr (.inl (0, .inl 0))))
+      | .inr (.inl r) =>
+        if r = (Fin.last l, .inl 0) then
+          FinTM.controlAction 0 (some (.inr (.inr (.inl (.inl (false, false, true))))))
+        else clSlotAction (clMatchLoadSelect l) (fun r => .inr (.inl r))
+          ((clLoadTM l).tm.tr r inp (fun i => work (clMatchLoadIndex l i)))
+      | .inr (.inr (.inl r)) => match r with
+        | .inr (.inr b) =>
+          ⟨0, Fin.addCases (fun _ => (none, 0))
+            (fun i => if i = 3 then (none, .pos) else if i = 4 then (some (some b), .pos)
+              else (none, 0)), none, some (.inl ())⟩
+        | r => clSlotAction (clMatchCmpSelect pos neg) (fun r => .inr (.inr (.inl r)))
+            (clCmpTM.tm.tr r inp (fun i => work (clMatchCmpIndex pos neg i)))
+      | .inr (.inr (.inr _)) => FinTM.controlAction 0 (some q) }

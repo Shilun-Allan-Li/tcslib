@@ -1,0 +1,73 @@
+/-- **The initial-code check recognizes the code of the initial configuration.**
+
+**Proof sketch.** (⇐) Read the header, the initial shape, the position field and the middle
+cell off the layout (`vScan_cfgWord`, `cfgWord_pos`, `getD_cfgWord_chunk`). (⇒) The word
+is the code of some window-bounded `C` (`validChk_iff`); the header gives the state `q₀` and
+the empty output; the initial shape makes every cell blank (and outside the window cells are
+blank anyway) and puts all heads in one cell, and the middle-cell flag puts the head of tape
+`0`, hence all heads, at position `0`. So `C` has the vertex of the initial configuration,
+and codes depend only on the vertex (`cfgWord_congr`). -/
+theorem initChk_iff (s : ℕ) (w : List Bool) :
+    InitChk N x s w ↔ w = cfgWord s (N.tm.initCfg x) := by
+  have hWin : InWin N s (N.tm.initCfg x) := fun i => by simp [NDTM.initCfg, Cfg.init]
+  constructor
+  · rintro ⟨hval, hhd, hiok, hpos, hcen⟩
+    obtain ⟨C, hC, rfl⟩ := (validChk_iff x s w).mp hval
+    obtain ⟨h1, -, -, h4⟩ := vScan_cfgWord s C hC
+    rw [h1] at hhd
+    simp only [Option.some.injEq, Prod.mk.injEq] at hhd
+    obtain ⟨hst, hsum⟩ := hhd
+    have hout : C.output = [] := by
+      apply (outSummary_eq_empty_iff _).mp
+      exact sumIdx_injective (by rw [hsum]; rfl)
+    rw [h4, decide_eq_true_eq] at hiok
+    rw [cfgWord_pos, bitsVal_padBits] at hpos
+    have hblank : ∀ i z, C.workTapes i z = none := by
+      intro i z
+      by_cases hz : |z| ≤ s
+      · have := (hiok (z + s).toNat (by rw [abs_le] at hz; omega)).1 i
+        simp only [cellOf] at this
+        rwa [show (((z + s).toNat : ℕ) : ℤ) - s = z by rw [abs_le] at hz; omega] at this
+      · by_contra hne; exact hz ((hC i).2 z hne)
+    have hheads : ∀ i, C.workTapePos i = 0 := by
+      intro i
+      have hk : 0 < N.k := Fin.pos i
+      have h0 : C.workTapePos ⟨0, hk⟩ = 0 := by
+        rcases hcen with h | h
+        · omega
+        · have := getD_cfgWord_chunk s C s (hH N + 2) (by omega) (by simp [W]; omega)
+          rw [show W N * s + (hH N + 2) = W N * s + (hH N + 2) from rfl, this] at h
+          rw [show hH N + 2 = hH N + 3 * (⟨0, hk⟩ : Fin N.k) + 2 by simp,
+            chunkBit_tape N _ _ 2 (by omega)] at h
+          simpa [cellOf] using h
+      have tog := (hiok s (by omega)).2
+      simp only [cellOf, sub_self] at tog
+      rcases tog with h | h
+      · simpa using h i
+      · have := h ⟨0, hk⟩
+        simp [h0] at this
+    have hcore : NDTM.coreSum C = NDTM.coreSum (N.tm.initCfg x) := by
+      simp only [NDTM.coreSum, MultiTapeTM.ConfigCount.core, NDTM.initCfg, Cfg.init, hst, hout,
+        Prod.mk.injEq, true_and]
+      refine ⟨⟨Fin.ext (by simpa using hpos), funext fun i => funext fun z => hblank i z,
+        funext hheads⟩, trivial⟩
+    exact cfgWord_congr hcore
+  · rintro rfl
+    obtain ⟨h1, -, -, h4⟩ := vScan_cfgWord s (N.tm.initCfg x) hWin
+    refine ⟨(validChk_iff x s _).mpr ⟨_, hWin, rfl⟩, ?_, ?_, ?_, ?_⟩
+    · rw [h1]; simp [NDTM.initCfg, Cfg.init, outSummary, sumIdx]
+    · rw [h4, decide_eq_true_eq]
+      intro j hj
+      refine ⟨fun i => by simp [cellOf, NDTM.initCfg, Cfg.init], ?_⟩
+      by_cases hjs : (j : ℤ) - s = 0
+      · left; intro i; simp [cellOf, NDTM.initCfg, Cfg.init, hjs]
+      · right; intro i; simp [cellOf, NDTM.initCfg, Cfg.init]; omega
+    · rw [cfgWord_pos, bitsVal_padBits]; rfl
+    · by_cases hk : N.k = 0
+      · exact Or.inl hk
+      · right
+        have hk' : 0 < N.k := Nat.pos_of_ne_zero hk
+        rw [getD_cfgWord_chunk s _ s (hH N + 2) (by omega) (by simp [W]; omega),
+          show hH N + 2 = hH N + 3 * (⟨0, hk'⟩ : Fin N.k) + 2 by simp,
+          chunkBit_tape N _ _ 2 (by omega)]
+        simp [cellOf, NDTM.initCfg, Cfg.init]

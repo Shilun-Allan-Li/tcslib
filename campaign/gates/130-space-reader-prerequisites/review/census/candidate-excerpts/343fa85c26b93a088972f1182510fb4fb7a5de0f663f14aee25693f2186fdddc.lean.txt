@@ -1,0 +1,286 @@
+/-- **R8.7, the record template** (design §12.8b). There is a module over the
+record alphabet with an entry and an exit state and `K + 2` tapes with the
+following contract. Start it at its entry with the native input `x` as digits
+and its head at `1`; on tape `1` a delimited `Bool` word `ws` as digits, whose
+little-endian value is the radius `s`; tape `0` blank on the template's slot
+and one cell either side; and the other tapes blank. It reaches its exit within
+`C` times the template length plus `|ws| + |x| + 1`, and not earlier, with
+`Turing.recordTemplate |x| s` written at the head of tape `0` and nothing else
+changed. Up to the exit every work head stays within `C` times the template
+length plus `|ws| + 1` of its entry position, independently of `|x|`.
+
+**Proof sketch.** Compose by R2 seams, running every `Bool` row lifted along
+`Turing.RecSym.digitEmb` on dedicated digit tapes, isolated by R1
+(`Turing.MultiTapeTM.liftSymbols_runFrom`). The bound field:
+`Turing.exists_inputLengthTM` gives `Nat.bits |x|` on a scratch tape; one more
+increment with the same width extension gives `Nat.bits (|x| + 1)`, which is the
+bound field (`Turing.binDigits_posWidth_succ`); copy it to tape `0`
+(`Turing.copyTM_run_ofCfg`) and clear the scratch. The window field: with `ws`
+copied to a scratch counter before each expansion (an expansion leaves its
+counter all `true`), `Turing.expandTM_run_ofCfg` with pattern `[false]` writes
+`s` digits, `Turing.writeAdvTM` one `true` digit, and `Turing.expandTM` again `s`
+digits, all in the digit image as the transport requires; a `Turing.scanTM` map
+(`Turing.scanResult_map`) turns `digit b` into `cell none b`. Clear the
+counters and return the heads by `Turing.skipBackTM`. The expansions cost
+`O(s + |ws|)` by `Turing.counterOverhead_le`, and `2s + 1` is at most the
+template length.
+
+**Fill appendix (continuation 3, partial).** The clean-bank bound phase is
+proved as `rt_exists_boundTM`: the public input-length row, the catalog
+increment, and the one-cell overflow extension are composed by R2 and the
+public phase host. `rt_exists_digitBoundTM` transports that phase through R1
+onto an isolated digit bank, keeping arbitrary unselected rich tapes and
+prior output. `rt_template_fields` identifies its canonical bound word and
+the two unmarked window halves with these frozen fields. The window's two
+expansions, copies, map, cleanup and final template composition remain
+unfinished; this public row retains its original admission.
+
+**Fill appendix (continuation 4, proved).** The bound field is now connected
+to the destination and its isolated bank is cleared. The window copies the
+radius into a separate clean digit bank, copies a fresh counter before each
+expansion, and releases the one-bit advancing writer between the two halves.
+A rich mapping scan converts the completed digits to `cell none`; rich
+copy/clear rows transfer the window and clear every scratch word. All stages
+are joined by R2 seams, including the destination skip and final rewind.
+The original signature is proved with complete first-exit and head-envelope
+clauses, using `rt_template_fields` and the public field-layout projections.
+This supersedes the preceding continuation's admission status. -/
+theorem exists_recordTemplateTM (Q T : Type) [Fintype Q] [DecidableEq Q] [Fintype T]
+    [DecidableEq T] :
+    ∃ (K : ℕ) (P : Type) (_ : Fintype P) (_ : DecidableEq P)
+      (R : MultiTapeTM (K + 2) (RecSym Q T) P) (entry exit : P) (C : ℕ),
+      ∀ {x : List Bool} (s : ℕ) (ws : List Bool), Nat.ofDigits 2 (ws.map Bool.toNat) = s →
+      ∀ d : Cfg (K + 2) (RecSym Q T) P (x.map (RecSym.digitEmb Q T)),
+        d.state = some entry → d.inputPos = 1 →
+        (∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+          d.workTapes 1 (d.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p) →
+        (∀ p : ℤ, -1 ≤ p → p ≤ ((joinFields (recordTemplate Q T x.length s)).length : ℤ) →
+          d.workTapes 0 (d.workTapePos 0 + p) = none) →
+        (∀ j : Fin (K + 2), 2 ≤ j.val → ∀ p, d.workTapes j p = none) →
+        ∃ t ≤ C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length +
+            x.length + 1),
+          (∀ u < t, (R.runFrom d u).state ≠ some exit) ∧
+          (∀ u ≤ t, ∀ j : Fin (K + 2),
+            |(R.runFrom d u).workTapePos j - d.workTapePos j| ≤
+              ((C * ((joinFields (recordTemplate Q T x.length s)).length + ws.length + 1) :
+                ℕ) : ℤ)) ∧
+          R.runFrom d t =
+            { d with
+              state := some exit
+              workTapes := fun j q =>
+                if j = 0 ∧ d.workTapePos j ≤ q ∧
+                    q < d.workTapePos j + ((joinFields (recordTemplate Q T x.length s)).length : ℤ)
+                  then fieldsTape (recordTemplate Q T x.length s) (q - d.workTapePos j)
+                else d.workTapes j q } := by
+  obtain ⟨K, S, fin, eq, R, en, ex, C, bound⟩ := rt_exists_boundFieldTM Q T
+  letI := fin
+  letI := eq
+  letI : Fintype rt_richWindowState := by
+    set_option synthInstance.maxSize 512 in
+      infer_instance
+  letI : DecidableEq rt_richWindowState := Classical.typeDecidableEq _
+  let bank : Fin (K + 1) ↪ Fin (K + 6) :=
+    ⟨fun i => ⟨i.val + 2, by omega⟩, by
+      intro i j h
+      apply Fin.ext
+      have := congrArg Fin.val h
+      simp at this
+      omega⟩
+  let winBank : Fin 3 ↪ Fin (K + 6) :=
+    ⟨fun i => ⟨i.val + K + 3, by omega⟩, by
+      intro i j h
+      apply Fin.ext
+      have := congrArg Fin.val h
+      simp at this
+      omega⟩
+  have bankPos (i : Fin (K + 1)) : 2 ≤ (bank i).val := by dsimp [bank]; omega
+  have winPos (i : Fin 3) : 2 ≤ (winBank i).val := by dsimp [winBank]; omega
+  have b0 : (0 : Fin (K + 6)) ∉ Set.range bank := by
+    rintro ⟨i, hi⟩; have := bankPos i; rw [hi] at this; contradiction
+  have w0 : (0 : Fin (K + 6)) ∉ Set.range winBank := by
+    rintro ⟨i, hi⟩; have := winPos i; rw [hi] at this; contradiction
+  have w1 : (1 : Fin (K + 6)) ∉ Set.range winBank := by
+    rintro ⟨i, hi⟩; have := winPos i; rw [hi] at this; contradiction
+  let W := rt_richWindowTM Q T (K + 6) 1 0 winBank
+  let tail := seamCompTM W (.inr (.inr (.inr .done))) (skipBackTM (K + 6) 0) .run
+  let rest := seamCompTM (skipTM (K + 6) 0) .done tail (.inl (.inl .sweep))
+  let M := seamCompTM (R bank 0) ex rest (.inl .run)
+  refine ⟨K + 4, S ⊕ (SeekPhase ⊕ (rt_richWindowState ⊕ SeekPhase)),
+    inferInstance, Classical.typeDecidableEq _, M, .inl en, .inr (.inr (.inr .done)), C + 60, ?_⟩
+  intro x s ws value d entry input radius slot blank
+  let wb : List (RecSym Q T) := (x.length + 1).bits.map RecSym.digit
+  let wc : List (RecSym Q T) :=
+    (List.replicate s false ++ true :: List.replicate s false).map (RecSym.cell none)
+  let L := (joinFields (recordTemplate Q T x.length s)).length
+  have wl : wb.length = (x.length + 1).bits.length := by simp [wb]
+  have cl : wc.length = 2 * s + 1 := by simp [wc]; omega
+  have ll : L = wb.length + 2 * s + 2 := by
+    change (joinFields (recordTemplate Q T x.length s)).length = _
+    rw [joinFields_recordTemplate_length, wl]
+    rfl
+  have template : recordTemplate Q T x.length s = [wb, wc] := rt_template_fields Q T x.length s
+  let a := d.mapState (fun _ => en)
+  have ae : a.state = some en := by simp [a, Cfg.mapState, entry]
+  obtain ⟨t, cost, cutA, headsA, runA⟩ := bound bank 0 b0 a ae input
+    (fun i p => blank (bank i) (bankPos i) p)
+  let a' : Cfg (K + 6) (RecSym Q T) S (x.map (RecSym.digitEmb Q T)) :=
+    { a with
+      state := some ex
+      workTapes := fun j p =>
+        if j = 0 ∧ d.workTapePos j ≤ p ∧ p < d.workTapePos j + (wb.length : ℤ)
+        then FinTM.bufferTape wb (p - d.workTapePos j) else d.workTapes j p }
+  have boundEnd : (R bank 0).runFrom a t = a' := by simpa only [a', wl] using runA
+  let b := a'.mapState (fun _ => SeekPhase.run)
+  have boundFrame (p : ℤ) (lo : -1 ≤ p) (hi : p ≤ (wb.length : ℤ)) :
+      b.workTapes 0 (d.workTapePos 0 + p) = FinTM.bufferTape wb p := by
+    change (if (0 : Fin (K + 6)) = 0 ∧ d.workTapePos 0 ≤ d.workTapePos 0 + p ∧
+        d.workTapePos 0 + p < d.workTapePos 0 + (wb.length : ℤ)
+      then FinTM.bufferTape wb (d.workTapePos 0 + p - d.workTapePos 0)
+      else d.workTapes 0 (d.workTapePos 0 + p)) = _
+    by_cases interior : 0 ≤ p ∧ p < (wb.length : ℤ)
+    · rw [if_pos (by omega)]; congr 1; omega
+    · rw [if_neg (by omega), slot p lo (by change p ≤ (L : ℤ); omega)]
+      have edge : p = -1 ∨ p = (wb.length : ℤ) := by omega
+      rcases edge with rfl | rfl <;> simp [FinTM.bufferTape]
+  obtain ⟨runB, cutB, headsB⟩ := skipTM_run_ofCfg (0 : Fin (K + 6)) wb b rfl
+    (fun p lo hi => boundFrame p (by omega) hi)
+  let b' : Cfg (K + 6) (RecSym Q T) SeekPhase (x.map (RecSym.digitEmb Q T)) :=
+    { b with
+      state := some .done
+      workTapePos := Function.update d.workTapePos 0 (d.workTapePos 0 + wb.length + 1) }
+  change (skipTM (K + 6) 0).runFrom b (wb.length + 1) = b' at runB
+  let c := b'.mapState (fun _ => (Sum.inl SweepPhase.sweep : rt_richWindowState))
+  have cp : c.workTapePos 0 = d.workTapePos 0 + wb.length + 1 := by
+    simp [c, b', Cfg.mapState]
+  have co (j : Fin (K + 6)) (ne : j ≠ 0) : c.workTapePos j = d.workTapePos j := by
+    simp [c, b', Cfg.mapState, ne]
+  have cr : ∀ p : ℤ, -1 ≤ p → p ≤ (ws.length : ℤ) →
+      c.workTapes 1 (c.workTapePos 1 + p) = FinTM.bufferTape (ws.map RecSym.digit) p := by
+    simpa [c, b', b, a', a, Cfg.mapState] using radius
+  have cb (i : Fin 3) (p : ℤ) : c.workTapes (winBank i) p = none := by
+    have ne : winBank i ≠ 0 := by intro h; exact w0 ⟨i, h⟩
+    simp only [c, b', b, a', a, Cfg.mapState, ne, false_and, if_false]
+    exact blank (winBank i) (winPos i) p
+  obtain ⟨u, ucost, cutC, headsC, runC⟩ :=
+    rt_richWindow_run Q T 1 0 winBank w1 w0 ws s value c rfl cr cb
+  let c' : Cfg (K + 6) (RecSym Q T) rt_richWindowState (x.map (RecSym.digitEmb Q T)) :=
+    { c with
+      state := some (.inr (.inr (.inr .done)))
+      workTapes := fun j p =>
+        if j = 0 ∧ c.workTapePos j ≤ p ∧ p < c.workTapePos j + (wc.length : ℤ)
+        then FinTM.bufferTape wc (p - c.workTapePos j) else c.workTapes j p }
+  have windowEnd : W.runFrom c u = c' := by simpa only [c', cl] using runC
+  let e := c'.mapState (fun _ => SeekPhase.run)
+  have ep : e.workTapePos 0 = d.workTapePos 0 + wb.length + 1 := cp
+  have eo (j : Fin (K + 6)) (ne : j ≠ 0) : e.workTapePos j = d.workTapePos j := co j ne
+  have old (p : ℤ) (lo : -1 ≤ p) (hi : p ≤ (wb.length : ℤ)) :
+      e.workTapes 0 (e.workTapePos 0 - wb.length - 1 + p) = FinTM.bufferTape wb p := by
+    change (if (0 : Fin (K + 6)) = 0 ∧ c.workTapePos 0 ≤ e.workTapePos 0 - wb.length - 1 + p ∧
+        e.workTapePos 0 - wb.length - 1 + p < c.workTapePos 0 + (wc.length : ℤ)
+      then _ else b.workTapes 0 (e.workTapePos 0 - wb.length - 1 + p)) = _
+    rw [if_neg (by rw [cp, ep]; omega), ep]
+    convert boundFrame p lo hi using 1; congr 1; omega
+  obtain ⟨runE, cutE, headsE⟩ := skipBackTM_run_ofCfg (0 : Fin (K + 6)) wb e rfl old
+  let B : ℤ := ((C + 60) * (L + ws.length + 1) : ℕ)
+  have big : (L : ℤ) + ws.length + 4 ≤ B := by
+    dsimp [B]
+    exact_mod_cast (show L + ws.length + 4 ≤ (C + 60) * (L + ws.length + 1) by nlinarith)
+  have radA : ∀ v ≤ t, ∀ j,
+      |((R bank 0).runFrom a v).workTapePos j - d.workTapePos j| ≤ B := by
+    intro v hv j
+    exact (headsA v hv j).trans (by dsimp [B]; exact_mod_cast
+      (show C * ((x.length + 1).bits.length + 1) ≤ (C + 60) * (L + ws.length + 1) by
+        rw [← wl]; nlinarith))
+  have radB : ∀ v ≤ wb.length + 1, ∀ j,
+      |((skipTM (K + 6) 0).runFrom b v).workTapePos j - d.workTapePos j| ≤ B := by
+    intro v hv j
+    have h := headsB j v hv
+    change (if j = 0 then _ ∈ Finset.Icc (d.workTapePos j)
+      (d.workTapePos j + wb.length + 1) else _ = d.workTapePos j) at h
+    split_ifs at h
+    · have h := Finset.mem_Icc.mp h
+      exact abs_le.mpr ⟨by omega, by omega⟩
+    · rw [h, sub_self, abs_zero]; omega
+  have shift (j : Fin (K + 6)) : |c.workTapePos j - d.workTapePos j| ≤ wb.length + 1 := by
+    by_cases zero : j = 0
+    · subst j; rw [cp]; have : (0 : ℤ) ≤ wb.length := Int.natCast_nonneg _
+      rw [abs_of_nonneg (by omega)]; omega
+    · rw [co j zero, sub_self, abs_zero]; positivity
+  have radC : ∀ v ≤ u, ∀ j,
+      |(W.runFrom c v).workTapePos j - d.workTapePos j| ≤ B := by
+    intro v hv j
+    calc
+      |(W.runFrom c v).workTapePos j - d.workTapePos j| =
+          |((W.runFrom c v).workTapePos j - c.workTapePos j) +
+            (c.workTapePos j - d.workTapePos j)| := by congr 1; ring
+      _ ≤ |(W.runFrom c v).workTapePos j - c.workTapePos j| +
+          |c.workTapePos j - d.workTapePos j| := abs_add_le _ _
+      _ ≤ ((2 * s + ws.length + 3 : ℕ) : ℤ) + (wb.length + 1) :=
+        add_le_add (headsC v hv j) (shift j)
+      _ ≤ B := by omega
+  have radE : ∀ v ≤ wb.length + 3, ∀ j,
+      |((skipBackTM (K + 6) 0).runFrom e v).workTapePos j - d.workTapePos j| ≤ B := by
+    intro v hv j
+    have h := headsE j v hv
+    by_cases zero : j = 0
+    · subst j
+      simp only [if_true, Finset.mem_Icc, ep] at h
+      exact abs_le.mpr ⟨by omega, by omega⟩
+    · simp only [if_neg zero, eo j zero] at h
+      rw [h, sub_self, abs_zero]; omega
+  obtain ⟨tailRun, tailCut, tailHeads⟩ := rt_copy_seam W (.inr (.inr (.inr .done)))
+    (skipBackTM (K + 6) 0) .run .done d.workTapePos B
+    windowEnd rfl cutC radC runE rfl cutE radE
+  obtain ⟨restRun, restCut, restHeads⟩ := rt_copy_seam (skipTM (K + 6) 0) .done
+    tail (.inl (.inl .sweep)) (.inr .done) d.workTapePos B
+    runB rfl cutB radB tailRun rfl tailCut tailHeads
+  obtain ⟨run, cut, heads⟩ := rt_copy_seam (R bank 0) ex rest (.inl .run)
+    (.inr (.inr .done)) d.workTapePos B
+    boundEnd rfl cutA radA restRun rfl restCut restHeads
+  have start : a.mapState Sum.inl = d := by
+    apply Cfg.ext <;> simp [a, Cfg.mapState, entry]
+  rw [start] at run cut heads
+  refine ⟨_, by
+    change _ ≤ (C + 60) * (L + ws.length + x.length + 1)
+    nlinarith,
+    cut, heads, ?_⟩
+  change M.runFrom d _ = _ at run
+  rw [run]
+  apply Cfg.ext
+  · rfl
+  · rfl
+  · funext j p
+    by_cases zero : j = 0
+    · subst j
+      simp only [Cfg.mapState, e, c', c, b', b, a', a, Function.update_self, true_and]
+      have layoutLength : (joinFields [wb, wc]).length = L := by rw [← template]
+      rw [template, layoutLength]
+      by_cases whole : d.workTapePos 0 ≤ p ∧ p < d.workTapePos 0 + (L : ℤ)
+      · rw [if_pos whole]
+        by_cases left : p < d.workTapePos 0 + (wb.length : ℤ)
+        · rw [if_neg (by omega), if_pos ⟨whole.1, left⟩]
+          have h := fieldsTape_field [wb, wc] 0 (by simp) (p - d.workTapePos 0)
+            (by omega) (by simp; omega)
+          simpa [fieldOffset] using h.symm
+        · by_cases gap : p = d.workTapePos 0 + (wb.length : ℤ)
+          · rw [if_neg (by omega), if_neg (by omega)]
+            have blankGap := slot (wb.length : ℤ) (by omega) (by change _ ≤ (L : ℤ); omega)
+            rw [gap, blankGap]
+            have h := fieldsTape_field [wb, wc] 0 (by simp) (wb.length : ℤ)
+              (by omega) (by simp)
+            simpa [fieldOffset, FinTM.bufferTape] using h.symm
+          · rw [if_pos (by omega)]
+            have h := fieldsTape_field [wb, wc] 1 (by simp)
+              (p - (d.workTapePos 0 + wb.length + 1)) (by omega) (by simp; omega)
+            have offset : (fieldOffset [wb, wc] 1 : ℤ) = wb.length + 1 := by simp [fieldOffset]
+            rw [offset] at h
+            convert h.symm using 1; congr 1; omega
+      · rw [if_neg whole, if_neg (by omega), if_neg (by omega)]
+    · simp [Cfg.mapState, e, c', c, b', b, a', a, zero]
+  · funext j
+    by_cases zero : j = 0
+    · subst j
+      simp only [Cfg.mapState, Function.update_self, ep]
+      omega
+    · simp only [Cfg.mapState, Function.update_of_ne zero, eo j zero]
+  · rfl

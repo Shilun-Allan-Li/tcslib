@@ -1,0 +1,19 @@
+import TCSlib.Complexity.ClassPSPACE.TQBF
+
+/-! # B4a pre-ship probe (maintainer; not part of the library)
+
+Read-only elaboration at the issue tree. It `#check`s every row that
+`Complexity.exists_adjacency_codec_cnf`'s binding sketch names, from `TQBF`'s own import
+closure, so the fill needs no new import. -/
+
+open Turing Complexity
+
+#check @Complexity.exists_adjacency_codec_cnf
+#check @Turing.MultiTapeTM.ConfigCount.coreCode_inj
+#check @Turing.NDTM.coreSum
+#check @Turing.NDTM.coreSum_stepWith
+#check @outSummary
+#check @Complexity.exists_cnf_boolFun
+#check @Std.Sat.CNF.serialize
+#check @Std.Sat.CNF.serializeClause
+#check @Cfg.InWindow

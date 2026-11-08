@@ -1,0 +1,211 @@
+import TCSlib.Complexity.TuringMachine.NDCodes
+import TCSlib.Complexity.ClassNP.NTIME
+import TCSlib.Complexity.ClassP.TimeConstructible
+import TCSlib.Complexity.ClassNP.NDNormalForm
+import TCSlib.Complexity.TuringMachine.Build.NDHost
+import TCSlib.Complexity.TuringMachine.NDCodeSimulator
+import TCSlib.Complexity.TuringMachine.UniversalStartup
+import TCSlib.Complexity.ClassNP.ExhaustiveReplay
+import TCSlib.Complexity.ClassNP.TMSAT
+import TCSlib.Complexity.TuringMachine.Build.Rewind
+
+namespace Turing
+
+section UNSeal
+attribute [local irreducible] Turing.Action.apply
+attribute [local irreducible] Turing.Cfg.init
+attribute [local irreducible] Turing.Cfg.inputSymbol
+attribute [local irreducible] Turing.Cfg.mapState
+attribute [local irreducible] Turing.Cfg.workTapeSymbols
+attribute [local irreducible] Turing.CodeNDTM.toFinNDTM
+attribute [local irreducible] Turing.FinNDTM.AcceptsWithin
+attribute [local irreducible] Turing.FinTM.bufferTape
+attribute [local irreducible] Turing.FinTM.bufferedCompTM
+attribute [local irreducible] Turing.FinTM.bufferedSecondCfg
+attribute [local irreducible] Turing.FinTM.controlAction
+attribute [local irreducible] Turing.FinTM.pairExtractTM
+attribute [local irreducible] Turing.FinTM.tapeBlocks
+attribute [local irreducible] Turing.GuessRunPhase.State
+attribute [local irreducible] Turing.MultiTapeTM.initCfg
+attribute [local irreducible] Turing.MultiTapeTM.runFrom
+attribute [local irreducible] Turing.MultiTapeTM.step
+attribute [local irreducible] Turing.NDTM.HaltsWithin
+attribute [local irreducible] Turing.NDTM.initCfg
+attribute [local irreducible] Turing.NDTM.runWith
+attribute [local irreducible] Turing.clearTM
+attribute [local irreducible] Turing.counterLoopCfg
+attribute [local irreducible] Turing.counterOverhead
+attribute [local irreducible] Turing.counterValue
+attribute [local irreducible] Turing.embedSilentCfg
+attribute [local irreducible] Turing.embedSilentRetTM
+attribute [local irreducible] Turing.embedSilentTM
+attribute [local irreducible] Turing.expandTM
+attribute [local irreducible] Turing.guessRunTM
+attribute [local irreducible] Turing.moveInputPos
+attribute [local irreducible] Turing.pairEncode
+attribute [local irreducible] Turing.prefixCanonTM
+attribute [local irreducible] Turing.rewindTM
+attribute [local irreducible] Turing.seamCompTM
+attribute [local irreducible] Turing.streamStartCfg
+attribute [local irreducible] Turing.universalPrefixTM
+attribute [-simp] Turing.Action.apply
+attribute [-simp] Turing.Cfg.init
+attribute [-simp] Turing.MultiTapeTM.initCfg
+attribute [-simp] Turing.NDTM.initCfg
+
+/-- Control sealed-1: closes only by unfolding `Turing.MultiTapeTM.runFrom` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    tm.runFrom c 0 = c := rfl
+
+/-- Control sealed-2: closes only by unfolding `Turing.FinTM.bufferTape` (rfl). -/
+example : FinTM.bufferTape [true] 0 = some true := by rfl
+
+/-- Control sealed-3: closes only by unfolding `Turing.Cfg.mapState` (rfl). -/
+example {k : ℕ} {S S' : Type} {x : List Bool} (f : S → S') (c : Cfg k Bool S x) :
+    (c.mapState f).inputPos = c.inputPos := rfl
+
+/-- Control sealed-4: closes only by unfolding `Turing.clearTM` (rfl). -/
+example {k : ℕ} (i : Fin k) : (clearTM (Symbol := Bool) k i).q₀ = .sweep := rfl
+
+/-- Control sealed-5: closes only by unfolding `Turing.pairEncode` (rfl). -/
+example : pairEncode [] [true] = [false, true, true] := by rfl
+
+/-- Control sealed-6: closes only by unfolding `Turing.seamCompTM` (rfl). -/
+example {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] (M₁ : MultiTapeTM k Bool S₁) (e : S₁)
+    (M₂ : MultiTapeTM k Bool S₂) (q : S₂) : (seamCompTM M₁ e M₂ q).q₀ = Sum.inl M₁.q₀ := rfl
+
+/-- Control sealed-7: closes only by unfolding `Turing.MultiTapeTM.initCfg` (rfl). -/
+example {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S) (x : List Bool) :
+    tm.initCfg x = Cfg.init tm.q₀ x := rfl
+
+/-- Control sealed-8: closes only by unfolding `Turing.Cfg.init` (rfl). -/
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).state = some q := rfl
+
+/-- Control sealed-9: closes only by unfolding `Turing.FinTM.controlAction` (rfl). -/
+example {k : ℕ} {S : Type} (m : SignType) (q : Option S) :
+    (FinTM.controlAction (k := k) m q).state = q := rfl
+
+/-- Control sealed-10: closes only by unfolding `Turing.FinTM.bufferedCompTM` (rfl). -/
+example (M₁ M₂ : FinTM Bool) : (FinTM.bufferedCompTM M₁ M₂).k = M₁.k + (1 + M₂.k) := rfl
+
+/-- Control sealed-11: closes only by unfolding `Turing.embedSilentCfg` (rfl). -/
+example {m n : ℕ} {S : Type} {x : List Bool} (ι : Fin m ↪ Fin n) (cap : Fin n)
+    (c : Cfg m Bool S x) :
+    (embedSilentCfg ι cap (fun _ _ => none) (fun _ => 0) [] [] c).state = c.state := rfl
+
+/-- Control sealed-12: closes only by unfolding `Turing.Cfg.workTapeSymbols` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (c : Cfg k Bool S x) (i : Fin k) :
+    c.workTapeSymbols i = c.workTapes i (c.workTapePos i) := rfl
+
+/-- Control sealed-13: closes only by unfolding `Turing.Action.apply` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :
+    (a.apply c).state = a.state := rfl
+
+/-- Control sealed-14: closes only by unfolding `Turing.moveInputPos` (rfl). -/
+example : (moveInputPos (0 : Fin 3) .pos).val = 1 := rfl
+
+/-- Control sealed-15: closes only by unfolding `Turing.embedSilentRetTM` (rfl). -/
+example {m n : ℕ} {S : Type} (ι : Fin m ↪ Fin n) (cap : Fin n) (M : MultiTapeTM m Bool S) :
+    (embedSilentRetTM ι cap M).q₀ = Sum.inl M.q₀ := rfl
+
+/-- Control sealed-16: closes only by unfolding `Turing.prefixCanonTM` (rfl). -/
+example (F : FinTM Bool) : prefixCanonTM F = FinTM.bufferedCompTM universalPrefixTM F := rfl
+
+/-- Control sealed-17: closes only by unfolding `Turing.universalPrefixTM` (rfl). -/
+example : universalPrefixTM.k = 0 := rfl
+
+/-- Control sealed-18: closes only by unfolding `Turing.Cfg.inputSymbol` (rfl). -/
+example : (⟨some (0 : Fin 1), 0, fun _ _ => none, fun _ => 0, []⟩ :
+    Cfg 0 Bool (Fin 1) []).inputSymbol = none := rfl
+
+/-- Control sealed-19: closes only by unfolding `Turing.FinTM.bufferedSecondCfg` (rfl). -/
+example (M₁ M₂ : FinTM Bool) {x y : List Bool} (c : Cfg M₂.k Bool M₂.State y) (b : Bool)
+    (p : Fin (x.length + 2)) (tp : Fin M₁.k → ℤ → Option Bool) (hd : Fin M₁.k → ℤ) :
+    (FinTM.bufferedSecondCfg M₁ M₂ c b p tp hd).inputPos = p := rfl
+
+/-- Control sealed-20: closes only by unfolding `Turing.FinTM.tapeBlocks` (rfl). -/
+example (a : Fin 1 → ℕ) (b : ℕ) (c : Fin 1 → ℕ) :
+    FinTM.tapeBlocks a b c = Fin.addCases a (Fin.addCases (fun _ => b) c) := rfl
+
+/-- Control sealed-21: closes only by unfolding `Turing.MultiTapeTM.step` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) :
+    tm.step { c with state := none } = { c with state := none } := rfl
+
+/-- Control sealed-22: closes only by unfolding `Turing.FinTM.pairExtractTM` (rfl). -/
+example : (FinTM.pairExtractTM true false).k = 1 := rfl
+
+/-- Control sealed-23: closes only by unfolding `Turing.rewindTM` (rfl). -/
+example {k : ℕ} (i : Fin k) : (rewindTM (Symbol := Bool) k i).q₀ = .start := rfl
+
+/-- Control sealed-24: closes only by unfolding `Turing.expandTM` (rfl). -/
+example (k : ℕ) (i : Fin k) (pat : List Bool) :
+    expandTM k i pat = counterLoopTM (writeAdvTM k i pat) 0 none := rfl
+
+/-- Control sealed-25: closes only by unfolding `Turing.counterLoopCfg` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (q : Option (CounterLoopState S)) (c : Cfg k Bool S x)
+    (ct : ℤ → Option Bool) (cp : ℤ) : (counterLoopCfg q c ct cp).state = q := rfl
+
+/-- Control sealed-26: closes only by unfolding `Turing.counterValue` (rfl). -/
+example (w : List Bool) : counterValue w = Nat.ofDigits 2 (w.map Bool.toNat) := rfl
+
+/-- Control sealed-27: closes only by unfolding `Turing.counterOverhead` (rfl). -/
+example (w : List Bool) (r : ℕ) : counterOverhead w r =
+    Finset.sum (Finset.range r) (fun j => 2 * ((counterWord w j).takeWhile not).length + 2) := rfl
+
+/-- Control sealed-28: closes only by unfolding `Turing.guessRunTM` (rfl). -/
+example {k : ℕ} {SP SQ : Type} [DecidableEq SP] [DecidableEq SQ] (P : MultiTapeTM k Bool SP)
+    (pexit : SP) (j : Fin k) (Q : MultiTapeTM k Bool SQ) (qe acc rej : SQ) :
+    guessRunTM P pexit j Q qe acc rej =
+      NDTM.phaseHostND (guessRunPhases P j Q) ⟨.pre, P.q₀⟩ (guessRunRed pexit qe acc rej) := rfl
+
+/-- Control sealed-29: closes only by unfolding `Turing.embedSilentTM` (rfl). -/
+example {m n : ℕ} {S : Type} (ι : Fin m ↪ Fin n) (cap : Fin n) (M : MultiTapeTM m Bool S) :
+    (embedSilentTM ι cap M).q₀ = M.q₀ := rfl
+
+/-- Control sealed-30: closes only by unfolding `Turing.streamStartCfg` (rfl). -/
+example {K : ℕ} {S : Type} (z : List Bool) (j : Fin K) (q : S) (s : List Bool) :
+    (streamStartCfg z j q s).inputPos = 1 := rfl
+
+/-- Control sealed-31: closes only by unfolding `Turing.NDTM.runWith` (rfl). -/
+example {k : ℕ} {S : Type} {x : List Bool} (tm : NDTM k Bool S) (c : Cfg k Bool S x) :
+    tm.runWith [] c = c := rfl
+
+/-- Control sealed-32: closes only by unfolding `Turing.NDTM.initCfg` (rfl). -/
+example {k : ℕ} {S : Type} (tm : NDTM k Bool S) (x : List Bool) :
+    tm.initCfg x = Cfg.init tm.q₀ x := rfl
+
+/-- Control sealed-33: closes only by unfolding `Turing.FinNDTM.AcceptsWithin` (rfl). -/
+example (N : FinNDTM Bool) (x : List Bool) (t : ℕ) : N.AcceptsWithin x t =
+    ∃ w : List Bool, w.length = t ∧ (N.tm.runWith w (N.tm.initCfg x)).state = none ∧
+      (N.tm.runWith w (N.tm.initCfg x)).output = [true] := rfl
+
+/-- Control sealed-34: closes only by unfolding `Turing.NDTM.HaltsWithin` (rfl). -/
+example {k : ℕ} {S : Type} (tm : NDTM k Bool S) (x : List Bool) (t : ℕ) : tm.HaltsWithin x t =
+    ∀ w : List Bool, w.length = t → (tm.runWith w (tm.initCfg x)).state = none := rfl
+
+/-- Control sealed-35: closes only by unfolding `Turing.CodeNDTM.toFinNDTM` (rfl). -/
+example (M : CodeNDTM) : M.toFinNDTM.k = 2 := rfl
+
+/-- Control sealed-36: closes only by unfolding `Turing.GuessRunPhase.State` (rfl). -/
+example (SP SQ : Type) : GuessRunPhase.State SP SQ .pre = SP := rfl
+
+/-- Control sealed-37: closes only by unfolding `Turing.Action.apply` (by simp). -/
+example {k : ℕ} {S : Type} {x : List Bool} (a : Action k Bool S) (c : Cfg k Bool S x) :
+    (a.apply c).state = a.state := by simp
+
+/-- Control sealed-38: closes only by unfolding `Turing.Cfg.init` (by simp). -/
+example {k : ℕ} {S : Type} (q : S) (x : List Bool) :
+    (Cfg.init (k := k) (Symbol := Bool) q x).inputPos = 1 := by simp
+
+/-- Control sealed-39: closes only by unfolding `Turing.MultiTapeTM.initCfg` (by simp). -/
+example {k : ℕ} {S : Type} (tm : MultiTapeTM k Bool S) (x : List Bool) :
+    (tm.initCfg x).output = [] := by simp
+
+/-- Control sealed-40: closes only by unfolding `Turing.NDTM.initCfg` (by simp). -/
+example {k : ℕ} {S : Type} (tm : NDTM k Bool S) (x : List Bool) :
+    (tm.initCfg x).output = [] := by simp
+
+end UNSeal
+
+end Turing

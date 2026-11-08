@@ -1,0 +1,10 @@
+/-- The host starts in the boot configuration of `S`'s start. -/
+theorem initCfg_eq_bootCfg :
+    (hostTM S A loop).initCfg x = bootCfg (A := A) (S.tm.initCfg x) := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext j z
+    revert j
+    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;> simp [bootCfg, hostCfg, Cfg.init]
+  · funext j
+    revert j
+    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;> simp [bootCfg, hostCfg, Cfg.init]

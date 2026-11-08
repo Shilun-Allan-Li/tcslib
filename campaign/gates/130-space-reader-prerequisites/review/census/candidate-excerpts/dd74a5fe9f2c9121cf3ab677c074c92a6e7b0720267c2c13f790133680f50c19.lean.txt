@@ -1,0 +1,16 @@
+/-- Projecting the bank action recovers the exact one-tape action. -/
+private lemma clBank_part {l : ℕ} {x : List Bool} (p : Fin (x.length + 2))
+    (c : Fin l → Cfg 1 Bool (Fin 4) x) (i : Fin l) :
+    clBankPart (fun i => (c i).state) (clBankCfg p c).workTapeSymbols i =
+      match (c i).state with
+      | none => FinTM.controlAction 0 none
+      | some q => clCountTM.tm.tr q (c i).inputSymbol (c i).workTapeSymbols := by
+  have hw : (fun _ : Fin 1 => (clBankCfg p c).workTapeSymbols i) =
+      (c i).workTapeSymbols := by
+    funext j
+    have hj : j = 0 := Fin.eq_zero j
+    subst j
+    rfl
+  unfold clBankPart
+  dsimp only
+  cases (c i).state <;> simp only [hw] <;> rfl

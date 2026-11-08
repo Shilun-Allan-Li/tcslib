@@ -1,0 +1,71 @@
+/-- The backward pass and clear erase a buffer from the forward pass's endpoint.
+
+**Proof sketch.** Apply the backward catalog specialization, then the proved fixed-origin
+clear. The public seam transports their first-return cuts. Its state-map equations and
+idempotence of a head update identify the framed endpoint. -/
+private theorem ss_bufferFinish_run {n : ℕ} (i : Fin n) (emptyPos : ℕ)
+    (he : emptyPos ≤ 1) (α : List Bool) (p : ℕ) (hp : α = [] → p = emptyPos)
+    {z : List Bool} (d : Cfg n Bool SeekPhase z) (hstate : d.state = some .run)
+    (hbuf : d.workTapes i = FinTM.bufferTape α)
+    (hpos : d.workTapePos i = if α = [] then (p : ℤ) else (α.length : ℤ) + 1) :
+    (ss_bufferFinish n i emptyPos).runFrom (d.mapState Sum.inl) (3 * α.length + 8) =
+      ⟨some (Sum.inr (Sum.inr .done)), d.inputPos,
+        Function.update d.workTapes i (fun _ => none),
+        Function.update d.workTapePos i 0, d.output⟩ ∧
+      ∀ u < 3 * α.length + 8,
+        ((ss_bufferFinish n i emptyPos).runFrom (d.mapState Sum.inl) u).state ≠
+          some (Sum.inr (Sum.inr .done)) := by
+  obtain ⟨hr, hc⟩ := ss_bufferBack_run i α p d hstate hbuf hpos
+  let a : Cfg n Bool SeekPhase z :=
+    { d with
+      state := some .done
+      workTapePos := Function.update d.workTapePos i
+        (if α = [] then (p : ℤ) - 1 else 0) }
+  let b := a.mapState (fun _ => false)
+  have hbstate : b.state = some false := by
+    rw [Cfg.mapState_state]
+    rfl
+  have hbpos : b.workTapePos i = if α = [] then (p : ℤ) - 1 else 0 := by
+    rw [Cfg.mapState_workTapePos]
+    exact Function.update_self _ _ _
+  have hbbuf : b.workTapes i = FinTM.bufferTape α := by
+    funext q
+    rw [Cfg.mapState_workTapes]
+    exact congrFun hbuf q
+  obtain ⟨ha, hacut⟩ := ss_bufferClear_run i emptyPos he α p hp b hbstate hbbuf hbpos
+  have hm : b.mapState (Sum.inl : Bool → Bool ⊕ SweepPhase) =
+      a.mapState (fun _ => Sum.inl false) := by
+    apply Cfg.ext
+    · simp only [b, Cfg.mapState_state, a, Option.map_some]
+    · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+    · funext j q
+      rw [Cfg.mapState_workTapes, Cfg.mapState_workTapes, Cfg.mapState_workTapes]
+    · funext j
+      rw [Cfg.mapState_workTapePos, Cfg.mapState_workTapePos, Cfg.mapState_workTapePos]
+    · rw [Cfg.mapState_output, Cfg.mapState_output, Cfg.mapState_output]
+  rw [hm] at ha hacut
+  have hs := seamCompTM_run_ofCfg (skipBackTM n i) .done (ss_bufferClear n i emptyPos)
+    (Sum.inl false) hr rfl hc ha
+  have hscut := seamCompTM_firstReturn_ofCfg (skipBackTM n i) .done
+    (ss_bufferClear n i emptyPos) (Sum.inl false) (Sum.inr .done) hr rfl hc ha rfl hacut
+  have ht : α.length + 3 + 1 + (2 * α.length + 4) = 3 * α.length + 8 := by omega
+  rw [ht] at hs hscut
+  refine ⟨hs.trans ?_, hscut⟩
+  apply Cfg.ext
+  · rw [Cfg.mapState_state]
+    rfl
+  · rw [Cfg.mapState_inputPos, Cfg.mapState_inputPos]
+  · funext j q
+    rw [Cfg.mapState_workTapes]
+    have hbtapes : b.workTapes = d.workTapes := by
+      funext j q
+      exact Cfg.mapState_workTapes _ _ _ _
+    rw [hbtapes]
+  · funext j
+    rw [Cfg.mapState_workTapePos]
+    have hbheads : b.workTapePos = a.workTapePos := by
+      funext j
+      exact Cfg.mapState_workTapePos _ _ _
+    rw [hbheads]
+    simp only [a, Function.update_idem]
+  · rw [Cfg.mapState_output, Cfg.mapState_output]

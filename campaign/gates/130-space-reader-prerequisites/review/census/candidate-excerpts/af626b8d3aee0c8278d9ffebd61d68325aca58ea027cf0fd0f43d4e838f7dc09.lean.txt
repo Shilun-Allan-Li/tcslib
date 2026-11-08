@@ -1,0 +1,14 @@
+/-- The assembly source emits native input followed by the candidate already
+on its sole work tape. Its two phases never write the candidate. -/
+private def enumCont_concatTM : FinTM Bool where
+  k := 1
+  State := Bool
+  tm := {
+    q₀ := false
+    tr := fun q inp work =>
+      if q then match work 0 with
+        | some b => ⟨0, fun _ => (none, .pos), some b, some true⟩
+        | none => controlAction 0 none
+      else match inp with
+        | some b => ⟨.pos, fun _ => (none, 0), some b, some false⟩
+        | none => controlAction 0 (some true) }

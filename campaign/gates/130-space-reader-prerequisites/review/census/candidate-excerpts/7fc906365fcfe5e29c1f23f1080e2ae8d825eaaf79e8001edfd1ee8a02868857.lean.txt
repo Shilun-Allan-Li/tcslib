@@ -1,0 +1,11 @@
+theorem left_fields {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (c : Cfg k Bool S x) (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) :
+    (leftCfg f c tapes heads).state = c.state.map f ∧
+    (leftCfg f c tapes heads).inputPos = c.inputPos ∧
+    (∀ (i : Fin (k + l)) (a : ℤ), (leftCfg f c tapes heads).workTapes i a =
+      Fin.addCases (motive := fun _ => ℤ → Option Bool) c.workTapes tapes i a) ∧
+    (∀ i : Fin (k + l), (leftCfg f c tapes heads).workTapePos i =
+      Fin.addCases (motive := fun _ => ℤ) c.workTapePos heads i) ∧
+    (leftCfg f c tapes heads).output = c.output := by
+  exact ⟨leftCfg_state _ _ _ _, leftCfg_inputPos _ _ _ _,
+    leftCfg_workTapes _ _ _ _, leftCfg_workTapePos _ _ _ _, leftCfg_output _ _ _ _⟩

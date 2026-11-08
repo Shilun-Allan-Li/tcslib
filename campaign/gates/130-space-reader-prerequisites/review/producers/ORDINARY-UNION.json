@@ -1,0 +1,110 @@
+[
+  {
+    "kernel_hints": "non-abbrev",
+    "name": "Turing.FinTM.bufferTape",
+    "ordinary": true,
+    "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+    "projection": false,
+    "reducibility": "semireducible",
+    "simp": false,
+    "type_Expr": "Lean.Expr.forallE\n  `Symbol\n  (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_1)))\n  (Lean.Expr.forallE\n    `w\n    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.param `u_1]) (Lean.Expr.bvar 0))\n    (Lean.Expr.forallE\n      `z\n      (Lean.Expr.const `Int [])\n      (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.param `u_1]) (Lean.Expr.bvar 2))\n      (Lean.BinderInfo.default))\n    (Lean.BinderInfo.default))\n  (Lean.BinderInfo.implicit)",
+    "type_mentions": [
+      "List",
+      "Int",
+      "Option"
+    ],
+    "unfold": false,
+    "universes": [
+      "u_1"
+    ],
+    "value_Expr": "Lean.Expr.lam\n  `Symbol\n  (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_1)))\n  (Lean.Expr.lam\n    `w\n    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.param `u_1]) (Lean.Expr.bvar 0))\n    (Lean.Expr.lam\n      `z\n      (Lean.Expr.const `Int [])\n      (Lean.Expr.app\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.const `ite [Lean.Level.succ (Lean.Level.param `u_1)])\n                (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.param `u_1]) (Lean.Expr.bvar 2)))\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Int []))\n                    (Lean.Expr.const `Int.instLEInt []))\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Int []))\n                      (Lean.Expr.lit (Lean.Literal.natVal 0)))\n                    (Lean.Expr.app (Lean.Expr.const `instOfNat []) (Lean.Expr.lit (Lean.Literal.natVal 0)))))\n                (Lean.Expr.bvar 0)))\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.const `Int.decLe [])\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Int []))\n                    (Lean.Expr.lit (Lean.Literal.natVal 0)))\n                  (Lean.Expr.app (Lean.Expr.const `instOfNat []) (Lean.Expr.lit (Lean.Literal.natVal 0)))))\n              (Lean.Expr.bvar 0)))\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.const\n                          `GetElem?.getElem?\n                          [Lean.Level.param `u_1, Lean.Level.zero, Lean.Level.param `u_1])\n                        (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.param `u_1]) (Lean.Expr.bvar 2)))\n                      (Lean.Expr.const `Nat []))\n                    (Lean.Expr.bvar 2))\n                  (Lean.Expr.lam\n                    `as\n                    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.param `u_1]) (Lean.Expr.bvar 2))\n                    (Lean.Expr.lam\n                      `i\n                      (Lean.Expr.const `Nat [])\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.app (Lean.Expr.const `LT.lt [Lean.Level.zero]) (Lean.Expr.const `Nat []))\n                            (Lean.Expr.const `instLTNat []))\n                          (Lean.Expr.bvar 0))\n                        (Lean.Expr.app\n                          (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.param `u_1]) (Lean.Expr.bvar 4))\n                          (Lean.Expr.bvar 1)))\n                      (Lean.BinderInfo.default))\n                    (Lean.BinderInfo.default)))\n                (Lean.Expr.app\n                  (Lean.Expr.const `List.instGetElem?NatLtLength [Lean.Level.param `u_1])\n                  (Lean.Expr.bvar 2)))\n              (Lean.Expr.bvar 1))\n            (Lean.Expr.app (Lean.Expr.const `Int.toNat []) (Lean.Expr.bvar 0))))\n        (Lean.Expr.app (Lean.Expr.const `Option.none [Lean.Level.param `u_1]) (Lean.Expr.bvar 2)))\n      (Lean.BinderInfo.default))\n    (Lean.BinderInfo.default))\n  (Lean.BinderInfo.implicit)",
+    "value_mentions": [
+      "List",
+      "Int",
+      "ite",
+      "Option",
+      "LE.le",
+      "Int.instLEInt",
+      "OfNat.ofNat",
+      "instOfNat",
+      "Int.decLe",
+      "GetElem?.getElem?",
+      "Nat",
+      "LT.lt",
+      "instLTNat",
+      "List.length",
+      "List.instGetElem?NatLtLength",
+      "Int.toNat",
+      "Option.none"
+    ]
+  },
+  {
+    "kernel_hints": "non-abbrev",
+    "name": "Turing.NDTM.initCfg",
+    "ordinary": true,
+    "owner": "TCSlib.Complexity.TuringMachine.Nondeterministic",
+    "projection": false,
+    "reducibility": "semireducible",
+    "simp": false,
+    "type_Expr": "Lean.Expr.forallE\n  `k\n  (Lean.Expr.const `Nat [])\n  (Lean.Expr.forallE\n    `State\n    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_1)))\n    (Lean.Expr.forallE\n      `Symbol\n      (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_2)))\n      (Lean.Expr.forallE\n        `tm\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.const `Turing.NDTM [Lean.Level.param `u_2, Lean.Level.param `u_1])\n              (Lean.Expr.bvar 2))\n            (Lean.Expr.bvar 0))\n          (Lean.Expr.bvar 1))\n        (Lean.Expr.forallE\n          `input\n          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.param `u_2]) (Lean.Expr.bvar 1))\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.const `Turing.Cfg [Lean.Level.param `u_2, Lean.Level.param `u_1])\n                  (Lean.Expr.bvar 4))\n                (Lean.Expr.bvar 2))\n              (Lean.Expr.bvar 3))\n            (Lean.Expr.bvar 0))\n          (Lean.BinderInfo.default))\n        (Lean.BinderInfo.implicit))\n      (Lean.BinderInfo.implicit))\n    (Lean.BinderInfo.implicit))\n  (Lean.BinderInfo.implicit)",
+    "type_mentions": [
+      "Nat",
+      "Turing.NDTM",
+      "List",
+      "Turing.Cfg"
+    ],
+    "unfold": true,
+    "universes": [
+      "u_1",
+      "u_2"
+    ],
+    "value_Expr": "Lean.Expr.lam\n  `k\n  (Lean.Expr.const `Nat [])\n  (Lean.Expr.lam\n    `State\n    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_1)))\n    (Lean.Expr.lam\n      `Symbol\n      (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_2)))\n      (Lean.Expr.lam\n        `tm\n        (Lean.Expr.app\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.const `Turing.NDTM [Lean.Level.param `u_2, Lean.Level.param `u_1])\n              (Lean.Expr.bvar 2))\n            (Lean.Expr.bvar 0))\n          (Lean.Expr.bvar 1))\n        (Lean.Expr.lam\n          `input\n          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.param `u_2]) (Lean.Expr.bvar 1))\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.const `Turing.Cfg.init [Lean.Level.param `u_1, Lean.Level.param `u_2])\n                    (Lean.Expr.bvar 4))\n                  (Lean.Expr.bvar 3))\n                (Lean.Expr.bvar 2))\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.const `Turing.NDTM.q₀ [Lean.Level.param `u_2, Lean.Level.param `u_1])\n                      (Lean.Expr.bvar 4))\n                    (Lean.Expr.bvar 2))\n                  (Lean.Expr.bvar 3))\n                (Lean.Expr.bvar 1)))\n            (Lean.Expr.bvar 0))\n          (Lean.BinderInfo.default))\n        (Lean.BinderInfo.implicit))\n      (Lean.BinderInfo.implicit))\n    (Lean.BinderInfo.implicit))\n  (Lean.BinderInfo.implicit)",
+    "value_mentions": [
+      "Nat",
+      "Turing.NDTM",
+      "List",
+      "Turing.Cfg.init",
+      "Turing.NDTM.q₀"
+    ]
+  },
+  {
+    "kernel_hints": "non-abbrev",
+    "name": "Turing.Cfg.init",
+    "ordinary": true,
+    "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+    "projection": false,
+    "reducibility": "semireducible",
+    "simp": false,
+    "type_Expr": "Lean.Expr.forallE\n  `k\n  (Lean.Expr.const `Nat [])\n  (Lean.Expr.forallE\n    `State\n    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_1)))\n    (Lean.Expr.forallE\n      `Symbol\n      (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_2)))\n      (Lean.Expr.forallE\n        `q₀\n        (Lean.Expr.bvar 1)\n        (Lean.Expr.forallE\n          `input\n          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.param `u_2]) (Lean.Expr.bvar 1))\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.const `Turing.Cfg [Lean.Level.param `u_2, Lean.Level.param `u_1])\n                  (Lean.Expr.bvar 4))\n                (Lean.Expr.bvar 2))\n              (Lean.Expr.bvar 3))\n            (Lean.Expr.bvar 0))\n          (Lean.BinderInfo.default))\n        (Lean.BinderInfo.default))\n      (Lean.BinderInfo.implicit))\n    (Lean.BinderInfo.implicit))\n  (Lean.BinderInfo.implicit)",
+    "type_mentions": [
+      "Nat",
+      "List",
+      "Turing.Cfg"
+    ],
+    "unfold": true,
+    "universes": [
+      "u_1",
+      "u_2"
+    ],
+    "value_Expr": "Lean.Expr.lam\n  `k\n  (Lean.Expr.const `Nat [])\n  (Lean.Expr.lam\n    `State\n    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_1)))\n    (Lean.Expr.lam\n      `Symbol\n      (Lean.Expr.sort (Lean.Level.succ (Lean.Level.param `u_2)))\n      (Lean.Expr.lam\n        `q₀\n        (Lean.Expr.bvar 1)\n        (Lean.Expr.lam\n          `input\n          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.param `u_2]) (Lean.Expr.bvar 1))\n          (Lean.Expr.app\n            (Lean.Expr.app\n              (Lean.Expr.app\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.const `Turing.Cfg.mk [Lean.Level.param `u_2, Lean.Level.param `u_1])\n                            (Lean.Expr.bvar 4))\n                          (Lean.Expr.bvar 2))\n                        (Lean.Expr.bvar 3))\n                      (Lean.Expr.bvar 0))\n                    (Lean.Expr.app\n                      (Lean.Expr.app (Lean.Expr.const `Option.some [Lean.Level.param `u_1]) (Lean.Expr.bvar 3))\n                      (Lean.Expr.bvar 1)))\n                  (Lean.Expr.app\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])\n                        (Lean.Expr.app\n                          (Lean.Expr.const `Fin [])\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])\n                                      (Lean.Expr.const `Nat []))\n                                    (Lean.Expr.const `Nat []))\n                                  (Lean.Expr.const `Nat []))\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `instHAdd [Lean.Level.zero])\n                                    (Lean.Expr.const `Nat []))\n                                  (Lean.Expr.const `instAddNat [])))\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.const `List.length [Lean.Level.param `u_2])\n                                  (Lean.Expr.bvar 2))\n                                (Lean.Expr.bvar 0)))\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])\n                                  (Lean.Expr.const `Nat []))\n                                (Lean.Expr.lit (Lean.Literal.natVal 2)))\n                              (Lean.Expr.app\n                                (Lean.Expr.const `instOfNatNat [])\n                                (Lean.Expr.lit (Lean.Literal.natVal 2)))))))\n                      (Lean.Expr.lit (Lean.Literal.natVal 1)))\n                    (Lean.Expr.app\n                      (Lean.Expr.app\n                        (Lean.Expr.app\n                          (Lean.Expr.const `Fin.instOfNat [])\n                          (Lean.Expr.app\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.app\n                                      (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])\n                                      (Lean.Expr.const `Nat []))\n                                    (Lean.Expr.const `Nat []))\n                                  (Lean.Expr.const `Nat []))\n                                (Lean.Expr.app\n                                  (Lean.Expr.app\n                                    (Lean.Expr.const `instHAdd [Lean.Level.zero])\n                                    (Lean.Expr.const `Nat []))\n                                  (Lean.Expr.const `instAddNat [])))\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.const `List.length [Lean.Level.param `u_2])\n                                  (Lean.Expr.bvar 2))\n                                (Lean.Expr.bvar 0)))\n                            (Lean.Expr.app\n                              (Lean.Expr.app\n                                (Lean.Expr.app\n                                  (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero])\n                                  (Lean.Expr.const `Nat []))\n                                (Lean.Expr.lit (Lean.Literal.natVal 2)))\n                              (Lean.Expr.app\n                                (Lean.Expr.const `instOfNatNat [])\n                                (Lean.Expr.lit (Lean.Literal.natVal 2))))))\n                        (Lean.Expr.app\n                          (Lean.Expr.app\n                            (Lean.Expr.const `Turing.instInhabitedCfg.default._proof_1 [Lean.Level.param `u_2])\n                            (Lean.Expr.bvar 2))\n                          (Lean.Expr.bvar 0)))\n                      (Lean.Expr.lit (Lean.Literal.natVal 1)))))\n                (Lean.Expr.lam\n                  (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Configuration 2095137494) \"_hygCtx\") \"_hyg\") 24)\n                  (Lean.Expr.app (Lean.Expr.const `Fin []) (Lean.Expr.bvar 4))\n                  (Lean.Expr.lam\n                    (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Configuration 2095137494) \"_hygCtx\") \"_hyg\") 26)\n                    (Lean.Expr.const `Int [])\n                    (Lean.Expr.app (Lean.Expr.const `Option.none [Lean.Level.param `u_2]) (Lean.Expr.bvar 4))\n                    (Lean.BinderInfo.default))\n                  (Lean.BinderInfo.default)))\n              (Lean.Expr.lam\n                (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Configuration 2095137494) \"_hygCtx\") \"_hyg\") 31)\n                (Lean.Expr.app (Lean.Expr.const `Fin []) (Lean.Expr.bvar 4))\n                (Lean.Expr.app\n                  (Lean.Expr.app\n                    (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Int []))\n                    (Lean.Expr.lit (Lean.Literal.natVal 0)))\n                  (Lean.Expr.app (Lean.Expr.const `instOfNat []) (Lean.Expr.lit (Lean.Literal.natVal 0))))\n                (Lean.BinderInfo.default)))\n            (Lean.Expr.app (Lean.Expr.const `List.nil [Lean.Level.param `u_2]) (Lean.Expr.bvar 2)))\n          (Lean.BinderInfo.default))\n        (Lean.BinderInfo.default))\n      (Lean.BinderInfo.implicit))\n    (Lean.BinderInfo.implicit))\n  (Lean.BinderInfo.implicit)",
+    "value_mentions": [
+      "Nat",
+      "List",
+      "Turing.Cfg.mk",
+      "Option.some",
+      "OfNat.ofNat",
+      "Fin",
+      "HAdd.hAdd",
+      "instHAdd",
+      "instAddNat",
+      "List.length",
+      "instOfNatNat",
+      "Fin.instOfNat",
+      "Turing.instInhabitedCfg.default._proof_1",
+      "Int",
+      "Option.none",
+      "instOfNat",
+      "List.nil"
+    ]
+  }
+]

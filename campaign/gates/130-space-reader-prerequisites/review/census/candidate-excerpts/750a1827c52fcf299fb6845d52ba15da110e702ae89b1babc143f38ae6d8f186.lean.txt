@@ -1,0 +1,16 @@
+/-- Write the left boundary and turn toward the first forward-scan cell. -/
+private lemma sweep_turn_right {A S : Type} {x : List A} (q : Option S) (q' : S)
+    (p : Fin (x.length + 2)) (z : ℤ) (l r : List (Option A)) (out : List A)
+    (b : Option A) :
+    (sweepAct q' b .pos).apply (sweepRevCfg q p z l r out) =
+      sweepCfg (some q') p (z + 1) (b :: r.tail) l out := by
+  refine Cfg.ext rfl (moveInputPos_zero _) ?_ rfl (List.append_nil _)
+  funext i w
+  have h := congrFun (sweepTape_write (-z) l r b) (-w)
+  have ht := congrFun (sweepTape_turn (z + 1) (b :: r.tail) l) w
+  have he : z + 1 - 1 = z := by omega
+  rw [he] at ht
+  change Function.update (fun w => sweepTape (-z) l r (-w)) z b w =
+    sweepTape (z + 1) (b :: r.tail) l w
+  rw [ht]
+  simpa only [Function.update_apply, neg_inj] using h

@@ -1,0 +1,100 @@
+/-- **The restart host decides with zero error** [AB09, Def 7.7 and Exercise 7.6(a)]: let `S`
+compute `1^{m(n)}` in time `T_S(n)` with `n ≤ m(n)`, and let every one-bit answer of `A` within
+`m` coins be `L(x)`, with no answer with probability at most `3/4`. Then the restart host
+decides `L` with zero error in expected time `T_S(n) + m(n) + 2 + 16(m(n) + 1)`.
+
+**Proof sketch.** After the startup (`startup`), the host performs rounds of `4(m + 1)` coins
+(`round`): each halts with `A`'s answer on its first `m` coins, which is `L(x)`, or ends ready.
+A round fails to halt only if `A` gives no answer, with probability at most `3/4`
+(`randProb_take`). Renewal (`randProb_rounds_le`, `expTimeLe_of_rounds`) bounds the expected
+time; `halted_rounds`, after padding a halted run to whole rounds, gives correctness. -/
+theorem clockHost_zDecides (S : FinTM Bool) (A : FinNDTM Bool) (L : Language Bool)
+    (m TS : ℕ → ℕ)
+    (hS : S.ComputesFunInTime (fun x => List.replicate (m x.length) true) TS)
+    (hm : ∀ n, n ≤ m n)
+    (hcorr : ∀ x u v, u.length = m x.length → attemptBit A x u = some v →
+      v = MultiTapeTM.indicator (L : Set (List Bool)) x)
+    (hprob : ∀ x : List Bool, randProb (m x.length) (fun u => attemptBit A x u = none) ≤ 3 / 4) :
+    (FinNDTM.clockHost S A true).ZDecidesInTime L
+      fun n => TS n + m n + 2 + 16 * (m n + 1) := by
+  classical
+  intro x
+  set mm := m x.length with hmm
+  set ℓ := MultiTapeTM.indicator (L : Set (List Bool)) x
+  obtain ⟨s₀, hs₀, sT, sP, hstart⟩ :=
+    startup (A := A) (loop := true) mm (hS x) (hm _)
+  set c₀ := runCfg (S := S) mm (A.tm.initCfg x) 0 sT sP
+  have hc₀ : ClockReady mm c₀ := ⟨_, _, _, readyAt_initCfg mm, rfl⟩
+  obtain ⟨R, hR⟩ : ∃ R, R = 4 * (mm + 1) := ⟨_, rfl⟩
+  have hsucc : ∀ p : List Bool, p.length = R → ∀ v, attemptBit A x (p.take mm) = some v →
+      ∀ (c : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x), ClockReady mm c →
+        ((hostTM S A true).runWith p c).state = none ∧
+        ((hostTM S A true).runWith p c).output = [ℓ] := by
+    intro p hp v hv c hc
+    obtain ⟨h1, h2⟩ := attemptBit_eq_some.mp hv
+    have hvℓ : v = ℓ := hcorr x _ v (List.length_take_of_le (by omega)) hv
+    rw [hvℓ] at h2
+    exact (round mm hc (hm _) p (hp.trans hR)).1 ℓ h1 h2
+  have hfail : ∀ p : List Bool, p.length = R → attemptBit A x (p.take mm) = none →
+      ∀ (c : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x), ClockReady mm c →
+        ClockReady mm ((hostTM S A true).runWith p c) := by
+    intro p hp hn c hc
+    refine (round mm hc (hm _) p (hp.trans hR)).2 fun ⟨h1, v, h2⟩ => ?_
+    rw [attemptBit_eq_some.mpr ⟨h1, h2⟩] at hn
+    exact absurd hn (by simp)
+  have hstep : ∀ (c : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x),
+      ClockReady mm c → ∀ p : List Bool, p.length = R →
+      (((hostTM S A true).runWith p c).state = none ∧
+        ((hostTM S A true).runWith p c).output = [ℓ]) ∨
+      ClockReady mm ((hostTM S A true).runWith p c) := by
+    intro c hc p hp
+    cases hb : attemptBit A x (p.take mm) with
+    | none => exact Or.inr (hfail p hp hb c hc)
+    | some v => exact Or.inl (hsucc p hp v hb c hc)
+  have hprobR : ∀ (c : Cfg (S.k + A.k + 1) Bool (ClockPhase S.State A.State) x), ClockReady mm c →
+      randProb R (fun p => ((hostTM S A true).runWith p c).state ≠ none) ≤ 3 / 4 := by
+    intro c hc
+    calc randProb R (fun p => ((hostTM S A true).runWith p c).state ≠ none)
+        ≤ randProb R (fun p => attemptBit A x (p.take mm) = none) := randProb_mono fun r hr => by
+          cases hb : attemptBit A x ((List.ofFn r).take mm) with
+          | none => rfl
+          | some v => exact absurd (hsucc _ List.length_ofFn v hb c hc).1 hr
+      _ = randProb mm (fun u => attemptBit A x u = none) :=
+          randProb_take (by omega) (fun u => attemptBit A x u = none)
+      _ ≤ 3 / 4 := hprob x
+  refine ⟨?_, fun w hw => ?_⟩
+  · have hexp := FinNDTM.expTimeLe_of_rounds (FinNDTM.clockHost S A true) x s₀ R (by omega) c₀
+      hstart (a := 3 / 4) (by norm_num) (by norm_num) fun j =>
+        randProb_rounds_le (hostTM S A true) (ClockReady mm) R (by norm_num)
+          (fun c hc p hp => (hstep c hc p hp).imp_left And.left) hprobR j c₀ hc₀
+    intro K
+    refine (hexp K).trans ?_
+    have h4 : ((R : ℕ) : ℚ) / (1 - 3 / 4) = 16 * ((mm : ℚ) + 1) := by
+      rw [hR]; push_cast; ring
+    have hs : (s₀ : ℚ) ≤ TS x.length + mm + 2 := by exact_mod_cast hs₀
+    rw [h4]
+    push_cast
+    linarith
+  · -- pad the halted run to whole rounds after the startup
+    have hle : w.length ≤ s₀ + R * w.length :=
+      le_trans (Nat.le_mul_of_pos_left _ (by omega)) (Nat.le_add_left _ _)
+    set w' := w ++ List.replicate (s₀ + R * w.length - w.length) false with hw'
+    have hlen : w'.length = s₀ + R * w.length := by
+      rw [hw', List.length_append, List.length_replicate, Nat.add_sub_cancel' hle]
+    have hrun : (hostTM S A true).runWith w' ((hostTM S A true).initCfg x) =
+        (hostTM S A true).runWith w ((hostTM S A true).initCfg x) := by
+      rw [hw', NDTM.runWith_append]
+      exact NDTM.runWith_of_halt _ hw
+    have hsplit : (hostTM S A true).runWith w' ((hostTM S A true).initCfg x) =
+        (hostTM S A true).runWith (w'.drop s₀) c₀ := by
+      rw [← List.take_append_drop s₀ w', NDTM.runWith_append,
+        hstart (w'.take s₀) (List.length_take_of_le (by rw [hlen]; exact Nat.le_add_right _ _)),
+        List.take_append_drop]
+    have hh : ((hostTM S A true).runWith (w'.drop s₀) c₀).state = none := by
+      rw [← hsplit, hrun]; exact hw
+    have := halted_rounds (hostTM S A true) (ClockReady mm) (fun c => c.output = [ℓ]) R hstep
+      (fun c hc => hc.state_ne_none mm) w.length c₀ hc₀ (w'.drop s₀)
+      (by rw [List.length_drop, hlen, Nat.add_sub_cancel_left]) hh
+    show ((hostTM S A true).runWith w ((hostTM S A true).initCfg x)).output = [ℓ]
+    rw [← hrun, hsplit]
+    exact this

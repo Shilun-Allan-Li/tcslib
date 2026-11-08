@@ -1,0 +1,20 @@
+/-- The setup's work-tape rewind is the public virtual-input host applied to
+the same halting rewind; it preserves the entire buffered word. -/
+private theorem b2b_vhost_rewind {x y : List Bool}
+    (c : Cfg 0 Bool B2bRewindState y) (hs : c.state = some .start)
+    (b : Bool) (hb : FinTM.VirtualTag c.inputPos b)
+    (p : Fin (x.length + 2)) (pre : List Bool) :
+    ∃ u ≤ c.inputPos.val + 2, ∃ b',
+      (vhostEmitTM (b2b_rewindTM 0)).runFrom (vhostCfg c b p pre) u =
+        vhostCfg ({ c with state := none, inputPos := 1 } : Cfg 0 Bool B2bRewindState y)
+          b' p pre ∧
+      ((vhostEmitTM (b2b_rewindTM 0)).runFrom (vhostCfg c b p pre) u).workTapePos
+        (vhostBuffer 0) = 0 ∧
+      ((vhostEmitTM (b2b_rewindTM 0)).runFrom (vhostCfg c b p pre) u).workTapes
+        (vhostBuffer 0) = FinTM.bufferTape y := by
+  obtain ⟨u, hu, hrun, _⟩ := b2b_rewind_run c hs
+  obtain ⟨b', _, he⟩ := vhostEmitTM_runFrom (b2b_rewindTM 0) c b hb p pre u
+  rw [hrun] at he
+  refine ⟨u, hu, b', he, ?_, ?_⟩
+  · rw [he]; simp only [vhostCfg, vhostBuffer, Fin.addCases_left]; simp
+  · rw [he]; simp only [vhostCfg, vhostBuffer, Fin.addCases_left]

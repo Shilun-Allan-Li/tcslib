@@ -1,0 +1,47 @@
+/-- **The round time is the unique first positive exit** (additive). Under the contract's
+hypotheses there is exactly one time `T` such that `0 < T`, the block is at `entry` or at
+`halt` at time `T`, and it is at neither exit at any time strictly between `0` and `T`. Hence
+the existential time of `roundTM_effect` is this `T`, whichever witness is chosen, and a host
+may define its round-time function by choice or by `Nat.find` without ambiguity (design note
+O7; counter-loop round functions; MIG-0b's round time).
+
+**Proof sketch.** Existence: the contract's time is positive, its endpoint is at
+`exit k a.state.isSome`, which is `entry` or `halt`, and its cut keeps every strictly earlier
+positive time off both exits. Uniqueness: of two such times, the smaller would lie strictly
+between `0` and the larger, where the larger one's cut forbids both exits. -/
+theorem roundTM_firstExit_unique {k n : ℕ} {x : List Bool}
+    (tr : Fin (n + 1) → Option Bool → (Fin k → Option Bool) → Action k Bool (Fin (n + 1)))
+    (c : Cfg k Bool (Fin (n + 1)) x) (q : Fin (n + 1)) (hq : c.state = some q)
+    (d : Cfg (k + 2) Bool (Σ key, Ph k key) x)
+    (entry : d.state = some ⟨.entry, ()⟩) (rel : Rep tr c d) :
+    ∃! T, 0 < T ∧
+      (((roundTM k).runFrom d T).state = some ⟨.entry, ()⟩ ∨
+        ((roundTM k).runFrom d T).state = some ⟨.halt, ()⟩) ∧
+      ∀ u, 0 < u → u < T →
+        ((roundTM k).runFrom d u).state ≠ some ⟨.entry, ()⟩ ∧
+          ((roundTM k).runFrom d u).state ≠ some ⟨.halt, ()⟩ := by
+  obtain ⟨T, hpos, -, hexit, -, -, hcut, -⟩ := roundTM_effect tr c q hq d entry rel
+  refine ⟨T, ⟨hpos, ?_, ?_⟩, ?_⟩
+  · rw [hexit]
+    unfold exit
+    split
+    · exact Or.inl rfl
+    · exact Or.inr rfl
+  · intro u hu huT
+    obtain ⟨s, hs, hse, hsh⟩ := hcut u hu huT
+    rw [hs]
+    exact ⟨fun h => hse (Option.some.inj h), fun h => hsh (Option.some.inj h)⟩
+  · rintro T' ⟨hpos', hexit', hcut'⟩
+    rcases Nat.lt_trichotomy T' T with hlt | heq | hgt
+    · obtain ⟨s, hs, hse, hsh⟩ := hcut T' hpos' hlt
+      rw [hs] at hexit'
+      rcases hexit' with h | h
+      · exact absurd (Option.some.inj h) hse
+      · exact absurd (Option.some.inj h) hsh
+    · exact heq
+    · have h := hcut' T hpos hgt
+      rw [hexit] at h
+      unfold exit at h
+      split at h
+      · exact absurd rfl h.1
+      · exact absurd rfl h.2

@@ -1,0 +1,446 @@
+/-- **The stage front**: the counter preparation and the initial-state range
+check, as one block over the stage's bank. The host runs seven framed catalog rows — copy
+the header to the outer counter, skip past the copy, one step back, write the spare `false`
+pad, skip past the pad, skip back over the padded word, increment (`incFixed` on the padded
+copy never overflows) — and then the bounded unary reader C1, embedded by the forwarding
+transformer, with both its ports dispatched to the parking phase. The block is silent,
+preserves the header, leaves every tape but the outer counter as it found it, puts the
+incremented header copy (of value `counterValue w + 1`) on the outer counter with its head
+at the origin, exits by C1's verdict with a strict cut, and on success lands the native head
+at the surviving suffix. C1's contract is a hypothesis, so the stage assembly can discharge
+it at `exists_canonUnaryTM` within its own tape budget.
+
+**Proof sketch.** The padded header copy increments without overflow (`incFixed` on it is `some v`,
+of length `|w| + 1` and value `counterValue w + 1`). The seven legs (`canonStageLeg0`–`Leg6`) carry
+the bank configuration from phase to phase, each with its lockstep window and dispatch. The
+eighth phase is C1 embedded by the forwarding transformer (`embedEmitCfg_eq` for its start, its
+contract for the run), and `phaseHostTM_run` dispatches both its ports to the parking phase. The
+strict cut is `canonStageCut_leg` on each phase's window; the endpoint is the last leg's. -/
+private lemma canonStageFrontSpec {M mU : ℕ} {SU : Type} [Fintype SU] [DecidableEq SU]
+    (U : MultiTapeTM mU Bool SU) (ue : SU) (ux : Bool → SU) (uBound : Fin mU) (ua : ℕ)
+    (uinj : Function.Injective ux)
+    (unary : ∀ (x w : List Bool) (d : Cfg mU Bool SU x), d.state = some ue →
+      1 ≤ d.inputPos.val →
+      d.workTapes uBound = FinTM.bufferTape w → d.workTapePos uBound = 0 →
+      (∀ j, j ≠ uBound → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+      ∃ t ≤ ua * (x.length + w.length + 1),
+        (U.runFrom d t).state =
+          some (ux (codeSkipFin (counterValue w + 1)
+            (x.drop (d.inputPos.val - 1))).isSome) ∧
+        (U.runFrom d t).output = d.output ∧
+        (∀ u < t, ∀ v, (U.runFrom d u).state ≠ some (ux v)) ∧
+        (U.runFrom d t).workTapes = d.workTapes ∧
+        (U.runFrom d t).workTapePos = d.workTapePos ∧
+        ∀ ys, codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1)) = some ys →
+          (U.runFrom d t).inputPos.val = x.length + 1 - ys.length)
+    (header ctrOuter : Fin M) (σ : Fin mU ↪ Fin M) (hσb : σ uBound = header)
+    (hσc : ∀ i, σ i ≠ ctrOuter) (hhc : header ≠ ctrOuter) :
+    ∃ (H : Type) (_ : Fintype H) (_ : DecidableEq H) (Fr : MultiTapeTM M Bool H)
+      (entry : H) (exit : Bool → H) (A : ℕ), Function.Injective exit ∧
+      ∀ (x w : List Bool) (d : Cfg M Bool H x), d.state = some entry → d.output = [] →
+        1 ≤ d.inputPos.val →
+        d.workTapes header = FinTM.bufferTape w → d.workTapePos header = 0 →
+        (∀ j, j ≠ header → d.workTapes j = FinTM.bufferTape [] ∧ d.workTapePos j = 0) →
+        ∃ t ≤ A * (x.length + w.length + 1), ∃ u : List Bool,
+          Nat.ofDigits 2 (u.map Bool.toNat) = counterValue w + 1 ∧
+          u.length = w.length + 1 ∧
+          (Fr.runFrom d t).state = some (exit (codeSkipFin (counterValue w + 1)
+            (x.drop (d.inputPos.val - 1))).isSome) ∧
+          (Fr.runFrom d t).output = [] ∧
+          (∀ v < t, ∀ b, (Fr.runFrom d v).state ≠ some (exit b)) ∧
+          (Fr.runFrom d t).workTapes header = FinTM.bufferTape w ∧
+          (Fr.runFrom d t).workTapePos header = 0 ∧
+          (Fr.runFrom d t).workTapes ctrOuter = FinTM.bufferTape u ∧
+          (Fr.runFrom d t).workTapePos ctrOuter = 0 ∧
+          (∀ j, j ≠ header → j ≠ ctrOuter →
+            (Fr.runFrom d t).workTapes j = FinTM.bufferTape [] ∧
+            (Fr.runFrom d t).workTapePos j = 0) ∧
+          ∀ ys, codeSkipFin (counterValue w + 1) (x.drop (d.inputPos.val - 1)) = some ys →
+            (Fr.runFrom d t).inputPos.val = x.length + 1 - ys.length := by
+  classical
+  letI : ∀ i, Fintype (canonStagePh SU i) := canonStagePh_fintype SU
+  letI : ∀ i, DecidableEq (canonStagePh SU i) := canonStagePh_deceq SU
+  refine ⟨Σ j, canonStagePh SU j, inferInstance, inferInstance,
+    canonStageFr M mU SU U ue ux header ctrOuter σ,
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩, fun b => ⟨⟨8, by omega⟩, b⟩, ua + 33, ?_, ?_⟩
+  · intro a b h
+    exact eq_of_heq (Sigma.mk.inj_iff.mp h).2
+  intro x w d hs hout hpos hht hhp hblank
+  have hvsome : (incFixed (w ++ [false])).isSome = true := by
+    rw [Option.isSome_iff_ne_none]
+    intro hnone
+    have hrep := (incFixed_eq_none_iff_replicate _).mp hnone
+    have hmem : false ∈ w ++ [false] := List.mem_append_right _ (List.mem_singleton.mpr rfl)
+    rw [hrep] at hmem
+    exact Bool.noConfusion (List.eq_of_mem_replicate hmem)
+  obtain ⟨v, hv⟩ := Option.isSome_iff_exists.mp hvsome
+  have hlapp : (w ++ [false]).length = w.length + 1 := by
+    rw [List.length_append]
+    rfl
+  have hvlen : v.length = w.length + 1 := by
+    have h1 := incFixed_length hv
+    rw [hlapp] at h1
+    exact h1
+  have hvval : Nat.ofDigits 2 (v.map Bool.toNat) = counterValue w + 1 := by
+    rw [canonStageInc_value _ v hv, canonStagePad_value, ← counterValue_eq]
+  obtain ⟨hB0h, hB0hp, hB0c, hB0cp, hB0o⟩ :=
+    canonStageBank_fields M header ctrOuter hhc (x := x)
+      (some SweepPhase.sweep) d.inputPos (FinTM.bufferTape []) 0 w
+  obtain ⟨hB7h, hB7hp, hB7c, hB7cp, hB7o⟩ :=
+    canonStageBank_fields M header ctrOuter hhc (x := x)
+      (some ue) d.inputPos (FinTM.bufferTape v) 0 w
+  have hstart : ((canonStageBank M header ctrOuter (some SweepPhase.sweep) d.inputPos
+      (FinTM.bufferTape []) 0 w)).mapState
+      (Sigma.mk (⟨0, by omega⟩ : Fin 9)) = d := by
+    refine Cfg.ext ?_ ?_ ?_ ?_ ?_
+    · rw [Cfg.mapState_state, hs]
+      rfl
+    · rw [Cfg.mapState_inputPos]
+      rfl
+    · funext j q
+      rw [Cfg.mapState_workTapes]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hB0h, hht]
+      · by_cases hj2 : j = ctrOuter
+        · rw [hj2, hB0c, (hblank ctrOuter (fun h => hhc h.symm)).1]
+        · rw [(hB0o j hj1 hj2).1, (hblank j hj1).1]
+    · funext j
+      rw [Cfg.mapState_workTapePos]
+      by_cases hj1 : j = header
+      · subst hj1
+        rw [hB0hp, hhp]
+      · by_cases hj2 : j = ctrOuter
+        · rw [hj2, hB0cp, (hblank ctrOuter (fun h => hhc h.symm)).2]
+        · rw [(hB0o j hj1 hj2).2, (hblank j hj1).2]
+    · rw [Cfg.mapState_output, hout]
+      rfl
+  obtain ⟨hpre0, hop0⟩ := canonStageLeg0 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre1, hop1⟩ := canonStageLeg1 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre2, hop2⟩ := canonStageLeg2 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre3, hop3⟩ := canonStageLeg3 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre4, hop4⟩ := canonStageLeg4 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre5, hop5⟩ := canonStageLeg5 U ue ux header ctrOuter σ hhc x w d.inputPos
+  obtain ⟨hpre6, hop6⟩ := canonStageLeg6 U ue ux header ctrOuter σ hhc x w d.inputPos v hv
+  have hhost1 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1)) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) d.inputPos
+        (FinTM.bufferTape w) 0 w)).mapState (Sigma.mk (⟨1, by omega⟩ : Fin 9)) := by
+    conv_lhs => rw [← hstart]
+    exact hop0
+  have hhost2 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1)) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) d.inputPos
+        (FinTM.bufferTape w) (w.length + 1) w)).mapState (Sigma.mk (⟨2, by omega⟩ : Fin 9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1))
+      ((w.length + 1) + 1), hhost1]
+    exact hop1
+  have hhost3 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1)) =
+      ((canonStageBank M header ctrOuter (some (WritePhase.wr 0) : Option (WritePhase 1)) d.inputPos
+        (FinTM.bufferTape w) (w.length) w)).mapState (Sigma.mk (⟨3, by omega⟩ : Fin 9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1))
+      ((([] : List Bool).length + 1) + 1), hhost2]
+    exact hop2
+  have hhost4 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1)) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) d.inputPos
+        (FinTM.bufferTape (w ++ [false])) (w.length) w)).mapState (Sigma.mk (⟨4, by omega⟩ : Fin 9))
+            := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1))
+      ((2 * ([false] : List Bool).length + 2) + 1), hhost3]
+    exact hop3
+  have hhost5 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1)) =
+      ((canonStageBank M header ctrOuter (some SeekPhase.run) d.inputPos
+        (FinTM.bufferTape (w ++ [false])) (w.length + 2) w)).mapState (Sigma.mk (⟨5, by omega⟩ : Fin
+            9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1))
+      ((([false] : List Bool).length + 1) + 1), hhost4]
+    exact hop4
+  have hhost6 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1)) =
+      ((canonStageBank M header ctrOuter (some FlagPhase.run) d.inputPos
+        (FinTM.bufferTape (w ++ [false])) 0 w)).mapState (Sigma.mk (⟨6, by omega⟩ : Fin 9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1))
+      (((w ++ [false]).length + 3) + 1), hhost5]
+    exact hop5
+  have hhost7 : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile id).length + 2 + 1)) =
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+        (FinTM.bufferTape v) 0 w)).mapState (Sigma.mk (⟨7, by omega⟩ : Fin 9)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1))
+      ((2 * ((w ++ [false]).takeWhile id).length + 2) + 1), hhost6]
+    exact hop6
+  -- leg 7: the embedded bounded unary reader
+  set selU : Cfg mU Bool SU x := ⟨some ue, d.inputPos,
+    fun i => (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w).workTapes (σ i),
+    fun i => (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w).workTapePos (σ i), []⟩ with hselU
+  have hsel : embedEmitCfg σ
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).output
+      (selU) =
+      (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w) :=
+    embedEmitCfg_eq σ _ _ _ _ _ rfl rfl (List.append_nil _)
+      (fun _ => ⟨rfl, rfl⟩) (fun _ _ => ⟨rfl, rfl⟩)
+  have hrun7 : ∀ tt : ℕ, (embedEmitTM σ U).runFrom
+      (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w) tt =
+      embedEmitCfg σ
+        ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes
+        ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos
+        ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).output
+        (U.runFrom (selU) tt) := by
+    intro tt
+    conv_lhs => rw [← hsel]
+    exact embedEmitTM_runFrom σ U _ _ _ _ tt
+  have hσh : ∀ i, i ≠ uBound → σ i ≠ header := by
+    intro i hi hcon
+    exact hi (σ.injective (hcon.trans hσb.symm))
+  obtain ⟨tU, htU, hUst, hUout, hUcut, hUtapes, hUheads, hUsfx⟩ := unary x w
+    (selU)
+    rfl hpos
+    (by
+      show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes (σ uBound) = _
+      rw [hσb, hB7h])
+    (by
+      show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos (σ uBound) = _
+      rw [hσb, hB7hp])
+    (by
+      intro j hj
+      constructor
+      · show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes (σ j) = _
+        rw [(hB7o (σ j) (hσh j hj) (hσc j)).1]
+      · show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos (σ j) = _
+        rw [(hB7o (σ j) (hσh j hj) (hσc j)).2])
+  obtain ⟨hpre7, hdisp7⟩ := phaseHostTM_run (canonStageFamily M mU SU U header ctrOuter σ)
+    ⟨⟨0, by omega⟩, SweepPhase.sweep⟩ (canonStageRed SU ue ux)
+    ⟨7, by omega⟩ _ _ tU (hrun7 tU)
+    (ux (codeSkipFin (counterValue w + 1)
+      (x.drop ((selU).inputPos.val - 1))).isSome)
+    (by rw [embedEmitCfg_state]; exact hUst)
+    ⟨⟨8, by omega⟩, (codeSkipFin (counterValue w + 1)
+      (x.drop ((selU).inputPos.val - 1))).isSome⟩
+    (by
+      cases (codeSkipFin (counterValue w + 1)
+        (x.drop ((selU).inputPos.val - 1))).isSome
+      · show (if ux false = ux true
+          then some (⟨⟨8, by omega⟩, true⟩ : Σ j, canonStagePh SU j)
+          else if ux false = ux false
+            then some (⟨⟨8, by omega⟩, false⟩ : Σ j, canonStagePh SU j) else none) =
+          some (⟨⟨8, by omega⟩, false⟩ : Σ j, canonStagePh SU j)
+        rw [if_neg (fun hcon => Bool.noConfusion (uinj hcon)), if_pos rfl]
+      · show (if ux true = ux true
+          then some (⟨⟨8, by omega⟩, true⟩ : Σ j, canonStagePh SU j)
+          else if ux true = ux false
+            then some (⟨⟨8, by omega⟩, false⟩ : Σ j, canonStagePh SU j) else none) =
+          some (⟨⟨8, by omega⟩, true⟩ : Σ j, canonStagePh SU j)
+        rw [if_pos rfl])
+    (by
+      intro u hu s hsu
+      rw [hrun7 u, embedEmitCfg_state] at hsu
+      have hsu' : (U.runFrom (selU) u).state = some s := hsu
+      by_cases hd1 : s = ux true
+      · rw [hd1] at hsu'
+        exact absurd hsu' (hUcut u hu true)
+      · by_cases hd0 : s = ux false
+        · rw [hd0] at hsu'
+          exact absurd hsu' (hUcut u hu false)
+        · show (if s = ux true then _ else if s = ux false then _ else none) = none
+          rw [if_neg hd1, if_neg hd0])
+  rw [← hrun7 tU] at hdisp7
+  have hfin : (canonStageFr M mU SU U ue ux header ctrOuter σ).runFrom d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile id).length + 2 + 1) + (tU + 1))
+          =
+      ((embedEmitTM σ U).runFrom (canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w) tU).mapState
+        (fun _ => (⟨⟨8, by omega⟩, (codeSkipFin (counterValue w + 1)
+          (x.drop ((selU).inputPos.val - 1))).isSome⟩ :
+          Σ j, canonStagePh SU j)) := by
+    rw [MultiTapeTM.runFrom_add d
+      ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+          ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+          [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile id).length + 2 + 1))
+      (tU + 1), hhost7]
+    exact hdisp7
+  refine ⟨(2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) + (2 *
+      ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1 + 1) + ((w ++
+      [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile id).length + 2 + 1) + (tU + 1), ?_,
+      v, hvval, hvlen, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩
+  · -- the ledger
+    have hTW : ((w ++ [false]).takeWhile id).length ≤ w.length + 1 := by
+      have h1 := (List.takeWhile_sublist (l := w ++ [false]) id).length_le
+      rw [hlapp] at h1
+      exact h1
+    have hn0 : ([] : List Bool).length = 0 := rfl
+    have hn1 : ([false] : List Bool).length = 1 := rfl
+    have hsplit : (ua + 33) * (x.length + w.length + 1) =
+        ua * (x.length + w.length + 1) + 33 * (x.length + w.length + 1) := by ring
+    have hexp : 33 * (x.length + w.length + 1) =
+        33 * x.length + 33 * w.length + 33 := by ring
+    omega
+  · -- the exit state
+    rw [hfin, Cfg.mapState_state, hrun7 tU, embedEmitCfg_state, hUst, Option.map_some]
+  · -- the output
+    rw [hfin, Cfg.mapState_output, hrun7 tU, embedEmitCfg_output, hUout]
+    rfl
+  · -- the cut
+    intro vt hvt b
+    by_cases h1 : vt ≤ 2 * w.length + 2
+    · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+        (0) (2 * w.length + 2) ⟨0, by omega⟩ (by decide : (0 : ℕ) ≠ 8) _ _
+        (by rw [MultiTapeTM.runFrom_zero]; exact hstart.symm) hpre0 vt (by omega)
+        (by omega) b
+    ·
+      by_cases h2 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1)
+      · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+          ((2 * w.length + 2 + 1)) (w.length + 1) ⟨1, by omega⟩ (by decide : (1 : ℕ) ≠ 8) _ _
+          hhost1 hpre1 vt (by omega) (by omega) b
+      ·
+        by_cases h3 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length +
+            1)
+        · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+            ((2 * w.length + 2 + 1) + (w.length + 1 + 1)) (([] : List Bool).length + 1) ⟨2, by
+                omega⟩ (by decide : (2 : ℕ) ≠ 8) _ _
+            hhost2 hpre2 vt (by omega) (by omega) b
+        ·
+          by_cases h4 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length
+              + 1 + 1) + (2 * ([false] : List Bool).length + 2)
+          · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+              ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1)) (2 *
+                  ([false] : List Bool).length + 2) ⟨3, by omega⟩ (by decide : (3 : ℕ) ≠ 8) _ _
+              hhost3 hpre3 vt (by omega) (by omega) b
+          ·
+            by_cases h5 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List
+                Bool).length + 1 + 1) + (2 * ([false] : List Bool).length + 2 + 1) + (([false] :
+                List Bool).length + 1)
+            · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+                ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) +
+                    (2 * ([false] : List Bool).length + 2 + 1)) (([false] : List Bool).length + 1)
+                    ⟨4, by omega⟩ (by decide : (4 : ℕ) ≠ 8) _ _
+                hhost4 hpre4 vt (by omega) (by omega) b
+            ·
+              by_cases h6 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List
+                  Bool).length + 1 + 1) + (2 * ([false] : List Bool).length + 2 + 1) + (([false] :
+                  List Bool).length + 1 + 1) + ((w ++ [false]).length + 3)
+              · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+                  ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1) +
+                      (2 * ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length + 1
+                      + 1)) ((w ++ [false]).length + 3) ⟨5, by omega⟩ (by decide : (5 : ℕ) ≠ 8) _ _
+                  hhost5 hpre5 vt (by omega) (by omega) b
+              ·
+                by_cases h7 : vt ≤ (2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List
+                    Bool).length + 1 + 1) + (2 * ([false] : List Bool).length + 2 + 1) + (([false] :
+                    List Bool).length + 1 + 1) + ((w ++ [false]).length + 3 + 1) + (2 * ((w ++
+                    [false]).takeWhile id).length + 2)
+                · exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+                    ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1)
+                        + (2 * ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length
+                        + 1 + 1) + ((w ++ [false]).length + 3 + 1)) (2 * ((w ++ [false]).takeWhile
+                        id).length + 2) ⟨6, by omega⟩ (by decide : (6 : ℕ) ≠ 8) _ _
+                    hhost6 hpre6 vt (by omega) (by omega) b
+                ·
+                  exact canonStageCut_leg (canonStageFr M mU SU U ue ux header ctrOuter σ) d
+                    ((2 * w.length + 2 + 1) + (w.length + 1 + 1) + (([] : List Bool).length + 1 + 1)
+                        + (2 * ([false] : List Bool).length + 2 + 1) + (([false] : List Bool).length
+                        + 1 + 1) + ((w ++ [false]).length + 3 + 1) + (2 * ((w ++ [false]).takeWhile
+                        id).length + 2 + 1)) tU ⟨7, by omega⟩ (by decide : (7 : ℕ) ≠ 8) _ _
+                    hhost7 hpre7 vt (by omega) (by omega) b
+  · -- the header tape
+    rw [hfin, hrun7 tU]
+    have h1 := embedEmitCfg_selected_tape σ
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).output
+      (U.runFrom (selU) tU) uBound
+    rw [hσb] at h1
+    funext q
+    rw [Cfg.mapState_workTapes, congrFun h1 q, congrFun hUtapes uBound]
+    show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes (σ uBound) q = _
+    rw [hσb, hB7h]
+  · -- the header head
+    rw [hfin, hrun7 tU, Cfg.mapState_workTapePos]
+    have h1 := embedEmitCfg_selected_pos σ
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos
+      ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).output
+      (U.runFrom (selU) tU) uBound
+    rw [hσb] at h1
+    rw [h1, congrFun hUheads uBound]
+    show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos (σ uBound) = _
+    rw [hσb, hB7hp]
+  · -- the outer counter tape
+    rw [hfin, hrun7 tU]
+    funext q
+    rw [Cfg.mapState_workTapes]
+    rw [congrFun (embedEmitCfg_unselected σ _ _ _ _ ctrOuter
+      (fun ⟨i, hi⟩ => hσc i hi)).1 q, hB7c]
+  · -- the outer counter head
+    rw [hfin, hrun7 tU, Cfg.mapState_workTapePos]
+    rw [(embedEmitCfg_unselected σ _ _ _ _ ctrOuter (fun ⟨i, hi⟩ => hσc i hi)).2, hB7cp]
+  · -- every other tape
+    intro j hj1 hj2
+    constructor
+    · rw [hfin, hrun7 tU]
+      funext q
+      rw [Cfg.mapState_workTapes]
+      by_cases hjr : j ∈ Set.range σ
+      · obtain ⟨i, rfl⟩ := hjr
+        rw [embedEmitCfg_selected_tape, congrFun hUtapes i]
+        show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapes (σ i) q = _
+        rw [(hB7o (σ i) hj1 hj2).1]
+      · rw [congrFun (embedEmitCfg_unselected σ _ _ _ _ j hjr).1 q,
+          (hB7o j hj1 hj2).1]
+    · rw [hfin, hrun7 tU, Cfg.mapState_workTapePos]
+      by_cases hjr : j ∈ Set.range σ
+      · obtain ⟨i, rfl⟩ := hjr
+        rw [embedEmitCfg_selected_pos, congrFun hUheads i]
+        show ((canonStageBank M header ctrOuter (some ue) d.inputPos
+      (FinTM.bufferTape v) 0 w)).workTapePos (σ i) = _
+        rw [(hB7o (σ i) hj1 hj2).2]
+      · rw [(embedEmitCfg_unselected σ _ _ _ _ j hjr).2, (hB7o j hj1 hj2).2]
+  · -- the suffix clause
+    intro ys hy
+    rw [hfin, hrun7 tU, Cfg.mapState_inputPos, embedEmitCfg_inputPos]
+    exact hUsfx ys hy
