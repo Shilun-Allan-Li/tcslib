@@ -23,7 +23,9 @@ set_option autoImplicit false
 
 The raw output length is exact. Its values are the modular zero/one vector of the
 original prefix, with false defaults and excess bits ignored. The efficiency sketch
-uses existing leaf contracts and a registered host. Nontrivial claims are admitted.
+uses existing leaf contracts and the existing public counted loop. The loop's
+registry disposition remains pending; dependent FP fills are paused. Nontrivial
+claims are admitted.
 
 ## References
 
