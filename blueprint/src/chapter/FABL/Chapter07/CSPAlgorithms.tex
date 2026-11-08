@@ -164,7 +164,7 @@ are independent and each variable has its assigned marginal law.
 \uses{FABL.FiniteRandomizedAssignment, FABL.FiniteRandomizedAssignment.sampleLaw, FABL.pmfExpectation}
 Let $V$ and $D$ be finite sets, and let a randomized assignment specify a marginal
 probability law on $D$ for each variable in $V$. For a payoff function from assignments
-$V\to D$ to $\mathbb{R}$, its expected payoff is the expectation under the assignment's
+$V\to D$ to $\mathbb{R}$, its expected payoff is the expectation under the assignment's
 sample law.
 \end{definition}
 
@@ -226,7 +226,7 @@ the value of $f$ at a maximizer of $f$ on $\Omega$.
 \leanok
 \uses{FABL.finiteMaximizer, FABL.orderedProductPMF, FABL.pmfExpectation}
 Let $D$ be a finite nonempty set, let $n$ be a nonnegative integer, assign a probability
-law on $D$ to each of the $n$ coordinates, and let $from(	ext{Fin}(n)	o D)	oeal$ be a
+law on $D$ to each of the $n$ coordinates, and let $from(\text{Fin}(n)\to D)\toeal$ be a
 payoff. The recursively selected assignment fixes each coordinate to a value maximizing
 the expected payoff over the remaining coordinates under their independent product law,
 conditional on the coordinates already fixed; when $n=0$, it is the unique empty
@@ -446,7 +446,7 @@ otherwise.
 \label{FABL.e3LinConstraintToE3Sat}
 \leanok
 \uses{FABL.CSPConstraint, FABL.e3LinClauseNegation, FABL.maxE3LinTemplate, FABL.maxE3SatTemplate}
-Given a constraint over $\mathbb{F}_2$ with three distinct variables and a right-hand
+Given a constraint over $\mathbb{F}_2$ with three distinct variables and a right-hand
 side, and an index $j\in\{0,1,2,3\}$, form a three-literal Boolean clause on the same
 ordered variables. Its literal signs are those specified by the $j$th clause in the
 four-clause replacement of the linear constraint.
@@ -540,7 +540,7 @@ of original equations plus the number of original equations satisfied by the ass
 mapped to the field with two elements.
 \end{theorem}
 
-\begin{definition}[{Boolean assignment as an $[0m$[0mF₂-valued function}]
+\begin{definition}[{Boolean assignment as an $$F₂-valued function}]
 \lean{FABL.boolAssignmentToF₂}
 \leanok
 \uses{FABL.boolF₂Equiv, FABL.𝔽₂}
@@ -616,11 +616,11 @@ Statement pending regeneration.
 \uses{FABL.CSPInstance, FABL.CSPInstance.value, FABL.boolAssignmentToF₂, FABL.e3LinToE3Sat, FABL.maxE3LinTemplate, FABL.value_e3LinToE3Sat}
 \difficulty{3}
 Let $P$ be an instance of the three-variable linear constraint problem over
-$br/	ext{?}$—that is, over the field with two elements—and let $a$ be a Boolean
-assignment to its variables. If $deltaootnote{}$ is a nonnegative rational number and
+$\bbr/\text{?}$—that is, over the field with two elements—and let $a$ be a Boolean
+assignment to its variables. If $\deltaootnote{}$ is a nonnegative rational number and
 the value of the associated three-literal satisfiability instance under $a$ is at least
-$7/8+delta$, then the value of $P$ under the corresponding assignment over the field
-with two elements is at least $1/2+delta$.
+$7/8+\delta$, then the value of $P$ under the corresponding assignment over the field
+with two elements is at least $1/2+\delta$.
 \end{theorem}
 
 \begin{theorem}[One sub delta le e3 sat optimum of e3 lin]

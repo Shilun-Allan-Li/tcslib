@@ -11,7 +11,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.CircuitComplexity.Stra
 \label{BoolCircuit.SLOperand}
 \leanok
 For each natural number $n$, an operand is either an input variable $x_k$ for some
-$k	ext{ in Fin }n$, its negation, or the value of a numbered program line.
+$k\text{ in Fin }n$, its negation, or the value of a numbered program line.
 \end{definition}
 
 \begin{definition}[Straight-line operations]
@@ -93,7 +93,7 @@ line $i$ and $i\le j$, then $o$ is before line $j$.
 \leanok
 \uses{BoolCircuit.SLOperand, BoolCircuit.SLOperand.Before, BoolCircuit.SLOperand.eval}
 \difficulty{4}
-Let $x:	ext{Fin}(n)	o	ext{Bool}$ be an assignment, let $o$ be an operand, and let $ys$
+Let $x:\text{Fin}(n)\to\text{Bool}$ be an assignment, let $o$ be an operand, and let $ys$
 and $ext$ be Boolean lists. If every line operand referenced by $o$ has index less than
 the length of $ys$ (with input and negated-input operands satisfying this condition
 automatically), then evaluating $o$ on $ys$ appended with $ext$ gives the same value as
@@ -166,7 +166,7 @@ values already produced.
 \leanok
 \uses{BoolCircuit.SLStmt, BoolCircuit.StraightLine.runLines}
 \difficulty{1}
-For any natural number $n$ and any Boolean assignment $x : 	ext{Fin}(n) \to
+For any natural number $n$ and any Boolean assignment $x : \text{Fin}(n) \to
 \{\mathrm{false},\mathrm{true}\}$, running the empty list of straight-line statements on
 $x$ returns the empty list.
 \end{theorem}
@@ -320,9 +320,9 @@ list for $ss$ with the gate representing $s$ appended.
 \leanok
 \uses{BoolCircuit.DAGGate.eval, BoolCircuit.SLOp.apply, BoolCircuit.SLOp.kind, BoolCircuit.SLOperand.vertex, BoolCircuit.SLStmt, BoolCircuit.SLStmt.toGate}
 \difficulty{4}
-Let $s$ be a straight-line statement, with operation $ullet$ (conjunction or
+Let $s$ be a straight-line statement, with operation $\bullet$ (conjunction or
 disjunction) and operands $a$ and $b$, and let $vals$ be a list of Boolean vertex
-values. The gate associated with $s$ evaluates to $ullet(vals[v_a],vals[v_b])$, where
+values. The gate associated with $s$ evaluates to $\bullet(vals[v_a],vals[v_b])$, where
 $v_a$ and $v_b$ are the vertices associated with its two operands and any out-of-range
 list lookup is taken to be false.
 \end{theorem}

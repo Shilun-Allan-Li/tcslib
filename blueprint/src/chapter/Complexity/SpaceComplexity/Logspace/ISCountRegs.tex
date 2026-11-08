@@ -24,64 +24,64 @@ The second register index among seventeen registers is $1$.
 \lean{Complexity.LogProg.ISCount.rk}
 \label{Complexity.LogProg.ISCount.rk}
 \leanok
-The coordinate is the element $2$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
-element of $\mathrm{Fin}(17)$.
+The coordinate is the element $2$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
+element of $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Size coordinate]
 \lean{Complexity.LogProg.ISCount.rs}
 \label{Complexity.LogProg.ISCount.rs}
 \leanok
-The coordinate is the element $3$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
-element of $\mathrm{Fin}(17)$.
+The coordinate is the element $3$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
+element of $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Real coordinate]
 \lean{Complexity.LogProg.ISCount.re}
 \label{Complexity.LogProg.ISCount.re}
 \leanok
-The coordinate is the element $4$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
-element of $\mathrm{Fin}(17)$.
+The coordinate is the element $4$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
+element of $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Capital rank coordinate]
 \lean{Complexity.LogProg.ISCount.rK}
 \label{Complexity.LogProg.ISCount.rK}
 \leanok
-The coordinate is the element $5$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
-element of $\mathrm{Fin}(17)$.
+The coordinate is the element $5$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
+element of $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Total rank coordinate]
 \lean{Complexity.LogProg.ISCount.rT}
 \label{Complexity.LogProg.ISCount.rT}
 \leanok
-The coordinate is the element $6$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
-element of $\mathrm{Fin}(17)$.
+The coordinate is the element $6$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
+element of $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Index coordinate]
 \lean{Complexity.LogProg.ISCount.ri}
 \label{Complexity.LogProg.ISCount.ri}
 \leanok
-The coordinate is the element $7$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
-element of $\mathrm{Fin}(17)$.
+The coordinate is the element $7$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
+element of $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[First index coordinate]
 \lean{Complexity.LogProg.ISCount.ri1}
 \label{Complexity.LogProg.ISCount.ri1}
 \leanok
-The coordinate is the element $8$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
-element of $\mathrm{Fin}(17)$.
+The coordinate is the element $8$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
+element of $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Complement coordinate]
 \lean{Complexity.LogProg.ISCount.rcp}
 \label{Complexity.LogProg.ISCount.rcp}
 \leanok
-The coordinate is the element $9$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
-element of $\mathrm{Fin}(17)$.
+The coordinate is the element $9$ of the finite set $\{0,1,\ldots,16\}$, regarded as an
+element of $\mathrm{Fin}(17)$.
 \end{definition}
 
 \begin{definition}[Vertex register index]
@@ -644,7 +644,7 @@ one.
 \label{Complexity.LogProg.ISCount.RelO}
 \leanok
 \uses{Complexity.LogProg.SavitchARM.Rel}
-For an oracle $O:	ext{Fin}(4)	o	ext{List}(	ext{Bool})	o	ext{Bool}$, an input bit string
+For an oracle $O:\text{Fin}(4)\to\text{List}(\text{Bool})\to\text{Bool}$, an input bit string
 $x$, and a natural number $s$, define a relation on natural numbers by the reachability
 relation associated with $O$, $x$, and $s$ in Savitch's alternating reachability
 machine.
@@ -655,7 +655,7 @@ machine.
 \label{Complexity.LogProg.ISCount.InitO}
 \leanok
 \uses{Complexity.LogProg.SavitchARM.InitO}
-Given an oracle $O:	ext{Fin}(4)	o	ext{List}(	ext{Bool})	o	ext{Bool}$, an input bit
+Given an oracle $O:\text{Fin}(4)\to\text{List}(\text{Bool})\to\text{Bool}$, an input bit
 string $x$, and a natural number $s$, define the initialization predicate on a natural
 number $u$ to hold exactly when the oracle's query at index $1$, on the nested
 self-delimiting encoding of $x$, the binary expansion of $u$, and the binary expansion
@@ -667,7 +667,7 @@ of $s$, returns true.
 \label{Complexity.LogProg.ISCount.AccO}
 \leanok
 \uses{Complexity.LogProg.SavitchARM.AccO}
-Given an oracle $O:	ext{Fin}(4)	o	ext{List}(	ext{Bool})	o	ext{Bool}$, an input bit
+Given an oracle $O:\text{Fin}(4)\to\text{List}(\text{Bool})\to\text{Bool}$, an input bit
 string $x$, and a natural number $s$, define the acceptance predicate on a natural
 number $v$ to hold exactly when the oracle's query at index $2$, on the nested
 self-delimiting encoding of $x$, the binary expansion of $v$, and the binary expansion

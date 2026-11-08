@@ -197,8 +197,8 @@ to $f(x)g(y)$ is bent.
 \leanok
 \uses{FABL.F₂Cube, FABL.IsSignValued, FABL.bentDirectProduct}
 \difficulty{1}
-Let $n,m\ge 0$, and let $f:_2^n	obR$ and $g:_2^m	obR$ satisfy $|f(x)|=|g(y)|=1$ for
-every input. Define their direct product on $_2^{n+m}$ by splitting each input into its
+Let $n,m\ge 0$, and let $f:_2^n\to\bbR$ and $g:_2^m\to\bbR$ satisfy $|f(x)|=|g(y)|=1$ for
+every input. Define their direct product on $_2^{n+m}$ by splitting each input into its
 first $n$ and last $m$ coordinates and multiplying the corresponding values of $f$ and
 $g$. Then this direct product has absolute value $1$ at every input.
 \end{theorem}
@@ -221,7 +221,7 @@ Fourier coefficient of $f$ at $a+\gamma$.
 \label{FABL.bentAffineModulation}
 \leanok
 \uses{FABL.F₂Cube, FABL.Sign, FABL.signValue, FABL.vectorWalshCharacter}
-Given a sign $[0m\sigma\in\{\pm1\}$, a vector $a$ in the $n$-dimensional Boolean cube,
+Given a sign $\sigma\in\{\pm1\}$, a vector $a$ in the $n$-dimensional Boolean cube,
 and a real-valued function $f$ on that cube, define the modulated function at $x$ as the
 product of the sign, the Walsh character indexed by $a$ evaluated at $x$, and $f(x)$.
 \end{definition}
@@ -328,7 +328,7 @@ where $\widehat f(\gamma)$ is the vector Fourier coefficient of $f$ at $\gamma$.
 \label{FABL.distanceToAffineSigns}
 \leanok
 \uses{FABL.F₂Cube, FABL.Sign, FABL.affineSignFunction, FABL.relativeHammingDist}
-For a function $f:\{0,1\}^n\to\mathbb{R}$, define its distance to the affine sign
+For a function $f:\{0,1\}^n\to\mathbb{R}$, define its distance to the affine sign
 functions to be the minimum, over all sign vectors and all points of the binary cube, of
 the relative Hamming distance from $f$ to the corresponding affine sign function.
 \end{definition}
@@ -415,8 +415,8 @@ $\delta\cdot x=\gamma\cdot M^{-1}x$, where the dot product is over $\mathbb{F}_2
 \leanok
 \uses{FABL.F₂Cube, FABL.bentDualFrequency, FABL.f₂DotProduct, FABL.𝔽₂}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $M$ be an invertible linear map on $br_2^n$, and
-let $b gamma,y\in\bbr_2^n$, where $\bbr_2$ is the field with two elements. Define the
+Let $n$ be a nonnegative integer, let $M$ be an invertible linear map on $\bbr_2^n$, and
+let $\mathbb gamma,y\in\bbr_2^n$, where $\bbr_2$ is the field with two elements. Define the
 dual frequency $M^*\gamma$ by requiring its dot product with $y$ to equal the dot
 product of $\gamma$ with $M^{-1}y$. Then the dot product of the bent dual frequency of
 $\gamma$ with $y$ equals the dot product of $\gamma$ with $M^{-1}y$.
@@ -471,8 +471,8 @@ $x\mapsto f(Mx)$ is bent.
 \leanok
 \uses{FABL.F₂Cube, FABL.IsSignValued, FABL.bentLinearReindex, FABL.𝔽₂}
 \difficulty{1}
-Let $f:_2^n	obR$ satisfy $|f(x)|=1$ for every $x$, and let $M:_2^n	o_2^n$ be an
-invertible linear map. Then the function $x	o f(Mx)$ also has absolute value $1$ at
+Let $f:_2^n\to\bbR$ satisfy $|f(x)|=1$ for every $x$, and let $M:_2^n\to_2^n$ be an
+invertible linear map. Then the function $x\to f(Mx)$ also has absolute value $1$ at
 every input.
 \end{theorem}
 

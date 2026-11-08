@@ -760,7 +760,7 @@ prefix emitted so far.
 \uses{Complexity.enumCont_concatCfg, Complexity.enumCont_concatTM, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.controlAction_apply, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
 \difficulty{5}
 Let $x$, $s$, $\mathit{pre}$, and $\mathit{rest}$ be Boolean words, and suppose
-$x=\mathit{pre}\mathbin{+  +}\mathit{rest}$. After exactly $|\mathit{rest}|+1$ steps
+$x=\mathit{pre}\mathbin{+\!\!+}\mathit{rest}$. After exactly $|\mathit{rest}|+1$ steps
 from the assembly configuration in input phase, with input head at position
 $|\mathit{pre}|+1$, candidate tape containing $s$ with its head at position $0$, and
 output $\mathit{pre}$, the machine is in candidate phase with input head at the right
@@ -775,12 +775,12 @@ boundary, candidate tape and head unchanged, and output $x$.
 \difficulty{5}
 Let $x$, $s$, $\mathit{pre}$, and $\mathit{rest}$ be Boolean words, let $p$ be an
 input-head position for input $x$, and let $\mathit{out}$ be a Boolean word. If
-$s=\mathit{pre}\mathbin{+  +}\mathit{rest}$, then after exactly $|\mathit{rest}|+1$
+$s=\mathit{pre}\mathbin{+\!\!+}\mathit{rest}$, then after exactly $|\mathit{rest}|+1$
 steps from the assembly configuration in candidate phase, with input head at $p$,
 candidate tape containing $s$ with its head at position $|\mathit{pre}|$, and output
-$\mathit{out}\mathbin{+  +}\mathit{pre}$, the machine is halted with the candidate tape
+$\mathit{out}\mathbin{+\!\!+}\mathit{pre}$, the machine is halted with the candidate tape
 unchanged, its head at position $|s|$, input head still at $p$, and output
-$\mathit{out}\mathbin{+  +}s$.
+$\mathit{out}\mathbin{+\!\!+}s$.
 \end{lemma}
 
 \begin{lemma}[Concatenation machine run]
@@ -902,10 +902,10 @@ high tapes, embedding the control state along a given map.
 \leanok
 \uses{Complexity.enumCont_padAction, Complexity.enumCont_padCfg, Turing.Action, Turing.Action.apply, Turing.Cfg}
 \difficulty{3}
-Let $k,K$ be natural numbers, let $S,H$ be types, let $	ext{emb}:S\to H$ be a map, let
+Let $k,K$ be natural numbers, let $S,H$ be types, let $\text{emb}:S\to H$ be a map, let
 $x$ be a Boolean input word, let $c$ be a configuration of a $k$-tape machine with
 states in $S$, and let $a$ be an action of that machine. Applying the action padded
-along $	ext{emb}$ to the padded configuration equals padding along $	ext{emb}$ of the
+along $\text{emb}$ to the padded configuration equals padding along $\text{emb}$ of the
 configuration obtained by applying $a$ to $c$.
 \end{lemma}
 
@@ -917,7 +917,7 @@ configuration obtained by applying $a$ to $c$.
 \difficulty{4}
 Let $k\le K$, let $S,H$ be types, let $x$ be a Boolean input word, let $M$ be a $k$-tape
 machine with states in $S$, let $N$ be a $K$-tape machine with states in $H$, and let
-$	ext{emb}:S\to H$. Suppose that for every source state, input symbol, and $K$-tuple of
+$\text{emb}:S\to H$. Suppose that for every source state, input symbol, and $K$-tuple of
 scanned work-tape symbols, $N$'s transition at the embedded state equals the padded
 action obtained from $M$'s transition using the first $k$ scanned symbols. Then for
 every source configuration $c$ and every $t\in\mathbb{N}$, running $N$ for $t$ steps
@@ -984,10 +984,10 @@ equal to the fixed-width increment of $s$, with overflow represented by the empt
 \uses{Complexity.enumCont_padCfg, Turing.Cfg.ofWords, Turing.stateWord}
 \difficulty{3}
 Let $k,K$ be natural numbers with $0<k$ and $k\le K$, let $S,H$ be types, let
-$	ext{emb}:S\to H$ be a map, let $q:S$, and let $x,s$ be Boolean words. Padding the seam
+$\text{emb}:S\to H$ be a map, let $q:S$, and let $x,s$ be Boolean words. Padding the seam
 configuration on input $x$ with state $q$, word $s$ on tape zero, and empty words on all
 other tapes of the $k$-tape bank gives the seam configuration on the $K$-tape bank with
-state $	ext{emb}(q)$, word $s$ on tape zero, and empty words on all other tapes.
+state $\text{emb}(q)$, word $s$ on tape zero, and empty words on all other tapes.
 \end{lemma}
 
 \begin{lemma}[Padding the initial configuration]
@@ -996,10 +996,10 @@ state $	ext{emb}(q)$, word $s$ on tape zero, and empty words on all other tapes.
 \leanok
 \uses{Complexity.enumCont_padCfg, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.stateWord}
 \difficulty{2}
-Let $k,K$ be natural numbers, let $S,H$ be types, let $	ext{emb}:S\to H$ be a map, let
+Let $k,K$ be natural numbers, let $S,H$ be types, let $\text{emb}:S\to H$ be a map, let
 $q:S$, and let $x$ be a Boolean input word. Padding the initial configuration with state
 $q$ on input $x$ gives the seam configuration on the $K$-tape bank with state
-$	ext{emb}(q)$ and empty words on all tapes.
+$\text{emb}(q)$ and empty words on all tapes.
 \end{lemma}
 
 \begin{lemma}[Overwriting the next buffer cell]

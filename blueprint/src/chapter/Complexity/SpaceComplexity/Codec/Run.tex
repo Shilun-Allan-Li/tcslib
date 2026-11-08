@@ -11,7 +11,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.SpaceComplexity.Codec.
 \label{Complexity.Codec.codecAs}
 \leanok
 \uses{Complexity.inputBitLang, Complexity.inputLenLang}
-Define a function from $	ext{Fin}(2)$ to Boolean languages by assigning the input-length
+Define a function from $\text{Fin}(2)$ to Boolean languages by assigning the input-length
 language to index $0$ and the input-bit language to index $1$.
 \end{definition}
 
@@ -358,7 +358,7 @@ Let $N$ be a finite nondeterministic Turing machine, let $y$ be a bit string, le
 a natural-number register bound, and let $I$ be a simulator state with two Boolean flags
 $f_0,f_1$. Suppose $u,u'$ are bit strings of equal length, the register valuation $v$
 has every register at most $B$, and its registers $E,Q_3,Q_4$ satisfy $v(E)=v(Q_3)+2|u|$
-and $v(Q_4)+2|u|le B$. Suppose also that, for every $i<|u|$, the input bits at
+and $v(Q_4)+2|u|\langle B$. Suppose also that, for every $i<|u|$, the input bits at
 positions $v(Q_3)+2i$ and $v(Q_4)+2i$ in $y$ (taken to be false when out of range) equal
 the $i$th bits of $u$ and $u'$, respectively (also taken false when out of range). Then
 the coded simulator has a finite execution from the paired scan-test state, with

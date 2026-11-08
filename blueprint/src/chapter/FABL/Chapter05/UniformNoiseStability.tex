@@ -1138,11 +1138,11 @@ new sign vector by reversing $x_i$ when $\pi(i)=j$ and leaving it unchanged othe
 \uses{FABL.BooleanFunction, FABL.flipCoordinate, FABL.flipPartitionFiber, FABL.partitionFunction, FABL.setCoordinate, FABL.uniformProbability}
 \difficulty{4}
 Let $n,m$ be natural numbers, let $f$ map sign vectors of length $n$ to signs, let
-$pi:bfntobfm$ be a coordinate map, and choose a sign vector $w$ of length $m$ and an
+$\pi:bfntobfm$ be a coordinate map, and choose a sign vector $w$ of length $m$ and an
 index $j<m$. The uniform probability over sign vectors $z$ of length $n$ that the values
 of the partition function at $w$ and at the vector obtained by flipping coordinate $j$
 differ equals the uniform probability over sign vectors $x$ of length $n$ that $f(x)$
-differs from its value after flipping every coordinate $i$ for which $pi(i)=j$.
+differs from its value after flipping every coordinate $i$ for which $\pi(i)=j$.
 \end{theorem}
 
 \begin{theorem}[Partition flips and noise sensitivity]
@@ -1165,7 +1165,7 @@ choices, equals the noise sensitivity of $f$ at noise rate $1/m$.
 \uses{FABL.BooleanFunction, FABL.averageCoordinateFlipProbability, FABL.expect_flipPartitionFiber_eq_noiseSensitivity, FABL.expect_partitionFunction_flip, FABL.flipCoordinate, FABL.flipPartitionFiber, FABL.inverseDimension_mem_Icc, FABL.noiseSensitivity, FABL.partitionFunction, FABL.uniformProbability}
 \difficulty{5}
 Let $n,m$ be natural numbers with $m>0$, and let $f\colon\{\pm1\}^n\to\{\pm1\}$. Choose
-a sign vector $z$ uniformly and a map $\pi\colon\{1,\ldots,n\}\to\{1,[0m1\ldots,m\}$
+a sign vector $z$ uniformly and a map $\pi\colon\{1,\ldots,n\}\to\{1,1\ldots,m\}$
 uniformly and independently. The expected average, over the input coordinates, of the
 uniform probability that the partitioned function $w\mapsto f((z_iw_{\pi(i)})_{i=1}^n)$
 changes when one coordinate of $w$ is flipped equals the noise sensitivity of $f$ at

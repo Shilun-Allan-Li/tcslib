@@ -55,8 +55,8 @@ polynomial-time abort class.
 \lean{Randomized.keepAs}
 \label{Randomized.keepAs}
 \leanok
-For a Boolean $b$, define a function on Boolean inputs $eta$ by returning the optional
-value $b$ when $eta$ is true, and no value when $eta$ is false.
+For a Boolean $b$, define a function on Boolean inputs $\beta$ by returning the optional
+value $b$ when $\beta$ is true, and no value when $\beta$ is false.
 \end{definition}
 
 \begin{definition}[Zero-error randomized attempt machine]
@@ -66,7 +66,7 @@ value $b$ when $eta$ is true, and no value when $eta$ is false.
 \uses{Randomized.keepAs, Turing.FinNDTM, Turing.FinNDTM.coinBranch, Turing.FinNDTM.mapOutput}
 Given a function $N$ assigning a finite nondeterministic Turing machine over the Boolean
 alphabet to each Boolean choice, form the machine obtained by mapping the outputs of
-$N(	ext{false})$ and $N(	ext{true})$ through the conditional Boolean output functions
+$N(\text{false})$ and $N(\text{true})$ through the conditional Boolean output functions
 for false and true, respectively, and combining the two machines by the coin-branch
 construction.
 \end{definition}

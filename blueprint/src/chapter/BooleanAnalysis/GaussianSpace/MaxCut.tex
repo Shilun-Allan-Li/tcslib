@@ -14,7 +14,7 @@ Declarations of the Lean module \texttt{TCSlib.BooleanAnalysis.GaussianSpace.Max
 Let $n$ be a natural number and let $G$ be a weighted directed graph on $n$ vertices
 whose weights are nonnegative and symmetric, sum to $1$ over all ordered pairs of
 vertices, and vanish on the diagonal. Then there is an assignment of unit vectors in
-$br^n$ to the vertices whose SDP value equals the supremum of the SDP values of all
+$\bbr^n$ to the vertices whose SDP value equals the supremum of the SDP values of all
 such unit-vector assignments.
 \end{theorem}
 
@@ -1378,7 +1378,7 @@ $c_*=(\theta_*/\pi)/((1-\cos\theta_*)/2)$.
   {pdf-b53c1a5aa27d-p009-b007}
 Let $n$ be a natural number, let $G$ be a weighted directed graph on $n$ vertices with
 nonnegative symmetric weights summing to $1$ and zero diagonal, and let $U$ assign a
-unit vector in $br^n$ to each vertex. The Goemans–Williamson constant times the SDP
+unit vector in $\bbr^n$ to each vertex. The Goemans–Williamson constant times the SDP
 value of $U$ is at most the expected cut value obtained by Gaussian rounding, where the
 expectation is over $n$ independent standard Gaussian coordinates.
 \end{theorem}
@@ -2047,8 +2047,8 @@ expectation is over $n$ independent standard Gaussian coordinates.
   {pdf-b53c1a5aa27d-p009-b007}
 Let $n$ be a natural number, let $G$ be a weighted directed graph on $n$ vertices with
 nonnegative symmetric weights summing to $1$ and zero diagonal, and let $U$ assign a
-unit vector in $rr^n$ to each vertex whose SDP value equals the SDP optimum. Suppose
-$	heta$ lies between the Goemans–Williamson angle and $\\pi$, inclusive, and
+unit vector in $\mathbb R^n$ to each vertex whose SDP value equals the SDP optimum. Suppose
+$\theta$ lies between the Goemans–Williamson angle and $\\pi$, inclusive, and
 $(1-\\cos\\theta)/2$ is at most the SDP optimum. Then the expected cut value from
 Gaussian rounding of $U$, with respect to $n$ independent standard Gaussian coordinates,
 is at least $\\theta/\\pi$.
@@ -2059,7 +2059,7 @@ is at least $\\theta/\\pi$.
 \label{BooleanAnalysis.GaussianSpace.MaxCut.fiveCycle_optima}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.MaxCut.IsSDPAssignment, BooleanAnalysis.GaussianSpace.MaxCut.IsValid, BooleanAnalysis.GaussianSpace.MaxCut.fiveCycle, BooleanAnalysis.GaussianSpace.MaxCut.fiveCycleSDP, BooleanAnalysis.GaussianSpace.MaxCut.optimum, BooleanAnalysis.GaussianSpace.MaxCut.sdpOptimum, BooleanAnalysis.GaussianSpace.MaxCut.sdpValue}
-For the weighted five-cycle on vertices indexed by $br/5br$, with weight $1/10$ on
+For the weighted five-cycle on vertices indexed by $\bbr/5\bbr$, with weight $1/10$ on
 each ordered adjacent pair and zero weight otherwise, the weights are nonnegative and
 symmetric, sum to $1$, and vanish on the diagonal; its maximum cut value is $4/5$. The
 assignment placing vertex $v$ at the unit vector with first two coordinates
@@ -2072,7 +2072,7 @@ $(1-\\cos(4\\pi/5))/2$, and this value is the SDP optimum.
 \label{BooleanAnalysis.GaussianSpace.MaxCut.fiveCycle_rounding_optimal}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.MaxCut.cutValue, BooleanAnalysis.GaussianSpace.MaxCut.fiveCycle, BooleanAnalysis.GaussianSpace.MaxCut.fiveCycleSDP, BooleanAnalysis.GaussianSpace.MaxCut.gaussianRounding, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
-Let $g=(g_0,dots,g_4)$ be sampled from the product of five standard Gaussian
+Let $g=(g_0,\ldots,g_4)$ be sampled from the product of five standard Gaussian
 probability measures on $\mathbb R$. With probability one, rounding the five-cycle SDP
 vectors by the signs of their inner products with $g$ produces a cut of value $4/5$.
 \end{theorem}

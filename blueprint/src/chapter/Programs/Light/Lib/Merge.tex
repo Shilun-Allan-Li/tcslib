@@ -56,7 +56,7 @@ $r$ beginning at $j+1$.
 \lean{Light.Merge.ListA}
 \label{Light.Merge.ListA}
 \leanok
-The abbreviation $	ext{ListA}$ denotes the natural number $0$.
+The abbreviation $\text{ListA}$ denotes the natural number $0$.
 \end{definition}
 
 \begin{definition}[Value of the second length constant]
@@ -114,8 +114,8 @@ $6$.
 \label{Light.mergeTakeLeft}
 \leanok
 \uses{Light.M, Light.Merge.Dest, Light.Merge.DoneA, Light.Merge.DoneB, Light.Merge.ListA, Light.Stmt, Light.k, Light.v}
-The statement first stores the value read from address $	ext{ListA}+	ext{DoneA}$ at
-address $	ext{Dest}+	ext{DoneA}+	ext{DoneB}$. It then increases $	ext{DoneA}$ by one.
+The statement first stores the value read from address $\text{ListA}+\text{DoneA}$ at
+address $\text{Dest}+\text{DoneA}+\text{DoneB}$. It then increases $\text{DoneA}$ by one.
 \end{definition}
 
 \begin{definition}[Right-List Merge Step]
@@ -145,7 +145,7 @@ one list has remaining elements, it takes the next element from that list.
 \label{Light.Merge.Pre}
 \leanok
 \uses{Light.Apart, Light.Limits, Light.Seg}
-Let $L$ and $R$ be lists of integers, let $[?]$ be a memory map from natural-number
+Let $L$ and $R$ be lists of integers, let $\bbc$ be a memory map from natural-number
 addresses to integers, and let $a,b,d$ be natural-number addresses. Suppose the
 memory-space limit is at most the word-size limit, $L$ and $R$ occupy memory segments
 beginning at $a$ and $b$, respectively, and the regions beginning at $a$, $b$, and $d$
@@ -158,11 +158,11 @@ limit. Suppose also that each input region is apart from the destination region.
 \label{Light.Merge.Inv}
 \leanok
 \uses{Light.SameOutside, Light.Seg, Light.State, Light.frame}
-Let $L$ and $R$ be lists of integers, let $[?]$ be a memory map, let $a,b,d$ be
+Let $L$ and $R$ be lists of integers, let $\bbc$ be a memory map, let $a,b,d$ be
 natural-number addresses, and let $i,j$ be natural numbers. A state satisfies the
-invariant if there are a memory map $[?]'$ and an output list $O$ such that its
+invariant if there are a memory map $\bbc'$ and an output list $O$ such that its
 location component is the frame determined by $a,|L|,b,|R|,d,i,j$ and its memory
-component is $[?]'$; moreover, $i\le |L|$, $j\le |R|$, the two maps agree outside the
+component is $\bbc'$; moreover, $i\le |L|$, $j\le |R|$, the two maps agree outside the
 destination region of length $|L|+|R|$, $|O|=i+j$, $O$ occupies a memory segment
 beginning at $d$, and concatenating $O$ with the merge of the unconsumed tails of $L$
 and $R$ gives the merge of $L$ and $R$.
@@ -173,7 +173,7 @@ and $R$ gives the merge of $L$ and $R$.
 \label{Light.Merge.Taken}
 \leanok
 \uses{Light.Merge.Inv, Light.State}
-Let $L$ and $R$ be lists of integers, let $[?]$ be a memory map, let $a,b,d,t$ be
+Let $L$ and $R$ be lists of integers, let $\bbc$ be a memory map, let $a,b,d,t$ be
 natural numbers, and let $\sigma$ be a state. The state has taken $t$ elements if there
 exist natural numbers $i,j$ with $i+j=t$ such that $\sigma$ satisfies the merge loop
 invariant at indices $i,j$.

@@ -60,9 +60,9 @@ the delimiter $0$, and then $r$.
 \label{Complexity.Meyer.query}
 \leanok
 \uses{Complexity.Meyer.fcode}
-Let $n$ be a natural number, let $b_0,[4m\ldots[0m,b_{n-1}$ be Boolean bits, and let
+Let $n$ be a natural number, let $b_0,\ldots,b_{n-1}$ be Boolean bits, and let
 $t,a,x$ be Boolean lists. The query string is the bit list
-$(b_0,[4m\ldots[0m,b_{n-1})$ followed by the code of $t$, two false bits, the code of
+$(b_0,\ldots,b_{n-1})$ followed by the code of $t$, two false bits, the code of
 $a$, two false bits, and $x$.
 \end{definition}
 
@@ -84,7 +84,7 @@ $n_b+2|t|+2|a|+4+|x|$.
 \leanok
 \uses{Complexity.Meyer.readField}
 Let $n$ be a natural number and $y$ a Boolean list. If $y$ has at least $n$ entries,
-take its first $n$ bits as a function on the indices $0,[4m\ldots[0m,n-1$, and parse
+take its first $n$ bits as a function on the indices $0,\ldots,n-1$, and parse
 the remainder as two consecutive delimited fields using the Boolean-field reader. When
 both fields parse successfully, return the first $n$ bits and the two parsed fields
 together with the unconsumed suffix; otherwise return no result.
@@ -209,7 +209,7 @@ coordinate $0$ is $a$.
 Let $M$ be a finite Turing machine with Boolean symbols, and let $a$ be a pair
 consisting of an optional optional Boolean and a sign. For the function on three
 coordinates that equals $a$ at coordinate $0$ and is otherwise idle, its value at
-coordinate $1$ is $(	ext{none},0)$.
+coordinate $1$ is $(\text{none},0)$.
 \end{theorem}
 
 \begin{theorem}[Idle Value Away from the Updated Coordinate]
@@ -221,7 +221,7 @@ coordinate $1$ is $(	ext{none},0)$.
 Let $M$ be a finite Turing machine with Boolean symbols, and let $a$ be a pair
 consisting of an optional optional Boolean and a sign. For the function on three
 coordinates that equals $a$ at coordinate $0$ and is otherwise idle, its value at
-coordinate $2$ is $(	ext{none},0)$.
+coordinate $2$ is $(\text{none},0)$.
 \end{theorem}
 
 \begin{theorem}[Idle Value Away from the Updated Coordinate]
@@ -233,7 +233,7 @@ coordinate $2$ is $(	ext{none},0)$.
 Let $M$ be a finite Turing machine with Boolean symbols, and let $a$ be a pair
 consisting of an optional optional Boolean and a sign. For the function on three
 coordinates that equals $a$ at coordinate $1$ and is otherwise idle, its value at
-coordinate $0$ is $(	ext{none},0)$.
+coordinate $0$ is $(\text{none},0)$.
 \end{theorem}
 
 \begin{theorem}[Value at the Updated Coordinate]
@@ -257,7 +257,7 @@ coordinate $1$ is $a$.
 Let $M$ be a finite Turing machine with Boolean symbols, and let $a$ be a pair
 consisting of an optional optional Boolean and a sign. For the function on three
 coordinates that equals $a$ at coordinate $1$ and is otherwise idle, its value at
-coordinate $2$ is $(	ext{none},0)$.
+coordinate $2$ is $(\text{none},0)$.
 \end{theorem}
 
 \begin{theorem}[Idle Value Away from the Updated Coordinate]
@@ -269,7 +269,7 @@ coordinate $2$ is $(	ext{none},0)$.
 Let $M$ be a finite Turing machine with Boolean symbols, and let $a$ be a pair
 consisting of an optional optional Boolean and a sign. For the function on three
 coordinates that equals $a$ at coordinate $2$ and is otherwise idle, its value at
-coordinate $0$ is $(	ext{none},0)$.
+coordinate $0$ is $(\text{none},0)$.
 \end{theorem}
 
 \begin{theorem}[Idle Value Away from the Updated Coordinate]
@@ -281,7 +281,7 @@ coordinate $0$ is $(	ext{none},0)$.
 Let $M$ be a finite Turing machine with Boolean symbols, and let $a$ be a pair
 consisting of an optional optional Boolean and a sign. For the function on three
 coordinates that equals $a$ at coordinate $2$ and is otherwise idle, its value at
-coordinate $1$ is $(	ext{none},0)$.
+coordinate $1$ is $(\text{none},0)$.
 \end{theorem}
 
 \begin{theorem}[Value at the Updated Coordinate]
@@ -300,7 +300,7 @@ coordinate $2$ is replaced by $a$, the value at coordinate $2$ is $a$.
 \leanok
 \uses{Complexity.Meyer.two}
 \difficulty{1}
-For arbitrary values $a,a'   in   Option(Option(  {false,true}))  times SignType$, the
+For arbitrary values $a,a'\in\text{Option}(\text{Option}(\{false,true\}))\times\text{SignType}$, the
 function on the three coordinates $0,1,2$ obtained by first setting coordinate $0$ to
 $a$ and then coordinate $1$ to $a'$ takes the value $a$ at coordinate $0$.
 \end{theorem}
@@ -311,7 +311,7 @@ $a$ and then coordinate $1$ to $a'$ takes the value $a$ at coordinate $0$.
 \leanok
 \uses{Complexity.Meyer.two}
 \difficulty{1}
-For arbitrary values $a,a'   in   Option(Option(  {false,true}))  times SignType$, the
+For arbitrary values $a,a'\in\text{Option}(\text{Option}(\{false,true\}))\times\text{SignType}$, the
 function on the three coordinates $0,1,2$ obtained by first setting coordinate $0$ to
 $a$ and then coordinate $1$ to $a'$ takes the value $a'$ at coordinate $1$.
 \end{theorem}
@@ -322,9 +322,9 @@ $a$ and then coordinate $1$ to $a'$ takes the value $a'$ at coordinate $1$.
 \leanok
 \uses{Complexity.Meyer.two}
 \difficulty{1}
-For arbitrary values $a,a'   in   Option(Option(  {false,true}))  times SignType$, the
+For arbitrary values $a,a'\in\text{Option}(\text{Option}(\{false,true\}))\times\text{SignType}$, the
 function on the three coordinates $0,1,2$ obtained by first setting coordinate $0$ to
-$a$ and then coordinate $1$ to $a'$ takes the default value $(  {none},0)$ at coordinate
+$a$ and then coordinate $1$ to $a'$ takes the default value $(\text{none},0)$ at coordinate
 $2$.
 \end{theorem}
 
@@ -334,9 +334,9 @@ $2$.
 \leanok
 \uses{Complexity.Meyer.two}
 \difficulty{1}
-For arbitrary values $a,a'   in   Option(Option(  {false,true}))  times SignType$, the
+For arbitrary values $a,a'\in\text{Option}(\text{Option}(\{false,true\}))\times\text{SignType}$, the
 function on the three coordinates $0,1,2$ obtained by first setting coordinate $1$ to
-$a$ and then coordinate $2$ to $a'$ takes the default value $(  {none},0)$ at coordinate
+$a$ and then coordinate $2$ to $a'$ takes the default value $(\text{none},0)$ at coordinate
 $0$.
 \end{theorem}
 
@@ -370,7 +370,7 @@ $a'$ at position $2$.
 \leanok
 \uses{Complexity.Meyer.two}
 \difficulty{1}
-For arbitrary values $a,a'   in   Option(Option(  {false,true}))  times SignType$, the
+For arbitrary values $a,a'\in\text{Option}(\text{Option}(\{false,true\}))\times\text{SignType}$, the
 function on the three coordinates $0,1,2$ obtained by first setting coordinate $0$ to
 $a$ and then coordinate $2$ to $a'$ takes the value $a$ at coordinate $0$.
 \end{theorem}
@@ -381,9 +381,9 @@ $a$ and then coordinate $2$ to $a'$ takes the value $a$ at coordinate $0$.
 \leanok
 \uses{Complexity.Meyer.two}
 \difficulty{1}
-For arbitrary values $a,a'   in   Option(Option(  {false,true}))  times SignType$, the
+For arbitrary values $a,a'\in\text{Option}(\text{Option}(\{false,true\}))\times\text{SignType}$, the
 function on the three coordinates $0,1,2$ obtained by first setting coordinate $0$ to
-$a$ and then coordinate $2$ to $a'$ takes the default value $(  {none},0)$ at coordinate
+$a$ and then coordinate $2$ to $a'$ takes the default value $(\text{none},0)$ at coordinate
 $1$.
 \end{theorem}
 
@@ -393,7 +393,7 @@ $1$.
 \leanok
 \uses{Complexity.Meyer.two}
 \difficulty{1}
-For arbitrary values $a,a'   in   Option(Option(  {false,true}))  times SignType$, the
+For arbitrary values $a,a'\in\text{Option}(\text{Option}(\{false,true\}))\times\text{SignType}$, the
 function on the three coordinates $0,1,2$ obtained by first setting coordinate $0$ to
 $a$ and then coordinate $2$ to $a'$ takes the value $a'$ at coordinate $2$.
 \end{theorem}

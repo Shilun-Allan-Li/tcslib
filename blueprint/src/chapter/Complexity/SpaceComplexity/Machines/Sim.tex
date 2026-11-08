@@ -43,10 +43,10 @@ the flag of segment $s$ is true.
 \leanok
 \uses{Complexity.LogProg.Consistent, Complexity.LogProg.Seg, Complexity.LogProg.TPos, Complexity.LogProg.TPos.Valid, Complexity.LogProg.TPos.isCell, Complexity.LogProg.gstep, Complexity.LogProg.seg, Complexity.LogProg.tmove, Complexity.LogProg.trackPos, Complexity.LogProg.wlen}
 \difficulty{6}
-Let $S$ be a finite list of segments, let $s<	ext{length}(S)$, and let $t$ be a
-tape-head position valid for segment $s$. Let $p,d	ext{ be Boolean flags such that }t$
-is consistent with them: at the left boundary $d=	ext{false}$, at the right boundary
-$d=	ext{true}$, and at a cell in a doubled segment its parity flag equals $p$. For any
+Let $S$ be a finite list of segments, let $s<\text{length}(S)$, and let $t$ be a
+tape-head position valid for segment $s$. Let $p,d\text{ be Boolean flags such that }t$
+is consistent with them: at the left boundary $d=\text{false}$, at the right boundary
+$d=\text{true}$, and at a cell in a doubled segment its parity flag equals $p$. For any
 movement $m\in\{-1,0,1\}$, apply the abstract update rule using segment $s$'s doubling
 flag, whether $s$ is the last or first segment, and whether $t$ is a cell; denote its
 new segment index, flags, and movement output by $s',p',d',m'$. Also apply the tape-head

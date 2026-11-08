@@ -10,7 +10,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.ClassPSPACE.Games}.
 \lean{Complexity.Game.playOut}
 \label{Complexity.Game.playOut}
 \leanok
-Given two strategies $s_1,s_2 : 	ext{List}(	ext{Bool})\to	ext{Bool}$ and a natural
+Given two strategies $s_1,s_2 : \text{List}(\text{Bool})\to\text{Bool}$ and a natural
 number $n$, the play sequence of length $n$ starts with the empty history and is formed
 by repeatedly appending one bit: at an even-length history append the bit chosen by
 $s_1$, and at an odd-length history append the bit chosen by $s_2$.
@@ -52,7 +52,7 @@ $h$ when $h$ has even length, and their logical conjunction when $h$ has odd len
 \lean{Complexity.Game.ply}
 \label{Complexity.Game.ply}
 \leanok
-Given strategies $s_1,s_2 : 	ext{List}(	ext{Bool})\to	ext{Bool}$ and a finite Boolean
+Given strategies $s_1,s_2 : \text{List}(\text{Bool})\to\text{Bool}$ and a finite Boolean
 history $h$, one move extends $h$ by the bit chosen by $s_1$ when $h$ has even length
 and by $s_2$ when $h$ has odd length.
 \end{definition}

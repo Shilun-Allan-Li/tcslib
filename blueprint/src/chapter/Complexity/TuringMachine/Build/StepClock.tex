@@ -35,7 +35,7 @@ and agrees with $c_t$ at every other cell.
 \label{Turing.Cfg.Stopped}
 \leanok
 \uses{Turing.Cfg}
-Let $k$ be a nonnegative integer, let $[?]$ be an input string over an alphabet $[?]$,
+Let $k$ be a nonnegative integer, let $\Sigma$ be an input string over an alphabet $\Sigma$,
 and let $c$ be a configuration of a $k$-tape Turing machine with that input and state
 set $S$. Given a Boolean-valued stopping rule on $S$, the configuration is stopped if it
 has no internal state, or if its state is some $s\in S$ for which the rule returns true.
@@ -524,8 +524,8 @@ $cp+|w|$, inclusive.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Stopped, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.Segment.trans, Turing.clockCfg, Turing.counterOverhead, Turing.counterOverhead_le, Turing.counterOverhead_succ, Turing.counterWord, Turing.counterWord_length, Turing.counterWord_value, Turing.counter_dec_zero, Turing.decFixed, Turing.sc_clockDebit, Turing.sc_clockTM, Turing.sc_decExit, Turing.sc_deliver, Turing.sc_live, Turing.sc_resume, Turing.sc_rounds, Turing.sc_wordPatch_frame, Turing.sc_wordPatch_twice, Turing.wordPatch}
 \difficulty{5}
-Let $e:	ext{Bool}	o	ext{Γ}$ be an embedding, let $M$ be a $k$-work-tape machine over
-$	ext{Γ}$ with state set $S$, and let $\mathrm{stopAt}:S\to\text{Bool}$. Let $x$ be a
+Let $e:\text{Bool}\to\text{Γ}$ be an embedding, let $M$ be a $k$-work-tape machine over
+$\text{Γ}$ with state set $S$, and let $\mathrm{stopAt}:S\to\text{Bool}$. Let $x$ be a
 finite input word and let $c$ be a configuration of $M$ on $x$ whose state is $q$. Let
 $w$ be a Boolean word, let $ct:\mathbb Z\to\mathrm{Option}(\text{Γ})$ be a tape content
 function, and let $cp\in\mathbb Z$ satisfy $ct(cp+p)$ equals the content at position $p$
@@ -551,7 +551,7 @@ $[cp-1,cp+|w|]$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Stopped, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.clockCfg, Turing.sc_State, Turing.sc_clockTM, Turing.sc_finish, Turing.sc_timeout, Turing.wordPatch}
 \difficulty{3}
-Let $S$ be a finite state set, let $[?]$ nope
+Let $S$ be a finite state set, let $\Sigma$ nope
 \end{theorem}
 
 \begin{theorem}[Finite-time clock simulation]

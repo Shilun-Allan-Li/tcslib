@@ -38,7 +38,7 @@ the configuration stride to be $k(2T+1)+N+3$, where $k$ is the parameter of $M$.
 \leanok
 \uses{Complexity.cfgStride}
 For a Boolean-input finite Turing machine $M$, natural numbers $N,T,t,r$, and an index
-$	au$ with $0\leq\tau<k$, define the cell index by $t$ times the configuration stride,
+$\tau$ with $0\leq\tau<k$, define the cell index by $t$ times the configuration stride,
 plus $\tau(2T+1)+r$. Here the configuration stride is $k(2T+1)+N+3$.
 \end{definition}
 
@@ -67,7 +67,7 @@ configuration stride is $k(2T+1)+N+3$.
 \label{Complexity.CfgPos}
 \leanok
 For a natural number $k$, configuration positions are of three kinds: a work-cell
-position, specified by a time $t$, a track $	au 	ext{ with } 0 \leq \tau < k$, and a
+position, specified by a time $t$, a track $\tau \text{ with } 0 \leq \tau < k$, and a
 cell coordinate $r$; an input position, specified by a time $t$ and an input coordinate
 $p$; or a snapshot position, specified by a time $t$.
 \end{definition}
@@ -229,7 +229,7 @@ work tapes of $M$.
 \difficulty{3}
 Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $N,T$ be natural
 numbers, and write $k$ for the number of states of $M$. Define the stride
-$s=k(2T+1)+N+3$. For every time $t$, state index $	au$ with $0\leq\tau<k$, row index
+$s=k(2T+1)+N+3$. For every time $t$, state index $\tau$ with $0\leq\tau<k$, row index
 $r<2T+1$, and natural number $p$, the index $ts+\tau(2T+1)+r$ is strictly less than
 $ts+k(2T+1)+p$.
 \end{theorem}
@@ -340,7 +340,7 @@ $2T$; and the previous-snapshot sources at time $t$.
 \leanok
 \uses{BoolCircuit.BitSrc, Complexity.cfgArity}
 Let $M$ be a finite Turing machine with Boolean symbols, and let $l$ be a finite list of
-bit sources. Define its padded list by appending to $l$ exactly $	ext{cfgArity}(M)-|l|$
+bit sources. Define its padded list by appending to $l$ exactly $\text{cfgArity}(M)-|l|$
 copies of the constant false source.
 \end{definition}
 

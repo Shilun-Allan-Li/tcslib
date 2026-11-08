@@ -43,8 +43,8 @@ $p(z)$ holds.
 \leanok
 \uses{BoolCircuit.CVAL, Complexity.Meyer.Sel, Complexity.Meyer.encodeSel, Complexity.Meyer.query, Turing.pairEncode}
 Given a deterministic finite-state machine $M$ over the binary alphabet, a binary string
-$D$, a selector $	ext{sel}$, and binary strings $T$, $A$, and $x$, define the answer to
-be true exactly when the pair consisting of $D$ and the query formed from $	ext{sel}$,
+$D$, a selector $\text{sel}$, and binary strings $T$, $A$, and $x$, define the answer to
+be true exactly when the pair consisting of $D$ and the query formed from $\text{sel}$,
 $T$, $A$, and $x$ belongs to the language of satisfiable fan-in-two circuits.
 \end{definition}
 
@@ -189,11 +189,11 @@ atom, and return no value in all other cases.
 \uses{Complexity.Meyer.AW, Complexity.Meyer.Rd, Complexity.Meyer.symvA, Complexity.Meyer.wsym, Complexity.TimeHierarchy.OutReg}
 Let $M$ be a finite-tape Turing machine with Boolean tape alphabet, let $v$ be a Boolean
 valuation of its atoms, and let $ho$ consist of an optional input symbol and an
-optional Boolean read symbol for each work tape. For a state-or-empty value $	au$,
+optional Boolean read symbol for each work tape. For a state-or-empty value $\tau$,
 output register $r$, work-tape index $h$, and Boolean $s$, set $c_1=a_n$ and $c_2=a_c$
 when $s$ is true, and reverse these choices when $s$ is false. The condition holds if
-$	au$ is empty precisely when the two symbols represented by the $t_n$ and $t_c$ answer
-atoms at $(h,s,c_1)$ agree; if $	au$ is a state $q$, use the transition from $q$ on
+$\tau$ is empty precisely when the two symbols represented by the $t_n$ and $t_c$ answer
+atoms at $(h,s,c_1)$ agree; if $\tau$ is a state $q$, use the transition from $q$ on
 $ho$ and its move direction: for a positive move, the $t_n$ symbol at $(h,s,c_1)$ must
 equal the $t_c$ symbol at $(h,s,c_2)$, except that when $s$ and the zero-answer atom are
 true it is compared instead with the updated work-tape symbol (or the read symbol if no

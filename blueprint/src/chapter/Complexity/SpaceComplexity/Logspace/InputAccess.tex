@@ -23,8 +23,8 @@ For any binary strings $x,y$, their pair encoding $\langle x,y\rangle$ is nonemp
 \difficulty{3}
 For every predicate $p$ on bit strings and natural numbers, bit string $u$, and natural
 number $v$, the Boolean indicator of the language of encodings
-$	ext{pairEncode}(x,	ext{bits}(i))$ satisfying $p(x,i)$, evaluated at
-$	ext{pairEncode}(u,	ext{bits}(v))$, is true exactly when $p(u,v)$ holds and false
+$\text{pairEncode}(x,\text{bits}(i))$ satisfying $p(x,i)$, evaluated at
+$\text{pairEncode}(u,\text{bits}(v))$, is true exactly when $p(u,v)$ holds and false
 otherwise.
 \end{theorem}
 
@@ -53,7 +53,7 @@ phases.
 \label{Complexity.LogProg.readTr}
 \leanok
 \uses{Complexity.LogProg.RdPh, Complexity.LogProg.clrEAct, Complexity.LogProg.eqBAct, Complexity.LogProg.eqCAct, Complexity.LogProg.goAct, Complexity.LogProg.incBAct, Complexity.LogProg.incCAct, Complexity.LogProg.rw2Act, Complexity.LogProg.toEndAct, Complexity.LogProg.xAct, Turing.Action}
-For a fixed number $m$ of work tapes, two tape indices $r,s	ext{ in }	ext{Fin}(m)$, a
+For a fixed number $m$ of work tapes, two tape indices $r,s\text{ in }\text{Fin}(m)$, a
 state assignment from read-phase labels to states, and a state assignment from optional
 Boolean values to states, define a transition function. Its input is a read-phase label,
 the symbol (or blank) under the selected work-tape head, and the symbols (or blanks)
@@ -68,8 +68,8 @@ register as specified by the corresponding read phase.
 \label{Complexity.LogProg.readModel}
 \leanok
 \uses{Complexity.LogProg.RProg, Complexity.LogProg.RdPh, Complexity.LogProg.junkAct, Complexity.LogProg.readTr}
-For a natural-number tape count $m$ and two work-tape indices $r,s	ext{ in
-}	ext{Fin}(m)$, define an $m$-work-tape machine with Boolean work symbols and states
+For a natural-number tape count $m$ and two work-tape indices $r,s\text{ in
+}\text{Fin}(m)$, define an $m$-work-tape machine with Boolean work symbols and states
 given by the sum of read-phase labels and optional Boolean values. Its initial state is
 the equality-checking phase; in a read-phase state it uses the corresponding read-phase
 transition, while in an optional-Boolean state it uses the default action that keeps the
@@ -115,7 +115,7 @@ Let $x$ be a finite Boolean input and let $c$ be a configuration with $m$ work t
 Suppose $r$ and $s$ are distinct tape indices and the head on tape $r$ is at position
 $0$. For any state labels $l,l'$, valid input-head position $ip$, natural number $k$,
 tape content $f:\mathbb Z\to\{\mathrm{none},\mathrm{false},\mathrm{true}\}$, and integer
-$p$ with $-1\le p\le \operatorname{length}(	ext{binary representation of }|x|+1)$,
+$p$ with $-1\le p\le \operatorname{length}(\text{binary representation of }|x|+1)$,
 updating tape $s$ and its head to $f$ and $p$ after the read configuration yields a
 configuration in the read frame of $c$: the output and other tape contents are
 preserved, and the heads on tapes $r,s$ lie between $-1$ and that same length,
@@ -1003,7 +1003,7 @@ bit, if any, of the binary expansion of $k$ after its first $q$ bits are dropped
 \uses{Complexity.LogProg.AccessPath, Complexity.LogProg.accessCfg, Complexity.LogProg.accessCfg_safe, Complexity.LogProg.accessExit, Complexity.LogProg.accessReg, Complexity.LogProg.accessTail, Complexity.LogProg.accessTr, Complexity.LogProg.access_inc_pointer, Complexity.LogProg.access_move, Complexity.LogProg.access_read, Complexity.LogProg.access_return, Complexity.LogProg.access_step, Complexity.LogProg.access_symbol, Complexity.LogProg.length_bits_mono}
 \difficulty{6}
 Let $y$ and $w$ be finite bit strings, let $i,k,p,q$ be natural numbers, let $e$ be a
-Boolean, and let $	ext{last}$ be either a bit or absent. Suppose $y$ with its first $i$
+Boolean, and let $\text{last}$ be either a bit or absent. Suppose $y$ with its first $i$
 bits removed is $w$, $i\le |y|$, $k\le |y|+1$, and $q\le |\mathrm{bits}(k)|$, where
 $\mathrm{bits}(k)$ is the binary word for $k$. Starting from the configuration with
 input $y$, input head at position $1$, work tapes storing the binary words for
@@ -1187,7 +1187,7 @@ a constant multiple of logarithmic space in the input length.
 \difficulty{4}
 The identity function on finite bit strings is implicitly logspace computable: its
 output length is bounded by $C(|x|+1)^c$ for some natural numbers $C,c$ on every input
-$x$, and both the language of encoded pairs $(x,	ext{bits}(i))$ for which output bit $i$
+$x$, and both the language of encoded pairs $(x,\text{bits}(i))$ for which output bit $i$
 is $1$ and the language of such pairs for which $i$ is less than the output length are
 decidable in logarithmic space.
 \end{theorem}

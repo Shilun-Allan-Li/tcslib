@@ -72,10 +72,10 @@ polynomial time belongs to the polynomial-time class with oracle $O$: $\mathsf{P
 \leanok
 \uses{Complexity.NPOracle, Complexity.POracle, Turing.FinOracleTM.toFinOracleNDTM, Turing.MultiTapeTM.indicator, Turing.OracleNDTM.initCfg, Turing.OracleNDTM.runWith, Turing.OracleTM.initCfg, Turing.OracleTM.runFrom, Turing.OracleTM.toOracleNDTM_runWith}
 \difficulty{5}
-For every language $O$ over $\{0,1\}$, every language decidable in polynomial time by a
+For every language $O$ over $\{0,1\}$, every language decidable in polynomial time by a
 deterministic Turing machine with oracle access to $O$ is also decidable in polynomial
 time by a nondeterministic Turing machine with the same oracle; equivalently,
-$	ext{P}^O\subseteq\text{NP}^O$.
+$\text{P}^O\subseteq\text{NP}^O$.
 \end{theorem}
 
 \begin{definition}[Oracle machine constructed from a finite machine]
@@ -261,5 +261,5 @@ a(1+C)(2c+1)^{d+2}2^{k(d+2)}\bigl(n^{k(d+2)}+1\bigr).\]
 \difficulty{4}
 Let $O$ be a language over $\\{0,1\\}$. If $O$ is decidable in polynomial time, then the
 class of languages decidable in polynomial time with oracle access to $O$ is exactly the
-ordinary polynomial-time class: $	ext{P}^O=	ext{P}$.
+ordinary polynomial-time class: $\text{P}^O=\text{P}$.
 \end{theorem}

@@ -13,7 +13,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.ClassP.BinaryArith.Bas
 \uses{Complexity.LogProg.bitsVal}
 \difficulty{4}
 For a finite Boolean word $w$, write $V(w)$ for its binary value, with the first bit
-least significant. Then $V(w)=eta+2V(w')$, where $eta=0$ if $w$ is empty and otherwise
+least significant. Then $V(w)=\beta+2V(w')$, where $\beta=0$ if $w$ is empty and otherwise
 is $0$ or $1$ according as its first bit is false or true, and $w'$ is obtained by
 deleting the first bit (or is empty if $w$ is empty).
 \end{theorem}
@@ -93,7 +93,7 @@ contains any `true` value; otherwise return the empty list.
 \leanok
 \uses{Complexity.BinArith.bitsVal_eq_zero_iff, Complexity.BinArith.normChunk, Complexity.LogProg.bitsVal, Complexity.LogProg.bits_two_mul_add}
 \difficulty{6}
-Let $w$ be a finite bit string of length at most $N$. For each $i=0,ldots,N-1$, take
+Let $w$ be a finite bit string of length at most $N$. For each $i=0,\ldots,N-1$, take
 the first bit of the suffix of $w$ beginning at position $i$, if that suffix contains a
 $1$, and otherwise take the empty string. Concatenating these strings gives the binary
 expansion of the natural number represented by $w$, with the least significant bit
@@ -252,20 +252,20 @@ length $N$.
 \lean{Complexity.BinArith.serialOut}
 \label{Complexity.BinArith.serialOut}
 \leanok
-Let $sigma$ be a state space, let $delta$ update the state from a state and two
+Let $sigma$ be a state space, let $delta$ update the state from a state and two
 Boolean inputs, and let $o$ produce a Boolean output from a state and two Boolean
 inputs. Given an initial state and a finite list of input pairs, return the list of
 outputs obtained by applying $o$ at each pair using the current state, then updating the
-state with $delta$ before processing the next pair.
+state with $delta$ before processing the next pair.
 \end{definition}
 
 \begin{definition}[Final state after serial inputs]
 \lean{Complexity.BinArith.serialState}
 \label{Complexity.BinArith.serialState}
 \leanok
-Let $sigma$ be a state space and let $delta$ update the state from a state and two
+Let $sigma$ be a state space and let $delta$ update the state from a state and two
 Boolean inputs. Given an initial state and a finite list of input pairs, return the
-state obtained by applying $delta$ successively to each pair, starting from the initial
+state obtained by applying $delta$ successively to each pair, starting from the initial
 state.
 \end{definition}
 
@@ -286,9 +286,9 @@ as the list.
 \leanok
 \uses{Complexity.BinArith.serialOut, Complexity.BinArith.serialState}
 \difficulty{5}
-Let $$ be a Boolean state transition function that takes a state and two input bits,
+Let $\delta$ be a Boolean state transition function that takes a state and two input bits,
 and let $s$ be an initial Boolean state. For any nonempty finite sequence of pairs of
-Boolean inputs, if each output bit is computed by applying $$ to the current state and
+Boolean inputs, if each output bit is computed by applying $\delta$ to the current state and
 the next input pair, then the last output bit equals the state obtained after processing
 the entire sequence.
 \end{theorem}

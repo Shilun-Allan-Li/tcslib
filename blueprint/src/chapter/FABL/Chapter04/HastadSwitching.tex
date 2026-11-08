@@ -328,7 +328,7 @@ indexed by the remaining coordinates.
 \leanok
 \uses{FABL.CoordinateDecisionTree, FABL.CoordinateDecisionTree.WellFormed, FABL.CoordinateDecisionTree.eval, FABL.CoordinateDecisionTree.toF₂DecisionTree, FABL.F₂DecisionTree.eval}
 \difficulty{4}
-Let $T$ be a coordinate decision tree on the Boolean cube $\mathbb{F}_2^n$, with values
+Let $T$ be a coordinate decision tree on the Boolean cube $\mathbb{F}_2^n$, with values
 in a type $\alpha$, and let $A$ be a set of available coordinates. If every query made
 by $T$ uses a coordinate in $A$ and each child tree satisfies the same condition after
 that coordinate is removed, then converting $T$ to a decision tree whose queries
@@ -392,7 +392,7 @@ evaluated at $x$.
 \leanok
 \uses{FABL.CoordinateDecisionTree.assignCoordinates}
 \difficulty{4}
-Let $n$ be a nonnegative integer, let $L$ be a list of coordinates in $	ext{Fin}(n)$,
+Let $n$ be a nonnegative integer, let $L$ be a list of coordinates in $\text{Fin}(n)$,
 and let $s,x$ be assignments of bits in $[2]$ to those coordinates. If $i$ is a
 coordinate not in $L$, then after successively assigning to $s$ the values of $x$ at the
 coordinates in $L$, the value at $i$ is still $s(i)$.
@@ -704,7 +704,7 @@ cardinality $i$, and whose bit value is $1$ at some position in that set.
 \label{FABL.SwitchingBlockCode.PositionSet}
 \leanok
 For natural numbers $w$ and $i$, the position sets of size $i$ are the subsets of
-$	ext{Fin}(w)$ having cardinality $i$.
+$\text{Fin}(w)$ having cardinality $i$.
 \end{definition}
 
 \begin{theorem}[Count of fixed-size position sets]
@@ -788,7 +788,7 @@ restriction of its bits to it gives back $B$.
 \uses{FABL.SwitchingBlockCode.FinalOfSize, FABL.SwitchingBlockCode.PositionSet, FABL.SwitchingBlockCode.canonical_ofPositionBits, FABL.SwitchingBlockCode.ofPositionBits, FABL.SwitchingBlockCode.ofPositionBits_restrictBits, FABL.SwitchingBlockCode.restrictBits, FABL.𝔽₂}
 For natural numbers $w$ and $i$, the canonical switching block codes on $w$ positions
 whose position sets have cardinality $i$ are in bijection with pairs consisting of an
-$i$-element subset of $	ext{Fin}(w)$ and a bit assignment on that subset.
+$i$-element subset of $\text{Fin}(w)$ and a bit assignment on that subset.
 \end{definition}
 
 \begin{theorem}[Count of canonical codes of fixed size]
@@ -829,7 +829,7 @@ zero function.
 \uses{FABL.SwitchingBlockCode.FullOfSize, FABL.SwitchingBlockCode.PositionSet, FABL.SwitchingBlockCode.canonical_ofPositionBits, FABL.SwitchingBlockCode.nonzero_iff_restrictBits_ne_zero, FABL.SwitchingBlockCode.ofPositionBits, FABL.SwitchingBlockCode.ofPositionBits_restrictBits, FABL.SwitchingBlockCode.restrictBits, FABL.SwitchingBlockCode.restrictBits_ofPositionBits, FABL.𝔽₂}
 For natural numbers $w$ and $i$, the canonical switching block codes on $w$ positions
 whose position sets have cardinality $i$ and whose bits are not all zero on that set are
-in bijection with pairs consisting of an $i$-element subset of $	ext{Fin}(w)$ and a
+in bijection with pairs consisting of an $i$-element subset of $\text{Fin}(w)$ and a
 nonzero bit assignment on that subset.
 \end{definition}
 
@@ -1011,10 +1011,10 @@ index $k$ is at most $\left(\frac{9w}{4}\right)^k$.
 \label{FABL.CoordRestriction.Extends}
 \leanok
 \uses{FABL.CoordRestriction}
-Let $n$ be a natural number, and let $ho,eta$ be coordinate restrictions on
+Let $n$ be a natural number, and let $ho,\beta$ be coordinate restrictions on
 ${0,1,-1}^n$, where each coordinate is free, fixed to $1$, or fixed to $-1$. Say that
-$eta$ extends $rho$ if every coordinate that $rho$ fixes has the same value in
-$eta$.
+$\beta$ extends $\rho$ if every coordinate that $\rho$ fixes has the same value in
+$\beta$.
 \end{definition}
 
 \begin{theorem}[Reflexivity of extension]
@@ -1496,10 +1496,10 @@ required sign.
 \uses{FABL.DNFTerm, FABL.DNFTerm.relativeBit, FABL.DNFTerm.satisfyingAssignment, FABL.DNFTerm.satisfyingAssignment_literal}
 \difficulty{3}
 Let $n$ be a natural number and let $T$ be a DNF term on $n$ coordinates. Define an
-assignment in $ oldsymbol{F}_2^n$ by setting each coordinate in the support of $T$ to
+assignment in $ \boldsymbol{F}_2^n$ by setting each coordinate in the support of $T$ to
 the bit corresponding to the required sign of its literal, and each coordinate outside
 the support to $0$. Then, at every literal position in $T$, the assignment's coordinate
-plus the bit corresponding to that literal's required sign is $0$ in $ oldsymbol{F}_2$.
+plus the bit corresponding to that literal's required sign is $0$ in $ \boldsymbol{F}_2$.
 \end{theorem}
 
 \begin{definition}[Satisfying extension]

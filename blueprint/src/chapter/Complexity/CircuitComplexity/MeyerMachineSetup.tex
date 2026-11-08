@@ -29,8 +29,8 @@ $(w,r)$. After $2|w|+2$ steps of the tabulating machine for $M$, started in stat
 $fA(f,bits)$ at input position $\min(p,|y|+1)$ with auxiliary words $[],w_C,w_O$, its
 entire configuration is the configuration at input position $\min(p+2|w|+2,|y|+1)$ with
 state $cpy(bits)$ if $f$ is true and $fA(true,bits)$ otherwise, auxiliary words
-$w_C,w_O$ changed to $w_C,w_O\mathbin{+egin{bmatrix}w\end{bmatrix}}$ if $f$ is true,
-and to $w_C\mathbin{+egin{bmatrix}w\end{bmatrix}},w_O$ otherwise; the output remains
+$w_C,w_O$ changed to $w_C,w_O\mathbin{+\begin{bmatrix}w\end{bmatrix}}$ if $f$ is true,
+and to $w_C\mathbin{+\begin{bmatrix}w\end{bmatrix}},w_O$ otherwise; the output remains
 empty and the original machine's work tapes remain blank.
 \end{theorem}
 
@@ -77,7 +77,7 @@ machine that simulates $M$ in its copy state, with input head at the position ob
 by clamping $p$ to the valid input-head range and buffers containing $w_X,w_C,w_O$,
 after $|rest|+1$ steps it is in the rewind-$X$ state at the right boundary, with the $X$
 buffer containing $w_X$ followed by $rest$ and its head at position
-$|w_X\mathbin{+[0m[0m+}rest|-1$; the other buffers and their head positions are
+$|w_X\mathbin{++}rest|-1$; the other buffers and their head positions are
 unchanged, and the output is empty.
 \end{theorem}
 
@@ -86,9 +86,9 @@ unchanged, and the output is empty.
 \label{Complexity.Meyer.aux_read0}
 \leanok
 \difficulty{1}
-Let $M$ be a finite-state Turing machine with $k$ work tapes, let $alpha$ be a type,
-let $f$ assign an $alpha$-value to each work-tape index, and let $a,b,c$ be
-$alpha$-values. Extending $f$ by the three values $a,b,c$ on the three auxiliary
+Let $M$ be a finite-state Turing machine with $k$ work tapes, let $\alpha$ be a type,
+let $f$ assign an $\alpha$-value to each work-tape index, and let $a,b,c$ be
+$\alpha$-values. Extending $f$ by the three values $a,b,c$ on the three auxiliary
 indices, the value at the first auxiliary index is $a$.
 \end{theorem}
 
@@ -97,9 +97,9 @@ indices, the value at the first auxiliary index is $a$.
 \label{Complexity.Meyer.aux_read1}
 \leanok
 \difficulty{1}
-Let $M$ be a finite-state Turing machine with $k$ work tapes, let $alpha$ be a type,
-let $f$ assign an $alpha$-value to each work-tape index, and let $a,b,c$ be
-$alpha$-values. Extending $f$ by the three values $a,b,c$ on the three auxiliary
+Let $M$ be a finite-state Turing machine with $k$ work tapes, let $\alpha$ be a type,
+let $f$ assign an $\alpha$-value to each work-tape index, and let $a,b,c$ be
+$\alpha$-values. Extending $f$ by the three values $a,b,c$ on the three auxiliary
 indices, the value at the second auxiliary index is $b$.
 \end{theorem}
 
@@ -108,9 +108,9 @@ indices, the value at the second auxiliary index is $b$.
 \label{Complexity.Meyer.aux_read2}
 \leanok
 \difficulty{1}
-Let $M$ be a finite-state Turing machine with $k$ work tapes, let $alpha$ be a type,
-let $f$ assign an $alpha$-value to each work-tape index, and let $a,b,c$ be
-$alpha$-values. Extending $f$ by the three values $a,b,c$ on the three auxiliary
+Let $M$ be a finite-state Turing machine with $k$ work tapes, let $\alpha$ be a type,
+let $f$ assign an $\alpha$-value to each work-tape index, and let $a,b,c$ be
+$\alpha$-values. Extending $f$ by the three values $a,b,c$ on the three auxiliary
 indices, the value at the third auxiliary index is $c$.
 \end{theorem}
 
@@ -151,7 +151,7 @@ $P$, the auxiliary head positions are $0,z_1-1,z_2$, and the output is empty.
 Let $M$ be a finite Turing machine with Boolean symbols, let $y$ and $w$ be Boolean
 words, let $P$ be an input-head position among the $|y|+2$ positions, and let $b$ be a
 Boolean vector with one coordinate for each selector bit of $M$. Let
-$	au_0,	au_2:br	o	ext{Option}(	ext{Bool})$ be tape contents and let $z_0,z_2\\in\bbr$.
+$\tau_0,\tau_2:\bbr\to\text{Option}(\text{Bool})$ be tape contents and let $z_0,z_2\\in\bbr$.
 For every natural number $j\le |w|$, after $j+1$ steps from the configuration in state
 $\mathrm{rewC}$ with auxiliary tapes containing $\tau_0$, the word $w$ stored from cell
 zero, and $\tau_2$, and head positions $z_0,j-1,z_2$, the machine is in state

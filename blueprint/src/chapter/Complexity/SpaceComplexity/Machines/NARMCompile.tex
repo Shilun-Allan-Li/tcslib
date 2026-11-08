@@ -114,8 +114,8 @@ instruction transition, including the simulation of $D$ when required.
 \label{Complexity.LogProg.ncompileFinNDTM}
 \leanok
 \uses{Complexity.LogProg.CSt, Complexity.LogProg.NARM, Complexity.LogProg.Ph, Complexity.LogProg.ncompileTM, Turing.FinNDTM, Turing.MultiTapeTM}
-Let $m$, $d$, and $k_D$ be nonnegative integers, and let $ont$ be a type of program
-labels and $ont$ a type of states for a deterministic Turing machine $D$ with $k_D$
+Let $m$, $d$, and $k_D$ be nonnegative integers, and let $\Lambda$ be a type of program
+labels and $S_D$ a type of states for a deterministic Turing machine $D$ with $k_D$
 work tapes over the Boolean alphabet. Suppose the label and state types are finite and
 have decidable equality. For a nondeterministic register program $A$ with $m$ registers
 and $d$ deciders, an initial label $l_0$, and a choice of initial state $q_0(j)$ for
@@ -173,10 +173,10 @@ value $\beta$.
 \difficulty{4}
 Let $A$ be a nondeterministic register program with $m$ registers and $d$ deciders, let
 $D$ be a deterministic Turing machine with $k_D$ work tapes, and choose initial states
-for its deciders and an answer bit $eta$. For any input and configuration $c$ of the
+for its deciders and an answer bit $\beta$. For any input and configuration $c$ of the
 compiled machine, if its state is $q$, and the choice map of $A$ is defined at $q$, then
 after one machine step the state is halting and the output is the previous output of $c$
-followed by $eta$.
+followed by $\beta$.
 \end{lemma}
 
 \begin{lemma}[Compiled Choice Step]

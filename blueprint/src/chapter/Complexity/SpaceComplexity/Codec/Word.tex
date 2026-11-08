@@ -13,7 +13,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.SpaceComplexity.Codec.
 \uses{Turing.OutSummary}
 Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols. The
 empty, accepting, and dead output summaries are assigned indices $0$, $1$, and $2$,
-respectively, in $	ext{Fin}(3)$.
+respectively, in $\text{Fin}(3)$.
 \end{definition}
 
 \begin{lemma}[Injectivity of the output summary index]
@@ -141,7 +141,7 @@ encoding of $c$ has length exactly $W$, the cell-code width for $N$.
 \difficulty{1}
 Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, and let
 $cv$ be a cell value for $N$. For every natural number $t$ with $t<W(N)$, the bit at
-position $t$ of the length-$W(N)$ encoding of $cv$, using 	ext{false} as the default for
+position $t$ of the length-$W(N)$ encoding of $cv$, using \text{false} as the default for
 an out-of-range list lookup, equals the bit specified by the chunk-bit rule at position
 $t$.
 \end{lemma}
@@ -446,7 +446,7 @@ $W$ in the surrounding definitions.
 Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, with $k$
 work tapes, and let $x$ be a finite Boolean word. For every natural number $s$ and every
 configuration $C$ of $N$ on input $x$, the encoding of $C$ has length at most
-$(2W+2)(s+\	ext{logSpace}(|x|)+1)$, where $W$ is the number of bits used to encode one
+$(2W+2)(s+\\text{logSpace}(|x|)+1)$, where $W$ is the number of bits used to encode one
 tape cell and $\text{logSpace}(n)=\lfloor\log_2 n\rfloor+1$.
 \end{theorem}
 

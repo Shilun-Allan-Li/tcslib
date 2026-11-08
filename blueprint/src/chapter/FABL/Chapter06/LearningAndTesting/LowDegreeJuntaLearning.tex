@@ -200,7 +200,7 @@ coordinates with the corresponding coordinates of $y$.
 \label{FABL.reindexedJuntaRestrictionExample}
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.Sign, FABL.fixedSignCubeEquiv, FABL.juntaRestrictionDimension}
-Let $n$ be a natural number, let $P$ be a set of coordinates in $	ext{Fin}(n)$, and let
+Let $n$ be a natural number, let $P$ be a set of coordinates in $\text{Fin}(n)$, and let
 a sample consist of a sign assignment to the coordinates outside $P$ together with a
 sign vector of length $n$. Reindex the first assignment as a sign vector of length equal
 to the number of coordinates outside $P$, and retain the second sign vector unchanged.
@@ -255,8 +255,8 @@ only if $|S|\\le\\lfloor 3k/4\\rfloor$.
 \label{FABL.lowDegreeJuntaCoefficientConfidence}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.dividePositiveLearningParameter, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaFourierFamily_nonempty, FABL.lowDegreeJuntaQuarterFailure}
-Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
-}n$, and let $ailure	ext{-parameter}$ be a rational number in $(0,1/2]$. Form the
+Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $\text{Fin
+}n$, and let $ailure\text{-parameter}$ be a rational number in $(0,1/2]$. Form the
 family of subsets of the coordinates outside $P$ having size at most $rac{3k}{4}$, with
 the cutoff rounded down, and let $N$ be its cardinality. The coefficient confidence
 parameter is the failure parameter divided by $4N$.
@@ -284,7 +284,7 @@ coefficient confidence parameter has value $\delta/(4|\mathcal F|)$.
 \label{FABL.lowDegreeJuntaCoefficientSampleCount}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.fourierEstimatorSampleCount, FABL.lowDegreeJuntaCoefficientAccuracy, FABL.lowDegreeJuntaCoefficientConfidence}
-Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
+Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $\text{Fin
 }n$, and let the failure parameter be rational and lie in $(0,1/2]$. Set the accuracy to
 $1/(3\cdot 2^k)$ and set the confidence parameter to the coefficient confidence
 parameter for $P$, $k$, and the given failure parameter. The sample count is the ceiling
@@ -302,7 +302,7 @@ of $2b/\varepsilon^2$, where $b$ is the least integer $m$ such that $2^m\geq \lc
 \label{FABL.lowDegreeJuntaPolynomialSampleCount}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.juntaRestrictionDimension, FABL.lowDegreeF₂LearningSampleCount, FABL.lowDegreeJuntaPolynomialDegree, FABL.lowDegreeJuntaQuarterFailure}
-Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
+Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $\text{Fin
 }n$, and let the failure parameter be rational and lie in $(0,1/2]$. Let $d$ be the
 number of coordinates outside $P$, let $r=k-\lfloor 3k/4\rfloor$, and let $\delta$ be
 one quarter of the failure parameter. The sample count is $2^r$ times the sum of the
@@ -316,7 +316,7 @@ such that $2^m\geq\lceil 2/\delta\rceil$.
 \label{FABL.lowDegreeJuntaRestrictedSampleCount}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.lowDegreeJuntaCoefficientSampleCount, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaPolynomialSampleCount}
-Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
+Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $\text{Fin
 }n$, and let the failure parameter be rational and lie in $(0,1/2]$. The restricted
 sample count is the cardinality of the family of subsets of the coordinates outside $P$
 of size at most $\lfloor 3k/4\rfloor$, multiplied by the coefficient estimation sample
@@ -328,10 +328,10 @@ count, plus the junta polynomial sample count.
 \label{FABL.lowDegreeJuntaFrequencyRank}
 \leanok
 \uses{FABL.lowDegreeJuntaFourierFamily}
-Let $n$ and $k$ be natural numbers, let $P$ be a set of coordinates in $	ext{Fin}(n)$,
+Let $n$ and $k$ be natural numbers, let $P$ be a set of coordinates in $\text{Fin}(n)$,
 and let $S$ be a member of the family of subsets of the coordinates outside $P$ having
 size at most $rac{3k}{4}$ rounded down. Its rank is its position in the canonical
-enumeration of that finite family, represented by an element of $	ext{Fin}$ whose size
+enumeration of that finite family, represented by an element of $\text{Fin}$ whose size
 is the cardinality of the family.
 \end{definition}
 
@@ -340,10 +340,10 @@ is the cardinality of the family.
 \label{FABL.lowDegreeJuntaCoefficientSampleIndex}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.lowDegreeJuntaCoefficientSampleCount, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaFrequencyRank, FABL.lowDegreeJuntaPolynomialSampleCount, FABL.lowDegreeJuntaRestrictedSampleCount}
-Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $	ext{Fin}(n)$, and let
+Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $\text{Fin}(n)$, and let
 the failure parameter lie in $(0,1/2]$. For a frequency $S$ in the low-degree junta
 Fourier family and a coefficient-estimation sample index $i$, assign the index
-$	ext{rank}(S)m+i$ in the combined restricted sample space, where $m$ is the
+$\text{rank}(S)m+i$ in the combined restricted sample space, where $m$ is the
 coefficient-estimation sample count.
 \end{definition}
 
@@ -352,7 +352,7 @@ coefficient-estimation sample count.
 \label{FABL.lowDegreeJuntaPolynomialSampleIndex}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.lowDegreeJuntaCoefficientSampleCount, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaPolynomialSampleCount, FABL.lowDegreeJuntaRestrictedSampleCount}
-Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $	ext{Fin}(n)$, and let
+Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $\text{Fin}(n)$, and let
 the failure parameter lie in $(0,1/2]$. A polynomial-estimation sample with index $i$ is
 assigned the index $N m+i$ in the combined restricted sample space, where $N$ is the
 size of the low-degree junta Fourier family and $m$ is the coefficient-estimation sample
@@ -364,7 +364,7 @@ count.
 \label{FABL.lowDegreeJuntaCoefficientSampleEmbedding}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.lowDegreeJuntaCoefficientSampleCount, FABL.lowDegreeJuntaCoefficientSampleIndex, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaRestrictedSampleCount}
-Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $	ext{Fin}(n)$, and let
+Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $\text{Fin}(n)$, and let
 the failure parameter lie in $(0,1/2]$. For each frequency $S$ in the low-degree junta
 Fourier family, the coefficient-estimation sample indices embed injectively into the
 combined restricted sample indices by sending each index to its block, indexed by the
@@ -376,7 +376,7 @@ rank of $S$.
 \label{FABL.lowDegreeJuntaPolynomialSampleEmbedding}
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.lowDegreeJuntaPolynomialSampleCount, FABL.lowDegreeJuntaPolynomialSampleIndex, FABL.lowDegreeJuntaRestrictedSampleCount}
-Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $	ext{Fin}(n)$, and let
+Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $\text{Fin}(n)$, and let
 the failure parameter lie in $(0,1/2]$. Polynomial-estimation sample indices embed
 injectively into the combined restricted sample indices by adding the total number of
 coefficient-estimation samples across the low-degree junta Fourier family.
@@ -413,7 +413,7 @@ coordinates.
 \label{FABL.lowDegreeJuntaPolynomialInputRow}
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.PositiveLearningParameter, FABL.fixedSignCubeEquiv, FABL.juntaRestrictionDimension, FABL.lowDegreeJuntaPolynomialSampleCount, FABL.lowDegreeJuntaPolynomialSampleEmbedding, FABL.lowDegreeJuntaRestrictedSampleCount}
-Let $n$ be a natural number, let $P$ be a set of coordinates in $0,\\ldots,n-1$, let
+Let $n$ be a natural number, let $P$ be a set of coordinates in $0,\\ldots,n-1$, let
 $k$ be a natural number, and let the failure parameter lie in $(0,1/2]$. Given a batch
 of the prescribed restricted sample size, the polynomial estimation input row is the
 sequence of sign vectors obtained by converting the inputs at the sample positions
@@ -458,7 +458,7 @@ polynomial sample count determined by $P$, $k$, and $\delta$.
 \label{FABL.lowDegreeJuntaCoefficientSamples}
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.PositiveLearningParameter, FABL.Sign, FABL.juntaRestrictionDimension, FABL.lowDegreeJuntaCoefficientSampleCount, FABL.lowDegreeJuntaCoefficientSampleIndex, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaRestrictedSampleCount, FABL.reindexedJuntaRestrictionExample}
-Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
+Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $\text{Fin
 }n$, and let the failure parameter be rational and lie in $(0,1/2]$. Given a batch of
 restricted examples, indexed by the restricted sample count and consisting of an
 assignment of signs to the coordinates outside $P$ together with a sign label, and a
@@ -478,7 +478,7 @@ indices for $S$.
 \label{FABL.lowDegreeJuntaPolynomialSamples}
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.PositiveLearningParameter, FABL.Sign, FABL.juntaRestrictionDimension, FABL.lowDegreeJuntaPolynomialSampleCount, FABL.lowDegreeJuntaPolynomialSampleIndex, FABL.lowDegreeJuntaRestrictedSampleCount, FABL.reindexedJuntaRestrictionExample}
-Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
+Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $\text{Fin
 }n$, and let the failure parameter be rational and lie in $(0,1/2]$. Given a batch of
 restricted examples indexed by the restricted sample count, the polynomial sample
 sequence has length equal to the junta polynomial sample count. Its entries are the
@@ -496,7 +496,7 @@ sample indices.
 \label{FABL.lowDegreeJuntaCoefficientEstimate}
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.PositiveLearningParameter, FABL.Sign, FABL.empiricalFourierCoeff, FABL.lowDegreeJuntaCoefficientSamples, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaRestrictedSampleCount}
-Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
+Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $\text{Fin
 }n$, and let the failure parameter be rational and lie in $(0,1/2]$. Given a batch of
 restricted examples and a member $S$ of the low-degree junta Fourier family, the
 coefficient estimate is the empirical Fourier coefficient at $S$ computed from the
@@ -512,7 +512,7 @@ coefficient sample sequence for that batch and $S$; it is rational-valued.
 \label{FABL.lowDegreeJuntaDetectedFrequencies}
 \leanok
 \uses{FABL.JuntaFreeAssignment, FABL.PositiveLearningParameter, FABL.Sign, FABL.juntaRestrictionDimension, FABL.lowDegreeJuntaCoefficientEstimate, FABL.lowDegreeJuntaDetectionThreshold, FABL.lowDegreeJuntaFourierFamily, FABL.lowDegreeJuntaRestrictedSampleCount}
-Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $	ext{Fin
+Let $n$ and $k$ be nonnegative integers, let $P$ be a set of coordinates in $\text{Fin
 }n$, and let the failure parameter be rational and lie in $(0,1/2]$. Given a batch of
 restricted examples, the detected frequencies are those members $S$ of the low-degree
 junta Fourier family that are nonempty and whose coefficient estimate, computed using
@@ -547,7 +547,7 @@ Let $n,k$ be nonnegative integers, let $P\subseteq\{0,\ldots,n-1\}$, and let the
 parameter lie in $(0,1/2]$. Given a batch of the prescribed restricted sample size,
 consisting of a free-coordinate sign assignment and a label for each sample, apply the
 low-degree polynomial learner to the prescribed polynomial-learning portion of the
-batch. The result is an $\mathbb{F}_2$-coefficient hypothesis on the free-coordinate
+batch. The result is an $\mathbb{F}_2$-coefficient hypothesis on the free-coordinate
 space, with degree bound $k-\lfloor 3k/4\rfloor$.
 \end{definition}
 
@@ -720,7 +720,7 @@ coordinate of the first nonconstant monomial selected by the specified rule.
 \label{FABL.juntaFreeCoordinateOfFin}
 \leanok
 \uses{FABL.FixedIndex, FABL.JuntaFreeIndex, FABL.juntaRestrictionDimension}
-Let $n$ be a natural number and let $P$ be a set of coordinates in $0,\\ldots,n-1$.
+Let $n$ be a natural number and let $P$ be a set of coordinates in $0,\\ldots,n-1$.
 The $i$-th coordinate in the enumeration of the coordinates outside $P$ is the
 coordinate represented by index $i$, for $i$ ranging from zero to one less than the
 number of coordinates outside $P$.
@@ -823,7 +823,7 @@ $P,k,\delta$.
 \label{FABL.lowDegreeJuntaNodeContinuation}
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaNodeDecision, FABL.LearningProgram, FABL.MatchedJuntaExample, FABL.PositiveLearningParameter, FABL.lowDegreeJuntaNodeAnalysisWork, FABL.lowDegreeJuntaNodeDecisionFromBatch, FABL.lowDegreeJuntaRestrictedSampleCount, FABL.matchedJuntaRestrictionExample}
-Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $	ext{Fin }n$, let $z$
+Let $n,k$ be natural numbers, let $P$ be a set of coordinates in $\text{Fin }n$, let $z$
 assign a sign to each coordinate in $P$, and let the failure parameter lie in $(0,1/2]$.
 For an optional batch of the prescribed restricted sample size, whose examples match $z$
 on $P$ when the batch is present, this definition returns the empty decision in a
@@ -1123,7 +1123,7 @@ size at most $\lfloor 3k/4\rfloor$ is zero.
 \lean{FABL.juntaWitnessCoordinateEmbedding}
 \label{FABL.juntaWitnessCoordinateEmbedding}
 \leanok
-Let $r$ be a natural number and let $J$ be a set of coordinates in $0,\\ldots,r-1$.
+Let $r$ be a natural number and let $J$ be a set of coordinates in $0,\\ldots,r-1$.
 Enumerating the elements of $J$ gives an embedding of the set of indices from zero to
 $|J|-1$ into the coordinates from zero to $r-1$, with image exactly $J$.
 \end{definition}
@@ -1557,7 +1557,7 @@ bounds at parameters $n,k,q$.
 \leanok
 \uses{FABL.juntaRestrictionDimension}
 \difficulty{3}
-For every natural number $n$ and every finite set $P$ of coordinates among $n$, the
+For every natural number $n$ and every finite set $P$ of coordinates among $n$, the
 number of coordinates outside $P$ is at most $n$.
 \end{theorem}
 

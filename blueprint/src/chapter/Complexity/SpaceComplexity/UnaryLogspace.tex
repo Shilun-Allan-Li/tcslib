@@ -13,7 +13,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.SpaceComplexity.UnaryL
 \uses{Turing.pairEncode}
 For a function $g$ assigning a Boolean list to each natural number, define a language
 over the Boolean alphabet consisting of precisely those pair-encoded words
-$(1^n,	ext{bits}(i))$ for which the $i$th entry of $g(n)$ is true, taking an
+$(1^n,\text{bits}(i))$ for which the $i$th entry of $g(n)$ is true, taking an
 out-of-range entry to be false.
 \end{definition}
 
@@ -24,7 +24,7 @@ out-of-range entry to be false.
 \uses{Turing.pairEncode}
 For a function $g$ assigning a Boolean list to each natural number, define a language
 over the Boolean alphabet consisting of precisely those pair-encoded words
-$(1^n,	ext{bits}(i))$ for which $i$ is less than the length of $g(n)$.
+$(1^n,\text{bits}(i))$ for which $i$ is less than the length of $g(n)$.
 \end{definition}
 
 \begin{definition}[Unary logspace]
@@ -101,7 +101,7 @@ the empty list otherwise.
 \leanok
 \uses{Complexity.unaryExt}
 \difficulty{1}
-For every function $g:\mathbb N\to\{0,1	ext{-strings}	ext{, including the empty
+For every function $g:\mathbb N\to\{0,1\text{-strings}\text{, including the empty
 string}ightarrow$ and every $n\in\mathbb N$, the extension of $g$ evaluated at the word
 of $n$ ones equals $g(n)$.
 \end{lemma}
@@ -116,8 +116,8 @@ Let $p$ be a predicate on bit strings and natural numbers. Suppose that for ever
 string $x$ and natural number $i$, $p(x,i)$ holds exactly when $x$ is the all-ones
 string of length $|x|$ and $p(x,i)$ holds. Let $q$ be a predicate on natural numbers,
 and suppose that for every natural numbers $n,i$, $p(1^n,i)$ holds exactly when $q(n,i)$
-holds. Then the language of encodings $	ext{pairEncode}(x,	ext{bits}(i))$ satisfying
-$p(x,i)$ is exactly the language of encodings $	ext{pairEncode}(1^n,	ext{bits}(i))$
+holds. Then the language of encodings $\text{pairEncode}(x,\text{bits}(i))$ satisfying
+$p(x,i)$ is exactly the language of encodings $\text{pairEncode}(1^n,\text{bits}(i))$
 satisfying $q(n,i)$.
 \end{lemma}
 
@@ -155,11 +155,11 @@ registers and stored answer unchanged.
 \label{Complexity.ltLang}
 \leanok
 \uses{Turing.pairEncode}
-Let $	ext{pairEncode}$ denote the pairing of two Boolean words into one Boolean word.
+Let $\text{pairEncode}$ denote the pairing of two Boolean words into one Boolean word.
 Define a language over the Boolean alphabet by including exactly those words that can be
-written as $	ext{pairEncode}(1^n,	ext{bits}(i))$ for natural numbers $n$ and $i$ with
+written as $\text{pairEncode}(1^n,\text{bits}(i))$ for natural numbers $n$ and $i$ with
 $i<n$, where $1^n$ is the length-$n$ word consisting entirely of true symbols and
-$	ext{bits}(i)$ is the binary representation of $i$.
+$\text{bits}(i)$ is the binary representation of $i$.
 \end{definition}
 
 \begin{definition}[Comparison machine labels]
@@ -208,7 +208,7 @@ and $v(1)=b$. Then $v(0)=a$.
 \leanok
 \uses{Complexity.LtM.vv}
 \difficulty{1}
-For natural numbers $a$ and $b$, define $v:	ext{Fin }2	obn$ by $v(0)=a$ and $v(1)=b$.
+For natural numbers $a$ and $b$, define $v:\text{Fin }2\to\bbn$ by $v(0)=a$ and $v(1)=b$.
 Then $v(1)=b$.
 \end{lemma}
 
@@ -218,7 +218,7 @@ Then $v(1)=b$.
 \leanok
 \uses{Complexity.LtM.vv}
 \difficulty{4}
-For natural numbers $a,b,c$, let $v:	ext{Fin}(2)\to\mathbb{N}$ have values $a$ at index
+For natural numbers $a,b,c$, let $v:\text{Fin}(2)\to\mathbb{N}$ have values $a$ at index
 $0$ and $b$ at index $1$. Updating $v$ at index $0$ to $c$ gives the function with
 values $c$ at index $0$ and $b$ at index $1$.
 \end{lemma}
@@ -251,7 +251,7 @@ doubled strings.
 \uses{Complexity.LogProg.bits_injective, Complexity.LogProg.indicator_eq_decide, Complexity.LtM.orc, Turing.pairEncode, Turing.pairEncode_replicate_inj}
 \difficulty{4}
 For natural numbers $n$ and $v$, the Boolean oracle that tests membership in the
-language of encodings $ $ returns true on the pairing of the length-$n$ string of ones
+language of valid encodings returns true on the pairing of the length-$n$ string of ones
 with the bit string of $v$ exactly when $v=2n$.
 \end{lemma}
 
@@ -261,7 +261,7 @@ with the bit string of $v$ exactly when $v=2n$.
 \leanok
 \uses{Complexity.LogProg.AConf, Complexity.LogProg.PreS, Complexity.LtM.A, Complexity.LtM.Lb}
 For a Boolean string $y$ and a configuration $a$ consisting of a state, two work-tape
-head positions, and an output, $G(y,a)$ holds precisely when $	ext{PreS}(A,y,a)$ holds
+head positions, and an output, $G(y,a)$ holds precisely when $\text{PreS}(A,y,a)$ holds
 and each head position is at most $2(|y|+1)$.
 \end{definition}
 

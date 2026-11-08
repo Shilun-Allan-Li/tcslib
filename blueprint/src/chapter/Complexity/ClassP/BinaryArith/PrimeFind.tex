@@ -105,8 +105,8 @@ prime.
 \uses{Complexity.BinArith.lovaszPrime}
 \difficulty{4}
 For every natural number $n$, the prime chosen as the least prime strictly greater than
-$2^{	ext{the ceiling of }rac{}{}	ext{?}}$—more precisely, greater than $2^{	ext{the
-ceiling of }rac{}{}	ext{?}}$—is at most $2^{	ext{the ceiling of }rac{}{}	ext{?}}$.
+$2^{\text{the ceiling of }rac{}{}\text{?}}$—more precisely, greater than $2^{\text{the
+ceiling of }rac{}{}\text{?}}$—is at most $2^{\text{the ceiling of }rac{}{}\text{?}}$.
 \end{theorem}
 
 \begin{theorem}[Upper bound for a power of two]
@@ -135,7 +135,7 @@ $2^{\lceil\log_2(2n)\rceil}+1$ is at most $8n+2$.
 \uses{Complexity.BinArith.add, Complexity.isNilB, Complexity.pairFstD, Complexity.pairSndD, Turing.pairEncode}
 For a list state $S$, if its second component is empty, the step returns $S$. Otherwise,
 writing its defaulted pair decomposition as $(A,B)$, the step encodes the pair
-consisting of the binary sum of the encoding of $(A,[	ext{true}])$ and the list obtained
+consisting of the binary sum of the encoding of $(A,[\text{true}])$ and the list obtained
 by dropping the first element of $B$.
 \end{definition}
 
@@ -145,7 +145,7 @@ by dropping the first element of $B$.
 \leanok
 \uses{Complexity.BinArith.countStep, Turing.pairEncode}
 For a finite sequence $z$ of Boolean values, the count loop is the result of applying
-the counting step $(	ext{length of }z+1)$ times to the encoding of the pair consisting
+the counting step $(\text{length of }z+1)$ times to the encoding of the pair consisting
 of the empty sequence and $z$.
 \end{definition}
 
@@ -317,9 +317,9 @@ $c=\operatorname{lovaszPrime}(n)$.
 \uses{Complexity.BinArith.lovaszPrime, Complexity.LogProg.bitsVal, Complexity.pairFstD, Complexity.pairSndD}
 For a natural number $n$ and a Boolean list $S$, let $a$ be the first component of the
 default pair decomposition of $S$, let $b$ be the first component of the default pair
-decomposition of the second component of $S$, and let $	au$ be the first entry of the
-second component of that second component, taking $	au$ to be false if the component is
-empty. Define the search measure to be $0$ when $	au$ is true; otherwise define it as
+decomposition of the second component of $S$, and let $\tau$ be the first entry of the
+second component of that second component, taking $\tau$ to be false if the component is
+empty. Define the search measure to be $0$ when $\tau$ is true; otherwise define it as
 $(P(n)-v(a))(P(n)+1)+(v(a)-v(b))+1$, where $P(n)$ is the prime-valued function used in
 the definition and $v$ is the binary value of a Boolean list.
 \end{definition}

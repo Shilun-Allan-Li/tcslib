@@ -57,8 +57,8 @@ right-hand side.
 \uses{FABL.CSPConstraint, FABL.CSPConstraint.toF₂LinearEquation, FABL.F₂LinearEquation.eval, FABL.maxLinearTemplate, FABL.𝔽₂}
 \difficulty{4}
 Let $r$ be a natural number, let $V$ be a finite set of variables, and let $c$ be a
-constraint whose predicate is a nonempty linear equation over $br/2br$. For any
-assignment $x:V\to\bbr/2br$, the associated equation evaluates to the sum of the
+constraint whose predicate is a nonempty linear equation over $\bbr/2\bbr$. For any
+assignment $x:V\to\bbr/2\bbr$, the associated equation evaluates to the sum of the
 assigned values of the variables in the constraint’s ordered scope.
 \end{theorem}
 
@@ -68,9 +68,9 @@ assigned values of the variables in the constraint’s ordered scope.
 \uses{FABL.CSPConstraint, FABL.CSPConstraint.Satisfied, FABL.CSPConstraint.eval_toF₂LinearEquation, FABL.CSPConstraint.toF₂LinearEquation, FABL.F₂LinearEquation.IsSatisfied, FABL.maxLinearTemplate, FABL.𝔽₂}
 \difficulty{3}
 Let $r$ be a natural number, let $V$ be a finite set, and let $c$ be a constraint in the
-maximum-arity linear template over the two-element field $F_2$. Thus $c$ applies a
+maximum-arity linear template over the two-element field $\bbF_2$. Thus $c$ applies a
 parity equation with a nonempty scope of at most $r$ distinct variables and a right-hand
-side in $F_2$. For every assignment of elements of $F_2$ to $V$, the associated linear
+side in $\bbF_2$. For every assignment of elements of $\bbF_2$ to $V$, the associated linear
 equation is satisfied if and only if $c$ is satisfied.
 \end{theorem}
 
@@ -93,7 +93,7 @@ $\mathbb F_2$.
 \uses{FABL.CSPConstraint.isSatisfied_toF₂LinearEquation_iff, FABL.CSPConstraint.toF₂LinearEquation, FABL.CSPInstance, FABL.CSPInstance.FullySatisfied, FABL.CSPInstance.linearRows, FABL.F₂SatisfiesRows, FABL.maxLinearTemplate, FABL.𝔽₂}
 \difficulty{4}
 Let $r$ be a natural number, let $V$ be a finite variable set, and consider an instance
-whose constraints are nonempty linear equations over $br$'s two-element field, each
+whose constraints are nonempty linear equations over $\bbr$'s two-element field, each
 involving at most $r$ distinct variables. For any assignment of field elements to $V$,
 every equation in the list of rows obtained from the constraints is satisfied if and
 only if every constraint in the instance is satisfied.
@@ -152,7 +152,7 @@ instance's list of linear equation rows.
 \uses{FABL.CSPInstance, FABL.CSPInstance.gaussianEliminationWork, FABL.CSPInstance.linearRows, FABL.cubicF₂LinearSolverBackend, FABL.cubicF₂LinearSolverBackend_work_le, FABL.maxLinearTemplate}
 \difficulty{4}
 Let $r$ be a natural number, let $V$ be a finite variable set, and let an instance of
-the specified maximum linear constraint system over $br$'s two-element field have a
+the specified maximum linear constraint system over $\bbr$'s two-element field have a
 nonempty multiset of constraints in which every variable occurs. Its Gaussian
 elimination work is at most
 \[m(|V|+1)+|V|m(|V|+2)+|V|(|V|+1),\]

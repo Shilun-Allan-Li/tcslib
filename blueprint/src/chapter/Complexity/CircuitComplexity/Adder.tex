@@ -212,7 +212,7 @@ and at position $i+1$ to be $n+2+15i+14$.
 \leanok
 \uses{BoolCircuit.DAGGate, BoolCircuit.RippleCarry.accIdx, BoolCircuit.RippleCarry.bitBlock, BoolCircuit.RippleCarry.cinIdx, BoolCircuit.constGate}
 For natural numbers $n$ and $k$, define a list of gates $A_i$ for each natural number
-$i$ by $A_0=(	ext{false constant gate},	ext{ true constant gate})$. For each $i$, let
+$i$ by $A_0=(\text{false constant gate},\text{ true constant gate})$. For each $i$, let
 $A_{i+1}$ be the concatenation of $A_i$ with the bit block whose three data inputs are
 $i$, $k+i$, and $2k+i$, whose carry input is $n$ when $i=0$ and $n+2+15j+8$ when
 $i=j+1$, whose accumulator input is $n+1$ when $i=0$ and $n+2+15j+14$ when $i=j+1$, and
@@ -235,9 +235,9 @@ gates followed by $i$ bit blocks has length $2+15i$.
 \leanok
 \uses{BoolCircuit.DAGGate, BoolCircuit.RippleCarry.accIdx, BoolCircuit.RippleCarry.adderGatesUpTo, BoolCircuit.RippleCarry.cinIdx}
 For each natural number $n$, define the gate list to be the list of gates up to position
-$	ext{⌊}n/3	ext{⌋}$ with parameter $k=	ext{⌊}n/3	ext{⌋}$, followed by a NOT gate reading
+$\text{⌊}n/3\text{⌋}$ with parameter $k=\text{⌊}n/3\text{⌋}$, followed by a NOT gate reading
 the carry input index at that position and an AND gate reading the accumulator index
-there and the vertex $n+2+15	ext{⌊}n/3	ext{⌋}$.
+there and the vertex $n+2+15\text{⌊}n/3\text{⌋}$.
 \end{definition}
 
 \begin{theorem}[Carry-in index bound]
@@ -332,7 +332,7 @@ formed and has at most two inputs.
 \leanok
 \uses{BoolCircuit.DAGCircuit, BoolCircuit.adderGates, BoolCircuit.gatesAcyclic_adderGates}
 For each natural number $n$, define a directed acyclic circuit with the ripple adder
-gate list for input size $n$ and output vertex $n+15	ext{⌊}n/3	ext{⌋}+3$.
+gate list for input size $n$ and output vertex $n+15\text{⌊}n/3\text{⌋}+3$.
 \end{definition}
 
 \begin{theorem}[Adder circuit has fan-in two]

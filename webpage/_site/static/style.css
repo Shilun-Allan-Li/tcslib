@@ -94,35 +94,32 @@ body {
     vertical-align: middle;
 }
 
-.nav-right {
+.nav-icons {
     margin-left: auto;
     display: flex;
     align-items: center;
     gap: 0.75rem;
 }
 
+.nav-icons a {
+    display: flex;
+    align-items: center;
+}
+
+.nav-icons img {
+    filter: brightness(0);
+    display: block;
+}
+
+[data-theme="dark"] .nav-icons img {
+    filter: var(--filter-white);
+}
+
 .theme-toggle {
-    background: none;
-    border: none;
+    all: unset;
     cursor: pointer;
-    font-size: 1.2rem;
-    padding: 0.25rem;
-    line-height: 1;
-    border-radius: 0.25rem;
-    transition: background 0.2s;
-    color: var(--color-text-muted);
-}
-
-.theme-toggle:hover {
-    background: var(--hover-bg-color);
-}
-
-.theme-toggle::before {
-    content: '🌙';
-}
-
-[data-theme="dark"] .theme-toggle::before {
-    content: '☀';
+    display: inline-flex;
+    align-items: center;
 }
 
 /* Main content */
@@ -191,10 +188,18 @@ article > h1:first-child {
     font-weight: 700;
     line-height: 1.3;
     letter-spacing: -0.01em;
-    margin-bottom: 1rem;
+    margin-bottom: 0;
 }
 
 .hero-text > p:nth-child(3) {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin-bottom: 1rem;
+}
+
+.hero-text > p:nth-child(4) {
     font-size: 1.125rem;
     color: var(--color-text-muted);
     line-height: 1.7;
@@ -203,7 +208,7 @@ article > h1:first-child {
 
 .hero-text > p:last-child {
     display: flex;
-    gap: 1rem;
+    gap: 2rem;
     justify-content: center;
     margin-top: 2rem;
 }
@@ -224,6 +229,14 @@ article > h1:first-child {
 .hero-btn img {
     width: 20px;
     height: 20px;
+}
+
+.hero-btn {
+    vertical-align: middle;
+}
+
+.hero-btn + .hero-btn {
+    margin-left: 1rem;
 }
 
 .hero-btn.primary {
@@ -251,6 +264,10 @@ article > h1:first-child {
 }
 
 /* Section titles */
+.pillars > p:first-child {
+    grid-column: 1 / -1;
+}
+
 .pillars > p:first-child > strong {
     font-size: 2.5rem;
     font-weight: 700;
@@ -396,4 +413,98 @@ article > h1:first-child {
     .get-started {
         padding: 3rem 1.5rem;
     }
+}
+
+/* Text pages (e.g. /dataset/): the theme hides the <h1>; .page-title stands in for it */
+.page-title {
+    max-width: 760px;
+    margin: 2.5rem auto 2rem;
+}
+
+.page-title > p:first-child {
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+}
+
+.page-title > p:not(:first-child) {
+    font-size: 1.15rem;
+    color: var(--color-text-muted);
+}
+
+article section,
+article > p,
+article > ul,
+article > ol,
+article > pre {
+    max-width: 760px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+article section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin: 2.5rem 0 0.75rem;
+}
+
+article section p,
+article > p {
+    margin: 0 0 1rem;
+}
+
+article section ul,
+article section ol {
+    padding-left: 1.4rem;
+    margin: 0 0 1rem;
+}
+
+article section li {
+    margin: 0.3rem 0;
+}
+
+article code {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--color-code-bg);
+    padding: 0.05em 0.35em;
+    border-radius: 4px;
+}
+
+article pre {
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    background: var(--color-white);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    margin: 0 0 1.25rem;
+}
+
+article pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+}
+
+/* Download buttons on the dataset page */
+.download-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    max-width: 760px;
+    margin: 0 auto 1.5rem;
+}
+
+.download-buttons .hero-btn + .hero-btn {
+    margin-left: 0;
+}
+
+/* The button label is a paragraph; keep the article's paragraph margin off it
+   so the text sits centred next to the arrow, as in the front-page hero. */
+.download-buttons .hero-btn p {
+    margin: 0;
 }

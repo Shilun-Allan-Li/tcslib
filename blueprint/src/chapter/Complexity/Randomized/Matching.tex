@@ -77,7 +77,7 @@ its entries in row-by-row order has length $n^2$.
 \leanok
 \uses{Randomized.Matching.adjOfWord, Randomized.Matching.adjWord, Randomized.Matching.getD_adjWord}
 \difficulty{1}
-For every natural number $n$ and every Boolean matrix $A$ indexed by $	ext{Fin}(n)
+For every natural number $n$ and every Boolean matrix $A$ indexed by $\text{Fin}(n)
 \times \text{Fin}(n)$, reconstructing an $n$-by-$n$ Boolean matrix from the adjacency
 word of $A$ yields $A$.
 \end{theorem}
@@ -333,7 +333,7 @@ matching test is efficient in the verifier model.
 \uses{Complexity.BinArith.lovaszBits, Complexity.BinArith.lovaszPrime, Complexity.pairFstD, Randomized.Matching.adjOfWord_adjWord, Randomized.Matching.encodeBPM, Randomized.Matching.lovaszMatrix, Randomized.Matching.lovaszSample, Randomized.Matching.matchingVerifier}
 \difficulty{4}
 Let $n$ be a natural number, let $A$ be a Boolean matrix indexed by
-$	ext{Fin}(n)\times\text{Fin}(n)$, and let $r$ be a finite bit string. On the encoding
+$\text{Fin}(n)\times\text{Fin}(n)$, and let $r$ be a finite bit string. On the encoding
 of the graph specified by $A$, the matching verifier accepts exactly when $r$ has length
 at least $n^2$ times the number of Lovász bits for $n$, and the determinant of the
 sampled, adjacency-masked matrix over the corresponding Lovász prime field is nonzero.

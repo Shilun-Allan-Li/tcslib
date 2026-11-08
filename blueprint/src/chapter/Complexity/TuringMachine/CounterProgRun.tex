@@ -42,7 +42,7 @@ registers $\rho'$, $p'$ input symbols read and output $o\,e$.
 \difficulty{3}
 Let $P$ be a counter program with $R$ natural-number registers and labels in $\Lambda$,
 run on a binary input $x$. Suppose that every output word $o$ admits a run of at most
-$b$ steps from $\ell,\rho,p,o$ to $[0m\ell',\rho',p'$ with output $o$ followed by $e$,
+$b$ steps from $\ell,\rho,p,o$ to $\ell',\rho',p'$ with output $o$ followed by $e$,
 and that every output word admits a run of at most $b'$ steps from $\ell',\rho',p'$ to
 $\ell''$ (a label or halt), $\rho''$, and $p''$, appending $e'$. Then every $o$ admits a
 run of at most $b+b'$ steps from $\ell,\rho,p,o$ to $\ell'',\rho'',p''$, with output $o$
@@ -112,7 +112,7 @@ state with registers $\rho$, input position $p$, and output $o$ within at most o
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
 Let $P$ be a counter program on a binary input $x$, and let $ho$ be a register
-assignment, $p$ an input position, and $\ell,\ell'\in\Lambda$ labels. If the
+assignment, $p$ an input position, and $\\ell,\ell'\in\Lambda$ labels. If the
 instruction at $\ell$ is to jump to $\ell'$, then for every output string $o$, the
 program reaches label $\ell'$ with registers $\rho$, input position $p$, and output $o$
 within at most one step.
@@ -195,9 +195,9 @@ output $o$.
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
 Let $P$ be a counter program on a binary input $x$, with registers $ho$ and labels
-$Lambda$. If the instruction at label $ell$ prints register $r$ in unary and then goes
-to $ell'$, then from any output string $o$, the program reaches label $ell'$ within
-one step, with registers and input position unchanged and with $1^{rho(r)}$ appended to
+$\Lambda$. If the instruction at label $\ell$ prints register $r$ in unary and then goes
+to $\ell'$, then from any output string $o$, the program reaches label $\ell'$ within
+one step, with registers and input position unchanged and with $1^{\rho(r)}$ appended to
 the output.
 \end{theorem}
 
@@ -207,10 +207,10 @@ the output.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, with registers $rho$ and labels
-$Lambda$. If the instruction at label $ell$ reads the next input bit and the input has
+Let $P$ be a counter program on a binary input $x$, with registers $\rho$ and labels
+$\Lambda$. If the instruction at label $\ell$ reads the next input bit and the input has
 no bit at position $p$, then from any output string $o$, the program reaches label
-$ell_e$ within one step, leaving the registers, input position, and output unchanged.
+$\ell_e$ within one step, leaving the registers, input position, and output unchanged.
 \end{theorem}
 
 \begin{theorem}[Reading a zero from the input]
@@ -219,9 +219,9 @@ $ell_e$ within one step, leaving the registers, input position, and output unch
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, with registers $rho$ and labels
-$Lambda$. If the instruction at label $ell$ reads the next input bit and the bit at
-position $p$ is $0$, then from any output string $o$, the program reaches label $ell_f$
+Let $P$ be a counter program on a binary input $x$, with registers $\rho$ and labels
+$\Lambda$. If the instruction at label $\ell$ reads the next input bit and the bit at
+position $p$ is $0$, then from any output string $o$, the program reaches label $\ell_f$
 within one step, leaves the registers unchanged, advances the input position to $p+1$,
 and leaves the output unchanged.
 \end{theorem}
@@ -232,9 +232,9 @@ and leaves the output unchanged.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, with registers $rho$ and labels
-$Lambda$. If the instruction at label $ell$ reads the next input bit and the bit at
-position $p$ is $1$, then from any output string $o$, the program reaches label $ell_t$
+Let $P$ be a counter program on a binary input $x$, with registers $\rho$ and labels
+$\Lambda$. If the instruction at label $\ell$ reads the next input bit and the bit at
+position $p$ is $1$, then from any output string $o$, the program reaches label $\ell_t$
 within one step, leaves the registers unchanged, advances the input position to $p+1$,
 and leaves the output unchanged.
 \end{theorem}
@@ -301,13 +301,13 @@ if $i \ge n$.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.Goes.mono, Complexity.CounterProg.Goes.trans, Complexity.CounterProg.MOp, Complexity.CounterProg.MOp.exec, Complexity.CounterProg.goes_goto, Complexity.CounterProg.goes_out, Complexity.CounterProg.goes_pr, Complexity.CounterProg.tmplInstr}
 \difficulty{5}
-Let $P$ be a counter program on a binary input $x$, and let $tau$ be a list of $n$
+Let $P$ be a counter program on a binary input $x$, and let $\tau$ be a list of $n$
 micro-operations, each printing a bit or printing a register in unary. Let
-$lab:mathbb{N}\toLambda$ be labels and let $nu\inLambda$. Suppose that at every
-index $i\le n$, the instruction at $lab(i)$ is the instruction prescribed by the
-template at $i$: it performs the corresponding micro-operation and goes to $lab(i+1)$
-when $i<n$, and goes to $nu$ when $i=n$. Then, for every register assignment $rho$ and
-input position $p$, from label $lab(0)$ the program reaches $nu$ within $n+1$ steps,
+$\mathrm{lab}:\mathbb{N}\to\Lambda$ be labels and let $\nu\in\Lambda$. Suppose that at every
+index $i\le n$, the instruction at $\mathrm{lab}(i)$ is the instruction prescribed by the
+template at $i$: it performs the corresponding micro-operation and goes to $\mathrm{lab}(i+1)$
+when $i<n$, and goes to $\nu$ when $i=n$. Then, for every register assignment $\rho$ and
+input position $p$, from label $\mathrm{lab}(0)$ the program reaches $\nu$ within $n+1$ steps,
 with the register assignment and input position unchanged and with the template’s
 concatenated output appended to the existing output.
 \end{theorem}

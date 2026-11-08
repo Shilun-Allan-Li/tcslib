@@ -21,7 +21,7 @@ operand is $x_k$ when the sign is true and $\neg x_k$ when it is false.
 \leanok
 \uses{BoolCircuit.SLOperand.Before, BoolCircuit.SLOperand.lit}
 \difficulty{3}
-For any input index $k	ext{ Fin}(n)$, Boolean sign $b$, and natural number $i$, the
+For any input index $k\text{ Fin}(n)$, Boolean sign $b$, and natural number $i$, the
 operand representing the literal that is $x_k$ when $b$ is true and $
 eg x_k$ when $b$ is false precedes line $i$.
 \end{theorem}
@@ -32,8 +32,8 @@ eg x_k$ when $b$ is false precedes line $i$.
 \leanok
 \uses{BoolCircuit.SLOperand.eval, BoolCircuit.SLOperand.lit}
 \difficulty{4}
-Let $l=(k,b)$ consist of an input index $k	ext{ Fin}(n)$ and a Boolean sign $b$, let
-$x:	ext{Fin}(n)	o	ext{Bool}$ be an assignment, and let $ys$ be a Boolean list. The
+Let $l=(k,b)$ consist of an input index $k\text{ Fin}(n)$ and a Boolean sign $b$, let
+$x:\text{Fin}(n)\to\text{Bool}$ be an assignment, and let $ys$ be a Boolean list. The
 literal operand specified by $l$ evaluates to true exactly when $x(k)=b$.
 \end{theorem}
 
@@ -146,11 +146,11 @@ $i=1,2$.
 \uses{BoolCircuit.SLOp}
 Define a table on pairs of Boolean inputs whose output consists of a conjunction or
 disjunction and two references to the sole position $0$, each tagged by a Boolean. On
-inputs $(	ext{false},	ext{false})$ it returns conjunction with tags
-$(	ext{true},	ext{false})$; on $(	ext{false},	ext{true})$ it returns conjunction with
-tags $(	ext{true},	ext{true})$; on $(	ext{true},	ext{false})$ it returns conjunction
-with tags $(	ext{false},	ext{false})$; and on $(	ext{true},	ext{true})$ it returns
-disjunction with tags $(	ext{true},	ext{false})$.
+inputs $(\text{false},\text{false})$ it returns conjunction with tags
+$(\text{true},\text{false})$; on $(\text{false},\text{true})$ it returns conjunction with
+tags $(\text{true},\text{true})$; on $(\text{true},\text{false})$ it returns conjunction
+with tags $(\text{false},\text{false})$; and on $(\text{true},\text{true})$ it returns
+disjunction with tags $(\text{true},\text{false})$.
 \end{definition}
 
 \begin{definition}[Two-Step Boolean Lookup Table]

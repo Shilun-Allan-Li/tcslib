@@ -103,7 +103,7 @@ Define $r_C$ to be the element $5$ of the set of integers from $0$ through $6$.
 \lean{Complexity.LogProg.TQBFARM.rV}
 \label{Complexity.LogProg.TQBFARM.rV}
 \leanok
-Let the seven register positions be indexed by $0,1,ots,6$. The variable register is
+Let the seven register positions be indexed by $0,1,\ldots,6$. The variable register is
 assigned index $6$.
 \end{definition}
 
@@ -473,9 +473,9 @@ label $l'$ and state $s'$, on input $x$, within bound $B$.
 \leanok
 \uses{Complexity.LogProg.GuardLe, Complexity.LogProg.TQBFARM.A, Complexity.LogProg.TQBFARM.Lb, Complexity.LogProg.TQBFARM.St, Complexity.LogProg.TQBFARM.St.Bd, Complexity.LogProg.TQBFARM.St.Bd.toV, Complexity.LogProg.TQBFARM.St.toV, Complexity.LogProg.TQBFARM.preS_A}
 \difficulty{1}
-Let $x$ be a Boolean input word, $B$ a natural number, $	ext{st}$ a machine state whose
+Let $x$ be a Boolean input word, $B$ a natural number, $\text{st}$ a machine state whose
 seven registers are all at most $B$, and $l$ an instruction label. The configuration
-with label $l$, register values given by $	ext{st}$, and no answer satisfies the machine
+with label $l$, register values given by $\text{st}$, and no answer satisfies the machine
 guard: any register-equality instruction compares distinct registers; input-comparison
 instructions are used only on inputs of the required valid plain or paired form; and an
 oracle call has no repeated register arguments. Its register values are all at most $B$.
@@ -502,9 +502,9 @@ then there is such a run from $(l,st)$ to $c$.
 \uses{Complexity.LogProg.AReach, Complexity.LogProg.AReach.refl, Complexity.LogProg.GuardLe, Complexity.LogProg.TQBFARM.A, Complexity.LogProg.TQBFARM.Lb, Complexity.LogProg.TQBFARM.St, Complexity.LogProg.TQBFARM.St.toV, Complexity.LogProg.TQBFARM.orc}
 \difficulty{1}
 Let $x$ be a Boolean input word, $B$ a natural-number bound, $l$ an instruction label,
-and $	ext{st},	ext{st}'$ machine states with $	ext{st}=	ext{st}'$. Starting at label $l$
-with register values given by $	ext{st}$ and no answer, the machine can reach label $l$
-with register values given by $	ext{st}'$ and no answer, along a finite run in which
+and $\text{st},\text{st}'$ machine states with $\text{st}=\text{st}'$. Starting at label $l$
+with register values given by $\text{st}$ and no answer, the machine can reach label $l$
+with register values given by $\text{st}'$ and no answer, along a finite run in which
 every configuration before the endpoint satisfies the machine guard and has every
 register at most $B$.
 \end{lemma}
@@ -570,9 +570,9 @@ and $incK$ when $b$ is false, with state $(K,S+T,P,0,Z,C,V)$.
 \difficulty{3}
 Let $x$ be a finite bit string, let $B$ be a natural number, let $b$ be a Boolean value,
 and let $st$ be a seven-register state whose registers $K,S,P,T,Z,C,V$ are all at most
-$B$. The program has a finite run from label $	ext{sb}(b,0)$ with registers initialized
-from $st$ to label $	ext{jzC}(b)$, with the same registers as $st$ except that $V$ is
-set to $0$ and $C$ is set to the truncated difference $	ext{max}(C-V,0)$; every
+$B$. The program has a finite run from label $\text{sb}(b,0)$ with registers initialized
+from $st$ to label $\text{jzC}(b)$, with the same registers as $st$ except that $V$ is
+set to $0$ and $C$ is set to the truncated difference $\text{max}(C-V,0)$; every
 configuration before the endpoint satisfies the program guard and has all registers at
 most $B$.
 \end{theorem}
@@ -585,7 +585,7 @@ most $B$.
 \difficulty{3}
 Let $x$ be a finite bit string, $B$ a natural number, $b$ a Boolean, and $s$ a machine
 state whose seven register values are at most $B$. The machine has a run on input $x$
-from label $	ext{hv}(b,0)$ and state $s$ to label $	ext{od}(b)$ and state obtained from
-$s$ by setting $C=0$ and $T=iglloor{s.T/2^{s.C}igrfloor}$, with the run guard
+from label $\text{hv}(b,0)$ and state $s$ to label $\text{od}(b)$ and state obtained from
+$s$ by setting $C=0$ and $T=\biglloor{s.T/2^{s.C}\bigrfloor}$, with the run guard
 satisfied at every configuration before its endpoint.
 \end{theorem}

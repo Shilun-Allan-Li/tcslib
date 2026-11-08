@@ -119,13 +119,13 @@ serialized literals}|$.
 \leanok
 \uses{Complexity.LogProg.AReach.trans, Complexity.LogProg.TQBFARM.A, Complexity.LogProg.TQBFARM.Run, Complexity.LogProg.TQBFARM.St, Complexity.LogProg.TQBFARM.St.Bd, Complexity.LogProg.TQBFARM.asg, Complexity.LogProg.TQBFARM.clause_run, Complexity.LogProg.TQBFARM.fin_of, Complexity.LogProg.TQBFARM.read_f, Complexity.LogProg.TQBFARM.read_t, Complexity.LogProg.TQBFARM.step_of, Complexity.LogProg.astep, Complexity.LogProg.reach_of_eq, Complexity.drop_add_of_drop, Complexity.drop_succ_of_drop, Complexity.getD_of_drop, Complexity.le_of_drop, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
 \difficulty{5}
-Let $x$ be a Boolean input word, $B$ a natural number, $r$ a suffix, $varphi$ a CNF
-formula over natural-number variables, and $	ext{st}$ a machine state. Suppose that
-deleting the first $	ext{st}.P$ bits of $x$ leaves the serialization of $varphi$
-followed by $r$, each of the seven registers of $	ext{st}$ is at most $B$, the length of
-$x$ is at most $B$, and $	ext{st}.T=	ext{st}.Z=	ext{st}.C=	ext{st}.V=0$. Then the
-machine can reach the return label with value $varphi$ evaluated under the assignment
-determined by $	ext{st}.K$ and $	ext{st}.S$, in a configuration obtained from $	ext{st}$
+Let $x$ be a Boolean input word, $B$ a natural number, $r$ a suffix, $\varphi$ a CNF
+formula over natural-number variables, and $\text{st}$ a machine state. Suppose that
+deleting the first $\text{st}.P$ bits of $x$ leaves the serialization of $\varphi$
+followed by $r$, each of the seven registers of $\text{st}$ is at most $B$, the length of
+$x$ is at most $B$, and $\text{st}.T=\text{st}.Z=\text{st}.C=\text{st}.V=0$. Then the
+machine can reach the return label with value $\varphi$ evaluated under the assignment
+determined by $\text{st}.K$ and $\text{st}.S$, in a configuration obtained from $\text{st}$
 by setting only $P$ to zero. Every configuration before the endpoint satisfies the
 machine guard and has every register at most $B$.
 \end{theorem}

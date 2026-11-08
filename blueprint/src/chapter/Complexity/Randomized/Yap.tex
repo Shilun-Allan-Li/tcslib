@@ -58,7 +58,7 @@ to true.
 \difficulty{5}
 Let $m : \mathbb{N}\to\mathbb{N}$, and for each $n\in\mathbb{N}$ let $D_n$ be a
 fan-in-two Boolean circuit with $n+m(n)$ input bits. Suppose $z,w$ are bit strings and
-$|z|=N$. Then the query asking whether $D_N$ accepts the concatenation $z\mathbin{+}w$
+$|z|=N$. Then the query asking whether $D_N$ accepts the concatenation $z\mathbin{+\!\!+}w$
 holds exactly when there is an assignment $y\in\{0,1\}^{m(|z|)}$ such that $w$ is the
 bit string of $y$ in order and $D_{|z|}$ accepts the combined input consisting of $z$
 followed by $y$.
@@ -138,7 +138,7 @@ the encoding of $(x,u,v,r)$ belongs to the package's language $R$.
 \leanok
 \uses{Complexity.Yap.Data.M₂, Complexity.Yap.Query, Turing.pairEncode}
 Let $d$ be a data structure and let $x,U,u,v,w$ be finite Boolean strings. The predicate
-$	ext{Match}(x,U,u,v,w)$ holds exactly when the length of $v$ equals $M_2$ applied to
+$\text{Match}(x,U,u,v,w)$ holds exactly when the length of $v$ equals $M_2$ applied to
 the pair encoding of $x$ and $u$, and the query language $U$ contains the concatenation
 of the pair encoding of that encoded pair and $v$ with $w$.
 \end{definition}
@@ -149,10 +149,10 @@ of the pair encoding of that encoded pair and $v$ with $w$.
 \leanok
 \uses{Complexity.Yap.Data.Match, Complexity.Yap.Data.M₁, Complexity.Yap.Data.SoundFail, Complexity.pairFstD, Complexity.pairSndD}
 Let $d$ be a data structure, and let $x,U,t,e$ be finite Boolean strings. The predicate
-$	ext{Core}(x,U,t,e)$ holds if the first component obtained by taking the first
+$\text{Core}(x,U,t,e)$ holds if the first component obtained by taking the first
 component of the first component of $t$ has length $M_1(x)$, and either
-$	ext{SoundFail}$ holds for $x,U$ and the four components of $t$ obtained by the nested
-first and second projections, or $	ext{Match}$ fails for $x,U$ with that same
+$\text{SoundFail}$ holds for $x,U$ and the four components of $t$ obtained by the nested
+first and second projections, or $\text{Match}$ fails for $x,U$ with that same
 first-first component and the two components of $e$.
 \end{definition}
 
@@ -162,8 +162,8 @@ first-first component and the two components of $e$.
 \leanok
 \uses{Complexity.Yap.Data.Core, Complexity.pairFstD, Complexity.pairSndD}
 Let $d$ be a data structure, and let $w,t,e$ be finite Boolean strings. The predicate
-$	ext{Check}(w,t,e)$ holds exactly when the length of $t$ is at most $B$ times
-$(|w|+1)^b$ and $	ext{Core}$ holds for the first and second components of $w$, together
+$\text{Check}(w,t,e)$ holds exactly when the length of $t$ is at most $B$ times
+$(|w|+1)^b$ and $\text{Core}$ holds for the first and second components of $w$, together
 with $t$ and $e$.
 \end{definition}
 
@@ -174,7 +174,7 @@ with $t$ and $e$.
 \uses{Complexity.Yap.Data.Check, Complexity.pairFstD, Complexity.pairSndD}
 Let $d$ be a data structure. The bad language consists of the Boolean strings $p$ such
 that, for every finite Boolean string $e$ whose length is at most $B(|p|+1)^b$,
-$	ext{Check}$ holds for the first and second components of $p$ and for $e$.
+$\text{Check}$ holds for the first and second components of $p$ and for $e$.
 \end{definition}
 
 \begin{definition}[Inner language]
@@ -193,7 +193,7 @@ belong to the bad language.
 \leanok
 \uses{Complexity.Yap.Data.Check, Complexity.pairFstD, Complexity.pairSndD}
 Let $d$ be a data structure. The check language consists of the Boolean strings $q$ for
-which $	ext{Check}$ holds on the first-first component of $q$, the second component of
+which $\text{Check}$ holds on the first-first component of $q$, the second component of
 its first component, and the second component of $q$.
 \end{definition}
 

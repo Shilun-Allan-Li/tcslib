@@ -268,7 +268,7 @@ decoded bitwise (a symbol $a$ becoming $1$ exactly when $a = e(1)$).
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.ArBlock, Turing.FinTM.arCfg}
 \difficulty{3}
-Let $\Gamma$ be an alphabet, let $E$ injectively code optional $[0m[0m\Gamma$ symbols
+Let $\Gamma$ be an alphabet, let $E$ injectively code optional $\Gamma$ symbols
 as blocks of $N+1$ optional bits, and let $e:\{0,1\}\hookrightarrow\Gamma$ be an
 embedding. For a binary input $x$ and a configuration $c$ over the letterwise $e$-image
 of $x$, the symbol scanned by the input head in the encoded configuration, mapped
@@ -294,7 +294,7 @@ are blank.
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arBuffer}
 \difficulty{1}
-Let $E$ be an injective code from optional $[0m[0m\Gamma$ symbols into blocks of $N+1$
+Let $E$ be an injective code from optional $\Gamma$ symbols into blocks of $N+1$
 optional bits, and let $r$ assign a scanned symbol or blank to each of $k$ tapes. After
 zero reading steps, every buffer entry on every tape is blank.
 \end{lemma}
@@ -305,7 +305,7 @@ zero reading steps, every buffer entry on every tape is blank.
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arBuffer}
 \difficulty{1}
-Let $E$ be an injective code from $	ext{Option }[0m[0m\Gamma$ into blocks of $N+1$
+Let $E$ be an injective code from $\text{Option }\Gamma$ into blocks of $N+1$
 optional bits, and let $r$ assign a scanned symbol or blank to each of $k$ tapes. After
 $N+1$ reading steps, the buffer is the complete coded block $E(r(i))$ on every tape $i$.
 \end{lemma}
@@ -316,7 +316,7 @@ $N+1$ reading steps, the buffer is the complete coded block $E(r(i))$ on every t
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arBuffer}
 \difficulty{4}
-Let $E$ be an injective code from optional $[0m[0m\Gamma$ symbols into blocks of $N+1$
+Let $E$ be an injective code from optional $\Gamma$ symbols into blocks of $N+1$
 optional bits, and let $r$ assign a scanned symbol or blank to each of $k$ tapes. For an
 offset $j\in\{0,\ldots,N\}$, updating entry $j$ of each tape's buffer after $j$ reading
 steps to the corresponding entry of its coded symbol produces the buffer after $j+1$
@@ -412,9 +412,9 @@ $t(p)$.
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arTail}
 \difficulty{2}
-Let $Ninmathbb{N}$, let $E$ inject the symbols of an alphabet $Gamma$ together with
-blank into blocks of $N+1$ optional bits, let $t:bb{Z}tomathrm{Option}Gamma$ be a
-tape, and let $pinbb{Z}$ and $winmathrm{Option}Gamma$. At counter $N+1$, the
+Let $N\in\mathbb{N}$, let $E$ inject the symbols of an alphabet $\Gamma$ together with
+blank into blocks of $N+1$ optional bits, let $t:\mathbb{Z}\to\mathrm{Option}\Gamma$ be a
+tape, and let $p\in\mathbb{Z}$ and $w\in\mathrm{Option}\Gamma$. At counter $N+1$, the
 write-sweep block family is the original tape coded blockwise: at every position $z$,
 its block is $E(t(z))$.
 \end{lemma}
@@ -425,9 +425,9 @@ its block is $E(t(z))$.
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arTail}
 \difficulty{2}
-Let $Ninmathbb{N}$, let $E$ inject the symbols of an alphabet $Gamma$ together with
-blank into blocks of $N+1$ optional bits, let $t:bb{Z}tomathrm{Option}Gamma$ be a
-tape, and let $pinbb{Z}$ and $winmathrm{Option}Gamma$. At counter $0$, the
+Let $N\in\mathbb{N}$, let $E$ inject the symbols of an alphabet $\Gamma$ together with
+blank into blocks of $N+1$ optional bits, let $t:\mathbb{Z}\to\mathrm{Option}\Gamma$ be a
+tape, and let $p\in\mathbb{Z}$ and $w\in\mathrm{Option}\Gamma$. At counter $0$, the
 write-sweep block family is the blockwise coding of the tape that agrees with $t$ except
 that its value at $p$ is $w$.
 \end{lemma}
@@ -438,10 +438,10 @@ that its value at $p$ is $w$.
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arPos, Turing.FinTM.arPos_eq, Turing.FinTM.arTail, Turing.FinTM.arTape, Turing.FinTM.arTape_at, Turing.FinTM.arTape_ext}
 \difficulty{4}
-Let $Ninmathbb{N}$, let $E$ inject the symbols of an alphabet $Gamma$ together with
-blank into blocks of $N+1$ optional bits, let $t:bb{Z}tomathrm{Option}Gamma$ be a
-tape, and let $pinbb{Z}$ and $winmathrm{Option}Gamma$. For any offset
-$jin{0,dots,N}$, replacing the binary tape induced by the counter-$(j+1)$ write-sweep
+Let $N\in\mathbb{N}$, let $E$ inject the symbols of an alphabet $\Gamma$ together with
+blank into blocks of $N+1$ optional bits, let $t:\mathbb{Z}\to\mathrm{Option}\Gamma$ be a
+tape, and let $p\in\mathbb{Z}$ and $w\in\mathrm{Option}\Gamma$. For any offset
+$j\in\{0,\dots,N}$, replacing the binary tape induced by the counter-$(j+1)$ write-sweep
 family at position $(N+1)p+j$ with the $j$th bit-or-blank entry of $E(w)$ gives exactly
 the binary tape induced by the counter-$j$ family.
 \end{lemma}
@@ -588,7 +588,7 @@ and work-tape symbols scanned by $c$, with write counter $N$.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg_run, Turing.FinTM.arReadCfg, Turing.FinTM.arReadCfg_dispatch, Turing.FinTM.arReadCfg_run, Turing.FinTM.arTM, Turing.FinTM.arWriteCfg_run, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
 \difficulty{5}
-Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $[0m[0m\Gamma$
+Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $\Gamma$
 symbols as blocks of $N+1$ optional bits, and let $e:\{0,1\}\hookrightarrow\Gamma$ be an
 embedding. For a finite-state $k$-tape machine $M$, a binary input $x$, and a
 configuration $c$ of $M$ on the letterwise $e$-image of $x$, running the binary
@@ -602,7 +602,7 @@ of the configuration after one step of $M$ from $c$.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arCfg_cycle, Turing.FinTM.arTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero}
 \difficulty{4}
-Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $[0m[0m\Gamma$
+Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $\Gamma$
 symbols as blocks of $N+1$ optional bits, and let $e:\{0,1\}\hookrightarrow\Gamma$ be an
 embedding. For a finite-state $k$-tape machine $M$, a binary input $x$, a configuration
 $c$ of $M$ on the letterwise $e$-image of $x$, and $t\in\mathbb{N}$, running the binary
@@ -616,7 +616,7 @@ encoding of the configuration reached after $t$ steps of $M$ from $c$.
 \leanok
 \uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arPos, Turing.FinTM.arTM, Turing.FinTM.arTape, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $[0m[0m\Gamma$
+Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $\Gamma$
 symbols as blocks of $N+1$ optional bits, and suppose the blank symbol is coded as the
 all-blank block. Let $e:\{0,1\}\hookrightarrow\Gamma$ be an embedding, $M$ a
 finite-state $k$-tape machine over $\Gamma$, and $x$ a binary input. The initial
@@ -644,9 +644,9 @@ transition emits a symbol $a\in\Gamma$, then $a=e(b)$ for some $b\in\{0,1\}$.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.ComputesInTime, Turing.FinTM.arBit_embed, Turing.FinTM.arCfg, Turing.FinTM.arCfg_init, Turing.FinTM.arCfg_run, Turing.FinTM.arTM, Turing.FinTM.computesInTime_iff}
 \difficulty{3}
-Let $Gamma$ be a finite alphabet, let $Ninmathbb{N}$, let $E$ inject the symbols of
-$Gamma$ together with blank into blocks of $N+1$ optional bits and encode blank by the
-all-blank block, and let $e:{0,1}hookrightarrowGamma$ be an embedding. If a machine
+Let $\Gamma$ be a finite alphabet, let $N\in\mathbb{N}$, let $E$ inject the symbols of
+$\Gamma$ together with blank into blocks of $N+1$ optional bits and encode blank by the
+all-blank block, and let $e:\{0,1}\hookrightarrow\Gamma$ be an embedding. If a machine
 $M$ on the letterwise $e$-image of a binary word $x$ halts after exactly $t$ steps,
 outputs the letterwise $e$-image of a binary word $w$, and uses some amount of space,
 then the binary simulator on input $x$ computes output $w$ at time $(3(N+1)+2)t$.
@@ -692,9 +692,9 @@ encoded transition's tape symbols, or moving the heads according to that transit
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.ArState, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg_finish, Turing.FinTM.arMoveCfg_step, Turing.FinTM.arReadCfg_dispatch, Turing.FinTM.arReadCfg_step, Turing.FinTM.arReadCfg_zero, Turing.FinTM.arSpacePhase, Turing.FinTM.arTM, Turing.FinTM.arWriteCfg_finish, Turing.FinTM.arWriteCfg_step, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
 \difficulty{6}
-Let $Gamma$ be a finite alphabet, let $N,kinmathbb{N}$, let $E$ inject the symbols of
-$Gamma$ together with blank into blocks of $N+1$ optional bits, and let
-$e:{0,1}hookrightarrowGamma$ be an embedding. For a machine $M$ over $Gamma$, a
+Let $\Gamma$ be a finite alphabet, let $N,k\in\mathbb{N}$, let $E$ inject the symbols of
+$\Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:\{0,1}\hookrightarrow\Gamma$ be an embedding. For a machine $M$ over $\Gamma$, a
 binary input $x$, a source configuration $c$ on its letterwise $e$-image, and a
 simulator configuration $d$ that is in a phase associated with $c$, the simulator's next
 configuration is either still in a phase associated with $c$, or is in a phase
@@ -708,11 +708,11 @@ from the state of $c$.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arSpacePhase, Turing.FinTM.arSpacePhase_step, Turing.FinTM.arTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Let $Gamma$ be a finite alphabet, let $N,kinmathbb{N}$, let $E$ inject the symbols of
-$Gamma$ together with blank into blocks of $N+1$ optional bits, and let
-$e:{0,1}hookrightarrowGamma$ be an embedding. For a machine $M$ over $Gamma$, a
+Let $\Gamma$ be a finite alphabet, let $N,k\in\mathbb{N}$, let $E$ inject the symbols of
+$\Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:\{0,1}\hookrightarrow\Gamma$ be an embedding. For a machine $M$ over $\Gamma$, a
 binary input $x$, and a configuration $c$ of $M$ on the letterwise $e$-image of $x$, for
-every $tinmathbb{N}$ there are $sle t$ such that the simulator's configuration after
+every $t\in\mathbb{N}$ there are $s\le t$ such that the simulator's configuration after
 $t$ steps is either the encoding of $M$'s configuration after $s$ steps, or is in a
 reading, writing, or moving phase associated with that source configuration and some
 nonhalting source state.
@@ -740,11 +740,11 @@ position after applying $a$ and some offset $j\le N+1$.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg_position, Turing.FinTM.arPos, Turing.FinTM.arSpacePhase_run, Turing.FinTM.arTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{5}
-Let $Gamma$ be a finite alphabet, let $N,kinmathbb{N}$, let $E$ inject the symbols of
-$Gamma$ together with blank into blocks of $N+1$ optional bits, and let
-$e:{0,1}hookrightarrowGamma$ be an embedding. For a machine $M$ over $Gamma$, a
+Let $\Gamma$ be a finite alphabet, let $N,k\in\mathbb{N}$, let $E$ inject the symbols of
+$\Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:\{0,1}\hookrightarrow\Gamma$ be an embedding. For a machine $M$ over $\Gamma$, a
 binary input $x$, a source configuration $c$ on its letterwise $e$-image, a time
-$tinmathbb{N}$, and a work tape $i$, there are $sle t+1$ and $jle N+1$ such that the
+$t\in\mathbb{N}$, and a work tape $i$, there are $s\le t+1$ and $j\le N+1$ such that the
 simulator's head position on tape $i$ at time $t$ is $(N+1)$ times the source head
 position on tape $i$ at time $s$, plus $j$.
 \end{lemma}
@@ -799,11 +799,11 @@ cardinality at most $(N+1)$ times the number of distinct positions visited, plus
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arPos, Turing.FinTM.arSpaceBlock, Turing.FinTM.arSpaceCover_card, Turing.FinTM.arTM, Turing.FinTM.arTM_position_visited, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape, Turing.MultiTapeTM.visitedByTapeHead}
 \difficulty{5}
-Let $Gamma$ be a finite alphabet, let $N,kinmathbb{N}$, let $E$ inject the symbols of
-$Gamma$ together with blank into blocks of $N+1$ optional bits, and let
-$e:{0,1}hookrightarrowGamma$ be an embedding. For a machine $M$ over $Gamma$, a
+Let $\Gamma$ be a finite alphabet, let $N,k\in\mathbb{N}$, let $E$ inject the symbols of
+$\Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:\{0,1}\hookrightarrow\Gamma$ be an embedding. For a machine $M$ over $\Gamma$, a
 binary input $x$, a source configuration $c$ on its letterwise $e$-image, and
-$tinmathbb{N}$, the simulator's space used through time $t$ is at most $(N+1)$ times
+$t\in\mathbb{N}$, the simulator's space used through time $t$ is at most $(N+1)$ times
 the source machine's space used through time $t+1$, plus the number $k$ of work tapes.
 \end{lemma}
 

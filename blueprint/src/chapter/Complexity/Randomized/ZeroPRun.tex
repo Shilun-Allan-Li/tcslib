@@ -365,8 +365,8 @@ Let $n$ be a natural number, let $R$ and $G$ be finite bit strings, and let $P$ 
 finite list of finite bit strings. The gate-running procedure applied to the encoding of
 the context determined by $n$, $R$, and $P$, paired with $G$, returns the encoding of
 that context together with the word and list of values obtained by applying the abstract
-evaluation step $|G|$ times, starting from $(G,[])$, using modulus $itsVal(R)+1$ and
-assigning the $i$th input variable the value $itsVal(P_i)+1$ (with an empty word when
+evaluation step $|G|$ times, starting from $(G,[])$, using modulus $\mathrm{bitsVal}(R)+1$ and
+assigning the $i$th input variable the value $\mathrm{bitsVal}(P_i)+1$ (with an empty word when
 $i$ is outside the list).
 \end{theorem}
 
@@ -531,7 +531,7 @@ significant, and suppose $C$ has at least one gate and every gate that refers to
 gates refers only to gates preceding it in the list. The bit string produced by the
 encoded evaluator on the encoding of the context and gate list has value less than
 $b(R)+1$, and its residue modulo $b(R)+1$ equals the value of $C$ over
-$\mathbb{Z}/(b(R)+1)\mathbb{Z}$ at the input whose $i$th coordinate is the residue of
+$\mathbb{Z}/(b(R)+1)\mathbb{Z}$ at the input whose $i$th coordinate is the residue of
 $b(P_i)+1$.
 \end{theorem}
 

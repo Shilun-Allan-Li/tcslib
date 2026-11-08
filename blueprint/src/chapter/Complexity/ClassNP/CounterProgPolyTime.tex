@@ -18,9 +18,9 @@ steps. This is how the emitters of [AB09, Remark~6.7] are shown to run in polyno
 \leanok
 \uses{Complexity.CounterProg.exists_tm, Complexity.CounterProg.init, Complexity.CounterProg.run, Complexity.CounterProg.toTM, Complexity.PolyTimeComputable, Turing.FinTM.ComputesInTime.mono}
 \difficulty{4}
-Let $P$ be a counter program with a finite label set $Lambda$ and decidable equality on
-labels, and fix a start label $l_0\inLambda$. Let $f$ map binary strings to binary
-strings, and let $C,c\inmathbb{N}$. Suppose that for every binary input $x$, there is a
+Let $P$ be a counter program with a finite label set $\Lambda$ and decidable equality on
+labels, and fix a start label $l_0\in\Lambda$. Let $f$ map binary strings to binary
+strings, and let $C,c\in\mathbb{N}$. Suppose that for every binary input $x$, there is a
 time $t\le C(|x|+1)^c$ at which the run of $P$ from its initial state at $l_0$ has
 halted and has output $f(x)$. Then $f$ is computable by a finite binary-alphabet Turing
 machine in time $C' (n+1)^{c'}$ on every input of length $n$, for some natural numbers

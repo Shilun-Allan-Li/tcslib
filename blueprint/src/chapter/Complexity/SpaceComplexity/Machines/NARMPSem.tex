@@ -88,8 +88,8 @@ current configuration also has probabilistic semantics with probability $p$.
 \leanok
 \uses{Complexity.LogProg.NHalts.of_choose, Complexity.LogProg.PSem, Complexity.LogProg.ansProb, Complexity.LogProg.nastep, Complexity.LogProg.nastep_choose, Complexity.LogProg.randProb_narun_choose, Complexity.LogProg.succ_of_nhalts}
 \difficulty{5}
-Let $A$ be a machine with $m$ natural-number registers, control labels in $$, and
-instructions that may choose between two labels using a fair random bit; let $$ be an
+Let $A$ be a machine with $m$ natural-number registers, control labels in $\Lambda$, and
+instructions that may choose between two labels using a fair random bit; let $\Lambda$ be an
 oracle, $x$ an input, and $G$ a guard on configurations. Suppose the instruction at
 label $l$ chooses between $l_1$ and $l_0$, and the configuration with label $l$,
 register values $v$, and no result satisfies $G$. If starting at $l_1$ with register
@@ -120,14 +120,14 @@ with probability $p$.
 \uses{Complexity.LogProg.PSem, Complexity.LogProg.PSem.det, Complexity.LogProg.astep}
 \difficulty{1}
 Let $A$ be a nondeterministic register program with oracle, input $x$, guard $G$, and a
-register configuration $(v,	ext{none})$, where $v$ assigns a natural number to each of
+register configuration $(v,\text{none})$, where $v$ assigns a natural number to each of
 the $m$ registers. Suppose the instruction at state $l$ deterministically clears
-register $r$ and moves to state $l'$, and suppose $G$ holds at $(l,v,	ext{none})$. If
+register $r$ and moves to state $l'$, and suppose $G$ holds at $(l,v,\text{none})$. If
 the program started at $l'$ with register $r$ set to $0$, all other register values
 unchanged, and no recorded answer has the property that it terminates with guard $G$
 and, for every run length at which all choice sequences halt, has probabilities $p$ and
 $1-p$ of answering true and false, respectively. Then the program started at $l$ with
-configuration $(v,	ext{none})$ has that same property.
+configuration $(v,\text{none})$ has that same property.
 \end{lemma}
 
 \begin{lemma}[Semantics of a Halving Step]
@@ -180,9 +180,9 @@ then the current configuration has probabilistic semantics with probability $p$.
 \difficulty{1}
 Let a nondeterministic register program have a state $l$ whose instruction branches on
 whether register $r$ is zero, with successor states $l_1$ for zero and $l_0$ for
-nonzero. If the current configuration $(l,v,	ext{no answer})$ satisfies the guard,
-register $r$ is zero, and the configuration $(l_1,v,	ext{no answer})$ has probabilistic
-semantics with acceptance probability $p$, then $(l,v,	ext{no answer})$ has
+nonzero. If the current configuration $(l,v,\text{no answer})$ satisfies the guard,
+register $r$ is zero, and the configuration $(l_1,v,\text{no answer})$ has probabilistic
+semantics with acceptance probability $p$, then $(l,v,\text{no answer})$ has
 probabilistic semantics with acceptance probability $p$.
 \end{lemma}
 
@@ -194,9 +194,9 @@ probabilistic semantics with acceptance probability $p$.
 \difficulty{1}
 Let a nondeterministic register program have a state $l$ whose instruction branches on
 whether register $r$ is zero, with successor states $l_1$ for zero and $l_0$ for
-nonzero. If the current configuration $(l,v,	ext{no answer})$ satisfies the guard,
-register $r$ is nonzero, and the configuration $(l_0,v,	ext{no answer})$ has
-probabilistic semantics with acceptance probability $p$, then $(l,v,	ext{no answer})$
+nonzero. If the current configuration $(l,v,\text{no answer})$ satisfies the guard,
+register $r$ is nonzero, and the configuration $(l_0,v,\text{no answer})$ has
+probabilistic semantics with acceptance probability $p$, then $(l,v,\text{no answer})$
 has probabilistic semantics with acceptance probability $p$.
 \end{lemma}
 
@@ -208,9 +208,9 @@ has probabilistic semantics with acceptance probability $p$.
 \difficulty{1}
 Let a nondeterministic register program have a state $l$ whose instruction branches on
 whether register $r$ is odd, with successor states $l_1$ for odd and $l_0$ for even. If
-the current configuration $(l,v,	ext{no answer})$ satisfies the guard, register $r$ is
-odd, and the configuration $(l_1,v,	ext{no answer})$ has probabilistic semantics with
-acceptance probability $p$, then $(l,v,	ext{no answer})$ has probabilistic semantics
+the current configuration $(l,v,\text{no answer})$ satisfies the guard, register $r$ is
+odd, and the configuration $(l_1,v,\text{no answer})$ has probabilistic semantics with
+acceptance probability $p$, then $(l,v,\text{no answer})$ has probabilistic semantics
 with acceptance probability $p$.
 \end{lemma}
 
@@ -222,9 +222,9 @@ with acceptance probability $p$.
 \difficulty{1}
 Let a nondeterministic register program have a state $l$ whose instruction branches on
 whether register $r$ is odd, with successor states $l_1$ for odd and $l_0$ for even. If
-the current configuration $(l,v,	ext{no answer})$ satisfies the guard, the value of
-register $r$ is even, and the configuration $(l_0,v,	ext{no answer})$ has probabilistic
-semantics with acceptance probability $p$, then $(l,v,	ext{no answer})$ has
+the current configuration $(l,v,\text{no answer})$ satisfies the guard, the value of
+register $r$ is even, and the configuration $(l_0,v,\text{no answer})$ has probabilistic
+semantics with acceptance probability $p$, then $(l,v,\text{no answer})$ has
 probabilistic semantics with acceptance probability $p$.
 \end{lemma}
 
@@ -268,7 +268,7 @@ $p$, then $(l,v,\mathrm{none})$ also has probabilistic semantics $p$.
 \uses{Complexity.LogProg.PSem, Complexity.LogProg.PSem.det, Complexity.LogProg.PSem.halted, Complexity.LogProg.astep}
 \difficulty{3}
 Let a nondeterministic register program have a state $l$ whose instruction immediately
-returns the Boolean value $b$. If the configuration $(l,v,	ext{no answer})$ satisfies
+returns the Boolean value $b$. If the configuration $(l,v,\text{no answer})$ satisfies
 the guard, then it has probabilistic semantics with acceptance probability $1$ when $b$
 is true and $0$ when $b$ is false.
 \end{lemma}
@@ -280,7 +280,7 @@ is true and $0$ when $b$ is false.
 \uses{Complexity.LogProg.PSem, Complexity.LogProg.PSem.congr, Complexity.LogProg.PSem.ret}
 \difficulty{1}
 Let a nondeterministic register program have a state $l$ whose instruction immediately
-returns false. If the configuration $(l,v,	ext{no answer})$ satisfies the guard, then it
+returns false. If the configuration $(l,v,\text{no answer})$ satisfies the guard, then it
 has probabilistic semantics with acceptance probability $0$.
 \end{lemma}
 
@@ -355,9 +355,9 @@ probability.
 \difficulty{7}
 Let a nondeterministic register program, oracle, input, guard, reached state $l'$,
 register valuation $v'$, and rational $p$ be given. Suppose the configuration
-$(l',v',	ext{no answer})$ has probabilistic semantics with acceptance probability $p$.
+$(l',v',\text{no answer})$ has probabilistic semantics with acceptance probability $p$.
 Then, for every natural number $T$ and configuration $a$, if running the program with
-each choice resolved as false for $T$ steps takes $a$ to $(l',v',	ext{no answer})$, and
+each choice resolved as false for $T$ steps takes $a$ to $(l',v',\text{no answer})$, and
 the guard holds at every configuration along that run before time $T$, the initial
 configuration $a$ has probabilistic semantics with acceptance probability $p$.
 \end{theorem}
@@ -371,8 +371,8 @@ configuration $a$ has probabilistic semantics with acceptance probability $p$.
 Let a nondeterministic register program, oracle, input, guard, starting configuration
 $a$, reached state $l'$, register valuation $v'$, and rational $p$ be given. Suppose
 there is a finite run of the program with each choice resolved as false that starts at
-$a$, reaches $(l',v',	ext{no answer})$, and satisfies the guard at every configuration
-before reaching it. If $(l',v',	ext{no answer})$ has probabilistic semantics with
+$a$, reaches $(l',v',\text{no answer})$, and satisfies the guard at every configuration
+before reaching it. If $(l',v',\text{no answer})$ has probabilistic semantics with
 acceptance probability $p$, then $a$ has probabilistic semantics with acceptance
 probability $p$.
 \end{theorem}

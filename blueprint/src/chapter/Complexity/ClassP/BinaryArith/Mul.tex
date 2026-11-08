@@ -81,8 +81,8 @@ $\operatorname{bits}(a)$ and $\operatorname{bits}(b)$ yields $\operatorname{bits
 \leanok
 \uses{Complexity.BinArith.add, Complexity.isNilB, Complexity.pairFstD, Complexity.pairSndD, Turing.pairEncode}
 For a list state $S$, write its nested pair decomposition as $(A,(B,C))$. If $B$ is
-empty, the step returns $S$; otherwise it returns the encoding of $(	ext{false} ::
-A,(	ext{drop}_1(B),R))$, where $R$ is the binary sum of the encoding of $(C,A)$ when the
+empty, the step returns $S$; otherwise it returns the encoding of $(\text{false} ::
+A,(\text{drop}_1(B),R))$, where $R$ is the binary sum of the encoding of $(C,A)$ when the
 first bit of $B$ is true, and is $C$ when that bit is false. An empty $B$ has default
 first bit false.
 \end{definition}
@@ -136,7 +136,7 @@ the new state is strictly smaller; if it is empty, the step leaves $S$ unchanged
 \difficulty{5}
 Let $z$ and $S$ be bit strings, and let $u$ and $v$ be the total first and second
 projections of $z$. Suppose there are bit strings $A,B,C$ such that $S$ encodes the pair
-$(A,	ext{the pair }(B,C))$, the value of $C$ plus the product of the values of $A$ and
+$(A,\text{the pair }(B,C))$, the value of $C$ plus the product of the values of $A$ and
 $B$ equals the product of the values of $u$ and $v$, $C$ is the canonical bit
 representation of its value, and $|A|+|B|\le |u|+|v|$. Then $|S|\le 4(|z|+1)$, where
 $|\cdot|$ denotes bit-string length and the value of a bit string is its little-endian

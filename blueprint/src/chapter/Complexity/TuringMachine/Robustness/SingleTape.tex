@@ -937,7 +937,7 @@ right, entering state $s(i+1)$. For any input-head position $p$, output word $o$
 integer $z$, and zipper lists $l,r$, and any natural number $n\le |w|$, after $n$ steps
 from the forward-sweep configuration with state $s(0)$ and frontier $z$, the machine is
 in state $s(n)$ with frontier $z+n$ and zipper lists
-$\operatorname{reverse}(\operatorname{map}(w[0:n],\mathrm{some}))\mathbin{++}l$ and $r$
+$\operatorname{reverse}(\operatorname{map}(w[0:n],\mathrm{some}))\mathbin{+\!\!+}l$ and $r$
 with its first $n$ entries removed; throughout these steps the work-head position lies
 in $[z,z+n]$.
 \end{lemma}
@@ -949,14 +949,14 @@ in $[z,z+n]$.
 \uses{Turing.Action.apply, Turing.FinTM.DGSpan, Turing.FinTM.sweepAct, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_left_any, Turing.FinTM.sweep_generate, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
 Let $A$ and $Q$ be types, let $x$ and $w$ be finite words over $A$, let $M$ be a
-one-work-tape Turing machine, and let $s:	ext{Fin}(|w|+1)\to Q$ be a state sequence.
+one-work-tape Turing machine, and let $s:\text{Fin}(|w|+1)\to Q$ be a state sequence.
 Suppose that for every $i<|w|$ and every input and scanned work symbol, the transition
 from state $s(i)$ is the action that writes $w_i$ and moves the work head one cell left,
 entering state $s(i+1)$. For any input-head position $p$, output word $o$, integer $z$,
 zipper lists $l,r$, and natural number $n\le |w|$, after $n$ steps from the
 backward-sweep configuration with state $s(0)$ and frontier $z$, the machine is in state
 $s(n)$ with frontier $z-n$ and zipper lists
-$\operatorname{reverse}(\operatorname{map}(w[0:n],\mathrm{some}))\mathbin{++}l$ and $r$
+$\operatorname{reverse}(\operatorname{map}(w[0:n],\mathrm{some}))\mathbin{+\!\!+}l$ and $r$
 with its first $n$ entries removed; throughout these steps the work-head position lies
 in $[z-n,z]$.
 \end{lemma}
@@ -1301,7 +1301,7 @@ $r$ and $\ell$ are true and $0$ otherwise. Then $C\le (4t+7)k+4$.
 \difficulty{6}
 Let $M$ be a finite-alphabet Turing machine with $k>0$ work tapes, choose a source
 symbol $a_0$, and let $x$ be a finite word over the enlarged sweep alphabet. Fix a time
-$	au$ such that the source machine, started on the word obtained by retracting each
+$\tau$ such that the source machine, started on the word obtained by retracting each
 symbol of $x$, is nonhalted at every time $t<\tau$. For every $t\le\tau$, there are
 integers $a$ and natural numbers $n,u$ such that the source configuration at time $t$
 has a window of $n$ consecutive work-tape cells beginning at $a$, satisfying the head,

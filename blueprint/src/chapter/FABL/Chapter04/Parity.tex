@@ -6850,7 +6850,7 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.BooleanFunction, FABL.BooleanFunction.toReal, FABL.DNFFormula.size, FABL.IsBalanced, FABL.Sign, FABL.mintermDNF, FABL.uniformProbability, FABL.uniformProbability_neg_one_eq_half_of_isBalanced}
 \difficulty{4}
-Let $n$ be a positive integer, and let $f$ map the $n$-dimensional sign cube to $\\{
+Let $n$ be a positive integer, and let $f$ map the $n$-dimensional sign cube to $\\{
 -1,1\\}$. If the uniform mean of the real-valued sign of $f$ is zero, then the minterm
 disjunctive normal form formed from the inputs on which $f$ equals $-1$ has size
 $2^{n-1}$.
@@ -11984,7 +11984,7 @@ of the $r$ coordinates a sign, viewed as a unit of the integers.
 \leanok
 \uses{FABL.ParityBlockAssignment}
 \difficulty{1}
-For every natural number $r$, the set of assignments of a sign in $\{ -1,1 \}$ to each
+For every natural number $r$, the set of assignments of a sign in $\{ -1,1 \}$ to each
 of $r$ positions has cardinality $2^r$.
 \end{theorem}
 
@@ -12155,7 +12155,7 @@ positions.
 \uses{FABL.parityLayerEquiv, FABL.parityLayerSize}
 \difficulty{1}
 For natural numbers $r$ and $q$, applying the inverse of the layer equivalence to the
-image of any index in $	ext{Fin}(r^q2^r)$ returns that index.
+image of any index in $\text{Fin}(r^q2^r)$ returns that index.
 \end{theorem}
 
 \begin{theorem}[Right inverse identity for layer indexing]
@@ -12165,7 +12165,7 @@ image of any index in $	ext{Fin}(r^q2^r)$ returns that index.
 \uses{FABL.ParityBlockAssignment, FABL.parityLayerEquiv}
 \difficulty{1}
 For natural numbers $r$ and $q$, the layer equivalence from indices in a set of size
-$r^q2^r$ to pairs consisting of a position in $	ext{Fin}(r^q)$ and a parity block
+$r^q2^r$ to pairs consisting of a position in $\text{Fin}(r^q)$ and a parity block
 assignment is a right inverse to its inverse: applying the equivalence after its inverse
 returns the original pair.
 \end{theorem}
@@ -12196,8 +12196,8 @@ bijection between such pairs and indices less than $r^{q+1}$.
 \leanok
 \uses{FABL.parityChildGroup, FABL.parityChildGroupEquiv}
 \difficulty{1}
-Let $r,q$ be natural numbers, let $g$ be an index in $	ext{Fin}(r^q)$, and let $j$ be an
-index in $	ext{Fin}(r)$. The index assigned to the pair $(g,j)$ in $	ext{Fin}(r^{q+1})$
+Let $r,q$ be natural numbers, let $g$ be an index in $\text{Fin}(r^q)$, and let $j$ be an
+index in $\text{Fin}(r)$. The index assigned to the pair $(g,j)$ in $\text{Fin}(r^{q+1})$
 has value $g r+j$, where $g$ and $j$ denote their respective values.
 \end{theorem}
 
@@ -12356,8 +12356,8 @@ equals the actual assignment for that group.
 \uses{FABL.ParityBlockAssignment, FABL.parityExactNodeValue, FABL.parityLayerEquiv, FABL.parityLayerSize, FABL.parityLayerValues}
 \difficulty{4}
 Let $r,q$ be natural numbers, let the actual assignment at each position in
-$	ext{Fin}(r^q)$ be a parity block assignment, and let $i$ be an index in
-$	ext{Fin}(r^q2^r)$. The AND layer value at $i$ equals $-1$ if and only if the parity
+$\text{Fin}(r^q)$ be a parity block assignment, and let $i$ be an index in
+$\text{Fin}(r^q2^r)$. The AND layer value at $i$ equals $-1$ if and only if the parity
 block assignment in the pair corresponding to $i$ equals the actual assignment at that
 pair's position.
 \end{theorem}
@@ -12369,8 +12369,8 @@ pair's position.
 \uses{FABL.ParityBlockAssignment, FABL.parityExactNodeValue, FABL.parityLayerEquiv, FABL.parityLayerSize, FABL.parityLayerValues}
 \difficulty{4}
 Let $r,q$ be natural numbers, let the actual assignment at each position in
-$	ext{Fin}(r^q)$ be a parity block assignment, and let $i$ be an index in
-$	ext{Fin}(r^q2^r)$. The OR layer value at $i$ equals $-1$ if and only if the parity
+$\text{Fin}(r^q)$ be a parity block assignment, and let $i$ be an index in
+$\text{Fin}(r^q2^r)$. The OR layer value at $i$ equals $-1$ if and only if the parity
 block assignment in the pair corresponding to $i$ differs from the actual assignment at
 that pair's position.
 \end{theorem}
@@ -12382,8 +12382,8 @@ that pair's position.
 \uses{FABL.ParityBlockAssignment, FABL.parityExactNodeValue, FABL.parityLayerEquiv, FABL.parityLayerSize, FABL.parityLayerValues}
 \difficulty{4}
 Let $r,q$ be natural numbers, let the actual assignment at each position in
-$	ext{Fin}(r^q)$ be a parity block assignment, and let $i$ be an index in
-$	ext{Fin}(r^q2^r)$. The OR layer value at $i$ equals $1$ if and only if the parity
+$\text{Fin}(r^q)$ be a parity block assignment, and let $i$ be an index in
+$\text{Fin}(r^q2^r)$. The OR layer value at $i$ equals $1$ if and only if the parity
 block assignment in the pair corresponding to $i$ equals the actual assignment at that
 pair's position.
 \end{theorem}
@@ -12446,7 +12446,7 @@ assigned signs differ.
 \difficulty{6}
 Let $r,q$ be natural numbers, let $G$ be either an AND or OR gate, let $A$ assign a sign
 block to each of the $r^{q+1}$ groups, let $g$ index one of $r^q$ groups, and let $a$ be
-a sign assignment on $	ext{Fin}(r)$. Applying the gate dual to $G$ to the level-$q+1$
+a sign assignment on $\text{Fin}(r)$. Applying the gate dual to $G$ to the level-$q+1$
 node values over the specified input set equals the exact dual-gate node value: it is
 the matching value precisely when $a$ equals the assignment whose $j$th sign is the
 product of the block $A$ assigns to child group $(g,j)$.
@@ -12568,9 +12568,9 @@ parity block assigned to $i$ is not $-1$.
 \uses{FABL.CircuitGate, FABL.CircuitGate.dual, FABL.CircuitGate.evalFinset, FABL.ParityBlockAssignment, FABL.Sign, FABL.mem_parityOutputInputs_and_iff, FABL.mem_parityOutputInputs_or_iff, FABL.parityBlockProduct, FABL.parityLayerEquiv, FABL.parityLayerSize, FABL.parityLayerValues, FABL.parityLayerValues_and_eq_neg_one_iff, FABL.parityLayerValues_or_eq_neg_one_iff, FABL.parityOutputInputs}
 \difficulty{5}
 Let $r$ be a natural number, let $G$ be either an AND or OR gate, and let $A$ assign a
-sign block to each index in $	ext{Fin}(r^0)$. Applying the gate dual to $G$ to the
+sign block to each index in $\text{Fin}(r^0)$. Applying the gate dual to $G$ to the
 level-zero node values over the specified output input set equals the product of the
-signs in the block assigned by $A$ to the unique index in $	ext{Fin}(r^0)$.
+signs in the block assigned by $A$ to the unique index in $\text{Fin}(r^0)$.
 \end{theorem}
 
 \begin{theorem}[Bottom layer value criterion]
@@ -12669,9 +12669,9 @@ internal node count of $T$.
 \uses{FABL.CircuitGate, FABL.CircuitTail, FABL.CircuitTail.eval, FABL.Sign}
 \difficulty{3}
 Let $m,k$ be natural numbers with $m=k$, let $T$ be a circuit tail indexed by $m$, let
-$g$ be an AND or OR gate, and let $v:	ext{Fin}(k)	o	ext{Sign}$ assign a sign to each
+$g$ be an AND or OR gate, and let $v:\text{Fin}(k)\to\text{Sign}$ assign a sign to each
 input. Evaluating the transported tail $T$ on $v$ gives the same sign as evaluating $T$
-on the assignment $i	ext{ }[0m[0m[0m\mapsto v(i\text{ cast along }m=k)$.
+on the assignment $i\text{ }\mapsto v(i\text{ cast along }m=k)$.
 \end{theorem}
 
 \begin{theorem}[Evaluation of the next parity layer]
@@ -17670,7 +17670,7 @@ $(q+2)r^{q+1}2^r$.
 \label{FABL.parityRealRoot}
 \leanok
 For natural numbers $n$ and $h$, define the real number $r(n,h)=n^{1/h}$, where the
-exponent is the reciprocal of $h$ in $br$.
+exponent is the reciprocal of $h$ in $\bbr$.
 \end{definition}
 
 \begin{definition}[Parity block side length]

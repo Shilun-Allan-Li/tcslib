@@ -10,7 +10,7 @@ Optimization on a weighted moment sphere produces nonnegative extremizers. Diffe
 \leanok
 \difficulty{4}
 Let $I$ be finite, let $w_i>0$ for every $i	extrm{ in }I$, and let $p>0$. The set of
-vectors $f:I	obr$ satisfying $sum_iw_i|f_i|^p=1$ is compact in the usual
+vectors $f:I\to\bbr$ satisfying $\sum_iw_i|f_i|^p=1$ is compact in the usual
 finite-dimensional topology.
 \end{theorem}
 
@@ -19,11 +19,11 @@ finite-dimensional topology.
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_moment_sphere_compact}
 \difficulty{5}
-Let $I$ be a finite set, let $w_i>0$ for each $i	extrm{ in }I$ with $sum_{i	extrm{ in
+Let $I$ be a finite set, let $w_i>0$ for each $i	extrm{ in }I$ with $\sum_{i	extrm{ in
 }I} w_i=1$, and let $1<p<2$ and $0
 earrowho
-earrow1$. For $f:I	obr$, define $G(f)=sum_i w_i|f_i|^p$ and
-$F(f)=ho^2sum_iw_if_i^2+(1-ho^2)(sum_iw_if_i)^2$. There is a vector $g:I	obr$ with
+earrow1$. For $f:I\to\bbr$, define $G(f)=\sum_i w_i|f_i|^p$ and
+$F(f)=ho^2\sum_iw_if_i^2+(1-ho^2)(\sum_iw_if_i)^2$. There is a vector $g:I\to\bbr$ with
 $g_i
 earrow0$ for all $i$, $G(g)=1$, and $F(f)
 earrow F(g)$ for every $f$ satisfying $G(f)=1$.
@@ -33,8 +33,8 @@ earrow F(g)$ for every $f$ satisfying $G(f)=1$.
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_concave_level_two_values}
 \leanok
 \difficulty{5}
-Let $I$ be finite, let $varphi:br	obr$ be strictly concave on $[0,infty)$, and let
-$f:I	obr$ be nonnegative. If there is a real number $c$ such that $varphi(f_i)=c$ for
+Let $I$ be finite, let $\varphi:\bbr\to\bbr$ be strictly concave on $[0,\infty)$, and let
+$f:I\to\bbr$ be nonnegative. If there is a real number $c$ such that $\varphi(f_i)=c$ for
 every $i	extrm{ in }I$, then there are $a,b
 earrow0$ such that each $f_i$ equals either $a$ or $b$.
 \end{theorem}
@@ -43,9 +43,9 @@ earrow0$ such that each $f_i$ equals either $a$ or $b$.
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_homogeneity}
 \leanok
 \difficulty{4}
-Let $I$ be finite, let $w:I	obr$, let $p,rho,t
-einbr$, and let $f:I	obr$. Define $G(g)=sum_iw_i|g_i|^p$ and
-$F(g)=rho^2sum_iw_ig_i^2+(1-rho^2)(sum_iw_ig_i)^2$. Then $G(tf)=|t|^pG(f)$ and
+Let $I$ be finite, let $w:I\to\bbr$, let $p,\rho,t
+e\mathbin\bbr$, and let $f:I\to\bbr$. Define $G(g)=\sum_iw_i|g_i|^p$ and
+$F(g)=\rho^2\sum_iw_ig_i^2+(1-\rho^2)(\sum_iw_ig_i)^2$. Then $G(tf)=|t|^pG(f)$ and
 $F(tf)=t^2F(f)$.
 \end{theorem}
 
@@ -73,11 +73,11 @@ $G(cf)=1$ and $F(cf)=F(f)/G(f)^{2/p}$.
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_directional_derivatives}
 \leanok
 \difficulty{5}
-Let $I$ be finite, let $w:I	obr$, let $p>1$ and $rho
-einbr$, and let $g,h:I	obr$ with $g_i
-earrow0$ for every $i$. Define $G(f)=sum_iw_i|f_i|^p$ and
-$F(f)=rho^2sum_iw_if_i^2+(1-rho^2)(sum_iw_if_i)^2$. At $t=0$, the derivative of
-$G(g+th)$ is $psum_iw_ig_i^{p-1}h_i$, and the derivative of $F(g+th)$ is
+Let $I$ be finite, let $w:I\to\bbr$, let $p>1$ and $\rho
+e\mathbin\bbr$, and let $g,h:I\to\bbr$ with $g_i
+earrow0$ for every $i$. Define $G(f)=\sum_iw_i|f_i|^p$ and
+$F(f)=\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2$. At $t=0$, the derivative of
+$G(g+th)$ is $p\sum_iw_ig_i^{p-1}h_i$, and the derivative of $F(g+th)$ is
 $2\bigl(\rho^2\sum_iw_ig_ih_i+(1-\rho^2)(\sum_iw_ig_i)(\sum_iw_ih_i)\bigr)$.
 \end{theorem}
 

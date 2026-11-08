@@ -59,7 +59,7 @@ vertices.
 \leanok
 \uses{BoolCircuit.DAGCircuit, BoolCircuit.GatesAcyclic.nil, BoolCircuit.emitTree, BoolCircuit.emitTree_spec}
 For each natural number $n$, let $C_n$ be the directed acyclic Boolean circuit obtained
-by emitting an AND tree on the input vertices $0,1,0,dots,n-1$; its output is the
+by emitting an AND tree on the input vertices $0,1,2,\ldots,n-1$; its output is the
 vertex returned by that tree construction.
 \end{definition}
 
@@ -70,7 +70,7 @@ vertex returned by that tree construction.
 \uses{BoolCircuit.GatesAcyclic.nil, BoolCircuit.TreeSpec, BoolCircuit.emitTree, BoolCircuit.emitTree_spec}
 \difficulty{1}
 For every natural number $n$, consider the circuit obtained by recursively combining the
-input vertices $0,1,dots,n-1$ with AND, starting from an empty gate list, and let $r$
+input vertices $0,1,\ldots,n-1$ with AND, starting from an empty gate list, and let $r$
 be its gate list and output vertex. The gate list extends the empty list and is acyclic,
 and the output vertex is less than $n$ plus the number of gates; on every Boolean input
 assignment, the output equals the AND of all input values. The number of gates is at

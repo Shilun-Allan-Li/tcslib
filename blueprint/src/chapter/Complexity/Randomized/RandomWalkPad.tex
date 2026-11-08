@@ -11,7 +11,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.Randomized.RandomWalkP
 \statementsource{Vad12}{pdf-bf2ce5422088-p039-b001}
 \label{Randomized.padNbr}
 \leanok
-Let $r$ be a decidable relation on the vertices $0,\\ldots,n-1$. For a vertex $v$ and
+Let $r$ be a decidable relation on the vertices $0,\\ldots,n-1$. For a vertex $v$ and
 an index $i<D$, define its padded neighbor to be the vertex with index $i$ if $i<n$ and
 $v$ is related to that vertex; otherwise define it to be $v$.
 \end{definition}
@@ -47,7 +47,7 @@ whose padded neighbor of $u$ is $v$ is $1$ if $r(u,v)$ holds and $0$ otherwise.
 \label{Randomized.padGraph}
 \leanok
 \uses{Randomized.RegularMultigraph, Randomized.card_padNbr_eq, Randomized.padNbr}
-Let $r$ be a symmetric relation on the finite vertex set $0,\\ldots,n-1$, and let $D$
+Let $r$ be a symmetric relation on the finite vertex set $0,\\ldots,n-1$, and let $D$
 be a natural number with $n\\le D$. The padded regular multigraph has degree $D$ and
 assigns to each vertex and each of its $D$ edge slots the padded neighbor; its edge
 multiplicities are symmetric.

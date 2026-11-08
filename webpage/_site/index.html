@@ -3,7 +3,24 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>TCSlib — TCS Formalization in Lean 4</title><link rel="icon" type="image/svg+xml" href="/tcslib/static/favicon.svg">
+    <title>TCSlib — TCS Formalization in Lean 4</title><meta name="description" content="TCSlib is an open-source Lean 4 library formalizing results in Theoretical Computer Science, including Boolean Function Analysis and Error-Correcting Codes, verified with Mathlib.">
+    <meta name="keywords" content="Lean 4, Lean theorem prover, formal verification, theoretical computer science, TCS, formalization, Mathlib, Boolean function analysis, Fourier analysis, error-correcting codes, coding theory, information theory, interactive theorem proving, proof assistant, verified mathematics, computer science proofs">
+    <meta name="author" content="TCSlib Contributors">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="TCSlib — TCS Formalization in Lean 4">
+    <meta property="og:description" content="Open-source Lean 4 library formalizing Theoretical Computer Science: Boolean Function Analysis, Error-Correcting Codes, and more.">
+    <meta property="og:url" content="https://shilun-allan-li.github.io/tcslib/">
+    <meta property="og:site_name" content="TCSlib">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="TCSlib — TCS Formalization in Lean 4">
+    <meta name="twitter:description" content="Open-source Lean 4 library formalizing Theoretical Computer Science.">
+    <link rel="canonical" href="https://shilun-allan-li.github.io/tcslib/">
+    <link rel="sitemap" type="application/xml" href="/tcslib/static/sitemap.xml">
+    <link rel="icon" type="image/svg+xml" href="/tcslib/static/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/tcslib/static/favicon-96x96.png">
+    <link rel="shortcut icon" href="/tcslib/static/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/tcslib/static/apple-touch-icon.png">
+    <link rel="manifest" href="/tcslib/static/site.webmanifest">
     <link rel="stylesheet" href="/tcslib/static/style.css">
     <script src="/tcslib/static/theme.js">
       </script>
@@ -82,9 +99,9 @@ document.addEventListener("DOMContentLoaded", () => {
       <nav class="navbar">
         <div class="nav-inner">
           <a class="logo" href="/tcslib/">TCSlib</a><div class="nav-links">
-            <a href="#boolean-analysis">Boolean Analysis</a><a href="#coding-theory">Coding Theory</a><a href="#get-started">Get Started</a><span class="divider"> | </span><a href="/tcslib/blueprint/">Blueprint</a><a href="/tcslib/docs/">Docs</a></div>
-          <div class="nav-right">
-            <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></button><a href="https://github.com/Shilun-Allan-Li/tcslib" aria-label="GitHub" target="_blank"><img src="/tcslib/static/github.svg" alt="GitHub" width="22" height="22"></a></div>
+            <a href="/tcslib/theorems/">Theorems</a><a href="/tcslib/dataset/">Dataset</a><span class="divider"> | </span><a href="/tcslib/blueprint/">Blueprint</a><a href="/tcslib/docs/">Docs</a><span class="divider"> | </span><div class="nav-icons">
+              <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme"><img id="theme-icon" src="/tcslib/static/moon.svg" alt="" width="22" height="22"></button><a href="https://github.com/Shilun-Allan-Li/tcslib" aria-label="GitHub" target="_blank"><img src="/tcslib/static/github.svg" alt="GitHub" width="22" height="22"></a></div>
+            </div>
           </div>
         </nav>
       </header>
@@ -95,12 +112,16 @@ document.addEventListener("DOMContentLoaded", () => {
             <p>
               TCSlib</p>
             <p>
-              A Lean 4 Formalization of Theoretical Computer Science</p>
+              A Lean 4 Formalization of</p>
             <p>
-              TCSlib is an open-source library formalizing results in Boolean Function Analysis
-and Coding Theory using <a href="https://lean-lang.org">Lean 4</a> and
+              Theoretical Computer Science</p>
+            <p>
+              TCSlib is an open-source library formalizing results across theoretical
+computer science using <a href="https://lean-lang.org">Lean 4</a> and
 <a href="https://leanprover-community.github.io/mathlib4_docs/">Mathlib</a>.
-Every theorem is machine-checked.</p>
+Our work spans Boolean function analysis and hypercontractivity, error-correcting
+codes, cryptography, and an ongoing formalization of Arora and Barak’s
+<strong>Computational Complexity: A Modern Approach</strong>.</p>
             <a class="hero-btn primary" href="https://github.com/Shilun-Allan-Li/tcslib"><img src="/tcslib/static/arrow.svg" alt="" width="20" height="20"><p>
                 View on GitHub</p>
               </a><a class="hero-btn secondary" href="#get-started"><p>
@@ -119,23 +140,80 @@ including the Fourier expansion, Parseval's identity, and spectral norms.</p>
             </div>
           <div class="pillar">
             <p>
-              <strong>Arrow's Impossibility Theorem</strong></p>
+              <strong>Hypercontractivity Beyond the Cube</strong></p>
             <p>
-              A formal proof of Arrow's Theorem via Boolean function analysis:
-no ranked voting system satisfies independence of irrelevant alternatives,
-unanimity, and non-dictatorship simultaneously.</p>
+              Our newer development extends beyond the Bonami lemma and the
+<code class="math inline">(2,4)</code> inequality to general forward and reverse noise inequalities,
+finite-product hypercontractivity, tensorization, and random-variable moment bounds.</p>
             </div>
           <div class="pillar">
             <p>
-              <strong>Hypercontractivity</strong></p>
+              <strong>Structure and Applications</strong></p>
             <p>
-              The Bonami Lemma and $(2,4)$-Hypercontractivity inequality,
-with applications to the structure of Boolean functions with small Fourier support.</p>
+              Hypercontractive methods connect small-set expansion, low-degree concentration
+and anticoncentration, influences, and KKL. The library also includes
+Arrow’s impossibility theorem via Boolean function analysis.</p>
+            <p>
+              <a href="https://github.com/Shilun-Allan-Li/tcslib/tree/main/TCSlib/BooleanAnalysis/Hypercontractivity">Explore the development</a>.</p>
+            </div>
+          </div>
+        <div class="pillars" id="complexity-theory">
+          <p>
+            <strong>Complexity Theory: Formalizing Arora–Barak</strong></p>
+          <div class="pillar">
+            <p>
+              <strong>Models of Computation</strong></p>
+            <p>
+              An ongoing formalization of Arora and Barak’s textbook, built on reusable
+Turing-machine constructions, circuits, formulas, and simulations.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Complexity Classes and Reductions</strong></p>
+            <p>
+              Developments cover P, NP, PSPACE, NP-completeness and Cook–Levin,
+as well as space complexity, diagonalization, and hierarchy theorems.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>An Active Formalization</strong></p>
+            <p>
+              Work continues across oracle computation, randomized complexity, circuit
+complexity, and expanders, with both completed proofs and open obligations.</p>
+            <p>
+              <a href="https://github.com/Shilun-Allan-Li/tcslib/blob/main/TCSlib/Complexity/README.md">Read the progress notes</a>.</p>
+            </div>
+          </div>
+        <div class="pillars" id="cryptography">
+          <p>
+            <strong>Cryptography</strong></p>
+          <div class="pillar">
+            <p>
+              <strong>Secret Sharing</strong></p>
+            <p>
+              Shamir’s threshold scheme, reconstruction, and perfect privacy,
+with reusable foundations for access structures and shared secrets.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Identification and Public-Key Cryptography</strong></p>
+            <p>
+              Our cryptography work includes RSA and the Schnorr identification protocol,
+with completeness, witness extraction, and honest-verifier zero-knowledge results.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Secure Multiparty Computation</strong></p>
+            <p>
+              Ongoing work on arithmetic circuits and the BGW protocol over Shamir sharings
+connects secret sharing to secure distributed computation.</p>
+            <p>
+              <a href="https://github.com/Shilun-Allan-Li/tcslib/tree/main/TCSlib/Cryptography">Explore cryptography</a>.</p>
             </div>
           </div>
         <div class="pillars" id="coding-theory">
           <p>
-            <strong>Coding Theory</strong></p>
+            <strong>Error-Correcting Codes</strong></p>
           <div class="pillar">
             <p>
               <strong>Classical Bounds</strong></p>
@@ -156,6 +234,74 @@ dual codes, and the MacWilliams identity.</p>
             <p>
               Quantum Singleton and Quantum Hamming bounds,
 formalizing the fundamental limits of quantum error correction.</p>
+            </div>
+          </div>
+        <div class="pillars" id="formalization-tools">
+          <p>
+            <strong>Scripts and Tools for Lean Formalization</strong></p>
+          <div class="pillar">
+            <p>
+              <strong>Have-to-Lemma</strong></p>
+            <p>
+              Extract local proof steps into reusable lemmas and clean up unnecessary
+intermediate facts. The tool uses Lean’s elaborated proof information and
+rechecks each rewrite before writing changes.</p>
+            <p>
+              <a href="https://github.com/Shilun-Allan-Li/tcslib/blob/main/scripts/haves.py">Use the have-to-lemma tool</a>.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Proofmatch</strong></p>
+            <p>
+              Match reference statements and proofs from PDFs or validated Markdown to
+Lean declarations. Proofmatch supports source extraction, search, and comparison
+to help maintain auditable links between informal mathematics and formal proofs.</p>
+            <p>
+              <a href="https://github.com/Shilun-Allan-Li/tcslib/tree/main/proofmatch">Explore Proofmatch</a>.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Blueprints and Dependency Tools</strong></p>
+            <p>
+              Scripts extract declaration dependencies, generate and validate blueprint
+entries, and check style and attribution, keeping the informal exposition
+connected to the evolving library.</p>
+            <p>
+              <a href="https://github.com/Shilun-Allan-Li/tcslib/tree/main/scripts">Browse the scripts</a>.</p>
+            </div>
+          </div>
+        <div class="pillars" id="autoformalization-dataset">
+          <p>
+            <strong>Mathematics Dataset and Autoformalization Pipeline</strong></p>
+          <div class="pillar">
+            <p>
+              <strong>Paired Informal and Formal Mathematics</strong></p>
+            <p>
+              Our dataset brings together TCSlib and attributed FABL material, pairing
+informal statements and proof accounts with extracted Lean statements,
+flattened proofs, dependency information, and source provenance.
+It is designed to support training and evaluation for autoformalization.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>From Sources to Dataset</strong></p>
+            <p>
+              An incremental pipeline ingests references, matches citations, maintains
+blueprints, and generates statement prose and proof accounts where sources
+are unmatched. Cached stages support resuming work as the library grows.</p>
+            <p>
+              <a href="https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/INSTRUCTIONS.md">Follow the pipeline guide</a>.</p>
+            </div>
+          <div class="pillar">
+            <p>
+              <strong>Provenance and Validation</strong></p>
+            <p>
+              Published gzip shards and a manifest make the dataset accessible with
+checksums and project provenance. Structural checks and optional sampled
+Lean checks track quality; the proof-completeness flag records the absence
+of placeholders in extracted text and is separate from kernel validation.</p>
+            <p>
+              <a href="https://github.com/Shilun-Allan-Li/tcslib/blob/main/dataset/README.md">Explore the dataset and schema</a>.</p>
             </div>
           </div>
         <div id="get-started" class="get-started">

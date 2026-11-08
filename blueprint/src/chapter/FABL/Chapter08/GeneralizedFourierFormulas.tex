@@ -76,8 +76,8 @@ n}}g(v))]$.
 \leanok
 \uses{FABL.pmfExpectation, FABL.pmfExpectation_const_mul}
 \difficulty{3}
-Let $Omega$ be a finite set, let $\pi$ be a probability mass function on $Omega$, and
-let $f:Omega\to\mathbb{R}$. The expectation of $-f$ under $\pi$ equals the negative of
+Let $\Omega$ be a finite set, let $\pi$ be a probability mass function on $\Omega$, and
+let $f:\Omega\to\mathbb{R}$. The expectation of $-f$ under $\pi$ equals the negative of
 the expectation of $f$ under $\pi$.
 \end{theorem}
 
@@ -3284,7 +3284,7 @@ Statement pending regeneration.
 Let $ $ be a finite nonempty set with probability mass function $ $, and let $ $ be a
 finite nonempty index set. Suppose $ $ is a basis of real-valued functions on $ $, with
 one basis vector equal to the constant-one function and with the basis orthonormal for
-expectation under $ $. For every natural number $n$ and every function $f: ^n	obR$, the
+expectation under $ $. For every natural number $n$ and every function $f: ^n\to\bbR$, the
 variance of $f$ under the product probability measure equals the sum of the squares of
 its Fourier coefficients over all multi-indices except the constant multi-index.
 \end{theorem}
@@ -10229,12 +10229,12 @@ $\sum_{i=0}^{n-1}\mathbf{1}_{a(i)\ne z}$.
   {context}
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p210-b002}
-Let $ mathcal{X}$ be a finite nonempty set with probability mass function $ pi$, and let
+Let $\mathcal{X}$ be a finite nonempty set with probability mass function $\pi$, and let
 a finite nonempty index set carry an orthonormal basis of real-valued functions on
-$ mathcal{X}$ that includes the constant-one function. For any number $n$ of coordinates
-and function $f$ on $ mathcal{X}^n$, its total influence equals the sum, over all index
-tuples $a$, of $ mathrm{ord}(a) widehat f(a)^2$, where $ mathrm{ord}(a)$ counts the
-coordinates at which $a$ is not the distinguished constant index and $ widehat f(a)$ is
+$\mathcal{X}$ that includes the constant-one function. For any number $n$ of coordinates
+and function $f$ on $\mathcal{X}^n$, its total influence equals the sum, over all index
+tuples $a$, of $\mathrm{ord}(a)\widehat f(a)^2$, where $\mathrm{ord}(a)$ counts the
+coordinates at which $a$ is not the distinguished constant index and $\widehat f(a)$ is
 the corresponding Fourier coefficient.
 \end{theorem}
 
@@ -11835,7 +11835,7 @@ coordinate $i$.
 \uses{FABL.ProductL2, FABL.pmfExpectation_const_mul, FABL.productMean}
 \difficulty{1}
 Let $n$ be a nonnegative integer, let $ Ω$ be a finite set with probability mass
-function $ π$, let $f:( Ω^n)	o bbr$, and let $c in bbr$. The product mean of $c f$ is
+function $ π$, let $f:( Ω^n)\to\bbr$, and let $c\mathbin\bbr$. The product mean of $c f$ is
 $c$ times the product mean of $f$.
 \end{theorem}
 
@@ -13575,11 +13575,11 @@ $f$ and to $g$.
 \leanok
 \uses{FABL.ProductL2, FABL.pmfExpectation_const_mul, FABL.productNoiseOperator}
 \difficulty{3}
-Let $[0m\Omega$ be a finite set, let $[0m\pi$ be a probability mass function on it,
-let $n$ be a natural number, and let $[0m\rho\in[0,1]$. For every real scalar $c$ and
-every real-valued function $f$ on $[0m\Omega^n$, the product noise operator that
-independently retains each coordinate with probability $[0m\rho$ and otherwise
-resamples from $[0m\pi$ satisfies $T_\rho(cf)=cT_\rho f$.
+Let $\Omega$ be a finite set, let $\pi$ be a probability mass function on it,
+let $n$ be a natural number, and let $\rho\in[0,1]$. For every real scalar $c$ and
+every real-valued function $f$ on $\Omega^n$, the product noise operator that
+independently retains each coordinate with probability $\rho$ and otherwise
+resamples from $\pi$ satisfies $T_\rho(cf)=cT_\rho f$.
 \end{theorem}
 
 \begin{theorem}[Fourier expansion of the product noise operator]
@@ -14288,15 +14288,15 @@ $d$ is the number of coordinates where $a$ differs from the constant index.
 \leanok
 \uses{FABL.FiniteFourierBasis, FABL.FiniteFourierBasis.fourierCoeff_productNoiseOperator, FABL.FiniteFourierBasis.plancherel, FABL.ProductL2, FABL.productInner, FABL.productNoiseOperator}
 \difficulty{3}
-Let $[0m\Omega$ be a finite nonempty set, let $[0m\pi$ be a probability mass function
-on $[0m\Omega$, and let $[0m\iota$ be a finite nonempty index set. Suppose a basis of
-the real-valued functions on $[0m\Omega$ is given whose distinguished vector is the
+Let $\Omega$ be a finite nonempty set, let $\pi$ be a probability mass function
+on $\Omega$, and let $\iota$ be a finite nonempty index set. Suppose a basis of
+the real-valued functions on $\Omega$ is given whose distinguished vector is the
 constant-one function and which is orthonormal for the inner product weighted by
-$[0m\pi$. For any natural number $[0m n$, any $[0m\rho\in[0,1]$, and any real-valued
-functions $f,g$ on $[0m\Omega^n$, the product noise operator that independently retains
-each input coordinate with probability $[0m\rho$ and otherwise resamples it from
-$[0m\pi$ is self-adjoint for the product inner product weighted by $[0m\pi^n$:
-$[0m\langle f,T_\rho g\rangle=[0m\langle T_\rho f,g\rangle$.
+$\pi$. For any natural number $ n$, any $\rho\in[0,1]$, and any real-valued
+functions $f,g$ on $\Omega^n$, the product noise operator that independently retains
+each input coordinate with probability $\rho$ and otherwise resamples it from
+$\pi$ is self-adjoint for the product inner product weighted by $\pi^n$:
+$\langle f,T_\rho g\rangle=\langle T_\rho f,g\rangle$.
 \end{theorem}
 
 \begin{definition}[Product noise stability]
@@ -15186,8 +15186,8 @@ multi-indices with exactly one nonzero coordinate and with that coordinate equal
 Let $ $ be a finite nonempty set with probability mass function $ $, and let $ $ be a
 finite nonempty index set. Suppose $ $ is a basis of real-valued functions on $ $, with
 one basis vector equal to the constant-one function and with the basis orthonormal for
-expectation under $ $. For every natural number $n$, every function $f: ^n	obR$, and
-every coordinate $i$, the stable influence polynomial at parameter $ $ tends, as $ 	o0$,
+expectation under $ $. For every natural number $n$, every function $f: ^n\to\bbR$, and
+every coordinate $i$, the stable influence polynomial at parameter $ $ tends, as $ \to0$,
 to the sum of the squared Fourier coefficients over multi-indices of order one that are
 nonzero at coordinate $i$.
 \end{theorem}
@@ -22058,7 +22058,7 @@ support.
 \uses{FABL.Sign, FABL.mean, FABL.pmfExpectation_uniformPMF_eq_expect, FABL.productMean, FABL.productProbabilityPMF_uniformSign, FABL.uniformPMF}
 \difficulty{3}
 Let $n$ be a nonnegative integer and let $f$ be a real-valued function on the set of
-sign vectors $ \{−1,1\}^n$. Its mean under the product of uniform probability
+sign vectors $\{−1,1\}^n$. Its mean under the product of uniform probability
 distributions on the two signs equals its uniform mean over the sign cube.
 \end{theorem}
 
@@ -26626,11 +26626,11 @@ $\rho$ and input $x$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p214-b005,
     pdf-ffbe9c7b3306-p053-b003}
-Let $n$ be a natural number and let $[0m\rho\in[0,1]$. On the cube $[0m\{-1,1\}^n$
+Let $n$ be a natural number and let $\rho\in[0,1]$. On the cube $\{-1,1\}^n$
 with uniform measure, the product noise operator that retains each input sign with
-probability $[0m\rho$ and otherwise resamples an independent uniform sign agrees, on
+probability $\rho$ and otherwise resamples an independent uniform sign agrees, on
 every real-valued function $f$, with the Walsh noise operator: it multiplies the Fourier
-coefficient indexed by a subset $S\subseteq\{1,\ldots,n\}$ by $[0m\rho^{|S|}$.
+coefficient indexed by a subset $S\subseteq\{1,\ldots,n\}$ by $\rho^{|S|}$.
 \end{theorem}
 
 \begin{theorem}[Product noise stability on the uniform sign cube]
@@ -26639,12 +26639,12 @@ coefficient indexed by a subset $S\subseteq\{1,\ldots,n\}$ by $[0m\rho^{|S|}$.
 \leanok
 \uses{FABL.Sign, FABL.noiseStability, FABL.noiseStability_eq_uniformInner_noiseOperator, FABL.productInner_uniformSign, FABL.productNoiseOperator_uniformSign_eq_noiseOperator, FABL.productNoiseStability, FABL.uniformPMF}
 \difficulty{3}
-Let $n$ be a natural number, let $[0m\rho\in[0,1]$, and let $f$ be a real-valued
-function on $[0m\{-1,1\}^n$. Choose $X$ uniformly from the sign cube, and form $Y$ by
+Let $n$ be a natural number, let $\rho\in[0,1]$, and let $f$ be a real-valued
+function on $\{-1,1\}^n$. Choose $X$ uniformly from the sign cube, and form $Y$ by
 independently retaining each coordinate of $X$ with probability $(1+ho)/2$ and flipping
 it otherwise. The expected product $\mathbb{E}[f(X)f(Y)]$ equals the product noise
 stability obtained by independently retaining each coordinate with probability
-$[0m\rho$ and otherwise resampling it as a uniform sign.
+$\rho$ and otherwise resampling it as a uniform sign.
 \end{theorem}
 
 \begin{theorem}[Influence of the two-coordinate indicator]

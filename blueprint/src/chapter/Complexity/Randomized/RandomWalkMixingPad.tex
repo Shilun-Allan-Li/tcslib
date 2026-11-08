@@ -12,7 +12,7 @@ Declarations of the Lean module \texttt{TCSlib.Complexity.Randomized.RandomWalkM
 \leanok
 \uses{Randomized.avgOut, Randomized.hitProb, Randomized.outNbrs}
 \difficulty{5}
-Let $n$ be a natural number, let $r$ be a decidable binary relation on $	ext{Fin}(n)$,
+Let $n$ be a natural number, let $r$ be a decidable binary relation on $\text{Fin}(n)$,
 and form the directed graph whose edges are given by $r$. For every target vertex $t$,
 time $k$, and starting vertex $s$, the probability of hitting $t$ after $k$ steps is
 between $0$ and $1$, inclusive.
@@ -24,7 +24,7 @@ between $0$ and $1$, inclusive.
 \leanok
 \uses{Randomized.avgOut, Randomized.hitProb, Randomized.outNbrs}
 \difficulty{4}
-Let $n$ be a natural number and let $r$ be a decidable relation on $	ext{Fin}(n)$. For
+Let $n$ be a natural number and let $r$ be a decidable relation on $\text{Fin}(n)$. For
 distinct vertices $s,t\in\text{Fin}(n)$, if $s$ has no outgoing neighbors in the digraph
 defined by $r$, then for every natural number $k$, the $k$-step probability of hitting
 $t$ from $s$ is zero.
@@ -36,7 +36,7 @@ $t$ from $s$ is zero.
 \leanok
 \uses{Randomized.avgOut, Randomized.hitProb, Randomized.outNbrs}
 \difficulty{1}
-Let $n$ be a natural number, let $r$ be a decidable binary relation on $	ext{Fin}(n)$,
+Let $n$ be a natural number, let $r$ be a decidable binary relation on $\text{Fin}(n)$,
 and form the directed graph whose edges are given by $r$. If $s$ and $t$ are distinct
 vertices and $s$ has at least one outgoing neighbor, then for every $k\in\mathbb{N}$ the
 probability of hitting $t$ from $s$ after $k+1$ steps is the average of the
@@ -151,7 +151,7 @@ probability of $t$ after $m$ such steps in the padded graph, provided $n\le D$.
 \leanok
 \uses{Randomized.RegularMultigraph.hitProb, Randomized.binTail, Randomized.binTail_mem_Icc, Randomized.hitProb, Randomized.padGraph, Randomized.sub_binTail_le_hitProb, Randomized.succ_mul_binTail_le}
 \difficulty{3}
-Let $n,D$ be nonnegative integers and let $r$ be a symmetric relation on $	ext{Fin}(n)$,
+Let $n,D$ be nonnegative integers and let $r$ be a symmetric relation on $\text{Fin}(n)$,
 with $n\le D\le 4n^2$. For vertices $s,t$ and an integer $k$, if the probability that a
 length-$k$ walk in the directed graph defined by $r$, starting at $s$, visits $t$ is at
 least $9/10$, then the probability that a length-$10n^2k$ walk in the padded regular
@@ -164,7 +164,7 @@ multigraph of degree $D$, starting at $s$, visits $t$ is at least $1/2$.
 \leanok
 \uses{Randomized.RegularMultigraph.hitProb, Randomized.half_le_hitProb_padGraph, Randomized.hitProb, Randomized.le_padDegree, Randomized.padDegree_le, Randomized.padGraph}
 \difficulty{3}
-Let $n$ be a nonnegative integer and let $r$ be a symmetric relation on $	ext{Fin}(n)$.
+Let $n$ be a nonnegative integer and let $r$ be a symmetric relation on $\text{Fin}(n)$.
 For vertices $s,t$ and an integer $k$, if the probability that a length-$k$ walk in the
 directed graph defined by $r$, starting at $s$, visits $t$ is at least $9/10$, then the
 corresponding probability in the padded regular multigraph of degree

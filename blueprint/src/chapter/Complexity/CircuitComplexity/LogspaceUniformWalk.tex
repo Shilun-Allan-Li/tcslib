@@ -77,7 +77,7 @@ or incrementing register zero and proceeding to the site's successor label other
 \lean{BoolCircuit.AdjWalk.rg}
 \label{BoolCircuit.AdjWalk.rg}
 \leanok
-For natural numbers $k,V,U,W$, define $r:	ext{Fin }4	obn$ by $r(0)=k$, $r(1)=V$,
+For natural numbers $k,V,U,W$, define $r:\text{Fin }4\to\bbn$ by $r(0)=k$, $r(1)=V$,
 $r(2)=U$, and $r(3)=W$.
 \end{definition}
 
@@ -136,7 +136,7 @@ every register among the four.
 \leanok
 \uses{BoolCircuit.AdjWalk.fin4_cases, BoolCircuit.AdjWalk.rg}
 \difficulty{4}
-For natural numbers $k,V,U,W,q$, let $r(k,V,U,W)$ be the function on $	ext{Fin}(4)$ with
+For natural numbers $k,V,U,W,q$, let $r(k,V,U,W)$ be the function on $\text{Fin}(4)$ with
 successive values $k,V,U,W$. Replacing its value at index $0$ by $q$ gives $r(q,V,U,W)$.
 \end{lemma}
 
@@ -146,7 +146,7 @@ successive values $k,V,U,W$. Replacing its value at index $0$ by $q$ gives $r(q,
 \leanok
 \uses{BoolCircuit.AdjWalk.fin4_cases, BoolCircuit.AdjWalk.rg}
 \difficulty{4}
-For natural numbers $k,V,U,W,q$, let $r(k,V,U,W)$ be the function on $	ext{Fin}(4)$ with
+For natural numbers $k,V,U,W,q$, let $r(k,V,U,W)$ be the function on $\text{Fin}(4)$ with
 successive values $k,V,U,W$. Replacing its value at index $1$ by $q$ gives $r(k,q,U,W)$.
 \end{lemma}
 
@@ -156,7 +156,7 @@ successive values $k,V,U,W$. Replacing its value at index $1$ by $q$ gives $r(k,
 \leanok
 \uses{BoolCircuit.AdjWalk.fin4_cases, BoolCircuit.AdjWalk.rg}
 \difficulty{4}
-For natural numbers $k,V,U,W,q$, let $r(k,V,U,W)$ be the function on $	ext{Fin}(4)$ with
+For natural numbers $k,V,U,W,q$, let $r(k,V,U,W)$ be the function on $\text{Fin}(4)$ with
 successive values $k,V,U,W$. Replacing its value at index $2$ by $q$ gives $r(k,V,q,W)$.
 \end{lemma}
 
@@ -166,7 +166,7 @@ successive values $k,V,U,W$. Replacing its value at index $2$ by $q$ gives $r(k,
 \leanok
 \uses{BoolCircuit.AdjWalk.fin4_cases, BoolCircuit.AdjWalk.rg}
 \difficulty{4}
-For natural numbers $k,V,U,W,q$, let $r(k,V,U,W)$ be the function on $	ext{Fin}(4)$ with
+For natural numbers $k,V,U,W,q$, let $r(k,V,U,W)$ be the function on $\text{Fin}(4)$ with
 successive values $k,V,U,W$. Replacing its value at index $3$ by $q$ gives $r(k,V,U,q)$.
 \end{lemma}
 
@@ -407,7 +407,7 @@ is the indicator of that edge relation.
 \difficulty{5}
 Let $C$ be a family of directed acyclic circuits, let $lm$ be a Boolean, let $n,i,B,V,U$
 be natural numbers, and let $o$ be a Boolean oracle on the five query indices and bit
-strings. Suppose $V	ext{,}U\le B$. For every $d,W,k$ with $W+d=U$, $k\le i$, and
+strings. Suppose $V\text{,}U\le B$. For every $d,W,k$ with $W+d=U$, $k\le i$, and
 $k+d+1\le B$, start the walk on the encoding of $1^n$ paired with the binary expansion
 of $i$, in state $uL$, with register values $(k,V,U,W)$ and no answer recorded. If $k\le
 i<k+d+1$, the walk halts with answer $lm$ or the $(i-k)$-th bit of the word consisting
@@ -492,9 +492,9 @@ reaching it.
 \uses{BoolCircuit.AdjWalk.Em, BoolCircuit.AdjWalk.Em.append, BoolCircuit.AdjWalk.Em.emit, BoolCircuit.AdjWalk.Em.mono, BoolCircuit.AdjWalk.Em.step, BoolCircuit.AdjWalk.Site.bit, BoolCircuit.AdjWalk.Site.next, BoolCircuit.AdjWalk.aLoop, BoolCircuit.AdjWalk.args_eq_filter, BoolCircuit.AdjWalk.astep_call₁, BoolCircuit.AdjWalk.gd_rg, BoolCircuit.AdjWalk.kindEm, BoolCircuit.AdjWalk.orc, BoolCircuit.AdjWalk.orc_size, BoolCircuit.AdjWalk.rg, BoolCircuit.AdjWalk.rg_1, BoolCircuit.AdjWalk.upd_2, BoolCircuit.AdjWalk.walk, BoolCircuit.DAGCircuit.IsCanonical, BoolCircuit.DAGCircuit.size, BoolCircuit.DAGGate.encode, BoolCircuit.GateKind.encode, BoolCircuit.encodeList, BoolCircuit.encodeNat, Complexity.LogProg.astep}
 \difficulty{6}
 Let $C$ be a family of directed acyclic circuits, and let $n,i,B$ be natural numbers and
-$[?]$ be a Boolean parameter $	ext{lm}$. Assume the circuit $C_n$ has its gate argument
+Let $\mathit{lm}$ be a Boolean parameter. Assume the circuit $C_n$ has its gate argument
 lists sorted in strictly increasing order and satisfies
-$	ext{output}(C_n)+1=	ext{size}(C_n)$, with $	ext{size}(C_n)+1\le B$. For natural
+$\text{output}(C_n)+1=\text{size}(C_n)$, with $\text{size}(C_n)+1\le B$. For natural
 numbers $d,V,k,U,W,K$ such that $V+d=\text{size}(C_n)$, $n\le V$, $k\le i$, $U,W\le B$,
 and $K=k+|S|\le B$, where $S$ is the encoding of the gates of $C_n$ from index $V-n$
 onward, start the gate-processing machine in state $gS$, with registers $(k,V,U,W)$, no

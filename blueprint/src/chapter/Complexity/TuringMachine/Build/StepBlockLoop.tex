@@ -75,7 +75,7 @@ $\tau$, it is at neither exit.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.StepBlock.Ph, Turing.StepBlock.Rep, Turing.StepBlock.exit, Turing.StepBlock.loopOrbit_succ, Turing.StepBlock.loopRoundTime, Turing.StepBlock.loopRoundTime_spec, Turing.StepBlock.roundTM, Turing.counterLoopOrbit}
 \difficulty{4}
-Let $M$ be a $k$-work-tape binary machine with states indexed by $	ext{Fin}(n+1)$, and
+Let $M$ be a $k$-work-tape binary machine with states indexed by $\text{Fin}(n+1)$, and
 let $c$ be an initial configuration with a present state. Suppose a compiled
 configuration $d$ starts at the live exit anchor and represents $c$. For a natural
 number $r$, assume the machine has a present state at every time $u<r$. Let $e$ be the
@@ -91,10 +91,10 @@ simulated configuration at that time, and $e$ has the same output as $d$.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.StepBlock.Ph, Turing.StepBlock.Rep, Turing.StepBlock.exit, Turing.StepBlock.loopOrbit_rep, Turing.StepBlock.loopRoundTime, Turing.StepBlock.loopRoundTime_spec, Turing.StepBlock.roundTM, Turing.counterLoopOrbit, Turing.tableBitsK}
 \difficulty{3}
-Let $M$ be a $k$-work-tape binary machine with states indexed by $	ext{Fin}(n+1)$, and
+Let $M$ be a $k$-work-tape binary machine with states indexed by $\text{Fin}(n+1)$, and
 let $c$ and $d$ be configurations such that $d$ starts at the live exit anchor and
 represents $c$. For a natural number $r$, suppose the simulated machine has a present
-state at every time $uulletulletullet r$. Let $e$ be the configuration after
+state at every time $u\bullet\bullet\bullet r$. Let $e$ be the configuration after
 iterating the compiled machine for $r$ exit-delimited rounds. Then $e$ is again at the
 live exit anchor, and the duration of the next round is positive and at most
 $50(|\text{tableBits}(M)|+1)$. At every strictly intermediate time in that round, the
@@ -134,21 +134,21 @@ completed state nor the escape state.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.VirtualTag, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.StepBlock.Ph, Turing.StepBlock.Rep, Turing.StepBlock.exit, Turing.StepBlock.hostedLoopTM, Turing.StepBlock.loopTM, Turing.StepBlock.loopTM_run, Turing.counterLoopCfg, Turing.tableBitsK, Turing.vhostCfg, Turing.vhostEmitTM, Turing.vhostEmitTM_runFrom}
 \difficulty{4}
-Let $M$ be a $k$-work-tape binary machine with states indexed by $	ext{Fin}(n+1)$, and
+Let $M$ be a $k$-work-tape binary machine with states indexed by $\text{Fin}(n+1)$, and
 let $c$ be a configuration whose state is present. Let $d$ be a configuration of the
 compiled machine, initially at its live entry, representing $c$: the simulated input
 position and work tapes agree, the transition table is stored on the table tape, the
 output summary and unary state are stored on the summary tape, and both auxiliary heads
-are at cell $0$. Let $w$ be a binary word, let $ct:br	o	ext{Option}(	ext{Bool})$ and
-$cpulletulletullet$ be a tape content and offset such that $ct(cp+p)$ stores the
-symbol of $w$ at every integer $p$ with $-1ulletulletullet$ and $pulletulletullet
+are at cell $0$. Let $w$ be a binary word, let $ct:\bbr\to\text{Option}(\text{Bool})$ and
+$cp\bullet\bullet\bullet$ be a tape content and offset such that $ct(cp+p)$ stores the
+symbol of $w$ at every integer $p$ with $-1\bullet\bullet\bullet$ and $p\bullet\bullet\bullet
 |w|$. Suppose $t$ is the natural number represented by the binary digits of $w$, and let
 the input head position of $c$ satisfy the virtual boundary-tag condition for a bit $b$.
 For any input-head position $p$ on an input $z$ and any output prefix, there are a time
 $T$, a simulated configuration $e$, a tape content $ct'$, and a boundary tag $b'$ such
-that $Tulletulletullet t(50(|	ext{tableBits}(M)|+1))+4t+2|w|+2$, and whenever the
-simulated machine has halted by time $t'ulletulletullet t$, $Tulletulletullet
-t'(50(|	ext{tableBits}(M)|+1))+4t'+2|w|$. The configuration $e$ represents the machine
+that $T\bullet\bullet\bullet t(50(|\text{tableBits}(M)|+1))+4t+2|w|+2$, and whenever the
+simulated machine has halted by time $t'\bullet\bullet\bullet t$, $T\bullet\bullet\bullet
+t'(50(|\text{tableBits}(M)|+1))+4t'+2|w|$. The configuration $e$ represents the machine
 configuration after $t$ steps and has the same output as $d$; $ct'$ agrees with $ct$
 outside the cells from $cp$ through $cp+|w|-1$, and $e$ satisfies the virtual
 boundary-tag condition for $b'$. After exactly $T$ steps, the hosted machine is the
@@ -165,9 +165,9 @@ every earlier time $u<T$, its state is neither exit anchor with either tag.
 \uses{Turing.Action, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.CounterLoopState, Turing.StepBlock.Ph, Turing.StepBlock.Rep, Turing.StepBlock.outputSummary, Turing.StepBlock.summaryCells, Turing.StepBlock.summaryTape, Turing.counterLoopCfg, Turing.counter_cfg_eq, Turing.vhostBank, Turing.vhostCfg}
 \difficulty{4}
 Let $k,n$ be natural numbers, let $tr$ be a transition function for a $k$-work-tape
-binary machine with states indexed by $	ext{Fin}(n+1)$, and let $c'$ and $e$ be
+binary machine with states indexed by $\text{Fin}(n+1)$, and let $c'$ and $e$ be
 configurations related by the compiled representation. For any loop-control state $q$,
-tape content $ct:br\to\text{Option}(\text{Bool})$, offset $cp$, tag $b$, input-head
+tape content $ct:\bbr\to\text{Option}(\text{Bool})$, offset $cp$, tag $b$, input-head
 position $p$, and output prefix, the virtual-host configuration built from the loop
 configuration at state $q$ has state $(q,b)$, input-head position $p$, output equal to
 the prefix followed by $e$'s output, and the symbol read on the bank tape corresponding

@@ -1760,7 +1760,7 @@ constructed from that input.
 \uses{FABL.BooleanFunction, FABL.DNFFormula.size, FABL.Sign, FABL.mintermDNF}
 \difficulty{3}
 Let $n$ be a nonnegative integer and let $f$ be a function from the $n$-dimensional sign
-cube to $\\{ -1,1\\}$. The size of the minterm disjunctive normal form formed from the
+cube to $\\{ -1,1\\}$. The size of the minterm disjunctive normal form formed from the
 inputs on which $f$ equals $-1$ is at most $2^n$.
 \end{theorem}
 
@@ -3031,8 +3031,8 @@ computing it in which each term contains at most $n$ literals.
 \leanok
 \uses{FABL.BooleanFunction, FABL.HasDNFSizeLE}
 For a Boolean function $f$ on the $n$-dimensional Boolean cube, define its DNF size to
-be the infimum in $br$-valued notation of the natural numbers $s$ for which $f$ has a
-DNF of size at most $s$; since this is an infimum in $br$ over a subset of $br$, it is
+be the infimum in $\bbr$-valued notation of the natural numbers $s$ for which $f$ has a
+DNF of size at most $s$; since this is an infimum in $\bbr$ over a subset of $\bbr$, it is
 the greatest lower bound of those admissible sizes.
 \end{definition}
 
@@ -6622,7 +6622,7 @@ Statement pending regeneration.
 \uses{FABL.DNFTerm, FABL.Literal}
 \difficulty{1}
 Let $n$ be a natural number, and let a literal on $n$ coordinates consist of a
-coordinate and a required sign in $\bz^\times$. A conjunction term is a list of such
+coordinate and a required sign in $\\bbz^\times$. A conjunction term is a list of such
 literals whose coordinates are pairwise distinct. If two literals in the same term have
 the same coordinate, then they are equal.
 \end{theorem}
@@ -23941,7 +23941,7 @@ literals.
 \uses{FABL.BooleanFunction, FABL.DecisionTree, FABL.F₂DecisionTree.Computes, FABL.F₂DecisionTree.depth, FABL.F₂DecisionTree.eval, FABL.F₂DecisionTree.hasCNFSizeWidth_of_decisionTree, FABL.F₂DecisionTree.leafCount, FABL.HasCNFSizeLE, FABL.HasCNFWidthLE, FABL.Sign, FABL.binaryCubeSignEquiv, FABL.binaryOfBooleanFunction, FABL.booleanFunctionOfBinary}
 \difficulty{4}
 Let $n$ be a nonnegative integer, let $T$ be a decision tree on the Boolean cube
-$\mathbb{F}_2^n$ with sign-valued outputs, and let $f:\{−1,1\}^n\to\{−1,1\}$ be a
+$\mathbb{F}_2^n$ with sign-valued outputs, and let $f:\{−1,1\}^n\to\{−1,1\}$ be a
 Boolean function. If evaluating $T$ on the coordinatewise binary encoding of each sign
 vector computes $f$, then $f$ has a conjunctive normal form with at most as many clauses
 as $T$ has leaves and with every clause containing at most $\mathrm{depth}(T)$ literals.

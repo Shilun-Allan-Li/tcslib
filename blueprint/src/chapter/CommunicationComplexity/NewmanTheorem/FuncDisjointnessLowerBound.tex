@@ -7350,7 +7350,7 @@ the special coordinate of $\omega$ equals the special-coordinate component of $z
 Let $n$ be a positive integer, let $p$ be a deterministic communication protocol for
 length-$n$ set disjointness, and let $z$ be an achievable record of the transcript,
 special coordinate, Alice’s bits before it, and Bob’s bits after it. For any hard sample
-$ \omega$ whose record is $z$, Alice’s vector of bits before the special coordinate,
+$\omega$ whose record is $z$, Alice’s vector of bits before the special coordinate,
 padded by false elsewhere, equals the pre-special-bit component of $z$.
 \end{theorem}
 
@@ -7407,7 +7407,7 @@ hard-distribution samples both yield $z$, then they have the same special coordi
 Let $n$ be a positive integer, let $p$ be a deterministic communication protocol for
 length-$n$ set disjointness, and let $z$ be an achievable value of the record consisting
 of the protocol transcript, the special coordinate, Alice’s bits before that coordinate,
-and Bob’s bits after it. If two hard samples $ \omega$ and $ \omega'$ both yield the
+and Bob’s bits after it. If two hard samples $\omega$ and $\omega'$ both yield the
 value $z$, then their vectors of Alice’s bits before the special coordinate, padded by
 false elsewhere, are equal.
 \end{theorem}
@@ -26644,12 +26644,12 @@ before it, and Bob's bits strictly after it.
 \uses{CommunicationComplexity.FiniteMeasureSpace.integral_comp_eq_sum_measureReal_fibers, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure_isProbabilityMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
 \difficulty{2}
 Let $n$ be a positive integer and let $p$ be a deterministic protocol for length-$n$
-disjointness, and let $cZ$ be the finite range of the statistic consisting of the
+disjointness, and let $\mathcal{Z}$ be the finite range of the statistic consisting of the
 protocol transcript, the special coordinate, Alice’s bits strictly before it, and Bob’s
 bits strictly after it. Under the hard distribution conditioned on disjoint inputs and
 Bob’s special bit being false, the expected KL divergence from the uniform law on one
 bit of Alice’s special-bit law conditioned on each statistic value equals the sum over
-$zcincZ$ of the measure of the fiber at $z$ times that divergence, where each
+$z\in\mathcal{Z}$ of the measure of the fiber at $z$ times that divergence, where each
 fiberwise law is formed by conditioning the ambient uniform sample measure on that
 fiber.
 \end{theorem}
@@ -26661,12 +26661,12 @@ fiber.
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_eq_sum_zVariable, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.specialX, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.uniformBool, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL_eq_disjointSpecialYFalseMeasure_cond_zVariable_klDiv_of_ne_zero, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
 \difficulty{3}
 Let $n$ be a positive integer and let $p$ be a deterministic protocol for length-$n$
-disjointness, and let $cZ$ be the finite range of the statistic consisting of the
+disjointness, and let $\mathcal{Z}$ be the finite range of the statistic consisting of the
 protocol transcript, the special coordinate, Alice’s bits strictly before it, and Bob’s
 bits strictly after it. Under the hard distribution conditioned on disjoint inputs and
 Bob’s special bit being false, the expected KL divergence from the uniform law on one
 bit of Alice’s special-bit law conditioned on each statistic value equals the sum over
-$zcincZ$ of the measure of the fiber at $z$ times the KL divergence from uniform of
+$z\in\mathcal{Z}$ of the measure of the fiber at $z$ times the KL divergence from uniform of
 Alice’s special-bit law obtained by conditioning that same disjoint-and-false
 distribution on the fiber at $z$.
 \end{theorem}
@@ -26970,7 +26970,7 @@ only on disjoint inputs.
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_le_claimInfo, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.claimInfo, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_le_three_halves_mul_aliceInfoTerm, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xFiberKL, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
 \difficulty{2}
 Let $n$ be a positive integer, let $p$ be a deterministic two-party protocol for set
-disjointness on $n$ coordinates, and let $[?]$ be a positive real number. If the sum of
+disjointness on $n$ coordinates, and let $\epsilon$ be a positive real number. If the sum of
 the two conditional mutual informations defining the total claimed information of $p$,
 under the hard distribution conditioned on disjoint inputs, is at most $2\gamma^4/3$,
 then the integral of the Kullback–Leibler divergence of the conditional law of Alice’s
@@ -26986,16 +26986,16 @@ being false, is at most $2\gamma^4$.
 \uses{CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ProtocolType, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.claimInfo, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointSpecialYFalseMeasure, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.integral_xFiberKL_disjointSpecialYFalse_le_two_mul_gamma_pow_four, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.two_mul_integral_xDistance_sq_le_integral_xFiberKL_disjointSpecialYFalse, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.xDistance, CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zVariable}
 \difficulty{2}
 Let $n$ be a positive integer and let $p$ be a deterministic communication protocol for
-disjointness on length-$n$ inputs. If $amma>0$ and the sum of the two conditional
+disjointness on length-$n$ inputs. If $\gamma>0$ and the sum of the two conditional
 mutual informations—between Alice’s special bit and the transcript given the special
 coordinate, Alice’s bits before it, and Bob’s bits from it onward, and between Bob’s
 special bit and the transcript given the special coordinate, Alice’s bits up to and
-including it, and Bob’s bits after it—is at most $2amma^4/3$ under the hard
+including it, and Bob’s bits after it—is at most $2\gamma^4/3$ under the hard
 distribution conditioned on disjoint inputs, then the expectation under that
 distribution further conditioned on Bob’s special bit being false of the squared total
 variation distance between the conditional law of Alice’s special bit given the
 transcript, special coordinate, Alice’s preceding bits, and Bob’s following bits, and
-the uniform law on one bit, is at most $amma^4$.
+the uniform law on one bit, is at most $\gamma^4$.
 \end{theorem}
 
 \begin{theorem}[Bad-event mass on the zero-zero slice]

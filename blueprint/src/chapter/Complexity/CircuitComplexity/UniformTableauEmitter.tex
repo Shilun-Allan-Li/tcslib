@@ -90,7 +90,7 @@ through $10$ in order takes the value $e.i$ at index $3$.
 \uses{Complexity.UTab.ER, Complexity.UTab.ER.f, Complexity.UTab.rQ}
 \difficulty{1}
 Let $e$ be a register record, and let $f_e$ be the function from the eleven indices
-$0,\ldots,10$ to the natural numbers defined by its fields in order. At index $4$, this
+$0,\ldots,10$ to the natural numbers defined by its fields in order. At index $4$, this
 function has value equal to the record's field for the current instruction's cell one
 step earlier.
 \end{theorem}
@@ -142,7 +142,7 @@ $e.pa$, the position in the hard-wired part of the input.
 \leanok
 \uses{Complexity.UTab.ER, Complexity.UTab.ER.f, Complexity.UTab.rPB}
 \difficulty{1}
-For a register record $e$, let $f_e$ denote the function from the indices $0,$ through
+For a register record $e$, let $f_e$ denote the function from the indices $0$ through
 $10$ to its eleven natural-number fields, in their declared order. Its value at index
 $9$ is $e.pb$, the position in the free part of the input.
 \end{theorem}
@@ -200,10 +200,10 @@ from $0$ through $10$.
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_inc, Complexity.UTab.ER.f, Complexity.UTab.ER.set, Complexity.UTab.ER.update_f}
 \difficulty{3}
 Let $P$ be a counter program with eleven natural-number registers, let $x$ be a binary
-input, and let $ho$ be the register assignment encoded by an environment $e$. If the
-instruction at label $ 	ext{ell}$ increments register $r$ and proceeds to label
-$ 	ext{ell}'$, then from label $ 	ext{ell}$, input position $p$, and any current output
-string, the program reaches label $ 	ext{ell}'$ in at most one step, with the register
+input, and let $\rho$ be the register assignment encoded by an environment $e$. If the
+instruction at label $\text{ell}$ increments register $r$ and proceeds to label
+$\text{ell}'$, then from label $\text{ell}$, input position $p$, and any current output
+string, the program reaches label $\text{ell}'$ in at most one step, with the register
 assignment obtained by increasing register $r$ by one, the input position still $p$, and
 no additional output.
 \end{theorem}
@@ -214,11 +214,11 @@ no additional output.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_dec, Complexity.UTab.ER.f, Complexity.UTab.ER.set, Complexity.UTab.ER.update_f}
 \difficulty{3}
-Let $P$ be a counter program with 11 registers, let $x$ be a binary input, and let $ho$
+Let $P$ be a counter program with 11 registers, let $x$ be a binary input, and let $\rho$
 be the register assignment encoded by an environment $e$. If the instruction at label
-$$ decrements register $r$ and jumps to label $'$, then for every current output
-string $o$, there is a run of at most one step from label $$ with registers $ho$ and
-input position $p$ to label $'$, with register assignment obtained by reducing register
+$\ell$ decrements register $r$ and jumps to label $\ell'$, then for every current output
+string $o$, there is a run of at most one step from label $\ell$ with registers $\rho$ and
+input position $p$ to label $\ell'$, with register assignment obtained by reducing register
 $r$ by one (leaving it at zero if it was zero), input position still $p$, and output
 still $o$.
 \end{theorem}
@@ -269,11 +269,11 @@ snapshot marker carrying a Boolean.
 \leanok
 \uses{Complexity.UTab.IPh, Complexity.UTab.SSrc, Complexity.UTab.inpS}
 For a natural number $W$, a Boolean $t_0$, and each phase
-$	exttt{p0},	exttt{zA},	exttt{zB},	exttt{uA},	exttt{uB},	exttt{e1},	exttt{e2}$, assign
+$\texttt{p0},\texttt{zA},\texttt{zB},\texttt{uA},\texttt{uB},\texttt{e1},\texttt{e2}$, assign
 the source list obtained by the following rule. Start with the 11 entries
 $(t_0,p_1,p_0,p_{-1},
 eg p_0\land\neg p_{-1},\ell,n_0,n_1,n_2,c_1,c_2)$, interpreting Boolean entries as
-constant sources, $ell$ as the source for layer $ell$, each enabled neighbor or
+constant sources, $\ell$ as the source for layer $\ell$, each enabled neighbor or
 current source as its indexed source and each disabled one as the constant false source;
 append $W$ sources indexed $0$ through $W-1$, each equal to the constant false source
 when $t_0$ is true and otherwise the corresponding position source. The phase parameters
@@ -304,7 +304,7 @@ and 2, two end-marker sources for each of the $k$ tracks, and the position sourc
 \label{Complexity.UTab.Tpl.kind}
 \leanok
 \uses{Complexity.CfgKind, Complexity.UTab.Tpl}
-For a template with a cell label $tau$, its configuration kind is the nested option
+For a template with a cell label $\tau$, its configuration kind is the nested option
 indicating that label; for an input template, it is the outer option indicating an input
 configuration with no cell label. Every other template has no configuration kind.
 \end{definition}
@@ -412,10 +412,10 @@ followed by $W_d(M)$ copies of $r_I$, and whose constant term is $2+W_d(M)$.
 \label{Complexity.UTab.instrOps}
 \leanok
 \uses{BoolCircuit.tabFixed, Complexity.CounterProg.MOp, Complexity.UTab.SSrc.toLinE, Complexity.UTab.Tpl, Complexity.UTab.Tpl.kind, Complexity.UTab.Tpl.srcs, Complexity.UTab.baseE, Complexity.UTab.sgOps, Complexity.cfgArity, Complexity.cfgF, Complexity.cfgWidth, Complexity.snapWidth}
-For a finite binary Turing machine $M$ and a template $	heta$, the instruction is a list
+For a finite binary Turing machine $M$ and a template $\theta$, the instruction is a list
 of micro-operations on eleven registers. It concatenates, first, the serialized AND
-gates associated with the sources of $	heta$, and then the serialized gates in the fixed
-transition table for the kind of $	heta$, with each table-gate argument represented by
+gates associated with the sources of $\theta$, and then the serialized gates in the fixed
+transition table for the kind of $\theta$, with each table-gate argument represented by
 the base linear expression shifted by that argument.
 \end{definition}
 
@@ -429,7 +429,7 @@ micro-operations on eleven registers. The preamble encodes the two constant gate
 and true; a zero-guard template encodes its specified constant gate; and the dummy
 template encodes a list of $W_d$ false constant gates, where $W_d$ is the fixed table
 width for $M$. The final template prints a delimiter, the linear encoding of the current
-snapshot at position $	ext{snapWidth}(M)$, and another delimiter; every other template
+snapshot at position $\text{snapWidth}(M)$, and another delimiter; every other template
 is assigned the instruction micro-operations associated with that template.
 \end{definition}
 
@@ -438,7 +438,7 @@ is assigned the instruction micro-operations associated with that template.
 \label{Complexity.UTab.Lmax}
 \leanok
 \uses{Complexity.UTab.Tpl, Complexity.UTab.tmpl}
-For a finite binary Turing machine $M$, let $L_{m max}$ be the maximum length of the
+For a finite binary Turing machine $M$, let $L_{\rm max}$ be the maximum length of the
 micro-operation lists assigned to its templates.
 \end{definition}
 
@@ -448,8 +448,8 @@ micro-operation lists assigned to its templates.
 \leanok
 \uses{Complexity.UTab.Lmax, Complexity.UTab.Tpl, Complexity.UTab.tmpl}
 \difficulty{1}
-Fix a finite-tape Turing machine $M$ and a template $	heta$ for its number of work
-tapes. The length of the micro-operation list generated by $	heta$ is at most the
+Fix a finite-tape Turing machine $M$ and a template $\theta$ for its number of work
+tapes. The length of the micro-operation list generated by $\theta$ is at most the
 maximum of these lengths over all templates for $M$.
 \end{theorem}
 

@@ -156,7 +156,7 @@ any call uses an argument list without repetitions.
 \uses{Complexity.LogProg.AReach, Complexity.LogProg.AReach.refl, Complexity.LogProg.AReach.step, Complexity.LogProg.AReach.trans, Complexity.LogProg.GuardLe, Complexity.LogProg.PreS, Complexity.LogProg.astep, Complexity.LogProg.dmove_run, Complexity.LogProg.move_run, Complexity.LogProg.reach_of_eq, Complexity.LogProg.register_update_le}
 \difficulty{6}
 Let $A$ be an instruction program on $m$ registers, with configurations consisting of a
-control state, register values in $bn$, and an optional Boolean result; let an oracle
+control state, register values in $\bbn$, and an optional Boolean result; let an oracle
 assign a Boolean answer to each of $d$ deciders on Boolean-string inputs. Suppose the
 transitions from states $l,l_1,\ldots,l_8$ are respectively: test whether register $c$
 is zero (branching to $l_x$ if so and $l_1$ otherwise); decrement $c$ and go to $l_2$;
@@ -164,7 +164,7 @@ test whether $r$ is zero (branching to $l_6$ if so and $l_3$ otherwise); decreme
 and go to $l_4$; increment $z$ and go to $l_5$; increment $z$ and return to $l_2$; test
 whether $z$ is zero (branching to $l$ if so and $l_7$ otherwise); decrement $z$ and go
 to $l_8$; and increment $r$ and return to $l_6$. Assume $c,r,z$ are pairwise distinct
-registers. For every $k	rinbn$ and register assignment $v$ with $v(c)=k$, $v(z)=0$,
+registers. For every $k	rin\bbn$ and register assignment $v$ with $v(c)=k$, $v(z)=0$,
 every register value at most $B$, and $v(r)2^{v(c)}	rin B$, this program reaches the
 configuration with state $l_x$, register $c$ set to zero, register $r$ set to
 $v(r)2^{v(c)}$, all other registers unchanged, and no result. Every configuration

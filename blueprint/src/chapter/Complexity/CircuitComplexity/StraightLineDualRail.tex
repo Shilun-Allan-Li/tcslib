@@ -65,8 +65,8 @@ emitted rail to the rail list.
 \label{BoolCircuit.StraightLine.dualRail}
 \leanok
 \uses{BoolCircuit.DAGGate, BoolCircuit.SLStmt, BoolCircuit.StraightLine.Rail, BoolCircuit.StraightLine.dualStep}
-For a natural number $n$, an input index $i_0 in br^n$ (that is, an element of
-$	ext{Fin}(n)$), and a list of gates, the dual-rail translation is the pair of statement
+For a natural number $n$, an input index $i_0 \mathbin \bbr^n$ (that is, an element of
+$\text{Fin}(n)$), and a list of gates, the dual-rail translation is the pair of statement
 and rail lists obtained by folding the gate-by-gate translation over that list. The fold
 starts with no statements and, for each input $k$, the rail pair consisting of $x_k$ and
 its negation.
@@ -167,7 +167,7 @@ evaluation of $ss$.
 \leanok
 \uses{BoolCircuit.SLOperand, BoolCircuit.SLOperand.Before, BoolCircuit.SLOperand.eval, BoolCircuit.SLOperand.eval_append, BoolCircuit.SLStmt, BoolCircuit.StraightLine.runLines, BoolCircuit.StraightLine.runLines_append}
 \difficulty{3}
-Let $x:	ext{Fin}(n)	o	ext{Bool}$ be an assignment, let $ss$ and $ext$ be lists of
+Let $x:\text{Fin}(n)\to\text{Bool}$ be an assignment, let $ss$ and $ext$ be lists of
 straight-line statements, and let $o$ be an operand whose referenced line indices are
 all less than the length of $ss$. Then the value of $o$ after running the program formed
 by appending $ext$ to $ss$ is the same as its value after running $ss$.

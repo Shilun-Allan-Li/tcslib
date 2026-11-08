@@ -318,8 +318,8 @@ output is at most $(2X)^{2^{\operatorname{size}(C)}}$.
 Let $x$ be an assignment to the inputs, and let $g$ and $h$ be finite lists of
 arithmetic gates. If every gate reference in $h$ is shifted forward by the length of
 $g$, then executing the concatenated list yields the values from executing $g$, followed
-by the values from executing $h$: $\operatorname{run}(x,g\mathbin{+}
-\operatorname{shift}_{|g|}(h))=\operatorname{run}(x,g)\mathbin{+}\operatorname{run}(x,h)$.
+by the values from executing $h$: $\operatorname{run}(x,g\mathbin{+\!\!+}
+\operatorname{shift}_{|g|}(h))=\operatorname{run}(x,g)\mathbin{+\!\!+}\operatorname{run}(x,h)$.
 \end{theorem}
 
 \begin{definition}[Circuit subtraction construction]

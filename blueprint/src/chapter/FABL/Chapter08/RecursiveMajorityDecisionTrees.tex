@@ -5188,8 +5188,8 @@ the $(d+1)$st recursive three-way construction associated with $i$ and $j$ are d
 \uses{FABL.recursiveMajorityThreeBlockCoordinates, FABL.recursiveMajorityThreeBlockEmbedding}
 \difficulty{5}
 For every natural number $d$, the three coordinate blocks obtained by fixing the first
-coordinate to $0$, $1$, and $2$ partition the coordinates indexed by $br^{3^{d+1}}$; in
-particular, their union is all of $	ext{Fin}(3^{d+1})$.
+coordinate to $0$, $1$, and $2$ partition the coordinates indexed by $\bbr^{3^{d+1}}$; in
+particular, their union is all of $\text{Fin}(3^{d+1})$.
 \end{theorem}
 
 \begin{definition}[Three-sign selector]
@@ -9983,7 +9983,7 @@ coordinates are $A\cup(B\cup C)$.
   {pdf-ffbe9c7b3306-p230-b003,
     pdf-ffbe9c7b3306-p044-b007}
 Let $n$ be a natural number, and let $A,B,C$ be pairwise disjoint sets of coordinates in
-$	ext{Fin}(n)$, with $A$ disjoint from $B\cup C$ and $B$ disjoint from $C$. Given three
+$\text{Fin}(n)$, with $A$ disjoint from $B\cup C$ and $B$ disjoint from $C$. Given three
 decision trees on these coordinate sets, with inputs and outputs in $\\{ -1,1\\}$, their
 ordered composition evaluates on every input to the majority of the three tree outputs
 (the common value of the first two when they agree, and otherwise the third).
@@ -15234,7 +15234,7 @@ seed $s$ and known value $a$ gives $a$ if $a=x_b$, and gives $x_c$ otherwise.
 \leanok
 \uses{FABL.FiniteDecisionTree, FABL.FiniteDecisionTree.castAvailable, FABL.FiniteDecisionTree.mapOutput, FABL.FiniteDecisionTree.thenOnDisjoint, FABL.Sign, FABL.majorityThreePairValue}
 Let $n$ be a natural number, and let $R_1,R_2,B_3$ be sets of coordinates in
-$	ext{Fin}(n)$ such that $R_1$ is disjoint from $R_2\cup B_3$ and $R_2$ is disjoint from
+$\text{Fin}(n)$ such that $R_1$ is disjoint from $R_2\cup B_3$ and $R_2$ is disjoint from
 $B_3$. Let $C_1$ and $C_2$ assign, to each sign, decision trees using coordinates in
 $R_1$ and $R_2$, respectively, and let $E_3$ be a decision tree using coordinates in
 $B_3$. For fixed signs $x_1,x_2$, the resulting decision tree first runs $E_3$,
@@ -17743,7 +17743,7 @@ coordinates in that block.
 \leanok
 \uses{FABL.depthTwoInitial_union_remaining, FABL.depthTwoRemainingCoordinates, FABL.recursiveMajorityThreeBlockCoordinates}
 \difficulty{1}
-For any block and seed in $\{0,1,2\}$, the coordinates in that block other than the one
+For any block and seed in $\{0,1,2\}$, the coordinates in that block other than the one
 selected first by the seed are contained in the block's full set of coordinates.
 \end{theorem}
 
@@ -17915,7 +17915,7 @@ cyclic-majority third coordinate.
 \leanok
 \uses{FABL.depthTwoTopFirst, FABL.depthTwoTopSecond}
 \difficulty{4}
-For every ordering parameter in $\{0,1,2\}$, the first and second positions selected by
+For every ordering parameter in $\{0,1,2\}$, the first and second positions selected by
 its associated cyclic order are distinct.
 \end{theorem}
 
@@ -17925,7 +17925,7 @@ its associated cyclic order are distinct.
 \leanok
 \uses{FABL.depthTwoTopFirst, FABL.depthTwoTopThird}
 \difficulty{4}
-For every ordering parameter in $\{0,1,2\}$, the first and third positions selected by
+For every ordering parameter in $\{0,1,2\}$, the first and third positions selected by
 its associated cyclic order are distinct.
 \end{theorem}
 
@@ -17935,7 +17935,7 @@ its associated cyclic order are distinct.
 \leanok
 \uses{FABL.depthTwoTopSecond, FABL.depthTwoTopThird}
 \difficulty{4}
-For every ordering parameter in $\{0,1,2\}$, the second and third positions selected by
+For every ordering parameter in $\{0,1,2\}$, the second and third positions selected by
 its associated cyclic order are distinct.
 \end{theorem}
 
@@ -17977,7 +17977,7 @@ resulting tree is the ordered interleaving of the three block trees.
 \leanok
 \uses{FABL.DepthTwoInterleavedSeed, FABL.FiniteDecisionTree.Computes, FABL.depthTwoInterleavedTreeBySeed, FABL.depthTwoInterleavedTreeOrdered_computes, FABL.recursiveMajority}
 \difficulty{3}
-For every choice of four indices in $\{0,1,2\}$, the associated decision tree on nine
+For every choice of four indices in $\{0,1,2\}$, the associated decision tree on nine
 sign-valued coordinates computes the recursive three-way majority function of depth two.
 \end{theorem}
 

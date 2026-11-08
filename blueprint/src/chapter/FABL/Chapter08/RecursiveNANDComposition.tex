@@ -101,9 +101,9 @@ leaves the queried coordinates and branching structure unchanged.
 \leanok
 \uses{FABL.FiniteDecisionTree, FABL.FiniteDecisionTree.eval, FABL.FiniteDecisionTree.mapOutput}
 \difficulty{4}
-Let $T$ be a finite decision tree with input alphabet $a9$, output labels in $b1$, and
+Let $T$ be a finite decision tree with input alphabet $a9$, output labels in $\mathbb1$, and
 available coordinates $A\subseteq\{0,\ldots,n-1\}$. For any function $g$ from its
-output-label set to a set $b2$, and any input $x$ assigning an alphabet symbol to each
+output-label set to a set $\mathbb2$, and any input $x$ assigning an alphabet symbol to each
 of the $n$ coordinates, evaluating the tree obtained by applying $g$ to every leaf label
 gives $g$ applied to the evaluation of $T$ at $x$.
 \end{theorem}
@@ -346,7 +346,7 @@ continuation of the second tree, yielding a tree on $A\cup B$.
 \uses{FABL.FiniteDecisionTree, FABL.FiniteDecisionTree.eval, FABL.Sign, FABL.SignCube, FABL.nandPair, FABL.orderedNandTree}
 \difficulty{1}
 Let $n$ be a natural number, and let $A$ and $B$ be disjoint sets of coordinates in
-$	ext{Fin}(n)$. Given two decision trees on these coordinate sets, with inputs and
+$\text{Fin}(n)$. Given two decision trees on these coordinate sets, with inputs and
 outputs in $\\{ -1,1\\}$, their ordered composition evaluates on every input to $-1$
 exactly when both tree outputs are $-1$, and to $1$ otherwise.
 \end{theorem}
@@ -477,8 +477,8 @@ recursive NAND tree.
 \leanok
 \uses{FABL.pmfExpectation, FABL.pmfExpectation_add_fun, FABL.pmfExpectation_const}
 \difficulty{3}
-Let $Omega$ be a finite set, let $pi$ be a probability mass function on $Omega$, let
-$c\in\bbr$, and let $f:Omega\tobr$. The expectation of the function $x\mapsto c+f(x)$
+Let $\Omega$ be a finite set, let $\pi$ be a probability mass function on $\Omega$, let
+$c\in\bbr$, and let $f:\Omega\to\bbr$. The expectation of the function $x\mapsto c+f(x)$
 equals $c$ plus the expectation of $f$.
 \end{theorem}
 
@@ -541,9 +541,9 @@ $a\in\alpha$.
 \leanok
 \uses{FABL.RandomizedDecisionTree, FABL.RandomizedDecisionTree.inputCost, FABL.RandomizedDecisionTree.outputConditionalCost}
 \difficulty{3}
-Let $Omega$ be a finite nonempty set, let $alpha$ be a type with decidable equality,
-let $n$ be a nonnegative integer, and let $f:(Fin ntoOmega)toalpha$. For a
-zero-error randomized decision tree $T$ computing $f$, an output value $ainalpha$, and
+Let $\Omega$ be a finite nonempty set, let $\alpha$ be a type with decidable equality,
+let $n$ be a nonnegative integer, and let $f:(Fin nto\Omega)to\alpha$. For a
+zero-error randomized decision tree $T$ computing $f$, an output value $a\mathbin\alpha$, and
 an input $x$ satisfying $f(x)=a$, the expected number of queries on $x$ is at most the
 maximum of that expected query count over all inputs on which $f$ equals $a$, with the
 count taken to be zero on inputs producing another value.
@@ -1089,7 +1089,7 @@ and applying the addressed iterated tribes function.
 For each natural number $k$, the composite of the depth-$2k$ binary-address coordinate
 equivalence and the inverse address correspondences between even binary addresses and
 quaternary addresses gives an equivalence from the coordinates indexed by
-$	ext{Fin}(2^{2k})$ to those indexed by $	ext{Fin}(4^k)$.
+$\text{Fin}(2^{2k})$ to those indexed by $\text{Fin}(4^k)$.
 \end{definition}
 
 \begin{theorem}[Even recursive NAND as iterated tribes]

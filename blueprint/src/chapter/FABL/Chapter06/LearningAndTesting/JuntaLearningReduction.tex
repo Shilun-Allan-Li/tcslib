@@ -22,8 +22,8 @@ specified sign in $\{\pm1\}$, or a declaration that the target is nonconstant.
 \leanok
 \uses{FABL.BooleanFunction, FABL.JuntaConstantDecision, FABL.Sign}
 Let $n$ be a natural number, and let $f$ be a function from $
-egthinspace	ext{?}$ to $
-egthinspace	ext{?}$.
+egthinspace\text{?}$ to $
+egthinspace\text{?}$.
 \end{definition}
 
 \begin{definition}[Constant decision value in $\mathbb F_2$]
@@ -183,8 +183,8 @@ number of failure bits associated with $\delta$.
 \lean{FABL.JuntaFreeIndex}
 \label{FABL.JuntaFreeIndex}
 \leanok
-Let $n$ be a natural number and let $P$ be a finite set of indices in $	ext{Fin }n$. The
-indices outside $P$ are the indices $i$ in $	ext{Fin }n$ such that $i\notin P$.
+Let $n$ be a natural number and let $P$ be a finite set of indices in $\text{Fin }n$. The
+indices outside $P$ are the indices $i$ in $\text{Fin }n$ such that $i\notin P$.
 \end{definition}
 
 \begin{definition}[Assignment on a coordinate set]
@@ -192,9 +192,9 @@ indices outside $P$ are the indices $i$ in $	ext{Fin }n$ such that $i\notin P$.
 \label{FABL.JuntaFixedAssignment}
 \leanok
 \uses{FABL.Sign}
-Let $n$ be a natural number and let $P$ be a finite set of indices in $	ext{Fin }n$. A
+Let $n$ be a natural number and let $P$ be a finite set of indices in $\text{Fin }n$. A
 fixed assignment on $P$ is a function assigning to each index in $P$ a sign, that is, an
-element of $\{ -1,1 \}$.
+element of $\{ -1,1 \}$.
 \end{definition}
 
 \begin{definition}[Assignments on free coordinates]
@@ -245,7 +245,7 @@ on all $n$ indices whose value at each index is the assigned sign for that index
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.combineJuntaAssignment}
 \difficulty{1}
-Let $n$ be a natural number, let $P$ be a set of coordinates in $	ext{Fin }n$, and let
+Let $n$ be a natural number, let $P$ be a set of coordinates in $\text{Fin }n$, and let
 $z$ assign a sign to each coordinate in $P$ and $y$ assign a sign to each coordinate
 outside $P$. The assignment formed by combining $z$ and $y$ agrees with $z$ at every
 coordinate in $P$.
@@ -257,7 +257,7 @@ coordinate in $P$.
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.JuntaFreeIndex, FABL.combineJuntaAssignment}
 \difficulty{1}
-Let $n$ be a natural number, let $P$ be a set of coordinates in $in n$, and let $z$
+Let $n$ be a natural number, let $P$ be a set of coordinates in $\mathbin n$, and let $z$
 assign a sign to each coordinate in $P$ while $y$ assigns a sign to each coordinate
 outside $P$. For every coordinate $i$ outside $P$, the assignment that uses $z$ on $P$
 and $y$ elsewhere takes the value $y(i)$ at $i$.
@@ -355,7 +355,7 @@ sign assignment. Restricting $x$ to $P$ gives its fixed-coordinate assignment.
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.combineJuntaAssignment, FABL.juntaFixedPart}
 \difficulty{3}
-Let $n$ be a natural number, let $P$ be a set of coordinates among $n$, and let $z$
+Let $n$ be a natural number, let $P$ be a set of coordinates among $n$, and let $z$
 and $y$ assign signs to the coordinates in $P$ and outside $P$, respectively. If these
 assignments are combined into a sign vector, its restriction to $P$ is $z$.
 \end{theorem}
@@ -366,7 +366,7 @@ assignments are combined into a sign vector, its restriction to $P$ is $z$.
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.combineJuntaAssignment, FABL.juntaFreePart}
 \difficulty{3}
-Let $n$ be a natural number, let $P$ be a set of coordinates among $n$, and let $z$
+Let $n$ be a natural number, let $P$ be a set of coordinates among $n$, and let $z$
 and $y$ assign signs to the coordinates in $P$ and outside $P$, respectively. If these
 assignments are combined into a sign vector, its restriction to the coordinates outside
 $P$ is $y$.
@@ -378,8 +378,8 @@ $P$ is $y$.
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.MatchesJuntaAssignment, FABL.combineJuntaAssignment, FABL.juntaFreePart}
 \difficulty{4}
-Let $n$ be a natural number, let $P$ be a set of coordinates in $br^n$ indexed by
-$	ext{Fin}(n)$, and let $z$ assign a sign to each coordinate in $P$. If a sign vector
+Let $n$ be a natural number, let $P$ be a set of coordinates in $\bbr^n$ indexed by
+$\text{Fin}(n)$, and let $z$ assign a sign to each coordinate in $P$. If a sign vector
 $x\in\{-1,1\}^{[n]}$ agrees with $z$ on every coordinate in $P$, then combining $z$ on
 $P$ with the restriction of $x$ to the coordinates outside $P$ recovers $x$.
 \end{theorem}
@@ -461,10 +461,10 @@ for which $x_i$ agrees with $z$ on every index in $P$.
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.MatchesJuntaAssignment, FABL.Sign, FABL.fixedMatchingIndices, FABL.juntaMatchCount, FABL.juntaMatchingIndices}
 \difficulty{4}
-Let $n$ be a natural number, let $P$ be a finite set of coordinates among $n$, let $z$
+Let $n$ be a natural number, let $P$ be a finite set of coordinates among $n$, let $z$
 be a sign assignment on $P$, and let $(x_i,s_i)_{i=1}^R$ be a finite batch of samples,
 where each $x_i$ is a sign vector. The number of samples whose coordinates on $P$ agree
-with $z$ equals the sum over $i=1, R$ of $1$ when $x_i$ agrees with $z$ on $P$, and $0$
+with $z$ equals the sum over $i=1, R$ of $1$ when $x_i$ agrees with $z$ on $P$, and $0$
 otherwise.
 \end{theorem}
 
@@ -484,7 +484,7 @@ $1$ if $x$ agrees with $z$ on every index in $P$, and is $0$ otherwise.
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.MatchesJuntaAssignment, FABL.juntaMatchObservation}
 \difficulty{1}
-Let $n$ be a natural number, let $P$ be a finite set of coordinates among $n$, let $z$
+Let $n$ be a natural number, let $P$ be a finite set of coordinates among $n$, let $z$
 be a sign assignment on $P$, and let $x$ be a sign vector. The observation that equals
 $1$ if $x$ agrees with $z$ on $P$ and $0$ otherwise belongs to the interval $[-1,1]$.
 \end{theorem}
@@ -551,7 +551,7 @@ into $\{0,\ldots,R-1\}$ whose image consists of indices of such matching samples
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.MatchesJuntaAssignment, FABL.Sign, FABL.juntaMatchCount, FABL.juntaMatchingIndexEmbedding, FABL.juntaMatchingIndices}
 \difficulty{3}
-Let $n,R,M$ be natural numbers, let $P$ be a finite set of coordinates among $n$, let
+Let $n,R,M$ be natural numbers, let $P$ be a finite set of coordinates among $n$, let
 $z$ be a sign assignment on $P$, and let $(x_r,s_r)_{r=1}^R$ be a batch of samples. If
 $M$ is at most the number of samples whose coordinates on $P$ agree with $z$, then every
 sample selected by the canonical order-preserving injection from the first $M$ indices
@@ -659,8 +659,8 @@ Statement pending regeneration.
 \leanok
 \uses{FABL.BooleanFunction, FABL.JuntaFixedAssignment, FABL.PositiveLearningParameter, FABL.juntaRestrictionSampleCount, FABL.takeMatchingJuntaExamples}
 Let $n,k,M$ be natural numbers, let $f$ be a Boolean function on the $n$-dimensional
-Boolean cube, let $P$ be a finite set of coordinates in $	ext{Fin}(n)$, let $z$ assign a
-sign to each coordinate in $P$, and let $ailure	ext{-parameter}$ lie in $(0,1/2]$. The
+Boolean cube, let $P$ be a finite set of coordinates in $\text{Fin}(n)$, let $z$ assign a
+sign to each coordinate in $P$, and let $ailure\text{-parameter}$ lie in $(0,1/2]$. The
 junta restriction failure set consists of all sample sequences of length equal to the
 junta restriction sample count for $k$, $M$, and the failure parameter for which
 selecting $M$ examples matching $z$ from the samples labeled by $f$ returns no batch.
@@ -735,10 +735,10 @@ $\delta$.
 \lean{FABL.injectionVectorSplitEquiv}
 \label{FABL.injectionVectorSplitEquiv}
 \leanok
-Let $A$ be a type, let $M,R$ be natural numbers, and let $e:	ext{Fin}(M)	o	ext{Fin}(R)$
+Let $A$ be a type, let $M,R$ be natural numbers, and let $e:\text{Fin}(M)\to\text{Fin}(R)$
 be an injection. The space of $R$-indexed $A$-valued vectors is equivalent to the
 product of an $M$-indexed $A$-valued vector and an $A$-valued assignment on the
-coordinates of $	ext{Fin}(R)$ outside the image of $e$.
+coordinates of $\text{Fin}(R)$ outside the image of $e$.
 \end{definition}
 
 \begin{theorem}[Restriction along an injection]
@@ -782,9 +782,9 @@ distributed among all functions from $\{0,\ldots,M-1\}$ to $A$.
 \label{FABL.selectedJuntaFreeBatch}
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.fixedMatchingIndexEmbedding, FABL.fixedMatchingIndices}
-Let $n,M$ be natural numbers, let $P$ be a finite set of coordinates in $	ext{Fin}(n)$,
+Let $n,M$ be natural numbers, let $P$ be a finite set of coordinates in $\text{Fin}(n)$,
 and let $z$ assign signs to the coordinates in $P$. For a natural number $R$, suppose
-$M$ is at most the number of indices $r	ext{ in }	ext{Fin}(R)$ whose fixed assignment
+$M$ is at most the number of indices $r\text{ in }\text{Fin}(R)$ whose fixed assignment
 equals $z$, and let each such index have a free assignment on the coordinates outside
 $P$. The selected batch is the $M$-indexed list of free assignments at the matching
 indices chosen by the fixed-matching-index embedding.
@@ -868,12 +868,12 @@ an optional $M$-tuple of such pairs.
 \label{FABL.JuntaRestrictionSampleBad}
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.MatchedJuntaExample, FABL.Sign, FABL.projectJuntaRestrictionBatch}
-Let $n,M$ be natural numbers, let $P$ be a finite set of coordinates in $	ext{Fin}(n)$,
-let $z$ assign signs to the coordinates in $P$, and let $	ext{bad}$ be a predicate on
+Let $n,M$ be natural numbers, let $P$ be a finite set of coordinates in $\text{Fin}(n)$,
+let $z$ assign signs to the coordinates in $P$, and let $\text{bad}$ be a predicate on
 $M$-tuples of free assignments paired with signs. Given either no sampled batch or a
 batch of $M$ examples that match $z$ on $P$, the sample is bad when projection of the
 sampled batch to free assignments and labels returns no batch, or when it returns a
-batch satisfying $	ext{bad}$.
+batch satisfying $\text{bad}$.
 \end{definition}
 
 \begin{definition}[Junta input batch splitting equivalence]
@@ -882,7 +882,7 @@ batch satisfying $	ext{bad}$.
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.combineJuntaAssignment, FABL.juntaFixedPart, FABL.juntaFreePart}
 Let $n,R$ be natural numbers and let $P$ be a finite set of coordinates in
-$	ext{Fin}(n)$. The space of $R$-indexed batches of points in the $n$-dimensional
+$\text{Fin}(n)$. The space of $R$-indexed batches of points in the $n$-dimensional
 Boolean cube is equivalent to the product of an $R$-indexed batch of sign assignments on
 $P$ and an $R$-indexed batch of sign assignments on the coordinates outside $P$.
 \end{definition}
@@ -893,7 +893,7 @@ $P$ and an $R$-indexed batch of sign assignments on the coordinates outside $P$.
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeAssignment, FABL.combineJuntaAssignment, FABL.juntaInputBatchSplitEquiv}
 \difficulty{1}
-Let $n,R$ be natural numbers and let $P$ be a finite set of coordinates among $n$.
+Let $n,R$ be natural numbers and let $P$ be a finite set of coordinates among $n$.
 Given a batch of assignments of signs to the coordinates in $P$ and a batch of
 assignments to the coordinates outside $P$, applying the inverse of the batch-splitting
 bijection returns the batch whose $r$th entry is the combination of the two assignments
@@ -1032,7 +1032,7 @@ coordinate outside $P$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.IsRelevantJuntaRestriction, FABL.JuntaFixedAssignment, FABL.JuntaNodeDecision, FABL.juntaRestriction}
 Let $n$ be a natural number, let $f$ be a Boolean function on the $n$-dimensional
-Boolean cube, let $P$ be a finite set of coordinates in $	ext{Fin}(n)$, and let $z$
+Boolean cube, let $P$ be a finite set of coordinates in $\text{Fin}(n)$, and let $z$
 assign signs to the coordinates in $P$. A decision declaring a constant sign is correct
 exactly when the restriction of $f$ obtained by fixing $P$ according to $z$ is
 constantly that sign; a decision to split on a coordinate outside $P$ is correct exactly
@@ -1046,7 +1046,7 @@ at that coordinate and give different values of the restriction.
 \leanok
 \uses{FABL.BooleanFunction, FABL.JuntaFixedAssignment, FABL.JuntaNodeDecision, FABL.JuntaNodeDecision.IsCorrect}
 Let $n$ be a natural number, let $f$ be a Boolean function on the $n$-dimensional
-Boolean cube, let $P$ be a finite set of coordinates in $	ext{Fin}(n)$, and let $z$
+Boolean cube, let $P$ be a finite set of coordinates in $\text{Fin}(n)$, and let $z$
 assign signs to the coordinates in $P$. An optional node decision is bad if it is
 absent, or, when present, if it is not correct for the restriction of $f$ determined by
 $P$ and $z$.
@@ -1059,8 +1059,8 @@ $P$ and $z$.
 \uses{FABL.BooleanFunction, FABL.JuntaFixedAssignment, FABL.JuntaNodeDecision, FABL.JuntaNodeDecision.IsBad, FABL.JuntaNodeDecision.IsCorrect}
 \difficulty{1}
 Let $n\ge 0$, let $P$ be a set of coordinates among the $n$ inputs, and fix signs on the
-coordinates in $P$. Let the target be a function from the sign cube ${-1,1}^n$ to
-$	ext{signs }{pm1}$. A decision is either that the target restricted to the remaining
+coordinates in $P$. Let the target be a function from the sign cube ${-1,1}^n$ to
+$\text{signs }{pm1}$. A decision is either that the target restricted to the remaining
 coordinates is constant at a specified sign, or that it depends on a specified remaining
 coordinate. If this decision is not bad—that is, it is not incorrect—then it is correct:
 in the constant case the restriction equals the specified constant function, and in the
@@ -1142,8 +1142,8 @@ count.
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.juntaTreeCallCount, FABL.juntaTreePerCallFailure}
 \difficulty{1}
-Let $k$ be a nonnegative integer and let $	au$ be a rational learning parameter with
-$0<	au\le\tfrac12$. The per-call failure parameter at depth $k$ is $	au$ divided by the
+Let $k$ be a nonnegative integer and let $\tau$ be a rational learning parameter with
+$0<\tau\le\tfrac12$. The per-call failure parameter at depth $k$ is $\tau$ divided by the
 junta tree call count at depth $k$.
 \end{theorem}
 
@@ -1153,10 +1153,10 @@ junta tree call count at depth $k$.
 \leanok
 \uses{FABL.PositiveLearningParameter, FABL.juntaTreeCallCount, FABL.juntaTreeCallCount_pos, FABL.juntaTreePerCallFailure, FABL.juntaTreePerCallFailure_value}
 \difficulty{3}
-Let $k$ be a nonnegative integer and let $	au$ be a rational learning parameter with
-$0<	au\le \tfrac12$. If the per-call failure parameter is obtained by dividing $	au$ by
+Let $k$ be a nonnegative integer and let $\tau$ be a rational learning parameter with
+$0<\tau\le \tfrac12$. If the per-call failure parameter is obtained by dividing $\tau$ by
 the junta tree call count at depth $k$, then the call count multiplied by that per-call
-parameter is exactly $	au$.
+parameter is exactly $\tau$.
 \end{theorem}
 
 \begin{definition}[Insert a fixed assignment]
@@ -1164,7 +1164,7 @@ parameter is exactly $	au$.
 \label{FABL.insertJuntaFixedAssignment}
 \leanok
 \uses{FABL.JuntaFixedAssignment, FABL.JuntaFreeIndex, FABL.Sign}
-Let $P$ be a subset of the coordinates $in n$, let $z$ assign a sign in $\{,-1\}$ to
+Let $P$ be a subset of the coordinates $\mathbin n$, let $z$ assign a sign in $\{,-1\}$ to
 each coordinate in $P$, and let $i$ be a coordinate outside $P$. For a sign $s$, the
 assignment on $P\cup\{i\}$ obtained by inserting $i$ assigns $s$ to $i$ and agrees with
 $z$ on every coordinate in $P$.
@@ -1289,7 +1289,7 @@ to each of the two signs and assembles them into a query tree.
 \label{FABL.emptyJuntaFixedAssignment}
 \leanok
 \uses{FABL.JuntaFixedAssignment}
-For any natural number $n$, the fixed assignment on the empty subset of $in n$ is the
+For any natural number $n$, the fixed assignment on the empty subset of $\mathbin n$ is the
 unique function from that empty set to the signs.
 \end{definition}
 
@@ -1349,7 +1349,7 @@ input whose sign encoding agrees with $z$ on $P$.
 \label{FABL.JuntaTreeOutputBad}
 \leanok
 \uses{FABL.BooleanFunction, FABL.F₂DecisionTree, FABL.F₂DecisionTree.ComputesJuntaRestriction, FABL.JuntaFixedAssignment, FABL.Sign}
-Let $f$ be a Boolean function on the $n$-dimensional sign cube, let $Pinin n$, and let
+Let $f$ be a Boolean function on the $n$-dimensional sign cube, let $P\mathbin\mathbin n$, and let
 $z$ assign signs to the coordinates in $P$. An absent tree output is declared not bad; a
 present tree output is bad exactly when the tree fails to compute $f$ on every input
 whose coordinates in $P$ agree with $z$, using only coordinates outside $P$ for its

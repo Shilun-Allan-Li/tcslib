@@ -22,10 +22,10 @@ the code that compiles the list of expressions starting at $k$ is straight.
 \leanok
 \uses{Light.Compiler.Framed, Light.Compiler.Framed.same, Light.Compiler.Temps, Light.Compiler.argsCode, Light.Compiler.cT, Light.Compiler.effects_compileExpr_of_width, Light.Compiler.temps_subset_scratch, Light.Expr, Light.Expr.Safe, Light.Expr.val, Light.Expr.width, Light.frame, WordRAM.AgreeOutside, WordRAM.AgreeOutside.mono, WordRAM.AgreeOutside.read, WordRAM.AgreeOutside.refl, WordRAM.AgreeOutside.trans, WordRAM.effects, WordRAM.effects_append, WordRAM.wd}
 \difficulty{5}
-Let $Z$ describe a word-RAM layout with limits, and let a light state $σ$ be
+Let $Z$ describe a word-RAM layout with limits, and let a light state $σ$ be
 represented in a frame at stack position $q$ by memory $m$, with the frame within the
 stack bounds. Let $es$ be a list of expressions and $k$ a starting temporary index.
-Suppose every expression in $es$ has width at most $Z.F$ and is safe in $σ$ under the
+Suppose every expression in $es$ has width at most $Z.F$ and is safe in $σ$ under the
 limits, and $k+|es|\le Z.F+1$. Then evaluating the compiled argument code yields, for
 each $i<|es|$, the $W$-bit encoding of the $i$th argument value in temporary cell $k+i$;
 throughout, memory is unchanged outside the temporary cells indexed from $k$ through

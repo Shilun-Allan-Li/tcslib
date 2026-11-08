@@ -168,7 +168,7 @@ Boolean-valued verifier $M$ and natural numbers $a,k$ such that the verifier ass
 to $M$ is efficient according to $E$, and for every input string $x$, membership in $L$
 implies that $M$ outputs true with probability at least $2/3$, while nonmembership
 implies that it outputs false with probability at least $2/3$. In both cases the
-probability is taken over uniformly random Boolean strings of length $rac{a|x|^k+a}{1}$
+probability is taken over uniformly random Boolean strings of length $\frac{a|x|^k+a}{1}$
 as specified by the polynomial-length function in the definition.
 \end{definition}
 
@@ -190,7 +190,7 @@ has an efficient verifier relative to $E$ if there exist a Boolean-valued verifi
 and natural numbers $a,k$ such that the optional-output verifier associated with $M$ is
 efficient according to $E$, and for every Boolean list $x$, membership in $L$ implies
 that $M$ accepts with probability at least $2/3$ when given a uniformly random string of
-length $igl(	ext{polyLen}(a,k,|x|)igr)$, while nonmembership implies that $M$ rejects
+length $\bigl(\text{polyLen}(a,k,|x|)\bigr)$, while nonmembership implies that $M$ rejects
 for every random string of that length.
 \end{definition}
 
@@ -217,7 +217,7 @@ Fix a verifier model $E$ and a language $L$ of finite Boolean lists. The languag
 belongs to zero-error probabilistic polynomial time relative to $E$ if there exist an
 efficient verifier $M$, taking an input and a random Boolean list and returning either a
 Boolean answer or no answer, and natural numbers $a,k$ such that, for every input $x$,
-on every random list of length $inom{a+k|x|}{k}$ the verifier never gives an incorrect
+on every random list of length $\binom{a+k|x|}{k}$ the verifier never gives an incorrect
 Boolean answer, and the probability that it gives no answer is at most $1/2$.
 \end{definition}
 

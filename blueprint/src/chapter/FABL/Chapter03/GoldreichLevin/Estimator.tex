@@ -129,7 +129,7 @@ $z_i,y_i,y'_i$ and the labels supplied by $f$.
 \leanok
 \uses{FABL.BooleanFunction, FABL.rationalRestrictedFourierWeightObservationFromInputs, FABL.restrictedFourierWeightObservationBatchOutput, FABL.restrictedFourierWeightObservationBatchOutputAux_eq_append_ofFn}
 \difficulty{1}
-Let $n,m$ be natural numbers, let $J$ be a set of coordinates in $br^n$, let $S$ be a
+Let $n,m$ be natural numbers, let $J$ be a set of coordinates in $\bbr^n$, let $S$ be a
 finite subset of $J$, and let a Boolean target function and three length-$m$ sequences
 of sign-cube inputs be given. The batch output is the length-$m$ list whose $i$th entry
 is the rational restricted Fourier weight observation formed from the fixed-coordinate
@@ -1728,7 +1728,7 @@ restricted-Fourier-weight observation work for $J$ and $S$ local computation ste
 \leanok
 \uses{FABL.BooleanFunction, FABL.FixedSignCube, FABL.FreeSignCube, FABL.LearningCost, FABL.LearningProgram.addOutcomeCost, FABL.LearningProgram.runWithCost, FABL.combineSignCube, FABL.rationalRestrictedFourierWeightObservation, FABL.restrictedFourierWeightObservationProgram, FABL.restrictedFourierWeightObservationWork}
 \difficulty{3}
-Let $n$ be a natural number, let $J$ be a finite subset of $	ext{Fin}(n)$, let $S$ be a
+Let $n$ be a natural number, let $J$ be a finite subset of $\text{Fin}(n)$, let $S$ be a
 finite subset of $J$, and let $z$ be a sign assignment on the coordinates outside $J$,
 while $y,y'$ are sign assignments on $J$. For any Boolean target on the sign cube,
 running the program that queries the target at the two cube points formed from $(y,z)$
@@ -1744,7 +1744,7 @@ cost $(0,2,2+2n+2|S|+1)$.
 \uses{FABL.BooleanFunction, FABL.LearningCost, FABL.LearningProgram.addOutcomeCost, FABL.LearningProgram.runWithCost, FABL.restrictedFourierWeightObservationBatchCost, FABL.restrictedFourierWeightObservationBatchOutputAux, FABL.restrictedFourierWeightObservationBatchProgramWith, FABL.restrictedFourierWeightObservationWork}
 \difficulty{4}
 Let $n,m$ be natural numbers, let $J$ be a finite subset of the coordinates
-$	ext{Fin}(n)$, and let $S$ be a finite subset of $J$. For a Boolean target on the sign
+$\text{Fin}(n)$, and let $S$ be a finite subset of $J$. For a Boolean target on the sign
 cube, three prescribed sequences of $m$ cube inputs, and an initial list of rational
 observations, running the batch program that pairs the fixed-coordinate part of each
 first input with the free-coordinate parts of the other two, queries the target at both

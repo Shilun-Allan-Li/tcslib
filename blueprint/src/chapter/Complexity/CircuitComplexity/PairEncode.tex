@@ -31,7 +31,7 @@ obtained by applying the corresponding input-or-constant gate to each $s(i)$ in 
 \label{BoolCircuit.inputValues}
 \leanok
 Let $n,m$ be nonnegative integers, let $s$ assign to each of $m$ input positions either
-an index in $	ext{Fin}(n)$ or a Boolean constant, and let $x:	ext{Fin}(n)	o	ext{Bool}$
+an index in $\text{Fin}(n)$ or a Boolean constant, and let $x:\text{Fin}(n)\to\text{Bool}$
 be an input assignment. The resulting assignment on the $m$ positions takes the value
 $x(j)$ when $s$ selects index $j$, and the selected constant otherwise.
 \end{definition}
@@ -118,7 +118,7 @@ constants false and true followed by the entries of $r$, each as a constant wire
 \uses{BoolCircuit.pairWireList, Turing.length_pairEncode, Turing.pairEncode}
 \difficulty{4}
 For every natural number $n$ and bit string $r$, the pair wire list has length
-$2n+2+|r|$. Moreover, for every assignment $v:	ext{Fin}(n)	o	ext{Bool}$, replacing each
+$2n+2+|r|$. Moreover, for every assignment $v:\text{Fin}(n)\to\text{Bool}$, replacing each
 variable wire by its value and each constant wire by that constant gives the
 self-delimiting pairing of the bit string $(v(0),\ldots,v(n-1))$ with $r$.
 \end{theorem}
@@ -139,7 +139,7 @@ returns its entry at the corresponding position.
 \uses{BoolCircuit.vectorOfList}
 \difficulty{3}
 Let $m$ be a natural number, let $l$ be a list of elements of a type, and suppose its
-length is $m$. Form the function from indices $0,m$ to elements of the type by reading
+length is $m$. Form the function from indices $0,\ldots,m$ to elements of the type by reading
 the corresponding entries of $l$; applying the list constructor indexed by that function
 recovers $l$.
 \end{theorem}

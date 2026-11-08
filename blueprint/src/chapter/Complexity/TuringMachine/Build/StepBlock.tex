@@ -302,8 +302,8 @@ has advanced by $\min(u,4k+4)$, and the summary-tape head has not moved.
 \leanok
 \uses{Turing.workReadsK}
 \difficulty{4}
-For every natural number $k$, every function $w : 	ext{Fin}(k) 	o
-ext{Option}(	ext{Bool})$ occurs in the list obtained by recursively listing all
+For every natural number $k$, every function $w : \text{Fin}(k) \to
+ext{Option}(\text{Bool})$ occurs in the list obtained by recursively listing all
 length-$k$ sequences whose entries are either absent, false, or true.
 \end{lemma}
 
@@ -343,7 +343,7 @@ to a cell containing true.
 \uses{Turing.StepBlock.inputRank, Turing.StepBlock.workRank}
 For a machine reading an input symbol that is either a Boolean value or blank, together
 with Boolean-or-blank symbols on each of its $k$ work tapes, the read rank is the
-element of ${0,\ldots,3^{k+1}-1}$ obtained by encoding the input symbol in base $3$ as
+element of ${0,\ldots,3^{k+1}-1}$ obtained by encoding the input symbol in base $3$ as
 the leading digit and the work-tape symbols as the remaining rank.
 \end{definition}
 
@@ -581,7 +581,7 @@ renaming its state.
 \uses{Turing.Action, Turing.StepBlock.recordWidth, Turing.actionBitsK, Turing.optBoolBits, Turing.optOptBoolBits, Turing.optStateBits, Turing.signBits}
 \difficulty{4}
 Let $k,n$ be natural numbers, and let $a$ be an action of a $k$-tape Turing machine with
-Boolean work-tape symbols and successor states in $	ext{Fin}(n+1)$. Its action-bit
+Boolean work-tape symbols and successor states in $\text{Fin}(n+1)$. Its action-bit
 encoding is the concatenation of a Boolean list of length $4k+4$ and the encoding of its
 optional successor state.
 \end{lemma}
@@ -608,7 +608,7 @@ bit of $b$.
 Let $k,n$ be natural numbers, let $S$ be a type, let $x$ be a finite input list of
 symbols, let $d$ be a configuration with $k+2$ work tapes, Boolean tape symbols, and
 state type $S$, and let $a$ be a $k$-tape action with Boolean work-tape symbols and
-successor states in $	ext{Fin}(n+1)$. Suppose the extra work tape, starting at its head
+successor states in $\text{Fin}(n+1)$. Suppose the extra work tape, starting at its head
 position, contains the serialized action $a$ with no blank among its bits. Then there is
 a Boolean record of length $4k+4$ such that the action serialization is this record
 followed by the successor-state serialization, the total length is $4k+4$ plus the
@@ -676,8 +676,8 @@ $\min(u,4k+4)+\max(u-(4k+5),0)$, and every other work-tape head is unchanged.
 \label{Turing.StepBlock.SeekCtrl}
 \leanok
 For each natural number $k$, define the seek-control state type to have states
-$	ext{observe}$ and $	ext{done}$, states $	ext{advance}(r)$ and $	ext{state}(r)$ for
-each rank $r$ with $0 \le r < 3^{k+1}$, and states $	ext{request}(r,s,b)$ for ranks
+$\text{observe}$ and $\text{done}$, states $\text{advance}(r)$ and $\text{state}(r)$ for
+each rank $r$ with $0 \le r < 3^{k+1}$, and states $\text{request}(r,s,b)$ for ranks
 $r,s$ in that range and a Boolean $b$.
 \end{definition}
 
@@ -1336,7 +1336,7 @@ position after applying $a$.
 \leanok
 \uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.StepBlock.Ph, Turing.StepBlock.RoundWindow, Turing.StepBlock.roundTM}
 For a $k$-tape configuration $c$ over Boolean work symbols and states in
-$	ext{Fin}(n+1)$, an action $a$ of the same machine, two configurations $d,e$ of the
+$\text{Fin}(n+1)$, an action $a$ of the same machine, two configurations $d,e$ of the
 compiled machine with $k+2$ work tapes, and a time $T\in\mathbb{N}$, the round-span
 condition holds when the compiled round machine started at $d$ reaches $e$ after exactly
 $T$ steps, and at every time $u<T$ its state is neither the entry state nor the halt

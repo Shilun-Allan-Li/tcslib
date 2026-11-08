@@ -222,7 +222,7 @@ and $x$.
 \uses{Turing.codeReadFin_append, Turing.codeReadState, Turing.optStateBits}
 \difficulty{2}
 For every bound $n\in\mathbb N$, optional state
-$s\in\{	ext{none}\}\cup\{0,\ldots,n-1\}$, and bit string $x$, the successor-state reader
+$s\in\{\text{none}\}\cup\{0,\ldots,n-1\}$, and bit string $x$, the successor-state reader
 applied to the encoding of $s$ followed by $x$ succeeds and returns $(s,x)$. Here the
 encoding is $0$ for no state and, for state $i$, a $1$ followed by $i$ ones and a $0$.
 \end{lemma}
@@ -420,7 +420,7 @@ $r$.
 \uses{Turing.codeReadFin, Turing.codeReadFin_sound, Turing.codeReadState, Turing.optStateBits}
 \difficulty{4}
 For every bound $n\in\mathbb N$, bit string $x$, optional state
-$s\in\{	ext{none}\}\cup\{0,\ldots,n-1\}$, and suffix $r$, if the successor-state reader
+$s\in\{\text{none}\}\cup\{0,\ldots,n-1\}$, and suffix $r$, if the successor-state reader
 with bound $n$ applied to $x$ returns $s$ and $r$, then $x$ is the encoding of $s$
 followed by $r$. The encoding is $0$ for no state and, for state $i$, a $1$ followed by
 $i$ ones and a $0$.

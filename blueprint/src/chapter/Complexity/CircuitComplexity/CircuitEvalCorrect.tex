@@ -101,12 +101,12 @@ $o$ after evaluating the gates of $G$ successively from the initial values $v$ i
 \leanok
 \uses{BoolCircuit.CircuitEval.GatesOK, BoolCircuit.DAGGate}
 \difficulty{4}
-For any finite list $G$ of Boolean circuit gates and any natural number $	ext{len}$, the
+For any finite list $G$ of Boolean circuit gates and any natural number $\text{len}$, the
 recursive condition that each gate has at most two distinct arguments, every NOT gate
 has exactly one argument, and each argument of the current gate is less than the current
 available length (which increases by one at each gate) is equivalent to the conjunction
 of these local gate conditions for every gate in $G$ and the indexed condition that the
-argument at position $i$ of $G$ is less than $	ext{len}+i$ for every valid index $i$.
+argument at position $i$ of $G$ is less than $\text{len}+i$ for every valid index $i$.
 \end{theorem}
 
 \begin{theorem}[Leading ones in a padded word]

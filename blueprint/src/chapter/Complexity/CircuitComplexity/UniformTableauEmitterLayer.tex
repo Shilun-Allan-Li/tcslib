@@ -133,7 +133,7 @@ bits for position $e_i$, in at most $L_{\max}(M)+3$ steps.
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.Goes.congr, Complexity.CounterProg.Goes.trans, Complexity.CounterProg.goes_loop, Complexity.UTab.CpS.dst, Complexity.UTab.CpS.exit, Complexity.UTab.CpS.src, Complexity.UTab.ER, Complexity.UTab.ER.f, Complexity.UTab.ER.f_ll, Complexity.UTab.ER.f_t, Complexity.UTab.ER.set_ll, Complexity.UTab.ER.update_f, Complexity.UTab.Hd, Complexity.UTab.Hd.body, Complexity.UTab.Hd.exit, Complexity.UTab.Hd.reg, Complexity.UTab.Ki, Complexity.UTab.Lb, Complexity.UTab.Lmax, Complexity.UTab.Str, Complexity.UTab.Tpl.after, Complexity.UTab.cellStart, Complexity.UTab.goes_cell_one, Complexity.UTab.goes_copyR, Complexity.UTab.goes_decR, Complexity.UTab.ibits, Complexity.UTab.prog, Complexity.UTab.rLL, Complexity.UTab.range'_add, Complexity.UTab.range'_eq_map, Complexity.UTab.tpL, Complexity.cellIdx}
 \difficulty{6}
 Let $M$ be a multitape Turing machine with Boolean symbols, let $x$ be a finite Boolean
-input, and let $n,T,t$ be natural numbers, $z$ a finite Boolean string, $	au$ a
+input, and let $n,T,t$ be natural numbers, $z$ a finite Boolean string, $\tau$ a
 work-tape index of $M$, $e$ an eleven-register record, and $p$ an input position.
 Suppose $1 \le T$, $t \le T$, and the registers of $e$ satisfy $e.nc=n$, $e.z=|z|$,
 $e.t=T$, $e.i=t\,\mathrm{Str}(M,n,z,T)+\tau(2T+1)$, $e.q=0$ when $t=0$ and
@@ -199,7 +199,7 @@ first $N$ input-bit sources is the source for input bit $k$.
 Let $M$ be a finite multitape Turing machine with Boolean symbols, let $x$ be a finite
 Boolean input, let $n,T$ be natural numbers, let $z$ be a finite Boolean string, and let
 $t
-earrow T$ and $p<|z|+n+2$. Choose an input phase $	ext{ph}$ and an 11-register
+earrow T$ and $p<|z|+n+2$. Choose an input phase $\text{ph}$ and an 11-register
 assignment $e$. Suppose the registers for the input count and hard-wired length equal
 $n$ and $|z|$, respectively; the instruction position is the position indexed by $p$ in
 layer $t$; the preceding-cell register is zero if $t=0$ and otherwise is the instruction
@@ -208,7 +208,7 @@ stride. Suppose also that the input-phase source list agrees with the input-posi
 source list specified by whether $p$ is $0$, $1$, or $|z|+n+1$, and that the layout
 source is valid and has the value of the $(p-1)$st bit of the layout of length $|z|+n$
 when $1\le p\le |z|+n$, and false otherwise. Then the counter program, starting at the
-label for phase $	ext{ph}$ at layer $t$ with register values $e$ and input position
+label for phase $\text{ph}$ at layer $t$ with register values $e$ and input position
 $ps$, reaches the successor label for that phase within $L_{\max}(M)+3$ steps, emits the
 prescribed instruction bits, and ends with instruction position increased by one and
 preceding-cell register equal to zero if $t=0$, or otherwise equal to the new

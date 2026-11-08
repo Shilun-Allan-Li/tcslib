@@ -77,15 +77,15 @@ For natural numbers $w,i,SP$, if $i+1\le w$ and $SP<2^{w-(i+1)}$, then $2SP+1<2^
 \leanok
 \uses{Complexity.LogProg.AReach, Complexity.LogProg.AReach.refl, Complexity.LogProg.GuardLe, Complexity.LogProg.SavitchARM.A, Complexity.LogProg.SavitchARM.Inv, Complexity.LogProg.SavitchARM.Inv.bd, Complexity.LogProg.SavitchARM.Reach, Complexity.LogProg.SavitchARM.Rel, Complexity.LogProg.SavitchARM.St, Complexity.LogProg.SavitchARM.St.toV, Complexity.LogProg.SavitchARM.step_of, Complexity.LogProg.astep, Complexity.LogProg.vword_whole₃, Turing.pairEncode}
 \difficulty{4}
-Let $E,s,w$ be natural numbers, let ${orc}$ be a Boolean oracle with four indices and
-Boolean-word inputs, let $x$ be a finite Boolean word, and let ${st}$ be a machine
-register state. Suppose $s\le w$ and ${st}$ satisfies the level-zero invariant for
-$s,w$. Then the program $A(E)$ has a finite execution from label ${cl}$, with register
-vector given by ${st}$ and no answer, to label ${rt}(b)$, where $b$ is the truth value
-of level-zero reachability from ${st}.U$ to ${st}.V$ with bound $2^w$ and relation
+Let $E,s,w$ be natural numbers, let $\text{orc}$ be a Boolean oracle with four indices and
+Boolean-word inputs, let $x$ be a finite Boolean word, and let $\text{st}$ be a machine
+register state. Suppose $s\le w$ and $\text{st}$ satisfies the level-zero invariant for
+$s,w$. Then the program $A(E)$ has a finite execution from label $\text{cl}$, with register
+vector given by $\text{st}$ and no answer, to label $\text{rt}(b)$, where $b$ is the truth value
+of level-zero reachability from $\text{st}.U$ to $\text{st}.V$ with bound $2^w$ and relation
 determined by the step oracle, $x$, and $s$. Every configuration strictly before the
 final one satisfies the program guard and has every register at most $2^{w^2}$; the
-final register vector is unchanged from ${st}$.
+final register vector is unchanged from $\text{st}$.
 \end{theorem}
 
 \begin{definition}[Recursive call correctness]
@@ -2380,14 +2380,14 @@ $m$ to $\mathrm{st}.V$.
   {pdf-c8033d2fd705-p008-b001}
 \uses{Complexity.LogProg.SavitchARM.A, Complexity.LogProg.SavitchARM.CallOK, Complexity.LogProg.SavitchARM.Inv.bd, Complexity.LogProg.SavitchARM.Inv.setM, Complexity.LogProg.SavitchARM.Reach, Complexity.LogProg.SavitchARM.Rel, Complexity.LogProg.SavitchARM.base_spec, Complexity.LogProg.SavitchARM.loop_spec, Complexity.LogProg.SavitchARM.step_of, Complexity.LogProg.astep}
 \difficulty{4}
-Let $E,s,w$ be natural numbers, let ${orc}$ be a Boolean oracle with four indices and
+Let $E,s,w$ be natural numbers, let $\text{orc}$ be a Boolean oracle with four indices and
 Boolean-word inputs, and let $x$ be a finite Boolean word. If $s\le w$, then for every
-natural number $i\le w$ and every register state ${st}$ satisfying the level-$i$
+natural number $i\le w$ and every register state $\text{st}$ satisfying the level-$i$
 invariant for $s,w$, there is a natural number $M'\le 2^w$ such that the program $A(E)$
-has a finite execution from label ${cl}$, starting with register vector ${st}$ and no
+has a finite execution from label $\text{cl}$, starting with register vector $\text{st}$ and no
 answer, to the return label whose Boolean value is the truth value of level-$i$
-reachability from ${st}.U$ to ${st}.V$ with bound $2^w$ and relation determined by the
+reachability from $\text{st}.U$ to $\text{st}.V$ with bound $2^w$ and relation determined by the
 step oracle, $x$, and $s$. Every preterminal configuration satisfies the program guard
-and has all registers at most $2^{w^2}$; the final register vector agrees with ${st}$
+and has all registers at most $2^{w^2}$; the final register vector agrees with $\text{st}$
 except that its midpoint register is $M'$.
 \end{theorem}

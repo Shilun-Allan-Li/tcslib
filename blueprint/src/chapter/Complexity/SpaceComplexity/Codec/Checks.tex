@@ -66,7 +66,7 @@ Let $N$ be a nondeterministic Turing machine with Boolean input alphabet, let $x
 Boolean input, let $s$ be a natural number, and let $w$ be a Boolean list. The predicate
 holds exactly when $w$ is a valid check for input length $|x|$ and time parameter $s$,
 and scanning the prefix of $w$ of length $W(N)(2s+1)$ yields the terminal scan result
-$(	ext{none},1)$.
+$(\text{none},1)$.
 \end{definition}
 
 \begin{theorem}[Characterization of accepted configuration checks]
@@ -289,7 +289,7 @@ be finite bit strings and $s$ a natural number. The paired encoding of $x$ with 
 paired encoding of $w$ and the binary expansion of $s$ belongs to the language of
 accepting configuration codes for $N$ if and only if $w$ passes the following check: its
 length is $W(N)(2s+1)+w_P(|x|)+1$; scanning its first $W(N)(2s+1)$ bits yields an
-accepting validator state and the head/output summary $(	ext{halted},1)$; the binary
+accepting validator state and the head/output summary $(\text{halted},1)$; the binary
 value of the next $w_P(|x|)$ bits is at most $|x|+1$; and the final bit is $1$. Here
 $W(N)$ is the encoded width of one cell block and $w_P(n)$ is the bit width used for an
 input-head position when the input length is $n$.

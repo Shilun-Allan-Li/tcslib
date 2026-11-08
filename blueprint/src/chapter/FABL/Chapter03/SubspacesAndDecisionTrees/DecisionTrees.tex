@@ -1181,7 +1181,7 @@ by every point of $\mathbb{F}_2^n$.
 \uses{FABL.F₂DecisionTree.Path, FABL.F₂DecisionTree.Path.mem_support, FABL.F₂DecisionTree.Path.support}
 \difficulty{3}
 Let $n$ be a nonnegative integer and let a path on the $n$ binary coordinates assign to
-each coordinate either a field element of $br/	ext{?}$ or no value, with support
+each coordinate either a field element of $\bbr/\text{?}$ or no value, with support
 consisting of the coordinates assigned a value. Any coordinate outside the support is
 assigned no value.
 \end{theorem}
@@ -1203,8 +1203,8 @@ matches $x$ and $x_i=b$.
 \leanok
 \uses{FABL.F₂DecisionTree.Path, FABL.F₂DecisionTree.Path.Matches, FABL.F₂DecisionTree.Path.cylinder, FABL.F₂DecisionTree.Path.indicator, FABL.setIndicator}
 \difficulty{1}
-Let $n$ be a nonnegative integer, let a path on the binary cube $br^n$ assign to each
-coordinate either no value or a value in $br/2br$, and let $x\in\bbr^n$ agree with
+Let $n$ be a nonnegative integer, let a path on the binary cube $\bbr^n$ assign to each
+coordinate either no value or a value in $\bbr/2\bbr$, and let $x\in\bbr^n$ agree with
 every value assigned by the path. Then the indicator of the set of vectors matching the
 path takes the value $1$ at $x$.
 \end{theorem}
@@ -1215,7 +1215,7 @@ path takes the value $1$ at $x$.
 \uses{FABL.F₂DecisionTree.Path, FABL.F₂DecisionTree.Path.Matches, FABL.F₂DecisionTree.Path.cylinder, FABL.F₂DecisionTree.Path.indicator, FABL.setIndicator}
 \difficulty{1}
 Let $n$ be a nonnegative integer, let a path on the binary cube of dimension $n$ specify
-a value in $br/2br$ or leave unspecified at each coordinate, and let $x$ be a binary
+a value in $\bbr/2\bbr$ or leave unspecified at each coordinate, and let $x$ be a binary
 vector that does not match the path. Then the indicator of the path's cylinder at $x$ is
 $0$.
 \end{theorem}
@@ -7329,7 +7329,7 @@ $x$.
   {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
   {pdf-ffbe9c7b3306-p073-b003}
 \difficulty{1}
-Let $n$ be a nonnegative integer, let $T$ be a decision tree on the binary cube $br^n$
+Let $n$ be a nonnegative integer, let $T$ be a decision tree on the binary cube $\bbr^n$
 with outputs in a type $\alpha$, and let $f:\bbr^n\to\alpha$ be the function computed by
 $T$. If $P$ is one of the paths of $T$ and $x\in\bbr^n$ agrees with every coordinate
 value assigned along $P$, then $f(x)$ equals the output label at the terminal leaf of
@@ -8204,7 +8204,7 @@ every value specified by the path.
 }
 \difficulty{3}
 Let $n$ be a nonnegative integer and let a path assign either no value or a value in
-$br/2br$ to each of the $n$ coordinates. Its cylinder—the set of binary vectors
+$\bbr/2\bbr$ to each of the $n$ coordinates. Its cylinder—the set of binary vectors
 agreeing with every assigned value—is exactly the coordinate subcube that fixes the
 path’s support coordinates to the vector obtained by using each assigned value and using
 $0$ at every unassigned coordinate.
@@ -8237,7 +8237,7 @@ every coordinate fixed by $P$ equals the length of $P$.
 \leanok
 \uses{FABL.F₂DecisionTree.Path, FABL.F₂DecisionTree.Path.base, FABL.F₂DecisionTree.Path.cylinder_eq_binaryAffineSubspace, FABL.F₂DecisionTree.Path.indicator, FABL.F₂DecisionTree.Path.support, FABL.F₂DecisionTree.coordinateZeroSubspace, FABL.binaryAffineSubspace, FABL.setIndicator}
 \difficulty{3}
-Let $n$ be a nonnegative integer, and let a path on $br^n$ over the binary field assign
+Let $n$ be a nonnegative integer, and let a path on $\bbr^n$ over the binary field assign
 either no value or a binary value to each coordinate. Its cylinder is the set of binary
 vectors agreeing with every assigned value; its support consists of the coordinates with
 assigned values, and its base vector records those values and is $0$ elsewhere. The

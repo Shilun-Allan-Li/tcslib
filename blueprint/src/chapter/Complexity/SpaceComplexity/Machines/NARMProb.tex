@@ -116,7 +116,7 @@ register values $v$, output prefix $out$, and natural numbers $W,N$. Suppose eve
 sequence of $N$ choice bits makes the program halt, and each configuration before
 halting satisfies the guard: its applicable instruction preconditions hold, every
 decider call has distinct argument registers and a clean run using at most $B$ work-head
-cells, and each register value $z$ satisfies $|	ext{the binary length of }z+1|\le W$.
+cells, and each register value $z$ satisfies $|\text{the binary length of }z+1|\le W$.
 Then there is a number $T$ such that the compiled nondeterministic Turing machine halts
 on every choice sequence of length $T$, and for each $b\in\{0,1\}$ the fraction of
 length-$T$ choice sequences producing output $out$ followed by $b$ equals the fraction
@@ -169,9 +169,9 @@ choice string makes the register program return true.
 \leanok
 \uses{Complexity.LogProg.NARM, Complexity.LogProg.NAns, Complexity.LogProg.NGuard, Complexity.LogProg.NHalts, Complexity.LogProg.narm_randProb, Complexity.LogProg.narm_space, Complexity.LogProg.narun, Complexity.LogProg.ncompileFinNDTM, Randomized.randProb, Turing.FinNDTM.AcceptsWithin, Turing.MultiTapeTM, Turing.NDTM.HaltsWithin, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.spaceUsedWith}
 \difficulty{1}
-Let $m,d,k_D,N$ be nonnegative integers, let $[0mA$ be a nondeterministic register
+Let $m,d,k_D,N$ be nonnegative integers, let $A$ be a nondeterministic register
 machine with $m$ registers and $d$ oracle indices, let $x$ be a bit string, let
-$	ext{oracle}$ assign a Boolean answer to each oracle index and bit string, and let $D$
+$\text{oracle}$ assign a Boolean answer to each oracle index and bit string, and let $D$
 be a deterministic Turing machine with $k_D$ work tapes. Suppose the register machine
 halts after $N$ choice bits on every choice string of length $N$, with every
 configuration before halting satisfying the guard that each register has binary length

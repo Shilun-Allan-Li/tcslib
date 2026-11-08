@@ -33,7 +33,7 @@ preserved.
 \label{Turing.MultiTapeTM.mapWorkSymbols}
 \leanok
 \uses{Turing.Action.mapWorkSymbols, Turing.MultiTapeTM}
-Given a deterministic multi-tape Turing machine with alphabet $[1mSymbol[0m$ and a
+Given a deterministic multi-tape Turing machine with alphabet $Symbol$ and a
 bijection $e$ of that alphabet, define a machine over the same alphabet and state set
 with the same initial state. Its transition first translates each scanned work-tape
 symbol back along $e$, applies the original transition, and then relabels every symbol
@@ -187,7 +187,7 @@ is the same for every choice of optional Boolean input symbol.
 \leanok
 \uses{Turing.Action.mapWorkSymbols, Turing.FlagPhase, Turing.MultiTapeTM.mapWorkSymbols, Turing.decrementTM, Turing.incrementTM}
 \difficulty{4}
-For any natural number $k$, any work-tape index $i in k$, any phase $q$ of the machine,
+For any natural number $k$, any work-tape index $i \mathbin k$, any phase $q$ of the machine,
 any optional Boolean input symbol, and any assignment of an optional Boolean symbol to
 each work tape, the decrement machine's transition action leaves the input head
 stationary, and on every work tape its write instruction is never the instruction to
@@ -219,7 +219,7 @@ For every Boolean word $w$, applying the counter-word operation zero times retur
 \leanok
 \uses{Turing.counterWord}
 For a finite Boolean word $w$ and a natural number $r$, define its counter overhead to
-be the sum over $j=0,[1m\ldots[0m,r-1$ of twice the length of the initial run of false
+be the sum over $j=0,\ldots,r-1$ of twice the length of the initial run of false
 bits in the counter word after $j$ steps, plus two.
 \end{definition}
 
@@ -1008,9 +1008,9 @@ position plus the counter-word length.
 \leanok
 \uses{Turing.Contract.Traj, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.RoundContract, Turing.RoundContract.counterLoopDone, Turing.RoundContract.orbit_anchor, Turing.RoundContract.orbit_round, Turing.counterLoopBody, Turing.counterLoopCfg_body, Turing.counterLoopTMVia_done_witness, Turing.counterValue, Turing.roundOrbit, Turing.roundOrbit_succ}
 \difficulty{5}
-Let $k$ be a natural number, let $S$ and $amma$ be types with decidable equality, let
-$e:\{\mathrm{false},\mathrm{true}\}\hookrightarrow\Gamma$ be an injection, let $M$ be a
-$k$-tape Turing machine, and let $ain S$ and $\mathrm{exit}:\mathrm{Option}(S)$. Let
+Let $k$ be a natural number, let $S$ and $\Gamma$ be types with decidable equality, let
+$e:\{\mathrm{false},\mathrm{true}\}\hookrightarrow\Gamma$ be an injection, let $M$ be a
+$k$-tape Turing machine, and let $a\mathbin S$ and $\mathrm{exit}:\mathrm{Option}(S)$. Let
 $R$ be a round contract for $M$ with anchor $a$ and escape set $\{\mathrm{exit}\}$, and
 fix an input $x$. For $p=(i,w)$ and a configuration $d$ of the counter-loop machine,
 suppose the last tape of $d$ stores the encoded word $w$ at offsets $q$ for $-1\le q\le
