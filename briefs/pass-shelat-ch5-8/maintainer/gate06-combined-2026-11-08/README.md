@@ -49,7 +49,41 @@ immutable and has no successful RESULT. The two unexecuted probe guard versions
 and their reviews are retained with explicit prerequisites/limits.
 The root publication snapshot separately records actual state at backup.
 
+Fresh static evidence is backed up in [final-static-checkpoint-r1/](final-static-checkpoint-r1/checkpoint-manifest.json)
+and summarized in [final-static-review.md](final-static-review.md):61 PR paths,
+all root-reachable;10 inherited style findings/0 new;238 new definitions/abbrevs
+have reader source shapes;4119 explicit-read items/1555 new or touched have
+0 identified new foreign-definition reads/0 unresolved. Historical native-kind
+metadata remains qualified; current C2/C3/instance-expanded seals are pending.
+All raw candidates and existing GI/API debt remain visible.
+
+The [failure preflight](failure-review-preflight.md) and standalone29MB ZIP in
+[rule10-failure-checkpoint-r1/](rule10-failure-checkpoint-r1/checkpoint-manifest.json)
+preserve115 historical keys,145 old head diagnostics+7 separate S2 base-source
+diagnostics,25 failing logs and230 raw range witnesses. Complete context differs
+for all21 historical failing owner modules; unchanged bodies alone give no
+current inheritance or merge waiver. All203,859,547 raw bytes, including earlier
+own draft history, remain in the checkpoint. The attachment helper is unexecuted.
+
+The separate [native continuation](native-runtime-resume-r1/README.md) has passed
+Root and peer source review and is now running. It validates and reuses only
+the original two successes, keeps all interruptions, and retries only exact
+host contention with fresh call directories. Initial/renewed foreign activity
+requires30 seconds idle; uninterrupted own checks retain the short idle guard.
+All counts separate old2/new34 bootstrap successes, interrupted attempts and
+638 required fresh local checks. Its successful aggregate, if produced, belongs
+to a new continuation directory; the stopped original run remains unchanged.
+The publication snapshot records actual progress at this checkpoint, not final
+acceptance. No full root/Checks/Rule10 result is yet established by these records.
+
+**Narrow policy ruling pending:** six existing global simp attributes were new
+relative to the PR base and unchanged from the audited source. Their statements
+passed Gate06, but global attribute registration was not explicitly approved.
+The [six-rule request](simp-ruling-request-r1.md) asks the user to approve exactly
+these normalizations (recommended), or remove/reverify them. No approval or
+broad exception is inferred. Statement-gate closures remain unchanged.
+
 The user merges accepted Lean through PRs into cryptography/pass-shelat-ch2-4.
 Existing #248 remains draft/deferred; its cleanup code is not in this source.
 
-**Not yet clear to merge — combined source and comments are published; fresh native/seal/axiom/export verification remains.**
+**Not yet clear to merge — combined native/seal/axiom/export verification and the six-rule decision remain.**

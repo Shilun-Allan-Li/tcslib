@@ -1,0 +1,43 @@
+{
+  "status": "BOUNDED_STATIC_PEER_REVIEW_FROZEN_NO_NATIVE_OR_PROPOSED_EXECUTION",
+  "source_head": "a495f3953afff46ad5dec2d29ac8a7f55bd8ae37",
+  "coordinator_sha256": "921959c0d81c4ffb7e2cedd38e540be69e19e8d62ec8f3743b7bd0ad6117369c",
+  "proposal_manifest_sha256": "2de8a659bf2c4f3e7306d09132272111fe69d497d3aef73c266529558e35ddaa",
+  "engine_sha256": "64b5b2ff2260a48eef55dcf77bdb5c4125459170b28c30499f60a93de7da3c95",
+  "findings": {
+    "blockers": 0,
+    "major": 0,
+    "minor": 0
+  },
+  "own_validation_sha256": "c3f820bc1f27dec37f13d1a1aa08668ed8f0d0114c3d50b4f75e8df202efcb98",
+  "scope": [
+    "entire311linecoordinator",
+    "pinned458lineengine",
+    "R1exact21filesandthreeattempts",
+    "prefix-adoption",
+    "host-onlyretry",
+    "fresh-calloutputs",
+    "lease-and-own-childsignals",
+    "bootstrap-local-finalcounts"
+  ],
+  "native_evidence_handling": "R1 outcomes are independently read/hash-validated retained data; no native rerun or fresh acceptance inferred.",
+  "runtime_expectations": {
+    "required_bootstrap_successes": 36,
+    "R1_reused_successes": 2,
+    "R1_retained_failures": 1,
+    "minimum_new_bootstrap_native_calls": 34,
+    "minimum_total_history_native_attempts_bootstrap": 37,
+    "required_fresh_local_successes": 638,
+    "minimum_total_history_native_attempts_final": 675,
+    "warm_objects": 437,
+    "final_local_objects": 1075
+  },
+  "limits": [
+    "No coordinator or engine import/execution; no native/process simulation.",
+    "Full 146 historical and 3810 external object rehashes are runtime guards, not independently executed by this static review.",
+    "Current objects for the two R1 successful native attempts alone were independently hashed.",
+    "No process/signal/retry simulation or actual native launch; inherited process polling is sampling, not exclusive-host proof.",
+    "Source/API/Rule10 acceptance and six PENDING_USER simp-attribute decisions are separate."
+  ],
+  "merge_clearance": false
+}
