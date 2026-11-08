@@ -32,6 +32,10 @@ Seyoon explicitly approved `MultiTapeTM.ConfigCount.core_eq`, NDClockHost `Clock
 
 Seyoon approved only `import TCSlib.Complexity.TuringMachine.CfgFacts` in Hardness for Prepare/comparator. Applied in#241 after the stationary/EXP repairs;21 changed roots total. The exact154-payload hypothesis is preserved; final integrated validation still required. Fresh/Prepared seam boundary remains open. A private minimal Seam reader proposal is being validated; no unapproved API/import/header/definition is adopted.
 
+### Latest Seam ruling
+
+Seyoon approved non-simp `Turing.seamCompTM_tr_inr` and selected Codex for its separate prerequisite, gate131. The complete188-entry hypothesis and exact ruling are in campaign/items/dedup/fe-live1-repairs/seam-reader-proposal/. Both complete Fresh/Prepared repairs pass full owners,9/12-head seals and24 paired control identities, with exact full consumer types/AX. Consumer source remains separate; source worktree/PR preparation is starting. A separate complete95-artifact exact Action.apply_workTapes home-move proposal is now reviewable, not adopted; home approval remains pending.
+
 ### Decisions still pending
 
 - SAT PolyTimeBlockLoop import for head/tail leaves (separate from approved Hardness imports).
@@ -44,7 +48,7 @@ Finish gate129 current50 screen and per-pair dispositions, root package integrit
 
 R=/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4; scratch remains the original tcslib-scratch. Source worktrees use package symlinks; S/wt-hk→R, wt-input-readers→ab34-input-readers, wt-space-readers→ab34-space-readers. Local3/machine5 Lean cap, nice10/j4, only leanelab/leanelab-o; one global screen lock. Use whole APFS snapshot clones and unlink own outputs before compile. Exchange is shared: only AB subtree mutations, pull --rebase before every push, no force/cleanup/stash of unrelated work. Preserve R's preexisting118 static data and untracked shared inbox originals. MAIN's untracked3sumapsp_example.lean stays SHA256 `14eb21e97204139a6ca3080245a40547002de3e9e870b8d35d0f5ef60c016a84`.
 
-Earlier full§0, including immutable dispatch pins and historical chain details, is preserved in `campaign/maintainer/history/2026-11-08-before-grouped-readers-section0.md`. The current queue is campaign/status/2026-11-08-overnight/queue.json. Next free gate131.
+Earlier full§0, including immutable dispatch pins and historical chain details, is preserved in `campaign/maintainer/history/2026-11-08-before-grouped-readers-section0.md`. The current queue is campaign/status/2026-11-08-overnight/queue.json. Next free gate132; gate131 reserved for the explicitly approved Seam right-row prerequisite (Codex).
 
 ## 1. Starting a session on a new machine
 

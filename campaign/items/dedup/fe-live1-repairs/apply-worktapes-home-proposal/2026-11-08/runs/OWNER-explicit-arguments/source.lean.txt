@@ -1,0 +1,10 @@
+import TCSlib.Complexity.TuringMachine.Configuration
+set_option maxHeartbeats 0
+#check @Turing.Action.apply_workTapes
+#print axioms Turing.Action.apply_workTapes
+example {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+    (a : Turing.Action k Symbol State) (c : Turing.Cfg k Symbol State input) (i : Fin k) :
+    (a.apply c).workTapes i =
+      Function.update (c.workTapes i) (c.workTapePos i)
+        ((a.workTapes i).1.getD (c.workTapeSymbols i)) :=
+  @Turing.Action.apply_workTapes k Symbol State input a c i

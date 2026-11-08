@@ -1,0 +1,49 @@
+--- a/TCSlib/Complexity/TuringMachine/Configuration.lean
++++ b/TCSlib/Complexity/TuringMachine/Configuration.lean
+@@ -260,6 +260,22 @@
+ `Turing.Action.apply_workTapes` (`Simulation`). -/
+ attribute [simps (config := { isSimp := false }) state inputPos workTapePos output] Action.apply
+ 
++/-- **Optional-write normalization** (promoted from the epoch-2 fill per the
++epoch-2 audit, promotion recommendation 1): applying an action rewrites each
++work tape at its head with the proposed write, defaulting to the existing read
++when the action declines to write. An explicit `some none` write remains an
++erase, while an outer `none` writes back the scanned symbol unchanged. Holds
++for every alphabet, state type, action, configuration, and tape index — no
++finiteness, liveness, or computation hypothesis. -/
++lemma Action.apply_workTapes {k : ℕ} {Symbol State : Type*} {input : List Symbol}
++    (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k) :
++    (a.apply c).workTapes i =
++      Function.update (c.workTapes i) (c.workTapePos i)
++        ((a.workTapes i).1.getD (c.workTapeSymbols i)) := by
++  cases hw : (a.workTapes i).1 with
++  | none => simp [Action.apply, hw, Cfg.workTapeSymbols]
++  | some w => simp [Action.apply, hw]
++
+ /-- A work tape head moves by at most one cell when an action is applied. -/
+ lemma workTapePos_apply_le (action : Action k Symbol State)
+     (cfg : Cfg k Symbol State input) (i : Fin k) :
+--- a/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ b/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -80,21 +80,6 @@
+ 
+ namespace Turing
+ 
+-/-- **Optional-write normalization** (promoted from the epoch-2 fill per the
+-epoch-2 audit, promotion recommendation 1): applying an action rewrites each
+-work tape at its head with the proposed write, defaulting to the existing read
+-when the action declines to write. An explicit `some none` write remains an
+-erase, while an outer `none` writes back the scanned symbol unchanged. Holds
+-for every alphabet, state type, action, configuration, and tape index — no
+-finiteness, liveness, or computation hypothesis. -/
+-lemma Action.apply_workTapes {k : ℕ} {Symbol State : Type*} {input : List Symbol}
+-    (a : Action k Symbol State) (c : Cfg k Symbol State input) (i : Fin k) :
+-    (a.apply c).workTapes i =
+-      Function.update (c.workTapes i) (c.workTapePos i)
+-        ((a.workTapes i).1.getD (c.workTapeSymbols i)) := by
+-  cases hw : (a.workTapes i).1 with
+-  | none => simp [Action.apply, hw, Cfg.workTapeSymbols]
+-  | some w => simp [Action.apply, hw]
+ 
+ end Turing
+ 
