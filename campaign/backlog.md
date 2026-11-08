@@ -1076,7 +1076,7 @@ with no new source repair or decision. Both source heads remain audited b129/55d
 The separate replay chains remain valid at their actual pins. Their import contexts interact,
 so a fresh actual combined394-module replay from wholeMAC6 is running at local prospective
 source11b09440347ca8274562d58b5f90a11cfce56e29. No combined result is claimed yet.
-**Not yet clear to merge: #215 — final closure/interactions in progress.**
+**Clear to merge: #215 first — Seyoon merges.** The current clean prospective merge and actualMSG8→MSG9 remain valid; PR215 is open/non-draft at the audited head.
 **Not yet clear to merge: #233 — combined replay pending.** Recommended order is #215 then
 #233 after readiness; Seyoon merges. Full audit closures, independent dependency paths and
 actual replay preparation/maps are in status/2026-11-08-audit-closures/.

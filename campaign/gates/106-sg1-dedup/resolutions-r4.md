@@ -33,3 +33,5 @@ Verbatim findings SHA256 `f860e27dcc62396bcc564b15e713af71a75ae02366816cc36ed172
 | N23 | Accepted | Notation is interpreted through the report's literal source bindings. |
 
 Audited source remains `b12902832c67210acd737d87d2d0c761bd5b35eb`. The current campaign at `8f14c7f1f67ccfb1c03613531abd91fea40c4d46` has the same1003 Lean blobs as MAC6/df434; the clean prospective merge retains the exact audited Lean tree. MSG8→MSG9 is current for this first merge. The independent dependency review requires an additional combined replay before treating subsequent MIG integration as validated; that actual394-module run is in progress, with no result yet. Original audit inputs and older executions are unchanged. Gate closure does not merge the PR or retire scheduled families.
+
+**Clear to merge: #215 first — Seyoon merges.** Root verified the current clean prospective merge and actual MSG8→MSG9 validity; PR215 is open/non-draft at the exact audited head. Its readiness update is in status/2026-11-08-audit-closures/pr-readiness/pr215-audit-closure.json. The separate combined replay for later MIG integration is still running.

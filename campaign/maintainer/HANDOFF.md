@@ -15,7 +15,7 @@ Gate106round4 returned PASS0/0/0/27 and gate118 PASS0/0/0/18. Verbatim local-inb
 
 The independent all1003-source merge-order review found real import-context interaction: four MIG owners newly reach Contract.Basic after SG1, so existing separate MSG9/MMIG4 runs cannot automatically clear their combination. Root started actual **mjoint1 full394** at local validation-only combined source11b09440347ca8274562d58b5f90a11cfce56e29 from a whole895-objectMAC6 clone. It holds one shared slot, j4/nice10; session2021. No final result yet. Evidence/preparation and complete source/objects maps: campaign/status/2026-11-08-audit-closures/. Do not relabel old329/394/two-module executions.
 
-**Not yet clear to merge: #215 — final closure-record and combined-interaction checks in progress.**
+**Clear to merge: #215 first — Seyoon merges.** Gate106R4 closed; current clean prospective merge and MSG8→MSG9 remain valid. PR open/non-draft, exactb129 head and updated readiness description verified.
 **Not yet clear to merge: #233 — combined replay pending.**
 
 Recommended order after readiness: #215 then #233; Seyoon alone merges. Do not retire candidate implementations before actual merge. Seven SG1 retention kinds and wider FE-LIVE-1 keep their exact existing next12.2c owner/window, after activeMIG-1 and before further SAT/Hardness fills. No new audit/fill dispatch or user decision is needed for these passing returns. Nextfree121. Older relocation/open-gate checkpoints below are historical.

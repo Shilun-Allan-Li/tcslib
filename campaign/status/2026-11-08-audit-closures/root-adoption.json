@@ -1,6 +1,6 @@
 {
   "utc": "2026-11-08T08:18:43.153440+00:00",
-  "result": "Both pinned audits CLOSED PASS; combined replay RUNNING",
+  "result": "Both pinned audits CLOSED PASS; SG1 clear first; combined MIG replay RUNNING",
   "gates": {
     "106-r4": {
       "blockers": 0,
@@ -71,5 +71,8 @@
     233
   ],
   "retirement": "Only after actual user merges; seven SG1 schedules and wider FE-LIVE-1 remain scheduled",
-  "PR_readiness": "Final records and combined replay pending; no root merge"
+  "PR_readiness": {
+    "215": "CLEAR FIRST: closedgate/currentcleanmerge/currentvalidMSG8\u2192MSG9/open/non-draft/exacthead; Seyoon merges",
+    "233": "NOT YET: gateclosed; combined394 replay running; draft retained"
+  }
 }
