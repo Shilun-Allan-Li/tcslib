@@ -1,7 +1,3 @@
-# Gate123
+**Clear to merge: #243.**
 
-External Codex findings received verbatim; maintainer review in progress.
-
-**Not yet clear to merge: #243 — review/current-tree disposition pending.**
-
-No mathematical fill, debt acknowledgment or source change follows from the report itself.
+Gate123 CLOSED; all 11 notes dispositioned, zero unresolved blockers/majors/minors. Clean current merge and exact passed replay validity are recorded in closure.json and resolutions.md. Source remains unmerged.

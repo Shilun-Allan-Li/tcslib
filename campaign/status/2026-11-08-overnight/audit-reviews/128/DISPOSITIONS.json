@@ -1,0 +1,214 @@
+{
+  "gate": 128,
+  "findings_SHA256": "b5f4ea4caa516da59fe05bba89e74fe240d88df14dcd4a46c27a90b37e3ab268",
+  "verdict": "PASS",
+  "counts": {
+    "blocker": 0,
+    "major": 0,
+    "minor": 0,
+    "note": 22
+  },
+  "notes": [
+    {
+      "finding": 1,
+      "severity": "note",
+      "original_location": "Gate128 · pinned inputs",
+      "original_claim": "Bundle integrity passes independently executed checks.",
+      "original_proposed_fix": "None.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted. Exact issued 1096/be1/975 bindings,885 distinct ordered sections,35,680,982 bytes,SHA57b721 and777 committed frozen payloads were independently verified, accounting only for Markdown framing."
+    },
+    {
+      "finding": 2,
+      "severity": "note",
+      "original_location": "`TCSlib/Complexity/Diagonalization/Ladner.lean`; `Diagonalization.lean`",
+      "original_claim": "Source changes match the selected, approved surface.",
+      "original_proposed_fix": "None; no additional layout, import or host approval is inferred.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted. Owner genuinely absent at BASE; exactly owner+facade change,1003→1004 paths; owner166c matches63eb and formal v2. Authorized facade import removal restores old formal code; root source unchanged. No new layout/API choice."
+    },
+    {
+      "finding": 3,
+      "severity": "note",
+      "original_location": "`Ladner.lean:53` · `padSAT`",
+      "original_claim": "Independent definition restatement agrees with the accepted padding convention.",
+      "original_proposed_fix": "None.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted definition restatement. Literal false separator and true suffix exactly match padSAT; last-false uniqueness follows from the all-true suffix even when empty. It preserves total SAT decoding."
+    },
+    {
+      "finding": 4,
+      "severity": "note",
+      "original_location": "`Ladner.lean:95` · `ladnerMachine`",
+      "original_claim": "Independent definition restatement preserves an effective, sufficiently redundant enumeration.",
+      "original_proposed_fix": "None; retain the index-padding and normalization arguments as fill obligations.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted with fill limits. Existing MachineCode.decode_encode_pad explicitly supplies arbitrary true padding. At least one final true gives a canonical little-endian binary word and unbounded possible indices. One-work-tape/code normalization and coefficient/degree absorption remain obligations, not a new host/API decision."
+    },
+    {
+      "finding": 5,
+      "severity": "note",
+      "original_location": "`Ladner.lean:107` · `ladnerH`, `padSAT_congr`, `ladnerH_eq`, `ladnerH_le`",
+      "original_claim": "Independent recursion restatement and reading assessment reveal no circularity.",
+      "original_proposed_fix": "None.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted. Strong recursion reads only earlier prefix lengths; positive n uses prefix<queried word≤log n<n, while cap0 excludes candidates at zero. The three proved own readings match this; no recursive definition circularity identified."
+    },
+    {
+      "finding": 6,
+      "severity": "note",
+      "original_location": "`Ladner.lean:182` · `SAT_H`, `SAT_H_eq`",
+      "original_claim": "Independent definition restatement agrees with the intended explicit witness.",
+      "original_proposed_fix": "None.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted definition restatement. SAT_H is exactly padSAT ladnerH; immediate rfl readings expose the chosen definitions and do not alter the language."
+    },
+    {
+      "finding": 7,
+      "severity": "note",
+      "original_location": "`Ladner.lean:195` · `ladnerH_polyTime`",
+      "original_claim": "No false statement or missing premise found; the proof remains admitted.",
+      "original_proposed_fix": "Preserve the disclosed quantitative obligations; do not treat conditional probes as a completed proof.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted only as a literal-target truth outline. Bottom-up finite tests, numeric deadline eventually polynomial in n and fixed-degree uniform simulation are consistent. Concrete unary CNF variable bounds support exponential-in-short-word SAT search. No concrete prep machine, sharp public verifier, arithmetic/memo proof or FP implementation has been supplied by this return."
+    },
+    {
+      "finding": 8,
+      "severity": "note",
+      "original_location": "`Ladner.lean:203` · `SAT_H_mem_NP`",
+      "original_claim": "No false statement or missing premise found; the proof remains admitted.",
+      "original_proposed_fix": "None for the statement; implement the verifier and its bounds during the fill.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted only as an admitted membership target assessment. A shorter prefix and its polynomial certificate, H computation and capped padding arithmetic give the intended verifier argument; actual verifier and resource ledgers remain unfilled."
+    },
+    {
+      "finding": 9,
+      "severity": "note",
+      "original_location": "`Ladner.lean:212` · `ladnerH_bounded_of_mem_P`",
+      "original_claim": "The literal global boundedness conclusion is justified.",
+      "original_proposed_fix": "None; retain coefficient absorption as well as degree absorption in the fill.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted literal global boundedness reasoning. A fixed normalized/padded index can dominate both coefficient and degree on nonempty inputs; empty-word acceptance is false. If cap≤index then H≤cap; if cap>index then that candidate bounds the minimum. No monotonic H assumption is needed."
+    },
+    {
+      "finding": 10,
+      "severity": "note",
+      "original_location": "`Ladner.lean:222` · `ladnerH_unbounded_of_not_mem_P`",
+      "original_claim": "The conclusion is eventual divergence, as required downstream.",
+      "original_proposed_fix": "None; do not weaken eventual divergence to ordinary unboundedness.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted eventual-divergence assessment. A fixed index passing all global tests yields a polynomial bounded-acceptance decider; otherwise each smaller index has a persistent finite failing witness. The global H reading makes those tests stable once queried. This is stronger than ordinary unboundedness and remains the actual header."
+    },
+    {
+      "finding": 11,
+      "severity": "note",
+      "original_location": "`Ladner.lean:233` · `SAT_mem_P_of_padSAT_NPHard`",
+      "original_claim": "The NPHard strengthening needs neither monotonicity nor NP membership.",
+      "original_proposed_fix": "None for the header; keep parsing correctness, finite exceptions and the recursion ledger as fill obligations.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted general NPHard strengthening as an admitted target. hp provides computable shape checks; hu yields sufficiently strong shrinkage beyond finite prefix exceptions. A single shrinking SAT recursion is compatible with polynomial time. NP membership of padSAT h and monotonicity are not premises; parser/capped arithmetic/recursion proofs remain fill obligations."
+    },
+    {
+      "finding": 12,
+      "severity": "note",
+      "original_location": "`Ladner.lean:244, :249` · `SAT_H_intermediate`, `ladner`",
+      "original_claim": "The final admitted statement and its packaging have the intended logical strength.",
+      "original_proposed_fix": "None.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted conditional final-target outline and packaging limit. H bounded plus polynomial computable bounded padding would put SAT in P; H divergent plus NPHard would do likewise. SAT NP-completeness supplies the P=NP contradiction. Actual ladner merely uses the admitted explicit witness target, not an independent proof."
+    },
+    {
+      "finding": 13,
+      "severity": "note",
+      "original_location": "`padSAT`, `ladnerH` · adversarial empty and exponent cases",
+      "original_claim": "Empty prefixes and `0^0` do not trivialize the language.",
+      "original_proposed_fix": "None; do not recast the conditional executed probes as unconditional nonemptiness proofs.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted adversarial reading. Separator excludes nil,0^0 changes the empty-prefix suffix, and H0=0 distinguishes false-only from false-true. Supplied membership/nonemptiness edges retain SAT-witness assumptions; no unconditional executed nonvacuity theorem claimed."
+    },
+    {
+      "finding": 14,
+      "severity": "note",
+      "original_location": "`ladnerH` · adversarial caps and zero deadlines",
+      "original_claim": "The small-input conventions are consistent.",
+      "original_proposed_fix": "None.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted adversarial caps/deadlines. Floor logs give caps0 at n0..3,1 at4 and2 at16. i0 and empty-input clocks are0; public FinTM.not_computesInTime_zero plus empty-word exclusion supports acceptance equivalence. No total-output-at-zero convention substituted."
+    },
+    {
+      "finding": 15,
+      "severity": "note",
+      "original_location": "`padSAT`, inherited `SAT` · adversarial parsing",
+      "original_claim": "Malformed formulas and embedded separators retain the declared semantics.",
+      "original_proposed_fix": "None; retain last-separator uniqueness in the later parser proof.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted parsing/total-SAT reading. Source SAT definition and decoded fallback support malformed membership; all-true words lack a separator; wrong suffix lengths fail regardless of satisfiability. The later parser proof is still required."
+    },
+    {
+      "finding": 16,
+      "severity": "note",
+      "original_location": "General padding target · adversarial nonmonotone functions",
+      "original_claim": "Eventual divergence permits downward jumps but excludes infinitely recurring small exponents.",
+      "original_proposed_fix": "None.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted adversarial hypothesis distinction. Alternating n and floor(n/2) diverges while making downward jumps; infinitely recurring zero exponents violate hu at C1. No monotonicity premise or replacement by mere unboundedness."
+    },
+    {
+      "finding": 17,
+      "severity": "note",
+      "original_location": "Source attribution · module references and design",
+      "original_claim": "The declared source adaptations are visible; the exact exercise wording remains a disclosed gap.",
+      "original_proposed_fix": "Keep the approved Theorem 3.3-and-proof citation fallback.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted with existing source-fidelity limits. Canonical source-check records January2007 draft/different numbering,2009 publisher/assignment support and unverified exact exercise parts. Preserve approved Theorem3.3/proof fallback. The opaque genui citation in the received file is preserved verbatim but is not used as a resolvable provenance anchor; canonical public-source URLs/receipts carry that role."
+    },
+    {
+      "finding": 18,
+      "severity": "note",
+      "original_location": "`review/evidence/actual-validation162/` · metadata and axioms",
+      "original_claim": "The supplied compiled metadata supports exactly the selected 17 authored declarations.",
+      "original_proposed_fix": "None; preserve the selected-scope qualification.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted selected-scope data check. All17 raw ABI rows reconstruct; definitions+readings10 standard-only; six targets plus dependent packaging7 sorryAx. Six private edges standard. No new compilation or global/generated constant census."
+    },
+    {
+      "finding": 19,
+      "severity": "note",
+      "original_location": "Actual validation · foreign-definition boundary and controls",
+      "original_claim": "The nine-head boundary and all 18 paired identities are supported within the declared traversal scope.",
+      "original_proposed_fix": "None; retain these scope limits and the separate Core/Mathlib argument rule.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted exact TCSlib rule10 boundary. Nine ordinary heads,146 definition rows,six encountered theorem boundaries,18 effective pairs. Each selected authored root starts full type/value, but all encountered theorem proofs stop, including two local generated helpers; no unrestricted closure. Full literal guard and separate Core/Mathlib argument rule remain explicit."
+    },
+    {
+      "finding": 20,
+      "severity": "note",
+      "original_location": "`inputs/passed-Nlad2/`; MAC8 anchors · replay lineage",
+      "original_claim": "Supplied replay and transport claims are internally consistent and source-bound.",
+      "original_proposed_fix": "None; do not relabel historical executions as fresh exact-head checks.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted exact replay/transport. All895 before/after inputs equal MAC8;896 outputs add owner/rewrite facade/preserve894 old hashes. Nlad1/2 owner object and115 internal imports match. Actual metadata/control pins stay63eb, transported by equality rather than relabelled fresh1096 runs. No umbrella elaboration."
+    },
+    {
+      "finding": 21,
+      "severity": "note",
+      "original_location": "Current QA, names and final copy screen",
+      "original_claim": "The supplied bounded checks disclose no new lint identity or copied-material debt.",
+      "original_proposed_fix": "None; preserve existing debt-family scopes, owners and resolution windows.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted bounded QA/name/screen facts. All777 payload verification includes sourceQA receipts and captured candidate rows; no check8b/global lint claim. Actual2275 pair lines identical and no added Ladner endpoint;0 new/gone/scores. Existing debt families stay governed; no semantic/global absence or waiver."
+    },
+    {
+      "finding": 22,
+      "severity": "note",
+      "original_location": "Audit limits and remaining fill route",
+      "original_claim": "This is a statement/reading audit, not mathematical completion or fill readiness.",
+      "original_proposed_fix": "Retain the six intentional admissions and resolve the concrete fill route separately; current-tree validation and Seyoon’s merge decision remain separate.",
+      "disposition": "accepted within statement/reading scope — no source fix or new permission",
+      "reason": "Accepted governance limit. Auditor distinguishes its data computations from supplied Lean and excludes live lint/name/score runs. All six admissions and pending exact SAT-reader/preparation/numeric/memo route remain. This return grants no source, proof-fill, API/import/home/host or merge approval."
+    }
+  ],
+  "new_approval_waiver_or_fill_dispatch": false,
+  "unresolved_source_or_evidence_issues": 0,
+  "recommendation": "Eligible for root statement-gate closure after verbatim intake/dispositions and current-source/MAC8 validity record. Six direct math holes remain; not fill readiness or merge clearance."
+}

@@ -12,24 +12,29 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 Seyoon merged #233, authorized overnight preparation while keeping mathematical holes
 for fills, and selected **Codex for all morning audits**. On returning, Seyoon confirmed
 dispatch of all eight current prompts. Root builds/reviews/publishes; Seyoon alone
-dispatches external agents, rules on design/debt and merges. Every source PR below is
-**Not yet clear to merge**; dispatch and internal peer review do not close an external gate.
+dispatches external agents, rules on design/debt and merges. Gates123/124/125/126/127/128 are now CLOSED after root disposition and current-tree
+validation; #243/#244/#245/#246/#247/#249 are **Clear to merge**. #241/#242 remain
+**Not yet clear to merge**. Source remains unmerged; Seyoon alone merges.
 
 Campaign Lean remains `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / **whole MAC8**:895 objects and1003 tracked Lean blobs.
 All subsequent campaign pushes are records only. #215/#222/#223/#228/#229/#230/#233/#234/#235
 are merged; the eight overnight source PRs remain unmerged. Next free gate:**129**.
-The prior replay/copy-screen jobs are complete. A bounded hypothetical Scan-reader proposal is now being prepared; its validation must retain actual fresh receipts. No mathematical fill was self-dispatched.
+The prior replay/copy-screen jobs are complete. A three-reader InputLength proposal
+now passes the complete consumer and guards but awaits Seyoon's API ruling. Two private
+existing-reader mechanical repair fronts are active; no mathematical fill was self-dispatched.
 
-### Audit returns now under review
+### Audit returns and current dispositions
 
 All eight external reports are received verbatim with hashes in each gate/findings.md
 and status/audit-intake/. Gate121 is HOLD:1 major for exposed unacknowledged imported-definition
 reads and1 portable-integrity minor. Gate127 is PASS with1 records pointer minor, corrected
-in the current context record. Gates122/123/124/125/126/128 report clean PASS. Root and
-parallel subagents are checking findings and current replay validity; no gate is closed yet.
-The eight original shared-drop files remain untouched. Root is preparing existing-reader
-repairs for121 and a bounded hypothetical Scan transition reader, without adopting public
-API or inferring a debt acknowledgment. Six mathematical holes remain in Ladner.
+in the current context record. Gates122/123/124/125/126/128 report clean PASS. Root and parallel subagents have dispositioned all notes for six scoped gates and
+verified current clean target source against the actual passed replays, all1003 campaign
+Lean blobs, toolchain/package inputs and895 physical MAC8 objects. Six gates are CLOSED.
+Gate122's selected13 PASS is preserved, but exposed held-front governance is not disposed
+by BASE restoration; root keeps closure pending. The eight shared-drop originals remain
+untouched. Existing-reader121 repairs and a concrete three-reader API proposal continue
+without adopting unapproved APIs or inferring debt permission. Six Ladner holes remain.
 
 ### Eight current source PRs
 
@@ -56,14 +61,14 @@ Each gate’s publication.json/prompt.md records every exact source/records/exch
 pin, SHA/section count and user dispatch confirmation. Immutable exchange READMEs record
 publication-time status; these records show subsequent dispatches.
 
-- Gate121: 817sections/SHA`12bbc82fc917ea24b73dab33d6351c897618a09111ee5595d692283bfa7ed821`; dispatch confirmed; findings pending.
-- Gate122: 1527sections/SHA`168b30616d27f5c2112f7ad1cfe06342b301a2825c96a48ba37ae7af30898381`; dispatch confirmed; findings pending.
-- Gate123: 373sections/SHA`057363ca1d75034d026280cadc56350d0ebbf89f59144b4a94c72e552e070fb0`; dispatch confirmed; findings pending.
-- Gate124: 670sections/SHA`79ca4ad99603e960e8eca889c637779b88e955991aa3a50f3e7f5efe97011f5e`; dispatch confirmed; findings pending.
-- Gate125: 291sections/SHA`431f8d4119cc69b4554308ed17575b434f73f3d4216be44d4db83f534556ede5`; dispatch confirmed; findings pending.
-- Gate126: 261sections/SHA`8b8ae13401e9af863bc2decdbac810283657def59e269e8caf52df4f2be0bd0c`; dispatch confirmed; findings pending.
-- Gate127: 615sections/SHA`acf98cfe3e58d5122487ab7fb6a64efde25a07b308cae98a623c687789f8633a`; dispatch confirmed; findings pending.
-- Gate128: 885sections/SHA`57b721338a51be0ab7d08e078163a0151bde3a232a3c962d99298153fadd7a78`; dispatch confirmed; findings pending.
+- Gate121: 817sections/SHA`12bbc82fc917ea24b73dab33d6351c897618a09111ee5595d692283bfa7ed821`; dispatch confirmed; findings received; HOLD/repair active.
+- Gate122: 1527sections/SHA`168b30616d27f5c2112f7ad1cfe06342b301a2825c96a48ba37ae7af30898381`; dispatch confirmed; findings received; selected13 PASS/governance pending.
+- Gate123: 373sections/SHA`057363ca1d75034d026280cadc56350d0ebbf89f59144b4a94c72e552e070fb0`; dispatch confirmed; findings received; gate CLOSED/current validity confirmed.
+- Gate124: 670sections/SHA`79ca4ad99603e960e8eca889c637779b88e955991aa3a50f3e7f5efe97011f5e`; dispatch confirmed; findings received; gate CLOSED/current validity confirmed.
+- Gate125: 291sections/SHA`431f8d4119cc69b4554308ed17575b434f73f3d4216be44d4db83f534556ede5`; dispatch confirmed; findings received; gate CLOSED/current validity confirmed.
+- Gate126: 261sections/SHA`8b8ae13401e9af863bc2decdbac810283657def59e269e8caf52df4f2be0bd0c`; dispatch confirmed; findings received; gate CLOSED/current validity confirmed.
+- Gate127: 615sections/SHA`acf98cfe3e58d5122487ab7fb6a64efde25a07b308cae98a623c687789f8633a`; dispatch confirmed; findings received; gate CLOSED/current validity confirmed.
+- Gate128: 885sections/SHA`57b721338a51be0ab7d08e078163a0151bde3a232a3c962d99298153fadd7a78`; dispatch confirmed; findings received; gate CLOSED/current validity confirmed.
 
 The earlier gate121816-section prompt is **VOID**; use its817-section replacement.
 The old gate123359-section prompt is **VOID**; use373/SHA057363. Intermediate unissued
@@ -101,7 +106,7 @@ metadata/guard/edge runs; current2-module replay is separately actual1096. TCSli
 all17 seeded roots and encountered-theorem proof boundaries are explicit. Source attribution
 uses the approved Theorem3.3/proof fallback; exact2009 exercise-part wording remains unverified.
 
-Three user questions remain pending; no approval is inferred from the overnight mandate:
+Four user decision fronts remain pending; no approval is inferred from the overnight mandate:
 
 - SAT's PolyTimeBlockLoop import for head/tail leaves: complete held proposal under
   campaign/items/dedup/sat-word-proposal/.
@@ -114,22 +119,28 @@ Three user questions remain pending; no approval is inferred from the overnight 
   was approved, but the home/import revision is not. CfgFacts has the demonstrated cycle;
   alternate7 owners checked/54 not recompiled. Preserve the intentionally dirty old candidate.
 
+- Three additional non-simp owner readers for InputLength: exact equations, full four-owner
+  hypothetical patch and actual native/sealed/22-pair evidence are in
+  campaign/items/dedup/inputlength-reader-proposal/2026-11-08/. They are unapproved
+  source-text proposals; no API adoption, full downstream replay or source merge.
+
 A bounded continuation triage records42 dispositions/25 source bindings at final-eight
 source. Exact matches are already in these PRs; remaining inspected targets need reader,
 design or mathematical work. This is not a whole-library absence/debt-completion claim.
 Seven held FH targets remain restored across six complete BASE-exact owners. Wider accepted
 debt retains its exact kinds/owner/window, after MIG1 and before further SAT/Hardness fills.
 
-Next: finish any still-pending publication, then review returned Codex findings with
-parallel subagents. Preserve reports verbatim, apply mechanical fixes, pause new design
-questions, and issue **Clear to merge** only after external closure and current-tree
-replay/validity checks. No new fill dispatch is authorized by an audit result.
+Next: Seyoon may merge the six cleared PRs. Rebind each subsequent source merge
+to the actual campaign and apply the standing replay-validity rule or whole-overlay replay.
+Continue existing-reader121 repairs and precise122 held-front disposition; ask for the
+three-reader public API decision before adoption. Preserve reports verbatim and pause
+other unresolved design fronts. No new fill dispatch follows from an audit PASS.
 
 ### Machine and preservation constraints
 
 Local3/machine5 Lean slots, nice10/j4; only leanelab/leanelab-o, never lake build.
 One global screen lock. Every shell sources scratch/env.sh; Python only-I. Use whole APFS
-snapshot clones and unlink compiled outputs before elaboration. Current own jobs:none.
+snapshot clones and unlink compiled outputs before elaboration. Current own fronts:two private mechanical repairs, each at most1 locked Lean job.
 
 R is /Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4;S is the original
 tcslib-scratch. S/wt-hk→R;wt-xch→shared exchange;wt-camp→ab34-campaign-current;

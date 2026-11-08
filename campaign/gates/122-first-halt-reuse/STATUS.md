@@ -1,7 +1,3 @@
-# Gate122
+**Not yet clear to merge: #242.**
 
-External Codex findings received verbatim; maintainer review in progress.
-
-**Not yet clear to merge: #242 — review/current-tree disposition pending.**
-
-No mathematical fill, debt acknowledgment or source change follows from the report itself.
+The external selected13 PASS and seven notes are preserved. Current clean merge/replay validity passes, but restoration of seven exposed candidates in six BASE-exact owners is not a Rule10 acknowledgment. Root keeps closure pending the precise held-front governance disposition; no new source defect in the selected13 or waiver is inferred.

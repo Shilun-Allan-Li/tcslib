@@ -2,13 +2,13 @@
 
 Checkpoint 2026-11-08T17:53:34.391519+00:00. Seyoon has confirmed 8 current dispatches; 0 published prompts await dispatch.
 
-Every source PR remains **Not yet clear to merge** until its external gate closes and current merged-tree validation is confirmed. Six Ladner mathematical proofs remain for fills. Use the current817-section gate121 replacement; its earlier816-section prompt is VOID, as is the old359-section gate123 prompt.
+All8 returns are received. Gates123/124/125/126/127/128 are CLOSED with current clean-merge/replay validity recorded; their PRs are **Clear to merge**. Gates121/122 remain **Not yet clear to merge** for the reasons below. The original dispatch prompts remain unchanged as history. Six Ladner mathematical proofs remain for fills. Use the current817-section gate121 replacement; its earlier816-section prompt is VOID, as is the old359-section gate123 prompt.
 
 ## Current prompts
 
 Dispatched by Seyoon: Codex gate 121.
 
-**Not yet clear to merge: #241 — external findings pending.**
+**Not yet clear to merge: #241 — valid foreign-definition-read major; mechanical repair/API proposal in progress.**
 
 ```text
 Audit gate 121 / PR #241 in Shilun-Allan-Li/tcslib.
@@ -34,7 +34,7 @@ content in your reply.
 
 Dispatched by Seyoon: Codex gate 122.
 
-**Not yet clear to merge: #242 — external findings pending.**
+**Not yet clear to merge: #242 — selected13 PASS; exposed held-front governance disposition pending.**
 
 ```text
 Audit gate 122 / PR #242 in Shilun-Allan-Li/tcslib.
@@ -59,7 +59,7 @@ content in your reply.
 
 Dispatched by Seyoon: Codex gate 123.
 
-**Not yet clear to merge: #243 — external findings pending.**
+**Clear to merge: #243 — gate CLOSED; current clean-merge/replay validity confirmed.**
 
 ```text
 Audit gate 123 / PR #243 in Shilun-Allan-Li/tcslib.
@@ -85,7 +85,7 @@ content in your reply.
 
 Dispatched by Seyoon: Codex gate 124.
 
-**Not yet clear to merge: #244 — external findings pending.**
+**Clear to merge: #244 — gate CLOSED; current clean-merge/replay validity confirmed.**
 
 ```text
 Audit gate 124 / PR #244 in Shilun-Allan-Li/tcslib.
@@ -110,7 +110,7 @@ content in your reply.
 
 Dispatched by Seyoon: Codex gate 125.
 
-**Not yet clear to merge: #245 — external findings pending.**
+**Clear to merge: #245 — gate CLOSED; current clean-merge/replay validity confirmed.**
 
 ```text
 Audit gate 125 / PR #245 in Shilun-Allan-Li/tcslib.
@@ -135,7 +135,7 @@ content in your reply.
 
 Dispatched by Seyoon: Codex gate 126.
 
-**Not yet clear to merge: #246 — external findings pending.**
+**Clear to merge: #246 — gate CLOSED; current clean-merge/replay validity confirmed.**
 
 ```text
 Audit gate 126 / PR #246 in Shilun-Allan-Li/tcslib.
@@ -160,7 +160,7 @@ content in your reply.
 
 Dispatched by Seyoon: Codex gate 127.
 
-**Not yet clear to merge: #247 — external findings pending.**
+**Clear to merge: #247 — gate CLOSED; current clean-merge/replay validity confirmed.**
 
 ```text
 Audit gate 127 / PR #247 in Shilun-Allan-Li/tcslib.
@@ -185,7 +185,7 @@ content in your reply.
 
 Dispatched by Seyoon: Codex gate 128.
 
-**Not yet clear to merge: #249 — external findings pending.**
+**Clear to merge: #249 — gate CLOSED; current clean-merge/replay validity confirmed.**
 
 ```text
 Audit gate 128 / PR #249 in Shilun-Allan-Li/tcslib.

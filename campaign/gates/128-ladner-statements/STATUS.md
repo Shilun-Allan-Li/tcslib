@@ -1,7 +1,4 @@
-# Gate128
+**Clear to merge: #249.**
 
-External Codex findings received verbatim; maintainer review in progress.
-
-**Not yet clear to merge: #249 — review/current-tree disposition pending.**
-
-No mathematical fill, debt acknowledgment or source change follows from the report itself.
+Gate128 CLOSED; all 22 notes dispositioned, zero unresolved blockers/majors/minors. Clean current merge and exact passed replay validity are recorded in closure.json and resolutions.md. Source remains unmerged.
+Six direct mathematical holes remain; this is statement clearance only.

@@ -1,0 +1,85 @@
+{
+  "utc": "2026-11-08T16:30:19.936336+00:00",
+  "kind": "Read-only full actual six-private-edge argument review; no new Lean run",
+  "actual_native_source": "evidence/actual-validation162/OwnerEdgesNative.lean.txt",
+  "source_sha256": "0173cd2b1290865a23e44d68df6a9be61a7c35604a30fdc5bd867f17aaf6eac0",
+  "private_roots": [
+    "LadnerEdge_1",
+    "LadnerEdge_2",
+    "LadnerEdge_3",
+    "LadnerEdge_4",
+    "LadnerEdge_5",
+    "LadnerEdge_6"
+  ],
+  "full_edge_range": {
+    "begin_line": 263,
+    "end_line": 292
+  },
+  "every_explicit_tactic_argument_site": [
+    {
+      "literal_line": 267,
+      "source": "  simp only [List.length_nil, List.length_append, List.length_cons,",
+      "continued_source": "    List.length_replicate] at hlen"
+    },
+    {
+      "literal_line": 278,
+      "source": "  rw [SAT_H_eq]",
+      "continued_source": null
+    },
+    {
+      "literal_line": 284,
+      "source": "    simpa only [Nat.log_zero_right] using ladnerH_le 0)",
+      "continued_source": null
+    },
+    {
+      "literal_line": 288,
+      "source": "    simpa only [Nat.log_one_right, Nat.log_zero_right] using ladnerH_le 1)",
+      "continued_source": null
+    }
+  ],
+  "named_equation_arguments": [
+    {
+      "name": "List.length_nil",
+      "role": "published imported theorem"
+    },
+    {
+      "name": "List.length_append",
+      "role": "published imported theorem"
+    },
+    {
+      "name": "List.length_cons",
+      "role": "published imported theorem"
+    },
+    {
+      "name": "List.length_replicate",
+      "role": "published imported theorem"
+    },
+    {
+      "name": "SAT_H_eq",
+      "role": "proved own-owner reading"
+    },
+    {
+      "name": "Nat.log_zero_right",
+      "role": "published imported theorem"
+    },
+    {
+      "name": "Nat.log_one_right",
+      "role": "published imported theorem"
+    }
+  ],
+  "other_published_APIs": [
+    "mem_padSAT_iff.mp/mpr",
+    "ladnerH_le",
+    "Nat.eq_zero_of_le_zero",
+    "FinTM.not_computesInTime_zero"
+  ],
+  "explicit_foreign_TCSlib_definition_arguments": [],
+  "explicit_Core_or_Mathlib_definition_arguments": [],
+  "unfold_delta_change_sites": [],
+  "rfl_uses": "Witness equality only; permitted standing reductions. No SAT or FinTM computation predicate explicitly unfolded.",
+  "conditional_edges": [
+    "LadnerEdge_2 assumes ψ∈SAT",
+    "LadnerEdge_3 assumes ψ∈SAT; not unconditional nonvacuity"
+  ],
+  "all6_execution_and_AXIOM_status": "Original frozen actual04/native and06/sealed receipts and complete standard-only six-edge AX rows in actual-validation162 remain authoritative. No new execution or mathematical fill."
+}

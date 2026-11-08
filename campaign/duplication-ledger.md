@@ -1809,7 +1809,7 @@ status/2026-11-08-overnight/queue.json.
 |---|---|---|
 | FE-LIVE-1:9 private helpers in4 owners | #241/gate121 | existing exists_first_entry_of_fixed; comparator/InputLength candidates held and baseline-restored; no whole-family retirement |
 | FH-1:10 current consumers in8 owners | #242/gate122 | existing exists_first_halt;7 other implementations restored and held; ordinary halt selection remains distinct from fixed-live entry |
-| BLIVE-REUSE-1:3 newly identified helpers in Universal/UniversalStartup | #242/gate122 | existing runFrom_state_ne_none_of_le and timedPrefix_penultimate; mandatory mechanical handling under WORKFLOW§3, not a debt waiver; adopted in currentf3c8, finaltail/44comparison pending |
+| BLIVE-REUSE-1:3 newly identified helpers in Universal/UniversalStartup | #242/gate122 | existing runFrom_state_ne_none_of_le and timedPrefix_penultimate; mandatory mechanical handling under WORKFLOW§3, not a debt waiver; adopted in currentf3c8; final153 replay/44comparison PASS; external selected13 PASS, root governance closure pending |
 | Five Bool-facing public run-law implementations | #243/gate123 | public generic output-prefix/extension, halt-absorption and backward-live contracts; names/headers retained; runFrom_one belongs to the paused RO1 front |
 | SafeRun zero/cons/trans implementations | #244/gate124 | public Segment operations through1 new private, non-simp own-definition conversion;3 public headers retained; no added public API |
 | Two private Hardness head/tail implementations | #245/gate125 | existing polyTimeComputable_tail/take1; SAT counterparts wait for the separate pending import decision |
@@ -1827,3 +1827,13 @@ owner/window: maintainer, next12.2c after active MIG-1 and before further SAT/Ha
 The present partial cleanups do not acknowledge future copies, retire those whole kinds,
 change a public statement/import/home or close another watch. Ladner's approved17-declaration
 statement skeleton/#249, with6 mathematical holes, is not a duplication retirement.
+
+
+### Returned overnight audits (2026-11-08; not source retirement)
+
+Gates123/124/125/126/127/128 are CLOSED after scoped per-finding disposition and
+current clean-merge/replay validity. Source PRs remain unmerged, so implementation
+retirement is not yet recorded. Ladner is a statement skeleton with six direct holes.
+Gate121 remains HOLD for exposed foreign-definition reads; gate122 selected13 PASS
+does not dispose of exposed held fronts by BASE restoration. No blanket Rule10
+acknowledgment, generic host permission or existing family scope extension is inferred.

@@ -1,0 +1,39 @@
+/private/tmp/ab34-rs1-hinit/runtime/ControlsSealed.lean:12:37: error: Type mismatch
+  rfl
+has type
+  ?m.12 = ?m.12
+but is expected to have type
+  MultiTapeTM.initCfg x = Cfg.init A.q₀ x
+/private/tmp/ab34-rs1-hinit/runtime/ControlsSealed.lean:20:39: error: Type mismatch
+  rfl
+has type
+  ?m.14 = ?m.14
+but is expected to have type
+  (MultiTapeTM.initCfg x).state = some A.q₀
+/private/tmp/ab34-rs1-hinit/runtime/ControlsSealed.lean:28:86: error: Type mismatch
+  rfl
+has type
+  ?m.22 = ?m.22
+but is expected to have type
+  Cfg.init q x =
+    { state := some q, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }
+/private/tmp/ab34-rs1-hinit/runtime/ControlsSealed.lean:36:54: error: Type mismatch
+  rfl
+has type
+  ?m.11 = ?m.11
+but is expected to have type
+  (Cfg.init q x).state = some q
+/private/tmp/ab34-rs1-hinit/runtime/ControlsSealed.lean:43:88: error: Type mismatch
+  rfl
+has type
+  ?m.36 = ?m.36
+but is expected to have type
+  Cfg.mapState f c =
+    { state := Option.map f c.state, inputPos := c.inputPos, workTapes := c.workTapes, workTapePos := c.workTapePos,
+      output := c.output }
+/private/tmp/ab34-rs1-hinit/runtime/ControlsSealed.lean:50:44: error: Type mismatch
+  rfl
+has type
+  ?m.18 = ?m.18
+but is expected to have type
+  (Cfg.mapState f c).state = Option.map f c.state

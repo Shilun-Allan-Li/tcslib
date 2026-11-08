@@ -1,0 +1,53 @@
+{
+  "utc": "2026-11-08T16:27:28.281469+00:00",
+  "policy_source": "standards/campaign/maintainer/WORKFLOW.md",
+  "policy_source_SHA256": "48a1d52ceeffd3136cec3d4cad3bb662fd0ec5027d92132f8feb25abd701b3b5",
+  "exact_lines71_80": [
+    {
+      "line": 71,
+      "text": "- **Rule 10 binds the maintainer's own API proofs:** read other files' TCSlib definitions only"
+    },
+    {
+      "line": 72,
+      "text": "  through their published equations. Core and Mathlib definitions may reduce by `rfl`, `decide`"
+    },
+    {
+      "line": 73,
+      "text": "  or `show`, but are never passed to `simp`, `rw` or `unfold`."
+    },
+    {
+      "line": 74,
+      "text": "  - **Check:** a sealed copy (`attribute [local irreducible]` on every other-file TCSlib"
+    },
+    {
+      "line": 75,
+      "text": "    definition reached; `attribute [-simp]` on the `@[simp]` ones that exist in the closure),"
+    },
+    {
+      "line": 76,
+      "text": "    each new section moved into its own `section` in a scratch copy."
+    },
+    {
+      "line": 77,
+      "text": "  - **Controls:** an `rfl` delta goal and an equation goal per sealed definition. They pass"
+    },
+    {
+      "line": 78,
+      "text": "    unsealed and fail sealed."
+    },
+    {
+      "line": 79,
+      "text": "  - Also inspect every `rw`/`simp`/`unfold` argument, since `simp [Def]` unfolds even a sealed"
+    },
+    {
+      "line": 80,
+      "text": "    definition."
+    }
+  ],
+  "mandatory_guard_scope": "Every reached other-file TCSlib ordinary definition (projection/abbreviation exclusions explicit), not all Core/Mathlib ordinary heads.",
+  "Core_Mathlib_scope": "Definitions may reduce by rfl/decide/show under standing workflow, but explicit simp/rw/unfold arguments are prohibited; the full argument review additionally records delta/change sites.",
+  "actual_collector_scope": "ImportedInventory.lean.txt lines33-34 tests TCSlib owner prefix excluding current Ladner owner, then skips other owners. Nine guard names/eight homes are therefore TCSlib-bounded and satisfy that policy scope.",
+  "supplement_not_required": "No broader non-TCS collector, new seal or new Lean execution is required solely by this wording clarification.",
+  "frozen_payloads_untouched": true,
+  "no_policy_exception_or_new_approval": true
+}

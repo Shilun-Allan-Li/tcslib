@@ -1,0 +1,16 @@
+--- records
+
++++ bundle
+
+@@ -1,3 +1,4 @@
+
++```
+ import sys,os,json,hashlib,subprocess,time,datetime,shutil
+ from pathlib import Path
+ wt=Path(sys.argv[1]).resolve();branch=sys.argv[2];name=sys.argv[3];targets=sys.argv[4:]
+@@ -72,3 +73,4 @@
+
+ write('RESULT.json',{'pass':passed,'head':head,'modules':len(rows),'expected_modules':len(mods),'failed':sum(not r['pass'] for r in rows),'static_exit':st.returncode,'seconds':time.monotonic()-start,'snapshot_valid':passed,'complete_input_objects':len(original),'complete_output_objects':len(new),'source_unchanged_during_replay':True})
+ print('REPLAY FINAL',name,'PASS' if passed else 'FAIL',flush=True)
+ if not passed:sys.exit(1)
++```

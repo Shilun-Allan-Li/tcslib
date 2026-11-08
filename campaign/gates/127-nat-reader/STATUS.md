@@ -1,7 +1,7 @@
 # Gate127
 
-External Codex findings received verbatim; maintainer review in progress.
+Gate CLOSED; pointer minor fixed and all notes dispositioned.
 
-**Not yet clear to merge: #247 — review/current-tree disposition pending.**
+**Clear to merge: #247.**
 
-No mathematical fill, debt acknowledgment or source change follows from the report itself.
+Exact source `e16049ad20823b3e6abba171e328489746062080`; current clean merge/source/package/MAC8 validity is recorded in closure.json. No source merge, unrelated debt waiver or whole-owner seal is inferred.
