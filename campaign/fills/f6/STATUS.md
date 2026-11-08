@@ -1,6 +1,6 @@
-# F6 — Codex gate120 Ready to dispatch
+# F6 — Codex gate120 dispatched
 
-**Ready to dispatch: Codex gate120.** Verified1762-section packet is published at exchange0eb0d599d7b28882280de09ae85a819b21338afc; exact pins, SHA256, full prompt and verification in campaign/gates/120-f6-space-universal/{publication.json,prompt.md}. User dispatch is not yet confirmed.
+**Dispatched by Seyoon: Codex gate120.** Verified1762-section packet is published at exchange0eb0d599d7b28882280de09ae85a819b21338afc; exact pins, SHA256, full prompt and verification in campaign/gates/120-f6-space-universal/{publication.json,prompt.md}. Seyoon confirmed dispatch in chat; await findings.
 
 **Not yet clear to merge: #235 — gate120 is open.** Source073/Hierarchy550c59 on merged#234/bf64: currentwholeMAC5→MF63 PASS2/static0/0, fresh138→193 compiled accounting, standard target axioms,19scopes/72pairedcontrols and conditional witness check, and actualfresh25BASE+HEAD1385→1396/1454→1455/477526→477688 allpass. Older23/229+2 generations keep their historical pins. The README explicitly corrects the retained preparation-time intro; all1762 Git-bound bundle sections are unchanged.
 

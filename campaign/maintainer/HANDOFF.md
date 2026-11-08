@@ -9,9 +9,9 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
-**Current checkpoint: F6 Ready to dispatch; SG1R4 evidence finishing; MIG final native3 passes.**
+**Current checkpoint: F6 dispatched; SG1R4 evidence finishing; MIG final native3 passes.**
 
-- **Ready to dispatch: Codex gate120 for #235.** Verified1762-section F6 packet published at exchange`0eb0d599d7b28882280de09ae85a819b21338afc`; exact source073/recordse819/SHA/prompt saved in gate120/publication.json and prompt.md, issued in chat. User dispatch not yet confirmed. Fresh25/currentmetadata/seals/MF63 are complete. **Not yet clear to merge: #235 — gate120 open.**
+- **Dispatched by Seyoon: Codex gate120 for #235.** Verified1762-section F6 packet published at exchange`0eb0d599d7b28882280de09ae85a819b21338afc`; exact source073/recordse819/SHA/prompt saved in gate120/publication.json and prompt.md, issued in chat. User confirmed dispatch in chat; await findings. Fresh25/currentmetadata/seals/MF63 are complete. **Not yet clear to merge: #235 — gate120 open.**
 - SG1pushed078 directly fixes both R3F4 backward-liveness copies;26notes dispositioned. ActualwholeMAC5MSG8 PASS329/static0/66 and freshfull25BASE/HEAD2019→1991 are frozen. Freshcurrent9owner metadata7101→7063 preserves1351nonprivate types/metadata/AX and168simprules; scopedF4 controls/selectedAX are finishing. CodexR4selected. **Not yet clear to merge: #215.** OldR3packet/report immutable.
 - MIGfinalpushed`eaecd6b2afd992ead0844fa5f351eaf143fd1d1c` applies the reviewed six reader bodies, Seyoon-approved2kernel-equivalent private transports, and a separately checked final CoreOption.map argument repair. ActualwholeMAC5native3 PASS12/0errors/3unchangedRAM admissions, complete895objectmaps. Recorded14whole-header/body seals/232pairedcontrols pass; the final Loop version separately passes3-targetseal/40freshcontrols. FreshwholeMAC5MMIG3 full394replay and25HEAD comparison run; BASE25frozen1702. CurrentHEAD compiled accounting/AX/sourceQA follow. **Not yet clear to merge: #233.** Codexgate118selected, not ready.
 
