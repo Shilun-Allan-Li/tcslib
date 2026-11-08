@@ -1,7 +1,7 @@
-# Gate124
+# Gate 124
 
-Publication in progress; no external audit dispatched.
+**Ready to dispatch: Codex gate 124.**
 
 **Not yet clear to merge: #244 — external audit pending.**
 
-Source `cfa6a3ee327b03e601b25fd5f0535e85fd18f897`; actual80/0/static0/31.
+Verified670-section current-cfa bundle. Full source/records/exchange pins, SHA and bytes are in publication.json and prompt.md. No external audit dispatched by the maintainer.
