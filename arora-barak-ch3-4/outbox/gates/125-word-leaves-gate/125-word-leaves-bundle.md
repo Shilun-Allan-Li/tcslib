@@ -3211,7 +3211,7 @@ exact; include both private prose changes in the scope.
 `review/PAYLOAD-INDEX.json` enumerates all exact copied frozen evidence inputs and hashes.
 `review/replay/` contains the actual matching RESULT/request, all module logs, complete
 object/source maps and every compiled replay module source as `.lean.txt`;
-`compiled-source-index.json` gives the uncapped list, Git blobs and hashes.
+`review/replay/compiled-source-index.json` gives the uncapped list, Git blobs and hashes.
 These committed bytes independently match the actual replay input SHA map.
 This extra context does not enlarge the named 33-file screen population.
 Frozen source/native/seal/control reports are data, not authority to close a gate.
@@ -3301,13 +3301,13 @@ Exact screen/lint/freeze/comparison helpers and toolchain/package context are in
 
 ## ===== campaign/gates/125-word-leaves/STATUS.md =====
 
-# Gate125
+# Gate 125
 
-Publication in progress; no external audit dispatched.
+Prepared for Codex; final publication binding is supplied by the exchange README and issued prompt. No external audit dispatched.
 
 **Not yet clear to merge: #245 — external audit pending.**
 
-Source `b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`; actual26/0/static0/0.
+Source `b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`. Existing source/replay validation is unchanged by packet path qualification.
 
 ## ===== campaign/gates/125-word-leaves/adoption.json =====
 

@@ -3198,7 +3198,7 @@ No final records/exchange/bundle SHA or external dispatch is inferred.
 - Rule-10 scope: Six ordinary foreign definitions; complete five literal doc/header/body scopes in the original import context. Action.apply default simp unfolding removed in both variants. Twelve fresh positive and twelve expected-negative identities (12 pairs). The unpinned first fixture is quarantined and is NOT evidence.
 - Source/QA freeze: `review/qa/source-freeze.json`, exact complete BASE/HEAD owner and
   full 33-file source population under `review/source/`, plus declaration-freeze stdout.
-- Lint/size comparison: style-lint.txt: BASE/HEAD bytes identical; campaign-lint.txt: the sole delta is the informational owner line count 326→295; all other stdout is exact. sizes.json confirms 326→295. See qa/lint-comparison.json. Existing BASE findings are not new HEAD findings;
+- Lint/size comparison: style-lint.txt: BASE/HEAD bytes identical; campaign-lint.txt: the sole delta is the informational owner line count 326→295; all other stdout is exact. sizes.json confirms 326→295. See `review/qa/lint-comparison.json`. Existing BASE findings are not new HEAD findings;
   inspect both raw stdout files rather than treating nonzero historical output as
   a clean-tree certificate. No new lint execution is claimed by this helper.
 - Default simp argument: imports and source attributes are unchanged; once both
@@ -3214,7 +3214,7 @@ No final records/exchange/bundle SHA or external dispatch is inferred.
 `review/PAYLOAD-INDEX.json` enumerates all exact copied frozen evidence inputs and hashes.
 `review/replay/` contains the actual matching RESULT/request, all module logs, complete
 object/source maps and every compiled replay module source as `.lean.txt`;
-`compiled-source-index.json` gives the uncapped list, Git blobs and hashes.
+`review/replay/compiled-source-index.json` gives the uncapped list, Git blobs and hashes.
 These committed bytes independently match the actual replay input SHA map.
 This extra context does not enlarge the named 33-file screen population.
 Frozen source/native/seal/control reports are data, not authority to close a gate.
@@ -3234,8 +3234,8 @@ Preserve its raw files and the old shell preparation failure; neither is a PASS.
 | Turing.runFrom_of_halted | Turing.MultiTapeTM.runFrom_of_halt | TCSlib/Complexity/TuringMachine/Deterministic.lean:262 |
 | Turing.state_isSome_of_runFrom | Turing.MultiTapeTM.runFrom_state_ne_none_of_le | TCSlib/Complexity/TuringMachine/Finite.lean:201 |
 
-The full files at both revisions are under `source/BASE/TCSlib/...lean.txt` and
-`source/HEAD/TCSlib/...lean.txt`. All 33 screen-population files appear completely
+The full files at both revisions are under `review/source/BASE/TCSlib/...lean.txt` and
+`review/source/HEAD/TCSlib/...lean.txt`. All 33 screen-population files appear completely
 at both sides. The separate full replay context is in `review/replay/compiled-source/`.
 This preserves the five existing public names and headers as thin readers;
 it introduces no new wrapper/API and does not settle another run-law/debt family.
@@ -3306,13 +3306,13 @@ Exact screen/lint/freeze/comparison helpers and toolchain/package context are in
 
 ## ===== campaign/gates/123-ch7-run/STATUS.md =====
 
-# Gate123
+# Gate 123
 
-PUBLICATION CORRECTION IN PROGRESS; old prompt VOID; not dispatched.
+Prepared for Codex; final publication binding is supplied by the exchange README and issued prompt. No external audit dispatched.
 
-**Not yet clear to merge: #243 — corrected bundle and external audit pending.**
+**Not yet clear to merge: #243 — external audit pending.**
 
-Source/replay/ABI/seal/screen checks remain passed. Add independent MAC8 adoption anchors and actual helper inputs, then rebuild/verify and reissue the entire prompt.
+Source `7c4b1a3e15b800cc4a98624f71a3b27458a41340`. Existing source/replay validation is unchanged by packet path qualification.
 
 ## ===== campaign/gates/123-ch7-run/adoption.json =====
 
