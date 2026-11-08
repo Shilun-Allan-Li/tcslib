@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.setupCfg_borrow",
+ "key": "b971adab80fd1f1b",
+ "kind": "lemma",
+ "title": "Full-width budget borrow pass",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a$ be a natural number, and let $x$ be a finite word over the schedule alphabet determined by $W$ and $a$. Choose a base configuration on input $x$, an input-head position $p$, integers $u$ and $g$, tape contents $\\mu,\\gamma\\colon\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{OblSymbol})$, a Boolean word $w$, and a Boolean carry $c$. Starting from the setup configuration whose control state is the borrow phase with carry $c$, whose budget-head position is $1$ and budget tape is the captured clock tape of $w$, and whose unary-counter and guide heads and tapes are $u,\\mu$ and $g,\\gamma$, respectively, after $|w|$ steps the configuration is the setup configuration with borrow carry equal to the final carry produced by the fixed-width borrow pass on $(c,w)$, budget-head position $1+|w|$, and budget tape equal to the captured clock tape of the rewritten word. In both configurations the input position, the source tapes and their heads, the unary-counter and guide tapes and heads, and the output are those specified by the same base configuration and parameters.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Bool",
+  "a is a natural number",
+  "x is a finite word over the schedule alphabet",
+  "base configuration on x",
+  "input-head position p",
+  "integer head positions u and g",
+  "tape contents ut and gt",
+  "Boolean word w",
+  "Boolean carry",
+  "initial borrow phase with carry",
+  "initial budget-head position 1",
+  "initial budget tape clockTape w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a bit word and $c$ a Boolean incoming borrow, and recall the fixed-width\nborrow pass: it processes all of $w$, subtracting the incoming borrow from its\nlittle-endian value while preserving its length, and returns an outgoing borrow flag\ntogether with the rewritten word.  From a setup configuration in the borrow phase with\nflag $c$ and budget head at cell $1$ over the captured clock tape of $w$, exactly $|w|$\nsteps reach the borrow phase whose flag is the outgoing borrow, with budget head at\n$1+|w|$ over the captured clock tape of the rewritten word; all other tapes and heads,\nand the parked input head, remain fixed."
+}

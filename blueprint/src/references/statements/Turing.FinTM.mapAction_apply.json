@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.mapAction_apply",
+ "key": "d5c22363cf2a1015",
+ "kind": "lemma",
+ "title": "Effect of a threaded-map action",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be a configuration of $M$ on input $x$, and let $q,q'$ be optional states of the threaded-map controller built over $M$. Let $p$ be an input-head position, $h$ an integer capture-head position, $o$ a Boolean word, $m,d\\in\\{-1,0,1\\}$ be directions, and $b$ an optional Boolean output symbol. Applying the administrative action with input movement $m$, capture-head movement $d$, output symbol $b$, and successor state $q'$ to the threaded-map configuration determined by $c,q,p,h,o$ gives the threaded-map configuration determined by $c,q'$, the input-head position obtained by moving $p$ by $m$, capture-head position $h+d$, and output word $o$ followed by $b$ when present.",
+ "hypotheses_covered": [
+  "M is a finite Turing machine over the Boolean alphabet",
+  "c is a configuration of M on input x",
+  "q and q' are optional threaded-map controller states",
+  "p is a valid input-head position for x",
+  "h is an integer capture-head position",
+  "o is a Boolean word",
+  "m and d are directions in {-1,0,1}",
+  "b is an optional Boolean symbol"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying an administrative action of the threaded-map controller moves the\ninput position and the capture-head displacement by the specified directions,\ninstalls the designated control state, and appends the optional emission to\nthe output; no work-tape cell changes."
+}

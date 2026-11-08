@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitSafe_join",
+ "key": "9696c93e0c2c7402",
+ "kind": "lemma",
+ "title": "Joining Safe Computation Segments",
+ "statement": "Let $M$ be a deterministic multi-tape Turing machine with Boolean work-tape symbols, let $a$ be a state, and let $c,d,f$ be configurations on the same input. Suppose that after $u$ steps from $c$ the machine reaches $d$, and that during steps $0$ through $u$ its state is never $a$. Suppose also that after $v$ steps from $d$ it reaches $f$, and during steps $0$ through $v$ its state is never $a$. Then after $u+v$ steps from $c$ it reaches $f$, and its state is never $a$ during any step from $0$ through $u+v$.",
+ "hypotheses_covered": [
+  "A Boolean-symbol multi-tape Turing machine",
+  "A distinguished state and three configurations on the same input",
+  "The run from the first configuration reaches the second after u steps",
+  "The first segment avoids the distinguished state at every step from 0 through u",
+  "The run from the second configuration reaches the third after v steps",
+  "The second segment avoids the distinguished state at every step from 0 through v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

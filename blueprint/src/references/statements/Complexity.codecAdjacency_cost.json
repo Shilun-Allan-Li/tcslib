@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.codecAdjacency_cost",
+ "key": "35d2b9a25ebf73fe",
+ "kind": "theorem",
+ "title": "Adjacency encoding cost bound",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, with $k$ work tapes, and let $n,s,C$ be nonnegative integers. Write $Q$ for its state set, and let $A=|Q|+6k+5$ and $T=2^k(2|Q|+2)^{\text{?}}$—more precisely, $T=2^k\\,|\\mathrm{Option}(Q)\\times\\mathrm{Option}(\\mathrm{Bool})\\times(\\mathrm{Fin}(k)\\to\\mathrm{Option}(\\mathrm{Bool}))|\\,2^{3k+7}(3k+8)$. If $A\\le C$, then the cost of the concatenation of the input-equality CNF and transition CNF is at most $(6+T)C(s+n+2)^{k+2}$. Here the cost of a CNF is the sum, over its clauses, of one plus the clause length.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Boolean-alphabet Turing machine",
+  "$C,n,s$ are nonnegative integers",
+  "$|Q|+6k+5\\le C$"
+ ],
+ "confidence": "low",
+ "caveat": "The transition coefficient is rendered directly from its formal definition; the unusual cardinality expression is left in set notation.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

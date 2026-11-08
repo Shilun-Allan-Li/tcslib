@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.norm_integral_gaussianProductDensityHessian_smul_le",
+ "key": "305236a82b76354c",
+ "kind": "lemma",
+ "title": "Bound for an integrated Gaussian density Hessian",
+ "statement": "Let $I$ be a finite index set, and let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\leq1$ for every $z$. Let $v\\geq0$ with $v\\ne0$, and let $c\\in\\mathbb R^I$. The norm of the integral of $f(z)$ times the product Gaussian density Hessian with mean $c$ and variance $v$, integrated against Lebesgue measure on $\\mathbb R^I$, is at most\n\\[\n|I|^2\\frac{2}{v}.\n\\]",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$f:\\mathbb R^I\\to\\mathbb R$ is measurable",
+  "$|f(z)|\\leq1$ for all $z$",
+  "$v\\geq0$",
+  "$v\\ne0$",
+  "$c\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Put $G_v(c,z)=\\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\\sum_i h_i k_i/v)$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$, then $\\|\\int f(z)T_v(c,z)\\,dz\\|\\le2|I|^2/v$ for every $c\\in\\mathbb R^I$, using maximum norms for the bilinear operator norm."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Compiler.Start.sub",
+ "key": "6b76c0a53e139026",
+ "kind": "theorem",
+ "title": "Reestablishing a start configuration",
+ "statement": "Let $S$ be a setting, and suppose a start configuration for a statement $s$ at depth $d$, code position $\\mathrm{pos}$, and stack position $q$ satisfies the start conditions. Let $t$ be a statement with compiled code at position $\\mathrm{pos}'$, whose code length ends at or before the dispatcher, and whose width is at most $S.F$. Suppose $\\sigma'$ is a state bounded by the limits of $S$, and a word-RAM memory $m'$ is related to $\\sigma'$ at stack position $q$. Then $t$, $\\sigma'$, $\\mathrm{pos}'$, and $m'$ satisfy the start conditions for $S$ at depth $d$ and stack position $q$.",
+ "hypotheses_covered": [
+  "A setting $S$",
+  "An existing start configuration for $s$ at depth $d$, position $\\mathrm{pos}$, and stack position $q$",
+  "The compiled code of $t$ occurs at $\\mathrm{pos}'$",
+  "$\\mathrm{pos}'+\\mathrm{size}(t)\\le S.\\mathrm{disp}$",
+  "$t$ has width at most $S.F$",
+  "$\\sigma'$ is bounded by $S$'s limits",
+  "$m'$ is related to $\\sigma'$ at stack position $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a setting, and suppose there is a start configuration for statement $s$ at\ndepth $d$, code position $\\mathrm{pos}$, and stack position $q$. Suppose a statement $t$\nhas its compiled code at position $\\mathrm{pos}'$, its code length ends at or before the\ndispatcher, its width is at most $S.F$, and a state $\\sigma'$ is bounded by\n$S.\\mathrm{lim}$. If a word-RAM memory $m'$ is related to $\\sigma'$ at stack position\n$q$, then $t$, $\\sigma'$, $\\mathrm{pos}'$, and $m'$ satisfy the start conditions for $S$\nat the same depth $d$ and stack position $q$."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.cellOf_mkCfg",
+ "key": "237aa284b5daf8ab",
+ "kind": "theorem",
+ "title": "Reconstruction from window cells",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean symbols, let $x$ be a finite Boolean string, let $s$ be a natural number, let $f$ assign a cell value to each natural-number index, and let $p$ be a valid input-head position among the $|x|+2$ positions. Suppose among indices $j<2s+1$, the head-and-summary slot is present exactly at $j=0$; for each work tape, at most one such index marks its head; and for each work tape, at least one such index marks its head. Then the configuration reconstructed from $f$, $s$, and $p$ has all work-tape heads within distance $s$ of the origin and blank cells outside that window, and its encoded cell at every index $j<2s+1$ is exactly $f(j)$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean symbols",
+  "$x$ is a finite Boolean string",
+  "$s$ is a natural number",
+  "$f$ assigns a cell value to each natural number",
+  "$p$ is a valid input-head position",
+  "The head-and-summary slot is present exactly at index zero within the window",
+  "For each work tape, no two window indices mark its head",
+  "For each work tape, some window index marks its head"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

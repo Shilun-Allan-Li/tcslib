@@ -1,16 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceInfoTerm_le_claimInfo",
- "key": "809bc5188f8a03ae",
+ "key": "00f0b7e101131eb2",
  "kind": "theorem",
- "title": "Alice's information term is bounded by the total claim information",
- "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for disjointness inputs of length $n$, and give the hard sample space the distribution conditioned on the event that the generated input pair $(X,Y)$ is disjoint. Write $T$ for the special coordinate, $X_T$ and $Y_T$ for Alice's and Bob's bits at $T$, and $M$ for the transcript produced by running $p$ on the input $(X,Y)$. Let Alice's information term be the conditional mutual information\n\\[\nI\\bigl(X_T \\,;\\, M \\,\\big|\\, T,\\, X_{<T},\\, Y_{\\ge T}\\bigr),\n\\]\nBob's information term be $I\\bigl(Y_T \\,;\\, M \\,\\big|\\, T,\\, X_{\\le T},\\, Y_{>T}\\bigr)$, and the total claim information be the sum of the two. Then Alice's information term is at most the total claim information.",
+ "title": "Alice information bounded by total claim information",
+ "statement": "For a positive integer $n$ and a deterministic communication protocol $p$ on length-$n$ set inputs, under the hard-sample distribution conditioned on disjointness, Alice's information between her bit at the special coordinate and the transcript of $p$, conditioned on the special coordinate, Alice's bits up to and including it, and Bob's bits strictly after it, is at most the sum of this Alice information term and Bob's information between his bit at the special coordinate and the transcript of $p$, conditioned on the special coordinate, Alice's bits up to and including it, and Bob's bits strictly after it.",
  "hypotheses_covered": [
-  "n is a positive integer",
-  "p is a deterministic disjointness protocol of length n",
-  "underlying measure is the hard distribution conditioned on the disjointness event"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol on length-$n$ set-disjointness inputs"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Alice's information term is bounded by the total corrected information."
+ "replaced": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for\ndisjointness inputs of length $n$, and give the hard sample space the distribution\nconditioned on the event that the generated input pair $(X,Y)$ is disjoint. Write $T$\nfor the special coordinate, $X_T$ and $Y_T$ for Alice's and Bob's bits at $T$, and $M$\nfor the transcript produced by running $p$ on the input $(X,Y)$. Let Alice's information\nterm be the conditional mutual information\n\\[\nI\\bigl(X_T \\,;\\, M \\,\\big|\\, T,\\, X_{<T},\\, Y_{\\ge T}\\bigr),\n\\]\nBob's information term be $I\\bigl(Y_T \\,;\\, M \\,\\big|\\, T,\\, X_{\\le T},\\, Y_{>T}\\bigr)$,\nand the total claim information be the sum of the two. Then Alice's information term is\nat most the total claim information."
 }

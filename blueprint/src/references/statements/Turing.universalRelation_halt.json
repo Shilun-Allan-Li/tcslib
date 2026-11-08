@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.universalRelation_halt",
+ "key": "9ae771431dae6ea2",
+ "kind": "lemma",
+ "title": "Checkpoint relation preserves halting",
+ "statement": "Let $c$ be an effective machine-coding scheme, let $\\alpha$ and $x$ be finite Boolean words, let $s$ be a configuration of the machine decoded from $\\alpha$ on input $x$, and let $d$ be a configuration of the associated universal machine on $\\langle\\alpha,x\\rangle$. If $s$ and $d$ satisfy the checkpoint relation, then $s$ is halted if and only if $d$ is halted.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-coding scheme",
+  "$\\alpha$ and $x$ are finite Boolean words",
+  "$s$ is a configuration of the decoded machine on input $x$",
+  "$d$ is a configuration of the associated universal machine on $\\langle\\alpha,x\\rangle$",
+  "$s$ and $d$ satisfy the checkpoint relation"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-coding scheme, let $\\alpha$ and $x$ be finite bit\nstrings, and let $s$ be a configuration of the machine decoded from $\\alpha$ on input\n$x$. Let $t$ be a configuration of the universal machine associated with $c$ on the\nencoding of $\\alpha$ and $x$. If the checkpoint relation holds between $s$ and $t$, then\n$s$ is halted if and only if $t$ is halted."
+}

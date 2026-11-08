@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.clOutputAt_compute",
+ "key": "6403bf60343f194b",
+ "kind": "lemma",
+ "title": "Returning a buffer with a head at or before its end",
+ "statement": "Let $A$ be a finite Turing machine over the Boolean alphabet, let $r$ be one of its states, and choose one of its work tapes. Suppose that from its initial configuration on input $x$, machine $A$ reaches a configuration $d$ after $a$ steps, with state $r$, empty output, contents of the chosen tape equal to the buffer holding $w$, and head position $j\\le |w|$. Assume $A$'s initial state differs from $r$ and every configuration in state $r$ is fixed by one step of $A$. Then the machine obtained by extending $A$ with the output procedure computes $w$ on input $x$ within $a+j+|w|+4$ steps.",
+ "hypotheses_covered": [
+  "$A$ is a finite machine over the Boolean alphabet",
+  "$r$ is a state of $A$",
+  "A work tape of $A$ is chosen",
+  "$x$ and $w$ are finite bit strings",
+  "$a$ and $j$ are natural numbers",
+  "$d$ is a configuration on input $x$ reached from the initial configuration of $A$ after $a$ steps",
+  "$d$ has state $r$",
+  "$A$'s initial state differs from $r$",
+  "every configuration in state $r$ is fixed by one step of $A$",
+  "$d$ has empty output",
+  "the chosen tape in $d$ contains the buffer for $w$",
+  "the chosen tape head in $d$ is at position $j$",
+  "$j\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine reach, in $a$ steps from its native start, an absorbing completion whose chosen tape holds the word $w$ with its head at some position $j \\le |w|$, with empty output and a start control distinct from the completion. Then the replay-extended machine computes $w$ from the same input within $a + j + |w| + 4$ steps; the whole source frame is preserved and every rewind and output transition appears in the ledger."
+}

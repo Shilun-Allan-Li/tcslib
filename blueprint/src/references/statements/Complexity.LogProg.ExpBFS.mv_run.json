@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.mv_run",
+ "key": "50e1779baa06660b",
+ "kind": "theorem",
+ "title": "Counter transfer in the breadth-first search machine",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $x$ be a finite Boolean word, and let $\\mathrm{orc}$ assign a Boolean answer to each of four indices and each finite Boolean word. Let $st$ be a machine state whose 17 natural-number counters are all at most $B$, let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory map, and let $p\\in\\mathbb Z$ satisfy $0\\le p\\le P$ and $st.c_1+st.c\\le B$. In the machine defined by the transition rules of the exponential breadth-first search procedure, the configuration starting in the counter-transfer phase with state $st$, memory $M$, and memory-head position $p$ reaches the copy phase for the radius and next-radius counters with the same memory and head position, with counter $c$ reset to $0$ and counter $c_1$ set to $st.c_1+st.c$. Every configuration strictly before that endpoint has all register values at most $B$, has memory-head position between $0$ and $P$, and satisfies the required operand conditions for its active instruction: equality tests compare distinct registers, input-word comparisons occur only on valid encodings, and calls use distinct argument registers.",
+ "hypotheses_covered": [
+  "$K_0,B,P$ are natural numbers",
+  "$x$ is a Boolean word",
+  "$\\mathrm{orc}$ is a Boolean-valued oracle on four indices and Boolean words",
+  "Every counter of $st$ is at most $B$",
+  "$M$ is a Boolean-valued map on the integers",
+  "$0\\le p\\le P$",
+  "$st.c_1+st.c\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let $x$ be a Boolean word, and let $\\mathrm{orc}$\nassign a Boolean answer to each of four indices and Boolean words. Let $st$ be a\nregister state whose 17 natural-number counters are all at most $B$, and let $M:\\mathbb\nZ\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory map. If the integer head position $p$\nsatisfies $0\\le p\\le P$ and $st.c_1+st.c\\le B$, then the machine, started in its\ncounter-transfer phase with state $st$, memory $M$, and head position $p$, reaches the\ncounter-copy phase with the same memory and head position, with counter $c$ set to $0$\nand counter $c_1$ set to $st.c_1+st.c$. At every configuration strictly before that\nendpoint, all register values are at most $B$, the head position lies between $0$ and\n$P$, and the current instruction satisfies its required operand conditions: equality\ntests use distinct registers, input-word comparisons are made only on valid encodings,\nand calls use distinct argument registers."
+}

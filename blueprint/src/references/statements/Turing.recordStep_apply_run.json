@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.recordStep_apply_run",
+ "key": "16e79dd985c41e3f",
+ "kind": "theorem",
+ "title": "Recorded Simulation of One Step",
+ "statement": "Let $M$ be a Boolean-input multi-tape machine with state set $Q$, let $T$ be a type of tags, let $upd:T\\times\\{\\text{absent},\\text{false},\\text{true}\\}\\to T$, and let $seek$ be a two-tape Boolean machine with states $S$ and designated states $start,finish$. Fix a Boolean input word $x$, a natural-number window radius $s$, a configuration $c$ on $x$, a tag $\\tau\\in T$, and a record $data$ whose input symbol agrees with the symbol scanned by $c$, whose zero-position flag correctly records whether the input head is at zero, and whose tag is $\\tau$. Suppose $c$ lies in the window of radius $s$. Suppose also that a four-tape configuration $d$ records $c$ and $\\tau$ on tape $0$ according to the specified record layout, while every other tape is blank. Then there is a time $t\\le 40(k+3)(L+1)$, where $k$ is the number of tapes of $M$ and $L$ is the length of the joined record, at which the recording machine reaches the configuration that has verdict state $true$ and whose tape $0$ contains the record of the configuration obtained by applying to $c$ the action prescribed by $M$ from $data$, with its tag updated by $upd$ using that action's output. This run avoids both verdict states before time $t$ and keeps every work-tape head within distance $L+1$ of its initial position through time $t$.",
+ "hypotheses_covered": [
+  "Machines $M$ and $seek$, state sets $Q,T,S$, and decidable equality on each state set",
+  "An update function $upd$",
+  "Designated seek states $start,finish$",
+  "A Boolean word $x$, radius $s$, configuration $c$, and tag $\\tau$",
+  "The configuration $c$ is in the window of radius $s$",
+  "Record data input equals the symbol scanned by $c$",
+  "Record data zero-position flag correctly reflects whether the input-head position is zero",
+  "Record data tag equals $\\tau$",
+  "A four-tape configuration $d$ whose tape 0 records $c$ and $\\tau$ in the specified layout",
+  "All tapes of $d$ other than tape 0 are blank",
+  "Existence of a time bounded by $40(k+3)(L+1)$, with $L$ the joined-record length",
+  "The endpoint is the specified snapshot with true verdict and updated record",
+  "Neither verdict state occurs before the endpoint time",
+  "All work-tape heads stay within distance $L+1$ of their initial positions through the endpoint time"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

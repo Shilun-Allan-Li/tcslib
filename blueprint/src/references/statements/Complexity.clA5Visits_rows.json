@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Visits_rows",
+ "key": "4c513a6c2e653ce8",
+ "kind": "lemma",
+ "title": "Visit Rows as an Ordered Row Stream",
+ "statement": "Let $M$ be a finite-state binary Turing machine, let $C,e$ be natural numbers, let $x$ be a bit string, and let $N$ be a natural number. The first $N$ visit rows for $M$, $C$, $e$, and $x$ equal the generic ordered stream of $N$ rows whose row at time $t$ consists, in tape order, of the optional-time codes for the greatest strictly earlier visits to the current work-head positions on the all-zero input of length $|x|+C(|x|+1)^e$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state binary Turing machine",
+  "$C,e$ are natural numbers",
+  "$x$ is a bit string",
+  "$N$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters $C$ and $e$, instance $x$, and count $N$, the ordered visit table of $N$ rows equals the generic sequential row stream whose row at time $t$ lists, per work tape, the optional-time code of the greatest strictly earlier visit over the reference length $|x| + C(|x|+1)^e$; time zero is included."
+}

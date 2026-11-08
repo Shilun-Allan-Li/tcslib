@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.decrementTM_run_succ_ofCfg",
+ "key": "42283a883a490c6c",
+ "kind": "theorem",
+ "title": "Decrement machine on a non-underflowing word",
+ "statement": "Let $k$ be a number of work tapes, choose one tape $i$, and let $x$ be an input word and $w,v$ Boolean words. Suppose fixed-width decrement sends $w$ to $v$, the initial configuration $d$ is in the run phase, and tape $i$ agrees with the buffer storing $w$ at every offset $p$ from its head position with $-1\\le p\\le |w|$. After $2|(w\\text{ begins with false})|+2$ steps, the decrement machine is in the done phase with flag true; on tape $i$, the cells from the initial head position through the next $|w|-1$ cells contain the buffered word $v$, and all other tape contents are unchanged. It has not reached either done phase at any earlier time, and through that time tape $i$'s head stays between one cell left of its initial position and the initial position plus the number of leading false bits of $w$, inclusive; every other tape head remains fixed.",
+ "hypotheses_covered": [
+  "A natural number k and a tape index i in Fin k",
+  "Boolean input word x",
+  "Boolean words w and v",
+  "decFixed w = some v",
+  "Configuration d with state some run",
+  "Tape i matches bufferTape w at offsets p satisfying -1 ≤ p ≤ |w|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

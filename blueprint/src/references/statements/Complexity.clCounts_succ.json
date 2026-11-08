@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clCounts_succ",
+ "key": "f46563888bf68bc4",
+ "kind": "lemma",
+ "title": "One round advances the counts",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape symbols, let $y$ be a finite Boolean word, and let $t$ be a natural number. If $b$ is a Boolean tag that correctly marks the boundary whenever the input head is at either boundary position in the configuration reached after $t$ steps on $y$, then advancing the counts at time $t$ using the machine's displacements computed with tag $b$ gives exactly the counts at time $t+1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$y$ is a finite Boolean word",
+  "$t$ is a natural number",
+  "$b$ is a Boolean tag satisfying the boundary-tag condition for the input-head position at time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, virtual input $y$, time $t$, and valid tag $b$ for the position reached at time $t$, advancing the counts at time $t$ by the displacements computed from $b$ yields exactly the counts at time $t+1$."
+}

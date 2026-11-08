@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emCall_eval_run",
+ "key": "79e30776e65ee7de",
+ "kind": "lemma",
+ "title": "Simulation by the Capture-Wrapped Evaluator",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $w$ and $s$ be Boolean words, and let $c$ be a configuration of $M$ on input $s$. Suppose $b$ correctly marks the boundary of the input-head position of $c$, $p$ is a physical input-head position on $w$, and the run from $c$ remains live at every time $j<t$. Then there is a Boolean tag $b'$ correctly marking the input-head position at time $t$ such that running the capture-wrapped evaluator for $t$ steps from the evaluator configuration associated with $c$, $b$, and $p$ gives exactly the evaluator configuration associated with the time-$t$ configuration of $M$, tag $b'$, and the same physical position $p$.",
+ "hypotheses_covered": [
+  "M is a finite-state Boolean Turing machine",
+  "w and s are Boolean words",
+  "c is a configuration of M on input s",
+  "b is a valid boundary tag for c's input-head position",
+  "p is a valid physical input-head position on w",
+  "M remains live at every time j less than t",
+  "t is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a bundled finite machine, $c$ a configuration of $M$ on a simulated argument\ncarrying a valid virtual boundary tag, and $t$ a time before which the run of $M$ from\n$c$ stays live. Then there is a valid tag for the endpoint such that running the\ncapture-wrapped evaluator for $t$ steps from the evaluator configuration of $c$ equals\nthe evaluator configuration of the run of $M$ from $c$ at time $t$."
+}

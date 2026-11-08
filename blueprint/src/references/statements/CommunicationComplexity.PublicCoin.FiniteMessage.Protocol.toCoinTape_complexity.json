@@ -1,16 +1,17 @@
 {
  "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity",
- "key": "c4809334973e7e56",
+ "key": "ecae6c181867bae8",
  "kind": "theorem",
- "title": "Coin-tape conversion preserves complexity",
- "statement": "Let $\\Omega$ be a finite probability space, and let $p$ be a public-coin finite-message protocol over shared randomness $\\Omega$ with input sets $X$, $Y$ and output type $\\alpha$. For every real number $\\delta > 0$, the coin-tape conversion of $p$ at slack $\\delta$ yields a length $n$ and a finite-message protocol over $\\mathrm{CoinTape}(n)$ whose communication complexity equals the communication complexity of $p$.",
+ "title": "Complexity preserved by coin-tape conversion",
+ "statement": "Let $\\Omega$ be a finite probability space and let $p$ be a public-coin finite-message protocol over shared randomness $\\Omega$, with inputs in $X,Y$ and output type $\\alpha$. For every $\\delta\\in\\mathbb R$ with $\\delta>0$, the protocol over a coin tape produced by converting $p$ with slack $\\delta$ has the same communication complexity as $p$.",
  "hypotheses_covered": [
-  "Ω is a finite probability space",
-  "p is a public-coin finite-message protocol over Ω with inputs X, Y and output α",
-  "δ > 0"
+  "$\\Omega$ is a finite probability space",
+  "A public-coin finite-message protocol $p$ over $\\Omega$, with inputs $X,Y$ and output type $\\alpha$",
+  "A real number $\\delta$",
+  "$\\delta>0$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "For any finite-message protocol $p$ over a finite probability space $\\Omega$ and any\n$\\delta > 0$, the complexity of the \\texttt{CoinTape} approximation\n$(p.\\mathrm{toCoinTape}\\;\\delta).2$ equals the complexity of the original protocol $p$."
+ "replaced": "Let $\\Omega$ be a finite probability space, and let $p$ be a public-coin finite-message\nprotocol over shared randomness $\\Omega$ with input sets $X$, $Y$ and output type\n$\\alpha$. For every real number $\\delta > 0$, the coin-tape conversion of $p$ at slack\n$\\delta$ yields a length $n$ and a finite-message protocol over $\\mathrm{CoinTape}(n)$\nwhose communication complexity equals the communication complexity of $p$."
 }

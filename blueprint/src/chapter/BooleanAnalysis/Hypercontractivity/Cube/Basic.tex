@@ -9,6 +9,10 @@ Uniform-cube event probabilities, variance, Fourier influence bounds, and real-e
 \lean{BooleanAnalysis.Hypercontractivity.fourierCoeff_derivative}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.expect_add, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.ThresholdFunctions.expect_neg, BooleanAnalysis.boolToSign, BooleanAnalysis.boolToSign_false, BooleanAnalysis.boolToSign_true, BooleanAnalysis.chiS, BooleanAnalysis.chiS_flipBit_eq, BooleanAnalysis.derivative, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.flipBit, BooleanAnalysis.flipBit_flipBit, BooleanAnalysis.fourierCoeff}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p047-b007,
+  pdf-ffbe9c7b3306-p047-b008
+}
 \difficulty{5}
 Let $f:\{0,1\}^n\to\bbr$, $i\in[n]$, and $S\subseteq[n]$. For the signed coordinate derivative $D_i f(x)=\tfrac12(-1)^{x_i}(f(x)-f(x^{\oplus i}))$, where $x^{\oplus i}$ flips coordinate $i$, one has $\widehat{D_i f}(S)=0$ if $i\in S$, and $\widehat{D_i f}(S)=\widehat f(S\cup\{i\})$ otherwise.
 \end{lemma}
@@ -18,13 +22,16 @@ Let $f:\{0,1\}^n\to\bbr$, $i\in[n]$, and $S\subseteq[n]$. For the signed coordin
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.ThresholdFunctions.expect_sub, BooleanAnalysis.chiS, BooleanAnalysis.chiS_empty, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourier_coeff_chi, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.innerProduct}
 \difficulty{4}
-Let $f:\{0,1\}^n\to\bbr$ have Fourier degree at most $k\in\mathbb N$, and let $c\in\bbr$. The function $x\mapsto f(x)-c$ also has Fourier degree at most $k$.
+Let $f:\{0,1\}^n\to\mathbb R$ have Fourier degree at most $k$, where $n,k\in\mathbb N$,
+and let $c\in\mathbb R$. Then the function $x\mapsto f(x)-c$ has Fourier degree at most
+$k$.
 \end{lemma}
 
 \begin{definition}[Cube event indicator]
 \lean{BooleanAnalysis.Hypercontractivity.cubeIndicator}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p029-b004}
 For an event $A\subseteq\{0,1\}^n$, its indicator $\mathbf1_A$ is the real-valued function equal to $1$ on $A$ and $0$ outside $A$.
 \end{definition}
 
@@ -39,6 +46,10 @@ For an event $A\subseteq\{0,1\}^n$, define its uniform probability by $\Pr[A]=\E
 \lean{BooleanAnalysis.Hypercontractivity.cubeVariance}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p018-b006,
+  pdf-ffbe9c7b3306-p027-b001
+}
 Let $f:\{0,1\}^n\to\bbr$, define $\operatorname{Var}(f)=\E[(f-\E f)^2]$, with uniform expectation on the cube.
 \end{definition}
 
@@ -46,22 +57,459 @@ Let $f:\{0,1\}^n\to\bbr$, define $\operatorname{Var}(f)=\E[(f-\E f)^2]$, with un
 \lean{BooleanAnalysis.Hypercontractivity.cubeVariance_eq_sum_nonempty_fourier}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.ThresholdFunctions.expect_add, BooleanAnalysis.ThresholdFunctions.expect_const, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.ThresholdFunctions.expect_sub, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.fourierCoeff_empty, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p027-b001,
+  pdf-ffbe9c7b3306-p027-b002
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.fourierCoeff_empty}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p026-b006,
+    pdf-ffbe9c7b3306-p026-b007}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.cubeVariance}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b006}
 \difficulty{4}
-For every $f:\{0,1\}^n\to\bbr$, uniform variance satisfies $\operatorname{Var}(f)=\sum_{\varnothing\ne S\subseteq[n]}\widehat f(S)^2$.
+For every $f:\{0,1\}^n\to\mathbb R$, its variance under the uniform measure on the
+Boolean cube is the sum of the squared Fourier–Walsh coefficients over all nonempty
+subsets of coordinates: $\operatorname{Var}(f)=\sum_{\varnothing\ne
+S\subseteq[n]}\widehat f(S)^2$.
 \end{lemma}
 
-\begin{lemma}[Degree bounds total influence]
+\begin{lemma}[Degree bound for total influence]
 \lean{BooleanAnalysis.Hypercontractivity.totalInfluence_le_degree_mul_variance}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.cubeVariance_eq_sum_nonempty_fourier, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 \difficulty{4}
-Let $f:\{0,1\}^n\to\bbr$ have Fourier degree at most $k\in\mathbb N$. Its total influence satisfies $I(f)\le k\operatorname{Var}(f)$, where $I(f)=\sum_{S\subseteq[n]}|S|\widehat f(S)^2$.
+Let $n,k\in\mathbb N$ and let $f:\{0,1\}^n\to\mathbb R$ have Fourier degree at most $k$.
+Then its total influence satisfies $\sum_{i=1}^n\mathrm{Inf}_i[f]\le
+k\,\operatorname{Var}(f)$, with variance and coordinate influences taken under the
+uniform measure on the cube.
 \end{lemma}
 
 \begin{lemma}[Squared influences under a degree bound]
 \lean{BooleanAnalysis.Hypercontractivity.sum_sq_influences_le_degree_mul}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.totalInfluence_le_degree_mul_variance, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier, BooleanAnalysis.totalInfluence}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.totalInfluence_le_degree_mul_variance, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.influence, BooleanAnalysis.influence_nonneg, BooleanAnalysis.totalInfluence}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p048-b001,
+  pdf-ffbe9c7b3306-p052-b002,
+  pdf-ffbe9c7b3306-p052-b003
+}
 \difficulty{4}
 Let $f:\{0,1\}^n\to\bbr$ have Fourier degree at most $k$, variance at most $1$, and coordinate influences $\operatorname{Inf}_i(f)\le\varepsilon$ for every $i$, where $\varepsilon\ge0$. Then $\sum_i\operatorname{Inf}_i(f)^2\le k\varepsilon$.
 \end{lemma}
@@ -71,7 +519,11 @@ Let $f:\{0,1\}^n\to\bbr$ have Fourier degree at most $k$, variance at most $1$, 
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_rpow_mean_le, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.cubeVariance_eq_sum_nonempty_fourier, BooleanAnalysis.fourierCoeff, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 \difficulty{5}
-Let $f:\{0,1\}^n\to\bbr$ have positive uniform variance, and let $\rho>0$. Writing $I(f)=\sum_S|S|\widehat f(S)^2$, one has $\operatorname{Var}(f)\rho^{I(f)/\operatorname{Var}(f)}\le\sum_{S\subseteq[n]}|S|\rho^{|S|}\widehat f(S)^2$.
+Let $f:\{0,1\}^n\to\mathbb R$ have positive variance under the uniform measure, and let
+$\rho>0$. If $I(f)$ is the sum of the coordinate influences and $\widehat f(S)$ are the
+Fourier–Walsh coefficients, then
+$\operatorname{Var}(f)\,\rho^{I(f)/\operatorname{Var}(f)}\leq\sum_{S\subseteq[n]}|S|\rho^{|S|}\widehat
+f(S)^2$.
 \end{lemma}
 
 \begin{definition}[Real-exponent cube power mean]
@@ -81,20 +533,23 @@ Let $f:\{0,1\}^n\to\bbr$ have positive uniform variance, and let $\rho>0$. Writi
 Let $p\in\bbr$ and $f:\{0,1\}^n\to\bbr$, define $\|f\|_p=(\E|f|^p)^{1/p}$ using real powers and uniform expectation, with $1/0=0$, $a^0=1$ for $a\ge0$, and $0^r=0$ for $r\ne0$.
 \end{definition}
 
-\begin{lemma}[Second power mean equals second norm]
+\begin{lemma}[Second power mean and second norm]
 \lean{BooleanAnalysis.Hypercontractivity.cubeLpNorm_two}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeLpNorm, BooleanAnalysis.innerProduct, BooleanAnalysis.l2Norm}
 \difficulty{1}
-For every $f:\{0,1\}^n\to\bbr$, the power mean $(\E|f|^2)^{1/2}$ equals the second norm $\sqrt{\E[f^2]}$.
+For every $f:\{0,1\}^n\to\mathbb R$, its power mean of order two under the uniform
+measure equals its $L^2$ norm: $(\mathbb E|f|^2)^{1/2}=\sqrt{\mathbb E[f^2]}$.
 \end{lemma}
 
-\begin{lemma}[Recovering an absolute moment]
+\begin{lemma}[Recovering the absolute moment]
 \lean{BooleanAnalysis.Hypercontractivity.cubeLpNorm_rpow}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeLpNorm, BooleanAnalysis.ThresholdFunctions.expect_nonneg, BooleanAnalysis.expect}
 \difficulty{3}
-Let $f:\{0,1\}^n\to\bbr$ and $q>0$, the power mean $\|f\|_q=(\E|f|^q)^{1/q}$ satisfies $\|f\|_q^q=\E|f|^q$.
+Let $f:\{0,1\}^n\to\mathbb R$ and let $q>0$. For the power mean $\|f\|_q=(\mathbb
+E|f|^q)^{1/q}$ under the uniform measure on the Boolean cube, $\|f\|_q^q=\mathbb
+E|f|^q$.
 \end{lemma}
 
 \begin{lemma}[Moment tail bound]
@@ -102,30 +557,37 @@ Let $f:\{0,1\}^n\to\bbr$ and $q>0$, the power mean $\|f\|_q=(\E|f|^q)^{1/q}$ sat
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeIndicator, BooleanAnalysis.Hypercontractivity.cubeLpNorm, BooleanAnalysis.Hypercontractivity.cubeLpNorm_rpow, BooleanAnalysis.Hypercontractivity.cubeProbability, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.ThresholdFunctions.expect_mono, BooleanAnalysis.ThresholdFunctions.expect_nonneg, BooleanAnalysis.expect}
 \difficulty{4}
-Let $f:\{0,1\}^n\to\bbr$ and $q,c>0$, uniform probability satisfies $\Pr[|f|\ge c]\le(\|f\|_q/c)^q$, where $\|f\|_q=(\E|f|^q)^{1/q}$.
+Let $f:\{0,1\}^n\to\mathbb R$ and let $q,c>0$. Under the uniform measure on the Boolean
+cube, $\Pr(|f(x)|\geq c)\leq(\|f\|_q/c)^q$, where $\|f\|_q=(\mathbb E|f|^q)^{1/q}$.
 \end{lemma}
 
-\begin{lemma}[Interpolation of cube moments]
+\begin{lemma}[Interpolation of Cube Moments]
 \lean{BooleanAnalysis.Hypercontractivity.cube_moment_interpolation}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.innerProduct}
 \difficulty{5}
-Let $f:\{0,1\}^n\to\bbr$ and $0<p<2<q$. With uniform expectations, $\E[f^2]\le(\E|f|^p)^{(q-2)/(q-p)}(\E|f|^q)^{(2-p)/(q-p)}$.
+Let $f:\{0,1\}^n\to\mathbb R$ and let $p,q\in\mathbb R$ satisfy $0<p<2<q$. With
+expectation taken uniformly on the cube, $\mathbb E[f^2]\le (\mathbb
+E|f|^p)^{(q-2)/(q-p)}(\mathbb E|f|^q)^{(2-p)/(q-p)}$.
 \end{lemma}
 
 \begin{lemma}[Scalar interpolation cancellation]
 \lean{BooleanAnalysis.Hypercontractivity.lp_interpolation_cancel}
 \leanok
 \difficulty{5}
-Let $A,M,u,v,c\in\bbr$ satisfy $A\ge0$, $M>0$, $u>0$, and $u+v=2$. If $M^2\le A^u(e^cM)^v$, then $M\le e^{cv/u}A$.
+Let $A,M,u,v,c\in\mathbb{R}$ satisfy $A\ge0$, $M>0$, $u>0$, and $u+v=2$. If $M^2\le
+A^u(e^cM)^v$, then $M\le e^{cv/u}A$.
 \end{lemma}
 
-\begin{lemma}[Norm comparison by interpolation]
+\begin{lemma}[Norm Comparison by Interpolation]
 \lean{BooleanAnalysis.Hypercontractivity.cube_norm_interpolation_bound}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeLpNorm, BooleanAnalysis.Hypercontractivity.cubeLpNorm_rpow, BooleanAnalysis.Hypercontractivity.cube_moment_interpolation, BooleanAnalysis.Hypercontractivity.lp_interpolation_cancel, BooleanAnalysis.ThresholdFunctions.expect_nonneg, BooleanAnalysis.innerProduct, BooleanAnalysis.innerProduct_self_nonneg, BooleanAnalysis.l2Norm}
 \difficulty{5}
-Let $f:\{0,1\}^n\to\bbr$, $0<p<2<q$, and $c\in\bbr$, with $\|f\|_r=(\E|f|^r)^{1/r}$. If $\|f\|_q\le e^c\|f\|_2$, then $\|f\|_2\le\exp\!\left(\frac{cq(2-p)}{p(q-2)}\right)\|f\|_p$.
+Let $f:\{0,1\}^n\to\mathbb R$, and let $p,q,c\in\mathbb R$ satisfy $0<p<2<q$. If
+$\|f\|_q\le e^c\|f\|_2$, then $\|f\|_2\le
+\exp\!\left(\frac{cq(2-p)}{p(q-2)}\right)\|f\|_p$, where the power means use uniform
+expectation on the cube.
 \end{lemma}
 
 \begin{lemma}[Positive-event bound for centered functions]
@@ -133,7 +595,8 @@ Let $f:\{0,1\}^n\to\bbr$, $0<p<2<q$, and $c\in\bbr$, with $\|f\|_r=(\E|f|^r)^{1/
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeIndicator, BooleanAnalysis.Hypercontractivity.cubeProbability, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.ThresholdFunctions.expect_sub, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.innerProduct}
 \difficulty{4}
-Let $g:\{0,1\}^n\to\bbr$ have uniform mean zero. Then $(\E|g|)^2\le4\E[g^2]\Pr[g>0]$.
+Let $g$ be a real-valued function on the Boolean cube of dimension $n$ with uniform mean
+zero. Then $(\mathbb E|g|)^2\leq4\langle g,g\rangle\Pr[g>0]$.
 \end{lemma}
 
 \begin{lemma}[Indicator pairing from an exponential moment]
@@ -141,21 +604,484 @@ Let $g:\{0,1\}^n\to\bbr$ have uniform mean zero. Then $(\E|g|)^2\le4\E[g^2]\Pr[g
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.expect_add, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.ThresholdFunctions.expect_mono, BooleanAnalysis.expect, BooleanAnalysis.innerProduct}
 \difficulty{4}
-Let $f:\{0,1\}^n\to\{0,1\}$ have uniform mean $\alpha>0$, let $g:\{0,1\}^n\to\bbr$, and let $t,b\in\bbr$. If $\E[e^{tg}]\le e^b$, then $t\E[fg]\le\alpha(b-\log\alpha)$.
+Let $f,g:\{0,1\}^n\to\mathbb R$, with $f$ taking only the values $0$ and $1$, and
+suppose its uniform expectation $\alpha=\mathbb E f$ is positive. For any $t,b\in\mathbb
+R$, if $\mathbb E e^{tg}\le e^b$, then $t\,\mathbb
+E[fg]\le\alpha\bigl(b-\log\alpha\bigr)$.
 \end{lemma}
 
-\begin{lemma}[Fourier rescaling of bounded-degree functions]
+\begin{lemma}[Noise operator bound for bounded-degree functions]
 \lean{BooleanAnalysis.Hypercontractivity.l2Norm_noiseOp_le}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.innerProduct, BooleanAnalysis.l2Norm, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier, BooleanAnalysis.parseval}
 \difficulty{4}
-Let $f:\{0,1\}^n\to\bbr$ have Fourier degree at most $k\in\mathbb N$, and let $\rho\ge1$. For the Fourier multiplier $\widehat{T_\rho f}(S)=\rho^{|S|}\widehat f(S)$, one has $\|T_\rho f\|_2\le\rho^k\|f\|_2$ under the uniform measure. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+Let $n,k$ be natural numbers and let $f:\{0,1\}^n\to\mathbb R$ have Fourier degree at
+most $k$, meaning every nonzero Fourier coefficient is indexed by a set of size at most
+$k$. For every real $\rho\ge1$, the $L^2$ norm under the uniform measure satisfies
+$\|T_\rho f\|_2\le\rho^k\|f\|_2$, where $T_\rho$ multiplies the Fourier coefficient at
+each set $S$ by $\rho^{|S|}$.
 \end{lemma}
 
-\begin{lemma}[Fourier tail from total influence]
+\begin{lemma}[Fourier Tail Bound by Total Influence]
 \lean{BooleanAnalysis.Hypercontractivity.fourierWeightAbove_le_totalInfluence_div_succ}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_tail_le_norm_div_rpow, BooleanAnalysis.ThresholdFunctions.fourierWeightAbove, BooleanAnalysis.fourierCoeff, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p052-b002,
+  pdf-ffbe9c7b3306-p052-b003,
+  pdf-ffbe9c7b3306-p269-b004
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p015-b010}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.influence}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b004}
+\proofstep
+  {BooleanAnalysis.totalInfluence}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p049-b005}
+\proofstep
+  {BooleanAnalysis.chiS_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b007}
+\proofstep
+  {BooleanAnalysis.influence_eq_sum_fourier}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b001}
+\proofstep
+  {BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p052-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fourierWeightAbove}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p028-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_tail_le_norm_div_rpow}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p263-b003}
 \difficulty{5}
-For every $f:\{0,1\}^n\to\bbr$ and $k\in\mathbb N$, $\sum_{|S|>k}\widehat f(S)^2\le I(f)/(k+1)$, where $I(f)=\sum_S|S|\widehat f(S)^2$ is total influence.
+For every $n,k\in\mathbb N$ and every $f:\{0,1\}^n\to\mathbb R$, the Fourier weight on
+levels strictly above $k$ satisfies $\displaystyle\sum_{S\subseteq[n],\ |S|>k}\widehat
+f(S)^2\le\frac{I[f]}{k+1}$, where $I[f]$ is the sum of the coordinate influences.
+\end{lemma}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Three-halves influence bound]
+\lean{BooleanAnalysis.Hypercontractivity.sum_three_halves_influences_le_degree_mul}
+\label{BooleanAnalysis.Hypercontractivity.sum_three_halves_influences_le_degree_mul}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.totalInfluence_le_degree_mul_variance, BooleanAnalysis.has_degree_at_most, BooleanAnalysis.influence, BooleanAnalysis.influence_nonneg, BooleanAnalysis.totalInfluence}
+\difficulty{4}
+Let $n,k\in\mathbb N$ and let $f:\{0,1\}^n\to\mathbb R$ have Fourier degree at most $k$
+and variance at most $1$ under the uniform measure. Suppose
+$\mathrm{Inf}_i[f]\le\varepsilon$ for every coordinate $i$, where $\varepsilon\in\mathbb
+R$. Then $\sum_{i=1}^n\mathrm{Inf}_i[f]^{3/2}\le k\sqrt{\varepsilon}$.
+\end{lemma}
+
+\begin{lemma}[Noise decreases cube variance]
+\lean{BooleanAnalysis.Hypercontractivity.cubeVariance_noiseOp_le}
+\label{BooleanAnalysis.Hypercontractivity.cubeVariance_noiseOp_le}
+\leanok
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.cubeVariance_eq_sum_nonempty_fourier, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_fourier}
+\difficulty{4}
+Let $f:\{0,1\}^n\to\mathbb R$ and $0\leq\rho\leq1$. For the Fourier noise operator
+$T_\rho$, the variance under the uniform measure satisfies $\operatorname{Var}(T_\rho
+f)\leq\operatorname{Var}(f)$.
 \end{lemma}

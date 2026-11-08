@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.lenCfg_read",
+ "key": "7374b1e157e60e17",
+ "kind": "lemma",
+ "title": "Input symbol in a checker configuration",
+ "statement": "Let $M$ be a finite Turing machine over Boolean symbols, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on $x$. For any optional checker state $q$, natural number $i\\le |x|$, and natural number $r$, the input symbol scanned in the corresponding length-checker configuration is $x[i]?$: the $i$-th bit when $i<|x|$, and no symbol when $i=|x|$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on $x$",
+  "$q$ is an optional checker state",
+  "$i$ is a natural number with $i\\le |x|$",
+  "$r$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$ and every position $i \\le \\abs{x}$, in a length-checker\nconfiguration at input position $i$ the input head reads the $i$-th bit of\n$x$ (the blank when $i = \\abs{x}$), independently of the saved tape bank."
+}

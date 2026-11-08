@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.MachineFormat.guardedScan",
+ "key": "d2ae513225aa3fa8",
+ "kind": "def",
+ "title": "Length-guarded machine scan",
+ "statement": "For a machine format $F$, define a partial function on finite bit strings as follows. Decode the input using the pair decoder, obtaining a bit string $b$ and a remainder $r$; if $r$ has length less than $(4k+5)3^{k+1}(\nu(b)+1)$, where $k$ is the parameter of $F$ and $\nu(b)$ is the natural-number code length of $b$, return no value, and otherwise return the result of applying $F$’s scan operation to the original input.",
+ "hypotheses_covered": [
+  "A machine format $F$",
+  "A finite bit string input"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define the pair decoder, the code-length function, or the scan operation, so their precise mathematical meanings cannot be stated from the provided definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.StepBlock.seekTM_groups",
+ "key": "b4e76d77b916dbf8",
+ "kind": "lemma",
+ "title": "Grouped table search",
+ "statement": "Let $k,n$ be nonnegative integers, let $x$ be a finite binary input, and let $G$ be a list of groups of transition actions, each group having length $3^{k+1}$. Let $R$ be a list of remaining actions whose length is the rank $r$ of a control state, and put $A=G\\mathbin{\\|}R$, where $G\\mathbin{\\|}R$ means the groups flattened and then concatenated with $R$. Suppose a configuration $d$ is in the initial recording state, its summary tape at offset $s$ from its head contains $1$ exactly when $s<|G|$ for every $0\\le s\\le |G|$, and its table tape stores the bit encoding of $A$ consecutively from its head. Starting the search machine in the control state carrying rank $r$, after $T=|G|+1+\\operatorname{cost}(A)$ steps it reaches the done control state, with the table and summary heads shifted forward respectively by the length of the encoding of $A$ and by $|G|$. It does not reach the done control state at any earlier time. Throughout times $u\\le T$, the input-head position, tape contents, and output remain those of $d$, and every other work-tape head stays fixed.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb{N}$ and finite binary input $x$",
+  "list of action groups $G$",
+  "each group has length $3^{k+1}$",
+  "remaining action list $R$",
+  "$|R|$ equals the control rank",
+  "configuration $d$",
+  "$d$ starts in the recording machine's initial state",
+  "summary-tape cells at offsets $0$ through $|G|$ have the stated values",
+  "table-tape cells store the encoding of $G$ flattened and followed by $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

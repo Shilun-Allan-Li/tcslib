@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_pairValid",
+ "key": "14b438d685726545",
+ "kind": "theorem",
+ "title": "Pair-code validity in linear time",
+ "statement": "There exist a finite Turing machine $M$ over the Boolean alphabet and a constant $c\\in\\mathbb{N}$ such that, on every Boolean string $x$, $M$ halts within $c(|x|+1)$ steps and outputs the one-bit string whose bit is true exactly when the pair parser succeeds on $x$.",
+ "hypotheses_covered": [
+  "Boolean input alphabet",
+  "a finite Turing machine and constant exist",
+  "correct one-bit output for every input",
+  "time bound c(|x|+1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes, within $c\\,(n+1)$ steps on inputs of length $n$, the one-bit\nfunction recording whether the input is a valid word of the self-delimiting\npair code."
+}

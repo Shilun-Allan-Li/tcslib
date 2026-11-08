@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.noiseSensitivity_le_half",
+ "key": "f525fce133c0a31b",
+ "kind": "lemma",
+ "title": "Upper bound for noise sensitivity",
+ "statement": "Let $n$ be a nonnegative integer, let $f\\colon\\{0,1\\}^n\\to\\mathbb R$, and let $\\delta\\in\\mathbb R$ satisfy $\\delta\\leq\\tfrac12$. The noise sensitivity defined by $\\operatorname{NS}_{\\delta}(f)=\\bigl(1-\\operatorname{Stab}_{1-2\\delta}(f)\\bigr)/2$ satisfies $$\\operatorname{NS}_{\\delta}(f)\\leq\\frac12.$$",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$f\\colon\\{0,1\\}^n\\to\\mathbb R$",
+  "$\\delta\\in\\mathbb R$",
+  "$\\delta\\leq\\tfrac12$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n\\in\\mathbb N$, real-valued $f:\\{0,1\\}^{n}\\to\\mathbb R$ and real $\\delta\\leq1/2$, including negative $\\delta$, the total real-valued noise sensitivity satisfies\n\\[\n\\operatorname{NS}_{\\delta}(f)=\\frac{1-\\sum_{S\\subseteq\\{1,\\ldots,n\\}}(1-2\\delta)^{|S|}\\widehat f(S)^2}{2}\\leq\\frac12,\n\\]\nwhere $\\widehat f(S)=2^{-n}\\sum_{x\\in\\{0,1\\}^{n}}f(x)\\prod_{i\\in S}(-1)^{x_i}$."
+}

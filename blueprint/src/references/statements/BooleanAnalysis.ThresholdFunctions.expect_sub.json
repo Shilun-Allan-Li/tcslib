@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.expect_sub",
+ "key": "6fa7a59fef75e149",
+ "kind": "lemma",
+ "title": "Subtraction commutes with expectation",
+ "statement": "Let $n$ be a nonnegative integer and let $f,g\\colon\\{0,1\\}^n\\to\\mathbb R$. The uniform expectation of their pointwise difference equals the difference of their uniform expectations: $\\E_x[f(x)-g(x)]=\\E_x[f(x)]-\\E_x[g(x)]$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ and $g$ are real-valued functions on $\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$ and $f,g:\\{0,1\\}^n\\to\\mathbb R$.\nThen $\\mathbb E[f-g]=\\mathbb E[f]-\\mathbb E[g]$, where $(f-g)(x)=f(x)-g(x)$ and\n$\\mathbb E[h]=2^{-n}\\sum_{x\\in\\{0,1\\}^n}h(x)$."
+}

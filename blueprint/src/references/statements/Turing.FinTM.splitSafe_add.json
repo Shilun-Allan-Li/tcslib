@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.splitSafe_add",
+ "key": "46f1c2ffa8a31451",
+ "kind": "lemma",
+ "title": "Concatenation of anchor-free runs",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $a$ be a control state, and let $c$ be a configuration. If the run from $c$ avoids state $a$ at every time from $0$ through $u$, and the run from the configuration reached at time $u$ avoids $a$ at every time from $0$ through $v$, then the run from $c$ avoids $a$ at every time from $0$ through $u+v$.",
+ "hypotheses_covered": [
+  "Boolean multi-tape machine $M$",
+  "anchor state $a$",
+  "starting configuration $c$",
+  "natural durations $u,v$",
+  "the run from $c$ avoids $a$ at times $0$ through $u$",
+  "the run continued from time $u$ avoids $a$ at times $0$ through $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the run from $c$ is anchor-free for $u$ steps and the run continued from\nits configuration at time $u$ is anchor-free for $v$ further steps, then the\nrun from $c$ is anchor-free for $u + v$ steps."
+}

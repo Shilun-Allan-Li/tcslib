@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.Lupanov.gateAt",
+ "key": "2dcf72461104ded5",
+ "kind": "def",
+ "title": "Gate at a specified index",
+ "statement": "Let $n,k,j$ be natural numbers and let $f$ be a Boolean function on strings of length $n$. The gate at index $j$ is a NOT gate reading input $j$ if $j<n$; otherwise it is selected from the heap-gate range when $j<z(n,k)$, from the function-gate range when $j<f(n,k)$, from the function-code gate range when $j<c(n,k)$, and from the combination-gate range thereafter, with the corresponding offsets and parameters determined by these ranges.",
+ "hypotheses_covered": [
+  "$n,k,j$ are natural numbers",
+  "$f$ is a Boolean-valued function on length-$n$ Boolean strings"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define `heapGate`, `funcGate`, or `combGate`, so their constructions and precise parameter meanings cannot be stated.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

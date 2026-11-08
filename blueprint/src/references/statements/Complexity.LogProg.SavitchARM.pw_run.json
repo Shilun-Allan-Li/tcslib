@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.pw_run",
+ "key": "f97ddcfa609f33f0",
+ "kind": "theorem",
+ "title": "Power loop execution",
+ "statement": "Fix natural numbers $E$ and $B$, an oracle that assigns a Boolean answer to each of four deciders and each Boolean word, and an input Boolean word $x$. For every natural number $j$ and every state $st$ of the eighteen-register machine, suppose the exponent counter is $X=j$, the loop counter and scratch registers satisfy $C=T=Z=0$, every register is at most $B$, $1\\le a$, and $P a^j\\le B$. Then the machine starting at the power-loop instruction, with register values given by $st$ and no answer recorded, reaches the copy routine that sets the window radius, with $X=0$, $P=P_{st}a_{st}^j$, all other registers unchanged, and no answer recorded. Every configuration strictly before that endpoint satisfies the guard that the machine’s instruction precondition holds and every register is at most $B$.",
+ "hypotheses_covered": [
+  "natural numbers E and B",
+  "oracle on four deciders and Boolean words",
+  "input Boolean word x",
+  "natural number j",
+  "initial eighteen-register state st",
+  "X=j",
+  "C=0",
+  "T=0",
+  "Z=0",
+  "all initial registers at most B",
+  "1≤a",
+  "P·a^j≤B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix natural numbers $E,B$, an oracle on four deciders and Boolean-string inputs, and an\ninput string $x$. For every natural number $j$ and machine state $st$, if the exponent\ncounter is $j$, $C=T=Z=0$, all registers are at most $B$, $1\\le a$, and $P a^j\\le B$,\nthen the machine starting at the power-loop instruction with this state and no answer\nrecorded reaches the copy routine that sets the window radius, with exponent counter\nzero and accumulator $P a^j$, and no answer recorded; every visited configuration\nsatisfies the guard requiring the program’s precondition and all registers to be at most\n$B$."
+}

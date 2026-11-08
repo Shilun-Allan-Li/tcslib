@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.universalEval_step",
+ "key": "2c4f5dbf14441d3a",
+ "kind": "lemma",
+ "title": "Administrative step of the interpreter",
+ "statement": "Let $x$ be a bit string and $B$ a four-tape configuration on $x$. Choose control states $q,q'$, a bit string $T$, integer cursors $p,s$, a state tape $\\sigma\\colon\\mathbb{Z}\\to\\{0,1,\\mathrm{blank}\\}$, signs $d_t,d_s\\in\\{-1,0,1\\}$, and an optional write instruction $w\\in\\mathrm{Option}(\\mathrm{Option}(\\{0,1\\}))$. Suppose the interpreter's transition at $q$, on the input symbol read from $B$ and the four work-tape symbols consisting of the buffer-tape symbol at $p$, $\\sigma(s)$, and the third and fourth reads from $B$, is the administrative action with target state $q'$, table movement $d_t$, state-tape write $w$, and state movement $d_s$. Then one interpreter step from the evaluation configuration with data $(B,q,T,p,\\sigma,s)$ is the evaluation configuration with control state $q'$, table cursor $p+d_t$, state tape unchanged if $w$ prescribes no write and otherwise updated at $s$ with the prescribed optional symbol, and state cursor $s+d_s$, based on the same $B$ and $T$.",
+ "hypotheses_covered": [
+  "A bit string $x$ and a four-tape base configuration $B$ on $x$",
+  "Control states $q,q'$",
+  "A bit string $T$, integer table cursor $p$, state tape $\\sigma$, and integer cursor $s$",
+  "Signs $d_t,d_s\\in\\{-1,0,1\\}$",
+  "An optional write instruction $w\\in\\mathrm{Option}(\\mathrm{Option}(\\{0,1\\}))$",
+  "The interpreter transition at $q$ on the specified input and work-tape reads equals the stated administrative action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider an evaluation configuration of the table interpreter with control\nstate $q$, table $T$ with cursor $p$, and state tape $\\sigma$ with cursor $s$\nover some base configuration.  If the interpreter's transition function at\n$q$, applied to the physical input symbol and the represented reads (the\nbuffer-tape symbol of $T$ at $p$, the state symbol $\\sigma(s)$, and the base\nconfiguration's two remaining work reads), is the administrative action with\ntarget $q'$, table movement $d_t$, optional state write $w$, and state\nmovement $d_s$, then one interpreter step takes the configuration to the\nevaluation configuration with control state $q'$, table cursor $p + d_t$,\nstate tape updated by $w$ at $s$, and state cursor $s + d_s$, leaving all\nother fields unchanged."
+}

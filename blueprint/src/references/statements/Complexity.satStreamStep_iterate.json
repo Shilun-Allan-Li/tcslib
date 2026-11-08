@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satStreamStep_iterate",
+ "key": "44299b31c3e7863d",
+ "kind": "lemma",
+ "title": "Iteration of the encoded state update",
+ "statement": "For every input bit string $x$, streaming seam state $s$, and integer $k\\ge 0$, iterating the encoded next-state function $k$ times from the encoding of $s$ gives the encoding of the state obtained by iterating the structured round-state update $k$ times from $s$.",
+ "hypotheses_covered": [
+  "input bit string $x$",
+  "streaming seam state $s$",
+  "iteration count $k\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, seam state $s$, and $k$, the $k$-fold iterate of the encoded\nnext-state function on the encoded word of $s$ equals the encoded word of the\n$k$-fold iterate of the structured round map on $s$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clRepeat_frame",
+ "key": "236e4e54ec95e1ce",
+ "kind": "lemma",
+ "title": "Clean-call configuration in the clock frame",
+ "statement": "Let $C$ be a finite Turing machine with states entry and exit, let $x,s$ be Boolean words, let $N,j$ be natural numbers, and let $q$ be a state of $C$. Place the work tapes of the seam configuration on input $x$ in state $q$ with state word $s$ into the first $C$ work-tape slots of the repetition controller, map its state to the corresponding lifted state, and retain the extra clock tape with its unary word of length $N$ and head at position $j$. The resulting configuration is exactly the repetition-controller configuration in lifted state $q$, with state word $s$, clock length $N$, and cursor $j$.",
+ "hypotheses_covered": [
+  "A finite Turing machine $C$ and states entry and exit",
+  "Boolean words $x,s$",
+  "Natural numbers $N,j$",
+  "A state $q$ of $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every clean-call machine, controls, input, state word, clock budget, cursor, and inner control, relocating the configuration assembled over the state word into the repetition controller's slots, with the protected clock retained, yields exactly the repetition seam at that inner control."
+}

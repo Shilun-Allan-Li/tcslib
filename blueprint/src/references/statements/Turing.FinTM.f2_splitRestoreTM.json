@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitRestoreTM",
+ "key": "1f597e1681aeaac9",
+ "kind": "def",
+ "title": "Split restoration machine",
+ "statement": "For each natural number $k$, define a Boolean-alphabet Turing machine with $k+1$ work tapes, state set $\text{Fin}(5)\\times\\{\\mathrm{false},\\mathrm{true}\\}$, and initial state $(0,\\mathrm{false})$. Its transition function is specified as follows. In a state whose first coordinate is $0$, if work tape $0$ scans a symbol, the input head moves right, work tape $0$ moves right, and each other work tape moves right while its scanned cell is cleared; the successor state has first coordinate $0$ and Boolean coordinate equal to the disjunction of the current Boolean coordinate and the condition that the input symbol is blank. If work tape $0$ scans blank in that state, the input head stays put, all work heads move left, and tape $0$ is written with true unless the Boolean coordinate is already true; the successor state is $(1,\\mathrm{false})$. In state $1$, if tape $0$ scans a symbol, all work heads move left without writing and the machine remains in state $(1,\\mathrm{false})$; if it scans blank, all work heads move right without writing and the machine enters $(2,\\mathrm{false})$. In state $2$, the input head moves left and the machine enters $(3,\\mathrm{false})$. In state $3$, if the input symbol is present, the input head moves left and the machine remains in $(3,\\mathrm{false})$; if the input symbol is blank, the input head moves right and the machine enters $(4,\\mathrm{false})$. In every other state, all heads stay put and the machine enters $(4,\\mathrm{false})$. No transition emits an output symbol.",
+ "hypotheses_covered": [
+  "$k$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.stripCertificate_false",
+ "key": "643f17bdd4d60971",
+ "kind": "lemma",
+ "title": "Stripping an all-zero string",
+ "statement": "For every $k\\in\\mathbb{N}$, stripping the binary string consisting of $k$ zeros is undefined.",
+ "hypotheses_covered": [
+  "$k$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{strip}$ be the partial map on binary strings defined by:\n$\\mathrm{strip}(\\varepsilon)$ is undefined, and for a bit $b$ and a string $v$,\n$\\mathrm{strip}(bv) = b\\,\\mathrm{strip}(v)$ when $\\mathrm{strip}(v)$ is defined,\nwhile otherwise $\\mathrm{strip}(1v) = \\varepsilon$ and $\\mathrm{strip}(0v)$ is\nundefined. Then for every $k \\in \\mathbb{N}$, $\\mathrm{strip}(0^k)$ is undefined."
+}

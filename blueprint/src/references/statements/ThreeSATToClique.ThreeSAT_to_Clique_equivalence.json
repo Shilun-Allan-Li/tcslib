@@ -1,15 +1,15 @@
 {
  "lean_name": "ThreeSATToClique.ThreeSAT_to_Clique_equivalence",
- "key": "8fc8b231d0d1d55b",
+ "key": "f8870d8dfc933a13",
  "kind": "theorem",
- "title": "Correctness of the 3-SAT to Clique reduction",
- "statement": "Let $f$ be a 3-CNF formula with $m$ clauses. Then $f$ is satisfiable if and only if its conflict graph has a clique of size $m$; that is, the graph whose vertices are the literal positions of $f$, with two positions adjacent exactly when they lie in different clauses and their literals do not conflict, contains $m$ pairwise-adjacent vertices precisely when some truth assignment satisfies every clause of $f$.",
+ "title": "3-SAT and clique equivalence",
+ "statement": "Let $V$ be any type and let $f$ be a list of $m$ clauses, each consisting of three literals over $V$. The formula $f$ is satisfiable if and only if its conflict graph has a clique of size $m$. The graph's vertices are clause-position pairs, and two are adjacent exactly when they come from different clauses and their literals are not opposite occurrences of the same variable.",
  "hypotheses_covered": [
-  "f is a 3-CNF formula (a list of 3-clauses)",
-  "the clique size sought equals the number of clauses m = f.length"
+  "$V$ is any type",
+  "$f$ is a finite list of three-literal clauses over $V$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "A 3-CNF formula $f$ is satisfiable if and only if its conflict graph contains a\nclique of size $f.\\mathtt{length}$:\n\\[\n  \\mathtt{is3Satisfiable}\\,f \\;\\iff\\;\n  \\mathtt{hasClique}\\,(\\mathtt{toCliqueGraph}\\,f)\\,f.\\mathtt{length}.\n\\]"
+ "replaced": "Let $f$ be a 3-CNF formula with $m$ clauses. Then $f$ is satisfiable if and only if its\nconflict graph has a clique of size $m$; that is, the graph whose vertices are the\nliteral positions of $f$, with two positions adjacent exactly when they lie in different\nclauses and their literals do not conflict, contains $m$ pairwise-adjacent vertices\nprecisely when some truth assignment satisfies every clause of $f$."
 }

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.taut_unary_run",
+ "key": "9ae6f41fbbcdbe0a",
+ "kind": "lemma",
+ "title": "Unary Index Run",
+ "statement": "Let $k$ be a natural number and let $r,u$ be binary words. Suppose a binary input $x$ is the concatenation of a prefix $p$ and the self-delimiting encoding of the word $1^k r$ paired with $u$. From the configuration whose state is the unary-index evaluation state with accumulator $c$, whose input head has consumed $|p|$ bits, whose work tape contains $u$, and whose work head is at integer position $h$, the verifier reaches after exactly $2k$ steps the configuration in the same state, with $|p|+2k$ input bits consumed, the same work tape, and work head at $h+k$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$r,u$ are binary words",
+  "$x=p$ concatenated with the pair encoding of $1^k r$ and $u$",
+  "the initial input position is valid as witnessed by the stated length bound",
+  "initial state is unary-index evaluation with accumulator $c$",
+  "initial work tape stores $u$ and work head is at $h$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $k \\in \\mathbb{N}$, let $r, u, p$ be binary words, and let the input be\n$x = p \\mathbin{+\\!\\!+} \\mathrm{pair}(1^k \\mathbin{+\\!\\!+} r, u)$. Started in the\nunary-index evaluation state with accumulator $c$, $|p|$ input bits consumed, work word\n$u$, and work head $h$, the non-tautology verifier after exactly $2k$ steps is in the\nsame state with $|p| + 2k$ bits consumed and work head $h + k$."
+}

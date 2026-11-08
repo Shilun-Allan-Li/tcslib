@@ -1,0 +1,17 @@
+{
+ "lean_name": "Std.Sat.CNF.parseClause_serializeClause",
+ "key": "c200a2115c2be138",
+ "kind": "theorem",
+ "title": "Clause parsing recovers its encoding",
+ "statement": "Let $C$ be a clause, let $r$ be a bit string, and let $f\\in\\mathbb{N}$. If the length of the encoding of $C$ is at most $f$, then parsing the encoding of $C$ followed by $r$ as a clause with fuel $f$ returns $C$ and remainder $r$.",
+ "hypotheses_covered": [
+  "$C$ is a clause",
+  "$r$ is a bit string",
+  "$f\\in\\mathbb{N}$",
+  "The encoding of $C$ has length at most $f$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C = (\\ell_1, \\dots, \\ell_m)$ be a clause of literals $\\ell_i = (v_i, b_i)$ with\n$v_i \\in \\mathbb{N}$ and $b_i \\in \\{0,1\\}$, and let\n$\\mathrm{enc}(C) = 1^{v_1+1}0b_1\\cdots1^{v_m+1}0b_m\\,0$ be its binary encoding. For every\nbit string $r$ and every fuel $f \\ge |\\mathrm{enc}(C)|$, the clause parser with fuel $f$\nsucceeds on $\\mathrm{enc}(C)\\,r$ and returns $C$ with remainder $r$. Here the clause parser\nwith fuel $f$ on an input $x$ returns the empty clause and remainder $y$ when $x = 0y$; when\n$f = g+1$ and $x = 1^{k+1}0cy$ it prepends the literal $(k,c)$ to the clause returned by the\nclause parser with fuel $g$ on $y$, keeping that call's remainder and failing if it fails;\nand it fails on every other input."
+}

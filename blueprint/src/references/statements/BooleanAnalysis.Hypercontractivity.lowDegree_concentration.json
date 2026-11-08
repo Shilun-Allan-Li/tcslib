@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.lowDegree_concentration",
+ "key": "9fac54b17ab75762",
+ "kind": "theorem",
+ "title": "Tail bound for low degree",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a real-valued function on the uniform Boolean cube, and let $k\\in\\mathbb N$ with $k>0$. Suppose every nonzero Fourier coefficient of $f$ is supported on a set of size at most $k$, and $\\|f\\|_2>0$. For every $t\\in\\mathbb R$ such that $(\\sqrt{2e})^k\\le t$, we have $\\Pr\\bigl(t\\|f\\|_2\\le |f|\\bigr)\\le \\exp\\!\\left(-\\dfrac{k}{2e}t^{2/k}\\right)$.",
+ "hypotheses_covered": [
+  "$n,k$ are natural numbers",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$",
+  "$k>0$",
+  "$f$ has Fourier degree at most $k$",
+  "$\\|f\\|_2>0$",
+  "$t$ is real",
+  "$(\\sqrt{2e})^k\\le t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube of Fourier degree at most a positive integer $k$, with $\\|f\\|_2>0$. For $t\\ge(\\sqrt{2e})^k$, $\\Pr(|f|\\ge t\\|f\\|_2)\\le\\exp(-kt^{2/k}/(2e))$."
+}

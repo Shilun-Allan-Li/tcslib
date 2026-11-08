@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.inner_run",
+ "key": "27069b104780bdfa",
+ "kind": "theorem",
+ "title": "Inner relaxation run",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}:\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be an oracle, let $x$ be a finite Boolean string, and let $\\varphi$ be a Boolean. For every $u,j\\in\\mathbb N$, state $S=(N,L_g,s,s_1,X,w,K,B_s,U,V,T,T_2,Z,C,ch,c,c_1)$, and memory $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$, suppose $K-V=j$, $V\\le K$, $U=u<K$, $T=T_2=Z=0$, $ch\\le1$, every coordinate of $S$ is at most $B$, and $B_s+K\\le B$, $B_s+K\\le P$, and $K+1\\le B$. Then there are a memory $M'$ and $ch'\\in\\mathbb N$ such that the machine $A(K_0)$, on input $x$ with oracle $\\mathrm{orc}$, runs from state $S$, memory $M$, head position $0$, and label corresponding to reading the mark of $V$ in the relaxation round for $\\varphi$, to the state obtained from $S$ by setting $V=0$ and $ch=ch'$, memory $M'$, head position $0$, and label corresponding to incrementing $U$ in that round. Every configuration before the endpoint has all register values at most $B$ and memory head position between $0$ and $P$. Moreover, $M'$ extends the marked positions of $M$ and agrees with $M$ outside the cells $B_s+v$ for $v<K$, while $ch'\\le1$. For every $v<K$, if $M'$ marks $B_s+v$, then either $M$ already marks that cell or $\\mathrm{orc}$ accepts the encoded query for $(x,\\rho,u,v)$, where $\\rho=s_1$ if $\\varphi$ is true and $\\rho=s$ otherwise; conversely, if $V\\le v<K$ and that query is accepted, then $M'$ marks $B_s+v$. If $M'=M$, then $ch'=ch$; if $M'\\ne M$, then $ch'=1$.",
+ "hypotheses_covered": [
+  "$K_0,B,P$ are natural numbers; the oracle has four indices and Boolean-string inputs; $x$ is a Boolean string; $\\varphi$ is Boolean",
+  "$u,j$ are natural numbers; $S$ is a state with the listed coordinates; $M$ is Boolean-valued on $\\mathbb Z$",
+  "$K-V=j$",
+  "$V\\le K$",
+  "$U=u<K$",
+  "$T=T_2=Z=0$",
+  "$ch\\le1$",
+  "Every coordinate of $S$ is at most $B$",
+  "$B_s+K\\le B$",
+  "$B_s+K\\le P$",
+  "$K+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}$ be a Boolean oracle on four indices\nand bit strings, let $x$ be a bit string, let $\\varphi$ be a Boolean, and let $u,j$ be\nnatural numbers. Consider a register state $S$ with coordinates\n$N,\\mathrm{Lg},s,s_1,X,w,K,B_s,U,V,T,T_2,Z,C,ch,c,c_1$, and a memory $M:\\mathbb\nZ\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Suppose $K-V=j$, $V\\le K$, $U=u<K$, $T=T_2=Z=0$,\n$ch\\le1$, every coordinate of $S$ is at most $B$, $B_s+K\\le B$, $B_s+K\\le P$, and\n$K+1\\le B$. Then there are a memory $M'$ and a natural number $ch'$ such that the\nprogram $A(K_0)$, with oracle $\\mathrm{orc}$ and input $x$, runs from label\n$\\mathrm{rlV}(\\varphi)$ with state $S$, memory $M$, and head position $0$ to label\n$\\mathrm{rlNU}(\\varphi)$ with the same state except that $V=0$ and $ch=ch'$, memory\n$M'$, and head position $0$; at every earlier step, all register values are at most $B$\nand the head position lies between $0$ and $P$. Moreover, $ch'\\le1$, the memory only\ngains marked cells, and it is unchanged outside the cells $B_s+v$ for $v<K$. For every\n$v<K$, if $M'$ marks cell $B_s+v$, then $M$ already marked that cell or the step oracle\naccepts $(x,rr(S,\\varphi),u,v)$; conversely, every $v$ with $V\\le v<K$ accepted by the\nstep oracle has cell $B_s+v$ marked in $M'$. If $M'=M$, then $ch'=ch$, and if $M'\\ne M$,\nthen $ch'=1$."
+}

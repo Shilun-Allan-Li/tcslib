@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.KarpLipton.allGood_of_decides",
+ "key": "ba29da0fdb6200ff",
+ "kind": "theorem",
+ "title": "Good circuit decisions exclude bad specifications",
+ "statement": "Let $C,c\text{ in }\backs lash\textbackslash N$, let $V$ be a language of bit strings, and let $F$ be a family of acyclic Boolean circuits with at most two inputs per gate, with well-formed gates, one circuit for each input length. Suppose the language accepted by $F$ is the language of strings $q$ for which, writing $(x,y)$ for the decoded pair components of $q$, there is a suffix $s$ such that $|y' s|=C(|x|+1)^c$ and $\bg x,y's\bg\text{ belongs to }V$, where $y'$ is obtained by deleting the marker from $y$. For bit strings $x,U$, suppose deleting the marker from $U$ gives the encoding of the circuit in $F$ on input length $2(2|x|+2+C(|x|+1)^c)+2+(C(|x|+1)^c+1)$. Suppose also that for every $u$ of length $C(|x|+1)^c$ there is a $v$ of that same length with $\bg\bg x,u\bg,v\bg\text{ belongs to }V$. Then for every bit strings $u,j,p$ it is not the case that all three length bounds $|u|=C(|x|+1)^c$, $|j|\\le C(|x|+1)^c$, $|p|\\le C(|x|+1)^c$ hold together with at least one of these: the corresponding circuit query on $\bg x,u\bg$ rejects the all-ones marker; $|p|=C(|x|+1)^c$ and the query on $0p$ accepts while $\bg\bg x,p\bg\notin V$; or $|j|+|p|+1=C(|x|+1)^c$, the query on $1 0 p$ preceded by $|j|$ ones accepts, and both queries formed by preceding $0(p0)$ and $0(p1)$ by $|j|$ ones reject. Here $\bg a,b\bg$ denotes the encoding of a pair, and each query uses the circuit code obtained by deleting the marker from $U$.",
+ "hypotheses_covered": [
+  "$F$ is a family whose circuits have well-formed gates and fan-in at most two",
+  "The accepted language of $F$ equals the specified prefix language",
+  "The marker-deleted $U$ is the encoded circuit for the specified input length",
+  "For every length-$C(|x|+1)^c$ string $u$, a same-length witness $v$ makes the paired string belong to $V$"
+ ],
+ "confidence": "low",
+ "caveat": "The statement expands several nested encodings and predicates; the exact decoding and marker conventions are compressed into the prose.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

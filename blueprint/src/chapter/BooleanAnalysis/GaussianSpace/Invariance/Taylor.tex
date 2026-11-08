@@ -5,35 +5,53 @@ Cubic Taylor approximation with an explicit fourth-order remainder gives integra
 
 \section{Declarations}
 
-\begin{theorem}[Cubic Taylor remainder bound]
+\begin{theorem}[Fourth-order Taylor remainder bound]
 \lean{BooleanAnalysis.GaussianSpace.abs_sub_taylor_cubic_le}
 \leanok
+\uses{BooleanAnalysis.GaussianSpace.abs_sub_taylor_le}
 \difficulty{5}
-Let $\psi\colon\mathbb R\to\mathbb R$ be $C^4$ and let $C\ge0$ satisfy $|\psi^{(4)}(t)|\le C$ for all real $t$. For all real $a,b$, $\left|\psi(a+b)-\sum_{j=0}^3\psi^{(j)}(a)b^j/j!\right|\le Cb^4/24$.
+Let $\psi\colon\mathbb R\to\mathbb R$ be four times continuously differentiable, and
+suppose $C\ge0$ and $|\psi^{(4)}(t)|\le C$ for every $t\in\mathbb R$. For all
+$a,b\in\mathbb R$,
+\[\left|\psi(a+b)-\sum_{j=0}^{3}\frac{\psi^{(j)}(a)}{j!}b^j\right|\le\frac{C}{24}b^4.\]
 \end{theorem}
 
-\begin{theorem}[Integrability under fourth-moment control]
+\begin{theorem}[Integrability under fourth moment control]
 \lean{BooleanAnalysis.GaussianSpace.integrable_test_of_memLp_four}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_sub_taylor_cubic_le, BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
+\uses{BooleanAnalysis.GaussianSpace.integrable_test_of_memLp}
 \difficulty{4}
-Let $Z\in L^4(\mu)$ be real-valued on a probability space $(\Omega,\mu)$, and let $\psi\colon\mathbb R\to\mathbb R$ be $C^4$. If some $C\ge0$ bounds $|\psi^{(4)}(t)|$ for every real $t$, then $\psi(Z)$ is integrable under $\mu$.
+Let $(\Omega,\mu)$ be a probability space, let $Z:\Omega\to\mathbb R$ belong to
+$L^4(\mu)$, and let $\psi:\mathbb R\to\mathbb R$ be four times continuously
+differentiable. If $C\ge 0$ and $|\psi^{(4)}(t)|\le C$ for every $t\in\mathbb R$, then
+$\omega\mapsto\psi(Z(\omega))$ is integrable under $\mu$.
 \end{theorem}
 
-\begin{theorem}[Expected cubic polynomial for matched moments]
+\begin{theorem}[Cubic Taylor polynomial under matched moments]
 \lean{BooleanAnalysis.GaussianSpace.integral_taylor_cubic}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
+\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.integral_taylor_polynomial}
 \difficulty{4}
-Let $X$ be a real input on a probability space, measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. For any real function $\psi$ and real $a,b$, $\mathbb E[\sum_{j=0}^3\psi^{(j)}(a)(bX)^j/j!]=\psi(a)+\tfrac12\psi^{(2)}(a)b^2$. Here iterated differentiation assigns zero at a point where the derivative does not exist, so the identity requires no smoothness of $\psi$.
+Let $(\Omega,\mu)$ be a probability space, let $X:\Omega\to\mathbb R$ satisfy $\mathbb E
+X=0$, $\mathbb E X^2=1$, $\mathbb E X^3=0$, and $\mathbb E X^4\le 9$, and suppose $X$ is
+measurable up to a null set with finite fourth absolute moment. For every function
+$\psi:\mathbb R\to\mathbb R$ and all $a,b\in\mathbb R$, the expectation of
+$\sum_{j=0}^{3}\frac{\psi^{(j)}(a)}{j!}(bX)^j$ is $\psi(a)+\frac{\psi^{(2)}(a)}{2}b^2$,
+where the derivatives are iterated derivatives.
 \end{theorem}
 
 \begin{theorem}[Expected scalar Taylor error]
 \lean{BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.abs_sub_taylor_cubic_le, BooleanAnalysis.GaussianSpace.integrable_test_of_memLp_four, BooleanAnalysis.GaussianSpace.integral_taylor_cubic, BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
+\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_polynomial_le, BooleanAnalysis.GaussianSpace.integral_taylor_cubic}
 \difficulty{5}
-Let $X$ be a real input on a probability space, measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. Let $\psi\colon\mathbb R\to\mathbb R$ be $C^4$ and let $C\ge0$ satisfy $|\psi^{(4)}(t)|\le C$ for all real $t$. For all real $a,b$, $|\mathbb E\psi(a+bX)-\psi(a)-\tfrac12\psi^{(2)}(a)b^2|\le(3C/8)b^4$.
+Let $(\Omega,\mu)$ be a probability space, and let $X:\Omega\to\mathbb R$ satisfy the
+fourth-order invariance moment conditions: it has finite fourth absolute moment, and its
+first, second, and third moments are $0,1,0$, respectively, with fourth moment at most
+$9$. Let $\psi:\mathbb R\to\mathbb R$ be four times continuously differentiable, and
+suppose $C\ge0$ and $|\psi^{(4)}(t)|\le C$ for every $t\in\mathbb R$. Then for all
+$a,b\in\mathbb R$,
+\[\left|\int_\Omega\psi(a+bX(\omega))\,d\mu(\omega)-\left(\psi(a)+\frac{\psi''(a)}2b^2\right)\right|\le\frac{3C}{8}b^4.\]
 \end{theorem}
 
 \begin{theorem}[Comparison of scalar affine input laws]
@@ -41,5 +59,82 @@ Let $X$ be a real input on a probability space, measurable up to a null set with
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_le}
 \difficulty{4}
-Let $X$ and $Y$ be real inputs on possibly different probability spaces, each measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. Let $\psi\colon\mathbb R\to\mathbb R$ be $C^4$ and let $C\ge0$ satisfy $|\psi^{(4)}(t)|\le C$ for all real $t$. For every real $a,b$, $|\mathbb E\psi(a+bX)-\mathbb E\psi(a+bY)|\le(3C/4)b^4$.
+Let $(\Omega,\mu)$ and $(\Xi,\nu)$ be probability spaces, and let
+$X\colon\Omega\to\mathbb R$ and $Y\colon\Xi\to\mathbb R$ each satisfy the fourth-order
+invariance moment conditions: they are measurable up to null sets with finite fourth
+absolute moments, have means zero, second moments one, third moments zero, and fourth
+moments at most $9$. Let $\psi\colon\mathbb R\to\mathbb R$ be four times continuously
+differentiable, and suppose $C\ge0$ and $|\psi^{(4)}(t)|\le C$ for every real $t$. For
+all $a,b\in\mathbb R$,
+\[\left|\mathbb E_\mu[\psi(a+bX)]-\mathbb E_\nu[\psi(a+bY)]\right|\le\frac{3C}{4}b^4.\]
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Taylor remainder bound of arbitrary order]
+\lean{BooleanAnalysis.GaussianSpace.abs_sub_taylor_le}
+\label{BooleanAnalysis.GaussianSpace.abs_sub_taylor_le}
+\leanok
+\difficulty{6}
+Let $m\ge0$ be an integer, let $\psi\colon\mathbb R\to\mathbb R$ be $(m+1)$ times
+continuously differentiable, and suppose $C\in\mathbb R$ satisfies $|\psi^{(m+1)}(t)|\le
+C$ for every $t\in\mathbb R$. For all $a,b\in\mathbb R$,
+\[\left|\psi(a+b)-\sum_{j=0}^{m}\frac{\psi^{(j)}(a)}{j!}b^j\right|\le\frac{C}{(m+1)!}|b|^{m+1}.\]
+\end{theorem}
+
+\begin{theorem}[Integrability of a smooth function of a random variable]
+\lean{BooleanAnalysis.GaussianSpace.integrable_test_of_memLp}
+\label{BooleanAnalysis.GaussianSpace.integrable_test_of_memLp}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.abs_sub_taylor_le, BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
+\difficulty{4}
+Let $(\Omega,\mu)$ be a probability space, let $m$ be a nonnegative integer, and let
+$Z:\Omega\to\mathbb R$ belong to $L^{m+1}(\mu)$. Let $\psi:\mathbb R\to\mathbb R$ be
+$(m+1)$-times continuously differentiable, and suppose there is a real number $C$ such
+that $|\psi^{(m+1)}(t)|\le C$ for every $t\in\mathbb R$. Then
+$\omega\mapsto\psi(Z(\omega))$ is integrable under $\mu$.
+\end{theorem}
+
+\begin{theorem}[Integration of a Taylor polynomial]
+\lean{BooleanAnalysis.GaussianSpace.integral_taylor_polynomial}
+\label{BooleanAnalysis.GaussianSpace.integral_taylor_polynomial}
+\leanok
+\uses{BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
+\difficulty{3}
+Let $(\Omega,\mu)$ be a probability space, let $p,m\in\mathbb N$, and let
+$X:\Omega\to\mathbb R$ have finite $p$th moment, with $m\le p$. For every function
+$\psi:\mathbb R\to\mathbb R$ and all $a,b\in\mathbb R$, $\int
+\sum_{j=0}^{m-1}\frac{\psi^{(j)}(a)}{j!}(bX)^j\,d\mu=\sum_{j=0}^{m-1}\frac{\psi^{(j)}(a)}{j!}b^j\int
+X^j\,d\mu$, where $\psi^{(j)}$ denotes the $j$th iterated derivative.
+\end{theorem}
+
+\begin{theorem}[Expected Taylor polynomial error]
+\lean{BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_polynomial_le}
+\label{BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_polynomial_le}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.abs_sub_taylor_le, BooleanAnalysis.GaussianSpace.integrable_test_of_memLp, BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
+\difficulty{4}
+Let $(\Omega,\mu)$ be a probability space, let $m\in\mathbb N$, and let
+$X:\Omega\to\mathbb R$ have finite $(m+1)$st absolute moment. Let $\psi:\mathbb
+R\to\mathbb R$ be $(m+1)$ times continuously differentiable, and suppose $C\in\mathbb R$
+satisfies $|\psi^{(m+1)}(t)|\le C$ for every $t\in\mathbb R$. For all $a,b\in\mathbb R$,
+\[\left|\int_\Omega\psi(a+bX(\omega))\,d\mu(\omega)-\int_\Omega\sum_{j=0}^{m}\frac{\psi^{(j)}(a)}{j!}(bX(\omega))^j\,d\mu(\omega)\right|\le\frac{C}{(m+1)!}|b|^{m+1}\int_\Omega|X(\omega)|^{m+1}\,d\mu(\omega).\]
+\end{theorem}
+
+\begin{theorem}[Third-order affine replacement bound]
+\lean{BooleanAnalysis.GaussianSpace.affine_replacement_bound_c3}
+\label{BooleanAnalysis.GaussianSpace.affine_replacement_bound_c3}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_polynomial_le, BooleanAnalysis.GaussianSpace.integral_taylor_polynomial}
+\difficulty{5}
+Let $([?]$) be probability spaces $(\Omega,\mu)$ and $(\Xi,\nu)$, and let
+$X\colon\Omega\to\mathbb R$ and $Y\colon\Xi\to\mathbb R$ have finite third absolute
+moments. Suppose their means and second moments agree. Let $\psi\colon\mathbb
+R\to\mathbb R$ be three times continuously differentiable, and suppose
+$|\psi^{(3)}(t)|\le C$ for every $t\in\mathbb R$. Then, for all $a,b\in\mathbb R$,
+\[
+\left|\int \psi(a+bX)\,d\mu-\int \psi(a+bY)\,d\nu\right|
+\le \frac C6 |b|^3\left(\int |X|^3\,d\mu+\int |Y|^3\,d\nu\right).
+\]
 \end{theorem}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopBody_step",
+ "key": "91f0e9f47af76681",
+ "kind": "lemma",
+ "title": "One Step of the Stop Wrapper",
+ "statement": "Let $B$ be a Boolean finite Turing machine, let $a$ be one of its states, and fix an input word $x$. If $c$ is a configuration of $B$ on $x$ with state $q$, $r$ is a release bit, $g$ is an optional flag bit, and it is not the case that $q=a$ and $r$ is false, then one step of the stop wrapper from the embedding of $c$ with release bit $r$ and flag $g$ equals the embedding of the body's one-step successor, with release bit false and flag true if that successor is halted, and otherwise with flag $g$.",
+ "hypotheses_covered": [
+  "$B$ is a Boolean finite Turing machine",
+  "$a$ is a state of $B$",
+  "$x$ is an input word",
+  "$c$ is a configuration of $B$ on $x$",
+  "the state of $c$ is $q$",
+  "$r$ is a release bit",
+  "$g$ is an optional flag bit",
+  "not ($q=a$ and $r$ is false)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of the loop body in a live control state $q$, and suppose it\nis not the case that $q$ is the anchor with the release bit clear. Then one step of the\nstop wrapper from the embedding of $c$ equals the embedding of the body's one-step\nsuccessor of $c$, with the release bit cleared and the flag set to $\\mathrm{true}$\nexactly when that body step is a halting transition."
+}

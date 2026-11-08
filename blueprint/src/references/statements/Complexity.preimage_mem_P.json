@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.preimage_mem_P",
+ "key": "a3e6faf352199103",
+ "kind": "theorem",
+ "title": "Polynomial-time preimage closure",
+ "statement": "Let $V$ be a language in $\\mathsf{P}$, and let $g$ be a polynomial-time computable function from binary strings to binary strings. Then the language $\\{x:g(x)\\in V\\}$ belongs to $\\mathsf{P}$.",
+ "hypotheses_covered": [
+  "$V\\in\\mathsf{P}$",
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $V \\subseteq \\{0,1\\}^*$ be a language in $\\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time, and let $g : \\{0,1\\}^* \\to \\{0,1\\}^*$ be polynomial-time computable (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the preimage $g^{-1}(V) = \\{x \\in \\{0,1\\}^* : g(x) \\in V\\}$ also belongs to $\\mathsf{P}$."
+}

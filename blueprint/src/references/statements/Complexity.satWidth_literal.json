@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satWidth_literal",
+ "key": "311549818bceaed7",
+ "kind": "lemma",
+ "title": "Width counter update for one literal",
+ "statement": "Let $\\ell=(v,b)$ be a literal with variable index $v\\in\\mathbb{N}$ and polarity bit $b\\in\\{0,1\\}$, let $c\\in\\{0,1,2,3\\}$, and let $g$ be a Boolean flag. Folding the width-pass transition over the binary encoding of $\\ell$, starting in state $1$ with counter $c$ and flag $g$, ends in state $1$ with counter $\\min(c+1,3)$ and flag $g\\wedge[c<3]$.",
+ "hypotheses_covered": [
+  "$\\ell$ is a literal over natural-number-indexed variables",
+  "$c$ is one of $0,1,2,3$",
+  "$g$ is a Boolean flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\ell$ be a literal, $c \\in \\{0,1,2,3\\}$ a counter value, and $g$ a Boolean\nflag. Folding the width-pass transition over the serialization of $\\ell$, from the\nclause position with counter $c$ and flag $g$, returns the clause position with\ncounter $\\min(c + 1, 3)$ and flag $g \\wedge [c < 3]$, independently of the\nvariable index and polarity of $\\ell$."
+}

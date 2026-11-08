@@ -1,0 +1,22 @@
+{
+ "lean_name": "FABL.F₂LinearSolverExponentCertificate",
+ "key": "8dc6f0b786fc28bd",
+ "kind": "structure",
+ "title": "Linear solver exponent certificate",
+ "statement": "Let a linear solver backend and a positive rational exponent $\\omega$ be given. A certificate consists of a natural-number-valued coefficient function of three natural-number arguments, the bound $2 \\leq \\omega$, and the following work guarantee: for every finite encoded coordinate set, every list of linear equations over $\\mathbb{F}_2$, and natural numbers $b,d,c_D,c_R$ with $0<b$, if the number of coordinates is at most $c_D b^d$ and the number of equations is at most $c_R b^d$, then the backend's work is at most $C(c_D,c_R,d)b^{\\lceil \\omega d\\rceil}$, where $C$ is the certificate's coefficient function.",
+ "hypotheses_covered": [
+  "A solver backend is given",
+  "$\\omega$ is a positive rational",
+  "$2 \\leq \\omega$",
+  "The coordinate set is finite and encoded",
+  "The equation list is finite",
+  "$b,d,c_D,c_R$ are natural numbers",
+  "$0<b$",
+  "The coordinate count is at most $c_D b^d$",
+  "The equation count is at most $c_R b^d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

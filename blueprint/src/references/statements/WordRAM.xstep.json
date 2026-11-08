@@ -1,0 +1,18 @@
+{
+ "lean_name": "WordRAM.xstep",
+ "key": "69794a28392bc0e4",
+ "kind": "def",
+ "title": "Extended machine step",
+ "statement": "Let $W$ be a word width, let $P$ be a finite program of extended instructions, let $x$ and $\\rho$ be finite Boolean input and coin tapes, and let $c$ be a machine configuration with program counter, word memory, output bits, and a count of coins already consumed. One step returns acceptance or rejection if the current instruction is respectively accept or reject (and treats a program counter beyond the end of $P$ as reject); otherwise it returns an updated configuration: a negative-value branch jumps to its target exactly when the tested word is negative, and each other instruction advances the counter by one and applies its specified operation. In particular, input reads write the indicated input bit (or zero for a negative or out-of-range index), emissions append whether the addressed word is nonzero, coin instructions write the next coin bit (or false if the coin tape is exhausted) and increment the consumed-coin count, and half instructions write the signed right shift by one.",
+ "hypotheses_covered": [
+  "Word width $W$",
+  "Finite extended program $P$",
+  "Boolean input tape $x$",
+  "Boolean coin tape $\\rho$",
+  "Initial extended configuration $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

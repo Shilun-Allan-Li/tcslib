@@ -25,9 +25,10 @@ outer list. Used to merge the clause (or term) lists of several CNFs (or DNFs).
 
 \begin{lemma}[Maximum term width bounded iff every term bounded]
 \lean{LMN.width_le_iff_forall}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b002}
 \label{LMN.width_le_iff_forall}
 \leanok
-\uses{Term, LitList.width}
+\uses{Depth2, Depth2.width, LitList.width}
 \difficulty{4}
 Let $t_1, \dots, t_k$ be a finite list of terms, each a conjunction of literals, and let
 $\ell$ be a natural number; write $w(t)$ for the width of a term (its number of
@@ -40,7 +41,7 @@ every term $t$ in the list.
 \lean{LMN.cnf_concat_width_le}
 \label{LMN.cnf_concat_width_le}
 \leanok
-\uses{CNF, CNF.width, LMN.listConcat}
+\uses{CNF, CNF.width, CNF.width_mk, LMN.cnfConcat, LMN.mem_listConcat, LMN.width_le_iff_forall}
 \difficulty{4}
 Let $\psi_1, \dots, \psi_s$ be CNF formulas over $n$ variables, and let $\ell$ be a
 natural number such that each $\psi_i$ has width at most $\ell$. Then the CNF formula
@@ -52,7 +53,7 @@ $\ell$.
 \lean{LMN.cnf_concat_eval}
 \label{LMN.cnf_concat_eval}
 \leanok
-\uses{CNF, CNF.eval, LMN.listConcat}
+\uses{CNF, CNF.eval, CNF.eval_mk, LMN.cnfConcat, LMN.listConcat}
 \difficulty{3}
 Let $\psi_1, \dots, \psi_k$ be CNF formulas over the variables $\{1, \dots, n\}$, and
 form the single CNF formula obtained by concatenating all of their clause lists into
@@ -65,7 +66,7 @@ only if every $\psi_i$ evaluates to true at $x$.
 \lean{LMN.dnf_concat_width_le}
 \label{LMN.dnf_concat_width_le}
 \leanok
-\uses{CNF, CNF.width, DNF, DNF.width, LMN.cnf_concat_width_le, LMN.listConcat, LitList.width, CNF.dual_width}
+\uses{DNF, DNF.width, DNF.width_mk, LMN.dnfConcat, LMN.mem_listConcat, LMN.width_le_iff_forall}
 \difficulty{6}
 Let $\varphi_1, \dots, \varphi_s$ be DNF formulas over $n$ variables, and let $\ell$ be
 a natural number such that each $\varphi_i$ has width at most $\ell$ (that is, every
@@ -78,7 +79,7 @@ width at most $\ell$.
 \lean{LMN.dnf_concat_eval}
 \label{LMN.dnf_concat_eval}
 \leanok
-\uses{DNF, DNF.eval, LMN.listConcat}
+\uses{DNF, DNF.eval, DNF.eval_mk, LMN.dnfConcat, LMN.listConcat}
 \difficulty{3}
 Let $\varphi_1, \dots, \varphi_k$ be DNF formulas over $n$ variables, and let $x \in
 \{0,1\}^n$ be a Boolean assignment. Form the single DNF whose term-list is the
@@ -91,11 +92,11 @@ evaluates to true at $x$.
 \lean{LMN.compression_and_of_cnfs}
 \label{LMN.compression_and_of_cnfs}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, LMN.cnfConcat, LMN.cnf_concat_eval, LMN.cnf_concat_width_le}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
 }
-\uses{CNF, CNF.eval, CNF.width, LMN.cnf_concat_eval, LMN.cnf_concat_width_le, LMN.listConcat}
 \difficulty{4}
 Fix $n$ and a width bound $\ell$, and let $f_1, \dots, f_k$ be Boolean functions on $n$
 variables, each mapping an assignment $x \in \{0,1\}^n$ to a truth value. Suppose that
@@ -109,11 +110,11 @@ formula of width at most $\ell$.
 \lean{LMN.compression_or_of_dnfs}
 \label{LMN.compression_or_of_dnfs}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, LMN.dnfConcat, LMN.dnf_concat_eval, LMN.dnf_concat_width_le}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
 }
-\uses{DNF, DNF.eval, DNF.width, LMN.dnf_concat_eval, LMN.dnf_concat_width_le, LMN.listConcat}
 \difficulty{3}
 Let $f_1, \dots, f_m$ be Boolean functions on $\{0,1\}^n$, and let $\ell$ be a natural
 number. Suppose that each $f_i$ is computed by some DNF formula of width at most $\ell$,
@@ -124,17 +125,26 @@ single DNF formula of width at most $\ell$.
 
 \begin{theorem}[Failure probability for one-step CNF representation of DNF gates]
 \lean{LMN.one_step_reduction_failure_bound}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b003,
+  pdf-52929dbaa962-p003-b001
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001
+}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
   pdf-b5e074215b9e-p003-b004
 }
 \label{LMN.one_step_reduction_failure_bound}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.layer2_cnf_replaceability_union_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p008-b005
 }
-\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.layer2_cnf_replaceability_union_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn}
 \difficulty{2}
 Fix an integer $w \ge 1$ and let $D_1, \dots, D_{s_2}$ be DNF formulas over $n \ge 1$
 Boolean variables, each of width at most $w$, and suppose that within every term of
@@ -153,6 +163,16 @@ $l$ is at most
 
 \begin{theorem}[One-step decision-tree depth bound under a random restriction]
 \lean{LMN.one_step_dtDepth_bound}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b004,
+  pdf-52929dbaa962-p003-b001
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001,
+  pdf-ffbe9c7b3306-p106-b002
+}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p012-b004}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
@@ -160,6 +180,7 @@ $l$ is at most
 }
 \label{LMN.one_step_dtDepth_bound}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, LMN.switching_bernoulli_union_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight_sum_one, SwitchingLemma.restrictFn, dtDepth}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p008-b005
@@ -1049,7 +1070,6 @@ $l$ is at most
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p004-b002}
-\uses{DNF, DNF.eval, DNF.width, LMN.switching_bernoulli_union_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrWeight_sum_one, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{5}
 Fix an integer $n \ge 1$, let $w \ge 1$, and let $g_1, \dots, g_{s_2}$ be $s_2$ DNF
 formulas on $n$ Boolean variables, each of width at most $w$. Assume that in every term
@@ -1081,17 +1101,26 @@ fails.
 
 \begin{theorem}[One-step compression of DNF gates under random restriction]
 \lean{LMN.one_step_reduction_with_compression}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b004,
+  pdf-52929dbaa962-p003-b001
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001
+}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p004-b002,
   pdf-b5e074215b9e-p003-b004
 }
 \label{LMN.one_step_reduction_with_compression}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
 }
-\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn}
 \difficulty{2}
 Let $g_1,\dots,g_{s_2}$ be DNF formulas on $n \ge 1$ variables, each of width at most
 $w$, where $w \ge 1$; assume that in every term of every $g_i$ any two literals on the
@@ -1108,3 +1137,39 @@ width } \le \ell\Bigr]
 where $g_i|_\rho$ is the restriction of $g_i$ by $\rho$ and a CNF formula $\psi$
 *computes* $g_i|_\rho$ when $\psi$ and $g_i|_\rho$ agree on every input.
 \end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Membership in a concatenated list]
+\lean{LMN.mem_listConcat}
+\label{LMN.mem_listConcat}
+\leanok
+\uses{LMN.listConcat}
+\difficulty{4}
+For any type $\alpha$, list of lists $ls$ over $\alpha$, and element $a \in \alpha$, the
+element $a$ belongs to the concatenation of $ls$ if and only if there is a list $l$ in
+$ls$ that contains $a$.
+\end{lemma}
+
+\begin{definition}[Concatenation of conjunctive normal forms]
+\lean{LMN.cnfConcat}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p094-b004}
+\label{LMN.cnfConcat}
+\leanok
+\uses{CNF, LMN.listConcat}
+For a natural number $n$, concatenating a finite list of conjunctive normal form
+formulas on $n$ variables produces the formula whose clauses are the clauses of all the
+listed formulas, concatenated in their list order.
+\end{definition}
+
+\begin{definition}[Concatenation of disjunctive normal forms]
+\lean{LMN.dnfConcat}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p093-b004}
+\label{LMN.dnfConcat}
+\leanok
+\uses{DNF, LMN.listConcat}
+For a natural number $n$, concatenating a finite list of disjunctive normal form
+formulas on $n$ variables produces the formula whose terms are the terms of all the
+listed formulas, concatenated in their list order.
+\end{definition}

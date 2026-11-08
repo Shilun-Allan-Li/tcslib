@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.universalCaptured_right",
+ "key": "7c803e605809aad5",
+ "kind": "lemma",
+ "title": "Capture endpoint as a right-block configuration",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet with $k$ work tapes, and let $D$ be a four-work-tape Turing machine over the Boolean alphabet with a finite state set $S$ and decidable equality. For any finite Boolean input $x$ and any configuration $c$ of $M$ on $x$, the interpreter-entry configuration of the output-capture wrapper for $M$ and $D$ is the right-block embedding of the four-tape configuration whose state is $D$’s initial state, whose input-head position is that of $c$, whose first work tape stores the output of $c$ from cell zero with its head at the output length, whose other three work tapes are blank with heads at zero, and whose output is empty; the first $k$ work tapes and their head positions in this embedding are those of $c$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state machine over the Boolean alphabet with $k$ work tapes",
+  "$D$ is a four-work-tape Boolean machine with finite state set and decidable equality",
+  "$x$ is a finite Boolean input",
+  "$c$ is a configuration of $M$ on $x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Let $M$ be a finite-tape machine over $\\{0,1\\}$, $D$ a four-tape follower\nmachine, and consider a configuration of $M$ on an input $x$.  The endpoint\nconfiguration of the capture stage --- which copies $M$'s accumulated output\nonto a fresh tape and hands control to $D$ --- equals the right-block\nembedding into the combined machine of the $D$-configuration with control at\n$D$'s initial state, the same physical input head as the source, first work\ntape holding the buffer tape of the captured output string with head at its\nright blank, and three blank tapes with heads at $0$, where $M$'s work tapes\nand head positions are retained unchanged as the inactive left block."
+}

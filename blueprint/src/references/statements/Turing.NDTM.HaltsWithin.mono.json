@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.NDTM.HaltsWithin.mono",
+ "key": "c0280d6b856efad3",
+ "kind": "theorem",
+ "title": "Monotonicity of all-branch halting",
+ "statement": "Let $M$ be a nondeterministic multi-tape Turing machine, $x$ an input word, and $t,t'$ natural numbers with $t\\le t'$. If every choice word of length exactly $t$ leads from the initial configuration of $M$ on $x$ to a halted configuration, then every choice word of length exactly $t'$ does as well.",
+ "hypotheses_covered": [
+  "A nondeterministic multi-tape Turing machine $M$",
+  "An input word $x$",
+  "Natural numbers $t,t'$ with $t\\le t'$",
+  "Every choice word of length exactly $t$ leads to a halted configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a nondeterministic multi-tape Turing machine, $x$ an input word, and\n$t \\le t'$ natural numbers.  If for every choice word of length $t$ the run of $M$ under\nit from the initial configuration on $x$ ends in a halted configuration, then the same\nholds for every choice word of length $t'$."
+}

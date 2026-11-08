@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp",
+ "key": "aca1f24fd1a18093",
+ "kind": "theorem",
+ "title": "Composition of Conditional Expectations",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate weights summing to $1$. For subsets $S,T\\subseteq\\{0,\\ldots,n-1\\}$, a function $f$ on the product outcome space, and an outcome $x$, applying conditional expectation first over the coordinates outside $T$ and then over those outside $S$ gives the conditional expectation over the coordinates outside $S\\cap T$: $E_S(E_Tf)(x)=E_{S\\cap T}f(x)$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space",
+  "All coordinate weights are strictly positive and sum to $1",
+  "$S,T$ are subsets of the coordinate indices",
+  "$f$ is real-valued on the product outcome space",
+  "$x$ is a product outcome"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $S,T\\subseteq[n]$, $f:\\Omega\\to\\mathbb R$, and $x\\in\\Omega$. For coordinate conditional expectations, $E_S(E_Tf)(x)=E_{S\\cap T}f(x)$."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.guessValidA_halts",
+ "key": "9e1645a45faaab2f",
+ "kind": "lemma",
+ "title": "Halting of the valid-input checker",
+ "statement": "For every Boolean input word $x$, every predicate $G$ on configurations of the checker, and every oracle with no query indices, suppose $G$ holds for each configuration whose program state is any of the four states and whose sole register is zero, regardless of its answer component. Then every sequence of three choice bits, starting from the prescribed initial configuration, halts after those three steps; at every earlier time when the computation has not yet halted, its configuration satisfies $G$.",
+ "hypotheses_covered": [
+  "A Boolean input word $x$.",
+  "A predicate $G$ on configurations with one register and four states.",
+  "$G$ holds for each of the four program states, zero register, and every answer component.",
+  "An oracle whose query-index set is empty.",
+  "The initial configuration has program state $0$, its sole register is $0$, and its answer is unset.",
+  "Every Boolean choice sequence of length three."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

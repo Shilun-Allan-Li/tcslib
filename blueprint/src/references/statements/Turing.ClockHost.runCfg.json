@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.ClockHost.runCfg",
+ "key": "6ebaecc01d7f9cea",
+ "kind": "def",
+ "title": "Run configuration",
+ "statement": "Let $S$ be a finite deterministic Boolean machine, $A$ a finite nondeterministic Boolean machine, a Boolean loop flag, an input list $x$, and a natural number $m$ be given. From a configuration of $A$ on $x$, an integer $j$, and contents and head positions for the work tapes of $S$, define the host configuration whose state records $A$'s optional current state and captured output, whose input-head position is $A$'s input-head position, whose work tapes combine the supplied contents for $S$ with $A$'s configuration, and whose yardstick tape contains $m$ consecutive true symbols starting at the origin; the yardstick head is at $j$, and the output is empty.",
+ "hypotheses_covered": [
+  "A finite deterministic Boolean machine $S$",
+  "A finite nondeterministic Boolean machine $A$",
+  "A Boolean loop flag",
+  "An input list $x$",
+  "A natural number $m$",
+  "A configuration of $A$ on input $x$",
+  "An integer yardstick-head position $j$",
+  "Work-tape contents for $S$",
+  "Work-tape head positions for $S$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet omits the host-configuration and output-capture definitions, so the precise tape layout cannot be verified from the given material.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

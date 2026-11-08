@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/BPLInP.lean :: Randomized.BPLInP.polyTimeComputable_dpStep -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Dynamic-Programming Step
+
+**Claim.** For every finite-state nondeterministic Turing machine $N$ over the binary alphabet and all natural numbers $c,B,e$, the function that performs one dynamic-programming step on an encoded bit string is polynomial-time computable.
+
+**Proof.** Decode the repeated components needed from the input using the polynomial-time first- and second-component decoders (Complexity.polyTimeComputable_pairFstD and Complexity.polyTimeComputable_pairSndD). For each transition entry, the two fixed-coin step tests are polynomial-time computable (Randomized.BPLInP.polyTimeComputable_stepTest); each test selects either the decoded count or the empty word. The conditional selection preserves polynomial-time computability (Complexity.polyTimeComputable_ite), and pairing the two selected counts and adding them gives a polynomial-time entry function (Complexity.PolyTimeComputable.pairEncode and Complexity.BinArith.polyTimeComputable_add). The row computation applies the polynomial-time zip-and-combine construction to these entries, then sums the results; closure for these operations (Complexity.BinArith.polyTimeComputable_zipWithW and Randomized.BPLInP.polyTimeComputable_sumW) makes the row function polynomial-time computable. Finally, the dynamic-programming step maps this row computation across the decoded data using the polynomial-time map construction (Complexity.BinArith.polyTimeComputable_mapW), assembles its input from the original encoding and decoded components, and pairs the mapped result with the retained first component. Polynomial-time closure under identity and pairing (Complexity.polyTimeComputable_id and Complexity.PolyTimeComputable.pairEncode) completes the proof.
+
+**Key facts.** `Complexity.polyTimeComputable_pairFstD`, `Complexity.polyTimeComputable_pairSndD`, `Randomized.BPLInP.polyTimeComputable_stepTest`, `Complexity.polyTimeComputable_ite`, `Complexity.PolyTimeComputable.pairEncode`, `Complexity.BinArith.polyTimeComputable_add`, `Complexity.BinArith.polyTimeComputable_zipWithW`, `Randomized.BPLInP.polyTimeComputable_sumW`, `Complexity.BinArith.polyTimeComputable_mapW`, `Complexity.polyTimeComputable_id`.

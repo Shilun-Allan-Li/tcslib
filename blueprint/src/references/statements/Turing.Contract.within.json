@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.Contract.within",
+ "key": "fca31dcc0ea0abf2",
+ "kind": "theorem",
+ "title": "Contract Endpoint Within a Time Bound",
+ "statement": "Let $M$ be a multi-tape Turing machine and $C$ a contract for $M$ with exit set $E$. Suppose a starting configuration $d$ is in the entry state and satisfies the precondition for parameter $i$. For any natural number $B$ at least the prescribed running time, there is a time $t\\leq B$ such that the run's state is outside $E$ at every earlier time and the configuration at time $t$ is the contract endpoint.",
+ "hypotheses_covered": [
+  "$C$ is a contract for $M$ with exit set $E$",
+  "$i$ is a parameter and $d$ is a starting configuration",
+  "$d$ is in the contract entry state",
+  "$d$ satisfies the contract precondition for $i$",
+  "$B$ is a natural number",
+  "The prescribed running time is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine and let $C$ be a contract for $M$. Suppose $d$\nstarts in the contract entry state and satisfies the precondition for parameter $i$. For\nany natural-number bound $B$ with $C.\\mathrm{time}(i,d)\\le B$, there is a time $t\\le B$\nsuch that no earlier configuration has a state in the contract exit set, and the\nconfiguration at time $t$ is the contract endpoint."
+}

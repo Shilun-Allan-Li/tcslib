@@ -1,18 +1,19 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mem_goodZEvent_of_xDistance_yDistance_le",
- "key": "550209b13c52fc1f",
+ "key": "2a8bbb16ab57325b",
  "kind": "theorem",
- "title": "Special bit-pair closeness from marginal closeness",
- "statement": "Let $p$ be a deterministic communication protocol for disjointness inputs of length $n$, let $\\gamma$ be a real number, and let $\\omega$ be a sample of the hard distribution. Associated with $\\omega$ is a value $z$ of the observation statistic, which records the transcript of $p$ on the input pair induced by $\\omega$, the special coordinate, Alice's input bits at the coordinates before it, and Bob's input bits at the coordinates after it; condition the hard distribution on the fiber of samples producing this same $z$. Suppose that, under this conditioning, the total variation distance between the law of Alice's bit at the special coordinate and the uniform law on one bit is at most $\\gamma$, and likewise the total variation distance between the law of Bob's bit at the special coordinate and the uniform law on one bit is at most $\\gamma$. Then the total variation distance between the conditional law of the special-coordinate bit-pair and the uniform law on a bit-pair is at most $2\\gamma$.",
+ "title": "Closeness of the special bit pair",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for set disjointness on $n$ coordinates, let $\\gamma\\in\\mathbb{R}$, and let $\\omega$ be a hard sample. If, conditional on the samples producing the same value of $Z$ as $\\omega$, each of Alice’s and Bob’s special-coordinate bits has total variation distance at most $\\gamma$ from the uniform law on one bit, then the conditional law of their special-coordinate bit pair has total variation distance at most $2\\gamma$ from the uniform law on a bit pair.",
  "hypotheses_covered": [
-  "$p$ a deterministic disjointness protocol of length $n$",
-  "$\\gamma$ a real number",
-  "$\\omega$ a sample of the hard distribution",
-  "TV distance of Alice's special-coordinate bit from uniform (conditioned on the fiber of $z$) at most $\\gamma$",
-  "TV distance of Bob's special-coordinate bit from uniform (conditioned on the fiber of $z$) at most $\\gamma$"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol for set disjointness on $n$ coordinates",
+  "$\\gamma$ is real",
+  "$\\omega$ is a hard sample",
+  "Alice’s conditional special-bit distance from uniform is at most $\\gamma$",
+  "Bob’s conditional special-bit distance from uniform is at most $\\gamma$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If both one-bit marginal distances on a $Z$ fiber are at most $γ$, then the fiber is good."
+ "replaced": "Let $p$ be a deterministic communication protocol for disjointness inputs of length $n$,\nlet $\\gamma$ be a real number, and let $\\omega$ be a sample of the hard distribution.\nAssociated with $\\omega$ is a value $z$ of the observation statistic, which records the\ntranscript of $p$ on the input pair induced by $\\omega$, the special coordinate, Alice's\ninput bits at the coordinates before it, and Bob's input bits at the coordinates after\nit; condition the hard distribution on the fiber of samples producing this same $z$.\nSuppose that, under this conditioning, the total variation distance between the law of\nAlice's bit at the special coordinate and the uniform law on one bit is at most\n$\\gamma$, and likewise the total variation distance between the law of Bob's bit at the\nspecial coordinate and the uniform law on one bit is at most $\\gamma$. Then the total\nvariation distance between the conditional law of the special-coordinate bit-pair and\nthe uniform law on a bit-pair is at most $2\\gamma$."
 }

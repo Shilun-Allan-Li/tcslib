@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.catalogFirstEntry",
+ "key": "45bda71a7edf6800",
+ "kind": "lemma",
+ "title": "First entry into a fixed state",
+ "statement": "Let $k\\in\\mathbb N$, let $S$ be a type, let $w$ be a Boolean word, and let $M$ be a $k$-work-tape machine with states in $S$. Suppose every configuration in state $q$ is fixed by one step of $M$, and suppose configurations $c,d$ satisfy that $d$ is in state $q$ and the run from $c$ reaches $d$ after $T$ steps. Then there is a time $t\\le T$ such that the run is at $d$ at time $t$, and no earlier time $j<t$ has the run in state $q$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ is a type and $w$ is a Boolean word",
+  "$M$ is a $k$-work-tape machine over Boolean symbols with states in $S",
+  "every configuration in state $q$ is fixed by one step",
+  "$d$ is in state $q$",
+  "the run from $c$ reaches $d$ after $T$ steps",
+  "$t\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q$ be a control state on which the machine stalls (every configuration\nin state $q$ is a fixed point of the step function), and suppose the run from\n$c$ reaches a configuration $d$ in state $q$ after $T$ steps. Then there is a\ntime $t \\le T$ such that no configuration strictly before time $t$ is in\nstate $q$ and the configuration at time $t$ is already $d$."
+}

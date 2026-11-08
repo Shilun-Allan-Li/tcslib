@@ -13,6 +13,10 @@ distributions.
 
 \begin{theorem}[Entropy bounded by the logarithm of the alphabet size]
 \lean{ProbabilityTheory.entropy_le_log_of_card_le}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p003-b005,
+  pdf-6d7577246334-p005-b001
+}
 \label{ProbabilityTheory.entropy_le_log_of_card_le}
 \leanok
 \difficulty{2}
@@ -26,6 +30,10 @@ N$, then the Shannon entropy of $X$ satisfies
 
 \begin{theorem}[Entropy bound for an alphabet of at most $2^c$ symbols]
 \lean{ProbabilityTheory.entropy_le_nat_mul_log_two_of_card_le_two_pow}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p003-b005,
+  pdf-6d7577246334-p005-b001
+}
 \label{ProbabilityTheory.entropy_le_nat_mul_log_two_of_card_le_two_pow}
 \leanok
 \uses{ProbabilityTheory.entropy_le_log_of_card_le}
@@ -42,6 +50,62 @@ where the logarithm is natural (so the entropy is measured in nats).
 
 \begin{theorem}[Mutual information is bounded by left entropy]
 \lean{ProbabilityTheory.mutualInfo_le_entropy_left}
+\proofsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p005-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p006-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p006-b002}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p006-b002}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p006-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
 \label{ProbabilityTheory.mutualInfo_le_entropy_left}
 \leanok
 \difficulty{2}
@@ -56,9 +120,70 @@ information between $X$ and $Y$ is at most the Shannon entropy of $X$:
 
 \begin{theorem}[Mutual information is bounded by the entropy of either variable]
 \lean{ProbabilityTheory.mutualInfo_le_entropy_right}
+\proofsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p005-b004}
 \label{ProbabilityTheory.mutualInfo_le_entropy_right}
 \leanok
 \uses{ProbabilityTheory.mutualInfo_le_entropy_left}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p001-b001}
+\proofstep
+  {ProbabilityTheory.mutualInfo_le_entropy_left}
+  {direct}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p005-b004}
 \difficulty{2}
 Let $X \colon \Omega \to S$ and $Y \colon \Omega \to T$ be measurable random variables,
 each taking only finitely many values, defined on a space $\Omega$ equipped with a
@@ -70,16 +195,15 @@ between $X$ and $Y$, one has
 \]
 \end{theorem}
 
-\begin{theorem}[Mutual information under almost-everywhere substitution]
+\begin{theorem}[Mutual information under almost everywhere equality]
 \lean{ProbabilityTheory.mutualInfo_congr_ae}
 \label{ProbabilityTheory.mutualInfo_congr_ae}
 \leanok
 \difficulty{1}
-Let $(\Omega, \mu)$ be a measured space and let $S$ and $T$ be countable measurable
-spaces. Suppose $X, X' \colon \Omega \to S$ and $Y, Y' \colon \Omega \to T$ are maps
-with $X$ and $Y$ measurable, and that $X = X'$ and $Y = Y'$ hold $\mu$-almost
-everywhere. Then the mutual information is unchanged, $I[X : Y \,;\, \mu] = I[X' : Y'
-\,;\, \mu]$.
+Let $(\Omega,\mu)$ be a measured space, and let $S,T$ be countable measurable spaces
+with measurable singletons. For measurable $X,X':\Omega\to S$ and $Y,Y':\Omega\to T$, if
+$X=X'$ and $Y=Y'$ almost everywhere with respect to $\mu$, then
+$I[X:Y;\mu]=I[X':Y';\mu]$.
 \end{theorem}
 
 \begin{theorem}[Mutual information is invariant under injective recoding]
@@ -97,16 +221,15 @@ I[X : f\circ Y\, ;\, \mu] = I[X : Y\, ;\, \mu].
 \]
 \end{theorem}
 
-\begin{theorem}[Vanishing of mutual information for an almost-surely constant variable]
+\begin{theorem}[Mutual information with a constant variable]
 \lean{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_left}
 \label{ProbabilityTheory.mutualInfo_eq_zero_of_ae_eq_const_left}
 \leanok
 \difficulty{3}
-Let $\mu$ be a probability measure (or the zero measure) on a sample space $\Omega$, and
-let $X\colon\Omega\to S$ and $Y\colon\Omega\to T$ be measurable random variables taking
-countably many values, each with finite range. If there is a constant $c\in S$ such that
-$X=c$ holds $\mu$-almost everywhere, then the mutual information between $X$ and $Y$
-vanishes: $I[X:Y;\mu]=0$.
+Let $(\Omega,\mu)$ be a measurable space equipped with either a probability measure or
+the zero measure, and let $X,Y$ be measurable random variables with finite ranges in
+countable measurable spaces $S,T$ whose singletons are measurable. If $X=c$ almost
+everywhere for some $c\in S$, then $I[X:Y;\mu]=0$.
 \end{theorem}
 
 \begin{theorem}[Vanishing of mutual information with an almost-surely constant variable]
@@ -122,19 +245,16 @@ many values. If $Y$ is $\mu$-almost-surely equal to a fixed constant $c \in T$, 
 mutual information between $X$ and $Y$ vanishes: \[ I[X : Y \,;\, \mu] = 0. \]
 \end{theorem}
 
-\begin{theorem}[Vanishing conditional mutual information for an almost-surely constant variable]
+\begin{theorem}[Conditional information with a constant variable]
 \lean{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \label{ProbabilityTheory.condMutualInfo_eq_zero_of_ae_eq_const_left}
 \leanok
 \difficulty{3}
-Let $\mu$ be a probability measure on a sample space $\Omega$ (or the zero measure), and
-let $X$, $Y$, $Z$ be measurable random variables on $\Omega$ taking finitely many values
-in the countable sets $S$, $T$, $U$ respectively. If there is a constant $c \in S$ with
-$X = c$ holding $\mu$-almost everywhere, then the conditional mutual information of $X$
-and $Y$ given $Z$ vanishes:
-\[
-I[X : Y \mid Z ; \mu] = 0.
-\]
+Let $(\Omega,\mu)$ be a measurable space equipped with either a probability measure or
+the zero measure. Let $X,Y,Z$ be measurable random variables with finite ranges in
+countable measurable spaces $S,T,U$, respectively, where singletons are measurable in
+each codomain. If $X=c$ almost everywhere for some $c\in S$, then the conditional mutual
+information of $X$ and $Y$ given $Z$ is zero: $I[X:Y\mid Z;\mu]=0$.
 \end{theorem}
 
 \begin{theorem}[Vanishing of conditional mutual information for an almost-surely constant variable]
@@ -382,6 +502,7 @@ W(\omega))$.
 
 \begin{definition}[Strict prefix of a boolean vector]
 \lean{ProbabilityTheory.boolVectorStrictPrefix}
+\statementsource{Vad12}{pdf-bf2ce5422088-p230-b004}
 \label{ProbabilityTheory.boolVectorStrictPrefix}
 \leanok
 For a boolean-vector-valued random variable $X : \Omega \to (\mathrm{Fin}\,m \to \mathrm{Bool})$
@@ -474,6 +595,63 @@ $\nu$, and $\mu[\,\cdot \mid A]$ for $\mu$ conditioned on the event $A$, one has
 
 \begin{theorem}[Chain rule for mutual information over a pair]
 \lean{ProbabilityTheory.mutualInfo_prod_right_eq_add}
+\proofsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p006-b003}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001,
+    pdf-6d7577246334-p013-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p013-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p013-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p013-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p013-b004}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p013-b004}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p013-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {raoyehudayoff-ch06-information}
+  {pdf-6d7577246334-p002-b001}
 \label{ProbabilityTheory.mutualInfo_prod_right_eq_add}
 \leanok
 \difficulty{4}

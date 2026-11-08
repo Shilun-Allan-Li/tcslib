@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean :: Turing.expandTM_run_ofCfg -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Expansion machine simulation
+
+**Claim.** The expansion machine runs the writer for exactly $d$ rounds, writing $d$ copies of the pattern on tape $i$, then finishes the counter loop at the stated time. Before that time it is neither done nor escaped; throughout the run the counter head and simulated tape heads satisfy the stated bounds.
+
+**Proof.** Let $M$ be the machine that writes the pattern and advances its designated head, and let each simulated round last $|\mathrm{pat}|+1$ steps. Define the configuration after $r$ complete rounds by replacing the segment of tape $i$ beginning at its original head with $r$ consecutive copies of the pattern, and advancing that head by $r|\mathrm{pat}|$. The proof first establishes by induction on $r$ that this is exactly the writer's configuration after $r$ rounds. At $r=0$ this is the original configuration. For the induction step, the writer's one-round specification says it writes the pattern and advances by its length; the previous copies remain in place, so the resulting segment is the concatenation of the old copies and one new copy. The other tapes and their heads are unchanged. Thus the writer returns to state $0$ after each complete round.
+
+For every $r<d$, the round starts in state $0$ and takes a positive number of steps. At each strictly intermediate time the writer is in a live state different from $0$; it has not halted, by the fact that a run ending in a live state has remained live at every earlier time (`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`). The writer's specification also excludes state $0$ at those intermediate times. Hence the counter-loop host does not mistake an intermediate writer state for the designated return state or an exit state.
+
+Apply the counter-loop completion theorem (`Turing.counterLoopTM_run_done`) to these $d$ rounds. The binary word represents $d$, so the counter completes exactly those rounds; its decrement and rewind costs sum to the stated overhead. The theorem gives the done configuration at the specified time, the absence of done and escape at all earlier times, the counter-head interval, and a decomposition of each intermediate time into a completed-round configuration followed by part of the next writer run (or the endpoint). To obtain the simulated-head bounds, use the writer's head bound within each round: on tape $i$, the head lies between the positions after $r$ and $r+1$ rounds, both within the interval from the starting position to the position after $d$ rounds; every other simulated head stays fixed. At the endpoint, the round-orbit identity gives the claimed patched tape and head position. The counter-loop theorem also gives the counter tape with the original word interval marked true and all other cells retaining their previous contents.
+
+**Key facts.** `Turing.writeAdvTM_run_ofCfg`, `Turing.MultiTapeTM.runFrom_state_ne_none_of_le`, `Turing.counterLoopTM_run_done`, `Turing.MultiTapeTM.runFrom_zero`.

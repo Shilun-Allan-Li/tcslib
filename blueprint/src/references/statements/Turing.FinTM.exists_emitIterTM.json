@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.exists_emitIterTM",
+ "key": "30cf3f58d8a8779e",
+ "kind": "theorem",
+ "title": "Iterated emission machine",
+ "statement": "Let $G$ and $E$ be finite Turing machines on Boolean words, and let $g,e : \\\\{0,1\\\\}^* \\\\to \\\\{0,1\\\\}^*$. Suppose there are natural numbers $C_G,c_G,C_E,c_E$ such that $G$ computes $g$ in time $C_G(n+1)^{c_G}$ and $E$ computes $e$ in time $C_E(n+1)^{c_E}$. If $a',k',b,l$ are natural numbers and every word $w$ and every $i\\\\ge 0$ satisfy $|g^{i}(w)| \\\\le b(|w|+1)^l$, then there are a finite Turing machine $M$ and natural numbers $C,c$ such that $M$ computes, in time $C(n+1)^c$, the concatenation of $e(w),e(g(w)),\\\\ldots,e(g^{a'(|w|+1)^{k'}}(w))$ on input $w$.",
+ "hypotheses_covered": [
+  "$G,E$ are finite Turing machines over Boolean words",
+  "$g,e$ are functions from Boolean words to Boolean words",
+  "$C_G,c_G,C_E,c_E$ are natural numbers",
+  "$G$ computes $g$ within $C_G(n+1)^{c_G}$ steps on length-$n$ inputs",
+  "$E$ computes $e$ within $C_E(n+1)^{c_E}$ steps on length-$n$ inputs",
+  "$a',k',b,l$ are natural numbers",
+  "For every Boolean word $w$ and natural number $i$, $|g^i(w)|\\\\le b(|w|+1)^l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

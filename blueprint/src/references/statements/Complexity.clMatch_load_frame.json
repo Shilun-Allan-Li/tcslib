@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clMatch_load_frame",
+ "key": "af84c007b5c52a36",
+ "kind": "lemma",
+ "title": "Loader Configuration Embedding",
+ "statement": "For any number $l$ of candidate fields, positive and negative coordinates in $\text{Fin}(l)$, input word, loader state, old and new rows, target words, stream, cursors, clock data, and flags, embedding the loader configuration into the matcher’s loading slots gives the matcher configuration in its loading state. The embedded configuration uses the new row and the supplied stream cursor; the target words, clock, flags, and their head positions are those of the matcher configuration.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb{N}$",
+  "positive and negative coordinates in $\\text{Fin}(l)$",
+  "input word in $\\{\\mathrm{false},\\mathrm{true}\\}^*$",
+  "arbitrary loader state",
+  "old and new rows indexed by $\\text{Fin}(l)$",
+  "two target words",
+  "stream word",
+  "two integer cursors",
+  "natural clock length and position",
+  "flag word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every loader control, old and new candidate rows, target words, stream, cursors, clock data, and flags, relocating the row-loader configuration into the search's slots, retaining the search's own administrative tapes, yields the search seam in the loading phase; both target words, the clock, and all stored flags are framed, while the candidate row and stream cursor may change."
+}

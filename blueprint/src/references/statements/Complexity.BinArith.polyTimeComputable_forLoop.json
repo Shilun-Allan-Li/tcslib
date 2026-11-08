@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.BinArith.polyTimeComputable_forLoop",
+ "key": "eff81d1956ed1441",
+ "kind": "theorem",
+ "title": "Polynomial-Time Computability of a Bounded Iteration",
+ "statement": "Let $f$ be a polynomial-time computable function on bit strings. Suppose there are natural numbers $B,b$ such that, for all bit strings $c,d$ and all natural numbers $j\\leq |c|$, the $j$-fold iterate of $f$ applied to $d$ has length at most $B\\bigl(|\\langle c,d\\rangle|+1\\bigr)^b$, where $\\langle c,d\\rangle$ is the self-delimiting pair encoding. Define a state update that leaves a state unchanged when its first decoded component is empty, and otherwise removes the first bit of that component and replaces the second component by its image under $f$. Iterating this update $|S|+1$ times from $S$ gives a polynomial-time computable function of $S$.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$B,b\\in\\mathbb{N}$",
+  "For all bit strings $c,d$ and all $j\\leq |c|$, the length of $f^{[j]}(d)$ is at most $B(|\\langle c,d\\rangle|+1)^b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.dataCfg_check",
+ "key": "db5d6d2a867b5568",
+ "kind": "lemma",
+ "title": "Counter Test with a Unit Marker",
+ "statement": "Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural number, and let $x$ be a schedule-alphabet input. If the base unary tape contains a unit marker at coordinate $u$, then one simulator step from the macrostep-check phase enters the seek-left phase, keeping the unary head at $u$ and the guide head at $0$. The new data register contains the same source state, the answer selected from the source action's output (or the old answer if that output is absent), the payloads decoded from the data tapes at coordinate $0$ as its reads, and blank neighbor registers; each data tape is updated at coordinate $0$ according to the source action's optional write, and the output is unchanged.",
+ "hypotheses_covered": [
+  "$W,M$ are finite machines over Boolean symbols",
+  "$a\\in\\mathbb N$",
+  "$x$ is a schedule-alphabet input",
+  "the base unary tape contains a unit marker at $u$",
+  "the initial phase is macrostep-check",
+  "the unary head is at $u$ and guide head is at $0$",
+  "the initial data register, data tapes, and output are arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's unary tape holds a unit marker at $u$.  One simulator step\nfrom the counter-test phase saves the current payloads decoded at the origin as\nthe new reads, updates the answer register to the bit emitted by the source\naction selected from the saved state and those reads (keeping the old answer\nwhen nothing is emitted), performs that action's optional work-lane writes at\nthe origin, clears the neighbor registers to blank, and enters the leftward-seek\nphase; no output is emitted."
+}

@@ -9,6 +9,10 @@ Restricting the final bit gives the average and half-difference decomposition. I
 \lean{BooleanAnalysis.Hypercontractivity.restrictLast}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p075-b002,
+  pdf-ffbe9c7b3306-p261-b003
+}
 \label{BooleanAnalysis.Hypercontractivity.restrictLast}
 Let $n$ be a natural number, let $f\colon\{0,1\}^{n+1}\to\bbr$, and let
 $b\in\{0,1\}$. The last-coordinate restriction of $f$ at $b$ is the function
@@ -19,6 +23,10 @@ $f_b\colon\{0,1\}^n\to\bbr$ defined by $f_b(x)=f(x,b)$.
 \lean{BooleanAnalysis.Hypercontractivity.avgLast}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.restrictLast}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p015-b001,
+  pdf-ffbe9c7b3306-p250-b005
+}
 \label{BooleanAnalysis.Hypercontractivity.avgLast}
 Let $n$ be a natural number and let $f\colon\{0,1\}^{n+1}\to\bbr$. Its
 last-coordinate average is the function $g\colon\{0,1\}^n\to\bbr$ defined by
@@ -29,6 +37,10 @@ $g(x)=\tfrac12\bigl(f(x,0)+f(x,1)\bigr)$.
 \lean{BooleanAnalysis.Hypercontractivity.diffLast}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.restrictLast}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p014-b005,
+  pdf-ffbe9c7b3306-p250-b005
+}
 \label{BooleanAnalysis.Hypercontractivity.diffLast}
 Let $n$ be a natural number and let $f\colon\{0,1\}^{n+1}\to\bbr$. Its
 last-coordinate half-difference is the function $h\colon\{0,1\}^n\to\bbr$ defined by
@@ -380,6 +392,7 @@ Fourier coefficient of the average satisfies $\abs{S}\le k$.
 \lean{BooleanAnalysis.Hypercontractivity.degree_diffLast}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.fourierCoeff_diffLast, BooleanAnalysis.fourierCoeff, BooleanAnalysis.has_degree_at_most}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p250-b005}
 \difficulty{4}
 \label{BooleanAnalysis.Hypercontractivity.degree_diffLast}
 Let $f\colon\{0,1\}^{n+1}\to\bbr$ be a Boolean function of degree at most $k$, meaning

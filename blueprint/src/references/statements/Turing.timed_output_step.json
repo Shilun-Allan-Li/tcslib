@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.timed_output_step",
+ "key": "c8426e85788779f3",
+ "kind": "lemma",
+ "title": "One output-phase step",
+ "statement": "Let $x$ be a Boolean word, and let $c$ be a four-tape interpreter configuration on input $x$. Let $b$ be a Boolean word, $q$ a timed-interpreter control, $q'$ an optional timed-interpreter control, $p\\in\\mathbb{Z}$ a buffer-head position, $o$ a Boolean output word, $d\\in\\{-1,0,1\\}$ a head movement, and $e$ an optional Boolean. Suppose that for every input symbol and every tuple of work-tape symbols, whenever lane $5$ contains at its head the symbol stored in $c$'s output buffer at position $p$, the transition from $q$ is an administrative action that leaves the clock lane unchanged, moves the buffer lane by $d$, emits $e$, and enters control $q'$. Then one step from the lifted configuration in control $q$, with buffer head at $p$ and real output $o$, yields the lifted configuration in control $q'$, with buffer head at $p+d$ and real output $o$ followed by $e$, if present.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean input word",
+  "$c$ is a four-tape interpreter configuration on input $x$",
+  "$b$ is a Boolean word",
+  "$q$ is a timed-interpreter control",
+  "$q'$ is an optional timed-interpreter control",
+  "$p$ is an integer",
+  "$o$ is a Boolean word",
+  "$d$ is a sign-type head movement",
+  "$e$ is an optional Boolean",
+  "For every input and work-tape read, if lane 5 reads the output-buffer content of $c$ at position $p$, the transition is the specified timed administrative action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose that, whenever the output-buffer lane reads its designated symbol, the\ntimed interpreter's transition in control $q$ is a pure buffer move by\n$d \\in \\{-1,0,1\\}$ with an optional real emission.  Then one step from the\noutput-phase configuration moves only the buffer head by $d$, appends the\noptional emission to the real output, and passes to the designated control."
+}

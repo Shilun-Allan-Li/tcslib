@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.NDTM.runWith_append",
+ "key": "ff0bf1194d9bc0d5",
+ "kind": "lemma",
+ "title": "Runs under concatenated choice words",
+ "statement": "Let $M$ be a nondeterministic multi-tape Turing machine, let $w,w'$ be finite Boolean words, and let $c$ be a configuration of $M$ on a fixed input. Running $M$ from $c$ under the concatenation $ww'$ gives the same configuration as first running it under $w$ and then running it under $w'$ from the resulting configuration.",
+ "hypotheses_covered": [
+  "A nondeterministic multi-tape Turing machine.",
+  "Finite Boolean words $w,w'$.",
+  "A configuration $c$ on a fixed input."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a nondeterministic multi-tape Turing machine, $c$ a configuration of $M$ on some\ninput, and $w, w'$ choice words.  Running $M$ from $c$ under the concatenation $w w'$ gives\nthe same configuration as first running $M$ from $c$ under $w$ and then running $M$ under\n$w'$ from the configuration so reached."
+}

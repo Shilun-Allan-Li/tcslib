@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.St.greg",
+ "key": "bd046458275c1cec",
+ "kind": "lemma",
+ "title": "Register bound from state bounds",
+ "statement": "Let $E$ and $B$ be natural numbers, let $\\sigma$ be a counting-algorithm state whose seventeen registers are each at most $B$, let $l$ be an optional control label, and let $res$ be an optional Boolean result. The abstract configuration with label $l$, register vector from $\\sigma$, and result $res$ has every register at most $B$.",
+ "hypotheses_covered": [
+  "A natural number $E$ determining the control-state type",
+  "A natural number register bound $B$",
+  "A counting-algorithm state $\\sigma$ with every register at most $B$",
+  "An optional control label $l$",
+  "An optional Boolean result $res$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If each of the seventeen natural-number quantities in a register state is at most $B$,\nthen every configuration whose register values are given by that state has all register\nvalues at most $B$, for any machine label and any optional Boolean result."
+}

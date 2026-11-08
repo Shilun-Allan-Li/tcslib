@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/InformationTerms.lean :: CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.condMutualInfo_message_dualProtocol_eq -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Conditional Information Under Duality
+
+**Claim.** If the Boolean variable and conditioning summary transform under duality as specified, then the conditional mutual information of the variable and dual protocol transcript given the transformed summary equals the corresponding information for the original protocol.
+
+**Proof.** The duality map on hard samples preserves the disjoint-conditioned measure (disjointCondMeasure_measurePreserving_dualHardSample). Consequently, the joint law of any finite-valued tuple is unchanged when its variables are pulled back along this map (IdentDistrib.condMutualInfo_eq_finite). Applying this to the Boolean variable, transcript, and conditioning summary rewrites the dual-side information using the pulled-back variables. The hypotheses identify the pulled-back Boolean variable with $X$ and the conditioning variable with the dual recoding of $Z$. The transcript identity (message_dualProtocol_dualHardSample) identifies the pulled-back dual transcript with an injective recoding of the original transcript. Injective recodings of both the transcript and conditioning value preserve conditional mutual information (condMutualInfo_comp_right_conditioning_of_injective), using injectivity of the transcript recoding (dualProtocolTranscriptMap_injective) and the conditioning recoding (dualConditioningValue_injective). Combining these equalities gives the claim.
+
+**Key facts.** `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measurePreserving_dualHardSample`, `ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite`, `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualProtocolTranscriptMap_injective`, `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.dualConditioningValue_injective`, `ProbabilityTheory.condMutualInfo_comp_right_conditioning_of_injective`, `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message_dualProtocol_dualHardSample`.

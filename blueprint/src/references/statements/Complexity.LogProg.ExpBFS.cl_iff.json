@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.cl_iff",
+ "key": "e02ab2d6d951e437",
+ "kind": "lemma",
+ "title": "Oracle reachability and machine configuration codes",
+ "statement": "Let $N$ be a nondeterministic Turing machine with a finite state set and Boolean work-tape alphabet, let $x$ be a bit string, and let $r,K$ be natural numbers. If $2^{(2W+2)(r+\\mathrm{logSpace}(|x|)+1)}\\le K$, where $W=3(|\\mathrm{State}(N)|+1)+3k+1$ and $k$ is the number of work tapes of $N$, then a number $v$ is reachable from some $u<K$ accepted by the initial-configuration oracle, through a finite chain of step-oracle transitions whose targets are all less than $K$, if and only if $v$ is reachable from the code of the initial configuration of $N$ on $x$ by a finite chain of valid one-step configuration codes, with each configuration confined to work-tape positions of absolute value at most $r$.",
+ "hypotheses_covered": [
+  "finite-state nondeterministic Turing machine over Boolean symbols, with $k$ work tapes",
+  "bit string $x$",
+  "natural numbers $r$ and $K$",
+  "bound $2^{(2W+2)(r+\\mathrm{logSpace}(|x|)+1)}\\le K$, with $W=3(|\\mathrm{State}(N)|+1)+3k+1",
+  "natural number $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

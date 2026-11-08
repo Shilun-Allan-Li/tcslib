@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.b3a_counter",
+ "key": "dc55f4db67a4f42e",
+ "kind": "theorem",
+ "title": "A machine for writing the binary length",
+ "statement": "There exist a natural number $K$, a finite state set $S$ with decidable equality, a deterministic machine $R$ with $K+1$ work tapes and Boolean symbols, entry and exit states in $S$, and a natural number $B$, such that for every Boolean word $x$ there is a time $t$ when $R$, started with the empty word on its first work tape and $x$ as input, is in the exit configuration with the binary expansion of $|x|$ on that tape. It has not reached the exit state at any earlier time $u<t$, and its total space use through time $t$ is at most $B$ times one plus the length of the binary expansion of $|x|$.",
+ "hypotheses_covered": [
+  "Existence of $K\\in\\mathbb N$",
+  "$S$ is finite and has decidable equality",
+  "$R$ is a machine with $K+1$ work tapes and Boolean symbols",
+  "Entry and exit states belong to $S$",
+  "$B\\in\\mathbb N$",
+  "For every Boolean word $x$, there exists $t\\in\\mathbb N$",
+  "The run from the specified initial buffer configuration equals the exit configuration with $|x|$ in binary",
+  "No earlier time $u<t$ has state equal to the exit state",
+  "Space use is at most $B(|\\operatorname{bin}(|x|)|+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

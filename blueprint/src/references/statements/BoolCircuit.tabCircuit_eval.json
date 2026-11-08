@@ -1,0 +1,22 @@
+{
+ "lean_name": "BoolCircuit.tabCircuit_eval",
+ "key": "4dfde49a7753c80d",
+ "kind": "theorem",
+ "title": "Evaluation of the tabulated circuit",
+ "statement": "Let $\\kappa$ be a finite set of instruction kinds, let $m,w,n$ be nonnegative integers, let $F$ assign to each kind a function from Boolean lists to Boolean lists, and let $z$ be a Boolean list. Consider a finite program whose instructions each have a kind and an ordered list of source bits; suppose every source in instruction $i$ is valid when the available input bits are $z$ followed by $n$ input bits and the output width is $w$, and every instruction has exactly $m$ sources. For any input assignment $x:\\mathrm{Fin}\\,n\\to\\mathrm{Bool}$, program position $o$ within the program, and output coordinate $j<w$, the tabulated circuit's value is the $j$th bit of the block produced by instruction $o$ when the program is run on the concatenation of $z$ and $x$, with missing list entries interpreted as false.",
+ "hypotheses_covered": [
+  "$\\kappa$ is finite",
+  "$m,w,n$ are nonnegative integers",
+  "$F$ maps each instruction kind and Boolean list to a Boolean list",
+  "$z$ is a Boolean list",
+  "all program sources are valid relative to $z$ followed by $n$ inputs, width $w$, and their instruction positions",
+  "each instruction has exactly $m$ sources",
+  "$o$ is a program position",
+  "$j<w$",
+  "$x$ is an assignment of $n$ Boolean inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

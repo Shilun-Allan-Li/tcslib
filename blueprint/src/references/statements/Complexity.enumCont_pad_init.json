@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_pad_init",
+ "key": "da2d6e104cccf904",
+ "kind": "lemma",
+ "title": "Padding the initial configuration",
+ "statement": "Let $k,K$ be natural numbers, let $S,H$ be types, let $\text{emb}:S\\to H$ be a map, let $q:S$, and let $x$ be a Boolean input word. Padding the initial configuration with state $q$ on input $x$ gives the seam configuration on the $K$-tape bank with state $\text{emb}(q)$ and empty words on all tapes.",
+ "hypotheses_covered": [
+  "natural numbers k and K",
+  "types S and H",
+  "map emb from S to H",
+  "state q ∈ S",
+  "Boolean input word x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Padding the initial (all-blank-work) configuration of a $k$-tape machine yields\nthe canonical configuration with an empty tape-zero word on the larger bank;\nthis holds even when the source machine has no work tapes."
+}

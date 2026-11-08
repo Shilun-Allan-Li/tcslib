@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.embedEmitCfg_eq",
+ "key": "25a33eb48b189d95",
+ "kind": "theorem",
+ "title": "Reconstruction of an embedded configuration",
+ "statement": "Let $m,k$ be nonnegative integers, let $\\sigma$ embed the indices of $m$ tapes into those of $k$ tapes, and let $c$ and $d$ be configurations on the same input, with $c$ using state set $S$ and $d$ using the same state set and symbol set. Suppose their states and input-head positions agree, and that concatenating a word $p$ with $c$'s output gives $d$'s output. Suppose also that on every selected tape, $c$'s tape contents and head position agree with those of $d$; on every unselected tape, the supplied tape contents and head position agree with those of $d$. Then embedding $c$ using the supplied tapes and head positions and prefixing its output by $p$ yields $d$.",
+ "hypotheses_covered": [
+  "Nonnegative tape counts $m,k$",
+  "An embedding of the $m$ tape indices into the $k$ tape indices",
+  "Tape contents and head positions for the $k$ tapes",
+  "An output prefix $p$",
+  "Configurations $c,d$ on the same input",
+  "Equal states",
+  "Equal input-head positions",
+  "Prefixed output agrees with $d$'s output",
+  "Selected tapes agree in contents and head positions",
+  "Unselected tapes agree with supplied contents and head positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

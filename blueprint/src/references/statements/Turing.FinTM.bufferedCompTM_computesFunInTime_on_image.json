@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.bufferedCompTM_computesFunInTime_on_image",
+ "key": "e033f3adcc60dd78",
+ "kind": "theorem",
+ "title": "Time bound for function composition on an image",
+ "statement": "Let $M$ and $U$ be finite Turing machines over the Boolean alphabet, let $f,g$ be functions from Boolean words to Boolean words, and let $T_1,T_2$ be functions from natural numbers to natural numbers. Suppose $M$ computes $f(x)$ on every input $x$ in exactly $T_1(|x|)$ steps, and suppose $U$ computes $g(x)$ from input $f(x)$ in exactly $T_2(|x|)$ steps for every Boolean word $x$. Then the buffered sequential composition of $M$ and $U$ computes $g$ on every input in exactly $2T_1(n)+T_2(n)+2$ steps when the input has length $n$.",
+ "hypotheses_covered": [
+  "$M,U$ are finite Turing machines over the Boolean alphabet",
+  "$f,g$ are functions from Boolean words to Boolean words",
+  "$T_1,T_2:\\mathbb{N}\\to\\mathbb{N}$",
+  "$M$ computes $f(x)$ in exactly $T_1(|x|)$ steps for every $x$",
+  "$U$ computes $g(x)$ from $f(x)$ in exactly $T_2(|x|)$ steps for every $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

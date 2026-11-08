@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.IG.of_eq",
+ "key": "fafd57984c54e307",
+ "kind": "lemma",
+ "title": "Invariance under state equality",
+ "statement": "Fix a Boolean oracle on four indices and finite Boolean strings, an input string, a natural-number register bound $B$, a control label $l$, and a proposition $P$. If two counting-algorithm states $\\sigma$ and $\\sigma'$ are equal, and the abstract machine starting at $l$ with register vector from $\\sigma'$ terminates with all registers at most $B$ and accepts if and only if $P$ holds, then the same bounded termination and acceptance property holds when it starts with the register vector from $\\sigma$.",
+ "hypotheses_covered": [
+  "A Boolean oracle on four indices and finite Boolean strings",
+  "An input string $x$",
+  "A natural-number register bound $B$",
+  "A control label $l$",
+  "A proposition $P$",
+  "States $\\sigma,\\sigma'$ with $\\sigma=\\sigma'$",
+  "The machine property for $\\sigma'$: bounded termination and acceptance equivalent to $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let an oracle assign a Boolean answer to each of four indices and each finite Boolean\nstring, and fix an input string, a natural-number register bound, a machine label, and a\nproposition. For states $\\sigma,\\sigma'$ of the machine, if $\\sigma=\\sigma'$ and the\nmachine starting at label $l$ with state $\\sigma'$ terminates while keeping every\nregister at most $B$, and accepts if and only if $P$ holds, then the same bounded\ntermination and acceptance property holds with initial state $\\sigma$."
+}

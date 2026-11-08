@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emitterAppend_run",
+ "key": "3ee67d6044c8a03e",
+ "kind": "lemma",
+ "title": "Run of the bit appender before its final step",
+ "statement": "Let $b$ be a Boolean bit and $x$ a Boolean input word. For every $j\\le |x|$, the bit-appending machine on input $x$, after $j$ steps from its initial configuration, is in its scan configuration with state present, input-head position $j+1$, and output equal to the first $j$ bits of $x$.",
+ "hypotheses_covered": [
+  "Boolean bit $b$",
+  "Boolean input word $x$",
+  "Natural number $j\\le |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le \\abs{x}$, after $j$ steps from its initial configuration\non input $x$ the bit appender is at input position $j$ with output exactly\nthe first $j$ bits of $x$; the appending halt is still ahead."
+}

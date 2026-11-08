@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.arTape_at",
+ "key": "8cebd796f79401aa",
+ "kind": "lemma",
+ "title": "Reading the induced tape at a block coordinate",
+ "statement": "Let $N\\in\\mathbb{N}$, let $F$ assign to each integer a block of $N+1$ optional bits, and let $z\\in\\mathbb{Z}$ and $j\\in\\{0,\\ldots,N\\}$. The tape induced by $F$ has at position $(N+1)z+j$ exactly the entry at offset $j$ of the block $F(z)$.",
+ "hypotheses_covered": [
+  "$N\\in\\mathbb{N}$",
+  "$F$ assigns a block of $N+1$ optional bits to each integer",
+  "$z\\in\\mathbb{Z}$",
+  "$j\\in\\{0,\\ldots,N\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ assign to every integer a block of $N+1$ optional bits. The binary tape induced\nby $F$ (position $p$ holding entry $p \\bmod (N+1)$ of block\n$F(\\lfloor p/(N+1)\\rfloor)$) reads, at position $(N+1)z + j$ with $z \\in \\mathbb{Z}$\nand $j \\in \\{0,\\dots,N\\}$, exactly the entry $j$ of $F(z)$."
+}

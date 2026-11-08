@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.b2b_search_contract",
+ "key": "8a6a42a4bb763cc7",
+ "kind": "theorem",
+ "title": "Bounded search for a fixed-length extension",
+ "statement": "Let $Q,e,c_V,c_I$ be natural numbers, let $V$ be a language of Boolean words, and let $M_V,M_I,M_P$ be finite-state Boolean Turing machines. Suppose the clean simulation of $M_V$, started in its initial state on any Boolean word $y$, halts with output equal to the indicator of whether $y\\in V$, clears all work tapes and returns all work-tape heads to the origin, and throughout the run keeps every work-tape head within distance $c_V(|y|^e+1)$ of the origin. Suppose also that $M_I$ computes the identity on every Boolean word of length $n$ in time $c_I(n+1)$, and that its space use on every input at every time is at most $c_I$. Then, on every Boolean input $x$, the specified search machine, started with its loop state, a false word of length $Q$ on its first work tape, and a true word of length $Q$ on its last work tape, halts with output indicating whether there is a word $u$ of length $Q$ such that the concatenation of $x$ and $u$ belongs to $V$. At every time up to and including that halting time, each work-tape head stays within distance $|x|+Q+c_V((|x|+Q)^e+1)+c_I+1$ of the origin.",
+ "hypotheses_covered": [
+  "$Q,e,c_V,c_I\\in\\mathbb N$",
+  "$V$ is a language of Boolean words",
+  "$M_V,M_I,M_P$ are finite-state Boolean Turing machines",
+  "$M_V$'s clean simulation halts on every Boolean word $y$ with output the indicator of membership in $V$",
+  "The clean simulation clears all work tapes and returns all work-tape heads to the origin",
+  "During that simulation, every work-tape head stays within distance $c_V(|y|^e+1)$",
+  "$M_I$ computes the identity in time $c_I(n+1)$ on every input of length $n$",
+  "$M_I$ uses at most $c_I$ space on every input at every time",
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

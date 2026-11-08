@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.mem_P_of_blockMajority",
+ "key": "352776fcaca5fb3e",
+ "kind": "theorem",
+ "title": "Polynomial-time closure under block majority",
+ "statement": "Let $V$ be a language in $\\mathsf{P}$, and let $a,k,a',k'$ be natural numbers. For each binary string $z$, take $x$ to be the first component of its encoded pair, using the empty string if parsing fails; let $y$ be the second component, also using the empty string if parsing fails. Put $N=a'(|x|+1)^{k'}$, and partition the initial portion of $y$ into length-$B$ blocks at positions $iB$, where $B=a(|x|+1)^k$; blocks shorter than $B$ are allowed at the end. The language of strings $z$ for which strictly more than half of the indices $i<N$ have the encoding of $(x,\\text{block at }i)$ in $V$ belongs to $\\mathsf{P}$.",
+ "hypotheses_covered": [
+  "$V$ belongs to $\\mathsf{P}$",
+  "$a,k,a',k'$ are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

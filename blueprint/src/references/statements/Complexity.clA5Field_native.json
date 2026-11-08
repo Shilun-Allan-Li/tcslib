@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5Field_native",
+ "key": "6f9ea71b4d866e46",
+ "kind": "lemma",
+ "title": "Polynomial-time variable header access",
+ "statement": "Let $s$ produce bit strings and let $u$ produce unary-encoded natural numbers, and suppose both functions are polynomial-time computable. Then the function that, on input $x$, selects from the header $s(x)$ the field whose index is the natural number represented by $u(x)$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "s is polynomial-time computable",
+  "u is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a header producer and a unary index producer are polynomial-time computable, then so is the function selecting the header field at the produced index: a counted sequence of native tail projections followed by one first projection."
+}

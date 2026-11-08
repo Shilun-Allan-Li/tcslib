@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.Contract.time_envelope",
+ "key": "3f7871ac7d3a4862",
+ "kind": "theorem",
+ "title": "Work-Tape Head Position Bound",
+ "statement": "Let $M$ be a machine and $C$ a contract for $M$. For any data value $i$, configuration $d$, natural number $u$ with $u\\\\le C$’s assigned running time at $(i,d)$, and work-tape index $j$, the head position of tape $j$ after $u$ steps lies in the interval from its initial position minus $C$’s assigned running time to its initial position plus that running time, inclusive.",
+ "hypotheses_covered": [
+  "$C$ is a contract for $M$",
+  "$i$ is a data value",
+  "$d$ is a configuration",
+  "$u$ is a natural number with $u\\\\le C$’s assigned time at $(i,d)$",
+  "$j$ is a work-tape index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine with $k$ work tapes, and let $C$ be a contract\nfor $M$ on a fixed input. For any contract parameter $i$, starting configuration $d$,\nnatural number $u$ with $u \\le C$'s running time on $i$ and $d$, and work-tape index\n$j$, the head position of tape $j$ after $u$ steps lies between its initial position\nminus that running time and its initial position plus that running time, inclusive."
+}

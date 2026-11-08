@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satStreamRun_clause",
+ "key": "4aa9cb1e8c054410",
+ "kind": "lemma",
+ "title": "Streaming Schedule for a Clause",
+ "statement": "Let $C$ be a clause over natural-number variables, let $x,p,r$ be bit strings, and let $j$ be a natural number. Suppose $x$ is the concatenation of $p$, the binary encoding of $C$, and $r$. Starting from cursor $j$, consumed length $|p|$, and phase $1$, exactly $|C|+1$ rounds emit the clause body prescribed for $C$ at cursor $j$ and end in phase $0$, with consumed length $|p|$ plus the encoded length of $C$ and cursor equal to the final cursor prescribed for that clause body.",
+ "hypotheses_covered": [
+  "$C$ is a clause over natural-number variables",
+  "$x,p,r$ are bit strings",
+  "$j$ is a natural number",
+  "$x=p$ followed by the encoding of $C$ and then $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input contain a serialized clause $C$ at the consumed position, with the\nseam in the first-literal phase at cursor $j$. Then exactly $|C| + 1$ rounds\nconsume the serialized clause, emit exactly the emitted clause body of $C$ at\n$j$, return to the formula phase, and leave the cursor at the body's final value."
+}

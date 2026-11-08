@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Meyer.field_none",
+ "key": "5d4be58d8a150356",
+ "kind": "theorem",
+ "title": "Halting on an invalid field",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $y$ be a Boolean word, and let $f$ and $bits$ be a Boolean and a bit vector of length equal to the number of selector types of $M$. For every Boolean word $rest$, natural number $p$, and Boolean words $w_C,w_O$, suppose $1\\le p$, $p+|rest|=|y|+1$, the suffix of $y$ beginning at position $p-1$ is $rest$, and reading a field from $rest$ returns no result. Then, starting the tabulating machine for $M$ in state $fA(f,bits)$ at input position $\\min(p,|y|+1)$ with auxiliary words $[],w_C,w_O$, there is a time $s\\le |rest|+1$ at which it has halted and its output is exactly $[\\mathrm{false}]$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Boolean Turing machine",
+  "$y$ is a Boolean word",
+  "$f$ is a Boolean",
+  "$bits$ has length equal to the number of selector types of $M$",
+  "$rest$ is a Boolean word",
+  "$p$ is natural and $1\\le p$",
+  "$p+|rest|=|y|+1$",
+  "the suffix of $y$ from position $p-1$ is $rest$",
+  "reading a field from $rest$ returns no result"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

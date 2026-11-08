@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.timed_laneCfg_right",
+ "key": "690ace87ae25d2a6",
+ "kind": "lemma",
+ "title": "Right-moving zipper step on one lane",
+ "statement": "Let $base$ be a configuration with $k$ work tapes, choose a lane $lane<k$, optional state $q$, state $q'$, integer $z$, lists $l,r$ of optional symbols, and optional symbols $a,b$. Applying the action that writes $b$ on lane $lane$, moves that head one cell right, and enters state $q'$ to the zipper configuration at frontier $z$ with left list $l$ and right list $a::r$ yields the zipper configuration at frontier $z+1$ with left list $b::l$ and right list $r$, state $q'$, and all other configuration data as specified by the base configuration.",
+ "hypotheses_covered": [
+  "$A,S$ are types",
+  "$k$ is a natural number",
+  "$x$ is a finite list over $A$",
+  "$base$ is a configuration with $k$ work tapes",
+  "$lane<k$",
+  "$q$ is an optional state",
+  "$q'$ is a state",
+  "$z$ is an integer",
+  "$l,r$ are finite lists of optional symbols",
+  "$a,b$ are optional symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying a right-moving single-lane action that writes a symbol $b$ to a\nsingle-active-lane configuration whose unprocessed list begins with a cell $a$\nconsumes $a$, pushes $b$ onto the processed stack, advances the frontier by\none, and passes to the designated control; all inactive data is unchanged."
+}

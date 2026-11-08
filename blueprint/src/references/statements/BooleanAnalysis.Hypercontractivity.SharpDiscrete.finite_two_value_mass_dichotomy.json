@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_mass_dichotomy",
+ "key": "7f0beab8161a8680",
+ "kind": "theorem",
+ "title": "Mass dichotomy for two-valued functions",
+ "statement": "Let $I$ be a finite set with weights $w_i>0$ and $\\sum_iw_i=1$. Suppose $\\lambda>0$, $w_i\\ge\\lambda$ for every $i$, and $f:I\\to\\mathbb{R}$ takes only the values $a$ and $b$, where $a,b\\in\\mathbb{R}$. Let $\\gamma=\\sum_{i:f_i=a}w_i$. Then either $f$ is identically $a$, $f$ is identically $b$, or $\\lambda\\le\\gamma\\le1-\\lambda$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w_i>0$ for every $i$",
+  "$\\sum_iw_i=1$",
+  "$\\lambda>0$",
+  "$w_i\\ge\\lambda$ for every $i$",
+  "$f:I\\to\\mathbb{R}$",
+  "$a,b\\in\\mathbb{R}$",
+  "$f_i=a$ or $f_i=b$ for every $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite, $w_i>0$, $\\sum_iw_i=1$, and $0<\\lambda\\le w_i$ for every $i$. If $f:I\\to\\bbr$ takes values in $\\{a,b\\}$, then either $f$ is identically $a$, or identically $b$, or $\\lambda\\le\\sum_{i:f_i=a}w_i\\le1-\\lambda$."
+}

@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.BlockLoop.polyTimeComputable_orLoop",
+ "key": "489c9ba8cac95e84",
+ "kind": "theorem",
+ "title": "Polynomial time for an iterated Boolean search",
+ "statement": "Let $t$ map bit strings to Booleans, and let $\\mathrm{nxt},x,r$ map bit strings to bit strings. Let $Q$ map a bit string and a natural number to a bit string, and let $F$ map a bit string and a natural number to a Boolean. Fix $a',k',c\\in\\mathbb{N}$. Suppose the functions $s\\mapsto[t(\\pi_2(\\pi_2(s)))]$ and $s\\mapsto\\mathrm{nxt}(\\pi_2(\\pi_2(s)))$ are polynomial-time computable, as are $x$ and $r$. Suppose that $|\\mathrm{nxt}(q)|\\le |q|+2+c$ for every bit string $q$, that $|x(z)|\\le |r(z)|$ and $r(z)=Q(z,0)$ for every $z$, and that for every $z$ and every $i<a'(|x(z)|+1)^{k'}$, one has $\\mathrm{nxt}(Q(z,i))=Q(z,i+1)$ and $t(Q(z,i))=F(z,i)$. Then the Boolean-valued bit-string function whose output is the one-bit list indicating whether $F(z,i)$ is true for at least one $i<a'(|x(z)|+1)^{k'}$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$t$ maps bit strings to Booleans; $\\mathrm{nxt},x,r$ map bit strings to bit strings",
+  "$Q$ and $F$ have the stated bit-string/natural-number domains",
+  "$a',k',c$ are natural numbers",
+  "The parsed test function is polynomial-time computable",
+  "The parsed next-state function is polynomial-time computable",
+  "$x$ and $r$ are polynomial-time computable",
+  "The length bound on $\\mathrm{nxt}(q)$ holds for every $q$",
+  "$|x(z)|\\le |r(z)|$ for every $z$",
+  "$r(z)=Q(z,0)$ for every $z$",
+  "The next-state recurrence holds for every $z,i$ in the specified range",
+  "The test identity holds for every $z,i$ in the specified range"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

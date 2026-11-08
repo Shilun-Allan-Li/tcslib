@@ -46,6 +46,12 @@ $\varphi$ has index less than $N$.
 
 \begin{definition}[Clause width at most $k$ ($k$CNF)]
 \lean{Std.Sat.CNF.WidthAtMost}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b002}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b004,
+  pdf-ffbe9c7b3306-p196-b010,
+  pdf-ffbe9c7b3306-p197-b002
+}
 \label{Std.Sat.CNF.WidthAtMost}
 \leanok
 Let $\alpha$ be a type of variables, let $\varphi$ be a CNF formula over $\alpha$, and
@@ -55,27 +61,24 @@ $k$CNF) if every clause of $\varphi$ contains at most $k$ literals
 for every $k$.
 \end{definition}
 
-\begin{theorem}[Members are bounded by the list maximum]
+\begin{theorem}[A list member is bounded by its maximum]
 \lean{Complexity.le_foldr_max_of_mem}
 \label{Complexity.le_foldr_max_of_mem}
 \leanok
 \difficulty{4}
-For a finite list $s$ of natural numbers, write $\max(s)$ for the right fold of
-$\max$ over $s$ with initial value $0$ (so the empty list has maximum $0$). If $n$ is a
-member of $s$, then $n \le \max(s)$.
+Let $s$ be a finite list of natural numbers and let $n$ belong to $s$. Then $n$ is at
+most the right fold of maximum over $s$ with initial value $0$.
 \end{theorem}
 
-\begin{theorem}[Evaluation reads only variables below the count]
+\begin{theorem}[Evaluation depends only on occurring variables]
 \lean{Complexity.eval_congr_of_lt_numVars}
 \label{Complexity.eval_congr_of_lt_numVars}
 \leanok
 \uses{Complexity.le_foldr_max_of_mem, Std.Sat.CNF.numVars}
 \difficulty{4}
-Let $\varphi$ be a CNF formula whose variables are indexed by natural numbers, and let
-$N(\varphi)$ be one plus the largest variable index occurring in $\varphi$ ($0$ if no
-variable occurs). If two assignments $a, b : \mathbb{N} \to \{0,1\}$ satisfy
-$a(v) = b(v)$ for every $v < N(\varphi)$, then $\varphi$ evaluates to the same truth
-value under $a$ as under $b$.
+Let $\varphi$ be a CNF formula with natural-number variable indices, and let
+$N(\varphi)$ be its variable count. If two Boolean assignments agree on every variable
+$v<N(\varphi)$, then they give the same truth value to $\varphi$.
 \end{theorem}
 
 \begin{theorem}[Termwise bound bounds the list maximum]
@@ -83,9 +86,9 @@ value under $a$ as under $b$.
 \label{Complexity.foldr_max_le_of_forall}
 \leanok
 \difficulty{4}
-Let $s$ be a finite list of natural numbers, write $\max(s)$ for the right fold of
-$\max$ over $s$ with initial value $0$, and let $n \in \mathbb{N}$. If every member of
-$s$ is at most $n$, then $\max(s) \le n$; in particular this holds when $s$ is empty.
+Let $s$ be a finite list of natural numbers and let $n$ be a natural number. If every
+member of $s$ is at most $n$, then the right fold of maximum over $s$, with initial
+value $0$, is at most $n$.
 \end{theorem}
 
 \begin{definition}[Clause excluding a single assignment]
@@ -101,22 +104,24 @@ assignment $a : \mathbb{N} \to \{0,1\}$ exactly when $a(i) \ne v_i$
 [AB09, Claim~2.13].
 \end{definition}
 
-\begin{theorem}[Excluding clause is false exactly at its point]
+\begin{theorem}[When the excluding clause is false]
 \lean{Complexity.falsifyingClause_eval_false}
 \label{Complexity.falsifyingClause_eval_false}
 \leanok
 \uses{Complexity.falsifyingClause}
 \difficulty{4}
-Let $\ell \in \mathbb{N}$, let $v \in \{0,1\}^\ell$, and let
-$C_v = \bigvee_{i<\ell} x_i^{\neg v_i}$ be the clause on the variables
-$x_0, \dots, x_{\ell-1}$ whose $i$-th literal is satisfied by an assignment $a$ exactly
-when $a(i) \ne v_i$. For every assignment $a : \mathbb{N} \to \{0,1\}$, the clause
-$C_v$ evaluates to false under $a$ if and only if $a(i) = v_i$ for all $i < \ell$
-[AB09, Claim~2.13].
+Let $\ell\in\mathbb{N}$, let $v\in\{0,1\}^{\ell}$, and let $a:\mathbb{N}\to\{0,1\}$ be
+an assignment. The clause excluding $v$ evaluates to false under $a$ if and only if
+$a(i)=v_i$ for every $i<\ell$.
 \end{theorem}
 
 \begin{definition}[Truth-table CNF of a Boolean function]
 \lean{Complexity.falsifyingCNF}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b004,
+  pdf-ffbe9c7b3306-p107-b007,
+  pdf-ffbe9c7b3306-p107-b008
+}
 \label{Complexity.falsifyingCNF}
 \leanok
 \uses{Complexity.falsifyingClause}
@@ -128,62 +133,54 @@ assignment $a : \mathbb{N} \to \{0,1\}$ exactly when $a(i) \ne v_i$
 [AB09, Claim~2.13].
 \end{definition}
 
-\begin{theorem}[Truth-table CNF uses only the first $\ell$ variables]
+\begin{theorem}[Variable count of the truth-table CNF]
 \lean{Complexity.falsifyingCNF_numVars}
 \label{Complexity.falsifyingCNF_numVars}
 \leanok
 \uses{Complexity.falsifyingCNF, Complexity.foldr_max_le_of_forall, Std.Sat.CNF.numVars}
 \difficulty{3}
-Let $\ell \in \mathbb{N}$, let $f : \{0,1\}^\ell \to \{0,1\}$, and let $\varphi_f$ be
-the CNF formula that is the conjunction, over all $v \in \{0,1\}^\ell$ with
-$f(v) = 0$, of the clause $\bigvee_{i<\ell} x_i^{\neg v_i}$ whose $i$-th literal is
-satisfied by an assignment $a$ exactly when $a(i) \ne v_i$. Then every variable
-occurring in $\varphi_f$ has index less than $\ell$; that is, one plus the largest
-variable index occurring in $\varphi_f$ (or $0$ if none occurs) is at most $\ell$.
+Let $\ell\in\mathbb{N}$ and let $f:\{0,1\}^{\ell}\to\{0,1\}$. The variable count of the
+truth-table CNF of $f$ is at most $\ell$.
 \end{theorem}
 
-\begin{theorem}[Truth-table CNF has at most $2^\ell$ clauses]
+\begin{theorem}[Number of clauses in the truth-table CNF]
 \lean{Complexity.falsifyingCNF_length}
 \label{Complexity.falsifyingCNF_length}
 \leanok
 \uses{Complexity.falsifyingCNF}
 \difficulty{2}
-Let $\ell \in \mathbb{N}$, let $f : \{0,1\}^\ell \to \{0,1\}$, and let $\varphi_f$ be
-the CNF formula that is the conjunction, over all $v \in \{0,1\}^\ell$ with
-$f(v) = 0$, of the clause $\bigvee_{i<\ell} x_i^{\neg v_i}$ whose $i$-th literal is
-satisfied by an assignment $a$ exactly when $a(i) \ne v_i$. Then $\varphi_f$ has at
-most $2^\ell$ clauses.
+Let $\ell\in\mathbb{N}$ and let $f:\{0,1\}^{\ell}\to\{0,1\}$. The truth-table CNF of $f$
+has at most $2^{\ell}$ clauses.
 \end{theorem}
 
-\begin{theorem}[Truth-table CNF has width at most $\ell$]
+\begin{theorem}[Width of the truth-table CNF]
 \lean{Complexity.falsifyingCNF_width}
 \label{Complexity.falsifyingCNF_width}
 \leanok
 \uses{Complexity.falsifyingCNF, Std.Sat.CNF.WidthAtMost}
 \difficulty{3}
-Let $\ell \in \mathbb{N}$, let $f : \{0,1\}^\ell \to \{0,1\}$, and let $\varphi_f$ be
-the CNF formula that is the conjunction, over all $v \in \{0,1\}^\ell$ with
-$f(v) = 0$, of the clause $\bigvee_{i<\ell} x_i^{\neg v_i}$ whose $i$-th literal is
-satisfied by an assignment $a$ exactly when $a(i) \ne v_i$. Then every clause of
-$\varphi_f$ contains at most $\ell$ literals, i.e.\ $\varphi_f$ is an $\ell$CNF.
+Let $\ell\in\mathbb{N}$ and let $f:\{0,1\}^{\ell}\to\{0,1\}$. Every clause in the
+truth-table CNF of $f$ has at most $\ell$ literals.
 \end{theorem}
 
-\begin{theorem}[Truth-table CNF computes its function]
+\begin{theorem}[Truth-table CNF evaluation]
 \lean{Complexity.falsifyingCNF_eval}
 \label{Complexity.falsifyingCNF_eval}
 \leanok
 \uses{Complexity.falsifyingCNF, Complexity.falsifyingCNF_width, Complexity.falsifyingClause, Complexity.falsifyingClause_eval_false}
 \difficulty{5}
-Let $\ell \in \mathbb{N}$, let $f : \{0,1\}^\ell \to \{0,1\}$, and let $\varphi_f$ be
-the CNF formula that is the conjunction, over all $v \in \{0,1\}^\ell$ with
-$f(v) = 0$, of the clause $\bigvee_{i<\ell} x_i^{\neg v_i}$ whose $i$-th literal is
-satisfied by an assignment $a$ exactly when $a(i) \ne v_i$. Then for every assignment
-$a : \mathbb{N} \to \{0,1\}$, the formula $\varphi_f$ evaluates under $a$ to
-$f(a(0), a(1), \dots, a(\ell-1))$.
+Let $\ell\in\mathbb{N}$, let $f:\{0,1\}^{\ell}\to\{0,1\}$, and let
+$a:\mathbb{N}\to\{0,1\}$ be an assignment. The truth-table CNF of $f$ evaluates under
+$a$ to $f(a(0),\ldots,a(\ell-1))$.
 \end{theorem}
 
 \begin{theorem}[CNF universality]
 \lean{Complexity.exists_cnf_boolFun}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b004,
+  pdf-ffbe9c7b3306-p107-b007,
+  pdf-ffbe9c7b3306-p107-b008
+}
 \label{Complexity.exists_cnf_boolFun}
 \leanok
 \uses{Complexity.falsifyingCNF, Complexity.falsifyingCNF_eval, Complexity.falsifyingCNF_length, Complexity.falsifyingCNF_numVars, Complexity.falsifyingCNF_width, Std.Sat.CNF.WidthAtMost, Std.Sat.CNF.numVars}

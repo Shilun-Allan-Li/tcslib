@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.setupCfg_unary_rewind",
+ "key": "2646ec1f600648b9",
+ "kind": "lemma",
+ "title": "Unary Rewind Cost",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,N,j\\in\\bbn$, and let $last\\in\\{\\mathrm{false},\\mathrm{true}\\}$. For any input word, base configuration, input-head position, budget-head position and tape, and guide-head position and tape, starting in the unary-rewind phase (unary-reset if $last$ is true and unary-back otherwise) with unary head at $j$ and unary tape containing $N$ markers, after $j+1$ steps the unary head is at $1$ and the phase is start-center if $last$ is true and the first rightward layout phase otherwise; the resulting configuration has all the same data and other head positions.",
+ "hypotheses_covered": [
+  "A finite Boolean-alphabet machine $W$",
+  "Natural parameters $a$, $N$, and $j$",
+  "Boolean parameter $last$",
+  "An input word and base configuration",
+  "An input-head position",
+  "Integer budget-head position and budget tape",
+  "Guide-head position and guide tape",
+  "Initial rewind phase determined by $last$",
+  "Unary head initially at $j$ and unary tape with $N$ markers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\in \\bbn$ and either rewind variant: from a setup configuration in the\ncorresponding unary rewind phase with unary head at cell $j$ over the unary tape with\n$N$ markers, exactly $j+1$ steps reach the successor phase --- the start-center phase\nfor the final rewind, the first rightward layout phase otherwise --- with unary head at\ncell $1$; no tape is written and all other heads are unchanged."
+}

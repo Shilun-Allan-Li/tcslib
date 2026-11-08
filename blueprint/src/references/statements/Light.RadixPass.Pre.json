@@ -1,0 +1,25 @@
+{
+ "lean_name": "Light.RadixPass.Pre",
+ "key": "ea3bafd50f9fd087",
+ "kind": "structure",
+ "title": "Radix pass preconditions",
+ "statement": "Let $L$ be a resource limit, let $\u0000\u0000\u0000\u0000$ be a memory function from natural-number addresses to integers, let $A$ be a collection of radix-pass parameters, let $\u0000\u0000\u0000\u0000$ be a list of natural-number indices, and let $k$ assign a natural-number key to each index. Assume that the space bound of $L$ is at most its word bound, the list has length $A.w$, and every entry in the list is less than $A.w$. The $A.w$ memory cells beginning at address $A.perm$ contain the list in order. For each $i<A.w$, the key cell at address $A.key+iA.stride+A.off$ is before $A.perm$ and contains the value $k(i)$, which is less than $A.nb$. Also, $A.perm+2A.w\\le A.cnt$, the $A.nb+1$ counter cells beginning at $A.cnt$ end no later than $A.perm+A.R$, and $A.perm+A.R$ is at most the space bound of $L$.",
+ "hypotheses_covered": [
+  "space bound is at most word bound",
+  "list length equals A.w",
+  "every list entry is less than A.w",
+  "memory segment beginning at A.perm contains the list",
+  "each key cell is before A.perm",
+  "each key cell contains k(i)",
+  "each key is less than A.nb",
+  "A.perm + 2A.w ≤ A.cnt",
+  "A.nb + 1 counter cells beginning at A.cnt end by A.perm + A.R",
+  "A.perm + A.R is at most the space bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

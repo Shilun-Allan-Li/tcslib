@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.dnf_totalInfluence_le_two_mul_width",
+ "key": "6478013be28f3798",
+ "kind": "lemma",
+ "title": "DNF total influence bound",
+ "statement": "For every DNF formula $d$ on $n$ Boolean variables, the total influence under the uniform measure of the sign encoding of its value is at most twice the width of $d$, where the width is the maximum term width and is $0$ for an empty formula.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$d$ is a DNF formula on $n$ Boolean variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor every DNF $d$ on $n$ variables, the total influence under the uniform cube law of $x\\mapsto(-1)^{d(x)}$ is at most twice the width of $d$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$."
+}

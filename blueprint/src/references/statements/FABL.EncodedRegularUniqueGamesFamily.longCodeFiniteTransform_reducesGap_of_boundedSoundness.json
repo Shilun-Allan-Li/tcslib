@@ -1,0 +1,24 @@
+{
+ "lean_name": "FABL.EncodedRegularUniqueGamesFamily.longCodeFiniteTransform_reducesGap_of_boundedSoundness",
+ "key": "707c05484f819ffb",
+ "kind": "theorem",
+ "title": "Long-code gap reduction",
+ "statement": "Let $q>0$, let a finite family of encoded regular unique games with $q$ labels be equipped with a finite family of sign predicates and a tester whose checks all use predicates from that family. Suppose $\beta$ is a lower bound on the tester's acceptance probability on every coordinate dictator, and let an optimization encoding, a finite long-code transform, an output codec, and a polynomial-time machine satisfy their stated encoding and output properties. For real parameters $\text{ugSoundness}<\text{ugCompleteness}$ and $\text{targetSoundness}<\text{targetCompleteness}$, suppose $1-\text{δUG}\u0000\text{ugCompleteness}$, $\text{ugSoundness}<\text{decodedLower}$, $\text{targetCompleteness}\u0000\beta-r\text{δUG}-r^2/M$, and $\u0000\text{targetSoundness}$, where the last two inequalities are respectively $\text{targetCompleteness}\\le\\beta-r\\,\\text{δUG}-r^2/M$ and $\\alpha+\\mathrm{error}(\\varepsilon)+\\tau+r^2/M\\le\\text{targetSoundness}$. Assume also that, for every semantic game instance and bounded long-code table, a long-code value at least $\\alpha+\\mathrm{error}(\\varepsilon)+\\tau$ implies that the finite unique game's optimum is at least $\\text{decodedLower}$. Then the machine gives a polynomial-time Karp reduction from the encoded unique-games promise problem with completeness threshold $\\text{ugCompleteness}$ and soundness threshold $\\text{ugSoundness}$ to the encoded target maximization promise problem with completeness threshold $\\text{targetCompleteness}$ and soundness threshold $\\text{targetSoundness}$.",
+ "hypotheses_covered": [
+  "q is positive",
+  "The tester predicate family is finite and contains every predicate used by the tester",
+  "Each coordinate dictator is accepted with probability at least β",
+  "An optimization encoding, finite long-code transform, output codec, and polynomial-time transform machine are supplied",
+  "ugSoundness < ugCompleteness",
+  "targetSoundness < targetCompleteness",
+  "1 − δUG ≤ ugCompleteness",
+  "ugSoundness < decodedLower",
+  "targetCompleteness ≤ β − r·δUG − r²/M",
+  "α + error(ε) + τ + r²/M ≤ targetSoundness",
+  "For every semantic instance and bounded long-code table, value at least α + error(ε) + τ implies the finite unique-game optimum is at least decodedLower"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

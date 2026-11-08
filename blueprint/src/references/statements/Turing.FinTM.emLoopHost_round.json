@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.emLoopHost_round",
+ "key": "e55c3fab509fe0cc",
+ "kind": "lemma",
+ "title": "One emitting loop round",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, and let $x,s,s',c,w$ be Boolean words. Suppose the run of $B$ from the seam configuration at state $a$ with tape word $s$ takes $t>0$ steps, avoids state $a$ at every intermediate time $u$ with $0<u<t$, and ends at the seam configuration with tape word $s'$ and output $c$. For every fuel configuration $f$ on input $x$, there is a time $v\\le t+2|w|+5$ such that the forwarding loop host started at its released call on the seam carrying $s$, with counter word $w$ and fuel configuration $f$, either reaches the released call on the seam carrying $s'$ with counter word decremented by one and output $c$, if the decrement succeeds, or has halted with output $c$, if the decrement underflows.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$",
+  "Anchor state $a$ of $B$",
+  "Words $x,s,s',c,w$",
+  "Positive duration $t$",
+  "No return to $a$ at intermediate times $0<u<t$",
+  "Run ends at the specified seam with output $c$",
+  "Arbitrary fuel configuration on input $x$",
+  "Time bound $v\\le t+2|w|+5$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s$ be a round word, $w$ a counter word, $f$ a fuel configuration, and $t > 0$ a\ntime such that the body, started at the clean anchor seam carrying $s$, does not revisit\nthe anchor strictly between times zero and $t$ and at time $t$ sits at the clean seam\ncarrying the stepped word with output a chunk word $u$. Then there is a time $v \\le t +\n2|w| + 5$ such that from the released call on the seam of $s$: when the fixed-width\ndecrement of $w$ succeeds, the forwarding host at time $v$ is at the released call on\nthe next seam with the decremented counter and physical output exactly $u$; on underflow\nthe host at time $v$ has halted with output exactly $u$ and no verdict bit."
+}

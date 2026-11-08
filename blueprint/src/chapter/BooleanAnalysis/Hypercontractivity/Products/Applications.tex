@@ -9,22 +9,507 @@ Finite-product hypercontractivity bounds the stability of small events and the s
 \lean{BooleanAnalysis.Hypercontractivity.product_stability_sq_eq_norm_noise_sq}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_selfAdjoint, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.FiniteProduct.stability, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_noise}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p214-b007}
 \difficulty{5}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $c\in\mathbb R$, and $f:\Omega\to\mathbb R$. Then $\operatorname{Stab}_{c^2}(f)=\|T_cf\|_{2,P}^2$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\sum_{S\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\|h\|_{p,P}=(\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $\operatorname{Stab}_a(h)=\mathbb E_P[hT_a h]$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$.
 \end{theorem}
 
-\begin{theorem}[Squared norm of an indicator]
+\begin{theorem}[Squared moment norm of an indicator]
 \lean{BooleanAnalysis.Hypercontractivity.product_indicator_norm_sq}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.indicator, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.FiniteProduct.prob}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p254-b005,
+  pdf-ffbe9c7b3306-p254-b006
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b004,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.indicator}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p029-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.prob}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p029-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.norm}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, an event $A\subseteq\Omega$, and $p>0$. Then $\|\mathbf1_A\|_{p,P}^2=\Pr_P(A)^{2/p}$. For a real function $h$ on $\Omega$, use $\|h\|_{p,P}=(\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $\Pr_P(A)=\mathbb E_P\mathbf1_A$, where $\mathbf1_A$ is $1$ on $A$ and $0$ elsewhere.
+Let $P$ be a finite product probability space, let $A$ be an event in its product
+outcome space, and let $p>0$. Then the squared $p$-moment norm of its indicator is
+$\|\mathbf 1_A\|_{p,P}^{2}=\Pr_P(A)^{2/p}$.
 \end{theorem}
 
 \begin{theorem}[Event stability from an atom bound]
 \lean{BooleanAnalysis.Hypercontractivity.product_smallSet_expansion}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.indicator, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise_norm_one_le, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.FiniteProduct.prob, BooleanAnalysis.Hypercontractivity.FiniteProduct.stability, BooleanAnalysis.Hypercontractivity.product_hypercontractivity, BooleanAnalysis.Hypercontractivity.product_indicator_norm_sq, BooleanAnalysis.Hypercontractivity.product_stability_sq_eq_norm_noise_sq}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p264-b001}
 \difficulty{6}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ with every coordinate atom at least $0<\lambda\le1$, and let $q\ge2$ and $0\le\rho\le\lambda^{1-2/q}/(q-1)$. For every event $A\subseteq\Omega$, $\operatorname{Stab}_\rho(\mathbf1_A)\le\Pr_P(A)^{2-2/q}$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\sum_{S\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\operatorname{Stab}_a(h)=\mathbb E_P[hT_a h]$; $\Pr_P(A)=\mathbb E_P\mathbf1_A$, where $\mathbf1_A$ is $1$ on $A$ and $0$ elsewhere. The powers indexed by subset cardinalities are natural powers, including $0^0=1$.
 \end{theorem}
@@ -34,23 +519,32 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.FiniteProduct.parseval, BooleanAnalysis.Hypercontractivity.FiniteProduct.stableInfluence, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_laplacian, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_noise}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $\rho\ge0$, a coordinate $i$, and $f:\Omega\to\mathbb R$. Then $\rho I_i^{(\rho)}(f)=\|T_{\sqrt\rho}L_if\|_{2,P}^2$, where $I_i^{(\rho)}$ is stable influence and $L_i$ is the coordinate Laplacian. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\sum_{S\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\|h\|_{p,P}=(\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $L_i h=h-E_{[n]\setminus\{i\}}h$; $I_i^{(a)}(h)=\sum_{S\ni i}a^{|S|-1}\mathbb E_Ph_S^2$ for $a\in\mathbb R$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$.
+Let $n\in\mathbb{N}$, let $P$ be a finite product probability space with $n$
+coordinates, and let $\rho\ge 0$. For every real-valued function $f$ on its outcome
+space and every coordinate $i$, $\rho I_i^{(\rho)}(f)=\|T_{\sqrt{\rho}}L_i
+f\|_{2,P}^{2}$.
 \end{theorem}
 
-\begin{theorem}[Absolute Boolean residual moment]
+\begin{theorem}[Absolute Residual Moment Identity]
 \lean{BooleanAnalysis.Hypercontractivity.product_boolean_residual_abs_expect}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_selfAdjoint, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass_sum}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $f:\Omega\to\{-1,1\}$, and $S\subseteq[n]$. For conditional expectation $E_S$ onto $S$, $\mathbb E_P|f-E_Sf|=\mathbb E_P(f-E_Sf)^2$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$.
+Let $P$ be a finite product probability space with strictly positive coordinate weights,
+let $f$ take values in $\{-1,1\}$ at every point, and let $S$ be a set of coordinates.
+The expectation of the absolute residual from conditioning on $S$ equals the second
+moment of that residual: $\mathbb E_P|f-E_Sf|=\mathbb E_P(f-E_Sf)^2$.
 \end{theorem}
 
-\begin{theorem}[Boolean Laplacian moments]
+\begin{theorem}[Laplacian moments bounded by influence]
 \lean{BooleanAnalysis.Hypercontractivity.product_laplacian_abs_moment_le_influence}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.product_boolean_residual_abs_expect}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $f:\Omega\to\{-1,1\}$, a coordinate $i$, and $1\le p\le2$. Then $\mathbb E_P|L_if|^p\le I_i(f)$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $L_i h=h-E_{[n]\setminus\{i\}}h$; $I_i(h)=\mathbb E_P(h-E_{[n]\setminus\{i\}}h)^2$.
+Let $P$ be a finite product probability space, let $f$ take values in $\{-1,1\}$ at
+every product outcome, and choose a coordinate $i$. For every real $p$ with $1\le
+p\le2$, the expectation of the $p$th absolute moment of the coordinate Laplacian is at
+most the influence of that coordinate: $\mathbb E_P|L_i f|^p\le I_i(f)$.
 \end{theorem}
 
 \begin{theorem}[Stable influence from norm contraction]
@@ -58,21 +552,1015 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.FiniteProduct.stableInfluence, BooleanAnalysis.Hypercontractivity.product_laplacian_abs_moment_le_influence, BooleanAnalysis.Hypercontractivity.product_stableInfluence_eq_sq_norm_noise_laplacian}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $q\ge2$, $\rho\ge0$, $f:\Omega\to\{-1,1\}$, and a coordinate $i$. If $\|T_{\sqrt\rho}L_if\|_{2,P}\le\|L_if\|_{q/(q-1),P}$, then $\rho I_i^{(\rho)}(f)\le I_i(f)^{2-2/q}$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\sum_{S\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\|h\|_{p,P}=(\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $L_i h=h-E_{[n]\setminus\{i\}}h$; $I_i(h)=\mathbb E_P(h-E_{[n]\setminus\{i\}}h)^2$; $I_i^{(a)}(h)=\sum_{S\ni i}a^{|S|-1}\mathbb E_Ph_S^2$ for $a\in\mathbb R$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$.
+Let $n\in\mathbb{N}$, let $P$ be a finite product probability space with $n$
+coordinates, and let $q,\rho\in\mathbb{R}$ satisfy $q\ge 2$ and $\rho\ge 0$. Let $f$ be
+a real-valued function on the outcome space taking values in $\{-1,1\}$, and let $i$ be
+a coordinate. If $\|T_{\sqrt{\rho}}L_i f\|_{2,P}\le\|L_i f\|_{q/(q-1),P}$, then $\rho
+I_i^{(\rho)}(f)\le I_i(f)^{2-2/q}$.
 \end{theorem}
 
 \begin{theorem}[Product stable-influence estimate]
 \lean{BooleanAnalysis.Hypercontractivity.product_stableInfluence}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.FiniteProduct.stableInfluence, BooleanAnalysis.Hypercontractivity.ProductAux.noise_norm_two_le, BooleanAnalysis.Hypercontractivity.product_hypercontractivity, BooleanAnalysis.Hypercontractivity.product_stableInfluence_le_of_norm_noise_laplacian_le}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p254-b003,
+  pdf-ffbe9c7b3306-p255-b004,
+  pdf-ffbe9c7b3306-p255-b005
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b001}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007,
+    pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sharpDiscreteRadius}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.signed_power_dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_holder}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.norm_le_of_pairing}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p114-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq_unit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002,
+    pdf-ffbe9c7b3306-p258-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p218-b002,
+    pdf-ffbe9c7b3306-p216-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy_insert}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p218-b002,
+    pdf-ffbe9c7b3306-p218-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sum_powerset_signed_inter}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p218-b002,
+    pdf-ffbe9c7b3306-p218-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.norm}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b003,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.noise}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p214-b005,
+    pdf-ffbe9c7b3306-p215-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p213-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.influence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p213-b005,
+    pdf-ffbe9c7b3306-p213-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.stableInfluence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p215-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.mass_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p217-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p213-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_selfAdjoint}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b003,
+    pdf-ffbe9c7b3306-p217-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.parseval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p209-b002,
+    pdf-ffbe9c7b3306-p212-b001,
+    pdf-ffbe9c7b3306-p216-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p214-b005,
+    pdf-ffbe9c7b3306-p214-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.signed_product_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b005,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.component_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b003,
+    pdf-ffbe9c7b3306-p216-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.noise_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p214-b005,
+    pdf-ffbe9c7b3306-p214-b006,
+    pdf-ffbe9c7b3306-p215-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteTensorization.pair_tensorization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteTensorization.norm_tensorization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p259-b004,
+    pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_moment_sphere_compact}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.exists_nonnegative_noise_maximizer}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_concave_level_two_values}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_homogeneity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.derivative_eq_mul_of_isLocalMax_quotient}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_normalization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_directional_derivatives}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_stationarity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_two_values}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.symmetric_power_slope_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.convexOn_symmetric_sqrt_rpow}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.convexOn_biased_power}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.biased_power_tangent_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.tangent_at_bias}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.normalized_biased_quadratic_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.nonnegative_biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_pos_lt_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_eq_sinh}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_pos_lt_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_eq_radius_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.concaveOn_tanh_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.sinh_ratio_antitoneOn}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_mono_bias}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.sinh_scale_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_sq_le_balanced}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.signed_power_dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_identities}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_duality}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.weighted_biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.weighted_two_point_le_of_atom_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_mass_dichotomy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_contraction_of_unit_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_sharp_contraction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity_induction_gt_one}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rpow_norm_le_of_sq_moments}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finite_noise_quadratic_mono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p056-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finite_coordinate_hypercontractivity_sharp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity_sharp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sinh_ratio_lower_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.coarse_radius_le_sharp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity_atom_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.signed_intersection_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b004,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b004,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b004,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_noise}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p055-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_condExp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b004,
+    pdf-ffbe9c7b3306-p212-b005,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_laplacian}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p049-b002,
+    pdf-ffbe9c7b3306-p049-b003,
+    pdf-ffbe9c7b3306-p213-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_noise_norm_two_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p025-b006,
+    pdf-ffbe9c7b3306-p063-b012}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.ProductAux.noise_norm_two_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p063-b012}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_stableInfluence_eq_sq_norm_noise_laplacian}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p057-b001,
+    pdf-ffbe9c7b3306-p056-b002,
+    pdf-ffbe9c7b3306-p049-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_boolean_residual_abs_expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b003,
+    pdf-ffbe9c7b3306-p047-b004,
+    pdf-ffbe9c7b3306-p049-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_laplacian_abs_moment_le_influence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b004,
+    pdf-ffbe9c7b3306-p049-b003,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_stableInfluence_le_of_norm_noise_laplacian_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p057-b001,
+    pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ with every coordinate atom at least $0<\lambda\le1$, and let $q\ge2$ and $0\le\rho\le\lambda^{1-2/q}/(q-1)$. For every $f:\Omega\to\{-1,1\}$ and coordinate $i$, $\rho I_i^{(\rho)}(f)\le I_i(f)^{2-2/q}$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $I_i(h)=\mathbb E_P(h-E_{[n]\setminus\{i\}}h)^2$; $I_i^{(a)}(h)=\sum_{S\ni i}a^{|S|-1}\mathbb E_Ph_S^2$ for $a\in\mathbb R$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$.
+Let $n\in\mathbb{N}$, let $P$ be a finite product probability space with $n$
+coordinates, and let $\lambda,q,\rho\in\mathbb{R}$ satisfy $0<\lambda$, $\lambda\le 1$,
+$q\ge 2$, $\rho\ge 0$, and $\rho\le \frac{1}{q-1}\lambda^{1-2/q}$. Suppose every
+coordinate atom has probability at least $\lambda$. For every function $f$ taking values
+in $\{-1,1\}$ and every coordinate $i$, $\rho I_i^{(\rho)}(f)\le I_i(f)^{2-2/q}$.
 \end{theorem}
 
 \begin{theorem}[Fourth-moment stable-influence bound]
 \lean{BooleanAnalysis.Hypercontractivity.product_stableInfluence_four}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.stableInfluence, BooleanAnalysis.Hypercontractivity.product_stableInfluence}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p255-b004,
+  pdf-ffbe9c7b3306-p255-b005,
+  pdf-ffbe9c7b3306-p267-b005
+}
 \difficulty{4}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ with every coordinate atom at least $0<\lambda\le1$. For every $f:\Omega\to\{-1,1\}$ and coordinate $i$, $\sum_{S\ni i}(\sqrt\lambda/3)^{|S|}\mathbb E_Pf_S^2\le I_i(f)^{3/2}$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $I_i(h)=\mathbb E_P(h-E_{[n]\setminus\{i\}}h)^2$.
 \end{theorem}
@@ -81,6 +1569,10 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.product_kkl_isoperimetric}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.ComparisonAux.kkl_coefficient_eq, BooleanAnalysis.Hypercontractivity.ComparisonAux.variance_rpow_ratio_le_noisy_total, BooleanAnalysis.Hypercontractivity.FiniteNorms.exists_sq_div_sum_le_of_sum_three_halves, BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.FiniteProduct.variance, BooleanAnalysis.Hypercontractivity.RandomizationAux.totalInfluence_eq_sum_card_components, BooleanAnalysis.Hypercontractivity.product_stableInfluence_four}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p267-b001,
+  pdf-ffbe9c7b3306-p097-b006
+}
 \difficulty{5}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ with every coordinate atom at least $0<\lambda\le1/2$. If $f:\Omega\to\{-1,1\}$ has positive variance and $a=I(f)/\operatorname{Var}_P(f)$, there is a coordinate $i$ such that $(a^{-1})^2(9/\lambda)^{-a}\le I_i(f)$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $I_i(h)=\mathbb E_P(h-E_{[n]\setminus\{i\}}h)^2$; $I(h)=\sum_{i=0}^{n-1}I_i(h)=\sum_{S\subseteq[n]}|S|\mathbb E_Ph_S^2$; $\operatorname{Var}_P(h)=\mathbb E_P(h-\mathbb E_Ph)^2$.
 \end{theorem}
@@ -89,40 +1581,2042 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.product_kkl}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.ComparisonAux.kkl_log_parameters, BooleanAnalysis.Hypercontractivity.ComparisonAux.kkl_scalar_dichotomy, BooleanAnalysis.Hypercontractivity.ComparisonAux.variance_rpow_ratio_le_noisy_total, BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.FiniteProduct.variance, BooleanAnalysis.Hypercontractivity.RandomizationAux.boolean_variance_le_one, BooleanAnalysis.Hypercontractivity.RandomizationAux.totalInfluence_eq_sum_card_components, BooleanAnalysis.Hypercontractivity.product_kkl_isoperimetric}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p267-b003,
+  pdf-ffbe9c7b3306-p267-b005,
+  pdf-ffbe9c7b3306-p268-b001
+}
 \difficulty{6}
 There is an absolute $c>0$ such that for every $n\ge2$, every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, with every coordinate atom at least $0<\lambda\le1/2$, and every $f:\Omega\to\{-1,1\}$, some coordinate $i$ satisfies $c\operatorname{Var}_P(f)\log n/(n\log(1/\lambda))\le I_i(f)$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $I_i(h)=\mathbb E_P(h-E_{[n]\setminus\{i\}}h)^2$; $\operatorname{Var}_P(h)=\mathbb E_P(h-\mathbb E_Ph)^2$.
 \end{theorem}
 
-\begin{theorem}[Product Friedgut junta theorem]
+\begin{theorem}[Friedgut Junta Theorem for Product Spaces]
 \lean{BooleanAnalysis.Hypercontractivity.product_friedgut_junta}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.ComparisonAux.junta_polynomial_absorption, BooleanAnalysis.Hypercontractivity.ComparisonAux.junta_threshold_parameters, BooleanAnalysis.Hypercontractivity.ComparisonAux.lowDegree_omission_le_of_stable_bound, BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound, BooleanAnalysis.Hypercontractivity.FiniteProduct.DependsOn, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.prob, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_tail_le_totalInfluence, BooleanAnalysis.Hypercontractivity.RandomizationAux.exists_boolean_junta_of_energy_bounds, BooleanAnalysis.Hypercontractivity.product_stableInfluence_four}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p268-b003,
+  pdf-ffbe9c7b3306-p268-b004,
+  pdf-ffbe9c7b3306-p269-b001,
+  pdf-ffbe9c7b3306-p269-b004
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.influence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b004}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sharpDiscreteRadius}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004,
+    pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.signed_power_dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_holder}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.norm_le_of_pairing}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_lowDegree_omission_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p015-b014}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq_unit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002,
+    pdf-ffbe9c7b3306-p258-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002,
+    pdf-ffbe9c7b3306-p259-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b003,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy_insert}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p218-b002,
+    pdf-ffbe9c7b3306-p218-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sum_powerset_signed_inter}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p218-b002,
+    pdf-ffbe9c7b3306-p218-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005,
+    pdf-ffbe9c7b3306-p208-b007}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005,
+    pdf-ffbe9c7b3306-p209-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005,
+    pdf-ffbe9c7b3306-p209-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.indicator}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p029-b004,
+    pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.prob}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p029-b004,
+    pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.norm}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005,
+    pdf-ffbe9c7b3306-p208-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.DependsOn}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p213-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b003,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.noise}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p214-b006,
+    pdf-ffbe9c7b3306-p215-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p213-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.influence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p213-b005,
+    pdf-ffbe9c7b3306-p213-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p213-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.stableInfluence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p215-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.mass_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p209-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p217-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p209-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p212-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_selfAdjoint}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b003,
+    pdf-ffbe9c7b3306-p217-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.parseval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p218-b001,
+    pdf-ffbe9c7b3306-p219-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.exists_boolean_rounding}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p075-b002,
+    pdf-ffbe9c7b3306-p080-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p214-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.signed_product_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.component_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b003,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.noise_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p214-b005,
+    pdf-ffbe9c7b3306-p214-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteTensorization.pair_tensorization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteTensorization.norm_tensorization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p259-b001,
+    pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_moment_sphere_compact}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005,
+    pdf-ffbe9c7b3306-p248-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.exists_nonnegative_noise_maximizer}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p247-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_concave_level_two_values}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_homogeneity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.derivative_eq_mul_of_isLocalMax_quotient}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_normalization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_directional_derivatives}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_stationarity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_two_values}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.symmetric_power_slope_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.convexOn_symmetric_sqrt_rpow}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.convexOn_biased_power}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.biased_power_tangent_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.tangent_at_bias}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.normalized_biased_quadratic_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.nonnegative_biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_pos_lt_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_eq_sinh}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_pos_lt_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_eq_radius_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.concaveOn_tanh_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.sinh_ratio_antitoneOn}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_mono_bias}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.sinh_scale_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_sq_le_balanced}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p220-b003,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.signed_power_dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p258-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_identities}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_duality}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.weighted_biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.weighted_two_point_le_of_atom_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_mass_dichotomy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_contraction_of_unit_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_sharp_contraction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity_induction_gt_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rpow_norm_le_of_sq_moments}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finite_noise_quadratic_mono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finite_coordinate_hypercontractivity_sharp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity_sharp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sinh_ratio_lower_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b001,
+    pdf-ffbe9c7b3306-p258-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.coarse_radius_le_sharp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity_atom_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.signed_intersection_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b004,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b005,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b004,
+    pdf-ffbe9c7b3306-p219-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_noise}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p219-b006,
+    pdf-ffbe9c7b3306-p214-b007}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_condExp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b004,
+    pdf-ffbe9c7b3306-p216-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_laplacian}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p049-b003,
+    pdf-ffbe9c7b3306-p213-b005,
+    pdf-ffbe9c7b3306-p213-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.influence_eq_sum_components}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b001,
+    pdf-ffbe9c7b3306-p213-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.totalInfluence_eq_sum_card_components}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p052-b002,
+    pdf-ffbe9c7b3306-p213-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_residual_secondMoment}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p212-b004,
+    pdf-ffbe9c7b3306-p212-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_tail_le_totalInfluence}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p052-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.exists_boolean_junta_of_energy_bounds}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p269-b002,
+    pdf-ffbe9c7b3306-p269-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.ComparisonAux.kkl_log_parameters}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p097-b006,
+    pdf-ffbe9c7b3306-p265-b004,
+    pdf-ffbe9c7b3306-p267-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.ComparisonAux.lowDegree_omission_le_of_stable_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p268-b003,
+    pdf-ffbe9c7b3306-p268-b004,
+    pdf-ffbe9c7b3306-p269-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.ComparisonAux.junta_threshold_parameters}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p097-b006,
+    pdf-ffbe9c7b3306-p265-b004,
+    pdf-ffbe9c7b3306-p268-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.ComparisonAux.junta_polynomial_absorption}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p097-b006,
+    pdf-ffbe9c7b3306-p265-b004,
+    pdf-ffbe9c7b3306-p268-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_noise_norm_two_le}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.ProductAux.noise_norm_two_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_stableInfluence_eq_sq_norm_noise_laplacian}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p057-b001,
+    pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p055-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_boolean_residual_abs_expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p212-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_laplacian_abs_moment_le_influence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b003,
+    pdf-ffbe9c7b3306-p047-b004,
+    pdf-ffbe9c7b3306-p213-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_stableInfluence_le_of_norm_noise_laplacian_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p057-b001,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_stableInfluence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_stableInfluence_four}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p057-b001,
+    pdf-ffbe9c7b3306-p097-b006,
+    pdf-ffbe9c7b3306-p267-b005}
 \difficulty{6}
-There is an absolute $C>0$ such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, with every coordinate atom at least $0<\lambda\le1/2$, every $f:\Omega\to\{-1,1\}$, and every $0<\varepsilon\le1$, there exist $J\subseteq[n]$ and $g:\Omega\to\{-1,1\}$ depending only on $J$ with $|J|\le(1/\lambda)^{CI(f)/\varepsilon}$ and $\Pr_P(f\ne g)\le\varepsilon$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $I_i(h)=\mathbb E_P(h-E_{[n]\setminus\{i\}}h)^2$; $I(h)=\sum_{i=0}^{n-1}I_i(h)=\sum_{S\subseteq[n]}|S|\mathbb E_Ph_S^2$; $\Pr_P(A)=\mathbb E_P\mathbf1_A$, where $\mathbf1_A$ is $1$ on $A$ and $0$ elsewhere.
+There is a universal constant $C>0$ such that the following holds. Let $P$ be a finite
+product of probability spaces with strictly positive coordinate weights, let
+$n\in\mathbb N$, and suppose every coordinate atom has weight at least $\lambda$, where
+$0<\lambda\le 1/2$. For every function $f$ taking values in $\{-1,1\}$ and every
+$0<\varepsilon\le1$, there are a coordinate set $J\subseteq[n]$ and a function $g$
+taking values in $\{-1,1\}$ that depends only on $J$, such that $|J|\le(1/\lambda)^{C
+I(f)/\varepsilon}$ and $\Pr_P(f\ne g)\le\varepsilon$, where $I(f)$ is the total
+influence of $f$.
 \end{theorem}
 
-\begin{theorem}[Comparison constant near zero]
+\begin{theorem}[Comparison Constant Limit at Zero]
 \lean{BooleanAnalysis.Hypercontractivity.productNormComparisonConstant_asymptotic_zero}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.productNormComparisonConstant}
 \difficulty{5}
-For every real $\lambda$, define $C_\lambda=\begin{cases}e,&\lambda=1/2,\\((1-\lambda)/\lambda)^{1/(2(1-2\lambda))},&\lambda\ne1/2.\end{cases}$. Then $\lim_{\lambda\to0^+}C_\lambda\sqrt\lambda=1$.
+For each real number $\lambda$, define $C(\lambda)=e$ when $\lambda=1/2$ and
+$C(\lambda)=((1-\lambda)/\lambda)^{1/(2(1-2\lambda))}$ otherwise, with real powers
+interpreted using the usual real-power convention. As $\lambda$ tends to $0$ through
+positive values, $C(\lambda)\sqrt{\lambda}$ tends to $1$.
 \end{theorem}
 
-\begin{theorem}[Comparison constant near one half]
+\begin{theorem}[Comparison Constant Limit at One Half]
 \lean{BooleanAnalysis.Hypercontractivity.productNormComparisonConstant_tendsto_half}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.ComparisonAux.constant_tendsto_half, BooleanAnalysis.Hypercontractivity.productNormComparisonConstant}
 \difficulty{1}
-For every real $\lambda$, define $C_\lambda=\begin{cases}e,&\lambda=1/2,\\((1-\lambda)/\lambda)^{1/(2(1-2\lambda))},&\lambda\ne1/2.\end{cases}$. Then $\lim_{\lambda\to(1/2)^-,\ 0<\lambda<1/2}C_\lambda=e$.
+For each real number $\lambda$, define $C(\lambda)=e$ when $\lambda=1/2$, and
+$C(\lambda)=((1-\lambda)/\lambda)^{1/(2(1-2\lambda))}$ otherwise. As $\lambda$
+approaches $1/2$ through values satisfying $0<\lambda<1/2$, $C(\lambda)$ tends to $e$.
 \end{theorem}
 
 \begin{theorem}[Sharp product small-set expansion]
 \lean{BooleanAnalysis.Hypercontractivity.product_smallSet_expansion_sharp}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.indicator, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.FiniteProduct.prob, BooleanAnalysis.Hypercontractivity.FiniteProduct.stability, BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_pos_lt_one, BooleanAnalysis.Hypercontractivity.product_hypercontractivity_sharp, BooleanAnalysis.Hypercontractivity.product_indicator_norm_sq, BooleanAnalysis.Hypercontractivity.product_stability_sq_eq_norm_noise_sq, BooleanAnalysis.Hypercontractivity.sharpDiscreteRadius}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p264-b001}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b001}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007,
+    pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sharpDiscreteRadius}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.signed_power_dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_holder}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteNorms.norm_le_of_pairing}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p114-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq_unit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002,
+    pdf-ffbe9c7b3306-p258-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005,
+    pdf-ffbe9c7b3306-p208-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.indicator}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.prob}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b006,
+    pdf-ffbe9c7b3306-p208-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.norm}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p208-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b005,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.noise}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p214-b005,
+    pdf-ffbe9c7b3306-p215-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.stability}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p214-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.mass_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p233-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_selfAdjoint}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p212-b002,
+    pdf-ffbe9c7b3306-p214-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.signed_product_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.component_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b005,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.noise_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p214-b005,
+    pdf-ffbe9c7b3306-p214-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteTensorization.pair_tensorization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteTensorization.norm_tensorization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_moment_sphere_compact}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.exists_nonnegative_noise_maximizer}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p248-b001,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_concave_level_two_values}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_homogeneity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.derivative_eq_mul_of_isLocalMax_quotient}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_normalization}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_directional_derivatives}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_stationarity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_two_values}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.symmetric_power_slope_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b006,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.convexOn_symmetric_sqrt_rpow}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b006,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.convexOn_biased_power}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b006,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.biased_power_tangent_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b006,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.tangent_at_bias}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b006,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.normalized_biased_quadratic_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b006,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.nonnegative_biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b006,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_pos_lt_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_eq_sinh}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_pos_lt_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.bias_coefficient_eq_radius_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.concaveOn_tanh_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.sinh_ratio_antitoneOn}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_mono_bias}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.sinh_scale_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_sq_le_balanced}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p256-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.signed_power_dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_identities}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005,
+    pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_duality}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b006,
+    pdf-ffbe9c7b3306-p248-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.weighted_biased_two_point_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.weighted_two_point_le_of_atom_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_mass_dichotomy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_contraction_of_unit_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_sharp_contraction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity_induction_gt_one}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b002,
+    pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rpow_norm_le_of_sq_moments}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finite_noise_quadratic_mono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b005,
+    pdf-ffbe9c7b3306-p056-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finite_coordinate_hypercontractivity_sharp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002,
+    pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_hypercontractivity_sharp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p007-b002,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.signed_intersection_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b004,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_component}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p216-b004,
+    pdf-ffbe9c7b3306-p218-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.RandomizationAux.component_noise}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p055-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_stability_sq_eq_norm_noise_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b005,
+    pdf-ffbe9c7b3306-p055-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.product_indicator_norm_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p029-b004}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ with every coordinate atom at least $0<\lambda<1/2$, and let $q>2$. Define $r_q(\lambda)=\sqrt{\frac{\sinh(\log((1-\lambda)/\lambda)/q)}{\sinh(\log((1-\lambda)/\lambda)/(q/(q-1)))}}$; if $0\le\rho\le r_q(\lambda)^2$, then $\operatorname{Stab}_\rho(\mathbf1_A)\le\Pr_P(A)^{2-2/q}$ for every event $A\subseteq\Omega$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\sum_{S\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\operatorname{Stab}_a(h)=\mathbb E_P[hT_a h]$; $\Pr_P(A)=\mathbb E_P\mathbf1_A$, where $\mathbf1_A$ is $1$ on $A$ and $0$ elsewhere. The powers indexed by subset cardinalities are natural powers, including $0^0=1$.
+Let $n\in\mathbb{N}$, let $P$ be a finite product probability space with $n$
+coordinates, and let $0<\lambda<1/2$. Suppose every coordinate atom has probability at
+least $\lambda$, and let $q>2$ and $\rho\ge 0$ satisfy $\rho\le r_q(\lambda)^2$, where
+$r_q(\lambda)=\sqrt{\sinh(u/q)/\sinh\bigl(u/(q/(q-1))\bigr)}$ and
+$u=\log((1-\lambda)/\lambda)$. Then for every event $A$ in the outcome space,
+$\operatorname{Stab}_\rho(\mathbf{1}_A)\le\Pr_P(A)^{2-2/q}$.
 \end{theorem}
 
 \begin{theorem}[Sharp product stable-influence estimate]
@@ -130,5 +3624,11 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.AtomBound, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.FiniteProduct.stableInfluence, BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_pos_lt_one, BooleanAnalysis.Hypercontractivity.product_hypercontractivity_sharp, BooleanAnalysis.Hypercontractivity.product_stableInfluence_le_of_norm_noise_laplacian_le, BooleanAnalysis.Hypercontractivity.sharpDiscreteRadius}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ with every coordinate atom at least $0<\lambda<1/2$, and let $q>2$. Define $r_q(\lambda)=\sqrt{\frac{\sinh(\log((1-\lambda)/\lambda)/q)}{\sinh(\log((1-\lambda)/\lambda)/(q/(q-1)))}}$; if $0\le\rho\le r_q(\lambda)^2$, then $\rho I_i^{(\rho)}(f)\le I_i(f)^{2-2/q}$ for every $f:\Omega\to\{-1,1\}$ and coordinate $i$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $I_i(h)=\mathbb E_P(h-E_{[n]\setminus\{i\}}h)^2$; $I_i^{(a)}(h)=\sum_{S\ni i}a^{|S|-1}\mathbb E_Ph_S^2$ for $a\in\mathbb R$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$.
+Let $n\in\mathbb{N}$, let $P$ be a finite product probability space with $n$
+coordinates, and let $\lambda,q,\rho\in\mathbb{R}$ satisfy $0<\lambda<1/2$, $q>2$, and
+$\rho\ge 0$. Suppose every coordinate atom has probability at least $\lambda$, and
+suppose $\rho\le r_q(\lambda)^2$, where
+$r_q(\lambda)=\sqrt{\sinh(u/q)/\sinh\bigl(u/(q/(q-1))\bigr)}$ and
+$u=\log((1-\lambda)/\lambda)$. For every function $f$ taking values in $\{-1,1\}$ and
+every coordinate $i$, $\rho I_i^{(\rho)}(f)\le I_i(f)^{2-2/q}$.
 \end{theorem}

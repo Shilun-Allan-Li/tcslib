@@ -1,0 +1,12 @@
+{
+ "lean_name": "Light.Stmt.width",
+ "key": "64480ca411343459",
+ "kind": "def",
+ "title": "Width of a statement",
+ "statement": "The width of a statement is defined recursively. It is $0$ for a skip; for an assignment it is the maximum of the assigned variable's index plus one and the expression width; for a store it is the maximum of the address and value expression widths; for a sequence it is the maximum of the two statement widths; for a conditional it is the maximum of the condition width and both branch widths; and for a loop it is the maximum of the condition and body widths. For a procedure call, it is the maximum of the destination variable's index plus one, the number of arguments, and the maximum width of the argument expressions (with maximum $0$ when there are no arguments).",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

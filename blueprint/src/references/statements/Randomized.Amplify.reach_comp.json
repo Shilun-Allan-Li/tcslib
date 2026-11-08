@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.Amplify.reach_comp",
+ "key": "9718759de1a561b5",
+ "kind": "theorem",
+ "title": "Reachability under composed runs",
+ "statement": "Let $N$ and $M$ be nondeterministic Turing machines with Boolean symbols and respectively $K$ and $K'$ work tapes, on a fixed Boolean input $x$, and let $\\phi$ map configurations of $N$ to configurations of $M$. Suppose that whenever a configuration $c$ of $N$ is not halted, one step of $M$ from $\\phi(c)$ under any choice bit equals $\\phi$ applied to the corresponding step of $N$. Let $P$ be a predicate on configurations of $M$. If $P$ holds at $\\phi(N\\text{'s run from }c\\text{ under }u)$ for every choice word $u$, and if after any such run that halts, $P$ continues to hold after every further choice word of $M$ from its mapped configuration, then $P$ holds at the configuration reached by running $M$ on any choice word $w$ from $\\phi(c)$.",
+ "hypotheses_covered": [
+  "$K,K'\\in\\mathbb{N}$; $N,M$ are Boolean-symbol nondeterministic Turing machines with those work-tape counts",
+  "$x$ is a Boolean input word",
+  "$\\phi$ maps configurations of $N$ to configurations of $M$",
+  "For every nonhalted $c$ and choice bit $b$, $M$ steps from $\\phi(c)$ to $\\phi(N\\text{'s step from }c)$",
+  "$P$ is a predicate on configurations of $M$",
+  "For every choice word $u$, $P$ holds at $\\phi(N\\text{'s run from }c\\text{ under }u)$",
+  "Whenever that run of $N$ is halted, $P$ holds after every further choice word of $M$ from its mapped configuration",
+  "$w$ is a choice word and $c$ is a configuration of $N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

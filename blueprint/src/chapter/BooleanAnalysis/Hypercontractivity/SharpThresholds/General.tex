@@ -5,51 +5,94 @@ Increasing symmetric Boolean functions and graph properties admit quantitative t
 
 \section{Declarations}
 
-\begin{theorem}[Narrow thresholds for transitive Boolean functions]
+\begin{theorem}[Sharp Threshold for Transitive Increasing Boolean Functions]
 \lean{BooleanAnalysis.Hypercontractivity.friedgut_kalai_sharp_threshold}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.IsIncreasing, BooleanAnalysis.Hypercontractivity.IsTransitiveSymmetric, BooleanAnalysis.Hypercontractivity.thresholdCurve}
-There exists an absolute $B>0$ such that for every $n\ge2$, nonconstant increasing transitively symmetric $f:\{0,1\}^n\to\{0,1\}$, $0<p_c\le1/2$ with $\Pr_{p_c}(f=1)=1/2$, and $0<\varepsilon<1/4$, the number $\eta=B\log(1/\varepsilon)\log(1/p_c)/\log n$ satisfies: if $\eta\le1/2$, then $\Pr_{p_c(1-\eta)}(f=1)\le\varepsilon$ and $\Pr_{p_c(1+\eta)}(f=1)\ge1-\varepsilon$.
+There is a constant $B>0$ such that for every $n\ge2$ and every increasing, transitively
+symmetric function $f:\{0,1\}^n\to\{0,1\}$ that is nonconstant, suppose
+$p_c,\varepsilon\in\mathbb R$ satisfy $0<p_c\le\tfrac12$, the biased probability that
+$f=1$ at $p_c$ is $\tfrac12$, and $0<\varepsilon<\tfrac14$. Set
+$\displaystyle\eta=B\frac{\log(1/\varepsilon)\log(1/p_c)}{\log n}$. If
+$\eta\le\tfrac12$, then the biased probability that $f=1$ at $p_c(1-\eta)$ is at most
+$\varepsilon$, and at $p_c(1+\eta)$ it is at least $1-\varepsilon$.
 \end{theorem}
 
-\begin{theorem}[Graph sharp-threshold approximation]
+\begin{theorem}[Graph Sharp-Threshold Approximation by Monotone DNF]
 \lean{BooleanAnalysis.Hypercontractivity.friedgut_graph_sharp_threshold}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.GraphEdge, BooleanAnalysis.Hypercontractivity.IsGraphProperty, BooleanAnalysis.Hypercontractivity.IsIncreasing, BooleanAnalysis.Hypercontractivity.IsMonotoneDNF, BooleanAnalysis.Hypercontractivity.biasedProbability, BooleanAnalysis.Hypercontractivity.biasedTotalInfluence, DNF, DNF.eval, DNF.width}
-There exists $w:\mathbb R\times\mathbb R\to\mathbb N$ such that whenever the $n$ variables bijectively index the edges of a labeled simple graph on $v$ vertices, $f:\{0,1\}^n\to\{0,1\}$ is an increasing graph property, $0<p\le1/2$, $K>0$, $0<\varepsilon<1$, and $I_p(f)\le K$, there is a monotone DNF $d$ of width at most $w(K,\varepsilon)$ with $\Pr_p(f\ne d)\le\varepsilon$. Here $I_p(f)=4p(1-p)$ times the sum of pivotal probabilities.
+There is a function $w:\mathbb R\times\mathbb R\to\mathbb N$ with the following
+property. For all $v,n\in\mathbb N$, every bijection from the $n$ coordinates to the
+two-element subsets of a labeled $v$-vertex set, and every increasing Boolean graph
+property $f:\{0,1\}^n\to\{0,1\}$ invariant under permutations of the vertices, let
+$p,K,\varepsilon\in\mathbb R$ satisfy $0<p\le\tfrac12$, $K>0$, and $0<\varepsilon<1$. If
+the biased total influence of $f$ at parameter $p$ is at most $K$, then there is a
+monotone DNF formula $d$ of width at most $w(K,\varepsilon)$ whose probability of
+disagreement with $f$ under the Bernoulli-$p$ product weights is at most $\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Bourgain booster theorem]
 \lean{BooleanAnalysis.Hypercontractivity.bourgain_sharp_threshold}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.prob, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.FiniteProduct.variance, BooleanAnalysis.Hypercontractivity.IsBooster}
-There are absolute $C,D>0$ such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, every $f:\Omega\to\{-1,1\}$, and every real $K$ satisfying $I(f)\le K$ and $\operatorname{Var}_P(f)\ge1/100$, there exists $\tau\in\mathbb R$ with $e^{-CK^2}\le|\tau|\le\Pr_P(\exists T\subseteq[n],\ |T|\le DK:\ (T,x)\text{ is a }\tau\text{-booster})$. A $\tau$-booster has $E_Tf(x)\ge\mathbb E_Pf+\tau$ for $\tau>0$, or $E_Tf(x)\le\mathbb E_Pf+\tau$ for $\tau<0$.
+There exist positive real constants $C,D$ such that, for every natural number $n$, every
+product $P$ of $n$ finite probability spaces with strictly positive atom masses, every
+real-valued function $f$ taking only the values $-1$ and $1$, and every real $K$ with
+$I(f)\leq K$ and $1/100\leq\operatorname{Var}_P(f)$, there is a real number $\tau$ such
+that $e^{-CK^2}\leq|\tau|$ and $|\tau|$ is at most the probability of the event that an
+outcome $x$ admits a set of coordinates $T$ with $|T|\leq DK$ for which either $\tau>0$
+and $\mathbb E_P f+\tau\leq E_Tf(x)$, or $\tau<0$ and $E_Tf(x)\leq\mathbb E_P f+\tau$.
 \end{theorem}
 
 \begin{theorem}[Hatami pseudo-junta approximation]
 \lean{BooleanAnalysis.Hypercontractivity.hatami_pseudo_junta}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.prob, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.IsPseudoJunta}
-There is an absolute $C>0$ such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, every $f:\Omega\to\{-1,1\}$, $K\ge0$ with $I(f)\le K$, and $\varepsilon>0$, there is $h:\Omega\to\{-1,1\}$ with $\Pr_P(f\ne h)\le\varepsilon$ that is determined by locally triggered coordinate observations exposing at most $\exp(CK^3/\varepsilon^3)$ coordinates in expectation.
+There is a constant $C>0$ such that, for every $n\in\mathbb N$, every product $P$ of $n$
+finite probability spaces with strictly positive atom masses, every Boolean-valued
+function $f$ on its outcome space, and all $K,\varepsilon\in\mathbb R$ with $K\ge0$,
+total influence $I(f)\le K$, and $\varepsilon>0$, there is a Boolean-valued function $h$
+on the same space that is a $\exp(CK^3/\varepsilon^3)$-pseudo-junta and satisfies
+$\Pr_P(f\ne h)\le\varepsilon$.
 \end{theorem}
 
 \begin{theorem}[Influence of Boolean pseudo-juntas]
 \lean{BooleanAnalysis.Hypercontractivity.pseudo_junta_totalInfluence_le}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.IsPseudoJunta}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $h:\Omega\to\{-1,1\}$, and $K\in\mathbb R$. If $h$ is determined by locally triggered coordinate observations whose expected exposed size is at most $K$, with each trigger depending only on its declared coordinate set, then $I(h)\le4K$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, and let $h$ take values in $\\{-1,1\}$ on its outcome space. If $h$ is a
+$K$-pseudo-junta, meaning its expected number of exposed coordinates is at most $K$,
+then its total influence satisfies $I(h)\le 4K$.
 \end{theorem}
 
 \begin{theorem}[Bourgain notable-coordinate structure]
 \lean{BooleanAnalysis.Hypercontractivity.bourgain_notable_coordinates}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.notableFamily}
-There are absolute $C,D>0$ such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, every $f:\Omega\to\{-1,1\}$, and $0<\varepsilon<1/2$, putting $k=I(f)/\varepsilon$, there exist sets $J(x)\subseteq[n]$ satisfying $|J(x)|\le e^{Ck}$ and $|\{S\subseteq J(x):|S|\le k\}|\le e^{Dk^2}$ for every $x$, and $\mathbb E_P\sum_{S\notin\{T\subseteq J(x):|T|\le k\}}f_S(x)^2\le2\varepsilon$.
+There exist positive real constants $C,D$ such that, for every natural number $n$, every
+product $P$ of $n$ finite probability spaces with strictly positive atom masses, every
+real-valued function $f$ taking only the values $-1$ and $1$, and every $\varepsilon$
+with $0<\varepsilon<1/2$, define $k=I(f)/\varepsilon$, where $I(f)$ is the total
+influence. There is a choice of a set of coordinates $J(x)$ for each outcome $x$ such
+that, for every $x$, $|J(x)|\leq e^{Ck}$ and the number of subsets $S\subseteq J(x)$
+with $|S|\leq k$ is at most $e^{Dk^2}$; moreover, the expectation of the sum of squared
+components $f_S(x)^2$ over all subsets $S\subseteq[n]$ not in that family is at most
+$2\varepsilon$.
 \end{theorem}
 
-\begin{theorem}[Nonnotable randomized Laplacian estimate]
+\begin{theorem}[Randomized Laplacian estimate off notable coordinates]
 \lean{BooleanAnalysis.Hypercontractivity.nonnotable_randomized_laplacian}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise, BooleanAnalysis.Hypercontractivity.cubeLpNorm, BooleanAnalysis.Hypercontractivity.notableCoordinates, BooleanAnalysis.Hypercontractivity.randomization, BooleanAnalysis.noiseOp}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $f:\Omega\to\mathbb R$, $x\in\Omega$, a coordinate $i$, and $\tau>0$. If $\sum_{S\ni i}f_S(x)^2<\tau$, put $g=T_{2/5}L_if$ and $h(r)=\sum_S\chi_S(r)g_S(x)$; then on the uniform sign cube $\|T_{1/\sqrt3}h\|_2^2\le\tau^{1/3}\|h\|_{4/3}^{4/3}$.
+Let $n$ be a nonnegative integer, let $P$ be a product of $n$ finite probability spaces
+whose coordinate atom weights are strictly positive and sum to one, and let
+$\Omega=\prod_{j=0}^{n-1}\Omega_j$ be its outcome space. For $f\colon\Omega\to\mathbb
+R$, $x\in\Omega$, a coordinate $i$, and $\tau>0$, suppose $i$ is not notable at $x$,
+meaning $\tau>\sum_{S\ni i}f_S(x)^2$, where $f_S$ is the $S$-component of $f$. Set
+$g=T_{2/5}L_i f$ and $h(r)=\sum_S\chi_S(r)g_S(x)$ for $r\in\{0,1\}^n$, using the product
+spectral noise and components and the Walsh characters on the Boolean cube. Then, with
+cube power means taken under the uniform measure,
+$\|T_{1/\sqrt3}h\|_2^2\le\tau^{1/3}\|h\|_{4/3}^{4/3}$.
 \end{theorem}

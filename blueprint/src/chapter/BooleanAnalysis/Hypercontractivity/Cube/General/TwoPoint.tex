@@ -82,6 +82,10 @@ x^r \ge 1 + r\,(x - 1).
 \lean{BooleanAnalysis.Hypercontractivity.two_point_ineq_general_unit}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.integrated_h_alpha_ineq, BooleanAnalysis.Hypercontractivity.rpow_ge_one_add_mul_sub}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p247-b002,
+  pdf-ffbe9c7b3306-p258-b003
+}
 \difficulty{4}
 \label{BooleanAnalysis.Hypercontractivity.two_point_ineq_general_unit}
 \statementsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p001-b002}
@@ -101,6 +105,11 @@ Set $\rho=\sqrt{(p-1)/(q-1)}$ when $q>1$ and $\rho=0$ when $q=1$. Then
 \lean{BooleanAnalysis.Hypercontractivity.low_norms_one_bit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.expect_abs_rpow_one_bit, BooleanAnalysis.Hypercontractivity.two_point_ineq_general_unit, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p258-b002,
+  pdf-ffbe9c7b3306-p259-b004,
+  pdf-ffbe9c7b3306-p259-b006
+}
 \difficulty{7}
 \label{BooleanAnalysis.Hypercontractivity.low_norms_one_bit}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
@@ -116,5 +125,8 @@ uniform measure and $T_\rho$ the noise operator,
 \[
 \bigl(\E\bigl[\,\abs{T_\rho f}^q\,\bigr]\bigr)^{1/q} \;\le\;
 \bigl(\E\bigl[\,\abs{f}^p\,\bigr]\bigr)^{1/p}.
-\] For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+\] For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise
+operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{theorem}

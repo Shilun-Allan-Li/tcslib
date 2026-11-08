@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clRepeat_call",
+ "key": "6ec7af2c5034cb8f",
+ "kind": "lemma",
+ "title": "One relocated clean call",
+ "statement": "Let $C$ be a finite Turing machine with states entry and exit, let $x,s,s'$ be Boolean words, and let $N,j,t$ be natural numbers with $t>0$. Suppose the run of $C$ from the seam configuration on input $x$, in state entry with state word $s$, is never in state exit at any time $r$ with $0<r<t$, and after exactly $t$ steps equals the seam configuration in state exit with state word $s'$. Then the repetition controller, started in its begin state with state word $s$, unary clock of length $N$ at cursor $j$, and empty output, reaches after exactly $t$ steps the configuration in the lifted exit state with state word $s'$, retaining the same clock and cursor.",
+ "hypotheses_covered": [
+  "A finite Turing machine $C$ and states entry and exit",
+  "Boolean words $x,s,s'$",
+  "Natural numbers $N,j,t$",
+  "$0<t$",
+  "At each $r$ with $0<r<t$, the source run is not in state exit",
+  "After $t$ steps, the source run equals the specified exit seam configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a clean call runs from the entry over a state word to its exit over a new state word in a strictly positive time $t$, never showing the exit control strictly before $t$. Then the repetition controller, started in its begin phase over the same bank, reaches in exactly $t$ steps the seam at the exit control with the new state word; the first source action is executed before any return test, so an entry equal to the exit is handled, and the unary clock is preserved."
+}

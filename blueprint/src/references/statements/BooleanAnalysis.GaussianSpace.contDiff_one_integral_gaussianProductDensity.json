@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.contDiff_one_integral_gaussianProductDensity",
+ "key": "c329f133ee46d0cb",
+ "kind": "lemma",
+ "title": "Differentiability of product Gaussian averages",
+ "statement": "Let $I$ be a finite set, and let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\le 1$ for every $z\\in\\mathbb R^I$. For every variance $v>0$, the function $m\\mapsto\\int_{\\mathbb R^I}\\left(\\prod_{i\\in I}p_v(m_i,z_i)\\right)f(z)\\,dz$ is continuously differentiable, where $p_v(c,z)$ is the density at $z$ of the Gaussian distribution with mean $c$ and variance $v$, and the integral is with respect to Lebesgue measure.",
+ "hypotheses_covered": [
+  "The index set $I$ is finite.",
+  "$f$ is measurable.",
+  "$|f(z)|\\le 1$ for every $z\\in\\mathbb R^I$.",
+  "The variance $v$ is nonzero (equivalently, $v>0$)."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$, the map $m\\mapsto\\int_{\\mathbb R^I}G_v(m,z)f(z)\\,dz$ is continuously differentiable."
+}

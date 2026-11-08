@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.loop_halted_run",
+ "key": "991c1d11173ae8a1",
+ "kind": "lemma",
+ "title": "Bounded computation of a Boolean disjunction",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c_j$ be a configuration on a common input for each $0\\le j\\le N$, and let $a$ be a Boolean-valued function on the natural numbers. Suppose $c_N$ is halted with output the one-bit word $[\\mathrm{false}]$. For every $j<N$, assume there is a time $t\\le B$ such that, if $a(j)$ is true, the run from $c_j$ is halted at time $t$ with output $[\\mathrm{true}]$; if $a(j)$ is false, the run from $c_j$ at time $t$ equals $c_{j+1}$. Then there is a time $t\\le NB$ at which the run from $c_0$ is halted and has output the one-bit word whose value is true exactly when $a(j)$ is true for some $j<N$.",
+ "hypotheses_covered": [
+  "M is a multi-tape Turing machine over the Boolean alphabet",
+  "The configurations c_j are indexed by natural numbers and share a common input",
+  "a maps natural numbers to Booleans",
+  "N and B are natural numbers",
+  "c_N is halted with output [false]",
+  "For every j<N, some t≤B satisfies the specified conditional run outcome"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c_0, \\dots, c_N$\nbe configurations of $M$ on a common input with $c_N$ halted with output the single bit\n$\\mathrm{false}$, and let $a$ be a Boolean predicate on round indices. Assume for each\n$j < N$ that within $B$ steps the machine either halts from $c_j$ with output the single\nbit $\\mathrm{true}$ (when $a(j)$ holds) or reaches $c_{j+1}$ (when $a(j)$ fails). Then\nfrom $c_0$ the machine halts within $N \\cdot B$ steps with output the single bit\nrecording whether $a(j)$ holds for some $j < N$."
+}

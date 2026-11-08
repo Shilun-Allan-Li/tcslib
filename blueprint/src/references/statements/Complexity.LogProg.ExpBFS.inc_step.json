@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.inc_step",
+ "key": "b29fcd4c70bb5c2f",
+ "kind": "lemma",
+ "title": "Reachability Before an Increment",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}$ be an oracle on four indices and Boolean strings, and let $x$ be a Boolean string. Suppose an instruction at label $l$ increments register $r$ and continues at $l'$. Let $S$ be a machine state, $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ a memory, $p\\in\\mathbb Z$, and $c$ a configuration. If every coordinate of $S$ is at most $B$, $0\\le p\\le P$, and there is a run from label $l'$ with state $S$ updated by increasing register $r$ by one, empty result, memory $M$, and head at $p$ to $c$, satisfying $G(x,B,P)$ at every earlier step, then there is such a run from label $l$ with the original state $S$, memory $M$, and head at $p$ to $c$, again satisfying $G(x,B,P)$ at every earlier step.",
+ "hypotheses_covered": [
+  "the instruction at $l$ is an increment of register $r$ to label $l'$",
+  "every coordinate of $S$ is at most $B$",
+  "$0\\le p\\le P$",
+  "the stated run from the incremented configuration to $c$ satisfies $G(x,B,P)$ at every earlier step"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P\\in\\mathbb N$, let $x$ be a bit string, and let $M:\\mathbb\nZ\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Suppose the program instruction at label $l$\nincrements register $r$ and continues at label $l'$. If every register value in state\n$S$ is at most $B$, and $0\\le p\\le P$, then any configuration reachable from the\nconfiguration at $l'$ with register $r$ increased by one, empty answer, memory $M$, and\nhead at $p$, while satisfying $G(x,B,P)$ at every earlier step, is also reachable from\nthe configuration at $l$ with the original register values and the same memory and head,\nwhile satisfying that invariant at every earlier step."
+}

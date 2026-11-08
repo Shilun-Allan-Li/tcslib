@@ -1,17 +1,16 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceInfoTerm_le_fixedAliceFullYInfoTerm",
- "key": "e2a81b60e81c3f77",
+ "key": "18ea04038c684753",
  "kind": "theorem",
- "title": "Fixed-coordinate conditioning inequality for Alice's information term",
- "statement": "Fix a positive integer $n$, a deterministic communication protocol $p$ for disjointness inputs on the coordinate set $\\{0,\\dots,n-1\\}$, and a coordinate $i$. Draw a hard sample and condition on the event that the induced input sets $X$ and $Y$ are disjoint; under this conditioned distribution let $X_i$ denote Alice's bit at coordinate $i$, let $M$ denote the transcript produced by executing $p$ on the induced input pair, let $X_{<i}$ denote Alice's bits at the coordinates below $i$, let $Y_{\\ge i}$ denote Bob's bits at the coordinates at least $i$, and let $Y$ denote Bob's full bit vector. Then the conditional mutual information between $X_i$ and $M$, given the partial pair $(X_{<i}, Y_{\\ge i})$, is at most the conditional mutual information given the fuller pair $(X_{<i}, Y)$:\n\\[\nI\\!\\left(X_i : M \\mid X_{<i},\\, Y_{\\ge i}\\right) \\;\\le\\; I\\!\\left(X_i : M \\mid X_{<i},\\, Y\\right).\n\\]",
+ "title": "Information under fuller conditioning",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on inputs of length $n$, and let $i$ be a coordinate in $\\{0,\\ldots,n-1\\}$. Under the hard distribution conditioned on the generated input sets being disjoint, the mutual information between Alice's bit at $i$ and the transcript, conditioned on Alice's bits strictly before $i$ and Bob's bits at and after $i$, is at most the mutual information between the same bit and transcript conditioned on Alice's bits strictly before $i$ and Bob's full input vector.",
  "hypotheses_covered": [
-  "n a positive integer",
-  "p a deterministic disjointness protocol on Fin n",
-  "i a coordinate in Fin n",
-  "information measured under the hard distribution conditioned on the input sets being disjoint"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol for disjointness on inputs of length $n$",
+  "$i$ is a coordinate in $\\{0,\\ldots,n-1\\}$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Fixed-coordinate chain-rule inequality: $I(X_{i} : M | X_{<i},Y_{≥i}) ≤ I(X_{i} : M | X_{<i},Y)$."
+ "replaced": "\nFix a positive integer $n$, a deterministic communication protocol $p$ for disjointness\ninputs on the coordinate set $\\{0,\\dots,n-1\\}$, and a coordinate $i$. Draw a hard sample\nand condition on the event that the induced input sets $X$ and $Y$ are disjoint; under\nthis conditioned distribution let $X_i$ denote Alice's bit at coordinate $i$, let $M$\ndenote the transcript produced by executing $p$ on the induced input pair, let $X_{<i}$\ndenote Alice's bits at the coordinates below $i$, let $Y_{\\ge i}$ denote Bob's bits at\nthe coordinates at least $i$, and let $Y$ denote Bob's full bit vector. Then the\nconditional mutual information between $X_i$ and $M$, given the partial pair $(X_{<i},\nY_{\\ge i})$, is at most the conditional mutual information given the fuller pair\n$(X_{<i}, Y)$:\n\\[\nI\\!\\left(X_i : M \\mid X_{<i},\\, Y_{\\ge i}\\right) \\;\\le\\; I\\!\\left(X_i : M \\mid X_{<i},\\,\nY\\right).\n\\]"
 }

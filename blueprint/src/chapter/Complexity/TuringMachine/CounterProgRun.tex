@@ -40,85 +40,82 @@ registers $\rho'$, $p'$ input symbols read and output $o\,e$.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.run_add}
 \difficulty{3}
-Let $P$ be a counter program on a binary input $x$, let $\ell, \ell'$ be labels,
-$\ell''$ a label or the halted state, $\rho, \rho', \rho''$ register vectors and
-$p, p', p''$ input positions.  Suppose that from label $\ell$ with registers
-$\rho$ and $p$ symbols read, $P$ reaches label $\ell'$ with registers $\rho'$ and
-$p'$ symbols read within $b$ steps while appending $e$ to whatever output was
-printed before, and that from $(\ell', \rho', p')$ it reaches $(\ell'', \rho'',
-p'')$ within $b'$ steps while appending $e'$.  Then from $(\ell, \rho, p)$ it
-reaches $(\ell'', \rho'', p'')$ within $b + b'$ steps while appending the
-concatenation $e\,e'$.
+Let $P$ be a counter program with $R$ natural-number registers and labels in $\Lambda$,
+run on a binary input $x$. Suppose that every output word $o$ admits a run of at most
+$b$ steps from $\ell,\rho,p,o$ to $[0m\ell',\rho',p'$ with output $o$ followed by $e$,
+and that every output word admits a run of at most $b'$ steps from $\ell',\rho',p'$ to
+$\ell''$ (a label or halt), $\rho''$, and $p''$, appending $e'$. Then every $o$ admits a
+run of at most $b+b'$ steps from $\ell,\rho,p,o$ to $\ell'',\rho'',p''$, with output $o$
+followed by the concatenation $e$ and $e'$.
 \end{theorem}
 
-\begin{theorem}[Weakening the step bound of a run]
+\begin{theorem}[Monotonicity of the run bound]
 \lean{Complexity.CounterProg.Goes.mono}
 \label{Complexity.CounterProg.Goes.mono}
 \leanok
 \uses{Complexity.CounterProg.Goes}
 \difficulty{2}
-Let $P$ be a counter program on a binary input $x$ and let $b \le b'$.  If from
-label $\ell$ with registers $\rho$ and $p$ input symbols read, $P$ reaches
-$\ell'$ (a label or the halted state) with registers $\rho'$ and $p'$ symbols
-read within $b$ steps while appending $e$ to its output, then it does so within
-$b'$ steps as well.
+Let $P$ be a counter program with $R$ natural-number registers and labels in $\Lambda$,
+run on a binary input $x$. If for every output word $o$ some run of at most $b$ steps
+from label $\ell$, register assignment $\rho$, and input position $p$ reaches $\ell'$,
+$\rho'$, and $p'$ while appending $e$, and $b\le b'$, then the same endpoints and output
+extension are reachable within $b'$ steps for every $o$.
 \end{theorem}
 
-\begin{theorem}[Rewriting the endpoints of a run]
+\begin{theorem}[Changing run endpoints]
 \lean{Complexity.CounterProg.Goes.congr}
 \label{Complexity.CounterProg.Goes.congr}
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.Goes.mono}
 \difficulty{2}
-Let $P$ be a counter program on a binary input $x$.  Suppose that from label
-$\ell$ with registers $\rho$ and $p$ input symbols read, $P$ reaches $\ell'$ (a
-label or the halted state) with registers $\rho'$ and $p'$ symbols read within
-$b$ steps while appending $e$ to its output, and that $\rho = \sigma$,
-$\rho' = \sigma'$, $p = q$, $p' = q'$, $e = e'$ and $b \le b'$.  Then from label
-$\ell$ with registers $\sigma$ and $q$ symbols read, $P$ reaches $\ell'$ with
-registers $\sigma'$ and $q'$ symbols read within $b'$ steps while appending
-$e'$.
+Let $P$ be a counter program with $R$ natural-number registers and labels in $\Lambda$,
+run on a binary input $x$. Suppose that for every output word $o$, some run of at most
+$b$ steps from label $\ell$, register assignment $\rho$, input position $p$, and output
+$o$ reaches label-or-halt state $\ell'$, assignment $\rho'$, position $p'$, and output
+$o$ followed by $e$. If $\rho=\sigma$, $\rho'=\sigma'$, $p=q$, $p'=q'$, $e=e'$, and
+$b\le b'$, then for every $o$ some run of at most $b'$ steps from $\ell,\sigma,q,o$
+reaches $\ell',\sigma',q'$ with output $o$ followed by $e'$.
 \end{theorem}
 
-\begin{theorem}[A single step is a run of length one]
+\begin{theorem}[A one-step transition gives a bounded run]
 \lean{Complexity.CounterProg.goes_of_step}
 \label{Complexity.CounterProg.goes_of_step}
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, let $\ell$ be a label,
-$\ell'$ a label or the halted state, $\rho, \rho'$ register vectors, $p, p'$
-input positions and $e$ a bit string.  If for every output $o$ one step of $P$
-on $x$ maps the state with label $\ell$, registers $\rho$, $p$ symbols read and
-output $o$ to the state with label $\ell'$, registers $\rho'$, $p'$ symbols read
-and output $o\,e$, then from $(\ell, \rho, p)$ the program reaches
-$(\ell', \rho', p')$ within one step while appending $e$ to its output.
+Let $P$ be a counter program on a binary input $x$, with initial label $\ell$, register
+assignment $\rho$, and input position $p$, and target label-or-halted-state $q$,
+register assignment $\rho'$, input position $p'$, and output string $e$. Suppose that
+for every output string $o$, one step from the state with label $\ell$, registers
+$\rho$, input position $p$, and output $o$ yields the state with label-or-halted-state
+$q$, registers $\rho'$, input position $p'$, and output $o$ followed by $e$. Then from
+that initial state the program reaches the specified target state within at most one
+step, appending $e$ to every initial output string.
 \end{theorem}
 
-\begin{theorem}[Run rule for the halt instruction]
+\begin{theorem}[Run rule for a halt instruction]
 \lean{Complexity.CounterProg.goes_halt}
 \label{Complexity.CounterProg.goes_halt}
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$ and $\ell$ a label whose
-instruction is $\mathsf{halt}$.  Then for all registers $\rho$ and input
-positions $p$, from label $\ell$ with registers $\rho$ and $p$ symbols read the
-program reaches the halted state, with registers still $\rho$ and still $p$
-symbols read, within one step and without printing anything.
+Let $P$ be a counter program on a binary input $x$, and let $\rho$ be a register
+assignment, $p$ an input position, and $\ell\in\Lambda$ a label. If the instruction at
+$\ell$ is to halt, then for every output string $o$, the program reaches the halted
+state with registers $\rho$, input position $p$, and output $o$ within at most one step.
 \end{theorem}
 
-\begin{theorem}[Run rule for the goto instruction]
+\begin{theorem}[Run rule for a goto instruction]
 \lean{Complexity.CounterProg.goes_goto}
 \label{Complexity.CounterProg.goes_goto}
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$ and $\ell$ a label whose
-instruction is $\mathsf{goto}\ \ell'$.  Then for all registers $\rho$ and input
-positions $p$, from label $\ell$ with registers $\rho$ and $p$ symbols read the
-program reaches label $\ell'$ with registers $\rho$ and $p$ symbols read within
-one step, without printing anything.
+Let $P$ be a counter program on a binary input $x$, and let $ho$ be a register
+assignment, $p$ an input position, and $\ell,\ell'\in\Lambda$ labels. If the
+instruction at $\ell$ is to jump to $\ell'$, then for every output string $o$, the
+program reaches label $\ell'$ with registers $\rho$, input position $p$, and output $o$
+within at most one step.
 \end{theorem}
 
 \begin{theorem}[Run rule for printing a bit]
@@ -127,12 +124,11 @@ one step, without printing anything.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$ and $\ell$ a label whose
-instruction is $\mathsf{out}(b, \ell')$, ``print the bit $b$, then go to
-$\ell'$''.  Then for all registers $\rho$ and input positions $p$, from label
-$\ell$ with registers $\rho$ and $p$ symbols read the program reaches label
-$\ell'$ with registers $\rho$ and $p$ symbols read within one step, appending the
-single bit $b$ to its output.
+Let $P$ be a counter program on a binary input $x$, with label $\ell$, destination label
+$\ell'$, bit $b$, register assignment $\rho$, and input position $p$. If the instruction
+at $\ell$ prints $b$ and then goes to $\ell'$, then for every output string $o$, within
+at most one step the program reaches $\ell'$ with registers $\rho$, input position $p$,
+and output $o$ followed by $b$.
 \end{theorem}
 
 \begin{theorem}[Run rule for incrementing a register]
@@ -141,26 +137,27 @@ single bit $b$ to its output.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, $r$ a register and $\ell$ a
-label whose instruction is $\mathsf{inc}(r, \ell')$.  Then for all registers
-$\rho$ and input positions $p$, from label $\ell$ with registers $\rho$ and $p$
-symbols read the program reaches label $\ell'$ within one step, printing
-nothing, with $p$ symbols read and registers $\rho$ except that register $r$ now
-holds $\rho(r) + 1$.
+Let $P$ be a counter program on a binary input $x$, with label $\ell$, destination label
+$\ell'$, register $r$, register assignment $\rho$, and input position $p$. If the
+instruction at $\ell$ increments register $r$ and then goes to $\ell'$, then for every
+output string $o$, within at most one step the program reaches $\ell'$ with input
+position $p$, output $o$, and registers equal to $\rho$ except that register $r$ has
+value $\rho(r)+1$.
 \end{theorem}
 
-\begin{theorem}[Run rule for decrementing a register]
+\begin{theorem}[One-step decrement behavior]
 \lean{Complexity.CounterProg.goes_dec}
 \label{Complexity.CounterProg.goes_dec}
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, $r$ a register and $\ell$ a
-label whose instruction is $\mathsf{dec}(r, \ell')$.  Then for all registers
-$\rho$ and input positions $p$, from label $\ell$ with registers $\rho$ and $p$
-symbols read the program reaches label $\ell'$ within one step, printing
-nothing, with $p$ symbols read and registers $\rho$ except that register $r$ now
-holds $\max(\rho(r) - 1, 0)$.
+Let $P$ be a counter program on input $x$, let $\ell,\ell'$ be labels, let $\rho$ be
+register values, and let $p$ be the input read position. If the instruction at $\ell$ is
+to decrement register $r$ and continue at $\ell'$, then for every current output string
+$o$ there is a run of at most one step from label $\ell$, registers $\rho$, read
+position $p$, and output $o$ to label $\ell'$, with register $r$ decreased by one with
+zero truncated at zero, all other registers unchanged, the same read position, and
+output still $o$.
 \end{theorem}
 
 \begin{theorem}[Zero test on a zero register]
@@ -169,12 +166,12 @@ holds $\max(\rho(r) - 1, 0)$.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, $r$ a register and $\ell$ a
-label whose instruction is $\mathsf{jz}(r, \ell_0, \ell_1)$, ``go to $\ell_0$ if
-register $r$ is zero, else to $\ell_1$''.  If the registers $\rho$ satisfy
-$\rho(r) = 0$, then for every input position $p$, from label $\ell$ with
-registers $\rho$ and $p$ symbols read the program reaches label $\ell_0$ with
-registers $\rho$ and $p$ symbols read within one step, printing nothing.
+Let $P$ be a counter program on a binary input $x$, with label $\ell$, register $r$,
+labels $\ell_0,\ell_1$, register assignment $\rho$, and input position $p$. Suppose the
+instruction at $\ell$ branches to $\ell_0$ when register $r$ is zero and to $\ell_1$
+otherwise, and suppose $\rho(r)=0$. Then for every output string $o$, within at most one
+step the program reaches $\ell_0$ with registers $\rho$, input position $p$, and output
+$o$.
 \end{theorem}
 
 \begin{theorem}[Zero test on a nonzero register]
@@ -183,27 +180,25 @@ registers $\rho$ and $p$ symbols read within one step, printing nothing.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, $r$ a register and $\ell$ a
-label whose instruction is $\mathsf{jz}(r, \ell_0, \ell_1)$, ``go to $\ell_0$ if
-register $r$ is zero, else to $\ell_1$''.  If the registers $\rho$ satisfy
-$\rho(r) \ne 0$, then for every input position $p$, from label $\ell$ with
-registers $\rho$ and $p$ symbols read the program reaches label $\ell_1$ with
-registers $\rho$ and $p$ symbols read within one step, printing nothing.
+Let $P$ be a counter program on a binary input $x$, with label $\ell$, register $r$,
+labels $\ell_0,\ell_1$, register assignment $\rho$, and input position $p$. Suppose the
+instruction at $\ell$ branches to $\ell_0$ when register $r$ is zero and to $\ell_1$
+otherwise, and suppose $\rho(r)\ne 0$. Then for every output string $o$, within at most
+one step the program reaches $\ell_1$ with registers $\rho$, input position $p$, and
+output $o$.
 \end{theorem}
 
-\begin{theorem}[Run rule for printing a register in unary]
+\begin{theorem}[Unary register printing in one step]
 \lean{Complexity.CounterProg.goes_pr}
 \label{Complexity.CounterProg.goes_pr}
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$, $r$ a register and $\ell$ a
-label whose instruction is $\mathsf{pr}(r, \ell')$, ``print the value of
-register $r$ in unary, then go to $\ell'$''.  Then for all registers $\rho$ and
-input positions $p$, from label $\ell$ with registers $\rho$ and $p$ symbols read
-the program reaches label $\ell'$ with registers $\rho$ and $p$ symbols read
-within one step, appending the string $1^{\rho(r)}$ of $\rho(r)$ ones to its
-output.
+Let $P$ be a counter program on a binary input $x$, with registers $ho$ and labels
+$Lambda$. If the instruction at label $ell$ prints register $r$ in unary and then goes
+to $ell'$, then from any output string $o$, the program reaches label $ell'$ within
+one step, with registers and input position unchanged and with $1^{rho(r)}$ appended to
+the output.
 \end{theorem}
 
 \begin{theorem}[Reading at the end of the input]
@@ -212,13 +207,10 @@ output.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$ and $\ell$ a label whose
-instruction is $\mathsf{rd}(\ell_e, \ell_0, \ell_1)$, ``read the next input
-symbol and go to $\ell_e$, $\ell_0$ or $\ell_1$ according as the input has ended,
-the symbol is $0$, or it is $1$''.  If $x$ has no symbol at (zero-based) position
-$p$, i.e.\ $p \ge |x|$, then for all registers $\rho$, from label $\ell$ with
-registers $\rho$ and $p$ symbols read the program reaches label $\ell_e$ with
-registers $\rho$ and still $p$ symbols read within one step, printing nothing.
+Let $P$ be a counter program on a binary input $x$, with registers $rho$ and labels
+$Lambda$. If the instruction at label $ell$ reads the next input bit and the input has
+no bit at position $p$, then from any output string $o$, the program reaches label
+$ell_e$ within one step, leaving the registers, input position, and output unchanged.
 \end{theorem}
 
 \begin{theorem}[Reading a zero from the input]
@@ -227,13 +219,11 @@ registers $\rho$ and still $p$ symbols read within one step, printing nothing.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$ and $\ell$ a label whose
-instruction is $\mathsf{rd}(\ell_e, \ell_0, \ell_1)$, ``read the next input
-symbol and go to $\ell_e$, $\ell_0$ or $\ell_1$ according as the input has ended,
-the symbol is $0$, or it is $1$''.  If the symbol of $x$ at (zero-based) position
-$p$ is $0$, then for all registers $\rho$, from label $\ell$ with registers
-$\rho$ and $p$ symbols read the program reaches label $\ell_0$ with registers
-$\rho$ and $p + 1$ symbols read within one step, printing nothing.
+Let $P$ be a counter program on a binary input $x$, with registers $rho$ and labels
+$Lambda$. If the instruction at label $ell$ reads the next input bit and the bit at
+position $p$ is $0$, then from any output string $o$, the program reaches label $ell_f$
+within one step, leaves the registers unchanged, advances the input position to $p+1$,
+and leaves the output unchanged.
 \end{theorem}
 
 \begin{theorem}[Reading a one from the input]
@@ -242,34 +232,32 @@ $\rho$ and $p + 1$ symbols read within one step, printing nothing.
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.goes_of_step, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program on a binary input $x$ and $\ell$ a label whose
-instruction is $\mathsf{rd}(\ell_e, \ell_0, \ell_1)$, ``read the next input
-symbol and go to $\ell_e$, $\ell_0$ or $\ell_1$ according as the input has ended,
-the symbol is $0$, or it is $1$''.  If the symbol of $x$ at (zero-based) position
-$p$ is $1$, then for all registers $\rho$, from label $\ell$ with registers
-$\rho$ and $p$ symbols read the program reaches label $\ell_1$ with registers
-$\rho$ and $p + 1$ symbols read within one step, printing nothing.
+Let $P$ be a counter program on a binary input $x$, with registers $rho$ and labels
+$Lambda$. If the instruction at label $ell$ reads the next input bit and the bit at
+position $p$ is $1$, then from any output string $o$, the program reaches label $ell_t$
+within one step, leaves the registers unchanged, advances the input position to $p+1$,
+and leaves the output unchanged.
 \end{theorem}
 
-\begin{theorem}[The count-down loop]
+\begin{theorem}[A counter program count-down loop]
 \lean{Complexity.CounterProg.goes_loop}
 \label{Complexity.CounterProg.goes_loop}
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.Goes.congr, Complexity.CounterProg.Goes.trans, Complexity.CounterProg.goes_dec, Complexity.CounterProg.goes_jz_pos, Complexity.CounterProg.goes_jz_zero}
 \difficulty{6}
-Let $P$ be a counter program on a binary input $x$, $r$ a register, and
-$h, d, c, z$ labels such that the instruction at $h$ is
-$\mathsf{jz}(r, z, d)$ (go to $z$ if register $r$ is zero, else to $d$) and the
-instruction at $d$ is $\mathsf{dec}(r, c)$.  Let $K, b \in \mathbb{N}$, and for
-each $j \in \mathbb{N}$ let $\sigma_j$ be a register vector, $p_j$ an input
-position and $e_j$ a bit string, with $\sigma_j(r) = K - j$ for all $j \le K$.
-Suppose that for every $j < K$, from label $c$ with registers $\sigma_j$ modified
-so that register $r$ holds $K - j - 1$, and $p_j$ symbols read, $P$ reaches label
-$h$ with registers $\sigma_{j+1}$ and $p_{j+1}$ symbols read within $b$ steps
-while appending $e_j$ to its output.  Then from label $h$ with registers
-$\sigma_0$ and $p_0$ symbols read, $P$ reaches label $z$ with registers
-$\sigma_K$ and $p_K$ symbols read within $K(b+2)+1$ steps while appending the
-concatenation $e_0 e_1 \cdots e_{K-1}$.
+Let $P$ be a counter program on a binary input $x$, with labels $h,d,c,z$ and register
+$r$. Suppose the instruction at $h$ tests $r$, going to $z$ if it is zero and to $d$
+otherwise, and the instruction at $d$ decrements $r$ and goes to $c$. Let
+$K,b\in\mathbb{N}$, and for each $j\in\mathbb{N}$ let $\sigma_j$ be a register
+assignment, $p_j$ an input position, and $e_j$ an output string. Assume
+$\sigma_j(r)=K-j$ for every $j\le K$, and that for every $j<K$, from label $c$ with
+register assignment obtained from $\sigma_j$ by setting register $r$ to $K-j-1$ and
+input position $p_j$, the program reaches label $h$ with registers $\sigma_{j+1}$ and
+input position $p_{j+1}$ within at most $b$ steps, appending $e_j$ to every initial
+output string. Then from label $h$ with registers $\sigma_0$ and input position $p_0$,
+the program reaches label $z$ with registers $\sigma_K$ and input position $p_K$ within
+at most $K(b+2)+1$ steps, appending the concatenation of $e_0,e_1,\ldots,e_{K-1}$ to
+every initial output string.
 \end{theorem}
 
 \begin{definition}[Template micro-operation]
@@ -307,23 +295,21 @@ $\lambda(i+1)$) if $i < n$ and $m_i = \mathsf{pr}(r)$; and $\mathsf{goto}\ \nu$
 if $i \ge n$.
 \end{definition}
 
-\begin{theorem}[Running a straight-line template]
+\begin{theorem}[Execution of a template sequence]
 \lean{Complexity.CounterProg.goes_tmpl}
 \label{Complexity.CounterProg.goes_tmpl}
 \leanok
 \uses{Complexity.CounterProg.Goes, Complexity.CounterProg.Goes.mono, Complexity.CounterProg.Goes.trans, Complexity.CounterProg.MOp, Complexity.CounterProg.MOp.exec, Complexity.CounterProg.goes_goto, Complexity.CounterProg.goes_out, Complexity.CounterProg.goes_pr, Complexity.CounterProg.tmplInstr}
 \difficulty{5}
-Let $P$ be a counter program on a binary input $x$, let
-$\tau = (m_0, \dots, m_{n-1})$ be a list of micro-operations, each either
-``print a bit $b$'' or ``print register $r$ in unary'', and let
-$\lambda : \mathbb{N} \to \Lambda$ and $\nu \in \Lambda$ be labels.  Suppose that
-for each $i < n$ the instruction of $P$ at $\lambda(i)$ performs $m_i$ and then
-goes to $\lambda(i+1)$, and the instruction at $\lambda(n)$ is
-$\mathsf{goto}\ \nu$.  Then for all registers $\rho$ and input positions $p$,
-from label $\lambda(0)$ with registers $\rho$ and $p$ symbols read the program
-reaches label $\nu$ with registers $\rho$ and $p$ symbols read within $n + 1$
-steps, appending $w_0 w_1 \cdots w_{n-1}$ to its output, where $w_i$ is $b$ if
-$m_i$ prints the bit $b$ and $w_i = 1^{\rho(r)}$ if $m_i$ prints register $r$.
+Let $P$ be a counter program on a binary input $x$, and let $tau$ be a list of $n$
+micro-operations, each printing a bit or printing a register in unary. Let
+$lab:mathbb{N}\toLambda$ be labels and let $nu\inLambda$. Suppose that at every
+index $i\le n$, the instruction at $lab(i)$ is the instruction prescribed by the
+template at $i$: it performs the corresponding micro-operation and goes to $lab(i+1)$
+when $i<n$, and goes to $nu$ when $i=n$. Then, for every register assignment $rho$ and
+input position $p$, from label $lab(0)$ the program reaches $nu$ within $n+1$ steps,
+with the register assignment and input position unchanged and with the template’s
+concatenated output appended to the existing output.
 \end{theorem}
 
 \begin{definition}[Linear expression in the registers]
@@ -357,18 +343,15 @@ this is the list of template micro-operations $\mathsf{pr}(r_1), \dots,
 $\mathsf{out}(1)$ (print the bit $1$).
 \end{definition}
 
-\begin{theorem}[A linear expression prints its value in unary]
+\begin{theorem}[Unary output from a linear expression]
 \lean{Complexity.CounterProg.flatMap_exec_linOps}
 \label{Complexity.CounterProg.flatMap_exec_linOps}
 \leanok
 \uses{Complexity.CounterProg.LinE, Complexity.CounterProg.LinE.val, Complexity.CounterProg.MOp, Complexity.CounterProg.MOp.exec, Complexity.CounterProg.linOps}
 \difficulty{4}
-Let $\rho : \{0,\dots,R-1\} \to \mathbb{N}$ be register values and $(L, c)$ a
-linear expression with $L = (r_1, \dots, r_k)$.  Concatenating the strings
-printed under $\rho$ by the micro-operations $\mathsf{pr}(r_1), \dots,
-\mathsf{pr}(r_k)$ followed by $c$ copies of $\mathsf{out}(1)$, where
-$\mathsf{pr}(r)$ prints $1^{\rho(r)}$ and $\mathsf{out}(1)$ prints $1$, gives
-exactly the unary string $1^{v}$ with $v = \rho(r_1) + \dots + \rho(r_k) + c$.
+For any register values $\rho$ and linear expression $e$, concatenating the outputs of
+the micro-operations associated with $e$ gives the unary bit string consisting of $e$
+ones, where $e$ is evaluated at $\rho$.
 \end{theorem}
 
 \begin{definition}[Micro-operations printing a fixed bit string]
@@ -381,111 +364,122 @@ micro-operations $\mathsf{out}(w_1), \dots, \mathsf{out}(w_n)$, each printing on
 bit of $w$.
 \end{definition}
 
-\begin{theorem}[A fixed bit string prints itself]
+\begin{theorem}[Bit-string output from bit operations]
 \lean{Complexity.CounterProg.flatMap_exec_bitsOps}
 \label{Complexity.CounterProg.flatMap_exec_bitsOps}
 \leanok
 \uses{Complexity.CounterProg.MOp, Complexity.CounterProg.MOp.exec, Complexity.CounterProg.bitsOps}
 \difficulty{3}
-For any register values $\rho$ and any bit string $w = w_1 \cdots w_n$,
-concatenating the strings printed under $\rho$ by the micro-operations
-$\mathsf{out}(w_1), \dots, \mathsf{out}(w_n)$, where $\mathsf{out}(b)$ prints the
-single bit $b$, gives back $w$.
+For any register values $\rho$ and bit string $w$, concatenating the outputs of the list
+of bit-printing operations associated with the bits of $w$ gives exactly $w$.
 \end{theorem}
 
-\begin{theorem}[Machine simulation of a bounded run]
+\begin{theorem}[Bounded-run Turing machine simulation]
 \lean{Complexity.CounterProg.sim_run}
 \label{Complexity.CounterProg.sim_run}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.enc, Complexity.CounterProg.run, Complexity.CounterProg.run_of_halted, Complexity.CounterProg.run_succ, Complexity.CounterProg.sim_step, Complexity.CounterProg.step, Complexity.CounterProg.step_pos_le, Complexity.CounterProg.step_regs_le, Complexity.CounterProg.toTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-Let $P$ be a counter program over $R$ registers with a finite label set
-$\Lambda$, let $\ell_0 \in \Lambda$, let $x$ be a binary input, and let $M$ be the
-multi-tape Turing machine compiled from $P$ with start label $\ell_0$, which keeps
-each register on its own work tape in unary.  For an abstract state $s$ (label or
-halted, registers $\rho_s$, number $\mathrm{pos}(s)$ of input symbols read,
-output so far) let $\mathrm{enc}(s)$ be the configuration of $M$ in the control
-state for the label of $s$ (or halted), with the input head on the next unread
-symbol, work tape $r$ holding $1^{\rho_s(r)}$ with its head on cell
-$\rho_s(r)$, and output equal to that of $s$.  Let $B \in \mathbb{N}$.  Then for
-every $t \in \mathbb{N}$ and every abstract state $s$ with
-$\mathrm{pos}(s) \le |x|$ and $\rho_s(r) + t \le B$ for every register $r$,
-there is $t' \le t(2B+3)$ such that running $M$ for $t'$ steps from
-$\mathrm{enc}(s)$ yields $\mathrm{enc}(s_t)$, where $s_t$ is the state reached
-by $t$ steps of $P$ on $x$ from $s$.
+Let $R,B\in\mathbb{N}$, let $\Lambda$ be a finite set of labels, let $P$ be a counter
+program over $R$ registers with labels in $\Lambda$, choose a start label
+$\ell_0\in\Lambda$, and let $x$ be an input bit string. For every $t\in\mathbb{N}$ and
+abstract state $s$ whose read position is at most $|x|$ and whose registers satisfy
+$s(r)+t\le B$ for every register $r$, there is a number of machine steps $t'\le t(2B+3)$
+such that the compiled machine started at $\ell_0$, run on input $x$ from the encoding
+of $s$, reaches the encoding of the state obtained by running $P$ on $x$ from $s$ for
+$t$ steps.
 \end{theorem}
 
-\begin{theorem}[A counter program is a Turing machine]
+\begin{theorem}[Turing machine simulation of a halted run]
 \lean{Complexity.CounterProg.exists_tm}
 \label{Complexity.CounterProg.exists_tm}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.enc, Complexity.CounterProg.init, Complexity.CounterProg.run, Complexity.CounterProg.sim_run, Complexity.CounterProg.toTM, Turing.Cfg.init, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.UnaryTape.ones_zero}
 \difficulty{5}
-Let $P$ be a counter program over $R$ registers with a finite label set
-$\Lambda$ and start label $\ell_0$, let $x$ be a binary input and
-$t \in \mathbb{N}$.  Suppose that $t$ steps of $P$ on $x$, started from the
-initial state (label $\ell_0$, all registers $0$, nothing read, empty output),
-reach a halted state, and let $y$ be its output.  Then the multi-tape Turing
-machine compiled from $P$ with start label $\ell_0$, which keeps each register
-on its own work tape in unary, computes $y$ on input $x$ in time $t(2t+3)$:
-after $t(2t+3)$ steps from its initial configuration on $x$ it is halted with
-output $y$.
+Let $R$ be a number of registers, let $\Lambda$ be a finite label set, let $P$ be a
+counter program over those registers and labels, let $\ell_0\in\Lambda$ be its start
+label, and let $x$ be a bit string. If the counter program started in its initial state
+is halted after $t$ steps, then the machine compiled from $P$ with start label $\ell_0$
+computes the output of that run on input $x$ in exactly $t(2t+3)$ steps, with some space
+usage.
 \end{theorem}
 
-\begin{theorem}[Input position grows at most one per step]
+\begin{theorem}[Bound on Input-Position Growth]
 \lean{Complexity.CounterProg.run_pos_le}
 \label{Complexity.CounterProg.run_pos_le}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.run, Complexity.CounterProg.run_succ, Complexity.CounterProg.run_zero, Complexity.CounterProg.step}
 \difficulty{4}
-Let $P$ be a counter program on a binary input $x$, let $s$ be an abstract state
-of $P$ in which $\mathrm{pos}(s)$ input symbols have been read, and let
-$t \in \mathbb{N}$.  Then after $t$ steps of $P$ on $x$ from $s$ the number of
-input symbols read is at most $\mathrm{pos}(s) + t$.
+Let $R\in\mathbb{N}$, let $\Lambda$ be a set of labels, let $P$ be a counter program
+over $R$ registers with labels in $\Lambda$, and fix an input bit string $x$. For every
+abstract state $s$ and every $t\in\mathbb{N}$, the read position after $t$ steps from
+$s$ is at most its initial read position plus $t$.
 \end{theorem}
 
-\begin{theorem}[A step only appends to the output]
+\begin{theorem}[Output extension after one step]
 \lean{Complexity.CounterProg.step_out}
 \label{Complexity.CounterProg.step_out}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.step}
 \difficulty{3}
-Let $P$ be a counter program on a binary input $x$ and $s$ an abstract state of
-$P$ with output $o$.  Then there is a bit string $e$ such that the output after
-one step of $P$ on $x$ from $s$ is $o\,e$.
+Let $R$ be a number of registers, let $\Lambda$ be a set of labels, let $P$ be a counter
+program over them, let $x$ be a bit string, and let $s$ be an abstract state. There
+exists a finite bit string $e$ such that the output after one step of $P$ on $x$ from
+$s$ is the output of $s$ followed by $e$.
 \end{theorem}
 
-\begin{theorem}[A run only appends to the output]
+\begin{theorem}[Output Is Extended by a Suffix]
 \lean{Complexity.CounterProg.run_out}
 \label{Complexity.CounterProg.run_out}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.run, Complexity.CounterProg.run_succ, Complexity.CounterProg.run_zero, Complexity.CounterProg.step, Complexity.CounterProg.step_out}
 \difficulty{4}
-Let $P$ be a counter program on a binary input $x$, $s$ an abstract state of $P$
-with output $o$, and $t \in \mathbb{N}$.  Then there is a bit string $e$ such
-that the output after $t$ steps of $P$ on $x$ from $s$ is $o\,e$.
+Let $R\in\mathbb{N}$, let $\Lambda$ be a set of labels, let $P$ be a counter program
+over $R$ registers with labels in $\Lambda$, and fix an input bit string $x$. For every
+abstract state $s$ and every $t\in\mathbb{N}$, there is a bit string $e$ such that the
+output after $t$ steps from $s$ is its initial output followed by $e$.
 \end{theorem}
 
-\begin{theorem}[Output growth of one step]
+\begin{theorem}[Bound on one-step output growth]
 \lean{Complexity.CounterProg.step_out_le}
 \label{Complexity.CounterProg.step_out_le}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.step}
 \difficulty{3}
-Let $P$ be a counter program on a binary input $x$, $K \in \mathbb{N}$, and $s$
-an abstract state of $P$ with output $o$ in which every register holds at most
-$K$.  Then the output after one step of $P$ on $x$ from $s$ has length at most
-$|o| + K + 1$.
+Let $R$ be a number of registers, let $\Lambda$ be a set of labels, let $P$ be a counter
+program over them, let $x$ be a bit string, and let $s$ be an abstract state. For any
+$K\in\mathbb{N}$ such that every register value in $s$ is at most $K$, the output after
+one step of $P$ on $x$ from $s$ has length at most the length of the output of $s$ plus
+$K+1$.
 \end{theorem}
 
-\begin{theorem}[Output length bound from the initial state]
+\begin{theorem}[Output-Length Bound from the Initial State]
 \lean{Complexity.CounterProg.run_init_out_le}
 \label{Complexity.CounterProg.run_init_out_le}
 \leanok
 \uses{Complexity.CounterProg.init, Complexity.CounterProg.run, Complexity.CounterProg.run_add, Complexity.CounterProg.run_regs_le, Complexity.CounterProg.run_zero, Complexity.CounterProg.step, Complexity.CounterProg.step_out_le}
 \difficulty{4}
-Let $P$ be a counter program on a binary input $x$, $\ell_0$ a label and
-$t \in \mathbb{N}$.  Starting from the initial state at $\ell_0$ (all registers
-$0$, nothing read, empty output), the output after $t$ steps of $P$ on $x$ has
-length at most $t(t+1)$.
+Let $R\in\mathbb{N}$, let $\Lambda$ be a set of labels, let $P$ be a counter program
+over $R$ registers with labels in $\Lambda$, and fix an input bit string $x$. For every
+starting label $\ell_0\in\Lambda$ and every $t\in\mathbb{N}$, the output produced after
+$t$ steps from the initial state at $\ell_0$ has length at most $t(t+1)$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Simulation under register bounds]
+\lean{Complexity.CounterProg.sim_run_of_regs_le}
+\label{Complexity.CounterProg.sim_run_of_regs_le}
+\leanok
+\uses{Complexity.CounterProg.St, Complexity.CounterProg.enc, Complexity.CounterProg.run, Complexity.CounterProg.run_add, Complexity.CounterProg.run_succ, Complexity.CounterProg.run_zero, Complexity.CounterProg.sim_run, Complexity.CounterProg.step_pos_le, Complexity.CounterProg.toTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_zero}
+\difficulty{5}
+Let $R\in\mathbb{N}$, let $\Lambda$ be a finite set of labels, let $P$ be a counter
+program over $R$ registers with labels in $\Lambda$, choose a start label
+$\ell_0\in\Lambda$, and let $x$ be an input bit string. For every $B,t\in\mathbb{N}$ and
+abstract state $s$ with read position at most $|x|$, suppose that for every $j<t$ and
+every register $r$, the value of register $r$ after $j$ steps of $P$ on $x$ from $s$ is
+at most $B$. Then there exists $t'\le t(2B+5)$ such that the compiled machine started at
+$\ell_0$, run on input $x$ from the encoding of $s$, reaches the encoding of the state
+obtained after $t$ steps of $P$ on $x$ from $s$.
 \end{theorem}

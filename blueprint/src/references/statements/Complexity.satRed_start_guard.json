@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satRed_start_guard",
+ "key": "3e66025ccf85e8a3",
+ "kind": "lemma",
+ "title": "No Early Visit to the Streaming State",
+ "statement": "For every Boolean word $x$ and time $t$, if the transducer started on $x$ has empty output after $t$ steps, then at every time $i<t$ its state is not $9$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$t\\in\\mathbb{N}$",
+  "The output after $t$ steps is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the clause-splitting transducer, run for $t$ steps from its initial\nconfiguration, has empty output, then at no earlier time was its control in the\nstreaming entry state: that state necessarily emits a bit, which output-prefix\nmonotonicity would make visible at time $t$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clPrepared_run",
+ "key": "abe01fff25e3c70c",
+ "kind": "lemma",
+ "title": "Simulation After Field Preparation",
+ "statement": "Let $A$ be a finite Turing machine over the Boolean alphabet, let $w_0,\\ldots,w_{k-1}$ be Boolean words of length at most $W$, let $\\mathrm{tail}$ be any Boolean word, and let $b\\in\\mathbb{N}$. Set $x$ to be the packed encoding of the row followed by the trailer. There is a startup time $a\\le 2|x|+4+k(3W+7)$ such that, after $a+b$ steps, the prepared machine's configuration is exactly the configuration obtained by placing the run of $A$ for $b$ steps from the configuration with initial state and work words $w_i$ into the prepared machine's frame, with $x$ retained on the stream tape and its head at the end of the packed row.",
+ "hypotheses_covered": [
+  "Finite Turing machine $A$ over the Boolean alphabet",
+  "Family of $k$ Boolean words, each of length at most $W$",
+  "Natural number $W$",
+  "Arbitrary Boolean trailer",
+  "Natural number duration $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let work words of length at most $W$ and a trailer be given, and let the native input be their packed encoding followed by the trailer. Then there is a startup time $a \\le 2|x| + 4 + k(3W+7)$, where $x$ is that input and $k$ the field count, such that for every duration $b$, running the loading-extended machine for $a + b$ steps equals the frame around the supplied machine's $b$-step run from the configuration assembled over the parsed words; no cleanup or random access is assumed."
+}

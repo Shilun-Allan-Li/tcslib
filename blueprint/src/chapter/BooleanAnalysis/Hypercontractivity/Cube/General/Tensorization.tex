@@ -11,7 +11,8 @@ A one-bit pairing bound tensorizes to arbitrary cube dimension. Holder duality a
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 \difficulty{5}
 \label{BooleanAnalysis.Hypercontractivity.holder_ineq_bool}
-Let $n$ be a natural number, let $p > 1$ and let $f, h : \{0,1\}^n \to \bbr$ be Boolean functions, with expectations
+Let $n$ be a natural number, let $p > 1$ and let $f, h : \{0,1\}^n \to \bbr$ be Boolean
+functions, with expectations
 taken under the uniform measure on $\{0,1\}^n$. Then their $L^2$ inner product satisfies
 \[
   \langle f, h\rangle \;\le\; \bigl(\E\bigl[\abs{f}^{p}\bigr]\bigr)^{1/p}\,
@@ -24,6 +25,12 @@ where the exponents $p$ and $p/(p-1)$ are conjugate.
 \lean{BooleanAnalysis.Hypercontractivity.noise_Lp_contraction_one_bit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.one_bit_val_false, BooleanAnalysis.Hypercontractivity.one_bit_val_true, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p064-b001,
+  pdf-ffbe9c7b3306-p257-b004,
+  pdf-ffbe9c7b3306-p258-b003,
+  pdf-ffbe9c7b3306-p259-b006
+}
 \difficulty{5}
 \label{BooleanAnalysis.Hypercontractivity.noise_Lp_contraction_one_bit}
 Let $q \ge 1$ and let $\rho$ be a real number with $0 \le \rho \le 1$. Then for every
@@ -34,7 +41,11 @@ $T_\rho$ satisfies
   \;\le\;
   \bigl(\E\!\left[\,\abs{g}^{\,q}\,\right]\bigr)^{1/q},
 \]
-where both expectations are taken with respect to the uniform measure on $\{0,1\}^1$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+where both expectations are taken with respect to the uniform measure on $\{0,1\}^1$.
+For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise
+operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{lemma}
 
 \begin{lemma}[Two-function hypercontractivity in dimension zero]
@@ -50,7 +61,11 @@ with the noise-operator image $T_\rho g$ satisfies
 \langle f, T_\rho g\rangle \;\le\;
 \bigl(\E\bigl[\abs{f}^p\bigr]\bigr)^{1/p}\,\bigl(\E\bigl[\abs{g}^q\bigr]\bigr)^{1/q},
 \]
-where $\E$ denotes expectation under the uniform measure. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+where $\E$ denotes expectation under the uniform measure. For $d\in\mathbb N$,
+$h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau
+h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{lemma}
 
 \begin{lemma}[Inductive step for two-function hypercontractivity]
@@ -178,7 +193,8 @@ where $\E$ denotes expectation under the uniform measure. For $d\in\mathbb N$, $
   {direct}
   {boolean-ch09-hypercontractivity-kkl}
   {pdf-4ba63c9394e5-p015-b003}
-Let $n$ be a natural number, let $p,q\in\bbr$ satisfy $p,q\ge1$ and let $\rho$ satisfy $0 \le \rho \le 1$, and write $T_\rho$ for the
+Let $n$ be a natural number, let $p,q\in\bbr$ satisfy $p,q\ge1$ and let $\rho$ satisfy
+$0 \le \rho \le 1$, and write $T_\rho$ for the
 noise operator with parameter $\rho$. Suppose the two-function bound
 \[
 \langle f, T_\rho g\rangle \;\le\;
@@ -186,7 +202,11 @@ noise operator with parameter $\rho$. Suppose the two-function bound
 \]
 holds for every pair of functions $f, g$ on the one-dimensional cube $\{0,1\}^1$, and
 also for every pair of functions on the $n$-dimensional cube $\{0,1\}^n$. Then the same
-bound holds for every pair of functions $f, g : \{0,1\}^{n+1} \to \bbr$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+bound holds for every pair of functions $f, g : \{0,1\}^{n+1} \to \bbr$. For
+$d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is
+$T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{lemma}
 
 \begin{theorem}[Tensorization of two-function hypercontractivity]
@@ -333,7 +353,11 @@ write $T_\rho$ for the associated noise operator. Suppose the two-function bound
 \]
 holds for every pair of Boolean functions $f, g \colon \{0,1\}^1 \to \bbr$ on the
 one-dimensional cube. Then, for every $n$, the same inequality holds for every pair of
-Boolean functions $f, g \colon \{0,1\}^n \to \bbr$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+Boolean functions $f, g \colon \{0,1\}^n \to \bbr$. For $d\in\mathbb N$,
+$h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau
+h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{theorem}
 
 \begin{theorem}[Weak two-function hypercontractivity on a single bit]
@@ -539,7 +563,10 @@ any two Boolean functions $f, g : \{0,1\}^1 \to \bbr$ on a single bit,
 \]
 where $T_\rho$ is the noise operator, $\E[\cdot]$ is the expectation, and
 $\inn{\cdot,\cdot}$ is the $L^2$ inner product, all taken with respect to the uniform
-measure on $\{0,1\}$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+measure on $\{0,1\}$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the
+spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat
+h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat
+h(S)=\E[h\chi_S]$ under the uniform measure.
 \end{theorem}
 
 \begin{theorem}[Equivalence of one- and two-function hypercontractivity]
@@ -560,7 +587,8 @@ measure on $\{0,1\}$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bb
   pdf-4ba63c9394e5-p013-b002,
   pdf-4ba63c9394e5-p013-b003
 }
-Fix a natural number $n$. Let $1 \le p \le q$ with $q \ge 2$, and let $\rho$ satisfy $0 \le \rho \le 1$ together
+Fix a natural number $n$. Let $1 \le p \le q$ with $q \ge 2$, and let $\rho$ satisfy $0
+\le \rho \le 1$ together
 with $\rho \le \sqrt{(p-1)/(q-1)}$. Then the one-function hypercontractive inequality
 \[
 \bigl(\E\bigl[\abs{T_\rho f}^q\bigr]\bigr)^{1/q} \le
@@ -575,13 +603,22 @@ holds if and only if the dual two-function inequality
 \]
 holds, where $T_\rho$ is the noise operator and $\E$ and
 $\langle\,\cdot\,,\cdot\,\rangle$ are the expectation and $L^2$ inner product with
-respect to the uniform measure on $\{0,1\}^n$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+respect to the uniform measure on $\{0,1\}^n$. For $d\in\mathbb N$,
+$h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau
+h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{theorem}
 
 \begin{theorem}[Pairing bound below exponent two]
 \lean{BooleanAnalysis.Hypercontractivity.weak_two_function_hypercontractivity}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.hypercontractivity_induction, BooleanAnalysis.Hypercontractivity.weak_two_function_hypercontractivity_one_bit, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p260-b004,
+  pdf-ffbe9c7b3306-p261-b003,
+  pdf-ffbe9c7b3306-p260-b005
+}
 \difficulty{4}
 \proofsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p014-b004,
@@ -867,5 +904,9 @@ Let $p, q \in \bbr$ satisfy $1 \le p \le 2$ and $1 \le q \le 2$, and set $\rho =
 \]
 where $\langle\cdot,\cdot\rangle$ is the $L^2$ inner product under the uniform measure
 on $\{0,1\}^n$, $\E$ is the corresponding expectation, and $T_\rho$ is the noise
-operator with parameter $\rho$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+operator with parameter $\rho$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and
+$\tau\in\bbr$, the spectral noise operator is $T_\tau
+h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{theorem}

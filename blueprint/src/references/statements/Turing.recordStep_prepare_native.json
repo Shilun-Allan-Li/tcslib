@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.recordStep_prepare_native",
+ "key": "a9b4a661df9c02d3",
+ "kind": "theorem",
+ "title": "Preparation of the native input scan",
+ "statement": "Let $k$ be natural, let $Q,T,S$ be types with decidable equality, let $M$ be a $k$-tape Boolean Turing machine, let $u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$, let $N$ be a two-tape Boolean machine with states in $S$, and fix $s_0,s_1\\in S$. For a Boolean input word $x$, a four-tape record configuration $d$, a Boolean word $w$, and record data $d_0$, assume that the recorded state is nonempty, the recorded width-one flag is false, $|x|>0$, and $|x|+1<2^{|w|}$. Then there are a Boolean value $b$ and natural numbers $q,t$ such that $b$ records whether the input head of $d$ is at the right boundary $|x|+1$, $q=|x|$ if $b$ and otherwise equals that head position, and $q\\le |x|$. The record machine reaches the specified snapshot with its control at the seek stage in state $s_0$, its input head at position zero, and its tape 3 holding the counter word obtained by decrementing the all-true word of length $|w|$ exactly $q+1$ times; the run avoids both verdict states before time $t$, keeps every work-tape head within distance $|w|+1$ of its initial position, and satisfies $t\\le 6|w|+5|x|+12$.",
+ "hypotheses_covered": [
+  "$k$ is natural",
+  "$Q,T,S$ have decidable equality",
+  "$M$ is a $k$-tape Boolean machine",
+  "$u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$N$ is a two-tape Boolean machine",
+  "fixed start and finish states in $S$",
+  "Boolean input word $x$",
+  "four-tape record configuration $d$",
+  "Boolean word $w$",
+  "record data $d_0$",
+  "recorded state is nonempty",
+  "recorded width-one flag is false",
+  "$|x|>0$",
+  "$|x|+1<2^{|w|}$"
+ ],
+ "confidence": "low",
+ "caveat": "The formal conclusion refers to private snapshot and record-run constructions; the statement describes their specified control and tape contents.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

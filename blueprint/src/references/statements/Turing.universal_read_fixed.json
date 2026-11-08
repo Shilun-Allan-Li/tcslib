@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.universal_read_fixed",
+ "key": "8bb21b9b00866065",
+ "kind": "lemma",
+ "title": "Reading the fixed action fields",
+ "statement": "Let $x$ be a finite bit string, let the base configuration be a four-tape configuration on input $x$, let $T=l\\,b_0b_1\\cdots b_7\\,r$ for finite bit strings $l,r$ and bits $b_0,\\ldots,b_7$, and let the state tape, its cursor, and an eight-bit register be specified. For every natural number $n$, field index $f\\in\\{0,\\ldots,7\\}$, and register $old$, if $f+n=7$ and $old$ agrees with the corresponding bit of $T$ at every index below $f$, then after $n+1$ interpreter steps from the action-reading phase at cursor $|l|+f$, the interpreter is in the successor-decoding phase with register equal to the eight bits of $T$ and cursor $|l|+8$, while the state tape, its cursor, and all other configuration data are unchanged.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "The base configuration is a four-tape configuration on input $x$",
+  "$T=l\\,b_0b_1\\cdots b_7\\,r$ with finite bit strings $l,r$ and eight bits",
+  "$n$ is a natural number",
+  "$f$ is a field index from $0$ through $7$",
+  "$old$ is an eight-bit register",
+  "$f+n=7$",
+  "$old$ agrees with the table bits at every index below $f$",
+  "The state tape and its cursor are specified"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table is $l \\cdot b_0 b_1 \\cdots b_7 \\cdot r$ for bits\n$b_0, \\dots, b_7$.  Consider the interpreter's action-reading phase at a\nfield $f \\in \\{0, \\dots, 7\\}$, with table cursor $|l| + f$ and a bit\nregister agreeing with $b$ at every index below $f$.  Then exactly $8 - f$\ninterpreter steps reach the successor-decoding phase carrying the complete\nregister $b_0, \\dots, b_7$, with table cursor $|l| + 8$; the state tape,\nstate cursor, and all other data are unchanged."
+}

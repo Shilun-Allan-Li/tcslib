@@ -1,0 +1,27 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.outer_run",
+ "key": "0f68162629ce47a1",
+ "kind": "theorem",
+ "title": "Outer Relaxation Round",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}$ assign a Boolean to each of four indices and each Boolean string, let $x$ be a Boolean string, and let $\\varphi$ be a Boolean. Let $j$ be a natural number, $S$ a machine state, and $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ a memory. Suppose $S.K-S.U=j$, $S.U\\le S.K$, $S.V=S.T=S.T_2=S.Z=0$, $S.ch\\le1$, and $S$ satisfies the stated register bounds $\\mathrm{SBd}(B,P)$. Then there are a memory $M'$ and a natural number $ch'$ such that the machine reaches a configuration at the round-exit instruction with $U=S.K$, change flag $ch'$, and memory $M'$, with the guard $G(x,B,P)$ holding at every configuration before the endpoint. The memory $M'$ extends the marked positions of $M$ and agrees with $M$ outside the cells $S.B_s+v$ for $v<S.K$; every predicate on indices below $S.K$ that is preserved along the step relation and holds at every initially marked index below $S.K$ also holds at every index below $S.K$ marked in $M'$. If $M'=M$, every step edge from an initially marked index $a$ with $S.U\\le a<S.K$ to an index $b<S.K$ has $b$ marked in $M$, and $ch'=S.ch$; if $M'\\ne M$, then $ch'=1$. In either case $ch'\\le1$.",
+ "hypotheses_covered": [
+  "$K_0,B,P$ are natural numbers",
+  "$\\mathrm{orc}$ is a Boolean-valued function on four indices and Boolean strings",
+  "$x$ is a Boolean string",
+  "$\\varphi$ is Boolean",
+  "$j$ is a natural number",
+  "$S$ is a machine state",
+  "$M$ is integer-indexed Boolean memory",
+  "$S.K-S.U=j$",
+  "$S.U\\le S.K$",
+  "$S.V=S.T=S.T_2=S.Z=0$",
+  "$S.ch\\le1$",
+  "$S$ satisfies $\\mathrm{SBd}(B,P)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Fix natural numbers $K_0,B,P$, a Boolean oracle $O$ on four indices and binary strings,\nan input binary string $x$, and a Boolean phase $\\varphi$. Let $j$ be a natural number\nand let $S$ be a state with $S.K-S.U=j$, $S.U\\le S.K$, $S.V=S.T=S.T_2=S.Z=0$, and\n$S.ch\\le 1$. Suppose every counter in $S$ is at most $B$, the base plus the code bound\nsatisfies $S.B_s+S.K\\le B$ and $S.B_s+S.K\\le P$, and $S.K+1\\le B$. Then there are memory\ncontents $M'$ and a natural number $ch'$ such that the machine, started in its\nrelaxation-round control with state $S$, reaches the round-exit control with the $U$\ncounter equal to $S.K$ and change flag $ch'$, and with memory $M'$. Throughout this run\nthe guard $G(x,B,P)$ holds; the memory only gains true cells and is unchanged outside\nthe cells indexed by $S.B_s+v$ for $v<S.K$. Every property of indices below $S.K$ that\nis preserved along step edges and holds at every initially marked index below $S.K$ also\nholds at every marked index below $S.K$ after the run. If $M'=M$, then every step edge\nfrom an initially marked index $a$ with $S.U\\le a<S.K$ to an index $b<S.K$ has $b$\nalready marked in $M$. Finally, $ch'\\le1$; if the memory is unchanged then $ch'=S.ch$,\nand if it changes then $ch'=1$."
+}

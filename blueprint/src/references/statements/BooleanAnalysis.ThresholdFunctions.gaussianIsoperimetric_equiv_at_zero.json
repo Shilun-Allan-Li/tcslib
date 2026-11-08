@@ -1,0 +1,12 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric_equiv_at_zero",
+ "key": "b0e7bb1ad9357ca6",
+ "kind": "theorem",
+ "title": "Gaussian isoperimetric profile near zero",
+ "statement": "Let $\\Phi$ be the standard Gaussian cumulative distribution function, $\\varphi(t)=e^{-t^2/2}/\\sqrt{2\\pi}$, and define $Q(\\alpha)=\\inf\\{t\\in\\mathbb R:\\alpha\\le\\Phi(t)\\}$ and $U(\\alpha)=\\varphi(Q(\\alpha))$, with the infimum given its extended-real order value. As $\\alpha$ tends to zero through positive values, $U(\\alpha)$ is asymptotically equivalent to $\\alpha\\sqrt{2\\log(1/\\alpha)}$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $\\varphi(x)=e^{-x^2/2}/\\sqrt{2\\pi}$, $\\Phi(t)=\\int_{-\\infty}^{t}\\varphi(x)\\,dx$, and $Q(\\alpha)=\\inf\\{t\\in\\mathbb R:\\alpha\\le\\Phi(t)\\}$ for $0<\\alpha<1$, with $Q(\\alpha)=0$ otherwise. Define $U(\\alpha)=\\varphi(Q(\\alpha))$ for every real $\\alpha$, so $U(\\alpha)=1/\\sqrt{2\\pi}$ for $\\alpha\\le0$ or $\\alpha\\ge1$. As $\\alpha\\to0$ through positive values, this profile is asymptotically equivalent to $\\alpha\\sqrt{2\\log(1/\\alpha)}$; equivalently, with natural logarithm,\n\\[\n\\lim_{\\alpha\\to0^+}\\frac{U(\\alpha)}{\\alpha\\sqrt{2\\log(1/\\alpha)}}=1.\n\\]"
+}

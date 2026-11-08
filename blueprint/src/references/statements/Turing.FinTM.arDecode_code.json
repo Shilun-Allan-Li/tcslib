@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.arDecode_code",
+ "key": "1af6d223d29b7ce4",
+ "kind": "lemma",
+ "title": "Decoding an encoded symbol",
+ "statement": "Let $\\Gamma$ be a type, let $N\\in\\mathbb{N}$, and let $E$ be an injection from optional $\\Gamma$-symbols into blocks of $N+1$ optional bits. For every optional symbol $a$, decoding its code $E(a)$ returns $a$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is a type",
+  "$N\\in\\mathbb{N}$",
+  "$E$ is an injection from optional symbols to blocks",
+  "$a$ is an optional symbol"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E$ be an injection of $\\Gamma \\cup \\{\\text{blank}\\}$ into blocks of $N+1$ optional\nbits, and let the decoder be the associated left inverse of $E$. Then for every\n$a \\in \\Gamma \\cup \\{\\text{blank}\\}$, decoding the block $E(a)$ returns $a$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.gb_of",
+ "key": "7e2da00b40907390",
+ "kind": "lemma",
+ "title": "Register Bounds Imply the Configuration Guard",
+ "statement": "Let $x$ be a Boolean input word, $B$ a natural number, $\text{st}$ a machine state whose seven registers are all at most $B$, and $l$ an instruction label. The configuration with label $l$, register values given by $\text{st}$, and no answer satisfies the machine guard: any register-equality instruction compares distinct registers; input-comparison instructions are used only on inputs of the required valid plain or paired form; and an oracle call has no repeated register arguments. Its register values are all at most $B$.",
+ "hypotheses_covered": [
+  "Every register of st is at most B."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any register state $\\mathrm{st}$ whose seven register values are at most $B$, any\ninput bit string $x$, and any instruction label $l$, the configuration with label $l$,\nregister values given by $\\mathrm{st}$, and no answer satisfies the machine's\npreconditions and has every register value at most $B$."
+}

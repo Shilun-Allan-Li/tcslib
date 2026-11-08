@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.roundTM_iterate",
+ "key": "84bb83807c95623a",
+ "kind": "theorem",
+ "title": "Iteration of the Round Machine",
+ "statement": "Let $k,n,t$ be natural numbers, let $x$ be a Boolean input word, and let $M$ be a machine with $k$ Boolean work tapes and $n+1$ states. Suppose $c$ remains in a live state through time $t$. For every augmented configuration $d$ at the round machine's entry state that represents $c$ and $M$'s transition rule, there is a time $T$ with $t\\le T\\le t\\,50(L+1)$, where $L$ is the encoded transition table length, such that the round machine is again at its entry state and represents $M$'s configuration at time $t$. Through time $T$, its output remains unchanged and it never reaches the halt state. Every original work-tape cell visited by the round machine's corresponding head through time $T$ is visited by the corresponding head of $M$ through time $t$; every cell visited by either auxiliary head lies in the integer interval $[-50(L+1),50(L+1)]$.",
+ "hypotheses_covered": [
+  "natural numbers k, n, and t",
+  "Boolean input word x",
+  "machine M with k Boolean work tapes and n+1 states",
+  "configuration c",
+  "c remains live at every time u≤t",
+  "augmented configuration d",
+  "d is at the round machine entry state",
+  "d represents c with respect to M's transition rule"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.DTIME_eq_empty_of_exists_zero",
+ "key": "9bf85082501f5ae6",
+ "kind": "theorem",
+ "title": "A zero time bound gives an empty class",
+ "statement": "Let $T : \\mathbb{N} \\to \\mathbb{N}$, and suppose there is a natural number $n$ such that $T(n)=0$. Then the deterministic time class defined by $T$ is empty.",
+ "hypotheses_covered": [
+  "$T : \\mathbb{N} \\to \\mathbb{N}$",
+  "There exists $n \\in \\mathbb{N}$ with $T(n)=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T : \\mathbb{N} \\to \\mathbb{N}$ be a time bound with $T(n) = 0$ for at least one\ninput length $n$. Then $\\mathrm{DTIME}(T) = \\emptyset$: no language over the binary\nalphabet is decidable by a finite multi-tape machine within $c \\cdot T$ steps for any\nconstant $c$, because on an input of length $n$ the allotted budget is\n$c \\cdot T(n) = 0$ and no machine halts in zero steps."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clA5Reconstruct",
+ "key": "e70468d67cf3c90b",
+ "kind": "lemma",
+ "title": "Reconstruction of the computation snapshots",
+ "statement": "Let $M$ be an oblivious finite Turing machine over the Boolean alphabet, with $k$ work tapes and a fixed binary code for its optional states. Let $m,T \\in \\mathbb{N}$, let $a : \\mathbb{N} \\to \\{\\mathrm{false},\\mathrm{true}\\}$ be an assignment, and let $y$ be a Boolean word of length $m$. Suppose the raw block at time zero encodes the initial snapshot of $M$ on $y$; for every $t<T$, the state slice of the raw block at time $t+1$ encodes the next state determined by the block at time $t$; and, for every $t\\le T$, the input slice gives the input symbol scanned in the run on $y$, while each work-tape slice gives the symbol prescribed by the most recent visit to that tape's current head position (or blank if there has been no such visit). Then for every $t\\le T$, the raw block at time $t$ is exactly the encoding of the snapshot of the run of $M$ on $y$ at time $t$.",
+ "hypotheses_covered": [
+  "$M$ is an oblivious finite Turing machine over the Boolean alphabet",
+  "A fixed binary code for the optional states of $M$",
+  "$m,T \\in \\mathbb{N}$",
+  "$a : \\mathbb{N} \\to \\{\\mathrm{false},\\mathrm{true}\\}$",
+  "$y$ is a Boolean word with length $m$",
+  "The raw block at time zero encodes the initial snapshot on $y$",
+  "For every $t<T$, the state slice at time $t+1$ encodes the next state from the block at time $t$",
+  "For every $t\\le T$, the input slice agrees with the scanned input symbol in the run on $y$",
+  "For every $t\\le T$ and each work tape, the work slice agrees with the symbol prescribed by the last visit to the current head position, or is blank if there is no such visit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the machine be oblivious, let $y$ have length $m$, and suppose an assignment's raw blocks satisfy: the block at time zero is the encoded initial snapshot; the state meaning at every $t < T$; the input-slice equations at every $t \\le T$; and the work-slice equations at every $t \\le T$ on all tapes. Then for every $t \\le T$ the raw block at $t$ equals the encoding of the genuine snapshot of the run on $y$ at time $t$; junk blocks are excluded bit for bit."
+}

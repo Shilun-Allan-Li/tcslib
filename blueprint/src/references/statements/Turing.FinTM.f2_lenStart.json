@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_lenStart",
+ "key": "0e8fffb30de81bba",
+ "kind": "lemma",
+ "title": "Initialization of the pair-scanning computation",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x,w$ be Boolean words, and let $T$ be a natural number. If $M$ computes output $w$ from input $x$ within $T$ steps, then there are a natural number $t\\le T+|x|+4$ and a configuration $c$ of $M$ on input $x$ whose output is $w$, such that the machine obtained by augmenting $M$ with one work tape reaches after $t$ steps a configuration with the control state in the auxiliary state component (specifically, its nested option component is empty), input head at the first input position, original work tapes and their head positions as in $c$, and the extra work tape holding $w$ with its head at position $|w|-1$; its output tape is empty.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ and $w$ are Boolean words",
+  "$T$ is a natural number",
+  "$M$ computes output $w$ from input $x$ within $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

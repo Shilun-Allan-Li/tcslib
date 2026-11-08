@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integral_profile_averagedGaussianIndicator_le",
+ "key": "5194c2444fc54dd4",
+ "kind": "lemma",
+ "title": "Gaussian profile and rotation sensitivity",
+ "statement": "Let $n\\ge 0$, let $A\\subseteq\\mathbb R^n$ be measurable, and let $\\varepsilon>0$. For each real $\\theta$, define $u_\\theta(x)=\\int 1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$, where $\\gamma_n$ is standard Gaussian measure on $\\mathbb R^n$. There is a constant $C>0$ such that, for every $\\theta\\in\\mathbb R$, $\\int \\overline I(u_\\theta(x))\\,d\\gamma_n(x)\\le \\varepsilon+C R_A(\\theta)$, where $\\overline I(p)=\\varphi(\\Phi^{-1}(p))$ for $0<p<1$ and is zero otherwise, and $R_A(\\theta)$ is the probability that $1_A(X)\\ne 1_A(\\cos\\theta X+\\sin\\theta Y)$ for independent $X,Y\\sim\\gamma_n$.",
+ "hypotheses_covered": [
+  "$n\\ge 0$",
+  "$A$ is measurable",
+  "$\\varepsilon>0$",
+  "There exists $C>0$",
+  "The bound holds for every real $\\theta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ be the standard Gaussian distribution function and density, and let $\\overline I(p)=\\varphi(\\Phi^{-1}(p))$ for $0<p<1$, with $\\overline I(p)=0$ elsewhere. Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For a measurable $A\\subseteq\\mathbb R^n$, let $u_\\theta(x)=\\mathbb E_Y1_A(\\cos\\theta\\,x+\\sin\\theta\\,Y)$ with $Y\\sim\\gamma_n$, and put $R_A(\\theta)=\\Pr(1_A(X)\\ne1_A(\\cos\\theta\\,X+\\sin\\theta\\,Y))$ for independent $X,Y\\sim\\gamma_n$. For every $\\varepsilon>0$ there exists $C>0$ such that $\\int\\overline I(u_\\theta(x))\\,d\\gamma_n(x)\\le\\varepsilon+CR_A(\\theta)$ for every real $\\theta$."
+}

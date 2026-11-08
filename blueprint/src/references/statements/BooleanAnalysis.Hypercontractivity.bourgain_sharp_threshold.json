@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.bourgain_sharp_threshold",
+ "key": "5485bbe835a42c00",
+ "kind": "theorem",
+ "title": "Bourgain booster theorem",
+ "statement": "There exist positive real constants $C,D$ such that, for every natural number $n$, every product $P$ of $n$ finite probability spaces with strictly positive atom masses, every real-valued function $f$ taking only the values $-1$ and $1$, and every real $K$ with $I(f)\\leq K$ and $1/100\\leq\\operatorname{Var}_P(f)$, there is a real number $\\tau$ such that $e^{-CK^2}\\leq|\\tau|$ and $|\\tau|$ is at most the probability of the event that an outcome $x$ admits a set of coordinates $T$ with $|T|\\leq DK$ for which either $\\tau>0$ and $\\mathbb E_P f+\\tau\\leq E_Tf(x)$, or $\\tau<0$ and $E_Tf(x)\\leq\\mathbb E_P f+\\tau$.",
+ "hypotheses_covered": [
+  "There exist real constants C and D with 0 < C and 0 < D",
+  "Natural number n",
+  "Product P of n finite probability spaces with strictly positive atom masses and coordinate weights summing to one",
+  "Function f takes only the values −1 and 1",
+  "Real K",
+  "Total influence I(f) ≤ K",
+  "1/100 ≤ Var_P(f)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There are absolute $C,D>0$ such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, every $f:\\Omega\\to\\{-1,1\\}$, and every real $K$ satisfying $I(f)\\le K$ and $\\operatorname{Var}_P(f)\\ge1/100$, there exists $\\tau\\in\\mathbb R$ with $e^{-CK^2}\\le|\\tau|\\le\\Pr_P(\\exists T\\subseteq[n],\\ |T|\\le DK:\\ (T,x)\\text{ is a }\\tau\\text{-booster})$. A $\\tau$-booster has $E_Tf(x)\\ge\\mathbb E_Pf+\\tau$ for $\\tau>0$, or $E_Tf(x)\\le\\mathbb E_Pf+\\tau$ for $\\tau<0$."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.step_of_tapeAction_move",
+ "key": "09a8d1b565d48f10",
+ "kind": "theorem",
+ "title": "Step from a tape movement action",
+ "statement": "Let $M$ be a $k$-tape Turing machine and $c$ a configuration. Suppose $c$ has state $q$, and the transition of $M$ at $q$ on the symbols currently read is the action that moves the input head by $\\mathrm{inp}$, moves tape $i$ by $m$, makes no writes or output, and enters state $q'$. Then the next configuration has state $q'$, input-head position obtained by moving $c$'s input head by $\\mathrm{inp}$ with boundary clamping, and work-head positions equal to those of $c$ except that tape $i$'s position is increased by $m$; all other components are unchanged.",
+ "hypotheses_covered": [
+  "$M$ is a $k$-tape Turing machine",
+  "$c$ is a configuration",
+  "$q,q'$ are states",
+  "$i$ is a work-tape index",
+  "$\\mathrm{inp}$ and $m$ are head movements",
+  "$c$ has state $q$",
+  "the transition at $q$ on the currently read symbols is the specified tape action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

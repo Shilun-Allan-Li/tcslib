@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clRows_split",
+ "key": "126935054274e758",
+ "kind": "lemma",
+ "title": "Factoring a Row from the Stream",
+ "statement": "Let $l$ be a natural number, let $\\mathrm{row}(n,i)$ be a family of Boolean words indexed by time $n$ and coordinate $i<l$, and let $N,j$ be natural numbers with $j<N$. For every Boolean word $u$, there is a Boolean word $v$ such that the stream of the first $N$ rows followed by $u$ equals the stream of the first $j$ rows, followed by the packed encoding of row $j$, followed by $v$.",
+ "hypotheses_covered": [
+  "$l$ is a natural number",
+  "$\\mathrm{row}$ assigns a Boolean word to each time and each coordinate $i<l$",
+  "$N$ and $j$ are natural numbers",
+  "$j<N$",
+  "$u$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every row family, bound $N$, time $j < N$, and trailer, there is a remainder word such that the full stream of $N$ rows plus trailer equals the stream of the first $j$ rows, followed by the packed encoding of row $j$, followed by that remainder; obtaining the row itself still requires the native loader."
+}

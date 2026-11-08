@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Work_meaning",
+ "key": "6d1c134d0282c111",
+ "kind": "lemma",
+ "title": "Meaning of the work constraint",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape symbols, let $B$ be a binary code for its optional states, let $m,t\\in\\mathbb{N}$, let $\\tau$ be one of its work tapes, and let $a:\\mathbb{N}\\to\\{0,1\\}$. The work constraint for tape $\\tau$ at time $t$ is satisfied by $a$ exactly when the work slice of the block at time $t$ equals the two-bit encoding of blank if the head on $\\tau$ has not visited its time-$t$ position earlier, and otherwise equals the encoding of the symbol written or kept there by the snapshot decoded from the block at the greatest earlier time $s<t$ when that head occupied the same position.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$B$ is a binary code for optional states",
+  "$m,t\\in\\mathbb{N}$",
+  "$\\tau$ is a work tape of $M$",
+  "$a$ assigns a Boolean value to each natural-numbered variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input count $m$, time $t$, tape $\\tau$, and assignment $a$, the work clause group evaluates to true under $a$ exactly when the work slice of the raw block at $t$ is the encoding of a blank on a first visit, and otherwise of the symbol written or kept, at the greatest strictly earlier visit $s$, by the snapshot decoded from the raw block at $s$."
+}

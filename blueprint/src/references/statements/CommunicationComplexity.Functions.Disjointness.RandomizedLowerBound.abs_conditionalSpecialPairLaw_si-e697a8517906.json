@@ -1,19 +1,19 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.abs_conditionalSpecialPairLaw_singleton_sub_quarter_le",
- "key": "f679c3ec0cdf2049",
+ "key": "887f7323f475ea6c",
  "kind": "theorem",
- "title": "Singleton masses of a good conditional special-pair law",
- "statement": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the disjointness problem on inputs of length $n$, drawn under the hard distribution. Write $(x_T, y_T)$ for the pair of Alice's and Bob's bits at the special coordinate $T$, and for a value $z$ of the conditioning statistic let $\\mu_z$ denote the conditional law of this bit-pair on $\\{0,1\\}^2$ given that the statistic equals $z$. Suppose $z$ is $\\gamma$-good, in the sense that the total variation distance between $\\mu_z$ and the uniform distribution on $\\{0,1\\}^2$ is at most $2\\gamma$. Then for every bit-pair $b \\in \\{0,1\\}^2$,\n\\[\n  \\abs{\\mu_z(\\{b\\}) - \\tfrac{1}{4}} \\le 2\\gamma .\n\\]",
+ "title": "Singleton probability bound",
+ "statement": "Fix a positive integer $n$, a deterministic disjointness protocol $p$ on length-$n$ inputs, a real number $\\gamma$, and an achievable statistic $z$. If the total variation distance between the conditional law of the special-coordinate bit pair given $z$ and the uniform law on $\\{0,1\\}^2$ is at most $2\\gamma$, then for every bit pair $b\\in\\{0,1\\}^2$, the absolute difference between its probability under that conditional law and $1/4$ is at most $2\\gamma$.",
  "hypotheses_covered": [
-  "n a positive integer",
-  "p a deterministic disjointness protocol on inputs of length n",
-  "gamma a real number",
-  "z a value of the conditioning statistic",
-  "z is gamma-good: total variation distance of its conditional special-pair law from the uniform law on bit-pairs is at most 2*gamma",
-  "b an arbitrary bit-pair"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic disjointness protocol on length-$n$ inputs",
+  "$\\gamma\\in\\mathbb R$",
+  "$z$ is an achievable statistic for $p$",
+  "The total variation distance of the conditional special-pair law from uniform is at most $2\\gamma$",
+  "$b$ is a Boolean bit pair"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "A good $z$ gives the expected singleton-mass estimate for the conditional special-pair law."
+ "replaced": "Fix a positive integer $n$ and a deterministic communication protocol $p$ for the\ndisjointness problem on inputs of length $n$, drawn under the hard distribution. Write\n$(x_T, y_T)$ for the pair of Alice's and Bob's bits at the special coordinate $T$, and\nfor a value $z$ of the conditioning statistic let $\\mu_z$ denote the conditional law of\nthis bit-pair on $\\{0,1\\}^2$ given that the statistic equals $z$. Suppose $z$ is\n$\\gamma$-good, in the sense that the total variation distance between $\\mu_z$ and the\nuniform distribution on $\\{0,1\\}^2$ is at most $2\\gamma$. Then for every bit-pair $b \\in\n\\{0,1\\}^2$,\n\\[\n  \\abs{\\mu_z(\\{b\\}) - \\tfrac{1}{4}} \\le 2\\gamma .\n\\]"
 }

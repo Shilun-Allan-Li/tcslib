@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.Inv",
+ "key": "ea7005fb83249c76",
+ "kind": "def",
+ "title": "Simulation invariant",
+ "statement": "Let $A$ be a program with $m$ registers, let $l_0$ be a control label, let an oracle assign Boolean answers to deciders on bit strings, and let $D$ be a Boolean multi-tape Turing machine with an initial state assigned to each decider. For natural numbers $B$ and $W$, a configuration of the compiled machine on input $x$ satisfies the invariant if every work-tape head position lies between $-1$ and $W$, inclusive, and the configuration satisfies the call-validity condition for the program compiled from $A$ starting at $l_0$, with head-position bounds from $-1$ through $W$ and call bound $B$.",
+ "hypotheses_covered": [
+  "program $A$ with $m$ registers",
+  "control label $l_0$",
+  "oracle",
+  "Boolean multi-tape machine $D$",
+  "initial state assignment for deciders",
+  "natural numbers $B,W$",
+  "input bit string $x",
+  "configuration of the compiled machine"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include the definitions of the compiled program or the call-validity predicate, so those parts can only be described by their role.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.UTab.prog_instr_bits",
+ "key": "c042b8b637ed2911",
+ "kind": "theorem",
+ "title": "Program output encodes instruction bits",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $n,T$ be natural numbers, let $z$ be a Boolean string, let $\\theta$ be a template for $M$, and let $e$ be an eleven-register record. Suppose the template program for $\\theta$ equals its instruction-operation list, register $NC$ in $e$ equals $n$, register $Z$ equals $|z|$, and register $I$ is less than $(T+1)$ times the configuration stride for input length $|z|+n$ and time bound $T$. Suppose there is a list $srcs$ of bit sources such that the configuration instruction at index $e.I$ is the instruction of kind $\\theta.kind$ with its sources padded from $srcs$; the template's sources, translated using the register values of $e$, equal that padded list; and every template source is valid for those register values. Then executing the template's operations with the register values of $e$ produces exactly the bit encoding of that configuration instruction.",
+ "hypotheses_covered": [
+  "Template program equals its instruction-operation list",
+  "Register NC equals n",
+  "Register Z equals the length of z",
+  "Register I is less than (T+1) times the configuration stride",
+  "Configuration instruction at index I has kind θ.kind and padded sources from srcs",
+  "Translated template sources equal the padded source list",
+  "Every template source is valid for the register values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

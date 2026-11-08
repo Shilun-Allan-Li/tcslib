@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emLoopCall_frame",
+ "key": "da3babb7b52abc84",
+ "kind": "lemma",
+ "title": "Forwarding call decomposition",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be an anchor state of $B$, and choose an output prefix, startup marker, configuration $c$ of $B$ on a Boolean input, release bit, optional flag bit, Boolean word, and configuration of $F$ on that input. The forwarding call equals the capturing call built from the configuration obtained by replacing the output of $c$ by the empty word, with the resulting configuration's physical output replaced by the prefix followed by the original output of $c$.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Turing machines over the Boolean alphabet",
+  "$a$ is a state of $B$",
+  "The prefix and word are Boolean words",
+  "The startup marker and release bit are Boolean",
+  "$c$ is a configuration of $B$ on a Boolean input",
+  "The flag is an optional Boolean",
+  "The fuel configuration is a configuration of $F$ on the same input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every output prefix $p$, startup marker, body configuration $c$, release bit, flag\nbit, counter word, and fuel configuration: the forwarding call equals the corresponding\ncapturing call built on $c$ with its output removed, with physical output replaced by\n$p$ followed by the output of $c$. The identity is between configurations only."
+}

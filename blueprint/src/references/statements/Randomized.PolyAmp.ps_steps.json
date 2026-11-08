@@ -1,0 +1,29 @@
+{
+ "lean_name": "Randomized.PolyAmp.ps_steps",
+ "key": "57b720b351e5f719",
+ "kind": "theorem",
+ "title": "Sampling-loop probability",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, let $sp:\\mathbb{N}\\to\\mathbb{N}$, and fix a Boolean input $x$. Suppose $N$ uses at most $sp(|y|)$ work-tape cells on every input $y$ and every choice word, $sp(|x|)\\le S$, the configuration-code bound for $N$, $|x|$, and $S$ is at most $K$, and $n+\\ell+S+2K+2\\le B$. Let $i,cnt\\in\\mathbb{N}$ satisfy $i\\le K+1$ and $cnt+1\\le K+1$, and let $A_1,A_0\\in\\mathbb{Q}$ be such that for every $c,d\\le K$, the run-loop configurations with accepting-run counts $cnt+1$ and $cnt$, respectively, have probabilities $A_1$ and $A_0$. Then for every $j\\in\\mathbb{N}$, every configuration $C$ on input $x$ reachable from the initial configuration in the sense that its machine state, input-head position, work-tape contents and head positions, and output summary agree with those of a configuration reached by some choice word, and every $d\\le K$, the sampling-loop configuration initialized with the code of $C$ has probability $\\Pr[\\text{accepting after }j\\text{ random choice bits}]A_1+(1-\\Pr[\\text{accepting after }j\\text{ random choice bits}])A_0$, where the probability is taken over uniformly random choice words of length $j$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean input symbols",
+  "$sp:\\mathbb{N}\\to\\mathbb{N}$",
+  "$x$ is a Boolean input",
+  "$N$ uses at most $sp(|y|)$ work-tape cells for every input $y$ and choice word",
+  "$sp(|x|)\\le S$",
+  "the configuration-code bound for $N$, $|x|$, and $S$ is at most $K$",
+  "$n+\\ell+S+2K+2\\le B$",
+  "$i\\le K+1$",
+  "$cnt+1\\le K+1$",
+  "$A_1,A_0$ are rational",
+  "for all $c,d\\le K$, the count $cnt+1$ run-loop configurations have probability $A_1$",
+  "for all $c,d\\le K$, the count $cnt$ run-loop configurations have probability $A_0$",
+  "$j\\in\\mathbb{N}$",
+  "$C$ is a configuration of $N$ on input $x$",
+  "$C$ is reachable from the initial configuration up to its core configuration and output summary",
+  "$d\\le K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite-state nondeterministic Turing machine on a Boolean input $x$, and\nlet $sp$ bound its space usage on every input and every choice word. Suppose $sp(|x|)\\le\nS$, the configuration-code bound for $N,|x|,S$ is at most $K$, and $n+\\ell+S+2K+2\\le B$.\nLet $i,cnt\\in\\mathbb N$ satisfy $i\\le K+1$ and $cnt+1\\le K+1$, and let\n$A_1,A_0\\in\\mathbb Q$ be such that, for all $c,d\\le K$, the run-loop amplifier\nconfigurations with accepting-run count $cnt+1$ and $cnt$, respectively, have\nprobabilities $A_1$ and $A_0$. Then for every $j\\in\\mathbb N$, machine configuration $C$\non $x$, and $d\\in\\mathbb N$ with $j\\le K$, $C$ reachable from the initial configuration\nby some choice word (up to its core state, head positions, and summarized output), and\n$d\\le K$, the amplifier at its sampling-loop label with registers initialized using the\ncode of $C$ has probability $\\Pr[\\text{accept after }j\\text{ random\nchoices}]A_1+(1-\\Pr[\\text{accept after }j\\text{ random choices}])A_0$."
+}

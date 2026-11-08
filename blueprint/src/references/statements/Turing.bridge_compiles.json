@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.bridge_compiles",
+ "key": "b1ef2199a17943ff",
+ "kind": "lemma",
+ "title": "Computation by the bridging machine",
+ "statement": "Let $c$ be a program in the partial-recursive language, and let $f$ map Boolean strings to Boolean strings. Suppose that for every Boolean string $y$, evaluating $c$ on the singleton list containing the sentinel code of $y$ returns the singleton list containing the sentinel code of $f(y)$. Then, for every Boolean string $x$, there is a time $t$ at which the bridging machine of $c$, run on the input $x$, has halted and has output $f(x)$.",
+ "hypotheses_covered": [
+  "A program $c$ in the partial-recursive language",
+  "A function $f$ from Boolean strings to Boolean strings",
+  "For every Boolean string $y$, the specified evaluation of $c$ equals the singleton list containing the sentinel code of $f(y)$",
+  "A Boolean string $x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a program in Mathlib's partial-recursive language and $f$ a total\nfunction on Boolean strings such that, for every string $x$, evaluating $c$ on the\nsingleton list containing the sentinel numeric code of $x$ yields exactly the\nsingleton list containing the sentinel numeric code of $f(x)$.  Then for every $x$\nthere exists a time $t$ such that the bridging machine of $c$, run on the embedded\ninput $x$, halts within $t$ steps with the embedded string $f(x)$ on its output\ntape."
+}

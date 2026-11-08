@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.split_hyps",
+ "key": "b7322aba8e864f80",
+ "kind": "theorem",
+ "title": "Split body contracts from a unary source",
+ "statement": "Let $C,e$ be natural numbers, let $M$ be a finite Turing machine over the Boolean alphabet, let $a$ be one of its states, and let $B:\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every Boolean word $s$, starting from state $a$ with empty output and each work tape holding the unary word of length $|s|+1$, the machine halts after $B(|s|)$ steps with output consisting of $C(|s|+1)^e$ ones and unchanged tape contents. Suppose also that $B(l)\\le (C+1+5e)(l+1)^e+1$ for every natural number $l$. Then, on every Boolean input $w$, the combined split-search body reaches its anchored empty-candidate configuration within $K(|w|+1)^{e+1}$ steps, with no earlier visit to the anchor, where $K=(C+1+5e)2^e+45$. Moreover, for every Boolean word $s$ with $|s|\\le |w|+1$, there is a positive $t\\le K(|w|+1)^{e+1}$ such that, from the anchor with candidate $s$ on the first work tape and all other work tapes blank, no strictly intermediate positive time visits the anchor; at time $t$ it halts with the encoded prefix of $w$ of length $|s|$ and remaining suffix if $|s|+C(|s|+1)^e=|w|$, and otherwise returns to the anchor with candidate $s$ followed by one $1$ bit and all other work tapes blank.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$a$ is a state of $M$",
+  "$B$ maps natural numbers to natural numbers",
+  "For every Boolean word $s$, the specified unary-bank computation halts after exactly $B(|s|)$ steps with the specified unary output and unchanged tape contents",
+  "For every natural number $l$, $B(l)\\le (C+1+5e)(l+1)^e+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

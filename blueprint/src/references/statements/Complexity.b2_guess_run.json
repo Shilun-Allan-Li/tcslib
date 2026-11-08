@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.b2_guess_run",
+ "key": "97134e142e2f9874",
+ "kind": "lemma",
+ "title": "Run of the guessing phase",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let $x$ be a Boolean word, let $c$ be an $S$-configuration on $x$, and let $u,w$ be Boolean words. Suppose the input-normalized machine derived from $S$, started at $c$, remains active at every time before $|w|$. Running the host under $w$ from the guessing-phase configuration associated to $c$ and $u$ yields the guessing-phase configuration associated to the scheduler's configuration after $|w|$ steps and the word obtained by appending to $u$ the choice bits at the positions where the scheduler emits.",
+ "hypotheses_covered": [
+  "$S$ and $V$ are finite deterministic machines over Booleans",
+  "$x$ is a Boolean word",
+  "$c$ is an $S$-configuration on $x$",
+  "$u$ and $w$ are Boolean words",
+  "The input-normalized $S$, started at $c$, has an active state at every time $s<|w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $d$ a scheduler configuration on an input $x$, $u$ a guessed word, and $w$ a word of choice bits such that the input-normalized scheduler is still live at every time before $|w|$. Running the reverse host under $w$ from the guessing-phase configuration for $(d,u)$ gives the guessing-phase configuration for the $|w|$-step scheduler run, with the selection of $w$ along the scheduler emission mask appended to the guessed word."
+}

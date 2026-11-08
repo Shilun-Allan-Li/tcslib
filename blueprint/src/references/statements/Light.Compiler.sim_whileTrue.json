@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Compiler.sim_whileTrue",
+ "key": "25229f6340d0f3e6",
+ "kind": "theorem",
+ "title": "Simulation of a true while loop",
+ "statement": "Let $S$ be a compiler setting, let $d,k_1,k_2$ be nonnegative integers, and let $c$ be a condition, $s$ a statement, and $\\sigma,\\sigma_1,\\sigma_2$ states. If $c$ is safe in $\\sigma$ under the limits of $S$ and holds in $\\sigma$, if executing $s$ from $\\sigma$ to $\\sigma_1$ at depth $d$ has cost $k_1$ and is simulated by $S$ with that cost, and if the loop that tests $c$ and executes $s$ is simulated by $S$ from $\\sigma_1$ to $\\sigma_2$ with cost $k_2$, then that loop is simulated by $S$ from $\\sigma$ to $\\sigma_2$ with cost $\\operatorname{cost}(c)+1+k_1+k_2$.",
+ "hypotheses_covered": [
+  "$c$ is safe in $\\sigma$ under $S$'s limits",
+  "$c$ holds in $\\sigma$",
+  "$s$ executes from $\\sigma$ to $\\sigma_1$ at depth $d$ with cost $k_1$",
+  "$s$ is simulated by $S$ from $\\sigma$ to $\\sigma_1$ with cost $k_1$",
+  "the loop testing $c$ and executing $s$ is simulated by $S$ from $\\sigma_1$ to $\\sigma_2$ with cost $k_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

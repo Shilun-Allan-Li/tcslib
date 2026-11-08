@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.foStep",
+ "key": "de21cebbedc65d3e",
+ "kind": "def",
+ "title": "Single gate fan-out expansion step",
+ "statement": "Given a number $n$, a state consisting of a gate list, a map from natural numbers to natural numbers, and a counter, and a gate $g$, write the state as $(G,t,N)$. The step appends to $G$ the gate with the same kind as $g$ and with each argument $a$ replaced by $t(a)$, followed by one AND gate with sole argument $t(a)$ for each argument $a$ of $g$. It replaces $t(v)$ by $n+|G|$ when $v=N$, by $n+|G|+1+i$ when $v$ occurs in the argument list of $g$ at index $i$, and otherwise leaves $t(v)$ unchanged; the new counter is $N+1$.",
+ "hypotheses_covered": [
+  "natural number n",
+  "input state (gate list, natural-number map, counter)",
+  "input gate g"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

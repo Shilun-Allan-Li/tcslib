@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.matrixExponentLowDegreeF₂WorkWithBackend_le_balancedCutoff",
+ "key": "eb36c33f141a6c79",
+ "kind": "theorem",
+ "title": "Low-degree learner work bound",
+ "statement": "Let $\\omega$ be a positive rational number with $2\\le\\omega$, let $n,k$ be natural numbers, and let $0<\\delta\\le 1/2$. Suppose a linear solver backend has a certificate for exponent $\\omega$: for some natural-number coefficient function, its work on every finite system of linear equations over $\\mathbb F_2$ is bounded by that coefficient times $b^{\\lceil\\omega d\\rceil}$ whenever the number of variables is at most $D b^d$, the number of equations is at most $R b^d$, and $b>0$. For any sample of size $m=2^{k-c}(M+F)$, where $c=\\lceil\\omega k/(\\omega+1)\\rceil$, $M$ is the number of monomials in $n$ variables of degree at most $k-c$, and $F=\\lceil 2/\\delta\\rceil$ rounded up to the next power of two in the sense $F=\\lceil\\log_2(2/\\delta)\\rceil$ as encoded by the failure-bit count, the work of the backend polynomial learner on that sample is at most $C(n+1)^c$, where $C$ is its specified coefficient formed from the certificate, the degree, and the learning parameter.",
+ "hypotheses_covered": [
+  "A linear solver backend and an exponent certificate for it",
+  "The certificate requires $2\\le\\omega$",
+  "The certificate supplies a natural-number coefficient function and the stated work bound for all finite equation systems satisfying its variable, row, and positive-base bounds",
+  "$n,k$ are natural numbers",
+  "$0<\\delta\\le 1/2$",
+  "The samples are indexed by the stated finite sample count and take values in the sign cube times the sign set"
+ ],
+ "confidence": "low",
+ "caveat": "The statement uses several upstream constructions whose informal descriptions are placeholders. The failure-bit count is $\\operatorname{clog}_2(\\lceil 2/\\delta\\rceil)$, and the learner coefficient is defined explicitly from the monomial count, row coefficient, and certificate; the prose above summarizes these constructions rather than giving their full expansions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

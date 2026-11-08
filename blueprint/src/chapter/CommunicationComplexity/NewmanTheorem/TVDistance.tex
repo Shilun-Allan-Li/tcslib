@@ -23,6 +23,12 @@ by taking the difference of $\mu$ and $\nu$ as measures.
 
 \begin{definition}[Total variation distance]
 \lean{CommunicationComplexity.tvDistance}
+\statementsource{Vad12}{pdf-bf2ce5422088-p172-b002}
+\statementsource{HILL99}{pdf-130039751e9f-p007-b003}
+\statementsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p001-b004,
+  pdf-70350d84fb7f-p002-b003
+}
 \label{CommunicationComplexity.tvDistance}
 \leanok
 \uses{CommunicationComplexity.signedMeasureDiff}
@@ -34,6 +40,11 @@ $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\|\mu - \nu\|_{\mathrm{TV}}$.
 
 \begin{definition}[Total variation distance via event supremum]
 \lean{CommunicationComplexity.tvDistanceSup}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p172-b002,
+  pdf-bf2ce5422088-p216-b003
+}
+\statementsource{levin-peres-wilmer-ch04-mixing}{pdf-70350d84fb7f-p001-b004}
 \label{CommunicationComplexity.tvDistanceSup}
 \leanok
 The \emph{supremum definition} of total variation distance between $\mu$ and $\nu$ is
@@ -115,9 +126,103 @@ where both sides are evaluated as real numbers on the whole space $\Omega$.
 
 \begin{lemma}[Event probability gap bounded by half the total variation]
 \lean{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation}
+\proofsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004
+}
 \label{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ, CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ, CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart, CommunicationComplexity.signedMeasureDiff}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004,
+    pdf-70350d84fb7f-p002-b003}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.signedMeasureDiff}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004,
+    pdf-70350d84fb7f-p002-b003}
+\proofstep
+  {CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004,
+    pdf-70350d84fb7f-p002-b005}
+\proofstep
+  {CommunicationComplexity.TVDistance.signedMeasureDiff_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004,
+    pdf-70350d84fb7f-p002-b005}
+\proofstep
+  {CommunicationComplexity.TVDistance.totalVariation_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003}
+\proofstep
+  {CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003,
+    pdf-70350d84fb7f-p002-b005}
 \difficulty{4}
 Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let $\mu
 - \nu$ denote their signed measure difference. Then for every measurable set $S
@@ -131,9 +236,103 @@ where $\abs{\mu - \nu}$ is the total variation measure of $\mu - \nu$ and $\abs{
 
 \begin{lemma}[Probability gap bounded by half total variation]
 \lean{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation}
+\proofsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004
+}
 \label{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation, CommunicationComplexity.signedMeasureDiff}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.signedMeasureDiff}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.signedMeasureDiff_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.totalVariation_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
 \difficulty{2}
 Let $\mu$ and $\nu$ be probability measures on a measurable space $\Omega$, and let $\mu
 - \nu$ denote their signed measure difference. Then for every measurable set $S
@@ -146,6 +345,10 @@ where $\abs{\mu - \nu}$ is the total variation measure of $\mu - \nu$.
 
 \begin{lemma}[Attainment of half the total variation by a single event]
 \lean{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation}
+\statementsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004
+}
 \label{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ, CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart, CommunicationComplexity.signedMeasureDiff}
@@ -162,6 +365,10 @@ event realizes exactly half the total variation of $\mu - \nu$ over the whole sp
 
 \begin{lemma}[Attainment of the total-variation distance]
 \lean{CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation}
+\statementsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004
+}
 \label{CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation}
 \leanok
 \uses{CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation, CommunicationComplexity.signedMeasureDiff}
@@ -176,6 +383,11 @@ $\abs{\mu-\nu}$. Then there exists a measurable set $S \subseteq \Omega$ such th
 
 \begin{theorem}[Equivalence of the two definitions of total variation distance]
 \lean{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup}
+\statementsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p001-b004,
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004
+}
 \label{CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup}
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation, CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation, CommunicationComplexity.signedMeasureDiff, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistanceSup}
@@ -192,6 +404,7 @@ measurable}\,\bigr\}.
 
 \begin{theorem}[Events differ by at most the total variation distance]
 \lean{CommunicationComplexity.TVDistance.abs_measureReal_sub_le_tvDistance}
+\statementsource{levin-peres-wilmer-ch04-mixing}{pdf-70350d84fb7f-p001-b004}
 \label{CommunicationComplexity.TVDistance.abs_measureReal_sub_le_tvDistance}
 \leanok
 \uses{CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation, CommunicationComplexity.tvDistance}
@@ -229,6 +442,67 @@ For every subset $S \subseteq \alpha$,
 
 \begin{lemma}[Positive part sum equals half the $\ell^1$ norm]
 \lean{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
+\proofsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004,
+  pdf-70350d84fb7f-p002-b005
+}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004,
+    pdf-70350d84fb7f-p002-b003}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p003-b006}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
 \label{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
 \leanok
 \difficulty{4}
@@ -243,9 +517,82 @@ parts of $a$ equals half the sum of its absolute values:
 
 \begin{lemma}[Half-total-variation bound for a zero-sum indicator sum]
 \lean{CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs}
+\proofsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004
+}
 \label{CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs}
 \leanok
 \uses{CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart, CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002,
+    pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002,
+    pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004,
+    pdf-70350d84fb7f-p002-b005}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003,
+    pdf-70350d84fb7f-p002-b004}
 \difficulty{4}
 Let $\alpha$ be a finite type and let $a : \alpha \to \bbr$ be a real-valued function
 whose entries sum to zero, $\sum_{x \in \alpha} a(x) = 0$. Then for every subset $S
@@ -257,9 +604,79 @@ whose entries sum to zero, $\sum_{x \in \alpha} a(x) = 0$. Then for every subset
 
 \begin{lemma}[Positive part of a zero-sum family equals half its total variation]
 \lean{CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs}
+\proofsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004,
+  pdf-70350d84fb7f-p002-b005
+}
 \label{CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs}
 \leanok
 \uses{CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002,
+    pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002,
+    pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p003-b005,
+    pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p003-b005,
+    pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p004-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004,
+    pdf-70350d84fb7f-p002-b005}
 \difficulty{2}
 Let $\alpha$ be a finite type and let $a : \alpha \to \bbr$ be a family of real numbers
 whose total sum vanishes, $\sum_{x} a(x) = 0$. Then
@@ -308,9 +725,115 @@ probability measures on $\Omega$. Then the singleton mass differences sum to zer
 
 \begin{theorem}[Total variation distance as half the $\ell^1$ distance]
 \lean{CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum}
+\statementsource{HILL99}{pdf-130039751e9f-p007-b003}
+\proofsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p001-b004,
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004
+}
 \label{CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs, CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs, CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff, CommunicationComplexity.TVDistance.singletonMassDiff, CommunicationComplexity.TVDistance.sum_singletonMassDiff_eq_zero, CommunicationComplexity.tvDistanceSup}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.tvDistanceSup}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.singletonMassDiff}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_singletonMassDiff_eq_zero}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
 \difficulty{5}
 Let $\Omega$ be a finite set equipped with the discrete measurable structure, and let
 $\mu$ and $\nu$ be probability measures on $\Omega$. Then the supremum form of total
@@ -325,9 +848,188 @@ individual points:
 
 \begin{theorem}[Total variation distance as half the $\ell^1$ distance]
 \lean{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum}
+\statementsource{HILL99}{pdf-130039751e9f-p007-b003}
+\proofsource{levin-peres-wilmer-ch04-mixing}{
+  pdf-70350d84fb7f-p001-b004,
+  pdf-70350d84fb7f-p002-b003,
+  pdf-70350d84fb7f-p002-b004
+}
 \label{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum, CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup, CommunicationComplexity.tvDistance}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003,
+    pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003,
+    pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.measureReal_eq_sum_singletons}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003,
+    pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003,
+    pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003,
+    pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.signedMeasureDiff}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.tvDistance}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004,
+    pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.tvDistanceSup}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.signedMeasure_apply_eq_posPart_sub_negPart}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.signedMeasureDiff_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.jordan_posPart_real_univ_eq_negPart_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.totalVariation_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.half_totalVariation_real_univ_eq_posPart_real_univ}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.event_abs_signedMeasureDiff_le_half_totalVariation}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.event_abs_measureReal_sub_le_half_totalVariation}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.exists_event_abs_signedMeasureDiff_eq_half_totalVariation}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.exists_event_abs_measureReal_sub_eq_half_totalVariation}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.tvDistance_eq_tvDistanceSup}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p001-b004,
+    pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_indicator_le_sum_posPart}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_posPart_eq_half_sum_abs}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.abs_sum_indicator_le_half_sum_abs}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.abs_sum_pos_indicator_eq_half_sum_abs}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.singletonMassDiff}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.measureReal_sub_eq_sum_indicator_singletonMassDiff}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.sum_singletonMassDiff_eq_zero}
+  {context}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b004}
+\proofstep
+  {CommunicationComplexity.TVDistance.tvDistanceSup_eq_half_sum}
+  {direct}
+  {levin-peres-wilmer-ch04-mixing}
+  {pdf-70350d84fb7f-p002-b003,
+    pdf-70350d84fb7f-p002-b004}
 \difficulty{1}
 Let $\Omega$ be a finite discrete measurable space, and let $\mu$ and $\nu$ be
 probability measures on $\Omega$. Then the total variation distance between $\mu$ and
@@ -343,7 +1045,7 @@ differences of their point masses:
 \lean{CommunicationComplexity.TVDistance.tvDistance_bool_eq_abs_true}
 \label{CommunicationComplexity.TVDistance.tvDistance_bool_eq_abs_true}
 \leanok
-\uses{CommunicationComplexity.TVDistance.tvDistance_eq_half_sum, CommunicationComplexity.tvDistance}
+\uses{CommunicationComplexity.TVDistance.measureReal_false_eq_one_sub_true, CommunicationComplexity.TVDistance.tvDistance_eq_half_sum, CommunicationComplexity.tvDistance}
 \difficulty{4}
 Let $\mu$ and $\nu$ be probability measures on the two-point space $\mathrm{Bool} =
 \{\mathrm{true}, \mathrm{false}\}$. Then their total variation distance is the absolute
@@ -355,9 +1057,10 @@ difference of the masses they assign to the single point $\mathrm{true}$:
 
 \begin{theorem}[Subadditivity of total variation distance under products]
 \lean{CommunicationComplexity.TVDistance.tvDistance_prod_le}
+\statementsource{levin-peres-wilmer-ch04-mixing}{pdf-70350d84fb7f-p011-b006}
 \label{CommunicationComplexity.TVDistance.tvDistance_prod_le}
 \leanok
-\uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.tvDistance_eq_half_sum, CommunicationComplexity.tvDistance}
+\uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.TVDistance.prod_measureReal_singleton, CommunicationComplexity.TVDistance.sum_prod_abs_le, CommunicationComplexity.TVDistance.tvDistance_eq_half_sum, CommunicationComplexity.tvDistance}
 \difficulty{5}
 Let $\alpha$ and $\beta$ be finite discrete measurable spaces, let $\mu_1,\nu_1$ be
 probability measures on $\alpha$, and let $\mu_2,\nu_2$ be probability measures on
@@ -373,58 +1076,48 @@ satisfies
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Mass at false on the two-point space]
+\begin{lemma}[Mass of false under a probability measure]
 \lean{CommunicationComplexity.TVDistance.measureReal_false_eq_one_sub_true}
 \label{CommunicationComplexity.TVDistance.measureReal_false_eq_one_sub_true}
 \leanok
 \difficulty{1}
-Let $\mu$ be a probability measure on the two-point space $\mathrm{Bool} =
-\{\mathrm{true}, \mathrm{false}\}$. Then the mass at $\mathrm{false}$ is one minus the
-mass at $\mathrm{true}$:
-\[
-\mu(\{\mathrm{false}\}) = 1 - \mu(\{\mathrm{true}\}).
-\]
+Let $\mu$ be a probability measure on $\mathrm{Bool}$. The real-valued measure of
+$\{\mathrm{false}\}$ is one minus the real-valued measure of $\{\mathrm{true}\}$:
+$\mu(\{\mathrm{false}\})=1-\mu(\{\mathrm{true}\})$.
 \end{lemma}
 
-\begin{lemma}[Pointwise triangle bound for a product gap]
+\begin{lemma}[Product difference bound]
 \lean{CommunicationComplexity.TVDistance.abs_mul_sub_mul_le}
 \label{CommunicationComplexity.TVDistance.abs_mul_sub_mul_le}
 \leanok
 \difficulty{1}
-Let $a, b, c, d \in \bbr$ with $b \ge 0$ and $c \ge 0$. Then
-\[
-\abs{ab - cd} \;\le\; \abs{a - c}\, b + c\, \abs{b - d}.
-\]
+For real numbers $a,b,c,d$ with $b\ge 0$ and $c\ge 0$, one has $\lvert ab-cd\rvert\le
+\lvert a-c\rvert b+c\lvert b-d\rvert$.
 \end{lemma}
 
-\begin{lemma}[$\ell^1$ gap of product weights bounded by marginal gaps]
+\begin{lemma}[Product weight gap bound]
 \lean{CommunicationComplexity.TVDistance.sum_prod_abs_le}
 \label{CommunicationComplexity.TVDistance.sum_prod_abs_le}
 \leanok
 \uses{CommunicationComplexity.TVDistance.abs_mul_sub_mul_le}
 \difficulty{3}
-Let $\alpha$ and $\beta$ be finite types, and let $a, c : \alpha \to \bbr$ and
-$b, d : \beta \to \bbr$ be real-valued weight functions. Suppose $b$ and $c$ are
-nonnegative and each sums to one, i.e.\ $b(y) \ge 0$ for all $y$, $c(x) \ge 0$ for all
-$x$, $\sum_{y \in \beta} b(y) = 1$ and $\sum_{x \in \alpha} c(x) = 1$. Then the $\ell^1$
-gap between the two product weight functions is at most the sum of the marginal $\ell^1$
-gaps:
+Let $\alpha$ and $\beta$ be finite sets, and let $a,c:\alpha\to\bbr$ and
+$b,d:\beta\to\bbr$. Suppose $b(y)\ge 0$ for every $y$, $c(x)\ge 0$ for every $x$, and
+$\sum_y b(y)=\sum_x c(x)=1$. Then
 \[
-\sum_{(x,y) \in \alpha \times \beta} \abs{a(x)\,b(y) - c(x)\,d(y)}
-\;\le\; \sum_{x \in \alpha} \abs{a(x) - c(x)} + \sum_{y \in \beta} \abs{b(y) - d(y)}.
+\sum_{(x,y)\in\alpha\times\beta}\abs{a(x)b(y)-c(x)d(y)}\leq
+\sum_{x\in\alpha}\abs{a(x)-c(x)}+\sum_{y\in\beta}\abs{b(y)-d(y)}.
 \]
 \end{lemma}
 
-\begin{lemma}[Singleton mass of a product measure]
+\begin{lemma}[Singleton mass under a product measure]
 \lean{CommunicationComplexity.TVDistance.prod_measureReal_singleton}
 \label{CommunicationComplexity.TVDistance.prod_measureReal_singleton}
 \leanok
 \difficulty{2}
-Let $\mu_1$ be a measure on a measurable space $\alpha$ and $\mu_2$ a $\sigma$-finite
-measure on a measurable space $\beta$. Then for every $x \in \alpha$ and $y \in \beta$,
-the real-valued mass that the product measure $\mu_1 \otimes \mu_2$ assigns to the
-singleton $\{(x,y)\}$ is the product of the singleton masses:
-\[
-(\mu_1 \otimes \mu_2)(\{(x,y)\}) = \mu_1(\{x\})\,\mu_2(\{y\}).
-\]
+Let $\alpha$ and $\beta$ be measurable spaces, let $\mu_1$ be a measure on $\alpha$, and
+let $\mu_2$ be a sigma-finite measure on $\beta$. For every $x\in\alpha$ and
+$y\in\beta$, the real-valued measure of the singleton $\{(x,y)\}$ under the product
+measure is the product of its real-valued singleton measures:
+$(\mu_1\otimes\mu_2)(\{(x,y)\})=\mu_1(\{x\})\mu_2(\{y\})$.
 \end{lemma}

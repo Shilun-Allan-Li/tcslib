@@ -8,85 +8,138 @@ An extended Bobkov functional includes arbitrary additional coordinate functions
 \begin{definition}[Extended profile-gradient functional]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.derivative,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative, BooleanAnalysis.expect}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p021-b001}
 For $P:\mathbb R\to\mathbb R$, $f:\{0,1\}^n\to\mathbb R$, and $g=(g_1,\ldots,g_m)$ of real functions on the cube, write $V(f,g)(x)=(D_1f(x),\ldots,D_nf(x),g_1(x),\ldots,g_m(x))$ and $F_P(f,g)=\mathbb E\sqrt{P(f)^2+\|V(f,g)\|_2^2}$, with $D_i$ the coordinate half-difference. The extended functional is $F_P(f,g)$ for arbitrary $n,m\ge0$.
 \end{definition}
 
 \begin{definition}[Gradient and additional coordinate vector]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.derivative}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative}
 For $f:\{0,1\}^n\to\mathbb R$, $m\ge0$, and real cube functions $g_1,\ldots,g_m$, define $V(f,g)(x)=(D_1f(x),\ldots,D_nf(x),g_1(x),\ldots,g_m(x))$, where $D_i$ is the coordinate half-difference.
 \end{definition}
 
-\begin{lemma}[Squared combined vector length]
+\begin{lemma}[Squared length decomposition]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.sum_sq_lengthVector}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector,BooleanAnalysis.derivative}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector, BooleanAnalysis.derivative}
 \difficulty{3}
-For $P:\mathbb R\to\mathbb R$, $f:\{0,1\}^n\to\mathbb R$, and $g=(g_1,\ldots,g_m)$ of real functions on the cube, write $V(f,g)(x)=(D_1f(x),\ldots,D_nf(x),g_1(x),\ldots,g_m(x))$ and $F_P(f,g)=\mathbb E\sqrt{P(f)^2+\|V(f,g)\|_2^2}$, with $D_i$ the coordinate half-difference. For every $x$, $\|V(f,g)(x)\|_2^2=\sum_i(D_i f(x))^2+\sum_jg_j(x)^2$.
+Let $f:\{0,1\}^n\to\mathbb R$ be a Boolean function, let
+$g_1,\ldots,g_m:\{0,1\}^n\to\mathbb R$, and let $x\in\{0,1\}^n$. If
+$V(f,g)(x)=(D_1f(x),\ldots,D_nf(x),g_1(x),\ldots,g_m(x))$, where $D_i$ is the coordinate
+half-difference, then
+$\sum_{j=1}^{n+m}V(f,g)(x)_j^2=\sum_{i=1}^n(D_if(x))^2+\sum_{j=1}^m g_j(x)^2$.
 \end{lemma}
 
-\begin{lemma}[Length under a coordinate restriction]
+\begin{lemma}[Length under last-coordinate restriction]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.extended_length_snoc}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector,BooleanAnalysis.GaussianSpace.BobkovInterpolation.sum_sq_lengthVector,BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.derivative}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector, BooleanAnalysis.GaussianSpace.BobkovInterpolation.sum_sq_lengthVector, BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.derivative}
 \difficulty{3}
-For a profile $P:\mathbb R\to\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\mathbb E\sqrt{P(h)^2+\|V(h,k)\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\{0,1\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. For every $x,b$, $\sqrt{P(f(x,b))^2+\|V(f,g)(x,b)\|_2^2}=\sqrt{P(f_b(x))^2+d_f(x)^2+\|V(f_b,g_b)(x)\|_2^2}$.
+Let $n,m$ be nonnegative integers, let $P:\mathbb R\to\mathbb R$, let $f$ be a
+real-valued function on $\{0,1\}^{n+1}$, and let $g_1,\ldots,g_m$ be real-valued
+functions on that cube. For every $x\in\{0,1\}^n$ and bit $b$, the square root of
+$P(f(x,b))^2$, plus the sum of the squares of all coordinate derivatives of $f$ at
+$(x,b)$ and the squares of all $g_j(x,b)$, equals the square root of
+$P(f_b(x))^2+(D_{n+1}f(x,b))^2$ plus the squared length of the vector consisting of the
+first $n$ derivatives of $f_b$ and the values of the restrictions $(g_j)_b$ at $x$.
 \end{lemma}
 
-\begin{lemma}[Linearity of combined coordinate vectors]
+\begin{lemma}[Linearity of the combined vector]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_linear_combination}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector,BooleanAnalysis.GaussianSpace.derivative_linear_combination}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector, BooleanAnalysis.GaussianSpace.derivative_linear_combination}
 \difficulty{4}
-For a profile $P:\mathbb R\to\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\mathbb E\sqrt{P(h)^2+\|V(h,k)\|_2^2}$, where $D_i$ is the coordinate half-difference. For real $c,d$, functions $f_1,f_2$ on the cube, and vectors $g_1,g_2$ of $m$ cube functions, $V(cf_1+df_2,cg_1+dg_2)(x)=cV(f_1,g_1)(x)+dV(f_2,g_2)(x)$ for every $x$.
+Let $n,m$ be nonnegative integers, let $f_1,f_2:\{0,1\}^n\to\mathbb R$, let $g_1,g_2$ be
+$m$-tuples of real-valued functions on $\{0,1\}^n$, let $c,d\in\mathbb R$, and let
+$x\in\{0,1\}^n$. The combined vector of the linear combinations $cf_1+df_2$ and
+$cg_1+dg_2$ at $x$ is $c$ times the combined vector of $(f_1,g_1)$ at $x$ plus $d$ times
+the combined vector of $(f_2,g_2)$ at $x$.
 \end{lemma}
 
-\begin{lemma}[Vector of a prefix-noised restriction]
+\begin{lemma}[Noise and last-coordinate restriction]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_noise_restriction}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_linear_combination,BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq_fun,BooleanAnalysis.Hypercontractivity.avgLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.boolToSign,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_linear_combination, BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq_fun, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.boolToSign, BooleanAnalysis.noiseOp}
 \difficulty{3}
-For a profile $P:\mathbb R\to\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\mathbb E\sqrt{P(h)^2+\|V(h,k)\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\{0,1\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For $s_0=1$, $s_1=-1$, $V(T_\rho f_b,T_\rho g_b)(x)=V(T_\rho a_f,T_\rho a_g)(x)+s_bV(T_\rho d_f,T_\rho d_g)(x)$ for every $x,b$.
+Let $n,m$ be nonnegative integers, let $\rho\in\mathbb R$, let $f$ be a real-valued
+function on $\{0,1\}^{n+1}$, let $g$ be an $m$-tuple of such functions, and let
+$x\in\{0,1\}^n$ and $b\in\{0,1\}$. The combined vector formed from the noise-operator
+images of the restrictions of $f$ and $g$ at $b$, evaluated at $x$, equals the combined
+vector formed from the noise-operator images of their last-coordinate averages, plus
+$\sigma(b)$ times the combined vector formed from the noise-operator images of their
+last-coordinate half-differences.
 \end{lemma}
 
-\begin{lemma}[Restriction of the fully noised vector]
+\begin{lemma}[Restriction of a noised combined vector]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_restrictLast_noiseOp}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_linear_combination,BooleanAnalysis.GaussianSpace.restrictLast_noiseOp_eq,BooleanAnalysis.Hypercontractivity.avgLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.boolToSign,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_linear_combination, BooleanAnalysis.GaussianSpace.restrictLast_noiseOp_eq, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.boolToSign, BooleanAnalysis.noiseOp}
 \difficulty{3}
-For a profile $P:\mathbb R\to\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\mathbb E\sqrt{P(h)^2+\|V(h,k)\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\{0,1\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For $s_0=1$, $s_1=-1$, $V((T_\rho f)_b,(T_\rho g)_b)(x)=V(T_\rho a_f,T_\rho a_g)(x)+s_b\rho V(T_\rho d_f,T_\rho d_g)(x)$ for every $x,b$.
+Let $n,m$ be nonnegative integers, let $\rho\in\mathbb R$, let $f$ be a real-valued
+function on $\{0,1\}^{n+1}$, let $g$ be an $m$-tuple of such functions, and let
+$b\in\{0,1\}$ and $x\in\{0,1\}^n$. The combined vector of the restrictions at $b$ of the
+noise-operator images of $f$ and $g$, evaluated at $x$, equals the combined vector of
+the noise-operator images of their last-coordinate averages at $x$, plus $\sigma(b)\rho$
+times the combined vector of the noise-operator images of their last-coordinate
+half-differences at $x$.
 \end{lemma}
 
-\begin{lemma}[Coordinate splitting of the extended functional]
+\begin{lemma}[Last-coordinate splitting of the functional]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_restrictLast}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional,BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.expect_succ_eq,BooleanAnalysis.Hypercontractivity.restrictLast}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional, BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.expect_succ_eq, BooleanAnalysis.Hypercontractivity.restrictLast}
 \difficulty{3}
-For a profile $P:\mathbb R\to\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\mathbb E\sqrt{P(h)^2+\|V(h,k)\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\{0,1\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. Then $F_P(f,g)=\bigl(F_P(f_0,(d_f,g_0))+F_P(f_1,(d_f,g_1))\bigr)/2$, where $(d_f,g_b)$ adjoins $d_f$ to the additional coordinates.
+Let $n,m\ge0$, let $P:\mathbb R\to\mathbb R$, and let $f,g_1,\ldots,g_m$ be real-valued
+functions on $\{0,1\}^{n+1}$. If $f_0,f_1$ and $g_{j,0},g_{j,1}$ denote their
+restrictions to the last coordinate and $d_f=(f_0-f_1)/2$, then $F_P(f,(g_j)_j)$ equals
+$\bigl(F_P(f_0,(d_f,g_{j,0})_j)+F_P(f_1,(d_f,g_{j,1})_j)\bigr)/2$.
 \end{lemma}
 
 \begin{lemma}[Noisy functional as a symmetric pair]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_pair}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extended_length_snoc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_restrictLast_noiseOp,BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength,BooleanAnalysis.GaussianSpace.derivative_last_noise_snoc,BooleanAnalysis.GaussianSpace.derivative_last_snoc,BooleanAnalysis.GaussianSpace.restrictLast_noiseOp_eq,BooleanAnalysis.Hypercontractivity.avgLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.expect_succ_eq_iterated,BooleanAnalysis.boolToSign_false,BooleanAnalysis.boolToSign_true,BooleanAnalysis.expect,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extended_length_snoc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_restrictLast_noiseOp, BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength, BooleanAnalysis.GaussianSpace.derivative_last_noise_snoc, BooleanAnalysis.GaussianSpace.derivative_last_snoc, BooleanAnalysis.GaussianSpace.restrictLast_noiseOp_eq, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.expect_succ_eq_iterated, BooleanAnalysis.boolToSign_false, BooleanAnalysis.boolToSign_true, BooleanAnalysis.expect, BooleanAnalysis.noiseOp}
 \difficulty{4}
-For a profile $P:\mathbb R\to\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\mathbb E\sqrt{P(h)^2+\|V(h,k)\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\{0,1\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For each $x$, put $a=T_\rho a_f(x)$, $b=T_\rho d_f(x)$, $u=V(T_\rho a_f,T_\rho a_g)(x)$, and $v=V(T_\rho d_f,T_\rho d_g)(x)$. Then $F_P(T_\rho f,T_\rho g)=\mathbb E_x\frac12\sum_{\epsilon\in\{-1,1\}}\sqrt{P(a+\epsilon\rho b)^2+(\rho b)^2+\|u+\epsilon\rho v\|_2^2}$.
+Let $n,m\ge0$, $P:\mathbb R\to\mathbb R$, $\rho\in\mathbb R$, and let $f,g_1,\ldots,g_m$
+be real-valued functions on $\{0,1\}^{n+1}$. Write $a_f=(f_0+f_1)/2$ and
+$d_f=(f_0-f_1)/2$, and define $a_{g_j},d_{g_j}$ in the same way from the last-coordinate
+restrictions. Then $F_P(T_\rho f,(T_\rho g_j)_j)$ equals the uniform expectation over
+$x\in\{0,1\}^n$ of $L(\rho,c(x))$, with first argument $T_\rho a_f(x)$, second argument
+$T_\rho d_f(x)$, vector arguments $V(T_\rho a_f,(T_\rho a_{g_j})_j)(x)$ and $V(T_\rho
+d_f,(T_\rho d_{g_j})_j)(x)$, and $c(x)=(\rho T_\rho d_f(x))^2$.
 \end{lemma}
 
-\begin{lemma}[Endpoint pair and noised restrictions]
+\begin{lemma}[Noisy last-coordinate splitting identity]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.expect_pairLength_one}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector,BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_noise_restriction,BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength,BooleanAnalysis.GaussianSpace.BobkovInterpolation.sum_sq_lengthVector,BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq,BooleanAnalysis.Hypercontractivity.avgLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.boolToSign_false,BooleanAnalysis.boolToSign_true,BooleanAnalysis.expect,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector, BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_noise_restriction, BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength, BooleanAnalysis.GaussianSpace.BobkovInterpolation.sum_sq_lengthVector, BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.boolToSign_false, BooleanAnalysis.boolToSign_true, BooleanAnalysis.expect, BooleanAnalysis.noiseOp}
 \difficulty{5}
-For a profile $P:\mathbb R\to\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\mathbb E\sqrt{P(h)^2+\|V(h,k)\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\{0,1\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For each $x$, put $a=T_\rho a_f(x)$, $b=T_\rho d_f(x)$, $u=V(T_\rho a_f,T_\rho a_g)(x)$, and $v=V(T_\rho d_f,T_\rho d_g)(x)$. Then $\mathbb E_x\frac12\sum_{\epsilon\in\{-1,1\}}\sqrt{P(a+\epsilon b)^2+b^2+\|u+\epsilon v\|_2^2}=\bigl(F_P(T_\rho f_0,(T_\rho d_f,T_\rho g_0))+F_P(T_\rho f_1,(T_\rho d_f,T_\rho g_1))\bigr)/2$.
+Let $n,m\ge0$, let $P:\mathbb R\to\mathbb R$ and $\rho\in\mathbb R$, and let $f$ and
+$g_1,\ldots,g_m$ be real-valued functions on $\{0,1\}^{n+1}$. Write $f_0,f_1$ and
+$g_{j,0},g_{j,1}$ for their restrictions to the last coordinate, and put
+$a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, with $a_{g_j}=(g_{j,0}+g_{j,1})/2$ and
+$d_{g_j}=(g_{j,0}-g_{j,1})/2$. Then the uniform-cube expectation of $L(1,B(x)^2)$, where
+$B=T_\rho d_f(x)$, the first argument of $L$ is $A=T_\rho a_f(x)$, and its vector
+arguments are $U=V(T_\rho a_f,(T_\rho a_{g_j})_j)(x)$ and $W=V(T_\rho d_f,(T_\rho
+d_{g_j})_j)(x)$, equals the average of $F_P$ on the two last-coordinate restrictions:
+$\bigl(F_P(T_\rho f_0,(T_\rho d_f,T_\rho g_{0})) + F_P(T_\rho f_1,(T_\rho d_f,T_\rho
+g_{1}))\bigr)/2$. Here $T_\rho$ is the Fourier noise operator, $V$ consists of the
+coordinate half-differences followed by the listed additional coordinates, and $F_P$ is
+the uniform expectation of the square root of $P$ of the function squared plus the
+squared Euclidean length of $V$.
 \end{lemma}
 
 \begin{lemma}[Noise contracts the extended functional]
 \lean{BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_le}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.expect_pairLength_one,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_pair,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_restrictLast,BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_contraction,BooleanAnalysis.GaussianSpace.noise_restriction_endpoints_mem,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.noiseOp_dim_zero,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.ThresholdFunctions.expect_mono,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.expect_pairLength_one, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_pair, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_restrictLast, BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_contraction, BooleanAnalysis.GaussianSpace.noise_restriction_endpoints_mem, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.noiseOp_dim_zero, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.ThresholdFunctions.expect_mono, BooleanAnalysis.noiseOp}
 \difficulty{5}
-For $P:\mathbb R\to\mathbb R$, $f:\{0,1\}^n\to\mathbb R$, and $g=(g_1,\ldots,g_m)$ of real functions on the cube, write $V(f,g)(x)=(D_1f(x),\ldots,D_nf(x),g_1(x),\ldots,g_m(x))$ and $F_P(f,g)=\mathbb E\sqrt{P(f)^2+\|V(f,g)\|_2^2}$, with $D_i$ the coordinate half-difference. Assume $P\ge0$ on $[0,1]$ and, whenever $z\pm d\in[0,1]$, $P(z)\le\bigl(\sqrt{P(z+d)^2+d^2}+\sqrt{P(z-d)^2+d^2}\bigr)/2$. If $P$ is continuous on $[0,1]$, $f$ takes values in $[0,1]$, and $0\le\rho\le1$, then $F_P(T_\rho f,T_\rho g)\le F_P(f,g)$, where $T_\rho$ is Boolean noise applied to each component.
+Let $n,m\ge0$ and $P:\mathbb R\to\mathbb R$ be continuous on $[0,1]$ and nonnegative
+there. Suppose that whenever $a+b,a-b\in[0,1]$,
+$P(a)\le\bigl(\sqrt{P(a+b)^2+b^2}+\sqrt{P(a-b)^2+b^2}\bigr)/2$. For any real-valued
+functions $f,g_1,\ldots,g_m$ on $\{0,1\}^n$ with $f(x)\in[0,1]$ for every $x$, and any
+$\rho\in[0,1]$, the extended functional satisfies $F_P(T_\rho f,(T_\rho g_j)_j)\le
+F_P(f,(g_j)_j)$, where $T_\rho$ is the Fourier noise operator.
 \end{lemma}

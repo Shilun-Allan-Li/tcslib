@@ -1,0 +1,30 @@
+{
+ "lean_name": "Complexity.UTab.cell_bits",
+ "key": "3bf4e6d5fd78f504",
+ "kind": "theorem",
+ "title": "Cell Template Bit Output",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, and choose natural numbers $n,|z|,T,t,r$ and a work-tape index $\\tau<k$. Suppose $r<2T+1$ and $t\\le T$. Let $e$ be a register state whose input-length and fixed-string-length registers are $n$ and $|z|$, respectively; whose instruction register is the layout index of cell $(t,\\tau,r)$; whose preceding-cell register, when $t\\ne0$, satisfies $q+\\mathrm{stride}=i$; and whose first-instruction register is $t\\,\\mathrm{stride}$. For a phase $ph$ in the five-element phase set, suppose its nonzero flag agrees with $1\\le r$, its phase-$2$ flag agrees with $r=T$, and its not-phase-$4$ flag agrees with $r+1<2T+1$. Then executing the cell template’s operations on $e$ produces exactly the bit string assigned to instruction $i$ by the table construction.",
+ "hypotheses_covered": [
+  "Finite binary-alphabet Turing machine M",
+  "Natural number n",
+  "Binary string z",
+  "Natural numbers T, t, and r",
+  "Work-tape index τ in Fin M.k",
+  "r < 2T + 1",
+  "t ≤ T",
+  "Register state e",
+  "Input-length register equals n",
+  "Fixed-string-length register equals |z|",
+  "Instruction register equals the layout index of cell (t, τ, r)",
+  "If t is nonzero, q plus the configuration stride equals i",
+  "First-instruction register equals t times the configuration stride",
+  "Phase ph is in the five-element phase set",
+  "The phase nonzero flag agrees with 1 ≤ r",
+  "The phase-2 flag agrees with r = T",
+  "The not-phase-4 flag agrees with r + 1 < 2T + 1"
+ ],
+ "confidence": "low",
+ "caveat": "The Lean statement contains an unused list x and several table-construction definitions whose informal descriptions are unavailable; the equality is rendered as the template output matching the corresponding instruction bit string.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

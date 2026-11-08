@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.half_noise_norm_le_randomization",
+ "key": "b4dc449892bfe25c",
+ "kind": "theorem",
+ "title": "Half-Noise Norm Bound by Randomization",
+ "statement": "Let $n\\in\\mathbb N$, let $P$ be a product of $n$ finite probability spaces whose coordinate atom weights are strictly positive and sum to $1$, let $f$ be a real-valued function on the product outcome space, and let $q\\in\\mathbb R$ satisfy $q\\ge1$. Then the $q$-moment norm of the product noise operator at parameter $1/2$ applied to $f$ is at most the randomization moment norm of $f$: $\\|T_{1/2}f\\|_{q,P}\\le\\|Rf\\|_q$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$P$ is a product of $n$ finite probability spaces",
+  "Every coordinate atom weight is strictly positive",
+  "The weights in each coordinate space sum to $1$",
+  "$f$ is real-valued on the product outcome space",
+  "$q\\in\\mathbb R$ with $1\\le q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $f:\\Omega\\to\\mathbb R$, and $q\\ge1$. Then $\\|T_{1/2}f\\|_{q,P}\\le(\\mathbb E_{x\\sim P}\\mathbb E_r|\\sum_S\\chi_S(r)f_S(x)|^q)^{1/q}$, where $r$ is uniform on the Boolean cube. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$ for $r\\in\\{0,1\\}^n$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

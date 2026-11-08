@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.preS_A",
+ "key": "5e4a60776259a84f",
+ "kind": "lemma",
+ "title": "Instruction precondition holds universally",
+ "statement": "For every bit string $x$ and every configuration of the seven-register program, the selected instruction satisfies its precondition: register comparisons use distinct registers, input-word comparisons are made only on inputs with the required valid encoding, and oracle calls use pairwise distinct argument registers.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "The configuration is an abstract configuration with seven natural-number registers and an optional program state and result"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit string $x$ and every configuration of the fixed seven-register program,\nthe instruction selected by the program satisfies its precondition: any register\ncomparison uses distinct registers, any input-word comparison has the required valid\ninput encoding, and any oracle call uses a list of distinct argument registers."
+}

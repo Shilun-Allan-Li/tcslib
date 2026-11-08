@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satHost_seam",
+ "key": "a210fa1102631ead",
+ "kind": "lemma",
+ "title": "Forwarded padded seam configuration",
+ "statement": "Let $M$ be a family of six finite Boolean Turing machines, let $K\\in\\mathbb{N}$, and let $i\\in\\{0,1,2,3,4,5\\}$ index a machine with positive work-tape count. For Boolean words $x,w,\\mathrm{pre},\\mathrm{out}$, a state $q$ of machine $i$, and an optional state $s$ of that machine, forwarding the configuration on input $x$ with optional state $s$, work-tape word $w$ on tape $0$ and all other work tapes blank, and output $\\mathrm{out}$—padded to $K$ work tapes—gives the configuration on input $x$ with optional state mapped into the host state space (or the return state of module $i$ if $s$ is absent), work-tape word $w$ on tape $0$ and all other work tapes blank, and output $\\mathrm{pre}\\,\\mathrm{out}$.",
+ "hypotheses_covered": [
+  "$M$ is a family of six finite Boolean Turing machines",
+  "$K\\in\\mathbb{N}$",
+  "$i\\in\\{0,1,2,3,4,5\\}$",
+  "machine $i$ has positive work-tape count",
+  "$x,w,\\mathrm{pre},\\mathrm{out}$ are Boolean words",
+  "$q$ is a state of machine $i$",
+  "$s$ is an optional state of machine $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a module with positive tape count: forwarding a padded canonical\nconfiguration of the module (built from a state word, with a given output)\nthrough the emitting embedding produces the host's canonical seam over the same\nstate word, with the supplied prefix prepended to the output; a halted module\nstate maps to the module's return state."
+}

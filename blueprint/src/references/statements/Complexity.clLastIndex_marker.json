@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clLastIndex_marker",
+ "key": "3625ff43c7ff4443",
+ "kind": "lemma",
+ "title": "Marker scan and last-match tracker",
+ "statement": "Let $P\\colon\\mathbb{N}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ and let $n\\in\\mathbb{N}$. The length of the prefix before the last true entry in the word $(P(0),\\ldots,P(n-1))$, when such an entry exists, and no value otherwise, is the last index below $n$ at which $P$ is true, or is undefined if there is no such index.",
+ "hypotheses_covered": [
+  "A Boolean-valued predicate on the natural numbers",
+  "A natural-number bound $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every predicate $P$ and bound $n$, mapping the length over the last-true split of the flag word of $P$ on indices $0,\\dots,n-1$ yields exactly the tracker's last matching index below $n$."
+}

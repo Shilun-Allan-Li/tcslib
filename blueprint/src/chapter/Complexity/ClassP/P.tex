@@ -29,63 +29,52 @@ $a \cdot (n^c + 1)$ steps on every input of length $n$, for some constant $a$.
 In symbols, $\mathsf{P} = \bigcup_{c \in \mathbb{N}} \mathrm{DTIME}(n^c + 1)$.
 \end{definition}
 
-\begin{theorem}[Fixed-degree polynomial time is in P]
+\begin{theorem}[Fixed-degree polynomial time lies in P]
 \lean{Complexity.dtime_poly_subset_P}
 \label{Complexity.dtime_poly_subset_P}
 \leanok
 \uses{Complexity.DTIME, Complexity.P}
 \difficulty{1}
-For every natural number $c$, the class $\mathrm{DTIME}(n \mapsto n^c + 1)$ —
-the languages over $\{0,1\}$ decided by some deterministic finite Turing machine
-within $a \cdot (n^c + 1)$ steps on inputs of length $n$, for some constant $a$ —
-is contained in $\mathsf{P}$.
+For every natural number $c$, the class of languages decidable by a finite deterministic
+Turing machine within $a(n^c+1)$ steps for some natural number $a$ is contained in the
+class of polynomial-time decidable languages.
 \end{theorem}
 
-\begin{theorem}[Membership in P from a pointwise polynomial bound]
+\begin{theorem}[Polynomial time from a pointwise time bound]
 \lean{Complexity.mem_P_of_dtime_le}
 \label{Complexity.mem_P_of_dtime_le}
 \leanok
 \uses{Complexity.DTIME, Complexity.P, Complexity.dtime_poly_subset_P, Turing.FinTM.ComputesInTime.mono}
 \difficulty{3}
-Let $L$ be a language over the binary alphabet, let $T : \mathbb{N} \to \mathbb{N}$
-be a time bound with $L \in \mathrm{DTIME}(T)$, and let $c$ and $d$ be natural
-numbers such that $T(n) \le c \cdot (n^d + 1)$ for every $n$. Then
-$L \in \mathsf{P}$. (The domination is required pointwise, at every input
-length, not merely for all sufficiently large $n$.)
+Let $L$ be a language of binary strings and let $T:\mathbb{N}\to\mathbb{N}$ be a time
+bound such that $L\in\mathrm{DTIME}(T)$. If there are natural numbers $c,d$ with
+$T(n)\le c(n^d+1)$ for every natural number $n$, then $L\in\mathsf{P}$.
 \end{theorem}
 
-\begin{lemma}[Successor-power bound]
+\begin{lemma}[Successor power bound]
 \lean{Complexity.succ_pow_le}
 \label{Complexity.succ_pow_le}
 \leanok
 \difficulty{4}
-For all natural numbers $n$ and $d$,
-\[
-(n + 1)^d \;\le\; 2^d \cdot \bigl(n^d + 1\bigr).
-\]
+For all natural numbers $n$ and $d$, $(n+1)^d\le 2^d(n^d+1)$.
 \end{lemma}
 
-\begin{theorem}[Characterization of P by conventional polynomial bounds]
+\begin{theorem}[Polynomial time with conventional bounds]
 \lean{Complexity.mem_P_iff}
 \label{Complexity.mem_P_iff}
 \leanok
 \uses{Complexity.P, Complexity.succ_pow_le, Turing.FinTM, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.DecidesInTime}
 \difficulty{4}
-A language $L$ over the binary alphabet belongs to $\mathsf{P}$ if and only if
-there exist natural numbers $C$ and $d$ and a deterministic finite Turing
-machine $M$ over $\{0,1\}$ such that $M$ decides $L$ within
-$C \cdot (n + 1)^d$ steps on every input of length $n$. In particular the $+1$
-padding in the definition of $\mathsf{P}$ describes the same class as the
-conventional polynomial time bounds $C \cdot (n+1)^d$.
+A language $L$ over the binary alphabet belongs to $\mathsf{P}$ if and only if there are
+natural numbers $C,d$ and a finite Turing machine that decides $L$ on every input of
+length $n$ within $C(n+1)^d$ steps.
 \end{theorem}
 
-\begin{theorem}[Constant time is polynomial time]
+\begin{theorem}[Constant time lies in polynomial time]
 \lean{Complexity.dtime_one_subset_P}
 \label{Complexity.dtime_one_subset_P}
 \leanok
 \uses{Complexity.DTIME, Complexity.P, Complexity.mem_P_of_dtime_le}
 \difficulty{1}
-Every language over the binary alphabet in $\mathrm{DTIME}(n \mapsto 1)$ — that
-is, decided by some deterministic finite Turing machine within a constant number
-of steps, uniformly over all inputs — belongs to $\mathsf{P}$.
+Every language in $\mathrm{DTIME}(n\mapsto 1)$ belongs to $\mathsf{P}$.
 \end{theorem}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.comp_ret",
+ "key": "50e1849dfc42649e",
+ "kind": "lemma",
+ "title": "Halting from an Answer State",
+ "statement": "Let $C,e\\in\\mathbb{N}$, let $\\mathrm{mode}$ and $b$ be Boolean values, let $f$ map finite Boolean strings to finite Boolean strings, let $h$ be a finite Boolean string, and let $B\\in\\mathbb{N}$. For any vector $v$ of fourteen natural-number registers whose entries are at most $B$, the computation started in the answer state for $b$, with register vector $v$ and no result yet, halts with result $b$. Every configuration strictly before halting satisfies the machine precondition and has all registers at most $B$.",
+ "hypotheses_covered": [
+  "$C,e\\in\\mathbb{N}$",
+  "Boolean values $\\mathrm{mode}$ and $b$",
+  "$f$ maps finite Boolean strings to finite Boolean strings",
+  "$h$ is a finite Boolean string",
+  "$B\\in\\mathbb{N}$",
+  "$v$ is a vector of fourteen natural-number registers",
+  "Every register of $v$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all natural numbers $C,e$, Boolean values $\\mathrm{mode},b$, every function $f$ on\nfinite bit strings, every input bit string $h$, every bound $B\\in\\mathbb N$, and every\nvector $v$ of fourteen natural-number registers whose entries are at most $B$, the\nspecified machine started in its answer state for $b$, with registers $v$ and no answer\nyet, halts with answer $b$. Every configuration before halting satisfies the machine's\nprecondition and register bound."
+}

@@ -99,9 +99,11 @@ coordinates. Then the collision piece consisting of those hash functions $h$ wit
 
 \begin{theorem}[Collision probability bound for random hashing]
 \lean{CommunicationComplexity.Functions.Hash.collision_prob_le}
+\statementsource{CW79}{pdf-1c24478649f7-p002-b005}
 \proofsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p001-b002}
 \label{CommunicationComplexity.Functions.Hash.collision_prob_le}
 \leanok
+\uses{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype, CommunicationComplexity.Functions.Hash.HashSpace, CommunicationComplexity.Functions.Hash.collisionPiece_measureReal, CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint, CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -272,7 +274,6 @@ coordinates. Then the collision piece consisting of those hash functions $h$ wit
   {context}
   {raoyehudayoff-ch03-randomized-protocols}
   {pdf-3eebfb23ab53-p001-b002}
-\uses{CommunicationComplexity.FiniteProbabilitySpace.measureReal_iUnion_fintype, CommunicationComplexity.Functions.Hash.HashSpace, CommunicationComplexity.Functions.Hash.collisionPiece_measureReal, CommunicationComplexity.Functions.Hash.collisionPiece_pairwiseDisjoint, CommunicationComplexity.Functions.Hash.collision_mem_iUnion}
 \difficulty{4}
 Let $\alpha$ be a finite type and let $k \ge 1$, so that each hash value lies in
 $\{0,\dots,k-1\}$. Consider the space of hash functions $h \colon \alpha \to

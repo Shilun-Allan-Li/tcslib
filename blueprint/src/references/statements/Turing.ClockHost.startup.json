@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.ClockHost.startup",
+ "key": "1159c55e57c03c22",
+ "kind": "theorem",
+ "title": "Startup reaches the initial run configuration",
+ "statement": "Let $S$ be a finite-state deterministic Boolean machine, let $A$ be a nondeterministic Boolean machine, let $x$ be a Boolean word, and let $m,T$ be natural numbers. Suppose $S$ halts on input $x$ after exactly $T$ steps with output consisting of $m$ true symbols, and $|x|\\le m$. Then there is a natural number $s_0\\le T+m+2$ and a choice of work-tape contents and head positions for $S$ such that, for every Boolean word $w$ of length $s_0$, running the host machine on input $x$ using choices $w$ for that many steps yields the run configuration encoding the initial configuration of $A$ on $x$, with clock value zero and those work-tape contents and head positions for $S$.",
+ "hypotheses_covered": [
+  "$S$ is a finite-state deterministic Boolean machine",
+  "$A$ is a nondeterministic Boolean machine",
+  "Boolean loop parameter",
+  "$x$ is a Boolean word",
+  "$m,T$ are natural numbers",
+  "$S$ computes the word of $m$ true symbols from $x$ in exactly $T$ steps",
+  "$|x|\\le m$",
+  "there exists $s_0\\le T+m+2$",
+  "there exist work-tape contents and head positions for $S$",
+  "the conclusion holds for every Boolean word $w$ of length $s_0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

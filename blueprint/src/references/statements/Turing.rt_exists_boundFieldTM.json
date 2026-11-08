@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.rt_exists_boundFieldTM",
+ "key": "ee28921d5f415470",
+ "kind": "theorem",
+ "title": "Bounded field-writing machine",
+ "statement": "For any types $Q$ and $T$ with decidable equality, there are a natural number $K$, a finite state set $S$ with decidable equality, a machine $R$ with $K+1$ work tapes over symbols that encode either Boolean digits, marked Boolean work cells, states from $Q$, or tags from $T$, designated states $entry,exit\\in S$, and a natural number $C$, with the following property. For every $k$, every embedding $\\iota:\\{0,\\ldots,K\\}\\hookrightarrow\\{0,\\ldots,k-1\\}$, every tape index $dst$ outside the image of $\\iota$, every Boolean word $x$, and every configuration $d$ on input $x$ encoded as digit symbols, if $d$ is in state $entry$, its input head is at position $1$, and all cells of the work tapes indexed by $\\iota$ are blank, then the embedded machine reaches a configuration equal to $d$ except that its state is $exit$ and tape $dst$ stores the binary expansion of $|x|+1$ starting at its initial head position (all other tape cells retain their contents). It does so at some time $t\\le C(|x|+1)$, does not visit state $exit$ earlier, and throughout the first $t$ steps every work-tape head stays within distance $C(\\operatorname{bits}(|x|+1)+1)$ of its initial position.",
+ "hypotheses_covered": [
+  "$Q,T$ have decidable equality",
+  "Finite state set $S$ with decidable equality exists",
+  "Embedding of $K+1$ tape indices into $k$ tape indices",
+  "Destination tape index lies outside the embedding image",
+  "Input is a Boolean word encoded as digit symbols",
+  "Initial state is $entry$",
+  "Input head starts at position $1$",
+  "Every cell on each embedded tape is blank",
+  "Time bound $C(|x|+1)$",
+  "No earlier visit to $exit$",
+  "Head displacement bound through time $t$",
+  "Final configuration and written binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CktSatReduction.Emitter.gate_run",
+ "key": "a648283dd89d645e",
+ "kind": "theorem",
+ "title": "Gate emission runtime",
+ "statement": "Let $w$ be a finite Boolean input, let $s=(\\phi,z,a,b)$ be an emitter state, let $\\kappa$ be a gate kind, let $c\\in\\{0,1,2\\}$ be a gate code, and let $i\\le |w|$. For any natural number $M$ such that $z,a,b\\le M$, and any output string $out$, there is a number of steps $T\\le 200(M+1)$ after which the emitter machine, started in its gate-emission state with program counter zero, input-head position corresponding to $i$, unary work tapes and work-head positions encoding $(z,a,b)$, and output $out$, is in its read state with phase $g$, vertex counter $z+1$, both argument counters zero, the same input-head position, unary work tapes and work-head positions encoding $(z+1,0,0)$, and output equal to $out$ followed by the bits emitted for gate kind $\\kappa$, code $c$, and counters $(z,a,b)$.",
+ "hypotheses_covered": [
+  "Boolean input list $w$",
+  "emitter state $s$",
+  "gate kind $\\kappa$",
+  "gate code $c\\in\\{0,1,2\\}$",
+  "input index $i\\le |w|$",
+  "natural number $M$",
+  "each coordinate of $s$ is at most $M$",
+  "initial output string $out$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

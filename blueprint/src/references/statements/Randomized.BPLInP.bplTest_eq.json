@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.BPLInP.bplTest_eq",
+ "key": "e20957390f760689",
+ "kind": "theorem",
+ "title": "Bounded-space test and path-count threshold",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean symbols, let $x$ be a finite Boolean string, and let $c,B,e$ be natural numbers. If\n\\[\n2^{(2W+2)\\left(c\\bigl(|\\operatorname{bits}(|x|)|+1\\bigr)+\\operatorname{logSpace}(|x|)+1\\right)}\\le B(|x|+1)^e,\n\\]\nthen the Boolean test on $x$ is true exactly when\n\\[\n2^{B(|x|+1)^e}<2D_{B(|x|+1)^e}\\!\\left(C_0\\right),\n\\]\nwhere $W$ is the number of bits used to encode a machine configuration cell, $D_t(a)$ is the recursively defined count of accepting computation paths of length at most $t$ starting from configuration code $a$ and retaining only successor codes below $B(|x|+1)^e$, and $C_0$ is the code of the initial configuration with space window $c(|\\operatorname{bits}(|x|)|+1)$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$x$ is a finite Boolean string",
+  "$c,B,e\\in\\mathbb{N}$",
+  "$2^{(2W+2)(c(|\\operatorname{bits}(|x|)|+1)+\\operatorname{logSpace}(|x|)+1)}\\le B(|x|+1)^e$"
+ ],
+ "confidence": "low",
+ "caveat": "The equality uses specialized machine encodings and dynamic-programming definitions, and the given upstream descriptions do not fully specify those functions informally.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

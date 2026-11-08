@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_clean_exit_words",
+ "key": "98918fbb88ebdd4f",
+ "kind": "lemma",
+ "title": "Clean exit at a prepared seam",
+ "statement": "Let $B$ be a finite Boolean Turing machine with at least one work tape, let $x$, $s$, and $y$ be Boolean words, let $q$ be a state of $B$, and let $q'$ be any optional state of the clean wrapper of $B$. The administrative configuration based on the seam with $s$ on tape zero, retained word $y$, control $q'$, input head at position $1$, capture head at position $0$, and empty output equals the two-ended configuration with control $q'$, tape zero containing $s$, the last tape containing $y$, both endpoint heads at position $0$, and empty output.",
+ "hypotheses_covered": [
+  "$B$ is a finite Boolean Turing machine",
+  "$0 < B.k$",
+  "$x$, $s$, and $y$ are Boolean words",
+  "$q$ is a state of $B$",
+  "$q'$ is an optional state of the clean wrapper of $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a machine $B$ with at least one work tape: the clean wrapper's completed\nadministrative configuration over the prepared seam carrying $s$, with retained\noutput $y$, equals the two-ended configuration with tape zero $s$, capture tape\n$y$, and both endpoint heads at zero."
+}

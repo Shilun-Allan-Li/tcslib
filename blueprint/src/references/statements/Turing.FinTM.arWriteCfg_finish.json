@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.arWriteCfg_finish",
+ "key": "91755fc8975f71af",
+ "kind": "lemma",
+ "title": "Finishing the write sweep",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $N\\in\\mathbb{N}$, let $E$ inject the symbols of $\\Gamma$ together with blank into blocks of $N+1$ optional bits, and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an embedding. Let $M$ be a finite Turing machine over $\\Gamma$, let $x$ be a Boolean input word, let $c$ be a configuration of $M$ on the letterwise $e$-image of $x$, and let $a$ be an action over $\\Gamma$ with the same number of work tapes as $M$. One step of the binary block-code simulator from the write-sweep configuration at counter $0$ equals the move-sweep configuration at counter $N+1$, for the same $c$ and $a$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$N\\in\\mathbb{N}$",
+  "$E$ is an injection from symbols of $\\Gamma$ together with blank into blocks of $N+1$ optional bits",
+  "$e:\\{0,1\\}\\hookrightarrow\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration on the letterwise $e$-image of $x$",
+  "$a$ is an action for the number of work tapes and state type of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One transition of the binary block-code simulator applied to the write-sweep\nconfiguration (source configuration $c$, source action $a$) at counter $0$ writes the\nlast code entry in place and yields the move-sweep configuration at counter $N+1$: the\nwork tapes now hold the complete blockwise coding of the tapes of the result of\napplying $a$ to $c$."
+}

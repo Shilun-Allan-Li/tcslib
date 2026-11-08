@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.UTab.prog",
+ "key": "35976118c5548093",
+ "kind": "def",
+ "title": "Universal simulation counter program",
+ "statement": "Let $M$ be a finite binary Turing machine with $k$ work tapes, and let $L$ be a natural number. Define a counter program with $11$ registers and labels indexed by the templates and control states of the simulation, using $L_{\\max}(M)$ as the template program-counter bound. Its instructions implement the following transitions: $rN$ reads the next input bit, halting at end of input, otherwise going to $nOut0$ on $0$ and $nInc$ on $1$; $nInc$ increments register $rNC$ and goes to $nOne$, which prints $1$ and returns to $rN$, while $nOut0$ prints $0$ and goes to $rT$. The label $rT$ reads a bit, halting at end of input, going to the prefix template on $0$, or to $tInc$ on $1$; $tInc$ increments $rT$ and returns to $rT$. The label $rZ$ reads a bit, going to the dummy template at end of input and otherwise to the zero-generating template for the bit read; $zInc$ increments $rZ$ and returns to $rZ$. At $lay(t_0)$, the program halts if $rT=0$ and otherwise starts processing cell $0$ with flag $t_0$. At a template label, it executes that template’s micro-operations in order and then continues at its successor label; the labels $pI$ and $pQ$ increment $rI$, then either continue directly when the template flag is true or increment $rQ$ before continuing. The copy labels copy their selected source register into the destination by decrementing the source while incrementing the destination, using $rTMP$ to restore the source; their exit depends on the copy state. Labels $dA$ and $dB$ decrement $rLL$ and enter the corresponding head state. A head state branches according to whether its associated register is zero; otherwise the program decrements that register and executes the head-state body. The labels $zb$, $ub$, $ub2$, $iPA$, and $iPB$ test or increment the indicated registers to select the corresponding input-template phase. The labels $eT$ and $eT2$ test $rZ$ and $rNC$ to select an input-template phase. Cleanup labels repeatedly test and decrement their selected register until it is zero, then continue at the cleanup state’s exit. The stop label halts.",
+ "hypotheses_covered": [
+  "$M$ is a finite binary Turing machine",
+  "$L$ is a natural number"
+ ],
+ "confidence": "low",
+ "caveat": "The definition gives a large case-by-case transition table, and this concise description groups several label cases by their shared behavior.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

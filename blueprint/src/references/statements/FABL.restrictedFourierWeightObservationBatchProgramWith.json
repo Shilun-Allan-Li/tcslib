@@ -1,0 +1,20 @@
+{
+ "lean_name": "FABL.restrictedFourierWeightObservationBatchProgramWith",
+ "key": "9bf6f337a1a74929",
+ "kind": "def",
+ "title": "Continuation for batched Fourier observations",
+ "statement": "Let $n$ be a natural number, let $J\\subseteq\\mathrm{Fin}(n)$ and $S\\subseteq J$, and let $m\\in\\mathbb N$. Given three lists of $m$ sign vectors, a list of rational observations, and a continuation that takes a list of rational observations to a membership-query program with output type $\\beta$, this program processes the vectors in order. At each position it takes the coordinates outside $J$ from the first vector and the coordinates on $J$ from the second and third vectors, queries the target at the two resulting combined vectors, charges $2n+2|S|+1$ local steps, and adds the resulting rational restricted Fourier weight observation; after all $m$ positions it passes the observations in their original order to the continuation.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$J$ is a finite subset of $\\mathrm{Fin}(n)$",
+  "$S\\subseteq J$",
+  "$m\\in\\mathbb N$",
+  "three input functions each provide $m$ sign vectors",
+  "initial observation list is a list of rationals",
+  "continuation maps lists of rationals to membership-query programs with output type $\\beta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitBody_restore",
+ "key": "9a463c92b7589e92",
+ "kind": "lemma",
+ "title": "Restoring the split-body configuration",
+ "statement": "Let $M$ be a finite Turing machine over Boolean symbols, let $a$ be one of its states, and let $w,s$ be Boolean words. Starting from the constructed restore-scan configuration indexed by zero, the split-body machine reaches the seam configuration with restore state $(4,\\mathrm{false})$ and the updated tape word obtained by appending $1$ to $s$ when $|s|\\\\le |w|$, and otherwise leaving $s$ unchanged, after some $t\\\\le 2|s|+|w|+5$ steps. Throughout these steps it avoids its anchor state.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$a$ is a state of $M$",
+  "$w,s$ are Boolean words"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion uses private restore-scan, split-body, and seam-configuration constructions; their supplied informal descriptions are placeholders, preventing a fully self-contained account of those constructions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

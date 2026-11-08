@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.exists_installCallTM",
+ "key": "2591f1ca67436445",
+ "kind": "theorem",
+ "title": "Install-mode call machine",
+ "statement": "Let $M$ be a finite Turing machine over Boolean words, let $f$ map Boolean words to Boolean words, and let $T : \\\\mathbb{N} \\\\to \\\\mathbb{N}$. Suppose $M$ computes $f$ within $T(|a|)$ steps on every input $a$. Then there are a finite Turing machine $C$, entry and exit states of $C$, and a natural number $c$ with at least one work tape such that, for every pair of Boolean words $x,a$, starting from the clean seam on native input $x$ with $a$ on the first work tape and the other work tapes blank, $C$ reaches the clean seam with $f(a)$ on the first work tape and the other work tapes blank at some positive time $t\\\\le c(T(|a|)+|a|+|f(a)|+1)$. The exit state is not visited at any earlier positive time before $t$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean words",
+  "$f$ maps Boolean words to Boolean words",
+  "$T$ maps natural numbers to natural numbers",
+  "$M$ computes $f$ within $T(|a|)$ steps for every input $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a bundled finite machine computing a function $f$ on Boolean words in time\n$T$. Then there are a machine $C$ with a positive number of work tapes, control states\ncalled entry and exit, and a constant $c$ such that for every native input $x$ and\nargument $a$: starting $C$ at the canonical seam in the entry state with $a$ as the sole\ntape-resident word (all other tapes blank, input head at one, empty output), there is a\npositive time $t \\le c\\,(T(|a|) + |a| + |f(a)| + 1)$, before which the exit state is\nnever visited, at which $C$ is exactly at the canonical seam in the exit state carrying\n$f(a)$ as the sole tape-resident word: the result installed, all scratch restored,\nnothing emitted, and the native input untouched."
+}

@@ -17,28 +17,26 @@ output tape gains at most one symbol per step and only ever grows.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Output length is at most the number of steps]
+\begin{theorem}[Output length is bounded by the number of steps]
 \lean{Turing.MultiTapeTM.output_length_le}
 \label{Turing.MultiTapeTM.output_length_le}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step_output}
 \difficulty{4}
-Let $M$ be a deterministic multi-tape Turing machine, let $x$ be an input
-word, and let $t \in \mathbb{N}$.  Then the word written on the output tape
-after $M$ runs for $t$ steps from its initial configuration on $x$ has length
-at most $t$.
+Let $tm$ be a multi-tape Turing machine, let $x$ be an input word, and let
+$t\\in\\mathbb{N}$. The output word in the configuration reached after $t$ steps from
+the initial configuration of $tm$ on $x$ has length at most $t$.
 \end{theorem}
 
-\begin{theorem}[Output is monotone along a run]
+\begin{theorem}[Output is a prefix along a run]
 \lean{Turing.MultiTapeTM.output_prefix}
 \label{Turing.MultiTapeTM.output_prefix}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step_output}
 \difficulty{4}
-Let $M$ be a deterministic multi-tape Turing machine, let $c$ be any
-configuration of $M$, and let $t \le t'$ be natural numbers.  Then the word on
-the output tape after running $M$ for $t$ steps from $c$ is a prefix of the
-word on the output tape after running $M$ for $t'$ steps from $c$.
+Let $tm$ be a multi-tape Turing machine, let $c$ be a configuration on an input word,
+and let $t,t'\\in\\mathbb{N}$ satisfy $t\\le t'$. The output word after $t$ steps from
+$c$ is a prefix of the output word after $t'$ steps from $c$.
 \end{theorem}
 
 \begin{definition}[Bundled finite Turing machine]
@@ -108,16 +106,15 @@ computability underlying the uncomputability results
 (Arora--Barak \S 1.4--1.5).
 \end{definition}
 
-\begin{theorem}[Weakening the time bound]
+\begin{theorem}[Monotonicity of time bounds]
 \lean{Turing.FinTM.ComputesInTime.mono}
 \label{Turing.FinTM.ComputesInTime.mono}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.ComputesInTimeAndSpace, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
 \difficulty{4}
-Let $M$ be a finite Turing machine over an alphabet $\Sigma$, let $x$ and $w$
-be words over $\Sigma$, and let $t \le t'$ be natural numbers.  If $M$,
-started on $x$, halts within $t$ steps with $w$ on its output tape, then it
-also halts within $t'$ steps with $w$ on its output tape.
+Let $M$ be a finite Turing machine over an alphabet $\Sigma$, and let $x,w$ be words
+over $\Sigma$. If $M$ computes $w$ from $x$ within $t$ steps and $t \le t'$, then $M$
+computes $w$ from $x$ within $t'$ steps.
 \end{theorem}
 
 \begin{theorem}[No computation in zero steps]
@@ -126,10 +123,9 @@ also halts within $t'$ steps with $w$ on its output tape.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{1}
-For every finite Turing machine $M$ over an alphabet $\Sigma$ and all words
-$x$ and $w$ over $\Sigma$, the machine $M$ does not compute the output $w$
-from the input $x$ within $0$ steps: after zero steps the machine is still in
-its initial, non-halted state.
+For a finite Turing machine $M$ and any input and output words $x$ and $w$ over its
+alphabet, there is no nonnegative integer $s$ for which the computation of $M$ on $x$ is
+halted after $0$ steps, has output $w$, and uses exactly $s$ work-tape cells.
 \end{theorem}
 
 \begin{theorem}[Uniqueness of the completed output]
@@ -138,11 +134,9 @@ its initial, non-halted state.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.MultiTapeTM.ComputesInTimeAndSpace}
 \difficulty{3}
-Let $M$ be a finite Turing machine over an alphabet $\Sigma$ and let $x$ be a
-word over $\Sigma$.  If $M$, started on $x$, halts within $t$ steps with $w$
-on its output tape and also halts within $t'$ steps with $w'$ on its output
-tape, then $w = w'$.  In other words, a machine has at most one completed
-output on a given input.
+Let $M$ be a finite Turing machine over an alphabet $\Sigma$, and let $x,w,w'$ be words
+over $\Sigma$. If $M$ computes $w$ from $x$ within $t$ steps and computes $w'$ from $x$
+within $t'$ steps, then $w=w'$.
 \end{theorem}
 
 \begin{theorem}[Time-bounded computation implies computation]
@@ -151,11 +145,10 @@ output on a given input.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.Computes, Turing.FinTM.ComputesFunInTime}
 \difficulty{1}
-Let $M$ be a finite Turing machine over an alphabet $\Sigma$.  If $M$ computes
-the string function $f \colon \Sigma^{*} \to \Sigma^{*}$ in time
-$T \colon \mathbb{N} \to \mathbb{N}$ (halting within $T(\abs{x})$ steps on
-every input $x$ with $f(x)$ on its output tape), then $M$ computes $f$, i.e.\
-on every input it eventually halts with the value of $f$ on its output tape.
+Let $M$ be a finite Turing machine over an alphabet $\Sigma$, let $f$ map words over
+$\Sigma$ to words over $\Sigma$, and let $T:\mathbb{N}\to\mathbb{N}$. If on every input
+$x$, $M$ halts with output $f(x)$ within $T(|x|)$ steps, then $M$ computes $f$; that is,
+on every input it eventually halts with output $f(x)$.
 \end{theorem}
 
 \begin{theorem}[Space-free characterization of timed computation]
@@ -164,23 +157,106 @@ on every input it eventually halts with the value of $f$ on its output tape.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{2}
-Let $M$ be a finite Turing machine over an alphabet $\Sigma$, let $x$ and $w$
-be words over $\Sigma$, and let $t \in \mathbb{N}$.  Then $M$ computes the
-output $w$ from the input $x$ within $t$ steps if and only if the
-configuration reached after running $M$ for $t$ steps from its initial
-configuration on $x$ is halted and carries exactly the word $w$ on its output
-tape.
+Let $M$ be a finite Turing machine over an alphabet $\Sigma$, and let $x,w\in\Sigma^*$
+and $t\in\mathbb{N}$. The machine computes $w$ from $x$ within $t$ steps if and only if
+its configuration after $t$ steps from the initial configuration on $x$ is halted and
+its output is exactly $w$.
 \end{theorem}
 
-\begin{theorem}[Completed outputs of a total machine]
+\begin{theorem}[Outputs of a function-computing machine]
 \lean{Turing.FinTM.Computes.exists_computesInTime_iff}
 \label{Turing.FinTM.Computes.exists_computesInTime_iff}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.Computes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique}
 \difficulty{3}
-Let $M$ be a finite Turing machine over an alphabet $\Sigma$ that computes the
-string function $g \colon \Sigma^{*} \to \Sigma^{*}$, and let $x$ and $w$ be
-words over $\Sigma$.  Then there exists a number of steps $t$ such that $M$,
-started on $x$, halts within $t$ steps with $w$ on its output tape if and only
-if $w = g(x)$.
+Let $M$ be a finite Turing machine over an alphabet $\Sigma$ that computes a function
+$g$ from words over $\Sigma$ to words over $\Sigma$. For any words $x$ and $w$ over
+$\Sigma$, there is a time $t$ at which $M$ halts on $x$ with output $w$ if and only if
+$w=g(x)$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Linear bound on space use]
+\lean{Turing.MultiTapeTM.spaceUsed_le_mul_succ}
+\label{Turing.MultiTapeTM.spaceUsed_le_mul_succ}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape, Turing.MultiTapeTM.visitedByTapeHead}
+\difficulty{4}
+Let $M$ be a Turing machine with $k$ work tapes, let $c$ be a configuration for an input
+string, and let $t\in\mathbb{N}$. The total number of distinct work-tape cells visited
+from $c$ through step $t$ is at most $k(t+1)$.
+\end{theorem}
+
+\begin{theorem}[Prefix preservation under a step]
+\lean{Turing.MultiTapeTM.step_output_prepend}
+\label{Turing.MultiTapeTM.step_output_prepend}
+\leanok
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.step}
+\difficulty{4}
+Let $M$ be a Turing machine, let $c$ be a configuration for an input string, and let $p$
+be a finite string of symbols. If $c$'s output is replaced by the concatenation of $p$
+and its output, then the configuration after one step is the one-step result from $c$
+with its output replaced by the concatenation of $p$ and that result's output.
+\end{theorem}
+
+\begin{theorem}[Output prefix is preserved throughout a run]
+\lean{Turing.MultiTapeTM.runFrom_output_prepend}
+\label{Turing.MultiTapeTM.runFrom_output_prepend}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step_output_prepend}
+\difficulty{1}
+Let $M$ be a multi-tape Turing machine, $c$ a configuration, $p$ a finite string of
+symbols, and $t\in\mathbb{N}$. Starting from the configuration obtained by prefixing
+$c$'s output with $p$, the configuration after $t$ steps equals the configuration
+reached from $c$ after $t$ steps with its output prefixed by $p$.
+\end{theorem}
+
+\begin{theorem}[Nonhalting persists backward along a run]
+\lean{Turing.MultiTapeTM.runFrom_state_ne_none_of_le}
+\label{Turing.MultiTapeTM.runFrom_state_ne_none_of_le}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
+\difficulty{3}
+Let $M$ be a multi-tape Turing machine, $c$ a configuration, and $t\in\mathbb{N}$. If
+the configuration reached after $t$ steps is not halted, then for every $u\in\mathbb{N}$
+with $u\le t$, the configuration reached after $u$ steps is not halted.
+\end{theorem}
+
+\begin{theorem}[First halting configuration]
+\lean{Turing.MultiTapeTM.exists_first_halt}
+\label{Turing.MultiTapeTM.exists_first_halt}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.Halted, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
+\difficulty{4}
+Let $M$ be a multi-tape Turing machine and let $c$ be a configuration on a fixed input.
+If the configuration reached after $t$ steps is halted, then there is a step $u \le t$
+such that no configuration reached in fewer than $u$ steps is halted, and the
+configuration at step $u$ equals the configuration at step $t$.
+\end{theorem}
+
+\begin{theorem}[Space bound from an interval of visited positions]
+\lean{Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc}
+\label{Turing.MultiTapeTM.spaceUsedByTape_le_card_Icc}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsedByTape}
+\difficulty{4}
+Let $M$ be a multi-tape Turing machine, $d$ a configuration, $t\in\mathbb{N}$, $i$ a
+work-tape index, and $lo,hi\in\mathbb{Z}$. Suppose that for every $u\in\mathbb{N}$ with
+$u\le t$, the head position of tape $i$ after $u$ steps lies in the integer interval
+$[lo,hi]$. Then the space used by tape $i$ through step $t$ is at most
+$(hi+1-lo).toNat$, the natural-number conversion of the integer $hi+1-lo$.
+\end{theorem}
+
+\begin{theorem}[Work-tape head displacement bound]
+\lean{Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc}
+\label{Turing.MultiTapeTM.workTapePos_runFrom_mem_Icc}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.workTapePos_step_le}
+\difficulty{4}
+Let $M$ be a deterministic multi-tape Turing machine, let $x$ be an input word, and let
+$c$ be a configuration of $M$ on $x$. For every $u\in\mathbb{N}$ and every work-tape
+index $j$, the head position on tape $j$ after $u$ steps lies in the integer interval
+from its initial position minus $u$ to its initial position plus $u$, inclusive.
 \end{theorem}

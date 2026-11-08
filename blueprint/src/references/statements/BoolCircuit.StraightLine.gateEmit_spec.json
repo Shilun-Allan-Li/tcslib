@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.StraightLine.gateEmit_spec",
+ "key": "771111b3a63f725c",
+ "kind": "theorem",
+ "title": "Correctness of emitting a gate",
+ "statement": "Let $n$ be the number of input variables, choose an input coordinate, and let $ss$ be a valid list of statements with a list of rails and a gate. Suppose the gate has at most two arguments and each referenced rail pair uses only inputs and lines earlier than $ss$. Processing the gate using the rail pairs at its argument indices extends the statements to a valid list, emits at most two statements, and returns a rail pair whose entries use only inputs and lines in the extended list. For every input assignment and list of Boolean vertex values, if each argument's rail pair evaluates on the existing run to that vertex value and its complement, then the output pair on the extended run evaluates to the gate's value and its complement.",
+ "hypotheses_covered": [
+  "An input coordinate is chosen",
+  "The existing statement list is valid",
+  "A list of rails and a gate are given",
+  "The gate has at most two arguments",
+  "Each argument's rail pair uses only inputs and lines earlier than the existing statement list",
+  "For the semantic conclusion, each argument's rail pair evaluates on the existing run to that vertex value and its complement"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

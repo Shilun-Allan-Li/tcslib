@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clMoves_correct",
+ "key": "68ba3f10aa2f24b1",
+ "kind": "lemma",
+ "title": "Position Changes Equal Recorded Displacements",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $y$ be an input word, and let $c$ be a configuration of $M$ on $y$. If the Boolean tag correctly marks the two boundary positions of the input head, then for every coordinate $i$ among the input-head coordinate and the work-tape coordinates, the reference position after one machine step equals the reference position before the step plus the recorded displacement at coordinate $i$.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine $M$",
+  "input word $y$",
+  "configuration $c$ of $M$ on $y$",
+  "Boolean tag satisfies the boundary-tag condition",
+  "coordinate $i\\in\\text{Fin}(1+M.k)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration with a valid position tag bit. For every coordinate, the reference position of the stepped configuration equals the reference position of $c$ plus the recorded displacement, including blocked input moves and the halting transition."
+}

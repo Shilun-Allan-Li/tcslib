@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.DAGCircuit.deconst_values",
+ "key": "ae9be3aa6ad0ddbf",
+ "kind": "theorem",
+ "title": "Value preservation under constant removal",
+ "statement": "Let $n>0$, let $C$ be a directed acyclic Boolean circuit on $n$ input vertices whose gates have distinct arguments, whose NOT gates each read exactly one vertex, and whose gates each read at most two vertices. For every input assignment $x:\\{0,\\ldots,n-1\\}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ and every vertex $v<n+|C|$, the value at the shifted vertex in the circuit obtained by adjoining the three-gate constant prefix and transforming the gates equals the value at $v$ in $C$; values at indices beyond the available list are interpreted as false.",
+ "hypotheses_covered": [
+  "Positive number of input vertices",
+  "Circuit has well-formed gates with distinct arguments",
+  "Every NOT gate has exactly one argument",
+  "Every gate has at most two arguments",
+  "An input assignment to the $n$ input vertices",
+  "Vertex index satisfies $v<n+|C|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

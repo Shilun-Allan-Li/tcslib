@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.read_row",
+ "key": "d5f61abbe5f3e58d",
+ "kind": "lemma",
+ "title": "Forward sweep over one block",
+ "statement": "Let $c$ be a configuration of a machine with $k$ work tapes, and let $j \\in \\mathbb{Z}$. Processing the block at coordinate $j$ whose left-neighbour flags are all false, by the forward sweep started from the control table at $j$, yields the control table at $j+1$ and the same block with the left-neighbour head flags recorded.",
+ "hypotheses_covered": [
+  "configuration c of a k-work-tape machine",
+  "integer coordinate j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a $k$-work-tape machine and $j \\in \\mathbb{Z}$.\nTransducing the block encoding coordinate $j$ (with unrecorded left-neighbour flags) by\nthe forward-sweep visit rule, starting from the control table associated with $j$,\nyields exactly the control table associated with $j+1$ together with the same block with\nleft-neighbour head flags recorded."
+}

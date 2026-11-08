@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CPSim.A",
+ "key": "22c509e12d810ecf",
+ "kind": "def",
+ "title": "Counter-program simulation machine",
+ "statement": "Let $R$ be a natural number, let $\\Lambda$ be a type of labels, let $P$ assign a counter-program instruction to each label, and fix an initial label $l_0$ and a Boolean $lm$. Define a two-decider register machine with $R+3$ registers and the simulation labels as its states: it starts by validating the input, follows each counter-program instruction while using the extra registers to handle output and printing, calls the first decider on the unary-first virtual input for read instructions, and halts with the corresponding Boolean answer; a program halt or an instruction/state mismatch returns false.",
+ "hypotheses_covered": [
+  "$R$ is a natural number",
+  "$\\Lambda$ is a type",
+  "$P$ assigns an instruction to each label",
+  "an initial label $l_0$",
+  "a Boolean $lm$"
+ ],
+ "confidence": "low",
+ "caveat": "The declaration depends on the meanings of counter-program instructions, virtual inputs, and decider calls, whose defining descriptions are not included in the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

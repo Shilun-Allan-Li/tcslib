@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.f2_segment_heads",
+ "key": "89e739d9e0776bab",
+ "kind": "lemma",
+ "title": "Head positions along bounded computation segments",
+ "statement": "Let $M$ be a multi-tape Turing machine with $k$ work tapes over Boolean symbols, let $x$ be a Boolean input word, and let $(c_j)_{j\\\\in\\\\mathbb N}$ be configurations of $M$ on $x$. Suppose $N,B,H$ are natural numbers, every tape head in $c_j$ lies in $[-H,H]$ for each $j<N$, $c_N$ is halted, every tape head in $c_N$ lies in $[-(H+B),H+B]$, and for each $j<N$ there is a $u\\\\le B$ such that the run from $c_j$ is halted after $u$ steps or reaches $c_{j+1}$ after $u$ steps. Then, at every time $t$ and on every work tape, the head position in the run from $c_0$ lies in $[-(H+B),H+B]$.",
+ "hypotheses_covered": [
+  "$M$ is a multi-tape Turing machine with $k$ work tapes over Boolean symbols",
+  "$x$ is a Boolean input word",
+  "$(c_j)$ is a sequence of configurations on $x$",
+  "$N,B,H$ are natural numbers",
+  "For every $j<N$, every tape head in $c_j$ lies in $[-H,H]$",
+  "$c_N$ is halted",
+  "Every tape head in $c_N$ lies in $[-(H+B),H+B]$",
+  "For every $j<N$, some $u\\\\le B$ makes the run from $c_j$ halt or reach $c_{j+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.bufferTape_nat",
+ "key": "7f8b8e0162b70d83",
+ "kind": "lemma",
+ "title": "Buffer tape at natural cells",
+ "statement": "For every finite word $w$ over a symbol type and every natural number $i$, the buffer tape for $w$ at cell $i$ contains exactly the optional $i$-th symbol of $w$.",
+ "hypotheses_covered": [
+  "$w$ is a finite word over a symbol type",
+  "$i$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a Boolean word and $i$ a natural number.  Cell $i$ of the buffer\ntape storing $w$ holds the optional $i$-th entry of $w$: the symbol $w_i$\nwhen $i < \\abs{w}$ and a blank otherwise.  In particular cell $\\abs{w}$ is\nthe blank immediately to the right of the stored word."
+}

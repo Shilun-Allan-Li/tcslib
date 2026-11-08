@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Meyer.tabTM_setup",
+ "key": "d8d6b0fc9412dced",
+ "kind": "theorem",
+ "title": "Tabulation Machine Setup",
+ "statement": "For a Boolean finite Turing machine $M$ and Boolean word $y$, if parsing $y$ as a query with selector width determined by $M$ fails, the tabulation machine halts within $|y|+1$ steps and outputs the single bit $0$. If parsing succeeds with fields $bits,t,a,x$, then for some number of steps at most $2|y|+4$, the machine reaches a configuration in its decoding state, with the selector bits stored in its finite control, its input head at the right boundary of $y$, its first three auxiliary work tapes holding the respective words $x,t,a$ from cell zero, their heads at cell zero, its original work tapes blank with heads at zero, and its output empty.",
+ "hypotheses_covered": [
+  "$M$ is a Boolean finite Turing machine",
+  "$y$ is a Boolean word",
+  "either parsing fails, or parsing succeeds with fields $bits,t,a,x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

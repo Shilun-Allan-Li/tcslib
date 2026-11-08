@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.universal_pair_get",
+ "key": "7b790a96aab5a4fb",
+ "kind": "lemma",
+ "title": "Doubled bits in a pair encoding",
+ "statement": "Let $\\alpha$ and $x$ be Boolean strings, and let $j<|\\alpha|$. In the pairing formed by doubling each bit of $\\alpha$, then appending the separator $01$ and $x$, the bits at positions $2j$ and $2j+1$ are both the $j$th bit of $\\alpha$.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are Boolean strings",
+  "$j$ is a natural number with $j<|\\alpha|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ and $x$ be bit strings and let $j < \\abs{\\alpha}$.  In the\nself-delimiting pairing $\\langle \\alpha, x\\rangle$ (each bit of $\\alpha$\ndoubled, then the separator pair $01$, then $x$ verbatim), the cells of index\n$2j$ and $2j+1$ (zero-indexed) both contain the $j$-th bit of $\\alpha$; both\ncells of a doubled code bit therefore lie before the separator."
+}

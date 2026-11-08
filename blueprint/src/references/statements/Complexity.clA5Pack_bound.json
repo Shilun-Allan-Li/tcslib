@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Pack_bound",
+ "key": "8c66fdfcf0b4ab66",
+ "kind": "lemma",
+ "title": "Polynomial bound on packed records",
+ "statement": "For every finite Boolean-alphabet Turing machine $M$, every binary code for its state alphabet, and all $C,e,c,A,d\\in\\mathbb{N}$, there is a polynomially bounded function $W:\\mathbb{N}\\to\\mathbb{N}$ such that, for every bit string $x$ and every cursor $i$ at most one more than the last round for $x$, the packed record word for $x$ and $i$ has length at most $W(|x|)$.",
+ "hypotheses_covered": [
+  "A finite Boolean-alphabet Turing machine $M$",
+  "A binary code for the machine's state alphabet",
+  "Natural parameters $C,e,c,A,d$",
+  "The cursor satisfies $i$ at most one more than the last round for $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine and parameters, there is a polynomially bounded function $W$ such that for every instance $x$ and cursor $i$ at most the last round plus one, the persistent body word at cursor $i$ has length at most $W(|x|)$."
+}

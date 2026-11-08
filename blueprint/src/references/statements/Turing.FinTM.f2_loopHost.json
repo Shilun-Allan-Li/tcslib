@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost",
+ "key": "903446d5785a78e6",
+ "kind": "def",
+ "title": "Boolean loop host machine",
+ "statement": "Given finite Boolean Turing machines $B$ and $F$, a state $a$ of $B$, and a Boolean mode $m$, define a finite Boolean Turing machine with $B.k+1+(1+F.k)+1$ work tapes. Its initial state is the initial state of $F$. Its transition function combines a fuel phase and calls to the loop body, using additional tapes to track a flag, a counter, and a payload; depending on the mode and control phase, it emits Boolean symbols or halts.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machine $B$",
+  "Finite Boolean Turing machine $F$",
+  "A state $a$ of $B$",
+  "A Boolean mode $m$"
+ ],
+ "confidence": "low",
+ "caveat": "The transition refers to auxiliary state and action definitions whose meanings are not included in the supplied definitions, so their precise behavior cannot be stated self-containedly from this payload.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

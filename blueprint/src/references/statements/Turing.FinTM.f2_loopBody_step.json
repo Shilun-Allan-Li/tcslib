@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopBody_step",
+ "key": "20d2286ec30685f2",
+ "kind": "lemma",
+ "title": "One step of the loop-body machine",
+ "statement": "Let $B$ be a finite Turing machine over the Boolean alphabet, let $a$ and $q$ be states of $B$, and let $c$ be a configuration of $B$ on a Boolean input with state $q$. Let $r$ be a Boolean and let the extra tape's cell zero contain an optional Boolean flag. If $q$ is not the anchor state with release flag false, then one step of the machine formed by adding the release flag and extra tape yields the lift of one step of $B$ from $c$, with release flag false. The extra tape's cell zero contains true if the base machine's next configuration is halted, and otherwise retains its previous contents.",
+ "hypotheses_covered": [
+  "A finite Turing machine over Booleans",
+  "An anchor state and a state $q$",
+  "A Boolean input",
+  "A base configuration with state $q$",
+  "A Boolean release parameter",
+  "An optional Boolean flag on the extra tape",
+  "The pair $(q,r)$ is not $(a,\\mathrm{false})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

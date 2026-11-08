@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.verifier_poly_indicator",
+ "key": "2bcbb963d41d4da6",
+ "kind": "lemma",
+ "title": "Polynomial-time language indicators",
+ "statement": "Let $V$ be a language over the binary alphabet and suppose $V$ belongs to $\u000bmathsf{P}$. Then the function sending each binary string $x$ to the one-bit string containing $1$ if $x\\in V$ and $0$ otherwise is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$V$ is a language over the binary alphabet",
+  "$V\\in\\mathsf{P}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $V \\subseteq \\{0,1\\}^{*}$ be a language in $\\mathsf{P}$, and let\n$\\mathbf{1}_V(x)$ be the bit $1$ if $x \\in V$ and $0$ otherwise. Then the map\nsending a binary string $x$ to the one-bit string $\\mathbf{1}_V(x)$ is\npolynomial-time computable: some finite multi-tape Turing machine over the binary\nalphabet computes it within $D(n+1)^d$ steps on every input of length $n$, for\nsome constants $D, d \\in \\mathbb{N}$."
+}

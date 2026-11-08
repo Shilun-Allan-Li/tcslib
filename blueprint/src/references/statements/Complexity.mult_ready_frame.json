@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.mult_ready_frame",
+ "key": "cc462feea325d4a8",
+ "kind": "lemma",
+ "title": "Preservation of the multiplication frame",
+ "statement": "Let $x,a,b,c$ be finite Boolean words, and let $v,u:\\{0,1,\\ldots,12\\}\\to\\mathbb{N}$. If $v$ satisfies the ready multiplication conditions for $x,a,b,c$ and $u(r)=v(r)$ for every $r\\ne 0$, then $u$ also satisfies those conditions.",
+ "hypotheses_covered": [
+  "$x,a,b,c$ are finite Boolean words",
+  "$v,u$ assign natural numbers to registers $0$ through $12$",
+  "$v$ satisfies the ready multiplication conditions",
+  "$u$ agrees with $v$ at every register other than $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x,a,b,c$ be finite bit strings, and let $v$ and $u$ assign natural numbers to each\nof $13$ registers. If $v$ satisfies the multiplication-ready conditions for $x,a,b,c$,\nand $u$ agrees with $v$ on every register other than register $0$, then $u$ also\nsatisfies those multiplication-ready conditions."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clA5Count_exact",
+ "key": "2b021a1639347f4a",
+ "kind": "lemma",
+ "title": "Exact stored movement counts",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $C,e,c,A,d$ be natural numbers, and let $x$ be a Boolean word. For every cursor $j$, every time $t$ at most $c\\bigl(A(|x|+C(|x|+1)^e+1)^d+1\\bigr)^2$, and every movement-count coordinate $i$, the count stored at time $t$ in the packed word formed from $M,C,e,c,A,d,x,j$ equals the count specified by the trajectory of $M$ on the all-false word of length $|x|+C(|x|+1)^e$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$C,e,c,A,d$ are natural numbers",
+  "$x$ is a Boolean word",
+  "$j$ is a natural-number cursor",
+  "$t$ is at most the stated producer horizon",
+  "$i$ is a valid movement-count coordinate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters, instance $x$, cursor $j$, time $t$ at most the producer horizon, and coordinate $i$, the stored count read from the body word equals the canonical movement count at time $t$ over the all-false reference input; the bound never truncates valid data."
+}

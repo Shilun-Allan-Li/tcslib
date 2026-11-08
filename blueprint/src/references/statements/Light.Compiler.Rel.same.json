@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Compiler.Rel.same",
+ "key": "98bf4c1f35dd408b",
+ "kind": "theorem",
+ "title": "Relation preserved outside scratch addresses",
+ "statement": "Let $W$ be a word size, let $Z$ specify a layout with $F$ local variables per frame, stack bound $Q$, and space limit, and let $\\sigma$ be a state. Suppose $m$ stores the encoded constants $1,0,-1$ and pool indices $n\\le Z.\\mathrm{disp}$ at their designated addresses, stores the stack address for frame pointer $q$, stores $\\sigma_{\\mathrm{loc}}(x)$ at stack address $q+x$ for every $x<F$, and stores $\\sigma_{\\mathrm{mem}}(a)$ at address $a$ for every $a<Z.\\mathrm{lim}.\\mathrm{space}$. If $m'$ agrees with $m$ outside the scratch addresses $-21,-15,-17,-19,-13$, and $-(23+4j)$ for $0\\le j\\le 2F$, then $m'$ satisfies the same storage relation for $Z,\\sigma,q$.",
+ "hypotheses_covered": [
+  "The relation between $m$, $Z$, $\\sigma$, and $q$",
+  "Agreement of $m'$ and $m$ outside the specified scratch-address set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

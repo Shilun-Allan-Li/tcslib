@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.ClockHost.clockTr",
+ "key": "9f5ce514071aeeb2",
+ "kind": "def",
+ "title": "Clocked transition function",
+ "statement": "Given a deterministic Boolean machine $S$, a nondeterministic Boolean machine $A$, a Boolean loop flag, a choice bit, a clock phase, the possibly blank input symbol under the head, and the symbols under the host machine's work-tape heads, the transition returns the following action. In the boot phase it simulates one step of $S$, routes its work-tape actions to the corresponding tapes, and enters the next boot phase or begins rewinding when $S$ halts. It then rewinds the yardstick tape and starts $A$; during the run phase it simulates the chosen transition of $A$ while the yardstick remains, captures its output, and when the yardstick is exhausted either emits the captured Boolean output if $A$ halted with one, halts if the loop flag is false, or performs the three reset sweeps and restarts $A$ if the loop flag is true. The rewind and reset phases move the relevant heads as specified by the tape contents, and all other tape actions and outputs are blank or absent.",
+ "hypotheses_covered": [
+  "A deterministic Boolean machine $S$",
+  "A nondeterministic Boolean machine $A$",
+  "A Boolean loop flag",
+  "A choice bit",
+  "A clock phase",
+  "An optional input symbol",
+  "The work-tape contents as a function of tape index"
+ ],
+ "confidence": "low",
+ "caveat": "The detailed transition cases depend on auxiliary tape-indexing and capture functions whose definitions are not included in the supplied vocabulary.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

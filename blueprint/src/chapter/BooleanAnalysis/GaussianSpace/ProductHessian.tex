@@ -11,112 +11,177 @@ The mean score and Hessian of a product Gaussian density have explicit linear an
 Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. For $c,z,h\in\mathbb R^I$, put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$. The mean score is the linear functional $S_v(c,z)$.
 \end{definition}
 
-\begin{lemma}[Derivative of the Gaussian linear score]
+\begin{lemma}[Derivative of the product Gaussian score]
 \lean{BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensityScore}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityScore}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. For $c,z,h\in\mathbb R^I$, put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$. For every $c,z$, the derivative in $c$ of $S_v(c,z)$ is the bilinear map $(h,k)\mapsto-\sum_i h_i k_i/v$.
+Let $I$ be a finite index set, let $v\ge0$, and let $c,z\in\mathbb R^I$. The function
+$m\mapsto S_v(m,z)$, where $S_v(m,z)[h]=\sum_{i\in I}((z_i-m_i)/v)h_i$, is
+differentiable at $c$. Its derivative sends a direction $h$ to the linear functional
+$k\mapsto-\sum_{i\in I}h_i k_i/v$, with division by zero interpreted as zero.
 \end{lemma}
 
 \begin{definition}[Product Gaussian mean Hessian]
 \lean{BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensityScore}
+\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensityScore}
 Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. The product-density Hessian is the bilinear form $T_v(c,z)$.
 \end{definition}
 
-\begin{lemma}[Derivative of the product-density derivative]
+\begin{lemma}[Derivative of the product density derivative]
 \lean{BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensityDerivative}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative_eq_density_smul_score,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian,BooleanAnalysis.GaussianSpace.gaussianProductDensityScore,BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensity,BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensityScore}
+\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative_eq_density_smul_score, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian, BooleanAnalysis.GaussianSpace.gaussianProductDensityScore, BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensity, BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensityScore}
 \difficulty{3}
-Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. For all $c,z\in\mathbb R^I$, the derivative at $c$ of $m\mapsto A_v(m,z)$ is $T_v(c,z)$.
+Let $I$ be a finite index set, let $v\ge0$, and let $c,z\in\mathbb R^I$. The function of
+$m\in\mathbb R^I$ given by the derivative of the product Gaussian density at mean $m$ is
+differentiable at $c$. Its derivative, applied to directions $h,k\in\mathbb R^I$, is
+$G_v(c,z)\bigl(S_v(c,z)[h]S_v(c,z)[k]-\sum_{i\in I}h_i k_i/v\bigr)$, where $G_v$ is the
+product Gaussian density, $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, and division by zero is
+interpreted as zero.
 \end{lemma}
 
-\begin{lemma}[Coordinate formula for the product Hessian]
+\begin{lemma}[Coordinate formula for the Gaussian Hessian]
 \lean{BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_eq_sum}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative_eq_density_smul_score,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian,BooleanAnalysis.GaussianSpace.gaussianProductDensityScore}
+\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative_eq_density_smul_score, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian, BooleanAnalysis.GaussianSpace.gaussianProductDensityScore}
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. For all $c,z,h,k\in\mathbb R^I$, $T_v(c,z)[h,k]=G_v(c,z)\sum_{i,j}((z_i-c_i)(z_j-c_j)/v^2-\delta_{ij}/v)h_jk_i$, where $\delta_{ij}$ is the Kronecker delta.
+Let $I$ be finite, $v\ge0$, and $c,z\in\mathbb R^I$. The product Gaussian density
+Hessian, as a continuous bilinear form, is the sum over $i,j\in I$ of the rank-one forms
+$(h,k)\mapsto h_jk_i$, each multiplied by
+$\left((z_i-c_i)(z_j-c_j)/v^2-\delta_{ij}/v\right)\prod_{k\in I}p_v(c_k,z_k)$, where
+$p_v(a,b)$ denotes the one-dimensional Gaussian density with mean $a$ and variance $v$,
+and $\delta_{ij}$ is $1$ if $i=j$ and $0$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Squared coordinate score envelope]
+\begin{lemma}[Bound for a squared Gaussian score]
 \lean{BooleanAnalysis.GaussianSpace.gaussianProductDensity_squaredScore_le}
 \leanok
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Assume $c,z,a\in\mathbb R^I$, $a_i\ge0$, $p_v(c_i,z_i)\le a_i$, and $|((z_i-c_i)^2/v^2-1/v)p_v(c_i,z_i)|\le a_i$ for every $i\in I$. For every $i\in I$, $((z_i-c_i)^2/v^2)G_v(c,z)\le(1+1/v)\prod_j a_j$.
+Let $I$ be finite, let $v\ge0$, and let $c,z,a\in\mathbb R^I$ satisfy $a_i\ge0$,
+$p_v(c_i,z_i)\le a_i$, and $\left|\left((z_i-c_i)^2/v^2-1/v\right)p_v(c_i,z_i)\right|\le
+a_i$ for every $i\in I$, where $p_v(u,w)$ denotes the Gaussian density with mean $u$ and
+variance $v$. Then for each $i\in I$, $\frac{(z_i-c_i)^2}{v^2}\prod_{j\in
+I}p_v(c_j,z_j)\le(1+1/v)\prod_{j\in I}a_j$.
 \end{lemma}
 
-\begin{lemma}[Envelope for a Hessian coefficient]
+\begin{lemma}[Bound for a product Gaussian Hessian coefficient]
 \lean{BooleanAnalysis.GaussianSpace.abs_gaussianProductDensity_hessianCoefficient_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_productHessian_mul_le,BooleanAnalysis.GaussianSpace.gaussianProductDensity_squaredScore_le}
+\uses{BooleanAnalysis.GaussianSpace.abs_productHessian_mul_le, BooleanAnalysis.GaussianSpace.gaussianProductDensity_squaredScore_le}
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Assume $c,z,a\in\mathbb R^I$, $a_i\ge0$, $p_v(c_i,z_i)\le a_i$, and $|((z_i-c_i)^2/v^2-1/v)p_v(c_i,z_i)|\le a_i$ for every $i\in I$. If $v>0$, then for every $i,j\in I$, $|((z_i-c_i)(z_j-c_j)/v^2-\delta_{ij}/v)G_v(c,z)|\le(1+2/v)\prod_k a_k$, where $\delta_{ij}$ is the Kronecker delta.
+Let $I$ be a finite index set, let $v\ge0$ be a real number with $v\ne0$, and let
+$c,z,a:I\to\mathbb R$. Suppose $a(i)\ge0$ and, for every $i\in I$, the Gaussian density
+with mean $c(i)$ and variance $v$, evaluated at $z(i)$, is at most $a(i)$, and
+\[
+\left|\left(\frac{(z(i)-c(i))^2}{v^2}-\frac1v\right)p_v(c(i),z(i))\right|\le a(i),
+\]
+where $p_v$ denotes that density. Then for every $i,j\in I$,
+\[
+\left|\left(\frac{(z(i)-c(i))(z(j)-c(j))}{v^2}-\begin{cases}1/v,&i=j,\\0,&i\ne
+j\end{cases}\right)\prod_{k\in I}p_v(c(k),z(k))\right|\le\left(1+\frac2v\right)\prod_{k
+i I}a(k).
+\]
 \end{lemma}
 
-\begin{lemma}[Joint continuity of the Gaussian Hessian]
+\begin{lemma}[Joint continuity of the product density Hessian]
 \lean{BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityHessian_joint}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_eq_sum}
+\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_eq_sum}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. For fixed $v\ge0$, the map $(c,z)\mapsto T_v(c,z)$ is continuous in bilinear operator norm.
+Let $I$ be a finite set and let $v\ge 0$. The product Gaussian density Hessian, viewed
+as a continuous bilinear form on $\mathbb R^I$, is jointly continuous as a function of
+its mean vector $c\in\mathbb R^I$ and input vector $z\in\mathbb R^I$.
 \end{lemma}
 
-\begin{lemma}[Norm of a coordinate tensor sum]
+\begin{lemma}[Norm bound for a coordinate tensor sum]
 \lean{BooleanAnalysis.GaussianSpace.norm_sum_sum_coordinateTensor_le}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.norm_coordinateProjection_le_one}
 \difficulty{4}
-Let $I$ be finite and $a_{ij}\in\mathbb R$. For the bilinear form $T(h,k)=\sum_{i,j}a_{ij}h_jk_i$ on maximum-norm vectors in $\mathbb R^I$, $\|T\|\le\sum_{i,j}|a_{ij}|$.
+Let $I$ be a finite set and let $a_{ij}\in\mathbb R$ for $i,j\in I$. Define the bilinear
+form $T\colon\mathbb R^I\times\mathbb R^I\to\mathbb R$ by $T(u,v)=\sum_{i,j\in
+I}a_{ij}u_jv_i$, and equip $\mathbb R^I$ with its usual supremum norm. Its operator norm
+satisfies $\|T\|\leq\sum_{i,j\in I}|a_{ij}|$.
 \end{lemma}
 
-\begin{lemma}[Local integrable envelope for the Hessian]
+\begin{lemma}[Integrable envelope for the Gaussian Hessian]
 \lean{BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_dominated}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_gaussianProductDensity_hessianCoefficient_le,BooleanAnalysis.GaussianSpace.gaussianPDFReal_two_derivatives_dominated,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_eq_sum,BooleanAnalysis.GaussianSpace.norm_sum_sum_coordinateTensor_le}
+\uses{BooleanAnalysis.GaussianSpace.abs_gaussianProductDensity_hessianCoefficient_le, BooleanAnalysis.GaussianSpace.gaussianPDFReal_two_derivatives_dominated, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_eq_sum, BooleanAnalysis.GaussianSpace.norm_sum_sum_coordinateTensor_le}
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. If $v>0$ and $M\ge0$, there is a nonnegative Lebesgue-integrable $b:\mathbb R^I\to\mathbb R$ such that $\|T_v(m,z)\|\le b(z)$ for every $z$ and every $m$ satisfying $|m_i|\le M$ for all $i$; the bilinear operator norm uses maximum norms.
+Let $I$ be finite, let $v\ge0$ with $v\ne0$, and let $M\ge0$. There is a nonnegative
+function $b:\mathbb R^I\to\mathbb R$ that is integrable with respect to Lebesgue measure
+on $\mathbb R^I$ and bounds the operator norm of the product Gaussian density Hessian at
+every $z\in\mathbb R^I$, uniformly over all $m\in\mathbb R^I$ with $|m_i|\le M$ for
+every $i\in I$.
 \end{lemma}
 
-\begin{lemma}[Integrability of the weighted density Hessian]
+\begin{lemma}[Integrability of the weighted Gaussian density Hessian]
 \lean{BooleanAnalysis.GaussianSpace.integrable_gaussianProductDensityHessian_smul}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityHessian_joint,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_dominated}
+\uses{BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityHessian_joint, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_dominated}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$ and $c\in\mathbb R^I$, then $z\mapsto f(z)T_v(c,z)$ is Lebesgue-integrable as a bilinear-form-valued function.
+Let $I$ be a finite set, let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f(z)|\le
+1$ for every $z$, let $v>0$, and let $c\in\mathbb R^I$. Define $G_v(c,z)=\prod_i
+p_v(c_i,z_i)$ and $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$. The function sending $z$ to
+$f(z)$ times the bilinear form $(h,k)\mapsto G_v(c,z)\bigl(S_v(c,z)[h]S_v(c,z)[k]-\sum_i
+h_i k_i/v\bigr)$ is integrable with respect to Lebesgue measure on $\mathbb R^I$, as a
+bilinear-form-valued function.
 \end{lemma}
 
-\begin{lemma}[Differentiation of the integrated first derivative]
+\begin{lemma}[Derivative of the integrated density derivative]
 \lean{BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensityDerivative}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_coordinate_le_of_mem_ball,BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityHessian_joint,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_dominated,BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.integrable_gaussianProductDensityDerivative_smul}
+\uses{BooleanAnalysis.GaussianSpace.abs_coordinate_le_of_mem_ball, BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityHessian_joint, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_dominated, BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.integrable_gaussianProductDensityDerivative_smul}
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$, then $m\mapsto\int f(z)A_v(m,z)\,dz$ is differentiable at every $c$, with derivative $\int f(z)T_v(c,z)\,dz$.
+Let $I$ be a finite set, let $v>0$, and let $f\colon\mathbb R^I\to\mathbb R$ be
+measurable with $|f(z)|\le1$ for every $z$. The function $m\mapsto\int_{\mathbb
+R^I}f(z)A_v(m,z)\,dz$, where $A_v$ is the mean derivative of the product Gaussian
+density of variance $v$, is Fréchet differentiable at every $c\in\mathbb R^I$, with
+derivative $h\mapsto\int_{\mathbb R^I}f(z)T_v(c,z)[h,\cdot]$; here $T_v$ is the Hessian
+of the product density, and the displayed derivative is the linear map obtained by
+integrating the bilinear form in its second argument.
 \end{lemma}
 
-\begin{lemma}[Integrated Hessian as coordinate-score expectations]
+\begin{lemma}[Integral of the Gaussian product density Hessian]
 \lean{BooleanAnalysis.GaussianSpace.integral_gaussianProductDensityHessian_smul_eq_sum}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_eq_sum,BooleanAnalysis.GaussianSpace.integrable_productHessian_mul,BooleanAnalysis.GaussianSpace.integral_pi_gaussianReal_eq_integral_smul}
+\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_eq_sum, BooleanAnalysis.GaussianSpace.integrable_productHessian_mul, BooleanAnalysis.GaussianSpace.integral_pi_gaussianReal_eq_integral_smul}
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$, $c,h,k\in\mathbb R^I$, and $Z\sim\bigotimes_iN(c_i,v)$, then $(\int f(z)T_v(c,z)\,dz)[h,k]=\sum_{i,j}\mathbb E[((Z_i-c_i)(Z_j-c_j)/v^2-\delta_{ij}/v)f(Z)]h_jk_i$, where $\delta_{ij}$ is the Kronecker delta.
+Let $I$ be a finite index set, let $v>0$, let $c\in\mathbb R^I$, and let $f:\mathbb
+R^I\to\mathbb R$ be measurable with $|f(z)|\le1$ for every $z$. Let $Z$ have independent
+coordinates with $Z_k\sim N(c_k,v)$. The integral, with respect to Lebesgue measure on
+$\mathbb R^I$, of $f(z)$ times the product Gaussian mean Hessian equals
+\[\sum_{i,j\in I}\mathbb E\!\left[\left(\frac{(Z_i-c_i)(Z_j-c_j)}{v^2}-\frac{\mathbf 1_{i=j}}{v}\right)f(Z)\right] (e_j^*\otimes e_i^*),\]
+where $e_k^*$ is the coordinate projection $z\mapsto z_k$, and $e_j^*\otimes e_i^*$
+denotes the bilinear form $(h,k)\mapsto h_jk_i$.
 \end{lemma}
 
-\begin{lemma}[Uniform norm bound for the integrated Hessian]
+\begin{lemma}[Bound for an integrated Gaussian density Hessian]
 \lean{BooleanAnalysis.GaussianSpace.norm_integral_gaussianProductDensityHessian_smul_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_integral_productHessian_mul_le,BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian,BooleanAnalysis.GaussianSpace.integral_gaussianProductDensityHessian_smul_eq_sum,BooleanAnalysis.GaussianSpace.norm_sum_sum_coordinateTensor_le}
+\uses{BooleanAnalysis.GaussianSpace.abs_integral_productHessian_mul_le, BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian, BooleanAnalysis.GaussianSpace.integral_gaussianProductDensityHessian_smul_eq_sum, BooleanAnalysis.GaussianSpace.norm_sum_sum_coordinateTensor_le}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Put $G_v(c,z)=\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\sum_i h_i k_i/v)$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$, then $\|\int f(z)T_v(c,z)\,dz\|\le2|I|^2/v$ for every $c\in\mathbb R^I$, using maximum norms for the bilinear operator norm.
+Let $I$ be a finite index set, and let $f:\mathbb R^I\to\mathbb R$ be measurable with
+$|f(z)|\leq1$ for every $z$. Let $v\geq0$ with $v\ne0$, and let $c\in\mathbb R^I$. The
+norm of the integral of $f(z)$ times the product Gaussian density Hessian with mean $c$
+and variance $v$, integrated against Lebesgue measure on $\mathbb R^I$, is at most
+\[
+|I|^2\frac{2}{v}.
+\]
 \end{lemma}
 
-\begin{lemma}[Lipschitz derivative of Gaussian product averages]
+\begin{lemma}[Lipschitz continuity of Gaussian product density averages]
 \lean{BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianProductDensityDerivative}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.norm_integral_gaussianProductDensityHessian_smul_le}
+\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.norm_integral_gaussianProductDensityHessian_smul_le}
 \difficulty{3}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$, the map $c\mapsto\int f(z)A_v(c,z)\,dz$ is globally $2|I|^2/v$-Lipschitz, with maximum norm on mean vectors and operator norm on linear functionals.
+Let $I$ be a finite index set, let $f:\mathbb R^I\to\mathbb R$ be measurable with
+$|f(z)|\le1$ for every $z$, and let $v>0$. For mean vector $c$, integrate $f(z)$ times
+the mean derivative of the product Gaussian density with variance $v$ in each coordinate
+over Lebesgue measure on $\mathbb R^I$. As a function of $c$, this
+linear-functional-valued integral is Lipschitz with constant $2|I|^2/v$, using the
+maximum norm on mean vectors and the operator norm on linear functionals.
 \end{lemma}

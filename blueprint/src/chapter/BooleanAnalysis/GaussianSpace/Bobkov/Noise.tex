@@ -5,58 +5,82 @@ Boolean noise preserves probability-valued functions for correlations in the uni
 
 \section{Declarations}
 
-\begin{lemma}[Noise preserves the probability interval]
+\begin{lemma}[Range preservation by the noise operator]
 \lean{BooleanAnalysis.GaussianSpace.noiseOp_mem_unitInterval}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.Hypercontractivity.noiseKernel_nonneg,BooleanAnalysis.Hypercontractivity.noiseKernel_sum_right,BooleanAnalysis.Hypercontractivity.noiseOp_eq_kernel_sum,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.noiseKernel_nonneg, BooleanAnalysis.Hypercontractivity.noiseKernel_sum_right, BooleanAnalysis.Hypercontractivity.noiseOp_eq_kernel_sum, BooleanAnalysis.noiseOp}
 \difficulty{3}
-Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. If $f:\{0,1\}^n\to[0,1]$ and $0\le\rho\le1$, then $(T_\rho f)(x)\in[0,1]$ for every $x$.
+For a natural number $n$, suppose $f\colon\{0,1\}^n\to\mathbb{R}$ takes values in
+$[0,1]$, and let $0\le\rho\le1$. Then $T_\rho f(x)\in[0,1]$ for every $x\in\{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Linearity of Boolean noise]
+\begin{lemma}[Linearity of the Boolean noise operator]
 \lean{BooleanAnalysis.GaussianSpace.noiseOp_linear_combination}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.Hypercontractivity.noiseOp_eq_kernel_sum,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.noiseOp_eq_kernel_sum, BooleanAnalysis.noiseOp}
 \difficulty{3}
-Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For real $c,d,\rho$ and real functions $f,g$ on $\{0,1\}^n$, $T_\rho(cf+dg)=cT_\rho f+dT_\rho g$.
+For a natural number $n$, real numbers $\rho,c,d$, and real-valued functions $f,g$ on
+$\{0,1\}^n$, the noise operator satisfies $T_\rho(cf+dg)=cT_\rho f+dT_\rho g$.
 \end{lemma}
 
-\begin{lemma}[Noise of a fixed restriction]
+\begin{lemma}[Noise decomposition of a coordinate restriction]
 \lean{BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.noiseOp_linear_combination,BooleanAnalysis.Hypercontractivity.avgLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.Hypercontractivity.restrictLast_false_eq,BooleanAnalysis.Hypercontractivity.restrictLast_true_eq,BooleanAnalysis.boolToSign,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.noiseOp_linear_combination, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.Hypercontractivity.restrictLast_false_eq, BooleanAnalysis.Hypercontractivity.restrictLast_true_eq, BooleanAnalysis.boolToSign, BooleanAnalysis.noiseOp}
 \difficulty{4}
-Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For $f:\{0,1\}^{n+1}\to\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. For every $x,b$ and real $\rho$, $(T_\rho f_b)(x)=(T_\rho a_f)(x)+s_b(T_\rho d_f)(x)$, where noise on the right acts on the first $n$ coordinates.
+Let $n$ be a natural number, $f\colon\{0,1\}^{n+1}\to\mathbb{R}$, $\rho\in\mathbb{R}$,
+$b\in\{0,1\}$, and $x\in\{0,1\}^n$. Write $f_b(x)=f(x,b)$,
+$a_f(x)=\tfrac12(f(x,0)+f(x,1))$, $d_f(x)=\tfrac12(f(x,0)-f(x,1))$, and $\sigma(0)=1$,
+$\sigma(1)=-1$. Applying the noise operator on the first $n$ coordinates gives $(T_\rho
+f_b)(x)=(T_\rho a_f)(x)+\sigma(b)(T_\rho d_f)(x)$.
 \end{lemma}
 
-\begin{lemma}[Last derivative after noise]
+\begin{lemma}[Last derivative of the noise operator]
 \lean{BooleanAnalysis.GaussianSpace.derivative_last_noise_snoc}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.derivative_last_snoc,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.noiseOp_snoc,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.boolToSign_false,BooleanAnalysis.boolToSign_true,BooleanAnalysis.derivative,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.derivative_last_snoc, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.noiseOp_snoc, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.boolToSign_false, BooleanAnalysis.boolToSign_true, BooleanAnalysis.derivative, BooleanAnalysis.noiseOp}
 \difficulty{3}
-Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For $f:\{0,1\}^{n+1}\to\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. For every $x,b$, $D_n(T_\rho f)(x,b)=\rho(T_\rho d_f)(x)$, where $D_n$ is the last-coordinate half-difference.
+Let $n$ be a natural number, let $f:\{0,1\}^{n+1}\to\mathbb R$, let $\rho\in\mathbb R$,
+and choose $x\in\{0,1\}^n$ and a bit $b\in\{0,1\}$. The discrete derivative in the last
+coordinate of the noise operator applied to $f$, evaluated at the point obtained by
+appending $b$ to $x$, equals $\rho$ times the noise operator applied to the
+last-coordinate half-difference of $f$, evaluated at $x$.
 \end{lemma}
 
-\begin{lemma}[Restriction after noise]
+\begin{lemma}[Restriction after applying noise]
 \lean{BooleanAnalysis.GaussianSpace.restrictLast_noiseOp_eq}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.Hypercontractivity.avgLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.noiseOp_snoc,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.boolToSign,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.noiseOp_snoc, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.boolToSign, BooleanAnalysis.noiseOp}
 \difficulty{1}
-Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For $f:\{0,1\}^{n+1}\to\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. For either bit $b$, $(T_\rho f)_b=T_\rho a_f+s_b\rho T_\rho d_f$ as functions on $\{0,1\}^n$.
+Let $n$ be a natural number, let $\rho\in\bbr$, and let $f:\{0,1\}^{n+1}\to\bbr$. Write
+$f_0,f_1$ for its restrictions to the last coordinate, and set $a_f=(f_0+f_1)/2$ and
+$d_f=(f_0-f_1)/2$. For either bit $b\in\{0,1\}$, the restriction of the noise operator
+applied to $f$ satisfies
+\[
+(T_\rho f)_b=T_\rho a_f+\sigma(b)\rho T_\rho d_f,
+\]
+where $\sigma(0)=1$ and $\sigma(1)=-1$.
 \end{lemma}
 
-\begin{lemma}[Function identity for noised restrictions]
+\begin{lemma}[Function identity for noised coordinate restrictions]
 \lean{BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq_fun}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq,BooleanAnalysis.Hypercontractivity.avgLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.boolToSign,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.boolToSign, BooleanAnalysis.noiseOp}
 \difficulty{1}
-Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For $f:\{0,1\}^{n+1}\to\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. For either bit $b$, $T_\rho f_b=T_\rho a_f+s_bT_\rho d_f$ as functions on $\{0,1\}^n$.
+Let $n$ be a natural number, $f\colon\{0,1\}^{n+1}\to\mathbb{R}$, $\rho\in\mathbb{R}$,
+and $b\in\{0,1\}$. Write $f_b(x)=f(x,b)$, $a_f(x)=\tfrac12(f(x,0)+f(x,1))$,
+$d_f(x)=\tfrac12(f(x,0)-f(x,1))$, and let $\sigma(0)=1$, $\sigma(1)=-1$. As functions on
+$\{0,1\}^n$, $T_\rho f_b=T_\rho a_f+\sigma(b)T_\rho d_f$.
 \end{lemma}
 
 \begin{lemma}[Range of the noised restriction endpoints]
 \lean{BooleanAnalysis.GaussianSpace.noise_restriction_endpoints_mem}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.noiseOp_mem_unitInterval,BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq,BooleanAnalysis.Hypercontractivity.avgLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.boolToSign_false,BooleanAnalysis.boolToSign_true,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.noiseOp_mem_unitInterval, BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.boolToSign_false, BooleanAnalysis.boolToSign_true, BooleanAnalysis.noiseOp}
 \difficulty{4}
-Let $T_\rho$ denote Boolean noise with real correlation $\rho$, whose Fourier multiplier on a set of size $k$ is $\rho^k$. For $f:\{0,1\}^{n+1}\to\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. If $f$ takes values in $[0,1]$ and $0\le\rho\le1$, then $(T_\rho a_f)(x)\pm(T_\rho d_f)(x)\in[0,1]$ for every $x$.
+Let $n$ be a natural number and $f\colon\{0,1\}^{n+1}\to\mathbb{R}$ take values in
+$[0,1]$. Suppose $0\le\rho\le1$, and let $x\in\{0,1\}^n$. If $a_f$ is the average of the
+two restrictions of $f$ to the last coordinate and $d_f$ is their half-difference, then
+both $(T_\rho a_f)(x)+(T_\rho d_f)(x)$ and $(T_\rho a_f)(x)-(T_\rho d_f)(x)$ belong to
+$[0,1]$.
 \end{lemma}

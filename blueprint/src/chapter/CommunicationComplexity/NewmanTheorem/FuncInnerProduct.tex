@@ -304,6 +304,7 @@ where both the inner and outer sums range over all $n$-bit Boolean inputs.
 \proofsource{raoyehudayoff-ch05-discrepancy}{pdf-4c44440f2aaa-p004-b003}
 \label{CommunicationComplexity.Functions.InnerProduct.sum_sq_indicator_mul_boolSign_innerProduct_le}
 \leanok
+\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.indicatorOne_le_one, CommunicationComplexity.Functions.InnerProduct.indicatorOne_sq, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_boolSign_innerProduct, CommunicationComplexity.boolSign}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -1205,7 +1206,6 @@ where both the inner and outer sums range over all $n$-bit Boolean inputs.
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p004-b003,
     pdf-4c44440f2aaa-p004-b002}
-\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.indicatorOne_le_one, CommunicationComplexity.Functions.InnerProduct.indicatorOne_sq, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.sum_sq_mul_boolSign_innerProduct, CommunicationComplexity.boolSign}
 \difficulty{4}
 Let $n \in \bbn$, and identify the set of $n$-bit Boolean inputs with $\{0,1\}^n$. For
 $x, y \in \{0,1\}^n$, write $\langle x, y\rangle = \bigoplus_{i=1}^{n} (x_i \wedge y_i)
@@ -1224,6 +1224,7 @@ for every subset $B \subseteq \{0,1\}^n$,
 \proofsource{raoyehudayoff-ch05-discrepancy}{pdf-4c44440f2aaa-p004-b003}
 \label{CommunicationComplexity.Functions.InnerProduct.integral_sq_indicator_mul_boolSign_innerProduct_le}
 \leanok
+\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.integral_eq_average_sum, CommunicationComplexity.Functions.InnerProduct.sum_sq_indicator_mul_boolSign_innerProduct_le, CommunicationComplexity.boolSign}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -2164,7 +2165,6 @@ for every subset $B \subseteq \{0,1\}^n$,
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p004-b002,
     pdf-4c44440f2aaa-p004-b003}
-\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.integral_eq_average_sum, CommunicationComplexity.Functions.InnerProduct.sum_sq_indicator_mul_boolSign_innerProduct_le, CommunicationComplexity.boolSign}
 \difficulty{3}
 Let $B \subseteq \{0,1\}^n$ be an arbitrary set of $n$-bit Boolean inputs, with
 indicator $\mathbf 1_B$, and write $\langle x,y\rangle = \bigoplus_{i=1}^{n} (x_i \wedge
@@ -2210,6 +2210,7 @@ $\mathrm{true}\mapsto -1$.
 }
 \label{CommunicationComplexity.Functions.InnerProduct.sq_discrepancy_prod_le}
 \leanok
+\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq, CommunicationComplexity.Functions.InnerProduct.discrepancy_prod_eq_integral, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.integral_sq_indicator_mul_boolSign_innerProduct_le, CommunicationComplexity.discrepancy}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -3151,7 +3152,6 @@ $\mathrm{true}\mapsto -1$.
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p004-b003,
     pdf-4c44440f2aaa-p001-b002}
-\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq, CommunicationComplexity.Functions.InnerProduct.discrepancy_prod_eq_integral, CommunicationComplexity.Functions.InnerProduct.innerProduct, CommunicationComplexity.Functions.InnerProduct.integral_sq_indicator_mul_boolSign_innerProduct_le, CommunicationComplexity.discrepancy}
 \difficulty{4}
 Fix $n \in \bbn$ and equip the product $\mathrm{BoolInput}(n) \times
 \mathrm{BoolInput}(n)$ with its uniform probability measure. For any two sets $A, B

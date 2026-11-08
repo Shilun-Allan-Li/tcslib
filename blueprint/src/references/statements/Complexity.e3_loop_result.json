@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.e3_loop_result",
+ "key": "ceb8f014d47fd09f",
+ "kind": "lemma",
+ "title": "Loop output agrees with split emitter",
+ "statement": "For natural numbers $C,c$ and a binary word $w$, search the indices from $0$ through $|w|$ for the first state passing the round test, using the state obtained by that many iterations of the search step from the empty word. If an index $i$ is found, encode the prefix of $w$ of length equal to that state’s length together with the remaining suffix; if none is found, return the empty word. This result equals the word produced by the exponential split emitter on $w$.",
+ "hypotheses_covered": [
+  "Natural numbers $C,c$",
+  "A binary word $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For natural numbers $C, c$ and a word $w$: taking the first accepted index of the bounded orbit search and emitting the encoded pair of the corresponding prefix and suffix of $w$ (or the empty word when the search is exhausted) yields exactly the word of the exponential split emitter on $w$."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.BlockLoop.loop_output",
+ "key": "7772d387ed24a8bf",
+ "kind": "theorem",
+ "title": "Output of a finite block loop",
+ "statement": "Let $g$ and $\\mathrm{out}$ be maps on finite bit strings, let $\\mathrm{upd}$ and $\\mathrm{nxt}$ be maps on pairs of finite bit strings, let $P,Q:\\mathbb{N}\\to\\{0,1\\}^*$, and let $K,N$ be natural numbers and $s_0$ a finite bit string. Suppose $s_0=\\langle P(0),\\langle 1^K,Q(0)\\rangle\\rangle$, each $P(i)$ for $i\\le K$ is nonempty, and for every $i<K$, $\\mathrm{upd}(P(i),Q(i))=P(i+1)$ and $\\mathrm{nxt}(P(i),Q(i))=Q(i+1)$. If $g$ is the step map determined by these update and next-state maps and $K<N$, then concatenating the emissions at iterates indexed from $0$ through $N-1$ gives $\\mathrm{out}(\\langle P(K),\\langle [],Q(K)\\rangle\\rangle)$.",
+ "hypotheses_covered": [
+  "Maps $g,\\mathrm{out}:\\{0,1\\}^*\\to\\{0,1\\}^*$",
+  "Maps $\\mathrm{upd},\\mathrm{nxt}:\\{0,1\\}^*\\times\\{0,1\\}^*\\to\\{0,1\\}^*$",
+  "Functions $P,Q:\\mathbb{N}\\to\\{0,1\\}^*$",
+  "Natural numbers $K,N$ and finite bit string $s_0$",
+  "$s_0=\\langle P(0),\\langle 1^K,Q(0)\\rangle\\rangle$",
+  "For every $i\\le K$, $P(i)$ is nonempty",
+  "For every $i<K$, $\\mathrm{upd}(P(i),Q(i))=P(i+1)$",
+  "For every $i<K$, $\\mathrm{nxt}(P(i),Q(i))=Q(i+1)$",
+  "$g$ is the step map determined by $\\mathrm{upd},\\mathrm{nxt}$",
+  "$K<N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

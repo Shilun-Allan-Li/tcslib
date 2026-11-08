@@ -5,17 +5,24 @@ Subtracting an independent centered copy increases every affine norm of exponent
 
 \section{Declarations}
 
-\begin{theorem}[Symmetrization increases affine norms]
+\begin{theorem}[Norm inequality under symmetrization]
 \lean{BooleanAnalysis.Hypercontractivity.symmetrization_norm_le}
 \leanok
 \difficulty{6}
-Let $X,X^{\prime}$ be independent identically distributed real random variables on a probability space, let $1\le q\le\infty$, assume $X\in L^q$ and $\E X=0$, and let $a\in\bbr$. Then $\|a+X\|_q\le\|a+X-X^{\prime}\|_q$, with the essential supremum at $q=\infty$.
+Let $(\Omega,\mu)$ be a probability space, let $X,X':\Omega\to\mathbb R$ have the same
+distribution and be independent, and let $q\in[0,\infty]$ satisfy $1\le q$. Suppose
+$X\in L^q(\mu)$ and $\int X\,d\mu=0$. Then for every $a\in\mathbb R$,
+$\|a+X\|_{L^q(\mu)}\le\|a+X-X'\|_{L^q(\mu)}$.
 \end{theorem}
 
-\begin{theorem}[Random-sign comparison]
+\begin{theorem}[Random-sign moment comparison]
 \lean{BooleanAnalysis.Hypercontractivity.randomization_norm_le}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.IsRademacherRV, BooleanAnalysis.Hypercontractivity.IsRademacherRV.map_eq}
 \difficulty{6}
-Let $X$ be a centered real random variable on a probability space, let $1\le q\le\infty$, and assume $X\in L^q$. If $r$ is an independent measurable uniform sign in $\{-1,1\}$, then for every $a\in\bbr$, $\|a+X/2\|_q\le\|a+rX\|_q$, including the essential-supremum norm.
+Let $(\Omega,\mu)$ be a probability space, let $X,r:\Omega\to\mathbb R$, let
+$q\in[1,\infty]$, and let $a\in\mathbb R$. Suppose $X$ belongs to $L^q(\mu)$, has
+integral zero, and is independent of $r$, where $r$ is a measurable Rademacher variable:
+it equals $1$ or $-1$ almost everywhere and each value has probability $1/2$. Then
+$\|a+X/2\|_{L^q(\mu)}\le\|a+rX\|_{L^q(\mu)}$, where these are the extended $L^q$ norms.
 \end{theorem}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.CNF.numVars_decode_le",
+ "key": "3974769e3f2c21b7",
+ "kind": "theorem",
+ "title": "Variable count bound for decoded formulas",
+ "statement": "For every finite bit string $x$, the variable count of the CNF formula obtained by decoding $x$ is at most the length of $x$.",
+ "hypotheses_covered": [
+  "A finite bit string $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit string $x$, the decoded formula satisfies $N(\\mathrm{dec}(x)) \\le |x|$. Here\nthe variable count $N(\\varphi)$ of a CNF formula $\\varphi$ is one plus the largest variable\nindex occurring in a literal of $\\varphi$, or $0$ if no literal occurs, and $\\mathrm{dec}(x)$\nis the formula obtained by parsing $x$, with recursion fuel $|x|$, according to the grammar\n$\\langle\\text{formula}\\rangle ::= 0 \\mid 1\\,\\langle\\text{clause}\\rangle\\,\\langle\\text{formula}\\rangle$,\n$\\langle\\text{clause}\\rangle ::= 0 \\mid \\langle\\text{literal}\\rangle\\,\\langle\\text{clause}\\rangle$,\n$\\langle\\text{literal}\\rangle ::= 1^{k+1}\\,0\\,b$ (the literal with variable index\n$k \\in \\mathbb{N}$ and polarity $b \\in \\{0,1\\}$) when this parse consumes all of $x$, and\nthe empty formula otherwise."
+}

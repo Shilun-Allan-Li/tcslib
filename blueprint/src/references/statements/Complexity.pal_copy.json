@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.pal_copy",
+ "key": "114059a2e6406bc6",
+ "kind": "lemma",
+ "title": "Copy-Phase Configuration Invariant",
+ "statement": "Let $x$ be a binary word. For every natural number $t\\le |x|$, after $t$ steps the three-state palindrome machine started in its initial configuration on input $x$ is in state $0$, with its input head at position $t+1$, its work head at cell $t$, its first $t$ bits copied to the work tape, and all other work-tape cells blank; its output is empty.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$t$ is a natural number",
+  "$t\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word. For every $t \\le |x|$, running the three-state\npalindrome machine for $t$ steps from its initial configuration on input $x$\nreaches the copy-state configuration with input head at cell $t+1$, exactly the\nfirst $t$ bits of $x$ copied onto the work tape (every other work cell still\nblank), and work head at cell $t$."
+}

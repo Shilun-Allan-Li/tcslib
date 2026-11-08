@@ -1,0 +1,21 @@
+{
+ "lean_name": "WordRAM.HaltsWithin",
+ "key": "b6032e566963c0b1",
+ "kind": "def",
+ "title": "Halting within resource bounds",
+ "statement": "Let $P$ be an extended program, let $x$ and $\\rho$ be Boolean lists, let $W,t,f$ be natural numbers, let $v$ be a Boolean, and let $o$ be a Boolean list. The computation from the initial configuration for input $x$, using $\\rho$ and a finite set $K$ of integer addresses, reaches a configuration after some $n<t$ steps, with $|K|\\le f$; at that configuration the next-step result is the terminal value $v$, and the output produced is $o$.",
+ "hypotheses_covered": [
+  "program $P$ is an extended program",
+  "input $x$ and auxiliary list $\\rho$ are Boolean lists",
+  "word width $W$ is a natural number",
+  "step bound $t$ is a natural number",
+  "terminal value $v$ is Boolean",
+  "output $o$ is a Boolean list",
+  "resource bound $f$ is a natural number",
+  "there exist a step count $n<t$, a reached configuration, and a finite set $K$ of integer addresses with $|K|\\le f$"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not include the definitions of the extended-step relation or the transition function, so their precise operational meaning cannot be stated from this declaration alone.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

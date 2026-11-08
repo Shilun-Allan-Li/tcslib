@@ -1,0 +1,20 @@
+{
+ "lean_name": "FABL.deterministicGoldreichLevinState",
+ "key": "374fd636daed33e7",
+ "kind": "def",
+ "title": "Deterministic Goldreich–Levin state sequence",
+ "statement": "Let $n>0$, and let $a,b$ be positive integers with $2a\\le b$, together with an integer Fourier bound $B\\ge1$. For a Boolean function $f:\\{−1,1\\}^n\\to\\{−1,1\\}$, define a sequence of states indexed by the nonnegative integers. The initial state has active family $\\{\\varnothing\\}$ and empty trace; at stage $k+1$, if $k<n$ and the preceding active family exists with size at most the active cap determined by the input threshold, update the state by the Goldreich–Levin query step at coordinate $k$, using the estimate records computed from $f$; if that family exceeds the cap, make the active family absent and preserve the trace. In all other cases, retain the preceding state unchanged.",
+ "hypotheses_covered": [
+  "Positive dimension $n>0$",
+  "Positive accuracy numerator $a$",
+  "Accuracy denominator $b$ and $2a\\le b$",
+  "Fourier bound $B\\ge1$",
+  "Boolean function $f:\\{−1,1\\}^n\\to\\{−1,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

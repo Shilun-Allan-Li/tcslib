@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.ndWriterTM",
+ "key": "c3d4665e69ee3c65",
+ "kind": "def",
+ "title": "Bounded nondeterministic bit writer",
+ "statement": "Let $k$ be a natural number, let $j$ be one of the $k$ work tapes, let $Q$ be a controller state type, let $q_0\\in Q$, let $\\delta:Q\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to Q$, let $\\mathrm{stop}:Q\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and let $\\mathrm{bounded}$ be a Boolean flag. The resulting nondeterministic machine over Boolean symbols starts in $\\mathrm{run}(q_0)$. In state $\\mathrm{done}$ it stays there with no writes or output and stationary heads; in state $\\mathrm{run}(q)$ it enters $\\mathrm{done}$ under the same idle action if $\\mathrm{stop}(q)$ holds or if bounded mode is enabled and tape $j$ is blank at its head. Otherwise, for choice bit $b$, it writes $b$ on tape $j$, moves that tape's head right, leaves all other heads stationary without writing, emits no output, and enters $\\mathrm{run}(\\delta(q,b))$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A selected tape $j$ among the $k$ tapes",
+  "A controller state type $Q$",
+  "An initial controller state $q_0$",
+  "A state update function depending on a Boolean choice",
+  "A stopping predicate on controller states",
+  "A Boolean bounded-mode flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

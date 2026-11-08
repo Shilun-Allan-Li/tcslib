@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.counter_carry",
+ "key": "8ff9c1be0d9a92db",
+ "kind": "lemma",
+ "title": "Execution of the full carry phase",
+ "statement": "Let $x$ be a finite binary input word, let $p$ be a valid input-head position for $x$, and let $b$ and $u$ be finite binary words. For every prefix $a$ of $b$, if the four-state binary-counter machine starts in state $1$ with input-head position $p$, work-head position $|a|$, the tape containing the concatenation of $a$ and $b$, and empty output, then after exactly one more step than the number of leading $1$ bits of $b$, it is in state $2$ with input-head position $p$, work-head position $|a|$ plus the number of leading $1$ bits of $b$ minus one, the tape containing the concatenation of $a$ and the increment of $b$, and empty output.",
+ "hypotheses_covered": [
+  "$x$ is a finite binary input word",
+  "$p$ is a valid input-head position for $x$",
+  "$b$ is a finite binary word",
+  "$u$ is a finite binary word (unused in the conclusion)",
+  "the claim holds for every prefix $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the four-state binary-counter machine is in its carry state with the\nconcatenation of binary words $p$ and $b$ on the nonnegative work-tape cells,\nwork head at cell $|p|$, and empty output, and let $r$ be the carry length of\n$b$ (its number of leading $1$ bits). Then after exactly $r + 1$ steps the\nmachine is in the rewind state with the work tape holding $p$ followed by the\nincremented word of $b$, the work head at cell $|p| + r - 1$, and the input\nhead and output unchanged."
+}

@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_pairSnd",
+ "key": "5cc3c0eb57f19af3",
+ "kind": "theorem",
+ "title": "Second-component extraction in linear time",
+ "statement": "There are a finite Turing machine $M$ and a constant $c\\in\\mathbb{N}$ such that, on every Boolean input $x$, $M$ halts within $c(|x|+1)$ steps and outputs the second component parsed from $x$ by the aligned pair parser, or the empty word if parsing fails.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes, within $c\\,(n+1)$ steps on inputs of length $n$, the function\nsending a word in the self-delimiting pair code to the second component of\nthe encoded pair, and any malformed word to the empty word."
+}

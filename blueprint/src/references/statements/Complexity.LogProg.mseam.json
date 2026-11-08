@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.mseam",
+ "key": "bd58b0c14e9ae4a7",
+ "kind": "def",
+ "title": "Configuration with a memory tape at a seam",
+ "statement": "Let $x$ be a Boolean input list, $l$ a program node, $v\\colon\\mathrm{Fin}(m)\\to\\mathbb N$ a register assignment, $M\\colon\\mathbb Z\\to\\{0,1\\}$ a memory tape, $p\\in\\mathbb Z$ its head position, and $out$ a Boolean output list. The construction forms a configuration on input $x$ with $m+k_D+1$ work tapes by taking the seam configuration associated with $x,l,v,out$ and adjoining a memory tape whose contents are the optional-symbol encoding of $M$ and whose head is at $p$.",
+ "hypotheses_covered": [
+  "Natural numbers $m,d,k_D$",
+  "Program-node and decider-state types $\\Lambda,SD$",
+  "A Boolean input list $x$",
+  "A program node $l$",
+  "A register assignment $v\\colon\\mathrm{Fin}(m)\\to\\mathbb N$",
+  "A Boolean-valued tape $M\\colon\\mathbb Z\\to\\{0,1\\}$",
+  "An integer head position $p$",
+  "A Boolean output list $out$"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not provide descriptions of the seam configuration or the tape encoding, so their precise contents beyond the displayed composition cannot be fully rendered.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

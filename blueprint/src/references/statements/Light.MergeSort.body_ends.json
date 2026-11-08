@@ -1,0 +1,23 @@
+{
+ "lean_name": "Light.MergeSort.body_ends",
+ "key": "a75d9deafe96ad65",
+ "kind": "theorem",
+ "title": "Merge sort body runtime",
+ "statement": "Let a program contain the prescribed sorting, halving, merging, and copying procedures, and let the space limit be at most the word limit, with one also at most the word limit. Let $L$ be a list of integers represented in memory on the segment beginning at $a$, with $a+|L|\\le fr$ and $fr+|L|$ at most the space limit. Suppose $d$ is below the depth limit, and that for every starting address $a'$, list $L'$, and memory $\\mu'$, if $1<|L|$, $2|L'|\\le |L|+1$, $L'$ is represented in $\\mu'$ on the segment beginning at $a'$, and $a'+|L'|\\le fr$, then the sorting procedure at depth $d+1$, started with length $|L'|$, address $a'$, and free address $fr$, terminates within $\\mathrm{sortTime}(|L'|)$ and leaves memory in which the segment beginning at $a'$ is sorted and the required memory outside that segment is preserved. Then the sorting body at depth $d$, started with length $|L|$, address $a$, free address $fr$, and memory $\\mu$, terminates within $\\mathrm{sortTime}(|L|)$ and leaves memory in which the segment beginning at $a$ is sorted and the required memory outside it is preserved.",
+ "hypotheses_covered": [
+  "Program contains the prescribed sort, half, merge, and copy procedure bodies",
+  "Space limit is at most the word limit",
+  "One is at most the word limit",
+  "Initial memory represents L on the segment beginning at a",
+  "a + |L| ≤ fr",
+  "fr + |L| ≤ space limit",
+  "d < depth limit",
+  "Induction hypothesis: for every a', L', and μ', if 1 < |L|, 2|L'| ≤ |L| + 1, μ' represents L' at a', and a' + |L'| ≤ fr, then the sort procedure at depth d + 1 meets the stated time and sorted-memory condition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

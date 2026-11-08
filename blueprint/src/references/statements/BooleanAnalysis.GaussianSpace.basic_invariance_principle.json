@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.basic_invariance_principle",
+ "key": "5e7d7bf676d4d1db",
+ "kind": "theorem",
+ "title": "Fourth-order invariance principle",
+ "statement": "Let $n,k\\in\\mathbb N$, and let $F$ be a multilinear polynomial on $\\{0,1\\}^n$ of degree at most $k$, written in the Walsh basis as $F(x)=\\sum_{S\\subseteq[n]}F(S)\\chi_S(x)$. Let $X_i\\colon\\Omega\\to\\mathbb R$ and $Y_i\\colon\\Xi\\to\\mathbb R$ be independent families under probability measures $\\mu$ and $\\nu$, respectively. Suppose every input has mean zero, second moment one, third moment zero, finite fourth moment, and fourth moment at most $9$. If $\\psi\\colon\\mathbb R\\to\\mathbb R$ is four times continuously differentiable, $C\\ge0$, and $|\\psi^{(4)}(t)|\\le C$ for all $t\\in\\mathbb R$, then\n\\[\n\\left|\\mathbb E_\\mu\\psi\\!\\left(\\sum_{S\\subseteq[n]}F(S)\\prod_{i\\in S}X_i\\right)-\\mathbb E_\\nu\\psi\\!\\left(\\sum_{S\\subseteq[n]}F(S)\\prod_{i\\in S}Y_i\\right)\\right|\n\\le \\frac C{12}9^k\\sum_{i=1}^n \\mathrm{Inf}_i[F]^2,\n\\]\nwhere $\\mathrm{Inf}_i[F]$ is the uniform-cube expectation of $(F(x)-F(x^i))^2/4$, with $x^i$ obtained by flipping coordinate $i$.",
+ "hypotheses_covered": [
+  "$n,k$ are natural numbers",
+  "$F$ has degree at most $k$",
+  "The underlying spaces are measurable and $\\mu,\\nu$ are probability measures",
+  "The coordinate inputs form independent families under their respective measures",
+  "Each input satisfies the fourth-order invariance moment conditions: mean $0$, second moment $1$, third moment $0$, and fourth moment at most $9$",
+  "$\\psi$ is four times continuously differentiable",
+  "$C\\ge0$",
+  "$|\\psi^{(4)}(t)|\\le C$ for all real $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{i\\in S}x_i$ be a real multilinear polynomial of degree at most $k$; let $I_i(F)=\\sum_{S\\ni i}a_S^2$. Let $X=(X_i)$ and $Y=(Y_i)$ be families of independent real inputs on probability spaces $(\\Omega,\\mu)$ and $(\\Xi,\\nu)$, respectively. Each input is measurable up to a null set, has finite fourth absolute moment, and has first, second, and third moments $0,1,0$ and fourth moment at most $9$. If $\\psi\\colon\\mathbb R\\to\\mathbb R$ is $C^4$ and $C\\ge0$ satisfies $|\\psi^{(4)}(t)|\\le C$ for every $t$, then $|\\mathbb E_\\mu\\psi(F(X))-\\mathbb E_\\nu\\psi(F(Y))|\\le (C/12)9^k\\sum_i I_i(F)^2$."
+}

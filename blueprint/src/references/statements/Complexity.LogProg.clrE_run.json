@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.clrE_run",
+ "key": "ea6d9c8f0803a009",
+ "kind": "lemma",
+ "title": "Register Erasure Run",
+ "statement": "Let $P$ be a register program with oracle, choose a register $r$, states $c_R,c_E,\\mathrm{next}$, and suppose that in state $c_R$ every transition is the prescribed register action, in state $c_E$ every transition is the prescribed erasing action, and neither state is an oracle-call state. For any configuration $c$ and Boolean word $w$, for every $k\\le |w|$, starting in state $c_E$ with register $r$ containing the prefix of $w$ of length $k$ and its head at position $k-1$, after $k+1$ steps the machine is in state $\\mathrm{next}$ with register $r$ blank and its head at zero, while the rest of the configuration is as in $c$. At every earlier time $t<k+1$, the configuration has state $c_E$ and some tape contents and head position $q$ for register $r$ satisfying $-1\\le q\\le k-1$.",
+ "hypotheses_covered": [
+  "register program P and oracle",
+  "register r and states c_R, c_E, next",
+  "transition action in state c_R for every input-symbol and work-symbol tuple",
+  "transition action in state c_E for every input-symbol and work-symbol tuple",
+  "P has no call at c_R or c_E",
+  "configuration c and Boolean word w",
+  "each k from 0 through |w|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

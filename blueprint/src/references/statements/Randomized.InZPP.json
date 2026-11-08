@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.InZPP",
+ "key": "7a90e2c3cd8d37aa",
+ "kind": "def",
+ "title": "Zero-error probabilistic languages",
+ "statement": "Fix a verifier model $E$ and a language $L$ of finite Boolean lists. The language $L$ belongs to zero-error probabilistic polynomial time relative to $E$ if there exist an efficient verifier $M$, taking an input and a random Boolean list and returning either a Boolean answer or no answer, and natural numbers $a,k$ such that, for every input $x$, on every random list of length $\binom{a+k|x|}{k}$ the verifier never gives an incorrect Boolean answer, and the probability that it gives no answer is at most $1/2$.",
+ "hypotheses_covered": [
+  "A verifier model $E$",
+  "A language $L$ of Boolean lists",
+  "There exist natural numbers $a,k$",
+  "The verifier is efficient according to $E$",
+  "For each input in $L$, every random list of the specified length does not yield the answer false",
+  "For each input outside $L$, every random list of the specified length does not yield the answer true",
+  "For every input, the probability of no answer is at most $1/2$"
+ ],
+ "confidence": "low",
+ "caveat": "The exact length is $\texttt{polyLen}(a,k,|x|)$, whose definition is not included, so its expansion as a binomial coefficient cannot be confirmed from the supplied statement.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

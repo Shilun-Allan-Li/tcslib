@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emCall_prepared_eval_first",
+ "key": "634b85c12bf6e824",
+ "kind": "lemma",
+ "title": "First Return of the Prepared Evaluation",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, and let $w,s,o$ be Boolean words. Suppose $M$ computes output $o$ from input $s$ in exactly $T$ steps. The evaluator, prepared with candidate input $s$ and run on input $w$, first reaches its return state at some positive time $t\\le 1+2T+|s|+2$; before that time it is never in the return state, and at time $t$ its configuration is the evaluator configuration of the halted tracked computation after the candidate input head has been scanned to the right boundary.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$w,s,o$ are Boolean words",
+  "$T$ is a natural number",
+  "$M$ computes output $o$ from $s$ in exactly $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ compute output $o$ on argument $s$ within time $T$, and consider the capture-\nwrapped evaluator of the right-boundary wrapper of the tracked evaluator of $M$, started\non the prepared candidate seam for $s$. Then there is a positive time $t \\le 1 + 2T +\n|s| + 2$ such that the evaluator does not visit its return state before $t$ and at time\n$t$ is exactly the evaluator configuration of the halted, right-normalized tracked\nendpoint: full trace banks, complete capture buffer, and candidate head at the right\nboundary."
+}

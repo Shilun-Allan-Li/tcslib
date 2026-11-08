@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.nnGates_inv",
+ "key": "c925f19639d622d9",
+ "kind": "theorem",
+ "title": "Invariants of the monotone gate construction",
+ "statement": "For every natural number $n$ and every finite list $G$ of gates, if the gates in $G$ are acyclic relative to $n$ and each gate has distinct inputs and exactly one input for a NOT gate or two for an AND or OR gate, then the construction obtained by processing $G$ has the following properties. Its counter equals $n+|G|$; its gates are acyclic; its tap map sends every index below $n+|G|$ to an index below $n$ plus the number of constructed gates, and is injective on those indices. For every Boolean assignment to the $n$ inputs, each such tapped vertex has the same value as the corresponding vertex in the original computation; every vertex is used by at most two constructed gates, and tapped vertices are unused. Every constructed gate has distinct inputs and the prescribed arity for its kind, and the number of constructed gates is at most $5|G|$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "The original gate list is acyclic relative to $n$",
+  "Every original gate has distinct arguments",
+  "Every original NOT gate has one argument and every original AND or OR gate has two arguments"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

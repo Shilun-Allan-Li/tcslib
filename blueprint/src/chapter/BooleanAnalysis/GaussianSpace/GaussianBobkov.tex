@@ -5,64 +5,109 @@ Normalized Boolean-block derivatives approximate the Euclidean coefficient lengt
 
 \section{Declarations}
 
-\begin{lemma}[Length under coordinate perturbations]
+\begin{lemma}[Euclidean length bound under perturbation]
 \lean{BooleanAnalysis.GaussianSpace.sqrt_sq_add_sum_sq_le_add_error}
 \leanok
 \difficulty{4}
-For a finite set $I$, a real scalar $P$, and vectors $d,g\in\mathbb R^I$, $\sqrt{P^2+\sum_i d_i^2}\le\sqrt{P^2+\sum_i g_i^2}+\sqrt{\sum_i(d_i-g_i)^2}$.
+Let $I$ be a finite set, let $P\in\mathbb R$, and let $d_i,g_i\in\mathbb R$ for each
+$i\in I$. Then $\sqrt{P^2+\sum_{i\in I}d_i^2}\le\sqrt{P^2+\sum_{i\in
+I}g_i^2}+\sqrt{\sum_{i\in I}(d_i-g_i)^2}$.
 \end{lemma}
 
-\begin{lemma}[Length bound for a repeated gradient]
+\begin{lemma}[Approximation bound for repeated coordinates]
 \lean{BooleanAnalysis.GaussianSpace.sqrt_sq_add_array_sq_le}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.sqrt_sq_add_sum_sq_le_add_error}
 \difficulty{5}
-Let $n\ge0$, $m>0$, $P\in\mathbb R$, $d\in\mathbb R^{n\times m}$, $g\in\mathbb R^n$, and $e\ge0$. If $|d_{ij}-g_i/\sqrt m|\le e$ for every $i,j$, then $\sqrt{P^2+\sum_{i,j}d_{ij}^2}\le\sqrt{P^2+\sum_i g_i^2}+\sqrt{nm}\,e$.
+Let $n,m\in\mathbb N$ with $m>0$, let $P\in\mathbb R$, let $d_{ij}$ be real numbers
+indexed by $1\le i\le n$ and $1\le j\le m$, let $g_i\in\mathbb R$, and let $e\ge0$. If
+$|d_{ij}-g_i/\sqrt m|\le e$ for every $i,j$, then $\sqrt{P^2+\sum_{i=1}^n\sum_{j=1}^m
+d_{ij}^2}\le\sqrt{P^2+\sum_{i=1}^n g_i^2}+\sqrt{nm}\,e$.
 \end{lemma}
 
-\begin{lemma}[Bounded continuous Bobkov integrand]
+\begin{lemma}[A bounded continuous Bobkov integrand]
 \lean{BooleanAnalysis.GaussianSpace.exists_boundedContinuous_bobkov_integrand}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile,BooleanAnalysis.GaussianSpace.continuous_closedGaussianProfile}
+\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile, BooleanAnalysis.GaussianSpace.continuous_closedGaussianProfile}
 \difficulty{5}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. Let $f:\mathbb R^n\to[0,1]$ be continuous, and let $D(z)$ be a continuous family of real linear functionals on $\mathbb R^n$ with $\|D(z)\|\le M$ for all $z$, for some real $M$. Then $z\mapsto\sqrt{\overline I(f(z))^2+\sum_i(D(z)e_i)^2}$ is a bounded continuous function.
+Let $n\ge0$, let $f:\mathbb R^n\to\mathbb R$ be continuous with $0\le f(x)\le1$ for
+every $x$, and let $D$ be a continuous map from $\mathbb R^n$ to the space of continuous
+linear functionals on $\mathbb R^n$. Suppose there is a real number $M$ such that
+$\|D(x)\|\le M$ for every $x$. Then there is a bounded continuous function $F:\mathbb
+R^n\to\mathbb R$ satisfying, for every $x$,
+\[F(x)=\sqrt{U(f(x))^2+\sum_{i=0}^{n-1}(D(x)e_i)^2},\]
+where $U$ is the Gaussian profile with zero values outside $(0,1)$ and $e_i$ are the
+coordinate unit vectors.
 \end{lemma}
 
-\begin{lemma}[Vanishing accumulated block error]
+\begin{lemma}[Vanishing block gradient error]
 \lean{BooleanAnalysis.GaussianSpace.tendsto_block_gradient_error}
 \leanok
 \difficulty{4}
-For every $n\ge0$ and $C\in\mathbb R$, $\sqrt{n(m+1)}\,2C/(m+1)\to0$ as $m\to\infty$.
+For every natural number $n$ and every real number $C$, the sequence $[?]$
 \end{lemma}
 
-\begin{lemma}[Bobkov bound on normalized Boolean blocks]
+\begin{lemma}[Bobkov bound for normalized Boolean blocks]
 \lean{BooleanAnalysis.GaussianSpace.bobkov_normalizedBoolBlocks_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_normalizedBoolBlocks_half_difference_sub_derivative_le,BooleanAnalysis.GaussianSpace.bobkov_inequality_array,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.sqrt_sq_add_array_sq_le,BooleanAnalysis.boolToSign}
+\uses{BooleanAnalysis.GaussianSpace.abs_normalizedBoolBlocks_half_difference_sub_derivative_le, BooleanAnalysis.GaussianSpace.bobkov_inequality_array, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.sqrt_sq_add_array_sq_le, BooleanAnalysis.boolToSign}
 \difficulty{5}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. Let $f:\mathbb R^n\to[0,1]$ be differentiable with derivative family $D(z)$, globally $C$-Lipschitz in operator norm for the maximum norm, where $C\ge0$. Write $|D(z)|_2=\sqrt{\sum_{i=1}^n(D(z)e_i)^2}$. For independent uniform bits $X_{ij}$, put $S_r(X)_i=r^{-1/2}\sum_{j=1}^r(-1)^{X_{ij}}$. For every $m>0$, $\overline I(\mathbb E f(S_m(X)))\le\mathbb E\sqrt{\overline I(f(S_m(X)))^2+|D(S_m(X))|_2^2}+\sqrt{nm}\,2C/m$.
+Let $n,m$ be natural numbers with $m>0$. Let $f:\mathbb R^n\to\mathbb R$ take values in
+$[0,1]$, and suppose it has a derivative $D(z)$ at every $z\in\mathbb R^n$, where $D(z)$
+is a continuous linear functional on $\mathbb R^n$; assume the map $z\mapsto D(z)$ is
+globally $C$-Lipschitz for some $C\ge0$. For independent uniform bits $X_{ij}$, set
+$S(X)_i=m^{-1/2}\sum_{j=1}^m\sigma(X_{ij})$, with $\sigma(0)=1$ and $\sigma(1)=-1$. Then
+$\overline I(\mathbb E f(S(X)))\le\mathbb E\sqrt{\overline I(f(S(X)))^2+\sum_{i=1}^n
+D(S(X))(e_i)^2}+\sqrt{nm}\,2C/m$, where $e_i$ is the $i$th standard basis vector and the
+expectation is over the bits.
 \end{lemma}
 
 \begin{lemma}[Smooth Gaussian Bobkov inequality]
 \lean{BooleanAnalysis.GaussianSpace.gaussian_bobkov_smooth}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.bobkov_normalizedBoolBlocks_le,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.continuous_closedGaussianProfile,BooleanAnalysis.GaussianSpace.exists_boundedContinuous_bobkov_integrand,BooleanAnalysis.GaussianSpace.tendsto_block_gradient_error,BooleanAnalysis.GaussianSpace.tendsto_integral_normalizedBoolBlocks,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.bobkov_normalizedBoolBlocks_le, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.continuous_closedGaussianProfile, BooleanAnalysis.GaussianSpace.exists_boundedContinuous_bobkov_integrand, BooleanAnalysis.GaussianSpace.tendsto_block_gradient_error, BooleanAnalysis.GaussianSpace.tendsto_integral_normalizedBoolBlocks, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. Let $f:\mathbb R^n\to[0,1]$ be differentiable with derivative family $D(z)$, globally $C$-Lipschitz in operator norm for the maximum norm, where $C\ge0$. Write $|D(z)|_2=\sqrt{\sum_{i=1}^n(D(z)e_i)^2}$. If also $\|D(z)\|\le M$ for every $z$, for some $M\in\mathbb R$, then $\overline I(\int f\,d\gamma_n)\le\int\sqrt{\overline I(f(z))^2+|D(z)|_2^2}\,d\gamma_n(z)$.
+Let $n$ be a nonnegative integer, let $f:\mathbb R^n\to\mathbb R$ take values in
+$[0,1]$, and let $D(x):\mathbb R^n\to\mathbb R$ be a continuous linear functional at
+each $x$. Suppose $D(x)$ is the derivative of $f$ at $x$, the map $x\mapsto D(x)$ is
+globally Lipschitz with some constant $C\ge0$ in operator norm, and $\|D(x)\|\le M$ for
+every $x$, for some real $M$. Then
+\[
+U\!\left(\int f\,d\gamma_n\right)\le \int
+\sqrt{U(f(x))^2+\sum_{i=1}^n(D(x)e_i)^2}\,d\gamma_n(x),
+\]
+where $e_i$ are the coordinate unit vectors, $\gamma_n$ is standard Gaussian measure,
+and $U$ is the Gaussian profile that equals the Gaussian density at the Gaussian
+quantile on $(0,1)$ and zero elsewhere.
 \end{lemma}
 
-\begin{lemma}[Integrability of bounded gradient length]
+\begin{lemma}[Integrability of a bounded gradient norm]
 \lean{BooleanAnalysis.GaussianSpace.integrable_gaussianGradient_of_bounded}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile_zero,BooleanAnalysis.GaussianSpace.exists_boundedContinuous_bobkov_integrand,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile_zero, BooleanAnalysis.GaussianSpace.exists_boundedContinuous_bobkov_integrand, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{4}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. Let $D(z)$ be a continuous family of real linear functionals on $\mathbb R^n$ and let $M\in\mathbb R$ satisfy $\|D(z)\|\le M$ for all $z$. Then $z\mapsto\sqrt{\sum_i(D(z)e_i)^2}$ is $\gamma_n$-integrable.
+Let $n$ be a natural number and let $D$ assign to each $x\in\mathbb R^n$ a continuous
+real linear functional on $\mathbb R^n$, continuously in $x$. Suppose $M\in\mathbb R$
+and $\|D(x)\|\le M$ for every $x\in\mathbb R^n$. Then $x\mapsto\sqrt{\sum_{i=1}^n
+(D(x)e_i)^2}$ is integrable with respect to the product standard Gaussian measure on
+$\mathbb R^n$, where $e_i$ are the coordinate vectors.
 \end{lemma}
 
 \begin{lemma}[Separated smooth Gaussian Bobkov bound]
 \lean{BooleanAnalysis.GaussianSpace.gaussian_bobkov_smooth_le_sum}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg,BooleanAnalysis.GaussianSpace.gaussian_bobkov_smooth,BooleanAnalysis.GaussianSpace.integrable_closedGaussianProfile_comp,BooleanAnalysis.GaussianSpace.integrable_gaussianGradient_of_bounded,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg, BooleanAnalysis.GaussianSpace.gaussian_bobkov_smooth, BooleanAnalysis.GaussianSpace.integrable_closedGaussianProfile_comp, BooleanAnalysis.GaussianSpace.integrable_gaussianGradient_of_bounded, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. Let $f:\mathbb R^n\to[0,1]$ be differentiable with derivative family $D(z)$, globally $C$-Lipschitz in operator norm for the maximum norm, where $C\ge0$. Write $|D(z)|_2=\sqrt{\sum_{i=1}^n(D(z)e_i)^2}$. If also $\|D(z)\|\le M$ for every $z$, for some $M\in\mathbb R$, then $\overline I(\int f\,d\gamma_n)\le\int\overline I(f)\,d\gamma_n+\int|D(z)|_2\,d\gamma_n(z)$.
+Let $n$ be a nonnegative integer, let $f:\mathbb R^n\to\mathbb R$ take values in
+$[0,1]$, and let $D(x):\mathbb R^n\to\mathbb R$ be a continuous linear functional at
+each $x$. Suppose $D(x)$ is the derivative of $f$ at $x$, the map $x\mapsto D(x)$ is
+globally Lipschitz with some constant $C\ge0$ in operator norm, and $\|D(x)\|\le M$ for
+every $x$, for some real $M$. Then
+\[
+U\!\left(\int f\,d\gamma_n\right)\le \int
+U(f(x))\,d\gamma_n(x)+\int\sqrt{\sum_{i=1}^n(D(x)e_i)^2}\,d\gamma_n(x),
+\]
+where $e_i$ are the coordinate unit vectors, $\gamma_n$ is standard Gaussian measure,
+and $U$ is the Gaussian profile that equals the Gaussian density at the Gaussian
+quantile on $(0,1)$ and zero elsewhere.
 \end{lemma}

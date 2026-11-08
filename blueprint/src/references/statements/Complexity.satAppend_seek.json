@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satAppend_seek",
+ "key": "0ada05d355633e13",
+ "kind": "lemma",
+ "title": "Seeking the first blank",
+ "statement": "Let $x$, $w$, and $r$ be Boolean words, and suppose $w=p r$ for a Boolean word $p$. Starting in the appender's seek state with input head at position $1$, work tape holding $w$, and work head at $|p|$, after exactly $|r|+1$ steps the machine is in its copy state with input head still at position $1$, work tape still holding $w$, and work head at $|w|$.",
+ "hypotheses_covered": [
+  "Boolean words $x,w,r$",
+  "there exists a prefix $p$ with $w=pr$",
+  "initial state is the seek state",
+  "initial input-head position is $1$",
+  "initial tape word is $w$",
+  "initial work-head position is $|p|$",
+  "number of steps is $|r|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the work tape hold a word $w = p \\mathbin{+\\!\\!+} r$ with the head at offset\n$|p|$ in the seek state. Then exactly $|r| + 1$ steps bring the head to the first\nblank at offset $|w|$ and enter the copy state, without moving the native input\nhead."
+}

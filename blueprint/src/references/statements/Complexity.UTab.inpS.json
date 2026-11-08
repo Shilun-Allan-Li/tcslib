@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.UTab.inpS",
+ "key": "0b242a94f57e335e",
+ "kind": "def",
+ "title": "Input source list",
+ "statement": "For a natural number $W$, Booleans $t_0,p_0,p_1,p_{N1}$, and a layout position $i\\in\\{0,1,2\\}$, form a list beginning with constant sources carrying, in order, $t_0,p_1,p_0,p_{N1}$, and $\\neg p_0\\land\\neg p_{N1}$, followed by the layout source at $i$. Add the three neighbor-source terms specified by $\\neg t_0\\land\\neg p_0$, $\\neg t_0$, and $\\neg t_0\\land\\neg p_{N1}$ at their indicated indices, then the conditional current sources at positions $1$ and $2$, each selected using $\\neg p_0$, and finally the conditional postponed-source list of length $W$ determined by $t_0$.",
+ "hypotheses_covered": [
+  "Natural number $W$",
+  "Booleans $t_0,p_0,p_1,p_{N1}$",
+  "Layout position among three positions",
+  "Natural-number parameter $k$ for the source type"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet uses the auxiliary operation `nbS` but does not provide its definition or informal description, so the neighbor-source terms cannot be explained fully.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

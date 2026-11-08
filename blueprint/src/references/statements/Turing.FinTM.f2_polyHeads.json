@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.f2_polyHeads",
+ "key": "6d141d74d8ba2fa9",
+ "kind": "def",
+ "title": "Head-position bounds",
+ "statement": "For natural numbers $d,C,q$, an optional control state indexed by $d,C$, and integer work-head positions $h_j$ for $j=0,\\ldots,d$, define the predicate that constrains these positions as follows. If the state is absent, require $-1\\le h_j\\le q$ for every $j$. In loop state $i$, require $0\\le h_j\\le q$ for every $j$, and $h_j<q$ whenever $j\\ne i$; in rewind state $i$, require $-1\\le h_j<q$ for every $j$, and $h_j\\ge0$ whenever $j\\ne i$. In advance or emit states, require $0\\le h_j<q$ for every $j$; in all other states the predicate is false.",
+ "hypotheses_covered": [
+  "$d,C,q\\in\\mathbb{N}$",
+  "The state is either absent or a control state indexed by $d,C$",
+  "$h:\\mathrm{Fin}(d+1)\\to\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

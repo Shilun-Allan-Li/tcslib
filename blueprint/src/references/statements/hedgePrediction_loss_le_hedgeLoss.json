@@ -1,6 +1,6 @@
 {
  "lean_name": "hedgePrediction_loss_le_hedgeLoss",
- "key": "644b66cc6ce708ff",
+ "key": "07b7e2372b3e8246",
  "kind": "lemma",
  "title": "Jensen bound for Hedge's weighted-average prediction",
  "statement": "Fix $N \\ge 1$ experts, a horizon of $T$ rounds, a learning rate $\\eta \\in \\bbr$, and a convex set $S \\subseteq \\bbr$. Let $\\ell : \\bbr \\times \\Omega \\to \\bbr$ be a loss function, let $e_t(i) \\in \\bbr$ be expert $i$'s prediction at round $t$, and let $o_t \\in \\Omega$ be the outcome at round $t$; write $L_{t,i} = \\ell(e_t(i), o_t)$ for the induced loss table and let $q_t(i)$ denote the Hedge distribution over the experts computed from $L$ at round $t$. Suppose every prediction $e_t(i)$ lies in $S$, and that for each round $t$ the map $x \\mapsto \\ell(x, o_t)$ is convex on $S$. Then at every round $t$ the loss of Hedge's weighted-average prediction $\\widehat{x}_t = \\sum_{i} q_t(i)\\, e_t(i)$ is at most its expected loss under $q_t$:\n\\[\n  \\ell\\!\\left(\\widehat{x}_t,\\, o_t\\right)\n  \\;\\le\\;\n  \\sum_{i=1}^{N} q_t(i)\\, \\ell\\!\\left(e_t(i),\\, o_t\\right).\n\\]",

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satPair_copy",
+ "key": "b7d82879387a4a98",
+ "kind": "lemma",
+ "title": "Copying the remaining input suffix",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $x$ be a Boolean word, let $s$ be a configuration of $M$ on $x$, and let $u,r$ be Boolean words. For every Boolean word $p$, output word $o$, and decomposition $x=p r$, running the pairing machine for $|r|+1$ steps from the canonical pairing configuration in its native-copy state, at input position $|p|$, with captured word $u$ and output $o$, yields the halted canonical pairing configuration at input position $|x|$ with the same saved configuration and capture tape and output $or$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x$ is a Boolean word",
+  "$s$ is a configuration of $M$ on $x$",
+  "$u,r$ are Boolean words",
+  "$p$ is a Boolean word",
+  "$o$ is a Boolean output word",
+  "$x=p r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the native input decompose as $x = p \\mathbin{+\\!\\!+} r$ with the pairing\nmachine in its native-copy state at input position $|p|$. Then exactly $|r| + 1$\nsteps emit every bit of $r$ and halt on the right blank, leaving all work tapes\nand the capture head unchanged."
+}

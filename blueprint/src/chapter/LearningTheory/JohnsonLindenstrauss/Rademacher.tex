@@ -15,9 +15,10 @@ concrete bound $\Pr[\varepsilon\norm{x}^2 < \abs{\norm{Ax}^2 - \norm{x}^2}] \leq
 
 \begin{theorem}[Distribution-agnostic JL single-vector concentration]
 \lean{jl_concentration_single_subgaussian}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p128-b001}
 \label{jl_concentration_single_subgaussian}
 \leanok
-\uses{ProbabilityTheory.HasBernsteinMGF, jl_concentration_single_via_bernstein}
+\uses{ProbabilityTheory.HasBernsteinMGF, jl_concentration_single_via_bernstein, subgaussian_centered_sq_bernstein}
 \difficulty{5}
 Let $(\Omega,\mu)$ be a probability space, let $A\colon\Omega\to\bbr^{k\times d}$ be a
 random matrix with $k\ge 1$ rows, and let $x\in\bbr^d$ be a nonzero vector. Write
@@ -37,6 +38,10 @@ $0<\varepsilon<1$,
 
 \begin{definition}[Rademacher distribution on $\mathbb{R}$]
 \lean{rademacherReal}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p023-b003,
+  pdf-681b6f3d947f-p153-b003
+}
 \label{rademacherReal}
 \leanok
 The Rademacher distribution $\mathrm{Rad}$ on $\mathbb{R}$ is the measure
@@ -113,6 +118,12 @@ moment equals one:
 
 \begin{lemma}[Identity is sub-Gaussian with variance proxy one under Rademacher]
 \lean{hasSubgaussianMGF_id_rademacherReal}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p023-b005,
+  pdf-681b6f3d947f-p024-b001,
+  pdf-681b6f3d947f-p024-b002,
+  pdf-681b6f3d947f-p024-b003
+}
 \label{hasSubgaussianMGF_id_rademacherReal}
 \leanok
 \uses{integral_id_rademacherReal, rademacherReal, rademacherReal_mem_Icc}
@@ -227,6 +238,12 @@ family $(R_i)_{i}$ of $k$ rows is mutually independent.
 
 \begin{lemma}[Rademacher entries are sub-Gaussian with variance proxy one]
 \lean{hasSubgaussianMGF_entry}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p023-b005,
+  pdf-681b6f3d947f-p024-b001,
+  pdf-681b6f3d947f-p024-b002,
+  pdf-681b6f3d947f-p024-b003
+}
 \label{hasSubgaussianMGF_entry}
 \leanok
 \uses{RadΩ, hasSubgaussianMGF_id_rademacherReal, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal}
@@ -243,7 +260,7 @@ that is, its moment generating function satisfies $\E\!\left[e^{t\,\omega_{ij}}\
 \lean{hasSubgaussianMGF_scaled_entry}
 \label{hasSubgaussianMGF_scaled_entry}
 \leanok
-\uses{RadΩ, integral_id_rademacherReal, radJointMeasure, radJointMeasure_entry_marginal, rademacherReal, rademacherReal_mem_Icc}
+\uses{RadΩ, hasSubgaussianMGF_const_mul, hasSubgaussianMGF_entry, radJointMeasure}
 \difficulty{5}
 Fix natural numbers $k > 0$ and $d$, a vector $x \in \bbr^d$, a row index $i$, and a
 column index $j$. Consider the joint Rademacher product measure on the space of $k
@@ -259,9 +276,140 @@ moment generating function is finite and satisfies \[
 
 \begin{lemma}[Rows of a Rademacher projection are sub-Gaussian]
 \lean{hasSubgaussianMGF_row_proj}
+\proofsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p023-b005,
+  pdf-681b6f3d947f-p024-b001,
+  pdf-681b6f3d947f-p024-b002,
+  pdf-681b6f3d947f-p024-b003
+}
 \label{hasSubgaussianMGF_row_proj}
 \leanok
-\uses{RadΩ, hasSubgaussianMGF_scaled_entry, radJointMeasure, radJointMeasure_row_iid, radMatrix}
+\uses{RadΩ, hasSubgaussianMGF_scaled_entry, norm_sq_div_eq_sum, radJointMeasure, radMatrix, radMatrix_row_proj_eq_sum, radMatrix_scaled_row_iid}
+\proofstep
+  {instMeasurableSpaceMatrixFinReal_tCSlib}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p083-b002}
+\proofstep
+  {rademacherReal}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {rad_half_ne_top}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {instIsProbabilityMeasureRealRademacherReal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {instIsFiniteMeasureRealRademacherReal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {rademacherReal_mem_Icc}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {integrable_smul_dirac}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b005}
+\proofstep
+  {integral_id_rademacherReal}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b005,
+    pdf-681b6f3d947f-p024-b001}
+\proofstep
+  {hasSubgaussianMGF_id_rademacherReal}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b005,
+    pdf-681b6f3d947f-p024-b001,
+    pdf-681b6f3d947f-p024-b003,
+    pdf-681b6f3d947f-p032-b004}
+\proofstep
+  {RadΩ}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p166-b002,
+    pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {instMeasurableSpaceRadΩ}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p166-b002}
+\proofstep
+  {radJointMeasure}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006,
+    pdf-681b6f3d947f-p166-b002}
+\proofstep
+  {instIsProbabilityMeasureRadΩRadJointMeasure}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {radMatrix}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b002,
+    pdf-681b6f3d947f-p128-b001}
+\proofstep
+  {radJointMeasure_row_marginal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {radJointMeasure_entry_marginal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {radJointMeasure_row_iid}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {hasSubgaussianMGF_entry}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003,
+    pdf-681b6f3d947f-p032-b004}
+\proofstep
+  {hasSubgaussianMGF_const_mul}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p037-b002}
+\proofstep
+  {hasSubgaussianMGF_scaled_entry}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p037-b002,
+    pdf-681b6f3d947f-p099-b001}
+\proofstep
+  {radMatrix_row_proj_eq_sum}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {radMatrix_scaled_row_iid}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006,
+    pdf-681b6f3d947f-p099-b001}
+\proofstep
+  {norm_sq_div_eq_sum}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p099-b001}
 \difficulty{5}
 Fix an integer $k \ge 1$ and a dimension $d$, let $x \in \bbr^d$ (with its Euclidean
 norm), and fix a row index $i \in \{1,\dots,k\}$. Draw the entries of the Rademacher
@@ -281,6 +429,10 @@ every $t \in \bbr$,
 
 \begin{lemma}[Variance of the identity under the Rademacher distribution]
 \lean{variance_id_rademacherReal}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p023-b003,
+  pdf-681b6f3d947f-p057-b006
+}
 \label{variance_id_rademacherReal}
 \leanok
 \uses{integral_id_rademacherReal, integral_sq_rademacherReal, rademacherReal, rademacherReal_mem_Icc}
@@ -352,9 +504,10 @@ has variance
 
 \begin{lemma}[Variance of a row of a Rademacher projection]
 \lean{variance_row_proj}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p128-b001}
 \label{variance_row_proj}
 \leanok
-\uses{RadΩ, memLp_scaled_entry, radJointMeasure, radJointMeasure_row_iid, radMatrix, variance_scaled_entry}
+\uses{RadΩ, memLp_scaled_entry, norm_sq_div_eq_sum, radJointMeasure, radMatrix, radMatrix_row_proj_eq_sum, radMatrix_scaled_row_iid, variance_scaled_entry}
 \difficulty{5}
 Fix an integer $k \ge 1$, a vector $x \in \bbr^d$, and a row index $i \in
 \{1,\dots,k\}$. Let $A$ be the Rademacher matrix drawn from the joint Rademacher product
@@ -370,7 +523,7 @@ image $Ax$ has variance
 \lean{integral_row_proj}
 \label{integral_row_proj}
 \leanok
-\uses{RadΩ, integral_entry, memLp_scaled_entry, radJointMeasure, radMatrix}
+\uses{integral_entry, memLp_scaled_entry, radJointMeasure, radMatrix, radMatrix_row_proj_eq_sum}
 \difficulty{4}
 Fix integers $k > 0$ and $d \ge 0$, and let the entries $\omega_{ij}$, for $i \in
 \{1,\dots,k\}$ and $j \in \{1,\dots,d\}$, be independent Rademacher random variables,
@@ -385,9 +538,10 @@ of the image $Mx$ has expectation zero:
 
 \begin{lemma}[Second moment of a single row of a Rademacher projection]
 \lean{integral_sq_row_proj}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p128-b001}
 \label{integral_sq_row_proj}
 \leanok
-\uses{RadΩ, hasSubgaussianMGF_row_proj, integral_row_proj, memLp_scaled_entry, radJointMeasure, radMatrix, variance_row_proj}
+\uses{RadΩ, integral_row_proj, memLp_scaled_entry, radJointMeasure, radMatrix, radMatrix_row_proj_eq_sum, variance_row_proj}
 \difficulty{4}
 Fix integers $k > 0$ and $d \ge 0$, a vector $x \in \bbr^d$, and a row index $i \in \{1,
 \dots, k\}$. Draw $\omega$ from the joint Rademacher measure on
@@ -430,6 +584,17 @@ each sample to the $i$-th coordinate of the image of $x$, is measurable.
 
 \begin{theorem}[Johnson–Lindenstrauss concentration for a single Rademacher projection]
 \lean{jl_concentration_single_rademacher}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p023-b005,
+  pdf-681b6f3d947f-p024-b001,
+  pdf-681b6f3d947f-p024-b002,
+  pdf-681b6f3d947f-p024-b003,
+  pdf-681b6f3d947f-p037-b003,
+  pdf-681b6f3d947f-p126-b003,
+  pdf-681b6f3d947f-p127-b003,
+  pdf-681b6f3d947f-p128-b001,
+  pdf-681b6f3d947f-p240-b004
+}
 \label{jl_concentration_single_rademacher}
 \leanok
 \uses{hasSubgaussianMGF_row_proj, integral_sq_row_proj, jl_concentration_single_subgaussian, radJointMeasure, radMatrix, radMatrix_proj_indep, radMatrix_proj_meas}
@@ -452,56 +617,48 @@ the Dasgupta–Gupta exponent.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Sub-Gaussian parameter scales quadratically under constant multiples]
+\begin{lemma}[Scaling a sub-Gaussian variable]
 \lean{hasSubgaussianMGF_const_mul}
 \label{hasSubgaussianMGF_const_mul}
 \leanok
-Let $X$ be a real random variable on a measure space $(\Omega,\mu)$ that is sub-Gaussian
-with variance proxy $\sigma \ge 0$, i.e.\ $e^{tX}$ is $\mu$-integrable and
-$\E_\mu[e^{tX}] \le \exp(\sigma t^2/2)$ for every $t \in \bbr$. Then for every constant
-$c \in \bbr$, the scaled variable $\omega \mapsto c\,X(\omega)$ is sub-Gaussian with
-variance proxy $c^2\sigma$:
-\[
-\E_\mu\!\left[e^{t\,cX}\right] \le \exp\!\left(\tfrac{1}{2}\,c^2\sigma\,t^2\right)
-\qquad\text{for all } t \in \bbr.
-\]
+\difficulty{4}
+Let $X$ be a real-valued measurable function on a measurable space with measure $bbr$,
+and suppose its moment-generating function satisfies the sub-Gaussian bound with
+variance proxy $csigma$ for every real parameter. For every $c\in\bbr$, the function
+$cX$ satisfies the same bound with variance proxy $c^2\sigma$.
 \end{lemma}
 
-\begin{lemma}[Row projection as a sum of scaled entries]
+\begin{lemma}[Coordinate of a scaled row projection]
 \lean{radMatrix_row_proj_eq_sum}
 \label{radMatrix_row_proj_eq_sum}
 \leanok
 \uses{RadΩ, radMatrix}
-Fix natural numbers $k, d$, a vector $x \in \bbr^d$, and a row index $i \in
-\{1,\dots,k\}$. For a sample $\omega$ in the Rademacher sample space
-$\mathrm{Rad\Omega}(k,d)$, let $A(\omega)$ be the Rademacher matrix with entries
-$\omega_{ij}/\sqrt{k}$. Then, as functions of $\omega$, the $i$-th coordinate of the
-image $A(\omega)x$ equals the sum of the scaled entries:
+\difficulty{3}
+Let $k,d$ be natural numbers, let $x\in\mathbb{R}^d$, and let $i$ be a row index in
+$\{0,\ldots,k-1\}$. For every real array $\omega=(\omega_{ij})$, the $i$th coordinate of
+the image of $x$ under the matrix with entries $\omega_{ij}/\sqrt{k}$ is
 \[
-\bigl(A(\omega)\,x\bigr)_i = \sum_{j} \frac{x_j}{\sqrt{k}}\,\omega_{ij}.
+\sum_{j=0}^{d-1}\frac{x_j}{\sqrt{k}}\,\omega_{ij}.
 \]
 \end{lemma}
 
-\begin{lemma}[Scaled entries within a row are mutually independent]
+\begin{lemma}[Independence of scaled row entries]
 \lean{radMatrix_scaled_row_iid}
 \label{radMatrix_scaled_row_iid}
 \leanok
 \uses{RadΩ, radJointMeasure, radJointMeasure_row_iid}
-Fix natural numbers $k, d$, a vector $x \in \bbr^d$, and a row index $i \in
-\{1,\dots,k\}$. Under the joint Rademacher product measure on
-$\mathrm{Rad\Omega}(k,d)$, the family of real random variables
-\[
-\omega \;\longmapsto\; \frac{x_j}{\sqrt{k}}\,\omega_{ij}, \qquad j \in \{1,\dots,d\},
-\]
-indexed by the columns of row $i$, is mutually independent.
+\difficulty{1}
+Let $k,d$ be natural numbers, $x\in\mathbb{R}^d$, and let $i$ be one of the $k$ row
+indices. Under the product measure in which every array entry is an independent
+Rademacher random variable, the random variables $\omega\mapsto
+(x_j/\sqrt{k})\omega_{ij}$, indexed by the $d$ columns, are mutually independent.
 \end{lemma}
 
-\begin{lemma}[Squared norm over $k$ as a sum of squared coordinates over $k$]
+\begin{lemma}[Squared Euclidean norm as a coordinate sum]
 \lean{norm_sq_div_eq_sum}
 \label{norm_sq_div_eq_sum}
 \leanok
-For every natural number $k$ and every vector $x \in \bbr^d$ with its Euclidean norm,
-\[
-\frac{\norm{x}^2}{k} = \sum_{j} \frac{x_j^2}{k}.
-\]
+\difficulty{3}
+For every natural number $k$, every natural number $d$, and every vector $x\in\bbr^d$
+with its Euclidean norm, $\norm{x}^2/k=\sum_{j\in\mathrm{Fin}\,d}x_j^2/k$.
 \end{lemma}

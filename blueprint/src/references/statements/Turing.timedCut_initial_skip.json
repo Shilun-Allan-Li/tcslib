@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.timedCut_initial_skip",
+ "key": "6e9ae1ab7570e800",
+ "kind": "lemma",
+ "title": "Skipping the Initial State Field",
+ "statement": "Let $x$ be a Boolean word, let $b$ be a four-tape interpreter configuration for input $x$, let $i$ be an index in $\\\\{0,\\\\ldots,8\\\\}$, let $T$ be a Boolean table, let $\\\\sigma\\\\colon\\\\mathbb{Z}\\\\to\\\\{0,1,\\\\mathrm{blank}\\\\}$ be a state tape, and let $s\\\\in\\\\mathbb{Z}$. If $T=l\\\\,1^n\\\\,0\\\\,r$ for Boolean words $l,r$ and $n\\\\in\\\\mathbb{N}$, then after exactly $n+1$ steps the stopped interpreter, started in the initial-state-skipping phase with table cursor $|l|$ and state tape $\\\\sigma$ with cursor $s$, is in the record-group selection phase with index $i$ and table cursor $|l|+n+1$, with all other configuration fields as specified by the interpreter evaluation configuration.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "base four-tape configuration for input $x$",
+  "index $i$ in $\\\\{0,\\\\ldots,8\\\\}$",
+  "Boolean table $T$",
+  "integer-indexed optional Boolean state tape $\\\\sigma$",
+  "integer cursor $s$",
+  "natural number $n$",
+  "Boolean words $l,r$",
+  "table decomposition $T=l\\\\,1^n\\\\,0\\\\,r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the table holds $n$ ones followed by a zero starting at the cursor position\n$|l|$, then the initial-state-skipping phase of the stopped table interpreter\ntraverses this unary field in exactly $n+1$ steps and enters record-group\nselection with the table cursor at $|l|+n+1$."
+}

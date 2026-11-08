@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.sat_literal_lt_numVars",
+ "key": "e59e2574c5941f6c",
+ "kind": "lemma",
+ "title": "Literal indices below the variable bound",
+ "statement": "Let $\\varphi$ be a CNF formula with natural-number variable indices, let $C$ be a clause in $\\varphi$, and let $\\ell$ be a literal in $C$. Then the variable index of $\\ell$ is strictly less than the variable count of $\\varphi$.",
+ "hypotheses_covered": [
+  "$\\varphi$ is a CNF formula with natural-number variable indices",
+  "$C$ is a clause in $\\varphi$",
+  "$\\ell$ is a literal in $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula, $C$ a clause of $\\varphi$, and $\\ell$ a literal of\n$C$. Then the variable index of $\\ell$ is strictly below the variable bound of\n$\\varphi$ (the maximum over all occurring indices $v$ of $v + 1$)."
+}

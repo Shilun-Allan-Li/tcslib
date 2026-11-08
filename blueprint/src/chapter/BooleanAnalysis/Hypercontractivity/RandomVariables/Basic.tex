@@ -8,6 +8,11 @@ Affine hypercontractivity is defined for real random variables and extended norm
 \begin{definition}[Affine hypercontractivity]
 \lean{BooleanAnalysis.Hypercontractivity.IsHypercontractive}
 \leanok
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p256-b003,
+  pdf-ffbe9c7b3306-p272-b002,
+  pdf-ffbe9c7b3306-p272-b003
+}
 For a real function $X$ on a measure space $(\Omega,\mu)$ and extended exponents $p,q\in[0,\infty]$, $(p,q,\rho)$-hypercontractivity means $1\le p\le q$, $0\le\rho<1$, $X\in L^q(\mu)$, and $\|a+\rho bX\|_q\le\|a+bX\|_p$ for every $a,b\in\bbr$, with extended-valued norms and the essential supremum at infinity.
 \end{definition}
 
@@ -20,12 +25,22 @@ For a real function $X$ on a measure space $(\Omega,\mu)$ and $q\in\bbr$, define
 \begin{definition}[Symmetric random variable]
 \lean{BooleanAnalysis.Hypercontractivity.IsSymmetricRV}
 \leanok
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p153-b003}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p279-b001}
 A real function $X$ on a measure space $(\Omega,\mu)$ is symmetric when $X$ and $-X$ are almost everywhere measurable and have the same distribution under $\mu$.
 \end{definition}
 
 \begin{definition}[Rademacher random variable]
 \lean{BooleanAnalysis.Hypercontractivity.IsRademacherRV}
 \leanok
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p023-b003,
+  pdf-681b6f3d947f-p153-b003
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p259-b004,
+  pdf-ffbe9c7b3306-p259-b006
+}
 A Rademacher variable on a measure space $(\Omega,\mu)$ is a measurable $r:\Omega\to\bbr$ satisfying $r\in\{-1,1\}$ almost everywhere and $\mu(r=1)=\mu(r=-1)=1/2$.
 \end{definition}
 
@@ -33,6 +48,11 @@ A Rademacher variable on a measure space $(\Omega,\mu)$ is a measurable $r:\Omeg
 \lean{BooleanAnalysis.Hypercontractivity.evalMultilinearRV}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p032-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p020-b005,
+  pdf-ffbe9c7b3306-p022-b002
+}
 Let $F$ assign a real coefficient $F(S)$ to every $S\subseteq[n]$, and let $X_i:\Omega\to\bbr$. Define $F(X)(\omega)=\sum_{S\subseteq[n]}F(S)\prod_{i\in S}X_i(\omega)$.
 \end{definition}
 
@@ -42,26 +62,30 @@ Let $F$ assign a real coefficient $F(S)$ to every $S\subseteq[n]$, and let $X_i:
 A real function $X$ on $(\Omega,\mu)$ has atom lower bound $\lambda\in\bbr$ when there exists a finite $s\subseteq\bbr$ supporting $X$ almost everywhere and every $x\in s$ satisfies $\mu(X=x)\ge\max(\lambda,0)$.
 \end{definition}
 
-\begin{theorem}[Power of a finite random-variable norm]
+\begin{theorem}[Power integral formula for the norm]
 \lean{BooleanAnalysis.Hypercontractivity.rvLpNorm_rpow}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.rvLpNorm}
 \difficulty{3}
-Let $q>0$ and $X\in L^q(\mu)$ on an arbitrary measure space. Its finite real norm satisfies $\|X\|_q^q=\int|X|^q\,d\mu$.
+Let $(\Omega,\mu)$ be any measure space, let $q>0$, and let $X:\Omega\to\mathbb R$
+belong to $L^q(\mu)$. Then $N_q(X)^q=\int_\Omega |X(\omega)|^q\,d\mu(\omega)$.
 \end{theorem}
 
-\begin{theorem}[Second norm of a centered affine function]
+\begin{theorem}[Squared norm of a centered affine function]
 \lean{BooleanAnalysis.Hypercontractivity.rvLpNorm_affine_sq}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.rvLpNorm, BooleanAnalysis.Hypercontractivity.rvLpNorm_rpow}
 \difficulty{5}
-Let $(\Omega,\mu)$ be a probability space, let $X\in L^2(\mu)$ satisfy $\E X=0$, and let $a,b\in\bbr$. Then $\|a+bX\|_2^2=a^2+b^2\|X\|_2^2$.
+Let $(\Omega,\mu)$ be a probability space, and let $X:\Omega\to\mathbb R$ belong to
+$L^2(\mu)$ with mean zero. For all $a,b\in\mathbb R$, the real-valued random-variable
+norm satisfies $N_2(a+bX)^2=a^2+b^2N_2(X)^2$.
 \end{theorem}
 
 \begin{theorem}[Law of a Rademacher variable]
 \lean{BooleanAnalysis.Hypercontractivity.IsRademacherRV.map_eq}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.IsRademacherRV}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p153-b003}
 \difficulty{5}
 Let $r$ be a measurable random variable on a probability space, with $r\in\{-1,1\}$ almost surely and $\Pr[r=1]=\Pr[r=-1]=1/2$. Its law is $\tfrac12\delta_1+\tfrac12\delta_{-1}$.
 \end{theorem}
@@ -70,59 +94,516 @@ Let $r$ be a measurable random variable on a probability space, with $r\in\{-1,1
 \lean{BooleanAnalysis.Hypercontractivity.IsHypercontractive.conjugate}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.IsHypercontractive, BooleanAnalysis.Hypercontractivity.rvLpNorm, BooleanAnalysis.Hypercontractivity.rvLpNorm_rpow}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p259-b001,
+  pdf-ffbe9c7b3306-p259-b002,
+  pdf-ffbe9c7b3306-p259-b003
+}
 \difficulty{6}
 Let $X$ be centered on a probability space, let $q>2$, and suppose $H_{2,q,\rho}(X)$. Then $H_{q/(q-1),2,\rho}(X)$. Write $H_{p,q,\rho}(X)$ for $1\le p\le q\le\infty$, $0\le\rho<1$, $X\in L^q(\mu)$, and $\|a+\rho bX\|_q\le\|a+bX\|_p$ for all $a,b\in\bbr$.
 \end{theorem}
 
-\begin{theorem}[Scaling preserves affine hypercontractivity]
+\begin{theorem}[Scaling Preserves Hypercontractivity]
 \lean{BooleanAnalysis.Hypercontractivity.IsHypercontractive.const_mul}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.IsHypercontractive}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p271-b008}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b003}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b003}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b003}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsHypercontractive}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p256-b003}
 \difficulty{3}
-Let $X$ be a real function on an arbitrary measure space, suppose $H_{p,q,\rho}(X)$, and let $c\in\bbr$. Then $H_{p,q,\rho}(cX)$. Write $H_{p,q,\rho}(X)$ for $1\le p\le q\le\infty$, $0\le\rho<1$, $X\in L^q(\mu)$, and $\|a+\rho bX\|_q\le\|a+bX\|_p$ for all $a,b\in\bbr$.
+Let $(  )$ be a measure space, let $X$ be a real-valued function on it, and suppose $X$
+is $(p,q,ho)$-hypercontractive. For every $c\in\bbr$, the function $cX$ is
+$(p,q,ho)$-hypercontractive.
 \end{theorem}
 
 \begin{theorem}[Reducing the contraction radius]
 \lean{BooleanAnalysis.Hypercontractivity.IsHypercontractive.mono_radius}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.IsHypercontractive}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p256-b004,
+  pdf-ffbe9c7b3306-p272-b003
+}
 \difficulty{6}
 Let $X$ be centered on a probability space, suppose $H_{p,q,\rho}(X)$, and let $0\le\sigma\le\rho$. Then $H_{p,q,\sigma}(X)$, including extended exponents equal to infinity. Write $H_{p,q,\rho}(X)$ for $1\le p\le q\le\infty$, $0\le\rho<1$, $X\in L^q(\mu)$, and $\|a+\rho bX\|_q\le\|a+bX\|_p$ for all $a,b\in\bbr$.
 \end{theorem}
 
-\begin{theorem}[Finite support gives every finite norm]
+\begin{theorem}[Finite atomic support implies integrability]
 \lean{BooleanAnalysis.Hypercontractivity.HasAtomLowerBound.memLp}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.HasAtomLowerBound}
 \difficulty{3}
-Let $\mu$ be a finite measure and $X:\Omega\to\bbr$ measurable. If a finite set supports $X$ almost everywhere and each listed value has mass at least $\max(\lambda,0)$ for some real $\lambda$, then $X\in L^p(\mu)$ for every $p\in[0,\infty]$, including essential boundedness.
+Let $(\Omega,\mu)$ be a measurable space with a finite measure, and let
+$X:\Omega\to\mathbb R$ be measurable. Suppose there is a finite set $s\subseteq\mathbb
+R$ such that $X$ lies in $s$ almost everywhere and, for every $x\in s$,
+$\mu(\{\omega:X(\omega)=x\})\ge\max(\lambda,0)$ for some $\lambda\in\mathbb R$. Then $X$
+belongs to $L^p(\mu)$ for every extended nonnegative real exponent $p$.
 \end{theorem}
 
 \begin{theorem}[Fourth moments of multilinear evaluations]
 \lean{BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp}
 \leanok
-\uses{BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\uses{BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp_nat, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p250-b003,
+  pdf-ffbe9c7b3306-p250-b005,
+  pdf-ffbe9c7b3306-p251-b002
+}
 \difficulty{5}
 Let $X_1,\ldots,X_n$ be mutually independent real random variables on a probability space, each belonging to $L^4$. For arbitrary real coefficients $F(S)$, the multilinear evaluation $\sum_{S\subseteq[n]}F(S)\prod_{i\in S}X_i$ belongs to $L^4$.
 \end{theorem}
 
-\begin{theorem}[Algebraic fourth-moment recurrence]
+\begin{theorem}[Moment algebra inequality]
 \lean{BooleanAnalysis.Hypercontractivity.reasonable_moment_algebra}
 \leanok
 \difficulty{4}
-Let $R,a,b,A,D,C\in\bbr$ satisfy $R\ge9$, $a,b,C,D\ge0$, $A\le Ra^2$, $D\le b^2$, and $C^2\le AD$. Then $A+6C+RD\le R(a+b)^2$.
+Let $R,a,b,A,D,C\in\mathbb R$ satisfy $9\le R$, $0\le a$, $0\le b$, $0\le C$, $0\le D$,
+$A\le Ra^2$, $D\le b^2$, and $C^2\le AD$. Then $A+6C+RD\le R(a+b)^2$.
 \end{theorem}
 
 \begin{theorem}[Splitting a multilinear sum]
 \lean{BooleanAnalysis.Hypercontractivity.multilinear_sum_insert}
 \leanok
 \difficulty{4}
-Let $s$ be a finite subset of an index set $I$, let $i\notin s$, let $F$ assign real coefficients to finite subsets of $I$, and let $X_j:\Omega\to\bbr$. For every $\omega\in\Omega$, $\sum_{T\subseteq s\cup\{i\}}F(T)\prod_{j\in T}X_j(\omega)=\sum_{T\subseteq s}F(T)\prod_{j\in T}X_j(\omega)+X_i(\omega)\sum_{T\subseteq s}F(T\cup\{i\})\prod_{j\in T}X_j(\omega)$.
+Let $\Omega$ be a set, let $\iota$ be an index set, let $s\subseteq\iota$ be finite, and
+choose $i\in\iota\setminus s$. Let $F$ assign a real coefficient to each finite subset
+of $\iota$, and let $X_j:\Omega\to\mathbb{R}$ for each $j\in\iota$. For every
+$\omega\in\Omega$, the sum over subsets of $s\cup\{i\}$ satisfies
+\[\sum_{T\subseteq s\cup\{i\}}F(T)\prod_{j\in T}X_j(\omega)=\sum_{T\subseteq s}F(T)\prod_{j\in T}X_j(\omega)+X_i(\omega)\sum_{T\subseteq s}F(T\cup\{i\})\prod_{j\in T}X_j(\omega).\]
 \end{theorem}
 
-\begin{theorem}[Integrability of mixed powers]
+\begin{theorem}[Integrability of products of powers]
 \lean{BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
 \leanok
 \difficulty{5}
-Let $\mu$ be a finite measure, let $p,a,b\in\mathbb N$ satisfy $a+b\le p$, and let real functions $f,g\in L^p(\mu)$. Then $f^ag^b$ is integrable.
+Let $(\Omega,\mu)$ be a measurable space with a finite measure, and let
+$f,g:\Omega\to\mathbb R$ belong to $L^p(\mu)$ for a natural number $p$. If $a,b$ are
+natural numbers with $a+b\le p$, then the function $\omega\mapsto f(\omega)^a
+g(\omega)^b$ is integrable with respect to $\mu$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Hypercontractivity Under Identical Distribution]
+\lean{BooleanAnalysis.Hypercontractivity.IsHypercontractive.identDistrib}
+\label{BooleanAnalysis.Hypercontractivity.IsHypercontractive.identDistrib}
+\leanok
+\uses{BooleanAnalysis.Hypercontractivity.IsHypercontractive}
+\difficulty{4}
+Let $(\Omega,\mu)$ and $(\Xi,\nu)$ be measure spaces, and let $X:\Omega\to\bbr$ and
+$Y:\Xi\to\bbr$ be identically distributed with respect to these measures. If $X$ is
+$(p,q,\rho)$-hypercontractive under $\mu$, then $Y$ is $(p,q,\rho)$-hypercontractive
+under $\nu$.
+\end{theorem}
+
+\begin{theorem}[Norm of a constant random variable]
+\lean{BooleanAnalysis.Hypercontractivity.rvLpNorm_const}
+\label{BooleanAnalysis.Hypercontractivity.rvLpNorm_const}
+\leanok
+\uses{BooleanAnalysis.Hypercontractivity.rvLpNorm}
+\difficulty{3}
+Let $(\Omega,\mu)$ be a probability space, let $c,q\in\mathbb R$, and suppose $q>0$. The
+real-valued random-variable norm of the constant function with value $c$ is
+$N_q(c)=|c|$.
+\end{theorem}
+
+\begin{theorem}[Homogeneity of the random-variable norm]
+\lean{BooleanAnalysis.Hypercontractivity.rvLpNorm_const_mul}
+\label{BooleanAnalysis.Hypercontractivity.rvLpNorm_const_mul}
+\leanok
+\uses{BooleanAnalysis.Hypercontractivity.rvLpNorm}
+\difficulty{3}
+For any measure space $(\Omega,\mu)$, any real-valued function $X$ on $\Omega$, and any
+$c,q\in\mathbb R$, the real-valued random-variable norm satisfies $N_q(cX)=|c|N_q(X)$.
+\end{theorem}
+
+\begin{theorem}[Affine three norm sq]
+\lean{BooleanAnalysis.Hypercontractivity.IsHypercontractive.affine_three_norm_sq}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p258-b003}
+\label{BooleanAnalysis.Hypercontractivity.IsHypercontractive.affine_three_norm_sq}
+\leanok
+\uses{BooleanAnalysis.Hypercontractivity.IsHypercontractive, BooleanAnalysis.Hypercontractivity.rvLpNorm, BooleanAnalysis.Hypercontractivity.rvLpNorm_affine_sq, BooleanAnalysis.Hypercontractivity.rvLpNorm_rpow}
+\difficulty{5}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{theorem}[Integrability of multilinear random evaluation]
+\lean{BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp_nat}
+\label{BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp_nat}
+\leanok
+\uses{BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\difficulty{6}
+Let $n$ be a natural number, let $p$ be a positive natural number, and let
+$(\Omega,\mu)$ be a probability space. Suppose $X_1,\ldots,X_n$ are independent
+real-valued random variables on this space, each belonging to $L^p(\mu)$. Then for every
+real coefficient family $F$ indexed by subsets of $\{0,\ldots,n-1\}$, the random
+variable $\sum_{S\subseteq\{0,\ldots,n-1\}} F(S)\prod_{i\in S}X_i$ belongs to
+$L^p(\mu)$.
 \end{theorem}

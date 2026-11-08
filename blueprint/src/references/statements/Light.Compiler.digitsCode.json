@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Compiler.digitsCode",
+ "key": "bfcf85b0941e189c",
+ "kind": "def",
+ "title": "Code for a digit list",
+ "statement": "Fix an integer register address $c$. For a finite list of natural numbers, define its code recursively: the empty list produces the instruction that subtracts register $c$ from itself and stores the result in $c$; for a list with first entry $d$ and remaining list $L$, append to the code for $L$ the instruction that doubles register $c$, and then, if $d$ is nonzero, the instruction that adds the contents of register $-5$ to register $c$.",
+ "hypotheses_covered": [
+  "An integer register address $c$",
+  "A finite list of natural numbers",
+  "The first entry $d$ determines whether the final addition is included"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.copyTM_spaceUsedByTape",
+ "key": "f699c4ef7989d04b",
+ "kind": "theorem",
+ "title": "Space used during copying",
+ "statement": "Let $k\\in\\mathbb{N}$, let $x$ be a Boolean input word, and let $\\mathrm{src},\\mathrm{dst}$ be distinct indices among the $k$ work tapes. For any family $w$ of Boolean words on those tapes with empty destination word, and for every time $t\\in\\mathbb{N}$, the copying machine started in its sweep state with tape contents $w$ has visited at most $|w_{\\mathrm{src}}|+2$ distinct cells on each of the source and destination tapes by time $t$. Every other tape has visited exactly one distinct cell by time $t$.",
+ "hypotheses_covered": [
+  "k is a natural number",
+  "x is a Boolean input word",
+  "src and dst are work-tape indices in Fin k",
+  "src ≠ dst",
+  "w assigns a Boolean word to each work tape",
+  "The destination word w_dst is empty",
+  "t is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

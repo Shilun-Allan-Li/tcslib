@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clInput_forward",
+ "key": "46d2c7693e7653fd",
+ "kind": "lemma",
+ "title": "Forward input-copying run",
+ "statement": "Let $x$ be a Boolean word. For every $j$ with $0\\le j\\le |x|$, after $j$ steps from the copier configuration with input head at position $1$, empty work tape, and work head at $0$, the machine is in its copying control with input head at position $j+1$, the first $j$ bits of $x$ copied onto the work tape, and work head at position $j$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$j\\in\\mathbb N$",
+  "$j\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word $x$ and every $j \\le |x|$, running the input copier for $j$ steps from its start configuration copies exactly the first $j$ bits of $x$ onto the work buffer, with the input head at position $j + 1$ and the work head at $j$; every source read and target write is charged."
+}

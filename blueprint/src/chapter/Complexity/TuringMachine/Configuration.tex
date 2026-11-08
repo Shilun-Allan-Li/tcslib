@@ -14,6 +14,11 @@ list of configurations. Nothing here mentions a machine: a step is split into an
 
 \begin{definition}[Single-step action of a machine]
 \lean{Turing.Action}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p003-b001,
+  pdf-b9fb35a232af-p003-b003
+}
 \label{Turing.Action}
 \leanok
 An action of a $k$-tape Turing machine over a symbol alphabet and a set of states records
@@ -26,6 +31,14 @@ successor state, where the absence of a successor state means the machine halts.
 
 \begin{definition}[Configuration of a multi-tape Turing machine]
 \lean{Turing.Cfg}
+\statementsource{Sav70}{
+  pdf-c8033d2fd705-p002-b002,
+  pdf-c8033d2fd705-p003-b006
+}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p003-b002,
+  pdf-b9fb35a232af-p003-b003
+}
 \label{Turing.Cfg}
 \leanok
 A configuration of a $k$-tape Turing machine, relative to a fixed input string of length
@@ -38,15 +51,15 @@ of the head on each work tape; and the contents of the write-only output tape, a
 string of symbols.
 \end{definition}
 
-\begin{lemma}[Extensionality without work tapes]
+\begin{lemma}[Extensionality with No Work Tapes]
 \lean{Turing.Cfg.ext_zero_tapes}
 \label{Turing.Cfg.ext_zero_tapes}
 \leanok
 \uses{Turing.Cfg}
 \difficulty{1}
-Consider a Turing machine with no work tapes ($k = 0$) on a fixed input string. If two
-configurations of such a machine have the same internal state, the same input head
-position, and the same output tape contents, then they are equal.
+Fix an input word and consider two configurations of a machine with no work tapes. If
+their optional states, input-head positions, and output words are equal, then the
+configurations are equal.
 \end{lemma}
 
 \begin{definition}[Clamped movement of the input head]
@@ -65,20 +78,18 @@ range, so an attempted move past either boundary cell results in no movement.
 \leanok
 \uses{Turing.moveInputPos}
 \difficulty{2}
-For any input-head position $p$ among the $n + 2$ positions of an input of length $n$,
-attempting to move the head by the sign $0$ leaves the position unchanged: the clamped
-move of $p$ by $0$ equals $p$.
+For every $n\in\mathbb{N}$ and every input-head position among the $n+2$ allowed
+positions, a move by zero leaves the position unchanged.
 \end{lemma}
 
-\begin{lemma}[Left move at the left boundary]
+\begin{lemma}[Input head at the left boundary]
 \lean{Turing.moveInputPos_leftBoundary}
 \label{Turing.moveInputPos_leftBoundary}
 \leanok
 \uses{Turing.moveInputPos}
 \difficulty{2}
-On an input of length $n$, attempting to move the input head left (by the sign $-1$)
-from the leftmost position $0$ results in no movement: the clamped move of $0$ by $-1$
-is again $0$.
+For every natural number $n$, moving the input head left from position $0$ by one step,
+with positions restricted to $0,\ldots,n+1$, leaves it at position $0$.
 \end{lemma}
 
 \begin{lemma}[Right move at the right boundary]
@@ -87,35 +98,38 @@ is again $0$.
 \leanok
 \uses{Turing.moveInputPos}
 \difficulty{3}
-On an input of length $n$, attempting to move the input head right (by the sign $1$)
-from the rightmost position $n + 1$ results in no movement: the clamped move of $n + 1$
-by $1$ is again $n + 1$.
+For every $n\in\mathbb{N}$, moving the input head one position to the right from
+position $n+1$, the rightmost of the $n+2$ allowed positions, leaves it at position
+$n+1$.
 \end{lemma}
 
-\begin{lemma}[Left move away from the left boundary]
+\begin{lemma}[Left move away from the boundary]
 \lean{Turing.moveInputPos_neg_of_ne_left}
 \label{Turing.moveInputPos_neg_of_ne_left}
 \leanok
 \uses{Turing.moveInputPos}
 \difficulty{3}
-Let $p$ be an input-head position on an input of length $n$ with $p \ne 0$. Then the
-clamped move of $p$ by the sign $-1$ is exactly the position $p - 1$: a left move that
-does not start at the left boundary decrements the position.
+Let $n$ be a natural number and let $p$ be a position in the range of $n+2$ positions
+with $p\ne0$. Moving $p$ by $-1$ with clamping gives the position $p-1$.
 \end{lemma}
 
-\begin{lemma}[Right move away from the right boundary]
+\begin{lemma}[Right move away from the boundary]
 \lean{Turing.moveInputPos_pos_of_ne_right}
 \label{Turing.moveInputPos_pos_of_ne_right}
 \leanok
 \uses{Turing.moveInputPos}
 \difficulty{3}
-Let $p$ be an input-head position on an input of length $n$ with $p \ne n + 1$. Then the
-clamped move of $p$ by the sign $1$ is exactly the position $p + 1$: a right move that
-does not start at the right boundary increments the position.
+Let $n$ be a natural number and let $p$ be a position in the range of $n+2$ positions
+with $p\ne n+1$. Moving $p$ by $1$ with clamping gives the position $p+1$.
 \end{lemma}
 
 \begin{definition}[Symbol under the input head]
 \lean{Turing.Cfg.inputSymbol}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p003-b002,
+  pdf-b9fb35a232af-p003-b003
+}
 \label{Turing.Cfg.inputSymbol}
 \leanok
 \uses{Turing.Cfg}
@@ -131,14 +145,18 @@ symbol read is the $p$-th symbol of the input string.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol}
 \difficulty{4}
-Let a configuration of a $k$-tape machine on an input string be given, and suppose its
-input head position equals $1 + p$ for some natural number $p$ strictly less than the
-length of the input. Then the symbol under the input head is precisely the $p$-th symbol
-(zero-indexed) of the input string.
+Let $c$ be a configuration on an input string, and let $p$ be a natural number. If the
+input-head position of $c$ is $1+p$ and $p$ is strictly less than the input length, then
+the symbol read by the input head is the symbol at zero-based index $p$ of the input.
 \end{lemma}
 
 \begin{definition}[Symbol under a work tape head]
 \lean{Turing.Cfg.workTapeSymbols}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p003-b002,
+  pdf-b9fb35a232af-p003-b003
+}
 \label{Turing.Cfg.workTapeSymbols}
 \leanok
 \uses{Turing.Cfg}
@@ -158,6 +176,8 @@ optional state component is absent.
 
 \begin{definition}[Initial configuration]
 \lean{Turing.Cfg.init}
+\statementsource{Sav70}{pdf-c8033d2fd705-p005-b003}
+\statementsource{BGW70}{pdf-b9fb35a232af-p004-b002}
 \label{Turing.Cfg.init}
 \leanok
 \uses{Turing.Cfg}
@@ -169,6 +189,8 @@ $0$, and the output tape is empty.
 
 \begin{definition}[Effect of an action on a configuration]
 \lean{Turing.Action.apply}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
+\statementsource{BGW70}{pdf-b9fb35a232af-p003-b003}
 \label{Turing.Action.apply}
 \leanok
 \uses{Turing.Action, Turing.Cfg, Turing.moveInputPos}
@@ -182,20 +204,23 @@ output tape. This is the part of a machine step that does not depend on how the 
 was chosen.
 \end{definition}
 
-\begin{lemma}[Work tape heads move by at most one cell]
+\begin{lemma}[Bound on work-head movement]
 \lean{Turing.workTapePos_apply_le}
 \label{Turing.workTapePos_apply_le}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg}
 \difficulty{2}
-For every action of a $k$-tape machine, every configuration, and every work tape index
-$i < k$, the head position of tape $i$ after applying the action differs from its
-position before by at most one: $\abs{p' - p} \le 1$, where $p$ and $p'$ are the
-positions of the head of tape $i$ before and after the action is applied.
+For every single-step action, configuration, and work-tape index $i$, the absolute
+difference between the head position after applying the action and its position before
+is at most $1$.
 \end{lemma}
 
 \begin{definition}[Cells visited along a list of configurations]
 \lean{Turing.visitedOfCfgs}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p004-b001,
+  pdf-b9fb35a232af-p005-b001
+}
 \label{Turing.visitedOfCfgs}
 \leanok
 \uses{Turing.Cfg}
@@ -206,6 +231,10 @@ of the list.
 
 \begin{definition}[Space used along a list of configurations]
 \lean{Turing.spaceUsedOfCfgs}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p004-b001,
+  pdf-b9fb35a232af-p005-b001
+}
 \label{Turing.spaceUsedOfCfgs}
 \leanok
 \uses{Turing.Cfg, Turing.visitedOfCfgs}

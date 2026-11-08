@@ -24,7 +24,10 @@ Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multili
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.Hypercontractivity.fourierCoeff_derivative, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
 \difficulty{1}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. The coefficient indexed by $S$ in its coordinate derivative is $0$ if $i\in S$, and $a_{S\cup\{i\}}$ if $i\notin S$.
+Let $F$ be a real coefficient family on the subsets of $[n]=\{0,\ldots,n-1\}$, and let
+$i\in[n]$. The coefficient at $S\subseteq[n]$ of the polynomial formed from the Fourier
+coefficients of the Boolean-cube derivative of $F$ is $0$ if $i\in S$, and is
+$F(S\cup\{i\})$ if $i\notin S$.
 \end{lemma}
 
 \begin{lemma}[Degree reduction under coordinate differentiation]
@@ -32,53 +35,97 @@ Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multili
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_coeff, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost}
 \difficulty{4}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. Define $A_i(x)=\sum_{S:i\notin S}a_S\prod_{j\in S}x_j$ and $D_i(x)=\sum_{S:i\notin S}a_{S\cup\{i\}}\prod_{j\in S}x_j$. If $F$ has degree at most $k+1$, where $k\ge0$ is an integer, then $D_i$ has degree at most $k$.
+Let $F$ be a real coefficient family on subsets of $[n]$, let $i\in[n]$, and let
+$k\in\mathbb N$. If $F(S)=0$ whenever $|S|>k+1$, then the coefficient family formed from
+the Fourier coefficients of the Boolean-cube derivative of $F$ has degree at most $k$;
+that is, its coefficient at $S$ vanishes whenever $|S|>k$.
 \end{lemma}
 
-\begin{lemma}[Cube evaluation of the derivative polynomial]
+\begin{lemma}[Evaluation of the derivative polynomial]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_eval}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.derivative, BooleanAnalysis.walsh_expansion}
 \difficulty{3}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. On $\{-1,1\}^n$, evaluation of its coordinate derivative polynomial equals the discrete derivative of the cube function $F$, where the discrete derivative at $i$ is $\tfrac12(F|_{x_i=1}-F|_{x_i=-1})$.
+Let $F$ be a real coefficient family on subsets of $[n]$ and let $i\in[n]$. At every
+Boolean-cube input, the Walsh-basis evaluation of the coefficient family formed from the
+Fourier coefficients of the Boolean-cube derivative of $F$ equals that discrete
+derivative.
 \end{lemma}
 
-\begin{lemma}[Derivative coefficient energy equals influence]
+\begin{lemma}[Derivative coefficient energy and influence]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_sum_sq}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_eval, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.expect_eval_sq, BooleanAnalysis.ThresholdFunctions.influence_eq_expect_derivative_sq, BooleanAnalysis.influence}
 \difficulty{3}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. Define $A_i(x)=\sum_{S:i\notin S}a_S\prod_{j\in S}x_j$ and $D_i(x)=\sum_{S:i\notin S}a_{S\cup\{i\}}\prod_{j\in S}x_j$. The sum of the squared coefficients of $D_i$ is the influence of coordinate $i$ on the uniform sign-cube function $F$: $\sum_{S:i\notin S}a_{S\cup\{i\}}^2=I_i(F)=\sum_{S\ni i}a_S^2$.
+Let $F$ be a real coefficient family on subsets of $[n]$, and let $i\in[n]$. The sum,
+over all $S\subseteq[n]$, of the squares of the coefficients formed from the Fourier
+coefficients of the Boolean-cube derivative of $F$ equals the influence of coordinate
+$i$ for the Boolean-cube function obtained by evaluating $F$ in the Walsh basis.
 \end{lemma}
 
-\begin{lemma}[Evaluation over subsets omitting one coordinate]
+\begin{lemma}[Evaluation of the coordinate-free polynomial]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.coordinateFree_eval_sum}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateFree, BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_supported, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
 \difficulty{4}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. Let $X_j\colon\Omega\to\mathbb R$ be arbitrary functions. For each $\omega\in\Omega$, evaluation of the coordinate-free part of $F$ on $X(\omega)$ equals $\sum_{S\subseteq\{1,\ldots,n\}\setminus\{i\}}a_S\prod_{j\in S}X_j(\omega)$.
+Let $F$ be a real coefficient family on subsets of $[n]$, let $i\in[n]$, let $\Omega$ be
+a measurable space, let $X_j:\Omega\to\mathbb R$ for each $j\in[n]$, and let
+$\omega\in\Omega$. The random-input evaluation of the polynomial obtained from $F$ by
+setting to zero every coefficient indexed by a set containing $i$ equals
+$\displaystyle\sum_{T\subseteq[n]\setminus\{i\}}F(T)\prod_{j\in T}X_j(\omega)$.
 \end{lemma}
 
-\begin{lemma}[Derivative evaluation over the remaining inputs]
+\begin{lemma}[Evaluation of the derivative on random inputs]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_eval_sum}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_coeff, BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_supported, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
 \difficulty{4}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. Let $X_j\colon\Omega\to\mathbb R$ be arbitrary functions. For each $\omega\in\Omega$, evaluation of the coordinate derivative on $X(\omega)$ equals $\sum_{S\subseteq\{1,\ldots,n\}\setminus\{i\}}a_{S\cup\{i\}}\prod_{j\in S}X_j(\omega)$.
+Let $F$ be a real coefficient family on subsets of $[n]$, let $i\in[n]$, let $\Omega$ be
+a type, let $X_j:\Omega\to\mathbb R$ for each $j\in[n]$, and let $\omega\in\Omega$. The
+multilinear evaluation of the coefficient family formed from the Fourier coefficients of
+the Boolean-cube derivative is $\displaystyle\sum_{T\subseteq[n]\setminus\{i\}}
+F(T\cup\{i\})\prod_{j\in T}X_j(\omega)$.
 \end{lemma}
 
-\begin{lemma}[Affine decomposition at a coordinate]
+\begin{lemma}[Coordinate decomposition of polynomial evaluation]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.eval_coordinate_split}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_eval_sum, BooleanAnalysis.GaussianSpace.Invariance.coordinateFree, BooleanAnalysis.GaussianSpace.Invariance.coordinateFree_eval_sum, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.Hypercontractivity.multilinear_sum_insert, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
 \difficulty{3}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. Define $A_i(x)=\sum_{S:i\notin S}a_S\prod_{j\in S}x_j$ and $D_i(x)=\sum_{S:i\notin S}a_{S\cup\{i\}}\prod_{j\in S}x_j$. For any functions $X_j\colon\Omega\to\mathbb R$ and $\omega\in\Omega$, $F(X(\omega))=A_i(X(\omega))+X_i(\omega)D_i(X(\omega))$.
+Let $n$ be a natural number, let $F$ be a real multilinear polynomial on the Boolean
+cube of dimension $n$, let $i$ be a coordinate, and let $X_j:\Omega\to\mathbb R$ be a
+family of real-valued functions on a type of inputs $\Omega$. For every
+$\omega\in\Omega$, the evaluation of $F$ at $X(\omega)$ is the sum of its part omitting
+coordinate $i$ and $X_i(\omega)$ times the evaluation of the coefficient polynomial of
+the cube derivative in coordinate $i$.
 \end{lemma}
 
-\begin{lemma}[Independence from the polynomial background]
+\begin{lemma}[Independence from coordinate-free polynomial parts]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.indep_coordinate_parts}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_eval_sum, BooleanAnalysis.GaussianSpace.Invariance.coordinateFree, BooleanAnalysis.GaussianSpace.Invariance.coordinateFree_eval_sum, BooleanAnalysis.Hypercontractivity.MultilinearMoments.indep_sum_of_notMem, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
 \difficulty{3}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. Define $A_i(x)=\sum_{S:i\notin S}a_S\prod_{j\in S}x_j$ and $D_i(x)=\sum_{S:i\notin S}a_{S\cup\{i\}}\prod_{j\in S}x_j$. If $(X_j)$ is an independent family of real functions on a measured space $(\Omega,\mu)$ and each $X_j$ is measurable up to a null set, then $X_i$ is independent of the joint pair $(A_i(X),D_i(X))$.
+Let $n$ be a nonnegative integer, let $(\Omega,\mu)$ be a measured space, and let
+$X_1,\ldots,X_n$ be an independent family of real-valued functions, each measurable up
+to a null set. For a real coefficient family $F$ on subsets of the coordinates and a
+fixed coordinate $i$, form its coordinate-free part and its coordinate-derivative
+coefficient family as defined above. Then $X_i$ is independent of the pair consisting of
+the multilinear evaluations of those two coefficient families at $X$.
+\end{lemma}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Coordinate independence of polynomial parts]
+\lean{BooleanAnalysis.GaussianSpace.Invariance.coordinate_parts_eq_of_off_coordinate}
+\label{BooleanAnalysis.GaussianSpace.Invariance.coordinate_parts_eq_of_off_coordinate}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_coeff, BooleanAnalysis.GaussianSpace.Invariance.coordinateFree, BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_eq_of_off_coordinate, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\difficulty{3}
+Let $F$ be a real coefficient family on subsets of $[n]$, let $i\in[n]$, let $\Omega$ be
+a type, and let $X,Y:[n]\to(\Omega\to\mathbb R)$. Suppose $X_j=Y_j$ as functions on
+$\Omega$ for every $j\ne i$. Then, as functions on $\Omega$, the random-input
+evaluations of the coordinate-free part of $F$ agree for $X$ and $Y$, and the
+random-input evaluations of the coefficient family formed from the Fourier coefficients
+of the Boolean-cube derivative of $F$ also agree for $X$ and $Y$.
 \end{lemma}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satWidth_clause",
+ "key": "3fd4f1758702f105",
+ "kind": "lemma",
+ "title": "Clause width fold",
+ "statement": "Let $C$ be a finite clause of literals, let $c\\in\\{0,1,2,3\\}$ be a counter value, and let $g$ be a Boolean flag. Folding the width-pass transition over the binary encoding of $C$, starting in state $1$ with counter $c$ and flag $g$, ends in state $0$ with counter $0$ and flag $g\\wedge[c+|C|\\le 3]$, where $|C|$ counts literal occurrences, including repetitions.",
+ "hypotheses_covered": [
+  "$C$ is a clause over natural-number-indexed variables",
+  "$c$ is one of $0,1,2,3$",
+  "$g$ is a Boolean flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a clause, $c \\in \\{0,1,2,3\\}$ a counter value, and $g$ a Boolean flag.\nFolding the width-pass transition over the serialization of $C$, from the clause\nposition with counter $c$ and flag $g$, returns the formula position with counter\n$0$ and flag $g \\wedge [c + |C| \\le 3]$, where $|C|$ counts literal occurrences\nincluding repetitions."
+}

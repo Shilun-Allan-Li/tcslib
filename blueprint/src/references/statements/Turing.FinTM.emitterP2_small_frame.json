@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_small_frame",
+ "key": "c06cbd7f2b0e6a76",
+ "kind": "lemma",
+ "title": "Frame for relocated preparation",
+ "statement": "Let $H$ be a type, let $k,l$ be positive natural numbers, let $e:\\mathrm{Fin}(9)\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$ be a function, let $w,s,u,v$ be Boolean words, let $q\\in\\mathrm{Fin}(9)$, and let $o$ be a Boolean flag. Embed the preparation configuration on input $w$, with words $s,u,v$ on its three tapes, phase $q$, flag $o$, input head at position $1$, and all work heads at zero, into the host using the administrative triple of tape positions; fill the other host tapes with blanks and rename the state by $e$. The result is exactly the configuration on input $w$ with state $e(q,o)$, the full host word layout consisting of candidate $s$, width word $u$, and suffix-length word $v$, input head at position $1$, all work heads at zero, and empty output.",
+ "hypotheses_covered": [
+  "Type $H$",
+  "Positive natural numbers $k,l$",
+  "Function $e:\\mathrm{Fin}(9)\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$",
+  "Boolean words $w,s,u,v$",
+  "Phase $q\\in\\mathrm{Fin}(9)$",
+  "Boolean flag $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "At zero head displacements, relocating a preparation frame through the\nadministrative-triple selection coincides exactly with the host's canonical\nconfiguration on the complete word layout, not merely with its two argument\nprojections."
+}

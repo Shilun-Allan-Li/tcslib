@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.tendsto_integral_normalizedBoolBlocks",
+ "key": "6c504305b125e807",
+ "kind": "lemma",
+ "title": "Gaussian limit for normalized Boolean blocks",
+ "statement": "Let $n\\ge0$ and let $F:\\mathbb R^n\\to\\mathbb R$ be bounded and continuous. For each $m\\ge0$, take independent uniform signs $\\varepsilon_{ij}\\in\\{-1,1\\}$, with $1\\le i\\le n$ and $1\\le j\\le m+1$, and set $S_m(i)=(m+1)^{-1/2}\\sum_{j=1}^{m+1}\\varepsilon_{ij}$. Then $\\mathbb E[F(S_m)]\\to\\int F\\,d\\gamma_n$ as $m\\to\\infty$, where $\\gamma_n$ is standard Gaussian measure on $\\mathbb R^n$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$F:\\mathbb R^n\\to\\mathbb R$ is bounded and continuous"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For independent uniform bits $X_{ij}$, put $S_r(X)_i=r^{-1/2}\\sum_{j=1}^r(-1)^{X_{ij}}$. For every $n\\ge0$ and bounded continuous $F:\\mathbb R^n\\to\\mathbb R$, $\\mathbb E F(S_{m+1}(X))\\to\\int F\\,d\\gamma_n$ as $m\\to\\infty$."
+}

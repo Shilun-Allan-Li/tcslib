@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.PathHard.parse_run",
+ "key": "6a19a715c16c50c3",
+ "kind": "theorem",
+ "title": "Parsing and run behavior",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let $y$ be a finite Boolean string with length at most $B$. If the pair parser fails on $y$, the program starting in its initial instruction with all registers zero and no recorded answer halts with answer false, and every configuration before halting satisfies the guard that its instruction meets the program precondition and every register is at most $B$. Moreover, for every pair of finite Boolean strings $x,\\beta$ whose pairing is $y$, the same initial run reaches the copy instruction assigning the input length to the value register, with the length register equal to $|y|$, the scan pointer equal to $2|x|+2$, all other registers zero, and no answer recorded; every earlier configuration satisfies the same guard.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$y$ is a finite Boolean string",
+  "$|y|\\le B",
+  "in the second conclusion, $x,\\beta$ are arbitrary finite Boolean strings with $y$ their pairing"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $N$ be a finite\nnondeterministic Turing machine over the Boolean alphabet, and let $y$ be a bit string\nwith $|y|\\le B$. Run the specified register program on input $y$ from its initial state\nwith all registers zero and no answer recorded. If the pair parser fails on $y$, the run\nhalts with answer false and every configuration before halting satisfies the program's\nguard: its register values are at most $B$ and its instruction state meets the program's\nprecondition. Moreover, for every pair of bit strings $x,\\beta$ with $y$ equal to their\nself-delimiting pairing, the run reaches the copy instruction for $x$ with the length\nregister equal to $|y|$, the scan pointer equal to $2|x|+2$, all other registers zero,\nand no answer recorded; every earlier configuration satisfies the same guard."
+}

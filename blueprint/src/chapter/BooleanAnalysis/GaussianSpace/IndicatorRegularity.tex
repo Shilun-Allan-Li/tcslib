@@ -5,48 +5,74 @@ At nonzero noise scale, averaged indicators have a product Gaussian density repr
 
 \section{Declarations}
 
-\begin{lemma}[Density representation of averaged indicators]
+\begin{lemma}[Density formula for the averaged indicator]
 \lean{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_integral_density}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.integral_affine_gaussian_pi_eq_density}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.integral_affine_gaussian_pi_eq_density}
 \difficulty{1}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. If $A$ is measurable and $\sin u\ne0$, then for all $x\in\mathbb R^n$, $u_u(x)=\int_{\mathbb R^n}\prod_i p_{\sin^2u}(\cos u\,x_i,z_i)1_A(z)\,dz$, where $p_v(c,z)$ is the $N(c,v)$ density.
+Let $n\ge0$, let $A\subseteq\mathbb R^n$ be measurable, let $u\in\mathbb R$ satisfy
+$\sin u\ne0$, and let $x\in\mathbb R^n$. Then
+\[
+u_u(x)=\int_{\mathbb R^n}\left(\prod_{i=1}^n p_{\sin^2 u}(\cos
+u\,x_i,z_i)\right)1_A(z)\,dz,
+\]
+where $u_u(x)=\int 1_A(\cos u\,x+\sin u\,y)\,d\gamma_n(y)$ and $p_v(c,z)$ is the density
+at $z$ of a Gaussian random variable with mean $c$ and variance $v$.
 \end{lemma}
 
-\begin{lemma}[Cosine scaling is a contraction]
+\begin{lemma}[Norm bound for cosine scaling]
 \lean{BooleanAnalysis.GaussianSpace.norm_cosineScaling_le_one}
 \leanok
 \difficulty{3}
-For every $n\ge0$ and $u\in\mathbb R$, the linear map $x\mapsto\cos u\,x$ on $\mathbb R^n$ has operator norm at most one for the maximum norm.
+For every natural number $n$ and every $u\in\mathbb R$, the linear map on $\mathbb R^n$
+given by $x\mapsto(\cos u)x$ has operator norm at most $1$.
 \end{lemma}
 
-\begin{lemma}[Derivative of an averaged indicator]
+\begin{lemma}[Derivative of an averaged Gaussian indicator]
 \lean{BooleanAnalysis.GaussianSpace.hasFDerivAt_averagedGaussianIndicator}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_integral_density,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensity}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_integral_density, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensity}
 \difficulty{5}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. If $A$ is measurable and $\sin u\ne0$, $u_u$ is differentiable at every $x\in\mathbb R^n$, with $D u_u(x)[h]=\cos u\int1_A(z)\,\partial_c[\prod_i p_{\sin^2u}(c_i,z_i)]_{c=\cos u\,x}[h]\,dz$, where $p_v$ is the Gaussian density and $\partial_c$ is differentiation in the mean vector.
+Let $n\in\mathbb N$, let $A\subseteq\mathbb R^n$ be measurable, and let $u\in\mathbb R$
+satisfy $\sin u\ne0$. For $x\in\mathbb R^n$, define $F(x)=\int 1_A(\cos u\,x+\sin
+u\,y)\,d\gamma_n(y)$, where $\gamma_n$ is standard Gaussian measure. The function $F$ is
+differentiable at every $x$, and its derivative is the linear functional obtained by
+composing multiplication by $\cos u$ with the integral, over $z\in\mathbb R^n$ with
+respect to Lebesgue measure, of $1_A(z)$ times the derivative in the mean vector $c$ of
+the product Gaussian density $\prod_{i=1}^n p_{\sin^2u}(c_i,z_i)$, evaluated at $c=\cos
+u\,x$.
 \end{lemma}
 
-\begin{lemma}[Uniform averaged-indicator derivative bound]
+\begin{lemma}[Derivative bound for a Gaussian indicator average]
 \lean{BooleanAnalysis.GaussianSpace.norm_fderiv_averagedGaussianIndicator_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.hasFDerivAt_averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.norm_cosineScaling_le_one,BooleanAnalysis.GaussianSpace.norm_integral_gaussianProductDensityDerivative_smul_le}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.hasFDerivAt_averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.norm_cosineScaling_le_one, BooleanAnalysis.GaussianSpace.norm_integral_gaussianProductDensityDerivative_smul_le}
 \difficulty{4}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. If $A$ is measurable and $\sin u\ne0$, then $\|D u_u(x)\|\le n(1+1/\sin^2u)$ for every $x\in\mathbb R^n$, with operator norm for the maximum norm.
+Let $n$ be a natural number, let $A\subseteq\mathbb R^n$ be measurable, and let
+$u\in\mathbb R$ satisfy $\sin u\ne0$. For every $x\in\mathbb R^n$, the derivative at $x$
+of the Gaussian conditional indicator average with angle $u$ has norm at most
+\[
+n\left(1+\frac{1}{\sin^2 u}\right).
+\]
 \end{lemma}
 
-\begin{lemma}[Pullback through a linear contraction]
+\begin{lemma}[Lipschitz continuity under linear contraction]
 \lean{BooleanAnalysis.GaussianSpace.lipschitzWith_comp_contraction}
 \leanok
 \difficulty{4}
-Let $E$ be a real normed vector space, $D:E\to\mathcal L(E,\mathbb R)$ be $C$-Lipschitz in operator norm with $C\ge0$, and $L:E\to E$ be continuous linear with $\|L\|\le1$. Then $x\mapsto D(Lx)\circ L$ is $C$-Lipschitz.
+Let $E$ be a real normed vector space, let $D:E\to\mathcal L(E,\mathbb R)$ be Lipschitz
+with constant $C\ge0$, and let $L:E\to E$ be continuous linear with operator norm at
+most $1$. Then the map $x\mapsto D(Lx)\circ L$ is Lipschitz with constant $C$.
 \end{lemma}
 
-\begin{lemma}[Lipschitz averaged-indicator derivative]
+\begin{lemma}[Lipschitz derivative of a Gaussian indicator average]
 \lean{BooleanAnalysis.GaussianSpace.lipschitzWith_fderiv_averagedGaussianIndicator}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.hasFDerivAt_averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.lipschitzWith_comp_contraction,BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.norm_cosineScaling_le_one}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.hasFDerivAt_averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.lipschitzWith_comp_contraction, BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.norm_cosineScaling_le_one}
 \difficulty{5}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. If $A$ is measurable and $\sin u\ne0$, then $x\mapsto D u_u(x)$ is globally $2n^2/\sin^2u$-Lipschitz in operator norm for the maximum norm on $\mathbb R^n$.
+Let $n\ge0$, let $A\subseteq\mathbb R^n$ be measurable, and let $u\in\mathbb R$ satisfy
+$\sin u\ne0$. Define $v_u(x)=\int 1_A(\cos u\,x+\sin u\,Y)\,d\gamma_n(Y)$ for standard
+Gaussian $Y$. The derivative map $x\mapsto Dv_u(x)$ is Lipschitz with constant
+$2n^2/\sin^2u$, using the maximum norm on $\mathbb R^n$ and the operator norm on linear
+functionals.
 \end{lemma}

@@ -12,6 +12,15 @@ lemmas about list operations and decision-tree depth used in the main argument.
 
 \begin{definition}[Restriction]
 \lean{SwitchingLemma.Restriction}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p005-b001}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b001,
+  pdf-52929dbaa962-p002-b003
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p075-b002,
+  pdf-ffbe9c7b3306-p098-b003
+}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b003}
 \label{SwitchingLemma.Restriction}
 \leanok
@@ -22,6 +31,13 @@ assigning each variable either a fixed Boolean value or leaving it free (\texttt
 
 \begin{definition}[Free variables of a restriction]
 \lean{SwitchingLemma.Restriction.freeVars}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p005-b001}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b003}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p074-b009,
+  pdf-ffbe9c7b3306-p075-b002,
+  pdf-ffbe9c7b3306-p098-b003
+}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b003}
 \label{SwitchingLemma.Restriction.freeVars}
 \leanok
@@ -32,6 +48,7 @@ $i \in \mathrm{Fin}\,n$ for which $\rho(i)$ is unset (\texttt{none}).
 
 \begin{definition}[Number of free variables]
 \lean{SwitchingLemma.Restriction.numFree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b003}
 \label{SwitchingLemma.Restriction.numFree}
 \leanok
 \uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
@@ -41,6 +58,11 @@ free variables.
 
 \begin{definition}[Extension of a point along a restriction]
 \lean{SwitchingLemma.Restriction.extend}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p005-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p075-b002,
+  pdf-ffbe9c7b3306-p098-b004
+}
 \label{SwitchingLemma.Restriction.extend}
 \leanok
 \uses{SwitchingLemma.Restriction}
@@ -51,6 +73,7 @@ $\rho(i)$ where it is set and falls back to $x(i)$ on the free variables.
 
 \begin{definition}[Fixing variables in a restriction]
 \lean{SwitchingLemma.Restriction.fixVars}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p075-b002}
 \label{SwitchingLemma.Restriction.fixVars}
 \leanok
 \uses{SwitchingLemma.Restriction}
@@ -60,6 +83,7 @@ that each listed variable is set to the corresponding fixed Boolean value.
 
 \begin{definition}[Un-fixing variables in a restriction]
 \lean{SwitchingLemma.Restriction.unfixVars}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p075-b002}
 \label{SwitchingLemma.Restriction.unfixVars}
 \leanok
 \uses{SwitchingLemma.Restriction}
@@ -69,70 +93,104 @@ to \texttt{none}, restoring it to a free variable.
 
 \begin{definition}[Restriction with $s$ free variables]
 \lean{SwitchingLemma.IsRestriction}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b003}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p074-b009,
+  pdf-ffbe9c7b3306-p075-b002
+}
 \label{SwitchingLemma.IsRestriction}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 \uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 The predicate $\mathrm{IsRestriction}\,s\,\rho$ holds when the restriction $\rho$ has
 exactly $s$ free variables.
 \end{definition}
 
 \begin{definition}[Literal killed by a restriction]
 \lean{SwitchingLemma.Literal.killedBy}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p099-b006}
 \label{SwitchingLemma.Literal.killedBy}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{Literal, SwitchingLemma.Restriction}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 A literal $l$ is killed by $\rho$ when $\rho$ fixes its variable to the value that makes
 $l$ false; concretely $\rho(l.\mathrm{var}) = \mathrm{some}\,l.\mathrm{neg}$.
 \end{definition}
 
 \begin{definition}[Literal fixed by a restriction]
 \lean{SwitchingLemma.Literal.fixedBy}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p099-b006}
 \label{SwitchingLemma.Literal.fixedBy}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{Literal, SwitchingLemma.Restriction}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 A literal $l$ is fixed by $\rho$ when $\rho$ fixes its variable to the value that makes
 $l$ true; concretely $\rho(l.\mathrm{var}) = \mathrm{some}\,(\lnot\, l.\mathrm{neg})$.
 \end{definition}
 
 \begin{definition}[Term killed by a restriction]
 \lean{SwitchingLemma.Term.killedBy}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p099-b006}
 \label{SwitchingLemma.Term.killedBy}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, Term}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 A term (conjunction of literals) is killed by $\rho$ when at least one of its literals is
 killed by $\rho$, forcing the whole term to evaluate to false.
 \end{definition}
 
 \begin{definition}[Term fixed by a restriction]
 \lean{SwitchingLemma.Term.fixedBy}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002
+}
 \label{SwitchingLemma.Term.fixedBy}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{SwitchingLemma.Literal.fixedBy, SwitchingLemma.Restriction, Term}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 A term is fixed by $\rho$ when every one of its literals is fixed by $\rho$, forcing the
 whole term to evaluate to true.
 \end{definition}
 
 \begin{definition}[Alive term]
 \lean{SwitchingLemma.isAlive}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002
+}
 \label{SwitchingLemma.isAlive}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{SwitchingLemma.Restriction, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, Term}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 A term $t$ is alive under $\rho$ when it is neither killed nor fixed by $\rho$.
 \end{definition}
 
 \begin{definition}[Restricted Boolean function]
 \lean{SwitchingLemma.restrictFn}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p005-b001}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b003}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p075-b002,
+  pdf-ffbe9c7b3306-p098-b004
+}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p006-b004}
 \label{SwitchingLemma.restrictFn}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 \uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b007}
 Given $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ and a restriction
 $\rho$, the restricted function maps $x$ to $f(\rho.\mathrm{extend}\,x)$, i.e.\ $f$
 evaluated on the free coordinates with the fixed coordinates set by $\rho$.
@@ -140,20 +198,22 @@ evaluated on the free coordinates with the fixed coordinates set by $\rho$.
 
 \begin{definition}[Bad restriction]
 \lean{SwitchingLemma.IsBadRestriction}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p100-b005}
 \statementsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p008-b005,
   pdf-fc447f326910-p018-b002
 }
 \label{SwitchingLemma.IsBadRestriction}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b001}
 \uses{SwitchingLemma.Restriction, SwitchingLemma.restrictFn, dtDepth}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b001}
 A restriction $\rho$ is bad for $f$ at depth $d$ when the restricted function
 $\mathrm{restrictFn}\,f\,\rho$ has decision-tree depth strictly greater than $d$.
 \end{definition}
 
 \begin{definition}[Number of $s$-restrictions]
 \lean{SwitchingLemma.numSRestrictions}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p003-b004}
 \label{SwitchingLemma.numSRestrictions}
 \leanok
 The number of restrictions on $n$ variables leaving exactly $s$ free, namely
@@ -226,6 +286,7 @@ $p$ evaluates to $\mathrm{false}$.
 \lean{SwitchingLemma.fixedTerm_implies_dtDepth_zero}
 \label{SwitchingLemma.fixedTerm_implies_dtDepth_zero}
 \leanok
+\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Literal.fixedBy_eval_true, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Term.fixedBy, SwitchingLemma.dtDepth_le_of_tree, SwitchingLemma.restrictFn, Term.eval, dtDepth}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \proofstep
   {BoolCircuit.Lit}
@@ -322,7 +383,6 @@ $p$ evaluates to $\mathrm{false}$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b005}
-\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Literal.fixedBy_eval_true, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Term.fixedBy, SwitchingLemma.dtDepth_le_of_tree, SwitchingLemma.restrictFn, Term.eval, dtDepth}
 \difficulty{4}
 Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction of
 those variables. If at least one term of $f$ is fixed by $\rho$, then the restricted
@@ -333,6 +393,7 @@ Boolean function $x \mapsto f(\rho\text{-extension of }x)$ has decision-tree dep
 \lean{SwitchingLemma.killedAll_implies_dtDepth_zero}
 \label{SwitchingLemma.killedAll_implies_dtDepth_zero}
 \leanok
+\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Literal.killedBy_eval_false, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Term.killedBy, SwitchingLemma.dtDepth_le_of_tree, SwitchingLemma.list_all_eq_false_of_mem, SwitchingLemma.list_any_eq_false, SwitchingLemma.restrictFn, Term.eval, dtDepth}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \proofstep
   {BoolCircuit.Lit}
@@ -439,7 +500,6 @@ Boolean function $x \mapsto f(\rho\text{-extension of }x)$ has decision-tree dep
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
-\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Literal.killedBy_eval_false, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Term.killedBy, SwitchingLemma.dtDepth_le_of_tree, SwitchingLemma.list_all_eq_false_of_mem, SwitchingLemma.list_any_eq_false, SwitchingLemma.restrictFn, Term.eval, dtDepth}
 \difficulty{4}
 Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction on
 these variables. If every term of $f$ is killed by $\rho$ — that is, each term contains
@@ -477,9 +537,10 @@ first term of $f$ that is not killed by $\sigma$.
 
 \begin{lemma}[Term length bounded by DNF width]
 \lean{SwitchingLemma.term_length_le_width}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b002}
 \label{SwitchingLemma.term_length_le_width}
 \leanok
-\uses{DNF, DNF.width, Term, LitList.width}
+\uses{DNF, DNF.width, Depth2.width, LitList.width, Term}
 \difficulty{3}
 Let $f$ be a DNF formula in $n$ variables, that is, a disjunction $t_1 \vee \cdots \vee
 t_m$ of terms, where each term is a conjunction of literals, and let its width be the

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.pairDiag_copy",
+ "key": "d73c69e9bed328fd",
+ "kind": "lemma",
+ "title": "Output and head position during the copy pass",
+ "statement": "Let $x$ and $w$ be finite Boolean strings, and let $t$ be a natural number with $t\\le |x|$. Starting from the copy-state configuration on input $x$, with input head at position $1$ and output $w$, after exactly $t$ steps the machine remains in the copy state, its input head is at position $t+1$, and its output is $w$ followed by the first $t$ bits of $x$.",
+ "hypotheses_covered": [
+  "$x$ and $w$ are finite Boolean strings",
+  "$t$ is a natural number",
+  "$t\\le |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $w$ an output string, and $t \\le |x|$.  Running the\nsix-state diagonal pairing machine for exactly $t$ steps from the\nconfiguration in its copy state (state $5$) with input head at position $1$\nand output $w$ yields the configuration still in the copy state with input\nhead at position $t + 1$ and output $w$ followed by the first $t$ bits of\n$x$."
+}

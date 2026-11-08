@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timedCut_Eval_reads",
+ "key": "9ba447442b28307f",
+ "kind": "lemma",
+ "title": "Work-tape reads of an evaluation configuration",
+ "statement": "Let $x$ be a Boolean input word, $B$ a four-tape configuration, $q$ a control state, $T$ a Boolean table word, $p\\in\\mathbb Z$ a table cursor, and $\\sigma\\colon\\mathbb Z\\to\\{0,1,\\mathrm{blank}\\}$ a state tape with cursor $s\\in\\mathbb Z$. The four symbols read by the work-tape heads of the evaluation configuration are, in order, the symbol of the buffer of $T$ at $p$, the symbol $\\sigma(s)$, and the symbols read by tapes 2 and 3 of $B$.",
+ "hypotheses_covered": [
+  "Boolean input word and four-tape base configuration",
+  "Control state",
+  "Boolean table and integer table cursor",
+  "Boolean-valued optional-symbol state tape and integer cursor"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider an interpreter evaluation configuration, whose four work tapes are: a\ntable tape holding the buffer of a bit string $T$ with cursor $p$, a state\ntape $\\sigma \\colon \\mathbb{Z} \\to \\{0,1,\\text{blank}\\}$ with cursor $s$, and\na mirrored work tape and a boundary-marker tape taken from a base\nconfiguration.  The four symbols under its work heads are, in order, the table\nsymbol at $p$, the state symbol $\\sigma(s)$, and the two symbols read on the\ncorresponding tapes of the base configuration."
+}

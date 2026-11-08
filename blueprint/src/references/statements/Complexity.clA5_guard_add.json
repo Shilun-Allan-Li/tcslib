@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clA5_guard_add",
+ "key": "9c61fe6ab4f3c535",
+ "kind": "lemma",
+ "title": "Joining two guarded run segments",
+ "statement": "Let $M$ be a deterministic Turing machine with $k$ work tapes, Boolean tape symbols, and state set $S$, let $x$ be a Boolean input word, let $q\\in S$, and let $c,d$ be configurations on $x$. For $a,b\\in\\mathbb{N}$, suppose the run from $c$ avoids state $q$ at every time $v<a$, the run from $c$ at time $a$ is $d$, and the run from $d$ avoids state $q$ at every time $v<b$. Then the run from $c$ avoids state $q$ at every time $v<a+b$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ is a type and $q\\in S$",
+  "$x$ is a Boolean input word",
+  "$M$ is a $k$-work-tape Turing machine over Boolean symbols with states in $S$",
+  "$c,d$ are configurations on input $x$",
+  "$a,b$ are natural numbers",
+  "The run from $c$ avoids $q$ at all times $v<a$",
+  "The run from $c$ at time $a$ equals $d$",
+  "The run from $d$ avoids $q$ at all times $v<b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a run avoids an anchor control for $a$ steps, reaches a configuration $d$, and the run from $d$ avoids the anchor for $b$ steps, then the whole run avoids the anchor for $a + b$ steps."
+}

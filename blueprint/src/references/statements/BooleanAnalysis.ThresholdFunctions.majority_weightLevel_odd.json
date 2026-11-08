@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_weightLevel_odd",
+ "key": "f1675c992375be62",
+ "kind": "lemma",
+ "title": "Odd-level Fourier weight of majority",
+ "statement": "For $m,k\\in\\mathbb N$ with $k$ odd, let $M_m$ be the majority function on $\\{0,1\\}^{2m+1}$ that is $1$ when more than $m$ coordinates are false and $-1$ otherwise. Its Fourier weight at level $k$ is $\\displaystyle W_k[M_m]=\\binom{2m+1}{k}\\left(\\frac{\\binom{m}{(k-1)/2}}{\\binom{2m}{k-1}}\\cdot\\frac{\\binom{2m}{m}}{2^{2m}}\\right)^2$, with the quotient interpreted as real division, including when its denominator is zero.",
+ "hypotheses_covered": [
+  "$m,k\\in\\mathbb N$",
+  "$k$ is odd"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $m\\in\\mathbb N$, put $n=2m+1$, and define $M_m:\\{\\pm1\\}^n\\to\\mathbb R$ by\n$M_m(x)=1$ when more than $m$ coordinates equal $1$, and $M_m(x)=-1$ otherwise.\nFor $S\\subseteq\\{1,\\ldots,n\\}$ define\n$\\widehat M_m(S)=2^{-n}\\sum_{x\\in\\{\\pm1\\}^n}M_m(x)\\prod_{i\\in S}x_i$, and for every\n$k\\in\\mathbb N$ define $W_k(M_m)=\\sum_{|S|=k}\\widehat M_m(S)^2$.\nFor every odd $k\\in\\mathbb N$, put $r=(k-1)/2$; then\n\\[\n W_k(M_m)=\\binom{2m+1}{k}\n \\left(\\frac{\\binom mr}{\\binom{2m}{k-1}}\n            \\frac{\\binom{2m}{m}}{2^{2m}}\\right)^2,\n\\]\nwhere $\\binom ab=0$ for $b>a$ and a real quotient with zero denominator is interpreted as zero."
+}

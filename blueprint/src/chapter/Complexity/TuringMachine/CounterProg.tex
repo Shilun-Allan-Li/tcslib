@@ -82,85 +82,87 @@ For a label $\ell_0$, the initial abstract state at $\ell_0$ (for $R$ registers)
 label $\ell_0$, every register equal to $0$, read position $0$, and empty output.
 \end{definition}
 
-\begin{theorem}[Zero steps of a counter program]
+\begin{theorem}[Zero-step run]
 \lean{Complexity.CounterProg.run_zero}
 \label{Complexity.CounterProg.run_zero}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.run}
 \difficulty{1}
-For every counter program $P$ over $R$ registers with labels in $\Lambda$, every input bit string
-$x$ and every abstract state $s$, running $P$ on $x$ from $s$ for zero steps returns $s$:
-$\mathrm{run}_{P,x}(s, 0) = s$.
+Let $R$ be a number of registers, let $\Lambda$ be a set of labels, let $P$ be a counter
+program over them, and let $x$ be a bit string. For every abstract state $s$, running
+$P$ on $x$ from $s$ for zero steps returns $s$.
 \end{theorem}
 
-\begin{theorem}[Runs of a counter program compose]
+\begin{theorem}[Composition of Counter-Program Runs]
 \lean{Complexity.CounterProg.run_add}
 \label{Complexity.CounterProg.run_add}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.run}
 \difficulty{1}
-Let $P$ be a counter program over $R$ registers with labels in $\Lambda$, $x$ an input bit
-string and $s$ an abstract state. For all $a, b \in \mathbb{N}$, running $a + b$ steps from $s$
-is the same as running $a$ steps and then $b$ further steps:
-$\mathrm{run}_{P,x}(s, a + b) = \mathrm{run}_{P,x}(\mathrm{run}_{P,x}(s, a), b)$.
+Let $R\in\mathbb{N}$, let $\Lambda$ be a set of labels, let $P$ be a counter program
+over $R$ registers with labels in $\Lambda$, and fix an input bit string $x$. For every
+abstract state $s$ and $a,b\in\mathbb{N}$, running for $a+b$ steps from $s$ gives the
+same state as running for $a$ steps and then for $b$ further steps.
 \end{theorem}
 
-\begin{theorem}[Peeling off the first step of a run]
+\begin{theorem}[Successive run decomposition]
 \lean{Complexity.CounterProg.run_succ}
 \label{Complexity.CounterProg.run_succ}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.run, Complexity.CounterProg.step}
 \difficulty{1}
-Let $P$ be a counter program over $R$ registers with labels in $\Lambda$, $x$ an input bit
-string, $s$ an abstract state and $t \in \mathbb{N}$. Running $t + 1$ steps from $s$ equals
-running $t$ steps from the state obtained by one step of $P$ on $x$ from $s$:
-$\mathrm{run}_{P,x}(s, t + 1) = \mathrm{run}_{P,x}(\mathrm{step}_{P,x}(s), t)$.
+Let $R$ be a number of registers, let $\Lambda$ be a set of labels, let $P$ be a counter
+program over them, and let $x$ be a bit string. For every abstract state $s$ and every
+$t\in\mathbb{N}$, the state reached after $t+1$ steps from $s$ equals the state reached
+after $t$ steps from the state obtained by one step of $P$ on $x$ from $s$.
 \end{theorem}
 
-\begin{theorem}[A halted state is stationary]
+\begin{theorem}[Stationarity of Halted States]
 \lean{Complexity.CounterProg.run_of_halted}
 \label{Complexity.CounterProg.run_of_halted}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.run, Complexity.CounterProg.run_succ, Complexity.CounterProg.step}
 \difficulty{4}
-Let $P$ be a counter program over $R$ registers with labels in $\Lambda$, $x$ an input bit
-string, and $s$ an abstract state whose label component marks it as halted. Then for every
-$t \in \mathbb{N}$, running $P$ on $x$ from $s$ for $t$ steps returns $s$ unchanged.
+Let $R\in\mathbb{N}$, let $\Lambda$ be a set of labels, let $P$ be a counter program
+over $R$ registers with labels in $\Lambda$, and fix an input bit string $x$. If an
+abstract state $s$ is halted, then running the program from $s$ for any $t\in\mathbb{N}$
+leaves the state unchanged.
 \end{theorem}
 
-\begin{theorem}[One step raises a register by at most one]
+\begin{theorem}[Register growth in one step]
 \lean{Complexity.CounterProg.step_regs_le}
 \label{Complexity.CounterProg.step_regs_le}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.step}
 \difficulty{4}
-Let $P$ be a counter program over $R$ registers with labels in $\Lambda$, $x$ an input bit
-string, $s$ an abstract state with registers $\rho$, and $r$ a register. If $\rho'$ denotes the
-registers of the state reached from $s$ by one step of $P$ on $x$, then
-$\rho'(r) \le \rho(r) + 1$.
+Let $R$ be the number of registers, let $\Lambda$ be a set of labels, and let $P$ assign
+an instruction to each label. For any input bit string $x$, state $s$, and register $r$,
+the value of register $r$ after one step of $P$ on $x$ is at most its value in $s$ plus
+one.
 \end{theorem}
 
-\begin{theorem}[One step stays within the input]
+\begin{theorem}[Read position after one step]
 \lean{Complexity.CounterProg.step_pos_le}
 \label{Complexity.CounterProg.step_pos_le}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.step}
 \difficulty{4}
-Let $P$ be a counter program over $R$ registers with labels in $\Lambda$, $x$ an input bit
-string, and $s$ an abstract state whose read position $p$ satisfies $p \le |x|$. Then the read
-position of the state reached from $s$ by one step of $P$ on $x$ is again at most $|x|$.
+Let $R$ be the number of registers, let $\Lambda$ be a set of labels, and let $P$ assign
+an instruction to each label. For any input bit string $x$ and state $s$ whose read
+position is at most the length of $x$, the state reached after one step of $P$ on $x$
+also has read position at most the length of $x$.
 \end{theorem}
 
-\begin{theorem}[A $t$-step run raises a register by at most $t$]
+\begin{theorem}[Bound on Register Growth]
 \lean{Complexity.CounterProg.run_regs_le}
 \label{Complexity.CounterProg.run_regs_le}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.run, Complexity.CounterProg.run_succ, Complexity.CounterProg.run_zero, Complexity.CounterProg.step, Complexity.CounterProg.step_regs_le}
 \difficulty{4}
-Let $P$ be a counter program over $R$ registers with labels in $\Lambda$, $x$ an input bit
-string, $s$ an abstract state with registers $\rho$, $r$ a register and $t \in \mathbb{N}$. If
-$\rho'$ denotes the registers of the state reached from $s$ after $t$ steps of $P$ on $x$, then
-$\rho'(r) \le \rho(r) + t$.
+Let $R\in\mathbb{N}$, let $\Lambda$ be a set of labels, let $P$ be a counter program
+over $R$ registers with labels in $\Lambda$, and fix an input bit string $x$. For every
+abstract state $s$, register $r$, and $t\in\mathbb{N}$, the value of register $r$ after
+$t$ steps from $s$ is at most its initial value plus $t$.
 \end{theorem}
 
 \begin{definition}[Control states of the compiled machine]
@@ -258,144 +260,148 @@ is halted, whose input head is at position $\min(p + 1, n + 1)$, whose work tape
 $1^{\rho(r)}$ with its head on cell $\rho(r)$, and whose output tape holds $w$.
 \end{definition}
 
-\begin{theorem}[One machine step from a running configuration]
+\begin{theorem}[Step from a running configuration]
 \lean{Complexity.CounterProg.step_some}
 \label{Complexity.CounterProg.step_some}
 \leanok
 \uses{Complexity.CounterProg.TSt, Complexity.CounterProg.toTM, Complexity.CounterProg.tr, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.step}
 \difficulty{1}
-Let $\Lambda$ be a finite set of labels, $P$ a counter program over $R$ registers with labels in
-$\Lambda$, $\ell_0 \in \Lambda$, and $x$ an input bit string. Let $C$ be a configuration on input
-$x$ of the machine of $P$ started at $\ell_0$ which is in some control state $q$ (not halted),
-with work tapes $(T_i)$ and work heads $(h_i)$. Then one step of that machine maps $C$ to the
-result of applying to $C$ the action that the compiled transition table of $P$ assigns to $q$,
-the symbol under the input head of $C$, and the work-tape symbols $(T_i(h_i))_i$.
+Let $R$ be the number of work tapes, let $\Lambda$ be a finite set of labels, let $P$
+assign an instruction to each label, let $x$ be an input bit string, and let $\ell_0 \in
+\Lambda$. For any compiled control state $q$, valid input-head position $p$, work tapes
+$T_i : \mathbb{Z} \to \{0,1,\sqcup\}$, work-head positions $h_i \in \mathbb{Z}$, and
+output string $w$, a configuration with control state $q$ takes one machine step to the
+result of applying the compiled transition action determined by $q$, the symbol under
+the input head, and the symbols under the work-tape heads.
 \end{theorem}
 
-\begin{theorem}[Effect of a single-tape action]
+\begin{theorem}[Applying an action on one work tape]
 \lean{Complexity.CounterProg.apply_act}
 \label{Complexity.CounterProg.apply_act}
 \leanok
 \uses{Complexity.CounterProg.TSt, Complexity.CounterProg.act, Turing.Action.apply, Turing.Cfg, Turing.UnaryTape.wrT, Turing.moveInputPos}
 \difficulty{4}
-Let $x$ be an input bit string and consider a configuration on $x$, with $R$ work tapes and the
-compiled control states, having an arbitrary state, input-head position $p$, work tapes $(T_i)$,
-work heads $(h_i)$ and output $w$. Applying to it the action on the single work tape $t$ with
-input-head move $i$, write instruction $\omega$, head move $m$, optional output bit $o$ and
-optional next state $q$ yields the configuration with state $q$, input-head position the clamped
-move of $p$ by $i$, tape $t$ replaced by $T_t$ with cell $h_t$ overwritten as prescribed by
-$\omega$ (and unchanged if $\omega$ writes nothing), head $t$ moved to $h_t + m$, all other
-tapes and heads unchanged, and output $w$ followed by $o$ if $o$ is present.
+Let $x$ be a binary input, let the set of control labels be finite, and consider a
+configuration with an arbitrary control state, input-head position $p$, work tapes
+$T_i:\mathbb{Z}\to\{0,1,\text{blank}	ext{ as an absent symbol}\}$, work-head positions
+$h_i\in\mathbb{Z}$, and output word $w$. For a work-tape index $t$, input-head move $i$,
+optional write instruction $\omega$, work-head move $m$, optional output bit $o$, and
+optional next state $q$, applying the action that performs these operations only on tape
+$t$ gives state $q$, input position the clamped move of $p$ by $i$, tape $t$ written at
+$h_t$ according to $\omega$ (or unchanged if there is no write), and head position
+$h_t+m$. Every other tape and head is unchanged, and the output is $w$ followed by $o$
+when present.
 \end{theorem}
 
-\begin{theorem}[Effect of an action touching no work tape]
+\begin{theorem}[Effect of a control-only action]
 \lean{Complexity.CounterProg.apply_ctl}
 \label{Complexity.CounterProg.apply_ctl}
 \leanok
 \uses{Complexity.CounterProg.TSt, Complexity.CounterProg.ctl, Turing.Action.apply, Turing.Cfg, Turing.moveInputPos}
 \difficulty{3}
-Let $x$ be an input bit string and consider a configuration on $x$, with $R$ work tapes and the
-compiled control states, having an arbitrary state, input-head position $p$, work tapes $(T_i)$,
-work heads $(h_i)$ and output $w$. Applying to it the action that touches no work tape, with
-input-head move $i$, optional output bit $o$ and optional next state $q$, yields the
-configuration with state $q$, input-head position the clamped move of $p$ by $i$, the same work
-tapes $(T_i)$ and heads $(h_i)$, and output $w$ followed by $o$ if $o$ is present.
+Let $x$ be a finite bit string, and let a configuration on $x$ have state $q'$,
+input-head position $p$, work tapes $T_i$, work-head positions $h_i$, and output word
+$w$. For any input-head move $i\in\{-1,0,1\}$, optional output bit $o$, and optional
+next state $q$, applying the action that makes no work-tape writes or movements gives
+the configuration with state $q$, input-head position the clamped move of $p$ by $i$,
+unchanged work tapes and work-head positions, and output $w$ followed by $o$ if present.
 \end{theorem}
 
-\begin{theorem}[Leftward walk of a register print]
+\begin{theorem}[Leftward Walk During Register Printing]
 \lean{Complexity.CounterProg.print_walk}
 \label{Complexity.CounterProg.print_walk}
 \leanok
 \uses{Complexity.CounterProg.TSt, Complexity.CounterProg.apply_act, Complexity.CounterProg.step_some, Complexity.CounterProg.toTM, Complexity.CounterProg.tr, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UnaryTape.ones, Turing.UnaryTape.ones_lt, Turing.UnaryTape.ones_neg, Turing.UnaryTape.wrT, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $\Lambda$ be a finite set of labels, $P$ a counter program over $R$ registers with labels in
-$\Lambda$, $\ell_0 \in \Lambda$, $x$ an input bit string, $r$ a register, $\ell$ a label, $p$ an
-input-head position, $(T_i)$ work tapes and $(h_i)$ work heads, and $m \in \mathbb{N}$ such that
-tape $r$ is the unary tape $T_r = 1^m$ (cells $0, \dots, m-1$ hold $1$, all others blank). Then
-for every $j \le m$ and every output string $w$, running the machine of $P$ started at $\ell_0$
-for $j + 1$ steps from the configuration in state $\mathsf{print}_{\leftarrow}(r, \ell)$ with
-input head $p$, tapes $(T_i)$, heads $(h_i)$ except that head $r$ is on cell $j - 1$, and output
-$w$, reaches the configuration in state $\mathsf{print}_{\rightarrow}(r, \ell)$ with input head
-$p$, tapes $(T_i)$, heads $(h_i)$ except that head $r$ is on cell $0$, and output $w\,1^j$.
+Let $R\in\mathbb{N}$, let $\Lambda$ be a finite set of labels, let $P$ be a counter
+program over $R$ registers with labels in $\Lambda$, and choose a start label
+$\ell_0\in\Lambda$. Fix an input bit string $x$, a register $r$, a label $\ell$, an
+input-head position $p$, work tapes $T_i:\mathbb{Z}\to\{0,1,\sqcup\}$ and work-head
+positions $h_i\in\mathbb{Z}$, and $m\in\mathbb{N}$; suppose tape $T_r$ has value $1$
+exactly at the cells $0,\ldots,m-1$ and is blank elsewhere. For every $j\in\mathbb{N}$
+with $j\le m$ and every output word $w$, starting in the print-left state for register
+$r$ and label $\ell$, with head $r$ at cell $j-1$ and the other data as specified, after
+$j+1$ steps the machine is in the print-right state for $r,\ell$, with head $r$ at cell
+$0$, unchanged input head and tapes, and output $w$ followed by $j$ copies of $1$.
 \end{theorem}
 
-\begin{theorem}[Rightward walk back after a register print]
+\begin{theorem}[Return walk over a unary register]
 \lean{Complexity.CounterProg.back_walk}
 \label{Complexity.CounterProg.back_walk}
 \leanok
 \uses{Complexity.CounterProg.TSt, Complexity.CounterProg.apply_act, Complexity.CounterProg.apply_ctl, Complexity.CounterProg.step_some, Complexity.CounterProg.toTM, Complexity.CounterProg.tr, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UnaryTape.ones, Turing.UnaryTape.ones_ge, Turing.UnaryTape.ones_lt, Turing.UnaryTape.wrT, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $\Lambda$ be a finite set of labels, $P$ a counter program over $R$ registers with labels in
-$\Lambda$, $\ell_0 \in \Lambda$, $x$ an input bit string, $r$ a register, $\ell$ a label, $p$ an
-input-head position, $(T_i)$ work tapes, $(h_i)$ work heads, $w$ an output string, and
-$m \in \mathbb{N}$ such that tape $r$ is the unary tape $T_r = 1^m$ (cells $0, \dots, m-1$ hold
-$1$, all others blank). Then for every $d \le m$, running the machine of $P$ started at $\ell_0$
-for $d + 1$ steps from the configuration in state $\mathsf{print}_{\rightarrow}(r, \ell)$ with
-input head $p$, tapes $(T_i)$, heads $(h_i)$ except that head $r$ is on cell $m - d$, and output
-$w$, reaches the configuration in state $\mathsf{main}(\ell)$ with input head $p$, tapes
-$(T_i)$, heads $(h_i)$ except that head $r$ is on cell $m$, and output $w$.
+Let $R$ be a number of registers, let $P$ be a counter program with finite label set
+$\Lambda$ and start label $\ell_0$, and fix an input bit string $x$. For a register $r$,
+label $\ell$, input-head position $p$, work tapes $T_i$, work-head positions $h_i$,
+output string $w$, and $m\in\mathbb N$, suppose $T_r$ is the unary tape of $m$. For
+every $d\le m$, starting in state $\mathsf{print}_{\rightarrow}(r,\ell)$ with input-head
+position $p$, tapes $T_i$, output $w$, and register-$r$ work-head at $m-d$ (all other
+work-head positions as in $h_i$), the machine of $P$ started at $\ell_0$ reaches after
+$d+1$ steps the configuration in state $\mathsf{main}(\ell)$ with the same input-head
+position, tapes, and output, and register-$r$ work-head at $m$ (all other work-head
+positions unchanged).
 \end{theorem}
 
-\begin{theorem}[Updating one unary register tape]
+\begin{theorem}[Updating a unary tape vector]
 \lean{Complexity.CounterProg.tapes_update}
 \label{Complexity.CounterProg.tapes_update}
 \leanok
 \uses{Turing.UnaryTape.ones}
 \difficulty{4}
-For $v \in \mathbb{N}$ let $1^v$ be the unary tape whose cells $0, \dots, v-1$ hold $1$ and whose
-other cells are blank. Let $\rho : \{0, \dots, R-1\} \to \mathbb{N}$, let $t$ be an index and
-$m \in \mathbb{N}$, and let $\rho'$ agree with $\rho$ except that $\rho'(t) = m$. Then replacing
-the $t$-th entry of the tape vector $(1^{\rho(r)})_r$ by $1^m$ gives the tape vector
-$(1^{\rho'(r)})_r$.
+Let $R$ be a number of registers, let $\rho : \{0,\ldots,R-1\} \to \mathbb{N}$ be a
+register assignment, let $t$ be a register, and let $m \in \mathbb{N}$. Replacing tape
+$t$ in the vector of unary tapes encoding $\rho$ by the unary tape encoding $m$ gives
+the vector of unary tapes encoding the assignment obtained by replacing $\rho(t)$ by
+$m$.
 \end{theorem}
 
-\begin{theorem}[Updating one head position]
+\begin{theorem}[Casting an updated register assignment]
 \lean{Complexity.CounterProg.heads_update}
 \label{Complexity.CounterProg.heads_update}
 \leanok
 \difficulty{4}
-Let $\rho : \{0, \dots, R-1\} \to \mathbb{N}$, let $t$ be an index and $m \in \mathbb{N}$, and let
-$\rho'$ agree with $\rho$ except that $\rho'(t) = m$. Then replacing the $t$-th entry of the
-integer vector $(\rho(r))_r$ by $m$ gives the integer vector $(\rho'(r))_r$.
+Let $rho:mathrm{Fin}(R)\tomathbb{N}$ be a register assignment, let $t$ be a register
+index, and let $m\inmathbb{N}$. Casting each value to an integer after replacing
+$rho(t)$ by $m$ gives the same function as first casting all values of $rho$ to
+integers and then replacing the value at $t$ by $m$.
 \end{theorem}
 
-\begin{theorem}[Input head position of an encoded state]
+\begin{theorem}[Encoded input-head position]
 \lean{Complexity.CounterProg.enc_inputPos}
 \label{Complexity.CounterProg.enc_inputPos}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.enc}
 \difficulty{2}
-Let $x$ be an input bit string of length $n$ and $s$ an abstract state of a counter program over
-$R$ registers whose read position $p$ satisfies $p \le n$. Then in the machine configuration
-encoding $s$ on input $x$, the input head is at position $p + 1$.
+Let $R$ be a number of registers, let $\Lambda$ be a label set, let $P$ be a counter
+program, let $x$ be an input bit string, and let $s$ be an abstract program state with
+read position $p$. If $p\le |x|$, then the input-head position in the machine
+configuration encoding $s$ is $p+1$.
 \end{theorem}
 
-\begin{theorem}[Input symbol read in an encoded state]
+\begin{theorem}[Input symbol in an encoded state]
 \lean{Complexity.CounterProg.enc_inputSymbol}
 \label{Complexity.CounterProg.enc_inputSymbol}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.enc, Complexity.CounterProg.enc_inputPos, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at}
 \difficulty{1}
-Let $x$ be an input bit string of length $n$ and $s$ an abstract state of a counter program over
-$R$ registers whose read position $p$ satisfies $p \le n$. Then the symbol under the input head
-in the machine configuration encoding $s$ on input $x$ is the bit $x_p$ (indexing from $0$) when
-$p < n$, and no symbol (a blank) when $p = n$.
+Let $R$ be a number of registers, let $\Lambda$ be a label set, let $P$ be a counter
+program, let $x$ be an input bit string, and let $s$ be an abstract program state with
+read position $p$. If $p\le |x|$, then the symbol under the input head in the machine
+configuration encoding $s$ is the possibly absent bit $x[p]$ (with zero-based indexing).
 \end{theorem}
 
-\begin{theorem}[One abstract step costs at most $2B+3$ machine steps]
+\begin{theorem}[Simulation of one counter-program step]
 \lean{Complexity.CounterProg.sim_step}
 \label{Complexity.CounterProg.sim_step}
 \leanok
 \uses{Complexity.CounterProg.St, Complexity.CounterProg.TSt, Complexity.CounterProg.act, Complexity.CounterProg.apply_act, Complexity.CounterProg.apply_ctl, Complexity.CounterProg.back_walk, Complexity.CounterProg.enc, Complexity.CounterProg.enc_inputSymbol, Complexity.CounterProg.heads_update, Complexity.CounterProg.print_walk, Complexity.CounterProg.step, Complexity.CounterProg.step_some, Complexity.CounterProg.tapes_update, Complexity.CounterProg.toTM, Complexity.CounterProg.tr, Turing.Action.apply, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.UnaryTape.ones, Turing.UnaryTape.ones_lt, Turing.UnaryTape.ones_neg, Turing.UnaryTape.update_ones_pred, Turing.UnaryTape.update_ones_succ, Turing.UnaryTape.wrT, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
 \difficulty{6}
-Let $\Lambda$ be a finite set of labels, $P$ a counter program over $R$ registers with labels in
-$\Lambda$, $\ell_0 \in \Lambda$, $x$ an input bit string, and $B \in \mathbb{N}$. Let $s$ be an
-abstract state that is running at some label $\ell \in \Lambda$, whose read position is at most
-$|x|$, and all of whose registers are at most $B$. Then there is $t \le 2B + 3$ such that running
-the Turing machine of $P$ started at $\ell_0$ for $t$ steps from the configuration encoding $s$
-on input $x$ yields the configuration encoding the state reached from $s$ by one step of $P$ on
-$x$. Here a state with registers $\rho$, read position $p$ and output $w$ is encoded by the
-configuration in control state $\mathsf{main}(\ell)$ (or halted if the state is halted) whose
-input head is at position $\min(p + 1, |x| + 1)$, whose work tape $r$ holds $1$ exactly on cells
-$0, \dots, \rho(r) - 1$ with its head on cell $\rho(r)$, and whose output is $w$.
+Let $R\in\mathbb{N}$, let $\Lambda$ be a finite set of labels, let $P$ be a counter
+program over $R$ registers with labels in $\Lambda$, choose a start label
+$\ell_0\in\Lambda$, and let $x$ be an input bit string. Suppose an abstract state $s$
+has current label $\ell\in\Lambda$, read position at most $|x|$, and every register
+value at most $B$, where $B\in\mathbb{N}$. Then there exists $t\le 2B+3$ such that the
+compiled machine started at $\ell_0$, run on input $x$ from the encoding of $s$, reaches
+the encoding of the state obtained from $s$ by one step of $P$ on $x$.
 \end{theorem}

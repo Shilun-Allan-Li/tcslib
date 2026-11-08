@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.codeErase_bind",
+ "key": "328c429cf528d9df",
+ "kind": "lemma",
+ "title": "Bind commutes with suffix erasure",
+ "statement": "For any types $A$ and $B$, any optional result that either fails or contains a value in $A$ paired with a bit-string suffix, and any partial continuation from suffixes to optional values in $B$, binding through the continuation applied to the suffix equals first discarding the value and then binding through the continuation.",
+ "hypotheses_covered": [
+  "$A$ and $B$ are types",
+  "$r$ is an optional value in $A$ paired with a bit-string suffix",
+  "$f$ maps bit-string suffixes to optional values in $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For an optional parse result $r$ --- either failure or a pair of a value and a\nsuffix --- and a partial continuation $f$ on suffixes: binding $r$ through the\nfunction applying $f$ to the suffix component equals first discarding the value\ncomponent of $r$ and then binding through $f$."
+}

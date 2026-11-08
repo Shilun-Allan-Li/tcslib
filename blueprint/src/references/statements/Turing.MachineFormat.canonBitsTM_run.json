@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MachineFormat.canonBitsTM_run",
+ "key": "5f88f0b787f8b809",
+ "kind": "lemma",
+ "title": "Run of the canonical-bit scan machine",
+ "statement": "Let $k\\in\\mathbb{N}$, let $i<k$ be a work-tape index, let $\\alpha$ be a Boolean input word, and let $w$ assign a Boolean word to each of the $k$ work tapes. Starting from the configuration with state $(\\mathrm{fwd},\\mathrm{true})$, input head at position $1$, those tape contents, all work-tape heads at position $0$, and empty output, the canonical-bit scan machine reaches after exactly $2|w_i|+2$ steps the configuration with state $(\\mathrm{done},c)$, the same tape contents and otherwise the standard initial configuration data, where $c$ is true precisely when the last symbol of $w_i$ (or true if $w_i$ is empty) is true. At every earlier time $t<2|w_i|+2$, its state is not $(\\mathrm{done},b)$ for any Boolean value $b$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$i$ is a work-tape index with $i<k$",
+  "$\\alpha$ is a Boolean input word",
+  "$w$ assigns a Boolean word to each of the $k$ work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

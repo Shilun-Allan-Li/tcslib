@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.mult_columns_correct",
+ "key": "c83b3ea21454d99f",
+ "kind": "lemma",
+ "title": "Correctness of binary multiplication columns",
+ "statement": "Let $a,b,c$ be finite bit strings with $|c|\\le |a|+|b|$. Define the column sum $C_j(a,b)=\\sum_{p=0}^{|a|-1}[p\\le j]a_p b_{j-p}$ and carries by $K_0=0$ and $K_{j+1}=\\lfloor(K_j+C_j(a,b))/2\\rfloor$, taking out-of-range bits to be zero. Then $V(c)=V(a)V(b)$ if and only if $K_{|a|+|b|}=0$ and, for every $j<|a|+|b|$, the $j$th bit of $c$ equals $(K_j+C_j(a,b))$ modulo $2$.",
+ "hypotheses_covered": [
+  "$a,b,c$ are finite bit strings",
+  "$|c|\\le |a|+|b|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

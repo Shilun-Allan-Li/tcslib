@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Decider_accept",
+ "key": "0af5e9b8afc8fc97",
+ "kind": "lemma",
+ "title": "Acceptance from the emitted verdict",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $V$ be a language of Boolean words, and let $y$ be a Boolean word. Suppose $M$ halts within $T$ steps on $y$ and outputs the Boolean indicator of membership in $V$. Then every step before time $T$ emits either no bit or the bit true if and only if $y\\in V$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$V$ is a language of Boolean words",
+  "$y$ is a Boolean word",
+  "$M$ computes the membership indicator of $y$ within $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine compute, on input $y$ within time $T$, the single indicator bit of membership of $y$ in a language $V$. Then no snapshot before time $T$ emits the bit false exactly when $y \\in V$; silent or junk traces cannot satisfy this equivalence, because the total decider supplies its actual verdict bit."
+}

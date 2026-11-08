@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.pairCount_computes",
+ "key": "6ce2162808612e8a",
+ "kind": "lemma",
+ "title": "Time bound for the captured-length checker",
+ "statement": "Let $M$ be a finite Turing machine over $\\\\{0,1\\\\}$, let $g$ be a function from finite bit strings to finite bit strings, and let $T$ be a time bound such that $M$ computes $g(x)$ within $T(|x|)$ steps for every input $x$. Then the captured-length checker built over $M$ computes, within $T(|x|)+2|x|+5$ steps on every input $x$, the one-bit function that outputs $1$ exactly when $x$ decodes as a pair $(a,b)$ and $|b|\\\\le |g(x)|$, and outputs $0$ otherwise.",
+ "hypotheses_covered": [
+  "$M$ computes $g$ in time $T$ on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ compute the total function $g$ within time $T$. Then the length\nchecker built over $M$ computes, within $T(n) + 2n + 5$ steps on inputs of\nlength $n$, the one-bit function that on input $x$ outputs whether\n$\\abs{b} \\le \\abs{g(x)}$ when $x$ decodes under the self-delimiting pair code\nas $(a,b)$, and outputs $0$ when $x$ is malformed."
+}

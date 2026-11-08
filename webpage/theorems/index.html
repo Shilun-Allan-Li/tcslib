@@ -524,6 +524,8 @@
 // (the website deployment), then uncompressed copies for local serving from the
 // repo root or dataset/ dir. Browsers without DecompressionStream skip the .gz.
 const DATA_URLS = [
+  "tcslib_theorems.manifest.json",
+  "../../dataset/tcslib_theorems.manifest.json",
   "tcslib_theorems.jsonl.gz",
   "../../dataset/tcslib_theorems.jsonl.gz",
   "tcslib_theorems.jsonl",
@@ -578,7 +580,28 @@ async function loadFromUrl(urls) {
     const stream = new Blob([buf]).stream().pipeThrough(new DecompressionStream("gzip"));
     return parseJsonl(await new Response(stream).text());
   }
-  return parseJsonl(new TextDecoder().decode(buf));
+  const text = new TextDecoder().decode(buf);
+  if (res.url.split("?")[0].endsWith(".manifest.json")) {
+    const manifest = JSON.parse(text);
+    if (manifest.format !== "tcslib-jsonl-shards-v1") throw new Error("Unsupported dataset manifest");
+    const items = [];
+    for (const shard of manifest.shards) {
+      const response = await fetch(new URL(shard.path, res.url));
+      if (!response.ok) throw new Error("Missing dataset shard: " + shard.path);
+      const compressed = await response.arrayBuffer();
+      if (compressed.byteLength !== shard.compressed_bytes) throw new Error("Shard size mismatch");
+      const sha = Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", compressed)),
+        x => x.toString(16).padStart(2, "0")).join("");
+      if (sha !== shard.sha256) throw new Error("Shard checksum mismatch");
+      const stream = new Blob([compressed]).stream().pipeThrough(new DecompressionStream("gzip"));
+      const rows = parseJsonl(await new Response(stream).text());
+      if (rows.length !== shard.rows) throw new Error("Shard row count mismatch");
+      for (const row of rows) items.push(row);
+    }
+    if (items.length !== manifest.rows) throw new Error("Dataset row count mismatch");
+    return items;
+  }
+  return parseJsonl(text);
 }
 
 function ingest(items) {

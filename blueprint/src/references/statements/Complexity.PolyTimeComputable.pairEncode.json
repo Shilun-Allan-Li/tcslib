@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.PolyTimeComputable.pairEncode",
+ "key": "9ce5fc1fd57809f6",
+ "kind": "theorem",
+ "title": "Pair encoding preserves polynomial time",
+ "statement": "Let $f,g$ be polynomial-time computable functions from bit strings to bit strings. Then the function mapping $x$ to the pair encoding of $f(x)$ and $g(x)$ is polynomial-time computable, where the pair encoding doubles each bit of its first component, appends the separator $01$, and then appends its second component.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ and $g$ be polynomial-time computable functions on bit strings (each computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the map $x \\mapsto \\langle f(x), g(x)\\rangle$ is polynomial-time computable, where $\\langle a,b\\rangle$ denotes the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$)."
+}

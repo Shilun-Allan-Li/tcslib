@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.foldStartAction_embed",
+ "key": "7bea306bb89d4921",
+ "kind": "lemma",
+ "title": "Start action on embedded symbols",
+ "statement": "For every alphabet $\\Gamma$, state type $S$, number $k$ of work tapes, state $q\\in S$, and possibly absent symbol $x\\in\\operatorname{Option}(\\Gamma)$, the guarded start action on the image of $x$ under the alphabet embedding equals the initialization action toward $q$.",
+ "hypotheses_covered": [
+  "arbitrary alphabet Γ",
+  "arbitrary state type S and q ∈ S",
+  "arbitrary k ∈ ℕ",
+  "possibly absent input symbol"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every base state $q$ and every possibly absent base symbol, the guarded start\naction evaluated at the image of that symbol under the alphabet embedding equals\nthe plain initialization action toward $q$: embedded symbols never trigger the\nhalting guard."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.BinArith.transduce_pairs",
+ "key": "73ddbb3eb0ca1a77",
+ "kind": "theorem",
+ "title": "Transduction of paired bits",
+ "statement": "Let $\\sigma$ be a set, let $\\delta : \\sigma \\times \\{0,1\\} \\times \\{0,1\\} \\to \\sigma$ and $o : \\sigma \\times \\{0,1\\} \\times \\{0,1\\} \\to \\{0,1\\}$, let $s \\in \\sigma$, and let $ps$ be a finite list of bit pairs. A one-pass transducer started in state $(\\bot,s)$, which stores the first bit of each pair and updates its state by $\\delta$ on the second bit while emitting $o$ of the current state and the pair, outputs exactly the serial output obtained by processing the pairs in $ps$ from state $s$. Its input is the word formed by listing each pair's two bits consecutively.",
+ "hypotheses_covered": [
+  "An arbitrary state set $\\sigma$",
+  "A state transition function on a state and two bits",
+  "A Boolean output function on a state and two bits",
+  "An initial state $s \\in \\sigma$",
+  "A finite list of bit pairs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/SpaceAmplifyPolyRun.lean :: Randomized.PolyAmp.ps_runs -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Run-loop probabilistic semantics
+
+**Claim.** For each permitted number of remaining runs and the stated register bounds, the run-loop configuration has probability equal to the fraction of choice words of length $iK$ for which the decision rule holds after adding the accepting length-$K$ blocks to the current count.
+
+**Proof.** Proceed by induction on $i$, the number of runs still to process. When $i=0$, the run loop immediately reaches the final test. The register bounds follow from `mk_le`, and the zero-length probability identity (`runVal_zero`) reduces the claim to the final-test theorem (`ps_fin`). For the successor case, the zero test at the loop label takes its nonzero branch; decrementing $i$ and clearing the current-code register prepare the next run. The initial configuration code is less than $K$ (`cfgCode_lt_codeBound`), so a search through candidate codes finds it. The search is justified by `searchUp_run`, and the initial-configuration oracle answer is characterized by `ampOr_init`. The program then copies the found code into the required register using `ps_cp`. From there the block-processing routine has semantics `ps_steps`: its probability is the mixture of the induction-hypothesis probabilities for an accepting block and a nonaccepting block, weighted by the block's acceptance probability. The initial configuration is reachable (`reach_init`), so this applies to the present run. The resulting mixture is exactly the recurrence for the fraction of choice words (`runVal_succ`), completing the induction.
+
+**Key facts.** `Randomized.PolyAmp.mk_le`, `Complexity.LogProg.PSem.jz_pos`, `Randomized.PolyAmp.runVal_zero`, `Randomized.PolyAmp.ps_fin`, `Complexity.LogProg.PSem.jz_neg`, `Complexity.LogProg.PSem.dec`, `Complexity.LogProg.PSem.clr`, `Randomized.PolyAmp.cfgCode_lt_codeBound`, `Complexity.LogProg.searchUp_run`, `Complexity.LogProg.vword_whole₂`, `Randomized.PolyAmp.ampOr_init`, `Complexity.LogProg.AReach.mono`, `Complexity.LogProg.PSem.of_reach`, `Randomized.PolyAmp.Reg.le_v`, `Randomized.PolyAmp.Reg.u_6`, `Randomized.PolyAmp.Reg.u_8`, `Randomized.PolyAmp.ps_cp`, `Randomized.PolyAmp.ps_steps`, `Randomized.PolyAmp.reach_init`, `Randomized.PolyAmp.runVal_succ`.

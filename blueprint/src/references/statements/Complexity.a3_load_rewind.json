@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.a3_load_rewind",
+ "key": "385da83f3c73ab8c",
+ "kind": "lemma",
+ "title": "Rewinding after loading a word",
+ "statement": "Let $C$ be a finite Turing machine with $k>0$ work tapes, designated states $\\mathrm{entry}$ and $\\mathrm{exit}$, and let $x$ be a Boolean word. For each natural number $j\\leq \\operatorname{length}(x)$, start the wrapper in phase $1$ with its input head at position $j$, tape zero containing $x$ with its head at position $j-1$, all other work tapes blank with their heads at zero, and empty output. After exactly $j+1$ steps, its configuration is in phase $2$, with its input head at position $1$, tape zero containing $x$ with its head at zero, all other work tapes blank with their heads at zero, and empty output.",
+ "hypotheses_covered": [
+  "$C$ is a finite Turing machine",
+  "$C$ has at least one work tape",
+  "entry and exit are states of $C$",
+  "$x$ is a Boolean word",
+  "$j$ is a natural number",
+  "$j\\leq \\operatorname{length}(x)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le |x|$: from the rewind-phase configuration of the decider\nwrapper with the full copy of $x$ on tape zero and both active heads just left\nof cell $j$, exactly $j + 1$ steps reach the dispatch seam --- the dispatch\nstate over $x$ on tape zero with all heads at the origin. This includes the\nempty input."
+}

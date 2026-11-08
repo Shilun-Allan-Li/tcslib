@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.Meyer.NumVal",
+ "key": "f24e03b54b0f4a12",
+ "kind": "def",
+ "title": "Boolean valuation of atoms",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape alphabet, let $\\mathrm{Ans}$ assign a Boolean value to each selector and pair of natural numbers, and let $W,n,t,a,j\\in\\mathbb{N}$ and $xb\\in\\{\\mathrm{false},\\mathrm{true}\\}$. Define the Boolean value of each atom as follows: an answer atom is evaluated by applying $\\mathrm{Ans}$ to its selector with the encoded time and address; the length atom is true; the time and address not-at-their-maximum atoms assert respectively $t+1<2^W$ and $a+1<2^W$; the zero and index atoms assert respectively $a=0$, $j=0$, $j<n$, $j\\le n$, and $j=n+1$; and the input-bit atom has value $xb$.",
+ "hypotheses_covered": [
+  "finite Boolean-tape Turing machine $M$",
+  "answer function on selectors and pairs of natural numbers",
+  "natural numbers $W,n,t,a,j$",
+  "Boolean input $xb$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

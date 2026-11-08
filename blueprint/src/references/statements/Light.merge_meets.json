@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.merge_meets",
+ "key": "dede0dfa11e06553",
+ "kind": "theorem",
+ "title": "Correctness of the merge procedure",
+ "statement": "Let a program $P$ contain the merge procedure at position $p$, and let the machine limits have word bound $W$, memory size $S$, and depth bound $D$. Suppose the input memory $\\mu$ stores lists $l,r$ of integers starting at addresses $a,b$, respectively; both lists and a destination segment of length $|l|+|r|$ fit within memory; the destination segment is disjoint from each input segment; and $S\\le W$. Then, when the procedure is called at depth $d$ with inputs $(a,|l|,b,|r|,\\mathrm{dst})$, it can execute within time $40(|l|+|r|)+12$ and leave a memory $\\mu'$ in which the segment starting at $\\mathrm{dst}$ contains the sorted merge of $l$ and $r$, while every memory location outside that destination segment retains its initial value.",
+ "hypotheses_covered": [
+  "The program has the merge procedure at index $p$",
+  "The machine limits $\\mathrm{lim}$ and depth $d$ are fixed",
+  "$S\\le W$",
+  "The initial memory contains $l$ at $a$ and $r$ at $b$",
+  "$a+|l|\\le S$",
+  "$b+|r|\\le S$",
+  "$\\mathrm{dst}+(|l|+|r|)\\le S$",
+  "The segment at $a$ is disjoint from the destination segment",
+  "The segment at $b$ is disjoint from the destination segment"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

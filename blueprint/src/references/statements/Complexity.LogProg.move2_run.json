@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.move2_run",
+ "key": "0f28be43ec0ad84e",
+ "kind": "theorem",
+ "title": "Bounded run for a register transfer",
+ "statement": "Let $A$ be a register program, let an oracle and input word be fixed, and let $B$ be a natural-number bound. Suppose distinct registers $r,t,t'$ and states $l,l_x,l_1,l_2,l_3$ satisfy: at $l$ the program branches on whether register $r$ is zero, sending the zero case to $l_x$ and the other case to $l_1$; at $l_1$ it decrements $r$ and continues to $l_2$; at $l_2$ it increments $t$ and continues to $l_3$; and at $l_3$ it increments $t'$ and returns to $l$. For every natural number $k$ and register valuation $v$ with $v(r)=k$, all register values at most $B$, and $v(t)+v(r)\\le B$ and $v(t')+v(r)\\le B$, there is a finite run from $(l,v,\\mathrm{none})$ to $(l_x,v',\\mathrm{none})$ in which $r$ is set to $0$, while $t$ and $t'$ are each increased by the initial value $v(r)$ and every other register retains its value. At every configuration before the final one, the active instruction satisfies its applicable side condition (register comparisons use distinct registers, input comparisons use valid encodings, and call arguments are distinct), and every register value is at most $B$.",
+ "hypotheses_covered": [
+  "$r\\ne t$, $r\\ne t'$, and $t\\ne t'$.",
+  "The four specified instructions occur at $l,l_1,l_2,l_3$.",
+  "$k$ is a natural number and $v(r)=k$.",
+  "Every register value under $v$ is at most $B$.",
+  "$v(t)+v(r)\\le B$.",
+  "$v(t')+v(r)\\le B$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

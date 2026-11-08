@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timed_flush",
+ "key": "f60f12d067a0c2ae",
+ "kind": "lemma",
+ "title": "Flushing buffered output after halting",
+ "statement": "Let $x$ be a finite Boolean word, and let $c$ be a four-tape interpreter configuration on input $x$ with no active state. For any Boolean clock word $b$, after $2|c.\text{output}|+3$ steps of the timed interpreter from the six-tape lift of $c$ with clock word $b$, the machine has no active state and its real output is the one-bit word $1$ followed by $c.\text{output}$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "four-tape Boolean interpreter configuration $c$ on input $x$",
+  "Boolean clock word $b$",
+  "$c$ has no active state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the six-tape lift of a halted four-tape configuration whose buffered\noutput is a word $w$, exactly $2|w| + 3$ steps of the timed interpreter halt\nthe machine with real output the success tag $1$ followed by exactly $w$."
+}

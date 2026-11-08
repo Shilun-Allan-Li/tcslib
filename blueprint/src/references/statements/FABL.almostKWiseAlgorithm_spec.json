@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.almostKWiseAlgorithm_spec",
+ "key": "91f073206066b634",
+ "kind": "theorem",
+ "title": "Guarantees of the almost-wise independent construction",
+ "statement": "Let $k,n,a,b$ be natural numbers with $1\\le k\\le n$, $a>0$, and $2a\\le b$. Set $d=\\max(1,\\lceil\\log_2 n\\rceil)$, $r=\\lceil b/a\\rceil$, $s=k(d+1)$, $q=sr$, and $t=\\lceil nb/a\\rceil$, where the ceilings of rational quantities are rounded up to natural numbers. For the construction with these parameters, let $L$ be its output list, let $M$ be the cardinality of its output multiset, let $W$ be its construction work, and let $B=2d$ be its random-bit count. Then $0<a/b\\le 1/2$, $|L|=M=2^B$, $M\\le16(s/(a/b))^2$, and $M\\le4q^2$. As $s/(a/b)$ tends to infinity along such inputs, $M=O((s/(a/b))^2)$; as $q$ tends to infinity, $M=O(q^2)$. The construction's probability density, transferred to the sign cube, has every nonempty Fourier coefficient on at most $k$ coordinates bounded in absolute value by $a/b$. Also, $B\\le2(\\lceil\\log_2 k\\rceil+\\lceil\\log_2(d+1)\\rceil+\\lceil\\log_2 r\\rceil)$, and $B$ is $O(\\lceil\\log_2 k\\rceil+\\lceil\\log_2(d+1)\\rceil+\\lceil\\log_2 r\\rceil)$ as that quantity tends to infinity. The work is the sum of the Vandermonde construction work and the small-bias construction work, plus $2^B$ times the matrix-vector multiplication work per output; it is at most $2^{38}(t+1)^{16}$ and is $O((t+1)^{16})$ as $t$ tends to infinity.",
+ "hypotheses_covered": [
+  "$1\\le k$",
+  "$k\\le n$",
+  "$a>0$",
+  "$2a\\le b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

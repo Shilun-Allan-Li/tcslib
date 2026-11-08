@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Emod.sign_ends",
+ "key": "e37e627708f65117",
+ "kind": "theorem",
+ "title": "Bounded execution of the signed remainder step",
+ "statement": "Let the machine limits be given, along with a program, a call depth, and natural numbers $M,V,fr,a$. Suppose $1\\le M$, the space limit is at most the word limit, $4V+4M+16$ is at most the word limit, $fr+\\bigl(\\lfloor\\log_2(V+1)\\rfloor+2\\bigr)$ is at most the space limit, and $a=|x|$ for an integer $x$. From a state whose locals are initialized by the frame $[x,M,fr,a\\bmod M,0,t]$ and whose memory is any function $\\mu'$, the signed remainder program has an execution of cost at most $12$ ending in a state whose local at position $0$ is the integer remainder of $x$ modulo $M$ and whose memory remains $\\mu'$.",
+ "hypotheses_covered": [
+  "$1\\le M$",
+  "space limit is at most word limit",
+  "$4V+4M+16$ is at most word limit",
+  "$fr+ (\\lfloor\\log_2(V+1)\\rfloor+2)$ is at most space limit",
+  "$a=|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

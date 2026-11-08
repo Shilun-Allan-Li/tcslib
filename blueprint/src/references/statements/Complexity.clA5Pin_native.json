@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5Pin_native",
+ "key": "1b04738f7cf039ef",
+ "kind": "lemma",
+ "title": "Polynomial-time variable-pinning clause",
+ "statement": "Let $f$ be a polynomial-time computable function from bit strings to bit strings, and let $i$ be a polynomial-time computable function from bit strings to natural numbers. Then the function mapping $z$ to the serialized clause group consisting of the unit clause that pins variable $i(z)$ to the bit of $f(z)$ at that index, using false when the index is out of range, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$i$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a word producer and a unary index producer are polynomial-time computable, then the serialized fragment of the unit clause pinning variable $i$ to the word's bit at $i$, with the false default out of range, is polynomial-time computable."
+}

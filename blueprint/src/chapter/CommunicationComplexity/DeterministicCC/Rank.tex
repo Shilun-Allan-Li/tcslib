@@ -48,6 +48,7 @@ is defined by $(M_R)_{x,y} = 1$ if $(x,y) \in R$ and $(M_R)_{x,y} = 0$ otherwise
 \proofsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p003-b008}
 \label{CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Rank.rectMatrix, CommunicationComplexity.Rectangle.IsRectangle}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -263,7 +264,6 @@ is defined by $(M_R)_{x,y} = 1$ if $(x,y) \in R$ and $(M_R)_{x,y} = 0$ otherwise
   {context}
   {raoyehudayoff-ch02-rank}
   {pdf-d59395db8359-p003-b008}
-\uses{CommunicationComplexity.Deterministic.Rank.rectMatrix, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
 Let $X$ be any set and $Y$ a finite set, and let $R \subseteq X \times Y$ be a
 rectangle, meaning $R = A \times B$ for some $A \subseteq X$ and $B \subseteq Y$. Let
@@ -306,6 +306,7 @@ Then the rank of their sum is at most the sum of their ranks:
 }
 \label{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix, CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one, CommunicationComplexity.Deterministic.Rank.rectMatrix, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.monoPartition_part_unique, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq, Matrix.rank_sum_le}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -568,7 +569,6 @@ Then the rank of their sum is at most the sum of their ranks:
   {raoyehudayoff-ch02-rank}
   {pdf-d59395db8359-p002-b001,
     pdf-d59395db8359-p003-b008}
-\uses{CommunicationComplexity.Deterministic.Rank.boolFunctionMatrix, CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.rank_rectMatrix_le_one, CommunicationComplexity.Deterministic.Rank.rectMatrix, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.monoPartition_part_unique, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq, Matrix.rank_sum_le}
 \difficulty{6}
 Let $X$ be a finite set, $Y$ a finite set, and $f : X \to Y \to \mathrm{Bool}$ a Boolean
 function. If $\mathcal{P}$ is a monochromatic rectangle partition of $X \times Y$ for
@@ -583,6 +583,7 @@ $f$, then the rank of $f$ is at most the number of members of $\mathcal{P}$:
 \proofsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p003-b009}
 \label{CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -943,7 +944,6 @@ $f$, then the rank of $f$ is at most the number of members of $\mathcal{P}$:
   {raoyehudayoff-ch02-rank}
   {pdf-d59395db8359-p003-b007,
     pdf-d59395db8359-p003-b008}
-\uses{CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_ncard, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
 \difficulty{2}
 Let $X$ and $Y$ be finite types and let $f : X \to Y \to \mathrm{Bool}$ be a two-party
 Boolean function, whose rank $\mathrm{rank}(f)$ is the $\bbr$-rank of the $0/1$ matrix
@@ -957,6 +957,7 @@ some $n \in \bbn$, then $\mathrm{rank}(f) \le 2^n$.
 \proofsource{raoyehudayoff-ch02-rank}{pdf-d59395db8359-p003-b009}
 \label{CommunicationComplexity.Deterministic.Rank.clog_boolFunctionRank_le_communicationComplexity}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le, CommunicationComplexity.Deterministic.communicationComplexity}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -1327,7 +1328,6 @@ some $n \in \bbn$, then $\mathrm{rank}(f) \le 2^n$.
   {raoyehudayoff-ch02-rank}
   {pdf-d59395db8359-p003-b007,
     pdf-d59395db8359-p003-b009}
-\uses{CommunicationComplexity.Deterministic.Rank.boolFunctionRank, CommunicationComplexity.Deterministic.Rank.boolFunctionRank_le_pow_of_communicationComplexity_le, CommunicationComplexity.Deterministic.communicationComplexity}
 \difficulty{3}
 Let $X$ be a finite type and $Y$ a finite type, and let $f : X \to Y \to \mathrm{Bool}$
 be a Boolean function with associated $0/1$ matrix $M_f \in \bbr^{X \times Y}$, whose

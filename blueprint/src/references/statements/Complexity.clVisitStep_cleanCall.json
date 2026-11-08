@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clVisitStep_cleanCall",
+ "key": "fe7e03cf180f8895",
+ "kind": "lemma",
+ "title": "Polynomial-time clean implementation",
+ "statement": "For every finite-state binary Turing machine $M$ and natural numbers $C,e$, there are a finite-state binary Turing machine $W$ with at least one work tape, entry and exit states of $W$, and natural numbers $a,d$, such that for every Boolean input word $x$ and argument word $u$, some time $t$ satisfies $0<t\\le a(|u|+1)^d$. Starting from the configuration on input $x$ with $W$ in its entry state and with $u$ on the first work tape and all other work tapes blank, the run has not reached the exit state at any intermediate time $j$ with $0<j<t$, and at time $t$ it is exactly the configuration with $W$ in its exit state and the first tape holding the producer-step result on $u$, all other work tapes blank, and the same input-head position and empty output.",
+ "hypotheses_covered": [
+  "Finite-state binary Turing machine M",
+  "Natural numbers C and e",
+  "A finite-state binary machine W with at least one work tape exists",
+  "Entry and exit states of W exist",
+  "Natural numbers a and d exist",
+  "Boolean input word x",
+  "Argument word u",
+  "There exists t with 0 < t ≤ a(|u|+1)^d",
+  "No intermediate time j with 0 < j < t has state equal to the exit state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine and parameters $C$ and $e$, there are a machine, entry and exit controls, and constants such that each producer step has a clean reusable native call: a strictly positive first exit within a polynomial of the argument length, returning exactly the stepped state word with all scratch restored. The variable number of such calls is not yet assembled here."
+}

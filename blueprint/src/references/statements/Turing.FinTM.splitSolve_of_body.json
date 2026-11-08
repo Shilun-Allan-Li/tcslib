@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.splitSolve_of_body",
+ "key": "40e9b63bd5e4f4ef",
+ "kind": "lemma",
+ "title": "Split solver from a round contract",
+ "statement": "Let $C,e,A$ be natural numbers, let $B$ be a finite Turing machine over the Boolean alphabet, and let $a$ be one of its states. Suppose that on every Boolean word $w$, the computation of $B$ from its initial configuration reaches, within $A(|w|+1)^{e+1}$ steps, the configuration with state $a$ and empty candidate on the first work tape, with all other work tapes blank, and with no earlier visit to state $a$. Suppose also that for every pair of Boolean words $w,s$ with $|s|\\le |w|+1$, there is a positive number of steps $t\\le A(|w|+1)^{e+1}$ such that, starting from state $a$ with candidate $s$ on the first work tape and the other work tapes blank, the computation has no visit to state $a$ at any strictly intermediate positive time. At time $t$, if $|s|+C(|s|+1)^e=|w|$, it is halted with output encoding the pair consisting of the prefix of $w$ of length $|s|$ and the remaining suffix; otherwise it has returned to state $a$ with candidate $s$ followed by one $1$ bit on the first work tape and all other work tapes blank. Then some finite Turing machine computes, on every Boolean word $w$, the encoded pair of the prefix and suffix at the least $i\\in\\{0,\\ldots,|w|\\}$ satisfying $i+C(i+1)^e=|w|$, or the empty word if no such $i$ exists, in at most $c(|w|+1)^{e+2}$ steps for some natural number $c$.",
+ "hypotheses_covered": [
+  "$C,e,A$ are natural numbers",
+  "$B$ is a finite Turing machine over the Boolean alphabet",
+  "$a$ is a state of $B$",
+  "For every Boolean word $w$, the initial computation reaches the anchored empty-candidate configuration within $A(|w|+1)^{e+1}$ steps",
+  "No earlier time in the startup computation visits state $a",
+  "For all Boolean words $w,s$ with $|s|\\le |w|+1$, a round takes a positive $t\\le A(|w|+1)^{e+1}$ steps",
+  "No strictly intermediate positive round time visits state $a",
+  "If the length equation holds, the round halts with the specified encoded prefix and suffix",
+  "If the length equation fails, the round returns to the anchored configuration with the stepped candidate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a body machine with a distinguished anchor state satisfy a startup\ncontract (within $A(n+1)^{e+1}$ steps it reaches the anchored empty-candidate\nconfiguration without an earlier anchor visit) and a round contract (from the\nanchored configuration carrying any candidate of length at most $n+1$, within\n$A(n+1)^{e+1}$ steps and with no interior anchor visit, it either halts with\nthe encoded split when the candidate satisfies the length equation, or\nreturns to the anchor with the stepped candidate). Then there exist a machine\n$M$ and a constant $c$ computing, within $c\\,(n+1)^{e+2}$ steps, the function\nthat sends $w$ to the pair encoding of the split of $w$ at the least $i$ with\n$i + C\\,(i+1)^{e} = \\abs{w}$, and to the empty word when no such $i$ exists."
+}

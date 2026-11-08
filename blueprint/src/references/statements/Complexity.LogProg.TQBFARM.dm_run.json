@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.dm_run",
+ "key": "84c40b021ce6aa55",
+ "kind": "theorem",
+ "title": "Doubling a register into scratch space",
+ "statement": "Let $x$ be a finite Boolean word, $B$ a natural number, $b$ a Boolean value, and $st$ a machine state whose seven register values are all at most $B$. If $st.T+2st.S\\le B$, then the machine reaches label $\\mathrm{mv}(b,0)$ from label $\\mathrm{dm}(b,0)$ with state obtained by setting $S$ to zero and replacing $T$ by its initial value plus twice the initial value of $S$, leaving the other state coordinates unchanged. Every configuration before the endpoint satisfies the machine's validity conditions and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$B$ is a natural number",
+  "$b$ is a Boolean value",
+  "$st$ is a machine state",
+  "Every register of $st$ is at most $B$",
+  "$st.T+2st.S\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any input bit string $x$, bound $B$, Boolean parameter $b$, and register state\n$\\mathrm{st}$ whose seven register values are all at most $B$, if $T+2S\\le B$, the\nmachine can reach the state with instruction $\\mathrm{mv}(b,0)$ and registers $S=0$ and\n$T=T_{\\mathrm{old}}+2S_{\\mathrm{old}}$, leaving the other registers unchanged. Every\nconfiguration before the final step satisfies the machine's preconditions and has every\nregister at most $B$."
+}

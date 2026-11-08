@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.ImplicitEnum.run",
+ "key": "bc4081c4e82324af",
+ "kind": "lemma",
+ "title": "Correctness of the enumerator run",
+ "statement": "Let $f$ map Boolean words to Boolean words, and let $o_0,o_1$ be Boolean-valued oracles such that, for every Boolean word $x$ and natural number $j$, $o_0(\\langle x,\\operatorname{bits}(j)\\rangle)$ is true exactly when $j<|f(x)|$, and $o_1(\\langle x,\\operatorname{bits}(j)\\rangle)$ equals the $j$-th bit of $f(x)$, defaulting to false when absent. If $|f(x)|\\le F$ and $|\\operatorname{bits}(j+1)|\\le W$ for every $j<|f(x)|$, then the enumerator, started in its initial configuration on $x$, reaches after some finite number $N$ of steps a halted configuration whose output is $f(x)$ and whose work-tape head is at position zero. Every configuration at a time strictly less than $N$ has shape bounded by $F$ and $W$.",
+ "hypotheses_covered": [
+  "The length oracle correctly tests whether an index is below the output length",
+  "The bit oracle returns the output bit, defaulting to false when absent",
+  "The output length is at most $F$",
+  "For every index below the output length, the bit length of its successor is at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

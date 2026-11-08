@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.rotated_gaussianCDF_quotient_tendsto",
+ "key": "b4128396a2163582",
+ "kind": "lemma",
+ "title": "Limit of the Gaussian CDF rotation quotient",
+ "statement": "For all real $t$ and $y$, as $\\theta$ tends to zero through positive values, $$\\frac{\\left|\\Phi\\left(\\frac{t-\\sin(\\theta)y}{\\cos(\\theta)}\\right)-\\Phi(t)\\right|}{\\theta}\\longrightarrow \\varphi(t)|y|,$$ where $\\Phi$ and $\\varphi$ are the standard Gaussian distribution function and density.",
+ "hypotheses_covered": [
+  "$t$ is real",
+  "$y$ is real",
+  "The limit is taken as $\\theta\\to0^+$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ denote the standard Gaussian distribution function and density. For $t,y\\in\\mathbb R$, define $q_{t,y}(\\theta)=\\Phi((t-\\sin\\theta\\,y)/\\cos\\theta)-\\Phi(t)$. For every $t,y$, $|q_{t,y}(\\theta)|/\\theta\\to\\varphi(t)|y|$ as $\\theta\\to0^+$."
+}

@@ -1,0 +1,32 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.loop_run",
+ "key": "81d67ef799d2d4db",
+ "kind": "theorem",
+ "title": "Correctness of the counting loop",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input, let $L$ be a language of Boolean strings, and let $sp:\\mathbb{N}\\to\\mathbb{N}$ be such that $N$ decides $L$ using space at most $sp(|x|)$. For a Boolean string $x$, let $E,B\\in\\mathbb{N}$ satisfy $\\mathrm{codeK}(N)\\le E$, $1\\le E$, and $2^{2E\\,\\mathrm{lgv}(|x|)+2E(sp(|x|)+1)}+1\\le B$. Suppose $d,s\\in\\mathbb{N}$ satisfy $sp(|x|)+1-s=d$ and $s\\le sp(|x|)+1$, and let $\\sigma$ be a counting state whose radius is $s$, whose halving count is $\\mathrm{lgv}(|x|)$, whose exponent is zero, whose registers $g,cur,stp,u,cnt$ are zero, and whose registers are all at most $B$. Assume either $s=0$ and $\\sigma.n=0$, or $1\\le s$ and $\\sigma.n$ is the number of codes below $2^{\\mathrm{codeK}(N)(s+\\mathrm{logSpace}(|x|)+1)}$ reachable from the initial configuration code by zero or more valid steps within the space window of radius $s-1$. Then, from the round state with false phase and $E$ rounds remaining, the counting program terminates on every computation branch, keeps every register at most $B$ whenever it is live, and has an accepting branch if and only if $x\\notin L$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean input that decides $L$ within space bound $sp$",
+  "$L$ is a language of Boolean strings",
+  "$sp:\\mathbb{N}\\to\\mathbb{N}$",
+  "$x$ is a Boolean string",
+  "$E,B\\in\\mathbb{N}$",
+  "$\\mathrm{codeK}(N)\\le E$",
+  "$1\\le E$",
+  "$2^{2E\\,\\mathrm{lgv}(|x|)+2E(sp(|x|)+1)}+1\\le B$",
+  "$d,s\\in\\mathbb{N}$ satisfy $sp(|x|)+1-s=d$",
+  "$s\\le sp(|x|)+1$",
+  "$\\sigma.s=s$",
+  "$\\sigma.lg=\\mathrm{lgv}(|x|)$",
+  "$\\sigma.e=0$",
+  "$\\sigma.g=\\sigma.cur=\\sigma.stp=\\sigma.u=\\sigma.cnt=0$",
+  "Every register of $\\sigma$ is at most $B$",
+  "Either $s=0$ and $\\sigma.n=0$, or $1\\le s$ and $\\sigma.n$ counts bounded codes reachable from the initial code by zero or more valid steps in the radius-$s-1$ space window",
+  "The initial program state is the false-phase round state with $E$ rounds remaining"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $N$ be a finite nondeterministic Turing machine, let $L$ be a language of Boolean\nstrings, and let $sp:\\mathbb{N}\\to\\mathbb{N}$ be a space bound such that $N$ decides $L$\nwithin space $sp$. Let $x$ be a Boolean string, and let $E,B\\in\\mathbb{N}$ satisfy\n$\\mathrm{codeK}(N)\\le E$, $1\\le E$, and $2^{2E\\,\\mathrm{lgv}(|x|)+2E(sp(|x|)+1)}+1\\le\nB$. For $d,s\\in\\mathbb{N}$ with $sp(|x|)+1-s=d$ and $s\\le sp(|x|)+1$, suppose a register\nstate $\\sigma$ has radius $s$, its halving register is $\\mathrm{lgv}(|x|)$, its exponent\nregister is zero, its designated registers $g,cur,stp,u,cnt$ are all zero, and every\nregister is at most $B$. Suppose also that either $s=0$ and $\\sigma.n=0$, or $1\\le s$\nand $\\sigma.n$ equals the number of codes in the set of configurations reachable from\nthe initial configuration by exactly $s-1$ steps within the prescribed space window.\nThen the specified nondeterministic register program started at $\\sigma$ in the round\nstate with phase false and $E$ rounds remaining terminates, and accepts exactly when\n$x\\notin L$."
+}

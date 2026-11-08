@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.poly_emit",
+ "key": "875745f003989905",
+ "kind": "lemma",
+ "title": "Emission chain appends its remaining bits",
+ "statement": "Let $c,C,q\\in\\mathbb{N}$, let $x$ be a bit string, let $h:\\{0,\\ldots,c\\}\\to\\mathbb{Z}$ be a head-position function, and let $j\\le C$ and $o$ be an output word. After exactly $j+1$ steps of the unary box-enumeration machine from the configuration on input $x$ in state $\\mathrm{emit}_j$, with tape contents $1^q$ and head positions $h$, the machine is in state $\\mathrm{advance}_0$, with the same tape contents and head positions, and output $o$ followed by $j$ copies of $1$.",
+ "hypotheses_covered": [
+  "$c,C,q$ are natural numbers",
+  "$x$ is a bit string",
+  "$h$ assigns integer head positions to indices $0,\\ldots,c$",
+  "$j\\le C$",
+  "$o$ is an output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c, C, q \\in \\mathbb{N}$, $x$ a bit string and $h \\colon \\{0,\\dots,c\\} \\to \\mathbb{Z}$. For every $j \\le C$ and every output word $o$, running $\\mathcal{P}_{c,C}$ for exactly $j+1$ steps from $\\Gamma_q(\\mathrm{emit}_j, h, o)$ yields $\\Gamma_q(\\mathrm{advance}_0, h, o\\,1^j)$; here $\\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\\mathrm{loop}_i$, $\\mathrm{rewind}_i$, $\\mathrm{advance}_i$, $\\mathrm{emit}_j$ are its control states, and $\\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$."
+}

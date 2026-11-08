@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.ComputesInTime.mono",
+ "key": "36d096e2a195caaa",
+ "kind": "theorem",
+ "title": "Monotonicity of time bounds",
+ "statement": "Let $M$ be a finite Turing machine over an alphabet $\\Sigma$, and let $x,w$ be words over $\\Sigma$. If $M$ computes $w$ from $x$ within $t$ steps and $t \\le t'$, then $M$ computes $w$ from $x$ within $t'$ steps.",
+ "hypotheses_covered": [
+  "finite Turing machine over alphabet $\\Sigma$",
+  "input and output words $x,w$ over $\\Sigma$",
+  "computes $w$ from $x$ within $t$ steps",
+  "$t \\le t'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite Turing machine over an alphabet $\\Sigma$, let $x$ and $w$\nbe words over $\\Sigma$, and let $t \\le t'$ be natural numbers.  If $M$,\nstarted on $x$, halts within $t$ steps with $w$ on its output tape, then it\nalso halts within $t'$ steps with $w$ on its output tape."
+}

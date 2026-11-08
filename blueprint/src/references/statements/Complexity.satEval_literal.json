@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satEval_literal",
+ "key": "38613313113441f9",
+ "kind": "lemma",
+ "title": "Literal evaluation and rewind",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, and let $w$ and $u$ be Boolean words. Fix a saved configuration of $M$ on input $w$, bits $a,c,b\\in\\{0,1\\}$, an index $v\\in\\mathbb{N}$ with $v<|u|$, and Boolean words $\\mathrm{pre}$ and $\\mathrm{rest}$ such that $w$ is the concatenation of $\\mathrm{pre}$, the word obtained by doubling each bit of the encoding $1^{v+1}0b$ of the literal $(v,b)$, and $\\mathrm{rest}$. Starting from the evaluator's canonical configuration at input position $|\\mathrm{pre}|$, with semantic phase $1$, formula bit $a$, clause bit $c$, skip flag cleared, and certificate head at $0$, after $3v+8$ steps it is in the canonical configuration at input position $|\\mathrm{pre}|+2(v+3)$, with phase $1$, formula bit $a$, clause bit $c\\vee(u_v=b)$, skip flag cleared, and certificate head at $0$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$w$ and $u$ are Boolean words",
+  "A saved configuration of $M$ on input $w$",
+  "$a,c,b$ are Boolean bits",
+  "$v\\in\\mathbb{N}$ and $v<|u|$",
+  "$\\mathrm{pre}$ and $\\mathrm{rest}$ are Boolean words",
+  "$w$ is the concatenation of $\\mathrm{pre}$, the doubled encoding of $(v,b)$, and $\\mathrm{rest}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the evaluator's input contains, at the current position, the doubling of a\nserialized literal $(v, b)$ with $v < |u|$ for the certificate $u$. Starting in the\nclause phase with clause bit $c$, exactly $3v + 8$ steps process the literal: the\ninput advances by $2(v + 3)$, the certificate head walks to position $v$, the\npolarity is compared with the $v$-th certificate bit, the clause bit becomes\n$c \\vee (u_v = b)$, and the certificate head returns to $0$."
+}

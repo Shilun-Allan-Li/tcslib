@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Ends.iteThen",
+ "key": "2b3cf0667e2a926c",
+ "kind": "theorem",
+ "title": "Conditional followed by a continuation",
+ "statement": "Fix a program environment, resource limits, and execution depth. Let $c$ be a condition and let $s_1,s_2,s$ be statements. In an initial state $\\sigma$, suppose that when $c$ holds, the sequence of $s_1$ followed by $s$ can execute with cost at most $T-(\\mathrm{cost}(c)+1)$ to a state satisfying $Q$, and that when $c$ does not hold, the corresponding sequence using $s_2$ can do so. If $c$ is safe in $\\sigma$ and $\\mathrm{cost}(c)+1\\le T$, then the conditional with branches $s_1,s_2$, followed by $s$, can execute from $\\sigma$ with cost at most $T$ to a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "If $c$ holds in $\\sigma$, the sequence of $s_1$ followed by $s$ has an execution of cost at most $T-(\\mathrm{cost}(c)+1)$ ending in a state satisfying $Q$",
+  "If $c$ does not hold in $\\sigma$, the sequence of $s_2$ followed by $s$ has an execution of cost at most $T-(\\mathrm{cost}(c)+1)$ ending in a state satisfying $Q$",
+  "The condition $c$ is safe in $\\sigma$",
+  "$\\mathrm{cost}(c)+1\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

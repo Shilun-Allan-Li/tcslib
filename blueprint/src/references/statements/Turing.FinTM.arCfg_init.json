@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.arCfg_init",
+ "key": "aea98acb7f15cf25",
+ "kind": "lemma",
+ "title": "Encoding the initial configuration",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $E$ injectively code optional $\u001b[0m\u001b[0m\\Gamma$ symbols as blocks of $N+1$ optional bits, and suppose the blank symbol is coded as the all-blank block. Let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an embedding, $M$ a finite-state $k$-tape machine over $\\Gamma$, and $x$ a binary input. The initial configuration of the binary block-code simulator on $x$ equals the encoding of the initial configuration of $M$ on the letterwise $e$-image of $x$.",
+ "hypotheses_covered": [
+  "Finite alphabet $\\Gamma$",
+  "Natural number $N$",
+  "Injective code $E$ of optional $\u001b[0m\u001b[0m\\Gamma$ symbols into $(N+1)$-entry optional-bit blocks",
+  "The code $E$ sends blank to the all-blank block",
+  "Bit embedding $e:\\{0,1\\}\\hookrightarrow\\Gamma$",
+  "Finite-state machine $M$ over $\\Gamma$ with $k$ work tapes",
+  "Binary input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the injective block code $E$ sends the blank to the all-blank block. Then for\nevery Turing machine $M$ over a finite alphabet $\\Gamma$, every bit embedding\n$e : \\{0,1\\} \\hookrightarrow \\Gamma$, and every binary string $x$, the initial\nconfiguration of the binary block-code simulator on input $x$ equals the encoded\ninitial configuration of $M$ on the letterwise $e$-image of $x$."
+}

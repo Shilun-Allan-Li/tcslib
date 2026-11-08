@@ -1,0 +1,16 @@
+{
+ "lean_name": "WordRAM.steps_add",
+ "key": "84278b19413ff553",
+ "kind": "theorem",
+ "title": "One-step addition",
+ "statement": "Let $W$ be a word width, $P$ a program, $m$ a memory, and $i,j,k,a,b$ integers. If the program beginning at position $pos$ starts with the instruction that adds the contents of addresses $j$ and $k$ into address $i$, and the words at $j$ and $k$ represent $a$ and $b$, respectively, then one step from $(pos,m)$ reaches program counter $pos+1$ and memory equal to $m$ updated at address $i$ with the word representing $a+b$.",
+ "hypotheses_covered": [
+  "The program at pos begins with add i j k",
+  "m(j) is the W-bit representation of a",
+  "m(k) is the W-bit representation of b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

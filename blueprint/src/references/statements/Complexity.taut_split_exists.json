@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.taut_split_exists",
+ "key": "16eb13a94b1ce11f",
+ "kind": "lemma",
+ "title": "Existence of a split solution",
+ "statement": "If natural numbers $N$ and $i$ satisfy $i+(i+1)=N$, then the bounded search with parameters $C=e=1$ returns $i$ on input $N$.",
+ "hypotheses_covered": [
+  "natural numbers $N$ and $i$",
+  "equation $i+(i+1)=N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If natural numbers $i$ and $N$ satisfy $i + (i + 1) = N$, then the bounded split\nsearch with parameters $(1,1)$, which looks for the least $j \\le N$ with\n$j + (j+1) = N$, succeeds on $N$ and returns exactly $i$."
+}

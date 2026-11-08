@@ -63,13 +63,19 @@ For $c, C \in \mathbb{N}$, $\mathcal{P}_{c,C}$ is the finite binary-alphabet mac
 Let $c, C, q \in \mathbb{N}$ and let $x$ be a bit string. For a control state $s$ of the unary box-enumeration machine $\mathcal{P}_{c,C}$, head positions $h \colon \{0,\dots,c\} \to \mathbb{Z}$ and an output word $o$, the loop configuration $\Gamma_q(s,h,o)$ is the configuration of a $(c+1)$-work-tape machine on input $x$ that is in state $s$, has its input head on the blank cell immediately right of the input, has every work tape holding $1^q$ in cells $0,\dots,q-1$ and blanks elsewhere, has work head $k$ at position $h(k)$, and has output $o$.
 \end{definition}
 
-\begin{lemma}[Head-only actions move one head]
+\begin{lemma}[Effect of a Single-Head Move]
 \lean{Complexity.polyMove_apply}
 \label{Complexity.polyMove_apply}
 \leanok
 \uses{Complexity.PolyControl, Complexity.polyCfg, Complexity.polyMove, Turing.Action.apply, Turing.moveInputPos_zero}
 \difficulty{3}
-Let $c, C, q \in \mathbb{N}$, $x$ a bit string, $s, s'$ control states of the unary box enumerator $\mathcal{P}_{c,C}$, $h \colon \{0,\dots,c\} \to \mathbb{Z}$, $o$ an output word, $i \in \{0,\dots,c\}$ and $d \in \{-1,0,1\}$. Applying the action that moves only work head $i$ by $d$ (writing nothing, emitting nothing, input head fixed) and enters $s'$ to $\Gamma_q(s,h,o)$ gives $\Gamma_q(s', h[i \mapsto h(i)+d], o)$; here $\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$, and $h[i \mapsto v]$ is $h$ with its $i$-th entry replaced by $v$.
+Let $c,C,q\in\mathbb{N}$, let $x$ be a finite bit string, let $s,s'$ be control states,
+let $h:\{0,\ldots,c\}\to\mathbb{Z}$ be a list of work-head positions, and let $o$ be an
+output bit string. For an index $i\in\{0,\ldots,c\}$ and a direction $d\in\{-1,0,1\}$,
+applying the action that moves work head $i$ by $d$ and enters state $s'$ to the
+configuration with state $s$, head positions $h$, and output $o$ yields the
+configuration with state $s'$, output $o$, and head positions obtained by replacing
+$h(i)$ by $h(i)+d$.
 \end{lemma}
 
 \begin{lemma}[Emission chain appends its remaining bits]
@@ -78,7 +84,12 @@ Let $c, C, q \in \mathbb{N}$, $x$ a bit string, $s, s'$ control states of the un
 \leanok
 \uses{Complexity.polyCfg, Complexity.polyUnaryTM, Turing.Action.apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $c, C, q \in \mathbb{N}$, $x$ a bit string and $h \colon \{0,\dots,c\} \to \mathbb{Z}$. For every $j \le C$ and every output word $o$, running $\mathcal{P}_{c,C}$ for exactly $j+1$ steps from $\Gamma_q(\mathrm{emit}_j, h, o)$ yields $\Gamma_q(\mathrm{advance}_0, h, o\,1^j)$; here $\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\mathrm{loop}_i$, $\mathrm{rewind}_i$, $\mathrm{advance}_i$, $\mathrm{emit}_j$ are its control states, and $\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$.
+Let $c,C,q\in\mathbb{N}$, let $x$ be a bit string, let $h:\{0,\ldots,c\}\to\mathbb{Z}$
+be a head-position function, and let $j\le C$ and $o$ be an output word. After exactly
+$j+1$ steps of the unary box-enumeration machine from the configuration on input $x$ in
+state $\mathrm{emit}_j$, with tape contents $1^q$ and head positions $h$, the machine is
+in state $\mathrm{advance}_0$, with the same tape contents and head positions, and
+output $o$ followed by $j$ copies of $1$.
 \end{lemma}
 
 \begin{lemma}[Rewinding a unary loop head]
@@ -87,7 +98,13 @@ Let $c, C, q \in \mathbb{N}$, $x$ a bit string and $h \colon \{0,\dots,c\} \to \
 \leanok
 \uses{Complexity.PolyControl, Complexity.polyCfg, Complexity.polyMove_apply, Complexity.polyTape, Complexity.polyUnaryTM, Turing.Action, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $c, C, q \in \mathbb{N}$, $x$ a bit string, $h \colon \{0,\dots,c\} \to \mathbb{Z}$, $o$ an output word and $i \in \{0,\dots,c\}$. For every $j \le q$, running $\mathcal{P}_{c,C}$ for exactly $j+1$ steps from $\Gamma_q(\mathrm{rewind}_i, h[i \mapsto j-1], o)$ yields $\Gamma_q(\mathrm{advance}_{i+1}, h[i \mapsto 0], o)$; here $\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\mathrm{loop}_i$, $\mathrm{rewind}_i$, $\mathrm{advance}_i$, $\mathrm{emit}_j$ are its control states, $\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$, and $h[i \mapsto v]$ is $h$ with its $i$-th entry replaced by $v$.
+Let $c,C,q\in\mathbb{N}$, let $x$ be a bit string, let $h:\{0,\ldots,c\}\to\mathbb{Z}$
+be a head-position function, let $o$ be an output word, and let $i\in\{0,\ldots,c\}$.
+For every $j\le q$, after exactly $j+1$ steps of the unary box-enumeration machine from
+the configuration on input $x$ in state $\mathrm{rewind}_i$, with tape contents $1^q$
+and head positions equal to $h$ except that head $i$ is at $j-1$, it reaches state
+$\mathrm{advance}_{i+1}$ with head positions equal to $h$ except that head $i$ is at
+$0$, and with output $o$.
 \end{lemma}
 
 \begin{lemma}[Advancing a loop head]
@@ -96,7 +113,12 @@ Let $c, C, q \in \mathbb{N}$, $x$ a bit string, $h \colon \{0,\dots,c\} \to \mat
 \leanok
 \uses{Complexity.polyCfg, Complexity.polyMove_apply, Complexity.polyUnaryTM, Turing.MultiTapeTM.step}
 \difficulty{2}
-Let $c, C, q \in \mathbb{N}$, $x$ a bit string, $h \colon \{0,\dots,c\} \to \mathbb{Z}$, $o$ an output word and $i \in \{0,\dots,c\}$. One step of $\mathcal{P}_{c,C}$ from $\Gamma_q(\mathrm{advance}_i, h, o)$ yields $\Gamma_q(\mathrm{loop}_i, h[i \mapsto h(i)+1], o)$; here $\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\mathrm{loop}_i$, $\mathrm{rewind}_i$, $\mathrm{advance}_i$, $\mathrm{emit}_j$ are its control states, $\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$, and $h[i \mapsto v]$ is $h$ with its $i$-th entry replaced by $v$.
+Let $c,C,q\in\mathbb{N}$, let $x$ be a bit string, let $h:\{0,\ldots,c\}\to\mathbb{Z}$
+be a head-position function, let $o$ be an output word, and let $i\in\{0,\ldots,c\}$.
+One step of the unary box-enumeration machine from the configuration on input $x$ in
+state $\mathrm{advance}_i$, with tape contents $1^q$ and head positions $h$, reaches the
+configuration in state $\mathrm{loop}_i$ with the same tape contents and output, and
+with head positions equal to $h$ except that head $i$ is at $h(i)+1$.
 \end{lemma}
 
 \begin{definition}[Running time of nested unary loops]
@@ -112,25 +134,36 @@ For $q, C \in \mathbb{N}$, the function $\kappa_{q,C} \colon \mathbb{N} \to \mat
 \leanok
 \uses{Complexity.polyCfg, Complexity.polyCost, Complexity.polyMove_apply, Complexity.polyTape, Complexity.polyUnaryTM, Complexity.poly_advance, Complexity.poly_emit, Complexity.poly_rewind, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{6}
-Let $c, C, q \in \mathbb{N}$ with $q > 0$, $x$ a bit string, $i \le c$, $h \colon \{0,\dots,c\} \to \mathbb{Z}$ with $h(k) = 0$ for every $k \le i$, $o$ an output word, and $r, j \in \mathbb{N}$ with $j + r = q$. Then running $\mathcal{P}_{c,C}$ for exactly $r\,(\kappa_{q,C}(i) + 2) + q + 2$ steps from $\Gamma_q(\mathrm{loop}_i, h[i \mapsto j], o)$ yields $\Gamma_q(\mathrm{advance}_{i+1}, h, o\,1^{rCq^i})$, where $\kappa_{q,C}(0) = C+1$ and $\kappa_{q,C}(r'+1) = q(\kappa_{q,C}(r')+2)+q+2$; here $\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\mathrm{loop}_i$, $\mathrm{rewind}_i$, $\mathrm{advance}_i$, $\mathrm{emit}_j$ are its control states, $\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$, and $h[i \mapsto v]$ is $h$ with its $i$-th entry replaced by $v$.
+Let $c,C,q\in\mathbb{N}$ with $q>0$, let $x$ be a bit string, let $i<c+1$, and let
+$h:\{0,\ldots,c\}\to\mathbb{Z}$ satisfy $h(k)=0$ whenever $k\le i$. Let $o$ be an output
+word, and let $r,j\in\mathbb{N}$ satisfy $j+r=q$. After exactly
+$r(\kappa_{q,C}(i)+2)+q+2$ steps of the unary box-enumeration machine from the
+configuration on input $x$ in state $\mathrm{loop}_i$, with tape contents $1^q$, output
+$o$, and head positions equal to $h$ except that head $i$ is at $j$, it reaches state
+$\mathrm{advance}_{i+1}$ with head positions $h$ and output $o$ followed by $rCq^i$
+copies of $1$. Here $\kappa_{q,C}(0)=C+1$ and
+$\kappa_{q,C}(m+1)=q(\kappa_{q,C}(m)+2)+q+2$.
 \end{lemma}
 
-\begin{lemma}[Extending a unary tape by one cell]
+\begin{lemma}[Extending a Unary Tape]
 \lean{Complexity.polyTape_write}
 \label{Complexity.polyTape_write}
 \leanok
 \uses{Complexity.polyTape}
 \difficulty{3}
-For every $q \in \mathbb{N}$, writing the symbol $1$ into cell $q$ of the tape contents $\tau_q$ yields $\tau_{q+1}$, where $\tau_q \colon \mathbb{Z} \to \{0,1,\sqcup\}$ holds $1$ on cells $0,\dots,q-1$ and the blank $\sqcup$ elsewhere.
+For every $q\in\mathbb{N}$, changing the tape contents $\tau_q$ by writing $1$ at cell
+$q$ gives $\tau_{q+1}$.
 \end{lemma}
 
-\begin{lemma}[Nested-loop cost is linear in box size]
+\begin{lemma}[Bound on Nested-Loop Cost]
 \lean{Complexity.polyCost_le}
 \label{Complexity.polyCost_le}
 \leanok
 \uses{Complexity.polyCost}
 \difficulty{4}
-Let $q, C \in \mathbb{N}$ with $q > 0$, and let $\kappa_{q,C} \colon \mathbb{N} \to \mathbb{N}$ be given by $\kappa_{q,C}(0) = C + 1$ and $\kappa_{q,C}(r+1) = q(\kappa_{q,C}(r) + 2) + q + 2$. Then $\kappa_{q,C}(r) \le (C + 1 + 5r)\,q^r$ for every $r \in \mathbb{N}$.
+Let $q,C\in\mathbb{N}$ with $q>0$, and let $\kappa_{q,C}$ be defined by
+$\kappa_{q,C}(0)=C+1$ and $\kappa_{q,C}(r+1)=q(\kappa_{q,C}(r)+2)+q+2$. Then, for every
+$r\in\mathbb{N}$, $\kappa_{q,C}(r)\le (C+1+5r)q^r$.
 \end{lemma}
 
 \begin{definition}[Configurations of the copying phase]
@@ -147,7 +180,11 @@ Let $c, C \in \mathbb{N}$, $x$ a bit string and $i \le |x|$. The copying configu
 \leanok
 \uses{Complexity.polyCopyCfg, Complexity.polyTape, Complexity.polyTape_write, Complexity.polyUnaryTM, Turing.Action.apply, Turing.Cfg.init, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-Let $c, C \in \mathbb{N}$ and let $x$ be a bit string. For every $i \le |x|$, running $\mathcal{P}_{c,C}$ for $i$ steps from its initial configuration on $x$ yields the configuration in the copy state with the input head on input position $i$ (counting from $0$), every work tape holding $1^i$ in cells $0,\dots,i-1$ and blanks elsewhere, every work head at cell $i$, and empty output; here $\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\mathrm{loop}_i$, $\mathrm{rewind}_i$, $\mathrm{advance}_i$, $\mathrm{emit}_j$ are its control states.
+Let $c,C\in\mathbb{N}$ and let $x$ be a bit string. For every $i\le |x|$, after $i$
+steps of the unary box-enumeration machine from its initial configuration on $x$, the
+machine is in the copy state with its input head at position $i$ (counting from $0$),
+each work tape containing $1^i$ in cells $0,\ldots,i-1$ and blanks elsewhere, every work
+head at position $i$, and empty output.
 \end{lemma}
 
 \begin{lemma}[The setup rewind]
@@ -156,7 +193,11 @@ Let $c, C \in \mathbb{N}$ and let $x$ be a bit string. For every $i \le |x|$, ru
 \leanok
 \uses{Complexity.polyCfg, Complexity.polyTape, Complexity.polyUnaryTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $c, C, q \in \mathbb{N}$ and let $x$ be a bit string. For every $j \le q$, running $\mathcal{P}_{c,C}$ for exactly $j+1$ steps from $\Gamma_q(\mathrm{setup}, h, \varepsilon)$, where every work head is at position $h(k) = j-1$, yields $\Gamma_q(\mathrm{loop}_c, h_0, \varepsilon)$, where every work head is at $h_0(k) = 0$; here $\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\mathrm{loop}_i$, $\mathrm{rewind}_i$, $\mathrm{advance}_i$, $\mathrm{emit}_j$ are its control states, setup is its rewinding state, and $\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$.
+Let $c,C,q\in\mathbb{N}$ and let $x$ be a bit string. For every $j\le q$, after exactly
+$j+1$ steps of the unary box-enumeration machine from the configuration on input $x$ in
+the setup state, with every work tape containing $1^q$, every work head at position
+$j-1$, and empty output, it reaches the loop state at level $c$, with every work head at
+position $0$, the same tape contents, and empty output.
 \end{lemma}
 
 \begin{lemma}[Startup of the box enumerator]
@@ -165,78 +206,113 @@ Let $c, C, q \in \mathbb{N}$ and let $x$ be a bit string. For every $j \le q$, r
 \leanok
 \uses{Complexity.polyCfg, Complexity.polyCopyCfg, Complexity.polyTape_write, Complexity.polyUnaryTM, Complexity.poly_copy, Complexity.poly_setup, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-Let $c, C \in \mathbb{N}$ and let $x$ be a bit string. After exactly $2(|x|+1)$ steps from its initial configuration on $x$, $\mathcal{P}_{c,C}$ is in control state $\mathrm{loop}_c$, with its input head on the blank cell right of the input, every work tape holding $1^{|x|+1}$ in cells $0,\dots,|x|$ and blanks elsewhere, every work head at cell $0$, and empty output; here $\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\mathrm{loop}_i$, $\mathrm{rewind}_i$, $\mathrm{advance}_i$, $\mathrm{emit}_j$ are its control states.
+Let $c,C\in\mathbb{N}$ and let $x$ be a bit string. After exactly $2(|x|+1)$ steps from
+its initial configuration on $x$, the unary box-enumeration machine is in the loop state
+at level $c$, with its input head on the blank cell immediately to the right of the
+input, every work tape containing $1^{|x|+1}$ in cells $0,\ldots,|x|$ and blanks
+elsewhere, every work head at position $0$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Box enumerator computes a unary polynomial]
+\begin{lemma}[Unary polynomial computation]
 \lean{Complexity.poly_unary_computes}
 \label{Complexity.poly_unary_computes}
 \leanok
 \uses{Complexity.polyCfg, Complexity.polyCost, Complexity.polyCost_le, Complexity.polyUnaryTM, Complexity.poly_loop, Complexity.poly_start, Turing.Action.apply, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-For all $c, C \in \mathbb{N}$, the unary box-enumeration machine $\mathcal{P}_{c,C}$ (a finite binary-alphabet machine with $c+1$ work tapes that runs $c+1$ nested unary loops of side $|x|+1$, emitting $C$ ones per innermost iteration) computes the function $x \mapsto 1^{C(|x|+1)^{c+1}}$ in time $n \mapsto (C + 5(c+1) + 4)(n+1)^{c+1}$: on every input $x$ it halts within $(C + 5(c+1) + 4)(|x|+1)^{c+1}$ steps with output exactly $C(|x|+1)^{c+1}$ ones.
+For all $c,C\in\mathbb{N}$, the unary box-enumeration machine with parameters $c,C$
+computes the function sending each binary string $x$ to the word consisting of
+$C(|x|+1)^{c+1}$ ones, in time $(C+5(c+1)+4)(|x|+1)^{c+1}$.
 \end{lemma}
 
-\begin{theorem}[Polynomials are time constructible]
+\begin{theorem}[Polynomial time constructibility]
 \lean{Complexity.timeConstructible_poly}
 \label{Complexity.timeConstructible_poly}
 \leanok
 \uses{Complexity.TimeConstructible, Complexity.poly_unary_computes, Complexity.timeConstructible_id, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_comp}
 \difficulty{5}
-For all $C, c \in \mathbb{N}$ with $C > 0$, the function $T(n) = C(n+1)^{c+1}$ is time constructible: $n \le T(n)$ for every $n$, and for some constant $a > 0$ a finite binary Turing machine outputs, on every input $x$, the little-endian binary representation of $T(|x|)$ within $a\,(T(|x|) + 1)$ steps.
+For natural numbers $C$ and $c$ with $C>0$, the function $T(n)=C(n+1)^{c+1}$ is time
+constructible: for every $n$, $n\le T(n)$, and some positive integer constant $a$ and
+finite binary Turing machine compute, on every binary input $x$, the little-endian
+binary representation of $T(|x|)$ within $a(T(|x|)+1)$ steps.
 \end{theorem}
 
-\begin{lemma}[Serialization length bounded by canonizer time]
+\begin{lemma}[Serialization Length Bound]
 \lean{Complexity.tmsat_serialization_length}
 \label{Complexity.tmsat_serialization_length}
 \leanok
 \uses{Turing.CodeTM.serialize, Turing.EffectiveMachineCode, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.output_length_le}
 \difficulty{2}
-Let $c$ be an effective machine-representation scheme: it assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$, and comes with a canonizer machine that, on every input $\alpha$, outputs the canonical serialization of $M_\alpha$ within $T_c(|\alpha|)$ steps. Then for every bit string $\alpha$, the canonical serialization of $M_\alpha$ has length at most $T_c(|\alpha|)$.
+Let $c$ be an effective machine code with canonizer and let $\alpha$ be a binary word.
+The length of the serialization of the machine decoded from $\alpha$ is at most the
+canonizer's time bound at input length $|\alpha|$.
 \end{lemma}
 
-\begin{lemma}[Flattening nonempty words does not shorten]
+\begin{lemma}[Length under list flattening]
 \lean{Complexity.tmsat_flatMap_length}
 \label{Complexity.tmsat_flatMap_length}
 \leanok
 \difficulty{3}
-Let $A$ and $B$ be types and let $f$ map every $a \in A$ to a list $f(a)$ over $B$ of length at least $1$. Then for every list $(a_1,\dots,a_k)$ over $A$, the concatenation $f(a_1)\,f(a_2) \cdots f(a_k)$ has length at least $k$.
+Let $A$ and $B$ be types, let $f$ assign to each $a\in A$ a list over $B$ of length at
+least $1$, and let $l$ be any finite list over $A$. Then the length of $l$ is at most
+the length of the concatenation of the lists $f(a)$ as $a$ ranges through $l$.
 \end{lemma}
 
-\begin{lemma}[Serialized transition records are nonempty]
+\begin{lemma}[Nonempty action serialization]
 \lean{Complexity.tmsat_action_nonempty}
 \label{Complexity.tmsat_action_nonempty}
 \leanok
 \uses{Turing.Action, Turing.actionBits, Turing.optBoolBits, Turing.optOptBoolBits, Turing.optStateBits, Turing.signBits}
 \difficulty{3}
-For every $n \in \mathbb{N}$ and every transition action of a one-work-tape binary Turing machine with state set $\{0,\dots,n\}$, the canonical serialization of the action (the two-bit input-head move, followed by the encodings of the work-tape write, the work-head move, the output emission and the successor state) has length at least $1$.
+For every natural number $n$ and every action of a one-work-tape binary Turing machine
+with state set $\\{0,\\dots,n\\}$, the serialization of the action has length at least
+$1$.
 \end{lemma}
 
-\begin{lemma}[Serialization bounds the machine parameters]
+\begin{lemma}[Bounds from machine serialization]
 \lean{Complexity.tmsat_serialization_parameters}
 \label{Complexity.tmsat_serialization_parameters}
 \leanok
 \uses{Complexity.tmsat_action_nonempty, Complexity.tmsat_flatMap_length, Turing.CodeTM, Turing.CodeTM.serialize, Turing.actionBits, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{5}
-Let $M$ be a one-work-tape binary Turing machine in code normal form with state set $\{0,\dots,m\}$ and initial state $q_0$, and let $L$ be the length of its canonical serialization. Then the binary representation of $m$ has length at most $L$, $q_0 \le L$, and $m + 1 \le L$.
+Let $M$ be a one-work-tape binary Turing machine in code normal form, with state set
+$\{0,\ldots,m\}$, initial state $q_0$, and canonical serialization of length $L$. Then
+the binary representation of $m$ has length at most $L$, the index of $q_0$ is at most
+$L$, and $m+1\le L$.
 \end{lemma}
 
-\begin{lemma}[Bound on the concrete simulation coefficient]
+\begin{lemma}[Concrete Simulation Coefficient Bound]
 \lean{Complexity.tmsat_concrete_coefficient}
 \label{Complexity.tmsat_concrete_coefficient}
 \leanok
 \uses{Complexity.tmsat_serialization_length, Complexity.tmsat_serialization_parameters, Turing.CodeTM.serialize, Turing.EffectiveMachineCode, Turing.universalBlockBound}
 \difficulty{3}
-Let $c$ be an effective machine-representation scheme: it assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$, and comes with a canonizer machine that, on every input $\alpha$, outputs the canonical serialization of $M_\alpha$ within $T_c(|\alpha|)$ steps. For a bit string $\alpha$, let $L$ be the length of the canonical serialization of $M_\alpha$, let $\{0,\dots,m\}$ be its state set and $q_0$ its initial state, let $\mathrm{bin}(m)$ be the binary representation of $m$, and let $B = 3L + 5(m+1) + 20$. Then \[ 3|\alpha| + T_c(|\alpha|) + L + 2\,|\mathrm{bin}(m)| + 2q_0 + 16 + B + 14 \;\le\; 3|\alpha| + 14\,T_c(|\alpha|) + 50. \]
+Let $c$ be an effective machine code with canonizer and let $\alpha$ be a binary word.
+The following inequality holds, where $L$ is the length of the serialization of the
+machine decoded from $\alpha$, $m$ is its number of states minus one, $q_0$ is its
+initial state index, and $T_c(n)$ is the canonizer's time bound at input length $n$:
+\[
+3|\alpha|+T_c(|\alpha|)+L+2|\mathrm{bin}(m)|+2q_0+16+\bigl(3L+5(m+1)+20\bigr)+14\le
+3|\alpha|+14T_c(|\alpha|)+50.
+\]
+Here $\mathrm{bin}(m)$ is the little-endian binary representation of $m$.
 \end{lemma}
 
-\begin{theorem}[Quantitative timed universal simulation]
+\begin{theorem}[Quantitative Timed Universal Simulation]
 \lean{Complexity.timed_universal_quantitative}
 \label{Complexity.timed_universal_quantitative}
 \leanok
 \uses{Complexity.tmsat_concrete_coefficient, Turing.CodeTM.serialize, Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.pairEncode, Turing.timed_universal_concrete, Turing.universalBlockBound}
 \difficulty{3}
-Let $c$ be an effective machine-representation scheme: it assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$, and comes with a canonizer machine that, on every input $\alpha$, outputs the canonical serialization of $M_\alpha$ within $T_c(|\alpha|)$ steps. Then there is a single finite binary Turing machine $U$ such that for all bit strings $\alpha, x$ and every $t \in \mathbb{N}$, writing $S = (3|\alpha| + 14\,T_c(|\alpha|) + 50)(t+1)^2$ and $z = \langle\langle \mathrm{bin}(t), \alpha\rangle, x\rangle$ (with $\langle\cdot,\cdot\rangle$ the self-delimiting pair encoding and $\mathrm{bin}(t)$ the little-endian binary representation of $t$): if $M_\alpha$ on input $x$ halts within $t$ steps with output $w$, then $U$ on $z$ halts within $S$ steps with output $1w$; and if $M_\alpha$ does not halt on $x$ within $t$ steps, then $U$ on $z$ halts within $S$ steps with output the single bit $0$.
+Let $c$ be an effective machine code with canonizer, and let $\alpha,x$ be binary words
+and $t\in\mathbb{N}$. There exists a finite-state binary Turing machine $U$ such that,
+for every output word $y$, if the machine decoded from $\alpha$ halts on $x$ at exactly
+time $t$ with output $y$, then $U$ halts on input
+$\langle\langle\mathrm{bin}(t),\alpha\rangle,x\rangle$ at exactly time
+$(3|\alpha|+14T_c(|\alpha|)+50)(t+1)^2$ with output $1y$; and if it does not halt on $x$
+with any output at exactly time $t$, then $U$ halts on that same input at exactly that
+time with output $0$. Here $T_c(n)$ is the canonizer's time bound at input length $n$,
+$\mathrm{bin}(t)$ is the little-endian binary representation, and
+$\langle\cdot,\cdot\rangle$ is the specified pairing of binary words.
 \end{theorem}
 
 \begin{definition}[Answer word of a bounded run]
@@ -247,31 +323,48 @@ Let $c$ be an effective machine-representation scheme: it assigns to every bit s
 Let $c$ be a machine-representation scheme, which assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ (decoding is total). For bit strings $\alpha, x$ and $t \in \mathbb{N}$, the answer word $A_c(\alpha, x, t)$ is $1w$ if $M_\alpha$, run for $t$ steps on input $x$, has halted with output $w$, and is the single bit $0$ if it has not halted after $t$ steps.
 \end{definition}
 
-\begin{lemma}[Timed simulator always returns the answer word]
+\begin{lemma}[Timed Simulator Returns the Answer]
 \lean{Complexity.tmsat_simulator_total}
 \label{Complexity.tmsat_simulator_total}
 \leanok
 \uses{Complexity.tmsatAnswer, Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode}
 \difficulty{4}
-Let $c$ be an effective machine-representation scheme: it assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$, and comes with a canonizer machine that, on every input $\alpha$, outputs the canonical serialization of $M_\alpha$ within $T_c(|\alpha|)$ steps. For bit strings $\alpha, x$ and $t \in \mathbb{N}$ write $S = (3|\alpha|+14\,T_c(|\alpha|)+50)(t+1)^2$ and $z = \langle\langle\mathrm{bin}(t),\alpha\rangle,x\rangle$ (self-delimiting pair encoding, little-endian binary $\mathrm{bin}(t)$). Let $U$ be a finite binary Turing machine such that, for all $\alpha, x, t$, whenever $M_\alpha$ on $x$ halts within $t$ steps with output $w$, $U$ on $z$ halts within $S$ steps with output $1w$, and whenever $M_\alpha$ does not halt on $x$ within $t$ steps, $U$ on $z$ halts within $S$ steps with output $0$. Then for all $\alpha, x, t$, $U$ on $z$ halts within $S$ steps with output exactly $A_c(\alpha,x,t)$, which is $1w$ if $M_\alpha$ run on $x$ for $t$ steps has halted with output $w$, and the single bit $0$ otherwise.
+Let $c$ be an effective machine-code scheme and $U$ a finite binary Turing machine.
+Suppose that for every pair of binary strings $\alpha,x$ and every $t\in\mathbb{N}$, if
+the machine decoded from $\alpha$ computes output $w$ on input $x$ in exactly $t$ steps,
+then $U$ computes $1w$ on input $\langle\langle\mathrm{bin}(t),\alpha\rangle,x\rangle$
+in exactly $S$ steps; and if it computes no output on $x$ in exactly $t$ steps, then $U$
+computes the one-bit string $0$ on that encoded input in exactly $S$ steps, where
+$S=(3|\alpha|+14T_c(|\alpha|)+50)(t+1)^2$. Then $U$ computes on that encoded input, in
+exactly $S$ steps, the word that is $1w$ when the decoded machine has halted by time $t$
+with output $w$, and is the one-bit string $0$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Answer word $11$ characterizes acceptance]
+\begin{lemma}[Acceptance characterized by the bounded-run answer]
 \lean{Complexity.tmsatAnswer_accept}
 \label{Complexity.tmsatAnswer_accept}
 \leanok
 \uses{Complexity.tmsatAnswer, Turing.CodeTM.toFinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MachineCode}
 \difficulty{3}
-Let $c$ be a machine-representation scheme, which assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ (decoding is total). For all bit strings $\alpha, x$ and $t \in \mathbb{N}$, let $A_c(\alpha,x,t)$ be $1w$ if $M_\alpha$ run on $x$ for $t$ steps has halted with output $w$, and the single bit $0$ otherwise. Then $A_c(\alpha,x,t) = 11$ if and only if $M_\alpha$ on input $x$ halts within $t$ steps with output exactly the single bit $1$.
+Let $c$ be a machine-representation scheme, and let $\alpha,x$ be binary strings and
+$t\in\mathbb{N}$. Run the machine decoded from $\alpha$ on $x$ for $t$ steps, and form
+the answer word by prefixing its output with $1$ if it has halted by then, or by taking
+the one-bit word $0$ if it has not halted. This answer word is $11$ if and only if the
+decoded machine computes the one-bit output $1$ from $x$ within $t$ steps.
 \end{lemma}
 
-\begin{lemma}[Uniform polynomial simulation budget]
+\begin{lemma}[Polynomial Simulation Budget]
 \lean{Complexity.tmsat_simulation_budget}
 \label{Complexity.tmsat_simulation_budget}
 \leanok
 \uses{Complexity.PolyBound, Turing.EffectiveMachineCode}
 \difficulty{4}
-Let $c$ be an effective machine-representation scheme: it assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$, and comes with a canonizer machine that, on every input $\alpha$, outputs the canonical serialization of $M_\alpha$ within $T_c(|\alpha|)$ steps, and suppose $T_c$ is polynomially bounded: $T_c(n) \le K(n+1)^k$ for all $n$, for some constants $K, k$. Then there exist $A, d \in \mathbb{N}$ such that for all $m, r, t \in \mathbb{N}$ with $r \le m$ and $t \le m$, \[ (3r + 14\,T_c(r) + 50)(t+1)^2 \le A\,(m+1)^d. \]
+Let $c$ be an effective machine-code scheme whose canonizer time function is
+polynomially bounded: there exist $C,k\in\mathbb{N}$ such that $c$'s canonizer time at
+input length $n$ is at most $C(n+1)^k$ for every $n\in\mathbb{N}$. Then there exist
+$A,d\in\mathbb{N}$ such that, for all $m,r,t\in\mathbb{N}$ with $r\le m$ and $t\le m$,
+$\bigl(3r+14T_c(r)+50\bigr)(t+1)^2\le A(m+1)^d$, where $T_c$ is the canonizer time
+function of $c$.
 \end{lemma}
 
 \begin{definition}[Quadruple encoding]
@@ -282,13 +375,15 @@ Let $c$ be an effective machine-representation scheme: it assigns to every bit s
 For bit strings $\alpha, x$ and $n, t \in \mathbb{N}$, the quadruple encoding $\langle\alpha, x, 1^n, 1^t\rangle$ is the bit string $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$, where $\langle a,b\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones.
 \end{definition}
 
-\begin{lemma}[Quadruple components fit in the encoding]
+\begin{lemma}[Bounds on encoded component lengths]
 \lean{Complexity.tmsat_quad_bounds}
 \label{Complexity.tmsat_quad_bounds}
 \leanok
 \uses{Complexity.tmsatQuad, Turing.universal_pair_length}
 \difficulty{2}
-For all bit strings $\alpha, x$ and all $n, t \in \mathbb{N}$, each of $|\alpha|$, $|x|$, $n$ and $t$ is at most the length of the quadruple encoding $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$, where $\langle a,b\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones.
+For all bit strings $\alpha,x$ and all natural numbers $n,t$, each of $|\alpha|$, $|x|$,
+$n$, and $t$ is at most the length of the nested encoding $\langle\alpha,\langle
+x,\langle 1^n,1^t\rangle\rangle\rangle$, where $1^j$ denotes the word of $j$ ones.
 \end{lemma}
 
 \begin{definition}[Verifier language for TMSAT]
@@ -299,21 +394,24 @@ For all bit strings $\alpha, x$ and all $n, t \in \mathbb{N}$, each of $|\alpha|
 Let $c$ be a machine-representation scheme, which assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ (decoding is total). The verifier language $V_c$ consists of all bit strings $yw$ such that $|w| = |y| + 1$, $y = \langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$ for some bit strings $\alpha, x$ and some $n, t \in \mathbb{N}$ (self-delimiting pair encoding, $1^k$ the word of $k$ ones), and $M_\alpha$ on input $\langle x, w_{[:n]}\rangle$ halts within $t$ steps with output exactly $1$, where $w_{[:n]}$ consists of the first $n$ bits of $w$.
 \end{definition}
 
-\begin{lemma}[Odd length of an exactly padded string]
+\begin{lemma}[Length of a padded concatenation]
 \lean{Complexity.tmsat_split_length}
 \label{Complexity.tmsat_split_length}
 \leanok
 \difficulty{2}
-For all bit strings $y$ and $w$ with $|w| = |y| + 1$, the concatenation $yw$ has odd length and $(|yw| - 1)/2 = |y|$.
+Let $y$ and $w$ be finite strings of bits, and suppose $|w|=|y|+1$. Then $|yw|$ is odd,
+and $(|yw|-1)/2=|y|$.
 \end{lemma}
 
-\begin{lemma}[TMSAT via exactly padded certificates]
+\begin{lemma}[TMSAT certificate characterization]
 \lean{Complexity.tmsat_certificate_equiv}
 \label{Complexity.tmsat_certificate_equiv}
 \leanok
 \uses{Complexity.TMSAT, Complexity.tmsatVerifier, Complexity.tmsat_quad_bounds, Turing.MachineCode}
 \difficulty{5}
-Let $c$ be a machine-representation scheme, which assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ (decoding is total). For every bit string $y$, $y \in \mathrm{TMSAT}_c$ if and only if there is a bit string $w$ with $|w| = |y| + 1$ and $yw \in V_c$. Here, with $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$, where $\langle a,b\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones, $\mathrm{TMSAT}_c$ is the set of strings $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$, over all bit strings $\alpha, x$ and $n, t \in \mathbb{N}$, such that $M_\alpha$ halts on $\langle x,u\rangle$ within $t$ steps with output exactly $1$ for some $u$ with $|u| = n$, and $V_c$ is the set of strings $y'w'$ with $|w'| = |y'|+1$ and $y' = \langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$ for some $\alpha, x, n, t$ such that $M_\alpha$ halts on $\langle x, w'_{[:n]}\rangle$ within $t$ steps with output exactly $1$, where $w'_{[:n]}$ is the first $n$ bits of $w'$.
+Let $c$ be a machine representation scheme and let $y$ be a bit string. Then
+$y\\in\\mathrm{TMSAT}_c$ if and only if there is a bit string $w$ of length $|y|+1$ such
+that $yw$ belongs to the verifier language $V_c$.
 \end{lemma}
 
 \begin{definition}[Pair-to-concatenation map]
@@ -324,40 +422,47 @@ Let $c$ be a machine-representation scheme, which assigns to every bit string $\
 This is the function on bit strings that sends every valid self-delimiting pair encoding $\langle a,b\rangle$ (the bits of $a$ doubled, then $01$, then $b$) to the concatenation $ab$, and every bit string that does not parse as a pair encoding to the empty string.
 \end{definition}
 
-\begin{lemma}[Equality test against a fixed word]
+\begin{lemma}[Polynomial-time equality test]
 \lean{Complexity.tmsat_pt_eq}
 \label{Complexity.tmsat_pt_eq}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.polyTimeComputable_of_linear, Turing.FinTM.computesFunInTime_ifEq}
 \difficulty{3}
-For every fixed bit string $w$, the function sending a bit string $x$ to the single bit that is $1$ if $x = w$ and $0$ otherwise is polynomial-time computable.
+For every fixed bit string $w$, the function that maps a bit string $x$ to the one-bit
+word $[1]$ if $x=w$ and to the one-bit word $[0]$ otherwise is polynomial-time
+computable.
 \end{lemma}
 
-\begin{lemma}[Fixed-width increment is never empty]
+\begin{lemma}[Nonempty fixed-width increment output]
 \lean{Complexity.tmsat_inc_nonempty}
 \label{Complexity.tmsat_inc_nonempty}
 \leanok
 \uses{Turing.incFixed}
 \difficulty{3}
-Consider the fixed-width little-endian binary increment, which sends a bit string $w$ to its successor among the words of length $|w|$, or fails (overflow) when $w$ consists only of ones, the empty word included. For every bit string $w$, the increment of $w$ is never the empty word.
+For every bit string $w$, if its fixed-width little-endian binary increment produces an
+output, that output is not the empty word.
 \end{lemma}
 
-\begin{lemma}[Overflow of the fixed-width increment]
+\begin{lemma}[Overflow of fixed-width increment]
 \lean{Complexity.tmsat_inc_none}
 \label{Complexity.tmsat_inc_none}
 \leanok
 \uses{Turing.incFixed}
 \difficulty{3}
-For every bit string $w$, the fixed-width little-endian binary increment of $w$ (its successor among the words of length $|w|$, or overflow when there is none) overflows if and only if $w = 1^{|w|}$, that is, $w$ consists only of ones.
+For every bit string $w$, the fixed-width little-endian binary increment overflows
+exactly when every bit of $w$ is $1$, including the empty word as the all-ones word of
+length zero.
 \end{lemma}
 
-\begin{lemma}[All-ones test is polynomial-time]
+\begin{lemma}[All-ones test in polynomial time]
 \lean{Complexity.tmsat_pt_unary}
 \label{Complexity.tmsat_pt_unary}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.polyTimeComputable_of_linear, Complexity.tmsat_inc_none, Complexity.tmsat_inc_nonempty, Complexity.tmsat_pt_eq, Turing.FinTM.computesFunInTime_incFixed, Turing.incFixed}
 \difficulty{4}
-The function sending a bit string $x$ to the single bit that is $1$ if $x$ consists only of ones (that is, $x = 1^{|x|}$, the empty word included) and $0$ otherwise is polynomial-time computable.
+The function sending a bit string $x$ to the one-bit word whose bit is $1$ exactly when
+every bit of $x$ is $1$ is polynomial-time computable. The condition includes the empty
+word, for which the output bit is $1$.
 \end{lemma}
 
 \begin{definition}[Prefix-extraction machine]
@@ -376,58 +481,83 @@ The prefix extractor $E$ is the finite binary-alphabet machine with one work tap
 For a bit string $x$, an optional state $q \in \{0,1,2,3\}$ (absence meaning halted), an index $i \le |x|$, $m \in \mathbb{N}$, a work-head position $h \in \mathbb{Z}$ and an output word $o$, $\Delta_x(q,i,m,h,o)$ is the configuration of a one-work-tape binary machine with states $\{0,1,2,3\}$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$; the blank cell right of the input when $i = |x|$), the work tape holding $1^m$ in cells $0,\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$.
 \end{definition}
 
-\begin{lemma}[Input symbol of an extractor configuration]
+\begin{lemma}[Input symbol at a configuration position]
 \lean{Complexity.tmsat_take_read}
 \label{Complexity.tmsat_take_read}
 \leanok
 \uses{Complexity.tmsatTakeCfg, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at}
 \difficulty{1}
-Let $x$ be a bit string, $q$ an optional state in $\{0,1,2,3\}$, $i \le |x|$, $m \in \mathbb{N}$, $h \in \mathbb{Z}$ and $o$ an output word. In the configuration of a one-work-tape binary machine with states $\{0,1,2,3\}$ on input $x$ that is in state $q$, has its input head on input position $i$ (counting from $0$), its work tape holding $1^m$ in cells $0,\dots,m-1$, its work head at $h$ and output $o$, the scanned input symbol is $x_i$ if $i < |x|$ and the blank if $i = |x|$.
+Let $x$ be a bit string, let $q$ be an optional state from a four-state set, and let
+$i,m\in\mathbb N$, $h\in\mathbb Z$, and $o$ be a bit string. Suppose $i\le |x|$. In the
+configuration on input $x$ with state $q$, input head at position $i$, unary work tape
+content $1^m$, work head at $h$, and output $o$, the symbol under the input head is the
+bit at position $i$ when $i<|x|$, and is blank when $i=|x|$.
 \end{lemma}
 
-\begin{lemma}[Extractor counts a data block]
+\begin{lemma}[Counting a doubled data block]
 \lean{Complexity.tmsat_take_double}
 \label{Complexity.tmsat_take_double}
 \leanok
 \uses{Complexity.polyTape_write, Complexity.tmsatTakeCfg, Complexity.tmsatTakeTM, Complexity.tmsat_take_read, Turing.Action, Turing.Action.apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-Let $x$ be a bit string, $i, m \in \mathbb{N}$ with $i + 2 \le |x|$, and $b$ a bit with $x_i = x_{i+1} = b$ (positions counted from $0$). Then running $E$ for $2$ steps from $\Delta_x(0, i, m, m, \varepsilon)$ yields $\Delta_x(0, i+2, m+1, m+1, \varepsilon)$; here $E$ is the prefix-extraction machine (one work tape, states $\{0,1,2,3\}$) that counts the aligned data blocks $00$ and $11$ of a pair encoding $\langle a,b\rangle$ in unary on its work tape and then copies bits of $b$ to its output while moving its work head back along the counter, and $\Delta_x(q,i,m,h,o)$ denotes the configuration of $E$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$), the work tape holding $1^m$ in cells $0,\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$.
+Let $x$ be a bit string, let $i,m\in\mathbb N$, and let $b\in\{0,1\}$. Suppose $i+2\le
+|x|$ and the bits of $x$ at positions $i$ and $i+1$ are both $b$. After two steps of the
+prefix extractor from state $0$, with its input head at position $i$, its unary work
+tape containing $1^m$, its work head at position $m$, and empty output, the machine is
+in state $0$ with its input head at $i+2$, its work tape containing $1^{m+1}$, its work
+head at $m+1$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Extractor reads the pair separator]
+\begin{lemma}[Reading the pair separator]
 \lean{Complexity.tmsat_take_separator}
 \label{Complexity.tmsat_take_separator}
 \leanok
 \uses{Complexity.tmsatTakeCfg, Complexity.tmsatTakeTM, Complexity.tmsat_take_read, Turing.Action, Turing.Action.apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{3}
-Let $x$ be a bit string and $i, m \in \mathbb{N}$ with $i + 2 \le |x|$, $x_i = 0$ and $x_{i+1} = 1$ (positions counted from $0$). Then running $E$ for $2$ steps from $\Delta_x(0, i, m, m, \varepsilon)$ yields $\Delta_x(3, i+2, m, m-1, \varepsilon)$; here $E$ is the prefix-extraction machine (one work tape, states $\{0,1,2,3\}$) that counts the aligned data blocks $00$ and $11$ of a pair encoding $\langle a,b\rangle$ in unary on its work tape and then copies bits of $b$ to its output while moving its work head back along the counter, and $\Delta_x(q,i,m,h,o)$ denotes the configuration of $E$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$), the work tape holding $1^m$ in cells $0,\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$.
+Let $x$ be a bit string and $i,m\in\mathbb N$. Suppose $i+2\le |x|$, the bit at position
+$i$ is $0$, and the bit at position $i+1$ is $1$. Starting from state $0$ with the input
+head at $i$, unary work tape content $1^m$, work head at $m$, and empty output, after
+two steps the extractor is in state $3$, with the input head at $i+2$, work tape content
+$1^m$, work head at $m-1$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Extractor parses the first pair component]
+\begin{lemma}[Parsing the encoded first component]
 \lean{Complexity.tmsat_take_parse}
 \label{Complexity.tmsat_take_parse}
 \leanok
 \uses{Complexity.tmsatTakeCfg, Complexity.tmsatTakeTM, Complexity.tmsat_take_double, Complexity.tmsat_take_separator, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{4}
-Let $a, b, p$ be bit strings, $x = p\,\langle a,b\rangle$ with $\langle a,b\rangle$ the self-delimiting pair encoding, and $m \in \mathbb{N}$. Then running $E$ for $2|a| + 2$ steps from $\Delta_x(0, |p|, m, m, \varepsilon)$ yields $\Delta_x(3, |p| + 2|a| + 2, m + |a|, m + |a| - 1, \varepsilon)$; here $E$ is the prefix-extraction machine (one work tape, states $\{0,1,2,3\}$) that counts the aligned data blocks $00$ and $11$ of a pair encoding $\langle a,b\rangle$ in unary on its work tape and then copies bits of $b$ to its output while moving its work head back along the counter, and $\Delta_x(q,i,m,h,o)$ denotes the configuration of $E$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$), the work tape holding $1^m$ in cells $0,\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$.
+Let $a,b,x$, and $p$ be bit strings, let $m\in\mathbb N$, and suppose $x=p\langle
+a,b\rangle$, where the encoding doubles every bit of $a$, appends $01$, and then appends
+$b$. Starting from state $0$ with the input head at position $|p|$, unary work tape
+content $1^m$, work head at $m$, and empty output, after $2|a|+2$ steps the extractor is
+in state $3$, with its input head at $|p|+2|a|+2$, work tape content $1^{m+|a|}$, work
+head at $m+|a|-1$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Extractor copies the payload prefix]
+\begin{lemma}[Copying a payload prefix]
 \lean{Complexity.tmsat_take_payload}
 \label{Complexity.tmsat_take_payload}
 \leanok
 \uses{Complexity.polyTape, Complexity.tmsatTakeCfg, Complexity.tmsatTakeTM, Complexity.tmsat_take_read, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-Let $p$ and $b$ be bit strings, $x = pb$, $m \in \mathbb{N}$, and $j \le \min(m, |b|)$. Then running $E$ for $j$ steps from $\Delta_x(3, |p|, m, m-1, \varepsilon)$ yields $\Delta_x(3, |p| + j, m, m - j - 1, b_{[:j]})$, where $b_{[:j]}$ is the first $j$ bits of $b$; here $E$ is the prefix-extraction machine (one work tape, states $\{0,1,2,3\}$) that counts the aligned data blocks $00$ and $11$ of a pair encoding $\langle a,b\rangle$ in unary on its work tape and then copies bits of $b$ to its output while moving its work head back along the counter, and $\Delta_x(q,i,m,h,o)$ denotes the configuration of $E$ on input $x$ in state $q$, with the input head on input position $i$ (counting from $0$), the work tape holding $1^m$ in cells $0,\dots,m-1$ and blanks elsewhere, the work head at $h$, and output $o$.
+Let $x,p,b$ be bit strings and $m,j\in\mathbb N$. Suppose $x=p b$ and $j\le\min(m,|b|)$.
+Starting in state $3$ with the input head at $|p|$, unary work tape content $1^m$, work
+head at $m-1$, and empty output, after $j$ steps the extractor is in state $3$, with
+input head at $|p|+j$, the same work tape content, work head at $m-j-1$, and output
+equal to the first $j$ bits of $b$.
 \end{lemma}
 
-\begin{lemma}[Prefix extractor on pair encodings]
+\begin{lemma}[Prefix extraction from a pair encoding]
 \lean{Complexity.tmsat_take_computes}
 \label{Complexity.tmsat_take_computes}
 \leanok
 \uses{Complexity.polyTape, Complexity.tmsatTakeCfg, Complexity.tmsatTakeTM, Complexity.tmsat_take_parse, Complexity.tmsat_take_payload, Complexity.tmsat_take_read, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{5}
-For all bit strings $a$ and $b$, the prefix-extraction machine $E$ (one work tape, four states; it counts the data blocks of a pair encoding in unary and then copies that many payload bits), started on the self-delimiting pair encoding $\langle a,b\rangle$, halts within $|\langle a,b\rangle| + 1$ steps with output exactly the first $|a|$ bits of $b$ (all of $b$ if $|b| < |a|$).
+For any bit strings $a$ and $b$, the prefix extractor, started on the encoding that
+doubles each bit of $a$, appends the separator $01$, and then appends $b$, halts within
+$|\langle a,b\rangle|+1$ steps and outputs the first $|a|$ bits of $b$, or all of $b$ if
+$|b|<|a|$.
 \end{lemma}
 
 \begin{lemma}[Truncation to a computed length]
@@ -436,16 +566,21 @@ For all bit strings $a$ and $b$, the prefix-extraction machine $E$ (one work tap
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.tmsatTakeTM, Complexity.tmsat_take_computes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.FinTM.exists_comp_on_image, Turing.MultiTapeTM.output_length_le, Turing.pairEncode}
 \difficulty{4}
-If $f$ and $g$ are polynomial-time computable functions on bit strings, then so is the function sending $x$ to the first $|f(x)|$ bits of $g(x)$ (all of $g(x)$ when it is shorter).
+If $f,g : \{0,1\}^* \to \{0,1\}^*$ are polynomial-time computable, then the function
+sending each bit string $x$ to the prefix of $g(x)$ of length $|f(x)|$ is
+polynomial-time computable; if $g(x)$ is shorter, this prefix is all of $g(x)$.
 \end{lemma}
 
-\begin{lemma}[Projections reconstruct a valid pair]
+\begin{lemma}[Reconstruction of a parsed pair]
 \lean{Complexity.tmsat_pair_valid}
 \label{Complexity.tmsat_pair_valid}
 \leanok
 \uses{Complexity.pairFstD, Complexity.pairSndD, Turing.eq_pairEncode_of_pairDecode, Turing.pairDecode, Turing.pairEncode}
 \difficulty{3}
-Let $z$ be a bit string that parses as a self-delimiting pair encoding, and let $\pi_1(z)$ and $\pi_2(z)$ be its decoded first and second components. Then $z = \langle \pi_1(z), \pi_2(z)\rangle$.
+Let $z$ be a bit string for which the aligned pair parser succeeds, and let $\pi_1(z)$
+and $\pi_2(z)$ be its decoded components. Then $z=\langle\pi_1(z),\pi_2(z)\rangle$,
+where the pairing doubles each bit of the first component, appends the separator $01$,
+and then appends the second component.
 \end{lemma}
 
 \begin{definition}[Odd split of a string]
@@ -456,13 +591,14 @@ Let $z$ be a bit string that parses as a self-delimiting pair encoding, and let 
 For a bit string $z$, the odd split $s(z)$ is the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ of the first $i$ bits of $z$ and the remaining bits, where $i$ is the least index in $\{0,\dots,|z|\}$ with $i + (i+1) = |z|$; if no such index exists (that is, $|z|$ is even), $s(z)$ is the empty string.
 \end{definition}
 
-\begin{lemma}[Successful split search solves its equation]
+\begin{lemma}[Equation satisfied by a successful split]
 \lean{Complexity.tmsat_split_some}
 \label{Complexity.tmsat_split_some}
 \leanok
 \uses{Turing.solveSplit}
 \difficulty{2}
-For $N \in \mathbb{N}$, consider the bounded search returning the least $i \in \{0,\dots,N\}$ with $i + 1\cdot(i+1)^1 = N$, if there is one. If the search returns $i$, then $i + (i+1) = N$.
+For $N\in\mathbb N$, if the bounded search for the least $i\in\{0,\ldots,N\}$ satisfying
+$i+(i+1)=N$ returns $i$, then $i+(i+1)=N$.
 \end{lemma}
 
 \begin{lemma}[Split search finds the solution]
@@ -471,16 +607,18 @@ For $N \in \mathbb{N}$, consider the bounded search returning the least $i \in \
 \leanok
 \uses{Complexity.tmsat_split_some, Turing.solveSplit}
 \difficulty{3}
-For all $N, i \in \mathbb{N}$ with $i + (i+1) = N$, the bounded search for the least $j \in \{0,\dots,N\}$ satisfying $j + 1\cdot(j+1)^1 = N$ returns exactly $i$.
+For natural numbers $N$ and $i$ satisfying $i+(i+1)=N$, the bounded search for the least
+$j\in\{0,\ldots,N\}$ satisfying $j+(j+1)=N$ returns $i$.
 \end{lemma}
 
-\begin{lemma}[Odd split of a padded instance]
+\begin{lemma}[Split of a padded string]
 \lean{Complexity.tmsat_split_append}
 \label{Complexity.tmsat_split_append}
 \leanok
 \uses{Complexity.tmsatSplit, Complexity.tmsat_split_exists, Turing.pairEncode}
 \difficulty{3}
-For bit strings $y$ and $w$ with $|w| = |y| + 1$, the odd split of $yw$, namely the self-delimiting pair encoding of its first $i$ bits and its remaining bits where $|yw| = 2i + 1$, equals $\langle y, w\rangle$.
+Let $y,w$ be bit strings with $|w|=|y|+1$. The odd split of their concatenation $yw$ is
+the self-delimiting pair encoding $\langle y,w\rangle$.
 \end{lemma}
 
 \begin{lemma}[Components of a valid odd split]
@@ -489,7 +627,9 @@ For bit strings $y$ and $w$ with $|w| = |y| + 1$, the odd split of $yw$, namely 
 \leanok
 \uses{Complexity.pairFstD, Complexity.pairSndD, Complexity.tmsatSplit, Complexity.tmsat_split_some, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.solveSplit}
 \difficulty{4}
-Let $z$ be a bit string such that $s(z)$ parses as a pair encoding, where $s(z)$ is the odd split of $z$ (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ of the first $i$ bits of $z$ and the rest when $|z| = 2i+1$, and the empty word when $|z|$ is even), and $\pi_1, \pi_2$ return the first and second components of a pair encoding (the empty word on strings that do not parse as pairs). Then $z = \pi_1(s(z))\,\pi_2(s(z))$ and $|\pi_2(s(z))| = |\pi_1(s(z))| + 1$.
+Let $z$ be a bit string whose odd split parses as a pair encoding. The total first and
+second projections of that split concatenate to $z$, and the second projected component
+has length one greater than the first.
 \end{lemma}
 
 \begin{definition}[Instance part of a verifier input]
@@ -548,31 +688,44 @@ For a bit string $z$, the clock field is $\pi_2(\pi_2(\pi_2(Y(z))))$, where $Y(z
 For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\pi_1, \pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \pi_1(s(z))$ and $W = \pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\pi_1(Y)$, $\pi_1(\pi_2(Y))$, $\pi_1(\pi_2(\pi_2(Y)))$ and $\pi_2(\pi_2(\pi_2(Y)))$. The guard $G(z)$ is the Boolean that is true exactly when $s(z)$, $Y$, $\pi_2(Y)$ and $\pi_2(\pi_2(Y))$ all parse as pair encodings and both the width field and the clock field consist only of ones (the empty word included).
 \end{definition}
 
-\begin{lemma}[Valid inputs decompose as padded quadruples]
+\begin{lemma}[Structure of valid verifier inputs]
 \lean{Complexity.tmsat_good_spec}
 \label{Complexity.tmsat_good_spec}
 \leanok
 \uses{Complexity.pairSndD, Complexity.tmsatClock, Complexity.tmsatCode, Complexity.tmsatGood, Complexity.tmsatInput, Complexity.tmsatQuad, Complexity.tmsatW, Complexity.tmsatWidth, Complexity.tmsatY, Complexity.tmsat_pair_valid, Complexity.tmsat_split_components, Turing.pairEncode}
 \difficulty{4}
-For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\pi_1, \pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \pi_1(s(z))$ and $W = \pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\pi_1(Y)$, $\pi_1(\pi_2(Y))$, $\pi_1(\pi_2(\pi_2(Y)))$ and $\pi_2(\pi_2(\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\pi_2(Y)$ and $\pi_2(\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones. If $G(z)$ holds, then $z = YW$, $|W| = |Y| + 1$, and $Y = \langle \alpha, \langle x, \langle 1^n, 1^t\rangle\rangle\rangle$, where $\alpha$ and $x$ are the code and input fields, $n$ and $t$ are the lengths of the width and clock fields, and $1^k$ is the word of $k$ ones.
+Let $z$ be a bit string satisfying the validity guard. Write $Y$ for its instance part
+and $W$ for its certificate part; write $\alpha$, $x$, $1^n$, and $1^t$ for the code,
+input, width, and clock fields extracted from $Y$, respectively, with $n$ and $t$ the
+lengths of the width and clock fields. Then $z=YW$, the length of $W$ is one more than
+the length of $Y$, and $Y=\langle\alpha,\langle x,\langle1^n,1^t\rangle\rangle\rangle$.
 \end{lemma}
 
-\begin{lemma}[Padded quadruples pass the guard]
+\begin{lemma}[Fields of a padded quadruple]
 \lean{Complexity.tmsat_good_quad}
 \label{Complexity.tmsat_good_quad}
 \leanok
 \uses{Complexity.pairFstD, Complexity.pairSndD, Complexity.tmsatClock, Complexity.tmsatCode, Complexity.tmsatGood, Complexity.tmsatInput, Complexity.tmsatQuad, Complexity.tmsatW, Complexity.tmsatWidth, Complexity.tmsatY, Complexity.tmsat_split_append, Turing.pairDecode_pairEncode}
 \difficulty{3}
-Let $\alpha, x, w$ be bit strings and $n, t \in \mathbb{N}$, let $y = \langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$ ($1^k$ the word of $k$ ones), suppose $|w| = |y| + 1$, and let $z = yw$. Write $s(z)$ for its odd split (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\pi_1, \pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \pi_1(s(z))$ and $W = \pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\pi_1(Y)$, $\pi_1(\pi_2(Y))$, $\pi_1(\pi_2(\pi_2(Y)))$ and $\pi_2(\pi_2(\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\pi_2(Y)$ and $\pi_2(\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones. Then $G(z)$ holds, the code field of $z$ is $\alpha$, its input field is $x$, its width and clock fields have lengths $n$ and $t$, and $W = w$.
+Let $\alpha$, $x$, and $w$ be bit strings, and let $n,t\in\mathbb{N}$. Suppose the
+length of $w$ is one more than the length of the encoding
+$\langle\alpha,x,1^n,1^t\rangle$, where $1^k$ denotes the word of $k$ ones. Append $w$
+to this encoding to form $z$. Then $z$ satisfies the validity guard; its code field is
+$\alpha$, its input field is $x$, its width and clock fields have lengths $n$ and $t$,
+respectively, and its certificate part is $w$.
 \end{lemma}
 
-\begin{lemma}[Verifier fields are polynomial-time computable]
+\begin{lemma}[Polynomial-time verifier fields]
 \lean{Complexity.tmsat_fields_poly}
 \label{Complexity.tmsat_fields_poly}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_and, Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD, Complexity.tmsatClock, Complexity.tmsatCode, Complexity.tmsatGood, Complexity.tmsatInput, Complexity.tmsatSplit, Complexity.tmsatW, Complexity.tmsatWidth, Complexity.tmsatY, Complexity.tmsat_pt_unary, Turing.FinTM.computesFunInTime_pairValid, Turing.FinTM.computesFunInTime_splitSolve}
 \difficulty{4}
-For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\pi_1, \pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \pi_1(s(z))$ and $W = \pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\pi_1(Y)$, $\pi_1(\pi_2(Y))$, $\pi_1(\pi_2(\pi_2(Y)))$ and $\pi_2(\pi_2(\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\pi_2(Y)$ and $\pi_2(\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones. Then the maps sending $z$ to its code field, input field, width field, clock field and to $W$, and the map sending $z$ to the single bit $G(z)$, are all polynomial-time computable.
+For every bit string $z$, each of the following functions is polynomial-time computable:
+its code field, input field, unary width field, unary clock field, and certificate
+component, as obtained by the total parsing and projection operations defining these
+fields; and the function returning the one-bit word encoding whether the specified
+parsing and unary-field validity checks all hold.
 \end{lemma}
 
 \begin{definition}[Guarded timed simulation request]
@@ -591,48 +744,70 @@ For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair e
 Let $c$ be a machine-representation scheme, which assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ (decoding is total). For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\pi_1, \pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \pi_1(s(z))$ and $W = \pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\pi_1(Y)$, $\pi_1(\pi_2(Y))$, $\pi_1(\pi_2(\pi_2(Y)))$ and $\pi_2(\pi_2(\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\pi_2(Y)$ and $\pi_2(\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones. Then the result for $z$ is $A_c(\alpha, \langle x, W_{[:n]}\rangle, t)$ when $G(z)$ holds, with $\alpha$, $x$ the code and input fields, $n$, $t$ the lengths of the width and clock fields and $W_{[:n]}$ the first $n$ bits of $W$, and $A_c(\varepsilon,\varepsilon,0)$ otherwise; here $A_c(\beta, v, t')$ is $1w'$ if $M_\beta$ run on $v$ for $t'$ steps has halted with output $w'$, and the single bit $0$ if it has not halted.
 \end{definition}
 
-\begin{lemma}[Request assembly is polynomial-time]
+\begin{lemma}[Polynomial-time request assembly]
 \lean{Complexity.tmsat_request_poly}
 \label{Complexity.tmsat_request_poly}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.PolyTimeComputable.pairMapSnd, Complexity.pairMapSnd, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_of_linear, Complexity.tmsatClock, Complexity.tmsatRequest, Complexity.tmsat_fields_poly, Complexity.tmsat_pt_take, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.computesFunInTime_pairSnd, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{4}
-For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\pi_1, \pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \pi_1(s(z))$ and $W = \pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\pi_1(Y)$, $\pi_1(\pi_2(Y))$, $\pi_1(\pi_2(\pi_2(Y)))$ and $\pi_2(\pi_2(\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\pi_2(Y)$ and $\pi_2(\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones, and the timed request of $z$ is $\langle\langle \mathrm{bin}(t), \alpha\rangle, \langle x, W_{[:n]}\rangle\rangle$ when $G(z)$ holds, where $\alpha$ and $x$ are the code and input fields, $n$ and $t$ the lengths of the width and clock fields, $W_{[:n]}$ the first $n$ bits of $W$, and $\mathrm{bin}(t)$ the little-endian binary representation of $t$; otherwise it is the fixed request $\langle\langle\varepsilon,\varepsilon\rangle,\varepsilon\rangle$. The map sending $z$ to its timed request is polynomial-time computable.
+The map sending a bit string $z$ to its timed request is polynomial-time computable. To
+define it, split $z$ at the least $i$ satisfying $i+(i+1)=|z|$ and pair-encode the two
+resulting parts; if there is no such $i$, use the empty word. Parse this encoding and
+its nested fields using the total pair projections, which return the empty word when
+parsing fails. If all required pair parses succeed and the width and clock fields
+consist only of ones, output the pair encoding whose first component is the pair of the
+little-endian binary representation of the clock-field length and the code field, and
+whose second component is the pair of the input field and the prefix of the padded
+certificate field of length equal to the width-field length; otherwise output the fixed
+encoding $\langle\langle\varepsilon,\varepsilon\rangle,\varepsilon\rangle$.
 \end{lemma}
 
-\begin{lemma}[Valid code and deadline fields are short]
+\begin{lemma}[Bounds on valid code and clock fields]
 \lean{Complexity.tmsat_good_bounds}
 \label{Complexity.tmsat_good_bounds}
 \leanok
 \uses{Complexity.tmsatClock, Complexity.tmsatCode, Complexity.tmsatGood, Complexity.tmsatInput, Complexity.tmsatWidth, Complexity.tmsat_good_spec, Complexity.tmsat_quad_bounds}
 \difficulty{3}
-For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\pi_1, \pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \pi_1(s(z))$ and $W = \pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\pi_1(Y)$, $\pi_1(\pi_2(Y))$, $\pi_1(\pi_2(\pi_2(Y)))$ and $\pi_2(\pi_2(\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\pi_2(Y)$ and $\pi_2(\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones. If $G(z)$ holds, then the code field and the clock field of $z$ each have length at most $|z|$.
+For a bit string $z$ satisfying the validity guard, the code field and clock field each
+have length at most the length of $z$.
 \end{lemma}
 
-\begin{lemma}[Guarded result decides the verifier language]
+\begin{lemma}[Acceptance characterizes the verifier language]
 \lean{Complexity.tmsat_result_accept}
 \label{Complexity.tmsat_result_accept}
 \leanok
 \uses{Complexity.tmsatAnswer_accept, Complexity.tmsatClock, Complexity.tmsatCode, Complexity.tmsatGood, Complexity.tmsatInput, Complexity.tmsatResult, Complexity.tmsatVerifier, Complexity.tmsatW, Complexity.tmsatWidth, Complexity.tmsatY, Complexity.tmsat_good_quad, Complexity.tmsat_good_spec, Turing.CodeTM.toFinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.not_computesInTime_zero, Turing.MachineCode}
 \difficulty{4}
-Let $c$ be a machine-representation scheme, which assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ (decoding is total). For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\langle z_{[:i]}, z_{[i:]}\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\pi_1, \pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \pi_1(s(z))$ and $W = \pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\pi_1(Y)$, $\pi_1(\pi_2(Y))$, $\pi_1(\pi_2(\pi_2(Y)))$ and $\pi_2(\pi_2(\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\pi_2(Y)$ and $\pi_2(\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones, and the result for $z$ is $A_c(\alpha, \langle x, W_{[:n]}\rangle, t)$ when $G(z)$ holds, with $\alpha$, $x$ the code and input fields, $n$, $t$ the lengths of the width and clock fields and $W_{[:n]}$ the first $n$ bits of $W$, and $A_c(\varepsilon,\varepsilon,0)$ otherwise; here $A_c(\beta, v, t')$ is $1w'$ if $M_\beta$ run on $v$ for $t'$ steps has halted with output $w'$, and the single bit $0$ if it has not halted. Then for every bit string $z$, the result for $z$ equals $11$ if and only if $z \in V_c$, where $V_c$ is the set of strings $y'w'$ with $|w'| = |y'| + 1$ for which there are bit strings $\beta, v$ and $n', t' \in \mathbb{N}$ with $y' = \langle\beta,\langle v,\langle 1^{n'},1^{t'}\rangle\rangle\rangle$ such that $M_\beta$ halts on $\langle v, w'_{[:n']}\rangle$ within $t'$ steps with output exactly $1$, $w'_{[:n']}$ being the first $n'$ bits of $w'$.
+Let $c$ be a machine representation scheme and $z$ a bit string. The result produced
+from $z$ by the guarded computation equals the two-bit word $11$ if and only if $z$
+belongs to the verifier language: the set of words $y'w'$ such that $|w'|=|y'|+1$ and
+there exist bit strings $\beta,v$ and natural numbers $n',t'$ with
+$y'=\langle\beta,\langle v,\langle1^{n'},1^{t'}\rangle\rangle\rangle$, for which the
+machine decoded from $\beta$ halts within $t'$ steps on input $\langle v,w'_{[:n']
+}\rangle$ with output exactly $1$.
 \end{lemma}
 
-\begin{theorem}[TMSAT is in NP]
+\begin{theorem}[NP membership of bounded machine acceptance]
 \lean{Complexity.TMSAT_mem_NP}
 \label{Complexity.TMSAT_mem_NP}
 \leanok
 \uses{Complexity.NP, Complexity.P, Complexity.PolyBound, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.TMSAT, Complexity.mem_P_iff, Complexity.timed_universal_quantitative, Complexity.tmsatClock, Complexity.tmsatCode, Complexity.tmsatGood, Complexity.tmsatInput, Complexity.tmsatRequest, Complexity.tmsatResult, Complexity.tmsatVerifier, Complexity.tmsatW, Complexity.tmsatWidth, Complexity.tmsat_certificate_equiv, Complexity.tmsat_good_bounds, Complexity.tmsat_pt_eq, Complexity.tmsat_request_poly, Complexity.tmsat_result_accept, Complexity.tmsat_simulation_budget, Complexity.tmsat_simulator_total, Turing.EffectiveMachineCode, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.exists_comp_on_image, Turing.MultiTapeTM.indicator, Turing.pairEncode}
 \difficulty{5}
-Let $c$ be an effective machine-representation scheme, assigning to each bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ and equipped with a canonizer machine that outputs the canonical serialization of $M_\alpha$ within $T_c(|\alpha|)$ steps, and suppose $T_c$ is polynomially bounded: $T_c(n) \le K(n+1)^k$ for all $n$, for some constants $K, k$. Then $\mathrm{TMSAT}_c \in \mathrm{NP}$, where $\mathrm{TMSAT}_c$ is the set of strings $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$, where $\langle a,b\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones, such that some $u$ with $|u| = n$ makes $M_\alpha$ halt on $\langle x,u\rangle$ within $t$ steps with output exactly $1$.
+Let $c$ be an effective machine-code scheme whose canonizer has a polynomially bounded
+running-time function. The language of strings that can be written as
+$\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle$, where $1^m$ denotes a string of
+$m$ ones, and for which there is a string $u$ of length $n$ such that the machine
+decoded from $\alpha$ halts after exactly $t$ steps on input $\langle x,u\rangle$ and
+outputs the single bit $1$, belongs to NP.
 \end{theorem}
 
-\begin{lemma}[Arithmetic bound on the reduction deadline]
+\begin{lemma}[Arithmetic deadline bound]
 \lean{Complexity.tmsat_deadline_bound}
 \label{Complexity.tmsat_deadline_bound}
 \leanok
 \difficulty{4}
-For all $K, B, e, C, c, n \in \mathbb{N}$, \[ K\bigl(B\,(2n + 2 + C(n+1)^c + 1)^e + 1\bigr)^2 \;\le\; (K+1)(B+1)^2(C+3)^{2e}\,(n+1)^{2e\max(1,c)}. \]
+For all $K,B,e,C,c,n\\in\\mathbb{N}$, $K\\bigl(B(2n+2+C(n+1)^c+1)^e+1\\bigr)^2\\le
+((K+1)(B+1)^2(C+3)^{2e})(n+1)^{2e\\max(1,c)}$.
 \end{lemma}
 
 \begin{lemma}[Constant functions are polynomial-time]
@@ -641,16 +816,18 @@ For all $K, B, e, C, c, n \in \mathbb{N}$, \[ K\bigl(B\,(2n + 2 + C(n+1)^c + 1)^
 \leanok
 \uses{Complexity.PolyTimeComputable, Turing.FinTM.computesFunInTime_const}
 \difficulty{2}
-For every fixed bit string $w$, the constant function sending every bit string to $w$ is polynomial-time computable.
+For every bit string $w$, the function sending every bit string to $w$ is
+polynomial-time computable.
 \end{lemma}
 
-\begin{lemma}[Binary certificate length is polynomial-time]
+\begin{lemma}[Polynomial-time binary certificate length]
 \lean{Complexity.tmsat_exact_certificate_bits}
 \label{Complexity.tmsat_exact_certificate_bits}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.timeConstructible_poly, Complexity.tmsat_constant_poly, Turing.FinTM.ComputesInTime.mono}
 \difficulty{4}
-For all $C, c \in \mathbb{N}$, the function sending a bit string $x$ to the little-endian binary representation of $C(|x|+1)^c$ (the empty word when this value is $0$) is polynomial-time computable.
+For all $C,c\\in\\mathbb{N}$, the function sending a bit string $x$ to the bit-list
+representation of the natural number $C(|x|+1)^c$ is polynomial-time computable.
 \end{lemma}
 
 \begin{definition}[Output function of the verifier wrapper]
@@ -667,25 +844,36 @@ For a language $V$ of bit strings, this is the total function on bit strings tha
 \leanok
 \uses{Complexity.tmsatQuad, Turing.pairEncode, Turing.pairEncode_injective}
 \difficulty{3}
-For bit strings $\alpha, x, \beta, y$ and $n, t, m, s \in \mathbb{N}$, if $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle = \langle\beta,\langle y,\langle 1^m,1^s\rangle\rangle\rangle$, where $\langle a,b\rangle$ is the self-delimiting pair encoding and $1^k$ the word of $k$ ones, then $\alpha = \beta$, $x = y$, $n = m$ and $t = s$.
+For bit strings $\alpha,x,\beta,y$ and natural numbers $n,t,m,s$, if
+$\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle=\langle\beta,\langle
+y,\langle 1^m,1^s\rangle\rangle\rangle$, then $\alpha=\beta$, $x=y$, $n=m$, and $t=s$.
 \end{lemma}
 
-\begin{lemma}[Correctness of the generic TMSAT reduction]
+\begin{lemma}[Correctness of the TMSAT reduction]
 \lean{Complexity.tmsat_reduction_correct}
 \label{Complexity.tmsat_reduction_correct}
 \leanok
 \uses{Complexity.TMSAT, Complexity.tmsatQuad, Complexity.tmsat_quad_injective, Turing.CodeTM.toFinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.MachineCode, Turing.MultiTapeTM.indicator, Turing.pairEncode}
 \difficulty{4}
-Let $c$ be a machine-representation scheme, which assigns to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ (decoding is total). Let $L$ and $V$ be languages of bit strings, $C, e \in \mathbb{N}$, $\alpha$ a bit string and $T \colon \mathbb{N} \to \mathbb{N}$. Suppose that $x \in L$ if and only if some $u$ with $|u| = C(|x|+1)^e$ satisfies $xu \in V$, and that for all $x, u$ with $|u| = C(|x|+1)^e$, $M_\alpha$ on input $\langle x,u\rangle$ halts within $T(|x|)$ steps with output the single bit $[xu \in V]$. Then for every bit string $x$, $x \in L$ if and only if $\langle\alpha,\langle x,\langle 1^{C(|x|+1)^e},1^{T(|x|)}\rangle\rangle\rangle \in \mathrm{TMSAT}_c$, where $\langle a,b\rangle$ is the self-delimiting pair encoding, $1^k$ the word of $k$ ones, and $\mathrm{TMSAT}_c$ the set of strings $\langle\beta,\langle y,\langle 1^n,1^t\rangle\rangle\rangle$ such that $M_\beta$ halts on $\langle y,v\rangle$ within $t$ steps with output exactly $1$ for some $v$ with $|v| = n$.
+Let $c$ be a machine representation scheme, let $L,V$ be languages of bit strings, let
+$C,e$ be natural numbers, let $\alpha$ be a bit string, and let $T :
+\mathbb{N}\to\mathbb{N}$. Suppose that for every bit string $x$, membership $x\in L$ is
+equivalent to the existence of a bit string $u$ with $|u|=C(|x|+1)^e$ and $x u\in V$.
+Suppose also that for every such $x,u$, the machine decoded from $\alpha$ halts within
+$T(|x|)$ steps on input $\langle x,u\rangle$ and outputs the single bit indicating
+whether $x u\in V$. Then for every bit string $x$, $x\in L$ if and only if
+$\langle\alpha,\langle x,\langle1^{C(|x|+1)^e},1^{T(|x|)}\rangle\rangle\rangle$ belongs
+to $\mathrm{TMSAT}_c$.
 \end{lemma}
 
-\begin{lemma}[Unary certificate length is polynomial-time]
+\begin{lemma}[Unary certificate length computation]
 \lean{Complexity.tmsat_certificate_unary}
 \label{Complexity.tmsat_certificate_unary}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.polyTimeComputable_const, Turing.FinTM.computesFunInTime_polyUnary}
 \difficulty{3}
-For all $C, c \in \mathbb{N}$, the function sending a bit string $x$ to the word $1^{C(|x|+1)^c}$ consisting of $C(|x|+1)^c$ ones is polynomial-time computable.
+For all $C,c\\in\\mathbb{N}$, the function on bit strings sending $x$ to the word
+consisting of $C(|x|+1)^c$ copies of $1$ is polynomial-time computable.
 \end{lemma}
 
 \begin{theorem}[TMSAT is NP-hard]
@@ -694,14 +882,23 @@ For all $C, c \in \mathbb{N}$, the function sending a bit string $x$ to the word
 \leanok
 \uses{Complexity.NPHard, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.TMSAT, Complexity.TimeConstructible, Complexity.mem_P_iff, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_of_linear, Complexity.polyUnaryTM, Complexity.poly_unary_computes, Complexity.timeConstructible_poly, Complexity.tmsatConcat, Complexity.tmsatQuad, Complexity.tmsatWrapperOutput, Complexity.tmsat_certificate_unary, Complexity.tmsat_deadline_bound, Complexity.tmsat_exact_certificate_bits, Complexity.tmsat_reduction_correct, Turing.CodeTM.toFinTM, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_pairConcat, Turing.FinTM.computesFunInTime_pairEncodeFixed, Turing.FinTM.computesFunInTime_pairValid, Turing.FinTM.one_work_tape_binary, Turing.MachineCode, Turing.MachineCode.decode_encode, Turing.MultiTapeTM.indicator, Turing.exists_codeTM, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{6}
-Let $c$ be a machine-representation scheme, assigning to every bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ so that the code of every such machine decodes back to it. Then $\mathrm{TMSAT}_c$ is $\mathrm{NP}$-hard: every language in $\mathrm{NP}$ reduces to it by a polynomial-time many-one reduction, where $\mathrm{TMSAT}_c$ is the set of strings $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$, where $\langle a,b\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones, such that some $u$ with $|u| = n$ makes $M_\alpha$ halt on $\langle x,u\rangle$ within $t$ steps with output exactly $1$.
+For every machine-code scheme with a total decoder and the property that encoding any
+machine followed by any number of $1$-bits decodes to that machine, the associated
+language of encoded machine descriptions, inputs, unary witness-length bounds, and unary
+time bounds for which some witness causes the decoded machine to halt with output $1$ is
+NP-hard under polynomial-time many-one reductions.
 \end{theorem}
 
-\begin{theorem}[TMSAT is NP-complete]
+\begin{theorem}[NP completeness of bounded machine acceptance]
 \lean{Complexity.TMSAT_NPComplete}
 \label{Complexity.TMSAT_NPComplete}
 \leanok
 \uses{Complexity.NPComplete, Complexity.PolyBound, Complexity.TMSAT, Complexity.TMSAT_NPHard, Complexity.TMSAT_mem_NP, Turing.EffectiveMachineCode}
 \difficulty{1}
-Let $c$ be an effective machine-representation scheme, assigning to each bit string $\alpha$ a one-work-tape binary Turing machine $M_\alpha$ and equipped with a canonizer machine that outputs the canonical serialization of $M_\alpha$ within $T_c(|\alpha|)$ steps, and suppose $T_c(n) \le K(n+1)^k$ for all $n$, for some constants $K, k$. Then $\mathrm{TMSAT}_c$ is $\mathrm{NP}$-complete, where $\mathrm{TMSAT}_c$ is the set of strings $\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle\rangle$, where $\langle a,b\rangle$ is the self-delimiting pair encoding and $1^k$ is the word of $k$ ones, such that some $u$ with $|u| = n$ makes $M_\alpha$ halt on $\langle x,u\rangle$ within $t$ steps with output exactly $1$.
+Let $c$ be an effective machine-code scheme whose canonizer has a polynomially bounded
+running-time function. The language of strings that can be written as
+$\langle\alpha,\langle x,\langle 1^n,1^t\rangle\rangle$, where $1^m$ denotes a string of
+$m$ ones, and for which there is a string $u$ of length $n$ such that the machine
+decoded from $\alpha$ halts after exactly $t$ steps on input $\langle x,u\rangle$ and
+outputs the single bit $1$, is NP-complete.
 \end{theorem}

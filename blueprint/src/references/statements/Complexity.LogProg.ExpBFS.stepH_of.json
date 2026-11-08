@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.stepH_of",
+ "key": "5ac262dded7b9c81",
+ "kind": "lemma",
+ "title": "Deterministic Step Preserves Halting",
+ "statement": "Let $K_0,B,P\\in\\mathbb{N}$, let $\\mathcal O$ assign a Boolean oracle on finite bit strings to each of four indices, and let $x$ be a finite bit string. Let $l$ be a machine label with deterministic instruction $i$, let $st$ be a state whose 17 register values are all at most $B$, let $M\\colon\\mathbb{Z}\\to\\{0,1\\}$ be a memory tape, and let $p\\in\\mathbb{Z}$ satisfy $0\\le p\\le P$. If executing $i$ from label $l$ with register vector determined by $st$, no prior answer, and memory configuration $(M,p)$ yields a configuration from which the machine eventually halts with answer $r\\in\\{0,1\\}$, with the guard condition $G(x,B,P)$ holding at every time before halting, then the machine started at label $l$ with register vector determined by $st$, no prior answer, and memory configuration $(M,p)$ also eventually halts with answer $r$, with $G(x,B,P)$ holding at every time before halting.",
+ "hypotheses_covered": [
+  "$K_0,B,P$ are natural numbers",
+  "$\\mathcal O$ is a family of four Boolean oracles on finite bit strings",
+  "$x$ is a finite Boolean word",
+  "$st$ is an exponential BFS machine state",
+  "$M\\colon\\mathbb Z\\to\\{0,1\\}$ is a memory tape",
+  "$p\\in\\mathbb Z$ and $0\\le p\\le P$",
+  "$l$ is a machine label and $i$ is a deterministic instruction with $A(K_0)(l)=\\mathrm{det}(i)$",
+  "Every one of the 17 register values encoded by $st$ is at most $B$",
+  "The run from the post-instruction configuration halts with answer $r$ and satisfies $G(x,B,P)$ at all earlier times"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P\\in\\mathbb N$, let $\\mathcal O$ be a family of four Boolean oracles on bit\nstrings, let $x$ be a finite bit string, and let $S$ be a register state with every\nregister at most $B$. Let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory\ntape, let $p\\in\\mathbb Z$ satisfy $0\\le p\\le P$, and let $\\ell$ be a machine label with\ninstruction $i$. If the machine’s instruction at $\\ell$ is the deterministic instruction\n$i$, and executing that instruction from label $\\ell$ with register values given by $S$\nand no prior answer yields a configuration from which the machine eventually halts with\nanswer $r$, while satisfying $G(x,B,P)$ at every time before halting, then it likewise\nhalts with answer $r$ from the configuration at label $\\ell$ whose registers are given\nby $S$, whose memory is $M$, and whose head is at $p$, with $G(x,B,P)$ holding at every\ntime before halting."
+}

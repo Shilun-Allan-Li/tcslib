@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_strictMonoOn",
+ "key": "aacb01c38e5ea01c",
+ "kind": "lemma",
+ "title": "Strict monotonicity of the Gaussian quantile",
+ "statement": "Let $\\Phi(t)=\\int_{-\\infty}^{t}e^{-x^2/2}/\\sqrt{2\\pi}\\,dx$ be the standard Gaussian distribution function, and define $Q(\\alpha)=\\inf\\{t\\in\\mathbb R: \\alpha\\le\\Phi(t)\\}$. Then $Q$ is strictly increasing on $(0,1)$; that is, $Q(\\alpha)<Q(\\beta)$ whenever $0<\\alpha<\\beta<1$.",
+ "hypotheses_covered": [
+  "The quantile arguments lie in the open interval $(0,1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi$ and $\\varphi$ be the standard Gaussian distribution function and density, and put $Q=\\Phi^{-1}$ and $I(p)=\\varphi(Q(p))$ for $0<p<1$. The function $Q$ is strictly increasing on $(0,1)$."
+}

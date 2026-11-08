@@ -1,19 +1,16 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.zFiber_inter_diag_specialPair_subset_protocolErrorEvent",
- "key": "d9572d4fed64527d",
+ "key": "4918f33accbda478",
  "kind": "theorem",
- "title": "Diagonal special-pair samples in a fixed transcript fiber are protocol errors",
- "statement": "Fix a positive integer $n$ and a deterministic two-party communication protocol $p$ that outputs a Boolean on pairs of subsets of $[n]$, intended to compute set disjointness. For a sample $\\omega$ of the hard distribution, let $Z(\\omega)$ denote the statistic recording the transcript produced by running $p$ on the induced input pair $(X_\\omega, Y_\\omega)$, together with the special coordinate $T$, Alice's input bits at coordinates before $T$, and Bob's input bits at coordinates after $T$. Fix one value $z$ of this statistic, and let $b$ be the Boolean output attached to the transcript stored in $z$. Then every sample $\\omega$ with $Z(\\omega) = z$ whose bits at the special coordinate satisfy $(\\text{Alice's special bit}, \\text{Bob's special bit}) = (b, b)$ belongs to the protocol error event; that is, the value $p$ computes on $(X_\\omega, Y_\\omega)$ differs from the true disjointness value of $X_\\omega$ and $Y_\\omega$.",
+ "title": "Diagonal special pairs are protocol errors",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on $n$-element inputs, and let $z$ be an achievable value of $Z=(M,T,X_{<T},Y_{>T})$. Every hard-distribution sample in the fiber $\\{Z=z\\}$ whose special-coordinate bit pair equals $(b,b)$, where $b$ is the output recorded by the transcript in $z$, belongs to the event on which $p$ errs on disjointness.",
  "hypotheses_covered": [
-  "n is a positive integer",
-  "p is a deterministic disjointness protocol on subsets of [n]",
-  "z is a fixed value of the transcript-plus-special-coordinate statistic Z",
-  "the sample omega lies in the fiber Z(omega) = z",
-  "omega's special-coordinate bit-pair equals (b, b), where b is the transcript output stored in z",
-  "conclusion: omega lies in the protocol error event"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic disjointness protocol on $n$ coordinates",
+  "$z$ is an achievable value of $Z"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "On a fixed $Z=z$ fiber, inputs whose special pair equals the $Z$-determined protocol output on both sides are protocol errors."
+ "replaced": "Fix a positive integer $n$ and a deterministic two-party communication protocol $p$ that\noutputs a Boolean on pairs of subsets of $[n]$, intended to compute set disjointness.\nFor a sample $\\omega$ of the hard distribution, let $Z(\\omega)$ denote the statistic\nrecording the transcript produced by running $p$ on the induced input pair $(X_\\omega,\nY_\\omega)$, together with the special coordinate $T$, Alice's input bits at coordinates\nbefore $T$, and Bob's input bits at coordinates after $T$. Fix one value $z$ of this\nstatistic, and let $b$ be the Boolean output attached to the transcript stored in $z$.\nThen every sample $\\omega$ with $Z(\\omega) = z$ whose bits at the special coordinate\nsatisfy $(\\text{Alice's special bit}, \\text{Bob's special bit}) = (b, b)$ belongs to the\nprotocol error event; that is, the value $p$ computes on $(X_\\omega, Y_\\omega)$ differs\nfrom the true disjointness value of $X_\\omega$ and $Y_\\omega$."
 }

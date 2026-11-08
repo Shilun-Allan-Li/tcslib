@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinNDTM.RDecidesInExpTime",
+ "key": "0edcafb92a11c4d6",
+ "kind": "def",
+ "title": "Randomized exponential-time decision predicate",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine over the Boolean alphabet, let $L$ be a language of Boolean strings, and let $T\\colon\\mathbb{N}\\to\\mathbb{N}$. For every Boolean string $x$, the machine's runtime is at most $T(|x|)$. If $x\\in L$, then for every rational $\\varepsilon>0$ there is a number of random choice bits $t$ for which the probability that the machine halts with output `[true]` is at least $2/3-\\varepsilon$. If $x\\notin L$, then every choice-bit string $w$ whose run halts produces output `[false]`.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine over the Boolean alphabet",
+  "$L$ is a language of Boolean strings",
+  "$T$ is a function from natural numbers to natural numbers",
+  "For every input, runtime is at most $T$ of its length",
+  "For yes instances, every rational $\\varepsilon>0$ admits a choice-bit length $t$ with acceptance probability at least $2/3-\\varepsilon$",
+  "For no instances, every choice-bit string yielding a halted run produces output `[false]`"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

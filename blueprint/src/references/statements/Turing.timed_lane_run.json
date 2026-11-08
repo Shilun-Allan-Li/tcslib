@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.timed_lane_run",
+ "key": "06f35d77f43d4bd8",
+ "kind": "lemma",
+ "title": "One-lane finite-state transduction",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes, choose a lane $lane<k$, and let $R,C$ be types with maps $state:R\\to S$ and $symbol:C\\to A$ and a visit rule $visit:R\\times C\\to R\\times C$. Suppose that whenever the selected lane reads $symbol(c)$, the transition from state $state(s)$, for any input and work-tape reads, is the single-lane action that writes $symbol$ of the updated cell, moves that lane right, and enters the state indexed by the updated register. Then, for any base configuration, word $as$ over $C$, initial register $s$, integer frontier $z$, and lists $l,r$ of optional symbols, running $M$ for $|as|$ steps from the zipper configuration whose right list begins with the encoded word $as$ followed by $r$ yields the zipper configuration whose frontier is $z+|as|$, register is the final register from the left-to-right transduction of $as$, and left list is the reversed encoded rewritten word prepended to $l$, with right list $r$.",
+ "hypotheses_covered": [
+  "$A,S,R,C$ are types",
+  "$k$ is a natural number",
+  "$x$ is a finite list over $A$",
+  "$M$ is a deterministic machine with $k$ work tapes",
+  "$lane<k$",
+  "$state:R\\to S$",
+  "$symbol:C\\to A$",
+  "$visit:R\\times C\\to R\\times C$",
+  "the transition condition $htr$ holds for every $s,c,inp,ws$ with the selected lane reading $symbol(c)$",
+  "$base$ is a configuration",
+  "$as$ is a finite list over $C$",
+  "$s$ is an initial register",
+  "$z$ is an integer",
+  "$l,r$ are finite lists of optional symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a machine's transitions, on a family of control states indexed by a\nregister type, always perform a right-moving single-lane write determined by a\nlocal visit function of the register and the symbol read on the designated\nlane.  Then running the machine for exactly the length of a word laid out on\nthat lane's zipper computes the left fold of the visit function over the word:\nthe final control carries the folded register, the frontier advances by the\nword's length, the processed stack holds the rewritten word reversed, and all\ninactive tapes are unchanged."
+}

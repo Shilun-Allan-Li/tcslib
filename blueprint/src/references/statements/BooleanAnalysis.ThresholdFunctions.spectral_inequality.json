@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.spectral_inequality",
+ "key": "ec2b0ba8c84e5631",
+ "kind": "lemma",
+ "title": "Variance and influence inequality",
+ "statement": "Let $n\\in\\mathbb N$ and let $g:\\{0,1\\}^n\\to\\mathbb R$. With expectation taken uniformly on the cube, let $\\mathrm{Inf}(g)$ be the sum of its coordinate influences and let $W_1(g)=\\sum_{|S|=1}\\widehat g(S)^2$ be its Fourier weight at level one. Then $2\\bigl(\\mathbb E[g^2]-(\\mathbb E g)^2\\bigr)\\le \\mathrm{Inf}(g)+W_1(g)$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$g:\\{0,1\\}^n\\to\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. Write $x^{\\{i\\}}$ for $x$ with bit $i$ flipped, $I_i(h)=\\mathbb E[(h(x)-h(x^{\\{i\\}}))^2]/4$, and $I(h)=\\sum_i I_i(h)$. For every real cube function $g$, $2(\\mathbb E[g^2]-(\\mathbb Eg)^2)\\le I(g)+\\sum_{|S|=1}\\widehat g(S)^2$."
+}

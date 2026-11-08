@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.maskedCfg_apply",
+ "key": "388d418982a6466c",
+ "kind": "lemma",
+ "title": "Masking commutes with actions",
+ "statement": "Let $k$ be a natural number, $A$ and $S$ be types, $x$ be a word over $A$, $z\\in A$, $c$ a configuration on $x$, and $a$ an action for a $k$-tape machine over $A$ with states in $S$. Applying $a$ to $c$ and then replacing the input by the constant word consisting of $|x|$ copies of $z$ gives the same configuration as first replacing the input of $c$ by that constant word and then applying $a$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$A,S$ are types",
+  "$x$ is a word over $A",
+  "$z$ is a symbol in $A$",
+  "$c$ is a configuration on $x$",
+  "$a$ is an action for a $k$-tape machine over $A$ with states in $S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $z$ be a symbol, $a$ an action (an input-head move, a write and a move for each\nwork tape, an optional emitted symbol, and a next state), and $c$ a configuration on\nan input word $x$. Then masking the input by $z$ after applying $a$ yields the same\nconfiguration as applying $a$ to the masked configuration."
+}

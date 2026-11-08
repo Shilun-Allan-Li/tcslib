@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.pi_over_two_theorem",
+ "key": "66fdfb76a8303c0d",
+ "kind": "theorem",
+ "title": "Fourier weight and approximation near π/2",
+ "statement": "There exists a real constant $C\\ge0$ such that, for every natural number $n$, every $\\{-1,1\\}$-valued function $f$ on $\\{0,1\\}^n$, and every real $\\varepsilon\\ge0$ for which $|\\widehat f(\\{i\\})|\\le\\varepsilon$ for all coordinates $i$, the level-one Fourier weight satisfies $W_1[f]\\le 2/\\pi+C\\varepsilon$. Moreover, if $2/\\pi-\\varepsilon\\le W_1[f]$, then $f$ disagrees with the threshold sign of its degree-one Fourier part on at most a fraction $C\\sqrt{\\varepsilon}$ of the uniformly chosen cube points.",
+ "hypotheses_covered": [
+  "there exists a real constant C",
+  "C ≥ 0",
+  "n is a natural number",
+  "f is ±1-valued",
+  "ε is real",
+  "0 ≤ ε",
+  "every singleton Fourier coefficient has absolute value at most ε",
+  "the lower-bound premise 2/π − ε ≤ W₁[f] for the approximation conclusion"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $n\\in\\mathbb N$ and a real-valued function $f$ on $\\{0,1\\}^n$, use uniform expectation $\\mathbb E[h]=2^{-n}\\sum_xh(x)$, singleton Fourier coefficients $\\widehat f(\\{i\\})=\\mathbb E[f(x)(-1)^{x_i}]$, degree-one Fourier weight $W^1[f]=\\sum_{i<n}\\widehat f(\\{i\\})^2$, and degree-one part $L_f(x)=\\sum_{i<n}\\widehat f(\\{i\\})(-1)^{x_i}$; define $\\tau(r)=1$ for $r\\ge0$ and $\\tau(r)=-1$ for $r<0$.\nThere exists a real constant $C\\ge0$ such that, for every $n\\in\\mathbb N$, every sign-valued function $f:\\{0,1\\}^n\\to\\{-1,1\\}$, and every real $\\varepsilon\\ge0$ with $|\\widehat f(\\{i\\})|\\le\\varepsilon$ for every $i<n$, one has\n\\[\nW^1[f]\\le\\frac2\\pi+C\\varepsilon\n\\quad\\text{and}\\quad\n\\left(\n\\frac2\\pi-\\varepsilon\\le W^1[f]\n\\ \\Longrightarrow\\\n\\Pr[f(x)\\ne\\tau(L_f(x))]\\le C\\sqrt\\varepsilon\n\\right),\n\\]\nwhere the probability is uniform on the cube."
+}

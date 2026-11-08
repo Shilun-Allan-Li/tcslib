@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.PolyHierarchy.nMap",
+ "key": "200cb71d08b30771",
+ "kind": "def",
+ "title": "Iterated tuple map",
+ "statement": "Let $f$ be a function on bit strings, let $\\ell_1,\\ell_2$ assign natural numbers to bit strings, and let $i$ be a natural number. On input $z$, form the $(i+1)$-fold iterated first projection of $z$, where each projection takes the first component of a pair parse and returns the empty string if parsing fails. Use this string to construct the unary paired length encoding from $\\ell_1,\\ell_2$, then apply the $(i+1)$-level tuple decoder with base map $n\\mapsto f(n)$ and the padded second-component decoder, using that encoding and $z$ as inputs.",
+ "hypotheses_covered": [
+  "Function $f : \\{0,1\\}^* \\to \\{0,1\\}^*$",
+  "Functions $\\ell_1,\\ell_2 : \\{0,1\\}^* \\to \\mathbb{N}$",
+  "Natural number $i$",
+  "Input bit string $z$"
+ ],
+ "confidence": "low",
+ "caveat": "The definitions of the base map and the projections and decoders used in this construction are not all included in the provided definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

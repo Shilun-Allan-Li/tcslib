@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.sim_call",
+ "key": "e002c77966a3bbe0",
+ "kind": "lemma",
+ "title": "One-step effect of an oracle call",
+ "statement": "Let $A$ be an instruction program on $m$ registers with control states in $\\Lambda$, let the oracle answer Boolean queries to $d$ deciders, and fix its initial state $l_0$ and a Boolean input $x$. Suppose the instruction at state $l$ is a call to decider $j$ in mode $\\mu$ with argument-register list $R$, branching to $l_1$ on a positive answer and to $l_0'$ on a negative answer. For any register assignment $v$ and output word $o$, one step of the program from the configuration in state $l$, at the start phase, with input head at position one and register tapes storing the binary expansions of $v$, yields the corresponding start-phase configuration with the same registers, input-head position, and output, and state $l_1$ if the oracle accepts the virtual input formed from $x$, mode $\\mu$, and the words in registers $R$, or state $l_0'$ otherwise.",
+ "hypotheses_covered": [
+  "The register program $A$, oracle, and initial state $l_0$",
+  "States $l,l_1,l_0'\\in\\Lambda$",
+  "Decider index $j<d$",
+  "Mode $\\mu$ and argument-register list $R$",
+  "The instruction at $l$ is the specified call",
+  "Register assignment $v$",
+  "Output word $o$",
+  "Boolean input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

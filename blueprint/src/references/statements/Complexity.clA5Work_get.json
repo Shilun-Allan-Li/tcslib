@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Work_get",
+ "key": "f815bd16ff95ccb8",
+ "kind": "lemma",
+ "title": "Indexing a time-major list",
+ "statement": "Let $\\alpha$ be a type, let $k,N,j\\in\\mathbb{N}$, and let $f:\\mathbb{N}\\to\\mathbb{N}\\to\\alpha$. If $j<kN$, then the entry at index $j$ of the list formed by concatenating, for each $t<N$ in order, the list $f(t,0),\\ldots,f(t,k-1)$ is $f(\\lfloor j/k\\rfloor,j\\bmod k)$.",
+ "hypotheses_covered": [
+  "$\\alpha$ is a type",
+  "$k,N,j$ are natural numbers",
+  "$f:\\mathbb{N}\\to\\mathbb{N}\\to\\alpha$",
+  "$j<kN$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every element family on times and tapes, tape count $k$, bound $N$, and index $j < kN$, the $j$-th entry of the list enumerating, for each time below $N$, the $k$ tape entries in order, is the entry at time $j$ divided by $k$ and tape $j$ modulo $k$; the zero-tape case has no legal index."
+}

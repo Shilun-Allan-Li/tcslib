@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.dataTM_computes",
+ "key": "d80b27d0f06c2a07",
+ "kind": "lemma",
+ "title": "Correctness of the Oblivious Simulator",
+ "statement": "Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $L$ be a binary language, and let $a,b$ be natural numbers and $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every binary word $x$, $W$ outputs the binary expansion of $T(|x|)$ within $b(T(|x|)+1)$ steps; that $n\\le T(n)$ for every $n$; and that $M$ decides $L$ within $aT(n)$ steps. Then for every binary word $x$, the simulator constructed from $W$, $M$, and $a$ on the input obtained by embedding each bit of $x$ into the schedule alphabet halts at some time $t$ with output consisting of the single schedule symbol whose bit tag is the indicator of whether $x\\in L$.",
+ "hypotheses_covered": [
+  "$W$ outputs $(T(|x|))$ in binary within $b(T(|x|)+1)$ steps for every binary word $x$",
+  "$n\\le T(n)$ for every natural number $n$",
+  "$M$ decides $L$ within $aT(n)$ steps",
+  "$x$ is an arbitrary binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ compute on every input $x$ the binary expansion of $T(|x|)$ within\n$b\\,(T(|x|)+1)$ steps, suppose $n \\le T(n)$ for all $n$, and let $M$ decide the\nlanguage $L$ within time $a\\,T(n)$.  Then for every word $x$ there is a time $t$\nwithin which the logical simulator, on the embedded input, computes the\none-symbol output consisting of the bit symbol of the indicator of $L$ at $x$."
+}

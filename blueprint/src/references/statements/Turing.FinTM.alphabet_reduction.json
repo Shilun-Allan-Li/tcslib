@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.alphabet_reduction",
+ "key": "b771889b2143f332",
+ "kind": "theorem",
+ "title": "Reduction to the binary alphabet",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an embedding, let $M$ be a finite Turing machine over $\\Gamma$, and let $f$ map binary strings to binary strings. Let $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every binary input $x$, $M$ computes the letterwise $e$-image of $f(x)$ from the letterwise $e$-image of $x$ within $T(|x|)$ steps. Then there are a natural number $c$ and a finite binary-alphabet machine $M'$ with the same number of work tapes as $M$ such that $M'$ computes $f$ within $n\\mapsto c(T(n)+1)$ steps.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite and has decidable equality",
+  "An embedding of the Boolean alphabet into $\\Gamma$",
+  "A finite Turing machine $M$ over $\\Gamma$",
+  "A function on binary strings and a natural-valued time bound",
+  "$M$ computes the embedded input-output function within the stated time bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "[AB09, Claim 1.5]. Let $\\Gamma$ be a finite alphabet, $e : \\{0,1\\} \\hookrightarrow\n\\Gamma$ an embedding of the two bits, $M$ a Turing machine over $\\Gamma$ (with a\nread-only input tape, a write-only output tape, and $k$ work tapes), $f$ a function on\nbinary strings, and $T : \\mathbb{N} \\to \\mathbb{N}$. Suppose $M$ computes $f$ via $e$\nwithin time $T$: for every binary string $x$, the run of $M$ on the letterwise\n$e$-image of $x$ halts within $T(\\abs{x})$ steps with output the letterwise $e$-image\nof $f(x)$. Then there exist a constant $c \\in \\mathbb{N}$ and a Turing machine $M'$\nover the binary alphabet with the same number $k$ of work tapes such that $M'$\ncomputes $f$ within time $n \\mapsto c\\,(T(n)+1)$."
+}

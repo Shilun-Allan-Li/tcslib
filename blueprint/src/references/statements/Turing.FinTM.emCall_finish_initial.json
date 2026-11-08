@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emCall_finish_initial",
+ "key": "0a8c74b4b64041b0",
+ "kind": "lemma",
+ "title": "Finalizer entry configuration",
+ "statement": "Fix a finite Boolean Turing machine $M$, a mode bit, Boolean words $x$, $a$, and $c$, and a time $T$. Embed the finalizer configuration on input $x$ in state $0$, with input head at position $1$, argument tape storing $a$ and capture tape storing $c$, their heads at $|a|$ and $|c|$, respectively, and empty output, into the call machine's tape layout. The resulting configuration is the cleanup frame at time $T$ with all source data, marker, and origin tapes blank, all their heads at the origin, and control in the finalizer-entry state.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine M",
+  "mode bit emit",
+  "Boolean input word x",
+  "argument word a",
+  "capture word c",
+  "time T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode, input, argument word $a$, capture word $c$, and time $T$: relocating the\nfinalizer's start configuration (argument head at $|a|$, capture head at $|c|$, empty\noutput) through the pair layout equals the cleanup frame in which all source banks are\nblank, in the finalizer-entry control state."
+}

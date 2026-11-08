@@ -1,0 +1,21 @@
+{
+ "lean_name": "WordRAM.mem_DTIME_of_decides",
+ "key": "42bc4542b179b15c",
+ "kind": "theorem",
+ "title": "Word RAM decider yields polynomial-time class bound",
+ "statement": "Let $P$ be an extended word RAM program and $L$ a language of Boolean strings. Suppose there are natural-number-valued functions $W,TW,SW$ such that $W$ is computable by a finite Turing machine within time $TW(n)$ and space $SW(n)$, and for every Boolean string $x$ there is an output string $o$ for which $P$, on $x$ with empty coin sequence and word width $W(|x|)$, halts within $T(|x|)$ steps and space $F(|x|)$, returning the Boolean indicator of membership in $L$. If $T':\\mathbb{N}\\to\\mathbb{N}$ and $a\\in\\mathbb{N}$ satisfy, for every $n$, $TW(n)+(T(n)+1)(F(n)(W(n)+1)+W(n)^2+n+1)\\le aT'(n)$, then $L$ belongs to the deterministic time class with bound $T'$.",
+ "hypotheses_covered": [
+  "$P$ is an extended word RAM program",
+  "$L$ is a language of Boolean strings",
+  "$W,TW,SW,T,F$ are natural-number-valued functions",
+  "$W$ is computable by a finite Turing machine within time $TW(n)$ and space $SW(n)$",
+  "For every Boolean string $x$, some output $o$ lets $P$ halt within time $T(|x|)$ and space $F(|x|)$ at word width $W(|x|)$ with empty coin sequence, returning the membership indicator of $L$",
+  "$T'$ is a natural-number-valued function",
+  "$a$ is a natural number",
+  "For every $n$, $TW(n)+(T(n)+1)(F(n)(W(n)+1)+W(n)^2+n+1)\\le aT'(n)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

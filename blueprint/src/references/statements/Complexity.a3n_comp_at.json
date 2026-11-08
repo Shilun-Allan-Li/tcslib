@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.a3n_comp_at",
+ "key": "8f15392fcf7d4a1b",
+ "kind": "lemma",
+ "title": "Time bound for buffered composition",
+ "statement": "Let $F,G$ be finite Turing machines over the binary alphabet, and let $x,y,z$ be binary words and $s,t$ natural numbers. If $F$ computes $y$ from $x$ in exactly $s$ steps and $G$ computes $z$ from $y$ in exactly $t$ steps, then their buffered composition computes $z$ from $x$ in exactly $s+|y|+2+t$ steps.",
+ "hypotheses_covered": [
+  "$F,G$ are finite binary-alphabet Turing machines",
+  "$x,y,z$ are binary words",
+  "$s,t\\in\\mathbb{N}$",
+  "$F$ computes $y$ from $x$ in $s$ steps",
+  "$G$ computes $z$ from $y$ in $t$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ and $G$ be deterministic machines, and suppose $F$ computes $y$ from $x$ within $s$ steps and $G$ computes $z$ from $y$ within $t$ steps. Then the buffered composition of $F$ and $G$ computes $z$ from $x$ within $s + |y| + 2 + t$ steps."
+}

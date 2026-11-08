@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.recordStep_tape_run",
+ "key": "97392b8453f5010b",
+ "kind": "theorem",
+ "title": "Recorded tape update run",
+ "statement": "Let $M$ be a deterministic machine with $k$ Boolean work tapes, let $\\mathrm{upd}:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$, and let $S$ be the state set of a two-tape Boolean machine with designated states $\\mathrm{start}$ and $\\mathrm{finish}$. For an input word $x$, a configuration $c$ of $M$, a radius $s\\in\\mathbb{N}$, and data $d$ and tape index $i<k$, suppose the work-tape heads of $c$ lie within distance $s$ of the origin and all tape cells outside that window are blank. Suppose also that tape $0$ of a four-tape recording machine, relative to its head, stores the $2s+1$ cells of tape $i$ indexed from $-s$ through $s$, each paired with a mark indicating whether the simulated head is there. Then the recording machine has a run of exactly $4(2s+1)+6$ steps from the configuration whose control state is the forward writing phase for tape $i$ to the configuration whose control state skips the newly written tape record; throughout the run it visits neither designated verdict state before the final step, and every work-tape head stays within distance $2s+2$ of its initial position. At the endpoint, tape $0$ stores the updated cells and head mark obtained by applying to $c$ the action prescribed by $M$ from $d$; every other tape cell outside tape $0$'s interval from its initial head position through that position plus $2s$ is unchanged.",
+ "hypotheses_covered": [
+  "$M$ is a deterministic machine with $k$ Boolean work tapes",
+  "$\\mathrm{upd}:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$\\mathrm{seek}$ is a two-tape Boolean machine with state set $S$",
+  "Designated states $\\mathrm{start},\\mathrm{finish}:S$",
+  "$s\\in\\mathbb{N}$",
+  "$c$ is a configuration on input $x$ and is in the radius-$s$ window",
+  "$d$ is recording data and $i<k$",
+  "$d$ is a four-tape configuration on input encoded from $x$",
+  "Tape $0$ of $d$ represents the indicated tape segment and head marks"
+ ],
+ "confidence": "low",
+ "caveat": "The formal endpoint modifies tape 0 only on a specified half-open interval; its buffer representation and the composite recording-machine control phases are described in words.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

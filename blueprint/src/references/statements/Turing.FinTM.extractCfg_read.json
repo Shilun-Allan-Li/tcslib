@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.extractCfg_read",
+ "key": "adf94cd33683e96d",
+ "kind": "lemma",
+ "title": "Input symbol in an extractor configuration",
+ "statement": "Let $x$ be a Boolean word, let $q$ be an optional extractor control state, and let $i\\in\\mathbb N$ satisfy $i\\le |x|$. For any buffered Boolean word $a$, integer head position $z$, and output word, the extractor configuration with input head just past the first $i$ symbols reads the $i$-th symbol of $x$, or no symbol if $i=|x|$.",
+ "hypotheses_covered": [
+  "x is a Boolean word",
+  "q is an optional extractor control state",
+  "i is natural",
+  "i≤|x|",
+  "a is a Boolean word",
+  "z is an integer",
+  "the output is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In an extractor configuration at input position $i \\le \\abs{x}$, the symbol\nunder the input head is the $i$-th bit of $x$ when $i < \\abs{x}$ and the blank\notherwise, regardless of the buffer contents."
+}

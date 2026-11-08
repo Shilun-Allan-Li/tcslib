@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/CircuitSatReductionMachine.lean :: BoolCircuit.CktSatReduction.Emitter.em_main_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Execution of an emitter run
+
+**Claim.** When the input suffix and counter bounds satisfy the stated hypotheses, the machine halts within $(|l|+1)200(|w|+1)$ steps and its output is the initial output followed by the emitter's result on $l$.
+
+**Proof.** Induct on the suffix $l$. If it is empty, the drop equality implies that the input head is at the end of the input, so the read transition sees no bit and halts; its output agrees with the empty-suffix emitter result. For $l=b::l'$, the drop equality identifies the bit read at position $i$ as $b$ and identifies the remaining suffix as the input after position $i$. The read transition takes one of three forms. If the abstract transition halts, the machine halts immediately with the prescribed output. If it continues without incrementing a counter, or continues while incrementing counter $t$, the machine takes one transition into the corresponding next abstract state. In the increment case, the unary tape update theorem shows that extending the tape by one true cell represents increasing that counter; the other counters remain unchanged. In either continuation case, the updated counters are at most $i+1$, so induction applies to $l'$. Finally, if the transition requests gate emission, the gate-emission runtime theorem supplies a run of at most $200(i+1)$ steps that emits the gate bits and reaches the next read state with counters $(z+1,0,0)$. Induction then handles $l'$. Concatenating each initial segment with the inductive run gives the stated output and time bound; the one-bit cases use at most one transition, and the gate case uses at most $1+200(i+1)\le200(|w|+1)$ before the recursive suffix run.
+
+**Key facts.** `BoolCircuit.CktSatReduction.Emitter.rd_step`, `Turing.MultiTapeTM.runFrom_add`, `BoolCircuit.CktSatReduction.Emitter.move_ip`, `BoolCircuit.CktSatReduction.Emitter.apply_ctl`, `BoolCircuit.CktSatReduction.Emitter.apply_act`, `BoolCircuit.CktSatReduction.Emitter.tapesOf_update`, `Turing.UnaryTape.update_ones_succ`, `BoolCircuit.CktSatReduction.Emitter.ES.vec_incTo`, `BoolCircuit.CktSatReduction.Emitter.gate_run`.

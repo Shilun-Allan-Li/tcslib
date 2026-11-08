@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.recordRun_tagged",
+ "key": "8b63e49388492d49",
+ "kind": "theorem",
+ "title": "Tagged run satisfies recorded-run conditions",
+ "statement": "Let $R$ be a machine whose states are tagged phase states, and let $M$ be a machine with phase states indexed by $i$. Suppose that through every time $u\\le t$, the run of $R$ from $a$ agrees with the run of $M$ from $c$ after tagging its state by $i$. Suppose the run of $R$ from $a$ reaches $b$ after $t+1$ steps, the phase index $i$ differs from the phase indices of both distinguished states $\\mathrm{yes}$ and $\\mathrm{no}$, and the work-head distances from the specified base positions are at most $r$ at every time $u\\le t$ in the run of $M$ and at time $t+1$ in configuration $b$. Then the run of $R$ from $a$ to $b$ in $t+1$ steps avoids both distinguished states at all earlier times and has all work-head distances from the base positions at most $r$ at every time through $t+1$.",
+ "hypotheses_covered": [
+  "A natural number $K$, symbol type $\\Gamma$, phase index type $I$, and phase state types $\\mathrm{Ph}(i)$",
+  "Input $x$ and a tagged-state machine $R$",
+  "Distinguished tagged states $\\mathrm{yes}$ and $\\mathrm{no}$",
+  "A base position for each of the $K$ tapes and radius $r\\in\\mathbb{N}$",
+  "Configurations $a,b$ for $R$ and phase machine $M$ with index $i$ and configuration $c$",
+  "A natural number $t$",
+  "For every $u\\le t$, $R$'s run from $a$ agrees with the run of $M$ from $c$ after tagging by $i$",
+  "$R$ reaches $b$ from $a$ in $t+1$ steps",
+  "$i$ differs from the phase index of $\\mathrm{yes}$",
+  "$i$ differs from the phase index of $\\mathrm{no}$",
+  "At every $u\\le t$ and on every tape, the run of $M$ has head distance from the base at most $r$",
+  "In $b$, every work-head distance from the base is at most $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

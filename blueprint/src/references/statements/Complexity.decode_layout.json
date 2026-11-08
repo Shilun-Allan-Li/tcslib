@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.decode_layout",
+ "key": "ca366172d775d35c",
+ "kind": "theorem",
+ "title": "Layout of a decoded tableau row",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, and let $w$ be the number of possible snapshots of $M$. Suppose a Boolean list $\\mathrm{pre}$ has length $w$, and a Boolean list $F$ has length $k(w+1)$, where $k$ is the number of work tapes of $M$. For any bits $a,b,c,d$, the list $\\mathrm{pre} ++ [a,b,c] ++ F ++ [d]$ has prefix of length $w$ equal to $\\mathrm{pre}$; its entries at indices $w,w+1,w+2$ are respectively $a,b,c$; dropping its first $w+3$ entries yields $F ++ [d]$; and its entry at index $w+3+k(w+1)$ is $d$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$\\mathrm{pre}$ is a Boolean list of length $\\mathrm{snapWidth}(M)$",
+  "$F$ is a Boolean list of length $M.k(\\mathrm{snapWidth}(M)+1)$",
+  "$a,b,c,d$ are Boolean values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

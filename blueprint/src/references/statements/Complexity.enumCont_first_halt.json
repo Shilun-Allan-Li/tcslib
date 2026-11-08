@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_first_halt",
+ "key": "fce682bee1cad8cb",
+ "kind": "lemma",
+ "title": "First halting time",
+ "statement": "Let $M$ be a machine on Boolean inputs, let $c_0$ be a configuration, and let $T$ be a natural number. If the run from $c_0$ is halted at time $T$, then there is a time $t\\le T$ such that it is not halted at any earlier time and its configuration at time $t$ equals its configuration at time $T$.",
+ "hypotheses_covered": [
+  "A machine on Boolean inputs",
+  "Initial configuration $c_0$",
+  "Natural number $T$",
+  "The run from $c_0$ is halted at time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a machine's run from $c_0$ is halted at time $T$, then there is a time\n$t \\le T$ at which it halts for the first time: the machine is live at every time\nbefore $t$, and its configuration at time $t$ equals its configuration at time\n$T$."
+}

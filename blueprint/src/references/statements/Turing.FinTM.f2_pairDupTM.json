@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.f2_pairDupTM",
+ "key": "b6192c876a13bc6f",
+ "kind": "def",
+ "title": "Pair-duplication machine",
+ "statement": "There is a deterministic Boolean Turing machine with no work tapes and five states, numbered $0$ through $4$, whose initial state is $0$. Its transition rules are as follows: in state $0$, on a Boolean input symbol $b$, it emits $b$ and enters state $1$ without moving the input head; on blank it moves left, emits false, and enters state $2$. In state $1$ it moves right, emits the scanned symbol if present, and returns to state $0$. In state $2$, it moves left while reading symbols, and on blank moves right into state $3$. In state $3$ it emits true and enters state $4$ without moving; in state $4$ it moves right and emits each scanned symbol, halting on blank.",
+ "hypotheses_covered": [
+  "Boolean alphabet",
+  "Zero work tapes",
+  "Five states, numbered 0 through 4",
+  "Initial state 0",
+  "Transition behavior on each state and scanned-symbol case"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

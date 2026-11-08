@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Iter_native",
+ "key": "3f5101a92e7838a0",
+ "kind": "lemma",
+ "title": "Polynomial-time bounded iteration",
+ "statement": "Let $f$ and $s$ be polynomial-time computable functions on Boolean words, and let $N$ be a natural-valued function whose unary encoding is polynomial-time computable. Suppose there is a natural number $K$ such that for every input $x$ and every $j\\le N(x)$, the $j$-fold iterate of $f$ applied to $s(x)$ has length at most $K\\bigl(|s(x)|+N(x)+1\\bigr)^2$. Then the function mapping $x$ to the $N(x)$-fold iterate of $f$ applied to $s(x)$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$s$ is polynomial-time computable",
+  "the unary encoding of $N(x)$ is polynomial-time computable",
+  "there is $K\\in\\mathbb{N}$ bounding every iterate length for all $j\\le N(x)$ by $K(|s(x)|+N(x)+1)^2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$, an initial-word producer $s$, and a unary count producer $N$ be polynomial-time computable, and suppose every iterate of $f$ up to $N$ of the input has length at most $K((|s| + N + 1))^2$ in the produced values. Then the function sending an input $x$ to the $N(x)$-fold iterate of $f$ at $s(x)$ is polynomial-time computable; each iteration is one clean call inside the real unary repetition host."
+}

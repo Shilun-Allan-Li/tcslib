@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.CNF.dual_dual",
+ "key": "392e279cb04c2213",
+ "kind": "theorem",
+ "title": "Dualizing twice returns the original formula",
+ "statement": "For every CNF formula $\\varphi$ over variables indexed by $\\mathbb{N}$, taking its De Morgan dual as a DNF formula and then taking the De Morgan dual of that DNF formula returns $\\varphi$.",
+ "hypotheses_covered": [
+  "A CNF formula over variables indexed by $\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula over variables indexed by $\\mathbb{N}$, a finite list of\nclauses each a finite list of literals $(v,b)$ with $v \\in \\mathbb{N}$ and\n$b \\in \\{0,1\\}$. Forming its De Morgan dual DNF formula, by replacing every literal\n$(v,b)$ with $(v,\\neg b)$ and reading the clauses as terms, and then forming the De Morgan\ndual CNF formula of that DNF formula, by again replacing every literal $(v,b)$ with\n$(v,\\neg b)$ and reading the terms as clauses, returns $\\varphi$."
+}

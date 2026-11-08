@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timed_sweep_shift",
+ "key": "7dd588531dbfadb7",
+ "kind": "lemma",
+ "title": "Tape Invariance Under a Frontier Shift",
+ "statement": "For any integer $z$ and finite lists $l,w,r$ of possibly blank Boolean symbols, the tape represented with frontier $z$, left list $l$, and right list $w$ followed by $r$ is the same function of tape position as the tape represented with frontier $z+|w|$, left list given by the reversal of $w$ followed by $l$, and right list $r$.",
+ "hypotheses_covered": [
+  "$z$ is an integer",
+  "$l,w,r$ are finite lists of possibly blank Boolean symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Moving the frontier of a finite zipper across a segment $w$ --- pushing the\nreversal of $w$ onto the processed stack and advancing the frontier by $|w|$\n--- leaves the represented tape unchanged."
+}

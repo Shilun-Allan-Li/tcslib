@@ -1,0 +1,15 @@
+{
+ "lean_name": "Std.Sat.CNF.eval_dual",
+ "key": "4262e7a9d737487b",
+ "kind": "theorem",
+ "title": "Evaluation of the dual formula",
+ "statement": "For every CNF formula $\\varphi$ over variables indexed by $\\mathbb{N}$ and every Boolean assignment $a:\\mathbb{N}\\to\\{0,1\\}$, the DNF De Morgan dual of $\\varphi$ evaluates to the Boolean negation of the evaluation of $\\varphi$ under $a$.",
+ "hypotheses_covered": [
+  "A CNF formula over variables indexed by $\\mathbb{N}$",
+  "A Boolean assignment $a:\\mathbb{N}\\to\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi = (C_1, \\dots, C_k)$ be a CNF formula over variables indexed by $\\mathbb{N}$,\neach clause a finite list of literals $(v,b)$ with $v \\in \\mathbb{N}$ and\n$b \\in \\{0,1\\}$, and let $\\varphi^{\\ast}$ be the DNF formula whose terms are obtained from\n$C_1, \\dots, C_k$ by replacing every literal $(v,b)$ with $(v, \\neg b)$. Then for every\nassignment $a : \\mathbb{N} \\to \\{0,1\\}$,\n\\[\n  \\varphi^{\\ast}(a) = \\neg\\, \\varphi(a),\n\\]\nwhere $\\varphi(a)$ is true when every clause of $\\varphi$ contains a literal $(v,b)$ with\n$a(v) = b$, and $\\varphi^{\\ast}(a)$ is true when some term of $\\varphi^{\\ast}$ has all of\nits literals $(v,b)$ satisfying $a(v) = b$."
+}

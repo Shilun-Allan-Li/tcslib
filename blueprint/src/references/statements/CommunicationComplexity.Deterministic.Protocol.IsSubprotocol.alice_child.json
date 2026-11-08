@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.alice_child",
+ "key": "22121beb454c44be",
+ "kind": "lemma",
+ "title": "Alice node children are subprotocols",
+ "statement": "Let $X,Y,\text{ and }\u001b[0m\\alpha$ be types, let $f:X\\to\\{0,1\\}$, and let $P$ assign a protocol over these types to each bit. For every bit $b$, the child protocol $P(b)$ is a subprotocol of the Alice node determined by $f$ and $P$.",
+ "hypotheses_covered": [
+  "A function from Alice's input type $X$ to a bit",
+  "A protocol-valued function on the two bits",
+  "An arbitrary bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : X \\to \\{0,1\\}$ be an Alice decision function and let $P$ assign a protocol\n$P(b)$ to each bit $b$. Then for every bit $b$, the child $P(b)$ is a subprotocol of the\nAlice node $\\texttt{alice}\\; f\\; P$."
+}

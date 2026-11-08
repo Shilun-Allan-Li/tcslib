@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satAppend_clean",
+ "key": "9d488e51e851972c",
+ "kind": "lemma",
+ "title": "Clean return of the appender",
+ "statement": "For every pair of Boolean words $x$ and $w$, there is a positive integer time $t$ with $t \\le 2|w|+3|x|+6$ such that the appender, started on input $x$ with its work tape holding $w$ in the standard one-tape word assignment, is not halted at any time $v<t$, and at time $t$ is halted in exactly the configuration whose work tape holds $w$ followed by $x$, with the input head at its initial position, the work head at zero, and the output empty.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Boolean work-tape word $w$",
+  "time $t$ is positive",
+  "$t \\le 2|w|+3|x|+6$",
+  "the run is not halted at any time $v<t$",
+  "the configuration at time $t$ equals the specified halted configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every native input $x$ and existing word $w$ on the data tape, there is a\npositive time $t \\le 2|w| + 3|x| + 6$ such that the appender, started at its\ncanonical entry over the state word of $w$, is not halted before $t$ and at time\n$t$ halts in the canonical configuration holding the state word of\n$w \\mathbin{+\\!\\!+} x$, with both the input and work heads returned to their\norigins and no output."
+}

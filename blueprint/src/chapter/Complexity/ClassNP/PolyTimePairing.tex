@@ -16,22 +16,25 @@ Turing-machine constructions.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Linear-time functions are polynomial-time]
+\begin{theorem}[Linear-time computation implies polynomial time]
 \lean{Complexity.polyTimeComputable_of_linear}
 \label{Complexity.polyTimeComputable_of_linear}
 \leanok
 \uses{Complexity.PolyTimeComputable, Turing.FinTM, Turing.FinTM.ComputesFunInTime}
 \difficulty{2}
-Let $f$ be a function from bit strings to bit strings. If there are a finite binary Turing machine $M$ and a constant $a \in \mathbb{N}$ such that $M$ computes $f$ within $a(n+1)$ steps on every input of length $n$, then $f$ is polynomial-time computable, i.e.\ some finite binary Turing machine computes $f$ within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+Let $f$ be a function on bit strings. If there exist a finite binary Turing machine $M$
+and a natural number $a$ such that, on every input of length $n$, $M$ computes $f$ in
+time $a(n+1)$, then $f$ is polynomial-time computable.
 \end{theorem}
 
-\begin{theorem}[Constant functions are polynomial-time]
+\begin{theorem}[Constant functions are polynomial-time computable]
 \lean{Complexity.polyTimeComputable_const}
 \label{Complexity.polyTimeComputable_const}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.polyTimeComputable_of_linear, Turing.FinTM.computesFunInTime_const}
 \difficulty{1}
-For every fixed bit string $w$, the constant function $x \mapsto w$ on bit strings is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+For every fixed bit string $w$, the constant function sending each bit string to $w$ is
+polynomial-time computable.
 \end{theorem}
 
 \begin{definition}[Threaded payload map]
@@ -48,70 +51,85 @@ Let $g$ be a function from bit strings to bit strings, and let $\langle a,b\rang
 \leanok
 \uses{Complexity.pairMapSnd, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{1}
-Let $g$ be a function from bit strings to bit strings, let $\langle a,b\rangle$ denote the self-delimiting pair encoding of bit strings $a,b$ (every bit of $a$ doubled, then $01$, then $b$), and let $\sigma_g$ be the threaded payload map of $g$, which decodes a bit string $z$ as a pair $\langle a,b\rangle$ and outputs $\langle a, g(b)\rangle$, or outputs the empty word if $z$ is not a pair encoding. Then $\sigma_g(\langle a,b\rangle) = \langle a, g(b)\rangle$ for all bit strings $a$ and $b$.
+For any function $g$ from finite bit strings to finite bit strings and any finite bit
+strings $a$ and $b$, applying the threaded payload map of $g$ to the encoding $\langle
+a,b\rangle$ gives $\langle a,g(b)\rangle$.
 \end{theorem}
 
-\begin{theorem}[Payload map preserves polynomial time]
+\begin{theorem}[Polynomial-time payload map]
 \lean{Complexity.PolyTimeComputable.pairMapSnd}
 \label{Complexity.PolyTimeComputable.pairMapSnd}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.pairMapSnd, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_pairMapSnd}
 \difficulty{4}
-Let $g$ be a polynomial-time computable function on bit strings (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then its threaded payload map, which sends a pair encoding $\langle a,b\rangle$ (every bit of $a$ doubled, then $01$, then $b$) to $\langle a, g(b)\rangle$ and every bit string that is not a pair encoding to the empty word, is also polynomial-time computable.
+Let $g$ be a polynomial-time computable function from bit strings to bit strings. The
+function that maps a valid pair encoding of $a,b$ to the pair encoding of $a,g(b)$, and
+maps every string that is not a valid pair encoding to the empty string, is
+polynomial-time computable.
 \end{theorem}
 
-\begin{lemma}[Appending to a pair encoding]
+\begin{lemma}[Appending to a Pair Encoding]
 \lean{Complexity.pairEncode_append}
 \label{Complexity.pairEncode_append}
 \leanok
 \uses{Turing.pairEncode}
 \difficulty{1}
-Let $\langle a,b\rangle$ denote the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$). For all bit strings $a, b, c$, appending $c$ to $\langle a,b\rangle$ appends it to the second component: $\langle a,b\rangle\, c = \langle a, b\,c\rangle$, where juxtaposition denotes concatenation.
+For any binary strings $a,b,c$, concatenating $c$ to the encoding $\langle a,b\rangle$
+gives the encoding $\langle a,bc\rangle$; that is, $\langle a,b\rangle c=\langle
+a,bc\rangle$.
 \end{lemma}
 
-\begin{theorem}[Pairing of polynomial-time functions]
+\begin{theorem}[Pair encoding preserves polynomial time]
 \lean{Complexity.PolyTimeComputable.pairEncode}
 \label{Complexity.PolyTimeComputable.pairEncode}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairMapSnd, Complexity.pairEncode_append, Complexity.pairMapSnd_pairEncode, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_of_linear, Turing.FinTM.computesFunInTime_pairConcat, Turing.FinTM.computesFunInTime_pairDup, Turing.FinTM.computesFunInTime_pairFst, Turing.FinTM.computesFunInTime_pairSnd, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{5}
-Let $f$ and $g$ be polynomial-time computable functions on bit strings (each computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the map $x \mapsto \langle f(x), g(x)\rangle$ is polynomial-time computable, where $\langle a,b\rangle$ denotes the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$).
+Let $f,g$ be polynomial-time computable functions from bit strings to bit strings. Then
+the function mapping $x$ to the pair encoding of $f(x)$ and $g(x)$ is polynomial-time
+computable, where the pair encoding doubles each bit of its first component, appends the
+separator $01$, and then appends its second component.
 \end{theorem}
 
-\begin{lemma}[Stripping the last one of an all-ones word]
+\begin{lemma}[Removing the last bit of an all-true word]
 \lean{Complexity.splitAtLastTrue_replicate_succ}
 \label{Complexity.splitAtLastTrue_replicate_succ}
 \leanok
 \uses{Turing.splitAtLastTrue}
 \difficulty{3}
-For a bit string $v$, let $\mathrm{split}(v)$ be the prefix of $v$ preceding its last occurrence of $1$, undefined when $v$ contains no $1$. Then for every $n \in \mathbb{N}$, $\mathrm{split}(1^{n+1})$ is defined and equals $1^n$, where $1^k$ is the word of $k$ ones.
+For every natural number $n$, cutting the word of $n+1$ true bits at its last true bit
+returns the word of $n$ true bits.
 \end{lemma}
 
-\begin{theorem}[Unary length map is polynomial-time]
+\begin{theorem}[Polynomial-time unary length function]
 \lean{Complexity.polyTimeComputable_unary}
 \label{Complexity.polyTimeComputable_unary}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_of_linear, Complexity.splitAtLastTrue_replicate_succ, Turing.FinTM.computesFunInTime_pairSnd, Turing.FinTM.computesFunInTime_polyUnary, Turing.FinTM.computesFunInTime_stripLast, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode, Turing.splitAtLastTrue}
 \difficulty{4}
-The map sending a bit string $x$ to the word $1^{|x|}$ of $|x|$ ones is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+The function that sends each bit string $x$ to the word consisting of $|x|$ copies of
+$1$ is polynomial-time computable.
 \end{theorem}
 
-\begin{theorem}[Closure of FP under concatenation]
+\begin{theorem}[Closure under concatenation]
 \lean{Complexity.PolyTimeComputable.append}
 \label{Complexity.PolyTimeComputable.append}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.polyTimeComputable_of_linear, Turing.FinTM.computesFunInTime_pairConcat, Turing.pairDecode_pairEncode}
 \difficulty{3}
-Let $f$ and $g$ be polynomial-time computable functions on bit strings (each computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the map $x \mapsto f(x)\,g(x)$, sending $x$ to the concatenation of $f(x)$ and $g(x)$, is polynomial-time computable.
+Let $f,g$ be polynomial-time computable functions from bit strings to bit strings. Then
+the function mapping each bit string $x$ to the concatenation $f(x)g(x)$ is
+polynomial-time computable.
 \end{theorem}
 
-\begin{theorem}[Polynomial unary generator is polynomial-time]
+\begin{theorem}[Polynomial unary output is polynomial-time]
 \lean{Complexity.polyTimeComputable_polyUnary}
 \label{Complexity.polyTimeComputable_polyUnary}
 \leanok
 \uses{Complexity.PolyTimeComputable, Turing.FinTM.computesFunInTime_polyUnary}
 \difficulty{2}
-For all $C, d \in \mathbb{N}$, the map sending a bit string $x$ to the word $1^{C(|x|+1)^d}$ of $C(|x|+1)^d$ ones is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $K(n+1)^k$ steps on every input of length $n$, for some constants $K, k \in \mathbb{N}$.
+For every $C,d\in\mathbb{N}$, the function sending a bit string $x$ to the word
+consisting of $C(|x|+1)^d$ copies of $1$ is polynomial-time computable.
 \end{theorem}
 
 \begin{theorem}[Prepending a fixed word is polynomial-time]
@@ -120,7 +138,8 @@ For all $C, d \in \mathbb{N}$, the map sending a bit string $x$ to the word $1^{
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.polyTimeComputable_of_linear, Turing.FinTM.computesFunInTime_prepend}
 \difficulty{1}
-For every fixed bit string $w$, the map $x \mapsto w\,x$ that prepends $w$ to a bit string $x$ is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+For every fixed bit string $w$, the function sending a bit string $x$ to the
+concatenation $wx$ is polynomial-time computable.
 \end{theorem}
 
 \begin{definition}[Total first projection of a pair]
@@ -145,7 +164,8 @@ Let $\langle a,b\rangle$ denote the self-delimiting pair encoding of bit strings
 \leanok
 \uses{Complexity.pairFstD, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{1}
-Let $\langle a,b\rangle$ denote the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$), and let $\pi_1$ be the total first projection, which returns the first component of a pair encoding and the empty word on any other bit string. Then $\pi_1(\langle a,b\rangle) = a$ for all bit strings $a, b$.
+For any two finite bit strings $a$ and $b$, the total first projection of their
+self-delimiting pair encoding is $a$.
 \end{theorem}
 
 \begin{theorem}[Second projection of an encoded pair]
@@ -154,34 +174,40 @@ Let $\langle a,b\rangle$ denote the self-delimiting pair encoding of bit strings
 \leanok
 \uses{Complexity.pairSndD, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{1}
-Let $\langle a,b\rangle$ denote the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$), and let $\pi_2$ be the total second projection, which returns the second component of a pair encoding and the empty word on any other bit string. Then $\pi_2(\langle a,b\rangle) = b$ for all bit strings $a, b$.
+For any finite bit strings $a$ and $b$, the total second projection of their
+self-delimiting pair encoding is $b$.
 \end{theorem}
 
-\begin{theorem}[First projection does not increase length]
+\begin{theorem}[First projection length bound]
 \lean{Complexity.length_pairFstD_le}
 \label{Complexity.length_pairFstD_le}
 \leanok
 \uses{Complexity.pairFstD, Turing.eq_pairEncode_of_pairDecode, Turing.length_pairEncode, Turing.pairDecode}
 \difficulty{4}
-Let $\pi_1$ be the total first projection, which sends a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$, and any other bit string to the empty word. Then for every bit string $z$, $|\pi_1(z)| \le |z|$.
+For every finite bit string $z$, the total first projection of $z$ has length at most
+$|z|$.
 \end{theorem}
 
-\begin{theorem}[First projection is polynomial-time]
+\begin{theorem}[First projection is polynomial-time computable]
 \lean{Complexity.polyTimeComputable_pairFstD}
 \label{Complexity.polyTimeComputable_pairFstD}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.pairFstD, Complexity.polyTimeComputable_of_linear, Turing.FinTM.computesFunInTime_pairFst}
 \difficulty{1}
-The total first projection $\pi_1$, which sends a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and any other bit string to the empty word, is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+The total first projection on bit strings, which returns the first component parsed from
+aligned doubled-bit blocks terminated by the separator $01$ and returns the empty word
+if parsing fails, is polynomial-time computable.
 \end{theorem}
 
-\begin{theorem}[Second projection is polynomial-time]
+\begin{theorem}[Second projection is polynomial-time computable]
 \lean{Complexity.polyTimeComputable_pairSndD}
 \label{Complexity.polyTimeComputable_pairSndD}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.pairSndD, Complexity.polyTimeComputable_of_linear, Turing.FinTM.computesFunInTime_pairSnd}
 \difficulty{1}
-The total second projection $\pi_2$, which sends a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $b$ and any other bit string to the empty word, is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+The total second projection on bit strings, which returns the suffix following the first
+aligned separator $01$ after a sequence of doubled-bit blocks and returns the empty word
+if parsing fails, is polynomial-time computable.
 \end{theorem}
 
 \begin{theorem}[Iterated first projection is polynomial-time]
@@ -190,16 +216,19 @@ The total second projection $\pi_2$, which sends a bit string of the form $\lang
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.pairFstD, Complexity.polyTimeComputable_id, Complexity.polyTimeComputable_pairFstD}
 \difficulty{4}
-Let $\pi_1$ be the total first projection, which sends a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and any other bit string to the empty word. For every $n \in \mathbb{N}$, the $n$-fold iterate $\pi_1^{n} = \pi_1 \circ \cdots \circ \pi_1$ (the identity for $n = 0$), which extracts the root of a left-nested tuple, is polynomial-time computable.
+For every $n\in\mathbb{N}$, the $n$-fold iterate of the total first projection on bit
+strings is polynomial-time computable; the zeroth iterate is the identity function.
 \end{theorem}
 
-\begin{theorem}[Concatenating pair components is polynomial-time]
+\begin{theorem}[Polynomial-time concatenation of pair components]
 \lean{Complexity.polyTimeComputable_pairConcat}
 \label{Complexity.polyTimeComputable_pairConcat}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_of_linear, Turing.FinTM.computesFunInTime_pairConcat, Turing.pairDecode}
 \difficulty{4}
-Let $\pi_1$ and $\pi_2$ be the total projections, which send a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and to $b$ respectively, and any other bit string to the empty word. Then the map $z \mapsto \pi_1(z)\,\pi_2(z)$, sending $z$ to the concatenation of its two components, is polynomial-time computable.
+Let $\pi_1$ and $\pi_2$ be the total projections that decode a self-delimiting pair of
+bit strings and return the empty word when decoding fails. The function sending each bit
+string $z$ to the concatenation $\pi_1(z)\pi_2(z)$ is polynomial-time computable.
 \end{theorem}
 
 \begin{theorem}[Swapping pair components is polynomial-time]
@@ -208,25 +237,35 @@ Let $\pi_1$ and $\pi_2$ be the total projections, which send a bit string of the
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD, Turing.pairEncode}
 \difficulty{1}
-Let $\langle a,b\rangle$ denote the self-delimiting pair encoding of bit strings $a$ and $b$ (every bit of $a$ doubled, then $01$, then $b$), and let $\pi_1$ and $\pi_2$ be the total projections, which send $\langle a,b\rangle$ to $a$ and to $b$ respectively, and any bit string that is not a pair encoding to the empty word. Then the map $z \mapsto \langle \pi_2(z), \pi_1(z)\rangle$ is polynomial-time computable.
+Let $\langle x,y\rangle$ denote the bit string formed by doubling each bit of $x$,
+appending the separator $01$, and then appending $y$. The map that sends a bit string
+$z$ to the encoding of its total second projection followed by its total first
+projection is polynomial-time computable; either projection is the empty word when
+parsing fails.
 \end{theorem}
 
-\begin{theorem}[Polynomial-time branching]
+\begin{theorem}[Polynomial-time computable branching]
 \lean{Complexity.polyTimeComputable_ite}
 \label{Complexity.polyTimeComputable_ite}
 \leanok
 \uses{Complexity.PolyTimeComputable, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_cond}
 \difficulty{5}
-Let $p$ be a Boolean-valued predicate on bit strings and let $f, g$ be functions from bit strings to bit strings. Suppose that the map sending $x$ to the one-bit word $p(x)$ is polynomial-time computable, and that $f$ and $g$ are polynomial-time computable (each computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the map sending $x$ to $f(x)$ if $p(x)$ is true and to $g(x)$ otherwise is polynomial-time computable.
+Let $p:
+\{0,1\}^*\to\{0,1\}$ and $f,g:
+\{0,1\}^*\to\{0,1\}^*$ be polynomial-time computable, where $p$ is computed as a one-bit
+output word. Then the function sending $x$ to $f(x)$ when $p(x)$ is true and to $g(x)$
+otherwise is polynomial-time computable.
 \end{theorem}
 
-\begin{theorem}[Polynomial-time conjunction of one-bit tests]
+\begin{theorem}[Polynomial-Time Conjunction]
 \lean{Complexity.polyTimeComputable_and}
 \label{Complexity.polyTimeComputable_and}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_ite}
 \difficulty{3}
-Let $p$ and $q$ be Boolean-valued predicates on bit strings such that the maps sending $x$ to the one-bit words $p(x)$ and $q(x)$ are both polynomial-time computable (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the map sending $x$ to the one-bit word $p(x) \land q(x)$ is polynomial-time computable.
+Let $p$ and $q$ be Boolean-valued functions on finite bit strings. If the functions
+sending $x$ to the one-bit outputs $[p(x)]$ and $[q(x)]$ are polynomial-time computable,
+then the function sending $x$ to $[p(x)\land q(x)]$ is polynomial-time computable.
 \end{theorem}
 
 \begin{theorem}[Polynomial-time length comparison on pairs]
@@ -235,7 +274,10 @@ Let $p$ and $q$ be Boolean-valued predicates on bit strings such that the maps s
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD, Complexity.polyTimeComputable_prepend, Turing.FinTM.computesFunInTime_pairLenCheck, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{4}
-Let $\pi_1$ and $\pi_2$ be the total projections, which send a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and to $b$ respectively, and any other bit string to the empty word. Then the map sending a bit string $z$ to the one-bit word that is $1$ if $|\pi_2(z)| \le |\pi_1(z)|$ and $0$ otherwise is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+Let $\pi_1$ and $\pi_2$ be the total projections that decode a self-delimiting pair of
+bit strings and return the empty word when decoding fails. The function sending each bit
+string $z$ to the one-bit word $1$ when $|\pi_2(z)|\le|\pi_1(z)|$ and to $0$ otherwise
+is polynomial-time computable.
 \end{theorem}
 
 \begin{theorem}[Polynomial-time length equality on pairs]
@@ -244,5 +286,8 @@ Let $\pi_1$ and $\pi_2$ be the total projections, which send a bit string of the
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.pairFstD, Complexity.pairFstD_pairEncode, Complexity.pairSndD, Complexity.pairSndD_pairEncode, Complexity.polyTimeComputable_and, Complexity.polyTimeComputable_lenLe, Complexity.polyTimeComputable_pairSwap}
 \difficulty{4}
-Let $\pi_1$ and $\pi_2$ be the total projections, which send a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and to $b$ respectively, and any other bit string to the empty word. Then the map sending a bit string $z$ to the one-bit word that is $1$ if $|\pi_1(z)| = |\pi_2(z)|$ and $0$ otherwise is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+Let $\pi_1$ and $\pi_2$ be the total projections that decode a self-delimiting pair of
+bit strings and return the empty word when decoding fails. The function sending each bit
+string $z$ to the one-bit word $1$ when $|\pi_1(z)|=|\pi_2(z)|$ and to $0$ otherwise is
+polynomial-time computable.
 \end{theorem}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.codeSkipRepeat_iter",
+ "key": "02028bac48d5d944",
+ "kind": "lemma",
+ "title": "Iteration of a partial reader",
+ "statement": "Let $r$ be a partial reader on Boolean strings, let $n$ be a natural number, and let $xs$ be a Boolean string. Applying $r$ successively $n$ times to $xs$, passing each returned suffix to the next application and propagating failure, equals applying $n$ times the map on optional strings that sends failure to failure and a present string $y$ to the result of $r(y)$, starting from the present value $xs$.",
+ "hypotheses_covered": [
+  "$r$ is a function from Boolean strings to optional Boolean strings",
+  "$n$ is a natural number",
+  "$xs$ is a Boolean string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $r$ be a partial reader on Boolean strings (returning either a suffix or\nfailure), let $n \\in \\bbn$, and let $xs$ be a Boolean string.  Applying $r$\nsequentially $n$ times starting from $xs$, threading each returned suffix into the\nnext application and failing as soon as one application fails, gives the same result\nas the $n$-th iterate --- evaluated at $xs$ --- of the total map on optional strings\nthat feeds a present value to $r$ and propagates failure."
+}

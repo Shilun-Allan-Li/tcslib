@@ -33,9 +33,8 @@ after that zero; it fails if the input is exhausted before a zero is found.
 \leanok
 \uses{Turing.codeReadUnary}
 \difficulty{3}
-For every $n \in \mathbb{N}$ and every bit string $x$, the unary numeral reader
-applied to the string consisting of $n$ ones, then a zero, then $x$, succeeds
-and returns the pair $(n, x)$; in particular the suffix $x$ is left untouched.
+For every $n\in\mathbb N$ and bit string $x$, the unary numeral reader applied to $n$
+ones followed by a $0$ and then $x$ succeeds and returns $(n,x)$.
 \end{lemma}
 
 \begin{definition}[Range-checked unary index reader]
@@ -166,57 +165,54 @@ assembled from these data.
 \lean{Turing.codeDecode}
 \label{Turing.codeDecode}
 \leanok
-\uses{Turing.CodeTM, Turing.codeFallback, Turing.codeParse}
+\uses{Turing.CodeFormat.decode, Turing.CodeTM, Turing.oneTapeFormat}
 The total decoding function from bit strings to coded machines: apply the
 machine parser, and return the fixed fallback machine (one state, immediately
 halting and silent) whenever parsing fails.
 \end{definition}
 
-\begin{lemma}[Bounded-index reader is a prefix inverse]
+\begin{lemma}[Bounded-index decoding]
 \lean{Turing.codeReadFin_append}
 \label{Turing.codeReadFin_append}
 \leanok
 \uses{Turing.codeReadFin, Turing.codeReadUnary_append, Turing.unaryFin}
 \difficulty{1}
-For a bound $n$, an index $i < n$, and any bit string $x$: the range-checked
-unary reader with bound $n$, applied to the self-delimiting unary code of $i$
-($i$ ones followed by a zero) concatenated with $x$, succeeds and returns
-$(i, x)$.
+For every natural number $n$, every index $i\in\{0,\ldots,n-1\}$, and every bit string
+$x$, reading the unary code of $i$—$i$ ones followed by a zero—then $x$, with the
+range-checked unary index reader of bound $n$, succeeds and returns $(i,x)$.
 \end{lemma}
 
-\begin{lemma}[Movement reader is a prefix inverse]
+\begin{lemma}[Head-movement decoding]
 \lean{Turing.codeReadSign_append}
 \label{Turing.codeReadSign_append}
 \leanok
 \uses{Turing.codeReadSign, Turing.signBits}
 \difficulty{2}
-For every head movement $s$ (left, stay, or right) and every bit string $x$,
-the head-movement reader applied to the two-bit dictionary code of $s$ ($11$,
-$00$, or $10$ respectively) followed by $x$ succeeds and returns $(s, x)$.
+For every head movement $s$ (left, stay, or right) and every bit string $x$, reading the
+two-bit code for $s$—$11$ for left, $00$ for stay, and $10$ for right—followed by $x$
+succeeds and returns $(s,x)$.
 \end{lemma}
 
-\begin{lemma}[Output reader is a prefix inverse]
+\begin{lemma}[Optional-output decoding]
 \lean{Turing.codeReadOutput_append}
 \label{Turing.codeReadOutput_append}
 \leanok
 \uses{Turing.codeReadOutput, Turing.optBoolBits}
 \difficulty{2}
-For every optional output bit $b$ (no output, output $0$, or output $1$) and
-every bit string $x$, the optional-output reader applied to the two-bit
-dictionary code of $b$ ($00$, $10$, or $11$ respectively) followed by $x$
-succeeds and returns $(b, x)$.
+For every optional bit $b$ and every bit string $x$, reading the two-bit code for
+$b$—$00$ for no output, $10$ for output $0$, and $11$ for output $1$—followed by $x$
+succeeds and returns $(b,x)$.
 \end{lemma}
 
-\begin{lemma}[Write reader is a prefix inverse]
+\begin{lemma}[Write decoding after encoding]
 \lean{Turing.codeReadWrite_append}
 \label{Turing.codeReadWrite_append}
 \leanok
 \uses{Turing.codeReadWrite, Turing.optOptBoolBits}
 \difficulty{2}
-For every optional work-tape write $b$ (write nothing, write the blank symbol,
-write $0$, or write $1$) and every bit string $x$, the optional-write reader
-applied to the two-bit dictionary code of $b$ ($00$, $01$, $10$, or $11$
-respectively) followed by $x$ succeeds and returns $(b, x)$.
+For every optional work-tape write $b$ and every bit string $x$, the optional-write
+reader applied to the two-bit encoding of $b$ followed by $x$ succeeds and returns $b$
+and $x$.
 \end{lemma}
 
 \begin{lemma}[Successor reader is a prefix inverse]
@@ -225,11 +221,10 @@ respectively) followed by $x$ succeeds and returns $(b, x)$.
 \leanok
 \uses{Turing.codeReadFin_append, Turing.codeReadState, Turing.optStateBits}
 \difficulty{2}
-For a bound $n$, a successor-state field $s$ (either halt or a live state
-$i < n$), and any bit string $x$: the successor-state reader with bound $n$,
-applied to the encoding of $s$ (a single $0$ for halt; a $1$ followed by the
-unary code of $i$ for a live state) followed by $x$, succeeds and returns
-$(s, x)$.
+For every bound $n\in\mathbb N$, optional state
+$s\in\{	ext{none}\}\cup\{0,\ldots,n-1\}$, and bit string $x$, the successor-state reader
+applied to the encoding of $s$ followed by $x$ succeeds and returns $(s,x)$. Here the
+encoding is $0$ for no state and, for state $i$, a $1$ followed by $i$ ones and a $0$.
 \end{lemma}
 
 \begin{lemma}[Record reader is a prefix inverse]
@@ -245,43 +240,41 @@ work-tape write, work-head movement, and output, followed by its
 successor-state field) concatenated with $x$ succeeds and returns $(a, x)$.
 \end{lemma}
 
-\begin{lemma}[Row reader is a prefix inverse]
+\begin{lemma}[Symbol row reader is a prefix inverse]
 \lean{Turing.codeReadSymbols_append}
 \label{Turing.codeReadSymbols_append}
 \leanok
 \uses{Turing.codeReadSymbols}
 \difficulty{3}
-Let a field reader and a field writer for values in a type $A$ be given such
-that reading from any written value followed by any suffix returns exactly that
-value and suffix.  Then for every function $f$ from the three tape symbols
-(blank, $0$, $1$) to $A$ and every bit string $x$, the three-symbol row reader
-applied to the concatenation of the written values $f(\mathrm{blank})$, $f(0)$,
-$f(1)$ in that order, followed by $x$, succeeds and returns $(f, x)$.
+Let $A$ be a type, and let a reader and writer for values in $A$ satisfy: for every
+$a\in A$ and bit string $x$, reading the encoding of $a$ followed by $x$ returns
+$(a,x)$. For every function $f$ assigning an element of $A$ to each of blank, $0$, and
+$1$, and every bit string $x$, the reader for a three-entry symbol row applied to the
+encodings of $f(\text{blank})$, $f(0)$, and $f(1)$ in that order, followed by $x$,
+returns $(f,x)$.
 \end{lemma}
 
-\begin{lemma}[Vector reader is a prefix inverse]
+\begin{lemma}[Vector decoding after encoding]
 \lean{Turing.codeReadVec_append}
 \label{Turing.codeReadVec_append}
 \leanok
 \uses{Turing.codeReadVec}
 \difficulty{4}
-Let a field reader and a field writer for values in a type $A$ be given such
-that reading from any written value followed by any suffix returns exactly that
-value and suffix.  Then for every $n$, every vector $f$ indexed by
-$\{0, \dots, n-1\}$, and every bit string $x$, the length-$n$ vector reader
-applied to the concatenation of the written entries $f(0), \dots, f(n-1)$ in
-order, followed by $x$, succeeds and returns $(f, x)$.
+Suppose a reader and writer for values in a type $A$ satisfy the following property:
+reading the encoding of any value followed by any suffix returns that value and suffix.
+Then, for every natural number $n$, every vector $f$ of $n$ values in $A$, and every bit
+string $x$, reading the concatenated encodings of $f(0),\ldots,f(n-1)$ followed by $x$
+succeeds and returns $f$ and $x$.
 \end{lemma}
 
-\begin{lemma}[Binary value inverts canonical bits]
+\begin{lemma}[Value of the binary expansion]
 \lean{Turing.codeBitsNat_bits}
 \label{Turing.codeBitsNat_bits}
 \leanok
 \uses{Turing.codeBitsNat}
 \difficulty{3}
-For every natural number $n$, interpreting the canonical
-least-significant-bit-first binary representation of $n$ (the empty string for
-$n = 0$) as a binary numeral yields $n$ again.
+For every natural number $n$, interpreting its canonical least-significant-bit-first
+binary expansion as a binary numeral gives $n$.
 \end{lemma}
 
 \begin{lemma}[Lower bound on record length]
@@ -300,9 +293,10 @@ contribute eight bits, and its successor-state field is nonempty.
 \label{Turing.codeFlatMap_length}
 \leanok
 \difficulty{3}
-If every element of a finite list maps under a function $f$ to a bit string of
-length at least $c$, then the concatenation of all these bit strings, in list
-order, has length at least $c$ times the length of the list.
+Let $A$ be a type, $x$ a finite list of elements of $A$, $f$ a function from $A$ to bit
+strings, and $c$ a natural number. If every element occurring in $x$ maps to a bit
+string of length at least $c$, then the concatenation of the images has length at least
+$c$ times the length of $x$.
 \end{lemma}
 
 \begin{lemma}[Lower bound on table length]
@@ -347,34 +341,31 @@ $1$-bits succeeds and returns exactly $M$.
 \lean{Turing.codeDecode_serialize_pad}
 \label{Turing.codeDecode_serialize_pad}
 \leanok
-\uses{Turing.CodeTM, Turing.CodeTM.serialize, Turing.codeDecode, Turing.codeParse_serialize_pad}
+\uses{Turing.CodeFormat.decode_serialize_pad, Turing.CodeTM, Turing.CodeTM.serialize, Turing.codeDecode, Turing.oneTapeFormat}
 \difficulty{1}
-For every coded machine $M$ and every $m \in \mathbb{N}$, the total decoder
-maps the canonical serialization of $M$ followed by $m$ additional $1$-bits
-back to $M$.
+For every one-work-tape coded Turing machine $M$ and every natural number $m$, decoding
+the serialization of $M$ followed by $m$ additional $1$-bits returns $M$.
 \end{lemma}
 
-\begin{lemma}[Soundness of the unary reader]
+\begin{lemma}[Soundness of unary decoding]
 \lean{Turing.codeReadUnary_sound}
 \label{Turing.codeReadUnary_sound}
 \leanok
 \uses{Turing.codeReadUnary}
 \difficulty{4}
-If the unary numeral reader succeeds on a bit string $x$, returning the value
-$n$ and the suffix $r$, then $x$ is exactly $n$ ones, followed by a zero,
-followed by $r$.
+If a bit string is successfully read as the unary value $n$ with remaining suffix $r$,
+then it consists of exactly $n$ ones, followed by a zero and then $r$.
 \end{lemma}
 
-\begin{lemma}[Soundness of the bounded-index reader]
+\begin{lemma}[Bounded-index reader soundness]
 \lean{Turing.codeReadFin_sound}
 \label{Turing.codeReadFin_sound}
 \leanok
 \uses{Turing.codeReadFin, Turing.codeReadUnary_sound, Turing.unaryFin}
 \difficulty{3}
-If the range-checked unary reader with bound $n$ succeeds on a bit string $x$,
-returning an index $i < n$ and a suffix $r$, then $x$ is exactly the
-self-delimiting unary code of $i$ ($i$ ones and a closing zero) followed by
-$r$.
+For every natural number $n$, bit string $x$, index $i\in\{0,\ldots,n-1\}$, and bit
+string $r$, if the range-checked unary index reader of bound $n$ succeeds on $x$ with
+result $(i,r)$, then $x$ consists of $i$ ones followed by a zero, and then $r$.
 \end{lemma}
 
 \begin{lemma}[Soundness of the doubled-bit header parser]
@@ -395,31 +386,31 @@ $r$.  This includes the case of an empty data word.
 \leanok
 \uses{Turing.codeReadSign, Turing.signBits}
 \difficulty{3}
-If the head-movement reader succeeds on a bit string $x$, returning a movement
-$s$ and a suffix $r$, then $x$ is exactly the two-bit dictionary code of $s$
-followed by $r$.
+For any bit string $x$, head movement $s\in\{-1,0,1\}$, and suffix $r$, if the movement
+reader applied to $x$ returns $s$ and $r$, then $x$ is the two-bit code for $s$ followed
+by $r$.
 \end{lemma}
 
-\begin{lemma}[Soundness of the output reader]
+\begin{lemma}[Optional-output reader soundness]
 \lean{Turing.codeReadOutput_sound}
 \label{Turing.codeReadOutput_sound}
 \leanok
 \uses{Turing.codeReadOutput, Turing.optBoolBits}
 \difficulty{3}
-If the optional-output reader succeeds on a bit string $x$, returning a value
-$b$ and a suffix $r$, then $x$ is exactly the two-bit dictionary code of $b$
-followed by $r$.
+For every bit string $x$, optional bit $b$, and bit string $r$, if the optional-output
+reader succeeds on $x$ with result $(b,r)$, then $x$ is the two-bit code for $b$—$00$
+for no output, $10$ for output $0$, or $11$ for output $1$—followed by $r$.
 \end{lemma}
 
-\begin{lemma}[Soundness of the write reader]
+\begin{lemma}[Soundness of write decoding]
 \lean{Turing.codeReadWrite_sound}
 \label{Turing.codeReadWrite_sound}
 \leanok
 \uses{Turing.codeReadWrite, Turing.optOptBoolBits}
 \difficulty{3}
-If the optional-write reader succeeds on a bit string $x$, returning a value
-$b$ and a suffix $r$, then $x$ is exactly the two-bit dictionary code of $b$
-followed by $r$.
+If the optional-write reader succeeds on a bit string $x$, returning an optional
+work-tape write $b$ and suffix $r$, then $x$ is the two-bit encoding of $b$ followed by
+$r$.
 \end{lemma}
 
 \begin{lemma}[Soundness of the successor reader]
@@ -428,10 +419,11 @@ followed by $r$.
 \leanok
 \uses{Turing.codeReadFin, Turing.codeReadFin_sound, Turing.codeReadState, Turing.optStateBits}
 \difficulty{4}
-If the successor-state reader with bound $n$ succeeds on a bit string $x$,
-returning a field $s$ and a suffix $r$, then $x$ is exactly the encoding of $s$
-(a single $0$ for halt, or a $1$ followed by the unary code of a live state
-below $n$) followed by $r$.
+For every bound $n\in\mathbb N$, bit string $x$, optional state
+$s\in\{	ext{none}\}\cup\{0,\ldots,n-1\}$, and suffix $r$, if the successor-state reader
+with bound $n$ applied to $x$ returns $s$ and $r$, then $x$ is the encoding of $s$
+followed by $r$. The encoding is $0$ for no state and, for state $i$, a $1$ followed by
+$i$ ones and a $0$.
 \end{lemma}
 
 \begin{lemma}[Soundness of the record reader]
@@ -446,32 +438,32 @@ the serialization of $a$ --- the codes of its five fields concatenated in order
 --- followed by $r$.
 \end{lemma}
 
-\begin{lemma}[Soundness of the row reader]
+\begin{lemma}[Soundness of the symbol row reader]
 \lean{Turing.codeReadSymbols_sound}
 \label{Turing.codeReadSymbols_sound}
 \leanok
 \uses{Turing.codeReadSymbols}
 \difficulty{3}
-Let a field reader and a field writer for values in a type $A$ be such that
-every successful read on a string exhibits that string as the written value
-followed by the returned suffix.  Then whenever the three-symbol row reader
-succeeds on a bit string $x$, returning a row $f$ and a suffix $r$, the string
-$x$ is exactly the concatenation of the written values $f(\mathrm{blank})$,
-$f(0)$, $f(1)$ followed by $r$.
+Let $A$ be a type, with a reader and writer for values in $A$ such that every successful
+read of a bit string as $a$ with suffix $r$ implies that the string is the encoding of
+$a$ followed by $r$. For every bit string $x$, function $f$ from blank, $0$, and $1$ to
+$A$, and suffix $r$, if the three-entry symbol row reader applied to $x$ returns
+$(f,r)$, then $x$ is the concatenation of the encodings of $f(\text{blank})$, $f(0)$,
+and $f(1)$ in that order, followed by $r$.
 \end{lemma}
 
-\begin{lemma}[Soundness of the vector reader]
+\begin{lemma}[Soundness of vector decoding]
 \lean{Turing.codeReadVec_sound}
 \label{Turing.codeReadVec_sound}
 \leanok
 \uses{Turing.codeReadVec}
 \difficulty{4}
-Let a field reader and a field writer for values in a type $A$ be such that
-every successful read on a string exhibits that string as the written value
-followed by the returned suffix.  Then whenever the length-$n$ vector reader
-succeeds on a bit string $x$, returning a vector $f$ and a suffix $r$, the
-string $x$ is exactly the in-order concatenation of the written entries
-$f(0), \dots, f(n-1)$ followed by $r$.
+Suppose a reader and writer for values in a type $A$ have the property that every
+successful read of a bit string as a value $a$ with suffix $r$ implies that the string
+is the encoding of $a$ followed by $r$. Then, for every natural number $n$, if the
+reader for vectors of length $n$ succeeds on a bit string $x$, returning a vector $f$
+and suffix $r$, then $x$ is the concatenation, in order, of the encodings of
+$f(0),\ldots,f(n-1)$ followed by $r$.
 \end{lemma}
 
 \begin{lemma}[All-true strings are replicates]
@@ -546,38 +538,37 @@ suffix through, and returns the final suffix; it fails as soon as any
 iteration fails.
 \end{definition}
 
-\begin{lemma}[Erasure law for the bounded-index reader]
+\begin{lemma}[Erasure law for bounded indices]
 \lean{Turing.codeEraseFin}
 \label{Turing.codeEraseFin}
 \leanok
 \uses{Turing.codeReadFin, Turing.codeSkipFin}
 \difficulty{3}
-For every bound $n$ and bit string $x$: discarding the parsed index from the
-result of the range-checked unary reader (keeping only the suffix, or failure)
-yields exactly the result of the unary index skipper with bound $n$ on $x$.
+For every natural number $n$ and every bit string $x$, discarding the decoded index and
+retaining only the remaining suffix from the unary reader, subject to the index being
+less than $n$, gives exactly the result of the unary index skipper with bound $n$.
 \end{lemma}
 
-\begin{lemma}[Erasure law for the movement reader]
+\begin{lemma}[Erasure law for movement fields]
 \lean{Turing.codeEraseSign}
 \label{Turing.codeEraseSign}
 \leanok
 \uses{Turing.codeReadSign, Turing.codeSkipPair}
 \difficulty{2}
-For every bit string $x$: discarding the parsed movement from the head-movement
-reader yields exactly the two-bit skipper whose validity predicate accepts a
-pair $(a, b)$ precisely when $a$ is $1$ or $b$ is $0$ (that is, it rejects only
-the pair $01$).
+For every bit string $x$, discarding the decoded head movement and retaining only the
+remaining suffix from the head-movement reader gives exactly the result of the two-bit
+skipper that accepts a pair $(a,b)$ precisely when $a=1$ or $b=0$.
 \end{lemma}
 
-\begin{lemma}[Erasure law for the output reader]
+\begin{lemma}[Erasure law for output fields]
 \lean{Turing.codeEraseOutput}
 \label{Turing.codeEraseOutput}
 \leanok
 \uses{Turing.codeReadOutput, Turing.codeSkipPair}
 \difficulty{2}
-For every bit string $x$: discarding the parsed value from the optional-output
-reader yields exactly the two-bit skipper whose validity predicate rejects only
-the pair $01$.
+For every bit string $x$, discarding the decoded optional output and retaining only the
+remaining suffix from the optional-output reader gives exactly the result of the two-bit
+skipper that accepts a pair $(a,b)$ precisely when $a=1$ or $b=0$.
 \end{lemma}
 
 \begin{lemma}[Erasure law for the write reader]
@@ -586,30 +577,30 @@ the pair $01$.
 \leanok
 \uses{Turing.codeReadWrite, Turing.codeSkipPair}
 \difficulty{2}
-For every bit string $x$: discarding the parsed value from the optional-write
-reader yields exactly the two-bit skipper that accepts every pair of bits.
+For every bit string $x$, discarding the value decoded by the optional-write reader
+gives exactly the result of a two-bit skipper that accepts every pair of bits.
 \end{lemma}
 
-\begin{lemma}[Erasure law for the successor reader]
+\begin{lemma}[Erasure law for successor-state fields]
 \lean{Turing.codeEraseState}
 \label{Turing.codeEraseState}
 \leanok
 \uses{Turing.codeEraseFin, Turing.codeReadState, Turing.codeSkipState}
 \difficulty{2}
-For every bound $n$ and bit string $x$: discarding the parsed field from the
-successor-state reader with bound $n$ yields exactly the successor-field
-skipper with bound $n$.
+For every natural number $n$ and every bit string $x$, discarding the decoded successor
+state and retaining only the remaining suffix from the successor-state reader with bound
+$n$ gives exactly the result of the successor-field skipper with bound $n$.
 \end{lemma}
 
-\begin{lemma}[Bind commutes with value erasure]
+\begin{lemma}[Bind commutes with suffix erasure]
 \lean{Turing.codeErase_bind}
 \label{Turing.codeErase_bind}
 \leanok
 \difficulty{1}
-For an optional parse result $r$ --- either failure or a pair of a value and a
-suffix --- and a partial continuation $f$ on suffixes: binding $r$ through the
-function applying $f$ to the suffix component equals first discarding the value
-component of $r$ and then binding through $f$.
+For any types $A$ and $B$, any optional result that either fails or contains a value in
+$A$ paired with a bit-string suffix, and any partial continuation from suffixes to
+optional values in $B$, binding through the continuation applied to the suffix equals
+first discarding the value and then binding through the continuation.
 \end{lemma}
 
 \begin{lemma}[Erasure law for the record reader]
@@ -624,15 +615,16 @@ transition-record skipper with parameter $n$, which validates the four
 dictionary fields and the successor field without constructing the record.
 \end{lemma}
 
-\begin{lemma}[Erasure law for the row reader]
+\begin{lemma}[Erasure law for symbol-indexed rows]
 \lean{Turing.codeEraseSymbols}
 \label{Turing.codeEraseSymbols}
 \leanok
 \uses{Turing.codeReadSymbols, Turing.codeSkipRepeat}
 \difficulty{1}
-For every field reader with values in a type $A$ and every bit string $x$:
-discarding the parsed row from the three-symbol row reader equals iterating the
-value-discarding version of the field reader three times.
+For every type $A$, every reader that returns an $A$-value and remaining suffix or fails
+on a bit string, and every bit string $x$, discarding the decoded row and retaining only
+the remaining suffix from the three-entry row reader gives exactly the result of
+applying the value-discarding version of the given reader three times in sequence.
 \end{lemma}
 
 \begin{lemma}[Erasure law for the vector reader]
@@ -641,9 +633,10 @@ value-discarding version of the field reader three times.
 \leanok
 \uses{Turing.codeErase_bind, Turing.codeReadVec, Turing.codeSkipRepeat}
 \difficulty{4}
-For every field reader with values in a type $A$, every length $n$, and every
-bit string $x$: discarding the parsed vector from the length-$n$ vector reader
-equals iterating the value-discarding version of the field reader $n$ times.
+For any type $A$, any field reader that maps a bit string to either failure or a value
+in $A$ together with a remaining suffix, any length $n$, and any bit string $x$,
+discarding the vector parsed by the length-$n$ reader gives the same result as applying
+$n$ times the skipper that discards each field's value and retains its suffix.
 \end{lemma}
 
 \begin{definition}[Suffix-retaining machine parser]
@@ -662,7 +655,7 @@ machine alone.
 \lean{Turing.codeScan}
 \label{Turing.codeScan}
 \leanok
-\uses{Turing.codeBitsNat, Turing.codeSkipAction, Turing.codeSkipFin, Turing.codeSkipRepeat, Turing.pairDecode}
+\uses{Turing.CodeFormat.scan, Turing.oneTapeFormat}
 The erased parser: it follows the same grammar as the machine parser ---
 doubled-bit canonical state count $n$, minimum-length guard $81(n+1)$, a
 skipped unary initial state below $n + 1$, then $(n+1) \cdot 3 \cdot 3$ skipped
@@ -709,19 +702,19 @@ serialization of $M$ followed by $t$.
 \lean{Turing.codeCanonical}
 \label{Turing.codeCanonical}
 \leanok
-\uses{Turing.CodeTM.serialize, Turing.codeFallback, Turing.codeScan}
+\uses{Turing.CodeFormat.canonical, Turing.oneTapeFormat}
 The canonical serialization denoted by a bit string $x$: if the erased suffix
 scanner accepts $x$ with unconsumed suffix $t$, the result is the prefix of $x$
 of length $|x| - |t|$ (the consumed part); if the scanner rejects $x$, the
 result is the serialization of the fixed fallback machine.
 \end{definition}
 
-\begin{lemma}[Canonizer computes the decoded serialization]
+\begin{lemma}[Canonical code of the decoded machine]
 \lean{Turing.codeCanonical_eq}
 \label{Turing.codeCanonical_eq}
 \leanok
-\uses{Turing.CodeTM.serialize, Turing.codeCanonical, Turing.codeDecode, Turing.codeParseFull, Turing.codeParseFull_sound, Turing.codeParse_full, Turing.codeScan_full}
+\uses{Turing.CodeFormat.canonical_eq, Turing.CodeTM.serialize, Turing.codeCanonical, Turing.codeDecode, Turing.oneTapeFormat}
 \difficulty{3}
-For every bit string $x$, the canonical serialization denoted by $x$ equals the
-serialization of the coded machine that $x$ decodes to under the total decoder.
+For every Boolean string $x$, its canonical code equals the serialization of the machine
+obtained by decoding $x$.
 \end{lemma}

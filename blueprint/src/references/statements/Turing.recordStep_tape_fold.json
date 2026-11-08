@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.recordStep_tape_fold",
+ "key": "16f1d3926f7ab6f4",
+ "kind": "theorem",
+ "title": "Fold over a tape window",
+ "statement": "Let $Q,T$ be types, let $s$ be a natural number, and let $c$ be a configuration of a $k$-tape Boolean machine on input $x$. Suppose every work-tape head of $c$ lies within distance $s$ of the origin and every tape is blank at integer positions whose absolute value exceeds $s$. For any work-tape index $i$, form the record-symbol list indexed by $j=0,\\ldots,2s$, whose $j$th entry stores the content of tape $i$ at position $j-s$ and marks whether its head is there. Scanning this list with the tape fold in the forward direction and then the identity backward leaves the list unchanged and returns the summary $(\\mathrm{true},c_i(h_i),[h_i=-s],[h_i=s])$, where $h_i$ is the head position, $c_i(h_i)$ is the optional symbol under that head, and each bracket is the Boolean truth value of the equality.",
+ "hypotheses_covered": [
+  "Types Q and T",
+  "Natural window radius s",
+  "Configuration c on Boolean input x",
+  "Every work-tape head lies within distance s of the origin",
+  "All work tapes are blank outside the interval [−s,s]",
+  "Selected work-tape index i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

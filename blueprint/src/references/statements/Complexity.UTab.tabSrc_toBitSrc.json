@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.UTab.tabSrc_toBitSrc",
+ "key": "70afbf2dc30e7e21",
+ "kind": "theorem",
+ "title": "Tabulated source index",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean symbols and $k$ work tapes, let $n,i\\in\\mathbb{N}$, let $z$ be a finite bit string, and let $\\rho$ assign a natural number to each of eleven registers. Suppose $\\rho(r_{\\mathrm{NC}})=n$ and $\\rho(r_{\\mathrm{Z}})=|z|$. Let $s$ be a source descriptor, and write $b_s$ for the bit source obtained from $s$ and $\\rho$, and $e_s$ for the linear register expression associated with $s$ and $M$. Assume that $s$ is available: if it is an input-head source, then $\\rho(r_{\\mathrm{PA}})<\\rho(r_{\\mathrm{Z}})$; if it is a previous-block source with direction $d\\in\\{0,1,2\\}$, then $1\\leq\\rho(r_{\\mathrm{Q}})+d$; if it is a current-block source, then $1\\leq\\rho(r_{\\mathrm{I}})$; and if it is a previous-snapshot source, then $1\\leq\\rho(r_{\\mathrm{LB}})$. Constant, unary-input, and cell-end sources are always available. If $b_s$ is valid for input length $|z|+n$, output width $\\operatorname{cfgWidth}(M)$, and instruction index $i$, then the tabulated index of $b_s$ equals the value of $e_s$ under $\\rho$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine with Boolean symbols and $k$ work tapes",
+  "$n,i\\in\\mathbb{N}$",
+  "$z$ is a finite bit string",
+  "$\\rho$ assigns natural numbers to eleven registers",
+  "$\\rho(r_{\\mathrm{NC}})=n$",
+  "$\\rho(r_{\\mathrm{Z}})=|z|$",
+  "The source-availability condition for each kind of descriptor",
+  "The associated bit source is valid for input length $|z|+n$, output width $\\operatorname{cfgWidth}(M)$, and instruction index $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

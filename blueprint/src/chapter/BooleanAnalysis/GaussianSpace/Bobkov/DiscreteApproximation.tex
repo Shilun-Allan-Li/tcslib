@@ -9,15 +9,21 @@ Lipschitz derivative bounds give quadratic linearization estimates. Applied to n
 \lean{BooleanAnalysis.GaussianSpace.norm_linearization_remainder_le}
 \leanok
 \difficulty{5}
-Let $E$ be a real normed vector space and $f:E\to\mathbb R$ be differentiable everywhere with derivative $D(x):E\to\mathbb R$. Suppose $x\mapsto D(x)$ is $C$-Lipschitz in operator norm, where $C\ge0$. For all $x,y\in E$, $|f(y)-f(x)-D(x)(y-x)|\le C\|y-x\|^2$.
+Let $E$ be a real normed vector space and let $f\colon E\to\mathbb R$ be differentiable
+at every point, with derivative $D(x)\colon E\to\mathbb R$ at $x$. Suppose $D$ is
+Lipschitz in operator norm with constant $C\geq0$. Then, for all $x,y\in E$,
+$\|f(y)-f(x)-D(x)(y-x)\|\leq C\|y-x\|^2$.
 \end{lemma}
 
-\begin{lemma}[Half-increment approximation]
+\begin{lemma}[Half-increment derivative error bound]
 \lean{BooleanAnalysis.GaussianSpace.abs_half_increment_sub_derivative_le}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.norm_linearization_remainder_le}
 \difficulty{4}
-Let $E$ be a real normed vector space and $f:E\to\mathbb R$ be differentiable everywhere with derivative $D(x):E\to\mathbb R$. Suppose $x\mapsto D(x)$ is $C$-Lipschitz in operator norm, where $C\ge0$. For $x,v\in E$ and $h\in\mathbb R$, $|(f(x+hv)-f(x))/2-(h/2)D(x)v|\le(C/2)h^2\|v\|^2$.
+Let $E$ be a real normed vector space and let $f:E\to\mathbb R$ be differentiable
+everywhere, with derivative $Df(x):E\to\mathbb R$. Suppose the derivative map is
+$C$-Lipschitz in operator norm for some $C\ge0$. For all $x,v\in E$ and $h\in\mathbb R$,
+\[\left|\frac{f(x+hv)-f(x)}{2}-\frac{h}{2}Df(x)[v]\right|\le \frac{C}{2}h^2\|v\|^2.\]
 \end{lemma}
 
 \begin{lemma}[Updating a normalized Boolean block]
@@ -25,13 +31,27 @@ Let $E$ be a real normed vector space and $f:E\to\mathbb R$ be differentiable ev
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 \difficulty{4}
-For $n,m\ge0$ and $x\in\{0,1\}^{n\times m}$, define $S_m(x)_k=m^{-1/2}\sum_{l=1}^m(-1)^{x_{kl}}$, interpreting division by zero as zero. If $x^{ij\leftarrow b}$ replaces bit $(i,j)$ by $b$, then $S_m(x^{ij\leftarrow b})=S_m(x)+\bigl((-1)^b-(-1)^{x_{ij}}\bigr)m^{-1/2}e_i$, where $e_i$ is the $i$th coordinate vector.
+Let $n,m$ be nonnegative integers, let
+$x\colon\{1,\ldots,n\}\to\{1,\ldots,m\}\to\{\mathrm{false},\mathrm{true}\}$, choose a
+row $i$, a column $j$, and a Boolean value $b$. Encode each Boolean by
+$\sigma(\mathrm{false})=1$ and $\sigma(\mathrm{true})=-1$, and define
+$S(x)_k=(\sum_{l=1}^m\sigma(x_{kl}))/\sqrt m$, with real division interpreted in the
+usual way, including when $m=0$. If $x'$ is obtained by replacing the entry $x_{ij}$ by
+$b$, then $S(x')=S(x)+\frac{\sigma(b)-\sigma(x_{ij})}{\sqrt m}e_i$, where $e_i$ is the
+vector equal to $1$ in coordinate $i$ and $0$ elsewhere.
 \end{lemma}
 
 \begin{lemma}[Block half-difference approximation]
 \lean{BooleanAnalysis.GaussianSpace.abs_normalizedBoolBlocks_half_difference_sub_derivative_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_half_increment_sub_derivative_le,BooleanAnalysis.GaussianSpace.normalizedBoolBlocks_update,BooleanAnalysis.boolToSign,BooleanAnalysis.boolToSign_false,BooleanAnalysis.boolToSign_true}
+\uses{BooleanAnalysis.GaussianSpace.abs_half_increment_sub_derivative_le, BooleanAnalysis.GaussianSpace.normalizedBoolBlocks_update, BooleanAnalysis.boolToSign, BooleanAnalysis.boolToSign_false, BooleanAnalysis.boolToSign_true}
 \difficulty{5}
-For $n,m\ge0$ and $x\in\{0,1\}^{n\times m}$, define $S_m(x)_k=m^{-1/2}\sum_{l=1}^m(-1)^{x_{kl}}$, interpreting division by zero as zero. Let $f:\mathbb R^n\to\mathbb R$ have derivative family $D(z)$ that is globally $C$-Lipschitz in operator norm for the maximum norm on $\mathbb R^n$, with $C\ge0$. For any bit $(i,j)$, $\left|\frac{f(S_m(x^{ij\leftarrow0}))-f(S_m(x^{ij\leftarrow1}))}{2}-\frac{D(S_m(x))e_i}{\sqrt m}\right|\le2C/m$.
+Let $n,m\ge0$, let $f\colon\mathbb R^n\to\mathbb R$ have derivative $D(z)$ at every
+$z\in\mathbb R^n$, and suppose the map $D\colon\mathbb R^n\to\mathcal L(\mathbb
+R^n,\mathbb R)$ is $C$-Lipschitz for some $C\ge0$. For a Boolean array
+$x=(x_{kl})_{k<n,\,l<m}$ and indices $i<n$, $j<m$, encode false by $1$ and true by $-1$,
+and write $S(x)_k=m^{-1/2}\sum_{l<m}\sigma(x_{kl})$. If $x^{0}$ and $x^{1}$ are obtained
+by setting entry $(i,j)$ to false and true, respectively, then
+\[\left|\frac{f(S(x^{0}))-f(S(x^{1}))}{2}-\frac{D(S(x))e_i}{\sqrt m}\right|\le\frac{2C}{m},\]
+where $e_i$ is the $i$th coordinate vector.
 \end{lemma}

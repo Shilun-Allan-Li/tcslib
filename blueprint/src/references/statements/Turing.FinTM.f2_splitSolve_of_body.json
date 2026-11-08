@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitSolve_of_body",
+ "key": "75db420034974752",
+ "kind": "lemma",
+ "title": "Constructing a Polynomial-Time Split Solver",
+ "statement": "Let $C,e,A$ be natural numbers, let $B$ be a finite Turing machine over the Boolean alphabet, and choose a state $a$ of $B$. Assume that for every Boolean word $w$ there is a time $t\\le A(|w|+1)^{e+1}$ such that, at every earlier time $t'<t$, the run of $B$ from its initial configuration on $w$ is not in state $a$, and at time $t$ it is in the seam configuration with state $a$ and all work-tape words empty. Assume also that for every pair of Boolean words $w,s$ with $|s|\\le |w|+1$, there is a positive time $t\\le A(|w|+1)^{e+1}$ such that at every intermediate time $t'$ with $0<t'<t$ the run from the seam configuration with state $a$, input $w$, and tape words assigned from $s$ is not in state $a$. If $|s|+C(|s|+1)^e=|w|$, then at time $t$ this run is halted and has output equal to the encoding of the prefix of $w$ of length $|s|$ together with the remaining suffix; otherwise, at time $t$ it is the seam configuration with state $a$ and tape words assigned from the word obtained by appending true to $s$ when $|s|\\le |w|$, and from $s$ unchanged otherwise. Under these assumptions, there exist a finite Boolean Turing machine $M$ and a natural-number constant $c$ that compute, on each input $w$, the encoded split specified by the equation $i+C(i+1)^e=|w|$ (and the empty word if no such $i$ exists) within $c(|w|+1)^{e+2}$ steps, while for every input $x$ and every time $t$ using at most $c(|x|+1)^{e+1}$ space.",
+ "hypotheses_covered": [
+  "C, e, and A are natural numbers",
+  "A finite Boolean Turing machine body and a chosen state a",
+  "For every Boolean input w, a time t bounded by A(|w|+1)^(e+1) reaches the empty-word seam configuration in state a",
+  "Before that time, the initial run never has state a",
+  "For all Boolean words w,s with |s|≤|w|+1, a positive round time t bounded by A(|w|+1)^(e+1) exists",
+  "At intermediate positive times before the round endpoint, the run from the specified seam configuration avoids state a",
+  "When the split equation holds, the round endpoint is halted with the encoded prefix and suffix as output",
+  "When the split equation does not hold, the round endpoint is the seam configuration with the prescribed updated tape word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

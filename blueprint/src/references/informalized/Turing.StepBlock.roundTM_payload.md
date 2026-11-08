@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/StepBlock.lean :: Turing.StepBlock.roundTM_payload -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Processing an Action Payload
+
+**Claim.** When the table contains an action between the specified prefix and suffix, the record phase reads that action's fixed-width fields, applies its effect to the simulated configuration and output summary, and copies its successor-state encoding to the summary tape. It reaches the table-tail phase after the stated number of steps, with the heads at the asserted positions and with the round-window property throughout.
+
+**Proof.** Let the encoded action split into its fixed-width portion and its successor-state field. First, `bufferTape_reads` shows that scanning from the end of `before` reads each bit of the action encoding from the table tape. The field decomposition result `actionBitsK_reads` then separates the fixed-width fields—input movement, work-tape writes and movements, and output—from the successor-state encoding, while giving the exact length relation.
+
+During the record phase, `recordTM_effect` and `recordTM_execute` show that the machine reads the fixed-width fields and applies the encoded action: the simulated work tapes and heads, input position, and output are updated as prescribed. The auxiliary summary tape is updated to record the new output summary; `outputSummary_append` verifies that this update agrees with appending the action's output symbol. The record phase ends after the fixed-width scan, and the control transition into the next phase contributes one step. `roundTM_phase` packages this run and its intermediate round-window bounds as a round span.
+
+Next, the two-step positioning phase moves the summary head to the start of the successor-state field. The successor-field phase scans that unary encoding, copies its bits onto the summary tape, and records whether a successor state exists. The scan length is the encoded state-field length; `succFieldTM_run` gives the resulting tape contents and head positions, while `succFieldTM_cut` ensures that the exit is not reached prematurely and `succFieldTM_heads` bounds head motion during the scan. `summaryCells_copy` identifies the copied bits with the intended unary word. These stages also satisfy the round-window property, since the auxiliary-head motions are tracked and the original heads remain within the old-or-updated positions. Finally, `RoundSpan.add` concatenates the record, positioning, and successor-field spans. The fixed-width length identity and the one-step phase redirections give total time $|a|_{\mathrm{code}}+6$ and the claimed table-tail endpoint.
+
+**Key facts.** `Turing.StepBlock.bufferTape_reads`, `Turing.StepBlock.actionBitsK_reads`, `Turing.StepBlock.recordTM_effect`, `Turing.StepBlock.recordTM_execute`, `Turing.StepBlock.outputSummary_append`, `Turing.StepBlock.roundTM_phase`, `Turing.StepBlock.twoMoveTM_run`, `Turing.StepBlock.succFieldTM_run`, `Turing.StepBlock.succFieldTM_cut`, `Turing.StepBlock.succFieldTM_heads`, `Turing.StepBlock.summaryCells_copy`, `Turing.StepBlock.RoundSpan.add`.

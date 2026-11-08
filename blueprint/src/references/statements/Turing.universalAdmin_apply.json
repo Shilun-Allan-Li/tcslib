@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.universalAdmin_apply",
+ "key": "c01d76b1ea9e3d93",
+ "kind": "lemma",
+ "title": "Effect of an interpreter action",
+ "statement": "Let $x$ be a Boolean input word and let $B$ be a four-tape configuration on input $x$. For control states $q,q'$, a table word $T$, an integer table cursor $p$, a state tape $\\sigma\\colon\\mathbb{Z}\\to\\{0,1,\\mathrm{blank}\\}$ with cursor $s$, table and state movements $d_t,d_s\\in\\{-1,0,1\\}$, and an optional write instruction $w\\in\\mathrm{Option}(\\mathrm{Option}\\{0,1\\})$, applying the administrative action targeted at $q'$ to the evaluation configuration determined by $B,q,T,p,\\sigma,s$ yields the evaluation configuration determined by $B,q',T,p+d_t,\\sigma',s+d_s$. Here $\\sigma'=\\sigma$ if no write is prescribed, and otherwise $\\sigma'$ is obtained by writing the prescribed bit or blank at position $s$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean input word",
+  "$B$ is a four-tape configuration on input $x$",
+  "$q$ and $q'$ are interpreter control states",
+  "$T$ is a Boolean table word",
+  "$p$ and $s$ are integer cursors",
+  "$\\sigma$ is a state tape with Boolean or blank entries",
+  "$d_t$ and $d_s$ are sign-valued movements",
+  "$w$ is an optional write instruction, possibly writing a blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying the administrative action with target control state $q'$, table\nmovement $d_t$, optional state-tape write $w$, and state movement $d_s$ to an\ninterpreter evaluation configuration with table cursor $p$ and state tape\n$\\sigma$ with cursor $s$ yields the evaluation configuration over the same\nbase with control state $q'$, table cursor $p + d_t$, state tape equal to\n$\\sigma$ updated at $s$ by $w$ when a write is present (and $\\sigma$\notherwise), and state cursor $s + d_s$.  The input head, the other two work\ntapes, and the accumulated output are unchanged."
+}

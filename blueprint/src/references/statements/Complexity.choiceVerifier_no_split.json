@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.choiceVerifier_no_split",
+ "key": "30e66b54910377c1",
+ "kind": "lemma",
+ "title": "Nonmembership when the split search fails",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$ be natural numbers, and let $y$ be a finite binary word. If the bounded search over $0\\le n\\le |y|$ finds no natural number satisfying $n+(C+1)(n+1)^c=|y|$, then $y$ does not belong to the choice-word verifier language of $N$ with parameters $C,c$.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine $N$ over the binary alphabet",
+  "Natural numbers $C,c$",
+  "A finite binary word $y$",
+  "No $n$ in the range $0\\le n\\le |y|$ satisfies $n+(C+1)(n+1)^c=|y|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine over the binary alphabet and let $C, c$ be natural numbers. If no natural number $n$ satisfies $n + C\\,(n+1)^c = |y|$ for a binary string $y$ (so the bounded split search fails at length $|y|$), then $y$ does not belong to the choice-word verifier language of $N$ with parameters $C, c$."
+}

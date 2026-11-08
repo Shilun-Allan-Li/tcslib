@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.sim_valQ",
+ "key": "568b64b8a03d7da2",
+ "kind": "lemma",
+ "title": "Simulation of a valid nested-pair input",
+ "statement": "Let $A$ be a register-program instruction map, let $l_0,l,l'$ be program states, let $r$ be a register, and suppose the instruction at $l$ validates a nested pair using register $r$, with successor $l'$. For any oracle, register values $v$, output word, and integer $W\\ge 0$, if the input encodes a unary prefix paired with two nested payloads, each canonical (every nonempty payload ends in $1$), the program simulates from the initial configuration with state $l$ to the corresponding configuration with state $l'$; otherwise it halts with answer false.",
+ "hypotheses_covered": [
+  "Instruction map $A$ and initial program state $l_0$",
+  "Oracle on the $d$ deciders",
+  "Program states $l,l'$",
+  "Register $r$",
+  "The instruction at $l$ is the specified nested-pair validation instruction",
+  "Register values $v$",
+  "Output word",
+  "Integer space bound $W\\ge 0$",
+  "Validity or invalidity of the input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

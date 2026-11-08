@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.PIT.gateRun_encodeGates",
+ "key": "9e76a0e418b1a852",
+ "kind": "theorem",
+ "title": "Evaluation of an encoded gate list",
+ "statement": "Let $n$ be a natural number, let $R$ be a finite bit string, let $P$ be a finite list of finite bit strings, and let $gs$ be a finite list of arithmetic gates with input variables among $n$ variables. Assume that each gate at position $i$ that is an addition, subtraction, or multiplication refers only to gate positions strictly less than $i$. Put $m=\\mathrm{val}(R)+1$, and assign input variable $j$ the value $\\mathrm{val}(P_j)+1$, taking the value to be $0$ when $j$ is beyond the end of $P$. Then running the gate evaluator on the encoding of $gs$, paired with the context determined by $n$, $R$, and $P$, produces the state encoding with that same context, terminal word $[0]$, and the list of gate values evaluated successively modulo $m$, starting from the empty list of prior values.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$R$ is a finite bit string",
+  "$P$ is a finite list of finite bit strings",
+  "$gs$ is a finite list of arithmetic gates on $n$ inputs",
+  "Every addition, subtraction, or multiplication gate at position $i$ refers only to positions strictly less than $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

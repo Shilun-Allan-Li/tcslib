@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.parallelTM_oblivious",
+ "key": "62976f0d2d209d6f",
+ "kind": "lemma",
+ "title": "Transverse coding preserves obliviousness",
+ "statement": "Let $A$ be a finite alphabet, let $e$ embed the Booleans into $A$, and let $P$ be a finite Turing machine over $A$. If, on any two inputs of equal length and at every time $t\\in\\mathbb N$, $P$ has the same input-head position and the same work-tape head positions, then its transverse binary realization has this same property on every pair of equal-length binary inputs, at every time.",
+ "hypotheses_covered": [
+  "$A$ is finite and has decidable equality",
+  "$e$ embeds the Booleans into $A$",
+  "$P$ is a finite Turing machine over $A$",
+  "$P$ has equal head positions at every time on any two equal-length inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over a finite alphabet $A$ and $e$ an embedding of the Booleans\ninto $A$. If $P$ is oblivious, then the transverse binary realization of $P$ is\noblivious — at all intermediate physical times and at all times after halting."
+}

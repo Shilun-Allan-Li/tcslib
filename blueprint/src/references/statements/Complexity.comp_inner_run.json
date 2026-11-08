@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.comp_inner_run",
+ "key": "62477be461469bbb",
+ "kind": "lemma",
+ "title": "Bounded inner computation",
+ "statement": "Let $C,e,p\\in\\mathbb N$, let $m$ be a Boolean mode, and let $f$ map finite Boolean words to finite Boolean words with $|f(x)|\\le C(|x|+1)^e$ for every such word $x$. For a finite Boolean word $z$, suppose $p\\le 8(2C+3)(|\\langle z,\\mathrm{bits}(p)\\rangle|+1)^{e+1}$, where $\\mathrm{bits}(p)$ is the binary word for $p$ and $\\langle\\cdot,\\cdot\\rangle$ is the self-delimiting pairing. The abstract computation on input $\\langle z,\\mathrm{bits}(p)\\rangle$, starting in the inner scan state with registers $1$ through $14$ initialized respectively to $|\\langle z,\\mathrm{bits}(p)\\rangle|$, $2|z|+2$, $2|z|$, $0$, $p$, $0$, $0$, $|\\langle z,\\mathrm{bits}(p)\\rangle|+1$, $0$, $0$, $0$, $0$, $0$, and with no result recorded, halts with result $\\mathbf{1}_{\\{p<|q|\\}}$ when $m$ is true and with the bit at position $p$ of $q$ (false if that position is absent) when $m$ is false, where $q$ is the word obtained by decoding $z$ as $(x,b)$ and returning $\\langle f(x),b\\rangle$ if $b$ is the canonical binary word for its decoded value, and the empty word otherwise. At every time before it halts, all register values are at most $8(2C+3)(|\\langle z,\\mathrm{bits}(p)\\rangle|+1)^{e+1}$; moreover, each active instruction comparing two registers compares distinct registers, instructions comparing a register with the input word are used only on inputs of the required valid encoding (a unary prefix followed by a canonical payload, or by a pair of canonical payloads, as appropriate), and every oracle call uses a list of distinct registers.",
+ "hypotheses_covered": [
+  "$C,e\\in\\mathbb N$",
+  "$m$ is a Boolean mode",
+  "$f$ maps finite Boolean words to finite Boolean words",
+  "For every finite Boolean word $x$, $|f(x)|\\le C(|x|+1)^e$",
+  "$z$ is a finite Boolean word",
+  "$p\\in\\mathbb N$",
+  "$p\\le 8(2C+3)(|\\langle z,\\mathrm{bits}(p)\\rangle|+1)^{e+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e$ be natural numbers, let the mode be Boolean, and let $f$ map bit strings to\nbit strings with $|f(x)|\\le C(|x|+1)^e$ for every bit string $x$. For any bit string $z$\nand natural number $p$ bounded by $8(2C+3)(|\\langle\nz,\\mathrm{bits}(p)\\rangle|+1)^{e+1}$, the machine, started in its inner scan state on\ninput $\\langle z,\\mathrm{bits}(p)\\rangle$ with the specified register values, halts with\nthe bit indicating whether $p$ is less than the length of the transformed paired word\nwhen the mode is true, and otherwise with the bit at position $p$ of that transformed\nword (taking missing positions to be false). The transformed word is obtained by parsing\n$z$ as a pair $(x,b)$ and returning $\\langle f(x),b\\rangle$ when $b$ is the canonical\nbinary representation of its decoded value, and the empty word otherwise."
+}

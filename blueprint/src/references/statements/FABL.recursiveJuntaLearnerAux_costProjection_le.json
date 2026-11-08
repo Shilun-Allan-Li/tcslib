@@ -1,0 +1,22 @@
+{
+ "lean_name": "FABL.recursiveJuntaLearnerAux_costProjection_le",
+ "key": "db3d2abb320d9c33",
+ "kind": "theorem",
+ "title": "Projected cost of the recursive learner",
+ "statement": "Let $n,k$ be nonnegative integers, let a node finder for $k$-juntas on the $n$-dimensional Boolean cube be given, and let $f$ be a Boolean function on that cube taking values in $\\{\\pm1\\}$. Fix a learning parameter $\\varepsilon\\in(0,1/2]$, an additive map $q$ from learning costs to nonnegative integers with $q(0)=0$, and a nonnegative integer $B$. Suppose every outcome in the support of each node-finder call, for every set $P$ of fixed coordinates and every assignment of signs on $P$, has projected cost at most $B$. Then for every recursion fuel $r$, every such $P$ and assignment, and every outcome in the support of the recursive learner, its projected cost is at most $T(r)B$, where $T(0)=1$ and $T(r+1)=1+2T(r)$.",
+ "hypotheses_covered": [
+  "$n,k$ are natural numbers",
+  "a node finder for dimension $n$ and junta size $k$",
+  "a Boolean function $f$ on the $n$-dimensional sign cube",
+  "a learning parameter in $(0,1/2]$",
+  "a projection from learning costs to natural numbers",
+  "the projection sends zero cost to zero",
+  "the projection is additive under cost addition",
+  "a natural-number bound $B$",
+  "every supported node-finder outcome has projected cost at most $B$, for every fixed-coordinate set and sign assignment"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

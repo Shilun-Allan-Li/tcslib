@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/PSubsetPPolyConfigCircuit.lean :: Complexity.cfgProg_blocks -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Configuration Program Blocks
+
+**Claim.** For each instruction index in the configuration program, its computed block equals the configuration expansion at that index, evaluated on the input formed by evaluating each listed source against the original input and no prior blocks.
+
+**Proof.** Fix an instruction index and use strong induction on it. The induction hypothesis says that every earlier computed block agrees with the corresponding configuration expansion. The well-formedness result (`Complexity.cfgProg_wf`) ensures the program's sources are valid, and `progBlocks_getD` identifies the block at the chosen index with the configuration update function applied to that instruction's evaluated sources. The program length formula (`Complexity.length_cfgProg`) turns the index bound into the bound required for the exhaustive index classification (`Complexity.cfgIdx_cases`). Consider its three cases. For a work-cell index, `cfgPos_cellIdx` identifies the instruction's kind and `cfgExp_cellIdx` identifies the intended expansion; the earlier-block induction hypothesis then lets `cell_block` compute that expansion. For an input-position index, `cfgPos_inpIdx` and `cfgExp_inpIdx` identify the corresponding input update and expansion. The sources from the original list evaluate independently of previous blocks by `eval_layout`, and the induction hypothesis supplies all earlier blocks needed by `inp_block`; that lemma therefore gives the desired expansion. For a snapshot index, `cfgPos_snapIdx` and `cfgExp_snapIdx` identify the snapshot update and target, and `snap_block` applies the earlier-block hypothesis to obtain the result. These cases exhaust all valid indices, completing the induction.
+
+**Key facts.** `BoolCircuit.progBlocks_getD`, `Complexity.cfgProg_wf`, `Complexity.length_cfgProg`, `Complexity.cfgIdx_cases`, `Complexity.cfgPos_cellIdx`, `Complexity.cfgExp_cellIdx`, `Complexity.CfgTableau.cell_block`, `Complexity.cfgPos_inpIdx`, `Complexity.cfgExp_inpIdx`, `Complexity.eval_layout`, `Complexity.inp_block`, `Complexity.cfgPos_snapIdx`, `Complexity.cfgExp_snapIdx`, `Complexity.snap_block`.

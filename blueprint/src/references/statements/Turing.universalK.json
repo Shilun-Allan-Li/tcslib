@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalK",
+ "key": "1e29417cd2e3863f",
+ "kind": "theorem",
+ "title": "Universal simulation for a fixed number of tapes",
+ "statement": "For every natural number $k$ and every effective coding scheme $E$ for machines with $k$ work tapes, there is a finite binary-alphabet Turing machine $U$ such that, for each code $\\alpha$, there is a natural number $C$ for which the following holds for every Boolean input word $x$. If the machine decoded from $\\alpha$ produces output $y$ and halts on $x$ after exactly $t$ steps, then $U$ produces $y$ and halts on $\\langle\\alpha,x\\rangle$ after exactly $C(t+1)$ steps; conversely, if $U$ produces $y$ and halts on $\\langle\\alpha,x\\rangle$, then the machine decoded from $\\alpha$ produces $y$ and halts on $x$ after some number of steps.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$E$ is an effective coding scheme for $k$-work-tape machines",
+  "$\\alpha$ is a Boolean code word",
+  "$x$ is a Boolean input word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every number $k$ of work tapes and every effective coding scheme for $k$-tape\nmachines, there is a finite binary-alphabet Turing machine $U$ with the following\nproperty. For each code $\\alpha$, there is a constant $C\\in\\mathbb{N}$ such that for\nevery input $x$, (i) whenever the machine decoded from $\\alpha$ produces output $y$ and\nhalts after exactly $t$ steps on $x$, $U$ produces the same output on\n$\\langle\\alpha,x\\rangle$ and halts after exactly $C(t+1)$ steps; and (ii) whenever $U$\nproduces output $y$ and halts on $\\langle\\alpha,x\\rangle$, the machine decoded from\n$\\alpha$ produces $y$ and halts on $x$ after some number of steps."
+}

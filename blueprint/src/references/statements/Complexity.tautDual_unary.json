@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tautDual_unary",
+ "key": "a3581fd80dc5d890",
+ "kind": "lemma",
+ "title": "Scan of a Unary Run",
+ "statement": "For every $n\\in\\mathbb{N}$ and every binary string $r$, scanning the string consisting of $n$ consecutive $1$s followed by $r$, starting in the unary-index state, produces $n$ consecutive $1$s followed by the scan of $r$ starting in the unary-index state.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb{N}$",
+  "$r$ is a binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n \\in \\mathbb{N}$ and binary string $r$, the polarity-flipping scan from the\nunary-index state of the formula syntax scanner maps $1^n \\mathbin{+\\!\\!+} r$ to\n$1^n$ followed by the polarity-flipping scan of $r$ from the unary-index state."
+}

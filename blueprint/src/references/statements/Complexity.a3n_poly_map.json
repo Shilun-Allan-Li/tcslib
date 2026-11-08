@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.a3n_poly_map",
+ "key": "41d0e70f2562f1f0",
+ "kind": "lemma",
+ "title": "Polynomial-time payload map",
+ "statement": "Let $g : \\{0,1\\}^* \\to \\{0,1\\}^*$ be polynomial-time computable. Define a function on binary words by decoding an input as a pair $(a,b)$ and returning the encoding of $(a,g(b))$ when decoding succeeds, and the empty word when it fails. This function is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g$ be a polynomial-time computable function on binary strings. Then the function that decodes its input as a pair $(a,b)$ and re-encodes the pair $(a, g(b))$, returning the empty word on malformed input, is polynomial-time computable."
+}

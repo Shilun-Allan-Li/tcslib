@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.derivative_abs_moment_eq_influence",
+ "key": "343c735608a4c743",
+ "kind": "lemma",
+ "title": "Derivative Moments and Influence",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ take values in $\\{-1,1\\}$, let $i\\in[n]$, and let $p\\in\\mathbb R$ satisfy $p>0$. Then $\\mathbb E|D_i f|^p=\\mathrm{Inf}_i[f]$, with uniform expectation on the cube, where $D_i f(x)=(f(x^{i\\mapsto 0})-f(x^{i\\mapsto 1}))/2$ and $\\mathrm{Inf}_i[f]=\\mathbb E[(f(x)-f(x^i))^2/4]$, with $x^i$ obtained by flipping coordinate $i$.",
+ "hypotheses_covered": [
+  "f takes only the values −1 and 1",
+  "i is a coordinate in [n]",
+  "p is real",
+  "p > 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f:\\{0,1\\}^n\\to\\{-1,1\\}$ be a function on the uniform Boolean cube, $i\\in[n]$, and $p>0$. Then $\\mathbb E|D_if|^p=I_i(f)$, where $D_if(x)=(f(x^{i\\leftarrow0})-f(x^{i\\leftarrow1}))/2$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation."
+}

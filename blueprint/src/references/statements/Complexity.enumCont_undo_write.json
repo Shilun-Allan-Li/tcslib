@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_undo_write",
+ "key": "a5b4cee5ef94768f",
+ "kind": "lemma",
+ "title": "Restoration of the source configuration",
+ "statement": "Let $k$ be a natural number, let $S$ be a type, let $x$ be a Boolean word, and let $c$ be a configuration of a $k$-work-tape machine on input $x$. For any one-step action $a$, history list $h$, and input-head position $p$, one step of the restoration machine from the mid-restoration configuration determined by $c,a,h,p$ is exactly the restoration checkpoint configuration determined by $c,h,p$.",
+ "hypotheses_covered": [
+  "A natural number of source work tapes",
+  "A source configuration on a Boolean input",
+  "A one-step action",
+  "A history list",
+  "A valid input-head position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration, $a$ an action, $h$ a history list, and $p$ an\ninput-head position. One step of the restoration machine from the mid-restoration\nconfiguration for $c$, $a$, $h$ and $p$ equals the checkpoint configuration for $c$\nand $h$ at $p$: the retained old symbols are written back, restoring the source\ntapes to their contents in $c$, and the history heads move back onto the last\nentry of $h$."
+}

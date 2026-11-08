@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.timedPrefix_advance",
+ "key": "16760134921bff9c",
+ "kind": "lemma",
+ "title": "Advancing parser step",
+ "statement": "Let $b_s,\\alpha,x,\\mathrm{clock},\\mathrm{out}$ be Boolean words, let $q$ be a parser control state, let $q'$ be an optional parser control state, and let $e$ be an optional Boolean output. Suppose $p$ is a position strictly before the end of the nested pair encoding $\\langle\\langle b_s,\\alpha\\rangle,x\\rangle$, and its bit at position $p$ is $b$. If, for every work-tape reading, the parser in state $q$ on input bit $b$ moves right, leaves its work tape unchanged, emits $e$, and enters $q'$, then from the configuration at input position $p+1$, with clock buffer $\\mathrm{clock}$ and output $\\mathrm{out}$, one step reaches the configuration at position $p+2$, with the same clock buffer and output $\\mathrm{out}$ followed by $e$; the state is $q'$.",
+ "hypotheses_covered": [
+  "Boolean words $b_s,\\alpha,x,\\mathrm{clock},\\mathrm{out}$",
+  "Parser control state $q$",
+  "Optional successor control state $q'$",
+  "Optional emitted Boolean $e$",
+  "Position $p$ is below the encoding length",
+  "The encoding’s bit at $p$ equals $b$",
+  "For every work-tape reading, the transition on $b$ in state $q$ is rightward, writes nothing, emits $e$, and enters $q'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the prefix parser's transition in control $q$, on the input symbol\nfound at physical position $p$ of the nested pair encoding, moves the input\nhead right, writes nothing to the work tape, optionally emits one bit, and\npasses to a control $q'$.  Then one machine step from the corresponding parser\nconfiguration advances the physical input position by one, appends the\noptional emission to the output, keeps the stored clock unchanged, and enters\n$q'$."
+}

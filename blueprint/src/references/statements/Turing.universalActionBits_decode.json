@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalActionBits_decode",
+ "key": "034806ddfd853a9d",
+ "kind": "lemma",
+ "title": "Decoding the eight action bits",
+ "statement": "For every natural number $n$ and every one-work-tape action $a$ over the Boolean alphabet, the two-bit fields at positions $0,1$ and $4,5$ decode to the input-head and work-head movements of $a$, respectively, while the field at positions $2,3$ decodes to its optional work-tape write and the field at positions $6,7$ recovers its optional output symbol.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$a$ is an action with one work tape, Boolean symbols, and states in $\\mathrm{Fin}(n+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For every one-work-tape machine action $a$ over $\\{0,1\\}$, the eight fixed\nbits of its serialized record decode back to its components: bits $0, 1$\ndecode to $a$'s input-head movement, bits $2, 3$ to its optional work-tape\nwrite, bits $4, 5$ to its work-head movement, and bits $6, 7$ to its\noptional output emission (bit $6$ flags whether an output is emitted and\nbit $7$ is the emitted bit)."
+}

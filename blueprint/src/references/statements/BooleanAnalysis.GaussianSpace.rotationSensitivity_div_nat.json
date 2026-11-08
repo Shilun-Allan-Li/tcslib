@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.rotationSensitivity_div_nat",
+ "key": "7772392863547c98",
+ "kind": "theorem",
+ "title": "Sensitivity bound by equal rotation steps",
+ "statement": "Let $n$ be a natural number, let $A\\subseteq\\mathbb R^n$ be measurable, let $\\delta\\in\\mathbb R$, and let $\\ell$ be a positive natural number. Then the Gaussian rotation sensitivity satisfies $$s_A(\\delta)\\le \\ell\\,s_A(\\delta/\\ell).$$",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ is measurable",
+  "$\\delta$ is real",
+  "$\\ell$ is a natural number",
+  "$0<\\ell$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$, let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$, and let $G,G\\prime$ be independent vectors with law $\\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\\gamma_n\\otimes\\gamma_n)\\{(g,h):\\mathbf1_A(g)\\ne\\mathbf1_A(\\cos t\\,g+\\sin t\\,h)\\}$. For any measurable $A\\subseteq\\mathbb R^n$, real $\\delta$, and positive integer $\\ell$, $s_A(\\delta)\\le\\ell\\,s_A(\\delta/\\ell)$."
+}

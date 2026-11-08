@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.CsCounted",
+ "key": "2f3857f156c5d3a8",
+ "kind": "structure",
+ "title": "Counted key frequencies",
+ "statement": "Let $A$ specify the item and counter locations, let $k:\bbn\\to\\bbn$ assign a key to each item index, and let $i\\in\\bbn$. For an integer-valued memory map $\\mu'$, the cell at address $A.cnt$ contains $0$, and for every key $t<A.nb$, the cell at address $A.cnt+(t+1)$ contains the number of indices $x<i$ with $k(x)=t$.",
+ "hypotheses_covered": [
+  "The cell at address A.cnt contains zero.",
+  "For every natural number t less than A.nb, the cell at address A.cnt + (t + 1) contains cntEq kf t i."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

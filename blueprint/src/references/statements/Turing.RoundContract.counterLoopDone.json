@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.RoundContract.counterLoopDone",
+ "key": "5e8ada63fd4ac4e4",
+ "kind": "def",
+ "title": "Contract for counter completion",
+ "statement": "Given a round contract for a machine with anchor state $a$ and escape set $\\{e\\}$, and an embedding of the Boolean symbols into the machine's alphabet, construct a contract for the counter-loop machine starting in its decrement phase with the run flag. The data consist of an original parameter and a Boolean counter word; the precondition requires that the extra tape contain the encoded counter word on the specified interval and that every round before the counter value satisfies the round precondition and ends at the anchor. The exact running time is the sum of the round times for rounds indexed from $0$ to one less than the counter value, plus the counter overhead for one more than the counter value; the endpoint is the completed loop configuration after that many rounds, with the counter tape patched to all true symbols on the specified interval. The head-position bounds are the round lower and upper bounds on the original tapes, and on the counter tape they are respectively one cell before its starting position and the starting position plus the counter-word length.",
+ "hypotheses_covered": [
+  "A natural number $k$ of original work tapes",
+  "Symbol and state types $\\Gamma$ and $S$",
+  "Decidable equality on $S$ and $\\Gamma$",
+  "An embedding of Boolean symbols into $\\Gamma$",
+  "A machine with $k$ work tapes over $\\Gamma$ and states $S$",
+  "An anchor state $a\\in S$ and an exit state option",
+  "A parameter type and finite input word over $\\Gamma$",
+  "A round contract for the machine with anchor $a$ and escape set containing exactly the specified exit",
+  "A Boolean counter word in the contract's data"
+ ],
+ "confidence": "low",
+ "caveat": "The endpoint and precondition use auxiliary counter-loop constructions whose detailed meanings are not included among the supplied definitions; the description follows their explicit arguments and fields.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

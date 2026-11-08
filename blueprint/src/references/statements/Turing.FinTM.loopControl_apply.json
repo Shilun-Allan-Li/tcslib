@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.FinTM.loopControl_apply",
+ "key": "16a79ebac6b2a478",
+ "kind": "lemma",
+ "title": "Effect of a Controller Action on a Frame",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, fix an input word $x$, and let a base configuration of the loop host on $x$ be given, together with a control state, an input-head position, flag, counter, and payload tapes, counter and payload head positions, and an output word. For any input-head direction, optional flag write, counter and payload write-and-move instructions, optional emitted bit, and successor control state, applying the corresponding controller action to this frame gives the frame with the successor state, the input position moved by the clamped direction, the flag updated at the origin, and the counter and payload tapes updated at their respective heads. The counter and payload heads move as instructed, and the emitted bit is appended to the output; all other tapes and heads remain those of the base configuration.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines $B$ and $F$",
+  "fixed Boolean input word $x$",
+  "base loop-host configuration on $x$",
+  "optional loop-host control state",
+  "input-head position",
+  "flag, counter, and payload tapes",
+  "counter and payload head positions",
+  "output word",
+  "input-head direction",
+  "optional flag write",
+  "counter and payload write-and-move instructions",
+  "optional emitted bit",
+  "successor control state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a controller frame of the loop host be given, together with a controller action\nspecified by an input direction, an optional flag write, counter and payload write-and-\nmove pairs, an optional emitted bit, and a successor state. Applying the action to the\nframe yields the frame with the successor state, the moved input head, the three tracks\nupdated by their optional writes at their current heads, the counter and payload heads\nmoved as instructed, and the emitted bit appended to the output."
+}

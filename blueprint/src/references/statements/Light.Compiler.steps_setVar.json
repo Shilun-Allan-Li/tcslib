@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Compiler.steps_setVar",
+ "key": "68e40446c11200b3",
+ "kind": "theorem",
+ "title": "Compiled assignment to a variable",
+ "statement": "Let $Z$ be admissible compiler size data of word size $W$, with state $\\sigma$ represented in a stack frame at depth $q$, where $1\\le q$ and $q+F\\le Q$. Suppose $x<F$, the code at $\\mathrm{pos}$ begins with the two instructions that compute the address of local variable $x$ and store the value from address $c$ there, memory $m$ contains the word encoding $v$ at address $c$, and $c$ is not the address register. Then after two machine steps some memory $m'$ represents the state obtained from $\\sigma$ by setting local variable $x$ to $v$, at the same stack depth $q$. The memories agree outside the writable-address set determined by $Z$ and $q$.",
+ "hypotheses_covered": [
+  "Admissible size data Z and word size W",
+  "Initial memory represents σ in a framed stack at depth q",
+  "x < Z.F",
+  "Code at pos begins with the specified address computation and store instructions",
+  "Memory at address c encodes v",
+  "c is distinct from the address register"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

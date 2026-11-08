@@ -33,6 +33,7 @@ $\sigma$. If $\rho_0'$ leaves $v$ free, then $\rho_0$ already leaves $v$ free.
 }
 \label{SwitchingLemma.find_clause_preserved_in_encode}
 \leanok
+\uses{DNF, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_not_kills_first_clause, SwitchingLemma.first_clause_preserved, Term}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -163,7 +164,6 @@ $\sigma$. If $\rho_0'$ leaves $v$ free, then $\rho_0$ already leaves $v$ free.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_not_kills_first_clause, SwitchingLemma.first_clause_preserved, Term}
 \difficulty{4}
 Let $f$ be a DNF formula on $n$ variables, viewed as an ordered list of terms, in which
 no term contains two distinct literals on the same variable. Fix restrictions $\rho_0$
@@ -234,7 +234,7 @@ started from the state obtained by processing the clause's free literals $\mathi
 \lean{SwitchingLemma.roundtrip_inv_hC'}
 \label{SwitchingLemma.roundtrip_inv_hC'}
 \leanok
-\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.foldl_sigma_stable, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_aux_ne_nonfree, Term}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.foldl_sigma_stable, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_aux_ne_nonfree, SwitchingLemma.processClauseLits_foldl_sigma_none, Term}
 \difficulty{4}
 Let $t$ be a term on $n$ variables, let $\mathit{lits}$ be a list of literals each
 tagged with a position index, and let $\mathit{path}$ be a list of variable–direction
@@ -256,7 +256,7 @@ when $i$ lies beyond the end of $t$) — agrees with $\sigma$ at $v$.
 \lean{SwitchingLemma.roundtrip_inv_hD'}
 \label{SwitchingLemma.roundtrip_inv_hD'}
 \leanok
-\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.foldl_rho_stable, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_foldl_rho_eq_of_set, SwitchingLemma.processClauseLits_rho_stable, Term}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.foldl_rho_stable, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_aux_ne_nonfree, SwitchingLemma.processClauseLits_foldl_rho_eq_of_set, SwitchingLemma.processClauseLits_rho_stable, Term}
 \difficulty{4}
 Let $t$ be a term on $n$ variables (a list of literals), let $\mathit{lits}$ be a list
 of literals each paired with a position index, let a decision-tree path be given, and
@@ -276,12 +276,18 @@ reconstructed restriction and $\rho_0^{\ast}$ take the same value.
 
 \begin{lemma}[Round-trip core of the Razborov encoding]
 \lean{SwitchingLemma.go_roundtrip_gen}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
   pdf-b5e074215b9e-p002-b003
 }
 \label{SwitchingLemma.go_roundtrip_gen}
 \leanok
+\uses{DNF, DNF.width, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_acc, SwitchingLemma.encode_go_fst_sigma_indep_at_free, SwitchingLemma.encode_go_snd_sigma_indep, SwitchingLemma.find_clause_preserved_in_encode, SwitchingLemma.foldl_rho_stable, SwitchingLemma.foldl_sigma_stable, SwitchingLemma.mem_filter_freeVars_zipIdx, SwitchingLemma.pcl_none_implies_rho_free, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_aux_ne_of_pcl_none, SwitchingLemma.processClauseLits_sigma_none_of_rho_none, SwitchingLemma.processEntries_of_processClauseLits, SwitchingLemma.roundtrip_base, SwitchingLemma.roundtrip_inv_hC', SwitchingLemma.roundtrip_inv_hD', SwitchingLemma.term_length_le_width}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -543,7 +549,6 @@ reconstructed restriction and $\rho_0^{\ast}$ take the same value.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, DNF.width, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_acc, SwitchingLemma.encode_go_fst_sigma_indep_at_free, SwitchingLemma.encode_go_snd_sigma_indep, SwitchingLemma.find_clause_preserved_in_encode, SwitchingLemma.foldl_rho_stable, SwitchingLemma.foldl_sigma_stable, SwitchingLemma.mem_filter_freeVars_zipIdx, SwitchingLemma.pcl_none_implies_rho_free, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_aux_ne_of_pcl_none, SwitchingLemma.processClauseLits_sigma_none_of_rho_none, SwitchingLemma.processEntries_of_processClauseLits, SwitchingLemma.roundtrip_base, SwitchingLemma.roundtrip_inv_hC', SwitchingLemma.roundtrip_inv_hD', SwitchingLemma.term_length_le_width}
 \difficulty{7}
 Fix a DNF formula $f$ on $n$ variables whose width is at most $w$ and in which no term
 repeats a variable (within a single term, any two literals on the same variable are
@@ -561,9 +566,14 @@ $c$. Then the restriction returned by $D$ equals $\sigma$.
 
 \begin{lemma}[Round-trip of the restriction encoder and decoder]
 \lean{SwitchingLemma.go_roundtrip}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma.go_roundtrip}
 \leanok
+\uses{DNF, DNF.width, SwitchingLemma.Restriction, SwitchingLemma.encode_go_fst_nonfree, SwitchingLemma.go_roundtrip_gen}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -831,7 +841,6 @@ $c$. Then the restriction returned by $D$ equals $\sigma$.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004,
     pdf-b5e074215b9e-p002-b003}
-\uses{DNF, DNF.width, SwitchingLemma.Restriction, SwitchingLemma.encode_go_fst_nonfree, SwitchingLemma.go_roundtrip_gen}
 \difficulty{2}
 Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose that
 within every term of $f$ any two literals naming the same variable are in fact equal.
@@ -843,12 +852,17 @@ larger than that list's length — recovers $\rho$ exactly.
 
 \begin{lemma}[Razborov decoding inverts encoding on bad restrictions]
 \lean{SwitchingLemma.razborovDecode_encode}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
   pdf-b5e074215b9e-p002-b003
 }
 \label{SwitchingLemma.razborovDecode_encode}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.go_roundtrip, SwitchingLemma.razborovDecode, SwitchingLemma.razborovEncode}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1159,7 +1173,6 @@ larger than that list's length — recovers $\rho$ exactly.
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.go_roundtrip, SwitchingLemma.razborovDecode, SwitchingLemma.razborovEncode}
 \difficulty{1}
 Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose that
 no term of $f$ contains two distinct literals on the same variable (within each term,
@@ -1173,9 +1186,15 @@ the original restriction $\rho$.
 
 \begin{theorem}[Injectivity of the Razborov encoding on bad restrictions]
 \lean{SwitchingLemma.razborovEncode_injective}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma.razborovEncode_injective}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.razborovDecode_encode, SwitchingLemma.razborovEncode}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1493,7 +1512,6 @@ the original restriction $\rho$.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004,
     pdf-b5e074215b9e-p002-b001}
-\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.razborovDecode_encode, SwitchingLemma.razborovEncode}
 \difficulty{2}
 Fix a DNF formula $f$ on $n$ variables and parameters $w, d \in \bbn$, and suppose that
 $f$ has width at most $w$ and that no term of $f$ repeats a variable — within any single

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.poly_copy",
+ "key": "81c558eb1a66389a",
+ "kind": "lemma",
+ "title": "The input-copying phase",
+ "statement": "Let $c,C\\in\\mathbb{N}$ and let $x$ be a bit string. For every $i\\le |x|$, after $i$ steps of the unary box-enumeration machine from its initial configuration on $x$, the machine is in the copy state with its input head at position $i$ (counting from $0$), each work tape containing $1^i$ in cells $0,\\ldots,i-1$ and blanks elsewhere, every work head at position $i$, and empty output.",
+ "hypotheses_covered": [
+  "$c,C$ are natural numbers",
+  "$x$ is a bit string",
+  "$i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c, C \\in \\mathbb{N}$ and let $x$ be a bit string. For every $i \\le |x|$, running $\\mathcal{P}_{c,C}$ for $i$ steps from its initial configuration on $x$ yields the configuration in the copy state with the input head on input position $i$ (counting from $0$), every work tape holding $1^i$ in cells $0,\\dots,i-1$ and blanks elsewhere, every work head at cell $i$, and empty output; here $\\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\\mathrm{loop}_i$, $\\mathrm{rewind}_i$, $\\mathrm{advance}_i$, $\\mathrm{emit}_j$ are its control states."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.UniformMachineCode2",
+ "key": "cb686c096d5ac579",
+ "kind": "structure",
+ "title": "Uniform machine-code system",
+ "statement": "A uniform machine-code system consists of an effective code for deterministic two-work-tape machines over binary symbols, together with a finite binary-input simulator and a natural-number degree. For every code, input, and time bound, the simulator decides whether the decoded machine outputs the one-bit word $[1]$ on that input within the given bound: in the affirmative case it outputs $[1]$, and otherwise it outputs $[0]$. In either case its computation takes exactly the prescribed time bound $d(|\\alpha|+|x|+t+1)^d$, where $d$ is the degree and $\\alpha,x,t$ are the code, input, and bound; the code system also includes a finite machine computing the serialization of each decoded machine, with some time bound depending on input length.",
+ "hypotheses_covered": [
+  "The inherited code and decoder are total and decode strings with the stated padding property.",
+  "A finite binary machine computes the serialization of each decoded machine within its specified time bound.",
+  "A single natural-number simulator degree is fixed.",
+  "For every code, input, and time bound, bounded acceptance implies output [true] in the stated polynomial number of steps.",
+  "For every code, input, and time bound, failure of bounded acceptance implies output [false] in the same stated polynomial number of steps."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

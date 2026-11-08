@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_frame_replay",
+ "key": "21520b2357c60455",
+ "kind": "lemma",
+ "title": "Replay of a Stored Word",
+ "statement": "Let $B,F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose a Boolean mode `findMode`, an input word $x$, a base loop-host configuration, an input-head position $p$, Boolean tape functions for the flag and counter, an integer counter-head position $h$, and a Boolean word $w$. Starting from controller phase $13$, with payload tape storing $w$, payload head at $0$, and empty output, after exactly $|w|+1$ steps the loop host is halted and its output is exactly $w$.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$",
+  "anchor state $a$ of $B$",
+  "Boolean mode `findMode`",
+  "input word $x$",
+  "base loop-host configuration",
+  "input-head position $p$",
+  "flag and counter tape functions",
+  "counter-head position $h$",
+  "Boolean word $w$",
+  "initial state is controller phase 13",
+  "payload tape stores $w$",
+  "payload head is at $0$",
+  "initial output is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a captured payload word and consider the loop host in its replay phase on a\nframe with empty output whose payload track is the buffer tape of $w$ with head at zero.\nAfter exactly $|w| + 1$ steps the host has halted and its output is exactly $w$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.MachineFormat.h1HostedVerdictTM",
+ "key": "75738ebb603471b3",
+ "kind": "def",
+ "title": "Hosted verdict machine",
+ "statement": "For each natural number $k$, define a Boolean-symbol machine with $1+(k+2+1)$ work tapes and states consisting of a counter-loop control state, a phase indexed by a key, and a Boolean flag. Its initial state and transition behavior are those of the hosted loop machine, except that in the designated completed or escape control states it stays in place, halts, and emits a Boolean verdict: in the escape state this is true exactly when the scanned cell on the designated summary tape contains true, and in the completed state it is false.",
+ "hypotheses_covered": [
+  "$k$ is a natural number"
+ ],
+ "confidence": "low",
+ "caveat": "The hosted loop machine, its phase and key types, and the designated summary-tape index are not defined in the supplied snippet, so their meaning cannot be made fully self-contained.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

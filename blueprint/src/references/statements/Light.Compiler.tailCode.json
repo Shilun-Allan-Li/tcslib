@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Compiler.tailCode",
+ "key": "e0db70cfec81f9fc",
+ "kind": "def",
+ "title": "Compiler tail code",
+ "statement": "Given a Boolean flag $d$ and a position $p$, the tail code first adds the value in the main-frame stack location to the zero register and stores the result in the designated result register. If $d$ is true, it then subtracts that stack value from zero, branches to position $p+4$ when the difference is negative, and otherwise rejects; the final instruction accepts. If $d$ is false, the code accepts immediately after the initial addition.",
+ "hypotheses_covered": [
+  "A Boolean flag $d$",
+  "A natural-number position $p$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define the register constants or the meaning of the main-frame stack location, so these are described only by their apparent roles.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

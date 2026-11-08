@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.setupCfg_input",
+ "key": "800e0a4faa34d5ec",
+ "kind": "lemma",
+ "title": "Input symbol in a setup configuration",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\mathbb{N}$, let $x$ be a word of schedule symbols, and choose a base configuration on $x$, a controller phase, a valid input-head position $p$, three integer head positions, and three controller tapes. In the resulting setup configuration, the input symbol read is blank if $p=0$; otherwise it is the symbol of $x$ at zero-based index $p-1$, or blank if that index is outside $x$.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Booleans",
+  "a is a natural number",
+  "x is a schedule-symbol word",
+  "base is a configuration on x",
+  "q is a controller phase",
+  "p is a valid input-head position",
+  "b, u, and g are integer controller-head positions",
+  "bt, ut, and gt are controller tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In a setup configuration on input $x$ with input head at position\n$p \\in \\{0,\\dots,|x|+1\\}$, the symbol read from the input tape is blank when $p = 0$,\nand otherwise it is the $(p-1)$-st symbol of $x$ (in $0$-indexed order), which is blank\nwhen $p - 1 \\ge |x|$."
+}

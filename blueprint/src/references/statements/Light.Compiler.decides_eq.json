@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.Compiler.decides_eq",
+ "key": "ab6be4a76edd4f12",
+ "kind": "theorem",
+ "title": "Compiled equality test",
+ "statement": "Let $Z$ be compiler size data for word size $W$, with local-frame capacity $Z.F$, limits $Z.lim$, stack capacity $Z.Q$, and a memory layout and code layout as specified by $Z$. Let $\u001b[0m\\sigma$ be a light state and let $q$ be a stack position such that memory $m$ represents $\u001b[0m\\sigma$ in a frame at $q$, with $1 \\le q$ and $q+Z.F \\le Z.Q$. Suppose every location and memory value of $\u001b[0m\\sigma$ has absolute value at most $Z.lim.word$, the code beginning at position $pos$ contains the compiled equality test for expressions $a,b$ with target position $l$, this condition has width at most $Z.F$, and both expressions are safe under $Z.lim$ in $\u001b[0m\\sigma$. Then there is a final memory $m'$ and a number of steps $n$ no greater than the size of the equality condition such that execution from $pos$ reaches $pos$ plus that size if $a$ and $b$ have equal values in $\u001b[0m\\sigma$, and reaches $l$ otherwise; throughout this execution, memory agrees with $m$ outside the scratch cells for a frame of size $Z.F$.",
+ "hypotheses_covered": [
+  "Memory and state form a representation related by Rel at stack position q",
+  "The stack position satisfies 1 ≤ q and q + Z.F ≤ Z.Q",
+  "Every location and memory value of σ has absolute value at most Z.lim.word",
+  "The compiled equality condition for a and b with target l occurs at code position pos",
+  "The equality condition width is at most Z.F",
+  "The equality condition is safe in σ under Z.lim"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

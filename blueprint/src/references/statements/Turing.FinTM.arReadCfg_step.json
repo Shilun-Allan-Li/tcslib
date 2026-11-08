@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.arReadCfg_step",
+ "key": "97985cc8fa3b935c",
+ "kind": "lemma",
+ "title": "One step of the read sweep",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $E$ inject the symbols of $\\Gamma$ together with blank into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into $\\Gamma$. For a machine $M$ over $\\Gamma$, a binary input $x$, a configuration $c$ of $M$ on the letterwise $e$-image of $x$, a state $q$ of $M$, and a counter $j\\in\\{0,\\ldots,N+1\\}$ with $j<N+1$, one step of the binary block-code simulator from the read-sweep configuration at counter $j$ is the read-sweep configuration at counter $j+1$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$E$ is an embedding of symbols and blank into blocks of $N+1$ optional bits",
+  "$e$ embeds the binary alphabet into $\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a binary input",
+  "$c$ is a configuration of $M$ on the letterwise $e$-image of $x$",
+  "$q$ is a state of $M$",
+  "$j$ is a valid read counter",
+  "$j<N+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a counter $j \\le N$, one transition of the binary block-code simulator applied to\nthe read-sweep configuration of a source configuration $c$ with source state $q$ at\ncounter $j$ yields the read-sweep configuration at counter $j+1$: the scanned code bits\nenter the buffers and every work head moves one cell right."
+}

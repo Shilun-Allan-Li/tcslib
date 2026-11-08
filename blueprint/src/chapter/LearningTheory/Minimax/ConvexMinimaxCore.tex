@@ -26,6 +26,7 @@ of mixed strategies is nonempty.
 
 \begin{definition}[Lower value of a finite game]
 \lean{OnlineLearning.finiteLowerValue}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p002-b003}
 \label{OnlineLearning.finiteLowerValue}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, payoffVsPure}
@@ -40,6 +41,7 @@ minimises over pure responses.
 
 \begin{definition}[Upper value of a finite game]
 \lean{OnlineLearning.finiteUpperValue}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p002-b003}
 \label{OnlineLearning.finiteUpperValue}
 \leanok
 \uses{MixedStrategy, ZeroSumGame, pureVsPayoff}
@@ -159,6 +161,12 @@ distributions) over the row and column actions, respectively.
 
 \begin{theorem}[Minimax theorem for finite zero-sum games]
 \lean{OnlineLearning.finite_minimax_value}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p009-b002}
+\statementsource{komiya-sion-minimax}{
+  pdf-3f7c8a3e445e-p001-b003,
+  pdf-3f7c8a3e445e-p002-b004,
+  pdf-3f7c8a3e445e-p003-b001
+}
 \label{OnlineLearning.finite_minimax_value}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteLowerValue_bddAbove, OnlineLearning.finiteLowerValue_le_upperValue, OnlineLearning.finiteUpperValue, OnlineLearning.finiteUpperValue_bddBelow, OnlineLearning.pureVsPayoff_le_one, ZeroSumGame, approx_minimax, payoffVsPure, pureVsPayoff}
@@ -177,6 +185,7 @@ distributions) over the row and column actions respectively.
 
 \begin{definition}[Convex-compact minimax statement]
 \lean{OnlineLearning.ConvexCompactMinimaxStatement}
+\statementsource{komiya-sion-minimax}{pdf-3f7c8a3e445e-p001-b003}
 \label{OnlineLearning.ConvexCompactMinimaxStatement}
 \leanok
 For sets $X, Y \subseteq \bbr$ and a payoff function $f : \bbr \to \bbr \to \bbr$,
@@ -192,6 +201,7 @@ to it while the proof is built up incrementally.
 
 \begin{definition}[Convex-compact minimax hypotheses]
 \lean{OnlineLearning.ConvexCompactMinimaxHypotheses}
+\statementsource{komiya-sion-minimax}{pdf-3f7c8a3e445e-p001-b003}
 \label{OnlineLearning.ConvexCompactMinimaxHypotheses}
 \leanok
 A structure bundling the assumptions of Cesa-Bianchi--Lugosi Theorem~7.1
@@ -256,6 +266,11 @@ whose $(i,j)$ entry is $f(x_i, y_j)$.
 
 \begin{theorem}[Minimax theorem for a sampled finite game]
 \lean{OnlineLearning.finite_sampled_minimax_value}
+\statementsource{komiya-sion-minimax}{
+  pdf-3f7c8a3e445e-p001-b003,
+  pdf-3f7c8a3e445e-p002-b004,
+  pdf-3f7c8a3e445e-p003-b001
+}
 \label{OnlineLearning.finite_sampled_minimax_value}
 \leanok
 \uses{OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.sampledGame}
@@ -311,9 +326,33 @@ most the value of $f$ at the $q$-averaged column point:
 
 \begin{lemma}[Weak minimax inequality for convex-compact games]
 \lean{OnlineLearning.weak_convex_compact_minimax}
+\proofsource{komiya-sion-minimax}{
+  pdf-3f7c8a3e445e-p001-b003,
+  pdf-3f7c8a3e445e-p002-b004
+}
 \label{OnlineLearning.weak_convex_compact_minimax}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses}
+\proofstep
+  {MixedStrategy}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p001-b003}
+\proofstep
+  {OnlineLearning.arbitraryMixedStrategy}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p001-b003}
+\proofstep
+  {OnlineLearning.mixedStrategyNonempty}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p001-b003}
+\proofstep
+  {OnlineLearning.ConvexCompactMinimaxHypotheses}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p001-b003}
 \difficulty{4}
 Let $X, Y \subseteq \bbr$ be nonempty convex sets with $X$ also compact, and let $f : X
 \times Y \to \bbr$ be a payoff that is bounded above and below on $X \times Y$, such
@@ -328,6 +367,7 @@ for every $x \in X$ the map $y \mapsto f(x,y)$ is concave on $Y$. Then
 
 \begin{definition}[Minimax sublevel set]
 \lean{OnlineLearning.minimaxSublevel}
+\statementsource{komiya-sion-minimax}{pdf-3f7c8a3e445e-p002-b004}
 \label{OnlineLearning.minimaxSublevel}
 \leanok
 For a set $X \subseteq \bbr$, a payoff function $f$, a column point $y$, and
@@ -375,9 +415,44 @@ $\mathrm{sublevel}(X,f,y,c) = X \cap \{x \in \bbr : f(x,y) \le c\}$ is compact.
 
 \begin{lemma}[From finite feasibility to a uniform row point]
 \lean{OnlineLearning.exists_forall_le_of_finite_sublevel_intersections}
+\proofsource{komiya-sion-minimax}{
+  pdf-3f7c8a3e445e-p002-b004,
+  pdf-3f7c8a3e445e-p003-b001
+}
 \label{OnlineLearning.exists_forall_le_of_finite_sublevel_intersections}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.minimaxSublevel, OnlineLearning.minimaxSublevel_isClosed}
+\proofstep
+  {MixedStrategy}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p001-b003}
+\proofstep
+  {OnlineLearning.arbitraryMixedStrategy}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p001-b003}
+\proofstep
+  {OnlineLearning.mixedStrategyNonempty}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p001-b003}
+\proofstep
+  {OnlineLearning.ConvexCompactMinimaxHypotheses}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p001-b003,
+    pdf-3f7c8a3e445e-p002-b004}
+\proofstep
+  {OnlineLearning.minimaxSublevel}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p002-b001}
+\proofstep
+  {OnlineLearning.minimaxSublevel_isClosed}
+  {context}
+  {komiya-sion-minimax}
+  {pdf-3f7c8a3e445e-p002-b001}
 \difficulty{4}
 Let $X, Y \subseteq \bbr$ together with a payoff function $f : \bbr \to \bbr \to \bbr$
 satisfy the convex-compact minimax hypotheses, and let $c \in \bbr$. Suppose that for

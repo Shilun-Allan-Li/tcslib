@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumMachine_contracts",
+ "key": "50265059dc16c807",
+ "kind": "theorem",
+ "title": "Enumerator configuration and time contracts",
+ "statement": "Let $C,c$ be natural numbers, let $V$ be a language of Boolean words, let $T_V$ be a time bound, and let $M_V$ be a finite Boolean Turing machine that decides $V$ within time $T_V$. Then there exist a natural number $b$ and a finite Boolean Turing machine $E$ such that for every Boolean input $x$ there are a family of configurations $\\mathrm{cfg}(i)$ of $E$ on $x$, indexed by natural numbers, and a startup time satisfying the following conditions. Writing $w=C(|x|+1)^c$, the startup time is at most $b\\bigl(T_V(|x|+w)+(|x|+w+1)^{c+1}\\bigr)$, and $E$ reaches $\\mathrm{cfg}(0)$ from its initial configuration within that startup time. The configuration $\\mathrm{cfg}(2^w)$ is halted with output $[\\mathrm{false}]$. For every $i<2^w$, there is a time at most $b\\bigl(T_V(|x|+w)+(|x|+w+1)^{c+1}\\bigr)$ such that, if $x$ concatenated with the width-$w$ little-endian binary word of $i$ belongs to $V$, the machine from $\\mathrm{cfg}(i)$ halts with output $[\\mathrm{true}]$; otherwise it reaches $\\mathrm{cfg}(i+1)$ at that time.",
+ "hypotheses_covered": [
+  "Natural numbers $C,c$",
+  "A language $V$ over Boolean words",
+  "A time bound $T_V$",
+  "A finite Boolean machine $M_V$ deciding $V$ within $T_V$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix constants $C, c$, a language $V$ over the binary alphabet, and a machine $MV$\ndeciding $V$ within time $T_v$. Then there exist a constant $b$ and one finite\nmachine $E$ such that for every input $x$ --- writing $n = |x|$ and\n$w = C(n+1)^c$ --- there is a rank-indexed family of configurations of $E$ on\n$x$ with: $E$ reaches the rank-$0$ configuration from its initial configuration\nwithin $b\\,(T_v(n+w) + (n+w+1)^{c+1})$ steps; the rank-$2^w$ configuration is\nhalted with single-bit output false; and from each rank $i < 2^w$, within the\nsame budget, $E$ either halts with output true when $x$ concatenated with the\nwidth-$w$ binary word of $i$ lies in $V$, or reaches the rank-$(i+1)$\nconfiguration otherwise."
+}

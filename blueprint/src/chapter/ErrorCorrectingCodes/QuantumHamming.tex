@@ -30,6 +30,7 @@ The four Pauli basis elements $\{I,X,Y,Z\}$, represented as an inductive type.
 \statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b004}
 \label{PauliString}
 \leanok
+\uses{PauliBasis}
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 A \emph{Pauli string} of length $n$ is a function $p : \mathrm{Fin}\,n \to \mathrm{PauliBasis}$.
 \end{definition}
@@ -46,6 +47,7 @@ A \emph{Pauli string} of length $n$ is a function $p : \mathrm{Fin}\,n \to \math
 \lean{weight}
 \label{weight}
 \leanok
+\uses{PauliString}
 \statementsource{quant-ph.0508070}{pdf-4bcdc0ee9c86-p003-b007}
 The \emph{support} $\mathrm{supp}(p) \subseteq \mathrm{Fin}\,n$ consists of coordinates
 where $p(i) \neq I$; the \emph{weight} is $\mathrm{wt}(p) = |\mathrm{supp}(p)|$.
@@ -55,13 +57,13 @@ where $p(i) \neq I$; the \emph{weight} is $\mathrm{wt}(p) = |\mathrm{supp}(p)|$.
 \lean{PauliErrorsLe}
 \label{PauliErrorsLe}
 \leanok
+\uses{PauliString, weight}
 \statementsource{PhysRevLett.77.2585}{
   pdf-9634739c3de9-p003-b003,
   pdf-9634739c3de9-p002-b004
 }
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p011-b008}
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p008-b003}
-\uses{PauliString, weight}
 The set of all Pauli strings of weight at most $t$:
 \[
 \mathcal{E}(n,t) = \bigl\{p : \mathrm{PauliString}\,n \;\big|\; \mathrm{wt}(p) \le t\bigr\}.
@@ -72,13 +74,13 @@ The set of all Pauli strings of weight at most $t$:
 \lean{card_pauliErrorsLe}
 \label{card_pauliErrorsLe}
 \leanok
+\uses{PauliErrorsLe, card_pauliStringsExactSupport, pauliStringsExactSupport}
 \proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \proofsource{PhysRevA.54.3824}{
   pdf-c11491661f48-p020-b001,
   pdf-c11491661f48-p021-b003
 }
 \proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
-\uses{PauliErrorsLe, weight}
 \difficulty{5}
 For natural numbers $n$ and $t$, the number of Pauli strings of length $n$ whose weight
 is at most $t$ is
@@ -139,11 +141,11 @@ dimension $\dim_{\mathbb{C}}(\mathcal{H}_n) = 2^n$.
 }
 \label{pauliOp}
 \leanok
+\uses{Hn, PauliString, pauliMatrix}
 \statementsource{quant-ph.9608006}{
   pdf-4fa1f624d1c5-p002-b003,
   pdf-4fa1f624d1c5-p003-b002
 }
-\uses{PauliString, Hn}
 For $p \in \mathrm{PauliString}\,n$, the associated Pauli operator
 $\hat{p} : \mathcal{H}_n \to \mathcal{H}_n$.
 \end{definition}
@@ -155,6 +157,7 @@ $\hat{p} : \mathcal{H}_n \to \mathcal{H}_n$.
 \lean{KnillLaflamme}
 \label{KnillLaflamme}
 \leanok
+\uses{Hn, PauliString, codeProj, pauliOp, pauliOpAdjoint, weight}
 \statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p002-b003}
 \statementsource{PhysRevA.54.3824}{
   pdf-c11491661f48-p023-b003,
@@ -166,7 +169,6 @@ $\hat{p} : \mathcal{H}_n \to \mathcal{H}_n$.
 }
 \statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b005}
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p005-b003}
-\uses{pauliOp}
 A subspace $C \le \mathcal{H}_n$ satisfies the \emph{Knill--Laflamme condition}
 for $t$-error correction if for all Pauli strings $E,F$ with $\mathrm{wt}(E),\mathrm{wt}(F) \le t$
 there exists $\lambda_{EF}\in\mathbb{C}$ such that
@@ -178,6 +180,7 @@ where $P_C$ is the orthogonal projection onto $C$.
 \lean{IsNondegenerate}
 \label{IsNondegenerate}
 \leanok
+\uses{Hn, KnillLaflamme, PauliString, codeProj, pauliOp, pauliOpAdjoint, weight}
 \statementsource{quant-ph.9705052}{
   pdf-e658890bd7ef-p002-b005,
   pdf-e658890bd7ef-p005-b005
@@ -189,7 +192,6 @@ where $P_C$ is the orthogonal projection onto $C$.
   pdf-bbdd8e5c3949-p003-b002,
   pdf-bbdd8e5c3949-p009-b002
 }
-\uses{KnillLaflamme}
 A code is \emph{non-degenerate} if it satisfies the Knill--Laflamme condition
 and additionally $P_C E^\dagger F P_C = 0$ whenever $E \neq F$.
 \end{definition}
@@ -201,13 +203,13 @@ and additionally $P_C E^\dagger F P_C = 0$ whenever $E \neq F$.
 \lean{ErrorSphere}
 \label{ErrorSphere}
 \leanok
+\uses{Hn, PauliErrorsLe, pauliOp}
 \statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \statementsource{PhysRevLett.77.2585}{
   pdf-9634739c3de9-p003-b003,
   pdf-9634739c3de9-p003-b001
 }
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
-\uses{pauliOp}
 The \emph{error sphere} $\mathrm{ES}(C,t)$ is the subspace
 $\bigvee_{\mathrm{wt}(p)\le t} \hat{p}(C)$, i.e.\ the supremum of the
 Pauli images of $C$ over all $t$-errors.
@@ -217,6 +219,7 @@ Pauli images of $C$ over all $t$-errors.
 \lean{error_subspaces_orthogonal}
 \label{error_subspaces_orthogonal}
 \leanok
+\uses{Hn, IsNondegenerate, PauliString, codeProj, codeProj_apply, codeProj_eq_self_of_mem, pauliMatrix, pauliOp, pauliOpAdjoint, weight}
 \proofsource{quant-ph.9705052}{
   pdf-e658890bd7ef-p005-b005,
   pdf-e658890bd7ef-p010-b003
@@ -234,7 +237,6 @@ Pauli images of $C$ over all $t$-errors.
   pdf-bbdd8e5c3949-p003-b002,
   pdf-bbdd8e5c3949-p009-b002
 }
-\uses{IsNondegenerate, pauliOp}
 \difficulty{6}
 Let $C \le \mathcal{H}_n$ be a code that is non-degenerate for $t$-error correction, and
 let $E, F$ be Pauli strings on $n$ qubits with weights $\mathrm{wt}(E) \le t$ and
@@ -247,11 +249,11 @@ that is, $\langle \hat{E}\,u,\, \hat{F}\,v\rangle = 0$ for all $u, v \in C$.
 \lean{error_sphere_dimension}
 \label{error_sphere_dimension}
 \leanok
+\uses{ErrorSphere, Hn, IsNondegenerate, PauliBasis.toMatrix, PauliErrorsLe, PauliString, error_subspaces_orthogonal, pauliMatrix, pauliOp, sigmaI, sigmaX, sigmaY, sigmaZ, weight}
 \proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \proofsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
 \proofsource{PhysRevLett.77.2585}{pdf-9634739c3de9-p003-b003}
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p009-b002}
-\uses{ErrorSphere, error_subspaces_orthogonal, card_pauliErrorsLe}
 \difficulty{7}
 Let $C \le \mathcal{H}_n$ be a code on $n$ qubits that is non-degenerate for $t$ errors,
 meaning it satisfies the Knill--Laflamme condition $P_C E^\dagger F P_C = \lambda_{EF}
@@ -271,6 +273,7 @@ where $\mathcal{E}(n,t)$ is the set of Pauli strings of weight at most $t$.
 \lean{quantum_hamming_bound}
 \label{quantum_hamming_bound}
 \leanok
+\uses{Hn, IsNondegenerate, quantum_hamming_bound_raw}
 \proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \proofsource{PhysRevA.54.3824}{pdf-c11491661f48-p021-b003}
 \proofsource{PhysRevA.55.900}{
@@ -284,7 +287,6 @@ where $\mathcal{E}(n,t)$ is the set of Pauli strings of weight at most $t$.
   pdf-bbdd8e5c3949-p009-b002,
   pdf-bbdd8e5c3949-p009-b003
 }
-\uses{error_sphere_dimension, finrank_Hn}
 \difficulty{3}
 Let $C \le \mathcal{H}_n$ be a subspace of the $n$-qubit Hilbert space whose complex
 dimension is $\dim_{\mathbb{C}} C = 2^k$, and suppose $k \le n$. If $C$ is a
@@ -347,8 +349,8 @@ over $\mathbb{C}$.
 \statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b006}
 \label{PauliBasis.toMatrix}
 \leanok
+\uses{PauliBasis, sigmaI, sigmaX, sigmaY, sigmaZ}
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
-\uses{sigmaI, sigmaX, sigmaY, sigmaZ}
 Maps each Pauli basis element $\{I,X,Y,Z\}$ to its corresponding $2\times 2$ matrix
 $\{\sigma_I,\sigma_X,\sigma_Y,\sigma_Z\}$.
 \end{definition}
@@ -358,8 +360,8 @@ $\{\sigma_I,\sigma_X,\sigma_Y,\sigma_Z\}$.
 \statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p003-b003}
 \label{pauliMatrix}
 \leanok
-\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 \uses{PauliBasis.toMatrix, PauliString}
+\statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b003}
 For a Pauli string $p$ on $n$ qubits, the $2^n\times 2^n$ matrix obtained as the
 tensor product of the single-qubit Pauli matrices $\sigma_{p(i)}$ over all coordinates~$i$.
 \end{definition}
@@ -368,6 +370,7 @@ tensor product of the single-qubit Pauli matrices $\sigma_{p(i)}$ over all coord
 \lean{PauliNZ.toBasis}
 \label{PauliNZ.toBasis}
 \leanok
+\uses{PauliBasis, PauliNZ}
 Embeds a non-identity Pauli ($X$, $Y$, or $Z$) from the three-element type
 $\mathrm{PauliNZ}$ into the full Pauli basis $\{I,X,Y,Z\}$.
 \end{definition}
@@ -376,7 +379,7 @@ $\mathrm{PauliNZ}$ into the full Pauli basis $\{I,X,Y,Z\}$.
 \lean{mkWithSupport}
 \label{mkWithSupport}
 \leanok
-\uses{PauliNZ.toBasis, PauliString}
+\uses{PauliNZ, PauliNZ.toBasis, PauliString}
 Given a finset $S \subseteq \mathrm{Fin}\,n$ and an assignment $f : S \to \mathrm{PauliNZ}$,
 constructs the Pauli string that equals $f(i).\mathrm{toBasis}$ on each $i \in S$ and equals $I$
 elsewhere.
@@ -386,7 +389,7 @@ elsewhere.
 \lean{support_mkWithSupport}
 \label{support_mkWithSupport}
 \leanok
-\uses{mkWithSupport, support}
+\uses{PauliNZ, PauliNZ.toBasis_ne_I, mkWithSupport, support}
 \difficulty{1}
 Fix $n$, a finset $S \subseteq \mathrm{Fin}\,n$, and an assignment $f : S \to \{X,Y,Z\}$
 of a non-identity Pauli to each coordinate in $S$. Let $p$ be the Pauli string of length
@@ -408,8 +411,8 @@ finset $S$.
 \lean{card_pauliStringsExactSupport}
 \label{card_pauliStringsExactSupport}
 \leanok
+\uses{PauliNZ, PauliNZ.toBasis, mkWithSupport, pauliStringsExactSupport, support, support_mkWithSupport}
 \proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
-\uses{PauliNZ.toBasis, mkWithSupport, pauliStringsExactSupport, support, support_mkWithSupport}
 \difficulty{5}
 Let $n$ be a natural number and let $S \subseteq \mathrm{Fin}\,n$ be a set of
 coordinates. The number of Pauli strings $p$ of length $n$ whose support
@@ -420,11 +423,11 @@ $\mathrm{supp}(p)$ equals exactly $S$ is $3^{|S|}$.
 \lean{Code}
 \label{Code}
 \leanok
+\uses{Hn}
 \statementsource{quant-ph.9705052}{pdf-e658890bd7ef-p002-b002}
 \statementsource{quant-ph.9608006}{pdf-4fa1f624d1c5-p002-b002}
 \statementsource{quant-ph.0005008}{pdf-1ac7bb3b99cc-p002-b002}
 \statementsource{PhysRevA.55.900}{pdf-bbdd8e5c3949-p004-b002}
-\uses{Hn}
 An $n$-qubit quantum code is a subspace of the $n$-qubit Hilbert space $\mathcal{H}_n$.
 \end{definition}
 
@@ -496,6 +499,7 @@ orthogonal projection onto $C$. Then $P_C$ is idempotent: for every $x \in
 \lean{quantum_hamming_bound_raw}
 \label{quantum_hamming_bound_raw}
 \leanok
+\uses{ErrorSphere, Hn, IsNondegenerate, card_pauliErrorsLe, error_sphere_dimension, finrank_Hn}
 \proofsource{quant-ph.9705052}{pdf-e658890bd7ef-p010-b003}
 \proofsource{PhysRevA.54.3824}{pdf-c11491661f48-p021-b003}
 \proofsource{PhysRevA.55.900}{
@@ -509,7 +513,6 @@ orthogonal projection onto $C$. Then $P_C$ is idempotent: for every $x \in
   pdf-bbdd8e5c3949-p009-b002,
   pdf-bbdd8e5c3949-p009-b003
 }
-\uses{ErrorSphere, Hn, IsNondegenerate, card_pauliErrorsLe, error_sphere_dimension, finrank_Hn}
 \difficulty{3}
 Let $C \le \mathcal{H}_n$ be a subspace of the $n$-qubit Hilbert space that is a
 non-degenerate quantum code correcting $t$ errors, and suppose its complex dimension is
@@ -523,7 +526,7 @@ $\dim_{\mathbb{C}} C = 2^{k}$ for some natural number $k$. Then
 \lean{PauliNZ.toBasis_ne_I}
 \label{PauliNZ.toBasis_ne_I}
 \leanok
-\uses{PauliNZ.toBasis}
+\uses{PauliNZ, PauliNZ.toBasis}
 \difficulty{1}
 Write $\{X, Y, Z\}$ for the three non-identity Pauli labels, embedded in the natural way
 into the full Pauli basis $\{I, X, Y, Z\}$. Then the image of every such label differs

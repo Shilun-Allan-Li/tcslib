@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.lipschitzWith_fderiv_averagedGaussianIndicator",
+ "key": "82edb9263fe56b7e",
+ "kind": "lemma",
+ "title": "Lipschitz derivative of a Gaussian indicator average",
+ "statement": "Let $n\\ge0$, let $A\\subseteq\\mathbb R^n$ be measurable, and let $u\\in\\mathbb R$ satisfy $\\sin u\\ne0$. Define $v_u(x)=\\int 1_A(\\cos u\\,x+\\sin u\\,Y)\\,d\\gamma_n(Y)$ for standard Gaussian $Y$. The derivative map $x\\mapsto Dv_u(x)$ is Lipschitz with constant $2n^2/\\sin^2u$, using the maximum norm on $\\mathbb R^n$ and the operator norm on linear functionals.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ is measurable",
+  "$u$ is real and $\\sin u\\ne0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For $A\\subseteq\\mathbb R^n$ and $\\theta\\in\\mathbb R$, put $u_\\theta(x)=\\int1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$. If $A$ is measurable and $\\sin u\\ne0$, then $x\\mapsto D u_u(x)$ is globally $2n^2/\\sin^2u$-Lipschitz in operator norm for the maximum norm on $\\mathbb R^n$."
+}

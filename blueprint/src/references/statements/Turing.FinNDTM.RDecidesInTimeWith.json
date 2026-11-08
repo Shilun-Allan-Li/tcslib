@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinNDTM.RDecidesInTimeWith",
+ "key": "7ae499af163e9247",
+ "kind": "def",
+ "title": "One-sided randomized time-bounded decision",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine over the Boolean alphabet, let $L$ be a language of Boolean strings, let $T:\bbn\to\bbn$ be a time bound, and let $p:\bbn\to\bbq$. For every input string $x$, the machine halts within $T(|x|)$ steps; if $x\notin L$, every choice string of length exactly $T(|x|)$ makes its output the one-symbol string consisting of false; and if $x\\in L$, the probability that its output is the one-symbol string consisting of true after $T(|x|)$ steps is at least $p(|x|)$.",
+ "hypotheses_covered": [
+  "Finite-state nondeterministic Turing machine over Boolean symbols",
+  "Language of Boolean strings",
+  "Time bound $T:\\bbn\\to\\bbn$",
+  "Threshold function $p:\\bbn\\to\\bbq$",
+  "For every input, halts within $T$ of its length",
+  "Members of $L$ have true-output probability at least $p$ of their length",
+  "Nonmembers of $L$ output [false] for every choice string of length exactly $T$ of their length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

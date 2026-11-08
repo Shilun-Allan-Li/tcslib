@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timed_universal",
+ "key": "3dc7fcb19aa383d8",
+ "kind": "theorem",
+ "title": "Timed universal simulation with timeout",
+ "statement": "For every effective machine coding scheme $c$, there is a finite-tape machine $U$ over the Boolean alphabet such that for every Boolean code word $\\alpha$ there is a natural number $C$, and for every Boolean input $x$ and deadline $t$, both of the following hold. If the machine decoded from $\\alpha$ computes an output $y$ on $x$ in exactly $t$ steps, then $U$ computes $1$ followed by $y$ on $\\langle\\langle\\operatorname{bin}(t),\\alpha\\rangle,x\\rangle$ in exactly $C(t+1)^2$ steps; if it computes no output on $x$ in exactly $t$ steps, then $U$ computes the one-bit output $0$ on that input in exactly $C(t+1)^2$ steps.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine coding scheme",
+  "$\\alpha$ is a Boolean code word",
+  "$x$ is a Boolean input",
+  "$t$ is a natural-number deadline"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective machine-coding scheme $c$, there is a single finite-tape machine $U$\nover $\\{0,1\\}$ such that for every code word $\\alpha$ there is a natural number $C$ that\nworks for every Boolean input $x$ and deadline $t\\in\\mathbb{N}$. If the machine decoded\nfrom $\\alpha$ computes output $y$ on $x$ in exactly $t$ steps, then $U$ computes $1$\nfollowed by $y$ on the nested encoding\n$\\langle\\langle\\mathrm{bin}(t),\\alpha\\rangle,x\\rangle$ in exactly $C(t+1)^2$ steps. If\nno output is computed by the decoded machine on $x$ in exactly $t$ steps, then $U$\ncomputes the one-bit output $0$ on that encoding in exactly $C(t+1)^2$ steps."
+}

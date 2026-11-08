@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.universalRelation_output",
+ "key": "f7fdec0d1543a0dd",
+ "kind": "lemma",
+ "title": "Output preservation for related configurations",
+ "statement": "Let $c$ be an effective machine-coding scheme, and let $\\alpha$ and $x$ be finite bit strings. Let $\\mathrm{src}$ be a configuration of the machine decoded from $\\alpha$ on input $x$, and let $\\mathrm{dst}$ be a configuration of the universal machine associated with $c$ on the paired input encoding of $\\alpha$ and $x$. If there are a natural number $p$ no greater than the length of the decoded machine's serialization, together with tape contents and head positions for the canonizer's work tapes, such that $\\mathrm{dst}$ is the corresponding extended simulation configuration built from $\\mathrm{src}$ and $p$, then the two configurations have the same output word.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-coding scheme",
+  "$\\alpha$ and $x$ are finite bit strings",
+  "$\\mathrm{src}$ is a configuration of the decoded machine on input $x$",
+  "$\\mathrm{dst}$ is a configuration of the associated universal machine on the paired input",
+  "There is a natural number $p$ at most the length of the decoded machine's serialization",
+  "There are tape contents and head positions for the canonizer's work tapes",
+  "$\\mathrm{dst}$ equals the extended simulation configuration determined by $\\mathrm{src}$, $p$, and those tape contents and head positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-coding scheme, let $\\alpha$ and $x$ be finite bit\nstrings, and let $s$ be a configuration of the machine decoded from $\\alpha$ on input\n$x$. Let $t$ be a configuration of the universal machine associated with $c$ on the\nencoding of $\\alpha$ and $x$. If the checkpoint relation holds between $s$ and $t$, then\ntheir output words are equal."
+}

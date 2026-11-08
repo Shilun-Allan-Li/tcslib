@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.tmsat_pair_valid",
+ "key": "d8764d22956d9353",
+ "kind": "lemma",
+ "title": "Reconstruction of a parsed pair",
+ "statement": "Let $z$ be a bit string for which the aligned pair parser succeeds, and let $\\pi_1(z)$ and $\\pi_2(z)$ be its decoded components. Then $z=\\langle\\pi_1(z),\\pi_2(z)\\rangle$, where the pairing doubles each bit of the first component, appends the separator $01$, and then appends the second component.",
+ "hypotheses_covered": [
+  "The pair parser succeeds on $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $z$ be a bit string that parses as a self-delimiting pair encoding, and let $\\pi_1(z)$ and $\\pi_2(z)$ be its decoded first and second components. Then $z = \\langle \\pi_1(z), \\pi_2(z)\\rangle$."
+}

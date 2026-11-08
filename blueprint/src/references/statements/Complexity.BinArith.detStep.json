@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.BinArith.detStep",
+ "key": "496c51c681a69caf",
+ "kind": "def",
+ "title": "Determinant state update",
+ "statement": "Let $p$ be a natural number and let a state consist of a list of rows of natural numbers and three natural numbers $(d,m,r)$. If $p<2$, or if the row list is empty, leave the state unchanged. Otherwise, write the first row as $r_0$ and the remaining rows as $R$. If $m\\le r$, return the empty row list with all three numbers zero. If $m>r$ and the first entry of $r_0$ (taken to be zero when the row is empty) is zero, move $r_0$ to the end of $R$, replace $d$ by $d(p-1)$ modulo $p$ when $m$ is even and leave $d$ unchanged when $m$ is odd, leave $m$ unchanged, and increase $r$ by one. In the remaining case, replace every row in $R$ by its elimination using $r_0$ and the inverse power of its first entry specified by exponent $p-2$, replace $d$ by $d$ times that first entry modulo $p$, decrease $m$ by one, and set $r$ to zero.",
+ "hypotheses_covered": [
+  "A natural number $p$",
+  "A state consisting of a row list and three natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

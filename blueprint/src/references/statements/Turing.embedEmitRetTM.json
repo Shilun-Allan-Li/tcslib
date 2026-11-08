@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.embedEmitRetTM",
+ "key": "c15df4fe6b62c3d9",
+ "kind": "def",
+ "title": "Embedding an Emitting Machine with Return State",
+ "statement": "Let $m,k$ be nonnegative integers and let $\\iota$ inject the $m$ work-tape indices into the $k$ work-tape indices. From an $m$-tape Turing machine with state set $S$, form a $k$-tape machine with states $S\\sqcup\\{\\ast\\}$, where $\\ast$ is a new state. Its initial state is the original initial state. In an original state, it reads the symbols on tapes selected by $\\iota$, applies the original transition, embeds that action using the emitting-action convention, and sends a halting transition to $\\ast$ instead of halting. In state $\\ast$, it stays on the input, makes no work-tape writes or head movements, emits no symbol, and transitions to $\\ast$.",
+ "hypotheses_covered": [
+  "Natural numbers $m,k$ of work tapes",
+  "An injection from the $m$ tape indices into the $k$ tape indices",
+  "An $m$-tape Turing machine with state set $S`"
+ ],
+ "confidence": "low",
+ "caveat": "The definition of the action-embedding operation is not included, so its precise emitting-action convention cannot be fully specified.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

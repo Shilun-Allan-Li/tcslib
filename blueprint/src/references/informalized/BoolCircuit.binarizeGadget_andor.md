@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/DAGFanin.lean :: BoolCircuit.binarizeGadget_andor -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Correctness of AND and OR binarization
+
+**Claim.** For an AND or OR gate whose arguments refer to existing vertices and whose argument list has length at most $K$, binarization extends the acyclic gate list and computes the original gate's value. The output vertex is in range, the list length is at most the original length plus the number of arguments plus two, its depth is at most $\lceil\log_2 K\rceil+1$ plus the maximum argument depth, and each added gate is well formed with at most two arguments.
+
+**Proof.** First observe that, since the gate is not NOT, binarization is exactly the tree-emission construction applied to the deduplicated argument list. The specification for emitted trees (\texttt{emitTree_spec}) gives an extension of the original list that remains acyclic, an in-range output vertex computing the gate on the existing vertex values, bounds on the emitted tree's size and depth, and the required properties of its added gates. Deduplicating arguments does not change the value of an AND or OR gate (\texttt{DAGGate.eval_dedup}), and the deduplicated list is no longer than the original list. Thus the tree's correctness transfers to the original gate. For the size bound, the tree cost is at most its number of leaves plus two (\texttt{treeCost_le}); the number of leaves is bounded by the original argument count. For the depth bound, monotonicity of the base-two logarithm ceiling gives $\lceil\log_2 |\mathrm{dedup}(args)|\rceil\le\lceil\log_2 K\rceil$, and the maximum depth over the deduplicated arguments is no greater than the maximum over all original arguments. The latter comparison follows by bounding each retained argument depth by the original maximum, using the fold-maximum bounds (\texttt{foldr_max_le₂} and \texttt{le_foldr_max₂}). Finally, the emitted gates are well formed and have at most two arguments by the tree specification; because the gate kind is not NOT, its added gates meet the required well-formedness condition as well.
+
+**Key facts.** `BoolCircuit.emitTree_spec`, `BoolCircuit.DAGGate.eval_dedup`, `BoolCircuit.treeCost_le`, `BoolCircuit.foldr_max_le₂`, `BoolCircuit.le_foldr_max₂`.

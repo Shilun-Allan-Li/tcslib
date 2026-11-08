@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satDrop_separator",
+ "key": "63488be9a384c941",
+ "kind": "lemma",
+ "title": "Recognizing the Separator",
+ "statement": "For Boolean words $u,v$, start the suffix-extraction machine on their pair encoding in state $0$ at the clamped input offset $2|u|$, with a unary counter of length $|u|$ whose head is at $|u|$ and empty output. After two steps it is in state $3$ at the clamped offset $2|u|+2$, with the counter unchanged, its head at $|u|-1$ (as an integer), and output empty.",
+ "hypotheses_covered": [
+  "Boolean words $u,v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $u$ and $v$ be binary words and consider the input\nthe pair encoding $\\mathrm{pair}(u,v)$ (every bit of $u$ doubled, then the separator $01$, then $v$). Started in its counting state at input offset $2|u|$, with a\nunary counter of length $|u|$, counter head at $|u|$, and empty output, the suffix\nextractor after exactly two steps is in its counter-rewind state at input offset\n$2|u| + 2$ (the first payload bit, just past the separator), with the counter\nunchanged, counter head at $|u| - 1$, and nothing emitted."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clA5Round",
+ "key": "98470f596fb91702",
+ "kind": "lemma",
+ "title": "One round of the five-module host",
+ "statement": "Let $S,J,E,I$ be finite Turing machines over the Boolean alphabet, let $\\mathrm{emit}$ and $\\mathrm{next}$ map Boolean words to Boolean words, and let $B_E,B_I:\\mathbb{N}\\to\\mathbb{N}$. Suppose $E$ satisfies the clean contract with result map the identity, emission map $\\mathrm{emit}$, and budget $B_E$, and $I$ satisfies the clean contract with result map $\\mathrm{next}$, empty emission, and budget $B_I$. For any Boolean input $x$ and body word $w$, the five-module host with $1+S.k+J.k+E.k+I.k$ work tapes, started at its loop anchor with the standard word assignment for $w$, reaches at some time $t$ with $0<t\\le 1+B_E(|w|)+B_I(|w|)$ the loop-anchor configuration with the standard word assignment for $\\mathrm{next}(w)$ and output $\\mathrm{emit}(w)$; at every intermediate time $v$ with $0<v<t$, its control is not the loop anchor.",
+ "hypotheses_covered": [
+  "$S,J,E,I$ are finite Turing machines over the Boolean alphabet",
+  "$\\mathrm{emit}$ and $\\mathrm{next}$ map Boolean words to Boolean words",
+  "$B_E,B_I$ are functions from natural numbers to natural numbers",
+  "$E$ satisfies the clean contract with identity result map, emission map $\\mathrm{emit}$, and budget $B_E$",
+  "$I$ satisfies the clean contract with result map $\\mathrm{next}$, empty emission, and budget $B_I$",
+  "$x,w$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let the emission module satisfy the clean contract preserving its argument and emitting a chunk, and the update module the clean contract replacing the argument and emitting nothing. Then from the anchor over any body word $w$, the host first returns to the anchor at a positive time at most $1$ plus both budgets at $|w|$, having appended exactly the emitted chunk and replaced $w$ by its update; empty chunks and a stationary saturated cursor are covered."
+}

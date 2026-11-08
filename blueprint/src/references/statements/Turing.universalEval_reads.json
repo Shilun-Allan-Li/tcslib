@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalEval_reads",
+ "key": "5540052b9296713b",
+ "kind": "lemma",
+ "title": "Work tape reads in an evaluation configuration",
+ "statement": "Let $x$ be a bit string, let $B$ be a four-tape configuration on input $x$, and choose a control state $q$, a bit string $T$, a table cursor $p\\in\\mathbb{Z}$, a state tape $\\sigma\\colon\\mathbb{Z}\\to\\{0,1,\\mathrm{blank}\\}$, and a state cursor $s\\in\\mathbb{Z}$. In the evaluation configuration built from these data, the four symbols read by the work-tape heads are, in order, the symbol of the buffer tape storing $T$ at $p$, the symbol $\\sigma(s)$, and the symbols read from the third and fourth work tapes of $B$.",
+ "hypotheses_covered": [
+  "A bit string $x$ and a four-tape base configuration on $x$",
+  "An arbitrary control state $q$",
+  "A bit string $T$ and integer table cursor $p$",
+  "A state tape $\\sigma\\colon\\mathbb{Z}\\to\\{0,1,\\mathrm{blank}\\}$ and integer cursor $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider an interpreter evaluation configuration whose table tape is the\nbuffer tape of a bit string $T$ with cursor $p$, whose state tape is\n$\\sigma$ with cursor $s$, and whose remaining data come from a base\nconfiguration.  The four symbols under its work heads are, in order: the\nsymbol of the buffer tape of $T$ at $p$, the state symbol $\\sigma(s)$, and\nthe two symbols read by the base configuration on its third and fourth work\ntapes."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.tendsto_integral_profile_averagedGaussianIndicator",
+ "key": "75ae5a0ca05aeb2d",
+ "kind": "lemma",
+ "title": "Vanishing integral of the closed Gaussian profile",
+ "statement": "Let $n\\ge0$ and let $A\\subseteq\\mathbb R^n$ be measurable. For $u_\\theta(x)=\\int 1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$, the integral $\\int U(u_\\theta(x))\\,d\\gamma_n(x)$ tends to $0$ as $\\theta\\to0$, where $U(\\alpha)=\\varphi(\\Phi^{-1}(\\alpha))$ for $0<\\alpha<1$ and $U(\\alpha)=0$ otherwise, with $\\varphi$ and $\\Phi$ the standard Gaussian density and distribution function.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A\\subseteq\\mathbb R^n$ is measurable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ be the standard Gaussian distribution function and density, and let $\\overline I(p)=\\varphi(\\Phi^{-1}(p))$ for $0<p<1$, with $\\overline I(p)=0$ elsewhere. Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For a measurable $A\\subseteq\\mathbb R^n$, let $u_\\theta(x)=\\mathbb E_Y1_A(\\cos\\theta\\,x+\\sin\\theta\\,Y)$ with $Y\\sim\\gamma_n$, and put $R_A(\\theta)=\\Pr(1_A(X)\\ne1_A(\\cos\\theta\\,X+\\sin\\theta\\,Y))$ for independent $X,Y\\sim\\gamma_n$. Then $\\int\\overline I(u_\\theta(x))\\,d\\gamma_n(x)\\to0$ as $\\theta\\to0$ through real values."
+}

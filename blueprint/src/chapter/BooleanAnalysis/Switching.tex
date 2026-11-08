@@ -272,10 +272,17 @@ component) of its last triple equals true.
 
 \begin{lemma}[Injectivity of the Razborov encoding on its auxiliary output]
 \lean{SwitchingLemma.exists_aux_injection}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p003-b005,
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \label{SwitchingLemma.exists_aux_injection}
 \leanok
-\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \uses{DNF, DNF.eval, DNF.width, DecisionTree.deepPath, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.encode_go_wellformed, SwitchingLemma.parseAux, SwitchingLemma.parseAux_triplesToAux, SwitchingLemma.razborovEncode, SwitchingLemma.triplesToAux}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \difficulty{7}
 Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, let $w$ satisfy $w
 > 0$, let $d$ be a natural number, and let $\gamma$ be a fixed restriction on the same
@@ -294,6 +301,7 @@ $\rho$. Then there exists a map $g$ from auxiliary lists to functions $\mathrm{F
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma.aux_image_card_bound}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.exists_aux_injection, SwitchingLemma.fixedTerm_implies_dtDepth_zero, SwitchingLemma.killedAll_implies_dtDepth_zero, SwitchingLemma.razborovEncode, SwitchingLemma.restrictFn, SwitchingLemma.term_length_le_width, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -615,7 +623,6 @@ $\rho$. Then there exists a map $g$ from auxiliary lists to functions $\mathrm{F
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003,
     pdf-b5e074215b9e-p001-b005}
-\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.exists_aux_injection, SwitchingLemma.fixedTerm_implies_dtDepth_zero, SwitchingLemma.killedAll_implies_dtDepth_zero, SwitchingLemma.razborovEncode, SwitchingLemma.restrictFn, SwitchingLemma.term_length_le_width, dtDepth}
 \difficulty{5}
 Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, let $d$ be a
 natural number, and let $\gamma$ be a fixed restriction. Write the Razborov encoding of
@@ -630,12 +637,20 @@ $\mathrm{aux}_\rho$ arising from such $\rho$ is at most $(4w)^d$.
 
 \begin{lemma}[Fiber bound for the Razborov encoding]
 \lean{SwitchingLemma.fiber_bound}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p003-b005,
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b004,
   pdf-b5e074215b9e-p002-b003
 }
 \label{SwitchingLemma.fiber_bound}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.aux_image_card_bound, SwitchingLemma.razborovEncode, SwitchingLemma.razborovEncode_injective}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1144,7 +1159,6 @@ $\mathrm{aux}_\rho$ arising from such $\rho$ is at most $(4w)^d$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.aux_image_card_bound, SwitchingLemma.razborovEncode, SwitchingLemma.razborovEncode_injective}
 \difficulty{4}
 Let $f$ be a DNF formula on $n$ variables whose width is at most $w$, and suppose no
 variable occurs twice within any single term of $f$ (any two literals of a term sharing
@@ -1161,7 +1175,7 @@ restrictions $\rho$ is at most $(4w)^d$.
 \lean{SwitchingLemma.card_filter_numFree_eq}
 \label{SwitchingLemma.card_filter_numFree_eq}
 \leanok
-\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.processClauseLits_path_length_eq}
+\uses{SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree}
 \difficulty{6}
 Fix natural numbers $n$ and $k$. Among all restrictions on $n$ variables — maps
 assigning each index $i \in \mathrm{Fin}\,n$ either a fixed Boolean value or leaving it
@@ -1225,6 +1239,7 @@ where $\ell$ is the number of literals and $m$ is the length of the path.
 \lean{SwitchingLemma.canonicalDTree_deepPath_length_ge}
 \label{SwitchingLemma.canonicalDTree_deepPath_length_ge}
 \leanok
+\uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_depth_ge, SwitchingLemma.restrictFn, dtDepth}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
 \proofstep
   {BoolCircuit.Lit}
@@ -1451,7 +1466,6 @@ where $\ell$ is the number of literals and $m$ is the length of the path.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_depth_ge, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{2}
 Let $f$ be a DNF formula on $n$ Boolean variables, let $\rho$ be a restriction of those
 variables, and let $d$ be a natural number. Write $f|_\rho$ for the restricted Boolean
@@ -1467,6 +1481,7 @@ has length strictly greater than $d$.
 \lean{SwitchingLemma.razborovEncode_path_length}
 \label{SwitchingLemma.razborovEncode_path_length}
 \leanok
+\uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_deepPath_length_ge}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
 \proofstep
   {BoolCircuit.Lit}
@@ -1698,7 +1713,6 @@ has length strictly greater than $d$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_deepPath_length_ge}
 \difficulty{2}
 Let $f$ be a DNF formula on $n$ variables, let $\rho$ be a restriction of those
 variables, and let $d$ be a natural number. Suppose $\rho$ is bad for $f$ at depth $d$:
@@ -1755,6 +1769,7 @@ at most the number of free variables of $\rho_0'$.
 \lean{SwitchingLemma.canonicalDTree_depth_zero_of_killed}
 \label{SwitchingLemma.canonicalDTree_depth_zero_of_killed}
 \leanok
+\uses{DNF, DecisionTree.depth, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \proofstep
   {BoolCircuit.Lit}
@@ -1856,7 +1871,6 @@ at most the number of free variables of $\rho_0'$.
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DecisionTree.depth, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree}
 \difficulty{3}
 Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction on
 those variables. If every term of $f$ is killed by $\rho$, then the canonical decision
@@ -1867,6 +1881,7 @@ tree for $f|_\rho$ has depth $0$.
 \lean{SwitchingLemma.canonicalDTree_depth_zero_of_fixed}
 \label{SwitchingLemma.canonicalDTree_depth_zero_of_fixed}
 \leanok
+\uses{DNF, DecisionTree.depth, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \proofstep
   {BoolCircuit.Lit}
@@ -1973,7 +1988,6 @@ tree for $f|_\rho$ has depth $0$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DecisionTree.depth, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree}
 \difficulty{3}
 Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction on
 those variables. If some term of $f$ is fixed by $\rho$ — that is, at least one
@@ -1985,11 +1999,11 @@ canonical decision tree of $f$ under $\rho$ has depth $0$.
 \lean{SwitchingLemma.IsCanonicalPath}
 \label{SwitchingLemma.IsCanonicalPath}
 \leanok
+\uses{DNF, DecisionTree.deepPath, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree}
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b002,
   pdf-b5e074215b9e-p002-b003
 }
-\uses{DNF, DecisionTree.deepPath, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree}
 $\mathrm{IsCanonicalPath}\,f\,\rho\,\mathrm{path}$ holds when $\mathrm{path}$ is an
 initial segment of the canonical decision tree's deepest root-to-leaf path for
 $f|_\rho$, i.e.\ $\mathrm{path} = (\mathrm{canonicalDTree}\,f\,\rho).\mathrm{deepPath}.\mathrm{take}\,(\mathrm{path.length})$.
@@ -2027,6 +2041,7 @@ literal in the $k$-th retained pair equals the $k$-th retained literal of $t$.
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \label{SwitchingLemma.canonicalDTree_deepPath_match_freeLits}
 \leanok
+\uses{DNF, DecisionTree, DecisionTree.deepPath, DecisionTree.depth, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_alive_eq_termSubTree', SwitchingLemma.canonicalDTree_depth_zero_of_fixed, SwitchingLemma.termSubTree_deepPath_var_match, SwitchingLemma.zipIdx_filter_getElem_fst, SwitchingLemma.zipIdx_filter_length, Term}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2192,7 +2207,6 @@ literal in the $k$-th retained pair equals the $k$-th retained literal of $t$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DecisionTree, DecisionTree.deepPath, DecisionTree.depth, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_alive_eq_termSubTree', SwitchingLemma.canonicalDTree_depth_zero_of_fixed, SwitchingLemma.termSubTree_deepPath_var_match, SwitchingLemma.zipIdx_filter_getElem_fst, SwitchingLemma.zipIdx_filter_length, Term}
 \difficulty{5}
 Let $f$ be a DNF formula on $n$ Boolean variables and $\rho$ a restriction, and let $t$
 be the first term of $f$, in list order, that is not killed by $\rho$. Suppose the
@@ -2300,9 +2314,16 @@ carry different variables.
 
 \begin{lemma}[Free-variable consumption invariant of the Razborov encoder]
 \lean{SwitchingLemma.razborovEncode_go_numFree_invariant}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p003-b005,
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \label{SwitchingLemma.razborovEncode_go_numFree_invariant}
 \leanok
-\uses{DNF, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, Literal, SwitchingLemma.IsCanonicalPath, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_deepPath_match_freeLits, SwitchingLemma.canonicalDTree_depth_zero_of_fixed, SwitchingLemma.canonicalDTree_depth_zero_of_killed, SwitchingLemma.canonicalPath_preserve_processClauseLits, SwitchingLemma.choose_mul_pow_bound, SwitchingLemma.encode_go_acc, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_freeLits_pairwise_var, SwitchingLemma.processClauseLits_freeVars_agree, SwitchingLemma.processClauseLits_len_add, SwitchingLemma.processClauseLits_numFree_σ, SwitchingLemma.processClauseLits_path_le, SwitchingLemma.processClauseLits_path_length_eq}
+\uses{DNF, DecisionTree.deepPath, DecisionTree.depth, DecisionTree.length_deepPath, Literal, SwitchingLemma.IsCanonicalPath, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_deepPath_match_freeLits, SwitchingLemma.canonicalDTree_depth_zero_of_fixed, SwitchingLemma.canonicalDTree_depth_zero_of_killed, SwitchingLemma.canonicalPath_preserve_processClauseLits, SwitchingLemma.encode_go_acc, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_freeLits_pairwise_var, SwitchingLemma.processClauseLits_freeVars_agree, SwitchingLemma.processClauseLits_len_add, SwitchingLemma.processClauseLits_numFree_σ, SwitchingLemma.processClauseLits_path_le, SwitchingLemma.processClauseLits_path_length_eq}
 \difficulty{7}
 Let $f$ be a DNF formula on $n$ Boolean variables in which, within each term, any two
 literals on the same variable are equal and no literal occurs more than once, and fix an
@@ -2320,8 +2341,16 @@ $\sigma$.
 
 \begin{lemma}[Free-variable count of the Razborov encoding's output]
 \lean{SwitchingLemma.razborovEncode_fst_numFree_eq}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p003-b005,
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \label{SwitchingLemma.razborovEncode_fst_numFree_eq}
 \leanok
+\uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsCanonicalPath, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_depth_ge, SwitchingLemma.razborovEncode, SwitchingLemma.razborovEncode_go_numFree_invariant, SwitchingLemma.razborovEncode_path_length, SwitchingLemma.restrictFn, dtDepth}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b003}
 \proofstep
   {BoolCircuit.Lit}
@@ -2746,7 +2775,6 @@ $\sigma$.
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DNF.eval, DecisionTree.deepPath, DecisionTree.depth, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsCanonicalPath, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_depth_ge, SwitchingLemma.razborovEncode, SwitchingLemma.razborovEncode_go_numFree_invariant, SwitchingLemma.razborovEncode_path_length, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $f$ be a DNF formula on $n$ Boolean variables in which no term repeats a literal,
 and within each term any two literals on the same variable coincide (so each variable
@@ -2760,6 +2788,12 @@ exactly $s - d$ free variables.
 
 \begin{lemma}[Counting bound for bad restrictions of a DNF]
 \lean{SwitchingLemma.bad_count_bound}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b003,
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b001,
   pdf-b5e074215b9e-p002-b002,
@@ -2768,6 +2802,7 @@ exactly $s - d$ free variables.
 }
 \label{SwitchingLemma.bad_count_bound}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.card_filter_numFree_eq, SwitchingLemma.fiber_bound, SwitchingLemma.razborovEncode, SwitchingLemma.razborovEncode_fst_numFree_eq}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \proofstep
   {BoolCircuit.Lit}
@@ -3514,7 +3549,6 @@ exactly $s - d$ free variables.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree, SwitchingLemma.card_filter_numFree_eq, SwitchingLemma.fiber_bound, SwitchingLemma.razborovEncode, SwitchingLemma.razborovEncode_fst_numFree_eq}
 \difficulty{5}
 Let $f$ be a DNF formula on $n$ Boolean variables in which no two literals of the same
 term share a variable and no term lists the same literal twice, and suppose every term
@@ -3544,28 +3578,30 @@ than $d$ is empty.
 
 \begin{definition}[Decision tree to DNF]
 \lean{SwitchingLemma.toDNF}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p093-b004}
 \statementsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p002-b006,
   pdf-fc447f326910-p002-b007
 }
 \label{SwitchingLemma.toDNF}
 \leanok
+\uses{DNF, DecisionTree, SwitchingLemma.toTerms}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b003}
-\uses{DNF, DecisionTree}
 Converts a decision tree into a DNF whose terms are the conjunctions of literals
 along each root-to-leaf path ending in a $\mathrm{true}$ leaf.
 \end{definition}
 
 \begin{definition}[Decision tree to CNF]
 \lean{SwitchingLemma.toCNF}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p094-b004}
 \statementsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p002-b006,
   pdf-fc447f326910-p002-b007
 }
 \label{SwitchingLemma.toCNF}
 \leanok
+\uses{CNF, DecisionTree, SwitchingLemma.toClauses}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b003}
-\uses{CNF, DecisionTree}
 Converts a decision tree into a CNF whose clauses are the disjunctions of negated
 literals along each root-to-leaf path ending in a $\mathrm{false}$ leaf.
 \end{definition}
@@ -3574,7 +3610,7 @@ literals along each root-to-leaf path ending in a $\mathrm{false}$ leaf.
 \lean{SwitchingLemma.dtDepth_witness}
 \label{SwitchingLemma.dtDepth_witness}
 \leanok
-\uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, DecisionTree.buildFull, DecisionTree.buildFull_depth, DecisionTree.buildFull_eval, dtDepth}
+\uses{DecisionTree, DecisionTree.buildFull, DecisionTree.buildFull_depth, DecisionTree.buildFull_eval, DecisionTree.depth, DecisionTree.eval, dtDepth}
 \difficulty{3}
 Let $f \colon (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be a Boolean
 function on $n$ variables, and let $d$ be its decision-tree depth. Then there exists a
@@ -3586,6 +3622,7 @@ equals $f(x)$ for every input $x$.
 \lean{SwitchingLemma.dtDepth_le_implies_small_dnf_cnf}
 \label{SwitchingLemma.dtDepth_le_implies_small_dnf_cnf}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, DecisionTree, DecisionTree.depth, SwitchingLemma.dtDepth_witness, SwitchingLemma.toCNF, SwitchingLemma.toClauses, SwitchingLemma.toClauses_eval, SwitchingLemma.toDNF, SwitchingLemma.toTerms, SwitchingLemma.toTerms_eval, dtDepth}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p003-b002,
   pdf-b5e074215b9e-p003-b003
@@ -3724,7 +3761,6 @@ equals $f(x)$ for every input $x$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{CNF, CNF.eval, Clause.eval, CNF.width, DNF, DNF.eval, DNF.width, DecisionTree, DecisionTree.depth, DecisionTree.eval, Literal.eval, SwitchingLemma.dtDepth_witness, SwitchingLemma.toCNF, SwitchingLemma.toDNF, Term.eval, dtDepth}
 \difficulty{6}
 Let $f : (\mathrm{Fin}\,n \to \bbf_2) \to \{0,1\}$ be a Boolean function, and let $d$ be
 a natural number such that the decision-tree depth of $f$ is at most $d$. Then $f$ is
@@ -3780,6 +3816,10 @@ operation is injective: if two literals have the same polarity flip, they are eq
 
 \begin{definition}[CNF to De Morgan dual DNF]
 \lean{CNF.dual}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b004,
+  pdf-ffbe9c7b3306-p094-b005
+}
 \label{CNF.dual}
 \leanok
 \uses{CNF, DNF, Literal.flipNeg}
@@ -3788,24 +3828,25 @@ clause (a disjunction) becomes a term (a conjunction) of negated literals:
 $\lnot\bigl(\bigwedge_i \bigvee_j l_{ij}\bigr) = \bigvee_i \bigl(\bigwedge_j \lnot l_{ij}\bigr)$.
 \end{definition}
 
-\begin{lemma}[Width is preserved under De Morgan dualization]
+\begin{lemma}[Width under De Morgan dualization]
 \lean{CNF.dual_width}
 \label{CNF.dual_width}
 \leanok
-\uses{CNF, CNF.width, DNF.width, LitList.width, CNF.dual}
+\uses{CNF, CNF.dual, CNF.width, DNF.width, Depth2.width, LitList.width}
 \difficulty{2}
-Let $\psi$ be a CNF formula over $n$ variables, and let $\psi^{*}$ be its De Morgan dual
-DNF, obtained by negating every literal so that each clause becomes a term. Then
-$\psi^{*}$ and $\psi$ have the same width; that is, the maximum term-length of
-$\psi^{*}$ equals the maximum clause-width of $\psi$.
+Let $n$ be a natural number and let $\psi$ be a CNF formula on $n$ variables. The width
+of its De Morgan dual DNF, defined as the maximum number of literals in a term and as
+$0$ when there are no terms, equals the width of $\psi$, defined as the maximum number
+of literals in a clause and as $0$ when there are no clauses.
 \end{lemma}
 
 \begin{lemma}[De Morgan dual of a CNF computes its negation]
 \lean{CNF.dual_eval}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p094-b005}
 \label{CNF.dual_eval}
 \leanok
+\uses{CNF, CNF.dual, CNF.eval, Clause.eval_cons, DNF.eval, Literal.flipNeg_eval, Term.eval_cons}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p002-b005}
-\uses{CNF, CNF.eval, Clause.eval, DNF.eval, Literal.flipNeg_eval, Term.eval, CNF.dual}
 \difficulty{4}
 Let $\psi$ be a formula in conjunctive normal form over $n$ Boolean variables — a
 conjunction of clauses, each clause a disjunction of literals — and let its De Morgan
@@ -3850,7 +3891,7 @@ structure unchanged. Then $T'$ has the same depth as $T$.
 \lean{dtDepth_neg}
 \label{dtDepth_neg}
 \leanok
-\uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, DecisionTree.negateLeaves, DecisionTree.buildFull, DecisionTree.buildFull_depth, DecisionTree.buildFull_eval, dtDepth}
+\uses{DecisionTree, DecisionTree.buildFull, DecisionTree.buildFull_depth, DecisionTree.buildFull_eval, DecisionTree.depth, DecisionTree.eval, DecisionTree.negateLeaves, dtDepth}
 \difficulty{4}
 Let $f$ be a Boolean function on $n$ variables, and let $\bar f$ denote its pointwise
 negation, so that $\bar f(x) = 1 - f(x)$ for every input $x$. Then $f$ and $\bar f$ have
@@ -3883,35 +3924,42 @@ $d$; that is, the restricted function of $\lnot f$ under $\rho$ has decision-tre
 greater than $d$ exactly when the restricted function of $f$ under $\rho$ does.
 \end{lemma}
 
-\begin{lemma}[Dual DNF preserves duplicate-free clauses]
+\begin{lemma}[Duplicate-free terms under CNF dualization]
 \lean{CNF.dual_nodup}
 \label{CNF.dual_nodup}
 \leanok
-\uses{CNF, Literal.flipNeg_injective, CNF.dual}
+\uses{CNF, CNF.dual, Literal.flipNeg_injective}
 \difficulty{2}
-Let $\psi$ be a CNF formula whose clauses are lists of literals, and suppose that every
-clause of $\psi$ contains no repeated literal. Then every term of the De Morgan dual DNF
-obtained from $\psi$ — the DNF formed by negating each literal of each clause — likewise
+Let $n$ be a natural number and let $\psi$ be a CNF formula on $n$ variables. If every
+clause of $\psi$ contains no repeated literal, then every term of its De Morgan dual DNF
 contains no repeated literal.
 \end{lemma}
 
-\begin{lemma}[Dual DNF preserves within-clause variable-distinctness]
+\begin{lemma}[Variable distinctness under CNF dualization]
 \lean{CNF.dual_inj}
 \label{CNF.dual_inj}
 \leanok
-\uses{CNF, Literal.flipNeg_var, CNF.dual}
+\uses{CNF, CNF.dual, Literal.flipNeg_var}
 \difficulty{3}
-Let $\psi$ be a CNF formula on $n$ variables with the property that, within each of its
-clauses, any two literals having the same variable are in fact the same literal (so no
-variable occurs in a clause with both polarities, nor is any literal repeated). Then the
-De Morgan dual DNF obtained from $\psi$ by negating every literal has the same property
-term by term: within each of its terms, any two literals sharing a variable are equal.
+Let $n$ be a natural number and let $\psi$ be a CNF formula on $n$ variables. Suppose
+that in every clause of $\psi$, any two literals with the same variable are equal. Then
+in every term of the De Morgan dual DNF of $\psi$, any two literals with the same
+variable are equal.
 \end{lemma}
 
 \begin{theorem}[Håstad's switching lemma for CNF formulas]
 \lean{SwitchingLemmaCNF.switching_lemma_cnf}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b003,
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p003-b005,
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \label{SwitchingLemmaCNF.switching_lemma_cnf}
 \leanok
+\uses{CNF, CNF.dual, CNF.dual_eval, CNF.dual_inj, CNF.dual_nodup, CNF.dual_width, CNF.eval, CNF.width, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.numSRestrictions, SwitchingLemma.switching_lemma, SwitchingLemmaCNF.restrictFn_neg, dtDepth_neg}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p001-b008,
   pdf-b5e074215b9e-p002-b001,
@@ -4748,7 +4796,6 @@ term by term: within each of its terms, any two literals sharing a variable are 
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b003}
-\uses{CNF, CNF.eval, CNF.width, DNF.eval, DNF.width, SwitchingLemma.IsBadRestriction, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.numSRestrictions, SwitchingLemma.switching_lemma, CNF.dual_inj, CNF.dual_nodup, SwitchingLemmaCNF.restrictFn_neg, CNF.dual, CNF.dual_eval, CNF.dual_width, dtDepth_neg}
 \difficulty{4}
 Let $\psi$ be a CNF formula on $n \ge 1$ Boolean variables whose width is at most $w$,
 and suppose that within each clause no literal is repeated and any two literals on the
@@ -4770,12 +4817,13 @@ greater than $d$,
 
 \begin{theorem}[Switching lemma corollary for CNF formulas]
 \lean{SwitchingLemmaCNF.switching_corollary_cnf}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b003}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p003-b004}
 \label{SwitchingLemmaCNF.switching_corollary_cnf}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.numSRestrictions, SwitchingLemma.restrictFn, SwitchingLemmaCNF.switching_lemma_cnf, dtDepth}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p003-b004}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
-\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, SwitchingLemma.IsRestriction, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.numSRestrictions, SwitchingLemma.restrictFn, SwitchingLemmaCNF.switching_lemma_cnf, dtDepth}
 \difficulty{4}
 Fix $n \ge 1$ and let $\psi$ be a CNF formula on $n$ Boolean variables whose width is at
 most $w$, meaning every clause of $\psi$ has at most $w$ literals; assume moreover that
@@ -4801,4 +4849,53 @@ Let $n$, $s$, and $d$ be natural numbers satisfying $5s \le n$ and $d \le s$. Th
 \[
   \binom{n}{s-d}\,(4n)^d \;\le\; \binom{n}{s}\,(5s)^d .
 \]
+\end{lemma}
+
+\begin{definition}[Decision tree terms]
+\lean{SwitchingLemma.toTerms}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p093-b004}
+\label{SwitchingLemma.toTerms}
+\leanok
+\uses{DecisionTree, Term}
+For each decision tree on $n$ Boolean variables, define a list of conjunctions of
+literals recursively. A true leaf yields the single empty conjunction, a false leaf
+yields no terms, and a branch querying variable $v$ yields the terms from its false
+subtree prefixed by the negated literal for $v$, followed by the terms from its true
+subtree prefixed by the positive literal for $v$.
+\end{definition}
+
+\begin{definition}[Decision tree clauses]
+\lean{SwitchingLemma.toClauses}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p094-b004}
+\label{SwitchingLemma.toClauses}
+\leanok
+\uses{Clause, DecisionTree}
+For each decision tree on $n$ Boolean variables, define a list of clauses recursively. A
+true leaf yields no clauses, a false leaf yields the single empty clause, and a branch
+querying variable $v$ yields the clauses from its false subtree prefixed by the positive
+literal for $v$, followed by the clauses from its true subtree prefixed by the negated
+literal for $v$.
+\end{definition}
+
+\begin{lemma}[Decision tree as a disjunction of terms]
+\lean{SwitchingLemma.toTerms_eval}
+\label{SwitchingLemma.toTerms_eval}
+\leanok
+\uses{DecisionTree, DecisionTree.eval, Literal.eval, SwitchingLemma.toTerms, Term.eval, Term.eval_cons}
+\difficulty{4}
+Let $n$ be a natural number, let $T$ be a decision tree on $n$ Boolean variables, and
+let $x$ be an assignment of Boolean values to those variables. The Boolean value
+indicating whether at least one term produced from $T$ evaluates to true on $x$ equals
+the value of $T$ on $x$.
+\end{lemma}
+
+\begin{lemma}[Evaluation of the clause representation]
+\lean{SwitchingLemma.toClauses_eval}
+\label{SwitchingLemma.toClauses_eval}
+\leanok
+\uses{Clause.eval, Clause.eval_cons, DecisionTree, DecisionTree.eval, Literal.eval, SwitchingLemma.toClauses}
+\difficulty{4}
+For every natural number $n$, every decision tree $T$ on $n$ Boolean variables, and
+every Boolean input $x\in\{0,1\}^n$, the conjunction of the clauses produced from $T$
+evaluates to the same Boolean value as $T$ on $x$.
 \end{lemma}

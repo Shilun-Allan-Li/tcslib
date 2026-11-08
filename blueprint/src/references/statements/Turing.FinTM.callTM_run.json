@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.callTM_run",
+ "key": "f0c024af1100a01b",
+ "kind": "theorem",
+ "title": "Bounded clean call computation",
+ "statement": "Let $M$ be a finite-state machine over the Boolean alphabet, let $e\\in\\{\\mathrm{false},\\mathrm{true}\\}$, and let $x$, $a$, and $c$ be Boolean words. Suppose $M$ halts on input word $a$ with output word $c$ after $T$ steps. Then there is a positive natural number $t$ with $t\\le (24+13k)(T+|a|+|c|+1)$, where $k$ is the number of work tapes of $M$, such that the call machine's run from its entry state, with $a$ on tape zero and all other work tapes blank, does not reach its exit state at any time $j<t$. At time $t$ its configuration is the exit-state configuration with $a$ on tape zero and empty output if $e$ is true, and with $c$ on tape zero and output $c$ if $e$ is false; all other work tapes are blank, the input head is at its initial position, and the other configuration data have their initial values.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state machine over Boolean symbols",
+  "$e$ is Boolean",
+  "$x,a,c$ are Boolean words",
+  "$M$ halts on input $a$ with output $c$ after $T$ steps",
+  "$T$ is a natural number",
+  "$t$ is positive",
+  "$t\\le (24+13k)(T+|a|+|c|+1)$",
+  "the run avoids the exit state at every time $j<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

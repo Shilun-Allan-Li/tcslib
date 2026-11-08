@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ups_coin",
+ "key": "d1466f9086db29a1",
+ "kind": "lemma",
+ "title": "Averaging over a block of random choices",
+ "statement": "Let $x$ be a Boolean input, $B$ a natural-number register bound, and $F$ a function from natural numbers to rational numbers. For every natural number $\\tau$ and register state $\\sigma$, suppose the scratch register equals $\\tau$, every register of $\\sigma$ is at most $B$, and $2(\\sigma_{nx}+1)2^{\\operatorname{size}(\\tau)}\\le B$. Suppose also that for every natural number $i$ with $\\sigma_{nx}2^{\\operatorname{size}(\\tau)}\\le i<(\\sigma_{nx}+1)2^{\\operatorname{size}(\\tau)}$, and every pair of natural numbers $b,e\\le B$, the program has probabilistic semantics $F(i)$ from the designated loop state with registers $nx=i$, $tmp=0$, $b=b$, and $e=e$. Then the program from the designated initial state with register state $\\sigma$ has probabilistic semantics $$\\frac{\\sum_{j<2^{\\operatorname{size}(\\tau)}}F(\\sigma_{nx}2^{\\operatorname{size}(\\tau)}+j)}{2^{\\operatorname{size}(\\tau)}}.$$",
+ "hypotheses_covered": [
+  "Boolean input $x$",
+  "Natural-number bound $B$",
+  "Function $F:\\mathbb{N}\\to\\mathbb{Q}$",
+  "Natural number $\\tau$",
+  "Register state $\\sigma$",
+  "Scratch register equals $\\tau$",
+  "Every register of $\\sigma$ is at most $B$",
+  "$2(\\sigma_{nx}+1)2^{\\operatorname{size}(\\tau)}\\le B$",
+  "For every index in the specified half-open block and every $b,e\\le B$, the loop-state configuration with the stated register updates has semantics $F(i)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ assign a rational value to each natural number, let $x$ be a Boolean input, and\nlet $B$ be a natural-number register bound. For every $\\tau$ and register state\n$\\sigma$, suppose the scratch register equals $\\tau$, all registers are at most $B$, and\n$2(\\sigma_{nx}+1)2^{\\operatorname{size}(\\tau)}\\le B$. Assume that for every index $i$ in\nthe block\n$[\\sigma_{nx}2^{\\operatorname{size}(\\tau)},(\\sigma_{nx}+1)2^{\\operatorname{size}(\\tau)})$,\nand every pair of natural numbers $b,e\\le B$, the program at the designated loop state\nwith registers $nx=i$, $tmp=0$, and the two specified updates $b,e$ has probabilistic\nsemantics $F(i)$. Then the program at the designated initial state with register state\n$\\sigma$ has probabilistic semantics equal to the average of $F$ over that block:\n$\\displaystyle\\frac{\\sum_{j<2^{\\operatorname{size}(\\tau)}}F(\\sigma_{nx}2^{\\operatorname{size}(\\tau)}+j)}{2^{\\operatorname{size}(\\tau)}}$."
+}

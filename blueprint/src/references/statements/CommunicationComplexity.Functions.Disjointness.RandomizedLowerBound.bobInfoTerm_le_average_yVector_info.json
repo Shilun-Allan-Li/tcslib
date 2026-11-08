@@ -1,19 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm_le_average_yVector_info",
- "key": "a378c42cee4145ea",
+ "key": "a5dff38ee50d594f",
  "kind": "theorem",
- "title": "Bob's single-coordinate information is at most the average full-vector information",
- "statement": "Fix an integer $n \\ge 1$ and a deterministic communication protocol $p$ for the disjointness problem on $n$ coordinates, in which Alice and Bob each hold a subset of $\\{1,\\dots,n\\}$. Work under the hard distribution over input pairs conditioned on the event that Alice's set $X$ and Bob's set $Y$ are disjoint, and let $M$ be the transcript that $p$ produces on a sampled input pair. Let $T$ be the special coordinate, let $Y_T$ be Bob's bit at coordinate $T$, let $X_{\\le T}$ be the vector recording Alice's bits at all coordinates up to and including $T$ and $0$ beyond, let $Y_{>T}$ be the vector recording Bob's bits at all coordinates strictly greater than $T$ and $0$ elsewhere, and let $X$ and $Y$ be the full input vectors of Alice and Bob. With every mutual information taken with respect to the hard distribution conditioned on disjointness of $X$ and $Y$,\n\\[\nI\\!\\left(Y_T ; M \\mid T,\\, X_{\\le T},\\, Y_{>T}\\right) \\;\\le\\; \\frac{1}{n}\\, I\\!\\left(Y ; M \\mid X\\right).\n\\]",
+ "title": "Bob information bounded by full-vector information",
+ "statement": "For a positive integer $n$ and a deterministic communication protocol $p$ on length-$n$ set inputs, under the hard-sample distribution conditioned on disjointness, the conditional mutual information between Bob's bit at the special coordinate and the transcript of $p$, given Alice's full input vector, is at most $1/n$ times the conditional mutual information between Bob's full input vector and that transcript, given Alice's full input vector.",
  "hypotheses_covered": [
-  "n is a positive integer (n ≥ 1)",
-  "p is a deterministic protocol on subset-inputs of {1,...,n}",
-  "the measure is the hard distribution conditioned on X, Y disjoint",
-  "M is the protocol transcript on the sampled input pair",
-  "left side conditions on the special coordinate T, X_{≤T}, Y_{>T}",
-  "right side conditions on the full vector X and divides by n"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol on length-$n$ set-disjointness inputs"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Bob fixed-coordinate chain-rule bound after conditioning on disjointness and averaging over the uniform special coordinate: $I(Y_{T} : M | T, X_{≤T}, Y_{>T}, D) ≤ I(Y : M | X, D) / n$."
+ "replaced": "\nFix an integer $n \\ge 1$ and a deterministic communication protocol $p$ for the\ndisjointness problem on $n$ coordinates, in which Alice and Bob each hold a subset of\n$\\{1,\\dots,n\\}$. Work under the hard distribution over input pairs conditioned on the\nevent that Alice's set $X$ and Bob's set $Y$ are disjoint, and let $M$ be the transcript\nthat $p$ produces on a sampled input pair. Let $T$ be the special coordinate, let $Y_T$\nbe Bob's bit at coordinate $T$, let $X_{\\le T}$ be the vector recording Alice's bits at\nall coordinates up to and including $T$ and $0$ beyond, let $Y_{>T}$ be the vector\nrecording Bob's bits at all coordinates strictly greater than $T$ and $0$ elsewhere, and\nlet $X$ and $Y$ be the full input vectors of Alice and Bob. With every mutual\ninformation taken with respect to the hard distribution conditioned on disjointness of\n$X$ and $Y$,\n\\[\nI\\!\\left(Y_T ; M \\mid T,\\, X_{\\le T},\\, Y_{>T}\\right) \\;\\le\\; \\frac{1}{n}\\, I\\!\\left(Y ;\nM \\mid X\\right).\n\\]"
 }

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.gaussian_cone_lintegral",
+ "key": "2aa32512d0614c82",
+ "kind": "lemma",
+ "title": "Gaussian mass of a cone",
+ "statement": "Let $A\\subseteq\\mathbb R^2$ and $\\Theta\\subseteq\\mathbb R$ be measurable. Suppose that for every $r>0$ and every $\\theta\\in\\mathbb R$, $(r\\cos\\theta,r\\sin\\theta)\\in A$ if and only if $\\theta\\in\\Theta$. Then the integral of the planar standard Gaussian density over $A$, interpreted as a nonnegative extended real integral, is $(2\\pi)^{-1}$ times the Lebesgue measure of $\\Theta\\cap(-\\pi,\\pi)$: $\\int_A d_2(x,y)\\,d(x,y)=(2\\pi)^{-1}\\,\\operatorname{Leb}(\\Theta\\cap(-\\pi,\\pi))$.",
+ "hypotheses_covered": [
+  "$A$ is measurable",
+  "$\\Theta$ is measurable",
+  "For every $r>0$ and $\\theta\\in\\mathbb R$, $(r\\cos\\theta,r\\sin\\theta)\\in A$ exactly when $\\theta\\in\\Theta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A\\subseteq\\mathbb R^2$ and $\\Theta\\subseteq\\mathbb R$ be measurable sets such that for all real $r>0$ and $\\theta$, $(r\\cos\\theta,r\\sin\\theta)\\in A$ if and only if $\\theta\\in\\Theta$. Then $\\int_A(2\\pi)^{-1}e^{-(x^2+y^2)/2}\\,dx\\,dy=(2\\pi)^{-1}\\operatorname{Leb}(\\Theta\\cap(-\\pi,\\pi))$, with the integral and angular Lebesgue measure in the nonnegative extended reals."
+}

@@ -1,19 +1,19 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialXLaw_eq_cond_specialY_of_prod",
- "key": "5d126f817b2e5a9e",
+ "key": "63dddc308edc7b30",
  "kind": "theorem",
- "title": "Product law implies conditioning on Bob's special bit leaves Alice's law unchanged",
- "statement": "Fix a deterministic disjointness protocol $p$ on inputs of length $n$ and an achievable value $z$ of the record $Z=(M,T,X_{<T},Y_{>T})$, and write $\\mu_z$ for the hard distribution conditioned on the fiber $Z=z$. Let $X_T$ and $Y_T$ denote Alice's and Bob's bits at the special coordinate $T$, and suppose that under $\\mu_z$ the pair $(X_T,Y_T)$ has product law, i.e. the law of $(X_T,Y_T)$ equals the product of the law of $X_T$ and the law of $Y_T$. Then for every $b_Y\\in\\{\\text{false},\\text{true}\\}$ such that the event $\\{Y_T=b_Y\\}$ has positive $\\mu_z$-mass, the law of $X_T$ under $\\mu_z$ coincides with the law of $X_T$ under $\\mu_z$ conditioned further on $\\{Y_T=b_Y\\}$.",
+ "title": "Conditioning under a product law",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on inputs of length $n$, and let $z$ be an achievable value of its summary $Z=(M,T,X_{<T},Y_{>T})$. Suppose the conditional law of the special-bit pair on the fiber $Z=z$ is the product of the conditional laws of Alice's and Bob's special bits. For any Boolean value $b_Y$ such that the fiber measure of the event that Bob's special bit equals $b_Y$ is nonzero, the conditional law of Alice's special bit on the fiber equals the pushforward under Alice's special-bit map of the fiber measure further conditioned on that event.",
  "hypotheses_covered": [
-  "p is a deterministic disjointness protocol on inputs of length n",
-  "z is an achievable value of the Z variable",
-  "the fiber (conditional) measure at Z = z",
-  "the conditional law of the special pair (X_T, Y_T) equals the product of the conditional laws of X_T and Y_T",
-  "b_Y is a Boolean value",
-  "the event Y_T = b_Y has positive mass under the fiber measure"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic length-$n$ disjointness protocol",
+  "$z$ is an achievable summary value",
+  "the conditional special-pair law equals the product of the conditional marginal laws",
+  "$b_Y$ is Boolean",
+  "the fiber measure of the event that Bob's special bit equals $b_Y$ is nonzero"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "On a product-law $Z$ fiber, conditioning on one Bob special-bit value does not change Alice's special-bit law."
+ "replaced": "Fix a deterministic disjointness protocol $p$ on inputs of length $n$ and an achievable\nvalue $z$ of the record $Z=(M,T,X_{<T},Y_{>T})$, and write $\\mu_z$ for the hard\ndistribution conditioned on the fiber $Z=z$. Let $X_T$ and $Y_T$ denote Alice's and\nBob's bits at the special coordinate $T$, and suppose that under $\\mu_z$ the pair\n$(X_T,Y_T)$ has product law, i.e. the law of $(X_T,Y_T)$ equals the product of the law\nof $X_T$ and the law of $Y_T$. Then for every $b_Y\\in\\{\\text{false},\\text{true}\\}$ such\nthat the event $\\{Y_T=b_Y\\}$ has positive $\\mu_z$-mass, the law of $X_T$ under $\\mu_z$\ncoincides with the law of $X_T$ under $\\mu_z$ conditioned further on $\\{Y_T=b_Y\\}$."
 }

@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.berryEsseen",
+ "key": "6cffef609d006f05",
+ "kind": "theorem",
+ "title": "Universal third-moment Gaussian approximation",
+ "statement": "There exists a real constant $c\\ge0$ such that the following holds. For every natural number $n$, every probability space $(\\Omega,\\mu)$, and every family of real random variables $(X_i)_{i\\in\\mathrm{Fin}(n)}$ that is mutually independent, measurable, has integrable third absolute powers, has mean zero term by term, and has total second moment equal to $1$, the Kolmogorov distance between the distribution of $\\sum_i X_i$ and the standard Gaussian measure is at most $c\\sum_i\\int |X_i|^3\\,d\\mu$.",
+ "hypotheses_covered": [
+  "there exists a real constant $c\\ge0$",
+  "$n$ is a natural number",
+  "$\\Omega$ has a measurable space and $\\mu$ is a probability measure on it",
+  "the family $(X_i)_{i\\in\\mathrm{Fin}(n)}$ is mutually independent under $\\mu$",
+  "each $X_i$ is measurable",
+  "each $|X_i|^3$ is integrable",
+  "each $X_i$ has integral zero",
+  "the sum of the second moments is $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThere exists a universal real constant $c\\ge0$ such that, for every $n\\ge0$ and family of independent measurable real random variables $X_1,\\ldots,X_n$ on any probability space, if each $|X_i|^3$ is integrable, $\\mathbb E X_i=0$, and $\\sum_i\\mathbb E X_i^2=1$, then $D_K(\\mathcal L(\\sum_iX_i),\\gamma)\\le c\\sum_i\\mathbb E|X_i|^3$. Here $\\gamma$ is standard Gaussian measure and $D_K(\\mu,\\nu)=\\sup_{t\\in\\mathbb R}|\\mu(({-\\infty},t])-\\nu(({-\\infty},t])|$ for probability measures."
+}

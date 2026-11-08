@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_disjoint_alice_of_ne",
+ "key": "9d993e4fc8d3c53b",
+ "kind": "lemma",
+ "title": "Disjoint leaf rectangles on Alice branches",
+ "statement": "Let $p,q$ be protocols over input types $X$ and $Y$, let $A\\subseteq X$ and $B\\subseteq Y$, let $f:X\\to\\{0,1\\}$, and let $b,b'$ be distinct bits. If $R$ is among the leaf rectangles of $p$ with first input restricted to $A\\cap\\{x:f(x)=b\\}$ and second to $B$, and $S$ is among the leaf rectangles of $q$ with first input restricted to $A\\cap\\{x:f(x)=b'\\}$ and second to $B$, then $R$ and $S$ are disjoint.",
+ "hypotheses_covered": [
+  "Protocols $p,q$ over input types $X$ and $Y$",
+  "Sets $A\\subseteq X$ and $B\\subseteq Y$",
+  "A function $f:X\\to\\{0,1\\}$",
+  "Distinct bits $b,b'$",
+  "Membership of $R$ and $S$ in the respective leaf-rectangle collections under the stated restrictions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p, q$ be protocols on $X \\times Y$, let $A \\subseteq X$, $B \\subseteq Y$, let\n$f : X \\to \\{0,1\\}$, and let $b \\neq b'$ be distinct bits. If $R$ is a leaf rectangle of\n$p$ on $(A \\cap \\{x \\mid f(x) = b\\}) \\times B$ and $S$ is a leaf rectangle of $q$ on\n$(A \\cap \\{x \\mid f(x) = b'\\}) \\times B$, then $R$ and $S$ are disjoint."
+}

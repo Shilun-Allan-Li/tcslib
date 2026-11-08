@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.dtDepth_composeRestr_le",
- "key": "e9b943b7f90ec649",
+ "key": "c88ce88944090546",
  "kind": "theorem",
  "title": "Composing restrictions does not increase decision-tree depth",
  "statement": "Let $f$ be a Boolean function of $n$ variables, and let $\\rho_1$ and $\\rho_2$ be two restrictions on those variables, each pinning some coordinates to a fixed Boolean value and leaving the rest free. Let $\\rho_1 \\circ \\rho_2$ be the composed restriction that fixes each coordinate $i$ to the value assigned by $\\rho_1$ when $\\rho_1$ pins $i$, and otherwise to the value assigned by $\\rho_2$. For a restriction $\\rho$, write $f|_{\\rho}$ for the function obtained from $f$ by substituting the fixed values of $\\rho$ and treating the coordinates left free by $\\rho$ as its inputs, and let $\\operatorname{depth}_{\\mathrm{DT}}(g)$ denote the least $d$ for which some decision tree of depth at most $d$ computes $g$. Then further restricting along $\\rho_2$ can only lower this depth:\n\\[\n\\operatorname{depth}_{\\mathrm{DT}}\\bigl(f|_{\\rho_1 \\circ \\rho_2}\\bigr) \\le \\operatorname{depth}_{\\mathrm{DT}}\\bigl(f|_{\\rho_1}\\bigr).\n\\]",

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Meyer.ansD_family",
+ "key": "86bed78fac69853c",
+ "kind": "theorem",
+ "title": "Circuit family computes bounded simulation queries",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean alphabet, and let $F$ be a family of Boolean circuits such that every circuit has fan-in at most two and $F$ accepts exactly the language recognized by the tabulating function of $M$. For any natural number $W$, Boolean word $x$, selector $\text{sel}$, and natural numbers $t,a<2^W$, the circuit in $F$ on $n_{\rm bits}(M)+4W+4+|x|$ input bits, encoded as a circuit description and queried with the encoding of $\text{sel}$ and the width-$W$ words for $t$ and $a$ together with $x$, returns the tabulated answer for $\text{sel}$ after $t$ steps of $M$ on $x$, with counter value $a$.",
+ "hypotheses_covered": [
+  "M is a finite-state Turing machine with Boolean alphabet",
+  "F is a family of Boolean circuits with fan-in at most two",
+  "F's accepted language equals M's tabulating language",
+  "W is a natural number",
+  "x is a Boolean word",
+  "sel is a selector for M",
+  "t and a are natural numbers",
+  "t < 2^W",
+  "a < 2^W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

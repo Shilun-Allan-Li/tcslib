@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timedPrefix_live",
+ "key": "927ec355a500eb96",
+ "kind": "lemma",
+ "title": "Parser remains live before completion",
+ "statement": "For Boolean words $b_s,\\alpha,x$, at every natural-number time $s<4|b_s|+2|\\alpha|+6$, the prefix parser on $\\langle\\langle b_s,\\alpha\\rangle,x\\rangle$ has not halted.",
+ "hypotheses_covered": [
+  "Boolean words $b_s,\\alpha,x$",
+  "Natural-number time $s$ is strictly less than $4|b_s|+2|\\alpha|+6$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "At every time strictly before $4|b| + 2|\\alpha| + 6$ steps on the nested pair\nencoding $\\langle \\langle b, \\alpha\\rangle, x\\rangle$, the prefix parser has\nnot halted."
+}

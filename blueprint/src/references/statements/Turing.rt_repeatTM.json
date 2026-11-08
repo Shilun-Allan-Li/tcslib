@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.rt_repeatTM",
+ "key": "d7839596e25ffcec",
+ "kind": "def",
+ "title": "Repeated pattern machine",
+ "statement": "For a finite Boolean word $p$, define a deterministic Turing machine with three work tapes, Boolean symbols, and states formed from sweep controls, counter-loop controls indexed by the $|p|+1$ possible counter values, and additional sweep controls. The machine is the sequential composition that copies tape $0$ onto tape $2$, expands the pattern $p$ on tape $1$, clears tape $2$, and then runs a counter loop whose body is the sweep phase and whose counter-decrement phase begins in its running state.",
+ "hypotheses_covered": [
+  "$p$ is a finite Boolean word"
+ ],
+ "confidence": "low",
+ "caveat": "The component machines and composition operation are not defined in the supplied statement, so the exact transition behavior of the composition is unavailable.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

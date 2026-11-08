@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.identifiedNegation_flip",
+ "key": "09c648132e6ea739",
+ "kind": "lemma",
+ "title": "Flipping an identified variable",
+ "statement": "Let $n,m\\ge 0$, let $f:\\{0,1\\}^n\\to\\mathbb R$, let $z\\in\\{0,1\\}^n$, and let $\\pi:[n]\\to[m]$. For every $w\\in\\{0,1\\}^m$ and $j\\in[m]$, if $w^j$ denotes $w$ with coordinate $j$ flipped and $F_j=\\{i\\in[n]:\\pi(i)=j\\}$, then $g(w^j)=f\\bigl((z\\oplus(w_{\\pi(i)})_{i=1}^n)^{F_j}\\bigr)$, where $g(v)=f(z\\oplus(v_{\\pi(i)})_{i=1}^n)$ and the superscript denotes flipping precisely the indicated coordinates.",
+ "hypotheses_covered": [
+  "Natural dimensions $n,m$",
+  "A real-valued function on the $n$-cube",
+  "A vector $z$ in the $n$-cube",
+  "A map from $[n]$ to $[m]$",
+  "An arbitrary input $w$ in the $m$-cube",
+  "A coordinate $j\\in[m]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $n,m\\in\\mathbb N$, $f:\\{0,1\\}^{n}\\to\\mathbb R$, $z\\in\\{0,1\\}^{n}$, a map $\\pi:\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}$, $w\\in\\{0,1\\}^{m}$ and $j\\in\\{1,\\ldots,m\\}$, define $g(v)=f(z\\oplus(v_{\\pi(i)})_{i=1}^{n})$, where $\\oplus$ is coordinatewise addition modulo $2$, and write $x^{A}$ for the vector obtained by flipping precisely the coordinates in $A$; then\n\\[\ng(w^{\\{j\\}})=f\\bigl((z\\oplus(w_{\\pi(i)})_{i=1}^{n})^{\\pi^{-1}(\\{j\\})}\\bigr).\n\\]"
+}

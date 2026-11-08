@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.universal_header_bound",
+ "key": "37807a1a9e322f18",
+ "kind": "lemma",
+ "title": "Length bound for the serialized header",
+ "statement": "For every machine $M$ in code normal form, let $m$ be its state-count parameter and $q_0$ its initial state index. If $\\ell$ is the number of bits in the binary representation of $m$ and $L$ is the length of its canonical serialization, then $2\\ell+2+q_0+1\\le L$.",
+ "hypotheses_covered": [
+  "$M$ is a machine in code normal form"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every coded machine $M$ with state count $m$ and initial state index\n$q_0$: writing $\\ell$ for the number of binary digits of $m$ and $L$ for\nthe length of the canonical serialization of $M$, one has\n$2\\ell + 2 + q_0 + 1 \\le L$; that is, the position just past the doubled\ncount field, its delimiter pair, and the unary initial-state field with its\nterminator lies within the serialized table."
+}

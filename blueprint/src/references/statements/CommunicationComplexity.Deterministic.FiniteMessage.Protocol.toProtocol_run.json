@@ -1,14 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run",
- "key": "55b2a75c13b577b9",
+ "key": "9e2281f7a8881c66",
  "kind": "theorem",
- "title": "Conversion to binary protocol preserves output",
- "statement": "Let $p$ be a finite-message deterministic two-party protocol over input types $X$ and $Y$ with output type $\\alpha$, and let $q$ be the binary protocol obtained by converting $p$ (encoding each message drawn from a finite nonempty type $\\beta$ as $\\lceil \\log_2 \\abs{\\beta} \\rceil$ bits). Then $q$ computes the same function as $p$: for every pair of inputs $x \\in X$ and $y \\in Y$, running $q$ on $(x, y)$ returns the same value in $\\alpha$ as running $p$ on $(x, y)$.",
+ "title": "Conversion preserves protocol output",
+ "statement": "Let $p$ be a deterministic finite-message two-party protocol with input types $X$ and $Y$ and output type $\\alpha$, where each message is drawn from a finite nonempty type. For every input pair $(x,y)\\in X\\times Y$, the binary protocol obtained by converting $p$ returns the same output as $p$.",
  "hypotheses_covered": [
-  "p is a finite-message protocol over input types X, Y and output type α"
+  "$p$ is a finite-message protocol over input types $X$ and $Y$ with output type $\\alpha$",
+  "Each message type used by $p$ is finite and nonempty"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "For every finite-message protocol $p$, the converted binary protocol satisfies\n$(\\texttt{toProtocol}\\,p).\\mathrm{run} = p.\\mathrm{run}$ as functions $X \\to Y \\to \\alpha$."
+ "replaced": "Let $p$ be a finite-message deterministic two-party protocol over input types $X$ and\n$Y$ with output type $\\alpha$, and let $q$ be the binary protocol obtained by converting\n$p$ (encoding each message drawn from a finite nonempty type $\\beta$ as $\\lceil \\log_2\n\\abs{\\beta} \\rceil$ bits). Then $q$ computes the same function as $p$: for every pair of\ninputs $x \\in X$ and $y \\in Y$, running $q$ on $(x, y)$ returns the same value in\n$\\alpha$ as running $p$ on $(x, y)$."
 }

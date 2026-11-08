@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_poly_step",
+ "key": "8dfdb74daa653163",
+ "kind": "lemma",
+ "title": "Preservation of the tape and head bounds",
+ "statement": "Let $d,C,q$ be natural numbers with $q>0$, let $x$ be a Boolean word, and let $c$ be a configuration of the unary catalog machine with parameters $d,C$ on input $x$. Suppose every work tape equals the tape containing true exactly at integer positions $z$ with $0\\le z<q$, and suppose the work-head positions satisfy the bounds specified by the machine's control state: in the halted state they lie between $-1$ and $q$ inclusive; in loop state $i$ they lie between $0$ and $q$ inclusive, with every head other than $i$ strictly below $q$; in rewind state $i$ they lie between $-1$ inclusive and $q$ exclusive, with every head other than $i$ nonnegative; in advance or emit states they lie between $0$ inclusive and $q$ exclusive; and in copy or setup states the condition is false. After one step, every work tape still has that content and the resulting state and head positions satisfy the corresponding bounds.",
+ "hypotheses_covered": [
+  "$d,C,q$ are natural numbers",
+  "$q>0$",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration on input $x$ with $d+1$ work tapes and the specified control states",
+  "Every work tape has true exactly at positions $0\\le z<q$",
+  "The current state and head positions satisfy the stated state-dependent bounds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

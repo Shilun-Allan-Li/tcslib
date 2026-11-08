@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.satEval_index",
+ "key": "20d35afda5910a42",
+ "kind": "lemma",
+ "title": "Unary index walk",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $w$ and $u$ be Boolean words, let $s$ be a configuration of $M$ on input $w$, let $a,c\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $n\\in\\mathbb N$, and let $j\\in\\mathbb Z$. Suppose $w$ is the concatenation of a prefix, the doubled word obtained by repeating $n$ true bits, and a suffix. Starting from the canonical evaluation configuration with prefix length as the input-head position, semantic phase $2$, truth bits $a,c$, skip flag cleared, and certificate-head position $j$, the evaluator reaches after $2n$ steps the canonical configuration with input-head position increased by $2n$, certificate-head position $j+n$, and the same phase, truth bits, and cleared skip flag.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$w$ is a Boolean input word",
+  "$s$ is a saved configuration of $M$ on input $w$",
+  "$u$ is a Boolean certificate word",
+  "$a,c$ are Boolean truth bits",
+  "$n\\in\\mathbb N$",
+  "The input $w$ is a prefix followed by the doubled word of $n$ true bits followed by a suffix",
+  "$j\\in\\mathbb Z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the evaluator's input contains, at the current position, the doubling of a\nunary run $1^n$. In the index phase, exactly $2n$ steps consume the doubled run,\nadvancing the input position by $2n$ and the certificate head by $n$, leaving the\nphase and both accumulator bits unchanged. (The first one of a literal is consumed\nby the clause phase, so this scan counts the variable index itself.)"
+}

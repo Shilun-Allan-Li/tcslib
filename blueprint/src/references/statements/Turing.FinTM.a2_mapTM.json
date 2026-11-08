@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.a2_mapTM",
+ "key": "ebc4c77d5fac54f2",
+ "kind": "def",
+ "title": "Boolean input mapping machine",
+ "statement": "Given a finite Boolean Turing machine $M$ and a Boolean flag $f$, this defines a finite Boolean Turing machine with $1+(1+M.k)$ work tapes. Its initial phase reads the input in pairs: it copies equal pairs to its first work tape, and when it encounters a pair consisting of false followed by true, it copies the remaining input to its second work tape. It then returns to the beginnings of the copied portions, emits the first portion with false symbols interleaved between its symbols, emits a true separator, and begins a simulation phase. If $f$ is true, that phase uses a transformed transition of $M$ with the second work tape and the remaining work tapes; if $f$ is false, it halts in that phase.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$f$ is a Boolean flag"
+ ],
+ "confidence": "low",
+ "caveat": "The precise state encoding and transformed tape movements depend on auxiliary definitions not included in the supplied statement.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

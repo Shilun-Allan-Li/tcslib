@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_borrow_run",
+ "key": "e00abc28668b6b75",
+ "kind": "lemma",
+ "title": "Borrow scan in the loop host",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, choose Boolean forwarding and find modes, and let $x$ be a Boolean input word. Let $C$ be a base loop-host configuration on $x$, let $p$ be an input-head position, and let $w$ be a Boolean word. For every Boolean word $v$, after $j+1$ steps from phase $8$ with empty flag and payload tracks, counter word $v w$, and counter head at $|v|$, where $j$ is the length of the initial string of false bits in $w$, the host is in phase $9$ if decrement succeeds and phase $10$ if it underflows. The counter contains $v$ followed by the decremented word and its head is at $|v|+j-1$; the input position and all other tracks retain the values prescribed by the frame.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Boolean Turing machines",
+  "$a$ is a state of $B$",
+  "Forwarding and find modes are Boolean",
+  "$x$ is a Boolean input word",
+  "$C$ is a base loop-host configuration on $x$",
+  "$p$ is an input-head position for $x$",
+  "$w$ is a Boolean word",
+  "$v$ is a Boolean prefix word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ and $w$ be Boolean words and $j$ the length of the maximal $\\mathrm{false}$\nprefix of $w$. Running the loop host for exactly $j + 1$ steps from its borrow phase on\na frame whose counter track holds $p$ followed by $w$ with head at $|p|$ reaches the\nsuccess- or underflow-rewind phase according to the decrement's flag, with the counter\ntrack holding $p$ followed by the decremented word and head at $|p| + j - 1$; all non-\ncounter tracks are preserved."
+}

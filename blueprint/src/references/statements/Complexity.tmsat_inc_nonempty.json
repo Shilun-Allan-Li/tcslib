@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.tmsat_inc_nonempty",
+ "key": "f0491a4630574d51",
+ "kind": "lemma",
+ "title": "Nonempty fixed-width increment output",
+ "statement": "For every bit string $w$, if its fixed-width little-endian binary increment produces an output, that output is not the empty word.",
+ "hypotheses_covered": [
+  "$w$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider the fixed-width little-endian binary increment, which sends a bit string $w$ to its successor among the words of length $|w|$, or fails (overflow) when $w$ consists only of ones, the empty word included. For every bit string $w$, the increment of $w$ is never the empty word."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.foInv_step",
+ "key": "8a7b0d2738f5cacd",
+ "kind": "theorem",
+ "title": "Preservation of fanout reduction invariants",
+ "statement": "Let $n$ be a nonnegative, integer, let $old$ be a finite list of Boolean gates, and let $g$ be another Boolean gate. Suppose a gate list, vertex map, and count satisfy the fanout reduction invariants for $old$. Suppose also that appending $g$ to $old$ preserves acyclicity, and that $g$ has distinct arguments, has at most two arguments, and has exactly one argument if it is a NOT gate. Then applying one fanout reduction step with $g$ yields a list, map, and count satisfying the fanout reduction invariants for the list obtained by appending $g$ to $old$.",
+ "hypotheses_covered": [
+  "The given state satisfies the fanout reduction invariants for $old$",
+  "$old$ with $g$ appended is acyclic relative to $n$",
+  "$g$ has distinct arguments",
+  "$g$ has at most two arguments",
+  "If $g$ is a NOT gate, it has exactly one argument"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.NSem.jodd_neg",
+ "key": "4ff5ecf5b08782ca",
+ "kind": "lemma",
+ "title": "Preservation Across an Oddness Test",
+ "statement": "Let $A$ be a nondeterministic register machine with oracle, input $x$, and configuration guard $G$. Suppose the instruction at live state $l$ tests whether register $r$ is odd, continuing at $l_1$ if its remainder modulo $2$ is $1$ and at $l_0$ otherwise. If the configuration with state $l$, valuation $v$, and no answer satisfies $G$, the remainder of $v(r)$ modulo $2$ is not $1$, and the configuration at state $l_0$ with valuation $v$ and no answer is terminating under $G$ and accepts exactly when proposition $P$ holds, then the original configuration has those same properties.",
+ "hypotheses_covered": [
+  "The instruction at state l tests whether register r has remainder 1 modulo 2, with branches l1 and l0",
+  "The configuration (l,v,no answer) satisfies G",
+  "The remainder of v(r) modulo 2 is not 1",
+  "The l0 successor is terminating under G and accepts exactly when P holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

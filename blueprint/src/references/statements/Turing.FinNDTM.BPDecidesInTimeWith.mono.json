@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinNDTM.BPDecidesInTimeWith.mono",
+ "key": "e5376b6cadc2eebe",
+ "kind": "theorem",
+ "title": "Monotonicity of time and success threshold",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $L$ be a language of binary strings, let $T_1,T_2\\colon\\mathbb{N}\\to\\mathbb{N}$, and let $p,q\\colon\\mathbb{N}\\to\\mathbb{Q}$. Suppose $T_1(m)\\le T_2(m)$ and $q(m)\\le p(m)$ for every $m$. If, on every input $x$, $N$ halts on every branch within $T_1(|x|)$ steps and outputs the membership indicator for $L$ with probability at least $p(|x|)$, then it halts within $T_2(|x|)$ steps on every branch and its corresponding output probability is at least $q(|x|)$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$L$ is a language of binary strings",
+  "$T_1,T_2\\colon\\mathbb{N}\\to\\mathbb{N}$",
+  "$p,q\\colon\\mathbb{N}\\to\\mathbb{Q}$",
+  "$T_1(m)\\le T_2(m)$ for every $m$",
+  "$q(m)\\le p(m)$ for every $m$",
+  "For every binary input $x$, $N$ halts within $T_1(|x|)$ steps on every branch and its membership-indicator output has probability at least $p(|x|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

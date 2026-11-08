@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.cont_suffix_run",
+ "key": "7791804d0723cb34",
+ "kind": "lemma",
+ "title": "Run After Copying the Suffix",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $y,\\mathrm{pre},x,u$ be binary words, and suppose $y=\\mathrm{pre}\\,u$. Starting in loader state $3$ with physical input head at position $|\\mathrm{pre}|+1$, input buffer holding $x$ with its head at $|x|$, and empty choice buffer with its head at $0$, after $|u|+(1+(|x|+1)+(|u|+1))+(|u|+1)$ steps the machine has halted and its output is the single bit indicating whether running $N$ on $x$ under choice word $u$ halts with output the one-bit word $1$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic machine over the binary alphabet",
+  "$y,\\mathrm{pre},x,u$ are binary words",
+  "$y=\\mathrm{pre}\\,u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine and let the physical input decompose as $y = p\\,u$. Starting in the suffix-copy state at position $|p|+1$ with input buffer $x$ and empty choice buffer, after $|u| + (1 + (|x|+1) + (|u|+1)) + (|u|+1)$ steps the pair-loader machine has halted, and its output is the single bit recording whether the run of $N$ on $x$ under choice word $u$ has halted with output the one-bit string $1$."
+}

@@ -1,15 +1,15 @@
 {
  "lean_name": "BoolCircuit.NAndCircuit.clauseToTerm_width",
- "key": "e64ab834d2a296c9",
+ "key": "cf6b9785bd2df80a",
  "kind": "theorem",
  "title": "Width of a converted AND-clause",
- "statement": "Fix $n$, and let $lits$ be a list of circuit literals on $n$ variables whose variable indices are pairwise distinct. Form the normal-form AND-clause on this list, and convert it into a term by replacing each circuit literal with the corresponding switching-lemma literal. Then the width of that term — its number of literals — equals the length of $lits$.",
+ "statement": "Let $n$ be a natural number, and let $lits$ be a list of Boolean-circuit literals on $n$ variables whose variable indices are pairwise distinct. The term obtained by converting the AND-clause built from $lits$ has width equal to the length of $lits$.",
  "hypotheses_covered": [
-  "lits is a list of circuit literals on n variables",
-  "the variable indices of lits are pairwise distinct (Nodup)"
+  "$n$ is a natural number",
+  "The variable indices in $lits$ are pairwise distinct"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "The width of the term obtained from an AND-clause equals the number of its literals:\n$\\texttt{Term.width}\\,(\\texttt{NAndCircuit}.\\mathrm{clause}\\,lits\\,h).\\mathrm{clauseToTerm} = lits.\\mathrm{length}$."
+ "replaced": "Fix $n$, and let $lits$ be a list of circuit literals on $n$ variables whose variable\nindices are pairwise distinct. Form the normal-form AND-clause on this list, and convert\nit into a term by replacing each circuit literal with the corresponding switching-lemma\nliteral. Then the width of that term — its number of literals — equals the length of\n$lits$."
 }

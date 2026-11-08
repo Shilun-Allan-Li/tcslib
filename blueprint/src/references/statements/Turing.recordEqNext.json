@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.recordEqNext",
+ "key": "dd8b33980ea566de",
+ "kind": "def",
+ "title": "Successor map for record equality",
+ "statement": "For a natural number $k$ and an index of the comparison, forward, backward, or verdict form, define a partial successor map from the phase type assigned to that index to an index together with its corresponding phase. At a completed comparison phase, a true flag moves to the forward pass when $j<k+2$ and otherwise to the backward pass with true flag; a false flag moves to the backward pass with false flag. A completed forward phase advances $i$ from $0$ to $1$, then returns to comparison at $j+1$; a completed backward phase advances $i$ from $0$ to $1$, then moves to the backward pass at the same $j$ with its flag. All other comparison, forward, and backward phases have no successor, and verdict indices have no successor in any phase.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "The input index has one of the comparison, forward, backward, or verdict forms, with the bounds and flags in its constructor"
+ ],
+ "confidence": "low",
+ "caveat": "The backward-pass successor uses an auxiliary construction not defined in the supplied statement; its exact index and phase are therefore not fully specified there.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

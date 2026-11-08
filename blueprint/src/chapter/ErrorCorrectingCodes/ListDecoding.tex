@@ -15,8 +15,15 @@ that are $(\rho,L)$-list-decodable.
 
 \begin{definition}[List-decodable code]
 \lean{ErrorCorrectingCodes.Codeword.list_decodable}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p009-b004,
+  pdf-bf2ce5422088-p136-b004,
+  pdf-bf2ce5422088-p293-b002
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b003}
 \label{ErrorCorrectingCodes.Codeword.list_decodable}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.hamming_ball}
 A code $C$ is $(\rho,L)$-list-decodable if every Hamming ball of radius
 $\lfloor\rho n\rfloor$ contains at most $L$ codewords of $C$.
 \end{definition}
@@ -26,9 +33,13 @@ $\lfloor\rho n\rfloor$ contains at most $L$ codewords of $C$.
 
 \begin{lemma}[Existence of list-decodable codes]
 \lean{ErrorCorrectingCodes.Codeword.exists_listDecodable_code}
+\statementsource{ghsz-combinatorial-list-decoding}{
+  pdf-6bd33ae73ade-p009-b007,
+  pdf-6bd33ae73ade-p010-b001
+}
 \label{ErrorCorrectingCodes.Codeword.exists_listDecodable_code}
 \leanok
-\uses{ErrorCorrectingCodes.Codeword.list_decodable, ErrorCorrectingCodes.Codeword.hamming_ball}
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.list_decodable}
 \difficulty{6}
 Let $\alpha$ be a finite field, and fix natural numbers $n$, $L$, $M$ and a real number
 $p$ with $0 \le p \le 1$, $1 \le L$, $L < M$, and $M \le \abs{\alpha}^n$. Suppose $V$ is
@@ -86,9 +97,14 @@ q^n \cdot \binom{V}{L+1} \cdot \binom{q^n - (L+1)}{\,M - (L+1)\,}
 
 \begin{theorem}[List-decoding over a q-ary alphabet]
 \lean{ErrorCorrectingCodes.Codeword.list_decoding_capacity}
+\statementsource{ghsz-combinatorial-list-decoding}{
+  pdf-6bd33ae73ade-p003-b004,
+  pdf-6bd33ae73ade-p009-b007,
+  pdf-6bd33ae73ade-p010-b001
+}
 \label{ErrorCorrectingCodes.Codeword.list_decoding_capacity}
 \leanok
-\uses{ErrorCorrectingCodes.Codeword.exists_listDecodable_code, ErrorCorrectingCodes.Codeword.listDecoding_counting_ineq, ErrorCorrectingCodes.Codeword.qary_entropy_pos, ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.exists_listDecodable_code, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound, ErrorCorrectingCodes.Codeword.listDecoding_counting_ineq, ErrorCorrectingCodes.Codeword.list_decodable, ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv, ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le, ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le, ErrorCorrectingCodes.Codeword.qaryEntropy, ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \difficulty{5}
 Let $\alpha$ be a finite field, write $q = \abs{\alpha}$ for the number of its elements,
 and fix a real number $p$ with $0 < p \le 1 - \tfrac{1}{q}$ together with an integer $L

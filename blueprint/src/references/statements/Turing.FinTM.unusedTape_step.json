@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.unusedTape_step",
+ "key": "c1cd1e0ef3520fc6",
+ "kind": "lemma",
+ "title": "One-step compatibility of the unused tape",
+ "statement": "Let $M$ be a Turing machine over an alphabet $\\Gamma$ with zero work tapes, let $hk$ certify that its number of work tapes is zero, and let $x\\in\\Gamma^*$. For every configuration $c$ of $M$ on input $x$, taking one step of the machine with an added unused work tape from the configuration that preserves $c$'s state, input-head position, and output while adding a blank tape with its head at the origin gives the same result as first taking one step of $M$ from $c$ and then applying that configuration embedding.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$hk$ states that $M$ has zero work tapes",
+  "$x\\in\\Gamma^*$",
+  "$c$ is a configuration of $M$ on input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a Turing machine over an alphabet $\\Gamma$ with no work tapes, and let $M'$\nbe the machine obtained from $M$ by adding one unused work tape. For every configuration\n$c$ of $M$ on an input $x$, one transition of $M'$ applied to the embedding of $c$ (same\nstate, input position, and output; blank added tape with head at the origin) equals the\nembedding of the configuration obtained by one transition of $M$ from $c$; this also\nholds when $c$ is halted."
+}

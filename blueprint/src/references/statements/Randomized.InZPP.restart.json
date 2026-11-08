@@ -1,0 +1,16 @@
+{
+ "lean_name": "Randomized.InZPP.restart",
+ "key": "0685df755750a6cf",
+ "kind": "theorem",
+ "title": "Restarting a zero-error randomized verifier",
+ "statement": "Let $E$ be a verifier model and $L$ a language of bit strings. If $L$ has a zero-error randomized verifier that runs efficiently, uses polynomially many random bits, never rejects a member, never accepts a nonmember, and halts with probability at least $1/2$ on each input, then there are an efficient verifier $M$ and natural numbers $a,k$ such that, on each input $x$, restarting runs of $M$ on fresh blocks of $|x|$-dependent random bits yields a procedure whose sum of nonhalting probabilities over its first $K$ time bounds is at most $2(N+1)$ for every natural number $K$, where $N=a(|x|+1)^k$. Moreover, whenever this restarted procedure returns a Boolean value on any bit string of random bits, that value is true exactly when $x\\in L$. Each run uses blocks of $N+1$ bits, and the repeated-run procedure returns the first nonhalting result within the available blocks.",
+ "hypotheses_covered": [
+  "$E$ is a verifier model",
+  "$L$ is a language of bit strings",
+  "$L$ has a zero-error verifier with polynomial random-bit bound, efficient running, no false rejections or acceptances, and nonhalting probability at most $1/2$"
+ ],
+ "confidence": "low",
+ "caveat": "The formal conclusion uses a cumulative sum of nonhalting probabilities indexed by time bounds; the informal description of that bound is unusually specific to the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

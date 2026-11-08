@@ -9,7 +9,9 @@ Orthogonal projections, conditional expectation, and product noise satisfy finit
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.signed_intersection_zero}
 \leanok
 \difficulty{4}
-For finite subsets $S,J$ of a set and a real function $g$ on finite subsets, if $S\nsubseteq J$ then $\sum_{T\subseteq S}(-1)^{|S|-|T|}g(T\cap J)=0$.
+Let $S$ and $J$ be finite subsets of a set, and let $g$ be a real-valued function on its
+finite subsets. If $S\nsubseteq J$, then $\sum_{T\subseteq S}(-1)^{|S|-|T|}g(T\cap
+J)=0$.
 \end{theorem}
 
 \begin{theorem}[Conditional expectation of a component]
@@ -17,22 +19,32 @@ For finite subsets $S,J$ of a set and a real function $g$ on finite subsets, if 
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul, BooleanAnalysis.Hypercontractivity.RandomizationAux.signed_intersection_zero}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $J,S\subseteq[n]$, $f:\Omega\to\mathbb R$, and $x\in\Omega$. Then $E_J(f_S)(x)=f_S(x)$ if $S\subseteq J$, and $E_J(f_S)(x)=0$ otherwise.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $J$ and $S$ be sets of coordinates, let $f$ be a real-valued function on the
+product space, and let $x$ be an outcome. The conditional expectation over coordinates
+outside $J$ of the $S$-component of $f$, evaluated at $x$, equals that component at $x$
+if $S\subseteq J$, and equals zero otherwise.
 \end{theorem}
 
-\begin{theorem}[Subset inversion identity]
+\begin{theorem}[Signed subset inversion identity]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.sum_powerset_signed_sum}
 \leanok
 \difficulty{5}
-For a finite set $U$ and a real function $g$ on finite subsets, $\sum_{S\subseteq U}\sum_{T\subseteq S}(-1)^{|S|-|T|}g(T)=g(U)$.
+Let $U$ be a finite subset of a type with decidable equality, and let $g$ be a
+real-valued function on its finite subsets. Then $\sum_{S\subseteq U}\sum_{T\subseteq
+S}(-1)^{|S|-|T|}g(T)=g(U)$.
 \end{theorem}
 
-\begin{theorem}[Orthogonal projection composition]
+\begin{theorem}[Composition of product components]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.component_component}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_component, BooleanAnalysis.Hypercontractivity.RandomizationAux.signed_intersection_zero}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $S,T\subseteq[n]$, $f:\Omega\to\mathbb R$, and $x\in\Omega$. The $S$-component of $f_T$ equals $f_S(x)$ when $S=T$, and equals zero otherwise.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $S,T$ be subsets of its coordinate set, and let $f$ be a real-valued
+function on the product outcome space. At every outcome $x$, the $S$-component of the
+function given by the $T$-component of $f$ equals the $S$-component of $f$ if $S=T$, and
+equals zero otherwise.
 \end{theorem}
 
 \begin{theorem}[Component multiplier under noise]
@@ -40,30 +52,41 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_component}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $S\subseteq[n]$, $\rho\in\mathbb R$, and $f:\Omega\to\mathbb R$. The $S$-component of $T_\rho f$ is $\rho^{|S|}f_S$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $S$ be a set of coordinates, let $\rho\in\mathbb R$, and let $f$ be a
+real-valued function on the product space. At every outcome $x$, the $S$-component of
+the noise transform of $f$ is $\rho^{|S|}$ times the $S$-component of $f$.
 \end{theorem}
 
-\begin{theorem}[Recovery from orthogonal summands]
+\begin{theorem}[Reconstruction from components]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.component_reconstruction}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.RandomizationAux.sum_powerset_signed_sum}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $f:\Omega\to\mathbb R$. Its orthogonal components satisfy $\sum_{S\subseteq[n]}f_S(x)=f(x)$ for every $x\in\Omega$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, and let $f$ be a real-valued function on the product space. At every outcome
+$x$, the sum of all its components, over all coordinate subsets $S$, equals $f(x)$.
 \end{theorem}
 
-\begin{theorem}[Weighted absolute-power Jensen inequality]
+\begin{theorem}[Weighted absolute-power inequality]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.weighted_abs_rpow_sum_le}
 \leanok
 \difficulty{4}
-Let $s$ be finite, let $w_i\ge0$ for $i\in s$ satisfy $\sum_{i\in s}w_i=1$, and let $F_i\in\mathbb R$ and $q\ge1$. Then $|\sum_{i\in s}w_iF_i|^q\le\sum_{i\in s}w_i|F_i|^q$.
+Let $s$ be a finite set, let $w,F:s\to\mathbb R$, and suppose $w(a)\ge0$ for every $a\in
+s$, $\sum_{a\in s}w(a)=1$, and $q\ge1$. Then $\left|\sum_{a\in
+s}w(a)F(a)\right|^q\le\sum_{a\in s}w(a)|F(a)|^q$.
 \end{theorem}
 
-\begin{theorem}[Reflected finite-moment contraction]
+\begin{theorem}[Weighted negative moment inequality]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.weighted_negative_moment_le}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.CenteredContraction.scalar_affine}
 \difficulty{4}
-Let $s$ be finite with weights $w_i\ge0$ summing to $1$, values $F_i\in\mathbb R$, $q>0$, and $0\le c\le1$. If $|1-cz|^q\le|1+z|^q-q(1+c)z$ for every real $z$, then with $a=\sum_{i\in s}w_iF_i$, $\sum_{i\in s}w_i|a-c(F_i-a)|^q\le\sum_{i\in s}w_i|F_i|^q$.
+Let $\alpha$ be a type, let $s$ be a finite subset of $\alpha$, and let $w,F:s\to\mathbb
+R$ be given, with $w_i\ge0$ for every $i\in s$ and $\sum_{i\in s}w_i=1$. Suppose $q>0$,
+$0\le c\le1$, and for every $z\in\mathbb R$, $|1-cz|^q\le |1+z|^q-q(1+c)z$. Set
+$a=\sum_{i\in s}w_iF_i$. Then $\sum_{i\in s}w_i|a-c(F_i-a)|^q\le\sum_{i\in
+s}w_i|F_i|^q$.
 \end{theorem}
 
 \begin{theorem}[Conditional reflected-moment contraction]
@@ -71,7 +94,12 @@ Let $s$ be finite with weights $w_i\ge0$ summing to $1$, values $F_i\in\mathbb R
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass_sum, BooleanAnalysis.Hypercontractivity.RandomizationAux.weighted_negative_moment_le}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $J\subseteq[n]$, $f:\Omega\to\mathbb R$, $q>0$, and $0\le c\le1$. If $|1-cz|^q\le|1+z|^q-q(1+c)z$ for every real $z$, then $\mathbb E_P|E_Jf-c(f-E_Jf)|^q\le\mathbb E_P|f|^q$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $J$ be a set of coordinates, let $f$ be a real-valued function on the
+product space, and let $q,c\in\mathbb R$ satisfy $0<q$ and $0\le c\le1$. Suppose that
+$|1-cz|^q\le |1+z|^q-q(1+c)z$ for every real $z$. Then the product expectation of
+$|E_Jf-c(f-E_Jf)|^q$ is at most the product expectation of $|f|^q$, where $E_J$ denotes
+conditional expectation over coordinates outside $J$.
 \end{theorem}
 
 \begin{theorem}[Conditional moment contraction]
@@ -79,15 +107,23 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass_sum, BooleanAnalysis.Hypercontractivity.RandomizationAux.weighted_abs_rpow_sum_le}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $J\subseteq[n]$, $f:\Omega\to\mathbb R$, and $q\ge1$. Then $\mathbb E_P|E_Jf|^q\le\mathbb E_P|f|^q$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $J$ be a set of coordinates, let $f$ be a real-valued function on the
+product space, and let $q\in\mathbb R$ satisfy $1\le q$. Then the product expectation of
+the $q$th power of the absolute value of the conditional expectation over coordinates
+outside $J$ is at most the product expectation of $|f|^q$.
 \end{theorem}
 
-\begin{theorem}[Degree after subtracting a constant]
+\begin{theorem}[Degree bound under constant subtraction]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.hasDegreeLE_sub_const}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.HasDegreeLE, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.RandomizationAux.signed_intersection_zero}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $k\in\mathbb N$, $f:\Omega\to\mathbb R$ of degree at most $k$, and $c\in\mathbb R$. Then $x\mapsto f(x)-c$ has degree at most $k$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $k$ be a nonnegative integer, and let $f$ be a real-valued function on its
+outcome space whose components indexed by sets of size greater than $k$ vanish
+identically. For every real constant $c$, the function $x\mapsto f(x)-c$ also has all
+components indexed by sets of size greater than $k$ vanishing identically.
 \end{theorem}
 
 \begin{theorem}[Positive variance forces positive degree]
@@ -95,7 +131,10 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.HasDegreeLE, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.variance, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_reconstruction}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $f:\Omega\to\mathbb R$ of degree at most $k\in\mathbb N$, and $\operatorname{Var}_P(f)>0$. Then $k>0$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $k\in\mathbb N$, and let $f$ be a real-valued function on the product space.
+Suppose every component of $f$ indexed by a coordinate subset of size greater than $k$
+vanishes identically, and suppose the variance of $f$ under $P$ is positive. Then $k>0$.
 \end{theorem}
 
 \begin{theorem}[Variance decomposition]
@@ -103,15 +142,23 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul, BooleanAnalysis.Hypercontractivity.FiniteProduct.parseval, BooleanAnalysis.Hypercontractivity.FiniteProduct.variance}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $f:\Omega\to\mathbb R$ with orthogonal components $f_S$. Then $\operatorname{Var}_P(f)=\sum_{\varnothing\ne S\subseteq[n]}\mathbb E_Pf_S^2$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, and let $f$ be real-valued on its outcome space. Its variance is the sum of the
+expected squared components over all nonempty coordinate subsets:
+$\operatorname{Var}_P(f)=\sum_{\varnothing\ne S\subseteq\{0,\ldots,n-1\}}\mathbb
+E_P[f_S^2]$.
 \end{theorem}
 
-\begin{theorem}[Components of conditional expectation]
+\begin{theorem}[Components after conditional expectation]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.component_condExp}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul, BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_component}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $J,S\subseteq[n]$, and $f:\Omega\to\mathbb R$. The $S$-component of $E_Jf$ equals $f_S$ when $S\subseteq J$, and zero otherwise.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $J,S$ be subsets of its coordinate set, and let $f$ be a real-valued
+function on the product outcome space. At every outcome $x$, the $S$-component of the
+conditional expectation of $f$ given the coordinates in $J$ equals the $S$-component of
+$f$ if $S\subseteq J$, and equals zero otherwise.
 \end{theorem}
 
 \begin{theorem}[Components of a coordinate Laplacian]
@@ -119,7 +166,11 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_condExp}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $f:\Omega\to\mathbb R$, a coordinate $i$, and $S\subseteq[n]$. The $S$-component of $L_if$ is $f_S$ if $i\in S$, and zero otherwise.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $f$ be a real-valued function on the product outcome space, let $i$ be a
+coordinate, and let $S$ be a subset of the coordinate set. At every outcome $x$, the
+$S$-component of $f$ minus its conditional expectation given all coordinates other than
+$i$ equals the $S$-component of $f$ if $i\in S$, and equals zero otherwise.
 \end{theorem}
 
 \begin{theorem}[Influence decomposition]
@@ -127,7 +178,10 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence, BooleanAnalysis.Hypercontractivity.FiniteProduct.parseval, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_laplacian}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $f:\Omega\to\mathbb R$, and a coordinate $i$. Then $I_i(f)=\sum_{S\ni i}\mathbb E_Pf_S^2$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $f$ be real-valued on its outcome space, and choose a coordinate
+$i\in\{0,\ldots,n-1\}$. The influence of $f$ at $i$ equals the sum, over all coordinate
+subsets $S$ containing $i$, of the expected squared $S$-component of $f$.
 \end{theorem}
 
 \begin{theorem}[Total influence decomposition]
@@ -135,15 +189,20 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.RandomizationAux.influence_eq_sum_components}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $f:\Omega\to\mathbb R$. Then $I(f)=\sum_{S\subseteq[n]}|S|\mathbb E_Pf_S^2$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, and let $f$ be real-valued on its outcome space. Its total influence equals
+$\sum_{S\subseteq\{0,\ldots,n-1\}} |S|\,\mathbb E_P[f_S^2]$, where $f_S$ is its
+$S$-component.
 \end{theorem}
 
-\begin{theorem}[Boolean variance bound]
+\begin{theorem}[Variance bound for Boolean functions]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.boolean_variance_le_one}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.parseval, BooleanAnalysis.Hypercontractivity.FiniteProduct.variance, BooleanAnalysis.Hypercontractivity.RandomizationAux.variance_eq_sum_components}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $f:\Omega\to\{-1,1\}$. Then $\operatorname{Var}_P(f)\le1$.
+Let $P$ be a finite product of $n$ finite probability spaces with strictly positive atom
+masses, and let $f$ be a real-valued function on its product outcome space taking values
+in $\{-1,1\}$. Then $\operatorname{Var}_P(f)\leq 1$.
 \end{theorem}
 
 \begin{theorem}[Conditional residual second moment]
@@ -151,21 +210,33 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.parseval, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_condExp}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $J\subseteq[n]$, and $f:\Omega\to\mathbb R$. Then $\mathbb E_P(f-E_Jf)^2=\sum_{S\nsubseteq J}\mathbb E_Pf_S^2$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $J$ be a set of coordinates, and let $f$ be a real-valued function on the
+product space. The product expectation of $(f-E_Jf)^2$ equals the sum, over coordinate
+subsets $S$ not contained in $J$, of the product expectations of $f_S^2$.
 \end{theorem}
 
-\begin{theorem}[Component tail from total influence]
+\begin{theorem}[Component tail bounded by total influence]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.component_tail_le_totalInfluence}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence, BooleanAnalysis.Hypercontractivity.RandomizationAux.totalInfluence_eq_sum_card_components}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $f:\Omega\to\mathbb R$, and $k\in\mathbb N$. Then $(k+1)\sum_{|S|>k}\mathbb E_Pf_S^2\le I(f)$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $f$ be a real-valued function on the product space, and let $k\in\mathbb N$.
+Then $(k+1)\sum_{S:\,|S|>k}\mathbb E_{x\sim P}[f_S(x)^2]\le I(f)$, where $f_S$ is the
+$S$-component and $I(f)$ is the total influence.
 \end{theorem}
 
-\begin{theorem}[Boolean junta from energy bounds]
+\begin{theorem}[Boolean junta approximation from energy bounds]
 \lean{BooleanAnalysis.Hypercontractivity.RandomizationAux.exists_boolean_junta_of_energy_bounds}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.DependsOn, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.exists_boolean_rounding, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.prob, BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_residual_secondMoment}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $f:\Omega\to\{-1,1\}$, $J\subseteq[n]$, $k\in\mathbb N$, and $a,b\in\mathbb R$. If $\sum_{|S|>k}\mathbb E_Pf_S^2\le a$ and $\sum_{|S|\le k,\ S\nsubseteq J}\mathbb E_Pf_S^2\le b$, then there exists $g:\Omega\to\{-1,1\}$ depending only on $J$ with $\Pr_P(f\ne g)\le a+b$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, and let $f$ take values in $\{-1,1\}$ on its outcome space. For a coordinate set
+$J\subseteq\{0,\ldots,n-1\}$, an integer $k\ge 0$, and real numbers $a,b$, suppose the
+total expected squared component energy over sets $S$ with $|S|>k$ is at most $a$, and
+the corresponding total over sets with $|S|\le k$ but $S\nsubseteq J$ is at most $b$.
+Then there is a function $g$ taking values in $\{-1,1\}$, depending only on coordinates
+in $J$, such that $\Pr_P(f\ne g)\le a+b$.
 \end{theorem}

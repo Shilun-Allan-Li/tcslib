@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.recordStep_scan_preserves",
+ "key": "c0a5ffa8e96ae481",
+ "kind": "theorem",
+ "title": "Preservation during a two-pass scan",
+ "statement": "Let $A$ and $\\Gamma$ be types, let $x,w$ be lists over $\\Gamma$, let $i$ be one of four work-tape indices, and let $\\delta_f,\\delta_b:A\\times\\Gamma\\to A\\times\\Gamma$ be transition maps. Suppose a configuration $c$ of the four-tape scan machine on input $x$ is in forward phase with state $a$, and tape $i$, at every offset $z$ from its head with $-1\\le z\\le |w|$, contains the corresponding symbol of $w$ (and is blank where that word has no symbol). If the forward-and-backward scan of $w$ from state $a$ returns the pair $(b,w)$, then after $2|w|+2$ steps the machine is in configuration $c$ with state changed to the completed phase carrying $b$. It has not entered any completed phase earlier, and through that time tape $i$'s head remains between its initial position minus one and its initial position plus $|w|$, while every other work-tape head stays fixed.",
+ "hypotheses_covered": [
+  "Four work tapes and a selected index i",
+  "Input list x and word w over Γ",
+  "Forward and backward transition maps δf and δb",
+  "Initial configuration c is in forward phase with state a",
+  "Tape i agrees with the buffered word w at offsets −1 through |w|",
+  "Scanning w from a returns final state b and leaves w unchanged"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

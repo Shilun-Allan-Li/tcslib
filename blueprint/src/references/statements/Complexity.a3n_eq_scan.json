@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a3n_eq_scan",
+ "key": "93e26efdeb2d86f3",
+ "kind": "lemma",
+ "title": "Comparison Scan Prefix Invariant",
+ "statement": "Let $y,pre,u,v$ be binary words with $y=pre\\,v$. For every natural number $j\\le |v|$, starting from the comparator configuration in comparison state with flag true, work word $u$, work head at zero, and input-head position $|pre|+1$, after $j$ steps it is in comparison state at input-head position $|pre|+j+1$ with work word $u$, work head at position $j$, and comparison flag true exactly when the length-$j$ prefixes of $u$ and $v$ agree.",
+ "hypotheses_covered": [
+  "$y,pre,u,v$ are binary words",
+  "$y=pre\\,v$",
+  "$j$ is a natural number",
+  "$j\\le |v|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the comparator input has the form $y = p\\,v$ and let $u$ be the decoded word. For every $j \\le |v|$, after $j$ steps from the comparison state at position $|p|+1$, the comparator is at position $|p|+j+1$ with its flag recording whether the length-$j$ prefixes of $u$ and $v$ agree."
+}

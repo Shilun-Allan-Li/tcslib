@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Ends.callThen",
+ "key": "607e7d04323cbd2a",
+ "kind": "theorem",
+ "title": "Call followed by a statement",
+ "statement": "Let $P$ be a program, let $\text{lim}$ be execution limits, and let $d,p,x,T,T'$ be natural numbers. Suppose there is a procedure body for $p$ whose execution at depth $d+1$, from the initial state with local variables initialized from the list $\text{vals}$ (using zero for missing entries) and memory $\u0000mu$, costs at most $T'$ and ends with local variable $0$ and memory satisfying $R(r,\u0000mu')$ for some $r$ and $\u0000mu'$. Suppose also that for every $r,\u0000mu'$ satisfying $R(r,\u0000mu')$, the statement $s$ executes from the state with local variable $x$ set to $r$ and memory $\u0000mu'$, at cost at most $T-((\\text{sum of argument expression costs})+2+T')$, to a state satisfying $Q$. If every call argument is safe in the initial state with local variables $\text{loc}$ and memory $\u0000mu$, and its value list is $\text{vals}$, if $d<\\text{lim.depth}$, and if the sum of the argument expression costs plus $2+T'$ is at most $T$, then the call to $p$ with arguments $\text{args}$ that assigns the procedure result to local variable $x$, followed by $s$, executes from that initial state at cost at most $T$ to a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "A body for procedure $p$ occurs in $P$ and executes at depth $d+1$ from locals initialized by $\\text{vals}$ and memory $\\mu$, with cost at most $T'$, producing a result and memory satisfying $R$",
+  "For every result and memory satisfying $R$, statement $s$ executes from locals updated at $x$ and that memory, with cost at most $T$ minus the argument costs, $2$, and $T'$, to a state satisfying $Q$",
+  "Every argument expression is safe in the initial state, and the arguments evaluate to $\\text{vals}$",
+  "$d<\\text{lim.depth}$",
+  "The sum of argument expression costs plus $2+T'$ is at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

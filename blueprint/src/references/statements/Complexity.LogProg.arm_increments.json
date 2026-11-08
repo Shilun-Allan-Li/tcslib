@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.arm_increments",
+ "key": "5fe7276563328324",
+ "kind": "lemma",
+ "title": "Repeated increments preserve bounded reachability",
+ "statement": "Let $A$ be an arithmetic register program, let $x$ be a Boolean input, and let $r$ be one of its registers. Suppose $k,B\\in\\mathbb{N}$, the instruction at each of the states $\\ell_0,\\ldots,\\ell_{k-1}$ increments register $r$ and proceeds to the next state, and an initial register valuation $v$ satisfies $v(s)\\le B$ for every register $s$ and $v(r)+k\\le B$. Then the program can reach the configuration with state $\\ell_k$, register valuation obtained by replacing $v(r)$ with $v(r)+k$, and no answer yet, from the configuration with state $\\ell_0$, valuation $v$, and no answer yet, with the precondition holding at every preceding step and all register values bounded by $B$.",
+ "hypotheses_covered": [
+  "Arithmetic register program, oracle, Boolean input, and register $r$",
+  "Natural numbers $k$ and $B$",
+  "Each of the first $k$ state instructions increments $r$ and advances to the next state",
+  "Every initial register value is at most $B$",
+  "The initial value of $r$ plus $k$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

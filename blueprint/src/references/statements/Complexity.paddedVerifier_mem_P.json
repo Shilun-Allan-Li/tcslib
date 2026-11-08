@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.paddedVerifier_mem_P",
+ "key": "584f30a9883c881a",
+ "kind": "lemma",
+ "title": "Polynomial-time closure of padded verification",
+ "statement": "Let $C,c\\in\\mathbb{N}$ and let $V$ be a language of binary strings in polynomial time. The padded verifier for $C,c,V$ is also in polynomial time.",
+ "hypotheses_covered": [
+  "$C,c$ are natural numbers",
+  "$V$ is a language of binary strings",
+  "$V$ belongs to polynomial time"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c \\in \\mathbb{N}$ and let $V \\subseteq \\{0,1\\}^{*}$ be a language in\n$\\mathsf{P}$. Consider the language $V^{\\mathrm{pad}}_{C,c}$ of binary strings $y$\nsuch that, for the least $n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist),\nthe suffix $v$ of $y$ after its first $n$ bits contains a $1$, and the prefix $u$\nof $v$ preceding its last $1$ satisfies $|u| \\le C(n+1)^c$ and\n$\\langle x, u\\rangle \\in V$, where $x$ is the first $n$ bits of $y$ and\n$\\langle x, u\\rangle$ is the self-delimiting pair encoding ($x$ with every bit\ndoubled, then $01$, then $u$). Then $V^{\\mathrm{pad}}_{C,c} \\in \\mathsf{P}$."
+}

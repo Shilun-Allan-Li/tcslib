@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.sweep_turn_right",
+ "key": "5a6a13e2cc973950",
+ "kind": "lemma",
+ "title": "Turning from a backward to a forward scan",
+ "statement": "Let $A$ be an alphabet, $S$ a state set, and $x$ a finite input word. For any optional state $q$, state $q'$, input-head position $p$ among the $|x|+2$ allowed positions, integer frontier $z$, lists $l,r$ of possibly blank symbols, output word $out$, and possibly blank symbol $b$, applying the action that writes $b$, moves the work head right, leaves the input head and output unchanged, and enters state $q'$ to the backward-facing configuration at $z$ gives the forward-facing configuration at $z+1$ with left list $b$ followed by the tail of $r$, right list $l$, input-head position $p$, and output $out$.",
+ "hypotheses_covered": [
+  "An alphabet $A$, state set $S$, and finite input word $x$",
+  "An optional state $q$ and state $q'$",
+  "An allowed input-head position $p$",
+  "An integer frontier $z$",
+  "Lists $l,r$ of possibly blank symbols and output word $out$",
+  "A possibly blank symbol $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider a one-work-tape configuration in backward-facing zipper form: work head at cell\n$z$, a list $r$ occupying cells $z, z-1, \\dots$, and a list $l$ occupying cells\n$z+1, z+2, \\dots$. Applying the sweep action that writes a symbol $b$ at the current\ncell, moves the work head right, leaves the input head and output unchanged, and enters\na state $q'$ yields the forward-facing zipper at $z+1$: cells $z, z-1, \\dots$ hold $b$\nfollowed by the tail of $r$, and cells $z+1, z+2, \\dots$ hold $l$."
+}

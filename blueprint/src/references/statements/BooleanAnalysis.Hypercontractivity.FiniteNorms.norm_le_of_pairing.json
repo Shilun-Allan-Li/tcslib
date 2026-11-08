@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteNorms.norm_le_of_pairing",
+ "key": "bf9dc008c076371e",
+ "kind": "theorem",
+ "title": "Weighted norm bound from pairings",
+ "statement": "Let $I$ be a finite set, let $w_i\\ge 0$ for each $i\\in I$, let $q>1$, let $z:I\\to\\mathbb R$, and let $N\\ge 0$. If every function $g:I\\to\\mathbb R$ satisfies\n\\[\n\\sum_{i\\in I}w_i z_i g_i\\le N\\left(\\sum_{i\\in I}w_i|g_i|^{q/(q-1)}\\right)^{1/(q/(q-1))},\n\\]\nthen $\\left(\\sum_{i\\in I}w_i|z_i|^q\\right)^{1/q}\\le N$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w_i\\ge0$ for every $i$",
+  "$q>1$",
+  "$z:I\\to\\mathbb R$",
+  "$N\\ge0$",
+  "The pairing bound holds for every $g:I\\to\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be a finite set with nonnegative weights $w_i$, $q>1$, $z:I\\to\\mathbb R$, and $N\\ge0$. If $\\sum_iw_iz_ig_i\\le N(\\sum_iw_i|g_i|^{q/(q-1)})^{(q-1)/q}$ for every $g:I\\to\\mathbb R$, then $(\\sum_iw_i|z_i|^q)^{1/q}\\le N$."
+}

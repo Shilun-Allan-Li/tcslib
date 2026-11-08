@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.AdjWalk.aLoop",
+ "key": "0594c9fb753bf031",
+ "kind": "lemma",
+ "title": "Bounded traversal of gate arguments",
+ "statement": "Let $C$ be a family of finite acyclic Boolean circuits, fix natural numbers $n,i,B$, a Boolean parameter $\\ell$, and a gate $g$ of the circuit for input length $n$. Suppose the gate at index $V-n$ is $g$, $n\\le V$, and $V+1\\le B$. For every choice of natural numbers $d,U,k,W,K$ such that $U+d=V$, $k\\le i$, $W\\le B$, $K=k+|E|$, and $K\\le B$, where $E$ is the encoding of the indices in $[U,U+d)$ that occur among the arguments of $g$, the emission property holds for $E$ starting from control state $aL$, registers $(k,V,U,W)$, and no answer. Its postcondition is that the resulting configuration has control state $gS$, registers $(K,V+1,V,W')$, and no answer for some $W'\\le B$.",
+ "hypotheses_covered": [
+  "The gate at index $V-n$ in the circuit for length $n$ is $g$.",
+  "$n\\le V$.",
+  "$V+1\\le B$.",
+  "For all $d,U,k,W,K$: $U+d=V$, $k\\le i$, $W\\le B$, $K=k+|E|$, and $K\\le B$, where $E$ encodes the indices in the indicated interval that are arguments of $g$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

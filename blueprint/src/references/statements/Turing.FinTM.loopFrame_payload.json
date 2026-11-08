@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopFrame_payload",
+ "key": "823b542f4527eae9",
+ "kind": "lemma",
+ "title": "Payload track read at its head",
+ "statement": "For any two Boolean finite Turing machines, input word, base configuration of the loop host, control state, input-head position, flag, counter, and payload tapes, counter and payload head positions, and output word, the symbol scanned on the payload track in the resulting controller frame is the value of the payload tape at the specified payload-head position.",
+ "hypotheses_covered": [
+  "Two Boolean finite Turing machines",
+  "An input word",
+  "A base loop-host configuration",
+  "A control state",
+  "An input-head position",
+  "Flag, counter, and payload tape contents",
+  "Counter and payload head positions",
+  "An output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every controller frame of the loop host with payload tape $f$ and payload head $h$,\nthe symbol scanned on the capture (payload) track of the frame is exactly $f(h)$."
+}

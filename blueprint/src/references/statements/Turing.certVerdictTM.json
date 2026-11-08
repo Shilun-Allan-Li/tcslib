@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.certVerdictTM",
+ "key": "21b7befd67cd0cea",
+ "kind": "def",
+ "title": "Certificate verdict machine",
+ "statement": "For a natural number $k$ and a designated work-tape index $c$ among the $k$ tapes, define a three-state Turing machine with Boolean tape symbols. It starts in state $0$; in state $0$ it moves the head on tape $c$ one cell left and enters state $1$. In state $1$, if the scanned symbol on tape $c$ is true, it again moves that head one cell left and enters state $2$; otherwise it outputs false and halts. In state $2$, it outputs true exactly when the scanned cell on tape $c$ is blank, and halts. In every step the input head stays put, and no work-tape cell is written.",
+ "hypotheses_covered": [
+  "Natural number $k$ of work tapes",
+  "Designated tape index $c : \\mathrm{Fin}(k)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

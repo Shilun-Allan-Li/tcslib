@@ -1,7 +1,12 @@
 from __future__ import annotations
 
 import re
+import hashlib
+import json
+import os
 import tempfile
+from concurrent.futures import ThreadPoolExecutor
+from threading import Event
 from collections.abc import Callable
 from decimal import Decimal
 from pathlib import Path
@@ -23,6 +28,7 @@ PROVENANCE_RE = re.compile(
 # stay under the API's verbatim-reproduction content filter and make
 # extraction restartable per chunk.
 CLEANUP_PAGES_PER_CALL = 3
+VISUAL_VALIDATION_PAGES_PER_CALL = 8
 
 
 def stable_block_id(source_fingerprint: str, page: int, sequence: int) -> str:
@@ -200,6 +206,8 @@ def repair_document(
     *,
     pdf_path: Path | None = None,
     renderer: Callable[[Path, int, Path], Path] = render_page,
+    cache_dir: Path | None = None,
+    jobs: int = 1,
 ) -> DocumentIndex:
     raw_text = raw_md.read_text(encoding="utf-8")
     fingerprint, pages = _raw_payload(raw_text)
@@ -209,26 +217,64 @@ def repair_document(
     # content filter, and a chunk failure loses only that chunk's retry.
     blocks = []
     ambiguity_rows = []
-    for start in range(0, len(pages), CLEANUP_PAGES_PER_CALL):
-        chunk = pages[start : start + CLEANUP_PAGES_PER_CALL]
-        cleanup = agent.run(
-            "cleanup", {"source_fingerprint": fingerprint, "pages": chunk}
-        )
+    failed = Event()
+
+    def clean_chunk(chunk):
+        if failed.is_set():
+            raise RuntimeError("PDF cleanup stopped after an earlier chunk failed")
+        payload = {"source_fingerprint": fingerprint, "pages": chunk}
+        cache = None
+        if cache_dir is not None:
+            resources = getattr(agent, "resource_root", Path(__file__).parent)
+            resource_text = "".join((resources / resource).read_text()
+                                    for resource in ("prompts/cleanup.md", "schemas/cleanup.json"))
+            def cache_for(model):
+                key_text = json.dumps(payload, sort_keys=True) + model + resource_text
+                return cache_dir / fingerprint / f"{hashlib.sha256(key_text.encode()).hexdigest()}.json"
+            cache = cache_for(str(getattr(agent, "model", "")))
+            # Explicitly trusted earlier models can supply completed chunks after
+            # a model change. Payload, prompt and schema hashes must still match.
+            if not cache.is_file():
+                for prior in os.environ.get("PROOFMATCH_CLEANUP_CACHE_MODELS", "").split(","):
+                    if prior.strip() and cache_for(prior.strip()).is_file():
+                        cache = cache_for(prior.strip())
+                        break
+        cached = cache is not None and cache.is_file()
+        try:
+            cleanup = json.loads(cache.read_text()) if cached else agent.run("cleanup", payload)
+        except Exception:
+            failed.set()
+            raise
         chunk_blocks = _blocks_from_output(
             fingerprint, {int(page["page"]) for page in chunk}, cleanup
         )
-        blocks.extend(chunk_blocks)
         chunk_ambiguities, unresolved = _ambiguities_from_output(
             fingerprint,
             {(block.page, block.sequence) for block in chunk_blocks},
             cleanup,
         )
-        ambiguity_rows.extend(chunk_ambiguities)
+        if cache is not None and not cached:
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            pending = cache.with_suffix(".tmp")
+            pending.write_text(json.dumps(cleanup, ensure_ascii=False))
+            pending.replace(cache)
+        print(f"  PDF pages {chunk[0]['page']}-{chunk[-1]['page']}: "
+              f"{'cached' if cached else 'cleaned'}", flush=True)
         for page, sequence, reason in unresolved:
             print(
                 f"Warning: cleanup flagged block {page}:{sequence}, which it "
                 f"never emitted — check that page by hand ({reason})"
             )
+        return chunk_blocks, chunk_ambiguities
+
+    chunks = [pages[start:start + CLEANUP_PAGES_PER_CALL]
+              for start in range(0, len(pages), CLEANUP_PAGES_PER_CALL)]
+    if jobs < 1:
+        raise ValueError("Extraction jobs must be positive")
+    with ThreadPoolExecutor(max_workers=jobs) as pool:
+        for chunk_blocks, chunk_ambiguities in pool.map(clean_chunk, chunks):
+            blocks.extend(chunk_blocks)
+            ambiguity_rows.extend(chunk_ambiguities)
     by_key = {(block.page, block.sequence): block for block in blocks}
 
     if ambiguity_rows:
@@ -248,49 +294,61 @@ def repair_document(
                 visual_cost,
             )
         )
-        with tempfile.TemporaryDirectory(prefix="proofmatch-pages-") as tmp:
-            images = [
-                renderer(pdf_path, page, Path(tmp) / f"page-{page:03d}.png")
-                for page in ambiguous_pages
-            ]
-            visual = agent.run(
-                "visual_validate",
-                {
-                    "blocks": [
-                        {
-                            "block_id": ambiguity.block_id,
-                            "page": page,
-                            "sequence": sequence,
-                            "reason": ambiguity.reason,
-                            "markdown": by_key[(page, sequence)].markdown,
-                        }
-                        for ambiguity, page, sequence in ambiguity_rows
-                    ]
-                },
-                images=images,
-            )
-        corrections = visual.get("corrections")
-        if not isinstance(corrections, list):
-            raise ValueError("visual output must contain a corrections array")
         resolved_keys: set[tuple[int, int]] = set()
-        for correction in corrections:
-            if not isinstance(correction, dict):
-                raise ValueError("visual correction must be an object")
-            key = (int(correction["page"]), int(correction["sequence"]))
-            if key not in by_key:
-                raise ValueError(f"visual correction cites nonexistent block {key}")
-            original = by_key[key]
-            by_key[key] = DocumentBlock(
-                block_id=original.block_id,
-                page=original.page,
-                sequence=original.sequence,
-                kind=original.kind,
-                title=original.title,
-                markdown=str(correction["markdown"]).strip(),
-                confidence=float(correction["confidence"]),
-            )
-            if correction.get("unresolved_reason") is None:
-                resolved_keys.add(key)
+        for start in range(0, len(ambiguous_pages), VISUAL_VALIDATION_PAGES_PER_CALL):
+            page_batch = ambiguous_pages[start : start + VISUAL_VALIDATION_PAGES_PER_CALL]
+            page_set = set(page_batch)
+            batch_rows = [row for row in ambiguity_rows if row[1] in page_set]
+            with tempfile.TemporaryDirectory(prefix="proofmatch-pages-") as tmp:
+                images = [
+                    renderer(pdf_path, page, Path(tmp) / f"page-{page:03d}.png")
+                    for page in page_batch
+                ]
+                visual = agent.run(
+                    "visual_validate",
+                    {
+                        "blocks": [
+                            {
+                                "block_id": ambiguity.block_id,
+                                "page": page,
+                                "sequence": sequence,
+                                "reason": ambiguity.reason,
+                                "markdown": by_key[(page, sequence)].markdown,
+                            }
+                            for ambiguity, page, sequence in batch_rows
+                        ]
+                    },
+                    images=images,
+                )
+            corrections = visual.get("corrections")
+            if not isinstance(corrections, list):
+                raise ValueError("visual output must contain a corrections array")
+            allowed_corrections = {
+                (page, sequence) for _, page, sequence in batch_rows
+            }
+            for correction in corrections:
+                if not isinstance(correction, dict):
+                    raise ValueError("visual correction must be an object")
+                key = (int(correction["page"]), int(correction["sequence"]))
+                if key not in allowed_corrections or key not in by_key:
+                    print(
+                        f"Warning: visual validation returned an unrequested block {key}; "
+                        "ignoring correction",
+                        flush=True,
+                    )
+                    continue
+                original = by_key[key]
+                by_key[key] = DocumentBlock(
+                    block_id=original.block_id,
+                    page=original.page,
+                    sequence=original.sequence,
+                    kind=original.kind,
+                    title=original.title,
+                    markdown=str(correction["markdown"]).strip(),
+                    confidence=float(correction["confidence"]),
+                )
+                if correction.get("unresolved_reason") is None:
+                    resolved_keys.add(key)
         ambiguities = tuple(
             DocumentAmbiguity(
                 ambiguity.block_id,

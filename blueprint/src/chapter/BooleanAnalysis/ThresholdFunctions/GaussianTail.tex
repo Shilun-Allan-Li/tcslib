@@ -7,6 +7,18 @@ This chapter develops the standard Gaussian density, cumulative distribution fun
 \begin{definition}[Standard Gaussian probability measure]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \leanok
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p017-b003,
+  pdf-681b6f3d947f-p058-b002,
+  pdf-681b6f3d947f-p119-b003
+}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p002-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p017-b004,
+  pdf-ffbe9c7b3306-p017-b005,
+  pdf-ffbe9c7b3306-p118-b005
+}
+\statementsource{mossel-neeman-gaussian-noise-stability}{pdf-b53c1a5aa27d-p003-b002}
 The standard Gaussian probability measure $\gamma$ on $\mathbb R$ is the measure with Lebesgue density $x\mapsto e^{-x^2/2}/\sqrt{2\pi}$. For every Borel set $A\subseteq\mathbb R$, it satisfies
 \[
 \gamma(A)=\int_A \frac{e^{-x^2/2}}{\sqrt{2\pi}}\,dx.
@@ -16,6 +28,13 @@ The standard Gaussian probability measure $\gamma$ on $\mathbb R$ is the measure
 \begin{definition}[Standard Gaussian probability density]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
 \leanok
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p017-b003}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p002-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p017-b005,
+  pdf-ffbe9c7b3306-p118-b005
+}
+\statementsource{mossel-neeman-gaussian-noise-stability}{pdf-b53c1a5aa27d-p003-b002}
 The standard Gaussian density is the function $\varphi:\mathbb R\to\mathbb R$ defined, for every $x\in\mathbb R$, by
 \[
 \varphi(x)=\frac{e^{-x^2/2}}{\sqrt{2\pi}}.
@@ -26,6 +45,13 @@ The standard Gaussian density is the function $\varphi:\mathbb R\to\mathbb R$ de
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p015-b002}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p002-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p017-b005,
+  pdf-ffbe9c7b3306-p118-b005
+}
+\statementsource{mossel-neeman-gaussian-noise-stability}{pdf-b53c1a5aa27d-p003-b002}
 Let $\gamma$ be the standard Gaussian probability measure on $\mathbb R$, with density $x\mapsto e^{-x^2/2}/\sqrt{2\pi}$. Its cumulative distribution function is the real-valued function defined for every $t\in\mathbb R$ by $\Phi(t)=\gamma(({-\infty},t])$.
 \end{definition}
 
@@ -33,6 +59,12 @@ Let $\gamma$ be the standard Gaussian probability measure on $\mathbb R$, with d
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianTail}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p015-b002}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p002-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p017-b005,
+  pdf-ffbe9c7b3306-p118-b005
+}
 Let $\Phi(t)=\int_{-\infty}^{t} e^{-x^2/2}/\sqrt{2\pi}\,dx$ be the standard Gaussian cumulative distribution function. Its complementary tail function is defined for every $t\in\mathbb R$ by $\overline\Phi(t)=1-\Phi(t)$.
 \end{definition}
 
@@ -40,6 +72,14 @@ Let $\Phi(t)=\int_{-\infty}^{t} e^{-x^2/2}/\sqrt{2\pi}\,dx$ be the standard Gaus
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p017-b005,
+  pdf-ffbe9c7b3306-p018-b005
+}
+\statementsource{mossel-neeman-gaussian-noise-stability}{
+  pdf-b53c1a5aa27d-p003-b002,
+  pdf-b53c1a5aa27d-p003-b003
+}
 Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$ be the standard Gaussian cumulative distribution function. Define $Q:\mathbb R\to\mathbb R$ by
 \[
 Q(\alpha)=\inf\{t\in\mathbb R:\alpha\le\Phi(t)\},
@@ -50,7 +90,18 @@ where the infimum is assigned the value $0$ when its set is empty or unbounded b
 \begin{definition}[Total Gaussian isoperimetric profile]
 \lean{BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p019-b002}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p017-b005,
+  pdf-ffbe9c7b3306-p018-b005,
+  pdf-ffbe9c7b3306-p118-b005,
+  pdf-ffbe9c7b3306-p125-b004
+}
+\statementsource{mossel-neeman-gaussian-noise-stability}{
+  pdf-b53c1a5aa27d-p006-b003,
+  pdf-b53c1a5aa27d-p006-b004
+}
 Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, and define $Q(\alpha)=\inf\{t\in\mathbb R:\alpha\le\Phi(t)\}$ for $0<\alpha<1$ and $Q(\alpha)=0$ otherwise. The Gaussian isoperimetric profile is the function $U:\mathbb R\to\mathbb R$ given by $U(\alpha)=\varphi(Q(\alpha))$. In particular its values at both endpoints and outside $[0,1]$ are $U(\alpha)=1/\sqrt{2\pi}$ for $\alpha\le0$ or $\alpha\ge1$.
 \end{definition}
 
@@ -58,6 +109,12 @@ Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and $\Phi(t)=\int_{-\infty}^{t}\varphi(x
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p017-b003}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p002-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p017-b005,
+  pdf-ffbe9c7b3306-p118-b005
+}
 \difficulty{3}
 Let $\varphi$ be the probability density of the standard Gaussian distribution $N(0,1)$. For every $x\in\mathbb R$, its value is
 \[
@@ -65,63 +122,68 @@ Let $\varphi$ be the probability density of the standard Gaussian distribution $
 \]
 \end{lemma}
 
-\begin{lemma}[Strict positivity of the Gaussian density]
+\begin{lemma}[Positivity of the Gaussian density]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
 \difficulty{1}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. For every $x\in\mathbb R$, one has $0<\varphi(x)$.
+For every real number $x$, the standard Gaussian density satisfies $0<\varphi(x)$.
 \end{lemma}
 
-\begin{lemma}[Continuity of the Gaussian density]
+\begin{lemma}[Continuity of the standard Gaussian density]
 \lean{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
 \difficulty{3}
-The standard Gaussian density $\varphi:\mathbb R\to\mathbb R$, defined by $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, is continuous on $\mathbb R$.
+The standard Gaussian density $\varphi:\mathbb R\to\mathbb R$, given by
+$\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, is continuous on $\mathbb R$.
 \end{lemma}
 
-\begin{lemma}[Derivative of the Gaussian density]
+\begin{lemma}[Derivative of the standard Gaussian density]
 \lean{BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. For every $x\in\mathbb R$, the function $\varphi$ is differentiable at $x$ and satisfies $\varphi'(x)=-x\varphi(x)$.
+Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. For every
+$x\in\mathbb R$, it is differentiable at $x$ with derivative $\varphi'(x)=-x\varphi(x)$.
 \end{lemma}
 
-\begin{lemma}[Divergence of squares at negative infinity]
+\begin{lemma}[Divergence of Squares at Negative Infinity]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
 \leanok
 \difficulty{4}
-For a real variable $x$ tending to $-\infty$, its square tends to $+\infty$:
-\[
-\lim_{x\to-\infty}x^2=+\infty.
-\]
+Let $f\colon\mathbb{R}\to\mathbb{R}$ be defined by $f(x)=x^2$. Then $f(x)\to+\infty$ as
+$x\to-\infty$.
 \end{lemma}
 
-\begin{lemma}[Density decay at negative infinity]
+\begin{lemma}[Standard Gaussian density decay at negative infinity]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq,BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq, BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. Its limit at negative infinity is $\lim_{x\to-\infty}\varphi(x)=0$.
+Let $\varphi:\mathbb R\to\mathbb R$ be the standard Gaussian density. As $x$ tends to
+negative infinity, $\varphi(x)$ tends to $0$.
 \end{lemma}
 
-\begin{lemma}[Logarithm of the Gaussian density]
+\begin{lemma}[Logarithm of the standard Gaussian density]
 \lean{BooleanAnalysis.ThresholdFunctions.log_standardGaussianPDF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. For every $x\in\mathbb R$, its natural logarithm satisfies
-\[
-\log\varphi(x)=-\log\sqrt{2\pi}-\frac{x^2}{2}.
-\]
+For every real number $x$, the standard Gaussian density $\varphi(x)$ satisfies
+$\displaystyle\log\varphi(x)=-\log\sqrt{2\pi}-\frac{x^2}{2}$.
 \end{lemma}
 
 \begin{lemma}[Integral formula for the Gaussian distribution]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p017-b005}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p002-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p017-b005,
+  pdf-ffbe9c7b3306-p118-b005
+}
 \difficulty{3}
 Let $\gamma$ be the standard Gaussian probability measure on $\mathbb R$, let $\Phi(t)=\gamma(({-\infty},t])$, and let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$. For every $t\in\mathbb R$, the cumulative probability equals the Lebesgue integral of the density:
 \[
@@ -132,77 +194,84 @@ Let $\gamma$ be the standard Gaussian probability measure on $\mathbb R$, let $\
 \begin{lemma}[Gaussian distribution increments]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
 \difficulty{3}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$. For any real $a,b$, with no ordering assumption, one has
-\[
-\Phi(b)-\Phi(a)=\int_a^b\varphi(x)\,dx,
-\]
-where the interval integral is signed, so that $\int_a^b=-\int_b^a$ when $b<a$.
+For all real numbers $a$ and $b$, the increment of the standard Gaussian distribution
+function satisfies $\Phi(b)-\Phi(a)=\int_a^b\varphi(x)\,dx$, where the interval integral
+is signed.
 \end{lemma}
 
 \begin{lemma}[Derivative of the Gaussian distribution function]
 \lean{BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$. For every $t\in\mathbb R$, the function $\Phi$ is differentiable at $t$ with derivative $\Phi'(t)=\varphi(t)$.
+Let $\Phi(t)=\gamma((- \infty,t])$ be the distribution function of the standard Gaussian
+measure, whose density is $\varphi(t)=e^{-t^2/2}/\sqrt{2\pi}$. For every $t\in\mathbb
+R$, $\Phi$ is differentiable at $t$ and $\Phi'(t)=\varphi(t)$.
 \end{lemma}
 
-\begin{lemma}[Continuity of the Gaussian distribution function]
+\begin{lemma}[Continuity of the standard Gaussian distribution function]
 \lean{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianCDF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
+\uses{BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
 \difficulty{1}
-The standard Gaussian cumulative distribution function $\Phi:\mathbb R\to\mathbb R$, given by $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$, is continuous on $\mathbb R$.
+The standard Gaussian distribution function $\Phi:\mathbb R\to\mathbb R$ is continuous
+on $\mathbb R$.
 \end{lemma}
 
-\begin{lemma}[Strict increase of Gaussian cumulative probabilities]
+\begin{lemma}[Strict increase of the Gaussian distribution function]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\uses{BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
 \difficulty{3}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$ be the standard Gaussian cumulative distribution function. It is strictly increasing: for every $a,b\in\mathbb R$ with $a<b$, one has $\Phi(a)<\Phi(b)$.
+The standard Gaussian distribution function $\Phi$ is strictly increasing: whenever
+$a,b\in\mathbb R$ and $a<b$, one has $\Phi(a)<\Phi(b)$.
 \end{lemma}
 
-\begin{lemma}[Positive Gaussian cumulative probabilities]
+\begin{lemma}[Positivity of the Gaussian distribution function]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{3}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$ be the standard Gaussian cumulative distribution function. For every real $t$, one has $0<\Phi(t)$.
+Let $\Phi$ be the cumulative distribution function of the standard Gaussian measure on
+$\mathbb R$. For every $t\in\mathbb R$, $0<\Phi(t)$.
 \end{lemma}
 
-\begin{lemma}[Gaussian cumulative probabilities below one]
+\begin{lemma}[Gaussian distribution function is below one]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_lt_one}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{3}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$ be the standard Gaussian cumulative distribution function. For every real $t$, one has $\Phi(t)<1$.
+Let $\Phi$ be the cumulative distribution function of the standard Gaussian measure on
+$\mathbb R$. For every $t\in\mathbb R$, $\Phi(t)<1$.
 \end{lemma}
 
 \begin{lemma}[Attainment of interior Gaussian probabilities]
 \lean{BooleanAnalysis.ThresholdFunctions.exists_standardGaussianCDF_eq}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$ be the standard Gaussian cumulative distribution function. For every real $\alpha$ satisfying $0<\alpha<1$, there exists a real $t$ with $\Phi(t)=\alpha$.
+For every real number $\alpha$ with $0<\alpha<1$, there exists $t\in\mathbb R$ such that
+the standard Gaussian cumulative distribution function satisfies $\Phi(t)=\alpha$.
 \end{lemma}
 
 \begin{lemma}[Quantile recovery from a cumulative value]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono,BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono, BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
 \difficulty{4}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$, and let $Q(\alpha)$ be $\inf\{s\in\mathbb R:\alpha\le\Phi(s)\}$ for $0<\alpha<1$ and $0$ otherwise. For real $\alpha,t$ satisfying $\Phi(t)=\alpha$, one has $Q(\alpha)=t$.
+For real numbers $\alpha$ and $t$, if $\Phi(t)=\alpha$, then $Q(\alpha)=t$.
 \end{lemma}
 
-\begin{lemma}[Cumulative probability of a Gaussian quantile]
+\begin{lemma}[Gaussian quantile recovery]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.exists_standardGaussianCDF_eq,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile,BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq}
+\uses{BooleanAnalysis.ThresholdFunctions.exists_standardGaussianCDF_eq, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile, BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq}
 \difficulty{4}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$, and let $Q(\alpha)$ be $\inf\{t\in\mathbb R:\alpha\le\Phi(t)\}$ for $0<\alpha<1$ and $0$ otherwise. For every $\alpha\in\mathbb R$ with $0<\alpha<1$, one has $\Phi(Q(\alpha))=\alpha$.
+For every real number $\alpha$ with $0<\alpha<1$, the standard Gaussian distribution
+function evaluated at its lower $\alpha$-quantile equals $\alpha$:
+$\Phi(Q(\alpha))=\alpha$.
 \end{lemma}
 
 \begin{lemma}[Integrability of the Gaussian first moment]
@@ -210,24 +279,28 @@ Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$, and let $Q(\alpha)$ 
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. The function $x\mapsto x\varphi(x)$ is integrable over $\mathbb R$ with respect to Lebesgue measure.
+Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. The function
+$x\mapsto x\varphi(x)$ is integrable on $\mathbb R$ with respect to Lebesgue measure.
 \end{lemma}
 
 \begin{lemma}[Truncated Gaussian first moment]
 \lean{BooleanAnalysis.ThresholdFunctions.integral_Iic_id_mul_standardGaussianPDF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.integrable_id_mul_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
+\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.integrable_id_mul_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. For every real $t$, its truncated first moment with respect to Lebesgue measure is
-\[
-\int_{(-\infty,t]}x\varphi(x)\,dx=-\varphi(t).
-\]
+Let $\varphi$ be the standard Gaussian density on $\mathbb R$. For every $t\in\mathbb
+R$, its first moment over $(-\infty,t]$ satisfies
+$\int_{(-\infty,t]}x\varphi(x)\,dx=-\varphi(t)$.
 \end{lemma}
 
 \begin{lemma}[Upper Gaussian Mills bound]
 \lean{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_le_mills}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.integrable_id_mul_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.integral_Iic_id_mul_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\uses{BooleanAnalysis.ThresholdFunctions.integrable_id_mul_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.integral_Iic_id_mul_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p021-b002,
+  pdf-681b6f3d947f-p021-b003
+}
 \difficulty{5}
 Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$. For every real $t<0$, one has
 \[
@@ -239,6 +312,7 @@ Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and $\Phi(t)=\int_{-\infty}^{t}\varphi(x
 \lean{BooleanAnalysis.ThresholdFunctions.millsF}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p021-b003}
 Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. Define $F:\mathbb R\to\mathbb R$ by $F(0)=0$ and, for $x\ne0$, by
 \[
 F(x)=\varphi(x)(x^{-3}-x^{-1}).
@@ -249,66 +323,77 @@ F(x)=\varphi(x)(x^{-3}-x^{-1}).
 \lean{BooleanAnalysis.ThresholdFunctions.millsF'}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p021-b003}
 Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ be the standard Gaussian density. Define $H:\mathbb R\to\mathbb R$ by $H(0)=\varphi(0)$ and, for $x\ne0$, by
 \[
 H(x)=\varphi(x)(1-3x^{-4}).
 \]
 \end{definition}
 
-\begin{lemma}[Derivative of the Mills lower-bound function]
+\begin{lemma}[Derivative of the Mills function]
 \lean{BooleanAnalysis.ThresholdFunctions.hasDerivAt_millsF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.millsF,BooleanAnalysis.ThresholdFunctions.millsF'}
+\uses{BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.millsF, BooleanAnalysis.ThresholdFunctions.millsF'}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, let $F(0)=0$ and $F(x)=\varphi(x)(x^{-3}-x^{-1})$ for $x\ne0$, and let $H(0)=\varphi(0)$ and $H(x)=\varphi(x)(1-3x^{-4})$ for $x\ne0$. For every nonzero real $x$, the function $F$ is differentiable at $x$ with derivative $F'(x)=H(x)$.
+Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and define $F(x)=\varphi(x)(x^{-3}-x^{-1})$ for
+$x\ne0$. For every nonzero real $x$, $F$ is differentiable at $x$ and
+$F'(x)=\varphi(x)(1-3x^{-4})$.
 \end{lemma}
 
-\begin{lemma}[Measurability of the Mills derivative integrand]
+\begin{lemma}[Measurability of the Mills integrand]
 \lean{BooleanAnalysis.ThresholdFunctions.measurable_millsF'}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.millsF'}
+\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.millsF'}
 \difficulty{3}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, and define $H:\mathbb R\to\mathbb R$ by $H(0)=\varphi(0)$ and $H(x)=\varphi(x)(1-3x^{-4})$ for $x\ne0$. The function $H$ is Borel measurable.
+Let $\varphi$ be the standard Gaussian density, and define $H:\mathbb R\to\mathbb R$ by
+$H(x)=\varphi(x)(1-3(x^4)^{-1})$ for every real $x$, with $0^{-1}=0$. Then $H$ is
+measurable.
 \end{lemma}
 
 \begin{lemma}[Integrability on negative lower half-lines]
 \lean{BooleanAnalysis.ThresholdFunctions.integrableOn_millsF'}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.measurable_millsF',BooleanAnalysis.ThresholdFunctions.millsF',BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\uses{BooleanAnalysis.ThresholdFunctions.measurable_millsF', BooleanAnalysis.ThresholdFunctions.millsF', BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
 \difficulty{5}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, and define $H:\mathbb R\to\mathbb R$ by $H(0)=\varphi(0)$ and $H(x)=\varphi(x)(1-3x^{-4})$ for $x\ne0$. For every real $t<0$, the function $H$ is integrable on $(-\infty,t]$ with respect to Lebesgue measure.
+Let $\varphi$ be the standard Gaussian density, and define $H(x)=\varphi(x)(1-3x^{-4})$,
+with the reciprocal power interpreted as zero at $x=0$. For every real $t<0$, $H$ is
+integrable on $(-\infty,t]$ with respect to Lebesgue measure.
 \end{lemma}
 
 \begin{lemma}[Cubic divergence at negative infinity]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_cube_atBot}
 \leanok
 \difficulty{4}
-For a real variable $x$ tending to $-\infty$, its cube tends to $-\infty$:
-\[
-\lim_{x\to-\infty}x^3=-\infty.
-\]
+As a real variable $x$ tends to $-\\infty$, its cube $x^3$ also tends to $-\\\infty$.
 \end{lemma}
 
-\begin{lemma}[Decay of the Mills lower-bound function]
+\begin{lemma}[Decay of a Gaussian density expression]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_millsF_atBot}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.millsF,BooleanAnalysis.ThresholdFunctions.tendsto_cube_atBot,BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
+\uses{BooleanAnalysis.ThresholdFunctions.millsF, BooleanAnalysis.ThresholdFunctions.tendsto_cube_atBot, BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, and define $F:\mathbb R\to\mathbb R$ by $F(0)=0$ and $F(x)=\varphi(x)(x^{-3}-x^{-1})$ for $x\ne0$. Its limit at negative infinity is $\lim_{x\to-\infty}F(x)=0$.
+Let $\varphi(x)$ be the standard Gaussian density, and define
+$F(x)=\varphi(x)(x^{-3}-x^{-1})$, with reciprocals interpreted as zero when their
+denominator is zero. Then $F(x)$ tends to $0$ as $x$ tends to $-\infty$.
 \end{lemma}
 
-\begin{lemma}[Continuity of the Mills lower-bound function]
+\begin{lemma}[Continuity of the Mills function away from zero]
 \lean{BooleanAnalysis.ThresholdFunctions.continuousAt_millsF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.millsF}
+\uses{BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.millsF}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, and define $F:\mathbb R\to\mathbb R$ by $F(0)=0$ and $F(x)=\varphi(x)(x^{-3}-x^{-1})$ for $x\ne0$. For every nonzero real $t$, the function $F$ is continuous at $t$.
+For every nonzero real number $t$, the function $x\mapsto\varphi(x)(x^{-3}-x^{-1})$,
+where $\varphi$ is the standard Gaussian density, is continuous at $t$.
 \end{lemma}
 
 \begin{lemma}[Lower Gaussian Mills bound]
 \lean{BooleanAnalysis.ThresholdFunctions.mills_le_standardGaussianCDF}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.continuousAt_millsF,BooleanAnalysis.ThresholdFunctions.hasDerivAt_millsF,BooleanAnalysis.ThresholdFunctions.integrableOn_millsF',BooleanAnalysis.ThresholdFunctions.millsF,BooleanAnalysis.ThresholdFunctions.millsF',BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos,BooleanAnalysis.ThresholdFunctions.tendsto_millsF_atBot}
+\uses{BooleanAnalysis.ThresholdFunctions.continuousAt_millsF, BooleanAnalysis.ThresholdFunctions.hasDerivAt_millsF, BooleanAnalysis.ThresholdFunctions.integrableOn_millsF', BooleanAnalysis.ThresholdFunctions.millsF, BooleanAnalysis.ThresholdFunctions.millsF', BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos, BooleanAnalysis.ThresholdFunctions.tendsto_millsF_atBot}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p021-b002,
+  pdf-681b6f3d947f-p021-b003
+}
 \difficulty{5}
 Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, and define $F(0)=0$ and $F(x)=\varphi(x)(x^{-3}-x^{-1})$ for $x\ne0$. For every real $t<0$, one has
 \[
@@ -319,7 +404,7 @@ F(t)\le\Phi(t).
 \begin{definition}[Signed Gaussian Mills ratio]
 \lean{BooleanAnalysis.ThresholdFunctions.millsRatio}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
 Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$ and $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$. Define the real-valued function $R$ for every $t\in\mathbb R$ by
 \[
 R(t)=\frac{\Phi(t)(-t)}{\varphi(t)}.
@@ -330,17 +415,221 @@ On $t<0$, this is the lower-tail Mills ratio $\Phi(t)|t|/\varphi(t)$.
 \begin{lemma}[Mills ratio upper bound]
 \lean{BooleanAnalysis.ThresholdFunctions.millsRatio_le_one}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.millsRatio,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_le_mills,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\uses{BooleanAnalysis.ThresholdFunctions.millsRatio, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_le_mills, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p021-b002,
+  pdf-681b6f3d947f-p021-b003
+}
 \difficulty{3}
 Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, and $R(t)=\Phi(t)(-t)/\varphi(t)$ for $t\in\mathbb R$. For every real $t<0$, one has $R(t)\le1$.
 \end{lemma}
 
-\begin{lemma}[Mills ratio lower bound]
+\begin{lemma}[Lower bound for the Gaussian Mills ratio]
 \lean{BooleanAnalysis.ThresholdFunctions.one_sub_le_millsRatio}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.millsRatio,BooleanAnalysis.ThresholdFunctions.mills_le_standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\uses{BooleanAnalysis.ThresholdFunctions.millsRatio, BooleanAnalysis.ThresholdFunctions.mills_le_standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\proofsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p021-b002,
+  pdf-681b6f3d947f-p021-b003
+}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003,
+    pdf-681b6f3d947f-p119-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p015-b002,
+    pdf-681b6f3d947f-p017-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianTail}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p015-b002,
+    pdf-681b6f3d947f-p021-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p015-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003,
+    pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.log_standardGaussianPDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003,
+    pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianCDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p015-b002,
+    pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_lt_one}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p015-b002,
+    pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.exists_standardGaussianCDF_eq}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p015-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p015-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.integrable_id_mul_standardGaussianPDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.integral_Iic_id_mul_standardGaussianPDF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_le_mills}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b002,
+    pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.millsF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b002,
+    pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.millsF'}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_millsF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.measurable_millsF'}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.integrableOn_millsF'}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_cube_atBot}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_millsF_atBot}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuousAt_millsF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.mills_le_standardGaussianCDF}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b002,
+    pdf-681b6f3d947f-p021-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.millsRatio}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p021-b002}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, and $R(t)=\Phi(t)(-t)/\varphi(t)$ for $t\in\mathbb R$. For every real $t<0$, one has $1-t^{-2}\le R(t)$.
+For every real $t<0$, the signed lower-tail Mills ratio $R(t)=\Phi(t)(-t)/\varphi(t)$
+satisfies
+\[
+1-(t^2)^{-1}\le R(t),
+\]
+where $\Phi$ is the standard Gaussian distribution function and $\varphi$ is its
+density.
 \end{lemma}
 
 \begin{lemma}[Reciprocal-square decay at negative infinity]
@@ -348,16 +637,15 @@ Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
 \difficulty{1}
-For a real variable $t$ tending to $-\infty$, the reciprocal of its square tends to zero:
-\[
-\lim_{t\to-\infty}\frac{1}{t^2}=0.
-\]
+For real $t$ tending to $- infty$, the reciprocal square tends to zero: $\lim_{t\to
+-\infty} 1/t^2=0$.
 \end{lemma}
 
 \begin{lemma}[Gaussian Mills ratio limit]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_millsRatio}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.millsRatio,BooleanAnalysis.ThresholdFunctions.millsRatio_le_one,BooleanAnalysis.ThresholdFunctions.one_sub_le_millsRatio,BooleanAnalysis.ThresholdFunctions.tendsto_inv_sq_atBot}
+\uses{BooleanAnalysis.ThresholdFunctions.millsRatio, BooleanAnalysis.ThresholdFunctions.millsRatio_le_one, BooleanAnalysis.ThresholdFunctions.one_sub_le_millsRatio, BooleanAnalysis.ThresholdFunctions.tendsto_inv_sq_atBot}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p125-b006}
 \difficulty{4}
 Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, and $R(t)=\Phi(t)(-t)/\varphi(t)$ for $t\in\mathbb R$. The limit of $R$ at negative infinity is
 \[
@@ -365,12 +653,14 @@ Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,
 \]
 \end{lemma}
 
-\begin{lemma}[Positive Mills ratio on negative arguments]
+\begin{lemma}[Positivity of the Mills ratio]
 \lean{BooleanAnalysis.ThresholdFunctions.millsRatio_pos}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.millsRatio,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\uses{BooleanAnalysis.ThresholdFunctions.millsRatio, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
 \difficulty{2}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, and $R(t)=\Phi(t)(-t)/\varphi(t)$ for $t\in\mathbb R$. For every real $t<0$, one has $0<R(t)$.
+Let $\\varphi$ be the standard Gaussian density and $\\Phi$ its cumulative distribution
+function, and define $R(t)=\\Phi(t)(-t)/\\varphi(t)$ for real $t$. For every real $t<0$,
+one has $0<R(t)$.
 \end{lemma}
 
 \begin{definition}[Gaussian logarithmic tail scale]
@@ -384,86 +674,327 @@ L(t)=2\log\bigl(1/\Phi(t)\bigr),
 where $\log$ is the natural logarithm.
 \end{definition}
 
-\begin{lemma}[Positivity of the logarithmic tail scale]
+\begin{lemma}[Positivity of the Gaussian logarithmic tail scale]
 \lean{BooleanAnalysis.ThresholdFunctions.gLog_pos}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.gLog,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_lt_one,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos}
+\uses{BooleanAnalysis.ThresholdFunctions.gLog, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_lt_one, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos}
 \difficulty{4}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$ and $L(t)=2\log(1/\Phi(t))$, where $\log$ is the natural logarithm. For every real $t$, one has $0<L(t)$.
+Let $\Phi$ be the cumulative distribution function of the standard Gaussian and define
+$L(t)=2\log(1/\Phi(t))$. Then $L(t)>0$ for every $t\in\mathbb R$.
 \end{lemma}
 
-\begin{lemma}[Logarithmic expansion through the Mills ratio]
+\begin{lemma}[Logarithmic Gaussian tail identity]
 \lean{BooleanAnalysis.ThresholdFunctions.gLog_eq}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.gLog,BooleanAnalysis.ThresholdFunctions.log_standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.millsRatio,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+\uses{BooleanAnalysis.ThresholdFunctions.gLog, BooleanAnalysis.ThresholdFunctions.log_standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.millsRatio, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
 \difficulty{4}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, $R(t)=\Phi(t)(-t)/\varphi(t)$, and $L(t)=2\log(1/\Phi(t))$. For every real $t<0$, with natural logarithms, one has
-\[
-L(t)=\bigl(-2\log R(t)+2\log(-t)+2\log\sqrt{2\pi}\bigr)+t^2.
-\]
+Let $\Phi$ be the standard Gaussian cumulative distribution function,
+$\varphi(t)=e^{-t^2/2}/\sqrt{2\pi}$, $R(t)=\Phi(t)(-t)/\varphi(t)$, and
+$L(t)=2\log(1/\Phi(t))$. For every $t<0$, with natural logarithms, $L(t)=-2\log
+R(t)+2\log(-t)+2\log\sqrt{2\pi}+t^2$.
 \end{lemma}
 
 \begin{lemma}[Logarithm dominated by the square]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_log_neg_div_sq}
 \leanok
 \difficulty{4}
-For a real variable $t$ tending to $-\infty$, with $\log$ denoting the natural logarithm, one has
-\[
-\lim_{t\to-\infty}\frac{\log(-t)}{t^2}=0.
-\]
+As a real variable $t$ tends to $-\infty$, $\log(-t)/t^2$ tends to $0$, where $\log$ is
+the natural logarithm.
 \end{lemma}
 
-\begin{lemma}[Quadratic logarithmic tail asymptotics]
+\begin{lemma}[Quadratic Gaussian tail asymptotics]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_gLog_div_sq}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.gLog,BooleanAnalysis.ThresholdFunctions.gLog_eq,BooleanAnalysis.ThresholdFunctions.millsRatio,BooleanAnalysis.ThresholdFunctions.tendsto_inv_sq_atBot,BooleanAnalysis.ThresholdFunctions.tendsto_log_neg_div_sq,BooleanAnalysis.ThresholdFunctions.tendsto_millsRatio}
+\uses{BooleanAnalysis.ThresholdFunctions.gLog, BooleanAnalysis.ThresholdFunctions.gLog_eq, BooleanAnalysis.ThresholdFunctions.millsRatio, BooleanAnalysis.ThresholdFunctions.tendsto_inv_sq_atBot, BooleanAnalysis.ThresholdFunctions.tendsto_log_neg_div_sq, BooleanAnalysis.ThresholdFunctions.tendsto_millsRatio}
 \difficulty{5}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$ and $L(t)=2\log(1/\Phi(t))$, where $\log$ is the natural logarithm. Then
-\[
-\lim_{t\to-\infty}\frac{L(t)}{t^2}=1.
-\]
+Let $\Phi(t)$ be the standard Gaussian cumulative distribution function and set
+$L(t)=2\log(1/\Phi(t))$, where $\log$ is the natural logarithm. Then $L(t)/t^2$ tends to
+$1$ as $t$ tends to $-\infty$.
 \end{lemma}
 
-\begin{lemma}[Square-root logarithmic tail asymptotics]
+\begin{lemma}[Square-root Gaussian tail asymptotics]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_sqrt_gLog_div}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.gLog,BooleanAnalysis.ThresholdFunctions.gLog_pos,BooleanAnalysis.ThresholdFunctions.tendsto_gLog_div_sq}
+\uses{BooleanAnalysis.ThresholdFunctions.gLog, BooleanAnalysis.ThresholdFunctions.gLog_pos, BooleanAnalysis.ThresholdFunctions.tendsto_gLog_div_sq}
 \difficulty{4}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$ and $L(t)=2\log(1/\Phi(t))$, where $\log$ is the natural logarithm. With the nonnegative square root, one has
-\[
-\lim_{t\to-\infty}\frac{\sqrt{L(t)}}{-t}=1.
-\]
+Let $\Phi(t)$ be the standard Gaussian cumulative distribution function and set
+$L(t)=2\log(1/\Phi(t))$, where $\log$ is the natural logarithm. Then $\sqrt{L(t)}/(-t)$
+tends to $1$ as $t$ tends to $-\infty$.
 \end{lemma}
 
-\begin{theorem}[Density relative to logarithmically scaled tail]
+\begin{theorem}[Gaussian density and tail asymptotic]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_div}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.gLog,BooleanAnalysis.ThresholdFunctions.gLog_pos,BooleanAnalysis.ThresholdFunctions.millsRatio,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF,BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos,BooleanAnalysis.ThresholdFunctions.tendsto_millsRatio,BooleanAnalysis.ThresholdFunctions.tendsto_sqrt_gLog_div}
+\uses{BooleanAnalysis.ThresholdFunctions.gLog, BooleanAnalysis.ThresholdFunctions.gLog_pos, BooleanAnalysis.ThresholdFunctions.millsRatio, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF, BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos, BooleanAnalysis.ThresholdFunctions.tendsto_millsRatio, BooleanAnalysis.ThresholdFunctions.tendsto_sqrt_gLog_div}
 \difficulty{5}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, and $L(t)=2\log(1/\Phi(t))$, with natural logarithm. Then
-\[
-\lim_{t\to-\infty}\frac{\varphi(t)}{\Phi(t)\sqrt{L(t)}}=1.
-\]
+Let $\varphi$ be the standard Gaussian density, let $\Phi(t)$ be the standard Gaussian
+cumulative distribution function, and set $L(t)=2\log(1/\Phi(t))$, where $\log$ is the
+natural logarithm. As $t\to-\infty$, the ratio $\varphi(t)/(\Phi(t)\sqrt{L(t)})$ tends
+to $1$.
 \end{theorem}
 
-\begin{theorem}[Quantile divergence at zero probability]
+\begin{theorem}[Gaussian quantile divergence at zero]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianQuantile}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono,BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+\uses{BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono, BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
 \difficulty{4}
-Let $\Phi(t)=\int_{-\infty}^{t}e^{-x^2/2}/\sqrt{2\pi}\,dx$, and let $Q(\alpha)=\inf\{t\in\mathbb R:\alpha\le\Phi(t)\}$ for $0<\alpha<1$ and $Q(\alpha)=0$ otherwise. As a real $\alpha$ tends to zero through positive values, the quantile tends to negative infinity:
-\[
-\lim_{\alpha\to0^+}Q(\alpha)=-\infty.
-\]
+Let $\Phi(t)$ be the cumulative distribution function of the standard Gaussian
+probability measure on $\mathbb R$, and define $Q(\alpha)=\inf\{t\in\mathbb
+R:\alpha\leq\Phi(t)\}$ for every real $\alpha$. As $\alpha$ tends to $0$ through
+positive values, $Q(\alpha)$ tends to $-\infty$.
 \end{theorem}
 
-\begin{theorem}[Isoperimetric profile asymptotics near zero]
+\begin{theorem}[Gaussian isoperimetric profile near zero]
 \lean{BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric_equiv_at_zero}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.gLog,BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF,BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile,BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile,BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_div,BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianQuantile}
+\uses{BooleanAnalysis.ThresholdFunctions.gLog, BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF, BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile, BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile, BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_div, BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianQuantile}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianTail}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b005,
+    pdf-ffbe9c7b3306-p125-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.log_standardGaussianPDF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianCDF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_lt_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.exists_standardGaussianCDF_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p118-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.integrable_id_mul_standardGaussianPDF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.integral_Iic_id_mul_standardGaussianPDF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_le_mills}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.millsF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.millsF'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_millsF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.measurable_millsF'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.integrableOn_millsF'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_cube_atBot}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_millsF_atBot}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuousAt_millsF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.mills_le_standardGaussianCDF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.millsRatio}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.millsRatio_le_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.one_sub_le_millsRatio}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_inv_sq_atBot}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_millsRatio}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gLog}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b004,
+    pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gLog_pos}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gLog_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_log_neg_div_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_gLog_div_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_sqrt_gLog_div}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_div}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianQuantile}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p125-b004}
 \difficulty{5}
-Let $\varphi(x)=e^{-x^2/2}/\sqrt{2\pi}$, $\Phi(t)=\int_{-\infty}^{t}\varphi(x)\,dx$, and $Q(\alpha)=\inf\{t\in\mathbb R:\alpha\le\Phi(t)\}$ for $0<\alpha<1$, with $Q(\alpha)=0$ otherwise. Define $U(\alpha)=\varphi(Q(\alpha))$ for every real $\alpha$, so $U(\alpha)=1/\sqrt{2\pi}$ for $\alpha\le0$ or $\alpha\ge1$. As $\alpha\to0$ through positive values, this profile is asymptotically equivalent to $\alpha\sqrt{2\log(1/\alpha)}$; equivalently, with natural logarithm,
-\[
-\lim_{\alpha\to0^+}\frac{U(\alpha)}{\alpha\sqrt{2\log(1/\alpha)}}=1.
-\]
+Let $\Phi$ be the standard Gaussian cumulative distribution function,
+$\varphi(t)=e^{-t^2/2}/\sqrt{2\pi}$, and define $Q(\alpha)=\inf\{t\in\mathbb
+R:\alpha\le\Phi(t)\}$ and $U(\alpha)=\varphi(Q(\alpha))$, with the infimum given its
+extended-real order value. As $\alpha$ tends to zero through positive values,
+$U(\alpha)$ is asymptotically equivalent to $\alpha\sqrt{2\log(1/\alpha)}$.
 \end{theorem}

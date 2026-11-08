@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clPrepare_start",
+ "key": "ea2ed15d60295563",
+ "kind": "lemma",
+ "title": "Preparation from the Initial Configuration",
+ "statement": "For every $l\\in\\mathbb{N}$ and every Boolean input word $x$, there is a time $t\\le 2|x|+3$ at which the preparation machine started on $x$ reaches the loader entry configuration: its field tapes are blank, its stream tape contains $x$ with its head at position zero, its input head is at position $1$, its loader counter is zero, and its output is empty.",
+ "hypotheses_covered": [
+  "Natural number $l$",
+  "Boolean input word $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every field count $l$ and input word $x$, there is a time $t \\le 2|x| + 3$ after which the preparation machine, started from its own native initial configuration with no assumed work-tape words, sits at the row loader's entry: all field targets blank, the stream holding exactly $x$ with cursor zero, and both heads canonical."
+}

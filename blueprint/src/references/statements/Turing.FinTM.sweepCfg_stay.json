@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.sweepCfg_stay",
+ "key": "08097290f2f960a5",
+ "kind": "lemma",
+ "title": "Stationary sweep configuration update",
+ "statement": "Let $A$ and $S$ be types, let $x$ be a finite list of symbols from $A$, and choose optional states $q,q'$, an input-head position $p$ among the $|x|+2$ positions, an integer frontier $z$, two finite lists $l,r$ of possibly blank symbols from $A$, and an output word $out$. Applying the one-tape action that keeps both heads stationary, makes no write, emits no output, and enters state $q'$ to the configuration with state $q$ and zipper tape determined by $z,l,r$ gives the configuration with state $q'$ and all other data unchanged.",
+ "hypotheses_covered": [
+  "$A$ and $S$ are types",
+  "$x$ is a finite list over $A$",
+  "$q,q'$ are optional states in $S$",
+  "$p$ is an input-head position among the $|x|+2$ positions",
+  "$z$ is an integer",
+  "$l,r$ are finite lists of possibly blank symbols over $A$",
+  "$out$ is a finite output word over $A$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying a stationary phase-change action — no write, no head movement, no output — to a\nforward-facing zipper configuration replaces only the control state and leaves the tape,\ninput head, and output unchanged."
+}

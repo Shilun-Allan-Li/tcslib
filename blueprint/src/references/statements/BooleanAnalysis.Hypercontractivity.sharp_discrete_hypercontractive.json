@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.sharp_discrete_hypercontractive",
+ "key": "1a3b1e3c2f7b1c8c",
+ "kind": "theorem",
+ "title": "Sharp hypercontractivity for finite laws",
+ "statement": "Let $(\\\\Omega,\\\\mu)$ be a probability space, and let $X:\\\\Omega\\\\to\\\\mathbb R$ be measurable with mean zero. Suppose $q>2$, $0<\\\\lambda<1/2$, and there is a finite set supporting $X$ almost surely such that each of its points has probability at least $\\\\lambda$. Set $\\\\rho=\\\\sqrt{\\\\sinh(u/q)/\\\\sinh(u/(q/(q-1)))}$, where $u=\\\\log((1-\\\\lambda)/\\\\lambda)$. Then for every $a,b\\\\in\\\\mathbb R$, the $L^q$ norm of $a+\\\\rho bX$ is at most the $L^2$ norm of $a+bX$, and the $L^2$ norm of $a+\\\\rho bX$ is at most the $L^{q/(q-1)}$ norm of $a+bX$; in both cases $X$ belongs to the output exponent's $L^p$ space, and the exponents satisfy $1\\\\le p\\\\le q$ with $0\\\\le\\\\rho<1$.",
+ "hypotheses_covered": [
+  "Probability space $(\\\\Omega,\\\\mu)$",
+  "Measurability of $X$",
+  "$q>2$",
+  "$0<\\\\lambda<1/2$",
+  "Finite almost-sure support of $X$",
+  "Each point in the finite support has probability at least $\\\\lambda$",
+  "Mean of $X$ is zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q>2$ and $0<\\lambda<1/2$, and let $X$ be measurable and centered on a probability space, supported almost surely on a finite set whose atoms each have probability at least $\\lambda$. Both $H_{2,q,\\rho_*}(X)$ and $H_{q/(q-1),2,\\rho_*}(X)$ hold. Here $\\rho_*(q,\\lambda)=\\sqrt{\\sinh(\\ell/q)/\\sinh(\\ell/(q/(q-1)))}$ with $\\ell=\\log((1-\\lambda)/\\lambda)$. Write $H_{p,q,\\rho}(X)$ for $1\\le p\\le q\\le\\infty$, $0\\le\\rho<1$, $X\\in L^q(\\mu)$, and $\\|a+\\rho bX\\|_q\\le\\|a+bX\\|_p$ for all $a,b\\in\\bbr$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.PathHard.wAns",
+ "key": "55f2196bcfb47a8c",
+ "kind": "def",
+ "title": "Boolean word encoding",
+ "statement": "For a Boolean mode, natural numbers $s,E,i$, a finite nondeterministic Turing machine $N$ over the Boolean alphabet, and Boolean words $x,\\beta$, define a Boolean value as follows. If the mode is true, the value is true exactly when $i<2(2^E)^2+2\\cdot 2^E+7$. Otherwise it is true when $i<2\\cdot 2^E$, false when $i=2\\cdot 2^E$, and true when $i=2\\cdot 2^E+1$. For the remaining indices, it is the edge predicate for $N,x,s$ at the pair of indices $\\left(\\left\\lfloor\\frac{i-(2\\cdot 2^E+2)}{2\\cdot 2^E}\\right\\rfloor,\\ (i-(2\\cdot 2^E+2))\\bmod 2^E\\right)$ when $i-(2\\cdot 2^E+2)<2(2^E)^2$; beyond that range it is the corresponding entry, if present, of the five-term Boolean list $(0,1,0,1,1)$, and false if there is no such entry.",
+ "hypotheses_covered": [
+  "A Boolean mode",
+  "Natural numbers $s,E,i$",
+  "A finite nondeterministic Turing machine over the Boolean alphabet",
+  "Boolean words $x,\\beta$"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not define the edge predicate, and the parameters $s$ and $\\beta$ do not occur in the displayed construction except that $s$ is passed to that predicate.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

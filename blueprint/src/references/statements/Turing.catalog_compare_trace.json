@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.catalog_compare_trace",
+ "key": "4755ca4fbdce429f",
+ "kind": "lemma",
+ "title": "Trace of the word-comparison machine",
+ "statement": "Let $M$ be the comparison machine on $k$ work tapes, with distinct tape indices $f$ and $s$. Let $u,v$ be finite words over a type with decidable equality, and let $d$ be a configuration in the run phase. Suppose tapes $f$ and $s$, respectively, contain $u$ and $v$ at every offset from $-1$ through their word lengths, with blank cells outside each word, relative to their current head positions. Suppose also that an index $\\delta\\le\\min(|u|,|v|)$ has matching symbols at every earlier index, has no symbol present in both words at index $\\delta$, and the two words are equal exactly when their symbols-or-absence at $\\delta$ agree. Then for every time $t$, the run of the comparison machine from $d$ is the corresponding piecewise trace: its forward configuration at time $t$ for $t\\le\\delta$, its rewind configuration with verdict indicating whether $u=v$ at index $2\\delta+1-t$ for $\\delta<t\\le2\\delta+1$, and thereafter its completed configuration with that same verdict.",
+ "hypotheses_covered": [
+  "A symbol type with decidable equality",
+  "Two work-tape indices $f,s$ with $f\\ne s$",
+  "Words $u,v$ and initial configuration $d$",
+  "Initial configuration is in the run phase",
+  "Tape $f$ contains $u$ and tape $s$ contains $v$ over offsets $-1$ through their respective lengths, relative to the heads",
+  "Index $\\delta\\le\\min(|u|,|v|)$",
+  "The words agree at all indices less than $\\delta$",
+  "No symbol is present in both words at index $\\delta$",
+  "The options at index $\\delta$ agree if and only if $u=v$",
+  "Time $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -5,12 +5,15 @@ Gaussian product densities and their first mean derivatives have common local in
 
 \section{Declarations}
 
-\begin{lemma}[Common scalar density and derivative envelope]
+\begin{lemma}[Common Gaussian density and derivative envelope]
 \lean{BooleanAnalysis.GaussianSpace.gaussianPDFReal_two_derivatives_dominated}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianPDFReal_meanDerivative_dominated,BooleanAnalysis.GaussianSpace.gaussianPDFReal_secondMeanDerivative_dominated,BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean}
+\uses{BooleanAnalysis.GaussianSpace.gaussianPDFReal_meanDerivative_dominated, BooleanAnalysis.GaussianSpace.gaussianPDFReal_secondMeanDerivative_dominated, BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean}
 \difficulty{5}
-For $v>0$ and $M\ge0$, let $p_v(m,z)$ be the Gaussian density with mean $m$ and variance $v$. There exists a nonnegative Lebesgue-integrable $b:\mathbb R\to\mathbb R$ such that $p_v(m,z)\le b(z)$, $|((z-m)/v)p_v(m,z)|\le b(z)$, and $|((z-m)^2/v^2-1/v)p_v(m,z)|\le b(z)$ whenever $|m|\le M$.
+Let $v>0$ and $M\ge0$, and write $p_v(m,z)=(2\pi v)^{-1/2}\exp(-(z-m)^2/(2v))$. There is
+a nonnegative Lebesgue-integrable function $b:\mathbb R\to\mathbb R$ such that for every
+$m,z\in\mathbb R$ with $|m|\le M$, all three bounds hold:
+\[p_v(m,z)\le b(z),\qquad \left|\frac{z-m}{v}p_v(m,z)\right|\le b(z),\qquad \left|\left(\frac{(z-m)^2}{v^2}-\frac1v\right)p_v(m,z)\right|\le b(z).\]
 \end{lemma}
 
 \begin{definition}[Mean derivative of a Gaussian product density]
@@ -19,97 +22,147 @@ For $v>0$ and $M\ge0$, let $p_v(m,z)$ be the Gaussian density with mean $m$ and 
 Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. The product-density derivative is $A_v(c,z)$ for mean and input vectors $c,z\in\mathbb R^I$.
 \end{definition}
 
-\begin{lemma}[Density times the linear score]
+\begin{lemma}[Derivative as density times score]
 \lean{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative_eq_density_smul_score}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. For $c,z,h\in\mathbb R^I$, $A_v(c,z)[h]=G_v(c,z)\sum_i((z_i-c_i)/v)h_i$.
+Let $I$ be a finite set, let $v\ge 0$, and let $c,z\in\mathbb R^I$. The derivative of
+the product Gaussian density with respect to its mean, viewed as a linear functional on
+$\mathbb R^I$, equals the product density multiplied by the linear functional
+$h\mapsto\sum_{i\in I}((z_i-c_i)/v)h_i$.
 \end{lemma}
 
-\begin{lemma}[Differentiating the product density]
+\begin{lemma}[Derivative of a product Gaussian density]
 \lean{BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensity}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean}
+\uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. For every $c,z\in\mathbb R^I$, the derivative at $c$ of $m\mapsto G_v(m,z)$ is $A_v(c,z)$.
+Let $I$ be a finite index set, let $v\ge0$, and let $c,z\in\mathbb R^I$. The function
+$m\mapsto\prod_{i\in I}p_v(m_i,z_i)$ is differentiable at $c$, with derivative the
+linear functional $h\mapsto\sum_{i\in I}\bigl(\prod_{j\ne
+i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$, where $p_v$ is the Gaussian density
+of variance $v$ and division by zero is interpreted as zero.
 \end{lemma}
 
-\begin{lemma}[Common product density and derivative envelope]
+\begin{lemma}[Common envelope for density and derivative]
 \lean{BooleanAnalysis.GaussianSpace.gaussianProductDensity_derivative_dominated}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianPDFReal_two_derivatives_dominated,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.norm_coordinateProjection_le_one}
+\uses{BooleanAnalysis.GaussianSpace.gaussianPDFReal_two_derivatives_dominated, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.norm_coordinateProjection_le_one}
 \difficulty{6}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. If $v>0$ and $M\ge0$, there exists a nonnegative Lebesgue-integrable $b:\mathbb R^I\to\mathbb R$ such that $|G_v(m,z)|\le b(z)$ and $\|A_v(m,z)\|\le b(z)$ for all $z$ and all $m$ with $|m_i|\le M$ for every $i$, with operator norm for the maximum norm.
+Let $I$ be finite, let $v\ge0$ with $v\ne0$, and let $M\ge0$. There is a nonnegative
+Lebesgue-integrable function $b:\mathbb R^I\to\mathbb R$ such that, for every
+$m,z\in\mathbb R^I$ with $|m_i|\le M$ for all $i$, both the absolute value of the
+product Gaussian density at $(m,z)$ and the operator norm of its mean derivative at
+$(m,z)$ are at most $b(z)$.
 \end{lemma}
 
-\begin{lemma}[Joint continuity of the product-density derivative]
+\begin{lemma}[Joint continuity of the product density derivative]
 \lean{BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative_joint}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative}
 \difficulty{1}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. For each fixed $v\ge0$, $(c,z)\mapsto A_v(c,z)$ is continuous in operator norm.
+Let $I$ be a finite set and let $v\ge 0$. The product Gaussian density derivative,
+viewed as a continuous linear functional on $\mathbb R^I$, is jointly continuous as a
+function of its mean vector $c\in\mathbb R^I$ and input vector $z\in\mathbb R^I$.
 \end{lemma}
 
-\begin{lemma}[Continuity in the integration vector]
+\begin{lemma}[Continuity of the product density derivative]
 \lean{BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative}
 \difficulty{1}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. For fixed $v\ge0$ and $c\in\mathbb R^I$, $z\mapsto A_v(c,z)$ is continuous in operator norm.
+Let $I$ be a finite set, let $v\ge 0$, and fix $c\in\mathbb R^I$. As a function of
+$z\in\mathbb R^I$, the product Gaussian density derivative at mean $c$ and input $z$, as
+a continuous linear functional on $\mathbb R^I$, is continuous in operator norm.
 \end{lemma}
 
-\begin{lemma}[Integrability of the weighted density derivative]
+\begin{lemma}[Integrability of the weighted Gaussian density derivative]
 \lean{BooleanAnalysis.GaussianSpace.integrable_gaussianProductDensityDerivative_smul}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensity_derivative_dominated}
+\uses{BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensity_derivative_dominated}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$ and $c\in\mathbb R^I$, then $z\mapsto f(z)A_v(c,z)$ is Lebesgue-integrable as a linear-functional-valued function.
+Let $I$ be a finite set, let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f(z)|\le
+1$ for every $z$, let $v>0$, and let $c\in\mathbb R^I$. Then the function sending $z$ to
+$f(z)$ times the linear functional $h\mapsto\sum_{i\in I}\bigl(\prod_{j\ne
+i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$ is integrable, as a function valued in
+the continuous linear functionals on $\mathbb R^I$, with respect to Lebesgue measure on
+$\mathbb R^I$. Here $p_v(m,t)$ is the density of the Gaussian with mean $m$ and variance
+$v$.
 \end{lemma}
 
-\begin{lemma}[Coordinate bound in a maximum-norm ball]
+\begin{lemma}[Coordinate bound in a maximum norm ball]
 \lean{BooleanAnalysis.GaussianSpace.abs_coordinate_le_of_mem_ball}
 \leanok
 \difficulty{4}
-Let $I$ be finite and $c,m\in\mathbb R^I$. If $\|m-c\|_\infty<\varepsilon$ for a real $\varepsilon$, then $|m_i|\le\|c\|_\infty+\varepsilon$ for every $i\in I$.
+Let $I$ be a finite index set and let $c,m:I\to\mathbb R$. If $m$ lies in the open
+metric ball of radius $\varepsilon$ about $c$ for the supremum norm, then $|m(i)|\le
+\|c\|+\varepsilon$ for every $i\in I$.
 \end{lemma}
 
-\begin{lemma}[Derivative of a product Gaussian average]
+\begin{lemma}[Derivative of a Gaussian product average]
 \lean{BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensity}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_coordinate_le_of_mem_ball,BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensity_derivative_dominated,BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensity}
+\uses{BooleanAnalysis.GaussianSpace.abs_coordinate_le_of_mem_ball, BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensity_derivative_dominated, BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensity}
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$, the function $m\mapsto\int_{\mathbb R^I}G_v(m,z)f(z)\,dz$ is differentiable at every $c$, with derivative $\int_{\mathbb R^I}f(z)A_v(c,z)\,dz$.
+Let $I$ be a finite set, let $v>0$, and let $f\colon\mathbb R^I\to\mathbb R$ be
+measurable with $|f(z)|\le1$ for every $z$. The function $m\mapsto\int_{\mathbb R^I}
+f(z)G_v(m,z)\,dz$, where $G_v$ is the product Gaussian density of variance $v$, is
+Fréchet differentiable at every $c\in\mathbb R^I$, with derivative
+$h\mapsto\int_{\mathbb R^I} f(z)A_v(c,z)[h]\,dz$, where $A_v$ is the mean derivative of
+the product density.
 \end{lemma}
 
 \begin{lemma}[Continuity of the integrated density derivative]
 \lean{BooleanAnalysis.GaussianSpace.continuous_integral_gaussianProductDensityDerivative}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_coordinate_le_of_mem_ball,BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative_joint,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensity_derivative_dominated}
+\uses{BooleanAnalysis.GaussianSpace.abs_coordinate_le_of_mem_ball, BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.continuous_gaussianProductDensityDerivative_joint, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensity_derivative_dominated}
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$, the linear-functional-valued function $c\mapsto\int_{\mathbb R^I}f(z)A_v(c,z)\,dz$ is continuous.
+Let $I$ be a finite set, let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f(z)|\le
+1$ for every $z$, and let $v>0$. The function of $c\in\mathbb R^I$ obtained by
+integrating $f(z)$ times the product Gaussian density derivative at mean $c$ and input
+$z$ with respect to Lebesgue measure is continuous as a map into the continuous linear
+functionals on $\mathbb R^I$.
 \end{lemma}
 
-\begin{lemma}[Continuous differentiability of product Gaussian averages]
+\begin{lemma}[Differentiability of product Gaussian averages]
 \lean{BooleanAnalysis.GaussianSpace.contDiff_one_integral_gaussianProductDensity}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.continuous_integral_gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensity}
+\uses{BooleanAnalysis.GaussianSpace.continuous_integral_gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.hasFDerivAt_integral_gaussianProductDensity}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$, the map $m\mapsto\int_{\mathbb R^I}G_v(m,z)f(z)\,dz$ is continuously differentiable.
+Let $I$ be a finite set, and let $f:\mathbb R^I\to\mathbb R$ be measurable with
+$|f(z)|\le 1$ for every $z\in\mathbb R^I$. For every variance $v>0$, the function
+$m\mapsto\int_{\mathbb R^I}\left(\prod_{i\in I}p_v(m_i,z_i)\right)f(z)\,dz$ is
+continuously differentiable, where $p_v(c,z)$ is the density at $z$ of the Gaussian
+distribution with mean $c$ and variance $v$, and the integral is with respect to
+Lebesgue measure.
 \end{lemma}
 
-\begin{lemma}[Integrated derivative as coordinate-score expectations]
+\begin{lemma}[Integral of the Gaussian product density derivative]
 \lean{BooleanAnalysis.GaussianSpace.integral_gaussianProductDensityDerivative_smul_eq_sum}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianCoordinate_first_kernel_integrable_bound,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative_eq_density_smul_score,BooleanAnalysis.GaussianSpace.integral_pi_gaussianReal_eq_integral_smul}
+\uses{BooleanAnalysis.GaussianSpace.gaussianCoordinate_first_kernel_integrable_bound, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative_eq_density_smul_score, BooleanAnalysis.GaussianSpace.integral_pi_gaussianReal_eq_integral_smul}
 \difficulty{5}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$, $c,h\in\mathbb R^I$, and $Z\sim\bigotimes_iN(c_i,v)$, then $(\int f(z)A_v(c,z)\,dz)[h]=\sum_i\mathbb E[((Z_i-c_i)/v)f(Z)]h_i$.
+Let $I$ be a finite index set, let $v>0$, let $c\in\mathbb R^I$, and let $f:\mathbb
+R^I\to\mathbb R$ be measurable with $|f(z)|\le1$ for every $z$. Write $p_v(m,t)$ for the
+density of the real Gaussian with mean $m$ and variance $v$, and let $Z$ have
+independent coordinates with $Z_j\sim N(c_j,v)$. Then the integral, with respect to
+Lebesgue measure on $\mathbb R^I$, of $f(z)$ times the linear functional
+$h\mapsto\sum_{i\in I}\bigl(\prod_{j\ne
+i}p_v(c_j,z_j)\bigr)\frac{z_i-c_i}{v}p_v(c_i,z_i)h_i$ equals the linear functional
+$h\mapsto\sum_{i\in I}\mathbb E[\frac{Z_i-c_i}{v}f(Z)]h_i$.
 \end{lemma}
 
-\begin{lemma}[Uniform norm bound for the integrated derivative]
+\begin{lemma}[Bound for an integrated Gaussian density derivative]
 \lean{BooleanAnalysis.GaussianSpace.norm_integral_gaussianProductDensityDerivative_smul_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianCoordinate_first_kernel_integrable_bound,BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative,BooleanAnalysis.GaussianSpace.integral_gaussianProductDensityDerivative_smul_eq_sum,BooleanAnalysis.GaussianSpace.norm_coordinateProjection_le_one}
+\uses{BooleanAnalysis.GaussianSpace.gaussianCoordinate_first_kernel_integrable_bound, BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative, BooleanAnalysis.GaussianSpace.integral_gaussianProductDensityDerivative_smul_eq_sum, BooleanAnalysis.GaussianSpace.norm_coordinateProjection_le_one}
 \difficulty{4}
-Let $I$ be finite and $v\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\prod_{i\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\mapsto\sum_i\bigl(\prod_{j\ne i}p_v(c_j,z_j)\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\mathbb R^I\to\mathbb R$ be measurable with $|f|\le1$. If $v>0$ and $c\in\mathbb R^I$, then $\|\int f(z)A_v(c,z)\,dz\|\le|I|(1+1/v)$, in operator norm for the maximum norm.
+Let $I$ be a finite index set, and let $f:\mathbb R^I\to\mathbb R$ be measurable with
+$|f(z)|\leq1$ for every $z$. Let $v\geq0$ with $v\ne0$, and let $c\in\mathbb R^I$. The
+norm of the integral of $f(z)$ times the product Gaussian density derivative with mean
+$c$ and variance $v$, integrated against Lebesgue measure on $\mathbb R^I$, is at most
+\[
+|I|\left(1+\frac1v\right).
+\]
 \end{lemma}

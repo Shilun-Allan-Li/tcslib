@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a3_verifier_mem_P",
+ "key": "684ca1b12c8c5592",
+ "kind": "lemma",
+ "title": "Polynomial-time membership of the verifier",
+ "statement": "Let $L$ be a language of binary words, and let $a,c$ be natural numbers and $M$ a finite Turing machine over the binary alphabet. If $M$ decides $L$ within time $n\\mapsto a\\cdot 2^{n^c}$, then the padding verifier for $L$ at degree $c$ belongs to $\\mathrm{P}$.",
+ "hypotheses_covered": [
+  "$L$ is a language over the binary alphabet",
+  "$a,c\\in\\mathbb{N}$",
+  "$M$ is a finite binary-alphabet Turing machine",
+  "$M$ decides $L$ within time $n\\mapsto a\\cdot 2^{n^c}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If some finite machine decides a language $L$ over the binary alphabet within\ntime $a \\cdot 2^{n^c}$, then the padding verifier of $L$ at degree $c$ belongs\nto $\\mathrm{P}$."
+}

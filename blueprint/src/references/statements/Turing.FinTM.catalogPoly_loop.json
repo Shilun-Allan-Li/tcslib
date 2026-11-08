@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.catalogPoly_loop",
+ "key": "45594f0dc0432324",
+ "kind": "lemma",
+ "title": "Main loop invariant of the generator",
+ "statement": "Let $c,C,q$ be natural numbers with $q>0$, let $x$ be a Boolean input word, and choose a loop level $i<c+1$. Suppose the work-head positions are given by $h : \\text{Fin}(c+1) \\to \\mathbb{Z}$, with every head at a level at most $i$ at position $0$. For $j,r\\in\\mathbb{N}$ with $j+r=q$ and any output word $o$, start in loop state $i$ with head $i$ at position $j$ and all other heads at their positions in $h$. After exactly $r\\bigl(T_i+2\\bigr)+q+2$ steps, where $T_i$ is the recursively defined cost for $i$ loop levels, the machine is in advance state $i+1$, the head positions are given by $h$, and the output is $o$ followed by $rCq^i$ ones.",
+ "hypotheses_covered": [
+  "$c,C,q$ are natural numbers and $q>0$",
+  "$x$ is a Boolean input word",
+  "$i<c+1$",
+  "$h$ assigns integer positions to all work heads",
+  "Every head at a level at most $i$ has position $0$ in $h$",
+  "$j,r$ are natural numbers with $j+r=q$",
+  "$o$ is an arbitrary output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q > 0$ be the unary side length, let $i \\le c$ be a loop level, and\nsuppose every head at a level $\\le i$ is at displacement $0$ except that head\n$i$ sits at $j$, where $j + r = q$. Then exactly $r\\,(T_i + 2) + q + 2$ steps\n(with $T_i$ the exact level-$i$ nest cost) execute the remaining $r$\niterations of loop $i$, append $r \\cdot C q^i$ ones to the output, reset head\n$i$ to $0$, and enter the advance state of level $i+1$; heads above level $i$\nare arbitrary and remain unchanged."
+}

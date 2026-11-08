@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clA5Sound",
+ "key": "8a5fafd4e067b9d3",
+ "kind": "lemma",
+ "title": "Soundness of the Cook–Levin Tableau",
+ "statement": "Let $M$ be a finite Turing machine with the obliviousness property, let $V$ be a language of Boolean words, and let $C,e,x,T$ be a natural-number pair, a Boolean word, and a time horizon, respectively. Suppose that for every Boolean word $y$ of length $|x|+C(|x|+1)^e$, the machine $M$ computes the Boolean indicator of membership in $V$ within $T$ steps. If the tableau formula for $M,C,e,x,T$ is satisfiable, then there is a Boolean word $u$ of length exactly $C(|x|+1)^e$ such that $x$ concatenated with $u$ belongs to $V$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine",
+  "$M$ is oblivious",
+  "$V$ is a language of Boolean words",
+  "$C,e$ are natural numbers; $x$ is a Boolean word; $T$ is a natural-number horizon",
+  "For every $y$ of length $|x|+C(|x|+1)^e$, $M$ computes the indicator of membership in $V$ within $T$ steps",
+  "The specified tableau formula is satisfiable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let an oblivious machine decide, within time $T$ and for every word $y$ of length $|x| + C(|x|+1)^e$, the indicator of membership of $y$ in a verifier language $V$. If the Cook--Levin tableau of the instance $x$ at horizon $T$ is satisfiable, then there is a certificate $u$ of length exactly $C(|x|+1)^e$ with the concatenation of $x$ and $u$ in $V$. The raw-block reconstruction excludes junk assignments before any decoder use, and totality plus the no-false family forces the accepting verdict."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.exists_fieldsCopyTM",
+ "key": "e1e4c04fc0c8706b",
+ "kind": "theorem",
+ "title": "Machine copying joined fields",
+ "statement": "For every alphabet $\\Gamma$ and natural number $m$, there exist a finite state set, a deterministic Turing machine over $\\Gamma$ with two work tapes, entry and exit states, and a constant $C$. For every input word, every list $f_s$ of $m$ fields, and every configuration $d$ in the entry state whose tape $0$ records the joined fields and whose tape $1$ is blank on the cells from one position before the record through its last position, the machine reaches its exit state at some time $t \\le C(L+1)$, where $L$ is the length of the joined record. It does not visit the exit state earlier, every work-tape head stays within distance $C(L+1)$ of its initial position through time $t$, and at time $t$ tape $1$ contains the joined fields on the interval from its initial head position up to but excluding that position plus $L$; all other tape cells and the remaining configuration data are unchanged.",
+ "hypotheses_covered": [
+  "An arbitrary alphabet $\\Gamma$ and natural number $m$",
+  "The field list has length $m$",
+  "The initial configuration is in the entry state",
+  "Tape $0$ records the joined fields on the specified interval",
+  "Tape $1$ is blank on the specified interval",
+  "The time bound is $C(L+1)$",
+  "The exit state is not reached before time $t$",
+  "All work-tape head displacements through time $t$ are at most $C(L+1)$",
+  "The final configuration has the specified tape-$1$ contents and otherwise preserves the configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

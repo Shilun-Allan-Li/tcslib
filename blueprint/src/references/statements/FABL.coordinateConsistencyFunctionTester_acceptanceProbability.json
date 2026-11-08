@@ -1,0 +1,16 @@
+{
+ "lean_name": "FABL.coordinateConsistencyFunctionTester_acceptanceProbability",
+ "key": "637dc8849b9cea5c",
+ "kind": "theorem",
+ "title": "Acceptance probability of the coordinate consistency tester",
+ "statement": "Let $n\\ge1$, let $w:\\{1,\\ldots,n\\}\\to\\{0,1\\}$, and let a proof table assign a bit to each of the $2^{2^n}$ sign vectors of length $2^n$. The nonadaptive tester chooses a coordinate uniformly from $\\{1,\\ldots,n\\}$ and a vector $y$ uniformly from $\\mathbb F_2^{2^n}$, queries the corresponding input bit and two proof bits associated with $y$ and its translate by the truth table of that coordinate, and accepts exactly when the product of the two proof signs equals the input sign. Its acceptance probability on this input and proof equals the uniform average over coordinates $j$ of the probability that the local correction of the proof agrees with $w(j)$, where the correction at $y$ is the product of the proof signs at $y$ and at its translate by the coordinate truth table.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$ and $n\\ge1$",
+  "input word $w:\\mathrm{Fin}(n)\\to\\mathrm{Bool}$",
+  "proof table $\\mathrm{Fin}(2^{2^n})\\to\\mathrm{Bool}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

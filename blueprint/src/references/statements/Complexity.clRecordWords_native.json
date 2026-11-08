@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clRecordWords_native",
+ "key": "3c4bac8389106d1a",
+ "kind": "lemma",
+ "title": "Polynomial-time recorder input assembly",
+ "statement": "Fix a finite-state Boolean machine $M$. If $y$ is a polynomial-time computable function from Boolean words to Boolean words and $T$ is a polynomial-time computable function from Boolean words to natural numbers, then the function sending $x$ to the self-delimiting packing of the recorder's initial tape words for $M$, $y(x)$, and $T(x)$, together with four empty fields, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "A finite-state Boolean machine $M$",
+  "The function $y$ is polynomial-time computable",
+  "The function $T$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a reference-input producer and a unary-horizon producer are polynomial-time computable, then so is the function packing the recorder's full argument: blank counters, empty record, the produced unary clock, the produced virtual input, blank source tapes, and four empty retained fields, as self-delimiting fields."
+}

@@ -1,0 +1,20 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean :: Turing.recordStep_apply_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: low -->
+
+# Recorded Simulation of One Step
+
+**Claim.** Under the stated record, blank-tape, and window hypotheses, the recording machine reaches the true-verdict configuration containing the record of the configuration after applying the prescribed action and updating its tag, within the stated time and head-position bounds.
+
+**Proof.** Write $a$ for the action prescribed by the simulated machine from the read data, $fs$ for the record of the starting configuration and tag, and $gs$ for the record after applying $a$ and updating the tag. The proof builds the run in stages, tracking both the record stored on tape zero and the heads' distances from their starting positions.
+
+1. The encoding facts ensure that $fs$ and $gs$ have the same number of fields and matching field lengths: the state, input-position, each work-tape window, and tag fields retain their sizes. The field-offset identities (`fieldOffset_succ`, `fieldOffset_add_length_le`, `length_joinFields_add_one`) then locate each field within the joined record, while `fieldsTape_field` identifies the symbols represented at those offsets. Thus each scan or skip can be analyzed on one field at a time.
+2. The machine first scans the state field and writes the successor state. It then processes the input-position field, updating its digits according to the action's input-head movement and the recorded boundary information. The corresponding scan and skip runs establish the resulting field contents and their time and head bounds (`scanTM_run_ofCfg`, `skipTM_run_ofCfg`). The specialized input-position analysis is supplied by `recordStep_position_run`.
+3. It processes each work-tape field in turn. The window hypothesis supplies the information needed to interpret the bounded tape record, and `recordStep_tape_run` proves that the field is transformed to the post-action tape contents and head mark. The field-length and offset facts let the proof splice each processed field into the growing record while preserving the unprocessed data. The sum of these per-tape runs is bounded by induction over the tape index.
+4. The tag field is changed to the updated tag. The proof then invokes `recordStep_write_back` to carry the tape-zero record back to its designated position. Throughout these phases, `recordStep_phase_run` connects each phase's proved run to the next phase selected by the control transition, and `recordRun_trans` concatenates the phase runs while preserving state avoidance and head bounds. A zero-length segment is handled by `recordRun_zero`.
+5. Finally, the equal field lengths give equal joined-record lengths, so the tape-zero contents occupy exactly the intended interval in the endpoint configuration. The phase times, bounded by the record length and number of tapes, add to at most $40(k+3)(L+1)$, where $L$ is the joined-record length. The head bounds for the individual scans and skips combine to give radius $L+1$ relative to the initial head positions, and the phase-run facts ensure neither verdict state occurs before the final time.
+
+**Key facts.** `Turing.cfgRecord_length`, `Turing.fieldOffset_add_length_le`, `Turing.fieldOffset_succ`, `Turing.fieldsTape_field`, `Turing.length_joinFields_add_one`, `Turing.scanResult_map`, `Turing.scanTM_run_ofCfg`, `Turing.skipTM_run_ofCfg`, `Turing.recordStep_phase_run`, `Turing.recordStep_position_run`, `Turing.recordStep_tape_run`, `Turing.recordStep_write_back`, `Turing.recordRun_zero`, `Turing.recordRun_trans`.
+
+**Caveat.** The supplied proof source includes the complete construction but several upstream helper statements are truncated. The account follows the visible phase structure and helper uses; some internal details of the specialized input-position, tape, and write-back arguments cannot be recovered from the supplied statements.

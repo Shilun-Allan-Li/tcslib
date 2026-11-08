@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.StepBlock.Rep",
+ "key": "f4de42c0eea78aee",
+ "kind": "def",
+ "title": "Representation of a machine configuration",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $x$ be a Boolean input word, let $\\mathrm{tr}$ be a transition function for a $k$-tape machine with Boolean work symbols and states in $\\text{Fin}(n+1)$, and let $c$ and $d$ be configurations of that machine and its compiled machine, respectively. The representation condition requires that their input-head positions agree; that the first $k$ work tapes and their head positions agree cellwise; that the two additional tapes contain, respectively, the designated encoding of the transition table of $\\mathrm{tr}$ and the designated summary of $c$'s output and state; and that both additional tape heads are at position zero.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb{N}$",
+  "Boolean input word $x$",
+  "$\\mathrm{tr}$ is a transition function from input symbols and $k$ work-tape symbols to actions, with Boolean symbols and states in $\\text{Fin}(n+1)$",
+  "$c$ is a $k$-tape configuration on input $x$",
+  "$d$ is a configuration with $k+2$ work tapes and compiled states on input $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not supply the definitions of the transition-table encoding or the output-and-state summary, so their exact contents cannot be stated.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clRead_forward",
+ "key": "35f72c4b3d6f58f9",
+ "kind": "lemma",
+ "title": "Forward decoding of a paired field",
+ "statement": "Let $x$ and $w$ be bit words, let $p$ be an input-head position among the $|x|+2$ positions, and let $\\mathrm{pre},\\mathrm{tail},\\mathrm{written},\\mathrm{old}$ be bit words. Starting with the reader in its initial control state, with stream $\\mathrm{pre}\\,\\langle w,\\mathrm{tail}\\rangle$ and target $\\mathrm{written}\\,\\mathrm{old}$, after $2|w|$ steps its stream and control state are unchanged, while the target is $\\mathrm{written}\\,w\\,\\mathrm{drop}_{|w|}(\\mathrm{old})$. The stream cursor has advanced from $|\\mathrm{pre}|$ to $|\\mathrm{pre}|+2|w|$, and the target cursor from $|\\mathrm{written}|$ to $|\\mathrm{written}|+|w|$.",
+ "hypotheses_covered": [
+  "$x,w,\\mathrm{pre},\\mathrm{tail},\\mathrm{written},\\mathrm{old}$ are bit words",
+  "$p$ is a valid input-head position among the $|x|+2$ positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, field word $w$, stream prefix, stream tail, written target prefix, and old suffix, running the reader for $2|w|$ steps decodes all of $w$ into the target, one overwritten cell per decoded bit, preserves the exact unread stream suffix, and leaves the separator for the following steps; both stream bits of each pair are charged individually."
+}

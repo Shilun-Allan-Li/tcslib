@@ -9,7 +9,9 @@ Optimization on a weighted moment sphere produces nonnegative extremizers. Diffe
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_moment_sphere_compact}
 \leanok
 \difficulty{4}
-Let $I$ be finite, $w_i>0$ for every $i$, and $p>0$. The set $\{f\in\bbr^I:\sum_iw_i|f_i|^p=1\}$ is compact in the usual finite-dimensional topology.
+Let $I$ be finite, let $w_i>0$ for every $i	extrm{ in }I$, and let $p>0$. The set of
+vectors $f:I	obr$ satisfying $sum_iw_i|f_i|^p=1$ is compact in the usual
+finite-dimensional topology.
 \end{theorem}
 
 \begin{theorem}[Existence of a nonnegative noise maximizer]
@@ -17,57 +19,88 @@ Let $I$ be finite, $w_i>0$ for every $i$, and $p>0$. The set $\{f\in\bbr^I:\sum_
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_moment_sphere_compact}
 \difficulty{5}
-Let $I$ be finite, $w_i>0$, $\sum_iw_i=1$, $1<p<2$, and $0\le\rho\le1$. Define $G(f)=\sum_iw_i|f_i|^p$ and $F(f)=\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2$. There exists a nonnegative vector $g$ with $G(g)=1$ and $F(f)\le F(g)$ whenever $G(f)=1$.
+Let $I$ be a finite set, let $w_i>0$ for each $i	extrm{ in }I$ with $sum_{i	extrm{ in
+}I} w_i=1$, and let $1<p<2$ and $0
+earrowho
+earrow1$. For $f:I	obr$, define $G(f)=sum_i w_i|f_i|^p$ and
+$F(f)=ho^2sum_iw_if_i^2+(1-ho^2)(sum_iw_if_i)^2$. There is a vector $g:I	obr$ with
+$g_i
+earrow0$ for all $i$, $G(g)=1$, and $F(f)
+earrow F(g)$ for every $f$ satisfying $G(f)=1$.
 \end{theorem}
 
-\begin{theorem}[A strict-concavity level has two values]
+\begin{theorem}[Two values on a strict-concavity level set]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_concave_level_two_values}
 \leanok
 \difficulty{5}
-Let $I$ be finite, let $\varphi:\bbr\to\bbr$ be strictly concave on $[0,\infty)$, and let $f:I\to[0,\infty)$ satisfy $\varphi(f_i)=c$ for every $i$ and some $c\in\bbr$. There exist $a,b\ge0$ such that every $f_i$ equals $a$ or $b$.
+Let $I$ be finite, let $varphi:br	obr$ be strictly concave on $[0,infty)$, and let
+$f:I	obr$ be nonnegative. If there is a real number $c$ such that $varphi(f_i)=c$ for
+every $i	extrm{ in }I$, then there are $a,b
+earrow0$ such that each $f_i$ equals either $a$ or $b$.
 \end{theorem}
 
-\begin{theorem}[Homogeneity of weighted moment and noise forms]
+\begin{theorem}[Homogeneity of weighted forms]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_homogeneity}
 \leanok
 \difficulty{4}
-Let $I$ be finite, $w:I\to\bbr$, and $p,\rho,t\in\bbr$. Define $G(f)=\sum_iw_i|f_i|^p$ and $F(f)=\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2$. Then $G(tf)=|t|^pG(f)$ and $F(tf)=t^2F(f)$ for every real vector $f$.
+Let $I$ be finite, let $w:I	obr$, let $p,rho,t
+einbr$, and let $f:I	obr$. Define $G(g)=sum_iw_i|g_i|^p$ and
+$F(g)=rho^2sum_iw_ig_i^2+(1-rho^2)(sum_iw_ig_i)^2$. Then $G(tf)=|t|^pG(f)$ and
+$F(tf)=t^2F(f)$.
 \end{theorem}
 
-\begin{theorem}[Derivative at a quotient maximum]
+\begin{theorem}[Derivative condition at a quotient maximum]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.derivative_eq_mul_of_isLocalMax_quotient}
 \leanok
 \difficulty{3}
-Let $f,g:\bbr\to\bbr$ be differentiable at $x$, with $f^{\prime}(x)=a$, $g^{\prime}(x)=b$, and $g(x)=1$. If $t\mapsto f(t)/g(t)^r$ has a local maximum at $x$ for $r\in\bbr$, then $a=rf(x)b$.
+Let $f,g:\mathbb{R}\to\mathbb{R}$ and $x,r,a,b\in\mathbb{R}$. Suppose $f$ is
+differentiable at $x$ with derivative $a$, $g$ is differentiable at $x$ with derivative
+$b$, $g(x)=1$, and $t\mapsto f(t)/g(t)^r$ has a local maximum at $x$. Then $a=r f(x)b$.
 \end{theorem}
 
-\begin{theorem}[Normalizing weighted moment and noise forms]
+\begin{theorem}[Normalization of weighted forms]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_normalization}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_homogeneity}
 \difficulty{4}
-Let $I$ be finite, $w:I\to\bbr$, $p\ne0$, and $\rho\in\bbr$. Define $G(f)=\sum_iw_i|f_i|^p$ and $F(f)=\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2$. If $G(f)>0$ and $c=G(f)^{-1/p}$, then $G(cf)=1$ and $F(cf)=F(f)/G(f)^{2/p}$.
+Let $I$ be a finite set, let $w_i,p,\rho\in\mathbb{R}$ with $p\ne0$, and let
+$f:I\to\mathbb{R}$ satisfy $G(f)>0$, where $G(h)=\sum_iw_i|h_i|^p$ and
+$F(h)=\rho^2\sum_iw_i h_i^2+(1-\rho^2)(\sum_iw_i h_i)^2$. Set $c=G(f)^{-1/p}$. Then
+$G(cf)=1$ and $F(cf)=F(f)/G(f)^{2/p}$.
 \end{theorem}
 
-\begin{theorem}[Directional derivatives of weighted noise forms]
+\begin{theorem}[Directional derivatives of weighted forms]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_directional_derivatives}
 \leanok
 \difficulty{5}
-Let $I$ be finite, $w:I\to\bbr$, $p>1$, $\rho\in\bbr$, $g_i\ge0$, and $h\in\bbr^I$. Define $G(f)=\sum_iw_i|f_i|^p$ and $F(f)=\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2$. At $t=0$, the derivative of $G(g+th)$ is $p\sum_iw_ig_i^{p-1}h_i$, and that of $F(g+th)$ is $2[\rho^2\sum_iw_ig_ih_i+(1-\rho^2)(\sum_iw_ig_i)(\sum_iw_ih_i)]$.
+Let $I$ be finite, let $w:I	obr$, let $p>1$ and $rho
+einbr$, and let $g,h:I	obr$ with $g_i
+earrow0$ for every $i$. Define $G(f)=sum_iw_i|f_i|^p$ and
+$F(f)=rho^2sum_iw_if_i^2+(1-rho^2)(sum_iw_if_i)^2$. At $t=0$, the derivative of
+$G(g+th)$ is $psum_iw_ig_i^{p-1}h_i$, and the derivative of $F(g+th)$ is
+$2\bigl(\rho^2\sum_iw_ig_ih_i+(1-\rho^2)(\sum_iw_ig_i)(\sum_iw_ih_i)\bigr)$.
 \end{theorem}
 
-\begin{theorem}[Stationarity of a normalized noise maximizer]
+\begin{theorem}[Stationarity of a noise maximizer]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_stationarity}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.SharpDiscrete.derivative_eq_mul_of_isLocalMax_quotient, BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_directional_derivatives, BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_normalization}
 \difficulty{6}
-Let $I$ be finite, $w_i>0$, $\sum_iw_i=1$, $1<p<2$, and $0\le\rho<1$. Define $G(f)=\sum_iw_i|f_i|^p$ and $F(f)=\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2$. If $g_i\ge0$, $G(g)=1$, and $F(f)\le F(g)$ whenever $G(f)=1$, then $F(g)\ge1$ and $F(g)g_i^{p-1}-\rho^2g_i=(1-\rho^2)\sum_jw_jg_j$ for every $i$.
+Let $I$ be a finite set with weights $w_i>0$ and $\sum_iw_i=1$, and let $1<p<2$ and
+$0\le\rho<1$. For $h:I\to\mathbb{R}$, define $G(h)=\sum_iw_i|h_i|^p$ and
+$F(h)=\rho^2\sum_iw_i h_i^2+(1-\rho^2)(\sum_iw_i h_i)^2$. Suppose $g_i\ge0$ for every
+$i$, $G(g)=1$, and $F(f)\le F(g)$ for every $f:I\to\mathbb{R}$ with $G(f)=1$. Then
+$F(g)\ge1$ and, for every $i$, $F(g)g_i^{p-1}-\rho^2g_i=(1-\rho^2)\sum_jw_jg_j$.
 \end{theorem}
 
-\begin{theorem}[Noise maximizers take at most two values]
+\begin{theorem}[Two values at a noise maximizer]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_two_values}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_concave_level_two_values, BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_stationarity}
 \difficulty{5}
-Let $I$ be finite, $w_i>0$, $\sum_iw_i=1$, $1<p<2$, and $0\le\rho<1$. Define $G(f)=\sum_iw_i|f_i|^p$ and $F(f)=\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2$. If $g_i\ge0$, $G(g)=1$, and $F(f)\le F(g)$ whenever $G(f)=1$, then some $a,b\ge0$ satisfy $g_i\in\{a,b\}$ for every $i$.
+Let $I$ be a finite set with weights $w_i>0$ and $\sum_iw_i=1$, and let $1<p<2$ and
+$0\le\rho<1$. For $h:I\to\mathbb{R}$, define $G(h)=\sum_iw_i|h_i|^p$ and
+$F(h)=\rho^2\sum_iw_i h_i^2+(1-\rho^2)(\sum_iw_i h_i)^2$. Suppose $g_i\ge0$ for every
+$i$, $G(g)=1$, and $F(f)\le F(g)$ for every $f:I\to\mathbb{R}$ with $G(f)=1$. Then there
+exist $a,b\ge0$ such that every value of $g$ is either $a$ or $b$.
 \end{theorem}

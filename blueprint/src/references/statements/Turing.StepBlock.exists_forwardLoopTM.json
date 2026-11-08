@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.StepBlock.exists_forwardLoopTM",
+ "key": "a145a4aace963e03",
+ "kind": "theorem",
+ "title": "A forward-loop simulation with bounded overhead",
+ "statement": "For every natural number $k$, there exist a finite state set $Q$ with decidable equality, a Turing machine $L$ with $k+2$ work tapes, an entry state in $Q$, and a natural number $C$ with the following property. For every natural number $n$, Boolean input word $x$, and $k$-tape machine $M$ whose states are indexed by $\\mathrm{Fin}(n+1)$, there is a natural-number cost function on configurations such that the simulation initialized by the forward-loop configuration map advances from the image of each nonhalting configuration to the image of its successor under $M$ in exactly that configuration's cost, maps halting configurations to halting configurations, and has no halting intermediate state during any such simulated block. The cost of each nonhalting configuration is positive and at most $50(|T|+1)+C$, where $T$ is the transition-table serialization of $M$. Moreover, for every configuration $c$ and time $t$ during which $M$ has not halted at any earlier time, each original tape head visits only cells visited by the corresponding head of $M$ through time $t$; each of the two additional tape heads visits only cells in the integer interval from $-(50(|T|+1)+C)$ to $50(|T|+1)+C$ by the simulated time equal to the sum of the first $t$ costs along the run of $M$ from $c$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb{N}$",
+  "$Q$ is finite and has decidable equality; $L$ has $k+2$ work tapes; an entry state and $C\\in\\mathbb{N}$ exist",
+  "$n\\in\\mathbb{N}$ and $x$ is a finite Boolean word",
+  "$M$ is a $k$-tape Boolean machine with state set $\\mathrm{Fin}(n+1)$",
+  "A cost function exists on configurations of $M$",
+  "Lockstep step, exit, and intermediate-state conditions for the halt sets $\\{\\mathrm{none}\\}$",
+  "For nonhalting configurations, cost is positive and at most $50(|T|+1)+C$",
+  "For every $c,t$, all earlier configurations at times $u<t$ are nonhalting",
+  "For each original tape, the simulated visited-head set is contained in the original visited-head set through time $t$",
+  "For each tape index $j$ with $k\\le j.val$, the simulated visited-head set lies in the stated symmetric integer interval"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -11,20 +11,24 @@ Interval averaging gives quantitative smooth approximations of Lipschitz functio
 For real $\eta,x$ and any real function $\psi$, the interval smoothing is $S_\eta\psi(x)=\eta^{-1}\int_0^\eta\psi(x+t)\,dt$, with value zero for $\eta=0$. The integral is oriented when $\eta<0$ and is assigned zero when its integrand is not integrable.
 \end{definition}
 
-\begin{theorem}[Derivative of an interval average]
+\begin{theorem}[Derivative of a translated interval average]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_hasDerivAt}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth}
 \difficulty{4}
-For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\eta\psi(x+t)\,dt$. If $\psi$ is continuous, then $S_\eta\psi$ is differentiable at every real $x$ with derivative $(\psi(x+\eta)-\psi(x))/\eta$.
+Let $\eta>0$ and let $\psi:\mathbb R\to\mathbb R$ be continuous. For every $x\in\mathbb
+R$, the translated interval average $S_\eta\psi$ is differentiable at $x$, with
+derivative $\bigl(\psi(x+\eta)-\psi(x)\bigr)/\eta$.
 \end{theorem}
 
-\begin{theorem}[One additional derivative from averaging]
+\begin{theorem}[Regularity gained by interval smoothing]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.contDiff_intervalSmooth}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_hasDerivAt}
 \difficulty{4}
-For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\eta\psi(x+t)\,dt$. For each integer $m\ge0$, if $\psi$ is $C^m$ on $\mathbb R$, then $S_\eta\psi$ is $C^{m+1}$ on $\mathbb R$.
+Let $\eta>0$, let $m\in\mathbb N$, and let $\psi\colon\mathbb R\to\mathbb R$ be
+$m$-times continuously differentiable. Then $S_\eta\psi$ is $(m+1)$-times continuously
+differentiable on $\mathbb R$.
 \end{theorem}
 
 \begin{theorem}[Higher derivatives of an interval average]
@@ -32,15 +36,20 @@ For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\e
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_hasDerivAt}
 \difficulty{4}
-For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\eta\psi(x+t)\,dt$. If $m\ge0$ is an integer and $\psi\in C^m(\mathbb R)$, then $(S_\eta\psi)^{(m+1)}(x)=(\psi^{(m)}(x+\eta)-\psi^{(m)}(x))/\eta$ for every real $x$.
+Let $eta>0$, let $m$ be a nonnegative integer, and let $psi:bbrtobbr$ be $m$ times
+continuously differentiable. For the interval average
+$S_etapsi(x)=eta^{-1}int_0^eta psi(x+t),dt$, its $(m+1)$st derivative at every
+$xinbbr$ is $((psi^{(m)}(x+eta)-psi^{(m)}(x))/eta)$.
 \end{theorem}
 
-\begin{theorem}[Derivative bound inherited from Lipschitz continuity]
+\begin{theorem}[Derivative bound for interval smoothing]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.abs_deriv_intervalSmooth_le}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_hasDerivAt}
 \difficulty{3}
-For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\eta\psi(x+t)\,dt$. If $\psi$ is $c$-Lipschitz for $c\ge0$, then $|(S_\eta\psi)\prime(x)|\le c$ for every real $x$.
+Let $\eta>0$, let $c\ge0$, and let $\psi\colon\mathbb R\to\mathbb R$ be $c$-Lipschitz.
+For every $x\in\mathbb R$, the interval smoothing $S_\eta\psi$ satisfies
+$\left|(S_\eta\psi)'(x)\right|\le c$.
 \end{theorem}
 
 \begin{theorem}[Interval averaging preserves the Lipschitz constant]
@@ -48,52 +57,111 @@ For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\e
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.abs_deriv_intervalSmooth_le, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_hasDerivAt}
 \difficulty{3}
-For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\eta\psi(x+t)\,dt$. If $\psi\colon\mathbb R\to\mathbb R$ is $c$-Lipschitz with $c\ge0$, then $S_\eta\psi$ is also $c$-Lipschitz.
+Let $\eta>0$ and define the interval average of $\psi:\mathbb R\to\mathbb R$ by
+\[
+S_\eta\psi(x)=\frac1\eta\int_0^\eta\psi(x+t)\,dt.
+\]
+If $\psi$ is $c$-Lipschitz for some $c\ge0$, then $S_\eta\psi$ is also $c$-Lipschitz.
 \end{theorem}
 
-\begin{theorem}[Uniform approximation by interval averaging]
+\begin{theorem}[Approximation by interval smoothing]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.abs_intervalSmooth_sub_le}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth}
 \difficulty{4}
-For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\eta\psi(x+t)\,dt$. If $\psi$ is $c$-Lipschitz for $c\ge0$, then $|S_\eta\psi(x)-\psi(x)|\le c\eta$ for every real $x$.
+Let $\eta>0$, let $c\ge0$, and let $\psi\colon\mathbb R\to\mathbb R$ be $c$-Lipschitz.
+For every $x\in\mathbb R$, $|S_\eta\psi(x)-\psi(x)|\le c\eta$.
 \end{theorem}
 
-\begin{theorem}[Bounds for repeated interval averaging]
+\begin{theorem}[Regularity and bounds for repeated interval averaging]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_iterate_bounds}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.abs_deriv_intervalSmooth_le, BooleanAnalysis.GaussianSpace.Invariance.abs_intervalSmooth_sub_le, BooleanAnalysis.GaussianSpace.Invariance.contDiff_intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.iteratedDeriv_intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.lipschitz_intervalSmooth}
 \difficulty{5}
-For $\eta>0$ and a real function $\psi$, write $S_\eta\psi(x)=\eta^{-1}\int_0^\eta\psi(x+t)\,dt$. If $\psi$ is $c$-Lipschitz with $c\ge0$ and $m\ge0$ is an integer, put $\phi=S_\eta^{m+1}\psi$, where the exponent denotes repeated application of $S_\eta$. Then $\phi$ is $C^{m+1}$ and $c$-Lipschitz, and for every real $x$, $|\phi(x)-\psi(x)|\le(m+1)c\eta$ and $|\phi^{(m+1)}(x)|\le c(2/\eta)^m$.
+Let $\eta>0$, let $c\ge0$, and let $\psi:\mathbb R\to\mathbb R$ be $c$-Lipschitz. For
+each natural number $m$, set $\phi=S_\eta^{m+1}\psi$, the result of applying the
+translated interval average $m+1$ times. Then $\phi$ is $m+1$ times continuously
+differentiable and $c$-Lipschitz, and for every $x\in\mathbb R$,
+\[|\phi(x)-\psi(x)|\le(m+1)c\eta,\qquad |\phi^{(m+1)}(x)|\le c(2/\eta)^m.\]
 \end{theorem}
 
-\begin{theorem}[Quantitative fourth-order smooth approximation]
+\begin{theorem}[Fourth-order smooth approximation]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.exists_contDiff_four_approx}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_iterate_bounds}
 \difficulty{4}
-For every $\eta>0$, $c\ge0$, and $c$-Lipschitz function $\psi\colon\mathbb R\to\mathbb R$, there exists $\phi\in C^4(\mathbb R)$ such that $|\phi(x)-\psi(x)|\le4c\eta$ and $|\phi^{(4)}(x)|\le8c/\eta^3$ for all real $x$.
+For every real $\eta>0$, every nonnegative real number $c$, and every $c$-Lipschitz
+function $\psi:\mathbb R\to\mathbb R$, there exists a function $\phi:\mathbb R\to\mathbb
+R$ of class $C^4$ such that, for every real $x$, $|\phi(x)-\psi(x)|\le 4c\eta$ and
+$|\phi^{(4)}(x)|\le 8c/\eta^3$.
 \end{theorem}
 
 \begin{theorem}[Expectation stability under uniform approximation]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.abs_integral_sub_le_uniform}
 \leanok
 \difficulty{4}
-Let $f,g\colon\Omega\to\mathbb R$ be functions on a probability space $(\Omega,\mu)$, with $f$ integrable and $g$ measurable up to a null set. If a real constant $D$ satisfies $|f(\omega)-g(\omega)|\le D$ for every $\omega$, then $|\int f\,d\mu-\int g\,d\mu|\le D$.
+Let $(\Omega,\mu)$ be a probability space, and let $f,g\colon\Omega\to\mathbb R$ with
+$f$ integrable and $g$ measurable up to a null set. If $D\in\mathbb R$ satisfies
+$|f(\omega)-g(\omega)|\le D$ for every $\omega\in\Omega$, then $\left|\int f\,d\mu-\int
+g\,d\mu\right|\le D$.
 \end{theorem}
 
-\begin{theorem}[Lipschitz comparison at any smoothing scale]
+\begin{theorem}[Lipschitz comparison at a smoothing scale]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.lipschitz_expectation_bound_at_scale}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.abs_integral_sub_le_uniform, BooleanAnalysis.GaussianSpace.Invariance.exists_contDiff_four_approx, BooleanAnalysis.GaussianSpace.integrable_test_of_memLp_four}
 \difficulty{4}
-Let $U\in L^4(\mu)$ and $V\in L^4(\nu)$ be real inputs on probability spaces, and let $B\ge0$. Suppose that for every $\phi\in C^4(\mathbb R)$ and $C\ge0$ bounding $|\phi^{(4)}|$ everywhere, $|\mathbb E_\mu\phi(U)-\mathbb E_\nu\phi(V)|\le CB$. For every $c\ge0$, $c$-Lipschitz function $\psi\colon\mathbb R\to\mathbb R$, and $\eta>0$, $|\mathbb E_\mu\psi(U)-\mathbb E_\nu\psi(V)|\le8c\eta+(8c/\eta^3)B$.
+Let $(\Omega,\mu)$ and $(\Xi,\nu)$ be probability spaces, and let $U\in L^4(\mu)$ and
+$V\in L^4(\nu)$. Suppose $B\ge0$ and, for every $C^4$ function $\phi:\mathbb R\to\mathbb
+R$ and every $C\ge0$ such that $|\phi^{(4)}(t)|\le C$ for all $t\in\mathbb R$, assume
+\[
+\left|\int \phi(U)\,d\mu-\int \phi(V)\,d\nu\right|\le CB.
+\]
+Then for every $c\ge0$, every $c$-Lipschitz function $\psi:\mathbb R\to\mathbb R$, and
+every $\eta>0$,
+\[
+\left|\int \psi(U)\,d\mu-\int \psi(V)\,d\nu\right|\le 8c\eta+\frac{8c}{\eta^3}B.
+\]
 \end{theorem}
 
-\begin{theorem}[Lipschitz comparison from fourth-order tests]
+\begin{theorem}[Lipschitz comparison from fourth derivative bounds]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.lipschitz_expectation_bound_of_fourth_derivative}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.lipschitz_expectation_bound_at_scale}
 \difficulty{5}
-Let $U\in L^4(\mu)$ and $V\in L^4(\nu)$ be real inputs on probability spaces, and let $B\ge0$. Suppose that for every $\phi\in C^4(\mathbb R)$ and $C\ge0$ bounding $|\phi^{(4)}|$ everywhere, $|\mathbb E_\mu\phi(U)-\mathbb E_\nu\phi(V)|\le CB$. For every $c\ge0$ and $c$-Lipschitz function $\psi\colon\mathbb R\to\mathbb R$, $|\mathbb E_\mu\psi(U)-\mathbb E_\nu\psi(V)|\le16cB^{1/4}$, including $B=0$.
+Let $(\Omega,\mu)$ and $(\Xi,\nu)$ be probability spaces, and let $U\in L^4(\mu)$ and
+$V\in L^4(\nu)$. Suppose $B\ge0$ and, for every $C^4$ function $\phi:\mathbb R\to\mathbb
+R$ and every $C\ge0$ such that $|\phi^{(4)}(t)|\le C$ for all $t\in\mathbb R$, assume
+\[
+\left|\int \phi(U)\,d\mu-\int \phi(V)\,d\nu\right|\le CB.
+\]
+Then for every $c\ge0$ and every $c$-Lipschitz function $\psi:\mathbb R\to\mathbb R$,
+\[
+\left|\int \psi(U)\,d\mu-\int \psi(V)\,d\nu\right|\le16cB^{1/4}.
+\]
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Continuity of iterated interval smoothing]
+\lean{BooleanAnalysis.GaussianSpace.Invariance.continuous_intervalSmooth_iterate}
+\label{BooleanAnalysis.GaussianSpace.Invariance.continuous_intervalSmooth_iterate}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.Invariance.contDiff_intervalSmooth, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth}
+\difficulty{4}
+Let $\eta>0$, let $\psi\colon\mathbb R\to\mathbb R$ be continuous, and let $m\in\mathbb
+N$. The result of applying the interval smoothing $S_\eta$ to $\psi$ repeatedly $m$
+times is continuous on $\mathbb R$.
+\end{theorem}
+
+\begin{theorem}[Value attained by a repeated interval average]
+\lean{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_iterate_exists_value}
+\label{BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth_iterate_exists_value}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.Invariance.continuous_intervalSmooth_iterate, BooleanAnalysis.GaussianSpace.Invariance.intervalSmooth}
+\difficulty{5}
+Let $\eta>0$ and let $\psi:\mathbb R\to\mathbb R$ be continuous. For every natural
+number $m$ and every real $x$, there is a point $y\in[x,x+m\eta]$ such that
+$S_\eta^m\psi(x)=\psi(y)$.
 \end{theorem}

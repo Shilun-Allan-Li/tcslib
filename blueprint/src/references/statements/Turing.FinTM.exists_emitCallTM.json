@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.exists_emitCallTM",
+ "key": "d2c1c10c14c51074",
+ "kind": "theorem",
+ "title": "Clean Emitting Call Simulation",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $f$ map Boolean words to Boolean words, and let $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose $M$ computes $f$ on every Boolean input $a$ within $T(|a|)$ steps. Then there are a finite Boolean Turing machine $C$ with at least one work tape, two of its states called entry and exit, and a natural number $c$, such that for every pair of Boolean words $x,a$ there is a positive integer $t\\le c(T(|a|)+|a|+|f(a)|+1)$ for which the run of $C$ from the configuration with input $x$, state entry, and $a$ on tape zero (all other tapes blank) has not entered exit at any positive time before $t$, and at time $t$ is in state exit with the same tape contents and head positions as that initial configuration, while its output is $f(a)$.",
+ "hypotheses_covered": [
+  "A finite Boolean Turing machine $M$",
+  "A function $f$ from Boolean words to Boolean words",
+  "A time bound $T:\\mathbb{N}\\to\\mathbb{N}$",
+  "$M$ computes $f(a)$ on every Boolean input $a$ within $T(|a|)$ steps",
+  "The constructed machine has a positive number of work tapes",
+  "Every pair of Boolean words $x,a$ has a positive time $t$ bounded by $c(T(|a|)+|a|+|f(a)|+1)$",
+  "The exit state is absent at every positive time before $t$",
+  "At time $t$ the configuration has exit state, the initial tape contents and head positions, and output $f(a)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a bundled finite machine computing a function $f$ on Boolean words in time\n$T$. Then there are a machine $C$ with a positive number of work tapes, control states\ncalled entry and exit, and a constant $c$ such that for every native input $x$ and\nargument $a$: starting $C$ at the canonical seam in the entry state with $a$ as the sole\ntape-resident word, there is a positive time $t \\le c\\,(T(|a|) + |a| + |f(a)| + 1)$,\nbefore which the exit state is never visited, at which $C$ is exactly at the entry seam\nwith exit control and physical output $f(a)$: the argument preserved on its tape, all\nscratch restored, and the computed word emitted."
+}

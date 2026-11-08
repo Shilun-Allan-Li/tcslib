@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_step",
+ "key": "7722d7da60b2895e",
+ "kind": "lemma",
+ "title": "One allocation step",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\mathbb{N}$, and consider a setup configuration with arbitrary base configuration, input-head position, integer controller-head positions, and controller tapes. Suppose its phase is the allocation phase of direction $r\\in\\{\\mathrm{right},\\mathrm{left}\\}$ indexed by $i\\in\\{0,1,2\\}$, the unary tape reads a unit marker at its head, and the guide tape reads the origin marker at its head if and only if that head is at cell $0$. One step advances the allocation index to $i+1\\pmod 3$, moves the unary head right by one exactly when $i=2$, moves the guide head one cell in direction $r$, and writes the origin marker at the guide cell previously under its head if that cell is $0$, writing an interior marker otherwise; all other tape contents and configuration data are unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a\\in\\mathbb{N}$",
+  "a base configuration, input-head position, and integer controller-head positions",
+  "arbitrary controller tapes",
+  "allocation direction is right or left and index is in $\\{0,1,2\\}$",
+  "unary tape reads a unit marker at its head",
+  "guide reads the origin marker exactly when its head is at $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider a setup configuration in layout phase $i \\in \\{0,1,2\\}$ of either direction,\nand suppose the unary tape reads a unit marker at the unary head and the guide tape\nreads the origin mark at the guide head exactly when that head is at cell $0$.  Then\none step moves to layout phase $i+1 \\bmod 3$, writes the guide mark at the guide head,\nmoves the guide head one cell in the chosen direction, and advances the unary head by\none exactly when $i = 2$; everything else is unchanged.  Thus the controller spends\nthree guide cells per unary marker."
+}

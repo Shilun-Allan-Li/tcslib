@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.arTM_computes",
+ "key": "1639be541329edce",
+ "kind": "lemma",
+ "title": "Simulation time bound",
+ "statement": "Let $\u0005Gamma$ be a finite alphabet, let $N\u0005in\u0005mathbb{N}$, let $E$ inject the symbols of $\u0005Gamma$ together with blank into blocks of $N+1$ optional bits and encode blank by the all-blank block, and let $e:\u0005{0,1}\u0005hookrightarrow\u0005Gamma$ be an embedding. If a machine $M$ on the letterwise $e$-image of a binary word $x$ halts after exactly $t$ steps, outputs the letterwise $e$-image of a binary word $w$, and uses some amount of space, then the binary simulator on input $x$ computes output $w$ at time $(3(N+1)+2)t$.",
+ "hypotheses_covered": [
+  "Finite alphabet $\u0005Gamma$",
+  "Natural number $N$",
+  "Finite block-code injection $E$ mapping blank to the all-blank block",
+  "Bit embedding $e$",
+  "Machine $M$ computes the letterwise $e$-image of $w$ from the letterwise $e$-image of $x$ in exactly $t$ steps, halting and using some space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Gamma$ be a finite alphabet, $E$ an injective block code of $\\Gamma \\cup\n\\{\\text{blank}\\}$ into blocks of $N+1$ optional bits that sends the blank to the\nall-blank block, $e : \\{0,1\\} \\hookrightarrow \\Gamma$ a bit embedding, and $M$ a\nTuring machine over $\\Gamma$. If, started on the letterwise $e$-image of a binary\nstring $x$, $M$ halts within $t$ steps with output the letterwise $e$-image of a\nbinary string $w$, then the binary block-code simulator, started on the input $x$\nitself, halts within $(3(N+1)+2)\\cdot t$ steps with output $w$."
+}

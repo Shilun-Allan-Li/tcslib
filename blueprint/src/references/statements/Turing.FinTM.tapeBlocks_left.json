@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.tapeBlocks_left",
+ "key": "fc36cfc63d2a123e",
+ "kind": "lemma",
+ "title": "Left block of the tape assembly",
+ "statement": "Let $\\alpha$ be a type, let $k,l$ be nonnegative integers, let $a$ and $c$ be families of values indexed by the $k$ left positions and $l$ right positions, respectively, and let $b\\in\\alpha$. At the position corresponding to any left-block index $i$, the three-block assembly of $a$, $b$, and $c$ has value $a(i)$.",
+ "hypotheses_covered": [
+  "A type $\\alpha$",
+  "Nonnegative integers $k,l$",
+  "A family $a$ indexed by the $k$ left positions",
+  "A buffer value $b\\in\\alpha$",
+  "A family $c$ indexed by the $l$ right positions",
+  "A left-block index $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a$ be a family of values on $k$ indices, $b$ a single value, and $c$ a\nfamily of values on $l$ indices.  Evaluating their three-block assembly at\nthe $i$-th index of the left block returns $a(i)$."
+}

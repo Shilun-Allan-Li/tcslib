@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.RecordStepSeekSpec",
+ "key": "bd47fbcd0f59869a",
+ "kind": "def",
+ "title": "Bounded Record Step and Seek Specification",
+ "statement": "Let $N$ be a deterministic Turing machine with two Boolean work tapes, and let $s_0,s_f$ be states of $N$. For every Boolean input list $x$, natural number $p$, and Boolean list $w$ whose base-two digit value is $p$, assume $p\\le |x|+1$. From every configuration $a$ on input $x$ that starts in state $s_0$, has the buffer encoding of $w$ on its first work tape at every offset $z$ with $-1\\le z\\le |w|$, and has a blank second work tape at every integer position, there is a time $t\\le C(|w|+a.\\mathrm{inputPos}+p+1)$ such that the machine is not in state $s_f$ at any earlier time, and through time $t$ each work-head displacement from its initial position has absolute value at most $C(|w|+1)$. At time $t$ the machine is in state $s_f$, its input-head position is $p$, and its work tapes, work-head positions, and output are unchanged from configuration $a$.",
+ "hypotheses_covered": [
+  "$N$ is a two-work-tape deterministic Turing machine over the Boolean alphabet",
+  "$s_0$ and $s_f$ are states",
+  "$C$ is a natural number",
+  "$x$ and $w$ are Boolean lists; $p$ is a natural number",
+  "The base-two digit value of $w$ equals $p$",
+  "$p\\le |x|+1$",
+  "The initial configuration is on input $x$ and in state $s_0$",
+  "The first work tape contains the buffer encoding of $w$ at every offset from $-1$ through $|w|$",
+  "The second work tape is blank at every integer position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

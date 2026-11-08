@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.setupCfg_budget_all",
+ "key": "13ca36706a13ee04",
+ "kind": "lemma",
+ "title": "Complete Binary-to-Unary Conversion",
+ "statement": "Let $W$ be a finite Turing machine over Boolean symbols, let $a,N,v\\in\\mathbb{N}$, and let $x$ be a finite word over the schedule alphabet. Choose a base configuration on input $x$, an input-head position $p$, an integer guide-head position $g$, and guide-tape contents $\\gamma\\colon\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{OblSymbol})$. For every bit word $w$ of little-endian value $v$, running the length-only schedule machine from the setup configuration in the budget-start phase, with budget head at $|w|+1$ on the captured clock tape of $w$ and unary head at $N+1$ on the unary tape with $N$ markers, for exactly $(v+1)(2|w|+(a+1)+4)$ steps yields the setup configuration in the unary-start phase with the same base configuration, input-head position, and guide tape and head, with budget head still at $|w|+1$ and unary head at $N+(a+1)(v+1)+1$. Its budget tape is the captured clock tape of some bit word $w'$ with $|w'|=|w|$, and its unary tape has $N+(a+1)(v+1)$ markers.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machine W",
+  "Natural parameter a",
+  "Input word x over the schedule alphabet",
+  "Base configuration on x",
+  "Input-head position p",
+  "Integer guide-head position g",
+  "Guide-tape contents gamma",
+  "Natural numbers N and v",
+  "Bit word w with budgetValue(w)=v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a bit word of little-endian value $v$ and let $N \\in \\bbn$.  From a setup\nconfiguration in the budget-start phase with budget head at $|w|+1$ over the captured\nclock tape of $w$ and unary head at $N+1$ over the unary tape with $N$ markers, exactly\n$(v+1)\\,\\bigl(2|w| + (a+1) + 4\\bigr)$ steps reach the unary-start phase with unary head\nat $N + (a+1)(v+1) + 1$ over the unary tape with $N + (a+1)(v+1)$ markers, the budget\ntape being the captured clock tape of some bit word $w'$ with $|w'| = |w|$ (the word\nkeeps its full width as its high bits become zero); the guide tape and head and the\ninput head are unchanged."
+}

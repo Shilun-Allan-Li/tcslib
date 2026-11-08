@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.contH",
+ "key": "832ade17086a8af0",
+ "kind": "lemma",
+ "title": "Halting from Equal Register States",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}\\colon\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be an oracle, let $x$ be a finite Boolean word, and let $l$ be a label of the program $A(E)$. If register states $\\mathrm{st}$ and $\\mathrm{st}'$ are equal and the machine started at label $l$ with the register vector of $\\mathrm{st}'$ and no answer halts with answer $r\\in\\{\\mathrm{false},\\mathrm{true}\\}$ after finitely many steps, with every earlier configuration satisfying the program’s safety condition and all register values at most $B$, then it also halts with answer $r$ from label $l$ with the register vector of $\\mathrm{st}$ and no answer, under those same conditions.",
+ "hypotheses_covered": [
+  "$E,B$ are natural numbers",
+  "$\\mathrm{orc}$ is an oracle on four indices and Boolean words",
+  "$x$ is a Boolean word",
+  "$l$ is a label for $A(E)$",
+  "$r$ is a Boolean",
+  "$\\mathrm{st}=\\mathrm{st}'$",
+  "there is a finite guarded halting execution from $(l,\\mathrm{st}'.toV,\\mathrm{none})$ with answer $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean oracle on four families of\nbinary words, let $x$ be a binary word, and let $l$ be a program label. If two register\nstates $\\mathrm{st}$ and $\\mathrm{st}'$ are equal and $A(E)$, started at label $l$ with\nthe register vector of $\\mathrm{st}'$ and no answer, halts with answer\n$r\\in\\{\\mathrm{false},\\mathrm{true}\\}$ after a finite execution whose earlier\nconfigurations satisfy the safety conditions and have all registers at most $B$, then it\nalso halts with answer $r$ from the register vector of $\\mathrm{st}$."
+}

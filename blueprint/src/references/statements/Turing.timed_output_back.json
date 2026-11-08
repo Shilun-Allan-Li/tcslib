@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timed_output_back",
+ "key": "8636fa6fca2d6068",
+ "kind": "lemma",
+ "title": "Output-buffer rewind",
+ "statement": "Let $x$ be a Boolean input word, and let $c$ be a configuration of the four-tape interpreter on input $x$. For Boolean words $b$ and $o$, and a natural number $j$ with $j\\leq |c.output|$, start the timed interpreter in its output-buffer rewind phase, with clock word $b$, the output buffer initialized from $c.output$ and its head at position $j-1$, and real output $o$. After $j+1$ steps it is in the flush phase with the buffer head at position $0$ and real output $o$ followed by the bit $1$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean input word",
+  "$c$ is a four-tape interpreter configuration on input $x$",
+  "$b$ and $o$ are Boolean words",
+  "$j$ is a natural number satisfying $j\\leq |c.output|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every $j$ at most the buffered output's length, from the buffer-rewind\nphase with the buffer head at $j-1$, exactly $j+1$ steps of the timed\ninterpreter reach the flush phase with the buffer head at $0$, emitting the\nsuccess tag $1$ at the left blank before any data bit."
+}

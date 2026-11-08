@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.codeReadState_append",
+ "key": "771c44705fbffbf9",
+ "kind": "lemma",
+ "title": "Successor reader is a prefix inverse",
+ "statement": "For every bound $n\\in\\mathbb N$, optional state $s\\in\\{\text{none}\\}\\cup\\{0,\\ldots,n-1\\}$, and bit string $x$, the successor-state reader applied to the encoding of $s$ followed by $x$ succeeds and returns $(s,x)$. Here the encoding is $0$ for no state and, for state $i$, a $1$ followed by $i$ ones and a $0$.",
+ "hypotheses_covered": [
+  "A natural-number bound n",
+  "An optional state s in Fin n",
+  "An arbitrary bit string x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a bound $n$, a successor-state field $s$ (either halt or a live state\n$i < n$), and any bit string $x$: the successor-state reader with bound $n$,\napplied to the encoding of $s$ (a single $0$ for halt; a $1$ followed by the\nunary code of $i$ for a live state) followed by $x$, succeeds and returns\n$(s, x)$."
+}

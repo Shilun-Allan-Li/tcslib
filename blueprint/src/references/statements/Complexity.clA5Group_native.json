@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Group_native",
+ "key": "130ebd9aacf952f9",
+ "kind": "lemma",
+ "title": "Polynomial-time serialization of a wired group",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $c$ be a binary code for its optional states, and fix a template kind $K$. Suppose that each of the four functions producing unary words of lengths $m(x),s(x),t(x),p(x)$ is polynomial-time computable. Then the function sending $x$ to the serialized fragment of the clause group wired with those four parameters is polynomial-time computable.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$ over the binary alphabet",
+  "A binary code for its optional states",
+  "A fixed template kind $K$",
+  "The unary functions $x\\mapsto 1^{m(x)},1^{s(x)},1^{t(x)},1^{p(x)}$ are polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a fixed machine, state code, and template kind, if the unary input count, source time, target time, and selected index are polynomial-time computable, then the serialized fragment of the wired clause group is polynomial-time computable; only the unary wiring varies with the input."
+}

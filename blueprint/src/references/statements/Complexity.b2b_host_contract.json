@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.b2b_host_contract",
+ "key": "70db0ac7f3b3fa31",
+ "kind": "theorem",
+ "title": "Bounded-space host computation",
+ "statement": "Let $C,c,e,c_V,c_I,c_P$ be natural numbers, let $V$ be a language of Boolean words, and let $M_V,M_I,M_P$ be finite Boolean Turing machines. Suppose that for every word $y$, the cleaned simulation of $M_V$ on $y$ halts with output indicating whether $y\\in V$, leaves all work tapes blank with heads at zero, and uses head positions bounded by $c_V(|y|^e+1)$. Suppose $M_I$ computes the identity in time $c_I(n+1)$ on inputs of length $n$ and uses at most $c_I$ space at every time on every input. Suppose $M_P$ maps each word $x$ to a unary word of length $C(|x|+1)^c$, computes this in time $c_P(n+1)^{c+1}$ on inputs of length $n$, and uses at most $c_P(|x|+1)$ space at every time on input $x$. Then for every Boolean word $x$, the host machine computes the indicator of the language of words $z$ for which there exists a word $u$ of length $C(|z|+1)^c$ such that $z$ followed by $u$ belongs to $V$. It does so in some finite time and uses space at most $(K+1)\\bigl(2(|x|+C(|x|+1)^c+c_V((|x|+C(|x|+1)^c)^e+1)+c_I+c_P(|x|+1)+1)+1\\bigr)$, where $K=3+2k_V+2k_I+2k_P$ and $k_V,k_I,k_P$ are the numbers of work tapes of the three machines, respectively.",
+ "hypotheses_covered": [
+  "$C,c,e,c_V,c_I,c_P$ are natural numbers",
+  "$V$ is a language of Boolean words",
+  "$M_V,M_I,M_P$ are finite Boolean Turing machines",
+  "every word $y$ has the stated cleaned $M_V$ run with bound $c_V(|y|^e+1)$",
+  "$M_I$ computes the identity in time $c_I(n+1)$",
+  "$M_I$ space is at most $c_I$ for every input and time",
+  "$M_P$ outputs a unary word of length $C(|x|+1)^c$",
+  "$M_P$ runs within time $c_P(n+1)^{c+1}$",
+  "$M_P$ space is at most $c_P(|x|+1)$ for every input and time",
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

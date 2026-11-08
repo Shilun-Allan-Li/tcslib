@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.exists_rulerDeviceTM",
+ "key": "26c5455e0ac8705d",
+ "kind": "theorem",
+ "title": "Existence of a Ruler Device",
+ "statement": "There exist a finite state set $P$ with decidable equality, a one-work-tape Boolean Turing machine $R$ with state set $P$, states $readEntry,moveExit\\in P$, an injective map $readExit:\\mathrm{Option}(\\{\\mathrm{false},\\mathrm{true}\\})\\to P$ whose image excludes $moveExit$, a map $moveEntry:\\{-1,0,1\\}\\to P$, and a constant $C\\in\\mathbb N$ with the following property. For any Boolean words $y,z$, any $\\ell$ with $0<\\ell\\le |z|$, any configuration $d$ of $R$ on input $z$, and any input-head position $i$ among the $|y|+2$ positions, suppose deleting the first $\\ell$ symbols of $z$ gives $y$, the input head of $d$ is at $\\ell+i$, and its work tape at every offset $p$ from $-1$ through $\\ell$ from its head contains the corresponding cell of the tape encoding $\\ell$ true symbols. If $d$ is in state $readEntry$, then within $C(\\ell+1)$ steps the machine reaches the otherwise unchanged configuration with state $readExit(inputCell(y,i))$; before that time it does not enter any $readExit$ state, and throughout the run its work head stays within distance $\\ell+1$ of its initial position. For every movement sign $m$, if $d$ is in state $moveEntry(m)$, then within $C(\\ell+1)$ steps it reaches state $moveExit$, with input head at $\\ell+moveInputPos(i,m)$, unchanged work tape, work-head position, and output; before that time it does not enter $moveExit$, and throughout the run its work head stays within distance $\\ell+1$ of its initial position.",
+ "hypotheses_covered": [
+  "Finite state set P with decidable equality and a one-work-tape Boolean machine R",
+  "States readEntry and moveExit, injective readExit map excluding moveExit, moveEntry map, and constant C",
+  "Boolean words y and z, with 0 < ℓ ≤ |z| and z’s suffix after ℓ symbols equal to y",
+  "Configuration d and input-head position i among the |y| + 2 positions",
+  "Ruler tape contents at offsets from −1 through ℓ",
+  "Initial state readEntry or moveEntry(m)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite state set $P$ with decidable equality, a deterministic\none-work-tape Turing machine $R$ over the Boolean alphabet, states\n$readEntry,moveExit\\in P$, an injective map $readExit:\\mathrm{Option}(\\{0,1\\})\\to P$\nwhose image excludes $moveExit$, a map $moveEntry:\\{-1,0,1\\}\\to P$, and a constant\n$C\\in\\mathbb N$ with the following property. For any Boolean words $y,z$, any $\\ell>0$\nwith $\\ell\\leq |z|$ and suffix $z$ after deleting its first $\\ell$ symbols equal to $y$,\nany configuration $d$ of $R$ on input $z$ whose input head is at $\\ell+i$ and whose work\ntape, from one cell left of its head through $\\ell$ cells to its right, contains the\nencoding of $\\ell$ true symbols, and any input-head position $i$ among the $|y|+2$\npositions, the following hold: if $d$ is in state $readEntry$, then within $C(\\ell+1)$\nsteps the machine reaches the otherwise unchanged configuration with state $readExit$ of\nthe input cell at position $i$ in the boundary-blank convention; before that time it\ndoes not enter any $readExit$ state, and throughout the run its work head stays within\ndistance $\\ell+1$ of its initial position. For every movement sign $m$, if $d$ is in\nstate $moveEntry(m)$, then within $C(\\ell+1)$ steps it reaches state $moveExit$, its\ninput head is at $\\ell$ plus the clamped move of $i$ by $m$, and its work tape,\nwork-head position, and output are unchanged; before that time it does not enter\n$moveExit$, and throughout the run its work head stays within distance $\\ell+1$ of its\ninitial position."
+}

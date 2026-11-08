@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.taut_syntax_separator",
+ "key": "408eef85c0025477",
+ "kind": "lemma",
+ "title": "The Pair Separator Ends the Syntax Pass",
+ "statement": "Let $x$ be a binary string, $s$ a syntax-scanner state, and $i$ a natural number. Suppose $i+2\\le |x|$, the bit of $x$ at position $i$ is $0$, and the bit at position $i+1$ is $1$. Starting from the verifier configuration on $x$ in the syntax state carrying $s$, with $i$ input bits consumed, empty work tape, and work head at $0$, after two steps it has consumed $i+2$ bits, with empty work tape and work head at $0$; its state is certificate-copy if $s$ is the exact-end state, and otherwise it is verdict with bit $1$.",
+ "hypotheses_covered": [
+  "$x$ is a binary string",
+  "$s$ is a syntax-scanner state",
+  "$i$ is a natural number",
+  "$i+2\\le |x|$",
+  "$x[i]=0$",
+  "$x[i+1]=1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input with $i + 2 \\le |x|$ whose bits at positions $i$ and $i+1$ are $0$\nand $1$, and let $s$ be a formula-scanner state. Started in the syntax state carrying\n$s$ with $i$ input bits consumed, empty work tape, head $0$, and empty output, after\nexactly two steps the non-tautology verifier has consumed $i+2$ bits and is in the\ncertificate-copy state if $s$ is the exact-end state, and in the verdict state with\nbit $1$ otherwise."
+}

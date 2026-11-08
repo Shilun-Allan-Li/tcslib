@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.Codec.parse_run₂",
+ "key": "a827d52c98313646",
+ "kind": "theorem",
+ "title": "Parsing a triple-encoded input",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input and let $y$ be a finite bit string. Either there are bit strings $x,w,w'$ and natural numbers $s,q_1,\\mathrm{cap}$ such that $y=\\langle x,\\langle w,\\langle w',\\mathrm{bits}(s)\\rangle\\rangle\\rangle$, the binary expansion of $s$ has length at most the length of the binary expansion of $|y|$, and $q_1,\\mathrm{cap}\\le (8W+8)(|y|+1)$, where $W$ is the machine-dependent width defined for $N$. In this case the step-mode program reaches its $N_1$ copy stage from its initial length scan, with all registers bounded by $(8W+8)(|y|+1)$ at every earlier step, and with register values $L=|y|$, $P=2|x|+2|w|+2|w'|+6$, $A=2|x|+2$, $B=2|x|+2|w|+4$, $Q_1=q_1$, $\\mathrm{Cap}=\\mathrm{cap}$, $Q_2=2|x|+2|w|+2|w'|+6$, and $S=s$ at that stage. Otherwise, if no such triple and $s$ satisfy the encoding and binary-length condition, the program halts with answer false from its initial length scan, with all registers bounded by the same bound at every earlier step.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine $N$ with Boolean input",
+  "An arbitrary finite bit string $y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

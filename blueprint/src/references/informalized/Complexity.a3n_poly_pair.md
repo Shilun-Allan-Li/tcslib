@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/Nondeterminism.lean :: Complexity.a3n_poly_pair -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Pairing of Two Functions
+
+**Claim.** If $f,g:\{0,1\}^*\to\{0,1\}^*$ are polynomial-time computable, then the function mapping $x$ to the self-delimiting encoding of $(f(x),g(x))$ is polynomial-time computable.
+
+**Proof.** The proof builds the target through a sequence of polynomial-time transformations. First duplicate the input, giving $(x,x)$ in pair-encoding form, and extract its first component using the polynomial-time first-projection machine (Turing.FinTM.computesFunInTime_pairDup, Turing.FinTM.computesFunInTime_pairFst). Separately, compute $f(x)$, pair it with the constant empty word, and use the payload map to obtain the encoding of $(f(x),[])$; this uses polynomial-time composition, the constant-word result (Complexity.a3n_poly_const), and the identity that decoding an encoded pair recovers its components (Turing.pairDecode_pairEncode). Apply the payload map again to the encoding of $(x,\operatorname{encode}(f(x),[]))$, replacing its second component by $g(x)$; obtain $g(x)$ by composing $g$ with the polynomial-time second-projection machine (Turing.FinTM.computesFunInTime_pairSnd). The result is an encoding with nested first component and $g(x)$ as second component. Finally, decode its second component and concatenate it with the preceding encoded data using the pair-concatenation machine (Turing.FinTM.computesFunInTime_pairConcat), then extract the second component of that outer encoding (Turing.FinTM.computesFunInTime_pairSnd). On valid encodings, decoding recovers the original components, and associativity of list concatenation gives $\operatorname{encode}(x,\operatorname{encode}(f(x),[]))\mathbin{++}g(x)=\operatorname{encode}(x,\operatorname{encode}(f(x),g(x)))$. Hence the final output is the required encoding. Each stage is polynomial-time, and polynomial-time computability is preserved under composition (Complexity.PolyTimeComputable.comp).
+
+**Key facts.** `Turing.FinTM.computesFunInTime_pairDup`, `Turing.FinTM.computesFunInTime_pairFst`, `Complexity.a3n_poly_const`, `Complexity.a3n_poly_map`, `Complexity.PolyTimeComputable.comp`, `Turing.pairDecode_pairEncode`, `Turing.FinTM.computesFunInTime_pairSnd`, `Turing.FinTM.computesFunInTime_pairConcat`.

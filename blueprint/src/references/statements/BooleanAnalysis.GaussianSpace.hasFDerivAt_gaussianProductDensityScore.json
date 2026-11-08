@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.hasFDerivAt_gaussianProductDensityScore",
+ "key": "198d3a74ea62b389",
+ "kind": "lemma",
+ "title": "Derivative of the product Gaussian score",
+ "statement": "Let $I$ be a finite index set, let $v\\ge0$, and let $c,z\\in\\mathbb R^I$. The function $m\\mapsto S_v(m,z)$, where $S_v(m,z)[h]=\\sum_{i\\in I}((z_i-m_i)/v)h_i$, is differentiable at $c$. Its derivative sends a direction $h$ to the linear functional $k\\mapsto-\\sum_{i\\in I}h_i k_i/v$, with division by zero interpreted as zero.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$v\\ge0$",
+  "$c,z\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. For $c,z,h\\in\\mathbb R^I$, put $S_v(c,z)[h]=\\sum_i((z_i-c_i)/v)h_i$. For every $c,z$, the derivative in $c$ of $S_v(c,z)$ is the bilinear map $(h,k)\\mapsto-\\sum_i h_i k_i/v$."
+}

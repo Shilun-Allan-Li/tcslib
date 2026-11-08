@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.extract_finish",
+ "key": "be86312d879ec20c",
+ "kind": "lemma",
+ "title": "Halting after the extractor rewind phase",
+ "statement": "Let $first,second$ be Boolean flags and let $x,pre,rest,a$ be Boolean words with $x=pre\\mathbin{++}rest$. Starting in the pair extractor's rewind state at input position $|pre|$, with buffer $a$, work head at $|a|-1$, and empty output, there is a time $t\\le 2|a|+|rest|+3$ at which the machine is halted and its output is $(a\\text{ if }first\\text{ is true, otherwise empty})$ followed by $(rest\\text{ if }second\\text{ is true, otherwise empty})$.",
+ "hypotheses_covered": [
+  "first and second are Boolean flags",
+  "x, pre, rest, and a are Boolean words",
+  "x=pre followed by rest"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a split $x = p s$ of the input and a validated buffer $a$, there is a time\n$t \\le 2\\abs{a} + \\abs{s} + 3$ such that after $t$ steps from the start of the\nrewind phase at position $\\abs{p}$ the extractor has halted, and its output is\n$a$ (when the first flag is set) followed by $s$ (when the second flag is\nset)."
+}

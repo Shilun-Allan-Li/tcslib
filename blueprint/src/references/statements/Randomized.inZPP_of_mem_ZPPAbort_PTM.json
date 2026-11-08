@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.inZPP_of_mem_ZPPAbort_PTM",
+ "key": "d4b5c7eecd0e00cf",
+ "kind": "theorem",
+ "title": "Abort-machine characterization of zero-error computation",
+ "statement": "Let $L$ be a language of bit strings. If there are a natural number $c$ and a finite nondeterministic Turing machine whose running time on inputs of length $n$ is bounded by $a(n^c+1)$ for some natural number $a$, such that every length-matched choice string makes the machine halt, its output is never the one-bit indicator of membership in $L$, and that output equals the indicator with probability at least $1/2$ under uniformly random choices, then $L$ has an efficient polynomial-witness verifier with no incorrect answers and probability at most $1/2$ of giving no answer.",
+ "hypotheses_covered": [
+  "$L$ is a language of bit strings",
+  "$L$ belongs to the class defined as the union over natural $c$ of languages decided by an aborting probabilistic Turing machine",
+  "There is a natural number $a$ and a finite nondeterministic Turing machine witnessing that membership",
+  "The machine halts on every choice string of the prescribed input-dependent length",
+  "For every such choice string, the output differs from the one-bit membership indicator",
+  "The probability of outputting the membership indicator is at least $1/2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.StepBlock.seekTM_stateStep",
+ "key": "87c71ab8d7a8d64e",
+ "kind": "lemma",
+ "title": "Seek machine state transition",
+ "statement": "Let $k$ be a natural number, let $x$ be a finite Boolean input, let $d$ be a configuration of the record machine, let $rank<3^{k+1}$, and let $b$ be a Boolean. Suppose $d$ is in the record machine's initial state and the symbol under the summary-tape head is $b$. If $b$ is true, one step of the seek machine advances the summary head by one and enters a request control carrying $rank$, the index $3^{k+1}-1$, and the flag false. If $b$ is false, it leaves the configuration's tapes and head positions unchanged and enters the done control when $rank=0$, or a request control carrying $rank$, $rank-1$, and the flag true otherwise.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$x$ is a finite Boolean input",
+  "$d$ is a configuration of the record machine",
+  "$rank<3^{k+1}$",
+  "$b$ is Boolean",
+  "$d$ has the record machine's initial state",
+  "the symbol under the summary-tape head is $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

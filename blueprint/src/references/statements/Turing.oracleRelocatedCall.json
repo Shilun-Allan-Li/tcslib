@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.oracleRelocatedCall",
+ "key": "dc46661daa584455",
+ "kind": "theorem",
+ "title": "Relocated finite-machine call",
+ "statement": "Let $C$ be a finite-state Turing machine over the Boolean alphabet with $C.k$ work tapes, let $en$ and $ex$ be states of $C$, and let $\\iota$ be an injection from the $1+C.k$ tapes of its virtual-host simulation into $k$ ambient tapes. Suppose that, on empty input and starting with $\\mathrm{stateWord}(C.k,\\mathrm{arg})$ on its work tapes in state $en$, the machine reaches the configuration with work tapes $\\mathrm{stateWord}(C.k,\\mathrm{result})$ in state $ex$ after $t$ steps, and its state is never $ex$ at any earlier time $s<t$. For any ambient tape contents and head positions, Boolean words $\\mathrm{arg}$ and $\\mathrm{result}$, Boolean input word $x$, valid input-head position $p$, and output word $\\mathrm{out}$, the embedded virtual-host simulation started from the corresponding configuration with tag true reaches the corresponding configuration based on the state-$ex$ result after $t$ steps; at every earlier time $s<t$, its state is not $(ex,\\mathrm{true})$.",
+ "hypotheses_covered": [
+  "$C$ is a finite Turing machine over the Boolean alphabet",
+  "$en$ and $ex$ are states of $C$",
+  "An injection embeds the $1+C.k$ virtual-host tapes into $k$ ambient tapes",
+  "Ambient tape contents and head positions are arbitrary",
+  "Argument and result are Boolean words",
+  "$t$ is a natural number",
+  "The base machine reaches the specified state-$ex$ configuration after $t$ steps",
+  "The base machine's state is never $ex$ at any earlier time $s<t$",
+  "$x$ is a Boolean input word",
+  "$p$ is a valid input-head position for $x$",
+  "The initial output word is arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

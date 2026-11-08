@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satDrop_write",
+ "key": "e1b7d17e3f9c224a",
+ "kind": "lemma",
+ "title": "Unary Counter Extension",
+ "statement": "Let $x$ be a Boolean word, $q$ an optional state among six states, and $i,n\\in\\mathbb{N}$. Applying the action that moves both heads right, writes true on the work tape, emits nothing, and enters state $0$ to the canonical configuration with input head at clamped offset $i$, counter length $n$, counter head at $n$, and empty output gives the canonical configuration with state $0$, input head at clamped offset $i+1$, counter length $n+1$, counter head at $n+1$, and empty output.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "optional state $q$ among six states",
+  "natural offsets $i,n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input, $i$ a natural offset, and $n \\in \\mathbb{N}$. Applying the\ndropper action that writes a one under the counter head, moves the input head and\nthe counter head right, and enters the counting state, to a canonical dropper\nconfiguration on $x$ at clamped offset $i$ whose unary counter has length $n$ and\nhead at $n$ (with empty output), yields the canonical configuration in the\ncounting state at clamped offset $i + 1$ with counter length $n + 1$ and counter\nhead at $n + 1$: writing the counter's right blank appends exactly one unary cell."
+}

@@ -12,23 +12,14 @@ and step laws, used by the data-machine correctness proof.
 
 \section{Declarations}
 
-\begin{lemma}[Arithmetic ledger for the schedule's cost]
+\begin{lemma}[Arithmetic bound for the schedule cost]
 \lean{Complexity.obliviousLedger_bound}
 \label{Complexity.obliviousLedger_bound}
 \leanok
 \difficulty{4}
-Let $a, b, u, n, \tau, w \in \bbn$ satisfy $n \le u$, $\tau \le b\,(u+1)$, and
-$w \le b\,(u+1)$.  Then
-\[
-  \tau + 3n + 18 + (u+1)\bigl(2w + (a+1) + 4\bigr)
-  + 22\,(a+1)(u+1) + 18\,\bigl((a+1)(u+1)\bigr)^2
-  \;\le\;
-  \bigl(18\,(a+1)^2 + 23\,(a+1) + 3b + 25\bigr)\,(u+1)^2 .
-\]
-The left-hand side gathers, as abstract summands, the costs of a clock run of length
-$\tau$, an input reset over $n$ cells, the fixed overheads, $u+1$ budget rounds over a
-word of width $w$, and the allocation and sweep stages measured in the unary budget
-$(a+1)(u+1)$; the inequality itself is a statement of pure natural-number arithmetic.
+Let $a,b,u,n,\tau,\mathrm{width}\in\mathbb{N}$ satisfy $n\le u$, $\tau\le b(u+1)$, and
+$\mathrm{width}\le b(u+1)$. Then
+\[\tau+3n+18+(u+1)\bigl(2\,\mathrm{width}+(a+1)+4\bigr)+22(a+1)(u+1)+18\bigl((a+1)(u+1)\bigr)^2\le\bigl(18(a+1)^2+23(a+1)+3b+25\bigr)(u+1)^2.\]
 \end{lemma}
 
 \begin{lemma}[Quadratic halting bound for the schedule]
@@ -37,19 +28,13 @@ $(a+1)(u+1)$; the inequality itself is a statement of pure natural-number arithm
 \leanok
 \uses{Complexity.budgetValue, Complexity.budgetValue_bits, Complexity.clockStageCfg, Complexity.clockStageCfg_captures, Complexity.clockStageCfg_setup, Complexity.clockTape, Complexity.oblEmbed, Complexity.obliviousLedger_bound, Complexity.obliviousSchedule, Complexity.setupCfg_finish, Complexity.setupCfg_initializes, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $W$ be a machine over the Boolean alphabet, let $a, b \in \bbn$, and let
-$T \colon \bbn \to \bbn$ satisfy $n \le T(n)$ for every $n$.  Suppose that on every
-Boolean input $x$ the machine $W$ halts within $b\,(T(\abs{x})+1)$ steps with output
-exactly the list of (little-endian) binary digits of $T(\abs{x})$.  Then for every
-Boolean input $x$, the length-only schedule machine built from $W$ and the padding
-parameter $a$, started on the embedding of $x$ into the schedule alphabet (each bit
-sent to its tagged bit symbol), halts --- through its clock capture, input reset,
-copy, fixed-width budget conversion, guide allocation, all macrosteps, and the final
-counter test --- within a uniform quadratic budget: there exists a time
-\[
-  t \;\le\; \bigl(18\,(a+1)^2 + 23\,(a+1) + 3b + 25\bigr)\,\bigl(T(\abs{x})+1\bigr)^2
-\]
-after which its control state is the halting state.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,b\in\mathbb{N}$,
+and let $T\colon\mathbb{N}\to\mathbb{N}$ satisfy $n\le T(n)$ for every $n$. Suppose that
+for every Boolean input $y$, the machine $W$ halts after exactly $b(T(|y|)+1)$ steps and
+outputs the little-endian binary expansion of $T(|y|)$. Then for every Boolean input
+$x$, the schedule machine determined by $W$ and $a$, started on the input obtained by
+tagging each bit of $x$, reaches a halting state at some time $t$ satisfying $t\le
+\bigl(18(a+1)^2+23(a+1)+3b+25\bigr)(T(|x|)+1)^2$.
 \end{lemma}
 
 \begin{lemma}[Quadratic halting bound for the candidate]
@@ -58,19 +43,12 @@ after which its control state is the halting state.
 \leanok
 \uses{Complexity.decorateTM_run, Complexity.oblEmbed, Complexity.obliviousCandidate, Complexity.obliviousDataInit, Complexity.obliviousSchedule, Complexity.obliviousSchedule_halts, Complexity.obliviousSchedule_output, Complexity.obliviousVisit, Complexity.parallelTM_run, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-Let $W$ and $M$ be machines over the Boolean alphabet, let $a, b \in \bbn$, and let
-$T \colon \bbn \to \bbn$ satisfy $n \le T(n)$ for every $n$.  Suppose that on every
-Boolean input $x$ the machine $W$ halts within $b\,(T(\abs{x})+1)$ steps with output
-exactly the list of (little-endian) binary digits of $T(\abs{x})$.  Then for every
-Boolean input $x$, the candidate oblivious simulator built from $W$, $M$, and $a$ ---
-the length-only schedule decorated by the data transducer for $M$ and realized over
-the binary alphabet by transverse binary blocks --- halts on $x$ within the same
-uniform quadratic budget: there exists a time
-\[
-  t \;\le\; \bigl(18\,(a+1)^2 + 23\,(a+1) + 3b + 25\bigr)\,\bigl(T(\abs{x})+1\bigr)^2
-\]
-after which its control state is the halting state.  No hypothesis on the computation
-of the source machine $M$ is needed, and the bound does not depend on $M$.
+Let $W$ and $M$ be finite machines over the binary alphabet, let $a,b\in\mathbb{N}$, and
+let $T:\mathbb{N}\to\mathbb{N}$. Suppose that on every binary input $x$, $W$ outputs the
+binary expansion of $T(|x|)$ within $b(T(|x|)+1)$ steps, and that $n\le T(n)$ for every
+$n$. Then, for every binary input $x$, the candidate built from $W$, $M$, and $a$
+reaches a halting state by some time
+$t\le\bigl(18(a+1)^2+23(a+1)+3b+25\bigr)(T(|x|)+1)^2$.
 \end{lemma}
 
 \begin{definition}[Decorated configuration]
@@ -97,33 +75,31 @@ schedule.
 \leanok
 \uses{Complexity.decorateTM, Complexity.decoratedCfg, Turing.FinTM, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-Let $P$ be a machine over an alphabet $A$, decorated by a data transducer with $l$
-extra tapes, designated head index $h$, a finite data-state set with initial element
-$d_0$, and a visit function.  For every input word $x$, the initial configuration of
-the decorated machine on $x$ equals the decorated configuration built from the
-initial configuration of $P$ on $x$, the initial data state $d_0$, entirely blank
-extra tapes, and the empty output: the data tapes begin blank and aligned with the
-schedule's origin.
+Let $P$ be a finite Turing machine over an alphabet $A$, let $l$ be a natural number,
+choose a work-tape index $h$ of $P$, a finite data-state set $D$ with initial state
+$d_0$, and any visit function of the specified type. For every input word $x$, the
+decorated machine's initial configuration on $x$ is the decorated configuration formed
+from $P$'s initial configuration, data state $d_0$, blank contents on all extra tapes,
+and empty output.
 \end{lemma}
 
-\begin{lemma}[One decorated step]
+\begin{lemma}[One step of a decorated configuration]
 \lean{Complexity.decoratedCfg_step}
 \label{Complexity.decoratedCfg_step}
 \leanok
 \uses{Complexity.decorateTM, Complexity.decoratedCfg, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $P$ be a machine over an alphabet $A$, decorated by a data transducer with $l$
-extra tapes, designated head index $h$, initial data state, and visit function.  Let
-$c$ be a configuration of $P$ on an input word $x$ whose control state is a live
-state $q$, let $d$ be a data state, and fix contents for the $l$ data tapes and an
-output word.  Write $v$ for the value of the visit function on $q$, $d$, the input
-symbol scanned by $c$, the $k$ work-tape reads of $c$, and the data-tape symbols at
-the position of the designated head $h$; thus $v$ consists of a new data state, one
-optional write per data tape, and an optional emitted symbol.  Then one step of the
-decorated machine from the decorated configuration equals the decorated configuration
-built from one step of $P$ from $c$, the new data state, each data tape updated by
-its optional write at the position of the designated head, and the output word
-extended by the emitted symbol when one is present.  In particular the decorated
-transition consists of exactly the prescribed schedule step together with the local
-data visit.
+Let $P$ be a finite Turing machine over an alphabet $A$ with $k$ work tapes, and let $l$
+be a natural number, $h$ a work-tape index of $P$, $D$ a finite data-state set, $d_0\in
+D$, and $V$ a visit function of the stated type. For an input word $x$ over $A$, let $c$
+be a configuration of $P$ with state $q$, and suppose $c$ is in state $q$; choose $d\in
+D$, contents $T_i\colon\mathbb Z\to A\cup\{\text{blank}\}$ for the $l$ extra tapes, and
+an output word $o$. Evaluate $V$ at $q$, $d$, the symbol scanned by $c$, the symbols
+under its work-tape heads, and the extra-tape symbols at the position of head $h$,
+obtaining a new data state, one optional write for each extra tape, and an optional
+output symbol. One step of the decorated machine from the configuration pairing $c$ with
+$d$, carrying the extra tapes and output $o$, equals the configuration formed from one
+step of $P$ from $c$, the new data state, each extra tape updated at the former position
+of head $h$ according to its write instruction, and the output word extended by the
+optional symbol.
 \end{lemma}

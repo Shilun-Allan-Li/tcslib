@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.UTab.goes_emit",
+ "key": "9c5bce3e707193c2",
+ "kind": "theorem",
+ "title": "Universal Program Emits the Tableau Circuit",
+ "statement": "Let $M$ be a finite-state multitape Turing machine with Boolean input and output, let $n,T\\in\\mathbb N$, and let $z$ be a finite bit string, with $T\\ge 1$. The counter program constructed from $M$, started at its initial label with all 11 registers zero and read position zero, on the input consisting of $n$ ones, then a zero, then $T$ ones, then a zero, followed by $z$, reaches a halted state with some register assignment and input position, and has printed the encoding of the tableau circuit for $M$, $n$, $z$, and $T$; this is achieved within the stated run bound.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state multitape Turing machine over Boolean symbols",
+  "$n,T$ are natural numbers",
+  "$z$ is a finite Boolean string",
+  "$1\\le T$"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem uses repository-defined constructions for the counter program, tableau circuit, encoding, and run bound; their full meanings are not supplied by the informal descriptions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

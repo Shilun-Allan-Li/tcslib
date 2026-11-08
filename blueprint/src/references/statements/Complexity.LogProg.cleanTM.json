@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.cleanTM",
+ "key": "272be4256be2ac4a",
+ "kind": "def",
+ "title": "Cleaned machine",
+ "statement": "Given a deterministic Turing machine $M$ with $k$ work tapes, Boolean alphabet, and state set $S$, and an initial state $q_0\\in S$, define a machine with $2k$ work tapes and cleaning states. It starts in the initialization state for $q_0$, marks the origin on the added tapes, and then simulates $M$ on the first $k$ tapes while maintaining marks on the added tapes; when $M$ halts, it proceeds through the cleaning phases to erase those marks and return the work tapes to blank, halting after the cleaning process.",
+ "hypotheses_covered": [
+  "$M$ is a $k$-work-tape Boolean-alphabet machine with state set $S$",
+  "$q_0$ is a state in $S$"
+ ],
+ "confidence": "low",
+ "caveat": "The definition specifies detailed transition behavior; the compressed description may omit operational details such as movement and write choices.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

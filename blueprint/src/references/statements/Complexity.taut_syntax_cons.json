@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.taut_syntax_cons",
+ "key": "c90812f5c55a1b49",
+ "kind": "lemma",
+ "title": "One Scanner Transition",
+ "statement": "For every syntax-scanner state $q$, bit $b$, and binary string $x$, scanning $b$ followed by $x$ from $q$ gives the same acceptance bit as scanning $x$ from the state reached by applying one transition to $q$ on $b$.",
+ "hypotheses_covered": [
+  "$q$ is a syntax-scanner state",
+  "$b$ is a bit",
+  "$x$ is a binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every state $q$ of the six-state formula syntax scanner with transition $\\delta$,\nevery bit $b$, and every binary string $x$, the acceptance bit of the scan from $q$ on\n$b :: x$ equals the acceptance bit of the scan from $\\delta(q, b)$ on $x$."
+}

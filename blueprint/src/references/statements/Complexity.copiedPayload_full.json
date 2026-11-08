@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.copiedPayload_full",
+ "key": "9816b4997006a605",
+ "kind": "lemma",
+ "title": "Full Copy of the Initial Input",
+ "statement": "Let $M$ be a finite deterministic machine over the Boolean alphabet and let $x$ be a Boolean word. The copied payload vector with count $|x|+1$ equals the head-centered payload vector of $M$'s initial configuration on $x$.",
+ "hypotheses_covered": [
+  "$M$ is a finite deterministic machine over Booleans",
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary machine $M$ and word $x$, the copied payloads of count\n$|x| + 1$ coincide with the head-centered payload vectors of the initial\nconfiguration of $M$ on $x$: the input lane carries the complete virtual input\nincluding both boundary tags, and every work lane is blank."
+}

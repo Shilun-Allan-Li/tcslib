@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.psem_addOnce",
+ "key": "43899ff3ab2fa930",
+ "kind": "theorem",
+ "title": "Single addition in a probabilistic program",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ natural-number registers, state set $\\Lambda$, and oracle, and fix an input $x$ and register bound $B$. Let $j,y,R$ be register indices with $j\\ne y$, $j\\ne R$, and $R\\ne y$. Suppose the instruction at state $test$ compares registers $j$ and $y$, going to $ex$ when they are equal and to $i_1$ otherwise; at $i_1$ it increments register $R$ and goes to $i_2$, and at $i_2$ it increments register $j$ and returns to $test$. For any rational $q$ and register valuation $v$ bounded by $B$, assume $v(j)\\le v(y)$ and $v(R)+(v(y)-v(j))\\le B$. If the configuration at $ex$ with register $R$ increased by $v(y)-v(j)$ and register $j$ set to $v(y)$ has probabilistic semantics of acceptance probability $q$ under the register bound $B$, then the configuration at $test$ with valuation $v$ has the same semantics and acceptance probability.",
+ "hypotheses_covered": [
+  "The program $A$, oracle, input $x$, and bound $B$ are fixed",
+  "$j,y,R$ are register indices",
+  "$j\\ne y$",
+  "$j\\ne R$",
+  "$R\\ne y$",
+  "The specified instructions at $test,i_1,i_2$",
+  "$q$ is rational",
+  "$v$ is a register valuation",
+  "Every register value of $v$ is at most $B$",
+  "$v(j)\\le v(y)$",
+  "$v(R)+(v(y)-v(j))\\le B$",
+  "The specified configuration at $ex$ has probabilistic semantics with acceptance probability $q$ under bound $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

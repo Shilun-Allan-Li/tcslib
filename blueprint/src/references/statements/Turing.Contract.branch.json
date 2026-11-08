@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.Contract.branch",
+ "key": "45cd2a6a02eb463b",
+ "kind": "def",
+ "title": "Branching composition of contracts",
+ "statement": "Let a first machine's contract start at an entry state and exit at one of two distinct designated states. For each exit state, suppose there is a contract for a corresponding second machine, together with a map from the first contract's data to that contract's data; assume the first endpoint, with its state reset to the corresponding second entry state, satisfies that second contract's precondition whenever it reaches that exit. The machine that runs the first machine and then switches to the selected second machine has a contract whose exit set is the union of the two second exit sets mapped into their respective state summands; its running time is the first running time plus one switching step and the running time of the selected second contract, and its head-position bounds are the coordinatewise minimum and maximum of the first bounds and the selected second bounds.",
+ "hypotheses_covered": [
+  "Decidable equality on the state sets of the first and two branch machines",
+  "The two designated exit states of the first machine are distinct",
+  "A first contract with exactly those two exit states",
+  "A contract for each branch machine",
+  "A data map for each branch",
+  "Each branch precondition holds at the first endpoint, reset to that branch's entry state, when the corresponding designated exit is reached"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

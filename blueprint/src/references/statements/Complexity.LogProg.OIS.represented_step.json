@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.represented_step",
+ "key": "72f6498128012700",
+ "kind": "theorem",
+ "title": "One simulated machine step",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $x,v$ be Boolean words, and let $o$ be an oracle for two languages on Boolean words. Suppose that, for every $i\\le |v|$, the first oracle answer on the encoding of $x$ paired with the binary expansion of $i$ is true exactly when $i<|v|$, and, for every $i<|v|$, the second oracle answer on that encoding equals the $i$-th bit of $v$ (defaulting to false if absent). Let $c$ be a live configuration of $M$ on $v$, and let $d$ represent $c$ in the compiled program. If every work-tape head of $c$ and of its next machine configuration lies in $[-S,S]$, then the compiled program, started at $d$, reaches after some finite number $N$ of steps a configuration representing the next configuration of $M$; every configuration strictly before step $N$ satisfies the safety bounds for length $|v|$ and parameter $S$.",
+ "hypotheses_covered": [
+  "A finite Boolean Turing machine $M$",
+  "Boolean words $x,v$",
+  "An oracle on two indices and Boolean words",
+  "The first oracle-answer condition for every $i\\le |v|`",
+  "The second oracle-answer condition for every $i<|v|`",
+  "A configuration $c$ of $M$ on $v$ with nonhalting state",
+  "A compiled configuration $d$ representing $c$",
+  "All work-tape heads in both $c$ and its next configuration lie in $[-S,S]`"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

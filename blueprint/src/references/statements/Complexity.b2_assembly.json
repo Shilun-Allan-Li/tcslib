@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.b2_assembly",
+ "key": "3014fbd7d6f095a9",
+ "kind": "lemma",
+ "title": "From scheduler halt to verifier start",
+ "statement": "Let $S$ and $V$ be deterministic machines over bits, let $x$ be a finite bit string, and let $c$ be a configuration of $S$ on input $x$ whose state is halted. Let $u$ and $w$ be finite bit strings with $|w|=|x\text{ followed by }u|+2$. Running the combined host machine on choice string $w$ from the guessing-phase configuration formed from $c$ and $u$ yields the verifier-phase configuration whose verifier component is the initial configuration of $V$ on input $x$ followed by $u$, whose boundary tag is true, and whose remaining tape and head data are those specified by $c$.",
+ "hypotheses_covered": [
+  "$S,V$ are finite deterministic machines over bits",
+  "$x$ is a finite bit string",
+  "$c$ is a configuration of $S$ on input $x$",
+  "$c$ is halted",
+  "$u,w$ are finite bit strings",
+  "$|w|=|x\\mathbin{+\u00017}u|+2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $d$ a halted scheduler configuration on an input $x$, $u$ a guessed word, and $w$ any choice word with $|w| = |x\\,u| + 2$. Running the host under $w$ from the guessing-phase configuration for $(d,u)$ installs the verifier-phase configuration for the initial configuration of $V$ on the assembled word $x\\,u$."
+}

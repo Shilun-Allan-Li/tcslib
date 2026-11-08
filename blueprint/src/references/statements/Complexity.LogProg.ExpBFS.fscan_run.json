@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.fscan_run",
+ "key": "0758d7ad05a1be12",
+ "kind": "theorem",
+ "title": "Halting Characterisation of the Final Scan",
+ "statement": "Let $K_0,B,P,j$ be natural numbers, let $x$ be a Boolean word, let $\\mathcal O$ assign a Boolean answer to each of four indices and each Boolean word, let $S=(N,L_g,s,s_1,X,w,K,B_s,U,V,T,T_2,Z,C,ch,c,c_1)$ be a machine state, and let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory marking. Suppose $K-U=j$ using truncated subtraction, $U\\le K$, $T=T_2=Z=0$, every coordinate of $S$ is at most $B$, $B_s+K\\le B$, $B_s+K\\le P$, and $K+1\\le B$. Then the machine started in its final-scan state with registers given by $S$, memory $M$, and memory head at $0$ halts while its guard holds at every time strictly before halting. Its answer is true exactly when there exists $v\\in\\mathbb N$ such that $U\\le v<K$, $M(B_s+v)=\\mathrm{true}$, and $\\mathcal O$ at index $3$ answers true on the encoding of $x$ paired with the encodings of $v$ and $s$.",
+ "hypotheses_covered": [
+  "$K_0,B,P,j$ are natural numbers",
+  "$x$ is a Boolean word",
+  "An oracle on four indices and Boolean words",
+  "A machine state $S$ and memory marking $M$",
+  "$K-U=j$ with natural-number truncated subtraction",
+  "$U\\le K$",
+  "$T=T_2=Z=0$",
+  "Every coordinate of $S$ is at most $B$",
+  "$B_s+K\\le B$",
+  "$B_s+K\\le P$",
+  "$K+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $x$\nbe a Boolean word, and let $K_0,B,P,j$ be natural numbers, with an oracle assigning a\nBoolean answer to each of four indices and each Boolean word. Let $S$ be a machine state\nand $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ a memory marking. Suppose $j=K-U$,\n$U\\le K$, the two walk counters and scratch register are zero, every register of $S$ is\nat most $B$, $B_s+K\\le B$, $B_s+K\\le P$, and $K+1\\le B$. Then the machine started in its\nfinal-scan state with registers given by $S$, memory $M$, and memory head at $0$ halts\nwhile satisfying the following guard at every time before halting: every register is at\nmost $B$, the current instruction's required safety condition holds, and the memory head\nlies between $0$ and $P$. Its Boolean answer is true exactly when there exists a natural\nnumber $v$ with $U\\le v<K$, $M(B_s+v)=\\mathrm{true}$, and the oracle at index $3$\nanswers true on the encoding of $x$ paired with the encodings of $v$ and $s$."
+}

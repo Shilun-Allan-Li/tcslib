@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_polyUnary",
+ "key": "472b0abb354c00cc",
+ "kind": "theorem",
+ "title": "Polynomial unary output is polynomial-time",
+ "statement": "For every $C,d\\in\\mathbb{N}$, the function sending a bit string $x$ to the word consisting of $C(|x|+1)^d$ copies of $1$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$C\\in\\mathbb{N}$",
+  "$d\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $C, d \\in \\mathbb{N}$, the map sending a bit string $x$ to the word $1^{C(|x|+1)^d}$ of $C(|x|+1)^d$ ones is polynomial-time computable, i.e.\\ some finite binary Turing machine computes it within $K(n+1)^k$ steps on every input of length $n$, for some constants $K, k \\in \\mathbb{N}$."
+}

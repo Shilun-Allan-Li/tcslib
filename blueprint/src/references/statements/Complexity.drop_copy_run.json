@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.drop_copy_run",
+ "key": "51e9bd04247d28f8",
+ "kind": "lemma",
+ "title": "A bounded copy-register run",
+ "statement": "Fix a mode, a Boolean input $h$, a stage among eight copy stages, and an initial assignment $v$ of natural numbers to nine registers. Suppose every register initially holds at most $4|h|+4$, and the value in the stage's source register is at most the value in its destination register. Then the specified register machine, with its associated oracle, has a run from the configuration at that stage with no answer yet to the configuration at the next stage with the source register replaced by the destination register's initial value and no answer yet; every configuration before the final one satisfies the machine's validity conditions and keeps every register at most $4|h|+4$.",
+ "hypotheses_covered": [
+  "Mode is a Boolean value",
+  "h is a Boolean list",
+  "stage is in Fin 8",
+  "v assigns natural numbers to nine registers",
+  "Every register value v(r) is at most 4 * |h| + 4",
+  "The source-register value is at most the destination-register value"
+ ],
+ "confidence": "high",
+ "caveat": "The statement depends on the auxiliary register machine, oracle, configuration, and reachability predicates; their operational definitions are lengthy.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

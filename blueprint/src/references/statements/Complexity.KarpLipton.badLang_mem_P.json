@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.KarpLipton.badLang_mem_P",
+ "key": "ceb526588a885d96",
+ "kind": "theorem",
+ "title": "Polynomial-time closure for the bad-specification language",
+ "statement": "Let $C,c\text{ in }\backs lash\textbackslash N$, and let $V$ be a language of bit strings in $P$. Form the language of strings $z$ for which the five decoded components $x,U,u,j,p$ satisfy the following: $|u|=C(|x|+1)^c$, $|j|\\le C(|x|+1)^c$, and $|p|\\le C(|x|+1)^c$; and at least one of the following holds. The circuit encoded by the marker-deleted $U$, queried on $\bg x,u\bg$ with the all-ones marker of length $C(|x|+1)^c$ followed by $0$, rejects; or $|p|=C(|x|+1)^c$, that circuit accepts the query with suffix $0p$, and $\bg\bg x,p\bg$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the circuit accepts the query with suffix $1 0 p$ preceded by $|j|$ ones, and rejects both queries with suffixes $0(p0)$ and $0(p1)$ preceded by $|j|$ ones. Then this language is in $P$.",
+ "hypotheses_covered": [
+  "$C,c$ are natural numbers",
+  "$V$ belongs to $P$"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on nested pair decoding and circuit-query encodings, which are rendered descriptively.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.timedCut_Eval_step",
+ "key": "9ec7f7be1c3dbc75",
+ "kind": "lemma",
+ "title": "Administrative interpreter step",
+ "statement": "Let $x$ be a Boolean input word, $B$ a four-tape configuration, $q,q'$ control states, $T$ a Boolean table word with cursor $p\\in\\mathbb Z$, and $\\sigma\\colon\\mathbb Z\\to\\{0,1,\\mathrm{blank}\\}$ a state tape with cursor $s\\in\\mathbb Z$. Suppose the stopped interpreter's transition at control $q$, on the input symbol read from $B$ and the four symbols read from the evaluation configuration determined by $(B,q,T,p,\\sigma,s)$, is the administrative action with target control $q'$, table movement $d_t$, and state instruction $(w,d_s)$, where $d_t,d_s\\in\\{-1,0,1\\}$ and $w$ is an optional state-tape write. Then one interpreter step gives the evaluation configuration with control $q'$, table cursor $p+d_t$, state cursor $s+d_s$, and state tape unchanged if no write is specified or updated at $s$ to the specified value otherwise.",
+ "hypotheses_covered": [
+  "Boolean input word and four-tape base configuration",
+  "Control states q and q'",
+  "Boolean table and integer table cursor",
+  "Boolean-valued optional-symbol state tape and integer cursor",
+  "Transition at q on the base input symbol and evaluation-configuration work-tape reads equals the stated administrative action",
+  "Table and state movements are signs",
+  "Optional state-tape write"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If, on the symbols read in an interpreter evaluation configuration, the\ntransition function of the stopped table interpreter returns the\nadministrative action with table move $d_t$, optional state-tape write, state\nmove $d_s$, and next control $q'$, then one machine step from that\nconfiguration yields exactly the evaluation configuration with control $q'$,\ntable cursor shifted by $d_t$, and state tape and state cursor updated\naccordingly."
+}

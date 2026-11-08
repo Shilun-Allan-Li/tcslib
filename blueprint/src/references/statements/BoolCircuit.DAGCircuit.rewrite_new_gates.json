@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.DAGCircuit.rewrite_new_gates",
+ "key": "655554b92f308d96",
+ "kind": "theorem",
+ "title": "Property of rewritten gates",
+ "statement": "Let $C$ be a finite acyclic Boolean circuit with $n$ input vertices, let $Q$ be a predicate on gate kinds and input counts, and let $P$ be a property of gates. Suppose a rewriting procedure replaces each gate satisfying $Q$ by a gadget that extends the existing acyclic gate list, preserves that gate's value for every input assignment, and returns a valid output vertex. Require also that the gadget's gate list has length at most the original list length plus the gate's number of inputs plus $2$, that its output depth is at most $c$ plus the maximum depth of the gate's input vertices, and that every added gate satisfies $P$. If every gate of $C$ satisfies $Q$, then every gate of the rewritten circuit satisfies $P$.",
+ "hypotheses_covered": [
+  "C is a DAG circuit with n input vertices",
+  "c is a natural number",
+  "the rewriting procedure satisfies the stated gadget guarantee for every acyclic prefix and eligible gate",
+  "every gate in C satisfies Q"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

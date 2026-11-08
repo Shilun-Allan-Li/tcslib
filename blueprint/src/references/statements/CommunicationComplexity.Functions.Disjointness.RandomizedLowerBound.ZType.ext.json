@@ -1,18 +1,19 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.ext",
- "key": "f1ec3cfbea9331f6",
+ "key": "a5a35bf5542d87c3",
  "kind": "theorem",
- "title": "Componentwise equality of the Z variable",
- "statement": "Fix a deterministic communication protocol $p$ for disjointness inputs of length $n$, and consider achievable values of the variable $Z = (M, T, X_{<T}, Y_{>T})$, each carrying a transcript $M$, a special coordinate $T \\in \\{0, \\dots, n-1\\}$, a Boolean string $X_{<T}$ recording Alice's bits before the special coordinate, and a Boolean string $Y_{>T}$ recording Bob's bits after it. Then two such achievable values $z$ and $z'$ coincide whenever they have the same transcript, the same special coordinate, the same $X_{<T}$, and the same $Y_{>T}$.",
+ "title": "Extensionality of achievable statistics",
+ "statement": "Fix a positive integer $n$ and a deterministic disjointness protocol $p$ on length-$n$ inputs. If two achievable statistics for $p$ have the same transcript, the same special coordinate, the same Alice-before vector, and the same Bob-after vector, then the two statistics are equal.",
  "hypotheses_covered": [
-  "z and z' are achievable Z values for the protocol p",
-  "equal transcript components",
-  "equal special-coordinate components",
-  "equal xBefore ($X_{<T}$) components",
-  "equal yAfter ($Y_{>T}$) components"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic disjointness protocol on length-$n$ inputs",
+  "The transcripts are equal",
+  "The special coordinates are equal",
+  "The Alice-before vectors are equal",
+  "The Bob-after vectors are equal"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Technical auxiliary result for \\texttt{ext}."
+ "replaced": "Fix a deterministic communication protocol $p$ for disjointness inputs of length $n$,\nand consider achievable values of the variable $Z = (M, T, X_{<T}, Y_{>T})$, each\ncarrying a transcript $M$, a special coordinate $T \\in \\{0, \\dots, n-1\\}$, a Boolean\nstring $X_{<T}$ recording Alice's bits before the special coordinate, and a Boolean\nstring $Y_{>T}$ recording Bob's bits after it. Then two such achievable values $z$ and\n$z'$ coincide whenever they have the same transcript, the same special coordinate, the\nsame $X_{<T}$, and the same $Y_{>T}$."
 }

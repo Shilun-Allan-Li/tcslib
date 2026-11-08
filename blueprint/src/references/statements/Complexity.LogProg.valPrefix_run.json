@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.valPrefix_run",
+ "key": "4e8257ee2cebdc24",
+ "kind": "lemma",
+ "title": "Validation of the unary prefix",
+ "statement": "Let $P$ be a register program with oracle $\\mathcal O$, $r$ a register, $p\\in\\mathbb Z$, and $c$ a configuration on input $x$. Suppose the transition identities $hU0,hU1,hS$ hold at states $vU0,vU1,vS$, respectively, and none of these states is an oracle-call state, as asserted by $cU0,cU1,cS$. If the length of the initial run of ones in $x$ is even and the next two bits are $01$, then the run from state $vU0$ at input-head position $1$ and register-head position $p$ reaches state $vX$ at input-head position $3+tRun(x)$, a valid position. If this bit-pattern condition fails, the run from the same starting configuration halts with a rejecting output. The runs avoid oracle-call states before their endpoint.",
+ "hypotheses_covered": [
+  "Transition identities hU0, hU1, and hS",
+  "No oracle calls at vU0, vU1, and vS, as asserted by cU0, cU1, and cS",
+  "c is a configuration on input x",
+  "r is a register and p is an integer",
+  "Bit condition: tRun(x) is even, x[tRun(x)]=false, and x[tRun(x)+1]=true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

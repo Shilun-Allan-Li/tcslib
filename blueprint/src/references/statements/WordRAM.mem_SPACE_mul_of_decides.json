@@ -1,0 +1,19 @@
+{
+ "lean_name": "WordRAM.mem_SPACE_mul_of_decides",
+ "key": "094f237608b6051c",
+ "kind": "theorem",
+ "title": "Quadratic space bound for Word RAM decisions",
+ "statement": "Let $P$ be an extended Word RAM program, $L$ a language of Boolean strings, and $S:\\mathbb{N}\\to\\mathbb{N}$ a space-constructible function: $S(n)$ is at least $\\lfloor\\log_2 n\\rfloor+1$, and some finite Turing machine outputs the binary representation of $S(|x|)$ using at most $cS(|x|)$ space for some positive natural number $c$. Suppose that for every input $x$ there are a time bound $t$ and an output string $o$ such that $P$ halts within $t$ steps at word width $cS(|x|)$, outputs the membership indicator of $x$ in $L$, and touches at most $cS(|x|)$ addresses. Then $L$ belongs to space $S(n)^2$, that is, $L\\in\\mathrm{SPACE}(n\\mapsto S(n)S(n))$.",
+ "hypotheses_covered": [
+  "An extended Word RAM program $P$ and Boolean language $L$",
+  "A function $S:\\mathbb{N}\\to\\mathbb{N}$",
+  "For every $n$, $\\lfloor\\log_2 n\\rfloor+1\\le S(n)$",
+  "Some positive natural number $c$ and finite Turing machine compute the binary representation of $S(|x|)$ using at most $cS(|x|)$ space",
+  "For every input, there are $t$ and $o$ witnessing a halting run at width $cS(|x|)$",
+  "The output is the membership indicator and at most $cS(|x|)$ addresses are touched"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

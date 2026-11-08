@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5Equisat",
+ "key": "1ad0144a87e8ba40",
+ "kind": "lemma",
+ "title": "Cook–Levin tableau certificate equivalence",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let its state alphabet have a binary code, and suppose $M$ is oblivious. Let $V$ be a language of bit strings, let $C,e,c,A,d$ be natural numbers, and suppose $M$ decides $V$ within time $c\\,(A(n+1)^d+1)^2$ on inputs of length $n$. For every bit string $x$, the tableau CNF with producer horizon $c\\,(A(|x|+C(|x|+1)^e+1)^d+1)^2$ is satisfiable if and only if there is a bit string $u$ of length exactly $C(|x|+1)^e$ such that the concatenation $xu$ belongs to $V$.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine M",
+  "binary code for its state alphabet",
+  "M is oblivious",
+  "language V of bit strings",
+  "natural parameters C,e,c,A,d",
+  "M decides V within the stated time bound",
+  "bit string x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let an oblivious machine decide a verifier language $V$ within time $c(A(n+1)^d+1)^2$. For every instance $x$, the Cook--Levin tableau of $x$ at the producer horizon is satisfiable exactly when some certificate $u$ of length $C(|x|+1)^e$ makes the concatenation of $x$ and $u$ belong to $V$."
+}

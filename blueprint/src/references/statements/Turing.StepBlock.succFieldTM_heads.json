@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.StepBlock.succFieldTM_heads",
+ "key": "02f1ba1423e0271b",
+ "kind": "lemma",
+ "title": "Head positions during successor-field processing",
+ "statement": "Let $m,n$ be natural numbers, let $x$ be a finite Boolean input, let $src,dst$ be distinct work-tape indices, let $copy$ be a Boolean, and let $d$ be a configuration of the successor-field machine. Let $s$ be absent or a state index less than $n$. Suppose $d$ is in the tag state and the source tape, starting at its head position, contains the optional-state encoding of $s$. At each time $t$ no greater than the encoding length, the input-head position and output agree with those of $d$. Every work-tape head advances by $t$ on the source tape, by $t-1$ on the destination tape if copying is enabled, and by zero on all other tapes.",
+ "hypotheses_covered": [
+  "$m,n$ are natural numbers",
+  "$x$ is a finite Boolean input",
+  "$src,dst$ are work-tape indices with $src\\ne dst$",
+  "$copy$ is Boolean",
+  "$d$ is a configuration of the successor-field machine",
+  "$s$ is absent or a state index less than $n$",
+  "$d$ is in the tag state",
+  "the source tape contains the optional-state encoding of $s$ from its head position",
+  "$t$ is at most the encoding length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

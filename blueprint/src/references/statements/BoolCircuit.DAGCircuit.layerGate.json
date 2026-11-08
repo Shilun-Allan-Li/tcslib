@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.DAGCircuit.layerGate",
+ "key": "d69cebb9aa49c293",
+ "kind": "def",
+ "title": "Gate in a circuit layer",
+ "statement": "Let $C$ be a directed acyclic Boolean circuit with $n$ input nodes, an ordered list of $m$ gates, and an output node. Assume each gate has distinct input arguments and every NOT gate has exactly one argument. For an integer $d$ with $0 \\le d \\le m$ and a node $u$ in layer $d+1$, define a gate whose input wires come from layer $d$ as follows: if $d<m$ and the circuit node represented by $u$ has index less than $n+d$, the gate copies that node's value; otherwise, it is the gate at position $d$, with its arguments wired to their corresponding nodes in layer $d$. When $d=m$, the gate copies the circuit's output node.",
+ "hypotheses_covered": [
+  "C is a DAG circuit with n input nodes",
+  "each gate has distinct input arguments",
+  "each NOT gate has exactly one argument",
+  "d is an integer with 0 ≤ d ≤ the number of gates",
+  "u is a node in layer d+1"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet uses DAGCircuit operations and layerGateOf without providing their definitions, so the circuit-node and gate-position interpretation follows the supplied draft and naming.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

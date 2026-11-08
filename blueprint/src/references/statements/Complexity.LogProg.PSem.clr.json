@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.clr",
+ "key": "cb2f15f665d50630",
+ "kind": "lemma",
+ "title": "Preservation under clearing a register",
+ "statement": "Let $A$ be a nondeterministic register program with oracle, input $x$, guard $G$, and a register configuration $(v,\text{none})$, where $v$ assigns a natural number to each of the $m$ registers. Suppose the instruction at state $l$ deterministically clears register $r$ and moves to state $l'$, and suppose $G$ holds at $(l,v,\text{none})$. If the program started at $l'$ with register $r$ set to $0$, all other register values unchanged, and no recorded answer has the property that it terminates with guard $G$ and, for every run length at which all choice sequences halt, has probabilities $p$ and $1-p$ of answering true and false, respectively. Then the program started at $l$ with configuration $(v,\text{none})$ has that same property.",
+ "hypotheses_covered": [
+  "The instruction at state $l$ is the deterministic clearing of register $r$ followed by a move to $l'$",
+  "The guard holds at $(l,v,\text{none})$",
+  "From $l'$ with register $r$ set to $0$, the program satisfies the stated termination and output-probability property for $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

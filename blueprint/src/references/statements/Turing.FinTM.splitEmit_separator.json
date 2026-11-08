@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitEmit_separator",
+ "key": "6c4f395a3fc0b4a8",
+ "kind": "lemma",
+ "title": "Separator emission of the split emitter",
+ "statement": "Let $k$ be a natural number, let $w,s$ be finite Boolean words, and let $out$ be a finite Boolean word. Starting in control state $0$ with both the input-head and counter-head positions equal to $|s|$ and output $out$, after two steps the split emitter is in control state $3$, the two positions remain $|s|$, and the output is $out$ followed by $0,1$.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Finite Boolean words $w,s,out$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Once the candidate counter is exhausted, two steps of the split emitter\nappend the separator bits $0,1$ to the output without moving the native head\nfrom the start of the suffix."
+}

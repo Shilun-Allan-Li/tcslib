@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timedFrame_step",
+ "key": "376cab1e2081950b",
+ "kind": "lemma",
+ "title": "One-step correspondence for framed configurations",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $j$ be one of its work-tape indices, let $x$ be a finite Boolean input, and let $c$ be a six-tape configuration of the timed interpreter on $x$. Choose arbitrary contents and head positions for the work tapes of $M$. Form a configuration of the capture machine by keeping $c$’s input-head position and output, placing $c$’s fifth work tape in tape $j$, and placing its other five work tapes in the five added tapes in their prescribed order; label its control state by the timed-interpreter component of the capture machine’s state space. One step of the capture machine from this configuration equals the configuration formed in the same way from the timed interpreter’s one-step successor of $c$.",
+ "hypotheses_covered": [
+  "A finite-state machine over the Boolean alphabet",
+  "A chosen work-tape index of that machine",
+  "A finite Boolean input word",
+  "A six-tape timed-interpreter configuration on that input",
+  "Arbitrary work-tape contents for the machine",
+  "Arbitrary work-tape head positions for the machine"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One step of the assembled capture machine from a framed configuration equals\nthe frame of one step of the timed interpreter, including the final halting\ntransition."
+}

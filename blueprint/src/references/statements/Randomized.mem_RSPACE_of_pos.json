@@ -1,0 +1,22 @@
+{
+ "lean_name": "Randomized.mem_RSPACE_of_pos",
+ "key": "fc38f56196b27f1f",
+ "kind": "theorem",
+ "title": "Positive Acceptance Probability Implies RSPACE",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, let $L$ be a language of bit strings, let $s:\\mathbb{N}\\to\\mathbb{N}$, and let $c\\in\\mathbb{N}$ and $\\delta\\in\\mathbb{Q}$ with $0<\\delta$. Suppose that on every input $x$, some time bound $T$ ensures halting on every branch; on members, the probability of outputting $[1]$ within that bound is at least $\\delta$; and on nonmembers, every choice string of length $T$ yields output $[0]$. Suppose also that the space used on every input and choice string is at most $c s(|x|)$. Then $L$ belongs to $\\mathrm{RSPACE}(s)$, the class with a constant-multiple space bound, halting on every branch within an input-dependent finite time, acceptance probability at least $2/3$ on members, and certain rejection on nonmembers.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine",
+  "$L$ is a language of bit strings",
+  "$s$ maps natural numbers to natural numbers",
+  "$c$ is a natural number",
+  "$\\delta$ is rational and positive",
+  "For each input there is a time bound $T$ by which all branches halt",
+  "Acceptance probability on members is at least $\\delta$",
+  "Every choice string of length $T$ produces $[0]$ on nonmembers",
+  "Space on every input and choice string is at most $c s(|x|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

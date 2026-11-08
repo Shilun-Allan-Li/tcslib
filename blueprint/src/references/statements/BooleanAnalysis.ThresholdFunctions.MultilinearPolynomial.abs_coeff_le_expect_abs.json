@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.abs_coeff_le_expect_abs",
+ "key": "2a74211962b0aac7",
+ "kind": "lemma",
+ "title": "Coefficient bound by absolute mean",
+ "statement": "Let $n\\in\\mathbb N$, let $p$ assign a real coefficient $p(S)$ to each subset $S\\subseteq[n]$, and let $P(x)=\\sum_{T\\subseteq[n]}p(T)\\chi_T(x)$ be its Walsh expansion. For every $S\\subseteq[n]$, \\[|p(S)|\\le\\mathbb E_x|P(x)|,\\] where the expectation is uniform on the Boolean cube.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$p$ is a real coefficient family indexed by subsets of $[n]$",
+  "$S\\subseteq[n]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. Let $P(x)=\\sum_{S\\subseteq[n]}a_S\\chi_S(x)$ with real coefficients $a_S$. For every $S\\subseteq[n]$, $|a_S|\\le\\mathbb E|P|$."
+}

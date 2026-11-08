@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timedCanon_complete",
+ "key": "5a6446925ca46a13",
+ "kind": "lemma",
+ "title": "Timed canonizer completion",
+ "statement": "Let $c$ be an effective machine code, and let $b$, $\\alpha$, and $x$ be finite Boolean strings. Run the machine that parses a clock prefix and then executes $c$’s canonizer on the nested pair encoding $\\langle\\langle b,\\alpha\\rangle,x\\rangle$. After exactly $4|b|+3|\\alpha|+8+c.\\mathrm{canonizerTime}(|\\alpha|)$ steps, it has halted, its output is the serialization of the machine decoded from $\\alpha$, and its input head is at position $4|b|+2|\\alpha|+7$; its clock tape contains $b$ starting at cell zero, with the tape head at position $|b|$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code",
+  "$b$, $\\alpha$, and $x$ are finite Boolean strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $c$ be an effective machine code, and let $b$, $\\alpha$, and $x$ be finite Boolean\nstrings. After $4|b|+3|\\alpha|+8+c.\\mathrm{canonizerTime}(|\\alpha|)$ steps, the timed\ncanonizer started on the nested pair encoding of $b$, $\\alpha$, and $x$ has halted, has\noutput equal to the serialization of the machine decoded from $\\alpha$, and has its\ninput head at position $4|b|+2|\\alpha|+7$. Its work tape designated for the clock\ncontains $b$ starting at cell zero, and its head is at position $|b|$."
+}

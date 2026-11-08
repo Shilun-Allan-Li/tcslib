@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.simCfg",
+ "key": "2d72ce7e3676590a",
+ "kind": "def",
+ "title": "Simulated machine configuration",
+ "statement": "Let $M$ be a $k$-work-tape Turing machine with Boolean input alphabet, let $q$ be an initial state, let $V$ be a Boolean input string, and let $t$ be a natural number. The associated configuration of a machine with $2k$ work tapes has the simulation state assigned to the original machine's configuration at time $t$, and uses that configuration's input-head position, work-tape contents and head positions, and output. Its additional work-tape data is formed from the visited-position sets for the original run through times $0$ to $t-1$, together with the original head positions.",
+ "hypotheses_covered": [
+  "A $k$-work-tape machine with Boolean input alphabet",
+  "An initial state $q$",
+  "A Boolean input string $V$",
+  "A natural number of steps $t$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement uses the constructors for configurations and marked sets without supplying their definitions, so the precise arrangement of the two groups of $k$ tapes cannot be specified from this payload alone.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

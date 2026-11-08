@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Ends.forMem",
+ "key": "2d2771acf2c7e240",
+ "kind": "theorem",
+ "title": "For-loop with an invariant on memory",
+ "statement": "Let $\text{lim}$ be execution limits, let $P$ be a program, and let $i,n,T,b$ be natural numbers, with fixed local-variable function $loc$, initial memory $\u0000mu$, upper-bound expression $hi$, loop body $body$, and postcondition $Q$. Let $I(j,\u0000mu')$ be a memory invariant. Suppose $I(0,\u0000mu)$ holds. For each $j<n$, assume that from local variables obtained by setting $i$ to $j$ in $loc$ and any memory satisfying $I(j)$, the body executes within cost $b$, preserves the local-variable function, and leaves memory satisfying $I(j+1)$. Assume that $I(n,\u0000mu')$ implies $Q$ for the state with local variable $i$ set to $n$ and memory $\u0000mu'$. Also assume that whenever $j≤n$ and $I(j,\u0000mu')$ holds, $hi$ is safe and evaluates to $n$ in that state. If $n$ is at most the word limit and $n(\text{cost}(hi)+b+7)+\text{cost}(hi)+5≤T$, then the for-loop terminates from $(loc,\u0000mu)$ within cost $T$ in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "$I(0,μ)$ holds",
+  "For every $j<n$ and $μ'$ with $I(j,μ')$, the body ends within cost $b$, preserves the local-variable function with $i=j$, and leaves memory satisfying $I(j+1)$",
+  "For every $μ'$ with $I(n,μ')$, $Q$ holds when local $i=n$ and memory is $μ'$",
+  "For every $j≤n$ and $μ'$ with $I(j,μ')$, $hi$ is safe and evaluates to $n$ at local $i=j$ and memory $μ'$",
+  "$(n:ℤ)≤\\text{lim.word}$",
+  "$n(\\text{hi.cost}+b+7)+\\text{hi.cost}+5≤T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

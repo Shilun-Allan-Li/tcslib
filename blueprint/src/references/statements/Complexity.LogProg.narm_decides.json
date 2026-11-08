@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.narm_decides",
+ "key": "d5613efdcf8f111f",
+ "kind": "theorem",
+ "title": "Nondeterministic logarithmic-space decision",
+ "statement": "Let $L$ be a language of binary strings, let $\u0000\text{Λ}$ be a finite set of machine states with decidable equality, and let $A$ be a nondeterministic register machine with $m$ registers, $d$ oracle languages $(A_j)_{j<d}$, and initial state $l_0$. Suppose every oracle language belongs to logarithmic space, and fix $K\\in\\mathbb{N}$. Assume that for every input $x$ there is a natural number $N$ such that every sequence of $N$ nondeterministic choices from the initial configuration (state $l_0$, all registers zero, and no answer recorded) halts; moreover, at every earlier prefix where the computation has not halted, its configuration satisfies the machine's precondition and, for every register $r$, the bit length of $r+1$ is at most $K(\\lfloor\\log_2 |x|\\rfloor+1)$. Assume also that $x\\in L$ if and only if some such sequence of $N$ choices leaves the answer true. Then $L$ belongs to nondeterministic logarithmic space.",
+ "hypotheses_covered": [
+  "$L$ is a language of binary strings",
+  "the state set $\\Lambda$ is finite and has decidable equality",
+  "$A$ is a nondeterministic register machine with $m$ registers and $d$ oracle languages",
+  "initial state $l_0$",
+  "each oracle language $A_j$ belongs to LOGSPACE",
+  "$K$ is a natural number",
+  "for every input $x$, some natural number $N$ satisfies the halting and prefix-configuration condition",
+  "at each earlier active prefix, the configuration satisfies the machine precondition",
+  "for every register $r$ at each such prefix, the bit length of $r+1$ is at most $K\\,\\mathrm{logSpace}(|x|)$",
+  "membership in $L$ is equivalent to existence of a length-$N$ choice sequence leaving answer true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

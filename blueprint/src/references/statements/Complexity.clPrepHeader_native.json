@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clPrepHeader_native",
+ "key": "214776371520709f",
+ "kind": "lemma",
+ "title": "Polynomial-Time Header Construction",
+ "statement": "For all natural numbers $C,e,c,A,d$, the arithmetic preparation header is computable in polynomial time: there is a finite-state Turing machine over the Boolean alphabet that, on each input word $x$, outputs the header formed from $x$, the binary representations of $Q=C(|x|+1)^e$, $m=|x|+Q$, and $T=c(A(m+1)^d+1)^2$, together with the all-false word of length $m$ and the all-true word of length $T$.",
+ "hypotheses_covered": [
+  "Natural parameters $C,e,c,A,d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all parameters $C, e, c, A, d$, the arithmetic preparation header, comprising the retained instance, the exact binary certificate length, reference length, and horizon, the all-false reference input, and the unary horizon clock, is computable in polynomial time by native machines with sequential access; no positivity assumption is placed on any parameter."
+}

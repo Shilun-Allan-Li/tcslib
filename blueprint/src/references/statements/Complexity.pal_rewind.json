@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.pal_rewind",
+ "key": "a398cacf7038790a",
+ "kind": "lemma",
+ "title": "Rewind-Phase Configuration Invariant",
+ "statement": "Let $x$ be a binary word. For every natural number $i\\le |x|$, after $i$ steps from state $1$ with the input head at position $i$, all bits of $x$ copied onto the work tape, and the work head at cell $|x|$, the three-state palindrome machine is in state $1$ with its input head at position $0$. The work tape and work-head position are unchanged, and the output remains empty.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$i$ is a natural number",
+  "$i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word of length $n$. For every $i \\le n$, running the\nthree-state palindrome machine for $i$ steps from the rewind-state configuration\non input $x$ with input head at cell $i$, all $n$ bits copied, and work head at\ncell $n$ brings the input head to the left boundary cell $0$, with the state,\nwork tape, and work head unchanged."
+}

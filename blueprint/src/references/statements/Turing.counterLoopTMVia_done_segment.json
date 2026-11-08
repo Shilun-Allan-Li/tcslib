@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.counterLoopTMVia_done_segment",
+ "key": "91e1da2a4d61db65",
+ "kind": "theorem",
+ "title": "Counter loop completion segment",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes, state $a$, designated exit state or halting exit, and let $e:\\\\{0,1\\\\}\\\\hookrightarrow\\\\Gamma$ encode Boolean symbols in its alphabet. Let $w$ be a Boolean word whose binary value is $d$, and suppose the extra tape initially stores the encoded word at cells $cp$ through $cp+|w|-1$: for every integer $p$ with $-1\\\\le p\\\\le |w|$, its content at $cp+p$ equals the word-buffer content at $p$. Let $c$ be an initial configuration and let $P$ be a property of the $k$ work-head positions, with $P$ true at $c$. Suppose that for each $r<d$, the $r$th iterate of the variable-length run of $M$ from $c$ to its next round has a round of length $\\\\tau$, satisfies the round conditions for exit set $\\\\{exit\\\\}$ and property $P$, and ends in state $a$. Then the counter-loop machine that runs $M$ on the first $k$ tapes and uses the encoded extra tape for its counter reaches its done configuration after $\\\\sum_{r<d}\\\\tau(c_r)+\\\\operatorname{overhead}(w,d+1)$ steps, where $c_r$ is the $r$th round configuration and the counter tape has been filled with encoded true symbols on the cells $cp$ through $cp+|w|-1$. Before that time its state is neither done nor escape; throughout the segment the extra head stays in $[cp-1,cp+|w|]$, and $P$ holds for the first $k$ head positions. Here a segment means the stated endpoint is reached, no state in $\\\\{done,escape\\\\}$ occurs earlier, and the position condition holds at every time up to and including the endpoint.",
+ "hypotheses_covered": [
+  "Boolean encoding $e$ into $\\\\Gamma$",
+  "Machine $M$, state $a$, and exit value",
+  "Run-length function $\\\\tau$ and initial configuration $c$",
+  "Counter word $w$ and its binary value $d$",
+  "Initial extra-tape buffer agreement for all $-1\\\\le p\\\\le |w|$",
+  "Position property $P$ holds initially",
+  "Each round $r<d$ satisfies the round conditions and ends in state $a' = a$"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem's endpoint and segment conditions are explicit, but the supplied prose for the counter-loop machine and round definitions is stubbed; the statement describes their mathematical roles without restating their full formal constructions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

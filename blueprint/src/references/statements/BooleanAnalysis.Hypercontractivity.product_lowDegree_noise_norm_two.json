@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_lowDegree_noise_norm_two",
+ "key": "55f1b76f44965a9a",
+ "kind": "theorem",
+ "title": "Second norm bound for low-degree noise",
+ "statement": "Let $P$ be a finite product probability space, let $k\\in\\mathbb N$, and let $c\\in\\mathbb R$ satisfy $1\\le c$. If $f$ is a real-valued function whose product components of every order greater than $k$ vanish identically, then $\\|T_c f\\|_{2,P}\\le c^k\\|f\\|_{2,P}$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive coordinate weights summing to one",
+  "$k\\in\\mathbb N$",
+  "$c\\in\\mathbb R$",
+  "$1\\le c$",
+  "Every product component of $f$ indexed by a set of size greater than $k$ vanishes at every outcome",
+  "$f$ is a real-valued function on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $c\\ge1$, $k\\in\\mathbb N$, and $f:\\Omega\\to\\mathbb R$ of degree at most $k$. Then $\\|T_cf\\|_{2,P}\\le c^k\\|f\\|_{2,P}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; degree at most $k$ means $h_S=0$ for every $|S|>k$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

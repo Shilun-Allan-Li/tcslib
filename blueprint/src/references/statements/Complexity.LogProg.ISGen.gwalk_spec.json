@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.gwalk_spec",
+ "key": "a1f7b6a99291beae",
+ "kind": "theorem",
+ "title": "Walk Initialization Correctness",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}$ be an oracle on four indices and finite Boolean words, let $x$ be a finite Boolean word, let $b$ be a Boolean value, and let $Q$ be a proposition. Let $\\sigma$ be a state whose registers are all at most $B$, and suppose $\\sigma.K+1\\le B$. Write $w_b=\\sigma.u$ and $t_b=\\sigma.i$ when $b$ is true, and $w_b=\\sigma.v$ and $t_b=\\sigma.i1$ otherwise. If membership of $t_b$ in the set of codes reachable from some initial code $u<\\sigma.K$ by a walk of at most $\\sigma.K$ steps implies that the machine started at its walk-entry state with $cur=stp=g=0$ terminates within register bound $B$ and accepts exactly when $Q$ holds, then the machine started at its walk-initialization state with register values $\\sigma$ terminates within that bound and accepts exactly when $t_b$ is so reachable and $Q$ holds. Here initial codes and steps are determined by the oracle's initial-code and transition queries, respectively, and each intermediate code in the walk is less than $\\sigma.K$.",
+ "hypotheses_covered": [
+  "$E,B$ are natural numbers",
+  "$\\mathrm{orc}$ is an oracle on four indices and Boolean words",
+  "$x$ is a finite Boolean word",
+  "$b$ is Boolean",
+  "$Q$ is a proposition",
+  "Every register of $\\sigma$ is at most $B$",
+  "$\\sigma.K+1\\le B$",
+  "The stated implication from reachability to the semantics at the walk-entry state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\{0,1\\}^* $ be an oracle,\nlet $x$ be a Boolean string, and let $\\sigma$ be a machine state. Write $K,s$ for its\ncode bound and parameter, and write $w_b$ and $t_b$ for its two state fields selected by\n$b\\in\\{0,1\\}$. Let $\\mathrm{Mem}(L,t)$ mean that some $u<K$ satisfies the initial oracle\nquery at $u$ and is connected to $t$ by at most $L$ steps, each step being an\noracle-accepted transition between codes less than $K$. Suppose every register of\n$\\sigma$ is at most $B$, and $K+1\\le B$. If, whenever $\\mathrm{Mem}(w_b,t_b)$ holds, the\nmachine started at its walk-entry control state with the same other parameters and with\nits current code, step count, and guess registers all zero has semantics $Q$, then the\nmachine started at its walk-initialization control state in state $\\sigma$ has semantics\n$\\mathrm{Mem}(w_b,t_b)\\land Q$."
+}

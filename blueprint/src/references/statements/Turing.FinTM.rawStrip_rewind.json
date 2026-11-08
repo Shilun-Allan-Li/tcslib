@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.rawStrip_rewind",
+ "key": "9d680c009a96213d",
+ "kind": "lemma",
+ "title": "Rewind to the replay position",
+ "statement": "Let $x,a$ be Boolean words and let $i\\in\\mathbb{N}$ satisfy $i\\le |x|$. For every natural number $j\\le |a|$, starting in state $2$ with $a$ stored on the work tape, the work-tape head at position $j-1$, and empty output, after $j+1$ steps the machine is in state $3$ with the work-tape head at position $0$; the input-head position, stored word, and empty output are unchanged.",
+ "hypotheses_covered": [
+  "$x,a$ are Boolean words",
+  "$i\\in\\mathbb{N}$",
+  "$i\\le |x|$",
+  "$j\\in\\mathbb{N}$",
+  "$j\\le |a|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the stripping machine's rewind state with buffer $a$ and work head at\ndisplacement $j-1$, for any $j \\le \\abs{a}$, exactly $j+1$ steps return the\nwork head to displacement $0$ and enter the replay state, emitting nothing."
+}

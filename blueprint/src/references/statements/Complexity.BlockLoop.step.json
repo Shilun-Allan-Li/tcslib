@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.BlockLoop.step",
+ "key": "d83f817745630ca1",
+ "kind": "def",
+ "title": "Block loop state transition",
+ "statement": "Given update and next-state functions on pairs of Boolean lists and an encoded state $s$, decode its outer pair. If the first component is empty, return the completed-block marker. Otherwise, decode the second component; if its first component is empty, also return the completed-block marker. In every other case, encode a new outer pair: its first component is the update function applied to the first component of $s$ and the second component of the decoded inner pair; its second component encodes the inner first component with its first entry removed, paired with the next-state function applied to those same inputs.",
+ "hypotheses_covered": [
+  "The update and next-state functions each take two Boolean lists and return a Boolean list",
+  "$s$ is a finite Boolean list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

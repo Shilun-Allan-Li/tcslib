@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.sealGates_read",
+ "key": "93c4bad2907370e9",
+ "kind": "theorem",
+ "title": "Readability after gate sealing",
+ "statement": "Let $n$ be a natural number, let $L$ be a list of vertex indices, let $G$ be a list of gates, and let $o$ be a vertex index. Suppose $o<n+|G|$, every index in $L$ is less than $n+|G|$, and every vertex $v<n+|G|$ with $v\\ne o$ and $v\\notin L$ is read by at least one gate in $G$. After sealing the indices in $L$ starting from $(G,o)$, every vertex below $n$ plus the resulting gate count, except the resulting output vertex, is read by at least one resulting gate.",
+ "hypotheses_covered": [
+  "$o<n+|G|$",
+  "Every index in $L$ is less than $n+|G|$",
+  "Every $v<n+|G|$ with $v\\ne o$ and $v\\notin L$ has positive fanout in $G$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

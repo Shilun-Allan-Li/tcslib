@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satClean_emit",
+ "key": "284d9ee5c2367307",
+ "kind": "lemma",
+ "title": "Polynomial-time clean emission",
+ "statement": "For every polynomial-time computable function $f$ from Boolean words to Boolean words, there exist a finite Turing machine $M$ and natural numbers $A,d$ such that $M$ has at least one work tape and, for every Boolean input word $x$ and argument word $z$, there is a positive time $t\\le A(|z|+1)^d$ at which the run from the initial state with $z$ on the first work tape and all other work tapes blank first halts. At that time its configuration has $f(z)$ on the first work tape, all other work tapes blank, and output exactly $f(z)$; the input head and work-tape heads and contents are those of the canonical starting configuration, apart from the first tape now containing $f(z)$.",
+ "hypotheses_covered": [
+  "A polynomial-time computable Boolean-word function"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every polynomial-time computable word function $f$ there exist a module $M$\nand constants $A, d$ such that $M$ satisfies the clean-module contract with the\nidentity as result function, emission $f$, and budget $n \\mapsto A\\,(n+1)^d$:\nthe emit-mode module preserves its argument and forwards the exact computed\nchunk, with cleanup and the final halt inside the polynomial budget."
+}

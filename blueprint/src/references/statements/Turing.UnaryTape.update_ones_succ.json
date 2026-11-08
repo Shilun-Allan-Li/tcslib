@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.UnaryTape.update_ones_succ",
+ "key": "99617548a3314c08",
+ "kind": "theorem",
+ "title": "Adding a unary cell",
+ "statement": "For every $m\\in\\mathbb{N}$, changing cell $m$ of the unary tape for $m$ to $1$ and leaving all other cells unchanged gives the unary tape for $m+1$.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $m \\in \\mathbb{N}$, let $\\mathrm{ones}_m : \\mathbb{Z} \\to \\{0, 1, \\sqcup\\}$ be the unary\ntape of $m$, which holds $1$ on cells $0, \\dots, m-1$ and the blank $\\sqcup$ elsewhere. For every\n$m \\in \\mathbb{N}$, the tape obtained from $\\mathrm{ones}_m$ by setting cell $m$ to $1$ and leaving\nevery other cell unchanged is $\\mathrm{ones}_{m+1}$."
+}

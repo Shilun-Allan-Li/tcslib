@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.computesInTime_iff",
+ "key": "3903ce86fd3f3dde",
+ "kind": "theorem",
+ "title": "Space-free characterization of timed computation",
+ "statement": "Let $M$ be a finite Turing machine over an alphabet $\\Sigma$, and let $x,w\\in\\Sigma^*$ and $t\\in\\mathbb{N}$. The machine computes $w$ from $x$ within $t$ steps if and only if its configuration after $t$ steps from the initial configuration on $x$ is halted and its output is exactly $w$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over $\\Sigma$",
+  "$x,w$ are words over $\\Sigma$",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite Turing machine over an alphabet $\\Sigma$, let $x$ and $w$\nbe words over $\\Sigma$, and let $t \\in \\mathbb{N}$.  Then $M$ computes the\noutput $w$ from the input $x$ within $t$ steps if and only if the\nconfiguration reached after running $M$ for $t$ steps from its initial\nconfiguration on $x$ is halted and carries exactly the word $w$ on its output\ntape."
+}

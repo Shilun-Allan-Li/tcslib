@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.stg",
+ "key": "b6d36e5a8b80a7e5",
+ "kind": "def",
+ "title": "Cleaning-stage configuration",
+ "statement": "Let $k$ be a natural number, let $S$ be a state type, and let $x$ be a Boolean input string. Given a natural number $i$, an input-head position among the $|x|+2$ allowed positions, work-tape contents $D_t,D_m$ on the integers, work-tape head positions $D_p$, and a Boolean output string, form a configuration with $2k$ work tapes. Its state is the cleaning state for tape $i$ in the marking phase if $i<k$, and is absent otherwise. In each group of $k$ tapes, tapes with index less than $i$ are blank with head at position zero; the other tapes use the corresponding contents and head positions from $D_t,D_m,D_p$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of tapes",
+  "A state type $S$",
+  "A Boolean input string $x$",
+  "An input-head position among the $|x|+2$ allowed positions",
+  "Work-tape contents $D_t,D_m$ indexed by tape and integer position",
+  "Work-tape head positions $D_p$",
+  "A Boolean output string"
+ ],
+ "confidence": "low",
+ "caveat": "The payload does not provide the definition of the configuration constructor, so the stated two-group tape layout is inferred from its arguments.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

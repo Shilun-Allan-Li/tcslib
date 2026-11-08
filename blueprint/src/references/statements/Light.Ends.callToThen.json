@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Ends.callToThen",
+ "key": "f7246137419d9ea8",
+ "kind": "theorem",
+ "title": "Procedure call followed by a statement",
+ "statement": "Let $P$ be a program, let $\text{lim}$ be execution limits, and let $d,p,x,T,T'$ be natural numbers. Suppose there is a procedure body at index $p$ whose execution at depth $d+1$, from the state with local values given by the frame of $\text{vals}$ and memory $\u0000mu$, takes cost at most $T'$ and produces a state whose local value at index $0$ and memory satisfy $R$. Suppose also that, for every pair $(r,\u0000mu')$ satisfying $R$, statement $s$ executes from the state with local frame obtained by setting position $x$ of $l$ to $r$ and memory $\u0000mu'$, at cost at most $T-((\\sum_{e\\in\\text{args}}\\mathrm{cost}(e))+2+T')$, to a state satisfying $Q$. If every expression in $\text{args}$ is safe in the state with local frame of $l$ and memory $\u0000mu$, and those expressions evaluate there to $\text{vals}$; if $d<\\text{lim.depth}$; and if $(\\sum_{e\\in\\text{args}}\\mathrm{cost}(e))+2+T'\\le T$, then the sequence consisting of the call to procedure $p$ with arguments $\text{args}$, storing its result at position $x$, followed by $s$, executes from the state with local frame of $l$ and memory $\u0000mu$ at cost at most $T$ to a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "The procedure body at index $p$ exists in $P$ and executes at depth $d+1$ from the state with frame of $\\text{vals}$ and memory $\\mu$ with cost at most $T'$, producing a result satisfying $R$.",
+  "For every result pair satisfying $R$, statement $s$ executes from the frame formed by setting position $x$ of $l$ to the returned value, with the resulting memory, at cost at most $T-((\\sum_{e\\in\\text{args}}\\mathrm{cost}(e))+2+T')$ to a state satisfying $Q$.",
+  "Every argument expression is safe in the input state and the arguments evaluate to $\\text{vals}$.",
+  "$d<\\text{lim.depth}$.",
+  "The sum of argument expression costs plus $2+T'$ is at most $T$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

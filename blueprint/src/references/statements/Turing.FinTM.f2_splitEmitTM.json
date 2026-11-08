@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitEmitTM",
+ "key": "c9730495013e0f11",
+ "kind": "def",
+ "title": "Split-emission machine",
+ "statement": "For each nonnegative integer $k$, define a finite Turing machine over the Boolean alphabet with $k+1$ work tapes and state set $\\{0,1,2,3\\}$, initially in state $0$. In state $0$, if the first work-tape cell is blank, it stays in place, emits $0$, and enters state $2$; otherwise it stays in place, emits the scanned input bit if present, and enters state $1$. In state $1$ it moves the input head right, moves the first work head right, leaves the other work heads still, emits the scanned input bit if present, and returns to state $0$. In state $2$ it stays in place, emits $1$, and enters state $3$. In state $3$, if the scanned input cell contains a bit, it moves the input head right, emits that bit, and remains in state $3$; if the cell is blank, it stays in place, emits nothing, and halts. All work tapes are otherwise unchanged.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

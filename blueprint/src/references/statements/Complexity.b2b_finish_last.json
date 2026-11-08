@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.b2b_finish_last",
+ "key": "4c62577aca80347b",
+ "kind": "theorem",
+ "title": "Final host computation and head bound",
+ "statement": "Let $M_V,M_I,M_P$ be finite Boolean Turing machines, let $x,u$ be Boolean words, let $c_t$ be an integer-indexed Boolean tape, and let $b$ be a Boolean value. Suppose $M_I$ computes the identity on $x$ in time $t_i$ and uses at most $s_i$ space at that time; suppose also that the cleaned simulation of $M_V$ on input $x$ followed by $u$ halts with output $b$, leaves its work tapes blank and heads at zero, and keeps every work-tape head within distance $s_v$ of zero throughout. Then, from the host configuration formed in its final-test phase using $x,u,c_t$ and zero initial offsets, the host machine halts with output $[b]$ after some finite number of steps, and every work-tape head stays within distance $|x|+|u|+s_v+s_i+1$ of zero throughout that run.",
+ "hypotheses_covered": [
+  "$M_V,M_I,M_P$ are finite Boolean Turing machines",
+  "$x,u$ are Boolean words",
+  "$c_t$ is an integer-indexed optional Boolean tape",
+  "$b$ is a Boolean value",
+  "$t_i,s_i,s_v$ are natural numbers",
+  "$M_I$ computes $x$ from input $x$ in time $t_i$",
+  "$M_I$ uses at most $s_i$ space on $x$ at time $t_i$",
+  "the cleaned simulation of $M_V$ on $x$ followed by $u$ has a clean run outputting $b$ with head bound $s_v$"
+ ],
+ "confidence": "low",
+ "caveat": "The initial host configuration is specified through auxiliary constructions whose informal descriptions were not provided; the statement describes its phase and supplied data, but not the full tape layout.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

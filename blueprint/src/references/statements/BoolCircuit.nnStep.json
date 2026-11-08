@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.nnStep",
+ "key": "6e0f369fdfac7c94",
+ "kind": "def",
+ "title": "One-step gate transformation",
+ "statement": "For $n\\in\\mathbb N$, a state $(G,t,N)$ consisting of a finite list $G$ of gates, a map $t\\colon\\mathbb N\\to\\mathbb N$, and a counter $N\\in\\mathbb N$, and a gate $g$ with argument list of length $k$, define the next state as follows. Append to $G$ a gate of the same kind as $g$ whose arguments are the images under $t$ of the arguments of $g$, then one negation gate reading each such image, then $k$ negation gates reading, in order, the vertices $n+|G|+1$ through $n+|G|+k$. The new map sends $N$ to $n+|G|$; for any other vertex appearing among the arguments of $g$, it sends that vertex to $n+|G|+1+k$ plus the index of its first occurrence in the argument list; on all remaining vertices it agrees with $t$. The counter increases to $N+1$.",
+ "hypotheses_covered": [
+  "natural number $n$",
+  "state consisting of a finite gate list, a map from natural numbers to natural numbers, and a natural-number counter",
+  "input gate $g$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

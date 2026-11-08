@@ -43,70 +43,78 @@ requested, and otherwise $t$ updated at cell $z$ with the requested (possibly bl
 symbol.
 \end{definition}
 
-\begin{lemma}[Action of one schedule step on a setup configuration]
+\begin{lemma}[Action on a setup configuration]
 \lean{Complexity.setupCfg_apply}
 \label{Complexity.setupCfg_apply}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.finThree_cases, Complexity.oblAction, Complexity.setupCfg, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.moveInputPos}
 \difficulty{4}
-Consider a setup configuration of the oblivious schedule machine built from a Boolean
-machine $W$ with $k$ work tapes and padding parameter $a$, with input head at $p$ and
-controller tapes $\beta, \mu, \gamma$ with heads at $b, u, g$.  Applying a schedule
-action with next phase $q'$, input-head move $d \in \{-1,0,+1\}$, and one (optional
-write, move) pair for each controller tape yields exactly the setup configuration with
-phase $q'$, input head moved by $d$ (clamped to $\{0,\dots,|x|+1\}$), each controller
-tape updated by its optional write at the old head position, and each controller head
-shifted by its move; the first $k$ work tapes and the output are untouched.
+Let $W$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, let
+$a\in\mathbb{N}$, and fix an input word $x$ over the schedule alphabet. Given a base
+configuration $c$ on $x$, phases $q,q'$, an input-head position
+$p\in\{0,\ldots,|x|+1\}$, head positions $b,u,g\in\mathbb{Z}$, and tape contents
+$\beta,\mu,\gamma\colon\mathbb{Z}\to\mathrm{Option}(\text{schedule alphabet})$, apply an
+action with next phase $q'$, input-head move $d\in\{-1,0,+1\}$, and write–move
+instructions $(w_b,m_b),(w_u,m_u),(w_g,m_g)$ on the three controller tapes. The result
+is the setup configuration with phase $q'$, input-head position obtained by moving $p$
+by $d$ with clamping to $\{0,\ldots,|x|+1\}$, controller heads at $b+m_b,u+m_u,g+m_g$,
+and controller tapes updated at their respective old head positions according to the
+optional writes; its first $k$ work tapes, their head positions, and its output agree
+with $c$.
 \end{lemma}
 
-\begin{lemma}[Input symbol read in a setup configuration]
+\begin{lemma}[Input symbol in a setup configuration]
 \lean{Complexity.setupCfg_input}
 \label{Complexity.setupCfg_input}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.setupCfg, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM}
 \difficulty{2}
-In a setup configuration on input $x$ with input head at position
-$p \in \{0,\dots,|x|+1\}$, the symbol read from the input tape is blank when $p = 0$,
-and otherwise it is the $(p-1)$-st symbol of $x$ (in $0$-indexed order), which is blank
-when $p - 1 \ge |x|$.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, let
+$x$ be a word of schedule symbols, and choose a base configuration on $x$, a controller
+phase, a valid input-head position $p$, three integer head positions, and three
+controller tapes. In the resulting setup configuration, the input symbol read is blank
+if $p=0$; otherwise it is the symbol of $x$ at zero-based index $p-1$, or blank if that
+index is outside $x$.
 \end{lemma}
 
-\begin{lemma}[Controller tape reads in a setup configuration]
+\begin{lemma}[Reads from the controller tapes]
 \lean{Complexity.setupCfg_reads}
 \label{Complexity.setupCfg_reads}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.finThree_cases, Complexity.setupCfg, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM}
 \difficulty{3}
-In a setup configuration with controller tapes $\beta, \mu, \gamma$ and heads at
-$b, u, g$, the symbols read from the three controller tapes are $\beta(b)$, $\mu(u)$,
-and $\gamma(g)$ respectively.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, and
+fix a schedule-alphabet input, a base configuration, a controller phase, an input-head
+position, integer controller-head positions $b,u,g$, and controller tapes
+$\beta,\mu,\gamma$. In the resulting setup configuration, the symbols read from the
+budget, unary, and guide tapes are respectively $\beta(b)$, $\mu(u)$, and $\gamma(g)$.
 \end{lemma}
 
-\begin{lemma}[Exact cost of the reset scan]
+\begin{lemma}[Reset scan to the left boundary]
 \lean{Complexity.setupCfg_reset_scan}
 \label{Complexity.setupCfg_reset_scan}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.oblAction, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_input, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.moveInputPos}
 \difficulty{5}
-Suppose the oblivious schedule machine is in a setup configuration in the reset-scan
-phase with input head at an interior position $j \le |x|$; the controller tapes and
-heads are arbitrary.  Then after exactly $j$ steps the machine is in the same setup
-configuration except that the input head is at the left boundary (position $0$): the
-phase, all tapes, and all work heads are unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, and
+fix a schedule-alphabet input $x$, a base configuration, integer controller-head
+positions, and controller tapes. For any $j\in\mathbb{N}$ with $j\le |x|$, starting in
+reset-scan phase with input head at position $j$, after exactly $j$ steps the input head
+is at position $0$ and the configuration is otherwise unchanged.
 \end{lemma}
 
-\begin{lemma}[Exact cost of the input reset]
+\begin{lemma}[Resetting the input head]
 \lean{Complexity.setupCfg_reset}
 \label{Complexity.setupCfg_reset}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_input, Complexity.setupCfg_reset_scan, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{5}
-From a setup configuration in the reset-start phase with input head at an arbitrary
-position $p \in \{0,\dots,|x|+1\}$, running exactly $\max(p,1)+1$ steps of the
-oblivious schedule machine leads to the setup configuration in the copy-left phase with
-input head at position $1$; all controller tapes and heads are unchanged.  (The reset
-begins with a mandatory left move, so even the right blank boundary and the empty input
-reach the left boundary before the final right move.)
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, and
+fix a schedule-alphabet input, a base configuration, an input-head position $p$, integer
+controller-head positions, and controller tapes. Starting in reset-start phase, after
+$\max(p,1)+1$ steps the machine is in copy-left phase with input head at position $1$;
+all controller tapes and their head positions, as well as the other configuration data,
+are unchanged.
 \end{lemma}
 
 \begin{definition}[Partially copied guide tape]
@@ -120,25 +128,25 @@ $0 \le z < j$ carry the origin mark at $z = 0$ and interior marks otherwise, and
 remaining cells are blank.
 \end{definition}
 
-\begin{lemma}[Extending the partial guide by one cell]
+\begin{lemma}[Extending the Partial Copy Guide]
 \lean{Complexity.copyGuide_next}
 \label{Complexity.copyGuide_next}
 \leanok
 \uses{Complexity.copyGuide}
 \difficulty{3}
-Updating the partial guide with $j$ copied cells at cell $j$ --- writing the origin
-mark when $j = 0$ and an interior mark otherwise --- yields the partial guide with
-$j+1$ copied cells.
+For every natural number $j$, updating the partial copy guide at coordinate $j$ with the
+origin mark if $j=0$ and the interior mark otherwise yields the partial copy guide for
+$j+1$ copied input cells.
 \end{lemma}
 
-\begin{lemma}[Origin uniqueness in the partial guide]
+\begin{lemma}[Uniqueness of the Guide Origin]
 \lean{Complexity.copyGuide_origin}
 \label{Complexity.copyGuide_origin}
 \leanok
 \uses{Complexity.copyGuide}
 \difficulty{2}
-For $j > 0$, a cell of the partial guide with $j$ copied cells carries the origin mark
-if and only if it is cell $0$.
+For every natural number $j>0$ and every integer coordinate $z$, the partial copy guide
+after $j$ cells has the origin mark at $z$ if and only if $z=0$.
 \end{lemma}
 
 \begin{definition}[Copy loop phase]
@@ -151,45 +159,51 @@ when $j = 0$ (the origin mark has not yet been written) and the further-copy pha
 otherwise.
 \end{definition}
 
-\begin{lemma}[The two steps opening the copy stage]
+\begin{lemma}[Opening the guide-copying stage]
 \lean{Complexity.setupCfg_copy_left}
 \label{Complexity.setupCfg_copy_left}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.copyPhase, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-From a setup configuration in the copy-left phase with guide head at $0$ and entirely
-blank guide tape, exactly two steps of the oblivious schedule machine write the virtual
-left boundary (an interior mark at guide cell $-1$) and reach the first-copy phase with
-guide head back at $0$ over the partial guide with $0$ copied cells; the input head,
-the budget and unary tapes, and their heads are unchanged.  This holds for every
-input-head position, including the empty input.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a\in\mathbb{N}$, and let
+$x$ be a finite schedule-alphabet word. For any base configuration on $x$, input-head
+position, integers $b,u$, and budget and unary tapes, starting in copy-left phase with
+guide head at cell $0$ and a blank guide tape, after two steps the machine is in the
+first-copy phase with guide head at cell $0$ and the partial guide with zero copied
+cells; the input-head position, base data, budget tape and head, and unary tape and head
+are unchanged.
 \end{lemma}
 
-\begin{lemma}[Prefix of the copy scan]
+\begin{lemma}[Prefix of the guide-copying scan]
 \lean{Complexity.setupCfg_copy_prefix}
 \label{Complexity.setupCfg_copy_prefix}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.copyGuide_next, Complexity.copyPhase, Complexity.oblAction, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_input, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos}
 \difficulty{5}
-Let $j \le |x|$.  From a setup configuration in the first-copy phase with input head at
-position $1$ and guide head at $0$ over the partial guide with $0$ copied cells,
-exactly $j$ steps lead to the copy phase for $j$ copied symbols with input head at
-$j+1$, guide head at $j$, and guide tape the partial guide with $j$ copied cells; the
-budget and unary tapes and heads are unchanged.  In particular the input and guide
-heads make exactly the same number of right moves, and no data value influences a
-movement.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a,j\in\mathbb{N}$, and let
+$x$ be a finite schedule-alphabet word with $j\le |x|$. For any base configuration on
+$x$, integers $b,u$, and budget and unary tapes, starting in the first-copy phase with
+input head at position $1$, guide head at cell $0$, and guide tape equal to the partial
+guide with zero copied cells, after $j$ steps the machine is in the copy phase
+corresponding to $j$ copied symbols, with input head at position $j+1$, guide head at
+cell $j$, and guide tape equal to the partial guide with $j$ copied cells; the base
+data, budget tape and head, and unary tape and head are unchanged.
 \end{lemma}
 
-\begin{lemma}[The final blank read of the copy scan]
+\begin{lemma}[Final step of the guide-copying scan]
 \lean{Complexity.setupCfg_copy_end}
 \label{Complexity.setupCfg_copy_end}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.copyGuide_next, Complexity.copyPhase, Complexity.oblAction, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_input, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-From a setup configuration in the copy phase for $|x|$ copied symbols, with input head
-parked at the right boundary $|x|+1$ (reading blank) and guide head at $|x|$, a single
-step enters the copy-return phase, leaves both heads in place, and closes the copied
-zone by writing one more mark, producing the partial guide with $|x|+1$ cells.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a\in\mathbb{N}$, and let
+$x$ be a finite schedule-alphabet word. For any base configuration on $x$, integers
+$b,u$, and budget and unary tapes, if the machine is in the copy phase corresponding to
+$|x|$ copied symbols, with input head at position $|x|+1$, guide head at cell $|x|$, and
+guide tape equal to the partial guide with $|x|$ copied cells, one step takes it to
+copy-return phase with the same input-head position and guide-head coordinate and guide
+tape equal to the partial guide with $|x|+1$ copied cells; the base data, budget tape
+and head, and unary tape and head are unchanged.
 \end{lemma}
 
 \begin{lemma}[Return across the copied guide]
@@ -198,10 +212,13 @@ zone by writing one more mark, producing the partial guide with $|x|+1$ cells.
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.copyGuide_origin, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.moveInputPos_zero}
 \difficulty{5}
-For all $n, j \in \bbn$: from a setup configuration in the copy-return phase with guide
-head at $j$ over the partial guide with $n+1$ copied cells, exactly $j+1$ steps reach
-the budget-start phase with guide head at the origin (cell $0$); all tapes and all
-other heads are unchanged.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a,n,j\in\mathbb{N}$, and
+let $x$ be a finite schedule-alphabet word. For any base configuration on $x$,
+input-head position, integers $b,u$, and budget and unary tapes, starting in copy-return
+phase with guide head at cell $j$ and guide tape equal to the partial guide with $n+1$
+copied cells, after $j+1$ steps the machine is in budget-start phase with guide head at
+cell $0$ and the same guide tape; the base data, input-head position, budget tape and
+head, and unary tape and head are unchanged.
 \end{lemma}
 
 \begin{definition}[Unary macrostep counter tape]
@@ -213,26 +230,24 @@ For $N \in \bbn$, the unary tape with $N$ markers has the origin sentinel at cel
 unit markers on cells $1,\dots,N$, and blanks elsewhere.
 \end{definition}
 
-\begin{lemma}[Appending one unary marker]
+\begin{lemma}[Appending a unary marker]
 \lean{Complexity.unaryTape_next}
 \label{Complexity.unaryTape_next}
 \leanok
 \uses{Complexity.unaryTape}
 \difficulty{3}
-Updating the unary tape with $N$ markers at cell $N+1$ with a unit marker yields the
-unary tape with $N+1$ markers.
+For every $N\in\mathbb{N}$, changing cell $N+1$ of the unary tape with $N$ markers to a
+unit marker gives the unary tape with $N+1$ markers.
 \end{lemma}
 
-\begin{lemma}[Origin uniqueness on the captured clock tape]
+\begin{lemma}[Unique origin on the captured tape]
 \lean{Complexity.clockTape_origin}
 \label{Complexity.clockTape_origin}
 \leanok
 \uses{Complexity.clockTape, Turing.FinTM.bufferTape}
 \difficulty{3}
-Let $w$ be a bit word and consider its captured clock tape: the tape with the origin
-sentinel at cell $0$, the $i$-th bit of $w$ at cell $i+1$ for $0 \le i < |w|$, and
-blanks elsewhere.  A cell of this tape carries the origin mark if and only if it is
-cell $0$.
+For every Boolean word $w$ and integer coordinate $z$, the captured clock tape has the
+origin marker at $z$ if and only if $z=0$.
 \end{lemma}
 
 \begin{lemma}[Blank cell after the captured word]
@@ -241,32 +256,39 @@ cell $0$.
 \leanok
 \uses{Complexity.clockTape}
 \difficulty{1}
-On the captured clock tape of a bit word $w$ (origin sentinel at cell $0$, the bits of
-$w$ on cells $1,\dots,|w|$), cell $|w|+1$ is blank.
+For every Boolean word $w$, the captured clock tape is blank at integer coordinate
+$|w|+1$.
 \end{lemma}
 
-\begin{lemma}[Rewind of the budget tape]
+\begin{lemma}[Rewind to the budget origin]
 \lean{Complexity.setupCfg_budget_back}
 \label{Complexity.setupCfg_budget_back}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.clockTape, Complexity.clockTape_origin, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-For every $j \in \bbn$: from a setup configuration in the budget-back phase with budget
-head at cell $j$ over the captured clock tape of a bit word $w$, exactly $j+1$ steps
-reach the sentinel at the origin and move right once, entering the first append phase
-with budget head at cell $1$; all tapes and all other heads are unchanged.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a,j\in\mathbb{N}$, and let
+$x$ be a finite word over the schedule alphabet determined by $W$ and $a$. For any base
+configuration on $x$, input-head position, integers $u,g$, Boolean word $w$, and
+unary-counter and guide tapes, running the length-only schedule for $j+1$ steps from the
+configuration in budget-back phase with budget head at cell $j$ and captured clock tape
+for $w$ yields the configuration in append phase with counter $0$, budget head at cell
+$1$, the same base data, input head, unary tape and head, guide tape and head, and
+captured clock tape.
 \end{lemma}
 
-\begin{lemma}[Exact cost of a full budget rewind]
+\begin{lemma}[Rewind to the budget origin]
 \lean{Complexity.setupCfg_budget_start}
 \label{Complexity.setupCfg_budget_start}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.clockTape, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_budget_back, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
 \difficulty{4}
-From a setup configuration in the budget-start phase with budget head at cell $|w|+1$
-(one cell beyond the captured clock tape of the bit word $w$), exactly $|w|+2$ steps
-reach the first append phase with budget head at cell $1$; the cost depends only on the
-width of $w$, not on its bits, and all tapes and all other heads are unchanged.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a\in\mathbb{N}$, and let
+$x$ be a finite schedule-alphabet word. For any base configuration on $x$, input-head
+position, integers $u,g$, Boolean word $w$, and unary-counter and guide tapes, starting
+in budget-start phase with the budget head at $|w|+1$ over the captured clock tape for
+$w$, after exactly $|w|+2$ steps the machine is in append phase with counter $0$ and
+budget head at cell $1$; the base data, input-head position, unary tape and head, guide
+tape and head, and captured clock tape are unchanged.
 \end{lemma}
 
 \begin{lemma}[Prefix of the unary append block]
@@ -275,89 +297,108 @@ width of $w$, not on its bits, and all tapes and all other heads are unchanged.
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryTape, Complexity.unaryTape_next, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos_zero}
 \difficulty{5}
-Let $j \le a+1$, where $a$ is the padding parameter.  From a setup configuration in
-append phase $0$ with unary head at cell $N+1$ over the unary tape with $N$ markers,
-exactly $j$ steps reach append phase $j$ with unary head at cell $N+j+1$ over the unary
-tape with $N+j$ markers; each step writes exactly one unit marker, and all other tapes
-and heads are unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,N,j\in\mathbb{N}$
+with $j\le a+1$, and consider a base configuration on an input word $x$ of schedule
+symbols. Start the schedule machine in append phase $0$, with the binary-budget head at
+$b$, the unary-counter head at $N+1$, and the guide head at $g$; let the binary-budget
+tape be $\beta$, the guide tape be $\gamma$, and the unary-counter tape have an origin
+marker at $0$, unit markers at $1,\ldots,N$, and blanks elsewhere. After exactly $j$
+steps, the state is append phase $j$, the unary-counter head is at $N+j+1$, and the
+unary-counter tape has an origin marker at $0$, unit markers at $1,\ldots,N+j$, and
+blanks elsewhere. The input-head position, all clock work tapes and their head
+positions, the binary-budget tape and head, the guide tape and head, and the output are
+unchanged.
 \end{lemma}
 
-\begin{lemma}[The full unary append block]
+\begin{lemma}[Unary append block]
 \lean{Complexity.setupCfg_append}
 \label{Complexity.setupCfg_append}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_append_prefix, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryTape, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{3}
-From a setup configuration in append phase $0$ with unary head at cell $N+1$ over the
-unary tape with $N$ markers, exactly $a+2$ steps append exactly $a+1$ unit markers and
-enter the borrow phase with incoming borrow set: the unary head is then at cell
-$N+(a+1)+1$ over the unary tape with $N+a+1$ markers, and all other tapes and heads are
-unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,N\in\mathbb{N}$,
+and let $x$ be a finite word over the schedule alphabet. For any base configuration on
+$x$, input-head position $p$, integers $b,g$, and tape contents
+$\beta,\gamma\colon\mathbb{Z}\to\text{Option}(\text{OblSymbol})$, start the schedule
+machine in phase $\mathsf{append}(0)$ with its binary-budget head at $b$, unary-counter
+head at $N+1$ over the tape with $N$ unary markers, and guide head at $g$; let its clock
+tapes and output be those of the base configuration. After $a+2$ steps, the
+configuration has phase $\mathsf{borrow}(\mathsf{true})$, the same input-head position,
+clock tapes, budget tape and head, guide tape and head, and output; its unary-counter
+tape has $N+a+1$ markers and its head is at $N+(a+1)+1$.
 \end{lemma}
 
-\begin{lemma}[Shifting a tape zipper past a fixed word]
+\begin{lemma}[Shift invariance of the tape representation]
 \lean{Complexity.sweepTape_shift}
 \label{Complexity.sweepTape_shift}
 \leanok
 \uses{Turing.FinTM.sweepTape, Turing.FinTM.sweepTape_read, Turing.FinTM.sweepTape_right}
 \difficulty{5}
-Present a tape as a zipper with frontier $z \in \bbz$, a list $l$ of the (possibly
-blank) cells to the left of $z$ listed nearest-first, and a list of the cells at and to
-the right of $z$.  If the right list decomposes as $w \mathbin{+\!\!+} r$, then the
-same tape is presented by the zipper with frontier $z + |w|$, left list
-$\mathrm{reverse}(w) \mathbin{+\!\!+} l$, and right list $r$.
+Let $A$ be an alphabet, $z\in\mathbb{Z}$, and let $l,w,r$ be finite lists of possibly
+blank symbols from $A$. The tape represented by frontier $z$, left list $l$, and right
+list $w$ followed by $r$ is the same tape as that represented by frontier $z+|w|$, left
+list $w$ in reverse order followed by $l$, and right list $r$.
 \end{lemma}
 
-\begin{lemma}[The captured clock tape as a zipper]
+\begin{lemma}[Captured clock tape as a zipper]
 \lean{Complexity.clockTape_zipper}
 \label{Complexity.clockTape_zipper}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.clockTape, Turing.FinTM.bufferTape, Turing.FinTM.sweepTape}
 \difficulty{5}
-For every bit word $w$, the captured clock tape of $w$ (origin sentinel at cell $0$,
-the bits of $w$ on cells $1,\dots,|w|$, blanks elsewhere) equals the zipper tape with
-frontier at cell $1$, left list consisting of the single origin sentinel, and right
-list the bits of $w$, each encoded as a budget-bit symbol.
+For every bit word $w$, its captured clock tape equals the tape formed by a zipper with
+frontier at coordinate $1$, left list consisting of the origin marker, and right list
+consisting of the symbols of $w$ encoded as bit symbols.
 \end{lemma}
 
-\begin{lemma}[The end zipper of a captured word]
+\begin{lemma}[End zipper of a captured word]
 \lean{Complexity.clockTape_zipper_end}
 \label{Complexity.clockTape_zipper_end}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.clockTape, Complexity.clockTape_zipper, Complexity.sweepTape_shift, Turing.FinTM.sweepTape}
 \difficulty{2}
-For every bit word $w$, the zipper tape with frontier $1+|w|$, empty right list, and
-left list consisting of the reversed encoded bits of $w$ followed by the origin
-sentinel equals the captured clock tape of $w$.
+For every bit word $w$, the zipper tape with frontier at coordinate $1+|w|$, empty right
+list, and left list consisting of the reversed list of bit symbols encoding $w$,
+followed by the origin marker, equals the captured clock tape of $w$.
 \end{lemma}
 
-\begin{lemma}[Lane focusing of a setup configuration]
+\begin{lemma}[Budget-lane focusing in a setup configuration]
 \lean{Complexity.laneCfg_setup}
 \label{Complexity.laneCfg_setup}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.finThree_cases, Complexity.laneCfg, Complexity.setupCfg, Turing.Cfg, Turing.FinTM, Turing.FinTM.sweepTape}
 \difficulty{4}
-Take a setup configuration and focus its budget lane: replace the state by $q'$, the
-budget tape by the zipper tape with frontier $z$, left list $l$, and right list $r$,
-and move the budget head to $z$, keeping every other tape and head.  The result is
-again a setup configuration, with the same base configuration, input head, unary and
-guide data, state $q'$, budget head $z$, and budget tape given by that zipper.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\bbn$, and let
+$x$ be a finite word over the schedule alphabet. Take a base configuration on $x$ with
+$W.k+3$ work tapes and control phases parameterized by the state set of $W$ and by $a$.
+For optional control phases $q,q'$, an input-head position $p$, integers $b,u,g,z$, tape
+contents $bt,ut,gt:\bbz\to\mathrm{Option}(\mathrm{OblSymbol})$, and finite lists $l,r$
+of possibly blank schedule symbols, focusing the first of the three additional work
+tapes in the setup configuration determined by $q,p,b,u,g,bt,ut,gt$ at frontier $z$ with
+lists $l,r$ and state $q'$ gives the setup configuration determined by $q',p,z,u,g$, the
+zipper tape determined by $z,l,r$, and $ut,gt$.
 \end{lemma}
 
-\begin{lemma}[The full-width borrow pass]
+\begin{lemma}[Full-width budget borrow pass]
 \lean{Complexity.setupCfg_borrow}
 \label{Complexity.setupCfg_borrow}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.budgetBorrow, Complexity.budgetBorrow_length, Complexity.clockTape, Complexity.clockTape_zipper, Complexity.clockTape_zipper_end, Complexity.laneCfg_setup, Complexity.obliviousSchedule, Complexity.obliviousSchedule_borrow_run, Complexity.setupCfg, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-Let $w$ be a bit word and $c$ a Boolean incoming borrow, and recall the fixed-width
-borrow pass: it processes all of $w$, subtracting the incoming borrow from its
-little-endian value while preserving its length, and returns an outgoing borrow flag
-together with the rewritten word.  From a setup configuration in the borrow phase with
-flag $c$ and budget head at cell $1$ over the captured clock tape of $w$, exactly $|w|$
-steps reach the borrow phase whose flag is the outgoing borrow, with budget head at
-$1+|w|$ over the captured clock tape of the rewritten word; all other tapes and heads,
-and the parked input head, remain fixed.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a$ be a natural
+number, and let $x$ be a finite word over the schedule alphabet determined by $W$ and
+$a$. Choose a base configuration on input $x$, an input-head position $p$, integers $u$
+and $g$, tape contents
+$\mu,\gamma\colon\mathbb{Z}\to\mathrm{Option}(\mathrm{OblSymbol})$, a Boolean word $w$,
+and a Boolean carry $c$. Starting from the setup configuration whose control state is
+the borrow phase with carry $c$, whose budget-head position is $1$ and budget tape is
+the captured clock tape of $w$, and whose unary-counter and guide heads and tapes are
+$u,\mu$ and $g,\gamma$, respectively, after $|w|$ steps the configuration is the setup
+configuration with borrow carry equal to the final carry produced by the fixed-width
+borrow pass on $(c,w)$, budget-head position $1+|w|$, and budget tape equal to the
+captured clock tape of the rewritten word. In both configurations the input position,
+the source tapes and their heads, the unary-counter and guide tapes and heads, and the
+output are those specified by the same base configuration and parameters.
 \end{lemma}
 
 \begin{lemma}[Branch at the end of a borrow pass]
@@ -366,71 +407,81 @@ and the parked input head, remain fixed.
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.clockTape, Complexity.clockTape_end, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-From a setup configuration in the borrow phase with flag $c$ and budget head at cell
-$|w|+1$ (the blank cell after the captured clock tape of the bit word $w$), one step
-keeps every tape and head fixed and moves to the unary-start phase when $c$ is true
-(the budget underflowed, i.e.\ is exhausted) and back to the budget-start phase
-otherwise.
+Let $W$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, let $a
+\in \bbn$, and let $x$ be an input word over the schedule alphabet. Take a base
+configuration on $x$, a position $p$ for its input head, integers $u,g$, a bit word $w$,
+schedule-tape contents $\mu,\gamma$, and a Boolean carry flag. In the configuration
+built from these data with controller state the borrow phase, budget head at $|w|+1$,
+and budget tape equal to the captured clock tape of $w$, one step leaves every tape,
+head position, and other configuration component unchanged, and changes the controller
+state to unary-start if the carry flag is true and budget-start otherwise.
 \end{lemma}
 
-\begin{lemma}[Exact cost of one budget round]
+\begin{lemma}[Cost and outcome of a budget round]
 \lean{Complexity.setupCfg_budget_round}
 \label{Complexity.setupCfg_budget_round}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.budgetBorrow, Complexity.budgetBorrow_length, Complexity.clockTape, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_append, Complexity.setupCfg_borrow, Complexity.setupCfg_borrow_end, Complexity.setupCfg_budget_start, Complexity.unaryTape, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-One complete round of the budget controller --- full rewind, append block of $a+1$
-unary markers, fixed-width borrow pass, and end test --- costs exactly
-$2|w| + (a+1) + 4$ steps, independently of the bits of the budget word $w$.  Starting
-in the budget-start phase with budget head at $|w|+1$ over the captured clock tape of
-$w$ and unary head at $N+1$ over the unary tape with $N$ markers, the round ends with
-the captured clock tape of the borrowed word (incoming borrow set), the unary tape with
-$N + a + 1$ markers, and phase unary-start or budget-start according to the borrow's
-underflow flag.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a,N\in\mathbb{N}$, and let
+$x$ be a finite schedule-alphabet word. Given any base configuration on $x$, input-head
+position, integer guide-head coordinate $g$, Boolean word $w$, and guide tape, start the
+length-only schedule in budget-start phase with the budget head at $|w|+1$ over the
+captured clock tape for $w$, and the unary head at $N+1$ over the unary tape with $N$
+markers. After exactly $2|w|+(a+1)+4$ steps, the budget tape contains the result of a
+borrow pass with incoming borrow set on $w$, the unary tape has $N+a+1$ markers and its
+head is at $N+(a+1)+1$, the budget head is at $|w|+1$, and the phase is unary-start if
+the borrow pass ends with a borrow and budget-start otherwise; the input head, base
+data, guide tape and guide head are unchanged.
 \end{lemma}
 
-\begin{lemma}[The complete binary-to-unary conversion]
+\begin{lemma}[Complete Binary-to-Unary Conversion]
 \lean{Complexity.setupCfg_budget_all}
 \label{Complexity.setupCfg_budget_all}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.budgetBorrow, Complexity.budgetBorrow_length, Complexity.budgetBorrow_underflow, Complexity.budgetBorrow_value, Complexity.budgetValue, Complexity.clockTape, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_budget_round, Complexity.unaryTape, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $w$ be a bit word of little-endian value $v$ and let $N \in \bbn$.  From a setup
-configuration in the budget-start phase with budget head at $|w|+1$ over the captured
-clock tape of $w$ and unary head at $N+1$ over the unary tape with $N$ markers, exactly
-$(v+1)\,\bigl(2|w| + (a+1) + 4\bigr)$ steps reach the unary-start phase with unary head
-at $N + (a+1)(v+1) + 1$ over the unary tape with $N + (a+1)(v+1)$ markers, the budget
-tape being the captured clock tape of some bit word $w'$ with $|w'| = |w|$ (the word
-keeps its full width as its high bits become zero); the guide tape and head and the
-input head are unchanged.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a,N,v\in\mathbb{N}$, and
+let $x$ be a finite word over the schedule alphabet. Choose a base configuration on
+input $x$, an input-head position $p$, an integer guide-head position $g$, and
+guide-tape contents $\gamma\colon\mathbb{Z}\to\mathrm{Option}(\mathrm{OblSymbol})$. For
+every bit word $w$ of little-endian value $v$, running the length-only schedule machine
+from the setup configuration in the budget-start phase, with budget head at $|w|+1$ on
+the captured clock tape of $w$ and unary head at $N+1$ on the unary tape with $N$
+markers, for exactly $(v+1)(2|w|+(a+1)+4)$ steps yields the setup configuration in the
+unary-start phase with the same base configuration, input-head position, and guide tape
+and head, with budget head still at $|w|+1$ and unary head at $N+(a+1)(v+1)+1$. Its
+budget tape is the captured clock tape of some bit word $w'$ with $|w'|=|w|$, and its
+unary tape has $N+(a+1)(v+1)$ markers.
 \end{lemma}
 
-\begin{lemma}[Origin uniqueness on the unary tape]
+\begin{lemma}[Uniqueness of the origin marker]
 \lean{Complexity.unaryTape_origin}
 \label{Complexity.unaryTape_origin}
 \leanok
 \uses{Complexity.unaryTape}
 \difficulty{2}
-A cell of the unary tape with $N$ markers carries the origin mark if and only if it is
-cell $0$.
+For every $N\in\mathbb{N}$ and every integer cell position $z$, the unary tape with $N$
+markers carries the origin marker at $z$ if and only if $z=0$.
 \end{lemma}
 
-\begin{lemma}[Unit markers of the unary tape]
+\begin{lemma}[Unit markers on the unary tape]
 \lean{Complexity.unaryTape_unit}
 \label{Complexity.unaryTape_unit}
 \leanok
 \uses{Complexity.unaryTape}
 \difficulty{1}
-For every $j < N$, cell $j+1$ of the unary tape with $N$ markers carries a unit marker.
+For every $N,j\in\mathbb{N}$ with $j<N$, the unary tape with $N$ markers carries a unit
+marker at cell $j+1$.
 \end{lemma}
 
-\begin{lemma}[Blank cell terminating the unary segment]
+\begin{lemma}[End of the unary tape]
 \lean{Complexity.unaryTape_end}
 \label{Complexity.unaryTape_end}
 \leanok
 \uses{Complexity.unaryTape}
 \difficulty{1}
-Cell $N+1$ of the unary tape with $N$ markers is blank.
+For every $N\in\mathbb{N}$, the unary tape with $N$ markers is blank at cell $N+1$.
 \end{lemma}
 
 \begin{definition}[Common phase of the two unary rewinds]
@@ -443,29 +494,34 @@ Boolean flag marks the final rewind, and the unary-back phase otherwise.  Both r
 follow the same path and differ only in their successor phase.
 \end{definition}
 
-\begin{lemma}[Exact cost of a unary rewind]
+\begin{lemma}[Unary Rewind Cost]
 \lean{Complexity.setupCfg_unary_rewind}
 \label{Complexity.setupCfg_unary_rewind}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryRewindPhase, Complexity.unaryTape, Complexity.unaryTape_origin, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-For every $j \in \bbn$ and either rewind variant: from a setup configuration in the
-corresponding unary rewind phase with unary head at cell $j$ over the unary tape with
-$N$ markers, exactly $j+1$ steps reach the successor phase --- the start-center phase
-for the final rewind, the first rightward layout phase otherwise --- with unary head at
-cell $1$; no tape is written and all other heads are unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,N,j\in\bbn$, and
+let $last\in\{\mathrm{false},\mathrm{true}\}$. For any input word, base configuration,
+input-head position, budget-head position and tape, and guide-head position and tape,
+starting in the unary-rewind phase (unary-reset if $last$ is true and unary-back
+otherwise) with unary head at $j$ and unary tape containing $N$ markers, after $j+1$
+steps the unary head is at $1$ and the phase is start-center if $last$ is true and the
+first rightward layout phase otherwise; the resulting configuration has all the same
+data and other head positions.
 \end{lemma}
 
-\begin{lemma}[Opening rewind of the allocation stage]
+\begin{lemma}[Unary Counter Initialization]
 \lean{Complexity.setupCfg_unary_start}
 \label{Complexity.setupCfg_unary_start}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_unary_rewind, Complexity.setupWrite, Complexity.unaryRewindPhase, Complexity.unaryTape, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
 \difficulty{4}
-From a setup configuration in the unary-start phase with unary head at cell $N+1$ over
-the unary tape with $N$ markers, exactly $N+2$ steps rewind the entire newly
-constructed unary segment and reach the first rightward layout phase with unary head at
-cell $1$; all tapes and all other heads are unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet and let $a,N\in\bbn$. For
+any input word, base configuration, input-head position, budget-head position and tape,
+and guide-head position and tape, starting in the unary-start phase with unary head at
+$N+1$ and unary tape containing $N$ markers, after $N+2$ steps the machine is in the
+first rightward layout phase with unary head at $1$; the resulting configuration has all
+the same data and other head positions.
 \end{lemma}
 
 \begin{definition}[Interior guide mark]
@@ -495,7 +551,8 @@ elsewhere, independently of the previous contents.
 \leanok
 \uses{Complexity.OblSymbol, Complexity.guideFill}
 \difficulty{2}
-Filling zero cells of a guide tape, in either direction, leaves the tape unchanged.
+For either direction of filling and any guide tape on the integer coordinates, filling
+zero cells leaves the tape unchanged.
 \end{lemma}
 
 \begin{lemma}[Origin preservation under allocation]
@@ -504,9 +561,10 @@ Filling zero cells of a guide tape, in either direction, leaves the tape unchang
 \leanok
 \uses{Complexity.OblSymbol, Complexity.guideFill, Complexity.guideMark}
 \difficulty{2}
-If a guide tape carries the origin mark exactly at cell $0$, then for every $j$ and
-either direction, its $j$-cell filled version also carries the origin mark exactly at
-cell $0$.
+Let $ho$ be either direction, and let $\\gamma$ be a guide tape whose origin mark
+occurs exactly at coordinate $0$. For every natural number $j$ and every integer
+coordinate $z$, the $j$-cell filled tape carries the origin mark at $z$ if and only if
+$z=0$.
 \end{lemma}
 
 \begin{lemma}[One more allocated cell]
@@ -515,9 +573,10 @@ cell $0$.
 \leanok
 \uses{Complexity.OblSymbol, Complexity.guideFill, Complexity.guideMark}
 \difficulty{4}
-Updating the $j$-cell filled version of a guide tape at cell $j$ (rightward)
-respectively $-j$ (leftward) with the corresponding guide mark yields the $(j+1)$-cell
-filled version.
+Let $ho$ be either the rightward or leftward direction, let $\\gamma$ be a guide tape,
+and let $j$ be a natural number. Updating the $j$-cell filled tape at coordinate $j$ in
+the rightward direction or $-j$ in the leftward direction with the guide mark for that
+coordinate yields the $(j+1)$-cell filled tape.
 \end{lemma}
 
 \begin{definition}[Phases of the outward allocation passes]
@@ -545,37 +604,44 @@ contents.
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideMark, Complexity.layoutMove, Complexity.layoutPhase, Complexity.nextThird, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-Consider a setup configuration in layout phase $i \in \{0,1,2\}$ of either direction,
-and suppose the unary tape reads a unit marker at the unary head and the guide tape
-reads the origin mark at the guide head exactly when that head is at cell $0$.  Then
-one step moves to layout phase $i+1 \bmod 3$, writes the guide mark at the guide head,
-moves the guide head one cell in the chosen direction, and advances the unary head by
-one exactly when $i = 2$; everything else is unchanged.  Thus the controller spends
-three guide cells per unary marker.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, and
+consider a setup configuration with arbitrary base configuration, input-head position,
+integer controller-head positions, and controller tapes. Suppose its phase is the
+allocation phase of direction $r\in\{\mathrm{right},\mathrm{left}\}$ indexed by
+$i\in\{0,1,2\}$, the unary tape reads a unit marker at its head, and the guide tape
+reads the origin marker at its head if and only if that head is at cell $0$. One step
+advances the allocation index to $i+1\pmod 3$, moves the unary head right by one exactly
+when $i=2$, moves the guide head one cell in direction $r$, and writes the origin marker
+at the guide cell previously under its head if that cell is $0$, writing an interior
+marker otherwise; all other tape contents and configuration data are unchanged.
 \end{lemma}
 
-\begin{lemma}[Allocation step on a filled guide]
+\begin{lemma}[Step of an outward allocation pass]
 \lean{Complexity.setupCfg_layout_fill}
 \label{Complexity.setupCfg_layout_fill}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideFill, Complexity.guideFill_next, Complexity.guideFill_origin, Complexity.layoutMove, Complexity.layoutPhase, Complexity.nextThird, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_layout_step, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Let $\gamma$ be a guide tape carrying the origin mark exactly at cell $0$, and suppose
-the unary tape reads a unit marker at the unary head.  Then one step from layout phase
-$i$ (of either direction) with guide head at $\pm j$ over the $j$-cell filled version
-of $\gamma$ leads to layout phase $i+1 \bmod 3$ with guide head at $\pm(j+1)$ over the
-$(j+1)$-cell filled version, incrementing the unary head exactly when $i = 2$.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,j\in\mathbb{N}$,
+and choose a schedule-symbol input, a base configuration, a valid input-head position,
+integers $b,u$, and tapes $\beta,\mu,\gamma$. Let $i\in\{0,1,2\}$ be an allocation index
+and choose a direction. Assume the unary tape has a unit marker at $u$ and the guide
+tape carries the origin mark exactly at coordinate $0$. From allocation index $i$ with
+guide head at $j$ in the rightward direction or $-j$ in the leftward direction, and with
+the guide tape filled through $j$ cells in that direction, one step advances the
+allocation index cyclically, advances the unary head by one exactly when $i=2$, moves
+the guide head one cell in the chosen direction, and leaves the guide filled through
+$j+1$ cells.
 \end{lemma}
 
-\begin{lemma}[Cyclic phase as a remainder]
+\begin{lemma}[Successor modulo three]
 \lean{Complexity.nextThird_mod}
 \label{Complexity.nextThird_mod}
 \leanok
 \uses{Complexity.nextThird}
 \difficulty{3}
-For every $j \in \bbn$, the cyclic successor on $\{0,1,2\}$ of $j \bmod 3$ is
-$(j+1) \bmod 3$.  Hence the finite allocation phase is the remainder modulo three of
-the number of guide cells already written.
+For every natural number $j$, advancing the phase represented by the remainder of $j$
+modulo $3$ gives the phase represented by the remainder of $j+1$ modulo $3$.
 \end{lemma}
 
 \begin{lemma}[Prefix of an outward allocation pass]
@@ -584,13 +650,15 @@ the number of guide cells already written.
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideFill, Complexity.guideFill_zero, Complexity.layoutPhase, Complexity.nextThird_mod, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_layout_fill, Complexity.unaryTape, Complexity.unaryTape_unit, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{5}
-Let $\gamma$ be a guide tape carrying the origin mark exactly at cell $0$, and let
-$j \le 3B$.  From layout phase $0$ (of either direction) with unary head at cell $1$
-over the unary tape with $B$ markers and guide head at cell $0$ over $\gamma$, exactly
-$j$ steps lead to layout phase $j \bmod 3$ with unary head at
-$\lfloor j/3 \rfloor + 1$, guide head at $\pm j$, and guide tape the $j$-cell filled
-version of $\gamma$: the elapsed time equals the number of written guide cells, and the
-unary head moves once every three cells.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B,j\in\mathbb{N}$,
+and choose a schedule-symbol input, a base configuration, a valid input-head position,
+an integer budget-head position, and tapes $\beta,\gamma$. Assume $j\le 3B$ and that
+$\gamma$ carries the origin mark exactly at coordinate $0$. After $j$ steps from
+allocation index $0$, with unary head at $1$ over the unary tape with $B$ markers and
+guide head at $0$, the allocation index is $j$ modulo $3$, the unary head is at $\lfloor
+j/3\rfloor+1$, and the guide head is at $j$ in the rightward direction or $-j$ in the
+leftward direction; the guide tape is the result of filling $j$ cells of $\gamma$ in
+that direction.
 \end{lemma}
 
 \begin{lemma}[End of an outward allocation pass]
@@ -599,11 +667,15 @@ unary head moves once every three cells.
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.layoutMove, Complexity.layoutPhase, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryTape, Complexity.unaryTape_end, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-From layout phase $0$ (of either direction) with unary head at cell $B+1$ --- the
-blank cell terminating the unary tape with $B$ markers --- and guide head at cell $g$,
-one step writes an interior mark at guide cell $g$, moves the guide head one further
-cell outward, keeps the unary head in place, and enters the right-edge or left-edge
-phase according to the direction.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B\in\mathbb{N}$,
+and choose a schedule-symbol input, a base configuration on it, a valid input-head
+position $p$, an integer budget-head position $b$, and budget and guide tapes $\beta$
+and $\gamma$. For either direction, one step from the corresponding phase of allocation
+index $0$, with unary head at $B+1$ over the unary tape with $B$ markers and guide head
+at $g$, enters the right-edge phase for the rightward pass or the left-edge phase for
+the leftward pass. The unary head stays at $B+1$, the guide head moves one cell in the
+pass direction, and the guide tape is updated to carry an interior mark at its former
+head position $g$.
 \end{lemma}
 
 \begin{definition}[Right half of the completed guide]
@@ -621,19 +693,18 @@ guide with $R+1$ copied cells by writing the right outer boundary marker at cell
 \leanok
 \uses{Complexity.copyGuide, Complexity.guideFill, Complexity.guideMark}
 \difficulty{2}
-If $n + 1 \le R$, then filling $R$ cells rightward starting from the partial guide with
-$n+1$ copied cells yields exactly the partial guide with $R$ cells: only the positive
-prefix is overwritten.
+Let $n$ and $R$ be natural numbers with $n+1\le R$. Filling $R$ cells rightward from the
+partial guide with $n+1$ copied cells yields the partial guide with $R$ copied cells.
 \end{lemma}
 
-\begin{lemma}[Origin uniqueness on the right guide]
+\begin{lemma}[Origin marker on the right guide]
 \lean{Complexity.rightGuide_origin}
 \label{Complexity.rightGuide_origin}
 \leanok
 \uses{Complexity.copyGuide_origin, Complexity.rightGuide}
 \difficulty{3}
-A cell of the right guide of radius $R$ carries the origin mark if and only if it is
-cell $0$; the right-boundary write cannot alter the origin.
+For every natural number $R$ and integer $z$, the right guide of radius $R$ carries the
+origin symbol at position $z$ if and only if $z=0$.
 \end{lemma}
 
 \begin{lemma}[Completion of the guide by the left pass]
@@ -642,137 +713,159 @@ cell $0$; the right-boundary write cannot alter the origin.
 \leanok
 \uses{Complexity.copyGuide, Complexity.guideFill, Complexity.guideMark, Complexity.guideTape, Complexity.rightGuide}
 \difficulty{2}
-Let $R > 0$.  Starting from the right guide of radius $R$, filling $R$ cells leftward
-and then writing an interior mark at cell $-R$ and the left outer boundary marker at
-cell $-R-1$ produces the completed guide of radius $R$: origin mark at $0$, interior
-marks at all $z$ with $0 < |z| \le R$, boundary markers at $\pm(R+1)$, and blanks
-elsewhere.
+Let $R$ be a positive natural number. Starting from the right guide of radius $R$, fill
+$R$ cells leftward, then write an interior mark at coordinate $-R$ and the left edge
+marker at coordinate $-R-1$. The resulting tape is the guide tape of radius $R$.
 \end{lemma}
 
-\begin{lemma}[The right boundary transition]
+\begin{lemma}[The right-boundary transition]
 \lean{Complexity.setupCfg_right_edge}
 \label{Complexity.setupCfg_right_edge}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.obliviousSchedule, Complexity.rightGuide, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Complexity.unaryTape, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-From a setup configuration in the right-edge phase with unary head at cell $B+1$ over
-the unary tape with $B$ markers and guide head at cell $R+1$ over the partial guide
-with $R+1$ copied cells, one step writes the right outer boundary marker at guide cell
-$R+1$, moves the unary and guide heads one cell left (to $B$ and $R$), and enters the
-first layout-return phase; the resulting guide tape is the right guide of radius $R$.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B,R\in\mathbb{N}$,
+and fix a schedule-alphabet input, a base configuration, an input-head position, an
+integer budget-head position, and a budget tape. Starting in right-edge phase with unary
+head at $B+1$ on the unary tape with $B$ markers and guide head at $R+1$ on the partial
+guide with $R+1$ copied cells, one step enters layout-return phase $0$, moves the unary
+and guide heads left to $B$ and $R$, respectively, and changes the guide tape to the
+right guide of radius $R$; the other configuration data is unchanged.
 \end{lemma}
 
-\begin{lemma}[One step of the read-only return]
+\begin{lemma}[A return-sweep step]
 \lean{Complexity.setupCfg_layout_return_step}
 \label{Complexity.setupCfg_layout_return_step}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.nextThird, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-Suppose a setup configuration is in layout-return phase $i \in \{0,1,2\}$ and the unary
-tape does not read the origin sentinel at the unary head.  Then one step moves to
-layout-return phase $i+1 \bmod 3$, moves the guide head one cell left, decrements the
-unary head exactly when $i = 2$, and writes nothing on any tape.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, and
+consider a setup configuration on a schedule-alphabet input, with arbitrary base
+configuration, input-head position, budget-head position, and controller tapes. If its
+phase is layout-return phase $i\in\{0,1,2\}$ and the unary tape does not contain the
+origin marker at the unary head, one step advances the phase to $i+1\pmod 3$, moves the
+unary head left by one exactly when $i=2$, and moves the guide head left by one; all
+tape contents and other configuration data are unchanged.
 \end{lemma}
 
-\begin{lemma}[Prefix of the read-only return]
+\begin{lemma}[Prefix of the return sweep]
 \lean{Complexity.setupCfg_layout_return_prefix}
 \label{Complexity.setupCfg_layout_return_prefix}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.nextThird_mod, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_layout_return_step, Complexity.unaryTape, Complexity.unaryTape_origin, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{5}
-Let $j \le 3B$.  From layout-return phase $0$ with unary head at cell $B$ over the
-unary tape with $B$ markers and guide head at cell $3B$ (over an arbitrary guide tape),
-exactly $j$ steps lead to layout-return phase $j \bmod 3$ with unary head at
-$B - \lfloor j/3 \rfloor$ and guide head at $3B - j$; no tape is written and all guide
-marks are unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, and
+let $x$ be a word over the schedule alphabet. Fix a base configuration on $x$, an
+input-head position $p$, an integer budget-head position $b$, arbitrary budget and guide
+tapes, and natural numbers $B,j$ with $j\le 3B$. Starting in layout-return phase $0$
+with unary head at $B$, unary tape containing $B$ markers, and guide head at $3B$, after
+$j$ steps the machine is in layout-return phase $j\bmod 3$, with unary head at
+$B-\lfloor j/3\rfloor$ and guide head at $3B-j$; the other configuration data, including
+all tape contents, are unchanged.
 \end{lemma}
 
-\begin{lemma}[The completed return pass]
+\begin{lemma}[Completion of the guide return pass]
 \lean{Complexity.setupCfg_layout_return}
 \label{Complexity.setupCfg_layout_return}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_layout_return_prefix, Complexity.setupWrite, Complexity.unaryTape, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-From layout-return phase $0$ with unary head at cell $B$ over the unary tape with $B$
-markers and guide head at cell $3B$ (over an arbitrary guide tape), exactly $3B+1$
-steps reach the origin and enter the first leftward layout phase with unary head at
-cell $1$ and guide head at cell $0$; no tape is written.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B\in\mathbb{N}$,
+and choose a schedule-symbol input, a base configuration on it, a valid input-head
+position $p$, an integer budget-head position $b$, and budget and guide tapes
+$\beta,\gamma$. Starting in return phase of allocation index $0$ with unary head at $B$
+over the unary tape with $B$ markers and guide head at $3B$, after exactly $3B+1$ steps
+the machine enters the first leftward layout phase with unary head at $1$ and guide head
+at $0$; the guide tape and all other configuration data are unchanged.
 \end{lemma}
 
-\begin{lemma}[The full rightward allocation pass]
+\begin{lemma}[The rightward allocation pass]
 \lean{Complexity.setupCfg_layout_right}
 \label{Complexity.setupCfg_layout_right}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.copyGuide_next, Complexity.copyGuide_origin, Complexity.guideFill_right_copy, Complexity.layoutMove, Complexity.layoutPhase, Complexity.obliviousSchedule, Complexity.rightGuide, Complexity.setupCfg, Complexity.setupCfg_layout_end, Complexity.setupCfg_layout_prefix, Complexity.setupCfg_right_edge, Complexity.unaryTape, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{5}
-Let $n + 1 \le B$.  From the first rightward layout phase with unary head at cell $1$
-over the unary tape with $B$ markers and guide head at cell $0$ over the partial guide
-with $n+1$ copied cells, exactly $3B + 2$ steps reach radius $3B$, install the right
-outer boundary marker, and enter the first layout-return phase with unary head at $B$,
-guide head at $3B$, and guide tape the right guide of radius $3B$.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,n,B\in\mathbb{N}$
+satisfy $n+1\le B$, and fix a schedule-alphabet input, a base configuration, an
+input-head position, an integer budget-head position, a budget tape, and a natural unary
+tape with $B$ markers. Starting in layout-right phase $0$ with unary head at $1$ and
+guide head at $0$ on the partial guide with $n+1$ copied cells, after $3B+2$ steps the
+machine is in layout-return phase $0$ with unary head at $B$ and guide head at $3B$, and
+its guide tape is the right guide of radius $3B$; the other configuration data is
+unchanged.
 \end{lemma}
 
-\begin{lemma}[The full leftward allocation pass]
+\begin{lemma}[Completion of the leftward allocation pass]
 \lean{Complexity.setupCfg_layout_left}
 \label{Complexity.setupCfg_layout_left}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideFill, Complexity.guideFill_left_finish, Complexity.guideTape, Complexity.layoutMove, Complexity.layoutPhase, Complexity.obliviousSchedule, Complexity.rightGuide, Complexity.rightGuide_origin, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupCfg_layout_end, Complexity.setupCfg_layout_prefix, Complexity.setupWrite, Complexity.unaryTape, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos_zero}
 \difficulty{5}
-Let $B > 0$.  From the first leftward layout phase with unary head at cell $1$ over the
-unary tape with $B$ markers and guide head at cell $0$ over the right guide of radius
-$3B$, exactly $3B + 2$ steps complete the fixed guide and enter the unary-reset phase
-with unary head at $B$, guide head at the left outer boundary $-3B - 1$, and guide tape
-the completed guide of radius $3B$.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, and
+let $B>0$. Choose a schedule-symbol input, a base configuration on it, a valid
+input-head position, an integer budget-head position, and a budget tape. Starting in the
+first leftward layout phase with unary head at $1$ over the unary tape with $B$ markers
+and guide head at $0$ over the right guide of radius $3B$, after exactly $3B+2$ steps
+the machine is in the unary-reset phase, with unary head at $B$ and guide head at
+$-3B-1$ over the completed guide of radius $3B$.
 \end{lemma}
 
-\begin{lemma}[Return scan to the guide origin]
+\begin{lemma}[Return to the Guide Origin]
 \lean{Complexity.setupCfg_start_center}
 \label{Complexity.setupCfg_start_center}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.guideTape_origin, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_apply, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-For every $j \in \bbn$: from a setup configuration in the start-center phase with guide
-head at cell $-j$ over the completed guide of radius $R$, exactly $j+1$ steps reach the
-origin and enter the macrostep-check phase with guide head at cell $0$; all tapes and
-all other heads are unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,R,j\in\bbn$, and
+fix an input word and base configuration for the schedule machine built from $W$ and
+$a$. For any input-head position, budget-head position and tape, unary-head position and
+tape, and base configuration, starting in the start-center phase with guide head at $-j$
+and guide tape of radius $R$, after $j+1$ steps the machine is in the macrostep-check
+phase with guide head at $0$; the resulting configuration is the setup configuration
+with all the same data and other head positions.
 \end{lemma}
 
-\begin{lemma}[Complete allocation ledger]
+\begin{lemma}[Completion of the guide allocation]
 \lean{Complexity.setupCfg_allocation}
 \label{Complexity.setupCfg_allocation}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.guideTape, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_layout_left, Complexity.setupCfg_layout_return, Complexity.setupCfg_layout_right, Complexity.setupCfg_start_center, Complexity.setupCfg_unary_rewind, Complexity.setupCfg_unary_start, Complexity.unaryRewindPhase, Complexity.unaryTape, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $n + 1 \le B$.  From a setup configuration in the unary-start phase with unary head
-at cell $B+1$ over the unary tape with $B$ markers and guide head at cell $0$ over the
-partial guide with $n+1$ copied cells, exactly $14B + 10$ steps produce the completed
-guide of radius $3B$ and enter the macrostep-check phase with unary head at cell $1$
-and guide head at cell $0$; the budget tape and head and the parked input head are
-unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, let $a
+\in \mathbb{N}$, and let $x$ be a finite word over the schedule alphabet. For any base
+configuration on $x$, input-head position $p$, integer budget-head position $b$, and
+budget tape contents $\beta$, let $n,B \in \mathbb{N}$ satisfy $n+1 \le B$. Starting
+from the setup configuration in the unary-start phase with unary head at $B+1$ over the
+unary tape with $B$ markers, unary head contents as specified by that tape, and guide
+head at $0$ over the partial guide with $n+1$ copied cells, after exactly $14B+10$ steps
+the machine is in the macrostep-check phase, with unary head at $1$ over the same unary
+tape and guide head at $0$ over the guide of radius $3B$; the clock tapes, budget tape
+and head, input-head position, and output are unchanged.
 \end{lemma}
 
-\begin{lemma}[The complete input-copy stage]
+\begin{lemma}[Complete guide-copying pass]
 \lean{Complexity.setupCfg_copy}
 \label{Complexity.setupCfg_copy}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copyGuide, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_copy_end, Complexity.setupCfg_copy_left, Complexity.setupCfg_copy_prefix, Complexity.setupCfg_copy_return, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-From a setup configuration in the copy-left phase with input head at position $1$,
-guide head at cell $0$, and entirely blank guide tape, exactly $2|x| + 4$ steps ---
-covering both virtual boundary cells and the return to the origin --- reach the
-budget-start phase with input head parked at position $|x|+1$, guide head at cell $0$,
-and guide tape the partial guide with $|x|+1$ copied cells; the budget and unary tapes
-and heads are unchanged, and the native input stays parked from then on.
+Let $W$ be a finite Turing machine over Boolean symbols, let $a\in\mathbb{N}$, and let
+$x$ be a finite schedule-alphabet word. For any base configuration on $x$, integers
+$b,u$, and budget and unary tapes, starting in copy-left phase with input head at
+position $1$, guide head at cell $0$, and blank guide tape, after exactly $2|x|+4$ steps
+the machine is in budget-start phase with input head at position $|x|+1$, guide head at
+cell $0$, and guide tape equal to the partial guide with $|x|+1$ copied cells; the base
+data, budget tape and head, unary tape and head are unchanged.
 \end{lemma}
 
-\begin{lemma}[Empty clock word equals empty unary budget]
+\begin{lemma}[Empty clock and unary tapes]
 \lean{Complexity.clockTape_unary_zero}
 \label{Complexity.clockTape_unary_zero}
 \leanok
 \uses{Complexity.clockTape, Complexity.unaryTape, Turing.FinTM.bufferTape_nil}
 \difficulty{2}
-The captured clock tape of the empty bit word equals the unary tape with zero markers:
-both consist of the origin sentinel at cell $0$ and blanks everywhere else.
+For every integer coordinate $z$, the captured clock tape of the empty bit word and the
+unary tape with zero markers have the same content.
 \end{lemma}
 
 \begin{lemma}[Setup form of a halted clock configuration]
@@ -781,60 +874,63 @@ both consist of the origin sentinel at cell $0$ and blanks everywhere else.
 \leanok
 \uses{Complexity.clockStageCfg, Complexity.clockTape, Complexity.clockTape_unary_zero, Complexity.finThree_cases, Complexity.setupCfg, Complexity.unaryTape, Turing.Cfg, Turing.FinTM}
 \difficulty{4}
-Let $c$ be a configuration of the $k$-tape Boolean machine $W$ on a Boolean input that
-has halted (its state is the halting state).  Then the clock-stage embedding of $c$
-into the oblivious schedule machine --- which keeps the work block of $c$ and captures
-its entire output word on the budget tape --- is itself a setup configuration: base the
-embedded configuration itself, phase reset-start, the embedded input-head position,
-budget head at cell $m+1$ over the captured clock tape of the output word of $c$
-(where $m$ is that word's length), unary head at cell $1$ over the unary tape with zero
-markers, and guide head at cell $0$ over the blank tape.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\in\mathbb{N}$, and
+let $x$ be a Boolean input. For any configuration $c$ of $W$ on $x$ whose state is
+absent, the clock-stage configuration of $c$ equals the setup configuration based on
+that clock-stage configuration, with control phase reset-start and the same input-head
+position. Its binary budget tape has the captured clock tape of the output word of $c$
+and head at $|c.output|+1$; its unary counter has only the origin marker and head at
+$1$; and its guide tape is blank with head at $0$.
 \end{lemma}
 
-\begin{lemma}[Macrostep retargeting of a setup configuration]
+\begin{lemma}[Macrostep Retargeting of a Setup Configuration]
 \lean{Complexity.macroCfg_setup}
 \label{Complexity.macroCfg_setup}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.finThree_cases, Complexity.macroCfg, Complexity.setupCfg, Turing.Cfg, Turing.FinTM}
 \difficulty{3}
-Modifying a setup configuration by changing only its phase to $q'$ and its unary and
-guide head positions to $u'$ and $g'$ --- keeping every tape, the budget head, and the
-input head fixed --- again yields a setup configuration with the same remaining data.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a$ be a natural
+number, let $x$ be a word over the schedule alphabet, and let $c$ be a configuration
+with $k+3$ work tapes on input $x$. For optional phases $q,q'$, an input-head position
+$p$, integers $b,u,g,u',g'$, and tape-content functions $\beta,\mu,\gamma : \mathbb{Z}
+\to \text{Option}(\text{schedule alphabet})$, first form the setup configuration from
+$c$ with phase $q$, input-head position $p$, tape heads at $b,u,g$, and contents
+$\beta,\mu,\gamma$ on the last three tapes. Applying the macrostep construction to this
+configuration with phase $q'$ and unary-counter and guide head positions $u',g'$ gives
+exactly the setup configuration based on $c$ with phase $q'$, input-head position $p$,
+tape heads at $b,u',g'$, and the same tape contents and output.
 \end{lemma}
 
-\begin{lemma}[The completed setup runs out its unary budget and halts]
+\begin{lemma}[Completion of the macrostep schedule]
 \lean{Complexity.setupCfg_finish}
 \label{Complexity.setupCfg_finish}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.macroCfg_finish, Complexity.macroCfg_setup, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.unaryTape, Complexity.unaryTape_end, Complexity.unaryTape_unit, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom}
 \difficulty{3}
-From a setup configuration in the macrostep-check phase with unary head at cell $1$
-over the unary tape with $B$ markers and guide head at cell $0$ over the completed
-guide of radius $3B$, exactly $B\,\bigl(6\,(3B) + 8\bigr) + 1$ steps execute one full
-sweep per unary marker and reach the halted configuration with unary head at cell
-$B+1$ and guide head at cell $0$; every tape, the budget head, and the input head are
-unchanged.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B\in\mathbb{N}$,
+and let $x$ be a word of schedule symbols. Choose a base configuration on $x$, an
+input-head position $p$, an integer $b$, and a binary-budget tape $\beta$. Starting in
+the macrostep-check phase with unary head at $1$, unary tape containing $B$ markers, and
+guide head at $0$ over the guide of radius $3B$, after exactly $B(6(3B)+8)+1$ steps the
+machine is halted, with unary head at $B+1$; the input head, budget head and tape, unary
+tape, guide head and tape, and all clock tapes and output are otherwise as specified by
+the same setup configuration.
 \end{lemma}
 
-\begin{lemma}[Complete initialization ledger]
+\begin{lemma}[Initialization of the schedule configuration]
 \lean{Complexity.setupCfg_initializes}
 \label{Complexity.setupCfg_initializes}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.budgetValue, Complexity.clockTape, Complexity.copyGuide, Complexity.guideTape, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_allocation, Complexity.setupCfg_budget_all, Complexity.setupCfg_copy, Complexity.setupCfg_reset, Complexity.unaryTape, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-Let $w$ be a bit word of little-endian value $v$, and suppose the input satisfies
-$|x| + 1 \le (a+1)(v+1)$, where $a$ is the padding parameter.  Consider a setup
-configuration in the reset-start phase with input head at an arbitrary position $p$,
-budget head at cell $|w|+1$ over the captured clock tape of $w$, unary head at cell $1$
-over the unary tape with zero markers, and guide head at cell $0$ over the blank guide
-tape.  Then there is a bit word $w'$ with $|w'| = |w|$ such that after exactly
-\[
-  \bigl(\max(p,1)+1\bigr) + \bigl(2|x| + 4\bigr)
-  + (v+1)\bigl(2|w| + (a+1) + 4\bigr) + \bigl(14\,(a+1)(v+1) + 10\bigr)
-\]
-steps the machine is in the macrostep-check phase with input head parked at position
-$|x|+1$, budget head at cell $|w|+1$ over the captured clock tape of $w'$, unary head
-at cell $1$ over the unary tape with $(a+1)(v+1)$ markers, and guide head at cell $0$
-over the completed guide of radius $3\,(a+1)(v+1)$: the binary counter retains its full
-width throughout.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,v\in\mathbb{N}$,
+let $x$ be a word of schedule symbols, and choose a base configuration on $x$, a valid
+input-head position $p$, and a bit word $w$ whose little-endian value is $v$. Assume
+$|x|+1\le (a+1)(v+1)$. Then there is a bit word $w'$ of the same length as $w$ such
+that, after exactly $(p-1+2)+(2|x|+4)+(v+1)(2|w|+(a+1)+4)+14(a+1)(v+1)+10$ steps from
+the reset-start setup with budget head at $|w|+1$, unary head at $1$ over the empty
+unary counter, and blank guide, the machine is in the macrostep-check phase with input
+head at $|x|+1$, budget head at $|w|+1$ over the captured clock tape for $w'$, unary
+head at $1$ over the unary tape with $(a+1)(v+1)$ markers, and guide head at $0$ over
+the guide of radius $3(a+1)(v+1)$.
 \end{lemma}

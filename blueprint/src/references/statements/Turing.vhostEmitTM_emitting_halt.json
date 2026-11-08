@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.vhostEmitTM_emitting_halt",
+ "key": "675c68317a647922",
+ "kind": "theorem",
+ "title": "Emitting Transition That Halts",
+ "statement": "Let $M$ be an $m$-tape Turing machine over Boolean symbols with state set $S$, and let $c$ be a configuration on a Boolean input word $y$. Suppose $c$ is in state $q$, the Boolean tag $b$ satisfies the boundary condition for its input-head position, and the transition of $M$ from $q$ on the symbols currently read halts while emitting the bit $a$. For any Boolean input word $x$, any virtual input-head position $p$ among the $|x|+2$ positions, and any Boolean list $\\mathrm{pre}$, one step of the virtual simulation from the configuration built from $c,b,p,\\mathrm{pre}$ has no state and has output $\\mathrm{pre}$ followed by the output of $c$ and then $a$.",
+ "hypotheses_covered": [
+  "$m$ is a natural number and $S$ is a type",
+  "$M$ is an $m$-tape machine over Boolean symbols with states in $S$",
+  "$y$ is a Boolean list and $c$ is a configuration on input $y$",
+  "$b$ is a Boolean tag satisfying the boundary condition for $c$'s input-head position",
+  "$x$ is a Boolean list",
+  "$p$ is a position among the $|x|+2$ virtual input-head positions",
+  "$\\mathrm{pre}$ is a Boolean list",
+  "$q$ is a state with $c$ in state $q$",
+  "the transition from $q$ on the currently read symbols halts",
+  "that transition emits a Boolean bit $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

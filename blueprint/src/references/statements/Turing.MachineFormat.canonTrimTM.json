@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.MachineFormat.canonTrimTM",
+ "key": "eea9f39bbcd4cab0",
+ "kind": "def",
+ "title": "Canonical trimming machine",
+ "statement": "For a natural number $k$ and a work-tape index $i<k$, define a deterministic machine with Boolean tape symbols and states recording a forward scan, a backward scan with a Boolean flag, or a completed scan with a Boolean flag. It starts in the forward state with flag false; while scanning forward it moves right on a nonblank symbol and moves left into the backward phase on a blank, and while scanning backward it moves left on a nonblank symbol, setting the flag to the conjunction of its current value and the scanned symbol, and moves right into the completed phase on a blank. In the backward phase, when the flag and scanned symbol are both true, it also prescribes writing a blank; in the completed phase it stays in place and remains completed.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$i$ is a work-tape index with $i<k"
+ ],
+ "confidence": "low",
+ "caveat": "The helper that packages the per-tape action is not defined in the supplied snippet, so the behavior of other tapes and the precise action encoding cannot be stated.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

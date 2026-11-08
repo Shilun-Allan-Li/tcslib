@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5Packed_install",
+ "key": "467494b989190e52",
+ "kind": "lemma",
+ "title": "Polynomial-time packed-record producer",
+ "statement": "For every finite Boolean-alphabet Turing machine $M$ and all $C,e,c,A,d\\in\\mathbb{N}$, there are a function $S$ on bit strings and natural numbers $a,r$ such that $M$ has at least one work tape and the following holds for every input word $x$ and argument word $u$. Starting with $S(u)$ on the first work tape and all other work tapes blank, the machine, on input $x$, halts after some positive number $t\\le a(|u|+1)^r$ of steps; it does not halt at any earlier step, and at step $t$ its configuration has output equal to the empty word and otherwise agrees with the canonical configuration containing the packed records for $u$.",
+ "hypotheses_covered": [
+  "A finite Boolean-alphabet Turing machine $M$",
+  "Natural parameters $C,e,c,A,d$",
+  "$M$ has a positive number of work tapes",
+  "For every input word $x$ and argument word $u$, the specified first-return computation exists",
+  "The first-return time is positive and at most $a(|u|+1)^r$",
+  "The machine is not halted at any earlier step",
+  "The terminal configuration is the canonical configuration for the packed records, with empty output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine and parameters, there are a clean module and constants such that the module replaces its argument word, the genuine retained native input, by the complete packed preparation data, header, trajectory, and visit table, emitting nothing, within a polynomial budget; the completed producer itself is consumed, not substituted."
+}

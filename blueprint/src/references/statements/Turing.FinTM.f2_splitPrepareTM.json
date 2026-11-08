@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitPrepareTM",
+ "key": "5fc0680191a2c740",
+ "kind": "def",
+ "title": "Split-preparation machine",
+ "statement": "For each nonnegative integer $k$, define a finite Turing machine over the Boolean alphabet with $k+1$ work tapes and state set $\\{0,1,2\\}\\times\\{\\mathrm{false},\\mathrm{true}\\}$, initially in $(0,\\mathrm{false})$. In phase $0$, if the first work-tape cell is nonblank, it moves the input head right, moves every work head right, writes the bit $1$ on each work tape other than the first, and stays in phase $0$, setting the Boolean component to true if it was already true or the input cell is blank. If that cell is blank, it keeps the input head still, moves every work head left, writes $1$ on each tape other than the first, and enters phase $1$ without changing the Boolean component. In phase $1$, it moves the input head still and moves all work heads left while the first work-tape cell is nonblank; when that cell is blank, it moves all work heads right and enters phase $2$. In phase $2$ it stays in place and remains in phase $2$, preserving the Boolean component.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

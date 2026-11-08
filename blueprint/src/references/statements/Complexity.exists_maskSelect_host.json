@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.exists_maskSelect_host",
+ "key": "79b55dd2b78a8f35",
+ "kind": "theorem",
+ "title": "Nondeterministic host for masked selection",
+ "statement": "Let $V$ be a language of binary strings in $\\mathrm{P}$, and let $C,c\\in\\mathbb{N}$. There exist $K,e\\in\\mathbb{N}$ and a nondeterministic finite Turing machine $N$ such that, for every binary string $x$, there are a natural number $s$ and a Boolean mask $m$ with exactly $C(|x|+1)^c$ true entries and $s+|m|\\le K(|x|^e+1)$. For every binary string $w$ of length $K(|x|^e+1)$, the computation of $N$ on $x$ using choices $w$ halts and outputs the single bit indicating whether $x$ followed by the subsequence selected by the true entries of $m$ among the first $|m|$ bits of $w$ belongs to $V$.",
+ "hypotheses_covered": [
+  "$V$ is a language over the binary alphabet",
+  "$V\\in\\mathrm{P}$",
+  "$C,c\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

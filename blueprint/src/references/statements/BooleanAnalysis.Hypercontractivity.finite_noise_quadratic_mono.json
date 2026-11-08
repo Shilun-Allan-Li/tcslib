@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.finite_noise_quadratic_mono",
+ "key": "81165ad4abc5bf5a",
+ "kind": "theorem",
+ "title": "Monotonicity of quadratic noise",
+ "statement": "Let $I$ be a finite set with weights $w_i\\in\\bbr$ satisfying $w_i\\ge0$ for every $i$ and $\\sum_{i\\in I}w_i=1$. For $\\rho,\\sigma\\in\\bbr$ with $0\\le\\rho\\le\\sigma$ and any $g:I\\to\\bbr$, one has $\\rho^2\\sum_{i\\in I}w_i g_i^2+(1-\\rho^2)(\\sum_{i\\in I}w_i g_i)^2\\le\\sigma^2\\sum_{i\\in I}w_i g_i^2+(1-\\sigma^2)(\\sum_{i\\in I}w_i g_i)^2$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w:I\\to\\bbr$",
+  "$w_i\\ge0$ for every $i$",
+  "$\\sum_{i\\in I}w_i=1$",
+  "$\\rho,\\sigma\\in\\bbr$",
+  "$0\\le\\rho$",
+  "$\\rho\\le\\sigma$",
+  "$g:I\\to\\bbr$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be a finite set with nonnegative weights $w_i$ satisfying $\\sum_iw_i=1$, and let $g:I\\to\\mathbb R$ and $0\\le\\rho\\le\\sigma$. Then $\\rho^2\\sum_iw_ig_i^2+(1-\\rho^2)(\\sum_iw_ig_i)^2\\le\\sigma^2\\sum_iw_ig_i^2+(1-\\sigma^2)(\\sum_iw_ig_i)^2$."
+}

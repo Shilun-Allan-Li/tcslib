@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.scanResult_carry",
+ "key": "361f537e3d5107c6",
+ "kind": "theorem",
+ "title": "Carry scan output",
+ "statement": "Let $\\Gamma$ be a set, let $\\operatorname{top}:\\Gamma\\to\\{\\mathrm{true},\\mathrm{false}\\}$ and $\\operatorname{next}:\\Gamma\\to\\Gamma$, and let $w$ be a finite word over $\\Gamma$. Consider a two-pass scan that starts with a true carry, scans left to right changing a symbol to $\\operatorname{next}(\\gamma)$ while the carry is true and setting the carry to $\\operatorname{top}(\\gamma)$, then scans the resulting word right to left without changing its symbols. Its final state is the conjunction of $\\operatorname{top}$ over $w$, and its output word consists of the symbols in the initial consecutive $\\operatorname{top}$-true prefix changed by $\\operatorname{next}$, followed by the first symbol after that prefix changed by $\\operatorname{next}$ if one exists, followed by the remaining symbols unchanged.",
+ "hypotheses_covered": [
+  "A symbol type $\\Gamma$",
+  "A predicate $\\operatorname{top}:\\Gamma\\to\\{\\mathrm{true},\\mathrm{false}\\}$",
+  "A symbol map $\\operatorname{next}:\\Gamma\\to\\Gamma$",
+  "A finite word $w$ over $\\Gamma$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

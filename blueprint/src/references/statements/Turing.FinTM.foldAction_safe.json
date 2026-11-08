@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.foldAction_safe",
+ "key": "b4f49a0af055f3aa",
+ "kind": "lemma",
+ "title": "Safety Under Translated Actions",
+ "statement": "Let $\\Gamma$ and $S$ be types, let $k$ be a natural number, let $x$ be a word over the folded alphabet, and let $c$ be a configuration with $k$ work tapes over that alphabet and control states of the form specified by the safety invariant. If $c$ satisfies the safety invariant, then for every assignment of fold sides to the work tapes and every action over $\\Gamma$ with state set $S$, applying the translated action using those sides and the symbols currently under the heads of $c$ produces a configuration satisfying the safety invariant.",
+ "hypotheses_covered": [
+  "Γ and S are types",
+  "k is a natural number",
+  "x is a list of folded-alphabet symbols",
+  "c is a configuration with the indicated folded alphabet and state type",
+  "c satisfies the safety invariant",
+  "a side is assigned to each work tape",
+  "a is an action over Γ with state set S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a $k$-work-tape machine over the folded alphabet, on\nan arbitrary folded-alphabet input, satisfying the safety invariant (control not in\nthe fresh initial state, nonnegative heads, correct origin flags at all nonnegative\ncells).  Then for every assignment of sides to the work tapes and every base-machine\naction $a$, applying the translation of $a$ --- relative to those sides and the\ncells under the heads of $c$ --- again yields a configuration satisfying the safety\ninvariant."
+}

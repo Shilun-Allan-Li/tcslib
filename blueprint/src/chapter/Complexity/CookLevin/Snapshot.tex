@@ -126,61 +126,55 @@ symbol of $x$ at position $p$ is the blank symbol $\sqcup$ if $p = 0$ or $p > n$
 bit $x_p$ if $1 \le p \le n$.
 \end{definition}
 
-\begin{theorem}[Oblivious head positions are input-independent]
+\begin{theorem}[Head positions follow the zero-input schedule]
 \lean{Complexity.oblivious_schedule_eq}
 \label{Complexity.oblivious_schedule_eq}
 \leanok
 \uses{Complexity.inputPosAt, Complexity.workPosAt, Turing.FinTM, Turing.FinTM.Oblivious, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{1}
-Let $M$ be a binary multi-tape Turing machine with $k$ work tapes that is oblivious: for any
-two inputs of the same length and every $t \in \mathbb{N}$, the input-head position and all
-work-head positions after $t$ steps agree on the two inputs. Then for every input
-$x \in \{0,1\}^*$ and every $t \in \mathbb{N}$, the input-head position after $t$ steps of
-$M$ on $x$ equals the input-head position after $t$ steps of $M$ on the all-zeros input
-$0^{|x|}$, and for every work tape $\tau$ the head position of tape $\tau$ after $t$ steps on
-$x$ equals its head position after $t$ steps on $0^{|x|}$.
+Let $M$ be an oblivious finite-state Turing machine over the binary alphabet, let $x$ be
+a binary input, and let $t\in\mathbb{N}$. After $t$ steps on $x$, the input-head
+position equals its position after $t$ steps on the all-zero input of length $|x|$, and
+the tuple of work-tape head positions also equals the corresponding tuple on that
+all-zero input.
 \end{theorem}
 
-\begin{theorem}[The initial snapshot]
+\begin{theorem}[Initial snapshot]
 \lean{Complexity.snapshotAt_zero}
 \label{Complexity.snapshotAt_zero}
 \leanok
 \uses{Complexity.inputBitAt, Complexity.snapshotAt, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{3}
-Let $M$ be a binary multi-tape Turing machine with initial state $q_0$ and $k$ work tapes,
-and let $x \in \{0,1\}^*$. Before any step is taken, $M$ on input $x$ is in state $q_0$, the
-symbol under its input head is the first bit $x_1$ of $x$ (or the blank $\sqcup$ if $x$ is
-empty), and every one of its $k$ work heads reads the blank $\sqcup$.
+Let $M$ be a finite binary Turing machine and let $x$ be a finite binary word. At time
+zero its snapshot consists of the initial state, the input symbol at position $1$ (the
+first bit of $x$, or blank if $x$ is empty), and a blank symbol under each work-tape
+head.
 \end{theorem}
 
-\begin{theorem}[One-step evolution of the state]
+\begin{theorem}[Successor state of a run]
 \lean{Complexity.snapshotAt_state_succ}
 \label{Complexity.snapshotAt_state_succ}
 \leanok
 \uses{Complexity.snapshotAt, Complexity.stepState, Turing.Action.apply, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
-Let $M$ be a binary multi-tape Turing machine with finite state set $Q$, $k$ work tapes and
-transition function $\delta$, let $x \in \{0,1\}^*$ and $t \in \mathbb{N}$, and let
-$q \in Q \cup \{\bot\}$ (with $\bot$ meaning halted), $a$ and $b = (b_0, \dots, b_{k-1})$ be
-the state, the symbol under the input head, and the symbols under the work heads after $t$
-steps of $M$ on $x$. Then the state of $M$ on $x$ after $t + 1$ steps is $\bot$ if
-$q = \bot$, and otherwise is the successor state prescribed by the transition
-$\delta(q, a, b)$.
+Let $M$ be a finite binary Turing machine, $x$ a finite binary word, and
+$t\in\mathbb{N}$. The state component of the snapshot of $M$ on $x$ after $t+1$ steps is
+the successor state determined by the snapshot after $t$ steps: it remains halted if
+that snapshot is halted, and otherwise is the state prescribed by the transition on its
+current state and scanned symbols.
 \end{theorem}
 
-\begin{theorem}[Input symbol read at the scheduled position]
+\begin{theorem}[Input symbol at the scheduled position]
 \lean{Complexity.snapshotAt_inputSymbol}
 \label{Complexity.snapshotAt_inputSymbol}
 \leanok
 \uses{Complexity.inputBitAt, Complexity.inputPosAt, Complexity.oblivious_schedule_eq, Complexity.snapshotAt, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.Oblivious, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-Let $M$ be a binary multi-tape Turing machine that is oblivious, meaning that on any two
-inputs of the same length its input-head and work-head positions after $t$ steps agree for
-every $t$. Let $x = x_1 \cdots x_n \in \{0,1\}^n$ and $t \in \mathbb{N}$, number the input
-cells $0, 1, \dots, n+1$ with cell $i \in \{1, \dots, n\}$ holding the $i$-th input bit, and
-let $p$ be the position of the input head after $t$ steps of $M$ on the all-zeros input
-$0^n$. Then the symbol under the input head after $t$ steps of $M$ on $x$ is the blank
-$\sqcup$ if $p = 0$ or $p > n$, and is the bit $x_p$ otherwise.
+Let $M$ be an oblivious finite binary Turing machine, let $x$ be a finite binary word,
+and let $t\in\mathbb{N}$. The symbol under the input head of $M$ on $x$ after $t$ steps
+equals the symbol of $x$ at the input-head position reached after $t$ steps on the
+all-zero word of length $|x|$; this symbol is blank when that position is $0$ or exceeds
+$|x|$.
 \end{theorem}
 
 \begin{lemma}[One-step update of a work cell]
@@ -189,74 +183,64 @@ $\sqcup$ if $p = 0$ or $p > n$, and is the bit $x_p$ otherwise.
 \leanok
 \uses{Complexity.snapshotAt, Complexity.writtenOrKept, Turing.Action.apply_workTapes, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a binary multi-tape Turing machine with finite state set $Q$, transition function
-$\delta$ and $k$ work tapes whose cells are indexed by $\mathbb{Z}$; let $x \in \{0,1\}^*$,
-$t \in \mathbb{N}$, $\tau \in \{0, \dots, k-1\}$ and $p \in \mathbb{Z}$. Let $q \in Q \cup
-\{\bot\}$ (with $\bot$ meaning halted), $a$ and $b = (b_0, \dots, b_{k-1})$ be the state, the
-input-head symbol and the work-head symbols after $t$ steps of $M$ on $x$, and let $h$ be the
-position of the head of work tape $\tau$ at that time. Then after $t + 1$ steps, cell $p$ of
-work tape $\tau$ has the same content as after $t$ steps if $p \ne h$; if $p = h$, its
-content is $b_\tau$ when $q = \bot$, and otherwise is the symbol that $\delta(q, a, b)$ writes
-on tape $\tau$, or $b_\tau$ when that transition writes nothing on tape $\tau$.
+Let $M$ be a finite-state Turing machine with Boolean work-tape symbols, let $x$ be a
+finite Boolean input, let $t\in\mathbb{N}$, let $\tau$ be a work-tape index, and let
+$p\in\mathbb{Z}$. After $t+1$ steps, the contents of cell $p$ on tape $\tau$ equal the
+symbol left in the cell by the step if $p$ is the tape head's position after $t$ steps;
+otherwise they equal the contents of that cell after $t$ steps. The symbol left by the
+step is the current scanned symbol if the machine is halted, and otherwise is the symbol
+prescribed by the transition (or the current scanned symbol if no write is prescribed).
 \end{lemma}
 
-\begin{lemma}[Unvisited cells keep their content]
+\begin{lemma}[Unvisited work cells retain their contents]
 \lean{Complexity.workCell_eq_of_no_visit}
 \label{Complexity.workCell_eq_of_no_visit}
 \leanok
 \uses{Complexity.workCell_succ, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-Let $M$ be a binary multi-tape Turing machine with $k$ work tapes whose cells are indexed by
-$\mathbb{Z}$, let $x \in \{0,1\}^*$, $\tau \in \{0, \dots, k-1\}$, $p \in \mathbb{Z}$, and
-let $a \le b$ be natural numbers. If for every $r$ with $a \le r < b$ the head of work tape
-$\tau$ is not at cell $p$ after $r$ steps of $M$ on $x$, then the content of cell $p$ of
-work tape $\tau$ after $b$ steps of $M$ on $x$ equals its content after $a$ steps.
+Let $M$ be a finite-state Turing machine with Boolean work-tape symbols, let $x$ be a
+finite Boolean input, let $\tau$ be a work-tape index, let $p\in\mathbb{Z}$, and let
+$a,b\in\mathbb{N}$ with $a\le b$. Suppose that at every time $r$ with $a\le r<b$, the
+head of work tape $\tau$ is not at cell $p$ during the run of $M$ on $x$. Then the
+contents of cell $p$ on that tape after $b$ steps equal its contents after $a$ steps.
 \end{lemma}
 
-\begin{lemma}[No previous visit means a fresh cell]
+\begin{lemma}[No previous visit implies distinct positions]
 \lean{Complexity.prevVisit_none_no_visit}
 \label{Complexity.prevVisit_none_no_visit}
 \leanok
 \uses{Complexity.prevVisit, Complexity.workPosAt, Turing.FinTM}
 \difficulty{3}
-Let $M$ be a binary multi-tape Turing machine with $k$ work tapes indexed by $\mathbb{Z}$,
-let $n, t \in \mathbb{N}$ and $\tau \in \{0, \dots, k-1\}$, and for $s \in \mathbb{N}$ let
-$w(s)$ be the position of the head of work tape $\tau$ after $s$ steps of $M$ on the
-all-zeros input $0^n$, and let $\mathrm{prev}$ be the largest $s < t$ with $w(s) = w(t)$,
-undefined when there is no such $s$. If $\mathrm{prev}$ is undefined, then $w(r) \ne w(t)$
-for every $r < t$.
+Let $M$ be a finite binary Turing machine, let $n,t$ be natural numbers, and let $\tau$
+be a work-tape index. If the last previous visit of tape $\tau$ at time $t$ on the
+all-zero input of length $n$ is undefined, then its head position at every time $r<t$
+differs from its position at time $t$.
 \end{lemma}
 
-\begin{lemma}[Characterisation of the last previous visit]
+\begin{lemma}[Characterisation of the Last Previous Visit]
 \lean{Complexity.prevVisit_some_last}
 \label{Complexity.prevVisit_some_last}
 \leanok
 \uses{Complexity.prevVisit, Complexity.workPosAt, Turing.FinTM}
 \difficulty{3}
-Let $M$ be a binary multi-tape Turing machine with $k$ work tapes indexed by $\mathbb{Z}$,
-let $n, t \in \mathbb{N}$ and $\tau \in \{0, \dots, k-1\}$, and for $s \in \mathbb{N}$ let
-$w(s)$ be the position of the head of work tape $\tau$ after $s$ steps of $M$ on the
-all-zeros input $0^n$, and let $\mathrm{prev}$ be the largest $s < t$ with $w(s) = w(t)$,
-undefined when there is no such $s$. If $\mathrm{prev}$ is defined and equals $s$, then
-$s < t$, $w(s) = w(t)$, and $w(r) \ne w(t)$ for every $r$ with $s < r < t$.
+Let $M$ be a finite-state binary Turing machine with $k$ work tapes, and let
+$n,t,s\in\mathbb{N}$ and $\tau$ be a work-tape index. If the last time before step $t$
+at which tape $\tau$'s head occupies its position at step $t$ is $s$, then $s<t$, the
+head positions at steps $s$ and $t$ agree, and at every step $r$ with $s<r<t$ the head
+position differs from its position at step $t$.
 \end{lemma}
 
-\begin{theorem}[Locality of work-tape reads]
+\begin{theorem}[Work symbol from the last visit]
 \lean{Complexity.snapshotAt_workSymbol}
 \label{Complexity.snapshotAt_workSymbol}
 \leanok
 \uses{Complexity.oblivious_schedule_eq, Complexity.prevVisit, Complexity.prevVisit_none_no_visit, Complexity.prevVisit_some_last, Complexity.snapshotAt, Complexity.workCell_eq_of_no_visit, Complexity.workCell_succ, Complexity.workPosAt, Complexity.writtenOrKept, Turing.FinTM, Turing.FinTM.Oblivious, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{5}
-Let $M$ be a binary multi-tape Turing machine with finite state set $Q$, transition function
-$\delta$ and $k$ work tapes indexed by $\mathbb{Z}$, which is oblivious: on any two inputs of
-the same length its input-head and work-head positions after $t$ steps agree for every $t$.
-Let $x \in \{0,1\}^n$, $t \in \mathbb{N}$ and $\tau \in \{0, \dots, k-1\}$, and let $w(s)$ be
-the position of the head of work tape $\tau$ after $s$ steps of $M$ on $0^n$. If no $s < t$
-has $w(s) = w(t)$, then the symbol under head $\tau$ after $t$ steps of $M$ on $x$ is the
-blank $\sqcup$. Otherwise let $s$ be the largest such time and let $q \in Q \cup \{\bot\}$
-(with $\bot$ meaning halted), $a$ and $b = (b_0, \dots, b_{k-1})$ be the state, the
-input-head symbol and the work-head symbols after $s$ steps of $M$ on $x$; then the symbol
-under head $\tau$ after $t$ steps of $M$ on $x$ is $b_\tau$ if $q = \bot$, and otherwise is
-the symbol that $\delta(q, a, b)$ writes on tape $\tau$, or $b_\tau$ if that transition
-writes nothing on tape $\tau$.
+Let $M$ be an oblivious finite binary Turing machine, let $x$ be a finite binary word,
+let $t\in\mathbb{N}$, and choose one of its work tapes $\tau$. Consider the times $s<t$
+when that tape's head is at the position it occupies at time $t$ on the all-zero input
+of length $|x|$. If there is no such time, the symbol under the tape head at time $t$ on
+input $x$ is blank; otherwise, using the greatest such time $s$, that symbol equals the
+symbol left in the tape cell by the step at time $s$ (which is the previously scanned
+symbol if the machine was halted or made no write).
 \end{theorem}

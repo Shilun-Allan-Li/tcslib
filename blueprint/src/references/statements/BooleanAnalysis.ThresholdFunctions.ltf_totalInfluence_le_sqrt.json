@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.ltf_totalInfluence_le_sqrt",
+ "key": "b4d0eec2b937c3b7",
+ "kind": "theorem",
+ "title": "Total influence of linear thresholds",
+ "statement": "For every natural number $n$, if $f:\\{0,1\\}^n\\to\\mathbb R$ is a linear threshold function, then its total influence, the sum over coordinates $i$ of $\\mathbb E[(f(x)-f(x^i))^2/4]$ under uniform $x$, is at most $\\sqrt n$. Here $x^i$ is obtained by flipping coordinate $i$.",
+ "hypotheses_covered": [
+  "natural dimension $n$",
+  "$f$ is a linear threshold function, represented by a polynomial threshold of degree at most one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Write $\\operatorname{sgn}_+(t)=1$ for $t\\ge0$ and $-1$ for $t<0$. Set $I_i(h)=\\tfrac14\\mathbb E[(h(x)-h(x^{\\{i\\}}))^2]$ and $I(h)=\\sum_i I_i(h)$, where $x^{\\{i\\}}$ flips bit $i$. If $f(x)=\\operatorname{sgn}_+(c+\\sum_i a_i(-1)^{x_i})$ for some real $c,a_i$, then $I(f)\\le\\sqrt n$."
+}

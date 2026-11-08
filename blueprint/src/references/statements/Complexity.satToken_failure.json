@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satToken_failure",
+ "key": "2ccfb5c3576fcf98",
+ "kind": "lemma",
+ "title": "Token suffix after failed literal parsing",
+ "statement": "For every bit string $r$, if the literal parser fails on the bit string beginning with $1$ followed by $r$, then splitting off its leading unary token leaves the empty suffix.",
+ "hypotheses_covered": [
+  "bit string $r$",
+  "failure of the literal parser on $1::r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the literal parser fails on a string starting with a one (a literal marker),\nthen the unary token splitter on that string returns an empty suffix: there is no\npolarity bit, which keeps the total round implementation faithful even on locally\nmalformed state--input combinations."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Ends.pieceTo",
+ "key": "c594ace9d96b2f36",
+ "kind": "theorem",
+ "title": "Execution with refreshed local variables",
+ "statement": "Let $xs$ be a list of local indices, let $s$ be a statement, and let $l$ be a list of integers. If $s$ has an execution from the state with frame $l$ and memory $\\mu$, of cost at most $T_1$, ending in a state satisfying $R$, and every such final state with locals $\\mathrm{loc}'$ and memory $\\mu'$ gives $Q$ in the state with frame obtained by refreshing the locals in $l$ at indices $xs$ from $\\mathrm{loc}'$ and memory $\\mu'$, then $s$ has an execution from the original state with cost at most $T$ ending in a state satisfying $Q$, provided every local assigned by $s$ occurs in $xs$ and $T_1\\le T$.",
+ "hypotheses_covered": [
+  "An execution of $s$ from the state with frame $l$ and memory $\\mu$ ends in a state satisfying $R$ with cost at most $T_1$",
+  "For all final locals $\\mathrm{loc}'$ and memory $\\mu'$ satisfying $R$, $Q$ holds after refreshing indices $xs$ in the original frame $l$",
+  "Every local assigned by $s$ occurs in $xs$",
+  "$T_1\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

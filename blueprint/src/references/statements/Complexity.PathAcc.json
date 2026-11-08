@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.PathAcc",
+ "key": "a4f1e989fb97f3a5",
+ "kind": "def",
+ "title": "Path acceptance condition",
+ "statement": "A Boolean list $x$ satisfies the acceptance condition if there exist natural numbers $n,s,t$ such that the unary block condition holds with parameters $0,n$, the matrix block condition holds with parameters $n,0$, $s<n$, and the doubled encoding of the binary digits of $s$ begins at index $2n+2+2n^2+2$. Also, $t<n$, the plain encoding of the binary digits of $t$ begins at index $2n+2+2n^2+2+2\\ell+2$, where $\\ell$ is the number of binary digits of $s$, and there is a walk from $s$ to $t$ of length at most $n$ using the encoded path relation on an $n$-by-$n$ vertex set.",
+ "hypotheses_covered": [
+  "There exists n satisfying UnaryRest(x,0,n)",
+  "There exists n satisfying MatRest(x,n,0)",
+  "There exists s<n",
+  "Doubled encoding of Nat.bits(s) begins at the specified index",
+  "There exists t<n",
+  "Plain encoding of Nat.bits(t) begins at the specified index",
+  "A walk of length at most n connects s to t using pathEdge(x,n) on n vertices"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied material omits the definitions of the doubled and plain encodings and of the walk predicate, so their exact meanings and the precise walk bound cannot be fully rendered.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

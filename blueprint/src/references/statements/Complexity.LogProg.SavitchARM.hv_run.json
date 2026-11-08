@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.hv_run",
+ "key": "ce380a79a72ca2ab",
+ "kind": "theorem",
+ "title": "Execution of the halving loop",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathcal{O}$ be a function assigning a Boolean value to each of four indices and each finite Boolean word, let $x$ be a finite Boolean word, let $b$ be a Boolean value, and let $\\mathrm{st}$ be a state of the eighteen registers with every register value at most $B$. There is a finite run of the program $A_E$, starting with control label $\\mathrm{hv}(b,0)$, register values $\\mathrm{st}$, and no answer, and ending with control label $\\mathrm{cp}(\\mathrm{popT}(b),0)$, counter register $C=0$, temporary register $T=\\lfloor \\mathrm{st}.T/2^{\\mathrm{st}.C}\\rfloor$, all other register values unchanged, and no answer. Every configuration strictly before the final configuration satisfies the guard: its instruction is permitted by the precondition for input $x$, and every register value is at most $B$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb{N}$",
+  "An oracle assigning a Boolean to each of four indices and finite Boolean words",
+  "A finite Boolean input word $x$",
+  "A Boolean value $b$",
+  "Every register value in $\\mathrm{st}$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathcal{O}$ assign a Boolean answer to each of four\nindices and each finite bit string, let $x$ be a finite bit string, and let $b$ be\neither Boolean value. From any state of the eighteen registers whose values are all at\nmost $B$, the program has a finite run starting at the halving-loop control state with\nphase $0$, register values given by that state, and no answer, and ending at the\ncopy-loop control state for the pop routine with phase $0$, with the counter register\nequal to $0$, the temporary register equal to its initial value divided by $2$ raised to\nthe initial counter value, every other register unchanged, and no answer. Every\nconfiguration strictly before the final configuration satisfies the guard: its\ninstruction is in the permitted precondition for input $x$, and all register values are\nat most $B$."
+}

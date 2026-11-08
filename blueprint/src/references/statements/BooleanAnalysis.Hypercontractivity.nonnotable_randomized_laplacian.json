@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.nonnotable_randomized_laplacian",
+ "key": "70cc2db7533cbc62",
+ "kind": "theorem",
+ "title": "Randomized Laplacian estimate off notable coordinates",
+ "statement": "Let $n$ be a nonnegative integer, let $P$ be a product of $n$ finite probability spaces whose coordinate atom weights are strictly positive and sum to one, and let $\\Omega=\\prod_{j=0}^{n-1}\\Omega_j$ be its outcome space. For $f\\colon\\Omega\\to\\mathbb R$, $x\\in\\Omega$, a coordinate $i$, and $\\tau>0$, suppose $i$ is not notable at $x$, meaning $\\tau>\\sum_{S\\ni i}f_S(x)^2$, where $f_S$ is the $S$-component of $f$. Set $g=T_{2/5}L_i f$ and $h(r)=\\sum_S\\chi_S(r)g_S(x)$ for $r\\in\\{0,1\\}^n$, using the product spectral noise and components and the Walsh characters on the Boolean cube. Then, with cube power means taken under the uniform measure, $\\|T_{1/\\sqrt3}h\\|_2^2\\le\\tau^{1/3}\\|h\\|_{4/3}^{4/3}$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$P$ is a product of $n$ finite probability spaces with positive coordinate weights summing to one",
+  "$f\\colon\\Omega\\to\\mathbb R$",
+  "$x\\in\\Omega$",
+  "$i$ is a coordinate",
+  "$\\tau>0$",
+  "$i$ is not in the set of coordinates whose local spectral influence at $x$ is at least $\\tau$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $f:\\Omega\\to\\mathbb R$, $x\\in\\Omega$, a coordinate $i$, and $\\tau>0$. If $\\sum_{S\\ni i}f_S(x)^2<\\tau$, put $g=T_{2/5}L_if$ and $h(r)=\\sum_S\\chi_S(r)g_S(x)$; then on the uniform sign cube $\\|T_{1/\\sqrt3}h\\|_2^2\\le\\tau^{1/3}\\|h\\|_{4/3}^{4/3}$."
+}

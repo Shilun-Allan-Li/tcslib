@@ -17,6 +17,7 @@ in the technical facts needed for the encode/decode round-trip.
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma.processClauseLits_bound}
 \leanok
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -48,7 +49,6 @@ in the technical facts needed for the encode/decode round-trip.
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b003,
     pdf-b5e074215b9e-p002-b002}
-\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits}
 \difficulty{4}
 Fix a list of literal–position pairs $L$, a path $P$ (a list of variable–direction
 pairs), and two restrictions $\rho_0, \sigma$ on $n$ variables. Running the
@@ -86,6 +86,7 @@ a + 1 + 2r \le 2m.
 }
 \label{SwitchingLemma.encode_go_aux_length_bound}
 \leanok
+\uses{DNF, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits_tight}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -172,7 +173,6 @@ a + 1 + 2r \le 2m.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits_tight}
 \difficulty{4}
 Consider the recursive encoding routine underlying Razborov's proof of the switching
 lemma, which processes a DNF formula $f$ on $n$ variables against a width parameter $w$
@@ -187,8 +187,15 @@ path lists.
 
 \begin{lemma}[Auxiliary encoding length is at most twice the depth]
 \lean{SwitchingLemma.razborovEncode_aux_length_le}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \label{SwitchingLemma.razborovEncode_aux_length_le}
 \leanok
+\uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.encode_go_aux_length_bound, SwitchingLemma.razborovEncode}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b003,
   pdf-b5e074215b9e-p002-b004
@@ -324,7 +331,6 @@ path lists.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, DNF.eval, DecisionTree.deepPath, SwitchingLemma.IsBadRestriction, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.encode_go_aux_length_bound, SwitchingLemma.razborovEncode}
 \difficulty{3}
 Let $f$ be a DNF formula on $n$ Boolean variables, let $w, d \in \bbn$, and let $\rho$
 be a restriction that is bad for $f$ at depth $d$; that is, the restriction of the
@@ -368,7 +374,7 @@ is, $\rho_0'(v) = \rho_0(v)$.
 \lean{SwitchingLemma.processClauseLits_rho_ne_none}
 \label{SwitchingLemma.processClauseLits_rho_ne_none}
 \leanok
-\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.encode_go_fst_acc, SwitchingLemma.processClauseLits}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits}
 \difficulty{3}
 Fix $n$, and let $\rho_0$ and $\sigma$ be restrictions on $n$ variables, let $\ell$ be a
 list of literals each paired with its position index in a clause, and let a
@@ -384,7 +390,7 @@ other words, this process never frees a variable that was already fixed in $\rho
 \lean{SwitchingLemma.encode_go_fst_nonfree}
 \label{SwitchingLemma.encode_go_fst_nonfree}
 \leanok
-\uses{DNF, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.encode_go_fst_acc, SwitchingLemma.processClauseLits_rho_ne_none, SwitchingLemma.processClauseLits_sigma_stable}
+\uses{DNF, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.processClauseLits_rho_ne_none, SwitchingLemma.processClauseLits_sigma_stable}
 \difficulty{5}
 Fix $n$ and work with formulas on the variables $\mathrm{Fin}\,n$. Let $f$ be a DNF
 formula, $w \in \bbn$ a width parameter, and $\mathrm{fuel} \in \bbn$ a bound on the
@@ -643,7 +649,7 @@ Then the restriction so obtained and $\rho_0'$ take the same value at $v$.
 \lean{SwitchingLemma.processClauseLits_foldl_rho_eq_of_set}
 \label{SwitchingLemma.processClauseLits_foldl_rho_eq_of_set}
 \leanok
-\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_foldl_rho_eq, SwitchingLemma.processClauseLits_no_target_of_rho_none, SwitchingLemma.zipIdx_drop_spec, Term}
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_foldl_rho_eq, SwitchingLemma.zipIdx_drop_spec, Term}
 \difficulty{5}
 Let $t$ be a term on $n$ variables, and let $L$ be a list of literal–index pairs each of
 which occurs at its recorded position in $t$ (that is, every pair in $L$ lies in the
@@ -727,6 +733,7 @@ $R(\sigma_1)(v) = R(\sigma_2)(v)$.
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
 \label{SwitchingLemma.processEntries_of_processClauseLits}
 \leanok
+\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits, SwitchingLemma.zipIdx_drop_spec, Term}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -777,7 +784,6 @@ $R(\sigma_1)(v) = R(\sigma_2)(v)$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.processClauseLits, SwitchingLemma.zipIdx_drop_spec, Term}
 \difficulty{5}
 Work over $n$ Boolean variables, where a *literal* is a variable together with a
 negation flag, a *term* is a list of literals (a conjunction), and a *restriction* $\rho
@@ -870,6 +876,7 @@ advice, yields an output whose first component is exactly $\sigma$.
 }
 \label{SwitchingLemma.encode_go_not_kills_first_clause}
 \leanok
+\uses{DNF, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_fst_acc, SwitchingLemma.encode_go_fst_nonfree, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem, SwitchingLemma.processClauseLits_sigma_ne_neg, Term}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -986,7 +993,6 @@ advice, yields an output whose first component is exactly $\sigma$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b004}
-\uses{DNF, Literal, SwitchingLemma.Restriction, SwitchingLemma.Term.killedBy, SwitchingLemma.encode_go_fst_acc, SwitchingLemma.encode_go_fst_nonfree, SwitchingLemma.processClauseLits, SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem, SwitchingLemma.processClauseLits_sigma_ne_neg, Term}
 \difficulty{6}
 Let $f$ be a DNF formula on $n$ variables in which no term contains two distinct
 literals over the same variable, and let $w$ be a natural-number width parameter. Fix

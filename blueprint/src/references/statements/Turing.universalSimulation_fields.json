@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalSimulation_fields",
+ "key": "4beb960a81a08611",
+ "kind": "lemma",
+ "title": "Checkpoint preservation of halting and output",
+ "statement": "Let $M$ be a machine in code normal form, let $\\alpha$ be a finite bit string, and let $x$ be a finite input string. For any configuration of $M$ on input $x$ and any natural-number table cursor, the corresponding interpreter checkpoint is halted if and only if the source configuration is halted, and its output equals the source configuration’s output.",
+ "hypotheses_covered": [
+  "A machine in code normal form $M$",
+  "A finite bit string $\\alpha$",
+  "A source configuration on some finite input $x$",
+  "A natural-number table cursor"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The interpreter checkpoint representing a source configuration of a coded\nmachine is halted exactly when the source configuration is halted, and its\naccumulated output equals the source's accumulated output."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.outerV_run",
+ "key": "58b84104cb78f7d7",
+ "kind": "theorem",
+ "title": "Outer target search",
+ "statement": "Let $E,s,w,u$ be natural numbers, let $b_0$ be a Boolean, let $\text{orc}$ be an oracle assigning a Boolean answer to each of four deciders and each Boolean word, and let $x$ be a Boolean word. Assume $s\\le w$, $u<2^w$, and that for every $M\\le 2^w$, the machine $A(E)$ started at its next-source-search state with register values given by the outer state $(s,w,u,0,M)$ halts with answer $b_0$, while every configuration before halting satisfies the program guard with register bound $2^{w^2}$. Then, for every $k,v,M$ such that $v+k=2^w$ and $M\\le 2^w$, the machine started at its outer target-search state with register values given by $(s,w,u,v,M)$ halts with answer equal to $b_0$ or the assertion that some $v'$ satisfies $v\\le v'<2^w$, the accepting-code oracle accepts $v'$, and there is a depth-$w$ reachability from $u$ to $v'$ using the relation $R(a,b)$ that holds exactly when the step oracle accepts the encoded triple $(a,b,s)$. Throughout the run before halting, every configuration satisfies the same guard with bound $2^{w^2}$.",
+ "hypotheses_covered": [
+  "$E$ is a natural number",
+  "$s,w,u$ are natural numbers and $s\\le w$",
+  "$u<2^w$",
+  "$b_0$ is Boolean",
+  "$\text{orc}$ is an oracle on four deciders and Boolean words",
+  "$x$ is a Boolean word",
+  "for every $M\\le 2^w$, the next-source-search run from $(s,w,u,0,M)$ halts with answer $b_0$ and obeys the guard bounded by $2^{w^2}$",
+  "$k,v,M$ are natural numbers with $v+k=2^w$ and $M\\le 2^w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s,w,u$ be natural numbers with $s\\le w$ and $u<2^w$, and let $b_0$ be a Boolean.\nAssume that, for every $M\\le 2^w$, the machine started at its next-source-search label\nwith registers initialized to the outer state having parameters $s,w,u,0,M$ halts with\nanswer $b_0$, while its configurations satisfy the register bound $2^{w^2}$ and the\nmachine's precondition. Then, for every $k,v,M$ with $v+k=2^w$ and $M\\le 2^w$, the\nmachine started at its outer target-search label with registers initialized to the outer\nstate having parameters $s,w,u,v,M$ halts with the Boolean disjunction of $b_0$ and the\nassertion that there exist $v'$ with $v\\le v'<2^w$, the accepting-code oracle accepts\n$v'$, and there is a path of reachability of depth $w$ from $u$ to $v'$ through codes\nbelow $2^w$. Throughout this run before halting, every register is at most $2^{w^2}$ and\neach configuration satisfies the machine's precondition."
+}

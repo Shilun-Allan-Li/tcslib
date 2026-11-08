@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.sim_clr",
+ "key": "adda400149ca1a50",
+ "kind": "lemma",
+ "title": "Simulation of Register Clearing",
+ "statement": "Let a program have finitely many natural-number registers, labels in a set $\\Lambda$, and an oracle for its calls. Suppose its instruction at label $l$ is to clear register $r$ and continue at label $l'$. For any Boolean input $x$, initial register values $v$, output word, and integer bound $W$ with the length of the binary word for $v(r)$ at most $W$, the compiled program can run from the configuration with label $l$, registers encoded by their binary words, all work heads at cell $0$, and the given output to the corresponding configuration with label $l'$, register $r$ set to $0$, and the other registers and output unchanged. During this finite run, every earlier configuration has no pending oracle call, and every work head position lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "A program with finitely many registers and a label set Λ",
+  "An oracle indexed by the finite set of deciders",
+  "The instruction at l is to clear register r and continue at l'",
+  "An arbitrary Boolean input x",
+  "An arbitrary vector v of natural-number register values",
+  "An arbitrary output word",
+  "The binary word length of v(r) is at most W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

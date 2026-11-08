@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clHeaderLayout_exact",
+ "key": "d7aa23892d5221d5",
+ "kind": "lemma",
+ "title": "Exact recorder header layout",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $C,e,c,A,d$ be nonnegative integers, and let $x$ be a Boolean word. Set $Q=C(|x|+1)^e$, $m=|x|+Q$, and $T=c(A(m+1)^d+1)^2$. The recorder layout obtained from the arithmetic header encoding of $x,Q,m,T$, an all-false word of length $m$, and a clock of $T$ true bits equals the layout consisting of the recorder’s prepared words for that reference input and horizon, followed by four fields: $x$, the binary representation of $Q$, the binary representation of $m$, and the binary representation of $T$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$C,e,c,A,d\\in\\mathbb N$",
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters $C, e, c, A, d$, and instance $x$, with $Q = C(|x|+1)^e$, $m = |x| + Q$, and $T = c(A(m+1)^d+1)^2$, the recorder layout of the arithmetic header equals the recorder's prepared words over the all-false reference input of length $m$ at horizon $T$, extended by the four retained fields: the instance $x$ and the binary representations of $Q$, $m$, and $T$. The certificate length stays exact."
+}

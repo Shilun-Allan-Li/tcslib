@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.f2_pairValidTM",
+ "key": "101c00e894590623",
+ "kind": "def",
+ "title": "Pair-validity machine",
+ "statement": "There is a deterministic Boolean Turing machine with no work tapes and state set $\\mathrm{Option}(\\{\\mathrm{false},\\mathrm{true}\\})$, initially in the state representing no stored Boolean. From that state, on input $b$ it moves right, emits nothing, and stores $b$. When it has stored $b$ and reads $c$, it moves right: if $b=c$, it emits nothing and returns to the state with no stored Boolean; if $b\\ne c$, it emits $\\neg b\\land c$ and halts. On blank in either kind of state, it emits false and halts without moving.",
+ "hypotheses_covered": [
+  "Boolean alphabet",
+  "Zero work tapes",
+  "State set consisting of an optional Boolean",
+  "Initial state is none",
+  "Transition behavior on each state and scanned-symbol case"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

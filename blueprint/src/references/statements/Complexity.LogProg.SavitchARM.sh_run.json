@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.sh_run",
+ "key": "f2e20505f13b9ee2",
+ "kind": "theorem",
+ "title": "Shift-loop reachability",
+ "statement": "Let $E,B\\in\\mathbb N$, let $\\mathcal O$ assign a Boolean answer to each of four indices and each Boolean word, let $x$ be a Boolean word, let $k$ be one of the three shift operations, and let $\\mathrm{st}$ be an 18-register machine state. Suppose every register of $\\mathrm{st}$ is at most $B$, its scratch register $Z$ is zero, and the value of the register associated with $k$, multiplied by $2^C$, is at most $B$. Then the machine has a finite run from phase zero at the shift operation $k$ to its exit label, ending with that register equal to its initial value multiplied by $2^C$ and the loop counter $C$ equal to zero; every configuration strictly before the endpoint satisfies the machine guard with bound $B$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb N$",
+  "Oracle on four indices and Boolean words",
+  "Boolean input $x$",
+  "Shift operation $k$",
+  "Machine state $\\mathrm{st}$",
+  "Every register of $\\mathrm{st}$ is at most $B$",
+  "Scratch register $Z=0$",
+  "Value of the register associated with $k$, multiplied by $2^C$, is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb N$, let $\\mathcal O$ be an oracle assigning a Boolean answer to each\nof four indices and each Boolean word, let $x$ be a Boolean word, let $k$ be one of the\nthree shift operations, and let $\\mathrm{st}$ be a state of the 18-register machine.\nSuppose every register of $\\mathrm{st}$ is at most $B$, its scratch register $Z$ is\nzero, and the value of the register acted on by $k$, multiplied by $2^{C}$, is at most\n$B$. Then the machine can reach the exit label for $k$ from label $k$ at phase zero,\nwith the register acted on by $k$ multiplied by $2^C$ and the loop counter $C$ cleared;\nthroughout the run, every intermediate configuration before the final one satisfies the\nmachine guard with bound $B$."
+}

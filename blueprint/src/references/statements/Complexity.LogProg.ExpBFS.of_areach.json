@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.of_areach",
+ "key": "0abff4670b37e566",
+ "kind": "lemma",
+ "title": "Lifting a Register Run to the Memory Machine",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}$ be a Boolean oracle on four indices and Boolean strings, and let $x$ be a Boolean string. Let $a,a'$ be register configurations, let $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be memory, and let $p\\in\\mathbb{Z}$. Suppose $0\\le p\\le P$, the register machine reaches $a'$ from $a$ with the guard $\\mathrm{GuardLe}(\\mathrm{Ad}(K_0),x,B)$ holding at every configuration strictly before the endpoint, and the control state of $a'$ is nonhalting. Then the memory machine reaches $(a',(M,p))$ from $(a,(M,p))$, with $G(x,B,P)$ holding at every configuration strictly before the endpoint.",
+ "hypotheses_covered": [
+  "$K_0,B,P\\in\\mathbb{N}$",
+  "Boolean oracle on four indices and Boolean strings",
+  "Boolean input string $x$",
+  "Register configurations $a,a'$",
+  "Integer-indexed Boolean memory $M$",
+  "Integer head position $p$ with $0\\le p\\le P$",
+  "Register run from $a$ to $a'$ satisfies $\\mathrm{GuardLe}(\\mathrm{Ad}(K_0),x,B)$ at all strictly prior configurations",
+  "The control component of $a'$ is nonhalting"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P\\in\\mathbb{N}$, fix a four-index Boolean oracle, an input bit string $x$,\nregister configurations $a,a'$, memory contents $M$, and a head position\n$p\\in\\mathbb{Z}$. Suppose $0\\le p\\le P$, the deterministic register machine reaches $a'$\nfrom $a$ while its guard holds at every preceding configuration, and the control\ncomponent of $a'$ is nonhalting. Then the memory machine reaches $(a',(M,p))$ from\n$(a,(M,p))$ while satisfying $G(x,B,P)$ throughout the run."
+}

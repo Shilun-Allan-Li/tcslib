@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timedCut_live_before",
+ "key": "2a38fda4f8f548ee",
+ "kind": "lemma",
+ "title": "Backward Persistence of Liveness",
+ "statement": "Let $x$ be a Boolean input word and $c$ a configuration of the stopped four-tape interpreter on input $x$. For natural numbers $s\\\\le t$, if the interpreter has not halted after $t$ steps from $c$, then it has not halted after $s$ steps from $c$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "four-tape interpreter configuration $c$ on input $x$",
+  "natural numbers $s,t$ with $s\\\\le t$",
+  "interpreter is live at time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the stopped table interpreter has not halted after $t$ steps from a\nconfiguration, then it has not halted after any $s \\le t$ steps from that\nconfiguration (halting is absorbing)."
+}

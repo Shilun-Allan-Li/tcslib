@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.mapParse_first",
+ "key": "e0e8067c40e9b21b",
+ "kind": "lemma",
+ "title": "Reading the first bit of a parse block",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x=\\mathrm{pre}\\,b\\,\\mathrm{rest}$ for Boolean words $\\mathrm{pre},\\mathrm{rest}$ and a bit $b$, and let $c$ be a configuration of $M$ on $x$. From the threaded-map parser's pair-reading state with emitting flag $e$, input head at position $|\\mathrm{pre}|+1$, capture head at displacement $0$, and output $\\mathrm{out}$, one step advances the input head to position $|\\mathrm{pre}|+2$, records $b$ in the controller state, and appends $b$ to the output exactly when $e$ is true; the capture head remains at displacement $0$.",
+ "hypotheses_covered": [
+  "M is a finite Boolean Turing machine",
+  "x equals pre followed by b and rest",
+  "pre and rest are Boolean words",
+  "b is a Boolean bit",
+  "c is an M-configuration on x",
+  "e is a Boolean emitting flag",
+  "out is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p\\, b\\, s$ with bit $b$, one step of the\nthreaded-map controller from its block-start parse state at position\n$\\abs{p}$ records $b$ in the finite control and advances the input head,\nemitting $b$ exactly when the controller is in its emitting (replay) pass."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.rt_appendSymbolTM",
+ "key": "4676b09efc5443a1",
+ "kind": "def",
+ "title": "Append-symbol machine",
+ "statement": "Let $k$ be a positive integer, choose one of its work tapes, and fix a symbol $b$ in an alphabet $\\Gamma$. The resulting machine is the sequential composition of a machine that skips forward on the selected tape, a boundary-writing machine that writes $b$, and a machine that skips back; the first and second stages are joined at their specified exit states, and the composite starts in the first stage's initial state.",
+ "hypotheses_covered": [
+  "A work-tape count $k$",
+  "A selected tape index $i\\in\\mathrm{Fin}(k)$",
+  "A symbol $b\\in\\Gamma$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement references skip machines and a composition construction whose operational definitions are not included.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -13,8 +13,8 @@ $x\in\alpha^k$, the output $Gx$ is uniformly distributed over $\alpha^n$.
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
 \label{ErrorCorrectingCodes.Codeword.Linear_Code_dist_eq_min_weight}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.Linear_Code', ErrorCorrectingCodes.Codeword.distance, ErrorCorrectingCodes.Codeword.hamming_distance, ErrorCorrectingCodes.Codeword.weight}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p047-b004}
-\uses{ErrorCorrectingCodes.Codeword.Linear_Code', ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.distance}
 \difficulty{4}
 Let $\alpha$ be a finite field and let $C$ be a linear code of length $n$ over $\alpha$,
 meaning there is a generator matrix $G$ whose columns generate $C$ (every $G$-image of a
@@ -33,6 +33,7 @@ all-zero codeword.
 \lean{ErrorCorrectingCodes.Codeword.uniform_vector_dist}
 \label{ErrorCorrectingCodes.Codeword.uniform_vector_dist}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword}
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p062-b003}
 The uniform probability mass function on $\alpha^n$, encoded as a function
 $\alpha^n\to\mathbb{R}$ assigning $1/|\alpha|^n$ to each vector.
@@ -42,6 +43,7 @@ $\alpha^n\to\mathbb{R}$ assigning $1/|\alpha|^n$ to each vector.
 \lean{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \label{ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword}
 \difficulty{2}
 Let $\alpha$ be a finite field, and let $n$ and $k$ be natural numbers. Fix a codeword
 $v : \mathrm{Fin}\,n \to \alpha$ of length $n$ and a codeword $x : \mathrm{Fin}\,k \to
@@ -53,6 +55,7 @@ $Gx = v$ is finite.
 \lean{ErrorCorrectingCodes.Codeword.matrix_dist}
 \label{ErrorCorrectingCodes.Codeword.matrix_dist}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 $\mu_x(v)$ is the fraction of $n\times k$ matrices $G$ satisfying $Gx=v$.
 \end{definition}
 
@@ -70,6 +73,7 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
 \lean{ErrorCorrectingCodes.Codeword.uniformity_lemma}
 \label{ErrorCorrectingCodes.Codeword.uniformity_lemma}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.get_matrix_row, ErrorCorrectingCodes.Codeword.matrix_dist, ErrorCorrectingCodes.Codeword.uniform_vector_dist, ErrorCorrectingCodes.Codeword.zero}
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p068-b001,
   pdf-7251cb8e4bc5-p068-b002
@@ -127,7 +131,6 @@ Utility returning the $i$-th row of a matrix as a $1\times k$ matrix.
   {context}
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p045-b006}
-\uses{ErrorCorrectingCodes.Codeword.matrix_dist, ErrorCorrectingCodes.Codeword.uniform_vector_dist, ErrorCorrectingCodes.Codeword.finite_matrix_dist}
 \difficulty{7}
 Let $\alpha$ be a finite field, and fix $n \ge 0$ and $k \ge 1$. Let $x \in \alpha^k$ be
 a nonzero vector. Then the distribution on $\alpha^n$ obtained by sampling an $n \times

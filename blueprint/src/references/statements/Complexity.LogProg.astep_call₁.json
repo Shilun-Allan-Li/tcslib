@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.LogProg.astep_call₁",
+ "key": "b9fc2a2e0351f380",
+ "kind": "lemma",
+ "title": "Unary first-argument oracle call",
+ "statement": "Let $A$ be a register program, $o$ an oracle function, and $l,l_1,l_0$ control states. If the instruction at $l$ calls oracle $j$ in unary-first mode with the single argument register $r$ and branches to $l_1$ on true and $l_0$ on false, then on input encoding a unary word of length $n$ followed by a word $w$, one abstract step from state $l$, register assignment $v$, and no stored answer goes to $l_1$ exactly when $o(j,\\langle 1^n,\\mathrm{bits}(v(r))\\rangle)$ is true, and otherwise goes to $l_0$, leaving the registers and stored answer unchanged.",
+ "hypotheses_covered": [
+  "The instruction at l is the specified unary-first call to oracle j with the single register r and branch states l₁ and l₀"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

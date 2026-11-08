@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/GaussianSpace/Noise/LpBounds.lean :: BooleanAnalysis.GaussianSpace.gaussian_two_function_positiveOffsets -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Integrability and bound for correlated Gaussian functions
+
+**Claim.** If $f$ and $g$ belong to the stated Gaussian $L^{1+r}$ and $L^{1+s}$ spaces, then their product on the correlated pair is integrable, and the integral of $|f(x)||g(y)|$ is at most the product of their Gaussian norms.
+
+**Proof.** Approximate $f$ and $g$ by continuous functions pulled back from the torus, with convergence both in the respective Gaussian $L^p$ norms and almost everywhere (`exists_gaussianTorus_approximation`). Each approximating pullback belongs to its required $L^p$ space (`memLp_gaussianTorusPullback`). For every approximation index, the continuous two-function inequality bounds the integral of the product of absolute values by the product of the two marginal norms (`gaussian_two_function_continuous`); the stated norm-to-moment identity converts its right side into those norms (`toReal_eLpNorm_ofReal_eq_integral`). Measure preservation of the two coordinate projections transfers the almost-everywhere convergence of the approximations to the correlated measure, so the products converge almost everywhere to $|f(x)||g(y)|$. Their nonnegativity, integrability, and uniform integral bounds allow the limiting integral theorem to conclude that this limit is integrable and its integral is bounded by the limit of the norm products (`integrable_and_integral_le_of_nonneg_tendsto`). Convergence of the approximating norms to the norms of $f$ and $g$ follows from convergence in $L^p$ (`tendsto_toReal_eLpNorm_of_sub`). Finally, the product $f(x)g(y)$ is measurable by the marginal $L^p$ measurability and measure-preserving coordinate maps; its absolute value is exactly $|f(x)||g(y)|$. Thus integrability of the absolute value gives integrability of the product, with the same bound.
+
+**Key facts.** `BooleanAnalysis.GaussianSpace.exists_gaussianTorus_approximation`, `BooleanAnalysis.GaussianSpace.memLp_gaussianTorusPullback`, `BooleanAnalysis.GaussianSpace.gaussian_two_function_continuous`, `BooleanAnalysis.GaussianSpace.toReal_eLpNorm_ofReal_eq_integral`, `BooleanAnalysis.GaussianSpace.integrable_and_integral_le_of_nonneg_tendsto`, `BooleanAnalysis.GaussianSpace.tendsto_toReal_eLpNorm_of_sub`.

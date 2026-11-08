@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.StepBlock.part",
+ "key": "28222765bfd6e478",
+ "kind": "def",
+ "title": "Machines for each control phase",
+ "statement": "For each natural number $k$ and each control key, assign a deterministic Turing machine over the Boolean alphabet with $k+2$ work tapes and the state type assigned to that key. The entry and halt machines leave all tapes stationary; lookup uses the seek machine; state-tail and state-gap use the forward skip machine on the summary tape, while state-home and state-restore use its return-pass version; clear-state clears the summary tape; to-summary and finish make two leftward moves on that tape, and to-state makes two rightward moves. The record key uses the record machine, the successor key uses the successor-field machine copying to the summary tape, and table-tail and table-home use the forward and return-pass skip machines on the table tape, respectively.",
+ "hypotheses_covered": [
+  "natural parameter $k$",
+  "control key"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.inc_run",
+ "key": "67923dbd6551112c",
+ "kind": "lemma",
+ "title": "Increment run on a binary counter",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a register, and let $c_C,c_B,\text{next}$ be states. Suppose the transition at $c_C$ is always the action denoted by `incCAct` for register $r$, and the transition at $c_B$ is always the action denoted by `incBAct` for register $r$; suppose neither state is a call state. From any configuration $c$, there is a finite run from the configuration with state $c_C$, register $r$ holding the binary word of $n$, and head position zero to the configuration with state $\text{next}$, register $r$ holding the binary word of $n+1$, and head position zero. At every earlier time $t$, the configuration has the form of $c$ with register $r$ holding some tape word and head position $q$, its state is either $c_C$ or $c_B$, and $-1\\le q\\le |\\mathrm{bits}(n+1)|$.",
+ "hypotheses_covered": [
+  "Transitions at $c_C$ satisfy the `incCAct` equation for all scanned input and work symbols",
+  "Transitions at $c_B$ satisfy the `incBAct` equation for all scanned input and work symbols",
+  "Neither $c_C$ nor $c_B$ is a call state"
+ ],
+ "confidence": "low",
+ "caveat": "The definitions of `incCAct` and `incBAct` are absent from the supplied snippet, so their precise actions cannot be stated mathematically.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

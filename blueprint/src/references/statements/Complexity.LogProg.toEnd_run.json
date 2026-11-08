@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.toEnd_run",
+ "key": "6f968583ada4fb40",
+ "kind": "lemma",
+ "title": "Run to the End of a Tape Word",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a work-tape register, and let $c_R$ and $n_x$ be states. Suppose that at state $c_R$ the transition function always prescribes the specified action that scans register $r$ to the end of its word and enters state $n_x$, regardless of the scanned input and work-tape symbols, and that $c_R$ is not a call state. For any initial configuration $c$, word $w$, and integers $n,p$ with $|w|-p=n$ and $0\\le p$, after $n+1$ steps from the configuration with register $r$ containing $w$ and its head at $p$, the program is in state $n_x$ with that head at $|w|-1$; at every earlier time $t<n+1$, the configuration still has state $c_R$, contains the same word on register $r$, and its head is at some $q$ with $p\\le q\\le |w|$.",
+ "hypotheses_covered": [
+  "The transition at state $c_R$ equals the specified end-scanning action for every input symbol and tuple of work-tape symbols",
+  "State $c_R$ is not a call state",
+  "$c$ is a configuration and $w$ is a Boolean word",
+  "$n$ is a natural number and $p$ is an integer",
+  "$|w|-p=n$",
+  "$0\\le p$"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not include the definition of the specified action `toEndAct`, so its exact transition behavior cannot be fully rendered from the supplied ground truth.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

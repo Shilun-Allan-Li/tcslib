@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.ImplicitEnum.regCfg_cfg",
+ "key": "bb4cc3b2173aeb05",
+ "kind": "lemma",
+ "title": "Register update on an enumerator configuration",
+ "statement": "Let $f$ be a function from Boolean words to Boolean words, let $o$ assign a Boolean value to each pair consisting of an index in $\\{0,1\\}$ and a Boolean word, and suppose that for every Boolean word $x$ and natural number $i$, $o(0,\\langle x,\\operatorname{bits}(i)\\rangle)$ records whether $i$ is less than the length of $f(x)$, while $o(1,\\langle x,\\operatorname{bits}(i)\\rangle)$ is the $i$-th bit of $f(x)$, defaulting to false when that position is absent. For any Boolean words $x,o'$, states $s,s'$ of the specified finite state set, and natural numbers $i,n$, updating register $0$ of the configuration for $x,o',s,i$ to state $s'$, tape content storing the binary expansion of $n$, and head position $0$ yields the configuration for $x,o',s',n$.",
+ "hypotheses_covered": [
+  "A function $f$ from Boolean words to Boolean words",
+  "A function $o$ assigning Boolean values to indices in $\\{0,1\\}$ and Boolean words",
+  "For all $x,i$, $o(0,\\langle x,\\operatorname{bits}(i)\\rangle)$ indicates $i < |f(x)|$",
+  "For all $x,i$, $o(1,\\langle x,\\operatorname{bits}(i)\\rangle)$ is the $i$-th bit of $f(x)$, defaulting to false",
+  "Boolean words $x,o'$",
+  "States $s,s'$ of the specified finite state set",
+  "Natural numbers $i,n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -95,6 +95,7 @@ empty conjunction is $\mathrm{true}$, and an empty disjunction is $\mathrm{false
 }
 \label{LMN.and_children_have_cnf}
 \leanok
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, LMN.compression_and_of_cnfs, LMN.restrictFn_node_eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -283,7 +284,6 @@ empty conjunction is $\mathrm{true}$, and an empty disjunction is $\mathrm{false
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p013-b002}
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, LMN.compression_and_of_cnfs, LMN.restrictFn_node_eval, LMN.restricted_has_small_cnf_of_dtDepth_le, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $cs$ be a finite list of Boolean circuits on $n$ variables, let $\rho$ be a
 restriction on those variables, and let $l$ be a natural number. Suppose that for every
@@ -296,12 +296,17 @@ assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
 
 \begin{lemma}[A small-width DNF for the restriction of an OR gate]
 \lean{LMN.or_children_have_dnf}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b006,
+  pdf-ffbe9c7b3306-p094-b007
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p002-b006,
   pdf-fc447f326910-p002-b007
 }
 \label{LMN.or_children_have_dnf}
 \leanok
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, LMN.restrictFn_node_eval, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -499,7 +504,6 @@ assignment $x : \mathrm{Fin}\,n \to \mathrm{Bool}$.
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004}
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, LMN.restrictFn_node_eval, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $c_1,\dots,c_m$ be Boolean circuits on $n$ variables, let $\rho$ be a restriction of
 those variables, and let $l$ be a natural number. For a Boolean function $g$ write
@@ -515,6 +519,14 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
 
 \begin{lemma}[Compression and switching at a single gate]
 \lean{LMN.compress_and_switch}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p100-b005,
+  pdf-ffbe9c7b3306-p104-b003,
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001,
+  pdf-ffbe9c7b3306-p106-b002
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p008-b005
@@ -528,6 +540,7 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
 }
 \label{LMN.compress_and_switch}
 \leanok
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, CNF.eval, DNF.eval, LMN.and_children_have_cnf, LMN.composeRestr, LMN.or_children_have_dnf, LMN.restrictFn_composeRestr, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1690,7 +1703,6 @@ evaluates to the disjunction of the values $c_1,\dots,c_m$.
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004}
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, CNF.eval, DNF.eval, LMN.and_children_have_cnf, LMN.composeRestr, LMN.or_children_have_dnf, LMN.restrictFn_composeRestr, LMN.switching_bernoulli_dtDepth_cnf_general, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{5}
 Fix $n \ge 1$, an integer $l \ge 1$, and a natural number $t$, and write $D(g)$ for the
 decision-tree depth of a Boolean function $g$ on $n$ variables, that is, the least depth

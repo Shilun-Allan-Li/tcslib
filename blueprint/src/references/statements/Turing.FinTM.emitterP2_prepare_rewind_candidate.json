@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_prepare_rewind_candidate",
+ "key": "20490b077815ff6f",
+ "kind": "lemma",
+ "title": "Rewind of the Candidate Tapes",
+ "statement": "Let $w,s,v$ be Boolean words, let $o$ be a bit, let $p$ be an input-head position for input $w$, and let $b\\in\\mathbb{Z}$. For every natural number $j\\le |s|$, starting in phase $3$ with $s$ on both the candidate and copy tapes, the third tape holding $v$, and the candidate and copy heads at displacement $j-1$, the preparation machine reaches phase $4$ after exactly $j+1$ steps with both of those heads at the origin; the tape contents, input-head position, flag, and third-tape head position are as specified by that resulting frame.",
+ "hypotheses_covered": [
+  "Boolean words $w,s,v$",
+  "Bit $o$",
+  "Input-head position $p$ for $w$",
+  "Integer displacement $b$ of the third-tape head",
+  "Natural number $j$ with $j\\le |s|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the preparation machine's candidate-rewind phase with the aligned\ncandidate and copy heads at displacement $j - 1$, for any $j \\le \\abs{s}$,\nexactly $j+1$ steps restore both heads to the origin without changing\neither word; the native input position and the prepared suffix are fixed."
+}

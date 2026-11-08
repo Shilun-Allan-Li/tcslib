@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.MultiTapeTM.ComputesFunInTimeAndSpace.mono",
+ "key": "239bc9f6be88d3fb",
+ "kind": "theorem",
+ "title": "Monotonicity of function-computation bounds",
+ "statement": "Let $M$ be a multi-tape Turing machine, let $f$ be a function, and let the input and output encodings into words over the machine's alphabet be injective. If $M$ computes $f$ within input-indexed time and space bounds $t,s$, and $t(a)\\le t'(a)$ and $s(a)\\le s'(a)$ for every input $a$, then $M$ computes $f$ within bounds $t',s'$ using the same encodings.",
+ "hypotheses_covered": [
+  "$M$ is a multi-tape Turing machine",
+  "$f$ is a function",
+  "The input and output encodings into words over the alphabet are injective",
+  "$t,s,t',s'$ are input-indexed natural-number bounds",
+  "$M$ computes $f$ within bounds $t,s$",
+  "$t(a)\\le t'(a)$ for every $a$",
+  "$s(a)\\le s'(a)$ for every $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine that computes a function $f$ between\ngiven injective encodings within input-indexed time bound $t$ and space bound\n$s$, and let $t'$ and $s'$ be bounds with $t(a) \\le t'(a)$ and\n$s(a) \\le s'(a)$ for every input $a$.  Then $M$ also computes $f$ between the\nsame encodings within the bounds $t'$ and $s'$."
+}

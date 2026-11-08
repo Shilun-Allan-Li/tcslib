@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.sat_comp_on_image",
+ "key": "52ef75ba16e2d8ef",
+ "kind": "lemma",
+ "title": "Composition on the image",
+ "statement": "Let $M$ and $U$ be finite Turing machines over the binary alphabet, let $f,g$ be functions from binary strings to binary strings, and let $T_1,T_2 : \\mathbb{N} \\to \\mathbb{N}$. Suppose $M$ computes $f$ on every input $x$ within $T_1(|x|)$ steps, and $U$ computes $g(x)$ from input $f(x)$ within $T_2(|x|)$ steps for every $x$. Then there is a finite Turing machine that computes $g$ on every input within $2T_1(n)+T_2(n)+2$ steps on inputs of length $n$.",
+ "hypotheses_covered": [
+  "$M$ and $U$ are finite Turing machines over the binary alphabet",
+  "$f,g : \\{0,1\\}^* \\to \\{0,1\\}^*$",
+  "$T_1,T_2 : \\mathbb{N} \\to \\mathbb{N}$",
+  "$M$ computes $f(x)$ within $T_1(|x|)$ steps for every $x$",
+  "$U$ computes $g(x)$ from $f(x)$ within $T_2(|x|)$ steps for every $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ and $U$ be finite multi-tape Turing machines over the binary alphabet, let\n$f, g$ be functions on binary strings and $T_1, T_2 : \\mathbb{N} \\to \\mathbb{N}$ time\nbounds. If $M$ computes $f$ within $T_1$, and for every input $x$ the machine $U$ run\non $f(x)$ halts within $T_2(|x|)$ steps with output $g(x)$, then some finite machine\ncomputes $g$ within time $n \\mapsto 2\\,T_1(n) + T_2(n) + 2$."
+}

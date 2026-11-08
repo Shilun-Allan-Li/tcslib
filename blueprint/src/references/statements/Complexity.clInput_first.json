@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clInput_first",
+ "key": "dd89e763d631d5a8",
+ "kind": "lemma",
+ "title": "First arrival at the copied-input configuration",
+ "statement": "For every Boolean word $x$, there is a time $t$ with $0<t\\le 2|x|+2$ such that the input copier, started in its initial configuration on $x$, is not in its return control at any earlier time $j<t$ and at time $t$ is in the return control with $x$ on its work tape, both heads at their initial positions, and empty output.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "There exists $t\\in\\mathbb N$ with $t\\le 2|x|+2$",
+  "$0<t$",
+  "At each $j<t$, the machine is not in state $2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word $x$, there is a time $t$ with $0 < t \\le 2|x| + 2$ at which the input copier, started from its native initial configuration, first reaches its return control, holding exactly $x$ on its work tape with both heads restored."
+}

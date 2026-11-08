@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.P_eq_NP_of_NPHard_mem_P",
+ "key": "8b62a97b6a591505",
+ "kind": "theorem",
+ "title": "An NP-hard language in P collapses P and NP",
+ "statement": "Let $L$ be a language over the binary alphabet such that every language in $\textsf{NP}$ has a polynomial-time many-one reduction to $L$. If $L$ is decidable in polynomial time, then the class $\textsf{P}$ of polynomial-time decidable languages equals $\textsf{NP}$, where membership in $\textsf{NP}$ means having polynomial-length certificates verifiable in polynomial time.",
+ "hypotheses_covered": [
+  "$L$ is NP-hard under polynomial-time many-one reductions",
+  "$L$ belongs to P"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L \\subseteq \\{0,1\\}^{*}$ be an $\\mathsf{NP}$-hard language, i.e.\\ every\nlanguage in $\\mathsf{NP}$ is polynomial-time Karp reducible to $L$. If\n$L \\in \\mathsf{P}$, then $\\mathsf{P} = \\mathsf{NP}$ [AB09, Theorem~2.8.2]."
+}

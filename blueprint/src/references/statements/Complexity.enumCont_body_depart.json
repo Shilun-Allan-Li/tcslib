@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_body_depart",
+ "key": "d7788912a3f899cf",
+ "kind": "lemma",
+ "title": "Departure from the anchor",
+ "statement": "Let $B$ be a finite Boolean machine, let $q_v,q_i$ be designated states, and let $x,s$ be Boolean words. Starting from the canonical seam configuration on input $x$, in administrative anchor state $0$, with $s$ on tape zero and all other tapes empty, one step of the active body yields the two-ended configuration in verification mode, with source state $q_v$, $s$ preserved on tape zero, the last tape blank, both endpoint heads at $0$, and empty output.",
+ "hypotheses_covered": [
+  "A finite Boolean machine $B",
+  "Designated states $q_v,q_i$",
+  "Boolean words $x,s$",
+  "Canonical seam configuration in anchor state $0$ with $s$ on tape zero and remaining tapes empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$ and candidate word $s$, one step of the active enumerator body\nfrom the anchor state over the canonical seam carrying $s$ on tape zero yields the\ntwo-ended configuration that enters the verification call (the source's verifier\nentry state in verification mode), with tape zero $s$, a blank capture tape, and\nboth endpoint heads at zero; the step writes nothing, moves no head, and emits\nnothing."
+}

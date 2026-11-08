@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.expcom_mem_triple",
+ "key": "280a6b977531da9b",
+ "kind": "lemma",
+ "title": "Membership of Encoded Inputs in EXPCOM",
+ "statement": "For Boolean words $\\alpha$ and $x$ and a natural number $n$, the word $\\langle\\alpha,\\langle x,1^n\\rangle\\rangle$ belongs to $\\mathrm{EXPCOM}$ if and only if the machine decoded from $\\alpha$ computes the output word $[1]$ on input $x$ in exactly $2^n$ steps.",
+ "hypotheses_covered": [
+  "Boolean word $\\alpha$",
+  "Boolean word $x$",
+  "natural number $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all Boolean words $\\alpha,x$ and all $n\\in\\mathbb{N}$, the encoding\n$\\langle\\alpha,\\langle x,1^n\\rangle\\rangle$ belongs to $\\mathrm{EXPCOM}$ if and only if\nthe machine decoded from $\\alpha$ halts on input $x$, outputs the one-bit word $[1]$,\nand uses exactly $2^n$ steps."
+}

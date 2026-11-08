@@ -1,0 +1,20 @@
+{
+ "lean_name": "FABL.depthTwoFinishDifferent",
+ "key": "bfef7bfc39dd06ec",
+ "kind": "def",
+ "title": "Decision tree with a distinct-output finish",
+ "statement": "Let $n$ be a natural number, and let $R_1,R_2,B_3$ be sets of coordinates in $\text{Fin}(n)$ such that $R_1$ is disjoint from $R_2\\cup B_3$ and $R_2$ is disjoint from $B_3$. Let $C_1$ and $C_2$ assign, to each sign, decision trees using coordinates in $R_1$ and $R_2$, respectively, and let $E_3$ be a decision tree using coordinates in $B_3$. For fixed signs $x_1,x_2$, the resulting decision tree first runs $E_3$, producing a sign $y_3$. If $y_3=x_1$, it runs $C_1(x_1)$; if that produces $y_1=y_3$, it returns $y_3$, and otherwise it runs $C_2(x_2)$ and returns the three-sign majority value of $y_1,y_2,y_3$. If $y_3\\ne x_1$, it runs $C_2(x_2)$; if that produces $y_2=y_3$, it returns $y_3$, and otherwise it runs $C_1(x_1)$ and returns the three-sign majority value of $y_1,y_2,y_3$. The resulting tree uses coordinates in $R_1\\cup(R_2\\cup B_3)$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$R_1$ is disjoint from $R_2\\cup B_3$",
+  "$R_2$ is disjoint from $B_3$",
+  "$C_1$ assigns an $R_1$-coordinate decision tree to each sign",
+  "$C_2$ assigns an $R_2$-coordinate decision tree to each sign",
+  "$E_3$ is a $B_3$-coordinate decision tree",
+  "the signs $x_1,x_2$ are fixed"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied upstream definitions do not specify the three-sign majority value or the operational meaning of sequencing decision trees, so those terms cannot be rendered more explicitly from the payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

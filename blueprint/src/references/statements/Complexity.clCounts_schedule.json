@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clCounts_schedule",
+ "key": "c6d2ea1cd35c1acf",
+ "kind": "lemma",
+ "title": "Counts match scheduled positions",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape symbols, and let $m,t$ be natural numbers. On input consisting of $m$ false bits, the signed count at the input coordinate at time $t$, plus one, equals the input-head position after $t$ steps. For every work tape, its signed count at time $t$ equals that tape's head position after $t$ steps on the same input.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$m$ is a natural number",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every oblivious machine, reference length $m$, and time $t$, the signed value of the stored input-head count pair over the all-false reference input, plus one, equals the public input position at time $t$, and the signed work count pairs equal the public work positions, including the shifted input origin."
+}

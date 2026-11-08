@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.gen_start",
+ "key": "06e86b48e01a59dc",
+ "kind": "theorem",
+ "title": "Generator initialization decides the complement",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, let $L$ be a language of Boolean words, let $sp:\\mathbb N\\to\\mathbb N$, and let $x$ be a Boolean word. Suppose $N$ decides $L$ using space at most $sp(n)$ on inputs of length $n$. For natural numbers $E$ and $B$, suppose the code bound of $N$ is at most $E$, $1\\le E$, and $2^{2E(\\operatorname{size}(|x|)+1)+2E(sp(|x|)+1)}+1\\le B$. Then, starting the generator in its scanning state with all registers zero, every computation branch terminates, every register stays at most $B$ before halting, and some branch accepts if and only if $x\\notin L$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean input symbols",
+  "$L$ is a language of Boolean words",
+  "$sp:\\mathbb N\\to\\mathbb N$",
+  "$x$ is a Boolean word",
+  "$N$ decides $L$ using space at most $sp(n)$ on inputs of length $n$",
+  "$E,B\\in\\mathbb N$",
+  "the code bound of $N$ is at most $E$",
+  "$1\\le E$",
+  "$2^{2E(\\operatorname{size}(|x|)+1)+2E(sp(|x|)+1)}+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $L$\nbe a language of Boolean words, let $sp:\\mathbb N\\to\\mathbb N$, and let $x$ be a Boolean\nword. Suppose $N$ decides $L$ using space at most $sp(n)$ on inputs of length $n$. For\nnatural numbers $E,B$, assume $\\kappa(N)\\le E$, $1\\le E$, and $2^{2E\nv(|x|)+2E(sp(|x|)+1)}+1\\le B$, where $v(n)=\\operatorname{size}(n)+1$. Then the generator\ninitialized in its scanning state with all registers zero terminates with every register\nat most $B$ and accepts exactly when $x\\notin L$."
+}

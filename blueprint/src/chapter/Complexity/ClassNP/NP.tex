@@ -19,6 +19,12 @@ the two converted verifier languages.
 
 \begin{definition}[The class $\mathsf{NP}$]
 \lean{Complexity.NP}
+\statementsource{BGS75}{
+  pdf-2459e3840724-p002-b002,
+  pdf-2459e3840724-p002-b003,
+  pdf-2459e3840724-p010-b004,
+  pdf-2459e3840724-p010-b005
+}
 \label{Complexity.NP}
 \leanok
 \uses{Complexity.P}
@@ -29,17 +35,17 @@ certificate $u \in \{0,1\}^{*}$ of length exactly $|u| = C \cdot (|x|+1)^c$ whos
 concatenation $xu$ with $x$ lies in $V$.
 \end{definition}
 
-\begin{theorem}[$\mathsf{P} \subseteq \mathsf{NP}$]
+\begin{theorem}[Polynomial time is contained in nondeterministic polynomial time]
 \lean{Complexity.P_subset_NP}
 \label{Complexity.P_subset_NP}
 \leanok
 \uses{Complexity.NP, Complexity.P}
 \difficulty{3}
-Every language $L \subseteq \{0,1\}^{*}$ decidable in polynomial time belongs to
-$\mathsf{NP}$; that is, for every $L \in \mathsf{P}$ there exist
-$C, c \in \mathbb{N}$ and a language $V \in \mathsf{P}$ such that for every binary
-string $x$, $x \in L$ if and only if some $u \in \{0,1\}^{*}$ with
-$|u| = C \cdot (|x|+1)^c$ has $xu \in V$.
+Every language in $\mathsf{P}$ belongs to $\mathsf{NP}$, where membership in
+$\mathsf{NP}$ means that there are natural numbers $C,c$ and a verifier language
+$V\in\mathsf{P}$ such that, for each binary string $x$, membership of $x$ is equivalent
+to the existence of a binary certificate $u$ of length exactly $C(|x|+1)^c$ for which
+the concatenation $xu$ belongs to $V$.
 \end{theorem}
 
 \begin{definition}[Stripping a marked certificate]
@@ -55,31 +61,24 @@ and $\mathrm{strip}(0v)$ is undefined. Thus $\mathrm{strip}(v)$ is the prefix of
 $v$ preceding its last $1$, and is undefined when $v$ contains no $1$.
 \end{definition}
 
-\begin{lemma}[Stripping fails on all-zero strings]
+\begin{lemma}[Stripping an all-zero string]
 \lean{Complexity.stripCertificate_false}
 \label{Complexity.stripCertificate_false}
 \leanok
 \uses{Complexity.stripCertificate}
 \difficulty{3}
-Let $\mathrm{strip}$ be the partial map on binary strings defined by:
-$\mathrm{strip}(\varepsilon)$ is undefined, and for a bit $b$ and a string $v$,
-$\mathrm{strip}(bv) = b\,\mathrm{strip}(v)$ when $\mathrm{strip}(v)$ is defined,
-while otherwise $\mathrm{strip}(1v) = \varepsilon$ and $\mathrm{strip}(0v)$ is
-undefined. Then for every $k \in \mathbb{N}$, $\mathrm{strip}(0^k)$ is undefined.
+For every $k\in\mathbb{N}$, stripping the binary string consisting of $k$ zeros is
+undefined.
 \end{lemma}
 
-\begin{lemma}[Stripping a padded certificate]
+\begin{lemma}[Stripping a padded string]
 \lean{Complexity.stripCertificate_pad}
 \label{Complexity.stripCertificate_pad}
 \leanok
 \uses{Complexity.stripCertificate, Complexity.stripCertificate_false}
 \difficulty{3}
-Let $\mathrm{strip}$ be the partial map on binary strings defined by:
-$\mathrm{strip}(\varepsilon)$ is undefined, and for a bit $b$ and a string $v$,
-$\mathrm{strip}(bv) = b\,\mathrm{strip}(v)$ when $\mathrm{strip}(v)$ is defined,
-while otherwise $\mathrm{strip}(1v) = \varepsilon$ and $\mathrm{strip}(0v)$ is
-undefined. Then for every binary string $u$ (possibly empty, possibly containing
-$1$s) and every $k \in \mathbb{N}$, $\mathrm{strip}(u\,1\,0^k) = u$.
+For every binary string $u$ and every $k\in\mathbb{N}$, stripping the string formed by
+appending a $1$ and then $k$ zeros to $u$ returns $u$.
 \end{lemma}
 
 \begin{lemma}[Characterisation of certificate stripping]
@@ -88,31 +87,26 @@ $1$s) and every $k \in \mathbb{N}$, $\mathrm{strip}(u\,1\,0^k) = u$.
 \leanok
 \uses{Complexity.stripCertificate, Complexity.stripCertificate_false, Complexity.stripCertificate_pad}
 \difficulty{5}
-Let $\mathrm{strip}$ be the partial map on binary strings defined by:
-$\mathrm{strip}(\varepsilon)$ is undefined, and for a bit $b$ and a string $v$,
-$\mathrm{strip}(bv) = b\,\mathrm{strip}(v)$ when $\mathrm{strip}(v)$ is defined,
-while otherwise $\mathrm{strip}(1v) = \varepsilon$ and $\mathrm{strip}(0v)$ is
-undefined. Then for every binary string $v$: $\mathrm{strip}(v)$ is undefined if
-and only if $v = 0^{|v|}$ consists only of zeros; and for every binary string $u$,
-$\mathrm{strip}(v) = u$ if and only if $v = u\,1\,0^k$ for some $k \in \mathbb{N}$.
+For every binary string $v$, stripping $v$ is undefined if and only if $v$ consists
+entirely of zeros. For every binary string $u$, stripping $v$ returns $u$ if and only if
+$v$ is $u$ followed by a $1$ and then some finite number of zeros.
 \end{lemma}
 
-\begin{lemma}[Padded total length is strictly increasing]
+\begin{lemma}[Strict increase of padded length]
 \lean{Complexity.certificateTotal_strictMono}
 \label{Complexity.certificateTotal_strictMono}
 \leanok
 \difficulty{3}
-For all $C, c \in \mathbb{N}$, the map $\mathbb{N} \to \mathbb{N}$ given by
-$n \mapsto n + (C+1)(n+1)^c$ is strictly increasing (also when $c = 0$).
+For all $C,c\in\mathbb{N}$, the function $n\mapsto n+(C+1)(n+1)^c$ on $\mathbb{N}$ is
+strictly increasing.
 \end{lemma}
 
-\begin{lemma}[Room for the marker bit]
+\begin{lemma}[Room for a marker bit]
 \lean{Complexity.certificate_room}
 \label{Complexity.certificate_room}
 \leanok
 \difficulty{3}
-For all $C, c, n \in \mathbb{N}$,
-\[ C\,(n+1)^c + 1 \le (C+1)\,(n+1)^c. \]
+For all $C,c,n\in\mathbb{N}$, $C(n+1)^c+1\le (C+1)(n+1)^c$.
 \end{lemma}
 
 \begin{definition}[Bounded search for the input/certificate split]
@@ -125,27 +119,24 @@ searching $0, 1, \dots, m$ in increasing order; it is undefined when no such $n$
 exists.
 \end{definition}
 
-\begin{lemma}[Specification of the split search]
+\begin{lemma}[Specification of certificate split search]
 \lean{Complexity.certificateSplit_spec}
 \label{Complexity.certificateSplit_spec}
 \leanok
 \uses{Complexity.certificateSplit, Complexity.certificateTotal_strictMono}
 \difficulty{4}
-For $C, c, m \in \mathbb{N}$ let $\mathrm{split}_{C,c}(m)$ be the least
-$n \le m$ with $n + (C+1)(n+1)^c = m$, and undefined if there is none. Then for
-all $C, c, m, n \in \mathbb{N}$, $\mathrm{split}_{C,c}(m) = n$ if and only if
-$n + (C+1)(n+1)^c = m$.
+Let $C,c,m,n$ be natural numbers. The bounded certificate split search at length $m$
+returns $n$ if and only if $n+(C+1)(n+1)^c=m$.
 \end{lemma}
 
-\begin{lemma}[The empty input has no split]
+\begin{lemma}[No split for zero input]
 \lean{Complexity.certificateSplit_zero}
 \label{Complexity.certificateSplit_zero}
 \leanok
 \uses{Complexity.certificateSplit, Complexity.certificateSplit_spec, Complexity.certificate_room}
 \difficulty{3}
-For $C, c, m \in \mathbb{N}$ let $\mathrm{split}_{C,c}(m)$ be the least
-$n \le m$ with $n + (C+1)(n+1)^c = m$, and undefined if there is none. Then for
-all $C, c \in \mathbb{N}$, $\mathrm{split}_{C,c}(0)$ is undefined.
+For all $C,c\in\mathbb{N}$, the value $\mathrm{split}_{C,c}(0)$ is undefined;
+equivalently, there is no $n\in\{0\}$ such that $n+(C+1)(n+1)^c=0$.
 \end{lemma}
 
 \begin{definition}[Paired exact-length verifier]
@@ -161,34 +152,26 @@ doubled, then the separator $01$, then $u$ verbatim --- such that
 $|u| = C(|x|+1)^c$ and the concatenation $xu$ lies in $V$.
 \end{definition}
 
-\begin{lemma}[Paired verifier on encoded pairs]
+\begin{lemma}[Membership of an Encoded Pair]
 \lean{Complexity.pairedVerifier_pair}
 \label{Complexity.pairedVerifier_pair}
 \leanok
 \uses{Complexity.pairedVerifier, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{2}
-Let $C, c \in \mathbb{N}$ and $V \subseteq \{0,1\}^{*}$, write
-$\langle x, u\rangle$ for the self-delimiting pair encoding of binary strings $x$
-and $u$ ($x$ with every bit doubled, then the separator $01$, then $u$), and let
-$V^{\mathrm{pair}}_{C,c}$ be the set of strings that the aligned pair parser
-decodes as a pair $(x, u)$ with $|u| = C(|x|+1)^c$ and $xu \in V$. Then for all
-binary strings $x$ and $u$, $\langle x, u\rangle \in V^{\mathrm{pair}}_{C,c}$ if
-and only if $|u| = C(|x|+1)^c$ and $xu \in V$.
+Let $C,c\in\mathbb{N}$, let $V$ be a language of binary strings, and let $x,u$ be binary
+strings. The encoding of $(x,u)$ belongs to the paired verifier language exactly when
+$|u|=C(|x|+1)^c$ and the concatenation $xu$ belongs to $V$.
 \end{lemma}
 
-\begin{lemma}[Paired verifier rejects malformed pairs]
+\begin{lemma}[Malformed pairs are rejected]
 \lean{Complexity.pairedVerifier_malformed}
 \label{Complexity.pairedVerifier_malformed}
 \leanok
 \uses{Complexity.pairedVerifier, Turing.pairDecode}
 \difficulty{2}
-Let $C, c \in \mathbb{N}$ and $V \subseteq \{0,1\}^{*}$. The aligned pair parser
-reads a binary string in two-bit blocks from the left, taking $00$ and $11$ as the
-bits $0$ and $1$ of a first component until the first block $01$, after which the
-remaining suffix is the second component; it fails on every other string. Let
-$V^{\mathrm{pair}}_{C,c}$ be the set of strings that this parser decodes as a pair
-$(x, u)$ with $|u| = C(|x|+1)^c$ and $xu \in V$. If $y$ is a binary string on
-which the parser fails, then $y \notin V^{\mathrm{pair}}_{C,c}$.
+Let $C,c\in\mathbb{N}$, let $V$ be a language of finite bit strings, and let $y$ be a
+finite bit string. If the aligned pair parser is undefined on $y$, then $y$ does not
+belong to the paired verifier language defined by $C,c,$ and $V$.
 \end{lemma}
 
 \begin{definition}[Padded exact-length verifier]
@@ -205,92 +188,63 @@ $\langle x, u\rangle$ is the self-delimiting pair encoding: $x$ with every bit
 doubled, then the separator $01$, then $u$ verbatim.
 \end{definition}
 
-\begin{lemma}[Padded verifier rejects inputs with no split]
+\begin{lemma}[Inputs without a valid split are rejected]
 \lean{Complexity.paddedVerifier_no_split}
 \label{Complexity.paddedVerifier_no_split}
 \leanok
 \uses{Complexity.certificateSplit, Complexity.paddedVerifier}
 \difficulty{2}
-Let $C, c \in \mathbb{N}$ and $V \subseteq \{0,1\}^{*}$, and let
-$V^{\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least
-$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after
-its first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last
-$1$ satisfies $|u| \le C(n+1)^c$ and $\langle x, u\rangle \in V$, where $x$ is
-the first $n$ bits of $y$ and $\langle x, u\rangle$ is the self-delimiting pair
-encoding ($x$ with every bit doubled, then $01$, then $u$). If $y$ is a binary
-string such that no $n \le |y|$ satisfies $n + (C+1)(n+1)^c = |y|$, then
-$y \notin V^{\mathrm{pad}}_{C,c}$.
+Let $C,c\in\mathbb{N}$, let $V$ be a language of binary strings, and let $y$ be a binary
+string. If no $n\le |y|$ satisfies $n+(C+1)(n+1)^c=|y|$, then $y$ does not belong to the
+padded verifier for $C,c,V$.
 \end{lemma}
 
-\begin{lemma}[Padded verifier at the exact boundary]
+\begin{lemma}[Exact-boundary padded verifier characterization]
 \lean{Complexity.paddedVerifier_append}
 \label{Complexity.paddedVerifier_append}
 \leanok
 \uses{Complexity.certificateSplit, Complexity.certificateSplit_spec, Complexity.paddedVerifier, Complexity.stripCertificate, Turing.pairEncode}
 \difficulty{3}
-Let $C, c \in \mathbb{N}$ and $V \subseteq \{0,1\}^{*}$, and let
-$V^{\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least
-$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after
-its first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last
-$1$ satisfies $|u| \le C(n+1)^c$ and $\langle x, u\rangle \in V$, where $x$ is
-the first $n$ bits of $y$ and $\langle x, u\rangle$ is the self-delimiting pair
-encoding ($x$ with every bit doubled, then $01$, then $u$). Then for all binary
-strings $x$ and $v$ with $|v| = (C+1)(|x|+1)^c$, the concatenation $xv$ lies in
-$V^{\mathrm{pad}}_{C,c}$ if and only if $v$ contains a $1$ and the prefix $u$ of
-$v$ preceding its last $1$ satisfies $|u| \le C(|x|+1)^c$ and
-$\langle x, u\rangle \in V$.
+Let $C,c\in\mathbb{N}$, let $V$ be a language of binary strings, and let $x,v$ be binary
+strings with $|v|=(C+1)(|x|+1)^c$. Then $xv$ belongs to the padded verifier for $C,c,V$
+if and only if there is a binary string $u$ such that stripping the certificate from $v$
+yields $u$, $|u|\le C(|x|+1)^c$, and the self-delimiting pair encoding of $x$ and $u$
+belongs to $V$.
 \end{lemma}
 
-\begin{lemma}[Padded verifier rejects an all-zero certificate region]
+\begin{lemma}[All-zero padding is rejected]
 \lean{Complexity.paddedVerifier_no_marker}
 \label{Complexity.paddedVerifier_no_marker}
 \leanok
 \uses{Complexity.paddedVerifier, Complexity.paddedVerifier_append, Complexity.stripCertificate_false}
 \difficulty{2}
-Let $C, c \in \mathbb{N}$ and $V \subseteq \{0,1\}^{*}$, and let
-$V^{\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least
-$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after
-its first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last
-$1$ satisfies $|u| \le C(n+1)^c$ and $\langle x, u\rangle \in V$, where $x$ is
-the first $n$ bits of $y$ and $\langle x, u\rangle$ is the self-delimiting pair
-encoding ($x$ with every bit doubled, then $01$, then $u$). Then for every binary
-string $x$ (even one containing $1$s), the string
-$x\,0^{(C+1)(|x|+1)^c}$ does not lie in $V^{\mathrm{pad}}_{C,c}$.
+For every $C,c\in\mathbb{N}$, every language $V$ of binary strings, and every binary
+string $x$, the string formed by appending $(C+1)(|x|+1)^c$ zeros to $x$ does not belong
+to the padded verifier for $C,c,V$.
 \end{lemma}
 
-\begin{lemma}[Padded verifier rejects over-long witnesses]
+\begin{lemma}[Rejection of Overlong Witnesses]
 \lean{Complexity.paddedVerifier_too_long}
 \label{Complexity.paddedVerifier_too_long}
 \leanok
 \uses{Complexity.paddedVerifier, Complexity.paddedVerifier_append, Complexity.stripCertificate_pad}
 \difficulty{3}
-Let $C, c \in \mathbb{N}$ and $V \subseteq \{0,1\}^{*}$, and let
-$V^{\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least
-$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after
-its first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last
-$1$ satisfies $|u| \le C(n+1)^c$ and $\langle x, u\rangle \in V$, where $x$ is
-the first $n$ bits of $y$ and $\langle x, u\rangle$ is the self-delimiting pair
-encoding ($x$ with every bit doubled, then $01$, then $u$). Let $x, u$ be binary
-strings and $k \in \mathbb{N}$ with $|u\,1\,0^k| = (C+1)(|x|+1)^c$ and
-$C(|x|+1)^c < |u|$. Then $x\,u\,1\,0^k \notin V^{\mathrm{pad}}_{C,c}$.
+Let $C,c,k\in\mathbb{N}$, let $V$ be a language of binary strings, and let $x,u$ be
+binary strings. If $|u\,1\,0^k|=(C+1)(|x|+1)^c$ and $C(|x|+1)^c<|u|$, then
+$x\,u\,1\,0^k$ does not belong to the padded verifier language $V^{\mathrm{pad}}_{C,c}$.
 \end{lemma}
 
-\begin{lemma}[Padded and bounded witnesses correspond]
+\begin{lemma}[Padded and Bounded Witnesses]
 \lean{Complexity.paddedVerifier_witness}
 \label{Complexity.paddedVerifier_witness}
 \leanok
 \uses{Complexity.certificate_room, Complexity.paddedVerifier, Complexity.paddedVerifier_append, Complexity.stripCertificate_pad, Turing.pairEncode}
 \difficulty{4}
-Let $C, c \in \mathbb{N}$ and $V \subseteq \{0,1\}^{*}$, and let
-$V^{\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least
-$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after
-its first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last
-$1$ satisfies $|u| \le C(n+1)^c$ and $\langle x, u\rangle \in V$, where $x$ is
-the first $n$ bits of $y$ and $\langle x, u\rangle$ is the self-delimiting pair
-encoding ($x$ with every bit doubled, then $01$, then $u$). Then for every binary
-string $x$, there exists $v$ with $|v| = (C+1)(|x|+1)^c$ and
-$xv \in V^{\mathrm{pad}}_{C,c}$ if and only if there exists $u$ with
-$|u| \le C(|x|+1)^c$ and $\langle x, u\rangle \in V$.
+Let $C,c\in\mathbb{N}$, let $V$ be a language of binary strings, and let $x$ be a binary
+string. There exists a binary string $v$ of length $(C+1)(|x|+1)^c$ such that $xv\in
+V^{\mathrm{pad}}_{C,c}$ if and only if there exists a binary string $u$ with $|u|\le
+C(|x|+1)^c$ and $\langle x,u\rangle\in V$, where $\langle x,u\rangle$ is obtained by
+doubling each bit of $x$, appending $01$, and then appending $u$.
 \end{lemma}
 
 \begin{definition}[Guarded pair-to-concatenation map]
@@ -305,35 +259,26 @@ every bit doubled, then $01$, then $b$) --- and sends every other string to the
 empty string.
 \end{definition}
 
-\begin{lemma}[Two split searches coincide]
+\begin{lemma}[Equality of two split searches]
 \lean{Complexity.verifier_split_bridge}
 \label{Complexity.verifier_split_bridge}
 \leanok
 \uses{Complexity.certificateSplit, Turing.solveSplit}
 \difficulty{1}
-For $D, e, m \in \mathbb{N}$ let $\mathrm{solve}_{D,e}(m)$ be the least $i \le m$
-with $i + D(i+1)^e = m$, undefined if there is none, and for $C, c, m \in \mathbb{N}$
-let $\mathrm{split}_{C,c}(m)$ be the least $n \le m$ with
-$n + (C+1)(n+1)^c = m$, undefined if there is none. Then for all
-$C, c \in \mathbb{N}$, the partial functions $\mathrm{solve}_{C+1,c}$ and
-$\mathrm{split}_{C,c}$ on $\mathbb{N}$ are equal.
+For all $C,c\in\mathbb{N}$, the partial functions on natural numbers given by the least
+$i\le m$ satisfying $i+(C+1)(i+1)^c=m$, when such an $i$ exists, and undefined
+otherwise, are equal.
 \end{lemma}
 
-\begin{lemma}[Reverse-scan stripping equals recursive stripping]
+\begin{lemma}[Equality of two stripping procedures]
 \lean{Complexity.verifier_strip_bridge}
 \label{Complexity.verifier_strip_bridge}
 \leanok
 \uses{Complexity.stripCertificate, Complexity.stripCertificate_spec, Turing.splitAtLastTrue}
 \difficulty{4}
-Let $\mathrm{strip}$ be the partial map on binary strings defined by:
-$\mathrm{strip}(\varepsilon)$ is undefined, and for a bit $b$ and a string $v$,
-$\mathrm{strip}(bv) = b\,\mathrm{strip}(v)$ when $\mathrm{strip}(v)$ is defined,
-while otherwise $\mathrm{strip}(1v) = \varepsilon$ and $\mathrm{strip}(0v)$ is
-undefined. Let $\mathrm{last}(v)$ be computed by reversing $v$, discarding the
-leading $0$s of the reversal, and, if a $1$ remains, deleting it and returning the
-reversal of what follows it, while $\mathrm{last}(v)$ is undefined if no $1$
-remains. Then $\mathrm{last}$ and $\mathrm{strip}$ are equal as partial maps on
-$\{0,1\}^{*}$.
+The partial function that returns the prefix before the last $1$ in a binary string, and
+is undefined when there is no $1$, equals the partial function that recursively strips a
+marked certificate by the same rule.
 \end{lemma}
 
 \begin{definition}[Original-bound test on encoded pairs]
@@ -349,77 +294,61 @@ $|b| \le C(|a|+1)^c$, and returns false on every string that is not a
 well-formed pair encoding.
 \end{definition}
 
-\begin{lemma}[The bound test is polynomial-time computable]
+\begin{lemma}[Polynomial bound test is polynomial-time computable]
 \lean{Complexity.verifier_poly_bound}
 \label{Complexity.verifier_poly_bound}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.verifier_bound, Turing.FinTM.computesFunInTime_pairLenCheck}
 \difficulty{1}
-For $C, c \in \mathbb{N}$ let $\beta_{C,c}(z)$, for a binary string $z$, be the
-bit $1$ if $z = \langle a, b\rangle$ is a well-formed self-delimiting pair encoding
-($a$ with every bit doubled, then $01$, then $b$) with $|b| \le C(|a|+1)^c$, and
-the bit $0$ otherwise. Then for all $C, c \in \mathbb{N}$ the map sending $z$ to
-the one-bit string $\beta_{C,c}(z)$ is polynomial-time computable: some finite
-multi-tape Turing machine over the binary alphabet computes it within
-$D(n+1)^d$ steps on every input of length $n$, for some constants
-$D, d \in \mathbb{N}$.
+For any natural numbers $C$ and $c$, the function that sends a bit string $z$ to the
+one-bit string indicating whether its decoded pair $(a,b)$ satisfies $|b|\le C(|a|+1)^c$
+is polynomial-time computable; strings that do not decode as pairs are assigned
+indicator value $0$.
 \end{lemma}
 
-\begin{lemma}[Deciders in P give polynomial-time indicators]
+\begin{lemma}[Polynomial-time language indicators]
 \lean{Complexity.verifier_poly_indicator}
 \label{Complexity.verifier_poly_indicator}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.mem_P_iff, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_ite, Turing.MultiTapeTM.indicator}
 \difficulty{3}
-Let $V \subseteq \{0,1\}^{*}$ be a language in $\mathsf{P}$, and let
-$\mathbf{1}_V(x)$ be the bit $1$ if $x \in V$ and $0$ otherwise. Then the map
-sending a binary string $x$ to the one-bit string $\mathbf{1}_V(x)$ is
-polynomial-time computable: some finite multi-tape Turing machine over the binary
-alphabet computes it within $D(n+1)^d$ steps on every input of length $n$, for
-some constants $D, d \in \mathbb{N}$.
+Let $V$ be a language over the binary alphabet and suppose $V$ belongs to $mathsf{P}$.
+Then the function sending each binary string $x$ to the one-bit string containing $1$ if
+$x\in V$ and $0$ otherwise is polynomial-time computable.
 \end{lemma}
 
-\begin{lemma}[Polynomial-time indicators give membership in P]
+\begin{lemma}[Polynomial-time indicators define a language in P]
 \lean{Complexity.verifier_mem_P}
 \label{Complexity.verifier_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.mem_P_iff, Turing.MultiTapeTM.indicator}
 \difficulty{1}
-Let $V \subseteq \{0,1\}^{*}$ be a language and let $\mathbf{1}_V(x)$ be the bit
-$1$ if $x \in V$ and $0$ otherwise. If the map sending a binary string $x$ to the
-one-bit string $\mathbf{1}_V(x)$ is polynomial-time computable, i.e.\ some finite
-multi-tape Turing machine over the binary alphabet computes it within $D(n+1)^d$
-steps on every input of length $n$ for some constants $D, d$, then
-$V \in \mathsf{P}$.
+Let $V$ be a language of bit strings. If the function that sends each bit string $x$ to
+the one-bit string indicating whether $x\in V$ is polynomial-time computable, then $V$
+belongs to $\mathsf{P}$.
 \end{lemma}
 
-\begin{lemma}[The reverse length comparison is polynomial-time computable]
+\begin{lemma}[Polynomial-time reverse length comparison]
 \lean{Complexity.verifier_poly_reverseBound}
 \label{Complexity.verifier_poly_reverseBound}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.PolyTimeComputable.pairEncode, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_of_linear, Complexity.polyTimeComputable_pairFstD, Complexity.polyTimeComputable_pairSndD, Complexity.verifier_bound, Complexity.verifier_poly_bound, Turing.FinTM.computesFunInTime_polyUnary, Turing.FinTM.computesFunInTime_prepend, Turing.pairDecode_pairEncode}
 \difficulty{5}
-For a binary string $z$, let $\pi_1(z)$ and $\pi_2(z)$ be the two components $a$
-and $b$ when $z = \langle a, b\rangle$ is a well-formed self-delimiting pair
-encoding ($a$ with every bit doubled, then $01$, then $b$), and let both be the
-empty string otherwise. Then for all $C, c \in \mathbb{N}$, the map sending $z$ to
-the one-bit string recording whether $C(|\pi_1(z)|+1)^c \le |\pi_2(z)|$ is
-polynomial-time computable: some finite multi-tape Turing machine over the binary
-alphabet computes it within $D(n+1)^d$ steps on every input of length $n$, for
-some constants $D, d \in \mathbb{N}$.
+For all $C,c\in\mathbb{N}$, the function on binary strings that sends $z$ to the one-bit
+string containing $1$ exactly when $C(|\pi_1(z)|+1)^c\le |\pi_2(z)|$, and containing $0$
+otherwise, is polynomial-time computable. Here each projection returns the corresponding
+component when $z$ is a valid encoded pair and the empty string otherwise.
 \end{lemma}
 
-\begin{lemma}[The paired verifier is in P]
+\begin{lemma}[Polynomial-time closure of the paired verifier]
 \lean{Complexity.pairedVerifier_mem_P}
 \label{Complexity.pairedVerifier_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.pairFstD, Complexity.pairSndD, Complexity.pairedVerifier, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_of_linear, Complexity.verifier_bound, Complexity.verifier_concat, Complexity.verifier_mem_P, Complexity.verifier_poly_bound, Complexity.verifier_poly_indicator, Complexity.verifier_poly_reverseBound, Turing.FinTM.computesFunInTime_pairConcat, Turing.FinTM.computesFunInTime_pairValid, Turing.MultiTapeTM.indicator, Turing.pairDecode}
 \difficulty{5}
-Let $C, c \in \mathbb{N}$ and let $V \subseteq \{0,1\}^{*}$ be a language in
-$\mathsf{P}$. Then the language of binary strings $y$ that are well-formed
-self-delimiting pair encodings $y = \langle x, u\rangle$ ($x$ with every bit
-doubled, then the separator $01$, then $u$ verbatim) with $|u| = C(|x|+1)^c$ and
-$xu \in V$ also belongs to $\mathsf{P}$.
+Let $C,c\in\mathbb{N}$ and let $V$ be a language of finite bit strings. If $V$ is
+decidable in polynomial time, then the paired verifier language defined by $C,c,$ and
+$V$ is also decidable in polynomial time.
 \end{lemma}
 
 \begin{definition}[Split of a padded input into a pair]
@@ -446,35 +375,25 @@ prefix of $v$ preceding its last $1$; on every other string (a malformed pair, o
 a pair whose second component has no $1$) it outputs the empty string.
 \end{definition}
 
-\begin{lemma}[The padded verifier is in P]
+\begin{lemma}[Polynomial-time closure of padded verification]
 \lean{Complexity.paddedVerifier_mem_P}
 \label{Complexity.paddedVerifier_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.certificateSplit, Complexity.certificateSplit_spec, Complexity.paddedVerifier, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_ite, Complexity.polyTimeComputable_of_linear, Complexity.stripCertificate, Complexity.verifier_bound, Complexity.verifier_mem_P, Complexity.verifier_poly_bound, Complexity.verifier_poly_indicator, Complexity.verifier_split, Complexity.verifier_split_bridge, Complexity.verifier_strip, Complexity.verifier_strip_bridge, Turing.FinTM.computesFunInTime_pairValid, Turing.FinTM.computesFunInTime_splitSolve, Turing.FinTM.computesFunInTime_stripLast, Turing.MultiTapeTM.indicator, Turing.pairDecode, Turing.pairDecode_pairEncode}
 \difficulty{6}
-Let $C, c \in \mathbb{N}$ and let $V \subseteq \{0,1\}^{*}$ be a language in
-$\mathsf{P}$. Consider the language $V^{\mathrm{pad}}_{C,c}$ of binary strings $y$
-such that, for the least $n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist),
-the suffix $v$ of $y$ after its first $n$ bits contains a $1$, and the prefix $u$
-of $v$ preceding its last $1$ satisfies $|u| \le C(n+1)^c$ and
-$\langle x, u\rangle \in V$, where $x$ is the first $n$ bits of $y$ and
-$\langle x, u\rangle$ is the self-delimiting pair encoding ($x$ with every bit
-doubled, then $01$, then $u$). Then $V^{\mathrm{pad}}_{C,c} \in \mathsf{P}$.
+Let $C,c\in\mathbb{N}$ and let $V$ be a language of binary strings in polynomial time.
+The padded verifier for $C,c,V$ is also in polynomial time.
 \end{lemma}
 
-\begin{theorem}[NP via bounded-length paired certificates]
+\begin{theorem}[NP certificates of bounded length]
 \lean{Complexity.mem_NP_iff_exists_length_le}
 \label{Complexity.mem_NP_iff_exists_length_le}
 \leanok
 \uses{Complexity.NP, Complexity.P, Complexity.paddedVerifier, Complexity.paddedVerifier_mem_P, Complexity.paddedVerifier_witness, Complexity.pairedVerifier, Complexity.pairedVerifier_mem_P, Complexity.pairedVerifier_pair, Turing.pairEncode}
 \difficulty{4}
-For a language $L \subseteq \{0,1\}^{*}$, the following are equivalent:
-(i) $L \in \mathsf{NP}$, i.e.\ there are $C', c' \in \mathbb{N}$ and a language
-$V' \in \mathsf{P}$ such that for every binary string $x$, $x \in L$ if and only if
-some $u$ with $|u| = C'(|x|+1)^{c'}$ has $xu \in V'$;
-(ii) there are $C, c \in \mathbb{N}$ and a language $V \in \mathsf{P}$ such that
-for every binary string $x$, $x \in L$ if and only if some binary string $u$ with
-$|u| \le C(|x|+1)^c$ has $\langle x, u\rangle \in V$, where
-$\langle x, u\rangle$ is the self-delimiting pair encoding consisting of $x$ with
-every bit doubled, then the separator $01$, then $u$ verbatim.
+A language $L$ over the binary alphabet belongs to $\mathsf{NP}$ if and only if there
+are natural numbers $C,c$ and a language $V\in\mathsf{P}$ such that, for every binary
+string $x$, $x\in L$ exactly when there is a binary string $u$ with $|u|\le C(|x|+1)^c$
+for which $\langle x,u\rangle\in V$. Here $\langle x,u\rangle$ is formed by doubling
+each bit of $x$, appending the separator $01$, and then appending $u$.
 \end{theorem}

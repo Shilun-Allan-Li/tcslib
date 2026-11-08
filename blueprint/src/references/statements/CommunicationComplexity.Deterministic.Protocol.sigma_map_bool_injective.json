@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.sigma_map_bool_injective",
+ "key": "103366d339f53f56",
+ "kind": "theorem",
+ "title": "Injectivity of a Boolean-indexed sum map",
+ "statement": "Let $\\beta$ and $\\gamma$ be families of types indexed by $b\\in\\{\\mathrm{false},\\mathrm{true}\\}$, and for each $b$ let $g_b:\\beta_b\\to\\gamma_b$ be an injective map. The map from pairs $(b,t)$ with $t\\in\\beta_b$ to pairs $(b,g_b(t))$ is injective.",
+ "hypotheses_covered": [
+  "Families of types $\\beta$ and $\\gamma$ indexed by Boolean values",
+  "For each Boolean index $b$, the map $g_b:\\beta_b\\to\\gamma_b$ is injective"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\beta, \\gamma : \\{\\mathrm{false}, \\mathrm{true}\\} \\to \\mathrm{Type}$ be two\nBoolean-indexed families of types and let $g_b : \\beta_b \\to \\gamma_b$ be a map for each\n$b \\in \\{\\mathrm{false}, \\mathrm{true}\\}$. If every $g_b$ is injective, then the map\n$\\Sigma_b\\, \\beta_b \\to \\Sigma_b\\, \\gamma_b$ sending $(b, t)$ to $(b, g_b(t))$ --- which\nkeeps the Boolean index and applies the family fibrewise --- is injective."
+}

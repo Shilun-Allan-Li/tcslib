@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.ups_start",
+ "key": "da1f9445201390ae",
+ "kind": "theorem",
+ "title": "Initial unary program semantics",
+ "statement": "Let $x$ be a finite Boolean word and $q\\in\\mathbb{Q}$. Assume that $q=0$ whenever there are no natural numbers $n,s,t$ such that $x$ has the prescribed unary graph encoding with endpoints $s,t$ and symmetric encoded edge relation. Assume also that for every such encoding with symmetric edge relation, $q$ equals the probability that a uniformly chosen sequence of $100n^4$ edge slots, followed from $s$ in the associated padded regular multigraph, visits $t$. Then the fixed program, started at its initial state with all fifteen registers zero on input $x$, terminates for every sequence of random choices, keeps every register at most $200(|x|+1)^4$, and accepts with probability $q$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$q$ is rational",
+  "If no unary graph encoding with endpoints and symmetric encoded edge relation exists, then $q=0$",
+  "For every such encoding, $q$ equals the stated walk hitting probability"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and $q$ a rational number. Suppose that $q=0$ whenever there are\nno natural numbers $n,s,t$ for which $x$ has the prescribed unary graph encoding with\nendpoints $s,t$ and its encoded edge relation is symmetric. Suppose also that, for every\nsuch encoding with symmetric edge relation, $q$ equals the probability that a uniformly\nrandom walk of length $100n^4$ in the associated padded regular multigraph, started at\n$s$, visits $t$. Then the fixed randomized program, started in its initial state with\nall registers zero on input $x$, terminates on every sequence of random choices, keeps\nevery register at most $200(|x|+1)^4$, and accepts with probability $q$."
+}

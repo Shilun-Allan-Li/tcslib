@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Meyer.goodF",
+ "key": "42485b599c1110ac",
+ "kind": "def",
+ "title": "Local verification predicate",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean tape alphabet and initial state $q_0$, and let $v$ be a Boolean valuation on the atoms associated with its states and tapes. This predicate assigns a Boolean to each verification item as follows: an initial-state item checks that the state and output register are $(q_0,\\mathrm{empty})$ exactly when the corresponding $t_0,a_0$ atom is true; an initial work-tape item checks that the $t_0,a_c$ atom agrees with whether the represented symbol is blank; and an initial input item checks the analogous $t_0,a_j$ atom against the input symbol specified by the valuation's input-length and input-bit atoms. A zero-sign item requires the two $t_c,a_0$ state answers for opposite sign parameters to agree. A state-transition item imposes the next-state and output-register update when the time atoms are all true and the current configuration and read data satisfy their claims; a work-tape transition item imposes the work-tape consistency condition when those time atoms and all answer atoms are true and the claims hold; an input-transition item imposes the input-tape consistency condition when the time and input-index bounds and claims hold; and an input-boundary item imposes the boundary consistency condition when the time and input-index boundary atoms and claims hold. These four transition checks are vacuously true when their indicated conditions do not hold. A final item requires the $t_1,a_0$ state answer for no state and a one-symbol output register to be true.",
+ "hypotheses_covered": [
+  "A finite-tape Turing machine with Boolean tape alphabet and initial state",
+  "A Boolean valuation on its atoms",
+  "A verification item"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

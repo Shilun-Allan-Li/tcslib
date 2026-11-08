@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tableauSources",
+ "key": "811a8918cc1c5970",
+ "kind": "def",
+ "title": "Sources for a tableau step",
+ "statement": "Let $M$ be a finite Turing machine with Boolean input, and let $n,t\\in\\mathbb{N}$. The source list is formed by concatenating: $w$ copies of the constant-false tableau vertex if $t=0$, where $w$ is the snapshot width of $M$, and otherwise the tableau block for $M$ on input length $n$ at time $t-1$; three entries recording whether $t=0$, whether the input-head position at time $t$ lies between $1$ and $n$, and that position minus one when it does (or the constant-false vertex otherwise); the tape-source lists for each work tape; and, finally, the constant-false vertex if $t=0$, or the vertex at position $w$ in the tableau at time $t-1$ otherwise.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean input",
+  "$n,t$ are natural numbers"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement omits the definitions of the tableau block, tape sources, and tableau vertices, so their precise mathematical meanings cannot be stated self-containedly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinOracleTM.exists_plain_simulation",
+ "key": "31bb5916e5b90485",
+ "kind": "theorem",
+ "title": "Simulation of an oracle computation",
+ "statement": "Let $M$ be a finite-state deterministic oracle Turing machine over Boolean strings, let $D$ be a finite-state deterministic Turing machine that decides the oracle language $O$ within $\\tau(n)$ steps, and let $\\tau$ be a time bound. There exist a finite-state deterministic Turing machine $P$ and a natural number $a$, with at least $k+1$ work tapes if $M$ has $k$ ordinary work tapes, such that the following holds. For every Boolean input $x$, every family $w$ of Boolean words on $M$'s $k+1$ work tapes whose query tape is blank, and every $t$, if $M$ with oracle $O$, started in its initial state with tape contents $w$, halts after $t$ steps, then $P$ started on $x$ with the first $k+1$ words of $w$ on its tapes halts after some $s$ steps and produces the same output, where $s\\le a(t+1)^2+a\\sum_{r=0}^{t-1} q_r$. Here $q_r=\\tau(|v_r|)$ if $M$ is in its query state at step $r$, with $v_r$ the query string then present on its query tape, and $q_r=0$ otherwise.",
+ "hypotheses_covered": [
+  "finite-state deterministic oracle Turing machine $M$ over Booleans",
+  "finite-state deterministic Turing machine $D$",
+  "$D$ decides $O$ within $\\tau(n)$ steps",
+  "input $x$",
+  "initial work-tape words $w$ with blank query tape",
+  "halting oracle run after $t$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "The statement gives no monotonicity hypothesis on $\\tau$; none is included.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -165,106 +165,75 @@ $x$.
 \leanok
 \uses{Std.Sat.CNF.takeTrues}
 \difficulty{3}
-For every $k \in \mathbb{N}$ and every bit string $r$, splitting the bit string
-$1^{k+1}\,0\,r$ into its maximal leading run of $1$s and the remainder gives the run length
-$k+1$ and the remainder $0\,r$.
+For every $k\in\mathbb{N}$ and every finite Boolean string $r$, removing the longest
+initial run of $1$s from $1^{k+1}0r$ returns run length $k+1$ and remainder $0r$.
 \end{theorem}
 
-\begin{theorem}[Literal round trip]
+\begin{theorem}[Literal encoding round trip]
 \lean{Std.Sat.CNF.parseLit_serializeLit}
 \label{Std.Sat.CNF.parseLit_serializeLit}
 \leanok
 \uses{Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeLit, Std.Sat.CNF.takeTrues_replicate}
 \difficulty{1}
-Let $\ell = (v, b)$ be a literal with variable index $v \in \mathbb{N}$ and polarity bit
-$b \in \{0,1\}$, whose binary encoding is $1^{v+1}0b$, and let $r$ be any bit string. The
-literal parser, which on an input of the form $1^{k+1}0cy$ returns the literal $(k,c)$ with
-remainder $y$ and fails on every other input, succeeds on $1^{v+1}0b\,r$ and returns $\ell$
-with remainder $r$.
+For any literal $\ell=(v,b)$, where $v\in\mathbb N$ and $b\in\{0,1\}$, and any finite
+bit string $r$, parsing the concatenation $1^{v+1}0b\,r$ returns the literal $\ell$ and
+remainder $r$.
 \end{theorem}
 
-\begin{theorem}[Clause round trip with suffix and fuel]
+\begin{theorem}[Clause parsing recovers its encoding]
 \lean{Std.Sat.CNF.parseClause_serializeClause}
 \label{Std.Sat.CNF.parseClause_serializeClause}
 \leanok
 \uses{Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit_serializeLit, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
 \difficulty{4}
-Let $C = (\ell_1, \dots, \ell_m)$ be a clause of literals $\ell_i = (v_i, b_i)$ with
-$v_i \in \mathbb{N}$ and $b_i \in \{0,1\}$, and let
-$\mathrm{enc}(C) = 1^{v_1+1}0b_1\cdots1^{v_m+1}0b_m\,0$ be its binary encoding. For every
-bit string $r$ and every fuel $f \ge |\mathrm{enc}(C)|$, the clause parser with fuel $f$
-succeeds on $\mathrm{enc}(C)\,r$ and returns $C$ with remainder $r$. Here the clause parser
-with fuel $f$ on an input $x$ returns the empty clause and remainder $y$ when $x = 0y$; when
-$f = g+1$ and $x = 1^{k+1}0cy$ it prepends the literal $(k,c)$ to the clause returned by the
-clause parser with fuel $g$ on $y$, keeping that call's remainder and failing if it fails;
-and it fails on every other input.
+Let $C$ be a clause, let $r$ be a bit string, and let $f\in\mathbb{N}$. If the length of
+the encoding of $C$ is at most $f$, then parsing the encoding of $C$ followed by $r$ as
+a clause with fuel $f$ returns $C$ and remainder $r$.
 \end{theorem}
 
-\begin{theorem}[Formula round trip with suffix and fuel]
+\begin{theorem}[Formula parsing recovers its encoding]
 \lean{Std.Sat.CNF.parseClauses_serialize}
 \label{Std.Sat.CNF.parseClauses_serialize}
 \leanok
 \uses{Std.Sat.CNF.parseClause_serializeClause, Std.Sat.CNF.parseClauses, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
 \difficulty{4}
-Let $\varphi = (C_1,\dots,C_k)$ be a CNF formula over variables indexed by $\mathbb{N}$, and
-let $\mathrm{enc}(\varphi) = 1\,\mathrm{enc}(C_1)\cdots1\,\mathrm{enc}(C_k)\,0$ be its binary
-encoding, where a clause with literals $(v_1,b_1),\dots,(v_m,b_m)$ is encoded as
-$1^{v_1+1}0b_1\cdots1^{v_m+1}0b_m\,0$. For every bit string $r$ and every fuel
-$f \ge |\mathrm{enc}(\varphi)|$, the formula parser with fuel $f$ succeeds on
-$\mathrm{enc}(\varphi)\,r$ and returns $\varphi$ with remainder $r$. Here the formula parser
-with fuel $f$ on an input $x$ returns the empty formula and remainder $y$ when $x = 0y$;
-when $f = g+1$ and $x = 1y$ it parses a clause $C$ from $y$ with fuel $g$, leaving $z$, then
-a formula $\psi$ from $z$ with fuel $g$, leaving $w$, and returns $C$ followed by the clauses
-of $\psi$ with remainder $w$; and it fails otherwise. The clause parser with fuel $g$ on $u$
-returns the empty clause and remainder $u'$ when $u = 0u'$, and when $g = h+1$ and
-$u = 1^{j+1}0cu'$ it prepends the literal $(j,c)$ to the clause parsed from $u'$ with fuel
-$h$, keeping that remainder; it fails otherwise.
+Let $\varphi$ be a CNF formula, let $r$ be a bit string, and let $f\in\mathbb{N}$. If
+the length of the encoding of $\varphi$ is at most $f$, then parsing the encoding of
+$\varphi$ followed by $r$ as a formula with fuel $f$ returns $\varphi$ and remainder
+$r$.
 \end{theorem}
 
-\begin{theorem}[Parsing inverts the binary encoding]
+\begin{theorem}[Formula encoding round trip]
 \lean{Std.Sat.CNF.parse_serialize}
 \label{Std.Sat.CNF.parse_serialize}
 \leanok
 \uses{Std.Sat.CNF.parse, Std.Sat.CNF.parseClauses_serialize, Std.Sat.CNF.serialize}
 \difficulty{3}
-For every CNF formula $\varphi$ over variables indexed by $\mathbb{N}$, the exact-consumption
-parser applied to the binary encoding $\mathrm{enc}(\varphi)$ succeeds and returns
-$\varphi$. Here a literal $(v,b)$ is encoded as $1^{v+1}0b$, a clause as the concatenation
-of its literal encodings followed by $0$, and a formula $(C_1,\dots,C_k)$ as
-$1\,\mathrm{enc}(C_1)\cdots1\,\mathrm{enc}(C_k)\,0$; the parser on a bit string $x$ reads
-$x$, with recursion fuel $|x|$, according to the grammar
-$\langle\text{formula}\rangle ::= 0 \mid 1\,\langle\text{clause}\rangle\,\langle\text{formula}\rangle$,
-$\langle\text{clause}\rangle ::= 0 \mid \langle\text{literal}\rangle\,\langle\text{clause}\rangle$,
-$\langle\text{literal}\rangle ::= 1^{k+1}\,0\,b$ (the literal $(k,b)$), and succeeds only if
-it consumes all of $x$.
+For every CNF formula $\varphi$ over variables indexed by $\mathbb N$, exact-consumption
+parsing of its binary encoding returns $\varphi$. The encoding uses $1^{v+1}0b$ for a
+literal $(v,b)$, appends $0$ after each clause, and prefixes each clause by $1$ before
+ending the formula with $0$.
 \end{theorem}
 
-\begin{theorem}[Decoding inverts the binary encoding]
+\begin{theorem}[Decoding a serialized CNF formula]
 \lean{Std.Sat.CNF.decode_serialize}
 \label{Std.Sat.CNF.decode_serialize}
 \leanok
 \uses{Std.Sat.CNF.decode, Std.Sat.CNF.parse_serialize, Std.Sat.CNF.serialize}
 \difficulty{1}
-For every CNF formula $\varphi$ over variables indexed by $\mathbb{N}$,
-$\mathrm{dec}(\mathrm{enc}(\varphi)) = \varphi$. Here a literal $(v,b)$ is encoded as
-$1^{v+1}0b$, a clause as the concatenation of its literal encodings followed by $0$, and a
-formula $(C_1,\dots,C_k)$ as $1\,\mathrm{enc}(C_1)\cdots1\,\mathrm{enc}(C_k)\,0$; and
-$\mathrm{dec}(x)$ is the formula obtained by parsing the bit string $x$, with recursion fuel
-$|x|$, according to the grammar
-$\langle\text{formula}\rangle ::= 0 \mid 1\,\langle\text{clause}\rangle\,\langle\text{formula}\rangle$,
-$\langle\text{clause}\rangle ::= 0 \mid \langle\text{literal}\rangle\,\langle\text{clause}\rangle$,
-$\langle\text{literal}\rangle ::= 1^{k+1}\,0\,b$ (the literal $(k,b)$) when this parse
-consumes all of $x$, and the empty formula otherwise.
+For every CNF formula $\varphi$ over variables indexed by $\mathbb{N}$, decoding its
+binary serialization returns $\varphi$.
 \end{theorem}
 
-\begin{theorem}[Leading-run split preserves length]
+\begin{theorem}[Length of the leading-one split]
 \lean{Std.Sat.CNF.takeTrues_length}
 \label{Std.Sat.CNF.takeTrues_length}
 \leanok
 \uses{Std.Sat.CNF.takeTrues}
 \difficulty{4}
-For every bit string $x$, if $k$ is the length of the longest prefix of $x$ consisting only
-of $1$s and $y$ is the remainder of $x$ after that prefix, then $k + |y| = |x|$.
+For every finite Boolean string $x$, let $(k,y)$ be the pair obtained by removing its
+longest initial run of $1$s, so that $k$ is the run length and $y$ is the remaining
+string. Then $k+|y|=|x|$.
 \end{theorem}
 
 \begin{theorem}[Length consumed by a literal parse]
@@ -273,10 +242,8 @@ of $1$s and $y$ is the remainder of $x$ after that prefix, then $k + |y| = |x|$.
 \leanok
 \uses{Std.Sat.CNF.parseLit, Std.Sat.CNF.takeTrues_length}
 \difficulty{4}
-Let $x$ and $r$ be bit strings and let $(v, b)$ be a literal with $v \in \mathbb{N}$ and
-$b \in \{0,1\}$. If the literal parser, which on an input $1^{k+1}0cy$ returns the literal
-$(k,c)$ with remainder $y$ and fails on every other input, returns $(v,b)$ with remainder
-$r$ when applied to $x$, then $v + 3 + |r| = |x|$.
+Let $x$ and $r$ be bit strings, and let $\ell=(v,b)$ be a literal. If parsing $x$ as a
+literal returns $\ell$ and remainder $r$, then $v+3+|r|=|x|$.
 \end{theorem}
 
 \begin{theorem}[Bounds for a successful clause parse]
@@ -285,14 +252,9 @@ $r$ when applied to $x$, then $v + 3 + |r| = |x|$.
 \leanok
 \uses{Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.parseLit_length}
 \difficulty{5}
-Let $f \in \mathbb{N}$, let $x$ and $r$ be bit strings and let $C$ be a clause of literals
-$(v,b)$ with $v \in \mathbb{N}$ and $b \in \{0,1\}$. Suppose the clause parser with fuel $f$
-succeeds on $x$ and returns $C$ with remainder $r$. Then $|r| \le |x|$, and every literal
-$(v,b)$ of $C$ satisfies $v + 1 + |r| \le |x|$. Here the clause parser with fuel $f$ on $x$
-returns the empty clause and remainder $y$ when $x = 0y$; when $f = g+1$ and
-$x = 1^{k+1}0cy$ it prepends the literal $(k,c)$ to the clause returned by the clause parser
-with fuel $g$ on $y$, keeping that call's remainder and failing if it fails; and it fails on
-every other input.
+Let $f\in\mathbb{N}$, let $x$ and $r$ be bit strings, and let $C$ be a clause of
+literals $(v,b)$. If parsing $x$ as a clause with fuel $f$ returns $C$ and remainder
+$r$, then $|r|\le |x|$, and every literal $(v,b)$ in $C$ satisfies $v+1+|r|\le |x|$.
 \end{theorem}
 
 \begin{theorem}[Bounds for a successful formula parse]
@@ -301,45 +263,183 @@ every other input.
 \leanok
 \uses{Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClause_bounds, Std.Sat.CNF.parseClauses}
 \difficulty{5}
-Let $f \in \mathbb{N}$, let $x$ and $r$ be bit strings and let $\varphi$ be a CNF formula
-over variables indexed by $\mathbb{N}$. Suppose the formula parser with fuel $f$ succeeds on
-$x$ and returns $\varphi$ with remainder $r$. Then $|r| \le |x|$, and every literal $(v,b)$
-of every clause of $\varphi$ satisfies $v + 1 + |r| \le |x|$. Here the formula parser with
-fuel $f$ on $x$ returns the empty formula and remainder $y$ when $x = 0y$; when $f = g+1$
-and $x = 1y$ it parses a clause $C$ from $y$ with fuel $g$, leaving $z$, then a formula
-$\psi$ from $z$ with fuel $g$, leaving $w$, and returns $C$ followed by the clauses of
-$\psi$ with remainder $w$; and it fails otherwise. The clause parser with fuel $g$ on $u$
-returns the empty clause and remainder $u'$ when $u = 0u'$, and when $g = h+1$ and
-$u = 1^{j+1}0cu'$ it prepends the literal $(j,c)$ to the clause parsed from $u'$ with fuel
-$h$, keeping that remainder; it fails otherwise.
+Let $f\in\mathbb{N}$, let $x$ and $r$ be bit strings, and let $\varphi$ be a CNF formula
+over variables indexed by $\mathbb{N}$. If parsing $x$ as a formula with fuel $f$
+returns $\varphi$ and remainder $r$, then $|r|\le |x|$, and every literal $(v,b)$ in
+every clause of $\varphi$ satisfies $v+1+|r|\le |x|$.
 \end{theorem}
 
-\begin{theorem}[Variable count from per-literal bounds]
+\begin{theorem}[Variable count from literal bounds]
 \lean{Std.Sat.CNF.numVars_le_of_literal_bounds}
 \label{Std.Sat.CNF.numVars_le_of_literal_bounds}
 \leanok
 \uses{Std.Sat.CNF.numVars}
 \difficulty{4}
-Let $\varphi$ be a CNF formula over variables indexed by $\mathbb{N}$ and let
-$n \in \mathbb{N}$. If every literal $(v,b)$ of every clause of $\varphi$ satisfies
-$v + 1 \le n$, then $N(\varphi) \le n$, where the variable count $N(\varphi)$ is one plus
-the largest variable index occurring in a literal of $\varphi$, or $0$ if $\varphi$ contains
-no literal.
+Let $\varphi$ be a CNF formula over variables indexed by $\mathbb{N}$, and let
+$n\in\mathbb{N}$. If every literal $(v,b)$ in every clause of $\varphi$ satisfies
+$v+1\le n$, then the variable count $N(\varphi)$ is at most $n$.
 \end{theorem}
 
-\begin{theorem}[Variable count of a decoded formula]
+\begin{theorem}[Variable count bound for decoded formulas]
 \lean{Std.Sat.CNF.numVars_decode_le}
 \label{Std.Sat.CNF.numVars_decode_le}
 \leanok
 \uses{Std.Sat.CNF.decode, Std.Sat.CNF.numVars, Std.Sat.CNF.numVars_le_of_literal_bounds, Std.Sat.CNF.parse, Std.Sat.CNF.parseClauses, Std.Sat.CNF.parseClauses_bounds}
 \difficulty{4}
-For every bit string $x$, the decoded formula satisfies $N(\mathrm{dec}(x)) \le |x|$. Here
-the variable count $N(\varphi)$ of a CNF formula $\varphi$ is one plus the largest variable
-index occurring in a literal of $\varphi$, or $0$ if no literal occurs, and $\mathrm{dec}(x)$
-is the formula obtained by parsing $x$, with recursion fuel $|x|$, according to the grammar
-$\langle\text{formula}\rangle ::= 0 \mid 1\,\langle\text{clause}\rangle\,\langle\text{formula}\rangle$,
-$\langle\text{clause}\rangle ::= 0 \mid \langle\text{literal}\rangle\,\langle\text{clause}\rangle$,
-$\langle\text{literal}\rangle ::= 1^{k+1}\,0\,b$ (the literal with variable index
-$k \in \mathbb{N}$ and polarity $b \in \{0,1\}$) when this parse consumes all of $x$, and
-the empty formula otherwise.
+For every finite bit string $x$, the variable count of the CNF formula obtained by
+decoding $x$ is at most the length of $x$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Reconstruction from the leading-one split]
+\lean{Std.Sat.CNF.takeTrues_repr}
+\label{Std.Sat.CNF.takeTrues_repr}
+\leanok
+\uses{Std.Sat.CNF.takeTrues}
+\difficulty{4}
+For every finite Boolean string $x$, if $(k,y)$ is obtained by removing its longest
+initial run of $1$s, then $1^k y=x$.
+\end{theorem}
+
+\begin{theorem}[Literal parsing representation]
+\lean{Std.Sat.CNF.parseLit_repr}
+\label{Std.Sat.CNF.parseLit_repr}
+\leanok
+\uses{Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeLit, Std.Sat.CNF.takeTrues_repr}
+\difficulty{4}
+Let $x$ and $r$ be finite bit strings, and let $\ell=(v,b)$ be a literal with variable
+index $v\in\mathbb N$ and polarity bit $b\in\{0,1\}$. If parsing $x$ returns $\ell$ and
+remainder $r$, then $x=1^{v+1}0b\,r$.
+\end{theorem}
+
+\begin{theorem}[Representation of a successful clause parse]
+\lean{Std.Sat.CNF.parseClause_repr}
+\label{Std.Sat.CNF.parseClause_repr}
+\leanok
+\uses{Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.parseLit_repr, Std.Sat.CNF.serializeClause}
+\difficulty{5}
+Let $f\in\mathbb{N}$, let $x$ and $r$ be bit strings, and let $C$ be a clause of
+literals. If parsing $x$ as a clause with fuel $f$ returns $C$ and remainder $r$, then
+$x$ is the encoding of $C$ followed by $r$.
+\end{theorem}
+
+\begin{theorem}[Representation of a successful formula parse]
+\lean{Std.Sat.CNF.parseClauses_repr}
+\label{Std.Sat.CNF.parseClauses_repr}
+\leanok
+\uses{Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClause_repr, Std.Sat.CNF.parseClauses, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
+\difficulty{5}
+Let $f\in\mathbb{N}$, let $x$ and $r$ be bit strings, and let $\varphi$ be a CNF
+formula. If parsing $x$ as a formula with fuel $f$ returns $\varphi$ and remainder $r$,
+then $x$ is the encoding of $\varphi$ followed by $r$.
+\end{theorem}
+
+\begin{theorem}[Formula parsing representation]
+\lean{Std.Sat.CNF.parse_repr}
+\label{Std.Sat.CNF.parse_repr}
+\leanok
+\uses{Std.Sat.CNF.parse, Std.Sat.CNF.serialize}
+\difficulty{3}
+Let $x$ be a finite bit string and let $\varphi$ be a CNF formula over variables indexed
+by $\mathbb N$. If exact-consumption parsing of $x$ returns $\varphi$, then $x$ is the
+binary encoding of $\varphi$: each literal $(v,b)$ is encoded as $1^{v+1}0b$, each
+clause as the concatenation of its literal encodings followed by $0$, and the formula as
+the concatenation of $1$ followed by each clause encoding, with a final $0$.
+\end{theorem}
+
+\begin{definition}[Boolean syntax state transition]
+\lean{Std.Sat.CNF.syntaxStep}
+\label{Std.Sat.CNF.syntaxStep}
+\leanok
+For a state $q\in\{0,1,2,3,4,5\}$ and a Boolean $b$, define the next state as follows:
+from state $0$ it is $1$ if $b$ is true and $4$ otherwise; from state $1$ it is $2$ if
+$b$ is true and $0$ otherwise; from state $2$ it is $2$ if $b$ is true and $3$
+otherwise; from state $3$ it is $1$, and from either state $4$ or $5$ it is $5$.
+\end{definition}
+
+\begin{definition}[Valid Boolean-list suffixes]
+\lean{Std.Sat.CNF.SyntaxSuffix}
+\label{Std.Sat.CNF.SyntaxSuffix}
+\leanok
+\uses{Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
+For a state $q\in\{0,1,2,3,4,5\}$ and a Boolean list $x$, define the suffix condition as
+follows. At state $0$, $x$ is the serialization of some CNF formula over $\mathbb N$; at
+state $1$, it is the serialization of a clause followed by the serialization of a CNF
+formula. At state $2$, it consists of $v$ true entries, then false and a Boolean $b$,
+followed by a serialized clause and a serialized CNF formula, for some $v\in\mathbb N$;
+at state $3$, it consists of a Boolean $b$ followed by a serialized clause and a
+serialized CNF formula. At state $4$, $x$ is empty, and at state $5$ the condition is
+false.
+\end{definition}
+
+\begin{theorem}[Syntax suffix under a leading bit]
+\lean{Std.Sat.CNF.syntaxSuffix_cons}
+\label{Std.Sat.CNF.syntaxSuffix_cons}
+\leanok
+\uses{Std.Sat.CNF.SyntaxSuffix, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit, Std.Sat.CNF.syntaxStep}
+\difficulty{5}
+For a state $q\in\{0,1,2,3,4,5\}$ and a bit string $x$, define the suffix condition as
+follows: in state $0$, $x$ encodes a CNF formula; in state $1$, it is a clause encoding
+followed by a formula encoding; in state $2$, it has the form $1^v0b$ followed by a
+clause encoding and a formula encoding, for some $v\in\mathbb N$ and $b\in\{0,1\}$; in
+state $3$, it is a bit followed by a clause encoding and a formula encoding; in state
+$4$, it is empty; and in state $5$, the condition is false. For every such state $q$,
+bit $b$, and finite bit string $x$, the condition holds for $b$ followed by $x$ exactly
+when it holds for $x$ in the state reached from $q$ by the transition rule: on input
+$1$, states $0,1,2,3$ go respectively to $1,2,2,1$; on input $0$, they go respectively
+to $4,0,3,1$; either input from states $4$ or $5$ leads to $5$.
+\end{theorem}
+
+\begin{theorem}[Empty syntax suffix]
+\lean{Std.Sat.CNF.syntaxSuffix_nil}
+\label{Std.Sat.CNF.syntaxSuffix_nil}
+\leanok
+\uses{Std.Sat.CNF.SyntaxSuffix, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause}
+\difficulty{4}
+For a state $q\in\{0,1,2,3,4,5\}$, the empty bit string satisfies the syntax suffix
+condition at state $q$ if and only if $q=4$.
+\end{theorem}
+
+\begin{theorem}[Syntax suffix recognition]
+\lean{Std.Sat.CNF.syntaxSuffix_run}
+\label{Std.Sat.CNF.syntaxSuffix_run}
+\leanok
+\uses{Std.Sat.CNF.SyntaxSuffix, Std.Sat.CNF.syntaxStep, Std.Sat.CNF.syntaxSuffix_cons, Std.Sat.CNF.syntaxSuffix_nil}
+\difficulty{4}
+For a state $q\in\{0,1,2,3,4,5\}$ and a finite bit string $x$, the following condition
+holds exactly when processing $x$ from state $q$ by the transitions specified below ends
+in state $4$: at state $0$, $x$ is the encoding of a CNF formula; at state $1$, it is
+the encoding of a clause followed by the encoding of a CNF formula; at state $2$, it has
+the form $1^v0b$ followed by the encoding of a clause and the encoding of a CNF formula,
+for some $v\in\mathbb N$ and bit $b$; at state $3$, it is a bit followed by the encoding
+of a clause and the encoding of a CNF formula; at state $4$, $x$ is empty; and at state
+$5$, the condition is false. On input $1$, states $0,1,2,3$ move respectively to
+$1,2,2,1$, while on input $0$ they move respectively to $4,0,3,1$; from either state $4$
+or state $5$, either input moves to state $5$.
+\end{theorem}
+
+\begin{definition}[Boolean syntax validity test]
+\lean{Std.Sat.CNF.syntaxOK}
+\label{Std.Sat.CNF.syntaxOK}
+\leanok
+\uses{Std.Sat.CNF.syntaxStep}
+For a list $x$ of Boolean values, define its syntax-validity test to return true exactly
+when iterating the Boolean syntax transition over $x$, starting from state $0$, ends at
+state $4$.
+\end{definition}
+
+\begin{theorem}[Syntax test characterizes parseability]
+\lean{Std.Sat.CNF.syntaxOK_spec}
+\label{Std.Sat.CNF.syntaxOK_spec}
+\leanok
+\uses{Std.Sat.CNF.parse, Std.Sat.CNF.parse_repr, Std.Sat.CNF.parse_serialize, Std.Sat.CNF.serialize, Std.Sat.CNF.syntaxOK, Std.Sat.CNF.syntaxSuffix_run}
+\difficulty{4}
+For every finite bit string $x$, start a six-state machine in state $0$ and process the
+bits of $x$ in order, with states numbered $0$ through $5$. On input $1$, the
+transitions from states $0,1,2,3$ are respectively to $1,2,2,1$; on input $0$, they are
+respectively to $4,0,3,1$; either input from states $4$ or $5$ leads to state $5$. The
+syntax test returns true exactly when this process ends in state $4$, which holds
+exactly when exact-consumption parsing of $x$ succeeds.
 \end{theorem}

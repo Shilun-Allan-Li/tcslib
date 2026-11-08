@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.drop_lookup",
+ "key": "f19754402d7b492a",
+ "kind": "lemma",
+ "title": "Lookup from the Search State",
+ "statement": "Let $mode$ be a Boolean mode, let $w,b,b'$ be bit strings, let $q$ be a natural number, and let $v$ assign natural numbers to the nine registers. Suppose every register value is at most $4|\\langle\\langle\\langle w,b\\rangle,b'\\rangle,\\mathrm{bits}(q)\\rangle|+4$, and the registers satisfy $v(0)=0$, $v(5)=4(2|w|+2)$, $v(3)=4|\\langle w,b\\rangle|+4$, $v(2)=4|\\langle w,b\\rangle|+4+2|b'|$, $v(6)=q$, and $v(7)=0$. Starting on input $\\langle\\langle\\langle w,b\\rangle,b'\\rangle,\\mathrm{bits}(q)\\rangle$ in state $seek(false)$ with values $v$ and no answer, the machine halts with the test $q<|dropIdx(\\langle\\langle w,b\\rangle,b'\\rangle)|$ when $mode$ is true, and otherwise with the bit of that decoded string at position $q$, defaulting to false when out of range. Every configuration before halting satisfies the machine's safety condition and register bound.",
+ "hypotheses_covered": [
+  "mode is a Boolean machine mode",
+  "w, b, and b' are bit strings",
+  "q is a natural number",
+  "v assigns natural-number values to the nine registers",
+  "every register is bounded by four times the encoded input length plus four",
+  "v(0)=0",
+  "v(5)=4(2|w|+2)",
+  "v(3)=4|⟨w,b⟩|+4",
+  "v(2)=4|⟨w,b⟩|+4+2|b'|",
+  "v(6)=q",
+  "v(7)=0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitPrepare_extra",
+ "key": "e5e5764a7bb69f7f",
+ "kind": "lemma",
+ "title": "Preparation scan’s extra cell",
+ "statement": "For every natural number $k$ and Boolean words $w,s$, one step of the preparation machine from its scan configuration after scanning $|s|$ cells yields its ready configuration in phase $1$, with work-head displacement $|s|-1$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w,s$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $w$ and candidate $s$, one step of the preparation machine\nfrom the end of its scan yields the prepared configuration in its rewind\nphase, in which every scratch tape holds the unary word of length\n$\\abs{s}+1$ and all work heads are at displacement $\\abs{s}-1$; the uniform\nextra cell makes the empty candidate need no special case."
+}

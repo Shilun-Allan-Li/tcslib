@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timed_execute",
+ "key": "62475a7c51f07f84",
+ "kind": "lemma",
+ "title": "Execution of a retained action",
+ "statement": "Let $x$ be a bit string, $c$ a four-tape interpreter configuration on input $x$, $b$ a clock word, and suppose the control state of $c$ is the pending-action state carrying action bits $a$ and halting flag $h$. If the six-tape timed interpreter is started from the lift of $c$ with clock word $b$, but with its control set to the execute phase carrying $a$ and $h$, then one step produces the lift of the result of one step of the four-tape table interpreter from $c$, with clock word $b$ unchanged.",
+ "hypotheses_covered": [
+  "input bit string $x$",
+  "four-tape configuration $c$",
+  "clock word $b$",
+  "action bits $a$ and halting flag $h$",
+  "$c$ has pending-action control carrying $a,h$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the six-tape lift of a pending-action configuration, with the control\nreplaced by the execute phase, one step of the timed interpreter applies the\nretained source action: the result equals the lift of one step of the\nunstopped table interpreter from the four-tape configuration, with the clock\nword unchanged."
+}

@@ -1,15 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output",
- "key": "73246de07ace9852",
+ "key": "bbbd929619b489d0",
  "kind": "theorem",
- "title": "Execution agrees with the transcript output",
- "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$, and let $(x, y) \\in X \\times Y$ be an input pair. Running $p$ on $x$ and $y$ produces the same value as first executing $p$ on $(x,y)$ to obtain its syntactic transcript and then reading off the output value attached to the leaf of that transcript.",
+ "title": "Execution equals transcript output",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, let $p$ be a deterministic two-party communication protocol with inputs in $X$ and $Y$ and outputs in $\\alpha$, and let $(x,y)\\in X\\times Y$. Running $p$ on $(x,y)$ gives the same value as reading the output attached to the transcript produced by that execution.",
  "hypotheses_covered": [
-  "p is a protocol over X, Y with output type α",
-  "an input pair (x, y) in X × Y"
+  "A protocol $p$ over input types $X,Y$ and output type $\\alpha$",
+  "An input pair $(x,y)\\in X\\times Y$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "For every protocol $p$ and input pair $xy$, running $p$ yields the same result as\nreading the output from the computed transcript:\n$p.\\mathrm{run}(xy.1, xy.2) = \\mathrm{Transcript.output}(p.\\mathrm{transcript}(xy))$."
+ "replaced": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)\nand $Y$ (Bob) with output type $\\alpha$, and let $(x, y) \\in X \\times Y$ be an input\npair. Running $p$ on $x$ and $y$ produces the same value as first executing $p$ on\n$(x,y)$ to obtain its syntactic transcript and then reading off the output value\nattached to the leaf of that transcript."
 }

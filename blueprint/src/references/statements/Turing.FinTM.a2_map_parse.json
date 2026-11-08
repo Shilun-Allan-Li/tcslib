@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.a2_map_parse",
+ "key": "55d469122ee1024d",
+ "kind": "lemma",
+ "title": "Parsing a remaining input suffix",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, and let $x$ and $r$ be Boolean words. For every Boolean prefix $p$ and buffer word $a$ such that $x= p r$, there is a time $t\\le 3|r|+3|a|+5$ with the following property. If decoding $r$ yields $(d,b)$, then the non-forward simulator started in its parsing state at input position $|p|+1$, with buffer $a$, empty second buffer, head positions $|a|$ and $0$, and empty output, reaches the virtual configuration for $M$ initialized on $b$, with tag true, input position $|x|+1$, buffer $a$ followed by $d$, and output the encoding of $(a d,[])$. If decoding $r$ is undefined, that configuration at time $t$ is halted and has empty output.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,r$ are Boolean words",
+  "for every Boolean prefix $p$",
+  "for every Boolean buffer word $a$",
+  "$x=pr$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

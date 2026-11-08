@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.universalPrefix_penultimate",
+ "key": "d06a8abd4ade929c",
+ "kind": "lemma",
+ "title": "Prefix parser before halting",
+ "statement": "Let $\\alpha$ and $x$ be finite bit strings. Starting on the encoding that doubles each bit of $\\alpha$, then appends $01$ and $x$, the prefix parser after $2|\\alpha|+1$ steps is in the live state recording the bit $0$, its input head is at position $2|\\alpha|+2$, and its output is exactly $\\alpha$.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are finite bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $\\alpha$ and $x$, after exactly $2\\abs{\\alpha}+1$\ntransitions on the self-delimiting pairing $\\langle \\alpha, x\\rangle$, the\ndoubled-bit prefix parser is in the live state recording the separator's\nfirst bit $0$, its input head is at position $2\\abs{\\alpha}+2$, and it has\nemitted exactly $\\alpha$."
+}

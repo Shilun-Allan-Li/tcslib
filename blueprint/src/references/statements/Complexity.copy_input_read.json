@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.copy_input_read",
+ "key": "bfe86ab39fad2355",
+ "kind": "lemma",
+ "title": "Symbol Read at the Copy Position",
+ "statement": "Let $S$ be a type, let $k$ be a natural number, let $x$ be a Boolean word, and let $c$ be a configuration with $k$ work tapes on the input obtained by embedding each bit of $x$ into the simulation alphabet. If $j\\le |x|$ and the input head is at position $j+1$, then the symbol read is the embedded bit at position $j$ when $j<|x|$, and is blank when $j=|x|$.",
+ "hypotheses_covered": [
+  "$S$ is a type",
+  "$k$ is a natural number",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration on the letterwise embedded input, with $k$ work tapes",
+  "$j\\le |x|$",
+  "The input-head position is $j+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word embedded letterwise into the simulation alphabet, and\nlet a configuration on this embedded input have its input head at position\n$j + 1$ with $j \\le |x|$.  Then the input read is the bit symbol of $x_j$ when\n$j < |x|$, and blank when $j = |x|$; this includes the empty input."
+}

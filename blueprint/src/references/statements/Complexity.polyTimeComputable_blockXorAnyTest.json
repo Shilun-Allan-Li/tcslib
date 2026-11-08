@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_blockXorAnyTest",
+ "key": "337062b64f9ce224",
+ "kind": "theorem",
+ "title": "Polynomial-Time Block XOR Test",
+ "statement": "Let $V$ be a language of finite bit strings whose Boolean membership indicator, output as a one-bit word, is polynomial-time computable. For any $a,k,a',k'\\in\\mathbb{N}$, the following function is polynomial-time computable: on input $w$, parse its first component as a pair to obtain $x$ (using the empty word if parsing fails), and let $y$ be the second component of $w$ (again using the empty word if parsing fails). For each of the first $a'(|x|+1)^{k'}$ blocks of length $a(|x|+1)^k$ in the parsed second component of the inner pair, take the bitwise XOR with the corresponding initial segment of $y$, truncating to the shorter word; the output is true exactly when at least one resulting word, paired with $x$, belongs to $V$.",
+ "hypotheses_covered": [
+  "$V$ is a language of finite bit strings",
+  "The one-bit membership indicator of $V$ is polynomial-time computable",
+  "$a,k,a',k'\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -30,55 +30,37 @@ the value is $\mathrm{true}$. ([AB09, \S 1.5] writes: $UC(\alpha) = 0$ if
 $M_\alpha(\alpha) = 1$, and $UC(\alpha) = 1$ otherwise.)
 \end{definition}
 
-\begin{theorem}[Characterization of the value false of the diagonal function]
+\begin{theorem}[False value of the diagonal function]
 \lean{Complexity.UC_eq_false_iff}
 \label{Complexity.UC_eq_false_iff}
 \leanok
 \uses{Complexity.UC, Turing.CodeTM.toFinTM, Turing.FinTM.ComputesInTime, Turing.MachineCode}
 \difficulty{2}
-Let $c$ be a representation scheme for Turing machines in code normal form (one
-work tape, binary alphabet; a total decoding of bit strings to machines,
-inverted by the encoding), and let $\alpha$ be a bit string. Then the diagonal
-function of $c$ takes the value $\mathrm{false}$ at $\alpha$ --- i.e.\
-$\mathrm{UC}_c(\alpha) = \mathrm{false}$ --- if and only if there exists a
-number of steps $t$ within which the machine denoted by $\alpha$ under $c$,
-run on the input $\alpha$ itself, halts with completed output the one-bit
-string $[\mathrm{true}]$.
+Let $c$ be a machine representation scheme and let $\alpha$ be a bit string. The
+diagonal function of $c$ has value false at $\alpha$ if and only if the machine decoded
+from $\alpha$, run on input $\alpha$, halts within some finite number of steps with
+output exactly the one-bit string $[1]$.
 \end{theorem}
 
-\begin{theorem}[Characterization of the value true of the diagonal function]
+\begin{theorem}[True value of the diagonal function]
 \lean{Complexity.UC_eq_true_iff}
 \label{Complexity.UC_eq_true_iff}
 \leanok
 \uses{Complexity.UC, Turing.CodeTM.toFinTM, Turing.FinTM.ComputesInTime, Turing.MachineCode}
 \difficulty{2}
-Let $c$ be a representation scheme for Turing machines in code normal form (one
-work tape, binary alphabet; a total decoding of bit strings to machines,
-inverted by the encoding), and let $\alpha$ be a bit string. Then the diagonal
-function of $c$ takes the value $\mathrm{true}$ at $\alpha$ --- i.e.\
-$\mathrm{UC}_c(\alpha) = \mathrm{true}$ --- if and only if there is no number
-of steps $t$ within which the machine denoted by $\alpha$ under $c$, run on the
-input $\alpha$ itself, halts with completed output the one-bit string
-$[\mathrm{true}]$: the machine diverges on $\alpha$, or halts with a completed
-output other than $[\mathrm{true}]$.
+Let $c$ be a machine representation scheme and let $\alpha$ be a bit string. The
+diagonal function of $c$ has value true at $\alpha$ if and only if there is no finite
+number of steps within which the machine decoded from $\alpha$, run on input $\alpha$,
+halts with output exactly the one-bit string $[1]$.
 \end{theorem}
 
 \begin{theorem}[Uncomputability of the diagonal function]
 \lean{Complexity.UC_not_computable}
 \label{Complexity.UC_not_computable}
 \leanok
-\uses{Complexity.Computable, Complexity.UC, Complexity.UC_eq_false_iff, Turing.CodeTM.toFinTM, Turing.FinTM.Computes.exists_computesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.MachineCode, Turing.MachineCode.decode_encode, Turing.exists_codeTM}
+\uses{Complexity.Computable, Complexity.UC, Complexity.UC_eq_false_iff, Turing.CodeTM.toFinTM, Turing.FinTM.Computes.exists_computesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.one_work_tape_binary, Turing.MachineCode, Turing.MachineCode.decode_encode, Turing.exists_codeTM}
 \difficulty{5}
-Let $c$ be any representation scheme for Turing machines in code normal form
-(one work tape, binary alphabet; a total decoding of bit strings to machines,
-inverted by the encoding), effective or not, and let $\mathrm{UC}_c$ be its
-diagonal function: $\mathrm{UC}_c(\alpha) = \mathrm{false}$ if the machine
-denoted by $\alpha$ under $c$ halts on the input $\alpha$ itself with completed
-output the one-bit string $[\mathrm{true}]$, and
-$\mathrm{UC}_c(\alpha) = \mathrm{true}$ otherwise. Then the total function on
-bit strings $\alpha \mapsto [\mathrm{UC}_c(\alpha)]$, returning the one-bit
-string whose single bit is the value of the diagonal function, is not
-computable: no finite Turing machine over the binary alphabet halts on every
-input $\alpha$ with $[\mathrm{UC}_c(\alpha)]$ on its output tape [AB09,
-Theorem 1.10].
+For every machine representation scheme $c$, the function mapping a bit string $\alpha$
+to the one-bit string whose bit is the diagonal value of $c$ at $\alpha$ is not
+computable.
 \end{theorem}

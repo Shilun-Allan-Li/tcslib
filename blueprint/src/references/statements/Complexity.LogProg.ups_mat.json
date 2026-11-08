@@ -1,0 +1,27 @@
+{
+ "lean_name": "Complexity.LogProg.ups_mat",
+ "key": "442d0ed2da3ddd6e",
+ "kind": "lemma",
+ "title": "Matrix-checking program semantics",
+ "statement": "Let $x$ be a finite bit string, $B$ a natural number, $q$ a rational number, $i,dd$ natural numbers, and $\\sigma$ a register state. Suppose $\\sigma.n^2-i=dd$, every register of $\\sigma$ is at most $B$, $2|x|+2\\le B$, $\\sigma.n\\le |x|$, $\\sigma.p=2\\sigma.n+2+2i$, $\\sigma.a=\\lfloor i/\\sigma.n\\rfloor$, $\\sigma.b=i\\bmod\\sigma.n$, and $i\\le\\sigma.n^2$. If the matrix-rest condition holds for $x,\\sigma.n,i$, then the universal probabilistic program started at the matrix-checking site with register state obtained from $\\sigma$ by setting $p=2\\sigma.n+2+2\\sigma.n^2+2$, $a=\\sigma.n$, and $b=0$ has acceptance probability $q$. If that condition fails, then $q=0$. In either case, the program started at its multiplication-and-checking entry site with register state $\\sigma$ has probabilistic semantics with acceptance probability $q$; the semantics also require termination along every sequence of choices and the stated register bound throughout the run.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$B$ is a natural number",
+  "$q$ is rational",
+  "$dd,i$ are natural numbers",
+  "$\\sigma.n^2-i=dd$",
+  "Every register of $\\sigma$ is at most $B$",
+  "$2|x|+2\\le B$",
+  "$\\sigma.n\\le |x|$",
+  "$\\sigma.p=2\\sigma.n+2+2i$",
+  "$\\sigma.a=i/\\sigma.n$ using natural-number division",
+  "$\\sigma.b=i\\bmod\\sigma.n$",
+  "$i\\le\\sigma.n^2$",
+  "Conditional on the matrix-rest condition, the specified continuation has probabilistic semantics with acceptance probability $q$",
+  "If the matrix-rest condition fails, $q=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural-number bound, $q$ a rational number, $dd,i$\nnatural numbers, and $\\sigma$ a record of fifteen natural-number registers. Assume\n$\\sigma.n^2-i=dd$, each register of $\\sigma$ is at most $B$, $2|x|+2\\le B$, $\\sigma.n\\le\n|x|$, $\\sigma.p=2\\sigma.n+2+2i$, $\\sigma.a=\\lfloor i/\\sigma.n\\rfloor$,\n$\\sigma.b=i\\bmod\\sigma.n$, and $i\\le\\sigma.n^2$. If the bits of $x$ from position\n$2\\sigma.n+2+2i$ through the designated end of the matrix entries occur in equal\nadjacent pairs, followed by the separator bits $01$, then the randomized program started\nat its matrix-checking entry point with input $x$, bound $B$, and register record\n$\\sigma$ has acceptance probability $q$ and rejection probability $1-q$; its\ncorresponding run from the copy-checking point, with input pointer\n$2\\sigma.n+2+2\\sigma.n^2+2$, row counter $\\sigma.n$, and column counter $0$, has the\nsame semantic property. If that paired-bit and separator condition fails, then $q=0$."
+}

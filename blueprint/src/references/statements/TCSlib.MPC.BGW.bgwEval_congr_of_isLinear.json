@@ -1,0 +1,24 @@
+{
+ "lean_name": "TCSlib.MPC.BGW.bgwEval_congr_of_isLinear",
+ "key": "b2fddbea03099f0f",
+ "kind": "theorem",
+ "title": "Locality of linear circuit evaluation",
+ "statement": "Let $F$ be a field with decidable equality, let $\\iota$ be an input-index type, let $d\\in\\mathbb N$, let $R$ be a degree-$d$ resharer, and let $A$ be a finite set of parties. Suppose two party-indexed input assignments $\\mathrm{inp}$ and $\\mathrm{inp}'$ agree at a party $j$ on every input label. Then every syntactically linear arithmetic circuit over $F$ has the same BGW evaluation at $j$ under these two assignments.",
+ "hypotheses_covered": [
+  "F is a field",
+  "F has decidable equality",
+  "ι is an input-index type",
+  "d is a natural number",
+  "R is a degree-d resharer",
+  "A is a finite set of parties",
+  "inp and inp' are party-indexed input assignments",
+  "j is a party",
+  "inp and inp' agree at j for every input label",
+  "C is an arithmetic circuit",
+  "C is syntactically linear"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a field, let $\\iota$ be a type, let $R$ be a resharer, and let $A$ be a\nfinite set of parties. Suppose two input assignments agree at a party $j$ for every\ninput wire. Then every linear circuit has the same evaluation at $j$ under both\nassignments."
+}

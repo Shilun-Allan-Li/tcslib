@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_erase_first",
+ "key": "01de8b8f848bd05a",
+ "kind": "lemma",
+ "title": "First return of the eraser",
+ "statement": "For Boolean words $w$ and $u$, there is an integer time $t$ with $0<t\\le 2(|u|+1)$ such that the eraser, started in state $0$ with $u$ on its tape and its head at displacement $0$, is not in state $2$ at any time $j<t$. At time $t$ it is in state $2$ with a blank tape and its head at displacement $0$, with input $w$ and empty output.",
+ "hypotheses_covered": [
+  "Boolean words $w$ and $u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any word $u$, there is a time $t$ with $0 < t \\le 2(\\abs{u}+1)$ such\nthat the eraser never visits its return state before $t$ and at time $t$\nhas reached the blank-tape return configuration; the return is positive\neven for the empty word."
+}

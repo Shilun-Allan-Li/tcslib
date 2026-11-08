@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.effects_poolCode",
+ "key": "52fd696682bfed97",
+ "kind": "theorem",
+ "title": "Pool initialization",
+ "statement": "Let $W,N\\in\\mathbb{N}$, let $m:\\mathbb{Z}\\to\\mathrm{BitVec}(W)$ be a memory state with $m(c_{\\mathrm{one}})=1$ as a $W$-bit word, and let $c_{\\mathrm{pool}}(n)=-(25+4n)$ and $c_{\\mathrm{one}}=-5$. The instruction sequence that first sets the pool cell at index $0$ to $1$ and then successively adds $1$ to each preceding pool cell leaves every cell with index $n\\le N$ equal to the $W$-bit representation of $n$.",
+ "hypotheses_covered": [
+  "Natural numbers W and N",
+  "Memory state m from integers to W-bit words",
+  "m at c_one equals the W-bit representation of 1",
+  "Index n is at most N"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

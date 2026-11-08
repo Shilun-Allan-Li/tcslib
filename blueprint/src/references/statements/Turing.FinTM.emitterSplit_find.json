@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emitterSplit_find",
+ "key": "52afb22956f51a80",
+ "kind": "lemma",
+ "title": "Orbit search and split search",
+ "statement": "For a function $f:\\mathbb{N}\\to\\mathbb{N}$ and a Boolean word $w$, searching the indices from $0$ through $|w|$ for the first one at which the acceptance test holds on the corresponding iterate of the split step, starting from the empty word, returns the same result as the least-index search for $i+f(i)=|w|$; both searches return none if no such index exists.",
+ "hypotheses_covered": [
+  "$f$ is a function from natural numbers to natural numbers",
+  "$w$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every function $f$ and every word $w$, searching the indices\n$0, \\dots, \\abs{w}$ for the first $i$ at which the width-parametric\nacceptance test succeeds on the $i$-th iterate of the split step (the unary\ncandidate $1^i$) returns exactly the width-parametric split search for $f$\nat length $\\abs{w}$."
+}

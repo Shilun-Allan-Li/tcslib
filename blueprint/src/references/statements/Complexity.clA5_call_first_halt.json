@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clA5_call_first_halt",
+ "key": "4141d2de12c9f763",
+ "kind": "lemma",
+ "title": "First halt in a padded run",
+ "statement": "Let $M$ be a deterministic Turing machine with $k$ work tapes, Boolean tape symbols, and state set $S$. For a Boolean input word $x$, a configuration $c$, and $t\\in\\mathbb{N}$, suppose $c$ is live and the configuration reached after $t$ steps is halted. Then there is a time $u$ with $0<u\\le t$ such that every configuration at time $v<u$ is live, and the configuration at time $u$ equals the one at time $t$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ is a type",
+  "$x$ is a Boolean input word",
+  "$M$ is a $k$-work-tape Turing machine over Boolean symbols with states in $S$",
+  "$c$ is a configuration on input $x$",
+  "$t$ is a natural number",
+  "$c$ is live",
+  "The run from $c$ is halted at time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine run from a live configuration to a halted configuration in $t$ steps. Then there is a strictly positive time $u \\le t$ at which the run first halts, and the configuration at $u$ equals the configuration at $t$; padding by absorbed halted steps changes no endpoint field."
+}

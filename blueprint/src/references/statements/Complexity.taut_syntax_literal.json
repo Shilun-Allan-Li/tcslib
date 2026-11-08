@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.taut_syntax_literal",
+ "key": "bca6533c84d797e0",
+ "kind": "lemma",
+ "title": "Syntax scan and literal parsing",
+ "statement": "For every finite binary string $x$, the syntax scanner started in the clause state accepts the string obtained by prefixing $x$ with $1$ exactly when parsing that prefixed string succeeds and the scanner started in the clause state accepts the parser's remaining suffix. If parsing fails, the scanner rejects the prefixed string.",
+ "hypotheses_covered": [
+  "$x$ is a finite binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For every binary string $x$, the string $1 :: x$ is accepted by the six-state formula\nsyntax scan from the clause-level state if and only if the literal parser succeeds on\n$1 :: x$ with some remainder $r$ and $r$ is accepted by the scan from the clause-level\nstate; when the literal parser fails, the scan rejects."
+}

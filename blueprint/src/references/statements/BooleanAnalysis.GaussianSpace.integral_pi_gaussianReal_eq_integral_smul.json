@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integral_pi_gaussianReal_eq_integral_smul",
+ "key": "f4f1c29fec99c61b",
+ "kind": "lemma",
+ "title": "Density Formula for Product Gaussian Integration",
+ "statement": "Let $I$ be a finite type, let $E$ be a real normed vector space, let $c:I\\to\\mathbb R$, and let $v\\ge0$ with $v\\ne0$. For every function $f:\\mathbb R^I\\to E$,\n\\[\n\\int_{\\mathbb R^I}f(z)\\,d\\Bigl(\\bigotimes_{i\\in I}N(c_i,v)\\Bigr)(z)\n=\\int_{\\mathbb R^I}\\Bigl(\\prod_{i\\in I}q_{c_i,v}(z_i)\\Bigr)f(z)\\,dz,\n\\]\nwhere $N(c_i,v)$ is the Gaussian measure with mean $c_i$ and variance parameter $v$, and $q_{c_i,v}$ is its density.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$E$ is a real normed vector space",
+  "$c:I\\to\\mathbb R$",
+  "$v\\in[0,\\infty)$",
+  "$v\\ne0$",
+  "$f:\\mathbb R^I\\to E$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be a finite set, $c\\in\\mathbb R^I$, $v>0$, and $\\mu_{c,v}=\\bigotimes_{i\\in I}N(c_i,v)$. For a real normed vector space $E$ and any $f:\\mathbb R^I\\to E$, $\\int f\\,d\\mu_{c,v}=\\int_{\\mathbb R^I}(\\prod_i p_v(c_i,z_i))f(z)\\,dz$, where $p_v$ is the scalar Gaussian density and nonintegrable integrals on either side are assigned zero."
+}

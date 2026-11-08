@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.comp_suffix_run",
+ "key": "d6b330f4624a1a4c",
+ "kind": "lemma",
+ "title": "Suffix Search Computation",
+ "statement": "Let $C,e$ be natural numbers, let $\\mathrm{mode}$ be a Boolean, let $f$ map finite Boolean words to finite Boolean words, and let $x,b$ be finite Boolean words. Let $p,B$ be natural numbers and let $v$ assign a natural number to each of fourteen registers, with every register value at most $B$. Suppose register $0$ contains $4|x|+4$, register $3$ contains twice the length of $\\langle x,b\\rangle$, register $13$ contains $2|f(x)|+2$, and register $5$ contains $p$. Assume also that $2|f(x)|+2\\le p$ and $2|f(x)|+2+|b|\\le B$. Starting in the suffix-search state with register values $v$, no result yet, and input $\\langle\\langle x,b\\rangle,\\mathrm{bits}(p)\\rangle$, the counter machine halts with result true precisely when $p<2|f(x)|+2+|b|$ if $\\mathrm{mode}$ is true; if it is false, the result is the bit of $b$ at index $p-(2|f(x)|+2)$, or false when that index is beyond the end of $b$. Before halting, every configuration satisfies the machine's step-validity condition, and every register remains at most $B$.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$\\mathrm{mode}$ is Boolean",
+  "$f$ maps Boolean words to Boolean words",
+  "$x,b$ are Boolean words",
+  "$p,B$ are natural numbers",
+  "$v$ assigns natural values to fourteen registers",
+  "Every register value of $v$ is at most $B$",
+  "Register 0 equals $4|x|+4$",
+  "Register 3 equals $2|\\langle x,b\\rangle|$",
+  "Register 13 equals $2|f(x)|+2$",
+  "Register 5 equals $p$",
+  "$2|f(x)|+2\\le p$",
+  "$2|f(x)|+2+|b|\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B,p$ be natural numbers, let $\\mathrm{mode}$ be a Boolean flag, let $f$ map bit\nstrings to bit strings, and let $x,b$ be bit strings. Suppose $v$ assigns a natural\nnumber to each of the 14 registers, every register value is at most $B$, register $0$\nequals $4|x|+4$, register $3$ equals twice the length of the encoding of $x$ paired with\n$b$, register $13$ equals $2|f(x)|+2$, register $5$ equals $p$, twice the length of\n$f(x)$ plus $2$ is at most $p$, and $2|f(x)|+2+|b|\\le B$. Starting in the suffix-search\nstate, the specified counter machine halts with the answer that is true exactly when\n$p<2|f(x)|+2+|b|$ if $\\mathrm{mode}$ is true; otherwise its answer is the bit of $b$ at\nposition $p-(2|f(x)|+2)$, using false if that position is beyond the end. Throughout the\nrun, the machine's step-validity condition holds and every register remains at most $B$."
+}

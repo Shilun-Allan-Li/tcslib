@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/SAT.lean :: Complexity.satTransformFrom_complete -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Satisfying assignments extend through the transform
+
+**Claim.** If a CNF formula is satisfied by an assignment and all its variables have indices below the cursor, then the transformed formula is satisfied by an assignment agreeing with the original below that cursor.
+
+**Proof.** Proceed by induction on the list of clauses, allowing both the cursor and the assignment to vary. For the empty formula, the original assignment itself works. For a formula consisting of a clause $C$ followed by a tail, satisfaction says that both $C$ and the tail are satisfied. The variable bound restricts to $C$ and to the tail separately. Apply the clause-splitting completeness result (`Complexity.satSplitClause_complete`) to $C$: it gives an assignment agreeing with the original below the current cursor and satisfying the clauses produced from $C$. The cursor after this split is at least the original cursor (`Complexity.satSplitClause_cursor`). By the variable-bound estimate (`Complexity.sat_numVars_le`), every variable in the tail lies below the original cursor, so the new assignment still agrees with the original on every variable relevant to the tail. Thus the tail remains satisfied, using invariance of formula evaluation under agreement on all its variables (`Complexity.eval_congr_of_lt_numVars`). Apply the induction hypothesis to the tail, starting at the advanced cursor and using the split's variable bound (`Complexity.satSplitClause_vars`). This produces a further extension satisfying the transformed tail. The advanced cursor is no smaller than the first, so the final assignment retains agreement below the original cursor. It also satisfies the first split's clauses: the second extension agrees with the first assignment on every variable occurring there, again by the variable-bound estimate and evaluation invariance. Finally, the transformed formula is the concatenation of those first clauses and the transformed tail, both satisfied, so it is satisfied.
+
+**Key facts.** `Complexity.satSplitClause_complete`, `Complexity.satSplitClause_cursor`, `Complexity.sat_numVars_le`, `Complexity.eval_congr_of_lt_numVars`, `Complexity.satSplitClause_vars`.

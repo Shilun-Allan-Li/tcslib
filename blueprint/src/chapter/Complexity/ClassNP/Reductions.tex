@@ -19,6 +19,7 @@ machine that prepends a fixed word to its input.
 
 \begin{definition}[Polynomial-time Karp reducibility]
 \lean{Complexity.PolyTimeReducible}
+\statementsource{BGS75}{pdf-2459e3840724-p003-b004}
 \label{Complexity.PolyTimeReducible}
 \leanok
 \uses{Complexity.PolyTimeComputable}
@@ -31,40 +32,40 @@ every binary string $x$, $x \in L$ if and only if $f(x) \in L'$
 [AB09, Definition~2.7].
 \end{definition}
 
-\begin{theorem}[Reflexivity of Karp reducibility]
+\begin{theorem}[Reflexivity of polynomial-time reducibility]
 \lean{Complexity.PolyTimeReducible.refl}
 \label{Complexity.PolyTimeReducible.refl}
 \leanok
 \uses{Complexity.polyTimeComputable_id}
 \difficulty{1}
-Every language $L \subseteq \{0,1\}^{*}$ is polynomial-time Karp reducible to
-itself: $L \le_p L$ [AB09, Exercise~2.9].
+Every language $L$ over the binary alphabet is polynomial-time Karp reducible to itself:
+$L\le_p L$.
 \end{theorem}
 
-\begin{theorem}[Transitivity of Karp reducibility]
+\begin{theorem}[Transitivity of polynomial-time reducibility]
 \lean{Complexity.PolyTimeReducible.trans}
 \label{Complexity.PolyTimeReducible.trans}
 \leanok
 \uses{Complexity.PolyTimeComputable.comp}
 \difficulty{2}
-Let $L, L', L'' \subseteq \{0,1\}^{*}$ be languages. If $L \le_p L'$ and
-$L' \le_p L''$, where $\le_p$ denotes polynomial-time Karp reducibility, then
-$L \le_p L''$ [AB09, Theorem~2.8.1].
+Let $L,L',L''$ be languages over the binary alphabet. If $L\le_p L'$ and $L'\le_p L''$,
+then $L\le_p L''$, where $\le_p$ denotes polynomial-time Karp reducibility.
 \end{theorem}
 
-\begin{theorem}[$\mathsf{P}$ is closed under Karp reductions]
+\begin{theorem}[Polynomial-time closure under many-one reductions]
 \lean{Complexity.mem_P_of_polyTimeReducible}
 \label{Complexity.mem_P_of_polyTimeReducible}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.mem_P_iff, Complexity.mem_P_of_dtime_le, Complexity.succ_pow_le, Turing.FinTM.DecidesInTime, Turing.MultiTapeTM.indicator}
 \difficulty{4}
-Let $L, L' \subseteq \{0,1\}^{*}$ be languages such that $L$ is polynomial-time
-Karp reducible to $L'$. If $L' \in \mathsf{P}$, then $L \in \mathsf{P}$
-[AB09, remark after Definition~2.7].
+Let $L$ and $L'$ be languages of binary strings. If $L$ is polynomial-time many-one
+reducible to $L'$ and $L'\in\mathsf{P}$, then $L\in\mathsf{P}$.
 \end{theorem}
 
 \begin{definition}[$\mathsf{NP}$-hardness]
 \lean{Complexity.NPHard}
+\statementsource{BGS75}{pdf-2459e3840724-p003-b004}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p188-b003}
 \label{Complexity.NPHard}
 \leanok
 \uses{Complexity.NP}
@@ -75,6 +76,7 @@ $L' \le_p L$ [AB09, Definition~2.7].
 
 \begin{definition}[$\mathsf{NP}$-completeness]
 \lean{Complexity.NPComplete}
+\statementsource{BGS75}{pdf-2459e3840724-p003-b004}
 \label{Complexity.NPComplete}
 \leanok
 \uses{Complexity.NP, Complexity.NPHard}
@@ -83,27 +85,597 @@ $L \in \mathsf{NP}$ and $L$ is $\mathsf{NP}$-hard, i.e.\ every language in
 $\mathsf{NP}$ is polynomial-time Karp reducible to $L$ [AB09, Definition~2.7].
 \end{definition}
 
-\begin{theorem}[An $\mathsf{NP}$-hard language in $\mathsf{P}$ collapses $\mathsf{NP}$]
+\begin{theorem}[An NP-hard language in P collapses P and NP]
 \lean{Complexity.P_eq_NP_of_NPHard_mem_P}
+\proofsource{BGS75}{
+  pdf-2459e3840724-p003-b006,
+  pdf-2459e3840724-p003-b007
+}
 \label{Complexity.P_eq_NP_of_NPHard_mem_P}
 \leanok
+\proofstep
+  {Turing.Action}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.Cfg}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001,
+    pdf-2459e3840724-p005-b002}
+\proofstep
+  {Turing.moveInputPos}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.moveInputPos_zero}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.moveInputPos_leftBoundary}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.moveInputPos_rightBoundary}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.moveInputPos_neg_of_ne_left}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.moveInputPos_pos_of_ne_right}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.Cfg.inputSymbol}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.inputSymbolInner}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.Cfg.workTapeSymbols}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.Cfg.init}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.Action.apply}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.MultiTapeTM}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.MultiTapeTM.step}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001,
+    pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.outputSymbol}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.MultiTapeTM.initCfg}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.MultiTapeTM.step_of_halt}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.runFrom}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Turing.MultiTapeTM.runFrom_zero}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.runFrom_succ_eq_step}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.runFrom_succ_eq_step'}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.runFrom_add}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.runFrom_of_halt}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.outputSymbol_of_halt}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.visitedByTapeHead}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p004-b006}
+\proofstep
+  {Turing.MultiTapeTM.spaceUsedByTape}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p004-b006}
+\proofstep
+  {Turing.MultiTapeTM.spaceUsed}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p004-b006}
+\proofstep
+  {Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p004-b006}
+\proofstep
+  {Turing.MultiTapeTM.step_output}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.MultiTapeTM.ComputesInTimeAndSpace}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002,
+    pdf-2459e3840724-p004-b006}
+\proofstep
+  {Turing.MultiTapeTM.indicator}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.MultiTapeTM.output_length_le}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.FinTM}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.ComputesInTime}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b003,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Turing.FinTM.ComputesFunInTime}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b003,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Turing.FinTM.ComputesInTime.mono}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b004}
+\proofstep
+  {Turing.FinTM.ComputesInTime.output_unique}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.FinTM.computesInTime_iff}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.FinTM.inputSymbol_at}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.tapeBlocks}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.tapeBlocks_left}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.tapeBlocks_buffer}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.tapeBlocks_right}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferTape}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferTape_nil}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferTape_nat}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferTape_left}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferTape_append}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.VirtualTag}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.virtualMove}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.virtualNextTag}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferTape_inputSymbol}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.virtualMove_correct}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferedCompTM}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001,
+    pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.FinTM.bufferedFirstCfg}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferedFirstCfg_init}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferedFirstCfg_step}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferedFirstCfg_run}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.FinTM.bufferedSecondCfg}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferedSecondCfg_step}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferedSecondCfg_run}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.FinTM.bufferedScanCfg}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.bufferedScanCfg_run}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.FinTM.bufferedFirstCfg_rewind}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002}
+\proofstep
+  {Turing.FinTM.bufferedComp_start}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Turing.FinTM.bufferedCompTM_computesInTime}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b004}
+\proofstep
+  {Turing.FinTM.computesFunInTime_comp}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.PolyTimeComputable}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b003,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.comp_time_bound}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.PolyTimeComputable.comp}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b004}
+\proofstep
+  {Turing.FinTM.SweepState}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.sweepStateFintype}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.sweepStateDecidableEq}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.CodeTM}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.CodeTM.toFinTM}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.CodeTM.toFinTM_k}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.pairEncode}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Turing.pairDecode}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Turing.pairDecode_pairEncode}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Turing.dbl}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Turing.dbl_nil}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Turing.dbl_cons}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Turing.length_dbl}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Turing.FinTM.CatalogPolyControl}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Turing.FinTM.catalogPolyControlFintype}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.catalogPolyControlDecidableEq}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.SplitBodyState}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.splitBodyStateFintype}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.splitBodyStateDecidableEq}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.EmitterP2State}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.emitterP2StateFintype}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Turing.FinTM.emitterP2StateDecidableEq}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b001}
+\proofstep
+  {Complexity.pairMapSnd}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Complexity.pairMapSnd_pairEncode}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Complexity.pairFstD}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Complexity.pairSndD}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Complexity.pairFstD_pairEncode}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Complexity.pairSndD_pairEncode}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b001}
+\proofstep
+  {Turing.FinTM.DecidesInTime}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b002,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.DTIME}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b003,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.P}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b003,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.dtime_poly_subset_P}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.mem_P_of_dtime_le}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.succ_pow_le}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.mem_P_iff}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b003,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.NP}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b003,
+    pdf-2459e3840724-p002-b004}
+\proofstep
+  {Complexity.P_subset_NP}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p002-b003}
+\proofstep
+  {Complexity.mem_P_of_polyTimeReducible}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b004,
+    pdf-2459e3840724-p003-b005}
+\proofstep
+  {Complexity.NPHard}
+  {context}
+  {BGS75}
+  {pdf-2459e3840724-p003-b004}
 \uses{Complexity.NP, Complexity.NPHard, Complexity.P, Complexity.P_subset_NP, Complexity.mem_P_of_polyTimeReducible}
 \difficulty{2}
-Let $L \subseteq \{0,1\}^{*}$ be an $\mathsf{NP}$-hard language, i.e.\ every
-language in $\mathsf{NP}$ is polynomial-time Karp reducible to $L$. If
-$L \in \mathsf{P}$, then $\mathsf{P} = \mathsf{NP}$ [AB09, Theorem~2.8.2].
+Let $L$ be a language over the binary alphabet such that every language in $	extsf{NP}$
+has a polynomial-time many-one reduction to $L$. If $L$ is decidable in polynomial time,
+then the class $	extsf{P}$ of polynomial-time decidable languages equals $	extsf{NP}$,
+where membership in $	extsf{NP}$ means having polynomial-length certificates verifiable
+in polynomial time.
 \end{theorem}
 
-\begin{theorem}[An $\mathsf{NP}$-complete language is in $\mathsf{P}$ iff $\mathsf{P}=\mathsf{NP}$]
+\begin{theorem}[Polynomial-time membership of an NP-complete language]
 \lean{Complexity.NPComplete.mem_P_iff}
 \label{Complexity.NPComplete.mem_P_iff}
 \leanok
 \uses{Complexity.NP, Complexity.NPComplete, Complexity.P, Complexity.P_eq_NP_of_NPHard_mem_P}
 \difficulty{2}
-Let $L \subseteq \{0,1\}^{*}$ be an $\mathsf{NP}$-complete language, i.e.\
-$L \in \mathsf{NP}$ and every language in $\mathsf{NP}$ is polynomial-time Karp
-reducible to $L$. Then $L \in \mathsf{P}$ if and only if
-$\mathsf{P} = \mathsf{NP}$ [AB09, Theorem~2.8.3].
+Let $L$ be an $\mathsf{NP}$-complete language over the Boolean alphabet. Then
+$L\in\mathsf{P}$ if and only if $\mathsf{P}=\mathsf{NP}$.
 \end{theorem}
 
 \begin{definition}[State encoding of the halting recognizer]
@@ -165,94 +737,66 @@ is $(s,b)$ for $s \in Q$, halted for $s=\bot, b=1$, and $\ell$ for
 $s=\bot, b=0$.
 \end{definition}
 
-\begin{lemma}[The loop state of the halting recognizer is stationary]
+\begin{lemma}[Stationarity of the loop state]
 \lean{Complexity.acceptTM_loop}
 \label{Complexity.acceptTM_loop}
 \leanok
 \uses{Complexity.acceptTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
-Let $M$ be a finite-state binary-alphabet Turing machine and $M^{\mathrm{acc}}$
-its halting recognizer, a machine with a distinguished loop state $\ell$ in
-which it moves no head, writes and emits nothing, and remains in $\ell$. For
-every input $x$, every configuration $C$ of $M^{\mathrm{acc}}$ on $x$ whose state
-is $\ell$, and every $t \in \mathbb{N}$, running $M^{\mathrm{acc}}$ for $t$ steps
-from $C$ yields $C$ itself; in particular it never halts.
+Let $M$ be a finite Turing machine over the binary alphabet, let $x$ be a finite binary
+string, and let $C$ be a configuration of its halting recognizer on $x$ whose state is
+the loop state. For every $t\in\mathbb{N}$, running the recognizer for $t$ steps from
+$C$ returns $C$.
 \end{lemma}
 
-\begin{lemma}[Recorded-bit actions commute with the configuration correspondence]
+\begin{lemma}[Action compatibility with the configuration map]
 \lean{Complexity.acceptCfg_apply}
 \label{Complexity.acceptCfg_apply}
 \leanok
 \uses{Complexity.acceptAction, Complexity.acceptCfg, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM}
 \difficulty{3}
-Let $M$ be a finite-state binary-alphabet Turing machine with state set $Q$, $x$
-an input, $C$ a configuration of $M$ on $x$, and $a$ an action of $M$. Let $b$
-be the last bit on $C$'s output tape ($0$ if empty), and let $\Phi(C)$ be the
-recognizer configuration with $C$'s head positions and tape contents, empty
-output, and state $\mathrm{enc}(s,b)$, where $s$ is $C$'s state and
-$\mathrm{enc}(s,b) = (s,b)$ for $s \in Q$, halt for a halted $s$ with $b=1$, and
-a loop state for a halted $s$ with $b=0$. Then applying to $\Phi(C)$ the action
-with $a$'s head moves and writes, no output, and successor state
-$\mathrm{enc}(s', b')$ ($s'$ the successor of $a$, $b'$ the bit $a$ emits, or $b$
-if none) gives exactly $\Phi(a(C))$, where $a(C)$ is the result of applying $a$
-to $C$.
+Let $M$ be a finite Turing machine over the binary alphabet, let $x$ be a finite binary
+string, let $C$ be a configuration of $M$ on $x$, and let $a$ be an action for $M$.
+Applying the transformed action that records the last output bit to the corresponding
+configuration gives the same configuration as first applying $a$ to $C$ and then forming
+its corresponding configuration.
 \end{lemma}
 
-\begin{lemma}[One step of the halting recognizer simulates one step]
+\begin{lemma}[Step compatibility with the configuration map]
 \lean{Complexity.acceptCfg_step}
 \label{Complexity.acceptCfg_step}
 \leanok
 \uses{Complexity.acceptAction, Complexity.acceptCfg, Complexity.acceptCfg_apply, Complexity.acceptState, Complexity.acceptTM, Complexity.acceptTM_loop, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
 \difficulty{4}
-Let $M$ be a finite-state binary-alphabet Turing machine with state set $Q$, and
-let $M^{\mathrm{acc}}$ be its halting recognizer: same work tapes, states
-$(q,b) \in Q \times \{0,1\}$ plus a stationary loop state $\ell$, simulating $M$
-with output suppressed and the last emitted bit recorded, halting where $M$
-halts with recorded bit $1$ and entering $\ell$ where it halts with bit $0$. For
-a configuration $C$ of $M$ on an input $x$, let $\Phi(C)$ be the configuration of
-$M^{\mathrm{acc}}$ with $C$'s head positions and work-tape contents, empty output,
-and state $(q,b)$, halted, or $\ell$ according as $C$ is in state $q$, halted
-with last output bit $1$, or halted with last output bit $0$ (the bit $b$ being
-the last output bit, $0$ if none). Then for every such $C$, one step of
-$M^{\mathrm{acc}}$ from $\Phi(C)$ yields $\Phi(C')$, where $C'$ is the result of
-one step of $M$ from $C$ (a halted configuration stepping to itself).
+Let $M$ be a finite Turing machine over the binary alphabet, let $x$ be a finite binary
+string, and let $C$ be any configuration of $M$ on $x$. One step of the halting
+recognizer from the corresponding configuration of $C$ equals the corresponding
+configuration of the result of one step of $M$ from $C$.
 \end{lemma}
 
-\begin{lemma}[Runs of the halting recognizer simulate runs]
+\begin{lemma}[Run correspondence for the halting recognizer]
 \lean{Complexity.acceptTM_run}
 \label{Complexity.acceptTM_run}
 \leanok
 \uses{Complexity.acceptCfg, Complexity.acceptCfg_step, Complexity.acceptTM, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step}
 \difficulty{2}
-Let $M$ be a finite-state binary-alphabet Turing machine with state set $Q$, and
-let $M^{\mathrm{acc}}$ be its halting recognizer: same work tapes, states
-$(q,b) \in Q \times \{0,1\}$ plus a stationary loop state $\ell$, start state
-$(q_0, 0)$, simulating $M$ with output suppressed and the last emitted bit
-recorded, halting where $M$ halts with recorded bit $1$ and entering $\ell$ where
-it halts with bit $0$. For every input $x$ and every $t \in \mathbb{N}$, the
-configuration of $M^{\mathrm{acc}}$ after $t$ steps on $x$ has the same head
-positions and work-tape contents as the configuration $C_t$ of $M$ after $t$
-steps on $x$, an empty output tape, and state $(q,b)$, halted, or $\ell$
-according as $C_t$ is in state $q$, halted with last output bit $1$, or halted
-with last output bit $0$, where $b$ is the last output bit of $C_t$ ($0$ if
-none).
+Let $M$ be a finite Turing machine over the binary alphabet, let $x$ be a finite binary
+string, and let $t\in\mathbb{N}$. After $t$ steps from its initial configuration on $x$,
+the halting recognizer has the configuration corresponding to the configuration reached
+by $M$ after $t$ steps on $x$.
 \end{lemma}
 
-\begin{lemma}[The halting recognizer halts exactly on accepted inputs]
+\begin{lemma}[Recognizer halting characterizes acceptance]
 \lean{Complexity.acceptTM_halts_iff}
 \label{Complexity.acceptTM_halts_iff}
 \leanok
 \uses{Complexity.acceptState, Complexity.acceptTM, Complexity.acceptTM_run, Turing.FinTM, Turing.FinTM.Computes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{5}
-Let $M$ be a finite-state binary-alphabet Turing machine and
-$p : \{0,1\}^{*} \to \{0,1\}$ a predicate such that on every input $x$ the
-machine $M$ eventually halts with the single bit $p(x)$ as its output. Let
-$M^{\mathrm{acc}}$ be the halting recognizer of $M$, which simulates $M$ with
-output suppressed while recording the last bit $M$ emits (initially $0$), halts
-when $M$ halts with recorded bit $1$, and otherwise enters a loop state in which
-it does nothing forever. Then for every input $x$, $M^{\mathrm{acc}}$ halts on
-$x$ (for some output $w$ and some $t$, it halts within $t$ steps with output $w$)
-if and only if $p(x) = 1$.
+Let $M$ be a finite Turing machine over the binary alphabet, let $p$ assign a Boolean
+value to every finite binary string, and suppose that for every input $y$, the machine
+$M$ computes the one-bit output $[p(y)]$ in some finite time. For every binary string
+$x$, the halting recognizer of $M$ halts on $x$ within some finite time, with some
+output, if and only if $p(x)=\mathrm{true}$.
 \end{lemma}
 
 \begin{definition}[Machine prepending a fixed word]
@@ -288,104 +832,75 @@ position $p$, and has $u$ on its output tape.
 \leanok
 \uses{Complexity.prefixCfg, Complexity.prefixTM, Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $w = w_0 \cdots w_{m-1}$ and $x$ be binary strings, and let $P_w$ be the
-machine with no work tapes and states $\{0, \ldots, m\}$ which, starting in
-state $0$, emits $w_i$ and moves to state $i+1$ in each state $i < m$, and in
-state $m$ copies the input bit by bit, halting at the first blank. For every
-$i \le m$, after $i$ steps on input $x$ the machine $P_w$ is in state $i$, its
-input head is still on the first input cell, and its output tape holds the first
-$i$ bits $w_0 \cdots w_{i-1}$ of $w$.
+Let $w$ and $x$ be binary strings. For every $i\in\mathbb{N}$ with $i\le |w|$, after $i$
+steps of the prefixing machine on input $x$, it is in state $i$, its input head remains
+at position $1$, and its output is the prefix of $w$ of length $i$.
 \end{lemma}
 
-\begin{lemma}[Copy phase of the prefixing machine]
+\begin{lemma}[Emission phase of the prefixing machine]
 \lean{Complexity.prefixTM_copy}
 \label{Complexity.prefixTM_copy}
 \leanok
 \uses{Complexity.prefixCfg, Complexity.prefixTM, Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-Let $w = w_0 \cdots w_{m-1}$ and $x = x_1 \cdots x_n$ be binary strings, and let
-$P_w$ be the machine with no work tapes and states $\{0, \ldots, m\}$ which emits
-$w_i$ and advances to state $i+1$ in each state $i < m$, and in state $m$ emits
-the scanned input bit and moves its input head right, halting at a blank. For
-every $i \le n$, running $P_w$ on input $x$ for $i$ steps from the configuration
-in state $m$ with the input head on the first input cell and output $w$ yields
-the configuration in state $m$ with the input head on cell $i+1$ and output
-$w\,x_1 \cdots x_i$.
+Let $w$ and $x$ be binary strings. For every $i\in\mathbb{N}$ with $i\le |w|$, after $i$
+steps of the prefixing machine on input $x$, it is in state $i$, its input head remains
+at position $1$, and its output is the prefix of $w$ of length $i$.
 \end{lemma}
 
-\begin{lemma}[The prefixing machine computes $x \mapsto wx$ in linear time]
+\begin{lemma}[Copy phase of the prefixing machine]
 \lean{Complexity.prefixTM_computes}
 \label{Complexity.prefixTM_computes}
 \leanok
 \uses{Complexity.prefixCfg, Complexity.prefixTM, Complexity.prefixTM_copy, Complexity.prefixTM_emit, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $w = w_0 \cdots w_{m-1}$ be a binary string and $P_w$ the machine with no
-work tapes and states $\{0, \ldots, m\}$ which first emits $w_0, \ldots, w_{m-1}$
-one per step without moving its input head, then copies the input bit by bit
-while moving right, halting at the first blank. Then for every binary input $x$,
-$P_w$ halts within $|w| + |x| + 1$ steps with output the concatenation $wx$.
+Let $w$ and $x$ be binary strings. For every $i\in\mathbb{N}$ with $i\le |x|$, after $i$
+steps from the configuration in the final prefixing state, with the input head at
+position $1$ and output $w$, the machine is still in that state, its input head is at
+position $i+1$, and its output is $w$ followed by the first $i$ bits of $x$.
 \end{lemma}
 
-\begin{lemma}[Running time of fixed-code pairing]
+\begin{lemma}[Running time of fixed-string pairing]
 \lean{Complexity.fixedPair_computes}
 \label{Complexity.fixedPair_computes}
 \leanok
 \uses{Complexity.prefixTM, Complexity.prefixTM_computes, Turing.FinTM.ComputesFunInTime, Turing.pairEncode}
 \difficulty{4}
-Let $\alpha = \alpha_1 \cdots \alpha_m$ be a binary string, and for a binary
-string $x$ let $\langle \alpha, x \rangle = \alpha_1\alpha_1 \cdots
-\alpha_m\alpha_m\,0\,1\,x$ be the pairing encoding ($\alpha$ with every bit
-doubled, then the separator $01$, then $x$). The machine with no work tapes that
-first emits the fixed word $\alpha_1\alpha_1 \cdots \alpha_m\alpha_m\,01$ one bit
-per step and then copies its input bit by bit, halting at the first blank,
-halts on every input $x$ within $2|\alpha| + |x| + 3$ steps with output
-$\langle \alpha, x \rangle$.
+Let $\alpha$ be a finite binary string. There is a finite binary-alphabet Turing machine
+that, on every binary input $x$, outputs the string formed by doubling each bit of $x$,
+then appending $01$ and $\alpha$, and halts within $2|\alpha|+|x|+3$ steps.
 \end{lemma}
 
-\begin{lemma}[Fixed-code pairing is polynomial-time computable]
+\begin{lemma}[Polynomial-time fixed-string pairing]
 \lean{Complexity.fixedPair_polyTime}
 \label{Complexity.fixedPair_polyTime}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.fixedPair_computes, Complexity.prefixTM, Turing.FinTM.ComputesInTime.mono, Turing.pairEncode}
 \difficulty{3}
-Let $\alpha$ be a fixed binary string, and for binary strings $x$ let
-$\langle \alpha, x \rangle$ be the pairing encoding: $\alpha$ with every bit
-doubled, followed by $01$, followed by $x$. Then the map
-$x \mapsto \langle \alpha, x \rangle$ is polynomial-time computable: some
-finite-state binary-alphabet Turing machine computes it within
-$C \cdot (n+1)^c$ steps on inputs of length $n$, for constants
-$C, c \in \mathbb{N}$.
+Let $\alpha$ be a finite binary string. The function that maps each binary string $x$ to
+the string formed by doubling each bit of $x$, then appending $01$ and $\alpha$, is
+polynomial-time computable.
 \end{lemma}
 
-\begin{theorem}[The halting language is $\mathsf{NP}$-hard]
+\begin{theorem}[NP-hardness of the halting language]
 \lean{Complexity.HALT_NPHard}
 \label{Complexity.HALT_NPHard}
 \leanok
 \uses{Complexity.HALT, Complexity.HALT_pairEncode_eq_true_iff, Complexity.NPHard, Complexity.NP_subset_EXP, Complexity.acceptTM, Complexity.acceptTM_halts_iff, Complexity.fixedPair_polyTime, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesFunInTime.computes, Turing.FinTM.one_work_tape_binary, Turing.MachineCode, Turing.MachineCode.decode_encode, Turing.MultiTapeTM.indicator, Turing.exists_codeTM, Turing.pairEncode}
 \difficulty{5}
-Let $c$ be any representation scheme for Turing machines: a total decoding of
-bit strings into coded one-work-tape machines together with an encoding, such
-that a machine's code followed by any number of $1$s decodes back to that
-machine. Let $\mathrm{HALT}_c$ be the set of bit strings of the form
-$\langle \alpha, x \rangle$ ($\alpha$ with every bit doubled, then $01$, then
-$x$) such that the machine decoded from $\alpha$ halts on input $x$. Then
-$\mathrm{HALT}_c$ is $\mathsf{NP}$-hard: every language in $\mathsf{NP}$ is
-polynomial-time Karp reducible to $\mathrm{HALT}_c$ [AB09, Exercise~2.8].
+For every machine representation scheme $c$, the language of bit strings $s$ for which
+the halting function of $c$ returns true is NP-hard: every language in NP is
+polynomial-time many-one reducible to it.
 \end{theorem}
 
-\begin{theorem}[The halting language is not in $\mathsf{NP}$]
+\begin{theorem}[The halting language is not in NP]
 \lean{Complexity.HALT_not_mem_NP}
 \label{Complexity.HALT_not_mem_NP}
 \leanok
 \uses{Complexity.HALT, Complexity.HALT_not_computable, Complexity.NP, Complexity.NP_subset_EXP, Turing.EffectiveMachineCode, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesFunInTime.computes, Turing.FinTM.DecidesInTime, Turing.MultiTapeTM.indicator}
 \difficulty{4}
-Let $c$ be an effective representation scheme for Turing machines: a total
-decoding of bit strings into coded machines with an encoding that decoding
-inverts (also after padding the code with $1$s), equipped with a finite-state
-binary-alphabet machine that, within some time bound, computes from every bit
-string the canonical serialization of the machine it decodes to. Let
-$\mathrm{HALT}_c$ be the set of bit strings of the form $\langle \alpha, x \rangle$
-($\alpha$ with every bit doubled, then $01$, then $x$) such that the machine
-decoded from $\alpha$ halts on input $x$. Then $\mathrm{HALT}_c \notin
-\mathsf{NP}$ [AB09, Exercise~2.8].
+For every effective machine coding scheme $c$, let $H_c$ be the language of bit strings
+$s$ for which there exist bit strings $\alpha,x$ with $s=\langle x,\alpha\rangle$ such
+that the machine decoded from $\alpha$ halts on input $x$, with some output, after some
+finite number of steps. Then $H_c$ does not belong to $\mathrm{NP}$.
 \end{theorem}

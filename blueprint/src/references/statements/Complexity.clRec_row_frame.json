@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.clRec_row_frame",
+ "key": "b81508180bb162ac",
+ "kind": "lemma",
+ "title": "Configuration frame during row copying",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean work-tape symbols, and let $x$ and $y$ be finite Boolean words. Let $c$ be a configuration of $M$ on input $y$, let $b$ be a Boolean value, let $n$ assign a natural number to each of the $(1+M.k)+(1+M.k)$ fields, let $record$ be a finite Boolean word, and let $T,t$ be natural numbers. For each index $i$ among the $(1+M.k)+(1+M.k)+1$ row positions and each copier control $q$ among five possibilities, placing the row configuration on the selected tapes of the recorder configuration, with state corresponding to the source state, $b$, and row state $(i,q)$, gives exactly the recorder configuration in that state.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols",
+  "$x,y$ are finite Boolean words",
+  "$c$ is a configuration of $M$ on input $y$",
+  "$b$ is Boolean",
+  "$n$ assigns a natural number to each of the $(1+M.k)+(1+M.k)$ fields",
+  "$record$ is a finite Boolean word",
+  "$T,t$ are natural numbers",
+  "$i$ is among the $(1+M.k)+(1+M.k)+1$ row positions",
+  "$q$ is one of five copier controls"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every source configuration, tag, movement counts, record, clock budget, logical time, field index, and copier control, relocating the row-copy seam into the recorder's tapes, retaining every inactive slot from the recorder configuration itself, yields exactly the recorder configuration in the row-copying phase; the inactive bank includes every source cell and head and the unchanged clock."
+}

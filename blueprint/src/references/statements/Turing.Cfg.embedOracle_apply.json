@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.Cfg.embedOracle_apply",
+ "key": "c92a54eff2da42ae",
+ "kind": "lemma",
+ "title": "Embedding commutes with applying an action",
+ "statement": "Let $k$ be a nonnegative integer, let $Q$ be a state set, let $\\Sigma$ be a symbol alphabet, and let $x$ be an input word over $\\Sigma$. For every one-step action $a$ on $k$ work tapes and configuration $c$ with state set $Q$ and input $x$, applying the action after renaming its successor states by the left inclusion $Q\\to Q\\sqcup\\{0,1,2\\}$ and extending it by an inert work tape to the embedded configuration of $c$ gives the embedding of the configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "$k$ is a nonnegative integer",
+  "$Q$ is a state type",
+  "$\\Sigma$ is a symbol type",
+  "$x$ is an input word over $\\Sigma$",
+  "$a$ is an action on $k$ work tapes over $\\Sigma$ and $Q$",
+  "$c$ is a configuration with $k$ work tapes, state set $Q$, and input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a$ be a one-step action of a machine with $k$ work tapes and state set\n$Q$, and let $c$ be a configuration of such a machine.  Rename the states of\n$a$ along the left inclusion $Q \\to Q \\sqcup \\{0,1,2\\}$ and extend the result\nby an inert $(k+1)$-st tape.  Applying this extended, renamed action to the\nembedding of $c$ into the $(k+1)$-tape oracle model yields exactly the\nembedding of the configuration obtained by applying $a$ to $c$."
+}

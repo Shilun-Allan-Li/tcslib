@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.Lupanov.lupGates_spec",
+ "key": "555c076a22aff27c",
+ "kind": "theorem",
+ "title": "Specification of the Lupanov gate construction",
+ "statement": "Let $n$ and $k$ be natural numbers with $k\\le n$, and let $f$ be a Boolean function on $n$-bit inputs. Start with the gate list prescribed by the Lupanov construction for $f$ and $k$, and take as roots the $2^{n-k}$ consecutive vertices beginning at the construction's combining-gate block. The construction appends an acyclic list of OR gates and returns an output vertex that lies within the resulting circuit; on every input, its value is the disjunction of the values at those roots. The resulting list has length at most the initial length plus the tree cost of the number of roots, and the output depth is at most the ceiling of the base-$2$ logarithm of the number of roots, plus one, plus the maximum depth of the roots in the initial circuit. Each appended gate has at most two distinct inputs.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$k$ is a natural number",
+  "$k\\le n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

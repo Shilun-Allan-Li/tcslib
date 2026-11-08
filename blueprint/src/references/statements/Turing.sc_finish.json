@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.sc_finish",
+ "key": "ce9c387374c7317f",
+ "kind": "theorem",
+ "title": "Bounded clock simulation",
+ "statement": "Let $\\Gamma$ be an alphabet, let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an embedding, and let $M$ be a deterministic machine with $k$ work tapes, state set $S$, and stopping predicate $P:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Fix an input $x$, a configuration $c$ whose state is $q$, a Boolean word $w$, a tape content $ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$, and a position $cp\\in\\mathbb Z$. Suppose that for every integer $p$ with $-1\\le p\\le |w|$, the content of this tape at $cp+p$ equals the content prescribed there by the word $w$ encoded using $e$. For every natural number $\\tau$ no greater than the base-two value $\\operatorname{Nat.ofDigits}(2, w.map(\\mathrm{Bool.toNat}))$, if $M$'s configuration after $\\tau$ steps is stopped (its state is absent or satisfies $P$), and every configuration at an earlier time is not stopped, then the machine obtained by adjoining a counter tape and using it to clock the simulation reaches, at some time $T\\le 5\\tau+2|w|+2$, a configuration whose simulated machine configuration is exactly $M$'s configuration after $\\tau$ steps, whose state is the finish state carrying that configuration's state, and whose counter tape is patched with the encoding under $e$ of some Boolean word $w'$ of length $|w|$. At every time $u<T$ its state is neither a finish state nor a timeout state; at every time $u\\le T$ its original work tapes, input-head position, and output agree with those of $M$ after some number $v\\le\\tau$ of steps, and its counter-head position lies between $cp-1$ and $cp+|w|$, inclusive.",
+ "hypotheses_covered": [
+  "Boolean alphabet embedding $e$",
+  "Machine $M$ with $k$ work tapes and state set $S$",
+  "Stopping predicate $P:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "Fixed input $x$",
+  "Configuration $c$ with state $q$",
+  "Boolean word $w$",
+  "Tape content $ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$ and position $cp\\in\\mathbb Z$",
+  "Tape agreement for every integer offset $p$ with $-1\\le p\\le |w|$",
+  "Natural number $\\tau\\le\\operatorname{Nat.ofDigits}(2,w.map(\\mathrm{Bool.toNat}))$",
+  "The configuration after $\\tau$ steps is stopped",
+  "Every configuration at an earlier time is not stopped"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

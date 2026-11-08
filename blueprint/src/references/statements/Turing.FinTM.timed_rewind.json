@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.timed_rewind",
+ "key": "fe49c28b7bf0bbc0",
+ "kind": "lemma",
+ "title": "Bounded rewind to the input start",
+ "statement": "Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean alphabet, let $x$ be a Boolean word, and let $r,s$ be states and $d$ an optional state. Suppose that from state $r$, for every input symbol and tuple of work-tape symbols, the machine moves the input head left and enters $s$. From state $s$, it moves left and stays in $s$ whenever an input symbol is scanned, and moves right and enters $d$ whenever a blank is scanned; these transitions make no writes, do not move any work-tape head, and emit no output. For every configuration $c$ on input $x$ whose state is $r$, there is a number of steps $t\\le p+2$, where $p$ is the input-head position of $c$, after which the machine is in the configuration obtained from $c$ by changing only its state to $d$ and its input-head position to $1$.",
+ "hypotheses_covered": [
+  "$M$ is a multi-tape Turing machine with $k$ work tapes over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$r,s$ are states and $d$ is an optional state",
+  "From $r$, every transition moves the input head left and enters $s$, regardless of scanned symbols",
+  "From $s$ on an input symbol, every transition moves left and remains in $s",
+  "From $s$ on a blank, every transition moves right and enters $d$",
+  "The specified transitions do not write to work tapes, move work-tape heads, or emit output",
+  "$c$ is a configuration on input $x$ whose state is $r$",
+  "The number of steps is at most the input-head position of $c$ plus two"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean\nalphabet on input $x$, with a start state $r$, a scanning state $s$, and an\noptional dispatch state $d$, such that regardless of the symbols read: from $r$\nthe machine always moves the input head left (clamped at the left boundary\nblank) and enters $s$; from $s$ it moves left and stays in $s$ when an input\nsymbol is scanned, and moves right and passes to $d$ when a blank is scanned;\nand none of these transitions touches a work tape, a work head, or the output.\nLet $c$ be a configuration of $M$ in state $r$ whose input head is at position\n$p \\in \\{0,\\dots,\\abs{x}+1\\}$, where position $0$ is the left boundary blank.\nThen there exists $t \\le p + 2$ such that running $M$ for $t$ steps from $c$\nyields the configuration that agrees with $c$ in every component except that\nits state is $d$ and its input head is at position $1$."
+}

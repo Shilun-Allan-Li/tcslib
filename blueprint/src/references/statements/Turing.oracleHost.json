@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.oracleHost",
+ "key": "9a47ab945158b752",
+ "kind": "def",
+ "title": "Oracle host machine",
+ "statement": "Given a finite Boolean oracle machine $M$ with $m$ ordinary work tapes and a finite Boolean Turing machine $C$ with $c$ work tapes, where $C$ has at least one work tape, and chosen entry and exit states $e$ and $x$ of $C$, define a finite Boolean Turing machine with $(m+2)+(c+1)+1$ work tapes. Its state set is the disjointly tagged union of the phase-specific state sets; its initial state is the dispatch phase's boot state; and its transition behavior is given by the phase host machine built from the oracle phase machines, with redirections determined by $M$, $C$, and exit state $x$.",
+ "hypotheses_covered": [
+  "Finite Boolean oracle machine $M$",
+  "Finite Boolean Turing machine $C$",
+  "$C$ has at least one work tape",
+  "Chosen entry state $e$ of $C$",
+  "Chosen exit state $x$ of $C$"
+ ],
+ "confidence": "low",
+ "caveat": "The phase-host construction and the underlying phase-machine definitions are not included, so the transition behavior is only specified by their roles in the given construction.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

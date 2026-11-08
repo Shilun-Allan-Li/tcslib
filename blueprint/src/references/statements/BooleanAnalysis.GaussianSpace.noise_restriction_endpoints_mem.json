@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.noise_restriction_endpoints_mem",
+ "key": "a373c0dfdc422054",
+ "kind": "lemma",
+ "title": "Range of the noised restriction endpoints",
+ "statement": "Let $n$ be a natural number and $f\\colon\\{0,1\\}^{n+1}\\to\\mathbb{R}$ take values in $[0,1]$. Suppose $0\\le\\rho\\le1$, and let $x\\in\\{0,1\\}^n$. If $a_f$ is the average of the two restrictions of $f$ to the last coordinate and $d_f$ is their half-difference, then both $(T_\\rho a_f)(x)+(T_\\rho d_f)(x)$ and $(T_\\rho a_f)(x)-(T_\\rho d_f)(x)$ belong to $[0,1]$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$f\\colon\\{0,1\\}^{n+1}\\to\\mathbb{R}$",
+  "$f(x)\\in[0,1]$ for every $x\\in\\{0,1\\}^{n+1}$",
+  "$0\\le\\rho\\le1$",
+  "$x\\in\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T_\\rho$ denote Boolean noise with real correlation $\\rho$, whose Fourier multiplier on a set of size $k$ is $\\rho^k$. For $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. If $f$ takes values in $[0,1]$ and $0\\le\\rho\\le1$, then $(T_\\rho a_f)(x)\\pm(T_\\rho d_f)(x)\\in[0,1]$ for every $x$."
+}

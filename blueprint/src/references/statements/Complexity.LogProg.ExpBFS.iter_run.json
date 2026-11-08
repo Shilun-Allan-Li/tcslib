@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.iter_run",
+ "key": "905d1f176e1ca93d",
+ "kind": "theorem",
+ "title": "Bounded-space search returns the correct answer",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine deciding a language $L$ within space bound $sp$, and let $x$ be a Boolean string. For all natural numbers $d,s$ and all Boolean memories $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$, suppose $sp(|x|)-s=d$, $s\\le sp(|x|)$, and every $z$ with $M(z)=\\mathrm{true}$ satisfies $z<2\\,kb(N,|x|,s)$. Then the exponential breadth-first-search program, started with radius $s$, logarithm register $lgv(|x|)$, all other registers zero, memory $M$, and memory head at $0$, halts with the correct answer to whether $x\\in L$. Every configuration before halting satisfies the program guard with register bound $bigB(N,|x|,sp(|x|))$ and memory-head position between $0$ and $3\\,kb(N,|x|,sp(|x|)+1)$, inclusive.",
+ "hypotheses_covered": [
+  "$N$ decides $L$ within space bound $sp$",
+  "$d,s\\in\\mathbb{N}$",
+  "$M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "$sp(|x|)-s=d$",
+  "$s\\le sp(|x|)$",
+  "true memory positions lie strictly below $2\\,kb(N,|x|,s)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite-state nondeterministic Turing machine deciding a language $L$ within\nspace bound $sp$, and let $x$ be a binary input. For every $d,s\\in\\mathbb{N}$ and memory\ncontents $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$, suppose $sp(|x|)-s=d$, $s\\le\nsp(|x|)$, and every position $z$ marked true by $M$ satisfies $z<2\\,kb(N,|x|,s)$. Then\nthe specified exponential breadth-first-search machine, started with radius $s$,\nlogarithmic register initialized to $lgv(|x|)$, all other registers zero, memory $M$,\nand memory head at $0$, halts with output $1$ exactly when $x\\in L$ (and output $0$\notherwise), while satisfying its configuration guard with register bound\n$bigB(N,|x|,sp(|x|))$ and memory-head bound $3\\,kb(N,|x|,sp(|x|)+1)$. The machine's\noracle is the four-language decider derived from $N$, and the reachability assertion\nuses that the intermediate configurations satisfy the stated guard."
+}

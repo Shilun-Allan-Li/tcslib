@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.MultiTapeTM.runFrom_of_halt",
+ "key": "9124c80461351b7e",
+ "kind": "lemma",
+ "title": "Runs from a halted configuration are constant",
+ "statement": "Let $M$ be a multi-tape Turing machine and let $c$ be a configuration on a fixed input whose state is absent, so that the machine is halted. For every $n\\in\\mathbb{N}$, running $M$ for $n$ steps from $c$ yields $c$.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine",
+  "A configuration on a fixed input with no state",
+  "A natural-number time $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine and $c$ a configuration whose state\ncomponent is empty (the machine has halted).  Then running $M$ for any number\nof steps from $c$ yields $c$ itself."
+}

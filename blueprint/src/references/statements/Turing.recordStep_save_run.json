@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.recordStep_save_run",
+ "key": "ad64b773fd9aaaf0",
+ "kind": "theorem",
+ "title": "Bounded counter-saving run",
+ "statement": "Let $x$ and $w$ be finite Boolean words, and let $c$ be a configuration on input $x$ with no work tapes. Suppose its state is false and its input-head position $p$ satisfies $p\\le |x|$. Assume that the binary value of $w$ is $2^{|w|}-1$ and that $p$ is strictly less than this value. Let $ct:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{Bool})$ be the contents of an additional work tape, with head position $cp\\in\\mathbb Z$, and suppose that for every integer $z$ with $-1\\le z\\le |w|$, the cell at position $cp+z$ contains the symbol of $w$ at offset $z$ (or is blank when that offset is outside the word). Consider the counter-loop machine whose body, on a false state reading an input symbol, moves the input head one position left and remains false, and which otherwise enters the true exit state; its counter is stored on the additional tape and decremented between body iterations. There is a time $t\\le 5(p+1)+2|w|$ at which this machine is in its escape state, its embedded configuration has true state and input-head position zero, and its additional tape contains the word obtained by applying the fixed-width decrement operation to $w$ exactly $p+1$ times. Before time $t$ it is in neither the done nor escape state, and at every time through $t$ the additional-tape head lies in $[cp-1,cp+|w|]$. The binary value of the bitwise complement of the resulting word is $p+1$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$c$ is a configuration on $x$ with no work tapes",
+  "$c$'s state is false",
+  "$c$'s input-head position $p$ is at most $|x|$",
+  "$w$ is a finite Boolean word",
+  "the binary value of $w$ is $2^{|w|}-1$",
+  "$p$ is strictly less than the binary value of $w$",
+  "$ct$ assigns an optional Boolean symbol to each integer tape position",
+  "$cp$ is an integer",
+  "for every integer $z$ with $-1\\le z\\le |w|$, $ct(cp+z)$ equals the tape content of $w$ at offset $z$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion depends on the specific counter-loop and tape-embedding constructions; the prose describes their behavior and resulting configuration without naming their Lean identifiers.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

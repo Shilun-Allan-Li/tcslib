@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/KarpLiptonPrefix.lean :: Complexity.KarpLipton.prefixLangOf_mem_NP -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomially Bounded Prefix Language in NP
+
+**Claim.** If $V\in\mathsf{P}$, the unary language for $\ell$ is polynomial-time computable, and $\ell(y)\le A(|y|+1)^a$, then the stated marker-removed prefix language belongs to $\mathsf{NP}$.
+
+**Proof.** Construct a polynomial-time verifier language on encoded pairs $(q,s)$. From such a pair, recover $q$ and $s$ using the polynomial-time first- and second-component decoding maps. Decode $q$ once more to obtain its first component $x$ and its second component; remove the marker from that second component and append the proposed string $s$. The verifier accepts exactly when this concatenated string has length $\ell(x)$ and when pairing $x$ with it gives a member of $V$. The decoder maps, marker removal, concatenation, and unary computation of $\ell(x)$ are polynomial-time computable. Thus the length check is in $\mathsf{P}$, and the membership check is a polynomial-time preimage of $V$. Their intersection is in $\mathsf{P}$. The NP characterization by certificates of polynomially bounded length now applies: on input $q$, the constructed verifier accepts some certificate exactly when the defining witness condition for the prefix language holds. For the bound, let $x$ be the first component of $q$. A witness $s$ in the prefix-language definition satisfies $|s|\le\ell(x)$, since the marker-removed second component has nonnegative length and its concatenation with $s$ has length $\ell(x)$. The decoding bound gives $|x|\le |q|$, so $\ell(x)\le A(|q|+1)^a$. Hence certificates have the required polynomial length. The NP characterization allows certificates of length at most this bound, completing the proof.
+
+**Key facts.** `Complexity.polyTimeComputable_pairFstD`, `Complexity.polyTimeComputable_pairSndD`, `Complexity.PolyTimeComputable.comp`, `Complexity.KarpLipton.polyTimeComputable_dropMarker`, `Complexity.PolyTimeComputable.append`, `Complexity.PolyHierarchy.UnaryPT.comp`, `Complexity.PolyTimeComputable.pairEncode`, `Complexity.lenEq_preimage_mem_P`, `Complexity.preimage_mem_P`, `Complexity.inter_mem_P`, `Complexity.mem_NP_iff_exists_length_le`, `Complexity.length_pairFstD_le`, `Complexity.KarpLipton.mem_prefixLangOf`.

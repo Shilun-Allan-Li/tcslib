@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.recordStep_observed_action",
+ "key": "7b4aead205094a67",
+ "kind": "theorem",
+ "title": "Observed transition matches the native step",
+ "statement": "Let $M$ be a Boolean-input, Boolean-work-tape machine with state set $Q$, let $s$ be a natural number, and let $c$ be a configuration on a Boolean input $x$. Suppose every work head of $c$ lies within distance $s$ of the origin and every tape cell at distance greater than $s$ is blank; also suppose $c$ is not halted. For any tag $\\tau$ and bit $b$, form record data from $c$ and the window of radius $s$, then set its tag to $\\tau$, its native-right flag to $b$, and its input field to the symbol read by $c$. The action prescribed from this data, applied to $c$, equals $M$'s one-step successor; its output equals the symbol emitted by $M$ on that step; and the record data's outside flag is false exactly when the successor configuration still satisfies the same window condition.",
+ "hypotheses_covered": [
+  "$M$ is a Boolean machine with state set $Q$",
+  "$s\\in\\mathbb N$",
+  "$x$ is a Boolean list and $c$ is a configuration of $M$ on $x",
+  "all work-head positions of $c$ have absolute value at most $s$",
+  "every work-tape cell at absolute position greater than $s$ is blank",
+  "$\\tau$ is a tag of type $T$",
+  "$b$ is a Boolean value",
+  "the state of $c$ is present"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.taut_machine_malformed",
+ "key": "458c629a3448197d",
+ "kind": "lemma",
+ "title": "Verifier behavior on malformed input",
+ "statement": "Let $x$ and $u$ be binary words, and suppose the exact-consumption parser fails on $x$. Then the non-tautology verifier computes the one-bit output $1$ on the pair encoding of $x$ and $u$ within $2|x|+3$ steps.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$u$ is a binary word",
+  "The parser returns failure on $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary string on which the exact-consumption formula parser fails, and\nlet $u$ be any binary word. Then the non-tautology verifier, run on\n$\\mathrm{pair}(x, u)$, halts within $2|x| + 3$ steps with output the single bit $1$."
+}

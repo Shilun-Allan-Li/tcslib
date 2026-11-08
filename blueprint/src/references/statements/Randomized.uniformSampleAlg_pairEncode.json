@@ -1,0 +1,15 @@
+{
+ "lean_name": "Randomized.uniformSampleAlg_pairEncode",
+ "key": "db59a84c4f42dbe2",
+ "kind": "theorem",
+ "title": "Correctness of the uniform sampling algorithm",
+ "statement": "For bit strings $w,r$ and a natural number $k$, encode the pair consisting of the encoding of $w$ with $k$ copies of the bit $1$ and the string $r$. The uniform-sampling algorithm on this input returns the empty string if none of the first $k$ consecutive blocks of length $\\operatorname{size}(N-1)$ in $r$ has binary value less than $N$, where $N$ is the binary value of $w$; otherwise it returns a leading bit $1$ followed by the binary expansion of the first such block's value. In the displayed length, $\\operatorname{size}$ is the binary length used by the algorithm.",
+ "hypotheses_covered": [
+  "$w$ and $r$ are bit strings",
+  "$k$ is a natural number"
+ ],
+ "confidence": "low",
+ "caveat": "The statement compares concrete encodings and an algorithm built from several auxiliary list-processing definitions; the prose summarizes their operational behavior.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

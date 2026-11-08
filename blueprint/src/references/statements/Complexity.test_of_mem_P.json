@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.test_of_mem_P",
+ "key": "2b2b90d474dfbd14",
+ "kind": "theorem",
+ "title": "Polynomial-Time Computability of a Language Indicator",
+ "statement": "Let $L$ be a language of binary strings. If $L$ belongs to $\\mathsf{P}$, then the function sending each binary string $z$ to the one-bit word indicating whether $z\\in L$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$L$ is a language of binary strings",
+  "$L\\in\\mathsf{P}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L \\subseteq \\{0,1\\}^*$ be a language in $\\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time. Then the map sending a bit string $z$ to the one-bit word $\\mathbf{1}_L(z)$, which is $1$ if $z \\in L$ and $0$ otherwise, is polynomial-time computable, i.e.\\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \\in \\mathbb{N}$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.TreeCircuit.reidx_eval",
+ "key": "6af14cc47b2c3e60",
+ "kind": "theorem",
+ "title": "Reindexing commutes with evaluation",
+ "statement": "Let $m,m'$ be natural numbers, let $c$ be a Boolean circuit on $m$ variables, let $f : \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,m'$, and let $g : \\mathrm{Fin}\\,m' \\to \\bbf_2$ be an assignment. Evaluating the reindexed circuit under $g$ gives the same value as evaluating $c$ under the assignment $g \\circ f$.",
+ "hypotheses_covered": [
+  "$m,m'$ are natural numbers",
+  "$c$ is a Boolean circuit on $m$ variables",
+  "$f : \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,m'$",
+  "$g : \\mathrm{Fin}\\,m' \\to \\bbf_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a Boolean circuit on $m$ variables, let $f : \\mathrm{Fin}\\,m \\to\n\\mathrm{Fin}\\,m'$ be a re-indexing map, and let $g : \\mathrm{Fin}\\,m' \\to \\bbf_2$ be an\nassignment to the $m'$ variables. Then evaluating the re-indexed circuit\n$\\mathrm{reidx}(c, f)$ under $g$ gives the same value as evaluating the original circuit\n$c$ under the pulled-back assignment $g \\circ f$:\n\\[\n\\mathrm{eval}\\big(\\mathrm{reidx}(c, f),\\, g\\big) = \\mathrm{eval}\\big(c,\\, g \\circ\nf\\big).\n\\]"
+}

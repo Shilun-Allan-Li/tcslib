@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassPSPACE/TQBFHardVerifier.lean :: Complexity.TQBFHard.pt_orB -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Bounded Disjunction
+
+**Claim.** For the given parameters, the Boolean test that checks whether some index in the prescribed range makes the selector false is polynomial-time computable.
+
+**Proof.** The proof uses the polynomial-time loop principle `BlockLoop.polyTimeComputable_orLoop`: if the initial loop state and one-step update are polynomial-time computable, the update increases length by a controlled amount, and the test at each state is polynomial-time computable, then the disjunction of those tests over a polynomially bounded range is polynomial-time computable. Here the loop state stores the first projection, the unary string of length $m=\mathrm{vwid}(A,a,|x|)$, and the current suffix of the second projection. The initial state is polynomial-time computable by pair projection and encoding closure. Each update drops the next $3m$ bits from that suffix, so it moves from the state for index $j$ to the state for index $j+1$. The drop offset has polynomial-time unary encoding by `pt_rep_mul`, applied to the second projection, and the resulting state is polynomial-time computable by `pt_drop` and pair-encoding closure. The selector test is polynomial-time computable from the relevant decoded components, by `pt_selT` and closure under negation and composition. Finally, the length bounds required by the loop principle follow from the pair-component length bound and the pair-encoding length formula; the initial-state and step equations follow by decoding the constructed pairs and combining successive drops. The loop principle therefore yields the disjunction over all $j<m$, which is precisely the definition of the stated Boolean test.
+
+**Key facts.** `Complexity.polyTimeComputable_pairFstD`, `Complexity.polyTimeComputable_pairSndD`, `Complexity.PolyTimeComputable.comp`, `Complexity.PolyTimeComputable.pairEncode`, `Complexity.TQBFHard.pt_rep_mul`, `Complexity.TQBFHard.pt_drop`, `Complexity.TQBFHard.pt_vwid`, `Complexity.TQBFHard.pt_selT`, `Complexity.polyTimeComputable_not`, `Complexity.length_pair_components_le`, `Turing.length_pairEncode`, `Complexity.BlockLoop.polyTimeComputable_orLoop`, `Complexity.pairFstD_pairEncode`, `Complexity.pairSndD_pairEncode`.

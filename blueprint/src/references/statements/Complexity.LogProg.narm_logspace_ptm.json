@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.narm_logspace_ptm",
+ "key": "042c110c519b9f35",
+ "kind": "theorem",
+ "title": "Logspace Simulation Preserves Output Probabilities",
+ "statement": "Let a nondeterministic register program with $m$ registers and $d$ oracle languages have a finite control-state set with decidable equality, and suppose every oracle language belongs to $\u0001\\text{LOGSPACE}$. For natural numbers $C_0,c_0$, assume that for every input $x$ some length $N$ makes the program halt on every choice string of length $N$, with each pre-final configuration satisfying its validity conditions and having every register value at most $C_0(|x|+1)^{c_0}$. Then there are a natural number $c$ and a finite-state nondeterministic machine that uses at most $c$ times logarithmic space on every input, and such that for every $x,N$ for which the stated halting and configuration conditions hold, the machine halts within some time $T$ and, for each bit $b$, the probability that it outputs the one-bit string $[b]$ after $T$ steps equals the probability that the register program answers $b$ after $N$ choices.",
+ "hypotheses_covered": [
+  "The program has $m$ registers and $d$ oracle languages",
+  "The finite control-state set has decidable equality",
+  "Every oracle language is in LOGSPACE",
+  "There are natural constants $C_0,c_0$",
+  "For each input, some length $N$ makes every choice string of that length halt",
+  "Every pre-final run configuration satisfies the program's validity conditions",
+  "Every register value is at most $C_0(|x|+1)^{c_0}$",
+  "The simulated-machine conclusion applies to every $x,N$ satisfying those halting and configuration conditions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

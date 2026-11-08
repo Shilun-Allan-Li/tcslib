@@ -1,0 +1,23 @@
+{
+ "lean_name": "Light.Ends.nextPair",
+ "key": "f41583b7a0691e16",
+ "kind": "theorem",
+ "title": "Execution of a counter update",
+ "statement": "Let $A,B,N,n,t,T$ be natural numbers, let $l$ be a list of integers, let $\\mu$ be an integer-valued memory, and let $Q$ be a state predicate. Suppose $Q$ holds in the state whose locals are the frame obtained by setting local $B$ to $(t+1)\\bmod n$ and then local $A$ to $(t+1)/n$ in $l$, and whose memory is $\\mu$. If $0<n$, $t+1$ and $n$ are at most the word limit, the initial frame has values $t/n$, $t\\bmod n$, and $n$ at locals $A,B,N$, respectively, $A\\ne B$, $B\\ne N$, and $14\\le T$, then the statement that increments $B$, resets it to zero and increments $A$ when the new value of $B$ equals $N$, has an execution from the state with frame $l$ and memory $\\mu$, with cost at most $T$, ending in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "$Q$ holds in the state with frame obtained by setting $B$ to $(t+1)\\bmod n$ and then $A$ to $(t+1)/n$, and memory $\\mu$",
+  "$0<n$",
+  "$t+1$ is at most the word limit",
+  "$n$ is at most the word limit",
+  "The initial frame has value $t/n$ at $A$",
+  "The initial frame has value $t\\bmod n$ at $B$",
+  "The initial frame has value $n$ at $N$",
+  "$A\\ne B$",
+  "$B\\ne N$",
+  "$14\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

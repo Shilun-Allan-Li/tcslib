@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clLoad_frame",
+ "key": "890ae7e7dce26518",
+ "kind": "lemma",
+ "title": "Embedding a field-loader configuration",
+ "statement": "Let $l$ be a natural number, let $x$ be a binary input word, and let $p$ be an input-head position for $x$. Choose a field index $i<l$, a loader control $q$, old words for all fields, a stream, a replacement word, and an integer cursor position $s$. Embed the two-tape configuration whose tapes contain the stream and replacement word into the row loader’s slots for field $i$ and the stream, using the row loader’s current tape contents for the other slots and placing their heads at zero. The resulting configuration is the row-loader configuration with field $i$ replaced by the replacement word, all other fields unchanged, and the stream and cursor preserved.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb N$",
+  "$x$ is a binary word",
+  "$p$ is an input-head position for $x$",
+  "$i<l$",
+  "$q$ is a loader control",
+  "old assigns a binary word to each of the $l$ fields",
+  "$stream$ and $word$ are binary words",
+  "$s\\in\\mathbb Z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, target field $i$, loader control, old field words, stream, replacement word, and cursor, relocating the two-tape loader configuration into the row loader's slots, retaining all other fields, yields the row seam in which only field $i$ has been replaced; every other field remains untouched."
+}

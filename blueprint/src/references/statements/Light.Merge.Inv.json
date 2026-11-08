@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.Merge.Inv",
+ "key": "c5d5dffda89cdd36",
+ "kind": "def",
+ "title": "Merge loop invariant",
+ "statement": "Let $L$ and $R$ be lists of integers, let $\u001b[?]$ be a memory map, let $a,b,d$ be natural-number addresses, and let $i,j$ be natural numbers. A state satisfies the invariant if there are a memory map $\u001b[?]'$ and an output list $O$ such that its location component is the frame determined by $a,|L|,b,|R|,d,i,j$ and its memory component is $\u001b[?]'$; moreover, $i\\le |L|$, $j\\le |R|$, the two maps agree outside the destination region of length $|L|+|R|$, $|O|=i+j$, $O$ occupies a memory segment beginning at $d$, and concatenating $O$ with the merge of the unconsumed tails of $L$ and $R$ gives the merge of $L$ and $R$.",
+ "hypotheses_covered": [
+  "there exist a modified memory map and an output list",
+  "state equals the specified frame paired with the modified map",
+  "i is at most the left-list length",
+  "j is at most the right-list length",
+  "original and modified maps agree outside the destination region",
+  "output length equals i+j",
+  "output is a memory segment at the destination",
+  "output followed by the merge of the remaining tails equals the merge of the original lists"
+ ],
+ "confidence": "low",
+ "caveat": "The payload omits the definitions of State, frame, SameOutside, Seg, and merge, so some components cannot be specified exactly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

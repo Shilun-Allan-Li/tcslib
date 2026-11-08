@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.timedPrefix_clock_end",
+ "key": "dbaf55c4d57b991d",
+ "kind": "lemma",
+ "title": "Clock delimiter consumed",
+ "statement": "For Boolean words $b_s,\\alpha,x$, after $4|b_s|+4$ steps of the prefix parser on $\\langle\\langle b_s,\\alpha\\rangle,x\\rangle$, its state is the first code-reading phase, its input head is at position $4|b_s|+5$, its work tape stores all of $b_s$, and its output is empty.",
+ "hypotheses_covered": [
+  "Boolean words $b_s,\\alpha,x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Running the prefix parser $4|b| + 4$ steps from its initial configuration on\nthe nested pair encoding $\\langle \\langle b, \\alpha\\rangle, x\\rangle$ consumes\nthe entire quadrupled clock and its four separator cells, stores exactly $b$\non the work tape, produces no output, and enters the code-extraction phase."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.tapeBlocks_buffer",
+ "key": "cdb66c6d6abd84a4",
+ "kind": "lemma",
+ "title": "Buffer value in the tape assembly",
+ "statement": "Let $\\alpha$ be a type, let $k,l$ be nonnegative integers, let $a$ and $c$ be families of values indexed by the $k$ left positions and $l$ right positions, respectively, and let $b\\in\\alpha$. The three-block assembly of $a$, $b$, and $c$ takes the value $b$ at its middle buffer position.",
+ "hypotheses_covered": [
+  "A type $\\alpha$",
+  "Nonnegative integers $k,l$",
+  "A family $a$ indexed by the $k$ left positions",
+  "A buffer value $b\\in\\alpha$",
+  "A family $c$ indexed by the $l$ right positions",
+  "An index in the single middle buffer position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a$ be a family of values on $k$ indices, $b$ a single value, and $c$ a\nfamily of values on $l$ indices.  Evaluating their three-block assembly at\nthe middle buffer index returns $b$."
+}

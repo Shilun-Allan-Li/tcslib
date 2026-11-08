@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.dg_collect",
+ "key": "cbd81bbbc4acd601",
+ "kind": "lemma",
+ "title": "Collection sweep span",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $M$ be a finite Turing machine over $\\Gamma$ with $k$ work tapes, and choose a symbol $a_0\\in\\Gamma$. Let $x$ be a word over the enlarged sweep alphabet, and let $c$ be a configuration of $M$ on the word obtained by retracting each symbol of $x$ to $\\Gamma$. Suppose $c$ is in state $q$, and every work-tape head is at or to the right of an integer $a$. For any integers $a,z$ and any $n\\in\\mathbb N$, the single-tape simulator started from the encoded configuration of $c$ reaches, after $1+nk$ steps, the forward-sweep configuration at frontier $z+1+nk$, with state recording $q$ and the read information at coordinate $a+n$. Its left stack is the reversed encoding of the read-marked blocks at coordinates $a$ through $a+n-1$, followed by a boundary marker, its right stack is the boundary marker, and throughout these steps the work-tape head stays between $z$ and $z+1+nk$, inclusive.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "A chosen symbol $a_0\\in\\Gamma$",
+  "$x$ is a word over the enlarged sweep alphabet",
+  "$c$ is a configuration on the retracted word",
+  "$c$ has state $q$",
+  "Every work-tape head of $c$ is at least $a$",
+  "Integers $a,z$ and natural number $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

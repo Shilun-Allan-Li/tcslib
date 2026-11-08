@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Compiler.Rel.beyond",
+ "key": "be72c613be92cd5b",
+ "kind": "theorem",
+ "title": "Preservation of the memory relation",
+ "statement": "Let $W$ be a word size, let $Z$ be a size specification with $F$ local variables per frame, stack capacity $Q$, and space limit, and let $\u0003c3\u0003e$ be a state. Suppose a memory map $m$ satisfies the relation for $Z$, $\u0003c3\u000e$, and a frame pointer index $q$, where $1 \u0003cleq q$. If another memory map $m'$ agrees with $m$ outside the union of the scratch addresses and the stack addresses indexed by $q+F \u0003cleq j<Q$, then $m'$ also satisfies the relation for $Z$, $\u0003c3\u000e$, and $q$.",
+ "hypotheses_covered": [
+  "A word size $W$ and size specification $Z$ with frame-local-variable count $F$ and stack capacity $Q$",
+  "A state $\u0003c3\u000e",
+  "A memory map $m$ satisfying the relation for $Z$, $\u0003c3\u000e$, and $q$",
+  "The lower bound $1 \u0003cleq q$",
+  "A memory map $m'$ agreeing with $m$ outside the union of the scratch addresses and stack addresses indexed by $q+F \u0003cleq j<Q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

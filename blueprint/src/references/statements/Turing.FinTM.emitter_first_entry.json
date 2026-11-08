@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitter_first_entry",
+ "key": "b8315619a32c880b",
+ "kind": "lemma",
+ "title": "First Entry into a Stopping Set",
+ "statement": "Let $M$ be a multi-tape Turing machine, let $S$ be its state set, and let $w$ be a Boolean input word. Suppose a predicate $P$ on states has the property that every configuration whose state satisfies $P$ is fixed by one step of $M$. If configurations $c$ and $d$ and a time bound $T$ satisfy that $d$ has a state satisfying $P$ and the run from $c$ reaches $d$ after $T$ steps, then there is a time $t\\le T$ at which the run from $c$ is $d$, with no earlier time $j<t$ at which its state satisfies $P$.",
+ "hypotheses_covered": [
+  "A multi-tape machine with $k$ work tapes, Boolean symbols, and state set $S$",
+  "A state predicate $P$",
+  "Every configuration with a state satisfying $P$ is fixed by one step",
+  "Configuration $d$ has a state satisfying $P$",
+  "The run from $c$ reaches $d$ after $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a class of control states be absorbing (any configuration whose state\nlies in the class is a fixed point of the step function), and suppose the\nrun from $c$ reaches a configuration $d$ with state in the class after $T$\nsteps. Then there is a time $t \\le T$ with no earlier visit to the class\nsuch that the configuration at time $t$ is already $d$."
+}

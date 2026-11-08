@@ -28,7 +28,7 @@ from pathlib import Path
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
-from proofmatch.dataset_io import open_dataset  # noqa: E402
+from proofmatch.dataset_io import dataset_exists, open_dataset  # noqa: E402
 
 DEFAULT = BASE / "dataset" / "tcslib_theorems.jsonl"
 
@@ -255,7 +255,7 @@ def main():
     args = ap.parse_args()
 
     path = Path(args.path)
-    if not path.exists():
+    if not dataset_exists(path):
         print(f"Dataset not found: {path}\nBuild it with: python3 scripts/build_dataset.py")
         return 1
     recs = load(path, args.filter)

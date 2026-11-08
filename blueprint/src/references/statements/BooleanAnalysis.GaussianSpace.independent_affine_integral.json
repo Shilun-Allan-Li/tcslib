@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.independent_affine_integral",
+ "key": "3395be8398703c3d",
+ "kind": "theorem",
+ "title": "Integral Formula for an Independent Affine Input",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, and let $A,D,W\\colon\\Omega\\to\\mathbb R$ be measurable up to null sets, with $W$ independent of the pair $(A,D)$. If $\\psi\\colon\\mathbb R\\to\\mathbb R$ is continuous and $\\psi(A+DW)$ is integrable, then the function $q(a,d)=\\mathbb E[\\psi(a+dW)]$ is integrable under the distribution of $(A,D)$, and $\\mathbb E[\\psi(A+DW)]=\\int_{\\mathbb R^2}q(a,d)\\,d\\mathcal L(A,D)(a,d)$.",
+ "hypotheses_covered": [
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$(A,D)$ is measurable up to null sets",
+  "$W$ is measurable up to null sets",
+  "$W$ is independent of $(A,D)$",
+  "$\\psi$ is continuous",
+  "$\\psi(A+DW)$ is integrable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A,D,W$ be real functions on a probability space $(\\Omega,\\mu)$ such that $(A,D)$ and $W$ are measurable up to null sets and $W$ is independent of $(A,D)$. If $\\psi\\colon\\mathbb R\\to\\mathbb R$ is continuous and $\\psi(A+DW)$ is integrable, then $q(a,d)=\\mathbb E_\\mu[\\psi(a+dW)]$ is integrable under the law $\\lambda$ of $(A,D)$ and $\\mathbb E_\\mu[\\psi(A+DW)]=\\int q(a,d)\\,d\\lambda(a,d)$."
+}

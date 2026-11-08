@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.mapStart",
+ "key": "64f48d20421f2a58",
+ "kind": "lemma",
+ "title": "Startup of the threaded-map controller",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, and let $x,w$ be Boolean words and $T$ a natural number. Suppose there is a space bound such that $M$ halts on input $x$ after exactly $T$ steps, outputs $w$, and uses that space. Then there exist a natural number $t\\leq T+|w|+|x|+5$ and a configuration $c$ of $M$ on $x$ whose output is $w$, such that the threaded-map controller started on $x$ reaches after $t$ steps its silent validation state, with input head at position $1$, capture head at displacement $0$, and empty output, while preserving the tape contents and head positions of $c$.",
+ "hypotheses_covered": [
+  "M is a finite Boolean Turing machine",
+  "x and w are Boolean words",
+  "T is a natural number",
+  "M computes w from x within T steps, with some space bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine that, on input $x$, halts within $T$ steps with output\n$w$. Then within $T + \\abs{w} + \\abs{x} + 5$ steps the threaded-map\ncontroller built over $M$ reaches, without emitting any physical output, its\nsilent validation state at input position $0$ with the capture head at $0$,\nretaining a halted bank of $M$ whose captured output is $w$."
+}

@@ -24,15 +24,10 @@ Boolean arrival tag.
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols}
 \difficulty{2}
-Let $a$ be a one-step action of a multi-tape Turing machine with $k$ work
-tapes, let $c$ be a configuration of such a machine, and let $i$ be one of the
-$k$ work-tape indices.  After applying $a$ to $c$, the content of the $i$-th
-work tape equals the old content updated at the cell under the $i$-th work
-head, where the new cell value is the symbol that $a$ proposes to write there
-and, when $a$ declines to write on that tape, the symbol previously scanned:
-an explicit blank write erases the cell, while no write at all copies the
-scanned symbol back unchanged.  No finiteness or liveness hypothesis is
-required.
+Let $a$ be an action for a machine with $k$ work tapes, let $c$ be a configuration, and
+let $i$ be a work-tape index. After applying $a$ to $c$, tape $i$ is the old tape
+updated at the cell under its head, with value the symbol prescribed by the action for
+that tape, or, if no symbol is prescribed, the symbol previously scanned there.
 \end{lemma}
 
 \begin{definition}[One step of an emission chain]
@@ -54,33 +49,27 @@ input head and all work tapes are left untouched.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM.emitAction, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean
-alphabet running on some input $x$, let $w$ be a Boolean word, and let $e$ be
-a map from $\{0,\dots,\abs{w}\}$ into the states of $M$ such that from each
-state $e(i)$, regardless of the symbols read, the transition of $M$ is the
-emission action for $w$ at index $i$: while $i < \abs{w}$ it appends the
-$i$-th symbol of $w$ to the output and passes to $e(i+1)$, and at
-$i = \abs{w}$ it halts, in both cases leaving the input head and all work
-tapes fixed.  If a configuration $c$ is in state $e(0)$, then for every
-$t \le \abs{w}$, after $t$ steps from $c$ the machine is in state $e(t)$ and
-its output is the output of $c$ followed by the first $t$ symbols of $w$.
+Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean alphabet on
+input $x$, let $w$ be a Boolean word, and let $e$ map the indices $0,\ldots,|w|$ to
+states of $M$. Suppose that from every state $e(i)$, for every scanned input symbol and
+tuple of work-tape symbols, the transition is the emission action for $w$ at index $i$.
+If a configuration $c$ is in state $e(0)$, then for every $t\le |w|$, after $t$ steps
+the machine is in state $e(t)$ and its output is the output of $c$ followed by the first
+$t$ symbols of $w$.
 \end{lemma}
 
-\begin{lemma}[Emission chain halts after the word]
+\begin{lemma}[Halting after an emission chain]
 \lean{Turing.FinTM.emit_halts}
 \label{Turing.FinTM.emit_halts}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM.emitAction, Turing.FinTM.emit_run, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
-Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean
-alphabet running on some input $x$, let $w$ be a Boolean word, and let $e$ be
-a map from $\{0,\dots,\abs{w}\}$ into the states of $M$ such that from each
-state $e(i)$, regardless of the symbols read, the transition of $M$ is the
-emission action for $w$ at index $i$ (append the $i$-th symbol of $w$ and
-pass to $e(i+1)$ while $i < \abs{w}$, halt at $i = \abs{w}$, never moving the
-input head or touching a work tape).  If a configuration $c$ is in state
-$e(0)$, then after exactly $\abs{w} + 1$ steps from $c$ the machine has
-halted and its output is the output of $c$ followed by all of $w$.
+Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean alphabet on
+input $x$, let $w$ be a Boolean word, and let $e$ map the indices $0,\ldots,|w|$ to
+states of $M$. Suppose that from every state $e(i)$, for every scanned input symbol and
+tuple of work-tape symbols, the transition is the emission action for $w$ at index $i$.
+If a configuration $c$ is in state $e(0)$, then after exactly $|w|+1$ steps the machine
+has halted and its output is the output of $c$ followed by $w$.
 \end{lemma}
 
 \begin{definition}[Input-head control action]
@@ -95,20 +84,15 @@ blanks), writes nothing on any work tape, moves no work head, emits no
 output, and passes to $q$, halting when $q$ is absent.
 \end{definition}
 
-\begin{lemma}[Input symbol at a given position]
+\begin{lemma}[Input symbol at a specified position]
 \lean{Turing.FinTM.inputSymbol_at}
 \label{Turing.FinTM.inputSymbol_at}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.inputSymbolInner}
 \difficulty{4}
-Let $c$ be a configuration of a multi-tape Turing machine over the Boolean
-alphabet on input $x$, and let $i \le \abs{x}$ be a natural number such that
-the input head of $c$ sits at position $i + 1$, in the convention where
-position $0$ is the left boundary blank and position $j$ with
-$1 \le j \le \abs{x}$ scans the $j$-th input symbol.  Then the symbol scanned
-on the input tape is the optional $i$-th entry of $x$ (zero-indexed): the
-symbol $x_i$ when $i < \abs{x}$, and the right boundary blank when
-$i = \abs{x}$.
+Let $x$ be a Boolean word, let $c$ be a configuration on input $x$, and let $i\le |x|$.
+If the input head of $c$ is at position $i+1$, then the symbol it scans is $x[i]?$: the
+$i$-th bit when $i<|x|$, and no symbol when $i=|x|$.
 \end{lemma}
 
 \begin{definition}[Left-block extension of an action]
@@ -167,52 +151,50 @@ whose first $k$ work tapes carry the given inactive contents and head
 positions, for instance data left behind by an earlier phase.
 \end{definition}
 
-\begin{lemma}[Action application commutes with the left embedding]
+\begin{lemma}[Action application commutes with left-block embedding]
 \lean{Turing.FinTM.leftCfg_apply}
 \label{Turing.FinTM.leftCfg_apply}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.leftAction, Turing.FinTM.leftCfg}
 \difficulty{3}
-Let $f : S \to S'$ be a state renaming, $a$ a one-step action of a machine
-with $k$ work tapes over the Boolean alphabet, $c$ a configuration of such a
-machine on input $x$, and fix contents and head positions for $l$ inactive
-extra tapes.  Applying the left-block extension of $a$ along $f$ to the
-left-block embedding of $c$ with the given inactive data yields the
-left-block embedding, with the same inactive data, of the result of applying
-$a$ to $c$.
+Let $k,l$ be nonnegative integers, let $S,S'$ be state sets, and let $x$ be a finite
+Boolean input. Given a map $f:S\to S'$, a $k$-tape action $a$ with Boolean work-tape
+symbols and states in $S$, a configuration $c$ on input $x$ with $k$ work tapes and
+states in $S$, and arbitrary contents and head positions for $l$ additional tapes,
+applying the action extended to the first $k$ tapes with states renamed by $f$ to the
+left-block embedding of $c$ gives exactly the left-block embedding of the result of
+applying $a$ to $c$, with the same additional tape contents and head positions.
 \end{lemma}
 
-\begin{lemma}[Action application commutes with the right embedding]
+\begin{lemma}[Action application commutes with right embedding]
 \lean{Turing.FinTM.rightCfg_apply}
 \label{Turing.FinTM.rightCfg_apply}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.rightAction, Turing.FinTM.rightCfg}
 \difficulty{3}
-Let $f : S \to S'$ be a state renaming, $a$ a one-step action of a machine
-with $l$ work tapes over the Boolean alphabet, $c$ a configuration of such a
-machine on input $x$, and fix contents and head positions for $k$ inactive
-extra tapes.  Applying the right-block extension of $a$ along $f$ to the
-right-block embedding of $c$ with the given inactive data yields the
-right-block embedding, with the same inactive data, of the result of applying
-$a$ to $c$.
+Let $k,l \in \mathbb{N}$, let $S,S'$ be state sets, let $f:S\to S'$ be a state map, let
+$x$ be a Boolean input, let $a$ be a one-step action for a machine with $l$ work tapes
+and states in $S$, and let $c$ be a configuration for that machine on $x$. For any
+contents and head positions on $k$ additional work tapes, applying the action extended
+to act on the last $l$ tapes and with states renamed by $f$ to the right embedding of
+$c$ gives the right embedding, with those additional tapes unchanged, of the result of
+applying $a$ to $c$.
 \end{lemma}
 
-\begin{lemma}[One-step simulation on the left block]
+\begin{lemma}[One-step simulation under left-block embedding]
 \lean{Turing.FinTM.leftCfg_step}
 \label{Turing.FinTM.leftCfg_step}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.leftAction, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a machine with $k$ work tapes and $M'$ a machine with $k + l$ work
-tapes, both over the Boolean alphabet, and let $f$ be a map from the states
-of $M$ to the states of $M'$ such that on every renamed state $f(q)$, for
-every scanned input symbol and every tuple of scanned work symbols, the
-transition of $M'$ is the left-block extension along $f$ of the transition of
-$M$ from $q$ on that input symbol and the symbols scanned on the first $k$
-tapes.  Then for every configuration $c$ of $M$ on input $x$ and all inactive
-contents and head positions for the last $l$ tapes, one step of $M'$ from the
-left-block embedding of $c$ equals the left-block embedding of one step of
-$M$ from $c$; in particular a halted embedded configuration stays halted.
+Let $k,l\in\mathbb N$, let $M$ have $k$ work tapes and states in $S$, and let $M'$ have
+$k+l$ work tapes and states in $S'$, both over Boolean symbols. Suppose $f:S\to S'$ and,
+for every state $q$, input symbol (possibly absent), and tuple of symbols on the $k+l$
+work tapes, the transition of $M'$ at state $f(q)$ equals the left-block extension along
+$f$ of the transition of $M$ at $q$, using the first $k$ tape symbols. Then for every
+configuration $c$ of $M$ on Boolean input $x$ and every choice of contents and head
+positions for the last $l$ tapes, one step of $M'$ from the embedded configuration
+equals the embedding of one step of $M$ from $c$.
 \end{lemma}
 
 \begin{lemma}[One-step simulation on the right block]
@@ -221,34 +203,32 @@ $M$ from $c$; in particular a halted embedded configuration stays halted.
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.rightAction, Turing.FinTM.rightCfg, Turing.FinTM.rightCfg_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a machine with $l$ work tapes and $M'$ a machine with $k + l$ work
-tapes, both over the Boolean alphabet, and let $f$ be a map from the states
-of $M$ to the states of $M'$ such that on every renamed state $f(q)$, for
-every scanned input symbol and every tuple of scanned work symbols, the
-transition of $M'$ is the right-block extension along $f$ of the transition
-of $M$ from $q$ on that input symbol and the symbols scanned on the last $l$
-tapes.  Then for every configuration $c$ of $M$ on input $x$ and all inactive
-contents and head positions for the first $k$ tapes --- which may hold
-arbitrary data from an earlier phase --- one step of $M'$ from the
-right-block embedding of $c$ equals the right-block embedding of one step of
-$M$ from $c$.
+Let $k,l$ be nonnegative integers, let $S,S'$ be state sets, and let $x$ be a finite
+Boolean input. Let $M$ have $l$ work tapes and state set $S$, and let $M'$ have $k+l$
+work tapes and state set $S'$. Suppose $f:S\to S'$ is such that, for every state $q\in
+S$, input symbol (possibly blank), and tuple of symbols on the $k+l$ work tapes, the
+transition of $M'$ at $f(q)$ is the right-block extension along $f$ of the transition of
+$M$ using the symbols on the last $l$ tapes. Then for every configuration $c$ of $M$ and
+every choice of contents and head positions for the first $k$ tapes, one step of $M'$
+from the configuration combining those data with $c$ on the last $l$ tapes equals the
+configuration formed by combining the same data with one step of $M$ from $c$.
 \end{lemma}
 
-\begin{lemma}[Lockstep run on the left block]
+\begin{lemma}[Lockstep run under left-block embedding]
 \lean{Turing.FinTM.leftCfg_run}
 \label{Turing.FinTM.leftCfg_run}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.leftAction, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_step, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step}
 \difficulty{1}
-Let $M$ be a machine with $k$ work tapes and $M'$ a machine with $k + l$ work
-tapes, both over the Boolean alphabet, and let $f$ be a map from the states
-of $M$ to the states of $M'$ such that on every renamed state, for all
-scanned symbols, the transition of $M'$ is the left-block extension along $f$
-of the corresponding transition of $M$ read off the first $k$ tapes.  Then
-for every configuration $c$ of $M$ on input $x$, all inactive contents and
-head positions for the last $l$ tapes, and every number of steps $t$, running
-$M'$ for $t$ steps from the left-block embedding of $c$ equals the left-block
-embedding of the run of $M$ for $t$ steps from $c$.
+Let $k,l\in\mathbb N$, let $M$ have $k$ work tapes and states in $S$, and let $M'$ have
+$k+l$ work tapes and states in $S'$, both over Boolean symbols. Suppose $f:S\to S'$ and,
+for every state $q$, input symbol (possibly absent), and tuple of symbols on the $k+l$
+work tapes, the transition of $M'$ at state $f(q)$ equals the left-block extension along
+$f$ of the transition of $M$ at $q$, using the first $k$ tape symbols. Then for every
+configuration $c$ of $M$ on Boolean input $x$, every choice of contents and head
+positions for the last $l$ tapes, and every $t\in\mathbb N$, running $M'$ for $t$ steps
+from the embedded configuration equals the embedding of the configuration reached by
+running $M$ for $t$ steps from $c$.
 \end{lemma}
 
 \begin{lemma}[Lockstep run on the right block]
@@ -257,16 +237,17 @@ embedding of the run of $M$ for $t$ steps from $c$.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.rightAction, Turing.FinTM.rightCfg, Turing.FinTM.rightCfg_step, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step}
 \difficulty{1}
-Let $M$ be a machine with $l$ work tapes and $M'$ a machine with $k + l$ work
-tapes, both over the Boolean alphabet, and let $f$ be a map from the states
-of $M$ to the states of $M'$ such that on every renamed state, for all
-scanned symbols, the transition of $M'$ is the right-block extension along
-$f$ of the corresponding transition of $M$ read off the last $l$ tapes.  Then
-for every configuration $c$ of $M$ on input $x$, all inactive contents and
-head positions for the first $k$ tapes, and every number of steps $t$,
-running $M'$ for $t$ steps from the right-block embedding of $c$ equals the
-right-block embedding of the run of $M$ for $t$ steps from $c$, with the
-inactive left-block data preserved throughout.
+Let $k,l$ be nonnegative integers, let $S,S'$ be state sets, and let $x$ be a finite
+Boolean input. Let $M$ have $l$ work tapes and state set $S$, and let $M'$ have $k+l$
+work tapes and state set $S'$. Suppose $f:S\to S'$ satisfies the following transition
+rule: for every state $q\in S$, input symbol (possibly blank) $a$, and tuple $w$ of
+symbols on the $k+l$ work tapes, the transition of $M'$ at state $f(q)$ on $a,w$ is the
+right-block extension along $f$ of the transition of $M$ at $q$ on $a$ and the symbols
+of $w$ on the last $l$ tapes. Then, from any configuration $c$ of $M$ and any contents
+and head positions for the first $k$ tapes, the run of $M'$ for $t$ steps from the
+configuration that places $c$ on the last $l$ tapes and those data on the first $k$
+tapes equals the configuration obtained by placing the run of $M$ for $t$ steps from $c$
+on the last $l$ tapes and preserving the first $k$ tapes' data.
 \end{lemma}
 
 \begin{definition}[Branch union of two machines]
@@ -290,38 +271,33 @@ the transition table does not.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.branchTM, Turing.FinTM.computesInTime_iff, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_run, Turing.FinTM.rightCfg, Turing.FinTM.rightCfg_run, Turing.MultiTapeTM.initCfg}
 \difficulty{4}
-Let $M_1$ and $M_2$ be Turing machines over the Boolean alphabet with
-finitely many states, let $b$ be a Boolean, let $x$ and $w$ be Boolean words,
-and let $t$ be a natural number.  The branch union of $M_1$ and $M_2$
-selected by $b$ halts on input $x$ within $t$ steps with output $w$ if and
-only if the selected machine --- $M_1$ when $b$ is true, $M_2$ when $b$ is
-false --- halts on input $x$ within $t$ steps with output $w$.
+Let $M_1$ and $M_2$ be finite Turing machines over the Boolean alphabet, let $b$ be a
+Boolean, and let $x,w$ be Boolean words and $t\in\mathbb{N}$. The branch union selected
+by $b$ computes output $w$ from input $x$ within $t$ steps if and only if $M_1$ does so
+when $b$ is true, and $M_2$ does so when $b$ is false.
 \end{lemma}
 
-\begin{lemma}[Effect of a control action]
+\begin{lemma}[Effect of an input-head control action]
 \lean{Turing.FinTM.controlAction_apply}
 \label{Turing.FinTM.controlAction_apply}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM.controlAction, Turing.moveInputPos}
 \difficulty{2}
-Let $c$ be a configuration of a machine with $k$ work tapes over the Boolean
-alphabet on input $x$, let $m \in \{-1, 0, +1\}$ be a movement, and let $q$
-be an optional state.  Applying the control action for $m$ and $q$ to $c$
-yields the configuration that agrees with $c$ on all work-tape contents,
-work-head positions, and output, whose state is $q$, and whose input head is
-that of $c$ moved by $m$ with clamping at the two boundary blanks.
+Let $x$ be a Boolean word, let $c$ be a configuration on input $x$ with $k$ work tapes,
+let $m\in\{-1,0,1\}$, and let $q$ be an optional state. Applying the control action with
+movement $m$ and successor state $q$ leaves all work-tape contents, work-tape head
+positions, and output unchanged, sets the state to $q$, and moves the input head by $m$
+with clamping at the boundary positions.
 \end{lemma}
 
-\begin{lemma}[Clamped left move subtracts one]
+\begin{lemma}[Value after a clamped left move]
 \lean{Turing.FinTM.moveInputPos_neg_val}
 \label{Turing.FinTM.moveInputPos_neg_val}
 \leanok
 \uses{Turing.moveInputPos, Turing.moveInputPos_neg_of_ne_left}
 \difficulty{2}
-Let $p \in \{0,\dots,n+1\}$ be an input-head position for an input of length
-$n$.  The clamped left move sends $p$ to the position whose value is $p - 1$
-in truncated natural subtraction; in particular the left boundary position
-$0$ is fixed.
+For every $n\in\mathbb N$ and every input-head position $p\in\{0,\ldots,n+1\}$, a
+clamped move one step to the left has value $\max(p-1,0)$.
 \end{lemma}
 
 \begin{lemma}[Leftward scan to the input start]
@@ -330,16 +306,15 @@ $0$ is fixed.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Let $M$ be a multi-tape Turing machine over the Boolean alphabet on input
-$x$, let $s$ be a scanning state, and let $d$ be an optional dispatch state,
-such that regardless of the work symbols read: in state $s$ scanning an input
-symbol, $M$ moves the input head left and stays in $s$; in state $s$ scanning
-a blank, $M$ moves the input head right and passes to $d$; and neither
-transition touches a work tape or the output.  Then from any configuration
-$c$ in state $s$ whose input-head position $p$ satisfies $p \le \abs{x}$,
-running $M$ for exactly $p + 1$ steps yields the configuration that agrees
-with $c$ in every component except that its state is $d$ and its input head
-is at position $1$, the position scanning the first input symbol.
+Let $k \in \mathbb{N}$, let $S$ be a state set, let $x$ be a Boolean input, and let $M$
+be a $k$-work-tape Turing machine over the Boolean alphabet with states in $S$. Suppose
+that for every input and work-tape symbols, in state $s$ the machine moves left and
+stays in $s$ when it scans an input symbol, and moves right and enters the optional
+destination state $d$ when it scans a blank; these transitions write nothing on the work
+tapes, move no work-tape heads, and emit no output. For every configuration $c$ on $x$
+in state $s$ whose input-head position $p$ satisfies $p \le |x|$, after exactly $p+1$
+steps the machine has state $d$ and input-head position $1$, with all other
+configuration components unchanged.
 \end{lemma}
 
 \begin{lemma}[Rewind from any input position]
@@ -348,17 +323,17 @@ is at position $1$, the position scanning the first input symbol.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{4}
-Let $M$ be a multi-tape Turing machine over the Boolean alphabet on input
-$x$, with a start state $r$, a scanning state $s$, and an optional dispatch
-state $d$, such that regardless of the symbols read: from $r$ the machine
-always moves the input head left and enters $s$; from $s$ it moves left and
-stays in $s$ when an input symbol is scanned, and moves right and passes to
-$d$ when a blank is scanned; and none of these transitions touches a work
-tape or the output.  Then from any configuration $c$ in state $r$ there
-exists a number of steps $t$ such that after $t$ steps the configuration
-agrees with $c$ in every component except that its state is $d$ and its input
-head is at position $1$.  This holds even when $x$ is empty or the input head
-of $c$ starts at a boundary blank.
+Let $k \in \mathbb{N}$, let $S$ be a state set, let $x$ be a Boolean input, and let $M$
+be a $k$-work-tape Turing machine over the Boolean alphabet with states in $S$. Suppose
+there are states $r,s \in S$ and an optional destination state $d \in
+\mathrm{Option}(S)$ such that, for every input symbol and tuple of work-tape symbols,
+state $r$ prescribes a left input-head move with successor state $s$, while state $s$
+prescribes a left move with successor $s$ when an input symbol is scanned and a right
+move with successor $d$ when a blank is scanned; these actions write nothing on the work
+tapes, move no work-tape heads, and emit no output. From every configuration $c$ on
+input $x$ whose state is $r$, there exists $t \in \mathbb{N}$ such that after $t$ steps
+the configuration has state $d$ and input-head position $1$, with every other component
+equal to that of $c$.
 \end{lemma}
 
 \begin{definition}[Three-block tape assembly]
@@ -372,37 +347,40 @@ tape indices that returns the left values on the first $k$ indices, the
 buffer value on the next index, and the right values on the last $l$ indices.
 \end{definition}
 
-\begin{lemma}[Left projection of the tape assembly]
+\begin{lemma}[Left block of the tape assembly]
 \lean{Turing.FinTM.tapeBlocks_left}
 \label{Turing.FinTM.tapeBlocks_left}
 \leanok
 \uses{Turing.FinTM.tapeBlocks}
 \difficulty{1}
-Let $a$ be a family of values on $k$ indices, $b$ a single value, and $c$ a
-family of values on $l$ indices.  Evaluating their three-block assembly at
-the $i$-th index of the left block returns $a(i)$.
+Let $\alpha$ be a type, let $k,l$ be nonnegative integers, let $a$ and $c$ be families
+of values indexed by the $k$ left positions and $l$ right positions, respectively, and
+let $b\in\alpha$. At the position corresponding to any left-block index $i$, the
+three-block assembly of $a$, $b$, and $c$ has value $a(i)$.
 \end{lemma}
 
-\begin{lemma}[Buffer projection of the tape assembly]
+\begin{lemma}[Buffer value in the tape assembly]
 \lean{Turing.FinTM.tapeBlocks_buffer}
 \label{Turing.FinTM.tapeBlocks_buffer}
 \leanok
 \uses{Turing.FinTM.tapeBlocks}
 \difficulty{1}
-Let $a$ be a family of values on $k$ indices, $b$ a single value, and $c$ a
-family of values on $l$ indices.  Evaluating their three-block assembly at
-the middle buffer index returns $b$.
+Let $\alpha$ be a type, let $k,l$ be nonnegative integers, let $a$ and $c$ be families
+of values indexed by the $k$ left positions and $l$ right positions, respectively, and
+let $b\in\alpha$. The three-block assembly of $a$, $b$, and $c$ takes the value $b$ at
+its middle buffer position.
 \end{lemma}
 
-\begin{lemma}[Right projection of the tape assembly]
+\begin{lemma}[Right block of the tape assembly]
 \lean{Turing.FinTM.tapeBlocks_right}
 \label{Turing.FinTM.tapeBlocks_right}
 \leanok
 \uses{Turing.FinTM.tapeBlocks}
 \difficulty{1}
-Let $a$ be a family of values on $k$ indices, $b$ a single value, and $c$ a
-family of values on $l$ indices.  Evaluating their three-block assembly at
-the $i$-th index of the right block returns $c(i)$.
+Let $\alpha$ be a type, let $k,l$ be nonnegative integers, let $a$ and $c$ be families
+of values indexed by the $k$ left positions and $l$ right positions, respectively, and
+let $b\in\alpha$. At the position corresponding to any right-block index $i$, the
+three-block assembly of $a$, $b$, and $c$ has value $c(i)$.
 \end{lemma}
 
 \begin{definition}[Buffer tape storing a word]
@@ -415,47 +393,44 @@ $w$ (zero-indexed) when $0 \le z < \abs{w}$, and is blank at every other
 integer cell.
 \end{definition}
 
-\begin{lemma}[Empty buffer is blank]
+\begin{lemma}[Empty buffer tape]
 \lean{Turing.FinTM.bufferTape_nil}
 \label{Turing.FinTM.bufferTape_nil}
 \leanok
 \uses{Turing.FinTM.bufferTape}
 \difficulty{1}
-The buffer tape storing the empty word is blank at every integer cell.
+The buffer tape storing the empty word contains no symbol at any integer cell.
 \end{lemma}
 
-\begin{lemma}[Buffer reads at natural cells]
+\begin{lemma}[Buffer tape at natural cells]
 \lean{Turing.FinTM.bufferTape_nat}
 \label{Turing.FinTM.bufferTape_nat}
 \leanok
 \uses{Turing.FinTM.bufferTape}
 \difficulty{1}
-Let $w$ be a Boolean word and $i$ a natural number.  Cell $i$ of the buffer
-tape storing $w$ holds the optional $i$-th entry of $w$: the symbol $w_i$
-when $i < \abs{w}$ and a blank otherwise.  In particular cell $\abs{w}$ is
-the blank immediately to the right of the stored word.
+For every finite word $w$ over a symbol type and every natural number $i$, the buffer
+tape for $w$ at cell $i$ contains exactly the optional $i$-th symbol of $w$.
 \end{lemma}
 
-\begin{lemma}[Left blank of a buffer]
+\begin{lemma}[Left blank cell of a buffer tape]
 \lean{Turing.FinTM.bufferTape_left}
 \label{Turing.FinTM.bufferTape_left}
 \leanok
 \uses{Turing.FinTM.bufferTape}
 \difficulty{1}
-For every Boolean word $w$, cell $-1$ of the buffer tape storing $w$ is
-blank; this includes the case of the empty word.
+For every finite word $w$ over any symbol type, the buffer tape storing $w$ contains no
+symbol at integer cell $-1$.
 \end{lemma}
 
-\begin{lemma}[Appending one bit to a buffer]
+\begin{lemma}[Appending a symbol to a buffer tape]
 \lean{Turing.FinTM.bufferTape_append}
 \label{Turing.FinTM.bufferTape_append}
 \leanok
 \uses{Turing.FinTM.bufferTape}
 \difficulty{4}
-Let $w$ be a Boolean word and $b$ a Boolean symbol.  The buffer tape storing
-$w$ followed by the single symbol $b$ equals the buffer tape storing $w$
-updated at cell $\abs{w}$ to hold $b$: exactly the cell that was the old
-right blank changes, and every other integer cell is unaffected.
+Let $w$ be a finite word over an alphabet and let $b$ be a symbol in that alphabet. The
+tape storing $w$ followed by $b$ is the tape storing $w$ updated at integer cell $|w|$
+to contain $b$.
 \end{lemma}
 
 \begin{definition}[Boundary tag for a virtual head]
@@ -491,36 +466,32 @@ itself after a stationary move, so that a suppressed outward move retains its
 boundary tag and repeated outward attempts remain clamped.
 \end{definition}
 
-\begin{lemma}[Buffer reads agree with input reads]
+\begin{lemma}[Buffer tape and input symbol]
 \lean{Turing.FinTM.bufferTape_inputSymbol}
 \label{Turing.FinTM.bufferTape_inputSymbol}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.FinTM.inputSymbol_at}
 \difficulty{4}
-Let $c$ be a configuration of a machine with $k$ work tapes over the Boolean
-alphabet whose input is the word $w$, and let $p \in \{0,\dots,\abs{w}+1\}$
-be its input-head position.  Cell $p - 1$ of the buffer tape storing $w$
-holds exactly the symbol scanned by the input head of $c$: the corresponding
-input symbol at interior positions, and a blank at the two boundary
-positions.
+Let $c$ be a configuration of a machine with $k$ work tapes, Boolean input word $w$, and
+state set $S$. If the input head is at position $p$, then the buffer tape storing $w$,
+read at integer cell $p-1$, contains exactly the optional symbol read by the input head
+of $c$.
 \end{lemma}
 
-\begin{lemma}[Virtual movement implements clamping]
+\begin{lemma}[Correctness of virtual head movement]
 \lean{Turing.FinTM.virtualMove_correct}
 \label{Turing.FinTM.virtualMove_correct}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.VirtualTag, Turing.FinTM.virtualMove, Turing.FinTM.virtualNextTag, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Let $c$ be a configuration of a machine over the Boolean alphabet on input
-$w$, let $p \in \{0,\dots,\abs{w}+1\}$ be its input-head position, let $b$ be
-a Boolean tag valid for $p$ (forced false at the left boundary $p = 0$ and
-true at the right boundary $p = \abs{w} + 1$), and let $m \in \{-1, 0, +1\}$
-be a requested movement.  Write $p'$ for the result of the native clamped
-move of $p$ by $m$.  Then, as integers, $p - 1$ plus the virtual movement
-determined by $b$, the scanned input symbol of $c$, and $m$ equals $p' - 1$;
-and the updated tag --- false after a left move, true after a right move,
-unchanged when stationary --- is again valid for $p'$.  This holds for every
-word $w$, including the empty word.
+Let $w$ be a Boolean string, $c$ a configuration on input $w$,
+$b\in\{\mathrm{false},\mathrm{true}\}$ a tag that is false at the left boundary and true
+at the right boundary, and $m\in\{-1,0,1\}$. The position of the virtual head, measured
+as the input-head position minus one, changes by the virtual movement using $b$, the
+scanned input symbol, and $m$ exactly as it changes under the native clamped movement.
+Moreover, the updated tag—false after a left move, true after a right move, and
+unchanged after a stationary move—satisfies the same boundary condition at the new
+position.
 \end{lemma}
 
 \begin{definition}[Buffered sequential composition machine]
@@ -558,48 +529,41 @@ immediately to its right, whose right tape block is blank with heads at the
 origin, and whose real output is empty.
 \end{definition}
 
-\begin{lemma}[Initialization of the buffered composition]
+\begin{lemma}[Initialization of buffered composition]
 \lean{Turing.FinTM.bufferedFirstCfg_init}
 \label{Turing.FinTM.bufferedFirstCfg_init}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-For all machines $M_1$ and $M_2$ over the Boolean alphabet with finitely many
-states and every input $x$, the initial configuration of the buffered
-sequential composition of $M_1$ and $M_2$ on $x$ equals the first-phase
-embedding of the initial configuration of $M_1$ on $x$, in which the buffer
-stores the empty word.
+For any finite Turing machines $M_1,M_2$ over the Boolean alphabet and any Boolean word
+$x$, the initial configuration of their buffered sequential composition on $x$ equals
+the first-phase configuration embedding of $M_1$'s initial configuration on $x$.
 \end{lemma}
 
-\begin{lemma}[First-phase single-step lockstep]
+\begin{lemma}[Single-step lockstep simulation]
 \lean{Turing.FinTM.bufferedFirstCfg_step}
 \label{Turing.FinTM.bufferedFirstCfg_step}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step}
 \difficulty{5}
-Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many
-states, and let $c$ be a configuration of $M_1$ on input $x$ that has not
-halted.  One step of the buffered sequential composition of $M_1$ and $M_2$
-from the first-phase embedding of $c$ equals the first-phase embedding of one
-step of $M_1$ from $c$.  In particular a symbol emitted by $M_1$ on that step
---- including on its halting transition --- lands on the buffer with the
-buffer head advancing past it, the real output stays empty, and a simulated
-halt of $M_1$ leaves the composite in a live administrative state.
+Let $M_1,M_2$ be finite Turing machines over the Boolean alphabet, let $x$ be a Boolean
+word, and let $c$ be a configuration of $M_1$ on $x$ whose state is not halted. One step
+of their buffered sequential composition from the first-phase embedding of $c$ equals
+the first-phase embedding of the configuration obtained by one step of $M_1$ from $c$.
 \end{lemma}
 
-\begin{lemma}[First-phase lockstep run]
+\begin{lemma}[Lockstep simulation during the first phase]
 \lean{Turing.FinTM.bufferedFirstCfg_run}
 \label{Turing.FinTM.bufferedFirstCfg_run}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg, Turing.FinTM.bufferedFirstCfg_step, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{3}
-Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many
-states, let $c$ be a configuration of $M_1$ on input $x$, and let $t$ be a
-number of steps such that the run of $M_1$ from $c$ has not halted at any
-time strictly before $t$.  Then running the buffered sequential composition
-of $M_1$ and $M_2$ for $t$ steps from the first-phase embedding of $c$ yields
-the first-phase embedding of the run of $M_1$ for $t$ steps from $c$.  The
-time $t$ itself may be the first halting time of $M_1$.
+Let $M_1,M_2$ be finite Turing machines over the Boolean alphabet, let $x$ be a Boolean
+word, let $c$ be a configuration of $M_1$ on $x$, and let $t\in\mathbb{N}$. Suppose that
+at every time $s<t$, the configuration reached by running $M_1$ from $c$ for $s$ steps
+is not halted. Then running the buffered composition from the first-phase embedding of
+$c$ for $t$ steps yields the first-phase embedding of the configuration reached by
+running $M_1$ from $c$ for $t$ steps.
 \end{lemma}
 
 \begin{definition}[Second-phase embedded configuration]
@@ -621,43 +585,41 @@ carries the work tapes and heads of $c$, and whose real output is the output
 of $c$.
 \end{definition}
 
-\begin{lemma}[Second-phase single-step simulation]
+\begin{lemma}[One-step simulation in the second phase]
 \lean{Turing.FinTM.bufferedSecondCfg_step}
 \label{Turing.FinTM.bufferedSecondCfg_step}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.FinTM.bufferTape_inputSymbol, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.tapeBlocks_buffer, Turing.FinTM.virtualMove, Turing.FinTM.virtualMove_correct, Turing.FinTM.virtualNextTag, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many
-states, let $c$ be a configuration of $M_2$ on a virtual input $y$, and let
-$b$ be a Boolean tag valid for the virtual input-head position of $c$ (forced
-false at the left boundary and true at the right boundary).  Fix a position
-$p$ of the physical input head over the real input $x$ and arbitrary inactive
-contents and head positions for the left tape block.  Then there exists a tag
-$b'$, valid for the input-head position reached after one step of $M_2$ from
-$c$, such that one step of the buffered sequential composition of $M_1$ and
-$M_2$ from the second-phase embedding of $c$ with tag $b$ equals the
-second-phase embedding of one step of $M_2$ from $c$ with tag $b'$, keeping
-$p$ and the inactive data unchanged.  The halted case is included: a halted
-$c$ stays halted on both sides.
+Let $M_1$ and $M_2$ be finite-state machines over the Boolean alphabet. Let $x,y$ be
+Boolean words, let $c$ be a configuration of $M_2$ on virtual input $y$, and let $b$ be
+a Boolean tag that is false at the left boundary of $c$'s input-head position and true
+at its right boundary. Choose any valid physical input-head position $p$ for $x$ and
+arbitrary contents and head positions for the left tape block of $M_1$. There is a
+Boolean tag $b'$ satisfying the boundary condition at the input-head position after one
+step of $M_2$ from $c$, such that one step of the buffered composition from the
+second-phase configuration determined by $c,b,p$ and the chosen left-block data equals
+the second-phase configuration determined by the one-step successor of $c$, tag $b'$,
+and the same $p$ and left-block data.
 \end{lemma}
 
-\begin{lemma}[Second-phase lockstep run]
+\begin{lemma}[Lockstep simulation in the second phase]
 \lean{Turing.FinTM.bufferedSecondCfg_run}
 \label{Turing.FinTM.bufferedSecondCfg_run}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_step, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many
-states, let $c$ be a configuration of $M_2$ on a virtual input $y$, and let
-$b$ be a Boolean tag valid for the virtual input-head position of $c$.  Fix a
-position $p$ of the physical input head over the real input $x$, arbitrary
-inactive contents and head positions for the left tape block, and a number of
-steps $t$.  Then there exists a tag $b'$, valid for the input-head position
-of the run of $M_2$ for $t$ steps from $c$, such that running the buffered
-sequential composition of $M_1$ and $M_2$ for $t$ steps from the second-phase
-embedding of $c$ with tag $b$ equals the second-phase embedding of that run
-with tag $b'$, keeping $p$ and the inactive data unchanged.  Completed
-outputs and absorbing halting are thereby preserved.
+Let $M_1$ and $M_2$ be finite-state machines over the Boolean alphabet. Let $x,y$ be
+Boolean words, let $c$ be a configuration of $M_2$ on virtual input $y$, and let $b$ be
+a Boolean tag that is false at the left boundary of $c$'s input-head position and true
+at its right boundary. Choose any valid physical input-head position $p$ for $x$,
+arbitrary contents and head positions for the left tape block of $M_1$, and a number of
+steps $t\in\mathbb N$. Then there is a Boolean tag $b'$ satisfying the same boundary
+condition for the input-head position reached by $M_2$ after $t$ steps from $c$, such
+that the buffered composition run for $t$ steps from the second-phase configuration
+determined by $c,b,p$ and the chosen left-block data equals the second-phase
+configuration determined by the resulting configuration of $M_2$, tag $b'$, and the same
+$p$ and left-block data.
 \end{lemma}
 
 \begin{definition}[Rewind-scan configuration]
@@ -677,38 +639,35 @@ right block blank with heads at the origin, and empty real output.  The scan
 state is live even when $j = 0$.
 \end{definition}
 
-\begin{lemma}[Scan reaches the initialized second phase]
+\begin{lemma}[Rewind scan reaches the second phase]
 \lean{Turing.FinTM.bufferedScanCfg_run}
 \label{Turing.FinTM.bufferedScanCfg_run}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedScanCfg, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.tapeBlocks_buffer, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many
-states, let $y$ be a Boolean word stored on the buffer, let $p$ be a position
-of the physical input head over the real input $x$, and fix arbitrary
-inactive contents and head positions for the left tape block.  For every
-$j \le \abs{y}$, running the buffered sequential composition of $M_1$ and
-$M_2$ for exactly $j + 1$ steps from the rewind-scan configuration with
-buffer head at cell $j - 1$ yields the second-phase embedding of the initial
-configuration of $M_2$ on virtual input $y$, with arrival tag true, physical
-position $p$, and the same inactive data.  This includes the case of an
-empty word $y$.
+Let $M_1$ and $M_2$ be finite-state machines over the Boolean alphabet, with any finite
+numbers of work tapes. Let $x$ and $y$ be Boolean words, let $p$ be a valid physical
+input-head position for $x$, and choose arbitrary contents and head positions for the
+left work-tape block of $M_1$. For every natural number $j$ with $j\le |y|$, running the
+buffered composition for $j+1$ steps from its rewind-scan configuration, with buffer
+head at cell $j-1$, yields the second-phase configuration of $M_2$ initialized on
+virtual input $y$, with arrival tag true, physical input-head position $p$, and the
+chosen left-block data unchanged.
 \end{lemma}
 
-\begin{lemma}[Exact cost of rewind and dispatch]
+\begin{lemma}[Rewind and dispatch duration]
 \lean{Turing.FinTM.bufferedFirstCfg_rewind}
 \label{Turing.FinTM.bufferedFirstCfg_rewind}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg, Turing.FinTM.bufferedScanCfg, Turing.FinTM.bufferedScanCfg_run, Turing.FinTM.bufferedSecondCfg, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many
-states, and let $c$ be a halted configuration of $M_1$ on input $x$ with
-output $w$.  Running the buffered sequential composition of $M_1$ and $M_2$
-for exactly $\abs{w} + 2$ steps from the first-phase embedding of $c$ yields
-the second-phase embedding of the initial configuration of $M_2$ on virtual
-input $w$, with arrival tag true, the physical input head parked where $c$
-left it, and the work tapes and head positions of $c$ retained as inactive
-left-block data.  The real output remains empty throughout.
+Let $M_1$ and $M_2$ be finite Turing machines over the Boolean alphabet, let $x$ be a
+Boolean input word, and let $c$ be a configuration of $M_1$ on $x$ whose state is
+halted. Starting from the first-phase configuration determined by $c$, the buffered
+composition of $M_1$ and $M_2$ reaches after exactly $|c.	ext{output}|+2$ steps the
+second-phase configuration determined by the initial configuration of $M_2$ on input
+$c.	ext{output}$, with arrival tag true, physical input-head position unchanged from
+$c$, and the left tape block and its head positions unchanged from $c$.
 \end{lemma}
 
 \begin{lemma}[Reaching the second phase from the start]
@@ -717,37 +676,135 @@ left-block data.  The real output remains empty throughout.
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg_init, Turing.FinTM.bufferedFirstCfg_rewind, Turing.FinTM.bufferedFirstCfg_run, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many
-states, and suppose that $M_1$, on input $x$, halts within $t_1$ steps with
-output $y$.  Then there exist a step count $a \le t_1 + \abs{y} + 2$, a
-position $p$ of the physical input head over $x$, and contents and head
-positions for the left tape block, such that running the buffered sequential
-composition of $M_1$ and $M_2$ for $a$ steps from its initial configuration
-on $x$ yields the second-phase embedding of the initial configuration of
-$M_2$ on virtual input $y$, with arrival tag true, physical position $p$, and
-that inactive left-block data.
+Let $M_1$ and $M_2$ be finite Turing machines over the Boolean alphabet, let $x,y$ be
+Boolean words, and let $t_1\in\mathbb{N}$. Suppose $M_1$ computes $y$ from $x$ in
+exactly $t_1$ steps. Then there are a time $a\le t_1+|y|+2$, a position of the physical
+input head on $x$, and contents and head positions for the left tape block such that the
+buffered composition, run from its initial configuration on $x$ for $a$ steps, is the
+second-phase configuration embedding of $M_2$'s initial configuration on input $y$, with
+boundary tag true and those chosen physical head position and left-block data.
 \end{lemma}
 
 %%% added by the blueprint pipeline
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Additional declarations}
 
-\begin{lemma}[Rewind within position plus two steps]
+\begin{lemma}[Bounded rewind to the input start]
 \lean{Turing.FinTM.timed_rewind}
 \label{Turing.FinTM.timed_rewind}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{4}
-Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean
-alphabet on input $x$, with a start state $r$, a scanning state $s$, and an
-optional dispatch state $d$, such that regardless of the symbols read: from $r$
-the machine always moves the input head left (clamped at the left boundary
-blank) and enters $s$; from $s$ it moves left and stays in $s$ when an input
-symbol is scanned, and moves right and passes to $d$ when a blank is scanned;
-and none of these transitions touches a work tape, a work head, or the output.
-Let $c$ be a configuration of $M$ in state $r$ whose input head is at position
-$p \in \{0,\dots,\abs{x}+1\}$, where position $0$ is the left boundary blank.
-Then there exists $t \le p + 2$ such that running $M$ for $t$ steps from $c$
-yields the configuration that agrees with $c$ in every component except that
-its state is $d$ and its input head is at position $1$.
+Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean alphabet,
+let $x$ be a Boolean word, and let $r,s$ be states and $d$ an optional state. Suppose
+that from state $r$, for every input symbol and tuple of work-tape symbols, the machine
+moves the input head left and enters $s$. From state $s$, it moves left and stays in $s$
+whenever an input symbol is scanned, and moves right and enters $d$ whenever a blank is
+scanned; these transitions make no writes, do not move any work-tape head, and emit no
+output. For every configuration $c$ on input $x$ whose state is $r$, there is a number
+of steps $t\le p+2$, where $p$ is the input-head position of $c$, after which the
+machine is in the configuration obtained from $c$ by changing only its state to $d$ and
+its input-head position to $1$.
 \end{lemma}
+
+\begin{theorem}[Space bounded by elapsed time]
+\lean{Turing.FinTM.ComputesInTime.spaceUsed_le}
+\label{Turing.FinTM.ComputesInTime.spaceUsed_le}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.visitedByTapeHead}
+\difficulty{5}
+Let $M$ be a finite Turing machine over the Boolean alphabet, and let $x,y$ be Boolean
+words and $T$ a natural number. If $M$ computes $y$ from $x$ within $T$ steps, then for
+every natural number $t$, the total number of work-tape cells visited through step $t$
+is at most $k(T+1)$, where $k$ is the number of work tapes of $M$.
+\end{theorem}
+
+\begin{theorem}[Space used by the branch union]
+\lean{Turing.FinTM.branchTM_spaceUsed}
+\label{Turing.FinTM.branchTM_spaceUsed}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.branchTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.spaceUsed}
+Let $M_1$ and $M_2$ be finite Turing machines over the Boolean alphabet, let $b$ be a
+Boolean, let $x$ be a Boolean input word, and let $t\in\mathbb{N}$. The total space used
+by the branch union selected by $b$ on its initial configuration with input $x$ through
+step $t$ is the selected machine's space through step $t$ plus the number of work tapes
+of the unselected machine: it is $M_1$'s space plus $M_2$'s number of work tapes if $b$
+is true, and $M_2$'s space plus $M_1$'s number of work tapes if $b$ is false.
+\end{theorem}
+
+\begin{theorem}[Work-head positions during a leftward scan]
+\lean{Turing.FinTM.rewind_scan_heads}
+\label{Turing.FinTM.rewind_scan_heads}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos}
+\difficulty{5}
+Let $k \in \mathbb{N}$, let $S$ be a state set, let $x$ be a Boolean input, and let $M$
+be a $k$-work-tape Turing machine over the Boolean alphabet with states in $S$. Suppose
+that for every input and work-tape symbols, in state $s$ the machine moves left and
+stays in $s$ when it scans an input symbol, and moves right and enters the optional
+destination state $d$ when it scans a blank; these transitions write nothing on the work
+tapes, move no work-tape heads, and emit no output. For every $j \in \mathbb{N}$ and
+configuration $c$ on $x$ in state $s$ with input-head position exactly $j$, if $j \le
+|x|$, then for every $u \le j+1$ the work-tape head positions after $u$ steps from $c$
+equal those in $c$.
+\end{theorem}
+
+\begin{theorem}[Rewinding the input head]
+\lean{Turing.FinTM.rewind_heads}
+\label{Turing.FinTM.rewind_heads}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.FinTM.rewind_scan_heads, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos}
+\difficulty{4}
+Let $k$ be a natural number, let $S$ be a state set, let $x$ be a finite Boolean input,
+and let $M$ be a Turing machine with $k$ work tapes over the Boolean alphabet and states
+in $S$. Let $a,b\in S$ and let $d$ be an optional state. Suppose that, for every input
+symbol (including a blank) and every tuple of work-tape symbols, the transition from $a$
+moves the input head left, leaves all work tapes and the output unchanged, and enters
+$b$. Suppose also that from $b$ the machine, on reading a Boolean symbol, moves the
+input head left and remains in $b$, while on reading a blank it moves right and enters
+$d$; in both cases it leaves all work tapes and the output unchanged. Then from every
+configuration $c$ on input $x$ whose state is $a$, there is a natural number $r\leq
+p+2$, where $p$ is the input-head position of $c$, such that after $r$ steps the
+configuration has state $d$ and input-head position $1$, with every other component
+equal to that of $c$. At every step count $u\leq r$, the work-tape head positions are
+the same as in $c$.
+\end{theorem}
+
+\begin{definition}[Agreement on a set of states]
+\lean{Turing.MultiTapeTM.AgreeOn}
+\label{Turing.MultiTapeTM.AgreeOn}
+\leanok
+\uses{Turing.MultiTapeTM}
+Let $M$ and $N$ be deterministic Turing machines with the same number of work tapes,
+alphabet, and state set, and let $Q$ be a set of states. They agree on $Q$ when, for
+every state in $Q$, every possibly blank input symbol, and every tuple of possibly blank
+work-tape symbols, their transition actions are equal.
+\end{definition}
+
+\begin{theorem}[Equal steps under transition agreement]
+\lean{Turing.MultiTapeTM.step_eq_of_agreeOn}
+\label{Turing.MultiTapeTM.step_eq_of_agreeOn}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.AgreeOn, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
+\difficulty{3}
+Let $M$ and $N$ be Turing machines with the same number of work tapes, symbol alphabet,
+and state set, and let $Q$ be a set of states. Suppose their transition actions agree
+for every state in $Q$ and every possible scanned input and work-tape symbols. For any
+input and configuration $c$ whose state, whenever present, belongs to $Q$, one step of
+$N$ from $c$ equals one step of $M$ from $c$.
+\end{theorem}
+
+\begin{theorem}[Runs agree when transitions agree on visited states]
+\lean{Turing.MultiTapeTM.runFrom_eq_of_agreeOn}
+\label{Turing.MultiTapeTM.runFrom_eq_of_agreeOn}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.AgreeOn, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step_eq_of_agreeOn}
+\difficulty{4}
+Let $M$ and $N$ be multi-tape Turing machines with the same number of work tapes, symbol
+alphabet, and state set, and let $Q$ be a set of states. Suppose their transition
+functions agree at every state in $Q$, for every input symbol and tuple of scanned
+work-tape symbols. For a fixed input word, configuration $c$, and time $t\in\mathbb{N}$,
+suppose that at every time $u<t$, if the state of the configuration reached by $M$ from
+$c$ after $u$ steps is some state $q$, then $q\in Q$. Then the configurations reached by
+$M$ and $N$ after $t$ steps from $c$ are equal.
+\end{theorem}

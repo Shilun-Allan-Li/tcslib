@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.update_wrote",
+ "key": "46bb522785dd4efc",
+ "kind": "theorem",
+ "title": "Updating Outside a Written Interval",
+ "statement": "Let $\\mu,f:\\mathbb{N}\\to\\mathbb{Z}$, and let $d,j,y\\in\\mathbb{N}$ and $w\\in\\mathbb{Z}$. Suppose that $y<d$ or $d+j\\le y$. Updating at $y$ the sequence obtained by writing the first $j$ values of $f$ into $\\mu$ starting at $d$ gives the same sequence as first updating $\\mu$ at $y$ to $w$ and then making that write.",
+ "hypotheses_covered": [
+  "y is outside the interval: y < d or d + j ≤ y",
+  "The update value w is an integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu$ be an integer-valued memory function, let $dst,j$ be natural numbers, and let\n$f:\\mathbb N\\to\\mathbb Z$. If $y$ lies outside the interval of indices from $dst$\nthrough $dst+j-1$, then updating the memory obtained by writing the first $j$ values of\n$f$ starting at $dst$ at index $y$ to value $w$ is the same as first updating $\\mu$ at\n$y$ to $w$ and then performing that write."
+}

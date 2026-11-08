@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_identities",
+ "key": "c8eeccdd1a50d47e",
+ "kind": "theorem",
+ "title": "Weighted noise identities",
+ "statement": "Let $I$ be a finite set, let $w_i\\in\\mathbb{R}$ satisfy $\\sum_i w_i=1$, and let $\\rho\\in\\mathbb{R}$ and $f,g:I\\to\\mathbb{R}$. Write $m_f=\\sum_i w_i f_i$ and $m_g=\\sum_i w_i g_i$. Then both identities hold:\n\\[\n\\sum_i w_i\\bigl(\\rho g_i+(1-\\rho)m_g\\bigr)^2=\\rho^2\\sum_i w_i g_i^2+(1-\\rho^2)m_g^2,\n\\qquad\n\\sum_i w_i\\bigl(\\rho f_i+(1-\\rho)m_f\\bigr)g_i=\\sum_i w_i f_i\\bigl(\\rho g_i+(1-\\rho)m_g\\bigr).\n\\]",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w_i$ are real and sum to $1$",
+  "$\\rho$ is real",
+  "$f,g:I\\to\\mathbb{R}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite, let real weights satisfy $\\sum_iw_i=1$, and let $\\rho\\in\\bbr$. For real vectors $f,g$, write $m_h=\\sum_iw_ih_i$ and $(T_\\rho h)_i=\\rho h_i+(1-\\rho)m_h$. Then $\\sum_iw_i(T_\\rho g)_i^2=\\rho^2\\sum_iw_ig_i^2+(1-\\rho^2)m_g^2$ and $\\sum_iw_i(T_\\rho f)_ig_i=\\sum_iw_if_i(T_\\rho g)_i$."
+}

@@ -89,15 +89,14 @@ triple or blank --- into a folded triple, interpreting a physical blank as the
 untagged triple with both payloads blank.
 \end{definition}
 
-\begin{lemma}[Unpacking inverts packing]
+\begin{lemma}[Unpacking reverses packing]
 \lean{Turing.FinTM.foldUnpack_pack}
 \label{Turing.FinTM.foldUnpack_pack}
 \leanok
 \uses{Turing.FinTM.FoldSymbol, Turing.FinTM.foldPack, Turing.FinTM.foldUnpack}
 \difficulty{2}
-For every folded-alphabet triple $v$ --- a Boolean flag together with two payloads,
-each a base symbol or blank --- unpacking the canonical packing of $v$ returns $v$
-itself.
+For every alphabet $\Gamma$ and every folded-alphabet symbol $v$, unpacking its
+canonical packing returns $v$.
 \end{lemma}
 
 \begin{definition}[Folding of a work tape]
@@ -123,28 +122,27 @@ on the negative side, while a crossing between simulated cells $0$ and $-1$
 (detected by the origin flag) flips the side without issuing a physical move.
 \end{definition}
 
-\begin{lemma}[Folded coordinates are nonnegative]
+\begin{lemma}[Nonnegativity of folded coordinates]
 \lean{Turing.FinTM.foldPos_nonneg}
 \label{Turing.FinTM.foldPos_nonneg}
 \leanok
 \uses{Turing.FinTM.foldPos}
 \difficulty{2}
-For every integer $z$, the folded coordinate --- equal to $z$ when $z \ge 0$ and to
-$-z-1$ otherwise --- is nonnegative.
+For every integer $z$, the folded coordinate $\varphi(z)$, defined by $\varphi(z)=z$
+when $z\ge 0$ and $\varphi(z)=-z-1$ otherwise, is nonnegative.
 \end{lemma}
 
-\begin{lemma}[Correctness of the translated move]
+\begin{lemma}[Correctness of the translated head move]
 \lean{Turing.FinTM.foldMove_correct}
 \label{Turing.FinTM.foldMove_correct}
 \leanok
 \uses{Turing.FinTM.foldMove, Turing.FinTM.foldPos, Turing.FinTM.foldSide}
 \difficulty{4}
-Let $z$ be an integer and $d \in \{-1,0,+1\}$ a move direction; write $\varphi(z)$
-for the folded coordinate ($z$ when $z \ge 0$, else $-z-1$) and $\sigma(z)$ for the
-side of $z$ (whether $z \ge 0$).  Then the translated move computed from $\sigma(z)$,
-the flag ``$\varphi(z) = 0$'', and $d$ is correct in both components: adding its
-physical displacement to $\varphi(z)$ gives $\varphi(z+d)$, and its returned side
-equals $\sigma(z+d)$.
+For every integer $z$ and move direction $d\in\{-1,0,+1\}$, let $\varphi(z)=z$ if $z\ge
+0$ and $\varphi(z)=-z-1$ otherwise, and let $\sigma(z)$ record whether $z\ge 0$.
+Translating $d$ using side $\sigma(z)$ and origin flag indicating whether $\varphi(z)=0$
+gives a physical displacement and a new side such that adding the displacement to
+$\varphi(z)$ gives $\varphi(z+d)$, and the new side is $\sigma(z+d)$.
 \end{lemma}
 
 \begin{definition}[Reading the active payload]
@@ -157,17 +155,15 @@ the cell (a physical blank unpacks to the untagged triple of blanks), return the
 first payload when the side is the nonnegative one and the second payload otherwise.
 \end{definition}
 
-\begin{lemma}[Folded reads agree with the virtual tape]
+\begin{lemma}[Reading the folded tape]
 \lean{Turing.FinTM.foldRead_tape}
 \label{Turing.FinTM.foldRead_tape}
 \leanok
 \uses{Turing.FinTM.foldPos, Turing.FinTM.foldPos_nonneg, Turing.FinTM.foldRead, Turing.FinTM.foldSide, Turing.FinTM.foldTape, Turing.FinTM.foldUnpack_pack}
 \difficulty{3}
-For every tape content $t \colon \bbz \to \Gamma \cup \{\square\}$ over a base
-alphabet $\Gamma$ and every integer $z$, reading the folded tape of $t$ at the
-physical position $\varphi(z)$ on the side of $z$ returns exactly the original
-content $t(z)$, where $\varphi(z) = z$ for $z \ge 0$ and $\varphi(z) = -z-1$
-otherwise.
+Let $t\colon\mathbb{Z}\to\operatorname{Option}(\Gamma)$ be a tape content and let
+$z\in\mathbb{Z}$. Reading the folded tape at the folded position $\varphi(z)$ on the
+side determined by whether $z\ge 0$ returns exactly $t(z)$.
 \end{lemma}
 
 \begin{definition}[Writing to the active payload]
@@ -182,18 +178,17 @@ flag and the untouched payload, and repack canonically (so a fully blank untagge
 result becomes a physical blank).
 \end{definition}
 
-\begin{lemma}[Folded writes commute with virtual updates]
+\begin{lemma}[Folded writes commute with tape updates]
 \lean{Turing.FinTM.foldTape_update}
 \label{Turing.FinTM.foldTape_update}
 \leanok
 \uses{Turing.FinTM.foldPos, Turing.FinTM.foldPos_nonneg, Turing.FinTM.foldSide, Turing.FinTM.foldTape, Turing.FinTM.foldUnpack_pack, Turing.FinTM.foldWrite}
 \difficulty{5}
-Let $\Gamma$ be an alphabet with decidable equality,
-$t \colon \bbz \to \Gamma \cup \{\square\}$ a tape content, $z$ an integer, and $a$ a
-possibly blank symbol.  Updating the folded tape of $t$ at the physical cell
-$\varphi(z)$ by the side-relative write of $a$ (on the side of $z$) yields exactly
-the folded tape of the pointwise update of $t$ at $z$ by $a$; here $\varphi(z) = z$
-for $z \ge 0$ and $\varphi(z) = -z-1$ otherwise.
+Let $\Gamma$ be an alphabet with decidable equality, let
+$t\colon\mathbb{Z}\to\operatorname{Option}(\Gamma)$ be a tape, and let $z\in\mathbb{Z}$
+and $a\in\operatorname{Option}(\Gamma)$. Updating the folded tape of $t$ at the folded
+position of $z$ by writing $a$ on the side determined by $z$ gives the folded tape
+obtained by updating $t$ at $z$ with $a$.
 \end{lemma}
 
 \begin{definition}[Translation of a machine action]
@@ -224,42 +219,44 @@ $\varphi$ of those of $c$, and whose input head position and output are transpor
 along the embedding.
 \end{definition}
 
-\begin{lemma}[Folded input symbol]
+\begin{lemma}[Input Symbols Under Folding]
 \lean{Turing.FinTM.foldCfg_input}
 \label{Turing.FinTM.foldCfg_input}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.foldCfg, Turing.FinTM.foldEmbedding}
 \difficulty{3}
-For every configuration $c$ of a $k$-work-tape machine over a base alphabet
-$\Gamma$ on an input $x$, the possibly absent input symbol scanned in the folded
-configuration of $c$ equals the image under the alphabet embedding of the input
-symbol scanned in $c$ (with absence mapped to absence).
+Let $\Gamma$ and $S$ be types, let $k$ be a natural number, let $x$ be a word over
+$\Gamma$, and let $c$ be a configuration with $k$ work tapes and state set $S$ on input
+$x$. The possibly absent symbol scanned by the input head in the folded configuration of
+$c$ is the image, under the alphabet embedding, of the possibly absent symbol scanned in
+$c$.
 \end{lemma}
 
-\begin{lemma}[Origin flags under a folded head]
+\begin{lemma}[Origin Flag at a Folded Head]
 \lean{Turing.FinTM.foldCfg_origin}
 \label{Turing.FinTM.foldCfg_origin}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.foldCfg, Turing.FinTM.foldPos, Turing.FinTM.foldPos_nonneg, Turing.FinTM.foldTape, Turing.FinTM.foldUnpack, Turing.FinTM.foldUnpack_pack}
 \difficulty{1}
-In the folded image of a configuration $c$ of a $k$-work-tape machine over a base
-alphabet, for each work tape the origin flag obtained by unpacking the physical
-cell under that tape's head equals the truth value of the statement that the folded
-head coordinate of that tape is $0$.
+Let $\Gamma$ and $S$ be types, let $k$ be a natural number, let $x$ be a word over
+$\Gamma$, let $c$ be a configuration with $k$ work tapes and state set $S$ on input $x$,
+and let $i$ be a work-tape index. In the folded configuration of $c$, the origin flag in
+the unpacked symbol under tape $i$'s head is true exactly when that tape's folded head
+coordinate is zero.
 \end{lemma}
 
-\begin{lemma}[Folding commutes with applying an action]
+\begin{lemma}[Folding Commutes with an Action]
 \lean{Turing.FinTM.foldCfg_apply}
 \label{Turing.FinTM.foldCfg_apply}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.foldAction, Turing.FinTM.foldCfg, Turing.FinTM.foldCfg_origin, Turing.FinTM.foldMove, Turing.FinTM.foldMove_correct, Turing.FinTM.foldPos, Turing.FinTM.foldSide, Turing.FinTM.foldTape_update, Turing.FinTM.foldUnpack, Turing.moveInputPos}
 \difficulty{5}
-Let $\Gamma$ be an alphabet with decidable equality, $a$ an action of a
-$k$-work-tape machine over $\Gamma$ with state set $S$, and $c$ a configuration of
-such a machine on an input $x$.  Applying to the folded configuration of $c$ the
-translated action --- formed from each work head's current side and the physical
-cells under the folded heads --- yields the folded configuration of the result of
-applying $a$ to $c$.
+Let $\Gamma$ be a type with decidable equality, let $S$ be a type, let $k$ be a natural
+number, let $x$ be a word over $\Gamma$, let $c$ be a configuration with $k$ work tapes
+and state set $S$ on input $x$, and let $a$ be an action over $\Gamma$ with state set
+$S$. Applying to the folded configuration of $c$ the translated action formed from each
+work head's current side and the folded symbol under that head yields exactly the folded
+configuration obtained by applying $a$ to $c$.
 \end{lemma}
 
 \begin{definition}[Decoding of an embedded input symbol]
@@ -307,16 +304,16 @@ but halt instead of entering $q$.  Thus no simulated transition precedes the
 validity check on the first input symbol.
 \end{definition}
 
-\begin{lemma}[Start action on embedded inputs]
+\begin{lemma}[Start action on embedded symbols]
 \lean{Turing.FinTM.foldStartAction_embed}
 \label{Turing.FinTM.foldStartAction_embed}
 \leanok
 \uses{Turing.FinTM.foldEmbedding, Turing.FinTM.foldInitAction, Turing.FinTM.foldStartAction}
 \difficulty{1}
-For every base state $q$ and every possibly absent base symbol, the guarded start
-action evaluated at the image of that symbol under the alphabet embedding equals
-the plain initialization action toward $q$: embedded symbols never trigger the
-halting guard.
+For every alphabet $\Gamma$, state type $S$, number $k$ of work tapes, state $q\in S$,
+and possibly absent symbol $x\in\operatorname{Option}(\Gamma)$, the guarded start action
+on the image of $x$ under the alphabet embedding equals the initialization action toward
+$q$.
 \end{lemma}
 
 \begin{definition}[The folding simulator machine]
@@ -334,41 +331,42 @@ active payload of each work tape, and executes the translation of the correspond
 transition of $M$.
 \end{definition}
 
-\begin{lemma}[One-step simulation commutation]
+\begin{lemma}[One step of the folding simulation]
 \lean{Turing.FinTM.foldCfg_step}
 \label{Turing.FinTM.foldCfg_step}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.foldCfg, Turing.FinTM.foldCfg_apply, Turing.FinTM.foldCfg_input, Turing.FinTM.foldDecode, Turing.FinTM.foldEmbedding, Turing.FinTM.foldRead, Turing.FinTM.foldRead_tape, Turing.FinTM.foldSide, Turing.FinTM.foldTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a multi-tape machine over a finite alphabet $\Gamma$ with decidable
-equality and let $c$ be a configuration of $M$ on an input $x$ over $\Gamma$.  One
-step of the folding simulator of $M$ on the folded configuration of $c$ equals the
-folded configuration of one step of $M$ on $c$.
+Let $\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing
+machine over $\Gamma$, let $x$ be an input word over $\Gamma$, and let $c$ be a
+configuration of $M$ on $x$. One step of the folding simulator of $M$ from the folded
+configuration of $c$ equals the folded configuration of the result of one step of $M$
+from $c$.
 \end{lemma}
 
-\begin{lemma}[Initialization reaches the folded start configuration]
+\begin{lemma}[Initialization of the Folded Configuration]
 \lean{Turing.FinTM.foldCfg_init}
 \label{Turing.FinTM.foldCfg_init}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.foldCfg, Turing.FinTM.foldCfg_input, Turing.FinTM.foldEmbedding, Turing.FinTM.foldInitAction, Turing.FinTM.foldPack, Turing.FinTM.foldPos, Turing.FinTM.foldStartAction, Turing.FinTM.foldStartAction_embed, Turing.FinTM.foldTM, Turing.FinTM.foldTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a multi-tape machine over a finite alphabet $\Gamma$ with decidable
-equality and let $x$ be an input over $\Gamma$.  One step of the folding simulator
-from its initial configuration on the symbol-wise embedded input $x$ yields exactly
-the folded configuration of the initial configuration of $M$ on $x$.
+Let $\Gamma$ be a finite type with decidable equality, let $M$ be a finite Turing
+machine over $\Gamma$, and let $x$ be a word over $\Gamma$. One step of the folding
+simulator, started on the symbol-wise embedded input, yields the folded configuration of
+$M$'s initial configuration on $x$.
 \end{lemma}
 
-\begin{lemma}[Lockstep simulation with a one-step offset]
+\begin{lemma}[Lockstep Folding Simulation]
 \lean{Turing.FinTM.foldCfg_run}
 \label{Turing.FinTM.foldCfg_run}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.foldCfg, Turing.FinTM.foldCfg_init, Turing.FinTM.foldCfg_step, Turing.FinTM.foldEmbedding, Turing.FinTM.foldTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero}
 \difficulty{4}
-Let $M$ be a multi-tape machine over a finite alphabet $\Gamma$ with decidable
-equality, $x$ an input over $\Gamma$, and $t \in \bbn$.  Running the folding
-simulator for $t+1$ steps from its initial configuration on the symbol-wise
-embedded input equals the folded configuration of running $M$ for $t$ steps from
-its initial configuration on $x$.
+Let $\Gamma$ be a finite type with decidable equality, let $M$ be a finite Turing
+machine over $\Gamma$, let $x$ be a word over $\Gamma$, and let $t$ be a natural number.
+Running the folding simulator for $t+1$ steps from its initial configuration on the
+symbol-wise embedded input yields the folded configuration reached by running $M$ for
+$t$ steps from its initial configuration on $x$.
 \end{lemma}
 
 \begin{lemma}[Writes preserve the origin flag]
@@ -377,21 +375,21 @@ its initial configuration on $x$.
 \leanok
 \uses{Turing.FinTM.FoldSymbol, Turing.FinTM.foldUnpack, Turing.FinTM.foldUnpack_pack, Turing.FinTM.foldWrite}
 \difficulty{1}
-For every side $s$, every physical cell content $w$ over the folded alphabet, and
-every possibly blank base symbol $a$, the origin flag obtained by unpacking the
-result of the side-relative write of $a$ into $w$ equals the origin flag obtained
-by unpacking $w$.
+For every alphabet $\Gamma$, side $s\in\{\mathrm{false},\mathrm{true}\}$, possibly blank
+folded cell content $w$, and possibly absent symbol $a\in\operatorname{Option}(\Gamma)$,
+the origin flag of the unpacked result of writing $a$ into $w$ on side $s$ equals the
+origin flag of the unpacked $w$.
 \end{lemma}
 
-\begin{lemma}[Translated moves stay nonnegative]
+\begin{lemma}[Nonnegativity of translated positions]
 \lean{Turing.FinTM.foldMove_nonneg}
 \label{Turing.FinTM.foldMove_nonneg}
 \leanok
 \uses{Turing.FinTM.foldMove}
 \difficulty{3}
-Let $p$ be a nonnegative integer, $s$ a side, and $d \in \{-1,0,+1\}$ a move
-direction.  Then $p$ plus the physical displacement of the translated move computed
-from $s$, the flag ``$p = 0$'', and $d$ is still nonnegative.
+For every nonnegative integer $p$, every side $s$, and every move direction
+$d\in\{-1,0,+1\}$, translating $d$ using side $s$ and the flag indicating whether $p=0$
+gives a physical displacement whose addition to $p$ is nonnegative.
 \end{lemma}
 
 \begin{definition}[The safety invariant]
@@ -407,82 +405,88 @@ position is nonnegative, and on every work tape the origin flag obtained by
 unpacking each nonnegative cell $p$ is set exactly when $p = 0$.
 \end{definition}
 
-\begin{lemma}[Translated actions preserve safety]
+\begin{lemma}[Safety Under Translated Actions]
 \lean{Turing.FinTM.foldAction_safe}
 \label{Turing.FinTM.foldAction_safe}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.FoldSymbol, Turing.FinTM.foldAction, Turing.FinTM.foldMove, Turing.FinTM.foldMove_nonneg, Turing.FinTM.foldSafe, Turing.FinTM.foldUnpack, Turing.FinTM.foldWrite_origin}
 \difficulty{4}
-Let $c$ be a configuration of a $k$-work-tape machine over the folded alphabet, on
-an arbitrary folded-alphabet input, satisfying the safety invariant (control not in
-the fresh initial state, nonnegative heads, correct origin flags at all nonnegative
-cells).  Then for every assignment of sides to the work tapes and every base-machine
-action $a$, applying the translation of $a$ --- relative to those sides and the
-cells under the heads of $c$ --- again yields a configuration satisfying the safety
-invariant.
+Let $\Gamma$ and $S$ be types, let $k$ be a natural number, let $x$ be a word over the
+folded alphabet, and let $c$ be a configuration with $k$ work tapes over that alphabet
+and control states of the form specified by the safety invariant. If $c$ satisfies the
+safety invariant, then for every assignment of fold sides to the work tapes and every
+action over $\Gamma$ with state set $S$, applying the translated action using those
+sides and the symbols currently under the heads of $c$ produces a configuration
+satisfying the safety invariant.
 \end{lemma}
 
-\begin{lemma}[The halting action preserves safety]
+\begin{lemma}[Safety under the halting action]
 \lean{Turing.FinTM.foldHalt_safe}
 \label{Turing.FinTM.foldHalt_safe}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM.FoldSymbol, Turing.FinTM.foldHalt, Turing.FinTM.foldSafe}
 \difficulty{1}
-If a configuration of a $k$-work-tape machine over the folded alphabet, on an
-arbitrary folded-alphabet input, satisfies the safety invariant, then so does the
-configuration obtained from it by applying the stationary halting action.
+Let $c$ be a configuration of a machine over the folded alphabet, and suppose $c$
+satisfies the safety invariant: its state is not the fresh initial state, all work-head
+positions are nonnegative, and each nonnegative tape cell has its origin flag set
+exactly at position $0$. Applying the stationary halting action to $c$ yields a
+configuration satisfying the same invariant.
 \end{lemma}
 
-\begin{lemma}[Simulator steps preserve safety]
+\begin{lemma}[Preservation of simulator safety]
 \lean{Turing.FinTM.foldSafe_step}
 \label{Turing.FinTM.foldSafe_step}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.FoldSymbol, Turing.FinTM.foldAction_safe, Turing.FinTM.foldDecode, Turing.FinTM.foldHalt_safe, Turing.FinTM.foldSafe, Turing.FinTM.foldTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a multi-tape machine over a finite alphabet with decidable equality and
-let $c$ be a configuration of the folding simulator of $M$, on an arbitrary
-folded-alphabet input, satisfying the safety invariant.  Then the configuration
-obtained after one step of the simulator also satisfies the safety invariant.
+Let $\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing
+machine over $\Gamma$, and let $x$ be an input word over the folded alphabet. If a
+configuration $c$ of the folding simulator of $M$ on $x$ satisfies the safety
+invariant—its state is not the fresh initial state, all work-head positions are
+nonnegative, and each nonnegative work-tape cell has its origin flag set exactly at
+position $0$—then the configuration after one simulator step also satisfies the safety
+invariant.
 \end{lemma}
 
-\begin{lemma}[Safety after the first step]
+\begin{lemma}[Safety after simulator initialization]
 \lean{Turing.FinTM.foldSafe_init}
 \label{Turing.FinTM.foldSafe_init}
 \leanok
 \uses{Turing.Action.apply, Turing.FinTM, Turing.FinTM.FoldSymbol, Turing.FinTM.foldInitAction, Turing.FinTM.foldSafe, Turing.FinTM.foldStartAction, Turing.FinTM.foldTM, Turing.FinTM.foldUnpack, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a multi-tape machine over a finite alphabet with decidable equality.
-For every input over the folded alphabet --- including inputs containing symbols
-outside the range of the alphabet embedding --- the configuration reached after one
-step of the folding simulator from its initial configuration satisfies the safety
-invariant.
+Let $\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing
+machine over $\Gamma$, and let $x$ be any input word over the folded alphabet. Starting
+the folding simulator on $x$ and taking one step yields a configuration satisfying the
+safety invariant: its state is not the fresh initial state, all work-head positions are
+nonnegative, and every nonnegative work-tape cell has its origin flag set exactly at
+position $0$.
 \end{lemma}
 
-\begin{lemma}[The simulator uses its tapes unidirectionally]
+\begin{lemma}[Nonnegative heads in the folding simulator]
 \lean{Turing.FinTM.foldTM_nonnegative}
 \label{Turing.FinTM.foldTM_nonnegative}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.NonnegativeHeads, Turing.FinTM.foldSafe, Turing.FinTM.foldSafe_init, Turing.FinTM.foldSafe_step, Turing.FinTM.foldTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-For every multi-tape machine $M$ over a finite alphabet with decidable equality,
-the folding simulator of $M$ has nonnegative heads: for every input over the folded
-alphabet, every number of steps, and every work tape, the position of that tape's
-head in the corresponding initialized run is nonnegative.
+Let $\Gamma$ be a finite alphabet with decidable equality, and let $M$ be a finite
+Turing machine over $\Gamma$. For every input over the folded alphabet, every number of
+steps $t\in\mathbb{N}$, and every work tape of $M$, the corresponding work-head position
+in the folding simulator's run from its initial configuration is nonnegative.
 \end{lemma}
 
-\begin{theorem}[Unidirectional tapes suffice]
+\begin{theorem}[Machines with nonnegative work heads]
 \lean{Turing.FinTM.nonnegative_heads}
 \label{Turing.FinTM.nonnegative_heads}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesFunInTimeVia, Turing.FinTM.FoldSymbol, Turing.FinTM.NonnegativeHeads, Turing.FinTM.computesInTime_iff, Turing.FinTM.foldCfg, Turing.FinTM.foldCfg_run, Turing.FinTM.foldEmbedding, Turing.FinTM.foldTM, Turing.FinTM.foldTM_nonnegative}
 \difficulty{3}
-Let $\Gamma$ be a finite alphabet with decidable equality, let $M$ be a multi-tape
-Turing machine over $\Gamma$, and suppose $M$ computes a function
-$f \colon \Gamma^* \to \Gamma^*$ within a time bound $T \colon \bbn \to \bbn$.
-Then there exist a finite alphabet $\Gamma'$ with decidable equality, an injection
-$e \colon \Gamma \hookrightarrow \Gamma'$, a machine $M'$ over $\Gamma'$, and a
-constant $c \in \bbn$ such that: in every initialized run of $M'$ no work head ever
-visits a negative cell, $M'$ has the same number of work tapes as $M$, and $M'$
-computes $f$ through the embedding $e$ within the time bound
-$n \mapsto c \cdot (T(n) + 1)$.
+Let $\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing
+machine over $\Gamma$, let $f$ map words over $\Gamma$ to words over $\Gamma$, and let
+$T\colon\mathbb N\to\mathbb N$. If $M$ computes $f$ in time $T$, then there are a finite
+alphabet $\Gamma'$ with decidable equality, an injection
+$e\colon\Gamma\hookrightarrow\Gamma'$, a finite Turing machine $M'$ over $\Gamma'$, and
+a constant $c\in\mathbb N$ such that every work head of $M'$ stays at a nonnegative cell
+throughout every initialized run, $M'$ has the same number of work tapes as $M$, and
+$M'$ computes $f$ on symbolwise encoded inputs via $e$ within $c(T(n)+1)$ steps on
+inputs of length $n$.
 \end{theorem}

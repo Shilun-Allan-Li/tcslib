@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.LayeredCircuit.toTreeCircuit_eval",
+ "key": "764d3f745e8d2e8f",
+ "kind": "theorem",
+ "title": "Tree-unrolling preserves evaluation",
+ "statement": "Let $F$ be a layered Boolean circuit with input nodes indexed by $\\mathrm{Fin}\\,n$ and output type $\\mathrm{out}$. Suppose each non-input node is designated AND or OR, every gate has finite arity, and each gate computes the conjunction of its input values when designated AND and their disjunction when designated OR. Then for every output node $o$ and every Boolean input assignment $x$, the tree circuit obtained by unrolling $o$ evaluates to the same value as $F$ at $o$ under $x$.",
+ "hypotheses_covered": [
+  "$F$ is a layered Boolean circuit from $\\mathrm{Fin}\\,n$ to $\\mathrm{out}$",
+  "Each non-input node has an AND-or-OR designation",
+  "Every gate has finite arity",
+  "Each gate computes the designated conjunction or disjunction of its inputs",
+  "$o$ is an output node",
+  "$x$ is a Boolean assignment to the $n$ inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a Boolean feedforward circuit with input variables indexed by\n$\\mathrm{Fin}\\,n$ and output nodes of type $\\mathrm{out}$, equipped with a flag\nassigning to each non-input node the label AND or OR and a witness that each gate has\nfinite arity. Suppose $F$ is an AND/OR circuit: every gate computes the conjunction of\nthe values on its input wires when its node is labelled AND, and their disjunction when\nit is labelled OR. Then for every output node $o$ and every assignment $x :\n\\mathrm{Fin}\\,n \\to \\bbf_2$, the tree-shaped Boolean circuit obtained by unrolling $o$\nfrom the last layer down to the inputs, evaluated at $x$, agrees with the value that $F$\nitself assigns to $o$ under the input assignment $x$."
+}

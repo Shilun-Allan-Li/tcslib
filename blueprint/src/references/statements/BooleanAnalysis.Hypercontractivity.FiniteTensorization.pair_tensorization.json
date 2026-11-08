@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteTensorization.pair_tensorization",
+ "key": "998e76d66e3c1f18",
+ "kind": "theorem",
+ "title": "Tensorization of pairing estimates",
+ "statement": "Let $n$ be a natural number, let each $\\Omega_i$ be finite, and let $w_i:\\Omega_i\\to\\mathbb R$ and $k_i:\\Omega_i\\times\\Omega_i\\to\\mathbb R$ be nonnegative. Let $p,r\\in\\mathbb R$ satisfy $1\\le p$ and $1\\le r$. Suppose that for every coordinate $i$ and every pair of real-valued functions $u,v$ on $\\Omega_i$, $\\sum_{x,y}k_i(x,y)u(x)v(y)\\le\\left(\\sum_xw_i(x)|u(x)|^p\\right)^{1/p}\\left(\\sum_yw_i(y)|v(y)|^r\\right)^{1/r}$. Then for all real-valued $f,g$ on $\\prod_i\\Omega_i$, $\\sum_{x,y}\\left(\\prod_i k_i(x_i,y_i)\\right)f(x)g(y)\\le\\left(\\sum_x\\left(\\prod_iw_i(x_i)\\right)|f(x)|^p\\right)^{1/p}\\left(\\sum_y\\left(\\prod_iw_i(y_i)\\right)|g(y)|^r\\right)^{1/r}$.",
+ "hypotheses_covered": [
+  "n is a natural number",
+  "Each coordinate set Ω_i is finite",
+  "Coordinate weights w_i are nonnegative",
+  "Coordinate kernels k_i are nonnegative",
+  "1 ≤ p",
+  "1 ≤ r",
+  "The stated one-coordinate pairing inequality holds for every coordinate and every pair of real-valued functions on that coordinate set",
+  "f and g are real-valued on the product of the coordinate sets"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Omega_i$ be finite sets, $w_i(a)\\ge0$ weights, and $k_i(a,b)\\ge0$ kernels for $i\\in[n]$. For $p,r\\ge1$, suppose $\\sum_{a,b}k_i(a,b)u(a)v(b)\\le\\|u\\|_{p,w_i}\\|v\\|_{r,w_i}$ for every coordinate $i$ and real $u,v$. Then $\\sum_{x,y}(\\prod_i k_i(x_i,y_i))f(x)g(y)\\le\\|f\\|_{p,w}\\|g\\|_{r,w}$ for all real $f,g$ on $\\prod_i\\Omega_i$, where $w(x)=\\prod_iw_i(x_i)$ and $\\|h\\|_{s,w}=(\\sum_xw(x)|h(x)|^s)^{1/s}$."
+}

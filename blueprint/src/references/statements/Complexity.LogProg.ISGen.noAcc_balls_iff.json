@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.noAcc_balls_iff",
+ "key": "734f64316db2f787",
+ "kind": "theorem",
+ "title": "Reachability and bounded balls",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input, let $x$ be a finite Boolean word, and let $s,K\\in\\mathbb{N}$ satisfy $2^{(2W+2)(s+\\lfloor\\log_2 |x|\\rfloor+2)}\\le K$, where $W$ is the encoding chunk width of $N$. The following are equivalent: for every $j$ with $0<j\\le K$, every code in the ball of radius $j$ formed from initial codes below $K$ using the one-step relation is not accepting; and every code reachable from the initial configuration code by finitely many one-step transitions is not accepting.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean input",
+  "$x$ is a finite Boolean word",
+  "$s,K\\in\\mathbb{N}$",
+  "$2^{(2W+2)(s+\\lfloor\\log_2 |x|\\rfloor+2)}\\le K$",
+  "The bounded-ball condition ranges over every $j$ with $0<j\\le K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite nondeterministic Turing machine with Boolean input, let $x$ be a\nBoolean word, and let $s,K\\in\\mathbb{N}$ satisfy $2^{(2W)(s+\\lfloor\\log_2\n|x|\\rfloor+2)}\\le K$, where $W$ is the encoding chunk width of $N$. The following are\nequivalent: for every $j$ with $1\\le j\\le K$, no number in the ball of radius $j$ under\nthe one-step relation, formed from initial codes below $K$, is an accepting code; and\nevery code reachable from the initial configuration code by finitely many one-step\ntransitions is not an accepting code."
+}

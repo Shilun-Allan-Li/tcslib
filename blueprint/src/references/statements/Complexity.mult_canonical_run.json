@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.mult_canonical_run",
+ "key": "639bbbbb02e47ad2",
+ "kind": "lemma",
+ "title": "Correctness of the Multiplication Computation",
+ "statement": "Let $x,a,b,c$ be Boolean words such that $x=\\langle a,\\langle b,c\\rangle\\rangle$, and let $v$ assign a natural number to each of thirteen registers. Suppose every register value is at most $4(|x|+1)$, and the register values satisfy $v(1)=|x|$, $v(2)=2|a|+2$, $v(3)=2|a|+2+2|b|+2$, $v(4)=2|a|$, $v(5)=2|a|+2+2|b|$, $v(6)=|a|+|b|$, and $v(7)=v(11)=v(12)=0$. Starting in the canonicality-test state for field $0$, with register values $v$ and no answer recorded, the multiplication procedure eventually halts with the Boolean answer indicating whether $x$ belongs to the multiplication language.",
+ "hypotheses_covered": [
+  "Boolean words $x,a,b,c$",
+  "$x=\\langle a,\\langle b,c\\rangle\\rangle$",
+  "register assignment $v$ on thirteen registers",
+  "every register value is at most $4(|x|+1)$",
+  "specified initial register values",
+  "initial state is canonicality-test for field $0$",
+  "initial answer is absent"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x,a,b,c$ be bit strings with $x=\\langle a,\\langle b,c\\rangle\\rangle$, and let $v$\nassign a natural-number register value to each of thirteen registers. Suppose every\nregister value is at most $4(|x|+1)$, and the initial register values satisfy $v_1=|x|$,\n$v_2=2|a|+2$, $v_3=2|a|+2+2|b|+2$, $v_4=2|a|$, $v_5=2|a|+2+2|b|$, $v_6=|a|+|b|$, and\n$v_7=v_{11}=v_{12}=0$. Starting in the canonicality-check state with these registers and\nno answer yet, the multiplication machine halts with the Boolean answer indicating\nwhether $x$ belongs to the binary multiplication language; at every earlier step its\nconfiguration satisfies the machine's prescribed precondition and all register values\nremain at most $4(|x|+1)$."
+}

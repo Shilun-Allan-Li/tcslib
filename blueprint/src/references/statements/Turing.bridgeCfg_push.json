@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.bridgeCfg_push",
+ "key": "cdd8e6a9c9162654",
+ "kind": "lemma",
+ "title": "Push as Two Tape Actions",
+ "statement": "Let $c$ be a partial recursive program, let $x$ be a finite input string over the bridge alphabet, and let $q,q_m,q'$ be optional control states of its bridging machine. Given a valid input-head position $p$, an assignment $st$ of compiled-machine stacks, an output string, a stack name $k$, and a compiled-stack symbol $a$, perform two actions on the work tape corresponding to $k$: first move its head one cell left without writing, then write $a$ (embedded in the bridge alphabet) without moving. The resulting configuration has control state $q'$, input position $p$, unchanged output, and stack assignment obtained by replacing $st(k)$ with $a$ prepended to it; the intermediate state is $q_m$.",
+ "hypotheses_covered": [
+  "A partial recursive program $c$",
+  "A finite input string over the bridge alphabet",
+  "Optional control states $q,q_m,q'$",
+  "A valid input-head position $p$",
+  "An assignment of compiled-machine stacks",
+  "An output string",
+  "A compiled-machine stack name $k$",
+  "A compiled-stack symbol $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Pushing a symbol $a$ onto the stack named $k$ is realized by two consecutive\none-tape actions on the tape of $k$: first move that head one cell to the left\n(writing nothing), then write the embedded symbol $a$ without moving.  Applied to a\nbridge configuration, this yields the bridge configuration whose assignment replaces\nthe stack at $k$ by $a$ prepended to it, with the specified final control state and\nthe input position and output unchanged."
+}

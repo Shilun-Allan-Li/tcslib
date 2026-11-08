@@ -1,0 +1,31 @@
+{
+ "lean_name": "Turing.FinTM.exists_zoneShiftOutTM",
+ "key": "6c6d40477786f349",
+ "kind": "theorem",
+ "title": "Bounded implementation of an outward zone shift",
+ "statement": "For each direction $s\\in\\{\\mathrm{false},\\mathrm{true}\\}$, there are a finite-state Turing machine $Z$ over Boolean symbols and a constant $c\\in\\mathbb N$ such that $Z$ has two work tapes and the following holds. For all natural numbers $\\ell,i$ with $1\\le i<\\ell$, every zone content $z$ with $\\ell$ zones, every Boolean input word $x$, and every initial configuration $d$ whose state is the initial state of $Z$, whose first work tape stores the encoding of $z$, whose second stores $i$ copies of $\\mathrm{true}$, whose work-tape heads are both at zero, and whose output is empty, there is a time $T\\le c(2^i+i+1)$ at which the machine has halted, its first tape stores the encoding of the outward-shifted zone content, its second tape still stores $i$ copies of $\\mathrm{true}$, both work-tape heads are at zero, its output is empty, and its input-head position is unchanged. At every time $t<T$ it is not halted; throughout times $t\\le T$, the first work-tape head lies in $[-(2B+2),2B+2]$, where $B$ is the base of zone $i+1$; and the second tape visits at most $c(2^i+i+1)$ cells by time $T$.",
+ "hypotheses_covered": [
+  "direction is a Boolean choice",
+  "1≤i<ℓ",
+  "z has ℓ zones",
+  "input is a Boolean word",
+  "initial state is the machine's initial state",
+  "first tape encodes z",
+  "second tape stores i true symbols",
+  "both work-tape heads start at zero",
+  "output starts empty",
+  "T≤c(2^i+i+1)",
+  "the first tape represents the outward-shifted zones at T",
+  "the second tape is unchanged at T",
+  "both heads are at zero at T",
+  "output remains empty at T",
+  "input-head position is unchanged at T",
+  "the machine is nonhalting at every t<T",
+  "first head stays in the stated interval for every t≤T",
+  "second tape visits at most c(2^i+i+1) cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

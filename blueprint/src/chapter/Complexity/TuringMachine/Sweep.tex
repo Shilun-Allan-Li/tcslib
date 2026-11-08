@@ -27,30 +27,28 @@ in $r$ (in order); every position beyond the extent of either list reads as
 blank.
 \end{definition}
 
-\begin{lemma}[Reading the zipper at its frontier]
+\begin{lemma}[Reading at the zipper frontier]
 \lean{Turing.FinTM.sweepTape_read}
 \label{Turing.FinTM.sweepTape_read}
 \leanok
 \uses{Turing.FinTM.sweepTape}
 \difficulty{2}
-Let $z$ be an integer and let $l$ and $r$ be finite lists of possibly-blank
-symbols over an alphabet $A$. The two-stack zipper tape with frontier $z$,
-left stack $l$, and right stack $r$ reads, at position $z$, exactly the first
-entry of $r$ — or blank when $r$ is empty.
+For every alphabet $A$, integer frontier $z$, and finite possibly blank-symbol stacks
+$l,r$, the two-stack tape with frontier $z$, left stack $l$, and right stack $r$ has at
+position $z$ the first entry of $r$, or blank if $r$ is empty.
 \end{lemma}
 
-\begin{lemma}[Write and move right on the zipper]
+\begin{lemma}[Writing and moving right on the zipper]
 \lean{Turing.FinTM.sweepTape_right}
 \label{Turing.FinTM.sweepTape_right}
 \leanok
 \uses{Turing.FinTM.sweepTape}
 \difficulty{4}
-Let $z$ be an integer, let $l$ and $r$ be finite lists of possibly-blank
-symbols over an alphabet $A$, and let $a$, $b$ be possibly-blank symbols.
-Overwriting position $z$ with $b$ in the two-stack zipper tape with frontier
-$z$, left stack $l$, and right stack $a \mathbin{::} r$ yields exactly the
-zipper tape with frontier $z + 1$, left stack $b \mathbin{::} l$, and right
-stack $r$: the written cell transfers from the right stack to the left stack.
+Let $A$ be an alphabet, $z$ an integer, and $l,r$ finite possibly blank-symbol stacks;
+let $a,b$ be possibly blank symbols. Updating the tape with frontier $z$, left stack
+$l$, and right stack $a::r$ at position $z$ to have value $b$ gives the same tape
+function as the two-stack tape with frontier $z+1$, left stack $b::l$, and right stack
+$r$.
 \end{lemma}
 
 \begin{definition}[Configuration at a forward sweep frontier]
@@ -78,20 +76,20 @@ the input head stationary, appends nothing to the output, and passes to
 state $q$.
 \end{definition}
 
-\begin{lemma}[One forward sweep step on configurations]
+\begin{lemma}[One-Step Forward Sweep Update]
 \lean{Turing.FinTM.sweepCfg_right}
 \label{Turing.FinTM.sweepCfg_right}
 \leanok
 \uses{Turing.Action.apply, Turing.FinTM.sweepAct, Turing.FinTM.sweepCfg, Turing.FinTM.sweepTape_right, Turing.moveInputPos_zero}
 \difficulty{3}
-Consider the forward-sweep configuration of a one-work-tape machine with
-(optional) state $q$, input-head position $p$, frontier $z$, left stack $l$,
-right stack $a \mathbin{::} r$, and output word $\mathit{out}$. Applying to it
-the local sweep action that writes the possibly-blank symbol $b$, moves the
-work head right, and enters state $q'$ produces exactly the forward-sweep
-configuration with state $q'$, the same input-head position $p$ and output
-$\mathit{out}$, frontier $z + 1$, left stack $b \mathbin{::} l$, and right
-stack $r$.
+Let $A$ be a type, let $x$ be a finite word over $A$, let $q$ be an optional state and
+$q'$ a state, and choose an input-head position $p$, an integer frontier $z$, finite
+left and right stacks $l,r$ of possibly blank symbols, an output word $out$, and
+possibly blank symbols $a,b$. Applying the action that writes $b$ at the scanned
+work-tape cell, moves the work head right, leaves the input head stationary, emits
+nothing, and enters $q'$ to the configuration represented by frontier $z$, stacks $l$
+and $a::r$, and output $out$ gives exactly the configuration with state $q'$, frontier
+$z+1$, stacks $b::l$ and $r$, and unchanged input-head position and output.
 \end{lemma}
 
 \begin{definition}[Finite-state transduction of a word]
@@ -106,28 +104,24 @@ $\mathit{visit}$ while the control state is threaded through, and the result
 records both the final control state and the fully rewritten word.
 \end{definition}
 
-\begin{lemma}[A local rule realizes a complete forward sweep]
+\begin{lemma}[A local rule realizes a forward sweep]
 \lean{Turing.FinTM.sweep_run}
 \label{Turing.FinTM.sweep_run}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepAct, Turing.FinTM.sweepCfg, Turing.FinTM.sweepCfg_right, Turing.FinTM.sweepFold, Turing.FinTM.sweepTape_read, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
-Let $M$ be a one-work-tape Turing machine over alphabet $A$ with states $S$,
-and let controller states $R$ and controller cells $C$ be encoded into $S$ and
-$A$ by maps $\mathit{state}$ and $\mathit{symbol}$. Suppose a local rule
-$\mathit{visit} \colon R \times C \to R \times C$ is implemented by $M$'s
-transition table: whenever $M$ is in state $\mathit{state}(s)$ and its work
-head reads $\mathit{symbol}(a)$ (for any input symbol), its transition is the
-local sweep action that writes the encoding of the rewritten cell, moves
-right, and enters the encoding of the new controller state. Then, starting
-from the forward-sweep configuration with state $\mathit{state}(s)$, frontier
-$z$, left stack $l$, and right stack consisting of the encoded word
-$\mathit{as}$ followed by $r$, running $M$ for exactly $|\mathit{as}|$ steps
-reaches the forward-sweep configuration whose state encodes the final
-controller state of the transduction of $\mathit{as}$, whose frontier is
-$z + |\mathit{as}|$, and whose left stack is the encoded rewritten word,
-reversed, prepended to $l$, with right stack $r$; the input-head position and
-the output word are unchanged.
+Let $T$ be a one-work-tape machine over alphabet $A$ with states $S$, and let $R$ and
+$C$ be sets with maps encoding controller states in $S$ and controller cells in $A$.
+Suppose that for every $s\in R$, $a\in C$, and input symbol, the transition from encoded
+state $s$ while reading encoded cell $a$ is the action that writes the encoding of the
+cell produced by a local rule $v:R\times C\to R\times C$, moves right, and enters the
+encoding of the new controller state. For any input-head position, output word, integer
+frontier $z$, left stack $l$, right stack $r$, and word $w$ over $C$, running $T$ for
+$|w|$ steps from the forward-facing zipper configuration with encoded state $s$ and
+right stack consisting of the encoded $w$ followed by $r$ yields the encoded final
+control state obtained by applying $v$ successively across $w$, frontier $z+|w|$, left
+stack equal to the reverse of the encoded rewritten word followed by $l$, and right
+stack $r$; the input-head position and output word are unchanged.
 \end{lemma}
 
 \begin{definition}[Configuration at a backward sweep frontier]
@@ -145,73 +139,65 @@ stores the cells at the frontier and to its left (in scanning order toward
 decreasing coordinates) and $l$ stores the cells strictly to the right.
 \end{definition}
 
-\begin{lemma}[One backward sweep step on configurations]
+\begin{lemma}[Backward sweep step at the frontier]
 \lean{Turing.FinTM.sweepRevCfg_left}
 \label{Turing.FinTM.sweepRevCfg_left}
 \leanok
 \uses{Turing.Action.apply, Turing.FinTM.sweepAct, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepTape, Turing.FinTM.sweepTape_right, Turing.moveInputPos_zero}
 \difficulty{4}
-Consider the backward-sweep configuration of a one-work-tape machine with
-(optional) state $q$, input-head position $p$, frontier $z$, left stack $l$,
-right stack $a \mathbin{::} r$, and output word $\mathit{out}$. Applying to it
-the local sweep action that writes the possibly-blank symbol $b$, moves the
-work head left, and enters state $q'$ produces exactly the backward-sweep
-configuration with state $q'$, the same input-head position $p$ and output
-$\mathit{out}$, frontier $z - 1$, left stack $b \mathbin{::} l$, and right
-stack $r$.
+Let $A$ be an alphabet, $S$ a state set, and $x$ a finite input word over $A$. Given an
+optional state $q$, a state $q'\in S$, an input-head position $p$, an integer frontier
+$z$, finite stacks $l,r$ of possibly blank symbols, an output word, and possibly blank
+symbols $a,b$, applying the action that writes $b$, moves the work head left, and enters
+state $q'$ to the backward-sweep configuration with right stack $a::r$ yields the
+backward-sweep configuration with state $q'$, the same input-head position and output,
+frontier $z-1$, left stack $b::l$, and right stack $r$.
 \end{lemma}
 
-\begin{lemma}[A local rule realizes a complete backward sweep]
+\begin{lemma}[A local rule realizes a backward sweep]
 \lean{Turing.FinTM.sweep_run_reverse}
 \label{Turing.FinTM.sweep_run_reverse}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepAct, Turing.FinTM.sweepFold, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_left, Turing.FinTM.sweepTape_read, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
-Let $M$ be a one-work-tape Turing machine over alphabet $A$ with states $S$,
-and let controller states $R$ and controller cells $C$ be encoded into $S$ and
-$A$ by maps $\mathit{state}$ and $\mathit{symbol}$. Suppose a local rule
-$\mathit{visit} \colon R \times C \to R \times C$ is implemented by $M$'s
-transition table: whenever $M$ is in state $\mathit{state}(s)$ and its work
-head reads $\mathit{symbol}(a)$ (for any input symbol), its transition is the
-local sweep action that writes the encoding of the rewritten cell, moves
-left, and enters the encoding of the new controller state. Then, starting
-from the backward-sweep configuration with state $\mathit{state}(s)$, frontier
-$z$, left stack $l$, and right stack consisting of the encoded word
-$\mathit{as}$ followed by $r$, running $M$ for exactly $|\mathit{as}|$ steps
-reaches the backward-sweep configuration whose state encodes the final
-controller state of the transduction of $\mathit{as}$, whose frontier is
-$z - |\mathit{as}|$, and whose left stack is the encoded rewritten word,
-reversed, prepended to $l$, with right stack $r$; the input-head position and
-the output word are unchanged.
+Let $T$ be a one-work-tape machine over alphabet $A$ with states $S$, and let $R$ and
+$C$ be sets with maps encoding controller states in $S$ and controller cells in $A$.
+Suppose that for every $s\in R$, $a\in C$, and input symbol, the transition from encoded
+state $s$ while reading encoded cell $a$ is the action that writes the encoding of the
+cell produced by a local rule $v:R\times C\to R\times C$, moves left, and enters the
+encoding of the new controller state. For any input-head position, output word, integer
+frontier $z$, left stack $l$, right stack $r$, and word $w$ over $C$, running $T$ for
+$|w|$ steps from the backward-facing zipper configuration with encoded state $s$ and
+right stack consisting of the encoded $w$ followed by $r$ yields the encoded final
+control state obtained by applying $v$ successively across $w$, frontier $z-|w|$, left
+stack equal to the reverse of the encoded rewritten word followed by $l$, and right
+stack $r$; the input-head position and output word are unchanged.
 \end{lemma}
 
-\begin{lemma}[Turning the zipper round]
+\begin{lemma}[Reflection of the zipper tape]
 \lean{Turing.FinTM.sweepTape_turn}
 \label{Turing.FinTM.sweepTape_turn}
 \leanok
 \uses{Turing.FinTM.sweepTape}
 \difficulty{4}
-Let $z$ be an integer and let $l$ and $r$ be finite lists of possibly-blank
-symbols over an alphabet $A$. The two-stack zipper tape with frontier $z$,
-left stack $l$, and right stack $r$ coincides, as a function on $\mathbb{Z}$,
-with the coordinate reflection $w \mapsto$ (zipper tape with frontier
-$-(z - 1)$, left stack $r$, and right stack $l$, read at $-w$): reversing the
-scanning direction exchanges the two stacks.
+For an alphabet $A$, an integer frontier $z$, and finite lists $l,r$ of possibly blank
+symbols, the tape represented by frontier $z$ and stacks $l,r$ equals the tape
+represented by frontier $-(z-1)$ and stacks $r,l$, evaluated at the reflected
+coordinate: for every $w\in\mathbb{Z}$, the first tape's content at $w$ is the second
+tape's content at $-w$.
 \end{lemma}
 
-\begin{lemma}[Transduction of a concatenation]
+\begin{lemma}[Transduction of a Concatenation]
 \lean{Turing.FinTM.sweepFold_append}
 \label{Turing.FinTM.sweepFold_append}
 \leanok
 \uses{Turing.FinTM.sweepFold}
 \difficulty{3}
-Let $\mathit{visit} \colon R \times C \to R \times C$ be a local rule, $s$ an
-initial control state, and $\mathit{as}$, $\mathit{bs}$ two words over $C$.
-The finite-state transduction of the concatenation
-$\mathit{as} \mathbin{+\!\!+} \mathit{bs}$ starting from $s$ is obtained by
-transducing $\mathit{as}$ from $s$, then transducing $\mathit{bs}$ from the
-resulting control state: the final state is that of the second transduction,
-and the rewritten word is the concatenation of the two rewritten words.
+Let $R,C$ be types, let $visit\colon R\times C\to R\times C$ be a local rule, let $s\in
+R$, and let $as,bs$ be finite words over $C$. Processing $as$ followed by $bs$ from
+state $s$ gives the same final state and rewritten word as first processing $as$ from
+$s$ and then processing $bs$ from the resulting state; the rewritten output is the
+concatenation of the two rewritten words.
 \end{lemma}
 
 \begin{definition}[Table-valued indexed transducer]
@@ -227,24 +213,20 @@ new value, and outputs $i$ tagged with the rewritten cell. Only the entry
 named by the visited cell changes.
 \end{definition}
 
-\begin{lemma}[Indexed transduction of a duplicate-free block]
+\begin{lemma}[Indexed transduction of a duplicate-free list]
 \lean{Turing.FinTM.indexedFold}
 \label{Turing.FinTM.indexedFold}
 \leanok
 \uses{Turing.FinTM.indexedVisit, Turing.FinTM.sweepFold}
 \difficulty{5}
-Let $\mathit{visit}_i \colon V \times C \to V \times C$ be a family of local
-rules indexed by a type $I$ with decidable equality, let
-$\mathit{cell} \colon I \to C$ assign a cell to each index, and let
-$\mathit{is}$ be a list of indices with no duplicates. Transducing, with the
-table-valued indexed transducer started at table $s$, the block that lists
-each $i \in \mathit{is}$ tagged with $\mathit{cell}(i)$, yields: the table
-that at every index $i$ occurring in $\mathit{is}$ holds the new value of
-$\mathit{visit}_i$ applied to the \emph{original} entry $s(i)$ and
-$\mathit{cell}(i)$, and elsewhere agrees with $s$; together with the block in
-which each tagged cell is replaced by its rewritten value, likewise computed
-from the original table. Because no index repeats, each local rule sees the
-untouched table entry.
+Let $I,V,C$ be types, with decidable equality on $I$. Let $\mathit{visit}_i:V\times C\to
+V\times C$ be a local rule for each $i\in I$, let $\mathit{cell}:I\to C$, let
+$\mathit{is}$ be a list of elements of $I$ with no repetitions, and let $s:I\to V$ be an
+initial table. Sweeping through the list of pairs $(i,\mathit{cell}(i))$ for $i$ in
+$\mathit{is}$ yields the table that replaces $s(i)$ by the first component of
+$\mathit{visit}_i(s(i),\mathit{cell}(i))$ for indices in $\mathit{is}$ and leaves other
+entries unchanged; the output list pairs each such index with the second component of
+that same local-rule value.
 \end{lemma}
 
 \begin{lemma}[Indexed transduction of a complete block]
@@ -253,110 +235,98 @@ untouched table entry.
 \leanok
 \uses{Turing.FinTM.indexedFold, Turing.FinTM.indexedVisit, Turing.FinTM.sweepFold}
 \difficulty{1}
-Let $k \in \mathbb{N}$, let $\mathit{visit}_i \colon V \times C \to V \times
-C$ be a family of local rules indexed by $i \in \{0, \dots, k-1\}$, let
-$\mathit{cell}$ assign a cell to each index, and let $s$ be an initial table.
-Transducing, with the table-valued indexed transducer started at $s$, the
-block listing every index $i$ exactly once in increasing order tagged with
-$\mathit{cell}(i)$, yields the table $i \mapsto$ (new value of
-$\mathit{visit}_i$ on $s(i)$ and $\mathit{cell}(i)$) together with the block
-of rewritten tagged cells in the same order.
+Let $k$ be a natural number, let $V,C$ be types, let $\mathit{visit}_i:V\times C\to
+V\times C$ be a local rule for each $i\in\{0,\ldots,k-1\}$, let $\mathit{cell}$ assign
+an element of $C$ to each such index, and let $s$ be a table with values in $V$.
+Sweeping through the pairs $(i,\mathit{cell}(i))$ in increasing index order yields the
+table whose value at each $i$ is the first component of
+$\mathit{visit}_i(s(i),\mathit{cell}(i))$, together with the same ordered block in which
+each cell is replaced by the second component of that local-rule value.
 \end{lemma}
 
-\begin{lemma}[Indexed transduction of a reversed complete block]
+\begin{lemma}[Indexed transduction of a reversed block]
 \lean{Turing.FinTM.indexedFold_block_reverse}
 \label{Turing.FinTM.indexedFold_block_reverse}
 \leanok
 \uses{Turing.FinTM.indexedFold, Turing.FinTM.indexedVisit, Turing.FinTM.sweepFold}
 \difficulty{3}
-Let $k \in \mathbb{N}$, let $\mathit{visit}_i \colon V \times C \to V \times
-C$ be a family of local rules indexed by $i \in \{0, \dots, k-1\}$, let
-$\mathit{cell}$ assign a cell to each index, and let $s$ be an initial table.
-Transducing, with the table-valued indexed transducer started at $s$, the
-block listing every index exactly once in \emph{decreasing} order tagged with
-its cell, yields the table $i \mapsto$ (new value of $\mathit{visit}_i$ on
-$s(i)$ and $\mathit{cell}(i)$) together with the correspondingly reversed
-block of rewritten tagged cells.
+Let $k$ be a natural number, let $V,C$ be types, let $\mathit{visit}_i:V\times C\to
+V\times C$ be a local rule for each $i\in\{0,\ldots,k-1\}$, let $\mathit{cell}$ assign
+an element of $C$ to each such index, and let $s$ be a table with values in $V$.
+Sweeping through the pairs $(i,\mathit{cell}(i))$ in decreasing index order yields the
+table whose value at each $i$ is the first component of
+$\mathit{visit}_i(s(i),\mathit{cell}(i))$, together with the reversed block in which
+each cell is replaced by the second component of that local-rule value.
 \end{lemma}
 
-\begin{lemma}[An explicit blank at the end of the zipper]
+\begin{lemma}[Empty and explicitly blank right stacks]
 \lean{Turing.FinTM.sweepTape_nil}
 \label{Turing.FinTM.sweepTape_nil}
 \leanok
 \uses{Turing.FinTM.sweepTape}
 \difficulty{2}
-Let $z$ be an integer and $l$ a finite list of possibly-blank symbols over an
-alphabet $A$. The two-stack zipper tape with frontier $z$, left stack $l$, and
-empty right stack equals the zipper tape with the same frontier and left stack
-whose right stack is the single blank cell.
+For every alphabet $A$, integer $z$, and finite possibly blank-symbol stack $l$, the
+two-stack tape with frontier $z$, left stack $l$, and empty right stack is equal, as a
+tape function, to the one with the same frontier and left stack and a right stack
+consisting of a single blank cell.
 \end{lemma}
 
-\begin{lemma}[Forward sweep step beyond the stored zone]
+\begin{lemma}[Forward Sweep Beyond the Stored Zone]
 \lean{Turing.FinTM.sweepCfg_right_any}
 \label{Turing.FinTM.sweepCfg_right_any}
 \leanok
 \uses{Turing.Action.apply, Turing.FinTM.sweepAct, Turing.FinTM.sweepCfg, Turing.FinTM.sweepCfg_right, Turing.FinTM.sweepTape_nil}
 \difficulty{4}
-Consider the forward-sweep configuration of a one-work-tape machine with
-(optional) state $q$, input-head position $p$, frontier $z$, left stack $l$,
-an \emph{arbitrary} (possibly empty) right stack $r$, and output word
-$\mathit{out}$. Applying the local sweep action that writes the
-possibly-blank symbol $b$, moves the work head right, and enters state $q'$
-produces the forward-sweep configuration with state $q'$, the same input-head
-position and output, frontier $z + 1$, left stack $b \mathbin{::} l$, and
-right stack the tail of $r$; when $r$ is empty, the cell consumed is a blank
-beyond the stored zone.
+Let $A$ be a type, $x$ a finite word over $A$, $q$ an optional state, $q'$ a state, $p$
+an input-head position for $x$, $z$ an integer frontier, $l,r$ finite stacks of possibly
+blank symbols, $out$ an output word, and $b$ a possibly blank symbol. Applying the
+action that writes $b$, moves the work head right, leaves the input head stationary,
+emits nothing, and enters $q'$ yields the configuration with state $q'$, frontier $z+1$,
+left stack $b::l$, right stack the tail of $r$, and the same input-head position and
+output.
 \end{lemma}
 
-\begin{lemma}[Backward sweep step beyond the stored zone]
+\begin{lemma}[Backward sweep step for an arbitrary right stack]
 \lean{Turing.FinTM.sweepRevCfg_left_any}
 \label{Turing.FinTM.sweepRevCfg_left_any}
 \leanok
 \uses{Turing.Action.apply, Turing.FinTM.sweepAct, Turing.FinTM.sweepRevCfg, Turing.FinTM.sweepRevCfg_left, Turing.FinTM.sweepTape_nil}
 \difficulty{4}
-Consider the backward-sweep configuration of a one-work-tape machine with
-(optional) state $q$, input-head position $p$, frontier $z$, left stack $l$,
-an \emph{arbitrary} (possibly empty) right stack $r$, and output word
-$\mathit{out}$. Applying the local sweep action that writes the
-possibly-blank symbol $b$, moves the work head left, and enters state $q'$
-produces the backward-sweep configuration with state $q'$, the same
-input-head position and output, frontier $z - 1$, left stack
-$b \mathbin{::} l$, and right stack the tail of $r$; when $r$ is empty, the
-cell consumed is a blank beyond the stored zone.
+Let $A$ be an alphabet, $S$ a state set, and $x$ a finite input word over $A$. Given an
+optional state $q$, a state $q'\in S$, an input-head position $p$, an integer frontier
+$z$, finite possibly blank-symbol stacks $l,r$, an output word, and a possibly blank
+symbol $b$, applying the action that writes $b$, moves the work head left, and enters
+state $q'$ yields the backward-sweep configuration with state $q'$, the same input-head
+position and output, frontier $z-1$, left stack $b::l$, and right stack equal to the
+tail of $r$.
 \end{lemma}
 
-\begin{lemma}[Generating a fixed word at exact cost]
+\begin{lemma}[Iterating a local generation rule]
 \lean{Turing.FinTM.sweep_generate}
 \label{Turing.FinTM.sweep_generate}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a one-work-tape Turing machine over alphabet $A$, let $w$ be a word
-over $A$ to be written, let $d$ be a fixed integer displacement, and let
-$\mathit{cfg}$ be a family of configurations of $M$ indexed by a step counter
-$i \in \{0, \dots, |w|\}$, an integer coordinate $z$, and two lists $l$, $r$
-of possibly-blank symbols. Assume the local one-step rule: for every
-$i < |w|$ and all $z$, $l$, $r$, a single step of $M$ from
-$\mathit{cfg}(i, z, l, r)$ yields
-$\mathit{cfg}(i+1,\, z + d,\, w_i \mathbin{::} l,\, \mathrm{tail}(r))$, where
-$w_i$ is the $i$-th symbol of $w$, pushed as a nonblank cell. Then for every
-$n \le |w|$, running $M$ for exactly $n$ steps from $\mathit{cfg}(0, z, l, r)$
-yields $\mathit{cfg}$ at counter $n$, coordinate $z + dn$, first list the
-first $n$ symbols of $w$, reversed, prepended to $l$, and second list $r$ with
-its first $n$ entries removed. The hypothesis is purely local and carries no
-premise about the global run.
+Let $M$ be a one-work-tape Turing machine over alphabet $A$, let $w$ be a finite word
+over $A$, and let $\mathit{cfg}$ assign a configuration to each counter $i$ from $0$
+through $|w|$, integer coordinate $z$, and pair of finite lists $l,r$ of possibly blank
+symbols. Fix $d\in\mathbb{Z}$, and suppose that for every $i<|w|$ and all $z,l,r$, one
+step from $\mathit{cfg}(i,z,l,r)$ yields
+$\mathit{cfg}(i+1,z+d,\,w_i::l,\,\operatorname{tail}(r))$. Then for every $n\leq |w|$,
+running the machine for exactly $n$ steps from $\mathit{cfg}(0,z,l,r)$ yields
+$\mathit{cfg}$ at counter $n$, coordinate $z+dn$, left list formed by prepending the
+first $n$ symbols of $w$ in reverse order to $l$, and right list formed by dropping the
+first $n$ entries of $r$.
 \end{lemma}
 
-\begin{lemma}[Heads and nonblank cells stay within elapsed time]
+\begin{lemma}[Work tape bounds after a computation]
 \lean{Turing.FinTM.source_bounds}
 \label{Turing.FinTM.source_bounds}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg.init, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.workTapePos_step_le}
 \difficulty{5}
-Let $M$ be a finite Turing machine over an alphabet $\Gamma$ (a deterministic
-multi-tape machine with finitely many states and some number of work tapes),
-let $x$ be an input word, and let $t \in \mathbb{N}$. In the configuration
-reached by running $M$ for $t$ steps from its initial configuration on $x$:
-every work-tape head position lies in the interval $[-t, t]$, and on every
-work tape, every cell at a coordinate $z$ with $z < -t$ or $z > t$ is blank.
+Let $M$ be a finite Turing machine over an alphabet $\Gamma$, let $x$ be an input word,
+and let $t\in\mathbb{N}$. After $t$ steps from its initial configuration on $x$, every
+work-tape head is at a position in $[-t,t]$, and every cell with integer coordinate
+$z<-t$ or $z>t$ on every work tape is blank.
 \end{lemma}

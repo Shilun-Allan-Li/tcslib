@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.call_pos",
+ "key": "ec68ba5550cf8107",
+ "kind": "lemma",
+ "title": "Preservation of semantics under a positive oracle call",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ registers and $d$ oracle deciders, let $x$ be a bit string, and let $G$ be a guard on configurations. Suppose the instruction at label $l$ is a deterministic call to decider $j$ in whole-input mode, with the single argument register $r$ and destinations $l_1$ and $l_0$. If $G$ holds at the configuration with label $l$, register contents $v$, and no answer yet, and the oracle answers yes on the encoding of $x$ paired with the binary representation of the contents of register $r$, then any probability $p$ for which the program has semantics from label $l_1$ with those same register contents and no answer is also its semantics from label $l$ with those contents and no answer.",
+ "hypotheses_covered": [
+  "The instruction at $l$ is the specified deterministic whole-input call to decider $j$ with argument register $r$ and destinations $l_1,l_0$.",
+  "The initial configuration at $l$ with contents $v$ and no answer satisfies $G$.",
+  "The oracle answers yes on the encoding of $x$ paired with the binary representation of $v(r)$.",
+  "The program has semantics with probability $p$ from the successor configuration at $l_1$, with contents $v$ and no answer."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.dg_right_span",
+ "key": "3cfe86fa763b044e",
+ "kind": "lemma",
+ "title": "Rightward Growth Span",
+ "statement": "Let $M$ be a finite-alphabet multi-tape Turing machine with $k$ work tapes, let $a_0$ be a source-alphabet symbol, let $q$ be a state, and let $s$ assign each tape an optional symbol and a Boolean head flag. For any input-head position, output word, integer frontier $z$, and two zipper lists, the simulator started in its right-growth phase with counter $0$ reaches the right-growth phase with counter $k$ after $k$ steps; throughout those steps its work-head position remains between $z$ and $z+k$, inclusive. The final configuration has frontier $z+k$, its left list is the reversed right guard block determined by $s$ (encoded as internal symbols) appended to the original left list, and its right list is the original right list with its first $k$ entries dropped; its input-head position and output are unchanged.",
+ "hypotheses_covered": [
+  "finite source alphabet",
+  "decidable equality on the source alphabet",
+  "a finite Turing machine M",
+  "a source-alphabet symbol a₀",
+  "a source state q",
+  "a read table s",
+  "an input-head position for an enlarged-alphabet input x",
+  "an output word",
+  "an integer frontier z",
+  "left and right zipper lists"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

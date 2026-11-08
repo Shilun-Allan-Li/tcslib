@@ -5,39 +5,46 @@ Explicit scalar identities select and evaluate the moment exponent in hypercontr
 
 \section{Declarations}
 
-\begin{lemma}[Concentration exponent threshold]
+\begin{lemma}[Concentration parameter threshold]
 \lean{BooleanAnalysis.Hypercontractivity.ConcentrationAux.concentration_parameter}
 \leanok
 \difficulty{4}
-Let $k>0$ be an integer and $t\ge(\sqrt{2e})^k$. Then $t>0$ and $t^{2/k}/e\ge2$.
+Let $k$ be a positive integer and $t\in\mathbb R$. If $(\sqrt{2e})^k\le t$, then $t>0$
+and $t^{2/k}/e\ge2$.
 \end{lemma}
 
 \begin{lemma}[Optimized moment identity]
 \lean{BooleanAnalysis.Hypercontractivity.ConcentrationAux.concentration_optimized_moment}
 \leanok
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p263-b003}
 \difficulty{4}
 Let $k>0$ be an integer and $t>0$, and put $q=t^{2/k}/e$. Then $((\sqrt q)^k/t)^q=\exp(-kt^{2/k}/(2e))$.
 \end{lemma}
 
-\begin{lemma}[Scaling a concentration threshold]
+\begin{lemma}[Scaling a concentration power]
 \lean{BooleanAnalysis.Hypercontractivity.ConcentrationAux.scaled_threshold_rpow}
 \leanok
 \difficulty{3}
-For an integer $k>0$ and reals $\lambda,t>0$, $(t(\sqrt\lambda)^k)^{2/k}=\lambda t^{2/k}$.
+For a positive integer $k$ and positive real numbers $\lambda$ and $t$,
+$(t(\sqrt\lambda)^k)^{2/k}=\lambda t^{2/k}$.
 \end{lemma}
 
-\begin{lemma}[Scaled concentration exponent threshold]
+\begin{lemma}[Scaled concentration threshold]
 \lean{BooleanAnalysis.Hypercontractivity.ConcentrationAux.scaled_concentration_parameter}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.ConcentrationAux.concentration_parameter, BooleanAnalysis.Hypercontractivity.ConcentrationAux.scaled_threshold_rpow}
 \difficulty{4}
-Let $k>0$ be an integer, $\lambda>0$, and $t\ge(\sqrt{2e/\lambda})^k$. Then $t>0$ and $\lambda t^{2/k}/e\ge2$.
+Let $k$ be a positive integer, let $\lambda>0$, and let $t\in\mathbb R$. If
+$(\sqrt{2e/\lambda})^k\le t$, then $t>0$ and $\lambda t^{2/k}/e\ge2$.
 \end{lemma}
 
-\begin{lemma}[Scaled optimized moment identity]
+\begin{lemma}[Optimized scaled moment identity]
 \lean{BooleanAnalysis.Hypercontractivity.ConcentrationAux.scaled_concentration_optimized_moment}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.ConcentrationAux.concentration_optimized_moment, BooleanAnalysis.Hypercontractivity.ConcentrationAux.scaled_threshold_rpow}
 \difficulty{5}
-Let $k>0$ be an integer and $\lambda,t>0$, and put $q=\lambda t^{2/k}/e$. Then $((\sqrt q\lambda^{1/q-1/2})^k/t)^q=\lambda^k\exp(-k\lambda t^{2/k}/(2e))$.
+Let $k$ be a positive integer, and let $\lambda,t\in\mathbb R$ be positive. Set
+$q=\lambda t^{2/k}/e$. Then $\left(\frac{(\sqrt
+q\,\lambda^{1/q-1/2})^k}{t}\right)^q=\lambda^k\exp\!\left(-\frac{k\lambda
+t^{2/k}}{2e}\right)$.
 \end{lemma}

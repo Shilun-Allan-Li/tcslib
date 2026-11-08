@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clLastCode_prev",
+ "key": "483e22d902b2dbd8",
+ "kind": "lemma",
+ "title": "Flag code for a previous visit",
+ "statement": "Let $M$ be a finite-state binary Turing machine with $k$ work tapes, let $m,t\\in\\mathbb{N}$, and let $\\tau$ be one of its work tapes. Form the Boolean word of length $t$ whose entry at $s<t$ is true exactly when the head of tape $\\tau$, after $s$ steps on the all-zero input of length $m$, is at the same position as after $t$ steps. The code of the index immediately before the word's last true entry (or the empty word if there is none) equals the optional-time code of the largest such $s<t$, with the code empty if no such $s$ exists.",
+ "hypotheses_covered": [
+  "A finite-state binary Turing machine $M$",
+  "Natural numbers $m$ and $t$",
+  "A work tape $\\tau$ of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every oblivious machine, reference length $m$, time $t$, and work tape $\\tau$, the last-visit code of the flag word testing, for each $s < t$, whether the work position at $s$ equals the position at $t$, is exactly the optional-time code of the public last-visit value; the time is in canonical binary."
+}

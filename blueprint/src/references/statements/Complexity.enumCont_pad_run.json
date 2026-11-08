@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.enumCont_pad_run",
+ "key": "8b016e03818b0252",
+ "kind": "lemma",
+ "title": "Simulation on a padded tape bank",
+ "statement": "Let $k\\le K$, let $S,H$ be types, let $x$ be a Boolean input word, let $M$ be a $k$-tape machine with states in $S$, let $N$ be a $K$-tape machine with states in $H$, and let $\text{emb}:S\\to H$. Suppose that for every source state, input symbol, and $K$-tuple of scanned work-tape symbols, $N$'s transition at the embedded state equals the padded action obtained from $M$'s transition using the first $k$ scanned symbols. Then for every source configuration $c$ and every $t\\in\\mathbb{N}$, running $N$ for $t$ steps from the padded configuration of $c$ gives the padding of the configuration reached by running $M$ from $c$ for $t$ steps.",
+ "hypotheses_covered": [
+  "natural numbers k and K with k ≤ K",
+  "types S and H",
+  "Boolean input word x",
+  "source machine M with k tapes and states in S",
+  "host machine N with K tapes and states in H",
+  "map emb from S to H",
+  "transition agreement for every state, input symbol, and K-tuple of scanned symbols",
+  "source configuration c",
+  "time t ∈ ℕ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $k \\le K$ and suppose a host machine's transitions on embedded states are the\npadded transitions of a $k$-tape source machine, reading only the first $k$\ntapes. Then for every configuration $c$ of the source and every time $t$, the\nhost's run from the padded configuration of $c$ equals the padding of the\nsource's run."
+}

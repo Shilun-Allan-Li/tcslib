@@ -16,6 +16,15 @@ at degree $n/2$, and the final Hamming-ball counting obstruction.
 
 \begin{definition}[MOD $q$ target inside $\mathbb{Z}/p$]
 \lean{RazborovSmolensky.modQTarget}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b004,
+  pdf-52929dbaa962-p005-b006
+}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p001-b004}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p004-b004,
+  pdf-988dc9f0ae91-p005-b002
+}
 \label{RazborovSmolensky.modQTarget}
 \leanok
 \uses{RazborovSmolensky.modGateOp}
@@ -36,6 +45,11 @@ $P(\mathrm{boolInput}(x)) \neq f(x)$.
 
 \begin{definition}[Low-degree bad-count lower bound]
 \lean{RazborovSmolensky.LowDegreeBadCountLB}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p007-b001}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p008-b003,
+  pdf-988dc9f0ae91-p011-b004
+}
 \label{RazborovSmolensky.LowDegreeBadCountLB}
 \leanok
 \uses{RazborovSmolensky.badInputCount}
@@ -85,6 +99,28 @@ Then there exists a seed $s \in S$ for which the number of Boolean inputs $x \in
 
 \begin{theorem}[{Low-degree polynomial approximation of an AC⁰[p] circuit}]
 \lean{RazborovSmolensky.exists_single_poly_for_circuit_one_size}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b005,
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p005-b007,
+  pdf-988dc9f0ae91-p006-b001,
+  pdf-988dc9f0ae91-p006-b002,
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001,
+  pdf-988dc9f0ae91-p007-b002,
+  pdf-988dc9f0ae91-p007-b003
+}
 \label{RazborovSmolensky.exists_single_poly_for_circuit_one_size}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.badInputCount, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one_size, RazborovSmolensky.exists_single_polynomial_from_pointwise_distribution}
@@ -107,6 +143,21 @@ where $\operatorname{size}(F)$ is the number of non-input nodes of $F$.
 
 \begin{theorem}[Size lower bound from a low-degree bad-count bound]
 \lean{RazborovSmolensky.size_lower_bound_from_badCountLB}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b006,
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b001,
+  pdf-d3f464808105-p003-b002
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b002,
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p008-b003,
+  pdf-988dc9f0ae91-p011-b004
+}
 \label{RazborovSmolensky.size_lower_bound_from_badCountLB}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.badInputCount, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_single_poly_for_circuit_one_size, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget}
@@ -130,6 +181,21 @@ where $\abs{F}$ is the number of non-input nodes of $F$.
 
 \begin{theorem}[Size lower bound from a relative bad-count bound]
 \lean{RazborovSmolensky.size_lower_bound_from_relative_badCountLB}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b006,
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b001,
+  pdf-d3f464808105-p003-b002
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b002,
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p008-b003,
+  pdf-988dc9f0ae91-p011-b004
+}
 \label{RazborovSmolensky.size_lower_bound_from_relative_badCountLB}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget, RazborovSmolensky.size_lower_bound_from_badCountLB}
@@ -148,6 +214,10 @@ Then the size of $F$ satisfies $\delta \cdot 2^{\ell} \le \abs{F}$.
 
 \begin{definition}[Standard field $\mathbb{F}_{p^{q-1}}$]
 \lean{RazborovSmolensky.ModqField}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p010-b004,
+  pdf-988dc9f0ae91-p011-b002
+}
 \label{RazborovSmolensky.ModqField}
 \leanok
 The Galois field $\mathbb{F}_{p^{q-1}}$, the standard field choice for the
@@ -175,6 +245,10 @@ $p^{q-1}$ elements.
 
 \begin{theorem}[An element of order $q$ in $\mathbb{F}_{p^{q-1}}^{\times}$]
 \lean{RazborovSmolensky.exists_unit_of_order_q_modqField}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p010-b004,
+  pdf-988dc9f0ae91-p011-b002
+}
 \label{RazborovSmolensky.exists_unit_of_order_q_modqField}
 \leanok
 \uses{RazborovSmolensky.ModqField, RazborovSmolensky.natCard_modqField}
@@ -186,6 +260,10 @@ $\mathbb{F}_{p^{q-1}}^{\times}$ contains a unit $u$ whose order is exactly $q$.
 
 \begin{theorem}[Nontrivial $q$-th root of unity in $\bbf_{p^{q-1}}$]
 \lean{RazborovSmolensky.exists_nontrivial_qth_root_modqField}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p010-b004,
+  pdf-988dc9f0ae91-p011-b002
+}
 \label{RazborovSmolensky.exists_nontrivial_qth_root_modqField}
 \leanok
 \uses{RazborovSmolensky.ModqField, RazborovSmolensky.exists_unit_of_order_q_modqField}
@@ -196,6 +274,10 @@ $\omega \neq 1$ satisfying $\omega^{q} = 1$; that is, a nontrivial $q$-th root o
 
 \begin{definition}[Root-of-unity cube $\{1,\omega\}^n$]
 \lean{RazborovSmolensky.rootCube}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p011-b002,
+  pdf-988dc9f0ae91-p012-b002
+}
 \label{RazborovSmolensky.rootCube}
 \leanok
 The subtype of vectors $x : \mathrm{Fin}\,n \to K$ such that each coordinate satisfies
@@ -204,6 +286,7 @@ $x_i = 1$ or $x_i = \omega$.
 
 \begin{theorem}[Polynomial representative on the root cube]
 \lean{RazborovSmolensky.exists_multilinear_representative_on_rootCube}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p012-b003}
 \label{RazborovSmolensky.exists_multilinear_representative_on_rootCube}
 \leanok
 \uses{RazborovSmolensky.rootCube}
@@ -217,6 +300,10 @@ f(x)$ for all $x$ in the cube.
 
 \begin{definition}[Squarefree monomial]
 \lean{RazborovSmolensky.squarefreeMonomial}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p012-b003
+}
 \label{RazborovSmolensky.squarefreeMonomial}
 \leanok
 For $s \subseteq \mathrm{Fin}\,n$, the monomial $\prod_{i \in s} X_i$.
@@ -224,6 +311,10 @@ For $s \subseteq \mathrm{Fin}\,n$, the monomial $\prod_{i \in s} X_i$.
 
 \begin{definition}[Squarefree (multilinear) polynomial from coefficients]
 \lean{RazborovSmolensky.squarefreePolynomial}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p012-b003
+}
 \label{RazborovSmolensky.squarefreePolynomial}
 \leanok
 \uses{RazborovSmolensky.squarefreeMonomial}
@@ -299,6 +390,15 @@ $s$.
 
 \begin{theorem}[Splitting a multilinear polynomial at half degree on the cube $\{1,\omega\}^n$]
 \lean{RazborovSmolensky.split_multilinear_at_half_degree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p007-b002,
+  pdf-52929dbaa962-p007-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p012-b004,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.split_multilinear_at_half_degree}
 \leanok
 \uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCube_affine_inverse, RazborovSmolensky.rootCube_top_mul_compl_inverse, RazborovSmolensky.squarefreeMonomial, RazborovSmolensky.squarefreeMonomial_totalDegree_le_card, RazborovSmolensky.squarefreePolynomial}
@@ -386,6 +486,15 @@ viewed as a polynomial in $K[X_0, \dots, X_{n-1}]$, is at most $\abs{s}$.
 
 \begin{theorem}[Direct half-degree split on the cube $\{1,\omega\}^n$]
 \lean{RazborovSmolensky.split_multilinear_at_half_degree_direct}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p007-b002,
+  pdf-52929dbaa962-p007-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p012-b004,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.split_multilinear_at_half_degree_direct}
 \leanok
 \uses{RazborovSmolensky.affineSquarefreeMonomial, RazborovSmolensky.affineSquarefreeMonomial_totalDegree_le_card, RazborovSmolensky.rootCube, RazborovSmolensky.rootCube_affine_inverse, RazborovSmolensky.rootCube_top_mul_compl_inverse, RazborovSmolensky.squarefreeMonomial, RazborovSmolensky.squarefreeMonomial_totalDegree_le_card, RazborovSmolensky.squarefreePolynomial}
@@ -445,6 +554,17 @@ $e$ coordinates, that is, with $\abs{\{a \in \alpha : \mathrm{center}(c)(a) \neq
 
 \begin{theorem}[Counting obstruction to low-degree approximation on the root cube]
 \lean{RazborovSmolensky.rootCube_counting_obstruction}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p007-b001,
+  pdf-52929dbaa962-p007-b004
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p009-b002,
+  pdf-988dc9f0ae91-p010-b001,
+  pdf-988dc9f0ae91-p012-b002,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.rootCube_counting_obstruction}
 \leanok
 \uses{RazborovSmolensky.finite_cover_by_hamming_balls_card_bound, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCubeBall, RazborovSmolensky.rootCubeFunctionBadCount}
@@ -464,6 +584,12 @@ degree at most $D$ differing from $f$ on at most $e$ points of the cube.
 
 \begin{theorem}[Approximating the top monomial approximates every function]
 \lean{RazborovSmolensky.rootProd_approx_implies_all_functions_approx}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p010-b001,
+  pdf-988dc9f0ae91-p012-b002,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.rootProd_approx_implies_all_functions_approx}
 \leanok
 \uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.split_multilinear_at_half_degree_direct, RazborovSmolensky.squarefreePolynomial}
@@ -480,6 +606,16 @@ n/2 \rfloor + d$ that disagrees with $f$ on at most $e$ points of the cube.
 
 \begin{theorem}[No low-degree approximation of the top monomial on the root cube]
 \lean{RazborovSmolensky.no_low_degree_rootProd_approx}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p007-b001,
+  pdf-52929dbaa962-p007-b004
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p010-b001,
+  pdf-988dc9f0ae91-p012-b002,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.no_low_degree_rootProd_approx}
 \leanok
 \uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootProd_approx_implies_all_functions_approx, RazborovSmolensky.squarefreePolynomial}
@@ -497,6 +633,16 @@ cube. Then no polynomial $P$ of total degree at most $d$ agrees with the top mon
 
 \begin{theorem}[Top-monomial inapproximability from finite counting data]
 \lean{RazborovSmolensky.no_low_degree_rootProd_approx_of_finite_counting}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p007-b001,
+  pdf-52929dbaa962-p007-b004
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p010-b001,
+  pdf-988dc9f0ae91-p012-b002,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.no_low_degree_rootProd_approx_of_finite_counting}
 \leanok
 \uses{RazborovSmolensky.no_low_degree_rootProd_approx, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCubeBall, RazborovSmolensky.rootCube_counting_obstruction, RazborovSmolensky.squarefreePolynomial}

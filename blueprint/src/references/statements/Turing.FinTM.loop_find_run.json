@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loop_find_run",
+ "key": "39d350b444d6e168",
+ "kind": "lemma",
+ "title": "First accepting payload within a step bound",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet with state set $S$, let $x$ be a Boolean input word, and let $c$ assign a configuration of $M$ on $x$ to each natural number. Let $a$ assign a Boolean acceptance flag and $y$ a Boolean payload word to each natural number, and let $B,N$ be natural numbers. Suppose $c(N)$ is halted with empty output. Suppose also that for every $j<N$ there is a time $t\\le B$ such that, if $a(j)$ is true, the run from $c(j)$ is halted at time $t$ with output $y(j)$; if $a(j)$ is false, the run from $c(j)$ at time $t$ is exactly $c(j+1)$. Then from $c(0)$ the machine halts within $N B$ steps with output $y(i)$ for the first index $i<N$ with $a(i)$ true, if such an index exists, and with empty output if none exists.",
+ "hypotheses_covered": [
+  "multi-tape Turing machine over the Boolean alphabet with state set S",
+  "Boolean input word x",
+  "configuration sequence c on input x",
+  "Boolean acceptance predicate a",
+  "payload-word assignment y",
+  "natural numbers B and N",
+  "c(N) is halted with empty output",
+  "for every j<N, some t≤B satisfies the acceptance-dependent run condition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c_0, \\dots, c_N$\nbe configurations of $M$ on a common input with $c_N$ halted with empty output, let $a$\nbe a Boolean predicate on round indices, and let $w$ assign a payload word to each\nindex. Assume for each $j < N$ that within $B$ steps the machine either halts from $c_j$\nwith output $w(j)$ (when $a(j)$ holds) or reaches $c_{j+1}$ (when $a(j)$ fails). Then\nfrom $c_0$ the machine halts within $N \\cdot B$ steps, with output $w(i)$ for the least\naccepting index $i < N$ when one exists and empty output otherwise."
+}

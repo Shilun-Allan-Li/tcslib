@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.randomization_condExp_average",
+ "key": "4e6139e661fd1930",
+ "kind": "theorem",
+ "title": "Average of masked randomizations",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, let $f$ be real-valued on its outcome space, and fix an outcome $x$. For each uniform $r\\in\\{0,1\\}^n$, let $M(r)=\\{i:r_i=0\\}$. The average over $r$ of the conditional expectation of $R_rf$ given the coordinates in $M(r)$, evaluated at $x$, equals the product noise operator at rate $1/2$ applied to $f$ at $x$: $\\mathbb E_r[E_{M(r)}(R_rf)(x)]=T_{1/2}f(x)$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive atom masses",
+  "$f$ is a real-valued function on the outcome space",
+  "$x$ is an outcome of $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $f:\\Omega\\to\\mathbb R$, and $x\\in\\Omega$. For uniform $r\\in\\{0,1\\}^n$, $R_rf=\\sum_S\\chi_S(r)f_S$, and $M(r)=\\{i:r_i=0\\}$, one has $\\mathbb E_r[E_{M(r)}(R_rf)(x)]=T_{1/2}f(x)$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$ for $r\\in\\{0,1\\}^n$; $R_rh=\\sum_{S\\subseteq[n]}\\chi_S(r)h_S$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

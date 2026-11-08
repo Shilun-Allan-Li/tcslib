@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.moveInputPos_neg_of_ne_left",
+ "key": "e4d4506aab6ecffb",
+ "kind": "lemma",
+ "title": "Left move away from the boundary",
+ "statement": "Let $n$ be a natural number and let $p$ be a position in the range of $n+2$ positions with $p\\ne0$. Moving $p$ by $-1$ with clamping gives the position $p-1$.",
+ "hypotheses_covered": [
+  "A natural number n",
+  "A position p in the range of n + 2 positions",
+  "p is not 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be an input-head position on an input of length $n$ with $p \\ne 0$. Then the\nclamped move of $p$ by the sign $-1$ is exactly the position $p - 1$: a left move that\ndoes not start at the left boundary decrements the position."
+}

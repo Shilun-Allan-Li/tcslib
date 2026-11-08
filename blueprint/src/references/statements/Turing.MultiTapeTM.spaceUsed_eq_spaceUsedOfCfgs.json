@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MultiTapeTM.spaceUsed_eq_spaceUsedOfCfgs",
+ "key": "2939046de85402fd",
+ "kind": "lemma",
+ "title": "Space of the computation trace",
+ "statement": "Let $M$ be a $k$-tape Turing machine, let $c$ be a configuration for an input string, and let $t\\in\\mathbb{N}$. The total number of distinct work-tape cells visited by $M$ from $c$ through step $t$ equals the total number of distinct work-tape head positions occurring in the list of configurations at steps $0$ through $t$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A machine with symbol alphabet and state set",
+  "An input string and a configuration for that input",
+  "A step count $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine, $c$ a configuration, and\n$t \\in \\mathbb{N}$.  The total space used by $M$ from $c$ up to step $t$\nequals the space touched by the list of configurations that $M$ traverses in\nsteps $0, 1, \\dots, t$ from $c$, where the space touched by a list of\nconfigurations is the sum over the work tapes of the number of distinct head\npositions occurring in the list."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedCut_count_run",
+ "key": "48eeb736fa33ebf0",
+ "kind": "lemma",
+ "title": "Skipping a doubled count field",
+ "statement": "Let $x$ be a Boolean input word, $B$ a four-tape configuration, $i$ a Boolean flag, $j$ an index among nine records, $T$ a Boolean table, $\\sigma$ a state tape with cursor $s$, and $b,l,r$ Boolean words. Suppose $T$ is the concatenation of $l$, the word formed by repeating each bit of $b$ twice in order, the delimiter $01$, and $r$. Starting in the count-first phase with flag $i$, index $j$, and table cursor $|l|$, after $2|b|+2$ steps the evaluation configuration has cursor $|l|+2|b|+2$ and control phase initial-copy if $i$ is true, or initial-skip with index $j$ if $i$ is false.",
+ "hypotheses_covered": [
+  "Boolean input word and four-tape base configuration",
+  "Boolean flag and index among nine records",
+  "Boolean table and state tape with cursor",
+  "Boolean words b, l, and r",
+  "Table T equals l followed by doubled bits of b, delimiter 01, and r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table holds, starting at the cursor position $|l|$, the doubling\n$b_1 b_1 b_2 b_2 \\cdots$ of a count string of $n$ bits followed by the\ndelimiter pair $01$.  Then the count-parsing phase of the stopped table\ninterpreter traverses this field in exactly $2n+2$ steps, advancing the cursor\npast the delimiter and entering the initial-state copier (when copying was\nrequested) or the initial-state skipper; no binary arithmetic on the count's\nvalue is performed."
+}

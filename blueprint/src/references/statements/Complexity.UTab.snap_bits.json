@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.UTab.snap_bits",
+ "key": "2329d0cdd77963b5",
+ "kind": "theorem",
+ "title": "Snapshot template bit output",
+ "statement": "Let $M$ be a finite Turing machine with Boolean symbols, let $n,T,t$ be natural numbers, let $z$ be a finite list of bits, and let $e$ be an eleven-register record. Assume $t\\le T$, and that the input-count, hard-wired-length, time-budget, instruction-position, and step-start registers of $e$ equal, respectively, $n$, the length of $z$, $T$, the index of the snapshot position at time $t$ for input length $|z|+n$ and budget $T$, and $t$ times the configuration stride for input length $|z|+n$ and budget $T$. The concatenated output of executing the snapshot template for time $t$ on the register values of $e$ equals the instruction-bit list specified by $M,n,z,T$ at the instruction position recorded in $e$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean symbols",
+  "$n,T,t$ are natural numbers",
+  "$z$ is a finite list of bits",
+  "$t\\le T$",
+  "$e$ is an eleven-register record",
+  "The input-count register of $e$ equals $n$",
+  "The hard-wired-length register of $e$ equals the length of $z$",
+  "The time-budget register of $e$ equals $T$",
+  "The instruction-position register of $e$ equals the snapshot index for time $t$, input length $|z|+n$, and budget $T$",
+  "The step-start register of $e$ equals $t$ times the configuration stride for input length $|z|+n$ and budget $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

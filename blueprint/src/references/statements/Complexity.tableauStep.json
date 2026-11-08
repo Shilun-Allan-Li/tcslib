@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tableauStep",
+ "key": "91524682051a0636",
+ "kind": "def",
+ "title": "Boolean tableau update",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, and let $l$ be any finite Boolean list. Let $B$ be the width of a snapshot encoding; decode the first $B$ entries of $l$ as a snapshot. Read the input symbol as the entry at position $B+2$ if the entry at position $B+1$ is true, and otherwise take it to be absent. For each work tape, take the chunk of $B+1$ entries beginning at position $B+3$ plus the tape index times $B+1$; when its first entry is true, use the decoded tail as the scanned symbol after applying the machine's write-or-keep operation, and otherwise take the scanned symbol to be absent. If the entry at position $B$ is true, the output is the encoding of the initial state, the read input symbol, and absent symbols on every work tape, followed by false. Otherwise, the output is the encoding of the next state and the scanned symbols just specified, together with the read input symbol, followed by the disjunction of the entry at position $B+3+k(B+1)$ and whether the decoded snapshot emits true; entries beyond the end of $l$ are read as false.",
+ "hypotheses_covered": [
+  "A finite Turing machine over the Boolean alphabet",
+  "An arbitrary finite Boolean list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves_step",
+ "key": "8015b0fb8f70633a",
+ "kind": "lemma",
+ "title": "Leaf count identity for path erasure",
+ "statement": "Let $P$ be a family of protocols indexed by bits, let $b$ be a bit, and let $s$ have a subprotocol path into $P(b)$. If $e=\\ell(P(b))-\\ell(s)+1$, with subtraction truncated on the natural numbers, then replacing the leaf count of branch $b$ by $e$ in the sum of the two branch leaf counts gives $\\ell(P(\\mathrm{false}))+\\ell(P(\\mathrm{true}))-\\ell(s)+1$, again using truncated subtraction.",
+ "hypotheses_covered": [
+  "A subprotocol path from $s$ into $P(b)$",
+  "$e=\\ell(P(b))-\\ell(s)+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ assign a protocol to each bit, let $b$ be a bit, and let $s$ be a subprotocol of\n$P(b)$ witnessed by a subprotocol path. If $e = \\ell(P(b)) - \\ell(s) + 1$ (truncated\nsubtraction on $\\mathbb{N}$), then replacing the leaf count of branch $b$ by $e$ in the sum\nof the two children's leaf counts gives\n\\[\n  \\ell(P(\\mathrm{false})) + \\ell(P(\\mathrm{true})) - \\ell(s) + 1 ,\n\\]\ni.e.\\ $\\ell(P(\\mathrm{false})) + e = \\ell(P(\\mathrm{false})) + \\ell(P(\\mathrm{true})) - \\ell(s) + 1$\nwhen $b = \\mathrm{true}$, and $e + \\ell(P(\\mathrm{true}))$ equals the same quantity when\n$b = \\mathrm{false}$."
+}

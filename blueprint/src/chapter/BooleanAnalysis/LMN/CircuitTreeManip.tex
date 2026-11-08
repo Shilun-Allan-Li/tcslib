@@ -14,6 +14,11 @@ representable by a width-$l$ DNF and CNF.
 
 \begin{definition}[DNF to dual CNF]
 \lean{DNF.dual}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b002,
+  pdf-52929dbaa962-p002-b003
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p094-b005}
 \label{DNF.dual}
 \leanok
 \uses{CNF, DNF, Literal.flipNeg}
@@ -22,79 +27,281 @@ literal of every term and reading the result as a CNF. Concretely
 $\neg\big(\bigvee_i \bigwedge_j \ell_{ij}\big) = \bigwedge_i \bigvee_j \neg\ell_{ij}$.
 \end{definition}
 
-\begin{lemma}[Dual CNF preserves width]
+\begin{lemma}[Width of the dual formula]
 \lean{DNF.dual_width}
 \label{DNF.dual_width}
 \leanok
-\uses{CNF.width, DNF, DNF.width, DNF.dual, LitList.width}
+\uses{CNF.width, DNF, DNF.dual, DNF.width, Depth2.width, LitList.width}
 \difficulty{2}
-Let $\varphi$ be a DNF formula on $n$ variables, that is, a list of terms, each term a
-list of literals, and let its De Morgan dual CNF be obtained by negating every literal
-of every term. Then the dual CNF has the same width as $\varphi$, where the width of a
-formula is the maximum number of literals appearing in any of its terms (equal to $0$
-when the formula is empty).
+For every DNF formula $\varphi$ on $n$ variables, its De Morgan dual CNF has the same
+width as $\varphi$.
 \end{lemma}
 
-\begin{lemma}[Dual CNF computes the negation of a DNF]
+\begin{lemma}[Evaluation of the dual formula]
 \lean{DNF.dual_eval}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b005,
+  pdf-ffbe9c7b3306-p107-b008
+}
 \label{DNF.dual_eval}
 \leanok
-\uses{CNF.eval, Clause.eval, DNF, DNF.eval, DNF.dual, Literal.flipNeg_eval, Term.eval}
+\uses{CNF.eval, Clause.eval_cons, DNF, DNF.dual, DNF.eval, Literal.flipNeg_eval, Term.eval_cons}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003,
+    pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003,
+    pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {DNF.dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
 \difficulty{4}
-Let $\varphi$ be a DNF formula on $n$ variables — a disjunction of terms, each term a
-conjunction of literals — and let $x \in \{0,1\}^n$ be an assignment. Form its De~Morgan
-dual CNF by negating every literal of every term of $\varphi$ and reading each resulting
-term as a clause (a disjunction of literals), so that the whole is a conjunction of
-clauses. Then this dual CNF evaluates on $x$ to the negation of the value of $\varphi$
-on $x$.
+For a DNF formula $\varphi$ on $n$ variables and an assignment $x\in\{0,1\}^n$, the De
+Morgan dual CNF evaluates to the Boolean negation of the value of $\varphi$ at $x$.
 \end{lemma}
 
-\begin{lemma}[A circuit of positive depth is a gate]
+\begin{lemma}[Positive depth implies an internal gate]
 \lean{LMN.TreeCircuit.exists_node_of_depth_ge_one}
 \label{LMN.TreeCircuit.exists_node_of_depth_ge_one}
 \leanok
 \uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth}
 \difficulty{2}
-Let $c$ be a Boolean circuit whose depth is at least $1$. Then $c$ is not a literal: it
-is an internal gate, so there exist a Boolean flag $\mathit{isAnd}$ and a list $cs$ of
-child circuits for which $c$ is the node with gate type $\mathit{isAnd}$ applied to the
-children $cs$.
+Let $m$ be a natural number and let $c$ be a Boolean circuit on $m$ variables. If the
+depth of $c$ is at least $1$, then there are a Boolean gate type and a list of child
+circuits such that $c$ is the node formed from that gate type and those children.
 \end{lemma}
 
-\begin{lemma}[Children of a depth-one gate are literals]
+\begin{lemma}[Depths of children of a shallow gate]
 \lean{LMN.TreeCircuit.depth1_children_are_lits}
 \label{LMN.TreeCircuit.depth1_children_are_lits}
 \leanok
 \uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth}
 \difficulty{4}
-Let $C$ be the Boolean circuit consisting of a single gate (an AND gate or an OR gate,
-according to a flag $\mathit{isAnd}$) applied to a list $cs$ of child circuits, so that
-the depth of $C$ equals $1$ plus the maximum depth among the circuits in $cs$. If the
-depth of $C$ is at most $1$, then every child circuit $c \in cs$ has depth $0$; that is,
-each child is a literal.
+Let $m\in\mathbb N$, choose an AND or OR gate, and let $cs$ be a list of Boolean circuit
+trees on $m$ variables. If the circuit formed by applying that gate to the children in
+$cs$ has depth at most $1$, then every child in $cs$ has depth $0$.
 \end{lemma}
 
 \begin{lemma}[Depth-zero circuits are literals]
 \lean{LMN.TreeCircuit.depth0_is_lit}
 \label{LMN.TreeCircuit.depth0_is_lit}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.Lit}
+\uses{BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth}
 \difficulty{2}
-Let $c$ be a Boolean circuit on $m$ variables whose depth is $0$. Then $c$ is a leaf:
-there exists a literal $l$ such that $c$ is the single-literal circuit built from $l$.
+Let $m\in\mathbb N$ and let $C$ be a Boolean circuit tree on $m$ variables. If $C$ has
+depth $0$, then there is a literal $\ell$ such that $C$ is the circuit consisting of
+that single literal.
 \end{lemma}
 
-\begin{lemma}[Depth-one gates have only literal inputs]
+\begin{lemma}[Children of a shallow gate are literals]
 \lean{LMN.TreeCircuit.depth1_all_lits}
 \label{LMN.TreeCircuit.depth1_all_lits}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.Lit, LMN.TreeCircuit.depth0_is_lit, LMN.TreeCircuit.depth1_children_are_lits}
+\uses{BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, LMN.TreeCircuit.depth0_is_lit, LMN.TreeCircuit.depth1_children_are_lits}
 \difficulty{1}
-Fix a number of variables $m$, a gate type $isAnd \in \{\mathrm{true},
-\mathrm{false}\}$, and a list $cs$ of Boolean circuits on $m$ variables, and form the
-circuit $\mathrm{node}(isAnd, cs)$ whose root gate is applied to the children in $cs$.
-If this circuit has depth at most $1$, then every child $c$ in $cs$ is a literal; that
-is, there exists a literal $l$ with $c = \mathrm{lit}(l)$.
+Let $m\in\mathbb N$, choose an AND or OR gate, and let $cs$ be a list of Boolean circuit
+trees on $m$ variables. If the circuit formed by applying that gate to the children in
+$cs$ has depth at most $1$, then every child in $cs$ is a literal.
 \end{lemma}
 
 \begin{definition}[Child function under gate substitution]
@@ -109,12 +316,24 @@ $\mathrm{gates}\,i$, namely $x \mapsto c_{\mathrm{sub}}.\mathrm{eval}\,(\lambda 
 
 \begin{lemma}[DNF and CNF forms of shallow restricted gates]
 \lean{LMN.switched_gates_have_dnf_cnf}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b003,
+  pdf-52929dbaa962-p002-b004,
+  pdf-52929dbaa962-p003-b001
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b006,
+  pdf-ffbe9c7b3306-p094-b007,
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005
+}
 \proofsource{switching-lemma}{
   pdf-b5e074215b9e-p003-b002,
   pdf-b5e074215b9e-p003-b003
 }
 \label{LMN.switched_gates_have_dnf_cnf}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -336,7 +555,6 @@ $\mathrm{gates}\,i$, namely $x \mapsto c_{\mathrm{sub}}.\mathrm{eval}\,(\lambda 
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p004-b002}
-\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{3}
 Let $g_1,\dots,g_m$ be DNF formulas on $n$ Boolean variables, let $\rho$ be a
 restriction of these variables, and let $l\in\bbn$. For each $i$, write $f_i$ for the
@@ -353,7 +571,7 @@ $\psi_i$ of width at most $l$ that also computes $f_i$.
 \lean{LMN.or_of_lit_children_dnf}
 \label{LMN.or_of_lit_children_dnf}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs, CNF.dual, CNF.dual_eval, CNF.dual_width}
+\uses{BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, CNF, CNF.dual, CNF.dual_eval, CNF.dual_width, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_or_of_dnfs}
 \difficulty{5}
 Fix natural numbers $m,n$ and a width bound $l$. Let $c_1,\dots,c_k$ be Boolean circuits
 on $m$ variables, each of which is a single literal, and let $N$ be the OR node whose
@@ -372,7 +590,7 @@ assignment $i \mapsto g_i(x)$ for every $x$.
 \lean{LMN.and_of_lit_children_cnf}
 \label{LMN.and_of_lit_children_cnf}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_and_of_cnfs, DNF.dual, DNF.dual_eval, DNF.dual_width}
+\uses{BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.dual, DNF.dual_eval, DNF.dual_width, DNF.eval, DNF.width, LMN.compression_and_of_cnfs}
 \difficulty{5}
 Fix natural numbers $m$, $n$, and $l$, and let $g_0, \dots, g_{m-1}$ be Boolean
 functions of an input $x : \mathrm{Fin}\,n \to \{0,1\}$, one for each index $i \in
@@ -388,9 +606,413 @@ every input $x$.
 
 \begin{lemma}[Absorbing a depth-one top gate into the second layer]
 \lean{LMN.absorbOneLevel_depth1}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001
+}
 \label{LMN.absorbOneLevel_depth1}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.TreeCircuit.depth1_all_lits, LMN.TreeCircuit.exists_node_of_depth_ge_one, LMN.Layer2Data, LMN.and_of_lit_children_cnf, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, LMN.or_of_lit_children_dnf, CNF.dual, CNF.dual_eval, CNF.dual_width}
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.dual, CNF.dual_eval, CNF.dual_width, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.TreeCircuit.depth1_all_lits, LMN.TreeCircuit.exists_node_of_depth_ge_one, LMN.and_of_lit_children_cnf, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, LMN.or_of_lit_children_dnf}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.TreeCircuit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BoolCircuit.TreeCircuit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BoolCircuit.TreeCircuit.depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {CNF.dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {CNF.dual_width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {CNF.dual_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.listConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.width_le_iff_forall}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {LMN.mem_listConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.cnfConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.dnfConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.cnf_concat_width_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.cnf_concat_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.dnf_concat_width_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.dnf_concat_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.compression_and_of_cnfs}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004,
+    pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.compression_or_of_dnfs}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p106-b004,
+    pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.dedupTermVar}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.termHasContradiction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.cleanDNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.dedupTermVar_nodup}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.dedupTermVar_var_inj}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.dedupTermVar_width_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {LMN.contradiction_term_eval_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.dedupTermVar_preserves_term_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.cleanDNF_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.cleanDNF_width_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {LMN.cleanDNF_var_inj}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.cleanDNF_nodup}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.Layer2Data}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002,
+    pdf-ffbe9c7b3306-p104-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {DNF.dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {DNF.dual_width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {DNF.dual_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {LMN.TreeCircuit.exists_node_of_depth_ge_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.TreeCircuit.depth1_children_are_lits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.TreeCircuit.depth0_is_lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.TreeCircuit.depth1_all_lits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.or_of_lit_children_dnf}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002,
+    pdf-ffbe9c7b3306-p106-b004}
+\proofstep
+  {LMN.and_of_lit_children_cnf}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002,
+    pdf-ffbe9c7b3306-p106-b004}
 \difficulty{5}
 Let $\mathrm{data}$ be layer-2 data over $n$ Boolean variables: a family of gates, each
 computing a DNF formula, sharing a common positive width bound. Let $c_{\mathrm{top}}$
@@ -411,7 +1033,7 @@ $\mathrm{data}'$.
 \lean{LMN.child_depth_le1_has_signed_dnf}
 \label{LMN.child_depth_le1_has_signed_dnf}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.Lit, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.TreeCircuit.depth1_all_lits, LMN.TreeCircuit.exists_node_of_depth_ge_one, LMN.and_of_lit_children_cnf, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, LMN.or_of_lit_children_dnf, CNF.dual, CNF.dual_eval, CNF.dual_width}
+\uses{BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.dual, CNF.dual_eval, CNF.dual_width, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.TreeCircuit.depth0_is_lit, LMN.TreeCircuit.depth1_all_lits, LMN.TreeCircuit.exists_node_of_depth_ge_one, LMN.and_of_lit_children_cnf, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, LMN.or_of_lit_children_dnf}
 \difficulty{5}
 Fix natural numbers $m,n,l$. Let $c_j$ be a Boolean circuit whose $m$ inputs are indexed
 by $\mathrm{Fin}\,m$ and whose depth is at most $1$, and let $\mathrm{gates}$ assign to
@@ -462,6 +1084,11 @@ $g$.
 
 \begin{lemma}[Depth reduction for depth-one composed circuits]
 \lean{LMN.exists_circuit_depth_reduction_depth1}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001
+}
 \label{LMN.exists_circuit_depth_reduction_depth1}
 \leanok
 \uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.child_depth_le1_has_signed_dnf}
@@ -546,6 +1173,10 @@ values when $\mathit{isAnd} = \mathrm{true}$ and their disjunction when $\mathit
 
 \begin{lemma}[Depth reduction for circuits with CNF and DNF gates]
 \lean{LMN.exists_circuit_depth_reduction}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b004,
+  pdf-52929dbaa962-p003-b001
+}
 \statementsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
@@ -556,7 +1187,7 @@ values when $\mathit{isAnd} = \mathrm{true}$ and their disjunction when $\mathit
 }
 \label{LMN.exists_circuit_depth_reduction}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.Lit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.TreeCircuit.exists_node_of_depth_ge_one, LMN.child_depth_le1_has_signed_dnf, LMN.exists_circuit_depth_reduction_depth1, LMN.exists_circuit_depth_reduction_depth2, LMN.node_eval_eq_of_finRange_map, LMN.reduce_children}
+\uses{BoolCircuit.Lit.eval, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.TreeCircuit.exists_node_of_depth_ge_one, LMN.child_depth_le1_has_signed_dnf, LMN.exists_circuit_depth_reduction_depth1, LMN.exists_circuit_depth_reduction_depth2, LMN.node_eval_eq_of_finRange_map, LMN.reduce_children}
 \difficulty{6}
 Let $c$ be a Boolean circuit on $m$ inputs whose depth is at least $1$, and suppose each
 input coordinate $i$ is fed by a Boolean function $g_i \colon \{0,1\}^n \to \{0,1\}$, so
@@ -573,6 +1204,10 @@ assignment $x$.
 
 \begin{lemma}[Absorbing one level of a depth-two circuit]
 \lean{LMN.absorbOneLevel_general}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
@@ -580,6 +1215,7 @@ assignment $x$.
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p004-b002}
 \label{LMN.absorbOneLevel_general}
 \leanok
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.exists_circuit_depth_reduction}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -906,7 +1542,6 @@ assignment $x$.
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004,
     pdf-fc447f326910-p013-b002}
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.exists_circuit_depth_reduction}
 \difficulty{2}
 Let $D$ be layer-2 data over $n$ variables: a family of DNF gates $g_0,\dots,g_{m-1}$
 together with a common positive width bound. Let $C$ be a Boolean circuit whose $m$
@@ -932,6 +1567,7 @@ $\bigl(h_j(x)\bigr)_j$.
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p004-b002}
 \label{LMN.absorbOneLevel}
 \leanok
+\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.absorbOneLevel_depth1, LMN.absorbOneLevel_general}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1273,7 +1909,6 @@ $\bigl(h_j(x)\bigr)_j$.
   {pdf-fc447f326910-p012-b003,
     pdf-fc447f326910-p012-b004,
     pdf-fc447f326910-p013-b002}
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.Layer2Data, LMN.absorbOneLevel_depth1, LMN.absorbOneLevel_general}
 \difficulty{3}
 Let $n, l \in \bbn$ with $l \ge 1$, and let $\mathcal{D}$ be a layer-2 datum on $n$
 variables whose gates $g_0, \dots, g_{m-1}$ are DNF formulas. Let $C$ be a Boolean

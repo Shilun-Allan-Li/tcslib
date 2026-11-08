@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.influence_eq_abs_fourierCoeff_of_sign",
+ "key": "f6392c4e083183ce",
+ "kind": "lemma",
+ "title": "Influence formula for a unate coordinate",
+ "statement": "Let $n\\ge0$, let $f:\\{0,1\\}^n\\to\\mathbb R$ be $\\pm1$-valued, and let $i\\in[n]$. Suppose its discrete derivative $D_i f(x)=\\tfrac12(f(x_{i\\leftarrow0})-f(x_{i\\leftarrow1}))$ is nonnegative at every point, or is nonpositive at every point. Then the influence of coordinate $i$ equals the absolute value of the Fourier--Walsh coefficient at the singleton frequency: $\\mathrm{Inf}_i[f]=|\\widehat f(\\{i\\})|$.",
+ "hypotheses_covered": [
+  "A natural dimension $n$",
+  "A real-valued function on the $n$-cube",
+  "The function is $\\pm1$-valued",
+  "A coordinate $i\\in[n]$",
+  "The discrete derivative in coordinate $i$ is everywhere nonnegative or everywhere nonpositive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for $S\\subseteq[n]$ and real cube functions $h$. For a real cube function $h$, write $D_i h(x)=\\tfrac12(h(x_{i\\leftarrow0})-h(x_{i\\leftarrow1}))$, where $x_{i\\leftarrow b}$ replaces bit $i$ by $b$. Set $I_i(h)=\\tfrac14\\mathbb E[(h(x)-h(x^{\\{i\\}}))^2]$ and $I(h)=\\sum_i I_i(h)$, where $x^{\\{i\\}}$ flips bit $i$. If $h$ is sign-valued and either $D_i h(x)\\ge0$ for all $x$ or $D_i h(x)\\le0$ for all $x$, then $I_i(h)=|\\widehat h(\\{i\\})|$."
+}

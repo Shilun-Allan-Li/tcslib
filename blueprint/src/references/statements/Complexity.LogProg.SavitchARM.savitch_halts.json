@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.savitch_halts",
+ "key": "e47907e992f23b8c",
+ "kind": "theorem",
+ "title": "Halting and Reachability Decision",
+ "statement": "Let $E$ be a natural number with $1\\le E$, let $x$ be a finite Boolean word, and let $\\mathrm{orc}$ assign a Boolean answer to each of four query types and each Boolean word. Suppose that for every natural number $k\\le |x|$, the answer to query type $0$ on the encoding of $x$ and the binary word for $k$ is true exactly when $k<|x|$. The register program, started in its scan state with all registers zero and no answer, halts with the Boolean value of the following proposition: there are $u,v<2^{(|x|+2)^{2E}}$ such that query type $1$ accepts $u$ as an initial code and query type $2$ accepts $v$ as an accepting code, both at radius $(|x|+2)^E$, and $u$ reaches $v$ in $(|x|+2)^{2E}$ levels under the relation specified by query type $3$ at that radius, with intermediate codes bounded by $2^{(|x|+2)^{2E}}$. Throughout the run, every register value is at most $2^{((|x|+2)^{2E})((|x|+2)^{2E})}$.",
+ "hypotheses_covered": [
+  "$E$ is a natural number with $1\\le E$",
+  "$x$ is a finite Boolean word",
+  "$\\mathrm{orc}$ is a Boolean oracle with four query types",
+  "For all $k\\le |x|$, query type $0$ on the encoding of $x$ and the binary word for $k$ returns true exactly when $k<|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E$ be a natural number with $1\\le E$, let $x$ be a bit string, and let\n$\\mathrm{orc}$ be a Boolean oracle with four query types. Suppose its input-length query\nreturns true exactly when $k<|x|$, for every $k\\le |x|$, on the encoding of $x$ and the\nbinary representation of $k$. Starting the specified register program in its scan state\nwith all registers zero and no answer, the program halts while every register remains at\nmost $2^{( |x|+2)^{2E}\\,( |x|+2)^{2E}}$. Its answer is true exactly when there are codes\n$u,v<2^{(|x|+2)^{2E}}$ such that $u$ is an initial configuration code and $v$ is an\naccepting configuration code for window radius $(|x|+2)^E$, and $u$ reaches $v$ at level\n$(|x|+2)^{2E}$ using intermediate codes below $2^{(|x|+2)^{2E}}$ and the oracle-defined\nstep relation for that radius."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.recordStepPhase",
+ "key": "fa324523c63863ba",
+ "kind": "def",
+ "title": "Phase type for recording a step",
+ "statement": "For a natural number $k$, types $Q,T,S$, and a record-step index consisting of a stage and its associated data, assign a phase type according to the stage. The state, position, tape-reading, tag-reading, writing, and shifting stages use scan phases carrying, respectively, an optional state, a pair in $\text{Fin}(3)\\times\\mathrm{Bool}$, a tuple in $\text{Bool}\\times\\mathrm{Option}(\text{Bool})\\times\\mathrm{Bool}\\times\\mathrm{Bool}$, an optional tag, the unit type, or a Boolean; the probe and save stages use the probe and counter-loop state types, the seek and restore stages use $S$, the read stage uses a nested optional Boolean, the counter-update stages use flag phases, and the copying and clearing stages use sweep phases. Every remaining stage uses a seek phase.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Types $Q,T,S$",
+  "A record-step index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

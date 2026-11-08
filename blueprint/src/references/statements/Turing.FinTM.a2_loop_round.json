@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.a2_loop_round",
+ "key": "03da77143ad47e96",
+ "kind": "lemma",
+ "title": "A loop round with bounded heads",
+ "statement": "Let $B$ and $t$ be natural numbers with $t>0$. Let $body$ and $F$ be finite Boolean Turing machines, let $anchor$ be a state of $body$, let $x,s,next,word$ be Boolean words, let $fuel$ be a configuration of $F$ on input $x$, and let $accepted$ be a Boolean. Start $body$ from the seam configuration with state $anchor$ and word $s$ on tape $0$ (all other work tapes blank). Assume that at every time $u$ with $0<u<t$ its state is not $anchor$; if $accepted$ is true, assume that at time $t$ it has halted and output exactly the one-bit word $[true]$, and otherwise assume that at time $t$ it is exactly the seam configuration with state $anchor$ and word $next$. Assume also that throughout times $u\\le t$ this run uses at most $B$ work-tape cells in total, and that every work-tape head of $fuel$ lies between $-B$ and $B$. Then, for the loop-host machine in non-search mode, started in its ready configuration with this body seam, the given word as payload, and fuel $fuel$, there is a time $v$ such that through every time $u\\le v$ all work-tape heads lie between $-(B+2|word|+6)$ and $B+2|word|+6$, and either the host is halted at time $v$, or the word admits a successful one-unit debit and at some time $v$ the host configuration is exactly its ready configuration for the seam with state $anchor$ and word $next$, with the debited word as payload and the same fuel configuration. Here a successful debit means the recursive operation that changes the first true bit to false, changing each preceding false bit to true; it fails if the word contains no true bit.",
+ "hypotheses_covered": [
+  "body and F are finite Boolean Turing machines",
+  "anchor is a body state",
+  "x, s, next, and word are Boolean words",
+  "fuel is an F configuration on input x",
+  "accepted is a Boolean",
+  "t and B are natural numbers",
+  "0 < t",
+  "no intermediate return to anchor at times 0 < u < t",
+  "accepted branch: body halts at time t and outputs [true]",
+  "rejected branch: body configuration at time t equals the seam configuration for anchor and next",
+  "body space use is at most B at all times u ≤ t",
+  "fuel heads are bounded by B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

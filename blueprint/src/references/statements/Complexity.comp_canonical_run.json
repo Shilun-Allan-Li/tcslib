@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.comp_canonical_run",
+ "key": "14423342ad87522f",
+ "kind": "lemma",
+ "title": "Canonical payload check run",
+ "statement": "Let $C,e,B$ be natural numbers, let $m$ be a Boolean, let $f$ map Boolean words to Boolean words, and let $x,b,$ and $t$ be Boolean words. Let $v$ assign each of the fourteen registers a natural number at most $B$, with register $3$ equal to twice the length of the encoding of $x$ paired with $b$, and register $4$ equal to $4|x|+4$. Then there is a register assignment $v'$, also bounded by $B$, that agrees with $v$ on every register other than register $0$, such that the abstract machine, starting in the canonicality-check state on the input encoding of the pair whose first component is the encoding of $x$ paired with $b$ and whose second component is $t$, reaches the inner-preparation state if $b$ is canonical and otherwise the negative-answer state, with no answer recorded; throughout the run, the prescribed configuration invariant holds.",
+ "hypotheses_covered": [
+  "$C,e,B$ are natural numbers",
+  "$m$ is a Boolean",
+  "$f$ maps Boolean words to Boolean words",
+  "$x,b,t$ are Boolean words",
+  "$v$ assigns each of fourteen registers a natural number at most $B$",
+  "register $3$ equals twice the length of the encoding of $x$ paired with $b$",
+  "register $4$ equals $4|x|+4$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B$ be natural numbers, let the mode be Boolean, let $f$ be a function on bit\nstrings, and let $x,b,\\mathrm{tail}$ be bit strings. Suppose the fourteen-register\nassignment $v$ is bounded by $B$, register $3$ contains twice the length of the paired\nencoding of $x$ and $b$, register $4$ contains $4|x|+4$, and $B$ bounds are the stated\nhypotheses. Then there is a register assignment $v'$ bounded by $B$, agreeing with $v$\non every register other than register $0$, such that the machine reaches the\ninner-preparation state if $b$ is canonical and otherwise reaches the negative-answer\nstate, starting on input $\\bigl\\langle\\langle x,b\\rangle,\\mathrm{tail}\\bigr\\rangle$ from\nthe canonicality-check state with registers $v$ and no answer recorded."
+}

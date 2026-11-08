@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.a2_map_emit",
+ "key": "da3582ba19b29d60",
+ "kind": "lemma",
+ "title": "Emitting the encoded first word",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $x,a,b,rest$ be Boolean words, and let $p$ be a valid input-head position on $x$. For every Boolean words $pre$ and $out$ such that $a=pre\\mathbin{++}rest$, running the constructed machine from the emit state with first buffer $a$, second buffer $b$, head positions $|pre|$ and $0$, and output $out$ for $2|rest|+2$ steps yields the run state at $M$'s initial state with tag true. The first buffer head is then at $|a|$, the second remains at $0$, and the output is $out$ followed by each bit of $rest$ twice in order, then $0,1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,a,b,rest$ are Boolean words",
+  "$p$ is a valid input-head position on $x$",
+  "$pre,out$ are Boolean words",
+  "$a=pre\\mathbin{++}rest$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

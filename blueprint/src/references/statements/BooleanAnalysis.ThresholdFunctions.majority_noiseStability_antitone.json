@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_noiseStability_antitone",
+ "key": "61a48dc24bdfde69",
+ "kind": "theorem",
+ "title": "Monotonicity of majority noise stability",
+ "statement": "Let $\\rho\\in\\mathbb R$ satisfy $0\\leq\\rho\\leq1$, and let $m\\in\\mathbb N$. For a Boolean function $f$ on $\\{0,1\\}^n$, define its noise stability by $\\operatorname{Stab}_{\\rho}(f)=\\langle f,T_{\\rho}f\\rangle$, where $T_{\\rho}f(x)=\\sum_{S\\subseteq[n]}\\rho^{|S|}\\widehat f(S)\\chi_S(x)$ and the inner product and Fourier coefficients use the uniform measure. Then the majority functions on the two respective odd-dimensional cubes satisfy $\\operatorname{Stab}_{\\rho}(M_{m+1})\\leq\\operatorname{Stab}_{\\rho}(M_m)$.",
+ "hypotheses_covered": [
+  "$\\rho\\in\\mathbb R$",
+  "$0\\leq\\rho$",
+  "$\\rho\\leq1$",
+  "$m\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m\\in\\mathbb N$ and $\\rho\\in[0,1]$, and for each $q\\in\\mathbb N$ define\n$M_q:\\{\\pm1\\}^{2q+1}\\to\\mathbb R$ to equal $1$ when more than $q$ coordinates equal $1$,\nand $-1$ otherwise.\nFor any $d\\in\\mathbb N$ and $f:\\{\\pm1\\}^d\\to\\mathbb R$, define\n$\\operatorname{Stab}_\\rho(f)=\\mathbb E[f(X)f(Y)]$, where $X$ is uniform on\n$\\{\\pm1\\}^d$ and, independently in each coordinate, $Y_i=-X_i$ with probability\n$(1-\\rho)/2$ and $Y_i=X_i$ otherwise; then\n\\[\n \\operatorname{Stab}_\\rho(M_{m+1})\\le\\operatorname{Stab}_\\rho(M_m).\n\\]"
+}

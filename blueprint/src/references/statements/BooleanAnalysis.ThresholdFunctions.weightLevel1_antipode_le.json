@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.weightLevel1_antipode_le",
+ "key": "f5fda7e23c6f212e",
+ "kind": "lemma",
+ "title": "First-level weight from antipodal differences",
+ "statement": "Let $n$ be a nonnegative integer, let $g:\\{0,1\\}^n\\to\\mathbb R$, and let $a\\in\\mathbb R$. If $|g(x)-g(\\bar x)|\\le 2|a|$ for every $x\\in\\{0,1\\}^n$, where $\\bar x$ is obtained by flipping every bit of $x$, then the Fourier weight of $g$ at level $1$ is at most $a^2$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$g$ is a real-valued function on $\\{0,1\\}^n$",
+  "$a\\in\\mathbb R$",
+  "For every $x$, $|g(x)-g(\\bar x)|\\le 2|a|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. Let $g$ be a real cube function and $a\\in\\mathbb R$. If $|g(x)-g(\\bar x)|\\le2|a|$ for every $x$, where $\\bar x_i=1-x_i$, then $\\sum_{|S|=1}\\widehat g(S)^2\\le a^2$."
+}

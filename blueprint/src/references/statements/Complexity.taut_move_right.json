@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.taut_move_right",
+ "key": "ff9ef3689184b1fd",
+ "kind": "lemma",
+ "title": "Effect of a silent rightward move",
+ "statement": "Let $x$ and $u$ be binary words, let $q$ be an optional control state, let $q'$ be a control state, let $i$ be a natural number with $i+1\\le |x|$, let $h$ be an integer, let $o$ be an output word, and let $e\\in\\{-1,0,1\\}$. Applying the silent action that moves the input head right, moves the work head by $e$, and enters $q'$ to the verifier configuration on $x$ with state $q$, $i$ input bits consumed, work word $u$, work head at $h$, and output $o$, yields the configuration with state $q'$, $i+1$ input bits consumed, the same work word and output, and work head at $h+e$.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$q$ is an optional control state",
+  "$q'$ is a control state",
+  "$i+1\\le |x|$",
+  "$u$ is a binary word",
+  "$h$ is an integer",
+  "$o$ is an output word",
+  "$e$ is a sign in $\\{-1,0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input with $i + 1 \\le |x|$. Applying the silent action that moves the\ninput head right, moves the work head by $e$, and enters state $q'$ to a\nnon-tautology verifier configuration on $x$ in any state with $i$ input bits consumed, work word\n$u$, work head $h$, and output $o$ yields the configuration in state $q'$ with $i+1$\nbits consumed, the same $u$ and $o$, and work head $h + e$."
+}

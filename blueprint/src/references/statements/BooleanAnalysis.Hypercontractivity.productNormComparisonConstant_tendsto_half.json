@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.productNormComparisonConstant_tendsto_half",
+ "key": "0ab4ccb00e2ef2e5",
+ "kind": "theorem",
+ "title": "Comparison Constant Limit at One Half",
+ "statement": "For each real number $\\lambda$, define $C(\\lambda)=e$ when $\\lambda=1/2$, and $C(\\lambda)=((1-\\lambda)/\\lambda)^{1/(2(1-2\\lambda))}$ otherwise. As $\\lambda$ approaches $1/2$ through values satisfying $0<\\lambda<1/2$, $C(\\lambda)$ tends to $e$.",
+ "hypotheses_covered": [
+  "The parameter approaches $1/2$ within the open interval $(0,1/2)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every real $\\lambda$, define $C_\\lambda=\\begin{cases}e,&\\lambda=1/2,\\\\((1-\\lambda)/\\lambda)^{1/(2(1-2\\lambda))},&\\lambda\\ne1/2.\\end{cases}$. Then $\\lim_{\\lambda\\to(1/2)^-,\\ 0<\\lambda<1/2}C_\\lambda=e$."
+}

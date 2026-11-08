@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.PathHard.preS_A",
+ "key": "1cf95354a53fb23c",
+ "kind": "lemma",
+ "title": "Program configurations satisfy the precondition",
+ "statement": "For any natural numbers $a,b,f$, Boolean mode $m$, oracle $o$ on five indices and finite Boolean strings, finite Boolean string $y$, and abstract configuration $c$ with fifteen natural-number registers, $c$ satisfies the program precondition. Thus, when its instruction compares two registers, their indices are distinct; when it compares a register with the input payload, $y$ is a valid plain encoding; when it compares a register with either component of a paired payload, $y$ is a valid paired encoding; and when it calls an oracle, its argument registers are pairwise distinct.",
+ "hypotheses_covered": [
+  "$a,b,f$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$o$ is an oracle on five indices and finite Boolean strings",
+  "$y$ is a finite Boolean string",
+  "$c$ is an abstract configuration with fifteen natural-number registers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every choice of natural numbers $a,b,f$, Boolean mode $m$, oracle $o$, bit string\n$y$, and program configuration $c$, the configuration satisfies the program precondition\nfor the specified register program. In particular, if its current instruction compares\ntwo registers, they are distinct; if it compares a register with the input payload, the\ninput is a valid plain encoding; if it compares with either component of a paired\npayload, the input is a valid paired encoding; and if it calls an oracle, its argument\nregisters are pairwise distinct."
+}

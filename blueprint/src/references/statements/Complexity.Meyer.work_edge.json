@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Meyer.work_edge",
+ "key": "3412830fc2f5dd26",
+ "kind": "theorem",
+ "title": "One-Step Work Tape Update",
+ "statement": "Let $M$ be a finite-tape Turing machine over Booleans, let $x$ be a Boolean input, let $W$ be a natural number, and let $x_b$ be Boolean-valued data on natural numbers. Suppose the encoding satisfies every check for times and addresses below $2^W$, indices through $|x|+1$, and all checks, and is correct at time $t$. Assume $t+1<2^W$, let $h$ be a work-tape index, and let $e$ be an integer with $a_E(e)+1<2^W$. Write $c$ for the machine configuration after $t$ steps, and let $\\rho$ record the symbols read by its input and work-tape heads. If $c$ is halting, the encoded symbol at offset $e$ is unchanged at the next time. Otherwise, let $q$ be its state, $m$ the movement of tape $h$ prescribed by the transition from $q$ on reads $\\rho$, and $w$ its prescribed optional write. The next encoded symbol at offset $e$ equals the symbol selected by applying $w$ at the scanned cell and moving the reference offset by $m$: for $m=1$, it is the resulting written-or-retained symbol when $e+1=0$, and otherwise the encoded value at time $t$ and offset $e+1$; for $m=-1$, the same rule uses offset $e+1$ on the left side and offset $e$ on the right, with the written-or-retained symbol when $e=0$; for $m=0$, it is the written-or-retained symbol when $e=0$ and otherwise the encoded value at time $t$ and offset $e$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-tape Turing machine over Booleans",
+  "$x$ is a Boolean input",
+  "$W$ is a natural number",
+  "$x_b$ is Boolean-valued data",
+  "The encoding satisfies every check for times and addresses below $2^W$, indices through $|x|+1$, and all checks",
+  "The encoding is correct at time $t$",
+  "$t+1<2^W$",
+  "$h$ is a work-tape index",
+  "$e$ is an integer with $a_E(e)+1<2^W$"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem's exact conclusion is a three-case equation involving the defined signed encoding and write-selection operation; the supplied informal definitions do not specify these operations.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

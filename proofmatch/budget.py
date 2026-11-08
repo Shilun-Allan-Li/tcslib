@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
+from threading import RLock
 from decimal import Decimal
 
 from proofmatch.model_policy import DEFAULT_MODEL
@@ -47,21 +48,24 @@ class StageEstimate:
 class Budget:
     cap_usd: Decimal | None = None
     spent_usd: Decimal = Decimal("0")
+    _lock: object = field(default_factory=RLock, init=False, repr=False, compare=False)
 
     @property
     def remaining_usd(self) -> Decimal | None:
-        if self.cap_usd is None:
-            return None
-        return max(Decimal("0"), self.cap_usd - self.spent_usd)
+        with self._lock:
+            if self.cap_usd is None:
+                return None
+            return max(Decimal("0"), self.cap_usd - self.spent_usd)
 
     def require(self, estimate: StageEstimate) -> None:
-        remaining = self.remaining_usd
-        if remaining is not None and estimate.usd > remaining:
-            raise BudgetExceeded(
-                f"{estimate.name} is estimated at ${estimate.usd:.2f}, "
-                f"but the run has only remaining ${remaining:.2f}"
-            )
-        self.spent_usd += estimate.usd
+        with self._lock:
+            remaining = self.remaining_usd
+            if remaining is not None and estimate.usd > remaining:
+                raise BudgetExceeded(
+                    f"{estimate.name} is estimated at ${estimate.usd:.2f}, "
+                    f"but the run has only remaining ${remaining:.2f}"
+                )
+            self.spent_usd += estimate.usd
 
 
 def price_row(model: str) -> tuple[Decimal, Decimal] | None:

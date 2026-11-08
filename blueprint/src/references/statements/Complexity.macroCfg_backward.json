@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.macroCfg_backward",
+ "key": "ad1273c67074965a",
+ "kind": "lemma",
+ "title": "Backward Scan Step",
+ "statement": "Let $W$ be a finite Boolean Turing machine, let $a,R$ be natural numbers, let $B$ be a base controller configuration, and let $u,g$ be integers. Suppose the base guide tape is the fixed guide of radius $R$. One schedule step from the backward phase with unary-counter head at $u$ and guide head at $g$ enters the return-to-center phase and moves the guide head to $g+1$ if $g=-R-1$; otherwise it stays in the backward phase and moves the guide head to $g-1$.",
+ "hypotheses_covered": [
+  "$W$ is a finite Boolean Turing machine",
+  "$a,R$ are natural numbers",
+  "$B$ is a base controller configuration",
+  "$u,g$ are integers",
+  "The base guide tape equals the fixed guide of radius $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$.  From the backward\nphase with guide head at $g$, one step of the schedule controller turns into the\nreturn-to-center phase and moves the guide head right exactly when $g = -R - 1$, and\notherwise stays in the backward phase and moves the guide head left."
+}

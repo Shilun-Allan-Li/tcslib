@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clCountTape_write",
+ "key": "f0224ad8dc3ff1de",
+ "kind": "lemma",
+ "title": "Writing at the suffix head",
+ "statement": "For bit lists $u$ and $v$ and a bit $b$, updating the tape holding $u$ followed by $v$ at cell $|u|$ with the symbol $b$ yields the tape holding $u$ followed by $b$ and then the tail of $v$.",
+ "hypotheses_covered": [
+  "$u$ and $v$ are bit lists",
+  "$b$ is a bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "unbound-variable"
+ ],
+ "replaced": "For bit lists $u$ and $v$ and a bit $b$, updating the tape that holds $u$ followed by $v$ at cell $|u|$ with the symbol $b$ yields the tape holding $u$ followed by $b$ and then the tail of $v$: the write either replaces the first suffix bit or extends the word, all other cells are unchanged, and negative cells stay blank."
+}

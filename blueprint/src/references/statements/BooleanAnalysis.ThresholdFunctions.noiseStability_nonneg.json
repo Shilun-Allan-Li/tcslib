@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.noiseStability_nonneg",
+ "key": "aec5edccbc46a208",
+ "kind": "lemma",
+ "title": "Nonnegative noise stability",
+ "statement": "Let $n$ be a nonnegative integer, let $f\\colon\\{0,1\\}^n\\to\\mathbb R$, and let $\\rho\\in\\mathbb R$ satisfy $\\rho\\geq0$. Then the noise stability of $f$ at parameter $\\rho$ satisfies $$0\\leq\\operatorname{Stab}_{\\rho}(f).$$",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$\\rho\\in\\mathbb R$",
+  "$\\rho\\geq0$",
+  "$f\\colon\\{0,1\\}^n\\to\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor every $n\\in\\mathbb N$, $f:\\{0,1\\}^{n}\\to\\mathbb R$ and real $\\rho\\geq0$, the noise stability\n\\[\n\\operatorname{Stab}_{\\rho}(f)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}\\rho^{|S|}\\widehat f(S)^2\n\\]\nis nonnegative, where $\\widehat f(S)=2^{-n}\\sum_{x\\in\\{0,1\\}^{n}}f(x)\\prod_{i\\in S}(-1)^{x_i}$ is the normalized Walsh coefficient (and $\\rho^0=1$, including at $\\rho=0$)."
+}

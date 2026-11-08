@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clockStageCfg_run",
+ "key": "a67398f1ad9b2c83",
+ "kind": "lemma",
+ "title": "Run correspondence through the clock phase",
+ "statement": "Let $W$ be a finite machine over the Boolean alphabet, let $a,\\tau\\in\\mathbb{N}$, and let $x$ be a Boolean input. Suppose the machine obtained by replacing every nonblank input symbol seen by $W$ with false remains in a nonhalting state at every time $t<\\tau$ when started on $x$. For every $t\\leq\\tau$, the schedule machine built from $W$ and $a$, started on the embedded input and run for $t+1$ steps, has the clock-stage configuration corresponding to the masked machine's configuration after $t$ steps on $x$.",
+ "hypotheses_covered": [
+  "$W$ is a finite machine over Booleans",
+  "$a\\in\\mathbb{N}$",
+  "$x$ is a Boolean input",
+  "$\\tau\\in\\mathbb{N}$",
+  "The masked machine is nonhalting at each time $t<\\tau$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a binary machine, $a$ a padding constant, $x$ a binary input, and $\\tau$ a\ntime bound such that the masked clock machine obtained from $W$, started on $x$, is\nstill live at every time strictly before $\\tau$.  Then for every $t \\le \\tau$, running\nthe schedule controller for $t + 1$ steps from its initial configuration on the\nblock-encoded input equals the clock-stage configuration of the masked clock run for\n$t$ steps from its initial configuration on $x$; every emitted budget bit is thereby\nrepresented."
+}

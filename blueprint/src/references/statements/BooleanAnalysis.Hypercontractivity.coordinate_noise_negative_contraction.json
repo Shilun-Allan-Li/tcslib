@@ -1,0 +1,22 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.coordinate_noise_negative_contraction",
+ "key": "c0ae5948f822a9be",
+ "kind": "theorem",
+ "title": "Negative coordinate-noise contraction for exponents at least two",
+ "statement": "For every $q\\in\\mathbb R$ with $q\\ge2$, there exists $c\\in\\mathbb R$ with $0<c\\le1$, and with $c=2/5$ whenever $q=4$, such that the following holds for every nonnegative integer $n$, every product $P$ of $n$ finite probability spaces with strictly positive coordinate atom weights summing to $1$, every coordinate $i$, and every real-valued function $f$ on its outcome space: $\\|N_{i,-c}f\\|_{q,P}\\le\\|f\\|_{q,P}$. Here $\\|h\\|_{q,P}=(\\mathbb E_P|h|^q)^{1/q}$ and $N_{i,-c}h=h-L_i h-cL_i h$, with $L_i h=h-E_{[n]\\setminus\\{i\\}}h$.",
+ "hypotheses_covered": [
+  "$q\\ge2$",
+  "$c>0$",
+  "$c\\le1$",
+  "if $q=4$, then $c=2/5$",
+  "$n$ is a nonnegative integer",
+  "$P$ is a finite product of probability spaces",
+  "coordinate atom weights are strictly positive and sum to $1$",
+  "$i$ is a coordinate",
+  "$f$ is real-valued on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $q\\ge2$ there exists $0<c\\le1$, with $c=2/5$ if $q=4$, such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, every coordinate $i$, and every real function $f$ on its outcome space, $\\|N_{i,-c}f\\|_{q,P}\\le\\|f\\|_{q,P}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $N_{i,a}h=E_{[n]\\setminus\\{i\\}}h+a(h-E_{[n]\\setminus\\{i\\}}h)$."
+}

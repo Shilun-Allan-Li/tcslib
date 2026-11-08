@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MachineFormat.decode_of_canonGuard",
+ "key": "987f4d3a218fc610",
+ "kind": "lemma",
+ "title": "Short Codes Decode to the Fallback",
+ "statement": "Let $F$ be a machine format, and let $\\alpha$, $b$, and $r$ be finite bit strings such that parsing $\\alpha$ as a paired encoding returns the pair $(b,r)$. Let $m=\\sum_{j<|b|} b_j2^j$ be the natural number represented by $b$, with its bits read least-significant first, and let $B=\\max\\bigl(g,(4k+5)3^{k+1}\\bigr)$, where $g$ is the format's guard and $k$ is its number of work tapes. If $|r|<B(m+1)$, then decoding $\\alpha$ in the format $F$ gives its fallback code.",
+ "hypotheses_covered": [
+  "$F$ is a machine format",
+  "$\\alpha$, $b$, and $r$ are finite bit strings",
+  "Parsing $\\alpha$ as a paired encoding returns $(b,r)$",
+  "$|r|<\\max\\bigl(g,(4k+5)3^{k+1}\\bigr)(m+1)$, where $m$ is the least-significant-bit-first value of $b$, $g$ is the format's guard, and $k$ is its number of work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

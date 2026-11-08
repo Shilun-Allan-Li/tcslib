@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.MultilinearMoments.indep_sum_of_notMem",
+ "key": "8bbf21c2faddfd41",
+ "kind": "theorem",
+ "title": "Independence from Sums Omitting a Coordinate",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, let $n$ be a natural number, and let $X_j:\\Omega\\to\\bbr$ for $j\\in\\{0,\\ldots,n-1\\}$ be mutually independent and almost everywhere measurable. Let $F$ and $G$ be real coefficient families on subsets of the coordinate set, let $s$ be a subset of that set, and let $i$ be a coordinate with $i\\notin s$. Then $X_i$ is independent of the pair consisting of $\\sum_{T\\subseteq s}F(T)\\prod_{j\\in T}X_j$ and $\\sum_{T\\subseteq s}G(T)\\prod_{j\\in T}X_j$.",
+ "hypotheses_covered": [
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$n$ is a natural number",
+  "The functions $X_j$ are mutually independent",
+  "Each $X_j$ is almost everywhere measurable",
+  "$F,G$ are real coefficient families on subsets of the coordinate set",
+  "$s$ is a subset of the coordinate set",
+  "$i$ is a coordinate and $i\\notin s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $(X_j)_{j\\in[n]}$ be mutually independent, almost everywhere measurable real functions on a measure space $(\\Omega,\\mu)$, let $s\\subseteq[n]$ and $i\\notin s$, and let $F,G$ be real coefficient families on subsets of $[n]$. Then $X_i$ is independent of the pair $(\\sum_{T\\subseteq s}F(T)\\prod_{j\\in T}X_j,\\sum_{T\\subseteq s}G(T)\\prod_{j\\in T}X_j)$."
+}

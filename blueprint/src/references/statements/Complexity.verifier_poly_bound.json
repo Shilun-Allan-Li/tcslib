@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.verifier_poly_bound",
+ "key": "d62a46002c385fee",
+ "kind": "lemma",
+ "title": "Polynomial bound test is polynomial-time computable",
+ "statement": "For any natural numbers $C$ and $c$, the function that sends a bit string $z$ to the one-bit string indicating whether its decoded pair $(a,b)$ satisfies $|b|\\le C(|a|+1)^c$ is polynomial-time computable; strings that do not decode as pairs are assigned indicator value $0$.",
+ "hypotheses_covered": [
+  "C is a natural number",
+  "c is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $C, c \\in \\mathbb{N}$ let $\\beta_{C,c}(z)$, for a binary string $z$, be the\nbit $1$ if $z = \\langle a, b\\rangle$ is a well-formed self-delimiting pair encoding\n($a$ with every bit doubled, then $01$, then $b$) with $|b| \\le C(|a|+1)^c$, and\nthe bit $0$ otherwise. Then for all $C, c \\in \\mathbb{N}$ the map sending $z$ to\nthe one-bit string $\\beta_{C,c}(z)$ is polynomial-time computable: some finite\nmulti-tape Turing machine over the binary alphabet computes it within\n$D(n+1)^d$ steps on every input of length $n$, for some constants\n$D, d \\in \\mathbb{N}$."
+}

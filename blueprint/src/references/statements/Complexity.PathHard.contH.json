@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.PathHard.contH",
+ "key": "049118fe17b6f93c",
+ "kind": "lemma",
+ "title": "Halting Invariance Under Equal Registers",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $o$ be an oracle taking an index from a five-element set and a Boolean word, and let $y$ be a Boolean word. For two register records $st,st'$, a machine label $l$, and a Boolean answer $r$, if $st=st'$ and the machine halts with answer $r$ from label $l$ and register values given by $st'$, starting with no answer recorded and satisfying the guard at every earlier step, then it also halts with answer $r$ from label $l$ and register values given by $st$, under the same guard.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "Boolean mode $m$",
+  "Oracle on five indices and Boolean words",
+  "Boolean input word $y$",
+  "Register records $st,st'$",
+  "Machine label $l$",
+  "Boolean answer $r$",
+  "Equality $st=st'$",
+  "Halting from $(l,st')$ with no initial answer and guard satisfied at every earlier step"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $\\mathrm{mode}$ be Boolean, let $o$ be an oracle\non five indices and Boolean words, let $y$ be a Boolean word, let\n$\\mathrm{st},\\mathrm{st}'$ be register records, let $l$ be a machine label, and let $r$\nbe a Boolean answer. If $\\mathrm{st}=\\mathrm{st}'$ and the machine halts with answer $r$\nfrom label $l$ with registers $\\mathrm{st}'$, with no answer initially recorded and its\nguard satisfied throughout, then it also halts with answer $r$ from label $l$ with\nregisters $\\mathrm{st}$, under the same guard."
+}

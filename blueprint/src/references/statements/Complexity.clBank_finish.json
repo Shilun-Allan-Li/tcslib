@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clBank_finish",
+ "key": "b22e67dbcd20ec0a",
+ "kind": "lemma",
+ "title": "Simultaneous selected counter increments",
+ "statement": "Let $l$ be a natural number, let $x$ be a bit word, let $p$ be an input-head position, and let $a$ select a subset of the $l$ coordinates. For each coordinate $i$, let $n(i)$ be a natural-number counter value, and suppose one common width bound $W$ satisfies that the binary representation of every $n(i)$ has length at most $W$. Starting with one counter on each tape, each in its selection-dependent starting control with head at cell $0$ and tape holding the binary representation of $n(i)$, the bank machine after $2W+2$ steps has every component in its return control with head at cell $0$; tape $i$ holds the binary representation of $n(i)+1$ when $a(i)$ is true and of $n(i)$ otherwise. The input position remains $p$ and the output remains empty.",
+ "hypotheses_covered": [
+  "Natural number $l$",
+  "Bit word $x$",
+  "Input-head position $p$ for $x$",
+  "Selection vector $a$ on $l$ coordinates",
+  "Counter-value vector $n$ on $l$ coordinates",
+  "Width bound $W$",
+  "For every coordinate $i$, the binary representation of $n(i)$ has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, selection vector, counter values, and common width bound $W$ covering all the values' binary representations, running the counter bank for $2W + 2$ steps increments exactly the selected coordinates, leaves the unselected ones unchanged, and restores every head to zero; the cost is independent of the number of counters."
+}

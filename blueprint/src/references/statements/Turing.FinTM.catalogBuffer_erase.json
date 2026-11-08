@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.catalogBuffer_erase",
+ "key": "aeb5ec6689a40fb8",
+ "kind": "lemma",
+ "title": "Erasing the final buffer cell",
+ "statement": "For every Boolean word $w$ and bit $b$, changing the buffer tape that stores $w$ followed by $b$ to blank at cell $|w|$ gives exactly the buffer tape that stores $w$.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$b$ is a Boolean value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Blanking the cell at position $\\abs{w}$ of the tape holding the buffered word\n$w b$ (for any final bit $b$) yields exactly the tape holding the buffered\nword $w$."
+}

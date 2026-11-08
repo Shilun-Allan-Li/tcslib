@@ -1,21 +1,17 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.volume_specialZeroZero_inter_xDistance_dualProtocol_eq_yDistance",
- "key": "24d0f437f9c7976b",
+ "key": "c36d9758c81af484",
  "kind": "theorem",
- "title": "Duality exchanges the Alice and Bob bias events on the zero–zero slice",
- "statement": "Fix a positive integer $n$, a deterministic communication protocol $p$ for the disjointness problem on inputs of length $n$, and a real number $\\gamma$. For a protocol $q$ and a hard sample $\\omega$, let $Z_q(\\omega)$ denote the associated statistic (the transcript of $q$ on the induced input together with the special coordinate and the padded bit vectors lying before and after it), write $d^X_q(z)$ for the total variation distance between the conditional law of Alice's special-coordinate bit given $Z_q = z$ and the uniform law on one bit, and write $d^Y_q(z)$ for the same distance computed from Bob's special-coordinate bit. Let $p^\\ast$ be the dual protocol, obtained by exchanging the roles of Alice and Bob and reversing both coordinate sets. Then, on the event that both special-coordinate bits are $0$, the volume of the set of samples $\\omega$ with $\\gamma < d^X_{p^\\ast}\\big(Z_{p^\\ast}(\\omega)\\big)$ equals the volume of the set of samples $\\omega$ with $\\gamma < d^Y_{p}\\big(Z_{p}(\\omega)\\big)$, where the volume is taken in the ambient measure on the finite hard sample space and read as a real number.",
+ "title": "Duality of special-bit bias events",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on inputs of length $n$, and let $\\gamma\\in\\mathbb R$. For each protocol, form the statistic consisting of its transcript, the special coordinate, Alice’s bits before that coordinate, and Bob’s bits after it; let the total variation distances of the conditional laws of the two special-coordinate bits from the uniform bit law be their respective biases. On the event that both special-coordinate bits are zero, the ambient volume of samples for which the bias of Alice’s bit under the dual protocol exceeds $\\gamma$ equals the ambient volume of samples for which the bias of Bob’s bit under $p$ exceeds $\\gamma$.",
  "hypotheses_covered": [
-  "n a positive integer",
-  "p a deterministic disjointness protocol of length n",
-  "gamma a real threshold",
-  "restriction to the event that both special-coordinate bits are zero",
-  "left side uses the dual protocol and its Alice-bit total-variation distance",
-  "right side uses the original protocol and its Bob-bit total-variation distance",
-  "strict inequality gamma < distance on both sides",
-  "volume read as a real number under the ambient measure on the finite hard sample space"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol on length-$n$ disjointness inputs",
+  "$\\gamma$ is real",
+  "The sample events are restricted to samples with both special-coordinate bits zero"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "The dual Alice bad event on the $X_{T}=Y_{T}=false$ slice is the original Bob bad event."
+ "replaced": "Fix a positive integer $n$, a deterministic communication protocol $p$ for the\ndisjointness problem on inputs of length $n$, and a real number $\\gamma$. For a protocol\n$q$ and a hard sample $\\omega$, let $Z_q(\\omega)$ denote the associated statistic (the\ntranscript of $q$ on the induced input together with the special coordinate and the\npadded bit vectors lying before and after it), write $d^X_q(z)$ for the total variation\ndistance between the conditional law of Alice's special-coordinate bit given $Z_q = z$\nand the uniform law on one bit, and write $d^Y_q(z)$ for the same distance computed from\nBob's special-coordinate bit. Let $p^\\ast$ be the dual protocol, obtained by exchanging\nthe roles of Alice and Bob and reversing both coordinate sets. Then, on the event that\nboth special-coordinate bits are $0$, the volume of the set of samples $\\omega$ with\n$\\gamma < d^X_{p^\\ast}\\big(Z_{p^\\ast}(\\omega)\\big)$ equals the volume of the set of\nsamples $\\omega$ with $\\gamma < d^Y_{p}\\big(Z_{p}(\\omega)\\big)$, where the volume is\ntaken in the ambient measure on the finite hard sample space and read as a real number."
 }

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.falsifyingCNF_length",
+ "key": "75405633b6cfd090",
+ "kind": "theorem",
+ "title": "Number of clauses in the truth-table CNF",
+ "statement": "Let $\\ell\\in\\mathbb{N}$ and let $f:\\{0,1\\}^{\\ell}\\to\\{0,1\\}$. The truth-table CNF of $f$ has at most $2^{\\ell}$ clauses.",
+ "hypotheses_covered": [
+  "Natural number $\\ell$",
+  "Boolean function $f:\\{0,1\\}^{\\ell}\\to\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\ell \\in \\mathbb{N}$, let $f : \\{0,1\\}^\\ell \\to \\{0,1\\}$, and let $\\varphi_f$ be\nthe CNF formula that is the conjunction, over all $v \\in \\{0,1\\}^\\ell$ with\n$f(v) = 0$, of the clause $\\bigvee_{i<\\ell} x_i^{\\neg v_i}$ whose $i$-th literal is\nsatisfied by an assignment $a$ exactly when $a(i) \\ne v_i$. Then $\\varphi_f$ has at\nmost $2^\\ell$ clauses."
+}

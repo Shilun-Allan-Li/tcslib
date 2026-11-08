@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.CsShifted.last",
+ "key": "ebbc0dbd5b08fc63",
+ "kind": "theorem",
+ "title": "Final counter shift",
+ "statement": "Let $A$ describe $n$ items with keys $kf(j)$, key bound $N_b$, destination range, and counter range, and let $\u001b[?]$ and $\u001b[?]$ be the initial and current memories. Assume the count-sort layout conditions: memory-space is bounded by word size; source, destination, and counter ranges lie in memory space; source cells contain the indexed items; each item's in-bounds key cell contains its key; all keys are below $N_b$; the source, destination, and counter ranges are pairwise disjoint; and each key cell lies outside the destination and counter ranges. Suppose the memories agree outside the destination and counter ranges, and every item is already in its sorted position $p(j)$, where $p(j)$ is the number of keys among all $n$ items that are smaller than $kf(j)$ plus the number of equal keys at indices at most $j$. Suppose also that for every $t\ne 0$ with $t\ne 0$ and $t\ne 0$—equivalently, for each $0<t\text{ with }t\text{ in the counter range}$—the counter cell at offset $t$ contains the number of keys below $t$. Then setting the first counter cell to zero yields a final state in which all items remain in their sorted positions, every counter cell at offset $t\text{ with }t\text{ at most }N_b$ contains the number of keys below $t$, and the memory agrees with the initial memory outside the destination and counter ranges.",
+ "hypotheses_covered": [
+  "Count-sort preconditions: word bound and memory-space bounds",
+  "Source cells contain the indexed items",
+  "Each item's key cell is in bounds and contains its key",
+  "All keys are below the key bound",
+  "Source, destination, and counter ranges are pairwise disjoint",
+  "Item key cells lie outside destination and counter ranges",
+  "Initial and current memories agree outside destination and counter ranges",
+  "All items occupy their sorted positions",
+  "For each $t\\le N_b$ with $0<t$, the counter cell contains the number of keys below $t$"
+ ],
+ "confidence": "low",
+ "caveat": "The state condition gives the shifted-counter clauses at $s=0$; the statement is rendered with a compact description of that invariant.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

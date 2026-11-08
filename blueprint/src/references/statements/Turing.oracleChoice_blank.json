@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.oracleChoice_blank",
+ "key": "bb9dd982403a27b1",
+ "kind": "theorem",
+ "title": "Blank oracle-choice transition",
+ "statement": "Let $N$ be a finite nondeterministic oracle Turing machine over the Boolean alphabet, let $O$ be an oracle language over that alphabet, and let $x$ be an input word. Suppose a configuration $d$ of the associated oracle machine has state $q$, where $q$ is not $N$’s query state, and the extra choice tape is blank at its head position. Then one step relative to $O$ leaves the tapes and head positions unchanged, sets the state to the halting state, and appends the Boolean symbol false to the output.",
+ "hypotheses_covered": [
+  "N is a finite nondeterministic oracle Turing machine over Bool",
+  "O is a language over Bool",
+  "d is a configuration on input x with the associated machine's work tapes and state type",
+  "d.state = some q",
+  "q differs from the embedded query state of N",
+  "the choice tape is blank at its head position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

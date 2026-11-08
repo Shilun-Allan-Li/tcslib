@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.seamReleaseTM_firstReturn",
+ "key": "1d428232c0ebb173",
+ "kind": "theorem",
+ "title": "First Return in Seam Release",
+ "statement": "Let $M$ be a machine, let $a$ be one of its states, and suppose a computation from $c$ starts in state $a$, runs for a positive number $T$ of steps to a configuration $c'$ in state $a$, and has no intermediate return to state $a$ at any time $t$ with $0<t<T$. Starting from the configuration obtained by renaming the state of $c$ to the left summand, the seam-release machine reaches the state-renamed version of $c'$ in the right summand after $T$ steps; at every time $t<T$, its state is not the right-summand copy of $a$.",
+ "hypotheses_covered": [
+  "M is a machine with state set S",
+  "anchor is a state of M",
+  "c and c′ are configurations for M on input x",
+  "c has state anchor",
+  "T is positive",
+  "M reaches c′ from c after T steps",
+  "c′ has state anchor",
+  "At every time t with 0<t<T, the computation from c is not in state anchor"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

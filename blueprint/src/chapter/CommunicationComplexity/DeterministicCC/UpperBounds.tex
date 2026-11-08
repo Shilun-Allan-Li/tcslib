@@ -15,7 +15,7 @@ of the relevant cardinality.
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_of_finiteMessage_protocol}
 \difficulty{4}
 Let $X$ and $Y$ be finite nonempty types, let $\alpha$ be any type, and let $f : X \to Y
 \to \alpha$. Then the deterministic communication complexity of $f$ satisfies
@@ -29,7 +29,7 @@ where $\abs{X}$ and $\abs{Y}$ denote the cardinalities of $X$ and $Y$.
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_of_finiteMessage_protocol}
 \difficulty{4}
 Let $X$ and $\alpha$ be finite nonempty types, let $Y$ be an arbitrary type, and let $f
 : X \to Y \to \alpha$ be a two-argument function. Then the deterministic communication
@@ -44,7 +44,7 @@ where $\abs{X}$ and $\abs{\alpha}$ denote the cardinalities of $X$ and $\alpha$.
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_Y_alpha}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_Y_alpha}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff_finiteMessage}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_of_finiteMessage_protocol}
 \difficulty{4}
 Let $X$ be an arbitrary type and let $Y$ and $\alpha$ be finite nonempty types. Then for
 every function $f : X \to Y \to \alpha$, the deterministic communication complexity of
@@ -58,14 +58,14 @@ where $\abs{Y}$ and $\abs{\alpha}$ denote the cardinalities of $Y$ and $\alpha$.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{theorem}[Upper bound witnessed by a finite-message protocol]
+\begin{theorem}[Communication complexity upper bound]
 \lean{CommunicationComplexity.Deterministic.communicationComplexity_le_of_finiteMessage_protocol}
 \label{CommunicationComplexity.Deterministic.communicationComplexity_le_of_finiteMessage_protocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff}
-Let $f : X \to Y \to \alpha$ and let $p$ be a finite-message protocol over $X$, $Y$,
-$\alpha$ whose run function equals $f$. Then for every $c \in \mathbb{N} \cup \{\infty\}$
-with $\texttt{FiniteMessage.Protocol.complexity}\,(p) \le c$, the deterministic
-communication complexity of $f$ satisfies $D(f) \le c$. Each of the three public bounds
-above is a single application of this lemma to an explicit two-message protocol.
+\difficulty{3}
+Let $f:X\times Y\to\alpha$ be a function and let $p$ be a finite-message deterministic
+protocol whose execution on each input pair $(x,y)$ returns $f(x,y)$. If the
+communication cost of $p$ is at most $c\in\mathbb N\cup\{\infty\}$, then the
+deterministic communication complexity of $f$ is at most $c$.
 \end{theorem}

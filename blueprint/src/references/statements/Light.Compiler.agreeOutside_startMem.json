@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.agreeOutside_startMem",
+ "key": "00eeff2949693cdd",
+ "kind": "theorem",
+ "title": "Memory preserved outside startup locations",
+ "statement": "Let $W$ be a word width, $F,N\\in\\bbn$ with $3\\le F$, and let $m:\\bbr\\to\\text{BitVec}(W)$ be a memory. The startup program initializes the constants at $-5,-7,-9$, the pool cells at addresses $-(25+4n)$ for $0\\le n\\le N$, the frame pointer at $-11$, and the frame cells at addresses $-2j$ for $4\\le j<4+F$, also copying the two argument values into frame cells. After executing it, the resulting memory agrees with $m$ at every integer address outside the union of the constant and pool addresses, the frame-pointer address, and the frame-cell addresses.",
+ "hypotheses_covered": [
+  "word width $W$",
+  "$3\\le F$",
+  "$N\\in\\bbn$",
+  "arbitrary initial memory $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

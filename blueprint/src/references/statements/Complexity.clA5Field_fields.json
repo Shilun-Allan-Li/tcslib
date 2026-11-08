@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Field_fields",
+ "key": "ef8020267fc8e0ed",
+ "kind": "lemma",
+ "title": "Recovery of packed fields",
+ "statement": "Let $w_0,\\ldots,w_{m-1}$ be a finite list of bit strings, let $r$ be any bit string, and let $i<m$. The $i$th field selected from the packed encoding of the list followed by $r$ is exactly $w_i$.",
+ "hypotheses_covered": [
+  "finite list of bit strings ws",
+  "bit-string trailer tail",
+  "natural index i",
+  "i is less than the length of ws"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every list of words, trailer, and legal index $i$ below the list length, the $i$-th header field of the packed encoding followed by the trailer is exactly the $i$-th word of the list, regardless of the suffix."
+}

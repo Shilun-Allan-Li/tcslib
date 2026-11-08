@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.tmove",
+ "key": "b1fa486b4e08b3c1",
+ "kind": "def",
+ "title": "Tape movement rule",
+ "statement": "Given a list of segments, a segment index $s$, a tape position, and a direction in $\text{SignType}$, this rule returns a new segment index and tape position. Direction zero leaves both unchanged. In the positive direction, at cell $c$ with marker $p$, if the current segment's flag is true and $p$ is false, the marker becomes true; otherwise the position advances to cell $c+1$ when that cell lies within the segment, and moves to the right boundary when it does not. From the right boundary, it moves to the left boundary of segment $s+1$ if that segment exists, and otherwise stays at the right boundary; from the left boundary, it moves to cell $0$ with marker false if the segment is nonempty, and otherwise to the right boundary. In the negative direction, at cell $c$ with marker $p$, if the current segment's flag is true and $p$ is true, the marker becomes false; otherwise the position moves to cell $c-1$ with marker true when $c>0$, and to the left boundary when $c=0$. From the right boundary, it moves to the last cell with marker true if the segment is nonempty, and otherwise to the left boundary; from the left boundary, it moves to the right boundary of segment $s-1$ when $s>0$, and otherwise stays at the left boundary.",
+ "hypotheses_covered": [
+  "a list of segments",
+  "a natural-number segment index",
+  "a tape position",
+  "a direction in SignType"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

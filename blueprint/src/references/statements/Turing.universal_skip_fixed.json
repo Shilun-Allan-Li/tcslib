@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.universal_skip_fixed",
+ "key": "158ae28f132018e5",
+ "kind": "lemma",
+ "title": "Exact-Cost Skip of Fixed Fields",
+ "statement": "Let $x$ be a Boolean input string, let $b$ be a four-tape interpreter configuration on $x$, let $d$ be a destination control index or no destination, let $r$ be a remaining-record count from $0$ through $8$, and let $T$ be a table with table cursor $p$, state tape $\\sigma$, and state cursor $s$. For every natural number $n$, field index $f$ from $0$ through $7$, and integer cursor $p$, if $f+n=7$, then after $n+1$ interpreter steps from the fixed-field skipping phase with registers $d,r,f$, table $T$, cursor $p$, tape $\\sigma$, and state cursor $s$, the interpreter is in the unary-skipping phase with registers $d,r$, table cursor $p+n+1$, and the same tape and state cursor.",
+ "hypotheses_covered": [
+  "Boolean input string $x$",
+  "Base configuration $b$ of the four-tape interpreter on $x$",
+  "Destination $d$ is an optional index from $0$ through $8$",
+  "Remaining-record count $r$ is an index from $0$ through $8$",
+  "Table $T$",
+  "State tape $\\sigma$",
+  "State cursor $s$",
+  "Natural number $n$",
+  "Field index $f$ is an index from $0$ through $7$",
+  "Integer table cursor $p$",
+  "Equation $f+n=7$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider the interpreter's fixed-field skipping phase, carrying a destination\nand a count of remaining records, with field register $f \\in \\{0,\\dots,7\\}$\nand table cursor $p$.  If $f + n = 7$, then exactly $n + 1$ interpreter steps\nadvance the table cursor to $p + n + 1$ and enter the unary-skipping phase\nwith the same destination and remaining count; no tape cell is inspected or\nmodified, and the state tape, state cursor, and all other data are unchanged."
+}

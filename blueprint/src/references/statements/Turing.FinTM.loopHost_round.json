@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_round",
+ "key": "0ab083f7f3023bec",
+ "kind": "lemma",
+ "title": "One round of the loop host",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, and let $m$ be a Boolean mode. Fix Boolean words $x,s,s',w,y$, a fuel configuration $f$ of $F$ on input $x$, a Boolean $e$, and a positive integer $t$. From the configuration of $B$ on input $x$ with state $a$, word $s$ on tape zero, all other work tapes blank, all work heads at zero, and empty output, suppose that no time $u$ with $0<u<t$ has state $a$. If $e$ is true, suppose the configuration at time $t$ is halted with output $y$; if $e$ is false, suppose it is exactly the clean configuration with state $a$ and tape-zero word $s'$. Then some $v\\le 3t+2|w|+5$ has the following effect from the released startup call on the clean configuration carrying $s$, with counter word $w$, no flag, and fuel configuration $f$: if $e$ is true, the host is halted with output $y$ in find mode and with output $[\\mathrm{true}]$ otherwise; if $e$ is false and decrementing $w$ succeeds, it reaches the released call on the clean configuration carrying $s'$, with the decremented word and the same fuel configuration; if $e$ is false and decrementing underflows, it halts with empty output in find mode and with output $[\\mathrm{false}]$ otherwise.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines B and F",
+  "anchor state of B",
+  "Boolean find mode",
+  "Boolean input and words s, s', w, and y",
+  "Boolean acceptance flag e",
+  "fuel configuration on input x",
+  "positive round length t",
+  "no return to anchor at times u with 0<u<t",
+  "conditional endpoint hypothesis: halted with output y if e is true, otherwise exactly the clean seam with word s'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s$ be a round word, $w$ a counter word, $f$ a fuel configuration, and $t > 0$ a\ntime such that the body, started at the clean anchor seam carrying $s$, does not revisit\nthe anchor strictly between times zero and $t$ and at time $t$ either halts with a\ndeclared payload (acceptance) or sits at the clean seam carrying the stepped word. Then\nthere is a time $v \\le 3t + 2|w| + 5$ such that from the released call on the seam of\n$s$: acceptance halts the host with the payload (find mode) or the bit $\\mathrm{true}$\n(decision mode); a rejection with successful decrement reaches the released call on the\nnext seam with the decremented counter; and a rejection with underflow halts with empty\noutput (find mode) or the bit $\\mathrm{false}$ (decision mode)."
+}

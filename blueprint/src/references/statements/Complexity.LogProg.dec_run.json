@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.dec_run",
+ "key": "0b54d2deee9841fb",
+ "kind": "lemma",
+ "title": "Binary decrement computation",
+ "statement": "Let $P$ be a register program, let $\\mathrm{oracle}$ be a map from decider indices and Boolean words to Boolean answers, let $r$ be a register, and let $dD,dL,dE,dB,\\mathrm{next}$ be states. Assume the transitions at these states implement, respectively, the specified binary decrement phases, and assume there are no calls at these states. For every initial configuration $c$ and natural number $n$, there is a time $T$ at which the run started in state $dD$ with register $r$ storing the binary expansion of $n$ and head at zero reaches state $\\mathrm{next}$ with that register storing the binary expansion of $n-1$ (with natural-number truncated subtraction) and head at zero; at every earlier time it has one of the states $s$, a tape function $f$, and a head position $q$ such that it is in the corresponding register configuration, there is no call at $s$, and $-1\\le q\\le |\\operatorname{bits}(n)|$.",
+ "hypotheses_covered": [
+  "Specified transition at $dD$ for all inputs and register readings",
+  "Specified transition at $dL$ for all inputs and register readings",
+  "Specified transition at $dE$ for all inputs and register readings",
+  "Specified transition at $dB$ for all inputs and register readings",
+  "No calls at $dD,dL,dE,dB$",
+  "$c$ is an arbitrary configuration",
+  "$n$ is a natural number"
+ ],
+ "confidence": "low",
+ "caveat": "The transition action definitions are referenced but not included in the supplied context, so their operational behavior cannot be stated more explicitly without adding unsupported detail.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

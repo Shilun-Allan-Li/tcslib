@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.mismatchSubtype_card_eq_hammingDist",
+ "key": "9be3bbb90dac6fb2",
+ "kind": "lemma",
+ "title": "Mismatch count and Hamming distance",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic one-way protocol for Index on $n$-bit inputs, and let $x$ be such an input. The number of indices on which the protocol’s output differs from the Index function equals the Hamming distance between $x$ and the answer vector determined by the message sent on input $x$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$p$ is a deterministic one-way protocol from $n$-bit Boolean inputs and indices in $[n]$ to Boolean outputs",
+  "$x$ is an $n$-bit Boolean input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a fixed input string $x$, the number of indices $i$ on which $p$ errs equals the Hamming\ndistance between $x$ and the answer vector of Alice's message on $x$:\n\\[\n  \\abs{\\mathrm{mismatch}(p, x)} = d_H\\bigl(x,\\ a(\\mathrm{send}(x))\\bigr).\n\\]"
+}

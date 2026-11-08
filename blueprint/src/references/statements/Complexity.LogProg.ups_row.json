@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.LogProg.ups_row",
+ "key": "287b2c11a0b5be1e",
+ "kind": "lemma",
+ "title": "Row Scan Invariant",
+ "statement": "Let $x$ be a Boolean string, $B$ a natural-number register bound, $k$ an index site, and $q$ a rational number. For every natural number $dd$ and register state $\\sigma$, suppose the value in the row register selected by $k$ minus the outer counter, with truncated natural subtraction, equals $dd$; every register is at most $B$; the outer counter is at most the selected row-register value, which is less than the vertex count $n$; the input pointer is $2n+2+2(an)$, where $a$ is the outer counter; the inner counter is at most $n$; and $2n+2+2n^2\\le B$. If, for every $b'\\le n$, the configuration at the next-row state with outer counter set to the selected row-register value, input pointer set to $2n+2+2(n\\cdot\\mathrm{row})$, and inner counter set to $b'$ has probabilistic semantics with acceptance probability $q$, then the configuration at the row-check state with register state $\\sigma$ has probabilistic semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "Boolean-string input $x$",
+  "natural-number bound $B$",
+  "index site $k$",
+  "rational number $q$",
+  "natural number $dd$",
+  "truncated difference of selected row register and outer counter equals $dd$",
+  "all registers are at most $B$",
+  "outer counter is at most the selected row register",
+  "selected row register is less than vertex count $n$",
+  "input pointer equals $2n+2+2(an)$",
+  "inner counter is at most $n$",
+  "$2n+2+2n^2\\le B$",
+  "for every $b'\\le n$, the specified next-row configuration has probabilistic semantics with acceptance probability $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a bit-string input $x$, a register bound $B$, an index site $k$, and a rational\nnumber $q$. For every natural number $dd$ and register state $\\sigma$, assume that the\nrow-register value minus the outer-counter value (with truncated natural subtraction)\nequals $dd$, every register of $\\sigma$ is at most $B$, the outer counter is at most the\nrow-register value, and the row-register value is less than the vertex count. Assume\nalso that the input pointer equals $2n+2+2(an)$, where $a$ and $n$ are the outer counter\nand vertex count; the inner counter is at most $n$; and $2n+2+2n^2\\le B$. If, for each\n$b'\\le n$, the configuration at the scan's next-row state with outer counter set to the\nrow-register value, pointer set to $2n+2+2(\\mathrm{row}\\cdot n)$, and inner counter set\nto $b'$ has probabilistic semantics with acceptance probability $q$, then the\nconfiguration at the scan's row-check state with register state $\\sigma$ has\nprobabilistic semantics with acceptance probability $q$."
+}

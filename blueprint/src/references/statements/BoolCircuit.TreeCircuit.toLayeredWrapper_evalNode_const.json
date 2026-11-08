@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.TreeCircuit.toLayeredWrapper_evalNode_const",
+ "key": "479673bb7e99f6c4",
+ "kind": "theorem",
+ "title": "Evaluation of embedded circuit nodes",
+ "statement": "Let $C$ be a Boolean circuit on $n$ variables and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$ be an input assignment. For every integer $m$ with $1 \\le m \\le \\mathrm{depth}(C)+1$ and every node $v$ in layer $m$ of the feedforward circuit embedding of $C$, the value of $v$ on input $x$ equals the value of $C$ on $x$.",
+ "hypotheses_covered": [
+  "A Boolean circuit C on n variables",
+  "An assignment x from Fin n to Bool",
+  "1 ≤ m",
+  "m ≤ depth(C) + 1",
+  "v is a node in layer m of the embedding"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a Boolean circuit on $n$ variables and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$\nbe an assignment of Boolean values to the inputs of $C$. The feedforward embedding of\n$C$ is a layered circuit of depth $\\mathrm{depth}(C) + 1$ whose layer $0$ carries the\n$n$ input variables and each of whose higher layers carries a single node. Then for\nevery layer index $m$ with $1 \\le m \\le \\mathrm{depth}(C) + 1$ and every node $v$ of\nlayer $m$, the value assigned to $v$ by the feedforward embedding on input $x$ equals\n$\\mathrm{eval}(C, x)$, the value of $C$ on $x$."
+}

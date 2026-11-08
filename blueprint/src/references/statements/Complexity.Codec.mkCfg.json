@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.Codec.mkCfg",
+ "key": "6500dbf0c1e19a3a",
+ "kind": "def",
+ "title": "Configuration decoded from cells",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, let $x$ be a finite Boolean input, let $s$ be a natural number, let $f$ assign a cell value to each natural index, and let $pos$ be one of the $|x|+2$ input-head positions. The decoded configuration has internal state and output summary read from cell $f(0)$, and input-head position $pos$. On each work tape, cells with integer index $z$ satisfying $|z|\\le s$ receive the optional symbol stored at index $z+s$ of $f$; all other cells are blank. Each work-tape head is placed at the least index $j$ with $0\\le j<2s+1$ whose corresponding flag is true, shifted by $-s$, or at $0$ if there is no such index.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean symbols",
+  "$x$ is a finite Boolean input",
+  "$s$ is a natural number",
+  "$f$ assigns a cell value at every natural index",
+  "$pos$ is an input-head position among $|x|+2$ positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

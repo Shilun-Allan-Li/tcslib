@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.absRun_a",
+ "key": "7bf4af03ea370002",
+ "kind": "theorem",
+ "title": "Acceptance during gate-argument parsing",
+ "statement": "Fix a gate kind $k$, a list of Boolean values $v$, and natural number $m$. For every list $p$ of natural numbers, counter $c\\in\\{0,1,2\\}$, marked-index list $M$, and Boolean string $\\ell$, suppose $|p|+m=2$, $c=|p|$, the entries of $p$ are distinct and all lie below $|v|$, and an index belongs to $M$ exactly when it belongs to $p$. Initialize the evaluator in its argument-reading phase with counter $c$ and accumulator obtained by starting with false for an OR gate and true otherwise, then combining the values indexed by $p$ using OR for an OR gate and AND otherwise. The run accepts exactly when there are lists $a,r$ such that $\\ell$ is the encoding of the list $a$ followed by $r$, the concatenation $p++a$ has length at most two and has distinct entries all below $|v|$, and, for a NOT gate, that concatenation has length one; moreover, the evaluator started in its gate-reading phase with the gate value of kind $k$ on indices $p++a$ appended to $v$, and run on $r$, accepts.",
+ "hypotheses_covered": [
+  "Gate kind $k$",
+  "Boolean value list $v$",
+  "Natural number $m$",
+  "Equality $|p|+m=2$",
+  "Counter equals $|p|$",
+  "Entries of $p$ are distinct",
+  "Every entry of $p$ is below $|v|$",
+  "Marked indices are exactly the entries of $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

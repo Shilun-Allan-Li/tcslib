@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.Contract.seq",
+ "key": "3c053b1a7e432ac2",
+ "kind": "def",
+ "title": "Sequential composition of contracts",
+ "statement": "Let two machines have respective state sets, and suppose the first machine's contract starts at its entry state and exits exactly at a designated state, while the second machine's contract starts at its own entry state and exits in a specified set. Given a map from the first contract's data to the second's and a condition ensuring that the first endpoint, with its state reset to the second entry state, satisfies the second precondition, their sequential composition has a contract from the first entry state: it runs for the first running time plus one transition to switch machines plus the second running time, and ends at the second endpoint with its state mapped into the second summand. Its head-position bounds are the coordinatewise minimum and maximum of the two contracts' bounds.",
+ "hypotheses_covered": [
+  "Decidable equality on the first machine's state set",
+  "A first contract whose exit set is the singleton containing its designated exit state",
+  "A second contract with its given exit set",
+  "A map from first-contract data to second-contract data",
+  "The first endpoint, reset to the second entry state, satisfies the second precondition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

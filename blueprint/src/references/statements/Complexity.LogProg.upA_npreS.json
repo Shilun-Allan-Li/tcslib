@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.upA_npreS",
+ "key": "f64f62f17d9afe32",
+ "kind": "lemma",
+ "title": "Safety Invariant for the Program",
+ "statement": "For every Boolean input $x$ and abstract configuration consisting of a control state, fifteen natural-number registers, and an optional Boolean result, the following condition holds. If the state is live and its instruction compares two registers, their indices are distinct; if it compares a register with the first payload of a plain encoded input or with either payload of a nested encoded input, respectively, then the input has the corresponding valid canonical encoding; and if it calls a decider, its argument-register list has no repetitions. No further condition is imposed in all other cases, including halted configurations and nondeterministic choice states.",
+ "hypotheses_covered": [
+  "The input is a Boolean word",
+  "The configuration has a control state in the program's label type, fifteen natural-number register values, and an optional Boolean result"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

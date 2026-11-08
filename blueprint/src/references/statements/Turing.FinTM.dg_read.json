@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.dg_read",
+ "key": "4e8db4cfccc771f9",
+ "kind": "lemma",
+ "title": "Forward sweep read update",
+ "statement": "Let $\\Gamma$ be a finite alphabet and let $M$ be a finite Turing machine over $\\Gamma$ with $k$ work tapes. Choose $a_0\\in\\Gamma$, a configuration $c$ of $M$ on a word $y\\in\\Gamma^*$, a state $q$, integers $a,z$, a natural number $n$, an input-head position, an output word, and left and right stacks. Starting from the forward-sweep configuration whose read table is initialized from $c$ at coordinate $a$ and whose right stack contains the ordinary encoding of the blocks at coordinates $a$ through $a+n-1$, after $nk$ steps the simulator is in the forward-sweep configuration whose read table is initialized from $c$ at coordinate $a+n$ and whose frontier is $z+nk$. Its left stack is the reversed encoding of those blocks with preceding-block head flags recorded, followed by the original left stack; its right stack and output are unchanged.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "A chosen symbol $a_0\\in\\Gamma$",
+  "A word $y$ over $\\Gamma$ and a configuration $c$ on $y$",
+  "A state $q$",
+  "Integers $a,z$ and natural number $n$",
+  "An input-head position, output word, and left and right stacks"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

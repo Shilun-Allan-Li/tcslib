@@ -1,0 +1,17 @@
+{
+ "lean_name": "FABL.lowDegreeJuntaNodeWorkBound_le_linearConfidence",
+ "key": "05d546863d128a62",
+ "kind": "theorem",
+ "title": "Node Work Bound",
+ "statement": "For every natural number $n$, every subset $P\\subseteq[n]$, and all natural numbers $k,b$, the node work bound at failure parameter $\\delta_{k,b}$ is at most $W_k(n+1)^{\\lfloor3k/4\\rfloor+4}(b+1)$. Here $T_0=1$, $T_{j+1}=1+2T_j$, $c_k=\\lfloor3k/4\\rfloor$, $d_k=k-c_k$, $L_k=\\lceil\\log_2T_k\\rceil+2(c_k+1)+5$, and $\\delta_{k,b}=T_k^{-1}2^{-(b+1)}$. The coefficient is $W_k=2A_k+R_k+S_k$, where $A_k=2^{k+1}R_k+16\\cdot4^kL_k$, $R_k=(c_k+1)(36\\cdot4^kL_k)+2^{d_k}(d_k+1+L_k)$, $S_k=(c_k+1)(36\\cdot4^kL_k)(c_k+1)+Q_k+(c_k+1)+(d_k+1)$, and $Q_k=2^{d_k}(d_k+1+L_k)$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$P$ is a subset of $[n]$",
+  "$k,b$ are natural numbers",
+  "the failure parameter is the specified dyadic per-call failure parameter"
+ ],
+ "confidence": "low",
+ "caveat": "The coefficient includes the polynomial learner work linear coefficient, whose defining formula is provided in the upstream snippet but not in the descriptions; the abbreviated notation here does not expand it.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

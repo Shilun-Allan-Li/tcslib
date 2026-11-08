@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.recordStep_read_all",
+ "key": "2fc4be890f651077",
+ "kind": "theorem",
+ "title": "Reading a complete configuration record",
+ "statement": "Let $k$ be natural, let $Q,T,S$ be types with decidable equality, let $M$ be a $k$-tape Boolean Turing machine, let $u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$, let $N$ be a two-tape Boolean machine with fixed states $s_0,s_1\\in S$, and let $x$ be a Boolean input word. For a natural number $s$, a configuration $c$ of $M$, a tag $\\tau\\in T$, and a four-tape record-machine configuration $d$, assume every work-tape head of $c$ lies within distance $s$ of zero and every tape cell outside that window is blank; assume that $d$ records the full configuration record formed from $c$ and $\\tau$ on tape 0, and that all other tapes of $d$ are blank. Then the record machine reaches the snapshot whose control is the read-exit control associated with the data read from $c$ (with tag $\\tau$), and whose tapes 1 and 3 each hold the encoded binary input-position digits, within $(10(k+3)+17)(L+1)$ steps, where $L$ is the length of the joined configuration record and each work-tape head stays within distance $L+1$ of its initial position. The run avoids both verdict states before its final time.",
+ "hypotheses_covered": [
+  "$k$ is natural",
+  "$Q,T,S$ have decidable equality",
+  "$M$ is a $k$-tape Boolean machine",
+  "$u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$",
+  "$N$ is a two-tape Boolean machine",
+  "fixed start and finish states in $S$",
+  "Boolean input word $x$",
+  "window radius $s$",
+  "configuration $c$ of $M$",
+  "tag $\\tau\\in T$",
+  "configuration $d$ of the record machine",
+  "$c$'s work heads lie within radius $s$ and cells outside the window are blank",
+  "$d$ records the encoded full configuration and tag",
+  "all nonzero-indexed tapes of $d$ are blank"
+ ],
+ "confidence": "low",
+ "caveat": "The private record relation and snapshot specify the detailed layout; the prose summarizes the requested read result and run bounds.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

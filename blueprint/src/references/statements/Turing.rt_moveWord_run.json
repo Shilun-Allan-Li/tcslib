@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.rt_moveWord_run",
+ "key": "93b81e27a179a979",
+ "kind": "theorem",
+ "title": "Copying and clearing a tape word",
+ "statement": "Let $k$ be a natural number, let $\\Gamma$ be an alphabet, and let $x$ be an input word. Choose distinct work tapes $\\mathrm{src},\\mathrm{dst}$ and a word $w\\in\\Gamma^*$. Suppose a configuration $d$ starts in the copy phase and, for every integer offset $p$ with $-1\\le p\\le |w|$, tape $\\mathrm{src}$ at its head position plus $p$ contains the symbol of $w$ at offset $p$ (and is blank outside the word). After $4|w|+5$ steps, the machine is in its final phase, tape $\\mathrm{src}$ is blank on the $|w|$ cells beginning at its original head position, and tape $\\mathrm{dst}$ contains a copy of $w$ on the $|w|$ cells beginning at its original head position; all other cells and configuration data are unchanged. The final phase is not reached earlier, and at every time up to and including this one, every work-tape head is within distance $|w|+1$ of its initial position.",
+ "hypotheses_covered": [
+  "$k$ work tapes and alphabet $\\Gamma$",
+  "distinct source and destination tape indices",
+  "initial state is the copy machine's sweep phase",
+  "source tape agrees with the buffered word at offsets $-1$ through $|w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

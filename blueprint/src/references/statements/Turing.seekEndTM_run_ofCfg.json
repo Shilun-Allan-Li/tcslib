@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.seekEndTM_run_ofCfg",
+ "key": "31bc4147a403bdbd",
+ "kind": "theorem",
+ "title": "Seeking the end of a field sequence",
+ "statement": "Let $k$ be a nonnegative integer, let $i<k$ index a work tape, and let $x$ be an input word. Let $ws$ be a nonempty finite list of nonempty words, and let $L$ be the sum, over the words in $ws$, of their lengths plus one. Consider a configuration $d$ in the running phase, and suppose that for every integer $p$ with $0\\le p\\le L$, tape $i$ at position $d_i+p$ contains the symbol at position $p$ of the concatenation of the words in $ws$, with a blank separator between consecutive words and no symbol outside that concatenation. After $L+1$ steps, the seeking machine is in the done phase with tape head $i$ at $d_i+L$; it is not in the done phase at any earlier time. At every time up to and including $L+1$, the head on tape $i$ lies between its initial position and $d_i+L$, inclusive, and every other work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$i$ indexes one of the $k$ work tapes",
+  "$ws$ is nonempty",
+  "Every word in $ws$ is nonempty",
+  "The initial configuration is in the running phase",
+  "Tape $i$ agrees with the concatenation-with-separators tape at all positions $p$ from $0$ through $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

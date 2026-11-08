@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.StepBlock.succFieldTM",
+ "key": "cb19eaa7e23d85b4",
+ "kind": "def",
+ "title": "Successor-field transition machine",
+ "statement": "For a natural number $m$, two work-tape indices $\\mathrm{src},\\mathrm{dst}\\in\\{0,\\ldots,m-1\\}$, and a Boolean choice $c$, define an $m$-work-tape machine with Boolean tape alphabet and the three successor-processing phases. It starts in the tag phase. In that phase it moves the source head one cell right and enters the unary phase if the scanned source symbol is $1$, and otherwise completes with the live flag false. In the unary phase it moves the source head right, and, when $c$ is true, writes the scanned source symbol on the destination tape; it remains in the unary phase if that symbol is $1$, and otherwise completes with the live flag true. In a completed phase it stays put on all tapes and preserves that phase and its flag.",
+ "hypotheses_covered": [
+  "A natural number $m$ of work tapes",
+  "Source and destination work-tape indices",
+  "A Boolean copy choice"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

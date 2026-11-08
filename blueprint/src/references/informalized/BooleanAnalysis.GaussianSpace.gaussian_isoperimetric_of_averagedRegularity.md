@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/GaussianSpace/SurfaceArea.lean :: BooleanAnalysis.GaussianSpace.gaussian_isoperimetric_of_averagedRegularity -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Isoperimetry from averaged regularity
+
+**Claim.** If a measurable set has Gaussian measure $\alpha\in(0,1)$ and its Gaussian-averaged indicators have the stated differentiability, Lipschitz, and bounded-derivative properties for every angle in $(0,\pi/2)$, then the Gaussian profile at $\alpha$ is at most the set's Gaussian surface area.
+
+**Proof.** Fix an angle $u\in(0,\pi/2)$ and choose its derivative field and bounds from the regularity hypothesis. The averaged indicator takes values in $[0,1]$, so the separated smooth Gaussian Bobkov bound applies to it. Its integral is the Gaussian measure of the set, hence is $\alpha$ by assumption. This gives the profile at $\alpha$ bounded by the sum of the mean profile of the averaged indicator and the mean norm of its coordinate gradient. Convert this real inequality to extended nonnegative reals, using nonnegativity of the profile and gradient terms. The gradient term is integrable by boundedness and continuity of the derivative field; the conversion of its integral to a lower integral is therefore valid. The variation estimate for the averaged indicator bounds its rotation differences by the set's rotation sensitivity. The gradient-to-surface-area estimate consequently bounds the gradient integral by the Gaussian surface area. Thus, for every such $u$, the profile at $\alpha$ is at most the mean profile of the averaged indicator plus the surface area. The averaged-profile isoperimetric lemma then passes from these inequalities over all $u\in(0,\pi/2)$ to the claimed bound for the Gaussian isoperimetric profile.
+
+**Key facts.** `BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_mem_unitInterval`, `BooleanAnalysis.GaussianSpace.gaussian_bobkov_smooth_le_sum`, `BooleanAnalysis.GaussianSpace.integral_averagedGaussianIndicator`, `BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg`, `BooleanAnalysis.GaussianSpace.integrable_gaussianGradient_of_bounded`, `BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_rotation_variation_le`, `BooleanAnalysis.GaussianSpace.lintegral_gradient_le_surfaceArea_of_variation_le`, `BooleanAnalysis.GaussianSpace.isoperimetric_of_averaged_profile_bound`.

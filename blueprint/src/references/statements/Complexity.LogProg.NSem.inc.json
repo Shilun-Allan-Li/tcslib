@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.NSem.inc",
+ "key": "072cbfcbac65c5c5",
+ "kind": "lemma",
+ "title": "Preservation Across Register Increment",
+ "statement": "Let $A$ be a nondeterministic register machine with oracle, input $x$, and configuration guard $G$. Suppose the instruction at live state $l$ increments register $r$ and continues at state $l'$, and the configuration with state $l$, register valuation $v$, and no answer satisfies $G$. If the configuration with state $l'$, with register $r$ increased by one and all other registers unchanged, is terminating under $G$ and accepts exactly when proposition $P$ holds, then the original configuration has those same properties.",
+ "hypotheses_covered": [
+  "The instruction at state l increments register r and continues at l'",
+  "The configuration (l,v,no answer) satisfies G",
+  "The increment successor configuration is terminating under G and accepts exactly when P holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

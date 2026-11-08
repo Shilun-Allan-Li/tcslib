@@ -1,0 +1,15 @@
+{
+ "lean_name": "bernoulli_mgf_bound_step1",
+ "key": "0687b40a86a72229",
+ "kind": "lemma",
+ "title": "Derivative of the Bernoulli auxiliary function",
+ "statement": "Let $L,x\\in\\mathbb{R}$ and suppose $1-L+Le^{-x}>0$. The function $\\varphi(y)=-Ly+\\frac{y^2}{8}-\\ln(1-L+Le^{-y})$ has derivative at $x$ equal to $-L+\\frac{x}{4}+\\frac{Le^{-x}}{1-L+Le^{-x}}$.",
+ "hypotheses_covered": [
+  "$L,x\\in\\mathbb{R}$",
+  "$1-L+Le^{-x}>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L, x \\in \\bbr$ and suppose $1 - L + L\\,e^{-x} > 0$. Then the auxiliary function\n\\[\n  \\varphi(x) \\;=\\; -L x + \\frac{x^2}{8} - \\ln\\!\\bigl(1 - L + L\\,e^{-x}\\bigr)\n\\]\nis differentiable at $x$ with derivative\n\\[\n  \\varphi'(x) \\;=\\; -L + \\frac{x}{4} + \\frac{L\\,e^{-x}}{1 - L + L\\,e^{-x}}.\n\\]\nThis is the $\\varphi'$ computation used in the proof of \\texttt{bernoulli\\_mgf\\_bound}."
+}

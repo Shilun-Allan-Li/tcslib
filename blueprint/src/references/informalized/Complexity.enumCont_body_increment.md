@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/EXP.lean :: Complexity.enumCont_body_increment -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Simulation of a fixed-width increment
+
+**Claim.** If the simulated increment machine halts with output equal to the fixed-width increment of $s$, or the empty word on overflow, then the body machine reaches the canonical seam configuration containing the incremented word, or preserves $s$ on overflow, within the stated bound.
+
+**Proof.** Run the body machine in increment-call mode until the clean call returns. The clean-call simulation gives a time $t\le 3T+|x|+|v|+8$, where $v$ is the increment machine's output, and places $v$ on the last tape. The increment-case lemma says either $v$ is empty and the prescribed fallback is $s$, or $v$ is nonempty, has length $|s|$, and is the prescribed incremented word (\texttt{Complexity.enumCont_increment_cases}). In the empty case, the branch-check result sends the machine directly to the anchor while preserving the candidate; the empty-buffer identity then identifies the result with the desired canonical seam configuration (\texttt{Complexity.enumCont_body_check}, \texttt{Turing.FinTM.bufferTape_nil}, \texttt{Complexity.enumCont_pair_words}). The time bound follows by adding this one step and substituting $|v|=0$. In the nonempty case, the branch check sends control to state $5$. The copy-completion lemma copies the output word back to the candidate tape and reaches the anchor, using the length hypothesis $|s|\le |v|$ (here equality); it also supplies the required endpoint and blank-tape arrangement (\texttt{Complexity.enumCont_copy_complete}). Concatenate this copy run after the clean-call run using the run-addition identity, and use the successor-step identity for the branch-check step (\texttt{Turing.MultiTapeTM.runFrom_add}, \texttt{Turing.MultiTapeTM.runFrom_succ_eq_step'}). The resulting configuration is the claimed word-based seam configuration, and the length equality yields the stated bound.
+
+**Key facts.** `Complexity.enumCont_body_call`, `Complexity.enumCont_increment_cases`, `Complexity.enumCont_body_check`, `Turing.FinTM.bufferTape_nil`, `Complexity.enumCont_pair_words`, `Complexity.enumCont_copy_complete`, `Turing.MultiTapeTM.runFrom_add`, `Turing.MultiTapeTM.runFrom_succ_eq_step'`.

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_rd_end",
+ "key": "0b1f96d0703c04b8",
+ "kind": "theorem",
+ "title": "Reading at the end of the input",
+ "statement": "Let $P$ be a counter program on a binary input $x$, with registers $\u0005rho$ and labels $\u0005Lambda$. If the instruction at label $\u0005ell$ reads the next input bit and the input has no bit at position $p$, then from any output string $o$, the program reaches label $\u0005ell_e$ within one step, leaving the registers, input position, and output unchanged.",
+ "hypotheses_covered": [
+  "The instruction at $\u0005ell$ is a read instruction with end label $\u0005ell_e$",
+  "The input has no bit at position $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$ and $\\ell$ a label whose\ninstruction is $\\mathsf{rd}(\\ell_e, \\ell_0, \\ell_1)$, ``read the next input\nsymbol and go to $\\ell_e$, $\\ell_0$ or $\\ell_1$ according as the input has ended,\nthe symbol is $0$, or it is $1$''.  If $x$ has no symbol at (zero-based) position\n$p$, i.e.\\ $p \\ge |x|$, then for all registers $\\rho$, from label $\\ell$ with\nregisters $\\rho$ and $p$ symbols read the program reaches label $\\ell_e$ with\nregisters $\\rho$ and still $p$ symbols read within one step, printing nothing."
+}

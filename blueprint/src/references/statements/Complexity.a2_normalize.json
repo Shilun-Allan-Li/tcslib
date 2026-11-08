@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a2_normalize",
+ "key": "b86ee44e4c0e1756",
+ "kind": "lemma",
+ "title": "Exponential time class normalization",
+ "statement": "Let $L$ be a language of binary strings, and let $C,c\\in\\mathbb{N}$. Suppose there are natural numbers $K,r$ and a finite nondeterministic Turing machine $N$ over the binary alphabet that decides $L$ within time $K\\bigl(n+C\\cdot 2^{(n+1)^c}+1\\bigr)^r$. Then $L$ belongs to $\\bigcup_{e\\in\\mathbb{N}}\\mathrm{NTIME}(n\\mapsto 2^{n^e})$.",
+ "hypotheses_covered": [
+  "Language $L$ over binary strings",
+  "Natural numbers $C,c$",
+  "Existence of natural numbers $K,r$ and a finite nondeterministic binary machine $N$",
+  "$N$ decides $L$ within the stated time bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L$ be a language over the binary alphabet and $C, c$ natural numbers. If some nondeterministic machine decides $L$ within time $K(n + C\\cdot 2^{(n+1)^c} + 1)^r$ for constants $K, r$, then $L$ belongs to $\\bigcup_e \\mathrm{NTIME}(2^{n^e})$."
+}

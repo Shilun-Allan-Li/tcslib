@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/SavitchARM/Correct.lean :: Complexity.NSPACE_poly_subset_PSPACE -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial Nondeterministic Space Is in PSPACE
+
+**Claim.** For every $k\in\mathbb N$, $\mathrm{NSPACE}(n\mapsto n^k+1)\subseteq\mathrm{PSPACE}$.
+
+**Proof.** Fix $k$ and a language in the indicated nondeterministic space class, witnessed by a machine $N$ and a constant space multiplier. Choose an exponent $E$ large enough to dominate the machine's state, tape, coding, and polynomial-space parameters. The proof constructs an alternating-machine computation that checks encoded configurations of $N$ and recursively tests reachability between them. The input-length language, the initial-configuration language, the accepting-configuration language, and the one-step transition language all lie in logarithmic space; each therefore lies in PSPACE (`inputLenLang_mem`, `initLang_mem`, `acceptLang_mem`, `stepLang_mem`, `LOGSPACE_subset_PSPACE`).
+
+The nondeterministic-space computation can be expressed as bounded reachability in the configuration graph. `radius_le`, `codeWidth_le`, and `configBound_le` provide, respectively, a bound on the space radius, enough bits to encode configurations, and an upper bound on the number of configurations. The reachability characterization (`mem_iff_reach`) then identifies membership in the original language with existence of encoded initial and accepting configurations connected by a path of the specified length. The oracle predicates used by this alternating computation are identified with the encoded initial, accepting, and transition languages (`initO_orcN`, `accO_orcN`, `rel_orcN`). The input-length oracle is verified directly, and `savitch_halts` establishes that the constructed alternating computation halts with the reachability answer. The alternating-machine-to-PSPACE theorem (`arm_decides_pspace_val`) converts this computation into a deterministic polynomial-space decider. Finally, the proof bounds the reachability witness range by the required polynomial-space resource, using $(n+2)^{4E}\le (2(n+1))^{4E}=2^{4E}(n+1)^{4E}$.
+
+**Key facts.** `Complexity.inputLenLang_mem`, `Complexity.Codec.initLang_mem`, `Complexity.Codec.acceptLang_mem`, `Complexity.Codec.stepLang_mem`, `Complexity.LOGSPACE_subset_PSPACE`, `Complexity.LogProg.SavitchARM.radius_le`, `Complexity.LogProg.SavitchARM.codeWidth_le`, `Complexity.LogProg.SavitchARM.configBound_le`, `Complexity.LogProg.SavitchARM.mem_iff_reach`, `Complexity.LogProg.SavitchARM.initO_orcN`, `Complexity.LogProg.SavitchARM.accO_orcN`, `Complexity.LogProg.SavitchARM.rel_orcN`, `Complexity.LogProg.SavitchARM.savitch_halts`, `Complexity.LogProg.arm_decides_pspace_val`.

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.HALT_eq_true_iff",
+ "key": "4a68b7240ea45e48",
+ "kind": "theorem",
+ "title": "Characterization of the halting function",
+ "statement": "Let $c$ be a machine representation scheme and let $s$ be a bit string. The halting function of $c$ returns true on $s$ if and only if there are bit strings $\\alpha$ and $x$ such that $s$ is their pairing encoding, and the machine decoded from $\\alpha$ produces some output on input $x$ within some finite number of steps.",
+ "hypotheses_covered": [
+  "A machine representation scheme $c$",
+  "A bit string $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a coding scheme for Turing machines and let $s$ be a bit string. Then\n$\\mathrm{HALT}_c(s)$ is true if and only if there exist bit strings $\\alpha$ and\n$x$ such that $s$ is the pairing encoding $\\langle \\alpha, x \\rangle$ and the\nmachine that $\\alpha$ denotes under $c$ produces some output on input $x$ within\nsome finite number of steps."
+}

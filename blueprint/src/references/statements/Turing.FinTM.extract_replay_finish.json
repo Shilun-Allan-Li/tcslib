@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.extract_replay_finish",
+ "key": "6d9e4805e3ef7386",
+ "kind": "lemma",
+ "title": "End of buffer replay",
+ "statement": "Let $first,second$ be Boolean flags, let $x,a$ be Boolean words, and let $i\\in\\mathbb N$ satisfy $i\\le |x|$. From the pair extractor's replay state at input position $i$, with buffer $a$, work head at zero, and empty output, after exactly $|a|+1$ steps the machine is in its suffix-scanning state with work head at $|a|$ and output equal to $a$ if $first$ is true, and empty otherwise.",
+ "hypotheses_covered": [
+  "first and second are Boolean flags",
+  "x and a are Boolean words",
+  "i is natural",
+  "i≤|x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the extractor's replay state with buffer $a$ and work head at\ndisplacement $0$, exactly $\\abs{a}+1$ steps reach the suffix state with the\nwork head at displacement $\\abs{a}$, and the output is $a$ when the\nfirst-component flag is set and empty otherwise."
+}

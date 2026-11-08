@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.Contract.Frames.seq",
+ "key": "26b1940a26ce59a6",
+ "kind": "theorem",
+ "title": "Frames under sequential composition",
+ "statement": "Let $M_1$ and $M_2$ be machines with the same input alphabet and number of work tapes, with state sets $S_1$ and $S_2$, and suppose $S_1$ has decidable equality. Let $C_1$ be a contract for $M_1$ from entry state $e_1$ to the singleton exit state $e_1'$, and let $C_2$ be a contract for $M_2$ from entry state $e_2$ to an exit set $X_2$. Let $\\mathrm{link}$ map the data for $C_1$ to data for $C_2$, and suppose that whenever a starting configuration is in state $e_1$ and satisfies the precondition of $C_1$, the endpoint of $C_1$ with its state reset to $e_2$ satisfies the corresponding precondition of $C_2$. If $C_1$ and $C_2$ have the frame property for frame sets $fp_1$ and $fp_2$, respectively, then their sequentially composed contract has the frame property for the union of $fp_1$ at the starting configuration and $fp_2$ at the linked data and state-reset endpoint of $C_1$.",
+ "hypotheses_covered": [
+  "M₁ and M₂ have the same input alphabet and number of work tapes",
+  "S₁ and S₂ are their state sets",
+  "S₁ has decidable equality",
+  "C₁ is a contract for M₁ from e₁ to {e₁'}",
+  "C₂ is a contract for M₂ from e₂ to X₂",
+  "both contracts use the same fixed input",
+  "link maps C₁ data to C₂ data",
+  "each eligible C₁ endpoint, with its state reset to e₂, satisfies the corresponding C₂ precondition",
+  "C₁ has the frame property for fp₁",
+  "C₂ has the frame property for fp₂"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_1$ and $M_2$ be machines with state sets $S_1$ and $S_2$, respectively, with\n$S_1$ having decidable equality. Let $C_1$ be a contract for $M_1$ from entry state\n$e_1$ to the sole exit state $e_1'$ and let $C_2$ be a contract for $M_2$ from entry\nstate $e_2$ to an exit set $X_2$, both on the same input and with the same $k$ work\ntapes. Suppose a map $\\mathrm{link}$ sends each parameter of $C_1$ to a parameter of\n$C_2$, and whenever a configuration satisfies the entry-state and precondition\nhypotheses of $C_1$, the state-renamed endpoint of $C_1$ satisfies the corresponding\nprecondition of $C_2$. If each contract preserves its work-tape contents outside its\nrespective frame sets, then their sequentially composed contract preserves the work-tape\ncontents outside the union of the first frame set and the second frame set evaluated at\nthe linked parameter and the renamed first endpoint."
+}

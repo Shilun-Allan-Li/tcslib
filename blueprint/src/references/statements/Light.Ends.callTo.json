@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Ends.callTo",
+ "key": "0de2f6aaf8f59142",
+ "kind": "theorem",
+ "title": "Procedure call with a bounded execution",
+ "statement": "Let $P$ be a program, let its execution limits be given, and let $d,p,x,T,T'$ be natural numbers, $l$ and $\\mathrm{vals}$ finite lists of integers, and $\\mu$ a memory function from natural numbers to integers. Suppose procedure $p$ has a body that, when started at depth $d+1$ with local frame initialized from $\\mathrm{vals}$ and memory $\\mu$, has an execution of cost at most $T'$ whose final value and memory satisfy $R(r,\\mu')$. Assume every pair $(r,\\mu')$ satisfying $R$ makes the state with memory $\\mu'$ and local frame obtained by setting position $x$ of $l$ to $r$ satisfy $Q$. If each expression in the call's argument list is safe in the state with local frame initialized from $l$ and memory $\\mu$, and those expressions evaluate to $\\mathrm{vals}$; if $d$ is less than the depth limit; and if the sum of the argument expression costs plus $2+T'$ is at most $T$, then the call to procedure $p$ with those arguments, storing its returned value at position $x$, has an execution of cost at most $T$ from that state to a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "There is a body for procedure p in P that executes at depth d+1 from the frame initialized from vals and memory μ, with cost at most T', and final value and memory satisfying R",
+  "Every pair (r, μ') satisfying R gives Q for the state whose memory is μ' and whose local frame is l with position x set to r",
+  "Every call argument is safe in the state with frame initialized from l and memory μ",
+  "The call arguments evaluate to vals in that state",
+  "d is less than the depth limit",
+  "The sum of the argument expression costs plus 2+T' is at most T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

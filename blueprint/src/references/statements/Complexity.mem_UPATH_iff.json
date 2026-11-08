@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.mem_UPATH_iff",
+ "key": "50bca49bf0b0a953",
+ "kind": "theorem",
+ "title": "Encoding characterization of undirected path reachability",
+ "statement": "A binary string $x$ encodes an undirected graph with $n$ vertices and designated vertices $s,t$ that are connected by a path if and only if there exist natural numbers $n,s,t$ and a witness that $x$ has the following format: $n$ copies of the pair $11$, followed by the separator $01$; then $n^2$ adjacency bits, each duplicated as $00$ or $11$, followed by $01$; then the bits of $s$, each duplicated, followed by $01$; and finally the ordinary binary expansion of $t$, occupying the entire remaining suffix. The format requires $s<n$ and $t<n$; the adjacency relation encoded by the matrix must be symmetric, and there must be a path from $s$ to $t$ using edges whose corresponding bits in $x$ are $1$.",
+ "hypotheses_covered": [
+  "$x$ is a binary string",
+  "There exist natural numbers $n,s,t$ and a witness that $x$ has the specified format",
+  "$s<n$ and $t<n$",
+  "The encoded adjacency relation is symmetric",
+  "There is a path from $s$ to $t$ in the encoded graph"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterToken_double",
+ "key": "948e0fae2cd1f4a9",
+ "kind": "lemma",
+ "title": "Two-step token bit encoding",
+ "statement": "Let $x,p,r$ be Boolean words and $b$ a Boolean, with $x=pbr$. Starting in the token-scanning state at the position immediately after $p$, with prior output $o$, after two steps the encoder is at the position immediately after $pb$ and has appended $bb$ to its output. Its state is the token-scanning state if $b$ is true and the separator-phase state if $b$ is false.",
+ "hypotheses_covered": [
+  "$x,p,r$ are Boolean words",
+  "$b$ is a Boolean",
+  "$x$ is the concatenation of $p$, the bit $b$, and $r$",
+  "The initial scan position is $|p|$ and is within the input",
+  "The initial output is $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p\\, b\\, r$ with bit $b$, two transitions of the\ntoken encoder from its scanning state at position $\\abs{p}$ emit $b$ twice\nand advance the input head once; the encoder continues token scanning when\n$b = 1$ and passes to the separator phase when $b = 0$."
+}

@@ -16,9 +16,7 @@ from __future__ import annotations
 
 import argparse
 import datetime as _dt
-import gzip
 import json
-import os
 import re
 import subprocess
 import sys
@@ -26,7 +24,9 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATASET = ROOT / "dataset" / "tcslib_theorems.jsonl.gz"
+sys.path.insert(0, str(ROOT))
+from proofmatch.dataset_io import open_dataset, resolve_dataset
+DATASET = ROOT / "dataset" / "tcslib_theorems.jsonl"
 
 # Folder under TCSlib/ -> the name the page prints.  Unknown folders get their
 # CamelCase name split into words, so a new area appears without editing this.
@@ -62,7 +62,7 @@ def _file_date(path: Path) -> _dt.date:
             return _dt.date.fromisoformat(out)
     except (subprocess.CalledProcessError, FileNotFoundError, ValueError):
         pass
-    return _dt.date.fromtimestamp(path.stat().st_mtime)
+    return _dt.date.fromtimestamp(resolve_dataset(path).stat().st_mtime)
 
 
 def _n(x: int) -> str:
@@ -70,18 +70,31 @@ def _n(x: int) -> str:
 
 
 def compute(path: Path = DATASET) -> dict:
-    with gzip.open(path, "rt", encoding="utf-8") as f:
-        records = [json.loads(line) for line in f if line.strip()]
-    n = len(records)
-    complete = sum(1 for r in records if r.get("proof_complete"))
+    resolved = resolve_dataset(path)
+    n = complete = rated = 0
     # The informal half is two columns with an origin marker each
     # (scripts/informal_sources.py): the statement is cited or written from the Lean;
     # the proof is cited, informalized from the Lean, or absent.
-    statement_sources = Counter(r.get("statement_source") or "unknown" for r in records)
-    proof_sources = Counter(r.get("proof_source") or "unknown" for r in records)
-    areas = Counter(r["source_module"].split(".")[1] for r in records)
-    date = _file_date(path)
-    size_mb = path.stat().st_size / 1e6
+    statement_sources = Counter()
+    proof_sources = Counter()
+    areas = Counter()
+    # Shards can expand to gigabytes; retain only the summary counters.
+    with open_dataset(resolved) as f:
+        for line in f:
+            if not line.strip():
+                continue
+            record = json.loads(line)
+            n += 1
+            complete += bool(record.get("proof_complete"))
+            rated += record.get("difficulty") is not None
+            statement_sources[record.get("statement_source") or "unknown"] += 1
+            proof_sources[record.get("proof_source") or "unknown"] += 1
+            areas[record["source_module"].split(".")[1]] += 1
+    date = _file_date(resolved)
+    if resolved.name.endswith(".manifest.json"):
+        size_mb = sum(s["compressed_bytes"] for s in json.loads(resolved.read_text())["shards"]) / 1e6
+    else:
+        size_mb = resolved.stat().st_size / 1e6
     by_area = ", ".join(f"{_area_name(a)} {_n(c)}" for a, c in areas.most_common())
     return {
         "n_records": n,
@@ -92,7 +105,7 @@ def compute(path: Path = DATASET) -> dict:
         "n_proof_cited": proof_sources.get("citation", 0),
         "n_proof_lean": proof_sources.get("lean", 0),
         "n_proof_none": proof_sources.get("none", 0),
-        "n_rated": sum(1 for r in records if r.get("difficulty") is not None),
+        "n_rated": rated,
         "by_area": by_area,
         "areas": dict(areas.most_common()),
         "size_mb": round(size_mb),
@@ -138,7 +151,7 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--render", type=Path, nargs="+", metavar="HTML",
                     help="replace %%key%% tokens in these generated pages")
     args = ap.parse_args(argv)
-    if not args.dataset.exists():
+    if not resolve_dataset(args.dataset).exists():
         print(f"error: {args.dataset} not found", file=sys.stderr)
         return 1
     stats = compute(args.dataset)

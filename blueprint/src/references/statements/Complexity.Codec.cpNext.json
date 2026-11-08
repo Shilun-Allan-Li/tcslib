@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.Codec.cpNext",
+ "key": "0fef1b50663e6359",
+ "kind": "def",
+ "title": "Successor labels for copy identifiers",
+ "statement": "Let $N$ be a nondeterministic Turing machine with Boolean tape alphabet. Define a function from the copy identifiers to control labels by assigning $A,B,Q1s,Cap,Q2,N1,Tn,E,Ts,F,Tw,U,Q1f$ respectively to the labels for scanning the first and second registers, copying the capacity, testing the counter, testing the $S$ down-counter, halving $N$, testing the halving counter, copying $Ts$, scanning $E$, copying $Tw$, scanning $F$, incrementing $U$ at position $0$, and testing the $Pos$ down-counter. Assign $E2,Ts2,F2,Tw2,U2,Q1f2,Tpos,Q3,Q4,Q1a,Q2a,Uc,Tsc$ respectively to copying $Ts2$, scanning $E2$, copying $Tw2$, scanning $F2$, incrementing $U2$ at position $0$, testing the $Pos2$ down-counter, decrementing the input counter, copying $Q4$, clearing the first verification register, copying $Q2a$, testing the initial verification state, copying $Tsc$, and scanning $C$.",
+ "hypotheses_covered": [
+  "A nondeterministic Turing machine with Boolean tape alphabet"
+ ],
+ "confidence": "low",
+ "caveat": "The statement defines a function by cases into a large control-label type; the provided definitions give no informal meanings for most of these labels, so the cases can only be described by their roles as encoded in their names.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

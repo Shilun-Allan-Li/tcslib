@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.expandTM_run_ofCfg",
+ "key": "94736d35cb2f4bd8",
+ "kind": "theorem",
+ "title": "Expansion machine simulation",
+ "statement": "Let $k$ be a natural number, let $x$ and $w$ be Boolean words, let $i$ be one of $k$ work tapes, let $\\mathrm{pat}$ be a Boolean word, and let $c$ be a configuration of a $k$-tape Boolean machine whose state is $0$. Suppose a tape content $\\mathrm{ct}$ agrees with $w$ on the interval from $-1$ through $|w|$ when read relative to head position $\\mathrm{cp}$, and let $d=\\operatorname{val}_2(w)$. Run the machine that repeatedly writes the pattern on tape $i$, using the binary word as its counter, for $d(|\\mathrm{pat}|+1)+\\mathrm{overhead}(w,d+1)$ steps from the counter-loop configuration built from $c$, $\\mathrm{ct}$, and $\\mathrm{cp}$. The resulting configuration is the counter-loop configuration in state done whose simulated configuration has tape $i$ patched with $d$ consecutive copies of $\\mathrm{pat}$, whose head on tape $i$ has advanced by $d|\\mathrm{pat}|$, and whose counter tape is true exactly on the original word interval; before that time it is in neither done nor escape. Throughout the run, the counter head stays between $\\mathrm{cp}-1$ and $\\mathrm{cp}+|w|$, and each simulated tape head stays between its starting position and its position advanced by $d|\\mathrm{pat}|$ on tape $i$, while every other simulated tape head remains fixed.",
+ "hypotheses_covered": [
+  "i is a work-tape index among k tapes",
+  "pat is a Boolean word",
+  "c has state 0",
+  "ct agrees with w on the stated interval relative to cp",
+  "d equals the binary value of w"
+ ],
+ "confidence": "low",
+ "caveat": "The formal conclusion includes an exact configuration equality and bounds at every time; the prose summarizes the defined counter overhead and configuration construction.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.splitSolveWithTM_computes",
+ "key": "b553b9728652a2dc",
+ "kind": "theorem",
+ "title": "Computation of the general split solver",
+ "statement": "Let $f:\\mathbb{N}\\to\\mathbb{N}$, let $E$ be a finite Turing machine over the Boolean alphabet, and let $T:\\mathbb{N}\\to\\mathbb{N}$ be monotone. Suppose that on every Boolean word $s$, $E$ halts within $T(|s|)$ steps and outputs the binary expansion of $f(|s|)$. Then the machine built from $E$ computes, on every Boolean word $w$, the pairing of the prefix of length $i$ and the remaining suffix when $i$ is the least number satisfying $i+f(i)=|w|$; if no such $i$ exists, it outputs the empty word. Its running time on inputs of length $n$ is at most $20(591+26k)(n+1)(T(n+1)+n+2)$, where $k$ is the number of work tapes of $E$.",
+ "hypotheses_covered": [
+  "function $f:\\mathbb{N}\\to\\mathbb{N}$",
+  "finite Boolean Turing machine $E$",
+  "time bound $T:\\mathbb{N}\\to\\mathbb{N}$",
+  "$T$ is monotone",
+  "$E$ computes the binary expansion of $f(|s|)$ on every Boolean word $s$ within $T(|s|)$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

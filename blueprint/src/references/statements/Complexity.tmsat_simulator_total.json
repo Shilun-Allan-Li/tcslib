@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.tmsat_simulator_total",
+ "key": "761668926f4fae5a",
+ "kind": "lemma",
+ "title": "Timed Simulator Returns the Answer",
+ "statement": "Let $c$ be an effective machine-code scheme and $U$ a finite binary Turing machine. Suppose that for every pair of binary strings $\\alpha,x$ and every $t\\in\\mathbb{N}$, if the machine decoded from $\\alpha$ computes output $w$ on input $x$ in exactly $t$ steps, then $U$ computes $1w$ on input $\\langle\\langle\\mathrm{bin}(t),\\alpha\\rangle,x\\rangle$ in exactly $S$ steps; and if it computes no output on $x$ in exactly $t$ steps, then $U$ computes the one-bit string $0$ on that encoded input in exactly $S$ steps, where $S=(3|\\alpha|+14T_c(|\\alpha|)+50)(t+1)^2$. Then $U$ computes on that encoded input, in exactly $S$ steps, the word that is $1w$ when the decoded machine has halted by time $t$ with output $w$, and is the one-bit string $0$ otherwise.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-code scheme",
+  "$U$ is a finite binary Turing machine",
+  "For every $\\alpha,x,t$, each output computed by the decoded machine at exactly time $t$ is returned with a leading $1$ by $U$ in exactly the stated $S$ steps",
+  "For every $\\alpha,x,t$, if the decoded machine computes no output at exactly time $t$, then $U$ returns $0$ in exactly the stated $S$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-code scheme and let $U$ be a finite binary Turing\nmachine satisfying the following property for every pair of bit strings $\\alpha,x$ and\nevery $t\\in\\mathbb N$: if the machine decoded from $\\alpha$ computes output $w$ on input\n$x$ in exactly $t$ steps, then $U$ computes $1w$ on input\n$\\langle\\langle\\mathrm{bin}(t),\\alpha\\rangle,x\\rangle$ in exactly $S$ steps; if it\ncomputes no output on $x$ in exactly $t$ steps, then $U$ computes $0$ on that encoded\ninput in exactly $S$ steps, where $S=(3|\\alpha|+14T_c(|\\alpha|)+50)(t+1)^2$. Then for\nevery $\\alpha,x,t$, $U$ computes the answer word on that encoded input in exactly $S$\nsteps: it is $1w$ if the decoded machine has halted by time $t$ with output $w$, and is\nthe single bit $0$ otherwise."
+}

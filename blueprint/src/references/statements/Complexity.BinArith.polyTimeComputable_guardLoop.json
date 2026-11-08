@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.BinArith.polyTimeComputable_guardLoop",
+ "key": "7e699a3e744bc549",
+ "kind": "theorem",
+ "title": "Polynomial-Time Computability of a Guarded Loop",
+ "statement": "Let $g$ be a polynomial-time computable function on bit strings. Define a loop state update as follows: if either the first decoded component of the state is empty or the first decoded component of its second decoded component is empty, replace the state by the fixed encoding of two empty strings. Otherwise, keep the first component unchanged and replace the second component by an encoding whose first component is obtained by applying $g$ to the old second component's second decoded component when that image has length at most the old first component's length, and is unchanged otherwise; the second component of this inner encoding is the image under $g$ in the first case and the unchanged old value in the second case. Then the function that applies this update once is computable in polynomial time by a finite Turing machine.",
+ "hypotheses_covered": [
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

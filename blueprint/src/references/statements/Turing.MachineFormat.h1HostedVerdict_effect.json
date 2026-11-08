@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.MachineFormat.h1HostedVerdict_effect",
+ "key": "345197f86f48941a",
+ "kind": "theorem",
+ "title": "Hosted summary effect",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes and state set $\\{0,\\ldots,n\\}$, let $x,z$ be finite bit strings, and let $d$ be a configuration of the step-block machine for $M$ on input $x$. Suppose $d$ is at the live entry state and correctly represents $M$'s initial configuration together with its transition table and summary tapes. For every $t\\in\\mathbb N$ and every input-head position $p$ among the $|z|+2$ positions, the hosted verdict machine started from the specified counter initialization of $d$, with input-head position $p$, halts after some $T\\le t\\bigl(50(|L|+1)+4\\bigr)+2\\ell(t)+3$ steps, where $L$ is the serialized transition table and $\\ell(t)$ is the length of the binary expansion of $t$; its final input-head position is $p$ and its output is $d$'s output followed by $s_t$. Here $c_0$ is the initial configuration of $M$ on $x$, $s_0$ is true exactly when $c_0$ is already halted, and $s_{j+1}$ is the summary obtained by combining $s_j$ with the output symbol emitted by the transition from $c_j$, while $c_{j+1}$ is the next configuration after that transition.",
+ "hypotheses_covered": [
+  "$M$ is a deterministic machine with $k$ work tapes and states $\\{0,\\ldots,n\\}$",
+  "$x,z$ are finite bit strings",
+  "$d$ is a configuration on input $x$",
+  "$d$ is at the live entry state",
+  "$d$ correctly represents $M$'s initial configuration and associated tapes",
+  "$t$ is a natural number",
+  "$p$ is one of the $|z|+2$ input-head positions"
+ ],
+ "confidence": "high",
+ "caveat": "The recursive summary is defined by the formal summary update, which combines a prior summary with the current transition's optional output.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

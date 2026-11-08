@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.obliviousSchedule_output",
+ "key": "63cee2293735a4d0",
+ "kind": "lemma",
+ "title": "Output of the schedule transition",
+ "statement": "For every finite Turing machine $W$ over the Boolean alphabet, every $a\\in\\mathbb{N}$, every state $q$ of the schedule machine determined by $W$ and $a$, every scanned input symbol (possibly blank), and every tuple of work-tape symbols (each possibly blank), the transition emits no output symbol.",
+ "hypotheses_covered": [
+  "W is a finite machine over Booleans",
+  "a is a natural number",
+  "q is a state of the schedule machine",
+  "The scanned input symbol may be blank",
+  "Each work-tape read may be blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every clock witness $W$ over the Boolean alphabet, every parameter\n$a \\in \\mathbb{N}$, every state $q$ of the length-only schedule, every scanned input\nsymbol, and every tuple of work-tape reads, the transition of the length-only\nschedule emits no output symbol. A decoration supplies the final answer at the\nschedule's final halting transition."
+}

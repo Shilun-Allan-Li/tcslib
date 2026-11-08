@@ -1,6 +1,6 @@
 {
  "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rbind_rrun",
- "key": "3cc5eab24eaca316",
+ "key": "e4a493cd232249d2",
  "kind": "theorem",
  "title": "Randomized bind unfolds into sequential execution",
  "statement": "Let $p$ be a public-coin finite-message protocol over shared-randomness space $\\Omega$ with private inputs in $X$, $Y$ and outputs in $\\alpha$, and let $q$ assign to each output $a \\in \\alpha$ a public-coin finite-message protocol $q(a)$ over shared-randomness space $\\Omega'$ with the same private input sets and outputs in $\\beta$. Then for all private inputs $x \\in X$ and $y \\in Y$ and every randomness pair $\\omega = (\\omega_1, \\omega_2) \\in \\Omega \\times \\Omega'$, the randomized execution of the fresh-randomness bind $\\mathrm{rbind}(p, q)$ satisfies\n\\[\n  \\mathrm{rrun}\\bigl(\\mathrm{rbind}(p, q),\\, x,\\, y,\\, \\omega\\bigr)\n    = \\mathrm{rrun}\\bigl(q(\\mathrm{rrun}(p, x, y, \\omega_1)),\\, x,\\, y,\\, \\omega_2\\bigr).\n\\]\nThat is, running the bound protocol with randomness $\\omega$ is the same as first running $p$ on $x, y$ with the randomness $\\omega_1$ to obtain an output, and then running the protocol $q$ assigns to that output on $x, y$ with the independent randomness $\\omega_2$.",

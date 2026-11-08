@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.mem_P_iff",
+ "key": "ebe6a475d86a6544",
+ "kind": "theorem",
+ "title": "Polynomial time with conventional bounds",
+ "statement": "A language $L$ over the binary alphabet belongs to $\\mathsf{P}$ if and only if there are natural numbers $C,d$ and a finite Turing machine that decides $L$ on every input of length $n$ within $C(n+1)^d$ steps.",
+ "hypotheses_covered": [
+  "$L$ is a language over the binary alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A language $L$ over the binary alphabet belongs to $\\mathsf{P}$ if and only if\nthere exist natural numbers $C$ and $d$ and a deterministic finite Turing\nmachine $M$ over $\\{0,1\\}$ such that $M$ decides $L$ within\n$C \\cdot (n + 1)^d$ steps on every input of length $n$. In particular the $+1$\npadding in the definition of $\\mathsf{P}$ describes the same class as the\nconventional polynomial time bounds $C \\cdot (n+1)^d$."
+}

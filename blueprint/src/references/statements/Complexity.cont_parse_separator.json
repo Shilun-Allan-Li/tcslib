@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.cont_parse_separator",
+ "key": "9b3edacf3a5d1598",
+ "kind": "lemma",
+ "title": "Recognition of the pair separator",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let $y$, $pre$, $u$, and $x$ be Boolean words such that $y=pre\\,0\\,1\\,u$. Starting in parser state $0$ with input head at position $|pre|+1$, input buffer $x$, empty choice buffer, and the other loader tapes and output as prescribed by the loader configuration, after two steps the pair-loader machine is in parser state $3$ with input head at position $|pre|+3$, the same input buffer $x$, and empty choice buffer, with the other loader tapes and output as prescribed by that resulting configuration.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the Boolean alphabet",
+  "$y$, $pre$, $u$, and $x$ are Boolean words",
+  "$y=pre\\,0\\,1\\,u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine and suppose the physical input has the form $y = p\\,0\\,1\\,u$. From the initial parser state at position $|p|+1$ with input buffer $x$, exactly two steps of the pair-loader machine enter the suffix-copy state at position $|p|+3$ without modifying either buffer or emitting output."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.loopRoundTime_spec",
+ "key": "953f01265641b360",
+ "kind": "lemma",
+ "title": "Simulation of One Machine Step",
+ "statement": "Let $k,n\\in\\mathbb N$, let $x$ be a finite binary input, let $M$ be a $k$-tape machine with binary work tapes and states indexed by $\\{0,\\ldots,n\\}$, and let $c$ be one of its configurations whose state is present. Let $d$ be a configuration of the round machine on the same input, with state at the live entry, and suppose $d$ represents $c$ and the transition table of $M$. If $\\tau$ is the first positive time at which the round machine reaches either exit, then $0<\\tau\\le 50(L+1)$, where $L$ is the length of the encoded transition table. At time $\\tau$ the round machine is at the live exit exactly when the state of the one-step successor of $c$ is present; its configuration represents that successor and its output is unchanged. At every intermediate positive time before $\\tau$, it is at neither exit.",
+ "hypotheses_covered": [
+  "Natural parameters $k,n$",
+  "Finite binary input $x$",
+  "Machine $M$ with $k$ binary work tapes and states indexed by $\\{0,\\ldots,n\\}$",
+  "Configuration $c$ of $M$",
+  "The state of $c$ is present",
+  "Configuration $d$ of the round machine on input $x$",
+  "$d$ is at the live entry",
+  "$d$ represents $c$ and $M$'s transition table"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

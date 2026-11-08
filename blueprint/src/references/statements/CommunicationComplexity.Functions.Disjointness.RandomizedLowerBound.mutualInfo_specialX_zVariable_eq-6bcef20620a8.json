@@ -1,18 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mutualInfo_specialX_zVariable_eq_aliceCoarseInfoTermSpecialYFalse",
- "key": "4e2b22b89fa22e17",
+ "key": "d7627a48c67930ae",
  "kind": "theorem",
- "title": "Full Z-information equals the coarse-conditioned Alice term",
- "statement": "Let $n$ be a positive integer and let $p$ be a deterministic two-party communication protocol for disjointness inputs of length $n$. Let $\\mu$ denote the hard distribution on inputs, conditioned both on the event that Alice's and Bob's generated input sets are disjoint and on Bob's bit at the special coordinate being $\\mathrm{false}$. Write $T$ for the special coordinate, $X_T$ for Alice's bit at coordinate $T$, $X_{<T}$ for the string of Alice's input bits at coordinates below $T$ (set to $\\mathrm{false}$ at all other coordinates), $Y_{>T}$ for the string of Bob's input bits at coordinates above $T$ (set to $\\mathrm{false}$ at all other coordinates), and $M$ for the transcript that $p$ produces on the sampled input pair. Then, with every information quantity computed under $\\mu$,\n\\[\nI\\big(X_T ; (M,\\,T,\\,X_{<T},\\,Y_{>T})\\big) \\;=\\; I\\big(X_T ; M \\mid (T,\\,X_{<T},\\,Y_{>T})\\big).\n\\]",
+ "title": "Mutual Information and Coarse Conditioning",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic protocol for disjointness on length-$n$ inputs. Under the hard distribution conditioned on disjoint inputs and on Bob’s special-coordinate bit being false, the mutual information between Alice’s special-coordinate bit and the statistic recording the transcript, special coordinate, Alice’s bits before it, and Bob’s bits after it equals the conditional mutual information between Alice’s special-coordinate bit and the transcript given the special coordinate, Alice’s bits before it, and Bob’s bits after it.",
  "hypotheses_covered": [
-  "n is a positive integer",
-  "p is a deterministic protocol for length-n disjointness inputs",
-  "distribution conditioned on the generated inputs being disjoint",
-  "distribution further conditioned on Bob's special bit being false",
-  "Z packages the transcript M with the coarse variable (T, X_{<T}, Y_{>T})"
+  "$n$ is a positive integer",
+  "$p$ is a length-$n$ disjointness protocol"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "The full $Z=(M,coarse)$ mutual information is the coarse information term, because the coarse part alone is independent of $X_{T}$ under $D ∧ Y_{T}=false$."
+ "replaced": "Let $n$ be a positive integer and let $p$ be a deterministic two-party communication\nprotocol for disjointness inputs of length $n$. Let $\\mu$ denote the hard distribution\non inputs, conditioned both on the event that Alice's and Bob's generated input sets are\ndisjoint and on Bob's bit at the special coordinate being $\\mathrm{false}$. Write $T$\nfor the special coordinate, $X_T$ for Alice's bit at coordinate $T$, $X_{<T}$ for the\nstring of Alice's input bits at coordinates below $T$ (set to $\\mathrm{false}$ at all\nother coordinates), $Y_{>T}$ for the string of Bob's input bits at coordinates above $T$\n(set to $\\mathrm{false}$ at all other coordinates), and $M$ for the transcript that $p$\nproduces on the sampled input pair. Then, with every information quantity computed under\n$\\mu$,\n\\[\nI\\big(X_T ; (M,\\,T,\\,X_{<T},\\,Y_{>T})\\big) \\;=\\; I\\big(X_T ; M \\mid\n(T,\\,X_{<T},\\,Y_{>T})\\big).\n\\]"
 }

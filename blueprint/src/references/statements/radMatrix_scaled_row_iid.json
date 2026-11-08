@@ -1,0 +1,17 @@
+{
+ "lean_name": "radMatrix_scaled_row_iid",
+ "key": "0586ee79db56eb2a",
+ "kind": "lemma",
+ "title": "Independence of scaled row entries",
+ "statement": "Let $k,d$ be natural numbers, $x\\in\\mathbb{R}^d$, and let $i$ be one of the $k$ row indices. Under the product measure in which every array entry is an independent Rademacher random variable, the random variables $\\omega\\mapsto (x_j/\\sqrt{k})\\omega_{ij}$, indexed by the $d$ columns, are mutually independent.",
+ "hypotheses_covered": [
+  "$k,d$ are natural numbers",
+  "$x\\in\\mathbb{R}^d$",
+  "$i$ is a row index among the $k$ rows",
+  "the underlying measure is the product Rademacher measure on all array entries"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix natural numbers $k, d$, a vector $x \\in \\bbr^d$, and a row index $i \\in\n\\{1,\\dots,k\\}$. Under the joint Rademacher product measure on\n$\\mathrm{Rad\\Omega}(k,d)$, the family of real random variables\n\\[\n\\omega \\;\\longmapsto\\; \\frac{x_j}{\\sqrt{k}}\\,\\omega_{ij}, \\qquad j \\in \\{1,\\dots,d\\},\n\\]\nindexed by the columns of row $i$, is mutually independent."
+}

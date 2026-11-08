@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.sub_binTail_le_hitProb",
+ "key": "d14ac3f94251628a",
+ "kind": "theorem",
+ "title": "Binomial-tail lower bound for hitting probability",
+ "statement": "Let $V$ be a finite set, let $G$ be a directed graph on $V$, and define the out-neighbors of a vertex by its directed edges. For a symmetric relation $r$ on $\\{0,\\ldots,n-1\\}$, let $B_D(m,j)$ be given by $B_D(m,0)=0$, $B_D(0,j+1)=1$, and $B_D(m+1,j+1)=B_D(m,j)/D+(1-1/D)B_D(m,j+1)$; let the padded graph use $D$ edge slots per vertex, sending slots beyond the first $n$ to the vertex itself. For every $m,j$ and starting vertex $s$, the hitting probability of a target $t$ in $G$ after $j$ independent uniform out-neighbor steps, minus $B_D(m,j)$, is at most the hitting probability of $t$ after $m$ such steps in the padded graph, provided $n\\le D$.",
+ "hypotheses_covered": [
+  "$V$ is finite and has decidable equality",
+  "$G$ is a directed graph on $V$ with decidable adjacency",
+  "$r$ is a decidable symmetric relation on $\\mathrm{Fin}(n)$",
+  "$D$ is a natural number with $n\\le D$",
+  "$t$ is a target vertex",
+  "The inequality holds for every pair of natural numbers $m,j$ and every starting vertex $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

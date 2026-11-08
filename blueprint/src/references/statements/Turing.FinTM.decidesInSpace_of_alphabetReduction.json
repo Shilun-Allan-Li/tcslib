@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.decidesInSpace_of_alphabetReduction",
+ "key": "e9c18f4135386401",
+ "kind": "theorem",
+ "title": "Space-efficient alphabet reduction",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an injection, let $D$ be a finite Turing machine over $\\Gamma$, let $L$ be a language of binary strings, and let $S:\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every binary string $x$, the machine $D$ computes the letterwise image under $e$ of the one-symbol output indicating whether $x\\in L$, on input the letterwise image of $x$; and suppose that for every $\\Gamma$-string $y$ and every time $t$, its computation from input $y$ uses at most $S(|y|)$ space. Then there are a natural number $c$ and a finite Turing machine $M$ over the Boolean alphabet that decides $L$ using at most $c(S(n)+1)$ space on inputs of length $n$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite and has decidable equality",
+  "$e$ is an injection from the Boolean alphabet into $\\Gamma$",
+  "$D$ is a finite Turing machine over $\\Gamma$",
+  "$L$ is a language of binary strings",
+  "$S$ is a natural-number-valued function on natural numbers",
+  "For each binary input, $D$ computes the encoded membership-indicator output on the encoded input within some time",
+  "For every $\\Gamma$-input and every time, $D$ uses space at most $S$ of the input length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

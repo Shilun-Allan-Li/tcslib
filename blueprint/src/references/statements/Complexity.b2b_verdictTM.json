@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.b2b_verdictTM",
+ "key": "31d595d245e6a1e6",
+ "kind": "def",
+ "title": "Boolean work tape verdict machine",
+ "statement": "For a natural number $k$ and a selected work tape $i$ among the $k$ work tapes, define a Turing machine with Boolean symbols and states $\text{left}$, $\text{read}$, and $\text{done}(b)$ for $b\\in\\{\\mathrm{false},\\mathrm{true}\\}$. Its initial state is $\text{left}$. In state $\text{left}$ it moves the head of work tape $i$ one cell left and enters $\text{read}$; in state $\text{read}$, if the scanned cell contains $b$, it erases that cell and enters $\text{done}(b)$, while a blank cell leads to $\text{done}(\\mathrm{false})$ without changing the tape. In state $\text{done}(b)$ it remains in that state without moving the input head.",
+ "hypotheses_covered": [
+  "The number $k$ of work tapes is a natural number",
+  "The selected tape index $i$ belongs to the $k$ work tapes",
+  "The symbol alphabet is Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

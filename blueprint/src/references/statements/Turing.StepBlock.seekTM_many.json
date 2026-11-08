@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.seekTM_many",
+ "key": "d9480f776d0e6147",
+ "kind": "lemma",
+ "title": "Search through a list of records",
+ "statement": "Let $k,n$ be nonnegative integers, let $x$ be a finite binary input, and let $A$ be a nonempty list of transition actions with at most $3^{k+1}$ entries. Let $d$ be a configuration whose state is the recording machine's initial state, and suppose its table tape stores the bit encoding of $A$ consecutively from the head. For any control rank $r$ and Boolean flag $b$, start the search machine in the request state with rank $r$, remaining count $|A|-1$, and flag $b$. After $\\operatorname{cost}(A)$ steps, its remaining count has been processed and it is in the done state if $b$ is true, and otherwise in the state carrying rank $r$. Its table head has advanced by the encoding length of $A$, and all other tape contents, the input-head position, and the output are unchanged; every other work-tape head remains fixed. It does not reach the done state at an earlier time.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb{N}$ and finite binary input $x$",
+  "nonempty action list $A$",
+  "$|A|\\le 3^{k+1}$",
+  "configuration $d$",
+  "$d$ is in the recording machine's initial state",
+  "table tape stores the encoding of $A$ consecutively from the head",
+  "control rank $r$",
+  "Boolean flag $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_integral_density",
+ "key": "fde54acb93cd2b69",
+ "kind": "lemma",
+ "title": "Density formula for the averaged indicator",
+ "statement": "Let $n\\ge0$, let $A\\subseteq\\mathbb R^n$ be measurable, let $u\\in\\mathbb R$ satisfy $\\sin u\\ne0$, and let $x\\in\\mathbb R^n$. Then\n\\[\nu_u(x)=\\int_{\\mathbb R^n}\\left(\\prod_{i=1}^n p_{\\sin^2 u}(\\cos u\\,x_i,z_i)\\right)1_A(z)\\,dz,\n\\]\nwhere $u_u(x)=\\int 1_A(\\cos u\\,x+\\sin u\\,y)\\,d\\gamma_n(y)$ and $p_v(c,z)$ is the density at $z$ of a Gaussian random variable with mean $c$ and variance $v$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ is measurable",
+  "$u$ is real and $\\sin u\\ne0$",
+  "$x\\in\\mathbb R^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$. For $A\\subseteq\\mathbb R^n$ and $\\theta\\in\\mathbb R$, put $u_\\theta(x)=\\int1_A(\\cos\\theta\\,x+\\sin\\theta\\,y)\\,d\\gamma_n(y)$. If $A$ is measurable and $\\sin u\\ne0$, then for all $x\\in\\mathbb R^n$, $u_u(x)=\\int_{\\mathbb R^n}\\prod_i p_{\\sin^2u}(\\cos u\\,x_i,z_i)1_A(z)\\,dz$, where $p_v(c,z)$ is the $N(c,v)$ density."
+}

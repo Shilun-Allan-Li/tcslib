@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_prepare_suffix",
+ "key": "ffac47ab2291c2a1",
+ "kind": "lemma",
+ "title": "Suffix-copying configurations",
+ "statement": "Let $w$ and $s$ be Boolean words, and let $o$ be a Boolean flag. For every natural number $j$ with $j\\leq |w.\\mathrm{drop}(|s|)|$, after $j$ steps from the preparation configuration in phase $1$ with candidate and copy tapes both containing $s$, empty suffix tape, input head at the saturated position after $|s|$ cells, and work-head positions $|s|$ and $0$, the candidate and copy tapes remain unchanged, the suffix tape contains the first $j$ symbols of the suffix of $w$ after $s$, and the input and suffix-tape heads are at the saturated position after $|s|+j$ cells and at position $j$, respectively. The phase and flag remain $1$ and $o$.",
+ "hypotheses_covered": [
+  "Boolean words $w$ and $s$",
+  "Boolean flag $o$",
+  "Natural number $j$",
+  "$j\\leq |w.\\mathrm{drop}(|s|)|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j$ at most the length of the native suffix after position\n$\\abs{s}$, $j$ steps of the preparation machine in its suffix phase copy the\nfirst $j$ bits of that suffix onto the third tape and advance the native\nhead accordingly; the other tapes are unchanged."
+}

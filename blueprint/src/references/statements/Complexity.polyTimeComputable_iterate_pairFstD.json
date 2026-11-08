@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_iterate_pairFstD",
+ "key": "74227330962ae47a",
+ "kind": "theorem",
+ "title": "Iterated first projection is polynomial-time",
+ "statement": "For every $n\\in\\mathbb{N}$, the $n$-fold iterate of the total first projection on bit strings is polynomial-time computable; the zeroth iterate is the identity function.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\pi_1$ be the total first projection, which sends a bit string of the form $\\langle a,b\\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and any other bit string to the empty word. For every $n \\in \\mathbb{N}$, the $n$-fold iterate $\\pi_1^{n} = \\pi_1 \\circ \\cdots \\circ \\pi_1$ (the identity for $n = 0$), which extracts the root of a left-nested tuple, is polynomial-time computable."
+}

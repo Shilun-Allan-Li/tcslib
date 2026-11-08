@@ -147,7 +147,7 @@ complexity of $f$ is at most $n + \lceil \log_2 \abs{\alpha} \rceil$.
 \lean{CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le_bool}
 \label{CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le_bool}
 \leanok
-\uses{CommunicationComplexity.Deterministic.OneWay.communicationComplexity, CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le, CommunicationComplexity.Deterministic.communicationComplexity}
+\uses{CommunicationComplexity.Deterministic.OneWay.clog_two_two, CommunicationComplexity.Deterministic.OneWay.communicationComplexity, CommunicationComplexity.Deterministic.OneWay.deterministic_communicationComplexity_le_of_oneWay_le, CommunicationComplexity.Deterministic.communicationComplexity}
 \difficulty{3}
 Let $X$ and $Y$ be the input types of Alice and Bob, and let $f : X \to Y \to
 \mathrm{Bool}$ be a two-party Boolean-valued function. If the one-way deterministic
@@ -158,12 +158,10 @@ communication complexity of $f$ is at most $n$ for some $n \in \bbn$, then the
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{theorem}[Ceiling log base two of two]
+\begin{theorem}[Ceiling logarithm of two]
 \lean{CommunicationComplexity.Deterministic.OneWay.clog_two_two}
 \label{CommunicationComplexity.Deterministic.OneWay.clog_two_two}
 \leanok
-The ceiling of the base-$2$ logarithm of $2$ equals $1$: in Lean's natural-number
-ceiling logarithm, $\lceil \log_2 2 \rceil = 1$. This is the numeric fact used to
-specialize the additive $\lceil \log_2 \abs{\alpha} \rceil$ overhead to $1$ for
-Boolean-valued functions.
+\difficulty{1}
+The ceiling of the base-$2$ logarithm of $2$ is $1$.
 \end{theorem}

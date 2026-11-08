@@ -1,0 +1,17 @@
+{
+ "lean_name": "Randomized.AlgGate.parse",
+ "key": "cc4dc69ebd4fc9c8",
+ "kind": "def",
+ "title": "Parsing an arithmetic gate",
+ "statement": "Given a natural number $n$ and a Boolean list, parse its initial three bits as an operation tag. Tags $000$, $001$, $010$, $011$, and $100$ specify, respectively, an input variable, the constant $1$, addition, subtraction, and multiplication; all other tags and incomplete tags fail. For an input-variable tag, decode one natural number and return that variable only if its index is less than $n$; for a binary-operation tag, decode two successive natural numbers and return the corresponding gate, in each case preserving the unconsumed suffix. The constant tag returns the constant and the suffix following its tag.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A Boolean list to parse",
+  "Input-variable index must be less than $n$",
+  "Each required natural-number decoding must succeed"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clVisitRows_native",
+ "key": "1bf6bd4a70190678",
+ "kind": "lemma",
+ "title": "Polynomial-time visit table",
+ "statement": "For every finite-state binary Turing machine $M$ and natural numbers $C,e,c,A,d$, the function that sends a Boolean word $x$ to the table of visit rows for $M,C,e,x$, with count $c\\,(A(|x|+C(|x|+1)^e+1)^d+1)^2+1$, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "A finite-state binary Turing machine M",
+  "Natural-number parameters C, e, c, A, and d"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine and parameters $C, e, c, A, d$, the function sending an instance $x$ to the ordered table of visit rows for all times up to the producer horizon plus one is polynomial-time computable: the retained instance and empty table start the loop, a clean call executes each full row step, the repetition controller runs the exact unary number of calls with a quadratic bound on all intermediate state words, and a native projection returns precisely the stored rows."
+}

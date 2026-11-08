@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.exists_replayCanonizer",
+ "key": "effec44869a7efb7",
+ "kind": "theorem",
+ "title": "Replay Machine Serialization",
+ "statement": "For every effective code system $c$ for two-work-tape nondeterministic binary machines, there are a finite-state deterministic binary machine $M$ and a function $T:\\mathbb{N}\\to\\mathbb{N}$ such that, on every binary string $\\alpha$, $M$ computes in time $T(|\\alpha|)$ the fixed serialization of the deterministic replay machine obtained from the machine decoded from $\\alpha$.",
+ "hypotheses_covered": [
+  "$c$ is an effective code system for two-work-tape nondeterministic binary machines"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective code system for two-work-tape nondeterministic binary Turing\nmachines, there exist a finite-state deterministic binary Turing machine $M$ and a\ntime-bound function $T:\\mathbb{N}\\to\\mathbb{N}$ such that, on every binary string\n$\\alpha$, $M$ halts within $T(|\\alpha|)$ steps and outputs the fixed serialization of\nthe deterministic replay machine associated with the machine decoded from $\\alpha$."
+}

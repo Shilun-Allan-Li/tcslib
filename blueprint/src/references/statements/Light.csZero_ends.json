@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.csZero_ends",
+ "key": "1cb6f439a4daf40c",
+ "kind": "theorem",
+ "title": "Counting-sort counter initialization",
+ "statement": "Let a counting-sort input have $n$ items and $N$ buckets, with the word and address bounds and required disjointness conditions for the source, destination, and counter ranges and key cells. From any state with arbitrary loop index, other loop variables, and memory agreeing with the initial memory outside the destination and counter ranges, the counter-initialization program has an execution of cost at most $15N+23$ ending with loop index $N+1$, with counters $0$ through $N$ all equal to zero and memory still agreeing with its initial value outside the destination and counter ranges.",
+ "hypotheses_covered": [
+  "Counting-sort preconditions: word bound, source/destination/counter bounds, item and key contents, key range, and required interval disjointness",
+  "Initial state has arbitrary loop index, arbitrary other loop variables, and agrees with initial memory outside destination and counter ranges"
+ ],
+ "confidence": "low",
+ "caveat": "The state predicate and initialization postcondition are bundled formal definitions not described in the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

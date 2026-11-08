@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timedCut_no_record",
+ "key": "38cb15536cb2af14",
+ "kind": "lemma",
+ "title": "No Pending Action Before a Live Endpoint",
+ "statement": "Let $x$ be a Boolean input word and $c$ a configuration of the stopped four-tape interpreter on input $x$. If $s<t$ and the interpreter has not halted at time $t$ from $c$, then at time $s$ its control state is not any pending-action state, for every choice of the eight action bits and halting flag.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "four-tape interpreter configuration $c$ on input $x$",
+  "natural numbers $s,t$ with $s<t$",
+  "interpreter is live at time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the stopped table interpreter has not halted after $t$ steps from a\nconfiguration, then at every time $s < t$ its control is not a pending-action\nstate, because the stopped interpreter halts one step after reaching such a\nstate."
+}

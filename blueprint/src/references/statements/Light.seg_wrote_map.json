@@ -1,0 +1,12 @@
+{
+ "lean_name": "Light.seg_wrote_map",
+ "key": "20538a3e671629cb",
+ "kind": "theorem",
+ "title": "A Mapped List in a Written Segment",
+ "statement": "Let $\\mu:\\mathbb{N}\\to\\mathbb{Z}$, let $d\\in\\mathbb{N}$, let $g:\\mathbb{Z}\\to\\mathbb{Z}$, and let $L$ be a finite list of integers. Write the values $g(L_i)$ into $\\mu$ starting at $d$, using the offset $i$ for each entry. The resulting sequence represents the list obtained by applying $g$ to each entry of $L$, starting at $d$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mu:\\mathbb{N}\\to\\mathbb{Z}$, $g:\\mathbb{Z}\\to\\mathbb{Z}$, and let $L$ be a finite\nlist of integers. Define a sequence to equal $g(L_i)$ at indices $a$ from $d$ through\n$d+|L|-1$, using the offset $i=a-d$, and to equal $\\mu(a)$ elsewhere. The values of this\nsequence starting at index $d$ agree with the list obtained by applying $g$ to each\nentry of $L$."
+}

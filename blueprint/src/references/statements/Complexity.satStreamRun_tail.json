@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satStreamRun_tail",
+ "key": "7a51eb1c230f931d",
+ "kind": "lemma",
+ "title": "Tail phase schedule",
+ "statement": "Let $C$ be a clause of literals over natural-numbered variables, let $x$ be a bit string, and let $\\mathrm{pre}$ and $\\mathrm{rest}$ be bit strings with $x=\\mathrm{pre}\\,\\mathrm{enc}(C)\\,\\mathrm{rest}$. For every fresh cursor $j\\in\\mathbb{N}$, running $|C|+1$ rounds from tail phase with cursor $j$ and consumed length $|\\mathrm{pre}|$ emits the pending tail output for $C$ at cursor $j$, and ends in formula phase with its final cursor and consumed length $|\\mathrm{pre}|+|\\mathrm{enc}(C)|$.",
+ "hypotheses_covered": [
+  "Clause $C$ of literals over natural-numbered variables",
+  "Input bit string $x$",
+  "Prefix and suffix bit strings $\\mathrm{pre}$ and $\\mathrm{rest}$ satisfying $x=\\mathrm{pre}\\,\\mathrm{enc}(C)\\,\\mathrm{rest}$",
+  "Fresh cursor $j\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input contain a serialized clause tail $C$ at the consumed position, with\nthe seam in the tail phase at cursor $j$. Then exactly $|C| + 1$ rounds — one per\nremaining literal plus one for the clause terminator — consume the serialized\ntail, emit exactly the pending tail output of $C$ at $j$, return to the formula\nphase, and leave the cursor at the tail's final value."
+}

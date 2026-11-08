@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassP/BinaryArith/Jacobi.lean :: Complexity.BinArith.polyTimeComputable_jacobiAlg -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Jacobi Algorithm
+
+**Claim.** The function defined by the specified Jacobi algorithm is polynomial-time computable.
+
+**Proof.** Initialize the iteration with the two decoded inputs and the initial sign marker. The first- and second-component projections, constant sign word, and pair encoding show that this initialization is polynomial-time computable (`polyTimeComputable_pairFstD`, `polyTimeComputable_pairSndD`, `polyTimeComputable_const`, `PolyTimeComputable.pairEncode`). The initialization also satisfies the Jacobi invariant: its two numerical components are the decoded inputs, their lengths are bounded by the input length (`length_pairFstD_le`, `length_pairSndD_le`), and its sign marker has the required initial value. The invariant is preserved by each Jacobi step (`jacInv_step`); induction over the number of steps therefore gives it throughout the iteration (`iterate_invariant`). In particular, it supplies the polynomial bound on all intermediate lengths required to apply bounded iteration (`polyTimeComputable_iterate`) for the $2(|z|+1)$ steps in the algorithm. Finally, the output rule tests the specified encoded equality and, when it holds, reads the sign bit to choose its result; equality testing, slot projection, head reading, and conditional selection are polynomial-time computable (`polyTimeComputable_beq`, `polyTimeComputable_slot2`, `polyTimeComputable_slot3`, `polyTimeComputable_headD`, `polyTimeComputable_ite`). Composing this output rule with the iteration proves the result (`PolyTimeComputable.comp`).
+
+**Key facts.** `Complexity.length_pairFstD_le`, `Complexity.length_pairSndD_le`, `Complexity.BinArith.iterate_invariant`, `Complexity.BinArith.jacInv_step`, `Complexity.BinArith.polyTimeComputable_pairFstD`, `Complexity.BinArith.polyTimeComputable_pairSndD`, `Complexity.polyTimeComputable_const`, `Complexity.PolyTimeComputable.pairEncode`, `Complexity.BinArith.polyTimeComputable_jacStep`, `Complexity.BinArith.polyTimeComputable_iterate`, `Complexity.BinArith.polyTimeComputable_beq`, `Complexity.BinArith.polyTimeComputable_slot2`, `Complexity.BinArith.polyTimeComputable_slot3`, `Complexity.polyTimeComputable_headD`, `Complexity.polyTimeComputable_ite`, `Complexity.PolyTimeComputable.comp`.

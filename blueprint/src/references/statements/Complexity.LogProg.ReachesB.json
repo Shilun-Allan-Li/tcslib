@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.ReachesB",
+ "key": "b19516dc8e9c2462",
+ "kind": "def",
+ "title": "Bounded register reachability",
+ "statement": "Let $P$ be a register program with oracle $\text{oracle}$, and let $c_0,c_1,c$ be configurations on input $x$, with register $r$ and integer bound $L$. The predicate holds if there is a time $T$ such that running $P$ with the oracle from $c_0$ for $T$ steps gives $c_1$, and for every $t<T$ there are a state $s$, input-head position $ip$, and integer $q$ such that the configuration at time $t$ equals the configuration obtained by replacing the corresponding register data of $c$ by $s,ip,r,q$, the program has no call at $s$, and $-1\\le q\\le L$.",
+ "hypotheses_covered": [
+  "A register program $P$",
+  "An oracle from indices in $\\{0,\\ldots,d-1\\}$ and Boolean strings to Booleans",
+  "Three configurations $c_0,c_1,c$ on input $x$",
+  "A register index $r$ among $m$ registers",
+  "An integer bound $L$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the run relation or the configuration constructor used in the intermediate-time condition, so their operational meaning is only described structurally.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/ZeroPPIT.lean :: Randomized.pitVerifier_spec -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial identity testing verifier specification
+
+**Claim.** For inputs outside the circuit-equality language, the verifier accepts with probability at least $2/3$; for inputs in the language, it rejects on every random string of the specified length.
+
+**Proof.** For the soundness direction, first split according to whether the two projections decode to well-formed circuits with a common input count. If no such pair exists, the invalid-pair verifier fact (`Randomized.pitVerifier_of_not`) says the verifier accepts on every random string, so its acceptance probability is $1$. Otherwise let the decoded circuits be $C,C'$. Since the input is outside the language, their represented polynomials differ: the language characterization (`Randomized.mem_PITLang_iff`) would otherwise put the input in the language. The subcircuit characterization of equality (`Randomized.AlgCircuit.toMvPolynomial_eq_iff_subCircuit`) therefore says the polynomial of the circuit computing their difference is nonzero.
+
+The encoded projections bound the input-variable counts and circuit sizes: apply the decoded-encoding recovery fact (`Randomized.AlgCircuit.encode_of_decode`) and the encoding length bound (`Randomized.AlgCircuit.lt_length_encode`). The pair-encoding length formula (`Turing.length_pairEncode`) relates these projection lengths to the length of the whole input. Together with the size formula for the difference circuit (`Randomized.AlgCircuit.size_subCircuit`), these bounds imply that the zero test's required random-string length is at most the verifier's allotted polynomial length (`Randomized.testLen_le_polyLen_of_le`). On each random string, the decoded verifier formula (`Randomized.pitVerifier_of_decode`) identifies acceptance with the difference circuit's zero test returning false. Equality of the corresponding random-event probabilities follows by event congruence (`Randomized.randProb_congr`); soundness of the nonzero-polynomial zero test (`Randomized.AlgCircuit.zeroTest_sound`) then gives the lower bound $2/3$.
+
+For completeness, take an input in the language and use its circuit-pair characterization (`Randomized.mem_PITLang_iff`) to obtain well-formed decoded circuits whose polynomials agree. Their difference circuit has zero polynomial by `Randomized.AlgCircuit.toMvPolynomial_eq_iff_subCircuit`. The zero test on a zero-polynomial circuit always returns true (`Randomized.AlgCircuit.zeroTest_of_toMvPolynomial_eq_zero`). The decoded verifier formula therefore makes the verifier return false for every random string.
+
+**Key facts.** `Randomized.pitVerifier_of_not`, `Randomized.mem_PITLang_iff`, `Randomized.AlgCircuit.toMvPolynomial_eq_iff_subCircuit`, `Randomized.AlgCircuit.encode_of_decode`, `Randomized.AlgCircuit.lt_length_encode`, `Turing.length_pairEncode`, `Randomized.AlgCircuit.size_subCircuit`, `Randomized.testLen_le_polyLen_of_le`, `Randomized.pitVerifier_of_decode`, `Randomized.randProb_congr`, `Randomized.AlgCircuit.zeroTest_sound`, `Randomized.AlgCircuit.zeroTest_of_toMvPolynomial_eq_zero`.

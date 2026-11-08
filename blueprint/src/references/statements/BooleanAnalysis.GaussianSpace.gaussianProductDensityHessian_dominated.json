@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussianProductDensityHessian_dominated",
+ "key": "75930c21562879c5",
+ "kind": "lemma",
+ "title": "Integrable envelope for the Gaussian Hessian",
+ "statement": "Let $I$ be finite, let $v\\ge0$ with $v\\ne0$, and let $M\\ge0$. There is a nonnegative function $b:\\mathbb R^I\\to\\mathbb R$ that is integrable with respect to Lebesgue measure on $\\mathbb R^I$ and bounds the operator norm of the product Gaussian density Hessian at every $z\\in\\mathbb R^I$, uniformly over all $m\\in\\mathbb R^I$ with $|m_i|\\le M$ for every $i\\in I$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$v\\ge0$ and $v\\ne0$",
+  "$M\\ge0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Put $G_v(c,z)=\\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\\sum_i h_i k_i/v)$. If $v>0$ and $M\\ge0$, there is a nonnegative Lebesgue-integrable $b:\\mathbb R^I\\to\\mathbb R$ such that $\\|T_v(m,z)\\|\\le b(z)$ for every $z$ and every $m$ satisfying $|m_i|\\le M$ for all $i$; the bilinear operator norm uses maximum norms."
+}

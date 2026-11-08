@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_extract_block",
+ "key": "d8fa121f323726da",
+ "kind": "lemma",
+ "title": "Two-Step Extraction of a Pair",
+ "statement": "Let $first,second\\in\\{\\mathrm{false},\\mathrm{true}\\}$ and let Boolean words satisfy $x=pre\\mathbin{++}[b,c]\\mathbin{++}rest$. Starting from the extractor configuration at position $|pre|$ with state indicating that it is ready to read the first symbol, tape word $a$, head at $|a|$, and empty output, after two steps the configuration is at position $|pre|+2$ with tape word and head position unchanged and empty output if $b=c$; if $b\\ne c$ and $b$ is true, it is halted with those same tape and output contents; if $b$ is false, it is in state $0$ with tape word $a$, head position $|a|-1$ (truncated at zero), and empty output.",
+ "hypotheses_covered": [
+  "first and second are Boolean flags",
+  "x, pre, rest, and a are Boolean words",
+  "b and c are Booleans",
+  "x=pre ++ [b,c] ++ rest"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

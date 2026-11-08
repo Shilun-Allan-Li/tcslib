@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.or_of_lit_children_dnf",
- "key": "be0f50fbfa4359db",
+ "key": "23a7dccd4ed912d4",
  "kind": "lemma",
  "title": "DNF for an OR of literals over gate functions",
  "statement": "Fix natural numbers $m,n$ and a width bound $l$. Let $c_1,\\dots,c_k$ be Boolean circuits on $m$ variables, each of which is a single literal, and let $N$ be the OR node whose children are exactly these circuits. Suppose that to each variable index $i \\in \\mathrm{Fin}\\,m$ there is associated a gate function $g_i$ taking a Boolean assignment $x : \\mathrm{Fin}\\,n \\to \\{0,1\\}$ to a Boolean value, and that every $g_i$ is computed both by some DNF formula on the $n$ inputs of width at most $l$ and by some CNF formula on the $n$ inputs of width at most $l$. Then the composite function $x \\mapsto N\\bigl((g_i(x))_{i}\\bigr)$ — the disjunction of the literal children evaluated at the gate values $g_i(x)$ — is itself computed by a DNF formula $\\varphi$ on the $n$ inputs of width at most $l$, in the sense that $\\varphi(x)$ equals the value of $N$ on the assignment $i \\mapsto g_i(x)$ for every $x$.",

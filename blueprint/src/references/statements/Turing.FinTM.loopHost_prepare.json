@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_prepare",
+ "key": "908a3a350e977262",
+ "kind": "lemma",
+ "title": "Preparation reaches startup",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose the forward and find-mode settings, and let $R,T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every input word $x$, the fuel machine halts within $T(|x|)$ steps, outputs the binary digit word of $R(|x|)$, and uses some amount of space. Then for every Boolean input $x$, there are a fuel configuration $c$ and a time $t$ such that $c$ is halted, its output is the binary digit word of $R(|x|)$, $t\\le 5T(|x|)+7$, and the loop host run for $t$ steps from its initial configuration on $x$ equals the prepared startup configuration built from $c$.",
+ "hypotheses_covered": [
+  "Boolean finite machines B and F",
+  "anchor state a of B",
+  "forward setting",
+  "find-mode setting",
+  "functions R and T from natural numbers to natural numbers",
+  "F computes the binary digit word of R(input length) in time T(input length)",
+  "Boolean input x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the fuel machine compute, in time $T$, the function sending each input $x$ to the\nbinary digit word of $R(|x|)$. Then for every input $x$ there are a halted fuel\nconfiguration $c$ with output exactly that digit word and a time $t \\le 5\\,T(|x|) + 7$\nsuch that the loop host, run for $t$ steps from its initial configuration on $x$,\nreaches the prepared startup configuration built from $c$."
+}

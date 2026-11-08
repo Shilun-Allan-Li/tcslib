@@ -1,0 +1,15 @@
+{
+ "lean_name": "FABL.innerProductLinearPCPPSystem",
+ "key": "fb872d7856585ce7",
+ "kind": "def",
+ "title": "Linear PCPP verifier system",
+ "statement": "For each positive natural number $m$, there is a Boolean proof-carrying property-testing system whose input has length $2m$, whose proof has length $2m+1$, and whose verifier makes three nonadaptive query slots. Its seed is uniform over the linear check seed space. For a Boolean seed, it queries the corresponding proof prefix position in the first slot and makes no other queries. For a seed $(i,\text{false})$, it queries the two input positions in the two blocks at index $i$, then the corresponding proof product position. For a seed $(i,\text{true})$, it queries the proof prefix positions corresponding to $i$ and $i+1$ and the proof product position at $i$. It accepts by the linear transcript acceptance rule.",
+ "hypotheses_covered": [
+  "$m$ is a natural number",
+  "$m$ is positive"
+ ],
+ "confidence": "low",
+ "caveat": "The designated proof positions are expressed using index functions whose definitions were not supplied, so their exact coordinate numbering cannot be given.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.universal_from_blocks",
+ "key": "72cb8e9e39c71032",
+ "kind": "lemma",
+ "title": "Linear time bounds from simulation relations",
+ "statement": "Let $c$ be an effective machine-coding scheme, let $U$ be a finite-tape binary machine, and let $S,B$ be functions assigning natural-number bounds to bit strings. Suppose a relation is specified between configurations of the machine decoded from each $\\alpha$ on input $x$ and configurations of $U$ on the paired encoding of $\\alpha$ and $x$. Assume that for every $\\alpha,x$, a related pair is reached from the two initial configurations after some number of steps; each related pair advances to a related pair when the source takes one step and $U$ takes between $1$ and $B(\\alpha)$ steps; related configurations halt simultaneously; and related configurations have equal outputs. Then for every $\\alpha$ there is a natural number $C$ such that, for every $x$, any output computed by the decoded machine within $t$ steps is computed by $U$ within $C(t+1)$ steps, and every output computed by $U$ at some time is computed by the decoded machine at some time.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-coding scheme",
+  "$U$ is a finite-tape binary machine",
+  "$S$ assigns a natural-number bound to each bit string",
+  "$B$ assigns a natural-number bound to each bit string",
+  "A relation is given for every code string and input between source and target configurations",
+  "For every $\\alpha,x$, some related pair is reached from the two initial configurations within $S(\\alpha)$ target steps",
+  "For every related pair, the source one-step successor is related to a target configuration reached in $d$ steps with $1\\le d\\le B(\\alpha)$",
+  "Related configurations halt simultaneously",
+  "Related configurations have equal outputs",
+  "For every $\\alpha$ there is a natural number $C$ satisfying both computation implications"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-coding scheme, let $U$ be a finite-tape binary machine,\nand let $S,B$ assign natural-number bounds to each bit string. Suppose a relation is\ngiven, for every code string $\\alpha$ and input $x$, between configurations of the\nmachine decoded from $\\alpha$ on $x$ and configurations of $U$ on\n$\\langle\\alpha,x\\rangle$. Assume that for every $\\alpha,x$, a related pair is reached\nfrom the two initial configurations within $S(\\alpha)$ steps of $U$; that each related\npair advances from the source machine’s one-step successor to a related target\nconfiguration in between $1$ and $B(\\alpha)$ target steps; that related configurations\nhalt simultaneously; and that related configurations have equal outputs. Then for every\n$\\alpha$ there is a constant $C$ such that, for every input $x$, any output computed by\nthe decoded machine within $t$ steps is computed by $U$ on $\\langle\\alpha,x\\rangle$\nwithin $C(t+1)$ steps, and every output computed by $U$ on that paired input at some\ntime is computed by the decoded machine on $x$ at some time."
+}

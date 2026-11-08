@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clockStageCfg_captures",
+ "key": "9ebbbca64e3b6421",
+ "kind": "lemma",
+ "title": "Schedule captures a halted clock configuration",
+ "statement": "Let $W$ be a finite-state binary machine, let $a,b$ be natural numbers, and let $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every Boolean input word $x$, $W$ halts within $b(T(|x|)+1)$ steps and outputs the binary representation of $T(|x|)$. For every such $x$, there are a time $\\tau\\le b(T(|x|)+1)$ and a halted configuration $c$ of $W$ on $x$ whose output is that binary representation, such that the length-only schedule machine, started on the bit-encoded input, reaches the clock-stage configuration associated with $c$ after $\\tau+1$ steps.",
+ "hypotheses_covered": [
+  "finite-state binary machine W",
+  "natural numbers a and b",
+  "time-bound function T",
+  "for every input x, W computes the binary representation of T(|x|) within b(T(|x|)+1) steps",
+  "input word x",
+  "time τ ≤ b(T(|x|)+1)",
+  "configuration c is halted and has the specified output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a binary machine, let $a$ and $b$ be constants, and let a time bound $T$ be\nsuch that on every input $x$, the machine $W$ outputs the binary representation of\n$T(|x|)$ within $b\\,(T(|x|)+1)$ steps.  Then for every input $x$ there exist a time\n$\\tau \\le b\\,(T(|x|)+1)$ and a halted configuration $c$ of $W$ on $x$ whose output is\nthe binary representation of $T(|x|)$, such that running the schedule controller for\n$\\tau + 1$ steps from its initial configuration on the block-encoded input equals the\nclock-stage configuration of $c$.  No assumption that $W$ is oblivious is used."
+}

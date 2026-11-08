@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.CsPlaced.succ",
+ "key": "f8c1a5fba2e84cd9",
+ "kind": "theorem",
+ "title": "Successor placement invariant",
+ "statement": "Let $n$, $src$, $dst$, $key$, $stride$, $off$, $nb$, and $cnt$ be natural numbers, and let $it,kf:\\mathbb{N}\\to\\mathbb{N}$ and $\\mu,\\mu':\\mathbb{N}\\to\\mathbb{Z}$. Let the resource limits be $word\\in\\mathbb{Z}$ and $space,depth\\in\\mathbb{N}$. Assume $space\\le word$; the source, destination, and counter intervals, of lengths $n,n,nb+1$ respectively, fit within $space$ and are pairwise apart; and for every $r<n$, the source cell at $src+r$ contains $it(r)$, the key cell at $key+it(r)\\cdot stride+off$ lies within $space$ and outside both the destination and counter intervals, and contains $kf(r)<nb$. Assume also that $i<n$ and that, for every $t<nb$, the cell at $cnt+t$ in $\\mu'$ contains the number of indices $r<n$ with $kf(r)<t$ plus the number of indices $r<i$ with $kf(r)=t$, while for every $j<i$, the cell at $dst+p(j)$ contains $it(j)$, where $p(j)$ is the number of indices $r<n$ with $kf(r)<kf(j)$ plus the number of indices $r<j$ with $kf(r)=kf(j)$. Form a new memory map by first setting the cell at $dst+p(i)$ to $it(i)$ and then setting the cell at $cnt+kf(i)$ to $p(i)+1$. In the resulting map, for every $t<nb$ the cell at $cnt+t$ contains the number of indices $r<n$ with $kf(r)<t$ plus the number of indices $r<i+1$ with $kf(r)=t$, and for every $j<i+1$ the cell at $dst+p(j)$ contains $it(j)$.",
+ "hypotheses_covered": [
+  "$space\\le word$",
+  "Source, destination, and counter intervals fit within $space$",
+  "Source, destination, and counter intervals are pairwise apart",
+  "Each source cell contains its specified item",
+  "Each item's key cell lies within space and outside the destination and counter intervals",
+  "Each key cell contains the specified key, which is below $nb$",
+  "$i<n$",
+  "The counter cells contain the counts prescribed at stage $i$",
+  "The destination cells contain the specified items at their stable sorting positions for all $j<i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A$ describe $n$ items, source and destination ranges, key cells, a key bound $N_b$,\nand a counter range, and let $\u001b[?]$—more precisely, let $\u001b[?]$ be the current memory and\nlet $it(j)$ and $kf(j)$ be the item and key at index $j$. Assume the count-sort layout\nconditions: the memory-space bound is at most the word bound; the source, destination,\nand counter ranges lie within memory space; each source cell contains its item, each\nitem's key cell lies within memory space and contains its key, every key is below $N_b$,\nthe source, destination, and counter ranges are pairwise disjoint, and every item key\ncell lies outside both the destination and counter ranges. If $i<n$ and, for every\n$t<N_b$, the counter cell at offset $t$ contains the number of items with key below $t$\nplus the number of indices $j<i$ with key equal to $t$, while each already placed item\n$j<i$ occupies position $p(j)=\bigl|\\{r<n:kf(r)<kf(j)\nobreak\text{ or }(kf(r)=kf(j)\text{ and }r\text{ is counted among the first }j+1\text{\nindices})\bigl|\bigr.$ (that is, the rank defined by the number of keys below $kf(j)$\namong all $n$ items plus the number of equal-key indices up through $j$), then after\nplacing item $i$ at position $p(i)$ and setting the counter cell for key $kf(i)$ to\n$p(i)+1$, the same invariant holds for the first $i+1$ items: each counter cell for\n$t<N_b$ contains the number of keys below $t$ among all items plus the number of indices\nbelow $i+1$ with key $t$, and each item at index $j<i+1$ is placed at position $p(j)$."
+}

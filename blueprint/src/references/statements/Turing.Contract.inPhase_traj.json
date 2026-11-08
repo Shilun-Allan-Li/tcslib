@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.Contract.inPhase_traj",
+ "key": "9b1861d9a3b71058",
+ "kind": "lemma",
+ "title": "Trajectory through a phase host",
+ "statement": "Let $I$ index phase state sets $\\mathrm{Ph}(i)$ and machines $M_i$, let $q_0$ be a state in their disjoint union, and let $red$ assign to each phase and state either no successor or a state in that union. Fix a phase $p$, a state $s_0\\in\\mathrm{Ph}(p)$, a contract $C$ for $M_p$ with exit set $X$, a datum $i$, and a host configuration $d$ whose state is $(p,s_0)$. Assume that the halted state is not in $X$, every state outside $X$ reduces to no successor in phase $p$, every state in $X$ reduces to a state in a different phase, and the configuration obtained from $d$ by replacing its state with $s_0$ satisfies $C$'s precondition. Through and including $C$'s assigned time, the host run agrees with the run of $M_p$ from that state-replaced configuration, with states embedded in phase $p$. One step later, the host run equals the endpoint of $C$ with its state bound through $red$; moreover, that endpoint has a state belonging to $X$.",
+ "hypotheses_covered": [
+  "A family of phase-indexed machines and phase state sets",
+  "A host initial state $q_0$",
+  "A reduction rule $red$",
+  "A fixed phase $p$ and state $s_0$",
+  "$C$ is a contract for $M_p$ with exit set $X$",
+  "The halted state is not in $X$",
+  "States outside $X$ reduce to no successor in phase $p$",
+  "States in $X$ reduce to states in a different phase",
+  "The host configuration starts in state $(p,s_0)$",
+  "The state-replaced configuration satisfies $C$'s precondition",
+  "A datum $i$ is specified"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_r$ be a machine for each phase $r$, let the host machine have initial state\n$q_0$, and let the reduction map send a phase and state to an optional phase-state pair.\nFix a phase $p$, a state $s_0$ in that phase, a contract $C$ for $M_p$ with exit set\n$X$, and a parameter $i$ and host configuration $d$ whose state is $(p,s_0)$. Assume the\nhalted state is not in $X$, every state outside $X$ reduces to no successor in phase\n$p$, and every state in $X$ reduces to a successor in a different phase; also assume the\nphase-$p$ projection of $d$ satisfies $C$'s precondition. Up to and including time $C$'s\nspecified duration, the host run equals the run of $M_p$ on that projection with its\nstate mapped into phase $p$; one step later it equals the endpoint of $C$ with its state\nbound through the reduction map; and that endpoint has a state belonging to $X$."
+}

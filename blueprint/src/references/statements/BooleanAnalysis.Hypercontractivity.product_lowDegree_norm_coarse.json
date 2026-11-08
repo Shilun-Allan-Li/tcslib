@@ -1,0 +1,22 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_lowDegree_norm_coarse",
+ "key": "b8af781b675ed5a8",
+ "kind": "lemma",
+ "title": "Coarse higher-moment bound for low-degree functions",
+ "statement": "Let $P$ be a finite product probability space, let $k\\in\\mathbb N$, and let $\\lambda,q\\in\\mathbb R$ satisfy $0<\\lambda\\le1$ and $2\\le q$. Suppose every coordinate atom has weight at least $\\lambda$. If every product component of a real-valued function $f$ indexed by a set of size greater than $k$ vanishes identically, then $\\|f\\|_{q,P}\\le\\bigl(\\sqrt q\\,\\lambda^{1/q-1/2}\\bigr)^k\\|f\\|_{2,P}$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive coordinate weights summing to one",
+  "$k\\in\\mathbb N$",
+  "$\\lambda,q\\in\\mathbb R$",
+  "$0<\\lambda$",
+  "$\\lambda\\le1$",
+  "Every coordinate atom has weight at least $\\lambda$",
+  "$2\\le q$",
+  "Every product component of $f$ indexed by a set of size greater than $k$ vanishes at every outcome",
+  "$f$ is a real-valued function on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ with every coordinate atom at least $0<\\lambda\\le1$. For $q\\ge2$ and $f:\\Omega\\to\\mathbb R$ of degree at most $k\\in\\mathbb N$, $\\|f\\|_{q,P}\\le(\\sqrt q\\lambda^{1/q-1/2})^k\\|f\\|_{2,P}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; degree at most $k$ means $h_S=0$ for every $|S|>k$."
+}

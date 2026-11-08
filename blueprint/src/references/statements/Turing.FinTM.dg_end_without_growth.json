@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.dg_end_without_growth",
+ "key": "83274c55c148209f",
+ "kind": "lemma",
+ "title": "Backward sweep without leftward growth",
+ "statement": "Let $\\Gamma$ be a finite alphabet and let $M$ be a finite Turing machine over $\\Gamma$ with $k$ work tapes. Choose $a_0\\in\\Gamma$, a state $q$, an optional input symbol, work-tape reads, and Boolean right-head flags. Suppose there is no tape whose right-head flag is true and whose prescribed head movement is left. For any input-head position, output word, integer $z$, and left stack $l$, the augmented simulator, starting in the backward-writing phase with the boundary marker on its right, reaches after one step the left-growth phase with the action's optional successor state, unchanged frontier $z$, unchanged left stack $l$, and the boundary marker still on its right; throughout this step its work-tape head remains at $z$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "A chosen symbol $a_0\\in\\Gamma$",
+  "A state $q$",
+  "An optional input symbol",
+  "A work-tape read assignment",
+  "A Boolean right-head flag for each tape",
+  "No tape flagged on the right has a prescribed leftward move",
+  "An input-head position, output word, integer $z$, and left stack $l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

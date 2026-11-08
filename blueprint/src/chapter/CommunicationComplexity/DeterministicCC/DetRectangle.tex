@@ -101,7 +101,7 @@ of input rectangles induced by the leaves of $p$ over the full input space $X \t
 \lean{CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectanglesAux_swap}
 \label{CommunicationComplexity.Deterministic.Protocol.swapInputSet_mem_leafRectanglesAux_swap}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swapInputSet}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.swap, CommunicationComplexity.Deterministic.Protocol.swapInputSet}
 \difficulty{4}
 Let $p$ be a deterministic communication protocol over input types $X$ (Alice) and $Y$
 (Bob), and let $A \subseteq X$ and $B \subseteq Y$. Denote by $p^{\mathrm{sw}}$ the
@@ -160,6 +160,7 @@ f_Y(y')) \in R\}$ along the product map $f_X \times f_Y$ is a leaf rectangle of 
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.aux_isRectangle}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Rectangle.IsRectangle}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -371,7 +372,6 @@ f_Y(y')) \in R\}$ along the product map $f_X \times f_Y$ is a leaf rectangle of 
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b002,
     pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{3}
 Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
 and $Y$ (Bob), and let $A \subseteq X$ and $B \subseteq Y$. Then every set belonging to
@@ -388,6 +388,7 @@ is a rectangle; that is, if $R \subseteq X \times Y$ is one of these leaf sets, 
 }
 \label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_isRectangle, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Rectangle.IsRectangle}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -609,7 +610,6 @@ is a rectangle; that is, if $R \subseteq X \times Y$ is one of these leaf sets, 
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b002,
     pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_isRectangle, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{1}
 Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn
 from $X$ and Bob's from $Y$, and let $R$ belong to the collection of leaf rectangles of
@@ -638,6 +638,7 @@ $R \subseteq A \times B$.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.aux_cover}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -846,7 +847,6 @@ $R \subseteq A \times B$.
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b002,
     pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \difficulty{4}
 Let $p$ be a deterministic two-party communication protocol with Alice's inputs drawn
 from a set $X$, Bob's inputs from a set $Y$, and outputs in a type $\alpha$, and let $A
@@ -868,6 +868,7 @@ collection.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.aux_disjoint}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_disjoint_alice_of_ne, CommunicationComplexity.Deterministic.Protocol.aux_disjoint_bob_of_ne, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -1093,7 +1094,6 @@ collection.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
 \difficulty{5}
 Let $p$ be a deterministic communication protocol over input types $X$ (Alice) and $Y$
 (Bob) producing values of type $\alpha$, and let $A \subseteq X$ and $B \subseteq Y$. If
@@ -1111,6 +1111,7 @@ Y$.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_cover, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -1326,7 +1327,6 @@ Y$.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_cover, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \difficulty{1}
 Let $p$ be a deterministic communication protocol over input types $X$ (Alice) and $Y$
 (Bob) producing a value of some type $\alpha$. Then the leaf rectangles of $p$ cover the
@@ -1342,6 +1342,7 @@ $p$ equals $X \times Y$.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_disjoint, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -1572,7 +1573,6 @@ $p$ equals $X \times Y$.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_disjoint, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \difficulty{1}
 Let $p$ be a deterministic two-party communication protocol over input types $X$ and $Y$
 producing values in $\alpha$, and let $R$ and $S$ be two of its leaf rectangles, that
@@ -1585,6 +1585,7 @@ is, two of the input rectangles induced by the leaves of $p$ over $X \times Y$. 
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b005}
 \label{CommunicationComplexity.Deterministic.Protocol.aux_mono}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_alice_bit, CommunicationComplexity.Deterministic.Protocol.aux_bob_bit, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.run}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -1797,7 +1798,6 @@ is, two of the input rectangles induced by the leaves of $p$ over $X \times Y$. 
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b002}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{4}
 Let $p$ be a deterministic communication protocol over input types $X$ (Alice) and $Y$
 (Bob) with outputs in $\alpha$, and let $A \subseteq X$ and $B \subseteq Y$. If $R$ is
@@ -1811,6 +1811,7 @@ inputs; that is, $p(x, y) = p(x', y')$.
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b005}
 \label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.aux_mono, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Rectangle.IsMonochromatic}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -2041,7 +2042,6 @@ inputs; that is, $p(x, y) = p(x', y')$.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.aux_mono, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Rectangle.IsMonochromatic}
 \difficulty{3}
 Let $p$ be a deterministic two-party communication protocol over input types $X$ and $Y$
 with output type $\alpha$, and let $g : X \to Y \to \alpha$ be a function that $p$
@@ -2058,6 +2058,7 @@ the same for all $(x, y) \in R$.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.aux_card}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_card_step, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -2266,7 +2267,6 @@ the same for all $(x, y) \in R$.
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b002,
     pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
 \difficulty{4}
 Let $p$ be a deterministic two-party communication protocol with input types $X$ (Alice)
 and $Y$ (Bob), and let $A \subseteq X$ and $B \subseteq Y$. Then the number of distinct
@@ -2294,6 +2294,7 @@ when its reachable inputs are constrained to $A \times B$ is finite.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_card}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_card, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -2517,7 +2518,6 @@ when its reachable inputs are constrained to $A \times B$ is finite.
   {pdf-fa052d8c95c0-p003-b005,
     pdf-fa052d8c95c0-p003-b006,
     pdf-fa052d8c95c0-p005-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_card, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectangles}
 \difficulty{1}
 Let $p$ be a deterministic two-party communication protocol over input types $X$ and $Y$
 producing values in $\alpha$, and let $c$ be its communication complexity. Then the
@@ -2544,6 +2544,7 @@ space — is finite.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover, CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle, CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono, CommunicationComplexity.Rectangle.IsMonoPartition}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -2820,7 +2821,6 @@ space — is finite.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_cover, CommunicationComplexity.Deterministic.Protocol.leafRectangles_disjoint, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle, CommunicationComplexity.Deterministic.Protocol.leafRectangles_mono, CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{1}
 Let $p$ be a deterministic two-party communication protocol over input types $X$ and $Y$
 producing outputs in $\alpha$, and let $g : X \to Y \to \alpha$. If $p$ computes $g$,
@@ -2839,6 +2839,7 @@ disjoint.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.rectangle_partition}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Rectangle.IsMonoPartition}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -3130,7 +3131,6 @@ disjoint.
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b003,
     pdf-fa052d8c95c0-p005-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Computes, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{1}
 Let $p$ be a deterministic two-party communication protocol on input types $X$ and $Y$
 with output type $\alpha$, and let $g : X \to Y \to \alpha$ be a function that $p$
@@ -3145,6 +3145,7 @@ most $2^{c}$, where $c$ is the communication complexity of $p$.
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.reachesPath_isRectangle}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Rectangle.IsRectangle}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -3355,7 +3356,6 @@ most $2^{c}$, where $c$ is the communication complexity of $p$.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p004-b006}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{2}
 Let $s$ and $p$ be deterministic two-party communication protocols over Alice's input
 type $X$ and Bob's input type $Y$, and let $\pi$ be a subprotocol path witnessing that
@@ -3377,6 +3377,7 @@ choices along $\pi$.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.reaches_isRectangle}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.reachesPath_isRectangle, CommunicationComplexity.Rectangle.IsRectangle}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -3598,7 +3599,6 @@ choices along $\pi$.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.reachesPath_isRectangle, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{1}
 Let $X$, $Y$, and $\alpha$ be types, let $p$ be a deterministic two-party communication
 protocol over Alice's inputs $X$ and Bob's inputs $Y$ with outputs in $\alpha$, and
@@ -3617,6 +3617,7 @@ X$ and $B \subseteq Y$.
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b005}
 \label{CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Rectangle.IsMonoPartition}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -3919,7 +3920,6 @@ X$ and $B \subseteq Y$.
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b003,
     pdf-fa052d8c95c0-p005-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{2}
 Let $g : X \times Y \to \alpha$ be a two-argument function, and let $n$ be a natural
 number. If the deterministic communication complexity $D(g)$ satisfies $D(g) \le n$,
@@ -3937,6 +3937,7 @@ monochromatic for $g$, the members cover $X \times Y$, and distinct members are 
 }
 \label{CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Deterministic.le_communicationComplexity_iff, CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le, CommunicationComplexity.Rectangle.IsMonoPartition}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -4252,7 +4253,6 @@ monochromatic for $g$, the members cover $X \times Y$, and distinct members are 
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b005,
     pdf-fa052d8c95c0-p003-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Deterministic.le_communicationComplexity_iff, CommunicationComplexity.Deterministic.mono_partition_of_communicationComplexity_le, CommunicationComplexity.Rectangle.IsMonoPartition}
 \difficulty{4}
 Let $g : X \to Y \to \alpha$ be a two-argument function and let $n$ be a natural number.
 If every monochromatic rectangle partition of $g$ consists of strictly more than $2^n$
@@ -4268,6 +4268,7 @@ D(g)$.
 }
 \label{CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_finite, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -4602,7 +4603,6 @@ D(g)$.
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b003,
     pdf-fa052d8c95c0-p005-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_finite, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_iff, CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
 \difficulty{3}
 Let $g : X \times Y \to \alpha$ be a two-argument function, and let $S \subseteq X
 \times Y$ be a fooling set for $g$, meaning that $S$ meets every $g$-monochromatic
@@ -4619,6 +4619,7 @@ $\abs{S} \le 2^{n}$.
 }
 \label{CommunicationComplexity.Deterministic.clog_ncard_le_communicationComplexity}
 \leanok
+\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le, CommunicationComplexity.Rectangle.IsFoolingSet}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -4956,7 +4957,6 @@ $\abs{S} \le 2^{n}$.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p011-b005}
-\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.foolingSet_ncard_le_pow_of_communicationComplexity_le, CommunicationComplexity.Rectangle.IsFoolingSet}
 \difficulty{3}
 Let $g : X \times Y \to \alpha$ be a two-argument function and let $S \subseteq X \times
 Y$ be a fooling set for $g$, meaning that every rectangle that is monochromatic for $g$
@@ -4973,60 +4973,63 @@ $\bbn_\infty$.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Alice's bit is fixed on a child's leaf rectangle]
+\begin{lemma}[Alice's bit on a leaf rectangle]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_alice_bit}
 \label{CommunicationComplexity.Deterministic.Protocol.aux_alice_bit}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
-Let $p$ be a protocol on $X \times Y$, let $A \subseteq X$, $B \subseteq Y$, let
-$f : X \to \{0,1\}$ be the bit Alice sends, and let $b$ be a bit. If $R$ is a leaf
-rectangle of $p$ run on the restricted input set $(A \cap \{x \mid f(x) = b\}) \times B$,
-then every input $(x, y) \in R$ satisfies $f(x) = b$.
+\difficulty{1}
+Let $p$ be a protocol over input types $X$ and $Y$, let $A\subseteq X$ and $B\subseteq
+Y$, let $f:X\to\{0,1\}$, and choose a bit $b$. If $R$ is among the leaf rectangles of
+$p$ when the first input is restricted to $A\cap\{x:f(x)=b\}$ and the second to $B$,
+then every $(x,y)\in R$ satisfies $f(x)=b$.
 \end{lemma}
 
-\begin{lemma}[Bob's bit is fixed on a child's leaf rectangle]
+\begin{lemma}[Bob's bit on a leaf rectangle]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_bob_bit}
 \label{CommunicationComplexity.Deterministic.Protocol.aux_bob_bit}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_subset, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
-Let $p$ be a protocol on $X \times Y$, let $A \subseteq X$, $B \subseteq Y$, let
-$f : Y \to \{0,1\}$ be the bit Bob sends, and let $b$ be a bit. If $R$ is a leaf
-rectangle of $p$ run on the restricted input set $A \times (B \cap \{y \mid f(y) = b\})$,
-then every input $(x, y) \in R$ satisfies $f(y) = b$. This is the mirror image of
-\texttt{CommunicationComplexity.Deterministic.Protocol.aux\_alice\_bit}.
+\difficulty{1}
+Let $p$ be a protocol over input types $X$ and $Y$, let $A\subseteq X$ and $B\subseteq
+Y$, let $f:Y\to\{0,1\}$, and choose a bit $b$. If $R$ is among the leaf rectangles of
+$p$ when the first input is restricted to $A$ and the second to $B\cap\{y:f(y)=b\}$,
+then every $(x,y)\in R$ satisfies $f(y)=b$.
 \end{lemma}
 
-\begin{lemma}[Leaf rectangles on opposite Alice branches are disjoint]
+\begin{lemma}[Disjoint leaf rectangles on Alice branches]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_disjoint_alice_of_ne}
 \label{CommunicationComplexity.Deterministic.Protocol.aux_disjoint_alice_of_ne}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_alice_bit, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
-Let $p, q$ be protocols on $X \times Y$, let $A \subseteq X$, $B \subseteq Y$, let
-$f : X \to \{0,1\}$, and let $b \neq b'$ be distinct bits. If $R$ is a leaf rectangle of
-$p$ on $(A \cap \{x \mid f(x) = b\}) \times B$ and $S$ is a leaf rectangle of $q$ on
-$(A \cap \{x \mid f(x) = b'\}) \times B$, then $R$ and $S$ are disjoint.
+\difficulty{3}
+Let $p,q$ be protocols over input types $X$ and $Y$, let $A\subseteq X$ and $B\subseteq
+Y$, let $f:X\to\{0,1\}$, and let $b,b'$ be distinct bits. If $R$ is among the leaf
+rectangles of $p$ with first input restricted to $A\cap\{x:f(x)=b\}$ and second to $B$,
+and $S$ is among the leaf rectangles of $q$ with first input restricted to
+$A\cap\{x:f(x)=b'\}$ and second to $B$, then $R$ and $S$ are disjoint.
 \end{lemma}
 
-\begin{lemma}[Leaf rectangles on opposite Bob branches are disjoint]
+\begin{lemma}[Disjoint rectangles from opposite Bob branches]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_disjoint_bob_of_ne}
 \label{CommunicationComplexity.Deterministic.Protocol.aux_disjoint_bob_of_ne}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.aux_bob_bit, CommunicationComplexity.Deterministic.Protocol.leafRectanglesAux}
-Let $p, q$ be protocols on $X \times Y$, let $A \subseteq X$, $B \subseteq Y$, let
-$f : Y \to \{0,1\}$, and let $b \neq b'$ be distinct bits. If $R$ is a leaf rectangle of
-$p$ on $A \times (B \cap \{y \mid f(y) = b\})$ and $S$ is a leaf rectangle of $q$ on
-$A \times (B \cap \{y \mid f(y) = b'\})$, then $R$ and $S$ are disjoint. This is the
-mirror image of \texttt{CommunicationComplexity.Deterministic.Protocol.aux\_disjoint\_alice\_of\_ne}.
+\difficulty{3}
+Let $p$ and $q$ be deterministic two-party protocols, let $A\subseteq X$ and $B\subseteq
+Y$, and let $f:Y\to\{\mathrm{false},\mathrm{true}\}$. For distinct bits $b,b'$, any
+rectangle in the collection of leaf rectangles of $p$ relative to $A$ and the inputs in
+$B$ where $f(y)=b$ is disjoint from any rectangle in the corresponding collection for
+$q$ where $f(y)=b'$.
 \end{lemma}
 
-\begin{lemma}[Union bound for two power-of-two cardinalities]
+\begin{lemma}[Cardinality bound for a union]
 \lean{CommunicationComplexity.Deterministic.Protocol.aux_card_step}
 \label{CommunicationComplexity.Deterministic.Protocol.aux_card_step}
 \leanok
-Let $S_0, S_1$ be sets in a type $\beta$ and let $c_0, c_1 \in \mathbb{N}$. If
-$\abs{S_0} \le 2^{c_0}$ and $\abs{S_1} \le 2^{c_1}$, then
-\[
-  \abs{S_0 \cup S_1} \;\le\; 2^{\,1 + \max(c_0, c_1)},
-\]
-where $\abs{\cdot}$ denotes the number of elements of a set.
+\difficulty{4}
+Let $S_0,S_1\subseteq\beta$ and let $c_0,c_1$ be nonnegative integers. Write $n(S)$ for
+the natural-number cardinality of a set, with infinite sets assigned cardinality zero.
+If $n(S_0)\le 2^{c_0}$ and $n(S_1)\le 2^{c_1}$, then $n(S_0\cup S_1)\le
+2^{1+\max(c_0,c_1)}$.
 \end{lemma}

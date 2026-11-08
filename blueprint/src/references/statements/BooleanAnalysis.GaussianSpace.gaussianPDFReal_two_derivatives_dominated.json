@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussianPDFReal_two_derivatives_dominated",
+ "key": "0faac4892960e56c",
+ "kind": "lemma",
+ "title": "Common Gaussian density and derivative envelope",
+ "statement": "Let $v>0$ and $M\\ge0$, and write $p_v(m,z)=(2\\pi v)^{-1/2}\\exp(-(z-m)^2/(2v))$. There is a nonnegative Lebesgue-integrable function $b:\\mathbb R\\to\\mathbb R$ such that for every $m,z\\in\\mathbb R$ with $|m|\\le M$, all three bounds hold:\n\\[p_v(m,z)\\le b(z),\\qquad \\left|\\frac{z-m}{v}p_v(m,z)\\right|\\le b(z),\\qquad \\left|\\left(\\frac{(z-m)^2}{v^2}-\\frac1v\\right)p_v(m,z)\\right|\\le b(z).\\]",
+ "hypotheses_covered": [
+  "$v$ is a nonzero nonnegative real, hence $v>0$",
+  "$M\\in\\mathbb R$ and $M\\ge0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $v>0$ and $M\\ge0$, let $p_v(m,z)$ be the Gaussian density with mean $m$ and variance $v$. There exists a nonnegative Lebesgue-integrable $b:\\mathbb R\\to\\mathbb R$ such that $p_v(m,z)\\le b(z)$, $|((z-m)/v)p_v(m,z)|\\le b(z)$, and $|((z-m)^2/v^2-1/v)p_v(m,z)|\\le b(z)$ whenever $|m|\\le M$."
+}

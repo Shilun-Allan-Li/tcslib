@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_undo_empty",
+ "key": "9a69a8861a90ad96",
+ "kind": "lemma",
+ "title": "Restoration step on empty history",
+ "statement": "Let $k$ be a natural number, let $S$ be a state type, let $x$ be a finite Boolean input, let $c$ be a configuration of a $k$-work-tape machine on input $x$, and let $p$ be a valid input-head position among the $|x|+2$ positions. Starting the restoration machine at the checkpoint for $c$ with empty history, one step gives the completed restoration configuration for $c$ and $p$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ is a state type",
+  "$x$ is a finite Boolean input",
+  "$c$ is a configuration of a $k$-work-tape machine on input $x$",
+  "$p$ is a valid input-head position among the $|x|+2$ positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "With no history left, one silent step of the restoration machine from the\ncheckpoint for a source configuration $c$ with empty history returns the history\nheads to zero and halts, reaching the completed restoration configuration for\n$c$. This also covers a source run of zero steps."
+}

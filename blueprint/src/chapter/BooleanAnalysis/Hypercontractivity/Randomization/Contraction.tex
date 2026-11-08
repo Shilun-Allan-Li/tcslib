@@ -5,20 +5,31 @@ Coordinate noise admits a negative contraction rate depending only on its expone
 
 \section{Declarations}
 
-\begin{theorem}[Negative coordinate noise contraction]
+\begin{theorem}[Negative coordinate-noise contraction for exponents at least two]
 \lean{BooleanAnalysis.Hypercontractivity.coordinate_noise_negative_contraction}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.CenteredContraction.scalar_contraction, BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_negative_moment_le, BooleanAnalysis.Hypercontractivity.coordinateNoise}
 \difficulty{4}
-For every $q\ge2$ there exists $0<c\le1$, with $c=2/5$ if $q=4$, such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, every coordinate $i$, and every real function $f$ on its outcome space, $\|N_{i,-c}f\|_{q,P}\le\|f\|_{q,P}$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $\|h\|_{p,P}=(\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $N_{i,a}h=E_{[n]\setminus\{i\}}h+a(h-E_{[n]\setminus\{i\}}h)$.
+For every $q\in\mathbb R$ with $q\ge2$, there exists $c\in\mathbb R$ with $0<c\le1$, and
+with $c=2/5$ whenever $q=4$, such that the following holds for every nonnegative integer
+$n$, every product $P$ of $n$ finite probability spaces with strictly positive
+coordinate atom weights summing to $1$, every coordinate $i$, and every real-valued
+function $f$ on its outcome space: $\|N_{i,-c}f\|_{q,P}\le\|f\|_{q,P}$. Here
+$\|h\|_{q,P}=(\mathbb E_P|h|^q)^{1/q}$ and $N_{i,-c}h=h-L_i h-cL_i h$, with $L_i
+h=h-E_{[n]\setminus\{i\}}h$.
 \end{theorem}
 
-\begin{theorem}[Self-adjoint coordinate noise]
+\begin{theorem}[Self-adjointness of coordinate noise]
 \lean{BooleanAnalysis.Hypercontractivity.coordinateNoise_selfAdjoint}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_selfAdjoint, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.coordinateNoise}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, a coordinate $i$, $\rho\in\mathbb R$, and $f,g:\Omega\to\mathbb R$. Then $\mathbb E_P[(N_{i,\rho}f)g]=\mathbb E_P[fN_{i,\rho}g]$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $N_{i,a}h=E_{[n]\setminus\{i\}}h+a(h-E_{[n]\setminus\{i\}}h)$.
+Let $P$ be a finite product of probability spaces whose coordinate atom weights are
+strictly positive and sum to $1$, let $i$ be a coordinate, let $\rho\in\mathbb R$, and
+let $f,g$ be real-valued functions on the product outcome space. If $N_{i,\rho}h=h-L_i
+h+\rho L_i h$, where $L_i h=h-E_{[n]\setminus\{i\}}h$ and the conditional expectation
+averages over coordinate $i$, then $\mathbb E_P[(N_{i,\rho}f)g]=\mathbb
+E_P[f(N_{i,\rho}g)]$.
 \end{theorem}
 
 \begin{theorem}[Positive coordinate noise contraction]
@@ -26,15 +37,23 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_moment_le, BooleanAnalysis.Hypercontractivity.RandomizationAux.weighted_abs_rpow_sum_le, BooleanAnalysis.Hypercontractivity.coordinateNoise}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, a coordinate $i$, $0\le\rho\le1$, $q\ge1$, and $f:\Omega\to\mathbb R$. Then $\|N_{i,\rho}f\|_{q,P}\le\|f\|_{q,P}$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $\|h\|_{p,P}=(\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $N_{i,a}h=E_{[n]\setminus\{i\}}h+a(h-E_{[n]\setminus\{i\}}h)$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $i$ be a coordinate, and let $f$ be a real-valued function on the product
+space. For $0\leq\rho\leq1$ and $q\geq1$, the one-coordinate noise operator $N_{i,\rho}$
+satisfies $\|N_{i,\rho}f\|_{q,P}\leq\|f\|_{q,P}$.
 \end{theorem}
 
-\begin{theorem}[Negative contraction for all exponents]
+\begin{theorem}[Negative coordinate-noise contraction for all exponents above one]
 \lean{BooleanAnalysis.Hypercontractivity.coordinate_noise_negative_contraction_allq}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteNorms.selfAdjoint_contraction, BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.coordinateNoise, BooleanAnalysis.Hypercontractivity.coordinateNoise_selfAdjoint, BooleanAnalysis.Hypercontractivity.coordinate_noise_negative_contraction}
 \difficulty{5}
-For every $q>1$ there exists $0<c\le1$, with $c=2/5$ when $q\in\{4,4/3\}$, such that every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ satisfies $\|N_{i,-c}f\|_{q,P}\le\|f\|_{q,P}$ for every coordinate $i$ and real function $f$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $\|h\|_{p,P}=(\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $N_{i,a}h=E_{[n]\setminus\{i\}}h+a(h-E_{[n]\setminus\{i\}}h)$.
+For every $q\in\mathbb R$ with $q>1$, there exists $c\in\mathbb R$ with $0<c\le1$, and
+with $c=2/5$ whenever $q=4$ or $q=4/3$, such that for every nonnegative integer $n$,
+every product $P$ of $n$ finite probability spaces with strictly positive coordinate
+atom weights summing to $1$, every coordinate $i$, and every real-valued function $f$ on
+its outcome space, $\|N_{i,-c}f\|_{q,P}\le\|f\|_{q,P}$. Here $\|h\|_{q,P}=(\mathbb
+E_P|h|^q)^{1/q}$ and $N_{i,-c}h=h-L_i h-cL_i h$, with $L_i h=h-E_{[n]\setminus\{i\}}h$.
 \end{theorem}
 
 \begin{definition}[Partial anisotropic noise]
@@ -44,26 +63,41 @@ For every $q>1$ there exists $0<c\le1$, with $c=2/5$ when $q\in\{4,4/3\}$, such 
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $J\subseteq[n]$, rates $r_i\in\mathbb R$, and $f:\Omega\to\mathbb R$. Define $T_{J,\boldsymbol r}f(x)=\sum_S(\prod_{j\in S\cap J}r_j)f_S(x)$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components).
 \end{definition}
 
-\begin{theorem}[Inserting a partial-noise coordinate]
+\begin{theorem}[Insertion of a Partial-Noise Coordinate]
 \lean{BooleanAnalysis.Hypercontractivity.partialNoise_insert}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian, BooleanAnalysis.Hypercontractivity.RandomizationAux.condExp_component, BooleanAnalysis.Hypercontractivity.coordinateNoise, BooleanAnalysis.Hypercontractivity.partialNoise}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $J\subseteq[n]$, rates $r_i\in\mathbb R$, $i\notin J$, and $f:\Omega\to\mathbb R$. For $T_{J,\boldsymbol r}f=\sum_S(\prod_{j\in S\cap J}r_j)f_S$, $T_{J\cup\{i\},\boldsymbol r}f=N_{i,r_i}(T_{J,\boldsymbol r}f)$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $N_{i,a}h=E_{[n]\setminus\{i\}}h+a(h-E_{[n]\setminus\{i\}}h)$.
+Let $P$ be a finite product probability space with strictly positive coordinate weights,
+let $J$ be a set of coordinates, let $r_i\in\mathbb R$ be rates, and let $f$ be a
+real-valued function on the product space. For any coordinate $i\notin J$, applying
+partial noise with coordinate set $J\cup\{i\}$ equals applying the one-coordinate noise
+operator at $i$ with rate $r_i$ to the result of applying partial noise with coordinate
+set $J$.
 \end{theorem}
 
-\begin{theorem}[Anisotropic contraction from coordinate bounds]
+\begin{theorem}[Anisotropic noise contraction]
 \lean{BooleanAnalysis.Hypercontractivity.anisotropicNoise_norm_le_of_coordinate}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.RandomizationAux.component_reconstruction, BooleanAnalysis.Hypercontractivity.anisotropicNoise, BooleanAnalysis.Hypercontractivity.coordinateNoise, BooleanAnalysis.Hypercontractivity.partialNoise, BooleanAnalysis.Hypercontractivity.partialNoise_insert}
 \difficulty{4}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $q\in\mathbb R$, and rates $r_i\in\mathbb R$. If $\|N_{i,r_i}g\|_{q,P}\le\|g\|_{q,P}$ for every coordinate $i$ and every real $g:\Omega\to\mathbb R$, then $\|T_{\boldsymbol r}f\|_{q,P}\le\|f\|_{q,P}$ for every real $f$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_{\boldsymbol s}h=\sum_{S\subseteq[n]}(\prod_{i\in S}s_i)h_S$ for real coordinate rates $s_i$; $N_{i,a}h=E_{[n]\setminus\{i\}}h+a(h-E_{[n]\setminus\{i\}}h)$; $\|h\|_{q,P}:=(\mathbb E_P|h|^q)^{1/q}$ as a totalized moment expression for every real $q$, with $1/0=0$, $0^0=1$, and $0^b=0$ for $b\ne0$.
+Let $P$ be a product of $n$ finite probability spaces with strictly positive atom
+masses, let $q\in\mathbb R$, let $r_i\in\mathbb R$ be a rate for each coordinate, and
+let $T_{\boldsymbol r}$ denote the anisotropic noise operator and $N_{i,r_i}$ the noise
+operator on coordinate $i$. If $\|N_{i,r_i}g\|_{q,P}\leq\|g\|_{q,P}$ for every
+coordinate $i$ and every real-valued function $g$ on the product, then $\|T_{\boldsymbol
+r}f\|_{q,P}\leq\|f\|_{q,P}$ for every real-valued function $f$ on the product.
 \end{theorem}
 
-\begin{theorem}[Independent signed rates decrease norms]
+\begin{theorem}[Contraction under signed product noise]
 \lean{BooleanAnalysis.Hypercontractivity.signed_anisotropicNoise_contraction}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.norm, BooleanAnalysis.Hypercontractivity.anisotropicNoise, BooleanAnalysis.Hypercontractivity.anisotropicNoise_norm_le_of_coordinate, BooleanAnalysis.Hypercontractivity.coordinate_noise_negative_contraction_allq, BooleanAnalysis.Hypercontractivity.coordinate_noise_positive_contraction, BooleanAnalysis.boolToSign}
 \difficulty{4}
-For every $q>1$ there exists $0<c\le1$, with $c=2/5$ when $q\in\{4,4/3\}$, such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, every sign vector $s\in\{-1,1\}^n$, and every real $f$ on its outcome space, $\|T_{c\boldsymbol s}f\|_{q,P}\le\|f\|_{q,P}$. For a real function $h$ on $\Omega$, use $E_Uh(x)=\mathbb E_P[h(X)\mid X_U=x_U]$ for $X\sim P$ and $U\subseteq[n]$; $h_S=\sum_{U\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\subseteq[n]$ (the Hoeffding--Efron--Stein components); $\|h\|_{p,P}=(\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $T_{\boldsymbol s}h=\sum_{S\subseteq[n]}(\prod_{i\in S}s_i)h_S$ for real coordinate rates $s_i$.
+For every real $q>1$, there is a constant $c$ with $0<c\\le1$ such that $c=2/5$ whenever
+$q=4$ or $q=4/3$. For every natural number $n$, every product of $n$ finite probability
+spaces whose coordinate atom weights are strictly positive and sum to one, every sign
+vector $s\\in\\{-1,1\\}^n$, and every real-valued function $f$ on the product outcome
+space, the $q$-moment norm of the anisotropic noise transform with coordinate rates
+$cs_i$ is at most the $q$-moment norm of $f$.
 \end{theorem}

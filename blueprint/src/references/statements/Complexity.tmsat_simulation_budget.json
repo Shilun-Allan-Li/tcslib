@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.tmsat_simulation_budget",
+ "key": "f2802791b7650997",
+ "kind": "lemma",
+ "title": "Polynomial Simulation Budget",
+ "statement": "Let $c$ be an effective machine-code scheme whose canonizer time function is polynomially bounded: there exist $C,k\\in\\mathbb{N}$ such that $c$'s canonizer time at input length $n$ is at most $C(n+1)^k$ for every $n\\in\\mathbb{N}$. Then there exist $A,d\\in\\mathbb{N}$ such that, for all $m,r,t\\in\\mathbb{N}$ with $r\\le m$ and $t\\le m$, $\\bigl(3r+14T_c(r)+50\\bigr)(t+1)^2\\le A(m+1)^d$, where $T_c$ is the canonizer time function of $c$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-code scheme",
+  "The canonizer time function of $c$ is polynomially bounded",
+  "$r,m,t$ are natural numbers",
+  "$r\\le m$",
+  "$t\\le m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-code scheme, and suppose its canonizer time function\nsatisfies $T_c(n)\\le K(n+1)^k$ for all $n\\in\\mathbb N$, for some $K,k\\in\\mathbb N$. Then\nthere exist $A,d\\in\\mathbb N$ such that, for all $m,r,t\\in\\mathbb N$ with $r\\le m$ and\n$t\\le m$, $\\bigl(3r+14T_c(r)+50\\bigr)(t+1)^2\\le A(m+1)^d$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.pop_run",
+ "key": "5e9df5bbad0a099b",
+ "kind": "theorem",
+ "title": "Return from a recursive level",
+ "statement": "For any bit string $x$, Boolean values $v,b$, and natural numbers $k,S,B$ with $k+1\\le B$ and $2S+1\\le B$, the seven-register program with its specified oracle has a run from the return label carrying $v$, at depth $k+1$, stack value $2S+b$, and pointer zero, to depth $k$, stack value $S$, and pointer zero. The final label is $\\mathrm{rt}(v)$ if $b$ is true and the first return-copy label carrying $v$ if $b$ is false. Every configuration before the final configuration satisfies the program precondition and has every register value at most $B$.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$v,b$ are Boolean values",
+  "$k,S,B$ are natural numbers",
+  "$k+1\\le B$",
+  "$2S+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and let $B,k,S$ be natural numbers. For either Boolean values\n$v,b$, if $k+1\\le B$ and $2S+1\\le B$, the fixed seven-register program, with its\nspecified oracle, can run from the return state carrying $v$, at depth $k+1$ and stack\nvalue $2S+b$, to depth $k$ and stack value $S$. The input pointer and all scratch\nregisters are zero at both endpoints; throughout the run, every register remains at most\n$B$ and every configuration satisfies the program's precondition."
+}

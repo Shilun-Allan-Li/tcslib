@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.sweepFold_append",
+ "key": "7d930e82b8524da4",
+ "kind": "lemma",
+ "title": "Transduction of a Concatenation",
+ "statement": "Let $R,C$ be types, let $visit\\colon R\\times C\\to R\\times C$ be a local rule, let $s\\in R$, and let $as,bs$ be finite words over $C$. Processing $as$ followed by $bs$ from state $s$ gives the same final state and rewritten word as first processing $as$ from $s$ and then processing $bs$ from the resulting state; the rewritten output is the concatenation of the two rewritten words.",
+ "hypotheses_covered": [
+  "$R$ and $C$ are types",
+  "$visit$ is a function from $R\\times C$ to $R\\times C$",
+  "$s$ is an initial state in $R$",
+  "$as,bs$ are lists over $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathit{visit} \\colon R \\times C \\to R \\times C$ be a local rule, $s$ an\ninitial control state, and $\\mathit{as}$, $\\mathit{bs}$ two words over $C$.\nThe finite-state transduction of the concatenation\n$\\mathit{as} \\mathbin{+\\!\\!+} \\mathit{bs}$ starting from $s$ is obtained by\ntransducing $\\mathit{as}$ from $s$, then transducing $\\mathit{bs}$ from the\nresulting control state: the final state is that of the second transduction,\nand the rewritten word is the concatenation of the two rewritten words."
+}

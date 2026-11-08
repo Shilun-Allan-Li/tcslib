@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitBody_rewind",
+ "key": "1ec118b4c97c0493",
+ "kind": "lemma",
+ "title": "Rewind to the first input position",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $start$ be a state of $M$, and let $w$ be a Boolean input word. Suppose $c$ is a configuration on input $w$ with one more work tape than $M$, with control state $0$ among three numbered states. For either Boolean value $ok$, if $c$ is in control state $0$, then starting from the same configuration with its state renamed to the rewind phase carrying $ok$, the split-body machine reaches, after some $t \\le r+2$ steps, a configuration with the same tapes, work-head positions, and output as $c$, input-head position $1$, and control state $2$, where $r$ is the initial input-head position of $c$. At every time $j \\le t$ in this run, the machine is not in its anchor state.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$start$ is a state of $M$",
+  "$w$ is a Boolean input word",
+  "$ok$ is Boolean",
+  "$c$ is a configuration on input $w$ with $M.k+1$ work tapes and three numbered control states",
+  "The state of $c$ is control state $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

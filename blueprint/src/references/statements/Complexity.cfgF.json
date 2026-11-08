@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.cfgF",
+ "key": "449880cceef7d267",
+ "kind": "def",
+ "title": "Configuration tableau update rule",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, with $k$ work tapes, and let $l$ be a finite Boolean list. The function indexed by configuration kinds returns a Boolean list as follows. For a work-tape kind specifying tape $\tau$, read the preceding snapshot from the block of $l$ beginning at position $13$, of length equal to the number of possible snapshots; determine the new head bit from positions $0$–$1$ when the marker at position $0$ is set, and otherwise from the preceding snapshot and positions $2,5,8$. Determine the cell content from the preceding snapshot and positions $5$–$7$, unless the marker is set, in which case it is blank; the chain value is this content when the new head bit is true, and is encoded by positions $11$–$12$ otherwise. The output is the head bit followed by the two-bit encodings of the content and chain value. For the input-tape kind, read the preceding snapshot from the block beginning at position $11$; determine the new head bit from positions $0$–$1$ when the marker is set, and otherwise from the preceding snapshot and positions $2,3,6,7,8$. The chain value is encoded by positions $4$–$5$ when the new head bit is true and by positions $9$–$10$ otherwise, and the output is the head bit followed by its two-bit encoding. For the absent kind, read the preceding snapshot from the block beginning at position $4+2k$ and form a new snapshot whose state is the initial state when position $0$ is true and otherwise the successor state of the preceding snapshot, whose input symbol is encoded by positions $2$–$3$, and whose work-tape symbols are encoded by positions $4+2\tau$–$5+2\tau$. The output is the encoding of that snapshot followed by a bit that is false when position $0$ is true and otherwise is the disjunction of position $1$ and whether the preceding snapshot emits true. At any position beyond the end of $l$, the bit read is false.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "The configuration kind is absent, an input-tape kind, or a work-tape kind specifying one of the $k$ tapes",
+  "The input is a Boolean list",
+  "Positions beyond the end of the input list are read as false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora",
+  "imperative"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -16,6 +16,7 @@ would be less than $d$), so $|C|$ is at most the number of possible projections.
 \lean{ErrorCorrectingCodes.Codeword.singleton_bound}
 \label{ErrorCorrectingCodes.Codeword.singleton_bound}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.dist_le_length, ErrorCorrectingCodes.Codeword.distance, ErrorCorrectingCodes.Codeword.hamming_distance}
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p087-b003,
   pdf-7251cb8e4bc5-p087-b004
@@ -68,7 +69,6 @@ would be less than $d$), so $|C|$ is at most the number of possible projections.
   {direct}
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p029-b006}
-\uses{ErrorCorrectingCodes.Codeword.dist_le_length}
 \difficulty{6}
 Let $\alpha$ be a finite alphabet with at least two symbols, and let $C$ be a code of
 length $n$ over $\alpha$ — that is, a finite set of codewords $c : \mathrm{Fin}\,n \to

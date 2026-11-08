@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.verifier_poly_reverseBound",
+ "key": "69f627deb65587c7",
+ "kind": "lemma",
+ "title": "Polynomial-time reverse length comparison",
+ "statement": "For all $C,c\\in\\mathbb{N}$, the function on binary strings that sends $z$ to the one-bit string containing $1$ exactly when $C(|\\pi_1(z)|+1)^c\\le |\\pi_2(z)|$, and containing $0$ otherwise, is polynomial-time computable. Here each projection returns the corresponding component when $z$ is a valid encoded pair and the empty string otherwise.",
+ "hypotheses_covered": [
+  "$C\\in\\mathbb{N}$",
+  "$c\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a binary string $z$, let $\\pi_1(z)$ and $\\pi_2(z)$ be the two components $a$\nand $b$ when $z = \\langle a, b\\rangle$ is a well-formed self-delimiting pair\nencoding ($a$ with every bit doubled, then $01$, then $b$), and let both be the\nempty string otherwise. Then for all $C, c \\in \\mathbb{N}$, the map sending $z$ to\nthe one-bit string recording whether $C(|\\pi_1(z)|+1)^c \\le |\\pi_2(z)|$ is\npolynomial-time computable: some finite multi-tape Turing machine over the binary\nalphabet computes it within $D(n+1)^d$ steps on every input of length $n$, for\nsome constants $D, d \\in \\mathbb{N}$."
+}

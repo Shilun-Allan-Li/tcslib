@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.catalog_increment_trace",
+ "key": "c05c2cc1393740e0",
+ "kind": "lemma",
+ "title": "Trace of the increment machine",
+ "statement": "Let $M$ be the increment machine on tape $i$, and let $w$ be a Boolean word stored on tape $i$ of a configuration $c$ in the run phase: at every offset from $-1$ through $|w|$, the tape agrees with the word buffer relative to its head position. Suppose $w$ consists of $p$ true bits followed by either no separator or one false bit and then a remaining word $z$. Then for every time $t$, the run from $c$ is the piecewise trace whose forward configuration at time $t$ applies for $t\\le p$, whose rewind configuration indexed by $2p+1-t$ applies for $p<t\\le2p+1$, and whose completed configuration applies thereafter; the verdict in the rewind and completed phases records whether the optional tail $z$ is present.",
+ "hypotheses_covered": [
+  "A work-tape index $i$",
+  "A Boolean word $w$ and configuration $c$",
+  "Initial configuration is in the run phase",
+  "Tape $i$ agrees with the buffer for every offset $-1\\le q\\le |w|$",
+  "A natural number $p$ and optional Boolean word $z$ with $w$ equal to $p$ true bits followed by an optional false bit and then $z$",
+  "Time $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

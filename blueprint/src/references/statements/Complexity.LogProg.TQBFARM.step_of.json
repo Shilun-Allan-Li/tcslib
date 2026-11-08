@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.step_of",
+ "key": "79fb287df7ab3c93",
+ "kind": "lemma",
+ "title": "Prepending One Machine Step",
+ "statement": "Let $x$ be a Boolean word, let $B$ be a natural-number bound, let $l$ be a program label, let $st$ be a seven-register state, and let $c$ be an abstract configuration. If every register of $st$ is at most $B$ and there is a finite run from the configuration obtained by taking one step of the program from $(l,st)$ to $c$, with every configuration before the endpoint satisfying the program guard and register bound $B$, then there is such a run from $(l,st)$ to $c$.",
+ "hypotheses_covered": [
+  "Every register of $st$ is at most $B$",
+  "A guarded, register-bounded run from the one-step successor of $(l,st)$ reaches $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural-number bound, $l$ a program label, $st$ a\nseven-register state, and $c$ a configuration. If every register of $st$ is at most $B$\nand there is a finite run from the configuration obtained by taking one program step\nfrom $(l,st)$ to $c$, with every configuration before the endpoint satisfying the\nprogram’s precondition and register bound $B$, then there is such a run from $(l,st)$ to\n$c$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.catalogPrefixTM_emit",
+ "key": "a2c80a6d787cebbe",
+ "kind": "lemma",
+ "title": "Emission phase of the prefix emitter",
+ "statement": "Let $w,x$ be Boolean words. For every natural number $i\\le |w|$, after $i$ steps from the prefix emitter's initial configuration on input $x$, its control state is $i$, its input head remains at position $1$, and its output is the prefix of $w$ of length $i$.",
+ "hypotheses_covered": [
+  "$w,x$ are Boolean words",
+  "$i\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $i \\le \\abs{w}$, after $i$ steps from its initial configuration on\ninput $x$ the fixed-prefix emitter for $w$ is in control state $i$, the input\nhead has not moved, and the output is the first $i$ bits of $w$."
+}

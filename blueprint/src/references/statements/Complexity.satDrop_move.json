@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.satDrop_move",
+ "key": "11a52f84f2814498",
+ "kind": "lemma",
+ "title": "Effect of a Silent Dropper Action",
+ "statement": "Let $x$ be a Boolean word; let $q,q'$ be optional states among six control states; let $i,i',n$ be natural numbers; let $h,h'$ be integers; let $m,d$ be input-head and counter-head moves; let $b$ be an optional output bit; and let $o$ be an output word. Suppose moving the input head by $m$ from the clamped offset $i$ gives the clamped offset $i'$, and $h+d=h'$. Applying the action with these moves, no counter write, output bit $b$, and successor state $q'$ to the canonical configuration with state $q$, offset $i$, counter length $n$, head $h$, and output $o$ gives the canonical configuration with state $q'$, offset $i'$, counter length $n$, head $h'$, and output $o$ followed by $b$ when present.",
+ "hypotheses_covered": [
+  "Boolean word $x$",
+  "optional control states $q,q'$",
+  "natural numbers $i,i',n$",
+  "integers $h,h'$",
+  "moves $m,d$",
+  "optional output bit $b$",
+  "output word $o$",
+  "input-head movement takes clamped offset $i$ to clamped offset $i'$",
+  "counter-head relation $h+d=h'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input, and consider a dropper action with no counter write, input\nmove $m$, counter-head move $d$, optional output bit $b$, and target state $q'$.\nIf the move $m$ takes the clamped offset $i$ to the clamped offset $i'$, and\n$h + d = h'$, then applying the action to the canonical dropper configuration at\noffset $i$ with counter length $n$, counter head $h$, and output $o$ yields the\ncanonical configuration in state $q'$ at offset $i'$ with the same counter, head\nat $h'$, and output $o$ followed by $b$ when present."
+}

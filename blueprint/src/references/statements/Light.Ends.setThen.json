@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Ends.setThen",
+ "key": "ba6f8db10f0c34dd",
+ "kind": "theorem",
+ "title": "Assignment followed by bounded execution",
+ "statement": "Let $L$ be resource limits, $P$ a program, $d$ a call depth, and $\text{loc},\text{mem}:\bbn\to\bbz$ an initial state. For an index $x$, an expression $e$, a statement $s$, a time bound $T$, and a postcondition $Q$, suppose that executing $s$ from the state obtained by assigning the value of $e$ in the initial state to local $x$ ends within $\u0000\text{max}(T-(\text{cost}(e)+1),0)$ steps and satisfies $Q$. If $e$ is safe in the initial state and $\text{cost}(e)+1\\le T$, then executing the assignment of $e$ to $x$ followed by $s$ from the initial state ends within $T$ steps and satisfies $Q$.",
+ "hypotheses_covered": [
+  "Execution of $s$ from the state with local $x$ updated to the value of $e$ ends within the truncated bound $T-(\\text{cost}(e)+1)$ and satisfies $Q$.",
+  "$e$ is safe in the initial state.",
+  "$\\text{cost}(e)+1\\le T$. "
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

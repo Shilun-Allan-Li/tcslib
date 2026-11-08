@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.LogProg.ps_start",
+ "key": "da02439c98b746de",
+ "kind": "theorem",
+ "title": "Path program from the zero configuration",
+ "statement": "For every finite bit string $x$, the fixed nondeterministic path program started with all nine registers zero and register bound $4(|x|+1)$ terminates on every computation branch without exceeding that bound, and has an accepting branch exactly when the following condition holds. There is a natural number $n$ such that for each $i<n$, the entries of $x$ at positions $2i$ and $2i+1$ are true, and the entries at $2n$ and $2n+1$ are respectively false and true; for every $j<n^2$, the entries at positions $2n+2+2j$ and $2n+3+2j$ agree, and the entries at positions $2n+2+2n^2$ and $2n+3+2n^2$ are respectively false and true. There are also $s,t<n$ such that the binary word of $s$ is doubled at position $2n+2+2n^2+2$ in $x$, the binary word of $t$ occurs starting at position $2n+2+2n^2+2+2|\\mathrm{bits}(s)|+2$ and ends exactly at the end of $x$, and there is a walk from $s$ to $t$ of length at most $n$ whose vertices are less than $n$, with each step from $u$ to $v$ satisfying $x_{2n+2+2(un+v)}=1$ (out-of-range entries are false).",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit string $x$, the fixed nondeterministic path program started with all nine\nregisters zero and register bound $4(|x|+1)$ terminates on every branch without\nexceeding that bound, and it has an accepting branch exactly when the following holds:\nthere is an $n$ such that the first $n$ aligned bit pairs of $x$ are all $11$, followed\nby the separator $01$; the next $n^2$ aligned pairs each consist of two equal bits,\nfollowed by another $01$; there is a source $s<n$ whose binary word, with each bit\ndoubled, occurs at the prescribed position and is followed by $01$; and there is a\ntarget $t<n$ whose binary word occurs plainly from the position immediately after that\nencoding through the end of $x$. Moreover, there is a walk from $s$ to $t$ of length at\nmost $n$ using vertices less than $n$, where a step from $u$ to $v$ is allowed exactly\nwhen the bit of $x$ at position $2n+2+2(un+v)$ is $1$."
+}

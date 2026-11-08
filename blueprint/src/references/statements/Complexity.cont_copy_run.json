@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.cont_copy_run",
+ "key": "4077cdd80df64adf",
+ "kind": "lemma",
+ "title": "Suffix Copying Run",
+ "statement": "Let $N$ be a nondeterministic Turing machine over the binary alphabet, and let $y,r,\\mathrm{pre},x,u$ be finite Boolean words with $y=\\mathrm{pre}\\,r$. Starting from the pair-loader configuration in state $3$, with physical input position $|\\mathrm{pre}|+1$, input buffer $x$, choice buffer $u$, and buffer-head positions $|x|$ and $|u|$, after exactly $|r|$ steps the configuration is in state $3$, at physical input position $|y|+1$, with input buffer $x$, choice buffer $ur$, head positions $|x|$ and $|ur|$, and empty output.",
+ "hypotheses_covered": [
+  "$N$ is a nondeterministic Turing machine over the binary alphabet",
+  "$y,r,\\mathrm{pre},x,u$ are finite Boolean words",
+  "$y=\\mathrm{pre}\\,r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine and let the physical input $y$ decompose as $y = p\\,r$ for words $p$ and $r$. From the suffix-copy loader state at position $|p| + 1$ with buffers $x$ and $u$, exactly $|r|$ steps of the pair-loader machine append $r$ to the choice buffer, ending at the right boundary of $y$ with the input buffer $x$ unchanged and no physical output."
+}

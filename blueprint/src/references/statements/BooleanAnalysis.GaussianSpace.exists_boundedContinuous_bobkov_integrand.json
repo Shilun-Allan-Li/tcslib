@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.exists_boundedContinuous_bobkov_integrand",
+ "key": "1f929114de8313f2",
+ "kind": "lemma",
+ "title": "A bounded continuous Bobkov integrand",
+ "statement": "Let $n\\ge0$, let $f:\\mathbb R^n\\to\\mathbb R$ be continuous with $0\\le f(x)\\le1$ for every $x$, and let $D$ be a continuous map from $\\mathbb R^n$ to the space of continuous linear functionals on $\\mathbb R^n$. Suppose there is a real number $M$ such that $\\|D(x)\\|\\le M$ for every $x$. Then there is a bounded continuous function $F:\\mathbb R^n\\to\\mathbb R$ satisfying, for every $x$,\n\\[F(x)=\\sqrt{U(f(x))^2+\\sum_{i=0}^{n-1}(D(x)e_i)^2},\\]\nwhere $U$ is the Gaussian profile with zero values outside $(0,1)$ and $e_i$ are the coordinate unit vectors.",
+ "hypotheses_covered": [
+  "$n\\ge0$",
+  "$f$ is continuous",
+  "$f(x)\\in[0,1]$ for every $x$",
+  "$D$ is continuous",
+  "$M\\in\\mathbb R$ bounds $\\|D(x)\\|$ for every $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ be the standard Gaussian distribution function and density, and let $\\overline I(p)=\\varphi(\\Phi^{-1}(p))$ for $0<p<1$, with $\\overline I(p)=0$ elsewhere. Let $f:\\mathbb R^n\\to[0,1]$ be continuous, and let $D(z)$ be a continuous family of real linear functionals on $\\mathbb R^n$ with $\\|D(z)\\|\\le M$ for all $z$, for some real $M$. Then $z\\mapsto\\sqrt{\\overline I(f(z))^2+\\sum_i(D(z)e_i)^2}$ is a bounded continuous function."
+}

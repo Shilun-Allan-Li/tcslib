@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.main_run",
+ "key": "772f7c9f47f70fc4",
+ "kind": "theorem",
+ "title": "Halting simulation on a delimited word",
+ "statement": "Let $z,x$ be Boolean words, and let $l$ be a Boolean word. Suppose $z=\\mathrm{pre}\\,\\mathrm{dbl}(l)\\,(0,1)\\,x$, where $\\mathrm{pre}$ is a Boolean word, and let $s$ satisfy the invariant that its work-head index is at most the length of its computed-value list, every marked index is smaller than that length, its phase is a main phase, and a phase outside the walking phases has work-head index zero. For any $B\\in\\mathbb N$ with $|s.\\mathrm{vals}|+|l|\\le B$, the circuit-evaluation machine, started in the configuration encoding $s$ at the input position immediately after $\\mathrm{pre}$, halts with output equal to the Boolean value obtained by recursively processing $l$ from $s$, within $(|l|+1)(2B+4)$ steps. This holds for either setting of the exactness parameter.",
+ "hypotheses_covered": [
+  "$z,x,l,\\mathrm{pre}$ are Boolean words",
+  "$z=\\mathrm{pre}\\,\\mathrm{dbl}(l)\\,(0,1)\\,x$",
+  "the start index $|\\mathrm{pre}|$ is at most $|z|$",
+  "$s$ satisfies all four conjuncts of the invariant",
+  "$B\\in\\mathbb N$",
+  "$|s.\\mathrm{vals}|+|l|\\le B$",
+  "the exactness parameter is Boolean"
+ ],
+ "confidence": "low",
+ "caveat": "The informal definitions supplied do not include the recursive evaluator or the configuration encoding used in the statement; these are described by their roles.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

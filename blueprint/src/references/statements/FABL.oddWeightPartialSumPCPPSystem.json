@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.oddWeightPartialSumPCPPSystem",
+ "key": "4de85edbdcc87847",
+ "kind": "def",
+ "title": "Odd weight partial sum verifier",
+ "statement": "For each natural number $m$, define a verifier with $m+2$ Boolean input positions, $m+1$ Boolean proof positions, and three query positions. It samples uniformly from the seed set consisting of two Boolean seeds and one seed for each index $k<m$. On the false seed it queries input positions $0$ and $1$ and proof position $0$; on the true seed it queries the last proof position and leaves the other two query positions unanswered; on seed $k$ it queries proof position $k$, input position $k+2$, and proof position $k+1$. It applies the corresponding transcript acceptance rule.",
+ "hypotheses_covered": [
+  "A natural number $m$",
+  "Boolean input alphabet",
+  "Input length $m+2$",
+  "Proof length $m+1$",
+  "Three query positions",
+  "Uniform sampling over the seed set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

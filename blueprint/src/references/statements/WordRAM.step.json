@@ -1,0 +1,16 @@
+{
+ "lean_name": "WordRAM.step",
+ "key": "4eb235efd5f76077",
+ "kind": "def",
+ "title": "One machine step",
+ "statement": "For a program $P$ and a configuration with program counter $p$ and memory $m$, one step returns either a new configuration or a Boolean terminal result. If the instruction at $p$ is missing, it is treated as rejection. An instruction that writes a value to address $i$ stores that $W$-bit value at $i$ and advances the counter to $p+1$; the arithmetic instructions write the corresponding word addition, subtraction, or multiplication, and load and store use the integer value represented by a word as an address. A negative-value branch jumps to its specified position exactly when the tested word represents a negative integer, and otherwise advances to $p+1$; accept and reject return true and false, respectively.",
+ "hypotheses_covered": [
+  "word width $W$ is a natural number",
+  "program $P$ is a list of instructions",
+  "the input configuration has a natural-number program counter and integer-addressed $W$-bit memory"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

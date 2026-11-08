@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_of_degree_le_one",
+ "key": "6406bc74938a0329",
+ "kind": "lemma",
+ "title": "Evaluation of a degree-one polynomial",
+ "statement": "Let $n\\in\\mathbb N$, let $p$ be a real coefficient family indexed by subsets of $[n]$, and suppose $p(S)=0$ whenever $|S|>1$. Then for every $x\\in\\{0,1\\}^n$, \\[\\sum_{S\\subseteq[n]}p(S)\\chi_S(x)=p(\\varnothing)+\\sum_{i\\in[n]}p(\\{i\\})(-1)^{x_i}.\\]",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$p$ is a real coefficient family indexed by subsets of $[n]$",
+  "$p(S)=0$ for every $S$ with $|S|>1$",
+  "$x$ is a Boolean-cube point"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. Let $P(x)=\\sum_{S\\subseteq[n]}a_S\\chi_S(x)$ with real coefficients $a_S$. If $a_S=0$ for $|S|>1$, then $P(x)=a_\\varnothing+\\sum_{i=1}^n a_{\\{i\\}}(-1)^{x_i}$ for every $x\\in\\{0,1\\}^n$."
+}

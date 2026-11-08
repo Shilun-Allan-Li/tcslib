@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.satEval_double",
+ "key": "be2dd1e5d1b38ade",
+ "kind": "lemma",
+ "title": "Consuming a Doubled Input Bit",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $w,u$ be Boolean words, and choose a saved configuration of $M$ on input $w$, phase indices $q,q'\\in\\{0,1,2,3,4\\}$, Boolean values $a,c,a',c',b$, a natural number $i$ with $i+2\\le |w|$, integer offsets $j,j'$, and a sign $d\\in\\{-1,0,1\\}$ such that $j+d=j'$. Suppose the $i$-th input bit is $b$, and the evaluator's transition from semantic phase $q$ with bits $a,c$ and skip flag false, upon reading $b$ in the canonical configuration at offset $i$ and certificate-head offset $j$, is the administrative action that moves the input head right, moves the certificate head by $d$, emits nothing, and enters phase $q'$ with bits $a',c'$ and skip flag true. Then two evaluator steps from that canonical configuration reach the canonical configuration at input offset $i+2$, certificate-head offset $j'$, and phase $q'$ with bits $a',c'$ and skip flag false.",
+ "hypotheses_covered": [
+  "finite Boolean machine $M$ with $k$ work tapes",
+  "saved configuration on input $w$",
+  "Boolean word $u$",
+  "phase indices $q,q'\\in\\{0,1,2,3,4\\}$",
+  "Boolean values $a,c,a',c',b$",
+  "$i+2\\le |w|$",
+  "integer offsets $j,j'$",
+  "sign $d\\in\\{-1,0,1\\}$",
+  "$j+d=j'$",
+  "the $i$-th input bit is $b$",
+  "the stated evaluator transition is the specified administrative action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the evaluator's transition at a semantic state on the current input bit is\nthe administrative action moving right, displacing the certificate head by $d$, and\nentering a new semantic state with the skip flag set. Then two machine steps — the\nsemantic transition followed by its silent skip — consume the doubled input bit:\nthe input position advances by two, the certificate head by $d$, and the control\nreaches the new semantic state with the skip flag cleared. The certificate head\nmoves only on the first of the two physical transitions."
+}

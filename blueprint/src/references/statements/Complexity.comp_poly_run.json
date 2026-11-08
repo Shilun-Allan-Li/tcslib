@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.comp_poly_run",
+ "key": "03ed495321570ef5",
+ "kind": "lemma",
+ "title": "Polynomial counter run",
+ "statement": "Let $C,e,B\\in\\mathbb{N}$, let $m,o\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $f$ map finite bit strings to finite bit strings, let $h$ be a finite bit string, and let $v$ be a vector of fourteen natural-number registers. Suppose every register value is at most $B$, registers $6,7,10,11$ are zero, register $8$ is positive, and, with $q=e+1$ if $o$ is true and $q=e$ otherwise and $F=2C+3$ if $o$ is true and $F=C$ otherwise, both $v(8)^q$ and $Fv(8)^q$ are at most $B$. Then there is a run of the specified register program from state polynomial start with flag $o$ and register vector $v$ to tail test if $o$ is true and to length bound otherwise. Every configuration before the endpoint satisfies the program's admissibility condition and has all register values at most $B$; at the endpoint, register $7$ is $Fv(8)^q$ and every other register retains its initial value.",
+ "hypotheses_covered": [
+  "$C,e,B$ are natural numbers",
+  "$m,o$ are Boolean values",
+  "$f$ maps finite bit strings to finite bit strings",
+  "$h$ is a finite bit string",
+  "$v$ assigns natural-number values to fourteen registers",
+  "Every register value of $v$ is at most $B$",
+  "Registers 6, 7, 10, and 11 of $v$ are zero",
+  "Register 8 of $v$ is positive",
+  "$v(8)^q\\le B$, where $q=e+1$ if $o$ is true and $q=e$ otherwise",
+  "$Fv(8)^q\\le B$, where $F=2C+3$ if $o$ is true and $F=C$ otherwise"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e$ be natural numbers, let $m,o$ be Boolean parameters, let $f$ map bit strings\nto bit strings, let $h$ be a bit string, let $B$ be a natural number, and let $v$ assign\nnatural numbers to fourteen registers. Suppose every register value is at most $B$,\nregisters $6$, $7$, $10$, and $11$ are zero, register $8$ is positive, and both\n$v_8^{q}$ and $Fv_8^{q}$ are at most $B$, where $q=e+1$ if $o$ is true and $q=e$\notherwise, and $F=2C+3$ if $o$ is true and $F=C$ otherwise. Then the program has a\nbounded safe run from state “polynomial start” with parameter $o$ to “tail test” if $o$\nis true and to “length bound” otherwise; the endpoint register vector is obtained by\nsetting register $7$ to $Fv_8^q$, with all other register values unchanged."
+}

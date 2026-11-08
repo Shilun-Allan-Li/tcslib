@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.mapValidate",
+ "key": "5fb2c8ed2cb593ed",
+ "kind": "lemma",
+ "title": "Silent validation of encoded pairs",
+ "statement": "Let $M$ be a Boolean finite Turing machine, let $x$ be a Boolean word, let $c$ be a configuration of $M$ on $x$, and let $r$ be a Boolean word. For every split $x=u r$, there exist an integer time $t\\le |r|+1$ such that the controller started in its silent validation state at input position $|u|+1$ has the following behavior: if the pair parser succeeds on $r$, then for some input-head position $p$ its configuration after $t$ steps is the corresponding configuration with the same simulated tape contents, empty output, input head at $p$, and controller state for the next phase. If the parser fails on $r$, then after $t$ steps the controller is halted and its output is empty.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machine $M$",
+  "Boolean input word $x$",
+  "configuration $c$ of $M$ on $x$",
+  "Boolean suffix $r$",
+  "for every prefix $u$ with $x=u r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a split $x = p s$ of the input, there is a time $t \\le \\abs{s} + 1$ from\nthe controller's silent validation state at position $\\abs{p}$ such that: if\n$s$ is a valid word of the self-delimiting pair code, after $t$ steps the\ncontroller is at its post-validation state with nothing emitted; and if $s$\nis malformed, after $t$ steps the controller has halted with empty output."
+}

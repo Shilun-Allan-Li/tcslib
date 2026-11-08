@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.dnf_junta",
+ "key": "eefdd61cfe14e864",
+ "kind": "theorem",
+ "title": "Junta Approximation for DNF",
+ "statement": "There exists a constant $C>0$ such that for every $n,w\\in\\mathbb N$ and every DNF $d$ on $n$ variables with width at most $w$, and every $0<\\varepsilon\\le1$, there are a coordinate set $J\\subseteq[n]$ and a function $h:\\{0,1\\}^n\\to\\{-1,1\\}$ depending only on coordinates in $J$ such that $|J|\\le(1/\\varepsilon)^{Cw}$ and the uniform probability that $h(x)$ differs from the sign encoding of $d(x)$ is at most $\\varepsilon$.",
+ "hypotheses_covered": [
+  "There exists a positive real constant C",
+  "n and w are natural numbers",
+  "d is a DNF on n variables",
+  "The width of d is at most w",
+  "ε is real and 0 < ε ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exists an absolute $C>0$ such that for every DNF $d$ on $n$ variables of width at most $w\\in\\mathbb N$ and every $0<\\varepsilon\\le1$, there exist $J\\subseteq[n]$ and $h:\\{0,1\\}^n\\to\\{-1,1\\}$ depending only on $J$, with $|J|\\le(1/\\varepsilon)^{Cw}$ and $\\Pr_x((-1)^{d(x)}\\ne h(x))\\le\\varepsilon$ under the uniform cube law."
+}

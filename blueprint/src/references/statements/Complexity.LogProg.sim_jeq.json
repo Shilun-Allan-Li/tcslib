@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.sim_jeq",
+ "key": "078b32e0d6d617dd",
+ "kind": "lemma",
+ "title": "Simulation of Register Equality Test",
+ "statement": "Let $A$ be a register-program instruction map with initial label $l_0$, let the oracle assign a Boolean answer to each decider and bit string, and let $x$ be an input bit string. Suppose labels $l,l_1,l_0'$, distinct registers $r,s$, and the instruction identity $A(l)=\\operatorname{jeq}(r,s,l_1,l_0')$ are given. For any register valuation $v$ and output word, if the length of the binary expansion of $v(r)$ is at most the integer bound $W$, then the compiled program simulates this instruction from the configuration with label $l$ and valuation $v$ to the configuration with the same valuation and output and with label $l_1$ when $v(r)=v(s)$, and label $l_0'$ otherwise; at every intermediate configuration before the endpoint, no oracle call is pending and each work-head position lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "An instruction map A and initial label l₀",
+  "An oracle assigning Boolean answers by decider and bit string",
+  "An input bit string x",
+  "Labels l, l₁, and l₀′",
+  "Distinct registers r and s",
+  "A(l) = jeq(r,s,l₁,l₀′)",
+  "A valuation v of all registers and an output word",
+  "Integer bound W",
+  "Length of the binary expansion of v(r) is at most W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

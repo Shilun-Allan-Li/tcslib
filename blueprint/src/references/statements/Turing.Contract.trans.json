@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.Contract.trans",
+ "key": "d259f2b13378a68b",
+ "kind": "def",
+ "title": "Composition of execution contracts",
+ "statement": "Let $C_1$ be a contract from entry state $e_1$ to the singleton exit state $e_2$, and let $C_2$ be a contract from $e_2$ to a set $X$ of states. Suppose a map sends each data value for $C_1$ to a data value for $C_2$, and every endpoint of $C_1$ satisfying its precondition satisfies the corresponding precondition of $C_2$. Also suppose that before the end of $C_1$, the run's state is outside $X$. The composed contract uses the precondition of $C_1$, runs for the sum of the two assigned times, ends at the endpoint assigned by $C_2$, and bounds each work-tape head between the minimum of the two lower bounds and the maximum of the two upper bounds.",
+ "hypotheses_covered": [
+  "$C_1$ exits at the singleton state $e_2$",
+  "$C_2$ starts at $e_2$ and exits in $X$",
+  "A map from $C_1$ data values to $C_2$ data values",
+  "Every eligible $C_1$ endpoint satisfies the corresponding $C_2$ precondition",
+  "Before the end of $C_1$, the run's state is outside $X$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

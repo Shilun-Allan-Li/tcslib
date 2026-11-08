@@ -1,0 +1,17 @@
+{
+ "lean_name": "Randomized.Amplify.rewindAt_emb",
+ "key": "6cc11c17251b6fd0",
+ "kind": "theorem",
+ "title": "Embedding a halted run at rewind",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean inputs, let $r$ be a natural number, and let $x$ be a Boolean input. Take an augmented configuration $D$, an index $j$ with $0\\le j\\le r$, a counter $c$ with $0\\le c\\le r+1$, and a configuration $u$ of $N$ on $x$. If $u$ is halted and every tape block of $D$ with index greater than $j$ is blank with its head at cell $0$, then embedding $u$ into block $j$ at counter $c$ produces an augmented configuration in rewind phase at index $j$. Its counter is increased by one, capped at $r+1$, exactly when the summary of $u$'s output is true; its output is empty, and every block with index greater than $j$ remains blank with its head at cell $0$.",
+ "hypotheses_covered": [
+  "$u$ is halted",
+  "Blocks of $D$ with index greater than $j$ are blank and have head position $0$",
+  "$j$ ranges from $0$ to $r$",
+  "$c$ ranges from $0$ to $r+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

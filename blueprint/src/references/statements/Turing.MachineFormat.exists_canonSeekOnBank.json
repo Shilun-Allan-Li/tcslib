@@ -1,0 +1,30 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonSeekOnBank",
+ "key": "138b93a2dc81c310",
+ "kind": "lemma",
+ "title": "Canonical seek on a tape bank",
+ "statement": "Let $F$ be a machine format, let $k$ be a natural number, and let $\\iota:\\{0,1\\}\\hookrightarrow\\{0,\\ldots,k-1\\}$ be an injection. There exist a finite state set $S$ with decidable equality, a deterministic Turing machine $R$ with $k$ work tapes over the Boolean alphabet, entry and exit states in $S$, and a natural number $a$ such that the following holds. For every Boolean input word $x$, natural number $p$, Boolean word $w$ whose base-two value is $p$, and configuration $d$ on input $x$, assume $p\\le |x|+1$, the state of $d$ is the entry state, tape $\\iota(0)$ contains the buffer representation of $w$ at every integer offset $q$ with $-1\\le q\\le |w|$, and tape $\\iota(1)$ is blank at every integer position. Then for some $t\\le a(|w|+d.inputPos.val+p+1)$, the run of $R$ from $d$ has not reached the exit state at any time $u<t$, and at time $t$ it is exactly $d$ with its state changed to the exit state and its input-head position set to $p$.",
+ "hypotheses_covered": [
+  "Machine format $F$",
+  "Natural number $k$",
+  "Injection from two designated indices into the $k$ work-tape indices",
+  "Finite state set $S$ with decidable equality",
+  "Machine $R$ and entry and exit states",
+  "Natural number $a$",
+  "Boolean input $x$, natural number $p$, and Boolean word $w$",
+  "Base-two value of $w$ equals $p$",
+  "$p\\le |x|+1$",
+  "Starting configuration has entry state",
+  "Buffer contents on tape $\\iota(0)$ for every integer $q$ with $-1\\le q\\le |w|$",
+  "Tape $\\iota(1)$ is blank at every integer position",
+  "A time $t\\le a(|w|+d.inputPos.val+p+1)$ exists",
+  "Exit state is not reached at any earlier time",
+  "Final configuration agrees with $d$ except for its exit state and input-head position $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

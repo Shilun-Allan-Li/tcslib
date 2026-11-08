@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.heads_update",
+ "key": "6716edb1b4ea0878",
+ "kind": "theorem",
+ "title": "Casting an updated register assignment",
+ "statement": "Let $\u0005rho:\u0005mathrm{Fin}(R)\\to\u0005mathbb{N}$ be a register assignment, let $t$ be a register index, and let $m\\in\u0005mathbb{N}$. Casting each value to an integer after replacing $\u0005rho(t)$ by $m$ gives the same function as first casting all values of $\u0005rho$ to integers and then replacing the value at $t$ by $m$.",
+ "hypotheses_covered": [
+  "The label type is finite and has decidable equality",
+  "A label $l_0$ is specified",
+  "A register assignment $\u0005rho$",
+  "A register index $t$",
+  "A natural number $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\rho : \\{0, \\dots, R-1\\} \\to \\mathbb{N}$, let $t$ be an index and $m \\in \\mathbb{N}$, and let\n$\\rho'$ agree with $\\rho$ except that $\\rho'(t) = m$. Then replacing the $t$-th entry of the\ninteger vector $(\\rho(r))_r$ by $m$ gives the integer vector $(\\rho'(r))_r$."
+}

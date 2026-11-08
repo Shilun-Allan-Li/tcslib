@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.seamComp_visited_general",
+ "key": "4835bfc5fe137397",
+ "kind": "lemma",
+ "title": "Visited Tape Cells Under Seam Composition",
+ "statement": "Let $M_1$ and $M_2$ be machines with the same work tapes, and let $e$ be a state of $M_1$ and $a$ a state of $M_2$. Suppose a computation of $M_1$ from $c_0$ reaches $c_1$ after $T_1$ steps, with state $e$, and does not visit state $e$ at any earlier time $t<T_1$. For each work tape $i$, the set of head positions visited by the seam-composed machine from the state-renamed configuration $c_0$ through time $T_1+1+T_2$ is contained in the union of the positions visited by $M_1$ from $c_0$ through time $T_1$ and those visited by $M_2$ from the state-renamed configuration with state $a$ and the other data of $c_1$ through time $T_2$.",
+ "hypotheses_covered": [
+  "Machines M₁ and M₂ share the symbol alphabet and have k work tapes",
+  "c₀ and c₁ are configurations for M₁ on input x",
+  "M₁ reaches c₁ from c₀ after T₁ steps",
+  "c₁ has state exit",
+  "No configuration before time T₁ has state exit",
+  "i is a work-tape index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

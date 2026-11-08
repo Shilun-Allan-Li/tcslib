@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_splitSolve_spaceUsed",
+ "key": "09bfe1a1f0f0a668",
+ "kind": "theorem",
+ "title": "Polynomial-time split search with bounded space",
+ "statement": "For all natural numbers $C$ and $e$, there exist a finite Turing machine $M$ and a natural number $c$ such that, on every Boolean input $w$ of length $n$, $M$ halts within $c(n+1)^{e+2}$ steps and outputs the encoding that doubles each bit of the prefix of $w$ of length $i$, appends $01$, and then appends the remaining suffix, where $i$ is the least integer in $0,\\ldots,n$ satisfying $i+C(i+1)^e=n$; if no such $i$ exists, its output is the empty word. For every Boolean word $x$ and every time $t$, the computation of $M$ on $x$ up to time $t$ uses at most $c(|x|+1)^{e+1}$ work-tape cells.",
+ "hypotheses_covered": [
+  "$C$ is a natural number",
+  "$e$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

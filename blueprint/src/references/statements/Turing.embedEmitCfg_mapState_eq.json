@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.embedEmitCfg_mapState_eq",
+ "key": "51907d2663a163e3",
+ "kind": "theorem",
+ "title": "State-renamed configuration reconstruction",
+ "statement": "Let $m,k$ be nonnegative integers, let $\\sigma$ embed the indices of $m$ tapes into those of $k$ tapes, and let $f:S\\to H$ be a map of state sets. Let $c$ be a configuration with state set $S$ and let $d$ be a configuration with state set $H$, both on the same input and over the same symbol set. Suppose applying $f$ to the optional state of $c$ gives the state of $d$, their input-head positions agree, and prefixing $c$'s output by a word $p$ gives $d$'s output. Suppose their tape contents and head positions agree on selected tapes, and the supplied tape contents and head positions agree with $d$ on every unselected tape. Then embedding $c$ with those supplied tapes and head positions and prefixing its output by $p$, followed by renaming its state using $f$, gives $d$.",
+ "hypotheses_covered": [
+  "Nonnegative tape counts $m,k$",
+  "An embedding of the $m$ tape indices into the $k$ tape indices",
+  "A state map $f:S\\to H$",
+  "Configurations on the same input and symbol set",
+  "Mapped optional state of $c$ equals the state of $d$",
+  "Equal input-head positions",
+  "Prefixed output agrees with $d$'s output",
+  "Selected tapes agree in contents and head positions",
+  "Unselected tapes agree with supplied contents and head positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

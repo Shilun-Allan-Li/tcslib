@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.exists_selfStartupTM",
+ "key": "81e8e021a6e8b5f0",
+ "kind": "theorem",
+ "title": "Self-Description Startup Machine",
+ "statement": "For every effective code system $c$ for one-work-tape binary machines, there are natural numbers $K$, a finite state set $P$, a deterministic binary machine $R$ with $K+3$ work tapes, and an exit state in $P$ such that the following holds. For each code $\\alpha$, there are natural numbers $T$ and $B$ so that, for every binary input $w$, after exactly $T$ steps on $\\langle\\alpha,w\\rangle$, $R$ is in the exit state, its input-head position is $1$, all work-head positions are $0$, its output is empty, its second work tape stores the decoded machine's transition table, and its third work tape stores the unary encoding of that machine's initial state shifted by two cells, with every other work-tape cell blank. The exit state is not reached at any earlier time, the output remains empty through time $T$, and the total space used by time $T$ is at most $B$.",
+ "hypotheses_covered": [
+  "$c$ is an effective code system for one-work-tape binary machines",
+  "$K$ is a natural number",
+  "$P$ is finite and has decidable equality",
+  "$R$ is a deterministic binary machine with $K+3$ work tapes",
+  "$\\alpha$ is any binary string",
+  "$T$ and $B$ are natural numbers depending on $\\alpha",
+  "$w$ is any binary input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective code system for one-work-tape binary machines, there exist a natural\nnumber $K$, a finite state set $P$, a deterministic binary machine $R$ with $K+3$ work\ntapes, and an exit state. For each code $\\alpha$, there are natural numbers $T$ and $B$\nsuch that, on every binary input $w$, after exactly $T$ steps the machine on the paired\ninput $\\langle\\alpha,w\\rangle$ is in the exit state with input-head position $1$, empty\noutput, and all work-head positions at zero; its second work tape stores the decoded\nmachine's transition table, its third stores the unary encoding of that machine's\ninitial state shifted by two cells, and every other work-tape cell is blank. The exit\nstate is not reached earlier, the output remains empty through time $T$, and the total\nspace used by time $T$ is at most $B$."
+}

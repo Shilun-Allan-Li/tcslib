@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.TreeCircuit.toLayeredWrapper_eval",
+ "key": "e70227c37c57996f",
+ "kind": "theorem",
+ "title": "Evaluation of the layered embedding",
+ "statement": "Let $C$ be a Boolean circuit tree on $n$ variables, and let $x$ assign a Boolean value to each variable. The value computed by the unique output of its layered feedforward embedding on input $x$ equals the value obtained by evaluating $C$ directly on $x$.",
+ "hypotheses_covered": [
+  "$C$ is a Boolean circuit tree on $n$ variables",
+  "$x$ is an assignment of Boolean values to the variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a Boolean circuit on $n$ variables, and let $x : \\mathrm{Fin}\\,n \\to \\bbf_2$\nbe an assignment of Boolean values to those variables. Form the feedforward embedding of\n$C$, a layered feedforward circuit with a single output wire, and let its unique output\nvalue under $x$ be the Boolean it computes. Then this value equals $C(x)$, the value\nobtained by evaluating the circuit $C$ directly on the assignment $x$."
+}

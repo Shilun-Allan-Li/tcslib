@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.skipBackTM",
+ "key": "495ecb1c929c04e0",
+ "kind": "def",
+ "title": "Backward tape-skipping machine",
+ "statement": "For a positive number $k$ of work tapes and a selected tape $i<k$, the machine starts in the run phase. In the run phase it leaves the selected tape unchanged, moves its head one step to the left, and enters the gap phase; in the gap phase it makes the same tape movement and enters the back phase. In the back phase, if the selected tape's scanned cell contains a symbol, it moves that tape's head one step to the left and remains in the back phase; if the cell is blank, it moves the head one step to the right and enters the done phase. In the done phase, it leaves the work tapes unchanged, keeps the input head still, emits no output, and remains in the done phase.",
+ "hypotheses_covered": [
+  "A symbol alphabet",
+  "A natural number $k$ of work tapes",
+  "A selected tape index $i<k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

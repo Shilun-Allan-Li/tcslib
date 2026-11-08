@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.oracleChoice_run",
+ "key": "bf733b490bbfe672",
+ "kind": "theorem",
+ "title": "Halting simulation with bounded time",
+ "statement": "Let $N$ be a finite nondeterministic oracle Turing machine over the Boolean alphabet, let $O$ be a Boolean oracle language, and let $x$ and $u$ be Boolean words. For any configuration $c$ of $N$ on input $x$, suppose an added tape with content $T$ and head position $p$ satisfies $T(p+i)=u_i$ when $i$ is a nonnegative integer less than the length of $u$, and is blank otherwise. Then there is a time $s\\le 2|u|+2$ at which the constructed deterministic oracle machine, started from the configuration formed by adding this tape to $c$, has halted; its output is the output of the run of $N$ on $c$ using choice word $u$ if that run has halted, and otherwise is that output followed by the Boolean symbol false.",
+ "hypotheses_covered": [
+  "finite nondeterministic oracle machine N over Bool",
+  "oracle language O over Bool",
+  "Boolean input word x",
+  "Boolean word u",
+  "configuration c of N",
+  "added tape content T and head position p",
+  "for every natural i, T(p+i) equals the i-th symbol of u, or is blank when i is outside u"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

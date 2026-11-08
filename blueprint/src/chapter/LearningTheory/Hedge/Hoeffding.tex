@@ -70,7 +70,7 @@ bound
 \lean{hoeffding_log_mgf_weak}
 \label{hoeffding_log_mgf_weak}
 \leanok
-\uses{eta_exp_bound}
+\uses{eta_exp_bound, log_one_add_le, weighted_exp_le_affine}
 \difficulty{5}
 Let $n \ge 1$ and let $p = (p_1, \dots, p_n)$ be a probability vector, so that $p_i \ge
 0$ for every $i$ and $\sum_{i} p_i = 1$. Let $\ell_1, \dots, \ell_n \in [0,1]$, and let
@@ -86,6 +86,7 @@ $\eta > 0$. Writing $L = \sum_{i} p_i \ell_i$ for the average loss, one has
 \lean{bernoulli_mgf_bound}
 \label{bernoulli_mgf_bound}
 \leanok
+\uses{bernoulli_mgf_bound_step1, bernoulli_mgf_bound_step2}
 \difficulty{7}
 Let $L \in [0,1]$ and let $\eta$ be a real number. Then the moment generating function
 of the shifted Bernoulli weight $1 - L + L\,e^{-\eta}$ satisfies
@@ -116,33 +117,22 @@ $\sum_{i=1}^n p_i = 1$, and let $\ell_1,\dots,\ell_n \in [0,1]$ be losses. Write
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[First derivative of the Hoeffding auxiliary function]
+\begin{lemma}[Derivative of the Bernoulli auxiliary function]
 \lean{bernoulli_mgf_bound_step1}
 \label{bernoulli_mgf_bound_step1}
 \leanok
-Let $L, x \in \bbr$ and suppose $1 - L + L\,e^{-x} > 0$. Then the auxiliary function
-\[
-  \varphi(x) \;=\; -L x + \frac{x^2}{8} - \ln\!\bigl(1 - L + L\,e^{-x}\bigr)
-\]
-is differentiable at $x$ with derivative
-\[
-  \varphi'(x) \;=\; -L + \frac{x}{4} + \frac{L\,e^{-x}}{1 - L + L\,e^{-x}}.
-\]
-This is the $\varphi'$ computation used in the proof of \texttt{bernoulli\_mgf\_bound}.
+\difficulty{4}
+Let $L,x\in\mathbb{R}$ and suppose $1-L+Le^{-x}>0$. The function
+$\varphi(y)=-Ly+\frac{y^2}{8}-\ln(1-L+Le^{-y})$ has derivative at $x$ equal to
+$-L+\frac{x}{4}+\frac{Le^{-x}}{1-L+Le^{-x}}$.
 \end{lemma}
 
-\begin{lemma}[Second derivative of the Hoeffding auxiliary function]
+\begin{lemma}[Derivative of the auxiliary derivative expression]
 \lean{bernoulli_mgf_bound_step2}
 \label{bernoulli_mgf_bound_step2}
 \leanok
-Let $L, x \in \bbr$ and suppose $1 - L + L\,e^{-x} > 0$. Then the function
-\[
-  \varphi'(x) \;=\; -L + \frac{x}{4} + \frac{L\,e^{-x}}{1 - L + L\,e^{-x}}
-\]
-(the derivative from \texttt{bernoulli\_mgf\_bound\_step1}) is differentiable at $x$ with
-derivative
-\[
-  \varphi''(x) \;=\; \frac{1}{4} - \frac{L\,(1 - L)\,e^{-x}}{\bigl(1 - L + L\,e^{-x}\bigr)^2}.
-\]
-This is the $\varphi''$ computation used in the proof of \texttt{bernoulli\_mgf\_bound}.
+\difficulty{4}
+Let $L,x\in\mathbb{R}$ and suppose $1-L+Le^{-x}>0$. The function $y\mapsto
+-L+\frac{y}{4}+\frac{Le^{-y}}{1-L+Le^{-y}}$ has derivative at $x$ equal to
+$\frac14-\frac{L(1-L)e^{-x}}{(1-L+Le^{-x})^2}$.
 \end{lemma}

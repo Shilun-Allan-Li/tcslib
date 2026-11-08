@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.splitPrepare_scan",
+ "key": "d2abd17cc44eb641",
+ "kind": "lemma",
+ "title": "Preparation scan configurations",
+ "statement": "Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words. For every $j\\in\\mathbb N$ with $j\\le |s|$, running the preparation machine for $j$ steps from the configuration in state $(0,\\mathrm{false})$ with the candidate on the first work tape and all other work tapes blank, input head at position $1$, and work heads at position $0$, yields the configuration in state $(0,|w|<j)$ whose input head is at the saturated position for $j$, whose first work tape still stores $s$, whose scratch tapes store the unary word of length $j$, and whose work heads are all at displacement $j$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w$ and $s$ are Boolean words",
+  "$j\\in\\mathbb N$",
+  "$j\\le |s|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j$ at most the candidate's length, $j$ steps of the preparation\nmachine from the start of its scan yield the preparation scan configuration\nfor $j$; the candidate is unchanged and nothing is emitted, and this holds\nalso for candidates longer than the native input."
+}

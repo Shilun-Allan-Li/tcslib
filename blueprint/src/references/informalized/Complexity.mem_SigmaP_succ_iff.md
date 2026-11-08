@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/PolyHierarchy/Levels.lean :: Complexity.mem_SigmaP_succ_iff -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Successor characterization of the existential hierarchy
+
+**Claim.** A language lies at existential level $i+1$ exactly when it has a polynomially bounded existential witness whose encoded pair with the input lies in some language at universal level $i$.
+
+**Proof.** For the forward direction, write membership in level $i+1$ using a polynomial-time predicate language $V$ and witness bound $C(|x|+1)^c$. Use as the new language the set of strings $w$ for which the universal-level predicate with the same bound holds on $w$. This set lies in the $i$th universal level: the characterization of $	ext{PiP}(i)$ as the universal alternating class (PiP_eq_altClass) identifies the class, and the uniform closure result (mem_altClass_of_uniform) applies because the first component of the encoded pair can be recovered in polynomial time and its length determines a polynomial witness bound (unaryPT_poly). On an encoded pair $\langle x,u\rangle$, decoding its first component returns exactly $x$ (pairFstD_pairEncode), so the new language's condition is precisely the remaining universal-level condition after the initial existential choice. The defining expansion of the first existential alternation (altQuant_true_succ) therefore gives the required equivalence.
+
+Conversely, suppose such a language $L'$ in $	ext{PiP}(i)$ is given. By the universal-level characterization (mem_PiP_iff), choose a polynomial-time language $V'$ whose universal predicate characterizes $L'$. Apply the normal-form closure result (mem_altClass_of_normal): polynomial-time preprocessing can form the encoded pair, and the witness lengths used by the original existential definition and by the characterization of $L'$ are polynomially bounded (unaryPT_poly and PolyTimeComputable.pairEncode). This yields membership in existential level $i+1$. To identify the resulting predicate with the stated one, fix the first witness $u$. Its prescribed length ensures that the polynomial bound calculated from the first component of $\langle x,u\rangle$ is the same as the original bound: decoding recovers $x$, and the encoding's first-component property gives that fact. Thus the witness condition agrees pointwise with membership of $\langle x,u\rangle$ in $L'$.
+
+**Key facts.** `Complexity.PiP_eq_altClass`, `Complexity.PolyHierarchy.mem_altClass_of_uniform`, `Complexity.PolyHierarchy.unaryPT_poly`, `Complexity.altQuant_true_succ`, `Complexity.mem_PiP_iff`, `Complexity.PolyHierarchy.mem_altClass_of_normal`, `Complexity.PolyTimeComputable.pairEncode`, `Complexity.pairFstD_pairEncode`, `Complexity.polyTimeComputable_id`, `Complexity.polyTimeComputable_pairFstD`, `Turing.length_pairEncode`.

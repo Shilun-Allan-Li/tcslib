@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.satRed_counterBack",
+ "key": "135c330a72eab796",
+ "kind": "lemma",
+ "title": "Counter rewind to the destination state",
+ "statement": "Let $x$ be a Boolean word, let $q$ and $q'$ be states among the $35$ states, and suppose that in state $q$ the machine, whenever work tape $0$ has a symbol under its head, moves that head one cell left and stays in state $q$, while otherwise it moves the head one cell right and enters state $q'$. For any $i\\le |x|$, counter length $n$, and $r\\le n$, start in state $q$ with input position just before position $i$, the unary counter of length $n$ with its head at $r-1$, an arbitrary second work tape with head at $b$, and output $o$. After exactly $r+1$ steps the machine is in state $q'$ at the same input position, with the same counter tape and second work tape, counter head at $0$, second head at $b$, and output $o$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "states $q,q'$ among the 35 states",
+  "specified transition on occupied versus blank counter cell",
+  "input position $i\\le |x|$",
+  "counter length $n$",
+  "rewind distance $r\\le n$",
+  "arbitrary second tape content and head position $b$",
+  "arbitrary output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q$ be a transducer state whose transition moves the counter head left while\nits cell is occupied and otherwise steps right into a destination state. For every\n$r \\le n$, starting from the canonical frame with counter length $n$ and counter\nhead at offset $r - 1$, exactly $r + 1$ silent transitions reach the destination\nstate with the counter head at $0$; input position, buffer, and output are\nuntouched."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.mult_columns_run",
+ "key": "906a158fab2610bd",
+ "kind": "lemma",
+ "title": "Execution of the multiplication procedure",
+ "statement": "Let $a,b,c,x$ be finite bit strings with $x=\\langle a,\\langle b,c\\rangle\\rangle$, and let $j\\le |a|+|b|$. Let $v$ be a vector of thirteen natural-number registers, each at most $4(|x|+1)$, satisfying $v_1=|x|$, $v_2=2|a|+2$, $v_4=2|a|$, $v_5=2|a|+2+2|b|$, and $v_6=|a|+|b|$. Suppose also that $v_7=j$, $v_{11}=K_j$, and $v_{12}=2|a|+2+2|b|+2+\\min(j,|c|)$, where $K_j$ is the carry into column $j$ for multiplying $a$ and $b$. The fixed multiplication procedure, started in its column-processing state with registers $v$ and no answer yet, halts with the Boolean value of the following condition: $|c|\\le |a|+|b|$, $K_{|a|+|b|}=0$, and for every $i$ with $j\\le i<|a|+|b|$, the $i$th bit of $c$ equals $(K_i+C_i(a,b))$ modulo $2$.",
+ "hypotheses_covered": [
+  "$x,a,b,c$ are finite bit strings",
+  "$x$ is the specified nested pair encoding of $a,b,c$",
+  "$j\\le |a|+|b|$",
+  "$v$ is a vector of thirteen natural-number registers",
+  "Each register is at most $4(|x|+1)$",
+  "The specified equalities for registers 1, 2, 4, 5, and 6 hold",
+  "Register 7 equals $j$",
+  "Register 11 equals the carry into column $j$",
+  "Register 12 has the specified value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

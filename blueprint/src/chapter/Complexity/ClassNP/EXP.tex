@@ -18,6 +18,7 @@ exponential-split machinery.
 
 \begin{definition}[The class $\mathrm{EXP}$]
 \lean{Complexity.EXP}
+\statementsource{Vad12}{pdf-bf2ce5422088-p054-b004}
 \label{Complexity.EXP}
 \leanok
 \uses{Complexity.DTIME}
@@ -48,15 +49,14 @@ length exactly $C \cdot 2^{(|x|+1)^c}$ with the concatenation
 $x \mathbin{+\!\!+} u$ in $V$.
 \end{definition}
 
-\begin{theorem}[$\mathrm{P} \subseteq \mathrm{EXP}$]
+\begin{theorem}[Polynomial time is contained in exponential time]
 \lean{Complexity.P_subset_EXP}
 \label{Complexity.P_subset_EXP}
 \leanok
 \uses{Complexity.DTIME.mono, Complexity.EXP, Complexity.P}
 \difficulty{3}
-Every language in $\mathrm{P}$ lies in $\mathrm{EXP}$: a language over the binary
-alphabet decidable in time polynomial in the input length is also decidable in time
-$2^{n^c}$ for some constant $c$, up to a constant factor.
+Every language in $\mathsf{P}$ belongs to $\mathrm{EXP}$, the class of languages
+decidable in time $2^{n^c}$ up to a constant factor for some natural number $c$.
 \end{theorem}
 
 \begin{definition}[Little-endian value of a boolean word]
@@ -86,97 +86,97 @@ $i$ is the list of the $w$ lowest binary digits of $i$, least significant first,
 with high-order zeros retained.
 \end{definition}
 
-\begin{lemma}[Value bound for a boolean word]
+\begin{lemma}[Bound on a binary word value]
 \lean{Complexity.enumValue_lt}
 \label{Complexity.enumValue_lt}
 \leanok
 \uses{Complexity.enumValue}
 \difficulty{2}
-For every boolean word $u$, the little-endian value of $u$ is strictly less than
+For every finite Boolean word $u$, its little-endian binary value is strictly less than
 $2^{|u|}$.
 \end{lemma}
 
-\begin{lemma}[Length of the width-$w$ word]
+\begin{lemma}[Length of a fixed-width binary word]
 \lean{Complexity.enumWord_length}
 \label{Complexity.enumWord_length}
 \leanok
 \uses{Complexity.enumWord}
 \difficulty{2}
-For all $w$ and $i$, the width-$w$ little-endian binary word of $i$ has length
-exactly $w$.
+For all natural numbers $w$ and $i$, the width-$w$ little-endian binary word of $i$ has
+length exactly $w$.
 \end{lemma}
 
-\begin{lemma}[The word of rank zero]
+\begin{lemma}[Zero represented at fixed width]
 \lean{Complexity.enumWord_zero}
 \label{Complexity.enumWord_zero}
 \leanok
 \uses{Complexity.enumWord}
 \difficulty{2}
-For every width $w$, the width-$w$ little-endian binary word of $0$ is the
-all-false word of length $w$.
+For every natural number $w$, the width-$w$ little-endian binary word of $0$ is the word
+consisting of $w$ false bits.
 \end{lemma}
 
-\begin{lemma}[Value of an in-range word]
+\begin{lemma}[Value of an in-range binary word]
 \lean{Complexity.enumWord_value}
 \label{Complexity.enumWord_value}
 \leanok
 \uses{Complexity.enumValue, Complexity.enumWord}
 \difficulty{3}
-If $i < 2^w$, then the little-endian value of the width-$w$ binary word of $i$
-equals $i$.
+For natural numbers $w$ and $i$ with $i<2^w$, the little-endian value of the width-$w$
+binary word of $i$ is $i$.
 \end{lemma}
 
-\begin{lemma}[Equal-length words with equal values coincide]
+\begin{lemma}[Injectivity of binary word values]
 \lean{Complexity.enumValue_injective}
 \label{Complexity.enumValue_injective}
 \leanok
 \uses{Complexity.enumValue}
 \difficulty{4}
-Two boolean words of the same length with the same little-endian value are equal
-(trailing high-order false bits included).
+Let $u$ and $v$ be finite Boolean words of equal length. If their little-endian binary
+values are equal, then $u=v$.
 \end{lemma}
 
-\begin{lemma}[Every word represents its own value]
+\begin{lemma}[Recovery of a word from its value]
 \lean{Complexity.enumWord_complete}
 \label{Complexity.enumWord_complete}
 \leanok
 \uses{Complexity.enumValue, Complexity.enumValue_injective, Complexity.enumValue_lt, Complexity.enumWord, Complexity.enumWord_length, Complexity.enumWord_value}
 \difficulty{1}
-Every boolean word $u$ equals the width-$|u|$ little-endian binary word of its own
-little-endian value.
+For every finite Boolean word $u$, the width-$|u|$ little-endian binary word
+representing its little-endian value is exactly $u$.
 \end{lemma}
 
-\begin{lemma}[Specification of the fixed-width increment]
+\begin{lemma}[Specification of fixed-width increment]
 \lean{Complexity.enumInc_spec}
 \label{Complexity.enumInc_spec}
 \leanok
 \uses{Complexity.enumInc, Complexity.enumValue}
 \difficulty{4}
-For every boolean word $u$: if the fixed-width increment of $u$ succeeds with
-result $v$, then $|v| = |u|$ and the little-endian value of $v$ is one more than
-that of $u$; if it overflows, then the value of $u$ plus one equals $2^{|u|}$.
+For every Boolean word $u$, if its fixed-width increment is a word $v$, then $v$ has the
+same length as $u$ and its little-endian value is the value of $u$ plus one. If the
+increment has no result, then the value of $u$ plus one equals $2^{|u|}$.
 \end{lemma}
 
-\begin{lemma}[Increment on canonical words]
+\begin{lemma}[Increment of a width-constrained binary word]
 \lean{Complexity.enumInc_word}
 \label{Complexity.enumInc_word}
 \leanok
 \uses{Complexity.enumInc, Complexity.enumInc_spec, Complexity.enumValue_injective, Complexity.enumValue_lt, Complexity.enumWord, Complexity.enumWord_length, Complexity.enumWord_value}
 \difficulty{4}
-For $i < 2^w$, the fixed-width increment of the width-$w$ binary word of $i$ equals
-the width-$w$ word of $i+1$ when $i + 1 < 2^w$, and reports overflow otherwise.
-This includes width zero.
+Let $w$ and $i$ be natural numbers with $i<2^w$. The fixed-width increment of the
+width-$w$ little-endian binary word representing $i$ is the width-$w$ word representing
+$i+1$ if $i+1<2^w$, and has no result otherwise.
 \end{lemma}
 
-\begin{lemma}[Exact-width certificates versus in-range ranks]
+\begin{lemma}[Exact-Width Words and Bounded Ranks]
 \lean{Complexity.enumCandidates_iff}
 \label{Complexity.enumCandidates_iff}
 \leanok
 \uses{Complexity.enumValue, Complexity.enumValue_lt, Complexity.enumWord, Complexity.enumWord_complete, Complexity.enumWord_length}
 \difficulty{3}
-For every width $w$ and every predicate $p$ on boolean words: there exists a word
-$u$ with $|u| = w$ satisfying $p$ if and only if there exists a rank $i < 2^w$ such
-that $p$ holds of the width-$w$ binary word of $i$.
+For every $w\in\mathbb{N}$ and every predicate $p$ on binary words, there exists a word
+$u$ of length $w$ satisfying $p$ if and only if there exists $i\in\mathbb{N}$ with
+$i<2^w$ such that the width-$w$ little-endian binary word of $i$ satisfies $p$.
 \end{lemma}
 
 \begin{definition}[Boolean test of consecutive ranks]
@@ -189,27 +189,29 @@ consecutive ranks starting at $i$ accepts, evaluated by testing the ranks in
 order.
 \end{definition}
 
-\begin{lemma}[Characterisation of the rank test]
+\begin{lemma}[Characterization of a Consecutive Rank Test]
 \lean{Complexity.enumAny_iff}
 \label{Complexity.enumAny_iff}
 \leanok
 \uses{Complexity.enumAny}
 \difficulty{4}
-Testing $\mathrm{count}$ consecutive ranks starting at $i$ against an acceptance
-function returns true if and only if some rank $j$ with
-$i \le j < i + \mathrm{count}$ accepts.
+Given any Boolean acceptance function $a$ on $\mathbb{N}$ and natural numbers $i$ and
+$\mathrm{count}$, the test of the $\mathrm{count}$ consecutive ranks starting at $i$
+returns true if and only if there is a rank $j$ with $i\le j<i+\mathrm{count}$ and
+$a(j)=\mathrm{true}$.
 \end{lemma}
 
-\begin{lemma}[Rank test equals certificate existence]
+\begin{lemma}[Certificates Among Enumerated Ranks]
 \lean{Complexity.enumAny_certificates}
 \label{Complexity.enumAny_certificates}
 \leanok
 \uses{Complexity.enumAny, Complexity.enumAny_iff, Complexity.enumCandidates_iff, Complexity.enumWord, Turing.MultiTapeTM.indicator}
 \difficulty{2}
-Let $V$ be a language over the binary alphabet, $x$ a string, and $w$ a width.
-Testing all $2^w$ ranks with the acceptance function ``the indicator of $V$ accepts
-$x$ concatenated with the width-$w$ binary word of the rank'' returns true if and
-only if there exists $u$ with $|u| = w$ and $x \mathbin{+\!\!+} u \in V$.
+Let $V\subseteq\{0,1\}^*$ be a language, and let $x$ be a binary word and
+$w\in\mathbb{N}$. Testing the $2^w$ consecutive ranks starting at zero, accepting rank
+$i$ exactly when $x$ concatenated with the width-$w$ little-endian binary word of $i$
+belongs to $V$, returns true if and only if there is a binary word $u$ of length $w$
+such that $x$ concatenated with $u$ belongs to $V$.
 \end{lemma}
 
 \begin{lemma}[Timed loop invariant for candidate rounds]
@@ -218,80 +220,79 @@ only if there exists $u$ with $|u| = w$ and $x \mathbin{+\!\!+} u \in V$.
 \leanok
 \uses{Complexity.enumAny, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $M$ be a finite multi-tape Turing machine over the binary alphabet, $x$ an
-input, and let $\mathrm{cfg}$ assign to each rank a configuration of $M$ on $x$.
-Suppose the configuration at rank $i + \mathrm{count}$ is halted with single-bit
-output false, and that for each rank $j$ with $i \le j < i + \mathrm{count}$ the
-machine, within $B$ steps from $\mathrm{cfg}(j)$, either halts with single-bit
-output true (when rank $j$ accepts) or reaches $\mathrm{cfg}(j+1)$ (when it
-rejects). Then within $\mathrm{count} \cdot B$ steps from $\mathrm{cfg}(i)$ the
-machine halts with single-bit output equal to the disjunction of the acceptance
-bits over the ranks $i \le j < i + \mathrm{count}$.
+Let $M$ be a finite Boolean Turing machine, let $x$ be a Boolean input, and let
+$\mathrm{cfg}$ assign a configuration of $M$ on $x$ to each natural-number rank. Let
+$\mathrm{accept}$ be a Boolean-valued function on ranks, and let $B,i,\mathrm{count}$ be
+natural numbers. Suppose the configuration at rank $i+\mathrm{count}$ is halted with
+output the one-symbol word $[\mathrm{false}]$. Suppose also that for every $j$ with
+$i\le j<i+\mathrm{count}$ there is a time $t\le B$ such that, if $\mathrm{accept}(j)$ is
+true, the machine from $\mathrm{cfg}(j)$ is halted after $t$ steps with output
+$[\mathrm{true}]$, and otherwise it reaches $\mathrm{cfg}(j+1)$ after $t$ steps. Then
+there is a time $t\le \mathrm{count}\,B$ at which the machine from $\mathrm{cfg}(i)$ is
+halted with output the one-symbol word containing the Boolean that is true exactly when
+at least one of the $\mathrm{count}$ ranks starting at $i$ is accepted.
 \end{lemma}
 
-\begin{lemma}[Polynomial exponents absorb into $2^{n^e}$]
+\begin{lemma}[Exponential bound for polynomial exponents]
 \lean{Complexity.enumExponent_bound}
 \label{Complexity.enumExponent_bound}
 \leanok
 \difficulty{5}
-For all constants $K, k \in \mathbb{N}$ there exist constants $A, e \in \mathbb{N}$
-such that $2^{K (n+1)^k} \le A \cdot 2^{n^e}$ for every $n$.
+For all natural numbers $K$ and $k$, there exist natural numbers $A$ and $e$ such that,
+for every natural number $n$, $2^{K(n+1)^k}\le A(2^n)^e$.
 \end{lemma}
 
-\begin{lemma}[Enumeration budgets are exponential budgets]
+\begin{lemma}[Exponential Bound for Enumeration Budgets]
 \lean{Complexity.enumBudget_bound}
 \label{Complexity.enumBudget_bound}
 \leanok
 \uses{Complexity.enumExponent_bound}
 \difficulty{5}
-For all constants $a, C, c, d \in \mathbb{N}$ there exist $A, e \in \mathbb{N}$
-such that for every $n$,
-\[
-a \cdot 2^{C(n+1)^c} \cdot \bigl(n + C(n+1)^c + 1\bigr)^d \le A \cdot 2^{n^e}.
-\]
+For all $a,C,c,d\in\mathbb{N}$, there exist $A,e\in\mathbb{N}$ such that for every
+$n\in\mathbb{N}$,
+\[a\cdot 2^{C(n+1)^c}\cdot\bigl(n+C(n+1)^c+1\bigr)^d\le A\cdot 2^{n^e}.\]
 \end{lemma}
 
-\begin{lemma}[Agreement of the two fixed-width increments]
+\begin{lemma}[Agreement of binary increment procedures]
 \lean{Complexity.enumCont_inc_eq}
 \label{Complexity.enumCont_inc_eq}
 \leanok
 \uses{Complexity.enumInc, Turing.incFixed}
 \difficulty{2}
-For every boolean word $s$, the fixed-width little-endian binary increment of $s$
-computed by the Turing-machine catalog's counter equals the one computed by the
-certificate-enumeration counter: both return the same-length incremented word, or
-both fail exactly on overflow (including on the empty word).
+For every Boolean word $s$, the recursively defined fixed-width little-endian increment
+of $s$ agrees with the certificate-enumeration increment of $s$, including their
+overflow outcome.
 \end{lemma}
 
-\begin{lemma}[The stalled increment preserves width]
+\begin{lemma}[Length after stalled increment]
 \lean{Complexity.enumCont_step_length}
 \label{Complexity.enumCont_step_length}
 \leanok
 \uses{Complexity.enumCont_inc_eq, Complexity.enumInc, Complexity.enumInc_spec, Turing.incFixed}
 \difficulty{2}
-For every boolean word $s$, applying the fixed-width increment and falling back to
-$s$ itself on overflow yields a word whose length is exactly $|s|$.
+For every finite Boolean word $s$, the word obtained by applying the fixed-width
+increment to $s$ and using $s$ itself if the increment overflows has length $|s|$.
 \end{lemma}
 
-\begin{lemma}[Orbit of the stalled increment]
+\begin{lemma}[Orbit of fixed-width binary increment]
 \lean{Complexity.enumCont_orbit}
 \label{Complexity.enumCont_orbit}
 \leanok
 \uses{Complexity.enumCont_inc_eq, Complexity.enumInc_word, Complexity.enumWord, Complexity.enumWord_zero, Turing.incFixed}
 \difficulty{3}
-For every width $w$ and every $i < 2^w$, iterating the stalled fixed-width
-increment (increment, keeping the word unchanged on overflow) $i$ times from the
-all-false word of length $w$ yields the width-$w$ little-endian binary word of
-$i$. Nothing is asserted at the terminal rank $2^w$.
+For every width $w$ and every natural number $i<2^w$, iterating the operation that
+increments a little-endian Boolean word when possible and leaves it unchanged on
+overflow, $i$ times from the all-false word of length $w$ gives the length-$w$
+little-endian binary representation of $i$, with leading zeros retained.
 \end{lemma}
 
-\begin{lemma}[Binary digits of $2^w - 1$]
+\begin{lemma}[Binary digits of a Mersenne number]
 \lean{Complexity.enumCont_fuel_bits}
 \label{Complexity.enumCont_fuel_bits}
 \leanok
 \difficulty{3}
-For every $w$, the binary-digit list of $2^w - 1$ is the all-true word of length
-$w$.
+For every natural number $w$, the binary digit list of $2^w-1$ consists of exactly $w$
+entries, all equal to true.
 \end{lemma}
 
 \begin{definition}[Sparse tape of a finite cell list]
@@ -303,15 +304,16 @@ nonnegative position $z$ holds the $z$-th list entry (which may itself be blank)
 and every position beyond the list, as well as every negative position, is blank.
 \end{definition}
 
-\begin{lemma}[Appending one sparse cell]
+\begin{lemma}[Appending a Sparse Tape Cell]
 \lean{Complexity.enumCont_sparse_append}
 \label{Complexity.enumCont_sparse_append}
 \leanok
 \uses{Complexity.enumCont_sparse}
 \difficulty{4}
-Appending one possibly blank entry to a finite cell list changes the induced
-sparse tape at exactly the position just past the old list, where the new entry
-is written.
+Let $w$ be a finite list of possibly blank Boolean cells, and let $b$ be an optional
+Boolean symbol. The tape function represented by the list obtained by appending $b$ to
+$w$ equals the tape function represented by $w$ with its value at position $|w|$
+replaced by $b$.
 \end{lemma}
 
 \begin{lemma}[Erasing the last sparse cell]
@@ -320,9 +322,9 @@ is written.
 \leanok
 \uses{Complexity.enumCont_sparse, Complexity.enumCont_sparse_append}
 \difficulty{3}
-Let $w$ be a finite list of possibly blank cells and $b$ a possibly blank entry.
-Blanking position $|w|$ of the sparse tape of $w$ extended by $b$ yields exactly
-the sparse tape of $w$; this holds even when $b$ is itself blank.
+Let $w$ be a finite list of possibly blank Boolean cells and let $b$ be a possibly blank
+Boolean cell. Blanking cell $|w|$ of the sparse tape determined by $w$ followed by $b$
+gives the sparse tape determined by $w$.
 \end{lemma}
 
 \begin{definition}[Encoding of head moves as tape symbols]
@@ -344,14 +346,15 @@ blank symbol to staying put, and a true bit to a left move; thus every move symb
 is decoded to the inverse of the move it encodes.
 \end{definition}
 
-\begin{lemma}[A move and its decoded inverse cancel]
+\begin{lemma}[Integer displacement of the decoded inverse move]
 \lean{Complexity.enumCont_unmove_cast}
 \label{Complexity.enumCont_unmove_cast}
 \leanok
 \uses{Complexity.enumCont_moveCode, Complexity.enumCont_unmove}
 \difficulty{1}
-For every head move $d$, encoding $d$ as a tape symbol and decoding the inverse
-move yields exactly the negation of $d$'s integer head displacement.
+For every head move $d\in\{-1,0,1\}$, the integer displacement of the inverse move
+obtained by encoding $d$ as a tape symbol and then decoding that symbol is the negative
+of the integer displacement of $d$.
 \end{lemma}
 
 \begin{definition}[History entry of one machine step]
@@ -399,17 +402,18 @@ old symbols and encoded moves as sparse tapes, and every history head sits one
 cell past the recorded entries.
 \end{definition}
 
-\begin{lemma}[One logged action appends one history entry]
+\begin{lemma}[Appending a logged step to the history]
 \lean{Complexity.enumCont_log_apply}
 \label{Complexity.enumCont_log_apply}
 \leanok
 \uses{Complexity.EnumContEntry, Complexity.enumCont_logAction, Complexity.enumCont_logCfg, Complexity.enumCont_sparse_append, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_append, Turing.FinTM.tapeBlocks}
 \difficulty{4}
-For any configuration $c$ with history $h$ and any action $a$ of the source
-machine: applying the logged version of $a$ to the logged configuration of $c$
-with history $h$ yields the logged configuration of $a$ applied to $c$, with
-history $h$ extended by the single entry recording the overwritten symbols and
-head moves of $a$. This includes halting and output-emitting actions.
+Let $c$ be a configuration of a $k$-work-tape Boolean machine on input $x$, let $h$ be a
+finite list of history entries, and let $a$ be an action for that machine. Applying the
+corresponding logged action to the configuration encoding $c$ and $h$ gives the encoding
+of the configuration obtained by applying $a$ to $c$, with the history extended by one
+entry consisting of the symbols scanned before the step and the work-head movements
+prescribed by $a$.
 \end{lemma}
 
 \begin{definition}[History of a run]
@@ -422,18 +426,17 @@ For a machine, a start configuration, and a time $t$: the list of history entrie
 first $t$ steps of the run. No entry is recorded once the machine has halted.
 \end{definition}
 
-\begin{lemma}[Logging runs in lockstep with the source]
+\begin{lemma}[Lockstep simulation with a complete history]
 \lean{Complexity.enumCont_log_run}
 \label{Complexity.enumCont_log_run}
 \leanok
 \uses{Complexity.enumCont_history, Complexity.enumCont_logAction, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_log_apply, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{5}
-For every finite machine $M$, start configuration $c_0$ (possibly prepared, not
-necessarily initial), and time $t$: running the logging machine of $M$ for $t$
-steps from the logged configuration of $c_0$ with empty history yields the logged
-configuration of $M$'s time-$t$ configuration together with the history of the
-first $t$ steps. In particular the source's input, output, and halting time are
-unchanged by the instrumentation.
+Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be an input word,
+let $c_0$ be any configuration of $M$ on $x$, and let $t$ be a natural number. After $t$
+steps, the logging machine started from the logged configuration of $c_0$ with empty
+history is exactly the logged configuration of the source machine's configuration after
+$t$ steps, together with the history recorded during those $t$ steps.
 \end{lemma}
 
 \begin{definition}[The restoration machine]
@@ -471,16 +474,17 @@ of $c$, whose clock and history tapes are all blank with heads at zero, and whos
 output is empty.
 \end{definition}
 
-\begin{lemma}[Undoing one tape write]
+\begin{lemma}[Restoring a Work Tape Cell]
 \lean{Complexity.enumCont_restore_cell}
 \label{Complexity.enumCont_restore_cell}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Action.apply_workTapes, Turing.Cfg, Turing.Cfg.workTapeSymbols}
 \difficulty{2}
-For any configuration $c$, action $a$, and work-tape index $i$: writing the symbol
-that was under head $i$ in $c$, at $c$'s head position, into tape $i$ after $a$
-has been applied restores tape $i$ exactly to its contents in $c$. This covers
-no-write actions and writes of the blank symbol.
+Let $c$ be a configuration of a machine with $k$ work tapes over Boolean symbols, let
+$a$ be a one-step action, and let $i$ be a work-tape index. After applying $a$ to $c$,
+overwrite tape $i$ at the original head position with the symbol (or blank) that was
+under that head in $c$. The resulting tape function is exactly the tape $i$ function in
+$c$.
 \end{lemma}
 
 \begin{lemma}[Erasing the newest clock mark]
@@ -489,8 +493,9 @@ no-write actions and writes of the blank symbol.
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append}
 \difficulty{3}
-For every $n$, blanking cell $n$ of the buffer tape holding $n + 1$ consecutive
-true marks yields the buffer tape holding $n$ consecutive true marks.
+For every natural number $n$, changing cell $n$ of the buffer tape containing $n+1$
+consecutive true marks to blank yields the buffer tape containing $n$ consecutive true
+marks.
 \end{lemma}
 
 \begin{definition}[Mid-restoration configuration]
@@ -504,59 +509,61 @@ old symbols of $c$ are retained in finite control, the source heads are back at
 their pre-action positions, and the last history entry is already erased.
 \end{definition}
 
-\begin{lemma}[First restoration transition: reverse the moves]
+\begin{lemma}[First restoration transition]
 \lean{Complexity.enumCont_undo_back}
 \label{Complexity.enumCont_undo_back}
 \leanok
 \uses{Complexity.EnumContEntry, Complexity.enumCont_clock_erase, Complexity.enumCont_logCfg, Complexity.enumCont_moveCode, Complexity.enumCont_sparse, Complexity.enumCont_sparse_erase, Complexity.enumCont_undoCfg, Complexity.enumCont_undoMid, Complexity.enumCont_undoTM, Complexity.enumCont_unmove_cast, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $c$ be a source configuration, $a$ an action, $h$ a history list, and $p$ an
-input-head position. One step of the restoration machine from the checkpoint at
-$p$ for the configuration obtained by applying $a$ to $c$, whose history is $h$
-extended by the entry recording $a$ (the symbols under the work heads of $c$ and
-the head moves of $a$), equals the mid-restoration configuration for $c$, $a$, $h$
-and $p$: the recorded head moves are reversed, the overwritten symbols are
-retained in finite control, and the cells of that history entry are erased.
+Let $k$ be a natural number, let $S$ be a state type, let $x$ be a finite Boolean input,
+let $c$ be a configuration of a $k$-work-tape machine on input $x$, let $a$ be an
+action, let $h$ be a finite history list, and let $p$ be an input-head position among
+the $|x|+2$ positions. Starting the restoration machine at the checkpoint for the
+configuration obtained by applying $a$ to $c$, with history $h$ extended by the entry
+recording the symbols under the work heads of $c$ and the work-head moves prescribed by
+$a$, one step gives the intermediate restoration configuration for $c$, $a$, $h$, and
+$p$.
 \end{lemma}
 
-\begin{lemma}[Second restoration transition: rewrite the old symbols]
+\begin{lemma}[Restoration of the source configuration]
 \lean{Complexity.enumCont_undo_write}
 \label{Complexity.enumCont_undo_write}
 \leanok
 \uses{Complexity.EnumContEntry, Complexity.enumCont_logCfg, Complexity.enumCont_restore_cell, Complexity.enumCont_undoCfg, Complexity.enumCont_undoMid, Complexity.enumCont_undoTM, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-Let $c$ be a source configuration, $a$ an action, $h$ a history list, and $p$ an
-input-head position. One step of the restoration machine from the mid-restoration
-configuration for $c$, $a$, $h$ and $p$ equals the checkpoint configuration for $c$
-and $h$ at $p$: the retained old symbols are written back, restoring the source
-tapes to their contents in $c$, and the history heads move back onto the last
-entry of $h$.
+Let $k$ be a natural number, let $S$ be a type, let $x$ be a Boolean word, and let $c$
+be a configuration of a $k$-work-tape machine on input $x$. For any one-step action $a$,
+history list $h$, and input-head position $p$, one step of the restoration machine from
+the mid-restoration configuration determined by $c,a,h,p$ is exactly the restoration
+checkpoint configuration determined by $c,h,p$.
 \end{lemma}
 
-\begin{lemma}[Final restoration transition on empty history]
+\begin{lemma}[Restoration step on empty history]
 \lean{Complexity.enumCont_undo_empty}
 \label{Complexity.enumCont_undo_empty}
 \leanok
 \uses{Complexity.enumCont_logCfg, Complexity.enumCont_undoCfg, Complexity.enumCont_undoResult, Complexity.enumCont_undoTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-With no history left, one silent step of the restoration machine from the
-checkpoint for a source configuration $c$ with empty history returns the history
-heads to zero and halts, reaching the completed restoration configuration for
-$c$. This also covers a source run of zero steps.
+Let $k$ be a natural number, let $S$ be a state type, let $x$ be a finite Boolean input,
+let $c$ be a configuration of a $k$-work-tape machine on input $x$, and let $p$ be a
+valid input-head position among the $|x|+2$ positions. Starting the restoration machine
+at the checkpoint for $c$ with empty history, one step gives the completed restoration
+configuration for $c$ and $p$.
 \end{lemma}
 
-\begin{lemma}[Complete reversal of a live source prefix]
+\begin{lemma}[Reversal of a live machine run]
 \lean{Complexity.enumCont_undo_run}
 \label{Complexity.enumCont_undo_run}
 \leanok
 \uses{Complexity.enumCont_history, Complexity.enumCont_undoCfg, Complexity.enumCont_undoResult, Complexity.enumCont_undoTM, Complexity.enumCont_undo_back, Complexity.enumCont_undo_empty, Complexity.enumCont_undo_write, Turing.Action.apply, Turing.Cfg, Turing.Cfg.Halted, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-Let $M$ be a finite machine that is live (not halted) at every time before $t$
-when run from $c_0$. Then the restoration machine, started at the checkpoint for
-$M$'s time-$t$ configuration with the $t$-step history, reaches the completed
-restoration configuration of $c_0$ --- original work tapes and head positions,
-blank history --- in exactly $2t + 1$ steps, preserving any supplied input-head
-position.
+Let $M$ be a finite Turing machine with Boolean work-tape symbols, let $x$ be a finite
+Boolean input, let $c_0$ be a configuration of $M$ on input $x$, let $p$ be a valid
+input-head position among the $|x|+2$ positions, and let $t$ be a natural number.
+Suppose the configuration reached by $M$ after each time $j<t$ from $c_0$ is not halted.
+Then the restoration machine, started at the checkpoint for the configuration reached
+after $t$ steps with the history of those $t$ steps and input-head position $p$, reaches
+the completed restoration configuration for $c_0$ and $p$ after exactly $2t+1$ steps.
 \end{lemma}
 
 \begin{lemma}[First halting time]
@@ -565,10 +572,10 @@ position.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Halted, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
 \difficulty{4}
-If a machine's run from $c_0$ is halted at time $T$, then there is a time
-$t \le T$ at which it halts for the first time: the machine is live at every time
-before $t$, and its configuration at time $t$ equals its configuration at time
-$T$.
+Let $M$ be a machine on Boolean inputs, let $c_0$ be a configuration, and let $T$ be a
+natural number. If the run from $c_0$ is halted at time $T$, then there is a time $t\le
+T$ such that it is not halted at any earlier time and its configuration at time $t$
+equals its configuration at time $T$.
 \end{lemma}
 
 \begin{definition}[Two-head administrative action]
@@ -617,96 +624,112 @@ the last tape holds a retained word $y$, and the control state, native input-hea
 position, and capture-head position are parameters. The output is empty.
 \end{definition}
 
-\begin{lemma}[Captured simulation phase of the clean wrapper]
+\begin{lemma}[Captured simulation phase]
 \lean{Complexity.enumCont_clean_capture}
 \label{Complexity.enumCont_clean_capture}
 \leanok
 \uses{Complexity.enumCont_cleanTM, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_log_run, Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.captureCfg, Turing.capture_run}
 \difficulty{3}
-If a source machine $M$ is live for $t$ steps from a configuration $c_0$, then the
-clean wrapper of $M$, run for $t$ steps from the captured logged start of $c_0$,
-reaches the captured logged configuration of $M$'s time-$t$ configuration with the
-$t$-step history; any halting emission of $M$ is retained on the capture tape.
+Let $M$ be a finite Boolean Turing machine, let $x$ be a Boolean input word, let $c_0$
+be a configuration of $M$ on input $x$, and let $t$ be a natural number. Suppose that
+$M$ is not halted at any time $j<t$ when run from $c_0$. Then the clean wrapper, run for
+$t$ steps from the captured logged version of $c_0$ with empty captured prefix and
+output, is in the captured logged configuration corresponding to the time-$t$
+configuration of $M$ and the history of its first $t$ steps, with empty captured prefix
+and output.
 \end{lemma}
 
-\begin{lemma}[Dispatch into the captured restoration]
+\begin{lemma}[Dispatch into captured restoration]
 \lean{Complexity.enumCont_clean_undo_entry}
 \label{Complexity.enumCont_clean_undo_entry}
 \leanok
 \uses{Complexity.EnumContEntry, Complexity.enumCont_cleanTM, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_undoCfg, Complexity.enumCont_undoEntry, Complexity.enumCont_undoTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.captureAction, Turing.captureCfg, Turing.moveInputPos_zero}
 \difficulty{5}
-If the source configuration $c$ is halted, then one silent step of the clean
-wrapper from the captured logged configuration of $c$ with history $h$ parks
-every history head on the last entry and enters the captured restoration phase at
-the checkpoint for $c$ and $h$, retaining $c$'s output on the capture tape.
+Let $M$ be a finite Boolean Turing machine, let $c$ be a configuration on input $x$, and
+let $h$ be a finite history list. If $c$ is halted, then one step of the clean wrapper
+from the captured logged configuration of $c$ with history $h$ equals the captured
+restoration checkpoint for $c$ and $h$, with $c$'s output retained on the capture tape
+and empty physical output.
 \end{lemma}
 
-\begin{lemma}[Captured restoration returns within $2t + 1$ steps]
+\begin{lemma}[Captured restoration bound]
 \lean{Complexity.enumCont_clean_restore}
 \label{Complexity.enumCont_clean_restore}
 \leanok
 \uses{Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_first_halt, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_undoCfg, Complexity.enumCont_undoResult, Complexity.enumCont_undoTM, Complexity.enumCont_undo_run, Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.captureCfg, Turing.capture_run}
 \difficulty{4}
-If the source $M$ is live for $t$ steps from $c_0$, then within $2t + 1$ steps the
-clean wrapper's captured restoration, started at the checkpoint of the time-$t$
-configuration with its history, reaches the administrative configuration in which
-the original source work fields of $c_0$ are restored, the time-$t$ output is
-retained on the last tape, and the capture head stands at the end of that word.
+Let $M$ be a finite Boolean Turing machine, let $c_0$ be a configuration on input $x$,
+let $p$ be an input-head position, and let $t$ be a natural number. Suppose the machine
+is not halted at any time $j<t$ when started from $c_0$. Then there is a time $r \le
+2t+1$ at which the clean wrapper, started in its captured restoration checkpoint for the
+time-$t$ configuration and its recorded history, reaches the administrative
+configuration whose source work fields are restored to those of $c_0$, whose retained
+word is the output after $t$ steps, whose control is in restoration phase, whose input
+head is at $p$, whose capture head is at the length of that output, and whose output is
+empty.
 \end{lemma}
 
-\begin{lemma}[Effect of a two-head administrative action]
+\begin{lemma}[Administrative buffer action]
 \lean{Complexity.enumCont_buffer_apply}
 \label{Complexity.enumCont_buffer_apply}
 \leanok
 \uses{Complexity.enumCont_bufferAction, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_logTM, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.moveInputPos}
 \difficulty{3}
-For any displacements $m, d$ and control states $q, q'$, applying the two-head
-administrative action with displacements $m, d$ and next state $q'$ to an
-administrative configuration of the clean wrapper in state $q$ yields the
-administrative configuration with the same tapes, retained word and empty output,
-in state $q'$, with the native input head moved by $m$ and the capture head moved
-by $d$.
+Let $M$ be a finite Boolean Turing machine, let $x,y$ be Boolean words, let $c_0$ be a
+configuration of $M$ on input $x$, let $q,q'$ be optional states of the clean wrapper of
+$M$, let $p$ be an input-head position, and let $h$ be an integer. For any input-head
+displacement $m$ and capture-head displacement $d$, applying the buffer action with
+successor state $q'$ to the administrative configuration formed from $c_0,y,q,p,h$ gives
+the corresponding configuration with state $q'$, input-head position moved from $p$ by
+$m$ (with boundary clamping), and capture-head position $h+d$, with its other fields
+unchanged.
 \end{lemma}
 
-\begin{lemma}[Bounded input rewind]
+\begin{lemma}[Bounded Input Rewind]
 \lean{Complexity.enumCont_rewind}
 \label{Complexity.enumCont_rewind}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.FinTM.rewind_scan, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{4}
-Consider a machine with a start state whose transition unconditionally steps the
-input head left into a scanning state, and a scanning state that keeps stepping
-left over input symbols and exits right into a destination state at the left
-blank. Then from any configuration in the start state there is a number of steps,
-at most the current input position plus $2$, after which the configuration equals
-the original one with control transferred to the destination state and the input
-head at cell one.
+Let $M$ be a deterministic machine with $k$ work tapes over Boolean symbols, with states
+$q_s,q_c$, and a possible destination state $d$ (which may be absent). Suppose every
+transition from $q_s$ moves the input head left and enters $q_c$, without changing work
+tapes or output. Suppose every transition from $q_c$ moves left and remains in $q_c$
+when it reads a Boolean symbol, and moves right and enters $d$ when it reads a blank;
+these transitions also leave work tapes and output unchanged. From any configuration $c$
+whose state is $q_s$, there is a time $r\le p+2$, where $p$ is the current input-head
+position, such that after $r$ steps the configuration agrees with $c$ in every field
+except that its state is $d$ and its input head is at position one.
 \end{lemma}
 
-\begin{lemma}[Rewinding the retained output word]
+\begin{lemma}[Rewinding the retained word]
 \lean{Complexity.enumCont_clean_buffer_rewind}
 \label{Complexity.enumCont_clean_buffer_rewind}
 \leanok
 \uses{Complexity.enumCont_buffer_apply, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_logTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-For every $j \le |y|$: from the administrative configuration of the clean wrapper
-with retained word $y$ and capture head just left of cell $j$, exactly $j + 1$
-steps return the capture head to zero without erasing $y$, advancing control to
-the final administrative state.
+Let $M$ be a finite Boolean Turing machine, let $x,y$ be Boolean words, let $c_0$ be a
+configuration of $M$ on input $x$, and let $p$ be an input-head position. For every
+integer $j$ with $0\le j\le |y|$, the clean wrapper started in the administrative
+configuration with retained word $y$, control state $4$, input-head position $p$, and
+capture-head position $j-1$ reaches after exactly $j+1$ steps the administrative
+configuration with the same retained word and input-head position, control state $5$,
+and capture-head position zero.
 \end{lemma}
 
-\begin{lemma}[A halting call can be made clean]
+\begin{lemma}[Clean completion of a halting computation]
 \lean{Complexity.enumCont_clean_complete}
 \label{Complexity.enumCont_clean_complete}
 \leanok
 \uses{Complexity.enumCont_bufferAction, Complexity.enumCont_buffer_apply, Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_clean_buffer_rewind, Complexity.enumCont_clean_capture, Complexity.enumCont_clean_restore, Complexity.enumCont_clean_undo_entry, Complexity.enumCont_first_halt, Complexity.enumCont_history, Complexity.enumCont_logCfg, Complexity.enumCont_rewind, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureCfg, Turing.moveInputPos_zero}
 \difficulty{6}
-If a machine $M$ halts within $T$ steps from configuration $c_0$ on input $x$ with
-output $y$, then within $3T + |x| + |y| + 8$ steps the clean wrapper of $M$,
-started at the captured logged start of $c_0$, halts in the administrative
-configuration with $c_0$'s work fields restored, all histories blank, $y$
-retained on the last tape, the input head at cell one, the capture head at zero,
-and no physical output.
+Let $M$ be a finite Boolean Turing machine, let $c_0$ be a configuration on input $x$,
+and let $y$ be a Boolean word. If after $T$ steps from $c_0$ the machine is halted and
+its output is $y$, then there is a time $\tau \le 3T+|x|+|y|+8$ at which the clean
+wrapper, started from the captured logged configuration of $c_0$ with empty captured
+word and output, reaches the administrative configuration with the source work fields
+restored to those of $c_0$, the retained word $y$, halted control, input head at
+position $1$, capture head at position $0$, and empty output.
 \end{lemma}
 
 \begin{definition}[The assembly machine]
@@ -736,12 +759,12 @@ prefix emitted so far.
 \leanok
 \uses{Complexity.enumCont_concatCfg, Complexity.enumCont_concatTM, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.controlAction_apply, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
 \difficulty{5}
-Suppose the input $x$ decomposes as $\mathit{pre} \mathbin{+\!\!+} \mathit{rest}$,
-and let $s$ be a candidate word. After exactly $|\mathit{rest}| + 1$ steps from the
-input-phase configuration of the assembly machine with the input head on the first
-symbol of $\mathit{rest}$, candidate $s$ with its head at zero, and output
-$\mathit{pre}$, the machine is in the candidate phase with the input head at the
-right boundary, the candidate tape and its head at zero unchanged, and output $x$.
+Let $x$, $s$, $\mathit{pre}$, and $\mathit{rest}$ be Boolean words, and suppose
+$x=\mathit{pre}\mathbin{+  +}\mathit{rest}$. After exactly $|\mathit{rest}|+1$ steps
+from the assembly configuration in input phase, with input head at position
+$|\mathit{pre}|+1$, candidate tape containing $s$ with its head at position $0$, and
+output $\mathit{pre}$, the machine is in candidate phase with input head at the right
+boundary, candidate tape and head unchanged, and output $x$.
 \end{lemma}
 
 \begin{lemma}[Candidate phase of assembly]
@@ -750,67 +773,69 @@ right boundary, the candidate tape and its head at zero unchanged, and output $x
 \leanok
 \uses{Complexity.enumCont_concatCfg, Complexity.enumCont_concatTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
-Suppose the candidate word $s$ decomposes as
-$\mathit{pre} \mathbin{+\!\!+} \mathit{rest}$, and let $\mathit{out}$ be a word and
-$p$ an input-head position. After exactly $|\mathit{rest}| + 1$ steps from the
-candidate-phase configuration of the assembly machine with input head at $p$,
-candidate head at position $|\mathit{pre}|$, and output
-$\mathit{out} \mathbin{+\!\!+} \mathit{pre}$, the machine is halted with the
-candidate tape unchanged, its head at position $|s|$, the input head still at $p$,
-and output $\mathit{out} \mathbin{+\!\!+} s$; an empty remainder takes the single
-final step.
+Let $x$, $s$, $\mathit{pre}$, and $\mathit{rest}$ be Boolean words, let $p$ be an
+input-head position for input $x$, and let $\mathit{out}$ be a Boolean word. If
+$s=\mathit{pre}\mathbin{+  +}\mathit{rest}$, then after exactly $|\mathit{rest}|+1$
+steps from the assembly configuration in candidate phase, with input head at $p$,
+candidate tape containing $s$ with its head at position $|\mathit{pre}|$, and output
+$\mathit{out}\mathbin{+  +}\mathit{pre}$, the machine is halted with the candidate tape
+unchanged, its head at position $|s|$, input head still at $p$, and output
+$\mathit{out}\mathbin{+  +}s$.
 \end{lemma}
 
-\begin{lemma}[Assembly emits the padded input]
+\begin{lemma}[Concatenation machine run]
 \lean{Complexity.enumCont_concat_run}
 \label{Complexity.enumCont_concat_run}
 \leanok
 \uses{Complexity.enumCont_concatCfg, Complexity.enumCont_concatTM, Complexity.enumCont_concat_candidate, Complexity.enumCont_concat_native, Turing.Cfg.ofWords, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
-For all binary words $x$ and $s$, the assembly machine started in its input phase
-on input $x$, with $s$ on its work tape and all heads at their starting positions,
-is halted after exactly $|x| + |s| + 2$ steps with output $x \mathbin{+\!\!+} s$,
-its input head at the right boundary, the candidate tape unchanged, and the
-candidate head at position $|s|$.
+For any Boolean words $x$ and $s$, running the assembly machine on input $x$ from its
+initial configuration with $s$ on its work tape for $|x|+|s|+2$ steps gives a halted
+configuration. Its input head is at the right boundary blank, its work tape stores $s$
+with the head at position $|s|$, and its output is $x$ followed by $s$.
 \end{lemma}
 
-\begin{lemma}[Buffered composition from a prepared first machine]
+\begin{lemma}[Buffered Sequential Composition Bound]
 \lean{Complexity.enumCont_prepared_comp}
 \label{Complexity.enumCont_prepared_comp}
 \leanok
 \uses{Complexity.enumCont_first_halt, Turing.Cfg, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg, Turing.FinTM.bufferedFirstCfg_rewind, Turing.FinTM.bufferedFirstCfg_run, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $M_1, M_2$ be finite machines, and let $c_0$ be a configuration of $M_1$ on
-input $x$ (not necessarily initial) from which $M_1$ halts within $T_1$ steps
-with output $y$; suppose $M_2$ computes $z$ from input $y$ within $T_2$ steps.
-Then the buffered composition of $M_1$ and $M_2$, started at its first-phase
-configuration for $c_0$, halts within $T_1 + |y| + 2 + T_2$ steps with output $z$.
+Let $M_1$ and $M_2$ be finite deterministic machines over Boolean symbols, and let $c_0$
+be any configuration of $M_1$ on input $x$. Suppose that after $T_1$ steps from $c_0$,
+$M_1$ is halted and its output is the word $y$, and that $M_2$ computes output $z$ from
+input $y$ in time $T_2$. Then there is a time $t\le T_1+|y|+2+T_2$ at which the buffered
+sequential composition, started from the first-phase configuration associated with
+$c_0$, is halted and has output $z$.
 \end{lemma}
 
-\begin{lemma}[Canonical candidate seam of a round]
+\begin{lemma}[Canonical Candidate Seam]
 \lean{Complexity.enumCont_round_seam}
 \label{Complexity.enumCont_round_seam}
 \leanok
 \uses{Complexity.enumCont_concatTM, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg, Turing.FinTM.tapeBlocks, Turing.stateWord}
 \difficulty{4}
-For any verifier machine $MV$, words $x, s$, and assembly phase: the buffered
-composition's first-phase configuration over the assembly machine prepared with
-candidate $s$ equals the canonical configuration in which control sits in the
-chosen assembly phase, tape zero carries $s$, and all other tapes (composition
-buffer and verifier work) are blank.
+Let $M_V$ be a finite machine over Boolean symbols, let $x$ and $s$ be Boolean words,
+and let $b$ be a Boolean phase. The buffered composition of the assembly machine with
+$M_V$, started from the assembly machine's configuration on input $x$ with phase $b$ and
+word $s$ on its work tape, equals the configuration on input $x$ whose state is the
+first-phase state corresponding to $b$, whose tape zero stores $s$, whose other work
+tapes are blank with heads at zero, whose input head is at position one, and whose
+output is empty.
 \end{lemma}
 
-\begin{lemma}[A prepared verifier call]
+\begin{lemma}[Time bound for a prepared verifier call]
 \lean{Complexity.enumCont_verifier_call}
 \label{Complexity.enumCont_verifier_call}
 \leanok
 \uses{Complexity.enumCont_concatTM, Complexity.enumCont_concat_run, Complexity.enumCont_prepared_comp, Complexity.enumCont_round_seam, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.FinTM.bufferedCompTM, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{3}
-If a machine $MV$ decides a language $V$ within time $T_v$, then from the
-canonical candidate seam with candidate $s$ on input $x$, the buffered
-composition of the assembly machine with $MV$ halts within
-$T_v(|x| + |s|) + 2(|x| + |s|) + 4$ steps, with single-bit output the indicator
-of $x \mathbin{+\!\!+} s \in V$.
+Let $M_V$ be a finite Turing machine deciding a language $V$ over Boolean words within
+time $T_V$, and let $x,s$ be Boolean words. From the canonical seam configuration with
+$s$ on the designated work tape and input $x$, the buffered composition of the assembly
+machine with $M_V$ reaches, in some $t\le T_V(|x|+|s|)+2(|x|+|s|)+4$ steps, a halted
+configuration whose output is the one-symbol word containing the indicator of $x$
+concatenated with $s$ belonging to $V$.
 \end{lemma}
 
 \begin{definition}[Halt-redirecting action wrapper]
@@ -833,18 +858,21 @@ preserved, and the control state is the embedded live state, or the designated
 return state when the source has halted.
 \end{definition}
 
-\begin{lemma}[Simulation through the first halt via redirection]
+\begin{lemma}[Simulation Through Halt Redirection]
 \lean{Complexity.enumCont_return_run}
 \label{Complexity.enumCont_return_run}
 \leanok
 \uses{Complexity.enumCont_returnAction, Complexity.enumCont_returnCfg, Turing.Cfg, Turing.Cfg.Halted, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-Suppose a host machine's transitions on embedded states are the halt-redirected
-transitions of a source machine, and the source is live at every time before $t$
-when run from $c_0$. Then the host's $t$-step run from the redirected
-configuration of $c_0$ equals the redirected configuration of the source's
-time-$t$ configuration; in particular at the first halt the host lands in the
-return state with the source's final writes and output.
+Let $M$ and $H$ be deterministic machines with $k$ work tapes over Boolean symbols, let
+$e$ map states of $M$ into states of $H$, and choose a return state $r$ of $H$. Suppose
+that, on every state, input reading, and work-tape reading, the transition of $H$ from
+the embedded state is the action of $M$ with its successor state embedded when present
+and redirected to $r$ when absent, leaving all other action components unchanged. If $M$
+is live at every time $j<t$ when run from a configuration $c_0$ on input $x$, then the
+run of $H$ for $t$ steps from the configuration obtained by embedding the state of $c_0$
+(or using $r$ if it is halted) and preserving its other fields equals the configuration
+obtained by applying the same state correspondence to the time-$t$ configuration of $M$.
 \end{lemma}
 
 \begin{definition}[Padding an action to a larger tape bank]
@@ -868,28 +896,33 @@ Pad a configuration of a $k$-tape machine to $K$ tapes by adding blank stationar
 high tapes, embedding the control state along a given map.
 \end{definition}
 
-\begin{lemma}[Padding commutes with one action]
+\begin{lemma}[Padding commutes with applying an action]
 \lean{Complexity.enumCont_pad_apply}
 \label{Complexity.enumCont_pad_apply}
 \leanok
 \uses{Complexity.enumCont_padAction, Complexity.enumCont_padCfg, Turing.Action, Turing.Action.apply, Turing.Cfg}
 \difficulty{3}
-Applying the padded version of an action to the padded version of a configuration
-equals the padding of the result of applying the original action; the added high
-tapes remain blank.
+Let $k,K$ be natural numbers, let $S,H$ be types, let $	ext{emb}:S\to H$ be a map, let
+$x$ be a Boolean input word, let $c$ be a configuration of a $k$-tape machine with
+states in $S$, and let $a$ be an action of that machine. Applying the action padded
+along $	ext{emb}$ to the padded configuration equals padding along $	ext{emb}$ of the
+configuration obtained by applying $a$ to $c$.
 \end{lemma}
 
-\begin{lemma}[Running a machine on an initial tape block of a host]
+\begin{lemma}[Simulation on a padded tape bank]
 \lean{Complexity.enumCont_pad_run}
 \label{Complexity.enumCont_pad_run}
 \leanok
 \uses{Complexity.enumCont_padAction, Complexity.enumCont_padCfg, Complexity.enumCont_pad_apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $k \le K$ and suppose a host machine's transitions on embedded states are the
-padded transitions of a $k$-tape source machine, reading only the first $k$
-tapes. Then for every configuration $c$ of the source and every time $t$, the
-host's run from the padded configuration of $c$ equals the padding of the
-source's run.
+Let $k\le K$, let $S,H$ be types, let $x$ be a Boolean input word, let $M$ be a $k$-tape
+machine with states in $S$, let $N$ be a $K$-tape machine with states in $H$, and let
+$	ext{emb}:S\to H$. Suppose that for every source state, input symbol, and $K$-tuple of
+scanned work-tape symbols, $N$'s transition at the embedded state equals the padded
+action obtained from $M$'s transition using the first $k$ scanned symbols. Then for
+every source configuration $c$ and every $t\in\mathbb{N}$, running $N$ for $t$ steps
+from the padded configuration of $c$ gives the padding of the configuration reached by
+running $M$ from $c$ for $t$ steps.
 \end{lemma}
 
 \begin{definition}[Three source routines on a shared tape bank]
@@ -929,30 +962,32 @@ increment check, a result copy, and a synchronized rewind. Its stopped variant
 agrees with the active body except that the anchor is a silent self-loop.
 \end{definition}
 
-\begin{lemma}[A prepared increment call]
+\begin{lemma}[Time bound for an increment call]
 \lean{Complexity.enumCont_increment_call}
 \label{Complexity.enumCont_increment_call}
 \leanok
 \uses{Complexity.enumCont_concatCfg, Complexity.enumCont_concatTM, Complexity.enumCont_concat_candidate, Complexity.enumCont_prepared_comp, Complexity.enumCont_round_seam, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.bufferedCompTM, Turing.MultiTapeTM.runFrom, Turing.incFixed, Turing.stateWord}
 \difficulty{4}
-Suppose a machine $I$ computes, within time $j(n+1)$ on inputs of length $n$, the
-output word of the fixed-width binary increment (the successor word, or the empty
-word on overflow). Then from the candidate seam in the candidate phase with
-candidate $s$ on input $x$, the buffered composition of the assembly machine
-with $I$ halts within $(j+3)(|s|+1)$ steps and outputs the increment result of
-$s$, which is empty exactly on overflow.
+Let $I$ be a finite Boolean-alphabet Turing machine and let $j$ be a natural number.
+Suppose that on every Boolean input $u$, machine $I$ halts within $j(|u|+1)$ steps and
+outputs the fixed-width increment of $u$, using the empty word when that increment
+overflows. Then for any Boolean words $x$ and $s$, there is a time $t\le (j+3)(|s|+1)$
+at which the buffered composition of the assembly machine with $I$, started in its
+candidate phase with $s$ on its first work tape and input $x$, is halted and has output
+equal to the fixed-width increment of $s$, with overflow represented by the empty word.
 \end{lemma}
 
-\begin{lemma}[Padding preserves the candidate seam]
+\begin{lemma}[Padding preserves a one-word seam]
 \lean{Complexity.enumCont_pad_words}
 \label{Complexity.enumCont_pad_words}
 \leanok
 \uses{Complexity.enumCont_padCfg, Turing.Cfg.ofWords, Turing.stateWord}
 \difficulty{3}
-For $0 < k \le K$: padding the canonical configuration whose only nonblank tape
-is tape zero carrying a word $s$ from a $k$-tape bank to a $K$-tape bank yields
-the canonical configuration with $s$ on tape zero of the larger bank, all added
-tapes blank and parked at zero.
+Let $k,K$ be natural numbers with $0<k$ and $k\le K$, let $S,H$ be types, let
+$	ext{emb}:S\to H$ be a map, let $q:S$, and let $x,s$ be Boolean words. Padding the seam
+configuration on input $x$ with state $q$, word $s$ on tape zero, and empty words on all
+other tapes of the $k$-tape bank gives the seam configuration on the $K$-tape bank with
+state $	ext{emb}(q)$, word $s$ on tape zero, and empty words on all other tapes.
 \end{lemma}
 
 \begin{lemma}[Padding the initial configuration]
@@ -961,21 +996,22 @@ tapes blank and parked at zero.
 \leanok
 \uses{Complexity.enumCont_padCfg, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.stateWord}
 \difficulty{2}
-Padding the initial (all-blank-work) configuration of a $k$-tape machine yields
-the canonical configuration with an empty tape-zero word on the larger bank;
-this holds even when the source machine has no work tapes.
+Let $k,K$ be natural numbers, let $S,H$ be types, let $	ext{emb}:S\to H$ be a map, let
+$q:S$, and let $x$ be a Boolean input word. Padding the initial configuration with state
+$q$ on input $x$ gives the seam configuration on the $K$-tape bank with state
+$	ext{emb}(q)$ and empty words on all tapes.
 \end{lemma}
 
-\begin{lemma}[Overwriting the next candidate cell]
+\begin{lemma}[Overwriting the next buffer cell]
 \lean{Complexity.enumCont_overwrite}
 \label{Complexity.enumCont_overwrite}
 \leanok
 \uses{Turing.FinTM.bufferTape}
 \difficulty{4}
-Writing a bit at position $|\mathit{pre}|$ of the buffer tape holding
-$\mathit{pre} \mathbin{+\!\!+} \mathit{old}$ yields the buffer tape holding
-$\mathit{pre}$, then that bit, then the tail of $\mathit{old}$ with its first
-cell dropped; this includes the case of an empty $\mathit{old}$.
+For Boolean lists $\mathrm{pre}$ and $\mathrm{old}$ and a Boolean $b$, let the buffer
+tape store their concatenation. Replacing the tape content at the integer cell
+$|\mathrm{pre}|$ by $b$ gives the buffer tape storing $\mathrm{pre}$ followed by $b$ and
+then by $\mathrm{old}$ with its first symbol dropped.
 \end{lemma}
 
 \begin{lemma}[Clearing the next captured cell]
@@ -984,10 +1020,10 @@ cell dropped; this includes the case of an empty $\mathit{old}$.
 \leanok
 \uses{Complexity.enumCont_sparse}
 \difficulty{4}
-For every $p$, every bit $b$, and every boolean word $\mathit{rest}$, blanking
-position $p$ of the sparse tape consisting of $p$ blank cells followed by the
-symbols of the word $b$ then $\mathit{rest}$ yields the sparse tape of $p + 1$ blank
-cells followed by the symbols of $\mathit{rest}$.
+Let $p$ be a natural number, $b$ a Boolean value, and $r$ a finite Boolean list.
+Blanking cell $p$ of the sparse tape determined by $p$ blank entries followed by the
+entries $b$ and $r$ gives the sparse tape determined by $p+1$ blank entries followed by
+$r$.
 \end{lemma}
 
 \begin{definition}[Two-ended administrative configurations]
@@ -1007,64 +1043,71 @@ cell one, and the output is empty.
 \leanok
 \uses{Complexity.enumCont_endsAction, Complexity.enumCont_pairCfg, Turing.Action.apply, Turing.moveInputPos_zero}
 \difficulty{4}
-Let $L > 0$, and consider a two-ended configuration on $L + 1$ work tapes whose
-tape zero holds $u$ and whose last tape holds $v$, with common head position $h$.
-Applying the two-ended action with optional writes $a$, $b$, displacement $d$ and
-next state $q'$ yields the two-ended configuration in state $q'$ whose tape zero is
-$u$ with cell $h$ overwritten by $a$ (if $a$ writes), whose last tape is $v$ with
-cell $h$ overwritten by $b$ (if $b$ writes), and whose common head position is
-$h + d$; the input head and the empty output are unchanged.
+Let $L>0$, let $q,q'$ be optional states, let $u,v$ be tape contents indexed by the
+integers, let $h$ be an integer head position, and let $a,b$ be optional writes and
+$d\in\{-1,0,1\}$ a displacement. Applying the two-ended action to the configuration with
+tape contents $u,v$ at the two ends, all intermediate tapes blank, and both end heads at
+$h$ gives the corresponding configuration in state $q'$, with the end cells at $h$
+changed according to the writes and the heads at $h+d$. An absent write leaves that cell
+unchanged; a present write may place either a Boolean symbol or a blank, while the
+input-head position and empty output remain as in the two-ended configuration.
 \end{lemma}
 
-\begin{lemma}[A list of blanks induces the blank tape]
+\begin{lemma}[Sparse tape of blank cells]
 \lean{Complexity.enumCont_sparse_blanks}
 \label{Complexity.enumCont_sparse_blanks}
 \leanok
 \uses{Complexity.enumCont_sparse}
 \difficulty{2}
-The sparse tape induced by a list of $n$ blank entries is blank at every
-position.
+For every natural number $n$, the sparse tape determined by a list of $n$ blank entries
+is the everywhere-blank tape.
 \end{lemma}
 
-\begin{lemma}[Lifted words induce buffer tapes]
+\begin{lemma}[Sparse tape of a Boolean word]
 \lean{Complexity.enumCont_sparse_some}
 \label{Complexity.enumCont_sparse_some}
 \leanok
 \uses{Complexity.enumCont_sparse, Turing.FinTM.bufferTape}
 \difficulty{2}
-The sparse tape induced by lifting every symbol of a boolean word into a
-nonblank cell equals the standard buffer tape of that word.
+For every finite Boolean word $w$, the sparse tape determined by replacing each symbol
+of $w$ with a nonblank cell containing that symbol is the buffer tape storing $w$.
 \end{lemma}
 
-\begin{lemma}[The copy scan replaces the captured suffix]
+\begin{lemma}[Copy scan of a captured suffix]
 \lean{Complexity.enumCont_copy_scan}
 \label{Complexity.enumCont_copy_scan}
 \leanok
 \uses{Complexity.enumCont_endsAction, Complexity.enumCont_ends_apply, Complexity.enumCont_overwrite, Complexity.enumCont_pairCfg, Complexity.enumCont_sparse, Complexity.enumCont_sparse_blanks, Complexity.enumCont_sparse_clear, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-Consider a machine with at least two work tapes whose copy state, at a two-ended
-configuration, overwrites the tape-zero cell with $f$ applied to the captured
-symbol, blanks the captured cell, and advances both heads, exiting left into a
-rewind state at the captured right blank. Starting with tape zero holding
-$\mathit{pre} \mathbin{+\!\!+} \mathit{old}$, the capture tape holding
-$\mathit{rest}$ beyond $|\mathit{pre}|$ already-erased cells, and both heads at
-$|\mathit{pre}|$: after $|\mathit{rest}| + 1$ steps the machine is in the rewind
-state, tape zero holds $\mathit{pre}$, then $f$ mapped over $\mathit{rest}$, then
-the remainder of $\mathit{old}$ beyond position $|\mathit{rest}|$, the capture
-tape is blank, and both heads stand at $|\mathit{pre}| + |\mathit{rest}| - 1$.
+Let $L>0$, let a machine have $L+1$ work tapes, let $q_c,q_r$ be states, and let $f$ be
+a Boolean map. Suppose that in state $q_c$ the machine reads the last tape: on a symbol
+$b$ it writes $f(b)$ on tape zero, blanks the last tape, moves both heads right, and
+remains in $q_c$; on a blank it makes no writes, moves both heads left, and enters
+$q_r$. For Boolean words $\mathit{pre},\mathit{old},\mathit{rest}$, start with the heads
+at position $|\mathit{pre}|$, tape zero storing $\mathit{pre}$ followed by
+$\mathit{old}$, and the last tape storing $\mathit{rest}$ starting at position
+$|\mathit{pre}|$ with all earlier cells blank. After $|\mathit{rest}|+1$ steps the
+machine is in state $q_r$, the last tape is blank, tape zero stores $\mathit{pre}$
+followed by the image of $\mathit{rest}$ under $f$ and then the suffix of $\mathit{old}$
+after its first $|\mathit{rest}|$ symbols, and both heads are at position
+$|\mathit{pre}|+|\mathit{rest}|-1$.
 \end{lemma}
 
-\begin{lemma}[Synchronized rewind of the endpoint heads]
+\begin{lemma}[Synchronized Rewind of Endpoint Heads]
 \lean{Complexity.enumCont_pair_rewind}
 \label{Complexity.enumCont_pair_rewind}
 \leanok
 \uses{Complexity.enumCont_endsAction, Complexity.enumCont_ends_apply, Complexity.enumCont_pairCfg, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-Consider a machine whose rewind state moves both endpoint heads left while the
-tape-zero cell is nonblank and exits right into an arrival state at the left
-blank. For every word $w$ on tape zero and every $j \le |w|$: from common head
-position $j - 1$, exactly $j + 1$ steps reach the arrival state with both heads
-at zero, preserving $w$ and the blank capture tape.
+Let $L>0$, let $M$ be a deterministic machine with $L+1$ work tapes and Boolean symbols,
+and let $q_r,q_a$ be states. Suppose that in state $q_r$, on every input and work-tape
+reading, the machine moves both endpoint heads one cell left and enters $q_r$ if tape
+zero is nonblank, and moves both one cell right and enters $q_a$ if tape zero is blank;
+it makes no writes or output. For every Boolean word $w$ and every $j\le |w|$, starting
+with both endpoint heads at $j-1$, tape zero storing $w$, the last tape blank, and state
+$q_r$, after exactly $j+1$ steps the configuration has state $q_a$, both endpoint heads
+at zero, tape zero still storing $w$, and the last tape blank; all other configuration
+fields agree with the prescribed initial and final two-ended configurations.
 \end{lemma}
 
 \begin{lemma}[Complete copy and rewind]
@@ -1073,34 +1116,41 @@ at zero, preserving $w$ and the blank capture tape.
 \leanok
 \uses{Complexity.enumCont_copy_scan, Complexity.enumCont_endsAction, Complexity.enumCont_pairCfg, Complexity.enumCont_pair_rewind, Complexity.enumCont_sparse_some, Turing.FinTM.bufferTape, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
-For a machine with copy and rewind states as in the two preceding scans: if the
-captured word $v$ is at least as long as the old tape-zero word, then from a
-two-ended configuration with both heads at zero, exactly $2|v| + 2$ steps replace
-tape zero entirely by $f$ mapped over $v$, blank the capture tape, and return
-both heads to zero in the arrival state.
+Let $L>0$, let a machine have $L+1$ work tapes, and let $q_c,q_r,q_a$ be states and $f$
+a Boolean map. Suppose that in state $q_c$ the machine reads the last tape: on a symbol
+$b$ it writes $f(b)$ on tape zero, blanks the last tape, moves both heads right, and
+remains in $q_c$; on a blank it makes no writes, moves both heads left, and enters
+$q_r$. Suppose that in state $q_r$ it reads tape zero: on a symbol it makes no writes,
+moves both heads left, and remains in $q_r$; on a blank it makes no writes, moves both
+heads right, and enters $q_a$. For words $\mathit{old}$ and $v$ with $|\mathit{old}|\le
+|v|$, starting with the two heads at zero, tape zero storing $\mathit{old}$, and the
+last tape storing $v$, after $2|v|+2$ steps the machine is in state $q_a$, tape zero
+stores the word obtained by applying $f$ to each symbol of $v$, the last tape is blank,
+and both heads are at zero.
 \end{lemma}
 
-\begin{lemma}[Logged seam with empty history]
+\begin{lemma}[Logging preserves an empty-history seam]
 \lean{Complexity.enumCont_log_words}
 \label{Complexity.enumCont_log_words}
 \leanok
 \uses{Complexity.enumCont_logCfg, Complexity.enumCont_logTM, Complexity.enumCont_sparse_blanks, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.stateWord}
 \difficulty{4}
-For a machine $B$ with at least one work tape: the logged configuration, with
-empty history, of the canonical seam carrying a word $s$ on tape zero equals the
-canonical seam of the logging machine's larger tape bank, the added tapes being
-blank and stationary.
+Let $B$ be a finite Turing machine over the Boolean alphabet with at least one work
+tape, let $x$ and $s$ be Boolean words, and let $q$ be a state of $B$. Padding the seam
+configuration that has state $q$ and word $s$ on tape zero, with all other tapes empty,
+by the logging construction with empty history gives exactly the seam configuration of
+the logging machine with state $q$ and word $s$ on tape zero.
 \end{lemma}
 
-\begin{lemma}[Appending an output tape to a seam]
+\begin{lemma}[Extending a word assignment by one tape]
 \lean{Complexity.enumCont_extend_words}
 \label{Complexity.enumCont_extend_words}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.stateWord}
 \difficulty{3}
-Appending one tape holding a word $y$ to a bank of $L$ tapes whose only nonblank
-tape is tape zero holding $s$ yields exactly the two-ended tape layout: tape
-zero $s$, last tape $y$, all intervening tapes blank.
+Let $L>0$ and let $s,y$ be Boolean words. Assigning the word $s$ to tape zero among the
+first $L$ tapes and the word $y$ to the additional last tape gives the tape layout in
+which tape zero stores $s$, tape $L$ stores $y$, and every intervening tape is blank.
 \end{lemma}
 
 \begin{lemma}[Clean entry at a prepared seam]
@@ -1109,10 +1159,12 @@ zero $s$, last tape $y$, all intervening tapes blank.
 \leanok
 \uses{Complexity.enumCont_cleanTM, Complexity.enumCont_extend_words, Complexity.enumCont_logCfg, Complexity.enumCont_log_words, Complexity.enumCont_pairCfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nil, Turing.captureCfg, Turing.stateWord}
 \difficulty{3}
-For a machine $B$ with at least one work tape: the clean wrapper's captured entry
-configuration at the prepared seam carrying $s$ on tape zero equals the
-two-ended administrative configuration with tape zero $s$, blank capture, and
-both endpoint heads at zero.
+Let $B$ be a finite Boolean Turing machine with at least one work tape, let $x$ and $s$
+be Boolean words, and let $q$ be a state of $B$. The captured logged seam configuration
+whose first work tape contains $s$ and whose other work tapes are blank equals the
+two-ended administrative configuration with state $q$, tape zero containing $s$, the
+last tape blank, both endpoint heads at position $0$, input head at position $1$, and
+empty output.
 \end{lemma}
 
 \begin{lemma}[Clean exit at a prepared seam]
@@ -1121,49 +1173,59 @@ both endpoint heads at zero.
 \leanok
 \uses{Complexity.enumCont_cleanCfg, Complexity.enumCont_cleanTM, Complexity.enumCont_extend_words, Complexity.enumCont_logTM, Complexity.enumCont_log_words, Complexity.enumCont_pairCfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.stateWord}
 \difficulty{3}
-For a machine $B$ with at least one work tape: the clean wrapper's completed
-administrative configuration over the prepared seam carrying $s$, with retained
-output $y$, equals the two-ended configuration with tape zero $s$, capture tape
-$y$, and both endpoint heads at zero.
+Let $B$ be a finite Boolean Turing machine with at least one work tape, let $x$, $s$,
+and $y$ be Boolean words, let $q$ be a state of $B$, and let $q'$ be any optional state
+of the clean wrapper of $B$. The administrative configuration based on the seam with $s$
+on tape zero, retained word $y$, control $q'$, input head at position $1$, capture head
+at position $0$, and empty output equals the two-ended configuration with control $q'$,
+tape zero containing $s$, the last tape containing $y$, both endpoint heads at position
+$0$, and empty output.
 \end{lemma}
 
-\begin{lemma}[A clean call inside the body]
+\begin{lemma}[Simulation of a clean call]
 \lean{Complexity.enumCont_body_call}
 \label{Complexity.enumCont_body_call}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_cleanTM, Complexity.enumCont_clean_complete, Complexity.enumCont_clean_entry_words, Complexity.enumCont_clean_exit_words, Complexity.enumCont_first_halt, Complexity.enumCont_pairCfg, Complexity.enumCont_return_run, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{4}
-Let $B$ be a source machine with at least one work tape that, started in state
-$q$ at the seam carrying candidate $s$ on input $x$, halts within $T$ steps with
-output $y$. Then the enumerator body, from the two-ended configuration embedding
-the clean call of $q$ in a given mode, reaches within $3T + |x| + |y| + 8$ steps
-the two-ended configuration in that mode's administrative continuation state,
-with candidate $s$ preserved, $y$ on the capture tape, all scratch blank, both
-endpoint heads at zero, and empty physical output.
+Let $B$ be a finite Boolean machine with at least one work tape, and let $q_v,q_i$ be
+designated states and $stop$ a Boolean parameter. Suppose that on input $x$, the run of
+$B$ from state $q$ with $s$ on tape zero and all other work tapes empty halts after $T$
+steps with output $y$. Then, for some $t\le 3T+|x|+|y|+8$, the body machine starting in
+the clean-call state corresponding to $q$ and mode $mode$, with candidate $s$ on tape
+zero, blank capture tape, all other tapes blank, endpoint heads at $0$, and empty
+output, reaches the administrative continuation state specified by $mode$. At that time
+the candidate $s$ is preserved, the capture tape contains $y$, all other tapes are
+blank, both endpoint heads are at $0$, and the output is empty.
 \end{lemma}
 
-\begin{lemma}[Two-ended configurations with blank capture are seams]
+\begin{lemma}[Two-Ended Configurations Are Seam Configurations]
 \lean{Complexity.enumCont_pair_words}
 \label{Complexity.enumCont_pair_words}
 \leanok
 \uses{Complexity.enumCont_pairCfg, Turing.Cfg.ofWords, Turing.FinTM.bufferTape, Turing.stateWord}
 \difficulty{3}
-The two-ended administrative configuration with tape zero holding $s$, blank
-capture tape, and both endpoint heads at zero equals the canonical seam
-configuration carrying $s$ on tape zero.
+Let $L$ be a natural number, $S$ a state type, $x$ a Boolean input word, $q\in S$, and
+$s$ a Boolean word. The configuration on $L+1$ work tapes with state $q$, tape zero
+storing $s$, the last tape blank, both endpoint heads at zero, all intervening tapes
+blank with heads at zero, input head at position one, and empty output equals the
+configuration with state $q$, $s$ on tape zero, all other tapes blank, every work-tape
+head at zero, input head at position one, and empty output.
 \end{lemma}
 
-\begin{lemma}[Initialization of the enumerator body]
+\begin{lemma}[Body initialization]
 \lean{Complexity.enumCont_body_start}
 \label{Complexity.enumCont_body_start}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_body_call, Complexity.enumCont_cleanTM, Complexity.enumCont_copy_complete, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Complexity.enumCont_pair_words, Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.stateWord}
 \difficulty{4}
-Let $B$ be a source machine with at least one work tape that, started at the
-empty seam on input $x$, halts within $T$ steps emitting $w$ consecutive true
-marks. Then within $3T + |x| + 3w + 10$ steps from its initial configuration on
-$x$, the enumerator body reaches the anchor state over the canonical seam
-carrying the all-false candidate of width $w$.
+Let $B$ be a finite Boolean Turing machine with at least one work tape, let $q_v,q_i$ be
+states of $B$, let $stop$ be a Boolean flag, and let $x$ be a Boolean input word.
+Suppose that, from its initial configuration on $x$, with all work tapes blank, $B$
+halts at time $T$ and outputs $w$ consecutive true bits. Then for some $t\le
+3T+|x|+3w+10$, the body machine with parameters $B,q_v,q_i,stop$, started in its own
+initial configuration on $x$, is at the anchor on the seam carrying $w$ false bits on
+tape zero and blank contents on all other tapes.
 \end{lemma}
 
 \begin{lemma}[Departure from the anchor]
@@ -1172,276 +1234,310 @@ carrying the all-false candidate of width $w$.
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_pairCfg, Complexity.enumCont_pair_words, Turing.Action.apply, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero, Turing.stateWord}
 \difficulty{3}
-For every input $x$ and candidate word $s$, one step of the active enumerator body
-from the anchor state over the canonical seam carrying $s$ on tape zero yields the
-two-ended configuration that enters the verification call (the source's verifier
-entry state in verification mode), with tape zero $s$, a blank capture tape, and
-both endpoint heads at zero; the step writes nothing, moves no head, and emits
-nothing.
+Let $B$ be a finite Boolean machine, let $q_v,q_i$ be designated states, and let $x,s$
+be Boolean words. Starting from the canonical seam configuration on input $x$, in
+administrative anchor state $0$, with $s$ on tape zero and all other tapes empty, one
+step of the active body yields the two-ended configuration in verification mode, with
+source state $q_v$, $s$ preserved on tape zero, the last tape blank, both endpoint heads
+at $0$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Acceptance emits the single true bit]
+\begin{lemma}[Acceptance emits the true bit]
 \lean{Complexity.enumCont_body_accept}
 \label{Complexity.enumCont_body_accept}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.step}
 \difficulty{2}
-For every candidate word $s$, after one step of the enumerator body (active or
-stopped) from the two-ended configuration in the verdict state with tape zero $s$
-and the captured word consisting of a single true bit, the machine is halted and
-its output is exactly the single bit true.
+Let $B$ be a finite machine over the Boolean alphabet, with designated states $q_v,q_i$
+and a Boolean parameter $stop$. For any Boolean words $x$ and $s$, start the
+corresponding body machine in its administrative state $3$ on input $x$, with tape zero
+containing $s$, the last tape containing the one-letter word consisting of true, all
+other tapes blank, both endpoint heads at cell $0$, and empty output. After one step its
+state is halted and its output is exactly the one-letter word consisting of true.
 \end{lemma}
 
-\begin{lemma}[Rejection erases the verdict]
+\begin{lemma}[Rejection transition]
 \lean{Complexity.enumCont_body_reject}
 \label{Complexity.enumCont_body_reject}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-For every candidate word $s$, one step of the enumerator body (active or stopped)
-from the two-ended configuration in the verdict state with tape zero $s$ and a
-captured single false bit yields the two-ended configuration that enters the
-increment call (the source's increment entry state in increment mode), with tape
-zero $s$, the captured verdict erased so that the capture tape is blank, and both
-endpoint heads at zero.
+For every Boolean finite machine $B$, states $q_v,q_i$ of $B$, Boolean flag $stop$, and
+Boolean words $x,s$, one step of the body machine with parameters $B,q_v,q_i,stop$, from
+the configuration on input $x$ in control state $3$ whose first and last work tapes
+store $s$ and the one-bit word $[\mathrm{false}]$, respectively, and whose endpoint
+heads are at zero, yields the configuration in control state $(q_i,2)$ with the first
+tape still storing $s$, the last tape blank, both endpoint heads at zero, and all other
+fields unchanged.
 \end{lemma}
 
-\begin{lemma}[Case analysis of the increment result]
+\begin{lemma}[Cases for the increment output]
 \lean{Complexity.enumCont_increment_cases}
 \label{Complexity.enumCont_increment_cases}
 \leanok
 \uses{Complexity.enumCont_step_length, Turing.incFixed}
 \difficulty{3}
-For every boolean word $s$, exactly one of the following holds for the
-fixed-width increment's output word: it is empty (overflow) and the stalled step
-leaves $s$ unchanged; or it is nonempty, has length exactly $|s|$, and the
-stalled step equals it.
+For every Boolean word $s$, let $v$ be the fixed-width increment of $s$, with overflow
+represented by the empty word. Either $v$ is empty and the increment operation with
+default value $s$ returns $s$, or $v$ is nonempty, has the same length as $s$, and that
+defaulted operation returns $v$.
 \end{lemma}
 
-\begin{lemma}[The increment-result check]
+\begin{lemma}[Increment-result branch check]
 \lean{Complexity.enumCont_body_check}
 \label{Complexity.enumCont_body_check}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-One step of the enumerator body from the increment-check state, at the two-ended
-configuration with candidate $s$ and captured increment result $v$, preserves
-all tapes and transfers control to the anchor when $v$ is empty (overflow) and
-to the result-copy state otherwise.
+Let $B$ be a finite Boolean machine, let $q_v,q_i$ be designated states, let $stop$ be a
+Boolean parameter, and let $x,s,v$ be Boolean words. From administrative state $4$, with
+tape zero containing $s$, the last tape containing $v$, the other tapes blank, both
+endpoint heads at $0$, and empty output, one step preserves the entire tape and head
+configuration and transfers control to the anchor state $0$ if $v$ is empty, and to
+state $5$ otherwise.
 \end{lemma}
 
-\begin{lemma}[One complete candidate update]
+\begin{lemma}[Simulation of a fixed-width increment]
 \lean{Complexity.enumCont_body_increment}
 \label{Complexity.enumCont_body_increment}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_body_call, Complexity.enumCont_body_check, Complexity.enumCont_copy_complete, Complexity.enumCont_increment_cases, Complexity.enumCont_logTM, Complexity.enumCont_pairCfg, Complexity.enumCont_pair_words, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.incFixed, Turing.stateWord}
 \difficulty{5}
-Let $B$ be a source machine with at least one work tape that, started in the
-increment entry state at the seam with candidate $s$, halts within $T$ steps
-emitting the fixed-width increment's output word. Then the enumerator body, from
-the two-ended configuration embedding the increment call, reaches within
-$3T + |x| + 3|s| + 11$ steps the anchor over the seam carrying the stalled
-increment of $s$: the successor word of the same width, or $s$ itself on
-overflow.
+Let $B$ be a finite Boolean machine with at least one work tape, let $q_v,q_i$ be
+designated states, and let $stop$ be a Boolean parameter. Suppose that, on input $x$,
+the run of $B$ from state $q_i$ with $s$ on tape zero and all other work tapes empty
+halts after $T$ steps and outputs the fixed-width increment of $s$, using the empty word
+when that increment overflows. Then, for some $t\le 3T+|x|+3|s|+11$, the body machine
+started in increment-call mode with candidate $s$ on tape zero and blank capture tape
+reaches the canonical seam configuration in anchor state $0$ whose tape zero contains
+the incremented word, or $s$ if the increment overflows, with all other tapes empty and
+output empty.
 \end{lemma}
 
-\begin{lemma}[One raw round after departure]
+\begin{lemma}[Raw body round]
 \lean{Complexity.enumCont_body_round_raw}
 \label{Complexity.enumCont_body_round_raw}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_body_accept, Complexity.enumCont_body_call, Complexity.enumCont_body_increment, Complexity.enumCont_body_reject, Complexity.enumCont_pairCfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.incFixed, Turing.stateWord}
 \difficulty{4}
-Let $B$ be a source machine with at least one work tape whose verification call
-on candidate $s$ (from the verifier entry state at the seam) halts within $T_v$
-steps with single-bit output $b$, and whose increment call halts within $T_i$
-steps emitting the fixed-width increment output. Then from the configuration
-just after departure, within $3T_v + 3T_i + 2|x| + 3|s| + 21$ steps the
-enumerator body either halts with output true (when $b$ is true) or reaches the
-anchor over the seam carrying the stalled increment of $s$ (when $b$ is false).
+Let $B$ be a finite Boolean Turing machine with at least one work tape, let $q_v,q_i$ be
+states of $B$, let $stop$ be a Boolean flag, and let $x,s$ be Boolean words. Suppose
+that from the seam configuration on input $x$ with state $q_v$ and word assignment
+placing $s$ on tape zero, $B$ halts within $T_v$ steps with output $[b]$, and from the
+corresponding configuration with state $q_i$, it halts within $T_i$ steps with output
+equal to the fixed-width increment of $s$, using the empty word if that increment
+overflows. Then for some $t\le 3T_v+3T_i+2|x|+3|s|+21$, the body machine with parameters
+$B,q_v,q_i,stop$, started just after departure in mode $1$ with $s$ on tape zero and the
+other tapes blank, either halts with output $[\mathrm{true}]$ when $b$ is true, or
+reaches the anchor on the seam carrying the increment of $s$, using $s$ itself when the
+increment overflows, when $b$ is false.
 \end{lemma}
 
-\begin{lemma}[A silent self-loop absorbs]
+\begin{lemma}[Absorption by a silent self-loop]
 \lean{Complexity.enumCont_absorb}
 \label{Complexity.enumCont_absorb}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
-If a control state's transition is the silent stationary self-loop, then from
-any configuration in that state, a run of any length leaves the configuration
-unchanged.
+Let $M$ be a deterministic machine with $k$ work tapes over the Boolean alphabet, let
+$q_a$ be a state, and suppose that in state $q_a$ the transition is always the action
+that keeps the input head fixed, makes no changes or movements on the work tapes, emits
+no output, and returns to $q_a$. Then, from any configuration on any Boolean input whose
+state is $q_a$, iterating the machine's step function any finite number of times leaves
+the entire configuration unchanged.
 \end{lemma}
 
-\begin{lemma}[Runs agree before the first anchor visit]
+\begin{lemma}[Agreement of runs before an anchor visit]
 \lean{Complexity.enumCont_agree_run}
 \label{Complexity.enumCont_agree_run}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-If two transition tables agree at every control state other than a designated
-anchor state, then their runs from a common configuration coincide for every
-duration during which the second machine's run has not yet visited the anchor.
+Let $M$ and $N$ be deterministic machines with $k$ work tapes over the Boolean alphabet
+and state set $S$, and designate a state $q_a$. Suppose their transitions agree in every
+state other than $q_a$, for every input symbol and every tuple of work-tape readings.
+For any configuration $c$ on input $x$ and any $t\in\mathbb N$, if the run of $N$ from
+$c$ is never in state $q_a$ at any time $j<t$, then the two machines' configurations
+after $t$ steps from $c$ are equal.
 \end{lemma}
 
-\begin{lemma}[First visit to a stopped anchor]
+\begin{lemma}[First visit to an anchor state]
 \lean{Complexity.enumCont_first_anchor}
 \label{Complexity.enumCont_first_anchor}
 \leanok
 \uses{Complexity.enumCont_absorb, Complexity.enumCont_agree_run, Turing.Cfg, Turing.FinTM.controlAction, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-Let two transition tables agree away from an anchor state, which the second
-(stopped) table turns into a silent self-loop. If the stopped run from $c$
-stands at the anchor at time $T$, then there is a time $t \le T$ such that the
-active run never visits the anchor before $t$ and its time-$t$ configuration
-equals the stopped run's time-$T$ configuration.
+Let $M$ and $M_0$ be machines with the same number of work tapes and state set, and let
+$q_a$ be a state. Suppose their transition rules agree at every state other than $q_a$,
+and that $M_0$ at $q_a$ makes a stationary, silent transition back to $q_a$. For a
+configuration $c$ and time $T$, if the run of $M_0$ from $c$ is in state $q_a$ at time
+$T$, then some $t\le T$ has the property that the run of $M$ is never in state $q_a$ at
+any earlier time and its configuration at time $t$ equals the configuration of $M_0$ at
+time $T$.
 \end{lemma}
 
-\begin{lemma}[Halted stopped runs transfer unchanged]
+\begin{lemma}[Transfer of halted runs]
 \lean{Complexity.enumCont_halt_transfer}
 \label{Complexity.enumCont_halt_transfer}
 \leanok
 \uses{Complexity.enumCont_absorb, Complexity.enumCont_agree_run, Turing.Cfg, Turing.FinTM.controlAction, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-Let two transition tables agree away from an anchor state, which the second
-(stopped) table turns into a silent self-loop. If the stopped run from $c$ is
-halted at time $T$, then the active run from $c$ equals the stopped run at time
-$T$, and the active run never visits the anchor at any time up to $T$.
+Let $k$ be a natural number, let $S$ be a state set, let $x$ be a Boolean input word,
+and let $M$ and $N$ be deterministic machines with $k$ work tapes and Boolean symbols,
+with $q_a\in S$. Suppose their transition actions agree in every state other than $q_a$,
+and in state $q_a$ machine $N$ takes the control action that stays on the input head and
+returns to $q_a$ without writing, moving work heads, or emitting output. If the run of
+$N$ from a configuration $c$ is halted after $T$ steps, then the run of $M$ from $c$ has
+the same configuration after $T$ steps, and at every time $j\le T$ its state is not
+$q_a$.
 \end{lemma}
 
-\begin{lemma}[Active and stopped bodies agree off the anchor]
+\begin{lemma}[Agreement off the anchor state]
 \lean{Complexity.enumCont_body_agree}
 \label{Complexity.enumCont_body_agree}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Turing.FinTM}
 \difficulty{3}
-The active and stopped variants of the enumerator body have identical transitions
-at every control state other than the anchor; their tape counts and finite state
-sets coincide.
+Let $B$ be a finite machine over the Boolean alphabet, with designated states $q_v,q_i$.
+For every state $q$ of the body machine other than the administrative anchor state $0$,
+and for every input symbol and tuple of work-tape readings, the transition of the active
+body (parameter $false$) equals the transition of the stopped body (parameter $true$).
 \end{lemma}
 
-\begin{lemma}[Guarded initialization of the body]
+\begin{lemma}[Guarded body initialization]
 \lean{Complexity.enumCont_body_start_guarded}
 \label{Complexity.enumCont_body_start_guarded}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_body_agree, Complexity.enumCont_body_start, Complexity.enumCont_first_anchor, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{3}
-Let $B$ be a source machine with at least one work tape that, from the empty
-seam on input $x$, halts within $T$ steps emitting $w$ true marks. Then within
-$3T + |x| + 3w + 10$ steps the active enumerator body reaches the anchor over
-the all-false width-$w$ candidate seam, without visiting the anchor at any
-earlier time.
+Let $B$ be a finite Boolean Turing machine with at least one work tape, let $q_v,q_i$ be
+states of $B$, and let $x$ be a Boolean input word. Suppose that, from its initial
+configuration on $x$, with all work tapes blank, $B$ halts at time $T$ and outputs $w$
+consecutive true bits. Then for some $t\le 3T+|x|+3w+10$, the body machine with
+parameters $B,q_v,q_i$ and stopped flag false, started in its initial configuration on
+$x$, reaches the anchor on the seam carrying $w$ false bits on tape zero and blank
+contents on all other tapes; at every time $j<t$, its state is not the anchor state.
 \end{lemma}
 
-\begin{lemma}[Guarded round of the body]
+\begin{lemma}[Guarded body round]
 \lean{Complexity.enumCont_body_round_guarded}
 \label{Complexity.enumCont_body_round_guarded}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_body_agree, Complexity.enumCont_body_depart, Complexity.enumCont_body_round_raw, Complexity.enumCont_first_anchor, Complexity.enumCont_halt_transfer, Complexity.enumCont_pairCfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.incFixed, Turing.stateWord}
 \difficulty{5}
-Let $B$ be a source machine with at least one work tape whose verification call
-on candidate $s$ halts within $T_v$ steps with single-bit verdict $b$, and whose
-increment call halts within $T_i$ steps emitting the fixed-width increment
-output. Then there is a time $t$ with
-$0 < t \le 3T_v + 3T_i + 2|x| + 3|s| + 22$ such that the active enumerator body,
-started at the anchor over the seam with candidate $s$, does not visit the
-anchor at any strictly intermediate positive time, and at time $t$ either halts
-with output true (when $b$ is true) or stands at the anchor over the seam
-carrying the stalled increment of $s$ (when $b$ is false).
+Let $B$ be a finite Boolean Turing machine with at least one work tape, let $q_v,q_i$ be
+states of $B$, and let $x,s$ be Boolean words. Suppose that from the seam configuration
+on input $x$ with state $q_v$ and word assignment placing $s$ on tape zero, $B$ halts
+within $T_v$ steps with output $[b]$, and from the corresponding configuration with
+state $q_i$, it halts within $T_i$ steps with output equal to the fixed-width increment
+of $s$, using the empty word if that increment overflows. Then there is an integer $t$
+with $0<t\le 3T_v+3T_i+2|x|+3|s|+22$ such that, in the body machine with stopped flag
+false started at its anchor on the seam carrying $s$, no strictly intermediate
+positive-time configuration is at the anchor; at time $t$, if $b$ is true the machine is
+halted with output $[\mathrm{true}]$, and if $b$ is false it is at the anchor on the
+seam carrying the increment of $s$, with $s$ itself used when the increment overflows.
 \end{lemma}
 
-\begin{lemma}[Lifting a prepared call into a shared bank]
+\begin{lemma}[Lifting a computation to a larger tape bank]
 \lean{Complexity.enumCont_lift_call}
 \label{Complexity.enumCont_lift_call}
 \leanok
 \uses{Complexity.enumCont_padAction, Complexity.enumCont_padCfg, Complexity.enumCont_pad_run, Complexity.enumCont_pad_words, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{2}
-Suppose a host machine simulates a source machine with at least one work tape by
-padded transitions on an initial tape block. If the source, started in state $q$
-at the seam carrying $s$, is halted at time $T$ with output $y$, then the host,
-started in the embedded state at its own seam carrying $s$, is halted at time
-$T$ with the same output $y$.
+Let $M$ and $B$ be finite Boolean-alphabet Turing machines with $M$ using a positive
+number of work tapes and no more work tapes than $B$. Let $e$ map the states of $M$ to
+states of $B$, and suppose that for every source state and every input/work-tape scan,
+$B$'s transition at the embedded state is the padded action of $M$'s transition, reading
+$M$'s work tapes from the corresponding initial block. If $M$, started in state $q$ on
+input $x$ with word $s$ on its first work tape and all remaining tapes blank, is halted
+at time $T$ with output $y$, then $B$, started in state $e(q)$ on input $x$ with the
+same initial tape contents, is halted at time $T$ with output $y$.
 \end{lemma}
 
-\begin{lemma}[Lifting an initial call into a shared bank]
+\begin{lemma}[Lifting an initial computation]
 \lean{Complexity.enumCont_lift_init}
 \label{Complexity.enumCont_lift_init}
 \leanok
 \uses{Complexity.enumCont_padAction, Complexity.enumCont_padCfg, Complexity.enumCont_pad_init, Complexity.enumCont_pad_run, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.stateWord}
 \difficulty{3}
-Suppose a host machine simulates a source machine by padded transitions on an
-initial tape block. If the source computes $y$ from input $x$ within $T$ steps,
-then the host, started in the embedded initial state at the empty seam on $x$,
-is halted at time $T$ with output $y$; this holds even for a source with no work
-tapes.
+Let $M$ and $B$ be finite Boolean-alphabet Turing machines, with $M$ using no more work
+tapes than $B$. Let $e$ map the states of $M$ to states of $B$, and suppose that at
+every embedded state and for every input/work-tape scan, $B$ takes the padded action of
+$M$, reading the corresponding initial work-tape block. If $M$ computes output $y$ from
+input $x$ in time $T$, then $B$, started in state $e(q_0)$ with all work tapes blank on
+input $x$, is halted at time $T$ and has output $y$.
 \end{lemma}
 
-\begin{lemma}[From body contracts to the enumerator contract]
+\begin{lemma}[Enumerator from body contracts]
 \lean{Complexity.enumCont_from_body}
 \label{Complexity.enumCont_from_body}
 \leanok
 \uses{Complexity.enumCont_fuel_bits, Complexity.enumCont_orbit, Complexity.enumCont_step_length, Complexity.enumWord, Turing.Cfg, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_polyUnary, Turing.FinTM.exists_loopCfgTM, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.incFixed, Turing.stateWord}
 \difficulty{6}
-Fix constants $C, c$, a budget function $G$, a language $V$ over the binary
-alphabet, and a finite machine (the body) with a designated anchor state
-satisfying: (i) from its initial configuration on any input $x$ it reaches,
-within $G(|x|)$ steps and with no earlier anchor visit, the anchor over the seam
-carrying the all-false candidate of width $w = C(|x|+1)^c$; and (ii) from the
-anchor over any candidate $s$ of width $w$, within some positive time at most
-$G(|x|)$ and with no interior anchor visit, it halts with output true when
-$x \mathbin{+\!\!+} s \in V$ and otherwise returns to the anchor over the stalled
-fixed-width increment of $s$. Then there exist a constant $b$ and a machine $E$
-such that for every input $x$ there is a rank-indexed family of configurations
-with: $E$ reaches the rank-$0$ configuration from its initial configuration
-within $b(G(|x|) + (|x|+1)^{c+1} + 1)$ steps; the rank-$2^w$ configuration is
-halted with single-bit output false; and from each rank $i < 2^w$, within the
-same budget, $E$ either halts with output true (when $x$ concatenated with the
-width-$w$ binary word of $i$ lies in $V$) or reaches rank $i + 1$.
+Let $C,c$ be natural numbers, let $G$ be a natural-number-valued function, let $V$ be a
+language of Boolean words, and let $B$ be a finite Boolean-input Turing machine with
+designated state $q_a$. Suppose that for every Boolean input $x$, the run of $B$ from
+its initial configuration reaches, at some time at most $G(|x|)$, state $q_a$ with the
+all-false word of width $w=C(|x|+1)^c$ on tape zero and all other tapes blank, and has
+not visited $q_a$ earlier. Suppose also that for every $x$ and every word $s$ of length
+$w$, the run from state $q_a$ with $s$ on tape zero and other tapes blank reaches, in
+positive time at most $G(|x|)$ and without an intervening positive-time visit to $q_a$,
+either a halted configuration with output true if $x$ followed by $s$ belongs to $V$, or
+the configuration at state $q_a$ with the fixed-width increment of $s$ on tape zero and
+all other tapes blank if it does not. Then there are a natural number $b$ and a finite
+Boolean-input Turing machine $E$ such that for every Boolean input $x$ there is a
+sequence of configurations indexed by the natural numbers and a startup time at most
+$b\bigl(G(|x|)+(|x|+1)^{c+1}+1\bigr)$. The run of $E$ reaches the sequence's initial
+configuration at that startup time; its configuration at index $2^w$ is halted with
+output false; and for every index $i<2^w$, some run time at most the same bound takes
+the configuration at index $i$ either to a halted configuration with output true when
+$x$ followed by the width-$w$ binary representation of $i$ belongs to $V$, or to the
+configuration at index $i+1$ otherwise.
 \end{lemma}
 
-\begin{theorem}[The enumerator's configuration contract]
+\begin{theorem}[Enumerator configuration and time contracts]
 \lean{Complexity.enumMachine_contracts}
 \label{Complexity.enumMachine_contracts}
 \leanok
 \uses{Complexity.enumCont_bodyTM, Complexity.enumCont_body_round_guarded, Complexity.enumCont_body_start_guarded, Complexity.enumCont_concatTM, Complexity.enumCont_from_body, Complexity.enumCont_increment_call, Complexity.enumCont_lift_call, Complexity.enumCont_lift_init, Complexity.enumCont_sources, Complexity.enumCont_verifier_call, Complexity.enumWord, Turing.Cfg, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.FinTM.bufferedCompTM, Turing.FinTM.computesFunInTime_incFixed, Turing.FinTM.computesFunInTime_polyUnary, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.incFixed}
 \difficulty{6}
-Fix constants $C, c$, a language $V$ over the binary alphabet, and a machine $MV$
-deciding $V$ within time $T_v$. Then there exist a constant $b$ and one finite
-machine $E$ such that for every input $x$ --- writing $n = |x|$ and
-$w = C(n+1)^c$ --- there is a rank-indexed family of configurations of $E$ on
-$x$ with: $E$ reaches the rank-$0$ configuration from its initial configuration
-within $b\,(T_v(n+w) + (n+w+1)^{c+1})$ steps; the rank-$2^w$ configuration is
-halted with single-bit output false; and from each rank $i < 2^w$, within the
-same budget, $E$ either halts with output true when $x$ concatenated with the
-width-$w$ binary word of $i$ lies in $V$, or reaches the rank-$(i+1)$
-configuration otherwise.
+Let $C,c$ be natural numbers, let $V$ be a language of Boolean words, let $T_V$ be a
+time bound, and let $M_V$ be a finite Boolean Turing machine that decides $V$ within
+time $T_V$. Then there exist a natural number $b$ and a finite Boolean Turing machine
+$E$ such that for every Boolean input $x$ there are a family of configurations
+$\mathrm{cfg}(i)$ of $E$ on $x$, indexed by natural numbers, and a startup time
+satisfying the following conditions. Writing $w=C(|x|+1)^c$, the startup time is at most
+$b\bigl(T_V(|x|+w)+(|x|+w+1)^{c+1}\bigr)$, and $E$ reaches $\mathrm{cfg}(0)$ from its
+initial configuration within that startup time. The configuration $\mathrm{cfg}(2^w)$ is
+halted with output $[\mathrm{false}]$. For every $i<2^w$, there is a time at most
+$b\bigl(T_V(|x|+w)+(|x|+w+1)^{c+1}\bigr)$ such that, if $x$ concatenated with the
+width-$w$ little-endian binary word of $i$ belongs to $V$, the machine from
+$\mathrm{cfg}(i)$ halts with output $[\mathrm{true}]$; otherwise it reaches
+$\mathrm{cfg}(i+1)$ at that time.
 \end{theorem}
 
-\begin{theorem}[Brute-force enumeration decides the existential projection]
+\begin{theorem}[Time bound for existential projection]
 \lean{Complexity.exists_proj_decider}
 \label{Complexity.exists_proj_decider}
 \leanok
 \uses{Complexity.enumAny, Complexity.enumAny_certificates, Complexity.enumLoop_run, Complexity.enumMachine_contracts, Complexity.enumWord, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.DecidesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let a machine $MV$ decide a language $V$ over the binary alphabet within time
-$T_v$, and fix constants $C, c$. Then there exist a constant $b$ and a finite
-machine deciding the existential projection
-$\{\,x \mid \exists u,\ |u| = C(|x|+1)^c \wedge x \mathbin{+\!\!+} u \in V\,\}$
-within time
-\[
-b \cdot 2^{C(n+1)^c} \cdot
-  \Bigl(T_v\bigl(n + C(n+1)^c\bigr) + \bigl(n + C(n+1)^c + 1\bigr)^{c+1}\Bigr).
-\]
+Let $C,c\in\mathbb{N}$, let $V$ be a language of binary strings, let
+$T_v:\mathbb{N}\to\mathbb{N}$, and let $M_V$ be a finite binary Turing machine that
+decides $V$ within time $T_v$. Then there are $b\in\mathbb{N}$ and a finite binary
+Turing machine deciding the language $\{x:\exists u,\ |u|=C(|x|+1)^c\text{ and }xu\in
+V\}$ within time, on inputs of length $n$,
+$b\,2^{C(n+1)^c}\bigl(T_v(n+C(n+1)^c)+(n+C(n+1)^c+1)^{c+1}\bigr)$.
 \end{theorem}
 
-\begin{theorem}[$\mathrm{NP} \subseteq \mathrm{EXP}$]
+\begin{theorem}[Containment of NP in exponential time]
 \lean{Complexity.NP_subset_EXP}
 \label{Complexity.NP_subset_EXP}
 \leanok
 \uses{Complexity.EXP, Complexity.NP, Complexity.enumBudget_bound, Complexity.exists_proj_decider, Complexity.mem_P_iff, Turing.FinTM.ComputesInTime.mono}
 \difficulty{4}
-Every language in $\mathrm{NP}$ lies in $\mathrm{EXP}$: a language over the
-binary alphabet with polynomial-length certificates and a polynomial-time
-verifier is decidable in time $2^{n^e}$ for some constant $e$, up to a constant
-factor.
+Every language in $\mathrm{NP}$ belongs to $\mathrm{EXP}$; that is,
+$\mathrm{NP}\subseteq\mathrm{EXP}$.
 \end{theorem}
 
 \begin{lemma}[Binary digits of a power-of-two multiple]
@@ -1449,8 +1545,8 @@ factor.
 \label{Complexity.a3_bits_shift}
 \leanok
 \difficulty{3}
-For every $C \neq 0$ and every $p$, the binary-digit list of $C \cdot 2^p$
-consists of $p$ false bits followed by the binary digits of $C$.
+For natural numbers $C$ and $p$ with $C\ne 0$, the binary digit list of $C\cdot 2^p$ is
+the concatenation of $p$ zero bits followed by the binary digit list of $C$.
 \end{lemma}
 
 \begin{definition}[The binary shift machine]
@@ -1462,48 +1558,49 @@ For a fixed boolean word $w$, a machine with no work tapes that emits one false
 bit for each native input symbol and then emits $w$, halting afterwards.
 \end{definition}
 
-\begin{lemma}[Scanner invariant of the shift machine]
+\begin{lemma}[Scanning invariant of the shift machine]
 \lean{Complexity.a3_shift_scan}
 \label{Complexity.a3_shift_scan}
 \leanok
 \uses{Complexity.a3ShiftTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-For every $t \le |x|$: after $t$ steps on input $x$, the shift machine is still
-in its scanning state, its input head stands at position $t + 1$, and its output
-so far is exactly $t$ false bits.
+Let $w$ and $x$ be Boolean words. For every natural number $t$ with $t\le |x|$, after
+$t$ steps on input $x$ the machine for $w$ is in its scanning state, its input head is
+at position $t+1$, and its output consists of exactly $t$ false bits.
 \end{lemma}
 
-\begin{lemma}[The shift machine computes its padded word]
+\begin{lemma}[Exact running time of the shift machine]
 \lean{Complexity.a3_shift_computes}
 \label{Complexity.a3_shift_computes}
 \leanok
 \uses{Complexity.a3ShiftTM, Complexity.a3_shift_scan, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.controlAction, Turing.FinTM.emit_halts, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{5}
-For every suffix word $w$ and every input $x$, the shift machine for $w$ halts on
-input $x$ within $|x| + |w| + 2$ steps, and its output is $|x|$ false bits followed
-by $w$.
+For Boolean words $w$ and $x$, the machine with no work tapes that emits one false bit
+for each input symbol and then emits $w$ halts after exactly $|x|+|w|+2$ steps on input
+$x$. Its output is the word consisting of $|x|$ false bits followed by $w$.
 \end{lemma}
 
-\begin{lemma}[Monotone linear budget for the shift machine]
+\begin{lemma}[Time bound for the Boolean shift function]
 \lean{Complexity.a3_shift_timed}
 \label{Complexity.a3_shift_timed}
 \leanok
 \uses{Complexity.a3ShiftTM, Complexity.a3_shift_computes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono}
 \difficulty{2}
-For every word $w$, the shift machine for $w$ computes the function mapping each
-input $x$ to $0^{|x|} \mathbin{+\!\!+} w$ within time $(|w| + 2)(n + 1)$ on inputs
-of length $n$; this time bound is monotone and linear in $n$.
+For every Boolean word $w$, the machine with no work tapes that emits one false bit for
+each input bit and then emits $w$ computes the function $x \mapsto 0^{|x|}
+\mathbin{+\!\!+} w$ on every Boolean word $x$ in time $(|w|+2)(|x|+1)$.
 \end{lemma}
 
-\begin{lemma}[Exponential padding widths are computable in binary]
+\begin{lemma}[Binary output for an exponential value]
 \lean{Complexity.a3_exp_bits_timed}
 \label{Complexity.a3_exp_bits_timed}
 \leanok
 \uses{Complexity.a3_bits_shift, Complexity.a3_shift_timed, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_comp, Turing.FinTM.computesFunInTime_const, Turing.FinTM.computesFunInTime_polyUnary}
 \difficulty{5}
-For all constants $C, c$ there exist a finite machine and a constant $A$ such
-that the machine computes, from each input $x$, the binary-digit list of
-$C \cdot 2^{(|x|+1)^c}$ within time $A (|x| + 1)^{c+1}$.
+For all natural numbers $C$ and $c$, there exist a finite Turing machine $M$ over the
+Boolean alphabet and a natural number $A$ such that, on every Boolean word $x$, $M$
+outputs the list of binary digits of $C\,2^{(\operatorname{length}(x)+1)^c}$ within
+$A(\operatorname{length}(x)+1)^{c+1}$ steps.
 \end{lemma}
 
 \begin{definition}[Decider wrapper of an installed call]
@@ -1536,105 +1633,125 @@ zero, and the output is empty.
 \leanok
 \uses{Complexity.a3LoadCfg, Complexity.a3RunTM, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-For every $i < |x|$, one step of the decider wrapper in its copy phase, with the
-first $i$ input bits already on tape zero, appends the $(i+1)$-st input bit to
-tape zero and advances both the input head and the tape-zero head by one.
+Let $C$ be a finite binary Turing machine with at least one work tape, let $entry,exit$
+be states of $C$, and let $x$ be a binary word. For every natural number $i<|x|$, one
+step of the wrapper from its copy-phase configuration with input head at position $i+1$,
+tape zero containing the prefix of $x$ of length $i$, and its head at position $i$,
+reaches the copy-phase configuration with input head at position $i+2$, tape zero
+containing the prefix of length $i+1$, and its head at position $i+1$; all other work
+tapes and heads are blank and at zero, respectively, and the output remains empty.
 \end{lemma}
 
-\begin{lemma}[The copy phase from blank tapes]
+\begin{lemma}[Copy phase from blank tapes]
 \lean{Complexity.a3_copy_run}
 \label{Complexity.a3_copy_run}
 \leanok
 \uses{Complexity.a3LoadCfg, Complexity.a3RunTM, Complexity.a3_copy_step, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{3}
-For every $i \le |x|$, running the decider wrapper for $i$ steps from its
-initial configuration on $x$ reaches the copy-phase configuration with the first
-$i$ input bits on tape zero and both active heads just past them.
+Let $C$ be a finite binary Turing machine with at least one work tape, let $entry,exit$
+be states of $C$, and let $x$ be a binary word. For any $i\in\mathbb{N}$ with $i\le
+|x|$, the wrapper machine started on $x$ reaches after $i$ steps a copy-phase
+configuration with input head at position $i+1$, tape zero containing the prefix of $x$
+of length $i$, and its head at position $i$; all other work tapes and heads are blank
+and at zero, respectively, and the output is empty.
 \end{lemma}
 
-\begin{lemma}[The synchronized load rewind]
+\begin{lemma}[Rewinding after loading a word]
 \lean{Complexity.a3_load_rewind}
 \label{Complexity.a3_load_rewind}
 \leanok
 \uses{Complexity.a3LoadCfg, Complexity.a3RunTM, Turing.Action.apply, Turing.Cfg.ofWords, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.FinTM.moveInputPos_neg_val, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right, Turing.stateWord}
 \difficulty{5}
-For every $j \le |x|$: from the rewind-phase configuration of the decider
-wrapper with the full copy of $x$ on tape zero and both active heads just left
-of cell $j$, exactly $j + 1$ steps reach the dispatch seam --- the dispatch
-state over $x$ on tape zero with all heads at the origin. This includes the
-empty input.
+Let $C$ be a finite Turing machine with $k>0$ work tapes, designated states
+$\mathrm{entry}$ and $\mathrm{exit}$, and let $x$ be a Boolean word. For each natural
+number $j\leq \operatorname{length}(x)$, start the wrapper in phase $1$ with its input
+head at position $j$, tape zero containing $x$ with its head at position $j-1$, all
+other work tapes blank with their heads at zero, and empty output. After exactly $j+1$
+steps, its configuration is in phase $2$, with its input head at position $1$, tape zero
+containing $x$ with its head at zero, all other work tapes blank with their heads at
+zero, and empty output.
 \end{lemma}
 
-\begin{lemma}[Linear-time arrival at the call seam]
+\begin{lemma}[Arrival at the dispatch configuration]
 \lean{Complexity.a3_run_start}
 \label{Complexity.a3_run_start}
 \leanok
 \uses{Complexity.a3LoadCfg, Complexity.a3RunTM, Complexity.a3_copy_run, Complexity.a3_load_rewind, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.moveInputPos_neg_val, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos, Turing.stateWord}
 \difficulty{4}
-Let $C$ be a finite machine with at least one work tape and designated entry and
-exit states, and let $x$ be an input. After exactly $2|x| + 2$ steps from its
-initial configuration on $x$, the decider wrapper of $C$ is in the dispatch seam
-configuration: the dispatch state, $x$ on tape zero, every other work tape blank,
-and all heads at their starting positions.
+Let $C$ be a finite Turing machine over the Boolean alphabet with $k>0$ work tapes, let
+$e$ and $z$ be states of $C$, and let $x$ be a Boolean word. After exactly $2|x|+2$
+steps, the wrapper machine started on $x$ is in state $2$ of its three setup states,
+with its input head at the first input cell, $x$ stored on work tape $0$, all other work
+tapes blank, all work-tape heads at cell $0$, and its output empty.
 \end{lemma}
 
-\begin{lemma}[Following the call until its first return]
+\begin{lemma}[Wrapper follows a run before exit]
 \lean{Complexity.a3_run_guarded}
 \label{Complexity.a3_run_guarded}
 \leanok
 \uses{Complexity.a3RunTM, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-As long as the inner machine's run from a configuration has not reached the
-designated exit state, the decider wrapper's run from the state-renamed copy of
-that configuration coincides, under the renaming, with the inner machine's run.
+Let $C$ be a finite Turing machine over the Boolean alphabet with at least one work
+tape, and let $\mathrm{entry}$ and $\mathrm{exit}$ be states of $C$. For any Boolean
+input $x$, any configuration $c$ of $C$ on input $x$, and any natural number $t$,
+suppose that for every $j<t$ the configuration reached from $c$ after $j$ steps is not
+in state $\mathrm{exit}$. Then the wrapper run for $t$ steps from the state-renamed copy
+of $c$ equals the state-renamed configuration reached by $C$ after $t$ steps from $c$.
 \end{lemma}
 
-\begin{lemma}[Dispatch and first positive return]
+\begin{lemma}[Wrapper follows a first return]
 \lean{Complexity.a3_run_call}
 \label{Complexity.a3_run_call}
 \leanok
 \uses{Complexity.a3RunTM, Complexity.a3_run_guarded, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.stateWord}
 \difficulty{5}
-Suppose the inner machine, started in its entry state at the seam carrying $x$
-on tape zero, first reaches the exit state at a positive time $t$ (no visit at
-any earlier positive time), in the canonical configuration carrying a word $y$
-on tape zero. Then the decider wrapper, from its dispatch seam, reaches the
-renamed exit configuration in exactly $t$ steps; this covers the case where the
-entry and exit states coincide.
+Let $C$ be a finite Turing machine over the Boolean alphabet with at least one work
+tape, and let $\mathrm{entry}$ and $\mathrm{exit}$ be states of $C$. Let $x,y$ be
+Boolean words and let $t$ be a positive natural number. Suppose that, starting from the
+configuration in state $\mathrm{entry}$ with $x$ on tape zero, the run of $C$ is not in
+state $\mathrm{exit}$ at any time $j$ with $0<j<t$, and at time $t$ it reaches the
+canonical configuration in state $\mathrm{exit}$ with $y$ on tape zero. Then the
+wrapper, started in phase $2$ with $x$ on tape zero, reaches the state-renamed canonical
+configuration in state $\mathrm{exit}$ with $y$ on tape zero after exactly $t$ steps.
 \end{lemma}
 
-\begin{lemma}[Extracting the installed singleton verdict]
+\begin{lemma}[Time bound for a singleton output]
 \lean{Complexity.a3_run_singleton}
 \label{Complexity.a3_run_singleton}
 \leanok
 \uses{Complexity.a3RunTM, Complexity.a3_run_call, Complexity.a3_run_start, Turing.Action.apply, Turing.Cfg.mapState, Turing.Cfg.ofWords, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.bufferTape, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.stateWord}
 \difficulty{3}
-Suppose the inner machine, started in its entry state at the seam carrying $x$,
-first returns to the exit state at a positive time $t$ with the singleton word
-$[b]$ on tape zero. Then the decider wrapper computes the output $[b]$ from
-input $x$ within $2|x| + 2 + t + 1$ steps, with no earlier emission.
+Let $C$ be a finite Turing machine over the Boolean alphabet with at least one work
+tape, and let $\mathrm{entry}$ and $\mathrm{exit}$ be states of $C$. Let $x$ be a
+Boolean word, $b$ a Boolean value, and $t>0$. Suppose that the run of $C$ from the
+canonical entry configuration carrying $x$ on tape zero is not in state $\mathrm{exit}$
+at any time $j$ with $0<j<t$, and at time $t$ reaches the canonical exit configuration
+carrying the singleton word $[b]$ on tape zero. Then the wrapper computes $[b]$ from
+input $x$ within $2\operatorname{length}(x)+2+t+1$ steps.
 \end{lemma}
 
-\begin{lemma}[A clean installed call yields an ordinary decider]
+\begin{lemma}[Cleaning a binary decider]
 \lean{Complexity.a3_decider_clean}
 \label{Complexity.a3_decider_clean}
 \leanok
 \uses{Complexity.a3RunTM, Complexity.a3_run_singleton, Turing.FinTM, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.DecidesInTime, Turing.FinTM.exists_installCallTM, Turing.MultiTapeTM.indicator}
 \difficulty{4}
-If a finite machine $M$ decides a language $L$ over the binary alphabet within
-time $T$, then there exist a finite machine $R$ and a constant $B$ such that $R$
-decides $L$ within time $B\,(T(n) + n + 2)$.
+Let $M$ be a finite Turing machine over the binary alphabet, let $L$ be a language of
+binary strings, and let $T:\mathbb{N}\to\mathbb{N}$. If $M$ decides $L$ within time $T$,
+then there exist a finite binary Turing machine $R$ and a natural number $B$ such that
+$R$ decides $L$ within time $n\mapsto B\bigl(T(n)+n+2\bigr)$.
 \end{lemma}
 
-\begin{lemma}[Timed buffered composition at the actual intermediate word]
+\begin{lemma}[Timed buffered composition]
 \lean{Complexity.a3_comp_at}
 \label{Complexity.a3_comp_at}
 \leanok
 \uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
-If a machine $F$ computes $y$ from $x$ within $s$ steps and a machine $G$
-computes $z$ from $y$ within $t$ steps, then the buffered composition of $F$ and
-$G$ computes $z$ from $x$ within $s + |y| + 2 + t$ steps.
+Let $F,G$ be finite Turing machines over the binary alphabet, let $x,y,z$ be binary
+words, and let $s,t\in\mathbb{N}$. If $F$ computes $y$ from $x$ within $s$ steps and $G$
+computes $z$ from $y$ within $t$ steps, then their buffered sequential composition
+computes $z$ from $x$ within $s+|y|+2+t$ steps.
 \end{lemma}
 
 \begin{definition}[Nonempty-input guard]
@@ -1648,35 +1765,39 @@ halts, and, on nonempty input, takes one silent step and then runs $M$ from $M$'
 initial state.
 \end{definition}
 
-\begin{lemma}[The guard preserves the source run]
+\begin{lemma}[Run preserved under state renaming]
 \lean{Complexity.a3_nonempty_run}
 \label{Complexity.a3_nonempty_run}
 \leanok
 \uses{Complexity.a3NonemptyTM, Turing.Cfg, Turing.Cfg.mapState, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
 \difficulty{3}
-After the nonempty guard has been passed, the guarded machine's run from any
-state-renamed configuration of $M$ coincides, under the renaming, with $M$'s own
-run.
+Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean input
+word, and let $c$ be any configuration of $M$ on input $x$. For every natural number
+$t$, running the machine that guards against empty input for $t$ steps from the
+configuration obtained by renaming the states of $c$ gives the state-renamed
+configuration reached by running $M$ from $c$ for $t$ steps.
 \end{lemma}
 
-\begin{lemma}[The guard rejects the empty input]
+\begin{lemma}[Empty-input rejection by the guard]
 \lean{Complexity.a3_nonempty_nil}
 \label{Complexity.a3_nonempty_nil}
 \leanok
 \uses{Complexity.a3NonemptyTM, Turing.Action.apply, Turing.Cfg.init, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{2}
-For every finite machine $M$, the nonempty-input guard of $M$, run on the empty
-input, is halted after one step with output exactly the single bit false.
+For every finite Turing machine $M$ over the Boolean alphabet, the nonempty-input guard
+of $M$, on the empty input, halts after one step and outputs exactly the one-symbol word
+$[\mathrm{false}]$, using some amount of work-tape space.
 \end{lemma}
 
-\begin{lemma}[The guard passes nonempty inputs through]
+\begin{lemma}[Guarded computation on nonempty input]
 \lean{Complexity.a3_nonempty_computes}
 \label{Complexity.a3_nonempty_computes}
 \leanok
 \uses{Complexity.a3NonemptyTM, Complexity.a3_nonempty_run, Turing.Action.apply, Turing.Cfg.init, Turing.Cfg.inputSymbol, Turing.Cfg.mapState, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.controlAction, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{3}
-If $x$ is nonempty and $M$ computes $y$ from $x$ within $t$ steps, then the
-guarded machine computes $y$ from $x$ within $t + 1$ steps.
+Let $M$ be a finite Turing machine over the Boolean alphabet, and let $x$ and $y$ be
+Boolean words with $x$ nonempty. If $M$ computes $y$ from $x$ within $t$ steps, then the
+machine that guards against empty input computes $y$ from $x$ within $t+1$ steps.
 \end{lemma}
 
 \begin{lemma}[Strict monotonicity of exponential padding]
@@ -1684,10 +1805,8 @@ guarded machine computes $y$ from $x$ within $t + 1$ steps.
 \label{Complexity.a3_split_strictMono}
 \leanok
 \difficulty{2}
-For all constants $C, c$, the map $n \mapsto n + C \cdot 2^{(n+1)^c}$ on the
-natural numbers is strictly increasing; in particular the exponential split of
-a padded length, when it exists, is unique. This includes coefficient zero and
-degree zero.
+For all natural numbers $C$ and $c$, the function on the natural numbers given by
+$n\mapsto n+C\cdot 2^{(n+1)^c}$ is strictly increasing.
 \end{lemma}
 
 \begin{definition}[The exponential-split search]
@@ -1699,24 +1818,24 @@ $n + C \cdot 2^{(n+1)^c} = m$, if one exists, and an explicit failure value
 otherwise.
 \end{definition}
 
-\begin{lemma}[A successful split certifies its equation]
+\begin{lemma}[Specification of a successful split]
 \lean{Complexity.a3_split_spec}
 \label{Complexity.a3_split_spec}
 \leanok
 \uses{Complexity.a3Split}
 \difficulty{2}
-If the exponential-split search on $(C, c, m)$ returns $n$, then $n \le m$ and
-$n + C \cdot 2^{(n+1)^c} = m$.
+For natural numbers $C,c,m,n$, if the exponential-split search on $(C,c,m)$ returns $n$,
+then $n\le m$ and $n+C\cdot 2^{(n+1)^c}=m$.
 \end{lemma}
 
-\begin{lemma}[Failure excludes every split]
+\begin{lemma}[Failure of the split search]
 \lean{Complexity.a3_split_none_iff}
 \label{Complexity.a3_split_none_iff}
 \leanok
 \uses{Complexity.a3Split}
 \difficulty{3}
-The exponential-split search on $(C, c, m)$ fails if and only if no natural
-number $n$ satisfies $n + C \cdot 2^{(n+1)^c} = m$.
+For natural numbers $C,c,m$, the exponential-split search fails exactly when there is no
+natural number $n$ satisfying $n+C\cdot 2^{(n+1)^c}=m$.
 \end{lemma}
 
 \begin{lemma}[Completeness of the split search]
@@ -1725,19 +1844,18 @@ number $n$ satisfies $n + C \cdot 2^{(n+1)^c} = m$.
 \leanok
 \uses{Complexity.a3Split, Complexity.a3_split_none_iff, Complexity.a3_split_spec, Complexity.a3_split_strictMono}
 \difficulty{3}
-If $n + C \cdot 2^{(n+1)^c} = m$, then the exponential-split search on
-$(C, c, m)$ returns exactly $n$.
+Let $C,c,m,n$ be natural numbers. If $n+C\cdot 2^{(n+1)^c}=m$, then the
+exponential-split search with parameters $C,c,m$ returns $n$.
 \end{lemma}
 
-\begin{lemma}[The split search rejects length zero]
+\begin{lemma}[No split at length zero]
 \lean{Complexity.a3_split_empty}
 \label{Complexity.a3_split_empty}
 \leanok
 \uses{Complexity.a3Split, Complexity.a3_split_none_iff}
 \difficulty{2}
-For every positive coefficient $C$ and every degree $c$, the exponential-split
-search on $(C, c, 0)$ returns the failure value, so length zero admits no
-exponential split.
+Let $C$ be a positive natural number and let $c$ be a natural number. The
+exponential-split search with parameters $C,c$ at length $0$ returns no value.
 \end{lemma}
 
 \begin{definition}[The emitted split word]
@@ -1751,25 +1869,25 @@ search on $(C, c, |y|)$ returns $i$, and is the empty word, signalling failure,
 when the search fails.
 \end{definition}
 
-\begin{lemma}[Linear length of the split word]
+\begin{lemma}[Length bound for the split word]
 \lean{Complexity.a3_split_length}
 \label{Complexity.a3_split_length}
 \leanok
 \uses{Complexity.a3Split, Complexity.a3SplitWord, Complexity.a3_split_spec, Turing.pairEncode}
 \difficulty{3}
-For every word $y$, the emitted split word for $y$ has length at most
-$2|y| + 2$, including on malformed (unsplittable) inputs.
+For natural numbers $C$ and $c$ and a finite Boolean word $y$, the length of the split
+word of $y$ is at most $2|y|+2$.
 \end{lemma}
 
-\begin{lemma}[Polynomial-time computation of the split word]
+\begin{lemma}[Polynomial time for split-word computation]
 \lean{Complexity.a3_split_timed}
 \label{Complexity.a3_split_timed}
 \leanok
 \uses{Complexity.a3Split, Complexity.a3SplitWord, Complexity.a3_exp_bits_timed, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_splitSolveWith, Turing.solveSplitWith}
 \difficulty{5}
-For all constants $C, c$ there exist a finite machine and a constant $A$
-computing the split-word function (the paired prefix/suffix encoding, or the
-empty failure word) within time $A (n + 1)^{c+2}$ on inputs of length $n$.
+For every pair of natural numbers $C,c$, there exist a finite Turing machine over the
+binary alphabet and a natural number $A$ such that, on every binary input of length $n$,
+the machine computes the split word in exactly $A(n+1)^{c+2}$ steps.
 \end{lemma}
 
 \begin{definition}[The padding verifier]
@@ -1784,45 +1902,47 @@ word in $L$. Words whose length admits no split are rejected; certificate bits
 carry no information.
 \end{definition}
 
-\begin{lemma}[The padding verifier on exact-width concatenations]
+\begin{lemma}[Verifier on padded concatenations]
 \lean{Complexity.a3_verifier_append}
 \label{Complexity.a3_verifier_append}
 \leanok
 \uses{Complexity.a3Split, Complexity.a3Verifier, Complexity.a3_split_complete}
 \difficulty{2}
-If $|u| = 2^{(|x|+1)^c}$, then the concatenation $x \mathbin{+\!\!+} u$ belongs
-to the padding verifier of $L$ at degree $c$ if and only if $x \in L$.
+Let $L$ be a language of binary words, let $c$ be a natural number, and let $x,u$ be
+binary words with $|u|=2^{(|x|+1)^c}$. Then $x$ followed by $u$ belongs to the padding
+verifier for $L$ at degree $c$ if and only if $x\in L$.
 \end{lemma}
 
-\begin{lemma}[The split equation bounds the source budget]
+\begin{lemma}[Bound from the split equation]
 \lean{Complexity.a3_source_budget}
 \label{Complexity.a3_source_budget}
 \leanok
 \uses{Complexity.a3Split, Complexity.a3_split_spec}
 \difficulty{3}
-If the exponential-split search with coefficient one returns $n$ on a length
-$m$, then $a \cdot 2^{n^c} \le a \cdot m$ for every constant $a$, including
-degree zero.
+Let $a,c,m,n$ be natural numbers. If the exponential-split search with coefficient $1$,
+degree $c$, and length $m$ returns $n$, then $a\cdot 2^{n^c}\le a\cdot m$.
 \end{lemma}
 
-\begin{lemma}[The padding verifier is polynomial-time]
+\begin{lemma}[Polynomial-time membership of the verifier]
 \lean{Complexity.a3_verifier_mem_P}
 \label{Complexity.a3_verifier_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.a3NonemptyTM, Complexity.a3Split, Complexity.a3SplitWord, Complexity.a3Verifier, Complexity.a3_comp_at, Complexity.a3_decider_clean, Complexity.a3_nonempty_computes, Complexity.a3_nonempty_nil, Complexity.a3_source_budget, Complexity.a3_split_length, Complexity.a3_split_spec, Complexity.a3_split_timed, Complexity.mem_P_iff, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.DecidesInTime, Turing.FinTM.bufferedCompTM, Turing.FinTM.computesFunInTime_pairFst, Turing.MultiTapeTM.indicator, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{6}
-If some finite machine decides a language $L$ over the binary alphabet within
-time $a \cdot 2^{n^c}$, then the padding verifier of $L$ at degree $c$ belongs
-to $\mathrm{P}$.
+Let $L$ be a language of binary words, and let $a,c$ be natural numbers and $M$ a finite
+Turing machine over the binary alphabet. If $M$ decides $L$ within time $n\mapsto a\cdot
+2^{n^c}$, then the padding verifier for $L$ at degree $c$ belongs to $\mathrm{P}$.
 \end{lemma}
 
-\begin{theorem}[$\mathrm{EXP} \subseteq \mathrm{NEXP}$]
+\begin{theorem}[Exponential Time Is Contained in Nondeterministic Exponential Time]
 \lean{Complexity.EXP_subset_NEXP}
 \label{Complexity.EXP_subset_NEXP}
 \leanok
 \uses{Complexity.EXP, Complexity.NEXP, Complexity.a3Verifier, Complexity.a3_verifier_append, Complexity.a3_verifier_mem_P}
 \difficulty{3}
-Every language in $\mathrm{EXP}$ lies in $\mathrm{NEXP}$: a language over the
-binary alphabet decidable in time $2^{n^c}$ admits certificates of length
-exactly $2^{(n+1)^c}$ together with a polynomial-time verifier language.
+Every language in $\mathrm{EXP}$ belongs to $\mathrm{NEXP}$, where membership in
+$\mathrm{NEXP}$ means that there are natural numbers $C,c$ and a language
+$V\in\mathsf{P}$ such that, for every binary string $x$, membership of $x$ is equivalent
+to the existence of a string $u$ of length exactly $C\cdot 2^{(|x|+1)^c}$ for which the
+concatenation $xu$ belongs to $V$.
 \end{theorem}

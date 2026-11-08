@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clockStageCfg_setup",
+ "key": "3adade16bffacb3b",
+ "kind": "lemma",
+ "title": "Setup form of a halted clock configuration",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\mathbb{N}$, and let $x$ be a Boolean input. For any configuration $c$ of $W$ on $x$ whose state is absent, the clock-stage configuration of $c$ equals the setup configuration based on that clock-stage configuration, with control phase reset-start and the same input-head position. Its binary budget tape has the captured clock tape of the output word of $c$ and head at $|c.output|+1$; its unary counter has only the origin marker and head at $1$; and its guide tape is blank with head at $0$.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a\\in\\mathbb{N}$",
+  "$x$ is a Boolean input and $c$ is a configuration of $W$ on $x$",
+  "$c$ has absent state (is halted)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $c$ be a configuration of the $k$-tape Boolean machine $W$ on a Boolean input that\nhas halted (its state is the halting state).  Then the clock-stage embedding of $c$\ninto the oblivious schedule machine --- which keeps the work block of $c$ and captures\nits entire output word on the budget tape --- is itself a setup configuration: base the\nembedded configuration itself, phase reset-start, the embedded input-head position,\nbudget head at cell $m+1$ over the captured clock tape of the output word of $c$\n(where $m$ is that word's length), unary head at cell $1$ over the unary tape with zero\nmarkers, and guide head at cell $0$ over the blank tape."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.Lockstep.cut",
+ "key": "aad145ce144e4569",
+ "kind": "theorem",
+ "title": "Avoidance before accumulated simulation cost",
+ "statement": "Let $M$ and $N$ be multi-tape Turing machines, let $e$ map configurations of $M$ to configurations of $N$, let $q$ assign a natural-number simulation cost to each configuration of $M$, and let $X$ and $X'$ be sets of states (including the possible halting state) of $M$ and $N$, respectively. Assume that for every configuration $c$ whose state is outside $X$, running $N$ from $e(c)$ for $q(c)$ steps yields the encoding of the next configuration of $M$; that if $c$ has state in $X$, then $e(c)$ has state in $X'$; and that, for every such $c$, the run of $N$ from $e(c)$ has state outside $X'$ at every time strictly less than $q(c)$. If the run of $M$ from an initial configuration $d$ has state outside $X$ at every time $u<t$, then the run of $N$ from $e(d)$ has state outside $X'$ at every time strictly less than $\\sum_{u=0}^{t-1} q(M^u(d))$, where $M^u(d)$ denotes the configuration reached after $u$ steps.",
+ "hypotheses_covered": [
+  "Machines $M$ and $N$ and their configuration spaces",
+  "Encoding from configurations of $M$ to configurations of $N$",
+  "Natural-number simulation cost for each configuration of $M$",
+  "State sets $X$ and $X'$, including possible halting states",
+  "For each configuration outside $X$, the cost-length run of $N$ from its encoding equals the encoding of the next $M$ configuration",
+  "A configuration with state in $X$ encodes to one with state in $X'$",
+  "For each configuration outside $X$, the run of $N$ from its encoding avoids $X'$ at every time below its simulation cost",
+  "Initial configuration $d$ and natural time $t$",
+  "The run of $M$ from $d$ avoids $X$ at every time $u<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

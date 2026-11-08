@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.registerCopy_loop",
+ "key": "85ae7f4b90ae552d",
+ "kind": "theorem",
+ "title": "Copying one register by a loop",
+ "statement": "Let a register program $A$ have distinct destination and source registers, and let its instruction at state $test$ compare these registers, proceeding to $done$ when they are equal and to $bump$ otherwise; at $bump$ it increments the destination and returns to $test$. Suppose every register initially contains a value at most $B$, and the destination's initial value is at most the source's. From the configuration at $test$, with no result yet, the program can reach $done$ with the destination set to the source's initial value and all other registers unchanged, while at every configuration before the final one the precondition invariant holds and all register values remain at most $B$.",
+ "hypotheses_covered": [
+  "Destination and source registers are distinct",
+  "Instruction at $test$ is the specified equality branch",
+  "Instruction at $bump$ increments the destination and returns to $test$",
+  "Every initial register value is at most $B$",
+  "Initial destination value is at most initial source value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

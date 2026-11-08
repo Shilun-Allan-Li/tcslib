@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitSource_poly",
+ "key": "f43523d30c5fca50",
+ "kind": "lemma",
+ "title": "Polynomial source on the prepared bank",
+ "statement": "For all natural numbers $c,C$ and every Boolean word $s$, the polynomial unary generator, started in the loop state at level $c$ with its work tapes holding unary words of length $|s|+1$ and with empty output, reaches after exactly $T_{c+1}(|s|+1)+1$ steps the halted configuration with the same work-tape contents and output consisting of $C(|s|+1)^{c+1}$ ones, where $T_0(q)=C+1$ and $T_{r+1}(q)=q(T_r(q)+2)+q+2$.",
+ "hypotheses_covered": [
+  "$c,C$ are natural numbers",
+  "$s$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $c$ and $C$ and every candidate $s$, the unary polynomial generator\nwith $c+1$ loop levels and $C$ emissions per innermost visit, started in its\noutermost loop state on the prepared bank for $s$, halts after exactly one\nmore step than the exact nest cost at side length $\\abs{s}+1$, and its\ncaptured output is a run of $C\\,(\\abs{s}+1)^{c+1}$ ones."
+}

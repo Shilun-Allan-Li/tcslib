@@ -1,0 +1,17 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.lt_publicCoinOneWay_communicationComplexity_of_distributionalLowerBound",
+ "key": "6492c790a202378a",
+ "kind": "theorem",
+ "title": "Distributional lower bound for Index",
+ "statement": "Let $n$ be a positive integer, let $\\varepsilon$ be real, and let $c$ be a natural number. If every deterministic one-way protocol for the Index function on $n$-bit inputs with communication cost at most $c$ has error strictly greater than $\\varepsilon$ under the uniform distribution on input pairs, then the public-coin one-way communication complexity of that function with error parameter $\\varepsilon$ is strictly greater than $c$, as an extended natural number.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$\\varepsilon$ is real",
+  "$c$ is a natural number",
+  "Every deterministic one-way protocol for Index on $n$ bits of cost at most $c$ has uniform-distribution error greater than $\\varepsilon$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every deterministic one-way protocol for $\\mathrm{IND}_n$ of cost at most $c$ has\nuniform-distributional error greater than $\\varepsilon$, then the public-coin one-way\ncommunication complexity of $\\mathrm{IND}_n$ at error $\\varepsilon$ is strictly greater than\n$c$ (as an extended natural number).  This is the easy direction of Yao's minimax principle for\none-way protocols, applied to Index."
+}

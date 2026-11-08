@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.ImplicitEnum.prog",
+ "key": "0676012bc9aa28a4",
+ "kind": "def",
+ "title": "Implicit enumeration program",
+ "statement": "The program has one work tape, two deciders, and the states of the implicit enumeration machine. Its ordinary machine is the specified Boolean one-tape machine; at state `ask` it calls decider 0 on the whole virtual input with register 0 as its argument, proceeding to `bit` on a positive answer and `done` on a negative answer. At state `bit` it calls decider 1 in the same mode with the same register argument, proceeding to `emitT` on a positive answer and `emitF` on a negative answer; in every other state it has no call.",
+ "hypotheses_covered": [
+  "One work tape",
+  "Two deciders",
+  "State set inherited from the supplied implicit enumeration machine",
+  "Call at ask uses decider 0, whole-input mode, argument register 0, and successors bit/done",
+  "Call at bit uses decider 1, whole-input mode, argument register 0, and successors emitT/emitF",
+  "All other states have no call"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement omits the definitions of the ordinary machine's increment actions and of the virtual-input encoding.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

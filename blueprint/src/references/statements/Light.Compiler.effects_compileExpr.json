@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.effects_compileExpr",
+ "key": "57cc825502043dd3",
+ "kind": "theorem",
+ "title": "Compiled expression effects",
+ "statement": "Let a word size, compiler size parameters, state, stack position, and memory satisfy the framed-state conditions: the designated constants, pool, frame pointer, local-variable cells, and valid memory cells encode the given state, and the stack position is within bounds. For an expression $e$ and temporary index $k$, suppose $e$ uses at most $F$ variables, is safe under the state and limits, and $k + \\mathrm{height}(e) \\le 2F+1$. Executing the compiled expression writes its value into temporary cell $k$ and leaves memory unchanged outside the set consisting of the address scratch cell and temporary cells indexed from $k$ through $2F$.",
+ "hypotheses_covered": [
+  "A framed initial memory and state, including its relation and stack bounds",
+  "Expression variable bound $e.\\mathrm{vars} \\le F$",
+  "Expression safety under the limits and state",
+  "Temporary-space bound $k+e.\\mathrm{height} \\le 2F+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

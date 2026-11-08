@@ -42,14 +42,14 @@ state type is the canonical finite state space $\{0,\dots,m\}$ of the coded
 machine, and whose transition table is that of the coded machine.
 \end{definition}
 
-\begin{lemma}[Tape count of the bundled machine]
+\begin{lemma}[Work-tape count of the bundled machine]
 \lean{Turing.CodeTM.toFinTM_k}
 \label{Turing.CodeTM.toFinTM_k}
 \leanok
 \uses{Turing.CodeTM, Turing.CodeTM.toFinTM}
 \difficulty{1}
-For every machine $M$ in code normal form, the bundled finite machine
-associated with $M$ has exactly one work tape.
+For every machine $M$ in code normal form, its associated finite-machine bundle has
+exactly one work tape.
 \end{lemma}
 
 \begin{definition}[Self-delimiting pair encoding]
@@ -76,27 +76,24 @@ together with the remaining suffix, untouched, as the second component.  On
 strings admitting no such parse the result is undefined.
 \end{definition}
 
-\begin{lemma}[The parser inverts the pair encoding]
+\begin{lemma}[The parser inverts pair encoding]
 \lean{Turing.pairDecode_pairEncode}
 \label{Turing.pairDecode_pairEncode}
 \leanok
 \uses{Turing.pairDecode, Turing.pairEncode}
 \difficulty{4}
-For all bit strings $x$ and $\alpha$, the aligned two-bit parser applied to
-the pair encoding $\langle x, \alpha\rangle$ (each bit of $x$ doubled, then
-the separator $01$, then $\alpha$ verbatim) succeeds and returns exactly the
-pair $(x, \alpha)$.
+For any finite Boolean strings $x$ and $\alpha$, parsing their pair encoding succeeds
+and returns exactly $(x,\alpha)$.
 \end{lemma}
 
-\begin{theorem}[Injectivity of the pair encoding]
+\begin{theorem}[Injectivity of pair encoding]
 \lean{Turing.pairEncode_injective}
 \label{Turing.pairEncode_injective}
 \leanok
 \uses{Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{3}
-The map sending a pair $(x, \alpha)$ of bit strings to its pair encoding ---
-each bit of $x$ doubled, then the separator $01$, then $\alpha$ verbatim ---
-is injective on pairs of bit strings.
+The pair encoding is injective: if two pairs of bit strings have the same encoding, then
+their first components agree and their second components agree.
 \end{theorem}
 
 \begin{definition}[The diagonal pairing machine]
@@ -125,150 +122,111 @@ the output string emitted so far.  The machine has no work tapes, so the
 work-tape components of the configuration are vacuous.
 \end{definition}
 
-\begin{lemma}[One step of the pairing machine]
+\begin{lemma}[One Step of the Pairing Machine]
 \lean{Turing.pairDiag_step}
 \label{Turing.pairDiag_step}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol,
-  Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.step, Turing.moveInputPos,
-  Turing.pairDiagCfg, Turing.pairDiagTM}
+\uses{Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.step, Turing.moveInputPos, Turing.pairDiagCfg, Turing.pairDiagTM}
 \difficulty{3}
-Consider the six-state diagonal pairing machine on an input string $x$, in a
-live configuration with control state $q$, input-head position $p$, and
-output string $w$, and suppose the symbol scanned by the input head is $b$
-(a bit or the blank).  Then one step of the machine yields exactly the
-configuration prescribed by the transition table entry at $(q, b)$: its
-successor state (or halting), the head position $p$ moved by the prescribed
-direction, and the output $w$ extended by the emitted bit, if any.
+Let $x$ be a bit string, $q$ one of the six control states, $p$ an input-head position,
+$w$ an output string, and $b$ either a bit or no symbol. If the configuration in state
+$q$, at position $p$, with output $w$ scans $b$, then one machine step yields the
+configuration whose state, input-head position, and output are prescribed by the
+transition table for state $q$ and scanned symbol $b$: the head moves according to the
+prescribed direction, with boundary clamping, and the emitted symbol, if any, is
+appended to $w$.
 \end{lemma}
 
-\begin{lemma}[Scanned symbol at an interior position]
+\begin{lemma}[Scanned Symbol at an Interior Position]
 \lean{Turing.pairDiag_inner}
 \label{Turing.pairDiag_inner}
 \leanok
 \uses{Turing.Cfg.inputSymbol, Turing.inputSymbolInner, Turing.pairDiagCfg}
 \difficulty{1}
-For the six-state diagonal pairing machine on an input string $x$, in any
-configuration whose input head sits at position $j + 1$ with $j < |x|$, the
-scanned input symbol is the $j$-th bit of $x$, for every control state and
-every output string.
+For every bit string $x$, control state $q$ among the six states or the halting state,
+output string $w$, and natural number $j<|x|$, a configuration with input head at
+position $j+1$ scans the bit $x_j$.
 \end{lemma}
 
-\begin{lemma}[Scanned symbol at the right boundary]
+\begin{lemma}[Scanned Symbol at the Right Boundary]
 \lean{Turing.pairDiag_right}
 \label{Turing.pairDiag_right}
 \leanok
 \uses{Turing.Cfg.inputSymbol, Turing.pairDiagCfg}
 \difficulty{1}
-For the six-state diagonal pairing machine on an input string $x$, in any
-configuration whose input head sits at the right boundary position
-$|x| + 1$, the scanned input symbol is the blank, for every control state and
-every output string --- including on the empty input.
+For every bit string $x$, optional control state $q$ among the six states or the halting
+state, and output string $w$, a configuration whose input head is at the right boundary,
+position $|x|+1$, scans no symbol.
 \end{lemma}
 
-\begin{lemma}[The doubling pass]
+\begin{lemma}[The Doubling Pass]
 \lean{Turing.pairDiag_double}
 \label{Turing.pairDiag_double}
 \leanok
-\uses{Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.initCfg,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero,
-  Turing.pairDiagCfg, Turing.pairDiagTM, Turing.pairDiag_inner,
-  Turing.pairDiag_step}
+\uses{Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero, Turing.pairDiagCfg, Turing.pairDiagTM, Turing.pairDiag_inner, Turing.pairDiag_step}
 \difficulty{5}
-Let $x$ be a bit string and $t \le |x|$.  Running the six-state diagonal
-pairing machine from its initial configuration on input $x$ for exactly $2t$
-steps yields the configuration in the initial control state with input head
-at position $t + 1$ whose output is the first $t$ bits of $x$ with each bit
-doubled.
+For every bit string $x$, every natural number $t$ with $t \le |x|$, running the
+diagonal pairing machine from its initial configuration on $x$ for $2t$ steps yields the
+configuration in state $0$, with input head at position $t+1$ and output consisting of
+the first $t$ bits of $x$, each repeated twice.
 \end{lemma}
 
-\begin{lemma}[The rewind pass]
+\begin{lemma}[The Rewind Pass]
 \lean{Turing.pairDiag_rewind}
 \label{Turing.pairDiag_rewind}
 \leanok
-\uses{Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero,
-  Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right,
-  Turing.pairDiagCfg, Turing.pairDiagTM, Turing.pairDiag_inner,
-  Turing.pairDiag_step}
+\uses{Turing.Cfg.ext_zero_tapes, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right, Turing.pairDiagCfg, Turing.pairDiagTM, Turing.pairDiag_inner, Turing.pairDiag_step}
 \difficulty{4}
-Let $x$ be a bit string, $w$ an output string, and $j \le |x|$.  Running the
-six-state diagonal pairing machine for exactly $j + 1$ steps from the
-configuration in its rewind state (state $4$) with input head at position $j$
-and output $w$ yields the configuration in its copy state (state $5$) with
-input head at position $1$ and output still $w$.
+For every bit string $x$, output string $w$, and natural number $j\le |x|$, running the
+machine for $j+1$ steps from state $4$, with input head at position $j$ and output $w$,
+yields state $5$ with input head at position $1$ and output still $w$.
 \end{lemma}
 
-\begin{lemma}[The copy pass]
+\begin{lemma}[Output and head position during the copy pass]
 \lean{Turing.pairDiag_copy}
 \label{Turing.pairDiag_copy}
 \leanok
-\uses{Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.moveInputPos_pos_of_ne_right, Turing.pairDiagCfg, Turing.pairDiagTM,
-  Turing.pairDiag_inner, Turing.pairDiag_step}
+\uses{Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos_pos_of_ne_right, Turing.pairDiagCfg, Turing.pairDiagTM, Turing.pairDiag_inner, Turing.pairDiag_step}
 \difficulty{4}
-Let $x$ be a bit string, $w$ an output string, and $t \le |x|$.  Running the
-six-state diagonal pairing machine for exactly $t$ steps from the
-configuration in its copy state (state $5$) with input head at position $1$
-and output $w$ yields the configuration still in the copy state with input
-head at position $t + 1$ and output $w$ followed by the first $t$ bits of
-$x$.
+Let $x$ and $w$ be finite Boolean strings, and let $t$ be a natural number with $t\le
+|x|$. Starting from the copy-state configuration on input $x$, with input head at
+position $1$ and output $w$, after exactly $t$ steps the machine remains in the copy
+state, its input head is at position $t+1$, and its output is $w$ followed by the first
+$t$ bits of $x$.
 \end{lemma}
 
-\begin{lemma}[Separator emission and turnaround]
+\begin{lemma}[Separator Emission and Turnaround]
 \lean{Turing.pairDiag_separator}
 \label{Turing.pairDiag_separator}
 \leanok
-\uses{Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero,
-  Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_zero,
-  Turing.pairDiagCfg, Turing.pairDiagTM, Turing.pairDiag_right,
-  Turing.pairDiag_step}
+\uses{Turing.Cfg.ext_zero_tapes, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_zero, Turing.pairDiagCfg, Turing.pairDiagTM, Turing.pairDiag_right, Turing.pairDiag_step}
 \difficulty{4}
-Let $x$ be a bit string and $w$ an output string.  Running the six-state
-diagonal pairing machine for exactly $3$ steps from the configuration in its
-initial control state with input head at the right boundary position
-$|x| + 1$ and output $w$ yields the configuration in its rewind state
-(state $4$) with input head at position $|x|$ and output $w$ followed by the
-separator pair $01$.
+For every bit string $x$ and output string $w$, running the machine for three steps from
+state $0$, with input head at the right boundary position $|x|+1$ and output $w$, yields
+state $4$, with input head at position $|x|$ and output $w$ followed by $01$.
 \end{lemma}
 
-\begin{lemma}[The complete pairing run]
+\begin{lemma}[The Complete Pairing Run]
 \lean{Turing.pairDiag_run}
 \label{Turing.pairDiag_run}
 \leanok
-\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.moveInputPos_zero, Turing.pairDiagCfg, Turing.pairDiagTM,
-  Turing.pairDiag_copy, Turing.pairDiag_double, Turing.pairDiag_rewind,
-  Turing.pairDiag_right, Turing.pairDiag_separator, Turing.pairDiag_step,
-  Turing.pairEncode}
+\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos_zero, Turing.pairDiagCfg, Turing.pairDiagTM, Turing.pairDiag_copy, Turing.pairDiag_double, Turing.pairDiag_rewind, Turing.pairDiag_right, Turing.pairDiag_separator, Turing.pairDiag_step, Turing.pairEncode}
 \difficulty{5}
-For every bit string $x$ of length $n$, running the six-state diagonal
-pairing machine from its initial configuration on input $x$ for exactly
-$4n + 5$ steps yields a halted configuration with input head at position
-$n + 1$ whose output is the diagonal pair encoding $\langle x, x\rangle$
-(each bit of $x$ doubled, then the separator $01$, then $x$ verbatim).
+For every bit string $x$, running the diagonal pairing machine from its initial
+configuration on $x$ for $4|x|+5$ steps yields a halted configuration with input head at
+position $|x|+1$ and output equal to the encoding of $x$ paired with itself: each bit of
+$x$ doubled, followed by $01$, followed by $x$.
 \end{lemma}
 
-\begin{theorem}[The diagonal pairing is linear-time computable]
+\begin{theorem}[Linear-time diagonal pair encoding]
 \lean{Turing.computesFunInTime_pairEncode_diag}
 \label{Turing.computesFunInTime_pairEncode_diag}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime,
-  Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono,
-  Turing.pairDiagTM, Turing.pairDiag_run, Turing.pairEncode}
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.pairDiagTM, Turing.pairDiag_run, Turing.pairEncode}
 \difficulty{3}
-There exist a finite-state machine $M$ over the binary alphabet and a
-constant $c$ such that on every input string $\alpha$ of length $n$, the
-machine $M$ halts within $c \cdot (n + 1)$ steps with output the diagonal
-pair encoding $\langle \alpha, \alpha\rangle$ (each bit of $\alpha$ doubled,
-then the separator $01$, then $\alpha$ verbatim).  In particular the diagonal
-pairing $\alpha \mapsto \langle \alpha, \alpha\rangle$ is computable in
-linear time.
+There exist a finite-state Turing machine $M$ over the binary alphabet and a
+natural-number constant $c$ such that, for every Boolean string $alpha$, $M$ outputs
+the pair encoding of $alpha$ with itself within $c(|alpha|+1)$ steps.
 \end{theorem}
 
 \begin{definition}[Serialization of a head move]
@@ -319,8 +277,7 @@ self-delimiting unary serialization of $s$.
 \lean{Turing.actionBits}
 \label{Turing.actionBits}
 \leanok
-\uses{Turing.Action, Turing.optBoolBits, Turing.optOptBoolBits,
-  Turing.optStateBits, Turing.signBits}
+\uses{Turing.Action, Turing.optBoolBits, Turing.optOptBoolBits, Turing.optStateBits, Turing.signBits}
 The serialization of a single transition record of a one-work-tape binary
 machine with $n + 1$ states: the concatenation of the two-bit input-head
 move, the two-bit optional write on the work tape, the two-bit work-head
@@ -356,22 +313,24 @@ padding bits $1$ decodes back to that machine (so every machine has
 infinitely many representations).
 \end{definition}
 
-\begin{theorem}[Decoding a code recovers the machine]
+\begin{theorem}[Decoding an unpadded machine code]
 \lean{Turing.MachineCode.decode_encode}
 \label{Turing.MachineCode.decode_encode}
 \leanok
 \uses{Turing.CodeTM, Turing.MachineCode}
 \difficulty{1}
-For every representation scheme satisfying the algebraic laws and every
-machine $M$ in code normal form, decoding the code of $M$ yields $M$ itself.
+Let a machine representation scheme provide an encoding of machines in one-work-tape
+binary normal form by bit strings and a decoding map from every bit string to such a
+machine. Assume that decoding the code of any machine followed by any finite number of
+$1$ bits returns that machine. Then decoding the unpadded code of every such machine
+returns the machine itself.
 \end{theorem}
 
 \begin{definition}[Effective representation scheme]
 \lean{Turing.EffectiveMachineCode}
 \label{Turing.EffectiveMachineCode}
 \leanok
-\uses{Turing.CodeTM.serialize, Turing.FinTM, Turing.FinTM.ComputesFunInTime,
-  Turing.MachineCode}
+\uses{Turing.CodeTM.serialize, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.MachineCode}
 An \emph{effective} representation scheme: a representation scheme
 satisfying the algebraic laws, together with a \emph{canonizer} --- a
 finite-state binary-alphabet machine --- and a time bound
@@ -380,20 +339,16 @@ canonizer halts within $T(|\alpha|)$ steps and outputs the fixed canonical
 serialization of the machine to which $\alpha$ decodes.
 \end{definition}
 
-\begin{theorem}[Every one-tape binary machine has a coded equivalent]
+\begin{theorem}[One-tape machines in coded form]
 \lean{Turing.exists_codeTM}
 \label{Turing.exists_codeTM}
 \leanok
-\uses{Turing.Cfg.mapState, Turing.CodeTM, Turing.CodeTM.toFinTM,
-  Turing.FinTM, Turing.FinTM.ComputesInTime,
-  Turing.MultiTapeTM.ComputesInTimeAndSpace, Turing.MultiTapeTM.relabelState,
-  Turing.MultiTapeTM.relabelState_runFrom_init}
+\uses{Turing.CodeTM, Turing.CodeTM.toFinTM, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.exists_codeTM_spaceUsed}
 \difficulty{4}
-Let $M$ be a machine over the binary alphabet with finitely many states and
-exactly one work tape.  Then there exists a machine $M'$ in code normal form
-such that for every input string $x$, every output string $w$, and every
-time bound $t$, the bundled machine of $M'$ halts on $x$ within $t$ steps
-with output $w$ if and only if $M$ does.
+Let $M$ be a finite-state Turing machine over the Boolean alphabet with exactly one work
+tape. Then there exists a machine in code normal form such that, for every Boolean
+input, Boolean output, and time bound, its associated finite machine computes that
+output from that input within that time bound if and only if $M$ does.
 \end{theorem}
 
 %%% added by the blueprint pipeline
@@ -415,8 +370,7 @@ obtained by writing every bit of $w$ twice in succession.
 \leanok
 \uses{Turing.dbl}
 \difficulty{1}
-The doubling of the empty bit string (the string obtained by writing each of
-its bits twice in succession) is the empty bit string.
+The doubling of the empty Boolean word is the empty Boolean word.
 \end{lemma}
 
 \begin{lemma}[Doubling a word with a leading bit]
@@ -425,10 +379,9 @@ its bits twice in succession) is the empty bit string.
 \leanok
 \uses{Turing.dbl}
 \difficulty{1}
-For every bit $b$ and every bit string $w$, the doubling of the string $b\,w$
-(where $\mathrm{dbl}(v)$ writes each bit of $v$ twice in succession) is
-$b\,b$ followed by $\mathrm{dbl}(w)$; that is,
-$\mathrm{dbl}(b\,w) = b\,b\,\mathrm{dbl}(w)$.
+For every Boolean bit $b$ and every finite Boolean word $w$, doubling the word formed by
+placing $b$ at the beginning of $w$ gives two copies of $b$ followed by the doubling of
+$w$.
 \end{lemma}
 
 \begin{lemma}[Length of a doubled word]
@@ -437,21 +390,18 @@ $\mathrm{dbl}(b\,w) = b\,b\,\mathrm{dbl}(w)$.
 \leanok
 \uses{Turing.dbl}
 \difficulty{3}
-For every bit string $w$, its doubling $\mathrm{dbl}(w)$, obtained by writing
-each bit of $w$ twice in succession, has length
-$\abs{\mathrm{dbl}(w)} = 2\abs{w}$.
+For every bit string $w$, its doubling has length $2$ times the length of $w$.
 \end{lemma}
 
-\begin{lemma}[Both copies of a doubled bit]
+\begin{lemma}[Entries of a doubled bit string]
 \lean{Turing.getElem?_dbl}
 \label{Turing.getElem?_dbl}
 \leanok
 \uses{Turing.dbl, Turing.dbl_cons}
 \difficulty{5}
-Let $w = w_0 w_1 \cdots w_{n-1}$ be a bit string, let $c < n$, and let
-$p \in \{0, 1\}$.  Then the doubling $\mathrm{dbl}(w)$ (each bit of $w$
-written twice in succession, positions indexed from $0$) has a symbol at
-position $2c + p$, and that symbol is $w_c$.
+Let $w$ be a finite Boolean word, let $c$ be an index with $c<|w|$, and let $p$ be a
+Boolean. At position $2c+p$ (where $p$ is identified with $0$ or $1$), the doubled word
+has value $w_c$.
 \end{lemma}
 
 \begin{lemma}[Pair encoding via doubling]
@@ -460,40 +410,30 @@ position $2c + p$, and that symbol is $w_c$.
 \leanok
 \uses{Turing.dbl, Turing.pairEncode}
 \difficulty{1}
-For all bit strings $x$ and $y$, the self-delimiting pair encoding
-$\langle x, y\rangle$ equals the concatenation
-\[
-  \langle x, y\rangle = \mathrm{dbl}(x)\; 0\, 1\; y,
-\]
-where $\mathrm{dbl}(x)$ is $x$ with every bit written twice in succession,
-followed by the separator bits $0$ then $1$, followed by $y$ verbatim.
+For any two bit strings $x$ and $y$, encoding the pair $(x,y)$ gives the concatenation
+of the string obtained by writing each bit of $x$ twice, the separator $01$, and $y$.
 \end{lemma}
 
-\begin{theorem}[Length of the pair encoding]
+\begin{theorem}[Length of a paired bit-string encoding]
 \lean{Turing.length_pairEncode}
 \label{Turing.length_pairEncode}
 \leanok
 \uses{Turing.pairEncode, Turing.pairEncode_eq_dbl}
 \difficulty{2}
-For all bit strings $x$ and $y$, the pair encoding $\langle x, y\rangle$
-(each bit of $x$ written twice, then the separator bits $0$ then $1$, then
-$y$ verbatim) has length
-$\abs{\langle x, y\rangle} = 2\abs{x} + 2 + \abs{y}$.
+For any bit strings $x$ and $y$, encode them by writing every bit of $x$ twice, then the
+separator $01$, then $y$. The resulting string has length $2|x|+2+|y|$.
 \end{theorem}
 
-\begin{theorem}[Shape of strings that fail to parse as pairs]
+\begin{theorem}[Shape of strings that fail to parse]
 \lean{Turing.pairDecode_eq_none}
 \label{Turing.pairDecode_eq_none}
 \leanok
 \uses{Turing.dbl, Turing.pairDecode}
 \difficulty{5}
-Consider the aligned pair parser on bit strings, which reads aligned
-two-bit blocks from the left, treats the blocks $00$ and $11$ as data bits
-$0$ and $1$, and stops successfully at the first aligned block $01$.  If the
-parser fails on a bit string $z$, then $z = \mathrm{dbl}(w)\,\tau$ for some
-bit string $w$ (with $\mathrm{dbl}(w)$ denoting $w$ with every bit written
-twice) and some tail $\tau$ that is either empty, a single bit, or begins
-with the bits $1$ then $0$.
+If the aligned pair parser returns no result on a finite Boolean string $z$, then there
+are finite Boolean strings $w$ and $\tau$ such that $z$ is the concatenation of the
+doubled string $\mathrm{dbl}(w)$ and $\tau$, and either $\tau$ is empty, consists of one
+bit, or begins with $10$.
 \end{theorem}
 
 \begin{theorem}[Successful parses are pair encodings]
@@ -502,33 +442,101 @@ with the bits $1$ then $0$.
 \leanok
 \uses{Turing.pairDecode, Turing.pairEncode}
 \difficulty{5}
-Let $z$, $a$, $b$ be bit strings, and consider the aligned pair parser,
-which reads aligned two-bit blocks from the left, collects the data bits
-$0$ and $1$ from the blocks $00$ and $11$, and at the first aligned block
-$01$ returns the collected bits together with the remaining suffix.  If the
-parser succeeds on $z$ and returns $(a, b)$, then $z$ is the pair encoding
-$\langle a, b\rangle$, i.e.\ $a$ with every bit written twice, then the
-separator bits $0$ then $1$, then $b$ verbatim.
+For Boolean strings $z,a,b$, if the aligned pair parser applied to $z$ returns $(a,b)$,
+then $z$ is the encoding formed by doubling each bit of $a$, appending the separator
+$01$, and then appending $b$ unchanged.
 \end{theorem}
 
-\begin{lemma}[Injectivity of unary-first pairs]
+\begin{lemma}[Injectivity for unary first components]
 \lean{Turing.pairEncode_replicate_inj}
 \label{Turing.pairEncode_replicate_inj}
 \leanok
 \uses{Turing.pairEncode, Turing.pairEncode_injective}
 \difficulty{3}
-Let $n, n' \in \mathbb{N}$ and let $u, u'$ be bit strings.  Write
-$\langle x, y\rangle$ for the pair encoding of bit strings $x$ and $y$
-(each bit of $x$ written twice, then the separator bits $0$ then $1$, then
-$y$ verbatim).  If $\langle 1^n, u\rangle = \langle 1^{n'}, u'\rangle$, where
-$1^n$ denotes the string of $n$ ones, then $n = n'$ and $u = u'$.
+Let $n,n'\in\mathbb{N}$ and let $u,u'$ be bit strings. If the encodings of $(1^n,u)$ and
+$(1^{n'},u')$ are equal, where $1^m$ is the string of $m$ ones, then $n=n'$ and $u=u'$.
 \end{lemma}
 
-\begin{lemma}[Binary expansion length bound]
+\begin{lemma}[Bound on binary expansion length]
 \lean{Turing.length_bits_le_self}
 \label{Turing.length_bits_le_self}
 \leanok
 \difficulty{2}
-For every natural number $m$, the binary expansion of $m$ without leading
-zeros (where $0$ has the empty expansion) consists of at most $m$ bits.
+For every natural number $m$, the length of its binary expansion is at most $m$.
 \end{lemma}
+
+\begin{theorem}[Binary expansion after multiplication by a power of two]
+\lean{Turing.bits_two_pow_mul}
+\label{Turing.bits_two_pow_mul}
+\leanok
+\difficulty{4}
+Let $j,m$ be natural numbers with $m>0$. The binary digit list of $2^j m$ is the list of
+$j$ false digits followed by the binary digit list of $m$.
+\end{theorem}
+
+\begin{theorem}[Binary digits of a power of two]
+\lean{Turing.bits_two_pow_eq_replicate}
+\label{Turing.bits_two_pow_eq_replicate}
+\leanok
+\uses{Turing.bits_two_pow_mul}
+\difficulty{1}
+For every natural number $n$, the binary digit list of $2^n$ is the list of $n$ false
+digits followed by a single true digit.
+\end{theorem}
+
+\begin{theorem}[Diagonal pairing machine computation]
+\lean{Turing.pairDiagTM_computes}
+\label{Turing.pairDiagTM_computes}
+\leanok
+\uses{Turing.FinTM.ComputesInTime, Turing.pairDiagTM, Turing.pairEncode}
+For every finite Boolean string $x$, the diagonal pairing machine, started on input $x$,
+halts after $4|x|+5$ steps with output equal to the pair encoding of $x$ with itself.
+\end{theorem}
+
+\begin{theorem}[Positive space usage]
+\lean{Turing.CodeTM.one_le_spaceUsed}
+\label{Turing.CodeTM.one_le_spaceUsed}
+\leanok
+\uses{Turing.CodeTM, Turing.CodeTM.toFinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape_le_spaceUsed, Turing.MultiTapeTM.visitedByTapeHead}
+\difficulty{3}
+For every machine $M$ in code normal form, every binary input string $x$, and every
+number of steps $t$, the total work-tape space used by its associated machine from the
+initial configuration on $x$ through step $t$ is at least $1$.
+\end{theorem}
+
+\begin{theorem}[Coded machine preserving time and space]
+\lean{Turing.exists_codeTM_spaceUsed}
+\label{Turing.exists_codeTM_spaceUsed}
+\leanok
+\uses{Turing.Cfg.mapState, Turing.CodeTM, Turing.CodeTM.toFinTM, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.ComputesInTimeAndSpace, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.relabelState, Turing.MultiTapeTM.relabelState_runFrom_init, Turing.MultiTapeTM.relabelState_spaceUsed, Turing.MultiTapeTM.spaceUsed}
+\difficulty{5}
+Let $M$ be a finite Turing machine over the Boolean alphabet with exactly one work tape.
+There exists a machine in code normal form whose associated finite machine computes each
+Boolean output from each Boolean input within a given time bound exactly when $M$ does,
+and whose total number of work-tape cells visited up to every time $t$ on every input
+equals that of $M$.
+\end{theorem}
+
+\begin{definition}[Finite machine in code normal form]
+\lean{Turing.FinTM.toCodeTM}
+\label{Turing.FinTM.toCodeTM}
+\leanok
+\uses{Turing.CodeTM, Turing.FinTM, Turing.MultiTapeTM.relabelState}
+For any finite Turing machine over the binary alphabet with exactly one work tape, there
+is a code-normal-form machine with $m+1$ states, where $m$ is one less than the number
+of states of the original machine. Its state set is identified with the original state
+set by a bijection, and its transitions and initial state are transported along that
+bijection.
+\end{definition}
+
+\begin{theorem}[Time preservation under state coding]
+\lean{Turing.FinTM.toCodeTM_computesInTime_iff}
+\label{Turing.FinTM.toCodeTM_computesInTime_iff}
+\leanok
+\uses{Turing.Cfg.mapState, Turing.CodeTM.toFinTM, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.toCodeTM, Turing.MultiTapeTM.ComputesInTimeAndSpace, Turing.MultiTapeTM.relabelState_runFrom_init}
+\difficulty{4}
+Let $M$ be a finite-state Turing machine over the binary alphabet with exactly one work
+tape, and let $x$ and $y$ be binary strings and $t\in\mathbb{N}$. The machine obtained
+by relabelling the states of $M$ by the canonical finite state set with the same number
+of states computes $y$ from $x$ within $t$ steps if and only if $M$ does.
+\end{theorem}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.PolyTimeComputable.pairMapSnd",
+ "key": "53a40fe33ea6487d",
+ "kind": "theorem",
+ "title": "Polynomial-time payload map",
+ "statement": "Let $g$ be a polynomial-time computable function from bit strings to bit strings. The function that maps a valid pair encoding of $a,b$ to the pair encoding of $a,g(b)$, and maps every string that is not a valid pair encoding to the empty string, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g$ be a polynomial-time computable function on bit strings (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then its threaded payload map, which sends a pair encoding $\\langle a,b\\rangle$ (every bit of $a$ doubled, then $01$, then $b$) to $\\langle a, g(b)\\rangle$ and every bit string that is not a pair encoding to the empty word, is also polynomial-time computable."
+}

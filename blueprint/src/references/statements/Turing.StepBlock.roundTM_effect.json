@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.StepBlock.roundTM_effect",
+ "key": "4b4b985231b6482a",
+ "kind": "theorem",
+ "title": "Round Machine Effect",
+ "statement": "Let $k,n$ be natural numbers, let $x$ be a Boolean input word, let $M$ be a machine with $k$ Boolean work tapes and $n+1$ states, and let $t$ be a natural number. Suppose a configuration $c$ is in a live state and remains live through time $t$. Suppose also that an augmented configuration $d$ is at the round machine's entry state and represents $c$, including the encoded transition table and the auxiliary tapes. There is a time $T$ with $0<T\\le 50(L+1)$, where $L$ is the encoded transition table length, such that the round machine reaches a live entry state representing $M$'s one-step successor of $c$. Its summary-tape symbol at that time is obtained by combining the initial summary-tape symbol with the action's optional output: no output preserves the summary, and an emitted bit makes the summary that bit if the old summary was absent, or $0$ otherwise. At every strictly intermediate positive time the state is neither entry nor halt; through time $T$ the output is unchanged, the input head is at its initial or final position and moves by at most one from its initial position, and each original work head is at its initial or final position. Every work-head displacement is at most $1$ on an original tape and at most $50(L+1)$ on either auxiliary tape. Both auxiliary heads are at zero initially and at time $T$.",
+ "hypotheses_covered": [
+  "natural numbers k and n",
+  "Boolean input word x",
+  "machine M with k Boolean work tapes and n+1 states",
+  "natural number t",
+  "configuration c",
+  "c is in a live state at every time u≤t",
+  "augmented configuration d",
+  "d is at the round machine entry state",
+  "d represents c with respect to M's transition rule"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

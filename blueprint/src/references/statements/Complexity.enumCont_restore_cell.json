@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_restore_cell",
+ "key": "a90eb9d6f7ad1735",
+ "kind": "lemma",
+ "title": "Restoring a Work Tape Cell",
+ "statement": "Let $c$ be a configuration of a machine with $k$ work tapes over Boolean symbols, let $a$ be a one-step action, and let $i$ be a work-tape index. After applying $a$ to $c$, overwrite tape $i$ at the original head position with the symbol (or blank) that was under that head in $c$. The resulting tape function is exactly the tape $i$ function in $c$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A Boolean input word $x$ and a configuration $c$ on input $x",
+  "A one-step action $a$",
+  "A work-tape index $i<k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any configuration $c$, action $a$, and work-tape index $i$: writing the symbol\nthat was under head $i$ in $c$, at $c$'s head position, into tape $i$ after $a$\nhas been applied restores tape $i$ exactly to its contents in $c$. This covers\nno-write actions and writes of the blank symbol."
+}

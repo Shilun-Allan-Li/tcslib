@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.poly_start",
+ "key": "aa6d4387fc20b844",
+ "kind": "lemma",
+ "title": "Startup of the box enumerator",
+ "statement": "Let $c,C\\in\\mathbb{N}$ and let $x$ be a bit string. After exactly $2(|x|+1)$ steps from its initial configuration on $x$, the unary box-enumeration machine is in the loop state at level $c$, with its input head on the blank cell immediately to the right of the input, every work tape containing $1^{|x|+1}$ in cells $0,\\ldots,|x|$ and blanks elsewhere, every work head at position $0$, and empty output.",
+ "hypotheses_covered": [
+  "$c,C$ are natural numbers",
+  "$x$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c, C \\in \\mathbb{N}$ and let $x$ be a bit string. After exactly $2(|x|+1)$ steps from its initial configuration on $x$, $\\mathcal{P}_{c,C}$ is in control state $\\mathrm{loop}_c$, with its input head on the blank cell right of the input, every work tape holding $1^{|x|+1}$ in cells $0,\\dots,|x|$ and blanks elsewhere, every work head at cell $0$, and empty output; here $\\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\\mathrm{loop}_i$, $\\mathrm{rewind}_i$, $\\mathrm{advance}_i$, $\\mathrm{emit}_j$ are its control states."
+}

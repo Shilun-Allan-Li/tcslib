@@ -14,9 +14,54 @@ whenever the union-bound failure probability is strictly below $1$.
 
 \begin{theorem}[Probabilistic method for JL embeddings]
 \lean{exists_isJLEmbedding_of_pair_bound}
+\proofsource{vershynin-hdp-book}{pdf-681b6f3d947f-p127-b003}
+\statementsource{dasgupta-gupta-jl}{
+  pdf-a6706e37c21a-p002-b003,
+  pdf-a6706e37c21a-p002-b004,
+  pdf-a6706e37c21a-p003-b003
+}
 \label{exists_isJLEmbedding_of_pair_bound}
 \leanok
 \uses{BadPair, BadSingle, IsJLEmbedding, jl_union_bound}
+\difficulty{4}
+
+\proofstep
+  {instMeasurableSpaceMatrixFinReal_tCSlib}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b002,
+    pdf-681b6f3d947f-p126-b003}
+\proofstep
+  {BadSingle}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p126-b002,
+    pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {JLDistortion}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p126-b001}
+\proofstep
+  {IsJLEmbedding}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p126-b001}
+\proofstep
+  {BadPair}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {JLDistortion.of_not_bad}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {jl_union_bound}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
 Let $\mu$ be a probability measure on $\Omega$, let
 $A : \Omega \to \mathbb{R}^{k\times d}$ be a measurable random matrix, let
 $\varepsilon\in\mathbb{R}$, and let $V$ be a finite subset of $\mathbb{R}^d$.

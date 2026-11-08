@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.call_neg",
+ "key": "3368c2030b573477",
+ "kind": "lemma",
+ "title": "Negative oracle call preserves semantics",
+ "statement": "Let $A$ be a randomized register program with $m$ registers and $d$ oracle deciders, let $x$ be a bit string, $G$ a guard on configurations, and $p\\in\\mathbb{Q}$. Suppose the instruction at state $l$ is a deterministic call to decider $j$ in whole-input mode, using register $r$, with successor states $l_1$ for a positive answer and $l_0$ for a negative answer. If $(l,v,\\mathrm{none})$ satisfies $G$, the oracle answers negatively on the paired input consisting of $x$ and the binary representation of the value in register $r$, and the configuration $(l_0,v,\\mathrm{none})$ has probabilistic semantics $p$, then $(l,v,\\mathrm{none})$ also has probabilistic semantics $p$.",
+ "hypotheses_covered": [
+  "The instruction at state $l$ is the specified deterministic whole-input call using register $r$, with successors $l_1$ and $l_0$.",
+  "The configuration $(l,v,\\mathrm{none})$ satisfies the guard $G$.",
+  "The oracle returns false on the encoding of $x$ paired with the binary representation of $v(r)$.",
+  "The configuration $(l_0,v,\\mathrm{none})$ has probabilistic semantics $p$. "
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

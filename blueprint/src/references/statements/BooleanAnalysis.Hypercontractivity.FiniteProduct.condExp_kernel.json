@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_kernel",
+ "key": "ad7d1c75a5bd826a",
+ "kind": "theorem",
+ "title": "Kernel Formula for Conditional Expectation",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate weights $w_i$ summing to $1$. For a coordinate subset $S$, a real-valued function $f$ on the product outcome space, and an outcome $x$, the conditional expectation is\n\\[E_Sf(x)=\\sum_y\\left(\\prod_i k_i(x,y)\\right)f(y),\\qquad k_i(x,y)=\\begin{cases}\\mathbf 1_{x_i=y_i},&i\\in S,\\\\ w_i(y_i),&i\\notin S.\\end{cases}\\]",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space",
+  "All coordinate weights are strictly positive and sum to $1$",
+  "$S$ is a subset of the coordinate indices",
+  "$f$ is real-valued on the product outcome space",
+  "$x$ is a product outcome"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ with coordinate weights $w_i$, $S\\subseteq[n]$, and $f:\\Omega\\to\\mathbb R$. Then $E_Sf(x)=\\sum_y[\\prod_{i\\in S}\\mathbf1_{x_i=y_i}\\prod_{i\\notin S}w_i(y_i)]f(y)$ for every $x\\in\\Omega$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.tmsat_inc_none",
+ "key": "9ac762582f1aa111",
+ "kind": "lemma",
+ "title": "Overflow of fixed-width increment",
+ "statement": "For every bit string $w$, the fixed-width little-endian binary increment overflows exactly when every bit of $w$ is $1$, including the empty word as the all-ones word of length zero.",
+ "hypotheses_covered": [
+  "$w$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit string $w$, the fixed-width little-endian binary increment of $w$ (its successor among the words of length $|w|$, or overflow when there is none) overflows if and only if $w = 1^{|w|}$, that is, $w$ consists only of ones."
+}

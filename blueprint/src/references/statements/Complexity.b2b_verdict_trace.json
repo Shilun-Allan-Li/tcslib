@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.b2b_verdict_trace",
+ "key": "04275930373ec3e5",
+ "kind": "theorem",
+ "title": "Trace of the verdict machine",
+ "statement": "Let $k$ be a natural number, let $x$ be a Boolean word, let $i$ be one of the $k$ work tapes, and let $d$ be a configuration of the verdict machine with state left. Suppose the cell immediately to the left of tape $i$'s head contains the Boolean $b$. For every natural number $t\\le 2$, the configuration after $t$ steps is $d$ if $t=0$; if $t=1$, only the state changes to read and tape $i$'s head moves left by one; and if $t=2$, the state is done with value $b$, that cell is erased, and the head remains at the cell it reached after the first step.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$x$ is a Boolean word",
+  "$i$ is a work-tape index with $i<k$",
+  "$d$ is a configuration over input $x$",
+  "The initial state of $d$ is left",
+  "The cell at tape $i$'s head position minus one contains $b$",
+  "$t$ is a natural number with $t\\le2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.Amplify.run_halts",
+ "key": "82b9c754e6adeeb9",
+ "kind": "theorem",
+ "title": "Halting after an amplified run",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine on Boolean inputs, let $r,T,m$ be natural numbers, and let $\\mathrm{dec}:\\mathbb{N}\\to\\{0,1\\}$. Suppose every choice word of length $T$ makes $N$ halt on input $x$. For a run index $j\\in\\{0,\\ldots,r\\}$, counter $c\\in\\{0,\\ldots,r+1\\}$, and configuration $D$ of the amplified machine, suppose every work-tape block with index greater than $j$ is blank with its head at $0$. Also suppose that, from every configuration in the rewind phase for run $j$, every choice word of length $m$ makes the amplified machine halt. Then every choice word of length $T+m$, started from the embedding of $N$’s initial configuration at run $j$ and counter $c$ into $D$, makes the amplified machine halt.",
+ "hypotheses_covered": [
+  "Every choice word of length $T$ makes $N$ halt on $x$",
+  "Run index $j$ lies in $\\{0,\\ldots,r\\}$",
+  "Counter $c$ lies in $\\{0,\\ldots,r+1\\}$",
+  "Every work-tape block with index greater than $j$ is blank and has its head at $0$ in $D$",
+  "Every choice word of length $m$ halts the amplified machine from any rewind configuration for run $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

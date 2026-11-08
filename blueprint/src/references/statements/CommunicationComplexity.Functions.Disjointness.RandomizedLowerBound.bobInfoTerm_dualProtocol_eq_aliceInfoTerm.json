@@ -1,16 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.bobInfoTerm_dualProtocol_eq_aliceInfoTerm",
- "key": "17dee34fabd09758",
+ "key": "ce0c77c34c4e46e8",
  "kind": "theorem",
- "title": "Duality of Alice's and Bob's information terms",
- "statement": "Fix a positive integer $n$ and write $\\mu$ for the hard distribution on samples $\\omega$, namely the uniform measure on the finite sample space conditioned on the disjointness event $X(\\omega) \\cap Y(\\omega) = \\emptyset$; here $X(\\omega), Y(\\omega) \\subseteq \\{0, 1, \\dots, n-1\\}$ are Alice's and Bob's input sets determined by $\\omega$, with distinguished special coordinate $T(\\omega)$ and bits $x_T, y_T$ of Alice and Bob at that coordinate. For a deterministic two-party protocol $p$ on these inputs, let $M_p(\\omega)$ be the transcript produced by running $p$ on the input pair $(X(\\omega), Y(\\omega))$, and let $p^\\ast$ be its dual, obtained by exchanging the roles of Alice and Bob and reversing the coordinate order. Then, with all conditional mutual informations computed under $\\mu$,\n\\[\n I\\big(y_T \\,;\\, M_{p^\\ast} \\;\\big|\\; T,\\, x_{\\le T},\\, y_{>T}\\big) \\;=\\; I\\big(x_T \\,;\\, M_p \\;\\big|\\; T,\\, x_{<T},\\, y_{\\ge T}\\big),\n\\]\nwhere $x_{<T}$ and $x_{\\le T}$ denote Alice's input bits strictly before, respectively up to and including, the special coordinate (padded with $\\mathrm{false}$ at all other coordinates), and $y_{>T}$ and $y_{\\ge T}$ denote Bob's input bits strictly after, respectively from, the special coordinate onward (padded with $\\mathrm{false}$ elsewhere).",
+ "title": "Duality of Bob and Alice information terms",
+ "statement": "For a positive integer $n$ and a deterministic communication protocol $p$ on length-$n$ set inputs, let $p^*$ be obtained by swapping Alice's and Bob's roles and reversing the coordinate order of both inputs. Under the hard-sample distribution conditioned on disjointness, the conditional mutual information between Bob's bit at the special coordinate and the transcript of $p^*$, given the special coordinate, Alice's bits up to and including it, and Bob's bits strictly after it, equals the conditional mutual information between Alice's bit at the special coordinate and the transcript of $p$, given the special coordinate, Alice's bits strictly before it, and Bob's bits from it onward.",
  "hypotheses_covered": [
-  "n a positive integer",
-  "p a deterministic protocol on disjointness inputs of length n",
-  "conditional mutual information taken under the disjointness-conditioned hard distribution"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic protocol on length-$n$ set-disjointness inputs"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Bob's corrected information term for the dual protocol is Alice's corrected information term for the original protocol."
+ "replaced": "Fix a positive integer $n$ and write $\\mu$ for the hard distribution on samples\n$\\omega$, namely the uniform measure on the finite sample space conditioned on the\ndisjointness event $X(\\omega) \\cap Y(\\omega) = \\emptyset$; here $X(\\omega), Y(\\omega)\n\\subseteq \\{0, 1, \\dots, n-1\\}$ are Alice's and Bob's input sets determined by $\\omega$,\nwith distinguished special coordinate $T(\\omega)$ and bits $x_T, y_T$ of Alice and Bob\nat that coordinate. For a deterministic two-party protocol $p$ on these inputs, let\n$M_p(\\omega)$ be the transcript produced by running $p$ on the input pair $(X(\\omega),\nY(\\omega))$, and let $p^\\ast$ be its dual, obtained by exchanging the roles of Alice and\nBob and reversing the coordinate order. Then, with all conditional mutual informations\ncomputed under $\\mu$,\n\\[\nI\\big(y_T \\,;\\, M_{p^\\ast} \\;\\big|\\; T,\\, x_{\\le T},\\, y_{>T}\\big) \\;=\\; I\\big(x_T \\,;\\,\nM_p \\;\\big|\\; T,\\, x_{<T},\\, y_{\\ge T}\\big),\n\\]\nwhere $x_{<T}$ and $x_{\\le T}$ denote Alice's input bits strictly before, respectively\nup to and including, the special coordinate (padded with $\\mathrm{false}$ at all other\ncoordinates), and $y_{>T}$ and $y_{\\ge T}$ denote Bob's input bits strictly after,\nrespectively from, the special coordinate onward (padded with $\\mathrm{false}$\nelsewhere)."
 }

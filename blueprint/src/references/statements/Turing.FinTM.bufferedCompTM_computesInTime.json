@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.bufferedCompTM_computesInTime",
+ "key": "3ce311db6cc47eac",
+ "kind": "theorem",
+ "title": "Time bound for buffered sequential composition",
+ "statement": "Let $M_1$ and $M_2$ be finite Turing machines over the Boolean alphabet, and let $x,y,o$ be Boolean words with $t_1,t_2\\in\\mathbb{N}$. If $M_1$ computes $y$ from $x$ in exactly $t_1$ steps and $M_2$ computes $o$ from $y$ in exactly $t_2$ steps, then their buffered sequential composition computes $o$ from $x$ in exactly $t_1+|y|+2+t_2$ steps.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x,y,o$ are Boolean words",
+  "$t_1,t_2\\in\\mathbb{N}$",
+  "$M_1$ computes $y$ from $x$ in exactly $t_1$ steps",
+  "$M_2$ computes $o$ from $y$ in exactly $t_2$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_1$ and $M_2$ be multi-tape Turing machines over the Boolean alphabet,\nlet $x$, $y$, $o$ be Boolean words, and let $t_1, t_2 \\in \\mathbb{N}$.\nConsider the buffered sequential composition machine of $M_1$ and $M_2$, which\nsimulates $M_1$ on its input with $M_1$'s output diverted to a buffer work\ntape, rewinds the buffer, and then simulates $M_2$ reading the buffer as its\ninput.  If $M_1$ halts on input $x$ within $t_1$ steps with output $y$, and\n$M_2$ halts on input $y$ within $t_2$ steps with output $o$, then this\ncomposition machine halts on input $x$ within $t_1 + \\abs{y} + 2 + t_2$ steps\nwith output $o$.  Neither machine is required to halt on any other input."
+}

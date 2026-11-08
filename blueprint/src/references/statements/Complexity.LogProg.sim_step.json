@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.sim_step",
+ "key": "ca94e4ca51751f84",
+ "kind": "theorem",
+ "title": "One-step preservation of call simulation",
+ "statement": "Let $P$ be a program with $m$ registers and $d$ possible deciders, let $D$ be a decider with $k_D$ work tapes and state set $S_D$, and choose an initial state for each decider. Fix a call state $l$, a call specification $c_s$, an initial program configuration $c_0$, and register words $W(r)$. Suppose $P$ makes the specified call at $l$, each argument register's tape initially stores its corresponding word $W(r)$, and the argument list has no repetitions. Suppose also that a combined configuration $g$ and decider configuration $d_c$ are related as follows: the combined machine is in the simulation state corresponding to $l$ and the decider's current state; the decider is nonhalting; and for some valid position in the virtual input, the two input-head positions, register tapes and heads, decider tapes and heads, and output agree with the prescribed segment-by-segment simulation correspondence. After one step of $D$, if the decider remains nonhalting, the resulting combined and decider configurations satisfy the same simulation relation. If the decider halts, the resulting combined configuration instead satisfies the return relation: the combined machine is ready to rewind the input, the decider is halted, and the same tape, head-position, and output correspondence holds.",
+ "hypotheses_covered": [
+  "Program $P$, decider $D$, and initial decider-state choices",
+  "The call state $l$ has call specification $c_s$",
+  "Initial configuration $c_0$, segment words $W(r)$, and input word $x$",
+  "Each argument register's initial tape stores its prescribed word",
+  "The call's argument list has no repetitions",
+  "Configurations $g,d_c$ satisfy the simulation relation, including its state, input-position, tape, head-position, and output conditions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

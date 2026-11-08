@@ -1,0 +1,31 @@
+{
+ "lean_name": "Complexity.LogProg.psem_mul",
+ "key": "88d708416a5338d3",
+ "kind": "theorem",
+ "title": "Multiplication in a probabilistic program",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ natural-number registers, state set $\\Lambda$, and oracle, and fix an input $x$ and register bound $B$. Let $i,j,a,b,R$ be register indices satisfying $i\\ne a$, $j\\ne b$, $j\\ne R$, $R\\ne b$, $i\\ne j$, $i\\ne R$, $R\\ne a$, $j\\ne a$, and $i\\ne b$. Suppose the instructions are as follows: $mo$ compares $i$ and $a$, going to $ex$ if equal and to $mo_1$ otherwise; $mo_1$ clears register $j$ and goes to $mi$; $mi$ compares $j$ and $b$, going to $mo_2$ if equal and to $mi_1$ otherwise; $mi_1$ increments $R$ and goes to $mi_2$; $mi_2$ increments $j$ and returns to $mi$; and $mo_2$ increments $i$ and returns to $mo$. For any rational $q$ and valuation $v$ bounded by $B$ with $v(i)\\le v(a)$ and $v(R)+(v(a)-v(i))v(b)\\le B$, assume that for every $z\\le B$, the configuration at $ex$ with $R$ set to $v(R)+(v(a)-v(i))v(b)$, $i$ set to $v(a)$, and $j$ set to $z$ has probabilistic semantics with acceptance probability $q$. Then the configuration at $mo$ with valuation $v$ has the same semantics and acceptance probability.",
+ "hypotheses_covered": [
+  "The program $A$, oracle, input $x$, and bound $B$ are fixed",
+  "$i,j,a,b,R$ are register indices",
+  "$i\\ne a$",
+  "$j\\ne b$",
+  "$j\\ne R$",
+  "$R\\ne b$",
+  "$i\\ne j$",
+  "$i\\ne R$",
+  "$R\\ne a$",
+  "$j\\ne a$",
+  "$i\\ne b$",
+  "The specified instructions at $mo,mo_1,mi,mi_1,mi_2,mo_2$",
+  "$q$ is rational",
+  "$v$ is a register valuation",
+  "Every register value of $v$ is at most $B$",
+  "$v(i)\\le v(a)$",
+  "$v(R)+(v(a)-v(i))v(b)\\le B$",
+  "For every $z\\le B$, the specified configuration at $ex$ has probabilistic semantics with acceptance probability $q$ under bound $B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,6 +1,6 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError",
- "key": "55f98b75f3b10b8c",
+ "key": "aab5951cb14d6728",
  "kind": "lemma",
  "title": "Signed correlation and distributional error",
  "statement": "Let $X$ and $Y$ be the input types of Alice and Bob, and let $\\mu$ be a finite probability measure on $X \\times Y$. Write $\\sigma \\colon \\mathrm{Bool} \\to \\{\\pm 1\\}$ for the map sending $\\mathrm{false}$ to $1$ and $\\mathrm{true}$ to $-1$. For a deterministic communication protocol $p$ with Boolean output and a target function $g \\colon X \\to Y \\to \\mathrm{Bool}$, the expected signed correlation between the protocol's output and the target satisfies\n\\[\n  \\E_{(x,y)\\sim\\mu}\\bigl[\\sigma\\bigl(p(x,y)\\bigr)\\,\\sigma\\bigl(g(x,y)\\bigr)\\bigr]\n  \\;=\\; 1 - 2\\,\\varepsilon_\\mu(p,g),\n\\]\nwhere $p(x,y)$ denotes the value computed by running $p$ on $(x,y)$ and $\\varepsilon_\\mu(p,g) = \\mu\\bigl(\\{(x,y) \\mid p(x,y) \\ne g(x,y)\\}\\bigr)$ is the distributional error of $p$ against $g$ under $\\mu$.",

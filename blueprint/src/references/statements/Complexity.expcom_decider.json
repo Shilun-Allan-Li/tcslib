@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.expcom_decider",
+ "key": "b839aa5ac5433d2f",
+ "kind": "theorem",
+ "title": "Exponential-Time Decision of Bounded Acceptance",
+ "statement": "Let $\\mathrm{EXPCOM}$ be the language of Boolean words $z$ for which there are Boolean words $\\alpha,x$ and a natural number $n$ such that $z=\\langle\\alpha,\\langle x,1^n\\rangle\\rangle$ and the machine decoded from $\\alpha$ accepts $x$ within $2^n$ steps. There exist a finite Boolean Turing machine $D$ and natural numbers $A,B$ such that, for every input of length $m$, $D$ decides membership in $\\mathrm{EXPCOM}$ within $A\\,2^{B(m+1)}$ steps.",
+ "hypotheses_covered": [
+  "The language $\\mathrm{EXPCOM}$ is defined by the stated encoded bounded-acceptance condition",
+  "There exists a finite Boolean Turing machine $D$",
+  "There exist natural numbers $A,B$",
+  "For every input length $m$, $D$ decides $\\mathrm{EXPCOM}$ within $A2^{B(m+1)}$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{EXPCOM}$ consist of the Boolean words $z$ for which there are Boolean words\n$\\alpha,x$ and a natural number $n$ such that $z=\\langle\\alpha,\\langle\nx,1^n\\rangle\\rangle$ and the machine decoded from $\\alpha$ accepts $x$ within $2^n$\nsteps. There exist a finite Turing machine $D$ and constants $A,B\\in\\mathbb{N}$ such\nthat, on every input of length $m$, $D$ decides membership in $\\mathrm{EXPCOM}$ within\n$A\\,2^{B(m+1)}$ steps."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.sim_inc",
+ "key": "c6e2c342d59ea956",
+ "kind": "lemma",
+ "title": "Simulation of Register Increment",
+ "statement": "Let $A$ be a register-program instruction map with initial label $l_0$, let the oracle assign a Boolean answer to each decider and bit string, and let $x$ be an input bit string. Suppose labels $l,l'$ and a register $r$ satisfy $A(l)=\\operatorname{inc}(r,l')$. For any register valuation $v$ and output word, if the length of the binary expansion of $v(r)+1$ is at most the integer bound $W$, then the compiled program simulates this increment from the configuration with label $l$ and valuation $v$ to the configuration with label $l'$ and valuation obtained by replacing $v(r)$ by $v(r)+1$, preserving the input and output; throughout the simulation, every intermediate configuration before the endpoint has no pending oracle call and all work-head positions lie between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "An instruction map A and initial label l₀",
+  "An oracle assigning Boolean answers by decider and bit string",
+  "An input bit string x",
+  "Labels l and l′, register r, and A(l) = inc(r,l′)",
+  "A valuation v of all registers and an output word",
+  "Integer bound W",
+  "Length of the binary expansion of v(r)+1 is at most W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

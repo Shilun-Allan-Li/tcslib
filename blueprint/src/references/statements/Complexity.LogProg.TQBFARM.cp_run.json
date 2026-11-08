@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.cp_run",
+ "key": "02348d047c6f1b55",
+ "kind": "theorem",
+ "title": "Copying one register into another",
+ "statement": "Let $x$ be a finite Boolean word, $B$ a natural number, $k$ one of the six copy-loop sites, and $st$ a machine state whose seven register values are all at most $B$. Suppose the scratch register $Z$ is zero and the sum of the initial values in the selected destination and source registers is at most $B$. Then the machine reaches the exit label for $k$ from phase $0$, with the destination register equal to its initial value plus the source register's initial value and all other registers unchanged. Every configuration before the endpoint satisfies the machine's validity conditions and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$B$ is a natural number",
+  "$k$ is a copy-loop site",
+  "$st$ is a machine state",
+  "Every register of $st$ is at most $B$",
+  "$st.Z=0$",
+  "The destination and source register values sum to at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $k$ a copy-operation site, and $st$ a\nmachine state. Suppose every register of $st$ is at most $B$, the scratch register\n$st.Z$ is zero, and the sum of the values in the selected destination and source\nregisters is at most $B$. Then the machine reaches the exit label for site $k$ from\nphase $0$, with the destination register replaced by the sum of its initial value and\nthe source-register value, and all other registers unchanged. Every configuration before\nthe end satisfies the machine's validity conditions and register bound $B$."
+}

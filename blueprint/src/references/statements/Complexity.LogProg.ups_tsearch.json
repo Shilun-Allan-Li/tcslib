@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ups_tsearch",
+ "key": "3a0e2dfd851426d3",
+ "kind": "lemma",
+ "title": "Search for a target encoding",
+ "statement": "Let $x$ be a finite Boolean word, $B$ a natural number, and $q$ a rational number. Let $d$ be a natural number and $\\sigma$ a register state such that $\\sigma.n-\\sigma.u=d$, every register of $\\sigma$ is at most $B$, $\\sigma.u\\le\\sigma.n$, $\\sigma.t=0$, $\\sigma.q\\le |x|$, and $2|x|+2\\le B$. Assume that for every $j$ with $\\sigma.u\\le j<\\sigma.n$ whose binary word occurs at position $\\sigma.q$ in $x$ and ends exactly at the end of $x$, the program started at the candidate-processing stage with $u=t=j$, pointer $|x|$, and scratch value zero has semantics with acceptance probability $q$. If there is no such $j$, assume $q=0$. Then the program started at the search stage in state $\\sigma$ has semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$B$ is natural",
+  "$q$ is rational",
+  "$d$ is natural and $\\sigma.n-\\sigma.u=d$",
+  "Every register of $\\sigma$ is at most $B$",
+  "$\\sigma.u\\le\\sigma.n$",
+  "$\\sigma.t=0$",
+  "$\\sigma.q\\le |x|$",
+  "$2|x|+2\\le B$",
+  "For every qualifying $j$, the stated candidate-processing configuration has semantics with acceptance probability $q$",
+  "If there is no qualifying $j$, then $q=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $q$ a rational number, and let $d$ be a\nnatural number and $\\sigma$ a register state. Suppose that $\\sigma.n-\\sigma.u=d$, every\nregister of $\\sigma$ is at most $B$, $\\sigma.u\\le\\sigma.n$, $\\sigma.t=0$, $\\sigma.q\\le\n|x|$, and $2|x|+2\\le B$. Assume that for every $j$ with $\\sigma.u\\le j<\\sigma.n$ whose\nbinary expansion is exactly the suffix of $x$ beginning at position $\\sigma.q$, the\nprogram started at the indicated candidate-processing stage with registers $u=t=j$,\npointer $|x|$, and scratch value zero has semantics with acceptance probability $q$. If\nthere is no such $j$, assume $q=0$. Then the program started at the search stage in\nstate $\\sigma$ has semantics with acceptance probability $q$."
+}

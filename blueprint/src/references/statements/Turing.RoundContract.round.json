@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.RoundContract.round",
+ "key": "136d109e9b858421",
+ "kind": "theorem",
+ "title": "A Round Satisfies Its Contract",
+ "statement": "Let $M$ be a $k$-tape Turing machine with state set $S$, let $a\\in S$, let $E$ be a set of optional states, and let $R$ be a round contract for $M$ with anchor $a$ and escape set $E$. For every data value $i$ and configuration $d$ whose state is $a$ and which satisfies the contract's precondition, the run for the prescribed duration is a round: the duration is positive, its endpoint is the prescribed post-configuration with state in the anchor state or $E$, no strictly intermediate positive time has a halted, anchor, or escape state, and all work-tape head positions throughout the run lie within the contract's coordinatewise bounds.",
+ "hypotheses_covered": [
+  "A $k$-tape machine $M$ with state set $S$",
+  "Anchor state $a$ and escape set $E$",
+  "A round contract $R$ for $M$, $a$, and $E$",
+  "A data value $i$ and configuration $d$ with state $a$",
+  "The contract precondition holds for $i,d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $R$ be a round contract for a multi-tape machine with anchor state $a$ and escape\nset $E$. For any data index $i$ and configuration $d$ whose state is $a$ and which\nsatisfies the contract precondition, the run from $d$ for the contract's duration is a\nround: the duration is positive, the endpoint is the prescribed post-configuration with\nstate in $\\{a\\}\\cup E$, no intermediate state at a positive time before the endpoint is\nhalted, $a$, or in $E$, and all work-head positions during the round lie within the\ncontract's coordinatewise head bounds."
+}

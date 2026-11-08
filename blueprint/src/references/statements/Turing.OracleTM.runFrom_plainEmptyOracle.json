@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.OracleTM.runFrom_plainEmptyOracle",
+ "key": "b77c9bb4e38a4ac1",
+ "kind": "theorem",
+ "title": "Empty-oracle simulation",
+ "statement": "Let $M$ be an oracle machine with $k$ ordinary work tapes, let $c$ be a configuration with $k+1$ work tapes, and let $t\\in\\mathbb{N}$. Running the plain machine obtained from $M$ by eliminating its oracle for $t$ steps from $c$ yields the same configuration as running $M$ for $t$ steps from $c$ with the empty language as oracle.",
+ "hypotheses_covered": [
+  "An oracle machine $M$ with $k$ ordinary work tapes",
+  "A configuration $c$ with $k+1$ work tapes",
+  "A natural-number step count $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be an oracle machine with $k$ ordinary work tapes, let $c$ be a\nconfiguration with $k+1$ work tapes, and let $t \\in \\mathbb{N}$.  Running the\nplain machine obtained from $M$ by the empty-oracle elimination for $t$ steps\nfrom $c$ yields exactly the configuration obtained by running $M$ for $t$\nsteps from $c$ relative to the empty oracle."
+}

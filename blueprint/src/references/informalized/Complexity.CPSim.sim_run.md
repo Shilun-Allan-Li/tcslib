@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/CounterProgSimRun.lean :: Complexity.CPSim.sim_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Counter Program Simulation Run
+
+**Claim.** Under the stated oracle behavior, output bound, time bound, and bounds on every intermediate counter-program state, the auxiliary simulation from the encoded state halts, maintains its prescribed invariant at every earlier step, and returns the bit specified by the final output and mode.
+
+**Proof.** Proceed by induction on the number $k$ of counter-program steps. For $k=0$, the initial state is labelled, so it cannot already have halted; this contradicts the assumed halted state after zero steps. For the successor case, use the bounds at times $0$ and $1$ to supply the hypotheses of the one-step simulation result (`sim_step`). If that result says the counter program halts in this step, the auxiliary simulation halts with false; the output has not changed, and the output-bound fact shows that the prescribed final answer is also false (`ans_of_le`). If the successor state remains labelled and its output length is still at most $p$, the one-step result gives a reachable auxiliary configuration encoding that successor state, with a bounded time coordinate. Apply the induction hypothesis there to the remaining $k$ steps. The bounds required by that hypothesis follow by shifting each time index forward by one, and the reachability-to-halting composition preserves the invariant on all earlier configurations (`AReach.halt`). Finally, if the output has grown past $p$, the one-step result already halts the auxiliary simulation with the answer determined by the new output. The counter program's later output is an extension of this output (`run_out`), so the answer at position $p$ is unchanged when $p$ was already within the earlier output (`ans_append`). The run identities at zero and successor steps, together with the fact that a halted state remains fixed, connect these cases to the stated run of length $k+1` (`run_zero`, `run_succ`, `run_of_halted`).
+
+**Key facts.** `Complexity.CPSim.sim_step`, `Complexity.CPSim.ans_of_le`, `Complexity.LogProg.AReach.halt`, `Complexity.CounterProg.run_out`, `Complexity.CPSim.ans_append`, `Complexity.CounterProg.run_zero`, `Complexity.CounterProg.run_succ`, `Complexity.CounterProg.run_of_halted`.

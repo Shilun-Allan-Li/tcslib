@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Ends.asFrame",
+ "key": "9f41454d6d038649",
+ "kind": "theorem",
+ "title": "Execution from refreshed local variables",
+ "statement": "Let $xs$ be a list of variable indices, $l$ a list of integers, and $loc$ and $\\mu$ integer-valued functions on the natural numbers. Suppose $loc(y)$ equals the value of the list frame $l$ at index $y$ for every $y$ not in $xs$. If a statement $s$ has an execution from the state whose locals are obtained by refreshing the entries of $l$ at the indices in $xs$ with their values from $loc$, and whose memory is $\\mu$, within cost $T$ and with postcondition $Q$, then it has such an execution from the state with locals $loc$ and memory $\\mu$.",
+ "hypotheses_covered": [
+  "For every $y\\notin xs$, $loc(y)$ equals the value of the frame of $l$ at $y$",
+  "The statement has an execution from refreshed locals and memory $\\mu$ of cost at most $T$ satisfying $Q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

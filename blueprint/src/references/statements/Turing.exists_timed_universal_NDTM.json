@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.exists_timed_universal_NDTM",
+ "key": "6f6f51aca50f2544",
+ "kind": "theorem",
+ "title": "Timed universal nondeterministic simulation",
+ "statement": "For every effective code for finite-state nondeterministic Boolean machines with two work tapes, there is a finite-state nondeterministic Boolean machine $U_N$ such that, for each Boolean string $\\alpha$, some natural number $C$ works for every Boolean string $x$ and every natural number $t$. On input $\\langle\\langle\\mathrm{bits}(t),\\alpha\\rangle,x\\rangle$, every choice sequence of length exactly $C(t+1)$ causes $U_N$ to halt. Moreover, $U_N$ has an accepting computation of exactly that length if and only if the machine decoded from $\\alpha$ has an accepting computation on $x$ using exactly $t$ nondeterministic choices.",
+ "hypotheses_covered": [
+  "An effective code for finite-state nondeterministic Boolean machines with two work tapes",
+  "For each $\\alpha$, a natural number $C$ is chosen independently of $x$ and $t$",
+  "The input is the nested pairing $\\langle\\langle\\mathrm{bits}(t),\\alpha\\rangle,x\\rangle$",
+  "Every choice sequence of length exactly $C(t+1)$ leads to halting",
+  "Acceptance by the universal machine is existential over choice sequences of exactly that length",
+  "The decoded machine's acceptance is by a choice sequence of exactly $t$ choices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective code for finite-state nondeterministic Boolean machines, there is a\nfinite-state nondeterministic Boolean machine $U_N$ such that for every program code\n$\\alpha$ there is a constant $C$ with the following property. For every input $x$ and\ntime bound $t$, on the paired input\n$\\langle\\langle\\mathrm{bits}(t),\\alpha\\rangle,x\\rangle$, every choice sequence of length\n$C(t+1)$ causes $U_N$ to halt; moreover, $U_N$ has an accepting computation of exactly\nthat length if and only if the machine decoded from $\\alpha$ has an accepting\ncomputation on $x$ using exactly $t$ nondeterministic choices."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedCapture_start",
+ "key": "cdd3bce2fac57aa6",
+ "kind": "lemma",
+ "title": "Reaching the interpreter after capture",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be one of its work tapes, let $x$ be a Boolean input word, and let $T$ be a natural number. If the configuration of $M$ after $T$ steps from its initial configuration on $x$ is halted, then there is a time $t\\le T+1$ at which the capture machine, started on $x$, is in the interpreter-entry configuration associated with that time-$T$ configuration.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$c$ is a work-tape index of $M$",
+  "$x$ is a Boolean word",
+  "$T$ is a natural number",
+  "the base machine's configuration after $T$ steps is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the base machine halts on input $x$ within $T$ steps, then for some\n$t \\le T + 1$, running the capture wrapper $t$ steps from its initial\nconfiguration on $x$ reaches the interpreter-entry configuration for the base\nmachine's configuration at time $T$; since halting is absorbing, all fields of\nthat configuration --- including the parked input head --- are retained, not\nmerely the completed output."
+}

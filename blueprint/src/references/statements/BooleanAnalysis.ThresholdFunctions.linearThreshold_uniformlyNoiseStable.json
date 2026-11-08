@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.linearThreshold_uniformlyNoiseStable",
+ "key": "de87358a9f400613",
+ "kind": "theorem",
+ "title": "Uniform noise stability of linear thresholds",
+ "statement": "The family of linear threshold classes is uniformly noise-stable: every function in the family is $\\pm 1$-valued, and there exists a function $\\varepsilon:\\mathbb R\\to\\mathbb R$ such that $0\\leq\\varepsilon(\\delta)\\leq1$ for $0\\leq\\delta\\leq\\tfrac12$, with $\\varepsilon(\\delta)\\to0$ as $\\delta\\to0^+$. For every dimension $n$, every function $f$ in the linear threshold class on $\\{0,1\\}^n$, and every $0<\\delta\\leq\\tfrac12$, its noise sensitivity satisfies $\\operatorname{NS}_{\\delta}(f)\\leq\\varepsilon(\\delta)$, where $\\operatorname{NS}_{\\delta}(f)=(1-\\operatorname{Stab}_{1-2\\delta}(f))/2$ and stability is computed using the uniform measure on the Boolean cube.",
+ "hypotheses_covered": [
+  "all members of the class in every natural dimension are $\\pm1$-valued",
+  "existence of $\\varepsilon:\\mathbb R\\to\\mathbb R$",
+  "$0\\leq\\varepsilon(\\delta)\\leq1$ for $\\delta\\in[0,1/2]$",
+  "$\\varepsilon(\\delta)$ tends to zero as $\\delta$ approaches zero from above",
+  "the noise sensitivity bound holds for every dimension, every class member, and $0<\\delta\\leq1/2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThe family of linear threshold functions on Boolean cubes is uniformly noise-stable: every function has the form $f(x)=\\operatorname{sgn}_{+}(c+\\sum_{i=1}^{n}a_i(-1)^{x_i})$ for real coefficients, is $\\{-1,1\\}$-valued, and there exists $\\varepsilon:\\mathbb R\\to\\mathbb R$ satisfying $0\\leq\\varepsilon(\\delta)\\leq1$ on $[0,1/2]$, $\\lim_{\\delta\\to0^{+}}\\varepsilon(\\delta)=0$ and\n\\[\n\\Pr[f(X)\\neq f(Y)]\\leq\\varepsilon(\\delta)\n\\]\nfor every dimension $n\\in\\mathbb N$, every such $f$ and every $0<\\delta\\leq1/2$.\nHere $\\operatorname{sgn}_{+}(t)=1$ for $t\\geq0$ and $-1$ for $t<0$, $X$ is uniform on $\\{0,1\\}^{n}$, and $Y$ independently flips its coordinates with probability $\\delta$."
+}

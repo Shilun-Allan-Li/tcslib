@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.KarpLipton.BadSpec",
+ "key": "6dbeeaa034dd756b",
+ "kind": "def",
+ "title": "Bad specification conditions",
+ "statement": "Let $C,c$ be natural numbers, let $V$ be a language of Boolean words, and let $x,U,u,j,p$ be Boolean words. The bad-specification condition requires that $|u|=C(|x|+1)^c$, $|j|\\le C(|x|+1)^c$, and $|p|\\le C(|x|+1)^c$, together with at least one of the following: the query on the encoding of $x,u$ with the word obtained by dropping the marker from $U$ and using a block of $C(|x|+1)^c$ true bits followed by false fails; or $|p|=C(|x|+1)^c$, that query with false prepended to $p$ holds, and the encoding of the pair $(x,u)$ with $p$ is not in $V$; or $|j|+|p|+1=C(|x|+1)^c$, the query with $|j|$ true bits followed by true, false, and then $p$ holds, while the queries with $|j|$ true bits followed by false and then $p$ with either false or true appended both fail.",
+ "hypotheses_covered": [
+  "$C,c$ are natural numbers",
+  "$V$ is a language of Boolean words",
+  "$x,U,u,j,p$ are Boolean words",
+  "$|u|=C(|x|+1)^c$",
+  "$|j|\\le C(|x|+1)^c$",
+  "$|p|\\le C(|x|+1)^c$",
+  "At least one of the three stated alternatives holds"
+ ],
+ "confidence": "low",
+ "caveat": "The exact meanings of the query predicate, pair encoding, marker removal, and language $\\mathrm{CVAL}$ are not defined in the supplied snippet.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

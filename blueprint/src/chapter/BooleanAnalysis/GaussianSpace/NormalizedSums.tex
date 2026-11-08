@@ -12,74 +12,102 @@ The multilinear polynomial for a normalized sum has degree one, equal coordinate
 For $n\ge0$, define a multilinear coefficient family $P_n$ on subsets of $\{1,\ldots,n\}$ by $P_n(S)=1/\sqrt n$ when $|S|=1$ and $P_n(S)=0$ otherwise; division by zero is zero. Its evaluation is $n^{-1/2}\sum_i z_i$.
 \end{definition}
 
-\begin{lemma}[Degree of the normalized-sum polynomial]
+\begin{lemma}[Degree bound for the normalized-sum polynomial]
 \lean{BooleanAnalysis.GaussianSpace.normalizedSumPolynomial_hasDegreeAtMost}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.normalizedSumPolynomial,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost}
+\uses{BooleanAnalysis.GaussianSpace.normalizedSumPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost}
 \difficulty{1}
-For every $n\ge0$, the multilinear polynomial with singleton coefficients $1/\sqrt n$ and all other coefficients zero has degree at most one.
+For every nonnegative integer $n$, the multilinear coefficient family whose coefficient
+is $1/\sqrt n$ on singleton subsets and zero on all other subsets has degree at most
+one; here division by zero is interpreted as zero.
 \end{lemma}
 
-\begin{lemma}[Influence of a normalized-sum coordinate]
+\begin{lemma}[Influence of a Normalized-Sum Polynomial]
 \lean{BooleanAnalysis.GaussianSpace.influence_normalizedSumPolynomial}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.normalizedSumPolynomial,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval,BooleanAnalysis.influence,BooleanAnalysis.influence_eq_sum_fourier}
+\uses{BooleanAnalysis.GaussianSpace.normalizedSumPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval, BooleanAnalysis.influence, BooleanAnalysis.influence_eq_sum_fourier}
 \difficulty{5}
-For $n\ge0$ and a coordinate $i\in\{1,\ldots,n\}$, let $f(x)=n^{-1/2}\sum_j(-1)^{x_j}$ on the uniform Boolean cube. Its influence $\mathbb E(D_i f)^2$, with $D_i$ the coordinate half-difference, equals $1/n$.
+For a natural number $n$ and a coordinate $i\in\{0,\ldots,n-1\}$, let $P_n$ be the
+multilinear coefficient family equal to $1/\sqrt n$ on singleton subsets and zero on all
+other subsets, and evaluate it on the Boolean cube using the Walsh characters. The
+influence of coordinate $i$ in this evaluated function is $1/n$.
 \end{lemma}
 
-\begin{lemma}[Variance of the normalized-sum polynomial]
+\begin{lemma}[Variance of the normalized sum on the Boolean cube]
 \lean{BooleanAnalysis.GaussianSpace.cubeVariance_normalizedSumPolynomial}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.influence_normalizedSumPolynomial,BooleanAnalysis.GaussianSpace.normalizedSumPolynomial,BooleanAnalysis.Hypercontractivity.cubeVariance,BooleanAnalysis.Hypercontractivity.cubeVariance_eq_sum_nonempty_fourier,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval,BooleanAnalysis.totalInfluence,BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
+\uses{BooleanAnalysis.GaussianSpace.influence_normalizedSumPolynomial, BooleanAnalysis.GaussianSpace.normalizedSumPolynomial, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.cubeVariance_eq_sum_nonempty_fourier, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval, BooleanAnalysis.totalInfluence, BooleanAnalysis.totalInfluence_eq_sum_sq_deg}
 \difficulty{5}
-If $n>0$ and $f(x)=n^{-1/2}\sum_{i=1}^n(-1)^{x_i}$ on the uniform Boolean cube, then $\operatorname{Var}(f)=1$.
+Let $n$ be a positive integer, and on the uniform Boolean cube $\{0,1\}^n$ define
+$f(x)=\frac{1}{\sqrt n}\sum_{i=1}^n(-1)^{x_i}$. Then $\operatorname{Var}(f)=1$.
 \end{lemma}
 
-\begin{lemma}[Evaluation at arbitrary random inputs]
+\begin{lemma}[Evaluation of the normalized sum polynomial]
 \lean{BooleanAnalysis.GaussianSpace.evalMultilinearRV_normalizedSumPolynomial}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.normalizedSumPolynomial,BooleanAnalysis.Hypercontractivity.evalMultilinearRV}
+\uses{BooleanAnalysis.GaussianSpace.normalizedSumPolynomial, BooleanAnalysis.Hypercontractivity.evalMultilinearRV}
 \difficulty{5}
-Let $n\ge0$, let $\Omega$ be a measurable space, and let $X_i:\Omega\to\mathbb R$ be arbitrary functions. The multilinear polynomial with singleton coefficients $1/\sqrt n$ and all other coefficients zero evaluates at $(X_i(\omega))_i$ to $\sum_iX_i(\omega)/\sqrt n$ for every $\omega\in\Omega$, with division by zero equal to zero.
+Let $n\ge0$, let $\Omega$ be a measurable space, and let $X_i:\Omega\to\mathbb R$ be
+arbitrary functions for $i=0,\ldots,n-1$. For every $\omega\in\Omega$, the multilinear
+polynomial whose singleton coefficients are $1/\sqrt n$ and whose other coefficients are
+zero evaluates to $\bigl(\sum_{i=0}^{n-1}X_i(\omega)\bigr)/\sqrt n$, with the usual real
+division convention when $n=0$.
 \end{lemma}
 
-\begin{lemma}[Gaussian comparison for independent normalized sums]
+\begin{lemma}[Gaussian comparison for normalized sums]
 \lean{BooleanAnalysis.GaussianSpace.normalizedSum_lipschitz_comparison}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments,BooleanAnalysis.GaussianSpace.HasInvarianceMoments.identDistrib,BooleanAnalysis.GaussianSpace.cubeVariance_normalizedSumPolynomial,BooleanAnalysis.GaussianSpace.evalMultilinearRV_normalizedSumPolynomial,BooleanAnalysis.GaussianSpace.hasInvarianceMoments_standardGaussian,BooleanAnalysis.GaussianSpace.influence_normalizedSumPolynomial,BooleanAnalysis.GaussianSpace.invariance_lipschitz,BooleanAnalysis.GaussianSpace.measurePreserving_gaussianProjection,BooleanAnalysis.GaussianSpace.normalizedSumPolynomial,BooleanAnalysis.GaussianSpace.normalizedSumPolynomial_hasDegreeAtMost,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.cubeVariance_normalizedSumPolynomial, BooleanAnalysis.GaussianSpace.evalMultilinearRV_normalizedSumPolynomial, BooleanAnalysis.GaussianSpace.hasInvarianceMoments_gaussianCoordinate, BooleanAnalysis.GaussianSpace.influence_normalizedSumPolynomial, BooleanAnalysis.GaussianSpace.invariance_lipschitz, BooleanAnalysis.GaussianSpace.measurePreserving_gaussianProjection, BooleanAnalysis.GaussianSpace.normalizedSumPolynomial, BooleanAnalysis.GaussianSpace.normalizedSumPolynomial_hasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{6}
-There is a universal $K>0$ such that, for every $n>0$, probability space $(\Omega,\mu)$, and independent real random variables $X_1,\ldots,X_n$ with finite fourth moments, $\mathbb E X_i=\mathbb E X_i^3=0$, $\mathbb E X_i^2=1$, and $\mathbb E X_i^4\le9$, every $c$-Lipschitz $\psi:\mathbb R\to\mathbb R$ with $c\ge0$ satisfies $|\mathbb E\psi(n^{-1/2}\sum_iX_i)-\mathbb E\psi(Z)|\le Kc\,n^{-1/4}$, where $Z$ is standard Gaussian.
+There is a constant $K>0$ such that the following holds. Let $n$ be a positive integer,
+let $(\Omega,\mu)$ be a probability space, and let $X_1,\ldots,X_n$ be independent real
+random variables on it, each satisfying the fourth-order invariance moment conditions:
+finite fourth absolute moment, mean zero, second moment one, third moment zero, and
+fourth moment at most $9$. For any $c\ge 0$ and any $c$-Lipschitz function $\psi:\mathbb
+R\to\mathbb R$, the difference between the expectation of $\psi(n^{-1/2}\sum_{i=1}^n
+X_i)$ and its expectation under the standard Gaussian measure has absolute value at most
+$Kc n^{-1/4}$.
 \end{lemma}
 
-\begin{lemma}[Product integration equals cube expectation]
+\begin{lemma}[Uniform cube expectation as product integration]
 \lean{BooleanAnalysis.GaussianSpace.integral_uniformBool_pi_eq_expect}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.expect,BooleanAnalysis.moment_eq_expect,BooleanAnalysis.uniformWeight}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.moment_eq_expect, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-For every $n\ge0$ and $f:\{0,1\}^n\to\mathbb R$, integration against the product of $n$ uniform bit measures equals the uniform cube expectation $2^{-n}\sum_xf(x)$.
+For every integer $n\ge0$ and every function $f:\{0,1\}^n\to\mathbb R$, its integral
+against the product of $n$ uniform probability measures on $\{0,1\}$ equals its uniform
+cube expectation $2^{-n}\sum_{x\in\{0,1\}^n}f(x)$.
 \end{lemma}
 
 \begin{lemma}[Gaussian comparison for normalized Boolean sums]
 \lean{BooleanAnalysis.GaussianSpace.normalizedBoolSum_lipschitz_comparison}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments,BooleanAnalysis.GaussianSpace.HasInvarianceMoments.identDistrib,BooleanAnalysis.GaussianSpace.hasInvarianceMoments_uniformBool,BooleanAnalysis.GaussianSpace.normalizedSum_lipschitz_comparison,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure,BooleanAnalysis.boolToSign}
+\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.hasInvarianceMoments_uniformBoolCoordinate, BooleanAnalysis.GaussianSpace.normalizedSum_lipschitz_comparison, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure, BooleanAnalysis.boolToSign}
 \difficulty{5}
-There is a universal $K>0$ such that, for $n>0$, independent uniform signs $\epsilon_1,\ldots,\epsilon_n$, a standard Gaussian $Z$, and any $c$-Lipschitz $\psi:\mathbb R\to\mathbb R$ with $c\ge0$, $|\mathbb E\psi(n^{-1/2}\sum_i\epsilon_i)-\mathbb E\psi(Z)|\le Kc\,n^{-1/4}$.
+There exists a constant $K>0$ such that for every positive integer $n$, every $c\geq0$,
+and every $c$-Lipschitz function $\psi\colon\mathbb R\to\mathbb R$, the uniform average
+of $\psi(n^{-1/2}\sum_{i=1}^n\sigma(x_i))$ over Boolean vectors
+$x\in\{\mathrm{false},\mathrm{true}\}^n$ differs from its integral under the standard
+Gaussian probability measure $\gamma$ by at most $Kc(1/n)^{1/4}$.
 \end{lemma}
 
 \begin{lemma}[Gaussian limit for normalized Boolean sums]
 \lean{BooleanAnalysis.GaussianSpace.tendsto_integral_normalizedBoolSum}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.normalizedBoolSum_lipschitz_comparison,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure,BooleanAnalysis.boolToSign}
+\uses{BooleanAnalysis.GaussianSpace.normalizedBoolSum_lipschitz_comparison, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure, BooleanAnalysis.boolToSign}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p018-b002}
 \difficulty{5}
 For every $c\ge0$ and $c$-Lipschitz $\psi:\mathbb R\to\mathbb R$, if $\epsilon_1,\ldots,\epsilon_{m+1}$ are independent uniform signs and $Z$ is standard Gaussian, then $\mathbb E\psi((m+1)^{-1/2}\sum_i\epsilon_i)\to\mathbb E\psi(Z)$ as $m\to\infty$, where the first expectation is integration under the product sign law.
 \end{lemma}
 
-\begin{lemma}[Cube-expectation limit for normalized sums]
+\begin{lemma}[Gaussian limit for Lipschitz functions of cube sums]
 \lean{BooleanAnalysis.GaussianSpace.tendsto_expect_normalizedBoolSum}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.GaussianSpace.integral_uniformBool_pi_eq_expect,BooleanAnalysis.GaussianSpace.tendsto_integral_normalizedBoolSum,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure,BooleanAnalysis.boolToSign,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.GaussianSpace.integral_uniformBool_pi_eq_expect, BooleanAnalysis.GaussianSpace.tendsto_integral_normalizedBoolSum, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure, BooleanAnalysis.boolToSign, BooleanAnalysis.expect}
 \difficulty{1}
-For every $c\ge0$ and $c$-Lipschitz $\psi:\mathbb R\to\mathbb R$, $2^{-(m+1)}\sum_{x\in\{0,1\}^{m+1}}\psi((m+1)^{-1/2}\sum_i(-1)^{x_i})\to\mathbb E\psi(Z)$ as $m\to\infty$, where $Z$ is standard Gaussian.
+Let $c\ge0$ and let $\psi:\mathbb R\to\mathbb R$ be $c$-Lipschitz. For each positive
+integer $m$, choose a uniformly random vector $X\in\{0,1\}^{m+1}$ and encode each
+coordinate by $1$ for $0$ and $-1$ for $1$. The expectation of $\psi$ applied to the sum
+of these signs divided by $\sqrt{m+1}$ tends, as $m\to\infty$, to the expectation of
+$\psi$ under the standard Gaussian probability measure on $\mathbb R$.
 \end{lemma}

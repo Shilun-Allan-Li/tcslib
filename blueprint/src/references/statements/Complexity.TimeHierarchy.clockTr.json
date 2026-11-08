@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.clockTr",
+ "key": "2ce9c6804f45729b",
+ "kind": "def",
+ "title": "Clocked simulation transition",
+ "statement": "Let $K$ and $W$ be finite Turing machines over the Boolean alphabet. Given a clock state, an optional input symbol, and the symbols scanned on the $K.k+1+W.k$ work tapes, define a transition as follows. In a simulation state, perform $K$’s transition on the first $K.k$ tapes, place its optional output on the middle tape, and leave the final $W.k$ tapes unchanged; if $K$ halts, enter the counter scan. The counter scan moves right and starts the input scan when the middle cell is blank, and otherwise moves left and continues scanning. The input scan moves left until the input cell is blank, then moves right and starts a decrement state with $W$’s initial state and an empty output register. In a decrement state, a blank middle cell halts and emits true; a false middle symbol is changed to true and the middle head moves right; a true middle symbol triggers $W$’s transition on the final $W.k$ tapes, changes the middle symbol to false, and moves the middle head left. If $W$ halts on that step, the transition emits true exactly when the updated output register does not contain precisely one true bit; if $W$ continues, the transition enters a return state carrying its new state and the updated register. The return state moves right and enters the corresponding decrement state when the middle cell is blank, and otherwise moves left and continues returning. Tapes not specified as being written are left unchanged, and their heads remain stationary.",
+ "hypotheses_covered": [
+  "Finite Turing machines K and W over the Boolean alphabet",
+  "A clock state",
+  "An optional Boolean input symbol",
+  "A scanned-symbol function for the K.k+1+W.k work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

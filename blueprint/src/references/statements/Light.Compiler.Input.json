@@ -1,0 +1,24 @@
+{
+ "lean_name": "Light.Compiler.Input",
+ "key": "f9e8132a2c585c08",
+ "kind": "structure",
+ "title": "Input memory condition",
+ "statement": "Let $W$ be a word size, let $\\mathrm{lim}$ be a triple of resource limits, let $\\mu\\colon\\mathbb{N}\\to\\mathbb{Z}$ assign an integer to each natural-numbered address, and let $m\\colon\\mathbb{Z}\\to\\{0,1\\}^W$ be a memory of $W$-bit words. For integers $i$ and $j$, the input condition requires that $m(a)=\\mathrm{wd}_W(\\mu(a))$ and $|\\mu(a)|\\leq\\mathrm{lim.word}$ for every natural number $a$, that the memory cells at the first and second argument addresses encode $i$ and $j$, respectively, and that $|i|,|j|\\leq\\mathrm{lim.word}$.",
+ "hypotheses_covered": [
+  "Word size $W$",
+  "Resource limits $\\mathrm{lim}$",
+  "Integer-valued map $\\mu$ on natural-numbered addresses",
+  "Memory $m$ of $W$-bit words indexed by integers",
+  "Integers $i$ and $j$",
+  "Every natural-numbered cell represents $\\mu(a)$ and satisfies the word bound",
+  "The first argument cell encodes $i$",
+  "The second argument cell encodes $j$",
+  "Both arguments satisfy the word bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

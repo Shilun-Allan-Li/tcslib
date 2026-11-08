@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timed_output_forward",
+ "key": "56097c0c1f808626",
+ "kind": "lemma",
+ "title": "Flushing the output buffer",
+ "statement": "Let $x$ be a Boolean input word, and let $c$ be a configuration of the four-tape interpreter on input $x$. For Boolean words $b,r,l,o$ with the interpreter’s output equal to the concatenation of $l$ and $r$, starting in the flush phase with the output-buffer head at position $|l|$ and real output $o$, after $|r|+1$ steps the machine is halted, the output-buffer head is at position $|c.output|$, and the real output is the concatenation of $o$ and $r$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean input word",
+  "$c$ is a four-tape interpreter configuration on input $x$",
+  "$b$, $r$, $l$, and $o$ are Boolean words",
+  "The interpreter's output is the concatenation of $l$ and $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "If the buffered output splits as a processed prefix $l$ followed by a\nremainder $r$, with the buffer head at $|l|$, then the flush phase of the\ntimed interpreter emits exactly the bits of $r$, in order, in $|r| + 1$ steps\nand halts at the right blank without a further emission."
+}

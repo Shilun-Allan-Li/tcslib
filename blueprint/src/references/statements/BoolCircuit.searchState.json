@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.searchState",
+ "key": "9efedd88425196f6",
+ "kind": "def",
+ "title": "Recursive Boolean circuit search state",
+ "statement": "Let $n$ be a natural number, and for each natural number $j$ let $D_j$ be a directed acyclic Boolean circuit with $n+j$ input vertices. Define $S_0$ to be the pair consisting of the single true constant gate and the empty list of indices. Recursively, if $S_j=(G,I)$, form a circuit gate list from $D_{j+1}$ by mapping each argument $v$ to the $(v+1)$st entry of the list formed by concatenating $0,1,\\ldots,n-1$, the entries of $I$, and $n$ when $v<n$, and to $n+|G|+(v-n)$ otherwise; remove repeated arguments from each mapped gate, then append an AND gate whose sole argument is the mapped output of $D_{j+1}$. The state $S_{j+1}$ is the pair whose first list is $G$ followed by this constructed gate list, and whose second list is $I$ followed by the index $n+|G|+|\\mathrm{gates}(D_{j+1})|$.",
+ "hypotheses_covered": [
+  "A natural number $n$.",
+  "For each natural number $j$, a directed acyclic Boolean circuit $D_j$ with $n+j$ input vertices."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

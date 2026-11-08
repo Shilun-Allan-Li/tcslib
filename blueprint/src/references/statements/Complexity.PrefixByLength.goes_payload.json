@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.PrefixByLength.goes_payload",
+ "key": "13ec4fec28b9eb28",
+ "kind": "theorem",
+ "title": "Processing the Payload Prefix or Suffix",
+ "statement": "For either choice of the program parameter, every bit string $r$, and every natural number $n$, the program on input $r$, starting at its head label with register value $n$ and input position $0$, reaches a halted state with register value $n-|r|$ truncated at zero. Its final input position is $\u0000\\min(n,|r|)$ when the parameter is true and $|r|$ when it is false; it appends the first $n$ bits of $r$ when the parameter is true and the suffix of $r$ after its first $n$ bits when false. The run takes at most $4|r|+3$ steps, for every output string already printed.",
+ "hypotheses_covered": [
+  "The program parameter is a Boolean choice",
+  "The input is the arbitrary bit string $r$",
+  "The register starts at $n$",
+  "The input position starts at zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

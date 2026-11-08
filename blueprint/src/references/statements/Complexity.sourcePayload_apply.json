@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.sourcePayload_apply",
+ "key": "ef860ac89fd24edb",
+ "kind": "lemma",
+ "title": "Head-centred payload update",
+ "statement": "Let $c$ be a configuration of a machine with $k$ work tapes on a binary input $x$, let $a$ be a one-step action, let $z\\in\\mathbb{Z}$, and let $i$ be one of the $k+1$ virtual tape coordinates. The payload at offset $z$ and coordinate $i$ in the configuration after applying $a$ equals the payload obtained from the original configuration after first accounting for the write prescribed by $a$ and then shifting by the direction assigned to coordinate $i$ by that action, with the input-coordinate shift clipped at the input boundaries.",
+ "hypotheses_covered": [
+  "$c$ is a configuration of a machine with $k$ work tapes on binary input $x$",
+  "$a$ is a one-step action for that machine",
+  "$z\\in\\mathbb{Z}$",
+  "$i$ is an index in the $k+1$ virtual tape coordinates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a binary machine with $k$ work tapes, let $\\alpha$ be an\naction, let $z$ be an integer offset, and let $i$ be one of the $k+1$ virtual tape\ncoordinates.  Then the head-centered payload of the configuration obtained by applying\n$\\alpha$ to $c$, at offset $z$ and coordinate $i$, equals the written payload of $c$\nand $\\alpha$ at offset $z$ plus the shift direction of coordinate $i$: writing at the\nold origin and then shifting each virtual tape by its displacement produces exactly\nthe payloads of the successor configuration, including stationary moves, boundary\nattempts, and blank writes."
+}

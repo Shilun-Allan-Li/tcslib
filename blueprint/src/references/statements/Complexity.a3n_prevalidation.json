@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a3n_prevalidation",
+ "key": "ccc2ac7b5db313d2",
+ "kind": "lemma",
+ "title": "Bounds from successful pair decoding",
+ "statement": "Let $C,c$ be natural numbers and let $w,x',u,x,\\mathrm{pad}$ be binary words. Suppose decoding $w$ yields $(x',u)$ and decoding $x'$ yields $(x,\\mathrm{pad})$. Then $|x|\\le |w|$, and the length of the binary expansion of $C\\,(2^{|x|+1})^c$ is at most $(|w|+1)^c$ plus the length of the binary expansion of $C$.",
+ "hypotheses_covered": [
+  "$C,c$ are natural numbers",
+  "$w,x',u,x,\\mathrm{pad}$ are binary words",
+  "Decoding $w$ yields $(x',u)$",
+  "Decoding $x'$ yields $(x,\\mathrm{pad})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c$ be natural numbers and suppose a string $w$ decodes as a pair with first component $x'$, which in turn decodes as a pair with first component $x$. Then $|x| \\le |w|$, and the binary expansion of $C \\cdot 2^{(|x|+1)^c}$ has length at most $(|w|+1)^c$ plus the length of the binary expansion of $C$."
+}

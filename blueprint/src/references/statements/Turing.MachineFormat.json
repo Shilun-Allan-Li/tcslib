@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.MachineFormat",
+ "key": "f07520e94723b03a",
+ "kind": "structure",
+ "title": "Machine format",
+ "statement": "A machine format consists of a code type, a family of transition-table types indexed by the number of states minus one, a state-count function, and a way to assemble a code from a state count, an initial state, and a table. It also specifies serializations of codes and tables, table-reading and table-skipping procedures, a guard constant, and a fallback code. Assembly records the stated state count, serializes as the pairing of the binary expansion of that count with the unary initial state followed by the table bits, and represents every code; table reading correctly parses and reconstructs the table and suffix, its erased version agrees with table skipping, and every table has at least the guard constant times the number of states in bits.",
+ "hypotheses_covered": [
+  "The state count and table types are supplied for all natural-number indices",
+  "The serialization, table reading, and table skipping operations are supplied",
+  "A natural-number guard constant and a fallback code are supplied",
+  "Assembly preserves its state-count parameter",
+  "Assembly has the specified serialization",
+  "Every code is obtainable by assembly",
+  "Table reading succeeds on an encoded table followed by any suffix",
+  "Successful table reading reconstructs the encoded table and suffix",
+  "Erasing the parsed table from table reading agrees with table skipping",
+  "Each table's bit length is at least the guard constant times the number of states"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

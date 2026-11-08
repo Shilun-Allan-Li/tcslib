@@ -1,0 +1,16 @@
+{
+ "lean_name": "FABL.BooleanCircuit.gateClauses",
+ "key": "b8a1075a3300f932",
+ "kind": "def",
+ "title": "Gate clauses",
+ "statement": "Let $C$ be a Boolean circuit on $n$ input variables, and let $i$ be one of its gate positions. The gate clauses at $i$ are the following list of terms on the $n$ input variables and one variable for each gate: for an input gate, the two terms pairing the gate variable with the input variable using opposite required signs; for a constant gate, the single literal requiring the gate variable to have the sign associated to that Boolean value; for a negation gate, the two terms pairing the gate variable with its source gate using matching signs; for a conjunction gate, two terms pairing the positive gate literal with each negative source literal, followed by a term pairing the negative gate literal with the positive source literals (with only one source literal when both inputs are the same gate); and for a disjunction gate, the corresponding two terms pairing the negative gate literal with each positive source literal, followed by a term pairing the positive gate literal with the negative source literals (again using only one source literal when both inputs are the same gate).",
+ "hypotheses_covered": [
+  "A natural number $n$ of input variables",
+  "A Boolean circuit $C$ on $n$ inputs",
+  "A gate position $i$ in $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

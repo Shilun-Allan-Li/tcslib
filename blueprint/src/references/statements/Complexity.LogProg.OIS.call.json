@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.call",
+ "key": "2e59be963098bf10",
+ "kind": "def",
+ "title": "Oracle call specification",
+ "statement": "For a machine state $s$, define a call specification as follows: in phase ask, call decider $0$ in whole-input mode with the added tape as its sole argument, continuing in phase bit after a positive answer and in phase work$(\\\\mathrm{none},\\\\mathrm{false})$ after a negative answer; in phase bit, call decider $1$ in whole-input mode with that same sole argument, continuing in phase work$(\\\\mathrm{some}\\\\,\\\\mathrm{true},\\\\mathrm{false})$ after a positive answer and phase work$(\\\\mathrm{some}\\\\,\\\\mathrm{false},\\\\mathrm{false})$ after a negative answer. In every other phase, there is no call.",
+ "hypotheses_covered": [
+  "A Boolean-symbol finite-tape Turing machine $M$",
+  "A current state and phase"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

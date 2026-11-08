@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.cert_embed_words",
+ "key": "16bc8a76d1b9cffe",
+ "kind": "theorem",
+ "title": "Embedding Tape Words",
+ "statement": "Let $m,k$ be nonnegative integers, let $S$ be a state set, and let $y$ be a Boolean input word. Let $M$ be a multi-tape Turing machine with $m$ work tapes over the Boolean alphabet, let $\rho:\text{Fin}(m)\to\text{Fin}(k)$ be an injection, and let $q\\in S$. For families of Boolean words $w$ on the $m$ tapes and $f,t$ on the $k$ tapes, suppose $t(\\rho(i))=w(i)$ for every $i$ and $t(j)=f(j)$ for every $j$ outside the image of $\\rho$. Then the configuration formed from the words $w$ in state $q$, with the words $f$ on tapes outside the embedded indices, all work-tape heads at cell zero, and empty output, equals the configuration formed from the words $t$ in state $q$ on input $y$, with all work-tape heads at cell zero and empty output.",
+ "hypotheses_covered": [
+  "Nonnegative integers $m,k$",
+  "State set $S$",
+  "Boolean input word $y$",
+  "Multi-tape machine $M$ with $m$ work tapes over Booleans",
+  "Injection from $m$ tape indices to $k$ tape indices",
+  "State $q\\in S$",
+  "Local Boolean-word family $w$",
+  "Frame and target Boolean-word families $f,t$",
+  "Target agrees with local words on embedded indices",
+  "Target agrees with frame words outside the injection image"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

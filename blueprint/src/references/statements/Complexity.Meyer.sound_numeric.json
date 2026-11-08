@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Meyer.sound_numeric",
+ "key": "cfc77b529b22ad28",
+ "kind": "theorem",
+ "title": "Soundness of the Numeric Checks",
+ "statement": "Let $M$ be a finite Turing machine with Boolean input alphabet, let $x$ be a Boolean string, let $W$ be a natural number, let $\\mathrm{Ans}$ assign a Boolean value to each selector and pair of natural-number indices, and let $xb$ be a Boolean-valued function on the natural numbers. Suppose that for every $t<2^W$, $a<2^W$, and $j\\le |x|+1$, every prescribed initialization, transition, work-tape, input, boundary, and final check is satisfied by the numerical encoding determined by $\\mathrm{Ans}$ and $xb$. Suppose also that $xb(j)=x_j$ for every $j<|x|$. Then after $2^W-1$ steps, the machine $M$ is halted and its output register records exactly one bit, equal to $1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean alphabet",
+  "$\\mathrm{Ans}$ is a Boolean-valued function on selectors and two natural-number indices",
+  "$W$ is a natural number",
+  "$x$ is a Boolean string",
+  "All prescribed checks hold for every $t<2^W$, $a<2^W$, and $j\\le |x|+1$",
+  "$xb(j)=x_j$ whenever $j<|x|$"
+ ],
+ "confidence": "low",
+ "caveat": "The check predicate is defined by a detailed encoding and a finite family of local Boolean constraints; the supplied descriptions do not explain these constraints informally.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

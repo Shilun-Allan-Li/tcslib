@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.dg_simulate",
+ "key": "cb5689541ad04840",
+ "kind": "lemma",
+ "title": "Finite-Time Simulation of the Source Machine",
+ "statement": "Let $M$ be a finite-alphabet Turing machine with $k>0$ work tapes, choose a source symbol $a_0$, and let $x$ be a finite word over the enlarged sweep alphabet. Fix a time $\tau$ such that the source machine, started on the word obtained by retracting each symbol of $x$, is nonhalted at every time $t<\\tau$. For every $t\\le\\tau$, there are integers $a$ and natural numbers $n,u$ such that the source configuration at time $t$ has a window of $n$ consecutive work-tape cells beginning at $a$, satisfying the head, blank-outside, visited-cell, size, and history conditions of a valid window; moreover, $u$ is at most the simulator time bound $\\sigma_k(t)$, and by time $u$ the simulator started on $x$ reaches the encoded configuration built from that source configuration and window, while its work head stays throughout between $ak-1$ and $(a+n)k$, inclusive.",
+ "hypotheses_covered": [
+  "finite source alphabet",
+  "decidable equality on the source alphabet",
+  "a finite Turing machine M with k>0 work tapes",
+  "a source symbol a₀",
+  "an enlarged-alphabet input word x",
+  "a natural-number horizon τ",
+  "the source run is nonhalted at every time t<τ",
+  "a natural number t≤τ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

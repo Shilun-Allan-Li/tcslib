@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emCall_eval_first",
+ "key": "0a80239e29ace998",
+ "kind": "lemma",
+ "title": "First Halting Time of the Evaluator",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, and let $w$, $s$, and $o$ be Boolean words. If $M$ halts on input $s$ with output $o$ after $T$ steps, then there are $t\\le T$ and a Boolean boundary tag $b$ such that at time $t$ the run of $M$ is halted with output $o$, and $b$ correctly marks the boundary of its input-head position. At every earlier time $j<t$, the capture-wrapped evaluator started from the configuration prepared using physical input $w$ and the initial configuration of $M$ on $s$ has not reached its return state; at time $t$ its configuration is exactly the evaluator configuration associated with the time-$t$ configuration of $M$ and tag $b$.",
+ "hypotheses_covered": [
+  "M is a finite-state Boolean Turing machine",
+  "w, s, and o are Boolean words",
+  "M computes output o on s within time T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ compute output $o$ on argument $s$ within time $T$. Then there is a time $t \\le\nT$ and a boundary tag such that the run of $M$ from its initial configuration on $s$ is\nhalted at $t$ with output $o$, the capture-wrapped evaluator started on the prepared\ncandidate does not visit its return state before $t$, and at time $t$ it is exactly the\nevaluator configuration of that halted run."
+}

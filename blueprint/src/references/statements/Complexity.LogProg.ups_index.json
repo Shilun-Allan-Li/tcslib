@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ups_index",
+ "key": "4b099948371cb920",
+ "kind": "lemma",
+ "title": "Index routine preserves probabilistic semantics",
+ "statement": "Let $x$ be a bit string, $B$ a natural number, $q$ a rational number, $k$ one of the four index sites, and $\\sigma$ a register state whose fifteen values are at most $B$. Write $r$ and $c$ for the values in the row and column positions specified by $k$, and suppose $r<n$ and $c<n$, where $n$ is the vertex-count register of $\\sigma$. Assume $2n+2+2n^2\\le B$, and that the program started at the entry specified by $k$ from the state obtained by setting its input pointer to $2n+2+2(rn+c)$ and its row and inner counters to $r,c$ has all live register values at most $B$, terminates along every sequence of choices, and has acceptance probability $q$ and rejection probability $1-q$ for every choice length at which every sequence of choices halts. Then the program started at the index routine for $k$ from $\\sigma$ has those same bounded-register termination and probability properties.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$B$ is a natural number",
+  "$q$ is rational",
+  "$k$ is an index site",
+  "$\\sigma$ is a register state bounded by $B$",
+  "row value $r<n$",
+  "column value $c<n$",
+  "$2n+2+2n^2\\le B$",
+  "the specified modified state at entry $\\operatorname{ixEx}(k)$ has bounded-register probabilistic semantics $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $q$ a rational number, $k$ an index site,\nand $\\sigma$ a 15-register configuration. Suppose every register of $\\sigma$ is at most\n$B$, and let $r$ and $c$ be the values in the row and column registers specified by $k$;\nassume $r<\\sigma.n$, $c<\\sigma.n$, and $2\\sigma.n+2+2\\sigma.n^2\\le B$. If the program\nstarted at the entry for $k$ with input pointer $2\\sigma.n+2+2(r\\sigma.n+c)$, row\nregister $r$, column register $c$, and all other registers as in $\\sigma$ has\nbounded-register termination and acceptance probability $q$ (and rejection probability\n$1-q$) for every choice length at which every sequence of choices halts, then the\nprogram started at the index routine for $k$ with configuration $\\sigma$ has the same\nbounded-register termination and probabilities."
+}

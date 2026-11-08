@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.timedCut_skip_groups",
+ "key": "7eba56c2f48030f5",
+ "kind": "lemma",
+ "title": "Skipping state groups",
+ "statement": "Let $x$ be a binary input, let $n$ be a nonnegative integer, and let a base configuration, index $i\\in\\{0,\\ldots,8\\}$, binary table $T$, lists $G,L,R$, and nonnegative integer $j$ be given. Suppose every group in $G$ has nine actions and $T$ is the concatenation of $L$, the serialized records of all actions in $G$, and $R$. Starting in the group phase at index $i$, with table cursor at the end of $L$, state tape encoding a window with $j$ unary symbols already consumed and $|G|$ remaining, and state cursor at $j+1$, after $|G|$ plus the total serialized length of those records plus $1$ steps the interpreter is in the state-rewind phase at index $i$. Its table cursor is past those records, its state tape encodes the window with $j+|G|$ symbols consumed and none remaining, and its state cursor is $j+|G|+1$.",
+ "hypotheses_covered": [
+  "A binary input $x$ and nonnegative integer $n$",
+  "A base four-tape configuration",
+  "An index $i\\in\\{0,\\ldots,8\\}$",
+  "A binary table $T$",
+  "A list $G$ whose groups each have nine actions",
+  "Binary strings $L,R$ and the stated decomposition of $T$",
+  "A nonnegative integer $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table holds, at the cursor, the concatenated records of a list of\n$g$ state groups, each consisting of nine records, and the state tape holds a\npartially erased unary state whose remaining ones number exactly $g$.  Then in\nexactly $g$ plus the total serialized length plus one steps, the stopped table\ninterpreter erases one unary state symbol per group, skips all of the groups'\nrecords, and enters the state rewind, with the table cursor past the traversed\nrecords and all erasures recorded on the state tape."
+}

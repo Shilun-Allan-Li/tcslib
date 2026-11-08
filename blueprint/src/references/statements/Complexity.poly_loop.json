@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.poly_loop",
+ "key": "ce09d3fa0b66a1b5",
+ "kind": "lemma",
+ "title": "Correctness and cost of a unary loop",
+ "statement": "Let $c,C,q\\in\\mathbb{N}$ with $q>0$, let $x$ be a bit string, let $i<c+1$, and let $h:\\{0,\\ldots,c\\}\\to\\mathbb{Z}$ satisfy $h(k)=0$ whenever $k\\le i$. Let $o$ be an output word, and let $r,j\\in\\mathbb{N}$ satisfy $j+r=q$. After exactly $r(\\kappa_{q,C}(i)+2)+q+2$ steps of the unary box-enumeration machine from the configuration on input $x$ in state $\\mathrm{loop}_i$, with tape contents $1^q$, output $o$, and head positions equal to $h$ except that head $i$ is at $j$, it reaches state $\\mathrm{advance}_{i+1}$ with head positions $h$ and output $o$ followed by $rCq^i$ copies of $1$. Here $\\kappa_{q,C}(0)=C+1$ and $\\kappa_{q,C}(m+1)=q(\\kappa_{q,C}(m)+2)+q+2$.",
+ "hypotheses_covered": [
+  "$c,C,q$ are natural numbers",
+  "$q>0$",
+  "$x$ is a bit string",
+  "$i<c+1$",
+  "$h(k)=0$ for every $k\\le i$",
+  "$o$ is an output word",
+  "$r,j$ are natural numbers",
+  "$j+r=q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c, C, q \\in \\mathbb{N}$ with $q > 0$, $x$ a bit string, $i \\le c$, $h \\colon \\{0,\\dots,c\\} \\to \\mathbb{Z}$ with $h(k) = 0$ for every $k \\le i$, $o$ an output word, and $r, j \\in \\mathbb{N}$ with $j + r = q$. Then running $\\mathcal{P}_{c,C}$ for exactly $r\\,(\\kappa_{q,C}(i) + 2) + q + 2$ steps from $\\Gamma_q(\\mathrm{loop}_i, h[i \\mapsto j], o)$ yields $\\Gamma_q(\\mathrm{advance}_{i+1}, h, o\\,1^{rCq^i})$, where $\\kappa_{q,C}(0) = C+1$ and $\\kappa_{q,C}(r'+1) = q(\\kappa_{q,C}(r')+2)+q+2$; here $\\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\\mathrm{loop}_i$, $\\mathrm{rewind}_i$, $\\mathrm{advance}_i$, $\\mathrm{emit}_j$ are its control states, $\\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$, and $h[i \\mapsto v]$ is $h$ with its $i$-th entry replaced by $v$."
+}

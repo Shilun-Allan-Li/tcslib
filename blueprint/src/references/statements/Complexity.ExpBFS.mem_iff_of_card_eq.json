@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.ExpBFS.mem_iff_of_card_eq",
+ "key": "16a15fc7cb1846b4",
+ "kind": "theorem",
+ "title": "Acceptance from equal reachability counts",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine with Boolean input alphabet, let $L$ be a language of Boolean strings, and let $sp$ assign a natural-number space bound to each input length. Suppose that for every input $y$ there is a time $T$ such that every choice string of length $T$ makes $N$ halt, every such run uses at most $sp(|y|)$ work-tape cells, and $y\\in L$ exactly when some such run halts with output $[\\mathrm{true}]$. Fix an input $x$ and a window size $s$, and suppose the sets of codes reachable from the initial configuration by zero or more steps within the $s$-window and within the $(s+1)$-window have equal cardinality. Then $x\\in L$ if and only if there is a number $u$ reachable by zero or more encoded $s$-window steps from the initial configuration code such that the code $u$, paired with $x$ and $s$, encodes a halted configuration with output $[\\mathrm{true}]$.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine with Boolean input alphabet",
+  "$L$ is a language of Boolean strings",
+  "$sp:\\mathbb N\\to\\mathbb N$ is a space bound",
+  "For every input $y$, there exists a time $T$",
+  "Every choice string of length $T$ makes $N$ halt on $y$",
+  "Every such run uses at most $sp(|y|)$ work-tape cells",
+  "$y\\in L$ iff some run from a choice string of length $T$ halts with output $[\\mathrm{true}]$",
+  "$x$ is a Boolean string",
+  "$s$ is a natural number",
+  "The finite sets of reachable codes at window sizes $s$ and $s+1$ have equal cardinality"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

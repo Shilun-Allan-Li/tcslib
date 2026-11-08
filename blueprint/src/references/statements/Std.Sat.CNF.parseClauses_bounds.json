@@ -1,0 +1,17 @@
+{
+ "lean_name": "Std.Sat.CNF.parseClauses_bounds",
+ "key": "29d1e2ee13951417",
+ "kind": "theorem",
+ "title": "Bounds for a successful formula parse",
+ "statement": "Let $f\\in\\mathbb{N}$, let $x$ and $r$ be bit strings, and let $\\varphi$ be a CNF formula over variables indexed by $\\mathbb{N}$. If parsing $x$ as a formula with fuel $f$ returns $\\varphi$ and remainder $r$, then $|r|\\le |x|$, and every literal $(v,b)$ in every clause of $\\varphi$ satisfies $v+1+|r|\\le |x|$.",
+ "hypotheses_covered": [
+  "$f\\in\\mathbb{N}$",
+  "$x$ and $r$ are bit strings",
+  "$\\varphi$ is a CNF formula over natural-number variables",
+  "The formula parser with fuel $f$ returns $\\varphi$ and remainder $r$ on input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f \\in \\mathbb{N}$, let $x$ and $r$ be bit strings and let $\\varphi$ be a CNF formula\nover variables indexed by $\\mathbb{N}$. Suppose the formula parser with fuel $f$ succeeds on\n$x$ and returns $\\varphi$ with remainder $r$. Then $|r| \\le |x|$, and every literal $(v,b)$\nof every clause of $\\varphi$ satisfies $v + 1 + |r| \\le |x|$. Here the formula parser with\nfuel $f$ on $x$ returns the empty formula and remainder $y$ when $x = 0y$; when $f = g+1$\nand $x = 1y$ it parses a clause $C$ from $y$ with fuel $g$, leaving $z$, then a formula\n$\\psi$ from $z$ with fuel $g$, leaving $w$, and returns $C$ followed by the clauses of\n$\\psi$ with remainder $w$; and it fails otherwise. The clause parser with fuel $g$ on $u$\nreturns the empty clause and remainder $u'$ when $u = 0u'$, and when $g = h+1$ and\n$u = 1^{j+1}0cu'$ it prepends the literal $(j,c)$ to the clause parsed from $u'$ with fuel\n$h$, keeping that remainder; it fails otherwise."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCopy_forward",
+ "key": "43c31eafa677fa8f",
+ "kind": "lemma",
+ "title": "Forward Copying Pass",
+ "statement": "For every Boolean input word $x$, every valid input-head position $p$, and every source prefix $u$ and suffix $w$, and every record $r$, starting the copier in its reading control with source word $u$ followed by $w$, source head at $|u|$, and record $r$, then running it for $2|w|$ steps leaves it in the reading control with source head at $|u|+|w|$, unchanged source word, and record extended by the word obtained by replacing each bit of $w$ with two copies of that bit. The input-head position remains $p$ and the output remains empty.",
+ "hypotheses_covered": [
+  "Boolean input word",
+  "valid input-head position",
+  "source prefix",
+  "source suffix",
+  "record"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, source word split into a prefix $u$ and suffix $w$, and record, running the copier for $2|w|$ steps from the reading control at cell $|u|$ appends the doubling of every bit of $w$ to the record and leaves the source head at the right end; the field separator has not yet been written."
+}

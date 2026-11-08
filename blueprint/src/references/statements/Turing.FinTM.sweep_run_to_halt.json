@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.sweep_run_to_halt",
+ "key": "68538681ebbb0e80",
+ "kind": "lemma",
+ "title": "Simulation up to the first halt",
+ "statement": "Let $M$ be a finite-state machine with $k>0$ work tapes over a finite alphabet, let $x$ be an input word, and let $\\sigma_k$ be defined by $\\sigma_k(0)=2k+2$ and $\\sigma_k(t+1)=\\sigma_k(t)+(4t+7)k+4$. Suppose the run of $M$ from its initial configuration on $x$ is nonhalting at every time $t<\\tau$. Then for every $t\\le\\tau$, the single-tape simulator after $\\sigma_k(t)$ steps from its initial configuration on the encoded input is in the canonical configuration representing the source machine's configuration at time $t$, with a zone of $2t+1$ blocks starting at coordinate $-t$ and work head at coordinate $-tk-1$.",
+ "hypotheses_covered": [
+  "$M$ has a finite state set and decidable state equality",
+  "$k>0$",
+  "$x$ is an input word",
+  "$\\tau$ is a natural number",
+  "The source run is nonhalting at every time $t<\\tau$",
+  "$t\\le\\tau$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k \\ge 1$ work tapes over a finite alphabet, let $x$ be an\ninput word, and suppose the run of $M$ from its initial configuration on $x$ has not\nhalted at any time $t < \\tau$. Then for every $t \\le \\tau$, running the single-tape\nsimulator for exactly $\\sigma_k(t)$ transitions (the exact simulation time after $t$\nsource steps) from its initial configuration on the symbol-wise encoded input reaches\nthe canonical between-steps configuration representing the configuration of $M$ after\n$t$ steps, with a zone of $2t+1$ blocks starting at coordinate $-t$ and work head at\nabsolute cell $-tk - 1$."
+}

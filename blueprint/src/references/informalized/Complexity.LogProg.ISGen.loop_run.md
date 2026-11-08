@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Logspace/ISCountGenCorrect.lean :: Complexity.LogProg.ISGen.loop_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Counting Loop Termination and Correctness
+
+**Claim.** Under the given machine, space, code-bound, and state assumptions, the generated program terminates and accepts exactly when $x\notin L$.
+
+**Proof.** Proceed by strong induction on the remaining space parameter $d$. Translate the three oracle predicates into the machine's initial, step, and acceptance predicates using the oracle-identification facts (`rel_orcN`, `initO_orcN`, and `accO_orcN`). The code-bound lemma (`code_le_gKv`) ensures that all machine configuration codes lie below the program's bound; monotonicity in the window size (`gKv_mono`) and the stated bound then give the required register limits. The exponential lower bound (`lt_gKv`) supplies the additional space-window inequality. The reachable-code set is nonempty (`one_le_card_rset`), and the radius-zero ball has the corresponding cardinality (`card_ball_zero_code`).
+
+Run one iteration using `iter_run`, with the comparison-stage property supplied by `cmp_run`. At the comparison stage, the ball at maximum radius has the same cardinality as the reachable-code set (`card_ball_eq_rset`), and its elements are below the bound by the ball-membership characterization (`mem_ball`) and the boundedness fact (`Mem.lt`). If the count agrees with the previous-radius count, then for positive $s$ the equal-cardinality characterization (`mem_iff_exists_acc_of_card_eq`) turns membership in $L$ into existence of a reachable accepting code. But the nonacceptance conclusion from the iteration, expressed as nonacceptance of every reachable code by `noAcc_balls_iff`, rules this out; hence the iteration yields $x\notin L$. Conversely, if $x\notin L$, any reachable accepting code would imply membership in $L$ (`mem_of_exists_acc`), so no such code exists, and the comparison gives either the equal-count case or the desired next iteration.
+
+In the unequal-count case, the induction hypothesis applies at the next radius: if that radius were already at least the space bound, the reachable-set cardinality would have stabilized (`card_rset_succ_of_le`), contradicting the unequal counts. This verifies the induction's smaller remaining parameter and supplies its state hypotheses. The comparison and iteration together establish the claimed semantics, including termination, at the original state.
+
+**Key facts.** `Complexity.LogProg.SavitchARM.rel_orcN`, `Complexity.LogProg.SavitchARM.initO_orcN`, `Complexity.LogProg.SavitchARM.accO_orcN`, `Complexity.LogProg.ISGen.code_le_gKv`, `Complexity.LogProg.ISGen.gKv_mono`, `Complexity.ExpBFS.one_le_card_rset`, `Complexity.LogProg.ISGen.card_ball_zero_code`, `Complexity.LogProg.ISGen.iter_run`, `Complexity.LogProg.ISGen.card_ball_eq_rset`, `Complexity.LogProg.ISCount.mem_ball`, `Complexity.LogProg.ISCount.Mem.lt`, `Complexity.LogProg.ISGen.cmp_run`, `Complexity.LogProg.ISGen.noAcc_balls_iff`, `Complexity.LogProg.ISGen.mem_iff_exists_acc_of_card_eq`, `Complexity.LogProg.ISGen.mem_of_exists_acc`, `Complexity.ExpBFS.card_rset_succ_of_le`.

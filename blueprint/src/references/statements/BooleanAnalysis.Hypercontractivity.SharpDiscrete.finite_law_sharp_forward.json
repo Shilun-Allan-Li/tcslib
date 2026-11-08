@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_law_sharp_forward",
+ "key": "e7cb16a07bad1b88",
+ "kind": "theorem",
+ "title": "Sharp affine contraction for finite laws",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, and let $X:\\Omega\\to\\mathbb R$ be measurable with mean zero. Suppose $q>2$ and $0<\\lambda<1/2$, and that $X$ is supported almost everywhere on a finite set $S\\subseteq\\mathbb R$ such that $\\mu(X=x)\\ge\\lambda$ for every $x\\in S$. Then $X\\in L^q(\\mu)$, the radius $\\rho=\\sqrt{\\sinh(u/q)/\\sinh(u/(q/(q-1)))}$ with $u=\\log((1-\\lambda)/\\lambda)$ satisfies $0\\le\\rho<1$, and for all $a,b\\in\\mathbb R$, $\\|a+\\rho bX\\|_{L^q(\\mu)}\\le\\|a+bX\\|_{L^2(\\mu)}$.",
+ "hypotheses_covered": [
+  "$\\mu$ is a probability measure",
+  "$X$ is real-valued and measurable",
+  "$q>2$",
+  "$0<\\lambda<1/2$",
+  "$X$ is almost surely supported on a finite set whose every listed value has probability at least $\\lambda$",
+  "$X$ has mean zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q>2$, $0<\\lambda<1/2$, and let $X$ be a centered measurable real random variable on a probability space, supported almost surely on a finite set whose atoms each have mass at least $\\lambda$. Then $H_{2,q,\\rho_*(q,\\lambda)}(X)$ holds. Here $\\rho_*(q,\\lambda)=\\sqrt{\\sinh(\\ell/q)/\\sinh(\\ell/(q/(q-1)))}$ with $\\ell=\\log((1-\\lambda)/\\lambda)$. Write $H_{p,q,\\rho}(X)$ for $1\\le p\\le q\\le\\infty$, $0\\le\\rho<1$, $X\\in L^q(\\mu)$, and $\\|a+\\rho bX\\|_q\\le\\|a+bX\\|_p$ for all $a,b\\in\\bbr$."
+}

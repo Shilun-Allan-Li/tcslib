@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.comp_inner_prepare",
+ "key": "a4c816dc62af5c13",
+ "kind": "lemma",
+ "title": "Inner preparation run",
+ "statement": "Let $C,e,n$ be natural numbers, let the mode be Boolean, let $f$ map finite Boolean words to finite Boolean words, let $h$ be a finite Boolean word, and let $v$ assign natural numbers to fourteen registers. Suppose every register value is at most $8(2C+3)(|h|+1)^{e+1}$, register $4$ equals $4n+4$, registers $6,7,10,11$ are zero, and $n\\le |h|$. Starting in the inner-preparation state with no result, the computation reaches the length-bound state with registers $8$ and $7$ equal to $n+1$ and $C(n+1)^e$, respectively, and every other register unchanged. Every configuration before the final one satisfies the prescribed invariant: the instruction is admissible at that configuration and all register values are at most $8(2C+3)(|h|+1)^{e+1}$.",
+ "hypotheses_covered": [
+  "$C,e,n\\in\\mathbb N$",
+  "mode is Boolean",
+  "$f$ is a function from finite Boolean words to finite Boolean words",
+  "$h$ is a finite Boolean word",
+  "$v$ assigns natural numbers to fourteen registers, each at most $8(2C+3)(|h|+1)^{e+1}$",
+  "register $4=4n+4$",
+  "registers $6,7,10,11$ are zero",
+  "$n\\le |h|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,h,n$ be natural numbers or bit strings as appropriate, let the mode be Boolean,\nlet $f$ be a function on bit strings, and let $v$ assign natural numbers to fourteen\nregisters. Suppose every register value is at most $8(2C+3)(|h|+1)^{e+1}$; register $4$\nequals $4n+4$; registers $6,7,10,11$ are zero; and $n\\le |h|$. Then the machine reaches\nthe length-bound state from the inner-preparation state, with registers $8$ and $7$\nupdated to $n+1$ and $C(n+1)^e$, respectively, and all other registers unchanged; the\nprescribed configuration invariant holds throughout the run."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.comp_copy_run",
+ "key": "28368bcf25cb22ac",
+ "kind": "lemma",
+ "title": "Register copy run",
+ "statement": "Let $C,e,B$ be natural numbers, let $m$ be a Boolean, let $f$ map Boolean words to Boolean words, and let $h$ be a Boolean word. Choose a stage $s$ among eight stages and let $v$ assign each of the fourteen registers a natural number at most $B$. Suppose the source register specified by stage $s$ is at most the destination register specified by that stage. Then the abstract machine, starting in the copy state for stage $s$ with its bump flag false, register assignment $v$, and no recorded answer, reaches the state prescribed by that stage with the destination register set to the original source-register value and every other register unchanged; throughout the run, the prescribed configuration invariant holds.",
+ "hypotheses_covered": [
+  "$C,e,B$ are natural numbers",
+  "$m$ is a Boolean",
+  "$f$ maps Boolean words to Boolean words",
+  "$h$ is a Boolean word",
+  "$s$ is one of eight copy stages",
+  "$v$ assigns each of fourteen registers a natural number at most $B$",
+  "the source register specified by $s$ has value at most that of the destination register specified by $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B$ be natural numbers, let the mode be Boolean, let $f$ and $h$ be a function\nand a bit string, respectively, and choose a copy stage $s$ and a fourteen-register\nassignment $v$. If every register value is at most $B$ and the source register specified\nby stage $s$ is no larger than its destination register, then the machine reaches the\nstate prescribed by stage $s$, with the destination register replaced by the source\nregister’s original value and all other registers unchanged, starting from the copy\nstate for stage $s$ with its first flag and no answer recorded; throughout this run it\nsatisfies the prescribed configuration invariant."
+}

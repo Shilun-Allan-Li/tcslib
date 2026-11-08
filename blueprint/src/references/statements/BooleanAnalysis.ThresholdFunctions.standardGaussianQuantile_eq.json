@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq",
+ "key": "4958d3f92dad5c93",
+ "kind": "lemma",
+ "title": "Quantile recovery from a cumulative value",
+ "statement": "For real numbers $\\alpha$ and $t$, if $\\Phi(t)=\\alpha$, then $Q(\\alpha)=t$.",
+ "hypotheses_covered": [
+  "$\\alpha\\in\\mathbb R$",
+  "$t\\in\\mathbb R$",
+  "$\\Phi(t)=\\alpha$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi(t)=\\int_{-\\infty}^{t}e^{-x^2/2}/\\sqrt{2\\pi}\\,dx$, and let $Q(\\alpha)$ be $\\inf\\{s\\in\\mathbb R:\\alpha\\le\\Phi(s)\\}$ for $0<\\alpha<1$ and $0$ otherwise. For real $\\alpha,t$ satisfying $\\Phi(t)=\\alpha$, one has $Q(\\alpha)=t$."
+}

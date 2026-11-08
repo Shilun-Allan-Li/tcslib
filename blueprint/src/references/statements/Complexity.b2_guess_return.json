@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.b2_guess_return",
+ "key": "b973475913611343",
+ "kind": "lemma",
+ "title": "Return from the scheduler guessing phase",
+ "statement": "Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, and let $x$ and $u$ be Boolean words. If $c$ is a configuration of $S$ on input $x$ whose state is absent, then for every bit $b$, one step of the reverse-host machine from the guessing-phase configuration determined by $c$ and $u$ produces the configuration in which the host is in its assembly phase, the assembly buffer contains the concatenation $xu$, and its head is at position $|xu|-1$.",
+ "hypotheses_covered": [
+  "$S$ and $V$ are finite deterministic Turing machines over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is an $S$-configuration on input $x$",
+  "$c$ has no active state",
+  "$u$ is a Boolean word",
+  "$b$ is a Boolean bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $d$ a halted scheduler configuration on an input $x$, and $u$ a guessed word. For any choice bit, one host step from the guessing-phase configuration for $(d,u)$ yields the assembly-rewind configuration holding the assembled word $x\\,u$ with assembly head at its last cell."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.splitCount_run",
+ "key": "58d8590c83b2a162",
+ "kind": "lemma",
+ "title": "Counted simulation of a source run",
+ "statement": "Let $M$ and $N$ be multi-tape Turing machines, respectively with $k$ and $k+1$ work tapes, and let $\\mathrm{emb}$ and $\\mathrm{ret}$ be state maps for the host simulation. Suppose that, for every source state, overflow flag, input symbol, and tuple of work-tape symbols, the host transition from the embedded state is the prescribed emission-counting transform of the source transition, using the successor-indexed work tapes. For any finite Boolean words $w,s$, source configuration $c$ over empty input, and time $t$, if the source run from $c$ is not halted at any time $j<t$, then the host run from the embedded configuration of $c$ at time $t$ equals the embedded configuration of the source run at time $t$.",
+ "hypotheses_covered": [
+  "Transition agreement for every state, overflow flag, input symbol, and work-tape tuple",
+  "Finite Boolean words $w,s$",
+  "Source configuration $c$ over empty input",
+  "Natural-number duration $t$",
+  "The source run is unhalted at every time $j<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the host machine's transitions on embedded states agree with the\nemission-counting transform of the source machine's transitions, and the\nsource, started from a configuration $c$ over the empty input, does not halt\nbefore time $t$. Then $t$ steps of the host from the embedding of $c$ land\nexactly on the embedding of the source configuration after $t$ steps; the\nhost's physical output stays empty throughout."
+}

@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.circuit_reduction_depth3",
- "key": "cc5ccdb56c75dd52",
+ "key": "f7ec05e3421f4a89",
  "kind": "theorem",
  "title": "Decision-tree depth after a random restriction of a depth-three circuit",
  "statement": "Fix $n \\ge 1$, and let $f\\colon \\{0,1\\}^n \\to \\{0,1\\}$ be the conjunction of $s_2$ DNF formulas $g_1,\\dots,g_{s_2}$, so that $f(x)=1$ if and only if $g_i(x)=1$ for every $i$. Assume a width bound $w \\ge 1$ under which each $g_i$ has width at most $w$ (every term of every gate has at most $w$ literals), and assume that within each term of each gate the literals are distinct and no variable occurs twice. Fix integers $l \\ge 1$ and $t$, and let $\\rho$ be a Bernoulli random restriction with parameter $\\frac{1}{40w}\\cdot\\frac{1}{40l}$; write $p_1=\\frac{1}{40w}$ and $p_2=\\frac{1}{40l}$. Write $f\\!\\restriction_\\rho$ for the function obtained by extending each input with the values $\\rho$ fixes, and let $D(\\cdot)$ denote decision-tree depth (the least depth of a decision tree computing the given function). Then the probability that the restricted function has decision-tree depth exceeding $t$ obeys\n\\[\n\\Pr_\\rho\\!\\big[\\,D(f\\!\\restriction_\\rho) > t\\,\\big]\n\\;\\le\\; s_2\\big((1/2)^{l} + e^{-n p_1/3}\\big) + \\big((1/2)^{t} + e^{-n p_2/3}\\big).\n\\]",

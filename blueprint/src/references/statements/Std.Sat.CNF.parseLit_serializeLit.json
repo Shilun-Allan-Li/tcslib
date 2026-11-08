@@ -1,0 +1,15 @@
+{
+ "lean_name": "Std.Sat.CNF.parseLit_serializeLit",
+ "key": "6bee8fe8720374c0",
+ "kind": "theorem",
+ "title": "Literal encoding round trip",
+ "statement": "For any literal $\\ell=(v,b)$, where $v\\in\\mathbb N$ and $b\\in\\{0,1\\}$, and any finite bit string $r$, parsing the concatenation $1^{v+1}0b\\,r$ returns the literal $\\ell$ and remainder $r$.",
+ "hypotheses_covered": [
+  "$\\ell$ is a literal with variable index in $\\mathbb N$ and polarity bit in $\\{0,1\\}$",
+  "$r$ is any finite bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\ell = (v, b)$ be a literal with variable index $v \\in \\mathbb{N}$ and polarity bit\n$b \\in \\{0,1\\}$, whose binary encoding is $1^{v+1}0b$, and let $r$ be any bit string. The\nliteral parser, which on an input of the form $1^{k+1}0cy$ returns the literal $(k,c)$ with\nremainder $y$ and fails on every other input, succeeds on $1^{v+1}0b\\,r$ and returns $\\ell$\nwith remainder $r$."
+}

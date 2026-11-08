@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopControlAction",
+ "key": "e4a50b64262e0387",
+ "kind": "def",
+ "title": "Loop control action",
+ "statement": "Let $B$ and $F$ be finite Turing machines over the Boolean alphabet. Given an input-head movement, a flag-tape instruction, counter-tape and payload-tape instructions, an optional output bit, and an optional next state in $F$'s state set or a state of the form $(b,(q,c))$ with $b,c\\in\\{\\mathrm{false},\\mathrm{true}\\}$ and $q$ a state of $B$, define an action on $B.k+1+(1+F.k)+1$ work tapes. The flag instruction is assigned to tape $B.k$, the counter instruction to tape $B.k+1$, and the payload instruction to tape $B.k+1+(1+F.k)$; every other work tape receives no write and no movement. The specified input-head movement, output bit, and next state are used unchanged.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $B$ and $F$",
+  "Input-head movement",
+  "Optional write-and-move instruction for the flag tape",
+  "Counter-tape and payload-tape write-and-move instructions",
+  "Optional output bit",
+  "Optional next state in the sum of $F$'s states and the stated Boolean/state alternatives"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

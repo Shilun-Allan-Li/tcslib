@@ -1,0 +1,14 @@
+{
+ "lean_name": "Light.CsZeroed.succ",
+ "key": "df9777fdafdf2fca",
+ "kind": "theorem",
+ "title": "Extension of a zeroed counter prefix",
+ "statement": "Let $A$ be counting-sort arguments, $j\\in\\mathbb{N}$, and $\\mu'$ an integer-valued memory map. If every counter at offset $t<j$ contains zero, then changing the counter at offset $j$ to zero makes every counter at offset $t<j+1$ contain zero.",
+ "hypotheses_covered": [
+  "Every counter at offset $t<j$ contains zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be the starting cell of a counter array, let $j$ be a natural number, and let\n$\\mu' : \\mathbb{N} \\to \\mathbb{Z}$. If $\\mu'(c+t)=0$ for every natural number $t<j$,\nthen the function obtained from $\\mu'$ by setting its value at $c+j$ to zero also\nvanishes at every position $c+t$ with $t<j+1$."
+}

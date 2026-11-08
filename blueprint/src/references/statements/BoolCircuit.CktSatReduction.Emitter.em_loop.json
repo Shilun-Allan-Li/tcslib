@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CktSatReduction.Emitter.em_loop",
+ "key": "d972baa57795f3da",
+ "kind": "theorem",
+ "title": "Machine execution for an emitter instruction suffix",
+ "statement": "Let $w$ be a Boolean list, let $k$ be a gate kind, let $c$ be one of $0,1,2$, and let $p$ be an input-head position among the $|w|+2$ positions. Let $v$ assign a natural number to each of three work tapes, and suppose every value of $v$ is at most $M$. For any instruction list $r$ and program counter $pc<64$ such that the program for $(k,c)$ starting at $pc$ is exactly $r$, and any output list $o$, there are a time $T\\le |r|(2M+3)$ and a program counter $p_e<64$ at which the program has ended such that, after $T$ steps from the configuration in emission state $(k,c,pc)$ with input-head position $p$, unary tapes and heads specified by $v$, and output $o$, the machine is in emission state $(k,c,p_e)$ with the same input position, tapes, and heads, and output $o$ followed by the execution of $r$ under $v$.",
+ "hypotheses_covered": [
+  "A Boolean input list $w$",
+  "A gate kind $k$ and $c\\in\\{0,1,2\\}$",
+  "An input-head position $p$ among the $|w|+2$ valid positions",
+  "A three-component natural-number vector $v$",
+  "A natural number $M$ with $v(t)\\le M$ for every component $t$",
+  "An instruction list $r$ and program counter $pc<64$",
+  "The program suffix at $pc$ equals $r$",
+  "An initial output list $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

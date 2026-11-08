@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.rightCfg_run",
+ "key": "583fa0e868e6a0e1",
+ "kind": "lemma",
+ "title": "Lockstep run on the right block",
+ "statement": "Let $k,l$ be nonnegative integers, let $S,S'$ be state sets, and let $x$ be a finite Boolean input. Let $M$ have $l$ work tapes and state set $S$, and let $M'$ have $k+l$ work tapes and state set $S'$. Suppose $f:S\\to S'$ satisfies the following transition rule: for every state $q\\in S$, input symbol (possibly blank) $a$, and tuple $w$ of symbols on the $k+l$ work tapes, the transition of $M'$ at state $f(q)$ on $a,w$ is the right-block extension along $f$ of the transition of $M$ at $q$ on $a$ and the symbols of $w$ on the last $l$ tapes. Then, from any configuration $c$ of $M$ and any contents and head positions for the first $k$ tapes, the run of $M'$ for $t$ steps from the configuration that places $c$ on the last $l$ tapes and those data on the first $k$ tapes equals the configuration obtained by placing the run of $M$ for $t$ steps from $c$ on the last $l$ tapes and preserving the first $k$ tapes' data.",
+ "hypotheses_covered": [
+  "$k,l$ are nonnegative integers",
+  "$S,S'$ are state sets",
+  "$x$ is a finite Boolean input",
+  "$M$ has $l$ work tapes over Bool and state set $S$",
+  "$M'$ has $k+l$ work tapes over Bool and state set $S'$",
+  "$f:S\\to S'$",
+  "For every $q$, input symbol, and $(k+l)$-tuple of work-tape symbols, the transition rule of $M'$ at $f(q)$ equals the right-block extension of the corresponding transition of $M$, using the last $l$ symbols",
+  "$c$ is a configuration of $M$ on input $x$",
+  "Arbitrary contents and head positions are specified for the first $k$ tapes",
+  "$t$ is a nonnegative number of steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $l$ work tapes and $M'$ a machine with $k + l$ work\ntapes, both over the Boolean alphabet, and let $f$ be a map from the states\nof $M$ to the states of $M'$ such that on every renamed state, for all\nscanned symbols, the transition of $M'$ is the right-block extension along\n$f$ of the corresponding transition of $M$ read off the last $l$ tapes.  Then\nfor every configuration $c$ of $M$ on input $x$, all inactive contents and\nhead positions for the first $k$ tapes, and every number of steps $t$,\nrunning $M'$ for $t$ steps from the right-block embedding of $c$ equals the\nright-block embedding of the run of $M$ for $t$ steps from $c$, with the\ninactive left-block data preserved throughout."
+}

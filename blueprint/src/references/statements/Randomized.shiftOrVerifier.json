@@ -1,0 +1,17 @@
+{
+ "lean_name": "Randomized.shiftOrVerifier",
+ "key": "da49807359a699d2",
+ "kind": "def",
+ "title": "Shifted OR verifier",
+ "statement": "Given a Boolean verifier $M$ and functions $p,k:\\mathbb{N}\\to\\mathbb{N}$, define a verifier on strings $(x,u,v)$ as follows: it outputs true if and only if, for some integer $i$ with $0\\le i<k(|x|)$, $M$ outputs true on $x$ and the string obtained by taking the length-$p(|x|)$ segment of $u$ beginning at position $i p(|x|)$ and XORing it bit by bit with $v$.",
+ "hypotheses_covered": [
+  "A verifier M is given",
+  "Functions p and k from natural numbers to natural numbers are given",
+  "The output is the disjunction over i in range(k(|x|)) of the stated verifier evaluations",
+  "The segment is drop(i p(|x|)) followed by taking p(|x|) bits, then bitwise XOR with v"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

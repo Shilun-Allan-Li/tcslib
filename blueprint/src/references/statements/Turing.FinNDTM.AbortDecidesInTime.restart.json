@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinNDTM.AbortDecidesInTime.restart",
+ "key": "39a92dfb612d04ad",
+ "kind": "theorem",
+ "title": "Correctness and expected time of restart",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, $L$ a language of binary strings, and $T$ a natural-number-valued time bound, and suppose $N$ satisfies the aborting decision conditions with time bound $T$. Fix a binary input $x$. Consider the procedure that repeatedly runs $N$ on $x$ in blocks of $T(|x|)$ choices, returning the bit if a block's output is exactly a one-bit string and otherwise continuing. Its expected number of choices, expressed as the sum of its probabilities of not having returned a result through each finite horizon, is at most $2T(|x|)$; moreover, whenever it returns a bit, that bit equals the indicator of whether $x\\in L$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$L$ is a language of binary strings",
+  "$T$ is a natural-number-valued time bound",
+  "$N$ satisfies the stated aborting decision conditions with time bound $T$",
+  "$x$ is a binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

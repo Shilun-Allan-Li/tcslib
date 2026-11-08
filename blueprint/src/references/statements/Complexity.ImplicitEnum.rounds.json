@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.ImplicitEnum.rounds",
+ "key": "fc942a9c0e8f5a80",
+ "kind": "lemma",
+ "title": "Successive enumeration rounds",
+ "statement": "Let $f$ and the two Boolean oracles satisfy, for every Boolean word $x$ and natural number $j$, $o_0(\\langle x,\\operatorname{bits}(j)\\rangle)$ is true exactly when $j<|f(x)|$, and $o_1(\\langle x,\\operatorname{bits}(j)\\rangle)$ equals the $j$-th bit of $f(x)$, defaulting to false when absent. Suppose $|f(x)|\\le F$, and $|\\operatorname{bits}(j+1)|\\le W$ for every $j<|f(x)|$. For every $i\\le |f(x)|$, the enumerator has a finite run from its initial configuration with empty output and counter zero to a configuration with the first $i$ bits of $f(x)$ as output, state asking, and counter $i$; every configuration strictly before the end of this run has shape bounded by $F$ and $W$.",
+ "hypotheses_covered": [
+  "The length oracle correctly tests whether an index is below the output length",
+  "The bit oracle returns the output bit, defaulting to false when absent",
+  "The output length is at most $F$",
+  "For every index below the output length, the bit length of its successor is at most $W$",
+  "The target prefix length satisfies $i\\le |f(x)|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

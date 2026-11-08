@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.satEval_skip",
+ "key": "122fff1e5d7caabe",
+ "kind": "lemma",
+ "title": "Skipping the Second Copy of a Bit",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $w$ be a Boolean input word, and fix a saved configuration of $M$ on $w$, a certificate word $u$, a phase $q\\in\\{0,1,2,3,4\\}$, Boolean bits $a,c$, an integer $j$, and an input position $i<|w|$. One evaluator step from the canonical configuration at position $i$, with phase $q$, bits $a,c$, skip flag set, and certificate head at $j$, yields the canonical configuration at position $i+1$ with the same phase, bits, and certificate head and with the skip flag cleared.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$w$ is a Boolean word",
+  "a saved configuration of $M$ on $w$",
+  "certificate word $u$",
+  "$q\\in\\{0,1,2,3,4\\}$",
+  "Boolean bits $a,c$",
+  "$i\\in\\mathbb N$ and $i<|w|$",
+  "$j\\in\\mathbb Z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be an input and $i < |w|$. From a canonical evaluation configuration at\ninput position $i$ in a semantic state with phase $q$, accumulator bits $a$ and\n$c$, and the skip flag set, one evaluator step yields the canonical configuration\nat position $i + 1$ in the same phase with the same accumulator bits and the skip\nflag cleared; the certificate head, the saved bank, and the empty output are\nunchanged."
+}

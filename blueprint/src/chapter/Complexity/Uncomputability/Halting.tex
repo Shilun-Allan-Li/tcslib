@@ -27,62 +27,49 @@ finite number of steps. Strings not of this form (the pairing encoding is not
 surjective) are mapped to false.
 \end{definition}
 
-\begin{theorem}[Unfolding of the halting function]
+\begin{theorem}[Characterization of the halting function]
 \lean{Complexity.HALT_eq_true_iff}
 \label{Complexity.HALT_eq_true_iff}
 \leanok
 \uses{Complexity.HALT, Turing.CodeTM.toFinTM, Turing.FinTM.ComputesInTime, Turing.MachineCode, Turing.pairEncode}
 \difficulty{2}
-Let $c$ be a coding scheme for Turing machines and let $s$ be a bit string. Then
-$\mathrm{HALT}_c(s)$ is true if and only if there exist bit strings $\alpha$ and
-$x$ such that $s$ is the pairing encoding $\langle \alpha, x \rangle$ and the
-machine that $\alpha$ denotes under $c$ produces some output on input $x$ within
-some finite number of steps.
+Let $c$ be a machine representation scheme and let $s$ be a bit string. The halting
+function of $c$ returns true on $s$ if and only if there are bit strings $\alpha$ and
+$x$ such that $s$ is their pairing encoding, and the machine decoded from $\alpha$
+produces some output on input $x$ within some finite number of steps.
 \end{theorem}
 
-\begin{theorem}[The halting function on a genuine pair]
+\begin{theorem}[Halting on an encoded pair]
 \lean{Complexity.HALT_pairEncode_eq_true_iff}
 \label{Complexity.HALT_pairEncode_eq_true_iff}
 \leanok
 \uses{Complexity.HALT, Complexity.HALT_eq_true_iff, Turing.CodeTM.toFinTM, Turing.FinTM.ComputesInTime, Turing.MachineCode, Turing.pairEncode, Turing.pairEncode_injective}
 \difficulty{3}
-Let $c$ be a coding scheme for Turing machines and let $\alpha$ and $x$ be bit
-strings. Then $\mathrm{HALT}_c$, evaluated on the pairing encoding
-$\langle \alpha, x \rangle$, is true if and only if the machine that $\alpha$
-denotes under $c$ halts on input $x$, completing some output within some finite
-number of steps.
+Let $c$ be a machine representation scheme and let $\alpha$ and $x$ be bit strings. The
+halting function of $c$ returns true on the pairing encoding of $\alpha$ and $x$ if and
+only if the machine decoded from $\alpha$ produces some output on input $x$ within some
+finite number of steps.
 \end{theorem}
 
-\begin{theorem}[Reduction from the diagonal function to halting]
+\begin{theorem}[Computability reduction from halting to the diagonal function]
 \lean{Complexity.UC_computable_of_HALT_computable}
 \label{Complexity.UC_computable_of_HALT_computable}
 \leanok
 \uses{Complexity.Computable, Complexity.HALT, Complexity.HALT_pairEncode_eq_true_iff, Complexity.UC, Complexity.UC_eq_false_iff, Complexity.UC_eq_true_iff, Turing.EffectiveMachineCode, Turing.FinTM.Computes, Turing.FinTM.Computes.exists_computesInTime_iff, Turing.FinTM.ComputesFunInTime.computes, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesFunInTime_const, Turing.FinTM.computesFunInTime_ifEq, Turing.FinTM.exists_comp_partial, Turing.FinTM.exists_cond, Turing.computesFunInTime_pairEncode_diag, Turing.pairEncode, Turing.universal}
 \difficulty{5}
-Let $c$ be an effective coding scheme for Turing machines, i.e.\ one admitting a
-universal evaluator machine. Write $\mathrm{HALT}_c$ for the halting function of
-$c$: it is true on a bit string $s$ exactly when $s$ is the pairing encoding
-$\langle \alpha, x \rangle$ of two bit strings and the machine denoted by $\alpha$
-under $c$ halts on input $x$, and false otherwise. Write $\mathrm{UC}_c$ for the
-diagonal function that maps a bit string $\alpha$ to false when the machine
-denoted by $\alpha$ under $c$ outputs the single bit true on input $\alpha$
-within some finite number of steps, and to true otherwise. If the function
-mapping $s$ to the one-bit string carrying $\mathrm{HALT}_c(s)$ is computable by
-a Turing machine, then so is the function mapping $\alpha$ to the one-bit string
-carrying $\mathrm{UC}_c(\alpha)$ [AB09, proof of Theorem 1.11].
+Let $c$ be an effective machine representation scheme, and suppose the function that
+maps each bit string $s$ to the one-bit string whose bit is the halting value of $c$ on
+$s$ is computable. Then the function mapping each bit string $\alpha$ to the one-bit
+string whose bit is the diagonal value of $c$ at $\alpha$ is computable.
 \end{theorem}
 
-\begin{theorem}[Uncomputability of the halting problem]
+\begin{theorem}[Uncomputability of the halting function]
 \lean{Complexity.HALT_not_computable}
 \label{Complexity.HALT_not_computable}
 \leanok
 \uses{Complexity.Computable, Complexity.HALT, Complexity.UC_computable_of_HALT_computable, Complexity.UC_not_computable, Turing.EffectiveMachineCode}
 \difficulty{1}
-Let $c$ be an effective coding scheme for Turing machines, i.e.\ one admitting a
-universal evaluator machine, and let $\mathrm{HALT}_c$ be its halting function:
-true on a bit string $s$ exactly when $s$ is the pairing encoding
-$\langle \alpha, x \rangle$ of two bit strings and the machine denoted by
-$\alpha$ under $c$ produces some output on input $x$ within some finite number of
-steps, and false otherwise. Then no Turing machine computes the function mapping
-$s$ to the one-bit string carrying $\mathrm{HALT}_c(s)$ [AB09, Theorem 1.11].
+For every effective machine representation scheme $c$, no finite-state Boolean Turing
+machine computes the function sending each bit string $s$ to the one-bit string whose
+bit is the value of the halting function of $c$ at $s$.
 \end{theorem}

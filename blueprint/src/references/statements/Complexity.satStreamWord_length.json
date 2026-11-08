@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satStreamWord_length",
+ "key": "8d652c534f559534",
+ "kind": "lemma",
+ "title": "Length of an encoded seam state",
+ "statement": "For every streaming seam state with fresh cursor $f$, consumed length $c$, and phase value $q$, the encoded seam word has length $2f+2c+q+4$.",
+ "hypotheses_covered": [
+  "streaming seam state $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every seam state with fresh cursor $f$, consumed length $c$, and phase\n$q \\in \\{0, \\dots, 4\\}$, the encoded seam word has length exactly\n$2f + 2c + q + 4$; in particular it is linear in the two unary counters."
+}

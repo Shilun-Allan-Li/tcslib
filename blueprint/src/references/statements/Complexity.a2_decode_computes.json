@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.a2_decode_computes",
+ "key": "c606a096bef3eca0",
+ "kind": "lemma",
+ "title": "Timed decoding by a binary countdown",
+ "statement": "For every finite Boolean word $x$, the countdown emitter computes the word consisting of $a2Value(x)$ copies of $1$ within $2|x|+2+(a2Value(x)+1)(2|x|+3)$ steps.",
+ "hypotheses_covered": [
+  "A finite Boolean word $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For every binary input $x$, the countdown emitter computes the all-ones word whose length is the little-endian value $v$ of $x$, within $2|x| + 2 + (v+1)(2|x|+3)$ steps."
+}

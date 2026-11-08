@@ -1,0 +1,23 @@
+{
+ "lean_name": "FABL.depthTwoFinishEqual",
+ "key": "2c45a1f07cda8454",
+ "kind": "def",
+ "title": "Decision tree for three-sign majority",
+ "statement": "Let $n$ be a nonnegative integer, let $R_1,R_2,B_3\\subseteq\\{0,\\ldots,n-1\\}$ satisfy $R_1\\cap(R_2\\cup B_3)=\\varnothing$ and $R_2\\cap B_3=\\varnothing$, and let a sign mean an element of $\\mathbb Z^\\times$. Suppose $C_1$ and $C_2$ assign, to each sign, a decision tree querying only coordinates in $R_1$ and $R_2$, respectively, and let $E_3$ be a decision tree querying only coordinates in $B_3$. For any fixed sign $x_1$, the construction gives a decision tree querying only coordinates in $R_1\\cup(R_2\\cup B_3)$: after the first tree returns $y_1$, it runs the second tree (with input $x_1$) before $E_3$ if $y_1=x_1$, and otherwise runs $E_3$ before the second tree; when the next observed sign equals $y_1$, it returns $y_1$ immediately, and otherwise labels the output by the three-sign majority value of the observed signs.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$R_1,R_2,B_3$ are subsets of the $n$ coordinates",
+  "$R_1$ is disjoint from $R_2\\cup B_3$",
+  "$R_2$ is disjoint from $B_3$",
+  "$C_1$ assigns a decision tree querying only $R_1$ to every sign",
+  "$C_2$ assigns a decision tree querying only $R_2$ to every sign",
+  "$E_3$ is a decision tree querying only $B_3$",
+  "$x_1$ is a fixed sign"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

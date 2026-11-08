@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.positiveMask_coefficient_expect",
+ "key": "c01b2db93dd41dee",
+ "kind": "theorem",
+ "title": "Expected Masked Walsh Character",
+ "statement": "Let $S\\subseteq[n]$, and choose $r$ uniformly from the Boolean cube $\\{0,1\\}^n$. If $M(r)=\\{i:r_i=0\\}$ and $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$, then $\\mathbb E[\\mathbf 1_{S\\subseteq M(r)}\\chi_S(r)]=(1/2)^{|S|}$.",
+ "hypotheses_covered": [
+  "Natural number $n$ defining the Boolean cube",
+  "Subset $S\\subseteq[n]$",
+  "Uniform choice of $r\\in\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $S\\subseteq[n]$ and uniform $r\\in\\{0,1\\}^n$, let $M(r)=\\{i:r_i=0\\}$ and $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$. Then $\\mathbb E_r[\\mathbf1_{S\\subseteq M(r)}\\chi_S(r)]=2^{-|S|}$."
+}

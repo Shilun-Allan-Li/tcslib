@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.npre_of_npreS",
+ "key": "11ffd03afdf84d41",
+ "kind": "lemma",
+ "title": "Transfer from nondeterministic to banked preconditions",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ registers and $d$ oracle deciders, let $M_j$ decide a language $L_j$ in space $s_j$ for each $j$, and fix an input bit string $x$. Suppose $B,W_d\\in\\mathbb N$, $1\\le B$, and for every $j,n$ with $n\\le 2|x|+2+m(2W_d+2)$ we have $s_j(n)\\le B$. If a configuration $a$ satisfies the nondeterministic precondition for $A$ on $x$, and every register value $v(r)$ in $a$ has binary representation of length at most $W_d$ after adding $1$, then $a$ satisfies the corresponding precondition for the banked machine that simulates all the deciders, using the language indicators as its oracles and space bound $B$.",
+ "hypotheses_covered": [
+  "$A$ is a nondeterministic register program with $m$ registers and $d$ deciders",
+  "Each $M_j$ decides $L_j$ within space bound $s_j$",
+  "$B,W_d$ are natural numbers",
+  "$1\\le B$",
+  "For all $j,n$ with $n\\le 2|x|+2+m(2W_d+2)$, $s_j(n)\\le B$",
+  "$a$ satisfies the nondeterministic precondition for $A$ on $x$",
+  "For every register $r$, the binary representation of $a$'s register value $v(r)+1$ has length at most $W_d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

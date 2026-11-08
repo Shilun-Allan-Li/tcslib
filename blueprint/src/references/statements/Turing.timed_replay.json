@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timed_replay",
+ "key": "3152159a6cab80b5",
+ "kind": "lemma",
+ "title": "Replay of a Nonhalting Run",
+ "statement": "Let $x$ be a Boolean input, $c$ a four-tape configuration of the table interpreter on $x$, $w$ a Boolean clock word, and $t\\in\\mathbb{N}$. If the stopped table interpreter's configuration after $t$ steps is live, then the timed interpreter's configuration after $t$ steps from the lift of $c$ with clock word $w$ equals the lift, with clock word $w$, of the stopped interpreter's configuration after $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$c$ is a four-tape configuration on $x$",
+  "$w$ is a Boolean clock word",
+  "$t\\in\\mathbb{N}$",
+  "the stopped interpreter's configuration after $t$ steps is live"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the stopped table interpreter has not halted after $t$ steps from a\nfour-tape configuration, then $t$ steps of the timed interpreter from the\nsix-tape lift of that configuration equal the lift of the $t$-step stopped\nrun, with an unchanged clock word; no countdown or output phase is visited in\nthe interior of the run."
+}

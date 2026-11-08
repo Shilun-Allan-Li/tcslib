@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.cont_guess_run",
+ "key": "bdd552ac91b07ca2",
+ "kind": "lemma",
+ "title": "Run of the guessing phase",
+ "statement": "Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a binary input, let $d$ be a configuration of $M$ on $x$, and let $u,w$ be binary words. Running the guessing-phase machine for $M$ from the invariant configuration corresponding to $(d,u)$ under the choice word $w$ yields the invariant configuration for the configuration reached after $|w|$ steps of $M$ from $d$, with the bits of $w$ selected at the steps when $M$ emits an output symbol appended to $u$.",
+ "hypotheses_covered": [
+  "$M$ is a finite deterministic Turing machine over the binary alphabet",
+  "$x$ is a binary input",
+  "$d$ is a configuration of $M$ on $x$",
+  "$u,w$ are binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic machine over the binary alphabet, $d$ a configuration, $u$ a captured word and $w$ a word of choice bits. Running the guessing-phase machine of $M$ under $w$ from the invariant configuration for $(d,u)$ yields the invariant configuration for the $|w|$-step run of $M$ from $d$, with the selection of $w$ along the emission mask appended to the captured word."
+}

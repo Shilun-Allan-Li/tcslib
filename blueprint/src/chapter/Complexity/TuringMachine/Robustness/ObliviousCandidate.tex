@@ -131,32 +131,33 @@ this coding retains the exact schedule.
 \leanok
 \uses{Complexity.decorateTM_oblivious, Complexity.obliviousCandidate, Complexity.obliviousSchedule_oblivious, Complexity.obliviousSchedule_output, Complexity.parallelTM_oblivious, Turing.FinTM, Turing.FinTM.Oblivious}
 \difficulty{3}
-For all binary machines $W$ and $M$ and every padding constant $a$, the candidate
-simulator built from $W$, $M$, and $a$ is oblivious: its head positions at every time
-step depend only on the length of the input.  This holds on all binary inputs of every
-length, including the empty input, and uses no assumption about the computations of
-$W$ or $M$.
+Let $W$ and $M$ be finite machines over the binary alphabet, and let $a\in\mathbb{N}$.
+For any two binary inputs of equal length and every time $t\in\mathbb{N}$, the candidate
+built from $W$, $M$, and $a$ has the same input-head position and the same work-tape
+head positions on both inputs.
 \end{lemma}
 
-\begin{lemma}[Idle source action]
+\begin{lemma}[Idle action in the halted state]
 \lean{Complexity.obliviousSourceAction_idle}
 \label{Complexity.obliviousSourceAction_idle}
 \leanok
 \uses{Complexity.OblPayload, Complexity.obliviousSourceAction, Turing.FinTM}
 \difficulty{1}
-For every binary machine $M$ and every vector of payload reads, the action selected in
-the halted state is the identity action: it performs no writes, emits no output, moves
-no head, and keeps the halted successor state.
+Let $M$ be a finite Turing machine over the Boolean alphabet, and let a vector of
+payload reads, one for each work tape and one for the virtual input, be given. When the
+selected state is absent, the selected action is stationary, makes no writes, emits no
+output, and has an absent successor state.
 \end{lemma}
 
-\begin{lemma}[Idle virtual heads]
+\begin{lemma}[Stationary virtual heads when halted]
 \lean{Complexity.obliviousSourceMove_idle}
 \label{Complexity.obliviousSourceMove_idle}
 \leanok
 \uses{Complexity.OblPayload, Complexity.obliviousSourceAction, Complexity.obliviousSourceMove, Turing.FinTM}
 \difficulty{3}
-For every binary machine $M$ and every vector of payload reads, each of the $k+1$
-virtual head directions selected in the halted state is stationary.
+Let $M$ be a finite Turing machine over the Boolean alphabet, and let a vector of
+payload reads, one for each work tape and one for the virtual input, be given. If the
+selected state is absent, every virtual head direction is stationary.
 \end{lemma}
 
 \begin{definition}[Little-endian value of a budget word]
@@ -169,14 +170,14 @@ $v$ has value $2v + b$.  Zero-padded words are permitted and high zero bits do n
 change the value.
 \end{definition}
 
-\begin{lemma}[Value of the canonical bit representation]
+\begin{lemma}[Value of the binary representation]
 \lean{Complexity.budgetValue_bits}
 \label{Complexity.budgetValue_bits}
 \leanok
 \uses{Complexity.budgetValue}
 \difficulty{4}
-For every natural number $n$, the little-endian value of the canonical binary
-representation of $n$ equals $n$.
+For every natural number $n$, the little-endian value of its binary bit representation
+is $n$.
 \end{lemma}
 
 \begin{definition}[Fixed-width borrow pass]
@@ -190,46 +191,45 @@ rewritten word, always retaining the full width of the word even when leading hi
 bits become zero.
 \end{definition}
 
-\begin{lemma}[Cleared borrow is the identity]
+\begin{lemma}[Borrow pass with no incoming borrow]
 \lean{Complexity.budgetBorrow_false}
 \label{Complexity.budgetBorrow_false}
 \leanok
 \uses{Complexity.budgetBorrow}
 \difficulty{3}
-For every bit word, the borrow pass entered with a cleared borrow flag returns a
-cleared flag and leaves every bit of the word unchanged.
+For every finite bit word, the borrow pass entered with a false borrow flag returns a
+false final borrow flag and leaves the word unchanged.
 \end{lemma}
 
-\begin{lemma}[Borrow pass preserves width]
+\begin{lemma}[Borrow pass preserves word length]
 \lean{Complexity.budgetBorrow_length}
 \label{Complexity.budgetBorrow_length}
 \leanok
 \uses{Complexity.budgetBorrow}
 \difficulty{3}
-For every borrow flag and every bit word, the word produced by the borrow pass has
-exactly the length of the input word.
+For every incoming borrow bit $c$ and every finite bit word $b$, the word produced by
+the borrow pass has the same length as $b$.
 \end{lemma}
 
-\begin{lemma}[Underflow exactly at zero]
+\begin{lemma}[Underflow occurs exactly at zero]
 \lean{Complexity.budgetBorrow_underflow}
 \label{Complexity.budgetBorrow_underflow}
 \leanok
 \uses{Complexity.budgetBorrow, Complexity.budgetBorrow_false, Complexity.budgetValue}
 \difficulty{4}
-For every bit word $w$, the borrow pass entered with a set borrow flag ends with a set
-flag if and only if the little-endian value of $w$ is $0$; this holds also for words
-padded with high zero bits.
+For every finite bit word $b$, the borrow pass started with borrow bit $1$ ends with
+borrow bit $1$ if and only if the little-endian value of $b$ is zero.
 \end{lemma}
 
-\begin{lemma}[Successful borrow subtracts one]
+\begin{lemma}[Borrow subtracts one from positive values]
 \lean{Complexity.budgetBorrow_value}
 \label{Complexity.budgetBorrow_value}
 \leanok
 \uses{Complexity.budgetBorrow, Complexity.budgetBorrow_false, Complexity.budgetValue}
 \difficulty{4}
-For every bit word $w$ whose little-endian value is positive, the word produced by the
-borrow pass entered with a set flag has little-endian value exactly one less than the
-value of $w$.
+For every finite bit word $b$ whose little-endian value is positive, the little-endian
+value of the word produced by the borrow pass started with borrow bit $1$, plus $1$,
+equals the value of $b$.
 \end{lemma}
 
 \begin{definition}[Single-lane configuration]
@@ -256,46 +256,51 @@ designated tape only, enters the given state, keeps the input head stationary, l
 every other work tape untouched, and emits no output.
 \end{definition}
 
-\begin{lemma}[Lane read]
+\begin{lemma}[Read symbol in a lane configuration]
 \lean{Complexity.laneCfg_read}
 \label{Complexity.laneCfg_read}
 \leanok
 \uses{Complexity.laneCfg, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepTape_read}
 \difficulty{1}
-In every single-lane configuration, the symbol read on the active lane is the first
-entry of the unprocessed list, or blank if that list is empty.
+For any base configuration, work tape, optional state, integer frontier $z$, and lists
+$l,r$ of possibly blank symbols, the symbol read by the head on that work tape in the
+associated lane configuration is the first entry of $r$, or blank if $r$ is empty.
 \end{lemma}
 
-\begin{lemma}[Right-moving lane step]
+\begin{lemma}[Rightward update of a lane configuration]
 \lean{Complexity.laneCfg_right}
 \label{Complexity.laneCfg_right}
 \leanok
 \uses{Complexity.laneAction, Complexity.laneCfg, Turing.Action.apply, Turing.Cfg, Turing.FinTM.sweepTape_right, Turing.moveInputPos_zero}
 \difficulty{4}
-Let a single-lane configuration be given whose unprocessed list begins with an entry
-$s$.  Applying the single-lane action that writes an entry $s'$ on the lane, moves
-right, and enters a state $q$ yields again a single-lane configuration: the state
-becomes $q$, the coordinate advances by one, $s'$ is pushed onto the processed list,
-$s$ is removed from the unprocessed list, and all other tapes and heads are unchanged.
+Let a base configuration, work tape, optional state $q$, state $q'$, integer $z$, lists
+$l,r$, and optional symbols $a,b$ be given. Applying the action that writes $b$ on the
+designated tape, moves its head right, and enters state $q'$ to the lane configuration
+with frontier $z$, left list $l$, and right list $a::r$ gives the lane configuration
+with state $q'$, frontier $z+1$, left list $b::l$, and right list $r$.
 \end{lemma}
 
-\begin{lemma}[Exact cost of a one-lane transduction]
+\begin{lemma}[Machine execution of a finite transduction]
 \lean{Complexity.lane_run}
 \label{Complexity.lane_run}
 \leanok
 \uses{Complexity.laneAction, Complexity.laneCfg, Complexity.laneCfg_read, Complexity.laneCfg_right, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepFold, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
-Let a $k$-tape machine, a designated lane, an encoding of transducer states into
-machine states, an encoding of transducer letters into tape symbols, and a local
-transducer step be given.  Suppose that from every encoded transducer state, whenever
-the lane reads an encoded letter, the machine performs exactly the single-lane action
-that writes the encoded output letter of the local step, moves right, and enters the
-encoded updated transducer state.  Then running the machine for exactly $\ell$ steps
-from a single-lane configuration whose unprocessed list begins with an encoded word of
-length $\ell$ yields the single-lane configuration in which the transducer has been
-folded over the whole word: the state is the encoded final transducer state, the
-coordinate has advanced by $\ell$, the encoded output word has been moved in reverse
-onto the processed list, and no inactive tape has changed.
+Let $M$ be a $k$-tape machine, let $i$ be a designated tape, and let $R,C$ be sets of
+transducer states and letters. Let $\mathrm{state}:R\to S$, $\mathrm{symbol}:C\to A$,
+and $\mathrm{visit}:R\times C\to R\times C$ be maps. Suppose that for every $s\in R$,
+$c\in C$, input symbol, and tuple $ws$ of work-tape symbols whose entry at tape $i$ is
+$\mathrm{symbol}(c)$, the machine transition from state $\mathrm{state}(s)$ is precisely
+the action that moves right on tape $i$, writes $\mathrm{symbol}(c')$ there, enters
+state $\mathrm{state}(s')$, keeps the input head stationary, leaves other work tapes
+unchanged, and emits no output, where $(s',c')=\mathrm{visit}(s,c)$. For any base
+configuration, list $as$ of letters, initial transducer state $s$, integer $z$, and
+lists $l,r$ of possibly blank symbols, running $M$ for $|as|$ steps from the lane
+configuration with state $\mathrm{state}(s)$, frontier $z$, left list $l$, and right
+list consisting of the encoded letters of $as$ followed by $r$ yields the lane
+configuration with final transducer state obtained by processing $as$ from $s$, frontier
+$z+|as|$, left list equal to the reverse of the encoded rewritten word prepended to $l$,
+and right list $r$.
 \end{lemma}
 
 \begin{definition}[One-bit borrow transducer]
@@ -306,57 +311,60 @@ Given a carry bit $c$ and a data bit $b$, the local borrow transducer produces t
 carry $c \wedge \lnot b$ and the output bit $b \oplus c$.
 \end{definition}
 
-\begin{lemma}[Folding the borrow transducer]
+\begin{lemma}[Borrow pass as a left-to-right fold]
 \lean{Complexity.budgetFold}
 \label{Complexity.budgetFold}
 \leanok
 \uses{Complexity.budgetBorrow, Complexity.budgetVisit, Turing.FinTM.sweepFold}
 \difficulty{3}
-For every carry flag and every bit word, folding the one-bit borrow transducer over
-the word is precisely the fixed-width borrow pass on that word.
+For every incoming carry bit $c$ and finite bit word $b$, folding the one-bit borrow
+rule from left to right over $b$, starting in state $c$, returns the same final state
+and rewritten word as the borrow pass on $b$ starting with $c$.
 \end{lemma}
 
-\begin{lemma}[Budget-lane focusing of a schedule action]
+\begin{lemma}[Budget tape action]
 \lean{Complexity.oblAction_budget}
 \label{Complexity.oblAction_budget}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.laneAction, Complexity.oblAction}
 \difficulty{4}
-Consider a machine with $k$ leading work tapes followed by three administrative tapes,
-of which the first is the budget tape.  For every state $q$, optional symbol $s$, and
-direction $d$, the schedule action that enters $q$, keeps the input head fixed, writes
-$s$ with direction $d$ on the budget tape, and leaves the two remaining administrative
-tapes and all $k$ leading tapes untouched equals the single-lane action on the budget
-tape writing $s$, moving in direction $d$, and entering $q$.
+Let $S$ be a state type, $k \in \mathbb{N}$, $q \in S$, $b$ an optional schedule symbol,
+and $d \in \{-1,0,1\}$. The schedule action with successor state $q$, stationary input
+head, and the write-and-move instruction $(b,d)$ on the first of the three
+administrative tapes—leaving the other two and the first $k$ tapes untouched—equals the
+action that performs that same instruction only on the designated budget tape and enters
+state $q$.
 \end{lemma}
 
-\begin{lemma}[Borrow transition of the schedule controller]
+\begin{lemma}[Borrow transition on the budget tape]
 \lean{Complexity.obliviousSchedule_borrow}
 \label{Complexity.obliviousSchedule_borrow}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.laneAction, Complexity.oblAction_budget, Complexity.obliviousSchedule, Turing.FinTM}
 \difficulty{2}
-Let $W$ be a binary machine and $a$ a padding constant, and consider the length-only
-schedule controller built from them, whose first administrative tape is the budget
-tape.  If the budget tape currently reads a bit symbol $b$, then the transition out of
-the borrow control phase with carry $c$ is the single-lane action on the budget tape
-that writes the bit $b \oplus c$, moves right, and enters the borrow phase with carry
-$c \wedge \lnot b$.
+Let $W$ be a finite binary machine, $a\in\mathbb{N}$, and let $c,b\in\{0,1\}$, with the
+first administrative tape reading the tagged bit $b$. For any input symbol and tape
+contents satisfying that reading, the schedule machine's transition from the borrow
+phase with carry $c$ is the action that writes the tagged bit $b\oplus c$ on the budget
+tape, moves its head one cell to the right, leaves all other tapes and the input head
+stationary, emits no output, and enters the borrow phase with carry $c\wedge\lnot b$.
 \end{lemma}
 
-\begin{lemma}[Exact run of the implemented borrow pass]
+\begin{lemma}[Run of the borrow pass]
 \lean{Complexity.obliviousSchedule_borrow_run}
 \label{Complexity.obliviousSchedule_borrow_run}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.budgetBorrow, Complexity.budgetFold, Complexity.budgetVisit, Complexity.laneCfg, Complexity.lane_run, Complexity.obliviousSchedule, Complexity.obliviousSchedule_borrow, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom}
 \difficulty{2}
-Let $W$ be a binary machine, $a$ a padding constant, and let a bit word $w$ be laid
-out as bit symbols on the budget lane of the schedule controller, starting in the
-borrow phase with carry $c$.  Running the controller for exactly $|w|$ steps carries
-out the fixed-width borrow pass on $w$: the phase becomes borrow with the resulting
-borrow flag, the rewritten word is moved in reverse into the processed zone, the head
-has advanced by $|w|$, and every other tape content and head position, including
-copied input data in later decorations, is unchanged.
+Let $W$ be a finite binary machine, $a\in\mathbb{N}$, and let $x$ be a schedule-symbol
+input. Take a configuration whose budget tape has head at integer position $z$, whose
+contents are the bit symbols for a word $bs$ beginning at that position followed by a
+right-hand list $r$, and whose state is the borrow phase with carry $c$. After exactly
+$|bs|$ steps, the machine is in the borrow phase with the carry produced by processing
+$bs$ from initial carry $c$; its budget-tape head is at $z+|bs|$, and the tape contains
+the reversed list of rewritten bits to the left of that position followed by $r$. The
+resulting configuration agrees with the original base configuration on every other
+component and tape.
 \end{lemma}
 
 \begin{definition}[Virtual input payload]
@@ -380,16 +388,17 @@ native input head is $1$ when the head sits at position $0$ (the left end), $2$ 
 it sits at position $|x| + 1$ (the right end), and $0$ otherwise.
 \end{definition}
 
-\begin{lemma}[Payload at the virtual input head]
+\begin{lemma}[Payload at the Virtual Input Head]
 \lean{Complexity.inputPayload_head}
 \label{Complexity.inputPayload_head}
 \leanok
 \uses{Complexity.inputPayload, Complexity.inputTag, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape_inputSymbol}
 \difficulty{3}
-For every configuration of a binary machine on an input $x$ with input head at
-position $p$, the virtual input payload of $x$ at coordinate $p - 1$ is exactly the
-pair of the symbol read by the native input head and the boundary tag of that
-configuration; on the empty input both boundary tags are produced correctly.
+Let $x$ be a binary word and let $c$ be a machine configuration on $x$. The virtual
+input payload at the integer coordinate one less than the configuration's input-head
+position equals the pair consisting of the symbol read by the input head and the
+boundary tag: tag $1$ at the left boundary, tag $2$ at the right boundary, and tag $0$
+at every other input-head position.
 \end{lemma}
 
 \begin{definition}[Clipped virtual direction]
@@ -402,15 +411,17 @@ and $d$ is rightward, and equals $d$ in every other case.  It expresses native i
 clamping as a virtual tape-shift direction.
 \end{definition}
 
-\begin{lemma}[Clipping matches the native head displacement]
+\begin{lemma}[Clipped direction gives head displacement]
 \lean{Complexity.clippedMove_correct}
 \label{Complexity.clippedMove_correct}
 \leanok
 \uses{Complexity.clippedMove, Turing.FinTM.moveInputPos_neg_val, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-For every input head position $p \in \{0, 1, \dots, n+1\}$ and every direction $d$,
-the position reached by the native clamped input move of $p$ in direction $d$, shifted
-down by one, equals $p - 1$ plus the clipped direction viewed as an integer.
+For every natural number $n$, input-head position $p\in\{0,\ldots,n+1\}$, and direction
+$d\in\{-1,0,1\}$, let the head move by $d$ with clamping at the two boundary positions,
+and let the clipped direction be $0$ for an attempted move outward at a boundary and $d$
+otherwise. The resulting head position, shifted down by one, is $p-1$ plus the clipped
+direction.
 \end{lemma}
 
 \begin{definition}[Head-centered source payloads]
@@ -437,15 +448,15 @@ $0$, and to the final coordinate the symbol read by the input head paired with t
 boundary tag of the configuration.
 \end{definition}
 
-\begin{lemma}[Origin payloads are the source reads]
+\begin{lemma}[Origin payloads and source reads]
 \lean{Complexity.sourcePayload_origin}
 \label{Complexity.sourcePayload_origin}
 \leanok
 \uses{Complexity.inputPayload_head, Complexity.sourcePayload, Complexity.sourceReads, Turing.Cfg, Turing.Cfg.workTapeSymbols}
 \difficulty{3}
-For every configuration of a binary machine, the head-centered payload vector at
-offset $0$ equals the read vector at the macrostep origin; reading the marked origin
-therefore obtains all source reads simultaneously.
+For a binary machine configuration $c$ with $k$ work tapes on input $x$, the
+head-centered payload vector at offset $0$ equals the vector of symbols read under the
+work-tape heads and the input head, with the input boundary tag included.
 \end{lemma}
 
 \begin{definition}[Totalized source action]
@@ -459,26 +470,27 @@ halted, and the transition action of $M$ on the current input and work-tape read
 $c$ otherwise; halting is thereby interpreted as an idle macrostep.
 \end{definition}
 
-\begin{lemma}[The controller selects the source transition]
+\begin{lemma}[Correctness of the selected source action]
 \lean{Complexity.obliviousSourceAction_correct}
 \label{Complexity.obliviousSourceAction_correct}
 \leanok
 \uses{Complexity.obliviousSourceAction, Complexity.sourcePayload, Complexity.sourcePayload_origin, Complexity.sourceReads, Complexity.sourceTotalAction, Turing.Cfg, Turing.FinTM}
 \difficulty{3}
-For every binary machine $M$ and every configuration $c$ of $M$ on an input $x$, the
-action selected by the data controller from the control state of $c$ and the
-head-centered payloads at offset $0$ equals the totalized action of $M$ at $c$.
+Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean
+input, and let $c$ be a configuration of $M$ on $x$. The action selected from the state
+of $c$ and the payload vector centered at offset $0$ equals the totalized action of $M$
+at $c$.
 \end{lemma}
 
-\begin{lemma}[Applying the totalized action is one step]
+\begin{lemma}[Applying the totalized action]
 \lean{Complexity.sourceTotalAction_apply}
 \label{Complexity.sourceTotalAction_apply}
 \leanok
 \uses{Complexity.sourceTotalAction, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-For every binary machine $M$ and every configuration $c$ of $M$, applying the
-totalized action of $M$ at $c$ to $c$ yields exactly one machine step of $M$ from $c$,
-including the idle step performed after $M$ has halted.
+For every finite binary Turing machine $M$, every input word $x$, and every
+configuration $c$ of $M$ on $x$, applying the totalized source action at $c$ to $c$
+gives the configuration obtained by one machine step from $c$.
 \end{lemma}
 
 \begin{definition}[Shift directions of an action]
@@ -492,17 +504,16 @@ the final coordinate the clipped direction of the action's input movement at the
 current input head position.
 \end{definition}
 
-\begin{lemma}[The controller selects the correct virtual shifts]
+\begin{lemma}[Correctness of virtual head movements]
 \lean{Complexity.obliviousSourceMove_correct}
 \label{Complexity.obliviousSourceMove_correct}
 \leanok
 \uses{Complexity.clippedMove, Complexity.inputTag, Complexity.obliviousSourceAction_correct, Complexity.obliviousSourceMove, Complexity.sourcePayload, Complexity.sourcePayload_origin, Complexity.sourceReads, Complexity.sourceShift, Complexity.sourceTotalAction, Turing.Cfg, Turing.FinTM}
 \difficulty{4}
-For every binary machine $M$ and every configuration $c$ of $M$ on an input $x$, the
-vector of virtual head directions selected by the controller from the control state of
-$c$ and the head-centered payloads at offset $0$ equals the shift vector of the
-totalized action of $M$ at $c$; in particular native input clamping and source work
-head movement are reproduced exactly.
+Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word,
+and let $c$ be a configuration of $M$ on input $x$. The vector of virtual head
+directions selected from the state of $c$ and the head-centered payloads at offset $0$
+equals the shift vector of the totalized action of $M$ at $c$.
 \end{lemma}
 
 \begin{definition}[Payloads after the origin write]
@@ -518,20 +529,19 @@ the action writes nothing), at every other offset it is the untouched tape conte
 and the input entries are read-only, always given by the virtual input payload.
 \end{definition}
 
-\begin{lemma}[Head-centered simulation identity]
+\begin{lemma}[Head-centred payload update]
 \lean{Complexity.sourcePayload_apply}
 \label{Complexity.sourcePayload_apply}
 \leanok
 \uses{Complexity.clippedMove_correct, Complexity.sourcePayload, Complexity.sourceShift, Complexity.sourceWrittenPayload, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols}
 \difficulty{5}
-Let $c$ be a configuration of a binary machine with $k$ work tapes, let $\alpha$ be an
-action, let $z$ be an integer offset, and let $i$ be one of the $k+1$ virtual tape
-coordinates.  Then the head-centered payload of the configuration obtained by applying
-$\alpha$ to $c$, at offset $z$ and coordinate $i$, equals the written payload of $c$
-and $\alpha$ at offset $z$ plus the shift direction of coordinate $i$: writing at the
-old origin and then shifting each virtual tape by its displacement produces exactly
-the payloads of the successor configuration, including stationary moves, boundary
-attempts, and blank writes.
+Let $c$ be a configuration of a machine with $k$ work tapes on a binary input $x$, let
+$a$ be a one-step action, let $z\in\mathbb{Z}$, and let $i$ be one of the $k+1$ virtual
+tape coordinates. The payload at offset $z$ and coordinate $i$ in the configuration
+after applying $a$ equals the payload obtained from the original configuration after
+first accounting for the write prescribed by $a$ and then shifting by the direction
+assigned to coordinate $i$ by that action, with the input-coordinate shift clipped at
+the input boundaries.
 \end{lemma}
 
 \begin{definition}[Parallel payload row]
@@ -573,9 +583,9 @@ cache to blank; all physical heads move left while it runs.
 \leanok
 \uses{Complexity.OblPayload, Complexity.payloadForward, Complexity.payloadRow}
 \difficulty{1}
-For every payload family and every coordinate $z$, applying the forward transducer
-with register the payloads at $z - 1$ to the uncached row at $z$ produces the payloads
-at $z$ as the new register together with the cached row at $z$.
+Let $I$ be an index type, let $f:\mathbb Z\to I\to\mathrm{OblPayload}$ be a payload
+family, and let $z\in\mathbb Z$. Applying the forward row transducer with left register
+$f(z-1)$ to the uncached row at $z$ gives register $f(z)$ and the cached row at $z$.
 \end{lemma}
 
 \begin{lemma}[One backward row]
@@ -584,11 +594,11 @@ at $z$ as the new register together with the cached row at $z$.
 \leanok
 \uses{Complexity.OblPayload, Complexity.payloadBackward, Complexity.payloadRow}
 \difficulty{3}
-For every payload family $f$, every vector of directions $d$, and every coordinate
-$z$, applying the backward transducer with directions $d$ and register the payloads at
-$z + 1$ to the cached row at $z$ produces the payloads at $z$ as the new register
-together with the uncached row at $z$ of the shifted family sending coordinate $z$ and
-tape $i$ to the value of $f$ at $z$ plus the direction of $i$.
+Let $I$ be an index type, let $f$ assign a payload to each integer coordinate and index,
+let $d$ assign a direction in $\{-1,0,1\}$ to each index, and let $z\in\mathbb Z$.
+Applying the backward row transducer with right register $f(z+1)$ to the cached row at
+$z$ gives register $f(z)$ and the uncached row whose payload at coordinate $z$ and index
+$i$ is $f(z+d(i),i)$.
 \end{lemma}
 
 \begin{definition}[Payload zone]
@@ -607,9 +617,9 @@ $z, z+1, \dots, z+n-1$, each cached or uncached according to the flag.
 \leanok
 \uses{Complexity.OblPayload, Complexity.payloadZone}
 \difficulty{3}
-For every payload family, starting coordinate, caching flag, and length $n$, the zone
-of $n$ rows is a list of length exactly $n$; every guide cell thus contributes exactly
-one parallel data row.
+For any index type $I$, payload family $f:\mathbb Z\to I\to\mathrm{OblPayload}$, integer
+coordinate $z$, caching flag, and natural number $n$, the zone of length $n$ starting at
+$z$ has list length exactly $n$.
 \end{lemma}
 
 \begin{lemma}[Full forward sweep]
@@ -618,10 +628,10 @@ one parallel data row.
 \leanok
 \uses{Complexity.OblPayload, Complexity.payloadForward, Complexity.payloadForward_row, Complexity.payloadZone, Turing.FinTM.sweepFold}
 \difficulty{4}
-For every payload family, coordinate $z$, and length $n$, folding the forward
-transducer with initial register the payloads at $z - 1$ over the uncached zone of $n$
-rows starting at $z$ ends with register the payloads at $z + n - 1$ and produces the
-cached zone of the same $n$ rows; all left-neighbor caches are installed.
+Let $I$ be an index type, let $f:\mathbb Z\to I\to\mathrm{OblPayload}$ be a payload
+family, let $z\in\mathbb Z$, and let $n\in\mathbb N$. Folding the forward row transducer
+over the uncached zone of length $n$ starting at $z$, with initial register $f(z-1)$,
+yields register $f(z+n-1)$ and the cached zone of length $n$ starting at $z$.
 \end{lemma}
 
 \begin{lemma}[Full backward sweep]
@@ -630,75 +640,74 @@ cached zone of the same $n$ rows; all left-neighbor caches are installed.
 \leanok
 \uses{Complexity.OblPayload, Complexity.payloadBackward, Complexity.payloadBackward_row, Complexity.payloadZone, Turing.FinTM.sweepFold, Turing.FinTM.sweepFold_append}
 \difficulty{4}
-For every payload family $f$, every vector of directions $d$, every coordinate $z$,
-and every length $n$, folding the backward transducer with directions $d$ and initial
-register the payloads at $z + n$ over the reversed cached zone of $n$ rows starting at
-$z$ ends with register the payloads at $z$ and produces the reversed uncached zone of
-the family shifted per tape by $d$; every row is shifted as prescribed.
+Let $I$ be an index type, let $f:\mathbb Z\to I\to\mathrm{OblPayload}$ be a payload
+family, let $d:I\to\{-1,0,1\}$ assign directions, let $z\in\mathbb Z$, and let
+$n\in\mathbb N$. Folding the backward row transducer over the reversed cached zone of
+length $n$ starting at $z$, with initial register $f(z+n)$, yields register $f(z)$ and
+the reversed uncached zone of length $n$ whose payload at coordinate $t$ and index $i$
+is $f(t+d(i),i)$.
 \end{lemma}
 
-\begin{lemma}[Two sweeps realize one source action]
+\begin{lemma}[Backward sweep for a source action]
 \lean{Complexity.payload_sweeps_source}
 \label{Complexity.payload_sweeps_source}
 \leanok
 \uses{Complexity.payloadBackward, Complexity.payloadBackward_zone, Complexity.payloadZone, Complexity.sourcePayload, Complexity.sourcePayload_apply, Complexity.sourceShift, Complexity.sourceWrittenPayload, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.sweepFold}
 \difficulty{3}
-Let $c$ be a configuration of a binary machine, $\alpha$ an action, $z$ a coordinate,
-and $n$ a width.  Folding the backward transducer with the shift directions of
-$\alpha$, seeded with the written payloads of $c$ and $\alpha$ at $z + n$, over the
-reversed cached zone of written payloads starting at $z$ yields the written payloads
-at $z$ together with the reversed uncached zone of the head-centered payloads of the
-configuration obtained by applying $\alpha$ to $c$; the two finite transductions thus
-realize one source action on the whole fixed layout.
+Let $c$ be a configuration of a $k$-work-tape machine on a binary input $x$, let $a$ be
+an action, let $z\in\mathbb Z$, and let $n\in\mathbb N$. Folding the backward row
+transducer with the shift directions prescribed by $a$, over the reversed cached zone of
+written payloads of length $n$ starting at $z$ and with initial register equal to the
+written payloads at $z+n$, yields register equal to the written payloads at $z$ and the
+reversed uncached zone of length $n$ of the source payloads for the configuration
+obtained by applying $a$ to $c$.
 \end{lemma}
 
-\begin{lemma}[Blank payloads outside the input]
+\begin{lemma}[Blank Payloads Outside the Input]
 \lean{Complexity.inputPayload_outside}
 \label{Complexity.inputPayload_outside}
 \leanok
 \uses{Complexity.blankPayload, Complexity.inputPayload, Turing.FinTM.bufferTape}
 \difficulty{4}
-For every binary word $x$ and every integer coordinate $z$ with $z < -1$ or
-$z > |x|$, the virtual input payload of $x$ at $z$ is the blank payload; outside both
-virtual boundaries the head-centered input tape is blank.
+For every binary word $x$ and integer $z$ satisfying $z<-1$ or $|x|<z$, the virtual
+input payload at $z$ is the blank payload.
 \end{lemma}
 
-\begin{lemma}[Support radius of the head-centered layout]
+\begin{lemma}[Support of source payloads]
 \lean{Complexity.sourcePayload_support}
 \label{Complexity.sourcePayload_support}
 \leanok
 \uses{Complexity.blankPayload, Complexity.inputPayload_outside, Complexity.sourcePayload, Turing.FinTM, Turing.FinTM.source_bounds, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-Let $M$ be a binary machine, $x$ an input, and $t, B$ natural numbers with $t \le B$
-and $|x| + 1 \le B$.  Then for every integer coordinate $z$ with $z < -3B$ or
-$z > 3B$ and every virtual tape coordinate, the head-centered payload of the
-configuration reached by running $M$ for $t$ steps from its initial configuration on
-$x$ is the blank payload.  This bound uses the initialized run, not arbitrary starting
-configurations.
+Let $M$ be a finite binary Turing machine, let $x$ be a binary word, and let
+$t,B\in\mathbb{N}$ satisfy $t\le B$ and $|x|+1\le B$. For every integer $z$ with $z<-3B$
+or $3B<z$ and every coordinate among the $k+1$ source tapes, the head-centered source
+payload of the configuration reached after $t$ steps from the initial configuration of
+$M$ on $x$ is the blank payload.
 \end{lemma}
 
-\begin{lemma}[Last-output register under a one-symbol append]
+\begin{lemma}[Last entry after appending an optional bit]
 \lean{Complexity.lastOutput_append}
 \label{Complexity.lastOutput_append}
 \leanok
 \difficulty{2}
-For every bit list $w$ and every optional bit $b$, the last entry, defaulting to
-false, of $w$ extended by the zero- or one-element list determined by $b$ equals $b$
-when $b$ is present, and the last entry of $w$ defaulting to false otherwise; a
-one-bit last-output register can therefore be maintained in finite control.
+For any finite bit list $w$ and optional bit $b$, the last entry of the list formed by
+appending $b$ when present, defaulting to false if the resulting list is empty, equals
+$b$ when $b$ is present and otherwise equals the last entry of $w$, defaulting to false.
 \end{lemma}
 
-\begin{lemma}[The answer sits in the last output bit at the padded budget]
+\begin{lemma}[Decision output at the padded time bound]
 \lean{Complexity.sourceAnswer_at_budget}
 \label{Complexity.sourceAnswer_at_budget}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.DecidesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{3}
-Let $M$ be a binary machine that decides a language $L$ over the binary alphabet
-within time $a \cdot T(n)$ on inputs of length $n$.  Then for every input $x$, after
-running $M$ for $(a + 1)(T(|x|) + 1)$ steps from its initial configuration on $x$, the
-last bit of the output word, defaulting to false, equals the indicator of the
-membership of $x$ in $L$.
+Let $M$ be a finite binary Turing machine, $L$ a language of finite binary words,
+$T:\mathbb{N}\to\mathbb{N}$, and $a\in\mathbb{N}$. Suppose that on every input $x$, $M$
+halts within $aT(|x|)$ steps, outputs the single bit indicating whether $x\in L$, and
+uses some finite amount of work space. Then after $(a+1)(T(|x|)+1)$ steps on any input
+$x$, the last output bit, interpreted as false if the output is empty, equals the
+indicator of whether $x\in L$.
 \end{lemma}
 
 \begin{definition}[Captured clock tape]
@@ -711,25 +720,25 @@ coordinate $0$ and, at each coordinate $z$ with $1 \le z \le |w|$, the bit symbo
 the corresponding bit of $w$; every other cell is blank.
 \end{definition}
 
-\begin{lemma}[Initial captured tape]
+\begin{lemma}[Captured tape of the empty word]
 \lean{Complexity.clockTape_nil}
 \label{Complexity.clockTape_nil}
 \leanok
 \uses{Complexity.clockTape}
 \difficulty{2}
-The captured clock tape of the empty word is blank everywhere except for the origin
-sentinel at coordinate $0$.
+The captured clock tape of the empty word is the function that has the origin marker at
+coordinate $0$ and is blank at every other integer coordinate.
 \end{lemma}
 
-\begin{lemma}[Capturing one emitted bit]
+\begin{lemma}[Appending a captured bit]
 \lean{Complexity.clockTape_append}
 \label{Complexity.clockTape_append}
 \leanok
 \uses{Complexity.clockTape, Turing.FinTM.bufferTape_append}
 \difficulty{4}
-For every bit word $w$ and every bit $b$, the captured clock tape of $w$ extended by
-$b$ differs from the captured tape of $w$ in exactly one cell: the cell at coordinate
-$|w| + 1$, which becomes the bit symbol of $b$.
+For every Boolean word $w$ and bit $b$, the captured clock tape of $w$ followed by $b$
+is obtained from the captured clock tape of $w$ by updating the cell at integer
+coordinate $|w|+1$ to the tagged bit $b$.
 \end{lemma}
 
 \begin{definition}[Clock-stage configuration]
@@ -748,50 +757,51 @@ origin sentinel with head at coordinate one, a blank guide tape with head at the
 origin, and empty output.
 \end{definition}
 
-\begin{lemma}[Masked input read of the clock stage]
+\begin{lemma}[Input-read presence is preserved]
 \lean{Complexity.clockStageCfg_input}
 \label{Complexity.clockStageCfg_input}
 \leanok
 \uses{Complexity.clockStageCfg, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM}
 \difficulty{3}
-Let $W$ be a binary machine, $a$ a padding constant, and $c$ a configuration of $W$ on
-an input $x$.  After forgetting the bit values (retaining only whether a symbol is
-present), the symbol read by the input head of the clock-stage configuration of $c$
-agrees with the correspondingly masked native read of $c$.
+Let $W$ be a finite-state binary machine, $a$ a natural number, $x$ a Boolean input
+word, and $c$ a configuration of $W$ on $x$. Replacing each nonblank symbol read by the
+clock-stage configuration with false, while leaving a blank read blank, gives the same
+possibly blank symbol as applying that replacement to the symbol read by $c$.
 \end{lemma}
 
-\begin{lemma}[Work reads of the clock stage]
+\begin{lemma}[Decoded work tape reads]
 \lean{Complexity.clockStageCfg_work}
 \label{Complexity.clockStageCfg_work}
 \leanok
 \uses{Complexity.clockBit, Complexity.clockStageCfg, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM}
 \difficulty{3}
-Let $W$ be a binary machine, $a$ a padding constant, and $c$ a configuration of $W$.
-Decoding the bit symbols read on the $k$ leading work tapes of the clock-stage
-configuration of $c$ recovers exactly the work-tape reads of $c$.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a$ be a natural
+number, and let $x$ be a finite Boolean input. For every configuration $c$ of $W$ on
+$x$, decoding the symbol under the head of each of the first $W.k$ work tapes in the
+clock-stage configuration of $c$ gives exactly the possibly blank symbol under the
+corresponding work-tape head in $c$.
 \end{lemma}
 
-\begin{lemma}[One live clock step is one schedule step]
+\begin{lemma}[One live clock step]
 \lean{Complexity.clockStageCfg_step}
 \label{Complexity.clockStageCfg_step}
 \leanok
 \uses{Complexity.clockStageCfg, Complexity.clockStageCfg_input, Complexity.clockStageCfg_work, Complexity.clockTape_append, Complexity.maskedClock, Complexity.obliviousSchedule, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{5}
-Let $W$ be a binary machine, $a$ a padding constant, and $c$ a live configuration of
-$W$ on an input $x$ (its control state is some state $q$).  Then one step of the
-schedule controller from the clock-stage configuration of $c$ equals the clock-stage
-configuration of one step, from $c$, of the masked clock machine obtained from $W$ by
-ignoring the input bit values; in particular any bit emitted by that step, including a
-final emission, is captured on the budget tape, and administrative work begins only
-after this transition.
+Let $W$ be a finite machine over Booleans, let $a\in\mathbb{N}$, and let $c$ be a
+configuration of $W$ on a Boolean input. If $c$ is in state $q$, then one step of the
+schedule machine from the clock-stage configuration of $c$ equals the clock-stage
+configuration of the next configuration obtained by one step of the machine that masks
+every nonblank input symbol as false.
 \end{lemma}
 
-\begin{lemma}[Exhaustion of the three administrative indices]
+\begin{lemma}[Cases for a three-element index]
 \lean{Complexity.finThree_cases}
 \label{Complexity.finThree_cases}
 \leanok
 \difficulty{2}
-Every element of the canonical three-element index type equals $0$, $1$, or $2$.
+Every element $j$ of the three-element index set $\{0,1,2\}$ is equal to $0$, $1$, or
+$2$.
 \end{lemma}
 
 \begin{lemma}[Initialization of the clock stage]
@@ -800,41 +810,40 @@ Every element of the canonical three-element index type equals $0$, $1$, or $2$.
 \leanok
 \uses{Complexity.clockStageCfg, Complexity.clockTape_nil, Complexity.finThree_cases, Complexity.maskedClock, Complexity.oblAction, Complexity.oblEmbed, Complexity.obliviousSchedule, Turing.Action.apply, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $W$ be a binary machine, $a$ a padding constant, and $x$ a binary input.  One step
-of the schedule controller from its initial configuration on the block-encoded input
-equals the clock-stage configuration of the initial configuration on $x$ of the masked
-clock machine obtained from $W$; this single transition installs both sentinels and
-starts the clock.
+Let $W$ be a finite-state binary machine, $a$ a natural number, and $x$ a Boolean word.
+One step of the length-only schedule machine from its initial configuration on the
+bit-encoded input equals the clock-stage configuration associated with the initial
+configuration of the machine that replaces each nonblank input symbol by false before
+applying $W$'s transition function.
 \end{lemma}
 
-\begin{lemma}[Clock-stage run up to the first halt]
+\begin{lemma}[Run correspondence through the clock phase]
 \lean{Complexity.clockStageCfg_run}
 \label{Complexity.clockStageCfg_run}
 \leanok
 \uses{Complexity.clockStageCfg, Complexity.clockStageCfg_init, Complexity.clockStageCfg_step, Complexity.maskedClock, Complexity.oblEmbed, Complexity.obliviousSchedule, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Let $W$ be a binary machine, $a$ a padding constant, $x$ a binary input, and $\tau$ a
-time bound such that the masked clock machine obtained from $W$, started on $x$, is
-still live at every time strictly before $\tau$.  Then for every $t \le \tau$, running
-the schedule controller for $t + 1$ steps from its initial configuration on the
-block-encoded input equals the clock-stage configuration of the masked clock run for
-$t$ steps from its initial configuration on $x$; every emitted budget bit is thereby
-represented.
+Let $W$ be a finite machine over the Boolean alphabet, let $a,\tau\in\mathbb{N}$, and
+let $x$ be a Boolean input. Suppose the machine obtained by replacing every nonblank
+input symbol seen by $W$ with false remains in a nonhalting state at every time $t<\tau$
+when started on $x$. For every $t\leq\tau$, the schedule machine built from $W$ and $a$,
+started on the embedded input and run for $t+1$ steps, has the clock-stage configuration
+corresponding to the masked machine's configuration after $t$ steps on $x$.
 \end{lemma}
 
-\begin{lemma}[The schedule captures the budget word]
+\begin{lemma}[Schedule captures a halted clock configuration]
 \lean{Complexity.clockStageCfg_captures}
 \label{Complexity.clockStageCfg_captures}
 \leanok
 \uses{Complexity.clockStageCfg, Complexity.clockStageCfg_run, Complexity.maskedClock, Complexity.maskedClock_computes, Complexity.oblEmbed, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{5}
-Let $W$ be a binary machine, let $a$ and $b$ be constants, and let a time bound $T$ be
-such that on every input $x$, the machine $W$ outputs the binary representation of
-$T(|x|)$ within $b\,(T(|x|)+1)$ steps.  Then for every input $x$ there exist a time
-$\tau \le b\,(T(|x|)+1)$ and a halted configuration $c$ of $W$ on $x$ whose output is
-the binary representation of $T(|x|)$, such that running the schedule controller for
-$\tau + 1$ steps from its initial configuration on the block-encoded input equals the
-clock-stage configuration of $c$.  No assumption that $W$ is oblivious is used.
+Let $W$ be a finite-state binary machine, let $a,b$ be natural numbers, and let
+$T:\mathbb{N}\to\mathbb{N}$. Suppose that on every Boolean input word $x$, $W$ halts
+within $b(T(|x|)+1)$ steps and outputs the binary representation of $T(|x|)$. For every
+such $x$, there are a time $\tau\le b(T(|x|)+1)$ and a halted configuration $c$ of $W$
+on $x$ whose output is that binary representation, such that the length-only schedule
+machine, started on the bit-encoded input, reaches the clock-stage configuration
+associated with $c$ after $\tau+1$ steps.
 \end{lemma}
 
 \begin{definition}[Fixed sweep guide]
@@ -854,18 +863,18 @@ elsewhere.
 \leanok
 \uses{Complexity.guideTape}
 \difficulty{2}
-For every radius $R$ and every integer coordinate $z$, the guide tape of radius $R$
-carries the left edge marker at $z$ if and only if $z = -R - 1$.
+For every natural number radius $R$ and every integer coordinate $z$, the guide tape of
+radius $R$ carries the left edge marker at $z$ if and only if $z=-R-1$.
 \end{lemma}
 
-\begin{lemma}[Location of the right edge]
+\begin{lemma}[Location of the right edge marker]
 \lean{Complexity.guideTape_right}
 \label{Complexity.guideTape_right}
 \leanok
 \uses{Complexity.guideTape}
 \difficulty{2}
-For every radius $R$ and every integer coordinate $z$, the guide tape of radius $R$
-carries the right edge marker at $z$ if and only if $z = R + 1$.
+For every natural number $R$ and integer $z$, the guide tape of radius $R$ carries the
+right edge marker at coordinate $z$ if and only if $z=R+1$.
 \end{lemma}
 
 \begin{lemma}[Location of the origin marker]
@@ -874,8 +883,8 @@ carries the right edge marker at $z$ if and only if $z = R + 1$.
 \leanok
 \uses{Complexity.guideTape}
 \difficulty{2}
-For every radius $R$ and every integer coordinate $z$, the guide tape of radius $R$
-carries the origin marker at $z$ if and only if $z = 0$.
+For every natural number $R$ and integer $z$, the guide tape of radius $R$ carries the
+origin marker at coordinate $z$ if and only if $z=0$.
 \end{lemma}
 
 \begin{definition}[Macrostep configuration]
@@ -891,157 +900,182 @@ on the input head, on the budget head, and on the output; only the control phase
 vary.
 \end{definition}
 
-\begin{lemma}[Unary read of a macrostep configuration]
+\begin{lemma}[Unary tape symbol in a macrostep configuration]
 \lean{Complexity.macroCfg_unary}
 \label{Complexity.macroCfg_unary}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.macroCfg, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM}
 \difficulty{1}
-In every macrostep configuration with unary head at $u$, the symbol read on the unary
-tape is the base configuration's unary tape content at coordinate $u$.
+Let $W$ be a finite machine over the Boolean alphabet, let $a$ be a natural number, let
+$x$ be a word over the schedule alphabet, and let $c$ be a schedule-controller
+configuration on $x$. For any optional phase $q$ and integers $u,g$, the symbol scanned
+on the unary-counter tape of the macrostep configuration built from $c$ at head position
+$u$ is the content of $c$'s unary-counter tape at position $u$.
 \end{lemma}
 
-\begin{lemma}[Guide read of a macrostep configuration]
+\begin{lemma}[Guide symbol in a macrostep configuration]
 \lean{Complexity.macroCfg_guide}
 \label{Complexity.macroCfg_guide}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.macroCfg, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM}
 \difficulty{1}
-In every macrostep configuration with guide head at $g$, the symbol read on the guide
-tape is the base configuration's guide tape content at coordinate $g$.
+Let $W$ be a finite binary Turing machine, let $a\in\mathbb{N}$, let $x$ be an input
+word over the schedule alphabet, and let $\mathrm{base}$ be a schedule-machine
+configuration on $x$. For any optional control phase $q$ and integers $u,g$, the symbol
+read on the guide tape in the macrostep configuration with phase $q$, unary head at $u$,
+and guide head at $g$ is the content of the base guide tape at coordinate $g$.
 \end{lemma}
 
-\begin{lemma}[Read-only actions move only the two macrostep heads]
+\begin{lemma}[Read-Only Schedule Action]
 \lean{Complexity.macroCfg_apply}
 \label{Complexity.macroCfg_apply}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.finThree_cases, Complexity.macroCfg, Complexity.oblAction, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.moveInputPos_zero}
 \difficulty{4}
-Let a macrostep configuration with phase $q$, unary head $u$, and guide head $g$ be
-given.  Applying the read-only schedule action that enters a phase $q'$, keeps the
-input and budget heads fixed, writes nothing, and moves the unary and guide heads in
-directions $d_u$ and $d_g$ yields the macrostep configuration with phase $q'$, unary
-head $u + d_u$, and guide head $g + d_g$.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a$ be a natural
+number, let $x$ be a list of schedule symbols, and let $B$ be a base configuration for
+the schedule controller. For optional phases $q,q'$ and integers $u,g$, applying the
+schedule action that enters phase $q'$, leaves the input head, budget head, and clock
+work tapes fixed, moves the unary-counter and guide heads by signs $d_u,d_g$, and emits
+nothing, to the macrostep configuration determined by $B,q,u,g$ gives the macrostep
+configuration determined by $B,q',u+d_u,g+d_g$.
 \end{lemma}
 
-\begin{lemma}[Counter test]
+\begin{lemma}[Counter Test Step]
 \lean{Complexity.macroCfg_check}
 \label{Complexity.macroCfg_check}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.macroCfg, Complexity.macroCfg_apply, Complexity.macroCfg_unary, Complexity.obliviousSchedule, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-For every macrostep configuration in the counter-test phase with unary head $u$ and
-guide head $g$: if the base's unary tape holds a unit marker at $u$, one step of the
-schedule controller enters the leftward-seek phase; otherwise it halts.  In both
-cases every head stays in place.
+Let $W$ be a finite Boolean Turing machine, let $a$ be a natural number, let $x$ be a
+list of schedule symbols, let $B$ be a base controller configuration, and let $u,g$ be
+integers. From the counter-test phase, one schedule step enters the leftward-seek phase
+exactly when the base unary-counter tape contains a unit marker at position $u$;
+otherwise the controller halts. In either case, the unary-counter and guide heads remain
+at $u$ and $g$, respectively.
 \end{lemma}
 
-\begin{lemma}[Outward scan step]
+\begin{lemma}[One step of the leftward seek]
 \lean{Complexity.macroCfg_seek}
 \label{Complexity.macroCfg_seek}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.guideTape_left, Complexity.macroCfg, Complexity.macroCfg_apply, Complexity.macroCfg_guide, Complexity.obliviousSchedule, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$.  From the
-leftward-seek phase with guide head at $g$, one step of the schedule controller turns
-into the forward phase and moves the guide head right exactly when $g = -R - 1$, and
-otherwise stays in the seek phase and moves the guide head left.
+Let $W$ be a finite binary Turing machine, let $a,R\in\mathbb{N}$, let $x$ be an input
+word over the schedule alphabet, and let $u,g\in\mathbb{Z}$. For a base configuration of
+the schedule machine on $x$, suppose its guide tape is the fixed guide of radius $R$.
+From the leftward-seek phase with guide head at $g$, one step enters the forward phase
+and moves the guide head to $g+1$ if $g=-R-1$; otherwise it remains in the leftward-seek
+phase and moves the guide head to $g-1$.
 \end{lemma}
 
-\begin{lemma}[Forward scan step]
+\begin{lemma}[One step of the forward scan]
 \lean{Complexity.macroCfg_forward}
 \label{Complexity.macroCfg_forward}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.guideTape_right, Complexity.macroCfg, Complexity.macroCfg_apply, Complexity.macroCfg_guide, Complexity.obliviousSchedule, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$.  From the forward
-phase with guide head at $g$, one step of the schedule controller turns into the
-backward phase and moves the guide head left exactly when $g = R + 1$, and otherwise
-stays in the forward phase and moves the guide head right.
+Let $W$ be a finite binary Turing machine, let $a,R\in\mathbb{N}$, let $x$ be an input
+word over the schedule alphabet, and let $u,g\in\mathbb{Z}$. For a base configuration of
+the schedule machine on $x$, suppose its guide tape is the fixed guide of radius $R$.
+From the forward phase with guide head at $g$, one step enters the backward phase and
+moves the guide head to $g-1$ if $g=R+1$; otherwise it remains in the forward phase and
+moves the guide head to $g+1$.
 \end{lemma}
 
-\begin{lemma}[Backward scan step]
+\begin{lemma}[Backward Scan Step]
 \lean{Complexity.macroCfg_backward}
 \label{Complexity.macroCfg_backward}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.guideTape_left, Complexity.macroCfg, Complexity.macroCfg_apply, Complexity.macroCfg_guide, Complexity.obliviousSchedule, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$.  From the backward
-phase with guide head at $g$, one step of the schedule controller turns into the
-return-to-center phase and moves the guide head right exactly when $g = -R - 1$, and
-otherwise stays in the backward phase and moves the guide head left.
+Let $W$ be a finite Boolean Turing machine, let $a,R$ be natural numbers, let $B$ be a
+base controller configuration, and let $u,g$ be integers. Suppose the base guide tape is
+the fixed guide of radius $R$. One schedule step from the backward phase with
+unary-counter head at $u$ and guide head at $g$ enters the return-to-center phase and
+moves the guide head to $g+1$ if $g=-R-1$; otherwise it stays in the backward phase and
+moves the guide head to $g-1$.
 \end{lemma}
 
-\begin{lemma}[Return scan step]
+\begin{lemma}[Return Scan Step]
 \lean{Complexity.macroCfg_center}
 \label{Complexity.macroCfg_center}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.guideTape_origin, Complexity.macroCfg, Complexity.macroCfg_apply, Complexity.macroCfg_guide, Complexity.obliviousSchedule, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$.  From the
-return-to-center phase with guide head at $g$, one step of the schedule controller
-commits exactly at the origin: when $g = 0$ it enters the counter-test phase and
-advances the unary head by one, and otherwise it stays in the return phase and moves
-the guide head right.
+Let $W$ be a finite Boolean Turing machine, let $a,R$ be natural numbers, let $B$ be a
+base controller configuration, and let $u,g$ be integers. Suppose the base guide tape is
+the fixed guide of radius $R$. One schedule step from the return-to-center phase with
+unary-counter head at $u$ and guide head at $g$ enters the counter-test phase and
+advances the unary-counter head to $u+1$ when $g=0$; otherwise it remains in the
+return-to-center phase and moves the guide head to $g+1$.
 \end{lemma}
 
-\begin{lemma}[Exact prefix of the outward scan]
+\begin{lemma}[Prefix of the leftward seek]
 \lean{Complexity.macroCfg_seek_run}
 \label{Complexity.macroCfg_seek_run}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.macroCfg, Complexity.macroCfg_seek, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Suppose the base's guide tape is the fixed guide of radius $R$ and let $n \le R + 1$.
-Running the schedule controller for $n$ steps from the leftward-seek phase with guide
-head at the origin stays in the seek phase and moves the guide head to $-n$.
+Let $W$ be a finite binary Turing machine, let $a,R,n\in\mathbb{N}$ with $n\le R+1$, let
+$x$ be an input word over the schedule alphabet, and let $u\in\mathbb{Z}$. For a base
+configuration of the schedule machine on $x$, suppose its guide tape is the fixed guide
+of radius $R$. Starting in the leftward-seek phase with guide head at $0$, after $n$
+steps the machine remains in the leftward-seek phase and its guide head is at $-n$.
 \end{lemma}
 
-\begin{lemma}[Exact prefix of the forward scan]
+\begin{lemma}[Prefix of the forward scan]
 \lean{Complexity.macroCfg_forward_run}
 \label{Complexity.macroCfg_forward_run}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.macroCfg, Complexity.macroCfg_forward, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Suppose the base's guide tape is the fixed guide of radius $R$ and let
-$n \le 2R + 1$.  Running the schedule controller for $n$ steps from the forward phase
-with guide head at $-R$ stays in the forward phase and moves the guide head to
-$-R + n$.
+Let $W$ be a finite binary Turing machine, let $a,R,n\in\mathbb{N}$ with $n\le 2R+1$,
+let $x$ be an input word over the schedule alphabet, and let $u\in\mathbb{Z}$. For a
+base configuration of the schedule machine on $x$, suppose its guide tape is the fixed
+guide of radius $R$. Starting in the forward phase with guide head at $-R$, after $n$
+steps the machine remains in the forward phase and its guide head is at $-R+n$.
 \end{lemma}
 
-\begin{lemma}[Exact prefix of the backward scan]
+\begin{lemma}[Backward Scan Prefix]
 \lean{Complexity.macroCfg_backward_run}
 \label{Complexity.macroCfg_backward_run}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.macroCfg, Complexity.macroCfg_backward, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Suppose the base's guide tape is the fixed guide of radius $R$ and let
-$n \le 2R + 1$.  Running the schedule controller for $n$ steps from the backward phase
-with guide head at $R$ stays in the backward phase and moves the guide head to
-$R - n$.
+Let $W$ be a finite Boolean Turing machine, let $a,R,n$ be natural numbers, let $B$ be a
+base controller configuration, and let $u$ be an integer. Suppose the base guide tape is
+the fixed guide of radius $R$, and $n\le 2R+1$. After $n$ schedule steps from the
+backward phase with unary-counter head at $u$ and guide head at $R$, the controller
+remains in the backward phase and the guide head is at $R-n$.
 \end{lemma}
 
-\begin{lemma}[Exact prefix of the return scan]
+\begin{lemma}[Return Scan Prefix]
 \lean{Complexity.macroCfg_center_run}
 \label{Complexity.macroCfg_center_run}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.macroCfg, Complexity.macroCfg_center, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Suppose the base's guide tape is the fixed guide of radius $R$ and let $n \le R$.
-Running the schedule controller for $n$ steps from the return-to-center phase with
-guide head at $-R$ stays in the return phase and moves the guide head to $-R + n$.
+Let $W$ be a finite Boolean Turing machine, let $a,R,n$ be natural numbers, let $B$ be a
+base controller configuration, and let $u$ be an integer. Suppose the base guide tape is
+the fixed guide of radius $R$, and $n\le R$. After $n$ schedule steps from the
+return-to-center phase with unary-counter head at $u$ and guide head at $-R$, the
+controller remains in the return-to-center phase and the guide head is at $-R+n$.
 \end{lemma}
 
-\begin{lemma}[Exact macrostep duration]
+\begin{lemma}[Exact duration of a macrostep]
 \lean{Complexity.macroCfg_cycle}
 \label{Complexity.macroCfg_cycle}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.macroCfg, Complexity.macroCfg_backward, Complexity.macroCfg_backward_run, Complexity.macroCfg_center, Complexity.macroCfg_center_run, Complexity.macroCfg_check, Complexity.macroCfg_forward, Complexity.macroCfg_forward_run, Complexity.macroCfg_seek, Complexity.macroCfg_seek_run, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{5}
-Suppose the base's guide tape is the fixed guide of radius $R$ and its unary tape
-holds a unit marker at coordinate $u$.  Then running the schedule controller for
-exactly $6R + 8$ steps from the counter-test phase with unary head at $u$ and guide
-head at the origin executes the entire fixed path of one macrostep and returns to the
-counter-test phase with unary head at $u + 1$ and guide head at the origin.
+Let $W$ be a finite binary Turing machine, let $a,R\in\mathbb{N}$, and let $x$ be an
+input word over the schedule alphabet. For a base configuration of the schedule machine
+on $x$, suppose its guide tape is the fixed guide of radius $R$ and its unary tape
+contains a unit marker at coordinate $u\in\mathbb{Z}$. Starting in the macrostep-check
+phase with unary head at $u$ and guide head at $0$, after exactly $6R+8$ steps the
+machine is again in the macrostep-check phase, with unary head at $u+1$ and guide head
+at $0$.
 \end{lemma}
 
 \begin{lemma}[Repeated macrosteps over a unary segment]
@@ -1050,24 +1084,26 @@ counter-test phase with unary head at $u + 1$ and guide head at the origin.
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.macroCfg, Complexity.macroCfg_cycle, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-Suppose the base's guide tape is the fixed guide of radius $R$ and its unary tape
-holds unit markers at all coordinates $1, 2, \dots, B$.  Then for every $j \le B$,
-running the schedule controller for $j\,(6R + 8)$ steps from the counter-test phase
-with unary head at $1$ and guide head at the origin reaches the counter-test phase
-with unary head at $j + 1$ and guide head at the origin, regardless of all simulated
-data and of source halting behavior.
+Let $W$ be a finite binary Turing machine, let $a,R,B\in\mathbb{N}$, let $x$ be an input
+word over the schedule alphabet, and let $\mathrm{base}$ be a schedule-machine
+configuration on $x$. Suppose its guide tape is the fixed guide of radius $R$ and, for
+every natural $j<B$, its unary tape contains a unit marker at coordinate $j+1$. Then for
+every natural $j\le B$, starting in the macrostep-check phase with unary head at $1$ and
+guide head at $0$, after $j(6R+8)$ steps the machine is in the macrostep-check phase
+with unary head at $j+1$ and guide head at $0$.
 \end{lemma}
 
-\begin{lemma}[End of the fixed schedule]
+\begin{lemma}[Termination after the unary budget]
 \lean{Complexity.macroCfg_finish}
 \label{Complexity.macroCfg_finish}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.guideTape, Complexity.macroCfg, Complexity.macroCfg_check, Complexity.macroCfg_repeat, Complexity.obliviousSchedule, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$, its unary tape holds
-unit markers at all coordinates $1, 2, \dots, B$, and the unary cell at coordinate
-$B + 1$ is blank.  Then running the schedule controller for $B\,(6R + 8) + 1$ steps
-from the counter-test phase with unary head at $1$ and guide head at the origin ends
-in the halted phase with unary head at $B + 1$ and guide head at the origin: the
-schedule finishes after exactly the budgeted macrosteps plus one final counter test.
+Let $W$ be a finite binary Turing machine, let $a,R,B\in\mathbb{N}$, and let $x$ be an
+input word over the schedule alphabet. For a base configuration of the schedule machine
+on $x$, suppose its guide tape is the fixed guide of radius $R$, its unary tape contains
+unit markers at every coordinate $j+1$ for $j<B$, and its unary cell at coordinate $B+1$
+is blank. Starting in the macrostep-check phase with unary head at $1$ and guide head at
+$0$, after exactly $B(6R+8)+1$ steps the machine is halted, with unary head at $B+1$ and
+guide head at $0$.
 \end{lemma}

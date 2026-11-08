@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.TMSAT_mem_NP",
+ "key": "ff6660cb321fcbcd",
+ "kind": "theorem",
+ "title": "NP membership of bounded machine acceptance",
+ "statement": "Let $c$ be an effective machine-code scheme whose canonizer has a polynomially bounded running-time function. The language of strings that can be written as $\\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle$, where $1^m$ denotes a string of $m$ ones, and for which there is a string $u$ of length $n$ such that the machine decoded from $\\alpha$ halts after exactly $t$ steps on input $\\langle x,u\\rangle$ and outputs the single bit $1$, belongs to NP.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-code scheme",
+  "The canonizer running-time function of $c$ is polynomially bounded"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-code scheme whose canonizer computes the serialization\nof the decoded machine, and suppose its running-time function is polynomially bounded.\nThen the language of encodings of a machine description, an input, and unary bounds\n$n,t$, for which some word $u$ of length $n$ makes the decoded machine halt within $t$\nsteps on the paired input and output $1$, belongs to NP."
+}

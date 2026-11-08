@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.foldCfg_input",
+ "key": "95668c8a3d9d9231",
+ "kind": "lemma",
+ "title": "Input Symbols Under Folding",
+ "statement": "Let $\\Gamma$ and $S$ be types, let $k$ be a natural number, let $x$ be a word over $\\Gamma$, and let $c$ be a configuration with $k$ work tapes and state set $S$ on input $x$. The possibly absent symbol scanned by the input head in the folded configuration of $c$ is the image, under the alphabet embedding, of the possibly absent symbol scanned in $c$.",
+ "hypotheses_covered": [
+  "Γ and S are types",
+  "k is a natural number",
+  "x is a list over Γ",
+  "c is a configuration with k work tapes and state set S on x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every configuration $c$ of a $k$-work-tape machine over a base alphabet\n$\\Gamma$ on an input $x$, the possibly absent input symbol scanned in the folded\nconfiguration of $c$ equals the image under the alphabet embedding of the input\nsymbol scanned in $c$ (with absence mapped to absence)."
+}

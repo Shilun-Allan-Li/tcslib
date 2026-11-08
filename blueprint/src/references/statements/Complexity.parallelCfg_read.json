@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.parallelCfg_read",
+ "key": "788f3b1478427fea",
+ "kind": "lemma",
+ "title": "Decoding scanned tape tracks",
+ "statement": "Let $A$ be a finite alphabet with decidable equality, let $e$ embed the Booleans into $A$, let $k$ be a natural number, let $x$ be a binary word, and let $c$ be a configuration over $A$ on the input obtained by applying $e$ to each bit of $x$. For every tape index $i<k$, decoding the family of bits read from the encoded configuration's tracks indexed by symbols of $A$ recovers exactly the possibly blank symbol under tape $i$'s head in $c$.",
+ "hypotheses_covered": [
+  "$A$ is finite",
+  "$A$ has decidable equality",
+  "$e$ embeds the Booleans into $A$",
+  "$k$ is a natural number",
+  "$x$ is a binary word",
+  "$c$ is a configuration over $A$ on the symbolwise image of $x$",
+  "$i$ is a tape index with $i<k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a $k$-tape machine over a finite alphabet $A$ on the\nsymbolwise embedding of a binary word. For every logical tape index $i < k$, decoding\nthe family of bits scanned on the tracks of block $i$ in the encoded configuration\nyields exactly the symbol scanned by $c$ on tape $i$."
+}

@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Machines/MARMCompile.lean :: Complexity.LogProg.mdet_live -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Simulation of a deterministic step
+
+**Claim.** Under the stated execution, precondition, register-size, and memory-head bounds, the compiled machine reaches the configuration representing the next ordinary state, with the same memory tape, memory-head position, and output, while satisfying the workspace bounds at every intermediate time.
+
+**Proof.** First apply the single-step simulation theorem for the register machine (`arm_step`) to obtain a finite run of the ordinary compiled program from the initial register configuration to the configuration for $l',v'$. It also gives the register-head invariant at each earlier time. The endpoint satisfies the same invariant by the hypothesis that every initial register word has length at most $W$ and by the equality of the endpoint configuration with the one for $l',v'$. Thus the ordinary program's register heads remain in the interval $[-1,W]$ through the endpoint. Next apply the compiled-run simulation theorem (`compile_correct_from`) with these register bounds and with the call condition supplied by the invariant from `arm_step`. This yields a finite run of the decider-aware compilation to the seam configuration of the ordinary endpoint, together with bounds on its register and decider-tape heads throughout. The endpoint of this run is live, so no earlier state along the run can be a state at which the auxiliary memory machine halts: `avoid_of_live` shows that any such state would halt the next step, contradicting liveness of the endpoint. Consequently, throughout the run the memory-aware compiler follows exactly the memory-free compiled run, while retaining the adjoined memory tape and its head position (`mrunFrom_eq`). At the endpoint this gives precisely the requested configuration. Finally, the register and decider bounds just obtained, together with $|p|\le P$, imply the full memory-aware workspace bound at each time (`mbox_memCfg`).
+
+**Key facts.** `Complexity.LogProg.arm_step`, `Complexity.LogProg.compile_correct_from`, `Complexity.LogProg.avoid_of_live`, `Complexity.LogProg.mrunFrom_eq`, `Complexity.LogProg.mbox_memCfg`.

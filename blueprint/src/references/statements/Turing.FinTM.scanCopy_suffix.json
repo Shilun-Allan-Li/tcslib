@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.scanCopy_suffix",
+ "key": "5dd45437573fff99",
+ "kind": "lemma",
+ "title": "Copying a suffix from an interior position",
+ "statement": "Let $M$ be a machine with no work tapes over the Boolean alphabet, and let $q$ be a state. Suppose that for every input symbol and work-tape tuple, in state $q$ the transition on a bit $b$ moves right, emits $b$, and returns to $q$, while on blank it stays in place, emits nothing, and halts. For finite Boolean strings $x,\\mathrm{rest},o$ and a natural number $\\mathrm{pre}$ such that $x=\\mathrm{pre}++\\mathrm{rest}$, after $|\\mathrm{rest}|+1$ steps from the scan configuration at position $|\\mathrm{pre}|$ in state $q$ with output $o$, the machine is in the halted scan configuration at position $|x|$ with output $o$ followed by $\\mathrm{rest}$.",
+ "hypotheses_covered": [
+  "$M$ has no work tapes, uses the Boolean alphabet, and has state set containing $q$",
+  "For every input symbol and work-tape tuple, on a scanned bit $b$ the transition moves right, emits $b$, and returns to $q$",
+  "For every input symbol and work-tape tuple, on blank the transition stays in place, emits nothing, and halts",
+  "$x$ and $\\mathrm{rest}$ are finite Boolean strings",
+  "$o$ is a finite Boolean output string",
+  "$\\mathrm{pre}$ is a natural number",
+  "$x=\\mathrm{pre}++\\mathrm{rest}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a control state $q$ of a machine without work tapes emits each scanned\nbit and moves right, and halts silently on the blank. If $x = p s$ is a split\nof the input into a prefix $p$ and suffix $s$, then $\\abs{s}+1$ steps from the\nscan configuration at position $\\abs{p}$ in state $q$ with prior output $o$\nreach a halted configuration with output $o$ followed by $s$."
+}

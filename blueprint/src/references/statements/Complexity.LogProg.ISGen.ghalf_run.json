@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.ghalf_run",
+ "key": "6baa07e1cc1dcd57",
+ "kind": "theorem",
+ "title": "Halving-stage initialization",
+ "statement": "Let $E,B$ be natural numbers, let $\\mathcal O$ assign a Boolean answer to each of four query types and each finite Boolean word, let $x$ be a finite Boolean word, and let $Q$ be a proposition. Let $\\sigma$ be a register state in which every register is at most $B$, and suppose $\\sigma.lg+\\operatorname{size}(\\sigma.n)\\le B$. If the procedure, started in the round state with false phase and index $E$, with $n=0$ and $lg=\\sigma.lg+\\operatorname{size}(\\sigma.n)$ and all other registers as in $\\sigma$, terminates on every sequence of choices while keeping every register at most $B$, and accepts exactly when $Q$ holds, then the same termination, register-bound, and acceptance property holds when started in the halving-test state with registers $\\sigma$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb N$",
+  "an oracle with four query types on finite Boolean words",
+  "a finite Boolean input word $x$",
+  "a proposition $Q$",
+  "all registers of $\\sigma$ are at most $B$",
+  "$\\sigma.lg+\\operatorname{size}(\\sigma.n)\\le B$",
+  "the procedure from the specified round state terminates on every choice sequence, keeps registers at most $B$, and accepts exactly when $Q$ holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B$ be natural numbers, let $\\mathcal O$ be an oracle assigning a Boolean answer\nto each of four query types and each Boolean-list input, let $x$ be a Boolean list, and\nlet $Q$ be a proposition. For any register state $\\sigma$, suppose every register is at\nmost $B$ and $\\sigma.lg+\\operatorname{size}(\\sigma.n)\\le B$. If, from the generator’s\nround state with false phase and index $E$, with $n=0$ and\n$lg=\\sigma.lg+\\operatorname{size}(\\sigma.n)$ and all other registers as in $\\sigma$,\nevery computation terminates with registers bounded by $B$ and accepts exactly when $Q$\nholds, then the same semantic property holds from the halving-test state with registers\n$\\sigma$."
+}

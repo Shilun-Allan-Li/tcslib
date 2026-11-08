@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clTrack_round",
+ "key": "a7d84544e220cdfb",
+ "kind": "lemma",
+ "title": "One complete tracking round",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $x,y$ be Boolean words, let $c$ be a configuration of $M$ on $y$, and let $b$ be a Boolean tag satisfying the boundary conditions for the input-head position of $c$. Assign a natural number $n_i$ to each of the $2(1+k)$ counter indices, and suppose their binary representations all have length at most $W$. There is a time $\tau$ with $0<\\tau\\le 2W+4$ such that at every integer time $j$ with $0<j<\\tau$, the tracking machine is in its bank phase; at time $\\tau$ it is at the canonical configuration for the one-step successor of $c$, with a valid boundary tag and each counter updated by one exactly when its index is selected by the actual source-head displacement vector.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,y$ are Boolean words",
+  "$c$ is a configuration of $M$ on $y$",
+  "$b$ satisfies the boundary-tag conditions at $c$'s input-head position",
+  "there is a natural counter value for each of the $2(1+k)$ indices",
+  "each counter's binary representation has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration with a valid position tag bit, and let movement counts be given whose binary representations fit a common width $W$. Then there is a strictly positive time $\\tau \\le 2W + 4$ such that: every intermediate time strictly between $0$ and $\\tau$ is in the bank phase, not at the anchor; and at $\\tau$ the tracking host is back at the canonical seam for the stepped source configuration, with a valid new tag and with exactly the clamped displacement counts advanced. Source output is suppressed and every counter head is restored."
+}

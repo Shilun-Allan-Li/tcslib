@@ -18,6 +18,7 @@ instead of with the library's size.
 from __future__ import annotations
 
 import re
+from threading import Event
 from dataclasses import dataclass
 from pathlib import Path
 from collections.abc import Mapping, Sequence
@@ -25,6 +26,9 @@ from collections.abc import Mapping, Sequence
 from proofmatch.blueprint import ENV_RE, LEAN_RE
 from proofmatch.budget import Budget, StageEstimate, token_cost
 from proofmatch.models import Candidate, DocumentIndex
+from proofmatch.routing_batches import cached_route, routing_payloads
+from proofmatch.parallel import bounded_map
+from proofmatch.agents import Agent
 
 
 CHAPTER_RE = re.compile(r"\\chapter\{([^}]*)\}")
@@ -293,6 +297,8 @@ def route_chapters(
     *,
     model: str,
     max_chapters: int | None = None,
+    cache_dir: Path | None = None,
+    jobs: int = 1,
 ) -> tuple[ChapterNode, ...]:
     """Pick the blueprint chapters whose mathematics the document covers.
 
@@ -305,21 +311,26 @@ def route_chapters(
     if not nodes:
         return ()
     profile = document_profile(index)
-    budget.require(estimate_routing(nodes, profile, model))
-    output = agent.run(
-        "route_chapters",
-        {"document": profile, "chapters": _chapter_payload(nodes)},
-    )
     by_key = {node.key: node for node in nodes}
-    selected: list[tuple[float, ChapterNode]] = []
-    for row in output.get("chapters", []):
-        if not isinstance(row, dict):
-            continue
-        node = by_key.get(str(row.get("chapter_key") or ""))
-        if node is None or not bool(row.get("selected")):
-            continue
-        selected.append((float(row.get("confidence") or 0.0), node))
-    selected.sort(key=lambda item: (-item[0], item[1].key))
+    selected: dict[str, float] = {}
+    stop = Event()
+    def route_batch(payload):
+        worker = (Agent(agent.resource_root, runner=agent.runner, model=agent.model, backend=agent.backend)
+                  if jobs > 1 and isinstance(agent, Agent) else agent)
+        batch_nodes = [by_key[row["chapter_key"]] for row in payload["chapters"]]
+        return cached_route(
+            worker, "route_chapters", payload, budget,
+            estimate_routing(batch_nodes, payload["document"], model),
+            model=model, cache_dir=cache_dir, row_key="chapters", id_key="chapter_key", stop_event=stop)
+    outputs = bounded_map(route_batch, routing_payloads(profile, _chapter_payload(nodes), "chapters"),
+                          jobs, stop_event=stop)
+    for output in outputs:
+        for row in output["chapters"]:
+            if row["selected"]:
+                key = row["chapter_key"]
+                selected[key] = max(selected.get(key, 0.0), float(row["confidence"]))
+    selected = sorted(((confidence, by_key[key]) for key, confidence in selected.items()),
+                      key=lambda item: (-item[0], item[1].key))
     if max_chapters is None:
         return tuple(node for _, node in selected)
     return tuple(node for _, node in selected[:max_chapters])
@@ -367,6 +378,8 @@ def route_declarations(
     budget: Budget,
     *,
     model: str,
+    cache_dir: Path | None = None,
+    stop_event=None,
 ) -> tuple[tuple[RoutedDeclaration, ...], tuple[RoutedDeclaration, ...]]:
     """Assign each declaration of one chapter a citation tier for this document.
 
@@ -375,49 +388,37 @@ def route_declarations(
     """
     profile = document_profile(index)
     rows = _declaration_payload(node, catalog)
-    routed: list[RoutedDeclaration] = []
-    rejected: list[RoutedDeclaration] = []
-    valid_blocks = {block.block_id for block in index.blocks}
-    for start in range(0, len(rows), DECLARATIONS_PER_CALL):
-        chunk = rows[start : start + DECLARATIONS_PER_CALL]
-        budget.require(estimate_declaration_routing(chunk, profile, model))
-        output = agent_factory().run(
-            "route_declarations",
-            {
-                "document": profile,
-                "chapter_title": node.title,
-                "declarations": chunk,
-            },
-        )
-        for row in output.get("declarations", []):
-            if not isinstance(row, dict):
-                continue
-            tier = str(row.get("tier") or "")
-            blocks = tuple(
-                str(block)
-                for block in (row.get("document_blocks") or [])
-                if str(block) in valid_blocks
-            )
-            declaration = RoutedDeclaration(
-                lean_name=str(row.get("lean_name") or ""),
-                tier=tier,
-                document_blocks=blocks,
-                rationale=str(row.get("rationale") or ""),
-            )
-            # A citable tier with no usable block citation cannot be compared;
-            # keep it on the rejected list so it is diagnosable rather than
-            # vanishing.
-            #
-            # `background` counts as citable: the document relies on the result
-            # at the cited block even though it does not originate it, which is
-            # a real relationship worth recording. Excluding it here made the
-            # tier unreachable and silently lost 85 of 86 uncited
-            # Hypercontractivity declarations. Only `unrelated` is dropped.
-            if tier in CITABLE_TIERS and blocks:
-                routed.append(declaration)
+    # A positive judgment in any segment survives negatives in other segments.
+    # Preserve all supporting blocks and keep the strongest relationship found.
+    merged: dict[str, RoutedDeclaration] = {}
+    strength = {"unrelated": 0, "background": 1, "states": 2, "proves": 3}
+    block_order = {block.block_id: i for i, block in enumerate(index.blocks)}
+    for payload in routing_payloads(profile, rows, "declarations",
+                                    extra={"chapter_title": node.title},
+                                    max_rows=DECLARATIONS_PER_CALL):
+        output = cached_route(
+            agent_factory(), "route_declarations", payload, budget,
+            estimate_declaration_routing(payload["declarations"], payload["document"], model),
+            model=model, cache_dir=cache_dir, row_key="declarations", id_key="lean_name", stop_event=stop_event)
+        for row in output["declarations"]:
+            name, tier = row["lean_name"], row["tier"]
+            previous = merged.get(name)
+            blocks = set(row["document_blocks"])
+            if previous is not None:
+                blocks.update(previous.document_blocks)
+                if strength[previous.tier] >= strength[tier]:
+                    tier, rationale = previous.tier, previous.rationale
+                else:
+                    rationale = row["rationale"]
             else:
-                rejected.append(declaration)
-    return (
-        tuple(item for item in routed if item.lean_name in catalog),
-        tuple(rejected),
-    )
+                rationale = row["rationale"]
+            merged[name] = RoutedDeclaration(
+                name, tier, tuple(sorted(blocks, key=block_order.__getitem__)), rationale)
+    routed, rejected = [], []
+    for row in rows:
+        declaration = merged[row["lean_name"]]
+        if declaration.tier in CITABLE_TIERS and declaration.document_blocks:
+            routed.append(declaration)
+        else:
+            rejected.append(declaration)
+    return tuple(routed), tuple(rejected)

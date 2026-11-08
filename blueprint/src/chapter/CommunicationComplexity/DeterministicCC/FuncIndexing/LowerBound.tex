@@ -71,16 +71,16 @@ $\Sigma_{x \in \{0,1\}^n}\, \mathrm{mismatch}(p, x)$ of the per-input mismatch i
 given by $((x, i), h) \mapsto (x, (i, h))$.
 \end{definition}
 
-\begin{lemma}[Mismatch count equals Hamming distance]
+\begin{lemma}[Mismatch count and Hamming distance]
 \lean{CommunicationComplexity.Functions.Indexing.mismatchSubtype_card_eq_hammingDist}
 \label{CommunicationComplexity.Functions.Indexing.mismatchSubtype_card_eq_hammingDist}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.Functions.Indexing.answerVector, CommunicationComplexity.Functions.Indexing.indexing, CommunicationComplexity.Functions.Indexing.mismatchSubtype}
-For a fixed input string $x$, the number of indices $i$ on which $p$ errs equals the Hamming
-distance between $x$ and the answer vector of Alice's message on $x$:
-\[
-  \abs{\mathrm{mismatch}(p, x)} = d_H\bigl(x,\ a(\mathrm{send}(x))\bigr).
-\]
+\difficulty{1}
+Let $n$ be a positive integer, let $p$ be a deterministic one-way protocol for Index on
+$n$-bit inputs, and let $x$ be such an input. The number of indices on which the
+protocol’s output differs from the Index function equals the Hamming distance between
+$x$ and the answer vector determined by the message sent on input $x$.
 \end{lemma}
 
 \begin{lemma}[Incorrect pairs counted by summing mismatches]
@@ -88,118 +88,131 @@ distance between $x$ and the answer vector of Alice's message on $x$:
 \label{CommunicationComplexity.Functions.Indexing.badPairSubtype_card_eq_sum}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Functions.Indexing.badPairEquivSigma, CommunicationComplexity.Functions.Indexing.badPairSubtype, CommunicationComplexity.Functions.Indexing.mismatchSubtype}
-The number of incorrect input pairs $(x, i)$ of $p$ equals the sum, over all strings
-$x \in \{0,1\}^n$, of the number of indices $i$ on which $p$ errs at $x$:
-\[
-  \abs{\mathrm{badPairs}(p)} = \sum_{x \in \{0,1\}^n} \abs{\mathrm{mismatch}(p, x)}.
-\]
+\difficulty{3}
+Let $n$ be a positive integer and let $p$ be a deterministic one-way protocol that takes
+an $n$-bit Boolean string from Alice and an index in $[n]$ from Bob, and outputs a
+Boolean. The number of input pairs $(x,i)$ on which $p$ disagrees with the Index
+function equals the sum, over all $n$-bit strings $x$, of the number of indices $i$ on
+which $p$ disagrees with the $i$th bit of $x$.
 \end{lemma}
 
-\begin{lemma}[At most $2^c$ answer vectors]
+\begin{lemma}[Bound on the number of answer vectors]
 \lean{CommunicationComplexity.Functions.Indexing.answerSet_card_le_pow_cost}
 \label{CommunicationComplexity.Functions.Indexing.answerSet_card_le_pow_cost}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Functions.Indexing.answerSet, CommunicationComplexity.Functions.Indexing.answerVector}
-A one-way protocol $p$ of cost $c$ realises at most $2^c$ distinct answer vectors:
-$\abs{A} \le 2^{p.\mathrm{cost}}$.
+\difficulty{3}
+Let $n$ be a positive integer and let $p$ be a deterministic one-way protocol for
+indexing on $n$-bit inputs. The number of distinct answer vectors of $p$ is at most
+$2^{c}$, where $c=\lceil\log_2 |\mathrm{Message}(p)|\rceil$ is its communication cost.
 \end{lemma}
 
-\begin{lemma}[Bad inputs are far from their own answer vector]
+\begin{lemma}[Bad inputs are far from their message answer]
 \lean{CommunicationComplexity.Functions.Indexing.badInput_implies_hammingDist_ge}
 \label{CommunicationComplexity.Functions.Indexing.badInput_implies_hammingDist_ge}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Functions.Indexing.answerSet, CommunicationComplexity.Functions.Indexing.answerVector, CommunicationComplexity.Functions.Indexing.badInput}
-If $x$ is a bad input for $p$, then the Hamming distance from $x$ to the answer vector of its
-own message satisfies $d_H\bigl(x, a(\mathrm{send}(x))\bigr) \ge n/4$ (as real numbers).
+\difficulty{3}
+Let $n$ be a positive integer, let $p$ be a deterministic one-way protocol for indexing
+on $n$-bit inputs, and let $x\in\{0,1\}^n$ be bad for $p$. Then the Hamming distance
+from $x$ to the answer vector associated with the message sent on $x$ is at least $n/4$.
 \end{lemma}
 
-\begin{theorem}[Half bad inputs give error at least $1/8$]
+\begin{theorem}[Many bad inputs force distributional error]
 \lean{CommunicationComplexity.Functions.Indexing.distributionalError_ge_one_eighth_of_bad_half}
 \label{CommunicationComplexity.Functions.Indexing.distributionalError_ge_one_eighth_of_bad_half}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.distributionalError, CommunicationComplexity.Deterministic.OneWay.Protocol.run, CommunicationComplexity.Functions.Indexing.badInput, CommunicationComplexity.Functions.Indexing.badInput_implies_hammingDist_ge, CommunicationComplexity.Functions.Indexing.badPairSubtype, CommunicationComplexity.Functions.Indexing.badPairSubtype_card_eq_sum, CommunicationComplexity.Functions.Indexing.indexing, CommunicationComplexity.Functions.Indexing.indexingInputDist, CommunicationComplexity.Functions.Indexing.mismatchSubtype, CommunicationComplexity.Functions.Indexing.mismatchSubtype_card_eq_hammingDist, CommunicationComplexity.uniformOn_univ_measureReal_eq_card_filter}
-Let $p$ be a deterministic one-way protocol for $\mathrm{IND}_n$.  If at least $2^{n-1}$ of
-Alice's $2^n$ inputs are bad for $p$ (no answer vector of $p$ lies within Hamming distance
-$n/4$), then the distributional error of $p$ on $\mathrm{IND}_n$ under the uniform
-distribution on pairs $(x, i)$ is at least $1/8$.
+\difficulty{6}
+Let $n$ be a positive integer and let $p$ be a deterministic one-way protocol for the
+Index function on $n$-bit strings and indices in $[n]$, with Boolean output. Call a
+string bad if no answer vector produced by any message of $p$ lies at Hamming distance
+less than $n/4$ from it. If at least $2^{n-1}$ strings are bad, then the probability
+that $p$ errs on a uniformly chosen pair consisting of an $n$-bit string and an index in
+$[n]$ is at least $1/8$.
 \end{theorem}
 
-\begin{lemma}[Binomial coefficients grow by a factor $3$ below $n/4$]
+\begin{lemma}[Growth of binomial coefficients below a quarter]
 \lean{CommunicationComplexity.Functions.Indexing.choose_three_mul_le_succ_choose_quarter}
 \label{CommunicationComplexity.Functions.Indexing.choose_three_mul_le_succ_choose_quarter}
 \leanok
-For natural numbers $n, i$ with $i < \lfloor n/4 \rfloor$, one has
-$3 \binom{n}{i} \le \binom{n}{i+1}$.
+\difficulty{5}
+For natural numbers $n$ and $i$ satisfying $i < \lfloor n/4\rfloor$, one has
+$3\binom{n}{i} \le \binom{n}{i+1}$.
 \end{lemma}
 
-\begin{lemma}[Hamming ball of radius $\lfloor n/4 \rfloor$ has at most $2\binom{n}{\lfloor n/4\rfloor}$ points]
+\begin{lemma}[Size of a quarter-radius Hamming ball]
 \lean{CommunicationComplexity.Functions.Indexing.hammingBall_card_quarter_le_two_mul_choose}
 \label{CommunicationComplexity.Functions.Indexing.hammingBall_card_quarter_le_two_mul_choose}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Functions.Indexing.choose_three_mul_le_succ_choose_quarter, CommunicationComplexity.ballVol_binary, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingBall_card}
-For every $n$ and every centre $a \in \{0,1\}^n$, the Hamming ball of radius
-$\lfloor n/4 \rfloor$ around $a$ satisfies
-\[
-  \abs{B_{\lfloor n/4 \rfloor}(a)} \le 2 \binom{n}{\lfloor n/4 \rfloor}
-\]
-(as real numbers).
+\difficulty{5}
+For every natural number $n$ and every binary word $a$ of length $n$, the Hamming ball
+centred at $a$ with radius $\lfloor n/4\rfloor$ has cardinality at most
+$2\binom{n}{\lfloor n/4\rfloor}$.
 \end{lemma}
 
-\begin{lemma}[Euler's number is at most $68/25$]
+\begin{lemma}[Upper bound for Euler’s number]
 \lean{CommunicationComplexity.Functions.Indexing.exp_one_le_68_div_25}
 \label{CommunicationComplexity.Functions.Indexing.exp_one_le_68_div_25}
 \leanok
-The real number $e = \exp(1)$ satisfies $e \le 68/25 = 2.72$.
+\difficulty{3}
+The exponential constant satisfies $\exp(1) \le 68/25$.
 \end{lemma}
 
-\begin{lemma}[Ratio $n / \lfloor n/4 \rfloor$ is at most $101/25$]
+\begin{lemma}[A bound on the quarter-divisor ratio]
 \lean{CommunicationComplexity.Functions.Indexing.div_nat_div_four_le_101_25}
 \label{CommunicationComplexity.Functions.Indexing.div_nat_div_four_le_101_25}
 \leanok
-
-For every natural number $n \ge 300$, the real ratio $n / \lfloor n/4 \rfloor$ is at most
-$101/25 = 4.04$.
+\difficulty{4}
+For every natural number $n \ge 300$, the real number $n/\lfloor n/4\rfloor$ is at most
+$101/25$.
 \end{lemma}
 
-\begin{lemma}[Quarter binomial coefficient is at most $11^{\lfloor n/4 \rfloor}$]
+\begin{lemma}[A bound on a quarter binomial coefficient]
 \lean{CommunicationComplexity.Functions.Indexing.choose_quarter_le_eleven_pow}
 \label{CommunicationComplexity.Functions.Indexing.choose_quarter_le_eleven_pow}
 \leanok
 \uses{CommunicationComplexity.Functions.Indexing.div_nat_div_four_le_101_25, CommunicationComplexity.Functions.Indexing.exp_one_le_68_div_25}
-For every natural number $n \ge 300$,
-\[
-  \binom{n}{\lfloor n/4 \rfloor} \le 11^{\lfloor n/4 \rfloor}.
-\]
+\difficulty{5}
+For every natural number $n \ge 300$, $\binom{n}{\lfloor n/4\rfloor} \le 11^{\lfloor
+n/4\rfloor}$.
 \end{lemma}
 
-\begin{lemma}[Good inputs are covered by Hamming balls around answer vectors]
+\begin{lemma}[Count of good Index inputs]
 \lean{CommunicationComplexity.Functions.Indexing.goodInput_card_le}
 \label{CommunicationComplexity.Functions.Indexing.goodInput_card_le}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Functions.Indexing.answerSet, CommunicationComplexity.Functions.Indexing.badInput, CommunicationComplexity.Functions.Indexing.hammingBall_card_quarter_le_two_mul_choose, CommunicationComplexity.hammingBall}
-Let $\mathrm{good}$ be the set of inputs $x \in \{0,1\}^n$ that are not bad for $p$ (those
-within Hamming distance $< n/4$ of some answer vector).  Then
-\[
-  \abs{\mathrm{good}} \le \abs{A} \cdot 2 \binom{n}{\lfloor n/4 \rfloor},
-\]
-where $A$ is the answer set of $p$.
+\difficulty{4}
+Let $n$ be a positive integer and let $p$ be a deterministic one-way protocol for the
+Index problem on $n$-bit inputs. The number of inputs that lie at Hamming distance less
+than $n/4$ from some answer vector of $p$ is at most $|A|\,2\binom{n}{\lfloor
+n/4\rfloor}$, where $A$ is the set of answer vectors of $p$.
 \end{lemma}
 
-\begin{lemma}[Small cost forces at least half the inputs to be bad]
+\begin{lemma}[Small cost yields many bad inputs]
 \lean{CommunicationComplexity.Functions.Indexing.badInput_card_ge_half_of_small_cost}
 \label{CommunicationComplexity.Functions.Indexing.badInput_card_ge_half_of_small_cost}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Functions.Indexing.answerSet, CommunicationComplexity.Functions.Indexing.answerSet_card_le_pow_cost, CommunicationComplexity.Functions.Indexing.badInput, CommunicationComplexity.Functions.Indexing.choose_quarter_le_eleven_pow, CommunicationComplexity.Functions.Indexing.goodInput_card_le}
-If $n \ge 300$ and the deterministic one-way protocol $p$ for $\mathrm{IND}_n$ has cost at most
-$\lfloor n/10 \rfloor$, then at least $2^{n-1}$ of the $2^n$ inputs $x \in \{0,1\}^n$ are bad
-for $p$ (no answer vector of $p$ lies within Hamming distance $n/4$ of $x$).
+\difficulty{6}
+Let $n$ be a positive integer with $n\ge 300$, and let $p$ be a deterministic one-way
+protocol for indexing on $n$-bit inputs. If its cost is at most $\lfloor n/10\rfloor$,
+then at least $2^{n-1}$ inputs $x\in\{0,1\}^n$ are bad for $p$, meaning that no answer
+vector of $p$ has Hamming distance less than $n/4$ from $x$.
 \end{lemma}
 
 \begin{theorem}[Cost at most $n/10$ forces error above $1/9$]
 \lean{CommunicationComplexity.Functions.Indexing.one_ninth_lt_distributionalError_of_cost_le}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p012-b003,
+  pdf-6d7577246334-p012-b004
+}
 \label{CommunicationComplexity.Functions.Indexing.one_ninth_lt_distributionalError_of_cost_le}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.Protocol.distributionalError, CommunicationComplexity.Functions.Indexing.badInput, CommunicationComplexity.Functions.Indexing.badInput_card_ge_half_of_small_cost, CommunicationComplexity.Functions.Indexing.distributionalError_ge_one_eighth_of_bad_half, CommunicationComplexity.Functions.Indexing.indexing, CommunicationComplexity.Functions.Indexing.indexingInputDist}
+\difficulty{3}
 For $n \ge 300$, every deterministic one-way protocol $p$ for $\mathrm{IND}_n$ with
 $p.\mathrm{cost} \le \lfloor n/10 \rfloor$ has distributional error strictly greater than
 $1/9$ under the uniform distribution on pairs $(x, i)$.
@@ -207,6 +220,10 @@ $1/9$ under the uniform distribution on pairs $(x, i)$.
 
 \begin{definition}[Distributional one-way lower-bound hypothesis for Index]
 \lean{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p012-b003,
+  pdf-6d7577246334-p012-b004
+}
 \label{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound}
 \leanok
 \uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.OneWay.Protocol, CommunicationComplexity.Deterministic.OneWay.Protocol.cost, CommunicationComplexity.Deterministic.OneWay.Protocol.distributionalError, CommunicationComplexity.Functions.Indexing.indexing, CommunicationComplexity.Functions.Indexing.indexingInputDist}
@@ -219,9 +236,14 @@ of the easy direction of Yao's minimax principle for one-way protocols, speciali
 
 \begin{theorem}[Index satisfies the lower-bound hypothesis at $(1/9, n/10)$]
 \lean{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound_one_ninth_of_large}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p012-b003,
+  pdf-6d7577246334-p012-b004
+}
 \label{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound_one_ninth_of_large}
 \leanok
 \uses{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound, CommunicationComplexity.Functions.Indexing.one_ninth_lt_distributionalError_of_cost_le}
+\difficulty{1}
 For $n \ge 300$, the predicate
 \texttt{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound}
 holds at error $\varepsilon = 1/9$ and cost budget $c = \lfloor n/10 \rfloor$: every
@@ -229,39 +251,40 @@ deterministic one-way protocol for $\mathrm{IND}_n$ of cost at most $\lfloor n/1
 uniform-distributional error greater than $1/9$.
 \end{theorem}
 
-\begin{theorem}[Distributional lower bound implies public-coin one-way lower bound]
+\begin{theorem}[Distributional lower bound for Index]
 \lean{CommunicationComplexity.Functions.Indexing.lt_publicCoinOneWay_communicationComplexity_of_distributionalLowerBound}
 \label{CommunicationComplexity.Functions.Indexing.lt_publicCoinOneWay_communicationComplexity_of_distributionalLowerBound}
 \leanok
 \uses{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound, CommunicationComplexity.Functions.Indexing.indexing, CommunicationComplexity.Functions.Indexing.indexingInputDist, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity, CommunicationComplexity.PublicCoin.OneWay.lt_communicationComplexity_of_forall_distributionalError_gt}
-If every deterministic one-way protocol for $\mathrm{IND}_n$ of cost at most $c$ has
-uniform-distributional error greater than $\varepsilon$, then the public-coin one-way
-communication complexity of $\mathrm{IND}_n$ at error $\varepsilon$ is strictly greater than
-$c$ (as an extended natural number).  This is the easy direction of Yao's minimax principle for
-one-way protocols, applied to Index.
+\difficulty{1}
+Let $n$ be a positive integer, let $\varepsilon$ be real, and let $c$ be a natural
+number. If every deterministic one-way protocol for the Index function on $n$-bit inputs
+with communication cost at most $c$ has error strictly greater than $\varepsilon$ under
+the uniform distribution on input pairs, then the public-coin one-way communication
+complexity of that function with error parameter $\varepsilon$ is strictly greater than
+$c$, as an extended natural number.
 \end{theorem}
 
-\begin{theorem}[Public-coin one-way lower bound at error $1/8$ from the hypothesis]
+\begin{theorem}[Public-coin lower bound from a distributional hypothesis]
 \lean{CommunicationComplexity.Functions.Indexing.div_ten_lt_publicCoinOneWay_communicationComplexity_of_distributionalLowerBound}
 \label{CommunicationComplexity.Functions.Indexing.div_ten_lt_publicCoinOneWay_communicationComplexity_of_distributionalLowerBound}
 \leanok
 \uses{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound, CommunicationComplexity.Functions.Indexing.indexing, CommunicationComplexity.Functions.Indexing.lt_publicCoinOneWay_communicationComplexity_of_distributionalLowerBound, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
-If every deterministic one-way protocol for $\mathrm{IND}_n$ of cost at most
-$\lfloor n/10 \rfloor$ has uniform-distributional error greater than $1/8$, then the
-public-coin one-way communication complexity of $\mathrm{IND}_n$ at error $1/8$ is strictly
-greater than $\lfloor n/10 \rfloor$.  This is the previous theorem specialised to the source's
-constants $\varepsilon = 1/8$, $c = \lfloor n/10 \rfloor$.
+\difficulty{1}
+Let $n$ be a positive integer. Suppose every deterministic one-way protocol for the
+Index function on $n$-bit strings and indices in $[n]$, with Boolean output and cost at
+most $\lfloor n/10\rfloor$, has error strictly greater than $1/8$ under the uniform
+distribution on input pairs. Then the one-way public-coin communication complexity of
+the Index function at error $1/8$ is strictly greater than $\lfloor n/10\rfloor$.
 \end{theorem}
 
-\begin{theorem}[Linear public-coin one-way lower bound for Index]
+\begin{theorem}[Linear public-coin lower bound for Index]
 \lean{CommunicationComplexity.Functions.Indexing.div_ten_lt_publicCoinOneWay_communicationComplexity_one_ninth}
 \label{CommunicationComplexity.Functions.Indexing.div_ten_lt_publicCoinOneWay_communicationComplexity_one_ninth}
 \leanok
 \uses{CommunicationComplexity.Functions.Indexing.deterministicOneWayDistributionalLowerBound_one_ninth_of_large, CommunicationComplexity.Functions.Indexing.indexing, CommunicationComplexity.Functions.Indexing.lt_publicCoinOneWay_communicationComplexity_of_distributionalLowerBound, CommunicationComplexity.PublicCoin.OneWay.communicationComplexity}
-For $n \ge 300$, the public-coin one-way communication complexity of $\mathrm{IND}_n$ at error
-$1/9$ is strictly greater than $\lfloor n/10 \rfloor$:
-\[
-  R^{\to,\mathrm{pub}}_{1/9}(\mathrm{IND}_n) > \lfloor n/10 \rfloor .
-\]
-This is the Kremer--Nisan--Ron linear lower bound with explicit constants.
+\difficulty{1}
+For every positive integer $n \ge 300$, the one-way public-coin communication complexity
+of the Index function on $n$-bit strings and indices in $[n]$, at error $1/9$, is
+strictly greater than $\lfloor n/10\rfloor$.
 \end{theorem}

@@ -1,0 +1,24 @@
+{
+ "lean_name": "OnlineLearning.finiteIndexed_column_sample_step",
+ "key": "0c67cc24def80018",
+ "kind": "theorem",
+ "title": "Finite column sample intersection",
+ "statement": "Let $X,Y\\subseteq\\mathbb{R}$ be nonempty sets, with $X$ compact and convex and $Y$ convex. Suppose $f:\\mathbb{R}\\times\\mathbb{R}\\to\\mathbb{R}$ is continuous and convex in its first variable on $X$ for each $y\\in Y$, concave in its second variable on $Y$ for each $x\\in X$, bounded above and below on $X\\times Y$, and satisfies $0\\le f(x,y)\\le1$ for all $x\\in X$ and $y\\in Y$. For an integer $M>1$, a sample $x_1,\\ldots,x_M\\in X$, a real number $\\varepsilon>0$, and a finite set $v\\subseteq Y$, define $K=\\sup_{y\\in Y}\\inf_{1\\le i\\le M}f(x_i,y)$. There is a point $x'\\in X$ such that $f(x',y)\\le K+\\varepsilon$ for every $y\\in v$.",
+ "hypotheses_covered": [
+  "$X,Y$ nonempty",
+  "$X$ compact and convex",
+  "$Y$ convex",
+  "$f$ continuous and convex in the first variable on $X$ for each $y\\in Y$",
+  "$f$ concave in the second variable on $Y$ for each $x\\in X$",
+  "$f$ bounded above and below on $X\\times Y$",
+  "$0\\le f(x,y)\\le1$ on $X\\times Y$",
+  "integer $M>1$",
+  "sample of $M$ points in $X$",
+  "$\\varepsilon>0$",
+  "finite column set $v\\subseteq Y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $X, Y \\subseteq \\bbr$ and $f : \\bbr \\to \\bbr \\to \\bbr$ satisfy the convex-compact\nminimax hypotheses, and suppose $f$ is normalized so that $0 \\le f(x,y) \\le 1$ for all\n$x \\in X$ and $y \\in Y$. Fix an integer $M \\ge 2$, a row sample\n$x : \\mathrm{Fin}\\,M \\to X$, a real $\\varepsilon > 0$, and a finite column sample\n$v \\subseteq Y$. Write\n\\[\n  K \\;:=\\; \\sup_{y \\in Y}\\; \\inf_{i \\in \\mathrm{Fin}\\,M}\\; f(x_i, y)\n\\]\nfor the indexed sampled lower value. Then the set\n\\[\n  X \\;\\cap\\; \\bigcap_{y \\in v} \\bigl\\{\\, x' \\in X : f(x', y) \\le K + \\varepsilon \\,\\bigr\\}\n\\]\nis nonempty; that is, there is a row $\\bar{x} \\in X$ with $f(\\bar{x}, y) \\le K + \\varepsilon$\nfor every $y \\in v$. This is the finite $\\varepsilon$-net step in the proof of\nCesa-Bianchi--Lugosi Theorem~7.1."
+}

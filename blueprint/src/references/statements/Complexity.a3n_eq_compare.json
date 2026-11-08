@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.a3n_eq_compare",
+ "key": "a255cbe01ae14411",
+ "kind": "lemma",
+ "title": "Pair comparator output after a scan",
+ "statement": "Let $y,p,u,v$ be binary words with $y=p$ followed by $v$. Start the pair comparator on input $y$ in control state $4$ with its comparison flag true, its input head at position $|p|+1$, and its work tape storing $u$ from cell zero with the head at cell zero. After $|v|+1$ steps, the machine is halted and its output is the single bit that is true exactly when $u=v$.",
+ "hypotheses_covered": [
+  "$y,p,u,v$ are binary words",
+  "$y=p$ followed by $v$",
+  "The specified initial comparator configuration uses control state $4$, true flag, input position $|p|+1$, work tape storing $u$, and work-head position $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the comparator input has the form $y = p\\,v$ and let $u$ be the decoded word. After $|v| + 1$ steps from the comparison state at position $|p|+1$, the pair comparator has halted and its output is the single bit recording whether $u = v$."
+}

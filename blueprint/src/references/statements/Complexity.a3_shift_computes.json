@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a3_shift_computes",
+ "key": "9a31ad7ffdeeb102",
+ "kind": "lemma",
+ "title": "Exact running time of the shift machine",
+ "statement": "For Boolean words $w$ and $x$, the machine with no work tapes that emits one false bit for each input symbol and then emits $w$ halts after exactly $|x|+|w|+2$ steps on input $x$. Its output is the word consisting of $|x|$ false bits followed by $w$.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$x$ is a Boolean input word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every suffix word $w$ and every input $x$, the shift machine for $w$ halts on\ninput $x$ within $|x| + |w| + 2$ steps, and its output is $|x|$ false bits followed\nby $w$."
+}

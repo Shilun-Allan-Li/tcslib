@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.DTIME_subset_NTIME",
+ "key": "3391ab488f4df2fb",
+ "kind": "theorem",
+ "title": "Deterministic time is contained in nondeterministic time",
+ "statement": "For every time bound $T : \\mathbb{N} \\to \\mathbb{N}$, every language decidable in deterministic time bounded by a constant multiple of $T$ is decidable in nondeterministic time bounded by a constant multiple of $T$.",
+ "hypotheses_covered": [
+  "$T : \\mathbb{N} \\to \\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every time bound $T : \\mathbb{N} \\to \\mathbb{N}$,\n$\\mathrm{DTIME}(T) \\subseteq \\mathrm{NTIME}(T)$. That is, if a language $L$ of binary\nstrings is decided by a finite deterministic multi-tape Turing machine that, for some\nconstant $c$, halts on every input $x$ within $c \\cdot T(|x|)$ steps with output $1$ if\n$x \\in L$ and $0$ otherwise, then $L$ is decided by a finite nondeterministic\nmulti-tape machine within $c \\cdot T(|x|)$ steps on every input $x$."
+}

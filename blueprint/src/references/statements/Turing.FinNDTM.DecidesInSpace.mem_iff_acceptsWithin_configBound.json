@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinNDTM.DecidesInSpace.mem_iff_acceptsWithin_configBound",
+ "key": "79aafd59b2b4d450",
+ "kind": "theorem",
+ "title": "Membership and acceptance at the configuration bound",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $L$ be a language of binary strings, and let $s\\colon\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every input $x$ there is a time $T$ such that $N$ halts on every branch by time $T$, uses at most $s(|x|)$ work-tape cells on every branch of length $T$, and $x\\in L$ exactly when $N$ accepts $x$ within $T$ steps. Then, for every binary string $x$, $x\\in L$ if and only if $N$ accepts $x$ within $3(\\lvert Q\\rvert+1)(|x|+2)3^{k(2s(|x|)+1)}(2s(|x|)+1)^k$ steps, where $Q$ is the state set of $N$ and $k$ is its number of work tapes.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$L$ is a language of binary strings",
+  "$s\\colon\\mathbb{N}\\to\\mathbb{N}$",
+  "For every input $x$, some time $T$ exists such that $N$ halts on every branch by time $T",
+  "Every branch of length $T$ uses at most $s(|x|)$ work-tape cells",
+  "For that time $T$, $x\\in L$ if and only if $N$ accepts $x$ within $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

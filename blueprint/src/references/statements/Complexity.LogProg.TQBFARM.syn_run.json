@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.syn_run",
+ "key": "5128f4695147717f",
+ "kind": "theorem",
+ "title": "Run of the Syntax Scan",
+ "statement": "Let $x$ be a Boolean word, let $n$ be a natural number, let $q$ be a syntax-automaton state, and let $st$ be a seven-register state. If $st.P+n=|x|$, every register of $st$ is at most $B$, and $|x|\\le B$, then there is a finite run from the syntax-scanning label with automaton state $q$ and registers $st$ to the input-exhausted label with automaton state obtained by folding the suffix of $x$ beginning at position $st.P$ through the syntax transition, and with the input pointer set to $|x|$ and every other register unchanged. Every configuration before the endpoint satisfies the program guard and register bound $B$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$q$ is a syntax-automaton state",
+  "$st$ is a seven-register state",
+  "$st.P+n=|x|$",
+  "Every register of $st$ is at most $B$",
+  "$|x|\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B,n$ natural numbers, $q$ a syntax-automaton state, and $st$ a\nseven-register state. If $st.P+n=|x|$, every register of $st$ is at most $B$, and\n$|x|\\le B$, then the program has a finite run from the syntax-scanning label with state\n$q$ and register values $st$ to the input-exhausted label with automaton state obtained\nby scanning the suffix of $x$ starting at position $st.P$ from $q$, and with all\nregisters unchanged except that $P=|x|$. Every configuration before the endpoint\nsatisfies the program’s precondition and register bound $B$."
+}

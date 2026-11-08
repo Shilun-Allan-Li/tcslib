@@ -30,48 +30,41 @@ each symbol of $x$, it halts within $T(|x|)$ steps with output the one-symbol
 string $e(b)$, where $b \in \{0,1\}$ is the indicator of whether $x \in L$.
 \end{definition}
 
-\begin{theorem}[Alphabet invariance of DTIME]
+\begin{theorem}[Binary time classes under alphabet encoding]
 \lean{Complexity.mem_DTIME_of_decidesInTimeVia}
 \label{Complexity.mem_DTIME_of_decidesInTimeVia}
 \leanok
 \uses{Complexity.DTIME, Turing.FinTM, Turing.FinTM.DecidesInTimeVia, Turing.FinTM.alphabet_reduction, Turing.MultiTapeTM.indicator}
 \difficulty{3}
-Let $\Gamma$ be a finite alphabet, let
-$e : \{0,1\} \hookrightarrow \Gamma$ be an injective embedding of the binary
-symbols, let $L \subseteq \{0,1\}^{*}$ be a language over the binary alphabet,
-and let $T : \mathbb{N} \to \mathbb{N}$ be a time bound. If some deterministic
-finite Turing machine over $\Gamma$ decides $L$ via $e$ within time $T$, then
-$L \in \mathrm{DTIME}(n \mapsto T(n) + 1)$; that is, some deterministic finite
-Turing machine over the binary alphabet decides $L$ within
-$a \cdot (T(n) + 1)$ steps on every input of length $n$, for some constant $a$.
+Let $\Gamma$ be a finite alphabet, let $e:\{0,1\}\hookrightarrow\Gamma$ be an injective
+map, let $L$ be a language of finite binary words, and let $T:\mathbb N\to\mathbb N$. If
+a finite Turing machine over $\Gamma$, on each input obtained by applying $e$ symbolwise
+to a binary word $x$, halts within $T(|x|)$ steps and outputs the one-symbol encoding
+under $e$ of the indicator of whether $x\in L$, then $L$ belongs to
+$\mathrm{DTIME}(n\mapsto T(n)+1)$.
 \end{theorem}
 
-\begin{theorem}[Alphabet invariance of P]
+\begin{theorem}[Binary polynomial-time membership via an encoded alphabet]
 \lean{Complexity.mem_P_of_decidesInTimeVia_poly}
 \label{Complexity.mem_P_of_decidesInTimeVia_poly}
 \leanok
 \uses{Complexity.P, Complexity.mem_DTIME_of_decidesInTimeVia, Complexity.mem_P_of_dtime_le, Complexity.succ_pow_le, Turing.FinTM, Turing.FinTM.DecidesInTimeVia}
 \difficulty{4}
-Let $\Gamma$ be a finite alphabet, let
-$e : \{0,1\} \hookrightarrow \Gamma$ be an injective embedding of the binary
-symbols, let $L \subseteq \{0,1\}^{*}$ be a language over the binary alphabet,
-and let $C$ and $d$ be natural numbers. If some deterministic finite Turing
-machine over $\Gamma$ decides $L$ via $e$ within $C \cdot (n+1)^d$ steps on
-every input of length $n$, then $L \in \mathsf{P}$. In particular, polynomial-time
-decidability over any finite alphabet already places a language in the
-binary-alphabet class $\mathsf{P}$.
+Let $\Gamma$ be a finite alphabet, let $e$ be an injective map from the binary alphabet
+into $\Gamma$, let $M$ be a finite-state Turing machine over $\Gamma$, and let $L$ be a
+language of binary strings. If, on every binary input $x$, the machine run on the
+symbolwise image $e(x)$ halts within $C(|x|+1)^d$ steps and outputs the one-symbol
+string containing $e(1)$ when $x\in L$ and $e(0)$ otherwise, for natural numbers $C,d$,
+then $L$ belongs to $\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[P is exactly one-work-tape polynomial time]
+\begin{theorem}[Polynomial time with one work tape]
 \lean{Complexity.mem_P_iff_one_work_tape}
 \label{Complexity.mem_P_iff_one_work_tape}
 \leanok
 \uses{Complexity.P, Complexity.mem_P_iff, Turing.FinTM, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.DecidesInTime, Turing.FinTM.one_work_tape_binary, Turing.MultiTapeTM.indicator}
 \difficulty{4}
-A language $L$ over the binary alphabet belongs to $\mathsf{P}$ if and only if
-there exist a deterministic finite Turing machine $M$ over $\{0,1\}$ and
-natural numbers $C$ and $d$ such that $M$ has exactly one work tape and $M$
-decides $L$ within $C \cdot (n+1)^d$ steps on every input of length $n$. Thus
-restricting to a single work tape does not change the class $\mathsf{P}$: the
-quadratic overhead of tape reduction preserves polynomial time bounds.
+A language $L$ over the binary alphabet belongs to $\mathsf{P}$ if and only if there are
+a finite Turing machine $M$ with exactly one work tape and natural numbers $C,d$ such
+that $M$ decides $L$ on every input of length $n$ within $C(n+1)^d$ steps.
 \end{theorem}

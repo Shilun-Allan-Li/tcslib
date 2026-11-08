@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.splitRestore_scan",
+ "key": "32b7ac74bd1df0e9",
+ "kind": "lemma",
+ "title": "Cleanup scan configurations",
+ "statement": "Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words. For every $j\\in\\mathbb N$ with $j\\le |s|$, running the cleanup machine for $j$ steps from its scan configuration at count $0$ yields its scan configuration at count $j$: the machine is in state $(0,|w|<j)$, the input head is at the saturated position for $j$, the first tape still stores $s$, each scratch tape contains the unary word of length $|s|+1$ with its first $j$ cells cleared, and all work heads are at displacement $j$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w$ and $s$ are Boolean words",
+  "$j\\in\\mathbb N$",
+  "$j\\le |s|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j$ at most the candidate's length, $j$ steps of the cleanup\nmachine from the start of its scan phase reach the cleanup scan configuration\nfor $j$, with nothing emitted; the overflow flag records exactly whether more\ncandidate cells than input cells have been consumed."
+}

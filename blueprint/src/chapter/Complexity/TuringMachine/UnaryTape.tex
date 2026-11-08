@@ -31,72 +31,64 @@ given by
 \]
 \end{definition}
 
-\begin{theorem}[Unary tape holds 1 below its value]
+\begin{theorem}[Unary tape symbol below its length]
 \lean{Turing.UnaryTape.ones_lt}
 \label{Turing.UnaryTape.ones_lt}
 \leanok
 \uses{Turing.UnaryTape.ones}
 \difficulty{1}
-Let $m \in \mathbb{N}$, and let $\mathrm{ones}_m : \mathbb{Z} \to \{0, 1, \sqcup\}$ be its unary
-tape, which holds $1$ on cells $0, \dots, m-1$ and the blank $\sqcup$ elsewhere. If
-$c \in \mathbb{Z}$ satisfies $0 \le c$ and $c < m$, then $\mathrm{ones}_m(c) = 1$.
+Let $m$ be a natural number, and let $c$ be an integer cell position. If $0 \le c$ and
+$c < m$, then the unary tape of $m$ contains the symbol $1$ at position $c$.
 \end{theorem}
 
-\begin{theorem}[Unary tape is blank from its value on]
+\begin{theorem}[Unary tape is blank beyond its value]
 \lean{Turing.UnaryTape.ones_ge}
 \label{Turing.UnaryTape.ones_ge}
 \leanok
 \uses{Turing.UnaryTape.ones}
 \difficulty{3}
-Let $m \in \mathbb{N}$, and let $\mathrm{ones}_m : \mathbb{Z} \to \{0, 1, \sqcup\}$ be its unary
-tape, which holds $1$ on cells $0, \dots, m-1$ and the blank $\sqcup$ elsewhere. If
-$c \in \mathbb{Z}$ satisfies $m \le c$, then $\mathrm{ones}_m(c) = \sqcup$.
+For $m\in\mathbb{N}$ and a cell position $c\in\mathbb{Z}$ with $m\le c$, the unary tape
+of $m$ is blank at $c$.
 \end{theorem}
 
-\begin{theorem}[Unary tape is blank at negative cells]
+\begin{theorem}[Unary tape is blank at negative positions]
 \lean{Turing.UnaryTape.ones_neg}
 \label{Turing.UnaryTape.ones_neg}
 \leanok
 \uses{Turing.UnaryTape.ones}
 \difficulty{3}
-Let $m \in \mathbb{N}$, and let $\mathrm{ones}_m : \mathbb{Z} \to \{0, 1, \sqcup\}$ be its unary
-tape, which holds $1$ on cells $0, \dots, m-1$ and the blank $\sqcup$ elsewhere. If
-$c \in \mathbb{Z}$ satisfies $c < 0$, then $\mathrm{ones}_m(c) = \sqcup$.
+For $m\in\mathbb{N}$ and a cell position $c\in\mathbb{Z}$ with $c<0$, the unary tape of
+$m$ is blank at $c$.
 \end{theorem}
 
-\begin{theorem}[Unary tape of zero is blank]
+\begin{theorem}[Unary tape of zero]
 \lean{Turing.UnaryTape.ones_zero}
 \label{Turing.UnaryTape.ones_zero}
 \leanok
 \uses{Turing.UnaryTape.ones}
 \difficulty{3}
-For $m \in \mathbb{N}$, let $\mathrm{ones}_m : \mathbb{Z} \to \{0, 1, \sqcup\}$ be the unary
-tape of $m$, which holds $1$ on cells $0, \dots, m-1$ and the blank $\sqcup$ elsewhere. The unary
-tape of $0$ is the all-blank tape: $\mathrm{ones}_0(c) = \sqcup$ for every $c \in \mathbb{Z}$.
+The unary tape associated with $0$ is blank at every integer cell: for every
+$c\in\mathbb{Z}$, its value at $c$ is `none`.
 \end{theorem}
 
-\begin{theorem}[Incrementing a unary tape]
+\begin{theorem}[Adding a unary cell]
 \lean{Turing.UnaryTape.update_ones_succ}
 \label{Turing.UnaryTape.update_ones_succ}
 \leanok
 \uses{Turing.UnaryTape.ones}
 \difficulty{3}
-For $m \in \mathbb{N}$, let $\mathrm{ones}_m : \mathbb{Z} \to \{0, 1, \sqcup\}$ be the unary
-tape of $m$, which holds $1$ on cells $0, \dots, m-1$ and the blank $\sqcup$ elsewhere. For every
-$m \in \mathbb{N}$, the tape obtained from $\mathrm{ones}_m$ by setting cell $m$ to $1$ and leaving
-every other cell unchanged is $\mathrm{ones}_{m+1}$.
+For every $m\in\mathbb{N}$, changing cell $m$ of the unary tape for $m$ to $1$ and
+leaving all other cells unchanged gives the unary tape for $m+1$.
 \end{theorem}
 
-\begin{theorem}[Decrementing a unary tape]
+\begin{theorem}[Erasing the last unary cell]
 \lean{Turing.UnaryTape.update_ones_pred}
 \label{Turing.UnaryTape.update_ones_pred}
 \leanok
 \uses{Turing.UnaryTape.ones}
 \difficulty{3}
-For $m \in \mathbb{N}$, let $\mathrm{ones}_m : \mathbb{Z} \to \{0, 1, \sqcup\}$ be the unary
-tape of $m$, which holds $1$ on cells $0, \dots, m-1$ and the blank $\sqcup$ elsewhere. For every
-$j \in \mathbb{N}$, the tape obtained from $\mathrm{ones}_{j+1}$ by setting cell $j$ to the blank
-$\sqcup$ and leaving every other cell unchanged is $\mathrm{ones}_j$.
+For every $j\in\mathbb{N}$, changing cell $j$ of the unary tape for $j+1$ to blank and
+leaving all other cells unchanged gives the unary tape for $j$.
 \end{theorem}
 
 \begin{definition}[Optional write at a head position]

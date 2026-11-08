@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integral_rotated_gaussianCDF_quotient_tendsto",
+ "key": "24575abcbc14f258",
+ "kind": "lemma",
+ "title": "Integrated Gaussian crossing limit",
+ "statement": "Let $\\Phi$ and $\\varphi$ be the standard Gaussian distribution function and density, and let $\\gamma$ be standard Gaussian measure on $\\mathbb R$. For every $t\\in\\mathbb R$, as $\\theta\\to0$ through positive values, $\\int \\frac{|\\Phi((t-\\sin\\theta\\,y)/\\cos\\theta)-\\Phi(t)|}{\\theta}\\,d\\gamma(y)$ tends to $\\varphi(t)\\int |y|\\,d\\gamma(y)$.",
+ "hypotheses_covered": [
+  "$t$ is any real number",
+  "The limit is taken as $\\theta\\to0^+$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ denote the standard Gaussian distribution function and density. For $t,y\\in\\mathbb R$, define $q_{t,y}(\\theta)=\\Phi((t-\\sin\\theta\\,y)/\\cos\\theta)-\\Phi(t)$. For every real $t$, if $Y\\sim N(0,1)$, then $\\mathbb E_Y(|q_{t,Y}(\\theta)|/\\theta)\\to\\varphi(t)\\mathbb E|Y|$ as $\\theta\\to0^+$."
+}

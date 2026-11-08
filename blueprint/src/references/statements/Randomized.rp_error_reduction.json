@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.rp_error_reduction",
+ "key": "ddf88b51f8e41369",
+ "kind": "theorem",
+ "title": "Error reduction for randomized languages",
+ "statement": "Let $E$ be a verifier model that is closed under testing whether any of a polynomial number of consecutive random blocks is accepted. Suppose a language $L$ has an $E$-efficient verifier with polynomially many random bits, perfect rejection on inputs outside $L$, and acceptance probability at least $\\min(2/3,(|x|+1)^{-c})$ on each input $x\\in L$, for some natural number $c$. Then, for every natural number $d$, $L$ has an $E$-efficient verifier with polynomially many random bits, perfect rejection outside $L$, and acceptance probability at least $1-2^{-((|x|+1)^d+1)}$ on every $x\\in L$.",
+ "hypotheses_covered": [
+  "$E$ is closed under the stated any-of-polynomially-many-blocks verifier construction",
+  "$c$ is a natural number",
+  "$L$ is a language of bit strings",
+  "$L$ has an $E$-efficient weak randomized verifier with polynomial random-bit length",
+  "Its acceptance probability on members is at least $\\min(2/3,(|x|+1)^{-c})$",
+  "It rejects every nonmember on every random string",
+  "$d$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

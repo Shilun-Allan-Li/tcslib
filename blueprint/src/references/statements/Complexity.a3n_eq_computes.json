@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a3n_eq_computes",
+ "key": "98a4c3c9f2ee78df",
+ "kind": "lemma",
+ "title": "Linear-Time Pair Equality Decision",
+ "statement": "For all binary words $u$ and $v$, the pair comparator, started on the encoding that doubles each bit of $u$, appends the separator $01$, and then appends $v$, halts within $3|u|+|v|+4$ steps and outputs the one-bit word whose bit is true exactly when $u=v$.",
+ "hypotheses_covered": [
+  "$u$ is a binary word",
+  "$v$ is a binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary strings $u$ and $v$, the pair comparator, on the self-delimiting encoding of the pair $(u,v)$, halts within $3|u| + |v| + 4$ steps with output the single bit recording whether $u = v$."
+}

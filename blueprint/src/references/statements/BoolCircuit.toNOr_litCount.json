@@ -1,14 +1,15 @@
 {
  "lean_name": "BoolCircuit.toNOr_litCount",
- "key": "ebdce03d75031865",
+ "key": "81b2379bbe258115",
  "kind": "theorem",
  "title": "OR-normalization preserves literal count",
- "statement": "For every Boolean circuit $c$ on $n$ variables, converting $c$ to OR-normal form leaves its total number of literal occurrences unchanged: the literal count of the normal-form OR circuit obtained from $c$ equals the literal count of $c$ itself.",
+ "statement": "Let $n$ be a natural number and let $c$ be a Boolean circuit on $n$ variables. The literal count of the OR-normal form obtained from $c$ equals the literal count of $c$.",
  "hypotheses_covered": [
-  "c is a Boolean circuit on n variables"
+  "$n$ is a natural number",
+  "$c$ is a Boolean circuit on $n$ variables"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "For every circuit $c$,\n$(c.\\mathrm{toNOr}).\\mathrm{litCount} = c.\\mathrm{litCount}$."
+ "replaced": "For every Boolean circuit $c$ on $n$ variables, converting $c$ to OR-normal form leaves\nits total number of literal occurrences unchanged: the literal count of the normal-form\nOR circuit obtained from $c$ equals the literal count of $c$ itself."
 }

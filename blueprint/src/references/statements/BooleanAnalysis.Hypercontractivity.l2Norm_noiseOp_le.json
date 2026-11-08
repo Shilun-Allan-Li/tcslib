@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.l2Norm_noiseOp_le",
+ "key": "75f4a8d70217acc5",
+ "kind": "lemma",
+ "title": "Noise operator bound for bounded-degree functions",
+ "statement": "Let $n,k$ be natural numbers and let $f:\\{0,1\\}^n\\to\\mathbb R$ have Fourier degree at most $k$, meaning every nonzero Fourier coefficient is indexed by a set of size at most $k$. For every real $\\rho\\ge1$, the $L^2$ norm under the uniform measure satisfies $\\|T_\\rho f\\|_2\\le\\rho^k\\|f\\|_2$, where $T_\\rho$ multiplies the Fourier coefficient at each set $S$ by $\\rho^{|S|}$.",
+ "hypotheses_covered": [
+  "$n$ and $k$ are natural numbers",
+  "$f$ is a real-valued function on the $n$-dimensional Boolean cube",
+  "$f$ has Fourier degree at most $k$",
+  "$\\rho$ is real and $1\\le\\rho$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^n\\to\\bbr$ have Fourier degree at most $k\\in\\mathbb N$, and let $\\rho\\ge1$. For the Fourier multiplier $\\widehat{T_\\rho f}(S)=\\rho^{|S|}\\widehat f(S)$, one has $\\|T_\\rho f\\|_2\\le\\rho^k\\|f\\|_2$ under the uniform measure. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure."
+}

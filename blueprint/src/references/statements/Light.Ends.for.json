@@ -1,0 +1,19 @@
+{
+ "lean_name": "Light.Ends.for",
+ "key": "cfd3f3a225720be8",
+ "kind": "theorem",
+ "title": "Bounded execution of a for-loop",
+ "statement": "Let $\text{lim}$ be execution limits, let $P$ be a program, and let $i,n,T$ be natural numbers, with initial state $\u0000sigma$, upper-bound expression $hi$, loop body $body$, and postcondition $Q$. Let $I(j,\u0000sigma)$ be an invariant. Suppose after setting local variable $i$ to $0$, $I(0)$ holds. For every $j<n$, if a state has local value $i=j$ and satisfies $I(j)$, assume the body executes within cost $b$, preserves the loop index at $j$, and leaves a state satisfying $I(j+1)$ after that index is incremented by one. Assume that at index $n$, $I(n)$ and local value $i=n$ imply $Q$; and whenever $j≤n$, local value $i=j$ and $I(j)$ hold, the upper-bound expression is safe and evaluates to $n$. If $n$ is at most the word limit and $n(\text{cost}(hi)+b+7)+\text{cost}(hi)+5≤T$, then the for-loop terminates from $\u0000sigma$ within cost $T$ in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "After setting local $i$ to $0$, invariant $I(0)$ holds",
+  "For each $j<n$, from any state with local $i=j$ and $I(j)$, the body ends within cost $b$, preserves local $i=j$, and the incremented state satisfies $I(j+1)$",
+  "At index $n$, local $i=n$ and $I(n)$ imply $Q$",
+  "For each $j≤n$, if local $i=j$ and $I(j)$, then $hi$ is safe and evaluates to $n$",
+  "$(n:ℤ)≤\\text{lim.word}$",
+  "$n(\\text{hi.cost}+b+7)+\\text{hi.cost}+5≤T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

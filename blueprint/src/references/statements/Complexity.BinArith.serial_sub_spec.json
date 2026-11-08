@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.BinArith.serial_sub_spec",
+ "key": "f0ec6542834ebc65",
+ "kind": "theorem",
+ "title": "Correctness of serial subtraction",
+ "statement": "For any finite bit string $z$, let $a$ and $b$ be its decoded components, taking a failed decoding to give empty components. Run the $|z|+2$-position serial subtraction procedure on these strings, padded with zeros and initialized with borrow $0$. Its final borrow bit is $1$ exactly when $\\operatorname{val}(a)<\\operatorname{val}(b)$. If $\\operatorname{val}(b)\\le\\operatorname{val}(a)$, the output has value $\\operatorname{val}(a)-\\operatorname{val}(b)$.",
+ "hypotheses_covered": [
+  "$z$ is a finite bit string",
+  "The procedure uses $|z|+2$ positions and initial borrow $0$",
+  "For the output-value conclusion, $\\operatorname{val}(b)\\le\\operatorname{val}(a)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

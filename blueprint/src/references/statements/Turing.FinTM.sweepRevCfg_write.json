@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.sweepRevCfg_write",
+ "key": "0d4af385387d583e",
+ "kind": "lemma",
+ "title": "Stationary write in a backward zipper",
+ "statement": "Let $A$ be an alphabet, $S$ a set of states, and $x$ a finite input word over $A$. For any optional state $q$, state $q'\\in S$, input-head position $p$ among the $|x|+2$ allowed positions, integer frontier $z$, finite lists $l,r$ of possibly blank symbols, output word, and possibly blank symbol $b$, applying the action that writes $b$ and leaves the work head stationary produces the backward-sweep configuration with state $q'$, input-head position $p$, frontier $z$, left list $l$, and right list $b::r.tail$, with the output unchanged.",
+ "hypotheses_covered": [
+  "An alphabet $A$ and state set $S$",
+  "A finite input word $x$ over $A$",
+  "An optional state $q$ and state $q'\\in S$",
+  "An input-head position $p$ among the $|x|+2$ allowed positions",
+  "An integer frontier $z$",
+  "Finite possibly blank-symbol lists $l,r$",
+  "An output word",
+  "A possibly blank symbol $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "In a backward-facing zipper configuration (work head at cell $z$, a list $r$ occupying\ncells $z, z-1, \\dots$, a list $l$ occupying cells $z+1, z+2, \\dots$), applying the sweep\naction that writes a symbol $b$ at the current cell without moving, leaves the input\nhead and output unchanged, and enters a state $q'$ replaces the first entry of $r$ by\n$b$ and the control state by $q'$, leaving everything else fixed."
+}

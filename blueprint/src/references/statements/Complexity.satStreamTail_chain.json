@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satStreamTail_chain",
+ "key": "2d11a76546214214",
+ "kind": "lemma",
+ "title": "Tail output agrees with the splitting chain",
+ "statement": "For literals $a$ and $b$, a clause tail $C$, and a cursor $j\\in\\mathbb{N}$, concatenate, for each clause in the splitting chain on head $a$, tail $b::C$, and cursor $j$, a clause marker followed by that clause's binary encoding. The resulting bit string is one clause marker followed by the encodings of $a$ and $b$, then the pending tail output for $C$ at cursor $j$; the chain's returned cursor also equals the cursor returned by the pending tail output.",
+ "hypotheses_covered": [
+  "literal $a$",
+  "literal $b$",
+  "clause tail $C$",
+  "cursor $j\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For literals $a, b$, a clause tail $C$, and a cursor $j$: concatenating a clause\nmarker with the serialization of each clause of the chain construction on $a$,\n$b :: C$, $j$ yields exactly one marker followed by the serializations of $a$ and\n$b$ and the pending tail output of $C$ at $j$; moreover the chain's returned\ncursor equals the tail's final cursor."
+}

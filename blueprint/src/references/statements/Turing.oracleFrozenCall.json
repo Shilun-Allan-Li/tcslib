@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.oracleFrozenCall",
+ "key": "3c960d72ae6c0c75",
+ "kind": "theorem",
+ "title": "Frozen virtual call simulation",
+ "statement": "Let $C$ be a finite Boolean Turing machine, with entry state $en$ and exit state $ex$, and let $arg$ and $result$ be Boolean words. Suppose that from the empty-input configuration with $arg$ on the designated state tape, $C$ reaches the corresponding configuration with state $ex$ and word $result$ after $t$ steps, and its state is never $ex$ at any earlier time. Then, for any Boolean input, valid input-head position, and output word, the virtual-head simulation started with tag true reaches after $t$ steps the corresponding configuration with word $result$, state $ex$, tag still true, and the same input-head position and output; it does not have state $(ex,true)$ at any earlier time.",
+ "hypotheses_covered": [
+  "$C$ is a finite Boolean Turing machine",
+  "$en$ and $ex$ are states of $C$",
+  "$arg$ and $result$ are Boolean words",
+  "$t$ is a natural number",
+  "the base machine reaches its specified exit configuration after $t$ steps",
+  "the base machine does not have state $ex$ at any time $s<t$",
+  "$x$ is a Boolean input word",
+  "$p$ is a valid input-head position for $x$",
+  "$out$ is a Boolean output word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

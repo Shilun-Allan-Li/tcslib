@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.timed_read",
+ "key": "be113c1b2cfe5f52",
+ "kind": "lemma",
+ "title": "Reading the decider's output bit",
+ "statement": "Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a halted configuration of $D$ on $x$ whose output is the one-bit word $[b]$. After two steps of the timed conditional controller from the decider-phase configuration corresponding to $c$, the controller is in the ready configuration for bit $b$.",
+ "hypotheses_covered": [
+  "$D,M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $D$ on $x$ with no state",
+  "$c$ outputs $[b]$",
+  "$b$ is a bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet, and\nconsider the timed conditional controller for them, with a decider block, a branch block\nand a capture tape as work tapes. Let $c$ be a halted configuration of $D$ on an input\n$x$ whose output is the one-bit word $\\beta$. Then two steps of the controller from the\ndecider-phase configuration of $c$ (in the back state, with $c$'s input head and work\ntapes on the decider block, a blank branch block, $\\beta$ in cell $0$ of the capture tape\nwith that head at cell $1$, and empty output) reach the ready-to-rewind configuration of\n$c$ and $\\beta$, which differs only in being in the rewind-start state for $\\beta$ with the\ncapture head at cell $0$."
+}

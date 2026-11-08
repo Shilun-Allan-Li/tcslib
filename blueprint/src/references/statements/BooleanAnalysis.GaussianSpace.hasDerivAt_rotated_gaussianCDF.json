@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.hasDerivAt_rotated_gaussianCDF",
+ "key": "ba2a20d421ea6383",
+ "kind": "lemma",
+ "title": "Derivative of a rotated Gaussian distribution function",
+ "statement": "Let $\\Phi$ and $\\varphi$ be the standard Gaussian distribution function and density. For every $t,y\\in\\mathbb R$, the function $\\theta\\mapsto\\Phi\\bigl((t-y\\sin\\theta)/\\cos\\theta\\bigr)-\\Phi(t)$ is differentiable at $0$, with derivative $-\\varphi(t)y$.",
+ "hypotheses_covered": [
+  "$t,y\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ denote the standard Gaussian distribution function and density. For $t,y\\in\\mathbb R$, define $q_{t,y}(\\theta)=\\Phi((t-\\sin\\theta\\,y)/\\cos\\theta)-\\Phi(t)$. For every $t,y$, $q_{t,y}'(0)=-\\varphi(t)y$."
+}

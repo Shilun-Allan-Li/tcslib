@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.ic_run",
+ "key": "f75021d19c67aca6",
+ "kind": "theorem",
+ "title": "Increment-Count Register Run",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input alphabet, let $m$ be a codec mode, let $y$ be a bit string, let $B$ be a natural number, and let $c$ be an increment-count identifier. For a register assignment $v$ on $21$ registers, suppose every register value is at most $B$ and the value in the register associated with $c$, plus the count associated with $c$, is at most $B$. Then the codec register program can reach the next label for $c$ from its index-zero label, increasing that register by the associated count; throughout the run, its prescribed safety condition holds and every register remains at most $B$.",
+ "hypotheses_covered": [
+  "Finite nondeterministic Boolean-input machine $N$",
+  "Codec mode $m$",
+  "Input bit string $y$",
+  "Natural-number bound $B$",
+  "Increment-count identifier $c$",
+  "Register assignment $v$ on 21 registers",
+  "Every register value in $v$ is at most $B$",
+  "$v(\\mathrm{reg}(c))+\\mathrm{count}(c)\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

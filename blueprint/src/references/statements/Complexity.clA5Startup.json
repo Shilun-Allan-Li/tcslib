@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5Startup",
+ "key": "85543c9f00adfa30",
+ "kind": "lemma",
+ "title": "Polynomial-Time Startup to the First Anchor",
+ "statement": "For every finite Boolean-alphabet Turing machine $M$ and natural numbers $C,e,c,A,d$, there are finite machines $S,J$ and natural-number constants $a_S,d_S,a_J,d_J,a_H,d_H$ such that the packed producer word for each input $x$ has length at most $a_H(|x|+1)^{d_H}$. Moreover, for every pair of finite Boolean-alphabet machines $E,I$ and every Boolean word $x$, the five-module host built from $S,J,E,I$ reaches, at some time $t$ at most $2|x|+3+a_S(|x|+1)^{d_S}+a_J(a_H(|x|+1)^{d_H}+1)^{d_J}$, the initial configuration over the packed producer word with an empty unary cursor and the loop-anchor state. At every earlier time $j<t$, its state is not the loop-anchor state.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean-alphabet Turing machine",
+  "$C,e,c,A,d$ are natural numbers",
+  "$E,I$ are arbitrary finite Boolean-alphabet Turing machines",
+  "$x$ is an arbitrary Boolean word",
+  "The existential bound on packed producer-word length",
+  "The time bound on reaching the stated configuration",
+  "The host state is not the loop-anchor state at each time $j<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine and parameters, there are install and cursor machines with polynomial constants such that, for arbitrary emission and update modules, the five-module host started from its native initial configuration reaches, within the summed startup budget and without ever showing the loop anchor earlier, the anchor over the persistent body word with cursor zero: the complete packed producer answer behind an empty unary cursor. Startup is silent and never executes the emission or update modules."
+}

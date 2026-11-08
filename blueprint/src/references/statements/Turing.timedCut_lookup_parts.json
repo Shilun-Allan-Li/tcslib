@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timedCut_lookup_parts",
+ "key": "c2ffa753c1f10c6b",
+ "kind": "lemma",
+ "title": "Serialization split at a transition record",
+ "statement": "Let $M$ be a coded machine, let $q$ be a state of $M$, and let $u,v\\in\\{\text{absent},0,1\\}$ be the input and work-tape reads. There are a list $G$ of lists of transition actions, a list $B$ of transition actions, and a Boolean word $R$ such that $G$ has length equal to the index of $q$, every list in $G$ has length nine, and $B$ has length equal to the record index of $(u,v)$. The serialization of $M$ is the concatenation of its header, the records in the lists of $G$ in order, the records in $B$ in order, the record for $M$'s transition from state $q$ on reads $u,v$, and $R$.",
+ "hypotheses_covered": [
+  "coded machine $M$",
+  "state $q$ in the state space of $M$",
+  "optional Boolean input read $u$",
+  "optional Boolean work-tape read $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every coded machine, state $q$, and pair of optional input and work reads,\nthe serialization splits as: the header, then the record groups of the $q$\nstates preceding $q$ (each a list of nine records), then the records of $q$'s\ngroup preceding the read offset selected by the two reads, then the serialized\nrecord of the machine's transition action for $q$ on those reads, then a\nremainder."
+}

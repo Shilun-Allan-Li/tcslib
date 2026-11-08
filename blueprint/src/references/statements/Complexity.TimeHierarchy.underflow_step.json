@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.underflow_step",
+ "key": "f5a7007ecfe6dbb6",
+ "kind": "lemma",
+ "title": "Clock underflow halts",
+ "statement": "Let $K$ and $W$ be finite Boolean-alphabet Turing machines, let $c$ be a configuration of $W$ on Boolean input $x$ with state $q$ and output register $r$, and choose contents $kt$ and head positions $kh$ for the tapes corresponding to $K$. Let $\\tau$ be a clock-tape content function and $z$ an integer. If the clock tape is blank at position $z$, then one step of the clock machine from the configuration with state $\\mathrm{dec}(q,r)$, underlying configuration $c$, clock tape $\\tau$, clock-head position $z$, tapes $kt,kh$, and empty output halts and has output consisting of the single bit $1$.",
+ "hypotheses_covered": [
+  "$K$ and $W$ are finite Turing machines over Boolean symbols",
+  "$c$ is a configuration of $W$ on Boolean input $x$",
+  "$q$ is a state of $W$ and $r$ is an output-register value",
+  "$kt$ gives the contents of the $K$ work tapes",
+  "$kh$ gives the head positions of the $K$ work tapes",
+  "$\\tau$ maps integer positions to optional Boolean symbols",
+  "$z$ is an integer",
+  "$\\tau(z)$ is blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

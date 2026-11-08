@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.timedPrefix_penultimate",
+ "key": "abfa0b30f0204156",
+ "kind": "lemma",
+ "title": "The prefix parser remains active",
+ "statement": "For any three finite bit strings $b$, $\\alpha$, and $x$, the prefix parser on the nested pair encoding $\\langle\\langle b,\\alpha\\rangle,x\\rangle$ is still in a nonhalting state after $4|b|+2|\\alpha|+5$ steps.",
+ "hypotheses_covered": [
+  "$b$, $\\alpha$, and $x$ are finite bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "After $4|b| + 2|\\alpha| + 5$ steps on the nested pair encoding\n$\\langle \\langle b, \\alpha\\rangle, x\\rangle$ --- one step before consuming\nthe final separator cell --- the prefix parser has not halted."
+}

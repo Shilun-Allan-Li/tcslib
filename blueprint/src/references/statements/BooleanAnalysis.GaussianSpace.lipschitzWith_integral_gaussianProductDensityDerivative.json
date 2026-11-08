@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianProductDensityDerivative",
+ "key": "dcdc7b09baee4a6f",
+ "kind": "lemma",
+ "title": "Lipschitz continuity of Gaussian product density averages",
+ "statement": "Let $I$ be a finite index set, let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\le1$ for every $z$, and let $v>0$. For mean vector $c$, integrate $f(z)$ times the mean derivative of the product Gaussian density with variance $v$ in each coordinate over Lebesgue measure on $\\mathbb R^I$. As a function of $c$, this linear-functional-valued integral is Lipschitz with constant $2|I|^2/v$, using the maximum norm on mean vectors and the operator norm on linear functionals.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$f$ is measurable",
+  "$|f(z)|\\le1$ for every $z$",
+  "$v$ is a nonzero nonnegative real, hence positive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$, the map $c\\mapsto\\int f(z)A_v(c,z)\\,dz$ is globally $2|I|^2/v$-Lipschitz, with maximum norm on mean vectors and operator norm on linear functionals."
+}

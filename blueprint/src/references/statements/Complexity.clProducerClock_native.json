@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clProducerClock_native",
+ "key": "55aaea2f49cfbfe1",
+ "kind": "lemma",
+ "title": "Polynomial-time unary producer clock",
+ "statement": "For all natural numbers $C,e,c,A,d$, the function sending a bit string $x$ to the unary word of length $c\\bigl(A(|x|+C(|x|+1)^e+1)^d+1\\bigr)^2+1$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$C,e,c,A,d$ are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all parameters $C, e, c, A, d$, the function sending an input $x$ to the unary word of the producer horizon at $|x|$ plus one true token is polynomial-time computable; the horizon is read off the inherited arithmetic header, and the extra token accounts for the inclusive final row."
+}

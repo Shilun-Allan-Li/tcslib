@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.macroCfg_unary",
+ "key": "dbe4b00379380102",
+ "kind": "lemma",
+ "title": "Unary tape symbol in a macrostep configuration",
+ "statement": "Let $W$ be a finite machine over the Boolean alphabet, let $a$ be a natural number, let $x$ be a word over the schedule alphabet, and let $c$ be a schedule-controller configuration on $x$. For any optional phase $q$ and integers $u,g$, the symbol scanned on the unary-counter tape of the macrostep configuration built from $c$ at head position $u$ is the content of $c$'s unary-counter tape at position $u$.",
+ "hypotheses_covered": [
+  "$W$ is a finite machine over the Boolean alphabet",
+  "$a$ is a natural number",
+  "$x$ is a word over the schedule alphabet",
+  "$c$ is a schedule-controller configuration on $x$",
+  "$q$ is an optional control phase",
+  "$u,g$ are integers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In every macrostep configuration with unary head at $u$, the symbol read on the unary\ntape is the base configuration's unary tape content at coordinate $u$."
+}

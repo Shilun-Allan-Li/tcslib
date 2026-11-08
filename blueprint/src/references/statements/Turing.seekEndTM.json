@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.seekEndTM",
+ "key": "c5930ed48c7921d5",
+ "kind": "def",
+ "title": "Rightward search for a tape boundary",
+ "statement": "For an alphabet of symbols, a number $k$ of work tapes, and a selected tape $i$ among them, define a machine with four phases: run, gap, back, and done. It starts in run; while scanning tape $i$, it moves right and remains in run on a nonblank symbol, and moves right into gap on a blank. In gap it moves right and returns to run on a nonblank symbol; on a blank it enters done without moving the input head. In back it stays in place on tape $i$ and enters done, while in done it stays in place; these transitions make no writes or outputs.",
+ "hypotheses_covered": [
+  "A symbol alphabet",
+  "A natural number $k$ of work tapes",
+  "A selected tape $i$ among the $k$ work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

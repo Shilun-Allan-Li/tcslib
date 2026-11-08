@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clRec_advance",
+ "key": "15e476bead387a66",
+ "kind": "lemma",
+ "title": "One recorded source transition",
+ "statement": "Let $M$ be a finite Boolean-alphabet Turing machine, let $x,y$ be Boolean words, and let $c$ be a configuration of $M$ on input $y$. Suppose a Boolean tag $b$ correctly marks the boundary position of $c$'s input head, and let $n$ be a family of natural-number movement counts, indexed by the fields of a stored row, such that each count's binary representation has length at most $W$. For any record word and natural numbers $T,t,W$, there are a natural number $s \\le 2W+5$ and a Boolean tag $b'$ correctly marking the input-head position after one step of $M$, such that the recorder, started in its source-release control with configuration $c$, counts $n$, record, clock budget $T$, and logical time $t$, reaches its next row-copy control with source configuration $M(c)$, counts advanced by one on exactly the counters selected by that transition's signed head movements, and the same record, clock budget, and logical time.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $M$; Boolean words $x,y$; source configuration $c$ on $y$",
+  "tag $b$ satisfies the virtual-boundary tag condition for $c$'s input-head position",
+  "movement-count family $n$ indexed by the stored-row fields",
+  "every count in $n$ has binary length at most $W$",
+  "arbitrary record and natural numbers $T,t,W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration with a valid position tag, and let the movement counts have binary representations of width at most $W$. From the source-release phase, there is a time $s \\le 2W + 5$ after which the recorder has executed exactly one source transition together with its full signed counter update and dispatched to the next row-copy phase, with a valid tag for the stepped configuration; the record and clock contents and heads are framed throughout."
+}

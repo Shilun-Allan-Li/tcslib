@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.UTab.inp_bits",
+ "key": "1348d307519aab69",
+ "kind": "theorem",
+ "title": "Input template matches tableau instruction bits",
+ "statement": "Let $M$ be a finite-state Turing machine with $k$ work tapes, let $n,T,t,p\\in\\mathbb N$, let $z$ be a finite Boolean string, and let $\\theta$ be one of the seven input phases. Suppose $p<|z|+n+2$, $t\\le T$, and let $e$ be a register record whose input-count and hard-wired-input-length registers equal $n$ and $|z|$, whose current-instruction register is the tableau position for input cell $(t,p)$, and whose step-start register is $t$ times the configuration stride. If $t\\ne0$, assume its preceding-cell register plus one stride equals its current-instruction register. Assume also that the phase’s source list agrees with the prescribed input-cell sources, that its layout source selects the corresponding hard-wired input bit when $1\\le p\\le |z|+n$ and is false otherwise, and that this layout source is valid for the register record. Then executing the template for the input cell of phase $\\theta$ produces exactly the bit string of the corresponding tableau instruction.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols, with $k$ work tapes",
+  "$n,T,t,p$ are natural numbers and $z$ is a finite Boolean string",
+  "$\\theta$ is an input phase",
+  "$p<|z|+n+2$",
+  "$t\\le T$",
+  "the input-count register equals $n$",
+  "the hard-wired-input-length register equals $|z|$",
+  "the current-instruction register is the tableau index of input cell $(t,p)$",
+  "if $t\\ne0$, the preceding-cell register plus one configuration stride equals the current-instruction register",
+  "the phase source list agrees with the prescribed input-cell source list",
+  "the layout source equals the indexed hard-wired input source for $1\\le p\\le |z|+n$, and is false otherwise",
+  "the layout source is valid for the register record"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

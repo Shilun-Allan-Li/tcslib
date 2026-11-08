@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.obliviousCandidate_oblivious",
+ "key": "df59819ff627e5a1",
+ "kind": "lemma",
+ "title": "Obliviousness of the candidate",
+ "statement": "Let $W$ and $M$ be finite machines over the binary alphabet, and let $a\\in\\mathbb{N}$. For any two binary inputs of equal length and every time $t\\in\\mathbb{N}$, the candidate built from $W$, $M$, and $a$ has the same input-head position and the same work-tape head positions on both inputs.",
+ "hypotheses_covered": [
+  "Finite binary machines $W$ and $M$",
+  "$a\\in\\mathbb{N}$",
+  "Two binary inputs of equal length",
+  "A time $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary machines $W$ and $M$ and every padding constant $a$, the candidate\nsimulator built from $W$, $M$, and $a$ is oblivious: its head positions at every time\nstep depend only on the length of the input.  This holds on all binary inputs of every\nlength, including the empty input, and uses no assumption about the computations of\n$W$ or $M$."
+}

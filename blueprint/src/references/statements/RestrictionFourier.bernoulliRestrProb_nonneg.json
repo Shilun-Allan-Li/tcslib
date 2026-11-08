@@ -1,0 +1,17 @@
+{
+ "lean_name": "RestrictionFourier.bernoulliRestrProb_nonneg",
+ "key": "c32806e06c18e4a1",
+ "kind": "lemma",
+ "title": "Nonnegativity of restriction-event probabilities",
+ "statement": "Let $n$ be a natural number, let $p\\in\\mathbb{R}$ satisfy $0\\le p\\le 1$, and let $E$ be a decidable event on restrictions of the $n$ variables. The Bernoulli restriction probability of $E$, formed using the weights $p^{|J|}((1-p)/2)^{n-|J|}$ for a restriction with free-variable set $J$, is nonnegative.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A real parameter $p$ with $0\\le p$",
+  "A real parameter $p$ with $p\\le 1$",
+  "A decidable event on restrictions of the $n$ variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p \\in \\bbr$ with $0 \\le p \\le 1$, and let $E$ be a decidable event on restrictions\nof $n$ variables, where a restriction assigns each coordinate either a fixed Boolean\nvalue or leaves it free. Under the Bernoulli($p$)-random restriction --- each\nrestriction $\\rho$ with free-variable set $J$ carries weight\n$p^{\\abs{J}}\\bigl(\\tfrac{1-p}{2}\\bigr)^{\\,n-\\abs{J}}$ --- the probability of $E$,\nnamely the weighted sum of the indicator of $E$ over all restrictions, is nonnegative:\n$0 \\le \\Pr_\\rho[E]$."
+}

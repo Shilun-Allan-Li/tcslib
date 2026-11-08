@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.sweepRevCfg_left_any",
+ "key": "f349ef0553ec6ce2",
+ "kind": "lemma",
+ "title": "Backward sweep step for an arbitrary right stack",
+ "statement": "Let $A$ be an alphabet, $S$ a state set, and $x$ a finite input word over $A$. Given an optional state $q$, a state $q'\\in S$, an input-head position $p$, an integer frontier $z$, finite possibly blank-symbol stacks $l,r$, an output word, and a possibly blank symbol $b$, applying the action that writes $b$, moves the work head left, and enters state $q'$ yields the backward-sweep configuration with state $q'$, the same input-head position and output, frontier $z-1$, left stack $b::l$, and right stack equal to the tail of $r$.",
+ "hypotheses_covered": [
+  "An alphabet $A$ and state set $S$",
+  "A finite input word $x$ over $A$",
+  "An optional state $q$ and a state $q'\\in S$",
+  "An input-head position $p$ among the $|x|+2$ positions",
+  "An integer frontier $z$",
+  "Finite possibly blank-symbol stacks $l,r$",
+  "An output word",
+  "A possibly blank symbol $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider the backward-sweep configuration of a one-work-tape machine with\n(optional) state $q$, input-head position $p$, frontier $z$, left stack $l$,\nan \\emph{arbitrary} (possibly empty) right stack $r$, and output word\n$\\mathit{out}$. Applying the local sweep action that writes the\npossibly-blank symbol $b$, moves the work head left, and enters state $q'$\nproduces the backward-sweep configuration with state $q'$, the same\ninput-head position and output, frontier $z - 1$, left stack\n$b \\mathbin{::} l$, and right stack the tail of $r$; when $r$ is empty, the\ncell consumed is a blank beyond the stored zone."
+}

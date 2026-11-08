@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.a3n_verifier_mem_P",
+ "key": "911d60ad91263f58",
+ "kind": "lemma",
+ "title": "Polynomial time for the padded verifier",
+ "statement": "Let $C,c\\in\\mathbb{N}$ and let $V$ be a language of finite binary strings belonging to $\\mathrm{P}$. The language of strings that decode as a pair $(x',u)$, with $x'$ decoding as $(x,p)$, such that $p$ is the all-ones string of length $C\\cdot 2^{(|x|+1)^c}$, $|u|=C\\cdot 2^{(|x|+1)^c}$, and the concatenation $xu$ belongs to $V$, belongs to $\\mathrm{P}$.",
+ "hypotheses_covered": [
+  "$C,c\\in\\mathbb{N}$",
+  "$V$ is a language over the binary alphabet",
+  "$V\\in\\mathrm{P}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all natural numbers $C, c$ and every language $V$ in $\\mathrm{P}$, the paired verifier language for $C$, $c$ and $V$, which checks both pair decodings, the exact all-ones pad of length $C\\cdot 2^{(|x|+1)^c}$, the exact witness length, and membership of the assembled word in $V$, belongs to $\\mathrm{P}$."
+}

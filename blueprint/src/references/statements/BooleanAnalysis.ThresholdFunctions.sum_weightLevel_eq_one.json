@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.sum_weightLevel_eq_one",
+ "key": "54a372c0c83ff71c",
+ "kind": "lemma",
+ "title": "Total Fourier weight of a sign-valued function",
+ "statement": "Let $n$ be a nonnegative integer and let $f:\\{0,1\\}^n\\to\\mathbb R$ take values in $\\{-1,1\\}$. If $W_k[f]$ denotes the sum of the squares of the Fourier--Walsh coefficients over all subsets of $[n]$ of size $k$, then $\\sum_{k=0}^{n} W_k[f]=1$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ is a real-valued function on the Boolean cube of dimension $n$",
+  "$f$ takes only the values $-1$ and $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\in\\mathbb N$ and $f:\\{\\pm1\\}^n\\to\\mathbb R$ satisfy $f(x)\\in\\{1,-1\\}$ for every $x$;\nfor $S\\subseteq\\{1,\\ldots,n\\}$ define\n$\\widehat f(S)=2^{-n}\\sum_{x\\in\\{\\pm1\\}^n}f(x)\\prod_{i\\in S}x_i$ and\n$W_k(f)=\\sum_{|S|=k}\\widehat f(S)^2$ for $k\\in\\mathbb N$.\nThen $\\sum_{k=0}^n W_k(f)=1$."
+}

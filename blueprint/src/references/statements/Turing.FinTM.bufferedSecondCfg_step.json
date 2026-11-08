@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.bufferedSecondCfg_step",
+ "key": "66c3d86f73d3dbfd",
+ "kind": "lemma",
+ "title": "One-step simulation in the second phase",
+ "statement": "Let $M_1$ and $M_2$ be finite-state machines over the Boolean alphabet. Let $x,y$ be Boolean words, let $c$ be a configuration of $M_2$ on virtual input $y$, and let $b$ be a Boolean tag that is false at the left boundary of $c$'s input-head position and true at its right boundary. Choose any valid physical input-head position $p$ for $x$ and arbitrary contents and head positions for the left tape block of $M_1$. There is a Boolean tag $b'$ satisfying the boundary condition at the input-head position after one step of $M_2$ from $c$, such that one step of the buffered composition from the second-phase configuration determined by $c,b,p$ and the chosen left-block data equals the second-phase configuration determined by the one-step successor of $c$, tag $b'$, and the same $p$ and left-block data.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are finite-state machines over Boolean symbols",
+  "$x,y$ are Boolean words",
+  "$c$ is a configuration of $M_2$ on virtual input $y$",
+  "$b$ satisfies the boundary-tag condition at $c$'s input-head position",
+  "$p$ is a valid physical input-head position for $x",
+  "left-block tape contents and head positions are arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many\nstates, let $c$ be a configuration of $M_2$ on a virtual input $y$, and let\n$b$ be a Boolean tag valid for the virtual input-head position of $c$ (forced\nfalse at the left boundary and true at the right boundary).  Fix a position\n$p$ of the physical input head over the real input $x$ and arbitrary inactive\ncontents and head positions for the left tape block.  Then there exists a tag\n$b'$, valid for the input-head position reached after one step of $M_2$ from\n$c$, such that one step of the buffered sequential composition of $M_1$ and\n$M_2$ from the second-phase embedding of $c$ with tag $b$ equals the\nsecond-phase embedding of one step of $M_2$ from $c$ with tag $b'$, keeping\n$p$ and the inactive data unchanged.  The halted case is included: a halted\n$c$ stays halted on both sides."
+}

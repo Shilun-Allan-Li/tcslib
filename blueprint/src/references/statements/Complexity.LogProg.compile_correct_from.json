@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.compile_correct_from",
+ "key": "5f4c439e65de9a04",
+ "kind": "theorem",
+ "title": "Compiled simulation from an arbitrary configuration",
+ "statement": "Let $P$ be a register program, let $D$ be a decider machine, and choose an initial program state, initial decider states, an oracle, register-head bounds $lo,hi$, an arbitrary initial configuration $c_0$, and a natural number $N$. Suppose every register head in the run from $c_0$ stays between its bounds through time $N$, and every configuration before time $N$ satisfies the call conditions: argument registers are distinct, the input head is at position $1$, each argument register stores its represented word from cell $0$ with head at $0$ and word length within the bounds, and each corresponding decider run halts with the oracle's answer, clears its work tapes, returns their heads to $0$, and keeps those heads within distance $B$ of $0$. Then the compiled machine started in the configuration obtained by adjoining blank decider tapes and compiled program state to $c_0$ reaches after some time $T$ the corresponding compiled configuration for the register-program run at time $N$. At every time up to $T$, its original-register heads remain within $lo,hi$, and each decider-tape head has absolute position at most $B$.",
+ "hypotheses_covered": [
+  "The program $P$, initial state, decider $D$, initial decider states $q_0$, and oracle",
+  "Register-head bounds $lo,hi$ and decider space bound $B$",
+  "The arbitrary starting configuration $c_0$ and horizon $N$",
+  "The register-head box bound through time $N$",
+  "The call conditions at every time $t<N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -18,6 +18,8 @@ of the halting time.
 
 \begin{definition}[Multi-tape Turing machine]
 \lean{Turing.MultiTapeTM}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
+\statementsource{BGW70}{pdf-b9fb35a232af-p003-b001}
 \label{Turing.MultiTapeTM}
 \leanok
 \uses{Turing.Action}
@@ -56,6 +58,10 @@ state and scanned symbols, and no symbol at all when $c$ is halted.
 
 \begin{definition}[Initial configuration]
 \lean{Turing.MultiTapeTM.initCfg}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p003-b002,
+  pdf-b9fb35a232af-p004-b001
+}
 \label{Turing.MultiTapeTM.initCfg}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.init}
@@ -65,15 +71,14 @@ first input symbol, all work tapes are blank with heads at the origin, and the
 output is empty.
 \end{definition}
 
-\begin{lemma}[A halted configuration is a fixed point of the step]
+\begin{lemma}[A halted configuration is fixed]
 \lean{Turing.MultiTapeTM.step_of_halt}
 \label{Turing.MultiTapeTM.step_of_halt}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.step}
 \difficulty{1}
-Let $M$ be a multi-tape Turing machine and $c$ a configuration whose state
-component is empty (the machine has halted).  Then one computation step of $M$
-leaves $c$ unchanged.
+Let $M$ be a Turing machine and let $c$ be a configuration for an input string. If the
+state component of $c$ is empty, then one step of $M$ leaves $c$ unchanged.
 \end{lemma}
 
 \begin{definition}[Configuration reached after $t$ steps]
@@ -93,8 +98,8 @@ stays in its halting configuration.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom}
 \difficulty{1}
-For every multi-tape Turing machine $M$ and configuration $c$, running $M$ for
-$0$ steps from $c$ yields $c$ itself.
+Let $M$ be a multi-tape Turing machine and $c$ a configuration. The configuration
+reached after zero steps from $c$ is $c$.
 \end{lemma}
 
 \begin{lemma}[Unfolding a run at the first step]
@@ -103,9 +108,9 @@ $0$ steps from $c$ yields $c$ itself.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{1}
-For every multi-tape Turing machine $M$, configuration $c$, and $t \in \mathbb{N}$,
-running $M$ for $t + 1$ steps from $c$ equals running $M$ for $t$ steps from
-the configuration obtained by one step of $M$ from $c$.
+Let $M$ be a multi-tape Turing machine, $c$ a configuration, and $t\in\mathbb{N}$. The
+configuration reached after $t+1$ steps from $c$ equals the configuration reached after
+$t$ steps starting from the one-step successor of $c$.
 \end{lemma}
 
 \begin{lemma}[Unfolding a run at the last step]
@@ -114,9 +119,9 @@ the configuration obtained by one step of $M$ from $c$.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{1}
-For every multi-tape Turing machine $M$, configuration $c$, and $t \in \mathbb{N}$,
-running $M$ for $t + 1$ steps from $c$ equals applying one step of $M$ to the
-configuration reached after running $M$ for $t$ steps from $c$.
+Let $M$ be a multi-tape Turing machine, $c$ a configuration, and $t\in\mathbb{N}$. The
+configuration reached after $t+1$ steps from $c$ is the one-step successor of the
+configuration reached after $t$ steps from $c$.
 \end{lemma}
 
 \begin{lemma}[Splitting a run]
@@ -125,24 +130,25 @@ configuration reached after running $M$ for $t$ steps from $c$.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom}
 \difficulty{2}
-For every multi-tape Turing machine $M$, configuration $c$, and
-$a, b \in \mathbb{N}$, running $M$ for $a + b$ steps from $c$ equals running
-$M$ for $b$ steps from the configuration reached after $a$ steps from $c$.
+Let $M$ be a multi-tape Turing machine, let $c$ be a configuration on a fixed input, and
+let $a,b\in\mathbb{N}$. Running $M$ for $a+b$ steps from $c$ gives the same
+configuration as running it for $b$ steps from the configuration reached after $a$ steps
+from $c$.
 \end{lemma}
 
-\begin{lemma}[A step-commuting map commutes with runs]
+\begin{lemma}[A step-commuting map preserves runs]
 \lean{Turing.MultiTapeTM.runFrom_comm_of_step}
 \label{Turing.MultiTapeTM.runFrom_comm_of_step}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step}
 \difficulty{2}
-Let $M$ and $M'$ be multi-tape Turing machines over the same alphabet, with
-$k$ and $k'$ work tapes and running on inputs $x$ and $x'$ respectively, and
-let $f$ map configurations of $M$ to configurations of $M'$ so that one step
-of $M'$ after $f$ agrees with $f$ after one step of $M$ on every
-configuration.  Then for every configuration $c$ of $M$ and every
-$n \in \mathbb{N}$, running $M'$ for $n$ steps from $f(c)$ yields the image
-under $f$ of the configuration $M$ reaches in $n$ steps from $c$.
+Let $M$ and $M'$ be multi-tape Turing machines, with respectively $k$ and $k'$ work
+tapes, state sets $S$ and $S'$, and fixed inputs $x$ and $x'$. Suppose a map $f$ sends
+configurations of $M$ on $x$ to configurations of $M'$ on $x'$ and satisfies
+$M'.\operatorname{step}(f(c))=f(M.\operatorname{step}(c))$ for every configuration $c$
+of $M$. Then for every such configuration $c$ and every $n\in\mathbb{N}$, running $M'$
+for $n$ steps from $f(c)$ yields the image under $f$ of the configuration reached by
+running $M$ for $n$ steps from $c$.
 \end{lemma}
 
 \begin{lemma}[Runs from a halted configuration are constant]
@@ -151,31 +157,30 @@ under $f$ of the configuration $M$ reaches in $n$ steps from $c$.
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step_of_halt}
 \difficulty{1}
-Let $M$ be a multi-tape Turing machine and $c$ a configuration whose state
-component is empty (the machine has halted).  Then running $M$ for any number
-of steps from $c$ yields $c$ itself.
+Let $M$ be a multi-tape Turing machine and let $c$ be a configuration on a fixed input
+whose state is absent, so that the machine is halted. For every $n\in\mathbb{N}$,
+running $M$ for $n$ steps from $c$ yields $c$.
 \end{lemma}
 
-\begin{lemma}[A halted configuration emits no output]
+\begin{lemma}[A halted configuration emits no output symbol]
 \lean{Turing.MultiTapeTM.outputSymbol_of_halt}
 \label{Turing.MultiTapeTM.outputSymbol_of_halt}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.outputSymbol}
 \difficulty{1}
-Let $M$ be a multi-tape Turing machine and $c$ a configuration whose state
-component is empty.  Then the step of $M$ from $c$ emits no output symbol.
+Let $tm$ be a multi-tape Turing machine and $c$ a configuration whose state is empty.
+The output symbol prescribed by one step of $tm$ from $c$ is absent.
 \end{lemma}
 
-\begin{lemma}[Work-tape heads move at most one cell per step]
+\begin{lemma}[Work-tape head movement bound]
 \lean{Turing.MultiTapeTM.workTapePos_step_le}
 \label{Turing.MultiTapeTM.workTapePos_step_le}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.step, Turing.workTapePos_apply_le}
 \difficulty{2}
-Let $M$ be a multi-tape Turing machine with $k$ work tapes, $c$ a
-configuration, and $i$ one of the $k$ work-tape indices.  Then the position of
-the $i$-th work-tape head after one step of $M$ from $c$ differs from its
-position in $c$ by at most $1$ in absolute value.
+Let $M$ be a multi-tape Turing machine, $c$ a configuration, and $i$ one of its
+work-tape indices. After one step of $M$ from $c$, the absolute difference between the
+position of work-tape head $i$ and its position in $c$ is at most $1$.
 \end{lemma}
 
 \begin{definition}[Cells visited by a work-tape head]
@@ -190,6 +195,11 @@ $c$, over steps $0$ through $t$ inclusive.
 
 \begin{definition}[Space used by one tape]
 \lean{Turing.MultiTapeTM.spaceUsedByTape}
+\statementsource{Sav70}{pdf-c8033d2fd705-p003-b001}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p004-b001,
+  pdf-b9fb35a232af-p005-b001
+}
 \label{Turing.MultiTapeTM.spaceUsedByTape}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.visitedByTapeHead}
@@ -200,6 +210,7 @@ step $t$, i.e.\ the cardinality of the set of positions visited by that head.
 
 \begin{definition}[Total space used]
 \lean{Turing.MultiTapeTM.spaceUsed}
+\statementsource{Sav70}{pdf-c8033d2fd705-p003-b001}
 \label{Turing.MultiTapeTM.spaceUsed}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.spaceUsedByTape}
@@ -210,64 +221,61 @@ visited by each head.  This is the space measure used throughout; the
 read-only input tape and the write-only output tape do not count.
 \end{definition}
 
-\begin{lemma}[A machine without work tapes uses no space]
+\begin{lemma}[Zero space with no work tapes]
 \lean{Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero}
 \label{Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.spaceUsed}
 \difficulty{2}
-Let $M$ be a multi-tape Turing machine with $k$ work tapes where $k = 0$.
-Then for every configuration $c$ and every step count $t$, the total space
-used by $M$ from $c$ up to step $t$ is $0$.
+Let $M$ be a Turing machine with $k$ work tapes, and let $c$ be a configuration for an
+input string. If $k=0$, then for every $t\in\mathbb{N}$ the total space used from $c$
+through step $t$ is zero.
 \end{lemma}
 
-\begin{lemma}[Per-tape space is at most the total space]
+\begin{lemma}[Per-tape space is at most total space]
 \lean{Turing.MultiTapeTM.spaceUsedByTape_le_spaceUsed}
 \label{Turing.MultiTapeTM.spaceUsedByTape_le_spaceUsed}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape}
 \difficulty{1}
-For every multi-tape Turing machine $M$, configuration $c$, step count $t$,
-and work-tape index $i$, the number of cells touched by the head of tape $i$
-up to step $t$ is at most the total space used by $M$ from $c$ up to step $t$.
+Let $M$ be a multi-tape Turing machine, $c$ a configuration, $t\in\mathbb{N}$, and $i$ a
+work-tape index. The number of distinct cells visited by tape $i$ through step $t$ is at
+most the total space used through step $t$.
 \end{lemma}
 
-\begin{lemma}[Space used equals the space of the computation trace]
+\begin{lemma}[Space of the computation trace]
 \lean{Turing.MultiTapeTM.spaceUsed_eq_spaceUsedOfCfgs}
 \label{Turing.MultiTapeTM.spaceUsed_eq_spaceUsedOfCfgs}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape, Turing.MultiTapeTM.visitedByTapeHead, Turing.spaceUsedOfCfgs, Turing.visitedOfCfgs}
 \difficulty{3}
-Let $M$ be a multi-tape Turing machine, $c$ a configuration, and
-$t \in \mathbb{N}$.  The total space used by $M$ from $c$ up to step $t$
-equals the space touched by the list of configurations that $M$ traverses in
-steps $0, 1, \dots, t$ from $c$, where the space touched by a list of
-configurations is the sum over the work tapes of the number of distinct head
-positions occurring in the list.
+Let $M$ be a $k$-tape Turing machine, let $c$ be a configuration for an input string,
+and let $t\in\mathbb{N}$. The total number of distinct work-tape cells visited by $M$
+from $c$ through step $t$ equals the total number of distinct work-tape head positions
+occurring in the list of configurations at steps $0$ through $t$.
 \end{lemma}
 
-\begin{lemma}[One step appends the emitted symbol to the output]
+\begin{lemma}[Output appended in one step]
 \lean{Turing.MultiTapeTM.step_output}
 \label{Turing.MultiTapeTM.step_output}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.step}
 \difficulty{2}
-For every multi-tape Turing machine $M$ and configuration $c$, the output
-component after one step of $M$ from $c$ equals the output of $c$ followed by
-the symbol emitted by that step, if any (and equals the output of $c$
-unchanged when no symbol is emitted).
+Let $M$ be a Turing machine and let $c$ be a configuration for an input string. After
+one step from $c$, the output string is the output string of $c$ with the symbol emitted
+by that step appended, if a symbol is emitted; if none is emitted, the output string is
+unchanged.
 \end{lemma}
 
-\begin{lemma}[The output is stable after halting]
+\begin{lemma}[Output stability after halting]
 \lean{Turing.MultiTapeTM.runFrom_output_eq_of_halt}
 \label{Turing.MultiTapeTM.runFrom_output_eq_of_halt}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
 \difficulty{3}
-Let $M$ be a multi-tape Turing machine, $c$ a configuration, and
-$\tau \le t$ natural numbers such that the configuration reached by $M$ after
-$\tau$ steps from $c$ is halted.  Then the output after $t$ steps from $c$
-equals the output after $\tau$ steps from $c$.
+Let $M$ be a multi-tape Turing machine and $c$ a configuration. If $	au,t\in\mathbb{N}$
+satisfy $\tau\le t$ and the configuration reached from $c$ after $\tau$ steps is halted,
+then the outputs after $t$ and $\tau$ steps are equal.
 \end{lemma}
 
 \begin{definition}[Computing an output in given time and space]
@@ -323,30 +331,29 @@ $t(n)$ steps and touching at most $s(n)$ work-tape cells, where $n$ is the
 length of the encoding of $a$.
 \end{definition}
 
-\begin{theorem}[Weakening the bounds of a computation]
+\begin{theorem}[Monotonicity of function-computation bounds]
 \lean{Turing.MultiTapeTM.ComputesFunInTimeAndSpace.mono}
 \label{Turing.MultiTapeTM.ComputesFunInTimeAndSpace.mono}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.ComputesFunInTimeAndSpace}
 \difficulty{2}
-Let $M$ be a multi-tape Turing machine that computes a function $f$ between
-given injective encodings within input-indexed time bound $t$ and space bound
-$s$, and let $t'$ and $s'$ be bounds with $t(a) \le t'(a)$ and
-$s(a) \le s'(a)$ for every input $a$.  Then $M$ also computes $f$ between the
-same encodings within the bounds $t'$ and $s'$.
+Let $M$ be a multi-tape Turing machine, let $f$ be a function, and let the input and
+output encodings into words over the machine's alphabet be injective. If $M$ computes
+$f$ within input-indexed time and space bounds $t,s$, and $t(a)\le t'(a)$ and $s(a)\le
+s'(a)$ for every input $a$, then $M$ computes $f$ within bounds $t',s'$ using the same
+encodings.
 \end{theorem}
 
-\begin{theorem}[Computability is monotone in the bounds]
+\begin{theorem}[Monotonicity of computability bounds]
 \lean{Turing.MultiTapeTM.ComputableInTimeAndSpace.mono}
 \label{Turing.MultiTapeTM.ComputableInTimeAndSpace.mono}
 \leanok
 \uses{Turing.MultiTapeTM.ComputableInTimeAndSpace, Turing.MultiTapeTM.ComputesFunInTimeAndSpace.mono}
 \difficulty{2}
-Let $f$ be a function computable within input-indexed time bound $t$ and
-space bound $s$ with respect to given binary encodings, and let $t'$ and $s'$
-be bounds with $t(a) \le t'(a)$ and $s(a) \le s'(a)$ for every input $a$.
-Then $f$ is computable within the bounds $t'$ and $s'$ with respect to the
-same encodings.
+Suppose a function $f$ is computable between given injective encodings into binary words
+within time bound $t$ and space bound $s$. If $t(a)\le t'(a)$ and $s(a)\le s'(a)$ for
+every input $a$, then $f$ is computable with the same machine and encodings within
+bounds $t'$ and $s'$.
 \end{theorem}
 
 \begin{definition}[Boolean indicator of a set]
@@ -386,35 +393,33 @@ must perform at least one step to halt.
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.haltsAtStep, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt}
 \difficulty{4}
-Let $M$ be a multi-tape Turing machine and fix an input word.  If $M$ halts on
-that input after exactly $t_1$ steps and also after exactly $t_2$ steps, then
-$t_1 = t_2$.
+Let $M$ be a multi-tape Turing machine and let $x$ be an input word. If $M$ halts at
+step $t_1$ on $x$ and also halts at step $t_2$ on $x$, then $t_1=t_2$.
 \end{lemma}
 
-\begin{lemma}[A repeated non-halting configuration precludes halting]
+\begin{lemma}[A repeated nonhalting configuration precludes halting]
 \lean{Turing.MultiTapeTM.not_halts_of_repeat_nonhalt}
 \label{Turing.MultiTapeTM.not_halts_of_repeat_nonhalt}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $M$ be a multi-tape Turing machine and let $c$ be a configuration that is
-not halted.  If running $M$ for $t + 1$ steps from $c$ returns to $c$ itself,
-then the computation of $M$ from $c$ never halts: for every number of steps
-$t'$, the configuration reached after $t'$ steps from $c$ is not halted.
+Let $tm$ be a multi-tape Turing machine, and let $c$ be a configuration whose state is
+not empty. If, for some $t\\in\\mathbb{N}$, the configuration reached after $t+1$ steps
+from $c$ equals $c$, then the configuration reached after every $t'\\in\\mathbb{N}$
+steps from $c$ has a nonempty state.
 \end{lemma}
 
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Input head moves right at most one cell per step]
+\begin{lemma}[Input-head position bound]
 \lean{Turing.MultiTapeTM.timed_input_bound}
 \label{Turing.MultiTapeTM.timed_input_bound}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{4}
-Let $M$ be a multi-tape Turing machine on an input word $x$, whose input-head
-position ranges over $\{0, 1, \dots, |x| + 1\}$, and let $c$ be a
-configuration of $M$ with input-head position $p$.  Then for every
-$t \in \mathbb{N}$, the input-head position in the configuration reached by
-running $M$ for $t$ steps from $c$ is at most $p + t$.
+Let $M$ be a deterministic multi-tape Turing machine, let $x$ be a fixed input word, and
+let $c$ be a configuration of $M$ on $x$ with input-head position $p$. For every
+$t\in\mathbb{N}$, the input-head position after running $M$ from $c$ for $t$ steps is at
+most $p+t$.
 \end{lemma}

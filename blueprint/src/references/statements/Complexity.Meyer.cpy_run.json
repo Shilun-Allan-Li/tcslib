@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Meyer.cpy_run",
+ "key": "e125809fe7add260",
+ "kind": "theorem",
+ "title": "Copying a Word on the Simulated Tape",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $y$ be a Boolean input word, and let $bits$ be a Boolean assignment to the selector-bit positions of $M$. For any Boolean word $rest$, natural number $p$, and Boolean words $w_X,w_C,w_O$, assume $1\\le p$, $p+|rest|=|y|+1$, and the suffix of $y$ beginning at index $p-1$ is $rest$. Starting the machine that simulates $M$ in its copy state, with input head at the position obtained by clamping $p$ to the valid input-head range and buffers containing $w_X,w_C,w_O$, after $|rest|+1$ steps it is in the rewind-$X$ state at the right boundary, with the $X$ buffer containing $w_X$ followed by $rest$ and its head at position $|w_X\\mathbin{+\u001b[0m\u001b[0m+}rest|-1$; the other buffers and their head positions are unchanged, and the output is empty.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machine $M$",
+  "Boolean input word $y$",
+  "Selector-bit assignment $bits$",
+  "Boolean word $rest$",
+  "Natural number $p$ with $1\\le p$",
+  "Length equation $p+|rest|=|y|+1$",
+  "Suffix equation $y.drop(p-1)=rest$",
+  "Arbitrary initial Boolean buffers $w_X,w_C,w_O$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion uses the explicitly defined simulator configurations and states; the informal descriptions supplied do not define those constructions fully.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

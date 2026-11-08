@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.splitCount_accept",
+ "key": "34cf3b1ac595de67",
+ "kind": "lemma",
+ "title": "Acceptance read of the counting host",
+ "statement": "Let $w$ and $s$ be finite Boolean words, let $c$ be a configuration of a $k$-tape Turing machine over empty input with Boolean tape symbols and state set $S$, and let $\tau$ be the configuration built from $w$, $s$, and $c$ using state maps $S\\times\\{\\mathrm{false},\\mathrm{true}\\}\\to H$ and $\\{\\mathrm{false},\\mathrm{true}\\}\\to H$. The overflow test is false and the input head of $\\tau$ scans no symbol if and only if $|s|+|c\\text{'s output}|=|w|$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ and $H$ are types",
+  "$w$ and $s$ are finite Boolean words",
+  "$c$ is a configuration with $k$ work tapes, Boolean symbols, state set $S$, and empty input",
+  "the embedding and return state maps have the stated Boolean-flag domains and codomain $H$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In the counting-host embedding of a source configuration, the conjunction of\nthe negated overflow flag with the test that the native input read is blank\nholds exactly when the candidate's length plus the source's output length\nequals the input length."
+}

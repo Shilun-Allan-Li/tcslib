@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.e3_choice_append",
+ "key": "3114a067a8a8e670",
+ "kind": "lemma",
+ "title": "Membership for a correctly sized choice word",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$ be natural numbers, and let $x,u$ be binary strings with $|u|=C\\cdot 2^{(|x|+1)^c}$. Then $xu$ belongs to the choice-word verifier language for $N,C,c$ if and only if running $N$ on $x$ under the choice word $u$ halts with output exactly the one-bit string $1$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$C,c$ are natural numbers",
+  "$x,u$ are binary strings",
+  "$|u|=C\\cdot 2^{(|x|+1)^c}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine over the binary alphabet, $C, c$ natural numbers, and $x, u$ binary strings with $|u| = C \\cdot 2^{(|x|+1)^c}$. Then $x\\,u$ lies in the exponential choice-word verifier language of $N$ with parameters $C, c$ if and only if the run of $N$ on $x$ under $u$ has halted with output the one-bit string $1$."
+}

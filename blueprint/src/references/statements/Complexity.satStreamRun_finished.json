@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.satStreamRun_finished",
+ "key": "5d169aca1d3bc819",
+ "kind": "lemma",
+ "title": "Finished state is absorbing",
+ "statement": "For every bit string $x$, all $k,j,p\\in\\mathbb{N}$, running $k$ rounds from the state with fresh cursor $j$, consumed length $p$, and finished phase returns that same state and emits the empty string.",
+ "hypotheses_covered": [
+  "Input bit string $x$",
+  "Round count $k\\in\\mathbb{N}$",
+  "Fresh cursor $j\\in\\mathbb{N}$",
+  "Consumed length $p\\in\\mathbb{N}$",
+  "Initial phase is finished"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, every $k \\in \\mathbb{N}$, and every seam state in the\nfinished phase, running $k$ streaming rounds returns the same state and the empty\noutput: padding after the formula terminator contributes no further output."
+}

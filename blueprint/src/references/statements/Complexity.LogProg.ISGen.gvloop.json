@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.gvloop",
+ "key": "8e200e5b2ee58610",
+ "kind": "theorem",
+ "title": "Outer enumeration invariant",
+ "statement": "Let $E,B$ be natural numbers, let $\\mathcal O:\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{0,1\\}$ be an oracle, let $x$ be a finite binary word, let $\\operatorname{Kont}:\\mathbb N\\to\\mathrm{Prop}$, and let $\\sigma$ be a counting state. For $u,v\\in\\mathbb N$, let $R(u,v)$ and $I(u)$ denote respectively the truth of the type-$3$ query encoding $(x,u,v,\\sigma.s)$ and the type-$1$ query encoding $(x,u,\\sigma.s)$, and let $\\operatorname{Mem}_j(t)$ mean that some $I$-witness below $\\sigma.K$ reaches $t$ in at most $j$ steps of $R$. Suppose every register of $\\sigma$ is at most $B$, $\\sigma.K+1\\le B$, $\\sigma.v\\le\\sigma.K$, $\\sigma.c\\le\\sigma.v$, and $\\sigma.g=\\sigma.cur=\\sigma.stp=\\sigma.u=\\sigma.cnt=0$. Assume that for every $c'\\le\\sigma.K$, if the outer recursive condition holds from position $\\sigma.v$, count $\\sigma.c$, and depth $\\sigma.K-\\sigma.v$, with terminal condition $c=c'$, then the stage-end machine initialized with $v=K,c=c'$ terminates within register bound $B$ and accepts exactly when $\\operatorname{Kont}(c')$ holds. The outer condition uses first predicate $\\operatorname{Mem}_{i1}(t)\\land\\neg\\operatorname{AccO}(t)$ and second predicate given by the inner recursive condition of depth $K$, starting at position and count zero, with first predicate $\\operatorname{Mem}_i(u)\\land u\\ne t\\land\\neg R(u,t)$, second predicate always true, and terminal condition count $\\sigma.cp$. Then the machine initialized at the outer-enumeration test state with registers $\\sigma$ terminates within register bound $B$ and accepts exactly when the outer recursive condition holds with terminal predicate $\\operatorname{Kont}$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb N$",
+  "$\\mathcal O$ is an oracle on four query types and binary words",
+  "$x$ is a finite binary word",
+  "$\\operatorname{Kont}:\\mathbb N\\to\\mathrm{Prop}$",
+  "$\\sigma$ is a counting state",
+  "Every register of $\\sigma$ is at most $B$",
+  "$\\sigma.K+1\\le B$",
+  "$\\sigma.v\\le\\sigma.K$",
+  "$\\sigma.c\\le\\sigma.v$",
+  "$\\sigma.g=\\sigma.cur=\\sigma.stp=\\sigma.u=\\sigma.cnt=0$",
+  "For every $c'\\le\\sigma.K$, the specified implication from the outer recursive condition to the stage-end machine's termination and exact acceptance of $\\operatorname{Kont}(c')$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $x$ be a finite binary word, let $\\mathcal O$ be an oracle,\nlet $\\operatorname{Kont}:\\mathbb{N}\\to\\mathrm{Prop}$, and let $\\sigma$ be a register\nstate with every register at most $B$. Write $R(u,v)$ for the truth of the oracle's\ntype-$3$ query on $(x,u,v,\\sigma.s)$ and $I(u)$ for the truth of its type-$1$ query on\n$(x,u,\\sigma.s)$; let $\\operatorname{Mem}_j(t)$ mean that some $I$-code below $\\sigma.K$\nreaches $t$ in at most $j$ steps of $R$. Use the recursive predicate $\\operatorname{GS}$\nthat at each step either satisfies its first predicate and increments the count, or\nsatisfies its second predicate and leaves the count unchanged, with its terminal\npredicate imposed at depth zero. Suppose $\\sigma.K+1\\le B$, $\\sigma.v\\le\\sigma.K$,\n$\\sigma.c\\le\\sigma.v$, and $\\sigma.g=\\sigma.cur=\\sigma.stp=\\sigma.u=\\sigma.cnt=0$.\nAssume for every $c'\\le\\sigma.K$ that the outer recursive condition starting at\n$t=\\sigma.v$, count $c=\\sigma.c$, and depth $\\sigma.K-\\sigma.v$ implies that the machine\nat the stage-end state with $v=K,c=c'$ terminates within register bound $B$ and accepts\nexactly when $\\operatorname{Kont}(c')$ holds. Here the first outer predicate is\n$\\operatorname{Mem}_{i1}(t)$ and oracle nonacceptance at $t$; its second predicate is\nthe inner recursive count condition over all $u<K$, with depth $K$, start $t=0$, count\n$0$, and terminal count $\\sigma.cp$. Then the machine initialized at the\nouter-enumeration test with state $\\sigma$ terminates within that bound and accepts\nexactly when this outer recursive condition holds with terminal predicate\n$\\operatorname{Kont}$."
+}

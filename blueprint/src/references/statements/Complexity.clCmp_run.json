@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clCmp_run",
+ "key": "b3395c100423b479",
+ "kind": "lemma",
+ "title": "Exact Comparator Runtime",
+ "statement": "For every Boolean input word $x$, every valid input-head position $p$, and every four Boolean words $w_0,w_1,w_2,w_3$, let $m$ be the maximum of their lengths. Starting in the comparator's initial control with all work-head positions at zero and running for $2m+2$ steps yields the completed control carrying the comparator's final verdict after processing $m$ columns, with the work words unchanged, all work heads at zero, the input-head position unchanged, and output empty.",
+ "hypotheses_covered": [
+  "Boolean input word",
+  "valid input-head position",
+  "four Boolean work words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, and four words, running the comparator for twice the common maximum width plus two steps from the start yields the completed control carrying the orbit verdict, with every word unchanged and all heads at zero."
+}

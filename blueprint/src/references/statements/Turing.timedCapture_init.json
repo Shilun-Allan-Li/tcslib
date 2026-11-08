@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.timedCapture_init",
+ "key": "c021594e11bda23b",
+ "kind": "lemma",
+ "title": "Capture wrapper initialization",
+ "statement": "Let $M$ be a finite Boolean-alphabet Turing machine with $k$ work tapes, let $i$ be one of its work-tape indices, and let $x$ be a finite Boolean input. The capture machine initialized on $x$ has exactly the configuration obtained by embedding $M$'s initial configuration on $x$: its state is the embedded initial state, its original work tapes and head positions are retained, its added buffer tape stores the initial output word with its head at that word's length, its remaining added tapes are blank with heads at zero, and its output is empty.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$i$ is a work-tape index of $M$",
+  "$x$ is a finite Boolean string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On every input, the initial configuration of the capture wrapper equals the\nfirst-phase embedding of the base machine's initial configuration, with a\nblank captured table and blank interpreter lanes."
+}

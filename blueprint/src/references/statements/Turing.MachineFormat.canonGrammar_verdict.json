@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.MachineFormat.canonGrammar_verdict",
+ "key": "7a31dbf9fa9ad987",
+ "kind": "lemma",
+ "title": "Canonical Grammar Verdict",
+ "statement": "Let $F$ be a machine format, and let $\\alpha$, $bits$, and $rest$ be Boolean words. Suppose parsing $\\alpha$ as a pair gives $(bits,rest)$, the word $bits$ is the canonical little-endian binary representation of its value $n$, and the remaining word has length at least $B(n+1)$, where $B$ is the maximum of the format's guard constant and $(4k+5)3^{k+1}$, with $k$ the format's work-tape count. If the grammar check on $n$ and $rest$ fails, decoding $\\alpha$ gives the format's fallback code. If the grammar check succeeds, scanning $\\alpha$ returns some suffix.",
+ "hypotheses_covered": [
+  "A machine format $F$",
+  "Boolean words $\\alpha$, $bits$, and $rest$",
+  "Pair parsing of $\\alpha$ returns $(bits,rest)$",
+  "$bits$ is the canonical little-endian binary representation of its value",
+  "The length of $rest$ is at least the guard-block bound times one more than that value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

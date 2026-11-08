@@ -1,0 +1,17 @@
+{
+ "lean_name": "Randomized.BPLInP.dpVal",
+ "key": "ce54f4b08a512d2f",
+ "kind": "def",
+ "title": "Dynamic-programming value",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean symbols, let $x$ be a Boolean string, and let $s,V$ be natural numbers. Define $D(t,c)$ for natural numbers $t,c$ recursively: at $t=0$, it is $1$ if the encoding of $x,c,s$ belongs to the machine’s accepting language and $0$ otherwise. At time $t+1$, sum over all $c'<V$ the value $D(t,c')$ once for each of the two fixed-choice machines whose transition relation takes encoded value $c$ to $c'$ within the specified bound.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$x$ is a Boolean string",
+  "$s,V$ are natural numbers",
+  "$t,c$ range over natural numbers"
+ ],
+ "confidence": "low",
+ "caveat": "The payload omits definitions of the accepting language, transition relation, encoding, and fixed-choice step, so their precise semantics cannot be fully stated.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

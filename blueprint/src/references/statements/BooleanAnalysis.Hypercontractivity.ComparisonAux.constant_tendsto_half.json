@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.ComparisonAux.constant_tendsto_half",
+ "key": "399616ebd038d447",
+ "kind": "lemma",
+ "title": "Comparison constant at one half",
+ "statement": "Let $C(\\lambda)$ equal $e$ when $\\lambda=1/2$, and equal $((1-\\lambda)/\\lambda)^{1/(2(1-2\\lambda))}$ otherwise, with the real-power conventions in its definition. As $\\lambda$ tends to $1/2$ from below through values in $(0,1/2)$, $C(\\lambda)$ tends to $e$.",
+ "hypotheses_covered": [
+  "The comparison constant is defined for real $\\lambda$ by the stated piecewise formula",
+  "The limit is taken as $\\lambda\\to 1/2$ within $0<\\lambda<1/2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every real $\\lambda$, define $C_\\lambda=\\begin{cases}e,&\\lambda=1/2,\\\\((1-\\lambda)/\\lambda)^{1/(2(1-2\\lambda))},&\\lambda\\ne1/2.\\end{cases}$. Then $\\lim_{\\lambda\\to(1/2)^-,\\ 0<\\lambda<1/2}C_\\lambda=e$."
+}

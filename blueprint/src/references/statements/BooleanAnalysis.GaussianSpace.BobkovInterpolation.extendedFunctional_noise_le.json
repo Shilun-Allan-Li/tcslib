@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_le",
+ "key": "88dc16da08d4de14",
+ "kind": "lemma",
+ "title": "Noise contracts the extended functional",
+ "statement": "Let $n,m\\ge0$ and $P:\\mathbb R\\to\\mathbb R$ be continuous on $[0,1]$ and nonnegative there. Suppose that whenever $a+b,a-b\\in[0,1]$, $P(a)\\le\\bigl(\\sqrt{P(a+b)^2+b^2}+\\sqrt{P(a-b)^2+b^2}\\bigr)/2$. For any real-valued functions $f,g_1,\\ldots,g_m$ on $\\{0,1\\}^n$ with $f(x)\\in[0,1]$ for every $x$, and any $\\rho\\in[0,1]$, the extended functional satisfies $F_P(T_\\rho f,(T_\\rho g_j)_j)\\le F_P(f,(g_j)_j)$, where $T_\\rho$ is the Fourier noise operator.",
+ "hypotheses_covered": [
+  "$n,m$ are natural numbers",
+  "$P$ is continuous on $[0,1]$",
+  "$P$ is nonnegative on $[0,1]$",
+  "the stated two-point inequality holds whenever $a\\pm b\\in[0,1]$",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$ with values in $[0,1]$",
+  "$g$ is an $m$-tuple of real-valued functions on $\\{0,1\\}^n$",
+  "$\\rho\\in[0,1]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $P:\\mathbb R\\to\\mathbb R$, $f:\\{0,1\\}^n\\to\\mathbb R$, and $g=(g_1,\\ldots,g_m)$ of real functions on the cube, write $V(f,g)(x)=(D_1f(x),\\ldots,D_nf(x),g_1(x),\\ldots,g_m(x))$ and $F_P(f,g)=\\mathbb E\\sqrt{P(f)^2+\\|V(f,g)\\|_2^2}$, with $D_i$ the coordinate half-difference. Assume $P\\ge0$ on $[0,1]$ and, whenever $z\\pm d\\in[0,1]$, $P(z)\\le\\bigl(\\sqrt{P(z+d)^2+d^2}+\\sqrt{P(z-d)^2+d^2}\\bigr)/2$. If $P$ is continuous on $[0,1]$, $f$ takes values in $[0,1]$, and $0\\le\\rho\\le1$, then $F_P(T_\\rho f,T_\\rho g)\\le F_P(f,g)$, where $T_\\rho$ is Boolean noise applied to each component."
+}

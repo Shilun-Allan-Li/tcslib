@@ -19,6 +19,7 @@ The proof is a probabilistic (union-bound) counting argument over random generat
 \lean{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 \label{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.hamming_distance, ErrorCorrectingCodes.Codeword.matrix_dist, ErrorCorrectingCodes.Codeword.uniform_vector_dist, ErrorCorrectingCodes.Codeword.uniformity_lemma, ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.zero}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p086-b002}
 \proofstep
   {ErrorCorrectingCodes.Codeword}
@@ -82,7 +83,6 @@ The proof is a probabilistic (union-bound) counting argument over random generat
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p068-b001,
     pdf-7251cb8e4bc5-p068-b002}
-\uses{ErrorCorrectingCodes.Codeword.uniformity_lemma, ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.hamming_ball}
 \difficulty{6}
 Let $\alpha$ be a finite field, let $n$ and $k \ge 1$ be natural numbers, and fix a
 nonzero codeword $x \in \alpha^{k}$ together with an integer $d > 0$. Regard an $n
@@ -104,8 +104,10 @@ about the all-zero codeword:
 
 \begin{theorem}[Existence bound via union bound]
 \lean{ErrorCorrectingCodes.Codeword.existence_bound}
+\statementsource{Vad12}{pdf-bf2ce5422088-p164-b003}
 \label{ErrorCorrectingCodes.Codeword.existence_bound}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.prob_leq_ball_size, ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.zero}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p086-b002}
 \proofstep
   {ErrorCorrectingCodes.Codeword}
@@ -176,7 +178,6 @@ about the all-zero codeword:
   {direct}
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p086-b002}
-\uses{ErrorCorrectingCodes.Codeword.prob_leq_ball_size}
 \difficulty{5}
 Let $\alpha$ be a finite nonempty field, let $n$ and $k$ be natural numbers with $k \ge
 1$, and let $d$ be a positive integer. Regard an $n \times k$ matrix $G$ over $\alpha$
@@ -195,8 +196,15 @@ of radius $d-1$ about the all-zero codeword of length $n$.
 
 \begin{theorem}[Gilbert–Varshamov bound for linear codes]
 \lean{ErrorCorrectingCodes.Codeword.gv_bound}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p095-b004,
+  pdf-681b6f3d947f-p095-b005,
+  pdf-681b6f3d947f-p096-b001,
+  pdf-681b6f3d947f-p111-b001
+}
 \label{ErrorCorrectingCodes.Codeword.gv_bound}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.existence_bound, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.weight, ErrorCorrectingCodes.Codeword.zero}
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p086-b002,
   pdf-7251cb8e4bc5-p082-b004
@@ -279,7 +287,6 @@ of radius $d-1$ about the all-zero codeword of length $n$.
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p086-b002,
     pdf-7251cb8e4bc5-p082-b004}
-\uses{ErrorCorrectingCodes.Codeword.existence_bound}
 \difficulty{5}
 Let $\alpha$ be a finite field with $q = \abs{\alpha}$ elements, and let $n, k, d$ be
 natural numbers. Write $B_{d-1}(\mathbf{0})$ for the Hamming ball of radius $d-1$ about

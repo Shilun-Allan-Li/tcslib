@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalCapture_transfer",
+ "key": "45a976fce7c2b731",
+ "kind": "lemma",
+ "title": "Transfer to the interpreter",
+ "statement": "Let $M$ be a finite-state machine over the Boolean alphabet, let $D$ be a four-work-tape machine over the Boolean alphabet with finite state set and decidable state equality, and let $c$ be a configuration of $M$ on input $x$. If $c$ is halted, one step of the capture wrapper from the first-phase configuration associated to $c$ equals the interpreter-entry configuration associated to $c$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state machine over the Boolean alphabet",
+  "$D$ is a four-work-tape Boolean machine with finite state set and decidable state equality",
+  "$c$ is a configuration of $M$ on the finite Boolean input $x$",
+  "$c$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a halted configuration of a machine $M$ on input $x$.  Then one\ntransition of the output-capture wrapper of $M$ and a four-tape interpreter\n$D$, applied to the first-phase embedding of $c$, yields the\ninterpreter-entry configuration for $c$: every component of $c$ is preserved\nand the control becomes the interpreter's initial state."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.cpI",
+ "key": "f53aa6454eb6e9e5",
+ "kind": "def",
+ "title": "Copy-loop instruction",
+ "statement": "For a natural number $E$, source and destination registers $s,d$ among $18$ registers, an exit label $e$, a function $m$ assigning a label to each of seven phases, and a phase $j\\in\\{0,1,\\ldots,6\\}$, define the instruction by these cases: at phase $0$, branch on whether $s=0$, going to $m(4)$ if so and to $m(1)$ otherwise; at phase $1$, decrement $s$ and go to $m(2)$; at phase $2$, increment $d$ and go to $m(3)$; at phase $3$, increment a scratch register $z$ and go to $m(0)$; at phase $4$, branch on whether $z=0$, going to $e$ if so and to $m(5)$ otherwise; at phase $5$, decrement $z$ and go to $m(6)$; at phase $6$, increment $s$ and go to $m(4)$.",
+ "hypotheses_covered": [
+  "Natural number $E$",
+  "Source and destination registers among 18 registers",
+  "Exit label $e$",
+  "Label function $m$ on seven phases",
+  "Phase $j$ among seven phases"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

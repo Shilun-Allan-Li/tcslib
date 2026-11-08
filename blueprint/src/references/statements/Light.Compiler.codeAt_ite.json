@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Compiler.codeAt_ite",
+ "key": "457ab5b089e55693",
+ "kind": "theorem",
+ "title": "Instruction locations in a conditional",
+ "statement": "Let $P$ be a list of WordRAM instructions, let $G$ be a code layout, let $q$ be a natural-number position, let $c$ be a condition, and let $s$ and $t$ be statements. If the code obtained by compiling “if $c$ then $s$ else $t$” at position $q$ is a prefix of the suffix of $P$ beginning at $q$, then the code for $c$ is a prefix of the suffix beginning at $q$; the code for $s$ is a prefix of the suffix beginning at $q+|c|$; the instruction that jumps to $q+|c|+|s|_G+1+|t|_G$ is at position $q+|c|+|s|_G$; and the code for $t$ is a prefix of the suffix beginning at $q+|c|+|s|_G+1$. Here $|c|$ is the condition size, and $|s|_G,|t|_G$ are the statement sizes for frame size $G.F$.",
+ "hypotheses_covered": [
+  "The compiled conditional at position $q$ is a prefix of the suffix of the instruction list beginning at $q$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

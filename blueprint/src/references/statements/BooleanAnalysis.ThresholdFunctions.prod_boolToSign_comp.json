@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.prod_boolToSign_comp",
+ "key": "b185edcffc95bf53",
+ "kind": "lemma",
+ "title": "Sign products under coordinate identification",
+ "statement": "Let $n,m\\in\\mathbb N$, let $\\pi:\\mathrm{Fin}\\,n\\to\\mathrm{Fin}\\,m$, let $S\\subseteq\\mathrm{Fin}\\,n$, and let $w\\in\\{0,1\\}^m$. The product of the sign encodings of $w(\\pi(i))$ over $i\\in S$ equals the product of the sign encodings of $w(j)$ over those $j\\in\\mathrm{Fin}\\,m$ whose fibers in $S$ have odd cardinality.",
+ "hypotheses_covered": [
+  "$n,m\\in\\mathbb N$",
+  "A map $\\pi:\\mathrm{Fin}\\,n\\to\\mathrm{Fin}\\,m$",
+  "A subset $S\\subseteq\\mathrm{Fin}\\,n$",
+  "A Boolean vector $w\\in\\{0,1\\}^m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $n,m\\in\\mathbb N$, a map $\\pi:\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}$, $S\\subseteq\\{1,\\ldots,n\\}$ and $w\\in\\{0,1\\}^{m}$, set $O_{\\pi}(S)=\\{j\\in\\{1,\\ldots,m\\}:|\\{i\\in S:\\pi(i)=j\\}|\\text{ is odd}\\}$; then\n\\[\n\\prod_{i\\in S}(-1)^{w_{\\pi(i)}}=\\prod_{j\\in O_{\\pi}(S)}(-1)^{w_j}.\n\\]"
+}

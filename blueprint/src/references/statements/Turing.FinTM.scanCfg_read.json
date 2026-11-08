@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.scanCfg_read",
+ "key": "b529eba084672d96",
+ "kind": "lemma",
+ "title": "Input symbol in a scan configuration",
+ "statement": "Let $x$ be a finite Boolean string, let $q$ be an optional state, let $i\\le |x|$, and let $o$ be a finite Boolean output string. In the configuration with no work tapes, state $q$, input head at position $i+1$, and output $o$, the symbol under the input head is the optional entry $x[i]?$ (so it is blank when $i=|x|$).",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean string",
+  "$q$ is an optional state",
+  "$i\\le |x|$",
+  "$o$ is a finite Boolean output string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In a scan configuration indexed by $i \\le \\abs{x}$, the symbol under the input\nhead is the $i$-th bit of $x$ when $i < \\abs{x}$, and the blank when\n$i = \\abs{x}$."
+}

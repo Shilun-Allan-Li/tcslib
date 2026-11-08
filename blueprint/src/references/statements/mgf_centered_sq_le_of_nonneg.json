@@ -1,0 +1,18 @@
+{
+ "lean_name": "mgf_centered_sq_le_of_nonneg",
+ "key": "93aaa8c231337ca0",
+ "kind": "lemma",
+ "title": "Centered-square MGF bound for nonnegative parameters",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, let $Z:\\Omega\\to\\bbr$ be measurable, and let $\\sigma^2>0$. Suppose that for every $s\\in\\bbr$, $e^{sZ}$ is $\\mu$-integrable and $\\mathbb{E}_\\mu[e^{sZ}]\\le e^{\\sigma^2s^2/2}$. For every $t$ with $0\\le t\\le1/(4\\sigma^2)$, the function $e^{t(Z^2-\\sigma^2)}$ is integrable and its expectation is at most $e^{2\\sigma^4t^2}$.",
+ "hypotheses_covered": [
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$Z$ is measurable",
+  "$\\sigma^2>0$",
+  "$e^{sZ}$ is integrable and its moment-generating function is bounded by $e^{\\sigma^2s^2/2}$ for every real $s$",
+  "$0\\le t\\le1/(4\\sigma^2)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $Z$ be a measurable real random variable on a probability space $(\\Omega, \\mu)$\nwhich is strictly sub-Gaussian with variance proxy $\\sigma^2 > 0$ (for every real $s$,\n$e^{sZ}$ is integrable and $\\E_\\mu[e^{sZ}] \\le e^{\\sigma^2 s^2/2}$).  Then for every\n$t$ with $0 \\le t \\le 1/(4\\sigma^2)$, the function $e^{t(Z^2 - \\sigma^2)}$ is\n$\\mu$-integrable and\n\\[\n  \\E_\\mu\\!\\left[e^{t(Z^2 - \\sigma^2)}\\right] \\;\\le\\; e^{2\\sigma^4 t^2}.\n\\]"
+}

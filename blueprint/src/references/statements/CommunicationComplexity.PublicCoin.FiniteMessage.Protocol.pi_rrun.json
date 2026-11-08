@@ -1,6 +1,6 @@
 {
  "lean_name": "CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.pi_rrun",
- "key": "b4cbe62a134e791a",
+ "key": "4f2a400bf87d3db4",
  "kind": "theorem",
  "title": "Product protocol runs component-wise",
  "statement": "Fix $k \\in \\bbn$, shared private-input sets $X$ and $Y$, and, for each index $i \\in \\mathrm{Fin}\\,k$, a randomness space $\\Omega_i$ and an output type $\\alpha_i$. Let $p = (p_i)_{i}$ be a family of public-coin finite-message protocols, where $p_i$ has randomness space $\\Omega_i$, private inputs from $X$ and $Y$, and outputs in $\\alpha_i$, and let $\\mathrm{pi}\\,p$ be their $k$-fold product, a public-coin protocol with randomness space $\\prod_i \\Omega_i$ and output type $\\prod_i \\alpha_i$. Then for all inputs $x \\in X$, $y \\in Y$ and every randomness tuple $\\omega = (\\omega_i)_i \\in \\prod_i \\Omega_i$, the randomized execution of the product on $(x, y, \\omega)$ is the tuple of the individual executions:\n\\[\n\\mathrm{rrun}(\\mathrm{pi}\\,p,\\, x,\\, y,\\, \\omega) = \\bigl(i \\mapsto \\mathrm{rrun}(p_i,\\, x,\\, y,\\, \\omega_i)\\bigr).\n\\]",

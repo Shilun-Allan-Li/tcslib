@@ -1,0 +1,15 @@
+{
+ "lean_name": "FABL.sum_shapleyValue_subsetPointIndicator_eq_layerExpression",
+ "key": "c08c3153909ef746",
+ "kind": "theorem",
+ "title": "Point indicator Shapley sum",
+ "statement": "Let $n$ be a nonnegative integer, let $A\\subseteq\\{1,\\ldots,n\\}$, and let $f_A$ be the indicator of $A$ among subsets: $f_A(S)=1$ if $S=A$ and $0$ otherwise. Choose $S$ by first choosing its cardinality uniformly from $0,\\ldots,n$, then choosing uniformly among subsets of that cardinality, and define each element's Shapley value as the expected difference $f_A(S\\cup\\{i\\})-f_A(S\\setminus\\{i\\})$. Then the sum of these values is\n\\[\n|A|\\bigl(w_n(|A|)+w_n(|A|-1)\\bigr)-(n-|A|)\\bigl(w_n(|A|)+w_n(|A|+1)\\bigr),\n\\]\nwhere $w_n(k)=1/\\bigl((n+1)\\binom{n}{k}\\bigr)$ for nonnegative integers $k$; the subtractions in the formula are truncated at zero when used as natural-number arguments or differences.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$A$ is a subset of an $n$-element set"
+ ],
+ "confidence": "low",
+ "caveat": "The formula mixes natural-number subtraction in the arguments and coefficient with real subtraction; the prose describes the natural-number truncation explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

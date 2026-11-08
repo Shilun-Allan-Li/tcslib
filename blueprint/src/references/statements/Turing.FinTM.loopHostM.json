@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.loopHostM",
+ "key": "3c12844f78455c55",
+ "kind": "def",
+ "title": "Loop host machine construction",
+ "statement": "Given finite Turing machines $B$ and $F$ over the Boolean alphabet, a state $a$ of $B$, and Boolean parameters $f$ and $m$, one can construct a finite Boolean-alphabet Turing machine with $B.k+1+(1+F.k)+1$ work tapes. Its states comprise states of $F$, body-call states carrying a startup bit, a state of $B$, and a Boolean marker, and fourteen controller states; its initial state is the initial state of $F$. Its transitions combine transitions of $F$ and $B$ with controller actions that manage calls, tape regions, a counter, and a payload, with terminal behavior determined by the parameters $f$ and $m$.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine B",
+  "finite Boolean-alphabet machine F",
+  "state a of B",
+  "Boolean parameter f",
+  "Boolean parameter m"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement relies on helper constructions whose operational meanings are not included, so the machine’s detailed transition behavior cannot be stated precisely from the provided material.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

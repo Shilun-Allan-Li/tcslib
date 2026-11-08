@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.codeReadUnary_append",
+ "key": "ae2b60f6dade9ee3",
+ "kind": "lemma",
+ "title": "Unary reader is a prefix inverse",
+ "statement": "For every $n\\in\\mathbb N$ and bit string $x$, the unary numeral reader applied to $n$ ones followed by a $0$ and then $x$ succeeds and returns $(n,x)$.",
+ "hypotheses_covered": [
+  "A natural number n",
+  "An arbitrary bit string x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n \\in \\mathbb{N}$ and every bit string $x$, the unary numeral reader\napplied to the string consisting of $n$ ones, then a zero, then $x$, succeeds\nand returns the pair $(n, x)$; in particular the suffix $x$ is left untouched."
+}

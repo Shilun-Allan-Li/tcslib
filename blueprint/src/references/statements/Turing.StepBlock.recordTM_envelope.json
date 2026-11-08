@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.recordTM_envelope",
+ "key": "a9ad0c34abe38c05",
+ "kind": "lemma",
+ "title": "Head-Movement Bounds During Recording",
+ "statement": "Let $k,n\\in\\mathbb N$, let $x$ be a finite binary input, let $d$ be a configuration of the $(k+2)$-work-tape record machine, let $a$ be an action for a $k$-work-tape machine with states indexed by $\\{0,\\ldots,n\\}$, and let $b$ be a Boolean record of width $4k+4$. Suppose $d$ starts in the record machine's initial state, the record tape contains $b$ at each of the next $4k+4$ cells from its head, and $b$ is the length-$4k+4$ prefix of the binary encoding of $a$. At every time $u\\le 4k+5$, the first $k$ work-tape heads have moved from their initial positions by the action's prescribed displacements only when $u=4k+5$; the input head has moved according to $a$ only at that final time and otherwise remains fixed. Every work-tape head has displacement in absolute value at most $1$ on the first $k$ tapes and at most $4k+4$ on the final two tapes, and the input-head displacement is at most $1$. The record-tape head is at its initial position plus $\\min(u,4k+4)$, and the summary-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb N$",
+  "binary input $x$",
+  "configuration $d$ of the $(k+2)$-tape record machine",
+  "action $a$ with states indexed by $\\{0,\\ldots,n\\}$",
+  "record $b$ indexed by the $4k+4$ positions",
+  "$d$ starts in the record machine's initial state",
+  "the record tape contains $b$ at each offset from the record head",
+  "$b$ is the length-$4k+4$ prefix of the encoding of $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

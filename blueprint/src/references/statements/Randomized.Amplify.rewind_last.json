@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.Amplify.rewind_last",
+ "key": "53f89b60827cfaf3",
+ "kind": "theorem",
+ "title": "Final rewind step",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean inputs, let $r$ be a natural number, and let $C$ be an augmented configuration whose phase is rewind at index $j$ and counter $c$, where $0\\le j\\le r$ and $0\\le c\\le r+1$. If $j$ is not less than $r$, then for every Boolean word $w$, running the amplified machine from $C$ on either the word formed by prefixing $w$ with true or the word formed by prefixing it with false yields the same configuration: the configuration obtained from $C$ by halting and appending the Boolean value of the decision function at $c$ to its output.",
+ "hypotheses_covered": [
+  "$C$ is in rewind phase at $(j,c)$",
+  "$j$ ranges from $0$ to $r$",
+  "$c$ ranges from $0$ to $r+1$",
+  "$j$ is not less than $r$",
+  "$w$ is any Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

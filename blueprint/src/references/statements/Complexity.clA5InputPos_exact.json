@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clA5InputPos_exact",
+ "key": "f32928126376398b",
+ "kind": "lemma",
+ "title": "Exact stored input position",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $C,e,c,A,d$ be natural numbers, and let $x$ be a Boolean word. For every cursor $j$ and time $t$ at most $c\\,(A(n+C(n+1)^e+1)^d+1)^2$, where $n=|x|$, the input position stored in the packed encoding of $x$ with cursor $j$ equals the input-head position of $M$ at time $t$ on an all-false input of length $n+C(n+1)^e$.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine $M$",
+  "natural parameters $C,e,c,A,d$",
+  "input word $x$",
+  "cursor $j$",
+  "time $t$",
+  "$t$ is at most the producer horizon for $|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters, instance $x$, cursor $j$, and time $t$ at most the producer horizon, the stored shifted input position equals the public oblivious input position at time $t$ over the reference length $|x| + C(|x|+1)^e$."
+}

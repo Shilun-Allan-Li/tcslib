@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_append",
+ "key": "96c72f9bf70d1195",
+ "kind": "lemma",
+ "title": "Unary append block",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,N\\in\\mathbb{N}$, and let $x$ be a finite word over the schedule alphabet. For any base configuration on $x$, input-head position $p$, integers $b,g$, and tape contents $\\beta,\\gamma\\colon\\mathbb{Z}\\to\\text{Option}(\\text{OblSymbol})$, start the schedule machine in phase $\\mathsf{append}(0)$ with its binary-budget head at $b$, unary-counter head at $N+1$ over the tape with $N$ unary markers, and guide head at $g$; let its clock tapes and output be those of the base configuration. After $a+2$ steps, the configuration has phase $\\mathsf{borrow}(\\mathsf{true})$, the same input-head position, clock tapes, budget tape and head, guide tape and head, and output; its unary-counter tape has $N+a+1$ markers and its head is at $N+(a+1)+1$.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over the Boolean alphabet",
+  "$a,N$ are natural numbers",
+  "$x$ is a finite word over the schedule alphabet",
+  "base configuration on $x$",
+  "input-head position $p$ among the valid positions",
+  "binary-budget head position $b$ and guide head position $g$ are integers",
+  "binary-budget tape contents $\\beta$ and guide tape contents $\\gamma$ are arbitrary functions from integers to optional schedule symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From a setup configuration in append phase $0$ with unary head at cell $N+1$ over the\nunary tape with $N$ markers, exactly $a+2$ steps append exactly $a+1$ unit markers and\nenter the borrow phase with incoming borrow set: the unary head is then at cell\n$N+(a+1)+1$ over the unary tape with $N+a+1$ markers, and all other tapes and heads are\nunchanged."
+}

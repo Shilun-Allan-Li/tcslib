@@ -1,0 +1,29 @@
+{
+ "lean_name": "Complexity.satRedAction_apply",
+ "key": "37efef1057ec7af2",
+ "kind": "lemma",
+ "title": "Action on a Reduction Frame",
+ "statement": "Let $x$ be a Boolean word; let $q,q'$ be optional states in the 35-state control set; let $i,i',n,n'\\in\\mathbb{N}$; let $B,B'$ be tape contents from integer offsets to optional Boolean symbols; let $a,b,a',b'\\in\\mathbb{Z}$; and let $o,o'$ be Boolean output words. Suppose $i,i'\\le |x|$, and choose an input move $m$, writes $w_0,w_1$ (each either no write or a symbol-or-blank write), head moves $d_0,d_1$, and optional output bit $e$. Assume the clamped input move takes the frame at position $i$ to position $i'$; applying the first prescribed write to the unary counter tape of length $n$ gives the unary counter tape of length $n'$; applying the second prescribed write to $B$ gives $B'$; the head offsets satisfy $a+d_0=a'$ and $b+d_1=b'$; and appending the optional bit $e$ to $o$ gives $o'$. Then applying the two-tape reduction action with these components and target state $q'$ to the canonical reduction frame with data $(x,q,i,n,B,a,b,o)$ yields the canonical reduction frame with data $(x,q',i',n',B',a',b',o')$.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$q,q'$ are optional states in the 35-state control set",
+  "$i,i',n,n'\\in\\mathbb{N}$",
+  "$i\\le |x|$ and $i'\\le |x|$",
+  "$B,B'$ are integer-indexed optional-Boolean tape contents",
+  "$a,b,a',b'\\in\\mathbb{Z}$",
+  "$o,o'$ are Boolean words",
+  "$m$ is an input-head move",
+  "$w_0,w_1$ are optional writes of optional Boolean symbols",
+  "$d_0,d_1$ are work-head moves",
+  "$e$ is an optional output bit",
+  "the clamped input move takes position $i$ to position $i'$",
+  "the first tape update takes the counter of length $n$ to the counter of length $n'$",
+  "the second tape update takes $B$ to $B'$",
+  "$a+d_0=a'$ and $b+d_1=b'$",
+  "appending $e$ to $o$ gives $o'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying a two-tape reduction action to a canonical reduction frame yields the\ncanonical frame whose input position, counter tape, buffer tape, both head\noffsets, and appended output are exactly as prescribed by the action's components;\nthis frame-level calculus is shared by the maximum pass and the streaming\nserializer."
+}

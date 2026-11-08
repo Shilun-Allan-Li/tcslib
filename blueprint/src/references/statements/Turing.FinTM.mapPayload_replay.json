@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.mapPayload_replay",
+ "key": "dbce495a39425931",
+ "kind": "lemma",
+ "title": "Replay of a captured word",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, let $c$ be a configuration of $M$ on input $x$, let $p$ be a valid input-head position, and let $o$ be a Boolean word. For every natural number $j$ with $j\\leq |c.output|$, running the threaded-map controller for $j$ steps from its payload-replay state, with capture head at displacement $0$ and output $o$, yields the configuration in that same controller state with input-head position $p$, capture-head displacement $j$, and output $o$ followed by the first $j$ symbols of $c.output$; the simulated machine's tape contents and head positions are preserved.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$p$ is a valid input-head position",
+  "$o$ is a Boolean word",
+  "$j$ is a natural number with $j\\leq |c.output|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every $j$ at most the captured word's length and every prior output\n$o$, running the controller for exactly $j$ steps from its payload-replay\nstate with the capture head at displacement $0$ yields the payload-replay\nconfiguration with the capture head at displacement $j$ and output $o$\nfollowed by the first $j$ captured bits; the bank is preserved."
+}

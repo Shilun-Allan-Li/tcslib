@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_sum",
+ "key": "c3cb5c0471c26ba5",
+ "kind": "theorem",
+ "title": "Weighted sum of a two-valued function",
+ "statement": "Let $I$ be a finite set with real weights satisfying $\\sum_iw_i=1$. Suppose $f:I\\to\\mathbb{R}$ takes only the values $a$ and $b$, for some $a,b\\in\\mathbb{R}$, and let $\\varphi:\\mathbb{R}\\to\\mathbb{R}$. With $\\gamma=\\sum_{i:f_i=a}w_i$, one has\n\\[\n\\sum_iw_i\\varphi(f_i)=\\gamma\\varphi(a)+(1-\\gamma)\\varphi(b).\n\\]",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w_i$ are real and sum to $1$",
+  "$f:I\\to\\mathbb{R}$",
+  "$a,b\\in\\mathbb{R}$",
+  "$f_i=a$ or $f_i=b$ for every $i$",
+  "$\\varphi:\\mathbb{R}\\to\\mathbb{R}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite, let real weights satisfy $\\sum_iw_i=1$, and let $f:I\\to\\bbr$ take values in $\\{a,b\\}$, where $a,b\\in\\bbr$. For any $\\varphi:\\bbr\\to\\bbr$, setting $\\gamma=\\sum_{i:f_i=a}w_i$ gives $\\sum_iw_i\\varphi(f_i)=\\gamma\\varphi(a)+(1-\\gamma)\\varphi(b)$."
+}

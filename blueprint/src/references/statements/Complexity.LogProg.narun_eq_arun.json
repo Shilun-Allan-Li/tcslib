@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.narun_eq_arun",
+ "key": "e91dc7caf76b241c",
+ "kind": "lemma",
+ "title": "Agreement with the deterministic simulation",
+ "statement": "Let $A$ be a nondeterministic register machine, let $\\text{oracle}$ be an oracle, let $x$ be an input bit string, let $\\beta$ be a Boolean value, and let $a$ be an initial configuration. Suppose that at every time $t<T$, whenever the deterministic simulation that replaces each choice instruction by the answer $\\beta$ is in a control state $l$, the instruction of $A$ at $l$ is not a choice instruction. Then for every finite choice string $\\sigma$ of length at most $T$, the nondeterministic run on $\\sigma$ agrees with that deterministic simulation after $|\\sigma|$ steps.",
+ "hypotheses_covered": [
+  "A nondeterministic register machine",
+  "An oracle and input bit string",
+  "A Boolean value $\\beta$",
+  "An initial configuration",
+  "A natural-number bound $T$",
+  "At every $t<T$, each control state reached by the deterministic simulation has a non-choice instruction",
+  "A finite choice string $\\sigma$ with length at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

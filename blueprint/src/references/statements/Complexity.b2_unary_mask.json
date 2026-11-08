@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_unary_mask",
+ "key": "e07e77f2f25401ab",
+ "kind": "lemma",
+ "title": "Emission Schedule Under Unary Normalization",
+ "statement": "Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a binary input, let $c$ be a configuration of $M$ on $x$, and let $t\\in\\mathbb{N}$. The length-$t$ emission schedule of the input-normalized machine from $c$ equals the length-$t$ emission schedule of $M$ from the configuration obtained by viewing $c$ on the all-ones input of length $|x|$.",
+ "hypotheses_covered": [
+  "A finite deterministic machine over the binary alphabet",
+  "A binary input $x$",
+  "A configuration of the machine on $x$",
+  "A step count $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic machine over the binary alphabet, $d$ a configuration and $t$ a step count. The emission mask of the input-normalized variant of $M$ over $t$ steps from $d$ equals the emission mask of $M$ over $t$ steps from the unary reinterpretation of $d$."
+}

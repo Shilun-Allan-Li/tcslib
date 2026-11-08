@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.Computes.exists_computesInTime_iff",
+ "key": "d04dc4dc01ec428e",
+ "kind": "theorem",
+ "title": "Outputs of a function-computing machine",
+ "statement": "Let $M$ be a finite Turing machine over an alphabet $\\Sigma$ that computes a function $g$ from words over $\\Sigma$ to words over $\\Sigma$. For any words $x$ and $w$ over $\\Sigma$, there is a time $t$ at which $M$ halts on $x$ with output $w$ if and only if $w=g(x)$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over $\\Sigma$",
+  "$g$ maps words over $\\Sigma$ to words over $\\Sigma$",
+  "$M$ computes $g$ on every input",
+  "$x$ and $w$ are words over $\\Sigma$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite Turing machine over an alphabet $\\Sigma$ that computes the\nstring function $g \\colon \\Sigma^{*} \\to \\Sigma^{*}$, and let $x$ and $w$ be\nwords over $\\Sigma$.  Then there exists a number of steps $t$ such that $M$,\nstarted on $x$, halts within $t$ steps with $w$ on its output tape if and only\nif $w = g(x)$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.rotationSensitivity_sum_le",
+ "key": "ccd2b0b2d1640e9c",
+ "kind": "theorem",
+ "title": "Sensitivity bound for sums of angles",
+ "statement": "Let $n\\ge 0$, let $A\\subseteq\\mathbb R^n$ be measurable, let $\\ell\\ge 0$ be an integer, and let $\\delta_1,\\ldots,\\delta_\\ell\\in\\mathbb R$. The rotation sensitivity of $A$ at angle $\\sum_{j=1}^{\\ell}\\delta_j$ is at most $\\sum_{j=1}^{\\ell}s_A(\\delta_j)$, where $s_A(u)$ denotes the rotation sensitivity at angle $u$.",
+ "hypotheses_covered": [
+  "$n\\ge 0$",
+  "$A$ is measurable",
+  "$\\ell\\ge 0$ is an integer",
+  "Each $\\delta_j$ is real"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$, let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$, and let $G,G\\prime$ be independent vectors with law $\\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\\gamma_n\\otimes\\gamma_n)\\{(g,h):\\mathbf1_A(g)\\ne\\mathbf1_A(\\cos t\\,g+\\sin t\\,h)\\}$. For any measurable $A\\subseteq\\mathbb R^n$, integer $\\ell\\ge0$, and real angles $\\delta_1,\\ldots,\\delta_\\ell$, $s_A(\\sum_{j=1}^\\ell\\delta_j)\\le\\sum_{j=1}^\\ell s_A(\\delta_j)$."
+}

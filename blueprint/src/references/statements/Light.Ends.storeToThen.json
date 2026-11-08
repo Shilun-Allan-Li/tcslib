@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Ends.storeToThen",
+ "key": "6abd3508f61db1d5",
+ "kind": "theorem",
+ "title": "Store followed by a bounded computation",
+ "statement": "Let a program, depth bound, list $l$ of integers, memory map $\\mu:\\mathbb N\\to\\mathbb Z$, time bound $T\\in\\mathbb N$, postcondition $Q$, expressions $a,e$, statement $s$, address $b\\in\\mathbb N$, and value $z\\in\\mathbb Z$ be given. Suppose that $s$ can execute from the state with locations given by the frame of $l$ and memory updated at $b$ to $z$, within time $T-(\\operatorname{cost}(a)+\\operatorname{cost}(e)+1)$, and end in a state satisfying $Q$. Suppose also that $a,e$ are safe in the original state and evaluate respectively to $b,z$, and that $b$ is less than the space bound. Then storing $e$ at address $a$ and executing $s$ from the original state ends in a state satisfying $Q$ within time $T$, provided the store cost is at most $T$.",
+ "hypotheses_covered": [
+  "The following statement $s$ has a $Q$-satisfying execution within the remaining time from locations given by the frame and memory updated at $b$ to $z$",
+  "The address expression is safe and evaluates to $b$ in the original state",
+  "The value expression is safe and evaluates to $z$ in the original state",
+  "$b$ is less than the space bound",
+  "The store cost is at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

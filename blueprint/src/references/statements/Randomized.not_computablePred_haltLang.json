@@ -1,0 +1,12 @@
+{
+ "lean_name": "Randomized.not_computablePred_haltLang",
+ "key": "59de3754572f3c23",
+ "kind": "theorem",
+ "title": "Undecidability of the halting language",
+ "statement": "Let the halting set consist of codes of programs paired with inputs for which the encoded program halts on the encoded input. Define the halting digit to be $1$ for numbers in this set and $0$ otherwise, and define the halting prefix by $h(0)=0$ and $h(J+1)=4h(J)+\text{halting digit}(J)$. For a binary string $x$, let $N(x)$ be the length of the output of the specified head transducer on $x$, and let $J(x)$ be the base-$4$ logarithm, rounded down, of the length of the output of the specified rest transducer on $x$. The language consists of strings $x$ satisfying $1\\\\le J(x)$, $N(x)=h(J(x)-1)$, and membership of $J(x)-1$ in the halting set; this language is not computable.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "The formal statement depends on particular head and rest transducers whose defining behavior is not given in the provided informal descriptions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_body_agree",
+ "key": "6a30779759393943",
+ "kind": "lemma",
+ "title": "Agreement off the anchor state",
+ "statement": "Let $B$ be a finite machine over the Boolean alphabet, with designated states $q_v,q_i$. For every state $q$ of the body machine other than the administrative anchor state $0$, and for every input symbol and tuple of work-tape readings, the transition of the active body (parameter $false$) equals the transition of the stopped body (parameter $true$).",
+ "hypotheses_covered": [
+  "A finite Boolean machine $B",
+  "Designated states $q_v,q_i$",
+  "A state $q$ of the body machine with $q\\ne$ administrative anchor state $0$",
+  "An arbitrary input-symbol reading and tuple of work-tape readings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The active and stopped variants of the enumerator body have identical transitions\nat every control state other than the anchor; their tape counts and finite state\nsets coincide."
+}

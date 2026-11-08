@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.sat_certificate",
+ "key": "d1842f2b4a42233f",
+ "kind": "lemma",
+ "title": "Satisfiability certificate characterization",
+ "statement": "For every finite binary word $x$, the CNF formula decoded from $x$ is satisfiable if and only if there exists a binary word $u$ of length $|x|+1$ such that this decoded formula evaluates to true under the assignment that gives variable $v$ the bit at index $v$ of $u$, and gives false when $v\\ge |u|$.",
+ "hypotheses_covered": [
+  "$x$ is a finite binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $x$, the CNF formula decoded from $x$ is satisfiable if and\nonly if there exists a word $u$ of length exactly $|x| + 1$ such that the decoded\nformula evaluates to true under the assignment that reads variable $v$ off the\n$v$-th bit of $u$ (default false). [AB09, Theorem~2.10, membership]"
+}

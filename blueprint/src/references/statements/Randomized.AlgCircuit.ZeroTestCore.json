@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.AlgCircuit.ZeroTestCore",
+ "key": "7d88ba8ae149b59a",
+ "kind": "def",
+ "title": "Core modular zero test",
+ "statement": "Let $C$ be an arithmetic circuit on $n$ inputs and let $r$ be a finite Boolean string. For every trial index $j$ among the number of trials determined by the size of $C$, evaluate $C$ modulo the test modulus obtained from the portion of $r$ after its first $n$ input blocks, at the test point obtained from those first blocks. The value must be zero in the corresponding residue class ring.",
+ "hypotheses_covered": [
+  "$C$ is an arithmetic circuit on $n$ inputs",
+  "$r$ is a finite Boolean string",
+  "The condition holds for every $j$ among the trials determined by $C$'s size",
+  "The test point is computed from the prefix of length $n$ times the input block length",
+  "The modulus is computed from the remaining suffix of $r$"
+ ],
+ "confidence": "low",
+ "caveat": "The definitions of the block encoding, trial count, and circuit evaluation are not included; the statement can only be described in terms of those constructions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

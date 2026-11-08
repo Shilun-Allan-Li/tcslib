@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Universal.lean :: Turing.timedCut_skip_groups -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Skipping State Groups
+
+**Claim.** When each group has nine actions and the table has the stated decomposition, the interpreter skips all groups in the specified time, reaches the state-rewind phase, and records that all group states have been consumed in its state window and cursor.
+
+**Proof.** Induct on the list of groups, generalizing the left table prefix and the number $j$ of unary symbols already consumed. With no groups, the state window has zero remaining symbols; its end marker is absent at cursor $j+1$ by `universalStateWindow_end`. The group-phase transition therefore enters state rewind without moving either cursor, giving the base case by the one-step and zero-run identities (`Turing.MultiTapeTM.runFrom_succ_eq_step`, `Turing.MultiTapeTM.runFrom_zero`) and `timedCut_Eval_step`. For a nonempty list $g::G$, the first group causes a transition into fixed-record skipping, because the state window has a true bit at its next position (`universalStateWindow_read`). The state-window erase identity (`universalStateWindow_erase`) accounts for consuming that bit and updates the window from $j$ consumed to $j+1$. Since $g$ has nine actions, `timedCut_skip_records` skips precisely the serialized records of $g$, advancing the table cursor by their total length. Apply the induction hypothesis to $G$, with the table prefix extended by those records and with consumed count $j+1$. The run-concatenation identity (`Turing.MultiTapeTM.runFrom_add`) combines the initial transition, the record-skip segment, and the remaining group run; the successor-run and zero-run identities (`Turing.MultiTapeTM.runFrom_succ_eq_step'`, `Turing.MultiTapeTM.runFrom_zero`) identify the initial transition. The lengths add to the asserted duration, and the cursor and window parameters simplify to the claimed totals.
+
+**Key facts.** `Turing.universalStateWindow_end`, `Turing.MultiTapeTM.runFrom_succ_eq_step`, `Turing.MultiTapeTM.runFrom_zero`, `Turing.timedCut_Eval_step`, `Turing.universalStateWindow_read`, `Turing.universalStateWindow_erase`, `Turing.timedCut_skip_records`, `Turing.MultiTapeTM.runFrom_add`, `Turing.MultiTapeTM.runFrom_succ_eq_step'`.

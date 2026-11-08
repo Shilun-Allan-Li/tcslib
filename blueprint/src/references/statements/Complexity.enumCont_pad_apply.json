@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_pad_apply",
+ "key": "7931acdaf9c96d47",
+ "kind": "lemma",
+ "title": "Padding commutes with applying an action",
+ "statement": "Let $k,K$ be natural numbers, let $S,H$ be types, let $\text{emb}:S\\to H$ be a map, let $x$ be a Boolean input word, let $c$ be a configuration of a $k$-tape machine with states in $S$, and let $a$ be an action of that machine. Applying the action padded along $\text{emb}$ to the padded configuration equals padding along $\text{emb}$ of the configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "natural numbers k and K",
+  "types S and H",
+  "map emb from S to H",
+  "Boolean input word x",
+  "configuration c on k tapes with states in S",
+  "action a on k tapes with states in S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying the padded version of an action to the padded version of a configuration\nequals the padding of the result of applying the original action; the added high\ntapes remain blank."
+}

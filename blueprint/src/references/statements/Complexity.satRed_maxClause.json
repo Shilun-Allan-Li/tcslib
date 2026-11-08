@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satRed_maxClause",
+ "key": "48972d4855dcf6b5",
+ "kind": "lemma",
+ "title": "Maximum scan of one clause",
+ "statement": "Let $x$ be a Boolean word and $C$ a clause of natural-number-indexed literals. If $x$ is a concatenation of a prefix, the serialization of $C$, and a suffix, then for every counter length $n$, second-tape content, second-tape head position $b$, and output word $o$, there is a number of steps $t\\le 2|\\mathrm{enc}(C)|$ after which the machine is in state $2$ at the input position just after the serialized clause. Its counter length is the maximum of $n$ and the largest literal variable index in $C$ plus one (or $0$ if $C$ is empty); the counter head remains at $0$, and the second tape, its head, and the output are unchanged.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "clause $C$ over natural-number-indexed literals",
+  "decomposition of $x$ as prefix, serialized clause, and suffix",
+  "arbitrary counter length $n$",
+  "arbitrary second-tape content",
+  "second-tape head position $b$",
+  "arbitrary output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a clause with serialization $\\mathrm{ser}(C)$, and let $m_C$ be the\nmaximum of $v + 1$ over the literals $(v, b)$ of $C$ (or $0$ if $C$ is empty).\nSuppose the input is $x = p \\mathbin{+\\!\\!+} \\mathrm{ser}(C) \\mathbin{+\\!\\!+} r$,\nand the transducer is in its clause-level maximum state at input position $|p|$,\nwith counter length $n$, counter head at $0$, and arbitrary buffer, buffer head,\nand output. Then there is a number $t \\le 2\\,|\\mathrm{ser}(C)|$ of silent steps\nafter which the transducer is in formula-level maximum control at input position\n$|p| + |\\mathrm{ser}(C)|$, with counter length $\\max(n, m_C)$, counter head back\nat $0$, and buffer, buffer head, and output unchanged."
+}

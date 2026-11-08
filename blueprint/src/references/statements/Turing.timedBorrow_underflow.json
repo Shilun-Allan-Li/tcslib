@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.timedBorrow_underflow",
+ "key": "ed5edd3aa5d26423",
+ "kind": "lemma",
+ "title": "Borrow underflow criterion",
+ "statement": "For every Boolean word, subtracting an incoming borrow flag set to true produces a final borrow flag equal to true if and only if the word's little-endian value is zero.",
+ "hypotheses_covered": [
+  "The input is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Subtracting a set borrow flag from a word underflows if and only if the word's\nlittle-endian value is $0$."
+}

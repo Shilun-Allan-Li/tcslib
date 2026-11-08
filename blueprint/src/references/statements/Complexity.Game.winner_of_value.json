@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Game.winner_of_value",
+ "key": "c6db18b87df13df7",
+ "kind": "theorem",
+ "title": "Position value determines the winner",
+ "statement": "Let $n$ be a natural number, let $W$ be a Boolean-valued predicate on finite Boolean histories, let $s_1,s_2$ be strategies for the first and second players, and let $b$ be a Boolean value. Define the value of a position with $r$ moves remaining recursively: at zero remaining moves it is $W$ of the current history; otherwise it is the disjunction of the two successor values when the history has even length, and their conjunction when it has odd length. The first player's greedy strategy chooses true exactly when the successor obtained by appending true has value true, and the second player's greedy strategy is its Boolean negation. If $b=\\mathrm{true}$ implies $s_1$ is the first player's greedy strategy, if $b=\\mathrm{false}$ implies $s_2$ is the second player's greedy strategy, if the current history $h$ and the remaining number of moves satisfy $|h|+r=n$, and if the position value at $(r,h)$ equals $b$, then after $r$ moves from $h$ under $s_1,s_2$, the outcome $W$ equals $b$.",
+ "hypotheses_covered": [
+  "natural number $n$",
+  "Boolean-valued outcome predicate $W$",
+  "strategies $s_1,s_2$ on finite Boolean histories",
+  "Boolean value $b$",
+  "if $b=\\mathrm{true}$, $s_1$ equals the first-player greedy strategy for $n,W$",
+  "if $b=\\mathrm{false}$, $s_2$ equals the second-player greedy strategy for $n,W$",
+  "natural number $r$ and history $h$ with $|h|+r=n$",
+  "position value at $(r,h)$ equals $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

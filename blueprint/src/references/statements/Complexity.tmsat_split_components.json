@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_split_components",
+ "key": "c61eee83d5889e12",
+ "kind": "lemma",
+ "title": "Components of a valid odd split",
+ "statement": "Let $z$ be a bit string whose odd split parses as a pair encoding. The total first and second projections of that split concatenate to $z$, and the second projected component has length one greater than the first.",
+ "hypotheses_covered": [
+  "$z$ is a bit string",
+  "The odd split of $z$ parses as a pair encoding"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $z$ be a bit string such that $s(z)$ parses as a pair encoding, where $s(z)$ is the odd split of $z$ (the self-delimiting pair encoding $\\langle z_{[:i]}, z_{[i:]}\\rangle$ of the first $i$ bits of $z$ and the rest when $|z| = 2i+1$, and the empty word when $|z|$ is even), and $\\pi_1, \\pi_2$ return the first and second components of a pair encoding (the empty word on strings that do not parse as pairs). Then $z = \\pi_1(s(z))\\,\\pi_2(s(z))$ and $|\\pi_2(s(z))| = |\\pi_1(s(z))| + 1$."
+}

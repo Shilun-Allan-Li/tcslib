@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.continuous_integral_gaussianProductDensityDerivative",
+ "key": "4489b9e7e9abb238",
+ "kind": "lemma",
+ "title": "Continuity of the integrated density derivative",
+ "statement": "Let $I$ be a finite set, let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\le 1$ for every $z$, and let $v>0$. The function of $c\\in\\mathbb R^I$ obtained by integrating $f(z)$ times the product Gaussian density derivative at mean $c$ and input $z$ with respect to Lebesgue measure is continuous as a map into the continuous linear functionals on $\\mathbb R^I$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$f:\\mathbb R^I\\to\\mathbb R$ is measurable",
+  "$|f(z)|\\le 1$ for every $z\\in\\mathbb R^I$",
+  "$v\\ge 0$",
+  "$v\\ne 0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$, the linear-functional-valued function $c\\mapsto\\int_{\\mathbb R^I}f(z)A_v(c,z)\\,dz$ is continuous."
+}

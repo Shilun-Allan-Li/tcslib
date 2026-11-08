@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.dataTM_ready",
+ "key": "8e829241bddae0b4",
+ "kind": "lemma",
+ "title": "The Simulator Reaches Its First Macrostep",
+ "statement": "Let $W$ and $M$ be finite Turing machines over the binary alphabet, and let $a,b$ be natural numbers and $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every binary word $x$, $W$ outputs the binary expansion of $T(|x|)$ within $b(T(|x|)+1)$ steps, and that $n\\le T(n)$ for every natural number $n$. For every binary word $x$, there exist a time $t$, a configuration of the schedule machine, and a family of data-tape contents such that the schedule configuration has unary tape encoding $(a+1)(T(|x|)+1)$, guide tape of radius $3(a+1)(T(|x|)+1)$, and the simulator's run at time $t$ is exactly the configuration formed from this schedule configuration in the macrostep-check phase, with unary head at coordinate $1$, guide head at coordinate $0$, initial data registers for $M$, the specified data tapes, and empty output; moreover, decoding each data-tape cell's current payload gives the corresponding payload of $M$'s initial configuration on $x$.",
+ "hypotheses_covered": [
+  "$W$ outputs $(T(|x|))$ in binary within $b(T(|x|)+1)$ steps for every binary word $x$",
+  "$n\\le T(n)$ for every natural number $n$",
+  "$x$ is an arbitrary binary word",
+  "there exist a natural time, a schedule configuration, and data-tape contents",
+  "the unary and guide tapes equal the stated tapes",
+  "the simulator run equals the stated macrostep configuration",
+  "each data cell's current payload agrees with the initial source payload"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ compute on every input $x$ the binary expansion of $T(|x|)$ within\n$b\\,(T(|x|)+1)$ steps, and suppose $n \\le T(n)$ for all $n$.  Then for every\nword $x$ there are a time $t$, a base schedule configuration whose unary tape\nhas $(a+1)(T(|x|)+1)$ markers and whose guide tape has radius\n$3(a+1)(T(|x|)+1)$, and data tapes decoding the head-centered payload vectors of\nthe initial configuration of the source $M$ on $x$, such that the $t$-step run\nof the logical simulator on the embedded input is the macrostep configuration\nwith data at the counter-test phase, unary head $1$, guide head at the origin,\ninitial data register, and empty output."
+}

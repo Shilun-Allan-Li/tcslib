@@ -13,8 +13,8 @@ Gilbert--Varshamov argument.
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
 \label{ErrorCorrectingCodes.Codeword.hamming_ball_size_asymptotic_upper_bound}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv, ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le, ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one, ErrorCorrectingCodes.Codeword.qaryEntropy}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p071-b001}
-\uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{5}
 Let $\alpha$ be a finite alphabet with at least two symbols, write $q = \abs{\alpha}$
 for its size, and let $n$ be a natural number. Fix a real number $p$ with $0 < p \le 1 -
@@ -37,7 +37,7 @@ ball of radius $\lfloor np\rfloor$ about $c$, namely $B_{\lfloor np\rfloor}(c) =
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \label{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
 \leanok
-\uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
+\uses{ErrorCorrectingCodes.Codeword.natCast_ne_one_of_two_le, ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le, ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le, ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one, ErrorCorrectingCodes.Codeword.qaryEntropy, ErrorCorrectingCodes.Codeword.qary_entropy_logb_expand}
 \difficulty{4}
 Let $q \ge 2$ be an integer and let $p$ be a real number with $0 < p < 1$. Then the
 $q$-th power of the $q$-ary entropy $H_q(p)$ is given by
@@ -50,7 +50,7 @@ q^{H_q(p)} \;=\; (q-1)^{p}\, p^{-p}\, (1-p)^{-(1-p)}.
 \lean{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp'}
 \label{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp'}
 \leanok
-\uses{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp}
+\uses{ErrorCorrectingCodes.Codeword.q_pow_qary_entropy_simp, ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{1}
 Let $q \ge 2$ be an integer and let $p$ be a real number with $0 < p < 1$. Then the
 base-$q$ power of the $q$-ary entropy $H_q(p)$ admits the closed form
@@ -81,8 +81,8 @@ where $\lfloor x \rfloor$ denotes the greatest integer not exceeding $x$.
 \lean{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
 \label{ErrorCorrectingCodes.Codeword.binomial_coef_asymptotic_lower_bound'}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword.floor_np_pos, ErrorCorrectingCodes.Codeword.mul_one_sub_pos, ErrorCorrectingCodes.Codeword.natCast_ne_one_of_two_le, ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le, ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le, ErrorCorrectingCodes.Codeword.natCast_sub_one_pos_of_two_le, ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one, ErrorCorrectingCodes.Codeword.qaryEntropy, ErrorCorrectingCodes.Codeword.stirling_comb_bound}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p072-b001}
-\uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \difficulty{7}
 Fix a real number $p$ with $0 < p < 1$ and an integer $q \ge 2$, and let $H_q$ denote
 the $q$-ary entropy function. Then there is a function $\varepsilon \colon \bbn \to
@@ -99,7 +99,7 @@ the $q$-ary entropy function. Then there is a function $\varepsilon \colon \bbn 
 \lean{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \label{ErrorCorrectingCodes.Codeword.qary_entropy_pos}
 \leanok
-\uses{ErrorCorrectingCodes.Codeword.qaryEntropy}
+\uses{ErrorCorrectingCodes.Codeword.lt_one_of_le_one_sub_inv, ErrorCorrectingCodes.Codeword.natCast_one_lt_of_two_le, ErrorCorrectingCodes.Codeword.natCast_pos_of_two_le, ErrorCorrectingCodes.Codeword.one_sub_pos_of_lt_one}
 \difficulty{5}
 Let $\alpha$ be a finite alphabet with $q = \abs{\alpha}$ symbols, and let $p$ be a real
 number with $0 < p \le 1 - 1/q$. Then the $q$-ary entropy of $p$ is strictly positive:
@@ -167,6 +167,7 @@ $\lfloor np\rfloor$ is strictly positive, i.e. $\lfloor np\rfloor \ge 1$.
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p072-b001}
 \label{ErrorCorrectingCodes.Codeword.stirling_comb_bound}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum, ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
 \proofstep
   {ErrorCorrectingCodes.Codeword}
   {context}
@@ -211,7 +212,6 @@ $\lfloor np\rfloor$ is strictly positive, i.e. $\lfloor np\rfloor \ge 1$.
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p072-b001,
     pdf-7251cb8e4bc5-p201-b005}
-\uses{ErrorCorrectingCodes.Codeword.am_gm_sqrt_le_half_sum, ErrorCorrectingCodes.Codeword.sqrt_two_pi_mul_sqrt_pi_half}
 \difficulty{5}
 Let $a,b,n\in\bbn$ with $a>0$, $b>0$, and $a+b=n$, and let $c>0$ be a real number.
 Suppose the factorial product $a!\,b!$ admits the Stirling-type upper bound

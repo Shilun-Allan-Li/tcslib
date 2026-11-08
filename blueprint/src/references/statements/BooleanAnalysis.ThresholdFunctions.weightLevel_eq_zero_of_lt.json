@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.weightLevel_eq_zero_of_lt",
+ "key": "dde99253502e78ca",
+ "kind": "lemma",
+ "title": "Fourier weights above the dimension vanish",
+ "statement": "Let $n$ and $k$ be nonnegative integers with $n<k$, and let $f:\\{0,1\\}^n\\to\\mathbb R$. The Fourier weight of $f$ at level $k$ is zero.",
+ "hypotheses_covered": [
+  "$n,k$ are nonnegative integers",
+  "$n<k$",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$ and $f:\\{\\pm1\\}^n\\to\\mathbb R$; for\n$S\\subseteq\\{1,\\ldots,n\\}$ define\n$\\widehat f(S)=2^{-n}\\sum_{x\\in\\{\\pm1\\}^n}f(x)\\prod_{i\\in S}x_i$, and for every\n$k\\in\\mathbb N$ define $W_k(f)=\\sum_{|S|=k}\\widehat f(S)^2$.\nThen $W_k(f)=0$ for every $k\\in\\mathbb N$ with $n<k$."
+}

@@ -1,0 +1,25 @@
+{
+ "lean_name": "Light.RadixPass.Pre.sort",
+ "key": "b723e268f2d9053f",
+ "kind": "theorem",
+ "title": "Radix pass counting-sort preconditions",
+ "statement": "Let $L$ have word bound $L.word$, space bound $L.space$, and depth bound $L.depth$; let $\\mu:\\mathbb{N}\\to\\mathbb{Z}$ be a memory map, let $A$ be radix-pass arguments, let $\\pi$ be a list of natural numbers, and let $kd:\\mathbb{N}\\to\\mathbb{N}$. Suppose $L.space\\le L.word$, $|\\pi|=A.w$, every entry of $\\pi$ is less than $A.w$, and the entries of $\\pi$ are stored consecutively starting at $A.perm$. For every $i<A.w$, suppose the key cell $A.key+i\\cdot A.stride+A.off$ lies before $A.perm$, stores $kd(i)$, and $kd(i)<A.nb$; also suppose $A.perm+2A.w\\le A.cnt$, $A.cnt+(A.nb+1)\\le A.perm+A.R$, and $A.perm+A.R\\le L.space$. Then the counting-sort arguments with $A.w$ items, source address $A.perm$, destination address $A.perm+A.w$, and the same key parameters, key bound, and counter address satisfy the counting-sort preconditions: item $j$ is the entry of $\\pi$ at position $j$, or $0$ if $j\\ge|\\pi|$, and its key is $kd$ of that item. In particular, the source, destination, and counter regions fit in memory and are pairwise disjoint; each item key cell fits in memory, lies outside the destination and counter regions, and stores a key less than $A.nb$; and the destination and counter regions fit in memory and are disjoint.",
+ "hypotheses_covered": [
+  "$L.space\\le L.word$",
+  "$|\\pi|=A.w$",
+  "Every entry of $\\pi$ is less than $A.w$",
+  "$\\pi$ is represented in memory starting at $A.perm$",
+  "For each $i<A.w$, the key cell address is before $A.perm$",
+  "For each $i<A.w$, that key cell stores $kd(i)$",
+  "For each $i<A.w$, $kd(i)<A.nb$",
+  "$A.perm+2A.w\\le A.cnt$",
+  "$A.cnt+(A.nb+1)\\le A.perm+A.R$",
+  "$A.perm+A.R\\le L.space$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $\\mu:\\mathbb N\\to\\mathbb Z$, let\n$w,\\mathrm{perm},\\mathrm{key},\\mathrm{stride},\\mathrm{off},\\mathrm{nb},R\\in\\mathbb N$,\nlet $\\pi$ be a list of natural numbers, and let $kd:\\mathbb N\\to\\mathbb N$. Suppose the\nmemory and word bounds satisfy $\\mathrm{space}\\le\\mathrm{word}$; the list has length $w$\nand every entry is less than $w$; its entries occupy the consecutive cells beginning at\n$\\mathrm{perm}$; for every $i<w$, the key cell\n$\\mathrm{key}+i\\,\\mathrm{stride}+\\mathrm{off}$ lies before $\\mathrm{perm}$ and stores\n$kd(i)<\\mathrm{nb}$; and $\\mathrm{perm}+2w\\le\\mathrm{cnt}$,\n$\\mathrm{cnt}+\\mathrm{nb}+1\\le\\mathrm{perm}+R$, and $\\mathrm{perm}+R\\le\\mathrm{space}$.\nThen the counting-sort setup with $w$ items in cells beginning at $\\mathrm{perm}$,\ndestination beginning at $\\mathrm{perm}+w$, and the same key and counter parameters\nsatisfies its preconditions: item $j<w$ is the $j$th entry of $\\pi$ (taken to be $0$ if\n$j$ is out of range), its key is $kd$ of that item, every item and destination cell and\nthe counter region fit in memory, each key cell fits in memory and stores the specified\nkey below $\\mathrm{nb}$, and the source, destination, counter, and key-cell regions are\ndisjoint as required."
+}

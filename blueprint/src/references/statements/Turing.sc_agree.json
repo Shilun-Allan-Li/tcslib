@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.sc_agree",
+ "key": "071a96132652468a",
+ "kind": "theorem",
+ "title": "Agreement of clock transitions",
+ "statement": "Let $\\Gamma$ be an alphabet, let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an embedding, and let $M$ be a deterministic Turing machine with $k$ work tapes over $\\Gamma$. Let $\\mathrm{stopAt}$ assign a Boolean value to each state, and choose a state $s$ with $\\mathrm{stopAt}(s)=\\mathrm{false}$. For any counter phase $f$ other than either completed phase, any input symbol or blank, and any tuple of $k+1$ optional work-tape symbols, the clock machine's transition from the state carrying $s$ and phase $f$ equals the transition of the embedded Boolean decrement machine, with its successor state relabeled by sending a completed true phase to the body state carrying $s$, a completed false phase to the timeout state carrying $s$, and every other phase to the state carrying $s$ and that phase.",
+ "hypotheses_covered": [
+  "An embedding of Boolean symbols into an alphabet $\\Gamma$",
+  "A deterministic Turing machine $M$ with $k$ work tapes over $\\Gamma$",
+  "A Boolean-valued stopping condition on the states of $M$",
+  "A state $s$ for which the stopping condition is false",
+  "A counter phase $f$ that is neither completed phase",
+  "An input symbol or blank",
+  "A tuple of $k+1$ optional work-tape symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

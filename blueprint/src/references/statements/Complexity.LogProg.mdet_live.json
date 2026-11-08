@@ -1,0 +1,27 @@
+{
+ "lean_name": "Complexity.LogProg.mdet_live",
+ "key": "51dcdb960bf120b5",
+ "kind": "theorem",
+ "title": "Live-step simulation of a deterministic instruction",
+ "statement": "Let $m,d,k_D$ be nonnegative integers, let $\\Lambda$ and $SD$ be state sets, and fix a Boolean input $x$, an augmented register machine $A$ with $m$ registers and $d$ deciders, an initial label $l_0$, an oracle, a $k_D$-work-tape Turing machine $D$, initial decider states $q_0$, bounds $B,W,P$, labels $l,l'$, register assignments $v,v'$, a Boolean memory tape $M$ with head position $p$, and an output word $out$. Suppose the ordinary execution from $(l,v)$ with no prior answer takes one step to $(l',v')$ with no answer, the precondition holds at $(l,v)$, every register satisfies $|\\mathrm{bits}(v(r)+1)|\\le W$, and $|p|\\le P$. Then for some finite time the compiled Turing machine, started with input $x$, registers $v$, memory tape $M$ at $p$, and output $out$, reaches exactly the corresponding configuration with label $l'$, registers $v'$, the same memory tape and head position, and the same output; throughout this run every configuration satisfies the bounds $W,B,P$ encoded by $\\mathrm{MBox}$.",
+ "hypotheses_covered": [
+  "A is an augmented register machine with m registers and d deciders",
+  "l₀ is the compiled machine's initial label",
+  "oracle maps each decider and Boolean word to a Boolean answer",
+  "D is a k_D-work-tape Boolean Turing machine",
+  "q₀ assigns an initial state to each decider",
+  "B, W, P are natural-number bounds",
+  "l and l' are program labels",
+  "v and v' assign natural-number values to each register",
+  "M is a Boolean-valued memory tape and p is its integer head position",
+  "out is the initial output word",
+  "the abstract execution from (l,v) takes one step to (l',v') with no answer",
+  "the precondition Pre holds at (l,v) with no answer",
+  "each register's v(r)+1 binary representation has length at most W",
+  "the absolute value of p is at most P"
+ ],
+ "confidence": "low",
+ "caveat": "The auxiliary notions Pre and MBox are supplied only as Lean definitions; their detailed conjunctions are not expanded.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

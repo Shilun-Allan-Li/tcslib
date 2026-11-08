@@ -1,0 +1,22 @@
+{
+ "lean_name": "Randomized.PIT.subW_eq",
+ "key": "e2a9fa0435ee9a29",
+ "kind": "theorem",
+ "title": "Encoding of a circuit difference",
+ "statement": "Let $x$ be a finite bit string, let $n$ be a natural number, and let $C$ and $C'$ be arithmetic circuits over $n$ input variables. Suppose the first and second components parsed from $x$ decode, respectively, to the indexed circuits $(n,C)$ and $(n,C')$. Assume each circuit is nonempty and every gate referring to earlier gates refers only to gates with smaller indices. Then the string produced by the circuit-difference construction on $x$ is the encoding of the circuit formed by appending the gates of $C'$, with their references shifted by the size of $C$, to the gates of $C$, followed by a subtraction gate whose inputs are the outputs of $C$ and the shifted copy of $C'$.",
+ "hypotheses_covered": [
+  "A finite bit string $x$",
+  "A natural number $n$",
+  "Circuits $C$ and $C'$ over $n$ input variables",
+  "The first parsed component of $x$ decodes to $(n,C)$",
+  "The second parsed component of $x$ decodes to $(n,C')$",
+  "$C$ is nonempty",
+  "Every gate reference in $C$ points to an earlier gate",
+  "$C'$ is nonempty",
+  "Every gate reference in $C'$ points to an earlier gate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

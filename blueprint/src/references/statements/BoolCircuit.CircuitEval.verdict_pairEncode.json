@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.verdict_pairEncode",
+ "key": "77d876bd4bbcea17",
+ "kind": "theorem",
+ "title": "Verdict for an encoded circuit",
+ "statement": "For any Boolean parameter $\\mathsf{exact}$ and bit strings $\\mathsf{code}$ and $x$, the verdict on the pairing of $\\mathsf{code}$ with $x$ is true if and only if there exist a natural number $n$ and a directed acyclic Boolean circuit $C$ with $n$ input vertices such that $C$ is well formed with fan-in at most two, its encoding is $\\mathsf{code}$, $n\\le |x|$, and, if $\\mathsf{exact}$ is true, then $n=|x|$, while $C$ evaluates to true on the first $n$ bits of $x$ (taking any out-of-range input lookup to be false).",
+ "hypotheses_covered": [
+  "arbitrary Boolean parameter $\\mathsf{exact}$",
+  "bit strings $\\mathsf{code}$ and $x$",
+  "existence of a natural number $n$ and a circuit with $n$ inputs",
+  "the circuit is well formed and has fan-in at most two",
+  "the circuit encoding equals $\\mathsf{code}$",
+  "$n\\le |x|$",
+  "$\\mathsf{exact}=\\mathrm{true}$ implies $n=|x|$",
+  "the circuit evaluates to true on inputs obtained from $x$, with out-of-range lookups false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

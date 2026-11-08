@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.guessRunTM",
+ "key": "ae0bcd448c86fb3d",
+ "kind": "def",
+ "title": "Combined guess-and-run machine",
+ "statement": "Let $P$ and $Q$ be deterministic $k$-work-tape Turing machines over Booleans, with state types $S_P$ and $S_Q$. Choose a setup exit state $p_{\rm exit}$, a work tape $j$, and run states $q_{\rm entry}$, $q_{\rm acc}$, and $q_{\rm rej}$; the nondeterministic machine with states tagged by computation phase starts in $P$'s initial state in the setup phase and combines the phase machines with transitions at these designated states: it writes a bounded guessed block on tape $j$, skips past the following blank, rewinds that tape, runs $Q$ from $q_{\rm entry}$, and emits true at $q_{\rm acc}$ or false at $q_{\rm rej}$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$P$ and $Q$ are deterministic machines over Booleans with state types $S_P$ and $S_Q$",
+  "The setup and run state types have decidable equality",
+  "$p_{\rm exit}$ is a setup state",
+  "$j$ is one of the $k$ work tapes",
+  "$q_{\rm entry}$, $q_{\rm acc}$, and $q_{\rm rej}$ are run states"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.satScan_computes",
+ "key": "6fd47090124db043",
+ "kind": "lemma",
+ "title": "Running time of a finite-state scanner",
+ "statement": "Let $S$ be a finite set with decidable equality, let $\\delta:S\\times\\{0,1\\}\\to S$ be a transition function, let $s_0\\in S$ be a starting state, and let $A:S\\to\\{0,1\\}$ be an acceptance predicate. The scanner built from these data computes, on every Boolean word $x$, the one-bit output $A(\\operatorname{foldl}(\\delta,s_0,x))$ in exactly $|x|+1$ steps.",
+ "hypotheses_covered": [
+  "A finite state set $S$",
+  "Decidable equality on $S$",
+  "A transition function $S\\times\\{0,1\\}\\to S$",
+  "A starting state $s_0\\in S$",
+  "An acceptance predicate $A:S\\to\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a finite set with transition function\n$\\delta : S \\times \\{0,1\\} \\to S$, start state $s_0 \\in S$, and accepting\npredicate $\\alpha$ on $S$. On every input $x$ of length $n$, the one-way scanner\nbuilt from these data halts within $n + 1$ steps, and its output is the\nsingle bit $\\alpha(\\delta^*(s_0, x))$, where $\\delta^*(s_0, x)$ is the state\nreached by folding $\\delta$ over $x$ from $s_0$."
+}

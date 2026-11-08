@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clPrev_native",
+ "key": "78c11f6ad90e6537",
+ "kind": "lemma",
+ "title": "Native computation of the previous visit",
+ "statement": "Let $M$ be a finite binary Turing machine, let $\\tau$ be one of its work tapes, and let $m,T:\\{0,1\\}^*\\to\\mathbb{N}$. Suppose the functions $x\\mapsto 0^{m(x)}$ and $x\\mapsto 1^{T(x)}$ are polynomial-time computable. Then the function sending $x$ to the optional-time code of the last time strictly before $T(x)$ at which tape $\\tau$ occupied its position at time $T(x)$ on input $0^{m(x)}$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$M$ is a finite binary Turing machine",
+  "$\\tau$ is a work-tape index of $M$",
+  "$m,T$ map bit strings to natural numbers",
+  "$x\\mapsto 0^{m(x)}$ is polynomial-time computable",
+  "$x\\mapsto 1^{T(x)}$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a source machine, work tape $\\tau$, and polynomial-time producers of a reference length (as an all-false word) and a unary time, the function sending an input to the optional-time code of the public greatest strictly earlier visit to the currently scanned cell of $\\tau$ is polynomial-time computable, with the canonical binary time encoding."
+}

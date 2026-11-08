@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.wl_phase_segment",
+ "key": "7b23b954800d15f3",
+ "kind": "theorem",
+ "title": "A phase segment in the hosted machine",
+ "statement": "Let $K\\in\\mathbb{N}$, let $Q,T,P_t,P_s$ be types with decidable equality on $P_t,P_s$, and let $R_t$ and $R_s$ be machines on respectively one and $K+1$ work tapes over the record alphabet. Consider a phase $i$ other than the stop phase, configurations $a,b$ for the row machine of phase $i$, a time $t$, and a phase value $v$ such that running that row machine from $a$ for $t$ steps reaches $b$, whose state is $v$. Suppose the phase transition sends $(i,v)$ to a hosted control state $q$, and no state encountered strictly before time $t$ admits a phase transition. If a predicate $B$ holds of all work-head position vectors throughout the row run, including at time $t$, then the hosted machine reaches the state obtained by embedding $b$ in phase $i$ and replacing its phase control by $q$ after $t+1$ steps. Before that final step it visits no state in the stop phase, and $B$ holds of its work-head position vector at every step through $t+1$.",
+ "hypotheses_covered": [
+  "A natural number $K$",
+  "Types $Q,T,P_t,P_s$, with decidable equality on $P_t,P_s$",
+  "Machines $R_t$ and $R_s$ on respectively one and $K+1$ work tapes over the record alphabet",
+  "A phase $i$ other than the stop phase",
+  "Configurations $a,b$ for the row machine in phase $i$",
+  "A time $t$ and phase value $v$",
+  "The row run from $a$ reaches $b$ after $t$ steps",
+  "The state of $b$ is $v$",
+  "The phase transition from $(i,v)$ yields hosted control state $q$",
+  "No earlier row-run state admits a phase transition",
+  "A predicate $B$ holds of the row-run work-head positions at every time through $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

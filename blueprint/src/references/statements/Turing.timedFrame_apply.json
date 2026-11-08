@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timedFrame_apply",
+ "key": "b3ce4f01e60df20e",
+ "kind": "lemma",
+ "title": "Applying a Framed Action",
+ "statement": "Let $M$ be a finite Boolean-alphabet Turing machine, choose one of its work tapes as the clock tape, and let $x$ be a Boolean input word. For any six-tape configuration $c$, tape contents and head positions for the original $M$-tapes, and six-tape action $a$, applying the framed action to the framed configuration gives the frame of the configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $M$",
+  "clock tape in $\\text{Fin}(M.k)$",
+  "Boolean input word $x$",
+  "six-tape configuration $c$",
+  "contents and head positions for the $M$ tapes",
+  "six-tape action $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying the framed lift of a six-tape action to a framed configuration equals\nthe frame of the six-tape configuration obtained by applying the action; the\ninactive lanes of the old block are unchanged."
+}

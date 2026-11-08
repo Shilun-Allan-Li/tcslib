@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clQuery_budget",
+ "key": "0fc43c2bb56067e9",
+ "kind": "lemma",
+ "title": "Polynomial bound for the query cost",
+ "statement": "For natural numbers $l,L,N,c,e$ satisfying $N\\le L$, one has\n\\[\n2\\bigl(2L+9+(l+5)(3L+7)+N\\bigl(l(5L+7)+2L+7\\bigr)\\bigr)+c(N+1)^e+2\\le (100(l+10)+c)(L+1)^{e+2}.\n\\]",
+ "hypotheses_covered": [
+  "$l,L,N,c,e$ are natural numbers",
+  "$N\\le L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "unbound-variable"
+ ],
+ "replaced": "For all naturals with $N \\le L$, the complete query ledger, twice the scan cost $2L + 9 + (l+5)(3L+7) + N(l(5L+7) + 2L + 7)$ plus $c(N+1)^e + 2$, is at most $(100(l+10) + c)(L+1)^{e+2}$, one common monomial in the encoded argument length $L$."
+}

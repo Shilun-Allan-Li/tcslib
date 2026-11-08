@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/RecordTable.lean :: Turing.rt_exists_cleanDigitBoundTM -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Embedded clean-tape digit writer
+
+**Claim.** The clean digit-writing machine can be run on any embedded collection of tapes with surrounding tape contents, head positions, and output prefix, while preserving the required endpoint, first-exit property, and head-radius bound.
+
+**Proof.** Use the digit-writing machine provided by `rt_exists_digitBoundTM`, with its same tape count, states, and time and radius constant. From the given configuration $d$, form a small initial configuration $a$ whose work tapes are blank, whose heads match the heads of $d$ on the embedded tapes, and whose output is empty. Lift its Boolean symbols to digit symbols, then embed it using $d$’s outside tapes, head positions, and output as prefix. The embedding equality theorem (`rt_embed_matches`) shows that this initial embedded configuration is exactly $d$: the states and input positions agree, all selected tapes are blank by hypothesis, and all outside data and the output prefix agree by construction. Apply the digit-writing guarantee to $a$. Its run has the required time bound, first-exit property, and radius bound. Applying the same embedding to each stage preserves the first-exit property and endpoint run: the run-embedding identity (`embedEmitTM_runFrom`) together with the symbol-lifting run identity (`MultiTapeTM.liftSymbols_runFrom`) identifies the embedded computation with the lift of the original one. For heads on selected tapes, the selected-position identity (`embedEmitCfg_selected_pos`) transfers the original bound; heads outside the image remain fixed by the frame property (`embedEmitTM_frame`), so their displacement is zero. At the endpoint, the original tape 0 contains the bit expansion; the buffer-map identity (`FinTM.bufferTape_map`) converts it to the corresponding digit-symbol buffer. The outside tapes, positions, and prefixed output are unchanged, and a second application of `rt_embed_matches` identifies the resulting embedded configuration with the asserted endpoint.
+
+**Key facts.** `Turing.rt_exists_digitBoundTM`, `Turing.rt_embed_matches`, `Turing.embedEmitTM_runFrom`, `Turing.MultiTapeTM.liftSymbols_runFrom`, `Turing.embedEmitCfg_selected_pos`, `Turing.embedEmitTM_frame`, `Turing.FinTM.bufferTape_map`.

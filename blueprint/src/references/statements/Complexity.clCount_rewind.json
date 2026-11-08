@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCount_rewind",
+ "key": "ffcb4f43f76d0197",
+ "kind": "lemma",
+ "title": "Rewinding to the Origin",
+ "statement": "For every bit-list input $x$, valid input-head position $p$, bit list $w$, and natural number $j$ with $j\\leq |w|$, running the increment machine for $j+1$ steps from rewind control, with input head at $p$, work head at the integer cell $j-1$, tape holding $w$, and empty output, ends in return control. The resulting input-head position is $p$, the work head is at cell $0$, the tape still holds $w$, and the output is empty.",
+ "hypotheses_covered": [
+  "$x$ is a bit list",
+  "$p$ is a valid input-head position for $x$",
+  "$w$ is a bit list",
+  "$j$ is a natural number",
+  "$j\\leq |w|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stored word $w$, and count $j \\le |w|$, running the increment machine in rewind control at cell $j - 1$ for $j + 1$ steps crosses the written cells, detects the untouched blank at cell $-1$, and ends at cell $0$ in the absorbing return control, with the stored word unchanged."
+}

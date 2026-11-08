@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MultiTapeTM.relabelState_runFrom_init",
+ "key": "2f8c838878a07b90",
+ "kind": "lemma",
+ "title": "State relabelling commutes with a run from the initial configuration",
+ "statement": "Let $tm$ be a multi-tape Turing machine with state set $S$, let $e:S\\\\simeq S'$ be a bijection, let $x$ be an input word, and let $t\\\\in\\\\mathbb{N}$. After $t$ steps from its initial configuration on $x$, the machine obtained by relabelling the states of $tm$ along $e$ has the same configuration as the configuration reached by $tm$ after $t$ steps from its own initial configuration, with the state relabelled by $e$.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine with state set $S$",
+  "A bijection $e:S\\\\simeq S'$",
+  "An input word $x$",
+  "A natural number of steps $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine with $k$ work tapes and state set $S$,\nlet $e$ be a bijection from $S$ to another state set, let $x$ be an input\nword, and let $t \\in \\mathbb{N}$.  Then the configuration reached by the\nmachine obtained by relabelling the states of $M$ along $e$ after $t$ steps\nfrom its initial configuration on $x$ equals the configuration that $M$\nreaches after $t$ steps from its own initial configuration on $x$, with its\nstate renamed along $e$."
+}

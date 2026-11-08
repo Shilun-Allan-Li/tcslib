@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_absorb",
+ "key": "b911104b7d537a17",
+ "kind": "lemma",
+ "title": "Absorption by a silent self-loop",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes over the Boolean alphabet, let $q_a$ be a state, and suppose that in state $q_a$ the transition is always the action that keeps the input head fixed, makes no changes or movements on the work tapes, emits no output, and returns to $q_a$. Then, from any configuration on any Boolean input whose state is $q_a$, iterating the machine's step function any finite number of times leaves the entire configuration unchanged.",
+ "hypotheses_covered": [
+  "A natural number of work tapes",
+  "Boolean alphabet and state set $S$",
+  "A machine $M$ and state $q_a$",
+  "For every input symbol and work-tape reading, the transition in $q_a$ is the silent stationary self-loop",
+  "An initial configuration $c$ in state $q_a$ on input $x$",
+  "An arbitrary number $t$ of steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a control state's transition is the silent stationary self-loop, then from\nany configuration in that state, a run of any length leaves the configuration\nunchanged."
+}

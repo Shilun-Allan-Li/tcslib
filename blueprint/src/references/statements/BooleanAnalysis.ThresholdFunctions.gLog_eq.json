@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.gLog_eq",
+ "key": "49ac907c268adb89",
+ "kind": "lemma",
+ "title": "Logarithmic Gaussian tail identity",
+ "statement": "Let $\\Phi$ be the standard Gaussian cumulative distribution function, $\\varphi(t)=e^{-t^2/2}/\\sqrt{2\\pi}$, $R(t)=\\Phi(t)(-t)/\\varphi(t)$, and $L(t)=2\\log(1/\\Phi(t))$. For every $t<0$, with natural logarithms, $L(t)=-2\\log R(t)+2\\log(-t)+2\\log\\sqrt{2\\pi}+t^2$.",
+ "hypotheses_covered": [
+  "$t<0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi(x)=e^{-x^2/2}/\\sqrt{2\\pi}$, $\\Phi(t)=\\int_{-\\infty}^{t}\\varphi(x)\\,dx$, $R(t)=\\Phi(t)(-t)/\\varphi(t)$, and $L(t)=2\\log(1/\\Phi(t))$. For every real $t<0$, with natural logarithms, one has\n\\[\nL(t)=\\bigl(-2\\log R(t)+2\\log(-t)+2\\log\\sqrt{2\\pi}\\bigr)+t^2.\n\\]"
+}

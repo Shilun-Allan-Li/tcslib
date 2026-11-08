@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.haltsWith_of_rejects",
+ "key": "57ecad9145069def",
+ "kind": "lemma",
+ "title": "Rejection implies bounded halting",
+ "statement": "Let $A$ be a register program with initial label $l_0$, let an oracle answer queries to its deciders, and let $x$ be a Boolean input. For any label $l$, register assignment $v$, output word, register $r$, and integer $W\\ge 0$, if the run of the compiled program from the configuration initialized by $x$, $v$, and that output rejects at register $r$ with head position reset to $0$, then it halts with output bit $0$ and all work-tape heads in the interval $[-1,W]$. Before halting, every configuration is between ordinary machine steps rather than oracle calls, and all its work-tape heads lie in $[-1,W]$.",
+ "hypotheses_covered": [
+  "Register program and initial label $l_0$",
+  "Oracle for the program's deciders",
+  "Input $x$, label $l$, register assignment $v$, and output word",
+  "Register $r$ and integer bound $W\\ge 0$",
+  "The compiled run rejects from the specified initialized configuration at register $r$ and head position $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

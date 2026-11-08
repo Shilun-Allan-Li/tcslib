@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satRedCounter_write",
+ "key": "cb2c8b792745bba0",
+ "kind": "lemma",
+ "title": "Writing on the Unary Counter",
+ "statement": "Let $n,j\\in\\mathbb{N}$ with $j\\le n$. Updating the unary counter tape of length $n$ to contain the bit $1$ at offset $j$ yields the unary counter tape of length $\\max(n,j+1)$.",
+ "hypotheses_covered": [
+  "$n,j\\in\\mathbb{N}$",
+  "$j\\le n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n, j \\in \\mathbb{N}$ with $j \\le n$. Writing a one at offset $j$ of the unary\ncounter tape of length $n$ yields the unary counter tape of length\n$\\max(n, j + 1)$: writing within the current prefix preserves it, while writing\nits right blank extends the length by one."
+}

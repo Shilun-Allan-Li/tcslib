@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.PathHard.matrix_halt",
+ "key": "79f6ae4779254fc4",
+ "kind": "theorem",
+ "title": "Halting of the matrix computation",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let $x$ and $\\beta$ be finite Boolean strings. Suppose a fifteen-register state $st$ has every register at most $B$, and its registers $u,t,c,z$ are zero. On input the pairing of $x$ and $\\beta$, the register program starting in its matrix-computation instruction with register values $st$ halts while satisfying the program guard at every time before halting. Its answer is true when $m$ is true; otherwise it is true exactly when there is an edge for input $x$ and radius $s$ from vertex $\\lfloor i/(2\\cdot 2^e)\\rfloor$ to vertex $\\lfloor (i/2)\\bmod 2^e\\rfloor$, where $s,i,e$ are the corresponding registers of $st$.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$N$ is a finite nondeterministic Turing machine with Boolean symbols",
+  "$x,\\beta$ are finite Boolean strings",
+  "all fifteen registers of $st$ are at most $B$",
+  "registers $u,t,c,z$ of $st$ are zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be nonnegative integers, let $N$ be a finite-state nondeterministic Turing\nmachine with Boolean tape symbols, and let $x,\\beta$ be finite bit strings. Consider the\nprogram $A$ with parameters $a,b,f$ and mode\n$\\mathrm{mode}\\in\\{\\mathrm{false},\\mathrm{true}\\}$, supplied with the five-language\noracle associated to $N$. For a register state $\\mathrm{st}$, suppose each of its\nfifteen registers is at most $B$, and its registers $u,t,c,z$ are all zero. Starting the\nprogram in its matrix-computation state with register values given by $\\mathrm{st}$, on\ninput encoding the pair $(x,\\beta)$, it halts with its registers bounded by $B$ at every\nearlier step; its answer is true if the mode is true, and otherwise is the truth value\nof whether there is an edge, for input $x$ and radius $s$, from vertex $\\left\\lfloor\ni/(4\\cdot 2^e)\\right\\rfloor$ to vertex $\\left\\lfloor (i/2)\\bmod 2^e\\right\\rfloor$, where\n$s,i,e$ are the corresponding registers of $\\mathrm{st}$."
+}

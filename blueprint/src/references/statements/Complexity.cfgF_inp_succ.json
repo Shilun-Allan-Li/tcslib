@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.cfgF_inp_succ",
+ "key": "3698218094a1ee43",
+ "kind": "theorem",
+ "title": "Input-position update rule",
+ "statement": "Let $M$ be a finite-state binary Turing machine with $k$ work tapes, let $w$ be a binary input, and fix $t,p\\in\\mathbb N$ with $p\\le |w|+1$ and a finite list of bits $l$. Suppose the first bit of $l$ is false, its snapshot field decodes to the machine's snapshot on $w$ at time $t$, its boundary bits indicate whether $p=0$ and $p=|w|+1$, and its input-symbol bits encode the symbol read from $w$ at position $p$. Suppose its neighboring-head bits encode whether the input head at time $t$ is at $p-1$, at $p$, or at $p+1$ (with the left-neighbor condition also requiring $p\\ge1$). Finally, suppose its designated chain bits encode the presence and value of the time-$(t+1)$ input-chain value at $p-1$, using no value when $p=0$. Then the local input-position update rule applied to $l$ yields the encoding of whether the input head at time $t+1$ is at $p$ and of the time-$(t+1)$ input-chain value at $p$.",
+ "hypotheses_covered": [
+  "p≤|w|+1",
+  "first list bit is false",
+  "decoded prior snapshot equals the run snapshot at time t",
+  "boundary bits indicate p=0 and p=|w|+1",
+  "input-symbol presence and value bits encode the input symbol at p",
+  "neighboring-head bits encode the stated positions at time t",
+  "chain presence and value bits encode the time-(t+1) chain at p−1, or are absent when p=0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

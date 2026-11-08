@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.SafeRun.cons",
+ "key": "348b7b09e69840cc",
+ "kind": "theorem",
+ "title": "Prepending a safe computation step",
+ "statement": "Let $H$ be a multi-tape machine with Boolean work tapes and state set $B$, let $\\mathrm{avoid}\\in B$, and let $c,c_1,c'$ be configurations on the same input. If one step of $H$ takes $c$ to $c_1$, the state of $c$ is not $\\mathrm{avoid}$, and running $H$ from $c_1$ for $t$ steps reaches $c'$ without visiting state $\\mathrm{avoid}$ at any time strictly before $t$, then running $H$ from $c$ for $t+1$ steps reaches $c'$ without visiting state $\\mathrm{avoid}$ at any time strictly before $t+1$.",
+ "hypotheses_covered": [
+  "Boolean work-tape machine $H$ with state set $B$",
+  "Avoided state $\\mathrm{avoid}$",
+  "One-step transition from $c$ to $c_1$",
+  "Initial state of $c$ is not $\\mathrm{avoid}$",
+  "A safe run from $c_1$ for $t$ steps ends at $c'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

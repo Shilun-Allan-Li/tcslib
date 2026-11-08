@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tautDual_invalid",
+ "key": "20814f0c605e8cab",
+ "kind": "lemma",
+ "title": "Return after an invalid scan",
+ "statement": "Let $x$ be a binary string such that scanning it from the formula-level state does not end in the exact-end state. Starting the dual transducer in the formula-level scanning state at position $1$ with empty output, the run reaches the anchor state at position $1$ with output consisting of the single bit $0$, after exactly $2|x|+2$ steps. The anchor state is not visited at any earlier time.",
+ "hypotheses_covered": [
+  "$x$ is a binary string",
+  "The scan of $x$ from formula level does not end in the exact-end state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary string on which the six-state formula syntax scan from formula\nlevel does not end in the exact-end state. Started in the formula-level scanning state\nat head position $1$ with empty output, the dual transducer reaches the anchor state\nat position $1$ with output the single bit $0$, in exactly $2|x| + 2$ steps and\nwithout visiting the anchor before then."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.CounterProg.step_pos_le",
+ "key": "bcd7cac60f39843d",
+ "kind": "theorem",
+ "title": "Read position after one step",
+ "statement": "Let $R$ be the number of registers, let $\\Lambda$ be a set of labels, and let $P$ assign an instruction to each label. For any input bit string $x$ and state $s$ whose read position is at most the length of $x$, the state reached after one step of $P$ on $x$ also has read position at most the length of $x$.",
+ "hypotheses_covered": [
+  "A counter program with $R$ registers and labels in $\\Lambda$",
+  "An input bit string $x$",
+  "A state $s$",
+  "The read position of $s$ is at most the length of $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, $x$ an input bit\nstring, and $s$ an abstract state whose read position $p$ satisfies $p \\le |x|$. Then the read\nposition of the state reached from $s$ by one step of $P$ on $x$ is again at most $|x|$."
+}

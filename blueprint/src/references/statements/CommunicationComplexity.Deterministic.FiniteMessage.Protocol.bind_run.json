@@ -1,6 +1,6 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.bind_run",
- "key": "39f850b4bac876da",
+ "key": "d35fa80a14033128",
  "kind": "theorem",
  "title": "Execution of a sequentially composed protocol",
  "statement": "Let $p$ be a finite-message protocol with input types $X$, $Y$ and output type $\\alpha$, and let $q$ assign to each value $a \\in \\alpha$ a finite-message protocol $q(a)$ with the same input types and output type $\\beta$. For any inputs $x \\in X$ and $y \\in Y$, executing the sequential composition of $p$ with $q$ agrees with first running $p$ on $(x,y)$ to obtain an output $a$ and then running $q(a)$ on the same inputs:\n\\[\n  \\mathrm{run}\\bigl(\\mathrm{bind}(p,q)\\bigr)(x,y) \\;=\\; \\mathrm{run}\\bigl(q(\\mathrm{run}(p)(x,y))\\bigr)(x,y).\n\\]",

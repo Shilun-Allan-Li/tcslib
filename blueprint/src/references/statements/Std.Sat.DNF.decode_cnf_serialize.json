@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.DNF.decode_cnf_serialize",
+ "key": "087f357a69f5e8b6",
+ "kind": "theorem",
+ "title": "Decoding a serialized DNF formula",
+ "statement": "For every DNF formula $\\psi$ over variables indexed by $\\mathbb{N}$, decoding its binary serialization as a DNF formula returns $\\psi$.",
+ "hypotheses_covered": [
+  "$\\psi$ is a DNF formula over $\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi = (C_1, \\dots, C_k)$ be a CNF formula over variables indexed by $\\mathbb{N}$,\neach clause a list of literals $(v,b)$ with $v \\in \\mathbb{N}$ and $b \\in \\{0,1\\}$, with\nbinary encoding $\\mathrm{enc}(\\varphi) = 1\\,\\mathrm{enc}(C_1)\\cdots1\\,\\mathrm{enc}(C_k)\\,0$,\nwhere a clause is encoded as the concatenation of its literal encodings $1^{v+1}0b$\nfollowed by $0$. Then decoding $\\mathrm{enc}(\\varphi)$ as a DNF formula yields the DNF\nformula whose terms are exactly $C_1, \\dots, C_k$. Here a bit string $x$ is decoded as the\nDNF formula whose terms are the literal lists obtained by parsing $x$, with recursion fuel\n$|x|$, according to the grammar\n$\\langle\\text{formula}\\rangle ::= 0 \\mid 1\\,\\langle\\text{clause}\\rangle\\,\\langle\\text{formula}\\rangle$,\n$\\langle\\text{clause}\\rangle ::= 0 \\mid \\langle\\text{literal}\\rangle\\,\\langle\\text{clause}\\rangle$,\n$\\langle\\text{literal}\\rangle ::= 1^{k+1}\\,0\\,b$ when this parse consumes all of $x$, and as\nthe formula with no terms otherwise."
+}

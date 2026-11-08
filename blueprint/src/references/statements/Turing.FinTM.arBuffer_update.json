@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.arBuffer_update",
+ "key": "e98e2e155587fa90",
+ "kind": "lemma",
+ "title": "One buffer fill step",
+ "statement": "Let $E$ be an injective code from optional $\u001b[0m\u001b[0m\\Gamma$ symbols into blocks of $N+1$ optional bits, and let $r$ assign a scanned symbol or blank to each of $k$ tapes. For an offset $j\\in\\{0,\\ldots,N\\}$, updating entry $j$ of each tape's buffer after $j$ reading steps to the corresponding entry of its coded symbol produces the buffer after $j+1$ reading steps.",
+ "hypotheses_covered": [
+  "Natural numbers $k,N$",
+  "Injective block code $E$ for optional $\u001b[0m\u001b[0m\\Gamma$ symbols",
+  "Assignment $r$ of an optional $\u001b[0m\u001b[0m\\Gamma$ symbol to each of $k$ tapes",
+  "Offset $j$ in $\u001b[0m\u001b[0m\\{0,\\ldots,N\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $j \\in \\{0,\\dots,N\\}$, overwriting entry $j$ of the $j$-step buffer of each tape\nwith entry $j$ of the code of that tape's scanned symbol yields the $(j+1)$-step\nbuffer."
+}

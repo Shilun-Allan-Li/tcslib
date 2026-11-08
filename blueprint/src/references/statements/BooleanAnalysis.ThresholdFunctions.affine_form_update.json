@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.affine_form_update",
+ "key": "6fa5c309ae5cd545",
+ "kind": "lemma",
+ "title": "Coordinate separation in an affine form",
+ "statement": "Let $n\\in\\mathbb N$, $c\\in\\mathbb R$, $a=(a_j)_{j=0}^{n-1}\\in\\mathbb R^n$, $i\\in\\{0,\\ldots,n-1\\}$, and $x,b\\in\\{0,1\\}^n$ with $b$ here a Boolean value. Write $x_{i\\leftarrow b}$ for $x$ with coordinate $i$ replaced by $b$, and encode a bit $u$ by $1$ if $u=0$ and $-1$ if $u=1$. Then $c+\\sum_{j=0}^{n-1}a_j\\sigma((x_{i\\leftarrow b})_j)=\\left(c+\\sum_{j\\ne i}a_j\\sigma(x_j)\\right)+a_i\\sigma(b)$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$c\\in\\mathbb R$",
+  "$a:\\mathrm{Fin}(n)\\to\\mathbb R$",
+  "$i\\in\\mathrm{Fin}(n)$",
+  "$x\\in\\{0,1\\}^n$",
+  "$b\\in\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$, $c\\in\\mathbb R$, $a\\in\\mathbb R^n$, $i\\in[n]$, $x\\in\\{0,1\\}^n$, and $b\\in\\{0,1\\}$. If $x_{i\\leftarrow b}$ replaces bit $i$ by $b$, then $c+\\sum_j a_j(-1)^{(x_{i\\leftarrow b})_j}=(c+\\sum_{j\\ne i}a_j(-1)^{x_j})+a_i(-1)^b$."
+}

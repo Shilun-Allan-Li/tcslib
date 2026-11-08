@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satEval_clause",
+ "key": "0c24398697bf754a",
+ "kind": "lemma",
+ "title": "Clause Evaluation Pass",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $w,u$ be Boolean words, and let $C$ be a clause of literals with natural-number variable indices. Suppose every variable index in $C$ is less than $|u|$. For every decomposition $w=p\\,\\mathrm{dbl}(\\mathrm{enc}(C))\\,r$, where $\\mathrm{enc}(C)$ is the clause encoding and $\\mathrm{dbl}$ doubles each bit, every saved configuration of $M$ on input $w$, and all Boolean values $a,c$, there exists $t\\le 3|\\mathrm{enc}(C)|$ such that the evaluator run for $t$ steps from the canonical configuration at input offset $|p|$, in clause phase with accumulator bits $a,c$ and certificate-head offset $0$, reaches the canonical configuration at input offset $|p|+2|\\mathrm{enc}(C)|$, in formula phase with formula bit $a\\wedge(c\\vee C(u))$, clause bit false, and certificate-head offset $0$. Here $C(u)$ denotes the truth value of $C$ under the assignment whose variable $v$ receives the $v$-th bit of $u$.",
+ "hypotheses_covered": [
+  "finite Boolean machine $M$ with $k$ work tapes",
+  "Boolean words $w,u$",
+  "clause $C$ over natural-number variable indices",
+  "each variable index in $C$ is less than $|u|$",
+  "decomposition $w=p\\,\\mathrm{dbl}(\\mathrm{enc}(C))\\,r$",
+  "saved configuration on input $w$",
+  "Boolean accumulator values $a,c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $u$ be the certificate word on the evaluator's last tape and $C$ a clause all\nof whose variable indices are below $|u|$, with serialization $\\mathrm{ser}(C)$.\nSuppose the evaluator's input is a word $p$, followed by the doubling of\n$\\mathrm{ser}(C)$, followed by a word $r$. Started at input position $|p|$ in the\nclause phase with formula bit $a$, clause bit $c$, and certificate head at $0$,\nthere is a number $t \\le 3\\,|\\mathrm{ser}(C)|$ of steps after which the evaluator\nis in the formula phase with formula bit $a \\wedge (c \\vee C(u))$, where $C(u)$ is\nthe truth value of $C$ under the assignment read off $u$, with the clause bit\nreset, input position $|p| + 2\\,|\\mathrm{ser}(C)|$, and certificate head at $0$.\nNo output bit is emitted by this pass, even for an empty or false clause."
+}

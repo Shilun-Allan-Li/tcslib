@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.arReadCfg_zero",
+ "key": "8e0611409a8ad1fc",
+ "kind": "lemma",
+ "title": "Read sweep at counter zero",
+ "statement": "Let $\\Gamma$ be an alphabet, let $E$ inject the symbols of $\\Gamma$ together with blank into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into $\\Gamma$. For a binary input $x$, a configuration $c$ on the letterwise $e$-image of $x$, and a state $q$ such that $c$ is in state $q$, the read-sweep configuration of $c$ at counter zero equals its encoded configuration.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is an alphabet",
+  "$E$ is an embedding of symbols and blank into blocks of $N+1$ optional bits",
+  "$e$ embeds the binary alphabet into $\\Gamma$",
+  "$x$ is a binary input",
+  "$c$ is a configuration on the letterwise $e$-image of $x$",
+  "$q$ is a state and $c$ is in state $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the source configuration $c$ is in state $q$ (in particular not halted), then the\nread-sweep configuration of $c$ at counter $0$ coincides with the encoded configuration\nof $c$."
+}

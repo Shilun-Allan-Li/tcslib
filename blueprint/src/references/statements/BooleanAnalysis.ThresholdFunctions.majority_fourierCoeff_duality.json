@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_fourierCoeff_duality",
+ "key": "dabaabc9d8354724",
+ "kind": "theorem",
+ "title": "Duality of majority Fourier coefficients",
+ "statement": "Let $m\\in\\mathbb N$ and let $S,T\\subseteq[2m+1]$ satisfy $|S|+|T|=2m+2$. For the majority function on $\\{0,1\\}^{2m+1}$, whose value is $1$ when more than $m$ coordinates are false and $-1$ otherwise, the Fourier--Walsh coefficients satisfy $\\widehat M_m(S)=(-1)^m\\widehat M_m(T)$.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb N$",
+  "$S,T\\subseteq[2m+1]$",
+  "$|S|+|T|=2m+2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $m\\in\\mathbb N$, put $n=2m+1$, and define $M_m:\\{\\pm1\\}^n\\to\\mathbb R$ by\n$M_m(x)=1$ when more than $m$ coordinates equal $1$, and $M_m(x)=-1$ otherwise.\nFor $S\\subseteq\\{1,\\ldots,n\\}$ define\n$\\widehat M_m(S)=2^{-n}\\sum_{x\\in\\{\\pm1\\}^n}M_m(x)\\prod_{i\\in S}x_i$.\nIf $S,T\\subseteq\\{1,\\ldots,n\\}$ satisfy $|S|+|T|=2m+2$, then\n\\[\n \\widehat M_m(S)=(-1)^m\\widehat M_m(T).\n\\]"
+}

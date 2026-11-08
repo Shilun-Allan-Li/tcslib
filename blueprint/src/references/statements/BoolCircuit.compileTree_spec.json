@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.compileTree_spec",
+ "key": "1feea8d6748796c8",
+ "kind": "theorem",
+ "title": "Specification of circuit compilation",
+ "statement": "Let $n$ be a natural number, $c$ a Boolean circuit tree on $n$ variables, and $gs$ a finite list of gates such that every input to its $i$th gate has index less than $n+i$. Compiling $c$ after $gs$ produces an extended gate list and a root vertex. The resulting list extends $gs$, is acyclic in the same sense, and the root index is less than $n$ plus the length of the resulting list. For every assignment of Boolean values to the variables, the value at the root equals the value of $c$. The resulting list has length at most $|gs|$ plus the size of $c$, and the depth at the root is at most the depth of $c$ plus $1$. Each newly appended gate has distinct input indices, any NOT gate among them has exactly one input, and each has at most $\\max(1,F)$ inputs, where $F$ is the maximum fanin of $c$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$c$ is a Boolean circuit tree on $n$ variables",
+  "$gs$ is a finite list of gates",
+  "Each input index of the $i$th gate in $gs$ is less than $n+i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

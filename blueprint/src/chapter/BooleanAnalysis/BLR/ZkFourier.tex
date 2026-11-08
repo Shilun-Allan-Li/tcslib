@@ -28,7 +28,7 @@ additive group structure of $(\mathbb{Z}/k\mathbb{Z})^n$.
 \lean{ZkFourier.card_ZkVec}
 \label{ZkFourier.card_ZkVec}
 \leanok
-\uses{ZkFourier.ZkVec, ZkFourier.rootOfUnity}
+\uses{ZkFourier.ZkVec}
 \difficulty{1}
 Let $k$ and $n$ be natural numbers with $k \ge 1$. The set $(\mathbb{Z}/k\mathbb{Z})^n$
 of $n$-tuples with entries in $\mathbb{Z}/k\mathbb{Z}$ is finite, and its cardinality is
@@ -51,8 +51,8 @@ base of the Fourier characters on $\mathbb{Z}_k^n$.
 \lean{ZkFourier.toOmega}
 \label{ZkFourier.toOmega}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p022-b007}
 \uses{ZkFourier.rootOfUnity}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p022-b007}
 For $a : \mathbb{Z}/k\mathbb{Z}$, $\texttt{ZkFourier.toOmega}\ a = \omega_k^{a}$,
 where $a$ is lifted to its canonical representative in
 $\{0, \ldots, k-1\} \subset \mathbb{N}$.  This is the group homomorphism
@@ -179,8 +179,8 @@ the canonical representative of $a$ in $\{0,\ldots,k-1\}$. Then for every $j \in
 \lean{ZkFourier.ZkFun}
 \label{ZkFourier.ZkFun}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 \uses{ZkFourier.ZkVec}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 $\texttt{ZkFourier.ZkFun}\ k\ n$ is the type of complex-valued functions on
 $\mathbb{Z}_k^n$, defined as $\mathbb{Z}_k^n \to \mathbb{C}$.  These are the
 objects whose Fourier transforms are studied.
@@ -201,8 +201,8 @@ The expectation of $f : \mathbb{Z}_k^n \to \mathbb{C}$ is the uniform average
 \lean{ZkFourier.inner_product}
 \label{ZkFourier.inner_product}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 \uses{ZkFourier.ZkFun, ZkFourier.expectation}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p021-b002}
 The Hermitian inner product of $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ is
 \[
   \langle f, g \rangle = \mathbb{E}\!\left[f(x)\,\overline{g(x)}\right].
@@ -225,8 +225,8 @@ real-valued quantity
 \lean{ZkFourier.convolution}
 \label{ZkFourier.convolution}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b004}
 \uses{ZkFourier.ZkFun, ZkFourier.expectation}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b004}
 The convolution of $f, g : \mathbb{Z}_k^n \to \mathbb{C}$ is
 \[
   (f * g)(x) = \mathbb{E}_{y}\!\left[f(y)\,g(x - y)\right].
@@ -247,11 +247,11 @@ computed componentwise modulo $k$.
 \lean{ZkFourier.char_s}
 \label{ZkFourier.char_s}
 \leanok
+\uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.toOmega, ZkFourier.zkDot}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b007,
   pdf-50833afe7403-p022-b009
 }
-\uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.toOmega, ZkFourier.zkDot}
 For $s \in \mathbb{Z}_k^n$, the Fourier character indexed by $s$ is
 $\chi_s : \mathbb{Z}_k^n \to \mathbb{C}$ defined by
 $\chi_s(x) = \omega_k^{s \cdot x}$.
@@ -414,6 +414,7 @@ that is, complex conjugation of a character amounts to negating its index.
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b002}
 \label{ZkFourier.char_s_mul}
 \leanok
+\uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.zkDot}
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -509,7 +510,6 @@ that is, complex conjugation of a character amounts to negating its index.
   {context}
   {boolean-ch08-generalized-domains}
   {pdf-50833afe7403-p022-b008}
-\uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.toOmega, ZkFourier.toOmega_add, ZkFourier.zkDot}
 \difficulty{3}
 Fix an integer $k \ge 1$ and let $\omega_k = e^{2\pi i/k}$. For a frequency vector $s
 \in \mathbb{Z}_k^n$, let $\chi_s \colon \mathbb{Z}_k^n \to \mathbb{C}$ be the Fourier
@@ -563,6 +563,7 @@ indexed by the zero vector, has expectation $\mathbb{E}[\chi_0] = 1$.
 }
 \label{ZkFourier.inner_product_char_self}
 \leanok
+\uses{ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.inner_product, ZkFourier.norm_char_s}
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -666,7 +667,6 @@ indexed by the zero vector, has expectation $\mathbb{E}[\chi_0] = 1$.
   {direct}
   {boolean-ch08-generalized-domains}
   {pdf-50833afe7403-p021-b004}
-\uses{ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.expectation, ZkFourier.inner_product, ZkFourier.norm_char_s}
 \difficulty{2}
 Fix an integer $k \ge 1$ and a dimension $n \ge 0$, and let $\omega_k = e^{2\pi i/k}$.
 For $s \in \mathbb{Z}_k^n$, let $\chi_s(x) = \omega_k^{\,s\cdot x}$ be the Fourier
@@ -684,6 +684,7 @@ f(x)\,\overline{g(x)}$. Then every character has unit norm: for all $s \in
 }
 \label{ZkFourier.inner_product_char_nonself}
 \leanok
+\uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.char_s_mul, ZkFourier.expectation_char_nontrivial, ZkFourier.inner_product}
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -824,7 +825,6 @@ f(x)\,\overline{g(x)}$. Then every character has unit norm: for all $s \in
   {boolean-ch08-generalized-domains}
   {pdf-50833afe7403-p022-b002,
     pdf-50833afe7403-p022-b003}
-\uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.char_s_conj, ZkFourier.char_s_mul, ZkFourier.expectation_char_nontrivial, ZkFourier.inner_product}
 \difficulty{3}
 Let $k \ge 1$ and $n \ge 0$, and let $\omega_k = e^{2\pi i/k}$. For $s, t \in
 \mathbb{Z}_k^n$ with $s \ne t$, the Fourier characters $\chi_s(x) = \omega_k^{s\cdot x}$
@@ -837,8 +837,8 @@ f(x)\,\overline{g(x)}$; that is, $\langle \chi_s, \chi_t\rangle = 0$.
 \lean{ZkFourier.fourier_coeff}
 \label{ZkFourier.fourier_coeff}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.inner_product}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 The Fourier coefficient of $f : \mathbb{Z}_k^n \to \mathbb{C}$ at frequency
 $s$ is
 \[
@@ -855,6 +855,7 @@ $s$ is
 }
 \label{ZkFourier.fourier_coeff_char_self}
 \leanok
+\uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_self}
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -968,7 +969,6 @@ $s$ is
   {direct}
   {boolean-ch08-generalized-domains}
   {pdf-50833afe7403-p005-b001}
-\uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_self}
 \difficulty{1}
 Fix an integer $k \ge 1$ and a dimension $n$, and let $\chi_s(x) = \omega_k^{s \cdot x}$
 denote the Fourier character on $\mathbb{Z}_k^n$ indexed by a frequency $s \in
@@ -985,6 +985,7 @@ equivalently, $\widehat{\chi_s}(s) = \langle \chi_s, \chi_s \rangle = 1$.
 }
 \label{ZkFourier.fourier_coeff_char_of_ne}
 \leanok
+\uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_nonself}
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -1143,7 +1144,6 @@ equivalently, $\widehat{\chi_s}(s) = \langle \chi_s, \chi_s \rangle = 1$.
   {boolean-ch08-generalized-domains}
   {pdf-50833afe7403-p021-b003,
     pdf-50833afe7403-p005-b001}
-\uses{ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.inner_product_char_nonself}
 \difficulty{1}
 Fix an integer $k \ge 1$ and a dimension $n$, and let $\omega_k = e^{2\pi i / k}$. For a
 frequency $s \in \mathbb{Z}_k^n$, write $\chi_s(x) = \omega_k^{\,s \cdot x}$ for the
@@ -1160,11 +1160,11 @@ in $\mathbb{Z}_k^n$, the Fourier coefficient of the character $\chi_s$ at $t$ va
 \lean{ZkFourier.fourier_expansion}
 \label{ZkFourier.fourier_expansion}
 \leanok
+\uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.char_s_add, ZkFourier.char_s_conj, ZkFourier.expectation, ZkFourier.expectation_char_nontrivial, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.zkDot}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p005-b001,
   pdf-50833afe7403-p022-b009
 }
-\uses{ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.card_ZkVec, ZkFourier.char_s, ZkFourier.char_s_add, ZkFourier.char_s_conj, ZkFourier.expectation, ZkFourier.expectation_char_nontrivial, ZkFourier.fourier_coeff, ZkFourier.inner_product, ZkFourier.zkDot}
 \difficulty{6}
 Fix integers $k \ge 1$ and $n$, and let $\omega_k = e^{2\pi i/k}$. For a frequency $s
 \in \mathbb{Z}_k^n$, let $\chi_s(x) = \omega_k^{\,s\cdot x}$ be the corresponding
@@ -1187,6 +1187,7 @@ be the Fourier coefficient of $f$ at $s$. Then every function $f : \mathbb{Z}_k^
 }
 \label{ZkFourier.parseval_identity}
 \leanok
+\uses{ZkFourier.L2_norm_sq, ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.fourier_expansion}
 \proofstep
   {ZkFourier.ZkVec}
   {context}
@@ -1355,7 +1356,6 @@ be the Fourier coefficient of $f$ at $s$. Then every function $f : \mathbb{Z}_k^
   {boolean-ch08-generalized-domains}
   {pdf-50833afe7403-p005-b001,
     pdf-50833afe7403-p022-b009}
-\uses{ZkFourier.L2_norm_sq, ZkFourier.ZkFun, ZkFourier.ZkVec, ZkFourier.char_s, ZkFourier.fourier_coeff, ZkFourier.fourier_expansion}
 \difficulty{5}
 Let $k \ge 1$ and $n$ be natural numbers, and let $f : \mathbb{Z}_k^n \to \mathbb{C}$ be
 a complex-valued function on $\mathbb{Z}_k^n$. Then the sum of the squared magnitudes of

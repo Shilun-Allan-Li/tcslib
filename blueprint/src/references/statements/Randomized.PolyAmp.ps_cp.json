@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.PolyAmp.ps_cp",
+ "key": "dcf3d61a0912017a",
+ "kind": "lemma",
+ "title": "Probabilistic semantics of a copy operation",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, let $os$ be a Boolean, let $x$ be a Boolean word, and let $B$ be a natural number. For a copy type $k$, let $r_{\\mathrm{src}}(k)$ and $r_{\\mathrm{dst}}(k)$ denote its source and destination register indices, and let $q_k$ be its exit label. Suppose a register state $\\sigma$ has every register at most $B$, its scratch value $z$ is zero, and the sum of its source and destination register values is at most $B$. Suppose also that $\\sigma'$ has register vector obtained from that of $\\sigma$ by replacing the destination value with the sum of the source and destination values. If the configuration at label $q_k$ with register state $\\sigma'$ has probabilistic semantics with probability $p$, then the configuration at the initial copy label for $k$ with register state $\\sigma$ has probabilistic semantics with probability $p$.",
+ "hypotheses_covered": [
+  "$\\sigma$ has every register at most $B$",
+  "$\\sigma.z=0$",
+  "$\\sigma.v(r_{\\mathrm{dst}}(k))+\\sigma.v(r_{\\mathrm{src}}(k))\\le B$",
+  "$\\sigma'.v$ is obtained by updating the destination register of $\\sigma.v$ to that sum",
+  "The exit-label configuration with $\\sigma'$ has probabilistic semantics with probability $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite-state nondeterministic Turing machine, let $x$ be a Boolean word,\nand let $B$ be a natural number. For a copy type $k$, write $r_{\\mathrm{src}}(k)$ and\n$r_{\\mathrm{dst}}(k)$ for its designated source and destination registers, and $q_k$ for\nits exit label. Suppose the register tuple $\\sigma$ has every register at most $B$ and\nits scratch register $z$ is zero. If the sum of the values in $r_{\\mathrm{src}}(k)$ and\n$r_{\\mathrm{dst}}(k)$ is at most $B$, and the register vector of $\\sigma'$ is obtained\nfrom that of $\\sigma$ by replacing the destination value with this sum, then for any\nrational $p$, probabilistic semantics with probability $p$ at label $q_k$ and tuple\n$\\sigma'$ implies probabilistic semantics with probability $p$ at the initial copy label\nfor $k$ and tuple $\\sigma$."
+}

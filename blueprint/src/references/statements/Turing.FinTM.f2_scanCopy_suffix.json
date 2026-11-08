@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.f2_scanCopy_suffix",
+ "key": "0b12fe9f3478d806",
+ "kind": "lemma",
+ "title": "Scanning a suffix of the input",
+ "statement": "Let $M$ be a Turing machine with no work tapes, let $q$ be a state, and suppose that in state $q$ each input bit is copied to the output while the input head moves right and the state remains $q$, and a blank input symbol causes the machine to emit nothing and halt. If Boolean words $x$, $\\mathrm{pre}$, and $\\mathrm{rest}$ satisfy $x=\\mathrm{pre}\\,\\mathrm{rest}$, then for every output word $o$, after $|\\mathrm{rest}|+1$ steps from the scan configuration on $x$ at position $|\\mathrm{pre}|$ in state $q$ with output $o$, the machine is halted at position $|x|$ with output $o$ followed by $\\mathrm{rest}$.",
+ "hypotheses_covered": [
+  "Machine $M$ has no work tapes",
+  "State $q$",
+  "For every input and work-tape reading, the transition in state $q$ has the specified behavior",
+  "Boolean words $x,\\mathrm{pre},\\mathrm{rest}$ with $x=\\mathrm{pre}\\,\\mathrm{rest}$",
+  "Output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

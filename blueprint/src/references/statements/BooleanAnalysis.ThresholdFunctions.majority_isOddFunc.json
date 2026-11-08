@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_isOddFunc",
+ "key": "1d6adafda5ef2b94",
+ "kind": "lemma",
+ "title": "Oddness of the majority function",
+ "statement": "For every $m\\in\\mathbb N$, let $M_m$ be the majority function on $\\{0,1\\}^{2m+1}$, with value $1$ when more than $m$ coordinates are false and $-1$ otherwise. For every $x\\in\\{0,1\\}^{2m+1}$, complementing every coordinate negates its value: $M_m(\\lnot x)=-M_m(x)$.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb N$",
+  "$x\\in\\{0,1\\}^{2m+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m\\in\\mathbb N$, put $n=2m+1$, and define $M_m:\\{\\pm1\\}^n\\to\\mathbb R$ by\n$M_m(x)=1$ when more than $m$ coordinates equal $1$, and $M_m(x)=-1$ otherwise.\nThen $M_m(-x)=-M_m(x)$ for every $x\\in\\{\\pm1\\}^n$, where $-x$ negates every coordinate."
+}

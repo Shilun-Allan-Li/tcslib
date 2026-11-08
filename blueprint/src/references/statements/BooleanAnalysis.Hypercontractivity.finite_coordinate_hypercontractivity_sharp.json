@@ -1,0 +1,24 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.finite_coordinate_hypercontractivity_sharp",
+ "key": "8f10508e22d7211f",
+ "kind": "theorem",
+ "title": "Sharp finite-coordinate hypercontractivity",
+ "statement": "Let $I$ be a finite set with weights $w_i\\in\\bbr$ satisfying $\\sum_{i\\in I}w_i=1$. Let $\\lambda,q,\\rho\\in\\bbr$ satisfy $0<\\lambda<1/2$, $w_i\\ge\\lambda$ for every $i\\in I$, $q>2$, $0\\le\\rho$, and $\\rho\\le\\rho_*(q,\\lambda)$, where $\\rho_*(q,\\lambda)=\\sqrt{\\sinh(u/q)/\\sinh(u/(q/(q-1)))}$ and $u=\\log((1-\\lambda)/\\lambda)$. For every $g:I\\to\\bbr$, both weighted norm inequalities hold: $\\bigl(\\sum_{i\\in I}w_i|\\rho g_i+(1-\\rho)\\sum_{j\\in I}w_jg_j|^q\\bigr)^{1/q}\\le\\bigl(\\sum_{i\\in I}w_i|g_i|^2\\bigr)^{1/2}$ and $\\bigl(\\sum_{i\\in I}w_i|\\rho g_i+(1-\\rho)\\sum_{j\\in I}w_jg_j|^2\\bigr)^{1/2}\\le\\bigl(\\sum_{i\\in I}w_i|g_i|^{q/(q-1)}\\bigr)^{(q-1)/q}$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w:I\\to\\bbr$",
+  "$\\sum_{i\\in I}w_i=1$",
+  "$\\lambda,q,\\rho\\in\\bbr$",
+  "$0<\\lambda$",
+  "$\\lambda<1/2$",
+  "$\\lambda\\le w_i$ for every $i$",
+  "$2<q$",
+  "$0\\le\\rho$",
+  "$\\rho\\le\\rho_*(q,\\lambda)$",
+  "$g:I\\to\\bbr$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite with weights $w_i\\ge\\lambda$, $\\sum_iw_i=1$, $0<\\lambda<1/2$, and $q>2$. Put $r=\\sqrt{\\sinh(\\log((1-\\lambda)/\\lambda)/q)/\\sinh(\\log((1-\\lambda)/\\lambda)/(q/(q-1)))}$. For $0\\le\\rho\\le r$, the operator $Ng=\\rho g+(1-\\rho)\\sum_iw_ig_i$ satisfies $\\|Ng\\|_{q,w}\\le\\|g\\|_{2,w}$ and $\\|Ng\\|_{2,w}\\le\\|g\\|_{q/(q-1),w}$. Here $\\|h\\|_{p,w}=(\\sum_{i\\in I}w_i|h_i|^p)^{1/p}$ for $p>0$."
+}

@@ -8,66 +8,108 @@ Planar Gaussian density separates into radial and angular factors. Cone masses a
 \begin{definition}[Planar standard Gaussian density]
 \lean{BooleanAnalysis.ThresholdFunctions.gaussianDensity2}
 \leanok
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p058-b002,
+  pdf-681b6f3d947f-p119-b003
+}
 For $z=(x,y)\in\mathbb R^2$, the planar Gaussian density is $d_2(x,y)=(2\pi)^{-1}\exp(-(x^2+y^2)/2)$.
 \end{definition}
 
-\begin{lemma}[Product of scalar Gaussian densities]
+\begin{lemma}[Product of Gaussian densities]
 \lean{BooleanAnalysis.ThresholdFunctions.gaussianPDF_mul}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.gaussianDensity2}
+\proofsource{vershynin-hdp-book}{pdf-681b6f3d947f-p058-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianDensity2}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p058-b002}
 \difficulty{4}
-For all real $x,y$, let $\varphi(t)=(2\pi)^{-1/2}e^{-t^2/2}$ and $d_2(x,y)=(2\pi)^{-1}e^{-(x^2+y^2)/2}$. Then $\varphi(x)\varphi(y)=d_2(x,y)$, with both sides regarded as nonnegative extended real values.
+For all real numbers $x$ and $y$, the product of the standard Gaussian probability
+densities at $x$ and $y$ equals the nonnegative extended real number associated to the
+planar standard Gaussian density at $(x,y)$:
+$\varphi(x)\varphi(y)=\operatorname{ENNReal}(d_2(x,y))$, where
+$d_2(x,y)=(2\pi)^{-1}\exp(-(x^2+y^2)/2)$.
 \end{lemma}
 
-\begin{lemma}[Density formula for the product Gaussian law]
+\begin{lemma}[Density of the product Gaussian law]
 \lean{BooleanAnalysis.ThresholdFunctions.gaussian_prod_apply}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.gaussianDensity2, BooleanAnalysis.ThresholdFunctions.gaussianPDF_mul}
+\proofsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p058-b002,
+  pdf-681b6f3d947f-p119-b003
+}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianDensity2}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p058-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianPDF_mul}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p058-b002}
 \difficulty{3}
-Let $\gamma$ be the standard real Gaussian probability measure. For every measurable $A\subseteq\mathbb R^2$, $(\gamma\otimes\gamma)(A)=\int_A(2\pi)^{-1}e^{-(x^2+y^2)/2}\,dx\,dy$, where the integral is nonnegative and extended-valued.
+Let $\gamma$ be the standard Gaussian probability measure on $\mathbb R$. For every
+measurable set $A\subseteq\mathbb R^2$, the product measure $\gamma\otimes\gamma$
+assigns $A$ the nonnegative extended real integral of the planar standard Gaussian
+density: $(\gamma\otimes\gamma)(A)=\int_A d_2(x,y)\,d(x,y)$, where
+$d_2(x,y)=(2\pi)^{-1}\exp(-(x^2+y^2)/2)$.
 \end{lemma}
 
-\begin{lemma}[Normalization of the radial Gaussian factor]
+\begin{lemma}[Radial Gaussian normalization]
 \lean{BooleanAnalysis.ThresholdFunctions.lintegral_radial}
 \leanok
 \difficulty{5}
-Let $f(r)=r\exp(-r^2/2)$ for $r>0$. Its nonnegative extended integral satisfies $\int_{(0,\infty)}f(r)\,dr=1$.
+The nonnegative extended integral of $r\exp(-r^2/2)$ over $r>0$ equals $1$:
+$\displaystyle\int_{(0,\infty)} r\exp(-r^2/2)\,dr=1$.
 \end{lemma}
 
-\begin{lemma}[Gaussian cone mass from angular measure]
+\begin{lemma}[Gaussian mass of a cone]
 \lean{BooleanAnalysis.ThresholdFunctions.gaussian_cone_lintegral}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.gaussianDensity2, BooleanAnalysis.ThresholdFunctions.lintegral_radial}
 \difficulty{6}
-Let $A\subseteq\mathbb R^2$ and $\Theta\subseteq\mathbb R$ be measurable sets such that for all real $r>0$ and $\theta$, $(r\cos\theta,r\sin\theta)\in A$ if and only if $\theta\in\Theta$. Then $\int_A(2\pi)^{-1}e^{-(x^2+y^2)/2}\,dx\,dy=(2\pi)^{-1}\operatorname{Leb}(\Theta\cap(-\pi,\pi))$, with the integral and angular Lebesgue measure in the nonnegative extended reals.
+Let $A\subseteq\mathbb R^2$ and $\Theta\subseteq\mathbb R$ be measurable. Suppose that
+for every $r>0$ and every $\theta\in\mathbb R$, $(r\cos\theta,r\sin\theta)\in A$ if and
+only if $\theta\in\Theta$. Then the integral of the planar standard Gaussian density
+over $A$, interpreted as a nonnegative extended real integral, is $(2\pi)^{-1}$ times
+the Lebesgue measure of $\Theta\cap(-\pi,\pi)$: $\int_A
+d_2(x,y)\,d(x,y)=(2\pi)^{-1}\,\operatorname{Leb}(\Theta\cap(-\pi,\pi))$.
 \end{lemma}
 
 \begin{lemma}[Nonpositive cosine on a centered period]
 \lean{BooleanAnalysis.ThresholdFunctions.cos_nonpos_iff_of_mem_Ioo}
 \leanok
 \difficulty{4}
-For every real $\theta$ with $-\pi<\theta<\pi$, $\cos\theta\le0$ if and only if $\theta\le-\pi/2$ or $\pi/2\le\theta$.
+For every real number $\theta$ with $-\pi<\theta<\pi$, one has $\cos\theta\le0$ if and
+only if $\theta\le-\pi/2$ or $\pi/2\le\theta$.
 \end{lemma}
 
-\begin{lemma}[Nonpositive cosine on a negative angular interval]
+\begin{lemma}[Cosine sign on a negative angular interval]
 \lean{BooleanAnalysis.ThresholdFunctions.cos_nonpos_iff_of_le_neg_pi_div_two}
 \leanok
 \difficulty{4}
-For every real $u$ with $-2\pi<u\le-\pi/2$, $\cos u\le0$ if and only if $-3\pi/2\le u$.
+For every real $u$ satisfying $-2\pi<u\le-\pi/2$, one has $\cos u\le0$ if and only if
+$-3\pi/2\le u$.
 \end{lemma}
 
 \begin{lemma}[Nonpositive cosine with a closed left endpoint]
 \lean{BooleanAnalysis.ThresholdFunctions.cos_nonpos_iff_of_neg_pi_div_two_le}
 \leanok
 \difficulty{4}
-For every real $u$ with $-\pi/2\le u<\pi$, $\cos u\le0$ if and only if $\pi/2\le u$ or $u=-\pi/2$.
+For every real number $u$ with $-\pi/2\le u<\pi$, one has $\cos u\le0$ if and only if
+$\pi/2\le u$ or $u=-\pi/2$.
 \end{lemma}
 
-\begin{lemma}[Measurability of a two-halfplane angle set]
+\begin{lemma}[Measurability of a two-half-plane angle set]
 \lean{BooleanAnalysis.ThresholdFunctions.measurableSet_twoHalfplaneAngles}
 \leanok
 \difficulty{3}
-For every real $\alpha$, the set $\{\theta\in\mathbb R:\cos\theta\le0\ \text{and}\ \cos(\theta-\alpha)\le0\}$ is Borel measurable.
+For every real number $\alpha$, the set $\{\theta\in\mathbb R : \cos\theta\le 0 \text{
+and } \cos(\theta-\alpha)\le 0\}$ is measurable.
 \end{lemma}
 
 \begin{lemma}[Angular overlap of two halfplanes]
@@ -75,5 +117,7 @@ For every real $\alpha$, the set $\{\theta\in\mathbb R:\cos\theta\le0\ \text{and
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.cos_nonpos_iff_of_le_neg_pi_div_two, BooleanAnalysis.ThresholdFunctions.cos_nonpos_iff_of_mem_Ioo, BooleanAnalysis.ThresholdFunctions.cos_nonpos_iff_of_neg_pi_div_two_le, BooleanAnalysis.ThresholdFunctions.measurableSet_twoHalfplaneAngles}
 \difficulty{6}
-For every real $\alpha\in[0,\pi]$, the Lebesgue measure of $\{\theta\in(-\pi,\pi):\cos\theta\le0,\ \cos(\theta-\alpha)\le0\}$ equals $\pi-\alpha$.
+For every real $\alpha$ with $0\le\alpha\le\pi$, the Lebesgue measure of the angles
+$\theta\in(-\pi,\pi)$ satisfying both $\cos\theta\le0$ and $\cos(\theta-\alpha)\le0$ is
+$\pi-\alpha$.
 \end{lemma}

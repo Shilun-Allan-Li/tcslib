@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedCut_skip_fixed",
+ "key": "ff610063415d7535",
+ "kind": "lemma",
+ "title": "Skipping fixed action fields",
+ "statement": "Let $x$ be a binary input, and let a base configuration, destination, bounded counter, binary table, state tape, and state-tape cursor be given. For every nonnegative integer $n$, field index $f\\in\\{0,\\ldots,7\\}$, and table cursor $p$, if $f+n=7$, then starting in the fixed-field-skipping phase at field $f$ and cursor $p$, after $n+1$ steps the stopped interpreter is in the unary-tail-scanning phase with the same destination and remaining counter, table cursor $p+n+1$, and unchanged state tape and state-tape cursor.",
+ "hypotheses_covered": [
+  "A binary input $x$",
+  "A base configuration, destination, bounded counter, binary table, state tape, and state-tape cursor",
+  "A nonnegative integer $n$",
+  "A field index $f\\in\\{0,\\ldots,7\\}$ and table cursor $p$",
+  "The equality $f+n=7$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In the fixed-field-skipping phase of the stopped table interpreter, with\ncurrent field index $i$ and $n$ further fields remaining (so $i + n = 7$),\nexactly $n+1$ steps advance the table cursor by $n+1$ cells and enter the\nunary-tail scanner; no tape content is inspected or modified."
+}

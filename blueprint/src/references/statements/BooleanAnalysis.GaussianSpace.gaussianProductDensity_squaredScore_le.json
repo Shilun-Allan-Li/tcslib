@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussianProductDensity_squaredScore_le",
+ "key": "d7beab01b7373c86",
+ "kind": "lemma",
+ "title": "Bound for a squared Gaussian score",
+ "statement": "Let $I$ be finite, let $v\\ge0$, and let $c,z,a\\in\\mathbb R^I$ satisfy $a_i\\ge0$, $p_v(c_i,z_i)\\le a_i$, and $\\left|\\left((z_i-c_i)^2/v^2-1/v\\right)p_v(c_i,z_i)\\right|\\le a_i$ for every $i\\in I$, where $p_v(u,w)$ denotes the Gaussian density with mean $u$ and variance $v$. Then for each $i\\in I$, $\\frac{(z_i-c_i)^2}{v^2}\\prod_{j\\in I}p_v(c_j,z_j)\\le(1+1/v)\\prod_{j\\in I}a_j$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$v\\ge0$",
+  "$c,z,a\\in\\mathbb R^I$",
+  "$a_i\\ge0$ for every $i$",
+  "$p_v(c_i,z_i)\\le a_i$ for every $i$",
+  "$|((z_i-c_i)^2/v^2-1/v)p_v(c_i,z_i)|\\le a_i$ for every $i$",
+  "The conclusion holds for each $i\\in I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Assume $c,z,a\\in\\mathbb R^I$, $a_i\\ge0$, $p_v(c_i,z_i)\\le a_i$, and $|((z_i-c_i)^2/v^2-1/v)p_v(c_i,z_i)|\\le a_i$ for every $i\\in I$. For every $i\\in I$, $((z_i-c_i)^2/v^2)G_v(c,z)\\le(1+1/v)\\prod_j a_j$."
+}

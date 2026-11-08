@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integral_gaussianProductDensityDerivative_smul_eq_sum",
+ "key": "73ee1d6b8b30d91b",
+ "kind": "lemma",
+ "title": "Integral of the Gaussian product density derivative",
+ "statement": "Let $I$ be a finite index set, let $v>0$, let $c\\in\\mathbb R^I$, and let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\le1$ for every $z$. Write $p_v(m,t)$ for the density of the real Gaussian with mean $m$ and variance $v$, and let $Z$ have independent coordinates with $Z_j\\sim N(c_j,v)$. Then the integral, with respect to Lebesgue measure on $\\mathbb R^I$, of $f(z)$ times the linear functional $h\\mapsto\\sum_{i\\in I}\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)\\frac{z_i-c_i}{v}p_v(c_i,z_i)h_i$ equals the linear functional $h\\mapsto\\sum_{i\\in I}\\mathbb E[\\frac{Z_i-c_i}{v}f(Z)]h_i$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$f$ is measurable",
+  "$|f(z)|\\le1$ for every $z$",
+  "$v\\in[0,\\infty)$ and $v\\ne0$",
+  "$c\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$, $c,h\\in\\mathbb R^I$, and $Z\\sim\\bigotimes_iN(c_i,v)$, then $(\\int f(z)A_v(c,z)\\,dz)[h]=\\sum_i\\mathbb E[((Z_i-c_i)/v)f(Z)]h_i$."
+}

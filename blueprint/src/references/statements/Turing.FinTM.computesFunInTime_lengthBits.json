@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_lengthBits",
+ "key": "c2f1017e86e23833",
+ "kind": "theorem",
+ "title": "Computing Input Length in Binary",
+ "statement": "There exist a finite Turing machine $M$ over the Boolean alphabet and a constant $c\\in\\mathbb{N}$ such that, on every Boolean word $x$, $M$ halts within $c(|x|+1)$ steps and outputs the little-endian binary representation of the length of $x$.",
+ "hypotheses_covered": [
+  "Existence of a finite Turing machine over Booleans",
+  "Existence of a natural-number constant c",
+  "Computes the binary representation of |x| within c(|x|+1) steps on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes the function sending each input $x$ to the little-endian binary\nrepresentation of $\\abs{x}$, within $c\\,(n+1)$ steps on inputs of length $n$."
+}

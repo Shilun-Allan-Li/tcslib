@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Meyer.dec_zero",
+ "key": "151b1c9a2bbd975a",
+ "kind": "theorem",
+ "title": "Zero-cell counter update",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean tape symbols, and let $y,x$ be Boolean words. Choose a bit vector encoding a transition-table selector, a simulated input-head position, and a configuration $c$ of $M$ on $x$. Let the counter tape have contents $\\tau_C:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$ and head position $z_C\\in\\mathbb{Z}$, and let $\\tau_O$ and $z_O$ specify the other auxiliary tape. If the counter tape contains the Boolean symbol false at $z_C$, then one step of the tabulating machine changes the simulated configuration to the same decoding state, writes true at $z_C$, and moves the counter head to $z_C+1$, leaving the other specified data unchanged.",
+ "hypotheses_covered": [
+  "A Boolean finite Turing machine M",
+  "Boolean words y and x",
+  "A selector bit vector of length nbits(M)",
+  "A position P among y's input-head positions",
+  "A configuration c of M on x",
+  "Counter tape contents τC and head position zC",
+  "Other auxiliary tape contents τO and head position zO",
+  "τC(zC) equals false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

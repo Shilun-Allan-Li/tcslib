@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.one_sub_le_millsRatio",
+ "key": "05c291883702d406",
+ "kind": "lemma",
+ "title": "Lower bound for the Gaussian Mills ratio",
+ "statement": "For every real $t<0$, the signed lower-tail Mills ratio $R(t)=\\Phi(t)(-t)/\\varphi(t)$ satisfies\n\\[\n1-(t^2)^{-1}\\le R(t),\n\\]\nwhere $\\Phi$ is the standard Gaussian distribution function and $\\varphi$ is its density.",
+ "hypotheses_covered": [
+  "t is real",
+  "t < 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $\\varphi(x)=e^{-x^2/2}/\\sqrt{2\\pi}$, $\\Phi(t)=\\int_{-\\infty}^{t}\\varphi(x)\\,dx$, and $R(t)=\\Phi(t)(-t)/\\varphi(t)$ for $t\\in\\mathbb R$. For every real $t<0$, one has $1-t^{-2}\\le R(t)$."
+}

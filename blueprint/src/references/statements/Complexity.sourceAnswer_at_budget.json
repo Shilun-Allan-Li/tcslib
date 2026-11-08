@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.sourceAnswer_at_budget",
+ "key": "763e52aa67087e6d",
+ "kind": "lemma",
+ "title": "Decision output at the padded time bound",
+ "statement": "Let $M$ be a finite binary Turing machine, $L$ a language of finite binary words, $T:\\mathbb{N}\\to\\mathbb{N}$, and $a\\in\\mathbb{N}$. Suppose that on every input $x$, $M$ halts within $aT(|x|)$ steps, outputs the single bit indicating whether $x\\in L$, and uses some finite amount of work space. Then after $(a+1)(T(|x|)+1)$ steps on any input $x$, the last output bit, interpreted as false if the output is empty, equals the indicator of whether $x\\in L$.",
+ "hypotheses_covered": [
+  "$M$ is a finite binary Turing machine",
+  "$L$ is a language of finite binary words",
+  "$T:\\mathbb{N}\\to\\mathbb{N}$",
+  "$a\\in\\mathbb{N}$",
+  "$M$ decides $L$ within time $aT(n)$",
+  "$x$ is a finite binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary machine that decides a language $L$ over the binary alphabet\nwithin time $a \\cdot T(n)$ on inputs of length $n$.  Then for every input $x$, after\nrunning $M$ for $(a + 1)(T(|x|) + 1)$ steps from its initial configuration on $x$, the\nlast bit of the output word, defaulting to false, equals the indicator of the\nmembership of $x$ in $L$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Codec.slide_step_iff",
+ "key": "88b713dcba45ea06",
+ "kind": "theorem",
+ "title": "Local Characterization of a Machine Step",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input and $k$ work tapes, let $x$ be an input, let $s\\in\\mathbb{N}$, and let $C$ be a configuration on $x$ whose work-tape heads lie within distance $s$ of the origin and whose tape contents vanish outside that window. Let $a$ be an action and let $v$ be a list of optional cell values of length $2s+1$. The condition that, at every position $i<2s+3$, the padded list of values in $v$ agrees with the local update rule determined by $a$ and the three corresponding padded cells of the encoding of $C$ is equivalent to both of the following: each entry of $v$ is the encoded cell of the configuration obtained by applying $a$ to $C$, and that resulting configuration has all work-tape heads and nonblank contents within the same window of radius $s$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean symbols",
+  "$x$ is a Boolean input list",
+  "$s\\in\\mathbb{N}$",
+  "$C$ is a configuration on $x$",
+  "$C$ has every work-tape head within radius $s$",
+  "$C$ has no nonblank tape contents outside radius $s$",
+  "$a$ is an action of $N$",
+  "$v$ is a list of optional cell values",
+  "$|v|=2s+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

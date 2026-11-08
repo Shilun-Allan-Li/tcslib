@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.a2_call_run",
+ "key": "7244fc7a7f639225",
+ "kind": "lemma",
+ "title": "Simulation of a loop-body call",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, and choose Boolean parameters for find mode and startup. For an input word $x$, an initial configuration $c$ of $B$, a release flag, a time $t$, a Boolean word $w$, and a configuration of $F$ used as fuel, assume that $c$ is not halted, every configuration reached from $c$ in fewer than $t$ steps is not halted, and none of those configurations is in state $a$ except possibly at time $0$ when the release flag is true. Then after $t$ steps the constructed host machine, started in the encoded call configuration, is in the encoded call configuration for the body machine after $t$ steps; its release flag is the original one exactly when $t=0$, and its additional flag is true exactly when the body configuration at time $t$ is halted. The word and fuel configuration are unchanged.",
+ "hypotheses_covered": [
+  "finite Boolean machines $B,F$ and anchor state of $B$",
+  "Boolean find-mode and startup parameters",
+  "input word and initial configuration of $B$",
+  "release flag",
+  "natural-number time $t$",
+  "Boolean word $w$ and fuel configuration of $F$",
+  "initial body configuration is not halted",
+  "all body configurations at times $u<t$ are not halted",
+  "before time $t$, the anchor state occurs only at time zero when release is true"
+ ],
+ "confidence": "low",
+ "caveat": "The host machine and encoded call configuration are given by lengthy private constructions, so their full operational meaning cannot be stated briefly without reproducing those constructions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.pairEncode_eq_dbl",
+ "key": "815a7167e3c5a61f",
+ "kind": "lemma",
+ "title": "Pair encoding via doubling",
+ "statement": "For any two bit strings $x$ and $y$, encoding the pair $(x,y)$ gives the concatenation of the string obtained by writing each bit of $x$ twice, the separator $01$, and $y$.",
+ "hypotheses_covered": [
+  "$x$ and $y$ are bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $x$ and $y$, the self-delimiting pair encoding\n$\\langle x, y\\rangle$ equals the concatenation\n\\[\n  \\langle x, y\\rangle = \\mathrm{dbl}(x)\\; 0\\, 1\\; y,\n\\]\nwhere $\\mathrm{dbl}(x)$ is $x$ with every bit written twice in succession,\nfollowed by the separator bits $0$ then $1$, followed by $y$ verbatim."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.recordRun_trans",
+ "key": "c978a47750d05676",
+ "kind": "theorem",
+ "title": "Concatenation of Recorded Runs",
+ "statement": "Let $R$ be a multi-tape Turing machine with distinguished states $yes$ and $no$, and fix a base head position for each work tape and a radius. If a run from configuration $a$ reaches $b$ in $t$ steps, avoids both distinguished states at every time before $t$, and keeps every work-tape head within the specified radius of its base position through time $t$, and a run from $b$ reaches $c$ in $v$ steps with the same avoidance and head-position bounds, then the run from $a$ reaches $c$ in $t+v$ steps, avoids both distinguished states before that time, and satisfies the same head-position bounds throughout.",
+ "hypotheses_covered": [
+  "A multi-tape machine $R$ and distinguished states $yes,no$",
+  "A base integer position for each work tape and a natural-number radius",
+  "The run from $a$ reaches $b$ after $t$ steps",
+  "Neither distinguished state occurs at any time $u<t$ in the first run",
+  "Every work-tape head stays within the radius of its base position for all $u\\le t$ in the first run",
+  "The run from $b$ reaches $c$ after $v$ steps",
+  "Neither distinguished state occurs at any time $u<v$ in the second run",
+  "Every work-tape head stays within the radius of its base position for all $u\\le v$ in the second run"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_pairConcat",
+ "key": "cc7cdb2c4bfcee66",
+ "kind": "theorem",
+ "title": "Polynomial-time concatenation of pair components",
+ "statement": "Let $\\pi_1$ and $\\pi_2$ be the total projections that decode a self-delimiting pair of bit strings and return the empty word when decoding fails. The function sending each bit string $z$ to the concatenation $\\pi_1(z)\\pi_2(z)$ is polynomial-time computable.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\pi_1$ and $\\pi_2$ be the total projections, which send a bit string of the form $\\langle a,b\\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and to $b$ respectively, and any other bit string to the empty word. Then the map $z \\mapsto \\pi_1(z)\\,\\pi_2(z)$, sending $z$ to the concatenation of its two components, is polynomial-time computable."
+}

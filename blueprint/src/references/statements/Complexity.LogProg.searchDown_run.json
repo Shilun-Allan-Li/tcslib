@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.searchDown_run",
+ "key": "4f7a2eda98df98e5",
+ "kind": "theorem",
+ "title": "Descending search reaches the first positive test",
+ "statement": "Let a register machine have $m$ registers, states in a type $\\Lambda$, and an oracle on $d$ Boolean-string inputs. Fix a register $r$, a decidable predicate $P$ on the natural numbers, states $\\mathrm{test},\\mathrm{yes},\\mathrm{dec}\\in\\Lambda$, a bound $B$, and a register valuation $v$ with every register at most $B$. Assume that from state $\\mathrm{test}$, with register $r$ set to any $c'$, one step leaves the registers unchanged and goes to $\\mathrm{yes}$ if $P(c')$ holds and to $\\mathrm{dec}$ otherwise; also assume every configuration at state $\\mathrm{test}$ with no result satisfies the machine's precondition, and that state $\\mathrm{dec}$ decrements register $r$ and returns to $\\mathrm{test}$. For any $c$ satisfying $P(c)$, every $c_0$ with $c<c_0\\le B$ and with no $c'$ strictly between $c$ and $c_0$ satisfying $P(c')$, the machine can reach the configuration at state $\\mathrm{yes}$ with register valuation $v$ updated to $c$ at $r$ and no result, starting from state $\\mathrm{dec}$ with that register set to $c_0$ and no result; throughout this run, every visited configuration before the final one satisfies the guard requiring the precondition and all registers to be at most $B$.",
+ "hypotheses_covered": [
+  "A register machine $A$ and oracle on $d$ Boolean strings",
+  "A register $r$ among $m$ registers",
+  "A decidable predicate $P:\\mathbb N\\to\\mathrm{Prop}$",
+  "States $\\mathrm{dec},\\mathrm{test},\\mathrm{yes}\\in\\Lambda$",
+  "A natural-number bound $B$ and register valuation $v$",
+  "Every register value in $v$ is at most $B$",
+  "The specified one-step behavior from $\\mathrm{test}$ for every $c'$",
+  "Every no-result configuration at $\\mathrm{test}$ satisfies the precondition",
+  "State $\\mathrm{dec}$ decrements register $r$ and returns to $\\mathrm{test}$",
+  "A natural number $c$ satisfying $P(c)$",
+  "For every $c_0$, $c<c_0$ and $c_0\\le B$",
+  "No $c'$ strictly between $c$ and $c_0$ satisfies $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean :: Turing.ClockHost.reset_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: low -->
+
+# Three-Sweep Reset Run
+
+**Claim.** If a choice word has length $3(m+1)$, then running the host from phase $p0$ with yard head at $m-1$ completes the three reset sweeps and returns to the running phase with $A$ in its initial state and no captured output. The input head is moved left $m+1$ times and then right once, each work head of $A$ advances by $3(m+1)$, the yard head returns to zero, and the other tapes and output are unchanged.
+
+**Proof.** Split the choice word into three blocks, each containing a marked transition bit and a run of $m$ bits: the first block has the form $u_1 b_1 r_1$ with $|u_1|=m$ and $|r_1|=2(m+1)$; split the remainder as $u_2 b_2 r_2$ with $|u_2|=m$ and $|r_2|=m+1$; the last split gives $u_3 b_3$ with $|u_3|=m$. The required decompositions come from the block-splitting fact (`exists_split_block`), and the length condition leaves no final suffix.
+
+The first $m$ choices execute the leftward $p0$ sweep (`p0_marks`), moving the yard head from $m-1$ to $-1$ and advancing $A$'s heads by $m$. The next bit turns the sweep around (`p0_turn`), moving the yard head to zero and the input head left once. The following $m$ choices execute the rightward $p1$ sweep (`p1_marks`), returning the yard head to $m$ and advancing $A$'s heads by another $m$. Its turnaround (`p1_turn`) changes to phase $p2$, sets the yard head to $m-1$, and advances those heads once more. The final $m$ choices execute the leftward $p2$ sweep (`p2_marks`), ending at yard position $-1$ and contributing another $m$ head moves; the last bit turns around (`p2_turn`), entering the running phase, moving the yard head to zero, and advancing the heads once more. Appending and cons decompositions of runs justify composing these successive blocks (`runWith_append`, `runWith_cons`), while the empty suffix contributes no step (`runWith_nil`). The three turnarounds move the input head left three times in the displayed route, but the first turnaround's stated move is part of the phase transitions; the resulting input position is the one encoded by the theorem as one right move after $m+1$ left moves, using the defining recursion for repeated left movement (`inLeft_succ`). Counting the head increments gives $m+1+m+1+m+1=3(m+1)$, and the yard and phase endpoints are those asserted.
+
+**Key facts.** `Turing.ClockHost.exists_split_block`, `Turing.ClockHost.p0_marks`, `Turing.ClockHost.p0_turn`, `Turing.ClockHost.p1_marks`, `Turing.ClockHost.p1_turn`, `Turing.ClockHost.p2_marks`, `Turing.ClockHost.p2_turn`, `Turing.NDTM.runWith_append`, `Turing.NDTM.runWith_cons`, `Turing.NDTM.runWith_nil`, `Turing.ClockHost.inLeft_succ`.
+
+**Caveat.** The supplied theorem target and proof route appear inconsistent in the input-head movement: the three turnarounds listed move left at p0, zero at p1, and right at p2, whereas the target expression is `moveInputPos (inLeft ip (m+1)) 1`. The account follows the stated route, but that input-head equality cannot be justified by the listed facts as written.

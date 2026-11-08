@@ -1,6 +1,6 @@
 {
  "lean_name": "SwitchingLemma.encode_go_wellformed",
- "key": "e1ccca2164c4de7b",
+ "key": "b41da3d348715df9",
  "kind": "lemma",
  "title": "Well-formedness invariant of the encoder's auxiliary output",
  "statement": "Let $f$ be a DNF formula on $n$ variables whose width does not exceed a positive integer $w$, and fix a recursion-budget (fuel) parameter, a path $P$ presented as a list of variable–direction pairs in $\\mathrm{Fin}\\,n \\times \\mathrm{Bool}$, and two restrictions $\\rho_0$ and $\\sigma$ on the $n$ variables. Run the Razborov encoder's recursive worker on $f$, $w$, the fuel, $P$, $\\rho_0$, and $\\sigma$ starting from an empty auxiliary accumulator, and let $A$ be its auxiliary output, a list of pairs in $\\bbn \\times \\mathrm{Bool}$. Then there exists a list $ts$ of triples in $\\mathrm{Fin}\\,w \\times \\mathrm{Bool} \\times \\mathrm{Bool}$ such that $A$ is exactly the aux list obtained from $ts$ by the triples-to-aux conversion, the number of triples in $ts$ is at most the length of $P$, and, whenever $ts$ is nonempty, the marker flag (the final Boolean component) of its last triple equals true.",

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.PS.of_eq",
+ "key": "43a9607adc57697f",
+ "kind": "lemma",
+ "title": "Register Equality Preserves Program Semantics",
+ "statement": "Let $x$ be a finite Boolean word, $B$ a natural number, $l$ a program label, $\u001bσ,\u001bσ'$ register states, and $P$ a proposition. If $\u001bσ=\u001bσ'$ and, starting at $l$ with register state $\u001bσ'$, every computation terminates with all registers bounded by $B$ at every preterminal configuration satisfying the program’s safety conditions, and an accepting computation exists exactly when $P$ holds, then the same properties hold starting at $l$ with register state $\u001bσ$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$B$ is a natural number",
+  "$l$ is a path-program label",
+  "$\u001bσ$ and $\u001bσ'$ are register states",
+  "$P$ is a proposition",
+  "$\u001bσ=\u001bσ'$",
+  "The abstract program semantics from $(l,\u001bσ')$ satisfies the bound and safety guard at every preterminal step and terminates for every sequence of choices",
+  "Acceptance from $(l,\u001bσ')$ is equivalent to $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a finite bit string, $B$ a natural number, $l$ a control label,\n$\u001b[1mσ,σ'\u001b[0m$ register records, and $P$ a proposition. If $σ=σ'$ and, from control\nlabel $l$ with register record $σ'$, every sequence of choices terminates while all\nregisters remain at most $B$, with an accepting computation existing exactly when $P$\nholds, then the same is true from $l$ with register record $σ$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.dnf_sensitivity_true_le_width",
+ "key": "e50efd908921036f",
+ "kind": "lemma",
+ "title": "Sensitivity at a satisfying DNF input",
+ "statement": "Let $d$ be a DNF formula on $n$ Boolean variables and let $x\\in\\{0,1\\}^n$ satisfy $d(x)=1$. The number of coordinates whose individual flip changes the sign encoding of the formula's value is at most the maximum width of a term of $d$, taken to be $0$ if $d$ has no terms.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$d$ is a DNF formula on $n$ Boolean variables",
+  "$x$ is a Boolean input",
+  "$d(x)=1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $d$ be a DNF on $n$ variables and let $x\\in\\{0,1\\}^n$ satisfy $d(x)=1$. The number of coordinates whose individual flip changes the sign encoding $(-1)^{d(x)}$ is at most the width of $d$."
+}

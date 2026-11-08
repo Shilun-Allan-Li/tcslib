@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Codec.decChain",
+ "key": "a3a02b8dcae146c2",
+ "kind": "theorem",
+ "title": "Repeated decrement execution",
+ "statement": "Let $A$ be a register program with $m$ registers and $d$ oracle queries, let $\\Lambda$ be its set of labels, and fix an input $y$, a register $r$, labels $\\ell_i$ for $i\\in\\mathbb N$, and natural numbers $k,B$. Suppose that for every $i<k$, label $\\ell_i$ instructs the program to decrement register $r$ and continue at $\\ell_{i+1}$; initially every register is at most $B$ and the value in register $r$ is at least $k$. Then the program has a finite execution from label $\\ell_0$ to label $\\ell_k$, with register $r$ reduced by $k$ and all other register values unchanged. Every configuration before the endpoint satisfies the program's guard: its instruction is safe to execute and every register remains at most $B$.",
+ "hypotheses_covered": [
+  "A program A with m registers and d oracle queries",
+  "An oracle",
+  "An input y",
+  "A register r",
+  "A label sequence indexed by natural numbers",
+  "Natural numbers k and B",
+  "Each of the first k labels decrements r and continues at the next label",
+  "Every initial register value is at most B",
+  "The initial value of r is at least k"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

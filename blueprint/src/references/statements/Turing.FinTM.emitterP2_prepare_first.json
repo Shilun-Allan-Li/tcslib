@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_prepare_first",
+ "key": "d2078cbcafe1a7bd",
+ "kind": "lemma",
+ "title": "First Completed Preparation Frame",
+ "statement": "For any Boolean words $w,s$, there is a natural number $t$ with $0<t\\le 5(|s|+|w|+3)$ such that the preparation machine, started from its initial frame, does not visit phase $8$ at any time $j<t$, and at time $t$ has candidate $s$ on its first tape, an empty second tape, the suffix of $w$ after its first $|s|$ symbols on its third tape, all work heads and the input head at their specified initial positions, and overflow flag equal to the truth value of $|w|<|s|$.",
+ "hypotheses_covered": [
+  "Boolean words $w,s$",
+  "Existence of $t$ with $0<t$",
+  "Bound $t\\le 5(|s|+|w|+3)$",
+  "No visit to phase $8$ at any time $j<t$",
+  "At time $t$, first tape contains $s$, second tape is empty, third tape contains the suffix after $|s|$ symbols, heads are at the specified positions, and overflow records $|w|<|s|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any input $w$ and candidate $s$, there is a time $t$ with\n$0 < t \\le 5(\\abs{s} + \\abs{w} + 3)$ such that the preparation machine never\nvisits its return phase before $t$ and at time $t$ sits in its completed\nframe with the candidate and native suffix prepared; positivity holds even\nfor empty input and an empty candidate."
+}

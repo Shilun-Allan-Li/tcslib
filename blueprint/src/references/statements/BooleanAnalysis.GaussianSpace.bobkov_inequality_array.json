@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.bobkov_inequality_array",
+ "key": "209d0bec90e1866f",
+ "kind": "lemma",
+ "title": "Bobkov inequality for Boolean arrays",
+ "statement": "Let $I$ and $J$ be finite sets and let $f:\\{0,1\\}^{I\\times J}\\to\\mathbb R$ take values in $[0,1]$. Under independent uniform bits, let $\\mathbb E f$ denote its expectation and define $D_{ij}f(x)=\\bigl(f(x^{ij\\leftarrow0})-f(x^{ij\\leftarrow1})\\bigr)/2$, where $x^{ij\\leftarrow b}$ is obtained by setting coordinate $(i,j)$ to $b$. Then $\\overline I(\\mathbb E f)\\le\\mathbb E\\sqrt{\\overline I(f)^2+\\sum_{i\\in I}\\sum_{j\\in J}(D_{ij}f)^2}$.",
+ "hypotheses_covered": [
+  "Finite index sets I and J",
+  "A real-valued function on Boolean arrays indexed by I × J",
+  "The function takes values in [0,1]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ be the standard Gaussian distribution function and density, and let $\\overline I(p)=\\varphi(\\Phi^{-1}(p))$ for $0<p<1$, with $\\overline I(p)=0$ elsewhere. Let $I,J$ be finite and $f:\\{0,1\\}^{I\\times J}\\to[0,1]$. Under independent uniform bits, $\\overline I(\\mathbb E f)\\le\\mathbb E\\sqrt{\\overline I(f)^2+\\sum_{i\\in I}\\sum_{j\\in J}(D_{ij}f)^2}$, where $D_{ij}f(x)=(f(x^{ij\\leftarrow0})-f(x^{ij\\leftarrow1}))/2$."
+}

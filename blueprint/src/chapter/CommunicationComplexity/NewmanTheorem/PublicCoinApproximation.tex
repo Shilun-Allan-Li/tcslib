@@ -24,29 +24,29 @@ $\varphi : \mathrm{CoinTape}(n) \to \Omega$ provided by
 \texttt{CommunicationComplexity.Internal.single\_coin\_approx}.
 \end{definition}
 
-\begin{theorem}[Coin-tape conversion preserves complexity]
+\begin{theorem}[Complexity preserved by coin-tape conversion]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
 \difficulty{1}
-Let $\Omega$ be a finite probability space, and let $p$ be a public-coin finite-message
-protocol over shared randomness $\Omega$ with input sets $X$, $Y$ and output type
-$\alpha$. For every real number $\delta > 0$, the coin-tape conversion of $p$ at slack
-$\delta$ yields a length $n$ and a finite-message protocol over $\mathrm{CoinTape}(n)$
-whose communication complexity equals the communication complexity of $p$.
+Let $\Omega$ be a finite probability space and let $p$ be a public-coin finite-message
+protocol over shared randomness $\Omega$, with inputs in $X,Y$ and output type $\alpha$.
+For every $\delta\in\mathbb R$ with $\delta>0$, the protocol over a coin tape produced
+by converting $p$ with slack $\delta$ has the same communication complexity as $p$.
 \end{theorem}
 
-\begin{theorem}[Coin-tape conversion preserves approximate satisfaction]
+\begin{theorem}[Approximate satisfaction after coin-tape conversion]
 \lean{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies}
 \label{CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape_approxSatisfies}
 \leanok
 \uses{CommunicationComplexity.CoinTape, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.comap_run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Internal.single_coin_approx, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.ApproxSatisfies, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.toCoinTape}
 \difficulty{5}
-Let $p$ be a public-coin finite-message protocol over a finite probability space
-$\Omega$, with private input sets $X$ and $Y$ and outputs in $\alpha$; let $Q : X \to Y
-\to \alpha \to \mathrm{Prop}$ be a predicate; and let $\varepsilon$ and $\delta$ be real
-numbers with $\delta > 0$. If $p$ approximately satisfies $Q$ with error at most
-$\varepsilon$, then the coin-tape protocol obtained by converting $p$ with slack
-$\delta$ approximately satisfies $Q$ with error at most $\varepsilon + \delta$.
+Let $\Omega$ be a finite probability space, and let $p$ be a public-coin finite-message
+protocol over shared randomness $\Omega$, with inputs in $X,Y$ and output type $\alpha$.
+Let $Q:X\to Y\to\alpha\to\mathrm{Prop}$ be a predicate, and let
+$\varepsilon,\delta\in\mathbb R$ satisfy $\delta>0$. If, for every $x,y$, the
+probability that $p$ fails to satisfy $Q(x,y,\cdot)$ is at most $\varepsilon$, then the
+protocol obtained by converting $p$ to a coin-tape protocol with slack $\delta$ has
+failure probability at most $\varepsilon+\delta$ for every $x,y$.
 \end{theorem}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.Meyer.inOK",
+ "key": "0cbc7532791bea64",
+ "kind": "def",
+ "title": "Input tape consistency condition",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean tape alphabet, let $v$ be a Boolean valuation on its atoms, let $\\sigma$ be an optional machine state paired with an output register, let $\\rho$ specify read data, and fix a Boolean $s$. First require that, for each of the two answer types $a_j$ and $a_{j1}$ (in the order determined by $s$), the symbols encoded by the corresponding $t_n$ and $t_c$ answer atoms agree. If $\\sigma$ has no state, or its transition reads the input tape at position zero, this is the whole condition. If the transition reads a positive or negative position and the input is not clamped (the input symbol in $\\rho$ is absent and the specified $t_c,a_1$ answer symbol is absent), instead require equality only between the $t_n$ symbol of the first answer type and the $t_c$ symbol of the second for a positive position, or between the $t_n$ symbol of the second and the $t_c$ symbol of the first for a negative position; if the input is clamped, retain the initial pair of equalities. The first answer type is $a_{j1}$ when $s$ is true and $a_j$ otherwise, and the second is the reverse.",
+ "hypotheses_covered": [
+  "A finite-tape Turing machine with Boolean tape alphabet",
+  "A Boolean valuation on its atoms",
+  "A state/output-register pair",
+  "Read data for the input and each work tape",
+  "A Boolean parameter"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/CircuitEvalCorrect.lean :: BoolCircuit.CircuitEval.absRun_a -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Acceptance in argument parsing
+
+**Claim.** Under the stated hypotheses, the argument-reading run accepts exactly when the input splits into the encoding of a list of further arguments followed by a remainder, the combined argument list is valid for the gate, and the corresponding gate-reading run accepts on that remainder.
+
+**Proof.** We first analyze a false bit in the argument-reading phase. The evaluator then finishes the current argument list, unless the gate is NOT and the number of arguments read is not one, in which case it rejects. The fold identity for gate accumulators (`accFin_foldl`) identifies the finished accumulator with the gate value on the arguments already read. Thus this case is exactly the claimed characterization with no further arguments: the encoding of the empty list is a single false bit, and the original length, distinctness, and bounds hypotheses give validity. The NOT condition is precisely the condition that the existing argument count is one. Conversely, any witness with an empty further-argument list forces this same false-bit case and satisfies its NOT check.
+
+For the induction step, a leading true bit begins another argument, provided the counter is not already two. The argument-reading lemma (`absRun_u`) characterizes the ensuing unary natural-number code: it supplies an index $r$ within the values list that is not already marked, updates the counter and accumulator using the value at $r$, marks $r$, and leaves a remainder to process in the argument-reading phase. The induction hypothesis applies to the extended prefix $p ++ [r]$. The hypotheses ensure that this prefix remains distinct and in range: the mark equivalence says $r$ was not in $p$, and the code condition gives its bound. Prepending $r$ to the further arguments reconstructs the original encoding and transfers the length, distinctness, bounds, and NOT conditions. In the reverse direction, split a nonempty further-argument list at its first entry $r$. Its validity makes $r$ in range and distinct from the existing prefix; the mark condition therefore permits the unary code to be read. Apply the induction hypothesis to the remaining arguments and join the code for $r$ back to the encoding. The zero-counter-budget case is handled directly: a true bit would exceed the two-argument limit, while a false bit is the empty-argument case above. Empty input rejects. These cases establish both directions.
+
+**Key facts.** `BoolCircuit.CircuitEval.accFin_foldl`, `BoolCircuit.CircuitEval.absRun_u`.

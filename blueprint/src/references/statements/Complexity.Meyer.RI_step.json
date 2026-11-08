@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.Meyer.RI_step",
+ "key": "fdb06f0e751e8ad7",
+ "kind": "theorem",
+ "title": "Input Read After One Step",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean symbols, let $x$ be a finite Boolean input word, let $c$ be a configuration of $M$ on $x$, and let $d\\in\\mathbb{Z}$. Write $f(e)$ for the input symbol seen from $c$ at offset $e$, and let $\\rho$ record the input and work-tape symbols read in $c$. If $c$ is halted, the input read after one step at offset $d$ is $f(d)$. If $c$ is active, let $m$ be the input-head movement prescribed by $M$ from its state and reads $\\rho$. The read after one step is $f(d)$ when the input read in $\\rho$ is absent and $f(m)$ is also absent; in every other case it is $f(d+m)$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-tape Turing machine with Boolean symbols",
+  "$x$ is a finite Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$d\\in\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

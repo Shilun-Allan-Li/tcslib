@@ -9,106 +9,159 @@ Conditional Gaussian averaging of indicators preserves their means and approxima
 \lean{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\statementsource{mossel-neeman-gaussian-noise-stability}{pdf-b53c1a5aa27d-p010-b007}
 Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. The averaged indicator is the function $u_\theta:\mathbb R^n\to\mathbb R$; for a nonintegrable integrand the integral is assigned zero.
 \end{definition}
 
-\begin{lemma}[Averaged indicator as conditional probability]
+\begin{lemma}[Averaged indicator as Gaussian measure]
 \lean{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{4}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. If $A$ is measurable, then $u_\theta(x)=\gamma_n\{y:\cos\theta\,x+\sin\theta\,y\in A\}$ for every real $\theta$ and every $x$.
+Let $n\ge0$, let $A\subseteq\mathbb R^n$ be measurable, and let $\theta\in\mathbb R$ and
+$x\in\mathbb R^n$. Then
+\[
+u_\theta(x)=\gamma_n\bigl(\{y\in\mathbb R^n:\cos\theta\,x+\sin\theta\,y\in A\}\bigr),
+\]
+where $u_\theta(x)=\int 1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$ and $\gamma_n$
+is standard Gaussian measure.
 \end{lemma}
 
-\begin{lemma}[Measurable membership disagreement]
+\begin{lemma}[Measurability of membership disagreement]
 \lean{BooleanAnalysis.GaussianSpace.measurableSet_indicatorDisagreement}
 \leanok
 \difficulty{4}
-Let $\Omega,\Xi$ be measurable spaces, $A\subseteq\Xi$ a measurable set, and $f,g:\Omega\to\Xi$ measurable maps. Then $\{z:\neg(f(z)\in A\ \Longleftrightarrow\ g(z)\in A)\}$ is measurable.
+Let $\Omega$ and $\Xi$ be measurable spaces, let $A\subseteq\Xi$ be measurable, and let
+$f,g:\Omega\to\Xi$ be measurable maps. Then the set of $z\in\Omega$ for which exactly
+one of $f(z)$ and $g(z)$ belongs to $A$ is measurable.
 \end{lemma}
 
-\begin{lemma}[Exact indicator approximation discrepancy]
+\begin{lemma}[Indicator approximation and rotation sensitivity]
 \lean{BooleanAnalysis.GaussianSpace.integral_abs_averagedGaussianIndicator_sub_indicator}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure,BooleanAnalysis.GaussianSpace.measurableSet_indicatorDisagreement,BooleanAnalysis.GaussianSpace.rotationSensitivity,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure, BooleanAnalysis.GaussianSpace.measurableSet_indicatorDisagreement, BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. For independent $X,Y\sim\gamma_n$, put $R_A(\theta)=\Pr(1_A(X)\ne1_A(\cos\theta\,X+\sin\theta\,Y))$. If $A$ is measurable, then $\int|u_\theta(x)-1_A(x)|\,d\gamma_n(x)=R_A(\theta)$ for every real $\theta$.
+Let $n$ be a nonnegative integer, let $A\subseteq\mathbb R^n$ be measurable, and let
+$\theta\in\mathbb R$. Write $u_\theta(x)=\int
+1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$, where $\gamma_n$ is standard Gaussian
+measure on $\mathbb R^n$. Then
+\[\int\left|u_\theta(x)-1_A(x)\right|\,d\gamma_n(x)=\Pr\!\left(1_A(X)\ne 1_A(\cos\theta\,X+\sin\theta\,Y)\right),\]
+where $X,Y$ are independent standard Gaussian vectors in $\mathbb R^n$.
 \end{lemma}
 
-\begin{lemma}[Range of averaged Gaussian indicators]
+\begin{lemma}[Range of the averaged Gaussian indicator]
 \lean{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_mem_unitInterval}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{3}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. If $A$ is measurable, then $0\le u_\theta(x)\le1$ for every real $\theta$ and every $x$.
+Let $n\ge0$, let $A\subseteq\mathbb R^n$ be measurable, and let $\theta\in\mathbb R$ and
+$x\in\mathbb R^n$. For $u_\theta(x)=\int
+1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$, where $\gamma_n$ is standard Gaussian
+measure, one has $0\le u_\theta(x)\le1$.
 \end{lemma}
 
-\begin{lemma}[Integral approximation of Gaussian indicators]
+\begin{lemma}[Convergence of averaged Gaussian indicators]
 \lean{BooleanAnalysis.GaussianSpace.tendsto_integral_abs_averagedGaussianIndicator_sub_indicator}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.integral_abs_averagedGaussianIndicator_sub_indicator,BooleanAnalysis.GaussianSpace.rotationSensitivity_tendsto_zero,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.integral_abs_averagedGaussianIndicator_sub_indicator, BooleanAnalysis.GaussianSpace.rotationSensitivity_tendsto_zero, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{1}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. If $A$ is measurable, then $\int|u_\theta-1_A|\,d\gamma_n\to0$ as $\theta\to0$ through real values.
+Let $n\ge0$ and let $A\subseteq\mathbb R^n$ be measurable. If $u_\theta(x)=\int
+1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$, then $\int
+|u_\theta(x)-1_A(x)|\,d\gamma_n(x)\to0$ as the real parameter $\theta$ tends to $0$.
 \end{lemma}
 
-\begin{lemma}[Measurability of averaged indicators]
+\begin{lemma}[Measurability of the Gaussian indicator average]
 \lean{BooleanAnalysis.GaussianSpace.measurable_averagedGaussianIndicator}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{4}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. For measurable $A$ and every real $\theta$, the function $u_\theta$ is measurable.
+Let $n$ be a natural number, let $A\subseteq\mathbb R^n$ be measurable, and let
+$\theta\in\mathbb R$. The function $x\mapsto\int
+1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$ is measurable, where $\gamma_n$ is the
+standard Gaussian product measure on $\mathbb R^n$.
 \end{lemma}
 
-\begin{lemma}[Integrability of averaged indicators]
+\begin{lemma}[Integrability of averaged Gaussian indicators]
 \lean{BooleanAnalysis.GaussianSpace.integrable_averagedGaussianIndicator}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_mem_unitInterval,BooleanAnalysis.GaussianSpace.measurable_averagedGaussianIndicator,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_mem_unitInterval, BooleanAnalysis.GaussianSpace.measurable_averagedGaussianIndicator, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{3}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. For measurable $A$ and every real $\theta$, the function $u_\theta$ is $\gamma_n$-integrable.
+For every natural number $n$, every measurable set $A\subseteq\mathbb R^n$, and every
+real number $\theta$, the function $x\mapsto\int
+1_A(\cos(\theta)x+\sin(\theta)y)\,d\gamma_n(y)$ is integrable with respect to standard
+Gaussian measure $\gamma_n$ on $\mathbb R^n$.
 \end{lemma}
 
 \begin{lemma}[Gaussian mean preservation]
 \lean{BooleanAnalysis.GaussianSpace.integral_averagedGaussianIndicator}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure,BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure, BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. For measurable $A$ and every real $\theta$, $\int u_\theta\,d\gamma_n=\gamma_n(A)$.
+Let $n\ge0$, let $A\subseteq\mathbb R^n$ be measurable, and let $\theta\in\mathbb R$.
+For $x\in\mathbb R^n$, define
+\[
+u_\theta(x)=\int_{\mathbb R^n}1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y),
+\]
+where $\gamma_n$ is standard Gaussian measure. Then
+\[
+\int_{\mathbb R^n}u_\theta(x)\,d\gamma_n(x)=\gamma_n(A).
+\]
 \end{lemma}
 
 \begin{lemma}[Exchange of middle product coordinates]
 \lean{BooleanAnalysis.GaussianSpace.measurePreserving_middleTranspose}
 \leanok
 \difficulty{4}
-Let $E$ be a measurable space and $\mu$ an s-finite measure on $E$. The map $((a,b),(c,d))\mapsto((a,c),(b,d))$ preserves the measure $(\mu\otimes\mu)\otimes(\mu\otimes\mu)$.
+Let $E$ be a measurable space and let $\mu$ be an s-finite measure on $E$. The map
+$((a,b),(c,d))\mapsto((a,c),(b,d))$ preserves the measure
+$(\mu\otimes\mu)\otimes(\mu\otimes\mu)$ on $(E\times E)\times(E\times E)$.
 \end{lemma}
 
 \begin{lemma}[Independent paired Gaussian mixtures]
 \lean{BooleanAnalysis.GaussianSpace.measurePreserving_gaussianPairedEndpoint}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation,BooleanAnalysis.GaussianSpace.measurePreserving_middleTranspose,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation, BooleanAnalysis.GaussianSpace.measurePreserving_middleTranspose, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{4}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For any real $u$, if $X_1,X_2,Y_1,Y_2$ are independent with law $\gamma_n$, then $(\cos u\,X_1+\sin u\,Y_1,\cos u\,X_2+\sin u\,Y_2)$ has law $\gamma_n\otimes\gamma_n$.
+Let $n$ be a natural number and $u\in\mathbb R$. If $X_1,X_2,Y_1,Y_2$ are independent
+standard Gaussian vectors in $\mathbb R^n$, then $(\cos u\,X_1+\sin u\,Y_1,\cos
+u\,X_2+\sin u\,Y_2)$ has the product of two standard Gaussian laws on $\mathbb R^n$.
 \end{lemma}
 
 \begin{lemma}[Difference of finite set measures]
 \lean{BooleanAnalysis.GaussianSpace.abs_measureReal_sub_le_symmDiff}
 \leanok
 \difficulty{4}
-Let $\mu$ be a finite measure on a measurable space $E$, and let $C,D\subseteq E$ be arbitrary sets. Then $|\mu(C)-\mu(D)|\le\mu(C\mathbin{\triangle} D)$, where all values are viewed as finite real numbers.
+Let $\mu$ be a finite measure on a measurable space $E$, and let $C,D\subseteq E$. Then
+$|\mu(C)-\mu(D)|\le\mu(C\mathbin{\triangle}D)$, where $C\mathbin{\triangle}D$ is their
+symmetric difference and the measures are viewed as real numbers.
 \end{lemma}
 
-\begin{lemma}[Coupled bound for two averaged values]
+\begin{lemma}[Coupled bound for averaged indicators]
 \lean{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_pair_diff_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_measureReal_sub_le_symmDiff,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure,BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.abs_measureReal_sub_le_symmDiff, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_eq_real_measure, BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. Let $A$ be measurable, $u,v\in\mathbb R$, and $x,x\prime\in\mathbb R^n$. For independent $Y,Y\prime\sim\gamma_n$, $|u_u(x)-u_u(\cos v\,x+\sin v\,x\prime)|\le\Pr(1_A(\cos u\,x+\sin u\,Y)\ne1_A(\cos u(\cos v\,x+\sin v\,x\prime)+\sin u(\cos v\,Y+\sin v\,Y\prime)))$.
+Let $n\ge0$, let $A\subseteq\mathbb R^n$ be measurable, and take $u,v\in\mathbb R$ and
+$x,x'\in\mathbb R^n$. If $Y,Y'$ are independent standard Gaussian vectors in $\mathbb
+R^n$, then
+\[
+|u_u(x)-u_u(\cos v\,x+\sin v\,x')|
+\le \Pr\!\left(1_A(\cos u\,x+\sin u\,Y)\ne 1_A\bigl(\cos u(\cos v\,x+\sin v\,x')+\sin
+u(\cos v\,Y+\sin v\,Y')\bigr)\right),
+\]
+where $u_u(w)=\int 1_A(\cos u\,w+\sin u\,y)\,d\gamma_n(y)$.
 \end{lemma}
 
 \begin{lemma}[Averaging contracts rotation variation]
 \lean{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_rotation_variation_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_pair_diff_le,BooleanAnalysis.GaussianSpace.measurableSet_indicatorDisagreement,BooleanAnalysis.GaussianSpace.measurePreserving_gaussianPairedEndpoint,BooleanAnalysis.GaussianSpace.rotationSensitivity,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_pair_diff_le, BooleanAnalysis.GaussianSpace.measurableSet_indicatorDisagreement, BooleanAnalysis.GaussianSpace.measurePreserving_gaussianPairedEndpoint, BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For $A\subseteq\mathbb R^n$ and $\theta\in\mathbb R$, put $u_\theta(x)=\int1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$. For independent $X,Y\sim\gamma_n$, put $R_A(\theta)=\Pr(1_A(X)\ne1_A(\cos\theta\,X+\sin\theta\,Y))$. If $A$ is measurable, then for every $u,v\in\mathbb R$, $\mathbb E_{X,Y}|u_u(X)-u_u(\cos v\,X+\sin v\,Y)|\le R_A(v)$.
+Let $n\ge0$, let $A\subseteq\mathbb R^n$ be measurable, and let $u,v\in\mathbb R$. For
+independent standard Gaussian vectors $G,G'\in\mathbb R^n$, define $u_u(x)=\int 1_A(\cos
+u\,x+\sin u\,y)\,d\gamma_n(y)$ and let $R_A(v)=\Pr(1_A(G)\ne1_A(\cos v\,G+\sin v\,G'))$.
+Then
+\[
+\mathbb E\left[|u_u(G)-u_u(\cos v\,G+\sin v\,G')|\right]\le R_A(v).
+\]
 \end{lemma}

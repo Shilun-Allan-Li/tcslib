@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.loopBody_stop",
+ "key": "8418032217ce931b",
+ "kind": "lemma",
+ "title": "Stopping at the Unreleased Anchor",
+ "statement": "Let $B$ be a Boolean finite Turing machine, let $a$ be one of its states, and fix an input word $x$. If $c$ is a configuration of $B$ on $x$ in state $a$, then one step of the stop wrapper from the embedding of $c$ with release bit false and any optional flag $g$ equals the embedding of the same configuration with its state removed, release bit false, and flag set to false.",
+ "hypotheses_covered": [
+  "$B$ is a Boolean finite Turing machine",
+  "$a$ is a state of $B$",
+  "$x$ is an input word",
+  "$c$ is a configuration of $B$ on $x$",
+  "the state of $c$ is $a$",
+  "$g$ is an optional flag bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of the loop body whose control state is the anchor and whose\nrelease bit is clear. One step of the stop wrapper from the embedding of $c$ halts the\nwrapper, writes $\\mathrm{false}$ on the flag cell, and changes no other component of the\nembedded configuration."
+}

@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Catalog.lean :: Turing.FinTM.f2_loopHost_prepare -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Preparing the Loop Host
+
+**Claim.** If the fuel machine computes the binary expansion of $R(|x|)$ in time $T(|x|)$, then there is a halted configuration $c$ with that output and a time $t\leq 5T(|x|)+7$ at which the loop host reaches its ready configuration built from $c$; every work-tape head of $c$ lies between $-T(|x|)$ and $T(|x|)$.
+
+**Proof.** Choose the first halting time $u$ of the fuel machine on $x$. The first-halt lemma gives $0<u\leq T(|x|)$, a live run before $u$, and equality of the configurations at times $u$ and $T(|x|)$. Let $c$ be the configuration at time $u$. It is halted and has the required output. The head-displacement bound says that after $u$ steps each work head lies within distance $u$ of its initial position, which is zero, hence within the claimed interval. The host-initialization and fuel-initialization identities, together with the fuel-source run simulation and capture lemma, show that after $u$ steps the host holds the captured fuel configuration for $c$. Its captured form is the phase-$0$ frame with the output word on the payload tape. The fuel-setup result then advances the host by $3|c.output|+4$ steps to phase $4$, with that output transferred to the counter tape and the relevant heads at zero. The input-rewind result supplies a further $v\leq c.inputPos+2$ steps to reach the ready configuration. The binary-output width bound gives $|c.output|\leq T(|x|)$, and the input-head displacement bound gives $c.inputPos\leq 1+u$. Thus the combined time $t=u+3|c.output|+4+v$ satisfies $t\leq 5T(|x|)+7$. Composing the three run segments uses the run-addition law; the resulting configuration is exactly the ready frame built from $c.
+
+**Key facts.** `Turing.FinTM.f2_loop_first_halt`, `Turing.FinTM.f2_head_steps`, `Turing.FinTM.f2_loopFuelCaptured_frame`, `Turing.FinTM.f2_loopFuel_init`, `Turing.FinTM.f2_loopFuel_run`, `Turing.FinTM.f2_loopHost_fuel_capture`, `Turing.FinTM.f2_loopHost_init`, `Turing.FinTM.f2_loopHost_fuel_setup`, `Turing.FinTM.f2_loopHost_input_rewind`, `Turing.FinTM.f2_loop_fuel_width`, `Turing.FinTM.f2_loop_input_run_le`, `Turing.MultiTapeTM.runFrom_add`.

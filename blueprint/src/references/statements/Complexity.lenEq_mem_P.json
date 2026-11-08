@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.lenEq_mem_P",
+ "key": "1fd1ddfd26adefeb",
+ "kind": "theorem",
+ "title": "Equal-length decoded pairs form a polynomial-time language",
+ "statement": "Let $z$ be a finite binary string, and let its two total decoded components be the components returned by the aligned pair parser, or both the empty string if parsing fails. The language of strings whose decoded components have equal length belongs to $\\mathsf{P}$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\pi_1$ and $\\pi_2$ be the total projections on bit strings, which send a bit string of the form $\\langle a,b\\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and to $b$ respectively, and send every other bit string to the empty word. Then the language $\\{z \\in \\{0,1\\}^* : |\\pi_1(z)| = |\\pi_2(z)|\\}$ belongs to $\\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time."
+}

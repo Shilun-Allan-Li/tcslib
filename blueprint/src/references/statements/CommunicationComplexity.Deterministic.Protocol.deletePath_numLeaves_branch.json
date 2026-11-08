@@ -1,0 +1,20 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_branch",
+ "key": "a5d5345b0111c981",
+ "kind": "lemma",
+ "title": "Leaf count after path deletion",
+ "statement": "Let $s$ be a protocol with a subprotocol path into $r$, let $P$ be a family of protocols indexed by bits, and let $b$ be a bit such that $P(b)=r$. Let $N$ be a constructor on protocol families, and let $Q$ assign a protocol family to each protocol, with $Q(q_c)(b)=q_c$ and $Q(q_c)(\\neg b)=P(\\neg b)$ for every $q_c$. Suppose the result $q$ of the following case distinction is specified by $q=P(\\neg b)$ if deleting the path from $r$ to $s$ returns nothing, and by $q=N(Q(q_c))$ if deletion returns $q_c$. Assume $N$ has leaf count equal to the sum of the leaf counts of its two children, and that whenever deletion returns some protocol $q'$, its leaf count is $\\ell(r)-\\ell(s)$. Then $\\ell(q)=\\ell(N(P))-\\ell(s)$, where subtraction is truncated subtraction on the natural numbers.",
+ "hypotheses_covered": [
+  "A subprotocol path from $s$ to $r$",
+  "$P(b)=r$",
+  "The deletion case distinction yields $q$ as stated",
+  "For every family $Q$, $\\ell(N(Q))=\\ell(Q(\\mathrm{false}))+\\ell(Q(\\mathrm{true}))$",
+  "For every $q_c$, $Q(q_c)(b)=q_c$",
+  "For every $q_c$, $Q(q_c)(\\neg b)=P(\\neg b)$",
+  "For every $q'$, if deletion returns $q'$, then $\\ell(q')=\\ell(r)-\\ell(s)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $P$ be a family of\nchildren with $P(b) = r$, and let $N$ be a node constructor whose leaf count is the sum of\nits two children's leaf counts. Let $Q$ be a rebuilding map with $Q(q_c)(b) = q_c$ and\n$Q(q_c)(\\neg b) = P(\\neg b)$, and suppose $q$ is the result of deleting along the path\ninside branch $b$: $q = P(\\neg b)$ if the deletion of $h_s$ returns nothing, and\n$q = N(Q(q_c))$ if it returns $q_c$. Assume (inductively) that whenever the deletion of\n$h_s$ returns some $q'$ one has $\\ell(q') = \\ell(r) - \\ell(s)$. Then\n\\[\n  \\ell(q) = \\ell(N(P)) - \\ell(s) .\n\\]"
+}

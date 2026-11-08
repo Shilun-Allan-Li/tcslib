@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.taut_verdict",
+ "key": "ab487c2089752233",
+ "kind": "lemma",
+ "title": "Verdict Transition",
+ "statement": "Let $x$ be a binary input, let $b$ be a bit, let $i$ be a natural number with $i\\le |x|$, let $u$ be a binary word, and let $h$ be an integer. One step from the verifier configuration in verdict state $b$, with $i$ input bits consumed, work tape containing $u$, work head at $h$, and empty output, halts and produces the one-bit output $b$, leaving the other configuration components unchanged.",
+ "hypotheses_covered": [
+  "$x$ is a binary input",
+  "$b$ is a bit",
+  "$i$ is a natural number with $i\\le |x|$",
+  "$u$ is a binary word",
+  "$h$ is an integer",
+  "initial verdict state carries $b$ and output is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input, $i \\le |x|$, $u$ a word, $h$ an integer, and $b$ a bit. From the\nnon-tautology verifier's configuration in the verdict state with bit $b$, $i$ input\nbits consumed, work word $u$, work head $h$, and empty output, one step halts with\noutput exactly the single bit $b$, all other components unchanged."
+}

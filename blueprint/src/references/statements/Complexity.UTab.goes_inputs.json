@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.UTab.goes_inputs",
+ "key": "10dd6833c2c7eb9a",
+ "kind": "theorem",
+ "title": "Input phase of the universal simulation",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean input and $k$ work tapes, let $x$ be a finite Boolean word, let $n,T,t$ be natural numbers, and let $z$ be a finite Boolean word, with $t\\le T$. Let $e$ be a register record satisfying $e.nc=n$, $e.z=|z|$, $e.i=t\\,\\mathrm{Str}(M,n,z,T)+k(2T+1)$, $e.q=0$ when $t=0$ and $e.q=e.i-\\mathrm{Str}(M,n,z,T)$ otherwise, $e.lb=t\\,\\mathrm{Str}(M,n,z,T)$, and $e.ll=e.pa=e.pb=e.tmp=0$. For every natural input position $ps$, the counter program started at the input phase with label determined by $t=0$, registers $e.f$, input position $ps$, and any output word reaches the snapshot phase with label determined by $t=0$, registers obtained from $e.f$ by replacing $e.i$ by $e.i+|z|+n+2$ and $e.q$ by $0$ when $t=0$ or by $e.i+|z|+n+2-\\mathrm{Str}(M,n,z,T)$ otherwise, and unchanged input position $ps$. During this computation it appends the encoded instruction bits for each index in the interval from $e.i$ up to but excluding $e.i+|z|+n+2$, in order, and uses at most $(|z|+n+2)(L_{\\max}(M)+20)$ steps.",
+ "hypotheses_covered": [
+  "$t\\le T$",
+  "$e.nc=n$",
+  "$e.z=|z|$",
+  "$e.i=t\\,\\mathrm{Str}(M,n,z,T)+k(2T+1)$",
+  "$e.q=0$ if $t=0$, and $e.q=e.i-\\mathrm{Str}(M,n,z,T)$ otherwise",
+  "$e.lb=t\\,\\mathrm{Str}(M,n,z,T)$",
+  "$e.ll=0$",
+  "$e.pa=0$",
+  "$e.pb=0$",
+  "$e.tmp=0",
+  "$ps\\in\\mathbb{N}$ is arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

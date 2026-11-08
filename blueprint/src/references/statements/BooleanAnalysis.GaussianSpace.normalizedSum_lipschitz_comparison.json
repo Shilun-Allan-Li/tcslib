@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.normalizedSum_lipschitz_comparison",
+ "key": "4e7e1dbb72235631",
+ "kind": "lemma",
+ "title": "Gaussian comparison for normalized sums",
+ "statement": "There is a constant $K>0$ such that the following holds. Let $n$ be a positive integer, let $(\\Omega,\\mu)$ be a probability space, and let $X_1,\\ldots,X_n$ be independent real random variables on it, each satisfying the fourth-order invariance moment conditions: finite fourth absolute moment, mean zero, second moment one, third moment zero, and fourth moment at most $9$. For any $c\\ge 0$ and any $c$-Lipschitz function $\\psi:\\mathbb R\\to\\mathbb R$, the difference between the expectation of $\\psi(n^{-1/2}\\sum_{i=1}^n X_i)$ and its expectation under the standard Gaussian measure has absolute value at most $Kc n^{-1/4}$.",
+ "hypotheses_covered": [
+  "There exists a positive constant $K$",
+  "$n$ is a positive integer",
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$X_1,\\ldots,X_n$ are independent",
+  "Each $X_i$ satisfies the fourth-order invariance moment conditions",
+  "$c$ is nonnegative",
+  "$\\psi$ is $c$-Lipschitz"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There is a universal $K>0$ such that, for every $n>0$, probability space $(\\Omega,\\mu)$, and independent real random variables $X_1,\\ldots,X_n$ with finite fourth moments, $\\mathbb E X_i=\\mathbb E X_i^3=0$, $\\mathbb E X_i^2=1$, and $\\mathbb E X_i^4\\le9$, every $c$-Lipschitz $\\psi:\\mathbb R\\to\\mathbb R$ with $c\\ge0$ satisfies $|\\mathbb E\\psi(n^{-1/2}\\sum_iX_i)-\\mathbb E\\psi(Z)|\\le Kc\\,n^{-1/4}$, where $Z$ is standard Gaussian."
+}

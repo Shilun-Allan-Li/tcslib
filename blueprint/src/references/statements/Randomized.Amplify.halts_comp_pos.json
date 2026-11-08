@@ -1,0 +1,23 @@
+{
+ "lean_name": "Randomized.Amplify.halts_comp_pos",
+ "key": "33e0cd9413ea5fac",
+ "kind": "theorem",
+ "title": "Halting composition with a position bound",
+ "statement": "Let $N$ and $M$ be nondeterministic Turing machines with Boolean symbols, respectively with $K$ and $K'$ work tapes and state sets $S$ and $S'$, on a fixed Boolean input. Let $\\varphi$ map configurations of $N$ to configurations of $M$. Suppose that whenever a configuration $c$ of $N$ is nonhalting, one step of $M$ from $\\varphi(c)$ under any choice bit equals the image under $\\varphi$ of the corresponding step of $N$. Suppose there are natural numbers $m,B$ such that, from the image of any halting configuration $c$ whose input-head position is at most $B$, every choice word of length $m$ leads $M$ to a halting configuration. Then, for every $n\\in\\mathbb{N}$ and configuration $c$ of $N$ whose input-head position plus $n$ is at most $B$, if every choice word of length $n$ leads $N$ from $c$ to a halting configuration, every choice word of length $n+m$ leads $M$ from $\\varphi(c)$ to a halting configuration.",
+ "hypotheses_covered": [
+  "$K,K'\\in\\mathbb{N}$ and $S,S'$ are state sets",
+  "$N$ and $M$ are nondeterministic Turing machines with Boolean symbols and respectively $K$ and $K'$ work tapes",
+  "$x$ is a fixed finite Boolean input",
+  "$\\varphi$ maps configurations of $N$ on $x$ to configurations of $M$ on $x$",
+  "For every nonhalting configuration $c$ of $N$ and choice bit $b$, $M$'s step from $\\varphi(c)$ under $b$ equals $\\varphi$ of $N$'s step from $c$ under $b$",
+  "There exist $m,B\\in\\mathbb{N}$ such that from the image of every halting configuration with input-head position at most $B$, every choice word of length $m$ leads $M$ to a halting configuration",
+  "$n\\in\\mathbb{N}$",
+  "The input-head position of $c$ plus $n$ is at most $B$",
+  "Every choice word of length $n$ leads $N$ from $c$ to a halting configuration",
+  "The choice word in the conclusion has length $n+m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

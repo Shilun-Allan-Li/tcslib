@@ -1,0 +1,22 @@
+{
+ "lean_name": "BoolCircuit.AdjWalk.uLoop",
+ "key": "f97193f561e0ba95",
+ "kind": "lemma",
+ "title": "Walk behavior in the unary loop",
+ "statement": "Let $C$ be a family of directed acyclic circuits, let $lm$ be a Boolean, let $n,i,B,V,U$ be natural numbers, and let $o$ be a Boolean oracle on the five query indices and bit strings. Suppose $V\text{,}U\\le B$. For every $d,W,k$ with $W+d=U$, $k\\le i$, and $k+d+1\\le B$, start the walk on the encoding of $1^n$ paired with the binary expansion of $i$, in state $uL$, with register values $(k,V,U,W)$ and no answer recorded. If $k\\le i<k+d+1$, the walk halts with answer $lm$ or the $(i-k)$-th bit of the word consisting of $d$ ones followed by zero, and every earlier configuration has all register values at most $B$. If $k+d+1\\le i$, the walk reaches a configuration with state $aN$, register values $(k+d+1,V,U,U)$, and no answer recorded; every configuration before reaching it has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$C$ is a circuit family",
+  "$lm$ is a Boolean",
+  "$n,i,B,V,U$ are natural numbers",
+  "$o$ is a Boolean oracle on five query indices and bit strings",
+  "$V\\le B$",
+  "$U\\le B$",
+  "for all natural numbers $d,W,k$, $W+d=U$",
+  "$k\\le i$",
+  "$k+d+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.catalogPoly_start",
+ "key": "7da968a1aea7cab5",
+ "kind": "lemma",
+ "title": "Startup of the generator",
+ "statement": "For natural numbers $c,C$ and any Boolean input word $x$, after exactly $2(|x|+1)$ steps from the generator's initial configuration on $x$, the machine is in the outermost loop state. Every work tape contains the unary word of length $|x|+1$, every work head is at position $0$, and the output is empty.",
+ "hypotheses_covered": [
+  "$c,C$ are natural numbers",
+  "$x$ is a Boolean input word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, running the generator for exactly $2(\\abs{x}+1)$ steps\nfrom its initial configuration yields the configuration in which every work\ntape holds the unary word of length $\\abs{x}+1$, the control is in the\noutermost loop state, all heads are at displacement $0$, and the output is\nempty; the extra unary cell makes empty input need no special case."
+}

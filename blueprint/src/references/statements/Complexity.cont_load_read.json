@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.cont_load_read",
+ "key": "04bd9ccc608c31a7",
+ "kind": "lemma",
+ "title": "Input symbol at a specified position",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $y$ be a binary input, let $q\\in\\mathrm{Fin}(6)$, let $x,u$ be binary words, and let $i\\in\\mathbb{N}$ satisfy $i\\leq |y|$. For any integer head positions $a,b$, the loader configuration with physical input head at position $i+1$ reads the optional symbol $y[i]$ (which is absent when $i=|y|$).",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$y$ is a binary input",
+  "$q\\in\\mathrm{Fin}(6)$",
+  "$x,u$ are binary words",
+  "$i\\in\\mathbb{N}$ and $i\\leq |y|$",
+  "$a,b\\in\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine and consider a loader configuration over a physical input $y$ whose input head is at position $i + 1$ with $i \\le |y|$. The symbol read from the physical input is the optional bit of $y$ at index $i$, which is blank exactly at the right boundary."
+}

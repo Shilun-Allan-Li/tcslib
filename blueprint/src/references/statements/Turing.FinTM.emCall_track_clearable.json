@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.emCall_track_clearable",
+ "key": "ab6e5501a2303a36",
+ "kind": "lemma",
+ "title": "The interval cleaner's time bound",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $x,w$ be Boolean words, let $p$ be one of the $|w|+2$ input-head positions, let $T\\in\\mathbb{N}$, and let $i$ be a work-tape index of $M$. There is an integer time $t$ with $0<t\\le 6T+7$ such that the three-tape cleaner, started on input $w$ at position $p$ in state $0$, has as its data tape the contents of tape $i$ of $M$ after $T$ steps on $x$, as its marker tape the closed span from the leftmost to the rightmost head position visited by tape $i$ through time $T$, and as its origin tape the marker at zero, with all three heads at tape $i$'s time-$T$ head position, reaches state $3$ with all three tapes blank and all three heads at the origin. Its output is empty.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,w$ are Boolean lists",
+  "$p\\in\\mathrm{Fin}(|w|+2)$",
+  "$T$ is a natural number",
+  "$i$ is a work tape of $M$",
+  "$t$ is positive",
+  "$t\\le 6T+7$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine, $x$ an input, $T$ a time, and $i$ a work tape. Then there is a\npositive time $t \\le 6T + 7$ after which the interval cleaner, started on the actual\ntape $i$ of the run of $M$ at time $T$, the closed-span marker of the visited interval,\nand the origin marker, with heads at the actual head position, reaches its return state\nwith all three tapes blank and all heads at the origin."
+}

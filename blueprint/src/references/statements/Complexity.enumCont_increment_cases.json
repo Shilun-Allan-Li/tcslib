@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.enumCont_increment_cases",
+ "key": "46c3fa00e16d14b4",
+ "kind": "lemma",
+ "title": "Cases for the increment output",
+ "statement": "For every Boolean word $s$, let $v$ be the fixed-width increment of $s$, with overflow represented by the empty word. Either $v$ is empty and the increment operation with default value $s$ returns $s$, or $v$ is nonempty, has the same length as $s$, and that defaulted operation returns $v$.",
+ "hypotheses_covered": [
+  "$s$ is a Boolean word",
+  "$v$ is defined as the fixed-width increment of $s$, defaulting to the empty word on overflow"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every boolean word $s$, exactly one of the following holds for the\nfixed-width increment's output word: it is empty (overflow) and the stalled step\nleaves $s$ unchanged; or it is nonempty, has length exactly $|s|$, and the\nstalled step equals it."
+}

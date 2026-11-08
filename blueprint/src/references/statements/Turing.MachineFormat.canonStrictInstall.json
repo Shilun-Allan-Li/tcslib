@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.MachineFormat.canonStrictInstall",
+ "key": "f89ebd097dd3c948",
+ "kind": "lemma",
+ "title": "Strict installation of a computed function",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet computing a function $f$ in time $T$. Then there exist a finite Boolean Turing machine $C$, two states of $C$ called entry and exit, and a natural number $a$, with at least one work tape, such that for every pair of Boolean words $x$ and $\\mathrm{arg}$, the machine started on input $x$ in the entry state, with $\\mathrm{arg}$ on tape $0$ and all other work tapes empty, reaches after some positive number $t$ of steps at most $a\\bigl(T(|\\mathrm{arg}|)+|\\mathrm{arg}|+|f(\\mathrm{arg})|+1\\bigr)$ the configuration with state exit, $f(\\mathrm{arg})$ on tape $0$, and all other work tapes empty. At every earlier time $u<t$, its state is different from exit.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$f$ is a function from Boolean words to Boolean words",
+  "$T$ is a function from natural numbers to natural numbers",
+  "$M$ computes $f$ in time $T$",
+  "The machine $C$ has at least one work tape",
+  "$x$ and $\\mathrm{arg}$ are arbitrary Boolean words",
+  "There is a natural number $t$ bounded by $a(T(|\\mathrm{arg}|)+|\\mathrm{arg}|+|f(\\mathrm{arg})|+1)$",
+  "$t$ is positive",
+  "The state is not exit at every time $u<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

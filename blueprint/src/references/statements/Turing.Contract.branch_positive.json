@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.Contract.branch_positive",
+ "key": "289d3f087c7692cc",
+ "kind": "theorem",
+ "title": "Positivity of a branched contract",
+ "statement": "Let $M_0,M_1,M_2$ be machines, with $C_0$ a contract for $M_0$ from entry state $entry_0$ to the two exits $e_1,e_2$, where $e_1\\ne e_2$, and let $C_1,C_2$ be contracts for $M_1,M_2$. Let $l_1,l_2$ map data for $C_0$ to data for $C_1,C_2$, respectively. Suppose that whenever an admissible $C_0$ endpoint has state $e_1$ (respectively, $e_2$), the endpoint with its state replaced by the entry state of $M_1$ (respectively, $M_2$) satisfies the corresponding branch contract's precondition. Then the branched contract has strictly positive assigned time for every datum and starting configuration satisfying its entry-state and precondition conditions.",
+ "hypotheses_covered": [
+  "$e_1\\ne e_2$",
+  "$C_0$ is a contract with entry $entry_0$ and exits $e_1,e_2$",
+  "$C_1,C_2$ are contracts for $M_1,M_2$",
+  "Maps $l_1,l_2$ send $C_0$ data to the respective branch data",
+  "At an admissible endpoint in state $e_1$, the renamed endpoint satisfies the linked $C_1$ precondition",
+  "At an admissible endpoint in state $e_2$, the renamed endpoint satisfies the linked $C_2$ precondition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C_0$ be a contract for a machine with entry state $\\mathrm{entry}_0$ and exits\n$e_1,e_2$, where $e_1\\ne e_2$. Let $C_1,C_2$ be contracts for the two branch machines,\nand let $l_1,l_2$ map data for $C_0$ to data for those contracts. Suppose that whenever\n$C_0$ ends in $e_1$, the corresponding state-renamed endpoint satisfies the $C_1$\nprecondition, and whenever it ends in $e_2$, the corresponding endpoint satisfies the\n$C_2$ precondition. Then the branched contract has strictly positive running time on\nevery datum and starting configuration satisfying its entry-state and precondition\nhypotheses."
+}

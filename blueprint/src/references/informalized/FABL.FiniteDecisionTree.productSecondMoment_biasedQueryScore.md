@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter08/DecisionTreeInequalities.lean :: FABL.FiniteDecisionTree.productSecondMoment_biasedQueryScore -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Second moment of the biased query score
+
+**Claim.** For a decision tree on sign inputs, the second moment of its biased queried-coordinate score equals the sum of the structural query probabilities of all coordinates.
+
+**Proof.** Induct on the tree. A leaf has query score zero and structural query probabilities all zero, so the identity holds. At a query of coordinate $k$, the query score is the standardized sign at $k$ plus the child’s query score, with the child selected by the value of coordinate $k$ (\texttt{biasedQueryScore_query}). Square this expression and apply the diagonal-section identity to average first over the value $\omega$ at $k$ and then over the remaining product input (\texttt{productMean_diagonal_section}); the squared integrand is invariant under resetting coordinate $k$ because the child cannot query it (\texttt{biasedQueryScore_replaceCoordinate_of_not_mem}). For each fixed $\omega$, the cross term vanishes because the child query score has mean zero (\texttt{productMean_biasedQueryScore}). The induction hypothesis evaluates the child’s second moment as the sum of its structural query probabilities. Averaging over $\omega$, the squared standardized sign contributes $1$ (\texttt{pmfExpectation_biasedStandardizedSign_sq}), while expectation distributes over the sum (\texttt{pmfExpectation_add_fun}, \texttt{pmfExpectation_sum}). In the resulting coordinate sum, the root contributes $1$ at $k$, and each other coordinate contributes the mean of its child structural query probability. The child probability at $k$ is zero because $k$ is no longer available (\texttt{structuralQueryProbability_eq_zero_of_not_mem}); thus these terms combine exactly into the structural query probabilities for the whole tree.
+
+**Key facts.** `FABL.FiniteDecisionTree.biasedQueryScore_query`, `FABL.FiniteDecisionTree.biasedQueryScore_replaceCoordinate_of_not_mem`, `FABL.FiniteDecisionTree.productMean_diagonal_section`, `FABL.FiniteDecisionTree.productMean_biasedQueryScore`, `FABL.pmfExpectation_biasedStandardizedSign_sq`, `FABL.pmfExpectation_add_fun`, `FABL.pmfExpectation_sum`, `FABL.FiniteDecisionTree.structuralQueryProbability_eq_zero_of_not_mem`.

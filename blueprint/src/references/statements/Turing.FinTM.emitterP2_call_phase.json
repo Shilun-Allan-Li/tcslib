@@ -1,0 +1,31 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_call_phase",
+ "key": "aeddcc9d6c20e1fe",
+ "kind": "lemma",
+ "title": "Simulation of an embedded call phase",
+ "statement": "Let $S,H$ be state types, let $x$ be a Boolean input word, and let a source machine with $k$ work tapes and a host machine with $l$ work tapes both use the Boolean alphabet. Let $\\iota$ inject the source tape indices into the host tape indices, and let $e:S\\to H$ be an injective state map. Choose host states $e_0$ and $a_0$ with $e_0\\ne a_0$, and assume $e(q)\\ne a_0$ for every source state $q$. Let $q_e,q_x$ be source states. Suppose the host transition at $e_0$, for every input and work-tape reading, is the source transition from $q_e$ with its state renamed by $e$; and at each state $e(q)$ with $q\\ne q_x$, the host transition agrees in the same way with the source transition from $q$. For any host tape contents and head positions, any prefix output list, source configurations $c,d$ with $c$ in state $q_e$, and any $t>0$, if the source run avoids $q_x$ at every time strictly between $0$ and $t$ and reaches $d$ at time $t$, then the host run from the configuration formed by embedding $c$ into the host tapes, preserving the other host tapes and prefixing the output by the given list, with state set to $e_0$, reaches the correspondingly embedded configuration from $d$ with state renamed by $e$ at time $t$. The host run has no configuration in state $a_0$ at any time from $0$ through $t$.",
+ "hypotheses_covered": [
+  "k and l are natural numbers",
+  "S and H are state types",
+  "x is a Boolean input word",
+  "src is a k-work-tape Boolean-alphabet machine with states S",
+  "host is an l-work-tape Boolean-alphabet machine with states H",
+  "index injects source tape indices into host tape indices",
+  "emb injects S into H",
+  "enter and anchor are host states and enter differs from anchor",
+  "every embedded source state differs from anchor",
+  "entry and exit are source states",
+  "host transitions at enter agree for all input and work readings with the embedded source transition at entry",
+  "host transitions at embedded q agree for every q other than exit and all input and work readings",
+  "tapes, heads, and output prefix are arbitrary host tape data",
+  "c and d are source configurations on input x",
+  "c has state entry",
+  "t is positive",
+  "the source run avoids exit at every time strictly between 0 and t",
+  "the source run reaches d at time t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

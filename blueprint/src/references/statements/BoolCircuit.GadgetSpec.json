@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.GadgetSpec",
+ "key": "14b6085de0bc47aa",
+ "kind": "structure",
+ "title": "Specification of a gate gadget",
+ "statement": "Let $n,c,\text{cost}$ be natural numbers, let $P$ be a property of gates, let $g$ be a gate, let $gs$ be a list of gates, and let $r=(r_1,r_2)$ be a list of gates together with a natural-number vertex. A gadget specification requires that $r_1$ extend $gs$ by appending some list; that $r_1$ be acyclic on $n$ inputs; that $r_2<n+|r_1|$; and that, on every Boolean input, the value at $r_2$ in $r_1$ equal the evaluation of $g$ on the values obtained by running $gs$ on that input. It also requires $|r_1|\u0004|gs|+\text{cost}$, depth at $r_2$ at most $c$ plus the maximum depth in $gs$ of the arguments of $g$ (with empty maximum taken as $0$), and that every gate appended to $gs$ satisfy $P$.",
+ "hypotheses_covered": [
+  "$r_1$ is $gs$ followed by an extension list",
+  "$r_1$ is acyclic on $n$ inputs",
+  "$r_2<n+|r_1|$",
+  "for every input, the specified vertex value equals evaluation of $g$ on the outputs of $gs$",
+  "$|r_1|\u0004|gs|+\\text{cost}$",
+  "depth bound by $c$ plus maximum argument depth, with empty maximum $0$",
+  "every appended gate satisfies $P$"
+ ],
+ "confidence": "low",
+ "caveat": "The length inequality is rendered as it appears in the supplied formal statement, but the relation symbol is not legible in the provided payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

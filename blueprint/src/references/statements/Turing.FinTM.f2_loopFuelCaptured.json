@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopFuelCaptured",
+ "key": "646a3210e8c7f79c",
+ "kind": "def",
+ "title": "Captured loop fuel configuration",
+ "statement": "For Boolean machines $body$ and $F$, an input string $x$, and a configuration $c$ of $F$ on $x$, define a configuration of $body.k+1+(1+F.k)+1$ work tapes whose state space is $F.State\\oplus((\\{\\mathrm{false},\\mathrm{true}\\}\\times(body.State\\times\\{\\mathrm{false},\\mathrm{true}\\}))\\oplus Fin(14))$. It is obtained by capturing the loop-fuel configuration associated with $c$, using the left state summand and the element $0$ of the final $Fin(14)$ summand.",
+ "hypotheses_covered": [
+  "Boolean machines $body$ and $F$",
+  "Boolean input string $x$",
+  "Configuration $c$ of $F$ on $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the capture operation or the loop-fuel configuration, so their detailed contents cannot be specified faithfully.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

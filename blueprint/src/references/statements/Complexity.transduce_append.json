@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.transduce_append",
+ "key": "e5b4cf0b229ff7d1",
+ "kind": "theorem",
+ "title": "Transducer output on concatenated strings",
+ "statement": "Let $\\sigma$ be a set, let $\\delta:\\sigma\\times\\{0,1\\}\\to\\sigma$ be a state transition function, let $o:\\sigma\\times\\{0,1\\}\\to\\{0,1\\}\\cup\\{\\bot\\}$ be an emission function, and let $q\\in\\sigma$. For all binary strings $u,v$, the output produced from $uv$ starting in $q$ is the output produced from $u$ starting in $q$, followed by the output produced from $v$ starting in the state reached after processing $u$; that state is obtained by folding $\\delta$ over $u$ from initial state $q$.",
+ "hypotheses_covered": [
+  "$\\sigma$ is a set",
+  "$\\delta:\\sigma\\times\\{0,1\\}\\to\\sigma$",
+  "$o:\\sigma\\times\\{0,1\\}\\to\\{0,1\\}\\cup\\{\\bot\\}$",
+  "$q\\in\\sigma$",
+  "$u,v$ are binary strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\sigma$ be a set of states, $\\delta : \\sigma \\times \\{0,1\\} \\to \\sigma$ a transition\nfunction and $o : \\sigma \\times \\{0,1\\} \\to \\{0,1\\} \\cup \\{\\bot\\}$ an emission function, and\nwrite $\\tau_{\\delta,o}(q, w)$ for the output of the one-pass transducer that reads $w$ from\nleft to right starting in state $q$, where each bit $b$ read in state $p$ emits the bit\n$o(p,b)$ (or nothing if $o(p,b) = \\bot$) and moves to state $\\delta(p,b)$. Then for every\nstate $q$ and all bit strings $u, v \\in \\{0,1\\}^*$,\n\\[ \\tau_{\\delta,o}(q, uv) = \\tau_{\\delta,o}(q, u)\\;\\tau_{\\delta,o}\\bigl(\\hat\\delta(q,u), v\\bigr), \\]\nwhere $\\hat\\delta(q,u)$ is the state reached from $q$ by applying $\\delta$ successively to\nthe bits of $u$ from left to right."
+}

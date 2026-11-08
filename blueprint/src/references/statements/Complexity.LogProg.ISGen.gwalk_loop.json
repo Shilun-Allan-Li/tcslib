@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.gwalk_loop",
+ "key": "3b106ed1ea51dd35",
+ "kind": "theorem",
+ "title": "Bounded Walk Loop Invariant",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $R$ be a relation on natural numbers, and let $b$ be a Boolean value. Let $Q$ be a proposition and let $\\sigma$ be a state whose registers are all at most $B$. Write $w_b=\\sigma.u$ and $q_b=\\sigma.i$ when $b$ is true, and $w_b=\\sigma.v$ and $q_b=\\sigma.i1$ otherwise. Suppose $\\sigma.K+1\\le B$, $\\sigma.cur<\\sigma.K$, and $\\sigma.stp\\le q_b$. If, whenever there is a walk from $\\sigma.cur$ to $w_b$ of at most $q_b-\\sigma.stp$ steps, with each intermediate vertex less than $\\sigma.K$ and each step in $R$, the machine started at its walk-entry state with $cur=stp=g=0$ terminates within register bound $B$ and accepts exactly when $Q$ holds, then the machine started at its walk-loop state with register values $\\sigma$ terminates within that bound and accepts exactly when both such a walk exists and $Q$ holds.",
+ "hypotheses_covered": [
+  "$E,B$ are natural numbers",
+  "$b$ is Boolean",
+  "$Q$ is a proposition",
+  "Every register of $\\sigma$ is at most $B$",
+  "$\\sigma.K+1\\le B$",
+  "$\\sigma.cur<\\sigma.K$",
+  "$\\sigma.stp\\le q_b$",
+  "The stated implication from walk existence to the semantics at the walk-entry state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $x$ be a finite binary word, let $\\mathcal O$ be an oracle,\nlet $b\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $Q$ be a proposition, and let $\\sigma$\nbe a register state with every register at most $B$. Write $R(u,v)$ for the truth of the\noracle's type-$3$ query on $(x,u,v,\\sigma.s)$, and let $\\operatorname{Walk}_{j}(c,t)$\nmean that there is an $R$-walk from $c$ to $t$ of at most $j$ steps, with each\nintermediate vertex less than $\\sigma.K$. Define the target $w(b)$ to be $\\sigma.u$ if\n$b$ is true and $\\sigma.v$ otherwise, and the step bound $q(b)$ to be $\\sigma.i$ if $b$\nis true and $\\sigma.i1$ otherwise. Suppose $\\sigma.K+1\\le B$, $\\sigma.cur<\\sigma.K$, and\n$\\sigma.stp\\le q(b)$. If the existence of a walk of at most $q(b)-\\sigma.stp$ steps from\n$\\sigma.cur$ to $w(b)$ implies that the machine initialized at the corresponding\nwalk-initialization stage with $cur=stp=g=0$ terminates within register bound $B$ and\naccepts exactly when $Q$ holds, then the machine initialized at the walk-loop stage with\nstate $\\sigma$ terminates within that bound and accepts exactly when both such a walk\nexists and $Q$ holds."
+}

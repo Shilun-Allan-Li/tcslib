@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.falsifyingClause_eval_false",
+ "key": "9830533ea9bd769b",
+ "kind": "theorem",
+ "title": "When the excluding clause is false",
+ "statement": "Let $\\ell\\in\\mathbb{N}$, let $v\\in\\{0,1\\}^{\\ell}$, and let $a:\\mathbb{N}\\to\\{0,1\\}$ be an assignment. The clause excluding $v$ evaluates to false under $a$ if and only if $a(i)=v_i$ for every $i<\\ell$.",
+ "hypotheses_covered": [
+  "Natural number $\\ell$",
+  "Bit string $v\\in\\{0,1\\}^{\\ell}$",
+  "Assignment $a:\\mathbb{N}\\to\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\ell \\in \\mathbb{N}$, let $v \\in \\{0,1\\}^\\ell$, and let\n$C_v = \\bigvee_{i<\\ell} x_i^{\\neg v_i}$ be the clause on the variables\n$x_0, \\dots, x_{\\ell-1}$ whose $i$-th literal is satisfied by an assignment $a$ exactly\nwhen $a(i) \\ne v_i$. For every assignment $a : \\mathbb{N} \\to \\{0,1\\}$, the clause\n$C_v$ evaluates to false under $a$ if and only if $a(i) = v_i$ for all $i < \\ell$\n[AB09, Claim~2.13]."
+}

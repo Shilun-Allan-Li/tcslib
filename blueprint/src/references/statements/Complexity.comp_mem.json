@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.comp_mem",
+ "key": "cee0dddf4c81b10d",
+ "kind": "lemma",
+ "title": "Logspace membership of the constructed language",
+ "statement": "Let $f$ be a function on bit strings such that its output length is bounded by a polynomial in the input length, the language of pairs $(x,i)$ for which the $i$th bit of $f(x)$ is true is decidable in logarithmic space, and the language of pairs $(x,i)$ for which $i<|f(x)|$ is decidable in logarithmic space. Let $C,e$ be natural numbers such that $|f(x)|\\le C(|x|+1)^e$ for every bit string $x$, and let $m$ be a Boolean mode. Then the language that, on an encoded pair $(z,p)$, tests whether $p$ is below the length of the output associated to $z$ when $m$ is true, and otherwise tests the output bit at position $p$, is decidable in logarithmic space.",
+ "hypotheses_covered": [
+  "$f$ has polynomially bounded output length",
+  "The output-bit index language for $f$ is in logarithmic space",
+  "The output-length index language for $f$ is in logarithmic space",
+  "Natural numbers $C,e$",
+  "For every $x$, $|f(x)|\\le C(|x|+1)^e$",
+  "Boolean mode $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

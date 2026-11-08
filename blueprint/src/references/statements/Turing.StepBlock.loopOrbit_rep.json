@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.loopOrbit_rep",
+ "key": "13787c169c59e286",
+ "kind": "lemma",
+ "title": "Representation along loop iterations",
+ "statement": "Let $M$ be a $k$-work-tape binary machine with states indexed by $\text{Fin}(n+1)$, and let $c$ be an initial configuration with a present state. Suppose a compiled configuration $d$ starts at the live exit anchor and represents $c$. For a natural number $r$, assume the machine has a present state at every time $u<r$. Let $e$ be the configuration obtained by iterating the compiled machine for $r$ rounds, each round lasting until it reaches an exit anchor. Then $e$ is at the exit anchor determined by whether the simulated machine is still running after $r$ steps, $e$ represents the simulated configuration at that time, and $e$ has the same output as $d$.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$ and binary input list $x$",
+  "Machine $M$ and configuration $c$",
+  "$c$ has a present state",
+  "Compiled configuration $d$",
+  "$d$ starts at the live exit anchor",
+  "$d$ represents $c$",
+  "Natural number $r$",
+  "Machine remains running at every time $u<r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

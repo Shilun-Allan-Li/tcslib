@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.mem_P_of_blockXorAny",
+ "key": "6d6c93814015edbe",
+ "kind": "theorem",
+ "title": "Polynomial-time closure under block XOR search",
+ "statement": "Let $V$ be a language in $\\mathsf{P}$, and let $a,k,a',k'$ be natural numbers. For a binary string $w$, take the first component of its encoded pair as an outer string, then take the first component of that string's encoded pair as $x$; when either parse fails, use the empty string for the corresponding component. Let $y$ be the second component of the outer pair, using the empty string if parsing fails, and set $B=a(|x|+1)^k$ and $N=a'(|x|+1)^{k'}$. The language of strings $w$ for which some $i<N$ has the following property belongs to $\\mathsf{P}$: the encoding of the pair $(x, y\\mathbin{\\mathrm{xor}}_\\ell u_i)$ is in $V$, where $u_i$ is the length-$B$ block of the second component of the inner pair at position $iB$, truncated at the end, and $\\mathbin{\\mathrm{xor}}_\\ell$ denotes bitwise XOR on corresponding positions up to the shorter of the two strings.",
+ "hypotheses_covered": [
+  "$V$ belongs to $\\mathsf{P}$",
+  "$a,k,a',k'$ are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

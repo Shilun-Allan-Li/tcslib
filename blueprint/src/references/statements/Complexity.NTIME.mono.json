@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.NTIME.mono",
+ "key": "68a33b67bb7ecd58",
+ "kind": "theorem",
+ "title": "Monotonicity of nondeterministic time",
+ "statement": "Let $T_1,T_2:\\mathbb{N}\\to\\mathbb{N}$ satisfy $T_1(n)\\le T_2(n)$ for every $n\\in\\mathbb{N}$. Then $\\mathrm{NTIME}(T_1)\\subseteq\\mathrm{NTIME}(T_2)$.",
+ "hypotheses_covered": [
+  "$T_1,T_2:\\mathbb{N}\\to\\mathbb{N}$",
+  "For every $n$, $T_1(n)\\le T_2(n)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T_1, T_2 : \\mathbb{N} \\to \\mathbb{N}$ be time bounds with $T_1(n) \\le T_2(n)$ for\nevery $n$. Then $\\mathrm{NTIME}(T_1) \\subseteq \\mathrm{NTIME}(T_2)$: every language of\nbinary strings decided by some finite nondeterministic multi-tape machine within\n$c \\cdot T_1(n)$ steps on inputs of length $n$, for some constant $c$, is also decided\nby such a machine within $c \\cdot T_2(n)$ steps."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clPrepared_idle",
+ "key": "c55dc357f8704667",
+ "kind": "lemma",
+ "title": "Stationarity of a Prepared Machine State",
+ "statement": "Let $A$ be a finite Turing machine over the Boolean alphabet and let $r$ be one of its states. Suppose that for every input symbol and every tuple of work-tape symbols, the transition from $r$ is the stationary control action that leaves the input head fixed, writes nothing, moves no work-tape head, emits no output, and returns to $r$. Then, for every input word $x$ and every configuration $c$ of the prepared machine on $x$ whose state is the copy of $r$ in the prepared machine's state space, one step leaves $c$ unchanged.",
+ "hypotheses_covered": [
+  "Finite Turing machine $A$ over the Boolean alphabet",
+  "State $r$ of $A$",
+  "Every transition from $r$ is the stationary control action returning to $r$",
+  "Input word $x$",
+  "Configuration $c$ in the prepared machine with state corresponding to $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a control of the prepared machine is absorbing, its transition is the stationary control action, then the corresponding control of the loading-extended machine is absorbing as well, with the complete retained-input frame fixed."
+}

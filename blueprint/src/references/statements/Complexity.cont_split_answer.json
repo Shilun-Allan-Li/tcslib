@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.cont_split_answer",
+ "key": "4a66cfabef10107e",
+ "kind": "lemma",
+ "title": "Pair Loader Computes the Verifier",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$ be natural numbers, and let $y$ be a binary word. The pair-loader machine, run on the word emitted by the polynomial split procedure for $y$, halts after exactly $3(2|y|+3)$ steps and outputs the indicator of the following property: there are binary words $x,u$ such that $|u|=C(|x|+1)^c$, $y=xu$, and running $N$ on $x$ under the choice word $u$ halts with output the one-bit word $1$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic machine over the binary alphabet",
+  "$C,c$ are natural numbers",
+  "$y$ is a binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine over the binary alphabet and let $C, c$ be natural numbers. For every binary string $y$, the pair-loader machine of $N$, run on the word emitted by the polynomial split emitter for $y$, halts within $3(2|y|+3)$ steps, and its output is the indicator bit of membership of $y$ in the choice-word verifier language of $N$ with parameters $C, c$."
+}

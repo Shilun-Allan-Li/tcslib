@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.dmove_run",
+ "key": "af23753824312346",
+ "kind": "theorem",
+ "title": "Bounded register transfer run",
+ "statement": "Let $A$ be a register program, fix an oracle and input, and suppose registers $r$ and $t$ are distinct. Suppose the instructions at states $l,l_1,l_2,l_3$ are, respectively, a zero test on $r$ branching to $l_x$ or $l_1$, a decrement of $r$ leading to $l_2$, an increment of $t$ leading to $l_3$, and an increment of $t$ leading back to $l$. For every $k$ and register valuation $v$ with $v(r)=k$, all registers bounded above by $B$, and $v(t)+2v(r)\\le B$, there is a finite run from state $l$ with valuation $v$ to state $l_x$ with $r$ reset to zero and $t$ increased by $2v(r)$, leaving the other registers unchanged; every configuration before the endpoint satisfies the guard that its precondition holds and all registers are at most $B$.",
+ "hypotheses_covered": [
+  "Registers $r$ and $t$ are distinct",
+  "Specified zero-test instruction at $l$",
+  "Specified decrement instruction at $l_1$",
+  "Specified increment instruction at $l_2$",
+  "Specified increment instruction at $l_3$",
+  "Initial valuation satisfies $v(r)=k$",
+  "Every initial register value is at most $B$",
+  "$v(t)+2v(r)\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

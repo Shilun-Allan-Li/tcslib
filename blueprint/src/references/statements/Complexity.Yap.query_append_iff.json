@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.Yap.query_append_iff",
+ "key": "c86f28fffa06bf7c",
+ "kind": "theorem",
+ "title": "Circuit query with appended input",
+ "statement": "Let $m : \\mathbb{N}\\to\\mathbb{N}$, and for each $n\\in\\mathbb{N}$ let $D_n$ be a fan-in-two Boolean circuit with $n+m(n)$ input bits. Suppose $z,w$ are bit strings and $|z|=N$. Then the query asking whether $D_N$ accepts the concatenation $z\\mathbin{+\u0001}w$ holds exactly when there is an assignment $y\\in\\{0,1\\}^{m(|z|)}$ such that $w$ is the bit string of $y$ in order and $D_{|z|}$ accepts the combined input consisting of $z$ followed by $y$.",
+ "hypotheses_covered": [
+  "A function $m:\\mathbb{N}\\to\\mathbb{N}$",
+  "A family $D_n$ of circuits with $n+m(n)$ input bits",
+  "Every $D_n$ has fan-in two",
+  "$z,w$ are bit strings",
+  "$|z|=N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

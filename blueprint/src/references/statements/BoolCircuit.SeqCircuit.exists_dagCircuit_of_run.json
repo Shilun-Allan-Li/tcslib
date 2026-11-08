@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.SeqCircuit.exists_dagCircuit_of_run",
+ "key": "3b293855f4d577f5",
+ "kind": "theorem",
+ "title": "DAG simulation of a sequential circuit",
+ "statement": "Let a Boolean sequential circuit have $n$ input bits, $r$ registers, a combinational DAG on its inputs and register contents, a next value for each register, and an initial register state. For every integer $T\\ge 1$, there is a DAG circuit on the same $n$ inputs whose output agrees with the sequential circuit's output after $T$ steps, and whose size is at most $2((r+g)T+n)$, where $g$ is the number of gates in the combinational DAG. If the combinational DAG is well formed, so is the resulting DAG; if it is well formed and every gate has at most two arguments, then the resulting DAG has those same properties.",
+ "hypotheses_covered": [
+  "A sequential circuit with $n$ inputs and $r$ registers",
+  "The combinational circuit is a DAG on $n+r$ sources",
+  "At least one step is run: $1\\le T$",
+  "For the well-formedness conclusion: the combinational circuit is well formed",
+  "For the fan-in-two conclusion: the combinational circuit is well formed and each gate has at most two arguments"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.mult_addresses",
+ "key": "ac8ae06f9a253e11",
+ "kind": "lemma",
+ "title": "Addresses in a nested encoding",
+ "statement": "For bit strings $a,b,c$, the nested encoding $\\langle a,\\langle b,c\\rangle\\rangle$ has the following entries: at position $2i$ it equals the $i$th bit of $a$ whenever $i<|a|$; at position $2|a|+2+2i$ it equals the $i$th bit of $b$ whenever $i<|b|$; and at position $2|a|+2+2|b|+2+i$ it equals the $i$th bit of $c$ for every natural number $i$, with out-of-range list entries interpreted as false.",
+ "hypotheses_covered": [
+  "$a,b,c$ are bit strings",
+  "The first address assertion assumes $i<|a|$",
+  "The second address assertion assumes $i<|b|$",
+  "The third address assertion holds for every natural number $i"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

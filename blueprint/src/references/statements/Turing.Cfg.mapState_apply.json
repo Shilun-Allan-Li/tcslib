@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.Cfg.mapState_apply",
+ "key": "d3f8a166385f06b5",
+ "kind": "lemma",
+ "title": "State Renaming and Action Application",
+ "statement": "Let $f$ be a function between state sets, let $a$ be a one-step action of a $k$-work-tape Turing machine, and let $c$ be a configuration on a fixed input word. Applying the action after renaming its successor state and the configuration state along $f$ gives the same configuration as applying $a$ to $c$ and then renaming the resulting state along $f$.",
+ "hypotheses_covered": [
+  "A function between state sets",
+  "A one-step action for $k$ work tapes",
+  "A configuration on a fixed input word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ be an arbitrary function from one state set to another (no\ninjectivity is required), let $a$ be a one-step action of a Turing machine\nwith $k$ work tapes, and let $c$ be a configuration on a fixed input word.\nThen applying the action $a$ with states renamed along $f$ to the\nconfiguration $c$ with state renamed along $f$ yields the same configuration\nas first applying $a$ to $c$ and then renaming the state of the result\nalong $f$."
+}

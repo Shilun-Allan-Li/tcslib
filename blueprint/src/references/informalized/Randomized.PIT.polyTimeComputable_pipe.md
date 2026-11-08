@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/ZeroP.lean :: Randomized.PIT.polyTimeComputable_pipe -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Pipeline Output
+
+**Claim.** The one-bit output containing the Boolean value of the specified pipeline is polynomial-time computable.
+
+**Proof.** The proof builds the pipeline’s input in stages. It extracts the needed components of $z$ by repeated first- and second-projection operations; these projections are polynomial-time computable (`Complexity.polyTimeComputable_pairFstD`, `Complexity.polyTimeComputable_slot2`, `Complexity.polyTimeComputable_slot3`, and `Complexity.polyTimeComputable_slot4`), and composition preserves polynomial time (`Complexity.PolyTimeComputable.comp`). It forms the padded words by appending fixed strings, which is polynomial-time computable (`Complexity.PolyTimeComputable.append`, `Complexity.polyTimeComputable_const`), and encodes the intermediate data as pairs (`Complexity.PolyTimeComputable.pairEncode`). The point-building loop is polynomial-time computable (`Randomized.PIT.polyTimeComputable_ptLoop`); applying it to the constructed initial data and projecting its required components keeps the computation polynomial-time (`Complexity.BinArith.polyTimeComputable_app`). The proof then assembles the arguments for the main loop, again using pairing and append closure, and applies the polynomial-time loop that iterates the pipeline step (`Randomized.PIT.polyTimeComputable_trLoop`). It projects the resulting output component and reads its head, defaulting to false for an empty word. Projection and head extraction are polynomial-time computable (`Complexity.BinArith.polyTimeComputable_app`, `Complexity.polyTimeComputable_headD`), so the final one-bit output is polynomial-time computable.
+
+**Key facts.** `Complexity.polyTimeComputable_pairFstD`, `Complexity.BinArith.polyTimeComputable_slot2`, `Complexity.BinArith.polyTimeComputable_slot3`, `Complexity.BinArith.polyTimeComputable_slot4`, `Complexity.PolyTimeComputable.comp`, `Complexity.PolyTimeComputable.append`, `Complexity.polyTimeComputable_const`, `Complexity.PolyTimeComputable.pairEncode`, `Complexity.BinArith.polyTimeComputable_app`, `Randomized.PIT.polyTimeComputable_ptLoop`, `Randomized.PIT.polyTimeComputable_trLoop`, `Complexity.polyTimeComputable_headD`.

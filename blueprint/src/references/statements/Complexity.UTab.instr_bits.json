@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.UTab.instr_bits",
+ "key": "d7cefd1097e719d1",
+ "kind": "theorem",
+ "title": "Template bits match tableau instruction bits",
+ "statement": "Let $M$ be a finite-state Turing machine with $k$ work tapes, let $n$ be a natural number, let $z$ be a finite Boolean string, let $\\theta$ be a template, and let $e$ be a register record. Suppose the template operation list equals its instruction-operation list, the input-count and hard-wired-input-length registers of $e$ are $n$ and $|z|$, and an instruction has kind equal to the kind of $\\theta$. Assume the template’s source expressions, evaluated at the register record, give exactly the instruction’s source list, whose length is the configuration arity; every such source is valid for the input length $|z|+n$, output width determined by $M$, and instruction index in $e$. Then executing the template produces exactly the encoded bits of the tableau instruction.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols, with $k$ work tapes",
+  "$n$ is a natural number and $z$ is a finite Boolean string",
+  "$\\theta$ is a template",
+  "$e$ is a register record",
+  "the template operation list equals its instruction-operation list",
+  "the input-count register equals $n$",
+  "the hard-wired-input-length register equals $|z|$",
+  "the instruction kind equals the template kind",
+  "the template’s evaluated sources equal the instruction source list",
+  "the instruction source list length equals the configuration arity",
+  "each template source is valid for input length $|z|+n$, the machine-determined output width, and instruction index $e.i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

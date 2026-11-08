@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.StepBlock.recordSkipTM_spec",
+ "key": "5320c59127419338",
+ "kind": "lemma",
+ "title": "Recording-machine run specification",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $x$ be a finite Boolean word, let $d$ be a configuration with $k+2$ work tapes, Boolean symbols, and record states, and let $a$ be an action whose successor state is in $\\{0,\\ldots,n\\}$ or absent. Suppose $d$ has the initial recording-machine state and its table tape contains the bits encoding $a$ in order from its current head position. For every $u$ less than the encoding length plus one, the machine's state after $u$ steps is not a tagged done state. For every $u$ up to and including the encoding length plus one, its input-head position, work-tape contents, and output equal their initial values; the head on the table tape is shifted by $\\min(u,4k+4)+\\max(u-(4k+5),0)$, and every other work-tape head is unchanged.",
+ "hypotheses_covered": [
+  "Natural numbers k and n",
+  "Finite Boolean word x",
+  "Configuration d with k+2 tapes and record states",
+  "Action a with state in Fin (n+1)",
+  "d has the initial recording-machine state",
+  "Every encoded action bit occurs in the corresponding table-tape cell"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.StepBlock.payload_correct",
+ "key": "ff140b205fc20a0d",
+ "kind": "lemma",
+ "title": "Correctness of the Encoded Action Payload",
+ "statement": "Let $k,n\\in\\mathbb N$, let $a$ be an action for a $k$-tape binary machine with states indexed by $\\{0,\\ldots,n\\}$, and let $bits$ assign a binary digit to each of the $4k+4$ positions in a record. If the word formed from these bits is the initial $4k+4$-bit segment of the serialized action $a$, then decoding the record payload yields the same input-head movement, work-tape actions, and output symbol as $a$, with no successor state.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$",
+  "Action $a$ for a $k$-tape binary machine with states indexed by $\\{0,\\ldots,n\\}$",
+  "Assignment of bits to the $4k+4$ record positions",
+  "The resulting bit word equals the length-$4k+4$ prefix of the serialized action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

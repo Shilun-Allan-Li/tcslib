@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.steps_dispatcher_pair",
+ "key": "d4e1d2b8aa829e9a",
+ "kind": "theorem",
+ "title": "One dispatcher comparison step",
+ "statement": "Let the dispatcher for $n$ procedures occur at position $\\mathrm{disp}$ in a word-RAM program of word size $W$. If $j<n$, the one-register contains the word encoding $1$, and $v-1$ lies in the signed range $-2^{W-1}\\le v-1<2^{W-1}$, then from program counter $\\mathrm{disp}+2j$ with the return-register containing the word encoding $v$, two machine steps reach a configuration whose return-register contains the word encoding $v-1$. Its program counter is $j$ if $v-1<0$, and otherwise is $\\mathrm{disp}+2(j+1)$.",
+ "hypotheses_covered": [
+  "Code at disp begins with the dispatcher for n procedures",
+  "j < n",
+  "One-register contains the word encoding 1",
+  "v−1 satisfies −2^W ≤ 2(v−1) < 2^W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

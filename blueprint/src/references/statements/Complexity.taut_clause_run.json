@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.taut_clause_run",
+ "key": "b986f443971be865",
+ "kind": "lemma",
+ "title": "Clause Evaluation Run",
+ "statement": "Let $C$ be a clause over variables indexed by $\\mathbb{N}$, and let $r$ and $u$ be binary words such that every variable index occurring in $C$ is less than $|u|$. For any binary words $x$ and $p$ satisfying $x=p\\mathbin{++}\\mathrm{pair}(\\mathrm{enc}(C)\\mathbin{++}r,u)$, and any Boolean accumulator $c$, there is a time $t\\le 3|\\mathrm{enc}(C)|$ such that the verifier, started in the clause-evaluation state with accumulator $c$, having consumed $|p|$ input bits, with work word $u$ and work head at $0$, reaches a configuration having consumed $|p|+2|\\mathrm{enc}(C)|$ input bits, work word $u$, and work head at $0$. Its state is the verdict state carrying false if $c$ is true and every literal in $C$ is satisfied by the assignment read from $u$; otherwise its state is the formula-level evaluation state.",
+ "hypotheses_covered": [
+  "$C$ is a clause over natural-number variables",
+  "$r$ and $u$ are binary words",
+  "Every variable index in $C$ is less than $|u|$",
+  "$x=p\\mathbin{++}\\mathrm{pair}(\\mathrm{enc}(C)\\mathbin{++}r,u)$",
+  "$c$ is a Boolean accumulator"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a list of literals whose variable indices are all below $|u|$ for a word\n$u$, let $\\sigma$ be its serialization, and let the input be\n$x = p \\mathbin{+\\!\\!+} \\mathrm{pair}(\\sigma \\mathbin{+\\!\\!+} r, u)$. Started in the\nclause-level evaluation state with accumulator $c$, $|p|$ bits consumed, work word $u$,\nand head $0$, the non-tautology verifier within some $t \\le 3|\\sigma|$ steps has\nconsumed $|p| + 2|\\sigma|$ bits, has head $0$, and is in the verdict state with bit $0$\nif $c$ holds and every literal of $C$ is satisfied by the assignment read off $u$, and\nin the formula-level evaluation state otherwise."
+}

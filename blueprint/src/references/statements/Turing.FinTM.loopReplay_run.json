@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.loopReplay_run",
+ "key": "b8873e951b9ea188",
+ "kind": "lemma",
+ "title": "Replay of a remaining suffix",
+ "statement": "Let $x$ and $P,R,O$ be Boolean words, and let $p$ be an input-head position among the $|x|+2$ positions. Starting with the replay machine live, its work tape holding $PR$ and its head at cell $|P|$, and output $O$, after exactly $|R|+1$ steps it is halted with its work tape still holding $PR$, its head at cell $|PR|$, and output $OR$.",
+ "hypotheses_covered": [
+  "Boolean input x and words P, R, and O",
+  "input-head position among |x|+2 positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ and $r$ be Boolean words and let an output prefix be given. After running the\none-tape replay machine for exactly $|r| + 1$ steps from its live state at cell $|p|$ of\nthe buffer tape holding $p$ followed by $r$, the machine is halted with the head at cell\n$|p| + |r|$, the stored word is unchanged, and the output is extended by exactly $r$ in\norder."
+}

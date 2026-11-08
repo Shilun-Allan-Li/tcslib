@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clTemplate_eval",
+ "key": "0f478038e807f51c",
+ "kind": "lemma",
+ "title": "Evaluation after relabeling a Boolean table",
+ "statement": "Let $\\ell$ be a natural number, let $p$ be a Boolean predicate on $\\ell$-bit vectors, let $w$ assign a natural-number variable index to each position, and let $a$ be a Boolean assignment to the natural numbers. Relabeling the chosen CNF table for $p$ by $w$ evaluates to $p$ on the vector whose $i$-th bit is $a(w(i))$.",
+ "hypotheses_covered": [
+  "A natural number $\\ell$",
+  "A Boolean predicate on $\\ell$-bit vectors",
+  "A wiring map from positions to natural-number variable indices",
+  "A Boolean assignment to natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every arity $\\ell$, predicate $p$ on $\\ell$-bit vectors, wiring map $w$ on variable indices, and assignment $a$, the relabeling of the chosen CNF table along $w$ evaluates to $p$ applied to the bits $a(w(0)),\\dots,a(w(\\ell-1))$; repeated wire indices are permitted and no injectivity is assumed."
+}

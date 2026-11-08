@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.badPairSubtype_card_eq_sum",
+ "key": "66d313245fc0ec59",
+ "kind": "lemma",
+ "title": "Incorrect pairs counted by summing mismatches",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic one-way protocol that takes an $n$-bit Boolean string from Alice and an index in $[n]$ from Bob, and outputs a Boolean. The number of input pairs $(x,i)$ on which $p$ disagrees with the Index function equals the sum, over all $n$-bit strings $x$, of the number of indices $i$ on which $p$ disagrees with the $i$th bit of $x$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$p$ is a deterministic one-way protocol with finite nonempty message set, Alice's input an $n$-bit Boolean string, Bob's input an index in $[n]$, and Boolean output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The number of incorrect input pairs $(x, i)$ of $p$ equals the sum, over all strings\n$x \\in \\{0,1\\}^n$, of the number of indices $i$ on which $p$ errs at $x$:\n\\[\n  \\abs{\\mathrm{badPairs}(p)} = \\sum_{x \\in \\{0,1\\}^n} \\abs{\\mathrm{mismatch}(p, x)}.\n\\]"
+}

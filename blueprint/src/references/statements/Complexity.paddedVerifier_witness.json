@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.paddedVerifier_witness",
+ "key": "3f1eb6d44522728d",
+ "kind": "lemma",
+ "title": "Padded and Bounded Witnesses",
+ "statement": "Let $C,c\\in\\mathbb{N}$, let $V$ be a language of binary strings, and let $x$ be a binary string. There exists a binary string $v$ of length $(C+1)(|x|+1)^c$ such that $xv\\in V^{\\mathrm{pad}}_{C,c}$ if and only if there exists a binary string $u$ with $|u|\\le C(|x|+1)^c$ and $\\langle x,u\\rangle\\in V$, where $\\langle x,u\\rangle$ is obtained by doubling each bit of $x$, appending $01$, and then appending $u$.",
+ "hypotheses_covered": [
+  "$C,c\\in\\mathbb{N}$",
+  "$V$ is a language of binary strings",
+  "$x$ is a binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c \\in \\mathbb{N}$ and $V \\subseteq \\{0,1\\}^{*}$, and let\n$V^{\\mathrm{pad}}_{C,c}$ be the set of binary strings $y$ such that, for the least\n$n$ with $n + (C+1)(n+1)^c = |y|$ (which must exist), the suffix $v$ of $y$ after\nits first $n$ bits contains a $1$, and the prefix $u$ of $v$ preceding its last\n$1$ satisfies $|u| \\le C(n+1)^c$ and $\\langle x, u\\rangle \\in V$, where $x$ is\nthe first $n$ bits of $y$ and $\\langle x, u\\rangle$ is the self-delimiting pair\nencoding ($x$ with every bit doubled, then $01$, then $u$). Then for every binary\nstring $x$, there exists $v$ with $|v| = (C+1)(|x|+1)^c$ and\n$xv \\in V^{\\mathrm{pad}}_{C,c}$ if and only if there exists $u$ with\n$|u| \\le C(|x|+1)^c$ and $\\langle x, u\\rangle \\in V$."
+}

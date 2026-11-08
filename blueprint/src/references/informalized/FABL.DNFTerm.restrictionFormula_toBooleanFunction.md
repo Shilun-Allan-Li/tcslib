@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter04/CircuitInfluence.lean :: FABL.DNFTerm.restrictionFormula_toBooleanFunction -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Restriction formula represents the restricted term
+
+**Claim.** For every sign vector, the restriction formula of a term has the same value as the term evaluated after completing the restriction using that vector on free coordinates.
+
+**Proof.** Fix a sign vector and compare the two sign-valued functions by showing they are negative exactly in the same cases; for signs in $\{-1,1\}$, this determines equality (`FABL.DNFTerm.sign_eq_of_neg_one_iff`). First suppose the term is not falsified by the restriction. The characterization of not being falsified says that every literal is safe under the restriction (`FABL.DNFTerm.notFalsified_iff`). The restriction formula then consists of the single term formed from the free literals. By the evaluation criterion for a DNF formula and for a term (`FABL.DNFFormula.eval_eq_neg_one_iff`, `FABL.DNFTerm.eval_eq_neg_one_iff`), its value is negative precisely when every free literal is met by the given vector. For a free coordinate, completion uses that vector, so this is precisely the condition that every literal of the original term is met after completion. For a fixed coordinate, safety means its required sign agrees with the fixed value; thus those literals are also met after completion. Conversely, if every original literal is met after completion, then in particular every free literal is met by the vector, so the restricted single term evaluates negatively. Now suppose the term is falsified by the restriction. There is a literal witnessing this. Its coordinate cannot be free, since a free coordinate is never declared falsified. If it is fixed to $1$ or to $-1$, falsification says its required sign differs from that fixed value. Completion therefore fails to meet this literal, and the original term does not evaluate negatively. The restriction formula is empty in this case, so it too does not evaluate negatively. The two functions thus agree on whether their value is $-1$, and hence agree outright.
+
+**Key facts.** `FABL.DNFTerm.sign_eq_of_neg_one_iff`, `FABL.DNFTerm.notFalsified_iff`, `FABL.DNFFormula.eval_eq_neg_one_iff`, `FABL.DNFTerm.eval_eq_neg_one_iff`.

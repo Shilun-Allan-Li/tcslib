@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.universal_count_run",
+ "key": "4f649c5250e08745",
+ "kind": "lemma",
+ "title": "Exact cost of parsing a count field",
+ "statement": "Let $x$ be a bit string, let $b$ be a four-tape interpreter configuration, let $i$ be a record index below $9$, and let $T$ be a table of the form $l\\,d(\\beta)\\,01\\,r$, where $d(\\beta)$ doubles every bit of the bit string $\\beta$. For either Boolean flag, any state tape and state-head position, and the table head initially at $|l|$, exactly $2|\\beta|+2$ interpreter steps reach the initial-state copier if the flag is true, and otherwise the initial-state skipper carrying $i$, with the table head at $|l|+2|\\beta|+2$; the other configuration data are unchanged.",
+ "hypotheses_covered": [
+  "$x,\\beta,l,r$ are bit strings",
+  "$b$ is a four-tape interpreter configuration on input $x$",
+  "$i$ is an index below $9$",
+  "$T=l\\,d(\\beta)\\,01\\,r$",
+  "the count parser starts at table cursor $|l|$ with state tape and state cursor specified",
+  "the initial flag is Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table is $l \\cdot d(\\beta) \\cdot 01 \\cdot r$, where $d(\\beta)$\ndoubles each bit of a bit string $\\beta$ and $01$ is the unequal delimiter\npair.  Starting the interpreter's count parser (carrying a Boolean flag and a\nrecord index) at table cursor $|l|$, exactly $2|\\beta| + 2$ steps move the\ntable cursor past the doubled count field and the delimiter to position\n$|l| + 2|\\beta| + 2$, entering the initial-state copier when the flag is set\nand the initial-state skipper with the carried index otherwise.  No binary\narithmetic on the value of $\\beta$ is performed, and the state tape, state\ncursor, and all other data are unchanged."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.scan_halts",
+ "key": "7d2e57308c179552",
+ "kind": "theorem",
+ "title": "Halting of the Circuit Scan",
+ "statement": "Let $C$ be a finite acyclic Boolean circuit with $n$ input vertices, gates listed in topological order, and an output vertex among its $n+|C|$ vertices, where $|C|$ is the number of gates. Let $o$ be an oracle whose answer on the binary representation of each natural number $p$, paired with the unary word of length $n$, is the $p$th bit of the circuit encoding, with value false when that bit is out of range. Suppose the input word $w$ encodes a valid instance of the selected task: for the edge task it encodes a pair of canonical binary words, and for the size or type task it encodes one canonical binary word. Suppose also that the decoded target index or indices are $i_v$ and $t_v$, respectively: in the edge task these are the two words’ represented numbers, and otherwise $t_v$ is the represented number. Then the scan machine for that task, started with all three registers zero and no answer, halts with all registers at most the encoding length of $C$. Its answer is the task’s default answer if $t_v<n$; if $t_v\\ge n$ and $t_v-n$ indexes a gate of $C$, its answer is true for the size task, is whether that gate has the requested kind for the type task, and is whether its argument list contains $i_v$ for the edge task; if the index is beyond the gate list, its answer is false.",
+ "hypotheses_covered": [
+  "$C$ is a DAG circuit with input count $n$",
+  "The oracle returns the circuit encoding bit at each represented natural number, defaulting to false out of range",
+  "The encoded input satisfies the selected task’s validity condition",
+  "The encoded input’s target indices are $i_v,t_v$",
+  "The initial configuration has start state, all registers zero, and no result",
+  "Throughout the run before halting, every register is bounded by the encoding length of $C$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

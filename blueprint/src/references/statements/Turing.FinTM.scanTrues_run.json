@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.scanTrues_run",
+ "key": "bae8e18ffc7d86ed",
+ "kind": "lemma",
+ "title": "Scan over a run of ones",
+ "statement": "Let $M$ be a machine with no work tapes over the Boolean alphabet, let $q$ be a state, and let $e$ be a Boolean flag. Suppose that for every work-tape tuple, the transition in state $q$ on input symbol $\\mathrm{true}$ moves right, has no work-tape actions, emits $\\mathrm{false}$ if $e$ is true and emits nothing otherwise, and returns to $q$. For every finite Boolean string $x$ and every $j\\le |x|$ such that the first $j$ entries of $x$ are all true, after $j$ steps from the scan configuration at position $0$ in state $q$ with empty output, the machine is in state $q$ at position $j$ with output consisting of $j$ false entries if $e$ is true, and empty output otherwise.",
+ "hypotheses_covered": [
+  "$M$ has no work tapes and uses the Boolean alphabet",
+  "$q$ is a state",
+  "$e$ is a Boolean flag",
+  "For every work-tape tuple, the transition at $q$ on true moves right, has no work-tape actions, emits false when $e$ is true and nothing otherwise, and returns to $q$",
+  "$x$ is a finite Boolean string",
+  "$j\\le |x|$",
+  "The first $j$ entries of $x$ are all true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a control state $q$ of a machine without work tapes moves right on\nreading a $1$, emitting a $0$ when an emission flag is set and nothing\notherwise. If the first $j \\le \\abs{x}$ bits of $x$ are all $1$, then $j$\nsteps from the scan configuration at position $0$ in state $q$ with empty\noutput lead to position $j$ in state $q$, with output $j$ zeros when the flag\nis set and empty output otherwise."
+}

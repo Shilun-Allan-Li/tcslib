@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/MeyerMachineWalk.lean :: Complexity.Meyer.wdec_fire -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Firing the Decision Sweep
+
+**Claim.** When the output auxiliary tape contains true at its head, one constructed-machine step enters the waiting-return state, clears that cell, and moves its head one place left. The resulting encoded configuration contains the decoded selector’s walked configuration, with a tag that correctly marks the new input-head boundary.
+
+**Proof.** First unfold the constructed machine’s step on the waiting-decision state. The auxiliary-tape read facts identify the third auxiliary tape’s scanned symbol as true and the first auxiliary tape’s symbol as the simulated input symbol. The transition now depends on the decoded selector, so split into its three forms. If it selects a state-and-output test, the simulated configuration does not move; keep the tag $b$. The auxiliary action clears the scanned output cell and moves its head left, while leaving the simulated tapes and heads unchanged. If it selects a work-tape symbol, the corresponding simulated work head moves in the indicated direction, and the same tag remains valid because the input head did not move. Again the auxiliary output cell is cleared and its head moves left. If it selects an input symbol, set $m$ to the virtualized version of the requested input-head move. The virtual-move correctness fact ( `Turing.FinTM.virtualMove_correct`) says both that the shifted integer position used to encode the simulated head changes exactly as the bounded input-head position changes, and that the updated tag $\operatorname{virtualNextTag}(b,m)$ correctly marks the new boundary. Thus the simulated input head and tag agree after the walk. In each case, the auxiliary-action calculation ( `Complexity.Meyer.lcfg_apply_aux`) identifies the resulting encoded configuration: the output tape is updated at $z_O$ and its head moves by $-1$. The input-tape movement is zero, so the chosen position $P$ is unchanged ( `Turing.moveInputPos_zero`).
+
+**Key facts.** `Complexity.Meyer.lcfg_step`, `Complexity.Meyer.aux_read2`, `Complexity.Meyer.aux_read0`, `Complexity.Meyer.lcfg_apply_aux`, `Turing.FinTM.virtualMove_correct`, `Turing.moveInputPos_zero`.

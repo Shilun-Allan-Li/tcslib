@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.setupCfg_copy_end",
+ "key": "1fc0f716cb6074a6",
+ "kind": "lemma",
+ "title": "Final step of the guide-copying scan",
+ "statement": "Let $W$ be a finite Turing machine over Boolean symbols, let $a\\in\\mathbb{N}$, and let $x$ be a finite schedule-alphabet word. For any base configuration on $x$, integers $b,u$, and budget and unary tapes, if the machine is in the copy phase corresponding to $|x|$ copied symbols, with input head at position $|x|+1$, guide head at cell $|x|$, and guide tape equal to the partial guide with $|x|$ copied cells, one step takes it to copy-return phase with the same input-head position and guide-head coordinate and guide tape equal to the partial guide with $|x|+1$ copied cells; the base data, budget tape and head, and unary tape and head are unchanged.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine W",
+  "natural parameter a",
+  "schedule input x and base configuration",
+  "integers b and u",
+  "budget and unary tapes",
+  "copy phase corresponding to |x|",
+  "input-head position |x|+1",
+  "guide-head coordinate |x|",
+  "partial guide with |x| copied cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From a setup configuration in the copy phase for $|x|$ copied symbols, with input head\nparked at the right boundary $|x|+1$ (reading blank) and guide head at $|x|$, a single\nstep enters the copy-return phase, leaves both heads in place, and closes the copied\nzone by writing one more mark, producing the partial guide with $|x|+1$ cells."
+}

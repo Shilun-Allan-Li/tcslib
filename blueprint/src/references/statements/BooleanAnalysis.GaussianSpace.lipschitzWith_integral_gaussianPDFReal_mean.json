@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianPDFReal_mean",
+ "key": "2793fb6b85dc649f",
+ "kind": "lemma",
+ "title": "Lipschitz continuity of Gaussian averages in the mean",
+ "statement": "Let $f:\\mathbb R\\to\\mathbb R$ be measurable with $|f(z)|\\le1$ for every $z$, and let $v>0$. The function $c\\mapsto\\int_{\\mathbb R}p_v(c,z)f(z)\\,dz$, where $p_v(c,z)$ is the density of a Gaussian with mean $c$ and variance $v$, is Lipschitz with constant $1+1/v$.",
+ "hypotheses_covered": [
+  "$f$ is measurable",
+  "$|f(z)|\\le1$ for every $z$",
+  "$v$ is a nonzero nonnegative real, hence positive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $v>0$ and $p_v(c,z)=(2\\pi v)^{-1/2}\\exp(-(z-c)^2/(2v))$. For measurable $f:\\mathbb R\\to\\mathbb R$ with $|f|\\le1$, the function $c\\mapsto\\int p_v(c,z)f(z)\\,dz$ is globally $(1+1/v)$-Lipschitz."
+}

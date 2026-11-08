@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.leftCfg_run",
+ "key": "a1b88839743b13cb",
+ "kind": "lemma",
+ "title": "Lockstep run under left-block embedding",
+ "statement": "Let $k,l\\in\\mathbb N$, let $M$ have $k$ work tapes and states in $S$, and let $M'$ have $k+l$ work tapes and states in $S'$, both over Boolean symbols. Suppose $f:S\\to S'$ and, for every state $q$, input symbol (possibly absent), and tuple of symbols on the $k+l$ work tapes, the transition of $M'$ at state $f(q)$ equals the left-block extension along $f$ of the transition of $M$ at $q$, using the first $k$ tape symbols. Then for every configuration $c$ of $M$ on Boolean input $x$, every choice of contents and head positions for the last $l$ tapes, and every $t\\in\\mathbb N$, running $M'$ for $t$ steps from the embedded configuration equals the embedding of the configuration reached by running $M$ for $t$ steps from $c$.",
+ "hypotheses_covered": [
+  "$k,l$ are natural numbers",
+  "$M$ has $k$ Boolean work tapes and state type $S$",
+  "$M'$ has $k+l$ Boolean work tapes and state type $S'$",
+  "$f:S\\to S'$ is a state map",
+  "the transition compatibility condition holds for all $q$, input symbols, and work-symbol tuples",
+  "$c$ is a configuration of $M$ on Boolean input $x$",
+  "contents and head positions for the last $l$ tapes are arbitrary",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k$ work tapes and $M'$ a machine with $k + l$ work\ntapes, both over the Boolean alphabet, and let $f$ be a map from the states\nof $M$ to the states of $M'$ such that on every renamed state, for all\nscanned symbols, the transition of $M'$ is the left-block extension along $f$\nof the corresponding transition of $M$ read off the first $k$ tapes.  Then\nfor every configuration $c$ of $M$ on input $x$, all inactive contents and\nhead positions for the last $l$ tapes, and every number of steps $t$, running\n$M'$ for $t$ steps from the left-block embedding of $c$ equals the left-block\nembedding of the run of $M$ for $t$ steps from $c$."
+}

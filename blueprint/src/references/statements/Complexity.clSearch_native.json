@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clSearch_native",
+ "key": "6b160d3ed099f72b",
+ "kind": "lemma",
+ "title": "Polynomial-Time Last-Visit Search",
+ "statement": "Let $M$ be a finite Boolean Turing machine and let $p,q$ be distinct coordinates among its stored movement-count fields. Suppose the Boolean-word-valued function $y$ and the function sending each input $x$ to the unary word of length $T(x)$ are polynomial-time computable. Then the function that, on input $x$, forms for each $s<T(x)$ the flag indicating whether the positive count at coordinate $p$ at time $s$ plus the final negative count at coordinate $q$ equals the final positive count at coordinate $p$ plus the negative count at coordinate $q$ at time $s$, and returns the code of the last true flag (or the empty word if there is none), is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$p$ and $q$ are valid stored movement-count coordinates for $M$",
+  "$p\\ne q$",
+  "$y$ is polynomial-time computable",
+  "the function $x\\mapsto 1^{T(x)}$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a source machine, distinct positive and negative counter coordinates, and polynomial-time reference-input and unary-time producers, the function sending an input to the last-visit code of the flags comparing each strictly earlier row's cross-sums against the final targets is polynomial-time computable; the scanner consumes exactly the first $T$ rows of the inclusive $T+1$-row trajectory, and the uniform query envelope charges argument construction, comparisons, reverse search, and output."
+}

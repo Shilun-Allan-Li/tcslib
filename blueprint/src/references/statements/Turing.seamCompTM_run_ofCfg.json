@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.seamCompTM_run_ofCfg",
+ "key": "8f154988d393b917",
+ "kind": "theorem",
+ "title": "Composition of two machine runs",
+ "statement": "Let $M_1$ and $M_2$ be deterministic machines with $k$ work tapes and a common input alphabet, with state sets $S_1$ and $S_2$. Form a machine on $S_1\\sqcup S_2$ that follows $M_1$ on left states, switches from the specified exit state to the specified entry state in one step without changing the tapes, and follows $M_2$ on right states. If $M_1$ reaches configuration $c_1$ from $c_0$ after $T_1$ steps, first visiting the exit state at time $T_1$, and $M_2$ reaches $c_3$ after $T_2$ steps from $c_1$ with its state replaced by the entry state, then the composed machine, started from $c_0$ with its state placed in the left component, reaches $c_3$ with its state placed in the right component after $T_1+1+T_2$ steps.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are machines with $k$ work tapes and common symbol alphabet",
+  "$exit\\in S_1$ and $entry\\in S_2$",
+  "$M_1$ reaches $c_1$ from $c_0$ in exactly $T_1$ steps",
+  "$c_1$ has state $exit$",
+  "No state along the first $T_1$ steps before time $T_1$ is $exit$",
+  "$M_2$ reaches $c_3$ in $T_2$ steps from $c_1$ with its state replaced by $entry$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

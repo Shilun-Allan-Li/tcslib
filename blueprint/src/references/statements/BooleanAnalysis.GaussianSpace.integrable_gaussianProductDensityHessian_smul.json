@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integrable_gaussianProductDensityHessian_smul",
+ "key": "9765208dbb887260",
+ "kind": "lemma",
+ "title": "Integrability of the weighted Gaussian density Hessian",
+ "statement": "Let $I$ be a finite set, let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\le 1$ for every $z$, let $v>0$, and let $c\\in\\mathbb R^I$. Define $G_v(c,z)=\\prod_i p_v(c_i,z_i)$ and $S_v(c,z)[h]=\\sum_i((z_i-c_i)/v)h_i$. The function sending $z$ to $f(z)$ times the bilinear form $(h,k)\\mapsto G_v(c,z)\\bigl(S_v(c,z)[h]S_v(c,z)[k]-\\sum_i h_i k_i/v\\bigr)$ is integrable with respect to Lebesgue measure on $\\mathbb R^I$, as a bilinear-form-valued function.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$f$ is measurable",
+  "$|f(z)|\\le 1$ for every $z$",
+  "$v\\ge 0$",
+  "$v\\ne 0$",
+  "$c\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Put $G_v(c,z)=\\prod_i p_v(c_i,z_i)$, where $p_v$ is the Gaussian density of variance $v$ for $v>0$ and $p_0=0$, and put $S_v(c,z)[h]=\\sum_i((z_i-c_i)/v)h_i$, with division by zero equal to zero. Define $A_v(c,z)[h]=G_v(c,z)S_v(c,z)[h]$ and $T_v(c,z)[h,k]=G_v(c,z)(S_v(c,z)[h]S_v(c,z)[k]-\\sum_i h_i k_i/v)$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$ and $c\\in\\mathbb R^I$, then $z\\mapsto f(z)T_v(c,z)$ is Lebesgue-integrable as a bilinear-form-valued function."
+}

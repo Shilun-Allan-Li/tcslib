@@ -1,0 +1,18 @@
+{
+ "lean_name": "WordRAM.mem_P_of_decides_logWord",
+ "key": "cd3ca32c06d6d16a",
+ "kind": "theorem",
+ "title": "Polynomial time from logarithmic word computation",
+ "statement": "Let $P$ be an extended Word RAM program, let $L$ be a language of Boolean strings, and let $c,C,d\\in\\mathbb{N}$. Suppose that for every input $x$ there are natural numbers $t,f$ and an output string $o$ such that $t\\le C(|x|+1)^d$ and $P$ halts within $t$ steps using words of width $c(\\lfloor\\log_2 |x|\\rfloor+1)$, with output equal to the Boolean indicator of whether $x\\in L$. Then $L$ belongs to polynomial time, that is, $L\\in\\bigcup_{r\\in\\mathbb{N}}\\mathrm{DTIME}(n^r+1)$.",
+ "hypotheses_covered": [
+  "An extended Word RAM program $P$ and Boolean language $L$",
+  "Natural numbers $c,C,d$",
+  "For every input, witnesses $t,f,o$ with $t\\le C(|x|+1)^d$",
+  "Halting within $t$ steps at word width $c(\\lfloor\\log_2 |x|\\rfloor+1)$",
+  "The output is the Boolean membership indicator for $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

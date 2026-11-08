@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.dataCfg_sweeps",
+ "key": "c91deba7acb3428f",
+ "kind": "lemma",
+ "title": "One pair of data sweeps",
+ "statement": "Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $a,R\\in\\mathbb{N}$, and fix a base configuration of the schedule machine, an integer $u$, a state $q$ of $M$ that may be absent if $M$ has halted, a bit $b$, read registers $r_i$ for the $M.k+1$ lanes, a payload function $f(z,i)$, data-tape contents, and an output word. Suppose the base guide tape is the fixed guide of radius $R$, the current payload on lane $i$ at coordinate $z$ is $f(z,i)$, and both boundary vectors $f(-R-1,\\cdot)$ and $f(R+1,\\cdot)$ consist entirely of blank payloads. Then there are updated data-tape contents such that, after exactly $6R+7$ steps from the configuration in the seek-left phase with guide head at $0$, unary head at $u$, and blank neighbor registers, the machine is in the macrostep-check phase with unary head at $u+1$, the source machine's state updated by its action on $q$ and the saved reads, and neighbor registers equal to $f(-R,\\cdot)$. If $m_i$ is the virtual head movement selected for lane $i$ by that source action, the updated current payload at coordinate $z$ on lane $i$ is $f(z+m_i,i)$ for $-R\\le z\\le R$ and $f(z,i)$ otherwise.",
+ "hypotheses_covered": [
+  "$W$ and $M$ are finite binary Turing machines",
+  "$a$ and $R$ are natural numbers",
+  "A base schedule configuration is given",
+  "$u$ is an integer",
+  "$q$ is an optional state of $M$",
+  "$b$ is a Boolean bit",
+  "Read registers, a payload function, data-tape contents, and an output word are given",
+  "The base guide tape is the fixed guide of radius $R$",
+  "At every coordinate and lane, the current data payload equals $f(z,i)$",
+  "The payload vector $f(-R-1,\\cdot)$ is entirely blank",
+  "The payload vector $f(R+1,\\cdot)$ is entirely blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$, the current\npayloads of the data tapes decode to $f$, and the boundary values $f(-R-1)$ and\n$f(R+1)$ are blank.  Then running the simulator exactly $6R + 7$ steps from the\nleftward-seek phase at the origin with unary head $u$ and blank neighbor\nregisters reaches the counter-test phase with unary head $u + 1$, simulated\nstate equal to the successor state of the source action selected from the saved\nstate and reads, and neighbor registers $f(-R)$, on tapes whose current payload\non lane $i$ at coordinate $z$ is $f(z + m_i)$ for $-R \\le z \\le R$ and $f(z)$\noutside, where $m_i$ is that lane's selected virtual head direction."
+}

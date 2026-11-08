@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.NNInv",
+ "key": "da55d1c0cb91556f",
+ "kind": "structure",
+ "title": "Invariant for fan-out reduction",
+ "statement": "For a natural number $n$, an original gate list, and a state consisting of a gate list, a vertex map, and a counter, the invariant requires that the counter equal $n$ plus the length of the original list; the new gate list be acyclic; and every original vertex index map below $n$ plus the original list length to a vertex below $n$ plus the new gate-list length, with distinct original indices mapping to distinct vertices. It also requires that, for every assignment of Boolean values to the $n$ input vertices, evaluation at each mapped original vertex agrees with the output of the original circuit on that assignment; every vertex have fan-out at most two; each mapped original vertex have fan-out zero; every new gate have distinct arguments and have exactly one argument if it is a negation gate and exactly two otherwise; and the new list have length at most five times the original list length.",
+ "hypotheses_covered": [
+  "natural number $n$",
+  "original gate list",
+  "state consisting of a gate list, a vertex map, and a counter"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

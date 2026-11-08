@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.bridge_emit",
+ "key": "ba8c5d930d6c4009",
+ "kind": "lemma",
+ "title": "Emission of a stack word",
+ "statement": "Let $c$ be a program, let $x$ be a bridge-alphabet input, let $p$ be a valid input-head position, let $xs$ be a Boolean string, and let $st$ assign a stack word to each of the four stack names. For any output word and optional pending Boolean bit, if the main stack is the stack word of $xs$, the bridging machine of $c$ can reach a halted configuration with the main stack reduced to the list terminator, all other stacks unchanged, and output extended by the pending bit, if present, followed by the bits of $xs$, all embedded in the bridge alphabet.",
+ "hypotheses_covered": [
+  "A program $c$",
+  "A bridge-alphabet input $x",
+  "A valid input-head position $p$",
+  "A Boolean string $xs$",
+  "A stack assignment $st$",
+  "An output word",
+  "An optional pending Boolean bit",
+  "The main stack equals the stack word of $xs$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose that in a bridge configuration of the bridging machine the main stack holds\nthe stack word of a Boolean string $xs$ and the control is the emitting state with\nan optional pending bit.  Then the machine reaches the halted configuration whose\nmain stack retains only the list terminator (the other stacks unchanged) and whose\noutput is extended by the pending bit, if present, followed by the bits of $xs$, all\nembedded into the bridge alphabet; the trailing sentinel bit of the stack word is\nconsumed without being emitted."
+}

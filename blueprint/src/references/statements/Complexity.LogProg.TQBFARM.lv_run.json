@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.lv_run",
+ "key": "fc95452516e6b481",
+ "kind": "theorem",
+ "title": "Run through literal evaluation",
+ "statement": "Let $x$ be a bit string, $B\\in\\mathbb{N}$, $b\\in\\{0,1\\}$, and let $st=(K,S,P,T,Z,C,V)$ be a seven-register state. If every register is at most $B$ and $T=Z=C=0$, the machine has a guarded run from label $lv(0,b)$ with state $st$ to label $cl(\\mathrm{asg}(K,S,V)=b)$ with state $(K,S,P,T,Z,C,0)$.",
+ "hypotheses_covered": [
+  "$b$ is a Boolean value",
+  "all seven registers are at most $B$",
+  "$T=0$",
+  "$Z=0$",
+  "$C=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $b$ a bit, and $st$ a seven-register\nstate. If every register of $st$ is at most $B$ and the scratch registers $T,Z,C$ are\nzero, then the machine has a guarded run from state $\\mathrm{lv}(\\mathrm{false},b)$ and\nregister state $st$ to state $\\mathrm{cl}(\\mathrm{asg}(st.K,st.S,st.V)=b)$, with the\nsame registers except that $V$ is set to zero."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timed_code_get",
+ "key": "6a2b9c32b66a552f",
+ "kind": "lemma",
+ "title": "Entries after the clock prefix",
+ "statement": "Let $bs$, $\\alpha$, and $x$ be finite Boolean words. For every $j\\in\\mathbb{N}$, the entry at index $4|bs|+4+j$ of the nested pair encoding $\\langle\\langle bs,\\alpha\\rangle,x\\rangle$ equals the entry at index $j$ of $\\langle\\alpha,x\\rangle$, with out-of-range entries interpreted as absent.",
+ "hypotheses_covered": [
+  "Three arbitrary finite Boolean words $bs$, $\\alpha$, and $x$",
+  "An arbitrary natural-number index $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j$, cell $4|b| + 4 + j$ of the nested pair encoding\n$\\langle \\langle b, \\alpha\\rangle, x\\rangle$ equals cell $j$ of the inner pair\nencoding $\\langle \\alpha, x\\rangle$."
+}

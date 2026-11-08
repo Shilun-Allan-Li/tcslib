@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_bob_bit",
+ "key": "a1c86aa8814e2e77",
+ "kind": "lemma",
+ "title": "Bob's bit on a leaf rectangle",
+ "statement": "Let $p$ be a protocol over input types $X$ and $Y$, let $A\\subseteq X$ and $B\\subseteq Y$, let $f:Y\\to\\{0,1\\}$, and choose a bit $b$. If $R$ is among the leaf rectangles of $p$ when the first input is restricted to $A$ and the second to $B\\cap\\{y:f(y)=b\\}$, then every $(x,y)\\in R$ satisfies $f(y)=b$.",
+ "hypotheses_covered": [
+  "A protocol over input types $X$ and $Y$",
+  "Sets $A\\subseteq X$ and $B\\subseteq Y$",
+  "A function $f:Y\\to\\{0,1\\}$ and a bit $b$",
+  "Membership of $R$ among the leaf rectangles under the specified input restriction",
+  "An input pair $(x,y)$ belonging to $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a protocol on $X \\times Y$, let $A \\subseteq X$, $B \\subseteq Y$, let\n$f : Y \\to \\{0,1\\}$ be the bit Bob sends, and let $b$ be a bit. If $R$ is a leaf\nrectangle of $p$ run on the restricted input set $A \\times (B \\cap \\{y \\mid f(y) = b\\})$,\nthen every input $(x, y) \\in R$ satisfies $f(y) = b$. This is the mirror image of\n\\texttt{CommunicationComplexity.Deterministic.Protocol.aux\\_alice\\_bit}."
+}

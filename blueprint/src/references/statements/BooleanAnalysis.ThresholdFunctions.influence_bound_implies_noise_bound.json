@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.influence_bound_implies_noise_bound",
+ "key": "b367cc49d8d049f6",
+ "kind": "theorem",
+ "title": "Influence bound implies noise sensitivity bound",
+ "statement": "Let $B=(B_n)_{n\\ge0}$ be a family of sets of real-valued functions on Boolean cubes, and let $A:\\mathbb N\\to\\mathbb R$. Suppose every function in every $B_n$ is $\\pm1$-valued, the family is closed under every substitution $w\\mapsto(z_i+w_{\\pi(i)}\\bmod 2)_{i=1}^n$ for all dimensions $n,m$, vectors $z\\in\\{0,1\\}^n$, and maps $\\pi:[n]\\to[m]$, and every $f\\in B_n$ has total influence at most $A(n)$. For $0<\\delta\\le\\tfrac12$, every $n\\ge0$, and every $f\\in B_n$, the noise sensitivity defined by $\\operatorname{NS}_\\delta(f)=(1-\\operatorname{Stab}_{1-2\\delta}(f))/2$ is at most $A(\\lfloor\\delta^{-1}\\rfloor)/\\lfloor\\delta^{-1}\\rfloor$, where $\\lfloor\\delta^{-1}\\rfloor$ is the natural-number floor used as the block count.",
+ "hypotheses_covered": [
+  "A dimension-indexed family $B$ of real-valued Boolean-cube functions",
+  "A function $A:\\mathbb N\\to\\mathbb R$",
+  "Every member of $B$ is $\\pm1$-valued",
+  "Closure of $B$ under all input negations and coordinate identifications",
+  "Every member's total influence is at most $A(n)$ in dimension $n$",
+  "A real noise parameter $\\delta$ with $0<\\delta\\le\\tfrac12$",
+  "Membership $f\\in B_n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $B=(B_n)_{n\\in\\mathbb N}$ be a family of sets of functions $\\{0,1\\}^{n}\\to\\{-1,1\\}$, closed under all substitutions $w\\mapsto(z_i+w_{\\pi(i)}\\pmod2)_{i=1}^{n}$ for every $n,m\\in\\mathbb N$, $z\\in\\{0,1\\}^{n}$ and map $\\pi:\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}$, and let $A:\\mathbb N\\to\\mathbb R$ satisfy\n\\[\n\\operatorname{Inf}(f):=\\sum_{i=1}^{n}\\Pr_X[f(X)\\neq f(X^{\\{i\\}})]\\leq A(n)\n\\quad\\text{for every }n\\in\\mathbb N,\\ f\\in B_n,\n\\]\nwhere $X$ is uniform on $\\{0,1\\}^{n}$ and $X^{\\{i\\}}$ flips coordinate $i$.\nThen for every $0<\\delta\\leq1/2$, $n\\in\\mathbb N$ and $f\\in B_n$, setting $m=\\lfloor1/\\delta\\rfloor$ gives\n\\[\n\\operatorname{NS}_{\\delta}(f)\\leq\\frac{A(m)}{m},\n\\]\nwhere $\\operatorname{NS}_{\\delta}(f)=\\Pr[f(X)\\neq f(Y)]$ and $Y$ independently flips each coordinate of $X$ with probability $\\delta$."
+}

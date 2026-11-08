@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_exit_fixed",
+ "key": "baca3f7caf83cbc9",
+ "kind": "lemma",
+ "title": "The Call Machine's Exit State Is Fixed",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $\\mathrm{emit}$ be a Boolean mode, and let $x$ be a Boolean word. Every configuration of the call machine on $x$ whose control state is the designated exit state $5$ is fixed by one computation step.",
+ "hypotheses_covered": [
+  "M is a finite-state Boolean Turing machine",
+  "emit is a Boolean mode",
+  "x is a Boolean word",
+  "z is a configuration of the call machine on x",
+  "z has control state equal to the designated exit state 5"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode and every configuration $z$ of the clean-call controller whose control is\nthe designated exit state, one step of the controller from $z$ equals $z$: the exit\nstate is silent and absorbing on every tape configuration."
+}

@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/GaussianSpace/InvarianceExtensions.lean :: BooleanAnalysis.GaussianSpace.invariance_c3_levy -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Invariance Bound in Lévy Distance
+
+**Claim.** There are positive constants $K,A$ such that, under the stated degree, variance, influence, independence, hypercontractivity, and moment hypotheses, the Lévy distance between the laws of the two polynomial evaluations is at most $K(1/\rho)^{Ak}\varepsilon^{1/8}$.
+
+**Proof.** The proof chooses $K=8$ and $A=2$. Set $B=(1/\rho)^{3k}\sum_i\mathrm{Inf}_i[F]^{3/2}/3$, which is nonnegative. The evaluations are measurable enough for the smoothing estimate because independent polynomial evaluations with coordinate third moments in $L^3$ belong to $L^3$ (`evalMultilinearRV_memLp_nat`); hypercontractivity supplies those coordinate moment bounds. The third-order invariance estimate (`invariance_c3`) then bounds the difference of expectations of every admissible smooth test function by its third-derivative bound times $B$. The derivative-to-Lévy comparison (`levy_bound_of_derivative_map`), with smoothing order two, converts this into a Lévy bound of $8B^{1/4}$. If $n=0$, the sum defining $B$ is empty, so this bound is zero and implies the result. Otherwise choose a coordinate. The hypercontractive radius bound (`hypercontractive_radius_le_five_sixths`) gives $\rho\le5/6$, hence $6/5\le1/\rho$. The influence-sum estimate (`sum_three_halves_influences_le_degree_mul`) bounds the sum by $k\sqrt\varepsilon$, using the degree of the cube evaluation (`has_degree_at_most_eval`) and the assumed variance and influence bounds. Thus $B\le k(1/\rho)^{3k}\sqrt\varepsilon/3$. Taking fourth roots and applying `invariance_c3_quarter_power_le` gives $B^{1/4}\le(1/\rho)^{2k}\varepsilon^{1/8}$. Multiplication by $8$ yields the claimed constants and exponents.
+
+**Key facts.** `BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp_nat`, `BooleanAnalysis.GaussianSpace.invariance_c3`, `BooleanAnalysis.GaussianSpace.Invariance.levy_bound_of_derivative_map`, `BooleanAnalysis.GaussianSpace.Invariance.hypercontractive_radius_le_five_sixths`, `BooleanAnalysis.Hypercontractivity.sum_three_halves_influences_le_degree_mul`, `BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.has_degree_at_most_eval`, `BooleanAnalysis.GaussianSpace.Invariance.invariance_c3_quarter_power_le`.

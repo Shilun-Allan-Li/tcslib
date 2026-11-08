@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.exists_loopTM",
+ "key": "d2b0f91dae56187a",
+ "kind": "theorem",
+ "title": "Decision loop machine",
+ "statement": "Let $B$ and $F$ be finite Turing machines over Boolean words, let $q$ be a state of $B$, let $I$ be a predicate on pairs of Boolean words, let $u$ map such pairs to Boolean words, let $A$ be Boolean-valued on such pairs, let $s_0$ map Boolean words to Boolean words, and let $R,T : \\\\mathbb{N} \\\\to \\\\mathbb{N}$. Suppose $F$ computes the binary digits of $R(|x|)$ within $T(|x|)$ steps, $I(x,s_0(x))$ holds, and $I(x,s)$ implies $I(x,u(x,s))$. Suppose startup on each input $x$ reaches the clean seam with word $s_0(x)$ within $T(|x|)$ steps without visiting $q$ earlier. For every $x,s$ satisfying $I(x,s)$, suppose a round takes positive time at most $T(|x|)$ with no intermediate positive-time visit to $q$; it halts with output $[\\\\mathrm{true}]$ if $A(x,s)$ holds, and otherwise reaches the clean seam with word $u(x,s)$. Then there are a finite Turing machine $E$ and a natural number $c$ such that $E$ computes the one-bit word indicating whether $A(x,u^i(x,s_0(x)))$ holds for some $i\\\\le R(|x|)$, within $c(T(n)+1)(R(n)+2)$ steps on inputs of length $n$.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Turing machines over Boolean words",
+  "$q$ is a state of $B",
+  "$I$ is a predicate on pairs of Boolean words",
+  "$u$ maps pairs of Boolean words to Boolean words",
+  "$A$ is Boolean-valued on pairs of Boolean words",
+  "$s_0$ maps Boolean words to Boolean words",
+  "$R,T$ map natural numbers to natural numbers",
+  "$F$ computes the binary digits of $R(|x|)$ within $T(|x|)$ steps",
+  "$I(x,s_0(x))$ holds for every $x$",
+  "$I(x,s)$ implies $I(x,u(x,s))$ for every $x,s$",
+  "Startup on each $x$ reaches the clean seam with word $s_0(x)$ within $T(|x|)$ steps and avoids $q$ beforehand",
+  "For every invariant pair $(x,s)$, a positive-time round of at most $T(|x|)$ steps avoids intermediate positive-time visits to $q$ and either halts with output true when $A(x,s)$ or reaches the clean seam with word $u(x,s)$ otherwise"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a loop body with anchor be given, a fuel machine computing the binary digits of\n$R(|x|)$ in time $T$, an invariant that holds at the initial word and is preserved by\nthe step function, a startup reaching the initial seam within $T(|x|)$ without visiting\nthe anchor earlier, and a per-round contract: on every admissible word, in positive time\nat most $T(|x|)$ with no early anchor revisit, the body either halts with output the\nsingle bit $\\mathrm{true}$ or advances to the seam of the stepped word. Then there are a\nfinite machine $E$ and a constant $c$ such that $E$ computes, within $c (T(n) + 1)(R(n)\n+ 2)$ steps on inputs of length $n$, the one-bit answer to whether some orbit point\namong the first $R(|x|) + 1$ iterates of the initial word is accepted."
+}

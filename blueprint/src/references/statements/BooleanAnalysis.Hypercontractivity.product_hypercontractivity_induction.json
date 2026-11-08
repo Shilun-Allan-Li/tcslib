@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_hypercontractivity_induction",
+ "key": "7d4d4ca1b36e5cc3",
+ "kind": "theorem",
+ "title": "Product hypercontractivity by tensorization",
+ "statement": "Let $P$ be a finite product probability space, and let $p,q,\\rho\\in\\mathbb R$ satisfy $1\\le p\\le q$ and $0\\le\\rho\\le1$. Suppose that for every coordinate $i$ and every real-valued function $g$ on that coordinate, the function $x\\mapsto \\rho g(x)+(1-\\rho)\\mathbb E_i g$ has $q$-moment norm at most the $p$-moment norm of $g$, where expectation and norms use the coordinate weights of $P$. Then for every real-valued function $f$ on the product outcome space, $\\|T_\\rho f\\|_{q,P}\\le \\|f\\|_{p,P}$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive coordinate weights summing to one",
+  "$p,q,\\rho\\in\\mathbb R$",
+  "$1\\le p$",
+  "$p\\le q$",
+  "$0\\le\\rho$",
+  "$\\rho\\le1$",
+  "The stated one-coordinate norm inequality holds for every coordinate and every real-valued coordinate function",
+  "$f$ is a real-valued function on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $1\\le p\\le q$, and $0\\le\\rho\\le1$. If every coordinate satisfies $\\|\\rho g+(1-\\rho)\\mathbb E_i g\\|_{q,i}\\le\\|g\\|_{p,i}$ for every real coordinate function $g$, then $\\|T_\\rho f\\|_{q,P}\\le\\|f\\|_{p,P}$ for every $f:\\Omega\\to\\mathbb R$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $\\|g\\|_{p,i}=(\\sum_{a\\in\\Omega_i}w_i(a)|g(a)|^p)^{1/p}$ and $\\mathbb E_i g=\\sum_{a\\in\\Omega_i}w_i(a)g(a)$, where $w_i$ gives the probability masses in coordinate $i$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

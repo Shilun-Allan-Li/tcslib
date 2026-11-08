@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.peres_theorem",
+ "key": "aa368877ce555a6a",
+ "kind": "theorem",
+ "title": "Noise sensitivity of linear threshold functions",
+ "statement": "There exists a real constant $C\\ge0$ such that, for every natural number $n$, every $\\{-1,1\\}$-valued function $f$ on $\\{0,1\\}^n$ that is the threshold of a real polynomial of degree at most one, and every $0<\\delta\\le\\tfrac12$, its noise sensitivity satisfies\n\\[\n\\operatorname{NS}_\\delta(f)\\le C\\sqrt{\\delta}.\n\\]\nHere the polynomial threshold assigns $1$ to nonnegative values and $-1$ to negative values, and noise sensitivity is defined from the noise stability at parameter $1-2\\delta$ by $\\operatorname{NS}_\\delta(f)=(1-\\operatorname{Stab}_{1-2\\delta}(f))/2$.",
+ "hypotheses_covered": [
+  "there exists a real constant C",
+  "C ≥ 0",
+  "n is a natural number",
+  "f is ±1-valued",
+  "f has a polynomial threshold representation of degree at most one",
+  "0 < δ",
+  "δ ≤ 1/2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThere exists a universal real constant $C\\geq0$ such that, for every $n\\in\\mathbb N$, every linear threshold function $f(x)=\\operatorname{sgn}_{+}(c+\\sum_{i=1}^{n}a_i(-1)^{x_i})$ on $\\{0,1\\}^{n}$ with real coefficients and every $0<\\delta\\leq1/2$,\n\\[\n\\operatorname{NS}_{\\delta}(f)\\leq C\\sqrt\\delta.\n\\]\nHere $\\operatorname{sgn}_{+}(t)=1$ for $t\\geq0$ and $-1$ for $t<0$, and $\\operatorname{NS}_{\\delta}(f)=\\Pr[f(X)\\neq f(Y)]$ with uniform $X$ and independent coordinate flips of probability $\\delta$ producing $Y$."
+}

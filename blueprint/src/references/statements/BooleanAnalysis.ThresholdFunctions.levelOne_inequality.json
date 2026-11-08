@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.levelOne_inequality",
+ "key": "04c11a27b133d421",
+ "kind": "theorem",
+ "title": "Level-one Fourier weight bound",
+ "statement": "There exists a real constant $C\\ge0$ such that for every natural number $n$, every function $f:\\{0,1\\}^n\\to\\mathbb R$, and every $\\alpha\\in\\mathbb R$ satisfying $f(x)\\in\\{0,1\\}$ for all $x$, $\\mathbb E[f]=\\alpha$, and $0<\\alpha\\le1/2$, the level-one Fourier weight satisfies\n\\[W_1[f]\\le C\\alpha^2\\log(\\alpha^{-1}),\\]\nwhere $\\log$ is the natural logarithm.",
+ "hypotheses_covered": [
+  "There exists a real constant $C\\ge0$",
+  "$n$ is a natural number",
+  "$f(x)\\in\\{0,1\\}$ for every Boolean-cube point $x$",
+  "$\\mathbb E[f]=\\alpha$",
+  "$0<\\alpha$",
+  "$\\alpha\\le1/2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $n\\in\\mathbb N$ and a real-valued function $h$ on $\\{0,1\\}^n$, write $\\mathbb E[h]=2^{-n}\\sum_{x\\in\\{0,1\\}^n}h(x)$, $\\widehat h(\\{i\\})=\\mathbb E[h(x)(-1)^{x_i}]$, and $W^1[h]=\\sum_{i<n}\\widehat h(\\{i\\})^2$ for its degree-one Fourier weight.\nThere exists a real constant $C\\ge0$ such that, for every $n\\in\\mathbb N$, every $f:\\{0,1\\}^n\\to\\mathbb R$ satisfying $f(x)\\in\\{0,1\\}$ for every $x$, and every real $\\alpha$ with $\\mathbb E[f]=\\alpha$ and $0<\\alpha\\le\\tfrac12$, one has\n\\[\nW^1[f]\\le C\\alpha^2\\log(\\alpha^{-1}),\n\\]\nwhere $\\log$ is the natural logarithm."
+}

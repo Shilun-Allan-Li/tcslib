@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.loopHostTM_contracts",
+ "key": "4e96a3b73f9f5e05",
+ "kind": "theorem",
+ "title": "Loop host computes a bounded decision sequence",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, and let $I$ be a predicate on pairs of Boolean words, $g$ a state-update function, $A$ a Boolean acceptance test, and $O$ an output-word function. Let $s_0$ assign an initial word to each input, and let $R,T:\\mathbb{N}\\to\\mathbb{N}$. Assume $F$ computes the word of binary digits of $R(|x|)$ on each input $x$ in time $T(|x|)$; $I(x,s_0(x))$ holds for every $x$ and is preserved by $g$; and for each $x$, the run of $B$ from its initial configuration reaches the seam configuration at state $a$ with tape words assigned by $s_0(x)$ within some time $t\\le T(|x|)$, without having state $a$ at any earlier time. Also assume that for every $x,s$ with $I(x,s)$, there is a time $t$ with $0<t\\le T(|x|)$ such that the run of $B$ from the seam configuration at $a$ with tape words assigned by $s$ does not have state $a$ at any intermediate time $t'$ with $0<t'<t$; at time $t$, if $A(x,s)$ is true the run is halted with output $O(x,s)$, and otherwise it is the seam configuration at $a$ with tape words assigned by $g(x,s)$. Then for every input $x$ there are a sequence of loop-host configurations $c_i$ and a startup time $u$ such that $u\\le 10(T(|x|)+1)$, the loop host's run from its initial configuration at time $u$ is $c_0$, every $c_i$ for $i\\le R(|x|)$ has empty output, and $c_{R(|x|)+1}$ is halted with output $[]$ in find mode and $[\\mathrm{false}]$ otherwise. Moreover, for every $i\\le R(|x|)$ there is a time $t\\le 10(T(|x|)+1)$ such that, if $A(x,g^{[i]}(s_0(x)))$ is true, the run from $c_i$ is halted at time $t$ with output $[]$ in find mode and $[\\mathrm{true}]$ otherwise; if it is false, that run at time $t$ equals $c_{i+1}$. Here $g^{[i]}$ denotes $i$-fold iteration of $s\\mapsto g(x,s)$.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$ and anchor state $a$ of $B$",
+  "Predicate $I$, update function $g$, acceptance test $A$, output function $O$",
+  "Initial-state function $s_0$ and bounds $R,T:\\mathbb{N}\\to\\mathbb{N}$",
+  "$F$ computes binary digits of $R(|x|)$ within time $T(|x|)$ for every input",
+  "$I(x,s_0(x))$ holds for every input",
+  "$I$ is preserved by $g$",
+  "For every input, a bounded initial run reaches the specified seam configuration without an earlier visit to $a$",
+  "For every invariant state, a positive bounded round run avoids intermediate visits to $a$",
+  "Each round run halts with output $O(x,s)$ when accepted",
+  "Each nonaccepting round run reaches the seam configuration for $g(x,s)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

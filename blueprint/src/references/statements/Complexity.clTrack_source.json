@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clTrack_source",
+ "key": "cc6a761ec7e6af4e",
+ "kind": "lemma",
+ "title": "One tracking step simulates a source step",
+ "statement": "Let $M$ be a finite Turing machine over Booleans, let $x,y$ be Boolean words, let $c$ be a configuration of $M$ on $y$, and let $b$ be a Boolean tag satisfying the boundary conditions for the input-head position of $c$. Assign a natural number $n_i$ to each of the $2(1+k)$ counter indices. There is a valid boundary tag for the input-head position after one step of $M$ such that one step of the tracking machine from the canonical configuration for $c$ enters the bank phase, with its control states initialized according to the actual source-head displacements and with every counter still storing the binary representation of its assigned value.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,y$ are Boolean words",
+  "$c$ is a configuration of $M$ on $y$",
+  "$b$ satisfies the boundary-tag conditions at $c$'s input-head position",
+  "there is a natural counter value for each of the $2(1+k)$ indices"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration with a valid position tag bit and let movement counts be given in canonical form. One step of the tracking host from the canonical seam applies the full source action, produces a valid tag for the stepped configuration, and enters the bank phase with exactly the counters of the actual displacements selected; no counter has yet changed, and the physical output is still empty."
+}

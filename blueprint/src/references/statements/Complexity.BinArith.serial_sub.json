@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.BinArith.serial_sub",
+ "key": "2846aed1ef380b22",
+ "kind": "theorem",
+ "title": "Value identity for serial subtraction",
+ "statement": "Let $N$ be a natural number, let $a,b$ be finite bit strings of lengths at most $N$, and let $c$ be an initial borrow bit. Pad $a$ and $b$ with zero bits to $N$ positions, then process the positions from least to most significant using the subtraction output bit and borrow update. If $o$ is the resulting $N$-bit output and $c_N$ the final borrow bit, then $\\operatorname{val}(o)+\\operatorname{val}(b)+c=\\operatorname{val}(a)+2^N c_N$, where bits are interpreted as $0$ or $1$.",
+ "hypotheses_covered": [
+  "$N$ is a natural number",
+  "$a$ is a finite bit string with $|a|\\le N$",
+  "$b$ is a finite bit string with $|b|\\le N$",
+  "$c$ is a bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

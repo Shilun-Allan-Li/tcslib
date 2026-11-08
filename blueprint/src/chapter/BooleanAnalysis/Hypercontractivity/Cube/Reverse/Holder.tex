@@ -9,45 +9,56 @@ Reverse Young and reverse Hölder inequalities bound pairings of nonnegative cub
 \lean{BooleanAnalysis.Hypercontractivity.reverse_young}
 \leanok
 \difficulty{5}
-Let $0<r<1$, $a\ge0$, and $b>0$. Writing $s=r/(r-1)<0$, one has $ab\ge a^r/r+b^s/s$.
+Let $0<r<1$, $a\ge0$, and $b>0$. Then $ab\ge a^r/r+b^{r/(r-1)}/(r/(r-1))$.
 \end{lemma}
 
-\begin{lemma}[Positivity of a nonnegative moment]
+\begin{lemma}[Positivity of a power moment]
 \lean{BooleanAnalysis.Hypercontractivity.ReverseMoments.expect_rpow_pos}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-Let $r\in\bbr$ and $u:\{0,1\}^n\to[0,\infty)$ have at least one positive value. Then $\E[u^r]>0$, with the convention $0^0=1$ and $0^r=0$ for $r\ne0$.
+Let $n\in\mathbb N$, let $r\in\mathbb R$, and let $u:\{0,1\}^n\to\mathbb R$ be pointwise
+nonnegative. If $u$ is positive at at least one point, then $\mathbb E[u^r]>0$ under the
+uniform measure.
 \end{lemma}
 
-\begin{lemma}[Normalizing a power moment]
+\begin{lemma}[Normalization of a power moment]
 \lean{BooleanAnalysis.Hypercontractivity.ReverseMoments.expect_normalized_rpow_eq_one}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect}
 \difficulty{3}
-Let $r\ne0$, let $u:\{0,1\}^n\to[0,\infty)$, and assume $A=\E[u^r]>0$ under the uniform measure. Then $\E[(u/A^{1/r})^r]=1$.
+Let $n\in\mathbb N$, let $r\in\mathbb R$ be nonzero, and let $u:\{0,1\}^n\to\mathbb R$
+be pointwise nonnegative. If $\mathbb E[u^r]>0$ under the uniform measure, then $\mathbb
+E\!\left[\left(u/(\mathbb E[u^r])^{1/r}\right)^r\right]=1$.
 \end{lemma}
 
-\begin{lemma}[Rescaling a pairing]
+\begin{lemma}[Rescaling the inner product]
 \lean{BooleanAnalysis.Hypercontractivity.innerProduct_eq_mul_expect_div}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.innerProduct}
 \difficulty{3}
-Let $u,v:\{0,1\}^n\to\bbr$ and nonzero $A,B\in\bbr$, uniform expectation satisfies $\E[uv]=AB\E[(u/A)(v/B)]$.
+Let $u,v:\{0,1\}^n\to\mathbb R$ and let $A,B\in\mathbb R$ be nonzero. With expectation
+and inner product taken under the uniform measure on the Boolean cube, $\langle
+u,v\rangle=AB\,\mathbb E[(u/A)(v/B)]$.
 \end{lemma}
 
-\begin{lemma}[Reverse Holder with a positive exponent]
+\begin{lemma}[Reverse Hölder inequality for positive exponents]
 \lean{BooleanAnalysis.Hypercontractivity.reverse_holder_of_pos}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.IsNonnegative, BooleanAnalysis.Hypercontractivity.ReverseMoments.expect_normalized_rpow_eq_one, BooleanAnalysis.Hypercontractivity.ReverseMoments.expect_rpow_pos, BooleanAnalysis.Hypercontractivity.innerProduct_eq_mul_expect_div, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.Hypercontractivity.reverse_young, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.innerProduct, BooleanAnalysis.uniformWeight}
 \difficulty{5}
-Let $0<r<1$ and $u,v:\{0,1\}^n\to[0,\infty)$. Then $\E[uv]\ge M_r(u)M_{r/(r-1)}(v)$. For nonnegative functions $u$, the extended mean is $M_r(u)=(\E u^r)^{1/r}$ when $r>0$; the same formula applies for $r<0$ when $u$ is positive everywhere. For positive $u$, $M_0(u)=\exp(\E\log u)$; if $r\le0$ and $u$ has a zero, $M_r(u)=0$. All expectations are uniform.
+Let $n$ be a nonnegative integer, let $0<r<1$, and let $u,v$ be nonnegative real-valued
+functions on the Boolean cube $\\{0,1\\}^n$. Then their uniform inner product satisfies
+$\\langle u,v\\rangle \\ge M_r(u)M_{r/(r-1)}(v)$, where $M_p$ denotes the extended power
+mean.
 \end{lemma}
 
-\begin{lemma}[Reverse Holder for finite conjugate exponents]
+\begin{lemma}[Reverse Hölder inequality]
 \lean{BooleanAnalysis.Hypercontractivity.reverse_holder}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.IsNonnegative, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.reverse_holder_of_pos, BooleanAnalysis.innerProduct, BooleanAnalysis.innerProduct_comm}
 \difficulty{4}
-Let $p<1$, $p\ne0$, and $f,g:\{0,1\}^n\to[0,\infty)$. Then $\E[fg]\ge M_p(f)M_{p/(p-1)}(g)$. For nonnegative functions $u$, the extended mean is $M_r(u)=(\E u^r)^{1/r}$ when $r>0$; the same formula applies for $r<0$ when $u$ is positive everywhere. For positive $u$, $M_0(u)=\exp(\E\log u)$; if $r\le0$ and $u$ has a zero, $M_r(u)=0$. All expectations are uniform.
+Let $p\in\mathbb R$ satisfy $p<1$ and $p\ne0$. For all nonnegative real-valued functions
+$f,g$ on the Boolean cube, $\langle f,g\rangle\ge M_p(f)M_{p/(p-1)}(g)$, where the inner
+product and extended power means use uniform expectation.
 \end{lemma}

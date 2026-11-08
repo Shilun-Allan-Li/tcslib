@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.cpExit",
+ "key": "c78813185801089d",
+ "kind": "def",
+ "title": "Copy-loop exit labels",
+ "statement": "For a natural number $K_0$, assign an exit label to each copy site. A radius copy proceeds to the logarithm copy at the same stage, and a logarithm copy exits to the width increment at that stage. An indexed addition copy proceeds to the next addition when its index plus one is less than $K_0$, and otherwise exits to the width clear at that stage. A width-counter copy proceeds to the shift phase at step zero; a first base copy exits to the width-work exit at the second-search stage and otherwise proceeds to the second base copy; a second base copy exits to the width-work exit at its stage. A base-access copy proceeds to the index-access copy at the same site, an index-access copy proceeds to the outward memory-access phase at that site, and the iteration copy exits to the increment of $s_1$.",
+ "hypotheses_covered": [
+  "Natural-number parameter $K_0$",
+  "Copy site; indexed additions use an index below $K_0$",
+  "Stage parameter for stage-dependent sites",
+  "Site parameter for access copies"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

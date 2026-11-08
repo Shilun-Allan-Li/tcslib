@@ -1,0 +1,16 @@
+{
+ "lean_name": "WordRAM.Steps.branch",
+ "key": "f16abb039a4c3c72",
+ "kind": "theorem",
+ "title": "Branching and Step Sequences",
+ "statement": "Let $n,l,pos,pos'$ be natural numbers, let $c$ be an initial configuration, let $m$ be a memory function, and let $v$ be an integer. Suppose that $n$ steps of the program take $c$ to the configuration with memory $m$ and program counter $l$ if $v<0$, and with memory $m$ and program counter $pos$ otherwise. If a proposition $p$ is equivalent to $v\\ge 0$ and $pos=pos'$, then if $p$ holds, $n$ steps take $c$ to the configuration with memory $m$ and program counter $pos'$; if $p$ fails, they take $c$ to the configuration with memory $m$ and program counter $l$.",
+ "hypotheses_covered": [
+  "There is an $n$-step execution from $c$ to the configuration with memory $m$ and program counter $l$ when $v<0$, or $pos$ otherwise",
+  "The proposition $p$ is equivalent to $v\\ge 0$",
+  "The program counters $pos$ and $pos'$ are equal"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

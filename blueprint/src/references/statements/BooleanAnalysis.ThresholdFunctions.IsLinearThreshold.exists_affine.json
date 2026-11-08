@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.IsLinearThreshold.exists_affine",
+ "key": "c97d9c1224619a06",
+ "kind": "lemma",
+ "title": "Affine representation of a linear threshold function",
+ "statement": "Let $n\\in\\mathbb N$ and let $f:\\{0,1\\}^n\\to\\bbr$ be a linear threshold function, meaning it is the threshold of a multilinear polynomial of degree at most one, with threshold sign equal to $1$ on nonnegative inputs and $-1$ on negative inputs. Then there are $c\\in\\bbr$ and coefficients $a_i\\in\\bbr$ for $i\\in[n]$ such that, for every $x\\in\\{0,1\\}^n$, \\[f(x)=\\sigma\\!\\left(c+\\sum_{i\\in[n]}a_i(-1)^{x_i}\\right),\\] where $\\sigma(r)=1$ for $r\\ge0$ and $\\sigma(r)=-1$ for $r<0$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$f$ is a real-valued function on the Boolean cube",
+  "$f$ is a polynomial threshold function of degree at most one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for $S\\subseteq[n]$ and real cube functions $h$. Write $\\operatorname{sgn}_+(t)=1$ for $t\\ge0$ and $-1$ for $t<0$. If $f$ is the sign $\\operatorname{sgn}_+(P)$ of a Walsh polynomial $P$ whose coefficients vanish on sets larger than one, then there exist real $c$ and $a_1,\\ldots,a_n$ such that $f(x)=\\operatorname{sgn}_+(c+\\sum_i a_i(-1)^{x_i})$ for every $x$."
+}

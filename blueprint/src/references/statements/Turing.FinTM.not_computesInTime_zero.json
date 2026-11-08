@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.not_computesInTime_zero",
+ "key": "55d88a86bb397325",
+ "kind": "theorem",
+ "title": "No computation in zero steps",
+ "statement": "For a finite Turing machine $M$ and any input and output words $x$ and $w$ over its alphabet, there is no nonnegative integer $s$ for which the computation of $M$ on $x$ is halted after $0$ steps, has output $w$, and uses exactly $s$ work-tape cells.",
+ "hypotheses_covered": [
+  "finite Turing machine $M$",
+  "input word $x$ over its alphabet",
+  "output word $w$ over its alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every finite Turing machine $M$ over an alphabet $\\Sigma$ and all words\n$x$ and $w$ over $\\Sigma$, the machine $M$ does not compute the output $w$\nfrom the input $x$ within $0$ steps: after zero steps the machine is still in\nits initial, non-halted state."
+}

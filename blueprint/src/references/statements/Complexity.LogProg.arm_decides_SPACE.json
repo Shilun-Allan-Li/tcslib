@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.arm_decides_SPACE",
+ "key": "9bdd4574ff798f4e",
+ "kind": "theorem",
+ "title": "Oracle register programs in space S",
+ "statement": "Let $L$ be a language of bit strings, let $A$ be a register program with $m$ registers and finitely many states, and let $\\ell_0$ be its initial state. Suppose there are $d$ oracle languages $A_0,\\ldots,A_{d-1}$, each decidable in logarithmic space, and functions $S:\\mathbb{N}\\to\\mathbb{N}$ and a natural number $K$ such that $\\lfloor\\log_2 n\\rfloor+1\\le S(n)$ for every $n$. Suppose also that, on each input $x$, the run from $\\ell_0$ with all registers zero halts with the correct membership answer for $L$, and every configuration before halting satisfies the program's side conditions and has, for every register $r$, binary length of $r$'s value plus one at most $K S(|x|)$. Then $L$ belongs to the space class $\\mathrm{SPACE}(S)$.",
+ "hypotheses_covered": [
+  "L is a language of bit strings",
+  "A has m registers and a finite state set Λ",
+  "The initial state ℓ₀",
+  "There are d oracle languages indexed by Fin d",
+  "Every oracle language belongs to LOGSPACE",
+  "S is a function from natural numbers to natural numbers",
+  "For every n, logSpace(n)≤S(n)",
+  "K is a natural number",
+  "For every input x, the run halts with the membership indicator for L(x)",
+  "Every configuration before halting satisfies PreS",
+  "For each register, the binary length of its value plus one is at most K*S of the input length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

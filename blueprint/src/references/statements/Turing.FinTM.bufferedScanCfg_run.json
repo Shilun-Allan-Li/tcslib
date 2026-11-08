@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.bufferedScanCfg_run",
+ "key": "2813e13e28e247af",
+ "kind": "lemma",
+ "title": "Rewind scan reaches the second phase",
+ "statement": "Let $M_1$ and $M_2$ be finite-state machines over the Boolean alphabet, with any finite numbers of work tapes. Let $x$ and $y$ be Boolean words, let $p$ be a valid physical input-head position for $x$, and choose arbitrary contents and head positions for the left work-tape block of $M_1$. For every natural number $j$ with $j\\le |y|$, running the buffered composition for $j+1$ steps from its rewind-scan configuration, with buffer head at cell $j-1$, yields the second-phase configuration of $M_2$ initialized on virtual input $y$, with arrival tag true, physical input-head position $p$, and the chosen left-block data unchanged.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are finite-state machines over Boolean symbols",
+  "$x,y$ are Boolean words",
+  "$p$ is a valid physical input-head position for $x$",
+  "left-block tape contents and head positions are arbitrary",
+  "$j$ is a natural number with $j\\le |y|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_1$ and $M_2$ be machines over the Boolean alphabet with finitely many\nstates, let $y$ be a Boolean word stored on the buffer, let $p$ be a position\nof the physical input head over the real input $x$, and fix arbitrary\ninactive contents and head positions for the left tape block.  For every\n$j \\le \\abs{y}$, running the buffered sequential composition of $M_1$ and\n$M_2$ for exactly $j + 1$ steps from the rewind-scan configuration with\nbuffer head at cell $j - 1$ yields the second-phase embedding of the initial\nconfiguration of $M_2$ on virtual input $y$, with arrival tag true, physical\nposition $p$, and the same inactive data.  This includes the case of an\nempty word $y$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.UnaryTape.ones_lt",
+ "key": "fb6de3c16f437642",
+ "kind": "theorem",
+ "title": "Unary tape symbol below its length",
+ "statement": "Let $m$ be a natural number, and let $c$ be an integer cell position. If $0 \\le c$ and $c < m$, then the unary tape of $m$ contains the symbol $1$ at position $c$.",
+ "hypotheses_covered": [
+  "Natural number $m$",
+  "Integer cell position $c$ with $0 \\le c$",
+  "Cell position $c < m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m \\in \\mathbb{N}$, and let $\\mathrm{ones}_m : \\mathbb{Z} \\to \\{0, 1, \\sqcup\\}$ be its unary\ntape, which holds $1$ on cells $0, \\dots, m-1$ and the blank $\\sqcup$ elsewhere. If\n$c \\in \\mathbb{Z}$ satisfies $0 \\le c$ and $c < m$, then $\\mathrm{ones}_m(c) = 1$."
+}

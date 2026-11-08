@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.csKey_gives",
+ "key": "5628d6afa70cd744",
+ "kind": "theorem",
+ "title": "Key expression evaluates safely",
+ "statement": "Let a counting-sort input have $n$ items stored at source address $s$, with key values $k_i$ satisfying $0\\le k_i<N$. Assume the word and address bounds and the disjointness conditions required for the counting-sort layout hold, and that the initial memory contains item $i$ at $s+i$ and key $k_i$ at its designated key cell. If a modified memory agrees with the initial memory outside the destination and counter ranges, then, for every $i<n$ and all integers $c,p$, the key-loading expression is safe in the state with loop variables $i,c,p$ and modified memory, and evaluates to $k_i$.",
+ "hypotheses_covered": [
+  "Counting-sort preconditions: word bound, source/destination/counter bounds, item and key contents, key range, and required interval disjointness",
+  "Modified memory agrees with initial memory outside destination and counter ranges",
+  "Index $i<n$",
+  "Integers $c,p$ are arbitrary"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on a large bundled precondition and a specific key-loading expression whose full definition is not present in the given definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

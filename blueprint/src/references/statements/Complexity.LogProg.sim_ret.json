@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.sim_ret",
+ "key": "3145208d0f896b6e",
+ "kind": "lemma",
+ "title": "Halting behavior of a return instruction",
+ "statement": "Let $m$ be the number of registers, let $\\Lambda$ be a set of program states, and let $A$ assign an instruction to each state. Fix an initial state $l_*$, an oracle on Boolean words, an input word $x$, register values $v\\colon\\{0,\\ldots,m-1\\}\\to\\mathbb{N}$, an output word, and an integer $W\\ge 0$. If the instruction at $l$ returns the Boolean value $b$, then the compiled program, started in state $l$ with those register values and output, reaches a halting configuration whose output is the given output word followed by $b$, with every register head position between $-1$ and $W$, inclusive. At every earlier step no call state is visited and all register head positions lie in that same interval.",
+ "hypotheses_covered": [
+  "The instruction assignment $A$ and initial state $l_*$",
+  "The oracle on words and its index set",
+  "The state $l$ and Boolean return value $b$",
+  "The instruction at $l$ returns $b$",
+  "Register values $v$ and output word",
+  "Integer bound $W$ satisfies $0\\le W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

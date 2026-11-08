@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.tautDual_copy",
+ "key": "64d0576d996aa2fb",
+ "kind": "lemma",
+ "title": "Copy pass over a suffix",
+ "statement": "Let $r$ be a binary string. For every binary input $x$, prefix $p$, output word $o$, and syntax-scanner state $q$ such that $x=p r$, the dual transducer, started in copying state $q$ at head position $|p|+1$ with output $o$, reaches after exactly $|r|$ steps the copying state carrying the scanner state obtained by processing $r$ from $q$, at position $|x|+1$, with output $o$ followed by the polarity-flipping scan of $r$ from $q$. No configuration before the final step is in the anchor state.",
+ "hypotheses_covered": [
+  "$r$ is a binary string",
+  "$x,p,o$ are binary strings",
+  "$q$ is a syntax-scanner state",
+  "$x=p r$",
+  "The initial head position is $|p|+1$",
+  "The run length is $|r|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input be $x = p \\mathbin{+\\!\\!+} r$, let $q$ be a formula-scanner state, and\nlet $o$ be an output word. Started in the copying state carrying $q$ at head position\n$|p| + 1$ with output $o$, the dual transducer reaches, in exactly $|r|$ steps and\nwithout visiting the anchor state before then, the copying state carrying the fold of\nthe scanner transition over $r$ from $q$, at position $|x| + 1$, with output $o$\nfollowed by the polarity-flipping scan of $r$ from $q$."
+}

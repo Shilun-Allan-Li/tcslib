@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_fuel_setup",
+ "key": "01c43e26b91ffeb8",
+ "kind": "lemma",
+ "title": "Fuel Setup",
+ "statement": "Let $B,F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose Boolean parameters `forward` and `findMode`, an input word $x$, a base loop-host configuration, an input-head position $p$, a Boolean flag tape, and Boolean words $w,o$. Starting in controller phase $0$ with blank counter tape, payload tape storing $w$, counter head at $0$, payload head at $|w|$, and output $o$, after exactly $3|w|+4$ steps the host is in phase $4$ with counter tape storing $w$, blank payload tape, both heads at $0$, and output $o$; all remaining frame data are unchanged. This includes the case $w=[]$.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$",
+  "anchor state $a$ of $B$",
+  "Boolean parameters `forward` and `findMode`",
+  "input word $x$",
+  "base loop-host configuration",
+  "input-head position $p$",
+  "Boolean flag tape function",
+  "Boolean words $w,o$",
+  "initial state is controller phase 0",
+  "counter tape is blank",
+  "payload tape stores $w$",
+  "counter head is at $0$",
+  "payload head is at $|w|$",
+  "initial output is $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be the captured fuel word. Starting the loop host in controller phase zero on a\nframe whose counter track is blank and whose payload track is the buffer tape of $w$\nwith payload head at cell $|w|$, after exactly $3|w| + 4$ steps the host is in the\ninput-rewind phase with the counter track holding $w$, the payload track blank, both\nheads at cell zero, and all inactive data unchanged. The empty word is included."
+}

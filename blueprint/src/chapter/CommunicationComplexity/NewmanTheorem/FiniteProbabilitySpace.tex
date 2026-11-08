@@ -114,9 +114,67 @@ also has $\mu(\{\omega\}) = 0$.
 
 \begin{theorem}[Square of the expectation is at most the expectation of the square]
 \lean{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
+\proofsource{vershynin-hdp-book}{pdf-681b6f3d947f-p014-b003}
 \label{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005,
+    pdf-681b6f3d947f-p011-b001}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005,
+    pdf-681b6f3d947f-p011-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p010-b005}
 \difficulty{3}
 Let $\Omega$ be a finite measurable space, let $\mu$ be a probability measure on
 $\Omega$, and let $f : \Omega \to \bbr$ be any real-valued function. Then
@@ -337,6 +395,7 @@ $p$-weighted sum of its values.
 
 \begin{theorem}[Squared mean at most mean of square on a finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p014-b003}
 \label{CommunicationComplexity.FiniteProbabilitySpace.sq_integral_le_integral_sq}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.sq_integral_le_integral_sq, CommunicationComplexity.FiniteProbabilitySpace}
@@ -467,9 +526,72 @@ satisfies $\int_\Omega f \le c$.
 
 \begin{theorem}[Markov's inequality on a finite probability space]
 \lean{CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div}
+\proofsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p016-b002,
+  pdf-681b6f3d947f-p016-b003
+}
 \label{CommunicationComplexity.FiniteProbabilitySpace.measureReal_ge_le_integral_div}
 \leanok
 \uses{CommunicationComplexity.FiniteProbabilitySpace}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p013-b002,
+    pdf-681b6f3d947f-p014-b001}
+\proofstep
+  {CommunicationComplexity.FiniteMeasureSpace.of}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p013-b002,
+    pdf-681b6f3d947f-p014-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p013-b002,
+    pdf-681b6f3d947f-p014-b001}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.of}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p013-b002,
+    pdf-681b6f3d947f-p014-b001}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceBool}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p013-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpaceProd}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b002}
+\proofstep
+  {CommunicationComplexity.finiteMeasureSpacePi}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b002}
+\proofstep
+  {CommunicationComplexity.instProd}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b002}
+\proofstep
+  {CommunicationComplexity.instPi}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p017-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.nonempty}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p013-b002}
+\proofstep
+  {CommunicationComplexity.FiniteProbabilitySpace.instNonempty}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p013-b002}
 \difficulty{3}
 Let $\Omega$ be a finite probability space and let $f : \Omega \to \bbr$ be a
 nonnegative function, so that $f(\omega) \ge 0$ for every $\omega \in \Omega$. Then for

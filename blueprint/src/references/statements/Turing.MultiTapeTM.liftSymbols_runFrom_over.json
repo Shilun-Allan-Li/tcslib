@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.MultiTapeTM.liftSymbols_runFrom_over",
+ "key": "7574aefcf861a00c",
+ "kind": "theorem",
+ "title": "Lifting computations over a fixed configuration",
+ "statement": "Let $\\Gamma$ and $Q$ be types, let $\\Gamma$ have decidable equality, and let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an embedding. Let $N$ be a multi-tape Turing machine with Boolean symbols and state set $Q$. Suppose its transition action is independent of the scanned input symbol, and no transition prescribes erasing a work-tape cell by writing a blank. Let $x$ be a $\\Gamma$-word and $x'$ a Boolean word of the same length, let $D$ be a configuration on $x$, and let $c$ be a configuration of $N$ on $x'$. For every $t\\in\\mathbb{N}$, running the lifted machine from the configuration formed by lifting $c$ over $D$ for $t$ steps gives the configuration formed by lifting the result of running $N$ from $c$ for $t$ steps over $D$.",
+ "hypotheses_covered": [
+  "Types $\\Gamma$ and $Q$",
+  "Decidable equality on $\\Gamma$",
+  "An embedding of Boolean symbols into $\\Gamma$",
+  "A Boolean-symbol machine $N$ with state set $Q$",
+  "Transitions independent of the scanned input symbol",
+  "No transition writes a blank on a work tape",
+  "Words $x$ and $x'$ with equal lengths, over $\\Gamma$ and Boolean symbols respectively",
+  "A configuration $D$ on $x$",
+  "A configuration $c$ of $N$ on $x'$",
+  "A natural-number step count"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

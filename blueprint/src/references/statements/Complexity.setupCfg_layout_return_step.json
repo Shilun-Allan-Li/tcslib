@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_return_step",
+ "key": "24b2719a91519e4d",
+ "kind": "lemma",
+ "title": "A return-sweep step",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a\\in\\mathbb{N}$, and consider a setup configuration on a schedule-alphabet input, with arbitrary base configuration, input-head position, budget-head position, and controller tapes. If its phase is layout-return phase $i\\in\\{0,1,2\\}$ and the unary tape does not contain the origin marker at the unary head, one step advances the phase to $i+1\\pmod 3$, moves the unary head left by one exactly when $i=2$, and moves the guide head left by one; all tape contents and other configuration data are unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Booleans",
+  "$a\\in\\mathbb{N}$",
+  "a base configuration on a schedule-alphabet input",
+  "an input-head position",
+  "integer budget, unary, and guide head positions",
+  "arbitrary budget, unary, and guide tapes",
+  "phase is layout-return phase $i$ for $i\\in\\{0,1,2\\}$",
+  "the unary tape at its head is not the origin marker"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a setup configuration is in layout-return phase $i \\in \\{0,1,2\\}$ and the unary\ntape does not read the origin sentinel at the unary head.  Then one step moves to\nlayout-return phase $i+1 \\bmod 3$, moves the guide head one cell left, decrements the\nunary head exactly when $i = 2$, and writes nothing on any tape."
+}

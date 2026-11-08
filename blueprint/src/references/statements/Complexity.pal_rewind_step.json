@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.pal_rewind_step",
+ "key": "e4a9015f00cd34a7",
+ "kind": "lemma",
+ "title": "Single Rewind-Phase Transition",
+ "statement": "Let $x$ be a binary word and let $i<|x|$. From state $1$, with the input head at position $i+1$, all bits of $x$ copied onto the work tape, and the work head at cell $|x|$, one step of the three-state palindrome machine reaches state $1$ with the input head at position $i$. The work tape and work-head position are unchanged, and the output remains empty.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$i$ is a natural number",
+  "$i<|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word of length $n$ and $i < n$. From the configuration of the\nthree-state palindrome machine on input $x$ in rewind state with input head at\ncell $i+1$, all $n$ bits copied, and work head at cell $n$, one transition moves\nthe input head left to cell $i$ and changes nothing else: the state, the copied\nwork tape, and the work head position are preserved."
+}

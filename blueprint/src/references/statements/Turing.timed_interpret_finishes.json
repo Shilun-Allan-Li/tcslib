@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.timed_interpret_finishes",
+ "key": "6467a0aea24143c0",
+ "kind": "lemma",
+ "title": "Uniform completion of the timed interpreter",
+ "statement": "Let $M$ be a coded machine, let $\\alpha$ and $x$ be finite Boolean words, and let $r$ be a natural number. For every configuration $\\mathrm{src}$ of $M$ on input $x$, every natural number $p$, and every finite Boolean word $bs$ such that $p\\leq |M.\\mathrm{serialize}|$ and the little-endian value of $bs$ is $r$, there is a natural number $d$ satisfying\n\\[\n d\\leq \\bigl(3|M.\\mathrm{serialize}|+5(M.\\mathrm{numStates}+1)+20+2|bs|+8\\bigr)(r+1)+2|\\mathrm{src.output}|,\n\\]\nsuch that after $d$ steps the timed interpreter started from the six-tape lift of the interpreter configuration for $M$, $\\alpha$, $\\mathrm{src}$, and $p$, with clock word $bs$, is halted and its output is the deadline-inclusive answer for $\\mathrm{src}$ after $r$ steps of $M$.",
+ "hypotheses_covered": [
+  "$M$ is a coded machine",
+  "$\\alpha$ is a finite Boolean word",
+  "$x$ is a finite Boolean input word",
+  "$r$ is a natural number",
+  "$\\mathrm{src}$ is a configuration of $M$ on input $x",
+  "$p$ is a natural number with $p\\leq |M.\\mathrm{serialize}|$",
+  "$bs$ is a finite Boolean word whose little-endian value is $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $M$ be a coded machine with serialization of length $L$ and state count\n$N+1$, let $\\mathrm{src}$ be any configuration of $M$, let the table cursor be\nat most $L$, and let the clock word have width $w$ and little-endian value\n$r$.  Then the timed interpreter, started from the six-tape lift of the\ninterpreter checkpoint of $\\mathrm{src}$ with that clock word, halts within\n\\[\n  \\bigl(3L + 5(N+1) + 20 + 2w + 8\\bigr)\\,(r+1)\n    + 2\\,\\lvert \\text{output of } \\mathrm{src}\\rvert\n\\]\nsteps, and its real output is exactly the deadline-inclusive answer of\n$\\mathrm{src}$ at budget $r$: halting on the final allowed transition counts\nas success."
+}

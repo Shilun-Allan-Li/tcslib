@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.mem_coNP_iff_forall",
+ "key": "d3bb297f6ad1a95f",
+ "kind": "theorem",
+ "title": "Universal-certificate characterization of coNP",
+ "statement": "For every language $L$ of binary strings, $L$ belongs to coNP if and only if there are natural numbers $C,c$ and a language $V$ in polynomial time such that, for every binary string $x$, membership $x\\in L$ is equivalent to the condition that every binary string $u$ of length exactly $C(|x|+1)^c$ satisfies $xu\\in V$, where $xu$ is the concatenation of $x$ and $u$.",
+ "hypotheses_covered": [
+  "$L$ is a language of binary strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "A language $L \\subseteq \\{0,1\\}^{*}$ belongs to the class coNP (that is, its\ncomplement lies in $\\mathsf{NP}$) if and only if there exist natural numbers $C$ and\n$c$ and a verifier language $V \\in \\mathsf{P}$ such that for every binary string $x$,\n\\[\n  x \\in L \\iff \\text{for every } u \\in \\{0,1\\}^{*} \\text{ with } |u| = C \\cdot (|x|+1)^{c},\\ \\ xu \\in V,\n\\]\nwhere $xu$ denotes the concatenation of $x$ and $u$."
+}

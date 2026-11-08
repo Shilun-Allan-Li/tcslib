@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.oracleRedirect",
+ "key": "9c324c34f2455505",
+ "kind": "def",
+ "title": "Oracle phase redirection",
+ "statement": "Given a finite Boolean oracle machine $M$, a finite Boolean Turing machine $C$, a state $e$ of $C$, a phase $i$, and a state $q$ belonging to that phase, define a partial redirection to a phase-state pair as follows. In the source phase, redirect precisely when the machine state is $M$'s query state, to dispatch with the bookmark state for the current Boolean side. In dispatch, redirect ready to the source phase at $M$'s initial state paired with true, copy to the service phase at the start of the sweep, and an answer state with verdict $v$ and side $s$ to the source phase at $M$'s positive-answer state if $v$ is true and negative-answer state otherwise, paired with $s$; all other dispatch states have no redirection. In service, redirect only the state consisting of $e$ paired with true to dispatch at read; every other service state has no redirection.",
+ "hypotheses_covered": [
+  "Finite Boolean oracle machine $M$",
+  "Finite Boolean Turing machine $C$",
+  "Chosen state $e$ of $C$",
+  "Phase $i$ and a state $q$ belonging to that phase"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

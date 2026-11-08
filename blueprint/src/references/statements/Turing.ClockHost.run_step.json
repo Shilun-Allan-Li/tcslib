@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.ClockHost.run_step",
+ "key": "e36904852068d647",
+ "kind": "theorem",
+ "title": "Clocked simulation step",
+ "statement": "Let $S$ be a finite-state deterministic machine over the Boolean alphabet and let $A$ be a nondeterministic machine over that alphabet, with a Boolean parameter indicating whether to loop. For an input $x$, a configuration $a$ of $A$, a natural number $j<m$, a Boolean choice $b$, and arbitrary work-tape contents and head positions for $S$, the host machine’s step from the run configuration encoding $a$ at clock position $j$ equals the run configuration encoding the result of taking one step of $A$ from $a$ using choice $b$, with clock position $j+1$.",
+ "hypotheses_covered": [
+  "$S$ is a finite-state deterministic Boolean machine",
+  "$A$ is a nondeterministic Boolean machine",
+  "Boolean loop parameter",
+  "Boolean input $x$",
+  "$a$ is a configuration of $A$ on $x$",
+  "$b$ is a Boolean choice",
+  "$j$ is a natural number with $j<m$",
+  "arbitrary work-tape contents and head positions for $S$",
+  "$m$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

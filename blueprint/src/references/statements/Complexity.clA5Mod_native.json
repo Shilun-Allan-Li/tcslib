@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5Mod_native",
+ "key": "5485b6967200f9e6",
+ "kind": "lemma",
+ "title": "Polynomial-time unary remainder",
+ "statement": "Let $f$ assign a natural number to every bit string, and suppose the function that maps $x$ to the unary word consisting of $f(x)$ true bits is polynomial-time computable. For every natural number $k$, the function that maps $x$ to the unary word consisting of $f(x)\\bmod k$ true bits is polynomial-time computable.",
+ "hypotheses_covered": [
+  "Unary encoding of $f$ is polynomial-time computable",
+  "Natural number $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a unary value is polynomial-time computable, then for every fixed constant the unary word of its remainder is polynomial-time computable, by native subtraction after the finite-control quotient scan; the zero-constant case is included."
+}

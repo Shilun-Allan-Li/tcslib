@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satStreamRound_bound",
+ "key": "6dd469462cca7544",
+ "kind": "lemma",
+ "title": "Preservation of the length invariant",
+ "statement": "Let $x$ be a finite bit string and let $s$ be a streaming seam state. If the number of bits consumed by $s$ is at most the length of $x$, and the fresh-variable cursor is at most the length of $x$ plus the number of bits consumed, then the state produced by one round on $x$ satisfies both inequalities as well.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$s$ is a streaming seam state",
+  "The number of bits consumed by $s$ is at most the length of $x$",
+  "The fresh-variable cursor of $s$ is at most the length of $x$ plus the number of bits consumed"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a seam state satisfies the length invariant on an input $x$, then so does the\nstate after one streaming round — including on malformed local inputs, where\nfinished and failure cases preserve the counters."
+}

@@ -16,6 +16,7 @@ formula is satisfiable if and only if the reduction graph admits a proper
 \lean{SATtoColor.Clause}
 \label{SATtoColor.Clause}
 \leanok
+\uses{SATtoColor.Literal}
 A \emph{clause} over a variable type $V$ is a structure bundling exactly three
 literals $\ell_1, \ell_2, \ell_3 : \mathrm{Literal}\,V$.  Each literal is
 either a positive or a negative occurrence of some variable.
@@ -25,6 +26,7 @@ either a positive or a negative occurrence of some variable.
 \lean{SATtoColor.SatisfiesLiteral}
 \label{SATtoColor.SatisfiesLiteral}
 \leanok
+\uses{SATtoColor.Literal}
 Given a Boolean assignment $\mathrm{assign} : V \to \mathrm{Bool}$, the
 function $\texttt{SATtoColor.SatisfiesLiteral}$ evaluates a literal: a positive
 literal $\mathrm{pos}(v)$ evaluates to $\mathrm{assign}(v)$, and a negative
@@ -110,7 +112,7 @@ $\mathrm{Fin}\,4$.
 \lean{SATtoColor.OutputVertex}
 \label{SATtoColor.OutputVertex}
 \leanok
-\uses{SATtoColor.Clause}
+\uses{SATtoColor.Clause, SATtoColor.Literal}
 The vertex set of the reduction graph is the inductive type
 $\mathrm{OutputVertex}(V)$ with three constructors:
 \begin{itemize}
@@ -194,7 +196,7 @@ literals.
 \lean{SATtoColor.sat3Coloring_litNode}
 \label{SATtoColor.sat3Coloring_litNode}
 \leanok
-\uses{SATtoColor.SatisfiesLiteral, SATtoColor.sat3Coloring}
+\uses{SATtoColor.Literal, SATtoColor.SatisfiesLiteral, SATtoColor.sat3Coloring}
 \difficulty{2}
 Fix a variable type $V$ and a Boolean assignment $\alpha : V \to \{\text{true},
 \text{false}\}$, and consider the coloring of the reduction graph induced by $\alpha$,
@@ -226,7 +228,7 @@ i.e.\ it admits a proper coloring by the three colors $\mathrm{Fin}\,3$.
 \lean{SATtoColor.SATtoColorSoundness}
 \label{SATtoColor.SATtoColorSoundness}
 \leanok
-\uses{SATtoColor.Clause, SATtoColor.EdgeRelation, SATtoColor.Is3Colorable, SATtoColor.IsSatisfiable, SATtoColor.OutputVertex, SATtoColor.ReductionGraph, SATtoColor.Sat3, SATtoColor.SatisfiesClause, SATtoColor.SatisfiesLiteral, SATtoColor.SatisfiesSat3}
+\uses{SATtoColor.Clause, SATtoColor.EdgeRelation, SATtoColor.Is3Colorable, SATtoColor.IsSatisfiable, SATtoColor.Literal, SATtoColor.OutputVertex, SATtoColor.ReductionGraph, SATtoColor.Sat3, SATtoColor.SatisfiesClause, SATtoColor.SatisfiesLiteral, SATtoColor.SatisfiesSat3}
 \difficulty{6}
 Let $f$ be a 3-SAT instance over a variable type $V$, that is, a list of clauses, each
 clause a triple of literals (positive or negative occurrences of variables). If the

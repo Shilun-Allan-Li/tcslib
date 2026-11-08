@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.StepBlock.loopOrbit_round",
+ "key": "071e7d67e4c9761a",
+ "kind": "lemma",
+ "title": "One compiled round reaches its live exit",
+ "statement": "Let $M$ be a $k$-work-tape binary machine with states indexed by $\text{Fin}(n+1)$, and let $c$ and $d$ be configurations such that $d$ starts at the live exit anchor and represents $c$. For a natural number $r$, suppose the simulated machine has a present state at every time $u\bullet\bullet\bullet r$. Let $e$ be the configuration after iterating the compiled machine for $r$ exit-delimited rounds. Then $e$ is again at the live exit anchor, and the duration of the next round is positive and at most $50(|\\text{tableBits}(M)|+1)$. At every strictly intermediate time in that round, the compiled machine is in a state different from both exit anchors.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$ and binary input list $x$",
+  "Machine $M$ and configuration $c$",
+  "Compiled configuration $d$",
+  "$d$ starts at the live exit anchor",
+  "$d$ represents $c$",
+  "Natural number $r$",
+  "Machine remains running at every time $u\\le r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_two_values",
+ "key": "bf63b2854e07af80",
+ "kind": "theorem",
+ "title": "Two values at a noise maximizer",
+ "statement": "Let $I$ be a finite set with weights $w_i>0$ and $\\sum_iw_i=1$, and let $1<p<2$ and $0\\le\\rho<1$. For $h:I\\to\\mathbb{R}$, define $G(h)=\\sum_iw_i|h_i|^p$ and $F(h)=\\rho^2\\sum_iw_i h_i^2+(1-\\rho^2)(\\sum_iw_i h_i)^2$. Suppose $g_i\\ge0$ for every $i$, $G(g)=1$, and $F(f)\\le F(g)$ for every $f:I\\to\\mathbb{R}$ with $G(f)=1$. Then there exist $a,b\\ge0$ such that every value of $g$ is either $a$ or $b$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w_i>0$ for every $i$",
+  "$\\sum_iw_i=1$",
+  "$1<p<2$",
+  "$0\\le\\rho<1$",
+  "$g_i\\ge0$ for every $i$",
+  "$G(g)=1$",
+  "$F(f)\\le F(g)$ for every real-valued $f$ with $G(f)=1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite, $w_i>0$, $\\sum_iw_i=1$, $1<p<2$, and $0\\le\\rho<1$. Define $G(f)=\\sum_iw_i|f_i|^p$ and $F(f)=\\rho^2\\sum_iw_if_i^2+(1-\\rho^2)(\\sum_iw_if_i)^2$. If $g_i\\ge0$, $G(g)=1$, and $F(f)\\le F(g)$ whenever $G(f)=1$, then some $a,b\\ge0$ satisfy $g_i\\in\\{a,b\\}$ for every $i$."
+}

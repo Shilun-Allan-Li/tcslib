@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.TMSAT_NPComplete",
+ "key": "b9cdac63418c709f",
+ "kind": "theorem",
+ "title": "NP completeness of bounded machine acceptance",
+ "statement": "Let $c$ be an effective machine-code scheme whose canonizer has a polynomially bounded running-time function. The language of strings that can be written as $\\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle$, where $1^m$ denotes a string of $m$ ones, and for which there is a string $u$ of length $n$ such that the machine decoded from $\\alpha$ halts after exactly $t$ steps on input $\\langle x,u\\rangle$ and outputs the single bit $1$, is NP-complete.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-code scheme",
+  "The canonizer running-time function of $c$ is polynomially bounded"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-code scheme with a canonizer whose running-time bound is\npolynomially bounded. Then the language of strings encoding a machine description, an\ninput, and unary bounds $n,t$, for which some word $u$ of length $n$ makes the decoded\nmachine halt within $t$ steps on the paired input and output the bit $1$, is\nNP-complete."
+}

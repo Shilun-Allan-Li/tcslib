@@ -1,0 +1,18 @@
+{
+ "lean_name": "FABL.FiniteDecisionTree.queryCount_thenOnDisjoint",
+ "key": "eb4898756fea4168",
+ "kind": "theorem",
+ "title": "Query count of sequential disjoint trees",
+ "statement": "Let $n$ be a nonnegative integer, let $\\Omega$ be a set of coordinate values, and let $\\alpha,\\beta$ be sets of leaf labels. Consider finite decision trees that query only coordinates in their specified available sets and branch according to observed values. Let $A,B\\subseteq\\{0,\\ldots,n-1\\}$ be disjoint, let $T$ be a tree using coordinates in $A$, and for each $a\\in\\alpha$ let $K(a)$ be a tree using coordinates in $B$. For any input $x$, the number of queries in the tree that first runs $T$ and then runs $K$ on the resulting label is the number of queries in $T$ plus the number in $K(T(x))$, each evaluated on $x$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ and $B$ are disjoint finite sets of coordinates among the $n$ coordinates",
+  "$T$ is a finite decision tree over $\\Omega$ with leaf labels in $\\alpha$ and available coordinates $A$",
+  "$K$ assigns to each label in $\\alpha$ a finite decision tree over $\\Omega$ with leaf labels in $\\beta$ and available coordinates $B$",
+  "$x$ assigns a value in $\\Omega$ to each coordinate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

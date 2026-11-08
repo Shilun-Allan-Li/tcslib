@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Compiler.sim_whileFalse",
+ "key": "41470c53a9ac2a17",
+ "kind": "theorem",
+ "title": "Simulation of a False While Loop",
+ "statement": "Let $S$ be a compiler setting, let $d$ be a natural number, and let $c$ be a condition safe in state $\\sigma$ that does not hold there. Then the loop with condition $c$ and body $s$ simulates execution from $\\sigma$ to itself with cost $\\mathrm{cost}(c)+1$. For every admissible initial machine placement and memory encoding, the compiled code reaches its endpoint within the corresponding machine-step bound, with the memory still encoding $\\sigma$ and unchanged outside writable addresses.",
+ "hypotheses_covered": [
+  "The condition is safe in the initial state",
+  "The condition does not hold in the initial state",
+  "For the simulation conclusion: initial frame relation, valid stack position, code located at the position and ending before the dispatcher, sufficient width, bounded source state, and sufficient stack room"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a compiler setting, $d$ a natural number, $c$ a condition, $s$ a statement,\nand $\\sigma$ a state. If $c$ is safe under the limits of $S$ in $\\sigma$ and does not\nhold in $\\sigma$, then the loop that executes $s$ while $c$ holds is simulated from\n$\\sigma$ to the same state $\\sigma$ with cost $\\operatorname{cost}(c)+1$."
+}

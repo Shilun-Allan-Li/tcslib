@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.NSPACE_subset_exp_dtime",
+ "key": "ac4b0f1191debb82",
+ "kind": "theorem",
+ "title": "Nondeterministic space and deterministic time",
+ "statement": "Let $S:\\mathbb{N}\\to\\mathbb{N}$ be space-constructible: there are a positive integer $a$ and a deterministic Turing machine that computes the binary representation of $S(n)$ using at most $aS(n)$ space on inputs of length $n$, and $1+\\lfloor\\log_2 n\\rfloor\\le S(n)$ for every $n$. Then every language decidable nondeterministically in space bounded by a constant multiple of $S$ is decidable deterministically in time bounded by $2^{c(S(n)+1)}$ for some constant $c\\in\\mathbb{N}$; equivalently, $\\mathrm{NSPACE}(S)\\subseteq\\bigcup_{c\\in\\mathbb{N}}\\mathrm{DTIME}\\bigl(n\\mapsto 2^{c(S(n)+1)}\\bigr)$.",
+ "hypotheses_covered": [
+  "$S$ is a function from the natural numbers to the natural numbers",
+  "$1+\\lfloor\\log_2 n\\rfloor\\le S(n)$ for every natural number $n$",
+  "$S$ is space-constructible, including a positive integer multiplier and a deterministic machine computing the binary representation of $S(n)$ within that space bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

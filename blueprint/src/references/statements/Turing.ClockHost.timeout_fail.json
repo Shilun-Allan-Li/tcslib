@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.ClockHost.timeout_fail",
+ "key": "c4bcd32a2c5c3348",
+ "kind": "theorem",
+ "title": "Timeout failure transition",
+ "statement": "Let $S$ be a finite-state deterministic Boolean machine and $A$ a nondeterministic Boolean machine, and fix a Boolean loop parameter, Boolean input $x$, and natural number $m$. Let $a$ be a configuration of $A$ on $x$ whose state is not absent with output a singleton Boolean word. For any choice bit and any work-tape contents and head positions for $S$, the host-machine step from the run configuration encoding $a$ at clock value $m$ equals the following configuration: if looping is enabled, the host is in phase $p_0$ with clock-tape head at $m-1$; otherwise the host is halted with clock-tape head at $m$. In either case, the input position, work tapes, and their head positions are inherited from $a$ and the given tapes for $S$, the clock tape contains the length-$m$ yardstick, and the output is empty.",
+ "hypotheses_covered": [
+  "$S$ is a finite-state deterministic Boolean machine",
+  "$A$ is a nondeterministic Boolean machine",
+  "Boolean loop parameter",
+  "Boolean input $x$",
+  "$m$ is a natural number",
+  "$a$ is a configuration of $A$ on $x$",
+  "$a$ is not both halted and carrying a singleton Boolean output",
+  "$b$ is a Boolean choice",
+  "arbitrary work-tape contents and head positions for $S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

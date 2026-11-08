@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Compiler.compileCond",
+ "key": "b89c7f49e952033b",
+ "kind": "def",
+ "title": "Compilation of conditions",
+ "statement": "For a condition and a natural-number jump position $l$, compile a comparison of $a$ and $b$ by first compiling $a$ at temporary index $0$ and $b$ at index $1$. For the condition $a<b$, subtract the value in register $0$ from the value in register $1$, subtract the contents of register $-5$, and jump to position $l$ if the result is negative. For the condition $a=b$, subtract the value in register $1$ from the value in register $0$ and jump to $l$ if negative; then replace the result by the contents of register $-7$ minus that result and jump to $l$ if negative.",
+ "hypotheses_covered": [
+  "The condition is either a less-than comparison or an equality comparison of expressions",
+  "A natural-number jump position $l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

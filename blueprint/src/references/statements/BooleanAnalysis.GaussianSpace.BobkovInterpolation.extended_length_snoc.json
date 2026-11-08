@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.extended_length_snoc",
+ "key": "2fe96e1986b0d966",
+ "kind": "lemma",
+ "title": "Length under last-coordinate restriction",
+ "statement": "Let $n,m$ be nonnegative integers, let $P:\\mathbb R\\to\\mathbb R$, let $f$ be a real-valued function on $\\{0,1\\}^{n+1}$, and let $g_1,\\ldots,g_m$ be real-valued functions on that cube. For every $x\\in\\{0,1\\}^n$ and bit $b$, the square root of $P(f(x,b))^2$, plus the sum of the squares of all coordinate derivatives of $f$ at $(x,b)$ and the squares of all $g_j(x,b)$, equals the square root of $P(f_b(x))^2+(D_{n+1}f(x,b))^2$ plus the squared length of the vector consisting of the first $n$ derivatives of $f_b$ and the values of the restrictions $(g_j)_b$ at $x$.",
+ "hypotheses_covered": [
+  "n,m are natural numbers",
+  "P is a real-valued profile",
+  "f is a real-valued function on the (n+1)-dimensional Boolean cube",
+  "g is an m-tuple of real-valued functions on that cube",
+  "x is a point of the n-dimensional Boolean cube",
+  "b is a Boolean bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a profile $P:\\mathbb R\\to\\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\\mathbb E\\sqrt{P(h)^2+\\|V(h,k)\\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\\{0,1\\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. For every $x,b$, $\\sqrt{P(f(x,b))^2+\\|V(f,g)(x,b)\\|_2^2}=\\sqrt{P(f_b(x))^2+d_f(x)^2+\\|V(f_b,g_b)(x)\\|_2^2}$."
+}

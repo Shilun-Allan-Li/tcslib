@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.catalogMarker_cases",
+ "key": "7b814e4af55fd68e",
+ "kind": "lemma",
+ "title": "Dichotomy for the last-marker split",
+ "statement": "For every Boolean word $v$, either $v$ contains no true bit and its last-true split is undefined, or there is a word $u$ such that $v$ contains a true bit, its last-true split is $u$, and for every Boolean word $p$, the last-true split of the concatenation $pv$ is $pu$.",
+ "hypotheses_covered": [
+  "$v$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every word $v$ satisfies exactly one of: $v$ contains no $1$ and the\nlast-marker split of $v$ is undefined; or $v$ contains a $1$ and the\nlast-marker split of $v$ is some word $u$ (the prefix of $v$ strictly before\nits last $1$) such that moreover, for every prefix $p$, the last-marker split\nof $p v$ is $p u$."
+}

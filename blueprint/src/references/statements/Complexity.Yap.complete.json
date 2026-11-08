@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.Yap.complete",
+ "key": "74449b25de3935ee",
+ "kind": "theorem",
+ "title": "Circuit encoding belongs to the inner language",
+ "statement": "Let $d$ be a refutation data package and let $L_2,K$ be languages of Boolean strings. Suppose that for every string $y$, membership in $L_2$ is equivalent to the existence of a string $v$ with $|v|=M_2(y)$ and $\\langle y,v\\rangle\\in K$. Suppose that for every string $z$, nonmembership in $K$ is equivalent to the existence of a string $r$ with $|r|\\le C_3(|z|+1)^{c_3}$ and $\\langle z,r\\rangle\\in R$. Let $m\\colon\\mathbb{N}\\to\\mathbb{N}$ and let $D_n$ be a directed acyclic circuit on $n+m(n)$ input bits for every $n$, each with fan-in at most two; assume that $z\\in K$ exactly when some assignment to its last $m(|z|)$ input bits makes $D_{|z|}$ accept $z$ concatenated with that assignment. Suppose that for all Boolean strings $x,U,u,v,w,r$ with $|u|=M_1(x)$, $|v|\\le M_2(\\langle x,u\\rangle)$, $|w|\\le|U|$, and $|r|\\le C_3(nLen(x)+1)^{c_3}$, one has $|\\langle\\langle u,v\\rangle,\\langle w,r\\rangle\\rangle|\\le B(|\\langle x,U\\rangle|+1)^b$. If every string $u$ of length $M_1(x)$ satisfies $\\langle x,u\\rangle\\in L_2$, then $\\langle x,D_{nLen(x)}.encode\\rangle$ belongs to the inner language.",
+ "hypotheses_covered": [
+  "$d$ is a refutation data package",
+  "$L_2,K$ are languages of Boolean strings",
+  "For every $y$, $y\\in L_2$ iff there exists $v$ with $|v|=M_2(y)$ and $\\langle y,v\\rangle\\in K$",
+  "For every $z$, $z\\notin K$ iff there exists $r$ with $|r|\\le C_3(|z|+1)^{c_3}$ and $\\langle z,r\\rangle\\in R$",
+  "$m\\colon\\mathbb{N}\\to\\mathbb{N}$",
+  "For every $n$, $D_n$ is a circuit on $n+m(n)$ input bits",
+  "Every $D_n$ has fan-in at most two",
+  "For every $z$, $z\\in K$ iff some assignment to the last $m(|z|)$ inputs makes $D_{|z|}$ accept $z$ concatenated with that assignment",
+  "The stated length bound holds for all $x,U,u,v,w,r$ satisfying the four listed length constraints",
+  "Every $u$ of length $M_1(x)$ satisfies $\\langle x,u\\rangle\\in L_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $d$ be a data record with parameters $C_1,c_1,C_2,c_2,C_3,c_3,B,b$ and refutation\nrelation $R$, and let $L_2,K$ be languages of binary strings. Suppose membership in\n$L_2$ is equivalent to having a certificate $v$ of length $M_2(y)$ with $\\langle\ny,v\\rangle\\in K$, and membership in the complement of $K$ is equivalent to having a\nrefutation $r$ of length at most $C_3(|z|+1)^{c_3}$ with $\\langle z,r\\rangle\\in R$.\nSuppose also that for every input length $n$ there is a fan-in-two circuit $D_n$ on\n$n+m(n)$ input bits, and that $z\\in K$ exactly when some assignment to its last $m(|z|)$\ninput bits makes $D_{|z|}$ accept the concatenation of $z$ with that assignment. Assume\nthat whenever $|v|\\le C_2(2|x|+2+M_1(x)+1)^{c_2}$ and $|w|\\le |U|$, the encoding\n$\\langle v,w\\rangle$ has length at most $B(|\\langle\\langle x,U\\rangle,t\\rangle|+1)^b$.\nIf every string $u$ of length $M_1(x)$ satisfies $\\langle x,u\\rangle\\in L_2$, then\n$\\langle x,D_{nLen(x)}.encode\\rangle$ belongs to the inner language: for every string\n$t$, the string obtained by pairing it with $\\langle x,D_{nLen(x)}.encode\\rangle$ fails\nthe bad-language condition."
+}

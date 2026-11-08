@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.StraightLine.emitOp",
+ "key": "f93e6b9ea514830d",
+ "kind": "def",
+ "title": "Emit an operation",
+ "statement": "Given an input index $i_0$, an operation $o$ (conjunction or disjunction), a line index $\\ell$, and a list of rails, return a list of statements and an output rail. For an empty list, emit $o$ applied dually to $x_{i_0}$ and $\\neg x_{i_0}$, followed by $o$ applied to those operands, and return the pair of lines $\\ell,\\ell+1$. For a singleton list, emit no statements and return its rail. For a list with at least two rails, emit $o$ on the first components of the first two rails and its dual on their second components, then return the pair of lines $\\ell,\\ell+1$.",
+ "hypotheses_covered": [
+  "An input index in $\\mathrm{Fin}(n)$",
+  "An operation that is conjunction or disjunction",
+  "A natural-number line index",
+  "A list of rails"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

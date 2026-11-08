@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.AdjExample.loop",
+ "key": "90916ac18abe94da",
+ "kind": "lemma",
+ "title": "Bounded-space execution of the comparison program",
+ "statement": "For any Boolean values $a,b$ and natural numbers $n,i$, for every pair of natural numbers $c,d$ with $c+d=n$ and $c\\le i$, the comparison program started in its test state with its sole register equal to $c$ halts on input $\\langle 1^n,\\operatorname{bits}(i)\\rangle$, returns the Boolean value of $(i<n\\text{ and }a=\\mathrm{true})$ or $(i=n\\text{ and }b=\\mathrm{true})$, and throughout the run satisfies the stated program invariant and keeps every register at most $(|x|+1)$, where $x=\\langle 1^n,\\operatorname{bits}(i)\\rangle$.",
+ "hypotheses_covered": [
+  "Boolean parameters $a,b$",
+  "Natural numbers $n,i$",
+  "Natural numbers $c,d$ with $c+d=n$",
+  "Bound $c\\le i$",
+  "Initial state is the test state",
+  "Initial register value is $c$",
+  "Input is the specified self-delimiting encoding"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

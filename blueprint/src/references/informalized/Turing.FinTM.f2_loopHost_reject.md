@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/Catalog.lean :: Turing.FinTM.f2_loopHost_reject -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Loop Host Debit or Rejection
+
+**Claim.** If the body configuration is halted with empty output, the loop host either completes a successful debit of the payload and returns to the call configuration with the body restored to the anchor state and release enabled, or halts with the mode-dependent rejection output. This takes at most $2|w|+4$ steps.
+
+**Proof.** Write $b$ for the initial call configuration. The call-frame description identifies its control state as phase $7$, its flag as false, and its payload tape as the buffer for $w$ (`f2_loopCall_frame`). The first transition clears the flag and enters phase $8$. The host then scans the payload and counter tapes in tandem: the borrow scan lemma (`f2_loopHost_borrow`) shows that after $2m+2$ additional steps, where $m$ is the borrow position, the payload has become the debit word and the control has reached either the released body call with the anchor state and flag true (debit succeeds), or phase $11$ (debit fails). The borrow position is at most $|w|$ (`f2_loopBorrowPos_le`). Including the initial transition, the successful case takes $2m+3$ steps. The frame is then exactly the required call configuration: the frame-rewriting lemma changes the returned body state, enables release, and blanks the flag (`f2_loopCall_reframe`). In the failure case, one further transition halts; it emits no bit in find mode and emits false otherwise. The action-on-frame identity and flag-clearing fact justify this final update (`f2_loopControl_apply`, `f2_loopFlag_clear`). Thus failure takes $2m+4$ steps, and both bounds are at most $2|w|+4$. The run-time identities for taking a final step ensure these described transitions give the claimed configurations (`runFrom_succ_eq_step`, `runFrom_succ_eq_step'`).
+
+**Key facts.** `Turing.FinTM.f2_loopCall_frame`, `Turing.FinTM.f2_loopFrame_flag`, `Turing.FinTM.f2_loopHost_borrow`, `Turing.FinTM.f2_loopBorrowPos_le`, `Turing.MultiTapeTM.runFrom_succ_eq_step`, `Turing.MultiTapeTM.runFrom_succ_eq_step'`, `Turing.FinTM.f2_loopCall_reframe`, `Turing.FinTM.f2_loopControl_apply`, `Turing.FinTM.f2_loopFlag_clear`.

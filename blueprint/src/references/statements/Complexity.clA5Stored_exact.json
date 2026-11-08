@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clA5Stored_exact",
+ "key": "f4b2d3031a8dcdb3",
+ "kind": "lemma",
+ "title": "Exact Stored Instance and Round",
+ "statement": "For every finite Boolean-alphabet Turing machine $M$, natural numbers $C,e,c,A,d,i$, and Boolean word $x$, the stored instance in the packed word with cursor $i$ is exactly $x$, and its stored last-round index equals the last-round index computed from $|x|$, the number of work tapes of $M$, and the producer horizon at input length $|x|$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean-alphabet Turing machine",
+  "$C,e,c,A,d,i$ are natural numbers",
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters, instance $x$, and cursor $i$, the retained instance of the persistent body word is $x$ itself, and the stored last-round index equals the last round of the schedule at input length $|x|$, tape count, and producer horizon."
+}

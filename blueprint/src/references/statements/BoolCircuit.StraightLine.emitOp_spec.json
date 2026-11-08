@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.StraightLine.emitOp_spec",
+ "key": "e76b77d6a337bfc5",
+ "kind": "theorem",
+ "title": "Correctness of emitting an operation",
+ "statement": "Let $n$ be the number of input variables, choose an input coordinate and a binary operation (conjunction or disjunction), and let $ss$ be a valid list of statements with a list of rails and a list of gate-argument indices. Assume the argument list has at most two entries, and each referenced rail pair uses only inputs and lines earlier than $ss$. Emit the operation using the rail pairs at those indices, obtaining new statements and an output rail pair. The extended statement list is valid, at most two statements are emitted, and both output rails use only inputs and lines in the extended list. Moreover, for every input assignment and every list of Boolean vertex values, if each referenced pair evaluates to the corresponding vertex value and its complement when run on $ss$, then the output pair, when run on the extended list, evaluates to the indicated gate's value and its complement; the gate computes the chosen conjunction or disjunction of the argument values.",
+ "hypotheses_covered": [
+  "An input coordinate and a conjunction-or-disjunction operation are chosen",
+  "The existing statement list is valid",
+  "A list of rails and a list of argument indices are given",
+  "The argument list has at most two entries",
+  "Each referenced rail pair uses only inputs and lines earlier than the existing statement list",
+  "For the semantic conclusion, each referenced rail pair evaluates on the existing run to the corresponding vertex value and its complement"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

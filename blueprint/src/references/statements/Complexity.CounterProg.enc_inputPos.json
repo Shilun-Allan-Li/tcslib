@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.enc_inputPos",
+ "key": "e053fa002e7f1702",
+ "kind": "theorem",
+ "title": "Encoded input-head position",
+ "statement": "Let $R$ be a number of registers, let $\\Lambda$ be a label set, let $P$ be a counter program, let $x$ be an input bit string, and let $s$ be an abstract program state with read position $p$. If $p\\le |x|$, then the input-head position in the machine configuration encoding $s$ is $p+1$.",
+ "hypotheses_covered": [
+  "Counter program register count $R$ and label set $\\Lambda$",
+  "Counter program $P$",
+  "Input bit string $x$",
+  "Abstract state $s$",
+  "Read position of $s$ satisfies $p\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input bit string of length $n$ and $s$ an abstract state of a counter program over\n$R$ registers whose read position $p$ satisfies $p \\le n$. Then in the machine configuration\nencoding $s$ on input $x$, the input head is at position $p + 1$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.UC_not_computable",
+ "key": "911bc720af700487",
+ "kind": "theorem",
+ "title": "Uncomputability of the diagonal function",
+ "statement": "For every machine representation scheme $c$, the function mapping a bit string $\\alpha$ to the one-bit string whose bit is the diagonal value of $c$ at $\\alpha$ is not computable.",
+ "hypotheses_covered": [
+  "arbitrary machine representation scheme $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be any representation scheme for Turing machines in code normal form\n(one work tape, binary alphabet; a total decoding of bit strings to machines,\ninverted by the encoding), effective or not, and let $\\mathrm{UC}_c$ be its\ndiagonal function: $\\mathrm{UC}_c(\\alpha) = \\mathrm{false}$ if the machine\ndenoted by $\\alpha$ under $c$ halts on the input $\\alpha$ itself with completed\noutput the one-bit string $[\\mathrm{true}]$, and\n$\\mathrm{UC}_c(\\alpha) = \\mathrm{true}$ otherwise. Then the total function on\nbit strings $\\alpha \\mapsto [\\mathrm{UC}_c(\\alpha)]$, returning the one-bit\nstring whose single bit is the value of the diagonal function, is not\ncomputable: no finite Turing machine over the binary alphabet halts on every\ninput $\\alpha$ with $[\\mathrm{UC}_c(\\alpha)]$ on its output tape [AB09,\nTheorem 1.10]."
+}

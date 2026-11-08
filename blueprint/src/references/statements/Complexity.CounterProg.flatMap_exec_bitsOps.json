@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.CounterProg.flatMap_exec_bitsOps",
+ "key": "24ed30bce08cb75d",
+ "kind": "theorem",
+ "title": "Bit-string output from bit operations",
+ "statement": "For any register values $\\rho$ and bit string $w$, concatenating the outputs of the list of bit-printing operations associated with the bits of $w$ gives exactly $w$.",
+ "hypotheses_covered": [
+  "Register values $\\rho$",
+  "Bit string $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any register values $\\rho$ and any bit string $w = w_1 \\cdots w_n$,\nconcatenating the strings printed under $\\rho$ by the micro-operations\n$\\mathsf{out}(w_1), \\dots, \\mathsf{out}(w_n)$, where $\\mathsf{out}(b)$ prints the\nsingle bit $b$, gives back $w$."
+}

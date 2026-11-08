@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satRed_maxLiteral",
+ "key": "0459a6eb95638259",
+ "kind": "lemma",
+ "title": "Maximum scan of one literal",
+ "statement": "Let $x$ be a Boolean word containing the serialization of the literal $(v,\\mathrm{pol})$ between a prefix and suffix, where $v\\in\\mathbb{N}$ and $\\mathrm{pol}$ is a Boolean polarity. For every counter length $n$, second-tape content, second-tape head position $b$, and output word $o$, starting in state $3$ with the counter head at $0$, after exactly $2v+5$ steps the machine is again in state $3$, at the input position just after the literal, with counter length $\\max(n,v+1)$ and counter head at $0$; the second tape, its head, and the output are unchanged.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "natural number $v$ and Boolean polarity",
+  "input decomposition containing the serialized literal",
+  "arbitrary counter length $n$",
+  "arbitrary second-tape content",
+  "second-tape head position $b$",
+  "arbitrary output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the input contains a serialized literal $(v,\\mathrm{pol})$ at the current\nposition and the transducer is in its clause-level maximum state with counter\nlength $n$ and counter head at $0$. Then exactly $2v + 5$ transitions consume the\nliteral, record the counter length $\\max(n,\\, v + 1)$, restore the counter head to\n$0$, and return to the same state with the input advanced by $v + 3$."
+}

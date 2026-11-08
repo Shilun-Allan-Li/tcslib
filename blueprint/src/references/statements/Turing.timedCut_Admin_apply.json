@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timedCut_Admin_apply",
+ "key": "3549a339216f354d",
+ "kind": "lemma",
+ "title": "Effect of an administrative action",
+ "statement": "Let $x$ be a Boolean input word, let $B$ be a four-tape configuration for that input, and choose control states $q,q'$, a Boolean table word $T$, a table cursor $p\\in\\mathbb Z$, a state tape $\\sigma\\colon\\mathbb Z\\to\\{0,1,\\mathrm{blank}\\}$ with cursor $s\\in\\mathbb Z$, table and state movements $d_t,d_s\\in\\{-1,0,1\\}$, and an optional state-tape write $w\\in\\mathrm{Option}(\\mathrm{Option}(\\{0,1\\}))$. Applying the administrative action with target control $q'$, table movement $d_t$, state instruction $(w,d_s)$ to the evaluation configuration determined by $(B,q,T,p,\\sigma,s)$ gives the evaluation configuration with control $q'$, table cursor $p+d_t$, state cursor $s+d_s$, and state tape unchanged if $w$ is absent or updated at $s$ to the value specified by $w$ if present.",
+ "hypotheses_covered": [
+  "Boolean input word and four-tape base configuration",
+  "Control states q and q'",
+  "Boolean table and integer table cursor",
+  "Boolean-valued optional-symbol state tape and integer cursor",
+  "Table and state movements are signs",
+  "Optional nested state-tape write"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying an administrative interpreter action --- one that moves the table\ncursor by $d_t \\in \\{-1,0,1\\}$, optionally writes a symbol at the state-tape\ncursor, moves the state cursor by $d_s$, and passes to a control state $q'$\n--- to an interpreter evaluation configuration changes exactly the two\ndesignated cursors and, when a write is present, the state-tape cell at the\ncursor; the input head, the mirrored data, and the accumulated output are\nunchanged."
+}

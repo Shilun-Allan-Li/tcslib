@@ -19,6 +19,10 @@ oracle machine run with the empty oracle is eliminated into a plain machine.
 
 \begin{definition}[Oracle Turing machine]
 \lean{Turing.OracleTM}
+\statementsource{BGS75}{
+  pdf-2459e3840724-p002-b001,
+  pdf-2459e3840724-p002-b002
+}
 \label{Turing.OracleTM}
 \leanok
 \uses{Turing.Action}
@@ -58,6 +62,7 @@ tape among the $k+1$ work tapes: the last index, $k$.
 
 \begin{definition}[Query string of a configuration]
 \lean{Turing.OracleTM.queryString}
+\statementsource{BGS75}{pdf-2459e3840724-p002-b001}
 \label{Turing.OracleTM.queryString}
 \leanok
 \uses{Turing.Cfg, Turing.OracleTM.queryTapeIdx}
@@ -71,6 +76,7 @@ configuration --- the query string is defined to be the empty word.
 
 \begin{definition}[One step relative to an oracle]
 \lean{Turing.OracleTM.step}
+\statementsource{BGS75}{pdf-2459e3840724-p002-b001}
 \label{Turing.OracleTM.step}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.OracleTM, Turing.OracleTM.queryString}
@@ -117,97 +123,90 @@ its initial configuration on $x$, the machine has halted and its output tape
 holds exactly $y$.  This is a time-only notion; space is not constrained.
 \end{definition}
 
-\begin{theorem}[Oracle-independence away from the query state]
+\begin{theorem}[Step Independence Away from the Query State]
 \lean{Turing.OracleTM.step_eq_of_ne_qQuery}
 \label{Turing.OracleTM.step_eq_of_ne_qQuery}
 \leanok
 \uses{Turing.Cfg, Turing.OracleTM.step}
 \difficulty{3}
-Let $M$ be an oracle machine with $k$ ordinary work tapes and let $c$ be a
-configuration whose current state is not the query state of $M$ (in
-particular, $c$ may be halted).  Then for any two oracle languages $O_1$ and
-$O_2$, one step of $M$ from $c$ relative to $O_1$ equals one step of $M$ from
-$c$ relative to $O_2$.
+Let $M$ be an oracle Turing machine, let $O_1,O_2$ be languages over its symbol
+alphabet, and let $c$ be a configuration. If the state of $c$ is not the query state of
+$M$, then one step from $c$ relative to $O_1$ equals one step from $c$ relative to
+$O_2$.
 \end{theorem}
 
-\begin{lemma}[Actions write only under the head]
+\begin{lemma}[Work tape cells away from the head]
 \lean{Turing.OracleTM.apply_workTapes_eq_of_ne}
 \label{Turing.OracleTM.apply_workTapes_eq_of_ne}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg}
 \difficulty{3}
-Let $a$ be a one-step action of a machine with $k'$ work tapes, let $c$ be a
-configuration of such a machine, let $i$ be a work-tape index, and let $z$ be
-an integer cell position different from the position of the $i$-th work head
-in $c$.  Then after applying $a$ to $c$, the content of cell $z$ of the $i$-th
-work tape is unchanged.
+Let $k'$ be a natural number, let $\mathrm{Symbol}$ and $\mathrm{State}$ be types, and
+fix an input word. For an action $a$ on $k'$ work tapes and a configuration $c$ for that
+input, the content at position $z \in \mathbb{Z}$ on tape $i$ is unchanged by applying
+$a$ to $c$ whenever $i$ is a tape index and $z$ differs from the position of the $i$-th
+work-tape head in $c$.
 \end{lemma}
 
-\begin{lemma}[Heads move at most one cell per oracle step]
+\begin{lemma}[Bound on work-head movement]
 \lean{Turing.OracleTM.workTapePos_step_le}
 \label{Turing.OracleTM.workTapePos_step_le}
 \leanok
 \uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.step, Turing.workTapePos_apply_le}
 \difficulty{3}
-Let $M$ be an oracle machine with $k$ ordinary work tapes, $O$ an oracle
-language, $c$ a configuration, and $i$ one of the $k+1$ work-tape indices.
-Then the position of the $i$-th work head after one step of $M$ relative to
-$O$ differs from its position in $c$ by at most $1$ in absolute value.
+Let $M$ be an oracle Turing machine with $k$ ordinary work tapes, let $O$ be an oracle
+language, and let $c$ be a configuration with $k+1$ work tapes. For any tape index $i$
+among those tapes, the head position on tape $i$ changes by at most one in absolute
+value after one step of $M$ relative to $O$: $\left|p_i'-p_i\right|\le 1$.
 \end{lemma}
 
-\begin{lemma}[Oracle steps write only under the head]
+\begin{lemma}[Unscanned work cells are unchanged]
 \lean{Turing.OracleTM.workTapes_step_eq_of_ne}
 \label{Turing.OracleTM.workTapes_step_eq_of_ne}
 \leanok
 \uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.apply_workTapes_eq_of_ne, Turing.OracleTM.step}
 \difficulty{3}
-Let $M$ be an oracle machine with $k$ ordinary work tapes, $O$ an oracle
-language, $c$ a configuration, $i$ one of the $k+1$ work-tape indices, and $z$
-an integer cell position different from the position of the $i$-th work head
-in $c$.  Then after one step of $M$ relative to $O$, the content of cell $z$
-of the $i$-th work tape is unchanged.
+Let $M$ be an oracle Turing machine with $k$ ordinary work tapes, let $O$ be an oracle
+language, and let $c$ be a configuration with $k+1$ work tapes. For any tape index $i$
+and integer cell position $z$ different from the head position on tape $i$ in $c$, the
+content of cell $z$ on that tape is unchanged after one step of $M$ relative to $O$.
 \end{lemma}
 
-\begin{lemma}[Locality invariant of an initialized oracle run]
+\begin{lemma}[Locality bounds for initialized oracle runs]
 \lean{Turing.OracleTM.runFrom_workTapes_invariant}
 \label{Turing.OracleTM.runFrom_workTapes_invariant}
 \leanok
-\uses{Turing.OracleTM, Turing.OracleTM.initCfg, Turing.OracleTM.runFrom, Turing.OracleTM.step, Turing.OracleTM.workTapePos_step_le, Turing.OracleTM.workTapes_step_eq_of_ne}
+\uses{Turing.OracleTM, Turing.OracleTM.initCfg, Turing.OracleTM.runFrom, Turing.OracleTM.runFrom_radius}
 \difficulty{5}
-Let $M$ be an oracle machine with $k$ ordinary work tapes, $O$ an oracle
-language, and $x$ an input word.  Then for every $t \in \mathbb{N}$, in the
-configuration reached by running $M$ with oracle $O$ for $t$ steps from its
-initial configuration on $x$: every one of the $k+1$ work heads is at a
-position of absolute value at most $t$, and every work-tape cell at an integer
-position $z$ with $t \le \abs{z}$ is blank.
+Let $M$ be an oracle machine with $k$ ordinary work tapes, let $O$ be a language over
+its symbol alphabet, and let $x$ be an input word. For every $t\in\mathbb{N}$, in the
+configuration reached after $t$ steps from the initial configuration on $x$, every
+work-tape head has position of absolute value at most $t$, and every cell $z$ of every
+one of the $k+1$ work tapes is blank whenever $t\le |z|$.
 \end{lemma}
 
-\begin{theorem}[Query length is bounded by the running time]
+\begin{theorem}[Query length bounded by running time]
 \lean{Turing.OracleTM.queryString_length_le}
 \label{Turing.OracleTM.queryString_length_le}
 \leanok
-\uses{Turing.OracleTM, Turing.OracleTM.initCfg, Turing.OracleTM.queryString, Turing.OracleTM.queryTapeIdx, Turing.OracleTM.runFrom, Turing.OracleTM.runFrom_workTapes_invariant}
+\uses{Turing.OracleTM, Turing.OracleTM.initCfg, Turing.OracleTM.queryString, Turing.OracleTM.queryString_length_le_of_blank, Turing.OracleTM.runFrom, Turing.OracleTM.runFrom_workTapes_invariant}
 \difficulty{4}
-Let $M$ be an oracle machine with $k$ ordinary work tapes, $O$ an oracle
-language, $x$ an input word, and $t \in \mathbb{N}$.  In the configuration
-reached by running $M$ with oracle $O$ for $t$ steps from its initial
-configuration on $x$, the query string --- the contents of the query tape from
-cell $0$ up to the first blank cell --- has length at most $t$.
+Let $M$ be an oracle Turing machine with $k$ ordinary work tapes, let $O$ be an oracle
+language, let $x$ be an input word, and let $t$ be a natural number. The query string in
+the configuration reached after $t$ steps from the initial configuration on $x$ has
+length at most $t$.
 \end{theorem}
 
-\begin{theorem}[Distant cells stay blank in an initialized run]
+\begin{theorem}[Blank cells beyond the elapsed time]
 \lean{Turing.OracleTM.runFrom_workTapes_blank}
 \label{Turing.OracleTM.runFrom_workTapes_blank}
 \leanok
 \uses{Turing.OracleTM, Turing.OracleTM.initCfg, Turing.OracleTM.runFrom, Turing.OracleTM.runFrom_workTapes_invariant}
 \difficulty{1}
-Let $M$ be an oracle machine with $k$ ordinary work tapes, $O$ an oracle
-language, $x$ an input word, and $t \in \mathbb{N}$.  Then in the
-configuration reached by running $M$ with oracle $O$ for $t$ steps from its
-initial configuration on $x$, every work-tape cell at an integer position $z$
-with $t \le \abs{z}$ is blank.  In particular, the query tape always contains
-a blank cell at a nonnegative position, so the empty-word fallback in the
-definition of the query string is never invoked in an initialized run.
+Let $M$ be an oracle machine with $k$ ordinary work tapes, let $O$ be a language over
+its symbol alphabet, and let $x$ be an input word. After running $M$ relative to $O$ for
+$t$ steps from its initial configuration on $x$, every cell $z$ of every one of its
+$k+1$ work tapes is blank whenever $t\le |z|$, where $z$ is an integer position.
 \end{theorem}
 
 \begin{definition}[Extension of an action by an inert tape]
@@ -240,42 +239,42 @@ extra last work tape is blank with its head at the origin.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.embedOracle, Turing.Cfg.inputSymbol}
 \difficulty{1}
-For any configuration $c$ of a machine with $k$ work tapes, the input symbol
-scanned in the embedding of $c$ into the $(k+1)$-tape oracle model equals the
-input symbol scanned in $c$.
+Let $k$ be a nonnegative integer, let $Q$ be a state set, let $\Sigma$ be a symbol
+alphabet, let $x$ be an input word over $\Sigma$, and let $c$ be a configuration with
+$k$ work tapes, state set $Q$, and input $x$. The optional symbol scanned by the input
+head of the embedded configuration equals the optional symbol scanned by the input head
+of $c$.
 \end{lemma}
 
-\begin{lemma}[Embedding preserves the scanned work symbols]
+\begin{lemma}[Scanned Symbols Under Embedding]
 \lean{Turing.Cfg.embedOracle_workTapeSymbols}
 \label{Turing.Cfg.embedOracle_workTapeSymbols}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.embedOracle, Turing.Cfg.workTapeSymbols}
 \difficulty{1}
-For any configuration $c$ of a machine with $k$ work tapes and any of the $k$
-original tape indices $i$, the symbol scanned on tape $i$ in the embedding of
-$c$ into the $(k+1)$-tape oracle model equals the symbol scanned on tape $i$
-in $c$.
+For any configuration $c$ of a machine with $k$ work tapes and any work-tape index $i$,
+the optional symbol under tape $i$'s head in the embedded configuration equals the
+optional symbol under tape $i$'s head in $c$.
 \end{lemma}
 
-\begin{lemma}[Embedding preserves haltedness]
+\begin{lemma}[Haltedness Under Embedding]
 \lean{Turing.Cfg.embedOracle_state_eq_none}
 \label{Turing.Cfg.embedOracle_state_eq_none}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.embedOracle}
 \difficulty{1}
-A configuration of a machine with $k$ work tapes is halted if and only if its
-embedding into the $(k+1)$-tape oracle model is halted.
+For any finite-tape Turing machine configuration $c$, its embedded oracle-machine
+configuration has no current state if and only if $c$ has no current state.
 \end{lemma}
 
-\begin{lemma}[Embedding preserves the output]
+\begin{lemma}[Output preserved by the embedding]
 \lean{Turing.Cfg.embedOracle_output}
 \label{Turing.Cfg.embedOracle_output}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.embedOracle}
 \difficulty{1}
-For any configuration $c$ of a machine with $k$ work tapes, the output tape of
-the embedding of $c$ into the $(k+1)$-tape oracle model equals the output tape
-of $c$.
+Let $c$ be a configuration of a $k$-tape Turing machine on a fixed input. The output
+tape of its embedding into the oracle model is equal to the output tape of $c$.
 \end{lemma}
 
 \begin{lemma}[Embedding commutes with applying an action]
@@ -284,25 +283,25 @@ of $c$.
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Action.extend, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.embedOracle}
 \difficulty{4}
-Let $a$ be a one-step action of a machine with $k$ work tapes and state set
-$Q$, and let $c$ be a configuration of such a machine.  Rename the states of
-$a$ along the left inclusion $Q \to Q \sqcup \{0,1,2\}$ and extend the result
-by an inert $(k+1)$-st tape.  Applying this extended, renamed action to the
-embedding of $c$ into the $(k+1)$-tape oracle model yields exactly the
+Let $k$ be a nonnegative integer, let $Q$ be a state set, let $\Sigma$ be a symbol
+alphabet, and let $x$ be an input word over $\Sigma$. For every one-step action $a$ on
+$k$ work tapes and configuration $c$ with state set $Q$ and input $x$, applying the
+action after renaming its successor states by the left inclusion $Q\to Q\sqcup\{0,1,2\}$
+and extending it by an inert work tape to the embedded configuration of $c$ gives the
 embedding of the configuration obtained by applying $a$ to $c$.
 \end{lemma}
 
-\begin{lemma}[Embedding sends initial configurations to initial configurations]
+\begin{lemma}[Embedding preserves initial configurations]
 \lean{Turing.Cfg.embedOracle_init}
 \label{Turing.Cfg.embedOracle_init}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.embedOracle, Turing.Cfg.init}
 \difficulty{1}
-For any state $q_0$ of a machine with $k$ work tapes and any input word $x$,
-the embedding into the $(k+1)$-tape oracle model of the initial configuration
-in state $q_0$ on input $x$ is the initial configuration on input $x$ whose
-state is the image of $q_0$ under the left inclusion into the extended state
-set $Q \sqcup \{0,1,2\}$.
+Let $k$ be a nonnegative integer, let $Q$ be a state set, let $\Sigma$ be a symbol
+alphabet, let $q_0\in Q$, and let $x$ be an input word over $\Sigma$. The embedding into
+the model with $k+1$ work tapes and state set $Q\sqcup\{0,1,2\}$ of the initial
+configuration on $x$ in state $q_0$ equals the initial configuration on $x$ in state
+given by the left inclusion of $q_0$.
 \end{lemma}
 
 \begin{definition}[Plain machine as an oracle machine that never queries]
@@ -320,57 +319,54 @@ machine never moves into a fresh state and ignores the query tape.  From each
 of the three fresh states the transition table halts immediately.
 \end{definition}
 
-\begin{theorem}[The embedded machine is well formed]
+\begin{theorem}[Well-formedness of the embedded machine]
 \lean{Turing.OracleTM.ofMultiTapeTM_wellFormed}
 \label{Turing.OracleTM.ofMultiTapeTM_wellFormed}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.OracleTM.WellFormed, Turing.OracleTM.ofMultiTapeTM}
 \difficulty{1}
-For every plain multi-tape machine with $k$ work tapes, the oracle machine
-obtained by embedding it into the oracle model is well formed: its three fresh
-special states (query, positive answer, negative answer) are pairwise
-distinct.
+Let $M$ be a deterministic Turing machine with $k$ work tapes. Regard it as an oracle
+Turing machine with state set formed by adjoining three fresh states, designated as the
+query state and the positive- and negative-answer states. The resulting oracle machine
+is well formed: its query state and two answer states are pairwise distinct.
 \end{theorem}
 
-\begin{lemma}[One step of an embedded plain machine]
+\begin{lemma}[Step of an Embedded Multi-Tape Machine]
 \lean{Turing.OracleTM.step_ofMultiTapeTM}
 \label{Turing.OracleTM.step_ofMultiTapeTM}
 \leanok
 \uses{Turing.Action.extend, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.embedOracle, Turing.Cfg.embedOracle_apply, Turing.Cfg.embedOracle_inputSymbol, Turing.Cfg.embedOracle_workTapeSymbols, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.step, Turing.OracleTM.ofMultiTapeTM, Turing.OracleTM.step}
 \difficulty{4}
-Let $M_0$ be a plain multi-tape machine with $k$ work tapes, let $O$ be any
-oracle language, and let $c$ be a configuration of $M_0$.  One step, relative
-to $O$, of the oracle machine obtained by embedding $M_0$, taken from the
-embedding of $c$ into the $(k+1)$-tape oracle model, equals the embedding of
-the configuration obtained by one step of $M_0$ from $c$.
+Let $M$ be a multi-tape Turing machine with $k$ work tapes, let $O$ be an oracle
+language over its symbol alphabet, and let $c$ be a configuration of $M$. One step of
+the oracle machine obtained from $M$, with oracle $O$, starting from the embedding of
+$c$, equals the embedding of the configuration obtained by one step of $M$ from $c$.
 \end{lemma}
 
-\begin{theorem}[An embedded plain machine runs in lockstep]
+\begin{theorem}[Lockstep simulation of a plain machine]
 \lean{Turing.OracleTM.runFrom_ofMultiTapeTM}
 \label{Turing.OracleTM.runFrom_ofMultiTapeTM}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.embedOracle, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.OracleTM.ofMultiTapeTM, Turing.OracleTM.runFrom, Turing.OracleTM.step, Turing.OracleTM.step_ofMultiTapeTM}
 \difficulty{3}
-Let $M_0$ be a plain multi-tape machine with $k$ work tapes, let $O$ be any
-oracle language, let $c$ be a configuration of $M_0$, and let
-$t \in \mathbb{N}$.  Running the oracle machine obtained by embedding $M_0$
-for $t$ steps relative to $O$ from the embedding of $c$ yields the embedding
-of the configuration obtained by running $M_0$ for $t$ steps from $c$.
+Let $M$ be a deterministic machine with $k$ work tapes, let $O$ be a language over its
+symbol alphabet, and let $c$ be a configuration of $M$. For every $t\in\mathbb{N}$,
+running the oracle machine associated to $M$ for $t$ steps from the embedded
+configuration of $c$, with oracle $O$, gives the embedding of the configuration reached
+by running $M$ for $t$ steps from $c$.
 \end{theorem}
 
-\begin{theorem}[Behavior of an embedded plain machine is oracle-independent]
+\begin{theorem}[Oracle simulation of a plain machine]
 \lean{Turing.OracleTM.computesInTime_ofMultiTapeTM}
 \label{Turing.OracleTM.computesInTime_ofMultiTapeTM}
 \leanok
 \uses{Turing.Cfg.embedOracle, Turing.Cfg.embedOracle_init, Turing.Cfg.embedOracle_output, Turing.Cfg.embedOracle_state_eq_none, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.OracleTM.ComputesInTime, Turing.OracleTM.initCfg, Turing.OracleTM.ofMultiTapeTM, Turing.OracleTM.runFrom_ofMultiTapeTM}
 \difficulty{3}
-Let $M_0$ be a plain multi-tape machine with $k$ work tapes, let $O$ be any
-oracle language, let $x$ and $y$ be words, and let $t \in \mathbb{N}$.  The
-oracle machine obtained by embedding $M_0$ computes $y$ on input $x$ within
-$t$ steps relative to $O$ if and only if, after running $M_0$ for $t$ steps
-from its initial configuration on $x$, the machine has halted and its output
-tape holds exactly $y$.  In particular, the input/output behavior and time
-bounds of the embedded machine do not depend on the oracle.
+Let $tm$ be a deterministic Turing machine with $k$ work tapes, let $O$ be an oracle
+language, and let $x,y$ be words and $t$ a natural number. The oracle machine obtained
+by embedding $tm$ computes $y$ on input $x$ within $t$ steps relative to $O$ if and only
+if the run of $tm$ from its initial configuration on $x$ is halted after $t$ steps and
+has output $y$.
 \end{theorem}
 
 \begin{definition}[Empty-oracle elimination]
@@ -387,27 +383,190 @@ movement, no output) directly into the negative-answer state, since the empty
 oracle always answers no.
 \end{definition}
 
-\begin{lemma}[One step of the empty-oracle elimination]
+\begin{lemma}[Empty-oracle step agreement]
 \lean{Turing.OracleTM.step_plainEmptyOracle}
 \label{Turing.OracleTM.step_plainEmptyOracle}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.MultiTapeTM.step, Turing.OracleTM, Turing.OracleTM.plainEmptyOracle, Turing.OracleTM.step}
 \difficulty{4}
-Let $M$ be an oracle machine with $k$ ordinary work tapes and let $c$ be a
-configuration with $k+1$ work tapes.  One step of the plain machine obtained
-from $M$ by the empty-oracle elimination, taken from $c$, equals one step of
-$M$ relative to the empty oracle, taken from $c$.
+Let $M$ be an oracle Turing machine with $k$ ordinary work tapes, and let $c$ be a
+configuration with $k+1$ work tapes. The successor of $c$ under the plain machine
+obtained from $M$ by the empty-oracle elimination is equal to the successor of $c$ under
+$M$ with the empty oracle.
 \end{lemma}
 
-\begin{theorem}[The empty-oracle elimination runs in lockstep]
+\begin{theorem}[Empty-oracle simulation]
 \lean{Turing.OracleTM.runFrom_plainEmptyOracle}
 \label{Turing.OracleTM.runFrom_plainEmptyOracle}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.OracleTM, Turing.OracleTM.plainEmptyOracle, Turing.OracleTM.runFrom, Turing.OracleTM.step, Turing.OracleTM.step_plainEmptyOracle}
 \difficulty{3}
-Let $M$ be an oracle machine with $k$ ordinary work tapes, let $c$ be a
-configuration with $k+1$ work tapes, and let $t \in \mathbb{N}$.  Running the
-plain machine obtained from $M$ by the empty-oracle elimination for $t$ steps
-from $c$ yields exactly the configuration obtained by running $M$ for $t$
-steps from $c$ relative to the empty oracle.
+Let $M$ be an oracle machine with $k$ ordinary work tapes, let $c$ be a configuration
+with $k+1$ work tapes, and let $t\in\mathbb{N}$. Running the plain machine obtained from
+$M$ by eliminating its oracle for $t$ steps from $c$ yields the same configuration as
+running $M$ for $t$ steps from $c$ with the empty language as oracle.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[A Halted Configuration Remains Fixed]
+\lean{Turing.OracleTM.step_of_halt}
+\label{Turing.OracleTM.step_of_halt}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.step}
+\difficulty{3}
+Let $M$ be an oracle Turing machine, let $O$ be an oracle language, and let $c$ be a
+configuration whose state is empty. One step from $c$ relative to $O$ leaves $c$
+unchanged.
+\end{theorem}
+
+\begin{theorem}[Successive run equals one further step]
+\lean{Turing.OracleTM.runFrom_succ_eq_step'}
+\label{Turing.OracleTM.runFrom_succ_eq_step'}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.runFrom, Turing.OracleTM.step}
+\difficulty{1}
+Let $M$ be an oracle machine with $k$ ordinary work tapes, let $O$ be a language over
+its symbol alphabet, let $c$ be a configuration with $k+1$ work tapes, and let
+$t\in\mathbb{N}$. Running $M$ relative to $O$ for $t+1$ steps from $c$ gives the same
+configuration as taking one step relative to $O$ from the configuration reached after
+$t$ steps.
+\end{theorem}
+
+\begin{theorem}[Additivity of run length]
+\lean{Turing.OracleTM.runFrom_add}
+\label{Turing.OracleTM.runFrom_add}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.runFrom}
+\difficulty{3}
+Let $M$ be an oracle Turing machine, $O$ an oracle language, and $c$ a configuration.
+For all nonnegative integers $a$ and $b$, running $M$ with oracle $O$ from $c$ for $a+b$
+steps gives the same configuration as first running it for $a$ steps and then running it
+for another $b$ steps.
+\end{theorem}
+
+\begin{theorem}[Runs from halted configurations]
+\lean{Turing.OracleTM.runFrom_of_halt}
+\label{Turing.OracleTM.runFrom_of_halt}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.runFrom, Turing.OracleTM.step_of_halt}
+\difficulty{1}
+Let $M$ be an oracle machine with $k$ ordinary work tapes, let $O$ be a language over
+its symbol alphabet, and let $c$ be a configuration with $k+1$ work tapes whose state is
+absent. For every natural number $n$, running $M$ relative to $O$ for $n$ steps from $c$
+leaves the configuration equal to $c$.
+\end{theorem}
+
+\begin{theorem}[Monotonicity of computation time]
+\lean{Turing.OracleTM.ComputesInTime.mono}
+\label{Turing.OracleTM.ComputesInTime.mono}
+\leanok
+\uses{Turing.OracleTM, Turing.OracleTM.ComputesInTime, Turing.OracleTM.initCfg, Turing.OracleTM.runFrom, Turing.OracleTM.runFrom_add, Turing.OracleTM.runFrom_of_halt}
+\difficulty{4}
+Let $M$ be an oracle Turing machine, $O$ an oracle language, and $x,w$ words. If $M$
+halts with output $w$ after $t$ steps relative to $O$, then it also halts with output
+$w$ after $t'$ steps relative to $O$ for every $t'\ge t$.
+\end{theorem}
+
+\begin{theorem}[Uniqueness of computed output]
+\lean{Turing.OracleTM.ComputesInTime.output_unique}
+\label{Turing.OracleTM.ComputesInTime.output_unique}
+\leanok
+\uses{Turing.OracleTM, Turing.OracleTM.ComputesInTime, Turing.OracleTM.ComputesInTime.mono}
+\difficulty{3}
+Let $M$ be an oracle Turing machine and $O$ an oracle language. If on the same input
+$x$, the machine halts with output $w$ after $t$ steps and halts with output $w'$ after
+$t'$ steps, both relative to $O$, then $w=w'$.
+\end{theorem}
+
+\begin{theorem}[Preservation of runs under step correspondence]
+\lean{Turing.OracleTM.runFrom_comm_of_step}
+\label{Turing.OracleTM.runFrom_comm_of_step}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.runFrom, Turing.OracleTM.step}
+\difficulty{1}
+Let $M$ and $M'$ be oracle Turing machines, with oracle languages $O$ and $O'$,
+respectively. Suppose a map $f$ from configurations of $M$ to configurations of $M'$
+satisfies $M'$'s one-step update with oracle $O'$ at $f(c)$ equals $f$ of $M$'s one-step
+update with oracle $O$, for every configuration $c$. Then, for every configuration $c$
+and every nonnegative integer $n$, running $M'$ from $f(c)$ for $n$ steps yields $f$ of
+the configuration obtained by running $M$ from $c$ for $n$ steps.
+\end{theorem}
+
+\begin{theorem}[Runs agree before any query]
+\lean{Turing.OracleTM.runFrom_eq_of_forall_ne_qQuery}
+\label{Turing.OracleTM.runFrom_eq_of_forall_ne_qQuery}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.runFrom, Turing.OracleTM.runFrom_succ_eq_step', Turing.OracleTM.step_eq_of_ne_qQuery}
+\difficulty{4}
+Let $M$ be an oracle Turing machine, let $O$ and $O'$ be oracle languages, and let $c$
+be a configuration. Suppose that at every time $s<t$, the run from $c$ using oracle $O$
+is not in the query state. Then the configurations reached after $t$ steps using $O$ and
+$O'$ are equal.
+\end{theorem}
+
+\begin{theorem}[One-step tape radius bound]
+\lean{Turing.OracleTM.step_radius}
+\label{Turing.OracleTM.step_radius}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.step, Turing.OracleTM.workTapePos_step_le, Turing.OracleTM.workTapes_step_eq_of_ne}
+\difficulty{4}
+Let $M$ be an oracle Turing machine with $k$ ordinary work tapes, let $O$ be an oracle
+language, and let $c$ be a configuration with $k+1$ work tapes. Choose a work-tape index
+$i$ and a natural number $n$. If the head on tape $i$ is at distance at most $n$ from
+the origin, and every cell $z$ with $|z|\ge n$ on that tape is blank, then after one
+step relative to $O$ the head on tape $i$ is at distance at most $n+1$ from the origin,
+and every cell $z$ with $|z|\ge n+1$ on that tape is blank.
+\end{theorem}
+
+\begin{theorem}[Work-tape support radius after a run]
+\lean{Turing.OracleTM.runFrom_radius}
+\label{Turing.OracleTM.runFrom_radius}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM, Turing.OracleTM.runFrom, Turing.OracleTM.runFrom_succ_eq_step', Turing.OracleTM.step_radius}
+\difficulty{4}
+Let $M$ be an oracle machine with $k$ ordinary work tapes, let $O$ be a language over
+its symbol alphabet, and let $c$ be a configuration with $k+1$ work tapes. Fix a tape
+$i$ and a natural number $n$. Suppose the absolute value of the head position on tape
+$i$ in $c$ is at most $n$, and every cell $z$ on that tape with $n\le |z|$ is blank.
+Then for every $s\in\mathbb{N}$, after running $M$ relative to $O$ for $s$ steps, the
+head position on tape $i$ has absolute value at most $n+s$, and every cell $z$ with
+$n+s\le |z|$ is blank.
+\end{theorem}
+
+\begin{theorem}[Query length bounded by a blank cell]
+\lean{Turing.OracleTM.queryString_length_le_of_blank}
+\label{Turing.OracleTM.queryString_length_le_of_blank}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM.queryString, Turing.OracleTM.queryTapeIdx}
+\difficulty{3}
+Let $c$ be a configuration with $k+1$ work tapes, and let $n$ be a natural number. If
+the query-tape cell at position $n$ is blank, then the query string of $c$ has length at
+most $n$.
+\end{theorem}
+
+\begin{theorem}[Query string determined by its cells]
+\lean{Turing.OracleTM.queryString_eq_of_cells}
+\label{Turing.OracleTM.queryString_eq_of_cells}
+\leanok
+\uses{Turing.Cfg, Turing.OracleTM.queryString, Turing.OracleTM.queryTapeIdx}
+\difficulty{6}
+Let $c$ be a configuration with $k+1$ work tapes and let $w$ be a finite word. Suppose
+that at each position $i$ with $0\le i<|w|$, the query tape contains the $i$-th symbol
+of $w$, and that the cell at position $|w|$ is blank. Then the query string of $c$ is
+$w$.
+\end{theorem}
+
+\begin{theorem}[Agreement with the empty-oracle simulation]
+\lean{Turing.OracleTM.runFrom_eq_plainEmptyOracle}
+\label{Turing.OracleTM.runFrom_eq_plainEmptyOracle}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.OracleTM, Turing.OracleTM.plainEmptyOracle, Turing.OracleTM.runFrom, Turing.OracleTM.runFrom_eq_of_forall_ne_qQuery, Turing.OracleTM.runFrom_plainEmptyOracle}
+\difficulty{3}
+Let $M$ be an oracle Turing machine, let $O$ be an oracle language, and let $c$ be a
+configuration. Suppose that at every time $s<t$, the run from $c$ by the plain machine
+simulating $M$ with the empty oracle is not in the query state. Then the configuration
+reached after $t$ steps by running $M$ with oracle $O$ from $c$ equals the configuration
+reached after $t$ steps by that plain machine.
 \end{theorem}

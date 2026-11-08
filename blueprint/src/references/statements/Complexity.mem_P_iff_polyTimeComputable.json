@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.mem_P_iff_polyTimeComputable",
+ "key": "f6110a41894e21fb",
+ "kind": "theorem",
+ "title": "Polynomial-time decidability and indicator computation",
+ "statement": "For a language $V$ of finite binary strings, $V$ belongs to $\\mathsf{P}$ if and only if the function that maps each binary string $x$ to the one-bit string containing $1$ when $x\\in V$ and $0$ otherwise is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$V$ is a language over the binary alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $V \\subseteq \\{0,1\\}^*$ be a language and let $\\mathbf{1}_V(x) \\in \\{0,1\\}$ be its indicator bit, equal to $1$ if $x \\in V$ and $0$ otherwise. Then $V$ belongs to $\\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time, if and only if the map sending a bit string $x$ to the one-bit word $\\mathbf{1}_V(x)$ is polynomial-time computable, i.e.\\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \\in \\mathbb{N}$."
+}

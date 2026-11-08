@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a3_nonempty_run",
+ "key": "d4f1e102885a9536",
+ "kind": "lemma",
+ "title": "Run preserved under state renaming",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean input word, and let $c$ be any configuration of $M$ on input $x$. For every natural number $t$, running the machine that guards against empty input for $t$ steps from the configuration obtained by renaming the states of $c$ gives the state-renamed configuration reached by running $M$ from $c$ for $t$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "After the nonempty guard has been passed, the guarded machine's run from any\nstate-renamed configuration of $M$ coincides, under the renaming, with $M$'s own\nrun."
+}

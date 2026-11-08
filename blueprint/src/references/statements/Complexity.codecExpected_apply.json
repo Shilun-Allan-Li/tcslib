@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.codecExpected_apply",
+ "key": "7996f8a58ef4dd14",
+ "kind": "theorem",
+ "title": "Expected encoding of an action",
+ "statement": "Let $M$ be a finite-state Turing machine with $k$ work tapes, let $n,s$ be natural numbers, and let $x$ be a Boolean input of length $n$. Let $c$ be a configuration on input $x$, $t$ a codec row, $p$ a tuple of an input-head position and work-head positions, $q$ a case consisting of an optional state, an optional input symbol, and one optional symbol per work tape, and $a$ a Boolean assignment to the codec ports. Assume that the input head recorded in the row of $c$ is the input-head position in $p$, and that each work-tape head of $c$ is at the integer position represented by its corresponding position in $p$ (with offset $s$). For every codec bit $b$, the expected value of $b$ under the action determined by $q$, using the port values read from the row of $c$ and $t$ by the gate wiring, equals the observed value of $b$ in the configuration obtained by applying that action to $c$ after replacing its output by the encoding of its output summary.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$",
+  "Natural numbers $n,s$",
+  "A Boolean input $x$ of length $n$",
+  "A configuration $c$ on input $x$",
+  "A codec row $t$",
+  "A tuple $p$ of input-head and work-head positions",
+  "A case $q$ containing an optional state, optional input symbol, and optional work-tape symbols",
+  "A Boolean assignment $a$ to codec ports",
+  "The row of $c$ records input-head position $p_1$",
+  "Each work-tape head of $c$ has position represented by $p$ with offset $s$",
+  "An arbitrary codec bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}
