@@ -66,10 +66,11 @@ y$ for the vector with $i$th coordinate $x_i \oplus y_i$,
 
 \begin{definition}[Multiplicative derivative]
 \lean{LowDegreeTest.mult_deriv}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p168-b004}
 \label{LowDegreeTest.mult_deriv}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p019-b005}
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, BoolFourier.xor_vec}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p019-b005}
 For a function $f : \{0,1\}^n \to \bbr$ and a direction vector $h \in \{0,1\}^n$,
 the multiplicative derivative is defined by
 $(\Delta_h f)(x) = f(x) \cdot f(x \oplus h)$.
@@ -77,10 +78,11 @@ $(\Delta_h f)(x) = f(x) \cdot f(x \oplus h)$.
 
 \begin{definition}[Gowers product]
 \lean{LowDegreeTest.gowers_product}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p168-b004}
 \label{LowDegreeTest.gowers_product}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p026-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, BoolFourier.xor_vec}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p026-b004}
 For $f : \{0,1\}^n \to \bbr$, base point $x \in \{0,1\}^n$, and direction
 vectors $h_1, \ldots, h_k \in \{0,1\}^n$, the order-$k$ Gowers product is defined
 recursively:
@@ -96,9 +98,379 @@ $x + \mathrm{span}\{h_1,\ldots,h_k\}$.
 
 \begin{lemma}[Base case of the Gowers product]
 \lean{LowDegreeTest.gowers_product_zero}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p168-b004}
 \label{LowDegreeTest.gowers_product_zero}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.gowers_product}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.xor_vec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BoolFourier.card_hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {LowDegreeTest.gowers_product}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.gowers_product_succ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.multi_expectation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.multi_expectation_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
 \difficulty{1}
 Let $f : \{0,1\}^n \to \bbr$ be a Boolean function and let $x \in \{0,1\}^n$. With no
 direction vectors supplied, the order-$0$ Gowers product equals the value of $f$ at $x$:
@@ -109,9 +481,382 @@ direction vectors supplied, the order-$0$ Gowers product equals the value of $f$
 
 \begin{lemma}[Recursive unfolding of the Gowers product]
 \lean{LowDegreeTest.gowers_product_succ}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p168-b004}
 \label{LowDegreeTest.gowers_product_succ}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.gowers_product}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007,
+    pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003,
+    pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.xor_vec}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BoolFourier.card_hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {LowDegreeTest.gowers_product}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.gowers_product_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.multi_expectation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.multi_expectation_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
 \difficulty{1}
 Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, let $k \ge 0$, let $x \in \{0,1\}^n$
 be a base point, and let $h_1, \ldots, h_{k+1} \in \{0,1\}^n$ be direction vectors. Then
@@ -200,8 +945,8 @@ $c$ is itself $c$:
 \lean{LowDegreeTest.is_degree_le_pm1}
 \label{LowDegreeTest.is_degree_le_pm1}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p007-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.hypercube, LowDegreeTest.gowers_product}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p007-b004}
 A function $f : \{0,1\}^n \to \bbr$ has degree $\le d$ if all its $(d{+}1)$-fold
 multiplicative derivatives vanish: for every $x$ and every $h_1,\ldots,h_{d+1}$,
 $\mathrm{GP}(f, d{+}1, x, h_1,\ldots,h_{d+1}) = 1$.
@@ -211,8 +956,8 @@ $\mathrm{GP}(f, d{+}1, x, h_1,\ldots,h_{d+1}) = 1$.
 \lean{LowDegreeTest.is_degree_le_bool}
 \label{LowDegreeTest.is_degree_le_bool}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p007-b004}
 \uses{BoolBLR.lift_pm1, BoolFourier.hypercube, LowDegreeTest.is_degree_le_pm1}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p007-b004}
 A Boolean function $f : \{0,1\}^n \to \{0,1\}$ has degree $\le d$ if its $\pm 1$
 lift $(-1)^f$ has degree $\le d$ in the sense of \texttt{LowDegreeTest.is\_degree\_le\_pm1}.
 \end{definition}
@@ -260,8 +1005,8 @@ square $x + \operatorname{span}\{h_1, h_2\}$ equals $1$.
 \lean{LowDegreeTest.degree_le_one_implies_affine}
 \label{LowDegreeTest.degree_le_one_implies_affine}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p017-b004}
 \uses{BoolBLR.is_linear_bool, BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.hypercube, BoolFourier.xor_vec, BoolFourier.zero_vec, LowDegreeTest.gowers_product_succ, LowDegreeTest.is_degree_le_bool}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p017-b004}
 \difficulty{6}
 Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function of degree at most $1$; that is,
 its $\pm 1$ lift $x \mapsto (-1)^{f(x)}$ has degree at most $1$, meaning every
@@ -276,6 +1021,7 @@ linear.
 
 \begin{definition}[Reed--Muller code]
 \lean{LowDegreeTest.ReedMuller}
+\statementsource{Vad12}{pdf-bf2ce5422088-p248-b001}
 \label{LowDegreeTest.ReedMuller}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.is_degree_le_bool}
@@ -323,8 +1069,8 @@ $\mathrm{RM}(d, n)$; that is, it has degree $\le d$.
 \lean{LowDegreeTest.linear_mem_ReedMuller_one}
 \label{LowDegreeTest.linear_mem_ReedMuller_one}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, LowDegreeTest.ReedMuller, LowDegreeTest.linear_is_degree_le_one}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \difficulty{1}
 Let $f : \{0,1\}^n \to \{0,1\}$ be a linear Boolean function, meaning that $f(x \oplus
 y) = f(x) \oplus f(y)$ for all $x, y \in \{0,1\}^n$, where $\oplus$ denotes
@@ -336,8 +1082,8 @@ n)$; that is, $f$ has degree at most $1$.
 \lean{LowDegreeTest.ReedMuller_one_is_affine}
 \label{LowDegreeTest.ReedMuller_one_is_affine}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p017-b004}
 \uses{BoolBLR.is_linear_bool, BoolFourier.hypercube, LowDegreeTest.ReedMuller, LowDegreeTest.degree_le_one_implies_affine}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p017-b004}
 \difficulty{1}
 Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function lying in the Reed–Muller code
 $\mathrm{RM}(1,n)$, that is, a function of degree at most $1$. Then $f$ is affine:
@@ -350,10 +1096,11 @@ $\mathbb{F}_2$-linear.
 
 \begin{definition}[Gowers norm (power form)]
 \lean{LowDegreeTest.gowers_norm_pow}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p168-b004}
 \label{LowDegreeTest.gowers_norm_pow}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p026-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BoolFourier.hypercube, LowDegreeTest.gowers_product, LowDegreeTest.multi_expectation}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p026-b004}
 The $k$-th Gowers uniformity norm to the $2^k$-th power is
 \[
   \|f\|_{U^k}^{2^k}
@@ -383,7 +1130,7 @@ Gowers product $\mathrm{GP}\big((-1)^f, d{+}1, x, h_1,\ldots,h_{d+1}\big)$ equal
 \lean{LowDegreeTest.gowers_U2_eq_L2_conv}
 \label{LowDegreeTest.gowers_U2_eq_L2_conv}
 \leanok
-\uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.char_is_degree_le_one, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product, LowDegreeTest.multi_expectation, LowDegreeTest.xor_vec_comm}
+\uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product, LowDegreeTest.multi_expectation, LowDegreeTest.xor_vec_comm}
 \difficulty{6}
 Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, and write $x \oplus y$ for the
 componentwise XOR of $x, y \in \{0,1\}^n$. Then the fourth power of the second Gowers
@@ -396,10 +1143,504 @@ where $(f * f)(x) = \E_{y}[f(y)\,f(x \oplus y)]$; that is,
 
 \begin{lemma}[The $U^2$ norm as the $\ell^4$ norm of the Fourier spectrum]
 \lean{LowDegreeTest.gowers_U2_fourier}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p168-b006,
+  pdf-ffbe9c7b3306-p038-b011
+}
 \label{LowDegreeTest.gowers_U2_fourier}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p003-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution, BoolFourier.parseval_identity, LowDegreeTest.gowers_U2_eq_L2_conv, LowDegreeTest.gowers_norm_pow}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.xor_vec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b001}
+\proofstep
+  {BoolFourier.card_hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.L2_norm_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.convolution}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b001}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BoolFourier.fourier_coeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BoolFourier.expectation_eq_expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.fourier_coeff_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BoolFourier.parseval_identity_aux_hL2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.parseval_identity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BoolFourier.fourier_coeff_convolution_aux_h_fubini}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b006}
+\proofstep
+  {BoolFourier.fourier_coeff_convolution_aux_h_split}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b001}
+\proofstep
+  {BoolFourier.fourier_coeff_convolution_aux_h_char}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b006}
+\proofstep
+  {BoolFourier.fourier_coeff_convolution}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b005,
+    pdf-ffbe9c7b3306-p030-b006}
+\proofstep
+  {LowDegreeTest.xor_vec_comm}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b001}
+\proofstep
+  {LowDegreeTest.gowers_product}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.gowers_product_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.gowers_product_succ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.multi_expectation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.multi_expectation_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.gowers_norm_pow}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b004}
+\proofstep
+  {LowDegreeTest.gowers_U2_eq_L2_conv}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p168-b006,
+    pdf-ffbe9c7b3306-p030-b005,
+    pdf-ffbe9c7b3306-p025-b006}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p003-b001}
 \difficulty{2}
 Let $f : \{0,1\}^n \to \bbr$ be a Boolean function, with Gowers uniformity norm
 $\|f\|_{U^2}$ and Fourier coefficients $\hat f(S) = \E_x[f(x)\chi_S(x)]$ indexed by the
@@ -551,7 +1792,7 @@ h_1,\ldots,h_{d+1}) = 1]\bigr] = 1.
 \lean{LowDegreeTest.degree_test_qualitative_soundness}
 \label{LowDegreeTest.degree_test_qualitative_soundness}
 \leanok
-\uses{BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.degree_test_accept_prob_eq, LowDegreeTest.gowers_norm_eq_one_iff, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product_pm1, LowDegreeTest.is_degree_le_bool}
+\uses{BoolBLR.lift_pm1, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.degree_test_accept_prob, LowDegreeTest.degree_test_accept_prob_eq, LowDegreeTest.gowers_norm_eq_one_iff, LowDegreeTest.gowers_norm_pow, LowDegreeTest.gowers_product_pm1, LowDegreeTest.is_degree_le_bool}
 \difficulty{5}
 Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function that does not have degree at most
 $d$, meaning that its $\pm 1$ lift $(-1)^f$ has at least one nonvanishing $(d{+}1)$-fold
@@ -567,8 +1808,8 @@ with probability strictly less than $1$.
 \lean{LowDegreeTest.char_is_degree_le_one}
 \label{LowDegreeTest.char_is_degree_le_one}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, LowDegreeTest.gowers_product, LowDegreeTest.is_degree_le_pm1}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \difficulty{4}
 For every subset $S \subseteq [n]$, the Walsh--Fourier character $\chi_S$ has degree at
 most $1$: every second-order Gowers product of $\chi_S$ equals $1$. Explicitly, for all
@@ -583,8 +1824,8 @@ base points $x \in \{0,1\}^n$ and all direction vectors $h_1, h_2 \in \{0,1\}^n$
 \lean{LowDegreeTest.neg_char_is_degree_le_one}
 \label{LowDegreeTest.neg_char_is_degree_le_one}
 \leanok
-\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \uses{BoolFourier.char_S, LowDegreeTest.char_is_degree_le_one, LowDegreeTest.is_degree_le_pm1}
+\statementsource{boolean-ch06-pseudorandomness-f2}{pdf-6c10bfcc8080-p006-b004}
 \difficulty{2}
 For every subset $S \subseteq [n]$, the negated Walsh--Fourier character $x \mapsto
 -\chi_S(x)$ on $\{0,1\}^n$ has degree $\le 1$: its second-order multiplicative
@@ -658,7 +1899,7 @@ coefficient of $F$ at $S$; equivalently, $\widehat{F}(S) \ge 2\varepsilon - 1$.
 \lean{LowDegreeTest.abs_fourier_coeff_le_of_far_from_degree}
 \label{LowDegreeTest.abs_fourier_coeff_le_of_far_from_degree}
 \leanok
-\uses{BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube, LowDegreeTest.epsilon_far_from_RM, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.fourier_coeff_le_of_far_from_degree, LowDegreeTest.neg_fourier_coeff_le_of_far_from_degree}
+\uses{BoolBLR.lift_pm1, BoolFourier.fourier_coeff, BoolFourier.hypercube, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.fourier_coeff_le_of_far_from_degree, LowDegreeTest.neg_fourier_coeff_le_of_far_from_degree}
 \difficulty{2}
 Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function, let $d \ge 1$, and let
 $\varepsilon$ be a real number with $0 \le \varepsilon \le 1$. Suppose $f$ is
@@ -675,6 +1916,7 @@ the Fourier coefficient at $S$ of the $\pm 1$ lift $x \mapsto (-1)^{f(x)}$, we h
 
 \begin{definition}[$\varepsilon$-far from Reed--Muller]
 \lean{LowDegreeTest.epsilon_far_from_RM}
+\statementsource{Vad12}{pdf-bf2ce5422088-p248-b001}
 \label{LowDegreeTest.epsilon_far_from_RM}
 \leanok
 \uses{BoolFourier.hypercube, LowDegreeTest.epsilon_far_from_degree}
@@ -694,13 +1936,472 @@ acceptance probability \texttt{LowDegreeTest.degree\_test\_accept\_prob}.
 
 \begin{lemma}[Parseval identity for the sign lift of a Boolean function]
 \lean{LowDegreeTest.parseval_pm1}
+\proofsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p004-b005}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p025-b006}
 \label{LowDegreeTest.parseval_pm1}
 \leanok
+\uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LitList}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LitList.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Term}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Clause}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Term.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Clause.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Depth2}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Depth2.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DNF}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004,
+    pdf-63759bd909d5-p005-b006}
+\proofstep
+  {CNF}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004,
+    pdf-63759bd909d5-p006-b002}
+\proofstep
+  {DNF.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b006}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b006}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b006}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b006}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b005}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b005}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b005}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b005}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p011-b006}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p011-b006}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.BoolToPM1}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.xor_vec}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.card_hypercube}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.BoolToPM1_sq}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.L2_norm_sq}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b001}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.fourier_coeff}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BoolFourier.expectation_eq_expect}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.fourier_coeff_eq}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BoolFourier.parseval_identity_aux_hL2}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b001}
+\proofstep
+  {BoolFourier.parseval_identity}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b005}
+\proofstep
+  {BoolBLR.lift_pm1}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {LowDegreeTest.gowers_product}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {LowDegreeTest.gowers_product_zero}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {LowDegreeTest.gowers_product_succ}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {LowDegreeTest.multi_expectation}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {LowDegreeTest.multi_expectation_const}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
 \statementsource{boolean-ch03-spectral-learning-restrictions}{
   pdf-20e15a3d3d5e-p004-b001,
   pdf-20e15a3d3d5e-p001-b003
 }
-\uses{BoolBLR.lift_pm1, BoolFourier.BoolToPM1, BoolFourier.BoolToPM1_sq, BoolFourier.L2_norm_sq, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.parseval_identity}
 \difficulty{2}
 Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean-valued function, and let $g : \{0,1\}^n \to
 \bbr$ be its $\pm 1$ lift $g(x) = (-1)^{f(x)}$. Writing $\hat g(S) = \E[g\,\chi_S]$ for
@@ -783,7 +2484,7 @@ of degree $\le d$ — then $f$ is also $\varepsilon$-far from degree $\le d'$.
 \lean{LowDegreeTest.derivative_distance_lemma}
 \label{LowDegreeTest.derivative_distance_lemma}
 \leanok
-\uses{BoolBLR.bool_dist, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.is_degree_le_bool}
+\uses{BoolBLR.bool_dist, BoolFourier.expectation, BoolFourier.hypercube, BoolFourier.xor_vec, LowDegreeTest.epsilon_far_from_degree, LowDegreeTest.epsilon_far_monotone, LowDegreeTest.is_degree_le_bool}
 \difficulty{4}
 Let $f : \{0,1\}^n \to \{0,1\}$ be a Boolean function that is $\varepsilon$-far from
 degree $\le d$, where $d \ge 2$; in particular $0 \le \varepsilon \le 1$. For a shift $h

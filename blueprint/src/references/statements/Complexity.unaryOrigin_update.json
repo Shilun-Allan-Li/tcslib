@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.unaryOrigin_update",
+ "key": "c14818245b185de5",
+ "kind": "lemma",
+ "title": "The origin marker survives a unit write",
+ "statement": "Let $u:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{OblSymbol})$ be a tape and let $v\\in\\mathbb Z$ satisfy $1\\le v$. Suppose $u(z)$ is the origin marker exactly when $z=0$. After updating the tape at position $v$ to the unit marker, its value is still the origin marker exactly at position $0$.",
+ "hypotheses_covered": [
+  "Tape $u$ from integers to optional schedule symbols",
+  "Integer position $v$ with $1\\le v$",
+  "The tape has the origin marker exactly at coordinate $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a tape carries the origin sentinel exactly at coordinate $0$, then after\nwriting a unit marker at any coordinate $u \\ge 1$ it still carries the origin\nsentinel exactly at coordinate $0$."
+}

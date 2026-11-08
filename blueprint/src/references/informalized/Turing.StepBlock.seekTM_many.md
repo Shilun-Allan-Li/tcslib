@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/StepBlock.lean :: Turing.StepBlock.seekTM_many -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Search Through a List of Records
+
+**Claim.** For a nonempty list of at most $3^{k+1}$ records whose encodings are stored consecutively from the table head, a request with remaining count $|A|-1$ processes the whole list in $\operatorname{cost}(A)$ steps. It ends in done when the flag is true and otherwise in the state carrying the original rank, advances the table head by the encoding length of $A$, preserves the other stated configuration data, and does not reach done sooner.
+
+**Proof.** Proceed by induction on the record list, generalizing the configuration so that the table head can be reset to the beginning of each remaining suffix. The empty case is impossible because the list is assumed nonempty. For a singleton, the one-record request result (`seekTM_request`) processes its encoding in its length plus three steps; with no suffix, the successor control state is exactly done or the state carrying the rank according to the flag. Its frame and nontermination conclusions give the desired properties. For a list with at least two records, split off its first record $a$. The consecutive-reads lemma (`reads_append`) separates the stored encoding into the encoding of $a$ and that of the suffix, so `seekTM_request` handles the first record and advances the table head by $|\operatorname{actionBitsK}(a)|$. The remaining suffix is nonempty and still respects the length bound: its length is at most $3^{k+1}$ because the original list does. Apply the induction hypothesis to this suffix from the advanced configuration. The run-addition law (`Turing.MultiTapeTM.runFrom_add`) concatenates the two runs, and the definition of cost gives $\operatorname{cost}(a::as)=|\operatorname{actionBitsK}(a)|+3+\operatorname{cost}(as)$. The first segment's no-early-done and frame properties cover times in that segment; after it, the induction hypothesis supplies those properties for the suffix. Since the suffix updates only the table-head position, the other heads remain fixed as claimed.
+
+**Key facts.** `Turing.StepBlock.reads_append`, `Turing.StepBlock.seekTM_request`, `Turing.MultiTapeTM.runFrom_add`.

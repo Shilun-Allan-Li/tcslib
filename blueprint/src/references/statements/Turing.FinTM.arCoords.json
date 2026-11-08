@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.arCoords",
+ "key": "7aa5546a8d223d62",
+ "kind": "lemma",
+ "title": "Block coordinates of a tape position",
+ "statement": "For $N\\in\\mathbb{N}$, $z\\in\\mathbb{Z}$, and an offset $j\\in\\{0,\\ldots,N\\}$, the position $p=(N+1)z+j$ lies in block $z$ at offset $j$: its quotient on division by $N+1$ is $z$, and its remainder is $j$.",
+ "hypotheses_covered": [
+  "Natural number $N$",
+  "Integer block index $z$",
+  "Offset $j$ in $\u001b[0m\u001b[0m\\{0,\\ldots,N\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $N \\in \\mathbb{N}$, every $z \\in \\mathbb{Z}$, and every\n$j \\in \\{0,\\dots,N\\}$, the position $p = (N+1)z + j$ satisfies\n$\\lfloor p/(N+1) \\rfloor = z$ and $p \\bmod (N+1) = j$."
+}

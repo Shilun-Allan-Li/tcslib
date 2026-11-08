@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.CounterProg.Goes.mono",
+ "key": "309b30bb4daea343",
+ "kind": "theorem",
+ "title": "Monotonicity of the run bound",
+ "statement": "Let $P$ be a counter program with $R$ natural-number registers and labels in $\\Lambda$, run on a binary input $x$. If for every output word $o$ some run of at most $b$ steps from label $\\ell$, register assignment $\\rho$, and input position $p$ reaches $\\ell'$, $\\rho'$, and $p'$ while appending $e$, and $b\\le b'$, then the same endpoints and output extension are reachable within $b'$ steps for every $o$.",
+ "hypotheses_covered": [
+  "A counter program $P$ with $R$ natural-number registers and label set $\\Lambda$",
+  "A binary input $x$",
+  "A run relation from $\\ell,\\rho,p$ to $\\ell',\\rho',p'$ appending $e$ within bound $b$",
+  "Bound inequality $b\\le b'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$ and let $b \\le b'$.  If from\nlabel $\\ell$ with registers $\\rho$ and $p$ input symbols read, $P$ reaches\n$\\ell'$ (a label or the halted state) with registers $\\rho'$ and $p'$ symbols\nread within $b$ steps while appending $e$ to its output, then it does so within\n$b'$ steps as well."
+}

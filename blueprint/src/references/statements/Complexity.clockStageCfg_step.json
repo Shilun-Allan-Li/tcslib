@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clockStageCfg_step",
+ "key": "4435deaaa008df9d",
+ "kind": "lemma",
+ "title": "One live clock step",
+ "statement": "Let $W$ be a finite machine over Booleans, let $a\\in\\mathbb{N}$, and let $c$ be a configuration of $W$ on a Boolean input. If $c$ is in state $q$, then one step of the schedule machine from the clock-stage configuration of $c$ equals the clock-stage configuration of the next configuration obtained by one step of the machine that masks every nonblank input symbol as false.",
+ "hypotheses_covered": [
+  "$W$ is a finite machine over Booleans",
+  "$a\\in\\mathbb{N}$",
+  "$x$ is a Boolean input and $c$ is a configuration of $W$ on $x$",
+  "$q$ is a state with $c$ in state $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a binary machine, $a$ a padding constant, and $c$ a live configuration of\n$W$ on an input $x$ (its control state is some state $q$).  Then one step of the\nschedule controller from the clock-stage configuration of $c$ equals the clock-stage\nconfiguration of one step, from $c$, of the masked clock machine obtained from $W$ by\nignoring the input bit values; in particular any bit emitted by that step, including a\nfinal emission, is captured on the budget tape, and administrative work begins only\nafter this transition."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass_closed",
+ "key": "3c8a7fca84860b3b",
+ "kind": "lemma",
+ "title": "Closure under negation and identification",
+ "statement": "Fix $k\\in\\mathbb N$. For all natural numbers $n,m$, if a $\\{-1,1\\}$-valued function on $\\{0,1\\}^n$ has a polynomial threshold representation of degree at most $k$, then for every $z\\in\\{0,1\\}^n$ and every map $\\pi:[n]\\to[m]$, the function on $\\{0,1\\}^m$ given by $g(w)=f((z_i+w_{\\pi(i)}\\pmod 2)_{i=1}^n)$ is also $\\{-1,1\\}$-valued and has a polynomial threshold representation of degree at most $k$.",
+ "hypotheses_covered": [
+  "k is a natural number",
+  "n and m are natural numbers",
+  "f is ±1-valued",
+  "f has a polynomial threshold representation of degree at most k",
+  "z is an element of {0,1}ⁿ",
+  "π is a map from [n] to [m]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $k,n,m\\in\\mathbb N$, a function $f:\\{0,1\\}^{n}\\to\\{-1,1\\}$ of the form $f(x)=\\operatorname{sgn}_{+}(p((-1)^{x_1},\\ldots,(-1)^{x_n}))$ for a real multilinear polynomial $p$ of degree at most $k$, every $z\\in\\{0,1\\}^{n}$ and every map $\\pi:\\{1,\\ldots,n\\}\\to\\{1,\\ldots,m\\}$, the function $g(w)=f((z_i+w_{\\pi(i)}\\pmod2)_{i=1}^{n})$ is also $\\{-1,1\\}$-valued and has a representation $g(w)=\\operatorname{sgn}_{+}(q((-1)^{w_1},\\ldots,(-1)^{w_m}))$ with a real multilinear polynomial $q$ of degree at most $k$.\nHere $\\operatorname{sgn}_{+}(t)=1$ for $t\\geq0$ and $-1$ for $t<0$."
+}

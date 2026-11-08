@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.MachineFormat.scan_eq_canonGrammar",
+ "key": "7cdd36f12a02801b",
+ "kind": "lemma",
+ "title": "Agreement of the scan and canonical grammar checks",
+ "statement": "Let $F$ be a machine format, and let $\\alpha$, $b$, and $r$ be finite bit strings. Suppose the aligned pair parser applied to $\\alpha$ returns $(b,r)$, the string $b$ is the canonical least-significant-bit-first binary representation of its value $n$, and $\\max\\{g,(4k+5)3^{k+1}\\}(n+1)\\le |r|$, where $g$ is the format's guard and $k$ is its number of work tapes. Then scanning $\\alpha$ returns the same result as the following check on $r$: consume a unary index smaller than $n+1$, skip the transition table for $n+1$ states and $k$ work tapes, and accept exactly when every bit in the remaining suffix is $1$, returning that suffix.",
+ "hypotheses_covered": [
+  "$F$ is a machine format",
+  "$\\alpha$, $b$, and $r$ are finite bit strings",
+  "The aligned pair parser applied to $\\alpha$ returns $(b,r)$",
+  "$b$ is the canonical least-significant-bit-first binary representation of its value $n$",
+  "$\\max\\{g,(4k+5)3^{k+1}\\}(n+1)\\le |r|$, where $g$ is the format's guard and $k$ is its number of work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

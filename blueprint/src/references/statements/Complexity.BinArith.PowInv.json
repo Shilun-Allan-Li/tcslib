@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.BinArith.PowInv",
+ "key": "7f6b8a0ebac1f1ce",
+ "kind": "def",
+ "title": "Modular exponentiation invariant",
+ "statement": "For Boolean lists $z$ and $S$, let $a$, $e$, and $m$ be the natural numbers encoded by the first component of $z$, the first component of its second component, and the second component of its second component. The state $S$ encodes lists $E$, $b$, and $\\mathrm{acc}$ in the form specified by the pair encoding, where $E$ has length at most the length of the binary representation of $e$, $b$ and $\\mathrm{acc}$ are canonical binary representations, $b$ has length at most the sum of the lengths of the binary representations of $a$ and $m$, and $\\mathrm{acc}$ has length at most one plus the length of the binary representation of $m$. If $m>0$, then $b$ and $\\mathrm{acc}$ encode numbers less than $m$, and $\\mathrm{acc}\\,b^{\\mathrm{val}(E)}$ is congruent to $a^e$ modulo $m$.",
+ "hypotheses_covered": [
+  "$z$ and $S$ are Boolean lists",
+  "There exist lists $E$, $b$, and $\\mathrm{acc}$ giving the specified encoded state",
+  "$E$ has length at most the length of the encoded exponent",
+  "$b$ and $\\mathrm{acc}$ are canonical binary representations",
+  "$b$ has the stated length bound",
+  "$\\mathrm{acc}$ has the stated length bound",
+  "When the encoded modulus is positive, both encoded values are less than the modulus and satisfy the stated modular congruence"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not define the pair encoding or binary-value function, so these representations and values can only be described using their evident roles.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

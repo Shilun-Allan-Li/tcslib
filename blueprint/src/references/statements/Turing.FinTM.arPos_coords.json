@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.arPos_coords",
+ "key": "70cea3240b9119e3",
+ "kind": "lemma",
+ "title": "Reconstructing a tape position",
+ "statement": "For every $N\\in\\mathbb{N}$ and $p\\in\\mathbb{Z}$, writing $p=(N+1)q+s$ with $q=\\lfloor p/(N+1)\\rfloor$ and $s$ the remainder in $\\{0,\\ldots,N\\}$ gives the original position $p$.",
+ "hypotheses_covered": [
+  "$N\\in\\mathbb{N}$",
+  "$p\\in\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $N \\in \\mathbb{N}$ and every $p \\in \\mathbb{Z}$,\n\\[\n(N+1)\\left\\lfloor \\frac{p}{N+1} \\right\\rfloor + \\left(p \\bmod (N+1)\\right) = p .\n\\]"
+}

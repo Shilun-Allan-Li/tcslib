@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clockStageCfg_input",
+ "key": "9b9a0d08619c66bf",
+ "kind": "lemma",
+ "title": "Input-read presence is preserved",
+ "statement": "Let $W$ be a finite-state binary machine, $a$ a natural number, $x$ a Boolean input word, and $c$ a configuration of $W$ on $x$. Replacing each nonblank symbol read by the clock-stage configuration with false, while leaving a blank read blank, gives the same possibly blank symbol as applying that replacement to the symbol read by $c$.",
+ "hypotheses_covered": [
+  "finite-state binary machine W",
+  "natural number a",
+  "Boolean input word x",
+  "configuration c of W on x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a binary machine, $a$ a padding constant, and $c$ a configuration of $W$ on\nan input $x$.  After forgetting the bit values (retaining only whether a symbol is\npresent), the symbol read by the input head of the clock-stage configuration of $c$\nagrees with the correspondingly masked native read of $c$."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.runFrom_count_eq",
+ "key": "aa1ad4eb8f389a07",
+ "kind": "theorem",
+ "title": "Configuration count bound",
+ "statement": "Let $K,B,P,T$ be natural numbers, let $x$ be a finite Boolean word, and let $M$ be a deterministic machine with $K+1$ work tapes and a finite state set $S$. Suppose every transition either leaves the last work tape's scanned cell unchanged or writes the symbol $1$ there. If the run of $M$ from its initial configuration on $x$ is halted by time $T$, and at every time $t\\le T$ the first $K$ work-tape heads have absolute positions at most $B$ while the last work-tape head has absolute position at most $P$, then the configuration at time $(|S|+1)(|x|+2)3^{K(2B+1)}(2B+1)^K(2P+1)(2P+2)$ equals the configuration at time $T$.",
+ "hypotheses_covered": [
+  "The state set is finite",
+  "The machine has $K+1$ work tapes and Boolean symbols",
+  "Every transition on the last tape writes either nothing or $1$",
+  "The run from the initial configuration is halted at time $T$",
+  "For every $t\\le T$, each of the first $K$ head positions has absolute value at most $B$",
+  "For every $t\\le T$, the last head position has absolute value at most $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

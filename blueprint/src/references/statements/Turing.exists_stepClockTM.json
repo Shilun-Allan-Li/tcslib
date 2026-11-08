@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.exists_stepClockTM",
+ "key": "13c0fea1b8486686",
+ "kind": "theorem",
+ "title": "Finite-time clock simulation",
+ "statement": "Let $M$ be a deterministic Turing machine with $k$ work tapes, Boolean alphabet, and finite state set $S$, and let $P:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a state predicate. There exist a finite-state machine $H$ with $k+1$ work tapes, an injective map $\\iota:S\\to Q$, and maps $F,U:\\mathrm{Option}(S)\\to Q$ such that the following holds. For every Boolean input $x$, every initial configuration $c$ of $M$ whose state is $q$, every Boolean word $w$, and every clock-tape offset $a\\in\\mathbb Z$, suppose the extra tape content $C$ satisfies $C(a+p)$ equals the content of the word $w$ at position $p$ for each integer $p$ with $-1\\le p\\le |w|$. Set $d$ to the natural number represented by the base-two digits of $w$. If, at some time $\\tau\\le d$, the run of $M$ from $c$ is halted or its state satisfies $P$, and every earlier configuration in that run is neither halted nor in a state satisfying $P$, then for some $T\\le 5\\tau+2|w|+2$, machine $H$, started from the configuration encoding $c$ with state $\\iota(q)$ and extra tape $C$ at offset $a$, reaches the configuration of $M$ at time $\\tau$ with state $F$ applied to that configuration's state; before time $T$, its state is never in the image of $F$ or $U$. If no configuration of $M$ at any time $u\\le d$ is halted or has a state satisfying $P$, then for some $T\\le 5d+2|w|+2$, the same run of $H$ reaches the configuration of $M$ at time $d$ with state $U$ applied to that configuration's state; before time $T$, its state is never in the image of $F$ or $U$.",
+ "hypotheses_covered": [
+  "$S$ is finite",
+  "Equality on $S$ is decidable",
+  "$M$ has $k$ work tapes and Boolean alphabet",
+  "$P$ is a Boolean predicate on states",
+  "The initial configuration has state $q$",
+  "For all integers $p$ with $-1\\le p\\le |w|$, $C(a+p)$ equals the word's content at position $p$",
+  "In the finish case, a halted or $P$-marked configuration occurs at time $\\tau\\le d$",
+  "In the finish case, no earlier configuration is halted or $P$-marked",
+  "In the timeout case, no configuration through time $d$ is halted or $P$-marked"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

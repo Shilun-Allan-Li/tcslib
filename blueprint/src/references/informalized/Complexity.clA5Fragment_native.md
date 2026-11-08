@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CookLevin/Hardness.lean :: Complexity.clA5Fragment_native -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Fragment Selection
+
+**Claim.** For each finite binary Turing machine and code for its optional states, the native selector that maps a packed body word to its serialized clause fragment is polynomial-time computable.
+
+**Proof.** The selector is a nested sequence of index tests, and each branch has a polynomial-time implementation. The packed header supplies the input size and horizon in polynomial time (`Complexity.clA5Sizes_native`), while the cursor and stored instance can also be computed in polynomial time (`Complexity.clA5Cursor_native`). The index functions for the initial, state, input, work, and acceptance regions are polynomial-time computable in unary (`Complexity.clA5Indices_native`). For the initial branch, both possible templates—whether the input-size indicator is zero or nonzero—are polynomial-time serializable using constant parameters and the group construction (`Complexity.clA5Group_native`); the choice between them preserves polynomial-time computability (`Complexity.clA5IfLt_native`). The pinning branch is polynomial-time by `Complexity.clA5Pin_native`, composing the cursor computation with filling a word of the required length (`Complexity.clNative_fill`). The zero test and successive interval tests combine these branches: the state branch is a wired group, the input branch is handled by `Complexity.clA5InputFragment_native`, and the work branch by `Complexity.clA5WorkChoice_native`; the acceptance branch is another wired group, and beyond it the output is the constant empty word (`Complexity.clA5_pt_const`). Composing the branch computations and selecting by polynomial-time unary index comparisons yields the stated selector (`Complexity.PolyTimeComputable.comp`).
+
+**Key facts.** `Complexity.clA5_pt_const`, `Complexity.clA5Sizes_native`, `Complexity.clA5Indices_native`, `Complexity.clA5Cursor_native`, `Complexity.clA5Group_native`, `Complexity.clA5IfLt_native`, `Complexity.clA5Pin_native`, `Complexity.clNative_fill`, `Complexity.clA5IfZero_native`, `Complexity.clA5InputFragment_native`, `Complexity.clA5Times_native`, `Complexity.clA5WorkChoice_native`, `Complexity.PolyTimeComputable.comp`.

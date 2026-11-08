@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.dbl_cons",
+ "key": "7643a6728ebfa34c",
+ "kind": "lemma",
+ "title": "Doubling a word with a leading bit",
+ "statement": "For every Boolean bit $b$ and every finite Boolean word $w$, doubling the word formed by placing $b$ at the beginning of $w$ gives two copies of $b$ followed by the doubling of $w$.",
+ "hypotheses_covered": [
+  "$b$ is a Boolean bit",
+  "$w$ is a finite Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit $b$ and every bit string $w$, the doubling of the string $b\\,w$\n(where $\\mathrm{dbl}(v)$ writes each bit of $v$ twice in succession) is\n$b\\,b$ followed by $\\mathrm{dbl}(w)$; that is,\n$\\mathrm{dbl}(b\\,w) = b\\,b\\,\\mathrm{dbl}(w)$."
+}

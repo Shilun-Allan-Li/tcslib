@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.catalogPolyMove_apply",
+ "key": "9a74bb11545448cf",
+ "kind": "lemma",
+ "title": "Effect of a head-only move",
+ "statement": "Let $c,C,q$ be natural numbers, let $x$ and $o$ be finite Boolean words, let $s,s'$ be control states for parameters $c,C$, let $h$ assign an integer position to each of the $c+1$ work tapes, and choose a work-tape index $i$ and a direction $d\\in\\{-1,0,1\\}$. Applying the action that moves only head $i$ by $d$ and enters state $s'$ to the configuration with input $x$, state $s$, unary tape contents of length $q$, head positions $h$, and output $o$ gives the configuration with the same input, tape contents, and output, state $s'$, and head positions equal to $h$ except that position $i$ is $h(i)+d$.",
+ "hypotheses_covered": [
+  "$c,C,q$ are natural numbers",
+  "$x$ is a finite Boolean word",
+  "$o$ is a finite Boolean word",
+  "$s,s'$ are control states for parameters $c,C$",
+  "$h$ assigns an integer position to each of the $c+1$ work tapes",
+  "$i$ is a work-tape index",
+  "$d$ is a sign direction in $\\{-1,0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every work-tape index $i$ and direction $d$, applying the head-only move\naction for $i$, $d$, and a target state to a generator loop configuration\nyields the loop configuration in that target state whose $i$-th work-head\nposition is increased by $d$; all tapes, the input position, the other\nheads, and the output are unchanged."
+}

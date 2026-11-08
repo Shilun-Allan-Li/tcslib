@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.diagLang_not_mem_DTIME",
+ "key": "cc1e4fd5efa7af15",
+ "kind": "theorem",
+ "title": "Diagonal language outside a time class",
+ "statement": "Let $g,T:\\mathbb{N}\\to\\mathbb{N}$ satisfy the condition that for every $A,N\\in\\mathbb{N}$ there is an $n\\ge N$ such that $A\\bigl(T(n)+n+1\\bigr)^2\\le g(n)$. Then the language of binary strings $x$ for which the diagonal simulator does not halt with output $1$ after exactly $g(|x|)$ steps does not belong to $\\mathrm{DTIME}(T)$.",
+ "hypotheses_covered": [
+  "$g,T:\\mathbb{N}\\to\\mathbb{N}$",
+  "For every $A,N\\in\\mathbb{N}$, there exists $n\\ge N$ with $A(T(n)+n+1)^2\\le g(n)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $g,T : \\mathbb{N} \\to \\mathbb{N}$ satisfy the following growth condition: for every\n$A,N \\in \\mathbb{N}$, there is some $n \\ge N$ such that $A(T(n)+n+1)^2 \\le g(n)$. Then\nthe language of binary strings on which the fixed diagonal machine does not output the\nsingle bit $1$ within $g(n)$ steps, where $n$ is the string length, does not belong to\n$\\mathrm{DTIME}(T)$; that is, no constant-factor time bound $cT(n)$ suffices for a\nmachine deciding it."
+}

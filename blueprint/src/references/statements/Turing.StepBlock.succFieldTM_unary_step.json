@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.succFieldTM_unary_step",
+ "key": "462522b204c1ce6c",
+ "kind": "lemma",
+ "title": "Unary copying step",
+ "statement": "Let $m$ be a nonnegative integer, let $x$ be a Boolean input word, and choose distinct work-tape indices $s,t\\in\\{0,\\ldots,m-1\\}$. Let $c$ indicate whether copying is enabled, and let $d$ be a configuration with $m$ Boolean work tapes. For a Boolean word $w$ and an integer $r<|w|$, suppose tape $s$ in $d$ contains the symbol $w_r$ at the cell $r$ positions to the right of its head. Form a configuration from $d$ by setting its phase to unary, advancing the heads on tape $s$ and, when copying is enabled, tape $t$ by $r$, and placing the first $r$ symbols of $w$ on tape $t$ starting at its original head position when copying is enabled. One step of the machine so defined produces the configuration formed in the same way with $r+1$ in place of $r$, and with phase unary if $w_r$ is true and done otherwise.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb N$",
+  "distinct tape indices $s,t\\in\\mathrm{Fin}(m)$",
+  "copy flag $c\\in\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "Boolean input word $x$",
+  "configuration $d$ with $m$ Boolean work tapes and phase in the stated phase type",
+  "Boolean word $w$",
+  "$r\\in\\mathbb N$ with $r<|w|$",
+  "tape $s$ in $d$ at its head position plus $r$ contains $w_r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

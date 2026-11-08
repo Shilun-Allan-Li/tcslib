@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_frame",
+ "key": "d1ded026f5762d42",
+ "kind": "lemma",
+ "title": "Framed configuration embedding",
+ "statement": "Let $k,l$ be natural numbers, let $S$ and $H$ be state sets, let $x$ be a finite Boolean input word, choose $q\\in S$, and let $\\iota$ inject the $k$ source tape indices into the $l$ host tape indices. Let $e:S\\to H$ be a map, let $T_j:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$ and $h_j\\in\\mathbb{Z}$ specify ambient contents and head positions for each host tape $j$, and let $c$ and $d$ be configurations on $x$ with $k$ and $l$ work tapes and state sets $S$ and $H$, respectively. Suppose the optional state of $c$, mapped by $e$, equals the optional state of $d$; their input-head positions and outputs agree; and for each source tape $i$, its contents and head position in $c$ equal those of host tape $\\iota(i)$ in $d$. Suppose also that for every host tape $j$ outside the image of $\\iota$, $T_j$ and $h_j$ equal its contents and head position in $d$. Then embedding $c$ into the host tapes using these ambient contents and head positions, with empty output prefix, and mapping its state by $e$ gives exactly $d$.",
+ "hypotheses_covered": [
+  "Natural numbers $k,l$",
+  "State sets $S,H$ and finite Boolean input word $x$",
+  "An element $q\\in S$",
+  "An injection from source tape indices to host tape indices",
+  "A state map $e:S\\to H$",
+  "Ambient contents and head positions for each host tape",
+  "Source and host configurations $c,d$",
+  "Equality of mapped optional states",
+  "Equality of input-head positions and outputs",
+  "Equality of contents and head positions at each selected host tape",
+  "Equality of ambient contents and head positions outside the injection image"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

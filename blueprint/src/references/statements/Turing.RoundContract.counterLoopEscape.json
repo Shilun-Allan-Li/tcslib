@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.RoundContract.counterLoopEscape",
+ "key": "6ef8b1ef95b3fbd4",
+ "kind": "def",
+ "title": "Contract for counter-loop escape",
+ "statement": "Let $a$ and $e$ be distinct states, and suppose a round contract for a machine with anchor $a$ has escape set $\\{e\\}$. Given an embedding of Boolean symbols into the machine's alphabet, construct a contract for the counter-loop machine starting in its decrement phase with the run flag. Its data consist of an original parameter, a Boolean counter word, and a natural number $t$. The precondition requires the encoded counter word on the extra tape, $t$ strictly less than its counter value, every round through round $t$ to satisfy the round precondition, all rounds before $t$ to end at the anchor, and round $t$ to end at $e$. The exact running time sums the round times for rounds $0$ through $t$, together with the counter overhead for $t+1$ rounds. The endpoint is the escaped configuration after $t+1$ rounds with the extra tape set to the counter word decremented $t+1$ times; the head-position bounds are the round bounds on the original tapes, and on the extra tape they are one cell before its initial head position and that position plus the counter-word length.",
+ "hypotheses_covered": [
+  "A natural number $k$ of original work tapes",
+  "Symbol and state types $\\Gamma$ and $S$",
+  "Decidable equality on $S$ and $\\Gamma$",
+  "An embedding of Boolean symbols into $\\Gamma$",
+  "A machine with $k$ work tapes over $\\Gamma$ and states $S$",
+  "Distinct states $a,e\\in S$",
+  "A parameter type and finite input word over $\\Gamma$",
+  "A round contract for the machine with anchor $a$ and escape set $\\{e\\}$",
+  "A Boolean counter word and natural number $t$ in the contract's data"
+ ],
+ "confidence": "low",
+ "caveat": "The semantics of the auxiliary counter-word and endpoint constructions are not supplied, so their description is limited to their explicit use in the definition.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

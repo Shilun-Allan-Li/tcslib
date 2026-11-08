@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clVisitCode_size",
+ "key": "cf840041271ff71f",
+ "kind": "lemma",
+ "title": "Length bound for a visit code",
+ "statement": "For every finite Turing machine $M$ over Booleans, natural numbers $m,t$, and work-tape index $\\tau$, the code for the last time strictly before $t$ at which tape $\\tau$'s head occupied its position at time $t$ has length at most $t+2$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$m,t$ are natural numbers",
+  "$\\tau$ is a work-tape index of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, reference length $m$, time $t$, and tape $\\tau$, the optional-time code of the greatest strictly earlier visit has length at most $t + 2$: a present predecessor is strictly below the query time, and absence at time zero is included."
+}

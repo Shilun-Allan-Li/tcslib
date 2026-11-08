@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.Cfg.SameOutside.keep_word",
+ "key": "9dfe3567115c41dd",
+ "kind": "theorem",
+ "title": "A stored word is preserved outside a footprint",
+ "statement": "Let $d$ and $d'$ be configurations with the same number of work tapes, symbol type, and input, possibly with different state types, whose tapes agree outside position sets $F_j$. Choose a tape $j$, an integer offset $o$, and a finite word $w$ over the symbol type. Suppose that for every integer $p$ with $-1\\le p\\le |w|$, the position $o+p$ is outside $F_j$, and tape $j$ of $d$ at $o+p$ contains the $p$-th symbol of $w$ when $p$ is a valid word index and is blank otherwise. Then tape $j$ of $d'$ has the same contents at every such position $o+p$.",
+ "hypotheses_covered": [
+  "Configurations $d$ and $d'$ have the same number of work tapes, symbol type, and input",
+  "Their state types may differ",
+  "A position set $F_j$ is specified for each work tape",
+  "The configurations' tapes agree outside their respective sets",
+  "A work-tape index $j$",
+  "An integer offset $o$",
+  "A finite word $w$ over the symbol type",
+  "For every integer $p$ with $-1\\le p\\le |w|$, the position $o+p$ is outside $F_j$",
+  "At each such position, tape $j$ of $d$ equals the buffer-tape content of $w$ at $p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

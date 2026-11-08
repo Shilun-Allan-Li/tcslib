@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.foGates_inv",
+ "key": "0acbc3983b1c3156",
+ "kind": "theorem",
+ "title": "Invariants of the fanout reduction",
+ "statement": "Let $n$ be a nonnegative integer and let $old$ be a finite list of Boolean gates. Suppose $old$ is acyclic, meaning every gate at position $i$ reads only vertices with index less than $n+i$, and every gate has distinct arguments, a NOT gate has exactly one argument, and every gate has at most two arguments. The fanout reduction of $old$ produces a list of gates, a map assigning a new vertex to each old vertex, and a count. The count equals $n+|old|$; the new list is acyclic; every old vertex below $n+|old|$ maps below $n$ plus the new list’s length, and the map is injective on those vertices. For every Boolean input on $n$ variables, the value at each mapped vertex equals the corresponding value in the original computation (using false for indices beyond the computed list). Every vertex has fanout at most $2$, each mapped old vertex has fanout zero, every new gate has distinct arguments and at most two arguments, and each NOT gate has exactly one argument. The new list has length at most $3|old|$.",
+ "hypotheses_covered": [
+  "$old$ is acyclic relative to $n$",
+  "Every gate in $old$ has distinct arguments",
+  "Every NOT gate in $old$ has exactly one argument",
+  "Every gate in $old$ has at most two arguments"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

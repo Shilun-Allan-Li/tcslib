@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.invariance_coordinate_fourth_moment",
+ "key": "3a2dc40a64871fd6",
+ "kind": "theorem",
+ "title": "Fourth moment of a coordinate derivative",
+ "statement": "Let $n,k\\in\\mathbb N$, let $(\\Omega,\\mu)$ be a probability space, and let $F$ be a multilinear coefficient family of degree at most $k+1$. Fix a coordinate $i\\in\\{0,\\ldots,n-1\\}$, and let $X_1,\\ldots,X_n$ be independent under $\\mu$, each satisfying the fourth-order invariance moment conditions. The fourth moment of the random-input evaluation of the coefficient family of the Boolean-cube derivative of $F$ in coordinate $i$ is at most $9^k\\mathrm{Inf}_i[F]^2$.",
+ "hypotheses_covered": [
+  "$n,k$ are natural numbers",
+  "$\\mu$ is a probability measure on a measurable space",
+  "$F$ is a coefficient family of degree at most $k+1$",
+  "$i$ is a coordinate among the $n$ coordinates",
+  "the coordinates of $X$ are independent under $\\mu$",
+  "each coordinate of $X$ satisfies the fourth-order invariance moment conditions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{j\\in S}x_j$ be a real multilinear polynomial and fix $i\\in\\{1,\\ldots,n\\}$. Define $A_i(x)=\\sum_{S:i\\notin S}a_S\\prod_{j\\in S}x_j$ and $D_i(x)=\\sum_{S:i\\notin S}a_{S\\cup\\{i\\}}\\prod_{j\\in S}x_j$. Suppose $F$ has degree at most $k+1$ and $(X_j)$ are independent real inputs on a probability space, each measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. Then $\\mathbb E[D_i(X)^4]\\le9^k I_i(F)^2$, where $I_i(F)=\\sum_{S\\ni i}a_S^2$."
+}

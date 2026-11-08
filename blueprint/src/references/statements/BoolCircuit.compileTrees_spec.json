@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.compileTrees_spec",
+ "key": "3a0e159f3b6b1856",
+ "kind": "theorem",
+ "title": "Specification of list compilation",
+ "statement": "Let $n$ be a natural number and $cs$ a finite list of Boolean circuit trees on $n$ variables. Suppose that every $c$ in $cs$, when compiled after any acyclic gate list $gs$, satisfies the single-circuit compilation specification: the compiled list extends $gs$ and is acyclic; its root index is below $n$ plus the resulting list length; its root value agrees with $c$ under every variable assignment; its length is at most $|gs|$ plus the size of $c$; its root depth is at most the depth of $c$ plus $1$; and its new gates have distinct inputs, every NOT gate has one input, and each new gate has at most $\\max(1,F)$ inputs, where $F$ is the maximum fanin of $c$. Then, for every acyclic initial gate list $gs$, compiling all of $cs$ appends a gate list and produces a list of root vertices of the same length as $cs$. The resulting gate list is acyclic and extends $gs$; every root index is below $n$ plus the resulting list length, and under each variable assignment the root values, in order, equal the evaluations of the circuits in $cs$. The resulting gate list has length at most $|gs|$ plus the sum of the circuit sizes in $cs$, and every root has depth at most the maximum circuit depth in $cs$ plus $1$. Each new gate has distinct inputs, every NOT gate has one input, and each new gate has at most $\\max(1,F)$ inputs, where $F$ is the maximum fanin among circuits in $cs$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$cs$ is a finite list of Boolean circuit trees on $n$ variables",
+  "Each circuit in $cs$ has the stated single-circuit compilation specification for every acyclic initial gate list",
+  "$gs$ is an acyclic initial gate list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.mapPayload_finish",
+ "key": "ef7627efd590921b",
+ "kind": "lemma",
+ "title": "Completion of Payload Replay",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, let $c$ be a configuration of $M$ on input $x$, let $p$ be a valid input-head position for $x$, and let $o$ be a Boolean word. Starting the threaded-map controller in its payload-replay state, with capture-head displacement $0$ and output word $o$, after $|c.\text{output}|+1$ steps it has halted and its output is $o$ followed by the output word of $c$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$p$ is a valid input-head position for $x$",
+  "$o$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the controller's payload-replay state with the capture head at\ndisplacement $0$ and prior output $o$, after one more step than the captured\nword's length the controller has halted with output $o$ followed by the\nentire captured word."
+}

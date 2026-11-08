@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timed_universal_concrete",
+ "key": "dca2f6dbde90d48b",
+ "kind": "theorem",
+ "title": "Concrete timed simulation bound",
+ "statement": "For every effective machine coding scheme $c$, there is a finite-tape machine $U$ over the Boolean alphabet such that for every Boolean code word $\\alpha$, Boolean input $x$, and natural number $t$, both of the following hold. Write $L$ for the length of the canonical serialization of the machine decoded from $\\alpha$, $N$ for its state-count parameter, $q$ for its initial-state index, and $T(n)$ for the canonizer's time bound. If the decoded machine computes output $y$ on $x$ in exactly $t$ steps, then $U$ computes $1$ followed by $y$ on $\\langle\\langle\\operatorname{bin}(t),\\alpha\\rangle,x\\rangle$ in exactly $C_{c,\\alpha}(t+1)^2$ steps; if it computes no output on $x$ in exactly $t$ steps, then $U$ computes the one-bit output $0$ on that input in exactly the same number of steps, where $C_{c,\\alpha}=(3|\\alpha|+T(|\\alpha|)+L+2|\\operatorname{bin}(N)|+2q+16)+(3L+5(N+1)+20)+14$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine coding scheme",
+  "$\\alpha$ is a Boolean code word",
+  "$x$ is a Boolean input",
+  "$t$ is a natural-number deadline"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective machine-coding scheme $c$, there is a single finite-tape machine $U$\nover $\\{0,1\\}$ such that for every Boolean code word $\\alpha$, input $x$, and deadline\n$t\\in\\mathbb{N}$, the following hold. Write $L$ for the length of the canonical\nserialization of the machine decoded from $\\alpha$, $N$ for its number of states, $q$\nfor the index of its initial state, and $T(n)$ for the running-time bound of the\nscheme's canonizer. If the decoded machine computes output $y$ on $x$ in exactly $t$\nsteps, then $U$ computes $1$ followed by $y$ on\n$\\langle\\langle\\mathrm{bin}(t),\\alpha\\rangle,x\\rangle$ in exactly $C_\\alpha(t+1)^2$\nsteps; if it computes no output on $x$ in exactly $t$ steps, then $U$ computes the\none-bit output $0$ on that input in exactly the same number of steps, where\n$C_\\alpha=(3|\\alpha|+T(|\\alpha|)+L+2|\\mathrm{bin}(N)|+2q+16)+(3L+5(N+1)+20)+14$."
+}

@@ -170,7 +170,7 @@ by at most $\varepsilon$.
 \lean{OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
 \label{OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
 \leanok
-\uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.exists_forall_le_of_finite_sublevel_intersections, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.minimaxSublevel, OnlineLearning.payoffVsPure_nonneg, OnlineLearning.pureVsPayoff_le_one, ZeroSumGame, payoffVsPure, pureVsPayoff}
+\uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.bddBelow_range_iSup_of_unitInterval, OnlineLearning.exists_forall_le_of_finite_sublevel_intersections, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteIndexed_column_sample_step, OnlineLearning.minimaxSublevel}
 \difficulty{7}
 Let $X, Y \subseteq \bbr$ satisfy the convex-compact minimax hypotheses for a payoff $f
 : \bbr \to \bbr \to \bbr$, and suppose in addition that $f$ is normalized, $0 \le f(x,y)
@@ -187,7 +187,7 @@ $x : \mathrm{Fin}\,M \to X$, writing $x_i$ for its $i$-th point. Then
 \lean{OnlineLearning.theorem71_finiteNoRegretBound_normalized}
 \label{OnlineLearning.theorem71_finiteNoRegretBound_normalized}
 \leanok
-\uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71FiniteNoRegretBound, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteRowSampleLowerValue, OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
+\uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.Theorem71FiniteNoRegretBound, OnlineLearning.bddAbove_range_iInf_of_unitInterval, OnlineLearning.bddBelow_of_nonneg, OnlineLearning.bddBelow_range_iSup_of_unitInterval, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteRowSampleLowerValue, OnlineLearning.theorem71_finiteIndexedNoRegretBound_normalized}
 \difficulty{5}
 Let $X, Y \subseteq \bbr$ and $f : \bbr \to \bbr \to \bbr$ satisfy the convex-compact
 minimax hypotheses, and suppose the payoff is normalized so that $0 \le f(x,y) \le 1$
@@ -224,60 +224,60 @@ $Y$. Then
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Range bounded above for a family with values at most one]
+\begin{lemma}[Upper bound for a function’s range]
 \lean{OnlineLearning.bddAbove_of_le_one}
 \label{OnlineLearning.bddAbove_of_le_one}
 \leanok
-If $g : \iota \to \bbr$ satisfies $g(i) \le 1$ for every index $i$, then the range of
-$g$ is bounded above.
+\difficulty{1}
+Let $\iota$ be an index type and let $g:\iota\to\mathbb{R}$. If $g(i)\le 1$ for every
+$i\in\iota$, then the range of $g$ is bounded above.
 \end{lemma}
 
-\begin{lemma}[Range bounded below for a nonnegative family]
+\begin{lemma}[Lower bound for a function’s range]
 \lean{OnlineLearning.bddBelow_of_nonneg}
 \label{OnlineLearning.bddBelow_of_nonneg}
 \leanok
-If $g : \iota \to \bbr$ satisfies $0 \le g(i)$ for every index $i$, then the range of
-$g$ is bounded below.
+\difficulty{1}
+Let $\iota$ be an index type and let $g:\iota\to\mathbb{R}$. If $g(i)\ge 0$ for every
+$i\in\iota$, then the range of $g$ is bounded below.
 \end{lemma}
 
-\begin{lemma}[Infima of a unit-interval family are bounded above]
+\begin{lemma}[Upper bound for infima of bounded families]
 \lean{OnlineLearning.bddAbove_range_iInf_of_unitInterval}
 \label{OnlineLearning.bddAbove_range_iInf_of_unitInterval}
 \leanok
 \uses{OnlineLearning.bddBelow_of_nonneg}
-Let $\iota$ be nonempty and let $g : \iota \to \kappa \to \bbr$ take values in $[0,1]$,
-i.e.\ $0 \le g(i,j) \le 1$ for all $i, j$. Then the family
-$j \mapsto \inf_{i \in \iota} g(i, j)$ has range bounded above.
+\difficulty{3}
+Let $\iota$ be a nonempty type, let $\kappa$ be a type, and let
+$g:\iota\to\kappa\to\mathbb{R}$ satisfy $0\le g(i,j)\le 1$ for every $i\in\iota$ and
+$j\in\kappa$. Then the range of the function assigning to each $j$ the infimum of
+$g(i,j)$ over $i\in\iota$ is bounded above.
 \end{lemma}
 
-\begin{lemma}[Suprema of a unit-interval family are bounded below]
+\begin{lemma}[Lower bound for suprema of bounded families]
 \lean{OnlineLearning.bddBelow_range_iSup_of_unitInterval}
 \label{OnlineLearning.bddBelow_range_iSup_of_unitInterval}
 \leanok
 \uses{OnlineLearning.bddAbove_of_le_one}
-Let $\kappa$ be nonempty and let $g : \iota \to \kappa \to \bbr$ take values in $[0,1]$,
-i.e.\ $0 \le g(i,j) \le 1$ for all $i, j$. Then the family
-$i \mapsto \sup_{j \in \kappa} g(i, j)$ has range bounded below.
+\difficulty{3}
+Let $\iota$ be a type, let $\kappa$ be a nonempty type, and let
+$g:\iota\to\kappa\to\mathbb{R}$ satisfy $0\le g(i,j)\le 1$ for every $i\in\iota$ and
+$j\in\kappa$. Then the range of the function assigning to each $i$ the supremum of
+$g(i,j)$ over $j\in\kappa$ is bounded below.
 \end{lemma}
 
-\begin{theorem}[Finite column-sample step of the indexed no-regret bound]
+\begin{theorem}[Finite column sample intersection]
 \lean{OnlineLearning.finiteIndexed_column_sample_step}
 \label{OnlineLearning.finiteIndexed_column_sample_step}
 \leanok
 \uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.bddAbove_of_le_one, OnlineLearning.bddAbove_range_iInf_of_unitInterval, OnlineLearning.bddBelow_of_nonneg, OnlineLearning.finiteIndexedRowSampleLowerValue, OnlineLearning.finiteLowerValue, OnlineLearning.finiteUpperValue, OnlineLearning.finite_minimax_value, OnlineLearning.minimaxSublevel, OnlineLearning.payoffVsPure_nonneg, OnlineLearning.pureVsPayoff_le_one, ZeroSumGame, payoffVsPure, pureVsPayoff}
-Let $X, Y \subseteq \bbr$ and $f : \bbr \to \bbr \to \bbr$ satisfy the convex-compact
-minimax hypotheses, and suppose $f$ is normalized so that $0 \le f(x,y) \le 1$ for all
-$x \in X$ and $y \in Y$. Fix an integer $M \ge 2$, a row sample
-$x : \mathrm{Fin}\,M \to X$, a real $\varepsilon > 0$, and a finite column sample
-$v \subseteq Y$. Write
-\[
-  K \;:=\; \sup_{y \in Y}\; \inf_{i \in \mathrm{Fin}\,M}\; f(x_i, y)
-\]
-for the indexed sampled lower value. Then the set
-\[
-  X \;\cap\; \bigcap_{y \in v} \bigl\{\, x' \in X : f(x', y) \le K + \varepsilon \,\bigr\}
-\]
-is nonempty; that is, there is a row $\bar{x} \in X$ with $f(\bar{x}, y) \le K + \varepsilon$
-for every $y \in v$. This is the finite $\varepsilon$-net step in the proof of
-Cesa-Bianchi--Lugosi Theorem~7.1.
+\difficulty{7}
+Let $X,Y\subseteq\mathbb{R}$ be nonempty sets, with $X$ compact and convex and $Y$
+convex. Suppose $f:\mathbb{R}\times\mathbb{R}\to\mathbb{R}$ is continuous and convex in
+its first variable on $X$ for each $y\in Y$, concave in its second variable on $Y$ for
+each $x\in X$, bounded above and below on $X\times Y$, and satisfies $0\le f(x,y)\le1$
+for all $x\in X$ and $y\in Y$. For an integer $M>1$, a sample $x_1,\ldots,x_M\in X$, a
+real number $\varepsilon>0$, and a finite set $v\subseteq Y$, define $K=\sup_{y\in
+Y}\inf_{1\le i\le M}f(x_i,y)$. There is a point $x'\in X$ such that $f(x',y)\le
+K+\varepsilon$ for every $y\in v$.
 \end{theorem}

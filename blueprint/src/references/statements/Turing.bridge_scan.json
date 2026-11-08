@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.bridge_scan",
+ "key": "d458abfd9810a50e",
+ "kind": "lemma",
+ "title": "Forward input scan",
+ "statement": "Let $c$ be a program in the partial-recursive language and let $x$ be a Boolean string. For every natural number $j$ with $j\\leq |x|$, after exactly $j$ steps from the initial configuration on input $x$, the bridging machine is in its scanning state with its input head at position $j+1$, all stacks empty, and output empty.",
+ "hypotheses_covered": [
+  "A program $c$ in the partial-recursive language",
+  "A Boolean string $x$",
+  "A natural number $j$ with $j\\leq |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a program in Mathlib's partial-recursive language and $x$ a Boolean input\nstring.  For every $j \\le \\abs{x}$, running the bridging machine of $c$ for exactly\n$j$ steps from its initial configuration on the embedded input $x$ yields the bridge\nconfiguration in the scanning state with the input head at position $j + 1$\n(positions are shifted by one, position $0$ being the left endmarker), all stacks\nempty, and empty output."
+}

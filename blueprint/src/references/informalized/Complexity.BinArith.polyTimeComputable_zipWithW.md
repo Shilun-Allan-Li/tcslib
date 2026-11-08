@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassP/BinaryArith/Words.lean :: Complexity.BinArith.polyTimeComputable_zipWithW -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Repeated Pairwise Transformation
+
+**Claim.** If the bit-string function $g$ is polynomial-time computable, then the function that applies the specified chunk operation along the iterates of the pairwise state transformation and concatenates the chunks is polynomial-time computable.
+
+**Proof.** The state transformation is polynomial-time computable: its two nested decoded slots are polynomial-time computable by the slot-2 and slot-3 results, and the first and second projections and pair encoding assemble the next state. The chunk operation first tests whether either relevant slot is empty; these tests are polynomial-time computable from the slots, and their disjunction is polynomial-time computable. In the nonempty case, the operation builds the input to $g$ from projections and pair encodings, applies $g$, and encodes the result. Polynomial-time closure under composition, pair encoding, and conditional choice therefore makes the chunk function polynomial-time computable. To apply the iterated-emission theorem, bound the length of every state iterate. After at least one transformation, the iterate has the pair-encoding form in the iterate formula; the pair-encoding length formula reduces the bound to lengths of dropped projections and decoded slots. The second-projection length bound and the bound on the total lengths of decoded components show these are at most a constant multiple of the original input length, giving the required polynomial orbit bound. The iterated-emission theorem now gives polynomial-time computability of the concatenation over the stated range.
+
+**Key facts.** `Complexity.BinArith.polyTimeComputable_slot2`, `Complexity.BinArith.polyTimeComputable_slot3`, `Complexity.PolyTimeComputable.comp`, `Complexity.PolyTimeComputable.pairEncode`, `Complexity.length_pairSndD_le`, `Complexity.length_pair_components_le`, `Turing.length_pairEncode`, `Complexity.BinArith.iterate_zipStep`, `Complexity.BinArith.length_iterate_pairSndD_le`, `Complexity.polyTimeComputable_const`, `Complexity.polyTimeComputable_isNil`, `Complexity.polyTimeComputable_or`, `Complexity.polyTimeComputable_ite`, `Complexity.polyTimeComputable_emitIter`.

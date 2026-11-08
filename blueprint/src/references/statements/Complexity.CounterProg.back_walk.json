@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.CounterProg.back_walk",
+ "key": "2d745c407e10d0d2",
+ "kind": "theorem",
+ "title": "Return walk over a unary register",
+ "statement": "Let $R$ be a number of registers, let $P$ be a counter program with finite label set $\\Lambda$ and start label $\\ell_0$, and fix an input bit string $x$. For a register $r$, label $\\ell$, input-head position $p$, work tapes $T_i$, work-head positions $h_i$, output string $w$, and $m\\in\\mathbb N$, suppose $T_r$ is the unary tape of $m$. For every $d\\le m$, starting in state $\\mathsf{print}_{\\rightarrow}(r,\\ell)$ with input-head position $p$, tapes $T_i$, output $w$, and register-$r$ work-head at $m-d$ (all other work-head positions as in $h_i$), the machine of $P$ started at $\\ell_0$ reaches after $d+1$ steps the configuration in state $\\mathsf{main}(\\ell)$ with the same input-head position, tapes, and output, and register-$r$ work-head at $m$ (all other work-head positions unchanged).",
+ "hypotheses_covered": [
+  "Finite label set $\\Lambda$",
+  "Counter program $P$ and start label $\\ell_0$",
+  "Input bit string $x$",
+  "Register $r$ and label $\\ell$",
+  "Input-head position $p$",
+  "Work tapes $T_i$ with $T_r$ the unary tape of $m$",
+  "Work-head positions $h_i$",
+  "Output string $w$",
+  "Natural number $m$",
+  "Natural number $d\\le m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Lambda$ be a finite set of labels, $P$ a counter program over $R$ registers with labels in\n$\\Lambda$, $\\ell_0 \\in \\Lambda$, $x$ an input bit string, $r$ a register, $\\ell$ a label, $p$ an\ninput-head position, $(T_i)$ work tapes, $(h_i)$ work heads, $w$ an output string, and\n$m \\in \\mathbb{N}$ such that tape $r$ is the unary tape $T_r = 1^m$ (cells $0, \\dots, m-1$ hold\n$1$, all others blank). Then for every $d \\le m$, running the machine of $P$ started at $\\ell_0$\nfor $d + 1$ steps from the configuration in state $\\mathsf{print}_{\\rightarrow}(r, \\ell)$ with\ninput head $p$, tapes $(T_i)$, heads $(h_i)$ except that head $r$ is on cell $m - d$, and output\n$w$, reaches the configuration in state $\\mathsf{main}(\\ell)$ with input head $p$, tapes\n$(T_i)$, heads $(h_i)$ except that head $r$ is on cell $m$, and output $w$."
+}

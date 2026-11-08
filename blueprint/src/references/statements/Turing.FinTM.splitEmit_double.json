@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.splitEmit_double",
+ "key": "9988ea88a46f4558",
+ "kind": "lemma",
+ "title": "Doubling pass of the split emitter",
+ "statement": "Let $k$ be a natural number and let $w,s$ be finite Boolean words with $|s|\\le |w|$. For every $j\\le |s|$, after $2j$ steps the split emitter is in the configuration with control state $0$, input and counter positions both $j$, and output obtained by appending two copies of each of the first $j$ bits of $w$ to the empty word.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Finite Boolean words $w,s$",
+  "The length of $s$ is at most the length of $w$",
+  "Natural number $j$ with $j\\le |s|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the candidate's length be at most $\\abs{w}$. For every $j$ at most the\ncandidate's length, $2j$ steps of the split emitter from its start emit each\nof the first $j$ bits of $w$ twice and advance both the native head and the\ncandidate counter to $j$; candidate bits are read only for their presence."
+}

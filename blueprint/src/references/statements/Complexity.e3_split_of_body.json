@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.e3_split_of_body",
+ "key": "d975470e4f490822",
+ "kind": "lemma",
+ "title": "Polynomial-time split recovery",
+ "statement": "Let $C,c,A,r$ be natural numbers, let $M$ be a finite deterministic Turing machine over the binary alphabet, and let $q$ be one of its states. Suppose that on every binary input $w$, there is a time $t\\le A(|w|+1)^{r+1}$ such that the machine started on $w$ has not been in state $q$ at any earlier time and at time $t$ is in state $q$ with its first work tape empty and all other work tapes blank. Suppose also that for every pair of binary strings $w,s$ with $|s|\\le |w|+1$, there is a positive time $t\\le A(|w|+1)^{r+1}$ such that, starting from state $q$ on input $w$ with $s$ on the first work tape and all other work tapes blank, the machine does not return to state $q$ at any intermediate positive time. If $|s|+C\\cdot 2^{(|s|+1)^c}=|w|$, it halts at time $t$ with output equal to the self-delimiting encoding of the first $|s|$ bits of $w$ and the remaining bits; otherwise, at time $t$ it is in state $q$ with the first work tape containing the result of one search round on $w,s$ and all other work tapes blank. Then some finite deterministic Turing machine computes the split-emitter function in time $B(n+1)^{r+2}$ for every input length $n$, for some natural number $B$.",
+ "hypotheses_covered": [
+  "$C,c,A,r$ are natural numbers",
+  "$M$ is a finite deterministic Turing machine over the binary alphabet",
+  "$q$ is a state of $M$",
+  "Startup reaches the specified clean anchor configuration within $A(|w|+1)^{r+1}$ steps on every binary input $w$",
+  "No earlier startup configuration has state $q$",
+  "For all binary strings $w,s$ with $|s|\\le |w|+1$, there is a positive round duration at most $A(|w|+1)^{r+1}$",
+  "No intermediate positive round configuration has state $q$",
+  "When the split equation holds, the round halts with the encoded prefix and suffix",
+  "When it does not hold, the round returns to the anchor with the one-step search state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix natural numbers $C, c$ and suppose a deterministic loop-body machine with a designated anchor state satisfies two timed contracts within $A(|w|+1)^{r+1}$ steps on every input $w$: a startup contract that first reaches the anchor with clean scratch, and a round contract that, from any anchored search state, either halts with the encoded pair payload when the round test accepts, or returns to the anchor with the stepped search state. Then some deterministic machine computes the exponential split-emitter function within $B(n+1)^{r+2}$ steps for a constant $B$."
+}

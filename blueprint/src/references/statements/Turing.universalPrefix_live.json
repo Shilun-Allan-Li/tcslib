@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.universalPrefix_live",
+ "key": "33452f9620cc01a7",
+ "kind": "lemma",
+ "title": "Liveness of the prefix parser",
+ "statement": "Let $\\alpha$ and $x$ be finite bit strings, and let $s\\in\\mathbb N$ satisfy $s<2|\\alpha|+2$. Starting on the encoding that doubles each bit of $\\alpha$, then appends $01$ and $x$, the prefix parser is still in a live state after $s$ steps.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are finite bit strings",
+  "$s\\in\\mathbb N$",
+  "$s<2|\\alpha|+2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $\\alpha$ and $x$ and every $s < 2\\abs{\\alpha}+2$, the\ndoubled-bit prefix parser, started on the self-delimiting pairing\n$\\langle \\alpha, x\\rangle$, has not halted after $s$ transitions."
+}

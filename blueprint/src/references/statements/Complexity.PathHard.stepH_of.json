@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.PathHard.stepH_of",
+ "key": "4cb4942bc0e254bd",
+ "kind": "lemma",
+ "title": "Removing an initial program step",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $mode$ be Boolean, let $o$ be an oracle assigning a Boolean value to each of five indices and each Boolean word, let $y$ be a Boolean word, and let $st$ be a state of fifteen natural-number registers, each at most $B$. For any program instruction $l$ and Boolean answer $r$, if there is a finite guarded run that halts with answer $r$ from the configuration obtained by taking one program step from instruction $l$ and register state $st$, then there is a finite guarded run that halts with answer $r$ starting directly from instruction $l$ and register state $st$.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "Boolean mode",
+  "oracle on five indices and Boolean words",
+  "Boolean input word $y$",
+  "each register of $st$ is at most $B$",
+  "instruction $l$",
+  "Boolean answer $r$",
+  "one-step successor configuration has a finite guarded run halting with answer $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let the mode be Boolean, let $o$ be an oracle on five\nindices and binary words, let $y$ be a binary word, and let $st$ be a register state\nwhose fifteen coordinates are all at most $B$. If, starting from the configuration\nobtained by taking one step of the specified register program from instruction $l$ and\nstate $st$, there is a finite guarded run that halts with answer $r$, then there is also\na finite guarded run that halts with answer $r$ starting directly from instruction $l$\nand state $st$."
+}

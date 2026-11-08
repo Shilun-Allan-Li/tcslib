@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_splitSolveWith",
+ "key": "a05fffa0c8d790d7",
+ "kind": "theorem",
+ "title": "Monotone-time padded split search",
+ "statement": "Let $f:\\mathbb{N}\\to\\mathbb{N}$, let $E$ be a finite Turing machine over the Boolean alphabet, and let $T_E:\\mathbb{N}\\to\\mathbb{N}$ be monotone. Suppose $E$, on every Boolean input $s$, halts within $T_E(|s|)$ steps and outputs the binary representation of $f(|s|)$. Then there exist a finite Turing machine $M$ and a natural number $c$ such that, on every Boolean input $w$ of length $n$, $M$ halts within $c(n+1)(T_E(n+1)+n+2)$ steps and outputs the encoding that doubles each bit of the prefix of $w$ of length $i$, appends $01$, and then appends the remaining suffix, where $i$ is the least integer in $0,\\ldots,n$ satisfying $i+f(i)=n$; if no such $i$ exists, its output is the empty word.",
+ "hypotheses_covered": [
+  "$f:\\mathbb{N}\\to\\mathbb{N}$",
+  "$E$ is a finite Turing machine over the Boolean alphabet",
+  "$T_E:\\mathbb{N}\\to\\mathbb{N}$",
+  "$T_E$ is monotone",
+  "$E$ computes the function sending $s$ to the binary representation of $f(|s|)$ within $T_E(|s|)$ steps for every Boolean input $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : \\mathbb{N} \\to \\mathbb{N}$ and let a machine $E$ compute the\nfunction sending an input of length $m$ to the little-endian binary\nrepresentation of $f(m)$ within a monotone time bound $T_E$. Then there\nexist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes, within $c\\,(n+1)(T_E(n+1) + n + 2)$ steps on inputs of length\n$n$, the function that on input $w$ finds the least $i \\le \\abs{w}$ with\n$i + f(i) = \\abs{w}$ and, on success, outputs the self-delimiting pair\nencoding of the first $i$ bits of $w$ paired with the rest of $w$, and on\nfailure outputs the empty word."
+}

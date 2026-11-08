@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Compiler.codeAt_call",
+ "key": "b88d7376d26b1d2d",
+ "kind": "theorem",
+ "title": "Instruction segments for a compiled call",
+ "statement": "Let $G$ be a code layout with $F$ local variables per frame and a list of procedure entry positions, and let $code$ be a finite instruction list. Suppose the compiled call to procedure $p$ with arguments $args$, storing its result in variable $x$ and starting at position $pos$, is a prefix of the code beginning at $pos$. Then the argument-evaluation instructions followed by the instructions that initialise a new frame form a prefix beginning at $pos$; the branch to procedure $p$’s entry position (or position $0$ if the list has no entry at index $p$) forms a prefix beginning at $pos+\\mathrm{argsSize}(args)+2F+4$; and the two instructions that store the call result form a prefix beginning at $pos+\\mathrm{callSize}(F,args)$.",
+ "hypotheses_covered": [
+  "The compiled call to procedure $p$ with arguments $args$, storing the result in variable $x$ and starting at $pos$, is a prefix of $code$ beginning at $pos$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

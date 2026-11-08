@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integrable_gaussianProductDensityDerivative_smul",
+ "key": "e14466b210293339",
+ "kind": "lemma",
+ "title": "Integrability of the weighted Gaussian density derivative",
+ "statement": "Let $I$ be a finite set, let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f(z)|\\le 1$ for every $z$, let $v>0$, and let $c\\in\\mathbb R^I$. Then the function sending $z$ to $f(z)$ times the linear functional $h\\mapsto\\sum_{i\\in I}\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$ is integrable, as a function valued in the continuous linear functionals on $\\mathbb R^I$, with respect to Lebesgue measure on $\\mathbb R^I$. Here $p_v(m,t)$ is the density of the Gaussian with mean $m$ and variance $v$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$f$ is measurable",
+  "$|f(z)|\\le 1$ for every $z$",
+  "$v\\ge 0$",
+  "$v\\ne 0$",
+  "$c\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. Let $f:\\mathbb R^I\\to\\mathbb R$ be measurable with $|f|\\le1$. If $v>0$ and $c\\in\\mathbb R^I$, then $z\\mapsto f(z)A_v(c,z)$ is Lebesgue-integrable as a linear-functional-valued function."
+}

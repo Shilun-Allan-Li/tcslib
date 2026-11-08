@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.splitRestore_first",
+ "key": "e4bb43be012d3f3e",
+ "kind": "lemma",
+ "title": "First entry into the cleanup return state",
+ "statement": "Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words. There is an integer $t$ with $0<t\\le 2|s|+|w|+5$ such that, at every time $j<t$, the cleanup machine started in its scan configuration at count $0$ is not in state $(4,\\mathrm{false})$, and at time $t$ it is in the configuration with state $(4,\\mathrm{false})$, input head at position $1$, all work heads at position $0$, the word obtained by appending one $1$ to $s$ if $|s|\\le |w|$ and otherwise leaving $s$ unchanged on the first work tape, all other work tapes blank, and empty output.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w$ and $s$ are Boolean words",
+  "There exists $t$",
+  "$0<t$",
+  "$t\\le 2|s|+|w|+5$",
+  "For every $j<t$, the configuration at time $j$ is not in state $(4,\\mathrm{false})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any input $w$ and candidate $s$, there is a time $t$ with\n$0 < t \\le 2\\abs{s} + \\abs{w} + 5$ such that the cleanup machine never visits\nits return state before time $t$ and at time $t$ sits in the canonical\nanchored return configuration carrying one split-search step applied to $s$."
+}

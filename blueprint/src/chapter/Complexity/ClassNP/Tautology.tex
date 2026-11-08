@@ -62,28 +62,26 @@ decoding is total with the empty formula as fallback, and the empty disjunction 
 false, no non-well-formed string belongs to $\mathrm{TAUTOLOGY}$.
 \end{definition}
 
-\begin{lemma}[Polarity flip preserves the variable bound]
+\begin{lemma}[Variable count under duality]
 \lean{Complexity.taut_numVars_dual}
 \label{Complexity.taut_numVars_dual}
 \leanok
 \uses{Std.Sat.CNF.numVars, Std.Sat.DNF, Std.Sat.DNF.dual}
 \difficulty{2}
-For every DNF formula $\psi$, the CNF obtained from $\psi$ by flipping the polarity of
-every literal has the same variable bound as the term list of $\psi$ viewed as a CNF,
-where the variable bound of a formula is one more than its largest variable index
-(and $0$ if no literal occurs).
+For every DNF formula $\psi$ over variables indexed by the natural numbers, the variable
+count of its De Morgan dual equals the variable count of the list of its terms viewed as
+a CNF formula.
 \end{lemma}
 
-\begin{lemma}[DNF evaluation depends only on mentioned variables]
+\begin{lemma}[DNF evaluation depends only on bounded variables]
 \lean{Complexity.taut_eval_congr}
 \label{Complexity.taut_eval_congr}
 \leanok
 \uses{Complexity.eval_congr_of_lt_numVars, Complexity.taut_numVars_dual, Std.Sat.CNF.eval_dual, Std.Sat.CNF.numVars, Std.Sat.DNF, Std.Sat.DNF.dual, Std.Sat.DNF.dual_dual, Std.Sat.DNF.eval}
 \difficulty{3}
-Let $\psi$ be a DNF formula and let $a, b : \mathbb{N} \to \{0,1\}$ be assignments
-with $a(v) = b(v)$ for every $v$ below the variable bound of $\psi$ (one more than its
-largest variable index). Then $\psi$ evaluates to the same truth value under $a$ and
-under $b$.
+Let $\psi$ be a DNF formula and let $a,b:\mathbb{N}\to\{0,1\}$ be assignments that agree
+at every index $v<N(\psi)$, where $N(\psi)$ is the variable count of the list of terms
+of $\psi$. Then $\psi$ has the same value under $a$ and $b$.
 \end{lemma}
 
 \begin{definition}[Assignment carried by a certificate]
@@ -95,38 +93,36 @@ maps a variable index $v$ to the $v$-th bit of $u$ when $v < |u|$, and to $0$ (f
 when $v \ge |u|$.
 \end{definition}
 
-\begin{lemma}[Certificate characterization of non-tautologies]
+\begin{lemma}[Certificate Characterization of Non-Tautologies]
 \lean{Complexity.taut_certificate_equiv}
 \label{Complexity.taut_certificate_equiv}
 \leanok
 \uses{Complexity.TAUTOLOGY, Complexity.tautAssignment, Complexity.taut_eval_congr, Std.Sat.CNF.numVars_decode_le, Std.Sat.DNF.decode, Std.Sat.DNF.eval}
 \difficulty{4}
-For every binary string $x$, $x$ lies outside $\mathrm{TAUTOLOGY}$ if and only if
-there exists a binary word $u$ of length exactly $|x| + 1$ such that the DNF decoded
-from $x$ evaluates to false under the assignment $\alpha_u$ that reads variable $v$
-off the $v$-th bit of $u$ (false for $v \ge |u|$).
+For every binary string $x$, $x$ lies outside the language of tautologies if and only if
+there is a binary word $u$ of length exactly $|x|+1$ such that the DNF decoded from $x$
+evaluates to false under the assignment that reads variable $v$ from the $v$-th bit of
+$u$ and assigns false when $v\ge |u|$.
 \end{lemma}
 
-\begin{lemma}[Split success equation]
+\begin{lemma}[Equation from a successful split]
 \lean{Complexity.taut_split_some}
 \label{Complexity.taut_split_some}
 \leanok
 \uses{Turing.solveSplit}
 \difficulty{2}
-Let $N$ and $i$ be natural numbers. If the bounded split search with parameters
-$(1,1)$ — which returns the least $i \le N$ with $i + (i+1) = N$, if any — returns
-$i$ on $N$, then $i + (i + 1) = N$.
+Let $N$ and $i$ be natural numbers. If the bounded search with parameters $C=e=1$
+returns $i$ on input $N$, then $i+(i+1)=N$.
 \end{lemma}
 
-\begin{lemma}[Split completeness]
+\begin{lemma}[Existence of a split solution]
 \lean{Complexity.taut_split_exists}
 \label{Complexity.taut_split_exists}
 \leanok
 \uses{Complexity.taut_split_some, Turing.solveSplit}
 \difficulty{3}
-If natural numbers $i$ and $N$ satisfy $i + (i + 1) = N$, then the bounded split
-search with parameters $(1,1)$, which looks for the least $j \le N$ with
-$j + (j+1) = N$, succeeds on $N$ and returns exactly $i$.
+If natural numbers $N$ and $i$ satisfy $i+(i+1)=N$, then the bounded search with
+parameters $C=e=1$ returns $i$ on input $N$.
 \end{lemma}
 
 \begin{definition}[Verifier bit for non-tautologies]
@@ -152,30 +148,29 @@ under the assignment reading variable $v$ off the $v$-th bit of the remaining $i
 bits (false beyond them).
 \end{definition}
 
-\begin{lemma}[Verifier on a correctly sized concatenation]
+\begin{lemma}[Verifier on a Sized Concatenation]
 \lean{Complexity.taut_verifier_append}
 \label{Complexity.taut_verifier_append}
 \leanok
 \uses{Complexity.tautAssignment, Complexity.tautVerifier, Complexity.tautVerifierBit, Complexity.taut_split_exists, Std.Sat.DNF.decode, Std.Sat.DNF.eval}
 \difficulty{3}
-Let $x$ and $u$ be binary words with $|u| = |x| + 1$, and let $V$ be the set of binary
-strings $z$ with $|z| = i + (i+1)$ whose first $i$ bits decode to a DNF that is false
-under the assignment read off the remaining bits. Then
-$x \mathbin{+\!\!+} u \in V$ if and only if the DNF decoded from $x$ evaluates to false
-under the assignment $\alpha_u$ reading variable $v$ off the $v$-th bit of $u$ (false
-beyond $|u|$).
+Let $x$ and $u$ be binary words with $|u|=|x|+1$. Then their concatenation belongs to
+the verifier language exactly when the DNF formula decoded from $x$ evaluates to false
+under the assignment that reads variable $v$ from the $v$-th bit of $u$, taking the
+value false beyond the end of $u$.
 \end{lemma}
 
-\begin{lemma}[A polynomial-time verifier gives coNP membership]
+\begin{lemma}[Polynomial-time verifier for tautology complements]
 \lean{Complexity.taut_membership_of_verifier}
 \label{Complexity.taut_membership_of_verifier}
 \leanok
 \uses{Complexity.P, Complexity.TAUTOLOGY, Complexity.coNP, Complexity.tautVerifier, Complexity.taut_certificate_equiv, Complexity.taut_verifier_append}
 \difficulty{3}
-Let $V$ be the set of binary strings $z$ with $|z| = i + (i + 1)$ for some $i$ such
-that the DNF decoded from the first $i$ bits of $z$ is false under the assignment
-reading variable $v$ off the $v$-th of the remaining bits (false beyond them). If $V$
-belongs to $\mathrm{P}$, then $\mathrm{TAUTOLOGY}$ belongs to coNP.
+Let $V$ be the language of binary strings $z$ for which there is an index $i$ satisfying
+$|z|=i+(i+1)$ such that the DNF formula decoded from the first $i$ bits of $z$ evaluates
+to false under the assignment given by the remaining $i+1$ bits, with all variables
+beyond those bits assigned false. If $V$ belongs to $	ext{P}$, then the language of
+binary strings whose decoded DNF formula is a tautology belongs to coNP.
 \end{lemma}
 
 \begin{definition}[Syntax scanner states]
@@ -209,35 +204,35 @@ $x$, the acceptance bit is true exactly when folding the scanner transition over
 of $x$, starting from $q$, ends in the exact-end state.
 \end{definition}
 
-\begin{lemma}[One scanner transition]
+\begin{lemma}[One Scanner Transition]
 \lean{Complexity.taut_syntax_cons}
 \label{Complexity.taut_syntax_cons}
 \leanok
 \uses{Complexity.TautSyntax, Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep}
 \difficulty{1}
-For every state $q$ of the six-state formula syntax scanner with transition $\delta$,
-every bit $b$, and every binary string $x$, the acceptance bit of the scan from $q$ on
-$b :: x$ equals the acceptance bit of the scan from $\delta(q, b)$ on $x$.
+For every syntax-scanner state $q$, bit $b$, and binary string $x$, scanning $b$
+followed by $x$ from $q$ gives the same acceptance bit as scanning $x$ from the state
+reached by applying one transition to $q$ on $b$.
 \end{lemma}
 
-\begin{lemma}[The error state never recovers]
+\begin{lemma}[Rejection from the Error State]
 \lean{Complexity.taut_syntax_bad}
 \label{Complexity.taut_syntax_bad}
 \leanok
 \uses{Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep, Complexity.taut_syntax_cons}
 \difficulty{3}
-For every binary string $x$, the acceptance bit of the six-state formula syntax
-scanner started in its error state and run over $x$ is false.
+For every binary string $x$, the syntax scanner started in its error state rejects $x$;
+equivalently, its acceptance bit is false.
 \end{lemma}
 
-\begin{lemma}[Exact end accepts only the empty string]
+\begin{lemma}[Acceptance from the Exact-End State]
 \lean{Complexity.taut_syntax_done}
 \label{Complexity.taut_syntax_done}
 \leanok
 \uses{Complexity.tautSyntaxAccept, Complexity.taut_syntax_bad}
 \difficulty{2}
-For every binary string $x$, the six-state formula syntax scanner started in its
-exact-end state accepts $x$ if and only if $x$ is empty.
+For every binary string $x$, the syntax scanner started in its exact-end state accepts
+$x$ if and only if $x$ is empty.
 \end{lemma}
 
 \begin{lemma}[Unary scanner partition]
@@ -292,63 +287,63 @@ If the exact-consumption formula parser succeeds on a binary string $x$, returni
 the formula $\varphi$, then $x$ equals the serialization of $\varphi$.
 \end{lemma}
 
-\begin{lemma}[Syntax scan of a unary index]
+\begin{lemma}[Syntax scan from the unary state]
 \lean{Complexity.taut_syntax_unary}
 \label{Complexity.taut_syntax_unary}
 \leanok
 \uses{Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep, Complexity.taut_syntax_cons, Std.Sat.CNF.takeTrues}
 \difficulty{3}
-For every binary string $x$, write $x = 1^k s$ where $s$ is the suffix left by the
-leading-ones scanner. The six-state formula syntax scan from the unary-index state
-accepts $x$ if and only if $s = 0\,b\,r$ for some bit $b$ and string $r$ and the scan
-from the clause-level state accepts $r$; if $s$ has fewer than two bits or starts
-with $1$, the scan rejects.
+For every finite binary string $x$, let $(k,s)$ be the result of removing its maximal
+initial run of $1$s. The scan from the unary-index state accepts $x$ exactly when $s$
+begins with $0$ followed by a bit $b$, and the scan from the clause-level state accepts
+the remaining suffix after those two bits; otherwise it rejects.
 \end{lemma}
 
-\begin{lemma}[Syntax scan agrees with the literal parser]
+\begin{lemma}[Syntax scan and literal parsing]
 \lean{Complexity.taut_syntax_literal}
 \label{Complexity.taut_syntax_literal}
 \leanok
 \uses{Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep, Complexity.taut_syntax_cons, Complexity.taut_syntax_unary, Std.Sat.CNF.parseLit, Std.Sat.CNF.takeTrues}
 \difficulty{4}
-For every binary string $x$, the string $1 :: x$ is accepted by the six-state formula
-syntax scan from the clause-level state if and only if the literal parser succeeds on
-$1 :: x$ with some remainder $r$ and $r$ is accepted by the scan from the clause-level
-state; when the literal parser fails, the scan rejects.
+For every finite binary string $x$, the syntax scanner started in the clause state
+accepts the string obtained by prefixing $x$ with $1$ exactly when parsing that prefixed
+string succeeds and the scanner started in the clause state accepts the parser's
+remaining suffix. If parsing fails, the scanner rejects the prefixed string.
 \end{lemma}
 
-\begin{lemma}[Syntax scan agrees with the clause parser]
+\begin{lemma}[Syntax scan and clause parsing]
 \lean{Complexity.taut_syntax_clause}
 \label{Complexity.taut_syntax_clause}
 \leanok
-\uses{Complexity.tautSyntaxAccept, Complexity.taut_parseLit_shape, Complexity.taut_syntax_literal, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.serializeLit}
+\uses{Complexity.tautSyntaxAccept, Complexity.taut_syntax_literal, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseLit, Std.Sat.CNF.parseLit_repr, Std.Sat.CNF.serializeLit}
 \difficulty{5}
-Let $f$ be a fuel value and $x$ a binary string with $|x| \le f$. The six-state formula
-syntax scan from the clause-level state accepts $x$ if and only if the clause parser
-with fuel $f$ succeeds on $x$ with some remainder $r$ and the scan from the
-formula-level state accepts $r$; when the clause parser fails, the scan rejects.
+Let $f$ be a natural-number fuel bound and let $x$ be a finite binary word with $|x|\le
+f$. The syntax scanner started at clause level accepts $x$ exactly when parsing one
+clause from $x$ with fuel $f$ succeeds, leaving a remainder $r$ that the scanner started
+at formula level accepts; if the parser fails, the clause-level scan rejects.
 \end{lemma}
 
-\begin{lemma}[Syntax scan agrees with the formula parser]
+\begin{lemma}[Syntax Scan and Formula Parsing]
 \lean{Complexity.taut_syntax_formula}
 \label{Complexity.taut_syntax_formula}
 \leanok
-\uses{Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep, Complexity.taut_parseClause_shape, Complexity.taut_syntax_clause, Complexity.taut_syntax_cons, Complexity.taut_syntax_done, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClauses}
+\uses{Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep, Complexity.taut_syntax_clause, Complexity.taut_syntax_cons, Complexity.taut_syntax_done, Std.Sat.CNF.parseClause, Std.Sat.CNF.parseClause_repr, Std.Sat.CNF.parseClauses}
 \difficulty{5}
-Let $f$ be a fuel value and $x$ a binary string with $|x| \le f$. The six-state formula
-syntax scan from the formula-level state accepts $x$ if and only if the formula parser
-with fuel $f$ succeeds on $x$ with an empty remainder.
+Let $f$ be a natural number and $x$ a binary string with $|x|\le f$. The syntax scanner
+started at formula level accepts $x$ if and only if the fuel-bounded CNF formula parser
+with fuel $f$ succeeds on $x$ and leaves an empty remainder.
 \end{lemma}
 
-\begin{lemma}[Syntax scan decides parseability]
+\begin{lemma}[Syntax scan and CNF parsing]
 \lean{Complexity.taut_syntax_parse}
 \label{Complexity.taut_syntax_parse}
 \leanok
 \uses{Complexity.tautSyntaxAccept, Complexity.taut_syntax_formula, Std.Sat.CNF.parse, Std.Sat.CNF.parseClauses}
 \difficulty{3}
-For every binary string $x$, the string $x$ is accepted by the six-state formula
-syntax scan from the formula-level state if and only if the exact-consumption formula
-parser succeeds on $x$.
+For every finite binary string $x$, start the six-state syntax scanner in the
+formula-level state and apply its transition function successively to the bits of $x$.
+The scanner ends in the exact-end state if and only if the exact-consumption parser
+returns a CNF formula on input $x$.
 \end{lemma}
 
 \begin{definition}[Evaluation states of the verifier]
@@ -434,79 +429,84 @@ and the given output.
 \leanok
 \uses{Complexity.TautControl, Complexity.tautCfg, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at}
 \difficulty{1}
-Let $x$ be an input and $i \le |x|$. In every configuration of the non-tautology
-verifier on $x$ whose input head has consumed $i$ bits, the symbol under the input
-head is the $i$-th bit of $x$ when $i < |x|$ and the blank when $i = |x|$,
-regardless of state, work tape, and output.
+Let $x$ be a finite word over any symbol alphabet, let $q$ be an optional state, and let
+$i\le |x|$. For any work word $u$, integer work-head position $h$, and output word $o$,
+the symbol read by the input head in the corresponding configuration is the $i$-th
+symbol of $x$, or no symbol if $i=|x|$.
 \end{lemma}
 
-\begin{lemma}[Silent right move]
+\begin{lemma}[Effect of a silent rightward move]
 \lean{Complexity.taut_move_right}
 \label{Complexity.taut_move_right}
 \leanok
 \uses{Complexity.TautControl, Complexity.tautCfg, Complexity.tautMove, Turing.Action.apply, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{3}
-Let $x$ be an input with $i + 1 \le |x|$. Applying the silent action that moves the
-input head right, moves the work head by $e$, and enters state $q'$ to a
-non-tautology verifier configuration on $x$ in any state with $i$ input bits consumed, work word
-$u$, work head $h$, and output $o$ yields the configuration in state $q'$ with $i+1$
-bits consumed, the same $u$ and $o$, and work head $h + e$.
+Let $x$ and $u$ be binary words, let $q$ be an optional control state, let $q'$ be a
+control state, let $i$ be a natural number with $i+1\le |x|$, let $h$ be an integer, let
+$o$ be an output word, and let $e\in\{-1,0,1\}$. Applying the silent action that moves
+the input head right, moves the work head by $e$, and enters $q'$ to the verifier
+configuration on $x$ with state $q$, $i$ input bits consumed, work word $u$, work head
+at $h$, and output $o$, yields the configuration with state $q'$, $i+1$ input bits
+consumed, the same work word and output, and work head at $h+e$.
 \end{lemma}
 
-\begin{lemma}[Silent stationary move]
+\begin{lemma}[Silent stationary input move]
 \lean{Complexity.taut_move_stay}
 \label{Complexity.taut_move_stay}
 \leanok
 \uses{Complexity.TautControl, Complexity.tautCfg, Complexity.tautMove, Turing.Action.apply}
 \difficulty{2}
-Let $x$ be an input and $i \le |x|$. Applying the silent action that keeps the input
-head fixed, moves the work head by $e$, and enters state $q'$ to a non-tautology
-verifier configuration on $x$ in any state with $i$ input bits consumed, work word $u$, work head
-$h$, and output $o$ yields the configuration in state $q'$ with the same index, $u$,
-and $o$, and work head $h + e$.
+Let $x$ be a finite binary input, let $q$ be any optional control state, let $q'$ be a
+control state, and let $i\le |x|$. For any work word $u$, work-head position
+$h\in\mathbb Z$, output word $o$, and work-head displacement $e\in\{-1,0,1\}$, applying
+the silent action that leaves the input head stationary, moves the work head by $e$, and
+enters $q'$ produces the configuration with state $q'$, the same input-head position,
+work word, and output, and work-head position $h+e$.
 \end{lemma}
 
-\begin{lemma}[A doubled bit is one syntax step]
+\begin{lemma}[Two Steps for a Doubled Bit]
 \lean{Complexity.taut_syntax_double}
 \label{Complexity.taut_syntax_double}
 \leanok
 \uses{Complexity.TautSyntax, Complexity.tautCfg, Complexity.tautSyntaxStep, Complexity.tautTM, Complexity.taut_move_right, Complexity.taut_read, Turing.Action.apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $x$ be an input with $i + 2 \le |x|$ whose bits at positions $i$ and $i + 1$ both
-equal $b$, and let $s$ be a formula-scanner state with transition $\delta$. Started in
-the syntax state carrying $s$ with $i$ input bits consumed, empty work tape, work head
-$0$, and empty output, the non-tautology verifier reaches, after exactly two steps,
-the syntax state carrying $\delta(s, b)$ with $i + 2$ bits consumed and all else
-unchanged.
+Let $x$ be a binary string, $s$ a syntax-scanner state, $i$ a natural number, and $b$ a
+bit. Suppose $i+2\le |x|$ and the bits of $x$ at positions $i$ and $i+1$ are both $b$.
+Starting from the verifier configuration on $x$ in the syntax state carrying $s$, with
+$i$ input bits consumed, empty work tape, and work head at $0$, after two steps the
+configuration is in the syntax state carrying the state reached by applying two syntax
+transitions on the doubled bit $bb$, with $i+2$ input bits consumed, empty work tape,
+and work head at $0$.
 \end{lemma}
 
-\begin{lemma}[The pair separator ends the syntax pass]
+\begin{lemma}[The Pair Separator Ends the Syntax Pass]
 \lean{Complexity.taut_syntax_separator}
 \label{Complexity.taut_syntax_separator}
 \leanok
 \uses{Complexity.TautSyntax, Complexity.tautCfg, Complexity.tautTM, Complexity.taut_move_right, Complexity.taut_read, Turing.Action.apply, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $x$ be an input with $i + 2 \le |x|$ whose bits at positions $i$ and $i+1$ are $0$
-and $1$, and let $s$ be a formula-scanner state. Started in the syntax state carrying
-$s$ with $i$ input bits consumed, empty work tape, head $0$, and empty output, after
-exactly two steps the non-tautology verifier has consumed $i+2$ bits and is in the
-certificate-copy state if $s$ is the exact-end state, and in the verdict state with
-bit $1$ otherwise.
+Let $x$ be a binary string, $s$ a syntax-scanner state, and $i$ a natural number.
+Suppose $i+2\le |x|$, the bit of $x$ at position $i$ is $0$, and the bit at position
+$i+1$ is $1$. Starting from the verifier configuration on $x$ in the syntax state
+carrying $s$, with $i$ input bits consumed, empty work tape, and work head at $0$, after
+two steps it has consumed $i+2$ bits, with empty work tape and work head at $0$; its
+state is certificate-copy if $s$ is the exact-end state, and otherwise it is verdict
+with bit $1$.
 \end{lemma}
 
-\begin{lemma}[The complete syntax pass]
+\begin{lemma}[Complete Syntax Pass]
 \lean{Complexity.taut_syntax_run}
 \label{Complexity.taut_syntax_run}
 \leanok
 \uses{Complexity.TautSyntax, Complexity.tautCfg, Complexity.tautSyntaxStep, Complexity.tautTM, Complexity.taut_syntax_double, Complexity.taut_syntax_separator, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{5}
-Let $a, u, p$ be binary words, $x = p \mathbin{+\!\!+} \mathrm{pair}(a, u)$, and $s$ a
-formula-scanner state. Started in the syntax state carrying $s$ with $|p|$ input bits
-consumed, empty work tape, head $0$, and empty output, the non-tautology verifier
-after exactly $2|a| + 2$ steps has consumed $|p| + 2|a| + 2$ bits, with work tape and
-output still empty, and is in the certificate-copy state if folding the scanner
-transition over $a$ from $s$ ends in the exact-end state, and in the verdict state
-with bit $1$ otherwise.
+Let $a$ and $u$ be binary strings. For every binary string $x$, prefix $p$,
+syntax-scanner state $s$, and equality $x=p\mathbin{++}\langle a,u\rangle$, start the
+verifier on $x$ in the syntax state carrying $s$, with $|p|$ input bits consumed, empty
+work tape, and work head at $0$. After $2|a|+2$ steps, it has consumed $|p|+2|a|+2$
+bits, with empty work tape and work head at $0$; its state is certificate-copy if
+scanning $a$ from $s$ ends in the exact-end state, and otherwise it is verdict with bit
+$1$.
 \end{lemma}
 
 \begin{lemma}[Initial configuration of the verifier]
@@ -515,42 +515,43 @@ with bit $1$ otherwise.
 \leanok
 \uses{Complexity.tautCfg, Complexity.tautTM, Turing.Cfg.init, Turing.MultiTapeTM.initCfg}
 \difficulty{2}
-For every input $x$, the initial configuration of the non-tautology verifier on $x$ is
-the configuration in the syntax state carrying the formula-level scanner state, with
-no input bits consumed, an empty work tape, work head at cell $0$, and empty output.
+For every binary input $x$, the verifier's initial configuration on $x$ is the
+configuration in the syntax state carrying the formula-level scanner state, with no
+input bits consumed, empty work tape, work head at $0$, and empty output.
 \end{lemma}
 
-\begin{lemma}[The verdict transition]
+\begin{lemma}[Verdict Transition]
 \lean{Complexity.taut_verdict}
 \label{Complexity.taut_verdict}
 \leanok
 \uses{Complexity.tautCfg, Complexity.tautTM, Turing.Action.apply, Turing.MultiTapeTM.step}
 \difficulty{2}
-Let $x$ be an input, $i \le |x|$, $u$ a word, $h$ an integer, and $b$ a bit. From the
-non-tautology verifier's configuration in the verdict state with bit $b$, $i$ input
-bits consumed, work word $u$, work head $h$, and empty output, one step halts with
-output exactly the single bit $b$, all other components unchanged.
+Let $x$ be a binary input, let $b$ be a bit, let $i$ be a natural number with $i\le
+|x|$, let $u$ be a binary word, and let $h$ be an integer. One step from the verifier
+configuration in verdict state $b$, with $i$ input bits consumed, work tape containing
+$u$, work head at $h$, and empty output, halts and produces the one-bit output $b$,
+leaving the other configuration components unchanged.
 \end{lemma}
 
-\begin{lemma}[Malformed formulas are accepted]
+\begin{lemma}[Verifier behavior on malformed input]
 \lean{Complexity.taut_machine_malformed}
 \label{Complexity.taut_machine_malformed}
 \leanok
 \uses{Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep, Complexity.tautTM, Complexity.taut_init, Complexity.taut_syntax_parse, Complexity.taut_syntax_run, Complexity.taut_verdict, Std.Sat.CNF.parse, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode}
 \difficulty{4}
-Let $x$ be a binary string on which the exact-consumption formula parser fails, and
-let $u$ be any binary word. Then the non-tautology verifier, run on
-$\mathrm{pair}(x, u)$, halts within $2|x| + 3$ steps with output the single bit $1$.
+Let $x$ and $u$ be binary words, and suppose the exact-consumption parser fails on $x$.
+Then the non-tautology verifier computes the one-bit output $1$ on the pair encoding of
+$x$ and $u$ within $2|x|+3$ steps.
 \end{lemma}
 
-\begin{lemma}[The empty input is rejected]
+\begin{lemma}[Verifier output on empty input]
 \lean{Complexity.taut_machine_empty}
 \label{Complexity.taut_machine_empty}
 \leanok
 \uses{Complexity.tautTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff}
 \difficulty{2}
-The non-tautology verifier, run on the empty input, halts within $2$ steps, and its
-output is the single bit $0$.
+The non-tautology verifier, started on the empty input, halts within two steps and
+writes the single-bit output $0$.
 \end{lemma}
 
 \begin{lemma}[Certificate copy run]
@@ -559,25 +560,27 @@ output is the single bit $0$.
 \leanok
 \uses{Complexity.TautControl, Complexity.tautCfg, Complexity.tautTM, Complexity.taut_read, Turing.Action, Turing.Action.apply, Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Let the input be $x = p \mathbin{+\!\!+} u$. Started in the certificate-copy state with
-$|p|$ input bits consumed, empty work tape, work head $0$, and empty output, for every
-$j \le |u|$ the non-tautology verifier after exactly $j$ steps is still in the copy
-state with $|p| + j$ bits consumed, the first $j$ bits of $u$ on the work tape, the
-work head at cell $j$, and empty output.
+Let $x$, $p$, and $u$ be binary words with $x=p\mathbin{+\!\!+}u$. Starting in the
+certificate-copy state with $|p|$ input bits consumed, empty work tape, work head at
+$0$, and empty output, after every $j\le |u|$ steps the verifier is still in the
+certificate-copy state, has consumed $|p|+j$ input bits, holds the prefix of $u$ of
+length $j$ on its work tape, and has its work head at $j$.
 \end{lemma}
 
-\begin{lemma}[Work-tape rewind]
+\begin{lemma}[Work Tape Rewind]
 \lean{Complexity.taut_work_rewind}
 \label{Complexity.taut_work_rewind}
 \leanok
 \uses{Complexity.TautControl, Complexity.tautCfg, Complexity.tautMove, Complexity.tautTM, Complexity.taut_move_stay, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{5}
-Let $q$ and $d$ be control states of the non-tautology verifier such that, in state
-$q$, it silently moves the work head left with the input head fixed whenever the work
-cell is nonblank, and otherwise moves the work head right and enters $d$. Then for
-every input $x$, index $i \le |x|$, work word $u$, and $n \le |u|$, starting in state
-$q$ with work head at cell $n - 1$, exactly $n + 1$ steps reach state $d$ with work
-head at cell $0$, all other components unchanged.
+Let $q$ and $d$ be control states of the verifier. Suppose that in state $q$, for every
+input symbol and work-tape reading, the machine moves the work head one cell left and
+remains in $q$ when the scanned work cell is nonblank; when it is blank, it moves the
+work head one cell right and enters $d$. For every binary input $x$, every $i\le |x|$,
+every binary word $u$, and every natural number $n\le |u|$, starting in state $q$ with
+input head having consumed $i$ bits, work tape containing $u$, and work head at $n-1$,
+after exactly $n+1$ steps the machine is in state $d$ with work head at $0$, while the
+input head, tape contents, and output remain unchanged.
 \end{lemma}
 
 \begin{lemma}[Startup of the evaluation phase]
@@ -586,27 +589,28 @@ head at cell $0$, all other components unchanged.
 \leanok
 \uses{Complexity.tautCfg, Complexity.tautSyntaxStep, Complexity.tautTM, Complexity.taut_copy_run, Complexity.taut_init, Complexity.taut_move_stay, Complexity.taut_read, Complexity.taut_syntax_parse, Complexity.taut_syntax_run, Complexity.taut_work_rewind, Std.Sat.CNF.parse, Turing.Action.apply, Turing.FinTM.timed_rewind, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{6}
-Let $x$ be a binary string on which the exact-consumption formula parser succeeds, and
-let $u$ be any binary word. Then for some $t \le 4(|\mathrm{pair}(x,u)| + 2)$, running
-the non-tautology verifier for $t$ steps from its initial configuration on
-$\mathrm{pair}(x,u)$ reaches the formula-level evaluation state with no input bits
-consumed, $u$ on the work tape from cell $0$, the work head at cell $0$, and empty
+Let $x$ and $u$ be binary words, and suppose the exact-consumption parser for CNF
+formulas succeeds on $x$. Then there is a number of steps $t\le 4(|\langle
+x,u\rangle|+2)$ such that the verifier started in its initial configuration on the
+paired input $\langle x,u\rangle$ reaches the formula-level evaluation state with no
+input bits consumed, work tape storing $u$ from cell $0$, work head at $0$, and empty
 output.
 \end{lemma}
 
-\begin{lemma}[A doubled bit is one evaluation step]
+\begin{lemma}[Two-step evaluation of a doubled bit]
 \lean{Complexity.taut_eval_double}
 \label{Complexity.taut_eval_double}
 \leanok
 \uses{Complexity.TautControl, Complexity.TautEval, Complexity.tautCfg, Complexity.tautEvalAction, Complexity.tautMove, Complexity.tautTM, Complexity.taut_move_right, Complexity.taut_read, Turing.Action.apply, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $x$ be an input with $i + 2 \le |x|$ and $i$-th bit $b$, let $u$ be a word, $h$ an
-integer, and $q$ an evaluation state. Suppose the evaluation action for $q$ on bit $b$,
-with the work cell at $h$ of the tape holding $u$, is the silent move advancing the
-input head, moving the work head by $e$, and entering $q'$. Then from the
-non-tautology verifier's evaluation configuration carrying $q$ with $i$ bits consumed,
-work word $u$, and head $h$, two steps reach state $q'$ with $i+2$ bits consumed and
-head $h + e$.
+Let $x$ be a binary word, $q$ an evaluation state, $q'$ a verifier control state, $i$ a
+natural number with $i+2\le |x|$, $u$ a binary word, $h$ an integer, $b$ a bit, and $e$
+a head-movement sign. Suppose the bit at index $i$ of $x$ is $b$, and the evaluation
+action in state $q$ on bit $b$, reading the work-tape cell at $h$ when the tape stores
+$u$, is the silent move that advances the input head, moves the work head by $e$, and
+enters $q'$. Then, starting in evaluation state $q$ with $i$ input bits consumed, work
+word $u$, and work head at $h$, two machine steps reach control state $q'$, with $i+2$
+bits consumed, work word $u$, and work head at $h+e$.
 \end{lemma}
 
 \begin{lemma}[Pair encoding of a concatenation]
@@ -615,9 +619,9 @@ head $h + e$.
 \leanok
 \uses{Turing.pairEncode}
 \difficulty{1}
-For all binary words $a$, $b$, $u$, the pair encoding satisfies
-$\mathrm{pair}(a \mathbin{+\!\!+} b, u) = \overline{a} \mathbin{+\!\!+} \mathrm{pair}(b, u)$,
-where $\overline{a}$ is the word obtained from $a$ by doubling every bit.
+For all finite binary words $a$, $b$, and $u$, encoding the pair whose first component
+is $a$ followed by $b$ and whose second component is $u$ equals the word obtained by
+doubling each bit of $a$, followed by the encoding of the pair $(b,u)$.
 \end{lemma}
 
 \begin{lemma}[Length of a doubled word]
@@ -626,101 +630,106 @@ where $\overline{a}$ is the word obtained from $a$ by doubling every bit.
 \leanok
 \uses{Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{3}
-For every binary word $a$, the word obtained from $a$ by replacing each bit $v$ with
-$v\,v$ has length exactly $2|a|$.
+For any finite binary word $a$, form a new word by replacing each bit with two
+consecutive copies of itself. The resulting word has length exactly $2|a|$.
 \end{lemma}
 
-\begin{lemma}[Unary index walk]
+\begin{lemma}[Unary Index Run]
 \lean{Complexity.taut_unary_run}
 \label{Complexity.taut_unary_run}
 \leanok
 \uses{Complexity.tautCfg, Complexity.tautTM, Complexity.taut_eval_double, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{4}
-Let $k \in \mathbb{N}$, let $r, u, p$ be binary words, and let the input be
-$x = p \mathbin{+\!\!+} \mathrm{pair}(1^k \mathbin{+\!\!+} r, u)$. Started in the
-unary-index evaluation state with accumulator $c$, $|p|$ input bits consumed, work word
-$u$, and work head $h$, the non-tautology verifier after exactly $2k$ steps is in the
-same state with $|p| + 2k$ bits consumed and work head $h + k$.
+Let $k$ be a natural number and let $r,u$ be binary words. Suppose a binary input $x$ is
+the concatenation of a prefix $p$ and the self-delimiting encoding of the word $1^k r$
+paired with $u$. From the configuration whose state is the unary-index evaluation state
+with accumulator $c$, whose input head has consumed $|p|$ bits, whose work tape contains
+$u$, and whose work head is at integer position $h$, the verifier reaches after exactly
+$2k$ steps the configuration in the same state, with $|p|+2k$ input bits consumed, the
+same work tape, and work head at $h+k$.
 \end{lemma}
 
-\begin{lemma}[Literal evaluation run]
+\begin{lemma}[Evaluation of a serialized literal]
 \lean{Complexity.taut_literal_run}
 \label{Complexity.taut_literal_run}
 \leanok
 \uses{Complexity.tautAssignment, Complexity.tautCfg, Complexity.tautEvalAction, Complexity.tautTM, Complexity.taut_double_length, Complexity.taut_eval_double, Complexity.taut_pair_append, Complexity.taut_unary_run, Complexity.taut_work_rewind, Std.Sat.CNF.serializeLit, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{6}
-Let $\ell = (v, b)$ be a literal and $u$ a word with $v < |u|$, and let the input be
-$x = p \mathbin{+\!\!+} \mathrm{pair}(\sigma \mathbin{+\!\!+} r, u)$ where $\sigma$ is the
-serialization of $\ell$. Started in the clause-level evaluation state with accumulator
-$c$, $|p|$ bits consumed, work word $u$, and head $0$, the non-tautology verifier after
-exactly $3v + 7$ steps is in the clause-level state with accumulator
-$c \wedge (\alpha_u(v) = b)$, where $\alpha_u$ reads $v$ off the $v$-th bit of $u$, with
-$|p| + 2|\sigma|$ bits consumed and head $0$.
+Let $\ell=(v,b)$ be a literal, let $r,u,x,\mathrm{pre}$ be binary words, and let $c$ be
+a Boolean value. Suppose $v<|u|$ and $x$ is the concatenation of $\mathrm{pre}$ with the
+pair encoding of the literal encoding of $\ell$ followed by $r$, together with $u$.
+Starting with $|\mathrm{pre}|$ input bits consumed, in the clause-level evaluation state
+with accumulator $c$, work word $u$, and work head at $0$, the verifier is after exactly
+$3v+7$ steps in the clause-level evaluation state with accumulator
+$c\wedge[\alpha_u(v)=b]$, with $|\mathrm{pre}|+2|\mathrm{enc}(\ell)|$ input bits
+consumed, work word $u$, work head at $0$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Term evaluation run]
+\begin{lemma}[Clause Evaluation Run]
 \lean{Complexity.taut_clause_run}
 \label{Complexity.taut_clause_run}
 \leanok
 \uses{Complexity.tautAssignment, Complexity.tautCfg, Complexity.tautTM, Complexity.taut_double_length, Complexity.taut_eval_double, Complexity.taut_literal_run, Complexity.taut_pair_append, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{5}
-Let $C$ be a list of literals whose variable indices are all below $|u|$ for a word
-$u$, let $\sigma$ be its serialization, and let the input be
-$x = p \mathbin{+\!\!+} \mathrm{pair}(\sigma \mathbin{+\!\!+} r, u)$. Started in the
-clause-level evaluation state with accumulator $c$, $|p|$ bits consumed, work word $u$,
-and head $0$, the non-tautology verifier within some $t \le 3|\sigma|$ steps has
-consumed $|p| + 2|\sigma|$ bits, has head $0$, and is in the verdict state with bit $0$
-if $c$ holds and every literal of $C$ is satisfied by the assignment read off $u$, and
-in the formula-level evaluation state otherwise.
+Let $C$ be a clause over variables indexed by $\mathbb{N}$, and let $r$ and $u$ be
+binary words such that every variable index occurring in $C$ is less than $|u|$. For any
+binary words $x$ and $p$ satisfying
+$x=p\mathbin{++}\mathrm{pair}(\mathrm{enc}(C)\mathbin{++}r,u)$, and any Boolean
+accumulator $c$, there is a time $t\le 3|\mathrm{enc}(C)|$ such that the verifier,
+started in the clause-evaluation state with accumulator $c$, having consumed $|p|$ input
+bits, with work word $u$ and work head at $0$, reaches a configuration having consumed
+$|p|+2|\mathrm{enc}(C)|$ input bits, work word $u$, and work head at $0$. Its state is
+the verdict state carrying false if $c$ is true and every literal in $C$ is satisfied by
+the assignment read from $u$; otherwise its state is the formula-level evaluation state.
 \end{lemma}
 
-\begin{lemma}[Formula evaluation run]
+\begin{lemma}[Verifier run on a serialized formula]
 \lean{Complexity.taut_formula_run}
 \label{Complexity.taut_formula_run}
 \leanok
 \uses{Complexity.tautAssignment, Complexity.tautCfg, Complexity.tautTM, Complexity.taut_clause_run, Complexity.taut_double_length, Complexity.taut_eval_double, Complexity.taut_pair_append, Complexity.taut_verdict, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Std.Sat.DNF.eval, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{5}
-Let $\varphi$ be a formula whose variable indices are all below $|u|$ for a word $u$,
-let $\sigma$ be its serialization, and let the input be
-$x = p \mathbin{+\!\!+} \mathrm{pair}(\sigma, u)$. Started in the formula-level
-evaluation state with $|p|$ bits consumed, work word $u$, and head $0$, the
-non-tautology verifier halts within some $t \le 3|\sigma| + 1$ steps, with work head
-$0$ and output the single bit that negates the truth value of $\varphi$ read as a DNF
-under the assignment $\alpha_u$ reading variable $v$ off the $v$-th bit of $u$ (false
-beyond $|u|$).
+Let $\varphi$ be a CNF formula over natural-number variables and $u$ a binary word, and
+suppose every variable index in every literal of $\varphi$ is less than $|u|$. For any
+binary words $x,p$ with $x=p\mathbin{+\!\!+}\langle \mathrm{enc}(\varphi),u\rangle$,
+there are a number of steps $t\le 3|\mathrm{enc}(\varphi)|+1$ and an index $i\le |x|$
+such that the verifier, started in the formula-level evaluation state with $|p|$ bits
+consumed, work tape storing $u$, work head at $0$, and empty output, reaches a halted
+configuration with $i$ input bits consumed, the same work tape and head position, and
+output the single bit negating the DNF value of $\varphi$ under the assignment that
+reads the $v$th bit of $u$ and is false for indices beyond $|u|$.
 \end{lemma}
 
-\begin{lemma}[Members are bounded by the maximum]
+\begin{lemma}[List entries are bounded by the fold maximum]
 \lean{Complexity.taut_le_max}
 \label{Complexity.taut_le_max}
 \leanok
 \difficulty{3}
-For every list $s$ of natural numbers and every member $n$ of $s$, $n$ is at most the
-maximum of $s$, computed as the right fold of $\max$ with initial value $0$.
+Let $s$ be a list of natural numbers and let $n$ be a member of $s$. Then $n$ is at most
+the right fold of maximum over $s$, with initial value $0$.
 \end{lemma}
 
-\begin{lemma}[Literal indices lie below the variable bound]
+\begin{lemma}[Literal index bound]
 \lean{Complexity.taut_literal_lt}
 \label{Complexity.taut_literal_lt}
 \leanok
 \uses{Complexity.taut_le_max, Std.Sat.CNF.numVars}
 \difficulty{3}
-Let $\varphi$ be a CNF formula, $C$ a clause of $\varphi$, and $\ell = (v, b)$ a literal
-of $C$. Then $v$ is strictly less than the variable bound of $\varphi$, i.e.\ one more
-than the largest variable index occurring in $\varphi$.
+Let $\varphi$ be a CNF formula over variables indexed by the natural numbers, let $C$ be
+one of its clauses, and let $\ell=(v,b)$ be a literal in $C$. Then $v<N(\varphi)$, where
+$N(\varphi)$ is the variable count of $\varphi$.
 \end{lemma}
 
-\begin{lemma}[Verifier correctness on correctly sized pairs]
+\begin{lemma}[Verifier correctness on encoded pairs]
 \lean{Complexity.taut_machine_pair}
 \label{Complexity.taut_machine_pair}
 \leanok
-\uses{Complexity.tautAssignment, Complexity.tautTM, Complexity.taut_evaluation_start, Complexity.taut_formula_run, Complexity.taut_literal_lt, Complexity.taut_machine_malformed, Complexity.taut_parse_shape, Std.Sat.CNF.decode, Std.Sat.CNF.decode_serialize, Std.Sat.CNF.numVars_decode_le, Std.Sat.CNF.parse, Std.Sat.CNF.parse_serialize, Std.Sat.CNF.serialize, Std.Sat.DNF.decode, Std.Sat.DNF.decode_cnf_serialize, Std.Sat.DNF.eval, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
+\uses{Complexity.tautAssignment, Complexity.tautTM, Complexity.taut_evaluation_start, Complexity.taut_formula_run, Complexity.taut_literal_lt, Complexity.taut_machine_malformed, Std.Sat.CNF.decode, Std.Sat.CNF.decode_serialize, Std.Sat.CNF.numVars_decode_le, Std.Sat.CNF.parse, Std.Sat.CNF.parse_repr, Std.Sat.CNF.parse_serialize, Std.Sat.CNF.serialize, Std.Sat.DNF.decode, Std.Sat.DNF.decode_cnf_serialize, Std.Sat.DNF.eval, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{5}
-Let $x$ and $u$ be binary words with $|u| = |x| + 1$. The non-tautology verifier, run on
-$\mathrm{pair}(x, u)$, halts within $10(|\mathrm{pair}(x,u)| + 1)$ steps with output
-the single bit that negates the truth value of the DNF decoded from $x$ under the
-assignment $\alpha_u$ reading variable $v$ off the $v$-th bit of $u$ (false beyond
-$|u|$).
+Let $x$ and $u$ be binary words with $|u|=|x|+1$. Then the non-tautology verifier
+computes, on their pair encoding, the one-bit output that is the negation of the truth
+value of the DNF decoded from $x$ under the certificate assignment determined by $u$,
+within $10(|\mathrm{pair}(x,u)|+1)$ steps.
 \end{lemma}
 
 \begin{definition}[Split of a verifier input]
@@ -733,54 +742,53 @@ with the remaining $i + 1$ bits when $|z| = i + (i + 1)$ for some $i$, and the e
 word when no such $i$ exists.
 \end{definition}
 
-\begin{lemma}[The verifier handles every split]
+\begin{lemma}[Verifier behavior on every input split]
 \lean{Complexity.taut_machine_split}
 \label{Complexity.taut_machine_split}
 \leanok
 \uses{Complexity.tautSplit, Complexity.tautTM, Complexity.tautVerifierBit, Complexity.taut_machine_empty, Complexity.taut_machine_pair, Complexity.taut_split_some, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.solveSplit, Turing.universal_pair_length}
 \difficulty{4}
-For every binary string $z$, let $z'$ be the pair encoding of the first $i$ bits of $z$
-with the rest if $|z| = 2i + 1$, and the empty word if $|z|$ is even. The
-non-tautology verifier, run on $z'$, halts within $40(|z| + 1)$ steps with output the
-single bit that is $0$ if $|z|$ is even and otherwise negates the truth value of the
-DNF decoded from the first $i$ bits of $z$ under the assignment read off the remaining
-bits.
+For every binary word $z$, the non-tautology verifier computes the one-bit output $B(z)$
+on the split encoding of $z$ within $40(|z|+1)$ steps. Here, if there is an $i$ with
+$|z|=i+(i+1)$, the split encoding is the pair encoding of the first $i$ bits of $z$ and
+the remaining bits, and $B(z)$ is the negation of the truth value of the DNF decoded
+from the first part under the certificate assignment determined by the remaining part.
+If there is no such $i$, the split encoding is empty and $B(z)=0$.
 \end{lemma}
 
-\begin{lemma}[Composition with a machine correct on an image]
+\begin{lemma}[Composition on the Image of a Computation]
 \lean{Complexity.taut_comp_on_image}
 \label{Complexity.taut_comp_on_image}
 \leanok
 \uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $M$ and $U$ be finite multi-tape Turing machines over the binary alphabet, let
-$f, g$ be functions on binary strings, and let $T_1, T_2 : \mathbb{N} \to \mathbb{N}$.
-If $M$ computes $f$ within $T_1$, and for every input $x$ the machine $U$ run on $f(x)$
-halts within $T_2(|x|)$ steps with output $g(x)$, then some finite machine computes $g$
-within time $n \mapsto 2\,T_1(n) + T_2(n) + 2$.
+Let $M$ and $U$ be finite Turing machines over the binary alphabet, let $f,g$ be
+functions from binary words to binary words, and let $T_1,T_2:\mathbb{N}\to\mathbb{N}$.
+Suppose $M$ computes $f$ within time $T_1$, and for every binary word $x$, $U$ computes
+$g(x)$ on input $f(x)$ within time $T_2(|x|)$. Then there is a finite Turing machine
+that computes $g$ within time $n\mapsto 2T_1(n)+T_2(n)+2$.
 \end{lemma}
 
-\begin{lemma}[The non-tautology verifier language is in P]
+\begin{lemma}[Polynomial-time non-tautology verification]
 \lean{Complexity.taut_verifier_mem_P}
 \label{Complexity.taut_verifier_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.mem_P_iff, Complexity.tautSplit, Complexity.tautTM, Complexity.tautVerifier, Complexity.tautVerifierBit, Complexity.taut_comp_on_image, Complexity.taut_machine_split, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_splitSolve, Turing.MultiTapeTM.indicator, Turing.solveSplit}
 \difficulty{5}
-The set of binary strings $z$ such that $|z| = i + (i + 1)$ for some $i$ and the DNF
-decoded from the first $i$ bits of $z$ evaluates to false under the assignment reading
-variable $v$ off the $v$-th of the remaining $i + 1$ bits (false beyond them) belongs
-to $\mathrm{P}$.
+Let $L$ be the language of binary strings $z$ for which there exists $i \in \mathbb{N}$
+with $|z|=i+(i+1)$ such that the DNF formula decoded from the first $i$ bits of $z$
+evaluates to false under the assignment given by the remaining $i+1$ bits, with
+variables beyond those bits assigned false. Then $L$ belongs to $\mathrm{P}$.
 \end{lemma}
 
-\begin{theorem}[TAUTOLOGY is in coNP]
+\begin{theorem}[Tautology belongs to coNP]
 \lean{Complexity.TAUTOLOGY_mem_coNP}
 \label{Complexity.TAUTOLOGY_mem_coNP}
 \leanok
 \uses{Complexity.TAUTOLOGY, Complexity.coNP, Complexity.taut_membership_of_verifier, Complexity.taut_verifier_mem_P}
 \difficulty{1}
-The language $\mathrm{TAUTOLOGY}$, of binary strings whose decoded DNF formula is true
-under every assignment, belongs to coNP; that is, its complement is in
-$\mathrm{NP}$ [AB09, Section~2.6.1].
+The language of bit strings whose decoded DNF formula evaluates to true under every
+Boolean assignment belongs to coNP; equivalently, its complement belongs to NP.
 \end{theorem}
 
 \begin{definition}[Polarity-flipping output bit]
@@ -804,27 +812,27 @@ and outputting each bit as read, except that a bit read in the polarity state is
 flipped.
 \end{definition}
 
-\begin{lemma}[Polarity-flipping scan of a unary run]
+\begin{lemma}[Scan of a Unary Run]
 \lean{Complexity.tautDual_unary}
 \label{Complexity.tautDual_unary}
 \leanok
 \uses{Complexity.tautDualBit, Complexity.tautDualScan, Complexity.tautSyntaxStep}
 \difficulty{3}
-For every $n \in \mathbb{N}$ and binary string $r$, the polarity-flipping scan from the
-unary-index state of the formula syntax scanner maps $1^n \mathbin{+\!\!+} r$ to
-$1^n$ followed by the polarity-flipping scan of $r$ from the unary-index state.
+For every $n\in\mathbb{N}$ and every binary string $r$, scanning the string consisting
+of $n$ consecutive $1$s followed by $r$, starting in the unary-index state, produces $n$
+consecutive $1$s followed by the scan of $r$ starting in the unary-index state.
 \end{lemma}
 
-\begin{lemma}[Polarity-flipping scan of a literal]
+\begin{lemma}[Polarity flip of a literal encoding]
 \lean{Complexity.tautDual_literal}
 \label{Complexity.tautDual_literal}
 \leanok
 \uses{Complexity.tautDualBit, Complexity.tautDualScan, Complexity.tautDual_unary, Complexity.tautSyntaxStep, Std.Sat.CNF.serializeLit}
 \difficulty{3}
-For every literal $(v, b)$ and binary string $r$, the polarity-flipping scan from the
-clause-level state of the formula syntax scanner maps the serialization of $(v, b)$
-followed by $r$ to the serialization of $(v, \neg b)$ followed by the
-polarity-flipping scan of $r$ from the clause-level state.
+For every literal $\ell=(v,b)$ over variables indexed by $\mathbb{N}$ and every binary
+string $r$, scanning the encoding of $(v,b)$ followed by $r$ from the clause-level state
+produces the encoding of $(v,\neg b)$ followed by the scan of $r$ from the clause-level
+state.
 \end{lemma}
 
 \begin{lemma}[Polarity-flipping scan of a clause]
@@ -833,23 +841,22 @@ polarity-flipping scan of $r$ from the clause-level state.
 \leanok
 \uses{Complexity.tautDualScan, Complexity.tautDual_literal, Std.Sat.CNF.serializeClause, Std.Sat.CNF.serializeLit}
 \difficulty{4}
-For every clause $C$ and binary string $r$, the polarity-flipping scan from the
-clause-level state of the formula syntax scanner maps the serialization of $C$
-followed by $r$ to the serialization of the clause obtained from $C$ by negating every
-literal's polarity, followed by the polarity-flipping scan of $r$ from the
-formula-level state.
+For every clause $C$ of literals with natural-number indices and every bit string $r$,
+scanning the encoding of $C$ followed by $r$, starting in the clause state, gives the
+encoding of the clause obtained by negating each literal's polarity, followed by the
+scan of $r$ starting in the formula state.
 \end{lemma}
 
-\begin{lemma}[Polarity-flipping scan of a serialized formula]
+\begin{lemma}[Serialization of the De Morgan dual]
 \lean{Complexity.tautDual_serialize}
 \label{Complexity.tautDual_serialize}
 \leanok
 \uses{Complexity.tautDualScan, Complexity.tautDual_clause, Std.Sat.CNF.dual, Std.Sat.CNF.serialize, Std.Sat.CNF.serializeClause, Std.Sat.DNF.serialize}
 \difficulty{4}
-For every CNF formula $\varphi$, the polarity-flipping scan from the formula-level
-state of the formula syntax scanner maps the serialization of $\varphi$ to the
-serialization of its De Morgan dual, the DNF obtained from $\varphi$ by negating every
-literal in place.
+Let $\varphi$ be a CNF formula over variables indexed by $\mathbb{N}$. Scanning its
+binary serialization from the formula-level state and flipping the bit read in each
+polarity state yields exactly the binary serialization of the DNF obtained by negating
+every literal of $\varphi$ in place.
 \end{lemma}
 
 \begin{definition}[Guarded dual output]
@@ -863,16 +870,14 @@ formula level ends in the exact-end state, and the one-bit word $0$ (the seriali
 of the empty formula) otherwise.
 \end{definition}
 
-\begin{lemma}[Guarded output is decode--dual--serialize]
+\begin{lemma}[Guarded dual output identity]
 \lean{Complexity.tautDual_output}
 \label{Complexity.tautDual_output}
 \leanok
-\uses{Complexity.tautDualOutput, Complexity.tautDual_serialize, Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep, Complexity.taut_parse_shape, Complexity.taut_syntax_parse, Std.Sat.CNF.decode, Std.Sat.CNF.dual, Std.Sat.CNF.parse, Std.Sat.DNF.serialize}
+\uses{Complexity.tautDualOutput, Complexity.tautDual_serialize, Complexity.tautSyntaxAccept, Complexity.tautSyntaxStep, Complexity.taut_syntax_parse, Std.Sat.CNF.decode, Std.Sat.CNF.dual, Std.Sat.CNF.parse, Std.Sat.CNF.parse_repr, Std.Sat.DNF.serialize}
 \difficulty{4}
-For every binary string $x$, the guarded dual output of $x$ — the polarity-flipping
-scan of $x$ if $x$ passes the formula syntax scan, and the word $0$ otherwise — equals
-the serialization of the De Morgan dual (every literal negated, read as a DNF) of the
-CNF formula decoded from $x$.
+For every binary string $x$, the guarded dual output of $x$ equals the binary encoding
+of the De Morgan dual of the CNF formula decoded from $x$, viewed as a DNF formula.
 \end{lemma}
 
 \begin{definition}[Control states of the dual transducer]
@@ -927,21 +932,24 @@ $o$.
 \leanok
 \uses{Complexity.TautDualControl, Complexity.tautDualAction, Complexity.tautDualCfg, Turing.Action.apply, Turing.Cfg.ext_zero_tapes, Turing.moveInputPos}
 \difficulty{1}
-For every input $x$, applying the zero-work-tape action that moves the input head by
-$d$, enters $q'$, and optionally emits $o$ to the configuration with state $q$, head
-position $p$, and output $w$ yields the configuration with state $q'$, head position
-$p$ moved by $d$ (clamped at the boundary blanks), and output $w$ followed by $o$.
+Let $x$ be a binary string, let $q,q'$ be control states of the dual transducer, let $p$
+be an input-head position, let $w$ be an output word, let $d\in\{-1,0,1\}$, and let $o$
+be an optional output bit. Applying the action that moves the input head by $d$, enters
+$q'$, and emits $o$ to the configuration with state $q$, position $p$, and output $w$
+gives the configuration with state $q'$, head position moved by $d$ with boundary
+clamping, and output $w$ followed by $o$ if present.
 \end{lemma}
 
-\begin{lemma}[Input symbol of a transducer configuration]
+\begin{lemma}[Input symbol at an interior position]
 \lean{Complexity.tautDual_read}
 \label{Complexity.tautDual_read}
 \leanok
 \uses{Complexity.TautDualControl, Complexity.tautDualCfg, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at}
 \difficulty{1}
-Let $x$ be an input and $i \le |x|$. In every configuration of the dual transducer on
-$x$ with input head at position $i + 1$, the symbol read is the $i$-th bit of $x$ when
-$i < |x|$ and the right boundary blank when $i = |x|$.
+Let $x$ be a binary string, let $q$ be a control state of the dual transducer, let
+$i\in\mathbb{N}$ satisfy $i\le |x|$, and let $o$ be an output word. In the configuration
+on input $x$ with state $q$, input head at position $i+1$, and output $o$, the symbol
+read is the $i$th bit of $x$ when $i<|x|$, and no symbol when $i=|x|$.
 \end{lemma}
 
 \begin{definition}[Anchor-free run segment]
@@ -955,78 +963,83 @@ steps from $c$ reaches exactly $d$, and for every $j < t$ the configuration afte
 steps from $c$ is not in the anchor state.
 \end{definition}
 
-\begin{lemma}[Empty segment]
+\begin{lemma}[Empty Anchor-Free Segment]
 \lean{Complexity.tautDual_segment_zero}
 \label{Complexity.tautDual_segment_zero}
 \leanok
 \uses{Complexity.TautDualControl, Complexity.tautDualSegment, Turing.Cfg}
 \difficulty{1}
-For every configuration $c$ of the dual transducer, running it for $0$ steps from $c$
-reaches $c$ without visiting the anchor state strictly before, so $c$ to $c$ is a
-segment of length $0$.
+For every binary input $x$ and every configuration $c$ of the dual transducer on $x$,
+the run from $c$ reaches $c$ after zero steps and has no anchor-state visit at any time
+strictly before then. Thus it is an anchor-free segment of length $0$.
 \end{lemma}
 
-\begin{lemma}[Single-step segment]
+\begin{lemma}[Single-Step Anchor-Free Segment]
 \lean{Complexity.tautDual_segment_one}
 \label{Complexity.tautDual_segment_one}
 \leanok
 \uses{Complexity.TautDualControl, Complexity.tautDualSegment, Complexity.tautDualTM, Turing.Cfg, Turing.MultiTapeTM.step}
 \difficulty{2}
-Let $c$ and $d$ be configurations of the dual transducer such that one step takes $c$
-to $d$ and $c$ is not in the anchor state. Then one step from $c$ reaches $d$ with no
-anchor visit before it, i.e.\ $c$ to $d$ is an anchor-free segment of length $1$.
+Let $x$ be a binary input and let $c,d$ be configurations of the dual transducer on $x$.
+If one step from $c$ reaches $d$ and $c$ is not in the anchor state, then the run from
+$c$ reaches $d$ after one step and does not visit the anchor state at any time strictly
+before then; hence it is an anchor-free segment of length $1$.
 \end{lemma}
 
-\begin{lemma}[Segments compose]
+\begin{lemma}[Composition of anchor-free run segments]
 \lean{Complexity.tautDual_segment_add}
 \label{Complexity.tautDual_segment_add}
 \leanok
 \uses{Complexity.TautDualControl, Complexity.tautDualSegment, Turing.Cfg, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-Let $c, d, e$ be configurations of the dual transducer. If running $a$ steps from $c$
-reaches $d$ without visiting the anchor state before time $a$, and running $b$ steps
-from $d$ reaches $e$ without visiting the anchor before time $b$, then running $a + b$
-steps from $c$ reaches $e$ without visiting the anchor before time $a + b$.
+Let $c,d,e$ be configurations of the dual transducer on a fixed binary input, and let
+$a,b\in\mathbb{N}$. If running the transducer for $a$ steps from $c$ reaches $d$ without
+being in the anchor state at any time before step $a$, and running it for $b$ steps from
+$d$ reaches $e$ without being in the anchor state at any time before step $b$, then
+running it for $a+b$ steps from $c$ reaches $e$ without being in the anchor state at any
+time before step $a+b$.
 \end{lemma}
 
-\begin{lemma}[Silent syntax scan of a suffix]
+\begin{lemma}[Silent scan of a suffix]
 \lean{Complexity.tautDual_scan}
 \label{Complexity.tautDual_scan}
 \leanok
 \uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Let the input be $x = p \mathbin{+\!\!+} r$, let $q$ be a formula-scanner state, and
-let $o$ be an output word. Started in the scanning state carrying $q$ at head position
-$|p| + 1$ with output $o$, the dual transducer reaches the scanning state carrying the
-fold of the scanner transition over $r$ from $q$, at position $|x| + 1$ with output
-still $o$, in exactly $|r|$ steps and without visiting the anchor state before then.
+Let $r,x,\mathrm{pre},o$ be binary strings and let $q$ be a syntax-scanner state, with
+$x=\mathrm{pre}\mathbin{+[0m+}r$. Starting on input $x$ in scanning state $q$ with head
+at position $|\mathrm{pre}|+1$ and output $o$, the dual transducer reaches scanning
+state equal to the scanner transition folded over $r$ from $q$, at position $|x|+1$ with
+output still $o$, after exactly $|r|$ steps. At every earlier time in this segment, its
+state is not the anchor state.
 \end{lemma}
 
-\begin{lemma}[Emitting copy pass over a suffix]
+\begin{lemma}[Copy pass over a suffix]
 \lean{Complexity.tautDual_copy}
 \label{Complexity.tautDual_copy}
 \leanok
 \uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualBit, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautDual_segment_zero, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Let the input be $x = p \mathbin{+\!\!+} r$, let $q$ be a formula-scanner state, and
-let $o$ be an output word. Started in the copying state carrying $q$ at head position
-$|p| + 1$ with output $o$, the dual transducer reaches, in exactly $|r|$ steps and
-without visiting the anchor state before then, the copying state carrying the fold of
-the scanner transition over $r$ from $q$, at position $|x| + 1$, with output $o$
-followed by the polarity-flipping scan of $r$ from $q$.
+Let $r$ be a binary string. For every binary input $x$, prefix $p$, output word $o$, and
+syntax-scanner state $q$ such that $x=p r$, the dual transducer, started in copying
+state $q$ at head position $|p|+1$ with output $o$, reaches after exactly $|r|$ steps
+the copying state carrying the scanner state obtained by processing $r$ from $q$, at
+position $|x|+1$, with output $o$ followed by the polarity-flipping scan of $r$ from
+$q$. No configuration before the final step is in the anchor state.
 \end{lemma}
 
-\begin{lemma}[Silent rewind to the start]
+\begin{lemma}[Silent rewind to the selected state]
 \lean{Complexity.tautDual_rewind}
 \label{Complexity.tautDual_rewind}
 \leanok
 \uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.step, Turing.moveInputPos_neg_of_ne_left, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Let $x$ be an input, $o$ an output word, $f$ a flag, and $p \le |x|$. Started in the
-rewind state with flag $f$ at head position $p$ and output $o$, the dual transducer
-reaches head position $1$ with output $o$, in the anchor state if $f$ is true and in
-the formula-level copying state otherwise, in exactly $p + 1$ steps and without
-visiting the anchor before then.
+Let $x$ and $o$ be binary strings, let $f\in\{\mathrm{false},\mathrm{true}\}$, and let
+$p\in\mathbb{N}$ satisfy $p\le |x|$. Starting from the dual transducer configuration on
+$x$ in rewind state $f$, with input head at position $p$ and output $o$, after $p+1$
+steps it is at position $1$ with output still $o$, in the anchor state if $f$ is true
+and in the formula-level copying state if $f$ is false. At every earlier time in these
+$p+1$ steps, its state is not the anchor state.
 \end{lemma}
 
 \begin{lemma}[End of the copying pass]
@@ -1035,36 +1048,36 @@ visiting the anchor before then.
 \leanok
 \uses{Complexity.TautSyntax, Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_segment_one, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
 \difficulty{3}
-For every input $x$, output word $o$, and formula-scanner state $q$, the configuration
-reached by one step of the dual transducer from the copying state carrying $q$ at the
-right boundary position $|x| + 1$ with output $o$ is the rewind state with flag true
-at position $|x|$ with output still $o$, and the anchor state is not visited.
+For every binary input $x$, output word $o$, and syntax-scanner state $q$, the dual
+transducer run from the copying state carrying $q$ at position $|x|+1$ with output $o$
+reaches after one step the rewind state with its flag true at position $|x|$, still with
+output $o$. The anchor state is not visited during this one-step segment.
 \end{lemma}
 
-\begin{lemma}[Round on a well-formed input]
+\begin{lemma}[Run on a Well-Formed Input]
 \lean{Complexity.tautDual_valid}
 \label{Complexity.tautDual_valid}
 \leanok
 \uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualScan, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_copy, Complexity.tautDual_copy_end, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
 \difficulty{5}
-Let $x$ be a binary string on which the six-state formula syntax scan from formula
-level ends in the exact-end state. Started in the formula-level scanning state at head
-position $1$ with empty output, the dual transducer reaches the anchor state at
-position $1$ with output the polarity-flipping scan of $x$, in exactly $4|x| + 4$ steps
-and without visiting the anchor before then.
+Let $x$ be a binary string whose syntax scan from the formula state ends in the
+exact-end state. Starting in the scanning state with the formula scanner at position $1$
+and empty output, the dual transducer reaches the anchor state at position $1$ with
+output equal to the polarity-flipping scan of $x$, after exactly $4|x|+4$ steps. At
+every time strictly before that, it is not in the anchor state.
 \end{lemma}
 
-\begin{lemma}[Round on a malformed input]
+\begin{lemma}[Return after an invalid scan]
 \lean{Complexity.tautDual_invalid}
 \label{Complexity.tautDual_invalid}
 \leanok
 \uses{Complexity.tautDualAction, Complexity.tautDualCfg, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_action, Complexity.tautDual_read, Complexity.tautDual_rewind, Complexity.tautDual_scan, Complexity.tautDual_segment_add, Complexity.tautDual_segment_one, Complexity.tautSyntaxStep, Turing.Action.apply, Turing.moveInputPos_neg_of_ne_left}
 \difficulty{4}
-Let $x$ be a binary string on which the six-state formula syntax scan from formula
-level does not end in the exact-end state. Started in the formula-level scanning state
-at head position $1$ with empty output, the dual transducer reaches the anchor state
-at position $1$ with output the single bit $0$, in exactly $2|x| + 2$ steps and
-without visiting the anchor before then.
+Let $x$ be a binary string such that scanning it from the formula-level state does not
+end in the exact-end state. Starting the dual transducer in the formula-level scanning
+state at position $1$ with empty output, the run reaches the anchor state at position
+$1$ with output consisting of the single bit $0$, after exactly $2|x|+2$ steps. The
+anchor state is not visited at any earlier time.
 \end{lemma}
 
 \begin{lemma}[One complete transducer round]
@@ -1073,33 +1086,31 @@ without visiting the anchor before then.
 \leanok
 \uses{Complexity.tautDualCfg, Complexity.tautDualOutput, Complexity.tautDualSegment, Complexity.tautDualTM, Complexity.tautDual_invalid, Complexity.tautDual_valid, Complexity.tautSyntaxStep, Turing.Cfg.ext_zero_tapes, Turing.Cfg.ofWords, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.moveInputPos_zero, Turing.stateWord}
 \difficulty{5}
-For every binary string $x$, let $c$ be the dual transducer's configuration on $x$ in
-the anchor state with input head at position $1$ and empty output. There is a time $t$
-with $0 < t \le 4|x| + 5$ such that the configurations at all times $j$ with
-$0 < j < t$ are not in the anchor state, and the configuration at time $t$ equals $c$
-except that its output is the guarded dual output of $x$: the polarity-flipping scan
-of $x$ if $x$ passes the formula syntax scan, and the single bit $0$ otherwise.
+For every binary string $x$, there is a positive integer $t$ with $t\le 4|x|+5$ such
+that, starting from the dual transducer's anchor configuration on $x$ with input head at
+position $1$ and empty output, the configuration after $t$ steps has the same state,
+head position, and tape contents as the starting configuration, and its output is the
+guarded dual output of $x$. At every time $j$ with $0<j<t$, the transducer is not in the
+anchor state.
 \end{lemma}
 
-\begin{lemma}[Decode--dual--serialize is polynomial-time]
+\begin{lemma}[Polynomial-time computability of dualization]
 \lean{Complexity.tautDual_poly}
 \label{Complexity.tautDual_poly}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.tautDualOutput, Complexity.tautDualTM, Complexity.tautDual_output, Complexity.tautDual_round, Std.Sat.CNF.decode, Std.Sat.CNF.dual, Std.Sat.DNF.serialize, Turing.Cfg.ext_zero_tapes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_const, Turing.FinTM.exists_emitLoopTM}
 \difficulty{5}
-The function that maps a binary string $x$ to the serialization of the De Morgan dual
-of the CNF formula decoded from $x$ — the DNF obtained by negating every literal in
-place — is polynomial-time computable.
+The function that maps each binary string $x$ to the encoding of the De Morgan dual, as
+a DNF formula, of the CNF formula decoded from $x$ is computable in polynomial time.
 \end{lemma}
 
-\begin{theorem}[TAUTOLOGY is coNP-complete]
+\begin{theorem}[Tautology is coNP-complete]
 \lean{Complexity.TAUTOLOGY_coNPComplete}
 \label{Complexity.TAUTOLOGY_coNPComplete}
 \leanok
 \uses{Complexity.PolyTimeComputable.comp, Complexity.SAT_NPHard, Complexity.TAUTOLOGY, Complexity.TAUTOLOGY_mem_coNP, Complexity.coNPComplete, Complexity.tautDual_poly, Std.Sat.CNF.Satisfiable, Std.Sat.CNF.decode, Std.Sat.CNF.dual, Std.Sat.CNF.tautology_dual_iff, Std.Sat.DNF.Tautology, Std.Sat.DNF.decode, Std.Sat.DNF.decode_serialize, Std.Sat.DNF.serialize}
 \difficulty{4}
-The language $\mathrm{TAUTOLOGY}$, of binary strings whose decoded DNF formula is true
-under every assignment, is coNP-complete: it belongs to coNP, and
-every language in coNP is polynomial-time Karp reducible to it
-[AB09, Example~2.21].
+The language of bit strings whose decoded DNF formula evaluates to true under every
+Boolean assignment is coNP-complete: it belongs to coNP, and every language in coNP has
+a polynomial-time many-one reduction to it.
 \end{theorem}

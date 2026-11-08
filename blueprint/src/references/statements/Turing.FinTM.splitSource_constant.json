@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitSource_constant",
+ "key": "4aafdb9a95e57f55",
+ "kind": "lemma",
+ "title": "Constant unary output",
+ "statement": "For every natural number $C$ and Boolean word $s$, the machine that emits the fixed prefix of $C$ ones, started on the empty input in its initial state with empty output and its single work tape containing ones at cells $0$ through $|s|$ and blanks elsewhere, reaches after $C+1$ steps a halted configuration whose output is the word of $C$ ones; the work tape and its head position are unchanged.",
+ "hypotheses_covered": [
+  "$C$ is a natural number",
+  "$s$ is a finite Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The fixed-prefix emitter for the word $1^C$, started on the empty virtual\ninput in the bank for candidate $s$ (it has no scratch tapes), halts after\nexactly $C+1$ steps with captured output $1^C$, the final step being the\nblank-reading halt."
+}

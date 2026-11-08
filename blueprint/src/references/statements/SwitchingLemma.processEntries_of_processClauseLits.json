@@ -1,6 +1,6 @@
 {
  "lean_name": "SwitchingLemma.processEntries_of_processClauseLits",
- "key": "feb7e5da76bd92df",
+ "key": "f3098bf20a1035ca",
  "kind": "lemma",
  "title": "Decoder replay of a clause's processed free literals",
  "statement": "Work over $n$ Boolean variables, where a *literal* is a variable together with a negation flag, a *term* is a list of literals (a conjunction), and a *restriction* $\\rho : \\mathrm{Fin}\\,n \\to \\mathrm{Option}\\,\\mathrm{Bool}$ fixes some variables and leaves the rest free. Let $t$ be a term whose length is at most a bound $w$, let $\\mathit{lits}$ be a list of literals each paired with a position index, every such pair occurring among the indexed entries of $t$, and fix a canonical decision-tree path together with restrictions $\\rho_0^{\\mathrm{enc}}, \\sigma^{\\mathrm{enc}}, \\sigma^{\\mathrm{dec}}, \\rho_0^{\\mathrm{dec}}$ and a remainder list. Then, running the decoder's entry-processing routine on the auxiliary data emitted when this clause's free literals are consumed against the path — followed by the termination marker $(w, \\mathrm{false})$ and the remainder — yields the same $\\sigma$- and $\\rho_0$-restrictions as folding the corresponding per-entry updates directly over that auxiliary data, with the remainder left unconsumed.",

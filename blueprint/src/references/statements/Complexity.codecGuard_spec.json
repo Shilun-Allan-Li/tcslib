@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.codecGuard_spec",
+ "key": "2733f8776b659dbd",
+ "kind": "theorem",
+ "title": "Configuration decoded by a guard",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $n,s$ be natural numbers, and let $x$ be a Boolean string of length $n$. Let $c$ be a configuration of $M$ on input $x$ whose work-tape heads lie in the window of radius $s$ and whose work tapes are blank outside that window. For any encoded row $t$, tuple of input and work-tape positions $p$, case $q$ specifying a state and scanned symbols, and bit index $b$, the guard formed by reading the wires selected by $p,q,b$ from the pair consisting of the encoding of $c$ and $t$ holds exactly when $c$ has state $q$'s state, its encoded input-head position is $p$'s input position, each work-tape head is at position $(p_i-s)$, and its scanned input and work-tape symbols are those specified by $q$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$n,s$ are natural numbers",
+  "$x$ has length $n$",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$c$ is in the window of radius $s$",
+  "$t$ is an encoded row",
+  "$p$ is a tuple of input and work-tape positions",
+  "$q$ is a state and scanned-symbol case",
+  "$b$ is a bit index"
+ ],
+ "confidence": "low",
+ "caveat": "The statement concerns a private wire encoding; the prose describes its fields and decoding condition explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

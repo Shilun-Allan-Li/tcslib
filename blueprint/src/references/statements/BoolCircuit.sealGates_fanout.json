@@ -1,0 +1,22 @@
+{
+ "lean_name": "BoolCircuit.sealGates_fanout",
+ "key": "3132d1240373818d",
+ "kind": "theorem",
+ "title": "Fanout bound after sealing gates",
+ "statement": "Fix $n\\in\\mathbb{N}$. Let $gs$ be an acyclic gate list, meaning that every argument index at position $i$ is less than $n+i$, and let $o<n+|gs|$. Let $L$ be a list of distinct indices, each less than $n+|gs|$, with $o\\notin L$. Suppose every index in $L$ has fanout zero in $gs$, the fanout of $o$ in $gs$ is at most one, and every index has fanout at most two in $gs$. Then after sealing the indices in $L$ starting from $(gs,o)$, every index has fanout at most two in the resulting gate list.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A gate list $gs$ acyclic relative to $n$",
+  "An index $o<n+|gs|$",
+  "A list $L$ whose entries are less than $n+|gs|$",
+  "The entries of $L$ are distinct",
+  "$o$ is not in $L$",
+  "Every index in $L$ has fanout zero in $gs$",
+  "The fanout of $o$ in $gs$ is at most one",
+  "Every index has fanout at most two in $gs$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -18,12 +18,14 @@ For integers $n,r\ge0$ and an index $i\in\{0,\ldots,n-1\}$, the hybrid selection
 Let $Z_{L,i},Z_{R,i}\colon\Omega\to\mathbb R$ be two indexed families, $0\le i<n$, and let $r\ge0$ be an integer. The hybrid family $H^{(r)}$ has $H^{(r)}_i=Z_{R,i}$ for $i<r$ and $H^{(r)}_i=Z_{L,i}$ for $i\ge r$.
 \end{definition}
 
-\begin{lemma}[Distinct coordinates remain distinct in hybrids]
+\begin{lemma}[Injectivity of hybrid coordinate selection]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.hybridIndex_injective}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.hybridIndex}
 \difficulty{4}
-For integers $n,r\ge0$, the map sending $i\in\{0,\ldots,n-1\}$ to its right copy when $i<r$ and its left copy otherwise is injective.
+For natural numbers $n$ and $r$, the map from the $n$-coordinate set to the disjoint
+union of two copies of that set, sending $i$ to the right copy when $i<r$ and to the
+left copy otherwise, is injective.
 \end{lemma}
 
 \begin{lemma}[Initial hybrid equals the left family]
@@ -31,36 +33,126 @@ For integers $n,r\ge0$, the map sending $i\in\{0,\ldots,n-1\}$ to its right copy
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.hybridIndex, BooleanAnalysis.GaussianSpace.Invariance.hybridInput}
 \difficulty{3}
-Let $Z_{L,i},Z_{R,i}\colon\Omega\to\mathbb R$ be two families indexed by $0\le i<n$, and define $H^{(r)}_i=Z_{R,i}$ if $i<r$ and $Z_{L,i}$ otherwise. Then $H^{(0)}_i=Z_{L,i}$ for every $i$.
+Let $n$ be a nonnegative integer, let $\Omega$ be a set, and let
+$Z_{L,i},Z_{R,i}:\Omega\to\mathbb R$ be two families indexed by $0\le i<n$. For the
+hybrid family that uses $Z_{R,i}$ when $i<r$ and $Z_{L,i}$ otherwise, its value at $r=0$
+is $Z_{L,i}$ for every coordinate $i$.
 \end{lemma}
 
-\begin{lemma}[Final hybrid equals the right family]
+\begin{lemma}[The final hybrid is the right family]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.hybridInput_all}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.hybridIndex, BooleanAnalysis.GaussianSpace.Invariance.hybridInput}
 \difficulty{3}
-Let $Z_{L,i},Z_{R,i}\colon\Omega\to\mathbb R$ be two families indexed by $0\le i<n$, and define $H^{(r)}_i=Z_{R,i}$ if $i<r$ and $Z_{L,i}$ otherwise. Then $H^{(n)}_i=Z_{R,i}$ for every $i$, including the empty family when $n=0$.
+Let $n$ be a natural number, let $\Omega$ be a type, and let $Z$ assign a real-valued
+function on $\Omega$ to each element of the disjoint union of two copies of the
+$n$-coordinate set. The hybrid family at stage $n$ equals the family whose coordinate
+$i$ is the function assigned by $Z$ to the right copy of $i$.
 \end{lemma}
 
-\begin{lemma}[Consecutive hybrids agree away from the replaced input]
+\begin{lemma}[Consecutive hybrids agree off the changed coordinate]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.hybridInput_succ_off}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.Invariance.hybridIndex, BooleanAnalysis.GaussianSpace.Invariance.hybridInput}
 \difficulty{3}
-Let $Z_{L,j},Z_{R,j}\colon\Omega\to\mathbb R$ be two families indexed by $0\le j<n$, and put $H^{(r)}_j=Z_{R,j}$ if $j<r$ and $Z_{L,j}$ otherwise. If $i,j\in\{0,\ldots,n-1\}$ and $j\ne i$, then $H^{(i)}_j=H^{(i+1)}_j$ as functions on $\Omega$.
+Let $n$ be a natural number, let $\Omega$ be a type, let $Z$ assign a real-valued
+function on $\Omega$ to each element of the disjoint union of two copies of the
+$n$-coordinate set, and let $i,j$ be coordinates with $j\ne i$. The hybrid families at
+stages $i$ and $i+1$ have the same function at coordinate $j$.
 \end{lemma}
 
-\begin{theorem}[Invariance for two mutually independent input copies]
+\begin{theorem}[Fourth-derivative invariance bound]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.invariance_of_independent_pair}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.Invariance.hybridIndex, BooleanAnalysis.GaussianSpace.Invariance.hybridIndex_injective, BooleanAnalysis.GaussianSpace.Invariance.hybridInput, BooleanAnalysis.GaussianSpace.Invariance.hybridInput_all, BooleanAnalysis.GaussianSpace.Invariance.hybridInput_succ_off, BooleanAnalysis.GaussianSpace.Invariance.hybridInput_zero, BooleanAnalysis.GaussianSpace.single_coordinate_replacement_bound, BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_supported, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.influence}
+\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.Invariance.hybridIndex, BooleanAnalysis.GaussianSpace.Invariance.hybridIndex_injective, BooleanAnalysis.GaussianSpace.Invariance.hybridInput, BooleanAnalysis.GaussianSpace.Invariance.hybridInput_succ_off, BooleanAnalysis.GaussianSpace.Invariance.hybrid_expectation_bound, BooleanAnalysis.GaussianSpace.single_coordinate_replacement_bound, BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_supported, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.influence}
+\proofsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p033-b002}
 \difficulty{5}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{i\in S}x_i$ be a real multilinear polynomial of degree at most $k$; let $I_i(F)=\sum_{S\ni i}a_S^2$. Let $(Z_{L,i},Z_{R,i})_{i=1}^n$ be a mutually independent family of $2n$ real inputs on a probability space, each measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. If $\psi\in C^4(\mathbb R)$ and $C\ge0$ bounds $|\psi^{(4)}|$ everywhere, then $|\mathbb E\psi(F(Z_L))-\mathbb E\psi(F(Z_R))|\le(C/12)9^k\sum_i I_i(F)^2$.
+Let $n,k\in\mathbb N$, let $(\Omega,\mu)$ be a probability space, and let $F$ be a
+multilinear coefficient family on $n$ coordinates of degree at most $k$. Suppose the
+$2n$ real random variables $Z_{L,i},Z_{R,i}$ are mutually independent and each satisfies
+the invariance moment conditions: its mean and third moment are zero, its second moment
+is one, and its fourth moment is at most $9$, with finite fourth moment. If $\psi\in
+C^4(\mathbb R)$ and $C\ge0$ bounds $|\psi^{(4)}|$ everywhere, then
+\[
+\left|\mathbb E_\mu\psi(F(Z_L))-\mathbb E_\mu\psi(F(Z_R))\right|\le \frac
+C{12}\,9^k\sum_{i=1}^n \mathrm{Inf}_i[F]^2,
+\]
+where $F(Z)(\omega)=\sum_{S\subseteq[n]}F(S)\prod_{i\in S}Z_i(\omega)$ and
+$\mathrm{Inf}_i[F]$ is the influence of the Walsh-basis function defined by the same
+coefficients.
 \end{theorem}
 
 \begin{theorem}[Joint laws from independent coordinate laws]
 \lean{BooleanAnalysis.GaussianSpace.Invariance.identDistrib_of_independent_coordinates}
 \leanok
 \difficulty{4}
-Let $I$ be a finite index set and let $(X_i)_{i\in I}$ and $(Y_i)_{i\in I}$ be real input families on probability spaces $(\Omega,\mu)$ and $(\Xi,\nu)$, respectively. If each family is independent and $X_i$ and $Y_i$ are measurable up to null sets with the same distribution for every $i$, then the random vectors $(X_i)_{i\in I}$ and $(Y_i)_{i\in I}$ have the same distribution.
+Let $I$ be a finite index set, let $(\Omega,\mu)$ and $(\Xi,\nu)$ be measurable
+probability spaces, and let $X_i:\Omega\to\mathbb R$ and $Y_i:\Xi\to\mathbb R$ be
+coordinate families. If each family is independent and corresponding coordinates have
+the same distribution, then the random vectors $(X_i)_{i\in I}$ and $(Y_i)_{i\in I}$
+have the same distribution.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Hybrid expectation bound]
+\lean{BooleanAnalysis.GaussianSpace.Invariance.hybrid_expectation_bound}
+\label{BooleanAnalysis.GaussianSpace.Invariance.hybrid_expectation_bound}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.Invariance.hybridInput, BooleanAnalysis.GaussianSpace.Invariance.hybridInput_all, BooleanAnalysis.GaussianSpace.Invariance.hybridInput_zero, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\difficulty{4}
+Let $n$ be a nonnegative integer, let $(\Omega,\mu)$ be a measure space, let $F$ be a
+real coefficient family on the subsets of the $n$ coordinates, and let $Z$ be two
+families of real-valued functions on $\Omega$, indexed by those coordinates. Let
+$\psi:\mathbb R\to\mathbb R$ and $B_i\in\mathbb R$ for each coordinate $i$. If, for each
+$i$, the absolute difference between the integrals of $\psi$ applied to the multilinear
+evaluations at hybrids $i$ and $i+1$ is at most $B_i$, then the absolute difference
+between the corresponding integrals for the all-left and all-right families is at most
+$\sum_{i=0}^{n-1}B_i$.
+\end{theorem}
+
+\begin{theorem}[Independent coupling of two input families]
+\lean{BooleanAnalysis.GaussianSpace.Invariance.independent_input_coupling}
+\label{BooleanAnalysis.GaussianSpace.Invariance.independent_input_coupling}
+\leanok
+\difficulty{4}
+Let $\iota$ be a finite index set, and let $(\Omega,\mu)$ and $(\Xi,\nu)$ be probability
+spaces. Suppose $X_i:\Omega\to\mathbb R$ and $Y_i:\Xi\to\mathbb R$ are measurable up to
+null sets for every $i\in\iota$. There exist a probability space carrying a mutually
+independent family $(Z_j)_{j\in\iota\sqcup\iota}$ such that each $Z_{\mathrm{inl}(i)}$
+has the same distribution as $X_i$ under $\mu$, and each $Z_{\mathrm{inr}(i)}$ has the
+same distribution as $Y_i$ under $\nu$.
+\end{theorem}
+
+\begin{theorem}[Identical laws of multilinear evaluations]
+\lean{BooleanAnalysis.GaussianSpace.Invariance.identDistrib_evalMultilinearRV}
+\label{BooleanAnalysis.GaussianSpace.Invariance.identDistrib_evalMultilinearRV}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.Invariance.identDistrib_of_independent_coordinates, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\difficulty{2}
+Let $n$ be a nonnegative integer, let $(\Omega,\mu)$ and $(\Xi,\nu)$ be probability
+spaces, and let $F$ be a real coefficient family on subsets of the $n$ coordinates.
+Suppose the coordinate families $X_i:\Omega\to\mathbb R$ and $Y_i:\Xi\to\mathbb R$ are
+each independent, and that $X_i$ and $Y_i$ have the same distribution for every
+coordinate $i$. Then the multilinear evaluations $\sum_S F(S)\prod_{i\in S}X_i$ and
+$\sum_S F(S)\prod_{i\in S}Y_i$ have the same distribution under $\mu$ and $\nu$,
+respectively.
+\end{theorem}
+
+\begin{theorem}[Independent coupling preserving polynomial distributions]
+\lean{BooleanAnalysis.GaussianSpace.Invariance.independent_polynomial_coupling}
+\label{BooleanAnalysis.GaussianSpace.Invariance.independent_polynomial_coupling}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.Invariance.identDistrib_evalMultilinearRV, BooleanAnalysis.GaussianSpace.Invariance.independent_input_coupling, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\difficulty{4}
+Let $n$ be a natural number and let $F$ assign a real coefficient to every subset of
+$\{0,\ldots,n-1\}$. Let $(\Omega,\mu)$ and $(\Xi,\nu)$ be probability spaces, and let
+$X_i:\Omega\to\mathbb R$ and $Y_i:\Xi\to\mathbb R$ be measurable up to null sets.
+Suppose the family $(X_i)_{i<n}$ is mutually independent under $\mu$, and $(Y_i)_{i<n}$
+is mutually independent under $\nu$. There exist a probability space carrying a mutually
+independent family $(Z_j)_{j\in\mathrm{Fin}(n)\sqcup\mathrm{Fin}(n)}$ whose left and
+right coordinates have the respective distributions of $X_i$ and $Y_i$, and such that
+evaluating $F$ on each coordinate family gives, respectively, the same distributions as
+evaluating it on $X$ under $\mu$ and on $Y$ under $\nu$.
 \end{theorem}

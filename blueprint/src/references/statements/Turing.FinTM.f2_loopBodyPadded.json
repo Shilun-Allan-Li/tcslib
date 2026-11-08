@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopBodyPadded",
+ "key": "1d27de630ad7d3d5",
+ "kind": "def",
+ "title": "Padded loop body configuration",
+ "statement": "For Boolean finite Turing machines $body$ and $F$, a state $anchor$ of $body$, an input word $x$, a configuration $c$ of $body$ on $x$, a Boolean $release$, an optional Boolean $flag$, a Boolean word $word$, and a configuration $fuel$ of $F$ on $x$, the construction that applies the loop-body configuration operation to $c$ and the given control data, then appends the buffer encoding of $word$ and the work tapes of $fuel$, yields a configuration on $x$ with $body.k+1+(1+F.k)$ work tapes and states in $body.State\\times\\{\\mathrm{false},\\mathrm{true}\\}$. The heads on the added tapes are at position zero.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines $body$ and $F$",
+  "state $anchor$ of $body$",
+  "input word $x$",
+  "configuration $c$ of $body$ on $x$",
+  "Boolean $release$",
+  "optional Boolean $flag$",
+  "Boolean word $word$",
+  "configuration $fuel$ of $F$ on $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define the loop-body configuration operation or buffer encoding, so their resulting state and tape contents cannot be specified further.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

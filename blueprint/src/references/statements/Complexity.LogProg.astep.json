@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.astep",
+ "key": "71691764e5805acf",
+ "kind": "def",
+ "title": "Abstract machine step",
+ "statement": "Let $m,d$ be natural numbers, let $\\Lambda$ be a type of states, let $A$ assign an instruction to each state, let an oracle assign a Boolean answer to each of $d$ deciders and each finite bit string, and fix an input bit string $x$. One step leaves a halted configuration unchanged; otherwise it executes the instruction at the current state: increment, truncated-decrement, clear, or halve the selected register and move to the indicated state; branch to one of two states according as a register is zero, odd, or equal to another register; or call the selected oracle on the virtual input determined by the mode, input, and register arguments, then branch according to its answer. A return instruction halts with its specified Boolean result. A plain- or pair-validity instruction continues to its specified state when the input has the corresponding valid encoding, and otherwise halts with result false. The three input-equality instructions branch according as the selected register's binary word equals, respectively, the plain payload, the first decoded pair word, or the second decoded pair word.",
+ "hypotheses_covered": [
+  "$m,d$ are natural numbers",
+  "$\\Lambda$ is a type",
+  "$A$ assigns an instruction to every state",
+  "The oracle maps each of $d$ deciders and each finite bit string to a Boolean",
+  "An input bit string $x$ is fixed"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

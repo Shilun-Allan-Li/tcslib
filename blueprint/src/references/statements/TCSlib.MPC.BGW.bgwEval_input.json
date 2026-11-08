@@ -1,0 +1,21 @@
+{
+ "lean_name": "TCSlib.MPC.BGW.bgwEval_input",
+ "key": "64e9f6c8c03a83d1",
+ "kind": "theorem",
+ "title": "Evaluation of an input wire",
+ "statement": "Let $F$ be a field with decidable equality, let $\\iota$ be an input-index type, let $d\\in\\mathbb N$, let $R$ be a degree-$d$ resharer, and let $A$ be a finite set of parties. For every party-indexed input assignment $\\mathrm{inp}$ and input label $i$, the BGW evaluation of the circuit consisting of the input wire $i$ is exactly the supplied assignment $\\mathrm{inp}(i)$.",
+ "hypotheses_covered": [
+  "F is a field",
+  "F has decidable equality",
+  "ι is an input-index type",
+  "d is a natural number",
+  "R is a degree-d resharer",
+  "A is a finite set of parties",
+  "inp is a party-indexed input assignment",
+  "i is an input label"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a field, let $\\iota$ be a type, let $R$ be a resharer, and let $A$ be a\nfinite set of parties. For any input assignment and input wire $i$, the evaluation of\nthat input circuit is the function assigning each party its input value at $i$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satRed_init",
+ "key": "3046bd5e2515c5ca",
+ "kind": "lemma",
+ "title": "Initial marker installation",
+ "statement": "For every Boolean input word $x$, running the transducer for two steps from its initial configuration on $x$ yields the configuration in state $2$, with the input head at the start of $x$, both work-tape heads at cell $0$, and empty output. The first work tape is blank, and the second is blank except for a false marker at offset $-1$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, the first two steps of the clause-splitting transducer from\nits initial configuration on $x$ are silent and yield the canonical frame in the\nmaximum-pass entry state with input head at $0$, empty counter, the empty marked\nbuffer (blank except for the permanent marker at offset $-1$), both work heads at\n$0$, and empty output."
+}

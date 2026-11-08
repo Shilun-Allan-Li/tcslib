@@ -1,0 +1,29 @@
+{
+ "lean_name": "Turing.guessRunTM_silent_spec",
+ "key": "60f37b9dd3ecf554",
+ "kind": "theorem",
+ "title": "Silent simulation and acceptance specification",
+ "statement": "Let $K,k$ be natural numbers, let $\\iota$ be an injection from the $K$ work-tape indices into the $k$ work-tape indices, and choose a tape index $\\mathrm{cap}$ outside the image of $\\iota$. Let $j_R$ be a work-tape index for a deterministic machine $R$ with $K$ Boolean work tapes, and choose states $\\mathrm{entry},\\mathrm{acc},\\mathrm{rej}$ of $R$. Let $P$ be a deterministic machine with $k$ Boolean work tapes and choose a state $p_{\\mathrm{exit}}$ of $P$. Suppose a tape profile $\\mathrm{blk}:\\mathbb Z\\to\\mathrm{Option}(\\{0,1\\})$ is nonblank exactly at integer positions $p$ satisfying $0\\le p<m$. Assume that after $T_P$ steps on input $z$, $P$ is in state $p_{\\mathrm{exit}}$, its tape contents are blank except for this profile on tape $\\iota(j_R)$, every work-tape head is at the origin, its input head is at position $1$, and its output is empty; also assume it did not visit $p_{\\mathrm{exit}}$ earlier. Suppose that for every Boolean word $s$ of length $m$, the run of $R$ from its initial configuration modified to enter $\\mathrm{entry}$ and place $s$ on tape $j_R$ reaches either $\\mathrm{acc}$ or $\\mathrm{rej}$ within $T$ steps, with neither verdict visited earlier. Then the combined nondeterministic machine halts for every choice-bit word of length $T_P+2m+T+11$. Moreover, for every $B\\ge T_P+2m+T+11$, there exists a length-$B$ choice-bit word that makes this machine halt with output exactly the one-bit word $[\\mathrm{true}]$ if and only if there is a length-$m$ Boolean word $s$ for which $R$ reaches $\\mathrm{acc}$ at some time, having visited neither $\\mathrm{acc}$ nor $\\mathrm{rej}$ at any earlier time.",
+ "hypotheses_covered": [
+  "$K,k$ are natural numbers",
+  "$\\iota:\\mathrm{Fin}(K)\\hookrightarrow\\mathrm{Fin}(k)$ is injective",
+  "$\\mathrm{cap}$ is not in the range of $\\iota$",
+  "$j_R$ is a work-tape index of the $K$-tape machine $R$",
+  "$R$ is a deterministic machine with $K$ Boolean work tapes",
+  "$\\mathrm{entry},\\mathrm{acc},\\mathrm{rej}$ are states of $R$",
+  "$P$ is a deterministic machine with $k$ Boolean work tapes",
+  "$p_{\\mathrm{exit}}$ is a state of $P$",
+  "$z$ is a Boolean input; $T_P,m$ are natural numbers",
+  "$\\mathrm{blk}$ is nonblank exactly on integer positions $0\\le p<m$",
+  "After $T_P$ steps, $P$ has the specified state, input-head position, tape contents, work-head positions, and empty output",
+  "No earlier time $u<T_P$ has state $p_{\\mathrm{exit}}$",
+  "$T$ is a natural number",
+  "For every Boolean word of length $m$, the corresponding $R$ run reaches acceptance or rejection within some time at most $T$",
+  "Before that verdict time, the $R$ run has visited neither verdict state",
+  "$B$ is any natural number at least $T_P+2m+T+11$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

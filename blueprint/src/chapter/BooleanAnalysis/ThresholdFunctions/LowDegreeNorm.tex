@@ -5,20 +5,30 @@ Hypercontractive moment bounds and interpolation compare the first and second mo
 
 \section{Declarations}
 
-\begin{lemma}[Low-degree energy retained by noise]
+\begin{lemma}[Noise lower bound for low-degree energy]
 \lean{BooleanAnalysis.ThresholdFunctions.noise_degree_lower}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.noise_l2_fourier, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp}
 \difficulty{4}
-Let $n\ge0$ and give $\{0,1\}^n$ uniform probability; write $\mathbb E$ for expectation. Put $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ and $\widehat h(S)=\mathbb E[h\chi_S]$ for $S\subseteq[n]$ and real cube functions $h$. Let $P(x)=\sum_{S\subseteq[n]}a_S\chi_S(x)$ with real coefficients; degree at most $k$ means $a_S=0$ for $|S|>k$. If $P$ has degree at most the integer $k\ge0$ and $0\le\rho\le1$, define $T_\rho P=\sum_S\rho^{|S|}a_S\chi_S$. Then $\rho^{2k}\sum_Sa_S^2\le\mathbb E[(T_\rho P)^2]$, with natural powers including $0^0=1$.
+Let $n,k\in\mathbb N$, and let $p$ be a real coefficient family on the subsets of $[n]$
+that vanishes on every subset of size greater than $k$. For $0\le\rho\le1$, the noise
+operator applied to the Boolean-cube function represented by $p$ satisfies
+\[
+\rho^{2k}\sum_{S\subseteq[n]}p(S)^2\le \mathbb E\!\left[(T_\rho P_p)^2\right],
+\]
+where the expectation is uniform on the cube.
 \end{lemma}
 
-\begin{lemma}[Hypercontractive bound for a low-degree moment]
+\begin{lemma}[Low degree moment bound]
 \lean{BooleanAnalysis.ThresholdFunctions.low_degree_moment_bound}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.expect_rpow_abs_nonneg, BooleanAnalysis.Hypercontractivity.expect_sq_noiseOp_nonneg, BooleanAnalysis.Hypercontractivity.general_one_function_hypercontractivity, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.ThresholdFunctions.noise_degree_lower, BooleanAnalysis.expect, BooleanAnalysis.noiseOp}
 \difficulty{5}
-Let $n\ge0$ and give $\{0,1\}^n$ uniform probability; write $\mathbb E$ for expectation. Put $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ and $\widehat h(S)=\mathbb E[h\chi_S]$ for $S\subseteq[n]$ and real cube functions $h$. Let $P(x)=\sum_{S\subseteq[n]}a_S\chi_S(x)$ with real coefficients; degree at most $k$ means $a_S=0$ for $|S|>k$. If $P$ has degree at most the integer $k\ge0$ and $1<t<2$, then $(t-1)^k\sum_Sa_S^2\le(\mathbb E|P|^t)^{2/t}$.
+Let $n,k$ be natural numbers, let $p$ be a coefficient family on subsets of the $n$
+coordinates, and suppose $p(S)=0$ whenever $|S|>k$. For every real $t$ with $1<t<2$,
+writing $P(x)=\sum_{S\subseteq\{0,\ldots,n-1\}}p(S)\chi_S(x)$, one has
+$\displaystyle(t-1)^k\sum_{S\subseteq\{0,\ldots,n-1\}}p(S)^2\leq\left(\mathbb
+E_{x\sim\mathrm{Unif}(\{0,1\}^n)}|P(x)|^t\right)^{2/t}$.
 \end{lemma}
 
 \begin{lemma}[Interpolation between first and second moments]
@@ -26,43 +36,55 @@ Let $n\ge0$ and give $\{0,1\}^n$ uniform probability; write $\mathbb E$ for expe
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect}
 \difficulty{5}
-Let $n\ge0$ and give $\{0,1\}^n$ uniform probability; write $\mathbb E$ for expectation. For every real cube function $f$ and real $1<t<2$, $\mathbb E|f|^t\le(\mathbb E|f|)^{2-t}(\mathbb E[f^2])^{t-1}$.
+Let $n$ be a nonnegative integer, let $f\colon\{0,1\}^n\to\mathbb R$, and let
+$t\in\mathbb R$ satisfy $1<t<2$. With expectation taken under the uniform measure on the
+Boolean cube, $$\E[|f|^t]\leq \E[|f|]^{2-t}\E[f^2]^{t-1}.$$
 \end{lemma}
 
-\begin{lemma}[Natural-power form of the interpolation bound]
+\begin{lemma}[Power form of the interpolation bound]
 \lean{BooleanAnalysis.ThresholdFunctions.interp_pow}
 \leanok
 \difficulty{4}
-Let $m\ge0$ be an integer and let $A,B,M\ge0$. If $M\le A^{1/(m+1)}B^{m/(m+1)}$, then $M^{2(m+1)}\le A^2B^{2m}$, with every zero base to the zero power interpreted as one.
+Let $m\in\mathbb N$ and $A,B,M\in\mathbb R$ be nonnegative. If $M\le
+A^{1/(m+1)}B^{m/(m+1)}$, where these are real powers, then $M^{2(m+1)}\le A^2B^{2m}$.
 \end{lemma}
 
 \begin{lemma}[Natural-power form of a moment comparison]
 \lean{BooleanAnalysis.ThresholdFunctions.hc_pow}
 \leanok
 \difficulty{4}
-Let $m,k\ge0$ be integers and let $B,M,D\ge0$. If $D^kB\le M^{2(m+1)/(2m+1)}$, then $(D^kB)^{2m+1}\le M^{2(m+1)}$, using natural powers and $0^0=1$.
+Let $m,k$ be natural numbers and let $B,M,D$ be nonnegative real numbers. If $D^kB\leq
+M^{2(m+1)/(2m+1)}$, then $(D^kB)^{2m+1}\leq M^{2(m+1)}$.
 \end{lemma}
 
-\begin{lemma}[An algebraic second-moment comparison]
+\begin{lemma}[Algebraic cancellation inequality]
 \lean{BooleanAnalysis.ThresholdFunctions.abstract_cancel}
 \leanok
 \difficulty{5}
-Let $m,k\ge0$ be integers and $A,B,M,C,D$ be real numbers with $B>0$, $C\ge1$, and $CD=1$. If $(D^kB)^{2m+1}\le M^{2(m+1)}$ and $M^{2(m+1)}\le A^2B^{2m}$, then $B\le(C^{m+1})^{2k}A^2$.
+Let $m,k$ be nonnegative integers and $A,B,M,C,D$ be real numbers. Suppose $B>0$, $C\ge
+1$, $CD=1$, $(D^kB)^{2m+1}\le M^{2(m+1)}$, and $M^{2(m+1)}\le A^2B^{2m}$. Then $B\le
+(C^{m+1})^{2k}A^2$.
 \end{lemma}
 
-\begin{lemma}[Finite exponential degree factor]
+\begin{lemma}[Finite exponential degree bound]
 \lean{BooleanAnalysis.ThresholdFunctions.finite_algebra}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.abstract_cancel, BooleanAnalysis.ThresholdFunctions.hc_pow, BooleanAnalysis.ThresholdFunctions.interp_pow}
 \difficulty{4}
-Let $m\ge1$ and $k\ge0$ be integers, let $A,M\ge0$ and $B>0$, and put $t=(2m+1)/(m+1)$. If $(t-1)^kB\le M^{2/t}$ and $M\le A^{2-t}B^{t-1}$, then $B\le((1+1/m)^{m+1})^{2k}A^2$.
+Let $m,k$ be nonnegative integers with $m\ge1$, and let $A,M\in\mathbb R$ be nonnegative
+and $B\in\mathbb R$ be positive. Set $t=(2m+1)/(m+1)$. If $(t-1)^kB\le M^{2/t}$ and
+$M\le A^{2-t}B^{t-1}$, then
+\[
+B\le\left((1+1/m)^{m+1}\right)^{2k}A^2.
+\]
 \end{lemma}
 
 \begin{theorem}[Limit of the finite degree factors]
 \lean{BooleanAnalysis.ThresholdFunctions.degree_norm_limit}
 \leanok
 \difficulty{4}
-For every integer $k\ge0$, the sequence $((1+1/m)^{m+1})^{2k}$ converges to $e^{2k}$ as the positive integer $m\to\infty$.
+For every natural number $k$, the sequence $\bigl((1+1/m)^{m+1}\bigr)^{2k}$, indexed by
+natural numbers $m$, converges to $e^{2k}$ as $m$ tends to infinity.
 \end{theorem}
 
 \begin{theorem}[Endpoint of a family of norm comparisons]
@@ -70,13 +92,835 @@ For every integer $k\ge0$, the sequence $((1+1/m)^{m+1})^{2k}$ converges to $e^{
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.degree_norm_limit}
 \difficulty{1}
-Let $k\ge0$ be an integer and $A,B\in\mathbb R$. If $B\le((1+1/m)^{m+1})^{2k}A^2$ for every integer $m\ge2$, then $B\le e^{2k}A^2$.
+Let $k$ be a nonnegative integer and let $A,B\in\mathbb R$. Suppose that for every
+integer $m\ge2$, $B\le\bigl((1+1/m)^{m+1}\bigr)^{2k}A^2$. Then $B\le e^{2k}A^2$.
 \end{theorem}
 
-\begin{theorem}[Sharp exponential first-to-second moment bound]
+\begin{theorem}[First and second moment bound for low degree]
 \lean{BooleanAnalysis.ThresholdFunctions.low_degree_l1_l2_sq}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.expect_rpow_abs_nonneg, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.expect_eval_sq, BooleanAnalysis.ThresholdFunctions.degree_norm_endpoint, BooleanAnalysis.ThresholdFunctions.expect_nonneg, BooleanAnalysis.ThresholdFunctions.finite_algebra, BooleanAnalysis.ThresholdFunctions.low_degree_moment_bound, BooleanAnalysis.ThresholdFunctions.moment_interpolation, BooleanAnalysis.expect}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p116-b004,
+  pdf-ffbe9c7b3306-p116-b005,
+  pdf-ffbe9c7b3306-p262-b006
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p026-b001,
+    pdf-ffbe9c7b3306-p026-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b002,
+    pdf-ffbe9c7b3306-p055-b003}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p055-b004}
+\proofstep
+  {BooleanAnalysis.noiseOp_self_adjoint}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b001,
+    pdf-ffbe9c7b3306-p026-b001}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p028-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004,
+    pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b004,
+    pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.innerProduct_eval_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.expect_eval_sq}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sum_boolCube_succ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformWeight_succ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noise_l2_fourier}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.contractivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_sq_noiseOp_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_rpow_abs_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseOp_compose}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p063-b011}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.boolCube1_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finsetFin1_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.boolCube1_ne}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finsetFin1_ne}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.one_bit_val_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.one_bit_val_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_noiseOp_sq_one_bit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_abs_rpow_one_bit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq_unit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.one_bit_p2_hypercontractivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.cauchy_schwarz_bool}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.holder_sharpness}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseKernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseKernel_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sum_fourier_kernel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p023-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseOp_eq_kernel_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b002,
+    pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.innerProduct_noiseOp_eq_weighted_sum}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p015-b010,
+    pdf-ffbe9c7b3306-p055-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseKernel_snoc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_succ_eq_iterated}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.norm_collapse_rpow}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.weighted_sum_succ_decomp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.one_bit_slice_eq_innerProduct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p258-b002,
+    pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.norm_collapse_clean}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.holder_ineq_bool}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_func_hyp_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p055-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_func_hyp_succ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.hypercontractivity_induction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.weak_two_function_hypercontractivity_one_bit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.one_function_iff_two_function_hypercontractivity}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p259-b003,
+    pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.weak_two_function_hypercontractivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p260-b005,
+    pdf-ffbe9c7b3306-p261-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseKernel_sum_right}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003,
+    pdf-ffbe9c7b3306-p055-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseKernel_sum_left}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003,
+    pdf-ffbe9c7b3306-p055-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseOp_abs_rpow_le_kernel_avg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b003,
+    pdf-ffbe9c7b3306-p055-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.trivial_contractivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p063-b012}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noise_op_norm_dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p259-b003}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.Interpolation.sqrt_div_le_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noise_param_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.bridging_hypercontractivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rpow_sum_antitone_exponent}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.h_alpha_ineq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.integrated_h_alpha_ineq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rpow_ge_one_add_mul_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.two_point_ineq_general_unit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p260-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.low_norms_one_bit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.low_norms_hypercontractivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.high_norms_hypercontractivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.general_one_function_hypercontractivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noise_degree_lower}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003,
+    pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.low_degree_moment_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002,
+    pdf-ffbe9c7b3306-p247-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.moment_interpolation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.interp_pow}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hc_pow}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abstract_cancel}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.finite_algebra}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.degree_norm_limit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.degree_norm_endpoint}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p247-b002}
 \difficulty{5}
-Let $n\ge0$ and give $\{0,1\}^n$ uniform probability; write $\mathbb E$ for expectation. Put $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ and $\widehat h(S)=\mathbb E[h\chi_S]$ for $S\subseteq[n]$ and real cube functions $h$. Let $P(x)=\sum_{S\subseteq[n]}a_S\chi_S(x)$ with real coefficients; degree at most $k$ means $a_S=0$ for $|S|>k$. If $P$ has degree at most the integer $k\ge0$, then $e^{-2k}\sum_{S\subseteq[n]}a_S^2\le(\mathbb E|P|)^2$.
+Let $n,k$ be natural numbers, and let $p$ be a coefficient family on the subsets of the
+$n$ coordinates, with $p(S)=0$ whenever $|S|>k$. If
+$P(x)=\sum_{S\subseteq\{0,\ldots,n-1\}}p(S)\chi_S(x)$, where $\chi_S$ is the Walsh
+character, then $\displaystyle
+e^{-2k}\sum_{S\subseteq\{0,\ldots,n-1\}}p(S)^2\leq\left(\mathbb
+E_{x\sim\mathrm{Unif}(\{0,1\}^n)}|P(x)|\right)^2$.
 \end{theorem}

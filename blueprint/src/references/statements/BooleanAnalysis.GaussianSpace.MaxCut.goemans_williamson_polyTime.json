@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.MaxCut.goemans_williamson_polyTime",
+ "key": "ab9870f23df658f6",
+ "kind": "theorem",
+ "title": "Polynomial-time approximation for Max-Cut",
+ "statement": "For every real $\\\\eta>0$, there is a polynomial-time computable map $A$ from bit strings to bit strings and there are natural numbers $C,k$ with the following property. Whenever a bit string parses as a nonempty list $E$ of ordered pairs of natural numbers, encode each pair in $E$ as an edge of a weighted graph, giving each ordered pair $(u,v)$ weight equal to the total number of occurrences of $(u,v)$ and $(v,u)$ in $E$, divided by twice the length of $E$. The expected cut value of this graph, using the Boolean assignment whose value at vertex $v$ is the $v$th output bit of $A$ on the encoding of the input bit string paired with a uniformly random bit string of length $C(\\\\lvert\\\\text{bits}\\\\rvert+1)^k$ (and using false when that output has no $v$th bit), is at least the Goemans–Williamson constant times the graph’s maximum cut value minus $\\\\eta$.",
+ "hypotheses_covered": [
+  "$\\\\eta$ is a positive real number",
+  "The bit string parses to the specified edge list",
+  "The edge list is nonempty",
+  "The random bit string has length $C(\\\\lvert\\\\text{bits}\\\\rvert+1)^k$ and is sampled uniformly"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

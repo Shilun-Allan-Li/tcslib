@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emCall_clear_origin",
+ "key": "52a65f2d7570f112",
+ "kind": "lemma",
+ "title": "Final rewind to the origin",
+ "statement": "Let $w$ be a Boolean word, let $p$ be an input-head position for $w$, and let $n$ be a nonnegative integer. Start the cleaner in state $2$ with its data and interval-marker tapes blank, its origin marker at cell $0$, and all heads at $n$. After exactly $n+1$ steps, it is in state $3$ with all three tapes blank and all heads at the origin.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$p$ is an input-head position for $w$",
+  "$n$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every natural number $n$, running the interval cleaner for exactly $n + 1$ steps\nfrom its rewind state with blank data and marker tapes and all heads at $n$ reaches the\nsilent return state with all three tapes blank and all heads at the origin, the origin\nmarker being erased by the final transition."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_reject",
+ "key": "9d1a8b21118528c1",
+ "kind": "lemma",
+ "title": "Rejecting or debiting a word",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, choose a mode bit, an input word $x$, a configuration $c$ of $B$ on $x$, a word $w$, and a configuration of $F$ on $x$. Assume $c$ is halted and has empty output. For some $t\\leq 2|w|+4$, if the debit operation on $w$ succeeds, the loop host run from the call configuration with $c$, flag false, and payload $w$ reaches the call configuration with $c$ restored to state $a$, release enabled, flag blank, and the debited word as payload, with the fuel configuration unchanged. If the debit operation does not succeed, the host instead halts and its output is empty in find mode and the one-bit word $[\\mathrm{false}]$ otherwise.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines B and F",
+  "anchor state a of B",
+  "mode bit",
+  "input word x",
+  "configuration c of B on x is halted",
+  "c has empty output",
+  "word w",
+  "configuration of F on x",
+  "existence of t ≤ 2|w|+4"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

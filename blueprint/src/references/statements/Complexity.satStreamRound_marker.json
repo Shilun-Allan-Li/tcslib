@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satStreamRound_marker",
+ "key": "eaa5426fd71a42e8",
+ "kind": "lemma",
+ "title": "Round at a Clause Marker",
+ "statement": "Let $x,p,r$ be bit strings and $j$ a natural number. If $x$ is the concatenation of $p$, the bit $1$, and $r$, then one round from the state with fresh cursor $j$, consumed length $|p|$, and formula phase emits $[1]$ and moves to consumed length $|p|+1$, leaving the cursor unchanged and entering phase $1$.",
+ "hypotheses_covered": [
+  "$x,p,r$ are bit strings",
+  "$j$ is a natural number",
+  "$x=p$ followed by $1$ and then $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input be $p \\mathbin{+\\!\\!+} 1 :: r$ and the seam state have consumed\n$|p|$ bits in the formula phase. The round emits $[1]$, consumes one bit, and\nmoves to the first-literal phase."
+}

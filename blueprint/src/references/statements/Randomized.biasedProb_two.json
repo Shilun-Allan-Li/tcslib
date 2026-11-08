@@ -1,0 +1,16 @@
+{
+ "lean_name": "Randomized.biasedProb_two",
+ "key": "0a5ce5d5e951a5aa",
+ "kind": "theorem",
+ "title": "Two-step biased probability expansion",
+ "statement": "For a real bias parameter $\\rho$, let $P_m(A)$ be the recursively defined biased probability of a predicate $A$ on finite Boolean words: the empty word has probability $1$ or $0$ according as it satisfies $A$ or not, and for positive length the first bit is true with weight $\\rho$ and false with weight $1-\\rho$. For every natural number $K$ and every such predicate $A$, the probability on words of length $2(K+1)$ is the sum over the four possible first two bits, with their respective weights: $P_{2(K+1)}(A)=\\rho\\bigl(\\rho P_{2K}(A_{11})+(1-\\rho)P_{2K}(A_{10})\\bigr)+(1-\\rho)\\bigl(\\rho P_{2K}(A_{01})+(1-\\rho)P_{2K}(A_{00})\\bigr)$, where $A_{bc}(w)$ means that $A$ holds of the word obtained by prefixing $b,c$ to $w$.",
+ "hypotheses_covered": [
+  "$K$ is a natural number",
+  "$A$ is a predicate on finite Boolean words",
+  "$\\rho$ is a real parameter"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

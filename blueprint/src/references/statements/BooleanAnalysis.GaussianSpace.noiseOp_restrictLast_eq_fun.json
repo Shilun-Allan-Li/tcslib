@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq_fun",
+ "key": "be0195a90ebb18bc",
+ "kind": "lemma",
+ "title": "Function identity for noised coordinate restrictions",
+ "statement": "Let $n$ be a natural number, $f\\colon\\{0,1\\}^{n+1}\\to\\mathbb{R}$, $\\rho\\in\\mathbb{R}$, and $b\\in\\{0,1\\}$. Write $f_b(x)=f(x,b)$, $a_f(x)=\\tfrac12(f(x,0)+f(x,1))$, $d_f(x)=\\tfrac12(f(x,0)-f(x,1))$, and let $\\sigma(0)=1$, $\\sigma(1)=-1$. As functions on $\\{0,1\\}^n$, $T_\\rho f_b=T_\\rho a_f+\\sigma(b)T_\\rho d_f$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$\\rho\\in\\mathbb{R}$",
+  "$f\\colon\\{0,1\\}^{n+1}\\to\\mathbb{R}$",
+  "$b\\in\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T_\\rho$ denote Boolean noise with real correlation $\\rho$, whose Fourier multiplier on a set of size $k$ is $\\rho^k$. For $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. For either bit $b$, $T_\\rho f_b=T_\\rho a_f+s_bT_\\rho d_f$ as functions on $\\{0,1\\}^n$."
+}

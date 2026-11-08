@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.UTab.goes_decR",
+ "key": "e96042f9d3c685bd",
+ "kind": "theorem",
+ "title": "One-step register decrement",
+ "statement": "Let $P$ be a counter program with 11 registers, let $x$ be a binary input, and let $\rho$ be the register assignment encoded by an environment $e$. If the instruction at label $\u001b$ decrements register $r$ and jumps to label $\u001b'$, then for every current output string $o$, there is a run of at most one step from label $\u001b$ with registers $\rho$ and input position $p$ to label $\u001b'$, with register assignment obtained by reducing register $r$ by one (leaving it at zero if it was zero), input position still $p$, and output still $o$.",
+ "hypotheses_covered": [
+  "The program has 11 registers",
+  "The input is a binary list",
+  "The starting label is $\u001b$ and the destination label is $\u001b'$",
+  "The register assignment is the one encoded by $e$",
+  "The starting input position is $p$",
+  "The instruction at $\u001b$ decrements register $r$ and jumps to $\u001b'$",
+  "The run is bounded by one step and applies for every starting output string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

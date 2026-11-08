@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.read_b",
+ "key": "b8ae0b1f40bf58bf",
+ "kind": "lemma",
+ "title": "Prepending a successful bit read",
+ "statement": "Let $x$ be a finite bit string, let $B$ be a natural number, let $l,l_1,l_0$ be program labels, let $st$ be a seven-register state, let $c$ be an abstract configuration, and let $b$ be a Boolean. Suppose the instruction at $l$ calls the first oracle in whole-input mode with the input-pointer register as its sole argument, every register of $st$ is at most $B$, and the bit of $x$ at position $st.P$ (taken to be false beyond the end of $x$) equals $b$. If there is a bounded, precondition-preserving run from label $l_1$ when $b$ is true, or from label $l_0$ when $b$ is false, with registers initialized from $st$, to $c$, then there is such a run from label $l$ with those same initial registers to $c$.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$B$ is a natural number",
+  "$l,l_1,l_0$ are program labels",
+  "$st$ is a seven-register state",
+  "$c$ is an abstract configuration",
+  "$b$ is a Boolean",
+  "the instruction at $l$ calls oracle $0$ in whole-input mode with sole argument $r_P$ and branches to $l_1$ on true and $l_0$ on false",
+  "every register of $st$ is at most $B$",
+  "the bit of $x$ at index $st.P$, defaulting to false when out of range, equals $b$",
+  "a bounded, precondition-preserving run from the branch label selected by $b$, with registers initialized from $st$, reaches $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $l,l_1,l_0$ program states, $st$ a\nseven-register state, and $c$ a machine configuration. Suppose the instruction at $l$\ncalls the first oracle in whole-input mode with the input-pointer register as its sole\nargument, every register of $st$ is at most $B$, and the bit of $x$ at position $st.P$\n(taken to be false when that position is beyond the end of $x$) equals $b$. If a\nbounded, precondition-preserving run reaches $c$ from the state $l_1$ when $b$ is true\nand from $l_0$ when $b$ is false, with the registers initialized from $st$, then such a\nrun also reaches $c$ from state $l$ with those same initial registers."
+}

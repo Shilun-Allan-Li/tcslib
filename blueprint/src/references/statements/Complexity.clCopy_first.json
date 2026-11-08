@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clCopy_first",
+ "key": "29c76a303f378a92",
+ "kind": "lemma",
+ "title": "First Positive Copier Completion",
+ "statement": "For every Boolean input word $x$, every valid input-head position $p$, source word $w$, and record $r$, there exists a natural number $t$ with $0<t\\le 3|w|+3$ such that, for every natural number $j<t$, the copier is not in its completed control after $j$ steps from the specified initial configuration. After $t$ steps it is in the completed control, with source word $w$, record $r$ extended by the self-delimiting encoding of $w$, source head at zero, record head at the new record length, input-head position $p$, and empty output.",
+ "hypotheses_covered": [
+  "Boolean input word",
+  "valid input-head position",
+  "source word",
+  "record"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, source word $w$, and record, there is a time $t$ with $0 < t \\le 3|w| + 3$ such that the copier is never in the completed control before $t$, and at $t$ it holds the record extended by the self-delimiting encoding of $w$, with the source untouched and both heads as specified; a host can therefore dispatch on completion without knowing the field length."
+}

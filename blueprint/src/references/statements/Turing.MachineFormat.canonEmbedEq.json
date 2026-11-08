@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.MachineFormat.canonEmbedEq",
+ "key": "6b6ea05dfa61ea65",
+ "kind": "lemma",
+ "title": "Embedded Configuration Equality",
+ "statement": "Let $m,k$ be natural numbers, let $S$ be a type, and let $x$ be a Boolean word. Let $M$ be an $m$-work-tape Turing machine, let $\\iota$ inject the $m$ work-tape indices into the $k$ indices, and let $c,d$ be configurations on input $x$ with respectively $m$ and $k$ work tapes. Suppose their states, input-head positions, and outputs agree; for each $i<m$, the contents and head position of tape $i$ in $c$ agree with those of tape $\\iota(i)$ in $d$; and outside the image of $\\iota$, the supplied tape contents and head positions agree with those in $d$. Then embedding $c$ into the $k$-tape configuration with the supplied contents and head positions, and with empty prefix output, gives exactly $d$.",
+ "hypotheses_covered": [
+  "Natural numbers $m,k$",
+  "A type $S$ and Boolean input word $x$",
+  "An $m$-work-tape machine $M$ over Boolean symbols and states $S$",
+  "An embedding $\\iota$ of the $m$ tape indices into the $k$ tape indices",
+  "Configurations $c$ and $d$ on input $x$, with $m$ and $k$ work tapes respectively",
+  "Equality of the states, input-head positions, and outputs of $c$ and $d",
+  "Agreement of selected tape contents and head positions",
+  "Agreement of supplied and target tape contents and head positions outside the image of $\\iota$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

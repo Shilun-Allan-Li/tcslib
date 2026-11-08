@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.MachineFormat.canonExitDispatch",
+ "key": "b2a1b912c5061681",
+ "kind": "lemma",
+ "title": "Dispatching an Exit State",
+ "statement": "Let $k>0$, let $S$ be a finite type with decidable equality, and let $M$ be a $k$-work-tape Turing machine over Boolean symbols and states $S$. Choose a starting state $s$, and an injective map $e$ from optional Boolean values to $S$. Then there are a finite state type $R$ with decidable equality, a $k$-work-tape machine $N$ over Boolean symbols and states $R$, an entry state in $R$, and an injective map $\\ell$ from bits to $R$ with the following property. For any Boolean input $x$, time $t$, and optional bit $v$, suppose the run of $M$ from the configuration with state $s$ and empty work tapes reaches state $e(v)$ at time $t$, and does not reach any state $e(q)$ at any earlier time. Then the run of $N$ from its entry state with empty work tapes, on input $x$, reaches at time $t+1$ the configuration obtained from that run of $M$ by replacing its state with $\\ell(1)$ when $v$ is the present bit $1$, and with $\\ell(0)$ otherwise. Moreover, before or at time $t+1$, the run of $N$ never reaches any state in the image of $\\ell$.",
+ "hypotheses_covered": [
+  "A positive number $k$ of work tapes",
+  "A finite state type $S$ with decidable equality",
+  "A $k$-work-tape machine $M$ over Boolean symbols and states $S$",
+  "A starting state $s\\in S$",
+  "An injective map $e$ from optional Boolean values to $S$",
+  "A Boolean input $x$, time $t$, and optional bit $v$",
+  "The run of $M$ reaches $e(v)$ at time $t$",
+  "At every earlier time, the run of $M$ avoids every state in the image of $e$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clMatch_return",
+ "key": "59377878f7d5dcef",
+ "kind": "lemma",
+ "title": "Completed Matcher Control Is Stationary",
+ "statement": "For every $l\\in\\mathbb{N}$, every $pos,neg\\in\\text{Fin}(l)$, every input symbol (possibly blank), and every assignment of scanned symbols or blanks to the matcher’s work tapes, the transition from its completed control is the action that makes no movement, writes nothing, emits nothing, and returns to that same completed control.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb{N}$",
+  "$pos,neg\\in\\text{Fin}(l)$",
+  "arbitrary optional Boolean input symbol",
+  "arbitrary scanned work-tape symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On every input symbol and work reads, the matcher's transition at its completed control is the stationary control action returning to the same control."
+}

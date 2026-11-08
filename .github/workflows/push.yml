@@ -89,6 +89,8 @@ jobs:
             # plasTeX silently skips plugins that fail to import, which deploys a
             # degraded site (raw \lean/\uses text, no dep graph). Fail loudly instead.
             python3 -c "import leanblueprint, plastexdepgraph, plastexshowmore" || { echo "::error::blueprint plugins failed to import - the web build would silently fall back to the base plasTeX theme"; exit 1; }
+            # External-project metadata is for the dataset, not our published blueprint.
+            python3 scripts/blueprint_assemble.py --check
             inv all
             test -f docs/blueprint/dep_graph_document.html || { echo "::error::dep_graph_document.html missing - the leanblueprint plugin was not active during the web build"; exit 1; }
 
@@ -115,7 +117,8 @@ jobs:
           cd webpage
           ~/.elan/bin/lake exe generate-site
           mkdir -p _site/theorems
-          cp ../dataset/tcslib_theorems.jsonl.gz _site/theorems/
+          cp ../dataset/tcslib_theorems.manifest.json _site/theorems/
+          cp -r ../dataset/shards _site/theorems/
           test -f _site/theorems/index.html || { echo "::error::theorems viewer missing from generated site"; exit 1; }
           # The dataset page carries %%tokens%% for its numbers; fill them from the
           # dataset file deployed alongside it (fails if any token has no value).

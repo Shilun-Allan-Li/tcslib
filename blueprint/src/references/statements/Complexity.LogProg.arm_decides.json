@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.arm_decides",
+ "key": "49ef4683371d6250",
+ "kind": "theorem",
+ "title": "Logspace decidability by an oracle register program",
+ "statement": "Let $L$ be a language of bit strings, let $A$ be a register program with $m$ registers and finitely many states, and let $\\ell_0$ be its initial state. Suppose there are $d$ oracle languages $A_0,\\ldots,A_{d-1}$, each decidable in logarithmic space, and a natural number $K$, such that for every input $x$, the run starting at $\\ell_0$ with all registers zero halts with the correct membership answer for $L$. At every configuration before halting, the program's side conditions hold and, for each register $r$, the binary representation of its value plus one has length at most $K(\\lfloor\\log_2 |x|\\rfloor+1)$. Then $L$ is decidable in logarithmic space.",
+ "hypotheses_covered": [
+  "L is a language of bit strings",
+  "A has m registers and a finite state set Λ",
+  "The initial state ℓ₀",
+  "There are d oracle languages indexed by Fin d",
+  "Every oracle language belongs to LOGSPACE",
+  "K is a natural number",
+  "For every input x, the run halts with the membership indicator for L(x)",
+  "Every configuration before halting satisfies PreS",
+  "For each register, the binary length of its value plus one is at most K times logSpace of the input length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

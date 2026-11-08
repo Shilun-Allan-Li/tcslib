@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_lift_call",
+ "key": "112855917ef32113",
+ "kind": "lemma",
+ "title": "Lifting a computation to a larger tape bank",
+ "statement": "Let $M$ and $B$ be finite Boolean-alphabet Turing machines with $M$ using a positive number of work tapes and no more work tapes than $B$. Let $e$ map the states of $M$ to states of $B$, and suppose that for every source state and every input/work-tape scan, $B$'s transition at the embedded state is the padded action of $M$'s transition, reading $M$'s work tapes from the corresponding initial block. If $M$, started in state $q$ on input $x$ with word $s$ on its first work tape and all remaining tapes blank, is halted at time $T$ with output $y$, then $B$, started in state $e(q)$ on input $x$ with the same initial tape contents, is halted at time $T$ with output $y$.",
+ "hypotheses_covered": [
+  "Finite Boolean-alphabet machines $M,B$",
+  "$0<M.k$",
+  "$M.k\\le B.k$",
+  "A state map $e:M.State\\to B.State$",
+  "For all source states, input symbols, and host work-symbol assignments, the host transition is the padded source transition read from its first $M.k$ tapes",
+  "Source state $q$, Boolean words $x,s,y$, and time $T$",
+  "Source run from the seam carrying $s$ on input $x$ is halted at $T$ with output $y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a host machine simulates a source machine with at least one work tape by\npadded transitions on an initial tape block. If the source, started in state $q$\nat the seam carrying $s$, is halted at time $T$ with output $y$, then the host,\nstarted in the embedded state at its own seam carrying $s$, is halted at time\n$T$ with the same output $y$."
+}

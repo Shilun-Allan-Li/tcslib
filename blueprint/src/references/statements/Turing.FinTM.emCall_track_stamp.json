@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emCall_track_stamp",
+ "key": "3f94290b5937c77f",
+ "kind": "lemma",
+ "title": "Stamping extends the visited span",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $c$ be a configuration of $M$ on a Boolean input, and let $\\ell_i,h_i\\in\\mathbb{Z}$ be bounds for each work tape $i$. Suppose $\\ell_i\\le h_i$ and $\\ell_i-1\\le p_i\\le h_i+1$, where $p_i$ is the head position on tape $i$. One step of the tracked machine from the intermediate stamping configuration equals the completed tracked configuration of $c$, with each span extended to include $p_i$ by replacing its bounds with $\\min(\\ell_i,p_i)$ and $\\max(h_i,p_i)$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$c$ is a configuration of $M$ on a Boolean input",
+  "For every tape $i$, $\\ell_i\\le h_i$",
+  "For every tape $i$, $\\ell_i-1\\le p_i\\le h_i+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration with visited bounds $\\ell_i \\le h_i$ such that each\nhead of $c$ lies within one cell of its span. One step of the tracked evaluator from the\nintermediate stamp configuration of $c$ equals the completed tracked configuration of\n$c$ with each span extended to include the current head, after which the stored\nsuccessor control (possibly a halt) is dispatched."
+}

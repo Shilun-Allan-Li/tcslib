@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumLoop_run",
+ "key": "599441578a5024c3",
+ "kind": "lemma",
+ "title": "Timed loop invariant for candidate rounds",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $x$ be a Boolean input, and let $\\mathrm{cfg}$ assign a configuration of $M$ on $x$ to each natural-number rank. Let $\\mathrm{accept}$ be a Boolean-valued function on ranks, and let $B,i,\\mathrm{count}$ be natural numbers. Suppose the configuration at rank $i+\\mathrm{count}$ is halted with output the one-symbol word $[\\mathrm{false}]$. Suppose also that for every $j$ with $i\\le j<i+\\mathrm{count}$ there is a time $t\\le B$ such that, if $\\mathrm{accept}(j)$ is true, the machine from $\\mathrm{cfg}(j)$ is halted after $t$ steps with output $[\\mathrm{true}]$, and otherwise it reaches $\\mathrm{cfg}(j+1)$ after $t$ steps. Then there is a time $t\\le \\mathrm{count}\\,B$ at which the machine from $\\mathrm{cfg}(i)$ is halted with output the one-symbol word containing the Boolean that is true exactly when at least one of the $\\mathrm{count}$ ranks starting at $i$ is accepted.",
+ "hypotheses_covered": [
+  "A finite Boolean Turing machine $M$",
+  "A Boolean input $x$",
+  "A rank-indexed family of configurations of $M$ on $x$",
+  "A Boolean-valued acceptance function",
+  "Natural numbers $B,i,\\mathrm{count}$",
+  "The endpoint configuration is halted with output $[\\mathrm{false}]$",
+  "Each rank in the specified interval satisfies the bounded accept-or-advance condition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite multi-tape Turing machine over the binary alphabet, $x$ an\ninput, and let $\\mathrm{cfg}$ assign to each rank a configuration of $M$ on $x$.\nSuppose the configuration at rank $i + \\mathrm{count}$ is halted with single-bit\noutput false, and that for each rank $j$ with $i \\le j < i + \\mathrm{count}$ the\nmachine, within $B$ steps from $\\mathrm{cfg}(j)$, either halts with single-bit\noutput true (when rank $j$ accepts) or reaches $\\mathrm{cfg}(j+1)$ (when it\nrejects). Then within $\\mathrm{count} \\cdot B$ steps from $\\mathrm{cfg}(i)$ the\nmachine halts with single-bit output equal to the disjunction of the acceptance\nbits over the ranks $i \\le j < i + \\mathrm{count}$."
+}

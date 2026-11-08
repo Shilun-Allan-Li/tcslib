@@ -5,34 +5,511 @@ Averaging outside a coordinate set is the corresponding Fourier projection. Rand
 
 \section{Declarations}
 
-\begin{lemma}[Character under coordinate averaging]
+\begin{lemma}[Character under coordinate restriction]
 \lean{BooleanAnalysis.Hypercontractivity.expect_chiS_coordinateRestriction}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.expect_const, BooleanAnalysis.ThresholdFunctions.expect_neg, BooleanAnalysis.chiS, BooleanAnalysis.chiS_flipBit_eq, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.flipBit, BooleanAnalysis.flipBit_flipBit}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p212-b004,
+  pdf-ffbe9c7b3306-p212-b005,
+  pdf-ffbe9c7b3306-p213-b001
+}
 \difficulty{5}
-Let $S,J\subseteq[n]$ and $x\in\{0,1\}^n$, and let $x\star_J y$ equal $x$ on $J$ and $y$ elsewhere. Then for uniform $y$, $\mathbb E_y\chi_S(x\star_J y)=\chi_S(x)$ if $S\subseteq J$, and zero otherwise.
+Let $n$ be a natural number, let $S,J\subseteq[n]$, and let $x\in\{0,1\}^n$. For uniform
+$y\in\{0,1\}^n$, form the point equal to $x$ on $J$ and to $y$ outside $J$. The
+expectation of its Walsh character indexed by $S$ is $\chi_S(x)$ if $S\subseteq J$, and
+is $0$ otherwise.
 \end{lemma}
 
 \begin{lemma}[Fourier formula for coordinate averaging]
 \lean{BooleanAnalysis.Hypercontractivity.expect_coordinateRestriction_eq_sum_fourier}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.expect_chiS_coordinateRestriction, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.walsh_expansion}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p212-b004,
+  pdf-ffbe9c7b3306-p212-b005,
+  pdf-ffbe9c7b3306-p213-b001
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p015-b010}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.chiS_flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.chiS_flipBit_eq}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004,
+    pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_chiS_coordinateRestriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p015-b012}
 \difficulty{4}
-Let $f:\{0,1\}^n\to\mathbb R$ be a function on the uniform Boolean cube, $J\subseteq[n]$, and $x\in\{0,1\}^n$. If $x\star_Jy$ keeps $x$ on $J$ and $y$ elsewhere, then $\mathbb E_y f(x\star_Jy)=\sum_{S\subseteq J}\widehat f(S)\chi_S(x)$.
+Let $n$ be a natural number, let $f:\{0,1\}^n\to\bbr$, let $J\subseteq[n]$, and let
+$x\in\{0,1\}^n$. The uniform expectation over $y\in\{0,1\}^n$ of $f$ evaluated at the
+point equal to $x$ on $J$ and to $y$ outside $J$ is
+$\displaystyle\sum_{S\subseteq[n]}\mathbf{1}_{\{S\subseteq J\}}\widehat f(S)\chi_S(x)$,
+where the indicator is $1$ when $S\subseteq J$ and $0$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Mean disagreement with random restrictions]
+\begin{lemma}[Disagreement under coordinate restriction]
 \lean{BooleanAnalysis.Hypercontractivity.expect_disagreement_coordinateRestriction}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.expect_coordinateRestriction_eq_sum_fourier, BooleanAnalysis.ThresholdFunctions.disagreementProbability, BooleanAnalysis.ThresholdFunctions.expect_const, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.ThresholdFunctions.expect_sub, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.isPmOne, BooleanAnalysis.parseval_pm_one}
 \difficulty{5}
-Let $f:\{0,1\}^n\to\{-1,1\}$ be a function on the uniform Boolean cube and $J\subseteq[n]$. For uniform independent $z$ and $x$, and $x\star_Jz$ keeping $x$ on $J$ and $z$ elsewhere, $\mathbb E_z\Pr_x(f(x)\ne f(x\star_Jz))=\tfrac12\sum_{S\nsubseteq J}\widehat f(S)^2$.
+Let $n$ be a natural number, let $f:\{0,1\}^n\to\bbr$ take values in $\{-1,1\}$, and let
+$J\subseteq[n]$. The uniform expectation over $z\in\{0,1\}^n$ of the disagreement
+probability between $f$ and the function $x\mapsto f(x_J,z_{[n]\setminus J})$ is
+$\displaystyle\frac12\sum_{S\subseteq[n]}\mathbf{1}_{\{S\nsubseteq J\}}\widehat f(S)^2$,
+where $x_J,z_{[n]\setminus J}$ denotes the point equal to $x$ on $J$ and to $z$
+elsewhere.
 \end{lemma}
 
 \begin{lemma}[Boolean junta from omitted Fourier weight]
 \lean{BooleanAnalysis.Hypercontractivity.exists_boolean_junta_of_fourier_omission}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.expect_disagreement_coordinateRestriction, BooleanAnalysis.ThresholdFunctions.disagreementProbability, BooleanAnalysis.ThresholdFunctions.expect_const, BooleanAnalysis.ThresholdFunctions.expect_mono, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.isPmOne, KKL.IsJunta}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p269-b002}
 \difficulty{5}
 Let $f:\{0,1\}^n\to\{-1,1\}$ be a function on the uniform Boolean cube and $J\subseteq[n]$. There exists $h:\{0,1\}^n\to\{-1,1\}$ depending only on $J$ such that $\Pr(f\ne h)\le\tfrac12\sum_{S\nsubseteq J}\widehat f(S)^2$.
 \end{lemma}
@@ -41,6 +518,10 @@ Let $f:\{0,1\}^n\to\{-1,1\}$ be a function on the uniform Boolean cube and $J\su
 \lean{BooleanAnalysis.Hypercontractivity.exists_boolean_constant_approximation}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.cubeVariance_eq_sum_nonempty_fourier, BooleanAnalysis.Hypercontractivity.exists_boolean_junta_of_fourier_omission, BooleanAnalysis.ThresholdFunctions.disagreementProbability, BooleanAnalysis.isPmOne, KKL.IsJunta}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p027-b003,
+  pdf-ffbe9c7b3306-p027-b004
+}
 \difficulty{1}
 Let $f:\{0,1\}^n\to\{-1,1\}$ be a function on the uniform Boolean cube. There exists a constant $h:\{0,1\}^n\to\{-1,1\}$ such that $\Pr(f\ne h)\le\operatorname{Var}(f)/2$.
 \end{lemma}

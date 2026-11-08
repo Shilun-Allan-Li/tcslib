@@ -1,0 +1,25 @@
+{
+ "lean_name": "FABL.recursiveJuntaLearnerAux_failureProbability_le",
+ "key": "2e15c87ab2967a74",
+ "kind": "theorem",
+ "title": "Failure probability of the recursive learner",
+ "statement": "Let $n,k$ be nonnegative integers, let a node finder for $k$-juntas on the $n$-dimensional Boolean cube be given, and let $f$ be a Boolean function on that cube taking values in $\\{\\pm1\\}$. Suppose $J$ is a set of coordinates with $|J|\\le k$ on which $f$ depends, and fix a learning parameter $\\varepsilon\\in(0,1/2]$. For every fuel $r$, fixed-coordinate set $P\\subseteq J$, and sign assignment on $P$ with $|J\\setminus P|\\le r$, the probability that the recursive learner fails to return a decision tree computing the restriction of $f$ consistent with that assignment is at most $T(r)\\varepsilon$, where $T(0)=1$ and $T(r+1)=1+2T(r)$.",
+ "hypotheses_covered": [
+  "$n,k$ are natural numbers",
+  "a node finder for dimension $n$ and junta size $k$",
+  "a Boolean function $f$ on the $n$-dimensional sign cube",
+  "$J$ is a finite set of coordinates",
+  "$|J|\\le k$",
+  "$f$ depends only on coordinates in $J$",
+  "a learning parameter in $(0,1/2]$",
+  "fuel $r$ is a natural number",
+  "$P$ is a set of coordinates",
+  "$P\\subseteq J$",
+  "a sign assignment on $P$",
+  "$|J\\setminus P|\\le r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.NDTM.phaseHostND_run",
+ "key": "8311886916191f38",
+ "kind": "theorem",
+ "title": "Phase host run behavior",
+ "statement": "Let $M_i$ be the machine assigned to each phase $i$, let $q_0$ be an initial state in the disjoint union of the phase state sets, and let $\\mathrm{red}$ assign to each phase state either no redirection or a new phase state. Fix a phase $i$, an input word $x$, configurations $c,c'$ of $M_i$ on $x$, a choice word $w$, and a state $s'$ such that running $M_i$ from $c$ under $w$ gives $c'$ with state $s'$. Suppose $\\mathrm{red}(i,s')=q'$ for some phase state $q'$, and that at every prefix of $w$ of length strictly less than $|w|$, whenever the run of $M_i$ from $c$ under that prefix has state $s$, one has $\\mathrm{red}(i,s)=\\varnothing$. Then, for every prefix length $u\\le |w|$, the phase-host machine run from the phase-tagged configuration $c$ under the first $u$ bits of $w$ agrees with the run of $M_i$ under that prefix, with states tagged by $i$; moreover, for every bit $b$, its run under $w$ followed by $b$ ends at the configuration $c'$ with its state replaced by $q'$.",
+ "hypotheses_covered": [
+  "A family of machines $M_i$ indexed by a type $I$.",
+  "An initial phase-tagged state $q_0$.",
+  "A redirection function returning either no redirect or a phase-tagged state.",
+  "A chosen phase $i$.",
+  "An input word $x$ and configurations $c,c'$ for $M_i$ on $x$.",
+  "A choice word $w$ with $M_i$ run under $w$ from $c$ equal to $c'$.",
+  "A state $s'$ such that $c'$ has state $s'$.",
+  "A phase-tagged state $q'$ with $\\mathrm{red}(i,s')=q'$.",
+  "At every prefix length $u<|w|$, the run state, if present, has no redirection.",
+  "An arbitrary choice bit $b$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

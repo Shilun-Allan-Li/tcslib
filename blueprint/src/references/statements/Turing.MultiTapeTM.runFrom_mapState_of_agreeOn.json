@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.MultiTapeTM.runFrom_mapState_of_agreeOn",
+ "key": "ed2f229b7db082be",
+ "kind": "theorem",
+ "title": "Runs agree under an embedding on guarded states",
+ "statement": "Let the source and host be multi-tape Turing machines with $k$ work tapes, a common symbol alphabet, and state sets $S$ and $H$, and let $x$ be an input word. Let $e:S\\hookrightarrow H$ be an injective map and let $G$ be a predicate on source states. Suppose that, for every $q\\in S$ satisfying $G(q)$ and every scanned input symbol and tuple of work-tape symbols, the host transition at $e(q)$ equals the source transition at $q$ with its successor state mapped by $e$. For any source configuration $c$ on $x$ and any $t\\in\\mathbb{N}$, if at every time $u<t$ the run of the source machine from $c$ has state $q$ only when $G(q)$ holds, then running the host for $t$ steps from the configuration obtained by mapping the state of $c$ along $e$ yields the configuration reached by the source after $t$ steps, with its state mapped along $e$.",
+ "hypotheses_covered": [
+  "Source and host machines with $k$ work tapes and a common symbol alphabet",
+  "State sets $S$ and $H",
+  "An input word $x$",
+  "An injective map $e:S\\hookrightarrow H$",
+  "A predicate $G$ on source states",
+  "Transition agreement after state mapping at every state satisfying $G$, for all scanned symbols",
+  "A source configuration $c$ and natural-number time $t$",
+  "At every time $u<t$, any present source-run state satisfies $G$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

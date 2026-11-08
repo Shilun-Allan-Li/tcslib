@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.write_row",
+ "key": "72d89c72a48ea005",
+ "kind": "lemma",
+ "title": "Backward sweep updates one tape block",
+ "statement": "Let $c$ be a configuration of a machine with $k$ work tapes, let $\\alpha$ be a one-step action, and let $j\\in\\mathbb{Z}$. Apply the backward-sweep rule successively to the reversed block encoding the tape cells at coordinate $j$, with the recorded neighboring head flags, starting from the head-flag table at coordinate $j+1$. The result is the head-flag table at coordinate $j$ together with the reversed block encoding at coordinate $j$ of the configuration obtained by applying $\\alpha$ to $c$.",
+ "hypotheses_covered": [
+  "$c$ is a configuration of a machine with $k$ work tapes",
+  "$\\alpha$ is an action for that machine",
+  "$j\\in\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a $k$-work-tape machine, $\\alpha$ an action of that\nmachine, and $j \\in \\mathbb{Z}$. Folding the backward-sweep visit rule for $\\alpha$ over\nthe reversed block encoding coordinate $j$ (with recorded left-neighbour flags),\nstarting from the table of head flags at coordinate $j+1$, yields the table of head\nflags at coordinate $j$ together with the reversed block encoding coordinate $j$ of the\nconfiguration obtained by applying $\\alpha$ to $c$."
+}

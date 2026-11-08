@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.sc_clockDebit",
+ "key": "82af4d03ae5728e8",
+ "kind": "theorem",
+ "title": "Clocked decrement segment",
+ "statement": "Let $e$ be an embedding of $\\\\{0,1\\\\}$ into an alphabet $\\\\Gamma$, let $M$ be a $k$-work-tape machine over $\\\\Gamma$ with state set $S$, and let $\\\\mathrm{stopAt}:S\\\\to\\\\{\\\\mathrm{false},\\\\mathrm{true}\\\\}$. Fix an input word $x$ over $\\\\Gamma$, a configuration $c$ of $M$ on $x$, a state $s\\\\in S$ with $\\\\mathrm{stopAt}(s)=\\\\mathrm{false}$, a Boolean word $w$, and a counter tape $ct:\\\\mathbb Z\\\\to\\\\mathrm{Option}(\\\\Gamma)$ with head position $cp\\\\in\\\\mathbb Z$ such that $ct(cp+p)$ contains the symbol of $w$ at offset $p$, mapped through $e$, for every integer $p$ with $-1\\\\le p\\\\le |w|$ (and is blank where that word has no symbol). Form the clocked machine $H$ from $M$, $e$, and $\\\\mathrm{stopAt}$, and set $t=2|w\\\\mathbin{\\\\mathrm{takeWhile}}(\\\\mathrm{not})|+2$. After $t$ steps from the clock configuration over $c$ with state recording the decrement phase for $s$ and counter tape $ct$ at $cp$, the machine is in the clock configuration over $c$ with state determined by whether the decrement of $w$ is defined, and counter tape obtained by patching $ct$ at $cp$ with the decremented word mapped through $e$ (using an all-true word of length $|w|$ when the decrement is undefined). This run avoids the finish and timeout states at every time strictly before $t$; at every time from $0$ through $t$, the counter head lies in $[cp-1,cp+|w|]$, and the reached configuration is the clock configuration over the unchanged $c$ with its current counter tape and head position.",
+ "hypotheses_covered": [
+  "Embedding of Boolean symbols into $\\\\Gamma$",
+  "A $k$-work-tape machine $M$ over $\\\\Gamma$ with state set $S$",
+  "A Boolean-valued predicate $\\\\mathrm{stopAt}$ on $S$",
+  "State $s$ satisfying $\\\\mathrm{stopAt}(s)=\\\\mathrm{false}$",
+  "Input word $x$ over $\\\\Gamma$",
+  "Configuration $c$ on input $x$",
+  "Boolean word $w$",
+  "Counter tape $ct:\\\\mathbb Z\\\\to\\\\mathrm{Option}(\\\\Gamma)$ and head position $cp\\\\in\\\\mathbb Z$",
+  "Tape agreement $ct(cp+p)=\\\\mathrm{bufferTape}(e(w),p)$ for all $p$ with $-1\\\\le p\\\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

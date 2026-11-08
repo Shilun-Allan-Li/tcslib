@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.UTab.snapS_toBitSrc",
+ "key": "de7ed75e61d78706",
+ "kind": "theorem",
+ "title": "Snapshot source translation",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet with $k$ work tapes, and let $N,T,t\\in\\mathbb{N}$. Let $\\ell$ be a list of Boolean circuit bit sources of length $N$, and let $\\rho$ assign a natural number to each of the 11 registers. Suppose the register for the current snapshot index has value $\\operatorname{snapIdx}_M(N,T,t)$, the register for the time bound has value $T$, and the register for the left boundary has value $t\\,\\operatorname{cfgStride}_M(N,T)$. Then translating each entry of the snapshot-source list of width equal to the number of possible snapshots, with its initial-time flag set to the indicator of $t=0$, gives exactly the list of bit sources specified by the tableau layout at time $t$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$N,T,t\\in\\mathbb{N}$",
+  "$\\ell$ is a list of Boolean circuit bit sources",
+  "$\\ell$ has length $N$",
+  "$\\rho$ assigns natural numbers to each of the 11 registers",
+  "The current-snapshot-index register equals $\\operatorname{snapIdx}_M(N,T,t)$",
+  "The time-bound register equals $T$",
+  "The left-boundary register equals $t\\,\\operatorname{cfgStride}_M(N,T)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

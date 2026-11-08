@@ -1,0 +1,16 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.balanced_children",
+ "key": "2571453f8503f8b7",
+ "kind": "lemma",
+ "title": "Balanced subprotocol selection",
+ "statement": "Let $p$ be a deterministic two-party protocol, let $P(\\mathrm{false})$ and $P(\\mathrm{true})$ be subprotocols of $p$, and let $n$ be a natural number. Suppose that three times the sum of their numbers of leaves is at least $2n$. Suppose also that for each bit $b$, whenever $3$ times the number of leaves of $P(b)$ is at least $2n$, there is a subprotocol $s$ of $P(b)$ whose number of leaves, multiplied by $3$, is at least $n$ and strictly less than $2n$. Then $p$ has a subprotocol $s$ whose number of leaves, multiplied by $3$, is at least $n$ and strictly less than $2n$.",
+ "hypotheses_covered": [
+  "Each child $P(b)$ is a subprotocol of $p$",
+  "$3(\\ell(P(\\mathrm{false}))+\\ell(P(\\mathrm{true})))\\ge 2n$",
+  "For each $b$, if $3\\ell(P(b))\\ge 2n$, some subprotocol $s$ of $P(b)$ satisfies $n\\le 3\\ell(s)<2n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a protocol, let $P(\\mathrm{false})$ and $P(\\mathrm{true})$ be two protocols\nthat are both subprotocols of $p$, and let $n$ be a natural number with\n$3\\,(\\ell(P(\\mathrm{false})) + \\ell(P(\\mathrm{true}))) \\ge 2n$, where $\\ell(\\cdot)$ denotes\nthe number of leaves. Suppose further that for each bit $b$ with $3\\,\\ell(P(b)) \\ge 2n$\nthere is a subprotocol $s$ of $P(b)$ with $n \\le 3\\,\\ell(s) < 2n$. Then there is a\nsubprotocol $s$ of $p$ with $n \\le 3\\,\\ell(s) < 2n$."
+}

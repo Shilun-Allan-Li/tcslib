@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_polyHeads_bounds",
+ "key": "81ac161bc6566f31",
+ "kind": "lemma",
+ "title": "Bounds on polynomial machine heads",
+ "statement": "Let $d,C,q$ be natural numbers, let $s$ be either absent or a control stage (copy, setup, loop indexed by $i<d+1$, rewind indexed by $i<d+1$, advance indexed by $i<d+2$, or emit indexed by $j<C+1$), and let $h$ assign an integer head position to each $j<d+1$. If the positions satisfy the bounds prescribed by the stage—when $s$ is absent, $-1 \\\\le h(j) \\\\le q$; in a loop stage indexed by $i$, $0 \\\\le h(j) \\\\le q$ and $h(j)<q$ for $j \\\\ne i$; in a rewind stage indexed by $i$, $-1 \\\\le h(j)<q$ and $h(j)\\\\ge0$ for $j \\\\ne i$; or in an advance or emit stage, $0 \\\\le h(j)<q$—then every head position satisfies $-1 \\\\le h(j) \\\\le q$.",
+ "hypotheses_covered": [
+  "$d,C,q$ are natural numbers",
+  "$s$ is absent or one of the listed control stages with its stated index range",
+  "$h$ assigns an integer to each index $j<d+1$",
+  "The head-position inequalities required by the chosen stage hold"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

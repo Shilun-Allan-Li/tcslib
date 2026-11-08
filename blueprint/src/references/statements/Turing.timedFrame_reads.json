@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedFrame_reads",
+ "key": "30f4c8af894db6bd",
+ "kind": "lemma",
+ "title": "Reads of a Framed Configuration",
+ "statement": "Let $M$ be a finite Boolean-alphabet Turing machine, choose a clock tape among its work tapes, and let $x$ be a Boolean input word. For any six-tape configuration $c$ and any contents and head positions for the $M$ tapes, the six symbols read on the framed configuration's four core tapes, clock tape, and buffer tape, assembled in that order, equal the six symbols read from $c$.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $M$",
+  "clock tape in $\\text{Fin}(M.k)$",
+  "Boolean input word $x$",
+  "six-tape configuration $c$",
+  "contents and head positions for the $M$ tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The six symbols read by a framed configuration on the interpreter's active\nlanes (the four core lanes, the retained clock lane, and the buffer lane)\ncoincide with the reads of the underlying six-tape interpreter configuration."
+}

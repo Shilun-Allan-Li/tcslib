@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.cont_rewind_choices",
+ "key": "a8b3699c91ad7c62",
+ "kind": "lemma",
+ "title": "Rewinding the choice buffer",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $y$, $x$, and $u$ be Boolean words, let $p$ be any valid input-head position for input $y$, and let $j\\in\\mathbb{N}$ satisfy $j\\le |u|$. Starting in loader state $5$ with input-head position $p$, choice buffer $u$, and choice-buffer head at position $j-1$, after exactly $j+1$ steps the pair-loader machine reaches the configuration obtained by embedding the initial configuration of $N$ on input $x$ in the simulation core, with boundary tag true, choice word $u$, choice-head index $0$, and physical input-head position $p$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the Boolean alphabet",
+  "$y$, $x$, and $u$ are Boolean words",
+  "$p$ is a valid input-head position for $y$",
+  "$j$ is a natural number",
+  "$j\\le |u|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine, let $x$ and $u$ be buffer words, and let $j \\le |u|$. From the loader configuration in the choice-rewind state with choice head at position $j - 1$, exactly $j + 1$ steps of the pair-loader machine reach the renamed embedding of the initial configuration of $N$ on $x$ prepared with choice word $u$, preserving the physical input position."
+}

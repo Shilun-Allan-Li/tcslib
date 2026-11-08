@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.rawStrip_erase",
+ "key": "036c6ef95df4c289",
+ "kind": "lemma",
+ "title": "Reverse erasure step",
+ "statement": "Let $x,w$ be Boolean words, let $i\\in\\mathbb{N}$ satisfy $i\\le |x|$, and let $b$ be a bit. From state $1$ with $w$ followed by $b$ stored on the work tape, the work-tape head at position $|w\\mathbin{++}[b]|-1$, and empty output, one step erases the final bit and moves the head to position $|w|-1$. The new state is $2$ if $b$ is true and $1$ if $b$ is false; the input-head position remains $i+1$, and the output remains empty.",
+ "hypotheses_covered": [
+  "$x,w$ are Boolean words",
+  "$i\\in\\mathbb{N}$",
+  "$i\\le |x|$",
+  "$b$ is a bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "One step of the stripping machine in its reverse state with buffer $w b$ and\nwork head on the final cell erases that cell and moves left, entering the\nrewind state when the erased bit $b$ is $1$ and staying in the reverse state\nwhen $b$ is $0$."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.comp_length_search",
+ "key": "fcecf95a7da3fb7f",
+ "kind": "lemma",
+ "title": "Length search register run",
+ "statement": "Let $C,e,B,F$ be natural numbers, let $m$ be a Boolean, let $f$ map finite bit strings to finite bit strings, let $h$ be a finite bit string, and let $v$ assign a natural number to each of fourteen registers. Suppose every register value is at most $B$, register $12$ has value at most $F$, and $F$ is at most the value in register $7$. Assume that for every $i$ smaller than the value in register $7$, the length oracle for $f$ on the encoded pair $(h,i)$ returns true exactly when $i<F$. Then the computation can run from its length-bound state with register vector $v$ and no answer to its double-test state with register $12$ set to $F$ and no answer, with every configuration before the endpoint satisfying the program’s instruction-side conditions and register bound $B$.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$f$ maps finite bit strings to finite bit strings",
+  "$h$ is a finite bit string",
+  "$B,F$ are natural numbers",
+  "$v$ assigns natural-number values to fourteen registers",
+  "Every register value is at most $B$",
+  "Register $12$ is at most $F$",
+  "$F$ is at most register $7$",
+  "For every $i$ less than register $7$, the length oracle on the encoded pair $(h,i)$ returns true exactly when $i<F$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e$ be natural numbers, let $m$ be a Boolean mode, let $f$ be a function on bit\nstrings, let $h$ be a bit string, and let $B,F$ be natural numbers. Let $v$ assign a\nnatural-number counter to each of the machine's fourteen registers. Suppose every\ncounter is at most $B$, the counter in register $12$ is at most $F$, $F$ is at most the\ncounter in register $7$, and, for every $i$ less than the counter in register $7$, the\nlength oracle for $f$ on the encoded pair $(h,i)$ returns true exactly when $i<F$. Then\nthe specified computation, starting in its length-bound state with register values $v$\nand no answer yet, can reach its double-test state with register $12$ set to $F$ and no\nanswer yet, while every earlier configuration satisfies the machine's instruction-side\nconditions and has all register values at most $B$."
+}

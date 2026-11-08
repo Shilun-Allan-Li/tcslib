@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_inc",
+ "key": "ae7ded13c366f20c",
+ "kind": "theorem",
+ "title": "Run rule for incrementing a register",
+ "statement": "Let $P$ be a counter program on a binary input $x$, with label $\\ell$, destination label $\\ell'$, register $r$, register assignment $\\rho$, and input position $p$. If the instruction at $\\ell$ increments register $r$ and then goes to $\\ell'$, then for every output string $o$, within at most one step the program reaches $\\ell'$ with input position $p$, output $o$, and registers equal to $\\rho$ except that register $r$ has value $\\rho(r)+1$.",
+ "hypotheses_covered": [
+  "The instruction at $\\ell$ increments register $r$ and goes to $\\ell'$",
+  "Arbitrary register assignment $\\rho$",
+  "Arbitrary input position $p$",
+  "The claim holds for every initial output string $o$",
+  "The step bound is one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, $r$ a register and $\\ell$ a\nlabel whose instruction is $\\mathsf{inc}(r, \\ell')$.  Then for all registers\n$\\rho$ and input positions $p$, from label $\\ell$ with registers $\\rho$ and $p$\nsymbols read the program reaches label $\\ell'$ within one step, printing\nnothing, with $p$ symbols read and registers $\\rho$ except that register $r$ now\nholds $\\rho(r) + 1$."
+}

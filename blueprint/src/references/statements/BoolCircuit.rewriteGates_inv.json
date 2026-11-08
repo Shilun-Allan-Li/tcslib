@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.rewriteGates_inv",
+ "key": "8741980d12594e17",
+ "kind": "theorem",
+ "title": "Invariant under gate rewriting",
+ "statement": "Suppose a gate-emission procedure is correct in the following sense: for every acyclic existing gate list, every gate whose arguments refer only to available vertices, and every gate kind and argument count satisfying a predicate $Q$, the emitted gadget extends the list and satisfies the stated gadget specification with depth factor $c$, cost equal to the gate's argument count plus $2$, and new-gate property $P$. Then for every acyclic original gate list whose gates satisfy $Q$, rewriting the list preserves the invariant that the rewritten list is acyclic, has length at most the sum of each original gate's argument count plus $2$, and contains only gates satisfying $P$; its vertex map has length $n$ plus the number of original gates and maps each original vertex to a valid rewritten vertex, preserving all vertex values and bounding each mapped depth by $c$ times the original depth.",
+ "hypotheses_covered": [
+  "Natural number depth factor c",
+  "Predicates Q on gate kind and argument count and P on gates",
+  "Emission procedure satisfies the gadget specification for every eligible gate and acyclic existing list",
+  "Original gate list is acyclic relative to n inputs",
+  "Every original gate satisfies Q"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

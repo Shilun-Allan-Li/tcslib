@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_of_linear",
+ "key": "ca10717a5194dc0f",
+ "kind": "theorem",
+ "title": "Linear-time computation implies polynomial time",
+ "statement": "Let $f$ be a function on bit strings. If there exist a finite binary Turing machine $M$ and a natural number $a$ such that, on every input of length $n$, $M$ computes $f$ in time $a(n+1)$, then $f$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$f$ maps bit strings to bit strings.",
+  "There exist a finite binary Turing machine $M$ and a natural number $a$.",
+  "$M$ computes $f$ on every input within $a(n+1)$ steps, where $n$ is the input length."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ be a function from bit strings to bit strings. If there are a finite binary Turing machine $M$ and a constant $a \\in \\mathbb{N}$ such that $M$ computes $f$ within $a(n+1)$ steps on every input of length $n$, then $f$ is polynomial-time computable, i.e.\\ some finite binary Turing machine computes $f$ within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \\in \\mathbb{N}$."
+}

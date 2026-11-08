@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clA5Compare_compute",
+ "key": "8bf9182a1b32e347",
+ "kind": "lemma",
+ "title": "Linear-time comparison of sums of binary values",
+ "statement": "For any four binary words $w_0,w_1,w_2,w_3$, form their encoded list of fields and use it as the machine input. The comparator halts within $35(|arg|+1)$ steps and outputs the one-bit word whose bit is true exactly when the little-endian binary values satisfy $\\operatorname{val}(w_0)+\\operatorname{val}(w_1)=\\operatorname{val}(w_2)+\\operatorname{val}(w_3)$.",
+ "hypotheses_covered": [
+  "$w$ is a family of four binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every four words, the verdict-replaying comparator computes, from the packed encoding of the four words, the single bit deciding whether the value of the first word plus the second equals the value of the third plus the fourth, within $35$ times the encoded argument length plus one."
+}

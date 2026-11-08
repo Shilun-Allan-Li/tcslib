@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.BinArith.powInv_init",
+ "key": "811fae755547e622",
+ "kind": "theorem",
+ "title": "Initial Power Invariant",
+ "statement": "For any bit string $z$, let $\\pi_1$ and $\\pi_2$ be the projections decoded from the self-delimiting pair encoding, with either projection set to the empty word when decoding fails, and let $\\langle w\\rangle$ be the natural number represented by a bit string with its first bit least significant. The state $\\langle B,\\langle N,\\langle \\operatorname{bits}(A\\bmod B),\\operatorname{bits}(1\\bmod B)\\rangle\\rangle\\rangle$, where $A=\\pi_1(z)$, $N=\\pi_1(\\pi_2(z))$, and $B=\\pi_2(\\pi_2(z))$, has the following property: it can be written as $\\langle B,\\langle E,\\langle b,\\mathrm{acc}\\rangle\\rangle\\rangle$ with $|E|\\leq |\\pi_1(\\pi_2(z))|$, $b$ and $\\mathrm{acc}$ in canonical binary form, $|b|\\leq |A|+|B|$, and $|\\mathrm{acc}|\\leq 1+|B|$. If $\\langle B\\rangle>0$, then $\\langle b\\rangle,\\langle\\mathrm{acc}\\rangle<\\langle B\\rangle$ and $\\langle\\mathrm{acc}\\rangle\\langle b\\rangle^{\\langle E\\rangle}\\equiv \\langle A\\rangle^{\\langle N\\rangle}\\pmod{\\langle B\\rangle}$.",
+ "hypotheses_covered": [
+  "z is an arbitrary bit string",
+  "If the decoded modulus is positive, the two residues are less than it and satisfy the stated congruence"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

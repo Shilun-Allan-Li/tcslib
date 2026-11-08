@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_unary_first",
+ "key": "21e534744549b511",
+ "kind": "lemma",
+ "title": "Length-Indexed First Halting Times",
+ "statement": "Let $M$ be a finite deterministic machine over the binary alphabet, let $f$ assign a binary word to each natural number, and let $T$ assign a natural-number time bound to each natural number. Suppose that for every $n$, $M$ computes $f(n)$ within $T(n)$ steps on the all-ones word of length $n$. Then there is a function $\\tau$ from the natural numbers to the natural numbers such that, for every binary word $x$, $\\tau(|x|)\\le T(|x|)$, the input-normalized machine associated with $M$ computes $f(|x|)$ within $\\tau(|x|)$ steps on $x$, and the machine is not halted at any time $s<\\tau(|x|)$ in that computation.",
+ "hypotheses_covered": [
+  "$M$ is a finite deterministic machine over the binary alphabet",
+  "$f:\\mathbb{N}\\to\\text{binary words}$",
+  "$T:\\mathbb{N}\\to\\mathbb{N}$",
+  "for every $n$, $M$ computes $f(n)$ within $T(n)$ steps on the all-ones word of length $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic machine over the binary alphabet such that for every $n$, on the all-ones input of length $n$, $M$ computes a word $f(n)$ within $T(n)$ steps. Then there is a function $\\tau$ with $\\tau(n) \\le T(n)$ for all $n$ such that on every input $x$, the input-normalized variant of $M$ computes $f(|x|)$ within $\\tau(|x|)$ steps and is still live at every time before $\\tau(|x|)$."
+}

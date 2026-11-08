@@ -1,0 +1,22 @@
+{
+ "lean_name": "Randomized.Amplify.halts_comp",
+ "key": "d2cd9c13e93b8bc4",
+ "kind": "theorem",
+ "title": "Halting under composition of simulations",
+ "statement": "Let $N$ and $M$ be nondeterministic Turing machines with Boolean symbols, respectively with $K$ and $K'$ work tapes and state sets $S$ and $S'$, on a fixed Boolean input. Let $\\varphi$ map configurations of $N$ to configurations of $M$. Suppose that whenever a configuration $c$ of $N$ is nonhalting, one step of $M$ from $\\varphi(c)$ under any choice bit equals the image under $\\varphi$ of the corresponding step of $N$. Suppose also that there is an $m\\in\\mathbb{N}$ such that, from the image of any halting configuration of $N$, every choice word of length $m$ leads $M$ to a halting configuration. Then, for every $n\\in\\mathbb{N}$ and configuration $c$ of $N$, if every choice word of length $n$ leads $N$ from $c$ to a halting configuration, every choice word of length $n+m$ leads $M$ from $\\varphi(c)$ to a halting configuration.",
+ "hypotheses_covered": [
+  "$K,K'\\in\\mathbb{N}$ and $S,S'$ are state sets",
+  "$N$ and $M$ are nondeterministic Turing machines with Boolean symbols and respectively $K$ and $K'$ work tapes",
+  "$x$ is a fixed finite Boolean input",
+  "$\\varphi$ maps configurations of $N$ on $x$ to configurations of $M$ on $x$",
+  "For every nonhalting configuration $c$ of $N$ and choice bit $b$, $M$'s step from $\\varphi(c)$ under $b$ equals $\\varphi$ of $N$'s step from $c$ under $b$",
+  "There exists $m\\in\\mathbb{N}$ such that from the image of every halting configuration of $N$, every choice word of length $m$ leads $M$ to a halting configuration",
+  "$n\\in\\mathbb{N}$",
+  "Every choice word of length $n$ leads $N$ from $c$ to a halting configuration",
+  "The choice word in the conclusion has length $n+m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

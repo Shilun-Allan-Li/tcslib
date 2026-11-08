@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ups_cp",
+ "key": "b6dfbfb1a0b5eb11",
+ "kind": "lemma",
+ "title": "Copy-site semantics preservation",
+ "statement": "Let $x$ be a Boolean input, $B$ a natural-number register bound, $k$ a copy site, $p$ a rational number, and $\\sigma$ a register state. Suppose every register of $\\sigma$ is at most $B$, and the value in the destination register selected by $k$ is at most the value in its source register. If the program has probabilistic semantics $p$ from the entry state associated with $k$, with the destination register replaced by the source register’s value, then it has probabilistic semantics $p$ from the copy instruction for $k$ with the original register state.",
+ "hypotheses_covered": [
+  "Boolean input $x$",
+  "Natural-number bound $B$",
+  "Copy site $k$",
+  "Rational value $p$",
+  "Register state $\\sigma$",
+  "Every register of $\\sigma$ is at most $B$",
+  "The destination register value is at most the source register value",
+  "Probabilistic semantics $p$ from the associated entry state after replacing the destination value by the source value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $U(x,B,\u0000l,\u0000σ,p)$ mean that the specified 15-register randomized program, started on\ninput $x$ at label $l$ with register values $σ$ and no answer yet, terminates with all\nregisters bounded by $B$ and has acceptance probability $p$ (with rejection probability\n$1-p$) for every choice length at which all random branches halt. For any copy site $k$,\nif every register of $σ$ is at most $B$, the value in the destination register is at\nmost the value in the source register, and $U$ holds at the site’s associated entry\nlabel with the destination register replaced by the source value, then\n$U(x,B,\u0000\\mathrm{copy}(k),σ,p)$ holds."
+}

@@ -47,6 +47,7 @@ hashing-based equality protocol.
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p008-b001}
 \label{CommunicationComplexity.Functions.Equality.communicationComplexity_le}
 \leanok
+\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha, CommunicationComplexity.Functions.Equality.clog_two_two, CommunicationComplexity.Functions.Equality.equality}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -888,7 +889,6 @@ hashing-based equality protocol.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p001-b002}
-\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha, CommunicationComplexity.Functions.Equality.equality}
 \difficulty{3}
 For every natural number $n$, the deterministic communication complexity of the $n$-bit
 equality function satisfies
@@ -928,6 +928,7 @@ of bits exchanged, taken in $\bbn_\infty$. Then
 }
 \label{CommunicationComplexity.Functions.Equality.le_communicationComplexity}
 \leanok
+\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Rectangle.monoPartition_cross_mem, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -1885,7 +1886,6 @@ of bits exchanged, taken in $\bbn_\infty$. Then
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p001-b002}
-\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Rectangle.monoPartition_cross_mem, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \difficulty{5}
 For every natural number $n \ge 1$, the deterministic communication complexity of the
 $n$-bit equality function satisfies
@@ -1909,6 +1909,7 @@ Bob's input.
 }
 \label{CommunicationComplexity.Functions.Equality.communicationComplexity_eq}
 \leanok
+\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Functions.Equality.communicationComplexity_le, CommunicationComplexity.Functions.Equality.communicationComplexity_zero, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.le_communicationComplexity}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -2899,7 +2900,6 @@ Bob's input.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p001-b002}
-\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Functions.Equality.communicationComplexity_le, CommunicationComplexity.Functions.Equality.communicationComplexity_zero, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.le_communicationComplexity}
 \difficulty{2}
 For a natural number $n$, let $\mathrm{equality}_n$ denote the two-party Boolean
 function on $n$-bit strings that returns $\mathtt{true}$ precisely when Alice's input $x
@@ -2950,6 +2950,7 @@ when the two hashes $h(x)$ and $h(y)$ agree.
 \proofsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p001-b002}
 \label{CommunicationComplexity.Functions.Equality.equalityHashProtocol_complexity}
 \leanok
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Functions.Equality.clog_two_two, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bob, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.output}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -3765,7 +3766,6 @@ when the two hashes $h(x)$ and $h(y)$ agree.
   {direct}
   {raoyehudayoff-ch03-randomized-protocols}
   {pdf-3eebfb23ab53-p001-b002}
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.alice, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.bob, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.output}
 \difficulty{3}
 For all natural numbers $n$ and $k$, the public-coin equality hashing protocol on
 $n$-bit Boolean inputs with hash range $\mathrm{Fin}(2^k)$ — in which, given a shared
@@ -3783,6 +3783,7 @@ exactly $k + 1$ bits.
 \proofsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p001-b002}
 \label{CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le_of_hε}
 \leanok
+\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Functions.Equality.HashSpace, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.Functions.Equality.equalityHashProtocol_complexity, CommunicationComplexity.Functions.Equality.equalityHashProtocol_rrun, CommunicationComplexity.Functions.Hash.collision_prob_le, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_of_finiteMessage}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -4687,7 +4688,6 @@ exactly $k + 1$ bits.
   {context}
   {raoyehudayoff-ch03-randomized-protocols}
   {pdf-3eebfb23ab53-p001-b002}
-\uses{CommunicationComplexity.BoolInput, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Functions.Equality.HashSpace, CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.equalityHashProtocol, CommunicationComplexity.Functions.Equality.equalityHashProtocol_complexity, CommunicationComplexity.Functions.Equality.equalityHashProtocol_rrun, CommunicationComplexity.Functions.Hash.collision_prob_le, CommunicationComplexity.PublicCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.communicationComplexity_le_of_finiteMessage}
 \difficulty{4}
 Fix natural numbers $n$ and $k$ and a real number $\varepsilon$ satisfying $1/2^{k} <
 \varepsilon$. Then the $\varepsilon$-error public-coin randomized communication
@@ -4709,6 +4709,7 @@ where the bound is taken in the extended naturals $\bbn \cup \{\infty\}$.
 \proofsource{raoyehudayoff-ch03-randomized-protocols}{pdf-3eebfb23ab53-p001-b002}
 \label{CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le}
 \leanok
+\uses{CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le_of_hε, CommunicationComplexity.PublicCoin.communicationComplexity}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -5605,7 +5606,6 @@ where the bound is taken in the extended naturals $\bbn \cup \{\infty\}$.
   {direct}
   {raoyehudayoff-ch03-randomized-protocols}
   {pdf-3eebfb23ab53-p001-b002}
-\uses{CommunicationComplexity.Functions.Equality.equality, CommunicationComplexity.Functions.Equality.publicCoin_communicationComplexity_le_of_hε, CommunicationComplexity.PublicCoin.communicationComplexity}
 \difficulty{4}
 For every natural number $n$ and every real $\varepsilon > 0$, the $\varepsilon$-error
 public-coin randomized communication complexity of the equality function
@@ -5626,11 +5626,10 @@ whose worst-case number of exchanged bits is bounded by this quantity.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{theorem}[Ceiling logarithm of $2$ in base $2$]
+\begin{theorem}[Base-two ceiling logarithm of two]
 \lean{CommunicationComplexity.Functions.Equality.clog_two_two}
 \label{CommunicationComplexity.Functions.Equality.clog_two_two}
 \leanok
-The base-$2$ ceiling logarithm of $2$ equals $1$: $\lceil \log_2 2 \rceil = 1$,
-i.e.\ \texttt{Nat.clog 2 2 = 1}. This is a small arithmetic fact used in the
-deterministic upper bound for the equality function.
+\difficulty{1}
+The base-two ceiling logarithm of $2$ equals $1$: $\lceil\log_2 2\rceil=1$.
 \end{theorem}

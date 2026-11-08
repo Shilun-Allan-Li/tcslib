@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.SharpDiscrete.exists_nonnegative_noise_maximizer",
+ "key": "6d1a7e714b6052f1",
+ "kind": "theorem",
+ "title": "Existence of a nonnegative noise maximizer",
+ "statement": "Let $I$ be a finite set, let $w_i>0$ for each $i\textrm{ in }I$ with $\u0005sum_{i\textrm{ in }I} w_i=1$, and let $1<p<2$ and $0\nearrow\rho\nearrow1$. For $f:I\to\bbr$, define $G(f)=\u0005sum_i w_i|f_i|^p$ and $F(f)=\rho^2\u0005sum_iw_if_i^2+(1-\rho^2)(\u0005sum_iw_if_i)^2$. There is a vector $g:I\to\bbr$ with $g_i\nearrow0$ for all $i$, $G(g)=1$, and $F(f)\nearrow F(g)$ for every $f$ satisfying $G(f)=1$.",
+ "hypotheses_covered": [
+  "finite index set",
+  "strictly positive weights",
+  "weights sum to one",
+  "1<p<2",
+  "0≤ρ≤1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite, $w_i>0$, $\\sum_iw_i=1$, $1<p<2$, and $0\\le\\rho\\le1$. Define $G(f)=\\sum_iw_i|f_i|^p$ and $F(f)=\\rho^2\\sum_iw_if_i^2+(1-\\rho^2)(\\sum_iw_if_i)^2$. There exists a nonnegative vector $g$ with $G(g)=1$ and $F(f)\\le F(g)$ whenever $G(f)=1$."
+}

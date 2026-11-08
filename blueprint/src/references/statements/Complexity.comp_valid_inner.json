@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.comp_valid_inner",
+ "key": "edec5fced1d2bfb1",
+ "kind": "lemma",
+ "title": "Inner Preparation Computation",
+ "statement": "Let $C,e$ be natural numbers, let $\\mathrm{mode}$ be Boolean, and let $f$ map finite Boolean words to finite Boolean words. Suppose that for every Boolean word $y$, $|f(y)|\\le C(|y|+1)^e$. Let $x,b$ be Boolean words, let $p$ be a natural number, and suppose that $b$ is empty or its last bit is true. Let $v$ assign natural numbers to fourteen registers, each at most $8(2C+3)(|\\langle\\langle x,b\\rangle,\\mathrm{bits}(p)\\rangle|+1)^{e+1}$. Suppose register $3$ equals $2|\\langle x,b\\rangle|$, register $4$ equals $4|x|+4$, register $5$ equals $p$, and registers $6,7,10,11,12,13$ are all zero. Starting in the inner-preparation state with these register values, no result yet, and input $\\langle\\langle x,b\\rangle,\\mathrm{bits}(p)\\rangle$, the counter machine halts with result true precisely when $p<|\\langle f(x),b\\rangle|$ if $\\mathrm{mode}$ is true; otherwise its result is the bit at index $p$ of $\\langle f(x),b\\rangle$, or false if that index is beyond the end. Before halting, every configuration satisfies the machine's step-validity condition, and all register values remain within the stated bound.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$\\mathrm{mode}$ is Boolean",
+  "$f$ maps Boolean words to Boolean words",
+  "For every $y$, $|f(y)|\\le C(|y|+1)^e$",
+  "$x,b$ are Boolean words",
+  "$p$ is a natural number",
+  "$b$ is empty or ends in true",
+  "$v$ assigns natural numbers to fourteen registers",
+  "Every value of $v$ is at most $8(2C+3)(|\\langle\\langle x,b\\rangle,\\mathrm{bits}(p)\\rangle|+1)^{e+1}$",
+  "Register 3 equals $2|\\langle x,b\\rangle|$",
+  "Register 4 equals $4|x|+4$",
+  "Register 5 equals $p$",
+  "Registers 6, 7, 10, 11, 12, and 13 equal zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B$ be natural numbers, let $\\mathrm{mode}$ be a Boolean flag, let $f$ map bit\nstrings to bit strings, and suppose $|f(y)|\\le C(|y|+1)^e$ for every bit string $y$. Let\n$x,b$ be bit strings, let $p$ be a natural number, and suppose the last bit of $b$ is\ntrue whenever $b$ is nonempty. Let $v$ assign a natural number to each of the 14\nregisters, with every register value at most $8(2C+3)(|\\langle\\langle\nx,b\\rangle,\\mathrm{bits}(p)\\rangle|+1)^{e+1}$. Suppose register $3$ is twice the length\nof the encoding of $x$ paired with $b$, register $4$ is $4|x|+4$, register $5$ is $p$,\nand registers $6,7,10,11,12,13$ are all zero. Starting in the inner-preparation state,\nthe specified counter machine halts with the answer that is true exactly when $p$ is\nless than the length of the encoding of $f(x)$ paired with $b$ if $\\mathrm{mode}$ is\ntrue; otherwise its answer is the bit at position $p$ in that encoding, using false when\nthat position is beyond the end. Throughout the run, its step-validity condition holds\nand every register remains within the stated bound."
+}

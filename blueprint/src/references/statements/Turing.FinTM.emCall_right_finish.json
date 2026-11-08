@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emCall_right_finish",
+ "key": "30dfafd2932c40b5",
+ "kind": "lemma",
+ "title": "Completing the Rightward Scan",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean word, and let $c$ be a halted configuration of $M$ on input $x$. There is a time $t\\le |x|+2$ at which the right-boundary wrapper, started from the embedding of $c$, is in the halted scan configuration built from $c$ with its input head at position $|x|+1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $M$ on input $x$",
+  "$c$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a halted configuration of the source machine on an input $x$. Then there is a\ntime $t \\le |x| + 2$ such that the right-boundary wrapper, run for $t$ steps from the\nembedding of $c$, is the halted scan configuration at position $|x|$, with the work\ntapes and output of $c$ unchanged."
+}

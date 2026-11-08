@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Meyer.awd",
+ "key": "7a78d3719b25486a",
+ "kind": "def",
+ "title": "Outputs for alternating-word types",
+ "statement": "Fix natural numbers $C_w$ and $c_w$. For a type in $\\{\\mathrm{ac},\\mathrm{an},\\mathrm{a0},\\mathrm{a1},\\mathrm{aj},\\mathrm{aj1}\\}$ and a Boolean word $z$, define its output word as follows: for $\\mathrm{ac}$ use the parsed second component of the outer second projection of $z$; for $\\mathrm{an}$ use its fixed-width binary successor, taking the empty word on overflow; for $\\mathrm{a0}$ use the all-zero word of length $C_w(|x|+1)^{c_w}$, where $x$ is the first component of the first projection of $z$; for $\\mathrm{a1}$ use the successor of that all-zero word, again taking the empty word on overflow. For $\\mathrm{aj}$ use the concatenation of the binary representation of the length of the parsed first component of the outer second projection and an all-zero word whose length is the parsed second component's length; for $\\mathrm{aj1}$ use its fixed-width successor, taking the empty word on overflow. Every parsed component here is obtained by the total projections, which return the empty word when parsing fails.",
+ "hypotheses_covered": [
+  "natural parameters $C_w,c_w$",
+  "input type is one of the six constructors of $AW$",
+  "input is a Boolean word $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

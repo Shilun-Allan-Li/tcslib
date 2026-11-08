@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.guessRunCfg_clean",
+ "key": "b46b108454d93104",
+ "kind": "theorem",
+ "title": "Clean configuration for a guessed run",
+ "statement": "Let $P$ and $Q$ be deterministic machines with state sets $SP$ and $SR$, respectively, over Boolean work tapes, and let $z$ be a finite Boolean input. Suppose $\\iota$ embeds the $K$ tape indices into the $k$ tape indices, the tape index $cap$ lies outside the image of $\\iota$, and $jR<K$. Let $blk$ be a tape content that is blank at every integer position $p<0$ or $p\\ge m$, and let $s$ be a Boolean word of length $m$. For every state $q$ of $P$ and entry state $entry$ of $Q$, applying the guessed-run configuration construction to the configuration with state $q$, input-head position $1$, all tape contents blank except for content $blk$ on tape $\\iota(jR)$, all work-tape heads at zero, and empty output, yields exactly the embedded silent configuration of the stream-start configuration for $Q$ with state $entry$, tape $jR$ containing $s$, and all other tapes blank.",
+ "hypotheses_covered": [
+  "Natural numbers $K,k$ and state types $SP,SR$",
+  "A finite Boolean input $z$",
+  "An embedding $\\iota$ from $K$ tape indices into $k$ tape indices",
+  "A tape index $cap$ outside the image of $\\iota$",
+  "A tape index $jR<K$",
+  "A tape content function $blk$",
+  "A natural number $m$ such that $blk(p)$ is blank for $p<0$ or $p\\ge m$",
+  "States $q$ of $P$ and $entry$ of $Q$",
+  "A finite Boolean word $s$ with $|s|=m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.ps_index",
+ "key": "3648db7166ecba2a",
+ "kind": "lemma",
+ "title": "Path program phase transfer",
+ "statement": "Let $x$ be a finite Boolean word, $B$ a natural number, $P$ a proposition, and $\\sigma$ a program register state whose nine register values are all at most $B$. Suppose $2|x|+2\\le B$, the source $s$ and guessed next vertex $nx$ satisfy $s<n$ and $nx<n$, and $2n+2+2n^2\\le |x|$, where $n$ is the vertex-count register. If the path program, started at the label $wrd$ with input pointer $2n+2+2(sn+nx)$, row register $s$, and column register $nx$, has the termination, register-bound, and acceptance properties expressed by $PS$ with conclusion $P$, then the same properties hold when it is started at label $wcp$ with register state $\\sigma$ and conclusion $P$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$B\\in\\mathbb N$",
+  "$P$ is a proposition",
+  "$\\sigma$ is a program register state",
+  "all nine register values of $\\sigma$ are at most $B$",
+  "$2|x|+2\\le B$",
+  "$s<n$",
+  "$nx<n$",
+  "$2n+2+2n^2\\le |x|$",
+  "the specified $wrd$-stage configuration satisfies $PS$ with proposition $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $P$ a proposition, and $\u001b[?m\u001b[0mσ$ a\nregister configuration whose nine register values are all at most $B$. Suppose\n$2|x|+2\\le B$, the source and guessed next-vertex registers are both less than the\nvertex-count register $n$, and $2n+2+2n^2\\le |x|$. If the fixed nondeterministic path\nprogram, started at the designated intermediate stage with the input pointer set to\n$2n+2+2(sn+\\mathrm{nx})$, row register $s$, and column register $\\mathrm{nx}$,\nterminates on every branch within the register bound and has an accepting branch exactly\nwhen $P$ holds, then the program started at its corresponding earlier stage with\nconfiguration $σ$ has the same termination, register-bound, and acceptance properties."
+}

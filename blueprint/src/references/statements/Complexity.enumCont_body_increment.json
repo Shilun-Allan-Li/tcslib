@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_body_increment",
+ "key": "7408936e4a26e5fc",
+ "kind": "lemma",
+ "title": "Simulation of a fixed-width increment",
+ "statement": "Let $B$ be a finite Boolean machine with at least one work tape, let $q_v,q_i$ be designated states, and let $stop$ be a Boolean parameter. Suppose that, on input $x$, the run of $B$ from state $q_i$ with $s$ on tape zero and all other work tapes empty halts after $T$ steps and outputs the fixed-width increment of $s$, using the empty word when that increment overflows. Then, for some $t\\le 3T+|x|+3|s|+11$, the body machine started in increment-call mode with candidate $s$ on tape zero and blank capture tape reaches the canonical seam configuration in anchor state $0$ whose tape zero contains the incremented word, or $s$ if the increment overflows, with all other tapes empty and output empty.",
+ "hypotheses_covered": [
+  "A finite Boolean machine $B$ with $0<B.k$",
+  "Designated states $q_v,q_i$ and Boolean parameter $stop$",
+  "Boolean words $x,s$ and natural number $T$",
+  "The source run from state $q_i$ with $s$ on tape zero halts after $T$ steps",
+  "The source run's output is the fixed-width increment of $s$, defaulting to the empty word on overflow",
+  "There exists $t\\le 3T+|x|+3|s|+11$ giving the stated seam configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B$ be a source machine with at least one work tape that, started in the\nincrement entry state at the seam with candidate $s$, halts within $T$ steps\nemitting the fixed-width increment's output word. Then the enumerator body, from\nthe two-ended configuration embedding the increment call, reaches within\n$3T + |x| + 3|s| + 11$ steps the anchor over the seam carrying the stalled\nincrement of $s$: the successor word of the same width, or $s$ itself on\noverflow."
+}

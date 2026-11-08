@@ -1,0 +1,16 @@
+{
+ "lean_name": "Randomized.InSigma2",
+ "key": "f1616cbf2544abe5",
+ "kind": "def",
+ "title": "Two-quantifier efficient verification",
+ "statement": "A language $L$ belongs to the class defined by an efficient two-witness verifier if there are a verifier $N$ and natural numbers $a_1,k_1,a_2,k_2$ such that $N$ is efficient according to $E$. For every input $x$, membership in $L$ is equivalent to the existence of a string $u$ of length $a_1+k_1|x|$ such that, for every string $v$ of length $a_2+k_2|x|$, the verifier outputs true on $(x,u,v)$.",
+ "hypotheses_covered": [
+  "A verifier N and natural numbers a₁,k₁,a₂,k₂ exist",
+  "N is an efficient two-witness verifier according to E",
+  "For every x, x is in L iff there exists u of length polyLen(a₁,k₁,|x|) such that for every v of length polyLen(a₂,k₂,|x|), N(x,u,v)=true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

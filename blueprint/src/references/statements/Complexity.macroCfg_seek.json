@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.macroCfg_seek",
+ "key": "bc0c8dc90e26104a",
+ "kind": "lemma",
+ "title": "One step of the leftward seek",
+ "statement": "Let $W$ be a finite binary Turing machine, let $a,R\\in\\mathbb{N}$, let $x$ be an input word over the schedule alphabet, and let $u,g\\in\\mathbb{Z}$. For a base configuration of the schedule machine on $x$, suppose its guide tape is the fixed guide of radius $R$. From the leftward-seek phase with guide head at $g$, one step enters the forward phase and moves the guide head to $g+1$ if $g=-R-1$; otherwise it remains in the leftward-seek phase and moves the guide head to $g-1$.",
+ "hypotheses_covered": [
+  "$W$ is a finite binary Turing machine",
+  "$a,R$ are natural numbers",
+  "$x$ is an input word over the schedule alphabet",
+  "$u,g$ are integers",
+  "$\\mathrm{base}$ is a schedule-machine configuration on $x$",
+  "the base guide tape is the fixed guide of radius $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$.  From the\nleftward-seek phase with guide head at $g$, one step of the schedule controller turns\ninto the forward phase and moves the guide head right exactly when $g = -R - 1$, and\notherwise stays in the seek phase and moves the guide head left."
+}

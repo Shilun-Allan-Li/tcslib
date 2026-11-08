@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.CVALPrefix_mem_P",
+ "key": "60f96b5b0039adc5",
+ "kind": "theorem",
+ "title": "Polynomial-time decidability of prefix circuit evaluation",
+ "statement": "Let $L$ consist of the bit strings that encode a pair $(C,x)$ by doubling every bit of the circuit encoding $C$, appending the separator $01$, and then appending $x$, where $C$ is a directed acyclic Boolean circuit with $n$ input vertices, each gate has fan-in at most two, $n\\leq |x|$, and $C$ evaluates to true on the first $n$ bits of $x$. Then $L$ is decidable in polynomial time by a finite-state multitape Turing machine.",
+ "hypotheses_covered": [
+  "Circuit has $n$ input vertices",
+  "Circuit is a directed acyclic circuit",
+  "Each gate has fan-in at most two and satisfies the well-formedness conditions",
+  "Input string has length at least $n$",
+  "Circuit evaluates to true on the first $n$ bits of the string",
+  "Pair encoding uses the encoded circuit and the string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

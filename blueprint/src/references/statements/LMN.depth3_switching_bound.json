@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.depth3_switching_bound",
- "key": "601261054a279241",
+ "key": "c30b794996ffdc87",
  "kind": "theorem",
  "title": "Depth-3 two-stage switching bound",
  "statement": "Let $n \\ge 1$, and let $f : \\{0,1\\}^n \\to \\{0,1\\}$ be the conjunction of $s_2$ DNF formulas $g_1, \\dots, g_{s_2}$ on $n$ variables, so that $f(x) = \\mathrm{true}$ exactly when $g_i(x) = \\mathrm{true}$ for every $i$. Suppose each $g_i$ has width at most $w$, where $w \\ge 1$, and that within every term of every $g_i$ no literal is repeated and no two distinct literals share the same variable. Fix natural numbers $l \\ge 1$ and $t$, together with real parameters $p_1, p_2 \\in (0,1]$ satisfying $p_1 \\le 1/(40w)$ and $p_2 \\le 1/(40l)$. Writing $D(g)$ for the decision-tree depth of a Boolean function $g$ and $f\\restriction_\\rho$ for the restricted function $x \\mapsto f(\\rho\\text{-extension of }x)$, a Bernoulli$(p_1 p_2)$ random restriction $\\rho$ then satisfies\n\\[\n  \\Pr_{\\rho}\\!\\big[\\, D(f\\restriction_\\rho) > t \\,\\big]\n  \\;\\le\\;\n  s_2\\Big( \\big(\\tfrac12\\big)^{l} + \\exp\\!\\big(-\\tfrac{n p_1}{3}\\big) \\Big)\n  \\;+\\;\n  \\Big( \\big(\\tfrac12\\big)^{t} + \\exp\\!\\big(-\\tfrac{n p_2}{3}\\big) \\Big).\n\\]",

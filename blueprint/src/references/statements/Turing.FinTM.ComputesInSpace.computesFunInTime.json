@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.ComputesInSpace.computesFunInTime",
+ "key": "443016e8f9206f85",
+ "kind": "theorem",
+ "title": "Time bound from logarithmic space",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $f$ map binary words to binary words, and let $c\\in\\mathbb{N}$. Suppose that for every binary input $x$, $M$ halts with output $f(x)$ after some number of steps and uses at most $c(\\lfloor\\log_2 |x|\\rfloor+1)$ work-tape cells. Then $M$ computes $f$ within the time bound $T(n)=((|Q|+1)\\,2\\,2^{5kc+3k})(n+1)^{5kc+1}$, where $k$ is the number of work tapes and $Q$ is the state set of $M$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$f$ maps binary words to binary words",
+  "$c$ is a natural number",
+  "For every binary input $x$, $M$ halts with output $f(x)$ at some time",
+  "The space used on $x$ is at most $c\\,\\mathrm{logSpace}(|x|)$, where $\\mathrm{logSpace}(n)=\\lfloor\\log_2 n\\rfloor+1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

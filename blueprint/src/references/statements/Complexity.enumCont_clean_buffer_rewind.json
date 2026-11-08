@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_clean_buffer_rewind",
+ "key": "be857ebead360d70",
+ "kind": "lemma",
+ "title": "Rewinding the retained word",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $x,y$ be Boolean words, let $c_0$ be a configuration of $M$ on input $x$, and let $p$ be an input-head position. For every integer $j$ with $0\\le j\\le |y|$, the clean wrapper started in the administrative configuration with retained word $y$, control state $4$, input-head position $p$, and capture-head position $j-1$ reaches after exactly $j+1$ steps the administrative configuration with the same retained word and input-head position, control state $5$, and capture-head position zero.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x,y$ are Boolean words",
+  "$c_0$ is a configuration of $M$ on input $x$",
+  "$p$ is an input-head position on $x$",
+  "$j$ is a natural number with $j\\le |y|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le |y|$: from the administrative configuration of the clean wrapper\nwith retained word $y$ and capture head just left of cell $j$, exactly $j + 1$\nsteps return the capture head to zero without erasing $y$, advancing control to\nthe final administrative state."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.rt_succ_run",
+ "key": "cf14c27e1b1f7159",
+ "kind": "theorem",
+ "title": "Successor machine run",
+ "statement": "Let $k$ be a natural number, let $x$ and $w$ be Boolean words, and choose a work-tape index $i$. Suppose a configuration $d$ starts in the successor machine's increment phase, and tape $i$ agrees with the buffered word $w$ at every offset from $-1$ through $|w|+1$. Then there is a time $t\\le 4|w|+14$ at which the machine first reaches its exit phase. At that time, tape $i$ contains the successor word of $w$ on the cells beginning at its original head position, and all other tape cells and configuration data are unchanged. Up to time $t$, every work-tape head stays within distance $|w|+4$ of its initial position.",
+ "hypotheses_covered": [
+  "natural number $k$ and Boolean input word $x$",
+  "work-tape index $i$ and Boolean word $w$",
+  "initial state is the successor machine's increment phase",
+  "tape $i$ agrees with the buffered word at offsets $-1$ through $|w|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

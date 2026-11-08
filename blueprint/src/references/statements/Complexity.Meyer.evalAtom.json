@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.Meyer.evalAtom",
+ "key": "bec23b9d2e0b7dd0",
+ "kind": "def",
+ "title": "Evaluation of an atom",
+ "statement": "Given a deterministic finite-state machine $M$ over the binary alphabet, natural-number parameters $C_w,c_w$, an atom $a$ associated with $M$, and a binary string $z$, define a Boolean value by the following cases. For an answer atom, test circuit satisfiability of the pair formed from the decoded description in $z$ and the query using the atom's selector and the transformed strings determined by its tags. For the other atoms, test, respectively: the specified lengths of the decoded strings, including the bound on the index length; whether incrementing the decoded time or auxiliary word succeeds; whether the auxiliary word is all zero; whether the decoded index length is zero, less than or at most the input length, or exactly one more than the input length; or whether the pair formed from the index description and input belongs to the language of satisfiable fan-in-two circuits.",
+ "hypotheses_covered": [
+  "Natural-number parameters Cw and cw",
+  "A deterministic finite-state machine M over Bool",
+  "An atom a associated with M",
+  "A binary string z"
+ ],
+ "confidence": "low",
+ "caveat": "The answer-atom case relies on several upstream string transformations and tag-dependent constructions; the statement summarizes the cases but cannot name those constructions precisely from the supplied informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

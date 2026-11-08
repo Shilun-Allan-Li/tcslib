@@ -5,25 +5,79 @@ Independent affine inputs can be integrated separately from a common background,
 
 \section{Declarations}
 
-\begin{theorem}[Integrating an independent affine input]
+\begin{theorem}[Integral Formula for an Independent Affine Input]
 \lean{BooleanAnalysis.GaussianSpace.independent_affine_integral}
 \leanok
 \difficulty{5}
-Let $A,D,W$ be real functions on a probability space $(\Omega,\mu)$ such that $(A,D)$ and $W$ are measurable up to null sets and $W$ is independent of $(A,D)$. If $\psi\colon\mathbb R\to\mathbb R$ is continuous and $\psi(A+DW)$ is integrable, then $q(a,d)=\mathbb E_\mu[\psi(a+dW)]$ is integrable under the law $\lambda$ of $(A,D)$ and $\mathbb E_\mu[\psi(A+DW)]=\int q(a,d)\,d\lambda(a,d)$.
+Let $(\Omega,\mu)$ be a probability space, and let $A,D,W\colon\Omega\to\mathbb R$ be
+measurable up to null sets, with $W$ independent of the pair $(A,D)$. If
+$\psi\colon\mathbb R\to\mathbb R$ is continuous and $\psi(A+DW)$ is integrable, then the
+function $q(a,d)=\mathbb E[\psi(a+dW)]$ is integrable under the distribution of $(A,D)$,
+and $\mathbb E[\psi(A+DW)]=\int_{\mathbb R^2}q(a,d)\,d\mathcal L(A,D)(a,d)$.
 \end{theorem}
 
-\begin{theorem}[Replacement with a shared random background]
+\begin{theorem}[Fourth-Order Affine Replacement Bound]
 \lean{BooleanAnalysis.GaussianSpace.independent_affine_replacement_bound}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.affine_replacement_bound, BooleanAnalysis.GaussianSpace.independent_affine_integral, BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
+\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.affine_replacement_bound, BooleanAnalysis.GaussianSpace.independent_affine_comparison_bound, BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
 \difficulty{5}
-Let $A,D,U,V$ be real random variables on a probability space, with $A,D\in L^4$. Suppose each of $U,V$ is independent of the pair $(A,D)$ and is measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. If $\psi\in C^4(\mathbb R)$, $C\ge0$ bounds $|\psi^{(4)}|$ everywhere, and both $\psi(A+DU)$ and $\psi(A+DV)$ are integrable, then $|\mathbb E\psi(A+DU)-\mathbb E\psi(A+DV)|\le(3C/4)\mathbb E[D^4]$.
+Let $(\Omega,\mu)$ be a probability space, and let $A,D,U,V\colon\Omega\to\mathbb R$.
+Suppose $A,D\in L^4(\mu)$, and suppose each of $U,V$ has mean zero, second moment one,
+third moment zero, and fourth moment at most $9$ (in particular, each is measurable up
+to null sets with finite fourth absolute moment). Assume each of $U,V$ is independent of
+$(A,D)$. Let $\psi\in C^4(\mathbb R)$, and suppose $C\ge0$ bounds $|\psi^{(4)}(t)|$ for
+every $t\in\mathbb R$. If $\psi(A+DU)$ and $\psi(A+DV)$ are integrable, then
+$\left|\mathbb E\psi(A+DU)-\mathbb E\psi(A+DV)\right|\le (3C/4)\mathbb E[D^4]$.
 \end{theorem}
 
 \begin{theorem}[Error from replacing one polynomial input]
 \lean{BooleanAnalysis.GaussianSpace.single_coordinate_replacement_bound}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_coeff, BooleanAnalysis.GaussianSpace.Invariance.coordinateFree, BooleanAnalysis.GaussianSpace.Invariance.eval_coordinate_split, BooleanAnalysis.GaussianSpace.Invariance.indep_coordinate_parts, BooleanAnalysis.GaussianSpace.independent_affine_replacement_bound, BooleanAnalysis.GaussianSpace.integrable_test_of_memLp_four, BooleanAnalysis.GaussianSpace.invariance_coordinate_fourth_moment, BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_eq_of_off_coordinate, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.influence}
+\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative, BooleanAnalysis.GaussianSpace.Invariance.coordinateFree, BooleanAnalysis.GaussianSpace.Invariance.coordinate_parts_eq_of_off_coordinate, BooleanAnalysis.GaussianSpace.Invariance.eval_coordinate_split, BooleanAnalysis.GaussianSpace.Invariance.indep_coordinate_parts, BooleanAnalysis.GaussianSpace.independent_affine_replacement_bound, BooleanAnalysis.GaussianSpace.integrable_test_of_memLp_four, BooleanAnalysis.GaussianSpace.invariance_coordinate_fourth_moment, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.influence}
 \difficulty{5}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{j\in S}x_j$ be a real multilinear polynomial and fix $i\in\{1,\ldots,n\}$. Suppose $F$ has degree at most $k+1$, and $X,Y$ are real input families on one probability space, each independent within itself, agreeing as functions at every coordinate other than $i$. Every input is measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. If $\psi\in C^4(\mathbb R)$ and $C\ge0$ bounds $|\psi^{(4)}|$ everywhere, then $|\mathbb E\psi(F(X))-\mathbb E\psi(F(Y))|\le(C/12)9^{k+1} I_i(F)^2$, where $I_i(F)=\sum_{S\ni i}a_S^2$.
+Let $n,k$ be nonnegative integers, let $(\Omega,\mu)$ be a probability space, and let
+$F$ be a real coefficient family on subsets of $\{0,\ldots,n-1\}$ whose coefficients
+vanish on sets of size greater than $k+1$. Fix a coordinate $i$, and let
+$X_j,Y_j:\Omega\to\mathbb R$ be two coordinate families, each independent within itself,
+such that $X_j=Y_j$ as functions whenever $j\ne i$. For every coordinate, both inputs
+satisfy the fourth-order invariance moment conditions: their first and third moments are
+zero, their second moment is one, and their fourth moment is at most $9$ (with finite
+fourth moment and almost-everywhere measurability). If $\psi\in C^4(\mathbb R)$,
+$C\ge0$, and $|\psi^{(4)}(t)|\le C$ for every real $t$, then $\left|\mathbb
+E[\psi(F(X))]-\mathbb E[\psi(F(Y))]\right|\le \frac{C}{12}9^{k+1}\,\mathrm{Inf}_i[F]^2$,
+where $F(X)(\omega)=\sum_S F(S)\prod_{j\in S}X_j(\omega)$ and the influence is that of
+the Boolean-cube evaluation of $F$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Independent Affine Comparison Bound]
+\lean{BooleanAnalysis.GaussianSpace.independent_affine_comparison_bound}
+\label{BooleanAnalysis.GaussianSpace.independent_affine_comparison_bound}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.independent_affine_integral}
+\difficulty{4}
+Let $(\Omega,\mu)$ be a probability space, and let $A,D,U,V\colon\Omega\to\mathbb R$ be
+measurable up to null sets, with the pair $(A,D)$ also measurable up to null sets.
+Suppose $U$ and $V$ are each independent of $(A,D)$. Let $\psi\colon\mathbb R\to\mathbb
+R$ be continuous, and suppose $\psi(A+DU)$ and $\psi(A+DV)$ are integrable. Let
+$B\colon\mathbb R^2\to\mathbb R$ be measurable with $B(A,D)$ integrable, and suppose for
+every $(a,d)\in\mathbb R^2$ that $\left|\mathbb E[\psi(a+dU)]-\mathbb
+E[\psi(a+dV)]\right|\le B(a,d)$. Then $\left|\mathbb E[\psi(A+DU)]-\mathbb
+E[\psi(A+DV)]\right|\le\mathbb E[B(A,D)]$.
+\end{theorem}
+
+\begin{theorem}[Third-Order Affine Replacement Bound]
+\lean{BooleanAnalysis.GaussianSpace.independent_affine_replacement_bound_c3}
+\label{BooleanAnalysis.GaussianSpace.independent_affine_replacement_bound_c3}
+\leanok
+\uses{BooleanAnalysis.GaussianSpace.affine_replacement_bound_c3, BooleanAnalysis.GaussianSpace.independent_affine_comparison_bound}
+\difficulty{4}
+Let $(\Omega,\mu)$ be a probability space, and let $A,D,U,V\colon\Omega\to\mathbb R$,
+with $(A,D)$ measurable up to null sets and $D,U,V\in L^3(\mu)$. Suppose $U$ and $V$
+have equal means and equal second moments, and each is independent of $(A,D)$. Let
+$\psi\in C^3(\mathbb R)$, and suppose $|\psi^{(3)}(t)|\le C$ for every $t\in\mathbb R$.
+If $\psi(A+DU)$ and $\psi(A+DV)$ are integrable, then
+\[\left|\mathbb E\psi(A+DU)-\mathbb E\psi(A+DV)\right|\le \frac C6\left(\mathbb E|U|^3+\mathbb E|V|^3\right)\mathbb E|D|^3.\]
 \end{theorem}

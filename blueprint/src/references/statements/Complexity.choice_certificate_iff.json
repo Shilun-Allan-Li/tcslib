@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.choice_certificate_iff",
+ "key": "f0b4cda13ed3be2b",
+ "kind": "lemma",
+ "title": "Certificates for the choice-word verifier",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $L$ be a language of binary strings, and let $a,c\\in\\mathbb{N}$. Suppose that on every binary input $x$, every choice word of length $a(|x|^c+1)$ halts and membership in $L$ is equivalent to acceptance within that time. Then for every binary string $x$, $x\\in L$ if and only if there is a binary word $u$ of length $(2a)(|x|+1)^c$ such that $xu$ belongs to the choice-word verifier language with parameters $2a$ and $c$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic binary machine",
+  "$L$ is a language of binary strings",
+  "$a,c\\in\\mathbb{N}$",
+  "$N$ decides $L$ within time $n\\mapsto a(n^c+1)$",
+  "$x$ is a binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine over the binary alphabet that decides a language $L$ within time $a\\,(n^c+1)$ on inputs of length $n$, meaning that every branch halts within the budget and acceptance characterizes membership. Then for every binary string $x$: $x \\in L$ if and only if there is a binary string $u$ with $|u| = 2a\\,(|x|+1)^c$ such that the concatenation $x\\,u$ lies in the choice-word verifier language of $N$ with parameters $2a$ and $c$."
+}

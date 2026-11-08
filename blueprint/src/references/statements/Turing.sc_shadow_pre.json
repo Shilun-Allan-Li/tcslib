@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.sc_shadow_pre",
+ "key": "ff3ada9be5cda33e",
+ "kind": "theorem",
+ "title": "Decoding preserves the Boolean counter tape",
+ "statement": "Let $e$ inject the Boolean alphabet into $\\Gamma$, let $x$ be an input over $\\Gamma$, let $ip$ be a valid input-head position, and let $out$ be an output word over $\\Gamma$. Let $w$ be a Boolean word, and suppose the tape $ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$ based at $cp\\in\\mathbb Z$ stores the encoded word $w$ at every offset $p$ with $-1\\le p\\le |w|$. Form the configuration $D$ with input-head position $ip$, output $out$, work-tape content $ct$, work-tape head position $cp$, and state $\\mathrm{run}$. Decoding $D$ leaves its state equal to $\\mathrm{run}$, and its decoded work tape at each of those offsets equals the buffer-tape content of $w$ there.",
+ "hypotheses_covered": [
+  "An injection $e$ from the Boolean alphabet to $\\Gamma$",
+  "An input word $x$ over $\\Gamma$",
+  "A valid input-head position $ip$",
+  "An output word $out$ over $\\Gamma$",
+  "A Boolean word $w$",
+  "A tape $ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$ and base position $cp\\in\\mathbb Z$",
+  "For all integer offsets $p$ with $-1\\le p\\le |w|$, $ct(cp+p)$ equals the encoded buffer-tape content of $w$ at $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

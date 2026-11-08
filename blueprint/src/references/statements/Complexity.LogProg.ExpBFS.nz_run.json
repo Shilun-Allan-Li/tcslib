@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.nz_run",
+ "key": "ab25556269db3691",
+ "kind": "theorem",
+ "title": "Next Iteration Initialization Run",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}:\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{0,1\\}$ be an oracle, let $x$ be a finite Boolean string, let $S$ be a machine state, and let $M:\\mathbb{Z}\\to\\{0,1\\}$ be a memory function. Suppose every register value in $S$ is at most $B$ and $S.s+1\\le B$. Starting in the next-iteration initialization state with registers $S$, memory $M$, and memory head at $0$, the machine reaches a configuration in the first-search copy phase with radius $S.s+1$, registers $U,V,w,K,B_s,c,c_1,s_1$ all zero, memory $M$, and head at $0$; at every earlier configuration, all register values are at most $B$, the memory head lies between $0$ and $P$, and the current instruction satisfies the machine's register-comparison side condition.",
+ "hypotheses_covered": [
+  "$K_0,B,P$ are natural numbers",
+  "$\\mathrm{orc}$ maps one of four indices and a Boolean string to a Boolean",
+  "$x$ is a Boolean string",
+  "$S$ is a machine state whose register values are all at most $B$",
+  "$M$ is an integer-indexed Boolean memory function",
+  "$S.s+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}$ be a Boolean oracle indexed by four\npossibilities, let $x$ be a Boolean string, let $S$ be a register state, and let $M$ be\na Boolean-valued memory on the integers. Assume every register value in $S$ is at most\n$B$, and that $S.s+1\\le B$. Starting with the machine in the next-iteration\ninitialization state, register values $S$, memory $M$, and head position $0$, it reaches\nthe first copy instruction of the next first search with the radius increased by one,\nregisters $U,V,w,K,B_s,c,c_1,s_1$ set to zero, and memory and head position still $M$\nand $0$; every configuration before that reached configuration satisfies the guard\n$G(x,B,P)$."
+}

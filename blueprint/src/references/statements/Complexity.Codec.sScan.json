@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Codec.sScan",
+ "key": "63fc4bd2b916aed2",
+ "kind": "def",
+ "title": "Paired scan of two lists",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean tape alphabet, let $G_0,G_1$ each take three optional cell values to an optional cell value, and let $u,u'$ be finite lists of Boolean symbols. Pair the lists position by position, apply the paired scan transition successively across the resulting list of pairs, starting from two initial scan states together with counter $0$ and a function assigning $(\text{false},\text{false})$ at every argument, and return the pair of scan states in the resulting accumulator.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean tape alphabet",
+  "$G_0,G_1$ are functions from three optional cell values to an optional cell value",
+  "$u,u'$ are finite lists of Boolean symbols"
+ ],
+ "confidence": "low",
+ "caveat": "The scan uses auxiliary operations for list pairing, accumulator updates, and the value $hH(N)$ whose definitions are not included in the supplied statement, so their exact behavior cannot be made fully explicit here.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

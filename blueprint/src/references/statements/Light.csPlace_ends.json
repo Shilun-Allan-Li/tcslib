@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.csPlace_ends",
+ "key": "a977a736b7b1f246",
+ "kind": "theorem",
+ "title": "Counting-sort placement phase",
+ "statement": "Let a counting-sort input have $n$ items $x_i$ with keys $k_i<N$, stored at source address $s$, with a destination range and $N+1$ counter cells satisfying the required bounds and disjointness conditions; assume the key cells are also within the address bound and disjoint from both ranges. Suppose the counter memory has cumulative counts $\\#\\{i<n:k_i<t\\}$ at counter $t$ for $t\\le N$, and bucket sizes $\\#\\{i<n:k_i=t\\}$ at counter $t+1$ for $t<N$. From any state with loop index $r$, arbitrary other loop variables, and memory agreeing with the initial memory outside the destination and counter ranges, the placement program has an execution of cost at most $38n+6$ ending with loop index $n$, memory still agreeing outside those ranges, updated counters encoding the next positions, and each processed item $j<n$ stored at its stable sorted position.",
+ "hypotheses_covered": [
+  "Counting-sort preconditions: word bound, source/destination/counter bounds, item and key contents, key range, and required interval disjointness",
+  "Initial memory has cumulative counts through bucket $N$ and bucket sizes from bucket $r$ onward",
+  "Initial state has the specified loop-index frame and agrees with initial memory outside destination and counter ranges"
+ ],
+ "confidence": "low",
+ "caveat": "The counter invariant and state predicate are bundled formal definitions; the given descriptions do not define them.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

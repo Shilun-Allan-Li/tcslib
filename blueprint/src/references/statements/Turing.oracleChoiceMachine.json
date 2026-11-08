@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.oracleChoiceMachine",
+ "key": "4cdccc7697f9b833",
+ "kind": "def",
+ "title": "Oracle choice machine",
+ "statement": "Given a finite Boolean nondeterministic oracle Turing machine $N$ with $k$ ordinary work tapes, a finite state set with decidable equality, and pairwise distinct query, positive-answer, and negative-answer states, the associated deterministic oracle Turing machine has $k+1$ ordinary work tapes and state set $Q\\sqcup\\{0,1,2\\}$, where $Q$ is the state set of $N$. Its initial state and query state are those of $N$ in the $Q$ summand, and its positive and negative answer states are $0$ and $1$ in the other summand. If the added tape's scanned cell is blank, its transition is the oracle-answer action for a negative answer; if that cell contains a Boolean $b$ and the current state lies in $Q$, its transition is $N$'s transition indexed by $b$, using the other tapes as the scanned-tape data and extending the action to include the added tape. In a state of the other summand with a nonblank added-tape cell, its transition makes no writes or output, leaves all heads stationary, and enters $N$'s positive-answer state when the current state is $0$, and its negative-answer state otherwise.",
+ "hypotheses_covered": [
+  "$N$ is a finite Boolean nondeterministic oracle Turing machine",
+  "$N$ has $k$ ordinary work tapes, for $k\\in\\mathbb{N}$",
+  "$N$ has a finite state set",
+  "The state set has decidable equality",
+  "The query, positive-answer, and negative-answer states of $N$ are pairwise distinct"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

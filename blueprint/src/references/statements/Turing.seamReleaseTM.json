@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.seamReleaseTM",
+ "key": "0e9a5dc8219eef62",
+ "kind": "def",
+ "title": "Machine with a Released Anchor State",
+ "statement": "Given a deterministic Turing machine $M$ with $k$ work tapes and state set $S$, and a chosen state $a\\in S$, there is a machine with state set $\\{\\ast\\}\\sqcup S$ whose initial state is $\\ast$. In state $\\ast$ it uses the transition of $M$ at $a$, and in state $s\\in S$ it uses the transition of $M$ at $s$; in both cases it preserves the input-head movement, work-tape actions, and output, and any successor state is placed in the $S$ summand.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A symbol alphabet",
+  "A state set $S$",
+  "A machine $M$ with that alphabet, state set, and $k$ work tapes",
+  "A chosen anchor state $a\\in S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

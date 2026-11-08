@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.weighted_fourierWeightUpTo_le_stability",
+ "key": "0e42313a30665d8b",
+ "kind": "lemma",
+ "title": "Weighted low-level Fourier bound",
+ "statement": "Let $n,k\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\bbr$, and let $\\rho\\in\\bbr$ satisfy $0\\le\\rho\\le1$. If $\\widehat f(S)$ denotes the Walsh–Fourier coefficient of $f$ at $S\\subseteq[n]$ and $T_\\rho$ is the noise operator, then \\[\\rho^k\\sum_{\\substack{S\\subseteq[n]\\\\|S|\\le k}}\\widehat f(S)^2\\le\\langle f,T_\\rho f\\rangle.\\]",
+ "hypotheses_covered": [
+  "$n,k\\in\\mathbb N$",
+  "$f$ is a real-valued function on the Boolean cube",
+  "$\\rho\\in\\mathbb R$",
+  "$0\\le\\rho$",
+  "$\\rho\\le1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube, $k\\in\\mathbb N$, and $0\\le\\rho\\le1$. Then $\\rho^k\\sum_{|S|\\le k}\\widehat f(S)^2\\le\\mathbb E[fT_\\rho f]$."
+}

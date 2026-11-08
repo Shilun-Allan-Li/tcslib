@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.valPairs_run",
+ "key": "a5146bcd3781e925",
+ "kind": "lemma",
+ "title": "Scanning paired encodings",
+ "statement": "Let $P$ be a register program with oracle $\\mathcal O$, $r$ a register, $p\\in\\mathbb Z$, and $c$ a configuration on input $x$. Suppose the transition identities $hP1,hP2$ hold at states $vP1,vP2$ and neither state is an oracle-call state, as asserted by $cP1,cP2$. For every Boolean word $z$, optional last bit $last$, and natural number $q$ satisfying $q+|z|=|x|+1$, assume that for each $k$, the symbol of $x$ at one-based position $q+k$ equals the $k$th bit of $z$, when defined. If scanning the aligned pairs of $z$, with initial previous bit $last$, returns a word $w$, then the run from state $vP1(last)$ at input-head position $q$ reaches state $vW0$ at position $q+|z|-|w|$, which is a valid input-head position. If the scan returns no word, that run halts with a rejecting output. In both cases, the stated reachability or rejection runs avoid oracle-call states before their endpoint.",
+ "hypotheses_covered": [
+  "Transition identities hP1 and hP2",
+  "No oracle calls at vP1 and vP2",
+  "c is a configuration on input x",
+  "r is a register and p is an integer",
+  "q+|z|=|x|+1",
+  "For every k, the symbol of x at one-based position q+k agrees with the kth bit of z when defined",
+  "Scan result condition: scanPairs(last,z)=some w, or scanPairs(last,z)=none"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

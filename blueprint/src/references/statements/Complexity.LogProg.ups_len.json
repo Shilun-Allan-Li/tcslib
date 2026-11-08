@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.ups_len",
+ "key": "50996168529a5a83",
+ "kind": "lemma",
+ "title": "Length-loop entry from multiplication",
+ "statement": "Let $x$ be a bit string, $B$ a natural number, $q$ a rational number, and $\\sigma$ a register state whose fifteen values are at most $B$. Suppose its scratch-sum, scratch-product, and walk-length values are all zero, and $100n^4+10n\\le B$, where $n$ is its vertex-count value. Assume that for every $a,b\\le B$, the program started at $w0$ on input $x$, with the row and inner counters set to $a,b$, the scratch-sum set to $10n$, the scratch-product set to $n(10n)$, and the walk length set to $n(10n)(n(10n))$ (all other values unchanged), has all live register values at most $B$, terminates along every sequence of choices, and has acceptance probability $q$ and rejection probability $1-q$ for every choice length at which every sequence of choices halts. Then the program started at $lc(0)$ from $\\sigma$ has those same bounded-register termination and probability properties.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$B$ is a natural number",
+  "$q$ is rational",
+  "$\\sigma$ is a register state bounded by $B$",
+  "scratch-sum, scratch-product, and walk-length values are zero",
+  "$100n^4+10n\\le B$",
+  "for every $a,b\\le B$, the specified state at $w0$ has bounded-register probabilistic semantics $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B$ be a natural-number bound, $q$ a rational number, and $\\sigma$ a 15-register\nstate whose registers are all at most $B$. Suppose its scratch-sum, scratch-product, and\nwalk-length registers satisfy $\\sigma.e=\\sigma.f=\\sigma.L=0$, and\n$100\\sigma.n^4+10\\sigma.n\\le B$. If, for every $a,b\\le B$, the randomized program\n$\\mathrm{upA}$ on input $x$, started at label $w0$ with the registers of $\\sigma$ except\nthat the row and inner counters are $a,b$, the scratch-sum register is $10\\sigma.n$, the\nscratch-product register is $\\sigma.n(10\\sigma.n)$, and the walk-length register is\n$\\sigma.n(10\\sigma.n)(\\sigma.n(10\\sigma.n))$, has acceptance probability $q$, then the\nsame program started at label $lc(0)$ with state $\\sigma$ has acceptance probability\n$q$."
+}

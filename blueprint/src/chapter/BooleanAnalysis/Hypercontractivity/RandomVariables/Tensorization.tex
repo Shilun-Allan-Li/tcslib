@@ -5,40 +5,60 @@ Minkowski for nonnegative product integrals compares mixed norms. Affine contrac
 
 \section{Declarations}
 
-\begin{theorem}[Minkowski for nonnegative product integrals]
+\begin{theorem}[Minkowski inequality for nonnegative product integrals]
 \lean{BooleanAnalysis.Hypercontractivity.Tensorization.lintegral_minkowski}
 \leanok
 \difficulty{6}
-Let $(A,\mu)$ and $(B,\nu)$ be probability spaces, let $f:A\times B\to[0,\infty]$ be measurable, and let $r\ge1$. Then $(\int_B(\int_A f(x,y)\,d\mu(x))^r\,d\nu(y))^{1/r}\le\int_A(\int_B f(x,y)^r\,d\nu(y))^{1/r}\,d\mu(x)$, with nonnegative extended integrals.
+Let $(A,\mu)$ and $(B,\nu)$ be probability spaces, let $f:A\times B\to[0,\infty]$ be
+measurable, and let $r\in\mathbb R$ satisfy $1\le r$. Then $\left(\int_B\left(\int_A
+f(x,y)\,d\mu(x)\right)^r d\nu(y)\right)^{1/r}\le\int_A\left(\int_B
+f(x,y)^r\,d\nu(y)\right)^{1/r}d\mu(x)$, with the integrals and powers taken in the
+nonnegative extended reals.
 \end{theorem}
 
-\begin{theorem}[Comparison of mixed nonnegative norms]
+\begin{theorem}[Comparison of mixed nonnegative integrals]
 \lean{BooleanAnalysis.Hypercontractivity.Tensorization.mixed_lintegral_le}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.Tensorization.lintegral_minkowski}
 \difficulty{4}
-Let $(A,\mu)$ and $(B,\nu)$ be probability spaces, let $g:A\times B\to[0,\infty]$ be measurable, and let $0<p\le q<\infty$. Then $(\int_B(\int_A g^p\,d\mu)^{q/p}\,d\nu)^{1/q}\le(\int_A(\int_B g^q\,d\nu)^{p/q}\,d\mu)^{1/p}$.
+Let $(A,\mu)$ and $(B,\nu)$ be probability spaces, let $g:A\times B\to[0,\infty]$ be
+measurable, and let $p,q\in\mathbb R$ satisfy $0<p\le q$. Then $\left(\int_B\left(\int_A
+g(x,y)^p\,d\mu(x)\right)^{q/p}d\nu(y)\right)^{1/q}\le\left(\int_A\left(\int_B
+g(x,y)^q\,d\nu(y)\right)^{p/q}d\mu(x)\right)^{1/p}$, with integrals and powers taken in
+the nonnegative extended reals.
 \end{theorem}
 
-\begin{theorem}[Affine sum contraction at finite exponents]
+\begin{theorem}[Finite-exponent affine sum contraction]
 \lean{BooleanAnalysis.Hypercontractivity.Tensorization.affine_sum_le_of_ne_top}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.Tensorization.mixed_lintegral_le}
 \difficulty{5}
-Let $\mu,\nu$ be probability measures on $\bbr$, $1\le p\le q<\infty$, and $\rho\in\bbr$. Suppose $\|a+\rho bx\|_{L^q(\theta)}\le\|a+bx\|_{L^p(\theta)}$ for every $a,b\in\bbr$ and each $\theta\in\{\mu,\nu\}$. Then $\|a+\rho b(x+y)\|_{L^q(\mu\times\nu)}\le\|a+b(x+y)\|_{L^p(\mu\times\nu)}$ for every $a,b$.
+Let $\mu$ and $\nu$ be probability measures on $\mathbb R$, let $p,q\in[0,\infty]$
+satisfy $1\le p\le q<\infty$, and let $\rho\in\mathbb R$. Suppose that for each
+$\theta\in\{\mu,\nu\}$ and all $a,b\in\mathbb R$, the extended $L^p$ and $L^q$ seminorms
+satisfy $\|x\mapsto a+\rho bx\|_{L^q(\theta)}\le\|x\mapsto a+bx\|_{L^p(\theta)}$. Then
+for all $a,b\in\mathbb R$, $\|(x,y)\mapsto a+\rho
+b(x+y)\|_{L^q(\mu\times\nu)}\le\|(x,y)\mapsto a+b(x+y)\|_{L^p(\mu\times\nu)}$.
 \end{theorem}
 
-\begin{theorem}[Uniform moment bounds imply essential boundedness]
+\begin{theorem}[Uniform moment bounds control the essential supremum]
 \lean{BooleanAnalysis.Hypercontractivity.Tensorization.eLpNorm_top_le_of_forall_nat}
 \leanok
 \difficulty{5}
-Let $f$ be an almost everywhere strongly measurable real function on an arbitrary measure space $(A,\mu)$, let $C\in[0,\infty]$ and $N\in\mathbb N$. If $\|f\|_n\le C$ for every integer $n\ge N$, then $\|f\|_\infty\le C$.
+Let $(A,\mu)$ be a measure space and let $f:A\to\mathbb R$ be almost everywhere strongly
+measurable. For $C\in[0,\infty]$ and $N\in\mathbb N$, suppose that $\|f\|_{L^n(\mu)}\le
+C$ for every natural number $n\ge N$. Then $\|f\|_{L^\infty(\mu)}\le C$.
 \end{theorem}
 
-\begin{theorem}[Affine sum contraction at extended exponents]
+\begin{theorem}[Affine sum contraction]
 \lean{BooleanAnalysis.Hypercontractivity.Tensorization.affine_sum_le}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.Tensorization.affine_sum_le_of_ne_top, BooleanAnalysis.Hypercontractivity.Tensorization.eLpNorm_top_le_of_forall_nat}
 \difficulty{6}
-Let $\mu,\nu$ be probability measures on $\bbr$, $1\le p\le q\le\infty$, and $\rho\in\bbr$. Suppose $\|a+\rho bx\|_{L^q(\theta)}\le\|a+bx\|_{L^p(\theta)}$ for every $a,b\in\bbr$ and each $\theta\in\{\mu,\nu\}$. Then $\|a+\rho b(x+y)\|_{L^q(\mu\times\nu)}\le\|a+b(x+y)\|_{L^p(\mu\times\nu)}$ for every $a,b$, with the essential supremum at infinity.
+Let $\mu$ and $\nu$ be probability measures on $\mathbb R$, let $p,q\in[0,\infty]$
+satisfy $1\le p\le q$, and let $\rho\in\mathbb R$. Suppose that for each
+$\theta\in\{\mu,\nu\}$ and all $a,b\in\mathbb R$, the extended $L^p$ and $L^q$ seminorms
+satisfy $\|x\mapsto a+\rho bx\|_{L^q(\theta)}\le\|x\mapsto a+bx\|_{L^p(\theta)}$. Then
+for all $a,b\in\mathbb R$, $\| (x,y)\mapsto a+\rho
+b(x+y)\|_{L^q(\mu\times\nu)}\le\|(x,y)\mapsto a+b(x+y)\|_{L^p(\mu\times\nu)}$.
 \end{theorem}

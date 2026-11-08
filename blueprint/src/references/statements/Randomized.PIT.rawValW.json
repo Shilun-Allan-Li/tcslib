@@ -1,0 +1,12 @@
+{
+ "lean_name": "Randomized.PIT.rawValW",
+ "key": "f9df47661cae1c24",
+ "kind": "def",
+ "title": "Raw value encoding",
+ "statement": "For a Boolean list $D$, define its raw value encoding by cases on its encoded word. In the variable case, take the binary sum of the pair encoding of the extracted word at the encoded variable index and the encoded point list; in the constant-one case, use the one-bit list $[1]$. In the addition case, take the binary sum of the pair encoding of the two recursively extracted operand words. In the subtraction case, take the binary sum of the first operand word paired with the binary difference between the encoding of $sK(D)$ paired with the second operand word. In every other case, take the binary product of the pair encoding of the two extracted operand words.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "The meanings of the word tests, selectors, encodings, and binary arithmetic operations are not supplied, so the cases cannot be identified more specifically.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

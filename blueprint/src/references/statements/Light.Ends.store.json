@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Ends.store",
+ "key": "45d6d6da4e29c5f4",
+ "kind": "theorem",
+ "title": "Store statement",
+ "statement": "Let a limit record, program, execution depth, state $\\sigma$, budget $T$, address expression $a$, value expression $e$, and postcondition $Q$ be given. Suppose $a$ and $e$ are safe in $\\sigma$, the value of $a$ is a valid address (nonnegative and less than the space bound), and $\\mathrm{cost}(a)+\\mathrm{cost}(e)+1\\le T$. If $Q$ holds after updating memory at the natural-number address corresponding to the value of $a$ to the value of $e$, while leaving the local function unchanged, then the store statement can execute from $\\sigma$ with cost at most $T$ and end in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "Address expression a is safe in σ.",
+  "Value expression e is safe in σ.",
+  "The value of a is a valid address: it is nonnegative and less than the space bound.",
+  "cost(a)+cost(e)+1 ≤ T.",
+  "Q holds of σ with memory updated at the natural-number conversion of a's value to e's value."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

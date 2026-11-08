@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.read_zone",
+ "key": "5b13bfc8bea735c9",
+ "kind": "lemma",
+ "title": "Forward sweep over a zone",
+ "statement": "Let $c$ be a configuration of a machine with $k$ work tapes, let $j \\in \\mathbb{Z}$, and let $n \\in \\mathbb{N}$. Processing the concatenation of the $n$ blocks at coordinates $j$ through $j+n-1$, with their left-neighbour flags initially false, by the forward sweep started from the control table at $j$ yields the control table at $j+n$ and those same blocks with their left-neighbour head flags recorded.",
+ "hypotheses_covered": [
+  "configuration c of a k-work-tape machine",
+  "integer coordinate j",
+  "natural number n"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a $k$-work-tape machine, $j \\in \\mathbb{Z}$, and\n$n \\in \\mathbb{N}$. The forward sweep over the concatenation of the $n$ unread blocks at\ncoordinates $j, \\dots, j+n-1$, started from the control table at $j$, ends in the\ncontrol table at $j+n$ and produces the corresponding blocks with left-neighbour head\nflags recorded."
+}

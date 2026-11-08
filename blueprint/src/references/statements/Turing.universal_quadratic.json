@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.universal_quadratic",
+ "key": "98496bcb0089e268",
+ "kind": "theorem",
+ "title": "Quadratic universal simulation",
+ "statement": "Let $c$ be an effective machine-coding scheme. There is a finite-tape machine $U$ over the Boolean alphabet such that, for every finite-tape Boolean machine $M_0$, function $f$ on finite Boolean strings, and time bound $T\\colon\\mathbb{N}\\to\\mathbb{N}$, if $M_0$ computes $f(x)$ within $T(|x|)$ steps for every input $x$, then there are a Boolean string $\\alpha$ and a constant $C\\in\\mathbb{N}$ such that, for every Boolean string $x$, $U$ computes $f(x)$ on the paired encoding of $\\alpha$ and $x$ within $C\\,(T(|x|)+1)^2$ steps.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine-coding scheme",
+  "$M_0$ is a finite-tape machine over the Boolean alphabet",
+  "$f$ maps finite Boolean strings to finite Boolean strings",
+  "$T\\colon\\mathbb{N}\\to\\mathbb{N}$ is a time bound",
+  "$M_0$ computes $f(x)$ within $T(|x|)$ steps for every input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective machine-coding scheme, there is a single finite-tape machine $U$\nover the binary alphabet such that the following holds. For every finite-tape binary\nmachine $M_0$, function $f$ on finite bit strings, and time bound\n$T\\colon\\mathbb{N}\\to\\mathbb{N}$, if $M_0$ computes $f$ on every input within time $T$\nof the input length, then there are a bit string $\\alpha$ and a constant\n$C\\in\\mathbb{N}$ such that, for every bit string $x$, $U$ computes $f(x)$ on the paired\nencoding of $\\alpha$ and $x$ within $C\\,(T(|x|)+1)^2$ steps."
+}

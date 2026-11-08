@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_cellWindow_embed_run",
+ "key": "cb498466ec58d245",
+ "kind": "theorem",
+ "title": "Embedding the cell-window computation",
+ "statement": "Let $Q,T$ be types with decidable equality, let $k\\in\\mathbb{N}$, and let $\\iota$ embed the three tape indices into the $k$ tape indices. Let $ws$ be a Boolean word and $s\\in\\mathbb{N}$ such that its binary value is $s$. Suppose a three-tape configuration $a$ on input $x$ starts in the initial sweep phase; tape 0 stores $ws$ as a buffer on the interval from one cell left of its head through the cell indexed by $|ws|$, tape 2 is blank on that interval, tape 1 is blank from one cell left through the cell indexed by $2s+1$, and the output is empty. For any surrounding tapes, head positions, and output prefix used to embed the configuration into $k$ tapes, there is a time $t\\le18(s+|ws|)+32$ such that the embedded machine has not reached its designated done state before $t$, every work-tape head stays within distance $2s+|ws|+3$ of its initial position through time $t$, and at time $t$ the designated state is reached and the output remains the prefix. The embedded configuration agrees with its initial version except on the interval of tape $\\iota(1)$ from its head position through the next $2s+1$ cells, where the buffer now stores $s$ false cell symbols, then one true cell symbol, then $s$ false cell symbols.",
+ "hypotheses_covered": [
+  "types $Q,T$ have decidable equality",
+  "$k\\in\\mathbb{N}$ and embedding $\\iota:\\mathrm{Fin}(3)\\hookrightarrow\\mathrm{Fin}(k)$",
+  "input word $x$, Boolean word $ws$, and $s\\in\\mathbb{N}$",
+  "binary value of $ws$ equals $s$",
+  "configuration $a$ starts in the specified initial sweep state",
+  "tape 0 agrees with the buffer for $ws$ on $-1\\le p\\le |ws|$ relative to its head",
+  "tape 2 is blank on $-1\\le p\\le |ws|$ relative to its head",
+  "tape 1 is blank on $-1\\le p\\le 2s+1$ relative to its head",
+  "output of $a$ is empty",
+  "arbitrary ambient tapes, head positions, and output prefix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

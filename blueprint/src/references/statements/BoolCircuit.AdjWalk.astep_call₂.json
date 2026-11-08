@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.AdjWalk.astep_call₂",
+ "key": "002a88152b7ea0f7",
+ "kind": "lemma",
+ "title": "Two-argument oracle-call step",
+ "statement": "Let $\\ell$ be a label, $j\\in\\{0,1,2,3,4\\}$, and $r,r'\\in\\{0,1,2,3\\}$, and let $v$ assign a natural number to each of the four registers. If the instruction at $\\ell$ calls oracle $j$ in unary-first mode with the ordered registers $r,r'$, with successor labels $\\ell_1$ and $\\ell_0$ for positive and negative answers, respectively, then one machine step from the configuration with label $\\ell$, registers $v$, and no answer leaves the registers unchanged and no answer recorded, and moves to $\\ell_1$ exactly when the oracle accepts the encoding of $1^n$ paired with the encoding of the binary representations of $v(r)$ and $v(r')$; otherwise it moves to $\\ell_0$.",
+ "hypotheses_covered": [
+  "The instruction at $\\ell$ is the specified ordered two-register oracle call",
+  "The registers $r,r'$ lie among the four registers",
+  "The register valuation $v$ is given"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

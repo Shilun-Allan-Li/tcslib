@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.ndFormat",
+ "key": "ae0675bda5570299",
+ "kind": "def",
+ "title": "Binary format for coded nondeterministic machines",
+ "statement": "A code format for two-tape nondeterministic machines uses, for each state count, a pair of transition tables, one for each choice bit. It serializes a machine by pairing the binary expansion of its state parameter with the unary initial-state index followed by the two table encodings; its table reader recovers a table and the remaining bits, and its erasing reader discards the table encoding. The format has guard constant $702$ and uses a fixed fallback machine for malformed strings.",
+ "hypotheses_covered": [
+  "The code type is the type of coded nondeterministic machines",
+  "Tables are pairs of two-tape transition tables",
+  "The state parameter and initial state determine the assembled machine",
+  "Serialization uses the state parameter, initial state, and table encodings",
+  "Table and erased-table readers are specified",
+  "Guard constant is $702$",
+  "A fixed fallback machine is specified"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

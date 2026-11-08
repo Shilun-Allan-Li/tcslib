@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.CounterProg.print_walk",
+ "key": "264722134dd5b0e4",
+ "kind": "theorem",
+ "title": "Leftward Walk During Register Printing",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a finite set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, and choose a start label $\\ell_0\\in\\Lambda$. Fix an input bit string $x$, a register $r$, a label $\\ell$, an input-head position $p$, work tapes $T_i:\\mathbb{Z}\\to\\{0,1,\\sqcup\\}$ and work-head positions $h_i\\in\\mathbb{Z}$, and $m\\in\\mathbb{N}$; suppose tape $T_r$ has value $1$ exactly at the cells $0,\\ldots,m-1$ and is blank elsewhere. For every $j\\in\\mathbb{N}$ with $j\\le m$ and every output word $w$, starting in the print-left state for register $r$ and label $\\ell$, with head $r$ at cell $j-1$ and the other data as specified, after $j+1$ steps the machine is in the print-right state for $r,\\ell$, with head $r$ at cell $0$, unchanged input head and tapes, and output $w$ followed by $j$ copies of $1$.",
+ "hypotheses_covered": [
+  "$R\\in\\mathbb{N}$ and the label set $\\Lambda$ is finite.",
+  "$P$ is a counter program over $R$ registers and labels in $\\Lambda$.",
+  "A start label $\\ell_0\\in\\Lambda$ is specified.",
+  "An input bit string $x$ is fixed.",
+  "A register $r$ and label $\\ell$ are specified.",
+  "An input-head position $p$ is specified.",
+  "Work tapes $T_i:\\mathbb{Z}\\to\\{0,1,\\sqcup\\}$ and head positions $h_i\\in\\mathbb{Z}$ are specified.",
+  "$m\\in\\mathbb{N}$ and tape $T_r$ equals one on cells $0\\le c<m$ and is blank elsewhere.",
+  "$j\\in\\mathbb{N}$ satisfies $j\\le m$.",
+  "An output word $w$ is specified."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Lambda$ be a finite set of labels, $P$ a counter program over $R$ registers with labels in\n$\\Lambda$, $\\ell_0 \\in \\Lambda$, $x$ an input bit string, $r$ a register, $\\ell$ a label, $p$ an\ninput-head position, $(T_i)$ work tapes and $(h_i)$ work heads, and $m \\in \\mathbb{N}$ such that\ntape $r$ is the unary tape $T_r = 1^m$ (cells $0, \\dots, m-1$ hold $1$, all others blank). Then\nfor every $j \\le m$ and every output string $w$, running the machine of $P$ started at $\\ell_0$\nfor $j + 1$ steps from the configuration in state $\\mathsf{print}_{\\leftarrow}(r, \\ell)$ with\ninput head $p$, tapes $(T_i)$, heads $(h_i)$ except that head $r$ is on cell $j - 1$, and output\n$w$, reaches the configuration in state $\\mathsf{print}_{\\rightarrow}(r, \\ell)$ with input head\n$p$, tapes $(T_i)$, heads $(h_i)$ except that head $r$ is on cell $0$, and output $w\\,1^j$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "WordRAM.steps_bltz",
+ "key": "52619ab7a264e7c3",
+ "kind": "theorem",
+ "title": "One-step conditional branch",
+ "statement": "Let $W$ be a word width, $P$ a program, and $c,l,pos$ integers or natural numbers as appropriate, with $v$ an integer and $m$ a memory. Suppose the program at position $pos$ begins with the instruction that branches to $l$ when address $c$ contains a negative value, the word at $c$ represents $v$, and $v$ satisfies $-2^W \\le 2v < 2^W$. Then one step from $(pos,m)$ leaves the memory unchanged and moves the program counter to $l$ if $v<0$, and to $pos+1$ otherwise.",
+ "hypotheses_covered": [
+  "The program at pos begins with bltz c l",
+  "m(c) is the W-bit representation of v",
+  "-2^W ≤ 2v < 2^W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

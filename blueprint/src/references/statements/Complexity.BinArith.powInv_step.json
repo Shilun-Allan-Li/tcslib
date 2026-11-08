@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.BinArith.powInv_step",
+ "key": "2efc0fdcf3a886a4",
+ "kind": "theorem",
+ "title": "Preservation and Progress of the Power Invariant",
+ "statement": "Let $z$ and $S$ be bit strings, and suppose $S$ has the following property: it is an encoding $\\langle B,\\langle E,\\langle b,\\mathrm{acc}\\rangle\\rangle\\rangle$ with $|E|\\leq |\\pi_1(\\pi_2(z))|$, with $b$ and $\\mathrm{acc}$ in canonical binary form, $|b|\\leq |\\pi_1(z)|+|B|$, and $|\\mathrm{acc}|\\leq 1+|B|$, where $B=\\pi_2(\\pi_2(z))$; if $\\langle B\\rangle>0$, also require $\\langle b\\rangle,\\langle\\mathrm{acc}\\rangle<\\langle B\\rangle$ and $\\langle\\mathrm{acc}\\rangle\\langle b\\rangle^{\\langle E\\rangle}\\equiv\\langle\\pi_1(z)\\rangle^{\\langle\\pi_1(\\pi_2(z))\\rangle}\\pmod{\\langle B\\rangle}$. Then one step of the specified state update preserves this property. Moreover, if $\\langle B\\rangle>0$ and $|\\pi_1(\\pi_2(S))|>0$, the length of that exponent component strictly decreases after the update.",
+ "hypotheses_covered": [
+  "z and S are bit strings",
+  "S satisfies the full stated power invariant",
+  "The strict-decrease conclusion assumes the decoded modulus value is positive and the exponent component has positive length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clCount_run",
+ "key": "77dbe9a97faed5ac",
+ "kind": "lemma",
+ "title": "Timed In-Place Increment",
+ "statement": "For every bit-list input $x$, valid input-head position $p$, and bit list $w$, running the increment machine for exactly $2\\operatorname{carry}(w)+2$ steps from carry control, with input head at $p$, work head at cell $0$, tape holding $w$, and empty output, ends in return control. The input-head position remains $p$, the work head is at cell $0$, the tape holds the increment of $w$, and the output is empty.",
+ "hypotheses_covered": [
+  "$x$ is a bit list",
+  "$p$ is a valid input-head position for $x$",
+  "$w$ is a bit list"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, and stored word $w$, running the increment machine from carry control at cell $0$ for exactly twice the carry count of $w$ plus two steps ends in the return control at cell $0$ with the stored word replaced by its increment; the native input head never moves from its supplied position."
+}

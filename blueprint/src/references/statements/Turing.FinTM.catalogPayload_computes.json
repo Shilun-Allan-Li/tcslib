@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.catalogPayload_computes",
+ "key": "549a06d04b64b442",
+ "kind": "lemma",
+ "title": "Computing on the extracted payload",
+ "statement": "Let $M_g$ be a finite Turing machine that computes a total function $g$ on Boolean words within time bound $T_g$, and suppose $T_g$ is monotone. Then the buffered composition of the pair-component extractor and $M_g$ computes the function that sends each Boolean word $x$ to $g(b)$, where $b$ is the second component returned by the aligned pair parser on $x$, taken to be the empty word if parsing is undefined. On inputs of length $n$, this computation finishes within $6(n+1)+T_g(n)+1$ steps.",
+ "hypotheses_covered": [
+  "$M_g$ computes $g$ within time bound $T_g$",
+  "$T_g$ is monotone"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine compute the total function $g$ within a monotone time bound\n$T_g$. Then the buffered composition of the second-component pair extractor\nwith that machine computes, within $6(n+1) + T_g(n) + 1$ steps on inputs of\nlength $n$, the function sending $x$ to $g(b)$, where $b$ is the second\ncomponent of $x$ under the self-delimiting pair code (the empty word when $x$\nis malformed)."
+}

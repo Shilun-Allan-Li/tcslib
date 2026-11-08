@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.redirectTM_live",
+ "key": "5ec7543b9c833282",
+ "kind": "theorem",
+ "title": "Redirected computation remains live",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit, and let $x,w$ be Boolean words and $t \\in \\mathbb{N}$. If $M$ computes $w$ from $x$ in exactly $t$ steps (halting at step $t$) and the last bit of $w$ is not $b$, then the machine obtained by redirecting $M$ to halt on $b$ is not halted after $u$ steps from its initial configuration on $x$, for every $u \\in \\mathbb{N}$.",
+ "hypotheses_covered": [
+  "finite-state Boolean Turing machine M",
+  "bit b",
+  "Boolean words x and w",
+  "natural number t",
+  "M computes w from x in t steps, with some space usage",
+  "last bit of w is not b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, $b$ a bit, $x$ and $w$\nBoolean words, and $t \\in \\mathbb{N}$. Consider the halt-redirected machine of $M$ and\n$b$, which simulates $M$ without emitting anything while recording the last bit $M$ has\nemitted, halts when $M$ halts with that bit equal to $b$, and otherwise enters an idle\nloop state. If $M$ on input $x$ halts within $t$ steps with output $w$, and either $w$ is\nempty or its last bit differs from $b$, then for every $u \\in \\mathbb{N}$ the\nhalt-redirected machine, run for $u$ steps from its initial configuration on $x$, is not\nhalted."
+}

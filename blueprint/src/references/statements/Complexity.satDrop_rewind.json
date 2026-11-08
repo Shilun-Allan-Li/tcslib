@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.satDrop_rewind",
+ "key": "1087a2e03e3eeb4a",
+ "kind": "lemma",
+ "title": "Rewinding the Counter",
+ "statement": "Let $x$ be a Boolean word and $p,n$ natural numbers. For every natural number $r\\le n$, starting in state $3$ at the clamped input offset $p$, with a unary counter of length $n$, counter head at $r-1$ (as an integer), and empty output, the suffix-extraction machine reaches after $r+1$ steps state $4$ at the same clamped input offset, with the counter unchanged, its head at $0$, and output empty.",
+ "hypotheses_covered": [
+  "Boolean word $x$",
+  "natural numbers $p,n$",
+  "natural number $r$",
+  "inequality $r\\le n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $r \\le n$: from the rewind state with counter length $n$ and counter\nhead at offset $r - 1$, exactly $r + 1$ steps return the counter head to $0$ and\nenter the skip state, without disturbing the payload head or emitting."
+}

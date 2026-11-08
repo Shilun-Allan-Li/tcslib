@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.universalPrefix_start",
+ "key": "10e27dcfddeca9ab",
+ "kind": "lemma",
+ "title": "Prefix parser halting configuration",
+ "statement": "Let $\\alpha$ and $x$ be finite bit strings. Starting on the encoding that doubles each bit of $\\alpha$, then appends $01$ and $x$, the prefix parser after $2|\\alpha|+2$ steps is halted, its input head is at position $2|\\alpha|+3$, and its output is exactly $\\alpha$.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are finite bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $\\alpha$ and $x$, the doubled-bit prefix parser, started\non the self-delimiting pairing $\\langle \\alpha, x\\rangle$, halts after\nexactly $2\\abs{\\alpha}+2$ transitions with output exactly $\\alpha$ and with\nits input head parked at position $2\\abs{\\alpha}+3$, that is, on the first\ncell of the verbatim suffix $x$ (the right blank when $x$ is empty).  Both\nthe step count and the emitted word are independent of $x$."
+}

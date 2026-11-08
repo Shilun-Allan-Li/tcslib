@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.mleft_of",
+ "key": "fcf35c2c93660ef7",
+ "kind": "lemma",
+ "title": "Prepending a Left Memory Move",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathrm{orc}:\\{0,1,2,3\\}\\to\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be an oracle, and let $x$ be a Boolean word. Let $st$ be a machine state whose 17 register values are all at most $B$, let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory, let $p\\in\\mathbb Z$ satisfy $0\\le p\\le P$, and let $l,l'$ be control states. If the instruction at $l$ moves the memory head one cell left and continues at $l'$, then every guarded finite run from the configuration at $l'$ with state $st$, memory $M$, and head position $p-1$ to a configuration $c$ can be prefixed by that instruction: there is a guarded finite run from the configuration at $l$ with the same state and memory and head position $p$ to $c$.",
+ "hypotheses_covered": [
+  "$K_0,B,P\\in\\mathbb N$",
+  "an oracle on four indices and Boolean words",
+  "a Boolean input word $x$",
+  "a state $st$ with all 17 register values at most $B$",
+  "Boolean memory $M$ indexed by integers",
+  "$p\\in\\mathbb Z$ with $0\\le p\\le P$",
+  "control states $l,l'$",
+  "the instruction at $l$ is a left memory move to $l'$",
+  "guarded reachability from the specified successor configuration to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix $K_0$, an oracle $O$, a Boolean input $x$, and natural-number bounds $B,P$. Let $S$\nbe a register state, $M$ an integer-indexed Boolean memory, $p$ an integer, $l,l'$\nmachine states, and $c$ a machine configuration. If the instruction at $l$ is a move of\nthe memory head one cell to the left followed by state $l'$, every register of $S$ is at\nmost $B$, and $0\\le p\\le P$, then any guarded reachability of $c$ from the configuration\nin state $l'$ with memory head at $p-1$ implies guarded reachability of $c$ from the\nconfiguration in state $l$ with memory head at $p$."
+}

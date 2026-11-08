@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.narm_decides_space",
+ "key": "e2d06a2b0774d8d2",
+ "kind": "theorem",
+ "title": "Space Bound for Oracle Register Programs",
+ "statement": "Let $L$ be a language of binary strings, and let a nondeterministic register program with $m$ registers and $d$ oracle languages have a finite control-state set with decidable equality. Let $S,W:\\mathbb{N}\\to\\mathbb{N}$ and $C$ be a natural number, with $1\\le S(n)$ and $W(n)\\le C S(n)$ for every $n$. Suppose each oracle language $A_j$ is decided by a deterministic machine using at most $s_j(n)$ space on inputs of length $n$. Assume that whenever $v\\le 2n+2+m(2W(n)+2)$, one has $s_j(v)\\le C S(n)$ for every $j,n$. For some input-independent natural bound $N$ (which may depend on the input), suppose that on each input $x$ every choice string of length $N$ makes the program halt, and every configuration before step $N$ satisfies the program's validity conditions and has each register's binary representation of its value plus one of length at most $W(|x|)$. If $x\\in L$ exactly when some length-$N$ choice string makes the program answer yes, then $L$ belongs to $\text{NSPACE}(S)$: it is decidable in nondeterministic space bounded by a constant multiple of $S$.",
+ "hypotheses_covered": [
+  "$L$ is a language of binary strings",
+  "The program has $m$ registers and $d$ oracle languages",
+  "The finite control-state set has decidable equality",
+  "Each oracle language $A_j$ has a deterministic decider using space $s_j$",
+  "$S,W:\\mathbb N\\to\\mathbb N$ and $C\\in\\mathbb N$",
+  "$1\\le S(n)$ for every $n$",
+  "$W(n)\\le C S(n)$ for every $n$",
+  "$s_j(v)\\le C S(n)$ whenever $v\\le 2n+2+m(2W(n)+2)$",
+  "For each input, some length $N$ makes every choice string of that length halt",
+  "Every pre-final run configuration satisfies the program's validity conditions",
+  "Each register's binary representation of its value plus one has length at most $W(|x|)$",
+  "Membership in $L$ is equivalent to existence of a length-$N$ accepting choice string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

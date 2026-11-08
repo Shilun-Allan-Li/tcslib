@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussianCoordinate_first_kernel_integrable_bound",
+ "key": "f0472d31a692962a",
+ "kind": "lemma",
+ "title": "First coordinate Gaussian score bound",
+ "statement": "Let $I$ be a finite set, let $c=(c_j)_{j\\in I}\\in\\mathbb R^I$, and let $v>0$. Equip $\\mathbb R^I$ with the product Gaussian measure whose coordinate at $j$ has mean $c_j$ and variance parameter $v$. If $f:\\mathbb R^I\\to\\mathbb R$ is measurable and satisfies $|f(z)|\\le1$ for every $z$, then for each $i\\in I$ the function $z\\mapsto ((z_i-c_i)/v)f(z)$ is integrable, and its integral has absolute value at most $1+1/v$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$c\\in\\mathbb R^I$",
+  "$v$ is a nonzero nonnegative real, hence $v>0$",
+  "$f$ is measurable",
+  "$|f(z)|\\le1$ for every $z\\in\\mathbb R^I$",
+  "$i\\in I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be a finite set, $c\\in\\mathbb R^I$, $v>0$, and $\\mu_{c,v}=\\bigotimes_{i\\in I}N(c_i,v)$. If $f:\\mathbb R^I\\to\\mathbb R$ is measurable with $|f|\\le1$ and $i\\in I$, then $z\\mapsto((z_i-c_i)/v)f(z)$ is $\\mu_{c,v}$-integrable and $|\\int((z_i-c_i)/v)f(z)\\,d\\mu_{c,v}(z)|\\le1+1/v$."
+}

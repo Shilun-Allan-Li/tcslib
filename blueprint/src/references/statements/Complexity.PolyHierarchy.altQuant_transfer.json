@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.PolyHierarchy.altQuant_transfer",
+ "key": "20450bbf282466bd",
+ "kind": "theorem",
+ "title": "Transfer of alternating quantifiers",
+ "statement": "Let $V$ and $V'$ be languages of bit strings, let $B,m\\in\\mathbb N$, and let $d$ map bit strings to bit strings. Suppose $d(v)$ has length $m$ whenever $v$ has length $B$, and every bit string of length $m$ equals $d(v)$ for some bit string $v$ of length $B$. Let $(F_n)_{n\\in\\mathbb N}$ be a family of maps on bit strings satisfying $F_{n+1}(\\langle w,v\\rangle)=\\langle F_n(w),d(v)\\rangle$ for all $n,w,v$, where $\\langle w,v\\rangle$ is the encoding that doubles each bit of $w$, appends $01$, and then appends $v$. For every $k\\in\\mathbb N$, $b\\in\\{\\mathrm{false},\\mathrm{true}\\}$, $n\\in\\mathbb N$, and bit string $w$, suppose every string $z$ obtained from $w$ by $k$ successive pair extensions satisfies $z\\in V'\\iff F_{n+k}(z)\\in V$. Then the depth-$k$ alternating-quantifier condition on input $w$, starting with an existential quantifier if $b=\\mathrm{true}$ and a universal quantifier if $b=\\mathrm{false}$, with each quantifier ranging over strings of length $B$ and with membership in $V'$ as its depth-zero condition, is equivalent to the corresponding condition on input $F_n(w)$ with each quantifier ranging over strings of length $m$ and membership in $V$ at depth zero.",
+ "hypotheses_covered": [
+  "$V,V'$ are languages of bit strings",
+  "$B,m\\in\\mathbb N$",
+  "Every length-$B$ string $v$ has $d(v)$ of length $m$",
+  "Every length-$m$ string is $d(v)$ for some length-$B$ string $v$",
+  "For all $n,w,v$, $F_{n+1}(\\langle w,v\\rangle)=\\langle F_n(w),d(v)\\rangle$",
+  "Every $z$ obtained from $w$ by $k$ successive pair extensions satisfies $z\\in V'\\iff F_{n+k}(z)\\in V$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

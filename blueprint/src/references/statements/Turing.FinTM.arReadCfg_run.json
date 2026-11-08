@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.arReadCfg_run",
+ "key": "7eeb23427a192b31",
+ "kind": "lemma",
+ "title": "Evolution through the read sweep",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $E$ inject the symbols of $\\Gamma$ together with blank into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into $\\Gamma$. For a machine $M$ over $\\Gamma$, a binary input $x$, a configuration $c$ of $M$ on the letterwise $e$-image of $x$, and a state $q$ with $c$ in state $q$, for every integer $j$ with $j\\le N+1$, running the binary block-code simulator for $j$ steps from the encoded configuration of $c$ gives the read-sweep configuration of $c$ at counter $j$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$E$ is an embedding of symbols and blank into blocks of $N+1$ optional bits",
+  "$e$ embeds the binary alphabet into $\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a binary input",
+  "$c$ is a configuration of $M$ on the letterwise $e$-image of $x$",
+  "$q$ is a state of $M$ and $c$ is in state $q$",
+  "$j\\le N+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration in state $q$ (not halted). For every $j \\le N+1$,\nrunning the binary block-code simulator for $j$ steps from the encoded configuration of\n$c$ reaches the read-sweep configuration of $c$ at counter $j$."
+}

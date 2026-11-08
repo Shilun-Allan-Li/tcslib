@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.macroCfg_apply",
+ "key": "e7b93f40505e7c62",
+ "kind": "lemma",
+ "title": "Read-Only Schedule Action",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a$ be a natural number, let $x$ be a list of schedule symbols, and let $B$ be a base configuration for the schedule controller. For optional phases $q,q'$ and integers $u,g$, applying the schedule action that enters phase $q'$, leaves the input head, budget head, and clock work tapes fixed, moves the unary-counter and guide heads by signs $d_u,d_g$, and emits nothing, to the macrostep configuration determined by $B,q,u,g$ gives the macrostep configuration determined by $B,q',u+d_u,g+d_g$.",
+ "hypotheses_covered": [
+  "$W$ is a finite Boolean Turing machine",
+  "$a$ is a natural number",
+  "$x$ is a list of schedule symbols",
+  "$B$ is a base controller configuration",
+  "$q,q'$ are optional schedule phases",
+  "$u,g$ are integers",
+  "$d_u,d_g$ are signs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a macrostep configuration with phase $q$, unary head $u$, and guide head $g$ be\ngiven.  Applying the read-only schedule action that enters a phase $q'$, keeps the\ninput and budget heads fixed, writes nothing, and moves the unary and guide heads in\ndirections $d_u$ and $d_g$ yields the macrostep configuration with phase $q'$, unary\nhead $u + d_u$, and guide head $g + d_g$."
+}

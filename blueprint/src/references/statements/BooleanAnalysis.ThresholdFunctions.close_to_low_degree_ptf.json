@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.close_to_low_degree_ptf",
+ "key": "b64fc15268a5bd03",
+ "kind": "theorem",
+ "title": "Approximation by a low degree threshold function",
+ "statement": "Let $n\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$ be $\\pm1$-valued, and let $0<\\delta\\le\\tfrac12$. There is a function $g:\\{0,1\\}^n\\to\\mathbb R$ that is a polynomial threshold function of degree at most $\\lfloor\\delta^{-1}\\rfloor$ and whose uniform probability of disagreement with $f$ is at most $3\\operatorname{NS}_\\delta(f)$, where $\\operatorname{NS}_\\delta(f)$ is the noise sensitivity defined using the Fourier noise operator.",
+ "hypotheses_covered": [
+  "dimension n is a natural number",
+  "f takes values in {−1,1}",
+  "δ is positive",
+  "δ is at most one half"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$, $f:\\{0,1\\}^n\\to\\{-1,1\\}$, and $0<\\delta\\le\\tfrac12$; write $\\operatorname{NS}_\\delta(f)=\\Pr[f(x)\\ne f(y)]$, where $x$ is uniform and $y$ is obtained by independently flipping each bit of $x$ with probability $\\delta$.\nThere exists $g:\\{0,1\\}^n\\to\\{-1,1\\}$ of the form $g(x)=\\operatorname{sgn}(p(x))$, where $p$ is a real multilinear polynomial of degree at most $\\lfloor1/\\delta\\rfloor$, with $\\operatorname{sgn}(t)=1$ for $t\\ge0$ and $-1$ for $t<0$, such that\n\\[\n \\Pr_x[f(x)\\ne g(x)]\\le3\\operatorname{NS}_\\delta(f).\n\\]"
+}

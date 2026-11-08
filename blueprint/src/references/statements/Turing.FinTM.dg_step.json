@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.FinTM.dg_step",
+ "key": "42ed0c9dd32e178b",
+ "kind": "lemma",
+ "title": "One-Step Simulation with Window Growth",
+ "statement": "Let $M$ be a finite-alphabet Turing machine with $k>0$ work tapes, choose a source symbol $a_0$, and let $c$ be a source configuration on the retracted input with state $q$. Suppose each work-tape head lies in the integer interval $[a,a+n)$, all tapes are blank at $a-1$ and $a+n$, and Boolean flags $\\mathit{left}$ and $\\mathit{right}$ correctly record whether the transition moves right at the left boundary and left at the right boundary, respectively. Then the simulator carries the encoding of $c$ and its window to the encoding of the one-step successor configuration and its expanded window: the new window begins at $a-\\mathit{left}$ and has length $n+\\mathit{right}+\\mathit{left}$. This takes $\\kappa_k(n,\\mathit{left},\\mathit{right})$ simulator steps, and during them the work head stays between $z-\\mathit{left}\\,k$ and $z+1+(n+\\mathit{right})k$, inclusive.",
+ "hypotheses_covered": [
+  "finite source alphabet",
+  "decidable equality on the source alphabet",
+  "a finite Turing machine M with k>0 work tapes",
+  "a source symbol a₀",
+  "an enlarged-alphabet input word x",
+  "a source configuration c on the retracted input",
+  "a state q equal to c's state",
+  "a read table s whose symbols equal those scanned in c",
+  "an integer a and natural number n",
+  "all work-tape head positions lie in [a,a+n)",
+  "all tapes are blank at a−1 and a+n",
+  "Boolean left correctly records the left-boundary crossing condition",
+  "Boolean right correctly records the right-boundary crossing condition",
+  "an integer z and zipper lists l and r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

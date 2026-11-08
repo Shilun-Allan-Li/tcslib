@@ -14,8 +14,8 @@ a residual part whose pair-degrees are at most $d$ and a part carried by the hea
 \lean{heavyPairs}
 \label{heavyPairs}
 \leanok
-\statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p006-b003}
 \uses{Hypergraph, Hypergraph.degree}
+\statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p006-b003}
 For a hypergraph $H$ on $\mathrm{Fin}\,n$ and a threshold $d$, the set of heavy pairs
 \[
   P \;=\; \{\, Q \subseteq \mathrm{Fin}\,n \;:\; \abs{Q} = 2, \ \deg_H(Q) > d \,\},
@@ -27,8 +27,8 @@ realised as the collection of two-element sets $\{u,v\}$ whose degree in $H$ exc
 \lean{heavy_pair_count_bound}
 \label{heavy_pair_count_bound}
 \leanok
-\statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p006-b006}
 \uses{Hypergraph, Hypergraph.IsUniform, Hypergraph.degree, heavyPairs}
+\statementsource{arXiv.2308.15403}{pdf-b372a20892ce-p006-b006}
 \difficulty{5}
 Let $H$ be a $3$-uniform hypergraph on the vertex set $\mathrm{Fin}\,n$, so that every
 edge of $H$ has exactly three vertices, and let $d$ be a positive integer. Call a
@@ -44,11 +44,11 @@ pairs. Then
 \lean{hypergraph_decomposition}
 \label{hypergraph_decomposition}
 \leanok
+\uses{Hypergraph, Hypergraph.IsMatching, Hypergraph.IsUniform, Hypergraph.degree, Hypergraph.pairDegreeBound, NormalLDC}
 \statementsource{arXiv.2308.15403}{
   pdf-b372a20892ce-p006-b003,
   pdf-b372a20892ce-p006-b008
 }
-\uses{Hypergraph, Hypergraph.IsMatching, Hypergraph.IsUniform, Hypergraph.degree, Hypergraph.pairDegreeBound, NormalLDC}
 \difficulty{2}
 Let $L$ be a normal form locally decodable code with message length $k$ and block length
 $n$, whose message indices $i : \mathrm{Fin}\,k$ carry the $3$-uniform matchings $H_i$

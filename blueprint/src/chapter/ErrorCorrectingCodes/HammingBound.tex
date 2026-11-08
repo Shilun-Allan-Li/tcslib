@@ -17,6 +17,7 @@ where $\mathrm{Vol}(n,t) = \sum_{i=0}^{t}\binom{n}{i}(q-1)^i$.
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_size}
 \label{ErrorCorrectingCodes.Codeword.hamming_ball_size}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.add, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.hamming_distance, ErrorCorrectingCodes.Codeword.sub, ErrorCorrectingCodes.Codeword.zero}
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p032-b001,
   pdf-7251cb8e4bc5-p070-b003
@@ -75,10 +76,11 @@ where $\abs{\alpha}$ is the number of symbols in the alphabet.
 
 \begin{lemma}[Disjointness of decoding balls around distinct codewords]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p095-b003}
 \label{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.distance, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.hamming_distance}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
-\uses{ErrorCorrectingCodes.Codeword.distance}
 \difficulty{4}
 Let $C$ be a code of length $n$ over a finite alphabet $\alpha$ whose minimum Hamming
 distance is $d$, with $d > 0$; that is, some two distinct codewords of $C$ lie at
@@ -93,6 +95,7 @@ satisfies both $d(c', c_1) \le \lfloor (d-1)/2 \rfloor$ and $d(c', c_2) \le \lfl
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \label{ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.distance, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \proofstep
   {ErrorCorrectingCodes.Codeword}
@@ -142,7 +145,6 @@ satisfies both $d(c', c_1) \le \lfloor (d-1)/2 \rfloor$ and $d(c', c_2) \le \lfl
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p032-b001,
     pdf-7251cb8e4bc5-p030-b002}
-\uses{ErrorCorrectingCodes.Codeword.hamming_ball_non_intersect}
 \difficulty{3}
 Let $C$ be a code of length $n$ over an alphabet $\alpha$ whose minimum Hamming distance
 is $d$, and suppose $d > 0$. Write $t = \left\lfloor \frac{d-1}{2} \right\rfloor$. Then
@@ -155,8 +157,13 @@ $B_t(c_2)$ of radius $t$ centered at $c_1$ and $c_2$ are disjoint.
 
 \begin{theorem}[Hamming (sphere-packing) bound]
 \lean{ErrorCorrectingCodes.Codeword.hamming_bound}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p092-b006,
+  pdf-681b6f3d947f-p111-b001
+}
 \label{ErrorCorrectingCodes.Codeword.hamming_bound}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.dist_le_length, ErrorCorrectingCodes.Codeword.distance, ErrorCorrectingCodes.Codeword.hamming_ball, ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint, ErrorCorrectingCodes.Codeword.hamming_ball_size}
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p031-b004,
   pdf-7251cb8e4bc5-p032-b001
@@ -228,7 +235,6 @@ $B_t(c_2)$ of radius $t$ centered at $c_1$ and $c_2$ are disjoint.
   {context}
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p032-b001}
-\uses{ErrorCorrectingCodes.Codeword.hamming_ball_size, ErrorCorrectingCodes.Codeword.hamming_ball'_disjoint}
 \difficulty{5}
 Let $\alpha$ be a finite alphabet with $q = \abs{\alpha} > 1$ symbols, and let $C
 \subseteq \alpha^n$ be a code (a finite set of length-$n$ codewords) whose minimum

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.UHALT_not_mem_EXP",
+ "key": "8f82cedb29330e31",
+ "kind": "theorem",
+ "title": "Universal halting is outside exponential time",
+ "statement": "For every effective machine code scheme $c$, the unary language consisting of all-one words of length $n$ such that the most-significant-first binary expansion of $n$ is $1$ followed by a string $s$ for which some advice string $\\alpha$ and input $x$ satisfy $s=\\langle\\alpha,x\\rangle$ and the machine decoded from $\\alpha$ halts on $x$ with some output is not in $\\mathrm{EXP}=\\bigcup_{C\\in\\mathbb{N}}\\mathrm{DTIME}(n\\mapsto 2^{n^C})$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code scheme"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective machine representation scheme $c$, the unary language of numbers\nwhose binary expansions begin with $1s$, where $s$ encodes an advice string and an input\non which the machine decoded from that advice halts, is not in\n$\\mathrm{EXP}=\\bigcup_{d\\in\\mathbb{N}}\\mathrm{DTIME}(2^{n^d})$."
+}

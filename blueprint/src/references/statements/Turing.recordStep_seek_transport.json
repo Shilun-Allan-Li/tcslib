@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.recordStep_seek_transport",
+ "key": "1cf901897279d8d3",
+ "kind": "theorem",
+ "title": "Transporting a bounded seek computation",
+ "statement": "Let $Q,T,S$ be types with decidable equality, let $\\mathrm{seek}$ be a two-work-tape Boolean machine with designated states $\\mathrm{start},\\mathrm{finish}$, and let $C$ be a natural number. Suppose that for every Boolean input $x$, natural number $p$, and Boolean word $w$, with $p\\le |x|+1$, any configuration $c$ on $x$ in state $\\mathrm{start}$ whose first work tape stores $w$ around its head at offsets $-1$ through $|w|$ and whose second tape is blank has a first arrival time $t\\le C(|w|+c_{\\mathrm{in}}+p+1)$ at state $\\mathrm{finish}$. Until that time, both work-tape heads remain within distance $C(|w|+1)$ of their starting positions; at time $t$, the input-head position is $p$ and both tapes, both work-head positions, and the output are unchanged. Now let $\\iota$ embed two work-tape indices into four, and let $d$ be a four-tape configuration over record symbols on the digit-embedded input, in state $\\mathrm{start}$. Suppose every symbol stored on either embedded tape is a digit symbol, the first embedded tape stores the digit embedding of $w$ around its head at offsets $-1$ through $|w|$, and the second embedded tape is blank. Then the machine obtained by embedding the symbol-lifted seek machine has a first arrival at state $\\mathrm{finish}$ at some time $t\\le C(|w|+d_{\\mathrm{in}}+p+1)$; its work-tape heads stay within distance $C(|w|+1)$ of their initial positions through time $t$, and at time $t$ the entire configuration is $d$ with state changed to $\\mathrm{finish}$ and input-head position $p$.",
+ "hypotheses_covered": [
+  "Types Q, T, and S have decidable equality",
+  "Seek machine, designated start and finish states, and natural bound C",
+  "Seek specification for every Boolean input x, p ≤ |x|+1, word w, and qualifying configuration c",
+  "Embedding ι of two work tapes into four",
+  "Configuration d on digit-embedded input is in state start",
+  "Symbols on both embedded tapes are digit symbols",
+  "First embedded tape stores the digit embedding of w on offsets −1 through |w|",
+  "Second embedded tape is blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

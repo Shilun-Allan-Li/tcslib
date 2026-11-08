@@ -1,0 +1,28 @@
+{
+ "lean_name": "Light.Compiler.decides_lt",
+ "key": "80215f0cdea93424",
+ "kind": "theorem",
+ "title": "Compiled strict inequality test",
+ "statement": "Let $Z$ be a compiler layout with frame width $F$, dispatcher position $D$, limits $(w,S)$, and stack capacity $Q$, satisfying $2(2w+2)<2^W$, $2S<2^W$, $4Q<2^W$, $2D<2^W$, and $2(F+1)\\le D$. Let $\\sigma$ be a light-program state, $q$ a stack position, and $m$ a word-RAM memory representing $\\sigma$ in a frame at $q$: the designated constant cells contain $1$, $0$, and $-1$; the pool cells through position $D$ contain their indices; the frame pointer contains $-2q$; the frame cells encode the first $F$ locations of $\\sigma$; and the memory cells at addresses below $S$ encode the corresponding values of $\\sigma$. Suppose $1\\le q$ and $q+F\\le Q$, every location and memory value of $\\sigma$ has absolute value at most $w$, the code beginning at position $pos$ has as a prefix the compiled test of $a<b$ with target position $l$, the test's width is at most $F$, and both expressions are safe under the limits in state $\\sigma$. Then there are a final memory $m'$ and a number of execution steps $n$ no greater than the test's size such that, if $a$ evaluates to less than $b$ in $\\sigma$, execution from position $pos$ and memory $m$ reaches position $pos$ plus the test's size with memory $m'$; otherwise it reaches position $l$ with memory $m'$. The final memory agrees with $m$ outside the cells reserved for scratch values: the difference, return, return-register, and next-frame-pointer cells, the address cell, and temporary cells indexed from $0$ through $2F$.",
+ "hypotheses_covered": [
+  "Layout word capacity: $2(2w+2)<2^W$",
+  "Layout address-space capacity: $2S<2^W$",
+  "Layout stack capacity: $4Q<2^W$",
+  "Layout pool capacity: $2D<2^W$",
+  "Pool offsets satisfy $2(F+1)\\le D$",
+  "Memory represents the state constants, pool, frame pointer, local locations, and bounded-address memory values",
+  "Frame lower bound $1\\le q$",
+  "Frame upper bound $q+F\\le Q$",
+  "All state location and memory values have absolute value at most $w$",
+  "Compiled strict-inequality test is a prefix of the code at $pos$ and targets $l$",
+  "Test width is at most $F$",
+  "Both expressions are safe under the limits in state $\\sigma$",
+  "Execution step count is at most the test size",
+  "Execution reaches the size-offset position when $a<b$ and target $l$ otherwise",
+  "Final memory agrees with the initial memory outside the specified scratch cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

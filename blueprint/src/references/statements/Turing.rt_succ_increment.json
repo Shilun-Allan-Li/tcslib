@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.rt_succ_increment",
+ "key": "de290332a86f4aa6",
+ "kind": "theorem",
+ "title": "Increment phase in a successor computation",
+ "statement": "Let $k$ be a natural number, let $x$ be a Boolean input word, and choose one of the $k$ work tapes. Suppose configurations $a,z$ of the increment machine satisfy that running from $a$ for $t$ steps gives $z$, that $z$ is in the completed increment phase with flag $b$, and that no earlier configuration is in any completed increment phase. Starting from $a$ with the increment phase embedded into the successor machine's state space, the successor machine agrees through time $t$ with the increment machine, under the same state embedding. At time $t+1$, its configuration is $z$ with its state replaced by the exit phase if $b$ is true, and by the extension phase's initial state if $b$ is false.",
+ "hypotheses_covered": [
+  "natural number $k$ and Boolean input word $x$",
+  "work-tape index $i$",
+  "configurations $a,z$ and time $t$",
+  "increment machine reaches $z$ at time $t$",
+  "$z$ has completed phase with flag $b$",
+  "no earlier time below $t$ has a completed increment phase, for either flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

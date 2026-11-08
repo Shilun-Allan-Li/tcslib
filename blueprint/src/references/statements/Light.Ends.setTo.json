@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Ends.setTo",
+ "key": "75a294030e819cbe",
+ "kind": "theorem",
+ "title": "Assignment to a prescribed local value",
+ "statement": "Let $l$ be a finite list of integers, let $\u0000\text{mem}:\bbn\to\bbz$ be a memory function, and let $x\bs \bbn$, $z\bs\bbz$, $e$ be an expression, $T\bs\bbn$, and $Q$ be a predicate on states. Suppose $Q$ holds in the state with memory $\text{mem}$ and local values given by the frame of the list obtained by setting entry $x$ of $l$ to $z$. Suppose also that $e$ is safe and evaluates to $z$ in the state whose local values are given by the frame of $l$ and whose memory is $\text{mem}$, and that $\text{cost}(e)+1\bs T$. Then assigning $e$ to local variable $x$ from that state terminates within time $T$ in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "$Q$ holds in the state with memory $\\text{mem}$ and local values given by the frame of $l$ after setting entry $x$ to $z$",
+  "$e$ is safe and evaluates to $z$ in the state given by the frame of $l$ and memory $\\text{mem}$",
+  "$\\text{cost}(e)+1\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

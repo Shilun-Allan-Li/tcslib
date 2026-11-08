@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.subcube_degreeOne_weight",
+ "key": "68fd190e56249fc5",
+ "kind": "theorem",
+ "title": "Mean and first-level weight of a subcube",
+ "statement": "Let $n\\ge 0$, let $J\\subseteq\\{0,\\ldots,n-1\\}$ be nonempty, and let $b\\in\\{0,1\\}^n$. Define $q(x)=1$ when $x_i=b_i$ for every $i\\in J$ and $q(x)=0$ otherwise. Under the uniform measure on the Boolean cube, its expectation and first-level Fourier weight satisfy $\\mathbb E[q]=2^{-|J|}$ and $W_1[q]=|J|/2^{2|J|}$.",
+ "hypotheses_covered": [
+  "The dimension $n$ is a natural number",
+  "The coordinate set $J$ is nonempty",
+  "The assignment $b$ is a Boolean vector of dimension $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\in\\mathbb N$, let $J\\subseteq\\{0,\\ldots,n-1\\}$ be nonempty, let $b\\in\\{0,1\\}^n$, and put $k=|J|$ and $q(x)=\\mathbf 1_{\\{x_i=b_i\\ \\text{for every }i\\in J\\}}$ for $x\\in\\{0,1\\}^n$.\nUsing uniform expectation $\\mathbb E[h]=2^{-n}\\sum_xh(x)$, singleton Fourier coefficients $\\widehat q(\\{i\\})=\\mathbb E[q(x)(-1)^{x_i}]$, and degree-one Fourier weight $W^1[q]=\\sum_{i<n}\\widehat q(\\{i\\})^2$, one has\n\\[\n\\mathbb E[q]=\\frac{1}{2^k}\n\\quad\\text{and}\\quad\nW^1[q]=\\frac{k}{2^{2k}}.\n\\]"
+}

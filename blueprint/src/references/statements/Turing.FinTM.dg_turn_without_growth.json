@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.dg_turn_without_growth",
+ "key": "e85d3610ab0eee34",
+ "kind": "lemma",
+ "title": "A simulated turn without rightward growth",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing machine over $\\Gamma$, choose $a_0\\in\\Gamma$, and let $x$ be a word over the enlarged sweep alphabet of $M$. Let $c$ be a configuration of $M$ on the input obtained by retracting each symbol of $x$ using $a_0$, let $q$ be a state of $M$, and let $s$ assign to each work tape an optional symbol and a Boolean flag. Suppose the symbols recorded by $s$ are exactly those scanned in $c$, and no tape flagged by $s$ has a transition that moves its head to the right. For any integer $z$ and finite left stack $l$, the simulator takes one step from the forward-sweep configuration at the input position of $c$, with frontier $z$, left stack $l$, right stack consisting of the boundary marker, and output equal to the embedded output of $c$, to the backward-sweep configuration at the input position after $M$'s prescribed transition, with frontier $z-1$, left stack consisting of the boundary marker, right stack $l$, and output equal to the embedded output after that transition. At both the initial and final configurations, the simulator's work-head position lies between $z-1$ and $z$, inclusive.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite and has decidable equality",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$a_0\\in\\Gamma$",
+  "$x$ is a word over the enlarged sweep alphabet of $M$",
+  "$c$ is a configuration on the input obtained by retracting $x$ using $a_0$",
+  "$q$ is a state of $M$",
+  "$s$ assigns each work tape an optional symbol and a Boolean flag",
+  "the symbols recorded by $s$ agree with the symbols scanned in $c$",
+  "no flagged tape has a transition moving right",
+  "$z$ is an integer",
+  "$l$ is a finite list of possibly blank sweep-alphabet symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

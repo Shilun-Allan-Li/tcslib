@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.TreeCircuit.ind",
+ "key": "a3a7db02c4fab4aa",
+ "kind": "theorem",
+ "title": "Structural induction for Boolean circuits",
+ "statement": "Let $P$ be a property of Boolean circuit trees on $n$ variables. Suppose $P$ holds for every literal circuit, and that for every choice of gate type and list of child circuits, if $P$ holds for each child in the list, then it holds for the circuit formed by that gate and list. Then $P$ holds for every Boolean circuit tree on $n$ variables.",
+ "hypotheses_covered": [
+  "$P$ holds for every literal circuit",
+  "For every gate type and child list, $P$ for each listed child implies $P$ for the resulting node circuit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a property of Boolean circuits on $n$ variables. Suppose that $P$ holds for\nevery literal circuit, and that whenever $P$ holds for every circuit in a list $cs$ of\nchildren, it also holds for the gate circuit $\\mathrm{node}(isAnd, cs)$ formed from $cs$\n(an AND gate when $isAnd = \\mathrm{true}$, an OR gate when $isAnd = \\mathrm{false}$).\nThen $P$ holds for every Boolean circuit on $n$ variables."
+}

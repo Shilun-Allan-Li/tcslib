@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a2Borrow_correct",
+ "key": "6903eed46bb6fccc",
+ "kind": "lemma",
+ "title": "Complete decrement round",
+ "statement": "For every output word, input word $x$, valid input-head position $p$, and binary word $u$, the number of steps $2\\beta+2$, where $\\beta$ is the borrow position of $u$, is at most $2|u|+2$. Starting from the specified borrow-phase configuration with head at work-tape cell zero, counter $u$, and no change to the output, the countdown machine reaches after exactly $2\\beta+2$ steps the configuration with head at cell zero, counter equal to the fixed-width decrement of $u$, and the corresponding success flag.",
+ "hypotheses_covered": [
+  "An output word",
+  "An input word $x$",
+  "A valid input-head position $p$",
+  "A binary word $u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every counter word $u$: a full borrow-and-rewind round of the countdown emitter from cell zero costs $2\\beta + 2 \\le 2|u| + 2$ steps, where $\\beta$ is the borrow position of $u$, and ends at cell zero in the round-return state carrying the success flag, with the counter replaced by its fixed-width decrement and no output emitted."
+}

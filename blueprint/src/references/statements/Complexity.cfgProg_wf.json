@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.cfgProg_wf",
+ "key": "db6865d181ac9d84",
+ "kind": "theorem",
+ "title": "Configuration program well-formedness",
+ "statement": "Let $M$ be a finite-state Turing machine with $k$ work tapes, and let $n,T$ be natural numbers. Suppose every source in the input list $\\ell$ is either an input bit with index less than $n$, a Boolean constant, or a bit of a block with block index less than $0$ and bit index less than the configuration width. Then every source used by an instruction at index $i$ in the configuration program is an input bit of index less than $n$, a constant, or a bit of a block with index less than $i$ and bit index less than the configuration width; moreover, every instruction in the program has source-list length equal to the configuration arity.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols",
+  "$n,T$ are natural numbers",
+  "Every source in $\\ell$ is valid for input width $n$, configuration width, and instruction index $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

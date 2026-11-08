@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.polyMove_apply",
+ "key": "e6579c0d64698cd0",
+ "kind": "lemma",
+ "title": "Effect of a Single-Head Move",
+ "statement": "Let $c,C,q\\in\\mathbb{N}$, let $x$ be a finite bit string, let $s,s'$ be control states, let $h:\\{0,\\ldots,c\\}\\to\\mathbb{Z}$ be a list of work-head positions, and let $o$ be an output bit string. For an index $i\\in\\{0,\\ldots,c\\}$ and a direction $d\\in\\{-1,0,1\\}$, applying the action that moves work head $i$ by $d$ and enters state $s'$ to the configuration with state $s$, head positions $h$, and output $o$ yields the configuration with state $s'$, output $o$, and head positions obtained by replacing $h(i)$ by $h(i)+d$.",
+ "hypotheses_covered": [
+  "$c,C,q\\in\\mathbb{N}$",
+  "$x$ is a finite bit string",
+  "$s,s'$ are control states",
+  "$h$ assigns an integer head position to each index from $0$ to $c$",
+  "$o$ is a finite bit string",
+  "$i\\in\\{0,\\ldots,c\\}$",
+  "$d\\in\\{-1,0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c, C, q \\in \\mathbb{N}$, $x$ a bit string, $s, s'$ control states of the unary box enumerator $\\mathcal{P}_{c,C}$, $h \\colon \\{0,\\dots,c\\} \\to \\mathbb{Z}$, $o$ an output word, $i \\in \\{0,\\dots,c\\}$ and $d \\in \\{-1,0,1\\}$. Applying the action that moves only work head $i$ by $d$ (writing nothing, emitting nothing, input head fixed) and enters $s'$ to $\\Gamma_q(s,h,o)$ gives $\\Gamma_q(s', h[i \\mapsto h(i)+d], o)$; here $\\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$, and $h[i \\mapsto v]$ is $h$ with its $i$-th entry replaced by $v$."
+}

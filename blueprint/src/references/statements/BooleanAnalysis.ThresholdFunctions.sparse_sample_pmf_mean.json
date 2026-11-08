@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.sparse_sample_pmf_mean",
+ "key": "2bc537eac7c847db",
+ "kind": "theorem",
+ "title": "Distribution with prescribed Fourier mean",
+ "statement": "Let $n$ be a nonnegative integer and let $f:\\{0,1\\}^n\\to\\mathbb R$. Write $\\widehat f(S)$ for the Fourier–Walsh coefficient of $f$ at $S\\subseteq\\{1,\\ldots,n\\}$, and let $L=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}|\\widehat f(S)|$. If $L>0$, there is a probability distribution $\\pi$ on the subsets of $\\{1,\\ldots,n\\}$ such that, for every $x\\in\\{0,1\\}^n$, the expectation over $S\\sim\\pi$ of $\\operatorname{sgn}_+(\\widehat f(S))\\chi_S(x)$ equals $f(x)/L$, where $\\operatorname{sgn}_+(t)=1$ for $t\\ge0$ and $-1$ for $t<0$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ is a real-valued function on the Boolean cube",
+  "the sum of the absolute Fourier–Walsh coefficients of $f$ is positive"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for $S\\subseteq[n]$ and real cube functions $h$. Write $\\operatorname{sgn}_+(t)=1$ for $t\\ge0$ and $-1$ for $t<0$. For a real cube function $f$ with $L=\\sum_{S\\subseteq[n]}|\\widehat f(S)|>0$, there exists a probability distribution $\\pi$ on the subsets of $[n]$ such that $\\mathbb E_{S\\sim\\pi}[\\operatorname{sgn}_+(\\widehat f(S))\\chi_S(x)]=f(x)/L$ for every cube point $x$."
+}

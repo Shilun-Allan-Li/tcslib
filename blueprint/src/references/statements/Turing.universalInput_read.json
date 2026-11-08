@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.universalInput_read",
+ "key": "bab93fff6cf9853f",
+ "kind": "lemma",
+ "title": "Masked read on the paired input",
+ "statement": "Let $\\alpha,x$ be bit strings and let $c$ be a configuration with $k$ work tapes on input $x$. If the single-marker tape has a $1$ at the coordinate of $c$'s input head, assign the blank symbol as the masked read; otherwise take the symbol read by the configuration obtained by embedding $c$ along the suffix $x$ of $\\langle\\alpha,x\\rangle$. This masked read equals the symbol read by $c$ on $x$.",
+ "hypotheses_covered": [
+  "Bit strings $\\alpha,x$",
+  "A configuration $c$ with $k$ work tapes on input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ be a bit string and let $c$ be a configuration of a machine with\n$k$ work tapes on input $x$; embed $c$ into the self-delimiting pairing\n$\\langle \\alpha, x\\rangle$ by shifting its input head by the suffix offset\n$2\\abs{\\alpha}+2$.  Mask the embedded read as follows: if the marker tape\ncarrying a single mark at coordinate $0$ shows its mark at the coordinate\nequal to $c$'s virtual head position --- that is, exactly at virtual position\n$0$ --- declare the read blank; otherwise take the symbol physically scanned\nby the embedded configuration.  This masked read equals the input symbol that\n$c$ scans natively on $x$, including at the left and right boundary blanks\n(and for an empty suffix)."
+}

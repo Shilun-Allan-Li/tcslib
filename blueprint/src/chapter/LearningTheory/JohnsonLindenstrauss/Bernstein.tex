@@ -15,6 +15,7 @@ tool for Johnson--Lindenstrauss-style concentration arguments.
 
 \begin{definition}[Bernstein MGF condition]
 \lean{ProbabilityTheory.HasBernsteinMGF}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p040-b001}
 \label{ProbabilityTheory.HasBernsteinMGF}
 \leanok
 $\texttt{ProbabilityTheory.HasBernsteinMGF}\ X\ \mu\ c\ t_{\max}$ is a
@@ -30,6 +31,7 @@ radius of validity.
 
 \begin{lemma}[Sub-exponential MGF bound for independent sums]
 \lean{ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p044-b003}
 \label{ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
@@ -47,6 +49,10 @@ X_i}\right] \le e^{(\sum_{i \in s} c_i)\, t^2}$.
 
 \begin{lemma}[Upper-tail Bernstein bound]
 \lean{ProbabilityTheory.HasBernsteinMGF.measure_ge_le}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p044-b003,
+  pdf-681b6f3d947f-p044-b002
+}
 \label{ProbabilityTheory.HasBernsteinMGF.measure_ge_le}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
@@ -63,6 +69,10 @@ for every $s$ with $0 \le s \le 2c\,t_{\max}$ the upper tail obeys
 
 \begin{lemma}[Lower-tail Bernstein bound]
 \lean{ProbabilityTheory.HasBernsteinMGF.measure_le_le}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p044-b003,
+  pdf-681b6f3d947f-p045-b001
+}
 \label{ProbabilityTheory.HasBernsteinMGF.measure_le_le}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF}
@@ -80,9 +90,30 @@ $c > 0$, then for every $s$ with $0 \le s \le 2 c\, t_{\max}$,
 
 \begin{lemma}[Two-sided Bernstein tail bound]
 \lean{ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le}
+\proofsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p044-b003,
+  pdf-681b6f3d947f-p045-b001
+}
 \label{ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_ge_le, ProbabilityTheory.HasBernsteinMGF.measure_le_le}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p040-b001,
+    pdf-681b6f3d947f-p044-b003}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.measure_ge_le}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p044-b003}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.measure_le_le}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p044-b003,
+    pdf-681b6f3d947f-p045-b001}
 \difficulty{4}
 Let $X : \Omega \to \bbr$ be a random variable on a probability space $(\Omega, \mu)$,
 and let $c, t_{\max} \ge 0$ be real parameters such that $X$ satisfies the Bernstein
@@ -98,6 +129,11 @@ t_{\max}$,
 
 \begin{lemma}[Bernstein tail bound for a sum of centered squares]
 \lean{ProbabilityTheory.centered_squared_iid_tail}
+\statementsource{laurent-massart-chi-squared}{
+  pdf-5ada2eaf45a8-p024-b004,
+  pdf-5ada2eaf45a8-p024-b006,
+  pdf-5ada2eaf45a8-p025-b001
+}
 \label{ProbabilityTheory.centered_squared_iid_tail}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le, ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}

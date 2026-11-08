@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.falsifyingCNF_numVars",
+ "key": "9bb8387f7bdc8707",
+ "kind": "theorem",
+ "title": "Variable count of the truth-table CNF",
+ "statement": "Let $\\ell\\in\\mathbb{N}$ and let $f:\\{0,1\\}^{\\ell}\\to\\{0,1\\}$. The variable count of the truth-table CNF of $f$ is at most $\\ell$.",
+ "hypotheses_covered": [
+  "Natural number $\\ell$",
+  "Boolean function $f:\\{0,1\\}^{\\ell}\\to\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\ell \\in \\mathbb{N}$, let $f : \\{0,1\\}^\\ell \\to \\{0,1\\}$, and let $\\varphi_f$ be\nthe CNF formula that is the conjunction, over all $v \\in \\{0,1\\}^\\ell$ with\n$f(v) = 0$, of the clause $\\bigvee_{i<\\ell} x_i^{\\neg v_i}$ whose $i$-th literal is\nsatisfied by an assignment $a$ exactly when $a(i) \\ne v_i$. Then every variable\noccurring in $\\varphi_f$ has index less than $\\ell$; that is, one plus the largest\nvariable index occurring in $\\varphi_f$ (or $0$ if none occurs) is at most $\\ell$."
+}

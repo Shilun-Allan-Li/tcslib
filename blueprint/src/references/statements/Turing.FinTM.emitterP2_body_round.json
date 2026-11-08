@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_round",
+ "key": "97b307703536fe28",
+ "kind": "lemma",
+ "title": "One complete round of the width split",
+ "statement": "Let $f:\\mathbb N\\to\\mathbb N$, and let $C,D$ be finite Turing machines over the Boolean alphabet with positive numbers of work tapes. Choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$, and let $w,s$ be Boolean words. Suppose $a,b>0$, the run of $C$ from its seam on input $w$ with $s$ on its first tape does not visit state $c_x$ at any time strictly between $0$ and $a$, and at time $a$ it is at state $c_x$ with the binary representation of $f(|s|)$ on its first tape. Suppose likewise that the run of $D$ from its seam on input $w$ with the suffix of $w$ after its first $|s|$ bits on its first tape does not visit $d_x$ strictly between times $0$ and $b$, and at time $b$ it is at $d_x$ with the binary representation of the suffix length on its first tape. Then the combined controller, started at its anchor with candidate $s$, has some time $t>0$ satisfying $t\\le a+b+10(|s|+|w|+|u|+|v|+10)$, where $u$ and $v$ are those two binary output words. It avoids the anchor at every time strictly between $0$ and $t$; at time $t$ it is halted with output encoding the pair consisting of the prefix of $w$ of length $|s|$ and the remaining suffix if $|s|+f(|s|)=|w|$, and otherwise it is back at the anchor with candidate advanced by one bit when $|s|\\le |w|$ and unchanged when $|s|>|w|$.",
+ "hypotheses_covered": [
+  "f is a function from natural numbers to natural numbers",
+  "C and D are finite Boolean-alphabet Turing machines",
+  "C and D each have a positive number of work tapes",
+  "ce and cx are states of C",
+  "de and dx are states of D",
+  "w and s are Boolean words",
+  "a and b are positive natural numbers",
+  "C avoids cx at all times strictly between 0 and a from its stated seam configuration",
+  "C is at cx with first tape containing the binary representation of f(|s|) at time a",
+  "D avoids dx at all times strictly between 0 and b from its stated seam configuration",
+  "D is at dx with first tape containing the binary representation of the suffix length at time b"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the width call on the candidate $s$ returns the binary word of\n$f(\\abs{s})$ in $a > 0$ steps and the suffix-length call returns the binary\nword of the suffix length in $b > 0$ steps, each with no interior\nexit-state visit. Then there is a time $t$ with\n$0 < t \\le a + b + 10(\\abs{s} + \\abs{w} + \\ell_u + \\ell_v + 10)$, where\n$\\ell_u, \\ell_v$ are the two binary words' lengths, such that the round\nfrom the canonical anchored seam carrying $s$ never revisits the anchor\nstrictly between $0$ and $t$, and at time $t$: if\n$\\abs{s} + f(\\abs{s}) = \\abs{w}$ the controller has halted with output the\npair encoding of the split of $w$ at $\\abs{s}$, and otherwise it is back at\nthe canonical anchored seam carrying the stepped candidate."
+}

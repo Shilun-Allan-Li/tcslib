@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/CfgRecord.lean :: Turing.recordStep_write_back -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Writing Back the Record
+
+**Claim.** Starting at the beginning of the backward write pass for field $k+2$, the recording machine reaches its true-verdict state within $4(k+2)(L+1)$ steps, without visiting either verdict state earlier and while every work-tape head stays within distance $L+1$ of its initial position, where $L$ is the length of the joined fields.
+
+**Proof.** Put $L=|\mathrm{joinFields}(fs)|$. Prove a stronger statement by strong induction on the field index $r<k+2$: from the beginning of the backward write pass for field $r$, the machine reaches the true verdict in at most $4(r+1)(L+1)$ steps, with the same verdict-avoidance and head-distance conditions. For the inductive step, the current field is $fs[r]$. The field-offset identity (`fieldOffset_succ`) locates its left boundary relative to the next field's boundary. The record agreement hypothesis, together with the fact that a field's entries occupy their designated interval in the joined record (`fieldsTape_field`), supplies exactly the tape contents required by the backward-skip machine. Its run theorem (`skipBackTM_run_ofCfg`) therefore shows that the machine crosses this field in $|fs[r]|+3$ steps and arrives at the beginning of the preceding field's backward write pass (or, when $r=0$, at the point where the true verdict is entered). The same theorem bounds the moving head's displacement; the field-offset length bound (`fieldOffset_add_length_le`) then keeps that displacement within $L+1$. The phase-transition result (`recordStep_phase_run`) lifts this run of the skip-back phase to the full recording machine, preserving avoidance of both verdict states before the phase ends and the head bound. The field length bound also gives $|fs[r]|+4\le 4(L+1)$. For $r=0$ this proves the claim directly. For $r>0$, concatenate this field's run with the induction hypothesis for $r-1$; the record-run composition lemma (`recordRun_trans`) preserves the safety and head bounds, and the time estimates add to at most $4(r+1)(L+1)$. Taking $r=k+1$ gives the stated bound.
+
+**Key facts.** `Turing.fieldOffset_succ`, `Turing.fieldsTape_field`, `Turing.skipBackTM_run_ofCfg`, `Turing.fieldOffset_add_length_le`, `Turing.recordStep_phase_run`, `Turing.recordRun_trans`.

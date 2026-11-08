@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.cfgPos",
+ "key": "b20f66213e9f70ca",
+ "kind": "def",
+ "title": "Indexing configuration positions",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape alphabet, let $N,T$ be natural numbers, and let $i$ be a natural number. Write $s$ for the stride determined by $M,N,T$, and write $q=\\lfloor i/s\\rfloor$ and $u=i \\bmod s$. The position assigned to $i$ is the work-cell position $(q,\\lfloor u/(2T+1)\\rfloor,u\\bmod(2T+1))$ if $u<k(2T+1)$, where $k$ is the number of work tracks of $M$; otherwise it is the input position $(q,u-k(2T+1))$ if $u<k(2T+1)+N+2$, and the snapshot position at time $q$ in all other cases.",
+ "hypotheses_covered": [
+  "Finite Turing machine $M$ with Boolean tape alphabet",
+  "Natural numbers $N,T$",
+  "Natural number index $i$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the stride function, so its value cannot be given explicitly from this payload.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

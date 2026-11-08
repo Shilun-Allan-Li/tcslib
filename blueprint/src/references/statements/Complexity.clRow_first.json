@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clRow_first",
+ "key": "0238d8c024e42fff",
+ "kind": "lemma",
+ "title": "First Return at the End of a Row",
+ "statement": "Let $l>0$, let $x$ and the counter words $w(i)$ be finite Boolean words, let $p$ be an input-head position for $x$, let $record$ be a finite Boolean word, and let $W$ be a natural number such that every $w(i)$ has length at most $W$. There is a natural number $t$ with $0<t\\le l(3W+4)$ such that at every time $j<t$ the row machine has not reached the end-of-row control at index $l$, and at time $t$ it is at that index in copier start control, with the input position and all counter words and heads unchanged, the record extended by the packed encoding of the full row, and physical output empty.",
+ "hypotheses_covered": [
+  "positive natural number $l$",
+  "Boolean input word $x$",
+  "input-head position $p$ for $x$",
+  "family $w$ of Boolean words indexed by $\\mathrm{Fin}(l)$",
+  "Boolean record word",
+  "natural number $W$ bounding the length of every counter word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a positive number $l$ of counters, every input word, input position, counter words of length at most $W$, and record, there is a time $t$ with $0 < t \\le l(3W+4)$ such that the row controller never shows the end-of-row control before $t$, and at $t$ the record has been extended by the complete stored row with all counter heads restored; positivity comes from the fixed positive field count."
+}

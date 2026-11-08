@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.loop_orbit_inv",
+ "key": "0d52c6bc93d47712",
+ "kind": "lemma",
+ "title": "Invariant along an iterated orbit",
+ "statement": "Let $I$ be a predicate on pairs of Boolean words, let $F$ map a Boolean word and a Boolean word to a Boolean word, and let $s_0$ assign a Boolean word to each Boolean word. Suppose $I(x,s_0(x))$ holds for every Boolean word $x$, and whenever $I(x,s)$ holds, so does $I(x,F(x,s))$. Then for every Boolean word $x$ and every natural number $i$, the predicate $I$ holds of $x$ and the result of iterating $s\\mapsto F(x,s)$ exactly $i$ times starting at $s_0(x)$.",
+ "hypotheses_covered": [
+  "I is a predicate on pairs of Boolean words",
+  "F maps pairs of Boolean words to Boolean words",
+  "s₀ maps Boolean words to Boolean words",
+  "I(x,s₀(x)) holds for every x",
+  "I(x,s) implies I(x,F(x,s)) for every x and s",
+  "x is a Boolean word",
+  "i is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be a binary predicate on Boolean words, let $F$ be a step function on Boolean\nwords indexed by an input word, and let $s_0$ assign an initial word to each input. If\n$I(x, s_0(x))$ holds for every input $x$ and $I(x, s)$ implies $I(x, F(x, s))$, then\n$I(x, F(x, \\cdot)^{i}(s_0(x)))$ holds for every input $x$ and every iteration count $i$."
+}

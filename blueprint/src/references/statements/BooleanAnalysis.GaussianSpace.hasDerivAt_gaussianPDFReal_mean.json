@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean",
+ "key": "0622b0e172cbf438",
+ "kind": "lemma",
+ "title": "Derivative of a Gaussian density in its mean",
+ "statement": "For any real numbers $c,z$ and any nonnegative variance $v$, the function of the mean $m\\mapsto p_v(m,z)$ has derivative at $m=c$ equal to $\\frac{z-c}{v}p_v(c,z)$, where $p_v$ is the Gaussian density with mean $m$ and variance $v$ (with the zero-variance density taken to be zero).",
+ "hypotheses_covered": [
+  "$c,z\\in\\mathbb R$",
+  "$v\\ge0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $v\\ge0$, put $p_v(c,z)=(2\\pi v)^{-1/2}\\exp(-(z-c)^2/(2v))$ when $v>0$, and $p_0(c,z)=0$; take division by zero to be zero. For all real $c,z$, the derivative at $c$ of $m\\mapsto p_v(m,z)$ is $((z-c)/v)p_v(c,z)$."
+}

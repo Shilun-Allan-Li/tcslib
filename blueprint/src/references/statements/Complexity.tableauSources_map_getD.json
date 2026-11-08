@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.tableauSources_map_getD",
+ "key": "58f50a7f506aada4",
+ "kind": "theorem",
+ "title": "Tableau source values",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean symbols, let $x$ be a finite Boolean string of length $n$, let $t\\in\\mathbb{N}$, and let $v$ be a finite list of Boolean values. Assume that $v_i=x_i$ for every $i<|x|$, that the values at indices $n$ and $n+1$ are respectively false and true, and that for every $s<t$ the values read at the tableau block for time $s$ form the machine-configuration encoding at time $s$, while the value at the tableau vertex for time $s$ is the acceptance value at time $s$. Then the values read from the tableau source indices at time $t$ equal the ideal source list: they encode the preceding configuration (or consist of false values when $t=0$), include the time-zero flag and the input symbol indicated by the input-head position, give each work tape's information from its most recent visit to its current position (or the prescribed blank information if there was no such visit), and include the previous acceptance value (false when $t=0$).",
+ "hypotheses_covered": [
+  "A finite-state Turing machine $M$ over Boolean symbols",
+  "A Boolean list $x$ with length $n$",
+  "A natural number $t$",
+  "A Boolean value list $v$ agrees with $x$ at every index below $|x|$",
+  "The value of $v$ at index $n$ is false",
+  "The value of $v$ at index $n+1$ is true",
+  "For every $s<t$, values read on the tableau block at time $s$ equal the configuration encoding at time $s$",
+  "For every $s<t$, the tableau vertex value at time $s$ equals the acceptance value at time $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

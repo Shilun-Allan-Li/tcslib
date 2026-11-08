@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.ConfigCodec.adjacency_eval_of_ne",
+ "key": "ca85a008e539795a",
+ "kind": "theorem",
+ "title": "Adjacency rejects distinct inputs",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape symbols, and let $n,s$ be natural numbers. Let $x$ and $x'$ be distinct Boolean inputs, each of length $n$, and let $c$ and $c'$ be arbitrary configurations of $M$ on inputs $x$ and $x'$, respectively. The adjacency formula evaluated on the concatenation of their Boolean codes is false.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine with Boolean tape symbols",
+  "$n,s$ are natural numbers",
+  "$x,x'$ are Boolean inputs of length $n$",
+  "$x\\ne x'$",
+  "$c$ is a configuration on input $x$",
+  "$c'$ is a configuration on input $x'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite Turing machine with Boolean tape symbols, and let\n$n,s\\in\\mathbb{N}$. If $x$ and $x'$ are distinct Boolean inputs, both of length $n$,\nthen for any configurations $c$ of $M$ on input $x$ and $c'$ of $M$ on input $x'$, the\nadjacency formula evaluated on the concatenation of their Boolean codes is false."
+}

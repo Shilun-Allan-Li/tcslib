@@ -1,0 +1,12 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.verdict",
+ "key": "60ae6c5daea3c046",
+ "kind": "def",
+ "title": "Verifier verdict",
+ "statement": "Given a Boolean flag $e$ and a finite Boolean string $z$, attempt to decode $z$ as a pair $(c,x)$ of Boolean strings; if decoding fails, the verdict is false. Otherwise let $r$ be the number of leading ones in $c$. The verdict is false unless $c$ contains a false entry, $r$ is at most the length of $x$, and either $e$ is false or $r$ equals the length of $x$. When these conditions hold, the verdict is the result of running the evaluator on $c$, starting in the phase that skips $r$ input positions, with the first $r$ entries of $x$ as its computed values, no marked cells, and head position zero.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

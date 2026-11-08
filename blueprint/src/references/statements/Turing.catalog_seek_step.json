@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.catalog_seek_step",
+ "key": "9948de73ecd94e2b",
+ "kind": "theorem",
+ "title": "A Seek Step Updates the Head Position",
+ "statement": "Let $M$ be a $k$-tape machine with the four seek phases, let $i$ be a work-tape index, and let $d$ be a configuration. For phases $q,q'$, integer $z$, and movement $m\\in\\{-1,0,1\\}$, suppose the transition from the configuration obtained from $d$ by setting the phase to $q$ and shifting head $i$ by $z$ is the action that leaves the input head and all tape contents unchanged, moves work-tape head $i$ by $m$ (and every other work-tape head by zero), emits nothing, and enters phase $q'$. Then one machine step gives the configuration obtained from $d$ by setting the phase to $q'$ and shifting head $i$ by $z+m$.",
+ "hypotheses_covered": [
+  "Machine M with seek phases",
+  "Work-tape index i",
+  "Configuration d",
+  "Phases q and q'",
+  "Integer offset z",
+  "Movement m in {-1,0,1}",
+  "Transition at the specified configuration equals the stated tape action"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

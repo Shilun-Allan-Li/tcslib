@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopBody_capture",
+ "key": "27fee116f38064b6",
+ "kind": "lemma",
+ "title": "Captured loop-body computation",
+ "statement": "Let $\\mathrm{body}$ be a Boolean finite Turing machine with anchor state $a$, and let $H$ be a state set with a machine whose transitions agree with the capture transform of the loop-body machine's transitions after applying an embedding $e$ and return state $r$. Suppose $c$ is a configuration of $\\mathrm{body}$ on input $x$, its state is present, and for every $u<t$ the run from $c$ is still active and has not reached $a$. Suppose also that for every $u<t$, either $u=0$ and the release flag is true, or the run from $c$ is not in state $a$. Then after $t$ steps the host machine from the captured loop-body configuration agrees with the capture of the body machine's configuration after $t$ steps; the release flag in that configuration is the original flag if $t=0$ and false otherwise, and its extra tape contains the halt marker exactly when the body computation has halted.",
+ "hypotheses_covered": [
+  "$\\mathrm{body}$ is a Boolean finite Turing machine",
+  "$a$ is a state of $\\mathrm{body}$",
+  "$H$ is a state type and a host machine is specified",
+  "$e$ maps loop-body states to host states and $r$ is a host return state",
+  "Host transitions agree with the specified capture transform for every state, input symbol, and work contents",
+  "$c$ is a configuration of $\\mathrm{body}$ on Boolean input $x$",
+  "The state of $c$ is present",
+  "$t$ is a natural number",
+  "The run from $c$ is active at every time $u<t$",
+  "At every time $u<t$, either $u=0$ with release true or the run is not in state $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

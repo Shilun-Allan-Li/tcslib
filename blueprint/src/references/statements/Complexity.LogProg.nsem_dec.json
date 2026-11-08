@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.LogProg.nsem_dec",
+ "key": "32f87a5d3f5e8d69",
+ "kind": "lemma",
+ "title": "Semantics of a decrement instruction",
+ "statement": "Let $A$ be a nondeterministic register program, $O$ an oracle family, $x$ an input bit string, and $G$ a guard on configurations. Suppose the instruction at state $l$ decrements register $r$ (with subtraction truncated at zero) and proceeds to state $l'$. If $G$ holds at $(l,v,\\mathrm{none})$, then for any proposition $P$, terminating semantics and acceptance equivalent to $P$ at $(l',v',\\mathrm{none})$, where $v'(r)=\\max(v(r)-1,0)$ and all other register values agree with $v$, imply the same semantics at $(l,v,\\mathrm{none})$.",
+ "hypotheses_covered": [
+  "The instruction at $l$ decrements register $r$ and proceeds to $l'$",
+  "The guard $G$ holds at $(l,v,\\mathrm{none})$",
+  "The successor configuration uses the decremented value $v(r)-1$ with natural-number truncated subtraction and has terminating semantics and acceptance equivalent to $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

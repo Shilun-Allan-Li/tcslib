@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clMatchFlag_schedule",
+ "key": "1d90b06fb413f31d",
+ "kind": "lemma",
+ "title": "Scheduled work-head position equality",
+ "statement": "Let $M$ be a binary multi-tape Turing machine with $k$ work tapes, let $m,s,t\\in\\mathbb{N}$, and let $\\tau$ be a work-tape index. For the movement-count row at time $s$ on the all-zero input of length $m$, and two target words both taken from the movement counts at time $t$, the comparison flag at the positive and negative slots for $\\tau$ is true exactly when the work-head positions at times $s$ and $t$ on tape $\\tau$ are equal.",
+ "hypotheses_covered": [
+  "A binary finite Turing machine $M$",
+  "Natural numbers $m,s,t$",
+  "A work-tape index $\\tau$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every oblivious machine, reference length $m$, times $s$ and $t$, and work tape $\\tau$, the comparison flag of the stored row at time $s$ against the target counts at time $t$, taken at the positive and negative slots of $\\tau$, is true exactly when the public work-head position on $\\tau$ at time $s$ equals the position at time $t$."
+}

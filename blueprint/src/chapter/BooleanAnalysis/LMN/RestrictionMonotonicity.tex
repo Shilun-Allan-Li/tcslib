@@ -13,6 +13,10 @@ and derives the key Bernoulli monotonicity $\Pr_{p\cdot q}[\mathrm{dtDepth} > t]
 
 \begin{definition}[Restriction of a decision tree]
 \lean{LMN.dtRestrict}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p074-b004,
+  pdf-ffbe9c7b3306-p075-b002
+}
 \label{LMN.dtRestrict}
 \leanok
 \uses{DecisionTree, SwitchingLemma.Restriction}
@@ -56,7 +60,7 @@ where $\rho$ sets it and the value $x_i$ on the free variables.
 \lean{LMN.dtDepth_restrictFn_le'}
 \label{LMN.dtDepth_restrictFn_le'}
 \leanok
-\uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, LMN.dtRestrict, LMN.dtRestrict_depth_le, LMN.dtRestrict_eval, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, DecisionTree.buildFull, DecisionTree.buildFull_depth, DecisionTree.buildFull_eval, dtDepth}
+\uses{DecisionTree, DecisionTree.buildFull, DecisionTree.buildFull_depth, DecisionTree.buildFull_eval, DecisionTree.depth, DecisionTree.eval, LMN.dtRestrict, LMN.dtRestrict_depth_le, LMN.dtRestrict_eval, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{5}
 Let $f$ be a Boolean function of $n$ Boolean variables, and let $\rho$ be a restriction
 that fixes some of these variables to Boolean values and leaves the remaining ones free.

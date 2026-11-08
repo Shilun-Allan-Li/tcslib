@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.a3_copy_step",
+ "key": "f134cc449c1de153",
+ "kind": "lemma",
+ "title": "One copy transition",
+ "statement": "Let $C$ be a finite binary Turing machine with at least one work tape, let $entry,exit$ be states of $C$, and let $x$ be a binary word. For every natural number $i<|x|$, one step of the wrapper from its copy-phase configuration with input head at position $i+1$, tape zero containing the prefix of $x$ of length $i$, and its head at position $i$, reaches the copy-phase configuration with input head at position $i+2$, tape zero containing the prefix of length $i+1$, and its head at position $i+1$; all other work tapes and heads are blank and at zero, respectively, and the output remains empty.",
+ "hypotheses_covered": [
+  "Finite binary machine $C$",
+  "$C$ has at least one work tape",
+  "States $entry,exit$ of $C$",
+  "Binary word $x$",
+  "Natural number $i$ with $i<|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $i < |x|$, one step of the decider wrapper in its copy phase, with the\nfirst $i$ input bits already on tape zero, appends the $(i+1)$-st input bit to\ntape zero and advances both the input head and the tape-zero head by one."
+}

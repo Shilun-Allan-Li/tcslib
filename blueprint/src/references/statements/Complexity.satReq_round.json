@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satReq_round",
+ "key": "0c252ae7081768c4",
+ "kind": "lemma",
+ "title": "Correctness of the round programs",
+ "statement": "For every Boolean word $x$ and every streaming seam state $s$, form the round request by pairing the encoded seam word of $s$ with $x$. The next-state program on that request returns the encoded seam state produced by one streaming round on $x$ from $s$, and the chunk program returns exactly the output of that round.",
+ "hypotheses_covered": [
+  "A Boolean word $x$",
+  "A streaming seam state $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On every canonical round request — the pair encoding of the encoded seam word of\nany state $s$ (not only reachable ones) with the input $x$ — the word-level\nnext-state program returns the encoded word of the state after one streaming\nround, and the word-level chunk program returns exactly the chunk emitted by that\nround."
+}

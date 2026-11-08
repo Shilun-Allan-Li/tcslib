@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.tensorize_reverse_bonami_beckner",
+ "key": "908ddb37b6e27314",
+ "kind": "theorem",
+ "title": "Tensorization of a reverse norm inequality",
+ "statement": "Let $p,q,\\rho\\in\\mathbb R$ satisfy $0<q<p$ and $0\\le\\rho\\le1$. Suppose that for every nonnegative real-valued function $u$ on the one-dimensional Boolean cube, $M_q(T_\\rho u)\\ge M_p(u)$. Then for every natural number $n$ and every nonnegative real-valued function $f$ on $\\{0,1\\}^n$, $M_q(T_\\rho f)\\ge M_p(f)$, where $T_\\rho$ is the Walsh–Fourier noise operator and $M_r$ is the extended power mean defined for cube functions.",
+ "hypotheses_covered": [
+  "$p,q,\\rho$ are real",
+  "$0<q<p$",
+  "$0\\le\\rho\\le1$",
+  "the reverse mean inequality holds for every nonnegative function on the one-dimensional cube",
+  "$n$ is a natural number",
+  "$f$ is a nonnegative real-valued function on the $n$-dimensional cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $0<q<p$ and $0\\le\\rho\\le1$. Suppose $M_q(T_\\rho u)\\ge M_p(u)$ for every nonnegative function $u$ on one bit. Then $M_q(T_\\rho f)\\ge M_p(f)$ for every $n\\in\\mathbb N$ and $f:\\{0,1\\}^n\\to[0,\\infty)$, where $M_r(u)=(\\E|u|^r)^{1/r}$. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure."
+}

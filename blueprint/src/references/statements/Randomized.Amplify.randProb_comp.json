@@ -1,0 +1,24 @@
+{
+ "lean_name": "Randomized.Amplify.randProb_comp",
+ "key": "06c95085dbb4b958",
+ "kind": "theorem",
+ "title": "Composition of randomized runs",
+ "statement": "Let $N$ and $M$ be nondeterministic Turing machines with Boolean symbols and respectively $K$ and $K'$ work tapes, on a fixed Boolean input $x$, and let $\\phi$ map configurations of $N$ to configurations of $M$. Suppose that whenever a configuration $c$ of $N$ is not halted, one step of $M$ from $\\phi(c)$ under any choice bit equals $\\phi$ applied to the corresponding step of $N$. Suppose also that for some $m\\in\\mathbb{N}$, every length-$m$ choice word leaves $M$ halted when started from $\\phi(c)$ whenever $c$ is halted; and that, for every halted $c$, the probability that $M$ satisfies a decidable predicate $Q$ after $m$ choice bits from $\\phi(c)$ equals $g(o(c))$, where $o$ maps configurations of $N$ to Boolean values and $g$ maps Boolean values to rationals. Then, for every $n\\in\\mathbb{N}$ and configuration $c$ of $N$ such that every length-$n$ choice word leaves $N$ halted, the probability that $M$ satisfies $Q$ after $n+m$ choice bits from $\\phi(c)$ equals the probability that $o$ is true after $n$ choice bits of $N$ times $g(\\mathrm{true})$, plus the probability that $o$ is false after $n$ choice bits of $N$ times $g(\\mathrm{false})$.",
+ "hypotheses_covered": [
+  "$K,K'\\in\\mathbb{N}$; $N,M$ are Boolean-symbol nondeterministic Turing machines with those work-tape counts",
+  "$x$ is a Boolean input word",
+  "$\\phi$ maps configurations of $N$ to configurations of $M$",
+  "For every nonhalted $c$ and choice bit $b$, $M$ steps from $\\phi(c)$ to $\\phi(N\\text{'s step from }c)$",
+  "$m\\in\\mathbb{N}$",
+  "For every halted $c$, all length-$m$ runs of $M$ from $\\phi(c)$ are halted",
+  "$Q$ is a decidable predicate on configurations of $M$",
+  "$o$ maps configurations of $N$ to $\\mathrm{Bool}$; $g$ maps $\\mathrm{Bool}$ to $\\mathbb{Q}$",
+  "For every halted $c$, the length-$m$ probability of $Q$ from $\\phi(c)$ equals $g(o(c))$",
+  "$n\\in\\mathbb{N}$ and $c$ is a configuration of $N$",
+  "Every length-$n$ run of $N$ from $c$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

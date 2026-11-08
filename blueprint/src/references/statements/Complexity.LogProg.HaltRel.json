@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.HaltRel",
+ "key": "4edb9e012815513a",
+ "kind": "def",
+ "title": "Halting relation",
+ "statement": "Let $g$ and $d$ be configurations as in the track relation, and fix a program node and a call specification with its register-word assignment. They satisfy the halting relation if there exist a segment index $s$, Boolean parity and direction values, and a track position $t$ such that $g$ is in the return state carrying the first bit of $d$'s output, or false if that output is empty; $d$ has halted; and the configurations satisfy the track relation at those parameters.",
+ "hypotheses_covered": [
+  "A configuration c₀ with m work tapes and input x",
+  "A program node l",
+  "A call specification and register-word assignment W",
+  "A configuration g with m+k_D work tapes on x",
+  "A configuration d with k_D work tapes on the virtual call input"
+ ],
+ "confidence": "low",
+ "caveat": "The track relation's detailed position conventions depend on omitted definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

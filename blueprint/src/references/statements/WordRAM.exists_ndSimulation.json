@@ -1,0 +1,18 @@
+{
+ "lean_name": "WordRAM.exists_ndSimulation",
+ "key": "b63783b410fe8f50",
+ "kind": "theorem",
+ "title": "Nondeterministic simulation of an extended word RAM",
+ "statement": "Let $P$ be an extended word RAM program, and let $W,TW,SW:\\mathbb{N}\\to\\mathbb{N}$ be functions such that some finite deterministic Turing machine, on every Boolean input $x$, outputs the $W(|x|)$-bit representation of $W(|x|)$ within $TW(|x|)$ steps and uses exactly $SW(|x|)$ work-tape cells. Then there are a finite nondeterministic Turing machine $N$ and a natural number $A$ such that, for every Boolean input $x$ and all $t,f\\in\\mathbb{N}$, if for every coin sequence $\\rho$ there are a Boolean value and an output string for which $P$ halts on $x$ with word width $W(|x|)$, in fewer than $t$ steps, touching at most $f$ memory addresses, then every length-$s$ choice sequence makes $N$ halt on $x$ within $s=TW(|x|)+A(t+1)(f(W(|x|)+1)+W(|x|)^2+|x|+1)$ steps and use at most $SW(|x|)+A(f(W(|x|)+1)+W(|x|)+\\lceil\\log_2(|x|+1)\\rceil+1)$ work-tape cells. Moreover, $N$ accepts on $x$ within $s$ steps if and only if there exist a coin sequence $\\rho$ and an output string $o$ such that $P$ halts with Boolean result true and output $o$ on $x$ with word width $W(|x|)$, in fewer than $t$ steps, touching at most $f$ memory addresses.",
+ "hypotheses_covered": [
+  "$P$ is an extended word RAM program",
+  "$W,TW,SW$ are functions from natural numbers to natural numbers",
+  "$W$ is computable by a finite deterministic Turing machine that outputs its $W(n)$-bit representation within $TW(n)$ steps and uses exactly $SW(n)$ work-tape cells",
+  "For every Boolean input $x$, natural numbers $t,f$, and coin sequence $\\rho$, there exist a Boolean value and output string witnessing that $P$ halts with word width $W(|x|)$ in fewer than $t$ steps while touching at most $f$ addresses",
+  "The simulated Turing machine halts for every choice sequence of the specified length and obeys the stated space bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

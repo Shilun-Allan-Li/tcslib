@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.regBack_x",
+ "key": "ca5bf62e640ee85b",
+ "kind": "lemma",
+ "title": "Register head returns to the origin",
+ "statement": "Let $P$ be a register program with $m$ registers and decider index set $\fin d$, let $O:\fin d\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{Bool}$ be an oracle, and let $c$ be a configuration on input $x$. Choose a register $r$, a Boolean word $w$, and states $s_0,n_x$ such that register $r$ in $c$ contains $w$; for every input symbol $a$ and tuple of scanned register symbols $ww$, the machine transition from $s_0$ moves the input head by $0$, moves register $r$ left by one and returns to $s_0$ if register $r$ scans a symbol, and moves register $r$ right by one and enters $n_x$ if register $r$ scans blank; also suppose $s_0$ is not a call state. For any valid input-head position $ip$, natural number $n$, and integer $q$ with $q+1=n$ and $q<|w|$, start from the configuration obtained from $c$ by setting the state to $s_0$, the input-head position to $ip$, and register $r$'s head position to $q$. After $n+1$ steps the resulting configuration is the one with state $n_x$, input-head position $ip$, unchanged tape contents and output, and register heads as in $c$ except that register $r$ is at $0$; at every time $t<n+1$, the configuration has state $s_0$, the same input-head position, tape contents, and output, and register $r$'s head is at some $q'$ with $-1\\le q'\\le q$, while all other register heads agree with $c$.",
+ "hypotheses_covered": [
+  "$P$ is a register program with $m$ registers and decider index set $\\fin d$",
+  "$O$ is an oracle on decider indices and Boolean words",
+  "$c$ is a configuration on input $x",
+  "$r$ is a register index",
+  "$w$ is a Boolean word",
+  "Register $r$ in $c$ contains $w$",
+  "The stated transition behavior holds for every input symbol and scanned-register-symbol tuple",
+  "$s_0$ is not a call state",
+  "$ip$ is a valid input-head position",
+  "$n$ is a natural number and $q$ is an integer",
+  "$q+1=n$",
+  "$q<|w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

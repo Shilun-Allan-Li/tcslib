@@ -1,0 +1,18 @@
+{
+ "lean_name": "FABL.completeQuadraticLinearPrefixProof_eq_of_checks",
+ "key": "d5324bef8da27b40",
+ "kind": "theorem",
+ "title": "Linear prefix values from consistency checks",
+ "statement": "Let $n$ be a nonnegative integer, let $w_0,\u001b[0m\\ldots,w_{n-1}$ be Boolean values, and let a Boolean table assign values to the indices for linear prefixes, quadratic prefixes, and coordinate products. Suppose the table satisfies all of the following checks: the linear prefix at $0$ is false; the quadratic prefix at $0$ is false and at $n$ is true; for each $i<n$, the linear prefix at $i+1$ is the sum in $\\mathbb F_2$ of the linear prefix at $i$ and the image of $w_i$; the product entry at $i$ is the Boolean conjunction of the linear prefix at $i$ and $w_i$; and the quadratic prefix at $i+1$ is the sum in $\\mathbb F_2$ of the quadratic prefix at $i$ and the image of that product entry. Then for every $k\\le n$, the image in $\\mathbb F_2$ of the table's linear prefix at $k$ equals the sum of the images of those $w_i$ with $i<k$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$w$ is a Boolean sequence indexed by $0,\\ldots,n-1$",
+  "the proof table is Boolean-valued on the specified prefix and product indices",
+  "all endpoint and transition checks hold",
+  "$k$ is an integer with $0\\le k\\le n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

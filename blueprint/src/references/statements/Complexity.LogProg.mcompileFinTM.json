@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.mcompileFinTM",
+ "key": "15eef5caf579552a",
+ "kind": "def",
+ "title": "Finite machine produced by compilation",
+ "statement": "Let $m$, $d$, and $k_D$ be natural numbers, let $\u0006Lambda$ and $SD$ be finite types with decidable equality, and let $A$ assign to each element of $\u0006Lambda$ an instruction with $m$ registers, $d$ decider indices, and labels in $\u0006Lambda$. Choose an initial label $l_0$, a Boolean-alphabet Turing machine $D$ with $k_D$ work tapes and state set $SD$, and a map $q_0$ assigning a state of $D$ to each of the $d$ decider indices. The compilation of these data is a finite Boolean-alphabet Turing machine with $m+k_D+1$ work tapes.",
+ "hypotheses_covered": [
+  "Natural numbers $m$, $d$, and $k_D$",
+  "A finite type $\\Lambda$ with decidable equality",
+  "A finite state type $SD$ with decidable equality",
+  "An instruction assignment $A$ on $\\Lambda$ with $m$ registers, $d$ decider indices, and labels in $\\Lambda$",
+  "An initial label $l_0$",
+  "A Boolean-alphabet machine $D$ with $k_D$ work tapes and state type $SD$",
+  "A map $q_0$ from the $d$ decider indices to states of $D$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement gives the compiled machine's tape count, but the definition of the compilation and the meaning of its state construction are not included.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

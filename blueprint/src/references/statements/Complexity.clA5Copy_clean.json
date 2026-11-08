@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5Copy_clean",
+ "key": "a36c5ad7aac32930",
+ "kind": "lemma",
+ "title": "Clean bounded-time input copy",
+ "statement": "For every Boolean word $x$, let $D$ be the release-wrapped three-state input copier described by the machine construction. There is a time $t$ with $0<t\\le 2|x|+3$ such that $D$ has not halted at any time $j<t$, and at time $t$ it is halted in the configuration whose tape zero stores $x$, whose other work tapes are blank, whose input head and work-tape heads are at their initial positions, and whose output is empty.",
+ "hypotheses_covered": [
+  "$x$ is any Boolean word",
+  "$D$ is the specified release-wrapped input copier, with one work tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word $x$, the release-wrapped native input copier, started over the blank state word, first halts at a positive time at most $2|x| + 3$ at the canonical seam whose stored word is exactly $x$, with silent output and unchanged heads."
+}

@@ -29,11 +29,15 @@ import re
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
+import sys
+sys.path.insert(0, str(BASE))
+from scripts import dataset_projects as dp
+
 DEP_GRAPH = BASE / "dep_graph.json"
 CHAPTER_DIR = BASE / "blueprint" / "src" / "chapter"
 
 # Mirror of blueprint_enumerate.py's policy.
-_MODIFIERS = r"(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+|@\[[^\]]*\]\s*)*"
+_MODIFIERS = r"(?:public\s+|private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+|@\[[^\]]*\]\s*)*"
 DECL_RE = re.compile(r"^\s*" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example)\b")
 KEEP_KINDS = {"theorem", "lemma", "def", "abbrev", "structure", "inductive", "class"}
 LEAN_LABEL_RE = re.compile(r"\\lean\{([^}]*)\}")
@@ -46,8 +50,7 @@ def load_modules() -> dict:
 
 
 def module_to_lean_path(module: str) -> Path:
-    rel = module[len("TCSlib."):] if module.startswith("TCSlib.") else module
-    return BASE / "TCSlib" / (rel.replace(".", "/") + ".lean")
+    return dp.source_path(module)
 
 
 # Mirror of blueprint_enumerate.py: strip Lean's `_private.<module>.<n>.` mangling.

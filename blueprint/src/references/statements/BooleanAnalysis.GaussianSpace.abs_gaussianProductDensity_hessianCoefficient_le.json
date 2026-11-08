@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.abs_gaussianProductDensity_hessianCoefficient_le",
+ "key": "d70aebfb8c919c98",
+ "kind": "lemma",
+ "title": "Bound for a product Gaussian Hessian coefficient",
+ "statement": "Let $I$ be a finite index set, let $v\\ge0$ be a real number with $v\\ne0$, and let $c,z,a:I\\to\\mathbb R$. Suppose $a(i)\\ge0$ and, for every $i\\in I$, the Gaussian density with mean $c(i)$ and variance $v$, evaluated at $z(i)$, is at most $a(i)$, and\n\\[\n\\left|\\left(\\frac{(z(i)-c(i))^2}{v^2}-\\frac1v\\right)p_v(c(i),z(i))\\right|\\le a(i),\n\\]\nwhere $p_v$ denotes that density. Then for every $i,j\\in I$,\n\\[\n\\left|\\left(\\frac{(z(i)-c(i))(z(j)-c(j))}{v^2}-\\begin{cases}1/v,&i=j,\\\\0,&i\\ne j\\end{cases}\\right)\\prod_{k\\in I}p_v(c(k),z(k))\\right|\\le\\left(1+\\frac2v\\right)\\prod_{k\ni I}a(k).\n\\]",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$v\\ge0$",
+  "$v\\ne0$",
+  "$c,z,a:I\\to\\mathbb R$",
+  "$a(i)\\ge0$ for every $i$",
+  "The Gaussian density at each coordinate is at most $a(i)$",
+  "The absolute second derivative coefficient at each coordinate is at most $a(i)$",
+  "Indices $i,j\\in I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Assume $c,z,a\\in\\mathbb R^I$, $a_i\\ge0$, $p_v(c_i,z_i)\\le a_i$, and $|((z_i-c_i)^2/v^2-1/v)p_v(c_i,z_i)|\\le a_i$ for every $i\\in I$. If $v>0$, then for every $i,j\\in I$, $|((z_i-c_i)(z_j-c_j)/v^2-\\delta_{ij}/v)G_v(c,z)|\\le(1+2/v)\\prod_k a_k$, where $\\delta_{ij}$ is the Kronecker delta."
+}

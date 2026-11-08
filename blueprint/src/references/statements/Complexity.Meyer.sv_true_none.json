@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Meyer.sv_true_none",
+ "key": "fd213759bdf34637",
+ "kind": "theorem",
+ "title": "Input-symbol interpretation of symbolic answers",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean symbols, input $x$, and width $W$, and let $\\mathrm{Ans}$ assign a Boolean value to each table selector and pair of natural-number coordinates. Assume that whenever $t,a<2^W$, $\\mathrm{Ans}$ agrees with the corresponding selector answer on the machine configuration reached after $t$ steps from its initial configuration on $x$, at coordinate $a$. Then for every sign $s$ and every $t,a<2^W$, the symbolic answer for the absent-tape selector equals the input symbol of that configuration at the position offset by $(-1)^s a$ from the input head, with an out-of-range or boundary position interpreted as blank.",
+ "hypotheses_covered": [
+  "A finite-tape machine with Boolean symbols and input x",
+  "A natural number width W",
+  "A Boolean answer table indexed by selectors and two natural coordinates",
+  "For all selectors and t,a<2^W, the table agrees with the selector answer on the configuration after t steps from the initial configuration on x",
+  "The Boolean sign s",
+  "The bounds t<2^W and a<2^W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

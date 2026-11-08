@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.sweepTape_write",
+ "key": "bc75b9100df7cae9",
+ "kind": "lemma",
+ "title": "Writing at the zipper frontier",
+ "statement": "For an alphabet $A$, an integer frontier $z$, finite lists $l,r$ of possibly blank symbols, and a possibly blank symbol $b$, overwriting the represented tape at coordinate $z$ with $b$ gives the tape represented by the same frontier and left stack, with right stack obtained by prepending $b$ to the tail of $r$.",
+ "hypotheses_covered": [
+  "An alphabet $A$",
+  "An integer $z$",
+  "Finite lists $l,r$ of possibly blank symbols",
+  "A possibly blank symbol $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider the two-way infinite partial tape assembled from a position $z \\in \\mathbb{Z}$,\na list $r$ of optional symbols occupying cells $z, z+1, \\dots$, and a list $l$ occupying\ncells $z-1, z-2, \\dots$ (all unlisted cells blank). Overwriting the cell at $z$ with a\nvalue $b$ yields the tape assembled from $z$, $l$, and the list whose first entry is $b$\nfollowed by the tail of $r$."
+}

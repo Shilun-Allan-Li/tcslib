@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.DAGCircuit.rewire_eval",
+ "key": "7fe58787022d74d7",
+ "kind": "theorem",
+ "title": "Evaluation After Rewiring",
+ "statement": "Let $N$ and $k$ be nonnegative integers, let $C$ be a Boolean circuit with $N$ inputs, and let $\\text{srcs}$ be a list of $N$ vertex indices, each less than $k+2$. The circuit $C$ is assumed to have gates in topological order, each reading only earlier vertices, and a valid output vertex. For every assignment $x$ to $k$ bits, the rewired circuit's output equals the output of $C$ when its $i$th input is taken from the list consisting of $x$ followed by $0,1$, at index $\\text{srcs}[i]$.",
+ "hypotheses_covered": [
+  "$C$ is a circuit with $N$ inputs",
+  "$k$ is a nonnegative integer",
+  "The source list has length $N$",
+  "Every source index is less than $k+2$",
+  "$C$ has gates in topological order with each gate reading only earlier vertices",
+  "$C$ has a valid output vertex",
+  "$x$ is an assignment to the $k$ bits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

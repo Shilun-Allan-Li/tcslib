@@ -19,20 +19,22 @@ A real-valued function $f$ on $\{0,1\}^n$ is nonnegative when $f(x)\ge0$ for eve
 Let $p\in\bbr$ and $f:\{0,1\}^n\to\bbr$, define $M_p(f)=0$ when $p\le0$ and $f$ has a zero; otherwise set $M_0(f)=\exp(\E\log|f|)$ and $M_p(f)=(\E|f|^p)^{1/p}$ for $p\ne0$, with uniform expectation.
 \end{definition}
 
-\begin{lemma}[Positive-exponent formula]
+\begin{lemma}[Formula for positive power means]
 \lean{BooleanAnalysis.Hypercontractivity.lpMean_of_pos}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.expect}
 \difficulty{1}
-For $p>0$ and $f:\{0,1\}^n\to\bbr$, the extended power mean agrees with the ordinary formula $M_p(f)=(\E|f|^p)^{1/p}$ under the uniform measure.
+Let $n$ be a natural number, $p>0$, and $f:\{0,1\}^n\to\mathbb{R}$. Then
+$M_p(f)=\bigl(\mathbb{E}|f|^p\bigr)^{1/p}$, with expectation under the uniform measure.
 \end{lemma}
 
-\begin{lemma}[Nonnegative positive-exponent means]
+\begin{lemma}[Nonnegativity of positive power means]
 \lean{BooleanAnalysis.Hypercontractivity.lpMean_nonneg}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.expect_rpow_abs_nonneg, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos}
 \difficulty{3}
-For $p>0$ and every $f:\{0,1\}^n\to\bbr$, the uniform power mean $M_p(f)=(\E|f|^p)^{1/p}$ is nonnegative.
+Let $n$ be a natural number, $p>0$, and $f:\{0,1\}^n\to\mathbb{R}$. Then $M_p(f)\ge0$,
+where $M_p$ is the extended power mean under the uniform measure.
 \end{lemma}
 
 \begin{lemma}[Monotonicity in function values]
@@ -40,7 +42,9 @@ For $p>0$ and every $f:\{0,1\}^n\to\bbr$, the uniform power mean $M_p(f)=(\E|f|^
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.IsNonnegative, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.expect_eq_fintypeExpect}
 \difficulty{4}
-For $p>0$ and functions $f,g:\{0,1\}^n\to\bbr$ satisfying $0\le f(x)\le g(x)$ for every $x$, one has $M_p(f)\le M_p(g)$, where $M_p(u)=(\E|u|^p)^{1/p}$.
+Let $n$ be a natural number and $p>0$. For functions $f,g:\{0,1\}^n\to\mathbb{R}$,
+suppose $f$ is nonnegative and $f(x)\le g(x)$ for every $x$. Then $M_p(f)\le M_p(g)$,
+where $M_p$ is the extended power mean under the uniform measure.
 \end{lemma}
 
 \begin{lemma}[Positive homogeneity of power means]
@@ -48,15 +52,19 @@ For $p>0$ and functions $f,g:\{0,1\}^n\to\bbr$ satisfying $0\le f(x)\le g(x)$ fo
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.expect_rpow_abs_nonneg, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.expect}
 \difficulty{4}
-Let $p,c>0$ and $f:\{0,1\}^n\to\bbr$. With $M_p(u)=(\E|u|^p)^{1/p}$, one has $M_p(cf)=cM_p(f)$.
+Let $n\in\mathbb N$, let $p,c>0$, and let $f:\{0,1\}^n\to\mathbb R$. The extended power
+mean of $cf$ with exponent $p$ equals $c$ times the extended power mean of $f$ with
+exponent $p$.
 \end{lemma}
 
-\begin{lemma}[Power mean on the empty cube]
+\begin{lemma}[Power mean on the zero dimensional cube]
 \lean{BooleanAnalysis.Hypercontractivity.lpMean_dim_zero}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.IsNonnegative, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{3}
-Let $p>0$ and let $f:\{0,1\}^0\to[0,\infty)$. Its uniform power mean $M_p(f)=(\E f^p)^{1/p}$ equals the value of $f$ at the unique empty string.
+Let $p>0$ and let $f:\{0,1\}^0\to\mathbb R$ be nonnegative at every point. Its extended
+power mean with exponent $p$ equals its value at the unique point of the zero
+dimensional cube.
 \end{lemma}
 
 \begin{lemma}[Collapsing nested power means]
@@ -64,39 +72,48 @@ Let $p>0$ and let $f:\{0,1\}^0\to[0,\infty)$. Its uniform power mean $M_p(f)=(\E
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.Hypercontractivity.norm_collapse_rpow, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-Let $p>0$ and $f:\{0,1\}^{n+1}\to\bbr$, and write $M_{p,z}$ for the uniform power mean $(\E_z|\cdot|^p)^{1/p}$. Then $M_{p,(x,b)}f(x,b)=M_{p,x}\bigl(M_{p,b}f(x,b)\bigr)$, where $x\in\{0,1\}^n$ and $b\in\{0,1\}$.
+Let $n\in\mathbb N$, let $p>0$, and let $f:\{0,1\}^{n+1}\to\mathbb R$. For
+$x\in\{0,1\}^n$, define $g(x)$ to be the uniform power mean of the two values $f(x,b)$
+as $b$ ranges over $\{0,1\}$. Then the uniform power mean of $f$ on $\{0,1\}^{n+1}$
+equals the uniform power mean of $g$ on $\{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Commuting equal-exponent means]
+\begin{lemma}[Commuting equal exponent means]
 \lean{BooleanAnalysis.Hypercontractivity.lpMean_comm}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-Let $p>0$ and $F:\{0,1\}^n\times\{0,1\}\to\bbr$. For uniform power means $M_{p,z}u=(\E_z|u|^p)^{1/p}$, one has $M_{p,x}(M_{p,b}F(x,b))=M_{p,b}(M_{p,x}F(x,b))$.
+Let $n\in\mathbb N$, let $p>0$, and let $F:\{0,1\}^n\times\{0,1\}\to\mathbb R$. Taking
+uniform power means with exponent $p$ in each variable, the mean over $x\in\{0,1\}^n$ of
+the means over $y\in\{0,1\}$ equals the mean over $y\in\{0,1\}$ of the means over
+$x\in\{0,1\}^n$.
 \end{lemma}
 
-\begin{lemma}[Homogeneity of Fourier coefficients]
+\begin{lemma}[Homogeneity of Fourier Coefficients]
 \lean{BooleanAnalysis.Hypercontractivity.fourierCoeff_const_mul}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 \difficulty{3}
-Let $f:\{0,1\}^n\to\bbr$, $c\in\bbr$, and $S\subseteq[n]$, uniform Fourier--Walsh coefficients satisfy $\widehat{cf}(S)=c\widehat f(S)$.
+Let $n\in\mathbb N$, $c\in\mathbb R$, $f:\{0,1\}^n\to\mathbb R$, and $S\subseteq[n]$.
+Then the uniform Fourier--Walsh coefficient satisfies $\widehat{(cf)}(S)=c\widehat
+f(S)$, where $(cf)(x)=c f(x)$.
 \end{lemma}
 
-\begin{lemma}[Homogeneity of noise]
+\begin{lemma}[Homogeneity of the noise operator]
 \lean{BooleanAnalysis.Hypercontractivity.noiseOp_const_mul}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.fourierCoeff_const_mul, BooleanAnalysis.noiseOp}
 \difficulty{4}
-Let $f:\{0,1\}^n\to\bbr$ and $\rho,c\in\bbr$, the Fourier noise operator satisfies $T_\rho(cf)=cT_\rho f$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+Let $n$ be a nonnegative integer, let $f\colon\{0,1\}^n\to\mathbb R$, and let
+$\rho,c\in\mathbb R$. The Fourier noise operator satisfies $T_\rho(cf)=cT_\rho f$.
 \end{lemma}
 
-\begin{lemma}[Noise on the empty cube]
+\begin{lemma}[Noise on the zero-dimensional cube]
 \lean{BooleanAnalysis.Hypercontractivity.noiseOp_dim_zero}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.noiseOp, BooleanAnalysis.walsh_expansion}
 \difficulty{4}
-Let $\rho\in\bbr$ and $f:\{0,1\}^0\to\bbr$, the Fourier noise operator satisfies $T_\rho f=f$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+Let $\rho\in\mathbb R$ and let $f\colon\{0,1\}^0\to\mathbb R$. Then $T_\rho f=f$.
 \end{lemma}
 
 \begin{lemma}[Noise preserves nonnegativity]
@@ -104,7 +121,9 @@ Let $\rho\in\bbr$ and $f:\{0,1\}^0\to\bbr$, the Fourier noise operator satisfies
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.IsNonnegative, BooleanAnalysis.Hypercontractivity.noiseKernel_nonneg, BooleanAnalysis.Hypercontractivity.noiseOp_eq_kernel_sum, BooleanAnalysis.noiseOp}
 \difficulty{3}
-Let $0\le\rho\le1$ and $f:\{0,1\}^n\to[0,\infty)$. Then $T_\rho f(x)\ge0$ at every cube point $x$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+Let $n$ be a nonnegative integer, let $0\le\rho\le1$, and let
+$f\colon\{0,1\}^n\to\mathbb R$ satisfy $f(x)\ge0$ at every point $x$. Then $T_\rho
+f(x)\ge0$ at every point of the cube.
 \end{lemma}
 
 \begin{lemma}[Noise on affine one-bit functions]
@@ -112,29 +131,41 @@ Let $0\le\rho\le1$ and $f:\{0,1\}^n\to[0,\infty)$. Then $T_\rho f(x)\ge0$ at eve
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-For $\rho,a\in\bbr$, let $f(b)=1+a(-1)^b$ on $\{0,1\}$. Then $T_\rho f(b)=1+\rho a(-1)^b$ for both bits $b$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+For $\rho,a\in\mathbb{R}$, define $f:\{0,1\}\to\mathbb{R}$ by $f(x)=1+a\sigma(x)$, where
+$\sigma(0)=1$ and $\sigma(1)=-1$. Then the Fourier noise operator satisfies $(T_\rho
+f)(x)=1+\rho a\sigma(x)$ for every $x\in\{0,1\}$.
 \end{lemma}
 
-\begin{lemma}[Fourier coefficients of averaged restrictions]
+\begin{lemma}[Fourier Coefficients of a Last-Coordinate Average]
 \lean{BooleanAnalysis.Hypercontractivity.fourierCoeff_avgLast_restrictions}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 \difficulty{3}
-Let $f:\{0,1\}^{n+1}\to\bbr$, $f_b(x)=f(x,b)$, and $g=(f_0+f_1)/2$. For every $S\subseteq[n]$, $\widehat g(S)=(\widehat{f_0}(S)+\widehat{f_1}(S))/2$.
+Let $n\in\mathbb N$, let $f:\{0,1\}^{n+1}\to\mathbb R$, and let $S\subseteq[n]$. If
+$f_b(x)=f(x,b)$ for $b\in\{0,1\}$ and $g(x)=\tfrac12(f_0(x)+f_1(x))$, then $\widehat
+g(S)=\tfrac12\bigl(\widehat{f_0}(S)+\widehat{f_1}(S)\bigr)$, with all Fourier
+coefficients taken on the appropriate uniform Boolean cube.
 \end{lemma}
 
-\begin{lemma}[Fourier coefficients of differenced restrictions]
+\begin{lemma}[Fourier Coefficients of a Last-Coordinate Half-Difference]
 \lean{BooleanAnalysis.Hypercontractivity.fourierCoeff_diffLast_restrictions}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
 \difficulty{3}
-Let $f:\{0,1\}^{n+1}\to\bbr$, $f_b(x)=f(x,b)$, and $h=(f_0-f_1)/2$. For every $S\subseteq[n]$, $\widehat h(S)=(\widehat{f_0}(S)-\widehat{f_1}(S))/2$.
+Let $n\in\mathbb N$, let $f:\{0,1\}^{n+1}\to\mathbb R$, and let $S\subseteq[n]$. If
+$f_b(x)=f(x,b)$ for $b\in\{0,1\}$ and $h(x)=\tfrac12(f_0(x)-f_1(x))$, then $\widehat
+h(S)=\tfrac12\bigl(\widehat{f_0}(S)-\widehat{f_1}(S)\bigr)$, with all Fourier
+coefficients taken on the appropriate uniform Boolean cube.
 \end{lemma}
 
-\begin{lemma}[Factoring noise by the final coordinate]
+\begin{lemma}[Factoring noise across the last coordinate]
 \lean{BooleanAnalysis.Hypercontractivity.noiseOp_snoc_slice}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.avgLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.fourierCoeff_avgLast_restrictions, BooleanAnalysis.Hypercontractivity.fourierCoeff_diffLast_restrictions, BooleanAnalysis.Hypercontractivity.noiseOp_dim_zero, BooleanAnalysis.Hypercontractivity.noiseOp_snoc, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.noiseOp}
 \difficulty{4}
-Let $f:\{0,1\}^{n+1}\to\bbr$, $\rho\in\bbr$, and $f_b(z)=f(z,b)$. For $x\in\{0,1\}^n$ and $b\in\{0,1\}$, $T_\rho f(x,b)=T_\rho\bigl(t\mapsto T_\rho f_t(x)\bigr)(b)$; the outer operator acts on one bit and the inner operator on $n$ bits. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+Let $n$ be a nonnegative integer, let $f\colon\{0,1\}^{n+1}\to\mathbb R$, let
+$\rho\in\mathbb R$, and let $x\in\{0,1\}^n$ and $y\in\{0,1\}^1$. Then $T_\rho
+f(x,y_0)=T_\rho\bigl(t\mapsto T_\rho(f_t)(x)\bigr)(y)$, where $f_t(z)=f(z,t_0)$ for
+$t\in\{0,1\}^1$ and $z\in\{0,1\}^n$; the outer noise operator acts on the
+one-dimensional cube.
 \end{lemma}

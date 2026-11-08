@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.jeq_pos",
+ "key": "e23cf581608b32da",
+ "kind": "lemma",
+ "title": "Semantics of the Equal-Register Branch",
+ "statement": "Let $A$ be a nondeterministic register machine with oracle, input, guard $G$, and probability $p$. Suppose its instruction at control state $l$ branches to $l_1$ when registers $r$ and $s$ are equal and to $l_0$ otherwise. If the current configuration satisfies $G$, the two registers have equal values, and the configuration at $l_1$ with the register assignment unchanged has probabilistic semantics with probability $p$, then the current configuration has probabilistic semantics with probability $p$.",
+ "hypotheses_covered": [
+  "Instruction at $l$ branches on equality of registers $r$ and $s$, with successors $l_1$ and $l_0$",
+  "$G$ holds at the current live configuration with no answer recorded",
+  "The values of registers $r$ and $s$ are equal",
+  "The unchanged-register configuration at $l_1$ has probabilistic semantics with probability $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

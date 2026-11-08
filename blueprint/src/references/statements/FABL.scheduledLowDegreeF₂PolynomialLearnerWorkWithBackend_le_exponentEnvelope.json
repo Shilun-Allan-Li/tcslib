@@ -1,0 +1,18 @@
+{
+ "lean_name": "FABL.scheduledLowDegreeF₂PolynomialLearnerWorkWithBackend_le_exponentEnvelope",
+ "key": "c17e5c749f8605a7",
+ "kind": "theorem",
+ "title": "Backend work exponent envelope",
+ "statement": "Let $\\omega\\in\\mathbb Q$ be positive with $2\\le\\omega$, and let a linear solver backend have an exponent certificate: for each dimension coefficient $d$, row coefficient $r$, and degree $k$, it supplies a coefficient $c(d,r,k)$ such that, whenever $B>0$, the number of variables is at most $dB^k$, and the number of equations is at most $rB^k$, the backend work is at most $c(d,r,k)B^{\\lceil\\omega k\\rceil}$. For nonnegative integers $n,\\ell$, a parameter $0<\\delta\\le 1/2$, and any labeled sample sequence of the scheduled sample count, the learner's work is at most $C(\\ell,\\delta)(n+1)^{\\lceil\\omega\\ell\\rceil}$, where $C(\\ell,\\delta)=r(d+1)+c(d,r,\\ell)$, $d=\\ell+1$, and $r=2^\\ell(\\ell+b(\\delta)+1)$ with $b(\\delta)=\\lceil\\log_2\\lceil2/\\delta\\rceil\\rceil$.",
+ "hypotheses_covered": [
+  "$\\omega$ is a positive rational exponent and $2\\le\\omega$",
+  "the backend has a certificate giving the stated work bound for all finite equation systems and positive integer bases",
+  "$n,\\ell$ are nonnegative integers",
+  "$0<\\delta\\le 1/2$",
+  "the sample sequence has length equal to the scheduled sample count"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

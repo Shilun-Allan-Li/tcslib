@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.Contract.lockstep",
+ "key": "4da8bf64ab93ebd2",
+ "kind": "def",
+ "title": "Contract induced by lockstep simulation",
+ "statement": "Let $C$ be a contract for a machine $M$ with entry $e$ and exits $X$, and let a lockstep simulation encode configurations of $M$ into configurations of a machine $N$, with target exit set $X'$ and per-configuration cost. Fix a target entry state $e'$ and integer-valued lower and upper bounds $b_{lo}(c,j)$ and $b_{hi}(c,j)$ for each target work tape $j$. Suppose that the target head position at every encoded configuration after $v$ steps lies within these bounds whenever $v=0$, or whenever the source state is outside $X$ and $v$ is at most its cost. Then there is a contract for $N$, indexed by pairs $(i,c)$, whose precondition requires a configuration equal to $enc(c)$ with $c$ in state $e$ and satisfying $C$’s precondition. Its running time is the sum of the simulation costs over the source run up to (but excluding) $C$’s endpoint; its endpoint is the encoding of $C$’s endpoint; and its work-head bounds are the minimum and maximum of the supplied bounds over the source run, including the endpoint.",
+ "hypotheses_covered": [
+  "Contract C for M with entry e, exits X, index type, and fixed input",
+  "Lockstep simulation L from M to N with encoding enc, costs, and target exits X'",
+  "Target entry state e'",
+  "Lower and upper target head-bound functions",
+  "For every c and v, if v=0 or c.state is outside X and v≤cost(c), each target head lies in the specified interval",
+  "New precondition requires d'=enc(c), c.state=e, and C.pre(i,c)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.SeqCircuit.unroll_reg",
+ "key": "b5b3293ccdb46302",
+ "kind": "theorem",
+ "title": "Register values in the unrolled circuit",
+ "statement": "Let $M$ be a sequential Boolean circuit with $n$ inputs and $r$ registers, let $T$ be a nonnegative integer, and fix an input assignment $x\\colon\\{0,\\ldots,n-1\\}\\to\\{\\mathrm{false},\\mathrm{true}\\}$. For each time $k$ with $k\\le T$ and each register $j$, the value at the unrolled circuit vertex assigned to register $j$ at time $k$ equals the evaluation, on the values of the unrolled circuit, of the gate with no inputs whose type is AND or OR according to whether register $j$ is initially true or false when $k=0$, and of the one-input AND gate reading register $j$'s next-state source at time $k-1$ when $k>0$.",
+ "hypotheses_covered": [
+  "$T$ is a nonnegative integer",
+  "An input assignment $x$ to the $n$ inputs",
+  "A time $k$ with $k\\le T$",
+  "A register index $j$ among the $r$ registers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

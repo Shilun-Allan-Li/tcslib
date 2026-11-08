@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.exists_large_nonempty_fourierCoeff",
+ "key": "ac0799688fb6f88e",
+ "kind": "theorem",
+ "title": "Large nonempty Fourier coefficient",
+ "statement": "There is a constant $C>0$ such that for every natural number $n$ and every function $f:\\{0,1\\}^n\\to\\mathbb R$ taking values in $\\{-1,1\\}$ and having variance at least $1/2$ under the uniform measure, there is a nonempty set $S\\subseteq\\{0,\\ldots,n-1\\}$ such that $|S|\\le C I(f)$ and $\\exp(-C I(f)^2)\\le\\widehat f(S)^2$. Here $I(f)$ is the total influence and $\\widehat f(S)$ is the uniform Fourier–Walsh coefficient at $S$.",
+ "hypotheses_covered": [
+  "there is a positive constant $C$",
+  "$n$ is a natural number",
+  "$f$ is a real-valued function on the Boolean cube",
+  "$f$ is $\\{-1,1\\}$-valued",
+  "the variance of $f$ is at least $1/2$ under the uniform measure"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThere exists an absolute $C>0$ such that for every $f:\\{0,1\\}^n\\to\\{-1,1\\}$ under the uniform law with $\\operatorname{Var}(f)\\ge1/2$, there is a nonempty $S\\subseteq[n]$ with $|S|\\le CI(f)$ and $\\widehat f(S)^2\\ge\\exp(-CI(f)^2)$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$."
+}

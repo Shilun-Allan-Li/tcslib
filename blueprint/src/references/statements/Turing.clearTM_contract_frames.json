@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.clearTM_contract_frames",
+ "key": "504403aa9fb5b345",
+ "kind": "theorem",
+ "title": "Frame property of the clearing contract",
+ "statement": "For every natural number $k$, every work-tape index $i<k$, and every input word $x$ over an alphabet $\\Gamma$, the contract for clearing tape $i$ has the following frame property: for each word $w$ and each starting configuration $d$ in the sweep state that satisfies the contract's precondition, the endpoint agrees with $d$ on every work-tape cell outside the set that, on tape $i$, is the half-open interval from the initial head position through the position just before the initial head position plus $|w|$, and, on every other tape, is empty.",
+ "hypotheses_covered": [
+  "natural number of work tapes $k$",
+  "tape index $i<k$",
+  "input word $x$ over alphabet $\\Gamma$",
+  "word $w$",
+  "starting configuration in the sweep state",
+  "contract precondition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a number $k$ of work tapes, a tape index $i<k$, and an input word $x$. For every\nword $w$ and every configuration $d$ whose state is the sweep phase and whose tape $i$,\nfrom its head position through offsets $-1$ to $|w|$, stores the buffer encoding of $w$,\nthe clearing machine's contract preserves every work-tape cell outside the interval from\nthe head position on tape $i$ up to but excluding that position plus $|w|$; on every\nother tape, it preserves every cell."
+}

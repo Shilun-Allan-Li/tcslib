@@ -1,0 +1,22 @@
+{
+ "lean_name": "BoolCircuit.progCircuit_eval",
+ "key": "b7dce0bca4921070",
+ "kind": "theorem",
+ "title": "Evaluation of a compiled program circuit",
+ "statement": "Let $n,m,w$ be nonnegative integers, let $\\kappa$ be an inhabited type of instruction kinds, let $F$ map a kind and a Boolean list to a Boolean list, and let $\\mathrm{prog}$ be a finite instruction list. Suppose the program is well formed for input bound $n$ and block width $w$, and every instruction has exactly $m$ sources. For valid positions $i<|\\mathrm{prog}|$ and $j<w$, and every Boolean assignment $x$ to the $n$ inputs, the circuit associated with position $i$ and output bit $j$ evaluates to bit $j$ of the block computed by running the program on $x$, with missing list entries interpreted as false.",
+ "hypotheses_covered": [
+  "$n,m,w$ are nonnegative integers",
+  "$\\kappa$ is inhabited",
+  "$F$ maps a kind and Boolean list to a Boolean list",
+  "$\\mathrm{prog}$ is a finite instruction list",
+  "The program is well formed for bounds $n,w$",
+  "Every instruction has exactly $m$ sources",
+  "$i<|\\mathrm{prog}|$",
+  "$j<w$",
+  "$x$ is an assignment to the $n$ inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

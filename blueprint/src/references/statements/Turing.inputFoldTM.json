@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.inputFoldTM",
+ "key": "8dfbb09c29905fde",
+ "kind": "def",
+ "title": "Input-fold machine",
+ "statement": "Let $A$ be a state space, let $\\Gamma$ be an input alphabet, let $k$ be the number of work tapes, let $\\delta:A\\to\\Gamma\\to A$ be an update rule, and let $a_0\\in A$. The machine starts in a forward phase carrying $a_0$. In that phase, on reading $\\gamma\\in\\Gamma$, it moves the input head right and replaces its carried value $a$ by $\\delta(a,\\gamma)$; on a blank cell it moves left and enters the backward phase carrying $a$. In the backward phase it moves left on symbols and right on a blank cell to enter the completed phase, preserving the carried value; in the completed phase it stays put. It performs no work-tape actions and emits no output.",
+ "hypotheses_covered": [
+  "A state space $A$",
+  "An input alphabet $\\Gamma$",
+  "A natural number $k$ of work tapes",
+  "An update rule $\\delta:A\\to\\Gamma\\to A$",
+  "An initial value $a_0\\in A$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

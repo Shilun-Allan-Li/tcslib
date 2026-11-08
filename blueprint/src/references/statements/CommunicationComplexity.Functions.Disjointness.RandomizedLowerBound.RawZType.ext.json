@@ -1,19 +1,19 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.RawZType.ext",
- "key": "167adcb3b39bfe18",
+ "key": "4906fa05970ac7e4",
  "kind": "theorem",
- "title": "Extensionality for raw $Z$-variables",
- "statement": "Fix a positive integer $n$ and a deterministic disjointness protocol $p$ on inputs of length $n$, and let $z$ and $z'$ be two raw $Z$-values for $p$ — each consisting of a syntactic transcript of $p$, a special coordinate in $\\{0,1,\\dots,n-1\\}$, and two Boolean vectors indexed by $\\{0,1,\\dots,n-1\\}$ recording the bits before and after that coordinate. If $z$ and $z'$ have the same transcript, the same special coordinate, the same \"before\" vector, and the same \"after\" vector, then $z = z'$.",
+ "title": "Extensionality of raw sample statistics",
+ "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for disjointness inputs on $\\{0,\\ldots,n-1\\}$. A raw statistic consists of a transcript of $p$, a special coordinate, a Boolean vector recording Alice's bits before that coordinate, and a Boolean vector recording Bob's bits after it. If two such statistics have equal transcripts, equal special coordinates, and equal respective vectors, then they are equal.",
  "hypotheses_covered": [
-  "positive integer $n$",
-  "a disjointness protocol $p$",
-  "transcripts agree",
-  "special coordinates agree",
-  "xBefore vectors agree",
-  "yAfter vectors agree"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic disjointness protocol on length-$n$ inputs",
+  "The transcripts of $z$ and $z'$ are equal",
+  "Their special coordinates are equal",
+  "Their Alice-before vectors are equal",
+  "Their Bob-after vectors are equal"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Technical auxiliary result for \\texttt{ext}."
+ "replaced": "Fix a positive integer $n$ and a deterministic disjointness protocol $p$ on inputs of\nlength $n$, and let $z$ and $z'$ be two raw $Z$-values for $p$ — each consisting of a\nsyntactic transcript of $p$, a special coordinate in $\\{0,1,\\dots,n-1\\}$, and two\nBoolean vectors indexed by $\\{0,1,\\dots,n-1\\}$ recording the bits before and after that\ncoordinate. If $z$ and $z'$ have the same transcript, the same special coordinate, the\nsame \"before\" vector, and the same \"after\" vector, then $z = z'$."
 }

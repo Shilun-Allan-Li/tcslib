@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonCheckedFront",
+ "key": "daed2ba5c93f5dd2",
+ "kind": "lemma",
+ "title": "A machine for checking the canonical front",
+ "statement": "For every machine format $F$, there exist a finite Boolean-alphabet Turing machine $C$, an entry state, an injective assignment of exit states to the three values in $\\{\\mathrm{none},\\mathrm{some\\ false},\\mathrm{some\\ true}\\}$, and a natural number $a$, with at least four work tapes, such that the following holds for every Boolean input $x$. At some time $t\\le a(|x|+1)$, starting with all work tapes blank, the machine is in the assigned exit state for a verdict, has produced no output, and has not previously visited any exit state. If the verdict is not $\\mathrm{some\\ true}$, then decoding $x$ returns the fallback code. If the verdict is $\\mathrm{some\\ true}$, then $x$ parses as $bits$ and $rest$, the binary representation of the value of $bits$ is exactly $bits$, and $\\max\\{guard,(4k+5)3^{k+1}\\}(v+1)\\le |rest|$, where $k$ is the work-tape count of $F$ and $v$ is the binary value of $bits$. At that time the input-head position is $2|bits|+3$; every work tape other than tape $1$ is at position zero and contains the canonical count word for $bits$ on tape $0$, the canonical offset word for $bits$ on tape $2$, and the empty word on all remaining tapes.",
+ "hypotheses_covered": [
+  "A machine format $F",
+  "The constructed machine has at least four work tapes",
+  "The exit-state assignment is injective",
+  "For each Boolean input, a bounded time and a verdict exist",
+  "The machine reaches the verdict’s exit state and has empty output",
+  "No exit state was visited earlier",
+  "If the verdict is not true, decoding returns the fallback code",
+  "If the verdict is true, the input has a canonical parsed header and sufficient guard length",
+  "If the verdict is true, the specified input-head position and work-tape contents and positions hold"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

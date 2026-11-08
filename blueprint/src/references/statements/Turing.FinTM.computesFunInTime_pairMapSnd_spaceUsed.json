@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_pairMapSnd_spaceUsed",
+ "key": "3ad75233c69481a2",
+ "kind": "theorem",
+ "title": "Pair mapping with a space bound",
+ "statement": "Let $g$ be a function from Boolean words to Boolean words, and let $T_g,S_g:\\mathbb{N}\\to\\mathbb{N}$ be monotone. Suppose a finite Turing machine $M_g$ computes $g$ within time $T_g$, and for every Boolean word $y$ and every time $t\\in\\mathbb{N}$ its computation on $y$ uses at most $S_g(|y|)$ work-tape cells. Then there are a finite Turing machine $M$ and a constant $c\\in\\mathbb{N}$ such that, on every Boolean input $z$, $M$ halts within $c(|z|+1+T_g(|z|))$ steps and outputs the pairing of $a$ with $g(b)$ if the aligned pair parser returns $(a,b)$ on $z$, and the empty word if parsing fails. At every time $t\\in\\mathbb{N}$, the computation of $M$ on $z$ uses at most $S_g(|z|)+c(|z|+1)$ work-tape cells.",
+ "hypotheses_covered": [
+  "A Boolean-word function $g$",
+  "Natural-number functions $T_g$ and $S_g$",
+  "$T_g$ is monotone",
+  "$S_g$ is monotone",
+  "A finite machine $M_g$ computes $g$ within time $T_g$",
+  "For every word $y$ and time $t$, $M_g$ uses at most $S_g(|y|)$ work-tape cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

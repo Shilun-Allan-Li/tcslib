@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.BinArith.gcdInv_step",
+ "key": "9467f0e093bd6ae9",
+ "kind": "theorem",
+ "title": "Invariant and decrease under a gcd step",
+ "statement": "Let $z,S$ be finite bit strings, and suppose $S=\\langle x,y\\rangle$ for bit strings $x,y$ with $|x|,|y|\\le |z|$, such that $\\gcd(V(x),V(y))=\\gcd(V(\\pi_1(z)),V(\\pi_2(z)))$. Here $V$ is the natural number represented by a bit string, and $\\pi_1,\\pi_2$ are the total projections of the self-delimiting pair encoding. Define the measure of a state $S$ as the binary size of $V(\\pi_1(S))V(\\pi_2(S))$, plus $1$ if $V(\\pi_1(S))<V(\\pi_2(S))$ and $0$ otherwise; the gcd step fixes $S$ when its second projected value is zero and otherwise replaces it by the encoding of that value and the remainder of the first value on division by the second. The gcd invariant with respect to $z$ is preserved by this step, the measure strictly decreases whenever it is positive, and the step fixes $S$ whenever its measure is zero.",
+ "hypotheses_covered": [
+  "$z,S$ are finite bit strings",
+  "There exist bit strings $x,y$ with $S=\\langle x,y\\rangle$",
+  "$|x|,|y|\\le |z|$",
+  "The gcd of the values of $x,y$ equals the gcd of the values of the total projections of $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

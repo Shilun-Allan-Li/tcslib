@@ -1,0 +1,22 @@
+{
+ "lean_name": "Randomized.InRPWith",
+ "key": "1d9ef3d279d9535d",
+ "kind": "def",
+ "title": "Randomized verifier characterization",
+ "statement": "Let $p:\\bbn\\to\\bbq$ and let $L$ be a language of Boolean strings. There exist a Boolean-valued verifier $M(x,r)$ and natural numbers $a,k$ such that the verifier runs in polynomial time, every $x\\in L$ is accepted with probability at least $p(|x|)$ when given a uniformly random Boolean string of length $\\mathrm{polyLen}(a,k,|x|)$, and every $x\\notin L$ is rejected for every Boolean string of that length.",
+ "hypotheses_covered": [
+  "A function $p:\\bbn\\to\\bbq$",
+  "A language $L$ of Boolean strings",
+  "Existence of a Boolean-valued verifier on pairs of Boolean strings",
+  "Existence of natural numbers $a$ and $k$",
+  "The verifier's option-valued computation runs in polynomial time",
+  "For every member $x\\in L$, acceptance probability is at least $p(|x|)$ using the specified random-string length",
+  "For every nonmember $x\\notin L$, rejection holds for every Boolean string of the specified length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.workCell_eq_of_no_visit",
+ "key": "9bc953c32f4ea669",
+ "kind": "lemma",
+ "title": "Unvisited work cells retain their contents",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean work-tape symbols, let $x$ be a finite Boolean input, let $\\tau$ be a work-tape index, let $p\\in\\mathbb{Z}$, and let $a,b\\in\\mathbb{N}$ with $a\\le b$. Suppose that at every time $r$ with $a\\le r<b$, the head of work tape $\\tau$ is not at cell $p$ during the run of $M$ on $x$. Then the contents of cell $p$ on that tape after $b$ steps equal its contents after $a$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols",
+  "$x$ is a finite Boolean input",
+  "$\\tau$ is a work-tape index",
+  "$p$ is an integer tape-cell position",
+  "$a,b$ are natural numbers with $a\\le b$",
+  "At every time $r$ with $a\\le r<b$, the selected tape head is not at $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary multi-tape Turing machine with $k$ work tapes whose cells are indexed by\n$\\mathbb{Z}$, let $x \\in \\{0,1\\}^*$, $\\tau \\in \\{0, \\dots, k-1\\}$, $p \\in \\mathbb{Z}$, and\nlet $a \\le b$ be natural numbers. If for every $r$ with $a \\le r < b$ the head of work tape\n$\\tau$ is not at cell $p$ after $r$ steps of $M$ on $x$, then the content of cell $p$ of\nwork tape $\\tau$ after $b$ steps of $M$ on $x$ equals its content after $a$ steps."
+}

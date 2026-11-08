@@ -1,0 +1,23 @@
+{
+ "lean_name": "Randomized.InBPPWeak",
+ "key": "41a0a5ad9a7943b7",
+ "kind": "def",
+ "title": "Weak randomized recognition of a language",
+ "statement": "Let $E$ be a verifier model, let $c$ be a natural number, and let $L$ be a language of Boolean strings. The property holds if there are a Boolean-valued verifier $M$ on pairs of Boolean strings and natural numbers $a,k$ such that the verifier induced by $M$ is efficient with respect to $E$, and for every Boolean string $x$, both of the following bounds hold: if $x\\in L$, the probability that $M$ accepts using a random string of length $\\operatorname{polyLen}(a,k,|x|)$ is at least $1/2+\\operatorname{weakAdv}(c,|x|)$; if $x\\notin L$, the probability that $M$ rejects using a random string of that length is at least the same quantity.",
+ "hypotheses_covered": [
+  "$E$ is a verifier model",
+  "$c$ is a natural number",
+  "$L$ is a language of Boolean strings",
+  "There exist a verifier $M$ and natural numbers $a,k$",
+  "The verifier induced by $M$ is efficient with respect to $E$",
+  "For every Boolean string $x$, membership in $L$ implies the acceptance-probability bound",
+  "For every Boolean string $x$, nonmembership in $L$ implies the rejection-probability bound",
+  "The random string length is $\\operatorname{polyLen}(a,k,|x|)$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the verifier-model efficiency predicate, the advantage function, the random-string length function, or the probability operation, so their precise meanings cannot be rendered self-contained from this payload.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

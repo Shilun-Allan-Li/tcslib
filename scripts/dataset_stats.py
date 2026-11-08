@@ -26,7 +26,9 @@ from collections import Counter
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DATASET = ROOT / "dataset" / "tcslib_theorems.jsonl.gz"
+sys.path.insert(0, str(ROOT))
+from proofmatch.dataset_io import open_dataset, resolve_dataset
+DATASET = ROOT / "dataset" / "tcslib_theorems.jsonl"
 
 # Folder under TCSlib/ -> the name the page prints.  Unknown folders get their
 # CamelCase name split into words, so a new area appears without editing this.
@@ -62,7 +64,7 @@ def _file_date(path: Path) -> _dt.date:
             return _dt.date.fromisoformat(out)
     except (subprocess.CalledProcessError, FileNotFoundError, ValueError):
         pass
-    return _dt.date.fromtimestamp(path.stat().st_mtime)
+    return _dt.date.fromtimestamp(resolve_dataset(path).stat().st_mtime)
 
 
 def _n(x: int) -> str:
@@ -70,7 +72,7 @@ def _n(x: int) -> str:
 
 
 def compute(path: Path = DATASET) -> dict:
-    with gzip.open(path, "rt", encoding="utf-8") as f:
+    with open_dataset(path) as f:
         records = [json.loads(line) for line in f if line.strip()]
     n = len(records)
     complete = sum(1 for r in records if r.get("proof_complete"))
@@ -81,7 +83,11 @@ def compute(path: Path = DATASET) -> dict:
     proof_sources = Counter(r.get("proof_source") or "unknown" for r in records)
     areas = Counter(r["source_module"].split(".")[1] for r in records)
     date = _file_date(path)
-    size_mb = path.stat().st_size / 1e6
+    resolved = resolve_dataset(path)
+    if resolved.name.endswith(".manifest.json"):
+        size_mb = sum(s["compressed_bytes"] for s in json.loads(resolved.read_text())["shards"]) / 1e6
+    else:
+        size_mb = resolved.stat().st_size / 1e6
     by_area = ", ".join(f"{_area_name(a)} {_n(c)}" for a, c in areas.most_common())
     return {
         "n_records": n,

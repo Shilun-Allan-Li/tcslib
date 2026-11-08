@@ -56,7 +56,7 @@ BATCH_SIZE = 6
 BATCH_CHARS = 40_000
 
 LIMIT_RE = re.compile(
-    r"(?i)(session limit|usage limit|quota|credit balance|out of credits|"
+    r"(?i)(session limit|usage limit|quota|spend cap|credit balance|out of credits|"
     r"upgrade to increase)"
 )
 
@@ -104,20 +104,24 @@ def batches(entries: list[dict]) -> list[list[dict]]:
     return out
 
 
-def rate_batch(agent: ClaudeAgent, batch: list[dict]) -> dict[str, tuple[int, str]]:
+def rate_batch(agent: ClaudeAgent, batch: list[dict]) -> tuple[dict[str, tuple[int, str]], list[str]]:
     payload = {"entries": [{"lean_name": e["name"], "proof_source": e["proof_source"]}
                            for e in batch]}
     result = agent.run("rate_difficulty", payload)
     wanted = {e["name"] for e in batch}
     out: dict[str, tuple[int, str]] = {}
+    duplicate: set[str] = set()
     for row in result["ratings"]:
         name = row["lean_name"]
         if name in wanted:
+            if name in out:
+                duplicate.add(name)
+                continue
             out[name] = (int(row["difficulty"]), row.get("reason", ""))
+    for name in duplicate:
+        out.pop(name, None)
     missing = sorted(wanted - set(out))
-    if missing:
-        raise AgentOutputError(f"ratings missing for {missing}")
-    return out
+    return out, missing
 
 
 def main() -> int:
@@ -214,25 +218,38 @@ def main() -> int:
         unit, batch = job
         if halted.is_set():
             return
-        try:
-            ratings = rate_batch(agent, batch)
-        except (AgentOutputError, AgentInvocationError) as error:
-            detail = str(error)
-            with lock:
-                counts["failed"] += len(batch)
-                if LIMIT_RE.search(detail):
-                    if not halted.is_set():
-                        halted.set()
-                        print(f"\n  STOPPING: {detail}")
-                        print("  Ratings so far are saved; re-run the same command to resume.")
-                else:
-                    print(f"  FAIL {unit['target_tex']} [{batch[0]['name']} ...]: {detail[:200]}")
-            return
-        commit(unit, ratings)
+        by_name = {entry["name"]: entry for entry in batch}
+        pending = list(batch)
+        for attempt in range(3):
+            try:
+                ratings, missing = rate_batch(agent, pending)
+            except (AgentOutputError, AgentInvocationError) as error:
+                detail = str(error)
+                with lock:
+                    counts["failed"] += len(pending)
+                    if LIMIT_RE.search(detail):
+                        if not halted.is_set():
+                            halted.set()
+                            print(f"\n  STOPPING: {detail}")
+                            print("  Ratings so far are saved; re-run the same command to resume.")
+                    else:
+                        print(f"  FAIL {unit['target_tex']} [{pending[0]['name']} ...]: {detail[:200]}")
+                return
+            if ratings:
+                commit(unit, ratings)
+            if not missing:
+                with lock:
+                    n = counts["rated"] + counts["sorry"] + counts["failed"]
+                    if n % 30 < len(batch):
+                        print(f"  ... {n}/{outstanding}")
+                return
+            if attempt < 2:
+                print(f"  RETRY {len(missing)} omitted rating(s) individually: {', '.join(missing)}")
+                pending = [by_name[name] for name in missing]
         with lock:
-            n = counts["rated"] + counts["sorry"] + counts["failed"]
-            if n % 30 < len(batch):
-                print(f"  ... {n}/{outstanding}")
+            counts["failed"] += len(pending)
+            print(f"  FAIL {unit['target_tex']}: ratings still missing for "
+                  f"{[entry['name'] for entry in pending]}")
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as pool:
         list(pool.map(run, jobs))

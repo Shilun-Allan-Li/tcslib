@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CircuitComplexity/Advice.lean :: Complexity.DTIMEAdvice_zero_eq_DTIME -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Zero Advice and Deterministic Time
+
+**Claim.** If $n+1\le T(n)$ for every $n$, then the class decidable in time a constant multiple of $T$ with advice of length zero is exactly $\mathrm{DTIME}(T)$.
+
+**Proof.** We prove both inclusions. Suppose first that a language is decided with zero-length advice by a machine $M$ in time $kT$. The advice function is necessarily constantly the empty string. Construct a machine that, on input $x$, first forms the paired encoding of $x$ with itself, then changes its second component to the empty string, and finally runs $M$. The duplication, constant-empty-string computation, and pair map are available in linear time: the pair-duplication fact is `computesFunInTime_pairDup`, the constant-function fact is `computesFunInTime_const`, and the second-component pair map is `computesFunInTime_pairMapSnd`. The pair-encoding identities `pairDecode_pairEncode` and `length_pairEncode` ensure that the resulting input to $M$ is precisely the encoding of $x$ with its actual empty advice. By `bufferedCompTM_computesInTime`, the total running time is bounded by the sum of these preprocessing costs, the intermediate input lengths, and the running time of $M$. Since $|x|+1\le T(|x|)$, the resulting expression is at most a fixed constant times $T(|x|)$; the bound is absorbed into the new machine's multiplicative constant. Thus the language lies in $\mathrm{DTIME}(T)$. Conversely, suppose $M$ decides the language in time $cT$. Use the constantly empty advice function and construct a machine that extracts the first component of the pair encoding and runs $M$. The pair decoding identity recovers $x$, and the encoding-length formula shows that the extraction and simulation together take at most $(3e+2+c)(|x|+1)$ steps, where $e$ is the extraction machine's linear-time constant. The hypothesis $|x|+1\le T(|x|)$ absorbs this into a constant multiple of $T$. This proves the reverse inclusion.
+
+**Key facts.** `Turing.FinTM.computesFunInTime_pairDup`, `Turing.FinTM.computesFunInTime_const`, `Turing.FinTM.computesFunInTime_pairMapSnd`, `Turing.pairDecode_pairEncode`, `Turing.length_pairEncode`, `Turing.FinTM.bufferedCompTM_computesInTime`, `Turing.FinTM.ComputesInTime.mono`, `Turing.FinTM.computesFunInTime_pairFst`.

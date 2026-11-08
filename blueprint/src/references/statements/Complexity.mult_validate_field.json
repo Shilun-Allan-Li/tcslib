@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.mult_validate_field",
+ "key": "6b7a6efa0f440efa",
+ "kind": "lemma",
+ "title": "Validation of a canonical field",
+ "statement": "Let $x,w$ be finite bit strings, let $f$ be one of the three field indices, let $v$ be an assignment of natural numbers to the 13 registers, and let $b$ be a Boolean answer. Assume every register is at most $4(|x|+1)$. Suppose that one program step from the field-test state goes to the next validation state when $w$ is empty, and otherwise goes to the field-clear state. If $w$ is nonempty, suppose the bit of $x$ at the position obtained from the designated source register by subtracting $1$ when $f$ is the third field and $2$ otherwise (with natural-number subtraction truncated at zero) agrees with the last bit of $w$, taking out-of-range bits to be false. Assume also that a noncanonical $w$ forces $b$ to be false, and that for canonical $w$, every bounded register assignment agreeing with $v$ on all registers other than register $0$ yields a halting run from the next validation state with answer $b$. Then the run from the field-test state halts with answer $b$, maintaining the program’s safety conditions before halting.",
+ "hypotheses_covered": [
+  "Finite bit strings $x,w$",
+  "Field index among three choices",
+  "Initial register assignment $v$",
+  "Boolean answer $b$",
+  "All registers bounded by $4(|x|+1)$",
+  "Specified one-step transition from the field-test state",
+  "Specified last-bit agreement when $w$ is nonempty",
+  "Noncanonical $w$ forces answer false",
+  "For canonical $w$, all bounded assignments agreeing outside register $0$ yield the stated halting run"
+ ],
+ "confidence": "low",
+ "caveat": "The formal premises rely on program-specific state constructors and a safety predicate whose informal definitions were not supplied; these are described by their mathematical roles.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

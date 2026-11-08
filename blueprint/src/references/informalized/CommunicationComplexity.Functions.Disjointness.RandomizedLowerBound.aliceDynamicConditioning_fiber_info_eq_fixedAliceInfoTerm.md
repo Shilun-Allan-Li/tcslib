@@ -1,0 +1,18 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/CommunicationComplexity/NewmanTheorem/FuncDisjointnessLowerBound/InformationTerms.lean :: CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceDynamicConditioning_fiber_info_eq_fixedAliceInfoTerm -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Dynamic and Fixed-Coordinate Information
+
+**Claim.** Conditioned on the special coordinate being $i$, the conditional mutual information for Alice’s special bit and the transcript given dynamic conditioning equals the fixed-coordinate conditional mutual information under the disjoint-input-conditioned law.
+
+**Proof.** Let $\mu$ be the disjoint-input-conditioned law, let $\mu_i$ be its conditioning on the special coordinate being $i$, and let $\nu$ be the uniform law on vectors of disjoint-coordinate types. The special-coordinate fiber has positive $\mu$-mass, since its probability is $1/n$ (`disjointCondMeasure_measureReal_specialCoordinate_preimage_singleton`); hence $\mu_i$ is a probability measure.
+
+Under $\mu_i$, the special coordinate equals $i$. Therefore Alice’s special bit agrees almost everywhere with her bit at fixed coordinate $i$, and the dynamic conditioning data agree almost everywhere with the fixed-coordinate conditioning data. The transcript and these fixed-coordinate variables also agree almost everywhere with their versions read from the disjoint-coordinate vector, by `message_ae_eq_coordinateMessage`, `fixedXBit_ae_eq_coordinateXBit`, and `fixedAliceConditioning_ae_eq_coordinateAliceConditioning`. Conditioning preserves these almost-everywhere agreements, and conditional mutual information is invariant under almost-everywhere changes of its three variables (`ProbabilityTheory.condMutualInfo_congr_ae_finite`). Thus the fiber information equals the information of the coordinate-vector variables under $\mu_i$.
+
+The disjoint-coordinate vector has law $\nu$ under $\mu_i$, by `identDistrib_disjointCoordinateVector_uniform_cond_specialCoordinate`. Invariance of conditional mutual information under equality in distribution (`ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite`) therefore identifies the fiber information with the corresponding information under $\nu$.
+
+For the fixed-coordinate term, the same almost-everywhere replacements under $\mu$ identify it with the information of those coordinate-vector variables under $\mu$. Their joint law under $\mu$ is also $\nu$, by `identDistrib_disjointCoordinateVector_uniform`; applying equality-in-distribution invariance again gives the same information under $\nu$. Both sides thus equal that common quantity.
+
+**Key facts.** `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.disjointCondMeasure_measureReal_specialCoordinate_preimage_singleton`, `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedXBit_ae_eq_coordinateXBit`, `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.message_ae_eq_coordinateMessage`, `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.fixedAliceConditioning_ae_eq_coordinateAliceConditioning`, `ProbabilityTheory.condMutualInfo_congr_ae_finite`, `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_disjointCoordinateVector_uniform_cond_specialCoordinate`, `ProbabilityTheory.IdentDistrib.condMutualInfo_eq_finite`, `CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.identDistrib_disjointCoordinateVector_uniform`.

@@ -13,21 +13,32 @@ balancing identity behind the optimized learning rates $\eta = \sqrt{c \log N / 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Telescoping of the log potential]
+\begin{lemma}[Telescoping log potential]
 \lean{log_potential_telescope}
 \label{log_potential_telescope}
 \leanok
 \uses{LossSeq, potential}
-Let $\eta \in \bbr$ and let $\ell$ be a loss sequence for $N$ experts over $T$ rounds,
-with potential $W_t = \texttt{potential}\ \eta\ \ell\ t$.  Then the one-step changes of the
-log potential telescope:
-\[
-  \sum_{t=0}^{T-1} \bigl(\log W_{t+1} - \log W_t\bigr) \;=\; \log W_T - \log W_0 .
-\]
+\difficulty{3}
+For any natural numbers $N,T$, any real learning rate $\eta$, and any loss sequence
+$\ell$ for $N$ experts over $T$ rounds, the successive changes in the logarithm of the
+potential sum to the total change: $\sum_{t\in\mathrm{Fin}\,T}\bigl(\log W_{t+1}-\log
+W_t\bigr)=\log W_T-\log W_0$, where $W_t$ is the sum of the Hedge weights at time $t$.
 \end{lemma}
 
 \begin{lemma}[Regret from a per-step log-potential bound]
 \lean{regret_le_of_log_potential_step}
+\difficulty{5}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p006-b001,
+  pdf-eda737ce3103-p006-b002,
+  pdf-eda737ce3103-p006-b003,
+  pdf-eda737ce3103-p007-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p004-b002,
+  pdf-9c61a2f1ecc1-p004-b003,
+  pdf-9c61a2f1ecc1-p004-b004
+}
 \label{regret_le_of_log_potential_step}
 \leanok
 \uses{LossSeq, bestExpertLoss, hedgeCumLoss, hedgeLoss, log_potential_telescope, potential, potential_ge_best_expert, potential_zero, regret}
@@ -44,13 +55,13 @@ regret of Hedge is bounded by
 \]
 \end{lemma}
 
-\begin{lemma}[Balancing the two terms of a Hedge bound]
+\begin{lemma}[Balance of two positive terms]
 \lean{optimalEta_balance}
 \label{optimalEta_balance}
 \leanok
-For real numbers $a, T, c > 0$, at the learning rate $\eta = \sqrt{c a / T}$ the two
-terms $a/\eta$ and $\eta T / c$ sum to $\sqrt{4 a T / c}$:
+\difficulty{5}
+For positive real numbers $a$, $T$, and $c$,
 \[
-  \frac{a}{\sqrt{ca/T}} + \frac{\sqrt{ca/T}\; T}{c} \;=\; \sqrt{\frac{4 a T}{c}} .
+\frac{a}{\sqrt{ca/T}}+\frac{T\sqrt{ca/T}}{c}=\sqrt{\frac{4aT}{c}}.
 \]
 \end{lemma}

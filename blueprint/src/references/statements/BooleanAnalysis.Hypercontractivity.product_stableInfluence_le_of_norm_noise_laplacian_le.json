@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_stableInfluence_le_of_norm_noise_laplacian_le",
+ "key": "65b4f4901b3c82ed",
+ "kind": "theorem",
+ "title": "Stable influence from norm contraction",
+ "statement": "Let $n\\in\\mathbb{N}$, let $P$ be a finite product probability space with $n$ coordinates, and let $q,\\rho\\in\\mathbb{R}$ satisfy $q\\ge 2$ and $\\rho\\ge 0$. Let $f$ be a real-valued function on the outcome space taking values in $\\{-1,1\\}$, and let $i$ be a coordinate. If $\\|T_{\\sqrt{\\rho}}L_i f\\|_{2,P}\\le\\|L_i f\\|_{q/(q-1),P}$, then $\\rho I_i^{(\\rho)}(f)\\le I_i(f)^{2-2/q}$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb{N}$ and a finite product probability space $P$ with $n$ coordinates",
+  "$q\\ge 2$",
+  "$\\rho\\ge 0$",
+  "$f$ is real-valued and takes values in $\\{-1,1\\}$",
+  "A coordinate $i$",
+  "$\\|T_{\\sqrt{\\rho}}L_i f\\|_{2,P}\\le\\|L_i f\\|_{q/(q-1),P}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $q\\ge2$, $\\rho\\ge0$, $f:\\Omega\\to\\{-1,1\\}$, and a coordinate $i$. If $\\|T_{\\sqrt\\rho}L_if\\|_{2,P}\\le\\|L_if\\|_{q/(q-1),P}$, then $\\rho I_i^{(\\rho)}(f)\\le I_i(f)^{2-2/q}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $L_i h=h-E_{[n]\\setminus\\{i\\}}h$; $I_i(h)=\\mathbb E_P(h-E_{[n]\\setminus\\{i\\}}h)^2$; $I_i^{(a)}(h)=\\sum_{S\\ni i}a^{|S|-1}\\mathbb E_Ph_S^2$ for $a\\in\\mathbb R$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

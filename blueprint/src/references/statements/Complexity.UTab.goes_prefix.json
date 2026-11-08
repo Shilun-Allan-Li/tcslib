@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.UTab.goes_prefix",
+ "key": "893627a34f8dc27c",
+ "kind": "theorem",
+ "title": "Counter program prefix execution",
+ "statement": "Let $M$ be a Boolean multi-tape Turing machine, let $n,T$ be natural numbers, and let $z$ be a finite Boolean word. On input consisting of $n$ ones, a zero, $T$ ones, a second zero, and then $z$, the eleven-register counter program for $M$ has a run of at most $3n+2T+|z|(L+3)+2(L+1)+6$ steps from its initial label, with all registers and the input position zero, to the label that begins the layout phase. At that point the input position is $n+T+|z|+2$ and the registers hold $n$ in the input-count register, $|z|$ in the hard-wired-length register, and $T$ in the step-budget register, with the other registers zero. The run appends $n$ ones and a zero, then the encodings of the false and true constant gates, the constant gates for the successive bits of $z$, and $W$ false constant gates. Here $W$ is the width of the universal table for the configuration update rule of $M$, $L$ is the maximum template length for that machine, and each gate encoding consists of its two-bit gate-kind code followed by a length-prefixed encoding of its input list; the bitstring encoding of a list places a one before each entry and ends with a zero.",
+ "hypotheses_covered": [
+  "A Boolean multi-tape Turing machine $M$",
+  "Natural numbers $n$ and $T$",
+  "A finite Boolean word $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

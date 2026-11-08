@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCmp_read",
+ "key": "3395c769c4361932",
+ "kind": "lemma",
+ "title": "The comparator reads the aligned word symbols",
+ "statement": "For any Boolean input word, any valid input-head position, any comparator control, four finite Boolean words, and any natural-number position $j$, the four symbols read by the aligned work-tape heads are exactly the symbols at position $j$ in the respective words, with absent symbols represented by blanks.",
+ "hypotheses_covered": [
+  "a Boolean input word $x$",
+  "a valid input-head position for $x$",
+  "a comparator control $q$",
+  "four Boolean words",
+  "a natural-number position $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every comparator configuration with all four heads at a nonnegative aligned position $j$, the native reads are exactly the bits of the four words at position $j$, with blanks past each word's end."
+}

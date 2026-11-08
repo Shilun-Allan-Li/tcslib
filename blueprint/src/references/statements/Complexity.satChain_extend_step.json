@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.satChain_extend_step",
+ "key": "ef046c3c00428fa6",
+ "kind": "lemma",
+ "title": "Extending an assignment at a splitting step",
+ "statement": "Let $h$ and $b$ be Boolean literals, let $R$ be a finite list of Boolean literals, let $n$ be a natural number, and let $a$ be a truth assignment. Suppose every variable index occurring in $h$, $b$, or $R$ is less than $n$, and the clause formed by $h$, $b$, and $R$ is satisfied by $a$. Then there is an assignment $a'$ agreeing with $a$ on every index below $n$ that satisfies both the link clause consisting of $h$, $b$, and the positive literal for variable $n$, and the continuation clause consisting of the negative literal for variable $n$ followed by $R$.",
+ "hypotheses_covered": [
+  "literals $h,b$ and finite tail list $R$",
+  "natural-number index $n$",
+  "truth assignment $a$",
+  "all variable indices in $h,b,R$ are below $n$",
+  "the clause $h,b,R$ is satisfied by $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a clause with head literal, a second literal $b$, and a tail have all its\nvariable indices below $n$, and let $a$ be an assignment satisfying it. Then there\nis an assignment $a'$ agreeing with $a$ below $n$ such that $a'$ satisfies both the\nlink clause $[\\mathrm{head},\\, b,\\, (n,\\mathrm{true})]$ and the continuation clause\nheaded by $(n,\\mathrm{false})$ followed by the tail; the fresh value $a'(n)$ is the\ntruth of the tail under $a$."
+}

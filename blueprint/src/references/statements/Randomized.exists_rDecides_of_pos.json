@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.exists_rDecides_of_pos",
+ "key": "fe2a37d7c9b4bccf",
+ "kind": "theorem",
+ "title": "Amplification of a Randomized Decision Procedure",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $L$ be a language of Boolean lists, let $s : \\mathbb{N} \\to \\mathbb{N}$, and let $\\delta,\\varepsilon$ be positive rational numbers. Suppose $N$ uses space at most $s(|x|)$ on every input $x$ and every choice word. Suppose also that for each input $x$ there is a time bound $T$ such that every choice word of length $T$ halts; if $x \\in L$, the probability of output $[\\mathrm{true}]$ at time $T$ is at least $\\delta$; and if $x \\notin L$, every choice word of length $T$ produces output $[\\mathrm{false}]$. Then there are a natural number $a$ and a finite nondeterministic Turing machine $N'$ over the Boolean alphabet that uses space at most $a s(|x|)$ on every input and choice word, and such that for each input $x$ there is a time bound $T$ at which every choice word halts, the probability of output $[\\mathrm{true}]$ is at least $1-\\varepsilon$ when $x \\in L$, and every choice word produces output $[\\mathrm{false}]$ when $x \\notin L$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the Boolean alphabet",
+  "$L$ is a language of Boolean lists",
+  "$s$ maps natural numbers to natural numbers",
+  "$\\delta$ and $\\varepsilon$ are positive rational numbers",
+  "$N$ uses space at most $s(|x|)$ for every input and choice word",
+  "For each input, some time bound makes every choice word of that length halt",
+  "On members of $L$, the acceptance probability at that bound is at least $\\delta$",
+  "On nonmembers of $L$, every choice word at that bound outputs exactly $[\\mathrm{false}]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

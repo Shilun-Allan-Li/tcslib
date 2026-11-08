@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.kkl",
+ "key": "597f0f08705bd5bd",
+ "kind": "theorem",
+ "title": "Variance-scaled influence bound",
+ "statement": "There is a constant $c>0$ such that, for every natural number $n$ and every function $f:\\{0,1\\}^n\\to\\mathbb R$ taking only the values $-1$ and $1$, one has $c\\,\\operatorname{Var}(f)\\,\\frac{\\log n}{n}\\le M(f)$, where variance and coordinate influences are computed under the uniform measure and $M(f)$ is the supremum of the absolute coordinate influences (with the empty supremum interpreted as $0$).",
+ "hypotheses_covered": [
+  "There exists a real constant $c$ with $c>0$",
+  "The dimension $n$ is a natural number",
+  "$f$ is a real-valued function on the $n$-dimensional Boolean cube",
+  "$f(x)\\in\\{-1,1\\}$ for every cube point $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThere exists an absolute $c>0$ such that for every natural dimension $n$ and every $f:\\{0,1\\}^n\\to\\{-1,1\\}$ under the uniform law, $c\\operatorname{Var}(f)(\\log n/n)\\le\\sup_{i\\in[n]}|I_i(f)|$, with the empty supremum and division by zero interpreted as zero. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation."
+}

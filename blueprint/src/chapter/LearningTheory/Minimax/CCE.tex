@@ -15,6 +15,11 @@ joint distribution is an $\varepsilon$-CCE.
 
 \begin{definition}[Two-player finite game]
 \lean{Game}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p007-b004,
+  pdf-eda737ce3103-p007-b005
+}
+\statementsource{roughgarden-agt-l13-equilibria}{pdf-33b1d8202421-p004-b002}
 \label{Game}
 \leanok
 A finite two-player game with $M$ row actions and $N$ column actions, specified
@@ -36,6 +41,11 @@ utilities.
 
 \begin{definition}[Joint distribution over action profiles]
 \lean{JointDistribution}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p008-b002}
+\statementsource{roughgarden-agt-l13-equilibria}{
+  pdf-33b1d8202421-p005-b002,
+  pdf-33b1d8202421-p007-b001
+}
 \label{JointDistribution}
 \leanok
 A joint distribution $\sigma$ on $\mathrm{Fin}\,M \times \mathrm{Fin}\,N$ is a
@@ -113,6 +123,10 @@ the column marginals sum to one: $\sum_{j} \sigma^{\mathrm{col}}_j = 1$.
 
 \begin{definition}[Row expected utility]
 \lean{JointDistribution.rowExpectedUtility}
+\statementsource{roughgarden-agt-l13-equilibria}{
+  pdf-33b1d8202421-p005-b002,
+  pdf-33b1d8202421-p007-b001
+}
 \label{JointDistribution.rowExpectedUtility}
 \leanok
 \uses{Game, JointDistribution}
@@ -122,6 +136,10 @@ $\sum_{i,j} \sigma_{ij} \cdot u_r(i,j)$.
 
 \begin{definition}[Column expected utility]
 \lean{JointDistribution.colExpectedUtility}
+\statementsource{roughgarden-agt-l13-equilibria}{
+  pdf-33b1d8202421-p005-b002,
+  pdf-33b1d8202421-p007-b001
+}
 \label{JointDistribution.colExpectedUtility}
 \leanok
 \uses{Game, JointDistribution}
@@ -131,6 +149,11 @@ $\sum_{i,j} \sigma_{ij} \cdot u_c(i,j)$.
 
 \begin{definition}[Row deviation utility]
 \lean{JointDistribution.rowDeviationUtility}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p008-b002,
+  pdf-eda737ce3103-p008-b003
+}
+\statementsource{roughgarden-agt-l13-equilibria}{pdf-33b1d8202421-p007-b001}
 \label{JointDistribution.rowDeviationUtility}
 \leanok
 \uses{Game, JointDistribution, JointDistribution.colMarginal}
@@ -141,6 +164,11 @@ $\sum_{j} \sigma^{\mathrm{col}}_j \cdot u_r(i', j)$.
 
 \begin{definition}[Column deviation utility]
 \lean{JointDistribution.colDeviationUtility}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p008-b002,
+  pdf-eda737ce3103-p008-b003
+}
+\statementsource{roughgarden-agt-l13-equilibria}{pdf-33b1d8202421-p007-b001}
 \label{JointDistribution.colDeviationUtility}
 \leanok
 \uses{Game, JointDistribution, JointDistribution.rowMarginal}
@@ -151,9 +179,17 @@ $\sum_{i} \sigma^{\mathrm{row}}_i \cdot u_c(i, j')$.
 
 \begin{definition}[Coarse correlated equilibrium]
 \lean{IsCoarseCorrelatedEquilibrium}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p001-b002,
+  pdf-eda737ce3103-p008-b002
+}
+\statementsource{roughgarden-agt-l13-equilibria}{
+  pdf-33b1d8202421-p007-b001,
+  pdf-33b1d8202421-p007-b002
+}
 \label{IsCoarseCorrelatedEquilibrium}
 \leanok
-\uses{Game, JointDistribution, JointDistribution.rowDeviationUtility, JointDistribution.rowExpectedUtility, JointDistribution.colDeviationUtility, JointDistribution.colExpectedUtility}
+\uses{Game, JointDistribution, JointDistribution.colDeviationUtility, JointDistribution.colExpectedUtility, JointDistribution.rowDeviationUtility, JointDistribution.rowExpectedUtility}
 A joint distribution $\sigma$ is a \emph{coarse correlated equilibrium} (CCE)
 of game $G$ if neither player can improve their expected utility by committing
 in advance to any fixed pure action: for all $i'$,
@@ -163,9 +199,10 @@ for all $j'$, $\mathrm{colDevUtil}(\sigma, G, j') \le \mathrm{colExpUtil}(\sigma
 
 \begin{definition}[$\varepsilon$-coarse correlated equilibrium]
 \lean{IsApproxCoarseCorrelatedEquilibrium}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p008-b002}
 \label{IsApproxCoarseCorrelatedEquilibrium}
 \leanok
-\uses{Game, JointDistribution, JointDistribution.rowDeviationUtility, JointDistribution.rowExpectedUtility, JointDistribution.colDeviationUtility, JointDistribution.colExpectedUtility}
+\uses{Game, JointDistribution, JointDistribution.colDeviationUtility, JointDistribution.colExpectedUtility, JointDistribution.rowDeviationUtility, JointDistribution.rowExpectedUtility}
 A joint distribution $\sigma$ is an \emph{$\varepsilon$-coarse correlated
 equilibrium} ($\varepsilon$-CCE) of game $G$ if each player's gain from any
 unilateral pure deviation is at most $\varepsilon$: for all $i'$,
@@ -177,7 +214,7 @@ and similarly for the column player.
 \lean{IsCoarseCorrelatedEquilibrium.toApprox}
 \label{IsCoarseCorrelatedEquilibrium.toApprox}
 \leanok
-\uses{Game, IsCoarseCorrelatedEquilibrium, IsApproxCoarseCorrelatedEquilibrium, JointDistribution, productDistribution}
+\uses{Game, IsApproxCoarseCorrelatedEquilibrium, IsCoarseCorrelatedEquilibrium, JointDistribution}
 \difficulty{2}
 Let $G$ be a finite two-player game with $M$ row actions and $N$ column actions, and let
 $\sigma$ be a joint distribution over the action profiles $(i,j)$ that is a coarse
@@ -194,6 +231,11 @@ deviation exceeds zero by at most $\varepsilon$.
 
 \begin{definition}[Product distribution]
 \lean{productDistribution}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p007-b005,
+  pdf-eda737ce3103-p008-b002
+}
+\statementsource{roughgarden-agt-l13-equilibria}{pdf-33b1d8202421-p005-b001}
 \label{productDistribution}
 \leanok
 \uses{JointDistribution, MixedStrategy}
@@ -230,6 +272,7 @@ p_i\,q_j = q_j$.
 
 \begin{definition}[Empirical joint distribution]
 \lean{empiricalJoint}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p008-b002}
 \label{empiricalJoint}
 \leanok
 \uses{JointDistribution, MixedStrategy}
@@ -295,9 +338,78 @@ Then for every function $f : \mathrm{Fin}\,M \times \mathrm{Fin}\,N \to \bbr$,
 
 \begin{lemma}[Row expected utility of the empirical joint distribution]
 \lean{empiricalJoint_rowExpectedUtility}
+\proofsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p008-b002,
+  pdf-eda737ce3103-p008-b003
+}
 \label{empiricalJoint_rowExpectedUtility}
 \leanok
 \uses{Game, JointDistribution.rowExpectedUtility, MixedStrategy, empiricalJoint, empiricalJoint_sum_prob_mul}
+\proofstep
+  {MixedStrategy}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004}
+\proofstep
+  {Game}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {JointDistribution}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowExpectedUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {productDistribution}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {productDistribution_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {productDistribution_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {empiricalJoint}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_sum_prob_mul}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
 \difficulty{1}
 Fix a finite two-player game with $M$ row actions and $N$ column actions, and write
 $u_r(i,j)$ for the row player's payoff at the pure profile $(i,j)$. Suppose that over $T
@@ -333,9 +445,75 @@ time-average of the per-round bilinear column payoffs:
 
 \begin{lemma}[Empirical row deviation utility as a time average]
 \lean{empiricalJoint_rowDeviationUtility}
+\proofsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p008-b002,
+  pdf-eda737ce3103-p008-b003
+}
 \label{empiricalJoint_rowDeviationUtility}
 \leanok
 \uses{Game, JointDistribution.rowDeviationUtility, MixedStrategy, empiricalJoint, empiricalJoint_colMarginal}
+\proofstep
+  {MixedStrategy}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {Game}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005,
+    pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {productDistribution}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005,
+    pdf-eda737ce3103-p008-b002}
+\proofstep
+  {productDistribution_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {productDistribution_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
 \difficulty{3}
 Let $G$ be a finite two-player game with $M$ row actions and $N$ column actions, and let
 $u_r(i,j)$ denote the row player's utility. Fix an integer $T \ge 1$, and suppose that
@@ -353,9 +531,76 @@ of the expected utilities of playing $i'$ against each round's column strategy:
 
 \begin{lemma}[Column deviation utility of the empirical joint distribution]
 \lean{empiricalJoint_colDeviationUtility}
+\proofsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p008-b002,
+  pdf-eda737ce3103-p008-b003
+}
 \label{empiricalJoint_colDeviationUtility}
 \leanok
 \uses{Game, JointDistribution.colDeviationUtility, MixedStrategy, empiricalJoint, empiricalJoint_rowMarginal}
+\proofstep
+  {MixedStrategy}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004}
+\proofstep
+  {Game}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005,
+    pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.colDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
+\proofstep
+  {productDistribution}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005,
+    pdf-eda737ce3103-p008-b002}
+\proofstep
+  {productDistribution_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {productDistribution_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {empiricalJoint}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
 \difficulty{3}
 Let $G$ be a finite two-player game with $M$ row actions and $N$ column actions and
 column utility $u_c(i,j)$, and fix a number of rounds $T \ge 1$. Suppose that in each
@@ -374,9 +619,188 @@ pure action $j'$ against the row marginal $\sigma^{\mathrm{row}}_i = \sum_{j}
 
 \begin{theorem}[No-regret play yields an approximate coarse correlated equilibrium]
 \lean{empiricalJoint_isApproxCCE}
+\proofsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p008-b002,
+  pdf-eda737ce3103-p008-b003
+}
 \label{empiricalJoint_isApproxCCE}
 \leanok
-\uses{Game, IsApproxCoarseCorrelatedEquilibrium, MixedStrategy, empiricalJoint, empiricalJoint_rowDeviationUtility, empiricalJoint_rowExpectedUtility, empiricalJoint_colDeviationUtility, empiricalJoint_colExpectedUtility}
+\uses{Game, IsApproxCoarseCorrelatedEquilibrium, MixedStrategy, empiricalJoint, empiricalJoint_col_deviation_le, empiricalJoint_row_deviation_le}
+\proofstep
+  {LossSeq}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004}
+\proofstep
+  {cumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p002-b004,
+    pdf-eda737ce3103-p006-b001}
+\proofstep
+  {hedgeWeight}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p005-b002}
+\proofstep
+  {potential}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p006-b001}
+\proofstep
+  {hedgeDist}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {hedgeLoss}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeCumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b002,
+    pdf-eda737ce3103-p007-b001}
+\proofstep
+  {bestExpertLoss}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p002-b004,
+    pdf-eda737ce3103-p006-b001}
+\proofstep
+  {regret}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p002-b005,
+    pdf-eda737ce3103-p007-b001}
+\proofstep
+  {MixedStrategy}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004}
+\proofstep
+  {Game}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005,
+    pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
+\proofstep
+  {JointDistribution.rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowExpectedUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
+\proofstep
+  {JointDistribution.colExpectedUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
+\proofstep
+  {JointDistribution.rowDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
+\proofstep
+  {JointDistribution.colDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
+\proofstep
+  {IsApproxCoarseCorrelatedEquilibrium}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {productDistribution}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005,
+    pdf-eda737ce3103-p008-b002}
+\proofstep
+  {productDistribution_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {productDistribution_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_sum_prob_mul}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_rowExpectedUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_colExpectedUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_rowDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_colDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_row_deviation_le}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_col_deviation_le}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
 \difficulty{4}
 Let $G$ be a finite two-player game with row utility $u_r$ and column utility $u_c$ over
 $M$ row actions and $N$ column actions, and consider $T > 0$ rounds of play in which the
@@ -402,47 +826,295 @@ correlated equilibrium of $G$.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Row regret bound gives row deviation bound]
+\begin{lemma}[Row deviation bound from cumulative regret]
 \lean{empiricalJoint_row_deviation_le}
+\proofsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p008-b003}
 \label{empiricalJoint_row_deviation_le}
 \leanok
 \uses{Game, JointDistribution.rowDeviationUtility, JointDistribution.rowExpectedUtility, MixedStrategy, empiricalJoint, empiricalJoint_rowDeviationUtility, empiricalJoint_rowExpectedUtility}
+\proofstep
+  {LossSeq}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004}
+\proofstep
+  {cumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001}
+\proofstep
+  {hedgeWeight}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p004-b008,
+    pdf-eda737ce3103-p005-b001}
+\proofstep
+  {potential}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b004,
+    pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeDist}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {hedgeLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeCumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b001}
+\proofstep
+  {bestExpertLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001}
+\proofstep
+  {regret}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p002-b005}
+\proofstep
+  {MixedStrategy}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004}
+\proofstep
+  {Game}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005,
+    pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowExpectedUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {JointDistribution.rowDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {productDistribution}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {productDistribution_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {productDistribution_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {empiricalJoint}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_sum_prob_mul}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_rowExpectedUtility}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_rowDeviationUtility}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
 \difficulty{2}
-Let $G$ be a finite two-player game with row utility $u_r$ over $M$ row actions and $N$
-column actions, and consider $T > 0$ rounds of play in which the row player uses the
-mixed strategy $p_t$ and the column player the mixed strategy $q_t$ at round $t$. Fix
-$\varepsilon \in \bbr$ and a pure row action $i'$, and suppose the row player's
-cumulative external regret against always playing $i'$ is at most $\varepsilon T$:
-\[
-  \sum_{t=1}^{T}\sum_{j}(q_t)_j\, u_r(i',j)
-  \;-\; \sum_{t=1}^{T}\sum_{i,j}(p_t)_i (q_t)_j\, u_r(i,j)
-  \;\le\; \varepsilon T.
-\]
-Then in the empirical joint distribution $\sigma$ of the play, deviating to $i'$ gains
-at most $\varepsilon$ over the expected utility:
-$\mathrm{rowDevUtil}(\sigma, G, i') \le \mathrm{rowExpUtil}(\sigma, G) + \varepsilon$.
-This is the row half of \texttt{empiricalJoint\_isApproxCCE}.
+Let $G$ be a two-player game with $M$ row actions and $N$ column actions, and let $T>0$.
+In each of $T$ rounds, let $p_t$ and $q_t$ be mixed strategies for the row and column
+players, respectively. For any $\varepsilon\in\mathbb{R}$ and row action $i'$, if the
+cumulative utility from always choosing $i'$ against the column strategies, minus the
+cumulative expected row utility under the round-by-round strategy pairs, is at most
+$\varepsilon T$, then under the empirical joint distribution of those pairs, the row
+player's expected utility from choosing $i'$ against the column marginal is at most the
+expected row utility plus $\varepsilon$.
 \end{lemma}
 
-\begin{lemma}[Column regret bound gives column deviation bound]
+\begin{lemma}[Column deviation bound from cumulative regret]
 \lean{empiricalJoint_col_deviation_le}
+\proofsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p008-b003}
 \label{empiricalJoint_col_deviation_le}
 \leanok
 \uses{Game, JointDistribution.colDeviationUtility, JointDistribution.colExpectedUtility, MixedStrategy, empiricalJoint, empiricalJoint_colDeviationUtility, empiricalJoint_colExpectedUtility}
+\proofstep
+  {LossSeq}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p004-b004,
+    pdf-eda737ce3103-p005-b001}
+\proofstep
+  {cumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001}
+\proofstep
+  {hedgeWeight}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {potential}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeDist}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {hedgeLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeCumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b001}
+\proofstep
+  {bestExpertLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001}
+\proofstep
+  {regret}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p002-b005,
+    pdf-eda737ce3103-p007-b001}
+\proofstep
+  {MixedStrategy}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p004-b004,
+    pdf-eda737ce3103-p005-b001}
+\proofstep
+  {Game}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005,
+    pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {JointDistribution.rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {JointDistribution.colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {JointDistribution.colExpectedUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {JointDistribution.colDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {productDistribution}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {productDistribution_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {productDistribution_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b005}
+\proofstep
+  {empiricalJoint}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_rowMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002,
+    pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_colMarginal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_sum_prob_mul}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b002}
+\proofstep
+  {empiricalJoint_colExpectedUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
+\proofstep
+  {empiricalJoint_colDeviationUtility}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p008-b003}
 \difficulty{2}
-Let $G$ be a finite two-player game with column utility $u_c$ over $M$ row actions and
-$N$ column actions, and consider $T > 0$ rounds of play in which the row player uses the
-mixed strategy $p_t$ and the column player the mixed strategy $q_t$ at round $t$. Fix
-$\varepsilon \in \bbr$ and a pure column action $j'$, and suppose the column player's
-cumulative external regret against always playing $j'$ is at most $\varepsilon T$:
-\[
-  \sum_{t=1}^{T}\sum_{i}(p_t)_i\, u_c(i,j')
-  \;-\; \sum_{t=1}^{T}\sum_{i,j}(p_t)_i (q_t)_j\, u_c(i,j)
-  \;\le\; \varepsilon T.
-\]
-Then in the empirical joint distribution $\sigma$ of the play, deviating to $j'$ gains
-at most $\varepsilon$ over the expected utility:
-$\mathrm{colDevUtil}(\sigma, G, j') \le \mathrm{colExpUtil}(\sigma, G) + \varepsilon$.
-This is the column half of \texttt{empiricalJoint\_isApproxCCE}, mirroring
-\texttt{empiricalJoint\_row\_deviation\_le}.
+Let $G$ be a two-player game with $M$ row actions and $N$ column actions, and let $T>0$.
+In each of $T$ rounds, let $p_t$ and $q_t$ be mixed strategies for the row and column
+players, respectively. For any $\varepsilon\in\mathbb{R}$ and column action $j'$, if the
+cumulative utility from always choosing $j'$ against the row strategies, minus the
+cumulative expected column utility under the round-by-round strategy pairs, is at most
+$\varepsilon T$, then under the empirical joint distribution of those pairs, the column
+player's expected utility from choosing $j'$ against the row marginal is at most the
+expected column utility plus $\varepsilon$.
 \end{lemma}

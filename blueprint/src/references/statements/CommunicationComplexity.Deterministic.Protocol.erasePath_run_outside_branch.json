@@ -1,0 +1,21 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside_branch",
+ "key": "a8b52722eecfcc46",
+ "kind": "lemma",
+ "title": "Erasure preserves runs outside the path",
+ "statement": "Let $s$ have a subprotocol path into $r$, and fix inputs $x\\in X$ and $y\\in Y$. Let $P$ be a family of protocols indexed by bits with $P(b)=r$, and let $N$ be a protocol constructor on such families. Fix a bit $c$ such that for every family $Q$, running $N(Q)$ on $(x,y)$ gives the same output as running $Q(c)$ on $(x,y)$. Let $Q$ be a family satisfying $Q(b)=E$ and $Q(\\neg b)=P(\\neg b)$, where $E$ is the protocol obtained by collapsing the path from $r$ to $s$ to a leaf carrying the canonical output of $s$. Assume that if $(x,y)$ follows the path to $s$, then $c\\ne b$, and that if $(x,y)$ does not follow the path to $s$, then $E$ and $r$ give the same output on $(x,y)$. Then $N(Q)$ and $N(P)$ give the same output on $(x,y)$.",
+ "hypotheses_covered": [
+  "A subprotocol path from $s$ into $r$",
+  "Fixed inputs $x\\in X$ and $y\\in Y$",
+  "$P(b)=r$",
+  "For every family, $N(Q)$ and $Q(c)$ give the same output on $(x,y)$",
+  "$Q(b)$ is the path erasure of $s$ in $r$",
+  "$Q(\\neg b)=P(\\neg b)$",
+  "If $(x,y)$ follows the path to $s$, then $c\\ne b$",
+  "If $(x,y)$ does not follow the path to $s$, the path erasure and $r$ give the same output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $(x,y)$ be an input\npair, and let $N$ be a node constructor (an Alice or Bob node) such that for every\nfamily $Q$ of children, running $N(Q)$ on $(x,y)$ is the same as running $Q(c)$ on $(x,y)$\nfor a fixed bit $c$. Let $P$ be a family of children with $P(b) = r$, and let $Q$ be the\nfamily obtained from $P$ by replacing the branch $b$ by the erasure of $h_s$ while keeping\nthe sibling $Q(\\neg b) = P(\\neg b)$. Assume that if $(x,y)$ reaches $s$ along the path\nthen $c \\ne b$, and that (inductively) if $(x,y)$ does not reach $s$ along the path then\nthe erasure of $h_s$ runs like $r$ on $(x,y)$. Then $N(Q)$ and $N(P)$ produce the same\noutput on $(x,y)$."
+}

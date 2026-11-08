@@ -38,19 +38,17 @@ input-head position, the work tapes and their head positions, and the output
 are preserved, and a halted configuration (one with no state) stays halted.
 \end{definition}
 
-\begin{lemma}[Renaming commutes with applying an action]
+\begin{lemma}[State Renaming and Action Application]
 \lean{Turing.Cfg.mapState_apply}
 \label{Turing.Cfg.mapState_apply}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState}
 \difficulty{1}
-Let $f$ be an arbitrary function from one state set to another (no
-injectivity is required), let $a$ be a one-step action of a Turing machine
-with $k$ work tapes, and let $c$ be a configuration on a fixed input word.
-Then applying the action $a$ with states renamed along $f$ to the
-configuration $c$ with state renamed along $f$ yields the same configuration
-as first applying $a$ to $c$ and then renaming the state of the result
-along $f$.
+Let $f$ be a function between state sets, let $a$ be a one-step action of a
+$k$-work-tape Turing machine, and let $c$ be a configuration on a fixed input word.
+Applying the action after renaming its successor state and the configuration state along
+$f$ gives the same configuration as applying $a$ to $c$ and then renaming the resulting
+state along $f$.
 \end{lemma}
 
 \begin{definition}[Transporting a machine along a state equivalence]
@@ -69,33 +67,75 @@ required here: a map identifying two states with different transitions would
 leave no well-defined transition table.
 \end{definition}
 
-\begin{lemma}[Relabelling commutes with one step]
+\begin{lemma}[State relabelling commutes with one step]
 \lean{Turing.MultiTapeTM.relabelState_step}
 \label{Turing.MultiTapeTM.relabelState_step}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.mapState, Turing.Cfg.mapState_apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.relabelState, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a multi-tape Turing machine with $k$ work tapes and state set $S$,
-let $e$ be a bijection from $S$ to another state set, and let $c$ be a
-configuration of $M$ on a fixed input word.  Then one step of the machine
-obtained by relabelling the states of $M$ along $e$, taken from the
-configuration $c$ with state renamed along $e$, equals the configuration
-obtained by one step of $M$ from $c$ with state renamed along $e$.  The
-equality includes the case of a halted $c$, where both sides leave the
-configuration unchanged.
+Let $M$ be a multi-tape Turing machine with $k$ work tapes, let $e$ be a bijection from
+its state set to another state set, let $x$ be an input word, and let $c$ be a
+configuration of $M$ on $x$. Taking one step of the relabelled machine from the
+configuration obtained by applying $e$ to the state of $c$ gives the same configuration
+as taking one step of $M$ from $c$ and then applying $e$ to its state.
 \end{lemma}
 
-\begin{lemma}[Relabelled runs from the initial configuration]
+\begin{lemma}[State relabelling commutes with a run from the initial configuration]
 \lean{Turing.MultiTapeTM.relabelState_runFrom_init}
 \label{Turing.MultiTapeTM.relabelState_runFrom_init}
 \leanok
 \uses{Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.relabelState, Turing.MultiTapeTM.relabelState_step, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step}
 \difficulty{1}
-Let $M$ be a multi-tape Turing machine with $k$ work tapes and state set $S$,
-let $e$ be a bijection from $S$ to another state set, let $x$ be an input
-word, and let $t \in \mathbb{N}$.  Then the configuration reached by the
-machine obtained by relabelling the states of $M$ along $e$ after $t$ steps
-from its initial configuration on $x$ equals the configuration that $M$
-reaches after $t$ steps from its own initial configuration on $x$, with its
-state renamed along $e$.
+Let $tm$ be a multi-tape Turing machine with state set $S$, let $e:S\\simeq S'$ be a
+bijection, let $x$ be an input word, and let $t\\in\\mathbb{N}$. After $t$ steps from
+its initial configuration on $x$, the machine obtained by relabelling the states of $tm$
+along $e$ has the same configuration as the configuration reached by $tm$ after $t$
+steps from its own initial configuration, with the state relabelled by $e$.
 \end{lemma}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Runs agree under an embedding on guarded states]
+\lean{Turing.MultiTapeTM.runFrom_mapState_of_agreeOn}
+\label{Turing.MultiTapeTM.runFrom_mapState_of_agreeOn}
+\leanok
+\uses{Turing.Action.apply, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.mapState, Turing.Cfg.mapState_apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.AgreeOn, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.runFrom_eq_of_agreeOn, Turing.MultiTapeTM.step}
+\difficulty{5}
+Let the source and host be multi-tape Turing machines with $k$ work tapes, a common
+symbol alphabet, and state sets $S$ and $H$, and let $x$ be an input word. Let
+$e:S\hookrightarrow H$ be an injective map and let $G$ be a predicate on source states.
+Suppose that, for every $q\in S$ satisfying $G(q)$ and every scanned input symbol and
+tuple of work-tape symbols, the host transition at $e(q)$ equals the source transition
+at $q$ with its successor state mapped by $e$. For any source configuration $c$ on $x$
+and any $t\in\mathbb{N}$, if at every time $u<t$ the run of the source machine from $c$
+has state $q$ only when $G(q)$ holds, then running the host for $t$ steps from the
+configuration obtained by mapping the state of $c$ along $e$ yields the configuration
+reached by the source after $t$ steps, with its state mapped along $e$.
+\end{theorem}
+
+\begin{theorem}[State relabelling preserves visited cells]
+\lean{Turing.MultiTapeTM.relabelState_visitedByTapeHead}
+\label{Turing.MultiTapeTM.relabelState_visitedByTapeHead}
+\leanok
+\uses{Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.relabelState, Turing.MultiTapeTM.relabelState_runFrom_init, Turing.MultiTapeTM.visitedByTapeHead}
+\difficulty{1}
+Let $M$ be a multi-tape Turing machine with $k$ work tapes, let $e$ be a bijection from
+its state set to another state set, let $x$ be an input word, let $t\in\mathbb{N}$, and
+choose a work tape $i<k$. The set of integer positions visited by the head of tape $i$
+from the initial configuration on $x$ through step $t$ is the same for $M$ and the
+machine obtained by relabelling its states along $e$.
+\end{theorem}
+
+\begin{theorem}[State relabelling preserves space use]
+\lean{Turing.MultiTapeTM.relabelState_spaceUsed}
+\label{Turing.MultiTapeTM.relabelState_spaceUsed}
+\leanok
+\uses{Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.relabelState, Turing.MultiTapeTM.relabelState_visitedByTapeHead, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape}
+\difficulty{1}
+Let $M$ be a multi-tape Turing machine with $k$ work tapes, let $e$ be a bijection from
+its state set to another state set, let $x$ be an input word, and let $t\in\mathbb{N}$.
+The total number of distinct work-tape cells visited from the initial configuration on
+$x$ through step $t$ is the same for $M$ and the machine obtained by relabelling its
+states along $e$.
+\end{theorem}

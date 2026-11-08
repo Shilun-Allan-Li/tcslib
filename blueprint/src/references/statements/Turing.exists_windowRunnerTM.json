@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.exists_windowRunnerTM",
+ "key": "78c6b7e265b27ecc",
+ "kind": "theorem",
+ "title": "Finite-window simulation by a Turing machine",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean work-tape symbols, and let $T$ be a finite set with decidable equality. Suppose an update rule $u:T\\times(\\{0,1\\}\\cup\\{\\mathrm{blank}\\})\\to T$ satisfies $u(\\tau,\\mathrm{blank})=\\tau$ for every $\\tau\\in T$. There exist a natural number $K$, a finite state set $P$ with decidable equality, a machine $R$ with $K+2$ work tapes over an alphabet encoding Boolean digits, work-tape cells, states, and tags, an entry state $p_{\\mathrm{in}}$, an injective map $e$ from the three outcomes halted, left, and exhausted to states of $P$, and a natural number $C$, such that every $e(o)$ differs from $p_{\\mathrm{in}}$. For every Boolean input $x$, window size $s$, configuration $c$ of $M$ whose work-tape heads lie within distance $s$ of zero and whose tapes are blank outside that window, tag $\\tau\\in T$, Boolean word $w$, and initial configuration $d$ of $R$ on the digit encoding of $x$, assume that $d$ is in state $p_{\\mathrm{in}}$, tape 0 records the encoded configuration $c$ and tag $\\tau$, the last tape agrees with the digit encoding of $w$ at every offset from $-1$ through $|w|$, and every other tape is blank. Then there are a time $t$ and an outcome $o$ such that $t\\le 5V(w)+2|w|+3$, where $V(w)$ is the base-two value of the digits of $w$ in their given order; at time $t$, $R$ is in state $e(o)$, and it was in no state $e(o')$ at any earlier time. Up to time $t$, each work-tape head moves by at most $C(L+|w|+1)$ from its initial position, the output is unchanged, and the total number of work-tape cells visited is at most $(K+2)(2C(L+|w|+1)+1)$, where $L=k(2s+1)+\\operatorname{posWidth}(|x|)+k+4$ and $k$ is the number of work tapes of $M$. For every natural number $N$, if the windowed run of $M$ for $N$ steps has an outcome other than exhausted and $CN(L+|x|+1)\\le V(w)$, then $o$ is that outcome. If $o$ is not exhausted, there is some $N$ for which the windowed run has outcome $o$; at time $t$, tape 0 records its resulting configuration and updated tag, and the last tape agrees, at every integer cell, with the original tape patched by a Boolean word of length $|w|$ at its initial head position; all other parts of $R$'s configuration are unchanged.",
+ "hypotheses_covered": [
+  "$M$ is a finite machine over Boolean symbols",
+  "$T$ is finite and has decidable equality",
+  "The update rule leaves the tag unchanged on blank output",
+  "$c$ has all work heads within distance $s$ of zero",
+  "$c$ has blank work-tape cells outside that window",
+  "$d$ starts in the designated entry state",
+  "Tape 0 records the encoding of $c$ and $\\tau$",
+  "The last tape agrees with the encoding of $w$ at offsets from $-1$ through $|w|$",
+  "Every tape other than tape 0 and the last tape is blank",
+  "$x,s,\\tau,w$ are otherwise arbitrary"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

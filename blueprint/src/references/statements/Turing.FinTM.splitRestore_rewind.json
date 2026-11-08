@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.splitRestore_rewind",
+ "key": "0d47d6f6580ace3a",
+ "kind": "lemma",
+ "title": "Rewind of the cleaned configuration",
+ "statement": "Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words, and fix any valid input-head position $p$ for input $w$. For every $j\\in\\mathbb N$ with $j\\le |s|$, running the cleanup machine for $j+1$ steps from state $(1,\\mathrm{false})$, with input head at $p$, the first work tape storing $s$, all scratch tapes blank, and all work heads at displacement $j-1$, yields the configuration in state $(2,\\mathrm{false})$ with the same input-head position and tape contents and all work heads at displacement $0$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w$ and $s$ are Boolean words",
+  "$p$ is a valid input-head position for $w$",
+  "$j\\in\\mathbb N$",
+  "$j\\le |s|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j$ at most the candidate's length, exactly $j+1$ steps of the\ncleanup machine from the cleaned configuration with all work heads at\ndisplacement $j-1$ yield the cleaned configuration of the next phase with\nevery work head at displacement $0$; no candidate bit is altered."
+}

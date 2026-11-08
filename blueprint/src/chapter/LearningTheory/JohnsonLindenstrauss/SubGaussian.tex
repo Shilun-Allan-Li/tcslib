@@ -16,33 +16,40 @@ bound for $Z^2$, a fourth-moment bound, and the two one-sided centered MGF bound
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{lemma}[Gaussian decoupling identity]
+\begin{lemma}[Gaussian exponential moment identity]
 \lean{exp_mul_sq_eq_integral_gaussian}
+\proofsource{vershynin-hdp-book}{pdf-681b6f3d947f-p032-b002}
+\proofstep
+  {instMeasurableSpaceMatrixFinReal_tCSlib}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p098-b004,
+    pdf-681b6f3d947f-p128-b004}
 \label{exp_mul_sq_eq_integral_gaussian}
 \leanok
-For every real $t \ge 0$ and every real $z$,
-\[
-  e^{t z^2} \;=\; \int e^{\sqrt{2t}\, z\, g}\, \mathrm{d}N(0,1)(g),
-\]
-i.e.\ $e^{tz^2}$ equals the moment generating function of a standard Gaussian
-evaluated at $s = \sqrt{2t}\, z$.
+\difficulty{3}
+For every $t,z\in\mathbb{R}$ with $t\ge0$, the standard Gaussian expectation satisfies
+$e^{tz^2}=\int_{\mathbb{R}}e^{\sqrt{2t}\,z g}\,dN(0,1)(g)$.
 \end{lemma}
 
-\begin{lemma}[Quadratic upper bound on $e^{-x}$]
+\begin{lemma}[Quadratic upper bound for the negative exponential]
 \lean{exp_neg_le_one_sub_add_sq_div_two}
 \label{exp_neg_le_one_sub_add_sq_div_two}
 \leanok
-For every real $x \ge 0$,
-\[
-  e^{-x} \;\le\; 1 - x + \frac{x^2}{2}.
-\]
+\difficulty{4}
+For every $x\in\mathbb{R}$ with $x\ge0$, $e^{-x}\le 1-x+\frac{x^2}{2}$.
 \end{lemma}
 
 \begin{lemma}[Exponential moment of $Z^2$ for a sub-Gaussian $Z$]
 \lean{integral_exp_mul_sq_le_of_subgaussian}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p032-b004,
+  pdf-681b6f3d947f-p033-b002
+}
 \label{integral_exp_mul_sq_le_of_subgaussian}
 \leanok
 \uses{exp_mul_sq_eq_integral_gaussian, integrable_exp_mul_sq_gaussianReal_zero, integral_exp_mul_sq_gaussianReal_zero}
+\difficulty{6}
 Let $Z$ be a measurable real random variable on a probability space $(\Omega, \mu)$
 which is strictly sub-Gaussian with variance proxy $\sigma^2$: for every real $s$,
 $e^{sZ}$ is $\mu$-integrable and $\E_\mu[e^{sZ}] \le e^{\sigma^2 s^2/2}$.  Then for every
@@ -53,56 +60,55 @@ $t \ge 0$ with $2\sigma^2 t < 1$, the function $e^{tZ^2}$ is $\mu$-integrable an
 the same bound that holds for $Z \sim N(0, \sigma^2)$.
 \end{lemma}
 
-\begin{lemma}[Fourth-moment bound for a sub-Gaussian $Z$]
+\begin{lemma}[Fourth moment bound for a sub-Gaussian variable]
 \lean{integral_pow_four_le_of_subgaussian}
 \label{integral_pow_four_le_of_subgaussian}
 \leanok
 \uses{integral_exp_mul_sq_le_of_subgaussian}
-Let $Z$ be a measurable real random variable on a probability space $(\Omega, \mu)$
-which is strictly sub-Gaussian with variance proxy $\sigma^2 > 0$ (for every real $s$,
-$e^{sZ}$ is integrable and $\E_\mu[e^{sZ}] \le e^{\sigma^2 s^2/2}$), and suppose
-$\E_\mu[Z^2] = \sigma^2$.  Then $Z^4$ is $\mu$-integrable and
-\[
-  \E_\mu\!\left[Z^4\right] \;\le\; 4\sigma^4 .
-\]
-(For a Gaussian the exact value is $3\sigma^4$.)
+\difficulty{6}
+Let $(\Omega,\mu)$ be a probability space, let $Z:\Omega\to\bbr$ be measurable, and let
+$\sigma^2>0$. Suppose that for every $s\in\bbr$, $e^{sZ}$ is $\mu$-integrable and
+$\mathbb{E}_\mu[e^{sZ}]\le e^{\sigma^2s^2/2}$, and that $\mathbb{E}_\mu[Z^2]=\sigma^2$.
+Then $Z^4$ is $\mu$-integrable and $\mathbb{E}_\mu[Z^4]\le4\sigma^4$.
 \end{lemma}
 
-\begin{lemma}[Centered-square MGF bound, nonpositive $t$]
+\begin{lemma}[Centered-square MGF bound for nonpositive parameters]
 \lean{mgf_centered_sq_le_of_nonpos}
 \label{mgf_centered_sq_le_of_nonpos}
 \leanok
 \uses{exp_neg_le_one_sub_add_sq_div_two, integral_pow_four_le_of_subgaussian}
-Let $Z$ be a measurable real random variable on a probability space $(\Omega, \mu)$
-which is strictly sub-Gaussian with variance proxy $\sigma^2 > 0$ (for every real $s$,
-$e^{sZ}$ is integrable and $\E_\mu[e^{sZ}] \le e^{\sigma^2 s^2/2}$), with
-$\E_\mu[Z^2] = \sigma^2$.  Then for every $t$ with $-1/(4\sigma^2) \le t \le 0$, the
-function $e^{t(Z^2 - \sigma^2)}$ is $\mu$-integrable and
-\[
-  \E_\mu\!\left[e^{t(Z^2 - \sigma^2)}\right] \;\le\; e^{2\sigma^4 t^2}.
-\]
+\difficulty{6}
+Let $(\Omega,\mu)$ be a probability space, let $Z:\Omega\to\bbr$ be measurable, and let
+$\sigma^2>0$. Suppose that for every $s\in\bbr$, $e^{sZ}$ is $\mu$-integrable and
+$\mathbb{E}_\mu[e^{sZ}]\le e^{\sigma^2s^2/2}$, and that $\mathbb{E}_\mu[Z^2]=\sigma^2$.
+For every $t$ with $-1/(4\sigma^2)\le t\le0$, the function $e^{t(Z^2-\sigma^2)}$ is
+integrable and its expectation is at most $e^{2\sigma^4t^2}$.
 \end{lemma}
 
-\begin{lemma}[Centered-square MGF bound, nonnegative $t$]
+\begin{lemma}[Centered-square MGF bound for nonnegative parameters]
 \lean{mgf_centered_sq_le_of_nonneg}
 \label{mgf_centered_sq_le_of_nonneg}
 \leanok
 \uses{integral_exp_mul_sq_le_of_subgaussian, neg_log_one_sub_two_mul_le_two_sq}
-Let $Z$ be a measurable real random variable on a probability space $(\Omega, \mu)$
-which is strictly sub-Gaussian with variance proxy $\sigma^2 > 0$ (for every real $s$,
-$e^{sZ}$ is integrable and $\E_\mu[e^{sZ}] \le e^{\sigma^2 s^2/2}$).  Then for every
-$t$ with $0 \le t \le 1/(4\sigma^2)$, the function $e^{t(Z^2 - \sigma^2)}$ is
-$\mu$-integrable and
-\[
-  \E_\mu\!\left[e^{t(Z^2 - \sigma^2)}\right] \;\le\; e^{2\sigma^4 t^2}.
-\]
+\difficulty{5}
+Let $(\Omega,\mu)$ be a probability space, let $Z:\Omega\to\bbr$ be measurable, and let
+$\sigma^2>0$. Suppose that for every $s\in\bbr$, $e^{sZ}$ is $\mu$-integrable and
+$\mathbb{E}_\mu[e^{sZ}]\le e^{\sigma^2s^2/2}$. For every $t$ with $0\le
+t\le1/(4\sigma^2)$, the function $e^{t(Z^2-\sigma^2)}$ is integrable and its expectation
+is at most $e^{2\sigma^4t^2}$.
 \end{lemma}
 
 \begin{theorem}[Sub-Gaussian implies sub-exponential centered square]
 \lean{subgaussian_centered_sq_bernstein}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p041-b007,
+  pdf-681b6f3d947f-p041-b008,
+  pdf-681b6f3d947f-p043-b002
+}
 \label{subgaussian_centered_sq_bernstein}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, mgf_centered_sq_le_of_nonneg, mgf_centered_sq_le_of_nonpos}
+\difficulty{4}
 Let $Z$ be a measurable real random variable on a probability space $(\Omega, \mu)$
 which is strictly sub-Gaussian with variance proxy $\sigma^2 > 0$, i.e.\ for every real
 $t$ the function $e^{tZ}$ is $\mu$-integrable and $\E_\mu[e^{tZ}] \le e^{\sigma^2 t^2/2}$,

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.Cfg.decodeSymbols_workTapes",
+ "key": "f438573bf842a046",
+ "kind": "theorem",
+ "title": "Pointwise decoding of work-tape contents",
+ "statement": "Let $k$ be a nonnegative integer, let $\\Gamma$ be a symbol alphabet, let $x$ be a finite input word over $\\Gamma$, and let $D$ be a configuration on $x$ with $k$ work tapes. Given an embedding $e$ of the Boolean symbols into $\\Gamma$, for every work tape $j$ and integer cell position $p$, the decoded tape content at $(j,p)$ is the original optional symbol at $(j,p)$ decoded to true if it equals $e(\\mathrm{true})$, decoded to false if it equals $e(\\mathrm{false})$, and left blank if neither equality holds.",
+ "hypotheses_covered": [
+  "$k$ is a nonnegative integer",
+  "$\\Gamma$ is a symbol type with decidable equality",
+  "$e$ embeds the Boolean symbols into $\\Gamma$",
+  "$x$ is a finite word over $\\Gamma$",
+  "$D$ is a $k$-tape configuration on $x$",
+  "$j$ is a work-tape index",
+  "$p$ is an integer cell position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.clPlaced_run",
+ "key": "1288a80f109c6bd1",
+ "kind": "lemma",
+ "title": "Iterated simulation by placed configurations",
+ "statement": "Let $k,l$ be natural numbers, let $S,H$ be types, let $x$ be a Boolean word, and let a placement consist of an injection from the $k$ source tape indices into the $l$ host tape indices and an exact selector for its occupied indices. Suppose the state map $S\\to H$ is injective, and there is a predicate on source states such that, whenever that predicate holds at a source state $q$, the host transition from its mapped state agrees on every input symbol and host tape-symbol tuple with the placed action corresponding to the source transition at $q$. Given host tape contents and head positions, a source configuration $c$, and a natural number $t$, if every state reached from $c$ at each time $j<t$ satisfies the predicate whenever that configuration is in a source state, then running the host machine for $t$ steps from the placed configuration equals placing the source machine's configuration after $t$ steps.",
+ "hypotheses_covered": [
+  "Natural numbers $k,l,t$",
+  "Types $S,H$ and Boolean input word $x$",
+  "Source and host machines",
+  "A placement with an injection and an exact selector",
+  "An injective state map $S\\to H$",
+  "A predicate on source states",
+  "Transition agreement at every predicate-satisfying source state, for all inputs and host tape-symbol tuples",
+  "Host tape contents and head positions",
+  "Source configuration $c$",
+  "Predicate guard for every time $j<t$ at which the source configuration has a state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

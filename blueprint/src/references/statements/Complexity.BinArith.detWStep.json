@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.BinArith.detWStep",
+ "key": "40426008f4b9f6f9",
+ "kind": "def",
+ "title": "Encoded determinant state update",
+ "statement": "For a Boolean list $S$, define its updated encoding as follows. If the decoded parameter is less than $2$, or the decoded row list is empty, leave $S$ unchanged. Otherwise, if the decoded pivot count is at most the decoded counter, encode the same parameter together with an empty row list and three zero counters. If the first entry of the first decoded row is zero, move that row to the end of the remaining rows, update the determinant component by multiplying it by the parameter minus one modulo the parameter when the pivot count is even, and increment the counter; when the pivot count is odd, leave the determinant component unchanged. In the remaining case, eliminate the first row from the remaining rows using the modular power specified by exponent equal to the parameter minus two, update the determinant component by multiplying it by the first entry modulo the parameter, and remove one from the pivot count while resetting the counter to zero.",
+ "hypotheses_covered": [
+  "Input is a Boolean list"
+ ],
+ "confidence": "low",
+ "caveat": "The Boolean encoding, decoding, row-elimination, modular-power, and list-mapping operations are not defined in the supplied statement, so this description follows the branches and updates but cannot fully specify their encoded meanings.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

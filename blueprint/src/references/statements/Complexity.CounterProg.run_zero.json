@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.run_zero",
+ "key": "be342d83efa00842",
+ "kind": "theorem",
+ "title": "Zero-step run",
+ "statement": "Let $R$ be a number of registers, let $\\Lambda$ be a set of labels, let $P$ be a counter program over them, and let $x$ be a bit string. For every abstract state $s$, running $P$ on $x$ from $s$ for zero steps returns $s$.",
+ "hypotheses_covered": [
+  "A number $R$ of registers",
+  "A set $\\Lambda$ of labels",
+  "A counter program $P$ over these registers and labels",
+  "An input bit string $x$",
+  "An abstract state $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every counter program $P$ over $R$ registers with labels in $\\Lambda$, every input bit string\n$x$ and every abstract state $s$, running $P$ on $x$ from $s$ for zero steps returns $s$:\n$\\mathrm{run}_{P,x}(s, 0) = s$."
+}

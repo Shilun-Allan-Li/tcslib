@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassNP/Tautology.lean :: Complexity.taut_clause_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Clause Evaluation Run
+
+**Claim.** Under the stated encoding and variable-bound hypotheses, the verifier processes the encoded clause in at most three times the encoding length, reaching the specified verdict or returning to formula evaluation according to the accumulator and whether every literal is satisfied.
+
+**Proof.** Proceed by induction on the clause $C$, uniformly for the input prefix, remaining encoded input, work word, and accumulator. If $C$ is empty, its serialization is the clause terminator. The verifier consumes the doubled terminator in two steps; the clause-level transition then produces the stated verdict when the accumulator is true, and otherwise returns to formula evaluation. This takes two steps, within the required bound. For a clause of the form $\ell::C$, the hypothesis ensures that the variable of $\ell$ occurs within the work word, and it also gives the corresponding bound for every literal of $C$. Split the paired input at the doubled encoding of $\ell$: the literal-run result (`Complexity.taut_literal_run`) consumes that encoding in $3\ell.1+7$ steps and updates the accumulator to $c$ conjoined with whether the assignment satisfies $\ell$. The rest of the paired input is then exactly the encoding of $C$ followed by the remainder, so the induction hypothesis applies to $C$ with this updated accumulator. Concatenating these runs is justified by the run-addition law (`Turing.MultiTapeTM.runFrom_add`). The final accumulator is true precisely when the original accumulator was true and every literal in $C$ is satisfied, since conjunction over a cons is the conjunction of the head condition and the tail condition. Finally, the step count fits the stated bound: the encoding of $\ell$ has length $2(\ell.1+1)+2$, and adding the inductive bound for $C$ gives at most three times the length of the whole serialized clause. The paired-input length identity (`Turing.universal_pair_length`) supplies the bounds needed to keep the input head within the encoded input throughout.
+
+**Key facts.** `Complexity.taut_literal_run`, `Turing.MultiTapeTM.runFrom_add`, `Complexity.taut_pair_append`, `Complexity.taut_double_length`, `Turing.universal_pair_length`.

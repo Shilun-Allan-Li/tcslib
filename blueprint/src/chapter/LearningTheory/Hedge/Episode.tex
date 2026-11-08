@@ -13,6 +13,15 @@ to every such adaptive episode.
 
 \begin{definition}[Loss history]
 \lean{LossHistory}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p001-b004,
+  pdf-eda737ce3103-p002-b001,
+  pdf-eda737ce3103-p003-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p002-b004,
+  pdf-9c61a2f1ecc1-p003-b001
+}
 \label{LossHistory}
 \leanok
 $\texttt{LossHistory}\ N\ t$ is the type of length-$t$ histories of loss vectors
@@ -32,6 +41,12 @@ the pathwise Hedge formalization that are stated over finite loss sequences.
 
 \begin{definition}[Learner policy]
 \lean{LearnerPolicy}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p001-b004,
+  pdf-eda737ce3103-p002-b001,
+  pdf-eda737ce3103-p003-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p003-b001}
 \label{LearnerPolicy}
 \leanok
 \uses{LossHistory}
@@ -44,6 +59,11 @@ so that the weight vector at each round forms a valid mixed strategy.
 
 \begin{definition}[Adaptive adversary]
 \lean{AdaptiveAdversary}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p003-b001}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p003-b001,
+  pdf-9c61a2f1ecc1-p006-b002
+}
 \label{AdaptiveAdversary}
 \leanok
 \uses{LossHistory}
@@ -57,6 +77,11 @@ that every coordinate of the chosen loss vector lies in $[0, 1]$.
 
 \begin{definition}[Hedge learner policy]
 \lean{hedgePolicy}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p004-b008,
+  pdf-eda737ce3103-p005-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p003-b004}
 \label{hedgePolicy}
 \leanok
 \uses{LearnerPolicy, LossHistory.toLossSeq, hedgeDist, hedgeDist_nonneg, hedgeDist_sum}
@@ -68,6 +93,12 @@ the exponential-weights distribution derived from the past realized losses.
 
 \begin{definition}[Episode loss at natural time]
 \lean{episodeLossNat}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p001-b004,
+  pdf-eda737ce3103-p002-b001,
+  pdf-eda737ce3103-p003-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p003-b001}
 \label{episodeLossNat}
 \leanok
 \uses{AdaptiveAdversary, LearnerPolicy}
@@ -81,6 +112,11 @@ strictly earlier rounds.
 
 \begin{definition}[Episode loss sequence]
 \lean{episodeLossSeq}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p001-b004,
+  pdf-eda737ce3103-p002-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p003-b001}
 \label{episodeLossSeq}
 \leanok
 \uses{AdaptiveAdversary, LearnerPolicy, LossSeq, episodeLossNat}
@@ -139,6 +175,13 @@ learner against that adversary. Then $\ell$ is a valid loss sequence: for every 
 
 \begin{theorem}[Hedge regret bound against an adaptive adversary]
 \lean{hedge_regret_bound_tight_episode}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p005-b001,
+  pdf-eda737ce3103-p006-b001,
+  pdf-eda737ce3103-p006-b002,
+  pdf-eda737ce3103-p006-b003,
+  pdf-eda737ce3103-p007-b001
+}
 \label{hedge_regret_bound_tight_episode}
 \leanok
 \uses{AdaptiveAdversary, episodeLossSeq, episodeLossSeq_valid, hedgePolicy, hedge_regret_bound_tight, regret}
@@ -159,6 +202,12 @@ single expert in hindsight, satisfies
 
 \begin{theorem}[Regret bound for Hedge against an adaptive adversary]
 \lean{hedge_regret_bound_tight_of_episode}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p006-b001,
+  pdf-eda737ce3103-p006-b002,
+  pdf-eda737ce3103-p006-b003,
+  pdf-eda737ce3103-p007-b001
+}
 \label{hedge_regret_bound_tight_of_episode}
 \leanok
 \uses{Episode, hedgePolicy, hedge_regret_bound_tight_episode, regret}

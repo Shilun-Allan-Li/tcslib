@@ -1,6 +1,6 @@
 {
  "lean_name": "SwitchingLemma.encode_go_fst_eq_rec",
- "key": "5b8fb6cce7eecb03",
+ "key": "9190fefabeb36a5e",
  "kind": "lemma",
  "title": "Encoder first component matches the recursive step",
  "statement": "Fix a DNF formula $f$ on $n$ variables, two restrictions $\\rho_0$ and $\\sigma$, a fuel budget, and a path $\\mathrm{step} :: \\mathrm{rest}$ consisting of a first variable–direction pair $\\mathrm{step}$ followed by a list $\\mathrm{rest}$ of further such pairs. Suppose $t_{\\mathrm{clause}}$ is the first term of $f$ that is not killed by $\\rho_0$, and that, listing the literals of $t_{\\mathrm{clause}}$ each tagged with its position in the term and keeping only those whose variable is free under $\\rho_0$, this filtered list is nonempty, of the form $\\mathit{fl} :: \\mathit{fls}$. Then the first component of the encoder run at fuel one greater on the whole path $\\mathrm{step} :: \\mathrm{rest}$ coincides with the first component of the encoder run at the smaller fuel started from the state obtained by processing the clause's free literals $\\mathit{fl} :: \\mathit{fls}$ against that same path from $\\rho_0$ and $\\sigma$.",

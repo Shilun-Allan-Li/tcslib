@@ -1,0 +1,14 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.communicationComplexity_le",
+ "key": "dd3f6cefccabe9ee",
+ "kind": "theorem",
+ "title": "Communication complexity of the Index function",
+ "statement": "For every positive integer $n$, the deterministic two-way communication complexity of the Index function on an $n$-bit string and an index in $[n]$ is at most $\\lceil\\log_2 n\\rceil+1$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The (two-way) deterministic communication complexity of $\\mathrm{IND}_n$ is at most\n$\\lceil \\log_2 n \\rceil + 1$:\n\\[\n  D(\\mathrm{IND}_n) \\le \\lceil \\log_2 n \\rceil + 1,\n\\]\nwhere $\\lceil \\log_2 n \\rceil$ is formalised as $\\mathrm{Nat.clog}\\,2\\,n$.  This is the\nprotocol in which Bob sends his index $i$ and Alice replies with the single bit $x_i$."
+}

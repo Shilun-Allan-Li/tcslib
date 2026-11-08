@@ -1,0 +1,21 @@
+{
+ "lean_name": "FABL.queryCount_depthTwoFinishEqual",
+ "key": "7d93d14b80cb7a54",
+ "kind": "theorem",
+ "title": "Query count for the disjoint completion procedure",
+ "statement": "Let $R_1,R_2,B_3$ be finite sets of coordinates in an $n$-coordinate cube, with $R_1$ disjoint from $R_2\\cup B_3$ and $R_2$ disjoint from $B_3$. For each sign, let $C_1$ and $C_2$ be decision trees querying coordinates from $R_1$ and $R_2$, respectively, and let $E_3$ be a decision tree querying coordinates from $B_3$. Fix a sign $x_1$ and an input $x\\in\\{\\pm1\\}^n$. The query count of the combined procedure is the query count of $C_1(x_1)$ plus the following: if $C_1(x_1)$ evaluates to $x_1$, add the query count of $C_2(x_1)$ and then add zero if $C_2(x_1)$ evaluates to the value of $C_1(x_1)$, or otherwise add the query count of $E_3$; if $C_1(x_1)$ does not evaluate to $x_1$, add the query count of $E_3$ and then add zero if $E_3$ evaluates to the value of $C_1(x_1)$, or otherwise add the query count of $C_2(x_1)$.",
+ "hypotheses_covered": [
+  "$R_1,R_2,B_3$ are finite subsets of the $n$ coordinates",
+  "$R_1$ is disjoint from $R_2\\cup B_3$",
+  "$R_2$ is disjoint from $B_3$",
+  "$C_1$ maps each sign to a decision tree on $R_1$",
+  "$C_2$ maps each sign to a decision tree on $R_2$",
+  "$E_3$ is a decision tree on $B_3$",
+  "fixed sign $x_1$",
+  "input $x\\in\\{\\pm1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

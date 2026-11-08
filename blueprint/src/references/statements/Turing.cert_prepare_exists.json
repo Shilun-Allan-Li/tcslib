@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.cert_prepare_exists",
+ "key": "cb0d31240273a75e",
+ "kind": "theorem",
+ "title": "Bounded preparation of a virtual-host configuration",
+ "statement": "Let $P$ be a Boolean Turing machine with finitely many states and $P.k$ work tapes, let $j$ be a work-tape index of $P$, and let $m$ be a positive integer. There exist a finite-state Boolean Turing machine $D$, a state $e$ of $D$, injections from the $m$ tape indices and from the $1+P.k$ tape indices into the work tapes of $D$, a work-tape index $c$ outside the image of the latter injection, and a natural number $a$ such that the following holds. For every Boolean input word $y$ and Boolean words $x,u$, when $D$ starts on input $y$ with the encoding of $(x,u)$ on the tape indexed by the image of $0$ under the first injection and all other work tapes empty, there is a time $t\\le a(|x|+|u|+1)$ at which its configuration has state $e$, input-head position $1$, and empty output. Its work tapes and head positions agree, under the second injection, with the virtual-host configuration whose simulated machine is in its initial state on input $x$, with $u$ on tape $j$, all other simulated work tapes empty, and boundary tag true; tape $c$ is empty with its head at position $0$, and the remaining tapes and head positions may be chosen arbitrarily. No earlier configuration in this run has state $e$.",
+ "hypotheses_covered": [
+  "$P$ is a finite-state Boolean Turing machine with $P.k$ work tapes",
+  "$j$ is a work-tape index of $P$",
+  "$m>0$",
+  "The bound and configuration property hold for every Boolean input word $y$ and Boolean words $x,u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora",
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

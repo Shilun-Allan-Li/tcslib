@@ -1,0 +1,29 @@
+{
+ "lean_name": "Light.countSort_meets",
+ "key": "df685da260187738",
+ "kind": "theorem",
+ "title": "Counting sort execution and output",
+ "statement": "Let $P$ be a program, let $q,d$ be natural numbers, and let the machine limits have word bound $W$, space bound $S$, and depth bound $D$. Let $A$ specify an item count $n$, source and destination addresses, a key address with stride and offset, a number $b$ of buckets, and a counter-array address. Suppose the routine at position $q$ in $P$ is the counting-sort routine; $S\\leq W$; the source, destination, and counter intervals of lengths $n,n,b+1$ lie within the space bound and are pairwise disjoint; and the initial memory stores item $\\mathrm{it}(i)$ at each source address for $i<n$. For each $i<n$, suppose the key address computed from $\\mathrm{it}(i)$ lies within space, stores the value $kf(i)$, and $kf(i)<b$; moreover, each such key address lies outside both the destination and counter intervals. Then on the listed arguments and initial memory $\\mu$, the routine has an execution at depth $d$ with cost at most $68n+58b+52$. Its final memory $\\mu'$ places item $\\mathrm{it}(j)$ at destination address $\\mathrm{dst}+\\mathrm{sortPos}(kf,n,j)$ for every $j<n$, stores at counter address $\\mathrm{cnt}+t$ the number of indices $i<n$ with $kf(i)<t$ for every $t\\leq b$, and agrees with $\\mu$ outside the destination and counter intervals.",
+ "hypotheses_covered": [
+  "The program entry at index q is countSortBody",
+  "The space bound is at most the word bound",
+  "Source interval fits within space",
+  "Destination interval fits within space",
+  "Counter interval of length nb+1 fits within space",
+  "Each source cell stores it(i) for i<n",
+  "Each computed key address is below lim.space",
+  "Each computed key cell stores kf(i)",
+  "Each key value is less than nb",
+  "Source and destination intervals are disjoint",
+  "Source and counter intervals are disjoint",
+  "Destination and counter intervals are disjoint",
+  "Each key address lies outside the destination interval",
+  "Each key address lies outside the counter interval"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

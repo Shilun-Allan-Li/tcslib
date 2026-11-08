@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.sim_iteFalse",
+ "key": "f435c648cd1a7cf0",
+ "kind": "theorem",
+ "title": "Simulation of the False Conditional Branch",
+ "statement": "Let $S$ be a compiler setting, let $d$ be a natural number, and let $c$ be a condition that is safe and false in state $\\sigma$. If the false branch $s_2$ simulates execution from $\\sigma$ to $\\sigma'$ in $k$ steps, then the conditional with branches $s_1$ and $s_2$ simulates execution from $\\sigma$ to $\\sigma'$ in $\\mathrm{cost}(c)+1+k$ steps. Simulation here quantifies over every admissible initial machine placement and memory encoding and guarantees a run to the code endpoint within the corresponding machine-step bound, with memory encoding $\\sigma'$ and agreement outside the writable addresses.",
+ "hypotheses_covered": [
+  "The condition is safe in the initial state",
+  "The condition does not hold in the initial state",
+  "The false branch simulates from the initial state to the target state in k steps",
+  "For the simulation conclusion: initial frame relation, valid stack position, code located at the position and ending before the dispatcher, sufficient width, bounded source state, and sufficient stack room"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a program setting, and suppose the condition $c$ is safe in state $\\sigma$\nand does not hold there. If the false-branch statement $s_2$ simulates execution from\n$\\sigma$ to $\\sigma'$ in $k$ steps, then the conditional statement with branches $s_1$\nand $s_2$ simulates execution from $\\sigma$ to $\\sigma'$ in $\\mathrm{cost}(c)+1+k$\nsteps."
+}

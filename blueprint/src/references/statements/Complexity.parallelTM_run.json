@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.parallelTM_run",
+ "key": "616f3a916639c237",
+ "kind": "lemma",
+ "title": "Exact correspondence of computation configurations",
+ "statement": "Let $A$ be a finite alphabet, let $e$ embed the Booleans into $A$, let $P$ be a finite Turing machine over $A$, let $x$ be a binary word, and let $t\\in\\mathbb N$. The configuration of the transverse binary realization of $P$ after $t$ steps on $x$ is exactly the transverse encoding of the configuration of $P$ after $t$ steps on the symbolwise image of $x$.",
+ "hypotheses_covered": [
+  "$A$ is finite and has decidable equality",
+  "$e$ embeds the Booleans into $A$",
+  "$P$ is a finite Turing machine over $A$",
+  "$x$ is a binary word",
+  "$t\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over a finite alphabet $A$, $e$ an embedding of the Booleans\ninto $A$, $x$ a binary word, and $t \\in \\mathbb{N}$. The configuration of the\ntransverse binary realization of $P$ after $t$ steps from its initial configuration\non $x$ equals the encoding of the configuration of $P$ after $t$ steps from its\ninitial configuration on the symbolwise embedding of $x$ — with no intermediate\ncoding states and no variable-duration memory accesses."
+}

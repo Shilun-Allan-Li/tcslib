@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.StepBlock.readActions_at",
+ "key": "bb54554b5d5301df",
+ "kind": "lemma",
+ "title": "Indexed transition actions",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $\\mathrm{tr}$ assign an action to each state in $\\{0,\\ldots,n\\}$, input read in $\\{\\text{blank},0,1\\}$, and work-tape read pattern, and let $q$ be a state in $\\{0,\\ldots,n\\}$. For any input read $\\mathrm{inp}\\in\\{\\text{blank},0,1\\}$ and any work-tape read pattern $w$, the action at index $3^k\\,\\mathrm{rank}(\\mathrm{inp})+\\mathrm{rank}(w)$ in the list of all transition actions at state $q$ is $\\mathrm{tr}(q,\\mathrm{inp},w)$, where the input ranks are blank, $0$, $1$ in that order and the work-tape patterns are listed in the recursively defined order.",
+ "hypotheses_covered": [
+  "Natural numbers k and n",
+  "Transition function tr with the stated input, work-read, state, and action types",
+  "State q in Fin (n+1)",
+  "Input read inp in Option Bool",
+  "Work-tape read pattern w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

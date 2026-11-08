@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.incrementTM_run_succ",
+ "key": "c3e6f5b346185e82",
+ "kind": "theorem",
+ "title": "Running time for a successful increment",
+ "statement": "Let $k$ be a natural number, choose one of $k$ work tapes, and let $x$ be a Boolean input word and $w$ a family of Boolean words on the work tapes. If incrementing the chosen tape's word yields a Boolean word $v$, then the increment machine started in its run phase from the configuration storing $w$ reaches the done phase with true verdict after some $T\\le 2|w_i|+2$ steps. No earlier time $t<T$ is in either done phase, and at time $T$ the configuration stores the updated family obtained by replacing $w_i$ by $v$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$i\\in\\mathrm{Fin}(k)$ selects a work tape",
+  "$x$ is a Boolean input word",
+  "$w$ assigns a Boolean word to each of the $k$ tapes",
+  "Incrementing $w_i$ yields the word $v$",
+  "There exists a natural number $T\\le 2|w_i|+2$",
+  "At every $t<T$, the machine is not in a done phase with either Boolean verdict"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

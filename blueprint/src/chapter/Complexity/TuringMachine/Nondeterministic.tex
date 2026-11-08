@@ -16,6 +16,13 @@ machine as a nondeterministic one that ignores its choices.
 
 \begin{definition}[Nondeterministic multi-tape Turing machine]
 \lean{Turing.NDTM}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
+\statementsource{BGW70}{pdf-b9fb35a232af-p003-b001}
+\statementsource{BGS75}{
+  pdf-2459e3840724-p002-b001,
+  pdf-2459e3840724-p002-b002
+}
+\statementsource{arora-barak-ch07-randomized-computation}{pdf-26d95080dbde-p002-b002}
 \label{Turing.NDTM}
 \leanok
 \uses{Turing.Action}
@@ -31,6 +38,9 @@ alphabet nor the state set is required to be finite.
 
 \begin{definition}[One step under a choice bit]
 \lean{Turing.NDTM.stepWith}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
+\statementsource{BGW70}{pdf-b9fb35a232af-p003-b003}
+\statementsource{arora-barak-ch07-randomized-computation}{pdf-26d95080dbde-p002-b002}
 \label{Turing.NDTM.stepWith}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols}
@@ -44,6 +54,11 @@ input head, and the symbols under the $k$ work-tape heads.
 
 \begin{definition}[Initial configuration of a nondeterministic machine]
 \lean{Turing.NDTM.initCfg}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
+\statementsource{BGW70}{
+  pdf-b9fb35a232af-p003-b002,
+  pdf-b9fb35a232af-p004-b002
+}
 \label{Turing.NDTM.initCfg}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.init}
@@ -55,6 +70,7 @@ empty.
 
 \begin{definition}[Run under a choice word]
 \lean{Turing.NDTM.runWith}
+\statementsource{arora-barak-ch07-randomized-computation}{pdf-26d95080dbde-p002-b002}
 \label{Turing.NDTM.runWith}
 \leanok
 \uses{Turing.Cfg, Turing.NDTM.stepWith}
@@ -66,64 +82,66 @@ and the run under $b w$ is the run under $w$ from the configuration reached by o
 of $M$ from $c$ under $b$.
 \end{definition}
 
-\begin{lemma}[Run under the empty choice word]
+\begin{lemma}[Run on the empty choice word]
 \lean{Turing.NDTM.runWith_nil}
 \label{Turing.NDTM.runWith_nil}
 \leanok
 \uses{Turing.Cfg, Turing.NDTM.runWith}
 \difficulty{1}
-Let $M$ be a nondeterministic multi-tape Turing machine and $c$ a configuration of $M$ on
-some input.  Running $M$ from $c$ under the empty choice word yields $c$ itself.
+For a nondeterministic multi-tape Turing machine $M$ and any configuration $c$ on a
+fixed input, the run of $M$ from $c$ under the empty choice word is $c$.
 \end{lemma}
 
-\begin{lemma}[Run under a choice word with a leading bit]
+\begin{lemma}[Runs under a leading choice bit]
 \lean{Turing.NDTM.runWith_cons}
 \label{Turing.NDTM.runWith_cons}
 \leanok
 \uses{Turing.Cfg, Turing.NDTM.runWith, Turing.NDTM.stepWith}
 \difficulty{1}
-Let $M$ be a nondeterministic multi-tape Turing machine, $c$ a configuration of $M$ on some
-input, $b \in \{0,1\}$ a choice bit, and $w$ a choice word.  Running $M$ from $c$ under the
-word $b w$ gives the same configuration as running $M$ under $w$ from the configuration
-reached by one step of $M$ from $c$ under the choice bit $b$.
+Let $M$ be a nondeterministic multi-tape Turing machine, let $b$ be a Boolean choice
+bit, let $w$ be a finite Boolean word, and let $c$ be a configuration of $M$ on a fixed
+input. Running $M$ from $c$ under the word consisting of $b$ followed by $w$ gives the
+same configuration as running it under $w$ from the configuration reached by one step
+under $b$.
 \end{lemma}
 
-\begin{lemma}[Run under a concatenated choice word]
+\begin{lemma}[Runs under concatenated choice words]
 \lean{Turing.NDTM.runWith_append}
 \label{Turing.NDTM.runWith_append}
 \leanok
 \uses{Turing.Cfg, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{4}
-Let $M$ be a nondeterministic multi-tape Turing machine, $c$ a configuration of $M$ on some
-input, and $w, w'$ choice words.  Running $M$ from $c$ under the concatenation $w w'$ gives
-the same configuration as first running $M$ from $c$ under $w$ and then running $M$ under
-$w'$ from the configuration so reached.
+Let $M$ be a nondeterministic multi-tape Turing machine, let $w,w'$ be finite Boolean
+words, and let $c$ be a configuration of $M$ on a fixed input. Running $M$ from $c$
+under the concatenation $ww'$ gives the same configuration as first running it under $w$
+and then running it under $w'$ from the resulting configuration.
 \end{lemma}
 
-\begin{lemma}[Halted configurations are fixed under every choice]
+\begin{lemma}[Halted configurations remain fixed]
 \lean{Turing.NDTM.stepWith_of_halt}
 \label{Turing.NDTM.stepWith_of_halt}
 \leanok
 \uses{Turing.Cfg, Turing.NDTM.stepWith}
 \difficulty{1}
-Let $M$ be a nondeterministic multi-tape Turing machine, $b \in \{0,1\}$ a choice bit, and
-$c$ a configuration of $M$ on some input whose state component is empty (the machine has
-halted).  Then one step of $M$ from $c$ under $b$ leaves $c$ unchanged.
+Let $M$ be a nondeterministic machine with $k$ work tapes, let $b$ be a choice bit, and
+let $c$ be a configuration on a fixed input whose state component is empty. Then one
+step under choice $b$ leaves $c$ unchanged.
 \end{lemma}
 
-\begin{lemma}[Runs from a halted configuration stay put]
+\begin{lemma}[Runs from halted configurations stay fixed]
 \lean{Turing.NDTM.runWith_of_halt}
 \label{Turing.NDTM.runWith_of_halt}
 \leanok
 \uses{Turing.Cfg, Turing.NDTM.runWith, Turing.NDTM.runWith_cons, Turing.NDTM.stepWith_of_halt}
 \difficulty{4}
-Let $M$ be a nondeterministic multi-tape Turing machine and $c$ a configuration of $M$ on
-some input whose state component is empty (the machine has halted).  Then for every choice
-word $w$, running $M$ from $c$ under $w$ yields $c$ itself.
+Let $M$ be a nondeterministic multi-tape Turing machine and let $c$ be a configuration
+on a fixed input whose state is empty. For every choice word $w$, the run of $M$ from
+$c$ under $w$ equals $c$.
 \end{lemma}
 
 \begin{definition}[Halting within $t$ steps on every branch]
 \lean{Turing.NDTM.HaltsWithin}
+\statementsource{arora-barak-ch07-randomized-computation}{pdf-26d95080dbde-p002-b003}
 \label{Turing.NDTM.HaltsWithin}
 \leanok
 \uses{Turing.NDTM, Turing.NDTM.initCfg, Turing.NDTM.runWith}
@@ -134,20 +152,21 @@ running $M$ under $w$ from its initial configuration on $x$ is halted, that is, 
 empty state component.
 \end{definition}
 
-\begin{theorem}[All-branch halting is monotone in the time bound]
+\begin{theorem}[Monotonicity of all-branch halting]
 \lean{Turing.NDTM.HaltsWithin.mono}
 \label{Turing.NDTM.HaltsWithin.mono}
 \leanok
 \uses{Turing.NDTM, Turing.NDTM.HaltsWithin, Turing.NDTM.initCfg, Turing.NDTM.runWith_append, Turing.NDTM.runWith_of_halt}
 \difficulty{4}
-Let $M$ be a nondeterministic multi-tape Turing machine, $x$ an input word, and
-$t \le t'$ natural numbers.  If for every choice word of length $t$ the run of $M$ under
-it from the initial configuration on $x$ ends in a halted configuration, then the same
-holds for every choice word of length $t'$.
+Let $M$ be a nondeterministic multi-tape Turing machine, $x$ an input word, and $t,t'$
+natural numbers with $t\le t'$. If every choice word of length exactly $t$ leads from
+the initial configuration of $M$ on $x$ to a halted configuration, then every choice
+word of length exactly $t'$ does as well.
 \end{theorem}
 
 \begin{definition}[Bundled finite nondeterministic Turing machine]
 \lean{Turing.FinNDTM}
+\statementsource{Sav70}{pdf-c8033d2fd705-p002-b002}
 \label{Turing.FinNDTM}
 \leanok
 \uses{Turing.NDTM}
@@ -159,6 +178,7 @@ cells hold either a symbol of $\Sigma$ or a blank.
 
 \begin{definition}[Deterministic machine as a nondeterministic one]
 \lean{Turing.MultiTapeTM.toNDTM}
+\statementsource{arora-barak-ch07-randomized-computation}{pdf-26d95080dbde-p003-b002}
 \label{Turing.MultiTapeTM.toNDTM}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.NDTM}
@@ -169,33 +189,34 @@ $\delta_0$ and $\delta_1$ are equal to $\delta$, so that its behaviour does not 
 the choice bit.
 \end{definition}
 
-\begin{lemma}[Deterministic machine viewed nondeterministically: same start]
+\begin{lemma}[Initial configuration is preserved]
 \lean{Turing.MultiTapeTM.toNDTM_initCfg}
 \label{Turing.MultiTapeTM.toNDTM_initCfg}
 \leanok
 \uses{Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.toNDTM, Turing.NDTM.initCfg}
 \difficulty{1}
-Let $M$ be a deterministic multi-tape Turing machine with transition function $\delta$,
-let $N$ be the nondeterministic machine with the same initial state whose two transition
-functions both equal $\delta$, and let $x$ be an input word.  Then the initial configuration
-of $N$ on $x$ coincides with the initial configuration of $M$ on $x$.
+Let $M$ be a deterministic multi-tape Turing machine and let $N$ be its associated
+nondeterministic machine, with the same initial state and both choice transitions equal
+to the transition of $M$. For every input word $x$, the initial configuration of $N$ on
+$x$ equals the initial configuration of $M$ on $x$.
 \end{lemma}
 
-\begin{theorem}[Deterministic machines ignore their choices]
+\begin{theorem}[Choice-independent run length]
 \lean{Turing.MultiTapeTM.toNDTM_runWith}
 \label{Turing.MultiTapeTM.toNDTM_runWith}
 \leanok
 \uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.MultiTapeTM.toNDTM, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{4}
-Let $M$ be a deterministic multi-tape Turing machine with transition function $\delta$, and
-let $N$ be the nondeterministic machine with the same initial state whose two transition
-functions both equal $\delta$.  For every configuration $c$ on a fixed input and every
-choice word $w \in \{0,1\}^*$, the run of $N$ from $c$ under $w$ equals the configuration
-reached by running $M$ from $c$ for $|w|$ steps.
+Let $M$ be a deterministic multi-tape Turing machine and let $N$ be its associated
+nondeterministic machine, whose two choice transitions both equal the transition of $M$.
+For every input word, configuration $c$ on that input, and finite choice word $w$,
+running $N$ from $c$ under $w$ gives the same configuration as running $M$ from $c$ for
+$|w|$ steps.
 \end{theorem}
 
 \begin{definition}[Bundled deterministic machine as a nondeterministic one]
 \lean{Turing.FinTM.toFinNDTM}
+\statementsource{arora-barak-ch07-randomized-computation}{pdf-26d95080dbde-p003-b002}
 \label{Turing.FinTM.toFinNDTM}
 \leanok
 \uses{Turing.FinNDTM, Turing.FinTM, Turing.MultiTapeTM.toNDTM}
@@ -205,3 +226,202 @@ nondeterministic Turing machine has the same number $k$ of work tapes and the sa
 set, and as underlying machine the nondeterministic machine with the same initial state
 whose two transition functions both equal $\delta$.
 \end{definition}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Fixing a nondeterministic choice]
+\lean{Turing.NDTM.fixChoice}
+\label{Turing.NDTM.fixChoice}
+\leanok
+\uses{Turing.MultiTapeTM, Turing.NDTM}
+Given a nondeterministic Turing machine with $k$ work tapes and a Boolean choice $b$,
+fixing the choice to $b$ gives a deterministic machine with the same initial state and
+the transition function selected by $b$.
+\end{definition}
+
+\begin{theorem}[A fixed choice gives a deterministic step]
+\lean{Turing.NDTM.stepWith_eq_fixChoice_step}
+\label{Turing.NDTM.stepWith_eq_fixChoice_step}
+\leanok
+\uses{Turing.Cfg, Turing.MultiTapeTM.step, Turing.NDTM, Turing.NDTM.fixChoice, Turing.NDTM.stepWith}
+\difficulty{4}
+Let $M$ be a nondeterministic machine with $k$ work tapes, let $b$ be a choice bit, and
+let $c$ be a configuration on a fixed input. The one-step result from $c$ using choice
+$b$ is the same as the one-step result of the deterministic machine obtained by fixing
+$M$'s choice to $b$.
+\end{theorem}
+
+\begin{theorem}[State renaming preserves a step]
+\lean{Turing.NDTM.stepWith_mapState_of_agreeOn}
+\label{Turing.NDTM.stepWith_mapState_of_agreeOn}
+\leanok
+\uses{Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.Cfg.mapState_apply, Turing.NDTM, Turing.NDTM.stepWith, Turing.NDTM.stepWith_of_halt}
+\difficulty{4}
+Let $S$ and $H$ be state sets, let $\Gamma$ be a symbol alphabet, and let $M_S$ and
+$M_H$ be nondeterministic machines with $k$ work tapes and state sets $S$ and $H$,
+respectively. Let $e:S\hookrightarrow H$ be an embedding and let $G\subseteq S$. Suppose
+that for each choice bit, every state $q\in G$, and every input and work-tape
+observation, the transition of $M_H$ at $e(q)$ is the state-renamed transition of $M_S$
+at $q$. If $c$ is a configuration of $M_S$ on input $x$ and every state present in $c$
+belongs to $G$, then stepping the renamed configuration $e(c)$ in $M_H$ gives the
+state-renamed result of stepping $c$ in $M_S$, for every choice bit.
+\end{theorem}
+
+\begin{theorem}[State renaming preserves guarded runs]
+\lean{Turing.NDTM.runWith_mapState_of_agreeOn}
+\label{Turing.NDTM.runWith_mapState_of_agreeOn}
+\leanok
+\uses{Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.NDTM, Turing.NDTM.runWith, Turing.NDTM.runWith_cons, Turing.NDTM.stepWith_mapState_of_agreeOn}
+\difficulty{5}
+Let $S$ and $H$ be state sets, let $\Gamma$ be an alphabet, and let $k$ be the number of
+work tapes. Suppose $M_{\mathrm{src}}$ and $M_{\mathrm{host}}$ are nondeterministic
+machines over $\Gamma$, with state sets $S$ and $H$, respectively, and let
+$e:S\hookrightarrow H$ be an embedding and $G\subseteq S$. Assume that for every choice
+bit, every $q\in G$, and every input and work-tape reading, the host transition at
+$e(q)$ is the source transition at $q$ with its successor state renamed by $e$. For a
+source configuration $c$ on input $x$ and a choice word $w$, suppose every state reached
+from $c$ under each prefix of $w$ of length strictly less than $|w|$ belongs to $G$
+whenever the run has a state; then the host run from the state-renamed configuration
+$e(c)$ under $w$ equals the source run from $c$ under $w$ with its state renamed by $e$.
+\end{theorem}
+
+\begin{theorem}[Deterministic runs under state renaming]
+\lean{Turing.NDTM.runWith_mapState_of_agreeOn_det}
+\label{Turing.NDTM.runWith_mapState_of_agreeOn_det}
+\leanok
+\uses{Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.toNDTM, Turing.MultiTapeTM.toNDTM_runWith, Turing.NDTM, Turing.NDTM.runWith, Turing.NDTM.runWith_mapState_of_agreeOn}
+\difficulty{3}
+Let $S$ and $H$ be state sets, let $\Gamma$ be an alphabet, and let $k$ be the number of
+work tapes. Suppose $M_{\mathrm{src}}$ is a deterministic multi-tape machine over
+$\Gamma$ with state set $S$, and $M_{\mathrm{host}}$ is a nondeterministic multi-tape
+machine over $\Gamma$ with state set $H$. Let $e:S\hookrightarrow H$ be an embedding and
+$G\subseteq S$. Assume that for every choice bit, every $q\in G$, and every input and
+work-tape reading, the host transition at $e(q)$ equals the deterministic source
+transition at $q$ with its successor state renamed by $e$. For a source configuration
+$c$ on input $x$ and a choice word $w$, suppose every state reached by the deterministic
+source run after $u$ steps belongs to $G$ whenever $u<|w|$ and that run has a state.
+Then the host run from $e(c)$ under $w$ equals the deterministic source configuration
+after $|w|$ steps, with its state renamed by $e$.
+\end{theorem}
+
+\begin{theorem}[Agreement with a fixed-choice run]
+\lean{Turing.NDTM.runWith_eq_fixChoice_runFrom}
+\label{Turing.NDTM.runWith_eq_fixChoice_runFrom}
+\leanok
+\uses{Turing.Action, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.MultiTapeTM.runFrom, Turing.NDTM, Turing.NDTM.fixChoice, Turing.NDTM.runWith, Turing.NDTM.runWith_mapState_of_agreeOn_det}
+\difficulty{5}
+Let $M$ be a nondeterministic multi-tape Turing machine, let $b$ be a Boolean choice
+bit, let $w$ be a finite Boolean word, and let $c$ be a configuration on a fixed input.
+Suppose that at every time $j<|w|$, if the run of the machine that always uses choice
+$b$ from $c$ has state $q$, then the two transitions of $M$ at state $q$ agree for every
+input symbol and tuple of work-tape symbols. Then running $M$ from $c$ under $w$ gives
+the same configuration as running the machine with choice fixed to $b$ for $|w|$ steps.
+\end{theorem}
+
+\begin{definition}[Relabeling machine states]
+\lean{Turing.NDTM.relabelState}
+\label{Turing.NDTM.relabelState}
+\leanok
+\uses{Turing.Action.mapState, Turing.NDTM}
+Given a nondeterministic Turing machine with state set $S$ and an equivalence $e:S\simeq
+S'$, relabel its states using $e$: the new initial state is the image of the old initial
+state, and each transition is obtained by translating its input state back along $e$ and
+its successor state forward along $e$.
+\end{definition}
+
+\begin{theorem}[State relabelling commutes with runs]
+\lean{Turing.NDTM.relabelState_runWith}
+\label{Turing.NDTM.relabelState_runWith}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.mapState, Turing.NDTM, Turing.NDTM.relabelState, Turing.NDTM.runWith, Turing.NDTM.runWith_mapState_of_agreeOn}
+\difficulty{1}
+Let $M$ be a nondeterministic multi-tape Turing machine over an alphabet $\Gamma$ with
+state set $S$, let $e:S\simeq S'$ be a bijection of state sets, and let $c$ be a
+configuration of $M$ on an input word $x$. For every finite Boolean choice word $w$,
+running the machine obtained by relabelling states by $e$ from the configuration with
+its state relabelled by $e$ gives the same configuration as running $M$ from $c$ under
+$w$ and then relabelling the resulting state by $e$.
+\end{theorem}
+
+\begin{lemma}[Input symbol under a truncated input]
+\lean{Turing.NDTM.inputSymbol_take_eq}
+\label{Turing.NDTM.inputSymbol_take_eq}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.inputSymbolInner}
+\difficulty{5}
+Let $x$ be a word over an alphabet $\Gamma$, let $m$ be a natural number, and let $c$ be
+a configuration on input $x$ and $c'$ a configuration on the prefix of $x$ of length at
+most $m$. If the two input-head positions are equal and the position in $c$ is at most
+$m$, then the symbols read under the input heads are equal.
+\end{lemma}
+
+\begin{lemma}[Value of the Clamped Head Movement]
+\lean{Turing.NDTM.moveInputPos_val}
+\label{Turing.NDTM.moveInputPos_val}
+\leanok
+\uses{Turing.moveInputPos}
+\difficulty{3}
+For every natural number $N$, every head position $q$ among the $N+2$ positions, and
+every sign $s\in\{-1,0,1\}$, the position after the clamped movement has value
+$\min\bigl(((q+s)\text{ computed in }\mathbb{Z})\text{ and converted to a natural
+number},\,N+1\bigr)$.
+\end{lemma}
+
+\begin{lemma}[Agreement of Clamped Head Movements]
+\lean{Turing.NDTM.moveInputPos_val_take}
+\label{Turing.NDTM.moveInputPos_val_take}
+\leanok
+\uses{Turing.NDTM.moveInputPos_val, Turing.moveInputPos}
+\difficulty{4}
+Let $n,n'$ be natural numbers, let $p$ be a position among the $n+2$ head positions, and
+let $p'$ be a position among the $n'+2$ head positions. Suppose $p'$ and $p$ have the
+same value, $n'\le n$, and either $p\le n'$ or $n'=n$. For every sign $s\in\{-1,0,1\}$,
+moving from either position by $s$ with the respective boundary clamping gives equal
+values, and the resulting value is at most $p+1$.
+\end{lemma}
+
+\begin{lemma}[Agreement of one step on a truncated input]
+\lean{Turing.NDTM.stepWith_take_agree}
+\label{Turing.NDTM.stepWith_take_agree}
+\leanok
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.NDTM, Turing.NDTM.inputSymbol_take_eq, Turing.NDTM.moveInputPos_val_take, Turing.NDTM.stepWith, Turing.NDTM.stepWith_of_halt}
+\difficulty{5}
+Let $M$ be a nondeterministic machine with $k$ work tapes, symbol alphabet $\Gamma$,
+state set $S$, and input word $x$. Let $m$ be a natural number, $b$ a choice bit, and
+$c$ a configuration on $x$. Let $c'$ be a configuration on the prefix of $x$ of length
+at most $m$. Suppose that $c$ and $c'$ have equal states, equal input-head positions,
+equal work tapes, equal work-tape head positions, and equal outputs, and that the
+input-head position of $c$ is at most $m$. Then after one step under choice $b$, these
+five components still agree between the two runs; also, the input-head position after
+stepping from $c$ is at most its previous position plus one.
+\end{lemma}
+
+\begin{lemma}[Agreement of runs on truncated inputs]
+\lean{Turing.NDTM.runWith_take_agree}
+\label{Turing.NDTM.runWith_take_agree}
+\leanok
+\uses{Turing.Cfg, Turing.NDTM, Turing.NDTM.runWith, Turing.NDTM.runWith_cons, Turing.NDTM.stepWith_take_agree}
+\difficulty{4}
+Let $M$ be a nondeterministic multi-tape Turing machine over an alphabet $\Gamma$, let
+$x$ be an input word, and let $m\in\mathbb{N}$. For every choice word $w$, configuration
+$c$ on input $x$, and configuration $c'$ on the truncated input consisting of the first
+$m$ symbols of $x$, suppose $c$ and $c'$ have equal states, input-head positions, work
+tapes, work-tape head positions, and outputs, and the input-head position of $c$ plus
+$|w|$ is at most $m+1$. Then the runs from $c$ and $c'$ under $w$ agree in all five of
+these components: state, input-head position, work tapes, work-tape head positions, and
+output.
+\end{lemma}
+
+\begin{theorem}[Runs on a truncated input]
+\lean{Turing.NDTM.runWith_initCfg_take}
+\label{Turing.NDTM.runWith_initCfg_take}
+\leanok
+\uses{Turing.NDTM, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_take_agree}
+\difficulty{3}
+Let $M$ be a nondeterministic multi-tape Turing machine over an alphabet $\Gamma$ with
+state set $S$, let $x$ be an input word, and let $m$ be a natural number. For any
+Boolean choice word $w$ with $|w|\le m$, the run from the initial configuration on $x$
+and the run from the initial configuration on the prefix of $x$ of length $m$ have equal
+states, input-head positions, work-tape contents, work-tape head positions, and outputs.
+\end{theorem}

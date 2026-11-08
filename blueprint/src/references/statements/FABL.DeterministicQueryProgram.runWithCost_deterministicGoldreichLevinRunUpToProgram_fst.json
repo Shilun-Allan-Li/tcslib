@@ -1,0 +1,18 @@
+{
+ "lean_name": "FABL.DeterministicQueryProgram.runWithCost_deterministicGoldreichLevinRunUpToProgram_fst",
+ "key": "07de1cd435914376",
+ "kind": "theorem",
+ "title": "Output of the truncated query run",
+ "statement": "Let $n,a,d,s$ be positive integers with $2a\\le d$ and $s\\ge1$, and let the target be a Boolean function on the sign cube of dimension $n$. For every integer $k\\ge0$, running the deterministic Goldreich–Levin query program truncated at stage $k$ returns, as its output component, the state obtained by the following recursion: start with active family $\\{\\varnothing\\}$ and empty trace; at each stage below $n$, if the active family is absent, keep the state, and if its size exceeds the active cap, replace it by the absent state while retaining the trace. Otherwise append the stage's estimate records to the trace and refine the active family using those estimates. After stage $n$, keep the state unchanged.",
+ "hypotheses_covered": [
+  "Positive output dimension $n$",
+  "Positive accuracy numerator $a$",
+  "Accuracy constraint $2a\\le d$",
+  "Fourier bound $s\\ge1$",
+  "A Boolean target on the sign cube"
+ ],
+ "confidence": "low",
+ "caveat": "The recursion's estimate-record construction and refinement rule are supplied as named definitions but their informal descriptions are absent, so this paraphrase summarizes the state transition rather than expanding those rules.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

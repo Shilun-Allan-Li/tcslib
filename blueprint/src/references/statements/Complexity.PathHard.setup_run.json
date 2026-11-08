@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.PathHard.setup_run",
+ "key": "dd8cc6648fb52495",
+ "kind": "theorem",
+ "title": "Bounded setup run",
+ "statement": "Let $a,b,f,X,Y,B$ be natural numbers with $a\\le b$, $2X+2\\le Y$, and $Y+8\\bigl(2^{b\\ell(X)+f}\\bigr)^2\\le B$. For any Boolean mode, finite nondeterministic Turing machine $N$, and Boolean word $y$, the register program with its oracle determined by $N$ has a finite run from the copy phase, starting with $y$-register $Y$, pointer $2X+2$, and all other registers zero, to the width-check phase. Its final registers are $Y$, $2X+2$, $X$, $0$, $0$, $a\\ell(X)$, $b\\ell(X)+f$, $2\\cdot2^{b\\ell(X)+f}$, $2(2^{b\\ell(X)+f})^2$, $4(2^{b\\ell(X)+f})^2$, $2X+2$, $0$, $0$, $0$, $0$, in register order; at every configuration before the endpoint, the program's guard holds and every register is at most $B$.",
+ "hypotheses_covered": [
+  "$a,b,f,X,Y,B$ are natural numbers",
+  "$a\\le b$",
+  "$2X+2\\le Y$",
+  "$Y+8(2^{b\\ell(X)+f})^2\\le B$",
+  "Boolean mode",
+  "finite nondeterministic Turing machine $N$",
+  "Boolean input word $y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,X,Y,B$ be natural numbers with $a\\le b$, $2X+2\\le Y$, and\n$Y+8\\bigl(2^{b\\ell(X)+f}\\bigr)^2\\le B$. For any Boolean mode, finite nondeterministic\nTuring machine $N$, and binary input $y$, the specified register program, using the\noracle determined by $N$, has a finite run from its copy phase with registers $y=Y$,\n$p=2X+2$, and all other registers zero to its width-check phase with registers $y=Y$,\n$p=2X+2$, $x=X$, $s=a\\ell(X)$, $e=b\\ell(X)+f$, $n=2\\cdot2^e$, $m=2(2^e)^2$,\n$k=4(2^e)^2$, and all other registers zero; at every configuration before the final one,\nits instruction satisfies the guard and every register is at most $B$."
+}

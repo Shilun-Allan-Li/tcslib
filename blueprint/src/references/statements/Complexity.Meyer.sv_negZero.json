@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.Meyer.sv_negZero",
+ "key": "173bc9c01151ced7",
+ "kind": "theorem",
+ "title": "Symmetric answers at zero",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean symbols, let $x$ be a Boolean input, and let $W$ be a natural number. Suppose a table of Boolean answers, indexed by machine-state or tape-symbol queries and two natural-number coordinates, satisfies every checker condition for all $t,a,j$ with $t,a<2^W$ and $j\\le |x|+1$, using the input bit supplied at position $j$. Then for every tape selector $\\tau$, every $t<2^W$, and the second coordinate $0$, the two symbol queries distinguished by the Boolean sign parameter have equal encoded answers: $\\mathrm{sv}(\\tau,\\mathrm{true},t,0)=\\mathrm{sv}(\\tau,\\mathrm{false},t,0)$.",
+ "hypotheses_covered": [
+  "A finite-tape machine over Boolean symbols",
+  "A Boolean input word and a natural number width W",
+  "The answer table satisfies every checker condition for all t,a<2^W and j≤|x|+1, with the supplied input-bit function",
+  "The time coordinate t is less than 2^W",
+  "The selector τ is either absent or names one of the machine's work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

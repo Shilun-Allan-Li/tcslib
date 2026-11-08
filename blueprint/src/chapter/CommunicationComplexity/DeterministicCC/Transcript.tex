@@ -32,7 +32,7 @@ contributes one Boolean bit together with the transcript of the chosen child pro
 \lean{CommunicationComplexity.Deterministic.Protocol.Transcript.output}
 \label{CommunicationComplexity.Deterministic.Protocol.Transcript.output}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript}
 Given a syntactic transcript $t$ of a protocol $p$, \texttt{Transcript.output}~$t$ returns
 the output value $\alpha$ attached to the leaf of the execution path described by $t$.
 \end{definition}
@@ -46,7 +46,7 @@ the output value $\alpha$ attached to the leaf of the execution path described b
 \statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript}
 For a syntactic transcript $t$ of $p$, the \emph{input set} $\mathrm{inputSet}(t)
 \subseteq X \times Y$ is the set of all input pairs $(x, y)$ whose execution of $p$
 follows exactly the path described by $t$.  It is defined recursively: for a terminal
@@ -55,7 +55,7 @@ where the current player's Boolean function matches the bit recorded in $t$ and 
 remaining pair belongs to the child transcript's input set.
 \end{definition}
 
-\begin{theorem}[Every transcript's input set is a rectangle]
+\begin{theorem}[Transcript input sets are rectangles]
 \lean{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet_isRectangle}
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{
   pdf-fa052d8c95c0-p005-b002,
@@ -63,6 +63,7 @@ remaining pair belongs to the child transcript's input set.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet_isRectangle}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Rectangle.IsRectangle}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -293,13 +294,11 @@ remaining pair belongs to the child transcript's input set.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p003-b002}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcriptSwap, CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
-Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
-and $Y$ (Bob) with output type $\alpha$, and let $t$ be a syntactic transcript of $p$.
-Then the input set of $t$ — the set of all input pairs $(x, y) \in X \times Y$ whose
-execution of $p$ follows exactly the path recorded by $t$ — is a rectangle: there exist
-$A \subseteq X$ and $B \subseteq Y$ such that this set equals $A \times B$.
+Let $p$ be a deterministic two-party protocol with input types $X$ and $Y$ and output
+type $\alpha$, and let $t$ be a transcript of $p$. The set of input pairs that follow
+the path recorded by $t$ is a rectangle: there are sets $A\subseteq X$ and $B\subseteq
+Y$ such that this input set is $A\times B$.
 \end{theorem}
 
 \begin{definition}[Execute protocol to transcript]
@@ -311,22 +310,21 @@ $A \subseteq X$ and $B \subseteq Y$ such that this set equals $A \times B$.
 \statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p003-b002}
 \label{CommunicationComplexity.Deterministic.Protocol.transcript}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript}
 Given a protocol $p$ and an input pair $xy \in X \times Y$, \texttt{Protocol.transcript}~$p$~$xy$
 executes $p$ on $xy$ and returns the syntactic transcript reached, recording each Boolean
 message sent along the way.
 \end{definition}
 
-\begin{theorem}[Every input lies in the input set of its own transcript]
+\begin{theorem}[Input membership in its transcript set]
 \lean{CommunicationComplexity.Deterministic.Protocol.mem_transcript}
 \label{CommunicationComplexity.Deterministic.Protocol.mem_transcript}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcript}
 \difficulty{2}
-Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
-and $Y$ (Bob) with output type $\alpha$, and let $(x, y) \in X \times Y$ be an input
-pair. Executing $p$ on $(x, y)$ yields a syntactic transcript, and the pair $(x, y)$
-itself belongs to the input set of that transcript.
+For every deterministic two-party protocol $p$ and every input pair $(x,y)\in X\times
+Y$, the pair $(x,y)$ belongs to the input set of the transcript produced by executing
+$p$ on $(x,y)$.
 \end{theorem}
 
 \begin{theorem}[Transcript recovered from its input set]
@@ -334,7 +332,7 @@ itself belongs to the input set of that transcript.
 \statementsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b003}
 \label{CommunicationComplexity.Deterministic.Protocol.transcript_eq_of_mem}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.Transcript.inputSet, CommunicationComplexity.Deterministic.Protocol.transcript}
 \difficulty{4}
 Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
 and $Y$ (Bob) with output type $\alpha$, let $t$ be a syntactic transcript of $p$, and
@@ -343,24 +341,24 @@ $t$, then executing $p$ on $(x, y)$ produces exactly the transcript $t$; that is
 $p.\mathrm{transcript}(x, y) = t$.
 \end{theorem}
 
-\begin{theorem}[Execution agrees with the transcript output]
+\begin{theorem}[Execution equals transcript output]
 \lean{CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output}
 \label{CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.output, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.output, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.transcript}
 \difficulty{2}
-Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
-and $Y$ (Bob) with output type $\alpha$, and let $(x, y) \in X \times Y$ be an input
-pair. Running $p$ on $x$ and $y$ produces the same value as first executing $p$ on
-$(x,y)$ to obtain its syntactic transcript and then reading off the output value
-attached to the leaf of that transcript.
+Let $X$, $Y$, and $\alpha$ be types, let $p$ be a deterministic two-party communication
+protocol with inputs in $X$ and $Y$ and outputs in $\alpha$, and let $(x,y)\in X\times
+Y$. Running $p$ on $(x,y)$ gives the same value as reading the output attached to the
+transcript produced by that execution.
 \end{theorem}
 
-\begin{theorem}[Transcript determines output]
+\begin{theorem}[Transcript determines protocol output]
 \lean{CommunicationComplexity.Deterministic.Protocol.run_eq_of_transcript_eq}
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p005-b005}
 \label{CommunicationComplexity.Deterministic.Protocol.run_eq_of_transcript_eq}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.output, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output, CommunicationComplexity.Deterministic.Protocol.transcript}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -596,14 +594,11 @@ attached to the leaf of that transcript.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p003-b002}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript.output, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.run_eq_transcript_output, CommunicationComplexity.Deterministic.Protocol.transcript, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{1}
-Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
-and $Y$ (Bob) with outputs in $\alpha$, and let $(x, y)$ and $(x', y')$ be two input
-pairs in $X \times Y$. If executing $p$ on $(x, y)$ produces the same syntactic
-transcript as executing $p$ on $(x', y')$, then $p$ returns the same output on both
-inputs: the value obtained by running $p$ on $(x, y)$ equals the value obtained by
-running $p$ on $(x', y')$.
+Let $X$, $Y$, and $\alpha$ be types, let $p$ be a deterministic two-party communication
+protocol with inputs in $X$ and $Y$ and outputs in $\alpha$, and take two input pairs
+$(x,y),(x',y')\in X\times Y$. If the protocol produces the same transcript on both
+pairs, then its outputs on the two pairs are equal.
 \end{theorem}
 
 \begin{theorem}[Sum bound from powers of two]
@@ -618,7 +613,7 @@ a + b \le 2^{1 + \max(c_a, c_b)}.
 \]
 \end{theorem}
 
-\begin{theorem}[Transcript count bounded by communication complexity]
+\begin{theorem}[Transcript count bound]
 \lean{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity}
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{
   pdf-fa052d8c95c0-p003-b005,
@@ -626,6 +621,7 @@ a + b \le 2^{1 + \max(c_a, c_b)}.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux, CommunicationComplexity.Deterministic.Protocol.complexity}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -856,14 +852,9 @@ a + b \le 2^{1 + \max(c_a, c_b)}.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p003-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.Transcript, CommunicationComplexity.Deterministic.Protocol.card_transcript_le_two_pow_complexity_aux, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{4}
-For every deterministic two-party communication protocol $p$ with input types $X$ and
-$Y$ and output type $\alpha$, the number of syntactic transcripts of $p$ is at most $2$
-raised to its communication complexity:
-\[
-\abs{\mathrm{Transcript}(p)} \le 2^{\mathrm{complexity}(p)}.
-\]
+For every deterministic two-party protocol $p$, the number of its syntactic transcripts
+is at most $2$ raised to its communication complexity.
 \end{theorem}
 
 \begin{definition}[Transcript swap]
@@ -881,7 +872,7 @@ node as the opposite player.
 \lean{CommunicationComplexity.Deterministic.Protocol.transcriptSwap_injective}
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptSwap_injective}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.sigma_map_bool_injective, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{4}
 Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
 and $Y$ (Bob) with output type $\alpha$, and let $p'$ be the role-swapped protocol
@@ -922,7 +913,7 @@ Boolean message sequence while re-routing through the input maps.
 \lean{CommunicationComplexity.Deterministic.Protocol.transcriptComap_injective}
 \label{CommunicationComplexity.Deterministic.Protocol.transcriptComap_injective}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.transcriptComap, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.sigma_map_bool_injective, CommunicationComplexity.Deterministic.Protocol.transcriptComap, CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
 \difficulty{4}
 Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)
 and $Y$ (Bob) with output type $\alpha$, and let $f_X : X' \to X$ and $f_Y : Y' \to Y$
@@ -952,14 +943,14 @@ syntactic transcript produced by running $p'$ directly on $(x', y')$.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{theorem}[Fibrewise injectivity on Boolean sigma types]
+\begin{theorem}[Injectivity of a Boolean-indexed sum map]
 \lean{CommunicationComplexity.Deterministic.Protocol.sigma_map_bool_injective}
 \label{CommunicationComplexity.Deterministic.Protocol.sigma_map_bool_injective}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol.transcriptSwap}
-Let $\beta, \gamma : \{\mathrm{false}, \mathrm{true}\} \to \mathrm{Type}$ be two
-Boolean-indexed families of types and let $g_b : \beta_b \to \gamma_b$ be a map for each
-$b \in \{\mathrm{false}, \mathrm{true}\}$. If every $g_b$ is injective, then the map
-$\Sigma_b\, \beta_b \to \Sigma_b\, \gamma_b$ sending $(b, t)$ to $(b, g_b(t))$ --- which
-keeps the Boolean index and applies the family fibrewise --- is injective.
+\difficulty{4}
+Let $\beta$ and $\gamma$ be families of types indexed by
+$b\in\{\mathrm{false},\mathrm{true}\}$, and for each $b$ let $g_b:\beta_b\to\gamma_b$ be
+an injective map. The map from pairs $(b,t)$ with $t\in\beta_b$ to pairs $(b,g_b(t))$ is
+injective.
 \end{theorem}

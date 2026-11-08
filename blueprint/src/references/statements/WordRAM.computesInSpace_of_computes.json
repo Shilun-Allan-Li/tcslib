@@ -1,0 +1,17 @@
+{
+ "lean_name": "WordRAM.computesInSpace_of_computes",
+ "key": "8fa29c3955771863",
+ "kind": "theorem",
+ "title": "Space Simulation by a Turing Machine",
+ "statement": "Let $P$ be an extended word-RAM program, let $g$ map Boolean lists to Boolean lists, and let $c,F_0\\in\\mathbb{N}$. Suppose that for every Boolean input list $x$, there are a time bound $t$ and a Boolean value $v$ such that $P$, started with word width $c(\\lfloor\\log_2 |x|\\rfloor+1)$ and no random bits, halts in fewer than $t$ steps, outputs $g(x)$, and touches at most $F_0$ memory addresses. Then there are a finite-state Turing machine $M$ and $a\\in\\mathbb{N}$ such that, for every Boolean input $x$, $M$ halts with output $g(x)$ and uses at most $a(\\lfloor\\log_2 |x|\\rfloor+1)$ work-tape cells.",
+ "hypotheses_covered": [
+  "A program $P$",
+  "A function $g$ from Boolean lists to Boolean lists",
+  "Natural numbers $c$ and $F_0$",
+  "For every Boolean input $x$, there exist $t$ and $v$ satisfying the stated halting, output, time, and space conditions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_initRest_run",
+ "key": "2452e5048ed3c879",
+ "kind": "theorem",
+ "title": "Initialization of the remaining record fields",
+ "statement": "Let $m>0$, let $x$ be a Boolean input word, and choose distinct tape indices $\\mathrm{src},\\mathrm{dst}<m$, symbols $\\mathrm{zero},\\mathrm{one},\\mathrm{first},\\mathrm{last}\\in\\Gamma$, and words $u,v$ over $\\Gamma$ with $|u|>0$. Let $k$ be a nonnegative integer and let $d$ be an $m$-tape configuration in the initial write state. Suppose the source tape, relative to its head, encodes the two fields $u,v$ joined by a blank separator, and the destination tape is blank throughout the specified range from offset $-1$ through the length of the joined output fields. Form the output fields from the one-symbol field $[\\mathrm{first}]$, the field beginning with $\\mathrm{one}$ followed by $|u|-1$ copies of $\\mathrm{zero}$, then $k$ copies of $v$, and finally the one-symbol field $[\\mathrm{last}]$, joining consecutive fields with blank separators. The initialization machine reaches its designated exit state at some time $t\\le 16|J|+8|v|+16$, where $J$ is the joined output word; it does not reach that exit state at any earlier time, and throughout times $z\\le t$ every work-tape head moves by at most $2|J|+2|v|+8$ from its initial position. At time $t$, the source tape is blank everywhere; the destination tape contains the encoding of $J$ on the interval from its initial head position through that position plus $|J|-1$; and every other tape cell retains its initial content.",
+ "hypotheses_covered": [
+  "$m$ is a positive integer",
+  "$x$ is a Boolean input word",
+  "$\\mathrm{src},\\mathrm{dst}<m$ and $\\mathrm{src}\\ne\\mathrm{dst}$",
+  "$\\mathrm{zero},\\mathrm{one},\\mathrm{first},\\mathrm{last}\\in\\Gamma$",
+  "$u,v$ are words over $\\Gamma$ and $|u|>0$",
+  "$k$ is a nonnegative integer",
+  "$d$ is an $m$-tape configuration on input $x$",
+  "$d$ has the initial write state",
+  "The source tape encodes the two fields $u,v$ joined by a blank separator",
+  "The destination tape is blank on the stated range from offset $-1$ through the joined output length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

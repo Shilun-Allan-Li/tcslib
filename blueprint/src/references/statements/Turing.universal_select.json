@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.universal_select",
+ "key": "c8ce6262f9d09bc9",
+ "kind": "lemma",
+ "title": "Exact-cost record selection",
+ "statement": "Let $x$ be a finite bit string, let the base configuration be a four-tape configuration on input $x$, let $i$ be an index from $0$ through $8$, and let the table be $l\\,G\\,B\\,r$. Suppose $G$ is the concatenation of the serialized records in a list of groups, each containing exactly nine one-work-tape binary machine actions; suppose $B$ is the concatenation of the serialized records of a list of actions of length $i$; and suppose the state tape encodes the number $g$ of groups in unary, with its cursor at $1$. Starting in the record-group phase with index $i$ and table cursor $|l|$, after exactly $2g+|G|+|B|+3$ steps the interpreter is in the action-reading phase at field $0$ with its bit register cleared, table cursor $|l|+|G|+|B|$, and state tape encoding $0$ in unary with cursor $1$; the other configuration data are inherited from the base configuration.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "The base configuration is a four-tape configuration on input $x$",
+  "$i$ is a finite index from $0$ through $8$",
+  "The table has form $l\\,G\\,B\\,r$",
+  "$G$ concatenates the serialized records of a list of groups",
+  "Every group has length $9$",
+  "$B$ concatenates the serialized records of a list of actions of length $i$",
+  "The state tape encodes the number of groups in unary, with cursor at $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table is $l \\cdot G \\cdot B \\cdot r$, where $G$ concatenates\nthe serialized transition records of $g$ groups of nine one-work-tape\nmachine actions each and $B$ concatenates the serialized records of a list\nof actions whose length is a read index $i \\in \\{0, \\dots, 8\\}$, and\nsuppose the state tape is the intact unary encoding of $g$ with state\ncursor $1$.  From the interpreter's record-group phase carrying $i$, with\ntable cursor $|l|$, exactly $2g + |G| + |B| + 3$ interpreter steps reach\nthe action-reading phase at field $0$ with a cleared bit register, table\ncursor $|l| + |G| + |B|$, state tape the intact unary encoding of $0$, and\nstate cursor $1$: the two table scans cost their serialized lengths, and\nthe destructive state count with its rewind costs $2g + 3$."
+}

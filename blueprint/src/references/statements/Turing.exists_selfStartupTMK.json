@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.exists_selfStartupTMK",
+ "key": "165d759c9909e986",
+ "kind": "theorem",
+ "title": "Variable-Tape Self-Description Startup",
+ "statement": "For every natural number $k$ and every effective code system $E$ assigning each binary string $\\alpha$ a deterministic binary machine with $k$ work tapes and a finite indexed state set, there are a natural number $K$, a finite state set $P$, a deterministic binary machine $R$ with $K+(k+2)$ work tapes, and an exit state in $P$ such that the following holds. For each $\\alpha$, there are natural numbers $T$ and $B$ so that, for every binary input $w$, after exactly $T$ steps on $\\langle\\alpha,w\\rangle$, $R$ is in the exit state, its input-head position is $1$, all work-head positions are $0$, and its output is empty; work tape $k$ stores the decoded machine's transition table, work tape $k+1$ stores its unary initial-state encoding shifted by two cells, and every other work-tape cell is blank. The exit state is not reached at any earlier time, the output remains empty through time $T$, and the total space used by time $T$ is at most $B$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$E$ assigns each binary string $\\alpha$ a machine with $k$ work tapes, Boolean symbols, and states indexed by $\\mathrm{Fin}(n+1)$ for some $n$",
+  "$E$ has a canonizer computing the serialized machine within its stated time bound",
+  "$K$ is a natural number",
+  "$P$ is finite and has decidable equality",
+  "$R$ has $K+(k+2)$ work tapes",
+  "$\\alpha$ is any binary string",
+  "$T$ and $B$ are natural numbers depending on $\\alpha$",
+  "$w$ is any binary input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every natural number $k$ and every effective code system assigning each binary\nstring $\\alpha$ a $k$-work-tape binary machine with finitely many indexed states, there\nexist a natural number $K$, a finite state set $P$, a deterministic binary machine $R$\nwith $K+k+2$ work tapes, and an exit state. For each $\\alpha$, there are natural numbers\n$T$ and $B$ such that, on every binary input $w$, after exactly $T$ steps on\n$\\langle\\alpha,w\\rangle$, the machine is in the exit state with input-head position $1$,\nempty output, and all work-head positions zero; work tape $k$ stores the decoded\nmachine's transition table, tape $k+1$ stores its unary initial-state encoding shifted\nby two cells, and every other tape is blank. The exit state is not reached earlier, the\noutput remains empty through time $T$, and the total space used by time $T$ is at most\n$B$."
+}

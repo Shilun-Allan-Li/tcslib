@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.valPlain_run",
+ "key": "7c81366a39e65652",
+ "kind": "lemma",
+ "title": "Validation of a plain input",
+ "statement": "Let $P$ be a register program with oracle $\\mathcal O$, $r$ a register, $p\\in\\mathbb Z$, and $c$ a configuration on input $x$. Suppose the transition identities $hU0,hU1,hS,hW0,hWF,hWT,h_1,h_2$ hold at the specified states and none of those states is an oracle-call state, as asserted by $cU0,cU1,cS,cW0,cWF,cWT,c_1,c_2$. Then the run from state $vU0$, input-head position $1$, and register-head position $p$ satisfies the following: if $x$ is a valid plain encoding, it reaches state $next$ at input-head position $1$; if $x$ is not a valid plain encoding, it halts with a rejecting output. In either case, the run preserves the indicated register-head positions and avoids oracle-call states before its endpoint.",
+ "hypotheses_covered": [
+  "Transition identities hU0, hU1, hS, hW0, hWF, hWT, h₁, and h₂",
+  "No oracle calls at the specified states, as asserted by cU0, cU1, cS, cW0, cWF, cWT, c₁, and c₂",
+  "c is a configuration on input x",
+  "r is a register and p is an integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

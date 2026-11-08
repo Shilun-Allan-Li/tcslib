@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.ps_scmp",
+ "key": "e243ed8cf7127355",
+ "kind": "lemma",
+ "title": "Doubled word scan and continuation",
+ "statement": "Let $x$ be a finite bit string, $B$ a natural number, $K$ a proposition, and $\u001bσ=(p,n,a,b,s,t,tmp,st,nx)$ a program register state. Suppose every register of $\u001bσ$ is at most $B$ and $p+2|\\mathrm{bits}(tmp)|+2\\le B$. Assume that whenever the word of binary digits of $tmp$ is doubled at position $p$ in $x$, the program started at the target stage with pointer $p+2|\\mathrm{bits}(tmp)|+2$ and scratch register zero terminates with all registers bounded by $B$ and has an accepting computation exactly when $K$ holds. Then the program started at the scan stage in state $\u001bσ$ terminates with all registers bounded by $B$ and has an accepting computation exactly when both that doubled-word condition and $K$ hold.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$B$ is a natural number",
+  "$K$ is a proposition",
+  "all nine registers of $\\u001bσ$ are at most $B$",
+  "$p+2|\\mathrm{bits}(tmp)|+2\\le B$",
+  "whenever the binary word of $tmp$ is doubled at position $p$ in $x$, the stated target-stage configuration has the specified termination, register bound, and acceptance semantics"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $K$ a proposition, and let $\\sigma$ be a\nconfiguration of nine natural-number registers, each at most $B$. Suppose the input\npointer $p$ in $\\sigma$ satisfies $p+2|\\mathrm{bits}(\\mathrm{tmp})|+2\\le B$. If,\nwhenever the bits of $\\mathrm{tmp}$ occur in $x$ starting at position $p$ with each bit\nrepeated twice and followed by $01$, the fixed program started after that block—with its\npointer advanced by $2|\\mathrm{bits}(\\mathrm{tmp})|+2$ and its scratch register set to\nzero—terminates within the register bound and accepts exactly when $K$ holds, then\nstarting the program at the scan stage in configuration $\\sigma$ terminates within the\nregister bound and accepts exactly when both that doubled-block condition and $K$ hold."
+}

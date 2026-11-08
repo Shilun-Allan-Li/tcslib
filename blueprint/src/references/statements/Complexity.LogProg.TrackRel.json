@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.TrackRel",
+ "key": "3c8b36acd894025f",
+ "kind": "structure",
+ "title": "Relation between simulated tracks",
+ "statement": "Let $c_0$ be a configuration with $m$ work tapes, and let $g$ and $d$ be configurations of machines with respectively $m+k_D$ and $k_D$ work tapes, on the input and virtual input determined by a call specification and register-word assignment. A track relation at segment $s$, parity $a$, direction $b$, and track position $t$ requires that $s$ be among the call's segments, that $t$ be valid and consistent there, and that the simulated and virtual input-head positions agree with their prescribed positions. It also requires the first $m$ work tapes and their head positions in $g$ to match $c_0$ and the prescribed register positions, the remaining tapes and head positions in $g$ to match those of $d$, and the output of $g$ to equal the output of $c_0$.",
+ "hypotheses_covered": [
+  "A configuration c₀ with m work tapes and input x",
+  "A program node l",
+  "A call specification and register-word assignment W",
+  "A configuration g with m+k_D work tapes on x",
+  "A configuration d with k_D work tapes on the virtual call input",
+  "A natural-number segment index s",
+  "Boolean parity and direction parameters",
+  "A track position t"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet omits the definitions of valid track positions, prescribed virtual positions, and the register-position function, so those clauses can only be summarized.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

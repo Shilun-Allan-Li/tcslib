@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.emod_meets",
+ "key": "2d0688fcfbb0c3e4",
+ "kind": "theorem",
+ "title": "Bounded modular reduction",
+ "statement": "Let $P$ be a program with word, space, and depth limits, and let $p$ be a procedure index. Suppose procedure $p$ is the modular-reduction body. Let $M,V,fr$ be natural numbers such that $1\\le M$, the space limit is at most the word limit, $4V+4M+16$ is at most the word limit, and $fr+\\bigl(\\lfloor\\log_2(V+1)\\rfloor+2\\bigr)$ is at most the space limit. For any initial memory $\\mu$ and integer $x$ with $|x|\\le V$, running this procedure at depth $d$ on the arguments $(x,M,fr)$ terminates within $43$ times the binary bit length of $\\lfloor |x|/M\\rfloor$, plus $34$, steps. It returns the remainder of $x$ modulo $M$ and leaves every memory location below $fr$ unchanged.",
+ "hypotheses_covered": [
+  "Procedure $p$ is exactly the modular-reduction body",
+  "$1\\le M$",
+  "Space limit is at most the word limit",
+  "$4V+4M+16$ is at most the word limit",
+  "$fr+\\bigl(\\lfloor\\log_2(V+1)\\rfloor+2\\bigr)$ is at most the space limit",
+  "$|x|\\le V$",
+  "The initial memory $\\mu$ is arbitrary",
+  "Execution is at depth $d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

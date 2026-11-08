@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.clockTM_loop",
+ "key": "55f3d76d1f843000",
+ "kind": "theorem",
+ "title": "Clocked simulation of a bounded computation",
+ "statement": "Let $K$ and $W$ be finite Turing machines over the Boolean alphabet, let $x$ and $s$ be Boolean words, and let $c$ be a configuration of $W$ on input $x$. If $c$ is in state $q$, then for every assignment of contents and head positions to the work tapes of $K$, the clock machine started with simulated configuration $c$, an output register recording the contents of $c$’s output tape, and counter tape containing $s$ halts within $4v+2(|s|-r)+|s|+1$ steps and outputs the one-bit word whose bit is true exactly when it is not the case that after $v$ steps from $c$, $W$ has halted and its output is the one-bit word true; here $v$ is the integer represented by $s$ in least-significant-bit-first order and $r$ is the number of true bits in $s$.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machines $K$ and $W$",
+  "Boolean input word $x$",
+  "Boolean word $s$",
+  "configuration $c$ of $W$ on input $x$",
+  "state $q$ with $c$ in state $q$",
+  "contents function for the work tapes of $K$",
+  "head-position function for the work tapes of $K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

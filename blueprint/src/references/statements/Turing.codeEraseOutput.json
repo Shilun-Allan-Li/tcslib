@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.codeEraseOutput",
+ "key": "e3a192189efaccda",
+ "kind": "lemma",
+ "title": "Erasure law for output fields",
+ "statement": "For every bit string $x$, discarding the decoded optional output and retaining only the remaining suffix from the optional-output reader gives exactly the result of the two-bit skipper that accepts a pair $(a,b)$ precisely when $a=1$ or $b=0$.",
+ "hypotheses_covered": [
+  "A bit string x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit string $x$: discarding the parsed value from the optional-output\nreader yields exactly the two-bit skipper whose validity predicate rejects only\nthe pair $01$."
+}

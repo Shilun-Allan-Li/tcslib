@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.Contract.seq_positive",
+ "key": "f50ecbb42575892b",
+ "kind": "theorem",
+ "title": "Sequential Composition Has Positive Duration",
+ "statement": "Let $M_1,M_2$ be machines with the same number of work tapes and input alphabet, and state sets $S_1,S_2$. Let $C_1$ be a contract for $M_1$ from entry state $e_1$ with exit set $\\\\{\\\\mathrm{some}(f_1)\\\\}$, and let $C_2$ be a contract for $M_2$ from entry state $e_2$ with exit set $X_2$. Let $\\\\ell$ map the data values of $C_1$ to those of $C_2$, and suppose that for every admissible $C_1$ start in state $e_1$, the endpoint of $C_1$, with its state replaced by $e_2$, satisfies the $C_2$ precondition at data value $\\\\ell(i)$. Then the sequentially composed contract, which runs $C_1$, takes one transition to switch machines, and then runs $C_2$, has strictly positive assigned running time for every admissible start in its entry state.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ have the same number of work tapes and input alphabet",
+  "$C_1$ is a contract for $M_1$ with entry $e_1$ and singleton exit set $\\\\{\\\\mathrm{some}(f_1)\\\\}$",
+  "$C_2$ is a contract for $M_2$ with entry $e_2$ and exit set $X_2$",
+  "$\\\\ell$ maps the data values of $C_1$ to those of $C_2$",
+  "Every admissible $C_1$ endpoint, with state replaced by $e_2$, satisfies the corresponding $C_2$ precondition"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_1,M_2$ be machines with respective entry and exit states\n$\\mathrm{entry}_1,\\mathrm{exit}_1$ for $M_1$, and entry state $\\mathrm{entry}_2$ for\n$M_2$. Let $C_1$ be a contract for $M_1$ with sole exit state $\\mathrm{exit}_1$, and let\n$C_2$ be a contract for $M_2$ with exit set $X_2$. Suppose a map from the indices of\n$C_1$ to those of $C_2$ sends every admissible $C_1$ start to a configuration satisfying\nthe $C_2$ precondition, after the $C_1$ endpoint has been relabeled constantly to\n$\\mathrm{entry}_2$. Then the sequentially composed contract $C_1;C_2$ has strictly\npositive duration for every admissible start in its entry state."
+}

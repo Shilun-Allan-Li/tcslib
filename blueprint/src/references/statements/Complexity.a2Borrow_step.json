@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a2Borrow_step",
+ "key": "5982d74842538c23",
+ "kind": "lemma",
+ "title": "Single borrow transition",
+ "statement": "Let $x$ be a Boolean input word, let $p$ be a valid input-head position, and let $\\mathrm{out}$ and $\\mathrm{pre}$ be Boolean words. If the borrow-phase machine has its work head at cell $|\\mathrm{pre}|$ and its tape contains $\\mathrm{pre}\\,\\mathrm{bs}$, one step leaves the input position and output unchanged and acts as follows. If $\\mathrm{bs}$ is empty, it enters the borrow-result state with failure and moves the work head to $|\\mathrm{pre}|-1$, leaving the tape unchanged. If $\\mathrm{bs}$ begins with $1$, it enters the borrow-result state with success, changes that bit to $0$, and moves the head to $|\\mathrm{pre}|-1$. If $\\mathrm{bs}$ begins with $0$, it remains in the borrow state, changes that bit to $1$, and moves the head to $|\\mathrm{pre}|+1$. No output is emitted in any case.",
+ "hypotheses_covered": [
+  "Arbitrary output word",
+  "Arbitrary input word",
+  "Valid input-head position",
+  "Arbitrary prefix and suffix words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every emitted prefix, every input and position, and every counter word split as $p\\,s$: one step of the countdown emitter in the borrow state with work head at cell $|p|$ clears a leading $1$ of $s$ and turns to rewind with success, converts a leading $0$ of $s$ to $1$ and advances, or, at the blank end of the word, turns to rewind with failure; in each case the width is preserved and nothing is emitted."
+}

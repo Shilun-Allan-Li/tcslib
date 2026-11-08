@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.splitEmbed_cut",
+ "key": "e79cc138858da9a7",
+ "kind": "lemma",
+ "title": "Anchor-free simulation up to a terminal state",
+ "statement": "Let source and host machines have the same number of work tapes and Boolean tape symbols, and let $\\mathrm{emb}$ map source states to host states. Fix a host anchor state and a decidable predicate $\\mathrm{stop}$ on source states. Assume no embedded source state is the anchor; every source configuration whose state satisfies $\\mathrm{stop}$ is fixed by one source step; and, for every state not satisfying $\\mathrm{stop}$ and every input and work-tape reading, the host transition from the embedded state is the source transition with its successor state mapped by $\\mathrm{emb}$. If source configuration $c$ reaches configuration $d$ after exactly $T$ steps and $d$ has a state satisfying $\\mathrm{stop}$, then there is a time $t\\le T$ at which the host run from the state-renamed configuration $c$ equals the state-renamed configuration $d$, and every host configuration from time $0$ through $t$ avoids the anchor state.",
+ "hypotheses_covered": [
+  "Source and host machines have the same number of work tapes and Boolean symbols",
+  "State map $\\mathrm{emb}$ and host anchor state",
+  "Decidable terminal-state predicate $\\mathrm{stop}$",
+  "No embedded source state equals the anchor",
+  "Source step fixes every configuration with a terminal state",
+  "Host transition agreement on embedded nonterminal states for every input and work reading",
+  "Configurations $c,d$ and natural-number duration $T$",
+  "Configuration $d$ has a state satisfying $\\mathrm{stop}$",
+  "Source run from $c$ at time $T$ equals $d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a source machine have a class of terminal control states on which it\nstalls, and let a host machine agree, on the images of non-terminal states\nunder a state embedding, with the mapped source transitions, where no\nembedded state equals a distinguished host anchor. If the source run from $c$\nreaches a terminal configuration $d$ within $T$ steps, then there is a\n$t \\le T$ such that the host run from the embedded $c$ reaches the embedded\n$d$ at time $t$ and the entire host trace up to time $t$ avoids the anchor."
+}

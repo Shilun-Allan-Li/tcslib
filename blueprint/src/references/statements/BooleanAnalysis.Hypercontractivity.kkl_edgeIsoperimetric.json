@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.kkl_edgeIsoperimetric",
+ "key": "6c28e4061642a6a5",
+ "kind": "theorem",
+ "title": "Influence bound from variance and total influence",
+ "statement": "Let $n$ be a natural number and let $f:\\{0,1\\}^n\\to\\mathbb R$ take only the values $-1$ and $1$. Assume $\\operatorname{Var}(f)>0$, and set $I=I[f]/\\operatorname{Var}(f)$, where $I[f]$ is the sum of the coordinate influences. Then $\\frac{9}{I^2}9^{-I}\\le M(f)$, where $M(f)$ is the supremum of the absolute coordinate influences (with the empty supremum interpreted as $0$).",
+ "hypotheses_covered": [
+  "The dimension $n$ is a natural number",
+  "$f$ is a real-valued function on the $n$-dimensional Boolean cube",
+  "$f(x)\\in\\{-1,1\\}$ for every cube point $x$",
+  "$\\operatorname{Var}(f)>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f:\\{0,1\\}^n\\to\\{-1,1\\}$ be a function on the uniform Boolean cube with variance $V>0$, and put $a=I(f)/V$. Then $(9/a^2)9^{-a}\\le\\max_{i\\in[n]}|I_i(f)|$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$."
+}

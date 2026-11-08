@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.exists_sparse_ptf_representation",
+ "key": "c8974606b323b52f",
+ "kind": "theorem",
+ "title": "Sparse polynomial threshold representation",
+ "statement": "Let $n$ be a positive integer and let $f:\\{0,1\\}^n\\to\\mathbb R$ take values in $\\{-1,1\\}$. Write $\\widehat f(S)$ for its Fourier–Walsh coefficient at $S\\subseteq[n]$, and set $s=\\lceil 4n(\\sum_{S\\subseteq[n]}|\\widehat f(S)|)^2\\rceil$. Then $f$ has a polynomial threshold representation with at most $s$ nonzero Walsh coefficients, and it is also the threshold sign of a sum of exactly $s$ signed Walsh characters, allowing repeated characters.",
+ "hypotheses_covered": [
+  "$n>0$",
+  "$f$ is a real-valued function on the $n$-dimensional Boolean cube",
+  "$f(x)\\in\\{-1,1\\}$ for every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\in\\mathbb N$ with $n>0$, let $f:\\{0,1\\}^n\\to\\{-1,1\\}$, define $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat f(S)=\\mathbb E_x[f(x)\\chi_S(x)]$ for uniform $x$ and $S\\subseteq\\{1,\\ldots,n\\}$, and set $L=\\sum_S|\\widehat f(S)|$ and $s=\\lceil4nL^2\\rceil$.\nThere exists a real multilinear polynomial $p(x)=\\sum_Sa_S\\chi_S(x)$ with at most $s$ nonzero coefficients such that $f(x)=\\operatorname{sgn}(p(x))$, where $\\operatorname{sgn}(t)=1$ for $t\\ge0$ and $-1$ for $t<0$.\nMoreover, there exist subsets $S_1,\\ldots,S_s\\subseteq\\{1,\\ldots,n\\}$, with repetitions allowed, and signs $\\varepsilon_1,\\ldots,\\varepsilon_s\\in\\{-1,1\\}$ such that\n\\[\n f(x)=\\operatorname{sgn}\\left(\\sum_{j=1}^s\\varepsilon_j\\chi_{S_j}(x)\\right)\n \\qquad\\text{for every }x\\in\\{0,1\\}^n.\n\\]"
+}

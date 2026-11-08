@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.splitBody_rewind",
+ "key": "fc5d23569f3e2301",
+ "kind": "lemma",
+ "title": "Input rewind phase",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $start$ be a state of $M$, let $w$ be a Boolean word, and let $ok$ be a Boolean value. For any configuration $c$ of the three-state rewind machine on input $w$ whose state is $0$, there is a time $t$ no greater than the current input-head position plus $2$ such that the split-search round body, started from $c$ with its state relabeled as the rewind phase carrying $ok$, reaches a configuration whose state is $2$ and whose input-head position is $1$, with every other component unchanged, and with its state relabeled in the same way. At every time from $0$ through $t$, the run avoids the anchor state.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$start$ is a state of $M$",
+  "$w$ is a Boolean word",
+  "$ok$ is a Boolean value",
+  "$c$ is a configuration with $M.k+1$ work tapes, Boolean symbols, three control states, and input $w$",
+  "The state of $c$ is $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a configuration $c$ of the rewind machine in its start state, there is a\ntime $t \\le i + 2$, with $i$ the current input position, such that the round\nbody run from the rewind-phase embedding of $c$ (carrying the acceptance bit)\nreaches the embedding of $c$ with its input head back at the first cell and\nin the rewind machine's return state; the whole trace avoids the anchor and\npreserves the source bank and output."
+}

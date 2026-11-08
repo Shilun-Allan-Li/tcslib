@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.exists_proj_decider",
+ "key": "377a5b70b85c25f0",
+ "kind": "theorem",
+ "title": "Time bound for existential projection",
+ "statement": "Let $C,c\\in\\mathbb{N}$, let $V$ be a language of binary strings, let $T_v:\\mathbb{N}\\to\\mathbb{N}$, and let $M_V$ be a finite binary Turing machine that decides $V$ within time $T_v$. Then there are $b\\in\\mathbb{N}$ and a finite binary Turing machine deciding the language $\\{x:\\exists u,\\ |u|=C(|x|+1)^c\\text{ and }xu\\in V\\}$ within time, on inputs of length $n$, $b\\,2^{C(n+1)^c}\\bigl(T_v(n+C(n+1)^c)+(n+C(n+1)^c+1)^{c+1}\\bigr)$.",
+ "hypotheses_covered": [
+  "$C,c\\in\\mathbb{N}$",
+  "$V$ is a language over the binary alphabet",
+  "$T_v:\\mathbb{N}\\to\\mathbb{N}$",
+  "$M_V$ is a finite binary Turing machine",
+  "$M_V$ decides $V$ within time $T_v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine $MV$ decide a language $V$ over the binary alphabet within time\n$T_v$, and fix constants $C, c$. Then there exist a constant $b$ and a finite\nmachine deciding the existential projection\n$\\{\\,x \\mid \\exists u,\\ |u| = C(|x|+1)^c \\wedge x \\mathbin{+\\!\\!+} u \\in V\\,\\}$\nwithin time\n\\[\nb \\cdot 2^{C(n+1)^c} \\cdot\n  \\Bigl(T_v\\bigl(n + C(n+1)^c\\bigr) + \\bigl(n + C(n+1)^c + 1\\bigr)^{c+1}\\Bigr).\n\\]"
+}

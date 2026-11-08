@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.counterLoopTM",
+ "key": "c8ee293eb967c360",
+ "kind": "def",
+ "title": "Counter loop machine",
+ "statement": "Given a deterministic machine $M$ with $k$ work tapes, Boolean work symbols, and state set $S$, a distinguished state $a\\in S$, and an optional designated exit state, form a machine with $k+1$ work tapes and states for the body, counter decrement, completion, and escape. It starts in the decrement phase in run mode; in body states it follows $M$ on the first $k$ tapes and redirects successor states according to $a$ and the designated exit, in decrement states it runs the counter-decrement routine on the added tape and routes its exits, and in the done and escape states it stays in that state without moving or writing.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A machine over Boolean work symbols with state set $S$",
+  "Decidable equality on $S$",
+  "A distinguished state $a\\in S$",
+  "An optional designated exit state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

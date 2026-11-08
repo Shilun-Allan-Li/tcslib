@@ -21,30 +21,25 @@ each literal index $i$ by $f(i)$ (keeping its sign) and recursing structurally t
 $\mathrm{And}/\mathrm{Or}$ nodes.
 \end{definition}
 
-\begin{theorem}[Re-indexing preserves circuit depth]
+\begin{theorem}[Reindexing preserves circuit depth]
 \lean{BoolCircuit.TreeCircuit.reidx_depth}
 \label{BoolCircuit.TreeCircuit.reidx_depth}
 \leanok
 \uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.ind, BoolCircuit.TreeCircuit.reidx}
 \difficulty{5}
-Let $c$ be a Boolean circuit on $m$ variables and let $f : \mathrm{Fin}\,m \to
-\mathrm{Fin}\,m'$ be any map of variable indices. Then re-indexing $c$ along $f$ leaves
-its depth unchanged: $\mathrm{depth}(\mathrm{reidx}(c, f)) = \mathrm{depth}(c)$.
+Let $m,m'$ be natural numbers, let $c$ be a Boolean circuit on $m$ variables, and let
+$f$ map the $m$ input indices to the $m'$ input indices. Replacing each input index of
+$c$ by its image under $f$ preserves depth.
 \end{theorem}
 
-\begin{theorem}[Re-indexing commutes with evaluation]
+\begin{theorem}[Reindexing commutes with evaluation]
 \lean{BoolCircuit.TreeCircuit.reidx_eval}
 \label{BoolCircuit.TreeCircuit.reidx_eval}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.ind, BoolCircuit.TreeCircuit.reidx, BoolCircuit.Lit.eval}
+\uses{BoolCircuit.Lit.eval, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.ind, BoolCircuit.TreeCircuit.reidx}
 \difficulty{5}
-Let $c$ be a Boolean circuit on $m$ variables, let $f : \mathrm{Fin}\,m \to
-\mathrm{Fin}\,m'$ be a re-indexing map, and let $g : \mathrm{Fin}\,m' \to \bbf_2$ be an
-assignment to the $m'$ variables. Then evaluating the re-indexed circuit
-$\mathrm{reidx}(c, f)$ under $g$ gives the same value as evaluating the original circuit
-$c$ under the pulled-back assignment $g \circ f$:
-\[
-\mathrm{eval}\big(\mathrm{reidx}(c, f),\, g\big) = \mathrm{eval}\big(c,\, g \circ
-f\big).
-\]
+Let $m,m'$ be natural numbers, let $c$ be a Boolean circuit on $m$ variables, let $f :
+\mathrm{Fin}\,m \to \mathrm{Fin}\,m'$, and let $g : \mathrm{Fin}\,m' \to \bbf_2$ be an
+assignment. Evaluating the reindexed circuit under $g$ gives the same value as
+evaluating $c$ under the assignment $g \circ f$.
 \end{theorem}

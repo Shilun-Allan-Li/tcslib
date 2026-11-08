@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.dcmp2Act",
+ "key": "7a0ddfc7a08fd8e4",
+ "kind": "def",
+ "title": "Action for the second decider",
+ "statement": "Given a register index $r$, a state $j_1$, a state-valued function $j_{RB}$ on Booleans, a Boolean $b_1$, and optional Boolean values $a,c$, define an action as follows. If $b_1$ is false and $a$ is true, use the action prescribed by $r$ and $j_{RB}$ evaluated at whether $c$ is absent; otherwise, if $c=b_1$, use the action prescribed by $r$ and $j_1$; in all other cases use the action prescribed by $r$ and $j_{RB}$ evaluated at false.",
+ "hypotheses_covered": [
+  "A register index among $m$ registers",
+  "A state $j_1$",
+  "A state-valued function $j_{RB}$ on Booleans",
+  "A Boolean $b_1$",
+  "Two optional Boolean values $a,c$",
+  "A Boolean input string $x$ (implicit in the action construction)"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the action constructor used for the selected actions, so their machine-level effects cannot be rendered more explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

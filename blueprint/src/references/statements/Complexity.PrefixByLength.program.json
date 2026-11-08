@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.PrefixByLength.program",
+ "key": "01836c67bd3e3c17",
+ "kind": "def",
+ "title": "Prefix-processing counter program",
+ "statement": "For each choice of a Boolean parameter $k$, define a one-register counter program with the following instructions at its labels. At scan, read a bit, stopping at end of input and otherwise proceeding to second-false or second-true according to the bit. At second-false, read a bit, stopping at end of input, proceeding to bump on $0$, and to head on $1$; at second-true, read a bit, stopping at end of input, proceeding to stop on $0$, and to bump on $1$. At bump, increment the register and return to scan. At head, stop if the register is zero and $k$ is true, or proceed to copy if it is zero and $k$ is false; if the register is positive, proceed to read. At read, stop at end of input; if $k$ is true, print the bit read and proceed to decrement, while if $k$ is false, proceed to decrement for either bit. At decrement, decrement the register, leaving zero unchanged, and return to head. At emit-$b$, print $b$ and proceed to decrement; at copy, read a bit, stopping at end of input and otherwise proceeding to copy-and-emit that bit; at copy-and-emit-$b$, print $b$ and return to copy; and at stop, halt.",
+ "hypotheses_covered": [
+  "A Boolean parameter $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

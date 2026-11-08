@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.PathHard.gb_of",
+ "key": "7f8a7dff51ced867",
+ "kind": "lemma",
+ "title": "Register bounds imply the guard",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $o$ be an oracle on five deciders and bit strings, and let $y$ be a bit string. If a fifteen-register state $st$ has every register value at most $B$, then for every program label $l$, the abstract configuration with label $l$, register values given by $st$, and no Boolean result satisfies the guard: its registers are all at most $B$ and its instruction-specific precondition holds.",
+ "hypotheses_covered": [
+  "$a,b,f$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$o$ is an oracle on five deciders and bit strings",
+  "$y$ is a bit string",
+  "$st$ has all fifteen registers at most $B$",
+  "$l$ is any program label"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f$ be natural numbers, let $A$ be the specified register program with\nparameters $a,b,f$ and mode $\\mathrm{mode}$, and let $o$ be an oracle and $y$ a bit\nstring. If a state record $\\mathrm{st}$ has every entry at most $B$, then for every\nprogram label $l$, the configuration with label $l$, register values given by\n$\\mathrm{st}$, and no answer yet satisfies the guard: its register values are at most\n$B$ and its current instruction meets the precondition for that instruction."
+}

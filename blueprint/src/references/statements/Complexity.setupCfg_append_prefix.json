@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.setupCfg_append_prefix",
+ "key": "983af787afcf4e20",
+ "kind": "lemma",
+ "title": "Prefix of the unary append block",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,N,j\\in\\mathbb{N}$ with $j\\le a+1$, and consider a base configuration on an input word $x$ of schedule symbols. Start the schedule machine in append phase $0$, with the binary-budget head at $b$, the unary-counter head at $N+1$, and the guide head at $g$; let the binary-budget tape be $\\beta$, the guide tape be $\\gamma$, and the unary-counter tape have an origin marker at $0$, unit markers at $1,\\ldots,N$, and blanks elsewhere. After exactly $j$ steps, the state is append phase $j$, the unary-counter head is at $N+j+1$, and the unary-counter tape has an origin marker at $0$, unit markers at $1,\\ldots,N+j$, and blanks elsewhere. The input-head position, all clock work tapes and their head positions, the binary-budget tape and head, the guide tape and head, and the output are unchanged.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Boolean symbols",
+  "$a,N,j$ are natural numbers",
+  "$j\\le a+1$",
+  "The initial configuration is the specified setup configuration in append phase $0$",
+  "The initial unary tape is the unary tape with $N$ markers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $j \\le a+1$, where $a$ is the padding parameter.  From a setup configuration in\nappend phase $0$ with unary head at cell $N+1$ over the unary tape with $N$ markers,\nexactly $j$ steps reach append phase $j$ with unary head at cell $N+j+1$ over the unary\ntape with $N+j$ markers; each step writes exactly one unit marker, and all other tapes\nand heads are unchanged."
+}

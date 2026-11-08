@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.taut_verifier_append",
+ "key": "dd781eb3ac9d4bda",
+ "kind": "lemma",
+ "title": "Verifier on a Sized Concatenation",
+ "statement": "Let $x$ and $u$ be binary words with $|u|=|x|+1$. Then their concatenation belongs to the verifier language exactly when the DNF formula decoded from $x$ evaluates to false under the assignment that reads variable $v$ from the $v$-th bit of $u$, taking the value false beyond the end of $u$.",
+ "hypotheses_covered": [
+  "$x,u$ are binary words",
+  "$|u|=|x|+1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ and $u$ be binary words with $|u| = |x| + 1$, and let $V$ be the set of binary\nstrings $z$ with $|z| = i + (i+1)$ whose first $i$ bits decode to a DNF that is false\nunder the assignment read off the remaining bits. Then\n$x \\mathbin{+\\!\\!+} u \\in V$ if and only if the DNF decoded from $x$ evaluates to false\nunder the assignment $\\alpha_u$ reading variable $v$ off the $v$-th bit of $u$ (false\nbeyond $|u|$)."
+}

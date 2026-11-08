@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.rawStrip_computes",
+ "key": "9dd6a5870cda1c06",
+ "kind": "lemma",
+ "title": "Time bound for marker stripping",
+ "statement": "For every Boolean word $x$, the raw marker-stripping machine computes the function that returns the prefix strictly before the last true bit of $x$, or the empty word if no true bit occurs, in time $4(|x|+1)$. That is, it halts after this many steps with that output, using some amount of work-tape space.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n$ and every input $x$ of length $n$, the marker-stripping\nmachine halts within $4(n+1)$ steps, and its output is the prefix of $x$\nstrictly before its last $1$ bit, or the empty word when $x$ contains no\n$1$."
+}

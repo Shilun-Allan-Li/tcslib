@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.a2_segments",
+ "key": "4c1dba696572bed6",
+ "kind": "lemma",
+ "title": "Work head bounds across computation segments",
+ "statement": "Let $k,N,B$ be natural numbers with $N>0$, let $Q$ be a state type, let $x$ be a Boolean input, let $M$ be a $k$-tape machine over the Boolean alphabet, and let $(c_i)_{i\\in\\mathbb{N}}$ be a sequence of configurations on $x$. Suppose that for every $i<N$ there is a time $u$ such that every configuration reached from $c_i$ at a time $v\\le u$ has all work-tape head positions in $[-B,B]$, and at time $u$ the machine is either halted or $i+1<N$ and its configuration equals $c_{i+1}$. Then, at every time $t$, the run of $M$ from $c_0$ has all work-tape head positions in $[-B,B]$.",
+ "hypotheses_covered": [
+  "$N>0$",
+  "For each $i<N$, there is a segment endpoint $u$",
+  "All heads stay in $[-B,B]$ through each segment endpoint",
+  "At each endpoint the run is halted or equals the next configuration, with $i+1<N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

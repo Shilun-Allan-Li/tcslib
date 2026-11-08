@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.inp_block",
+ "key": "68a2a5872a710bfd",
+ "kind": "theorem",
+ "title": "Correctness of the input-cell update",
+ "statement": "Let $M$ be a finite-state multi-tape Turing machine over the binary alphabet, let $\\ell$ be a list of circuit bit sources, let $T,t,p\\in\\mathbb N$, let $x$ be a binary string, and let $B$ be a list of binary blocks. Suppose every source $s$ in $\\ell$ has the same value on $(x,B)$ as on $(x,[])$. Suppose also that every block of index $i'<t\\bigl(k(2T+1)+|\\ell|+3\\bigr)+k(2T+1)+p$ equals the configuration encoding at index $i'$ generated from the list of source values on $(x,[])$, where $k$ is the number of work tapes of $M$. If $p<|\\ell|+2$, then applying the input-cell update to the values of the padded input-cell source list for time $t$ and position $p$ gives exactly the input-cell encoding at that time and position for the binary input whose bits are the values of the sources in $\\ell$ on $(x,[])$.",
+ "hypotheses_covered": [
+  "A finite-state multi-tape Turing machine M over the binary alphabet",
+  "A list ℓ of circuit bit sources and a natural number T",
+  "A natural number t and a position p",
+  "A binary string x and a list B of binary blocks",
+  "Each source in ℓ has equal evaluation on (x,B) and (x,[])",
+  "Every block with index less than the input index has the specified configuration-encoding value",
+  "The position bound p<|ℓ|+2"
+ ],
+ "confidence": "low",
+ "caveat": "The claim uses the particular input-cell source, padding, update, and encoding constructions; their full constructions are not described in the supplied informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

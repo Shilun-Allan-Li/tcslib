@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.obliviousSchedule_borrow",
+ "key": "e1fd13e2b03913d7",
+ "kind": "lemma",
+ "title": "Borrow transition on the budget tape",
+ "statement": "Let $W$ be a finite binary machine, $a\\in\\mathbb{N}$, and let $c,b\\in\\{0,1\\}$, with the first administrative tape reading the tagged bit $b$. For any input symbol and tape contents satisfying that reading, the schedule machine's transition from the borrow phase with carry $c$ is the action that writes the tagged bit $b\\oplus c$ on the budget tape, moves its head one cell to the right, leaves all other tapes and the input head stationary, emits no output, and enters the borrow phase with carry $c\\wedge\\lnot b$.",
+ "hypotheses_covered": [
+  "A finite binary machine $W$",
+  "$a\\in\\mathbb{N}$",
+  "Carry bit $c$ and bit $b$",
+  "An input symbol",
+  "Tape contents whose budget-tape symbol is the tagged bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a binary machine and $a$ a padding constant, and consider the length-only\nschedule controller built from them, whose first administrative tape is the budget\ntape.  If the budget tape currently reads a bit symbol $b$, then the transition out of\nthe borrow control phase with carry $c$ is the single-lane action on the budget tape\nthat writes the bit $b \\oplus c$, moves right, and enters the borrow phase with carry\n$c \\wedge \\lnot b$."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.extract_first",
+ "key": "8398e9b6fcf213fe",
+ "kind": "lemma",
+ "title": "First step of the extractor",
+ "statement": "Let $first,second$ be Boolean flags, let $x,pre,rest,a$ be Boolean words, and let $b$ be a bit, with $x=pre\\mathbin{++}[b]\\mathbin{++}rest$. One step of the pair extractor from its block-start configuration at input position $|pre|$, with buffer $a$, work head at $|a|$, and empty output, leaves the buffer, work head, and output unchanged, advances the input head to position $|pre|+1$, and enters the control state recording $b$.",
+ "hypotheses_covered": [
+  "first and second are Boolean flags",
+  "x, pre, rest, and a are Boolean words",
+  "b is a bit",
+  "x=pre followed by b and rest"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p\\, b\\, r$ with bit $b$, one step of the pair\nextractor from its block-start state at position $\\abs{p}$ records $b$ in the\nfinite control and advances the input head, leaving the buffer and the output\nunchanged."
+}

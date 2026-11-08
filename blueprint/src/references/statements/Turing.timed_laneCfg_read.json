@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.timed_laneCfg_read",
+ "key": "31de8ee992de27ef",
+ "kind": "lemma",
+ "title": "Reading the active lane",
+ "statement": "Let $A$ and $S$ be types, let $x$ be a finite list over $A$, and let $base$ be a configuration with $k$ work tapes. For a lane $lane<k$, an optional state $q$, an integer frontier $z$, and finite lists $l,r$ of optional symbols over $A$, the configuration obtained by replacing that lane with the zipper determined by $z,l,r$ and placing its head at $z$ reads the head entry of $r$, or blank if $r$ is empty.",
+ "hypotheses_covered": [
+  "$A,S$ are types",
+  "$k$ is a natural number",
+  "$x$ is a finite list over $A$",
+  "$base$ is a configuration with $k$ work tapes",
+  "$lane<k$",
+  "$q$ is an optional state",
+  "$z$ is an integer",
+  "$l,r$ are finite lists of optional symbols over $A$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In a single-active-lane configuration, the active lane reads the first entry\nof the unprocessed zipper list, or a blank when that list is empty."
+}

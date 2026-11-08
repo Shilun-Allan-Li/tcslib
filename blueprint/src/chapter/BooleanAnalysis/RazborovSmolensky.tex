@@ -101,6 +101,7 @@ namely $(q - r) \bmod q$: this is $0$ when $r = 0$ and $q - r$ when $r > 0$.
 
 \begin{definition}[Padded Boolean input of a root-cube point]
 \lean{RazborovSmolensky.paddedResidueInput}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p013-b003}
 \label{RazborovSmolensky.paddedResidueInput}
 \leanok
 \uses{RazborovSmolensky.residuePadOnes, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBit}
@@ -186,6 +187,7 @@ $\bbz/p \to \bbf_{p^{q-1}}$.
 
 \begin{theorem}[$\mathrm{MOD}_q$ of the padded input is the residue indicator]
 \lean{RazborovSmolensky.paddedResidueInput_modQTarget_eq_residueIndicator}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p013-b003}
 \label{RazborovSmolensky.paddedResidueInput_modQTarget_eq_residueIndicator}
 \leanok
 \uses{RazborovSmolensky.ModqField, RazborovSmolensky.modQTarget, RazborovSmolensky.paddedResidueInput, RazborovSmolensky.residuePadOnes, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBit, RazborovSmolensky.rootResidueIndicator, RazborovSmolensky.rootResidueWeight}
@@ -212,6 +214,10 @@ $x \in \{1,\omega\}^n$ to its padded Boolean input on $n + (q-1)$ bits is inject
 
 \begin{theorem}[Residue approximants from one padded $\mathrm{MOD}_q$ approximant]
 \lean{RazborovSmolensky.padded_modQ_approx_gives_root_residue_approximants}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p013-b003,
+  pdf-988dc9f0ae91-p014-b001
+}
 \label{RazborovSmolensky.padded_modQ_approx_gives_root_residue_approximants}
 \leanok
 \uses{RazborovSmolensky.ModqField, RazborovSmolensky.badInputCount, RazborovSmolensky.boolInput, RazborovSmolensky.modQTarget, RazborovSmolensky.paddedResidueInput, RazborovSmolensky.paddedResidueInput_injective, RazborovSmolensky.paddedResidueInput_modQTarget_eq_residueIndicator, RazborovSmolensky.paddedResiduePolynomial, RazborovSmolensky.paddedResiduePolynomial_eval_eq_map_eval, RazborovSmolensky.paddedResiduePolynomial_totalDegree_le, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootResidueIndicator}
@@ -228,6 +234,7 @@ residue-$r$ indicator on at most $E$ points of the cube $\{1,\omega\}^n$.
 
 \begin{theorem}[Residue expansion of the root product]
 \lean{RazborovSmolensky.rootProduct_eq_residueIndicator_sum}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p007-b001}
 \label{RazborovSmolensky.rootProduct_eq_residueIndicator_sum}
 \leanok
 \uses{RazborovSmolensky.rootCube, RazborovSmolensky.rootResidueIndicator, RazborovSmolensky.rootResidueWeight}
@@ -272,6 +279,10 @@ the cube.
 
 \begin{theorem}[Sharp Boolean-to-root-product transfer]
 \lean{RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct_qE}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p013-b003,
+  pdf-988dc9f0ae91-p014-b001
+}
 \label{RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct_qE}
 \leanok
 \uses{RazborovSmolensky.ModqField, RazborovSmolensky.badInputCount, RazborovSmolensky.modQTarget, RazborovSmolensky.padded_modQ_approx_gives_root_residue_approximants, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.root_residue_approximants_combine_to_rootProduct}
@@ -287,6 +298,10 @@ $x \mapsto \prod_i x_i$ on at most $q \cdot E$ points of the cube $\{1,\omega\}^
 
 \begin{theorem}[Boolean-to-root-product transfer]
 \lean{RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p013-b003,
+  pdf-988dc9f0ae91-p014-b001
+}
 \label{RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct}
 \leanok
 \uses{RazborovSmolensky.ModqField, RazborovSmolensky.badInputCount, RazborovSmolensky.modQTarget, RazborovSmolensky.padded_modQ_approx_transfers_to_rootProduct_qE, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount}
@@ -339,6 +354,21 @@ by $q$) on at least $E$ Boolean inputs.
 
 \begin{theorem}[{Quantitative $\mathrm{MOD}_q \notin \mathrm{AC}^0[p]$}]
 \lean{RazborovSmolensky.MODq_notin_AC0p_quantitative}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b006,
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b002,
+  pdf-988dc9f0ae91-p005-b003,
+  pdf-988dc9f0ae91-p005-b004,
+  pdf-988dc9f0ae91-p005-b005,
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p007-b003,
+  pdf-988dc9f0ae91-p008-b002,
+  pdf-988dc9f0ae91-p008-b003
+}
 \label{RazborovSmolensky.MODq_notin_AC0p_quantitative}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.LayeredCircuit.size, RazborovSmolensky.LowDegreeBadCountLB, RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.ModqField, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.modGateOp, RazborovSmolensky.modQTarget, RazborovSmolensky.size_lower_bound_from_relative_badCountLB, RazborovSmolensky.smolensky_modQ_lowDegreeBadCountLB}

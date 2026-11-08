@@ -1,16 +1,18 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt",
- "key": "c61bc2bf06bba9e9",
+ "key": "868f02cdde50cd3b",
  "kind": "lemma",
- "title": "Leaf count after pruning a subprotocol path",
- "statement": "Let $s$ and $p$ be deterministic two-party communication protocols, and let $s$ lie along a subprotocol path inside $p$, so that $s$ occurs as a rooted subtree of $p$. If $s$ has strictly fewer leaves than $p$, that is, if the number of leaves of $s$ is less than the number of leaves of $p$, then the protocol obtained by pruning this path from $p$ has exactly $\\text{numLeaves}(p) - \\text{numLeaves}(s)$ leaves.",
+ "title": "Leaf count after path pruning",
+ "statement": "Let $X$, $Y$, and $\\alpha$ be types, and let $s$ and $p$ be deterministic two-party communication protocols with inputs in $X$ and $Y$ and outputs in $\\alpha$. Suppose a specified sequence of branch choices in $p$ leads to the subtree $s$, and $s$ has strictly fewer output leaves than $p$. Then deleting that path by splicing out the branch to $s$ yields a protocol with $\\mathrm{numLeaves}(p)-\\mathrm{numLeaves}(s)$ output leaves.",
  "hypotheses_covered": [
-  "s and p are deterministic communication protocols",
-  "a subprotocol path witnessing s as a rooted subtree of p",
-  "the number of leaves of s is strictly less than the number of leaves of p"
+  "Protocols $s$ and $p$ over input types $X,Y$ and output type $\\alpha$",
+  "A specified subprotocol path from $s$ to $p$",
+  "$\\mathrm{numLeaves}(s)<\\mathrm{numLeaves}(p)$"
  ],
  "confidence": "high",
  "caveat": "",
- "rubric": [],
- "replaced": "If $s.\\mathrm{numLeaves} < p.\\mathrm{numLeaves}$, then\n$(\\texttt{prunePath}\\;\\texttt{hsp}\\;\\texttt{hlt}).\\mathrm{numLeaves} = p.\\mathrm{numLeaves} - s.\\mathrm{numLeaves}$."
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $s$ and $p$ be deterministic two-party communication protocols, and let $s$ lie\nalong a subprotocol path inside $p$, so that $s$ occurs as a rooted subtree of $p$. If\n$s$ has strictly fewer leaves than $p$, that is, if the number of leaves of $s$ is less\nthan the number of leaves of $p$, then the protocol obtained by pruning this path from\n$p$ has exactly $\\text{numLeaves}(p) - \\text{numLeaves}(s)$ leaves."
 }

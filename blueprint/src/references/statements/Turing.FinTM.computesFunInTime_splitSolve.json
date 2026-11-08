@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_splitSolve",
+ "key": "dd9b47ae3e96cbf2",
+ "kind": "theorem",
+ "title": "Polynomial-time padded split search",
+ "statement": "For all natural numbers $C$ and $e$, there exist a finite Turing machine $M$ and a natural number $c$ such that, on every Boolean input $w$ of length $n$, $M$ halts within $c(n+1)^{e+2}$ steps. Its output is the encoding that doubles each bit of the prefix of $w$ of length $i$, appends the separator $01$, and then appends the remaining suffix, where $i$ is the least integer in $0,\\ldots,n$ satisfying $i+C(i+1)^e=n$; if no such $i$ exists, its output is the empty word.",
+ "hypotheses_covered": [
+  "$C$ is a natural number",
+  "$e$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all constants $C$ and $e$ there exist a finite Turing machine $M$ and a\nconstant $c$ such that $M$ computes, within $c\\,(n+1)^{e+2}$ steps on inputs\nof length $n$, the function that on input $w$ searches for the least\n$i \\le \\abs{w}$ with $i + C\\,(i+1)^{e} = \\abs{w}$ and, on success, outputs\nthe self-delimiting pair encoding of the first $i$ bits of $w$ paired with\nthe rest of $w$, and on failure outputs the empty word."
+}

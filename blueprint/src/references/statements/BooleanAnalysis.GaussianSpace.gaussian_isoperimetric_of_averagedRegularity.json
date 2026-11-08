@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussian_isoperimetric_of_averagedRegularity",
+ "key": "c0b9ee1a010fc114",
+ "kind": "lemma",
+ "title": "Isoperimetry from regular averaged indicators",
+ "statement": "Let $n$ be a nonnegative integer, let $A\\subseteq\\mathbb R^n$ be measurable, and suppose its standard Gaussian measure has real value $\\alpha\\in(0,1)$. For every $u\\in(0,\\pi/2)$, define $f_u(x)=\\int 1_A(\\cos(u)x+\\sin(u)y)\\,d\\gamma_n(y)$. Suppose that for each such $u$ there are a continuous-linear-functional-valued map $D_u$, a constant $C_u\\ge0$, and a real number $M_u$ such that $D_u(x)$ is the derivative of $f_u$ at every $x$, $D_u$ is globally Lipschitz with constant $C_u$, and $\\|D_u(x)\\|\\le M_u$ for every $x$. Then the Gaussian profile $U(\\alpha)$, converted to an extended nonnegative real, is at most the Gaussian surface area of $A$, defined by the lower limit of its scaled rotation sensitivities as the angle tends to zero from above.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ is measurable",
+  "$\\alpha\\in(0,1)$",
+  "The standard Gaussian measure of $A$ has real value $\\alpha$",
+  "For every $u\\in(0,\\pi/2)$, there exist $D_u,C_u,M_u$",
+  "For each such $u$, $D_u(x)$ is the derivative of the averaged indicator at every $x$",
+  "For each such $u$, $D_u$ is globally Lipschitz with constant $C_u\\ge0$",
+  "For each such $u$, there is a real $M_u$ bounding $\\|D_u(x)\\|$ for all $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$, let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$, and let $G,G\\prime$ be independent vectors with law $\\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\\gamma_n\\otimes\\gamma_n)\\{(g,h):\\mathbf1_A(g)\\ne\\mathbf1_A(\\cos t\\,g+\\sin t\\,h)\\}$. Write $P_\\gamma(A)=\\liminf_{t\\to0^+}\\bigl[\\sqrt{\\pi/2}\\,s_A(t)/t\\bigr]_+$ in $[0,\\infty]$, where $[x]_+=\\max(x,0)$. Let $A\\subseteq\\mathbb R^n$ be measurable with $\\gamma_n(A)=\\alpha\\in(0,1)$ and put $f_u(x)=\\mathbb E[\\mathbf1_A(\\cos u\\,x+\\sin u\\,G)]$. Suppose that for each $0<u<\\pi/2$, $f_u$ has a derivative family $D_u$ and there exist constants $C_u\\ge0$ and $M_u\\in\\mathbb R$ such that $D_u$ is $C_u$-Lipschitz and $\\|D_u(x)\\|\\le M_u$ for all $x$. Then $\\varphi(\\Phi^{-1}(\\alpha))\\le P_\\gamma(A)$, where $\\varphi$ and $\\Phi$ are the standard Gaussian density and distribution function."
+}

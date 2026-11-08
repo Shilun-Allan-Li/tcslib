@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.memAct",
+ "key": "254dd4ed15cfd78e",
+ "kind": "def",
+ "title": "Actions for memory instructions",
+ "statement": "Let $i$ be a memory instruction and let $r$ be the optional bit read from the cell under the memory head. A register instruction gives an action with no head movement, tape writes, output, or successor state. A read instruction gives no movement, writes, or output and continues at the first successor if $r$ is true, and at the second otherwise. A set instruction writes $1$ on the added tape and continues at its specified node; a left or right instruction moves that tape's head one cell in the indicated direction and continues at its specified node. In these last three cases, the input head and all other work tapes stay put, and no output is emitted.",
+ "hypotheses_covered": [
+  "Natural numbers $m,d$ and $k_D$",
+  "Program-node and decider-state types $\\Lambda$ and $SD$",
+  "A memory instruction with parameters $m,d,\\Lambda$",
+  "An optional Boolean read value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

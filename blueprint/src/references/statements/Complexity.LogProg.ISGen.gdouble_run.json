@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.gdouble_run",
+ "key": "93e9815302667729",
+ "kind": "theorem",
+ "title": "Doubling the code bound",
+ "statement": "Fix $E,B\\in\\mathbb N$, an oracle on four indices and Boolean strings, an input bit string $x$, a proposition $Q$, and a register state $\\sigma$. For every $m\\in\\mathbb N$ such that $\\sigma.e=m$, suppose all seventeen quantities in $\\sigma$ are at most $B$, $\\sigma.K\\,2^m\\le B$, and for every $k',T'\\le B$ the procedure started in state $\\mathrm{st0}$ with $e=0$, $K=\\sigma.K\\,2^m$, $k=k'$, and $T=T'$ terminates with all registers at most $B$ and accepts if and only if $Q$ holds. Then the procedure started in state $\\mathrm{db}$ with state $\\sigma$ terminates with all registers at most $B$ and accepts if and only if $Q$ holds.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb N$",
+  "oracle on four indices and Boolean strings",
+  "input bit string $x$",
+  "proposition $Q$",
+  "for every $m\\in\\mathbb N$",
+  "$\\sigma.e=m$",
+  "all seventeen quantities in $\\sigma$ are at most $B$",
+  "$\\sigma.K\\,2^m\\le B$",
+  "for every $k',T'\\le B$, specified initialization state has semantics $Q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $Q$ be a proposition, let $E,B\\in\\mathbb N$, and fix the oracle, input, and register\nbound defining the generator semantics. For every $m\\in\\mathbb N$ and register state\n$\\sigma$ with exponent register $e=m$, suppose every register of $\\sigma$ is at most\n$B$, $K\\,2^m\\le B$, and, for every $k',T'\\le B$, the generator starting in its\ncounting-initialization state with exponent $0$, code bound $K\\,2^m$, and scratch\nregisters $k',T'$ terminates with all registers bounded by $B$ and accepts exactly when\n$Q$ holds. Then the generator starting in its doubling state at $\\sigma$ also terminates\nwith all registers bounded by $B$ and accepts exactly when $Q$ holds."
+}

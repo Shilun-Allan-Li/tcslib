@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.f2_lenAction",
+ "key": "05a111b35bf8a12b",
+ "kind": "def",
+ "title": "Length-machine action",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes. For input-head movement $m$, work-head movement $d$, optional Boolean output $b$, and optional successor state $q$ of the enlarged machine, define an action with $k+1$ work tapes: it moves the input head by $m$, writes nothing on every work tape, leaves the first $k$ work heads stationary, moves the last work head by $d$, emits $b$ when present, and passes to $q$, halting when $q$ is absent.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "Input-head movement $m$ is a sign",
+  "Work-head movement $d$ is a sign",
+  "Output is optional Boolean",
+  "Successor state is optional state of $M$'s state type enlarged by $\\mathrm{Fin}(4)\\oplus\\mathrm{Option}(\\mathrm{Bool})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

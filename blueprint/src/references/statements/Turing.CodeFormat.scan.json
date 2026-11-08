@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.CodeFormat.scan",
+ "key": "925606dc365b0381",
+ "kind": "def",
+ "title": "Code format scanner",
+ "statement": "For a code format $F$, the scanner takes a bit string, decodes it as a pair of a length code and a remainder, and lets $n$ be the natural number represented by the length code. It returns no result unless that code is exactly the bit representation of $n$ and the remainder has at least $g(n+1)$ bits, where $g$ is the format’s guard constant. Otherwise it removes the unary encoding of a state index in the range of $n+1$ states, then removes the encoded transition table; it succeeds with the remaining suffix precisely when every bit in that suffix is $1$.",
+ "hypotheses_covered": [
+  "A code format $F$",
+  "Input is a finite bit string"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include definitions of the pair decoder, natural-number bit representation, unary-prefix skipper, or table skipper, so their precise parsing conventions cannot be fully stated.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

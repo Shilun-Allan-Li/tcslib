@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.Contract.branch_traj",
+ "key": "ca483dbf02f30418",
+ "kind": "lemma",
+ "title": "Run of a two-branch composition",
+ "statement": "Let $M_0,M_1,M_2$ be machines with state sets $S_0,S_1,S_2$, let $e_1,e_2\\in S_0$ be distinct, and let $C_0$ be a contract for $M_0$ with entry state $entry_0$ and exits $e_1,e_2$. Given branch entry states $entry_1,entry_2$ and a datum and starting configuration satisfying the $C_0$ precondition and entry-state condition, the composed machine's run agrees, through and including the assigned $C_0$ time, with the $M_0$ run whose states are embedded in the $S_0$ summand; throughout this interval that $M_0$ run is not halted. If the $C_0$ endpoint has state $e_1$, then after one switching step the composed run, at every subsequent time, agrees with the run of $M_1$ started from that endpoint with its state replaced by $entry_1$, with states embedded in the first branch. If the endpoint has state $e_2$, the corresponding equality holds for $M_2$, started with the endpoint state replaced by $entry_2$ and states embedded in the second branch.",
+ "hypotheses_covered": [
+  "$e_1\\ne e_2$",
+  "$C_0$ is a contract for $M_0$ with entry $entry_0$ and exits $e_1,e_2$",
+  "A datum $i$ and composed starting configuration $d$ are specified",
+  "$d$ starts in the composed entry state",
+  "The state-renamed starting configuration satisfies the $C_0$ precondition",
+  "Branch entry states $entry_1,entry_2$ are specified"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_0$ have state set $S_0$, and let $M_1,M_2$ have state sets $S_1,S_2$. Let $C_0$\nbe a contract for $M_0$ whose exits are the two states $e_1,e_2\\in S_0$, with $e_1\\ne\ne_2$. For the machine formed by composing $M_0$ with the two branches, started in phase\n$M_0$ at its entry state, every run up to the $C_0$ contract time agrees with the run of\n$M_0$ after embedding its states into the composed state space, and that run never\nhalts. If the $C_0$ endpoint has state $e_1$, then after the one-step phase transition,\nthe composed run agrees at every subsequent time with the run of $M_1$ started from that\nendpoint with its state replaced by the entry state of $M_1$, with states embedded into\nthe first branch. If the endpoint has state $e_2$, the corresponding subsequent run\nagrees with $M_2$ started from the endpoint with its state replaced by the entry state\nof $M_2$, with states embedded into the second branch."
+}

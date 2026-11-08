@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_finalize_run",
+ "key": "7c2779d71ffa6cff",
+ "kind": "lemma",
+ "title": "Finalization Within the Call Machine",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $\\mathrm{emit}$ be a Boolean mode, and let $x$, $\\mathrm{arg}$, and $\\mathrm{cap}$ be Boolean words; let $T$ be a natural number. Start the call machine on $x$ in its finalizer dispatch state, with the dispatch index at the last of $M$'s $k$ work tapes, the simulated data tapes and their heads given by the prescribed bank frame at time $T$, and the marker and origin banks as specified by that frame. After exactly $|\\mathrm{arg}|+3|\\mathrm{cap}|+6$ steps, the machine is in exit state $5$, with $\\mathrm{arg}$ on the first work tape if $\\mathrm{emit}$ is true and $\\mathrm{cap}$ there otherwise, every other work tape blank, all heads at the origin, and output $\\mathrm{cap}$ if $\\mathrm{emit}$ is true and empty otherwise.",
+ "hypotheses_covered": [
+  "M is a finite-state Boolean Turing machine with k work tapes",
+  "emit is a Boolean mode",
+  "x, arg, and cap are Boolean words",
+  "T is a natural number",
+  "initial configuration is the prescribed bank frame at time T with dispatch index at the last work tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode, input, argument word $a$, capture word $c$, and time $T$: running the\nclean-call controller for exactly $|a| + 3|c| + 6$ steps from the cleanup frame in which\nall banks are clean (in the last cleaner-dispatch state) reaches the canonical exit seam\ncarrying $c$ in install mode and $a$ in emit mode, with output $c$ exactly in emit mode,\nevery scratch tape blank, and every head at its origin."
+}

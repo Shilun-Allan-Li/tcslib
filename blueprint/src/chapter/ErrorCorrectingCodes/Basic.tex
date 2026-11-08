@@ -13,6 +13,16 @@ alphabet $\alpha$.  Throughout, $\alpha$ is a type carrying instances
 
 \begin{definition}[Codeword]
 \lean{ErrorCorrectingCodes.Codeword}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p009-b002,
+  pdf-bf2ce5422088-p135-b001,
+  pdf-bf2ce5422088-p244-b002,
+  pdf-bf2ce5422088-p246-b002,
+  pdf-bf2ce5422088-p308-b004
+}
+\statementsource{AL17}{pdf-27f2b3787521-p028-b007}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p095-b001}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b001}
 \label{ErrorCorrectingCodes.Codeword}
 \leanok
 \statementsource{philips}{
@@ -31,6 +41,7 @@ A codeword of length $n$ over alphabet $\alpha$ is a function $c : \mathrm{Fin}\
 \lean{ErrorCorrectingCodes.Codeword.zero}
 \label{ErrorCorrectingCodes.Codeword.zero}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword}
 Pointwise addition, subtraction, and the all-zero codeword.
 \end{definition}
 
@@ -38,8 +49,21 @@ Pointwise addition, subtraction, and the all-zero codeword.
 
 \begin{definition}[Code]
 \lean{ErrorCorrectingCodes.Codeword.Code}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p009-b002,
+  pdf-bf2ce5422088-p135-b001,
+  pdf-bf2ce5422088-p246-b002,
+  pdf-bf2ce5422088-p308-b004
+}
+\statementsource{AL17}{
+  pdf-27f2b3787521-p028-b006,
+  pdf-27f2b3787521-p028-b007
+}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p095-b001}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b001}
 \label{ErrorCorrectingCodes.Codeword.Code}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword}
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p015-b006}
 \statementsource{philips}{pdf-24e94ad30862-p025-b003}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
@@ -48,8 +72,19 @@ A (block) code of length $n$ over $\alpha$ is a finite set (\texttt{Finset}) of 
 
 \begin{definition}[Linear code via generator matrix]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p163-b005,
+  pdf-bf2ce5422088-p164-b001,
+  pdf-bf2ce5422088-p308-b004
+}
+\statementsource{AL17}{
+  pdf-27f2b3787521-p028-b007,
+  pdf-27f2b3787521-p029-b001
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b001}
 \label{ErrorCorrectingCodes.Codeword.Linear_Code}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code}
 \statementsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p045-b006,
   pdf-7251cb8e4bc5-p028-b003
@@ -61,8 +96,19 @@ arises this way.
 
 \begin{definition}[Linear code, existential form]
 \lean{ErrorCorrectingCodes.Codeword.Linear_Code'}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p163-b005,
+  pdf-bf2ce5422088-p164-b001,
+  pdf-bf2ce5422088-p308-b004
+}
+\statementsource{AL17}{
+  pdf-27f2b3787521-p028-b007,
+  pdf-27f2b3787521-p029-b001
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b001}
 \label{ErrorCorrectingCodes.Codeword.Linear_Code'}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.Code}
 \statementsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p045-b006,
   pdf-7251cb8e4bc5-p028-b003
@@ -75,6 +121,10 @@ Existential version: there exists some $m$ and generator matrix $G$ witnessing l
 
 \begin{definition}[$q$-ary entropy]
 \lean{ErrorCorrectingCodes.Codeword.qaryEntropy}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p138-b002,
+  pdf-bf2ce5422088-p293-b002
+}
 \label{ErrorCorrectingCodes.Codeword.qaryEntropy}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p069-b005}
@@ -86,8 +136,19 @@ H_q(p) \;=\; p\log_q(q-1) - p\log_q p - (1-p)\log_q(1-p).
 
 \begin{definition}[Hamming distance]
 \lean{ErrorCorrectingCodes.Codeword.hamming_distance}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p136-b003,
+  pdf-bf2ce5422088-p244-b002
+}
+\statementsource{AL17}{
+  pdf-27f2b3787521-p028-b006,
+  pdf-27f2b3787521-p029-b001
+}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p092-b005}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b001}
 \label{ErrorCorrectingCodes.Codeword.hamming_distance}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword}
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p018-b002}
 \statementsource{philips}{pdf-24e94ad30862-p023-b007}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
@@ -96,8 +157,20 @@ Hamming distance between two codewords, wrapping Mathlib's \texttt{hammingDist}.
 
 \begin{definition}[Distance predicate for a code]
 \lean{ErrorCorrectingCodes.Codeword.distance}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p137-b001,
+  pdf-bf2ce5422088-p207-b004,
+  pdf-bf2ce5422088-p248-b001
+}
+\statementsource{AL17}{
+  pdf-27f2b3787521-p028-b006,
+  pdf-27f2b3787521-p028-b007,
+  pdf-27f2b3787521-p029-b001
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b001}
 \label{ErrorCorrectingCodes.Codeword.distance}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.hamming_distance}
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p022-b008}
 \statementsource{philips}{pdf-24e94ad30862-p025-b003}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
@@ -108,8 +181,12 @@ are closer than $d$.
 
 \begin{definition}[Rate]
 \lean{ErrorCorrectingCodes.Codeword.rate}
+\statementsource{Vad12}{pdf-bf2ce5422088-p135-b001}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p096-b003}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b002}
 \label{ErrorCorrectingCodes.Codeword.rate}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword.Code}
 \statementsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p016-b003,
   pdf-7251cb8e4bc5-p017-b002
@@ -122,8 +199,13 @@ R(C) = \frac{\log|C|}{n\log|\alpha|}.
 
 \begin{definition}[Weight]
 \lean{ErrorCorrectingCodes.Codeword.weight}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p163-b007,
+  pdf-bf2ce5422088-p308-b004
+}
 \label{ErrorCorrectingCodes.Codeword.weight}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.hamming_distance, ErrorCorrectingCodes.Codeword.zero}
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p027-b002}
 \statementsource{philips}{pdf-24e94ad30862-p023-b009}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
@@ -134,6 +216,7 @@ The Hamming weight of $c$ is $d(c, \mathbf{0})$.
 \lean{ErrorCorrectingCodes.Codeword.max_size}
 \label{ErrorCorrectingCodes.Codeword.max_size}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.distance}
 \statementsource{philips}{pdf-24e94ad30862-p025-b004}
 \statementsource{IEEE-TIT.23.157}{pdf-abed77da6b7a-p001-b004}
 \texttt{max\_size n d A} asserts existence of a code of size $A$ and minimum distance $d$
@@ -142,8 +225,12 @@ that is maximal among all such codes.
 
 \begin{definition}[Hamming ball]
 \lean{ErrorCorrectingCodes.Codeword.hamming_ball}
+\statementsource{Vad12}{pdf-bf2ce5422088-p136-b003}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p095-b003}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p002-b003}
 \label{ErrorCorrectingCodes.Codeword.hamming_ball}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword, ErrorCorrectingCodes.Codeword.hamming_distance}
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p029-b006}
 The Hamming ball of radius $l$ around $c$:
 \[
@@ -159,6 +246,7 @@ implemented as a \texttt{Finset}.
 \lean{ErrorCorrectingCodes.Codeword.dist_le_length}
 \label{ErrorCorrectingCodes.Codeword.dist_le_length}
 \leanok
+\uses{ErrorCorrectingCodes.Codeword.Code, ErrorCorrectingCodes.Codeword.distance, ErrorCorrectingCodes.Codeword.hamming_distance}
 \difficulty{3}
 Let $C$ be a code of length $n$ over an alphabet $\alpha$ — that is, a finite set of
 codewords, each a function $\mathrm{Fin}\,n \to \alpha$ — and let $d$ be a natural

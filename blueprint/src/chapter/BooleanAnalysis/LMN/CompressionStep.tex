@@ -14,7 +14,7 @@ the switched gates can be repackaged as clean, bounded-width DNFs.
 \lean{LMN.circuit_depth_zero_is_lit}
 \label{LMN.circuit_depth_zero_is_lit}
 \leanok
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.Lit}
+\uses{BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth}
 \difficulty{2}
 Let $c$ be a Boolean circuit on $m$ variables — a tree whose leaves are literals and
 whose internal nodes are AND or OR gates applied to lists of subcircuits — and suppose
@@ -24,6 +24,10 @@ consists of that literal alone.
 
 \begin{lemma}[Layer-2 composed bound, base case]
 \lean{LMN.layer2_composed_bound_base}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b003,
+  pdf-ffbe9c7b3306-p104-b004
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p012-b003,
@@ -31,6 +35,7 @@ consists of that literal alone.
 }
 \label{LMN.layer2_composed_bound_base}
 \leanok
+\uses{BoolCircuit.Lit, BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.size, DNF.eval, LMN.Layer2Data, LMN.circuit_depth_zero_is_lit, LMN.composedDelta, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth, dtDepth_neg}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1031,7 +1036,6 @@ consists of that literal alone.
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p011-b004}
-\uses{BoolCircuit.TreeCircuit, BoolCircuit.TreeCircuit.depth, BoolCircuit.TreeCircuit.eval, BoolCircuit.TreeCircuit.size, BoolCircuit.Lit, DNF.eval, LMN.Layer2Data, LMN.circuit_depth_zero_is_lit, LMN.composedDelta, LMN.switching_bernoulli_dtDepth_dnf_general, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth, dtDepth_neg}
 \difficulty{5}
 Let $g_1,\dots,g_m$ be DNF formulas on $n$ Boolean variables, and let $w$ be a positive
 integer such that every $g_i$ has width at most $w$; assume $n \ge 1$, and that in each
@@ -1059,6 +1063,7 @@ l)}.
 }
 \label{LMN.switched_gates_give_new_dnfs}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -1265,7 +1270,6 @@ l)}.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b004}
-\uses{DNF, DNF.eval, DNF.width, LMN.cleanDNF, LMN.cleanDNF_eval, LMN.cleanDNF_nodup, LMN.cleanDNF_var_inj, LMN.cleanDNF_width_le, SwitchingLemma.Restriction, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Let $n$, $m$, and $l$ be natural numbers, let $\rho_1$ be a restriction on $n$
 variables, and let $g_1, \dots, g_m$ be DNF formulas on $n$ variables. For each $i$,

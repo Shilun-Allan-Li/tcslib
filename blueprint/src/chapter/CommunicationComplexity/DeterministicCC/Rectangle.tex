@@ -31,12 +31,12 @@ product $A \times B$ for some $A \subseteq X$ and $B \subseteq Y$.
 }
 \label{CommunicationComplexity.Rectangle.IsRectangle_iff}
 \leanok
+\uses{CommunicationComplexity.Rectangle.IsRectangle}
 \proofstep
   {CommunicationComplexity.Rectangle.IsRectangle}
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p004-b006}
-\uses{CommunicationComplexity.Rectangle.IsRectangle}
 \difficulty{4}
 A subset $R \subseteq X \times Y$ is a rectangle — that is, $R = A \times B$ for some $A
 \subseteq X$ and $B \subseteq Y$ — if and only if it is closed under crossing: for all
@@ -142,6 +142,7 @@ Let $\mathcal{P}$ be a monochromatic rectangle partition for a function $g : X \
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p011-b005}
 \label{CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
 \leanok
+\uses{CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.monoPartition_point_mem}
 \proofstep
   {CommunicationComplexity.Rectangle.IsRectangle}
   {direct}
@@ -170,7 +171,6 @@ Let $\mathcal{P}$ be a monochromatic rectangle partition for a function $g : X \
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p005-b005,
     pdf-fa052d8c95c0-p005-b003}
-\uses{CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.monoPartition_point_mem}
 \difficulty{4}
 Let $X$, $Y$, and $\alpha$ be sets and let $g : X \times Y \to \alpha$. If $S \subseteq
 X \times Y$ is a fooling set for $g$ and $\mathcal{P}$ is a monochromatic rectangle
@@ -184,6 +184,7 @@ as extended natural numbers (allowing the value $\infty$).
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p011-b005}
 \label{CommunicationComplexity.Rectangle.foolingSet_ncard_le_of_monoPartition}
 \leanok
+\uses{CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
 \proofstep
   {CommunicationComplexity.Rectangle.IsRectangle}
   {direct}
@@ -218,7 +219,6 @@ as extended natural numbers (allowing the value $\infty$).
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p011-b005,
     pdf-fa052d8c95c0-p008-b004}
-\uses{CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsMonoPartition, CommunicationComplexity.Rectangle.foolingSet_encard_le_of_monoPartition}
 \difficulty{3}
 Let $g : X \times Y \to \alpha$, let $S \subseteq X \times Y$ be a fooling set for $g$,
 and let $\mathcal{P}$ be a monochromatic rectangle partition for $g$. If $\mathcal{P}$

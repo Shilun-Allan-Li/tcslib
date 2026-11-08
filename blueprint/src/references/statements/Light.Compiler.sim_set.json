@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Compiler.sim_set",
+ "key": "6e9063e05e8d5283",
+ "kind": "theorem",
+ "title": "Simulation of Variable Assignment",
+ "statement": "Let $S$ be a compiler setting, let $d,x$ be natural numbers, let $e$ be an expression safe in state $\\sigma$, and let $\\sigma$ be a state. Assigning the value of $e$ in $\\sigma$ to variable $x$ simulates execution from $\\sigma$ to the state with its variable function updated at $x$ to $e(\\sigma)$ and with memory unchanged, in $\\mathrm{cost}(e)+1$ steps. This holds for every admissible initial machine placement and memory encoding; the compiled code reaches its endpoint within the corresponding machine-step bound, with memory encoding the updated state and agreement outside writable addresses.",
+ "hypotheses_covered": [
+  "The expression is safe in the initial state",
+  "For the simulation conclusion: initial frame relation, valid stack position, code located at the position and ending before the dispatcher, sufficient width, bounded source state, and sufficient stack room"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a program setting, and suppose expression $e$ is safe in state $\\sigma$. Then\nassigning the value of $e$ in $\\sigma$ to local variable $x$ simulates execution from\n$\\sigma$ to the state with that updated local-variable function and unchanged memory, in\n$\\mathrm{cost}(e)+1$ steps."
+}

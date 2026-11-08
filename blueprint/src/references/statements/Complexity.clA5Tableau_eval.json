@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Tableau_eval",
+ "key": "2b2ed6fb40712c93",
+ "kind": "lemma",
+ "title": "Evaluation of the tableau constraints",
+ "statement": "Let $M$ be a finite binary Turing machine with $k$ work tapes, let $c$ be a binary code for its optional states, let $C,e,T\\in\\mathbb{N}$, let $x$ be a finite binary word, and let $a:\\mathbb{N}\\to\\{0,1\\}$ be an assignment. Set $m=|x|+C(|x|+1)^e$. The tableau evaluates to true under $a$ if and only if all of the following hold: for every $j<|x|$, $a(j)$ is the $j$-th bit of $x$ (with false as the default); the initial constraint holds at parameters $(m,0,0,0)$; the state constraint holds from time $t$ to time $t+1$ for every $t<T$; every input group at time $t\\le T$ evaluates to true; every work group at time $t\\le T$ evaluates to true on each of the $k$ tapes; and the acceptance constraint holds at every $t<T$.",
+ "hypotheses_covered": [
+  "A finite binary Turing machine $M$",
+  "A binary code for the optional states of $M$",
+  "Natural parameters $C,e,T$",
+  "A finite binary input word $x$",
+  "A total Boolean assignment $a:\\mathbb{N}\\to\\{0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, state code, parameters $C$ and $e$, instance $x$, horizon $T$, and assignment $a$, with $m = |x| + C(|x|+1)^e$: the tableau evaluates to true under $a$ exactly when the first $|x|$ variables are pinned to the bits of $x$; the initial meaning holds; the state meaning holds at every $t < T$; every inclusive input group with $t \\le T$ evaluates to true; every inclusive work group with $t \\le T$ evaluates to true on every tape; and the acceptance meaning holds at every $t < T$."
+}

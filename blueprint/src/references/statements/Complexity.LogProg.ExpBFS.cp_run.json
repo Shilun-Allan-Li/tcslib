@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.cp_run",
+ "key": "808104d96122c9d8",
+ "kind": "theorem",
+ "title": "Copy routine run",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $k$ be a copy site, and let $S$ be a machine state, $M\\colon\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ a memory configuration, and $p\\in\\mathbb{Z}$. If $0\\le p\\le P$, every register value of $S$ is at most $B$, its scratch register $Z$ is zero, and the sum of the source and destination register values for $k$ is at most $B$, then the machine has a finite guarded run from the first phase of the copy routine, initialized with $S$, memory $M$, and head position $p$, to the exit control state for $k$. At the endpoint, the destination register contains the sum of its initial value and the source register's initial value; all other registers, the memory, and the head position are unchanged.",
+ "hypotheses_covered": [
+  "$0\\le p$",
+  "$p\\le P$",
+  "Every register value of $S$ is at most $B$",
+  "$S.Z=0$",
+  "The sum of the source and destination register values is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the machine, oracle, input, and bounds $B,P$. Let $k$ be a copy site, $S$ a register\nstate, $M$ a memory configuration, and $p\\in\\mathbb{Z}$. Suppose $0\\leq p\\leq P$, every\nregister of $S$ is at most $B$, the scratch register $S.Z$ is zero, and the sum of the\nsource and destination register values is at most $B$. Starting at the first phase of\nthe copy routine with registers encoded by $S$, memory $M$, and head position $p$, the\nmachine has a finite guarded run ending at the exit control state for $k$. The memory\nand head position are unchanged, and the destination register is increased by the source\nregister's value while all other registers retain their values."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clBank_component",
+ "key": "9546fe17b870ab7e",
+ "kind": "lemma",
+ "title": "One counter component reaches its result",
+ "statement": "Let $x$ be a bit word, let $p$ be an input-head position, let $a$ be a selection bit, and let $n,W$ be natural numbers such that the little-endian binary representation of $n$ has length at most $W$. Starting with the single-tape counter machine in its carry control if $a$ is true and its return control otherwise, with its head at cell $0$, tape holding the binary representation of $n$, input head at $p$, and empty output, after $2W+2$ steps its control is the return control, its head is again at cell $0$, its tape holds the binary representation of $n+1$ if $a$ is true and of $n$ otherwise, and the input position and empty output are unchanged.",
+ "hypotheses_covered": [
+  "Bit word $x$",
+  "Input-head position $p$ for $x$",
+  "Selection bit $a$",
+  "Counter value $n$",
+  "Width bound $W$",
+  "The binary representation of $n$ has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, selection flag, counter value $n$, and width bound $W$ with the binary representation of $n$ at most $W$ bits long, running one counter component for $2W + 2$ steps from its selection-dependent start control ends in the return control at head zero, holding the binary representation of $n+1$ if the component was selected and of $n$ otherwise."
+}

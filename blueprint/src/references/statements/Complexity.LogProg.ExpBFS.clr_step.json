@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.clr_step",
+ "key": "9957bf51f663ac79",
+ "kind": "lemma",
+ "title": "Reachability across a cleared register",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathsf{orc}$ assign a Boolean to each of four query types and each finite bit string, and let $x$ be a finite bit string. Let $st$ be a machine state whose 17 register values are all at most $B$, let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory function, and let $p\\in\\mathbb Z$ satisfy $0\\le p\\le P$. If the machine's instruction at state $l$ clears register $r$ and moves to state $l'$, and there is a finite guarded run from state $l'$ with register vector obtained from $st$ by setting register $r$ to zero, memory $M$, and memory head at $p$, to a configuration $c$, then there is such a guarded run from state $l$ with register vector $st$, the same memory and head position, to $c$.",
+ "hypotheses_covered": [
+  "$K_0,B,P\\in\\mathbb N$",
+  "Oracle with four query types and finite bit-string inputs",
+  "Finite bit-string input $x$",
+  "State $st$ has all 17 register values at most $B$",
+  "Instruction at $l$ clears register $r$ and goes to $l'$",
+  "Memory $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "$p\\in\\mathbb Z$ with $0\\le p\\le P$",
+  "A guarded finite run exists from the cleared-register configuration to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P$ be natural numbers, let an oracle assign Boolean answers to four query\ntypes and finite bit strings, and let $x$ be a bit string. Suppose $st$ is a machine\nstate, $M$ is a memory, $p$ is an integer with $0\\le p\\le P$, and clearing register $r$\nat state $l$ leads to state $l'$. If the bounded-reachability property holds from the\nconfiguration with state $l'$, registers obtained from $st$ by setting register $r$ to\nzero, memory $M$, and head position $p$, then it also holds from the configuration with\nstate $l$, registers given by $st$, memory $M$, and head position $p$. Here $st$ has\nevery register at most $B$."
+}

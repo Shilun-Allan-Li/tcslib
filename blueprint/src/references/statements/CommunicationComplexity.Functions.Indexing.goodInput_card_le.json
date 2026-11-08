@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.goodInput_card_le",
+ "key": "4a8d42266ab40a99",
+ "kind": "lemma",
+ "title": "Count of good Index inputs",
+ "statement": "Let $n$ be a positive integer and let $p$ be a deterministic one-way protocol for the Index problem on $n$-bit inputs. The number of inputs that lie at Hamming distance less than $n/4$ from some answer vector of $p$ is at most $|A|\\,2\\binom{n}{\\lfloor n/4\\rfloor}$, where $A$ is the set of answer vectors of $p$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$p$ is a deterministic one-way protocol from $n$-bit Boolean inputs and indices in $[n]$ to Boolean outputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{good}$ be the set of inputs $x \\in \\{0,1\\}^n$ that are not bad for $p$ (those\nwithin Hamming distance $< n/4$ of some answer vector).  Then\n\\[\n  \\abs{\\mathrm{good}} \\le \\abs{A} \\cdot 2 \\binom{n}{\\lfloor n/4 \\rfloor},\n\\]\nwhere $A$ is the answer set of $p$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.call_spec",
+ "key": "87e4e15459094eb1",
+ "kind": "theorem",
+ "title": "Bounded quantified formula calls",
+ "statement": "Let $x$ and $qs$ be Boolean words, let $B$ be a natural number, and let $\\varphi$ be a CNF formula over natural-number variables. Suppose $x$ is the pair encoding of $qs$ and the serialization of $\\varphi$, that $2^{|qs|+1}\\le B$, and that $|x|\\le B$. For every pair of natural numbers $j,k$ with $k+j=|qs|$, and every $S<2^{k+1}$, the machine reaches, from the node state with depth $k$, assignment stack $S$, and input pointer $0$, the return state carrying the truth value of evaluating $\\varphi$ under the remaining quantifiers of $qs$ and the assignment encoded by $(k,S)$; the ending depth, stack, and input pointer are unchanged.",
+ "hypotheses_covered": [
+  "$x$ is the pair encoding of $qs$ and the serialization of $\\varphi$",
+  "$2^{|qs|+1}\\le B$",
+  "$|x|\\le B$",
+  "$j,k\\in\\mathbb N$ and $k+j=|qs|$",
+  "$S<2^{k+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $qs$ a bit string of quantifiers, and\n$\\varphi$ a CNF formula. Suppose $x=\\langle\nqs,\\operatorname{serialize}(\\varphi)\\rangle$, $2^{|qs|+1}\\le B$, and $|x|\\le B$. Then\nfor every pair of natural numbers $j,k$ with $k+j=|qs|$, and every stack value\n$S<2^{k+1}$, the machine starting at a node with depth $k$, stack $S$, and input pointer\n$0$ reaches the return state whose answer is the truth value of the quantified-formula\nevaluation of $\\varphi$ on the remaining quantifiers of $qs$ under the assignment\nencoded by $(k,S)$, with the same depth, stack, and pointer. Every configuration before\nthe end of this run satisfies the machine's validity conditions and has all registers at\nmost $B$."
+}

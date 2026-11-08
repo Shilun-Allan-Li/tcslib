@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_pair_rewind",
+ "key": "f555d5d73bffc24a",
+ "kind": "lemma",
+ "title": "Synchronized Rewind of Endpoint Heads",
+ "statement": "Let $L>0$, let $M$ be a deterministic machine with $L+1$ work tapes and Boolean symbols, and let $q_r,q_a$ be states. Suppose that in state $q_r$, on every input and work-tape reading, the machine moves both endpoint heads one cell left and enters $q_r$ if tape zero is nonblank, and moves both one cell right and enters $q_a$ if tape zero is blank; it makes no writes or output. For every Boolean word $w$ and every $j\\le |w|$, starting with both endpoint heads at $j-1$, tape zero storing $w$, the last tape blank, and state $q_r$, after exactly $j+1$ steps the configuration has state $q_a$, both endpoint heads at zero, tape zero still storing $w$, and the last tape blank; all other configuration fields agree with the prescribed initial and final two-ended configurations.",
+ "hypotheses_covered": [
+  "$L$ is a positive natural number",
+  "A machine on $L+1$ work tapes over Boolean symbols",
+  "States $q_r$ and $q_a$",
+  "The stated transition rule holds for every input symbol and work-tape reading",
+  "A Boolean word $w$",
+  "A natural number $j$ with $j\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider a machine whose rewind state moves both endpoint heads left while the\ntape-zero cell is nonblank and exits right into an arrival state at the left\nblank. For every word $w$ on tape zero and every $j \\le |w|$: from common head\nposition $j - 1$, exactly $j + 1$ steps reach the arrival state with both heads\nat zero, preserving $w$ and the blank capture tape."
+}

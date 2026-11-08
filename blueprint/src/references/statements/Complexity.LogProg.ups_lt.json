@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.ups_lt",
+ "key": "680df33294924ce8",
+ "kind": "lemma",
+ "title": "Less-than loop from its two cases",
+ "statement": "Let $x$ be a bit string, $B$ a natural number, $q$ a rational number, and $\\sigma$ a register state whose fifteen values are at most $B$. If the random-index value of $\\sigma$ is less than its vertex-count value, assume that for every $a\\le B$ the program started at the index routine for the walk site, with the row counter set to $a$ and all other values as in $\\sigma$, has all live register values at most $B$, terminates along every sequence of choices, and has acceptance probability $q$ and rejection probability $1-q$ for every choice length at which every sequence of choices halts. If the vertex-count value is at most the random-index value, assume the same property for every $a\\le B$ when started at the continuation label with the row counter set to $a$. Then the program started at the less-than loop label from $\\sigma$ has those bounded-register termination and probability properties.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$B$ is a natural number",
+  "$q$ is rational",
+  "$\\sigma$ is a register state bounded by $B$",
+  "if random index is less than vertex count, every row-counter update bounded by $B$ gives the stated property at the walk-site index routine",
+  "if vertex count is at most the random index, every row-counter update bounded by $B$ gives the stated property at the continuation label"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $q$ a rational number, and $\\sigma$ a\nrecord of 15 natural-number register values, with every register at most $B$. If\n$\\sigma$'s random index is less than its vertex count, assume that for every $a\\le B$\nthe program satisfies the specified bounded-register termination and\nacceptance-probability property with probability $q$, starting at the index routine for\nthe walk site and with the row counter set to $a$. If the vertex count is at most the\nrandom index, assume that for every $a\\le B$ the same property holds starting at the\ncontinuation label with the row counter set to $a$. Then the program satisfies that\nproperty with probability $q$ starting at the less-than loop label with initial register\nrecord $\\sigma$."
+}

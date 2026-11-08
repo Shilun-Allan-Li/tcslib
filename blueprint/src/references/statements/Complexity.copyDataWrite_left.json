@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.copyDataWrite_left",
+ "key": "4acc3a664279591d",
+ "kind": "lemma",
+ "title": "Writing the Left Boundary Payload",
+ "statement": "Let $M$ be a finite deterministic machine over Booleans, let $x$ be a Boolean word, and let a tape assignment give the contents of the $|M|+1$ data lanes at each integer coordinate. Suppose the current payload at every lane and coordinate is blank. After writing the left-boundary payload, with blank content and tag $1$, at coordinate $-1$ on the input lane, the current payload at every lane and coordinate equals the copied payload vector of count $0$.",
+ "hypotheses_covered": [
+  "$M$ is a finite deterministic machine over Booleans",
+  "$x$ is a Boolean word",
+  "A tape assignment is given for all data lanes and integer coordinates",
+  "Every current payload is blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If every current payload of the data tapes is blank, then after the copy write\nplacing the left-boundary payload (blank content with tag $1$) at coordinate\n$-1$, the current payloads are exactly the copied payloads of count $0$."
+}

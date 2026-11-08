@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.e3_shift_scan",
+ "key": "4ad1324f8afbd75e",
+ "kind": "lemma",
+ "title": "Scan invariant of the zero-prefixing machine",
+ "statement": "For every pair of binary words $w,x$ and every natural number $t\\le |x|$, after $t$ steps from its initial configuration on input $x$, the machine defined from $w$ is in its scanning state, its input head is at position $t+1$, and its output consists of exactly $t$ zero bits.",
+ "hypotheses_covered": [
+  "Binary words $w,x$",
+  "A natural number $t$ with $t\\le |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every fixed word $w$, every input $x$ and every $t \\le |x|$: after $t$ steps from the initial configuration, the zero-prefixing emitter for $w$ is still in its scanner state, its input head is at position $t + 1$, and its output so far is $t$ zero bits."
+}

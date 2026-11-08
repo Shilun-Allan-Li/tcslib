@@ -97,7 +97,11 @@ For every $x \in \{0,1\}^n$ and every bit $b$,
   T_\rho f(x, b) \;=\; T_\rho(Af)(x) \;+\; \sigma(b)\,\rho\,T_\rho(Df)(x),
 \]
 where $(x,b) \in \{0,1\}^{n+1}$ is the point obtained by appending $b$ as the last
-coordinate, $\sigma(0)=1$, $\sigma(1)=-1$, and $T_\rho$ is the noise operator. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+coordinate, $\sigma(0)=1$, $\sigma(1)=-1$, and $T_\rho$ is the noise operator. For
+$d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is
+$T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{lemma}
 
 \begin{lemma}[Fourth-moment decomposition under the noise operator]
@@ -121,14 +125,348 @@ under the uniform measure decomposes as
   = \E\bigl[(T_\rho g)^4\bigr]
   + 6\rho^2\,\E\bigl[(T_\rho g)^2\,(T_\rho h)^2\bigr]
   + \rho^4\,\E\bigl[(T_\rho h)^4\bigr].
-\] For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+\] For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise
+operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{lemma}
 
 \begin{lemma}[A quadratic inequality from bound data]
 \lean{BooleanAnalysis.Hypercontractivity.hypercontractivity_algebra'}
 \leanok
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p253-b003}
 \difficulty{5}
 \proofsource{boolean-ch09-hypercontractivity-kkl}{pdf-4ba63c9394e5-p007-b004}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
 \label{BooleanAnalysis.Hypercontractivity.hypercontractivity_algebra'}
 \statementsource{boolean-ch09-hypercontractivity-kkl}{
   pdf-4ba63c9394e5-p007-b004,
@@ -325,7 +663,11 @@ controlled by the square of its second moment:
   \E\bigl[(T_\rho f)^4\bigr]\;\le\;\bigl(\E[f^2]\bigr)^2,
 \]
 where $T_\rho$ is the noise operator and $\E$ denotes expectation under the uniform
-measure on $\{0,1\}^n$. Equivalently, $\norm{T_\rho f}_4\le\norm{f}_2$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+measure on $\{0,1\}^n$. Equivalently, $\norm{T_\rho f}_4\le\norm{f}_2$. For $d\in\mathbb
+N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau
+h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{theorem}
 
 \begin{lemma}[Hölder's inequality for the exponents $4/3$ and $4$]
@@ -348,6 +690,10 @@ respect to the uniform measure on $\{0,1\}^n$. Then their $L^2$ inner product sa
 \lean{BooleanAnalysis.Hypercontractivity.hypercontractivity_4_div_3_2}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.hypercontractivity_2_4, BooleanAnalysis.Hypercontractivity.innerProduct_le_L43_L4, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp, BooleanAnalysis.noiseOp_self_adjoint, BooleanAnalysis.uniformWeight}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p254-b002,
+  pdf-ffbe9c7b3306-p254-b003
+}
 \difficulty{5}
 \statementsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p004-b006,
@@ -590,5 +936,9 @@ original function:
   \;\le\;
   \bigl(\E\bigl[\,\abs{f}^{4/3}\,\bigr]\bigr)^{3/4},
 \]
-where both expectations are taken under the uniform measure on the hypercube. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+where both expectations are taken under the uniform measure on the hypercube. For
+$d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is
+$T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{theorem}

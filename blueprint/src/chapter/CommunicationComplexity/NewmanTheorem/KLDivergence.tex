@@ -13,6 +13,7 @@ specialize to the Boolean ($\mathrm{Bool}$) case.
 
 \begin{theorem}[KL divergence as a log-likelihood-ratio sum (absolutely continuous case)]
 \lean{CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
+\statementsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p003-b003}
 \label{CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace}
@@ -33,6 +34,7 @@ number $x$ as a nonnegative extended real, negative values being sent to $0$.
 
 \begin{theorem}[KL divergence on a finite space as a log-likelihood-ratio sum]
 \lean{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
+\statementsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p003-b003}
 \label{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons, CommunicationComplexity.klDiv_eq_sum_llr_of_ac}
@@ -53,6 +55,7 @@ number as a nonnegative extended real, sending any negative value to $0$.
 
 \begin{theorem}[KL divergence of probability mass functions]
 \lean{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_llr}
+\statementsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p003-b003}
 \label{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_llr}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr}
@@ -108,6 +111,7 @@ log-likelihood ratio of $\mu$ against $\nu$, one has
 
 \begin{theorem}[KL divergence on a finite space as a sum of log-ratios]
 \lean{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
+\statementsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p003-b003}
 \label{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.absolutelyContinuous_iff_forall_singletons, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_llr, CommunicationComplexity.singleton_mass_mul_llr_eq_log_ratio}
@@ -146,6 +150,7 @@ divergence $D_{\mathrm{KL}}(\mu \,\|\, \nu)$ is finite.
 
 \begin{theorem}[Kullback–Leibler divergence between probability mass functions]
 \lean{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_log}
+\statementsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p003-b003}
 \label{CommunicationComplexity.FiniteMeasureSpace.pmf_klDiv_eq_sum_log}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace, CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
@@ -164,6 +169,7 @@ are read as $0$.
 
 \begin{theorem}[Real-valued and extended KL divergence agree on Bool]
 \lean{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}
+\statementsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p003-b003}
 \label{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}
 \leanok
 \uses{CommunicationComplexity.FiniteMeasureSpace.klDiv_eq_sum_log}
@@ -183,6 +189,7 @@ is,
 
 \begin{theorem}[Real value of a conditioned Boolean Kullback–Leibler divergence]
 \lean{ProbabilityTheory.toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero}
+\statementsource{raoyehudayoff-ch06-information}{pdf-6d7577246334-p003-b003}
 \label{ProbabilityTheory.toReal_klDiv_map_bool_eq_KLDiv_of_measureReal_ne_zero}
 \leanok
 \uses{ProbabilityTheory.toReal_klDiv_bool_eq_KLDiv}

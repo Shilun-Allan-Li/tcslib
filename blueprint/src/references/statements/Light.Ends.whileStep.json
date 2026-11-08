@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Ends.whileStep",
+ "key": "0a5c3044a065dd9d",
+ "kind": "theorem",
+ "title": "One bounded loop iteration",
+ "statement": "Let a program, depth bound, condition $c$, body statement $s$, initial state $\\sigma$, time bounds $T_1,T_2,T\\in\\mathbb N$, and postcondition $Q$ be given. If $c$ is safe and true at $\\sigma$, and the body can execute from $\\sigma$ within time $T_1$ to a state from which the same loop can end in a state satisfying $Q$ within time $T_2$, and $\\operatorname{cost}(c)+1+T_1+T_2\\le T$, then the loop ends from $\\sigma$ in a state satisfying $Q$ within time $T$.",
+ "hypotheses_covered": [
+  "The condition is safe at the initial state",
+  "The condition holds at the initial state",
+  "The body reaches within $T_1$ a state from which the loop reaches a $Q$-state within $T_2$",
+  "The combined time bound is at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

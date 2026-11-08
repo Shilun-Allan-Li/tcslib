@@ -1,0 +1,21 @@
+{
+ "lean_name": "FABL.EncodedMaxThreeSatModel.distinguishesThreeCNFSat",
+ "key": "2705a95dcd4ddf02",
+ "kind": "theorem",
+ "title": "Distinguishing Three-CNF Satisfiability",
+ "statement": "Let a binary encoding of three-CNF formulas and an encoded maximization model be given. Suppose every canonical formula encoding is a valid instance, its optimum is at most $1$, and its optimum is $1$ exactly when the formula is satisfiable. If a polynomial-time algorithm returns a feasible solution on every valid instance and has value at least $1$ whenever the optimum is at least $1$, then any polynomial-time threshold test whose output is the one-bit indicator of whether the algorithm's value is at least $1$ distinguishes satisfiable from unsatisfiable formulas: it outputs true on every encoded satisfiable formula and false on every encoded unsatisfiable formula.",
+ "hypotheses_covered": [
+  "A binary encoding of three-CNF formulas",
+  "Every canonical formula encoding is a valid maximization instance",
+  "The optimum of each encoded formula is at most $1$",
+  "The optimum is $1$ exactly when the formula is satisfiable",
+  "The algorithm is a polynomial-time map and returns a feasible solution on every valid instance",
+  "The algorithm returns value at least $1$ whenever the optimum is at least $1$",
+  "The threshold test is a polynomial-time map",
+  "The threshold test's output is exactly the one-bit indicator of whether the algorithm's value is at least $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a binary encoding of exact-three-literal CNF formulas and an encoded maximization\nmodel for those formulas be given. Suppose every encoded formula is a valid instance,\nits optimum is at most $1$, and its optimum is $1$ exactly when the formula is\nsatisfiable. If a polynomial-time algorithm always returns a feasible solution on valid\ninstances and achieves value at least $1$ whenever the optimum is at least $1$, and a\npolynomial-time test outputs the single bit indicating whether the algorithm's value is\nat least $1$, then that test distinguishes satisfiable from unsatisfiable formulas on\nthe promise problem of valid formula encodings: it outputs true for satisfiable formulas\nand false for unsatisfiable formulas."
+}

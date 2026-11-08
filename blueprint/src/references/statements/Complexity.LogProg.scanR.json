@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.scanR",
+ "key": "f77b176c7da1b07a",
+ "kind": "lemma",
+ "title": "Simulation of a scan across input symbols",
+ "statement": "Let $P$ be a register program with $m$ registers, an oracle, an input word $x$, and a configuration $c$; fix a register $r$, an integer position $p$, a state sequence $\\sigma_j$, and natural numbers $q_0,k$. Suppose $q_0+k\\le |x|+1$. Suppose that for every $j<k$ and every tuple of scanned register symbols, the ordinary transition from state $\\sigma_j$, reading the input symbol at position $q_0+j$, is the action that moves the input head right, leaves every register tape unchanged and stationary, emits no output, and enters state $\\sigma_{j+1}$. Suppose also that there is no oracle call at any state $\\sigma_j$ for $j<k$. Then for every $j\\le k$, after $j$ steps from the configuration with state $\\sigma_0$, input-head position $q_0$, and register-$r$ head position $p$, the run has state $\\sigma_j$, input-head position $q_0+j$, and register-$r$ head position $p$, with the other configuration data unchanged.",
+ "hypotheses_covered": [
+  "A register program $P$, oracle, input $x$, and configuration $c$",
+  "A register $r$, integer position $p$, state sequence $\\sigma$, and natural numbers $q_0,k$",
+  "$q_0+k\\le |x|+1$",
+  "For every $j<k$ and every scanned-register-symbol tuple, the specified transition is the right-moving, register-idle action entering $\\sigma_{j+1}$",
+  "No call occurs at $\\sigma_j$ for every $j<k$",
+  "The conclusion holds for each $j\\le k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

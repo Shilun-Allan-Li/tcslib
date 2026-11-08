@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.tableRewindTM_run_ofCfg",
+ "key": "8793d6c3f3e440e6",
+ "kind": "theorem",
+ "title": "Rewinding a table tape",
+ "statement": "Let $k$ be a number of work tapes, let $\\Gamma$ be an alphabet, let $x$ be an input word, and choose a tape $i$ among the $k$ work tapes. Let $ws$ be a nonempty list of nonempty fields, and write $L$ for its total field offset. Suppose a configuration $d$ starts in the left component's run phase, and for every integer $p$ with $-2 \\le p < L$, tape $i$ at position $d_i-L+p$ contains the symbol prescribed by the fields tape at position $p$. After $L+7$ steps of the table-rewind machine, the configuration is exactly $d$ with state changed to the right component's done phase and tape $i$'s head moved to $d_i-L$. Before that time the machine has not reached the right component's done phase; throughout steps $t \\le L+7$, the head on tape $i$ remains between $d_i-L-2$ and $d_i$, inclusive, and every other work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$k$ is a natural number and $i$ is one of the $k$ tapes",
+  "$ws$ is a list of fields and is nonempty",
+  "Every field in $ws$ is nonempty",
+  "$d$ is a configuration on input $x$",
+  "The initial state is the left run phase",
+  "For all integers $p$ with $-2 \\le p < L$, the specified tape cell agrees with the fields tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

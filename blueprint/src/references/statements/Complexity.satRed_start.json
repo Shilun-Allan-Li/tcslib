@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satRed_start",
+ "key": "968f65781f7640a2",
+ "kind": "lemma",
+ "title": "Transducer Startup Configuration",
+ "statement": "For every CNF formula $\\varphi$ over variables indexed by $\\mathbb{N}$, there is a time $t \\le 3|\\mathrm{enc}(\\varphi)|+5$ at which the transducer, started on $\\mathrm{enc}(\\varphi)$, is in state $9$, with input head at position $1$, counter tape storing the unary word of length $N(\\varphi)$ and head at $0$, buffer tape storing the content specified by the empty word with cut position $0$ and head at $0$, and empty output.",
+ "hypotheses_covered": [
+  "$\\varphi$ is a CNF formula over natural-number variables",
+  "There exists $t \\le 3|\\mathrm{enc}(\\varphi)|+5$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula with serialization $\\mathrm{ser}(\\varphi)$ and\nits variable bound $N(\\varphi)$ (one more than the largest variable index occurring in $\\varphi$, or $0$ if no variable occurs). There is a time $t \\le 3\\,|\\mathrm{ser}(\\varphi)| + 5$ at which the\nclause-splitting transducer, started on $\\mathrm{ser}(\\varphi)$, is in its\nstreaming entry state with exactly $1^{N(\\varphi)}$ on the counter tape, the\nbuffer empty apart from its permanent marker, the input head back at $0$, both\nwork heads at $0$, and empty output."
+}

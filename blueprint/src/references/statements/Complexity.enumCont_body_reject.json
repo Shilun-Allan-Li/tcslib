@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_body_reject",
+ "key": "f3c8ec63fd1ec25f",
+ "kind": "lemma",
+ "title": "Rejection transition",
+ "statement": "For every Boolean finite machine $B$, states $q_v,q_i$ of $B$, Boolean flag $stop$, and Boolean words $x,s$, one step of the body machine with parameters $B,q_v,q_i,stop$, from the configuration on input $x$ in control state $3$ whose first and last work tapes store $s$ and the one-bit word $[\\mathrm{false}]$, respectively, and whose endpoint heads are at zero, yields the configuration in control state $(q_i,2)$ with the first tape still storing $s$, the last tape blank, both endpoint heads at zero, and all other fields unchanged.",
+ "hypotheses_covered": [
+  "$B$ is a finite Boolean Turing machine",
+  "$q_v,q_i$ are states of $B$",
+  "$stop$ is a Boolean flag",
+  "$x,s$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every candidate word $s$, one step of the enumerator body (active or stopped)\nfrom the two-ended configuration in the verdict state with tape zero $s$ and a\ncaptured single false bit yields the two-ended configuration that enters the\nincrement call (the source's increment entry state in increment mode), with tape\nzero $s$, the captured verdict erased so that the capture tape is blank, and both\nendpoint heads at zero."
+}

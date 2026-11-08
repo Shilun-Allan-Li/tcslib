@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_weightLevel_even",
+ "key": "273d5c06d718cbb8",
+ "kind": "lemma",
+ "title": "Vanishing even-level majority weight",
+ "statement": "Let $m,k\\in\\mathbb N$ and suppose $k$ is even. The Fourier weight at level $k$ of the majority function on $\\{0,1\\}^{2m+1}$ is zero: $W_k[M_m]=0$.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb N$",
+  "$k\\in\\mathbb N$",
+  "$k$ is even"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $m\\in\\mathbb N$, put $n=2m+1$, and define $M_m:\\{\\pm1\\}^n\\to\\mathbb R$ by\n$M_m(x)=1$ when more than $m$ coordinates equal $1$, and $M_m(x)=-1$ otherwise.\nFor $S\\subseteq\\{1,\\ldots,n\\}$ define\n$\\widehat M_m(S)=2^{-n}\\sum_{x\\in\\{\\pm1\\}^n}M_m(x)\\prod_{i\\in S}x_i$, and for every\n$k\\in\\mathbb N$ define $W_k(M_m)=\\sum_{|S|=k}\\widehat M_m(S)^2$.\nIf $k\\in\\mathbb N$ is even, then $W_k(M_m)=0$."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.exists_recordTemplateTM",
+ "key": "8c71c6efedac0c97",
+ "kind": "theorem",
+ "title": "Machine for Writing a Record Template",
+ "statement": "For finite decidable types $Q,T$, there are a natural number $K$, a finite decidable state type $P$, a deterministic machine $R$ with $K+2$ work tapes over the record alphabet, entry and exit states, and a constant $C$ such that the following holds. For every binary string $x$, natural number $s$, and binary string $w$ representing $s$ in base two, any configuration $d$ on the embedded input with entry state and input head at position $1$, with tape $1$ containing $w$, tape $0$ blank over the joined template interval, and every tape of index at least $2$ blank, reaches in at most $C(|\\langle H\\rangle|+|w|+|x|+1)$ steps the configuration obtained by entering the exit state and writing the joined fields of the prescribed record template $H$ for parameters $Q,T,|x|,s$ on tape $0$. It avoids the exit state before that time, and all work-tape heads stay within distance $C(|\\langle H\\rangle|+|w|+1)$ of their starting positions through that time.",
+ "hypotheses_covered": [
+  "Finite decidable types $Q,T$",
+  "Binary string $x$",
+  "Natural number $s$ and binary representation $w$ with $\\operatorname{ofDigits}_2(w)=s$",
+  "Entry state and input head at position $1$",
+  "Tape $1$ stores $w$",
+  "Tape $0$ is blank throughout the template interval",
+  "All tapes of index at least $2$ are blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

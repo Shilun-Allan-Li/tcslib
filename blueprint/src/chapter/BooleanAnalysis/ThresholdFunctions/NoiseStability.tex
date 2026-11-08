@@ -14,21 +14,29 @@ A class of functions on Boolean cubes is a family $B=(B_n)_{n\in\mathbb N}$, whe
 \begin{definition}[Boolean-valued function classes]
 \lean{BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass,BooleanAnalysis.isPmOne}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass, BooleanAnalysis.isPmOne}
 For a family $B=(B_n)_{n\in\mathbb N}$ of sets of functions $\{0,1\}^{n}\to\mathbb R$, being Boolean-valued means that every $f\in B_n$, in every dimension $n$, satisfies $f(x)\in\{-1,1\}$ for all $x\in\{0,1\}^{n}$.
 \end{definition}
 
 \begin{definition}[Polynomial threshold classes]
 \lean{BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.IsPolynomialThreshold,BooleanAnalysis.isPmOne}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.IsPolynomialThreshold, BooleanAnalysis.isPmOne}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p006-b003,
+  pdf-ffbe9c7b3306-p115-b005
+}
 For $k,n\in\mathbb N$, the degree-at-most-$k$ polynomial threshold class consists of functions $f:\{0,1\}^{n}\to\{-1,1\}$ for which there is a real multilinear polynomial $p$ of degree at most $k$ such that $f(x)=\operatorname{sgn}_{+}(p((-1)^{x_1},\ldots,(-1)^{x_n}))$ for every $x$, where $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $\operatorname{sgn}_{+}(t)=-1$ for $t<0$.
 \end{definition}
 
 \begin{definition}[Linear threshold classes]
 \lean{BooleanAnalysis.ThresholdFunctions.linearThresholdClass}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.IsLinearThreshold,BooleanAnalysis.isPmOne}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.IsLinearThreshold, BooleanAnalysis.isPmOne}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p044-b005,
+  pdf-ffbe9c7b3306-p113-b003
+}
 For every $n\in\mathbb N$, the linear threshold class consists of functions $f:\{0,1\}^{n}\to\{-1,1\}$ admitting real coefficients $c,a_1,\ldots,a_n$ with
 \[
 f(x)=\operatorname{sgn}_{+}\left(c+\sum_{i=1}^{n}a_i(-1)^{x_i}\right),
@@ -39,7 +47,11 @@ where $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$.
 \begin{definition}[Uniform noise stability]
 \lean{BooleanAnalysis.ThresholdFunctions.IsUniformlyNoiseStable}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass,BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass,BooleanAnalysis.ThresholdFunctions.noiseSensitivity}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass, BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass, BooleanAnalysis.ThresholdFunctions.noiseSensitivity}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p006-b003,
+  pdf-ffbe9c7b3306-p130-b005
+}
 For a family $B=(B_n)_{n\in\mathbb N}$ of sets of real-valued functions on $\{0,1\}^{n}$, uniform noise stability means that every member is $\{-1,1\}$-valued and there exists a function $\varepsilon:\mathbb R\to\mathbb R$ with $0\leq\varepsilon(\delta)\leq1$ for $0\leq\delta\leq1/2$ and $\lim_{\delta\to0^{+}}\varepsilon(\delta)=0$, such that
 \[
 \Pr[f(X)\neq f(Y)]\leq\varepsilon(\delta)
@@ -51,7 +63,8 @@ Here $X$ is uniform on $\{0,1\}^{n}$ and $Y$ is obtained by flipping each coordi
 \begin{definition}[Negated coordinate identification]
 \lean{BooleanAnalysis.ThresholdFunctions.identifiedNegation}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p131-b003}
 For every $n,m\in\mathbb N$, a function $f:\{0,1\}^{n}\to\mathbb R$, a vector $z\in\{0,1\}^{n}$ and a map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, negating according to $z$ and identifying according to $\pi$ gives the function $g:\{0,1\}^{m}\to\mathbb R$ defined by
 \[
 g(w)=f\bigl((z_i+w_{\pi(i)}\pmod2)_{i=1}^{n}\bigr).
@@ -61,7 +74,8 @@ g(w)=f\bigl((z_i+w_{\pi(i)}\pmod2)_{i=1}^{n}\bigr).
 \begin{definition}[Closure under negation and identification]
 \lean{BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass,BooleanAnalysis.ThresholdFunctions.identifiedNegation}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass, BooleanAnalysis.ThresholdFunctions.identifiedNegation}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p131-b002}
 For a family $B=(B_n)_{n\in\mathbb N}$ of sets of real-valued functions on $\{0,1\}^{n}$, closure under input negation and identification means that, for all $n,m\in\mathbb N$, $f\in B_n$, $z\in\{0,1\}^{n}$ and maps $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, the function
 \[
 w\longmapsto f\bigl((z_i+w_{\pi(i)}\pmod2)_{i=1}^{n}\bigr)
@@ -79,28 +93,526 @@ m(\delta)=\max\{0,\lfloor\delta^{-1}\rfloor\},
 where the floor is the integer floor and $0^{-1}$ is defined to be $0$; in particular $m(\delta)=0$ for $\delta\leq0$.
 \end{definition}
 
-\begin{lemma}[Nonnegative stability at nonnegative correlation]
+\begin{lemma}[Nonnegative noise stability]
 \lean{BooleanAnalysis.ThresholdFunctions.noiseStability_nonneg}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.noiseStability,BooleanAnalysis.stability_formula}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.noiseStability, BooleanAnalysis.stability_formula}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p056-b002,
+  pdf-ffbe9c7b3306-p056-b003
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b002,
+    pdf-ffbe9c7b3306-p055-b003}
+\proofstep
+  {BooleanAnalysis.stability_formula}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b001,
+    pdf-ffbe9c7b3306-p056-b002,
+    pdf-ffbe9c7b3306-p056-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseStability}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b005,
+    pdf-ffbe9c7b3306-p056-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b002,
+    pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib_1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
 \difficulty{3}
-For every $n\in\mathbb N$, $f:\{0,1\}^{n}\to\mathbb R$ and real $\rho\geq0$, the noise stability
-\[
-\operatorname{Stab}_{\rho}(f)=\sum_{S\subseteq\{1,\ldots,n\}}\rho^{|S|}\widehat f(S)^2
-\]
-is nonnegative, where $\widehat f(S)=2^{-n}\sum_{x\in\{0,1\}^{n}}f(x)\prod_{i\in S}(-1)^{x_i}$ is the normalized Walsh coefficient (and $\rho^0=1$, including at $\rho=0$).
+Let $n$ be a nonnegative integer, let $f\colon\{0,1\}^n\to\mathbb R$, and let
+$\rho\in\mathbb R$ satisfy $\rho\geq0$. Then the noise stability of $f$ at parameter
+$\rho$ satisfies $$0\leq\operatorname{Stab}_{\rho}(f).$$
 \end{lemma}
 
-\begin{lemma}[Half bound for totalized sensitivity]
+\begin{lemma}[Upper bound for noise sensitivity]
 \lean{BooleanAnalysis.ThresholdFunctions.noiseSensitivity_le_half}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.noiseSensitivity,BooleanAnalysis.ThresholdFunctions.noiseStability,BooleanAnalysis.ThresholdFunctions.noiseStability_nonneg}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.noiseSensitivity, BooleanAnalysis.ThresholdFunctions.noiseStability, BooleanAnalysis.ThresholdFunctions.noiseStability_nonneg}
 \difficulty{3}
-For every $n\in\mathbb N$, real-valued $f:\{0,1\}^{n}\to\mathbb R$ and real $\delta\leq1/2$, including negative $\delta$, the total real-valued noise sensitivity satisfies
-\[
-\operatorname{NS}_{\delta}(f)=\frac{1-\sum_{S\subseteq\{1,\ldots,n\}}(1-2\delta)^{|S|}\widehat f(S)^2}{2}\leq\frac12,
-\]
-where $\widehat f(S)=2^{-n}\sum_{x\in\{0,1\}^{n}}f(x)\prod_{i\in S}(-1)^{x_i}$.
+Let $n$ be a nonnegative integer, let $f\colon\{0,1\}^n\to\mathbb R$, and let
+$\delta\in\mathbb R$ satisfy $\delta\leq\tfrac12$. The noise sensitivity defined by
+$\operatorname{NS}_{\delta}(f)=\bigl(1-\operatorname{Stab}_{1-2\delta}(f)\bigr)/2$
+satisfies $$\operatorname{NS}_{\delta}(f)\leq\frac12.$$
 \end{lemma}
 
 \begin{lemma}[Bounds on the reciprocal block count]
@@ -108,47 +620,579 @@ where $\widehat f(S)=2^{-n}\sum_{x\in\{0,1\}^{n}}f(x)\prod_{i\in S}(-1)^{x_i}$.
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.noiseBlockCount}
 \difficulty{4}
-For every real $\delta$ with $0<\delta\leq1/2$, the natural number $m=\lfloor1/\delta\rfloor$ satisfies
-\[
-2\leq m,\qquad m\leq\frac1\delta,\qquad \frac1{2\delta}\leq m.
-\]
+Let $\delta\in\mathbb R$ satisfy $0<\delta\leq\tfrac12$, and let
+$m=\max\{0,\lfloor\delta^{-1}\rfloor\}$. Then $$2\leq m,\qquad m\leq\delta^{-1},\qquad
+\frac{\delta^{-1}}2\leq m.$$
 \end{lemma}
 
-\begin{lemma}[Square-root bound per block]
+\begin{lemma}[Square-root bound for the reciprocal block count]
 \lean{BooleanAnalysis.ThresholdFunctions.sqrt_div_noiseBlockCount_le}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.noiseBlockCount,BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec}
+\uses{BooleanAnalysis.ThresholdFunctions.noiseBlockCount, BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec}
 \difficulty{5}
-For every real $\delta$ with $0<\delta\leq1/2$, setting $m=\lfloor1/\delta\rfloor$ gives
-\[
-\frac{\sqrt m}{m}\leq\sqrt2\,\sqrt\delta.
-\]
+For every real $\delta$ with $0<\delta\le\tfrac12$, let $m=\lfloor\delta^{-1}\rfloor$.
+Then $\sqrt m/m\le\sqrt2\,\sqrt\delta$.
 \end{lemma}
 
-\begin{lemma}[A vanishing uniform sensitivity bound]
+\begin{lemma}[Uniform noise stability from a sensitivity bound]
 \lean{BooleanAnalysis.ThresholdFunctions.isUniformlyNoiseStable_of_bound}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass,BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass,BooleanAnalysis.ThresholdFunctions.IsUniformlyNoiseStable,BooleanAnalysis.ThresholdFunctions.noiseSensitivity,BooleanAnalysis.ThresholdFunctions.noiseSensitivity_le_half}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass, BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass, BooleanAnalysis.ThresholdFunctions.IsUniformlyNoiseStable, BooleanAnalysis.ThresholdFunctions.noiseSensitivity, BooleanAnalysis.ThresholdFunctions.noiseSensitivity_le_half}
 \difficulty{4}
-Let $B=(B_n)_{n\in\mathbb N}$ be a family of sets of functions $\{0,1\}^{n}\to\{-1,1\}$ and let $\varepsilon:\mathbb R\to\mathbb R$ satisfy $\varepsilon(\delta)\geq0$ for $0\leq\delta\leq1/2$, $\lim_{\delta\to0^{+}}\varepsilon(\delta)=0$ and $\operatorname{NS}_{\delta}(f)\leq\varepsilon(\delta)$ for every $n$, $f\in B_n$ and $0<\delta\leq1/2$.
-Then $B$ is uniformly noise-stable: there exists $\eta:\mathbb R\to\mathbb R$ with $0\leq\eta(\delta)\leq1$ on $[0,1/2]$, $\lim_{\delta\to0^{+}}\eta(\delta)=0$ and $\operatorname{NS}_{\delta}(f)\leq\eta(\delta)$ for every such $n,f,\delta$, where $\operatorname{NS}_{\delta}(f)=\Pr[f(X)\neq f(Y)]$, $X$ is uniform on the cube and $Y$ flips each coordinate independently with probability $\delta$.
+Let $B=(B_n)_{n\in\mathbb N}$ be a family of sets of real-valued functions on Boolean
+cubes, and suppose every function in every $B_n$ takes values in $\{-1,1\}$. Let
+$\varepsilon:\mathbb R\to\mathbb R$ be nonnegative for $0\le\delta\le1/2$, with
+$\varepsilon(\delta)\to0$ as $\delta\to0^+$, and suppose that
+$\operatorname{NS}_{\delta}(f)\le\varepsilon(\delta)$ for every $n$, every $f\in B_n$,
+and every $0<\delta\le1/2$. Then there exists a function $\eta:\mathbb R\to\mathbb R$
+taking values in $[0,1]$ on $[0,1/2]$, tending to zero as $\delta\to0^+$, such that
+$\operatorname{NS}_{\delta}(f)\le\eta(\delta)$ for all such $n,f$ and $0<\delta\le1/2$.
 \end{lemma}
 
 \begin{lemma}[Boolean values of linear thresholds]
 \lean{BooleanAnalysis.ThresholdFunctions.linearThresholdClass_isBooleanValued}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass,BooleanAnalysis.ThresholdFunctions.linearThresholdClass}
+\uses{BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass, BooleanAnalysis.ThresholdFunctions.linearThresholdClass}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p044-b005,
+  pdf-ffbe9c7b3306-p113-b003
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.isPmOne}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p028-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.threshold}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsPolynomialThresholdRepresentation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsPolynomialThreshold}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsLinearThreshold}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004,
+    pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib_1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.linearThresholdClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
 \difficulty{1}
-For every $n\in\mathbb N$, every member $f$ of the linear threshold class on $\{0,1\}^{n}$ takes values in $\{-1,1\}$; the class consists of functions $f(x)=\operatorname{sgn}_{+}(c+\sum_{i=1}^{n}a_i(-1)^{x_i})$ with real coefficients, where $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$.
+For every natural number $n$, every function $f$ in the linear threshold class on the
+Boolean cube $\\{0,1\\}^n$ takes only the values $-1$ and $1$.
 \end{lemma}
 
-\begin{lemma}[Closure of linear threshold functions]
+\begin{lemma}[Closure under negation and identification]
 \lean{BooleanAnalysis.ThresholdFunctions.linearThresholdClass_closed}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification,BooleanAnalysis.ThresholdFunctions.IsLinearThreshold.exists_affine,BooleanAnalysis.ThresholdFunctions.identifiedNegation,BooleanAnalysis.ThresholdFunctions.isLinearThreshold_affine,BooleanAnalysis.ThresholdFunctions.isPmOne_thresholdSign,BooleanAnalysis.ThresholdFunctions.linearThresholdClass,BooleanAnalysis.ThresholdFunctions.thresholdSign,BooleanAnalysis.boolToSign}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification, BooleanAnalysis.ThresholdFunctions.IsLinearThreshold.exists_affine, BooleanAnalysis.ThresholdFunctions.identifiedNegation, BooleanAnalysis.ThresholdFunctions.isLinearThreshold_affine, BooleanAnalysis.ThresholdFunctions.isPmOne_thresholdSign, BooleanAnalysis.ThresholdFunctions.linearThresholdClass, BooleanAnalysis.ThresholdFunctions.thresholdSign, BooleanAnalysis.boolToSign}
 \difficulty{5}
-For all $n,m\in\mathbb N$, real coefficients $c,a_1,\ldots,a_n$, $z\in\{0,1\}^{n}$ and maps $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, if $f(x)=\operatorname{sgn}_{+}(c+\sum_{i=1}^{n}a_i(-1)^{x_i})$, then $g(w)=f((z_i+w_{\pi(i)}\pmod2)_{i=1}^{n})$ is a $\{-1,1\}$-valued linear threshold function on $\{0,1\}^{m}$, meaning that $g(w)=\operatorname{sgn}_{+}(b+\sum_{j=1}^{m}u_j(-1)^{w_j})$ for some real $b,u_1,\ldots,u_m$.
-Here $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$.
+For all natural numbers $n,m$, if $f$ is a $\pm 1$-valued linear threshold function on
+$\{0,1\}^n$, then for every $z\in\{0,1\}^n$ and every map
+$\pi:\{0,\ldots,n-1\}\to\{0,\ldots,m-1\}$, the function $g:\{0,1\}^m\to\mathbb R$
+defined by $g(w)=f((z_i+w_{\pi(i)}\bmod 2)_{i=0}^{n-1})$ is a $\pm 1$-valued linear
+threshold function.
 \end{lemma}
 
 \begin{definition}[Odd-multiplicity image]
@@ -163,9 +1207,11 @@ O_{\pi}(S)=\{j\in\{1,\ldots,m\}: |\{i\in S:\pi(i)=j\}|\text{ is odd}\}.
 \begin{lemma}[Cardinality of the odd-multiplicity image]
 \lean{BooleanAnalysis.ThresholdFunctions.oddFiberImage_card_le}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.oddFiberImage,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass_mono}
+\uses{BooleanAnalysis.ThresholdFunctions.oddFiberImage}
 \difficulty{4}
-For all $n,m\in\mathbb N$, maps $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$ and subsets $S\subseteq\{1,\ldots,n\}$, the set $O_{\pi}(S)=\{j\in\{1,\ldots,m\}:|\{i\in S:\pi(i)=j\}|\text{ is odd}\}$ satisfies $|O_{\pi}(S)|\leq|S|$.
+Let $n,m\in\mathbb N$, let $\pi:[n]\to[m]$, and let $S\subseteq[n]$. The set of indices
+$j\in[m]$ for which the fiber $\{i\in S:\pi(i)=j\}$ has odd cardinality has cardinality
+at most $|S|$.
 \end{lemma}
 
 \begin{lemma}[Parity of a sign power]
@@ -173,93 +1219,618 @@ For all $n,m\in\mathbb N$, maps $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$ and subset
 \leanok
 \uses{BooleanAnalysis.boolToSign}
 \difficulty{5}
-For every bit $b\in\{0,1\}$ and natural number $c$, setting $s(b)=(-1)^b$ gives
-\[
-s(b)^c=\begin{cases}s(b)&\text{if }c\text{ is odd},\\1&\text{if }c\text{ is even}.\end{cases}
-\]
+For every Boolean value $b$ and natural number $c$, the $c$th power of its sign encoding
+is the sign encoding itself when $c$ is odd, and is $1$ when $c$ is even.
 \end{lemma}
 
-\begin{lemma}[Sign products after coordinate identification]
+\begin{lemma}[Sign products under coordinate identification]
 \lean{BooleanAnalysis.ThresholdFunctions.prod_boolToSign_comp}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.ThresholdFunctions.boolToSign_pow,BooleanAnalysis.ThresholdFunctions.oddFiberImage,BooleanAnalysis.boolToSign}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.boolToSign_pow, BooleanAnalysis.ThresholdFunctions.oddFiberImage, BooleanAnalysis.boolToSign}
 \difficulty{4}
-For $n,m\in\mathbb N$, a map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, $S\subseteq\{1,\ldots,n\}$ and $w\in\{0,1\}^{m}$, set $O_{\pi}(S)=\{j\in\{1,\ldots,m\}:|\{i\in S:\pi(i)=j\}|\text{ is odd}\}$; then
-\[
-\prod_{i\in S}(-1)^{w_{\pi(i)}}=\prod_{j\in O_{\pi}(S)}(-1)^{w_j}.
-\]
+Let $n,m\in\mathbb N$, let $\pi:\mathrm{Fin}\,n\to\mathrm{Fin}\,m$, let
+$S\subseteq\mathrm{Fin}\,n$, and let $w\in\{0,1\}^m$. The product of the sign encodings
+of $w(\pi(i))$ over $i\in S$ equals the product of the sign encodings of $w(j)$ over
+those $j\in\mathrm{Fin}\,m$ whose fibers in $S$ have odd cardinality.
 \end{lemma}
 
-\begin{lemma}[Walsh characters under negated identification]
+\begin{lemma}[Walsh character under negated identification]
 \lean{BooleanAnalysis.ThresholdFunctions.chiS_identifiedNegation}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.ThresholdFunctions.oddFiberImage,BooleanAnalysis.ThresholdFunctions.prod_boolToSign_comp,BooleanAnalysis.boolToSign,BooleanAnalysis.chiS}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.oddFiberImage, BooleanAnalysis.ThresholdFunctions.prod_boolToSign_comp, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
 \difficulty{4}
-For $n,m\in\mathbb N$, $z\in\{0,1\}^{n}$, $w\in\{0,1\}^{m}$, a map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$ and $S\subseteq\{1,\ldots,n\}$, define $\chi_A(x)=\prod_{i\in A}(-1)^{x_i}$ for subsets of the coordinate set of $x$, and set $O_{\pi}(S)=\{j\in\{1,\ldots,m\}:|\{i\in S:\pi(i)=j\}|\text{ is odd}\}$; then
-\[
-\chi_S\bigl((z_i+w_{\pi(i)}\pmod2)_{i=1}^{n}\bigr)=\chi_S(z)\chi_{O_{\pi}(S)}(w).
-\]
+Let $n,m\ge0$, let $z$ and $w$ be Boolean vectors of lengths $n$ and $m$, respectively,
+let $\pi$ map the $n$ coordinates to the $m$ coordinates, and let $S$ be a subset of the
+$n$ coordinates. Define $O_\pi(S)$ to consist of those target coordinates that have an
+odd number of preimages in $S$. Form the vector whose $i$th coordinate is $w_{\pi(i)}$
+when $z_i=0$ and its complement when $z_i=1$. Its Walsh character on $S$ equals
+$\chi_S(z)\chi_{O_\pi(S)}(w)$.
 \end{lemma}
 
-\begin{lemma}[Closure of polynomial threshold functions]
+\begin{lemma}[Closure under negation and identification]
 \lean{BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass_closed}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval,BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.threshold,BooleanAnalysis.ThresholdFunctions.chiS_identifiedNegation,BooleanAnalysis.ThresholdFunctions.identifiedNegation,BooleanAnalysis.ThresholdFunctions.isPmOne_thresholdSign,BooleanAnalysis.ThresholdFunctions.oddFiberImage,BooleanAnalysis.ThresholdFunctions.oddFiberImage_card_le,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass,BooleanAnalysis.ThresholdFunctions.thresholdSign,BooleanAnalysis.chiS}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.threshold, BooleanAnalysis.ThresholdFunctions.chiS_identifiedNegation, BooleanAnalysis.ThresholdFunctions.identifiedNegation, BooleanAnalysis.ThresholdFunctions.isPmOne_thresholdSign, BooleanAnalysis.ThresholdFunctions.oddFiberImage, BooleanAnalysis.ThresholdFunctions.oddFiberImage_card_le, BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass, BooleanAnalysis.ThresholdFunctions.thresholdSign, BooleanAnalysis.chiS}
 \difficulty{6}
-For every $k,n,m\in\mathbb N$, a function $f:\{0,1\}^{n}\to\{-1,1\}$ of the form $f(x)=\operatorname{sgn}_{+}(p((-1)^{x_1},\ldots,(-1)^{x_n}))$ for a real multilinear polynomial $p$ of degree at most $k$, every $z\in\{0,1\}^{n}$ and every map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, the function $g(w)=f((z_i+w_{\pi(i)}\pmod2)_{i=1}^{n})$ is also $\{-1,1\}$-valued and has a representation $g(w)=\operatorname{sgn}_{+}(q((-1)^{w_1},\ldots,(-1)^{w_m}))$ with a real multilinear polynomial $q$ of degree at most $k$.
-Here $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$.
+Fix $k\in\mathbb N$. For all natural numbers $n,m$, if a $\{-1,1\}$-valued function on
+$\{0,1\}^n$ has a polynomial threshold representation of degree at most $k$, then for
+every $z\in\{0,1\}^n$ and every map $\pi:[n]\to[m]$, the function on $\{0,1\}^m$ given
+by $g(w)=f((z_i+w_{\pi(i)}\pmod 2)_{i=1}^n)$ is also $\{-1,1\}$-valued and has a
+polynomial threshold representation of degree at most $k$.
 \end{lemma}
 
-\begin{lemma}[Monotonicity in the allowed polynomial degree]
+\begin{lemma}[Monotonicity of polynomial threshold classes]
 \lean{BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass_mono}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass}
 \difficulty{4}
-For every $n,k,k'\in\mathbb N$ with $k\leq k'$, every $\{-1,1\}$-valued function on $\{0,1\}^{n}$ represented by $\operatorname{sgn}_{+}(p((-1)^{x_1},\ldots,(-1)^{x_n}))$ for a real multilinear polynomial $p$ of degree at most $k$ also admits such a representation of degree at most $k'$, where $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$.
+Let $k,k',n\in\mathbb N$ with $k\le k'$. Every $\{-1,1\}$-valued function on $\{0,1\}^n$
+that has a polynomial threshold representation of degree at most $k$ also has one of
+degree at most $k'$.
 \end{lemma}
 
 \begin{lemma}[Exclusive-or form of negated identification]
 \lean{BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.identifiedNegation,BooleanAnalysis.ThresholdFunctions.xorVec}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.identifiedNegation, BooleanAnalysis.ThresholdFunctions.xorVec}
 \difficulty{4}
-For every $n,m\in\mathbb N$, $f:\{0,1\}^{n}\to\mathbb R$, $z\in\{0,1\}^{n}$, $w\in\{0,1\}^{m}$ and map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, define $g(v)=f((u_i(v))_{i=1}^{n})$, where $u_i(v)=1-v_{\pi(i)}$ when $z_i=1$ and $u_i(v)=v_{\pi(i)}$ when $z_i=0$; then
-\[
-g(w)=f\bigl(z\oplus(w_{\pi(i)})_{i=1}^{n}\bigr),
-\]
-where $\oplus$ is coordinatewise addition modulo $2$.
+Let $n,m\ge 0$, let $f:\{0,1\}^n\to\mathbb R$, let $z\in\{0,1\}^n$, and let
+$\pi:[n]\to[m]$. For every $w\in\{0,1\}^m$, the negated coordinate identification
+satisfies $g(w)=f(z\oplus(w_{\pi(i)})_{i=1}^n)$, where $\oplus$ is coordinatewise
+addition modulo two.
 \end{lemma}
 
 \begin{lemma}[Flipping an identified variable]
 \lean{BooleanAnalysis.ThresholdFunctions.identifiedNegation_flip}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.fiber,BooleanAnalysis.ThresholdFunctions.flipSet,BooleanAnalysis.ThresholdFunctions.identifiedNegation,BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply,BooleanAnalysis.ThresholdFunctions.mem_fiber,BooleanAnalysis.ThresholdFunctions.xorVec,BooleanAnalysis.flipBit}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.fiber, BooleanAnalysis.ThresholdFunctions.flipSet, BooleanAnalysis.ThresholdFunctions.identifiedNegation, BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply, BooleanAnalysis.ThresholdFunctions.mem_fiber, BooleanAnalysis.ThresholdFunctions.xorVec, BooleanAnalysis.flipBit}
 \difficulty{5}
-For $n,m\in\mathbb N$, $f:\{0,1\}^{n}\to\mathbb R$, $z\in\{0,1\}^{n}$, a map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, $w\in\{0,1\}^{m}$ and $j\in\{1,\ldots,m\}$, define $g(v)=f(z\oplus(v_{\pi(i)})_{i=1}^{n})$, where $\oplus$ is coordinatewise addition modulo $2$, and write $x^{A}$ for the vector obtained by flipping precisely the coordinates in $A$; then
-\[
-g(w^{\{j\}})=f\bigl((z\oplus(w_{\pi(i)})_{i=1}^{n})^{\pi^{-1}(\{j\})}\bigr).
-\]
+Let $n,m\ge 0$, let $f:\{0,1\}^n\to\mathbb R$, let $z\in\{0,1\}^n$, and let
+$\pi:[n]\to[m]$. For every $w\in\{0,1\}^m$ and $j\in[m]$, if $w^j$ denotes $w$ with
+coordinate $j$ flipped and $F_j=\{i\in[n]:\pi(i)=j\}$, then
+$g(w^j)=f\bigl((z\oplus(w_{\pi(i)})_{i=1}^n)^{F_j}\bigr)$, where
+$g(v)=f(z\oplus(v_{\pi(i)})_{i=1}^n)$ and the superscript denotes flipping precisely the
+indicated coordinates.
 \end{lemma}
 
-\begin{lemma}[Average influence of an identified variable]
+\begin{lemma}[Influence after coordinate identification]
 \lean{BooleanAnalysis.ThresholdFunctions.expect_influence_identifiedNegation}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.fiber,BooleanAnalysis.ThresholdFunctions.flipDisagreement,BooleanAnalysis.ThresholdFunctions.flipSet,BooleanAnalysis.ThresholdFunctions.identifiedNegation,BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply,BooleanAnalysis.ThresholdFunctions.identifiedNegation_flip,BooleanAnalysis.ThresholdFunctions.sum_comp_xorVec,BooleanAnalysis.ThresholdFunctions.xorVec,BooleanAnalysis.expect,BooleanAnalysis.expect_eq_fintypeExpect,BooleanAnalysis.flipBit,BooleanAnalysis.influence,BooleanAnalysis.uniformWeight}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.fiber, BooleanAnalysis.ThresholdFunctions.flipDisagreement, BooleanAnalysis.ThresholdFunctions.flipSet, BooleanAnalysis.ThresholdFunctions.identifiedNegation, BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply, BooleanAnalysis.ThresholdFunctions.identifiedNegation_flip, BooleanAnalysis.ThresholdFunctions.sum_comp_xorVec, BooleanAnalysis.ThresholdFunctions.xorVec, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.flipBit, BooleanAnalysis.influence, BooleanAnalysis.uniformWeight}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p131-b003,
+  pdf-ffbe9c7b3306-p132-b001
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b008}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b008}
+\proofstep
+  {BooleanAnalysis.influence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b004}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p114-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p075-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.mem_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p075-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_comp_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipDisagreement}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib_1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation_flip}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003,
+    pdf-ffbe9c7b3306-p046-b002}
 \difficulty{5}
-For $n,m\in\mathbb N$, $f:\{0,1\}^{n}\to\mathbb R$, a map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$ and $j\in\{1,\ldots,m\}$, define $g_z(w)=f(z\oplus(w_{\pi(i)})_{i=1}^{n})$, where $\oplus$ is coordinatewise addition modulo $2$, and write $x^{A}$ for the vector obtained by flipping the coordinates in $A$; then
-\[
-\mathbb E_{z}\!\left[\operatorname{Inf}_j(g_z)\right]
-=\mathbb E_x\!\left[\frac{(f(x)-f(x^{\pi^{-1}(\{j\})}))^2}{4}\right],
-\qquad
-\operatorname{Inf}_j(h)=\mathbb E_w\!\left[\frac{(h(w)-h(w^{\{j\}}))^2}{4}\right].
-\]
-Each expectation is uniform on the full Boolean cube of its variable's dimension.
+Let $n,m\in\mathbb N$, let $f:\{0,1\}^n\to\mathbb R$, let $\pi:[n]\to[m]$, and fix
+$j\in[m]$. For each $z\in\{0,1\}^n$, define $g_z(w)=f((z_i\oplus w_{\pi(i)})_{i=1}^n)$,
+where $\oplus$ is addition modulo two. The uniform average over $z$ of the influence of
+coordinate $j$ on $g_z$ equals $\frac14\mathbb E_x[(f(x)-f(x^{F_j}))^2]$, where
+$F_j=\{i\in[n]:\pi(i)=j\}$, $x^{F_j}$ is obtained by flipping the coordinates in $F_j$,
+and $x$ is uniform on $\{0,1\}^n$.
 \end{lemma}
 
 \begin{lemma}[Sum of block-flip disagreements]
 \lean{BooleanAnalysis.ThresholdFunctions.sum_flipDisagreement_fiber}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.fiber,BooleanAnalysis.ThresholdFunctions.flipDisagreement,BooleanAnalysis.ThresholdFunctions.flipDisagreement_eq,BooleanAnalysis.ThresholdFunctions.noiseSensitivity,BooleanAnalysis.ThresholdFunctions.noiseStability,BooleanAnalysis.ThresholdFunctions.sum_pi_sign,BooleanAnalysis.fourierCoeff,BooleanAnalysis.isPmOne,BooleanAnalysis.stability_formula}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.fiber, BooleanAnalysis.ThresholdFunctions.flipDisagreement, BooleanAnalysis.ThresholdFunctions.flipDisagreement_eq, BooleanAnalysis.ThresholdFunctions.noiseSensitivity, BooleanAnalysis.ThresholdFunctions.noiseStability, BooleanAnalysis.ThresholdFunctions.sum_pi_sign, BooleanAnalysis.fourierCoeff, BooleanAnalysis.isPmOne, BooleanAnalysis.stability_formula}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p132-b001}
 \difficulty{5}
 For every $n\in\mathbb N$, positive integer $m$, $f:\{0,1\}^{n}\to\{-1,1\}$ and $j\in\{1,\ldots,m\}$,
 \[
@@ -270,88 +1841,2451 @@ For every $n\in\mathbb N$, positive integer $m$, $f:\{0,1\}^{n}\to\{-1,1\}$ and 
 Here $X$ is uniform on $\{0,1\}^{n}$, $X^{A}$ flips precisely the coordinates of $A$, and $\operatorname{NS}_{1/m}(f)$ is $\Pr[f(X)\neq f(Y)]$ when each coordinate of $X$ is independently flipped with probability $1/m$ to obtain $Y$.
 \end{lemma}
 
-\begin{lemma}[Monotonicity of totalized noise sensitivity]
+\begin{lemma}[Monotonicity of noise sensitivity]
 \lean{BooleanAnalysis.ThresholdFunctions.noiseSensitivity_mono}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.noiseSensitivity,BooleanAnalysis.ThresholdFunctions.noiseStability,BooleanAnalysis.stability_formula}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.noiseSensitivity, BooleanAnalysis.ThresholdFunctions.noiseStability, BooleanAnalysis.stability_formula}
 \difficulty{4}
-For every $n\in\mathbb N$, $f:\{0,1\}^{n}\to\mathbb R$ and real $\delta\leq\delta'\leq1/2$, with no lower bound on either rate, one has $\operatorname{NS}_{\delta}(f)\leq\operatorname{NS}_{\delta'}(f)$, where the total real-valued extension is
-\[
-\operatorname{NS}_{t}(f)=\frac{1-\sum_{S\subseteq\{1,\ldots,n\}}(1-2t)^{|S|}\widehat f(S)^2}{2},
-\qquad
-\widehat f(S)=2^{-n}\sum_{x\in\{0,1\}^{n}}f(x)\prod_{i\in S}(-1)^{x_i}.
-\]
+Let $n$ be a nonnegative integer, let $f\colon\{0,1\}^n\to\mathbb R$, and let
+$\delta,\delta'\in\mathbb R$ satisfy $\delta\leq\delta'\leq\tfrac12$. Then
+$$\operatorname{NS}_{\delta}(f)\leq\operatorname{NS}_{\delta'}(f),$$ where
+$\operatorname{NS}_{u}(f)=\bigl(1-\operatorname{Stab}_{1-2u}(f)\bigr)/2$.
 \end{lemma}
 
-\begin{theorem}[Influence-to-noise bound for closed classes]
+\begin{theorem}[Influence bound implies noise sensitivity bound]
 \lean{BooleanAnalysis.ThresholdFunctions.influence_bound_implies_noise_bound}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass,BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass,BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification,BooleanAnalysis.ThresholdFunctions.expect_influence_identifiedNegation,BooleanAnalysis.ThresholdFunctions.identifiedNegation,BooleanAnalysis.ThresholdFunctions.noiseBlockCount,BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec,BooleanAnalysis.ThresholdFunctions.noiseSensitivity,BooleanAnalysis.ThresholdFunctions.noiseSensitivity_mono,BooleanAnalysis.ThresholdFunctions.sum_flipDisagreement_fiber,BooleanAnalysis.expect,BooleanAnalysis.expect_eq_fintypeExpect,BooleanAnalysis.influence,BooleanAnalysis.totalInfluence}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass, BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass, BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification, BooleanAnalysis.ThresholdFunctions.expect_influence_identifiedNegation, BooleanAnalysis.ThresholdFunctions.identifiedNegation, BooleanAnalysis.ThresholdFunctions.noiseBlockCount, BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec, BooleanAnalysis.ThresholdFunctions.noiseSensitivity, BooleanAnalysis.ThresholdFunctions.noiseSensitivity_mono, BooleanAnalysis.ThresholdFunctions.sum_flipDisagreement_fiber, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect, BooleanAnalysis.influence, BooleanAnalysis.totalInfluence}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p131-b002,
+  pdf-ffbe9c7b3306-p131-b003,
+  pdf-ffbe9c7b3306-p132-b001
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p015-b010}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p026-b001,
+    pdf-ffbe9c7b3306-p026-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007,
+    pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.influence}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b003,
+    pdf-ffbe9c7b3306-p047-b004}
+\proofstep
+  {BooleanAnalysis.totalInfluence}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p049-b005}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b002,
+    pdf-ffbe9c7b3306-p055-b003}
+\proofstep
+  {BooleanAnalysis.stability_formula}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b002,
+    pdf-ffbe9c7b3306-p056-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.sensitivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p049-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.isPmOne}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseStability}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseSensitivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p054-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.mem_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_comp_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_comp_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.chiS_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fourierCoeff_comp_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_mul_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p026-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipDisagreement}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p054-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipDisagreement_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p054-b002,
+    pdf-ffbe9c7b3306-p056-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.neg_one_pow_card_inter_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_pi_sign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib_1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseBlockCount}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation_flip}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_influence_identifiedNegation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003,
+    pdf-ffbe9c7b3306-p132-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_flipDisagreement_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003,
+    pdf-ffbe9c7b3306-p132-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseSensitivity_mono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
 \difficulty{6}
-Let $B=(B_n)_{n\in\mathbb N}$ be a family of sets of functions $\{0,1\}^{n}\to\{-1,1\}$, closed under all substitutions $w\mapsto(z_i+w_{\pi(i)}\pmod2)_{i=1}^{n}$ for every $n,m\in\mathbb N$, $z\in\{0,1\}^{n}$ and map $\pi:\{1,\ldots,n\}\to\{1,\ldots,m\}$, and let $A:\mathbb N\to\mathbb R$ satisfy
-\[
-\operatorname{Inf}(f):=\sum_{i=1}^{n}\Pr_X[f(X)\neq f(X^{\{i\}})]\leq A(n)
-\quad\text{for every }n\in\mathbb N,\ f\in B_n,
-\]
-where $X$ is uniform on $\{0,1\}^{n}$ and $X^{\{i\}}$ flips coordinate $i$.
-Then for every $0<\delta\leq1/2$, $n\in\mathbb N$ and $f\in B_n$, setting $m=\lfloor1/\delta\rfloor$ gives
-\[
-\operatorname{NS}_{\delta}(f)\leq\frac{A(m)}{m},
-\]
-where $\operatorname{NS}_{\delta}(f)=\Pr[f(X)\neq f(Y)]$ and $Y$ independently flips each coordinate of $X$ with probability $\delta$.
+Let $B=(B_n)_{n\ge0}$ be a family of sets of real-valued functions on Boolean cubes, and
+let $A:\mathbb N\to\mathbb R$. Suppose every function in every $B_n$ is $\pm1$-valued,
+the family is closed under every substitution $w\mapsto(z_i+w_{\pi(i)}\bmod 2)_{i=1}^n$
+for all dimensions $n,m$, vectors $z\in\{0,1\}^n$, and maps $\pi:[n]\to[m]$, and every
+$f\in B_n$ has total influence at most $A(n)$. For $0<\delta\le\tfrac12$, every $n\ge0$,
+and every $f\in B_n$, the noise sensitivity defined by
+$\operatorname{NS}_\delta(f)=(1-\operatorname{Stab}_{1-2\delta}(f))/2$ is at most
+$A(\lfloor\delta^{-1}\rfloor)/\lfloor\delta^{-1}\rfloor$, where
+$\lfloor\delta^{-1}\rfloor$ is the natural-number floor used as the block count.
 \end{theorem}
 
-\begin{theorem}[Peres's noise-sensitivity bound]
+\begin{theorem}[Noise sensitivity of linear threshold functions]
 \lean{BooleanAnalysis.ThresholdFunctions.peres_theorem}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.influence_bound_implies_noise_bound,BooleanAnalysis.ThresholdFunctions.linearThresholdClass,BooleanAnalysis.ThresholdFunctions.linearThresholdClass_closed,BooleanAnalysis.ThresholdFunctions.linearThresholdClass_isBooleanValued,BooleanAnalysis.ThresholdFunctions.ltf_totalInfluence_le_sqrt,BooleanAnalysis.ThresholdFunctions.noiseSensitivity,BooleanAnalysis.ThresholdFunctions.sqrt_div_noiseBlockCount_le}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.influence_bound_implies_noise_bound, BooleanAnalysis.ThresholdFunctions.linearThresholdClass, BooleanAnalysis.ThresholdFunctions.linearThresholdClass_closed, BooleanAnalysis.ThresholdFunctions.linearThresholdClass_isBooleanValued, BooleanAnalysis.ThresholdFunctions.ltf_totalInfluence_le_sqrt, BooleanAnalysis.ThresholdFunctions.noiseSensitivity, BooleanAnalysis.ThresholdFunctions.sqrt_div_noiseBlockCount_le}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p132-b002,
+  pdf-ffbe9c7b3306-p131-b003
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p026-b001,
+    pdf-ffbe9c7b3306-p026-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007,
+    pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.influence}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b004}
+\proofstep
+  {BooleanAnalysis.totalInfluence}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p049-b005}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.expectationOperator}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b007}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003}
+\proofstep
+  {BooleanAnalysis.stability_formula}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b001,
+    pdf-ffbe9c7b3306-p056-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.sensitivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b008,
+    pdf-ffbe9c7b3306-p049-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.isPmOne}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_self_pm_one}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.parseval_pm_one}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p028-b002,
+    pdf-ffbe9c7b3306-p036-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.threshold}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsPolynomialThresholdRepresentation}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsPolynomialThreshold}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsLinearThreshold}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005,
+    pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseStability}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b005,
+    pdf-ffbe9c7b3306-p056-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseSensitivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p054-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_mono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p045-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.isPmOne_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p021-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_of_degree_le_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p036-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.update_eq_ite_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007,
+    pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.derivative_eq_flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.influence_eq_expect_derivative_sq}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b003,
+    pdf-ffbe9c7b3306-p047-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_expectationOperator}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fourierCoeff_singleton_eq_expect_derivative}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.derivative_sq_eq_abs_of_pmOne}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.influence_eq_abs_fourierCoeff_of_sign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b002,
+    pdf-ffbe9c7b3306-p047-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p021-b004,
+    pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_hasDegreeAtMost_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p036-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsLinearThreshold.exists_affine}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.isLinearThreshold_affine}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affine_form_update}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.derivative_affine_threshold_sign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p045-b002,
+    pdf-ffbe9c7b3306-p047-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_singleton_fourier_sq_le_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.ltf_totalInfluence_le_sqrt}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p063-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.mem_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_comp_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_comp_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.chiS_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fourierCoeff_comp_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_mul_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p026-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipDisagreement}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipDisagreement_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006,
+    pdf-ffbe9c7b3306-p026-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.neg_one_pow_card_inter_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_pi_sign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib_1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p130-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p130-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.linearThresholdClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseBlockCount}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sqrt_div_noiseBlockCount_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p132-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.linearThresholdClass_isBooleanValued}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.linearThresholdClass_closed}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation_flip}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_influence_identifiedNegation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b003,
+    pdf-ffbe9c7b3306-p054-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_flipDisagreement_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseSensitivity_mono}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.influence_bound_implies_noise_bound}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b002,
+    pdf-ffbe9c7b3306-p131-b003}
 \difficulty{3}
-There exists a universal real constant $C\geq0$ such that, for every $n\in\mathbb N$, every linear threshold function $f(x)=\operatorname{sgn}_{+}(c+\sum_{i=1}^{n}a_i(-1)^{x_i})$ on $\{0,1\}^{n}$ with real coefficients and every $0<\delta\leq1/2$,
+There exists a real constant $C\ge0$ such that, for every natural number $n$, every
+$\{-1,1\}$-valued function $f$ on $\{0,1\}^n$ that is the threshold of a real polynomial
+of degree at most one, and every $0<\delta\le\tfrac12$, its noise sensitivity satisfies
 \[
-\operatorname{NS}_{\delta}(f)\leq C\sqrt\delta.
+\operatorname{NS}_\delta(f)\le C\sqrt{\delta}.
 \]
-Here $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$, and $\operatorname{NS}_{\delta}(f)=\Pr[f(X)\neq f(Y)]$ with uniform $X$ and independent coordinate flips of probability $\delta$ producing $Y$.
+Here the polynomial threshold assigns $1$ to nonnegative values and $-1$ to negative
+values, and noise sensitivity is defined from the noise stability at parameter
+$1-2\delta$ by $\operatorname{NS}_\delta(f)=(1-\operatorname{Stab}_{1-2\delta}(f))/2$.
 \end{theorem}
 
-\begin{theorem}[Uniform stability of linear thresholds]
+\begin{theorem}[Uniform noise stability of linear thresholds]
 \lean{BooleanAnalysis.ThresholdFunctions.linearThreshold_uniformlyNoiseStable}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.IsUniformlyNoiseStable,BooleanAnalysis.ThresholdFunctions.isUniformlyNoiseStable_of_bound,BooleanAnalysis.ThresholdFunctions.linearThresholdClass,BooleanAnalysis.ThresholdFunctions.linearThresholdClass_isBooleanValued,BooleanAnalysis.ThresholdFunctions.peres_theorem}
+\uses{BooleanAnalysis.ThresholdFunctions.IsUniformlyNoiseStable, BooleanAnalysis.ThresholdFunctions.isUniformlyNoiseStable_of_bound, BooleanAnalysis.ThresholdFunctions.linearThresholdClass, BooleanAnalysis.ThresholdFunctions.linearThresholdClass_isBooleanValued, BooleanAnalysis.ThresholdFunctions.peres_theorem}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p130-b004,
+  pdf-ffbe9c7b3306-p132-b002,
+  pdf-ffbe9c7b3306-p130-b005
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003,
+    pdf-ffbe9c7b3306-p075-b002}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p026-b001,
+    pdf-ffbe9c7b3306-p026-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.influence}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b003,
+    pdf-ffbe9c7b3306-p047-b004}
+\proofstep
+  {BooleanAnalysis.totalInfluence}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p049-b005}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.expectationOperator}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b007}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p055-b003}
+\proofstep
+  {BooleanAnalysis.stability_formula}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b002,
+    pdf-ffbe9c7b3306-p056-b003}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sensitivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007,
+    pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.isPmOne}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_self_pm_one}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.parseval_pm_one}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p028-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.threshold}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsPolynomialThresholdRepresentation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsPolynomialThreshold}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p115-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsLinearThreshold}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005,
+    pdf-ffbe9c7b3306-p113-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseStability}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p053-b005,
+    pdf-ffbe9c7b3306-p056-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseSensitivity}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p054-b002,
+    pdf-ffbe9c7b3306-p017-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const_mul}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_mono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.isPmOne_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_of_degree_le_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p036-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.update_eq_ite_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.derivative_eq_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.influence_eq_expect_derivative_sq}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b003,
+    pdf-ffbe9c7b3306-p047-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_expectationOperator}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fourierCoeff_singleton_eq_expect_derivative}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.derivative_sq_eq_abs_of_pmOne}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.influence_eq_abs_fourierCoeff_of_sign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p048-b002,
+    pdf-ffbe9c7b3306-p047-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p036-b002,
+    pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p036-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p036-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_hasDegreeAtMost_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p036-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsLinearThreshold.exists_affine}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.isLinearThreshold_affine}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affine_form_update}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p047-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.derivative_affine_threshold_sign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p061-b009}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_singleton_fourier_sq_le_one}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b006}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.ltf_totalInfluence_le_sqrt}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p063-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.instIsProbabilityMeasureBoolCubeUniformMeasure}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.mem_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_comp_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_comp_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.chiS_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.fourierCoeff_comp_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_mul_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p026-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipDisagreement}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p054-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipDisagreement_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p054-b002,
+    pdf-ffbe9c7b3306-p026-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.neg_one_pow_card_inter_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_pi_sign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p015-b013}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.instMeasurableSpaceFinsetFin_tCSlib_1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p015-b013}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.BooleanFunctionClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p130-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsBooleanValuedClass}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p130-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.linearThresholdClass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsUniformlyNoiseStable}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p130-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsClosedUnderInputNegationAndIdentification}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseBlockCount}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseStability_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p056-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseSensitivity_le_half}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p054-b002,
+    pdf-ffbe9c7b3306-p056-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sqrt_div_noiseBlockCount_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.isUniformlyNoiseStable_of_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p130-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.linearThresholdClass_isBooleanValued}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b005}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.linearThresholdClass_closed}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003,
+    pdf-ffbe9c7b3306-p132-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation_apply}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.identifiedNegation_flip}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_influence_identifiedNegation}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_flipDisagreement_fiber}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.noiseSensitivity_mono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.influence_bound_implies_noise_bound}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p131-b002,
+    pdf-ffbe9c7b3306-p131-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.peres_theorem}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p130-b004,
+    pdf-ffbe9c7b3306-p132-b002}
 \difficulty{4}
-The family of linear threshold functions on Boolean cubes is uniformly noise-stable: every function has the form $f(x)=\operatorname{sgn}_{+}(c+\sum_{i=1}^{n}a_i(-1)^{x_i})$ for real coefficients, is $\{-1,1\}$-valued, and there exists $\varepsilon:\mathbb R\to\mathbb R$ satisfying $0\leq\varepsilon(\delta)\leq1$ on $[0,1/2]$, $\lim_{\delta\to0^{+}}\varepsilon(\delta)=0$ and
-\[
-\Pr[f(X)\neq f(Y)]\leq\varepsilon(\delta)
-\]
-for every dimension $n\in\mathbb N$, every such $f$ and every $0<\delta\leq1/2$.
-Here $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$, $X$ is uniform on $\{0,1\}^{n}$, and $Y$ independently flips its coordinates with probability $\delta$.
+The family of linear threshold classes is uniformly noise-stable: every function in the
+family is $\pm 1$-valued, and there exists a function $\varepsilon:\mathbb R\to\mathbb
+R$ such that $0\leq\varepsilon(\delta)\leq1$ for $0\leq\delta\leq\tfrac12$, with
+$\varepsilon(\delta)\to0$ as $\delta\to0^+$. For every dimension $n$, every function $f$
+in the linear threshold class on $\{0,1\}^n$, and every $0<\delta\leq\tfrac12$, its
+noise sensitivity satisfies $\operatorname{NS}_{\delta}(f)\leq\varepsilon(\delta)$,
+where $\operatorname{NS}_{\delta}(f)=(1-\operatorname{Stab}_{1-2\delta}(f))/2$ and
+stability is computed using the uniform measure on the Boolean cube.
 \end{theorem}
 
-\begin{lemma}[Vanishing square-root polylogarithmic modulus]
+\begin{lemma}[Vanishing square-root logarithmic power]
 \lean{BooleanAnalysis.ThresholdFunctions.tendsto_sqrt_mul_log_pow}
 \leanok
 \difficulty{5}
-For every natural number $d$, with $\log$ denoting the natural logarithm,
-\[
-\lim_{\delta\to0^{+}}\sqrt\delta\,\bigl(\log(1/\delta)\bigr)^d=0.
-\]
+For every natural number $d$, the function $\delta\mapsto
+\sqrt{\delta}\,\bigl(\log(1/\delta)\bigr)^d$ tends to $0$ as $\delta$ tends to $0$
+through positive real values.
 \end{lemma}
 
-\begin{theorem}[Kane's influence bound for higher degrees]
+\begin{theorem}[Influence bound for polynomial thresholds]
 \lean{BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_bound_of_two_le}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass,BooleanAnalysis.totalInfluence}
-There exists a universal real constant $C>0$ such that, for every $n,k\in\mathbb N$ with $k\geq2$ and every $f:\{0,1\}^{n}\to\{-1,1\}$ admitting a representation $f(x)=\operatorname{sgn}_{+}(p((-1)^{x_1},\ldots,(-1)^{x_n}))$ by a real multilinear polynomial $p$ of degree at most $k$,
-\[
-\operatorname{Inf}(f)\leq\sqrt n\,
-\bigl(2^k\log(\max\{n,2\})\bigr)^{Ck\log(\max\{k,2\})}.
-\]
-Here $\operatorname{Inf}(f)=\sum_{i=1}^{n}\Pr_X[f(X)\neq f(X^{\{i\}})]$, $X$ is uniform, $X^{\{i\}}$ flips coordinate $i$, $\log$ is the natural logarithm, real powers have positive bases, and $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$.
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass, BooleanAnalysis.totalInfluence}
+There exists a real constant $C>0$ such that for all natural numbers $n,k$ with $2\le
+k$, every $\{-1,1\}$-valued function $f:\{0,1\}^n\to\mathbb R$ represented as the
+threshold sign of a multilinear polynomial of degree at most $k$ satisfies
+\[\operatorname{Inf}(f)\le\sqrt n\,\operatorname{rpow}\!\left(2^k\log(\max\{n,2\}),\ Ck\log(\max\{k,2\})\right).\]
+Here $\operatorname{Inf}(f)$ is the sum, over coordinates, of the uniform expectation of
+$(f(x)-f(x^i))^2/4$, where $x^i$ is obtained by flipping coordinate $i$; the threshold
+sign is $1$ on nonnegative inputs and $-1$ otherwise, and $\operatorname{rpow}$ denotes
+real exponentiation.
 \end{theorem}
 
 \begin{lemma}[Degree-one polynomial thresholds are linear]
 \lean{BooleanAnalysis.ThresholdFunctions.isLinearThreshold_of_polynomialThresholdClass}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.IsLinearThreshold,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.IsLinearThreshold, BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p113-b003,
+  pdf-ffbe9c7b3306-p115-b005
+}
 \difficulty{4}
 For every $n,k\in\mathbb N$ with $k\leq1$, if $f:\{0,1\}^{n}\to\{-1,1\}$ has a representation $f(x)=\operatorname{sgn}_{+}(p((-1)^{x_1},\ldots,(-1)^{x_n}))$ by a real multilinear polynomial $p$ of degree at most $k$, then there exist real $c,a_1,\ldots,a_n$ such that
 \[
@@ -363,7 +4297,11 @@ where $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$.
 \begin{theorem}[Kane's influence bound for all degrees]
 \lean{BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_le}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.isLinearThreshold_of_polynomialThresholdClass,BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_bound_of_two_le,BooleanAnalysis.ThresholdFunctions.ltf_totalInfluence_le_sqrt,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass,BooleanAnalysis.totalInfluence}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.isLinearThreshold_of_polynomialThresholdClass, BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_bound_of_two_le, BooleanAnalysis.ThresholdFunctions.ltf_totalInfluence_le_sqrt, BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass, BooleanAnalysis.totalInfluence}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p134-b001,
+  pdf-ffbe9c7b3306-p141-b002
+}
 \difficulty{5}
 There exists a universal real constant $C>0$ such that, for every $n,k\in\mathbb N$, including $n=0$ and $k=0$, and every $f:\{0,1\}^{n}\to\{-1,1\}$ represented as $f(x)=\operatorname{sgn}_{+}(p((-1)^{x_1},\ldots,(-1)^{x_n}))$ by a real multilinear polynomial $p$ of degree at most $k$,
 \[
@@ -373,34 +4311,32 @@ There exists a universal real constant $C>0$ such that, for every $n,k\in\mathbb
 Here $\operatorname{Inf}(f)=\sum_{i=1}^{n}\Pr_X[f(X)\neq f(X^{\{i\}})]$, $X$ is uniform, $X^{\{i\}}$ flips coordinate $i$, $\log$ is the natural logarithm, real powers have positive bases, and $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$.
 \end{theorem}
 
-\begin{lemma}[Bounding a real logarithmic exponent]
+\begin{lemma}[Bound for powers with a smaller exponent]
 \lean{BooleanAnalysis.ThresholdFunctions.rpow_le_log_two_rpow_mul_pow}
 \leanok
 \difficulty{5}
-For real $L,E$ and $d\in\mathbb N$ with $L\geq\log2$ and $0\leq E\leq d$, where $\log$ is the natural logarithm, one has
-\[
-L^E\leq(\log2)^{-d}L^d,
-\]
-with real exponentiation on the positive bases $L$ and $\log2$.
+Let $L,E\in\mathbb R$ and $d\in\mathbb N$. If $\log 2\leq L$, $0\leq E$, and $E\leq d$,
+then
+\[L^E\leq(\log 2)^{-d}L^d.\]
 \end{lemma}
 
 \begin{lemma}[Block-count polylogarithmic estimate]
 \lean{BooleanAnalysis.ThresholdFunctions.kane_noise_aux}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.noiseBlockCount,BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec,BooleanAnalysis.ThresholdFunctions.rpow_le_log_two_rpow_mul_pow,BooleanAnalysis.ThresholdFunctions.sqrt_div_noiseBlockCount_le}
+\uses{BooleanAnalysis.ThresholdFunctions.noiseBlockCount, BooleanAnalysis.ThresholdFunctions.noiseBlockCount_spec, BooleanAnalysis.ThresholdFunctions.rpow_le_log_two_rpow_mul_pow, BooleanAnalysis.ThresholdFunctions.sqrt_div_noiseBlockCount_le}
 \difficulty{5}
-For $k,d\in\mathbb N$ and real $E,\delta$ with $0\leq E\leq d$ and $0<\delta\leq1/2$, setting $m=\lfloor1/\delta\rfloor$ gives
-\[
-\frac{\sqrt m\,\bigl(2^k\log(\max\{m,2\})\bigr)^E}{m}
-\leq\sqrt2\,(2^k)^E(\log2)^{-d}\sqrt\delta\,\bigl(\log(1/\delta)\bigr)^d,
-\]
-where $\log$ is the natural logarithm and the powers with real exponents have positive bases.
+Let $k,d\in\mathbb N$ and $E,\delta\in\mathbb R$ satisfy $0\le E\le d$ and
+$0<\delta\le1/2$. Set $m=\max\{0,\lfloor\delta^{-1}\rfloor\}$. Then
+\[\frac{\sqrt m\,\operatorname{rpow}\!\left(2^k\log(\max\{m,2\}),E\right)}{m}\le\sqrt2\,(2^k)^E(\log2)^{-d}\sqrt\delta\,\bigl(\log(1/\delta)\bigr)^d,\]
+where $\log$ is the natural logarithm and $\operatorname{rpow}(a,b)$ denotes the real
+power of $a$ to exponent $b$.
 \end{lemma}
 
 \begin{theorem}[Kane's influence and noise-sensitivity bounds]
 \lean{BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_bound}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.influence_bound_implies_noise_bound,BooleanAnalysis.ThresholdFunctions.kane_noise_aux,BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_le,BooleanAnalysis.ThresholdFunctions.noiseSensitivity,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass_closed,BooleanAnalysis.totalInfluence}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.influence_bound_implies_noise_bound, BooleanAnalysis.ThresholdFunctions.kane_noise_aux, BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_le, BooleanAnalysis.ThresholdFunctions.noiseSensitivity, BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass, BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass_closed, BooleanAnalysis.totalInfluence}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p134-b001}
 \difficulty{5}
 For $n,k\in\mathbb N$, let a degree-at-most-$k$ polynomial threshold function mean $f:\{0,1\}^{n}\to\{-1,1\}$ of the form $f(x)=\operatorname{sgn}_{+}(p((-1)^{x_1},\ldots,(-1)^{x_n}))$ for a real multilinear polynomial $p$ of degree at most $k$, with $\operatorname{sgn}_{+}(t)=1$ for $t\geq0$ and $-1$ for $t<0$; there exists a universal $C_0>0$ such that every such function satisfies
 \[
@@ -417,7 +4353,14 @@ Here $\operatorname{Inf}(f)=\sum_{i=1}^{n}\Pr_X[f(X)\neq f(X^{\{i\}})]$, $X$ is 
 \begin{theorem}[Uniform stability of polynomial thresholds]
 \lean{BooleanAnalysis.ThresholdFunctions.polynomialThreshold_uniformlyNoiseStable}
 \leanok
-\uses{BooleanAnalysis.ThresholdFunctions.IsUniformlyNoiseStable,BooleanAnalysis.ThresholdFunctions.isUniformlyNoiseStable_of_bound,BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_bound,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass,BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass_mono,BooleanAnalysis.ThresholdFunctions.tendsto_sqrt_mul_log_pow}
+\uses{BooleanAnalysis.ThresholdFunctions.IsUniformlyNoiseStable, BooleanAnalysis.ThresholdFunctions.isUniformlyNoiseStable_of_bound, BooleanAnalysis.ThresholdFunctions.kane_totalInfluence_bound, BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass, BooleanAnalysis.ThresholdFunctions.polynomialThresholdClass_mono, BooleanAnalysis.ThresholdFunctions.tendsto_sqrt_mul_log_pow}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p131-b002,
+  pdf-ffbe9c7b3306-p131-b003,
+  pdf-ffbe9c7b3306-p132-b001,
+  pdf-ffbe9c7b3306-p134-b001,
+  pdf-ffbe9c7b3306-p130-b005
+}
 \difficulty{5}
 For every fixed $k\in\mathbb N$, including $k=0$, the degree-at-most-$k$ polynomial threshold functions form a uniformly noise-stable family: there exists $\varepsilon:\mathbb R\to\mathbb R$ with $0\leq\varepsilon(\delta)\leq1$ for $0\leq\delta\leq1/2$ and $\lim_{\delta\to0^{+}}\varepsilon(\delta)=0$ such that
 \[

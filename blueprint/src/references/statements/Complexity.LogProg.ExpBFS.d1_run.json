@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.d1_run",
+ "key": "07f17554ba5247a7",
+ "kind": "theorem",
+ "title": "Register reset run",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $S$ be a machine state, and let $M\\colon\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory configuration. If every register value of $S$ is at most $B$, then the machine has a finite guarded run from the first reset control state, initialized with $S$, memory $M$, and head position $0$, to the move control state. At the endpoint, the registers $U,V,w,K,B_s$ are zero, and every other register retains its value from $S$; the memory and head position are unchanged.",
+ "hypotheses_covered": [
+  "Every register value of $S$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the machine, oracle, input, and bounds, and let $S$ be a register state whose every\nfield is at most $B$. Starting at the first reset control state with registers encoded\nby $S$, memory $M$, and head position $0$, the machine has a finite guarded run ending\nat the move control state. The fields $U,V,w,K,Bs$ are zero at the end, and every other\nfield agrees with $S$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_prepare_run",
+ "key": "703fe44b0aa99a4c",
+ "kind": "lemma",
+ "title": "Preparing the First Cleanup Bank",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, and let $x$, $a$, and $c$ be Boolean words. If $M$ computes output $c$ from input $a$ in exactly $T$ steps, then for either emission mode there is a time $t\\le 2T+|a|+4$ at which the call machine, started on input $x$ with the standard tape contents for $a$, is in the frame with zero banks cleaned and the cleaner at its initial state.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$\\mathrm{emit}$ is a Boolean mode",
+  "$x,a,c$ are Boolean words",
+  "$T$ is a natural number",
+  "$M$ computes output $c$ from $a$ in exactly $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ compute output $c$ on argument $a$ within time $T$. For every mode and input\nword, there is a time $t \\le 2T + |a| + 4$ such that the clean-call controller, run for\n$t$ steps from its canonical entry seam on $a$, reaches the cleanup frame with zero\ncleaned banks in the first cleaner-entry state, with no scan of the native input."
+}

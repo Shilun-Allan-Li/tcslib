@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.inputLength_round",
+ "key": "fe6fd33714e0f623",
+ "kind": "theorem",
+ "title": "One Input-Length Counting Round",
+ "statement": "Let $x$ be a Boolean word and let $d$ be a one-work-tape configuration on input $x$, with natural numbers $n,p$ and a Boolean list $v$. Suppose $d$ is in phase count, its input head is at position $n+1$, $n<|x|$, the binary digits of $n$ have either the form of $p$ ones followed by a zero and then $v$, or $p$ ones with $v$ empty, and the binary digits of $n+1$ are $p$ zeros followed by a one and then $v$. Suppose also that the work tape agrees with the buffer tape for the binary digits of $n$ at every offset from the work-head position between $-1$ and the number of binary digits of $n$. After $2p+3$ steps, the machine is in phase count with the binary digits of $n+1$ stored over a segment of length $p+1$, the input head moved by one clamped step to the right, and the work head left at its original position. At each time $u\\le 2p+3$, the work-head position is between one cell left of its initial position and its initial position plus $p$.",
+ "hypotheses_covered": [
+  "Boolean word $x$ and one-work-tape configuration $d$",
+  "natural numbers $n,p$ and Boolean list $v$",
+  "initial phase is count",
+  "initial input-head position is $n+1$",
+  "$n<|x|$",
+  "stated binary digit forms for $n$ and $n+1$",
+  "work tape agrees with the buffer for the binary digits of $n$ at offsets $-1$ through its digit length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

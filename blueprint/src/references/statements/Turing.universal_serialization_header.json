@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.universal_serialization_header",
+ "key": "50ce194d84ab4629",
+ "kind": "lemma",
+ "title": "Header and Remaining Record Table",
+ "statement": "For every machine $M$ in code normal form, there is a bit string $\\rho$ such that its canonical serialization is the pair encoding of the binary digit string of its state-count parameter with $1^{q_0}0\\rho$, where $q_0$ is the initial state index.",
+ "hypotheses_covered": [
+  "$M$ is a machine in code normal form"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every coded machine $M$ with initial state index $q_0$ and state count\n$m$, there is a bit string $\\rho$ (the transition-record table) such that the\ncanonical serialization of $M$ equals the pair encoding of the binary digit\nstring of $m$ with the string $1^{q_0} \\cdot 0 \\cdot \\rho$; that is, the\nserialization begins with exactly its doubled count field and delimiter,\nthen the initial state in unary with its terminator, then the record table."
+}

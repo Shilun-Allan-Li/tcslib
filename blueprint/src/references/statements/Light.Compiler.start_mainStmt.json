@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.start_mainStmt",
+ "key": "74d8a018336fd4db",
+ "kind": "theorem",
+ "title": "Initial main statement setup",
+ "statement": "Let $W$ be a word width, let $lim$ be a resource limit, let $P$ be a program, let $p_0$ be a procedure index, and let $dec$ be a Boolean. Suppose the word width fits the limits, the dispatcher position determined by $P$ and $dec$, and the stack capacity determined by $P$ and $lim$. For every state $\u001bσ$ bounded by $lim$ and every word memory $m$ related to $\u001bσ$ at stack position $4$, the statement that calls procedure $p_0$ with the first two variables as arguments satisfies the starting conditions at depth $0$, code position $4$, and stack position $4$.",
+ "hypotheses_covered": [
+  "word width, resource limits, program, procedure index, and Boolean parameter",
+  "word-width fit condition",
+  "bounded initial state",
+  "memory related to the state at the main-frame stack position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a word width, let $lim$ be a limits record, let $P$ be a program, let $p_0$\nbe a procedure index, and let $dec$ be a Boolean. Suppose the word width fits the\nlimits, dispatcher position, and stack capacity determined by $P$ and $dec$. For any\nstate $σ$ bounded by $lim$ and any memory $m$ related to $σ$ at the main-frame stack\nposition for the setting determined by these data, the main statement at procedure index\n$p_0$ satisfies the starting conditions at depth $0$, main code position, and main-frame\nstack position."
+}

@@ -16,6 +16,7 @@ an $m$-clique.
 \lean{ThreeSATToClique.Clause}
 \label{ThreeSATToClique.Clause}
 \leanok
+\uses{ThreeSATToClique.Literal}
 A clause is a list of literals over a variable type $V$; it represents a
 disjunction of those literals.
 \end{definition}
@@ -33,6 +34,7 @@ clauses.
 \lean{ThreeSATToClique.evalLiteral}
 \label{ThreeSATToClique.evalLiteral}
 \leanok
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.Literal}
 Given a truth assignment $\alpha : V \to \mathrm{Prop}$, the evaluation of a
 literal $\ell$ under $\alpha$ is $\alpha(v)$ when $\ell = \texttt{pos}\,v$ and
 $\neg\,\alpha(v)$ when $\ell = \texttt{neg}\,v$.
@@ -42,7 +44,7 @@ $\neg\,\alpha(v)$ when $\ell = \texttt{neg}\,v$.
 \lean{ThreeSATToClique.clauseSatisfied}
 \label{ThreeSATToClique.clauseSatisfied}
 \leanok
-\uses{ThreeSATToClique.Clause, ThreeSATToClique.evalLiteral}
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.Clause, ThreeSATToClique.evalLiteral}
 A clause $c$ is \emph{satisfied} by assignment $\alpha$ if at least one literal
 $\ell \in c$ satisfies $\mathtt{evalLiteral}\,\alpha\,\ell$.
 \end{definition}
@@ -51,7 +53,7 @@ $\ell \in c$ satisfies $\mathtt{evalLiteral}\,\alpha\,\ell$.
 \lean{ThreeSATToClique.formulaSatisfied}
 \label{ThreeSATToClique.formulaSatisfied}
 \leanok
-\uses{ThreeSATToClique.CNFFormula, ThreeSATToClique.clauseSatisfied}
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.CNFFormula, ThreeSATToClique.clauseSatisfied}
 A CNF formula $f$ is \emph{satisfied} by $\alpha$ if every clause $c \in f$ is
 satisfied by $\alpha$.
 \end{definition}
@@ -60,7 +62,7 @@ satisfied by $\alpha$.
 \lean{ThreeSATToClique.isSatisfiable}
 \label{ThreeSATToClique.isSatisfiable}
 \leanok
-\uses{ThreeSATToClique.CNFFormula, ThreeSATToClique.formulaSatisfied}
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.CNFFormula, ThreeSATToClique.formulaSatisfied}
 A CNF formula $f$ is \emph{satisfiable} if there exists an assignment $\alpha$
 that satisfies $f$.
 \end{definition}
@@ -69,6 +71,7 @@ that satisfies $f$.
 \lean{ThreeSATToClique.Clause3}
 \label{ThreeSATToClique.Clause3}
 \leanok
+\uses{ThreeSATToClique.Literal}
 A 3-clause over $V$ is a structure with exactly three literals $l_1, l_2, l_3 :
 \mathtt{Literal}\,V$, representing a disjunction of precisely three literals.
 \end{definition}
@@ -85,7 +88,7 @@ A 3-CNF formula over $V$ is a list of 3-clauses, representing their conjunction.
 \lean{ThreeSATToClique.clause3Satisfied}
 \label{ThreeSATToClique.clause3Satisfied}
 \leanok
-\uses{ThreeSATToClique.Clause3, ThreeSATToClique.evalLiteral}
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.Clause3, ThreeSATToClique.evalLiteral}
 A 3-clause $c$ is satisfied by $\alpha$ if at least one of its three literals
 $c.l_1$, $c.l_2$, $c.l_3$ evaluates to true under $\alpha$.
 \end{definition}
@@ -94,7 +97,7 @@ $c.l_1$, $c.l_2$, $c.l_3$ evaluates to true under $\alpha$.
 \lean{ThreeSATToClique.formula3Satisfied}
 \label{ThreeSATToClique.formula3Satisfied}
 \leanok
-\uses{ThreeSATToClique.Formula3, ThreeSATToClique.clause3Satisfied}
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.Formula3, ThreeSATToClique.clause3Satisfied}
 A 3-CNF formula $f$ is satisfied by $\alpha$ if every 3-clause $c \in f$ is
 satisfied by $\alpha$.
 \end{definition}
@@ -103,7 +106,7 @@ satisfied by $\alpha$.
 \lean{ThreeSATToClique.is3Satisfiable}
 \label{ThreeSATToClique.is3Satisfiable}
 \leanok
-\uses{ThreeSATToClique.Formula3, ThreeSATToClique.formula3Satisfied}
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.Formula3, ThreeSATToClique.formula3Satisfied}
 A 3-CNF formula $f$ is satisfiable if there exists an assignment $\alpha$ such
 that $\alpha$ satisfies $f$.
 \end{definition}
@@ -121,7 +124,7 @@ and $l\_idx : \mathrm{Fin}\,3$ is a literal position within that clause.
 \lean{ThreeSATToClique.getLitInClause}
 \label{ThreeSATToClique.getLitInClause}
 \leanok
-\uses{ThreeSATToClique.Clause3}
+\uses{ThreeSATToClique.Clause3, ThreeSATToClique.Literal}
 Given a 3-clause $c$ and a position $p : \mathrm{Fin}\,3$, returns the $p$-th
 literal of $c$: $c.l_1$ at position $0$, $c.l_2$ at position $1$, and $c.l_3$ at
 position $2$.
@@ -131,7 +134,7 @@ position $2$.
 \lean{ThreeSATToClique.getLitAt}
 \label{ThreeSATToClique.getLitAt}
 \leanok
-\uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.getLitInClause}
+\uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.Literal, ThreeSATToClique.getLitInClause}
 Given a 3-CNF formula $f$ and a vertex $v : \mathtt{CliqueVertex}\,f.\mathtt{length}$,
 returns the literal at position $v.l\_idx$ within clause $f[v.c\_idx]$.  The type of
 $v$ guarantees the index is always in bounds.
@@ -141,6 +144,7 @@ $v$ guarantees the index is always in bounds.
 \lean{ThreeSATToClique.literalsConflict}
 \label{ThreeSATToClique.literalsConflict}
 \leanok
+\uses{ThreeSATToClique.Literal}
 Two literals $l_1$ and $l_2$ \emph{conflict} if one is the positive and the other
 the negative occurrence of the same variable, i.e.\ $l_1 = \texttt{pos}\,v$ and
 $l_2 = \texttt{neg}\,v$ (or vice versa) for some $v$.
@@ -150,7 +154,7 @@ $l_2 = \texttt{neg}\,v$ (or vice versa) for some $v$.
 \lean{ThreeSATToClique.literalsConflict_symm}
 \label{ThreeSATToClique.literalsConflict_symm}
 \leanok
-\uses{ThreeSATToClique.literalsConflict}
+\uses{ThreeSATToClique.Literal, ThreeSATToClique.literalsConflict}
 \difficulty{3}
 Call two literals over a variable set *conflicting* when one is the positive and the
 other the negative occurrence of one and the same variable. For any two literals $l_1$
@@ -177,17 +181,15 @@ A graph $G$ on vertex type $V$ \emph{has a $k$-clique} if there exists a finite 
 $s \subseteq V$ of $k$ vertices that are pairwise adjacent in $G$.
 \end{definition}
 
-\begin{lemma}[True literals never conflict]
+\begin{lemma}[True literals do not conflict]
 \lean{ThreeSATToClique.no_conflict_of_true}
 \label{ThreeSATToClique.no_conflict_of_true}
 \leanok
-\uses{ThreeSATToClique.evalLiteral, ThreeSATToClique.literalsConflict}
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.Literal, ThreeSATToClique.evalLiteral, ThreeSATToClique.literalsConflict}
 \difficulty{3}
-Let $\alpha$ be a truth assignment on a set $V$ of variables, and let $\ell_1,\ell_2$ be
-literals over $V$, each of the form $\mathrm{pos}\,v$ (the variable $v$) or
-$\mathrm{neg}\,v$ (its negation). If both $\ell_1$ and $\ell_2$ evaluate to true under
-$\alpha$, then they do not conflict; that is, they are not the positive and negative
-occurrences of one and the same variable.
+Let $V$ be a set of variables, let $\alpha$ be a truth assignment on $V$, and let
+$\ell_1,\ell_2$ be literals over $V$. If both literals evaluate to true under $\alpha$,
+then they do not conflict.
 \end{lemma}
 
 \begin{lemma}[One clique vertex per clause]
@@ -220,34 +222,35 @@ literal named by $v$ is one of the three literals $l_1, l_2, l_3$ of the clause 
 \leanok
 \uses{ThreeSATToClique.CliqueVertex, ThreeSATToClique.Formula3, ThreeSATToClique.evalLiteral, ThreeSATToClique.getLitAt, ThreeSATToClique.hasClique, ThreeSATToClique.is3Satisfiable, ThreeSATToClique.no_conflict_of_true, ThreeSATToClique.toCliqueGraph}
 \difficulty{5}
-Let $f$ be a 3-CNF formula consisting of $m$ clauses, and let its conflict graph be the
-simple graph on the vertices $\langle c, \ell\rangle$ (clause index $c$, literal
-position $\ell$) in which two vertices are adjacent exactly when they belong to
-different clauses and their literals do not conflict. If $f$ is satisfiable, then this
-conflict graph has an $m$-clique.
+Let $V$ be any type and let $f$ be a list of $m$ clauses, each consisting of three
+literals over $V$. If some truth assignment satisfies every clause of $f$, then the
+conflict graph has a clique of size $m$. Its vertices are clause-position pairs, and two
+are adjacent exactly when they come from different clauses and their literals are not
+opposite occurrences of the same variable.
 \end{theorem}
 
 \begin{theorem}[Soundness of the 3-SAT to clique reduction]
 \lean{ThreeSATToClique.ThreeSAT_to_Clique_soundness}
 \label{ThreeSATToClique.ThreeSAT_to_Clique_soundness}
 \leanok
-\uses{ThreeSATToClique.Formula3, ThreeSATToClique.clique_vertices_choose_one_per_clause, ThreeSATToClique.evalLiteral, ThreeSATToClique.getLitAt, ThreeSATToClique.getLitAt_mem_clause, ThreeSATToClique.hasClique, ThreeSATToClique.is3Satisfiable, ThreeSATToClique.toCliqueGraph}
+\uses{ThreeSATToClique.Assignment, ThreeSATToClique.Formula3, ThreeSATToClique.clique_vertices_choose_one_per_clause, ThreeSATToClique.evalLiteral, ThreeSATToClique.getLitAt, ThreeSATToClique.getLitAt_mem_clause, ThreeSATToClique.hasClique, ThreeSATToClique.is3Satisfiable, ThreeSATToClique.toCliqueGraph}
 \difficulty{5}
-Let $f$ be a 3-CNF formula consisting of $m$ clauses. If the conflict graph of $f$ has
-an $m$-clique, then $f$ is satisfiable.
+Let $V$ be a set of variables and let $f$ be a finite list of 3-clauses over $V$. If the
+conflict graph of $f$ has a clique of size equal to the number of clauses in $f$, then
+there is a truth assignment on $V$ that satisfies every clause of $f$.
 \end{theorem}
 
-\begin{theorem}[Correctness of the 3-SAT to Clique reduction]
+\begin{theorem}[3-SAT and clique equivalence]
 \lean{ThreeSATToClique.ThreeSAT_to_Clique_equivalence}
 \label{ThreeSATToClique.ThreeSAT_to_Clique_equivalence}
 \leanok
 \uses{ThreeSATToClique.Formula3, ThreeSATToClique.ThreeSAT_to_Clique_completeness, ThreeSATToClique.ThreeSAT_to_Clique_soundness, ThreeSATToClique.hasClique, ThreeSATToClique.is3Satisfiable, ThreeSATToClique.toCliqueGraph}
 \difficulty{1}
-Let $f$ be a 3-CNF formula with $m$ clauses. Then $f$ is satisfiable if and only if its
-conflict graph has a clique of size $m$; that is, the graph whose vertices are the
-literal positions of $f$, with two positions adjacent exactly when they lie in different
-clauses and their literals do not conflict, contains $m$ pairwise-adjacent vertices
-precisely when some truth assignment satisfies every clause of $f$.
+Let $V$ be any type and let $f$ be a list of $m$ clauses, each consisting of three
+literals over $V$. The formula $f$ is satisfiable if and only if its conflict graph has
+a clique of size $m$. The graph's vertices are clause-position pairs, and two are
+adjacent exactly when they come from different clauses and their literals are not
+opposite occurrences of the same variable.
 \end{theorem}
 
 %%% added by the blueprint pipeline
@@ -261,4 +264,12 @@ A literal over a variable type $V$ is either a positive occurrence
 $\mathrm{pos}\,v$ or a negative occurrence $\mathrm{neg}\,v$ of a variable
 $v \in V$: the former asserts the variable itself, the latter asserts its
 negation.
+\end{definition}
+
+\begin{definition}[Boolean Assignment]
+\lean{ThreeSATToClique.Assignment}
+\label{ThreeSATToClique.Assignment}
+\leanok
+For a type $V$, an assignment is a predicate on $V$, equivalently a choice of which
+elements of $V$ are assigned true.
 \end{definition}

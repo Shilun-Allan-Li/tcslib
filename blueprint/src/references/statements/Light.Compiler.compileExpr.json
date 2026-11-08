@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Compiler.compileExpr",
+ "key": "49ead3b9768afc72",
+ "kind": "def",
+ "title": "Compilation of expressions",
+ "statement": "For an expression and a natural-number temporary-register index $k$, compile a constant $n$ by applying the digit-list code at address $-(23+4k)$ to the base-$2$ digits of $n$. Compile a variable $x$ by subtracting the pool address $-(25+8x)$ from the frame-pointer register address $-11$ and storing the result at address $-13$, then loading into address $-(23+4k)$ from the memory address held there. For an operation applied to expressions $a$ and $b$, concatenate their compilations at indices $k$ and $k+1$, then apply the operation to the registers at addresses $-(23+4k)$ and $-(23+4(k+1))$, storing the result at the first address; for a load applied to $a$, append to its compilation at index $k$ the instruction that loads into that register from the memory address held in it.",
+ "hypotheses_covered": [
+  "An expression in the language of constants, variables, binary operations, and loads",
+  "A natural-number temporary-register index $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

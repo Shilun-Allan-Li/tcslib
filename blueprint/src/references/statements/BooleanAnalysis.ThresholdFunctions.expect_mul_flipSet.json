@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.expect_mul_flipSet",
+ "key": "7f81dcba64502bd8",
+ "kind": "lemma",
+ "title": "Fourier formula for flip correlation",
+ "statement": "Let $n$ be a nonnegative integer, let $f\\colon\\{0,1\\}^n\\to\\mathbb R$, and let $S\\subseteq[n]$. If $x^S$ denotes the vector obtained from $x$ by flipping exactly the coordinates in $S$, then\n\\[\n\\E_x[f(x)f(x^S)] = \\sum_{T\\subseteq[n]}(-1)^{|T\\cap S|}\\widehat f(T)^2,\n\\]\nwhere $\\widehat f(T)=\\E_x[f(x)\\chi_T(x)]$ and $\\chi_T(x)=\\prod_{i\\in T}\\sigma(x_i)$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$",
+  "$S$ is a subset of $[n]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. For $S\\subseteq[n]$, let $x^S$ be the bit vector obtained by flipping exactly the coordinates in $S$. For every real cube function $f$ and $S\\subseteq[n]$, $\\mathbb E[f(x)f(x^S)]=\\sum_{T\\subseteq[n]}(-1)^{|T\\cap S|}\\widehat f(T)^2$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.poly_unary_computes",
+ "key": "19bb15e6d35c2545",
+ "kind": "lemma",
+ "title": "Unary polynomial computation",
+ "statement": "For all $c,C\\in\\mathbb{N}$, the unary box-enumeration machine with parameters $c,C$ computes the function sending each binary string $x$ to the word consisting of $C(|x|+1)^{c+1}$ ones, in time $(C+5(c+1)+4)(|x|+1)^{c+1}$.",
+ "hypotheses_covered": [
+  "$c\\in\\mathbb{N}$",
+  "$C\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $c, C \\in \\mathbb{N}$, the unary box-enumeration machine $\\mathcal{P}_{c,C}$ (a finite binary-alphabet machine with $c+1$ work tapes that runs $c+1$ nested unary loops of side $|x|+1$, emitting $C$ ones per innermost iteration) computes the function $x \\mapsto 1^{C(|x|+1)^{c+1}}$ in time $n \\mapsto (C + 5(c+1) + 4)(n+1)^{c+1}$: on every input $x$ it halts within $(C + 5(c+1) + 4)(|x|+1)^{c+1}$ steps with output exactly $C(|x|+1)^{c+1}$ ones."
+}

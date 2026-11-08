@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.loopCall_frame",
+ "key": "b31cdfaaa0064372",
+ "kind": "lemma",
+ "title": "Body Call as a Controller Frame",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be an anchor state of $B$, and fix an input word $x$. For a startup bit, a configuration $c$ of $B$ on $x$, a release bit, an optional flag bit, a counter word, and a configuration of $F$ on $x$, the resulting body call equals the controller frame formed from that call itself. The frame uses the call's control state and $c$'s input-head position; its flag tape stores the optional flag at the origin and is blank elsewhere, its counter and payload tapes store the counter word and $c$'s output word from the origin, respectively, the counter head is at zero, the payload head is at the length of $c$'s output, and the output is empty.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines $B$ and $F$",
+  "anchor state of $B$",
+  "fixed Boolean input word $x$",
+  "startup bit",
+  "configuration $c$ of $B$ on $x$",
+  "release bit",
+  "optional flag bit",
+  "counter word",
+  "configuration of $F$ on $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every body call of the loop host, built on a body configuration $c$ with flag bit,\ncounter word $w$, and fuel residue, the call equals the controller frame over itself\nwhose flag track stores the flag bit at the origin, whose counter track is the buffer\ntape of $w$ with head at zero, and whose payload track is the buffer tape of the output\nof $c$ with head at that output's length, with empty physical output."
+}

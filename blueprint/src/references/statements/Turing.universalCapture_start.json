@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.universalCapture_start",
+ "key": "337cc27a17f682b0",
+ "kind": "lemma",
+ "title": "Entry into the interpreter after halting",
+ "statement": "Let $M$ be a finite-state machine over the Boolean alphabet, let $D$ be a four-work-tape machine over the Boolean alphabet with finite state set and decidable state equality, and let $x$ be a finite Boolean input. If $M$’s configuration after $T$ steps from its initial configuration on $x$ is halted, then there exists $t\\le T+1$ such that the capture wrapper’s configuration after $t$ steps from its initial configuration on $x$ is the interpreter-entry configuration associated to $M$’s configuration after $T$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state machine over the Boolean alphabet",
+  "$D$ is a four-work-tape Boolean machine with finite state set and decidable state equality",
+  "$x$ is a finite Boolean string",
+  "$T$ is a natural number",
+  "The configuration of $M$ after $T$ steps from its initial configuration on $x$ is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine, $D$ a four-tape interpreter, $x$ an input, and $T$ a\nnatural number such that $M$ has halted within $T$ steps on $x$.  Then there\nexists $t \\le T+1$ such that, after exactly $t$ transitions on $x$, the\noutput-capture wrapper of $M$ and $D$ stands in the interpreter-entry\nconfiguration corresponding to the configuration of $M$ after $T$ steps: the\ncontrol is the interpreter's initial state, the full halted configuration of\n$M$ --- including its parked input head --- is preserved, and the output of\n$M$ is captured on the table tape."
+}

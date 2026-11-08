@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.counter_increment",
+ "key": "fdc8cff10b3f4a51",
+ "kind": "lemma",
+ "title": "One complete counter increment",
+ "statement": "Let $x$ and $b$ be finite binary words, and let $i<|x|$. Starting in the count state with the input head at position $i+1$, work head at $0$, tape contents given by $b$, and empty output, after $2r+2$ steps, where $r$ is the carry length of $b$, the machine is in the count state with input head at position $i+2$, work head at $0$, tape contents given by the increment of $b$, and empty output.",
+ "hypotheses_covered": [
+  "Finite binary input word $x$",
+  "Natural number $i$ with $i<|x|$",
+  "Finite binary work-tape word $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input word and $i < |x|$. Starting the four-state binary-counter\nmachine in the count state with the input head scanning the $i$-th input\nsymbol, a binary word $b$ stored on the work tape with the work head at cell\n$0$, and empty output: after exactly $2r + 2$ steps, where $r$ is the carry\nlength of $b$, the machine is again in the count state with the input head\nadvanced by one position, the work tape holding the incremented word of $b$,\nthe work head back at cell $0$, and the output still empty."
+}

@@ -1,0 +1,18 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Inclusions.lean :: Complexity.b2b_hostedSource_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Hosted Source Computation
+
+**Claim.** If the cleaned simulation halts with output $[b]$, clears its tapes and heads, and keeps its heads within distance $B$, then the hosted machine started at any valid input-head position on $y$ reaches a halting configuration with output $[b]$, while all its work-tape heads remain within distance $B$.
+
+**Proof.** Write $k=2k_M$ for the number of tapes in the hosted machine. The proof runs three components in sequence: an input rewind, the cleaned simulation, and a final rewind. For the first component, apply `b2b_rewind_run` to the initial rewind machine with input-head position $p$. It reaches its halting configuration with the input head returned to position $1$, without moving any work-tape heads. The first-halt principle (`Turing.MultiTapeTM.exists_first_halt`) lets the proof use the earliest halting time, so the return transition of the embedded-and-retiring rewind machine is triggered at the right point. The embedding identity (`b2b_embed_refl`) identifies this full-tape embedding with the original configuration. Consequently the first component passes control to the cleaned simulation with all work heads still at zero.
+
+Let $T$ witness the cleaned-run hypothesis. Again take its first halting time, and apply the result for an embedded machine that retires on halting (`Turing.embedEmitRetTM_run`). Since the cleaned simulation halts with output $[b]$, blank tapes, and all heads at zero, its retiring embedding reaches a configuration carrying that output and those zero head positions. This establishes the clean simulation’s exit configuration. Its earlier configurations are live, as required to ensure control is handed off only at its first halt. The second use of `b2b_embed_refl` identifies the embedding with the original machine on its assigned tapes.
+
+Start the final rewind from this exit configuration. By `b2b_rewind_run`, it halts while leaving work-head positions unchanged; because the cleaned simulation left every head at zero, the final rewind keeps them at zero as well. The two sequential handoffs are justified by the composition theorem for machines joined at designated exit states (`Turing.seamCompTM_run_ofCfg`). Hence the full hosted machine reaches a no-state configuration with output $[b]$ after the sum of the three finite run lengths, including the handoff steps.
+
+It remains to bound heads at every intermediate time, not just at phase boundaries. During the first rewind, the rewind lemma bounds the heads by their initial zero positions, and at the exit they remain zero. During the clean simulation, the embedded-retiring-machine result identifies each pre-exit configuration with the corresponding cleaned configuration, so the hypothesis bounds each head by $B$; at exit, the heads are zero. During the last rewind the heads stay at zero. The visited-head inclusion for sequentially composed machines (`Turing.seamCompTM_visitedByTapeHead_ofCfg`), applied first to the outer handoff and then to the inner handoff, places every head position visited by the full run among those visited in one of these three phases. The three phase bounds therefore give the required bound throughout.
+
+**Key facts.** `Complexity.b2b_rewind_run`, `Turing.MultiTapeTM.exists_first_halt`, `Complexity.b2b_embed_refl`, `Turing.embedEmitRetTM_run`, `Turing.seamCompTM_run_ofCfg`, `Turing.seamCompTM_visitedByTapeHead_ofCfg`.

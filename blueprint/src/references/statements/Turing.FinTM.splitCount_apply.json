@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.splitCount_apply",
+ "key": "964b5c10086e348b",
+ "kind": "lemma",
+ "title": "One-step correspondence of the counting host",
+ "statement": "Let $w$ and $s$ be finite Boolean words, let $c$ be a configuration of a source machine with empty input, and let $a$ be one of its actions. Form the counting-host configuration whose native input-head position is the saturated position for $|s|+|c.output|$, whose work tapes store $s$ and the source work tapes, and whose state records whether $|w|<|s|+|c.output|$. Applying the transformed action to this configuration, using the symbol it scans on its native input, gives exactly the counting-host configuration associated with the source configuration obtained by applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "Finite Boolean words $w$ and $s$",
+  "Source configuration $c$ over empty input",
+  "Source action $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Applying the transformed action to the counting-host embedding of a source\nconfiguration yields exactly the counting-host embedding of the source\nconfiguration after the original action: one native input cell is consumed\nper source emission, the candidate is preserved, and all source-bank writes\nand moves are reproduced."
+}

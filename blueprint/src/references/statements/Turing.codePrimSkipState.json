@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.codePrimSkipState",
+ "key": "1e5603c342120fd8",
+ "kind": "lemma",
+ "title": "Primitive recursiveness of the state-field skipper",
+ "statement": "The reader that takes a natural-number bound and a Boolean string, consumes a leading $0$ and returns the remaining suffix, or consumes a leading $1$ followed by a unary numeral whose value is smaller than the bound and returns the suffix after that numeral, is primitive recursive jointly in the bound and the string. It fails when the string is empty or when the unary numeral is missing its terminating $0$ or is not smaller than the bound.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The two-argument skipping reader for a halt-or-successor field is primitive\nrecursive jointly in the bound and the string.  This reader consumes one tag bit;\non a true tag it further consumes a unary index checked to be smaller than the\nbound, and on a false tag it returns the rest of the string unchanged."
+}

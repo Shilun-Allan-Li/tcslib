@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.extract_block",
+ "key": "bf28799527edf173",
+ "kind": "lemma",
+ "title": "Two-step behavior on an aligned pair",
+ "statement": "Let $first,second$ be Boolean flags, and let Boolean words $x,pre,rest,a$ and bits $b,c$ satisfy $x=pre\\mathbin{++}[b,c]\\mathbin{++}rest$. Starting from the pair extractor's block-start configuration at input position $|pre|$, with buffer $a$, work-head position $|a|$, and empty output, after two steps the configuration is as follows: if $b=c$, it remains in the block-start state at position $|pre|+2$, with buffer $a\\mathbin{++}[b]$, head at the end of that buffer, and empty output; if $b=1,c=0$, it is halted at position $|pre|+2$, with buffer $a$, head at $|a|$, and empty output; if $b=0,c=1$, it is in the rewind state at position $|pre|+2$, with buffer $a$, head one cell before its end, and empty output.",
+ "hypotheses_covered": [
+  "first and second are Boolean flags",
+  "x, pre, rest, and a are Boolean words",
+  "b and c are bits",
+  "x=pre followed by b, c, and rest"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p\\, b\\, c\\, r$ with bits $b, c$, then two\nextractor steps from the block-start state at position $\\abs{p}$ with buffer\n$a$ append $b$ to the buffer and continue when $b = c$; halt silently when\n$(b,c) = (1,0)$; and enter the rewind phase with the work head one cell before\nthe end of the buffer when $(b,c) = (0,1)$. In all three cases nothing is\nemitted."
+}

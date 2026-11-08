@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.UShape",
+ "key": "b1a983f37fe19802",
+ "kind": "def",
+ "title": "U-shaped encoding condition",
+ "statement": "For a Boolean string $x$ and natural numbers $n,s,t$, define the U-shaped encoding condition to hold when all of the following are satisfied: $x$ has the unary-rest property at offset $0$ and length $n$; it has the matrix-rest property at parameters $n,0$; $s<n$; the double encoding at offset $2n+2+2n^2+2$ represents the binary expansion of $s$; $t<n$; and the plain encoding at offset $2n+2+2n^2+2+2\\lvert\\mathrm{bits}(s)\\rvert+2$ represents the binary expansion of $t$.",
+ "hypotheses_covered": [
+  "Unary-rest property for $x$ at $0,n$",
+  "Matrix-rest property for $x$ at $n,0$",
+  "$s<n$",
+  "Double encoding of the binary expansion of $s$ at the stated offset",
+  "$t<n$",
+  "Plain encoding of the binary expansion of $t$ at the stated offset"
+ ],
+ "confidence": "low",
+ "caveat": "The definitions of the unary-rest, matrix-rest, double-encoding, and plain-encoding predicates are absent, so their precise meanings cannot be supplied.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

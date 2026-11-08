@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satSafe_spec",
+ "key": "23dbd621dab424fd",
+ "kind": "lemma",
+ "title": "Safe request representation",
+ "statement": "For every Boolean word $z$, there exist a CNF formula $\\varphi$ over natural-number variables and a Boolean word $u$ such that the safe request on $z$ is the pairing of the serialization of $\\varphi$ with $u$, every variable index occurring in $\\varphi$ is less than $|u|$, and the value of $\\varphi$ under the assignment given by $u$ (with variables beyond $|u|$ assigned false) equals the safe evaluation value of $z$.",
+ "hypotheses_covered": [
+  "A Boolean word $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $z$ there exist a CNF formula $\\varphi$ and a word $u$ such\nthat the safe evaluator request on $z$ is exactly the pair encoding of the\nserialization of $\\varphi$ with $u$, every variable index occurring in $\\varphi$ is\nbelow $|u|$, and the truth value of $\\varphi$ under the assignment read off $u$\nequals the safe evaluation value of $z$. This holds also on failed splits and\nfailed parses."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.eq_pathRaw_iff",
+ "key": "67d637a224925f0d",
+ "kind": "lemma",
+ "title": "Characterization of the raw path encoding",
+ "statement": "Let $x$ and $M$ be finite Boolean words and let $n,s,t$ be natural numbers. Then $x$ is the encoding of the pair consisting of $n$ true bits and the nested pair of $M$ with the pair of the binary expansions of $s$ and $t$ (using the encoding that doubles each bit of the first component, appends $01$, and then appends the second component) if and only if all of the following hold: starting at position $0$, the first $n$ bits are each doubled and followed by the separator $01$; starting at position $2n+2$, the bits of $M$ are each doubled and followed by $01$; starting at position $2n+2+2|M|+2$, the bits of the binary expansion of $s$ are each doubled and followed by $01$; and starting at position $2n+2+2|M|+2+2|\text{binary expansion of }s|+2$, the binary expansion of $t$ appears verbatim and ends exactly at the end of $x$. In each doubled segment, both copies of every bit agree with the corresponding bit of that segment's word; positions beyond the end of $x$ are interpreted as false when checking these conditions.",
+ "hypotheses_covered": [
+  "$x$ and $M$ are finite Boolean words",
+  "$n,s,t$ are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

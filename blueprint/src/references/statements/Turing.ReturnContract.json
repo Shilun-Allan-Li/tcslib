@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.ReturnContract",
+ "key": "74f0fd659d492c92",
+ "kind": "structure",
+ "title": "Return-to-state execution contract",
+ "statement": "Let $M$ be a $k$-work-tape Turing machine, let $a$ be an anchor state, let $I$ be a type of data, and fix an input string $x$. A return contract assigns each data value and configuration a precondition, a strictly positive running time, an endpoint, and integer lower and upper bounds for each work-tape head. Whenever a configuration starts in state $a$ and satisfies the precondition, the run reaches its assigned endpoint at the assigned time, and that endpoint is again in state $a$; at each positive time strictly before the endpoint, the state is not $a$, and throughout the run each work-tape head stays within its assigned bounds.",
+ "hypotheses_covered": [
+  "A $k$-work-tape Turing machine $M$",
+  "Anchor state $a$",
+  "Data type $I$ and fixed input string $x$",
+  "Starting configuration has state $a$ and satisfies the precondition",
+  "Assigned running time is strictly positive",
+  "Run reaches the assigned endpoint at the assigned time",
+  "Endpoint state equals $a$",
+  "At each positive earlier time, state is not $a$",
+  "Each work-tape head stays within its assigned bounds through the endpoint"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

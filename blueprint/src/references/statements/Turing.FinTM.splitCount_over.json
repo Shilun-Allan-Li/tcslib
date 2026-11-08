@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.splitCount_over",
+ "key": "e9bd5a81e1d84247",
+ "kind": "lemma",
+ "title": "Overflow-flag update",
+ "statement": "Let $w$ be a finite Boolean word, let $c$ be a configuration on input $w$, and let $j$ be a natural number. If the input head of $c$ is at the saturated position for $j$, then the disjunction of the test $|w|<j$ with the test that the scanned input symbol is blank is equivalent to $|w|<j+1$.",
+ "hypotheses_covered": [
+  "The input head of $c$ equals the saturated position for $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a configuration whose input head is at the saturated position for $j$ on\ninput $w$, the disjunction of the flag recording $\\abs{w} < j$ with the test\nthat the symbol read is blank equals the flag recording $\\abs{w} < j + 1$."
+}

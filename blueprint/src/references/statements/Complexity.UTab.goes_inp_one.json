@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.UTab.goes_inp_one",
+ "key": "747f7b0512278b8f",
+ "kind": "theorem",
+ "title": "Execution at an Input Position",
+ "statement": "Let $M$ be a finite multitape Turing machine with Boolean symbols, let $x$ be a finite Boolean input, let $n,T$ be natural numbers, let $z$ be a finite Boolean string, and let $t\nearrow T$ and $p<|z|+n+2$. Choose an input phase $\text{ph}$ and an 11-register assignment $e$. Suppose the registers for the input count and hard-wired length equal $n$ and $|z|$, respectively; the instruction position is the position indexed by $p$ in layer $t$; the preceding-cell register is zero if $t=0$ and otherwise is the instruction position minus one layer stride; and the layer-start register equals $t$ times the layer stride. Suppose also that the input-phase source list agrees with the input-position source list specified by whether $p$ is $0$, $1$, or $|z|+n+1$, and that the layout source is valid and has the value of the $(p-1)$st bit of the layout of length $|z|+n$ when $1\\le p\\le |z|+n$, and false otherwise. Then the counter program, starting at the label for phase $\text{ph}$ at layer $t$ with register values $e$ and input position $ps$, reaches the successor label for that phase within $L_{\\max}(M)+3$ steps, emits the prescribed instruction bits, and ends with instruction position increased by one and preceding-cell register equal to zero if $t=0$, or otherwise equal to the new instruction position minus one layer stride; all other registers and the input position are unchanged.",
+ "hypotheses_covered": [
+  "$M$ is a finite multitape Turing machine over Boolean symbols",
+  "$x$ is a finite Boolean input",
+  "$n,T$ are natural numbers; $z$ is a finite Boolean string; $t\\le T$",
+  "$p<|z|+n+2$",
+  "The input-count register is $n$ and hard-wired-length register is $|z|$",
+  "The instruction-position register indexes position $p$ in layer $t$",
+  "The preceding-cell register is zero for $t=0$, otherwise instruction position minus layer stride",
+  "The layer-start register equals $t$ times the layer stride",
+  "The input-phase source list agrees with the specified input-position source list",
+  "The layout source has the specified bit or false value",
+  "The layout source is valid for the register assignment"
+ ],
+ "confidence": "low",
+ "caveat": "The theorem also specifies an exact emitted bit string through the circuit-tableau encoding; the supplied definitions do not provide enough informal vocabulary to describe that bit string more concretely.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.csPrefix_ends",
+ "key": "57a1139eb36c0eda",
+ "kind": "theorem",
+ "title": "Counting-sort prefix phase",
+ "statement": "Let a counting-sort input have $n$ items with keys in $\\{0,\\ldots,N-1\\}$, and assume the address bounds, key-cell bounds, and required disjointness conditions for the source, destination, and counter ranges. If the counters initially contain the frequencies of keys among the first $n$ items (with counter zero equal to $0$), then the prefix-sum program has an execution of cost at most $25N+6$ that ends with loop index $N$, counters containing the cumulative frequencies through each key, and memory agreeing with its initial value outside the destination and counter ranges.",
+ "hypotheses_covered": [
+  "Counting-sort preconditions: word bound, source/destination/counter bounds, item and key contents, key range, and required interval disjointness",
+  "Initial state has loop index $n$, counters containing the counted key frequencies, and agrees with initial memory outside destination and counter ranges"
+ ],
+ "confidence": "low",
+ "caveat": "The bundled counted-state and summed-state predicates are not informally defined in the supplied descriptions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

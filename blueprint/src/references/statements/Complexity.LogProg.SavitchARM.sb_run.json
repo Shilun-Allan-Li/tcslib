@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.sb_run",
+ "key": "fb1fbd8ccf56d412",
+ "kind": "theorem",
+ "title": "Stack Subtraction Run",
+ "statement": "Let $E,B$ be natural numbers, let $\\mathrm{orc}$ be a Boolean oracle with four query types, let $x$ be a finite Boolean word, and let $b$ be a Boolean value. For any machine register state $\\mathrm{st}$ whose eighteen register values are all at most $B$, the program has a finite run from the state for the phase-zero subtraction routine, with register values given by $\\mathrm{st}$ and no answer, to the state for recovering the popped endpoint, with scratch register $Q$ set to zero, saved-endpoints register $SE$ set to $\\max(\\mathrm{st}.SE-\\mathrm{st}.Q,0)$, and every other register unchanged; the answer remains absent. Every configuration before the final one satisfies the guard that the instruction meets its stated preconditions and every register value is at most $B$.",
+ "hypotheses_covered": [
+  "$E$ is a natural number",
+  "$B$ is a natural number",
+  "$\\mathrm{orc}$ is a Boolean oracle with four query types",
+  "$x$ is a finite Boolean word",
+  "$b$ is a Boolean value",
+  "Every register value in $\\mathrm{st}$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E$, $B$ be natural numbers, let $\\mathrm{orc}$ be a four-query Boolean oracle, let\n$x$ be a bit string, and let $b$ be a Boolean value. For every register state\n$\\mathrm{st}$ whose eighteen register values are all at most $B$, the program has a\nfinite run from the phase-zero subtraction routine, with register vector given by\n$\\mathrm{st}$ and no answer, to the phase-zero move routine for recovering the popped\nendpoint, with the scratch register $Q$ set to $0$, the endpoint stack $SE$ replaced by\n$\\max(SE-Q,0)$ using the original register values, and all other registers unchanged.\nEvery configuration before the final one satisfies the program’s guard requiring its\nregister values to be at most $B$ and its instruction to meet the program’s stated\npreconditions."
+}

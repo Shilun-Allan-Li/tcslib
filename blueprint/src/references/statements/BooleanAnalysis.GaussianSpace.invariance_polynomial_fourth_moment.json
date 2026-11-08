@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.invariance_polynomial_fourth_moment",
+ "key": "5e77f22486ccf030",
+ "kind": "theorem",
+ "title": "Fourth moment bound by coefficient energy",
+ "statement": "Let $n,k\\in\\mathbb N$, let $(\\Omega,\\mu)$ be a probability space, and let $F$ be a multilinear coefficient family of degree at most $k$. Suppose $X_1,\\ldots,X_n$ are independent under $\\mu$ and each satisfies the fourth-order invariance moment conditions. Then\n\\[\n\\mathbb E_\\mu[F(X)^4]\\le 9^k\\left(\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}F(S)^2\\right)^2.\n\\]",
+ "hypotheses_covered": [
+  "$n,k$ are natural numbers",
+  "$\\mu$ is a probability measure on a measurable space",
+  "$F$ is a coefficient family of degree at most $k$",
+  "the coordinates of $X$ are independent under $\\mu$",
+  "each coordinate of $X$ satisfies the fourth-order invariance moment conditions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{i\\in S}x_i$ be a real multilinear polynomial of degree at most $k$; let $I_i(F)=\\sum_{S\\ni i}a_S^2$. Let $(X_i)$ be independent real inputs on a probability space, each measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. Then $\\mathbb E[F(X)^4]\\le9^k(\\sum_S a_S^2)^2$."
+}

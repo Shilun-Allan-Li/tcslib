@@ -9,7 +9,10 @@ Generalized binomial coefficients yield the normalized reverse two-point estimat
 \lean{BooleanAnalysis.Hypercontractivity.hasSum_choose_rpow}
 \leanok
 \difficulty{4}
-Let $s,x\in\bbr$ with $|x|<1$, the generalized binomial series converges and $\sum_{k=0}^{\infty}\binom{s}{k}x^k=(1+x)^s$, where $\binom{s}{k}=s(s-1)\cdots(s-k+1)/k!$ and $\binom{s}{0}=1$.
+Let $s,x\in\mathbb R$ with $|x|<1$. Then the generalized binomial series converges to
+$(1+x)^s$:
+\[\sum_{k=0}^{\infty}\binom{s}{k}x^k=(1+x)^s,\]
+where $\binom{s}{k}=s(s-1)\cdots(s-k+1)/k!$ and $\binom{s}{0}=1$.
 \end{lemma}
 
 \begin{lemma}[Summability of the even binomial series]
@@ -17,60 +20,72 @@ Let $s,x\in\bbr$ with $|x|<1$, the generalized binomial series converges and $\s
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.hasSum_choose_rpow}
 \difficulty{1}
-For every $s,x\in\bbr$ with $|x|<1$, the series $\sum_{k=0}^{\infty}\binom{s}{2k}x^{2k}$ is summable, with generalized binomial coefficients.
+For real numbers $s$ and $x$ with $|x|<1$, the series
+$\sum_{k=0}^{\infty}\binom{s}{2k}x^{2k}$, with generalized binomial coefficients, is
+summable.
 \end{lemma}
 
-\begin{lemma}[Even part of the binomial expansion]
+\begin{lemma}[Even part of the generalized binomial series]
 \lean{BooleanAnalysis.Hypercontractivity.even_part_rpow_eq_tsum}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.hasSum_choose_rpow, BooleanAnalysis.Hypercontractivity.summable_choose_even}
 \difficulty{5}
-Let $s,x\in\bbr$ with $|x|<1$, $((1+x)^s+(1-x)^s)/2=\sum_{k=0}^{\infty}\binom{s}{2k}x^{2k}$, using generalized binomial coefficients.
+For real numbers $s$ and $x$ with $|x|<1$, one has
+$\frac{(1+x)^s+(1-x)^s}{2}=\sum_{k=0}^{\infty}\binom{s}{2k}x^{2k}$, where $\binom{s}{m}$
+denotes the generalized binomial coefficient.
 \end{lemma}
 
-\begin{lemma}[Moment of a positive affine bit function]
+\begin{lemma}[Affine bit moment]
 \lean{BooleanAnalysis.Hypercontractivity.expect_abs_rpow_affine}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.expect_abs_rpow_one_bit, BooleanAnalysis.Hypercontractivity.one_bit_val_false, BooleanAnalysis.Hypercontractivity.one_bit_val_true, BooleanAnalysis.boolToSign, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff}
 \difficulty{4}
-Let $s,b\in\bbr$ with $|b|<1$, uniform one-bit expectation satisfies $\E_{t\in\{0,1\}}|1+b(-1)^t|^s=((1+b)^s+(1-b)^s)/2$.
+Let $s,b\in\bbr$ with $|b|<1$. The uniform expectation over the one-dimensional Boolean
+cube satisfies $\E\bigl[|1+b\sigma(x_1)|^s\bigr]=\bigl((1+b)^s+(1-b)^s\bigr)/2$.
 \end{lemma}
 
 \begin{lemma}[Second generalized binomial coefficient]
 \lean{BooleanAnalysis.Hypercontractivity.ring_choose_two}
 \leanok
 \difficulty{3}
-For every $s\in\bbr$, the generalized binomial coefficient satisfies $\binom{s}{2}=s(s-1)/2$.
+For every real number $s$, the generalized binomial coefficient of order two is
+$\binom{s}{2}=s(s-1)/2$.
 \end{lemma}
 
-\begin{lemma}[Recurrence between even binomial coefficients]
+\begin{lemma}[Recurrence for even generalized binomial coefficients]
 \lean{BooleanAnalysis.Hypercontractivity.ring_choose_even_succ}
 \leanok
 \difficulty{4}
-Let $s\in\bbr$ and $k\in\mathbb N$, the generalized binomial coefficients satisfy $\binom{s}{2k+2}=\binom{s}{2k}(s-2k)(s-2k-1)/((2k+1)(2k+2))$.
+For every real number $s$ and natural number $k$, the generalized binomial coefficients
+satisfy $\binom{s}{2(k+1)}=\binom{s}{2k}(s-2k)(s-(2k+1))/((2k+1)(2k+2))$.
 \end{lemma}
 
-\begin{lemma}[Signs of even binomial coefficients]
+\begin{lemma}[Signs of even generalized binomial coefficients]
 \lean{BooleanAnalysis.Hypercontractivity.ring_choose_even_nonpos}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.ring_choose_even_succ, BooleanAnalysis.Hypercontractivity.ring_choose_two}
 \difficulty{4}
-Let $0<s<1$. For every integer $k\ge1$, the generalized binomial coefficient satisfies $\binom{s}{2k}\le0$.
+Let $0<s<1$. For every natural number $k$ with $1\le k$, the generalized binomial
+coefficient of order $2k$ satisfies $\binom{s}{2k}\le0$.
 \end{lemma}
 
 \begin{lemma}[Borell scalar factor estimate]
 \lean{BooleanAnalysis.Hypercontractivity.borell_factor_bound}
 \leanok
 \difficulty{4}
-Let $0<q<p<1$, $\rho\ge0$, $\rho^2=(1-p)/(1-q)$, and $m\in\mathbb N$ with $m\ge2$. Then $\rho(m-q)\le m-p$.
+Let $p,q,\rho\in\mathbb R$ satisfy $0<q$, $q<p$, $p<1$, $0\leq\rho$, and
+$\rho^2=(1-p)/(1-q)$. For every natural number $m\geq2$, one has $\rho(m-q)\leq m-p$.
 \end{lemma}
 
-\begin{lemma}[Successor comparison of even coefficients]
+\begin{lemma}[Successor comparison of even generalized binomial coefficients]
 \lean{BooleanAnalysis.Hypercontractivity.choose_even_ratio_step}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.borell_factor_bound, BooleanAnalysis.Hypercontractivity.ring_choose_even_nonpos, BooleanAnalysis.Hypercontractivity.ring_choose_even_succ}
 \difficulty{5}
-Let $0<q<p<1$, $\rho\ge0$, $\rho^2=(1-p)/(1-q)$, and integer $K\ge1$. If $\binom p{2K}\le(p/q)\binom q{2K}\rho^{2K}$, then $\binom p{2K+2}\le(p/q)\binom q{2K+2}\rho^{2K+2}$, with generalized binomial coefficients.
+Let $p,q,\rho\in\mathbb R$ satisfy $0<q<p<1$, $\rho\ge0$, and $\rho^2=(1-p)/(1-q)$, and
+let $K\ge1$ be an integer. If $\binom{p}{2K}\le (p/q)\binom{q}{2K}\rho^{2K}$ for the
+generalized binomial coefficients, then $\binom{p}{2(K+1)}\le
+(p/q)\binom{q}{2(K+1)}\rho^{2(K+1)}$.
 \end{lemma}
 
 \begin{lemma}[Comparison of even binomial coefficients]
@@ -78,7 +93,9 @@ Let $0<q<p<1$, $\rho\ge0$, $\rho^2=(1-p)/(1-q)$, and integer $K\ge1$. If $\binom
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.choose_even_ratio_step, BooleanAnalysis.Hypercontractivity.ring_choose_two}
 \difficulty{4}
-Let $0<q<p<1$, $\rho\ge0$, and $\rho^2=(1-p)/(1-q)$. For every integer $k\ge1$, $\binom p{2k}\le(p/q)\binom q{2k}\rho^{2k}$, with generalized binomial coefficients.
+Let $p,q,\rho\in\mathbb R$ satisfy $0<q$, $q<p$, $p<1$, $0\leq\rho$, and
+$\rho^2=(1-p)/(1-q)$. For every natural number $k\geq1$, the generalized binomial
+coefficients satisfy $\binom{p}{2k}\leq(p/q)\binom{q}{2k}\rho^{2k}$.
 \end{lemma}
 
 \begin{lemma}[Normalized reverse two-point inequality]
@@ -86,7 +103,10 @@ Let $0<q<p<1$, $\rho\ge0$, and $\rho^2=(1-p)/(1-q)$. For every integer $k\ge1$, 
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.choose_even_ratio_le, BooleanAnalysis.Hypercontractivity.even_part_rpow_eq_tsum, BooleanAnalysis.Hypercontractivity.expect_abs_rpow_affine, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.Hypercontractivity.noiseOp_affine_one_bit, BooleanAnalysis.Hypercontractivity.summable_choose_even, BooleanAnalysis.boolToSign, BooleanAnalysis.noiseOp}
 \difficulty{6}
-Let $0<q<p<1$, $\rho\ge0$, $\rho^2=(1-p)/(1-q)$, and $|a|<1$. For $f(t)=1+a(-1)^t$ on $\{0,1\}$, $M_q(T_\rho f)\ge M_p(f)$, where $M_r(u)=(\E|u|^r)^{1/r}$ under the uniform measure. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+Let $0<q<p<1$, let $\rho,a\in\mathbb R$ satisfy $\rho\ge0$, $\rho^2=(1-p)/(1-q)$, and
+$|a|<1$. On the one-dimensional Boolean cube, define $f(x)=1+a\sigma(x)$, where $\sigma$
+is the sign encoding. Then $M_q(T_\rho f)\ge M_p(f)$, with the extended power means
+taken under the uniform measure.
 \end{lemma}
 
 \begin{lemma}[The two one-bit strings]
@@ -94,29 +114,38 @@ Let $0<q<p<1$, $\rho\ge0$, $\rho^2=(1-p)/(1-q)$, and $|a|<1$. For $f(t)=1+a(-1)^
 \leanok
 \uses{BooleanAnalysis.BoolCube}
 \difficulty{4}
-Every point of $\{0,1\}^1$ is either the string whose only coordinate is $0$ or the string whose only coordinate is $1$.
+Every point of the one-dimensional Boolean cube is either the string whose only
+coordinate is $0$ or the string whose only coordinate is $1$.
 \end{lemma}
 
-\begin{lemma}[Normalizing a nonnegative one-bit function]
+\begin{lemma}[Normal form for a nonnegative one-bit function]
 \lean{BooleanAnalysis.Hypercontractivity.normalize_one_bit}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.IsNonnegative, BooleanAnalysis.Hypercontractivity.boolCube_one_cases, BooleanAnalysis.boolToSign, BooleanAnalysis.boolToSign_false, BooleanAnalysis.boolToSign_true}
 \difficulty{4}
-For every nonnegative function $f:\{0,1\}\to[0,\infty)$ that is not identically zero, there exist $c>0$ and $a\in[-1,1]$ such that $f(t)=c(1+a(-1)^t)$ for both bits $t$.
+Let $f\colon\{0,1\}^1\to\mathbb R$ be nonnegative at every point and not identically
+zero. Then there exist real numbers $c$ and $a$ such that $c>0$, $-1\le a\le1$, and
+$f(x)=c\bigl(1+a\sigma(x_0)\bigr)$ for every $x\in\{0,1\}^1$, where $\sigma(0)=1$ and
+$\sigma(1)=-1$.
 \end{lemma}
 
-\begin{lemma}[Continuity of affine one-bit means]
+\begin{lemma}[Continuity of affine one-bit power means]
 \lean{BooleanAnalysis.Hypercontractivity.continuous_lpMean_affine}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.boolToSign, BooleanAnalysis.expect}
 \difficulty{3}
-For every $s>0$, the map $a\mapsto(\E_{t\in\{0,1\}}|1+a(-1)^t|^s)^{1/s}$ is continuous on $\bbr$.
+For every real $s>0$, the function of $a\in\mathbb R$ given by the uniform power mean of
+$x\mapsto 1+a\sigma(x_0)$ on the one-dimensional Boolean cube is continuous; explicitly,
+it is $\bigl(\frac12\sum_{x\in\{0,1\}}|1+a\sigma(x_0)|^s\bigr)^{1/s}$, where
+$\sigma(0)=1$ and $\sigma(1)=-1$.
 \end{lemma}
 
-\begin{theorem}[One-bit reverse Bonami--Beckner inequality]
+\begin{theorem}[One-bit reverse Bonami–Beckner inequality]
 \lean{BooleanAnalysis.Hypercontractivity.reverse_bonami_beckner_one_bit}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.IsNonnegative, BooleanAnalysis.Hypercontractivity.continuous_lpMean_affine, BooleanAnalysis.Hypercontractivity.lpMean, BooleanAnalysis.Hypercontractivity.lpMean_const_mul, BooleanAnalysis.Hypercontractivity.lpMean_of_pos, BooleanAnalysis.Hypercontractivity.noiseOp_affine_one_bit, BooleanAnalysis.Hypercontractivity.noiseOp_const_mul, BooleanAnalysis.Hypercontractivity.normalize_one_bit, BooleanAnalysis.Hypercontractivity.reverse_two_point_normalized, BooleanAnalysis.boolToSign, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp}
 \difficulty{5}
-Let $0<q<p<1$, $\rho\ge0$, and $\rho^2=(1-p)/(1-q)$. Every $f:\{0,1\}\to[0,\infty)$ satisfies $M_q(T_\rho f)\ge M_p(f)$, where $M_r(u)=(\E|u|^r)^{1/r}$ under the uniform measure. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+Let $p,q,\rho\in\mathbb R$ satisfy $0<q$, $q<p$, $p<1$, $0\le\rho$, and
+$\rho^2=(1-p)/(1-q)$. For every nonnegative real-valued function $f$ on the
+one-dimensional Boolean cube, $M_q(T_\rho f)\ge M_p(f)$.
 \end{theorem}

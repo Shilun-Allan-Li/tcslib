@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.loopDebit_value",
+ "key": "45adab4505225e16",
+ "kind": "lemma",
+ "title": "Value change under decrement",
+ "statement": "For every Boolean word $u$, if its fixed-width decrement reports success, then the value of the resulting word plus one equals the value of $u$; if it reports failure, then the value of $u$ is zero.",
+ "hypotheses_covered": [
+  "$u$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every Boolean word $u$ read as a little-endian counter: if the fixed-width decrement\nof $u$ reports success then the value of the decremented word plus one equals the value\nof $u$, and if it reports underflow then the value of $u$ is zero."
+}

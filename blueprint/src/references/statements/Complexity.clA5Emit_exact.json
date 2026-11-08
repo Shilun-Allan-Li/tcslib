@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Emit_exact",
+ "key": "5719e64885499fbf",
+ "kind": "lemma",
+ "title": "Exact Cook–Levin emission chunks",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let its state alphabet have a binary code, and let $C,e,c,A,d$ be natural numbers, $x$ a bit string, and $j$ a natural number. The emitter on the packed records for $x$ at cursor $j$ equals the $j$th chunk of the tableau clause-group schedule with horizon $c\\,(A(|x|+C(|x|+1)^e+1)^d+1)^2$, when $j$ is at most the schedule's last round; otherwise it is empty. The final round's chunk includes the schedule terminator.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine M",
+  "binary code for its state alphabet",
+  "natural parameters C,e,c,A,d",
+  "bit string x",
+  "natural cursor j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, state code, parameters, instance $x$, and cursor $j$, the chunk selector on the body word at $j$ equals the chunk of round $j$ of the pure tableau group list when $j$ is at most the last round, and the empty word otherwise; member counts and the sole-last-terminator convention are preserved."
+}

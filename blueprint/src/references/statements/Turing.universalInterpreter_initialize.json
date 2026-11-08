@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universalInterpreter_initialize",
+ "key": "8d71b73363f8f73e",
+ "kind": "lemma",
+ "title": "Interpreter initialization from a serialized header",
+ "statement": "Let $x$ be a bit string, let $p$ be an input-head position on $x$, and let $\\beta$, $\\rho$, and $T$ be bit strings with $n\\in\\mathbb{N}$. Suppose $T=\\langle\\beta,1^n\\,0\\,\\rho\\rangle$, where $1^n$ denotes a string of $n$ ones. After exactly $|T|+2|\\beta|+2n+7$ steps from the interpreter's entry configuration with table $T$ and input head at $p$, the result is the evaluation configuration over the initialization base at $p$, with control in the main dispatch state, table cursor $2|\\beta|+2+n+1$, state tape encoding state index $n$, and state cursor $1$.",
+ "hypotheses_covered": [
+  "A bit string $x$ and input-head position $p$ on $x$",
+  "Bit strings $\\beta,\\rho,T$",
+  "A natural number $n$",
+  "The table identity $T=\\langle\\beta,1^n\\,0\\,\\rho\\rangle$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the captured table $T$ is the pair encoding of a bit string $\\beta$\n(the count field) with a string of the form $1^n \\cdot 0 \\cdot \\rho$ (the\ninitial state $n$ in unary, followed by an arbitrary remainder $\\rho$).\nThen from the interpreter's entry configuration with physical input head\nparked at a position $p$, exactly $|T| + 2|\\beta| + 2n + 7$ interpreter steps\nreach the evaluation configuration over the initialization base at $p$ whose\ncontrol is the main dispatch state, with table cursor $2|\\beta| + 2 + n + 1$\n(just past the serialized header), the unary state tape encoding the index\n$n$, and state cursor $1$.  No transition-table lookup is involved yet."
+}

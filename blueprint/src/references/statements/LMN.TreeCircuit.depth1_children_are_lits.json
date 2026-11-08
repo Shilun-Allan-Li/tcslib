@@ -1,0 +1,17 @@
+{
+ "lean_name": "LMN.TreeCircuit.depth1_children_are_lits",
+ "key": "55b0b16c19e1e694",
+ "kind": "lemma",
+ "title": "Depths of children of a shallow gate",
+ "statement": "Let $m\\in\\mathbb N$, choose an AND or OR gate, and let $cs$ be a list of Boolean circuit trees on $m$ variables. If the circuit formed by applying that gate to the children in $cs$ has depth at most $1$, then every child in $cs$ has depth $0$.",
+ "hypotheses_covered": [
+  "Natural number m",
+  "Gate type is AND or OR",
+  "List cs of circuit trees on m variables",
+  "The circuit formed from the gate and cs has depth at most 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be the Boolean circuit consisting of a single gate (an AND gate or an OR gate,\naccording to a flag $\\mathit{isAnd}$) applied to a list $cs$ of child circuits, so that\nthe depth of $C$ equals $1$ plus the maximum depth among the circuits in $cs$. If the\ndepth of $C$ is at most $1$, then every child circuit $c \\in cs$ has depth $0$; that is,\neach child is a literal."
+}

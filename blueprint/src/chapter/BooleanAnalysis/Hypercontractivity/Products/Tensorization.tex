@@ -9,7 +9,13 @@ Nonnegative finite coordinate kernels tensorize both pairing bounds and moment-n
 \lean{BooleanAnalysis.Hypercontractivity.FiniteTensorization.pair_tensorization}
 \leanok
 \difficulty{6}
-Let $\Omega_i$ be finite sets, $w_i(a)\ge0$ weights, and $k_i(a,b)\ge0$ kernels for $i\in[n]$. For $p,r\ge1$, suppose $\sum_{a,b}k_i(a,b)u(a)v(b)\le\|u\|_{p,w_i}\|v\|_{r,w_i}$ for every coordinate $i$ and real $u,v$. Then $\sum_{x,y}(\prod_i k_i(x_i,y_i))f(x)g(y)\le\|f\|_{p,w}\|g\|_{r,w}$ for all real $f,g$ on $\prod_i\Omega_i$, where $w(x)=\prod_iw_i(x_i)$ and $\|h\|_{s,w}=(\sum_xw(x)|h(x)|^s)^{1/s}$.
+Let $n$ be a natural number, let each $\Omega_i$ be finite, and let
+$w_i:\Omega_i\to\mathbb R$ and $k_i:\Omega_i\times\Omega_i\to\mathbb R$ be nonnegative.
+Let $p,r\in\mathbb R$ satisfy $1\le p$ and $1\le r$. Suppose that for every coordinate
+$i$ and every pair of real-valued functions $u,v$ on $\Omega_i$,
+$\sum_{x,y}k_i(x,y)u(x)v(y)\le\left(\sum_xw_i(x)|u(x)|^p\right)^{1/p}\left(\sum_yw_i(y)|v(y)|^r\right)^{1/r}$.
+Then for all real-valued $f,g$ on $\prod_i\Omega_i$, $\sum_{x,y}\left(\prod_i
+k_i(x_i,y_i)\right)f(x)g(y)\le\left(\sum_x\left(\prod_iw_i(x_i)\right)|f(x)|^p\right)^{1/p}\left(\sum_y\left(\prod_iw_i(y_i)\right)|g(y)|^r\right)^{1/r}$.
 \end{theorem}
 
 \begin{theorem}[Tensorization of norm contractions]
@@ -17,5 +23,12 @@ Let $\Omega_i$ be finite sets, $w_i(a)\ge0$ weights, and $k_i(a,b)\ge0$ kernels 
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteNorms.norm_le_of_pairing, BooleanAnalysis.Hypercontractivity.FiniteNorms.weighted_holder, BooleanAnalysis.Hypercontractivity.FiniteTensorization.pair_tensorization}
 \difficulty{5}
-Let $\Omega_i$ be finite sets, $w_i(a)\ge0$ weights, and $k_i(y,x)\ge0$ kernels for $i\in[n]$. For $p\ge1$ and $q>1$, suppose $\|\sum_xk_i(\,\cdot\,,x)h(x)\|_{q,w_i}\le\|h\|_{p,w_i}$ for every coordinate $i$ and real $h$. Then the product operator $Tf(y)=\sum_x\prod_i k_i(y_i,x_i)f(x)$ satisfies $\|Tf\|_{q,w}\le\|f\|_{p,w}$ for every real $f$ on $\prod_i\Omega_i$, with $w(x)=\prod_iw_i(x_i)$ and $\|h\|_{s,w}=(\sum_xw(x)|h(x)|^s)^{1/s}$.
+Let $n$ be a natural number, let each $\Omega_i$ be finite, and let
+$w_i:\Omega_i\to\mathbb R$ and $k_i:\Omega_i\times\Omega_i\to\mathbb R$ be nonnegative.
+Let $p,q\in\mathbb R$ satisfy $1\le p$ and $1<q$. Suppose that for every coordinate $i$
+and every $h:\Omega_i\to\mathbb R$, $\left(\sum_y w_i(y)\left|\sum_x
+k_i(y,x)h(x)\right|^q\right)^{1/q}\le\left(\sum_xw_i(x)|h(x)|^p\right)^{1/p}$. Then for
+every real-valued $f$ on $\prod_i\Omega_i$,
+$\left(\sum_y\left(\prod_iw_i(y_i)\right)\left|\sum_x\left(\prod_i
+k_i(y_i,x_i)\right)f(x)\right|^q\right)^{1/q}\le\left(\sum_x\left(\prod_iw_i(x_i)\right)|f(x)|^p\right)^{1/p}$.
 \end{theorem}

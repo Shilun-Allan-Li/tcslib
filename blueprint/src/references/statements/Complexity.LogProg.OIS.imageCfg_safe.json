@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.imageCfg_safe",
+ "key": "f16a283735a086b4",
+ "kind": "theorem",
+ "title": "Safety of an encoded configuration",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $x,v$ be Boolean words, and let $c$ be a configuration of $M$ on input $v$. Suppose $i\\le |v|$, and every work-tape head of $c$ lies between $-S$ and $S$. Form a configuration for the compiled program on input $x$ by retaining $c$'s state, output, original work tapes, and work-head positions, adjoining one extra tape containing the binary expansion of $i$ with its head at $0$, placing the input head at position $1$, and adjoining the phase $\\mathrm{ph}$ to the state. Then every work-tape head lies between its prescribed lower and upper bounds (the original tapes between $-S$ and $S$, and the extra tape between $-1$ and the length of the binary expansion of $|v|+1$); moreover, whenever the state is a call state, the input head is at position $1$, the extra-tape head is at $0$, and that tape contains the binary expansion of some integer at most $|v|$.",
+ "hypotheses_covered": [
+  "A finite Boolean Turing machine $M$",
+  "Boolean words $x,v$",
+  "A configuration $c$ of $M$ on input $v$",
+  "Natural numbers $i,S$ with $i\\le |v|`",
+  "Every work-tape head of $c$ lies in $[-S,S]$",
+  "A phase $\\mathrm{ph}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

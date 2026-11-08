@@ -1,15 +1,17 @@
 {
  "lean_name": "BoolCircuit.NOrCircuit.toDNF_var_inj",
- "key": "19b64d7539775d12",
+ "key": "ee185f81586b230a",
  "kind": "theorem",
- "title": "Variable-injectivity of literals in the DNF of an OR-of-clauses",
- "statement": "Fix $n \\in \\bbn$ and a list $c_1, \\dots, c_m$ of normal-form AND circuits on $n$ variables, and suppose each $c_i$ is a base AND-clause — that is, $c_i = \\mathrm{clause}(\\ell_1, \\dots, \\ell_{k_i})$ for some list of circuit literals whose variable indices are pairwise distinct. Let $F$ be the DNF formula obtained from the OR circuit $\\mathrm{node}(c_1, \\dots, c_m)$ by converting each clause $c_i$ into the term formed by its literals. Then in every term of $F$, any two literals that share the same variable are identical.",
+ "title": "Variable uniqueness in DNF terms",
+ "statement": "Let $n$ be a natural number and let $cs$ be a finite list of normal-form AND circuits on $n$ variables, each of which is a base clause with pairwise distinct variable indices. In every term of the DNF of the OR circuit with children $cs$, any two literals with the same variable are equal.",
  "hypotheses_covered": [
-  "each circuit in the list is a base AND-clause (not an internal node)",
-  "within each clause, the variable indices of its literals are pairwise distinct"
+  "$n$ is a natural number",
+  "$cs$ is a list of normal-form AND circuits",
+  "Every circuit in $cs$ is a base clause",
+  "The variable indices in each clause are pairwise distinct"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "If every child of an $\\texttt{NOrCircuit}.\\mathrm{node}\\,cs$ is an AND-clause with distinct\nliteral indices, then in every term of the resulting DNF any two literals on the same\nvariable are equal."
+ "replaced": "Fix $n \\in \\bbn$ and a list $c_1, \\dots, c_m$ of normal-form AND circuits on $n$\nvariables, and suppose each $c_i$ is a base AND-clause — that is, $c_i =\n\\mathrm{clause}(\\ell_1, \\dots, \\ell_{k_i})$ for some list of circuit literals whose\nvariable indices are pairwise distinct. Let $F$ be the DNF formula obtained from the OR\ncircuit $\\mathrm{node}(c_1, \\dots, c_m)$ by converting each clause $c_i$ into the term\nformed by its literals. Then in every term of $F$, any two literals that share the same\nvariable are identical."
 }

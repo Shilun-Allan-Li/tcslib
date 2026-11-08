@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.valWord_run",
+ "key": "71834fc851c00b9d",
+ "kind": "lemma",
+ "title": "Simulation of a Boolean word scan",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a register, and let $v_0,v_F,v_T,r_1,r_2,n$ be states. Suppose the transitions from $v_0,v_F,v_T$ act according to the value word action, with the remembered last bit respectively absent, false, and true; suppose $r_1$ moves the input head left and enters $r_2$, while $r_2$ moves left and stays in $r_2$ when it reads a symbol, and moves right and enters $n$ at the right boundary. Assume none of these five states is a call state. For a configuration $c$, integer position $p$, Boolean word $x$, word $w$, and natural number $q$ satisfying $q+|w|=|x|+1$, assume that at every offset $k$ the symbol read at input position $q+k$ is the $k$-th bit of $w$. Starting at input position $q$ in state $v_0,v_F$, or $v_T$ according as the remembered bit is absent, false, or true, with register $r$'s head at $p$ and all other configuration data inherited from $c$, the run reaches the analogous configuration in state $n$ at input position $1$ if the last bit of $w$ (or the remembered bit when $w$ is empty) is not false; if that bit is false, it instead halts after appending a rejecting output bit, with register-head positions equal to those of $c$ except that register $r$ is at $p$. In either case, every earlier configuration is in a state with no call and has the same register-head positions, with register $r$ at $p$.",
+ "hypotheses_covered": [
+  "the specified transition rule from v₀",
+  "the specified transition rule from v_F",
+  "the specified transition rule from v_T",
+  "the specified transition rule from r₁",
+  "the specified transition rule from r₂",
+  "none of v₀, v_F, v_T, r₁, r₂ is a call state",
+  "initial configuration c and register r",
+  "integer register-head position p",
+  "word w and remembered bit last",
+  "q + |w| = |x| + 1",
+  "input symbols at positions q + k agree with the k-th bit of w"
+ ],
+ "confidence": "low",
+ "caveat": "The formal conclusion uses the technical predicates Reaches and Rejects; their full run-time and configuration conditions are included in the statement.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

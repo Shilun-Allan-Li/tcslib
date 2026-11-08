@@ -48,40 +48,36 @@ $1$ bits — that is, the number of cells cleared to $0$ when the word is
 incremented. A word that is empty or begins with $0$ has carry length $0$.
 \end{definition}
 
-\begin{lemma}[Potential accounting for one increment]
+\begin{lemma}[One-count identity for binary increment]
 \lean{Complexity.counterInc_potential}
 \label{Complexity.counterInc_potential}
 \leanok
 \uses{Complexity.counterCarry, Complexity.counterInc}
 \difficulty{3}
-Let $b$ be a binary word written least-significant bit first, let $r$ be its
-carry length (its number of leading $1$ bits), and let $w(b)$ denote the number
-of $1$ bits in a word. Then the incremented word $b'$ satisfies
-$w(b') + r = w(b) + 1$: each cleared bit lowers the count of ones by one, and
-the single final write raises it by one.
+For every finite binary word $b$ written least-significant bit first, the number of $1$
+bits in its increment plus the number of leading $1$ bits in $b$ equals the number of
+$1$ bits in $b$ plus one.
 \end{lemma}
 
-\begin{lemma}[Increment agrees with binary successor]
+\begin{lemma}[Increment of a binary representation]
 \lean{Complexity.counterInc_bits}
 \label{Complexity.counterInc_bits}
 \leanok
 \uses{Complexity.counterInc}
 \difficulty{4}
-For every natural number $n$, applying the word increment to the little-endian
-binary representation of $n$ (with no redundant leading zeros; $0$ is the empty
-word) yields exactly the binary representation of $n + 1$, including the case
-where the word grows by one bit on overflow.
+For every natural number $n$, incrementing its least-significant-bit-first binary
+representation produces the least-significant-bit-first binary representation of $n+1$.
 \end{lemma}
 
-\begin{lemma}[Length bounds for one increment]
+\begin{lemma}[Length bounds for binary increment]
 \lean{Complexity.counterInc_length}
 \label{Complexity.counterInc_length}
 \leanok
 \uses{Complexity.counterCarry, Complexity.counterInc}
 \difficulty{3}
-For every binary word $b$ (least-significant bit first), the incremented word
-has length at most $|b| + 1$, and the carry length of $b$ is at most the length
-of the incremented word.
+For every finite binary word $b$ written least-significant bit first, its increment has
+length at most $|b|+1$, and the number of leading $1$ bits of $b$ is at most the length
+of its increment.
 \end{lemma}
 
 \begin{definition}[Single carry transition action]
@@ -136,237 +132,185 @@ out on the nonnegative cells of the work tape (blank elsewhere), and an output
 word.
 \end{definition}
 
-\begin{lemma}[Reading past a prefix]
+\begin{lemma}[Reading after a binary prefix]
 \lean{Complexity.counterTape_read}
 \label{Complexity.counterTape_read}
 \leanok
 \uses{Complexity.counterTape}
 \difficulty{3}
-Let $p$ and $b$ be binary words, and lay the concatenation of $p$ followed by
-$b$ on the nonnegative cells of a tape (blank elsewhere). Then the symbol at
-cell $|p|$ is the first bit of $b$, or blank when $b$ is empty.
+For finite binary words $p$ and $b$, the tape formed by placing their concatenation on
+the nonnegative cells has, at position $|p|$, the first bit of $b$, or a blank if $b$ is
+empty.
 \end{lemma}
 
-\begin{lemma}[Writing at the end of a prefix]
+\begin{lemma}[Writing at a binary prefix boundary]
 \lean{Complexity.counterTape_write}
 \label{Complexity.counterTape_write}
 \leanok
 \uses{Complexity.counterTape, Complexity.counterTape_read}
 \difficulty{4}
-Let $p$ and $b$ be binary words, lay their concatenation on the nonnegative
-cells of a tape, and let $\beta$ be a bit. Overwriting cell $|p|$ with $\beta$
-yields exactly the tape of the word obtained by following $p$ with $\beta$ and
-then the tail of $b$ (all bits of $b$ after its first). In particular, when $b$
-is empty the stored word is extended by one cell; all other cells, including
-the negative ones, are unchanged.
+For finite binary words $p$ and $b$ and a bit $eta$, overwrite position $|p|$ of the
+tape containing their concatenation with $eta$. The resulting tape is the tape of the
+word formed by appending $eta$ to $p$ and then appending the tail of $b$ (the word
+obtained by removing its first bit, or the empty word if $b$ is empty).
 \end{lemma}
 
-\begin{lemma}[One carry step of the counter machine]
+\begin{lemma}[Single step of the carry phase]
 \lean{Complexity.counter_carry_step}
 \label{Complexity.counter_carry_step}
 \leanok
-\uses{Complexity.counterBump,
-  Complexity.counterCfg,
-  Complexity.counterTM,
-  Complexity.counterTape,
-  Complexity.counterTape_read,
-  Complexity.counterTape_write,
-  Turing.Action.apply,
-  Turing.MultiTapeTM.step,
-  Turing.moveInputPos_zero}
+\uses{Complexity.counterBump, Complexity.counterCfg, Complexity.counterTape, Complexity.counterTape_read, Complexity.counterTape_write, Turing.Action.apply, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-Suppose the four-state binary-counter machine is in its carry state with the
-concatenation of binary words $p$ and $b$ on the nonnegative work-tape cells,
-work head at cell $|p|$, and empty output. If $b$ begins with $1$, one step
-clears that bit to $0$ and moves the work head right, staying in the carry
-state; otherwise one step writes $1$ at cell $|p|$ (replacing the first bit of
-$b$, or extending the word) and moves the work head left, entering the rewind
-state. The input head does not move.
+Let $x$ be a finite binary input word, let $p$ be a valid input-head position for $x$,
+and let $a,b$ be finite binary words. Starting in state $1$ with input-head position
+$p$, work-head position $|a|$, the tape containing the concatenation of $a$ and $b$, and
+empty output, one step of the four-state binary-counter machine has the following
+effect: if $b$ begins with $1$, it enters state $1$, moves the work head right by one,
+and changes the tape word to $a$ followed by $0$ and the tail of $b$; otherwise it
+enters state $2$, moves the work head left by one, and changes the tape word to $a$
+followed by $1$ and the tail of $b$. The input-head position remains $p$ and the output
+remains empty.
 \end{lemma}
 
-\begin{lemma}[The full carry phase]
+\begin{lemma}[Execution of the full carry phase]
 \lean{Complexity.counter_carry}
 \label{Complexity.counter_carry}
 \leanok
-\uses{Complexity.counterCarry,
-  Complexity.counterCfg,
-  Complexity.counterInc,
-  Complexity.counterTM,
-  Complexity.counter_carry_step,
-  Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_zero}
+\uses{Complexity.counterCarry, Complexity.counterCfg, Complexity.counterInc, Complexity.counter_carry_step, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
-Suppose the four-state binary-counter machine is in its carry state with the
-concatenation of binary words $p$ and $b$ on the nonnegative work-tape cells,
-work head at cell $|p|$, and empty output, and let $r$ be the carry length of
-$b$ (its number of leading $1$ bits). Then after exactly $r + 1$ steps the
-machine is in the rewind state with the work tape holding $p$ followed by the
-incremented word of $b$, the work head at cell $|p| + r - 1$, and the input
-head and output unchanged.
+Let $x$ be a finite binary input word, let $p$ be a valid input-head position for $x$,
+and let $b$ and $u$ be finite binary words. For every prefix $a$ of $b$, if the
+four-state binary-counter machine starts in state $1$ with input-head position $p$,
+work-head position $|a|$, the tape containing the concatenation of $a$ and $b$, and
+empty output, then after exactly one more step than the number of leading $1$ bits of
+$b$, it is in state $2$ with input-head position $p$, work-head position $|a|$ plus the
+number of leading $1$ bits of $b$ minus one, the tape containing the concatenation of
+$a$ and the increment of $b$, and empty output.
 \end{lemma}
 
-\begin{lemma}[The rewind phase]
+\begin{lemma}[Rewinding the work-tape head]
 \lean{Complexity.counter_rewind}
 \label{Complexity.counter_rewind}
 \leanok
-\uses{Complexity.counterCfg,
-  Complexity.counterTM,
-  Complexity.counterTape,
-  Turing.Action.apply,
-  Turing.Cfg.workTapeSymbols,
-  Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_zero,
-  Turing.MultiTapeTM.step,
-  Turing.moveInputPos_zero}
+\uses{Complexity.counterCfg, Complexity.counterTape, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
-Suppose the four-state binary-counter machine is in its rewind state with a
-binary word $b$ on the nonnegative work-tape cells, empty output, and work head
-at cell $j - 1$ for some natural number $j \le |b|$ (so possibly at the blank
-cell $-1$). Then after exactly $j + 1$ steps the machine is in the count state
-with the work head at cell $0$, and the stored word, input-head position, and
-output all unchanged.
+Let $x$ and $b$ be finite binary words, let $p$ be any input-head position among the
+$|x|+2$ positions, and let $j$ be a natural number with $j\le |b|$. Starting in the
+rewind state with input head at $p$, work head at $j-1$, tape contents given by $b$, and
+empty output, after $j+1$ steps the machine is in the count state with input head still
+at $p$, work head at $0$, tape contents still given by $b$, and empty output.
 \end{lemma}
 
-\begin{lemma}[The count transition consumes one input symbol]
+\begin{lemma}[Equality of count and carry successors]
 \lean{Complexity.counter_start}
 \label{Complexity.counter_start}
 \leanok
-\uses{Complexity.counterBump,
-  Complexity.counterCfg,
-  Complexity.counterTM,
-  Complexity.counterTape,
-  Turing.Action.apply,
-  Turing.Cfg.inputSymbol,
-  Turing.inputSymbolInner,
-  Turing.moveInputPos,
-  Turing.moveInputPos_pos_of_ne_right,
-  Turing.moveInputPos_zero}
+\uses{Complexity.counterBump, Complexity.counterCfg, Complexity.counterTape, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right, Turing.moveInputPos_zero}
 \difficulty{4}
-Let $x$ be an input word and $i < |x|$. Taking one step of the four-state
-binary-counter machine from the count state — with the input head scanning the
-$i$-th input symbol, the work head at cell $0$ over a stored binary word $b$,
-and empty output — produces the same configuration as taking one step from the
-carry state with the input head advanced by one position and the same work tape
-and output.
+Let $x$ and $b$ be finite binary words, and let $i<|x|$. The one-step successor of the
+configuration with count state, input head at position $i+1$, work head at $0$, tape
+contents $b$, and empty output equals the one-step successor of the configuration with
+carry state, input head at position $i+2$, work head at $0$, the same tape contents, and
+empty output.
 \end{lemma}
 
-\begin{lemma}[Cost of one complete increment]
+\begin{lemma}[One complete counter increment]
 \lean{Complexity.counter_increment}
 \label{Complexity.counter_increment}
 \leanok
-\uses{Complexity.counterCarry,
-  Complexity.counterCfg,
-  Complexity.counterInc,
-  Complexity.counterInc_length,
-  Complexity.counterTM,
-  Complexity.counter_carry,
-  Complexity.counter_rewind,
-  Complexity.counter_start,
-  Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add,
-  Turing.MultiTapeTM.runFrom_succ_eq_step}
+\uses{Complexity.counterCarry, Complexity.counterCfg, Complexity.counterInc, Complexity.counterInc_length, Complexity.counter_carry, Complexity.counter_rewind, Complexity.counter_start, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step}
 \difficulty{4}
-Let $x$ be an input word and $i < |x|$. Starting the four-state binary-counter
-machine in the count state with the input head scanning the $i$-th input
-symbol, a binary word $b$ stored on the work tape with the work head at cell
-$0$, and empty output: after exactly $2r + 2$ steps, where $r$ is the carry
-length of $b$, the machine is again in the count state with the input head
-advanced by one position, the work tape holding the incremented word of $b$,
-the work head back at cell $0$, and the output still empty.
+Let $x$ and $b$ be finite binary words, and let $i<|x|$. Starting in the count state
+with the input head at position $i+1$, work head at $0$, tape contents given by $b$, and
+empty output, after $2r+2$ steps, where $r$ is the carry length of $b$, the machine is
+in the count state with input head at position $i+2$, work head at $0$, tape contents
+given by the increment of $b$, and empty output.
 \end{lemma}
 
-\begin{lemma}[The amortized counting invariant]
+\begin{lemma}[Amortized counter invariant]
 \lean{Complexity.counter_count}
 \label{Complexity.counter_count}
 \leanok
-\uses{Complexity.counterCarry,
-  Complexity.counterCfg,
-  Complexity.counterInc_bits,
-  Complexity.counterInc_potential,
-  Complexity.counterTM,
-  Complexity.counterTape,
-  Complexity.counter_increment,
-  Turing.MultiTapeTM.initCfg,
-  Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add}
+\uses{Complexity.counterCarry, Complexity.counterCfg, Complexity.counterInc_bits, Complexity.counterInc_potential, Complexity.counterTape, Complexity.counter_increment, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-Let $x$ be a binary input word and $i \le |x|$, and let $w(i)$ denote the
-number of $1$ bits in the binary representation of $i$. Then there is a step
-count $t$ with $t + 2\,w(i) \le 4i$ such that, after $t$ steps from its initial
-configuration on $x$, the four-state binary-counter machine is in the count
-state having consumed exactly the first $i$ input symbols, with the work tape
-holding the binary representation of $i$ (least-significant bit first), the
-work head at cell $0$, and empty output.
+For every finite binary input word $x$ and every natural number $i$ with $i\le |x|$,
+there is a natural number $t$ such that $t+2w(i)\le4i$, where $w(i)$ is the number of
+$1$ bits in the least-significant-bit-first binary representation of $i$, and after $t$
+steps from the machine's initial configuration on $x$, the machine is in state $0$ with
+input-head position $i+1$, work-head position $0$, the tape holding the binary
+representation of $i$, and empty output.
 \end{lemma}
 
-\begin{lemma}[The emit phase copies the word]
+\begin{lemma}[Prefix emission during the emit phase]
 \lean{Complexity.counter_emit_run}
 \label{Complexity.counter_emit_run}
 \leanok
-\uses{Complexity.counterCfg,
-  Complexity.counterTM,
-  Complexity.counterTape,
-  Turing.Action.apply,
-  Turing.Cfg.workTapeSymbols,
-  Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.MultiTapeTM.step,
-  Turing.moveInputPos_zero}
+\uses{Complexity.counterCfg, Complexity.counterTape, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-Suppose the four-state binary-counter machine is in its emit state with a
-binary word $b$ on the nonnegative work-tape cells, work head at cell $0$, and
-empty output. Then for every $i \le |b|$, after exactly $i$ steps it is still
-in the emit state with the work head at cell $i$, the tape contents and
-input-head position unchanged, and the output equal to the first $i$ bits of
-$b$.
+Let $x$ and $b$ be finite binary words, let $p$ be any input-head position among the
+$|x|+2$ positions, and let $i$ be a natural number with $i\le |b|$. Starting in the emit
+state with input head at $p$, work head at $0$, tape contents given by $b$, and empty
+output, after $i$ steps the machine is in the emit state, with input head still at $p$,
+work head at $i$, unchanged tape contents, and output equal to the prefix of $b$ of
+length $i$.
 \end{lemma}
 
 \begin{lemma}[Emission halts with the stored word]
 \lean{Complexity.counter_emit}
 \label{Complexity.counter_emit}
 \leanok
-\uses{Complexity.counterCfg,
-  Complexity.counterTM,
-  Complexity.counterTape,
-  Complexity.counter_emit_run,
-  Turing.Action.apply,
-  Turing.Cfg.workTapeSymbols,
-  Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.MultiTapeTM.step}
+\uses{Complexity.counterCfg, Complexity.counterTape, Complexity.counter_emit_run, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the four-state binary-counter machine is in its emit state with a
-binary word $b$ on the nonnegative work-tape cells, work head at cell $0$, and
-empty output. Then after exactly $|b| + 1$ steps the machine has halted and its
-output equals $b$.
+Let $x$ and $b$ be finite binary words, and let $p$ be any input-head position among the
+$|x|+2$ positions. Starting the four-state counter machine in its emit state, with input
+head at $p$, work head at $0$, tape contents given by $b$, and empty output, after
+$|b|+1$ steps its state is halted and its output is $b$.
 \end{lemma}
 
-\begin{theorem}[The identity function is time constructible]
+\begin{theorem}[Identity Is Time Constructible]
 \lean{Complexity.timeConstructible_id}
 \label{Complexity.timeConstructible_id}
 \leanok
-\uses{Complexity.TimeConstructible,
-  Complexity.counterCfg,
-  Complexity.counterTM,
-  Turing.length_bits_le_self,
-  Complexity.counter_count,
-  Complexity.counter_emit,
-  Turing.Action.apply,
-  Turing.Cfg.inputSymbol,
-  Turing.FinTM.ComputesInTime,
-  Turing.FinTM.ComputesInTime.mono,
-  Turing.MultiTapeTM.initCfg,
-  Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add,
-  Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.MultiTapeTM.step}
+\uses{Complexity.TimeConstructible, Complexity.counterCfg, Complexity.counter_count, Complexity.counter_emit, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.length_bits_le_self}
 \difficulty{5}
-The identity function $n \mapsto n$ on the natural numbers is time
-constructible: trivially $n \le n$ for all $n$, and there are a positive
-integer constant $c$ and a finite Turing machine over the binary alphabet that,
-on every input word $x \in \{0,1\}^{*}$, outputs the binary representation of
-$|x|$ (least-significant bit first, empty for $|x| = 0$) within at most
-$c \cdot (|x| + 1)$ steps.
+The identity function $n\mapsto n$ on the natural numbers is time constructible: for
+every natural number $n$, $n\le n$, and there exist a positive natural number $c$ and a
+finite binary Turing machine that, on every binary input $x$, outputs the binary
+representation of $|x|$ within $c(|x|+1)$ steps.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Length-bits Turing machine]
+\lean{Turing.FinTM.lengthBitsTM}
+\label{Turing.FinTM.lengthBitsTM}
+\leanok
+\uses{Complexity.counterBump, Turing.FinTM}
+The length-bits machine is the finite Turing machine over the Boolean alphabet with one
+work tape, four states, and initial state $0$. Its transition rule is the one specified
+by the given construction, using counter-update actions in states $0$ and $1$; the
+remaining states perform the stated tape scans, output symbols, and halting behavior.
+\end{definition}
+
+\begin{theorem}[Time bound for computing length bits]
+\lean{Turing.FinTM.lengthBitsTM_computes}
+\label{Turing.FinTM.lengthBitsTM_computes}
+\leanok
+\uses{Turing.FinTM.ComputesFunInTime, Turing.FinTM.lengthBitsTM}
+The finite Boolean Turing machine that outputs the binary bits of the input length
+computes the function $x\mapsto \operatorname{bits}(|x|)$ in time $n\mapsto 5(n+1)$: for
+every Boolean word $x$, it halts within $5(|x|+1)$ steps with output equal to the binary
+representation of $|x|$.
+\end{theorem}
+
+\begin{theorem}[Space bound for length bits machine]
+\lean{Turing.FinTM.lengthBitsTM_spaceUsed}
+\label{Turing.FinTM.lengthBitsTM_spaceUsed}
+\leanok
+\uses{Turing.FinTM.lengthBitsTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.spaceUsed}
+For every Boolean word $x$ and every natural number $t$, the total number of work-tape
+cells visited by the length-bits machine during the first $t$ steps of its computation
+on $x$ is at most $5(\operatorname{size}(|x|)+1)$, where $\operatorname{size}$ is the
+binary size of a natural number.
 \end{theorem}

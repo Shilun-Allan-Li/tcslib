@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.UTab.ok_nbS",
+ "key": "048f7a1955b5e6e2",
+ "kind": "theorem",
+ "title": "Validity of a conditional previous source",
+ "statement": "Let $M$ be a finite-state Turing machine over the binary alphabet, let $\\rho$ assign a natural number to each of the eleven registers, let $ok$ be a Boolean, let $d\\in\\{0,1,2\\}$, and let $j\\in\\mathbb N$. If $ok$ is true, suppose $1\\leq\\rho(r_Q)+d$. Then the source that is the previous-configuration source indexed by $(d,j)$ when $ok$ is true and the constant-false source otherwise is valid for $\\rho$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over the binary alphabet",
+  "$\\rho$ assigns a natural number to each of the eleven registers",
+  "$ok$ is a Boolean",
+  "$d\\in\\{0,1,2\\}$",
+  "$j\\in\\mathbb N$",
+  "If $ok$ is true, then $1\\leq\\rho(r_Q)+d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "Let $k\\in\\mathbb{N}$, let $\\rho$ assign a natural number to each of the eleven register\nindices, and let $ok$ be a Boolean, $d\\in\\{0,1,2\\}$, and $j\\in\\mathbb{N}$. If $ok$ is\ntrue, assume $1\\leq \\rho(r_Q)+d$. The source that is the previous-configuration source\nindexed by $(d,j)$ when $ok$ is true and the constant-false source otherwise is valid\nfor $\\rho$."
+}

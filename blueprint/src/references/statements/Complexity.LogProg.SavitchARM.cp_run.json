@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.cp_run",
+ "key": "373ad38741371a3b",
+ "kind": "theorem",
+ "title": "Register copy loop",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean-valued oracle on four indices and Boolean words, and let $x$ be a Boolean word. For a copy-loop site $k$ and register state $\\mathrm{st}$, suppose every register is at most $B$, the scratch register $Z$ is zero, and the sum of the destination and source register values specified by $k$ is at most $B$. The machine reaches the exit for $k$ from phase $0$ at that site, with the destination register increased by the source register's original value, all other registers unchanged, and the result unset; every configuration before the final one satisfies the guard requiring valid instructions and registers at most $B$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb{N}$",
+  "$\\mathrm{orc}$ is a Boolean-valued oracle on four indices and Boolean words",
+  "$x$ is a Boolean word",
+  "$k$ is a copy-loop site",
+  "$\\mathrm{st}$ is a register state",
+  "every register of $\\mathrm{st}$ is at most $B$",
+  "$Z=0$ in $\\mathrm{st}$",
+  "the destination plus source register values specified by $k$ are at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}$ be an oracle assigning a Boolean answer to\neach of four indices and each Boolean word, and let $x$ be a Boolean word. For a\ncopy-loop site $k$ and register state $\\mathrm{st}$, assume every register is at most\n$B$, the scratch register $Z$ is zero, and the destination value plus the source value\nspecified by $k$ is at most $B$. Then the machine $A(E)$ can run from its initial phase\nat site $k$ to the exit for $k$, replacing the destination register by the sum of its\noriginal value and source value, leaving all other registers unchanged and the answer\nunset; throughout the run, every intermediate configuration satisfies the guard\nrequiring valid machine instructions and all registers at most $B$."
+}

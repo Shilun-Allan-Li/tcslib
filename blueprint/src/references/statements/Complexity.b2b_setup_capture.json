@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.b2b_setup_capture",
+ "key": "a13d78067689bf75",
+ "kind": "theorem",
+ "title": "Setup simulation capture",
+ "statement": "Let $M_V,M_I,M_P$ be finite-state Boolean Turing machines, and let $x,y$ be Boolean words. Suppose that $M_P$, started in its initial configuration on input $x$, halts after $t$ steps with output $y$, using space at most $s$. Then there are a time $T$ and a valid input-head position $p$ such that the specified host machine, started in its initial configuration on $x$, is in its origin phase with rewind-start state after $T$ steps, with input head at $p$, with the designated word tape containing $y$ from cell zero onward, and with every other work-tape cell blank; the designated tape head is at position $|y|$ and all other work-tape heads are at the origin. At every time up to and including $T$, each work-tape head stays within distance $s+|y|$ of the origin.",
+ "hypotheses_covered": [
+  "$M_V,M_I,M_P$ are finite-state Boolean Turing machines",
+  "$x,y$ are Boolean words",
+  "$t,s\\in\\mathbb N$",
+  "$M_P$ halts on $x$ after $t$ steps with output $y$",
+  "$M_P$ uses space at most $s$ on $x$ at time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.PolyAmp.ps_start",
+ "key": "d0d58c8c6a26e888",
+ "kind": "theorem",
+ "title": "Initial amplifier semantics",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine with Boolean input, let $x$ be a Boolean input word, and let $sp:\\mathbb{N}\\to\\mathbb{N}$ bound the space used by $N$ on every input and every choice word. For $n\\in\\mathbb{N}$, write $\\ell(n)$ for one plus the length of the binary digit list of $n$, and set $K_*=2^{F\\ell(|x|)}$. Suppose $sp(|x|)\\le cS\\,\\ell(|x|)$, the configuration-code bound for $N,|x|,cS\\,\\ell(|x|)$ is at most $K_*$, and $|x|+\\ell(|x|)+(cS+F)\\ell(|x|)+2K_*+2\\le B$. Then the amplifier started at its initial label with all registers zero terminates for every sequence of choice bits, keeps each register at most $B$ while running, and has acceptance probability equal to the run value with parameters $K_*$, $K_*+1$, and $0$.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine with Boolean input",
+  "$x$ is a Boolean input word",
+  "$sp:\\mathbb{N}\\to\\mathbb{N}$ bounds space on every input and choice word",
+  "$cS,F,B\\in\\mathbb{N}$",
+  "$sp(|x|)\\le cS\\,\\ell(|x|)$",
+  "The configuration-code bound for $N,|x|,cS\\,\\ell(|x|)$ is at most $K_*=2^{F\\ell(|x|)}$",
+  "$|x|+\\ell(|x|)+(cS+F)\\ell(|x|)+2K_*+2\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite-state nondeterministic Turing machine on a Boolean input $x$, and\nlet $sp$ bound its space usage on every input and every choice word. Write $\\ell(n)$ for\none plus the length of the binary representation of $n$, and $K_*=2^{F\\ell(|x|)}$.\nSuppose $sp(|x|)\\le cS\\,\\ell(|x|)$, the configuration-code bound for\n$N,|x|,cS\\,\\ell(|x|)$ is at most $K_*$, and $|x|+\\ell(|x|)+(cS+F)\\ell(|x|)+2K_*+2\\le B$.\nThen the amplifier started at its initial label with all registers zero terminates along\nevery sequence of choice bits, keeps every register at most $B$, and has probability\nequal to the run value with parameters $K_*$, $K_*+1$, and $0$."
+}

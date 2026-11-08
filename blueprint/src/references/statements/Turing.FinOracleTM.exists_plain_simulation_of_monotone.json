@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinOracleTM.exists_plain_simulation_of_monotone",
+ "key": "19e42897b14a93cc",
+ "kind": "theorem",
+ "title": "Plain simulation of an oracle computation",
+ "statement": "Let $M$ be a finite oracle Turing machine with $k$ ordinary work tapes over the binary alphabet, let $D$ be a finite Turing machine over the binary alphabet, and let $O$ be a language of binary strings. Let $\\tau:\\mathbb{N}\\to\\mathbb{N}$ be nondecreasing, and suppose $D$ decides $O$ within time $\\tau$. Then there exist a finite Turing machine $P$ over the binary alphabet and a natural number $a$ such that $P$ has at least $k+1$ work tapes and the following holds: for every binary input $x$, every family $w$ of $k+1$ binary words whose last word is empty, and every $t\\in\\mathbb{N}$, if the run of $M$ with oracle $O$, started on $x$ in its initial state with the words $w$ on its $k+1$ work tapes, empty output, and all work-tape heads at the origin, has halted after $t$ steps, then there is an $s\\le a(t+1)(t+1+\\tau(t))$ such that $P$, started on $x$ in its initial state with the first $P$ work-tape words of $w$, empty output, and all work-tape heads at the origin, has halted after $s$ steps and has the same output as the run of $M$.",
+ "hypotheses_covered": [
+  "$M$ is a finite oracle Turing machine over the binary alphabet, with $k$ ordinary work tapes",
+  "$D$ is a finite Turing machine over the binary alphabet",
+  "$O$ is a language of binary strings",
+  "$\\tau:\\mathbb{N}\\to\\mathbb{N}$ is monotone nondecreasing",
+  "$D$ decides $O$ within time $\\tau$",
+  "The last word of the supplied family of $k+1$ words is empty",
+  "The oracle run from the specified tape-word configuration halts after $t$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

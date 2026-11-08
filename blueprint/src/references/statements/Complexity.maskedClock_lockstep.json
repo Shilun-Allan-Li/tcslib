@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.maskedClock_lockstep",
+ "key": "ade3ecfd8df2b4b4",
+ "kind": "lemma",
+ "title": "Masked clock runs in lockstep",
+ "statement": "Let $A$ be a type, $W$ a finite machine over $A$, $z\\in A$, $x$ a word over $A$, and $t\\in\\mathbb{N}$. The configuration reached after $t$ steps by the machine obtained by masking input symbols to $z$, when started on $x$, becomes exactly the configuration reached after $t$ steps by $W$ when started on the constant input consisting of $|x|$ copies of $z$, after replacing the first configuration's input by that same constant input.",
+ "hypotheses_covered": [
+  "$A$ is a type",
+  "$W$ is a finite machine over $A$",
+  "$z$ is a symbol in $A$",
+  "$x$ is a word over $A$",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ be a machine over an alphabet $A$, let $z \\in A$, let $x$ be an input word,\nand let $t \\in \\mathbb{N}$. Masking the configuration reached by the masked clock of\n$W$ after $t$ steps from its initial configuration on $x$ yields exactly the\nconfiguration reached by $W$ after $t$ steps from its initial configuration on the\nconstant input $z^{\\abs{x}}$ — an equality of all five configuration components\n(state, input position, work tapes, work-head positions, and output), at live and\nhalted times alike."
+}

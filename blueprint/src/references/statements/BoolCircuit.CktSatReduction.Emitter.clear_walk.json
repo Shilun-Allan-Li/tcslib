@@ -1,0 +1,22 @@
+{
+ "lean_name": "BoolCircuit.CktSatReduction.Emitter.clear_walk",
+ "key": "7b8ab368631b3892",
+ "kind": "theorem",
+ "title": "Clearing a unary tape",
+ "statement": "Let $w$ be a finite Boolean input, let $p$ be an input-head position, and let $T_0,T_1,T_2 : \\mathbb{Z} \\to \\mathrm{Option}(\\mathrm{Bool})$ and $h_0,h_1,h_2 \\in \\mathbb{Z}$ be the contents and head positions of three work tapes. Choose an output word $O$ and a tape index $t \\in \\{0,1,2\\}$. For every $j \\in \\mathbb{N}$, if the machine starts in state $\\mathrm{clW}(t)$ with tape $t$ containing a $1$ at exactly the cells $0,\\ldots,j-1$ and its head at $j-1$, then after $j+1$ steps it is in state $\\mathrm{clS2}$ if $t=1$ and in state $\\mathrm{inc}$ otherwise; tape $t$ is blank everywhere with its head at $0$, while the input-head position, the other work tapes and their head positions, and the output word remain unchanged.",
+ "hypotheses_covered": [
+  "Boolean input word w",
+  "Input-head position p",
+  "Three work-tape contents tp",
+  "Three work-head positions hd",
+  "Output word out",
+  "Tape index t in Fin 3",
+  "Natural number j"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

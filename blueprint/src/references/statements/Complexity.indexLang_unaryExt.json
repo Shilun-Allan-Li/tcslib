@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.indexLang_unaryExt",
+ "key": "eb6a5cd6586f06a1",
+ "kind": "lemma",
+ "title": "Unary extension of an indexed language",
+ "statement": "Let $p$ be a predicate on bit strings and natural numbers. Suppose that for every bit string $x$ and natural number $i$, $p(x,i)$ holds exactly when $x$ is the all-ones string of length $|x|$ and $p(x,i)$ holds. Let $q$ be a predicate on natural numbers, and suppose that for every natural numbers $n,i$, $p(1^n,i)$ holds exactly when $q(n,i)$ holds. Then the language of encodings $\text{pairEncode}(x,\text{bits}(i))$ satisfying $p(x,i)$ is exactly the language of encodings $\text{pairEncode}(1^n,\text{bits}(i))$ satisfying $q(n,i)$.",
+ "hypotheses_covered": [
+  "$p$ is a predicate on bit strings and natural numbers",
+  "For all $x,i$, $p(x,i)$ iff $x$ is all ones of length $|x|$ and $p(x,i)$",
+  "$q$ is a predicate on natural numbers",
+  "For all $n,i$, $p(1^n,i)$ iff $q(n,i)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

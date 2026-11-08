@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_tmpl",
+ "key": "1332fb3e9be6b852",
+ "kind": "theorem",
+ "title": "Execution of a template sequence",
+ "statement": "Let $P$ be a counter program on a binary input $x$, and let $\u0005tau$ be a list of $n$ micro-operations, each printing a bit or printing a register in unary. Let $\u0005lab:\u0005mathbb{N}\\to\u0005Lambda$ be labels and let $\u0005nu\\in\u0005Lambda$. Suppose that at every index $i\\le n$, the instruction at $\u0005lab(i)$ is the instruction prescribed by the template at $i$: it performs the corresponding micro-operation and goes to $\u0005lab(i+1)$ when $i<n$, and goes to $\u0005nu$ when $i=n$. Then, for every register assignment $\u0005rho$ and input position $p$, from label $\u0005lab(0)$ the program reaches $\u0005nu$ within $n+1$ steps, with the register assignment and input position unchanged and with the template’s concatenated output appended to the existing output.",
+ "hypotheses_covered": [
+  "The list of template micro-operations",
+  "The label function and continuation label",
+  "At every index $i\\le n$, the program instruction equals the template instruction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, let\n$\\tau = (m_0, \\dots, m_{n-1})$ be a list of micro-operations, each either\n``print a bit $b$'' or ``print register $r$ in unary'', and let\n$\\lambda : \\mathbb{N} \\to \\Lambda$ and $\\nu \\in \\Lambda$ be labels.  Suppose that\nfor each $i < n$ the instruction of $P$ at $\\lambda(i)$ performs $m_i$ and then\ngoes to $\\lambda(i+1)$, and the instruction at $\\lambda(n)$ is\n$\\mathsf{goto}\\ \\nu$.  Then for all registers $\\rho$ and input positions $p$,\nfrom label $\\lambda(0)$ with registers $\\rho$ and $p$ symbols read the program\nreaches label $\\nu$ with registers $\\rho$ and $p$ symbols read within $n + 1$\nsteps, appending $w_0 w_1 \\cdots w_{n-1}$ to its output, where $w_i$ is $b$ if\n$m_i$ prints the bit $b$ and $w_i = 1^{\\rho(r)}$ if $m_i$ prints register $r$."
+}

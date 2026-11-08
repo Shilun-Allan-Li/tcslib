@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.access_inc_pointer",
+ "key": "5a6e00baafbf1fe0",
+ "kind": "lemma",
+ "title": "Incrementing a Counter and Pointer",
+ "statement": "Let $m$ be a Boolean mode, $y$ a Boolean input word, $r$ one of the four work tapes with $r=0$ or $r=3$, $\\ell$ an access label, $i,k,p$ natural numbers, and $q$ an integer. Suppose $-1\\le q\\le$ the bit-length of $|y|+1$, and the value stored on tape $r$ in the tuple $(i,0,k,p)$, plus one, is at most $|y|+1$. There is a finite sequence of access-machine steps from the configuration with state “increment on tape $r$ with label $\\ell$,” tapes encoding $i,0,k,p$, and tape-$2$ head at $q$, to the configuration with state “read label $\\ell$ in phase eC,” with the counter for tape $0$ increased by one if $r=0$, the counter for tape $3$ increased by one if $r=3$, and the other entries unchanged; the tape-$2$ head remains at $q$.",
+ "hypotheses_covered": [
+  "Boolean mode m",
+  "Boolean input word y",
+  "r is tape 0 or tape 3",
+  "access label ℓ",
+  "natural numbers i, k, p",
+  "integer q lies between -1 and the bit-length of |y|+1",
+  "the value stored on tape r in (i,0,k,p), plus one, is at most |y|+1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

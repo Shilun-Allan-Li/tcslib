@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.cmp_run",
+ "key": "32574dd9ecd34af9",
+ "kind": "theorem",
+ "title": "Comparison stage semantics",
+ "statement": "Fix $E,B\\in\\mathbb N$, an oracle $\\mathrm{orc}:\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$, an input bit string $x$, a proposition $Q$, and a register state $\\sigma$ consisting of the seventeen natural-number quantities specified for the counting procedure. Suppose each quantity in $\\sigma$ is at most $B$ and $\\sigma.s+1\\le B$. If $\\sigma.cp\\ne\\sigma.n$, assume the procedure started in round state $\\mathrm{rd}(\\mathrm{false},E)$ with $n$ replaced by $\\sigma.cp$ and $s$ replaced by $\\sigma.s+1$ terminates with all registers at most $B$, and accepts if and only if $Q$ holds. Then, started in comparison state $\\mathrm{cmp}$ with state $\\sigma$, it terminates with all registers at most $B$ and accepts if and only if $\\sigma.cp=\\sigma.n$ or both $\\sigma.cp\\ne\\sigma.n$ and $Q$ hold.",
+ "hypotheses_covered": [
+  "$E\\in\\mathbb N$",
+  "$B\\in\\mathbb N$",
+  "oracle on four indices and Boolean strings",
+  "input Boolean string $x$",
+  "proposition $Q$",
+  "state $\\sigma$",
+  "every quantity of $\\sigma$ is at most $B$",
+  "$\\sigma.s+1\\le B$",
+  "if $\\sigma.cp\\ne\\sigma.n$, specified round-state procedure has semantics $Q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a natural number $E$, an oracle on four indices and bit strings, an input bit string\n$x$, and a register bound $B$. For any proposition $Q$ and register state\n$\u001b[1msigma\u001b[0m$, suppose every one of its seventeen quantities is at most $B$ and\n$\u001b[1msigma\u001b[0m.s+1\\le B$. Suppose also that whenever\n$\u001b[1msigma\u001b[0m.cp\\ne\u001b[1msigma\u001b[0m.n$, the generated machine, started at the round label\nwith parameter $E$ and with the state obtained by replacing $n$ by $\u001b[1msigma\u001b[0m.cp$\nand $s$ by $\u001b[1msigma\u001b[0m.s+1$, terminates with all registers bounded by $B$ and accepts\nexactly when $Q$ holds. Then, started at the comparison label from $\u001b[1msigma\u001b[0m$, it\nterminates with all registers bounded by $B$ and accepts exactly when\n$\u001b[1msigma\u001b[0m.cp=\u001b[1msigma\u001b[0m.n$ or both $\u001b[1msigma\u001b[0m.cp\\ne\u001b[1msigma\u001b[0m.n$ and $Q$\nholds."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.cont",
+ "key": "17cea7024321e3c6",
+ "kind": "lemma",
+ "title": "Invariance under equal register states",
+ "statement": "Let $x$ be a finite Boolean word, let $B$ be a natural number, let $st$ and $st'$ be machine states, let $l$ be a machine label, and let $c$ be an abstract configuration. If $st=st'$ and the machine reaches $c$ from label $l$ with register vector given by $st'$, while satisfying the guard that every intermediate configuration has valid preconditions and all register values at most $B$, then it also reaches $c$ from label $l$ with register vector given by $st$, under the same guard.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$B$ is a natural number",
+  "$st,st'$ are machine states",
+  "$l$ is a machine label",
+  "$c$ is an abstract configuration",
+  "$st=st'$",
+  "A guarded reach from $(l,st')$ to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string and $B$ a natural number. For states $st,st'$, a machine label\n$l$, and a configuration $c$, if $st=st'$ and the machine can reach $c$ from label $l$\nwith register vector $st'$ under the bounded-run condition, then it can reach $c$ from\nlabel $l$ with register vector $st$ under the same condition."
+}

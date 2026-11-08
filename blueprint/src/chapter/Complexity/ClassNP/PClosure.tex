@@ -14,121 +14,201 @@ functions, is decidable in polynomial time.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[P via polynomial-time indicator]
+\begin{theorem}[Polynomial-time decidability and indicator computation]
 \lean{Complexity.mem_P_iff_polyTimeComputable}
 \label{Complexity.mem_P_iff_polyTimeComputable}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.mem_P_iff, Turing.MultiTapeTM.indicator}
 \difficulty{3}
-Let $V \subseteq \{0,1\}^*$ be a language and let $\mathbf{1}_V(x) \in \{0,1\}$ be its indicator bit, equal to $1$ if $x \in V$ and $0$ otherwise. Then $V$ belongs to $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time, if and only if the map sending a bit string $x$ to the one-bit word $\mathbf{1}_V(x)$ is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+For a language $V$ of finite binary strings, $V$ belongs to $\mathsf{P}$ if and only if
+the function that maps each binary string $x$ to the one-bit string containing $1$ when
+$x\in V$ and $0$ otherwise is polynomial-time computable.
 \end{theorem}
 
-\begin{theorem}[P is closed under polynomial-time preimages]
+\begin{theorem}[Polynomial-time preimage closure]
 \lean{Complexity.preimage_mem_P}
 \label{Complexity.preimage_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.mem_P_iff_polyTimeComputable}
 \difficulty{1}
-Let $V \subseteq \{0,1\}^*$ be a language in $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time, and let $g : \{0,1\}^* \to \{0,1\}^*$ be polynomial-time computable (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the preimage $g^{-1}(V) = \{x \in \{0,1\}^* : g(x) \in V\}$ also belongs to $\mathsf{P}$.
+Let $V$ be a language in $\mathsf{P}$, and let $g$ be a polynomial-time computable
+function from binary strings to binary strings. Then the language $\{x:g(x)\in V\}$
+belongs to $\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[Polynomial-time Boolean tests define languages in P]
+\begin{theorem}[Polynomial-time tests define languages in P]
 \lean{Complexity.mem_P_of_test}
 \label{Complexity.mem_P_of_test}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.mem_P_iff_polyTimeComputable, Turing.MultiTapeTM.indicator}
 \difficulty{3}
-Let $b : \{0,1\}^* \to \{0,1\}$ be a Boolean test on bit strings such that the map sending $z$ to the one-bit word $b(z)$ is polynomial-time computable (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the language $\{z \in \{0,1\}^* : b(z) = 1\}$ belongs to $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time.
+Let $b$ be a Boolean-valued function on finite binary strings. If the function sending
+each string $z$ to the one-bit word $[b(z)]$ is polynomial-time computable, then the
+language of strings $z$ for which $b(z)=1$ belongs to $\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[Indicator of a language in P is polynomial-time]
+\begin{theorem}[Polynomial-Time Computability of a Language Indicator]
 \lean{Complexity.test_of_mem_P}
 \label{Complexity.test_of_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.mem_P_iff_polyTimeComputable, Turing.MultiTapeTM.indicator}
 \difficulty{1}
-Let $L \subseteq \{0,1\}^*$ be a language in $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time. Then the map sending a bit string $z$ to the one-bit word $\mathbf{1}_L(z)$, which is $1$ if $z \in L$ and $0$ otherwise, is polynomial-time computable, i.e.\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+Let $L$ be a language of binary strings. If $L$ belongs to $\mathsf{P}$, then the
+function sending each binary string $z$ to the one-bit word indicating whether $z\in L$
+is polynomial-time computable.
 \end{theorem}
 
-\begin{theorem}[P is closed under intersection]
+\begin{theorem}[Closure of polynomial time under intersection]
 \lean{Complexity.inter_mem_P}
 \label{Complexity.inter_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.mem_P_of_test, Complexity.polyTimeComputable_and, Complexity.test_of_mem_P, Turing.MultiTapeTM.indicator}
 \difficulty{3}
-Let $L_1, L_2 \subseteq \{0,1\}^*$ be languages in $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time. Then their intersection $L_1 \cap L_2 = \{z : z \in L_1 \text{ and } z \in L_2\}$ also belongs to $\mathsf{P}$.
+Let $L_1$ and $L_2$ be languages over the binary alphabet, each in $[1m[0m\mathsf{P}$.
+Then the language of strings belonging to both $L_1$ and $L_2$ is also in
+$[1m[0m\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[P is closed under union]
+\begin{theorem}[Polynomial time is closed under union]
 \lean{Complexity.union_mem_P}
 \label{Complexity.union_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.mem_P_of_test, Complexity.polyTimeComputable_const, Complexity.polyTimeComputable_ite, Complexity.test_of_mem_P, Turing.MultiTapeTM.indicator}
 \difficulty{4}
-Let $L_1, L_2 \subseteq \{0,1\}^*$ be languages in $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time. Then their union $L_1 \cup L_2 = \{z : z \in L_1 \text{ or } z \in L_2\}$ also belongs to $\mathsf{P}$.
+Let $L_1$ and $L_2$ be languages of finite Boolean words, each in $\mathsf{P}$. Then
+their union $\{z : z\in L_1\text{ or }z\in L_2\}$ is also in $\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[The empty language is in P]
+\begin{theorem}[The empty language is in polynomial time]
 \lean{Complexity.empty_mem_P}
 \label{Complexity.empty_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.mem_P_of_test, Complexity.polyTimeComputable_const}
 \difficulty{1}
-Let $\mathsf{P}$ be the class of languages over $\{0,1\}$ decidable by a deterministic Turing machine in polynomial time. Then the empty language $\emptyset \subseteq \{0,1\}^*$ belongs to $\mathsf{P}$.
+The empty language over the binary alphabet, consisting of no finite binary strings,
+belongs to the class $\mathsf{P}=\bigcup_{c\in\mathbb{N}}\mathrm{DTIME}(n\mapsto
+n^c+1)$.
 \end{theorem}
 
-\begin{theorem}[The full language is in P]
+\begin{theorem}[The full binary language is in polynomial time]
 \lean{Complexity.univ_mem_P}
 \label{Complexity.univ_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.mem_P_of_test, Complexity.polyTimeComputable_const}
 \difficulty{1}
-Let $\mathsf{P}$ be the class of languages over $\{0,1\}$ decidable by a deterministic Turing machine in polynomial time. Then the language $\{0,1\}^*$ consisting of all bit strings belongs to $\mathsf{P}$.
+The language consisting of all finite binary strings belongs to the class of
+polynomial-time decidable languages.
 \end{theorem}
 
-\begin{theorem}[P is closed under Boolean combinations of tests]
+\begin{theorem}[Polynomial-time closure under finite Boolean combinations]
 \lean{Complexity.mem_P_of_atoms}
 \label{Complexity.mem_P_of_atoms}
 \leanok
 \uses{Complexity.P, Complexity.compl_mem_P, Complexity.empty_mem_P, Complexity.inter_mem_P, Complexity.union_mem_P, Complexity.univ_mem_P}
 \difficulty{5}
-Let $\iota$ be a finite index set and, for each $i \in \iota$, let $b_i : \{0,1\}^* \to \{0,1\}$ be a Boolean test on bit strings such that the language $\{z : b_i(z) = 1\}$ belongs to $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time. Then for every Boolean function $F : \{0,1\}^{\iota} \to \{0,1\}$, the language
-\[ \{\, z \in \{0,1\}^* : F\big((b_i(z))_{i \in \iota}\big) = 1 \,\} \]
-also belongs to $\mathsf{P}$.
+Let $I$ be a finite index set, let $b_i$ be a Boolean-valued function on finite binary
+strings for each $i\in I$, and suppose the language of strings $z$ with $b_i(z)=1$
+belongs to $\mathsf{P}$ for every $i$. For any Boolean function $F$ on assignments of
+bits to $I$, the language of strings $z$ for which $F((b_i(z))_{i\in I})=1$ belongs to
+$\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[Equal-length pairs form a language in P]
+\begin{theorem}[Equal-length decoded pairs form a polynomial-time language]
 \lean{Complexity.lenEq_mem_P}
 \label{Complexity.lenEq_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.mem_P_of_test, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_lenEq}
 \difficulty{2}
-Let $\pi_1$ and $\pi_2$ be the total projections on bit strings, which send a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and to $b$ respectively, and send every other bit string to the empty word. Then the language $\{z \in \{0,1\}^* : |\pi_1(z)| = |\pi_2(z)|\}$ belongs to $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time.
+Let $z$ be a finite binary string, and let its two total decoded components be the
+components returned by the aligned pair parser, or both the empty string if parsing
+fails. The language of strings whose decoded components have equal length belongs to
+$\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[Length comparison of pair components is in P]
+\begin{theorem}[Decoded length comparison is in polynomial time]
 \lean{Complexity.lenLe_mem_P}
 \label{Complexity.lenLe_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.mem_P_of_test, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_lenLe}
 \difficulty{2}
-Let $\pi_1$ and $\pi_2$ be the total projections on bit strings, which send a bit string of the form $\langle a,b\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and to $b$ respectively, and send every other bit string to the empty word. Then the language $\{z \in \{0,1\}^* : |\pi_2(z)| \le |\pi_1(z)|\}$ belongs to $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time.
+Let $z$ be a finite binary string, and let its two total decoded components be the
+components returned by the aligned pair parser, or both the empty string if parsing
+fails. The language of strings for which the second component has length at most the
+first component's length belongs to $\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[Equal output lengths of polynomial-time maps]
+\begin{theorem}[Equal output lengths form a polynomial-time language]
 \lean{Complexity.lenEq_preimage_mem_P}
 \label{Complexity.lenEq_preimage_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.lenEq_mem_P, Complexity.preimage_mem_P}
 \difficulty{2}
-Let $f, g : \{0,1\}^* \to \{0,1\}^*$ be polynomial-time computable functions (each computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the language $\{z \in \{0,1\}^* : |f(z)| = |g(z)|\}$ belongs to $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time.
+Let $f,g$ be polynomial-time computable functions from finite binary strings to finite
+binary strings. The language of inputs $z$ for which $|f(z)|=|g(z)|$ belongs to
+$\mathsf{P}$.
 \end{theorem}
 
-\begin{theorem}[Output-length comparison of polynomial-time maps]
+\begin{theorem}[Output-length comparison is in polynomial time]
 \lean{Complexity.lenLe_preimage_mem_P}
 \label{Complexity.lenLe_preimage_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.pairEncode, Complexity.lenLe_mem_P, Complexity.preimage_mem_P}
 \difficulty{2}
-Let $f, g : \{0,1\}^* \to \{0,1\}^*$ be polynomial-time computable functions (each computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the language $\{z \in \{0,1\}^* : |g(z)| \le |f(z)|\}$ belongs to $\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time.
+Let $f,g$ be polynomial-time computable functions from finite binary strings to finite
+binary strings. The language of inputs $z$ for which $|g(z)|\le |f(z)|$ belongs to
+$\mathsf{P}$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Polynomial-time closure under block search]
+\lean{Complexity.mem_P_of_blockAny}
+\label{Complexity.mem_P_of_blockAny}
+\leanok
+\uses{Complexity.P, Complexity.blockAt, Complexity.mem_P_of_test, Complexity.pairFstD, Complexity.polyTimeComputable_blockAnyTest, Complexity.test_of_mem_P, Turing.MultiTapeTM.indicator, Turing.pairEncode}
+\difficulty{4}
+Let $V$ be a language in $\mathsf{P}$, and let $a,k,a',k'$ be natural numbers. For a
+binary string $z$, let $x$ be the first component of its encoded pair (or the empty
+string if it does not parse as a pair), and let $y$ be the second component (or the
+empty string if it does not parse). Set $B=a(|x|+1)^k$, and let the block at index $i$
+be the length-$B$ segment of $y$ beginning at position $iB$, truncated if necessary.
+Then the language of strings $z$ for which there exists an integer $i<a'(|x|+1)^{k'}$
+such that the encoding of the pair consisting of $x$ and its block at index $i$ belongs
+to $V$ is in $\mathsf{P}$.
+\end{theorem}
+
+\begin{theorem}[Polynomial-time closure under block majority]
+\lean{Complexity.mem_P_of_blockMajority}
+\label{Complexity.mem_P_of_blockMajority}
+\leanok
+\uses{Complexity.P, Complexity.blockAt, Complexity.mem_P_of_test, Complexity.pairFstD, Complexity.polyTimeComputable_blockMajorityTest, Complexity.test_of_mem_P, Turing.MultiTapeTM.indicator, Turing.pairEncode}
+\difficulty{3}
+Let $V$ be a language in $\mathsf{P}$, and let $a,k,a',k'$ be natural numbers. For each
+binary string $z$, take $x$ to be the first component of its encoded pair, using the
+empty string if parsing fails; let $y$ be the second component, also using the empty
+string if parsing fails. Put $N=a'(|x|+1)^{k'}$, and partition the initial portion of
+$y$ into length-$B$ blocks at positions $iB$, where $B=a(|x|+1)^k$; blocks shorter than
+$B$ are allowed at the end. The language of strings $z$ for which strictly more than
+half of the indices $i<N$ have the encoding of $(x,\text{block at }i)$ in $V$ belongs to
+$\mathsf{P}$.
+\end{theorem}
+
+\begin{theorem}[Polynomial-time closure under block XOR search]
+\lean{Complexity.mem_P_of_blockXorAny}
+\label{Complexity.mem_P_of_blockXorAny}
+\leanok
+\uses{Complexity.P, Complexity.blockAt, Complexity.mem_P_of_test, Complexity.pairFstD, Complexity.pairSndD, Complexity.polyTimeComputable_blockXorAnyTest, Complexity.test_of_mem_P, Turing.MultiTapeTM.indicator, Turing.pairEncode}
+\difficulty{4}
+Let $V$ be a language in $\mathsf{P}$, and let $a,k,a',k'$ be natural numbers. For a
+binary string $w$, take the first component of its encoded pair as an outer string, then
+take the first component of that string's encoded pair as $x$; when either parse fails,
+use the empty string for the corresponding component. Let $y$ be the second component of
+the outer pair, using the empty string if parsing fails, and set $B=a(|x|+1)^k$ and
+$N=a'(|x|+1)^{k'}$. The language of strings $w$ for which some $i<N$ has the following
+property belongs to $\mathsf{P}$: the encoding of the pair $(x,
+y\mathbin{\mathrm{xor}}_\ell u_i)$ is in $V$, where $u_i$ is the length-$B$ block of the
+second component of the inner pair at position $iB$, truncated at the end, and
+$\mathbin{\mathrm{xor}}_\ell$ denotes bitwise XOR on corresponding positions up to the
+shorter of the two strings.
 \end{theorem}

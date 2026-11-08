@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.StepBlock.roundTM_phase",
+ "key": "916a1f86f11f3f6b",
+ "kind": "lemma",
+ "title": "A redirected phase forms a round span",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $x$ be a finite binary input, let $c$ be a configuration of a $k$-tape machine with states indexed by $\\{0,\\ldots,n\\}$, and let $a$ be one of its actions. Choose a phase label $j$ other than the entry or halt label, configurations $d,e$ in that phase, and a time $T$. Suppose the phase machine runs from $d$ to $e$ in $T$ steps; the state of $e$ is $s$; the phase redirection at $(j,s)$ produces a next labelled phase; no state encountered at any time $u<T$ redirects; and the round-window property holds at every phase-machine time $u\\le T$. Then the full round machine runs from $d$ embedded under label $j$ to $e$ embedded in the redirected next phase in $T+1$ steps, with the round-span property.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$ and finite binary input $x$",
+  "Configuration $c$ and action $a$",
+  "Phase label differs from entry and halt",
+  "Configurations $d,e$ in the phase indexed by the label",
+  "Natural number duration $T$",
+  "Phase-machine run from $d$ to $e$ in $T$ steps",
+  "Endpoint state of $e$ is $s$",
+  "Redirection at $(j,s)$ equals the specified next labelled phase",
+  "No earlier phase state redirects at times $u<T$",
+  "Round-window property holds for all phase-machine times $u\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

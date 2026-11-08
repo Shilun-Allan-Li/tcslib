@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.moveInputPos_pos_of_ne_right",
+ "key": "c23a5d3dcdc39ec7",
+ "kind": "lemma",
+ "title": "Right move away from the boundary",
+ "statement": "Let $n$ be a natural number and let $p$ be a position in the range of $n+2$ positions with $p\\ne n+1$. Moving $p$ by $1$ with clamping gives the position $p+1$.",
+ "hypotheses_covered": [
+  "A natural number n",
+  "A position p in the range of n + 2 positions",
+  "p is not n + 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be an input-head position on an input of length $n$ with $p \\ne n + 1$. Then the\nclamped move of $p$ by the sign $1$ is exactly the position $p + 1$: a right move that\ndoes not start at the right boundary increments the position."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.uloop",
+ "key": "41262a2b293b08a7",
+ "kind": "lemma",
+ "title": "Unary Scan Loop",
+ "statement": "Let $E$ be a finite bit string of length at most $B$, and let $o$ return the bit of $E$ at each natural-number position, defaulting to false beyond its end. Suppose the suffix of $E$ beginning at position $p$ consists of exactly $k$ true bits followed by a false bit and a remaining suffix. For either value of the Boolean flag $ex$, the scan machine, on input $X(n,w)$ and starting in state $uA(ex)$ with registers $(p,c,0)$ and no result, can reach state $uE(ex)$ with registers $(p+k,c,k)$ and no result, with every register bounded by $B$ at all intermediate configurations.",
+ "hypotheses_covered": [
+  "The oracle agrees with $E$ on every position, defaulting to false out of range",
+  "$p,c,k$ are natural numbers",
+  "The suffix of $E$ at position $p$ is $k$ true bits followed by false and a remaining suffix",
+  "$ex$ is a Boolean value",
+  "$E$ has length at most $B$",
+  "$c\\le B$",
+  "The input is $X(n,w)$",
+  "The run maintains the register bound $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

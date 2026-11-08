@@ -1,0 +1,14 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianQuantile",
+ "key": "a6821ec6dbf1cc72",
+ "kind": "theorem",
+ "title": "Gaussian quantile divergence at zero",
+ "statement": "Let $\\Phi(t)$ be the cumulative distribution function of the standard Gaussian probability measure on $\\mathbb R$, and define $Q(\\alpha)=\\inf\\{t\\in\\mathbb R:\\alpha\\leq\\Phi(t)\\}$ for every real $\\alpha$. As $\\alpha$ tends to $0$ through positive values, $Q(\\alpha)$ tends to $-\\infty$.",
+ "hypotheses_covered": [
+  "$\\alpha$ tends to $0$ through positive values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi(t)=\\int_{-\\infty}^{t}e^{-x^2/2}/\\sqrt{2\\pi}\\,dx$, and let $Q(\\alpha)=\\inf\\{t\\in\\mathbb R:\\alpha\\le\\Phi(t)\\}$ for $0<\\alpha<1$ and $Q(\\alpha)=0$ otherwise. As a real $\\alpha$ tends to zero through positive values, the quantile tends to negative infinity:\n\\[\n\\lim_{\\alpha\\to0^+}Q(\\alpha)=-\\infty.\n\\]"
+}

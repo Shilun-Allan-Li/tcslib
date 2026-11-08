@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.inp_step",
+ "key": "092da734d5f33a63",
+ "kind": "theorem",
+ "title": "Input Head Position After One Step",
+ "statement": "Let $M$ be a binary-input machine, let $w$ be an input word, and let $c$ be a configuration on $w$. For $p\\le |w|+1$, the indicator that the input-head position after one step is $p$ equals the following Boolean condition: if $c$ is halted, the current position is $p$; otherwise, inspect the transition's input-head move. A right move satisfies the condition when either $p=0$ or the current position is $p-1$ with $p\\ge1$; a stationary move satisfies it when the current position is $p$; and a left move satisfies it when either $p=|w|+1$ or the current position is $p+1$.",
+ "hypotheses_covered": [
+  "Input word is a list of bits",
+  "Configuration is for the machine on that input",
+  "Natural number p satisfies p ≤ |w|+1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

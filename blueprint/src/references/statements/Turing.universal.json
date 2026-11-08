@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.universal",
+ "key": "a74a50bb162eb59f",
+ "kind": "theorem",
+ "title": "Linear-time universal simulation",
+ "statement": "For every effective machine coding scheme $c$, there is a finite-tape machine $U$ over the Boolean alphabet such that for every Boolean code word $\\alpha$ there is a natural number $C$ that works for every Boolean input $x$. If the machine decoded from $\\alpha$ computes output $y$ on $x$ in exactly $t$ steps, then $U$ computes $y$ on $\\langle\\alpha,x\\rangle$ in exactly $C(t+1)$ steps. Conversely, if $U$ computes an output $y$ on $\\langle\\alpha,x\\rangle$ in some number of steps, then the machine decoded from $\\alpha$ computes $y$ on $x$ in some number of steps.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine coding scheme",
+  "$\\alpha$ is a Boolean code word",
+  "$C$ may depend on $c$ and $\\alpha$ but works for every $x$",
+  "$x$ is a Boolean input",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine-coding scheme. There is a finite-tape machine $U$ over\nthe Boolean alphabet such that, for every code string $\\alpha$, there is a\nnatural-number constant $C$ for which the following hold for every input string $x$. If\nthe machine decoded from $\\alpha$ halts on $x$ with output $y$ after exactly $t$ steps,\nthen $U$ halts on the pair encoding $\\langle\\alpha,x\\rangle$ with output $y$ after\nexactly $C(t+1)$ steps. Conversely, if $U$ halts on $\\langle\\alpha,x\\rangle$ with output\n$y$ after some number of steps, then the machine decoded from $\\alpha$ halts on $x$ with\noutput $y$ after some number of steps."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Cursor_install",
+ "key": "edfa09d3075ce993",
+ "kind": "lemma",
+ "title": "Clean cursor installation module",
+ "statement": "There exist a finite Boolean Turing machine $S$ and natural numbers $a,r$ such that $S$ has at least one work tape and, for every Boolean input word $x$ and argument word $v$, it first halts at some time $t$ satisfying $0<t\\le a(|v|+1)^r$. At that time its tape zero stores the pair encoding of the empty word and $v$, its other work tapes are blank, its heads are at their initial positions, and its output is empty.",
+ "hypotheses_covered": [
+  "There exist a finite Boolean Turing machine $S$ and natural numbers $a,r$",
+  "$S$ has a positive number of work tapes",
+  "The property holds for every Boolean input word $x$ and argument word $v$",
+  "The first halting time is positive and at most $a(|v|+1)^r$",
+  "The final configuration stores the pair encoding of the empty word and $v$, with other tapes blank, initial head positions, and empty output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There are a clean module and constants such that the module replaces its argument word by the pair encoding of the empty word with that argument, installing an empty unary emission cursor in front of the packed data, while emitting nothing; neither the header nor either stored table changes."
+}

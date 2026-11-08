@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.satChain_complete",
+ "key": "c5c8b9c889b00821",
+ "kind": "lemma",
+ "title": "Completeness of the clause-splitting chain",
+ "statement": "Let $h$ be a Boolean literal, let $R$ be a finite list of Boolean literals, let $n$ be a natural number, and let $a$ assign a truth value to each variable. Suppose every variable index occurring in $h$ or $R$ is less than $n$, and the clause consisting of $h$ followed by $R$ is satisfied by $a$. Then there is an assignment $a'$ agreeing with $a$ on every index below $n$ such that the CNF formula produced by the clause-splitting chain starting at $h$, with remainder $R$ and cursor $n$, is satisfied by $a'$.",
+ "hypotheses_covered": [
+  "literal $h$ and finite remainder list $R$",
+  "natural-number cursor $n$",
+  "truth assignment $a$",
+  "all variable indices in $h$ and $R$ are below $n$",
+  "the clause $h$ followed by $R$ is satisfied by $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a clause (head plus remaining literals) have all variable indices below $n$,\nand let $a$ be an assignment satisfying it. Then there is an assignment $a'$\nagreeing with $a$ on all indices below $n$ that satisfies the formula emitted by\nthe chain construction at cursor $n$."
+}

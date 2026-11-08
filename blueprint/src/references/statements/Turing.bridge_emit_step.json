@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.bridge_emit_step",
+ "key": "75f64b4a857c223e",
+ "kind": "lemma",
+ "title": "One emission step",
+ "statement": "Let $c$ be a program, let $x$ be a bridge-alphabet input, let $p$ be a valid input-head position, and let $st$ assign stack words to the four stack names. Suppose the main stack begins with the bit symbol for a Boolean $b$, followed by a stack word $xs$. In one step from the emitting state with optional pending bit $carry$, the bridging machine removes that first symbol, enters the emitting state with pending bit $b$, leaves the input-head position and other stacks unchanged, and appends $carry$ to the output if it is present.",
+ "hypotheses_covered": [
+  "A program $c$",
+  "A bridge-alphabet input $x$",
+  "A valid input-head position $p$",
+  "A stack assignment $st$",
+  "An output word",
+  "An optional pending Boolean bit $carry$",
+  "A Boolean $b$",
+  "A stack word $xs$",
+  "The main stack equals the bit symbol for $b$ followed by $xs$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the bridging machine is in the emitting state with an optional pending bit,\nand the main stack begins with the bit symbol embedding a Boolean $b$.  Then a\nsingle step pops that symbol, appends the pending bit (if present, embedded into the\nbridge alphabet) to the output, and continues in the emitting state with pending bit\n$b$; the input position and the other stacks are unchanged."
+}

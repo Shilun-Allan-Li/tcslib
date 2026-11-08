@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopControl_apply",
+ "key": "5d18879a6bd2733e",
+ "kind": "lemma",
+ "title": "Loop Control Action on a Framed Configuration",
+ "statement": "Let $\\mathrm{body}$ and $F$ be finite Boolean Turing machines, let $x$ be a Boolean input word, and choose a base configuration, optional control state $q$, input-head position $p$, three tape contents $\\mathrm{flag},\\mathrm{counter},\\mathrm{payload}$, head positions $\\mathrm{ch},\\mathrm{ph}$, output word $\\mathrm{out}$, input movement $\\mathrm{inp}$, optional write values $\\mathrm{fw},\\mathrm{ca},\\mathrm{pa}$ for the flag, counter, and payload tapes, optional emitted Boolean symbol $\\mathrm{emit}$, and optional next state. Applying the loop-control action to the frame configuration produces the frame with next state, input position moved from $p$ by $\\mathrm{inp}$, the flag tape updated at cell $0$ according to $\\mathrm{fw}$, the counter and payload tapes updated at their respective head positions according to the write components of $\\mathrm{ca}$ and $\\mathrm{pa}$, head positions advanced by their movement components, and output $\\mathrm{out}$ followed by $\\mathrm{emit}$ if present; all remaining frame data are unchanged.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $\\mathrm{body}$ and $F$",
+  "Boolean input word $x$",
+  "Base configuration of the loop host machine on $x$",
+  "Optional current loop-host state $q$",
+  "Input-head position $p$",
+  "Flag, counter, and payload tape contents",
+  "Counter and payload head positions $\\mathrm{ch}$ and $\\mathrm{ph}$",
+  "Output word $\\mathrm{out}$",
+  "Input movement $\\mathrm{inp}$",
+  "Optional write value for the flag tape",
+  "Counter and payload write-and-move instructions",
+  "Optional emitted Boolean symbol",
+  "Optional next loop-host state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.StepBlock.tableBitsK_cut",
+ "key": "c858b62dcad550c6",
+ "kind": "lemma",
+ "title": "Cutting a transition table into read blocks",
+ "statement": "Let $k,n\\in\\mathbb{N}$, and let a transition table assign an action to each state in $\\{0,\\ldots,n\\}$, each input read in $\\{\\text{blank},0,1\\}$, and each tuple of $k$ work-tape reads in $\\{\\text{blank},0,1\\}^k$. For any state $q$, input read $a$, and work-tape read tuple $w$, the bit string encoding the full table can be decomposed into the encodings of $q$ complete earlier state blocks, then $r$ read entries within state $q$, then the encoding of the action at $(q,a,w)$, followed by a tail. Here there are $q$ earlier blocks, each containing $3^{k+1}$ actions, and $r$ is the rank of $(a,w)$ in the ordering that first orders input reads and then work-tape read tuples.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$",
+  "A transition table on states, input reads, and work-tape read tuples",
+  "A state $q$",
+  "An input read $a$",
+  "A work-tape read tuple $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

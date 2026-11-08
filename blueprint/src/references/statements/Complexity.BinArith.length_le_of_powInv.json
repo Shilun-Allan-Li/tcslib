@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.BinArith.length_le_of_powInv",
+ "key": "2cc6d046fb8ebd1c",
+ "kind": "theorem",
+ "title": "Length bound from a power witness",
+ "statement": "Let $z$ and $S$ be finite bit strings, and suppose there are bit strings $E$, $b$, and $a$ such that $S$ is the pairing of the total second projection of the total second projection of $z$ with the nested pair consisting of $E$ and the pair $(b,a)$. Require that the length of $E$ is at most the length of the total first projection of the total second projection of $z$, that $b$ and $a$ are the canonical bit strings obtained by writing their respective values in binary, that the length of $b$ is at most the sum of the lengths of the total first projection of $z$ and the total second projection of the total second projection of $z$, and that the length of $a$ is at most one plus the length of the total second projection of the total second projection of $z$. If the value of that latter projection is positive, require also that the values of $b$ and $a$ are both smaller than it and that the value of $a$ times the value of $b$ raised to the value of $E$ is congruent modulo it to the value of the total first projection of $z$ raised to the value of the total first projection of the total second projection of $z$. Then the length of $S$ is at most $9$ times the sum of the length of $z$ and one.",
+ "hypotheses_covered": [
+  "$z$ and $S$ are bit strings",
+  "There exist bit strings $E,b,a$ with the specified nested pairing encoding of $S$",
+  "$|E|\\le |\\pi_1(\\pi_2(z))|$",
+  "$b=\\operatorname{bits}(\\operatorname{val}(b))$",
+  "$a=\\operatorname{bits}(\\operatorname{val}(a))$",
+  "$|b|\\le |\\pi_1(z)|+|\\pi_2(\\pi_2(z))|$",
+  "$|a|\\le 1+|\\pi_2(\\pi_2(z))|$",
+  "If $\\operatorname{val}(\\pi_2(\\pi_2(z)))>0$, then $\\operatorname{val}(b)$ and $\\operatorname{val}(a)$ are each smaller than $\\operatorname{val}(\\pi_2(\\pi_2(z)))$",
+  "Under the same positivity condition, $\\operatorname{val}(a)\\operatorname{val}(b)^{\\operatorname{val}(E)}$ is congruent to $\\operatorname{val}(\\pi_1(z))^{\\operatorname{val}(\\pi_1(\\pi_2(z)))}$ modulo $\\operatorname{val}(\\pi_2(\\pi_2(z)))$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.pal_test_read",
+ "key": "9345d1fb3a5ec127",
+ "kind": "lemma",
+ "title": "Work tape reads the reversed bit",
+ "statement": "Let $x$ be a binary word and let $i<|x|$. In the test configuration on input $x$ with the input head at position $i+1$, the work head at integer position $|x|-1-i$, and the first $|x|$ bits copied, the symbol under the work head is the bit of the reversal of $x$ at position $i$.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$i<|x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word of length $n$ and $i < n$. In the test-state\nconfiguration of the palindrome machine on input $x$ with input head at cell\n$i+1$, all $n$ bits copied, and work head at the integer cell $n-1-i$, the symbol\nunder the work head is the $i$-th bit of the reversal $x^{R}$."
+}

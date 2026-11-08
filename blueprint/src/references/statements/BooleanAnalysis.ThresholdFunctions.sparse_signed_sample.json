@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.sparse_signed_sample",
+ "key": "9b410bb314b32f5b",
+ "kind": "theorem",
+ "title": "Uniform approximation by signed Fourier samples",
+ "statement": "Let $n$ be a positive integer and let $f:\\{0,1\\}^n\\to\\mathbb R$ be nonzero. Write $\\widehat f(S)$ for the Fourier–Walsh coefficient at $S\\subseteq\\{1,\\ldots,n\\}$ and set $L=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}|\\widehat f(S)|$. For $\\delta>0$ and a nonnegative integer $s$ with $4nL^2/\\delta^2\\le s$, there exist subsets $T_1,\\ldots,T_s\\subseteq\\{1,\\ldots,n\\}$, with repetitions allowed, such that for every $x\\in\\{0,1\\}^n$, $\\left|f(x)-\\sum_{j=1}^s \\frac{L}{s}\\operatorname{sgn}_+(\\widehat f(T_j))\\chi_{T_j}(x)\\right|<\\delta$, where $\\operatorname{sgn}_+(t)=1$ for $t\\ge0$ and $-1$ for $t<0$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$f$ is a nonzero real-valued function on the Boolean cube",
+  "$\\delta>0$",
+  "$s$ is a nonnegative integer",
+  "$4nL^2/\\delta^2\\le s$, where $L$ is the sum of the absolute Fourier–Walsh coefficients of $f$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for $S\\subseteq[n]$ and real cube functions $h$. Write $\\operatorname{sgn}_+(t)=1$ for $t\\ge0$ and $-1$ for $t<0$. Let $n>0$, let $f$ be a real cube function not identically zero, put $L=\\sum_S|\\widehat f(S)|$, and let $\\delta>0$ and an integer $s\\ge0$ satisfy $4nL^2/\\delta^2\\le s$. There exists a sequence of subsets $T_1,\\ldots,T_s\\subseteq[n]$, with repetitions allowed, such that $|f(x)-(L/s)\\sum_{j=1}^s\\operatorname{sgn}_+(\\widehat f(T_j))\\chi_{T_j}(x)|<\\delta$ for every $x\\in\\{0,1\\}^n$."
+}

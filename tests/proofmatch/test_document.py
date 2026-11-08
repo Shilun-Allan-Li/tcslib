@@ -55,6 +55,32 @@ class FakeAgent:
 
 
 class DocumentTests(unittest.TestCase):
+    def test_cleanup_checkpoint_survives_an_interrupted_later_chunk(self):
+        class CheckpointAgent:
+            model = "test"
+            def __init__(self):
+                self.calls = []
+                self.fail = True
+            def run(self, name, payload):
+                page = payload["pages"][0]["page"]
+                self.calls.append(page)
+                if page == 4 and self.fail:
+                    raise RuntimeError("interrupted")
+                return {"blocks": [{"page": page, "sequence": 1, "kind": "prose",
+                                    "title": "", "markdown": "Text.", "confidence": 1.0}],
+                        "ambiguities": []}
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            raw = root / "input.raw.md"
+            raw.write_text("<!-- source-pdf-sha256: abcdef1234567890 -->\n" +
+                           "".join(f"<!-- pdf-page: {i} -->\nText.\n" for i in range(1, 7)))
+            agent = CheckpointAgent()
+            with self.assertRaisesRegex(RuntimeError, "interrupted"):
+                repair_document(raw, root / "out.md", agent, Budget(), cache_dir=root / "cache")
+            agent.fail = False
+            repair_document(raw, root / "out.md", agent, Budget(), cache_dir=root / "cache")
+            self.assertEqual(agent.calls, [1, 4, 4])
+
     def test_parser_recovers_bold_theorem_and_proof_kinds(self):
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp) / "notes.md"

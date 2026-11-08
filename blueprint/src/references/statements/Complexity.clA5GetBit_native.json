@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5GetBit_native",
+ "key": "a675f68a6c4d0e83",
+ "kind": "lemma",
+ "title": "Polynomial-time indexed bit read",
+ "statement": "Let $f$ map bit strings to bit strings and let $i$ assign a natural-number index to each bit string. If $f$ is polynomial-time computable and the unary word of length $i(x)$ is polynomial-time computable from $x$, then the function returning the bit of $f(x)$ at index $i(x)$, with false as the default when that index is out of range, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "The function $x\\mapsto 1^{i(x)}$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a word producer and a unary index producer are polynomial-time computable, then the single-bit read of the produced word at the produced index, with false as out-of-range default, is polynomial-time computable."
+}

@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.lastOutput_append",
+ "key": "a7d4615d26ce005c",
+ "kind": "lemma",
+ "title": "Last entry after appending an optional bit",
+ "statement": "For any finite bit list $w$ and optional bit $b$, the last entry of the list formed by appending $b$ when present, defaulting to false if the resulting list is empty, equals $b$ when $b$ is present and otherwise equals the last entry of $w$, defaulting to false.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit list $w$ and every optional bit $b$, the last entry, defaulting to\nfalse, of $w$ extended by the zero- or one-element list determined by $b$ equals $b$\nwhen $b$ is present, and the last entry of $w$ defaulting to false otherwise; a\none-bit last-output register can therefore be maintained in finite control."
+}

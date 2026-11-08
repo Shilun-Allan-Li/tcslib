@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.tmsat_good_quad",
+ "key": "cd9a79f78db1dc5c",
+ "kind": "lemma",
+ "title": "Fields of a padded quadruple",
+ "statement": "Let $\\alpha$, $x$, and $w$ be bit strings, and let $n,t\\in\\mathbb{N}$. Suppose the length of $w$ is one more than the length of the encoding $\\langle\\alpha,x,1^n,1^t\\rangle$, where $1^k$ denotes the word of $k$ ones. Append $w$ to this encoding to form $z$. Then $z$ satisfies the validity guard; its code field is $\\alpha$, its input field is $x$, its width and clock fields have lengths $n$ and $t$, respectively, and its certificate part is $w$.",
+ "hypotheses_covered": [
+  "$\\alpha,x,w$ are bit strings",
+  "$n,t\\in\\mathbb{N}$",
+  "The length of $w$ is the length of $\\langle\\alpha,x,1^n,1^t\\rangle$ plus one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha, x, w$ be bit strings and $n, t \\in \\mathbb{N}$, let $y = \\langle\\alpha,\\langle x,\\langle 1^n,1^t\\rangle\\rangle\\rangle$ ($1^k$ the word of $k$ ones), suppose $|w| = |y| + 1$, and let $z = yw$. Write $s(z)$ for its odd split (the self-delimiting pair encoding $\\langle z_{[:i]}, z_{[i:]}\\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\\pi_1, \\pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \\pi_1(s(z))$ and $W = \\pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\\pi_1(Y)$, $\\pi_1(\\pi_2(Y))$, $\\pi_1(\\pi_2(\\pi_2(Y)))$ and $\\pi_2(\\pi_2(\\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\\pi_2(Y)$ and $\\pi_2(\\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones. Then $G(z)$ holds, the code field of $z$ is $\\alpha$, its input field is $x$, its width and clock fields have lengths $n$ and $t$, and $W = w$."
+}

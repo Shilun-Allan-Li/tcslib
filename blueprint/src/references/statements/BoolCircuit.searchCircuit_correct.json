@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.searchCircuit_correct",
+ "key": "4e49d9074b79e3bd",
+ "kind": "theorem",
+ "title": "Correctness of the search circuit",
+ "statement": "Let $n,m$ be natural numbers, let $R$ be a relation between Boolean lists, and let $(D_j)_{j\\in\\mathbb N}$ be a family of Boolean circuits, with $D_j$ taking $n+j$ input bits. Suppose every $D_j$ is well formed, has fan-in at most two, and, for each $1\\le j\\le m$, every Boolean list $y$ of length $n$ and list $p$ of length $j$ satisfy: $D_j$ outputs true on their concatenation exactly when $p$ has an extension of length $m$ related to $y$ by $R$. For any input $x\\in\\{0,1\\}^n$, if there is a length-$m$ list related to the list of bits of $x$ by $R$, then the search circuit built from this family outputs a list of length $m$ that is related to the list of bits of $x$ by $R$.",
+ "hypotheses_covered": [
+  "Every circuit $D_j$ is well formed and has fan-in at most two",
+  "For every $j$ with $1\\le j\\le m$, the circuit test is equivalent to existence of an $R$-related length-$m$ extension",
+  "$x$ is an $n$-bit input",
+  "There exists a length-$m$ list $v$ with $R(\\operatorname{bits}(x),v)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

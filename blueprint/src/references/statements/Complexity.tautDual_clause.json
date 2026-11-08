@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tautDual_clause",
+ "key": "a2cb235b4ce1cdf3",
+ "kind": "lemma",
+ "title": "Polarity-flipping scan of a clause",
+ "statement": "For every clause $C$ of literals with natural-number indices and every bit string $r$, scanning the encoding of $C$ followed by $r$, starting in the clause state, gives the encoding of the clause obtained by negating each literal's polarity, followed by the scan of $r$ starting in the formula state.",
+ "hypotheses_covered": [
+  "$C$ is a clause of literals with natural-number indices",
+  "$r$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every clause $C$ and binary string $r$, the polarity-flipping scan from the\nclause-level state of the formula syntax scanner maps the serialization of $C$\nfollowed by $r$ to the serialization of the clause obtained from $C$ by negating every\nliteral's polarity, followed by the polarity-flipping scan of $r$ from the\nformula-level state."
+}

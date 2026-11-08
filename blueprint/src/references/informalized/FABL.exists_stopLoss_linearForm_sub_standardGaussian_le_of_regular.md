@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter05/RademacherFirstMoment.lean :: FABL.exists_stopLoss_linearForm_sub_standardGaussian_le_of_regular -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Stop-Loss Approximation for Rademacher Sums
+
+**Claim.** There is a positive constant $C$ such that for every normalized coefficient vector with $|a_i|\le\varepsilon$, and every $t\ge0$, the stop-loss expectation of its Rademacher sum differs from the standard Gaussian stop-loss expectation by at most $C\varepsilon$.
+
+**Proof.** Apply the nonuniform Berry–Esseen bound to the independent centered summands $X_i=a_i x_i$ under uniform measure on the sign cube. They have total variance one by $\sum_i a_i^2=1$, and the sum of their third absolute moments, denoted $\gamma$, is at most $\varepsilon$ by the coefficient bound and normalization. Thus at every real $y$, the difference of the distribution functions of their sum and a standard Gaussian is bounded by $C\gamma/(1+|y|^3)$.\n\nFor an integrable random variable $Z$, its stop-loss expectation at $t$ is the integral over $u>0$ of its upper-tail probability at $t+u$. The needed integrability holds for both sums: the Rademacher sum has a subgaussian moment-generating bound, and the standard Gaussian has a finite first moment. Since $t,u\ge0$, we have $|t+u|=t+u\ge u$. Also, upper-tail probabilities equal one minus the corresponding cumulative distribution functions, so their difference is bounded by the same distribution-function estimate. Consequently the absolute difference of the stop-loss expectations is at most the integral over $u>0$ of $2C\gamma/(1+u^3)$; the factor two is a harmless enlargement of the tail bound. The integral is at most $8C\gamma$. Identifying the sum of the summands with the specified linear form and using $\gamma\le\varepsilon$ proves the result with constant $8C$.
+
+**Key facts.** `FABL.rademacherSummands_iIndep`, `FABL.integral_rademacherSummand_eq_zero`, `FABL.variance_rademacherSummand`, `FABL.rademacherSummand_memLp`, `FABL.thirdMomentSum_rademacherSummand_le`, `FABL.measureReal_Ioi_eq_one_sub_cdf`, `FABL.integrableOn_upperTailFrom`, `FABL.integral_posPart_sub_eq_integral_upperTailFrom`, `FABL.integrableOn_nonuniformTailBound`, `FABL.integral_nonuniformTailBound_le`, `FABL.sum_rademacherSummand`, `FABL.integral_uniformPMF_eq_expect`.

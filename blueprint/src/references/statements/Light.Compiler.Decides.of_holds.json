@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.Compiler.Decides.of_holds",
+ "key": "7d425d79b5e5c4ea",
+ "kind": "theorem",
+ "title": "Execution When a Predicate Holds",
+ "statement": "Let $W,F,\\mathrm{pos},\\mathrm{size},l\\in\\mathbb{N}$, let $\\mathrm{code}$ be a program for a word RAM with $W$-bit words, let $m$ be its initial memory, and let $p$ be a proposition. Suppose there exist a memory $m'$ and a number $n\\le\\mathrm{size}$ such that $m'$ agrees with $m$ at every address outside the scratch set, and the program runs for $n$ steps from program position $\\mathrm{pos}$ and memory $m'$ whenever $p$ holds, reaching position $\\mathrm{pos}+\\mathrm{size}$. If $p$ holds, then there exist such an $m'$ and $n\\le\\mathrm{size}$, with the same agreement outside the scratch set, for which the program runs from position $\\mathrm{pos}$ and memory $m$ for $n$ steps to position $\\mathrm{pos}+\\mathrm{size}$. Here the scratch set consists of addresses $-21,-15,-17,-19,-13$ and addresses $-(23+4j)$ for integers $j$ with $0\\le j\\le 2F$.",
+ "hypotheses_covered": [
+  "The program satisfies Decides: there exist m' and n≤size; m' agrees with m outside Scratch F; p implies an n-step run from (pos,m) to (pos+size,m'); ¬p implies an n-step run from (pos,m) to (l,m')",
+  "The proposition p holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

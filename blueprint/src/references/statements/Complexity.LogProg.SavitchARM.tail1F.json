@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.tail1F",
+ "key": "0a605ab5feebf02b",
+ "kind": "theorem",
+ "title": "Phase-one failure loop",
+ "statement": "Let $E$ be a natural number, let $\\mathrm{orc}$ be an oracle with four indices and Boolean-word queries, let $x$ be a Boolean word, and let $s,w$ be natural numbers with $s\\le w$. Let $i$ be a natural number with $i+1\\le w$, and let $\\mathrm{st}$ be a machine state satisfying the following conditions: $n,a,X,P,T,Z,C,Q,E$ are zero; its radius is $s$, width is $w$, and code bound is $2^w$; its source and target codes are less than $2^w$, its midpoint is at most $2^w$, and its level is $i+1$; its saved-endpoints stack is less than $2^{w(w-(i+1))}$ and its phase stack is less than $2^{w-(i+1)}$. Suppose also that $M<2^w$ and $M_2\\le 2^w$. Starting at label $a1F$ with the source code replaced by the old midpoint $M$, the midpoint replaced by $M_2$, and the popped endpoint set to the old source code, the machine can reach label $loop$ with the midpoint increased from its original value by one and every other register equal to its value in $\\mathrm{st}$. Every configuration strictly before the endpoint has all registers at most $2^{w^2}$ and satisfies the machine's validity condition.",
+ "hypotheses_covered": [
+  "$s\\le w$",
+  "$i\\in\\mathbb N$ and $i+1\\le w$",
+  "$\\mathrm{st}$ satisfies all conditions in $\\operatorname{Inv}(s,w,i+1,\\mathrm{st})$",
+  "$M<2^w$",
+  "$M_2\\le 2^w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E\\in\\mathbb N$, let $\\mathcal O$ be an oracle on four indices and Boolean words,\nlet $x$ be a Boolean word, and let $s,w\\in\\mathbb N$ with $s\\le w$. Let $i\\in\\mathbb N$\nsatisfy $i+1\\le w$, and let $\\mathrm{st}$ be a state satisfying the following\nconditions: the registers $n,a,X,P,T,Z,C,Q,E$ are zero; the radius is $s$, the width is\n$w$, and $K=2^w$; $U,V<2^w$, $M\\le 2^w$, and $I=i+1$; and $SE<2^{w(w-(i+1))}$ and\n$SP<2^{w-(i+1)}$. If $M<2^w$ and $M_2\\le 2^w$, then from label $a1F$ with register\nvalues $U=M$, $M=M_2$, and $E=U_{\\mathrm{old}}$, the machine can reach label $loop$ with\nthe same state except that $M$ is increased by one. Every configuration before the\nendpoint satisfies the guard with register bound $2^{w^2}$."
+}

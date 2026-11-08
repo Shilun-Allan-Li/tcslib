@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_prepare_final",
+ "key": "e4274602c4bd6537",
+ "kind": "lemma",
+ "title": "Prepared configuration after evaluation",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $\\mathrm{emit}$ be a Boolean, let $x$, $\\mathrm{arg}$, and $\\mathrm{cap}$ be Boolean words, and let $T\\in\\mathbb{N}$. Suppose the run of $M$ on $\\mathrm{arg}$ has output $\\mathrm{cap}$ at time $T$. The embedded evaluator configuration formed from the right-boundary scan of the tracked run at time $T$, with the scan halted at the right end of $\\mathrm{arg}$, equals the call-layout frame with zero cleared banks, state at the source evaluator's return state, data tapes from the run at time $T$, visited-span and origin-marker tapes, argument and capture contents, and corresponding head positions.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$\\mathrm{emit}$ is a Boolean",
+  "$x$, $\\mathrm{arg}$, and $\\mathrm{cap}$ are Boolean words",
+  "$T$ is a natural number",
+  "the output of $M$ on $\\mathrm{arg}$ at time $T$ equals $\\mathrm{cap}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the source run on argument $a$ have output $c$ at time $T$. The identity relocation\nof the evaluator configuration of the halted right-normalized tracked endpoint equals\nthe cleanup frame with zero cleaned banks: complete source data, visited spans, origin\nmarkers, captured result $c$, and the argument head at its right boundary."
+}

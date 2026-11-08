@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5Next_pack",
+ "key": "fe2c91eb45a8ff35",
+ "kind": "lemma",
+ "title": "Cursor update on packed words",
+ "statement": "Let $M$ be a Turing machine with a finite state set and Boolean tape alphabet, let $C,e,c,A,d$ be natural numbers, let $x$ be a finite bit string, and let $i$ be a natural number. Set $T=c\\bigl(A(|x|+C(|x|+1)^e+1)^d+1\\bigr)^2$ and $R=|x|+(M.k+3)T+M.k+1$, where $M.k$ is the number of work tapes of $M$. If $i\\le R+1$, then applying the cursor update to the packed encoding with unary cursor $i$ and data determined by $M,C,e,c,A,d,x$ yields the packed encoding with the same data and unary cursor $\\min(i+1,R+1)$; in particular, the cursor remains at $R+1$ once it reaches that value.",
+ "hypotheses_covered": [
+  "A Turing machine with a finite state set and Boolean tape alphabet",
+  "Natural-number parameters $C,e,c,A,d$",
+  "A finite bit string $x$",
+  "A natural-number cursor $i$",
+  "The bound $i\\le R+1$, with $T$ and $R$ as stated"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every source machine, parameters, instance $x$, and cursor $i$ at most the last round plus one, the native cursor update of the body word at $i$ is the body word at $\\min(i+1, R+1)$, where $R$ is the last round; the saturated cursor is stationary."
+}

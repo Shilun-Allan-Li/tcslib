@@ -62,6 +62,7 @@ from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
+from scripts import dataset_projects as dp
 
 from proofmatch.dataset_io import open_dataset, resolve_dataset  # noqa: E402
 
@@ -123,7 +124,7 @@ def graph_declarations(path: Path) -> dict[str, set[str]]:
             for m, md in modules.items()}
 
 
-DECL_RE = re.compile(r"^\s*(?:@\[[^\]]*\]\s*)?(?:private\s+|protected\s+|noncomputable\s+|"
+DECL_RE = re.compile(r"^\s*(?:@\[[^\]]*\]\s*)?(?:public\s+|private\s+|protected\s+|noncomputable\s+|"
                      r"nonrec\s+|scoped\s+|unsafe\s+|partial\s+)*"
                      r"(?:theorem|lemma|def|abbrev|structure|inductive|class|instance|opaque|axiom)"
                      r"\s+([^\s:({\[⦃]+)", re.M)
@@ -138,15 +139,14 @@ def source_short_names(root: Path) -> dict[str, set[str]]:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except OSError:
             continue
-        module = "TCSlib." + str(path.relative_to(root).with_suffix("")).replace("/", ".")
+        module = root.name + "." + str(path.relative_to(root).with_suffix("")).replace("/", ".")
         for m in DECL_RE.finditer(text):
             names.setdefault(m.group(1).rsplit(".", 1)[-1], set()).add(module)
     return names
 
 
 def module_source_exists(module: str) -> bool:
-    rel = module[len("TCSlib."):] if module.startswith("TCSlib.") else module
-    return (BASE / "TCSlib" / (rel.replace(".", "/") + ".lean")).exists()
+    return dp.source_path(module).exists() if dp.is_internal(module) else False
 
 
 def merge(previous: list[dict], built: dict[str, dict], graph: dict[str, set[str]], *,
@@ -258,7 +258,12 @@ def main() -> int:
         if not graph and previous and not args.selected:
             print(f"WARNING: {args.graph} unreadable; every previous record the build lacks "
                   "is dropped")
-        declared = None if args.selected else source_short_names(BASE / "TCSlib")
+        declared = None
+        if not args.selected:
+            declared = {}
+            for name, root in dp.projects().items():
+                for short, mods in source_short_names(root / name).items():
+                    declared.setdefault(short, set()).update(mods)
         records, summary = merge(previous, patch, graph, selected=args.selected,
                                  drop_unbuilt=args.drop_unbuilt, declared=declared)
         print(f"merge: {len(previous)} previous + {len(patch)} built -> {len(records)} records")

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.BinArith.forLoop_pairEncode",
+ "key": "c08f383d0c94ade1",
+ "kind": "theorem",
+ "title": "For-loop iteration on an encoded pair",
+ "statement": "Let $f$ map finite bit strings to finite bit strings, and let $c,d$ be finite bit strings. Starting from the self-delimiting pair encoding $\\langle c,d\\rangle$, iterate the step that leaves the state unchanged when its total first projection is empty, and otherwise replaces it by the encoding of that projection with its first bit removed and the result of applying $f$ to its total second projection. After $|\\langle c,d\\rangle|+1$ steps, the state is the encoding $\\langle\\varepsilon,f^{|c|}(d)\\rangle$, where $\\varepsilon$ is the empty bit string.",
+ "hypotheses_covered": [
+  "$f$ maps finite bit strings to finite bit strings",
+  "$c,d$ are finite bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

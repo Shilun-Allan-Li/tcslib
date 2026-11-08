@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_compare",
+ "key": "aad52a27d957d9be",
+ "kind": "lemma",
+ "title": "Comparison of installed words",
+ "statement": "Let $C$ and $D$ be finite Boolean Turing machines with positive numbers of work tapes, and choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$. For any input word $w$ and words $s,u,v$, there is a time $t\\le 2(\\max(|u|,|v|)+1)$ at which the controller, started in comparison state $(0,\\mathrm{true})$ with $s,u,v$ installed in their respective host tapes, is in state $(2,\\mathbf{1}_{u=v})$ with those words unchanged; at every time $j\\le t$, its state is not the anchor.",
+ "hypotheses_covered": [
+  "$C,D$ are finite Boolean Turing machines",
+  "$0<C.k$ and $0<D.k$",
+  "$c_e,c_x$ are states of $C$; $d_e,d_x$ are states of $D$",
+  "$w,s,u,v$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For installed result words $u$ and $v$, there is a time\n$t \\le 2(\\max(\\abs{u},\\abs{v}) + 1)$ after which the controller, from its\ncomparison seam, records in finite control whether $u = v$, changing no\ncandidate, buffer, or module scratch cell; the trace avoids the anchor."
+}

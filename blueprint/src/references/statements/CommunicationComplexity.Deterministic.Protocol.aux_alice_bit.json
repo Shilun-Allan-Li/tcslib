@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.Protocol.aux_alice_bit",
+ "key": "111669935fd7b4b8",
+ "kind": "lemma",
+ "title": "Alice's bit on a leaf rectangle",
+ "statement": "Let $p$ be a protocol over input types $X$ and $Y$, let $A\\subseteq X$ and $B\\subseteq Y$, let $f:X\\to\\{0,1\\}$, and choose a bit $b$. If $R$ is among the leaf rectangles of $p$ when the first input is restricted to $A\\cap\\{x:f(x)=b\\}$ and the second to $B$, then every $(x,y)\\in R$ satisfies $f(x)=b$.",
+ "hypotheses_covered": [
+  "A protocol over input types $X$ and $Y$",
+  "Sets $A\\subseteq X$ and $B\\subseteq Y$",
+  "A function $f:X\\to\\{0,1\\}$ and a bit $b$",
+  "Membership of $R$ among the leaf rectangles under the specified input restriction",
+  "An input pair $(x,y)$ belonging to $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ be a protocol on $X \\times Y$, let $A \\subseteq X$, $B \\subseteq Y$, let\n$f : X \\to \\{0,1\\}$ be the bit Alice sends, and let $b$ be a bit. If $R$ is a leaf\nrectangle of $p$ run on the restricted input set $(A \\cap \\{x \\mid f(x) = b\\}) \\times B$,\nthen every input $(x, y) \\in R$ satisfies $f(x) = b$."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.windowRun_exhausted_of_live",
+ "key": "857327fd1c5a4d56",
+ "kind": "theorem",
+ "title": "Exhaustion of a live window run",
+ "statement": "Let $M$ be a Boolean-input Turing machine with $k$ work tapes, let $s$ be a natural-number window radius, and let $\\mathrm{upd}$ be an update rule on an accumulator type $T$ and an optional Boolean. For every natural number $N$, initial configuration $c$, and accumulator $\\tau$, suppose the machine is not halted at any time $u<N$ and its configuration is in the window of radius $s$ at every time $u\\le N$. Then the window run with clock $N$ returns the exhausted outcome and its configuration component is exactly the configuration reached by $M$ after $N$ steps from $c$.",
+ "hypotheses_covered": [
+  "Boolean-input machine $M$ with $k$ work tapes",
+  "window radius $s\\in\\mathbb{N}$",
+  "update rule $\\mathrm{upd}:T\\times\\{\\text{none or Boolean}\to T$",
+  "clock $N\\in\\mathbb{N}$",
+  "configuration $c$",
+  "accumulator $\\tau\\in T$",
+  "machine is not halted at every time $u<N$",
+  "configuration lies in the radius-$s$ window at every time $u\\le N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

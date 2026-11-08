@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.cert_silent_words",
+ "key": "2f4cb98a49c47a4e",
+ "kind": "theorem",
+ "title": "Silent Embedding of Tape Words",
+ "statement": "Let $M$ be a Boolean machine with $m$ work tapes, let $\\iota$ inject those tape indices into $k$ tape indices, and let $\\mathrm{cap}$ be outside the image of $\\iota$. Suppose $d$ is an $m$-tape configuration on Boolean input $y$ whose state is $q$, whose input head is at position $1$, whose tape contents are the buffers storing $w(\\iota(i))$ on each local tape $i$, whose tape heads are all at position $0$, and whose output is empty; also suppose $w(\\mathrm{cap})$ is empty. Then embedding $d$ with the buffer words $w$ and zero head positions, and renaming every state to $\\mathrm{finish}$, gives the standard configuration on $k$ tapes with state $\\mathrm{finish}$ and tape assignment $w$.",
+ "hypotheses_covered": [
+  "A Boolean input word $y$",
+  "A Boolean machine $M$ with $m$ work tapes and state set $S$",
+  "An injection from $m$ tape indices to $k$ tape indices",
+  "The capture tape lies outside the injection's image",
+  "A tape-word assignment $w$ on $k$ tapes",
+  "An $m$-tape configuration $d$",
+  "The configuration state is $q$",
+  "The input-head position is $1$",
+  "Each local tape contains the buffer for the corresponding embedded word",
+  "All local tape heads are at $0$",
+  "The output word is empty",
+  "The capture tape's word is empty",
+  "A target state $\\mathrm{finish}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

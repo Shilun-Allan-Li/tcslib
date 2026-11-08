@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satEvalCfg_work",
+ "key": "db903ed1dd0188a0",
+ "kind": "lemma",
+ "title": "Certificate Symbol Under the Last Head",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $w,u$ be Boolean words, and choose a saved configuration of $M$ on input $w$, a semantic state $q$, a natural number $i\\le |w|$, and an integer offset $j$. The symbol under the head of the evaluator's last work tape in the corresponding canonical evaluation configuration is the content of the certificate buffer $u$ at offset $j$.",
+ "hypotheses_covered": [
+  "finite Boolean machine $M$ with $k$ work tapes",
+  "saved configuration on input $w$",
+  "Boolean word $u$",
+  "semantic state $q$",
+  "$i\\le |w|$",
+  "integer offset $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $u$ be a certificate word and $j \\in \\mathbb{Z}$. In every canonical\nevaluation configuration with certificate $u$ and certificate head at offset $j$,\nthe symbol read by the last work head is the cell of the buffer tape of $u$ at\noffset $j$, that is, the $j$-th bit of $u$ when $0 \\le j < |u|$ and the blank\notherwise."
+}

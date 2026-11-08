@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.codeEraseSymbols",
+ "key": "a4d2e8da493033fc",
+ "kind": "lemma",
+ "title": "Erasure law for symbol-indexed rows",
+ "statement": "For every type $A$, every reader that returns an $A$-value and remaining suffix or fails on a bit string, and every bit string $x$, discarding the decoded row and retaining only the remaining suffix from the three-entry row reader gives exactly the result of applying the value-discarding version of the given reader three times in sequence.",
+ "hypotheses_covered": [
+  "A type A",
+  "A reader from bit strings to optional pairs of an A-value and suffix",
+  "A bit string x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every field reader with values in a type $A$ and every bit string $x$:\ndiscarding the parsed row from the three-symbol row reader equals iterating the\nvalue-discarding version of the field reader three times."
+}

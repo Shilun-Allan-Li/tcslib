@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clA5Data_exact",
+ "key": "b576992fba40c119",
+ "kind": "lemma",
+ "title": "Exact stored tableau data",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $C,e,c,A,d,i$ be natural numbers, and let $x$ be a Boolean word. In the packed word formed from these data, the stored input length is $m=|x|+C(|x|+1)^e$, the stored horizon is $T=c\\bigl(A(m+1)^d+1\\bigr)^2$, the stored trajectory is the serialization of the first $T+1$ trajectory rows of $M$ on the all-false input of length $m$, and the stored visit table is the ordered list of the first $T+1$ visit rows for $M,C,e,x$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$C,e,c,A,d,i$ are natural numbers",
+  "$x$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, parameters, instance $x$, and cursor $i$, the stored input length is $m = |x| + C(|x|+1)^e$, the stored horizon is the producer horizon $T$, the stored trajectory is the inclusive serialized trajectory of $T+1$ rows over the all-false input of length $m$, and the stored visit table is the ordered table of $T+1$ visit rows."
+}

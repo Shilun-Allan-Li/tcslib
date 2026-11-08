@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.loop_fuel_width",
+ "key": "72ee407276c499a9",
+ "kind": "lemma",
+ "title": "Binary output length and running time",
+ "statement": "Let $F$ be a finite Turing machine over the Boolean alphabet, and let $R,T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every input word $y$, the machine halts within $T(|y|)$ steps with output the binary digit word of $R(|y|)$. Then, for every Boolean word $x$, the length of the binary digit word of $R(|x|)$ is at most $T(|x|)$.",
+ "hypotheses_covered": [
+  "F is a finite Turing machine over the Boolean alphabet",
+  "R and T are functions from natural numbers to natural numbers",
+  "F computes the binary digit word of R(|y|) on every input y within T(|y|) steps",
+  "x is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be a bundled finite machine over the Boolean alphabet that computes, in time\n$T$, the function sending each input $x$ to the binary digit word of $R(|x|)$. Then for\nevery input $x$, the length of that digit word is at most $T(|x|)$, since a run can\nappend at most one output symbol per step."
+}

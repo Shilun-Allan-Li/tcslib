@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.setupCfg_layout_end",
+ "key": "311203e185561cdb",
+ "kind": "lemma",
+ "title": "End of an outward allocation pass",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,B\\in\\mathbb{N}$, and choose a schedule-symbol input, a base configuration on it, a valid input-head position $p$, an integer budget-head position $b$, and budget and guide tapes $\\beta$ and $\\gamma$. For either direction, one step from the corresponding phase of allocation index $0$, with unary head at $B+1$ over the unary tape with $B$ markers and guide head at $g$, enters the right-edge phase for the rightward pass or the left-edge phase for the leftward pass. The unary head stays at $B+1$, the guide head moves one cell in the pass direction, and the guide tape is updated to carry an interior mark at its former head position $g$.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over Booleans",
+  "a and B are natural numbers",
+  "base is a configuration on the chosen input",
+  "p is a valid input-head position",
+  "b and g are integer head positions",
+  "bt and gt are controller tapes",
+  "right specifies either allocation direction"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From layout phase $0$ (of either direction) with unary head at cell $B+1$ --- the\nblank cell terminating the unary tape with $B$ markers --- and guide head at cell $g$,\none step writes an interior mark at guide cell $g$, moves the guide head one further\ncell outward, keeps the unary head in place, and enters the right-edge or left-edge\nphase according to the direction."
+}

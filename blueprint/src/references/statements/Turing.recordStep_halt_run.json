@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.recordStep_halt_run",
+ "key": "f3ed0feac6440afd",
+ "kind": "theorem",
+ "title": "Halted-State Record Run",
+ "statement": "Let $M$ be a deterministic machine with $k$ Boolean work tapes and state set $Q$, let $T$ be a tag type, and let $S$ be the state type of a two-work-tape seeking machine. Choose a tag update function, the seeking machine, and its start and finish states; take an encoded input word $x$, a four-tape configuration $d$, a record-symbol word $w$, and record data whose state is empty. From the snapshot in the read-exit phase with both buffers equal to $w$, the assembled record-step machine reaches, after $4|w|+6$ steps, the snapshot in the true-verdict phase with empty buffers. Before the final step it reaches neither designated verdict state, and at every step through the run each work-tape head stays within distance $|w|+1$ of its corresponding position in $d$.",
+ "hypotheses_covered": [
+  "Machine $M$ with $k$ Boolean work tapes and state set $Q$",
+  "Tag type $T$ and tag update function",
+  "Two-work-tape seeking machine and its start and finish states",
+  "Encoded input word $x$",
+  "Four-tape configuration $d$",
+  "Record-symbol word $w$ and record data",
+  "Record data state is empty",
+  "Exact run length $4|w|+6$",
+  "No designated verdict state before the final step",
+  "All work-tape heads stay within radius $|w|+1$ through the run"
+ ],
+ "confidence": "low",
+ "caveat": "The assembled record-step machine and the record-data and snapshot constructions are only specified formally, without informal definitions in the supplied vocabulary.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

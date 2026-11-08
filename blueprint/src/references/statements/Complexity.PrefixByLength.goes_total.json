@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.PrefixByLength.goes_total",
+ "key": "9bbddcab5dac9b13",
+ "kind": "theorem",
+ "title": "Total Processing of a Pair Encoding",
+ "statement": "For either choice of the program parameter and every bit string $z$, there are a register assignment and an input position such that, on input $z$, the program starting at its scan label with register value $0$ and input position $0$ reaches a halted state with that assignment and position. To describe its appended output, parse $z$ into a first component $a$ and a second component $b$ by reading aligned pairs $00$ and $11$ as bits of $a$ until the separator $01$, with the remaining suffix as $b$; if this parse fails, take both components to be empty. The output appended is the first $|a|$ bits of $b$ when the parameter is true and the suffix of $b$ after its first $|a|$ bits when false, and the run takes at most $5(|z|+1)$ steps; this holds for every output string already printed.",
+ "hypotheses_covered": [
+  "The program parameter is a Boolean choice",
+  "The input is an arbitrary bit string $z$",
+  "The register starts at zero",
+  "The input position starts at zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

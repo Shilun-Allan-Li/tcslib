@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.derivative_restrictLast",
+ "key": "305eac679b06ae4b",
+ "kind": "lemma",
+ "title": "Derivative under last-coordinate restriction",
+ "statement": "Let $n$ be a natural number, let $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, let $i$ be a coordinate in $\\{0,\\ldots,n-1\\}$, let $b$ be a bit, and let $x\\in\\{0,1\\}^n$. The discrete derivative in direction $i$ of the restriction of $f$ to last coordinate $b$, evaluated at $x$, equals the discrete derivative of $f$ in coordinate $i$ at the point obtained by appending $b$ to $x$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$f$ is a real-valued function on the $(n+1)$-dimensional Boolean hypercube",
+  "$i$ is a coordinate in $\\{0,\\ldots,n-1\\}$",
+  "$b$ is a bit",
+  "$x$ is in the $n$-dimensional Boolean hypercube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^{n+1}\\to\\mathbb R$ and $f_b(x)=f(x,b)$. For $i<n$, $b\\in\\{0,1\\}$, and $x\\in\\{0,1\\}^n$, $D_i f_b(x)=D_i f(x,b)$, where $D_i$ is the coordinate half-difference."
+}

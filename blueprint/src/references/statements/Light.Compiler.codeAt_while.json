@@ -1,0 +1,14 @@
+{
+ "lean_name": "Light.Compiler.codeAt_while",
+ "key": "4c617a97593e3db4",
+ "kind": "theorem",
+ "title": "Instruction locations in a while loop",
+ "statement": "Let $P$ be a finite list of WordRAM instructions, let $G$ be a code layout, let $pos$ be a natural number, let $c$ be a condition, and let $s$ be a statement. If the instruction list produced by compiling the while loop with condition $c$ and body $s$ at position $pos$ is a prefix of the suffix of $P$ beginning at $pos$, then the compiled condition is a prefix of $P$ beginning at $pos$, the compiled body is a prefix beginning at $pos + \\mathrm{size}(c)$, and the single instruction that conditionally jumps back to $pos$ is a prefix beginning at $pos + \\mathrm{size}(c) + \\mathrm{size}_{G.F}(s)$.",
+ "hypotheses_covered": [
+  "The compiled while-loop instruction list is a prefix of the instruction list obtained by dropping the first $pos$ instructions of $P$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

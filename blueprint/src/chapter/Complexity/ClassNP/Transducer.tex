@@ -28,21 +28,18 @@ for a bit $b$ and a string $w$, where $\bar o(q,b)$ is the one-bit word $o(q,b)$
 $o(q,b) \in \{0,1\}$ and the empty word when $o(q,b) = \bot$.
 \end{definition}
 
-\begin{theorem}[Transducer output on a concatenation]
+\begin{theorem}[Transducer output on concatenated strings]
 \lean{Complexity.transduce_append}
 \label{Complexity.transduce_append}
 \leanok
 \uses{Complexity.transduce}
 \difficulty{3}
-Let $\sigma$ be a set of states, $\delta : \sigma \times \{0,1\} \to \sigma$ a transition
-function and $o : \sigma \times \{0,1\} \to \{0,1\} \cup \{\bot\}$ an emission function, and
-write $\tau_{\delta,o}(q, w)$ for the output of the one-pass transducer that reads $w$ from
-left to right starting in state $q$, where each bit $b$ read in state $p$ emits the bit
-$o(p,b)$ (or nothing if $o(p,b) = \bot$) and moves to state $\delta(p,b)$. Then for every
-state $q$ and all bit strings $u, v \in \{0,1\}^*$,
-\[ \tau_{\delta,o}(q, uv) = \tau_{\delta,o}(q, u)\;\tau_{\delta,o}\bigl(\hat\delta(q,u), v\bigr), \]
-where $\hat\delta(q,u)$ is the state reached from $q$ by applying $\delta$ successively to
-the bits of $u$ from left to right.
+Let $\sigma$ be a set, let $\delta:\sigma\times\{0,1\}\to\sigma$ be a state transition
+function, let $o:\sigma\times\{0,1\}\to\{0,1\}\cup\{\bot\}$ be an emission function, and
+let $q\in\sigma$. For all binary strings $u,v$, the output produced from $uv$ starting
+in $q$ is the output produced from $u$ starting in $q$, followed by the output produced
+from $v$ starting in the state reached after processing $u$; that state is obtained by
+folding $\delta$ over $u$ from initial state $q$.
 \end{theorem}
 
 \begin{definition}[Transition function of the transducer machine]
@@ -75,59 +72,48 @@ cell right and enters state $\delta(q,b)$, and on reading a blank input cell hal
 moving or writing.
 \end{definition}
 
-\begin{theorem}[Run of the transducer machine on a suffix]
+\begin{theorem}[Run of a transducer on a suffix]
 \lean{Complexity.transducer_run}
 \label{Complexity.transducer_run}
 \leanok
 \uses{Complexity.transduce, Complexity.transducerTM, Complexity.transducerTr, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Let $\sigma$ be a finite set of states, $\delta : \sigma \times \{0,1\} \to \sigma$,
-$o : \sigma \times \{0,1\} \to \{0,1\} \cup \{\bot\}$ and $q_0 \in \sigma$, and let $M$ be
-the binary Turing machine with no work tapes, state set $\sigma$ and start state $q_0$ that,
-in state $p$ reading an input bit $b$, appends $o(p,b)$ to its output (nothing if
-$o(p,b) = \bot$), moves its input head one cell right and enters $\delta(p,b)$, and that
-halts on reading a blank. Let $x = x_0 x_1 \cdots x_{n-1} \in \{0,1\}^*$, let
-$0 \le i \le n$, let $w = x_i x_{i+1} \cdots x_{n-1}$ be the suffix of $x$ starting at
-position $i$, and let $C$ be any configuration of $M$ on input $x$ that is in state
-$q \in \sigma$ with its input head on the cell holding $x_i$ (on the blank just right of
-the input when $i = n$). Then running $M$ for $|w| + 1$ steps from $C$ reaches the halting
-state, and the output tape then holds the output of $C$ followed by
-$\tau_{\delta,o}(q, w)$, where $\tau_{\delta,o}(q, w)$ denotes the word emitted by reading
-$w$ from left to right starting in state $q$, each bit $b$ read in state $p$ emitting
-$o(p,b)$ (or nothing) and moving to $\delta(p,b)$.
+Let $\sigma$ be a finite set, let $\delta : \sigma \times \{0,1\} \to \sigma$ and $o :
+\sigma \times \{0,1\} \to \{0,1\} \cup \{\bot\}$ be transition and emission functions,
+and let $q_0 \in \sigma$. For every input word $x$, suffix $l$, state $q$, configuration
+$C$ on input $x$, and integer $i$ such that $l$ is the suffix of $x$ obtained by
+dropping its first $i$ symbols, $i \le |x|$, $C$ is in state $q$, and its input head is
+at position $i+1$, running the machine determined by $\delta,o,q_0$ from $C$ for $|l|+1$
+steps reaches the halting state. Its output is the initial output of $C$ followed by the
+word emitted by reading $l$ from state $q$.
 \end{theorem}
 
-\begin{theorem}[Transducer machine computes the transducer function]
+\begin{theorem}[Computing a one-pass transducer]
 \lean{Complexity.transducerTM_computes}
 \label{Complexity.transducerTM_computes}
 \leanok
 \uses{Complexity.transduce, Complexity.transducerTM, Complexity.transducer_run, Turing.FinTM.ComputesFunInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-Let $\sigma$ be a finite set of states, $\delta : \sigma \times \{0,1\} \to \sigma$ a
-transition function, $o : \sigma \times \{0,1\} \to \{0,1\} \cup \{\bot\}$ an emission
-function ($\bot$ meaning no output) and $q_0 \in \sigma$, and let $M$ be the binary Turing
-machine with no work tapes, state set $\sigma$ and start state $q_0$ that, in state $p$
-reading an input bit $b$, appends $o(p,b)$ to its output (nothing if $\bot$), moves its
-input head right and enters $\delta(p,b)$, and halts on reading a blank. Then $M$ computes
-the function $x \mapsto \tau_{\delta,o}(q_0, x)$ in time $n + 1$: on every input
-$x \in \{0,1\}^*$ it halts within $|x| + 1$ steps with $\tau_{\delta,o}(q_0, x)$ on its
-output tape, where $\tau_{\delta,o}(q_0, x)$ is the word emitted by reading $x$ from left to
-right starting in $q_0$, each bit $b$ read in state $p$ emitting $o(p,b)$ (or nothing) and
-moving to $\delta(p,b)$.
+Let $\sigma$ be a finite set with decidable equality, let
+$\delta:\sigma\times\{0,1\}\to\sigma$ be a transition function, let
+$o:\sigma\times\{0,1\}\to\{0,1\}\cup\{\bot\}$ be an emission function, and choose an
+initial state $q_0\in\sigma$. The binary Turing machine with no work tapes that, on each
+input bit, emits $o(q,b)$ (or nothing when this is $\bot$), moves right, and changes
+state to $\delta(q,b)$, and that halts on the blank cell, computes the one-pass
+transducer's output from $q_0$ on every input in at most $n+1$ steps, where $n$ is the
+input length.
 \end{theorem}
 
-\begin{theorem}[One-pass transducers are polynomial-time computable]
+\begin{theorem}[Polynomial-time transducer computation]
 \lean{Complexity.polyTimeComputable_transduce}
 \label{Complexity.polyTimeComputable_transduce}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.polyTimeComputable_of_linear, Complexity.transduce, Complexity.transducerTM, Complexity.transducerTM_computes}
 \difficulty{2}
-Let $\sigma$ be a finite set of states, $\delta : \sigma \times \{0,1\} \to \sigma$ a
-transition function, $o : \sigma \times \{0,1\} \to \{0,1\} \cup \{\bot\}$ an emission
-function ($\bot$ meaning no output) and $q_0 \in \sigma$, and let $\tau_{\delta,o}(q_0, x)$
-be the word emitted by the one-pass transducer reading $x \in \{0,1\}^*$ from left to right
-starting in $q_0$, where each bit $b$ read in state $p$ emits $o(p,b)$ (or nothing) and
-moves to $\delta(p,b)$. Then the map $x \mapsto \tau_{\delta,o}(q_0, x)$ is
-polynomial-time computable: some finite binary Turing machine computes it within
-$C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \in \mathbb{N}$.
+Let $\sigma$ be a finite set, let $\delta : \sigma \times \{0,1\} \to \sigma$ be a
+transition function, let $o : \sigma \times \{0,1\} \to \{0,1\} \cup \{\bot\}$ be an
+emission function, and choose a starting state $q_0 \in \sigma$. The string function
+that processes each input bit from left to right, emits $o(q,b)$ when this value is a
+bit and emits nothing when it is $\bot$, then changes state to $\delta(q,b)$, is
+polynomial-time computable.
 \end{theorem}

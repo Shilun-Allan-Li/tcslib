@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.a2_start",
+ "key": "756509f55adfce39",
+ "kind": "lemma",
+ "title": "Complete startup of the countdown",
+ "statement": "For every binary input $x$, after exactly $2|x|+2$ steps from the countdown machine’s initial configuration on $x$, the machine is in its borrow phase with work tape containing $x$, work-head position $0$, input head at the right boundary position $|x|+1$, and empty output.",
+ "hypotheses_covered": [
+  "Binary input $x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, the $(2|x| + 2)$-step run of the countdown emitter from its blank-tape initial configuration is the borrow-state configuration at cell zero with the full input $x$ as counter, input head at the right boundary and empty output."
+}

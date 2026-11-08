@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/ZeroPPIT.lean :: Randomized.PIT.pitW_pairEncode -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# PIT test agrees with verifier
+
+**Claim.** For all bit strings $x$ and $r$, applying the PIT test to the encoded pair of $x$ and $r$ gives the same Boolean value as applying the verifier to $x$ and $r$.
+
+**Proof.** Decoding the outer pair in the PIT test recovers $x$ and $r$. Split according to whether both component strings pass `validW` and their unary input-length fields agree. In the passing case, the characterization of `validW` supplies decoded, well-formed circuits $C,C'$; successful decoding reconstructs each encoded circuit. The unary-field decoder facts identify their input dimensions, and the equality of lengths makes those dimensions the same $n$. The scan-state identity identifies the combined counter with the unary encoding of the size of the subtraction circuit. Thus `pipe_eq` applies to these circuits and says that the test accepts exactly when their evaluations agree modulo every sampled modulus. The modular evaluation specification identifies each modular value with the circuit's evaluation in the corresponding finite ring and bounds each value strictly below the modulus. The subtraction-circuit evaluation identity turns equality of those residues into the zero test for $C-C'$, using the bounds to remove reduction modulo the modulus. The verifier characterization on successfully decoded circuits says precisely that its answer is the negation of this zero test, matching the PIT test. In the failing case, the PIT test is true because its validity condition fails. If the verifier were false, the characterization of verifier behavior in the absence of two well-formed decoded circuits would be contradicted; hence the verifier is true as well.
+
+**Key facts.** `Complexity.pairFstD_pairEncode`, `Complexity.pairSndD_pairEncode`, `Randomized.PIT.validW_iff`, `Randomized.AlgCircuit.encode_of_decode`, `Complexity.BinArith.uHead_encodeNat`, `Complexity.BinArith.uRest_encodeNat`, `Randomized.PIT.sI_scanRun`, `Randomized.AlgCircuit.size_subCircuit`, `Randomized.PIT.pipe_eq`, `Randomized.pitVerifier_of_decode`, `Randomized.PIT.zeroTest_eq`, `Randomized.PIT.evalModW_spec`, `Randomized.AlgCircuit.eval_subCircuit`, `Randomized.pitVerifier_of_not`.

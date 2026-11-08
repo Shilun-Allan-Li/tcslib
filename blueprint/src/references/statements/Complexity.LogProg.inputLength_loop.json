@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.inputLength_loop",
+ "key": "531b6553609add28",
+ "kind": "theorem",
+ "title": "Input length counting loop",
+ "statement": "Let $A$ be a register program with oracle, and let $r$ be a register and $j$ an oracle index. Suppose state `scan` calls oracle $j$ on the whole input and the single register $r$, proceeding to `inc` on a positive answer and `done` otherwise; state `inc` increments $r$ and returns to `scan`. Suppose that for every $n\\le |x|$, the oracle answers positively on the encoding of $x$ paired with the binary word of $n$ exactly when $n<|x|$. If $|x|\\le B$, all initial registers are at most $B$, and the initial value of $r$ is at most $|x|$, then the program reaches `done` with $r=|x|$, while every configuration before that endpoint satisfies $\\mathrm{PreS}$ and keeps all registers at most $B$.",
+ "hypotheses_covered": [
+  "Specified transition at `scan`",
+  "Specified transition at `inc`",
+  "For every $n\\le |x|$, the oracle query on $x$ and the binary word of $n$ returns the decision $n<|x|$",
+  "$|x|\\le B$",
+  "Every initial register value is at most $B$",
+  "Initial value of register $r$ is at most $|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,12 @@
+{
+ "lean_name": "Light.Compiler.compileStmt",
+ "key": "c0c2a658c56e7118",
+ "kind": "def",
+ "title": "Statement compilation",
+ "statement": "Given a code layout with $F$ local variables per frame, a list of procedure entry positions, and a dispatcher position, the compiler maps a statement and a starting code position to a list of Word RAM instructions. It emits no instructions for skip; evaluates and stores expressions for assignments and stores; concatenates compiled code for sequences, placing the second statement after the first according to their sizes; and emits condition checks, branch code, and jumps for conditionals and loops. For a call, it evaluates the arguments, creates and initializes a new frame, jumps to the selected procedure entry (or position $0$ if the procedure index is out of range), then stores the returned value in the designated variable.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

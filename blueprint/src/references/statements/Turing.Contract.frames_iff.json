@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.Contract.frames_iff",
+ "key": "b7b9054e89af0003",
+ "kind": "theorem",
+ "title": "Characterization of frame preservation",
+ "statement": "Let $C$ be a contract and let $F_{i,d,j}\\subseteq\\mathbb Z$ specify, for each datum $i$, starting configuration $d$, and tape $j$, a set of cell positions. The endpoint of every eligible run agrees with its starting configuration on every tape cell outside the corresponding set if and only if, for every such $i,d,j$ and every $q\\notin F_{i,d,j}$, the endpoint's content at $q$ equals the starting configuration's content there.",
+ "hypotheses_covered": [
+  "$C$ is a contract",
+  "A set of integer positions is specified for each datum, starting configuration, and tape"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a contract for a $k$-tape machine, and let $F$ assign to each parameter and\nconfiguration a set of integer positions on each tape. The contract preserves every tape\ncell outside these sets—meaning its endpoint agrees there with the starting\nconfiguration for every entry-state configuration satisfying the precondition—if and\nonly if, for every such parameter, configuration, tape, and position outside the\nassigned set, the endpoint tape content equals the starting tape content."
+}

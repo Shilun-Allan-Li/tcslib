@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.universal_pair_separator",
+ "key": "16abf475aa3b2986",
+ "kind": "lemma",
+ "title": "Separator positions in a paired encoding",
+ "statement": "For any two finite bit strings $\\alpha$ and $x$, the bits of the encoding formed by doubling each bit of $\\alpha$, appending $01$, and then appending $x$ are $0$ at index $2|\\alpha|$ and $1$ at index $2|\\alpha|+1$.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are finite bit strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $\\alpha$ and $x$, the cells of index $2\\abs{\\alpha}$ and\n$2\\abs{\\alpha}+1$ in the self-delimiting pairing $\\langle \\alpha, x\\rangle$\n(each bit of $\\alpha$ doubled, then the separator pair $01$, then $x$\nverbatim) contain the bits $0$ and $1$ respectively: the separator begins\nimmediately after the doubled code region."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_serialization_length",
+ "key": "ed9d6f2d7619dd98",
+ "kind": "lemma",
+ "title": "Serialization Length Bound",
+ "statement": "Let $c$ be an effective machine code with canonizer and let $\\alpha$ be a binary word. The length of the serialization of the machine decoded from $\\alpha$ is at most the canonizer's time bound at input length $|\\alpha|$.",
+ "hypotheses_covered": [
+  "$c$ is an effective machine code with a canonizer that computes the serialization of the decoded machine within its specified time bound",
+  "$\\alpha$ is a binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective machine representation scheme and let $\\alpha$ be a bit string.\nIf the scheme's canonizer computes the canonical serialization of the machine decoded\nfrom each code within its specified time bound, then the length of the canonical\nserialization of the machine decoded from $\\alpha$ is at most the canonizer's time bound\nat input length $|\\alpha|$."
+}

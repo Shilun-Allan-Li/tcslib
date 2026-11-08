@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.sim_jeqIn",
+ "key": "982bec40c8ded0b9",
+ "kind": "lemma",
+ "title": "Simulation of an input-word equality test",
+ "statement": "Let $A$ be a map from labels to register-program instructions, with initial label $l_0$, and let an oracle assign a Boolean answer to each decider and bit string. Suppose $x$ is a bit string of the form $\\langle 1^n,w\\rangle$, where $w$ is canonical, and $A(l)$ tests whether register $r$ equals the input payload, with successor labels $l_1$ for equality and $l_0'$ otherwise. For any register valuation $v$, output word, and integer $W$ such that the length of the binary expansion of $v(r)$ is at most $W$, the compiled program simulates this instruction from the configuration with label $l$, valuation $v$, and the given output to the configuration with the same valuation and output, and label $l_1$ precisely when the binary expansion of $v(r)$ equals $w$ (and $l_0'$ otherwise); at every step before the endpoint, no oracle call is pending and every work-tape head position lies between $-1$ and $W$, inclusive.",
+ "hypotheses_covered": [
+  "An instruction map and initial label",
+  "An oracle assigning Boolean answers by decider and bit string",
+  "Input is a valid plain encoding with canonical payload",
+  "Labels l, l₁, and l₀′",
+  "Register r and instruction testing equality with the input payload",
+  "Register valuation and output word",
+  "Integer bound W",
+  "Binary expansion length of v(r) is at most W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

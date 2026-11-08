@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.transferTM_run_ofCfg",
+ "key": "2faf5d3f211d332f",
+ "kind": "theorem",
+ "title": "Behavior of the transfer machine",
+ "statement": "Let $k$ be a natural number, let $x$ be a finite input word over an alphabet of symbols, and let $w$ be another finite word over that alphabet. Choose distinct indices $\\mathrm{src},\\mathrm{dst}\\in\\{0,\\ldots,k-1\\}$ and a configuration $d$ on input $x$ whose state is the sweep phase. Suppose that, for every integer offset $p$ with $-1\\le p\\le |w|$, the source tape of $d$ at the cell $p$ steps from its initial head position agrees with the buffer storing $w$ at offset $p$. After $2|w|+2$ steps, the transfer machine is in the done phase; it has erased the source tape and written the buffered word on the destination tape at offsets $0,\\ldots,|w|-1$, leaving every other tape cell unchanged. It does not enter the done phase at any earlier step. At every step up to and including step $2|w|+2$, the source and destination heads lie between one cell to the left of their respective initial positions and $|w|$ cells to their right, inclusive, while every other work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$x$ is a finite input word over the symbol alphabet",
+  "$w$ is a finite word over the symbol alphabet",
+  "$\\mathrm{src}$ and $\\mathrm{dst}$ are indices among the $k$ work tapes",
+  "$\\mathrm{src}\\ne\\mathrm{dst}$",
+  "$d$ is a configuration on input $x$",
+  "$d$ is in the sweep phase",
+  "for every integer $p$ with $-1\\le p\\le |w|$, the source tape content at its initial head position plus $p$ equals the buffered content of $w$ at offset $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

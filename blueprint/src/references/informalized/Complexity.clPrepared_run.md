@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/CookLevin/Hardness.lean :: Complexity.clPrepared_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Simulation After Preparation
+
+**Claim.** After a bounded preparation period, the prepared machine’s configuration is the original machine’s run for the specified number of steps, placed in the prepared machine’s frame with the packed input retained on its stream tape.
+
+**Proof.** Write $x$ for the packed rows followed by the trailer. The preparation result (`Complexity.clPrepare_first`) supplies a time $a$ within its stated bound at which the preparation machine has reached the loading configuration, and guarantees that before then it never enters the state that dispatches to the simulated machine. Since the prepared machine agrees with the preparation machine on all those earlier states, the run-lifting theorem for machines whose transitions agree on the states visited (`Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`) transfers this initial segment to the prepared machine, with preparation states embedded into its state space. One additional transition dispatches from the loading configuration into the simulated machine’s initial configuration: the dispatch transition preserves the input head position because it moves by zero (`Turing.moveInputPos_zero`), and its effect on the remaining configuration fields gives exactly the framed initial configuration. The control-action configuration formula (`Turing.FinTM.controlAction_apply`) justifies this field-by-field identification. Finally, the placed-run theorem (`Complexity.clPlaced_run`) simulates the original machine for the next $b$ steps inside the prepared frame, since its transitions there are precisely the placed transitions of the original machine. Splitting the total run at the preparation time plus this dispatch step, using the run composition law (`Turing.MultiTapeTM.runFrom_add`) and the successor-step identity (`Turing.MultiTapeTM.runFrom_succ_eq_step'`), yields the required configuration at time $a+1+b$. The preparation bound gives $a+1\le 2|x|+4+k(3W+7)$, as required.
+
+**Key facts.** `Complexity.clPrepare_first`, `Turing.MultiTapeTM.runFrom_mapState_of_agreeOn`, `Turing.FinTM.controlAction_apply`, `Turing.moveInputPos_zero`, `Complexity.clPlaced_run`, `Turing.MultiTapeTM.runFrom_succ_eq_step'`, `Turing.MultiTapeTM.runFrom_add`.

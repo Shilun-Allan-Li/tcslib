@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.exists_ndAcceptsWithin_decider",
+ "key": "990bc75401ac4265",
+ "kind": "theorem",
+ "title": "Deciding bounded nondeterministic acceptance",
+ "statement": "For every effective coding scheme $c$ for nondeterministic two-work-tape machines over the binary alphabet, there exists a finite binary-alphabet Turing machine $B$ such that, for every binary code string $\\alpha$, there is a natural-number constant $C$ with the following property. For every binary input $x$ and every natural number $t$, if the machine decoded from $\\alpha$ accepts $x$ along some choice string of length exactly $t$, then $B$ computes output $[1]$ on the paired encoding of the binary representation of $t$, $\\alpha$, and $x$ in exactly $C\\,2^{C(t+1)}$ steps; if it does not accept in this sense, then $B$ computes output $[0]$ on that same input in exactly $C\\,2^{C(t+1)}$ steps.",
+ "hypotheses_covered": [
+  "effective coding scheme $c$ for nondeterministic two-work-tape binary machines",
+  "code string $\\alpha$",
+  "binary input $x$",
+  "natural number $t$",
+  "choice string of length exactly $t$",
+  "acceptance means halting with output $[1]$",
+  "computation time exactly $C\\,2^{C(t+1)}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every effective coding scheme for nondeterministic two-work-tape binary machines,\nthere exists a finite binary Turing machine $B$. For each code string $\\alpha$, there is\na constant $C$ such that for every binary input $x$ and natural number $t$, if the\nmachine decoded from $\\alpha$ has an accepting computation on $x$ within exactly $t$\nchoice steps, then $B$ computes the output $[1]$ on the paired encoding of the binary\nrepresentation of $t$, $\\alpha$, and $x$ within $C\\,2^{C(t+1)}$ steps; if it has no such\naccepting computation, then $B$ computes $[0]$ on that encoding within the same bound."
+}

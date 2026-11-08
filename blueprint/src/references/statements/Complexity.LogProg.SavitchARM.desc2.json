@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.desc2",
+ "key": "cae10f496b0b06a0",
+ "kind": "theorem",
+ "title": "Second recursive descent branch",
+ "statement": "Let $E,s,w,i\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean-valued oracle on four indices and Boolean words, let $x$ be a Boolean word, and let $\\mathrm{st}$ be a register state. Suppose $s\\leq w$, $i+1\\leq w$, the recursive-call property holds at level $i$, and $\\mathrm{st}$ satisfies the level-$(i+1)$ invariant with parameters $s,w$; also suppose its midpoint register is less than $2^w$ and $M_1\\leq 2^w$. Starting at phase $0$ of the push loop for the true phase bit, with the target register set to the original midpoint, the midpoint register set to $M_1$, and the popped-endpoint register set to the original target, the machine reaches the phase-1 success site when level-$i$ reachability holds from the original midpoint to the original target, and the phase-1 failure site otherwise. For some $M_2\\leq 2^w$, its final source register is the original midpoint, its midpoint register is $M_2$, and its popped-endpoint register is the original source; every configuration before the final one satisfies the guard requiring valid instructions and all registers at most $2^{w\\cdot w}$.",
+ "hypotheses_covered": [
+  "$E,s,w,i\\in\\mathbb{N}$",
+  "$\\mathrm{orc}$ is a Boolean-valued oracle on four indices and Boolean words",
+  "$x$ is a Boolean word",
+  "$\\mathrm{st}$ is a register state",
+  "$s\\leq w$",
+  "$i+1\\leq w$",
+  "the recursive-call property holds at level $i$",
+  "$\\mathrm{st}$ satisfies the level-$(i+1)$ invariant with parameters $s,w$",
+  "the midpoint register of $\\mathrm{st}$ is less than $2^w$",
+  "$M_1\\leq 2^w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,s,w,i\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean oracle on four indices and\nBoolean words, let $x$ be a Boolean word, and let $\\mathrm{st}$ be a register state.\nAssume $s\\leq w$, $i+1\\leq w$, the recursive call property holds at level $i$, the state\nsatisfies the level-$(i+1)$ invariant with parameters $s,w$, its midpoint register $M$\nis less than $2^w$, and $M_1\\leq 2^w$. From the phase-1 push site with target register\nset to the old midpoint, midpoint register $M_1$, and popped-endpoint register set to\nthe old target, the machine reaches the phase-1 success site if level-$i$ reachability\nholds from the old midpoint to the old target, and otherwise reaches the phase-1 failure\nsite. There is an $M_2\\leq 2^w$ such that the final source register is the old midpoint,\nthe popped-endpoint register is the old source, and the midpoint register is $M_2$;\nevery configuration along the run satisfies the guard bounding all registers by\n$2^{w^2}$ and requiring valid instructions."
+}

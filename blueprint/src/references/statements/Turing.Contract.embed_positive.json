@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.Contract.embed_positive",
+ "key": "c3c74c7e424fac9d",
+ "kind": "theorem",
+ "title": "Positivity under tape embedding",
+ "statement": "Let $m,k$ be natural numbers, let $\\sigma$ inject the $m$ work-tape indices into the $k$ work-tape indices, and let $C$ be a contract for an $m$-tape machine. If $C$ has strictly positive assigned time for every datum and every starting configuration in its entry state satisfying its precondition, then the contract induced by embedding $C$ into the $k$-tape machine also has strictly positive assigned time for every datum and every eligible starting configuration.",
+ "hypotheses_covered": [
+  "An injection $\\sigma$ maps the $m$ tape indices into the $k$ tape indices",
+  "$C$ is a contract for the $m$-tape machine",
+  "$C$ has strictly positive assigned time for every eligible datum and start"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $m,k$ be natural numbers, let $\nho:\text{Fin}(m)\to\text{Fin}(k)$ be an embedding, and\nlet $C$ be a contract for a machine with $m$ work tapes. If every run of $C$ from an\nentry-state configuration satisfying its precondition has strictly positive duration,\nthen the contract obtained by embedding the machine and its contract into $k$ work tapes\nalso has strictly positive duration."
+}

@@ -267,6 +267,7 @@ where the term $u\ln u$ is taken to be $0$ at $u = 0$.
 \lean{CommunicationComplexity.integral_exp_sub_cgf_eq_one}
 \label{CommunicationComplexity.integral_exp_sub_cgf_eq_one}
 \leanok
+\uses{CommunicationComplexity.exp_sub_cgf_eq}
 \difficulty{3}
 Let $\mu$ be a probability measure on a measurable space $\Omega$, let $X : \Omega \to
 \bbr$ be a random variable, and let $t \in \bbr$. Write $\Lambda(t) = \log \int_\Omega
@@ -281,6 +282,7 @@ $x \mapsto e^{t X(x)}$ is $\mu$-integrable, then
 \lean{CommunicationComplexity.integrable_exp_sub_cgf}
 \label{CommunicationComplexity.integrable_exp_sub_cgf}
 \leanok
+\uses{CommunicationComplexity.exp_sub_cgf_eq}
 \difficulty{2}
 Let $(\Omega,\mu)$ be a measure space, let $X\colon\Omega\to\bbr$ be a measurable
 function, and let $t\in\bbr$. Write $\Lambda(t)$ for the cumulant generating function of
@@ -309,6 +311,11 @@ t \int_\Omega f(x)\,X(x)\,d\mu(x) \;\le\; \int_\Omega \bigl(f(x)\log f(x) - f(x)
 
 \begin{theorem}[A Pinsker-type inequality for the Kullback–Leibler generator]
 \lean{CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p007-b009,
+  pdf-6d7577246334-p009-b001,
+  pdf-6d7577246334-p009-b002
+}
 \label{CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun}
 \leanok
 \uses{CommunicationComplexity.variational_integral_mul_le_integral_klFun_add_cgf}
@@ -342,6 +349,11 @@ is,
 
 \begin{theorem}[A Pinsker-type inequality for the Radon–Nikodym density]
 \lean{CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p007-b009,
+  pdf-6d7577246334-p009-b001,
+  pdf-6d7577246334-p009-b002
+}
 \label{CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.half_integral_abs_sub_one_sq_le_integral_klFun, CommunicationComplexity.integrable_rnDensity, CommunicationComplexity.integral_rnDensity_eq_one_of_ac, CommunicationComplexity.measurable_rnDensity, CommunicationComplexity.rnDensity, CommunicationComplexity.rnDensity_nonneg}
@@ -380,6 +392,11 @@ where $\varphi(t) = t\log t + 1 - t$.
 
 \begin{theorem}[Pinsker-type bound via the KL integral]
 \lean{CommunicationComplexity.density_l1_pinsker_le_kl_integral}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p007-b009,
+  pdf-6d7577246334-p009-b001,
+  pdf-6d7577246334-p009-b002
+}
 \label{CommunicationComplexity.density_l1_pinsker_le_kl_integral}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.half_densityAbsIntegral_sq_le_integral_klFun_rnDensity, CommunicationComplexity.integral_klFun_rnDeriv_eq_kl_integral, CommunicationComplexity.rnDensity}
@@ -399,6 +416,11 @@ the constant $1$.
 
 \begin{theorem}[Pinsker's inequality under absolute continuity]
 \lean{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p007-b009,
+  pdf-6d7577246334-p009-b001,
+  pdf-6d7577246334-p009-b002
+}
 \label{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable}
 \leanok
 \uses{CommunicationComplexity.densityAbsIntegral, CommunicationComplexity.density_l1_pinsker_le_kl_integral, CommunicationComplexity.tvDistance, CommunicationComplexity.tvDistance_eq_half_densityAbsIntegral_of_ac}
@@ -415,6 +437,11 @@ the right-hand side being the Kullback–Leibler divergence of $\mu$ from $\nu$.
 
 \begin{theorem}[Pinsker's inequality under absolute continuity]
 \lean{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p007-b009,
+  pdf-6d7577246334-p009-b001,
+  pdf-6d7577246334-p009-b002
+}
 \label{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable}
 \leanok
 \uses{CommunicationComplexity.real_pinsker_inequality_of_ac_of_integrable, CommunicationComplexity.tvDistance}
@@ -432,6 +459,11 @@ $\mathrm{KL}(\mu \,\|\, \nu)$ is the Kullback–Leibler divergence of $\mu$ from
 
 \begin{theorem}[Pinsker's inequality under absolute continuity]
 \lean{CommunicationComplexity.pinsker_inequality_of_ac}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p007-b009,
+  pdf-6d7577246334-p009-b001,
+  pdf-6d7577246334-p009-b002
+}
 \label{CommunicationComplexity.pinsker_inequality_of_ac}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality_of_ac_of_integrable, CommunicationComplexity.tvDistance}
@@ -447,6 +479,11 @@ distance $\mathrm{TV}(\mu,\nu)$ and the Kullback–Leibler divergence $D_{\mathr
 
 \begin{theorem}[Pinsker's inequality]
 \lean{CommunicationComplexity.pinsker_inequality}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p007-b009,
+  pdf-6d7577246334-p009-b001,
+  pdf-6d7577246334-p009-b002
+}
 \label{CommunicationComplexity.pinsker_inequality}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality_of_ac, CommunicationComplexity.tvDistance}
@@ -463,6 +500,11 @@ $[0,\infty]$.
 
 \begin{theorem}[Pinsker's inequality for finite KL divergence]
 \lean{CommunicationComplexity.two_mul_tvDistance_sq_le_toReal_klDiv}
+\statementsource{raoyehudayoff-ch06-information}{
+  pdf-6d7577246334-p007-b009,
+  pdf-6d7577246334-p009-b001,
+  pdf-6d7577246334-p009-b002
+}
 \label{CommunicationComplexity.two_mul_tvDistance_sq_le_toReal_klDiv}
 \leanok
 \uses{CommunicationComplexity.pinsker_inequality, CommunicationComplexity.tvDistance}
@@ -479,13 +521,13 @@ total variation distance $\mathrm{TV}(\mu,\nu) = \tfrac{1}{2}\|\mu -
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{theorem}[Factorisation of the CGF-tilted exponential]
+\begin{theorem}[Factorisation of the tilted exponential]
 \lean{CommunicationComplexity.exp_sub_cgf_eq}
 \label{CommunicationComplexity.exp_sub_cgf_eq}
 \leanok
-Let $\mu$ be a measure on a measurable space $\Omega$, let $X\colon \Omega \to \bbr$,
-and let $t \in \bbr$. Writing $\Lambda(t)$ for the cumulant generating function of $X$
-under $\mu$ at $t$, the functions $x \mapsto e^{\,t X(x) - \Lambda(t)}$ and
-$x \mapsto e^{-\Lambda(t)} \cdot e^{\,t X(x)}$ are equal, i.e.\ the tilted exponential
-factors as the constant $e^{-\Lambda(t)}$ times $e^{\,tX}$.
+\difficulty{3}
+Let $\mu$ be a measure on a measurable space $\Omega$, let $X:\Omega\to\bbr$, and let
+$t\in\bbr$. Writing $\Lambda(t)$ for the cumulant generating function of $X$ under $\mu$
+at $t$, the functions $x\mapsto e^{tX(x)-\Lambda(t)}$ and $x\mapsto
+e^{-\Lambda(t)}e^{tX(x)}$ are equal.
 \end{theorem}

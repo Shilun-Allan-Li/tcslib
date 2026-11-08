@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.exists_rulerHostTM",
+ "key": "e787b54f71810b6e",
+ "kind": "theorem",
+ "title": "Ruler-host simulation",
+ "statement": "For every deterministic $m$-work-tape binary Turing machine $M$ with a finite state set $S$ and decidable state equality, there are a finite state set $Q$, a deterministic binary machine $H$ with $m+1$ work tapes, an injection $\\mathrm{inj}:S\\times\\{0,1\\}\\to Q$, and a positive integer $C$ with the following property. Let $y,z$ be binary strings, let $\\ell>0$ satisfy $|z|=\\ell+|y|$ and $z$'s suffix after its first $\\ell$ symbols equal $y$, and let the extra tape contain a ruler of $\\ell$ ones from offset $-1$ through $\\ell$, with head position $rp$. For any configuration $c$ of $M$ on input $y$ and bit $b$ indicating whether its input head is at position zero, and any time $t$, the host machine started on the paired input and configuration formed by shifting the input-head position by $\\ell$, preserving the original tapes and output, and placing the ruler on its extra tape, reaches after some $t'$ with $t\\le t'\\le C(\\ell+1)t$ the corresponding configuration of $M$ after $t$ steps, with the state encoded using a bit indicating whether that simulated input head is at zero. If $M$ has not halted before $t$, the host has not halted before $t'$; at every intermediate host time $u\\le t'$, its original tapes and output agree with some simulated configuration at a time $v\\le t$, the ruler tape is unchanged, and its ruler head remains in $[rp-1,rp+\\ell]$. By time $t'$, each original tape has visited exactly the cells visited by the corresponding tape of $M$ through time $t$, and the ruler head has visited only cells in that same interval.",
+ "hypotheses_covered": [
+  "A natural number m and a deterministic m-work-tape binary machine M",
+  "The state set S is finite with decidable equality",
+  "Binary strings y and z satisfy |z|=ℓ+|y|",
+  "The suffix of z after its first ℓ symbols is y",
+  "The ruler length ℓ is positive",
+  "The ruler tape agrees with the length-ℓ buffer tape at offsets −1 through ℓ",
+  "The initial input-head boundary bit b is true exactly when c's input position is zero",
+  "An arbitrary initial configuration c and time t"
+ ],
+ "confidence": "high",
+ "caveat": "The conclusion's paired input and shifted configuration are described in words; the stated bounds and tape, output, state, and visited-cell conditions follow the formal statement.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

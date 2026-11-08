@@ -38,6 +38,8 @@ $c$, with the terms of support size $> D$ set to $0$.
 
 \begin{theorem}[Squarefree polynomial representation on the root cube]
 \lean{RazborovSmolensky.exists_squarefree_representative_on_rootCube}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p007-b003}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p012-b003}
 \label{RazborovSmolensky.exists_squarefree_representative_on_rootCube}
 \leanok
 \uses{RazborovSmolensky.rootCube, RazborovSmolensky.squarefreeMonomial, RazborovSmolensky.squarefreePolynomial}
@@ -55,6 +57,8 @@ satisfies $P(x) = f(x)$ for every $x \in \{1,\omega\}^n$.
 
 \begin{theorem}[Low-degree monomials multilinearize on the root cube]
 \lean{RazborovSmolensky.monomial_lowDegree_squarefree_complete_on_rootCube}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p007-b003}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p012-b003}
 \label{RazborovSmolensky.monomial_lowDegree_squarefree_complete_on_rootCube}
 \leanok
 \uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial, RazborovSmolensky.rootCube, RazborovSmolensky.squarefreeMonomial}
@@ -121,6 +125,11 @@ P\!\left(\sum_{i \in S} c_i\right) = \sum_{i \in S} P(c_i).
 
 \begin{theorem}[Completeness of low-degree squarefree polynomials on the root cube]
 \lean{RazborovSmolensky.lowDegree_squarefree_complete_on_rootCube}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p007-b003}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p012-b003,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.lowDegree_squarefree_complete_on_rootCube}
 \leanok
 \uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial, RazborovSmolensky.lowDegreeSquarefreePolynomial_sum, RazborovSmolensky.monomial_lowDegree_squarefree_complete_on_rootCube, RazborovSmolensky.rootCube}
@@ -261,6 +270,18 @@ number of elements of $K$.
 
 \begin{theorem}[Counting obstruction for low-degree squarefree approximation on the root cube]
 \lean{RazborovSmolensky.rootCube_counting_obstruction_lowDegreeSquarefree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p007-b001,
+  pdf-52929dbaa962-p007-b002,
+  pdf-52929dbaa962-p007-b003,
+  pdf-52929dbaa962-p007-b004
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p009-b001,
+  pdf-988dc9f0ae91-p009-b002,
+  pdf-988dc9f0ae91-p010-b001,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.rootCube_counting_obstruction_lowDegreeSquarefree}
 \leanok
 \uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.lowDegreeSquarefreePolynomial, RazborovSmolensky.lowDegree_squarefree_complete_on_rootCube, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCubeBall, RazborovSmolensky.rootCubeBall_card_le_binomial, RazborovSmolensky.rootCube_card_of_ne_one, RazborovSmolensky.rootCube_counting_obstruction, RazborovSmolensky.rootCube_function_card_of_ne_one}
@@ -282,6 +303,28 @@ some $f$ fails to be approximated in this sense by any such $Q$.
 
 \begin{theorem}[No low-degree approximation of the coordinate product on the root cube]
 \lean{RazborovSmolensky.no_low_degree_rootProd_approx_concrete}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p007-b001,
+  pdf-52929dbaa962-p007-b002,
+  pdf-52929dbaa962-p007-b003,
+  pdf-52929dbaa962-p007-b004
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p003-b001,
+  pdf-d3f464808105-p005-b002,
+  pdf-d3f464808105-p005-b003,
+  pdf-d3f464808105-p005-b004,
+  pdf-d3f464808105-p005-b005,
+  pdf-d3f464808105-p005-b006
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p011-b006,
+  pdf-988dc9f0ae91-p012-b001,
+  pdf-988dc9f0ae91-p012-b002,
+  pdf-988dc9f0ae91-p012-b003,
+  pdf-988dc9f0ae91-p012-b004,
+  pdf-988dc9f0ae91-p013-b001
+}
 \label{RazborovSmolensky.no_low_degree_rootProd_approx_concrete}
 \leanok
 \uses{RazborovSmolensky.LowDegreeSupport, RazborovSmolensky.exists_squarefree_representative_on_rootCube, RazborovSmolensky.no_low_degree_rootProd_approx, RazborovSmolensky.rootCube, RazborovSmolensky.rootCubeBadCount, RazborovSmolensky.rootCube_counting_obstruction_lowDegreeSquarefree, RazborovSmolensky.squarefreePolynomial}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.timedCondTM_computes",
+ "key": "028696e3f64a985b",
+ "kind": "theorem",
+ "title": "Time bound for a conditional computation",
+ "statement": "Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, and let $p$ be a Boolean-valued function on Boolean words. Suppose $D$ computes the one-bit output $[p(x)]$ from every input $x$ within $T_0(|x|)$ steps, and $M_1$ and $M_2$ compute $f_1(x)$ and $f_2(x)$ within $T_1(|x|)$ and $T_2(|x|)$ steps, respectively. Then the timed conditional controller computes $f_1(x)$ when $p(x)$ is true and $f_2(x)$ otherwise, within $5\\bigl(T_0(|x|)+\\max(T_1(|x|),T_2(|x|))+1\\bigr)$ steps for every input $x$.",
+ "hypotheses_covered": [
+  "$D,M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$D$ computes $[p(x)]$ within $T_0(|x|)$ for every input",
+  "$M_1$ computes $f_1(x)$ within $T_1(|x|)$ for every input",
+  "$M_2$ computes $f_2(x)$ within $T_2(|x|)$ for every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

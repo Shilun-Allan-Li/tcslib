@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.a2_compile",
+ "key": "bebc147a21a624f4",
+ "kind": "lemma",
+ "title": "Compiling an exponential certificate language",
+ "statement": "Let $L$ and $V$ be languages over the Boolean alphabet, and let $C,c,A,d$ be natural numbers. Suppose that for every Boolean word $x$, membership $x\\in L$ is equivalent to the existence of a Boolean word $u$ with $|u|=C\\,(2^{|x|+1})^c$ and $xu\\in V$. Suppose also that a finite deterministic Turing machine $M$ decides $V$ within time $A(m+1)^d$ on inputs of length $m$. Then there exist natural numbers $K,r$ and a finite nondeterministic Turing machine $N$ that decides $L$ within time $K\\bigl(n+C(2^{n+1})^c+1\\bigr)^r$.",
+ "hypotheses_covered": [
+  "Languages $L$ and $V$ over the Boolean alphabet",
+  "Natural-number parameters $C,c$",
+  "Certificate characterization for every input word $x$",
+  "Certificate length $C(2^{|x|+1})^c$ and concatenation $xu\\in V$",
+  "Finite deterministic machine $M$ decides $V$ within $A(m+1)^d$",
+  "Natural-number parameters $A,d$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L$ be a language over the binary alphabet such that $x \\in L$ exactly when some binary string $u$ with $|u| = C \\cdot 2^{(|x|+1)^c}$ has $x\\,u \\in V$, and let $M$ be a deterministic machine deciding the verifier language $V$ within $A(m+1)^d$. Then there are constants $K, r$ and a nondeterministic machine deciding $L$ within $K\\,(n + C\\cdot 2^{(n+1)^c} + 1)^r$."
+}

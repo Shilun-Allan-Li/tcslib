@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.flipDisagreement_eq",
+ "key": "9d2c6f9f90ecbc40",
+ "kind": "lemma",
+ "title": "Fourier formula for flip disagreement",
+ "statement": "Let $n$ be a nonnegative integer, let $f\\colon\\{0,1\\}^n\\to\\mathbb R$ take values in $\\{-1,1\\}$, and let $S\\subseteq[n]$. If $x^S$ is obtained by flipping the coordinates in $S$, then\n\\[\n\\frac14\\E_x[(f(x)-f(x^S))^2]\n=\\frac{1-\\displaystyle\\sum_{T\\subseteq[n]}(-1)^{|T\\cap S|}\\widehat f(T)^2}{2},\n\\]\nwhere $\\widehat f(T)=\\E_x[f(x)\\chi_T(x)]$ and $\\chi_T(x)=\\prod_{i\\in T}\\sigma(x_i)$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$",
+  "$f(x)\\in\\{-1,1\\}$ for every $x$",
+  "$S$ is a subset of $[n]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$ and equip $\\{0,1\\}^n$ with its uniform probability measure; write $\\mathbb E$ for uniform expectation. For $S\\subseteq[n]$, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for real cube functions $h$. For $S\\subseteq[n]$, let $x^S$ be the bit vector obtained by flipping exactly the coordinates in $S$. If $f\\colon\\{0,1\\}^n\\to\\{-1,1\\}$, then $\\Pr[f(x)\\ne f(x^S)]=(1-\\sum_{T\\subseteq[n]}(-1)^{|T\\cap S|}\\widehat f(T)^2)/2$ for each $S\\subseteq[n]$; equivalently, this is $\\tfrac14\\mathbb E[(f(x)-f(x^S))^2]$."
+}

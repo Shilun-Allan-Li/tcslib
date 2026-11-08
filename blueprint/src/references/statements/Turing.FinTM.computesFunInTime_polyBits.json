@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_polyBits",
+ "key": "1d912ff5e6438511",
+ "kind": "theorem",
+ "title": "Polynomial values in binary",
+ "statement": "For every $C,e\\in\\mathbb{N}$, there exist a finite Turing machine $M$ over the Boolean alphabet and a constant $c\\in\\mathbb{N}$ such that, on every input $x$, $M$ outputs the binary representation of $C(|x|+1)^e$, with bits listed from least significant to most significant, within $c(|x|+1)^{e+1}$ steps.",
+ "hypotheses_covered": [
+  "C and e are natural numbers",
+  "a finite Boolean-alphabet Turing machine and natural constant exist",
+  "output is the binary bit list of C(|x|+1)^e",
+  "time bound c(|x|+1)^(e+1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all constants $C$ and $e$ there exist a finite Turing machine $M$ and a\nconstant $c$ such that $M$ computes the function sending each input of length\n$n$ to the little-endian binary representation of $C\\,(n+1)^{e}$, within\n$c\\,(n+1)^{e+1}$ steps."
+}

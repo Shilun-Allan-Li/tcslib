@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.regPos_after",
+ "key": "2be50407b2649a8d",
+ "kind": "lemma",
+ "title": "Register position after a track move",
+ "statement": "Let $c_0$ be a configuration with $m$ registers, let $x$ be a Boolean input, and let a call specification with an ordered list of argument registers determine the virtual input segments from $x$ and register words $W$. Assume the argument list has no repetitions, $m>0$, and $s$ is at most the length of that list. For a register $r$, a track position $tp$, a sign $mv\\in\\{-1,0,1\\}$, and a second track position $T2$, suppose either $G1=s$ and the track position of $T2$ equals that of $tp$ plus $mv$, or $mv=0$ and one of the following holds: $G1=s+1$, $tp$ is the right boundary and $T2$ the left boundary; or $G1+1=s$, $tp$ is the left boundary and $T2$ the right boundary. Then the register position at segment index $G1$ and track position $T2$ equals its position at index $s$ and $tp$, plus $mv$ exactly when $s\\ne0$ and $r$ is the argument register selected at index $s$; otherwise the position is unchanged.",
+ "hypotheses_covered": [
+  "Argument-register list has no repetitions",
+  "$m>0$",
+  "$s\\leq$ the argument-list length",
+  "Either the same segment index and track-position displacement by $mv$, or $mv=0$ and one of the two specified boundary transitions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

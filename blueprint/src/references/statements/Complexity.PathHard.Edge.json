@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.PathHard.Edge",
+ "key": "4d37a9ac4c274b33",
+ "kind": "def",
+ "title": "Machine configuration edges",
+ "statement": "Let $N$ be a nondeterministic Turing machine with Boolean alphabet, let $x$ be a finite Boolean string, and let $s,u,v$ be natural numbers. Declare $(u,v)$ to be an edge at input $x$ and parameter $s$ if at least one of the following holds: $u=0$, $v\\ge2$, and the encoding of $x$ together with the encoding of the binary representations of $v-2$ and $s$ belongs to the initial language of $N$; or $u\\ge2$, $v=1$, and the corresponding encoding using $u-2$ belongs to its accepting language; or $u,v\\ge2$ and $N$ makes a step from configuration $u-2$ to configuration $v-2$ on input $x$ with parameter $s$.",
+ "hypotheses_covered": [
+  "$N$ is a nondeterministic Turing machine with Boolean alphabet",
+  "$x$ is a finite Boolean string",
+  "$s,u,v$ are natural numbers"
+ ],
+ "confidence": "low",
+ "caveat": "The snippet does not define the encoding, initial and accepting languages, or step relation.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

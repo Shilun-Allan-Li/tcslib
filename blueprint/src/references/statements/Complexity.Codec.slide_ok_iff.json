@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Codec.slide_ok_iff",
+ "key": "e2a312ccb16e5f30",
+ "kind": "theorem",
+ "title": "Sliding recurrence check",
+ "statement": "Let $X$ be a set, let $G\\colon X^3\\to X$, let $e\\in X$, and let $u,v$ be finite lists in $X$ with $|u|=|v|$. The Boolean flag obtained by starting from $(e,e,e,\\mathrm{true})$, processing the pairs in the zip of $u$ and $v$ followed by two copies of $(e,e)$, and at each step updating the triple and retaining the flag exactly when the previous middle entry equals $G$ applied to the previous triple, is true if and only if, for every integer $i<|u|+2$, the entry at position $i$ of the list $e::v$ equals $G$ applied to the entries at positions $i,i+1,i+2$ of $e::e::u$, where any out-of-range entry is interpreted as $e$.",
+ "hypotheses_covered": [
+  "$G\\colon X^3\\to X$",
+  "$e\\in X$",
+  "$u,v$ are finite lists in $X$",
+  "$|u|=|v|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

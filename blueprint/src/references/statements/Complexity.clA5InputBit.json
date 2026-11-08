@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5InputBit",
+ "key": "c96e88d553f2fa33",
+ "kind": "lemma",
+ "title": "Boundary-Aware Input Bit Formula",
+ "statement": "For every Boolean word $y$ and natural-number position $p$, the boundary-aware input read is absent unless $1\\le p\\le |y|$; in that range it is the bit at zero-based position $p-1$, with false as the default value.",
+ "hypotheses_covered": [
+  "A Boolean word $y$",
+  "A position $p\\in\\mathbb N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every word $y$ and position $p$, the input symbol at $p$ is the bit of $y$ at $p - 1$ when $0 < p \\le |y|$ and a blank otherwise."
+}

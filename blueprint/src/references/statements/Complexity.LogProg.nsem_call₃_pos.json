@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.nsem_call₃_pos",
+ "key": "82d06834fcdcd7ef",
+ "kind": "lemma",
+ "title": "Semantics of a positive three-argument oracle call",
+ "statement": "Let $A$ be a nondeterministic register program, $O$ an oracle family, $x$ an input bit string, and $G$ a guard on configurations. Suppose the instruction at state $l$ calls oracle $j$ in whole-input mode with registers $r,s,t$, branching to $l_1$ on a true answer and to $l_0$ on a false answer. For register values $v$ and any proposition $P$, if $G$ holds at $(l,v,\\mathrm{none})$ and $O_j$ answers true on $\\langle x,\\langle\\operatorname{bits}(v(r)),\\langle\\operatorname{bits}(v(s)),\\operatorname{bits}(v(t))\\rangle\\rangle\\rangle$, then terminating semantics and acceptance equivalent to $P$ at $(l_1,v,\\mathrm{none})$ imply the same at $(l,v,\\mathrm{none})$.",
+ "hypotheses_covered": [
+  "The instruction at $l$ is the stated whole-input call to oracle $j$ with registers $r,s,t$ and branches $l_1,l_0$",
+  "The guard $G$ holds at $(l,v,\\mathrm{none})$",
+  "The oracle answers true on $\\langle x,\\langle\\operatorname{bits}(v(r)),\\langle\\operatorname{bits}(v(s)),\\operatorname{bits}(v(t))\\rangle\\rangle\\rangle$",
+  "The successor configuration $(l_1,v,\\mathrm{none})$ has terminating semantics and acceptance equivalent to $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

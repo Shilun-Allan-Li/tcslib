@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.expect_mul_linear_form",
+ "key": "c87873817d09a4e5",
+ "kind": "lemma",
+ "title": "Correlation with a linear form",
+ "statement": "Let $n$ be a nonnegative integer, let $f\\colon\\{0,1\\}^n\\to\\mathbb R$, and let $b_i\\in\\mathbb R$ for each $i\\in[n]$. Then\n\\[\n\\E_x\\!\\left[f(x)\\sum_{i\\in[n]} b_i\\sigma(x_i)\\right]\n=\\sum_{i\\in[n]}b_i\\widehat f(\\{i\\}),\n\\]\nwhere $\\widehat f(\\{i\\})=\\E_x[f(x)\\sigma(x_i)]$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$",
+  "$b$ assigns a real coefficient to each coordinate in $[n]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$ be a real-valued cube function, and let $(b_i)_{i<n}$ be real coefficients.\nWith uniform expectation $\\mathbb E[h]=2^{-n}\\sum_{x\\in\\{0,1\\}^n}h(x)$ and singleton Fourier coefficients $\\widehat f(\\{i\\})=\\mathbb E[f(x)(-1)^{x_i}]$, one has\n\\[\n\\mathbb E\\!\\left[f(x)\\sum_{i<n}b_i(-1)^{x_i}\\right]\n =\\sum_{i<n}b_i\\widehat f(\\{i\\}).\n\\]"
+}

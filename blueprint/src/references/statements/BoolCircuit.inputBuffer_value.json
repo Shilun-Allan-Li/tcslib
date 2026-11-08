@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.inputBuffer_value",
+ "key": "51c33b40f772a163",
+ "kind": "theorem",
+ "title": "Values Produced by an Input Buffer",
+ "statement": "Let $n,m$ be natural numbers, let each of $m$ source positions select either one of $n$ Boolean inputs or a Boolean constant, and let $x$ be an assignment of Boolean values to those $n$ inputs. Form the list of gates that copies the selected input or produces the selected constant, and run these gates in order starting with the list of the $n$ input values, evaluating each gate from the values already present. For every buffer position $i$, the value at index $n+i$ of the resulting list, using false as the default if out of range, equals the value selected by source position $i$.",
+ "hypotheses_covered": [
+  "$n,m$ are natural numbers",
+  "A source selector maps each of $m$ positions to one of $n$ inputs or a Boolean constant",
+  "$x$ assigns a Boolean value to each of the $n$ inputs",
+  "$i$ is a buffer position in $\\mathrm{Fin}\\,m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

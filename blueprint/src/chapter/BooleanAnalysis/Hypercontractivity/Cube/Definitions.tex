@@ -15,6 +15,14 @@ A weighted directed graph on a set $V$ consists of a directed graph on $V$, with
 \lean{BooleanAnalysis.Hypercontractivity.stableCubeGraph}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.WeightedDigraph, BooleanAnalysis.Hypercontractivity.noiseKernel, BooleanAnalysis.uniformWeight}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p053-b003,
+  pdf-ffbe9c7b3306-p053-b004,
+  pdf-ffbe9c7b3306-p120-b003,
+  pdf-ffbe9c7b3306-p254-b008,
+  pdf-ffbe9c7b3306-p260-b001,
+  pdf-ffbe9c7b3306-p260-b005
+}
 For $n\in\mathbb N$ and $\rho\in\bbr$, the $\rho$-stable cube is the complete directed graph, including loops, on $\{0,1\}^n$, with weight $w(x,y)=2^{-n}\prod_{i=1}^n\frac{1+\rho(-1)^{x_i+y_i}}{2}$. For $-1\le\rho\le1$, these weights are the joint probabilities of a uniform correlated pair.
 \end{definition}
 
@@ -22,5 +30,13 @@ For $n\in\mathbb N$ and $\rho\in\bbr$, the $\rho$-stable cube is the complete di
 \lean{BooleanAnalysis.Hypercontractivity.noisyCubeGraph}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.WeightedDigraph, BooleanAnalysis.Hypercontractivity.stableCubeGraph}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p053-b003,
+  pdf-ffbe9c7b3306-p054-b002,
+  pdf-ffbe9c7b3306-p120-b003,
+  pdf-ffbe9c7b3306-p254-b008,
+  pdf-ffbe9c7b3306-p260-b001,
+  pdf-ffbe9c7b3306-p260-b005
+}
 For $n\in\mathbb N$ and $\delta\in\bbr$, the $\delta$-noisy cube is the $(1-2\delta)$-stable cube: the complete directed graph on $\{0,1\}^n$ with weights $2^{-n}\prod_{i=1}^n\frac{1+(1-2\delta)(-1)^{x_i+y_i}}{2}$.
 \end{definition}

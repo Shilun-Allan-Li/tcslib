@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.universal_pair_suffix",
+ "key": "df5399fa64ddbb14",
+ "kind": "lemma",
+ "title": "Suffix lookups in a paired encoding",
+ "statement": "For any finite bit strings $\\alpha$ and $x$ and any natural number $j$, the optional bit at index $2|\\alpha|+2+j$ in the encoding formed by doubling each bit of $\\alpha$, appending $01$, and then appending $x$ equals the optional bit at index $j$ in $x$.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are finite bit strings",
+  "$j$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $\\alpha$ and $x$ and every natural number $j$, the\noptional cell lookup at index $2\\abs{\\alpha}+2+j$ in the self-delimiting\npairing $\\langle \\alpha, x\\rangle$ agrees with the optional lookup at index\n$j$ in $x$; both are simultaneously undefined when $j \\ge \\abs{x}$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.ptf_chow_theorem",
+ "key": "59bc55c69311c9be",
+ "kind": "theorem",
+ "title": "Uniqueness from low-degree Fourier coefficients",
+ "statement": "Let $n,k\\in\\mathbb N$ and let $f,g:\\{0,1\\}^n\\to\\mathbb R$ be $\\pm1$-valued functions. Suppose $f$ is represented as the threshold sign of a multilinear polynomial of degree at most $k$, with zero assigned sign $1$, and suppose $f$ and $g$ have equal Fourier–Walsh coefficients at every subset of coordinates of cardinality at most $k$. Then $g=f$.",
+ "hypotheses_covered": [
+  "$n,k\\in\\mathbb N$",
+  "$f$ is a polynomial threshold function of degree at most $k$",
+  "$f$ is $\\pm1$-valued",
+  "$g$ is $\\pm1$-valued",
+  "The Fourier–Walsh coefficients of $f$ and $g$ agree for every coordinate subset of size at most $k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n,k\\in\\mathbb N$, let $f,g:\\{0,1\\}^n\\to\\{-1,1\\}$, and define $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\mathbb E_x[h(x)\\chi_S(x)]$ using uniform expectation, for $S\\subseteq\\{1,\\ldots,n\\}$ and $h:\\{0,1\\}^n\\to\\mathbb R$.\nSuppose $f(x)=\\operatorname{sgn}(p(x))$ for a real multilinear polynomial $p(x)=\\sum_{|S|\\le k}a_S\\chi_S(x)$, where $\\operatorname{sgn}(t)=1$ for $t\\ge0$ and $-1$ for $t<0$.\nIf $\\widehat g(S)=\\widehat f(S)$ for every $S$ with $|S|\\le k$, then $g=f$."
+}

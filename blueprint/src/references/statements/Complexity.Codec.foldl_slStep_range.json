@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.Codec.foldl_slStep_range",
+ "key": "76ea8171727ed778",
+ "kind": "lemma",
+ "title": "Folded three-term recurrence check",
+ "statement": "Let $X$ be a type with decidable equality, let $G:X\\times X\\times X\\to X$, let $e\\in X$, and let $f,g:\\mathbb{N}\\to X$ and $J\\in\\mathbb{N}$. Starting from $(e,e,e,\\mathrm{true})$, process the pairs $(f(i),g(i))$ for $0\\le i<J$ in order, updating $(a,b,c,q)$ to $(b,f(i),g(i),q\\land[b=G(a,b,f(i))])$. The resulting state is $(F_J,F_{J+1},H_J,Q_J)$, where $F_k$ is the value at position $k$ in the list $(e,e,f(0),\\ldots,f(J-1))$ (using $e$ when out of range), $H_k$ is the value at position $k$ in $(e,g(0),\\ldots,g(J-1))$ (again using $e$ out of range), and $Q_J$ is true exactly when $H_i=G(F_i,F_{i+1},F_{i+2})$ for every $i<J$.",
+ "hypotheses_covered": [
+  "$X$ has decidable equality",
+  "$G:X^3\\to X$",
+  "$e\\in X$",
+  "$f,g:\\mathbb{N}\\to X$",
+  "$J\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

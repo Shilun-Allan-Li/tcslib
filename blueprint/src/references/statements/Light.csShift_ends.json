@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.csShift_ends",
+ "key": "1e3c3d9f7c489a81",
+ "kind": "theorem",
+ "title": "Counting-sort shift phase",
+ "statement": "Let a counting-sort input have $n$ items with keys in $\\{0,\\ldots,N-1\\}$, and assume the word and address bounds, key-cell bounds, and required disjointness conditions for the source, destination, and counter ranges. If the input state has completed placement of all $n$ items, then the shifting program has an execution of cost at most $18N+9$ whose final memory has every item at its stable sorted position, has cumulative key counts in the counter cells, and agrees with the initial memory outside the destination and counter ranges.",
+ "hypotheses_covered": [
+  "Counting-sort preconditions: word bound, source/destination/counter bounds, item and key contents, key range, and required interval disjointness",
+  "Initial state has loop index $n$, all items placed at their stable sorted positions, and agrees with initial memory outside destination and counter ranges"
+ ],
+ "confidence": "low",
+ "caveat": "The bundled placed-state and postcondition predicates are not informally defined in the supplied descriptions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

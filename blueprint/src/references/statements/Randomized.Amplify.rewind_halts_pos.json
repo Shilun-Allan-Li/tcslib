@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.Amplify.rewind_halts_pos",
+ "key": "0ad64622bbea67c4",
+ "kind": "theorem",
+ "title": "Halting during rewind from a bounded position",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean inputs, let $x$ be an input, and let $r,t$ be natural numbers. Suppose every choice word of length exactly $t$, run on $N$ from its initial configuration on $x$, ends in a halted configuration. For every $i\\in\\mathbb N$ and $j$ with $0\\le j\\le r$ such that $j+i=r$, every counter $c$ with $0\\le c\\le r+1$, and every augmented configuration $C$ in rewind phase at $(j,c)$ with empty output and all later blocks blank with their heads at $0$, if the input-head position of $C$ is at most $t+1$, then every choice word of length exactly $i(2t+3)+1$ makes the amplified machine started from $C$ halt.",
+ "hypotheses_covered": [
+  "Every length-$t$ choice word makes $N$ halt on $x$ from its initial configuration",
+  "$j+i=r$",
+  "$j$ ranges from $0$ to $r$",
+  "$c$ ranges from $0$ to $r+1$",
+  "$C$ is in rewind phase at $(j,c)$, has empty output, and all later blocks are blank with head position $0$",
+  "The input-head position of $C$ is at most $t+1$",
+  "The choice word has length exactly $i(2t+3)+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

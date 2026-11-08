@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.Contract.inPhase_positive",
+ "key": "708812e046ef2762",
+ "kind": "theorem",
+ "title": "Positivity of a phase contract",
+ "statement": "Let $I$ index a family of machines with phase state sets $\\mathrm{Ph}(i)$, let $q_0$ be a state of the phase-host machine, and let $red$ assign to each phase and state either no successor or a state in the disjoint union of the phase state sets. Fix a phase $p$, a state $s_0\\in\\mathrm{Ph}(p)$, and a contract $C$ for the machine in phase $p$. Suppose the halted state is not in $C$'s exit set; every state outside that exit set reduces to no successor in phase $p$; and every state in that exit set reduces to a state in a different phase. If $C$ has strictly positive assigned time for every eligible datum and starting configuration, then the contract obtained by placing $C$ inside the phase-host machine has strictly positive assigned time for every eligible datum and starting configuration.",
+ "hypotheses_covered": [
+  "A family of phase-indexed machines and their phase state sets",
+  "A phase-host initial state $q_0$",
+  "A reduction rule $red$",
+  "A fixed phase $p$ and entry state $s_0$",
+  "$C$ is a contract for the phase-$p$ machine",
+  "The halted state is outside $C$'s exit set",
+  "Every state outside the exit set reduces to no successor",
+  "Every state in the exit set reduces to a state in a different phase",
+  "$C$ has strictly positive assigned time for every eligible datum and start"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_p$ be the machine for phase $p$ in a family of phase-indexed machines, let $C$ be\na contract for $M_p$, and let $q_0$ be a state of the phase-host machine. Suppose the\nreduction map sends every state outside the exit set to no successor, sends every state\nin the exit set to a successor in a different phase, and the halted state is not in the\nexit set. If $C$ has strictly positive duration on every entry-state configuration\nsatisfying its precondition, then the contract obtained by placing $C$ inside phase $p$\nof the host machine has strictly positive duration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "integral_pow_four_le_of_subgaussian",
+ "key": "47a32d232ddaa510",
+ "kind": "lemma",
+ "title": "Fourth moment bound for a sub-Gaussian variable",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, let $Z:\\Omega\\to\\bbr$ be measurable, and let $\\sigma^2>0$. Suppose that for every $s\\in\\bbr$, $e^{sZ}$ is $\\mu$-integrable and $\\mathbb{E}_\\mu[e^{sZ}]\\le e^{\\sigma^2s^2/2}$, and that $\\mathbb{E}_\\mu[Z^2]=\\sigma^2$. Then $Z^4$ is $\\mu$-integrable and $\\mathbb{E}_\\mu[Z^4]\\le4\\sigma^4$.",
+ "hypotheses_covered": [
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$Z$ is measurable",
+  "$\\sigma^2>0$",
+  "$e^{sZ}$ is integrable and its moment-generating function is bounded by $e^{\\sigma^2s^2/2}$ for every real $s$",
+  "$\\mathbb{E}_\\mu[Z^2]=\\sigma^2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $Z$ be a measurable real random variable on a probability space $(\\Omega, \\mu)$\nwhich is strictly sub-Gaussian with variance proxy $\\sigma^2 > 0$ (for every real $s$,\n$e^{sZ}$ is integrable and $\\E_\\mu[e^{sZ}] \\le e^{\\sigma^2 s^2/2}$), and suppose\n$\\E_\\mu[Z^2] = \\sigma^2$.  Then $Z^4$ is $\\mu$-integrable and\n\\[\n  \\E_\\mu\\!\\left[Z^4\\right] \\;\\le\\; 4\\sigma^4 .\n\\]\n(For a Gaussian the exact value is $3\\sigma^4$.)"
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.Contract.trans_positive",
+ "key": "e98c133ba5035c24",
+ "kind": "theorem",
+ "title": "Positivity of the Composed Running Time",
+ "statement": "Let $C_1$ be a contract for $M$ from entry state $e_1$ to the singleton exit state $e_2$, and let $C_2$ be a contract for $M$ from $e_2$ to exit set $X$. Let $\\mathrm{link}$ map parameters of $C_1$ to parameters of $C_2$. Suppose every endpoint of $C_1$ from an admissible start satisfies the corresponding linked precondition of $C_2$, and before the end of the first run the state is outside $X$. If $C_1$ has strictly positive prescribed running time for every admissible start, then the contract obtained by composing $C_1$ and $C_2$ has strictly positive prescribed running time for every admissible start.",
+ "hypotheses_covered": [
+  "$C_1$ is a contract for $M$ from $e_1$ to $\\{e_2\\}$",
+  "$C_2$ is a contract for $M$ from $e_2$ to $X$",
+  "$\\mathrm{link}$ maps $C_1$ parameters to $C_2$ parameters",
+  "Every admissible $C_1$ endpoint satisfies the linked $C_2$ precondition",
+  "Before the $C_1$ running time, the run's state is outside $X$",
+  "$C_1$ has positive running time on every admissible start"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C_1$ and $C_2$ be contracts for the same multi-tape Turing machine, where $C_1$\nenters at $e_1$ and exits at $e_2$, and $C_2$ enters at $e_2$ and exits in a set $X$.\nLet $\\mathrm{link}$ map parameters of $C_1$ to parameters of $C_2$. Assume each endpoint\nof $C_1$ satisfies the precondition of $C_2$ at the linked parameter, and that before\nthe $C_1$ running time the machine's state never belongs to $X$. If $C_1$ has strictly\npositive running time for every admissible starting configuration, then the contract\nformed by sequentially composing $C_1$ and $C_2$ also has strictly positive running time\nfor every admissible starting configuration."
+}

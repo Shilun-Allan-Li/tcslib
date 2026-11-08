@@ -1,0 +1,15 @@
+{
+ "lean_name": "Std.Sat.CNF.syntaxSuffix_run",
+ "key": "a650d906bbe0b0a7",
+ "kind": "theorem",
+ "title": "Syntax suffix recognition",
+ "statement": "For a state $q\\in\\{0,1,2,3,4,5\\}$ and a finite bit string $x$, the following condition holds exactly when processing $x$ from state $q$ by the transitions specified below ends in state $4$: at state $0$, $x$ is the encoding of a CNF formula; at state $1$, it is the encoding of a clause followed by the encoding of a CNF formula; at state $2$, it has the form $1^v0b$ followed by the encoding of a clause and the encoding of a CNF formula, for some $v\\in\\mathbb N$ and bit $b$; at state $3$, it is a bit followed by the encoding of a clause and the encoding of a CNF formula; at state $4$, $x$ is empty; and at state $5$, the condition is false. On input $1$, states $0,1,2,3$ move respectively to $1,2,2,1$, while on input $0$ they move respectively to $4,0,3,1$; from either state $4$ or state $5$, either input moves to state $5$.",
+ "hypotheses_covered": [
+  "$q$ is one of the six states $0,1,2,3,4,5$",
+  "$x$ is a finite bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

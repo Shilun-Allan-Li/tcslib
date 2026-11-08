@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.catalog_clear_trace",
+ "key": "afcaee806c41a8ad",
+ "kind": "lemma",
+ "title": "Trace of the clearing machine",
+ "statement": "Let $i$ be a work-tape index, $w$ a finite word, and $d$ a configuration whose state is the forward-sweep phase. Suppose that, at every offset $p$ from $-1$ through the length of $w$, tape $i$ at position equal to its head position plus $p$ contains the symbol of $w$ at offset $p$ when that offset is a word position, and is blank otherwise. Then, for every time $t$, the clearing machine started from $d$ has configuration given by the following trace: its forward-sweep configuration at time $t$ when $t\\le |w|$, its rewind configuration indexed by $2|w|+1-t$ when $|w|<t\\le 2|w|+1$, and its specified completed configuration thereafter. The completed configuration has the same data as $d$ except that the state is the done phase and tape $i$ is blank on the interval from its initial head position inclusive to that position plus $|w|$ exclusive.",
+ "hypotheses_covered": [
+  "A work-tape index $i$",
+  "A word $w$",
+  "Initial configuration $d$ is in the sweep phase",
+  "Tape $i$ agrees with the buffer word at all offsets $-1\\le p\\le |w|$",
+  "Time $t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

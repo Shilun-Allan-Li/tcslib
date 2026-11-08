@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonGuardReady",
+ "key": "4b46d3df0be2a32d",
+ "kind": "lemma",
+ "title": "Guard-Checking Machine from Ready Tapes",
+ "statement": "For every machine format $F$, every $k\\\\ge4$, there exist a finite state set $S$, a deterministic Turing machine with $k$ work tapes and states $S$, an entry state, an injective map from the Boolean values to states, and a constant $a\\\\in\\\\mathbb N$. For all Boolean words $x,bits,rest$ parsed from $x$ as $(bits,rest)$, the machine, started on $x$ with the prescribed ready words on its tapes, reaches within $t\\\\le a(|x|+1)$ steps the exit state indexed by whether $B_F(\\\\operatorname{val}(bits)+1)\\\\le |rest|$, where $B_F=\\\\max(\\\\operatorname{guard}(F),(4k+5)3^{k+1})$; at that time its output is empty, its input-head position is $2|bits|+3$ when the inequality holds and $|x|+1$ otherwise, and every tape except tape $1$ retains its prescribed ready word with its head at zero. No earlier time is in either exit state.",
+ "hypotheses_covered": [
+  "machine format $F$",
+  "natural number $k$ with $4\\\\le k$",
+  "finite state set $S$ and decidable equality",
+  "machine has $k$ work tapes",
+  "exit-state map is injective",
+  "constant $a\\\\in\\\\mathbb N$",
+  "Boolean words $x,bits,rest$ with pair parsing result $(bits,rest)$",
+  "time bound $t\\\\le a(|x|+1)$",
+  "initial configuration uses the prescribed ready words",
+  "final state, output, input-head position, and tape conditions",
+  "no earlier visit to either exit state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

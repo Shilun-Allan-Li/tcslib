@@ -29,6 +29,10 @@ import re
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent  # tcstcslib/
+import sys
+sys.path.insert(0, str(BASE))
+from scripts import dataset_projects as dp
+
 DEP_GRAPH = BASE / "dep_graph.json"
 CHAPTER_DIR = BASE / "blueprint" / "src" / "chapter"
 WORK_DIR = BASE / "blueprint" / ".work"
@@ -47,7 +51,7 @@ KIND_ENV = {
 SKIP_KINDS = {"instance", "example"}
 
 # Matches the declaration keyword, tolerating modifiers and attributes.
-_MODIFIERS = r"(?:private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+|@\[[^\]]*\]\s*)*"
+_MODIFIERS = r"(?:public\s+|private\s+|protected\s+|noncomputable\s+|partial\s+|unsafe\s+|scoped\s+|local\s+|nonrec\s+|@\[[^\]]*\]\s*)*"
 DECL_RE = re.compile(
     r"^\s*" + _MODIFIERS + r"(theorem|lemma|def|abbrev|structure|inductive|class|instance|example)\b"
     r"(?:\s+(?P<ident>[^\s({\[:⦃⟨]+))?"
@@ -61,8 +65,7 @@ def load_modules() -> dict:
 
 
 def module_to_lean_path(module: str) -> Path:
-    rel = module[len("TCSlib."):] if module.startswith("TCSlib.") else module
-    return BASE / "TCSlib" / (rel.replace(".", "/") + ".lean")
+    return dp.source_path(module)
 
 
 def module_to_tex_path(module: str) -> Path:
@@ -160,7 +163,7 @@ def detect_kind_and_doc(lines: list[str], start: int, end: int, expected: str | 
     hi = min(len(lines), end)
     first = None
     for i in range(lo, min(hi + 1, len(lines))):
-        m = DECL_RE.match(lines[i])
+        m = DECL_RE.match("\n".join(lines[i:i + 5]))
         if not m:
             continue
         if first is None:
@@ -171,7 +174,7 @@ def detect_kind_and_doc(lines: list[str], start: int, end: int, expected: str | 
         # `startLine` can also point *past* the keyword; sweep a small neighbourhood
         # before giving up and accepting the window's first declaration.
         for i in range(max(0, lo - 8), min(len(lines), hi + 8)):
-            m = DECL_RE.match(lines[i])
+            m = DECL_RE.match("\n".join(lines[i:i + 5]))
             if m and _ident_matches(expected, m.group("ident")):
                 return m.group(1), i, extract_docstring(lines, i)
     if first is None:
@@ -236,7 +239,7 @@ def build_work_unit(module: str, mdata: dict, kept_global: set[str],
         return None
     lines = lean_path.read_text(encoding="utf-8", errors="ignore").splitlines()
     tex_path = module_to_tex_path(module)
-    rel_lean = lean_path.relative_to(BASE).as_posix()
+    rel_lean = dp.display_path(lean_path)
     rel_tex = tex_path.relative_to(BASE).as_posix()
     area = module.split(".")[1] if module.count(".") >= 1 else module
 
@@ -260,7 +263,7 @@ def build_work_unit(module: str, mdata: dict, kept_global: set[str],
         claimed.add(nname)
         uses = sorted({
             nd for d in dd.get("deps", [])
-            if d.get("module", "").startswith("TCSlib")
+            if dp.is_internal(d.get("module", ""))
             for nd in [normalize_name(d["name"])]
             if nd in kept_global and nd != nname
         })
@@ -304,7 +307,7 @@ def main():
 
     modules = load_modules()
     if args.module:
-        wanted = args.module if args.module.startswith("TCSlib.") else f"TCSlib.{args.module}"
+        wanted = args.module if dp.is_internal(args.module) else f"TCSlib.{args.module}"
         modules = {m: d for m, d in modules.items() if m == wanted or m.endswith("." + args.module)}
         if not modules:
             print(f"No module matching {args.module!r}.")
@@ -320,10 +323,7 @@ def main():
     # dep_graph.json is the source of truth: a module is in it iff it compiled.
     # `.lean` files on disk that are absent from the graph did NOT compile and are
     # intentionally excluded (we only document real, \leanok-able statements).
-    disk_modules = {
-        "TCSlib." + str(p.relative_to(BASE / "TCSlib").with_suffix("")).replace("/", ".")
-        for p in (BASE / "TCSlib").rglob("*.lean")
-    }
+    disk_modules = set(dp.source_modules())
     non_compiling = sorted(disk_modules - set(full_graph))
     if non_compiling:
         print(f"\nIntentionally skipped — absent from dep_graph (did not compile): {len(non_compiling)}")

@@ -1,19 +1,18 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.mixed_inputs_mem_transcript_of_zVariable_eq",
- "key": "4ef04075ed9aa8d2",
+ "key": "cd5847a60dfa9dc1",
  "kind": "theorem",
- "title": "Mixed inputs lie in the common transcript's rectangle",
- "statement": "Fix $n \\ge 1$ and a deterministic disjointness protocol $p$ on the coordinate set $\\{0,\\dots,n-1\\}$. For a hard-distribution sample $\\omega$, let $X(\\omega), Y(\\omega) \\subseteq \\{0,\\dots,n-1\\}$ denote Alice's and Bob's input sets, and recall that the $Z$-variable $Z = (M, T, X_{<T}, Y_{>T})$ records, among other data, the transcript $M$ that $p$ produces on the input pair $(X(\\omega), Y(\\omega))$. Suppose two hard-distribution samples $\\omega$ and $\\omega'$ yield the same value $z$ of this $Z$-variable under $p$, and let $M$ be the transcript component of $z$. Then both mixed input pairs $(X(\\omega'), Y(\\omega))$ and $(X(\\omega), Y(\\omega'))$ belong to the input set of $M$, that is, the set of all input pairs whose execution of $p$ follows the transcript $M$.",
+ "title": "Mixed Inputs Follow the Common Transcript",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on length-$n$ inputs, and let $z$ be an achievable value of the statistic recording the transcript, special coordinate, Alice’s bits before it, and Bob’s bits after it. If samples $\\omega,\\omega'$ both yield $z$, then both mixed input pairs $(X(\\omega'),Y(\\omega))$ and $(X(\\omega),Y(\\omega'))$ belong to the input set of the transcript component of $z$.",
  "hypotheses_covered": [
-  "n ≥ 1 (n : ℕ+)",
-  "p a deterministic disjointness protocol on n coordinates",
-  "ω, ω' are hard-distribution samples",
-  "the Z-variable of ω under p equals z",
-  "the Z-variable of ω' under p equals z",
-  "M is the transcript component of z"
+  "$n$ is a positive integer",
+  "$p$ is a length-$n$ disjointness protocol",
+  "$z$ is an achievable statistic value",
+  "$\\omega$ yields $z$",
+  "$\\omega'$ yields $z$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "The transcript component of $Z$ is a rectangle: two samples in the same $Z$ fiber also contain the two mixed input pairs in that transcript rectangle."
+ "replaced": "Fix $n \\ge 1$ and a deterministic disjointness protocol $p$ on the coordinate set\n$\\{0,\\dots,n-1\\}$. For a hard-distribution sample $\\omega$, let $X(\\omega), Y(\\omega)\n\\subseteq \\{0,\\dots,n-1\\}$ denote Alice's and Bob's input sets, and recall that the\n$Z$-variable $Z = (M, T, X_{<T}, Y_{>T})$ records, among other data, the transcript $M$\nthat $p$ produces on the input pair $(X(\\omega), Y(\\omega))$. Suppose two\nhard-distribution samples $\\omega$ and $\\omega'$ yield the same value $z$ of this\n$Z$-variable under $p$, and let $M$ be the transcript component of $z$. Then both mixed\ninput pairs $(X(\\omega'), Y(\\omega))$ and $(X(\\omega), Y(\\omega'))$ belong to the input\nset of $M$, that is, the set of all input pairs whose execution of $p$ follows the\ntranscript $M$."
 }

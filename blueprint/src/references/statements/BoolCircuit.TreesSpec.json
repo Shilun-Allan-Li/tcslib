@@ -1,0 +1,25 @@
+{
+ "lean_name": "BoolCircuit.TreesSpec",
+ "key": "504c200df3be8c44",
+ "kind": "structure",
+ "title": "Tree Circuit Specification",
+ "statement": "Let $n$ be a natural number, let $k$ be an AND, OR, or NOT gate, let $vss$ be a finite list of lists of natural-number vertex labels, let $gs$ be a finite list of Boolean gates, and let $r=(r_1,r_2)$ consist of a finite gate list and a list of vertex labels. Suppose $r_1$ is obtained by appending gates to $gs$ and is acyclic, $r_2$ has the same length as $vss$, and every vertex label in $r_2$ is less than $n+|r_1|$. For every Boolean assignment to the $n$ inputs, the values at the vertices in $r_2$, in order, equal the evaluations on the initial circuit $gs$ of gates of kind $k$ whose respective argument lists are the lists in $vss$. The total number of gates in $r_1$ is at most the number in $gs$ plus the sum, over the lists $vs$ in $vss$, of the tree cost for $|vs|$ inputs; every gate appended after $gs$ has kind $k$, has pairwise distinct arguments, and has at most two arguments.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$k$ is a gate kind",
+  "$vss$ is a finite list of finite lists of natural-number vertex labels",
+  "$gs$ is a finite list of gates",
+  "$r$ is a pair of a gate list and a vertex-label list",
+  "$r_1$ is $gs$ followed by an extension",
+  "$r_1$ is acyclic",
+  "$r_2$ and $vss$ have equal lengths",
+  "Every vertex label in $r_2$ is less than $n+|r_1|",
+  "For every Boolean assignment, the listed vertex values equal the corresponding gate evaluations using $gs$",
+  "$|r_1|$ is at most $|gs|$ plus the sum of the tree costs for the input-list lengths in $vss$",
+  "Each gate appended after $gs$ has kind $k$, pairwise distinct arguments, and at most two arguments"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include definitions of acyclicity, vertex evaluation, gate evaluation, or tree cost, so their precise meanings cannot be made fully self-contained from the payload alone.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

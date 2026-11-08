@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.satMap_run",
+ "key": "cd18b1580addc7de",
+ "kind": "lemma",
+ "title": "Machine execution matches transducer semantics",
+ "statement": "Let $S$ be a finite state set with decidable equality, let $\\delta:S\\times\\{0,1\\}\\to S$ be a transition function, let $\\varepsilon:S\\times\\{0,1\\}\\to\\{0,1\\}\\cup\\{\\text{no output}\\}$ be a per-bit emission rule, let $\\phi:S\\to\\{0,1\\}\\cup\\{\\text{no output}\\}$ be a final emission rule, and choose a start state. For Boolean words $x$ and $r$, suppose $x=p\\mathbin{+\u0013+}r$ for a word $p$; for every state $q$ and already-emitted word $o$, the associated transducer machine, started on input $x$ in state $q$ with its input head at position $|p|$ and output $o$, is halted after $|r|+1$ steps and has output $o$ followed by the transducer semantics on $q$ and $r$.",
+ "hypotheses_covered": [
+  "The state set is finite",
+  "The state set has decidable equality",
+  "A transition function on states and bits",
+  "A per-bit optional emission rule",
+  "An optional final emission rule",
+  "A start state",
+  "Boolean words $x$ and $r$",
+  "A decomposition $x=p\\mathbin{+\u0013+}r$",
+  "An arbitrary state $q$",
+  "An arbitrary emitted prefix $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input decompose as $x = p \\mathbin{+\\!\\!+} r$. From any state $q$ at\nposition $|p|$ with emitted prefix $o$, the word-transducer machine halts after\nexactly $|r| + 1$ steps with output $o$ followed by the transducer semantics\napplied to $q$ and $r$."
+}

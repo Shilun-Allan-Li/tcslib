@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.skipTM_run_ofCfg",
+ "key": "7777f53b47b90bba",
+ "kind": "theorem",
+ "title": "Skipping over a word",
+ "statement": "Let $k$ be a nonnegative integer, let $i<k$ index a work tape, let $x$ be an input word, and let $w$ be a finite word. Consider a configuration $d$ in the running phase such that, for every integer $p$ with $0\\le p\\le |w|$, tape $i$ at position $d_i+p$ contains the symbol of $w$ at position $p$ (and is blank where that position has no symbol). After $|w|+1$ steps, the skipping machine is in the done phase with tape head $i$ at $d_i+|w|+1$; it is not in the done phase at any earlier time. At every time up to and including $|w|+1$, the head on tape $i$ lies between its initial position and $d_i+|w|+1$, inclusive, and every other work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$i$ indexes one of the $k$ work tapes",
+  "The initial configuration is in the running phase",
+  "Tape $i$ agrees with the word tape at every integer $p$ from $0$ through $|w|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

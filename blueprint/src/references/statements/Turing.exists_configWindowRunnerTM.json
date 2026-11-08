@@ -1,0 +1,27 @@
+{
+ "lean_name": "Turing.exists_configWindowRunnerTM",
+ "key": "e3ddb0748b0d3094",
+ "kind": "theorem",
+ "title": "A bounded machine for simulating a windowed run",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean input and $k$ work tapes. Let $T$ be a finite set with decidable equality, and let $u:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$ satisfy $u(\\tau,\\mathrm{none})=\\tau$ for every $\\tau\\in T$. There exist a natural number $K$, a finite state set $P$ with decidable equality, a Turing machine $R$ with $K+1$ work tapes over an alphabet recording Boolean digits, work-tape cells, states, and tags, an entry state $p_{\\mathrm{in}}$, an injective map $e$ from the three window-exit types to states of $R$ whose values differ from $p_{\\mathrm{in}}$, and a natural number $C$ with the following property. For every Boolean input $x$, natural number $s$, configuration $c$ of $M$ on $x$ whose work-tape head positions have absolute value at most $s$ and whose work-tape cells outside that window are blank, and tag $\\tau\\in T$, suppose a configuration $d$ of $R$ on the digit encoding of $x$ has state $p_{\\mathrm{in}}$, has on its first work tape the record encoding $(c,\\tau)$, and has blank contents on every other work tape. Then there are a time $t$ and an exit type $o$ such that $t\\le C2^{C(\\ell+1)}$, where $\\ell=k(2s+1)+\\mathrm{posWidth}(|x|)+k+4$, and the state of $R$ after $t$ steps is $e(o)$, while before time $t$ it is never in any exit state. At every time $v\\le t$, each work-tape head of $R$ has moved from its initial position by at most $C(\\ell+1)$, and the output remains unchanged; by time $t$ its total space use is at most $(K+1)(2C(\\ell+1)+1)$. For every $N\\le \\mathrm{configBound}(M,|x|,s)+1$, if the $N$-step windowed run from $(c,\\tau)$ does not end by clock exhaustion, its exit type is $o$. If $o$ is not clock exhaustion, there is some $N$ for which that windowed run ends with type $o$, and at time $t$ the runner's first work tape agrees with the record of the resulting configuration and updated tag throughout the recorded field; its state is $e(o)$, and all other tape cells retain their initial contents.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine with Boolean input and $k$ work tapes",
+  "$T$ is finite with decidable equality",
+  "$u(\\tau,\\mathrm{none})=\\tau$ for every tag",
+  "$c$ is a configuration on input $x$",
+  "Each work-tape head of $c$ lies within radius $s$",
+  "All work-tape cells of $c$ outside radius $s$ are blank",
+  "$d$ is on the digit encoding of $x$",
+  "$d$ has entry state",
+  "The first tape of $d$ records $(c,\\tau)$",
+  "All other work tapes of $d$ are blank",
+  "$N\\le \\mathrm{configBound}(M,|x|,s)+1$ in the bounded-run implication",
+  "The windowed run does not end by exhaustion in that implication"
+ ],
+ "confidence": "low",
+ "caveat": "The final tape equality is restricted to the recorded interval on tape zero; outside that interval, the formal statement preserves the original tape contents. The prose summarizes this as agreement throughout the recorded field and preservation elsewhere.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -17,6 +17,10 @@ families.
 
 \begin{definition}[Bad distortion event for a single vector]
 \lean{BadSingle}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p125-b003,
+  pdf-681b6f3d947f-p126-b001
+}
 \label{BadSingle}
 \leanok
 For a parameter $\varepsilon\in\mathbb{R}$, a matrix $A$, and a vector
@@ -52,6 +56,7 @@ satisfies
 
 \begin{lemma}[Scaling a centered real Gaussian]
 \lean{map_const_mul_gaussian}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p058-b006}
 \label{map_const_mul_gaussian}
 \leanok
 \difficulty{3}
@@ -145,6 +150,10 @@ is, $0^2 + 0 + \log(1 - 0) = 0$.
 
 \begin{lemma}[Taylor bound for the centered chi-squared log-MGF]
 \lean{neg_log_one_sub_two_mul_le_two_sq}
+\statementsource{laurent-massart-chi-squared}{
+  pdf-5ada2eaf45a8-p024-b006,
+  pdf-5ada2eaf45a8-p025-b001
+}
 \label{neg_log_one_sub_two_mul_le_two_sq}
 \leanok
 \uses{taylorAux_hasDerivAt, taylorAux_zero}
@@ -157,6 +166,7 @@ For every real number $s$ with $\abs{s} \le 1/4$, one has
 
 \begin{lemma}[Quadratic Gaussian integral]
 \lean{integral_exp_mul_sq_standardGaussian}
+\statementsource{laurent-massart-chi-squared}{pdf-5ada2eaf45a8-p024-b006}
 \label{integral_exp_mul_sq_standardGaussian}
 \leanok
 \difficulty{5}
@@ -194,6 +204,10 @@ Gaussian probability measure on $\bbr$ with variance $v$. If $t \in \bbr$ satisf
 
 \begin{theorem}[Centered chi-squared MGF bound]
 \lean{centered_chi_squared_step}
+\statementsource{laurent-massart-chi-squared}{
+  pdf-5ada2eaf45a8-p024-b006,
+  pdf-5ada2eaf45a8-p025-b001
+}
 \label{centered_chi_squared_step}
 \leanok
 \uses{integrable_exp_mul_sq_gaussianReal_zero, integral_exp_mul_sq_gaussianReal_zero, neg_log_one_sub_two_mul_le_two_sq}
@@ -211,6 +225,10 @@ variable $Y^2 - 1/k$ satisfies
 
 \begin{theorem}[Bernstein MGF bound for a centered chi-squared summand]
 \lean{hasBernsteinMGF_centered_chi_squared}
+\statementsource{laurent-massart-chi-squared}{
+  pdf-5ada2eaf45a8-p024-b006,
+  pdf-5ada2eaf45a8-p025-b001
+}
 \label{hasBernsteinMGF_centered_chi_squared}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, centered_chi_squared_step}
@@ -224,6 +242,11 @@ $t_{\max} = k/4$.
 
 \begin{lemma}[Chi-squared tail bound for independent $N(0,1/k)$ variables]
 \lean{chi_squared_tail}
+\statementsource{laurent-massart-chi-squared}{
+  pdf-5ada2eaf45a8-p024-b004,
+  pdf-5ada2eaf45a8-p024-b005,
+  pdf-5ada2eaf45a8-p025-b001
+}
 \label{chi_squared_tail}
 \leanok
 \uses{ProbabilityTheory.HasBernsteinMGF, ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le, ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun, hasBernsteinMGF_centered_chi_squared}

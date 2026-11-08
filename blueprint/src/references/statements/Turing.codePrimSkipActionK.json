@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.codePrimSkipActionK",
+ "key": "e10e29c961a03c39",
+ "kind": "lemma",
+ "title": "Primitive Recursiveness of the Fixed-Count Action Skipper",
+ "statement": "For each fixed natural number $k$, the following partial reader is primitive recursive jointly in the bound $n$ and its Boolean-string input: it first consumes a pair of bits $(a,b)$ satisfying $a=1$ or $b=0$, then repeats $k$ times the operation of consuming any two bits followed by a pair satisfying that same condition, then consumes one more pair satisfying the condition, and finally consumes a state field. The state field is either a single $0$, or a $1$ followed by a unary numeral whose value is less than $n+1$; on success the reader returns the remaining suffix, and it fails if any required consumption is invalid or incomplete.",
+ "hypotheses_covered": [
+  "$k$ is fixed"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

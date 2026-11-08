@@ -17,6 +17,11 @@ distance-form corollaries together with explicit logarithmic dimension bounds.
 
 \begin{definition}[Single-pair distortion bound]
 \lean{JLDistortion}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p126-b001,
+  pdf-681b6f3d947f-p250-b002
+}
+\statementsource{dasgupta-gupta-jl}{pdf-a6706e37c21a-p002-b003}
 \label{JLDistortion}
 \leanok
 For $\varepsilon \in \mathbb{R}$, vectors $u, v \in \mathbb{R}^d$, and their
@@ -30,6 +35,15 @@ squared-distance inequality
 
 \begin{definition}[$\varepsilon$-JL embedding]
 \lean{IsJLEmbedding}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p125-b003,
+  pdf-681b6f3d947f-p126-b001,
+  pdf-681b6f3d947f-p250-b002
+}
+\statementsource{dasgupta-gupta-jl}{
+  pdf-a6706e37c21a-p001-b002,
+  pdf-a6706e37c21a-p002-b003
+}
 \label{IsJLEmbedding}
 \leanok
 \uses{JLDistortion}
@@ -90,9 +104,37 @@ Then the images $Au$ and $Av$ satisfy the two-sided single-pair distortion bound
 
 \begin{theorem}[Union bound for Johnson–Lindenstrauss distortion]
 \lean{jl_union_bound}
+\proofsource{vershynin-hdp-book}{pdf-681b6f3d947f-p127-b003}
 \label{jl_union_bound}
 \leanok
 \uses{BadPair, BadSingle, JLDistortion.of_not_bad}
+\proofstep
+  {instMeasurableSpaceMatrixFinReal_tCSlib}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b002,
+    pdf-681b6f3d947f-p126-b001}
+\proofstep
+  {BadSingle}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p126-b001,
+    pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {JLDistortion}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p126-b001}
+\proofstep
+  {BadPair}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {JLDistortion.of_not_bad}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
 \difficulty{5}
 Let $(\Omega,\mu)$ be a probability space, and let $A\colon\Omega\to\bbr^{k\times d}$ be
 a measurable random $k\times d$ matrix. Fix a finite set $V\subseteq\bbr^d$ and a
@@ -113,9 +155,11 @@ fails the two-sided distortion bound $(1-\varepsilon)\|u-v\|^2 \le \|A(\omega)(u
 
 \begin{theorem}[Johnson–Lindenstrauss embedding from a Gaussian matrix]
 \lean{johnson_lindenstrauss_of_gaussian}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p250-b002}
+\statementsource{dasgupta-gupta-jl}{pdf-a6706e37c21a-p005-b003}
 \label{johnson_lindenstrauss_of_gaussian}
 \leanok
-\uses{BadPair, BadSingle, IsJLEmbedding, jl_concentration_single, jl_union_bound}
+\uses{BadSingle, IsJLEmbedding, exists_isJLEmbedding_of_pair_bound, jl_concentration_single}
 \difficulty{4}
 Fix dimensions $d$ and $k$ with $k \ge 1$, a distortion parameter $\varepsilon \in
 (0,1)$, and a finite set of points $V \subseteq \bbr^d$. Let $A$ be a random $k \times
@@ -133,9 +177,15 @@ embedding of $V$: for every pair $u, v \in V$,
 
 \begin{theorem}[Sub-Gaussian random projections give a Johnson–Lindenstrauss embedding]
 \lean{johnson_lindenstrauss_of_subgaussian}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p128-b001,
+  pdf-681b6f3d947f-p250-b002,
+  pdf-681b6f3d947f-p251-b001,
+  pdf-681b6f3d947f-p251-b002
+}
 \label{johnson_lindenstrauss_of_subgaussian}
 \leanok
-\uses{BadPair, BadSingle, IsJLEmbedding, concentration_zero, jl_concentration_single_subgaussian, jl_union_bound}
+\uses{BadSingle, IsJLEmbedding, concentration_zero, exists_isJLEmbedding_of_pair_bound, jl_concentration_single_subgaussian}
 \difficulty{4}
 Let $k \ge 1$, and let $A$ be a random $k \times d$ real matrix defined on a probability
 space $(\Omega,\mu)$, so that for each $x \in \bbr^d$ the image $Ax \in \bbr^k$ has
@@ -197,6 +247,16 @@ in a Euclidean space with $\abs{V} \le n$, one has $k > 0$ and \[ \abs{V}^2 \cdo
 
 \begin{theorem}[Johnson–Lindenstrauss flattening lemma]
 \lean{johnson_lindenstrauss}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p125-b003,
+  pdf-681b6f3d947f-p126-b001,
+  pdf-681b6f3d947f-p127-b003,
+  pdf-681b6f3d947f-p250-b002
+}
+\statementsource{dasgupta-gupta-jl}{
+  pdf-a6706e37c21a-p002-b003,
+  pdf-a6706e37c21a-p003-b003
+}
 \label{johnson_lindenstrauss}
 \leanok
 \uses{BadSingle, IsJLEmbedding, exists_iid_gaussian_matrix, jl_failure_bound_of_dim, johnson_lindenstrauss_of_gaussian, measurableSet_badSingle}
@@ -214,6 +274,11 @@ for all $u, v \in V$.
 
 \begin{theorem}[Johnson–Lindenstrauss flattening lemma]
 \lean{johnson_lindenstrauss_subgaussian}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p128-b001,
+  pdf-681b6f3d947f-p250-b002,
+  pdf-681b6f3d947f-p251-b002
+}
 \label{johnson_lindenstrauss_subgaussian}
 \leanok
 \uses{BadSingle, IsJLEmbedding, hasSubgaussianMGF_row_proj, integral_sq_row_proj, jl_failure_bound_of_dim, johnson_lindenstrauss_of_subgaussian, measurableSet_badSingle, measurable_radMatrix, radJointMeasure, radMatrix, radMatrix_proj_indep, radMatrix_proj_meas}
@@ -247,6 +312,15 @@ for every pair $u, v \in V$ one has $(1-\varepsilon)\,\|u-v\|^2 \le \|f(u)-f(v)\
 
 \begin{theorem}[Johnson–Lindenstrauss flattening in distance form]
 \lean{johnson_lindenstrauss_dist}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p126-b001,
+  pdf-681b6f3d947f-p127-b003,
+  pdf-681b6f3d947f-p250-b002
+}
+\statementsource{dasgupta-gupta-jl}{
+  pdf-a6706e37c21a-p002-b003,
+  pdf-a6706e37c21a-p003-b003
+}
 \label{johnson_lindenstrauss_dist}
 \leanok
 \uses{jl_dist_of_embedding, johnson_lindenstrauss}
@@ -264,9 +338,417 @@ where $\norm{\cdot}$ denotes the Euclidean norm.
 
 \begin{theorem}[Johnson–Lindenstrauss flattening: distance form]
 \lean{johnson_lindenstrauss_subgaussian_dist}
+\proofsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p128-b001,
+  pdf-681b6f3d947f-p250-b002,
+  pdf-681b6f3d947f-p251-b001,
+  pdf-681b6f3d947f-p251-b002
+}
 \label{johnson_lindenstrauss_subgaussian_dist}
 \leanok
 \uses{jl_dist_of_embedding, johnson_lindenstrauss_subgaussian}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p044-b002,
+    pdf-681b6f3d947f-p044-b003}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p044-b003,
+    pdf-681b6f3d947f-p037-b001}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.measure_ge_le}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p044-b003}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.measure_le_le}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p045-b001}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p044-b002,
+    pdf-681b6f3d947f-p045-b001}
+\proofstep
+  {ProbabilityTheory.centered_squared_iid_tail}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p039-b003,
+    pdf-681b6f3d947f-p050-b005,
+    pdf-681b6f3d947f-p051-b001}
+\proofstep
+  {instMeasurableSpaceMatrixFinReal_tCSlib}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p097-b001}
+\proofstep
+  {BadSingle}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b002,
+    pdf-681b6f3d947f-p126-b001}
+\proofstep
+  {concentration_zero}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b003,
+    pdf-681b6f3d947f-p126-b001}
+\proofstep
+  {norm_sq_toEuclideanLin}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p050-b003,
+    pdf-681b6f3d947f-p106-b001}
+\proofstep
+  {taylorAux_hasDerivAt}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b004}
+\proofstep
+  {taylorAux_zero}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b004}
+\proofstep
+  {neg_log_one_sub_two_mul_le_two_sq}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b004,
+    pdf-681b6f3d947f-p040-b001}
+\proofstep
+  {integral_exp_mul_sq_standardGaussian}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b002,
+    pdf-681b6f3d947f-p058-b002}
+\proofstep
+  {integral_exp_mul_sq_gaussianReal_zero}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b002,
+    pdf-681b6f3d947f-p058-b002}
+\proofstep
+  {integrable_exp_mul_sq_gaussianReal_zero}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b002,
+    pdf-681b6f3d947f-p058-b002}
+\proofstep
+  {jl_concentration_single_via_bernstein}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b003,
+    pdf-681b6f3d947f-p126-b001,
+    pdf-681b6f3d947f-p126-b002}
+\proofstep
+  {exp_mul_sq_eq_integral_gaussian}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b002,
+    pdf-681b6f3d947f-p058-b002}
+\proofstep
+  {exp_neg_le_one_sub_add_sq_div_two}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p033-b002}
+\proofstep
+  {integral_exp_mul_sq_le_of_subgaussian}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b004,
+    pdf-681b6f3d947f-p032-b002}
+\proofstep
+  {integral_pow_four_le_of_subgaussian}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b004,
+    pdf-681b6f3d947f-p039-b003}
+\proofstep
+  {mgf_centered_sq_le_of_nonpos}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p039-b003,
+    pdf-681b6f3d947f-p040-b001}
+\proofstep
+  {mgf_centered_sq_le_of_nonneg}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p039-b003,
+    pdf-681b6f3d947f-p040-b001}
+\proofstep
+  {subgaussian_centered_sq_bernstein}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p039-b003,
+    pdf-681b6f3d947f-p041-b007,
+    pdf-681b6f3d947f-p044-b002}
+\proofstep
+  {jl_concentration_single_subgaussian}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p044-b002,
+    pdf-681b6f3d947f-p045-b002,
+    pdf-681b6f3d947f-p041-b007}
+\proofstep
+  {JLDistortion}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p086-b006,
+    pdf-681b6f3d947f-p087-b002}
+\proofstep
+  {IsJLEmbedding}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b002,
+    pdf-681b6f3d947f-p126-b001}
+\proofstep
+  {BadPair}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b002,
+    pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {JLDistortion.of_not_bad}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p086-b006,
+    pdf-681b6f3d947f-p087-b002}
+\proofstep
+  {jl_union_bound}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p030-b006,
+    pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {exists_isJLEmbedding_of_pair_bound}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {johnson_lindenstrauss_of_subgaussian}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p128-b001,
+    pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {rademacherReal}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {rad_half_ne_top}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {instIsProbabilityMeasureRealRademacherReal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {instIsFiniteMeasureRealRademacherReal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {rademacherReal_mem_Icc}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {integrable_smul_dirac}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {integrable_rademacherReal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {integral_id_rademacherReal}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {integral_sq_rademacherReal}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003,
+    pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {hasSubgaussianMGF_id_rademacherReal}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b004,
+    pdf-681b6f3d947f-p035-b005}
+\proofstep
+  {RadΩ}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {instMeasurableSpaceRadΩ}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {radJointMeasure}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {instIsProbabilityMeasureRadΩRadJointMeasure}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {radMatrix}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p128-b001}
+\proofstep
+  {measurable_radMatrix}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p128-b001}
+\proofstep
+  {radJointMeasure_row_marginal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {radJointMeasure_entry_marginal}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {radJointMeasure_row_iid}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {radJointMeasure_rows_iid}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {hasSubgaussianMGF_entry}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p032-b004,
+    pdf-681b6f3d947f-p035-b005}
+\proofstep
+  {hasSubgaussianMGF_const_mul}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p037-b002}
+\proofstep
+  {hasSubgaussianMGF_scaled_entry}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p037-b002}
+\proofstep
+  {radMatrix_row_proj_eq_sum}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p128-b001}
+\proofstep
+  {radMatrix_scaled_row_iid}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {norm_sq_div_eq_sum}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p055-b003}
+\proofstep
+  {hasSubgaussianMGF_row_proj}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p036-b005,
+    pdf-681b6f3d947f-p064-b002}
+\proofstep
+  {variance_id_rademacherReal}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003,
+    pdf-681b6f3d947f-p014-b001}
+\proofstep
+  {variance_entry}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006,
+    pdf-681b6f3d947f-p014-b001}
+\proofstep
+  {integral_entry}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {memLp_scaled_entry}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {variance_scaled_entry}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p014-b001}
+\proofstep
+  {variance_row_proj}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p016-b007,
+    pdf-681b6f3d947f-p023-b004}
+\proofstep
+  {integral_row_proj}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p023-b003}
+\proofstep
+  {integral_sq_row_proj}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p014-b001}
+\proofstep
+  {radMatrix_proj_indep}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p057-b006}
+\proofstep
+  {radMatrix_proj_meas}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p128-b001}
+\proofstep
+  {measurableSet_badSingle}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {jl_failure_bound_of_dim}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p127-b003}
+\proofstep
+  {johnson_lindenstrauss_subgaussian}
+  {direct}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p125-b003,
+    pdf-681b6f3d947f-p126-b001}
+\proofstep
+  {jl_dist_of_embedding}
+  {context}
+  {vershynin-hdp-book}
+  {pdf-681b6f3d947f-p087-b002}
 \difficulty{1}
 Let $\varepsilon \in (0,1)$ and let $n \ge 2$ be an integer. Suppose $k$ is a natural
 number with $k \ge 32\,(\log n)/\varepsilon^2$, and let $V$ be a finite set of at most
@@ -280,9 +762,229 @@ for all $u, v \in V$,
 
 \begin{theorem}[Existence of a Johnson–Lindenstrauss dimension threshold]
 \lean{johnson_lindenstrauss_dim_bound}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p125-b003,
+  pdf-681b6f3d947f-p126-b001
+}
+\proofsource{dasgupta-gupta-jl}{pdf-a6706e37c21a-p002-b003}
 \label{johnson_lindenstrauss_dim_bound}
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.sum_of_iIndepFun}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.measure_ge_le}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.measure_le_le}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {ProbabilityTheory.HasBernsteinMGF.measure_abs_gt_le}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {instMeasurableSpaceMatrixFinReal_tCSlib}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {BadSingle}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {concentration_zero}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {map_const_mul_gaussian}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {sum_scaled_iid_gaussian_map}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {rows_indep}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {toEuclideanLin_apply_eq_sum}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {norm_sq_toEuclideanLin}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {taylorAux_hasDerivAt}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {taylorAux_zero}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {neg_log_one_sub_two_mul_le_two_sq}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {integral_exp_mul_sq_standardGaussian}
+  {direct}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {integral_exp_mul_sq_gaussianReal_zero}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {integrable_exp_mul_sq_gaussianReal_zero}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {centered_chi_squared_step}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {hasBernsteinMGF_centered_chi_squared}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002}
+\proofstep
+  {chi_squared_tail}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p004-b002,
+    pdf-a6706e37c21a-p004-b003,
+    pdf-a6706e37c21a-p005-b001}
+\proofstep
+  {jl_concentration_single_via_chi_squared}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003,
+    pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {JLDistortion}
+  {direct}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p002-b003}
+\proofstep
+  {IsJLEmbedding}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p002-b003}
+\proofstep
+  {BadPair}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {jl_concentration_single}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {JLDistortion.of_not_bad}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {jl_union_bound}
+  {direct}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {exists_isJLEmbedding_of_pair_bound}
+  {direct}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p002-b003,
+    pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {johnson_lindenstrauss_of_gaussian}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {rademacherReal}
+  {direct}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {instIsProbabilityMeasureRealRademacherReal}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {instIsFiniteMeasureRealRademacherReal}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {RadΩ}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {instMeasurableSpaceRadΩ}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {radJointMeasure}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {instIsProbabilityMeasureRadΩRadJointMeasure}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {measurableSet_badSingle}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {exists_iid_gaussian_matrix}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p005-b003}
+\proofstep
+  {jl_failure_bound_of_dim}
+  {context}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p003-b003}
+\proofstep
+  {johnson_lindenstrauss}
+  {direct}
+  {dasgupta-gupta-jl}
+  {pdf-a6706e37c21a-p002-b003,
+    pdf-a6706e37c21a-p003-b003}
 \difficulty{2}
 Let $\varepsilon$ be a real number with $0 < \varepsilon < 1$, and let $n \ge 2$ be an
 integer. Then there is a threshold $k_0 \in \bbn$ such that for every target dimension
@@ -297,6 +999,10 @@ $\varepsilon$-JL embedding of $V$; that is, for all $u, v \in V$,
 
 \begin{theorem}[Dimension threshold for Johnson–Lindenstrauss embeddings]
 \lean{johnson_lindenstrauss_subgaussian_dim_bound}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p128-b001,
+  pdf-681b6f3d947f-p250-b002
+}
 \label{johnson_lindenstrauss_subgaussian_dim_bound}
 \leanok
 \uses{IsJLEmbedding, johnson_lindenstrauss_subgaussian}

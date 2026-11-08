@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.node_run",
+ "key": "3374b892c352fe27",
+ "kind": "theorem",
+ "title": "Run through a quantified-formula node",
+ "statement": "For any bit string $x$ and natural numbers $k,S,p,B$ satisfying $2k\\le B$, $S\\le B$, and $p\\le B$, the seven-register program with its specified oracle has a run from the node label with depth $k$, stack value $S$, pointer $p$, and all scratch registers zero to the label $\\mathrm{nd1}$ with depth $k$, stack value $S$, pointer $2k$, and all scratch registers zero. Every configuration before the final configuration satisfies the program precondition and has every register value at most $B$.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$k,S,p,B$ are natural numbers",
+  "$2k\\le B$",
+  "$S\\le B$",
+  "$p\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B,k,S,p$ natural numbers, and suppose $2k\\leq B$, $S\\leq B$,\nand $p\\leq B$. Then the machine has a guarded run from the node state with depth $k$,\nassignment stack $S$, and pointer $p$ (all scratch registers zero) to state\n$\\mathrm{nd1}$ with depth $k$, assignment stack $S$, pointer $2k$, and all scratch\nregisters zero."
+}

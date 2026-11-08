@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.satScan_run",
+ "key": "3652d6377920a920",
+ "kind": "lemma",
+ "title": "Complete scan of an input suffix",
+ "statement": "Let $S$ be a finite set with decidable equality, let $\\delta:S\\times\\{0,1\\}\\to S$ be a transition function, let $s_0\\in S$ be a starting state, and let $A:S\\to\\{0,1\\}$ be an acceptance predicate. For all Boolean words $x$ and $r$, every prefix $p$ satisfying $x=p\\mathbin{+\u001as}r$, and every state $q\\in S$, the scanner started on $x$ in state $q$ with its input head just after $p$ is halted after $|r|+1$ steps and has output $[A(\\operatorname{foldl}(\\delta,q,r))]$.",
+ "hypotheses_covered": [
+  "A finite state set $S$",
+  "Decidable equality on $S$",
+  "A transition function $S\\times\\{0,1\\}\\to S$",
+  "A starting state $s_0\\in S$",
+  "An acceptance predicate $A:S\\to\\{0,1\\}$",
+  "Boolean words $x$ and $r$",
+  "A prefix $p$ with $x=p$ concatenated with $r$",
+  "A state $q\\in S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the input decompose as $x = p \\mathbin{+\\!\\!+} r$. Started in any state $q$ at\nposition $|p|$, the one-way scanner halts after exactly $|r| + 1$ steps with output\nthe single bit obtained by applying the accepting predicate to the fold of the\ntransition over $r$ from $q$; no earlier step emits."
+}

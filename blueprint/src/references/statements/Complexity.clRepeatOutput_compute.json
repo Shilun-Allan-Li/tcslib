@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.clRepeatOutput_compute",
+ "key": "4a35b2e46671620b",
+ "kind": "lemma",
+ "title": "Time bound for repeated iteration",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet, with entry and exit states and at least one work tape. Suppose that for every input word $x$ and argument word $u$, there is a time $t\\le a(|u|+1)^d$ with $t>0$ such that the call of $C$ from its entry configuration on $u$ avoids the exit state at every intermediate time $0<j<t$ and reaches the exit configuration containing $f(u)$ at time $t$. Let $s$ be a Boolean word, and let $N,W$ be natural numbers with every iterate $f^{[j]}(s)$ for $j\\le N$ of length at most $W$. If $z$ denotes the packed repetition argument built from the call machine's state word for $s$ and a unary clock of length $N$, then the repetition-output machine computes $f^{[N]}(s)$ from $z$ within $2|z|+9+(k+1)(3|z|+7)+N(a(W+1)^d+2)+W$ steps, where $k$ is the number of work tapes of $C$.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine $C$",
+  "entry and exit states of $C$",
+  "$0<k$",
+  "function $f$ on Boolean words",
+  "natural numbers $a,d$",
+  "every input and argument has a positive call time bounded by $a(|u|+1)^d$",
+  "the call avoids the exit state at intermediate times",
+  "the call reaches the exit configuration containing $f(u)$",
+  "initial word $s$",
+  "natural numbers $N,W$",
+  "all iterates $f^{[j]}(s)$ for $j\\le N$ have length at most $W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose every argument has a clean call computing one application of a word function $f$ within $a(|arg|+1)^d$ steps, and every iterate of $f$ from the initial word $s$ up to $N$ has length at most $W$. Then the repetition-output machine computes the $N$-fold iterate of $f$ at $s$ from the packed repetition argument within $2|x| + 9 + (k+1)(3|x|+7) + N(a(W+1)^d + 2) + W$ steps, where $x$ is the argument and $k$ the call machine's tape count; input parsing, all positive calls, every dispatch, and the final replay are charged."
+}

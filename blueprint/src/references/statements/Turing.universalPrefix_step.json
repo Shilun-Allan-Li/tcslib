@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.universalPrefix_step",
+ "key": "478b879e411aca7e",
+ "kind": "lemma",
+ "title": "One step of the prefix parser",
+ "statement": "Let $\\alpha$ and $x$ be finite bit strings, let $q$ be a parser state represented by an optional bit, let $p$ be an input-head position on their encoded input, and let $w$ be an output word. Suppose the symbol scanned at $p$ is $b$, where $b$ is an optional bit. Then one parser step gives the configuration whose state, input-head position, and output are respectively the successor state prescribed by the transition on $q$ and $b$, the position obtained by its input-head movement, and $w$ with its emitted symbol, if any, appended.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are finite bit strings",
+  "$q\\in\\mathrm{Option}(\\mathrm{Bool})$",
+  "$p$ is a valid input-head position on the encoded input",
+  "$w$ is a finite output word",
+  "$b\\in\\mathrm{Option}(\\mathrm{Bool})$",
+  "the symbol scanned at $p$ equals $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the doubled-bit prefix parser stand, on the self-delimiting pairing\n$\\langle \\alpha, x\\rangle$ of bit strings $\\alpha$ and $x$, in a live control\nstate $q$ at input-head position $p$ with output word $w$ emitted so far, and\nsuppose the symbol scanned at $p$ is $b$.  Then one transition produces again\na configuration with no work-tape content: its control state and head\nmovement are those prescribed by the parser's transition function on\n$(q, b)$, and the bit emitted by that transition (if any) is appended to $w$."
+}

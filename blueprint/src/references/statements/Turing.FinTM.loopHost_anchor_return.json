@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_anchor_return",
+ "key": "f20737fe5b65bd05",
+ "kind": "lemma",
+ "title": "Capturing an anchor return",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, and choose Boolean parameters for the forwarding, find, and startup modes and a Boolean word $p$. Let $x$ be a Boolean input word, $c$ a configuration of $B$ on $x$, $r$ a release bit, $t$ a natural number, $w$ a Boolean word, and $u$ a configuration of $F$ on $x$. Suppose the run of $B$ from $c$ is in state $a$ at time $t$; if $t=0$, suppose $r$ is false; and at every time $v<t$, either $v=0$ and $r$ is true, or the run is not in state $a$. Then the loop host run for $t+1$ steps, started from the image of the padded body configuration formed from $c,r$, no flag, $w$, and $u$, equals the image of the padded configuration formed from the body run at time $t$ with its state set to halted, release false, and flag set to false, using the same modes, prefix, word, and fuel configuration.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Boolean Turing machines",
+  "$a$ is a state of $B$",
+  "Forwarding, find, and startup parameters are Boolean",
+  "$p,w$ are Boolean words",
+  "$x$ is a Boolean input word",
+  "$c$ is a configuration of $B$ on $x",
+  "$r$ is Boolean",
+  "$t$ is a natural number",
+  "$u$ is a configuration of $F$ on $x",
+  "The body run from $c$ is in state $a$ at time $t$",
+  "If $t=0$, then $r$ is false",
+  "At every $v<t$, either $v=0$ and $r$ is true, or the body run is not in state $a$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion compares configurations built by private image and padding constructions; the supplied informal definitions do not fully specify the image construction.",
+ "rubric": [],
+ "replaced": "Let $c$ be a body configuration, $t$ a time at which the body run from $c$ sits in the\nanchor state, with no earlier anchor visit except possibly a released step at time zero,\nand with the release bit clear whenever $t = 0$. Then the loop host, run for $t + 1$\nsteps from the body call built on $c$, reaches the stopped call whose body data is the\nbody run at time $t$ with control removed, release clear, and stop flag\n$\\mathrm{false}$, with the counter word and fuel residue unchanged."
+}

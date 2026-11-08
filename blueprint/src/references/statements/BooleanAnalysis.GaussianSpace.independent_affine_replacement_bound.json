@@ -1,0 +1,24 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.independent_affine_replacement_bound",
+ "key": "31e82c01ebda64fc",
+ "kind": "theorem",
+ "title": "Fourth-Order Affine Replacement Bound",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, and let $A,D,U,V\\colon\\Omega\\to\\mathbb R$. Suppose $A,D\\in L^4(\\mu)$, and suppose each of $U,V$ has mean zero, second moment one, third moment zero, and fourth moment at most $9$ (in particular, each is measurable up to null sets with finite fourth absolute moment). Assume each of $U,V$ is independent of $(A,D)$. Let $\\psi\\in C^4(\\mathbb R)$, and suppose $C\\ge0$ bounds $|\\psi^{(4)}(t)|$ for every $t\\in\\mathbb R$. If $\\psi(A+DU)$ and $\\psi(A+DV)$ are integrable, then $\\left|\\mathbb E\\psi(A+DU)-\\mathbb E\\psi(A+DV)\\right|\\le (3C/4)\\mathbb E[D^4]$.",
+ "hypotheses_covered": [
+  "$(\\Omega,\\mu)$ is a probability space",
+  "$A,D\\in L^4(\\mu)$",
+  "$U$ satisfies the fourth-order invariance moment conditions under $\\mu$",
+  "$V$ satisfies the fourth-order invariance moment conditions under $\\mu$",
+  "$U$ is independent of $(A,D)$",
+  "$V$ is independent of $(A,D)$",
+  "$\\psi\\in C^4(\\mathbb R)$",
+  "$C\\ge0$",
+  "$|\\psi^{(4)}(t)|\\le C$ for every real $t$",
+  "$\\psi(A+DU)$ is integrable",
+  "$\\psi(A+DV)$ is integrable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $A,D,U,V$ be real random variables on a probability space, with $A,D\\in L^4$. Suppose each of $U,V$ is independent of the pair $(A,D)$ and is measurable up to a null set with finite fourth absolute moment, first three moments $0,1,0$, and fourth moment at most $9$. If $\\psi\\in C^4(\\mathbb R)$, $C\\ge0$ bounds $|\\psi^{(4)}|$ everywhere, and both $\\psi(A+DU)$ and $\\psi(A+DV)$ are integrable, then $|\\mathbb E\\psi(A+DU)-\\mathbb E\\psi(A+DV)|\\le(3C/4)\\mathbb E[D^4]$."
+}

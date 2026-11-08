@@ -1,0 +1,21 @@
+{
+ "lean_name": "FABL.compositionLocalAssignment_eq_extracted",
+ "key": "779e0204e191789b",
+ "kind": "theorem",
+ "title": "Local assignment from an extended proof",
+ "statement": "Let $n$, the original proof length $\\ell$, and the query count $r$ be natural numbers, and let $V$ be a Boolean PCPP system with these parameters. Let $K$ be a natural number and let a seedwise three-CNF reduction for $V$ with parameter $K$ be given; assume $n>0$. For every input word $w\\in\\{0,1\\}^n$, every extended proof of length $\\ell+K|\\mathrm{Seed}(V)|$, and every verifier seed, the sign assignment obtained by evaluating the concatenated input and extended proof at the reduction's local addresses equals the extension of the encoded outer local bits, read from the first $\\ell$ proof positions, by the auxiliary signs extracted from the extended proof for that seed.",
+ "hypotheses_covered": [
+  "$n,\\ell,r$ are natural numbers",
+  "$V$ is a Boolean PCPP system with input length $n$, proof length $\\ell$, and query count $r$",
+  "$K$ is a natural number",
+  "A seedwise three-CNF reduction for $V$ with parameter $K$ is given",
+  "$n>0$",
+  "$w$ is an input word of length $n$",
+  "The extended proof has length $\\ell+K|\\mathrm{Seed}(V)|$",
+  "A verifier seed is chosen"
+ ],
+ "confidence": "low",
+ "caveat": "The equality follows the formal definitions of proof restriction, local address, and auxiliary extraction; this prose describes their roles without spelling out the finite-index encodings.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

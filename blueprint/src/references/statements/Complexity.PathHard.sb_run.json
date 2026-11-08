@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.PathHard.sb_run",
+ "key": "cdd59cc287734085",
+ "kind": "theorem",
+ "title": "Execution of a subtraction routine",
+ "statement": "Let $a,b,f,B\\in\\mathbb{N}$, let $m\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $o$ assign a Boolean to each of five indices and each finite Boolean string, and let $y$ be a finite Boolean string. For any subtraction site $k$ and register configuration $st$ whose fifteen registers are at most $B$, the register program starting at the phase-zero instruction for $k$, with register values given by $st$ and no answer recorded, reaches its exit instruction. At the endpoint, the register associated with $k$ is zero and the index register has value $\\max(st.i-st_{r},0)$, where $st_r$ is the initial value of the register associated with $k$; every configuration before the endpoint satisfies the program's preconditions and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "Natural-number parameters $a,b,f,B$",
+  "Boolean parameter $m$",
+  "Oracle on five indices and finite Boolean strings",
+  "Finite Boolean input string $y$",
+  "Subtraction site $k$",
+  "Initial register configuration $st$ has all fifteen values at most $B$",
+  "Execution starts at phase zero for $k$, with register values $st$ and no answer recorded"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $mode$ be a Boolean, let $o$ be an oracle\nassigning a Boolean to each of five indices and each finite Boolean string, and let $y$\nbe a finite Boolean string. For any subtraction site $k$ and register state $st$ whose\nfifteen natural-number registers are all at most $B$, the program starting at the\ninitial phase for $k$, with register values given by $st$ and no answer recorded,\nreaches the exit phase for $k$ with the register associated to $k$ set to zero and the\nindex register set to $st.i$ minus the initial value of the register associated to $k$\n(with subtraction truncated at zero). At every earlier configuration, all registers are\nat most $B$ and the program's required preconditions hold."
+}

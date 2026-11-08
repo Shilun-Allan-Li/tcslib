@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.counterInc_potential",
+ "key": "a7cb6f01010d3af4",
+ "kind": "lemma",
+ "title": "One-count identity for binary increment",
+ "statement": "For every finite binary word $b$ written least-significant bit first, the number of $1$ bits in its increment plus the number of leading $1$ bits in $b$ equals the number of $1$ bits in $b$ plus one.",
+ "hypotheses_covered": [
+  "$b$ is a finite binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $b$ be a binary word written least-significant bit first, let $r$ be its\ncarry length (its number of leading $1$ bits), and let $w(b)$ denote the number\nof $1$ bits in a word. Then the incremented word $b'$ satisfies\n$w(b') + r = w(b) + 1$: each cleared bit lowers the count of ones by one, and\nthe single final write raises it by one."
+}

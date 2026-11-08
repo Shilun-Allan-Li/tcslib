@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.ClockHost.reset_run",
+ "key": "cb7e6f3b089af375",
+ "kind": "theorem",
+ "title": "Three-sweep reset run",
+ "statement": "Let $S$ be a deterministic Boolean-tape Turing machine and $A$ a nondeterministic Boolean-tape Turing machine, with a Boolean loop parameter and input word $x$. For any natural number $m$, input-head position, and simulated-machine tape contents and head positions, if a choice word $w$ has length $3(m+1)$, then running the host machine under $w$ from phase $p0$ with yard head at $m-1$ ends in the running phase with $A$ in its initial state and no captured output; the input head is moved left by $m+1$ positions with boundary clamping and then one position right, every head of $A$’s work tapes advances by $3(m+1)$, the yard head is at $0$, and the other tapes and output are unchanged.",
+ "hypotheses_covered": [
+  "Boolean deterministic machine $S$",
+  "Boolean nondeterministic machine $A$",
+  "Boolean loop parameter",
+  "Boolean input word $x$",
+  "Natural yard length $m$",
+  "Valid input-head position $ip$",
+  "Arbitrary simulated-machine tape contents and head positions",
+  "Choice word $w$ with $|w|=3(m+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.NDTM.stepWith_of_halt",
+ "key": "10b722d011026159",
+ "kind": "lemma",
+ "title": "Halted configurations remain fixed",
+ "statement": "Let $M$ be a nondeterministic machine with $k$ work tapes, let $b$ be a choice bit, and let $c$ be a configuration on a fixed input whose state component is empty. Then one step under choice $b$ leaves $c$ unchanged.",
+ "hypotheses_covered": [
+  "A nondeterministic machine with $k$ work tapes",
+  "A choice bit $b$",
+  "A configuration $c$ on a fixed input",
+  "The state component of $c$ is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a nondeterministic multi-tape Turing machine, $b \\in \\{0,1\\}$ a choice bit, and\n$c$ a configuration of $M$ on some input whose state component is empty (the machine has\nhalted).  Then one step of $M$ from $c$ under $b$ leaves $c$ unchanged."
+}

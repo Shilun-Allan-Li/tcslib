@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_complete",
+ "key": "ab363979d203a416",
+ "kind": "lemma",
+ "title": "Completion of a Clean Call",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine with $k$ work tapes, let $\\mathrm{emit}$ be a Boolean mode, and let $x$, $\\mathrm{arg}$, and $\\mathrm{cap}$ be Boolean words. If $M$ halts on input $\\mathrm{arg}$ with output $\\mathrm{cap}$ after $T$ steps, then the call machine for $M$ in mode $\\mathrm{emit}$, started on physical input $x$ with $\\mathrm{arg}$ on its first work tape and all other work tapes blank, reaches after some $t \\le (24+13k)(T+|\\mathrm{arg}|+|\\mathrm{cap}|+1)$ steps the configuration with exit state $5$, with $\\mathrm{arg}$ on the first work tape when $\\mathrm{emit}$ is true and $\\mathrm{cap}$ there otherwise, all other work tapes blank, and output $\\mathrm{cap}$ when $\\mathrm{emit}$ is true and empty otherwise.",
+ "hypotheses_covered": [
+  "M is a finite-state Boolean Turing machine with k work tapes",
+  "emit is a Boolean mode",
+  "x, arg, and cap are Boolean words",
+  "M halts on arg with output cap after T steps",
+  "T is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k$ work tapes computing output $c$ on argument $a$ within\ntime $T$. For every mode and input word, there is a time $t \\le (24 + 13k)(T + |a| + |c|\n+ 1)$ such that the clean-call controller, run for $t$ steps from its canonical entry\nseam on $a$, reaches the canonical exit seam carrying $c$ in install mode and $a$ in\nemit mode, with output $c$ exactly in emit mode."
+}

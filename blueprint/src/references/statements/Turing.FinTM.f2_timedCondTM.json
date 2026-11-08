@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.f2_timedCondTM",
+ "key": "863c3646a9ce7447",
+ "kind": "def",
+ "title": "Timed conditional machine",
+ "statement": "Given three finite Turing machines $D$, $M_1$, and $M_2$ over the Boolean alphabet, define a finite machine with $k_D+k_1+k_2+1$ work tapes and state set $Q_D\\sqcup(\\{0,1\\}\\sqcup((\\{0,1\\}\\times\\{0,1\\})\\sqcup(Q_1\\sqcup Q_2)))$. Its initial state is the initial state of $D$, tagged in the left summand. In states tagged by $Q_D$, it simulates $D$ on its tapes, padded by the other tapes, while recording any output bit on the extra tape; the remaining states control the subsequent scan and selection phases, then simulate the selected branch machine on its tape block, with the transition table on branch states given by the branch union started in its false setting.",
+ "hypotheses_covered": [
+  "$D$, $M_1$, and $M_2$ are finite Turing machines over the Boolean alphabet"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,16 +1,16 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.ZType.achievable",
- "key": "d713ef8f4adb326a",
+ "key": "34a465e227ff0b19",
  "kind": "theorem",
- "title": "Every achievable Z-value comes from a hard sample",
- "statement": "Fix a positive integer $n$ and a deterministic protocol $p$ for disjointness inputs of length $n$, and recall that the raw $Z$-variable sends each hard-distribution sample $\\omega$ to the tuple $Z(\\omega) = (M, T, X_{<T}, Y_{>T})$ consisting of the transcript of $p$ on $\\omega$'s input, the special coordinate, and the input bits before and after that coordinate. An achievable $Z$-value is a raw value together with a witness that it arises this way. Then for every achievable $Z$-value $z$, there exists a hard-distribution sample $\\omega$ such that $Z(\\omega)$ equals the underlying raw value of $z$.",
+ "title": "Realizability of achievable statistics",
+ "statement": "Fix a positive integer $n$, a deterministic disjointness protocol $p$ on length-$n$ inputs, and an achievable statistic $z$ for $p$. Then there exists a hard-distribution sample $\\omega$ whose raw statistic under $p$ equals the underlying raw statistic of $z$.",
  "hypotheses_covered": [
-  "n a positive integer",
-  "p a deterministic disjointness protocol",
-  "z an achievable Z-value (element of the subtype ZType n p)"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic disjointness protocol on length-$n$ inputs",
+  "$z$ is an achievable statistic for $p$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "The achievability proof carried by a \\texttt{ZType} value."
+ "replaced": "Fix a positive integer $n$ and a deterministic protocol $p$ for disjointness inputs of\nlength $n$, and recall that the raw $Z$-variable sends each hard-distribution sample\n$\\omega$ to the tuple $Z(\\omega) = (M, T, X_{<T}, Y_{>T})$ consisting of the transcript\nof $p$ on $\\omega$'s input, the special coordinate, and the input bits before and after\nthat coordinate. An achievable $Z$-value is a raw value together with a witness that it\narises this way. Then for every achievable $Z$-value $z$, there exists a\nhard-distribution sample $\\omega$ such that $Z(\\omega)$ equals the underlying raw value\nof $z$."
 }

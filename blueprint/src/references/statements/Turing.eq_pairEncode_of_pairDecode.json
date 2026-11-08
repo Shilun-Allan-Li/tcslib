@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.eq_pairEncode_of_pairDecode",
+ "key": "5891dd9f222b9368",
+ "kind": "theorem",
+ "title": "Successful parses are pair encodings",
+ "statement": "For Boolean strings $z,a,b$, if the aligned pair parser applied to $z$ returns $(a,b)$, then $z$ is the encoding formed by doubling each bit of $a$, appending the separator $01$, and then appending $b$ unchanged.",
+ "hypotheses_covered": [
+  "$z,a,b$ are Boolean strings",
+  "The aligned pair parser returns $(a,b)$ on input $z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $z$, $a$, $b$ be bit strings, and consider the aligned pair parser,\nwhich reads aligned two-bit blocks from the left, collects the data bits\n$0$ and $1$ from the blocks $00$ and $11$, and at the first aligned block\n$01$ returns the collected bits together with the remaining suffix.  If the\nparser succeeds on $z$ and returns $(a, b)$, then $z$ is the pair encoding\n$\\langle a, b\\rangle$, i.e.\\ $a$ with every bit written twice, then the\nseparator bits $0$ then $1$, then $b$ verbatim."
+}

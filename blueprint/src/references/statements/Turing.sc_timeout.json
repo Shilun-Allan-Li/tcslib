@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.sc_timeout",
+ "key": "f287de98b3b55bae",
+ "kind": "theorem",
+ "title": "Bounded timeout of a clocked simulation",
+ "statement": "Let $e:\text{Bool}\to\text{Γ}$ be an embedding, let $M$ be a $k$-work-tape machine over $\text{Γ}$ with state set $S$, and let $\\mathrm{stopAt}:S\\to\\text{Bool}$. Let $x$ be a finite input word and let $c$ be a configuration of $M$ on $x$ whose state is $q$. Let $w$ be a Boolean word, let $ct:\\mathbb Z\\to\\mathrm{Option}(\\text{Γ})$ be a tape content function, and let $cp\\in\\mathbb Z$ satisfy $ct(cp+p)$ equals the content at position $p$ of the tape storing the encoded word $w$ whenever $-1\\le p\\le |w|$. Write $N$ for the integer represented by the binary digits of $w$, and suppose that for every natural number $u\\le N$, the configuration reached by running $M$ from $c$ for $u$ steps is not stopped by $\\mathrm{stopAt}$. Then there are a natural number $T\\le 5N+2|w|+2$ and a Boolean word $w'$ with $|w'|=|w|$ such that the clocked machine, started with body configuration $c$, clock head at $cp$, and clock state carrying $q$ in its forward counting phase, reaches after $T$ steps a timeout state carrying the state of $M$'s configuration after $N$ steps, with the body tapes, input-head position, and output equal to that configuration and the clock tape obtained by patching $ct$ with the encoding of $w'$ at base position $cp$. At every time $u<T$, the clocked machine is in neither its finish nor its timeout state. For every $u\\le T$, there is a natural number $v\\le N$ such that its body tapes, their head positions, input-head position, and output agree with those of $M$ after $v$ steps, and its clock-head position belongs to $[cp-1,cp+|w|]$.",
+ "hypotheses_covered": [
+  "An embedding of the Boolean alphabet into Γ",
+  "A k-work-tape machine M over Γ with state set S",
+  "A stopping predicate stopAt:S→Bool",
+  "A finite input word x",
+  "A configuration c of M on x and a state q",
+  "The configuration c has state q",
+  "A Boolean word w",
+  "A tape content function ct:ℤ→Option Γ and base position cp∈ℤ",
+  "For each integer p with -1≤p≤|w|, ct(cp+p) equals the encoded buffer-tape content of w at p",
+  "For every natural u≤N, M's configuration after u steps from c is not stopped, where N is the binary value of w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

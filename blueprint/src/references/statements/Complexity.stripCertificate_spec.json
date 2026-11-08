@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.stripCertificate_spec",
+ "key": "368e5197137fc06a",
+ "kind": "lemma",
+ "title": "Characterisation of certificate stripping",
+ "statement": "For every binary string $v$, stripping $v$ is undefined if and only if $v$ consists entirely of zeros. For every binary string $u$, stripping $v$ returns $u$ if and only if $v$ is $u$ followed by a $1$ and then some finite number of zeros.",
+ "hypotheses_covered": [
+  "$v$ is a binary string",
+  "The first equivalence characterises when stripping $v$ is undefined",
+  "For every binary string $u$, the second equivalence characterises when stripping $v$ returns $u"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\mathrm{strip}$ be the partial map on binary strings defined by:\n$\\mathrm{strip}(\\varepsilon)$ is undefined, and for a bit $b$ and a string $v$,\n$\\mathrm{strip}(bv) = b\\,\\mathrm{strip}(v)$ when $\\mathrm{strip}(v)$ is defined,\nwhile otherwise $\\mathrm{strip}(1v) = \\varepsilon$ and $\\mathrm{strip}(0v)$ is\nundefined. Then for every binary string $v$: $\\mathrm{strip}(v)$ is undefined if\nand only if $v = 0^{|v|}$ consists only of zeros; and for every binary string $u$,\n$\\mathrm{strip}(v) = u$ if and only if $v = u\\,1\\,0^k$ for some $k \\in \\mathbb{N}$."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.strictGate_eval",
+ "key": "f411b12ba6b81a3f",
+ "kind": "theorem",
+ "title": "Evaluation of a strict gate",
+ "statement": "Let $n$ be a natural number and let $g$ be a gate with at most two inputs, no repeated input vertices, and exactly one input if it is a NOT gate. For Boolean lists $v$ and $v'$, suppose the value of $v$ at index $n+1$ (using false for indices outside the list) is true and its value at index $n+2$ is false. Suppose also that for every input vertex $a$ of $g$, the value of $v$ at the shifted index of $a$ equals the value of $v'$ at index $a$, again using false outside either list. Then the strictification of $g$ evaluated on $v$ has the same value as $g$ evaluated on $v'$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$g$ has at most two inputs",
+  "$g$ has no repeated input vertices",
+  "if $g$ is a NOT gate, it has exactly one input",
+  "$v$ has value true at index $n+1$, with out-of-range values false",
+  "$v$ has value false at index $n+2$, with out-of-range values false",
+  "at each input $a$ of $g$, $v$ at the shifted index of $a$ agrees with $v'$ at index $a$, with out-of-range values false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.loop_rewind_bounded",
+ "key": "3e1f6da31dee69f0",
+ "kind": "lemma",
+ "title": "Bounded rewind of the input head",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $s$ and $r$ be states, and let $d$ be an optional state. Suppose that every transition from $s$, regardless of the scanned symbols, moves the input head one position left and enters $r$; every transition from $r$ moves the head one position left and remains in $r$ when an input symbol is scanned, and moves it one position right and enters $d$ when no input symbol is scanned. From any configuration $c$ in state $s$, there is a time $t$ with $t \\le p+2$, where $p$ is the input-head position of $c$, at which the machine is in state $d$ with input-head position $1$, and every other component of $c$ is unchanged.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine over the Boolean alphabet",
+  "States s and r and optional destination state d",
+  "Every transition from s moves the input head left and enters r, for all scanned symbols",
+  "From r, reading an input symbol moves left and remains in r",
+  "From r, reading no input symbol moves right and enters d",
+  "The initial configuration has state s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet with two distinguished\ncontrol states: a start state whose every transition moves the input head left and\nenters a scan state, and a scan state that keeps moving left while it reads an input\nsymbol and, on reading the left boundary blank, moves right and enters a given\ndestination state. Then from any configuration $c$ in the start state there is a time\n$t$ at most the input-head position of $c$ plus two after which the machine sits in the\ndestination state with input head at position one and every other component of $c$\nunchanged."
+}

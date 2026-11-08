@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/Randomization/General.lean :: BooleanAnalysis.Hypercontractivity.cube_lowDegree_projection -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Low Degree Projection Moment Bounds
+
+**Claim.** For $q>1$, the Fourier truncation $g^{\le k}$ obeys both conditional bounds: when $q\ge2$, $\|g^{\le k}\|_q\le(\sqrt{q-1})^k\|g\|_q$; when $q\le2$, $\|g^{\le k}\|_q\le(1/\sqrt{q-1})^k\|g\|_q$.
+
+**Proof.** First suppose $q\ge2$. The truncation has degree at most $k$ (\texttt{BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.cube_lowDegree_has_degree}), so the low-degree norm bound gives $\|g^{\le k}\|_q\le(\sqrt{q-1})^k\|g^{\le k}\|_2$ (\texttt{BooleanAnalysis.Hypercontractivity.lowDegree_norm_ge_two}). Projection does not increase the $L^2$ norm (\texttt{BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.cube_lowDegree_l2_le}). Finally, the $L^2$ norm equals the order-two power mean (\texttt{BooleanAnalysis.Hypercontractivity.cubeLpNorm_two}), and power means are nondecreasing in their exponent, so $\|g\|_2\le\|g\|_q$ (\texttt{BooleanAnalysis.Hypercontractivity.lp_norm_mono}). Combining these inequalities proves the first bound.
+
+Now suppose $1<q\le2$, and let $p=q/(q-1)$ be the conjugate exponent. Then $p\ge2$. The projection is self-adjoint: by Plancherel and the formula for the Fourier coefficients of a truncation, $\langle f,g^{\le k}\rangle=\langle f^{\le k},g\rangle$ for all $f,g$ (\texttt{BooleanAnalysis.plancherel}; \texttt{KKL.fourierCoeff_lowDegreePart}). Choose a function $f$ witnessing the sharpness of Hölder's inequality for $g^{\le k}$, so that $\|f\|_p\le1$ and $\|g^{\le k}\|_q\le\langle f,g^{\le k}\rangle$ (\texttt{BooleanAnalysis.Hypercontractivity.holder_sharpness}). Self-adjointness changes this inner product to $\langle f^{\le k},g\rangle$. Hölder's inequality bounds it by $\|f^{\le k}\|_p\|g\|_q$ (\texttt{BooleanAnalysis.Hypercontractivity.holder_ineq_bool}). Apply the already proved $q\ge2$ bound with exponent $p$ to $f^{\le k}$, obtaining $\|f^{\le k}\|_p\le(\sqrt{p-1})^k\|f\|_p\le(\sqrt{p-1})^k$. Since $p-1=1/(q-1)$, this factor is $(1/\sqrt{q-1})^k$, giving the second bound.
+
+**Key facts.** `BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.cube_lowDegree_has_degree`, `BooleanAnalysis.Hypercontractivity.lowDegree_norm_ge_two`, `BooleanAnalysis.Hypercontractivity.RandomizationProjectionAux.cube_lowDegree_l2_le`, `BooleanAnalysis.Hypercontractivity.cubeLpNorm_two`, `BooleanAnalysis.Hypercontractivity.lp_norm_mono`, `BooleanAnalysis.plancherel`, `KKL.fourierCoeff_lowDegreePart`, `BooleanAnalysis.Hypercontractivity.holder_sharpness`, `BooleanAnalysis.Hypercontractivity.holder_ineq_bool`.

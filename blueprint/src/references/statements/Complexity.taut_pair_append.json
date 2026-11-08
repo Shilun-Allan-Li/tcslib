@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.taut_pair_append",
+ "key": "6109f84a36bdc3af",
+ "kind": "lemma",
+ "title": "Pair encoding of a concatenation",
+ "statement": "For all finite binary words $a$, $b$, and $u$, encoding the pair whose first component is $a$ followed by $b$ and whose second component is $u$ equals the word obtained by doubling each bit of $a$, followed by the encoding of the pair $(b,u)$.",
+ "hypotheses_covered": [
+  "binary words $a$, $b$, and $u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary words $a$, $b$, $u$, the pair encoding satisfies\n$\\mathrm{pair}(a \\mathbin{+\\!\\!+} b, u) = \\overline{a} \\mathbin{+\\!\\!+} \\mathrm{pair}(b, u)$,\nwhere $\\overline{a}$ is the word obtained from $a$ by doubling every bit."
+}

@@ -1,0 +1,27 @@
+{
+ "lean_name": "BoolCircuit.runWith_remap_rel",
+ "key": "1f5e5d8eb6605011",
+ "kind": "theorem",
+ "title": "Relation preserved under gate remapping",
+ "statement": "Let $\\beta$ be a type, let $f$ assign an output in $\\beta$ to each gate and list of previous outputs, let $R$ be a relation on $\\beta$, let $d\\in\\beta$, and let $\\sigma:\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every gate $g$ and output lists $v,v'$, if $R(v'_{\\sigma(a)},v_a)$ holds for every argument index $a$ of $g$ (where an out-of-range list index returns $d$), then $R(f(g\\text{ with every argument index }a\\text{ replaced by }\\sigma(a),v),f(g,v'))$ holds. Let $L,L'\\in\\mathbb{N}$ and let $init,init'$ be lists of lengths $L,L'$, respectively. Suppose $\\sigma(v)<L'$ whenever $v<L$, $\\sigma(L+i)=L'+i$ for every $i$, and $R(init'_{\\sigma(v)},init_v)$ for every $v<L$, again using $d$ for out-of-range indices. Let $gs$ be a gate list such that, for each position $i$ in $gs$, every argument index of its gate is less than $L+i$. Then for every $v<L+|gs|$, the output at index $\\sigma(v)$ from running the remapped gates on $init'$ is related by $R$ to the output at index $v$ from running $gs$ on $init$, with out-of-range indices interpreted as $d$.",
+ "hypotheses_covered": [
+  "An output type $\\beta$",
+  "A gate evaluation function $f$",
+  "A relation $R$ on $\\beta$",
+  "An element $d\\in\\beta$ used for out-of-range list indices",
+  "An index map $\\sigma:\\mathbb{N}\\to\\mathbb{N}$",
+  "The evaluation compatibility condition for every gate and pair of output lists",
+  "Natural numbers $L,L'$",
+  "Initial lists of lengths $L,L'$",
+  "$\\sigma(v)<L'$ for every $v<L$",
+  "$\\sigma(L+i)=L'+i$ for every $i$",
+  "The initial-list relation for every $v<L$",
+  "A gate list $gs$",
+  "Every argument index at gate position $i$ is less than $L+i$",
+  "The conclusion holds for every $v<L+|gs|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

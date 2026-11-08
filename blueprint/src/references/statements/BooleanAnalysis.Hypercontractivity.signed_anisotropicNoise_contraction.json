@@ -1,0 +1,22 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.signed_anisotropicNoise_contraction",
+ "key": "aaa9cecc621690a3",
+ "kind": "theorem",
+ "title": "Contraction under signed product noise",
+ "statement": "For every real $q>1$, there is a constant $c$ with $0<c\\\\le1$ such that $c=2/5$ whenever $q=4$ or $q=4/3$. For every natural number $n$, every product of $n$ finite probability spaces whose coordinate atom weights are strictly positive and sum to one, every sign vector $s\\\\in\\\\{-1,1\\\\}^n$, and every real-valued function $f$ on the product outcome space, the $q$-moment norm of the anisotropic noise transform with coordinate rates $cs_i$ is at most the $q$-moment norm of $f$.",
+ "hypotheses_covered": [
+  "$q>1$",
+  "Existence of $c$ with $0<c\\\\le1$",
+  "If $q=4$ or $q=4/3$, then $c=2/5$",
+  "$n\\\\in\\\\mathbb N$",
+  "Finite coordinate spaces",
+  "Strictly positive coordinate weights",
+  "Coordinate weights sum to one",
+  "Sign vector in $\\\\{-1,1\\\\}^n$",
+  "Real-valued function on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $q>1$ there exists $0<c\\le1$, with $c=2/5$ when $q\\in\\{4,4/3\\}$, such that for every product $P$ of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, every sign vector $s\\in\\{-1,1\\}^n$, and every real $f$ on its outcome space, $\\|T_{c\\boldsymbol s}f\\|_{q,P}\\le\\|f\\|_{q,P}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$; $T_{\\boldsymbol s}h=\\sum_{S\\subseteq[n]}(\\prod_{i\\in S}s_i)h_S$ for real coordinate rates $s_i$."
+}

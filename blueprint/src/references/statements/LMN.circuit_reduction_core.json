@@ -1,6 +1,6 @@
 {
  "lean_name": "LMN.circuit_reduction_core",
- "key": "449a7666a2b75d9d",
+ "key": "949ca350e1c652e2",
  "kind": "theorem",
  "title": "Switching-lemma bound on decision-tree depth after a random restriction",
  "statement": "Let $f:\\{0,1\\}^n\\to\\{0,1\\}$ be a Boolean function on $n\\ge 1$ variables, and let $d,s,w,l,t$ be natural numbers with $d\\ge 2$ and $s,w,l\\ge 1$. Suppose $f$ is computed by some Boolean circuit of depth at most $d$, size at most $s$, and fan-in at most $w$. Draw a random restriction $\\rho$ on the $n$ variables in which each variable is independently left free with probability\n\\[\n  p \\;=\\; \\frac{1}{40w}\\left(\\frac{1}{40l}\\right)^{d-2},\n\\]\nand is otherwise fixed to $0$ or to $1$, each with probability $(1-p)/2$; let $f\\restriction_\\rho$ denote the function of the free variables obtained by substituting the fixed values into $f$. Then the probability that $f\\restriction_\\rho$ cannot be computed by any decision tree of depth at most $t$ satisfies\n\\[\n  \\bbP\\!\\left[\\,\\text{decision-tree depth of } f\\restriction_\\rho > t\\,\\right]\n  \\;\\le\\; s\\left(\\tfrac12\\right)^{l} + \\left(\\tfrac12\\right)^{t}\n  + s\\,\\exp\\!\\left(-\\frac{n}{120w}\\right) + s\\,\\exp\\!\\left(-\\frac{n}{120l}\\right).\n\\]",

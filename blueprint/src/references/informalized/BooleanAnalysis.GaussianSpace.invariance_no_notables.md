@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/GaussianSpace/InvarianceExtensions.lean :: BooleanAnalysis.GaussianSpace.invariance_no_notables -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Invariance with Small Noisy Influences
+
+**Claim.** There is a constant $K>0$ such that the stated cube and Gaussian expectations for the noise-smoothed function differ by at most $Kc\varepsilon^{\delta/3}$ under the given variance, noisy-influence, and parameter hypotheses.
+
+**Proof.** Take twice the positive constant from the low-degree and tail invariance estimate (`invariance_lowDegree_tail`). Set the cutoff $k=\log(1/\varepsilon)/3$, which is nonnegative because $0<\varepsilon\le1$ (`invariance_cutoff_nonneg`). Put $\rho=1-\delta$; the parameter bounds ensure $0\le\rho\le1$. Noise does not increase variance (`cubeVariance_noiseOp_le`). Each influence of the degree-$\lfloor k\rfloor$ truncation of the smoothed function is at most $\varepsilon$: truncation does not increase influence (`influence_lowDegreePart_le`), and the influence after noise is bounded by the corresponding noisy influence (`influence_noiseOp_le_noisyInfluence`), which is assumed at most $\varepsilon$. The high-degree tail of the smoothed function has norm at most $\exp(-\delta k)$ (`highDegree_noise_l2Norm_le_exp`), which equals $\varepsilon^{\delta/3}$ (`invariance_cutoff_exp`). The cutoff estimate (`invariance_cutoff_power_le`) also gives $2^k\varepsilon^{1/4}\le\varepsilon^{\delta/3}$, using $\delta\le1/20$. Apply the low-degree and tail invariance estimate with this cutoff and smoothed function. Its two error terms are each at most $\varepsilon^{\delta/3}$, so their sum is at most twice that quantity. Absorbing this factor into the chosen constant proves the claim.
+
+**Key facts.** `BooleanAnalysis.GaussianSpace.Invariance.invariance_lowDegree_tail`, `BooleanAnalysis.GaussianSpace.Invariance.invariance_cutoff_nonneg`, `BooleanAnalysis.Hypercontractivity.cubeVariance_noiseOp_le`, `KKL.influence_lowDegreePart_le`, `KKL.influence_noiseOp_le_noisyInfluence`, `BooleanAnalysis.GaussianSpace.Invariance.highDegree_noise_l2Norm_le_exp`, `BooleanAnalysis.GaussianSpace.Invariance.invariance_cutoff_exp`, `BooleanAnalysis.GaussianSpace.Invariance.invariance_cutoff_power_le`.

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.exists_recordEqTM",
+ "key": "2bc042f648c2dc47",
+ "kind": "theorem",
+ "title": "Machine for Comparing Records",
+ "statement": "For every natural number $k$ and finite decidable state types $Q$ and $T$, there are a finite decidable state type $P$, a deterministic two-work-tape machine $R$ over the record alphabet, distinct states $\\mathrm{yes},\\mathrm{no}\\in P$, designated entry state, and constant $C$ such that the following holds. For any input string, lists of fields $f,g$ each having exactly $k+3$ fields, and initial configuration $d$ in the entry state whose two work tapes encode $f$ and $g$ at their respective head positions, the machine reaches the original configuration with only its state changed to $\\mathrm{yes}$ if $f=g$, and to $\\mathrm{no}$ otherwise, in some time $t\\le C(|\\langle f\\rangle|+1)$. Before time $t$ it visits neither decision state, and through time $t$ each work-tape head stays within distance $C(|\\langle f\\rangle|+1)$ of its starting position; here $\\langle f\\rangle$ denotes the concatenation of the fields of $f$ with blank separators, and the tape encodings agree with that concatenation at offsets from $-1$ through its length (and likewise for $g$).",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Finite decidable types $Q$ and $T$",
+  "Two lists of fields each of length $k+3$",
+  "Initial configuration in the designated entry state",
+  "The two work-tape record encodings hold at offsets $-1$ through the joined record length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

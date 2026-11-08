@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.cont_mask_count",
+ "key": "725c76f94f6a66cc",
+ "kind": "lemma",
+ "title": "Emission count and output length",
+ "statement": "Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a binary input, let $d$ be a configuration of $M$ on $x$, and let $t\\in\\mathbb{N}$. The output length of $d$ plus the number of true entries in the emission mask for the first $t$ steps from $d$ equals the output length of the configuration reached after $t$ steps of $M$ from $d$.",
+ "hypotheses_covered": [
+  "$M$ is a finite deterministic Turing machine over the binary alphabet",
+  "$x$ is a binary input",
+  "$d$ is a configuration of $M$ on $x$",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a deterministic machine, $d$ a configuration and $t$ a step count. The output length of $d$ plus the number of $1$ entries in the emission mask over $t$ steps equals the output length of the configuration reached after $t$ steps of $M$ from $d$."
+}

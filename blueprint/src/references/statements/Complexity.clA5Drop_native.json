@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clA5Drop_native",
+ "key": "561ceac0fca2e569",
+ "kind": "lemma",
+ "title": "Polynomial-time counted suffix",
+ "statement": "Let $s$ and $u$ be polynomial-time computable functions from binary words to binary words. Then the function mapping $x$ to the suffix of $s(x)$ obtained by dropping the first $|u(x)|$ bits is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$s$ is polynomial-time computable",
+  "$u$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a word producer and a length-witness producer are polynomial-time computable, then so is the function dropping, from the produced word, a number of leading bits equal to the witness's length; each tail call is charged even after the word is exhausted."
+}

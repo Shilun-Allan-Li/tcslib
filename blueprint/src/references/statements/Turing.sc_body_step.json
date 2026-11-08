@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.sc_body_step",
+ "key": "8bd14fe403f77131",
+ "kind": "theorem",
+ "title": "Clocked Body Step",
+ "statement": "Let $\\Gamma$ be an alphabet, let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an embedding, let $M$ be a Turing machine with $k$ work tapes over $\\Gamma$ and state set $S$, and let $\\mathrm{stopAt}:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$. For an input word $x$ over $\\Gamma$, a configuration $c$ of $M$ on $x$, and a state $s\\in S$ such that $c$ is in state $s$, let $ct:\\mathbb{Z}\\to\\mathrm{Option}\\,\\Gamma$ be a tape content function and $cp\\in\\mathbb{Z}$. One step of the clocked machine from the configuration with body state $s$, underlying configuration $c$, and additional tape content $ct$ and head position $cp$ yields the configuration whose underlying machine configuration is the one-step successor of $c$, whose additional tape content and head position remain $ct$ and $cp$, and whose state is the decrement phase at the successor state if that successor is a state, and the finish state if the successor configuration is halted.",
+ "hypotheses_covered": [
+  "An embedding of Boolean symbols into $\\Gamma$",
+  "A Turing machine $M$ with $k$ work tapes over $\\Gamma$ and state set $S$",
+  "A Boolean-valued predicate on $S$",
+  "An input word $x$ over $\\Gamma$",
+  "A configuration $c$ of $M$ on $x$",
+  "A state $s\\in S$ with $c$ in state $s$",
+  "A tape content function $ct:\\mathbb{Z}\\to\\mathrm{Option}\\,\\Gamma$",
+  "A head position $cp\\in\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

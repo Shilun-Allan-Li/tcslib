@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Codec.boundary_iff",
+ "key": "c76c0a99eae94ed9",
+ "kind": "theorem",
+ "title": "Boundary test for window preservation",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean symbols, let $x$ be a finite Boolean string, and let $s$ be a natural number. Suppose a configuration $C$ has every work-tape head within distance $s$ of the origin and has blank cells at every work-tape position whose distance from the origin exceeds $s$. For any one-step action $a$ of the machine and any pair $h'$ consisting of an optional state and a three-valued output summary, the following are equivalent: updating the encoded cell at the right endpoint of the window using the empty cell on its left and right gives the empty cell, and updating the encoded cell at the left endpoint using the empty cell on its left and right gives the empty cell; the resulting configuration after action $a$ again has all work-tape heads within distance $s$ and blank cells at every position farther than $s$ from the origin.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean symbols",
+  "$x$ is a finite Boolean string",
+  "$s$ is a natural number",
+  "$C$ has all work-tape heads within distance $s$ of the origin",
+  "$C$ has blank work-tape cells outside that window",
+  "$a$ is a one-step action for $N$",
+  "$h'$ is an arbitrary optional state paired with an element of a three-element set"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

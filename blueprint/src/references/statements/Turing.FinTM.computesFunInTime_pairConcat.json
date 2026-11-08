@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_pairConcat",
+ "key": "32cf57a6d84687de",
+ "kind": "theorem",
+ "title": "Concatenating Parsed Pair Components",
+ "statement": "There exist a finite Turing machine $M$ over the Boolean alphabet and a constant $c\\in\\mathbb{N}$ such that, on every Boolean word $z$, $M$ halts within $c(|z|+1)$ steps and outputs the concatenation of the two components returned by the aligned pair parser when that parser succeeds, and outputs the empty word when it fails.",
+ "hypotheses_covered": [
+  "Existence of a finite Turing machine over Booleans",
+  "Existence of a natural-number constant c",
+  "Computes the parser-success concatenation, or the empty word on parser failure, within c(|z|+1) steps on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes, within $c\\,(n+1)$ steps on inputs of length $n$, the function\nsending a word that encodes the pair $(a,b)$ under the self-delimiting pair\ncode to the concatenation $a b$, and any malformed word to the empty word."
+}

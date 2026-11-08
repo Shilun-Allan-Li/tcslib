@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.splitPrepare_rewind",
+ "key": "b6908a7c22dbe507",
+ "kind": "lemma",
+ "title": "Rewind of the prepared configuration",
+ "statement": "Let $k$ be a nonnegative integer and let $w$ and $s$ be Boolean words. For every integer $j$ with $0\\le j\\le |s|$, running the preparation machine for $j+1$ steps from the configuration in state $1$ whose input head is at the saturated position for $s$, whose first work tape stores $s$, whose scratch tapes store the unary word of length $|s|+1$, and whose work heads are at displacement $j-1$, yields the configuration in state $2$ with the same tape contents and input-head position and all work heads at displacement $0$.",
+ "hypotheses_covered": [
+  "$k\\in\\mathbb N$",
+  "$w$ and $s$ are Boolean words",
+  "$j\\in\\mathbb N$",
+  "$j\\le |s|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j$ at most the candidate's length, exactly $j+1$ steps of the\npreparation machine from the prepared configuration in its rewind phase with\nall work heads at displacement $j-1$ yield the prepared configuration in its\nreturn phase with every head at displacement $0$; each scratch tape keeps\nits extra unary cell."
+}

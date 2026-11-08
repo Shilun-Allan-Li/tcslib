@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonBoolBranch",
+ "key": "0a6df7a7ebae196d",
+ "kind": "lemma",
+ "title": "A machine branching on a computed Boolean value",
+ "statement": "Let $F$ be a machine format, let $M$ be a finite Turing machine over the Boolean alphabet, and let $p$ map Boolean strings to Boolean values. Suppose $M$ computes the one-symbol output $p(x)$ on every input $x$ within $c(|x|+1)$ steps for some natural number $c$. Then there are a finite Boolean-alphabet Turing machine $C$, an entry state, an injective assignment of exit states to Boolean values, and a natural number $a$, with at least one work tape, such that for every input $x$ there is a time $t\\le a(|x|+1)$ at which $C$, started in its entry state with all work tapes blank, is in the exit state assigned to $p(x)$ with all work tapes blank; before time $t$, it is never in either exit state.",
+ "hypotheses_covered": [
+  "A machine format $F$",
+  "A finite Turing machine $M$ over Boolean symbols",
+  "A Boolean-valued function $p$ on Boolean strings",
+  "A natural number $c$ giving the time bound",
+  "For every input, $M$ computes the one-symbol output $p(x)$ within $c(|x|+1)$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

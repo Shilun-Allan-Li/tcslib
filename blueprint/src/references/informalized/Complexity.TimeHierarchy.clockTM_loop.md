@@ -1,0 +1,18 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TimeHierarchy/ClockLoop.lean :: Complexity.TimeHierarchy.clockTM_loop -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Bounded Clocked Simulation
+
+**Claim.** Starting from the decrement state with counter tape $s$, the clock machine halts within $\operatorname{ctrBound}(s)$ steps and outputs the one-bit answer that is true exactly when the simulated machine has not halted after $\operatorname{ctrVal}(s)$ steps with output $[true]$.
+
+**Proof.** Induct on the natural number represented by the counter, generalizing the counter word and simulated configuration. If the represented value is zero, the counter word consists entirely of false bits (`ctrVal_zero_eq`). The borrow scan reaches the end of this word, and the underflow transition halts and outputs true (`borrow_run`, `underflow_step`). Because the simulated machine has not taken a step, this is precisely the required answer. The run length is bounded by the stated counter bound.
+
+For a positive counter, write the word as $j$ false bits, then a true bit, then a remainder (`ctrVal_pos_decomp`). The borrow scan turns the leading false bits into true bits and places the head at the first true bit. The simulated machine now makes one transition. The counter’s true bit is changed to false, and the buffer-update fact identifies the resulting tape with the binary word representing the old value minus one (`wstep`, `bufferTape_update_mid`). The output register tracks whether the simulated output so far is empty, a single bit, or longer; its update agrees with appending the transition’s output (`OutReg.ofList_push`). Also, the simulated transition is the machine’s actual next step because its current state is $q$.
+
+If that transition halts, the clock machine halts at once. The register characterization (`OutReg.ofList_eq_one_true`) shows that its output bit is true exactly when the simulated run’s final output is not the one-bit word $[true]$. Since the simulated machine halted on this step, this is the claimed answer for the original counter value.
+
+If the transition continues in state $q'$, the clock machine enters its return scan. The return scan restores the buffer head to zero while retaining the decremented counter word (`ret_run`). Apply the induction hypothesis to that word and the new simulated configuration. Its represented value is one less than the original (`ctrVal_borrow`), so the induction conclusion gives the desired answer, since running the simulated machine for one step and then for the remaining steps is the same as running it for the original number of steps (`runFrom_succ_eq_step`). The run-composition equation (`runFrom_add`) joins the borrow, simulated transition, return scan, and inductive run. Finally, the popcount identities and the bound on popcount by word length (`ctrPop_replicate`, `ctrPop_le_length`) verify that this total duration is at most $\operatorname{ctrBound}(s)$.
+
+**Key facts.** `Complexity.TimeHierarchy.ctrVal_zero_eq`, `Complexity.TimeHierarchy.borrow_run`, `Complexity.TimeHierarchy.underflow_step`, `Complexity.TimeHierarchy.ctrVal_pos_decomp`, `Complexity.TimeHierarchy.wstep`, `Complexity.TimeHierarchy.bufferTape_update_mid`, `Complexity.TimeHierarchy.OutReg.ofList_push`, `Complexity.TimeHierarchy.ret_run`, `Complexity.TimeHierarchy.ctrVal_borrow`, `Turing.MultiTapeTM.runFrom_succ_eq_step`, `Turing.MultiTapeTM.runFrom_add`, `Complexity.TimeHierarchy.ctrPop_replicate`, `Complexity.TimeHierarchy.ctrPop_le_length`, `Complexity.TimeHierarchy.OutReg.ofList_eq_one_true`, `Turing.MultiTapeTM.runFrom_of_halt`.

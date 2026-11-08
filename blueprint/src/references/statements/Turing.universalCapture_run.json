@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.universalCapture_run",
+ "key": "8f2094faf4988424",
+ "kind": "lemma",
+ "title": "Lockstep capture of a live run",
+ "statement": "Let $M$ be a finite-state machine over the Boolean alphabet, let $D$ be a four-work-tape machine over the Boolean alphabet with finite state set and decidable state equality, and let $c$ be a configuration of $M$ on input $x$. If $M$ is not halted after any $s<t$ steps from $c$, then after $t$ steps the capture wrapper of $M$ and $D$, started from the first-phase configuration associated to $c$, is the first-phase configuration associated to the configuration reached by $M$ after $t$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state machine over the Boolean alphabet",
+  "$D$ is a four-work-tape Boolean machine with finite state set and decidable state equality",
+  "$c$ is a configuration of $M$ on the finite Boolean input $x$",
+  "For every natural number $s<t$, the configuration reached from $c$ after $s$ steps is not halted",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a machine $M$ on input $x$ and let $t$ be a\nnatural number such that $M$ has not halted after any $s < t$ steps from $c$.\nThen $t$ transitions of the output-capture wrapper of $M$ and a four-tape\ninterpreter $D$, started from the first-phase embedding of $c$, produce\nexactly the first-phase embedding of the configuration of $M$ after $t$\nsteps from $c$."
+}

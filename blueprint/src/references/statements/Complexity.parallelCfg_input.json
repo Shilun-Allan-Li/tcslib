@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.parallelCfg_input",
+ "key": "a9cf8e18fc9bacff",
+ "kind": "lemma",
+ "title": "Input symbol under configuration encoding",
+ "statement": "Let $A$ be a finite alphabet with decidable equality, let $e$ embed the Booleans into $A$, let $k$ be a natural number, let $x$ be a binary word, and let $c$ be a configuration on the input obtained by applying $e$ to each bit of $x$. Applying $e$ to the possibly blank symbol read under the input head of the encoded configuration gives exactly the possibly blank symbol read under the input head of $c$.",
+ "hypotheses_covered": [
+  "$A$ is finite",
+  "$A$ has decidable equality",
+  "$e$ embeds the Booleans into $A$",
+  "$k$ is a natural number",
+  "$x$ is a binary word",
+  "$c$ is a configuration over $A$ on the symbolwise image of $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a machine over a finite alphabet $A$ on the symbolwise\nembedding of a binary word $x$ under an embedding $e$ of the Booleans into $A$.\nMapping the (possibly blank) input bit scanned by the encoded configuration through\n$e$ recovers exactly the (possibly blank) input symbol scanned by $c$."
+}

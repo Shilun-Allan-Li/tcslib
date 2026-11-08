@@ -1,0 +1,21 @@
+{
+ "lean_name": "Light.Ends.forScratch",
+ "key": "5540eff3c53a9f22",
+ "kind": "theorem",
+ "title": "Bounded execution of a counted loop",
+ "statement": "Fix a program environment, resource limits, and execution depth, and let $i$ be a local variable, $h$ an expression, and $B$ a loop body. Let $X$ be a list of local indices, $I(j,\\mu)$ an invariant on a counter value $j$ and memory $\\mu$, and $Q$ a postcondition on states. Suppose $I(0,\\mu)$ holds; for every $j<n$, every local store $\\ell'$, and every memory $\\mu'$ satisfying $I(j,\\mu')$, executing $B$ from the state whose locals are the frame of the list obtained by refreshing $\\ell'$ along $X$ and then setting local $i$ to $j$, with memory $\\mu'$, can finish with cost at most $b$ and memory satisfying $I(j+1,\\cdot)$. Suppose also that whenever $I(n,\\mu')$ holds, $Q$ holds of that same framed state with local $i$ set to $n$; that for every $j\\le n$ satisfying the invariant, $h$ is safe in that state and has value $n$; that every local assigned by $B$ belongs to $X$; that $i\\notin X$; that $n\\le\\mathrm{word}$; and that $n(\\mathrm{cost}(h)+b+7)+\\mathrm{cost}(h)+5\\le T$. Then the counted loop starting from the state with locals given by the frame of $\\ell$ and memory $\\mu$ can finish with cost at most $T$ in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "Invariant holds initially: $I(0,\\mu)$",
+  "Each iteration for $j<n$ preserves the invariant and has cost at most $b$ from the specified refreshed frame with counter $j$",
+  "At $j=n$, the specified framed state satisfies $Q$ whenever the invariant holds",
+  "For every $j\\le n$ satisfying the invariant, the loop bound expression is safe and evaluates to $n$ in the specified state",
+  "Every local assigned by the body belongs to $X$",
+  "The counter index $i$ is not in $X$",
+  "$n\\le\\mathrm{word}$",
+  "$n(\\mathrm{cost}(h)+b+7)+\\mathrm{cost}(h)+5\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

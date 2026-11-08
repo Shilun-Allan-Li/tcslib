@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.expect_disagreement_coordinateRestriction",
+ "key": "a4e40dcf140dae52",
+ "kind": "lemma",
+ "title": "Disagreement under coordinate restriction",
+ "statement": "Let $n$ be a natural number, let $f:\\{0,1\\}^n\\to\\bbr$ take values in $\\{-1,1\\}$, and let $J\\subseteq[n]$. The uniform expectation over $z\\in\\{0,1\\}^n$ of the disagreement probability between $f$ and the function $x\\mapsto f(x_J,z_{[n]\\setminus J})$ is $\\displaystyle\\frac12\\sum_{S\\subseteq[n]}\\mathbf{1}_{\\{S\\nsubseteq J\\}}\\widehat f(S)^2$, where $x_J,z_{[n]\\setminus J}$ denotes the point equal to $x$ on $J$ and to $z$ elsewhere.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$f:\\{0,1\\}^n\\to\\bbr$",
+  "$f(x)\\in\\{-1,1\\}$ for every $x$",
+  "$J\\subseteq[n]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^n\\to\\{-1,1\\}$ be a function on the uniform Boolean cube and $J\\subseteq[n]$. For uniform independent $z$ and $x$, and $x\\star_Jz$ keeping $x$ on $J$ and $z$ elsewhere, $\\mathbb E_z\\Pr_x(f(x)\\ne f(x\\star_Jz))=\\tfrac12\\sum_{S\\nsubseteq J}\\widehat f(S)^2$."
+}

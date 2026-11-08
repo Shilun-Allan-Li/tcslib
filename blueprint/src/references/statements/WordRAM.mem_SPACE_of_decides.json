@@ -1,0 +1,20 @@
+{
+ "lean_name": "WordRAM.mem_SPACE_of_decides",
+ "key": "fd118b7641ecb624",
+ "kind": "theorem",
+ "title": "Space bound for Word RAM decisions",
+ "statement": "Let $P$ be an extended Word RAM program, $L$ a language of Boolean strings, and $W,T_W,S_W,F:\\mathbb{N}\\to\\mathbb{N}$. Suppose a finite Turing machine computes $W(n)$ in at most $T_W(n)$ steps and space $S_W(n)$. Suppose that for every input $x$ there are a time bound $t$ and an output string $o$ such that $P$ halts within $t$ steps at word width $W(|x|)$, outputs the Boolean indicator of membership of $x$ in $L$, and touches at most $F(|x|)$ addresses. If for some natural number $a$ and function $s:\\mathbb{N}\\to\\mathbb{N}$, every $n$ satisfies $S_W(n)+F(n)(W(n)+1)+W(n)+(\\lfloor\\log_2 n\\rfloor+1)+1\\le a s(n)$, then $L$ belongs to space $s$, that is, $L\\in\\mathrm{SPACE}(s)$.",
+ "hypotheses_covered": [
+  "An extended Word RAM program $P$ and Boolean language $L$",
+  "Functions $W,T_W,S_W,F:\\mathbb{N}\\to\\mathbb{N}$",
+  "A finite Turing machine computes $W(n)$ within time $T_W(n)$ and space $S_W(n)$",
+  "For every input, there are $t,o$ witnessing halting at width $W(|x|)$ with the membership indicator as output",
+  "At most $F(|x|)$ addresses are touched",
+  "Natural number $a$ and function $s$",
+  "For every $n$, $S_W(n)+F(n)(W(n)+1)+W(n)+(\\lfloor\\log_2 n\\rfloor+1)+1\\le a s(n)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

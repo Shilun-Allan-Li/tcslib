@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.isLocalTester_of_close_of_acceptanceProbability_ge",
+ "key": "12f898474e97c78e",
+ "kind": "theorem",
+ "title": "Acceptance bound yields local testing",
+ "statement": "Let $\\Omega$ be a finite nonempty set, let $\\beta$ be a codomain, let $T$ be a randomized nonadaptive tester on functions $\\Omega\\to\\beta$, and let $P$ be a property of such functions. Suppose its rate $\\rho$ is positive, every function satisfying $P$ is accepted with probability one, and for every $\\varepsilon\\in[0,1]$ and every function $f$, acceptance probability at least $1-\\rho\\varepsilon$ implies that $f$ is within relative Hamming distance $\\varepsilon$ of some function satisfying $P$. Then $T$ is a local tester for $P$ with rate $\\rho$: every function satisfying $P$ is accepted with probability one, and every function more than $\\varepsilon$ away from all functions satisfying $P$ is rejected with probability greater than $\\rho\\varepsilon$ for each $\\varepsilon\\in[0,1]$.",
+ "hypotheses_covered": [
+  "The domain $\\Omega$ is finite and nonempty",
+  "$T$ is a nonadaptive function tester from $\\Omega$ to $\\beta$ with $r$ query positions",
+  "$P$ is a property of functions from $\\Omega$ to $\\beta$",
+  "The rate $\\rho$ is positive",
+  "Every function satisfying $P$ has acceptance probability one",
+  "For every $\\varepsilon\\in[0,1]$ and function $f$, acceptance probability at least $1-\\rho\\varepsilon$ implies there is a function satisfying $P$ at relative Hamming distance at most $\\varepsilon$ from $f$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\n% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

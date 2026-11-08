@@ -9,6 +9,10 @@ Indicators on the uniform Boolean cube satisfy moment identities and volume boun
 \lean{BooleanAnalysis.Hypercontractivity.setIndicator}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.cubeIndicator}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p029-b004,
+  pdf-ffbe9c7b3306-p264-b001
+}
 For a set $A\subseteq\{0,1\}^n$, define $\mathbf1_A(x)=1$ if $x\in A$ and $\mathbf1_A(x)=0$ otherwise.
 \end{definition}
 
@@ -16,63 +20,77 @@ For a set $A\subseteq\{0,1\}^n$, define $\mathbf1_A(x)=1$ if $x\in A$ and $\math
 \lean{BooleanAnalysis.Hypercontractivity.volume}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.setIndicator, BooleanAnalysis.expect}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b001,
+  pdf-ffbe9c7b3306-p024-b002,
+  pdf-ffbe9c7b3306-p029-b004,
+  pdf-ffbe9c7b3306-p264-b001
+}
 For a set $A\subseteq\{0,1\}^n$, define its volume $\mu(A)=\mathbb E_x\mathbf1_A(x)=|A|/2^n$ under the uniform cube law.
 \end{definition}
 
-\begin{lemma}[Indicator nonnegativity]
+\begin{lemma}[Nonnegativity of a finite-set indicator]
 \lean{BooleanAnalysis.Hypercontractivity.setIndicator_nonneg}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.cubeIndicator, BooleanAnalysis.Hypercontractivity.setIndicator}
 \difficulty{4}
-For every $A\subseteq\{0,1\}^n$ and $x\in\{0,1\}^n$, $\mathbf1_A(x)\ge0$.
+For any dimension $n\in\mathbb N$, any finite subset $A\subseteq\{0,1\}^n$, and any
+$x\in\{0,1\}^n$, the indicator satisfies $0\le\mathbf 1_A(x)$.
 \end{lemma}
 
-\begin{lemma}[Indicator upper bound]
+\begin{lemma}[Upper bound for a finite-set indicator]
 \lean{BooleanAnalysis.Hypercontractivity.setIndicator_le_one}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.cubeIndicator, BooleanAnalysis.Hypercontractivity.setIndicator}
 \difficulty{4}
-For every $A\subseteq\{0,1\}^n$ and $x\in\{0,1\}^n$, $\mathbf1_A(x)\le1$.
+For any dimension $n\in\mathbb N$, any finite subset $A\subseteq\{0,1\}^n$, and any
+$x\in\{0,1\}^n$, the indicator satisfies $\mathbf 1_A(x)\le 1$.
 \end{lemma}
 
-\begin{lemma}[Absolute value of an indicator]
+\begin{lemma}[Absolute value of a set indicator]
 \lean{BooleanAnalysis.Hypercontractivity.abs_setIndicator}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.setIndicator, BooleanAnalysis.Hypercontractivity.setIndicator_nonneg}
 \difficulty{1}
-For every $A\subseteq\{0,1\}^n$ and $x\in\{0,1\}^n$, $|\mathbf1_A(x)|=\mathbf1_A(x)$.
+For a finite set $A\subseteq\{0,1\}^n$ and a point $x\in\{0,1\}^n$, the indicator
+satisfies $|\mathbf 1_A(x)|=\mathbf 1_A(x)$.
 \end{lemma}
 
-\begin{lemma}[Squared indicator]
+\begin{lemma}[Idempotence of a finite-set indicator]
 \lean{BooleanAnalysis.Hypercontractivity.setIndicator_sq}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.cubeIndicator, BooleanAnalysis.Hypercontractivity.setIndicator}
 \difficulty{4}
-For every $A\subseteq\{0,1\}^n$ and $x\in\{0,1\}^n$, $\mathbf1_A(x)^2=\mathbf1_A(x)$.
+For any dimension $n\in\mathbb N$, finite subset $A\subseteq\{0,1\}^n$, and point
+$x\in\{0,1\}^n$, one has $\mathbf 1_A(x)^2=\mathbf 1_A(x)$.
 \end{lemma}
 
-\begin{lemma}[Positive indicator powers]
+\begin{lemma}[Positive powers of a finite-set indicator]
 \lean{BooleanAnalysis.Hypercontractivity.setIndicator_rpow}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.cubeIndicator, BooleanAnalysis.Hypercontractivity.setIndicator}
 \difficulty{4}
-For every $A\subseteq\{0,1\}^n$, $x\in\{0,1\}^n$, and $r>0$, $\mathbf1_A(x)^r=\mathbf1_A(x)$.
+For any dimension $n\in\mathbb N$, finite subset $A\subseteq\{0,1\}^n$, point
+$x\in\{0,1\}^n$, and real number $r>0$, one has $\mathbf 1_A(x)^r=\mathbf 1_A(x)$.
 \end{lemma}
 
-\begin{lemma}[Absolute indicator powers]
+\begin{lemma}[Positive powers of a set indicator]
 \lean{BooleanAnalysis.Hypercontractivity.abs_setIndicator_rpow}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.abs_setIndicator, BooleanAnalysis.Hypercontractivity.setIndicator, BooleanAnalysis.Hypercontractivity.setIndicator_rpow}
 \difficulty{3}
-For every $A\subseteq\{0,1\}^n$, $x\in\{0,1\}^n$, and $r>0$, $|\mathbf1_A(x)|^r=\mathbf1_A(x)$.
+For a finite set $A\subseteq\{0,1\}^n$, a point $x\in\{0,1\}^n$, and a real number
+$r>0$, the indicator satisfies $|\mathbf 1_A(x)|^r=\mathbf 1_A(x)$.
 \end{lemma}
 
-\begin{lemma}[Indicator absolute moment]
+\begin{lemma}[Absolute moment of a set indicator]
 \lean{BooleanAnalysis.Hypercontractivity.expect_abs_indicator_rpow}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.abs_setIndicator_rpow, BooleanAnalysis.Hypercontractivity.setIndicator, BooleanAnalysis.Hypercontractivity.volume, BooleanAnalysis.expect}
 \difficulty{3}
-For every $A\subseteq\{0,1\}^n$ and $r>0$, the uniform expectation satisfies $\mathbb E|\mathbf1_A|^r=|A|/2^n$.
+Let $A$ be a subset of the $n$-dimensional Boolean cube and let $r>0$. Under the uniform
+measure, the expectation of the $r$th power of the absolute value of its indicator is
+equal to the volume of $A$.
 \end{lemma}
 
 \begin{lemma}[Indicator moment norm]
@@ -80,29 +98,34 @@ For every $A\subseteq\{0,1\}^n$ and $r>0$, the uniform expectation satisfies $\m
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.expect_abs_indicator_rpow, BooleanAnalysis.Hypercontractivity.setIndicator, BooleanAnalysis.Hypercontractivity.volume, BooleanAnalysis.expect}
 \difficulty{1}
-For every $A\subseteq\{0,1\}^n$ and $r>0$, its moment norm under the uniform cube law satisfies $\|\mathbf1_A\|_r=(|A|/2^n)^{1/r}$.
+Let $A\subseteq\{0,1\}^n$ and let $r\in\mathbb R$ with $r>0$. Under the uniform
+probability measure on the Boolean cube, the $r$-moment norm of its indicator is
+$\bigl(\mathbb E|\mathbf1_A|^r\bigr)^{1/r}=\mu(A)^{1/r}$.
 \end{lemma}
 
-\begin{lemma}[Nonnegative volume]
+\begin{lemma}[Nonnegative uniform volume]
 \lean{BooleanAnalysis.Hypercontractivity.volume_nonneg}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.setIndicator_nonneg, BooleanAnalysis.Hypercontractivity.volume, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{4}
-For every $A\subseteq\{0,1\}^n$, its uniform volume satisfies $\mu(A)=|A|/2^n\ge0$.
+For every natural number $n$ and every set $A\subseteq\{0,1\}^n$, the uniform volume
+$\mu(A)$ satisfies $0\le\mu(A)$.
 \end{lemma}
 
-\begin{lemma}[Volume at most one]
+\begin{lemma}[Uniform volume upper bound]
 \lean{BooleanAnalysis.Hypercontractivity.volume_le_one}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.cubeIndicator, BooleanAnalysis.Hypercontractivity.setIndicator, BooleanAnalysis.Hypercontractivity.volume, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{3}
-For every $A\subseteq\{0,1\}^n$, its uniform volume satisfies $\mu(A)=|A|/2^n\le1$.
+For every natural number $n$ and every set $A\subseteq\{0,1\}^n$, the uniform volume
+$\mu(A)$ satisfies $\mu(A)\le1$.
 \end{lemma}
 
 \begin{theorem}[Parameterized two-set expansion]
 \lean{BooleanAnalysis.Hypercontractivity.generalized_small_set_expansion}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.expect_abs_indicator_rpow, BooleanAnalysis.Hypercontractivity.general_two_function_hypercontractivity, BooleanAnalysis.Hypercontractivity.setIndicator, BooleanAnalysis.Hypercontractivity.volume, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p260-b005}
 \difficulty{4}
 Let $A,B\subseteq\{0,1\}^n$ have uniform volumes $\alpha,\beta$, and let real $p,u,\rho$ satisfy $1\le p\le u$, $u\ge2$, $0\le\rho\le1$, and $\rho\le\sqrt{(p-1)/(u-1)}$. Then $\mathbb E[\mathbf1_AT_\rho\mathbf1_B]\le\alpha^{(u-1)/u}\beta^{1/p}$.
 \end{theorem}
@@ -111,6 +134,11 @@ Let $A,B\subseteq\{0,1\}^n$ have uniform volumes $\alpha,\beta$, and let real $p
 \lean{BooleanAnalysis.Hypercontractivity.small_set_expansion}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.Hypercontractivity.generalized_small_set_expansion, BooleanAnalysis.Hypercontractivity.setIndicator, BooleanAnalysis.Hypercontractivity.volume, BooleanAnalysis.Hypercontractivity.volume_nonneg, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p264-b001,
+  pdf-ffbe9c7b3306-p254-b003,
+  pdf-ffbe9c7b3306-p254-b006
+}
 \difficulty{4}
 For every $A\subseteq\{0,1\}^n$ of uniform volume $\alpha$ and $0<\rho\le1$, $\mathbb E[\mathbf1_AT_\rho\mathbf1_A]\le\alpha^{2/(1+\rho)}$.
 \end{theorem}

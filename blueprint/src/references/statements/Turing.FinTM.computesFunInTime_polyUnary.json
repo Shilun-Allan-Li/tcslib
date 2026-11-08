@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_polyUnary",
+ "key": "3cab2cb5f6c7617d",
+ "kind": "theorem",
+ "title": "Unary polynomial output",
+ "statement": "For every $C,e\\in\\mathbb{N}$, there exist a finite Turing machine $M$ over the Boolean alphabet and a constant $c\\in\\mathbb{N}$ such that, on every input $x$, $M$ outputs a string of $C(|x|+1)^e$ true bits within $c(|x|+1)^{e+1}$ steps.",
+ "hypotheses_covered": [
+  "C and e are natural numbers",
+  "a finite Boolean-alphabet Turing machine and natural constant exist",
+  "output consists of C(|x|+1)^e true bits",
+  "time bound c(|x|+1)^(e+1)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all constants $C$ and $e$ there exist a finite Turing machine $M$ and a\nconstant $c$ such that $M$ computes the function sending each input of length\n$n$ to the run of $C\\,(n+1)^{e}$ ones, within $c\\,(n+1)^{e+1}$ steps."
+}

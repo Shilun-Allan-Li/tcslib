@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clRecordOutput_quadratic",
+ "key": "af809a66d048dbad",
+ "kind": "lemma",
+ "title": "Quadratic time for trajectory recording",
+ "statement": "For every finite-state Boolean machine $M$, Boolean word $y$, natural number $T$, and family of four Boolean words $(k_i)_{i<4}$, form the input $x$ by packing the machine's initial recorder tape contents for $y$ and $T$, together with the four words $k_i$, as self-delimiting fields. The output machine computes the list of recorded counter rows through time $T$ from $x$ in at most $\\bigl(10+10((\\mathrm{recorder\\ tape\\ count})+4)+(8(\\mathrm{field\\ count})+7)\\bigr)(|x|+1)^2$ steps.",
+ "hypotheses_covered": [
+  "A finite-state Boolean machine $M$",
+  "A Boolean word $y$",
+  "A natural number $T$",
+  "A family of four Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, virtual input $y$, horizon $T$, and retained fields, the trajectory-output machine computes the inclusive trajectory from the packed layout within a constant times the square of the encoded argument length plus one; every initial word and the unary horizon occur inside the argument, so the bound covers a zero horizon as well."
+}

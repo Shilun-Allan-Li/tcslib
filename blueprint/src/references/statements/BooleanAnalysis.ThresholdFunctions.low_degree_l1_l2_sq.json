@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.low_degree_l1_l2_sq",
+ "key": "9fc6cd94d77d63d9",
+ "kind": "theorem",
+ "title": "First and second moment bound for low degree",
+ "statement": "Let $n,k$ be natural numbers, and let $p$ be a coefficient family on the subsets of the $n$ coordinates, with $p(S)=0$ whenever $|S|>k$. If $P(x)=\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}p(S)\\chi_S(x)$, where $\\chi_S$ is the Walsh character, then $\\displaystyle e^{-2k}\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}p(S)^2\\leq\\left(\\mathbb E_{x\\sim\\mathrm{Unif}(\\{0,1\\}^n)}|P(x)|\\right)^2$.",
+ "hypotheses_covered": [
+  "natural numbers $n,k$",
+  "coefficient family $p$ on subsets of the $n$ coordinates",
+  "degree bound $p(S)=0$ whenever $|S|>k$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$ and give $\\{0,1\\}^n$ uniform probability; write $\\mathbb E$ for expectation. Put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$ and $\\widehat h(S)=\\mathbb E[h\\chi_S]$ for $S\\subseteq[n]$ and real cube functions $h$. Let $P(x)=\\sum_{S\\subseteq[n]}a_S\\chi_S(x)$ with real coefficients; degree at most $k$ means $a_S=0$ for $|S|>k$. If $P$ has degree at most the integer $k\\ge0$, then $e^{-2k}\\sum_{S\\subseteq[n]}a_S^2\\le(\\mathbb E|P|)^2$."
+}

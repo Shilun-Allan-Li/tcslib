@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Compiler.Start.test",
+ "key": "509c901fb41c9b1c",
+ "kind": "theorem",
+ "title": "Compiled conditions decide their truth",
+ "statement": "Let $S$ be a setting, and suppose a start configuration for a statement $s$ at depth $d$, code position $\\mathrm{pos}$, and stack position $q$ satisfies the start conditions, with word-RAM memory $m$. Let $c$ be a condition whose compiled code occurs at $\\mathrm{pos}$, whose width is at most $S.F$, and which is safe for a light state $\\sigma$ under the limits of $S$. Then there exist a word-RAM memory $m'$ and a natural number $k\\le\\mathrm{size}(c)$ such that $m'$ agrees with $m$ outside the scratch-address set for frame size $S.F$; if $c$ holds in $\\sigma$, the compiled code takes $k$ steps from position $\\mathrm{pos}$ to $\\mathrm{pos}+\\mathrm{size}(c)$, and if $c$ does not hold, it takes $k$ steps from $\\mathrm{pos}$ to branch position $l$.",
+ "hypotheses_covered": [
+  "A setting $S$",
+  "A start configuration for $s$ at depth $d$, position $\\mathrm{pos}$, and stack position $q$, with memory $m$",
+  "The compiled condition code for $c$ occurs at $\\mathrm{pos}$",
+  "$c$ has width at most $S.F$",
+  "$c$ is safe for $\\sigma$ under $S$'s limits"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ be a setting and suppose a start configuration for a statement $s$ at depth $d$,\ncode position $\\mathrm{pos}$, and stack position $q$ has word-RAM memory $m$. Let $c$ be\na condition whose compiled code occurs at $\\mathrm{pos}$, whose width is at most $S.F$,\nand which is safe for the light state $\\sigma$ under limits $S.\\mathrm{lim}$. Then there\nare a memory $m'$ and a natural number $n$ with $n\\le \\mathrm{size}(c)$ such that $m'$\nagrees with $m$ outside the scratch locations (the designated condition registers and\ntemporary registers); if $c$ holds in $\\sigma$, the compiled condition takes $n$ steps\nfrom position $\\mathrm{pos}$ to $\\mathrm{pos}+\\mathrm{size}(c)$, and if $c$ does not\nhold, it takes $n$ steps from position $\\mathrm{pos}$ to the specified branch position\n$l$."
+}

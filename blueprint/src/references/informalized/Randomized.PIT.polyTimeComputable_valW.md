@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/ZeroPRun.lean :: Randomized.PIT.polyTimeComputable_valW -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Modular Gate Evaluation
+
+**Claim.** The function sending an encoded gate-state string to its modular value is computable in polynomial time.
+
+**Proof.** Decode the state components needed for the calculation, including its current gate and stored values. The state extraction, argument extraction, indexed-value lookup, and modulus parameter are polynomial-time computable by the corresponding upstream procedures; composition and pair encoding let us form the inputs to the arithmetic operations. The raw value is defined by cases on the gate type. For a variable gate, retrieve the indexed stored value and add the encoded constant; for the constant-one gate, return the constant one; for an addition gate, add the two indexed values; for a subtraction gate, subtract the second indexed value from the modulus and add the first; in the remaining case, multiply the two indexed values. Each branch is polynomial-time computable using the procedures for addition, subtraction, multiplication, and constant strings. Since the gate predicates are polynomial-time computable, the polynomial-time conditional rule combines these branches to show that the raw value is polynomial-time computable. Finally, pair-encode that raw value with the modulus parameter and apply the polynomial-time remainder operation. This is exactly the modular value.
+
+**Key facts.** `Randomized.PIT.polyTimeComputable_sW`, `Randomized.PIT.polyTimeComputable_arg1W`, `Randomized.PIT.polyTimeComputable_xW`, `Randomized.PIT.polyTimeComputable_arg2W`, `Complexity.BinArith.polyTimeComputable_slot3`, `Randomized.PIT.polyTimeComputable_sCtx`, `Complexity.BinArith.polyTimeComputable_getW`, `Complexity.PolyTimeComputable.comp`, `Complexity.PolyTimeComputable.pairEncode`, `Complexity.polyTimeComputable_const`, `Complexity.BinArith.polyTimeComputable_add`, `Randomized.PIT.polyTimeComputable_isVarW`, `Complexity.polyTimeComputable_ite`, `Randomized.PIT.polyTimeComputable_isOneW`, `Randomized.PIT.polyTimeComputable_isAddW`, `Complexity.BinArith.polyTimeComputable_sub`, `Randomized.PIT.polyTimeComputable_sK`, `Randomized.PIT.polyTimeComputable_isSubW`, `Complexity.BinArith.polyTimeComputable_mul`, `Complexity.BinArith.polyTimeComputable_mod`.

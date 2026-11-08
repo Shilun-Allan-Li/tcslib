@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.oracleHost_offQuery",
+ "key": "8420b13eec65b471",
+ "kind": "theorem",
+ "title": "Oracle host simulation away from queries",
+ "statement": "Let $M$ be a finite-state Boolean oracle Turing machine with $k$ ordinary work tapes, and let $C$ be a finite-state Boolean Turing machine with $C.k>0$. Choose states $en,ex$ of $C$, a language $O$ of Boolean strings, an input string $x$, and a configuration $c$ of $M$ on $x$. For either Boolean tag $side$, suppose the query-tape head position of $c$ is nonnegative when $side$ is true and nonpositive when $side$ is false. If the run of $M$ with the empty oracle is not in its query state at any time $s<t$, then there is a Boolean tag $side'$ such that, after $t$ steps with oracle $O$, the query-tape head position is nonnegative when $side'$ is true and nonpositive when $side'$ is false, and the host machine’s run from the stable configuration encoding $c$ and $side$ equals the stable configuration encoding the configuration reached by $M$ with oracle $O$ and tag $side'$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Boolean oracle Turing machine",
+  "$C$ is a finite-state Boolean Turing machine",
+  "$C$ has at least one work tape",
+  "$en$ and $ex$ are states of $C$",
+  "$O$ is a language of Boolean strings",
+  "$x$ is a Boolean input string",
+  "$c$ is a configuration of $M$ on $x$",
+  "$side$ is a Boolean tag",
+  "The initial query-tape head position is nonnegative if $side$ is true and nonpositive if $side$ is false",
+  "$t$ is a natural number",
+  "The empty-oracle run is not in the query state at every time $s<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

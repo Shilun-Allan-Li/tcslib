@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.ld_run",
+ "key": "0895a27be1ccbc1a",
+ "kind": "theorem",
+ "title": "Exponent-loading execution",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathcal{O}$ be a Boolean-valued function on four indices and finite Boolean words, and let $x$ be a finite Boolean word. Suppose $k,j\\in\\mathbb{N}$, $j<E+1$, $j+k=E$, and $\\mathrm{st}$ is a state with $\\mathrm{st}.X=j$, every register at most $B$, $E\\le B$, and $\\mathrm{st}.P+1\\le B$. Then the program $A_E$ has a finite run from the configuration with label $\\mathrm{ld}(j)$, registers $\\mathrm{st}$, and no answer to the configuration with label $\\mathrm{pw}$, $X=E$, $P=\\mathrm{st}.P+1$, every other register unchanged, and no answer. Every configuration strictly before the final one satisfies the guard for $A_E$, input $x$, and bound $B$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb{N}$",
+  "An oracle assigning a Boolean to each of four indices and finite Boolean words",
+  "A finite Boolean input word $x$",
+  "$k,j\\in\\mathbb{N}$",
+  "$j<E+1$",
+  "$j+k=E$",
+  "$\\mathrm{st}.X=j$",
+  "Every register of $\\mathrm{st}$ is at most $B$",
+  "$E\\le B$",
+  "$\\mathrm{st}.P+1\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathcal{O}$ be an oracle on four indices and bit strings,\nand let $x$ be a bit string. For all $k,j\\in\\mathbb{N}$ and register states\n$\\mathrm{st}$, suppose $j<E+1$, $j+k=E$, $\\mathrm{st}.X=j$, every register of\n$\\mathrm{st}$ is at most $B$, $E\\le B$, and $\\mathrm{st}.P+1\\le B$. Then there is a\nfinite run, guarded by bound $B$ before its final configuration, from label\n$\\mathrm{ld}(j)$ with registers $\\mathrm{st}$ and no answer to label $\\mathrm{pw}$ with\n$X=E$, $P=\\mathrm{st}.P+1$, all other registers unchanged, and no answer."
+}

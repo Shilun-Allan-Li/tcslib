@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a2Buffer_read",
+ "key": "fd7f0069b211e92b",
+ "kind": "lemma",
+ "title": "Buffer read at a suffix boundary",
+ "statement": "For any Boolean words $\\mathrm{pre}$ and $\\mathrm{bs}$, the buffer tape containing their concatenation, when read at cell $|\\mathrm{pre}|$, returns the first bit of $\\mathrm{bs}$, or blank if $\\mathrm{bs}$ is empty.",
+ "hypotheses_covered": [
+  "Arbitrary Boolean prefix",
+  "Arbitrary Boolean suffix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all binary words $p$ and $s$, reading the buffer tape holding $p\\,s$ at cell $|p|$ returns the first bit of $s$, or blank when $s$ is empty."
+}

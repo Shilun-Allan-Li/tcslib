@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.ptf_support_fourier_mass_of_ne_zero",
+ "key": "d6f0a6c2a00f8d50",
+ "kind": "theorem",
+ "title": "Fourier mass on a representing support",
+ "statement": "Let $n\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$, and let $p$ be a nonzero multilinear polynomial on the Boolean cube whose threshold sign, with zero assigned sign $1$, is $f$. If $F$ is a finite family of coordinate subsets containing every subset with nonzero coefficient in $p$, then $1\\leq\\sum_{S\\in F}|\\widehat f(S)|$, where $\\widehat f(S)$ is the Fourier–Walsh coefficient of $f$ at $S$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "The representing polynomial $p$ is nonzero",
+  "$F$ is a finite family of coordinate subsets",
+  "Every subset with nonzero coefficient in $p$ belongs to $F$",
+  "The threshold sign of $p$, with zero assigned sign $1$, equals $f$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\in\\mathbb N$, $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ on $\\{0,1\\}^n$, and $p(x)=\\sum_Sa_S\\chi_S(x)$ be a nonzero real multilinear polynomial; let $F$ be a finite family of subsets of $\\{1,\\ldots,n\\}$ containing every $S$ with $a_S\\ne0$.\nSuppose $f:\\{0,1\\}^n\\to\\mathbb R$ satisfies $f(x)=\\operatorname{sgn}(p(x))$, where $\\operatorname{sgn}(t)=1$ for $t\\ge0$ and $-1$ for $t<0$, and define $\\widehat f(S)=\\mathbb E_x[f(x)\\chi_S(x)]$ using uniform expectation.\nThen $1\\le\\sum_{S\\in F}|\\widehat f(S)|$."
+}

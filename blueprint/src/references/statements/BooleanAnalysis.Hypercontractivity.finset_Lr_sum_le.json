@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.finset_Lr_sum_le",
+ "key": "bb24e620003f6945",
+ "kind": "lemma",
+ "title": "Minkowski inequality for finite sums",
+ "statement": "Let $I,K$ be sets, let $r\\in\\bbr$ with $1\\le r$, and let $s\\subseteq I$ and $t\\subseteq K$ be finite. Suppose $a:I\\times K\\to\\bbr$ satisfies $a(i,j)\\ge0$ for every $i\\in s$ and $j\\in t$. Then $\\displaystyle\\left(\\sum_{j\\in t}\\left(\\sum_{i\\in s}a(i,j)\\right)^r\\right)^{1/r}\\le\\sum_{i\\in s}\\left(\\sum_{j\\in t}a(i,j)^r\\right)^{1/r}$.",
+ "hypotheses_covered": [
+  "$I,K$ are types (sets)",
+  "$r\\in\\bbr$",
+  "$1\\le r$",
+  "$s\\subseteq I$ is finite",
+  "$t\\subseteq K$ is finite",
+  "$a:I\\times K\\to\\bbr$",
+  "$a(i,j)\\ge0$ for all $i\\in s$ and $j\\in t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s\\subseteq I$ and $t\\subseteq J$ be finite sets, let $r\\ge1$, and let $a:I\\times J\\to\\bbr$ satisfy $a(i,j)\\ge0$ for $i\\in s$, $j\\in t$. Then $(\\sum_{j\\in t}(\\sum_{i\\in s}a(i,j))^r)^{1/r}\\le\\sum_{i\\in s}(\\sum_{j\\in t}a(i,j)^r)^{1/r}$."
+}

@@ -1,6 +1,6 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.FiniteMessage.Protocol.encode_alice",
- "key": "5ef6b3967701e776",
+ "key": "add51111e3b5c15b",
  "kind": "theorem",
  "title": "Binary encoding of a finite-alphabet message from Alice",
  "statement": "Let $X$, $Y$, and $\\alpha$ be types, let $\\beta$ be a finite nonempty type, let $f : X \\to \\beta$ be a function, and let $Q : \\beta \\to \\mathrm{Protocol}\\,X\\,Y\\,\\alpha$ assign to each value $b \\in \\beta$ a deterministic two-party communication protocol. Then there exists a deterministic protocol $R$ over the same input types such that, on every pair of inputs $x : X$ and $y : Y$, running $R$ yields the same output as running the protocol $Q(f(x))$, and the communication complexity of $R$ equals\n\\[\n\\lceil \\log_2 \\abs{\\beta} \\rceil \\;+\\; \\max_{b \\in \\beta} \\operatorname{complexity}(Q(b)),\n\\]\nwhere $\\abs{\\beta}$ denotes the cardinality of $\\beta$.",

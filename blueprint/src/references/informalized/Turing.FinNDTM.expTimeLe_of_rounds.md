@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/Randomized/ZPPHosts.lean :: Turing.FinNDTM.expTimeLe_of_rounds -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Expected Nonhalting Bound from Round Decay
+
+**Claim.** Under the common-configuration and round-decay assumptions, the sum of nonhalting probabilities over lengths below any $K$ is at most $s_0+R/(1-a)$.
+
+**Proof.** Write $f(t)$ for the probability that the halting result is absent after $t$ choices. These probabilities lie between $0$ and $1$ (`Randomized.notHaltedProb_nonneg`, `Randomized.notHaltedProb_le_one`). First, for every $j$, the common-configuration assumption identifies the run after the first $s_0$ choices with a run from $c_0$ on the remaining choices: split a word into its length-$s_0$ prefix and its suffix, use the run-concatenation law (`Turing.NDTM.runWith_append`), and apply the hypothesis that every such prefix reaches $c_0$. The characterization of an absent halting result (`Turing.FinNDTM.haltRun_eq_none_iff`) then identifies the relevant event with nonhalting from $c_0$. Splitting uniform choice words into independent prefix and suffix (`Randomized.randProb_split`), and using that the prefix event has probability one (`Randomized.randProb_true`), gives $f(s_0+Rj)\le a^j$ from the round-decay assumption; the event identification preserves the probability (`Randomized.randProb_congr`). Since nonhalting probability is antitone in the number of choices (`Turing.FinNDTM.notHaltedProb_haltRun_antitone`), every term in the block from $s_0+Rj$ through $s_0+R(j+1)-1$ is at most $a^j$. Summing these $R$ terms and inducting over the number of blocks shows that the first $Rn$ terms after $s_0$ sum to at most $R\sum_{j<n}a^j$. The finite geometric sum is at most $1/(1-a)$ because $0\le a<1$. Finally, for a given $K$, enlarge the summation range to $s_0+RK$; nonnegativity makes this enlargement valid. The first $s_0$ terms contribute at most $s_0$, and the remaining terms contribute at most $R/(1-a)$.
+
+**Key facts.** `Randomized.notHaltedProb_le_one`, `Randomized.notHaltedProb_nonneg`, `Randomized.randProb_congr`, `Randomized.randProb_split`, `Randomized.randProb_true`, `Turing.FinNDTM.haltRun_eq_none_iff`, `Turing.FinNDTM.notHaltedProb_haltRun_antitone`, `Turing.NDTM.runWith_append`.

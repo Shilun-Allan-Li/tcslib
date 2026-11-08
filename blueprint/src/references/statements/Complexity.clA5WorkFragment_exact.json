@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.clA5WorkFragment_exact",
+ "key": "33796983b99e9bb6",
+ "kind": "lemma",
+ "title": "Exact Work Fragment Identity",
+ "statement": "Let $M$ be a finite-state binary Turing machine, let a binary code be given for its optional states, let $C,e,c,A,d$ be natural numbers, let $x$ be a bit string, and let $j,t$ be natural numbers. If $t$ is at most the producer horizon at input length $|x|$, then for each work tape $\tau$ of $M$, the work fragment obtained from the stored visit table in the packed records with cursor $j$ equals the serialized fragment of the pure work clause group at time $t$ and tape $\tau$, using the reference input length $|x|+C(|x|+1)^e$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state binary Turing machine",
+  "A binary code is given for the optional states of $M$",
+  "$C,e,c,A,d$ are natural numbers",
+  "$x$ is a bit string",
+  "$j,t$ are natural numbers",
+  "$t$ is at most the producer horizon at input length $|x|$",
+  "$\tau$ is a work tape of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, state code, parameters, instance $x$, cursor $j$, time $t$ at most the producer horizon, and tape $\\tau$, the stored-visit work fragment equals the serialized fragment of the pure work clause group at time $t$ and tape $\\tau$ over the reference length; the stored earlier source is strictly below the target, so bounded decoding preserves every legitimate visit, including source zero."
+}

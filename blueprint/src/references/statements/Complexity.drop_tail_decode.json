@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.drop_tail_decode",
+ "key": "a001a2ea27cc5f51",
+ "kind": "lemma",
+ "title": "Tail decoding run",
+ "statement": "Let $z$ and $t$ be finite bit strings, let $h=\u001bangle z,t\u001brangle$, and set $p=2|z|+2$. For either Boolean mode, if $t$ is canonical and $|t|$ is at most the length of the binary representation of $|h|$, the machine has a run from the configuration with state $\u001bmathrm{copy}(0,\u001bmathrm{false})$, pointer $p$, all other registers zero, and no answer set, to the configuration with state $\u001bmathrm{copy}(3,\u001bmathrm{false})$, the same pointer, query register $\u001bmathrm{bitsVal}(t)$, tail register $p$, all other registers zero, and no answer set. Every configuration before the endpoint satisfies the machine's safety condition and has each register at most $4|h|+4$. If either condition on $t$ fails, the machine instead halts with answer false from that initial configuration, with the same safety condition and register bound at every configuration before halting.",
+ "hypotheses_covered": [
+  "Boolean mode",
+  "Bit strings z and t",
+  "Tail t is canonical and its length is at most the length of the binary representation of |h| in the reachability case"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

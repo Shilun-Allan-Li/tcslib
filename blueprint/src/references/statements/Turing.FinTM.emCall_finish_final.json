@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_finish_final",
+ "key": "cfeacfef6255d579",
+ "kind": "lemma",
+ "title": "Finalizer endpoint configuration",
+ "statement": "Fix a finite Boolean Turing machine $M$, a mode bit, and Boolean words $x$, $a$, and $c$. Embed the finalizer configuration on input $x$ in state $5$, with input head at position $1$, argument tape storing $a$ in emit mode and $c$ in install mode, capture tape blank, both work heads at the origin, and output $c$ in emit mode and empty in install mode, into the call machine's tape layout. The resulting configuration is the canonical configuration on input $x$ in the exit state, with the first work tape storing $a$ in emit mode and $c$ in install mode, every other work tape blank, all work heads at the origin, and the same mode-dependent output.",
+ "hypotheses_covered": [
+  "finite Boolean Turing machine M",
+  "mode bit emit",
+  "Boolean input word x",
+  "argument word a",
+  "capture word c"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode, input, argument word $a$, and capture word $c$: relocating the\nfinalizer's final configuration through the pair layout equals the canonical seam in the\nexit control state whose first work tape holds $c$ in install mode and $a$ in emit mode,\nall other tapes blank, all heads at their origins, with output $c$ in emit mode and\nempty otherwise."
+}

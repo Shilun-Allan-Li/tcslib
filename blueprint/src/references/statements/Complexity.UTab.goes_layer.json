@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.UTab.goes_layer",
+ "key": "7e2196125cbce275",
+ "kind": "theorem",
+ "title": "Execution of a tableau layer",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean tape symbols, let $x$ be a Boolean input word, let $n$ be a natural number, let $z$ be a Boolean word, and let $T,t,\\ell,ps$ be natural numbers. Assume $1\\le T$ and $t\\le T$. Starting at the layer label whose initial-step flag is true exactly when $t=0$, with the register values specified by the layer-start record for $(n,z,T,t,\\ell)$ and input position $ps$, the counter program can execute in at most $B$ steps to the copy-loop label when $t=0$, and to the layer label otherwise. Here $B=k(2T+3)(L+20)+( |z|+n+2)(L+20)+(L+3)+9(T+1)D+6$, where $k$ is the number of work tapes, $L$ is the maximum template length, and $D$ is the stride determined by $M,n,z,T$. The final register values are those of the layer-start record for $(n,z,T,t+1,\\ell)$, except that its $q$ register is set to $0$ when $t=0$ and otherwise to $(t+1)D-D$. The output is extended by the concatenation, over all indices $i$ from $tD$ through but excluding $(t+1)D$, of the Boolean encoding of the instruction for position $i$ in the tableau, and the execution property holds for every output prefix.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols",
+  "$x$ is a Boolean word",
+  "$n$ is a natural number",
+  "$z$ is a Boolean word",
+  "$T,t,\\ell,ps$ are natural numbers",
+  "$1\\le T$",
+  "$t\\le T",
+  "$k$ is the number of work tapes",
+  "$L$ is the maximum template length",
+  "$D$ is the configuration stride determined by $M,n,z,T$",
+  "execution is bounded by the stated layer bound",
+  "the claim holds for every output prefix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

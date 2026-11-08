@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.one_div_le_local_composed_rejection",
+ "key": "b659dc73dc98e6f9",
+ "kind": "theorem",
+ "title": "Rejection probability after local composition",
+ "statement": "Let $n\\ge1$, let $V$ be a finite-seed nonadaptive verifier with Boolean input and proof, input length $n$, proof length $\\ell$, and $r$ query positions, and let $K>0$. Suppose a reduction assigns to each verifier seed a CNF formula on $r+K$ sign variables with exactly $K$ nonempty clauses of width at most three; for every transcript, the formula is satisfiable by an auxiliary sign assignment exactly when the verifier accepts that transcript. Let $w$ be a Boolean input word, let $p$ be a Boolean proof word of length $\\ell+K|\\mathrm{Seed}(V)|$, and suppose the verifier rejects the word formed from $w$ and the first $\\ell$ proof bits at some seed. Then, fixing that seed and choosing one of its $K$ clauses uniformly, the expected rejection indicator of the composed three-query verifier is at least $1/K$.",
+ "hypotheses_covered": [
+  "Positive input length $n$",
+  "A PCPP verifier with finite seed set, input length $n$, proof length $\\ell$, and $r$ query positions",
+  "Positive integer clause count $K$ and a seedwise reduction satisfying the stated clause, completeness, and soundness conditions",
+  "Boolean input word of length $n",
+  "Boolean proof word of length $\\ell+K|\\mathrm{Seed}(V)|$",
+  "A verifier seed at which the restricted outer proof is rejected"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\n% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

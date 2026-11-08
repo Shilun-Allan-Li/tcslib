@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ISGen.gscan_run",
+ "key": "ee8094ee807cec5f",
+ "kind": "theorem",
+ "title": "Input-length scan initialization",
+ "statement": "Let $E,B$ be natural numbers, let $x$ be a finite Boolean word, and let $\\mathcal O$ be an oracle with four query types on finite Boolean words. Suppose that for every $k\\le |x|$, query type $0$ on the encoding of $x$ together with the binary word for $k$ returns true exactly when $k<|x|$. Let $Q$ be a proposition, and let $\\sigma$ be a register state whose registers are all at most $B$, with $\\sigma.n\\le |x|$ and $|x|\\le B$. If the procedure started in state $lg0$ with $n=|x|$ and all other registers as in $\\sigma$ terminates on every sequence of choices while keeping every register at most $B$, and accepts exactly when $Q$ holds, then the same semantic property holds from state $scan$ with registers $\\sigma$.",
+ "hypotheses_covered": [
+  "$E,B\\in\\mathbb N$",
+  "a finite Boolean word $x$",
+  "an oracle with four query types on finite Boolean words",
+  "for every $k\\le |x|$, query type $0$ on the encoded pair $(x,\\operatorname{bits}(k))$ equals true exactly when $k<|x|$",
+  "a proposition $Q$",
+  "all registers of $\\sigma$ are at most $B$",
+  "$\\sigma.n\\le |x|$",
+  "$|x|\\le B$",
+  "the specified procedure from state $lg0$ terminates on every choice sequence, keeps registers at most $B$, and accepts exactly when $Q$ holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $x$ be a finite binary word, and let $\\mathcal O$ be an\noracle with four binary-word queries. Suppose that for every $k\\le |x|$, its query of\ntype $0$ on the encoding of $(x,\\operatorname{bits}(k))$ returns true exactly when\n$k<|x|$. Let $Q$ be a proposition and let $\\sigma$ be a register state whose registers\nare all at most $B$, with $\\sigma.n\\le |x|$ and $|x|\\le B$. If the machine initialized\nin state $\\sigma$ with its input-length register set to $|x|$ terminates with all\nregisters bounded by $B$ and accepts exactly when $Q$ holds, then the same is true when\nit is initialized at the scan stage with state $\\sigma$."
+}

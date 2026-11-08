@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.Pre",
+ "key": "e67cd967439e7e45",
+ "kind": "def",
+ "title": "Machine precondition",
+ "statement": "Let $A$ be a program with $m$ registers, an oracle, a Boolean multi-tape Turing machine $D$, a choice of initial state for each decider, and a natural-number bound $B$. A configuration satisfies the precondition if, at a register-comparison instruction, the compared registers are distinct; at an input-payload comparison, the input has the corresponding valid encoding; and at a call instruction, the argument registers are distinct and $D$, started in the assigned state on the call’s encoded virtual input, halts with the oracle’s answer, leaves all work tapes blank with all work-tape heads at zero, and keeps every work-tape head within distance $B$ of zero throughout the run, including its halting time. Other configurations satisfy the precondition automatically.",
+ "hypotheses_covered": [
+  "program $A$ with $m$ registers",
+  "oracle",
+  "Boolean multi-tape machine $D$",
+  "initial state assignment for deciders",
+  "natural-number bound $B$",
+  "input bit string $x",
+  "configuration"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include the definitions of the encoded virtual input, the compiled program, or the call-validity predicate, so their precise details cannot be rendered from this payload alone.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

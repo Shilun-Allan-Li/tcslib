@@ -39,22 +39,25 @@ For all natural numbers $C$ and $c$, the map $n \mapsto n + C\,(n+1)^c$ on the n
 Let $C, c$ be natural numbers and let $x, u, y, v$ be binary strings with $|u| = C\,(|x|+1)^c$ and $|v| = C\,(|y|+1)^c$. If the concatenations $x\,u$ and $y\,v$ are equal as strings, then $x = y$ and $u = v$.
 \end{lemma}
 
-\begin{lemma}[Failed split search characterizes unsolvable lengths]
+\begin{lemma}[Failure of certificate split search]
 \lean{Complexity.certificateSplit_none_iff}
 \label{Complexity.certificateSplit_none_iff}
 \leanok
 \uses{Complexity.certificateSplit}
 \difficulty{3}
-For natural numbers $C$, $c$ and $m$, the bounded search for a split position (which scans all $n \le m$ for a solution of $n + C\,(n+1)^c = m$) returns no result if and only if no natural number $n$ satisfies $n + C\,(n+1)^c = m$.
+Let $C,c,m$ be natural numbers. The bounded search that checks whether
+$n+(C+1)(n+1)^c=m$ for some $n\le m$ returns no result if and only if there is no
+natural number $n$ such that $n+C(n+1)^c=m$.
 \end{lemma}
 
-\begin{lemma}[Completeness of the split search]
+\begin{lemma}[Completeness of certificate split search]
 \lean{Complexity.certificateSplit_complete}
 \label{Complexity.certificateSplit_complete}
 \leanok
-\uses{Complexity.certificateSplit, Complexity.certificateSplit_none_iff, Complexity.certificateSplit_spec, Complexity.certificate_split_strictMono}
+\uses{Complexity.certificateSplit, Complexity.certificateSplit_none_iff, Complexity.certificateSplit_spec, Turing.certificateLength_strictMono}
 \difficulty{3}
-For natural numbers $C$, $c$, $m$ and $n$ with $n + C\,(n+1)^c = m$, the bounded search for a split position at length $m$ succeeds and returns exactly $n$.
+Let $C,c,m,n$ be natural numbers. If $n+C(n+1)^c=m$, then the bounded certificate split
+search at length $m$ returns $n$.
 \end{lemma}
 
 \begin{definition}[The choice-word verifier language]
@@ -65,31 +68,43 @@ For natural numbers $C$, $c$, $m$ and $n$ with $n + C\,(n+1)^c = m$, the bounded
 Given a nondeterministic Turing machine $N$ over the binary alphabet and natural numbers $C$ and $c$, the choice-word verifier language of $N$ consists of all binary strings of the form $x\,u$ (concatenation) where $|u| = C\,(|x|+1)^c$ and the run of $N$ on input $x$ under choice word $u$ has halted with output exactly the one-bit string $1$.
 \end{definition}
 
-\begin{lemma}[Membership of a correctly split word]
+\begin{lemma}[Membership for a prescribed input-certificate split]
 \lean{Complexity.choiceVerifier_append}
 \label{Complexity.choiceVerifier_append}
 \leanok
-\uses{Complexity.certificate_split_unique, Complexity.choiceVerifier, Turing.FinNDTM, Turing.NDTM.initCfg, Turing.NDTM.runWith}
+\uses{Complexity.choiceVerifier, Turing.FinNDTM, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.append_split_unique, Turing.certificateLength_strictMono}
 \difficulty{3}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet, let $C, c$ be natural numbers, and let $x$ and $u$ be binary strings with $|u| = C\,(|x|+1)^c$. Then the concatenation $x\,u$ belongs to the choice-word verifier language of $N$ with parameters $C, c$ if and only if the run of $N$ on input $x$ under choice word $u$ has halted with output exactly the one-bit string $1$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$
+be natural numbers, and let $x,u$ be finite binary words satisfying $|u|=C(|x|+1)^c$.
+Then the concatenation $xu$ belongs to the choice-word verifier language of $N$ with
+parameters $C,c$ if and only if the run of $N$ on input $x$ under $u$ is halted with
+output exactly the one-bit word $[1]$.
 \end{lemma}
 
-\begin{lemma}[Rejection of words without a valid split]
+\begin{lemma}[Nonmembership when the split search fails]
 \lean{Complexity.choiceVerifier_no_split}
 \label{Complexity.choiceVerifier_no_split}
 \leanok
 \uses{Complexity.certificateSplit, Complexity.certificateSplit_none_iff, Complexity.choiceVerifier, Turing.FinNDTM}
 \difficulty{3}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet and let $C, c$ be natural numbers. If no natural number $n$ satisfies $n + C\,(n+1)^c = |y|$ for a binary string $y$ (so the bounded split search fails at length $|y|$), then $y$ does not belong to the choice-word verifier language of $N$ with parameters $C, c$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$
+be natural numbers, and let $y$ be a finite binary word. If the bounded search over
+$0\le n\le |y|$ finds no natural number satisfying $n+(C+1)(n+1)^c=|y|$, then $y$ does
+not belong to the choice-word verifier language of $N$ with parameters $C,c$.
 \end{lemma}
 
-\begin{lemma}[Budget invariance of acceptance after all branches halt]
+\begin{lemma}[Acceptance under larger halting budgets]
 \lean{Complexity.acceptsWithin_iff_of_halts}
 \label{Complexity.acceptsWithin_iff_of_halts}
 \leanok
-\uses{Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.AcceptsWithin.mono, Turing.NDTM.HaltsWithin, Turing.NDTM.initCfg, Turing.NDTM.runWith_append, Turing.NDTM.runWith_of_halt}
+\uses{Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.AcceptsWithin.mono, Turing.NDTM.HaltsWithin, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_append, Turing.NDTM.runWith_of_halt, Turing.run_take_of_halted}
 \difficulty{4}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet, let $x$ be an input string, and let $t \le t'$ be step budgets such that every choice word of length $t$ drives $N$ on $x$ into a halted configuration. Then $N$ accepts $x$ within $t'$ steps if and only if $N$ accepts $x$ within $t$ steps, where acceptance within a budget means that some choice word of exactly that length yields a halted run with output the one-bit string $1$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $x$ be
+a binary string, and let $t,t'\in\mathbb{N}$ with $t\le t'$. Suppose every choice string
+of length exactly $t$ leaves the machine halted on input $x$. Then $N$ accepts $x$
+within $t'$ steps if and only if it accepts $x$ within $t$ steps, where acceptance
+within a budget means that some choice string of exactly that length leaves the machine
+halted with output exactly the one-bit string $1$.
 \end{lemma}
 
 \begin{lemma}[The doubled coefficient covers the time bound]
@@ -104,9 +119,14 @@ For all natural numbers $a$, $c$ and $n$, the inequality $a\,(n^c + 1) \le 2a\,(
 \lean{Complexity.choice_certificate_iff}
 \label{Complexity.choice_certificate_iff}
 \leanok
-\uses{Complexity.acceptsWithin_iff_of_halts, Complexity.choiceVerifier, Complexity.choiceVerifier_append, Complexity.choice_budget_le, Turing.FinNDTM, Turing.FinNDTM.DecidesInTime}
+\uses{Complexity.acceptsWithin_iff_of_halts, Complexity.choiceVerifier, Complexity.choiceVerifier_append, Turing.FinNDTM, Turing.FinNDTM.DecidesInTime, Turing.choiceBudget_le}
 \difficulty{3}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet that decides a language $L$ within time $a\,(n^c+1)$ on inputs of length $n$, meaning that every branch halts within the budget and acceptance characterizes membership. Then for every binary string $x$: $x \in L$ if and only if there is a binary string $u$ with $|u| = 2a\,(|x|+1)^c$ such that the concatenation $x\,u$ lies in the choice-word verifier language of $N$ with parameters $2a$ and $c$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $L$ be
+a language of binary strings, and let $a,c\in\mathbb{N}$. Suppose that on every binary
+input $x$, every choice word of length $a(|x|^c+1)$ halts and membership in $L$ is
+equivalent to acceptance within that time. Then for every binary string $x$, $x\in L$ if
+and only if there is a binary word $u$ of length $(2a)(|x|+1)^c$ such that $xu$ belongs
+to the choice-word verifier language with parameters $2a$ and $c$.
 \end{lemma}
 
 \subsection{Output capture and the deterministic simulation core}
@@ -125,22 +145,24 @@ For a binary string $w$, the output summary is: nothing when $w$ is empty, the b
 Given a current output summary $s$ (an optional bit) and an optional emitted bit $e$, the updated summary is $s$ when nothing is emitted, the emitted bit when $s$ is still empty, and the bit $0$ when a bit is emitted while $s$ already holds one.
 \end{definition}
 
-\begin{lemma}[The summary tracks appended emissions]
+\begin{lemma}[Summary update under an emitted bit]
 \lean{Complexity.captureEmission_correct}
 \label{Complexity.captureEmission_correct}
 \leanok
 \uses{Complexity.captureEmission, Complexity.capturedSummary}
 \difficulty{2}
-For every binary string $w$ and every optional bit $e$, updating the output summary of $w$ by the emission $e$ equals the output summary of $w$ with the content of $e$ appended.
+For every finite bit word $w$ and every optional bit $e$, updating the summary of $w$
+with $e$ gives the summary of the word obtained by appending the contents of $e$ to $w$.
 \end{lemma}
 
-\begin{lemma}[The accepting summary characterizes the singleton]
+\begin{lemma}[Summary recognizes the singleton one]
 \lean{Complexity.capturedSummary_true}
 \label{Complexity.capturedSummary_true}
 \leanok
 \uses{Complexity.capturedSummary}
 \difficulty{2}
-For every binary string $w$, the output summary of $w$ equals the bit $1$ if and only if $w$ is exactly the one-bit string $1$.
+For every finite bit word $w$, its summary is the optional bit $1$ if and only if $w$ is
+the one-bit word $[1]$.
 \end{lemma}
 
 \begin{definition}[Partition of work tapes into source and private blocks]
@@ -166,60 +188,93 @@ For a nondeterministic Turing machine $N$ over the binary alphabet with $k$ work
 Given a configuration of a nondeterministic machine $N$ on input $x$, a boundary tag, a choice word $u$, a choice-head index $j$, and a physical input position, the corresponding embedding is the configuration of the simulation core of $N$ that stores the source state, tag and output summary in finite control, each source work tape on its own tape, and the words $x$, $u$ and the source output on the three private buffer tapes, with empty physical output.
 \end{definition}
 
-\begin{lemma}[One simulated step consumes one copied choice]
+\begin{lemma}[One-step simulation of a choice bit]
 \lean{Complexity.choiceCore_step}
 \label{Complexity.choiceCore_step}
 \leanok
 \uses{Complexity.captureEmission, Complexity.captureEmission_correct, Complexity.capturedSummary, Complexity.choiceCore, Complexity.choiceCoreCfg, Complexity.choiceTapes, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinNDTM, Turing.FinTM.VirtualTag, Turing.FinTM.bufferTape_append, Turing.FinTM.bufferTape_inputSymbol, Turing.FinTM.virtualMove, Turing.FinTM.virtualMove_correct, Turing.FinTM.virtualNextTag, Turing.MultiTapeTM.step, Turing.NDTM.stepWith, Turing.NDTM.stepWith_of_halt, Turing.moveInputPos_zero}
 \difficulty{6}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet, let a configuration of $N$ on input $x$ carry a valid virtual boundary tag, and let $u$ be a choice word with next unread index $j < |u|$. Then one physical step of the simulation core of $N$ transforms the embedded configuration into the embedding of the configuration obtained by one step of $N$ under the choice bit at position $j$, with choice index $j+1$ and some valid updated boundary tag.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let
+$x,y,u$ be finite binary words, and let $c$ be a configuration of $N$ on input $x$.
+Suppose a Boolean tag $b$ satisfies the virtual boundary-tag condition for the
+input-head position of $c$. For every natural number $j<|u|$ and every physical input
+position for $y$, there is a Boolean tag $b'$ such that the configuration reached from
+$c$ by one step under the $j$th bit of $u$ has valid boundary tag $b'$, and one step of
+the simulation core from the encoding of $c,b,u$, choice-head position $j$, and the
+given physical position equals the encoding of that successor configuration, $b'$, $u$,
+choice-head position $j+1$, and the same physical position.
 \end{lemma}
 
-\begin{lemma}[Lockstep simulation over a prefix of choices]
+\begin{lemma}[Lockstep simulation of a choice prefix]
 \lean{Complexity.choiceCore_run}
 \label{Complexity.choiceCore_run}
 \leanok
 \uses{Complexity.choiceCore, Complexity.choiceCoreCfg, Complexity.choiceCore_step, Turing.Cfg, Turing.FinNDTM, Turing.FinTM.VirtualTag, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.NDTM.runWith, Turing.NDTM.runWith_append, Turing.NDTM.stepWith}
 \difficulty{4}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet, let a configuration of $N$ on input $x$ carry a valid virtual boundary tag, and let $u$ be a choice word with $t \le |u|$. Then $t$ physical steps of the simulation core of $N$ carry the embedded configuration to the embedding of the run of $N$ under the first $t$ bits of $u$, again with a valid boundary tag.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $x,y$
+be finite binary words, and let $c$ be a configuration of $N$ on input $x$. Suppose a
+Boolean tag $b$ satisfies the virtual boundary-tag condition for the input-head position
+of $c$. For every finite binary word $u$, natural number $t\le |u|$, and physical input
+position for $y$, there is a Boolean tag $b'$ such that the run of $N$ from $c$ under
+the first $t$ bits of $u$ has a valid boundary tag $b'$, and the simulation core run for
+$t$ steps from the encoding of $c,b,u$, choice-head position $0$, and the given physical
+position equals the encoding of that resulting configuration, $b'$, $u$, choice-head
+position $t$, and the same physical position.
 \end{lemma}
 
-\begin{lemma}[Final verdict transition at the choice blank]
+\begin{lemma}[Final verdict after the choice word]
 \lean{Complexity.choiceCore_finish}
 \label{Complexity.choiceCore_finish}
 \leanok
 \uses{Complexity.capturedSummary, Complexity.capturedSummary_true, Complexity.choiceCore, Complexity.choiceCoreCfg, Complexity.choiceTapes, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinNDTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet and consider the embedding of a configuration of $N$ whose choice head stands at the blank after the complete choice word $u$. One further step of the simulation core halts with output a single bit, and that bit is $1$ exactly when the embedded source configuration has halted with output the one-bit string $1$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $x,y$
+be finite binary words, let $c$ be a configuration of $N$ on input $x$, let $b$ be a
+Boolean boundary tag, and let $u$ be a finite binary choice word. Place the simulation
+core in the configuration encoding $c$, $b$, $u$, choice-head position $|u|$, and
+physical input position $y$. After one step, the core is halted and its output is the
+one-bit word whose bit is $1$ exactly when $c$ is halted and its output is exactly
+$[1]$.
 \end{lemma}
 
-\begin{lemma}[Timed contract of the simulation core]
+\begin{lemma}[Timed behavior of the simulation core]
 \lean{Complexity.choiceCore_timed}
 \label{Complexity.choiceCore_timed}
 \leanok
 \uses{Complexity.choiceCore, Complexity.choiceCoreCfg, Complexity.choiceCore_finish, Complexity.choiceCore_run, Turing.Cfg, Turing.FinNDTM, Turing.FinTM.VirtualTag, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.NDTM.runWith}
 \difficulty{3}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet, let a configuration of $N$ carry a valid virtual boundary tag, and let $u$ be a choice word. From the prepared embedded configuration, the simulation core of $N$ halts after exactly $|u| + 1$ steps, and its output is the single bit recording whether the run of $N$ under $u$ from that configuration has halted with output the one-bit string $1$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let
+$x,y,u$ be finite binary words, and let $c$ be a configuration of $N$ on input $x$.
+Suppose a Boolean tag $b$ satisfies the virtual boundary-tag condition for the
+input-head position of $c$, and let $p$ be a physical input position for $y$. Starting
+from the simulation core configuration encoding $c,b,u$, choice-head position $0$, and
+physical position $p$, after exactly $|u|+1$ steps the core is halted and its output is
+the one-bit word whose bit is $1$ exactly when the run of $N$ from $c$ under $u$ is
+halted and has output exactly $[1]$.
 \end{lemma}
 
-\begin{lemma}[Validity of the initial boundary tag]
+\begin{lemma}[Initial boundary-tag validity]
 \lean{Complexity.choiceCore_initial_tag}
 \label{Complexity.choiceCore_initial_tag}
 \leanok
 \uses{Turing.Cfg.init, Turing.FinNDTM, Turing.FinTM.VirtualTag, Turing.NDTM.initCfg}
 \difficulty{1}
-For every nondeterministic Turing machine $N$ over the binary alphabet and every input string $x$, the initial configuration of $N$ on $x$ satisfies the virtual boundary-tag invariant with the interior tag value (its input head starts at position one, inside the window).
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet and let $x$
+be a finite binary word. The initial configuration of $N$ on $x$, whose input head is at
+position $1$, satisfies the virtual boundary-tag condition with tag $\mathrm{true}$.
 \end{lemma}
 
 \subsection{The pair loader and the forward compilation}
 
-\begin{lemma}[Agreement of the library and local split searches]
+\begin{lemma}[Agreement of Split Searches]
 \lean{Complexity.cont_split_bridge}
 \label{Complexity.cont_split_bridge}
 \leanok
 \uses{Complexity.certificateSplit, Turing.solveSplit}
 \difficulty{1}
-For all natural numbers $C$, $c$ and $m$, the library split-search function and the local bounded split search return the same optional split position for the length equation $n + C\,(n+1)^c = m$.
+For all natural numbers $C,c,m$, the least solution in $\{0,\ldots,m\}$ of
+$n+C(n+1)^c=m$, when one exists, is the same for the two bounded split searches; if no
+solution exists, both searches are undefined.
 \end{lemma}
 
 \begin{definition}[Pair loader feeding the simulation core]
@@ -238,130 +293,211 @@ For a nondeterministic Turing machine $N$ over the binary alphabet, a determinis
 For a nondeterministic machine $N$, a loader state index, two buffer words $x$ and $u$, a physical input position and two buffer head positions, the corresponding configuration of the pair-loader machine of $N$ holds $x$ and $u$ on the two buffer tapes, with all source work tapes and the capture tape blank and the physical output empty.
 \end{definition}
 
-\begin{lemma}[Lockstep of the embedded core states]
+\begin{lemma}[Embedded Core Run Correspondence]
 \lean{Complexity.cont_core_run}
 \label{Complexity.cont_core_run}
 \leanok
 \uses{Complexity.choiceCore, Complexity.contPairTM, Turing.Action.apply, Turing.Action.mapState, Turing.Cfg, Turing.Cfg.mapState, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $N$ be a nondeterministic machine over the binary alphabet and let $d$ be any configuration of the simulation core of $N$. For every step count $t$, running the pair-loader machine of $N$ for $t$ steps from the state-renamed copy of $d$ yields exactly the state-renamed copy of the $t$-step run of the simulation core from $d$.
+Let $N$ be a nondeterministic Turing machine over the binary alphabet, let $y$ be a
+finite Boolean input word, let $c$ be a configuration of the deterministic simulation
+core for $N$ on $y$, and let $t$ be a natural number. Running the pair-loader machine
+for $t$ steps from the configuration obtained by embedding the core state into the
+pair-loader state space gives exactly the embedded configuration reached by running the
+core for $t$ steps from $c$.
 \end{lemma}
 
-\begin{lemma}[Exact cost of rewinding the choice buffer]
+\begin{lemma}[Rewinding the choice buffer]
 \lean{Complexity.cont_rewind_choices}
 \label{Complexity.cont_rewind_choices}
 \leanok
 \uses{Complexity.choiceCoreCfg, Complexity.choiceTapes, Complexity.contLoadCfg, Complexity.contPairTM, Turing.Action.apply, Turing.Cfg.init, Turing.Cfg.mapState, Turing.Cfg.workTapeSymbols, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.NDTM.initCfg, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $N$ be a nondeterministic machine, let $x$ and $u$ be buffer words, and let $j \le |u|$. From the loader configuration in the choice-rewind state with choice head at position $j - 1$, exactly $j + 1$ steps of the pair-loader machine reach the renamed embedding of the initial configuration of $N$ on $x$ prepared with choice word $u$, preserving the physical input position.
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $y$,
+$x$, and $u$ be Boolean words, let $p$ be any valid input-head position for input $y$,
+and let $j\in\mathbb{N}$ satisfy $j\le |u|$. Starting in loader state $5$ with
+input-head position $p$, choice buffer $u$, and choice-buffer head at position $j-1$,
+after exactly $j+1$ steps the pair-loader machine reaches the configuration obtained by
+embedding the initial configuration of $N$ on input $x$ in the simulation core, with
+boundary tag true, choice word $u$, choice-head index $0$, and physical input-head
+position $p$.
 \end{lemma}
 
-\begin{lemma}[Exact cost of rewinding the input buffer]
+\begin{lemma}[Rewinding the Input Buffer]
 \lean{Complexity.cont_rewind_input}
 \label{Complexity.cont_rewind_input}
 \leanok
 \uses{Complexity.choiceTapes, Complexity.contLoadCfg, Complexity.contPairTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $N$ be a nondeterministic machine, let $x$ and $u$ be buffer words, and let $j \le |x|$. From the loader configuration in the input-rewind state with input-buffer head at position $j-1$ and choice head at the right end of $u$, exactly $j+1$ steps of the pair-loader machine reach the choice-rewind state with input-buffer head reset to zero and choice head at position $|u| - 1$, with all tape contents preserved.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let
+$y,x,u$ be binary words, let $p$ be an input-head position among the $|y|+2$ positions,
+and let $j\le |x|$. Starting in loader state $4$ with input-buffer head at $j-1$ and
+choice-buffer head at $|u|$, after exactly $j+1$ steps the pair-loader machine is in
+loader state $5$, with the same physical input position and tape contents, input-buffer
+head at $0$, and choice-buffer head at $|u|-1$.
 \end{lemma}
 
-\begin{lemma}[Buffer appends realized by one write action]
+\begin{lemma}[Appending Bits by a Write Action]
 \lean{Complexity.cont_write_apply}
 \label{Complexity.cont_write_apply}
 \leanok
 \uses{Complexity.choiceTapes, Complexity.contLoadCfg, Turing.Action.apply, Turing.FinNDTM, Turing.FinTM.bufferTape_append, Turing.moveInputPos}
 \difficulty{4}
-Let $N$ be a nondeterministic machine and consider a loader configuration whose two buffer heads stand at the right blanks of the buffer words $x$ and $u$. Applying an action that optionally writes one bit at each of the two buffer heads (advancing a head exactly when it writes) produces the loader configuration whose buffers are $x$ and $u$ with the respective optional bits appended, with the physical input head moved by the action's input move and all other tapes unchanged.
+Let $N$ be a finite nondeterministic machine over the Boolean alphabet, let $y,x,u$ be
+Boolean words, let $q,q'\in\{0,1,2,3,4,5\}$, and let $p$ be an input-head position among
+the $|y|+2$ positions. For any input-head movement $m\in\{-1,0,1\}$ and optional bits
+$b_x,b_u$, applying the action that writes each present bit at its respective buffer
+head and advances that head exactly when it writes, while moving the input head by $m$,
+to the loader configuration with buffers $x,u$ and head positions $|x|,|u|$ yields the
+loader configuration with state index $q'$, buffers $x$ and $u$ extended by $b_x$ and
+$b_u$, input-head position obtained by the clamped move from $p$, and buffer-head
+positions equal to the lengths of the extended buffers.
 \end{lemma}
 
-\begin{lemma}[Physical input read at an explicit position]
+\begin{lemma}[Input symbol at a specified position]
 \lean{Complexity.cont_load_read}
 \label{Complexity.cont_load_read}
 \leanok
 \uses{Complexity.contLoadCfg, Turing.Cfg.inputSymbol, Turing.FinNDTM, Turing.FinTM.inputSymbol_at}
 \difficulty{1}
-Let $N$ be a nondeterministic machine and consider a loader configuration over a physical input $y$ whose input head is at position $i + 1$ with $i \le |y|$. The symbol read from the physical input is the optional bit of $y$ at index $i$, which is blank exactly at the right boundary.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $y$ be
+a binary input, let $q\in\mathrm{Fin}(6)$, let $x,u$ be binary words, and let
+$i\in\mathbb{N}$ satisfy $i\leq |y|$. For any integer head positions $a,b$, the loader
+configuration with physical input head at position $i+1$ reads the optional symbol
+$y[i]$ (which is absent when $i=|y|$).
 \end{lemma}
 
-\begin{lemma}[One right-moving loader transition]
+\begin{lemma}[Right-moving loader transition]
 \lean{Complexity.cont_load_right}
 \label{Complexity.cont_load_right}
 \leanok
 \uses{Complexity.choiceTapes, Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_load_read, Complexity.cont_write_apply, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinNDTM, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-Let $N$ be a nondeterministic machine, let $y$ be a physical input with position index $i < |y|$, and suppose the transition table of the pair-loader machine, applied in a loader state $q$ to the bit of $y$ at index $i$, yields a right input move that optionally appends one bit to each buffer and enters a loader state $q'$. Then one physical step from the loader configuration at position $i+1$ with buffers $x$ and $u$ (heads at their right blanks) produces the loader configuration at position $i+2$ in state $q'$ with the appended buffers.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $y$ be
+a binary input, let $q,q'\in\mathrm{Fin}(6)$, and let $x,u$ be binary words. Suppose
+$i<|y|$, and let $b_x,b_u$ be optional bits. If the transition of the pair-loader
+machine in state $q$, reading $y[i]$ with buffers $x,u$ and their heads at the right
+blanks, is a right move that writes $b_x$ to the first buffer when present, writes $b_u$
+to the second buffer when present, leaves the third private tape unchanged, emits
+nothing, and enters state $q'$, then one step of the machine from that loader
+configuration reaches the loader configuration at physical input position $i+2$, in
+state $q'$, with buffers $x$ and $u$ extended by the respective optional bits and their
+heads at the new right blanks.
 \end{lemma}
 
-\begin{lemma}[Exact cost of copying the suffix]
+\begin{lemma}[Suffix Copying Run]
 \lean{Complexity.cont_copy_run}
 \label{Complexity.cont_copy_run}
 \leanok
 \uses{Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_load_right, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
-Let $N$ be a nondeterministic machine and let the physical input $y$ decompose as $y = p\,r$ for words $p$ and $r$. From the suffix-copy loader state at position $|p| + 1$ with buffers $x$ and $u$, exactly $|r|$ steps of the pair-loader machine append $r$ to the choice buffer, ending at the right boundary of $y$ with the input buffer $x$ unchanged and no physical output.
+Let $N$ be a nondeterministic Turing machine over the binary alphabet, and let
+$y,r,\mathrm{pre},x,u$ be finite Boolean words with $y=\mathrm{pre}\,r$. Starting from
+the pair-loader configuration in state $3$, with physical input position
+$|\mathrm{pre}|+1$, input buffer $x$, choice buffer $u$, and buffer-head positions $|x|$
+and $|u|$, after exactly $|r|$ steps the configuration is in state $3$, at physical
+input position $|y|+1$, with input buffer $x$, choice buffer $ur$, head positions $|x|$
+and $|ur|$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Entering the simulation core after copying]
+\begin{lemma}[Entering the Simulation Core]
 \lean{Complexity.cont_start_core}
 \label{Complexity.cont_start_core}
 \leanok
 \uses{Complexity.choiceCoreCfg, Complexity.choiceTapes, Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_load_read, Complexity.cont_rewind_choices, Complexity.cont_rewind_input, Turing.Action.apply, Turing.Cfg.mapState, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.NDTM.initCfg, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $N$ be a nondeterministic machine and let $x$ and $u$ be the buffer words held by a loader configuration at the right boundary of the physical input $y$. Exactly $1 + (|x|+1) + (|u|+1)$ further steps of the pair-loader machine (one dispatch and the two buffer rewinds) reach the renamed embedding of the initial configuration of $N$ on $x$ prepared with choice word $u$; no bits of the choice word are consumed by these administrative steps.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, and let
+$y,x,u$ be binary words. Starting in loader state $3$ with input head at position
+$|y|+1$, input buffer holding $x$ with its head at $|x|$, and empty choice buffer with
+its head at $|u|$, after exactly $1+(|x|+1)+(|u|+1)$ steps the configuration is the
+state-renamed simulation-core configuration of $N$ initialized on $x$, with choice word
+$u$, choice head at $0$, boundary tag true, and physical input head at position $|y|+1$.
 \end{lemma}
 
-\begin{lemma}[Composition of copying, rewinds and simulation]
+\begin{lemma}[Run After Copying the Suffix]
 \lean{Complexity.cont_suffix_run}
 \label{Complexity.cont_suffix_run}
 \leanok
 \uses{Complexity.choiceCore_initial_tag, Complexity.choiceCore_timed, Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_copy_run, Complexity.cont_core_run, Complexity.cont_start_core, Turing.Cfg.mapState, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.NDTM.initCfg, Turing.NDTM.runWith}
 \difficulty{4}
-Let $N$ be a nondeterministic machine and let the physical input decompose as $y = p\,u$. Starting in the suffix-copy state at position $|p|+1$ with input buffer $x$ and empty choice buffer, after $|u| + (1 + (|x|+1) + (|u|+1)) + (|u|+1)$ steps the pair-loader machine has halted, and its output is the single bit recording whether the run of $N$ on $x$ under choice word $u$ has halted with output the one-bit string $1$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let
+$y,\mathrm{pre},x,u$ be binary words, and suppose $y=\mathrm{pre}\,u$. Starting in
+loader state $3$ with physical input head at position $|\mathrm{pre}|+1$, input buffer
+holding $x$ with its head at $|x|$, and empty choice buffer with its head at $0$, after
+$|u|+(1+(|x|+1)+(|u|+1))+(|u|+1)$ steps the machine has halted and its output is the
+single bit indicating whether running $N$ on $x$ under choice word $u$ halts with output
+the one-bit word $1$.
 \end{lemma}
 
-\begin{lemma}[Two-step decoding of a doubled bit]
+\begin{lemma}[Decoding one doubled bit]
 \lean{Complexity.cont_parse_double}
 \label{Complexity.cont_parse_double}
 \leanok
 \uses{Complexity.choiceTapes, Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_load_right, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
-Let $N$ be a nondeterministic machine and suppose the physical input has the form $y = p\,b\,b\,r$ for a bit $b$. From the initial parser state at position $|p|+1$ with input buffer $x$, exactly two steps of the pair-loader machine append $b$ to the input buffer and move to position $|p|+3$, leaving the choice buffer empty and the output silent.
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let
+$y$, $pre$, $rest$, and $x$ be Boolean words with $y=pre \, b b \, rest$ for a bit $b$.
+Starting in parser state $0$ with input head at position $|pre|+1$, input buffer $x$,
+empty choice buffer, and the other loader tapes and output as prescribed by the loader
+configuration, after two steps the machine is in parser state $0$ with input head at
+position $|pre|+3$ and input buffer $x b$; its choice buffer remains empty and the other
+loader tapes and output are as prescribed by that resulting loader configuration.
 \end{lemma}
 
-\begin{lemma}[Two-step recognition of the separator]
+\begin{lemma}[Recognition of the pair separator]
 \lean{Complexity.cont_parse_separator}
 \label{Complexity.cont_parse_separator}
 \leanok
 \uses{Complexity.choiceTapes, Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_load_right, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero}
 \difficulty{4}
-Let $N$ be a nondeterministic machine and suppose the physical input has the form $y = p\,0\,1\,u$. From the initial parser state at position $|p|+1$ with input buffer $x$, exactly two steps of the pair-loader machine enter the suffix-copy state at position $|p|+3$ without modifying either buffer or emitting output.
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let
+$y$, $pre$, $u$, and $x$ be Boolean words such that $y=pre\,0\,1\,u$. Starting in parser
+state $0$ with input head at position $|pre|+1$, input buffer $x$, empty choice buffer,
+and the other loader tapes and output as prescribed by the loader configuration, after
+two steps the pair-loader machine is in parser state $3$ with input head at position
+$|pre|+3$, the same input buffer $x$, and empty choice buffer, with the other loader
+tapes and output as prescribed by that resulting configuration.
 \end{lemma}
 
-\begin{lemma}[Exact parse of the doubled prefix]
+\begin{lemma}[Parsing the encoded input prefix]
 \lean{Complexity.cont_parse_run}
 \label{Complexity.cont_parse_run}
 \leanok
 \uses{Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_parse_double, Complexity.cont_parse_separator, Turing.FinNDTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode}
 \difficulty{5}
-Let $N$ be a nondeterministic machine and suppose the physical input has the form $y = p\,e$ where $e$ is the self-delimiting encoding of a pair $(x, u)$. From the initial parser state at position $|p|+1$ with input buffer $a$, exactly $2|x| + 2$ steps of the pair-loader machine decode the doubled prefix and the separator, reaching the suffix-copy state at position $|p| + 2|x| + 3$ with input buffer $a\,x$ and the choice buffer still empty.
+Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let
+$y$, $x$, and $u$ be Boolean words. For every pair of Boolean words $pre$ and $a$ such
+that $y=pre\,\langle x,u\rangle$, the pair-loader machine, started in parser state $0$
+with input head at position $|pre|+1$, input buffer $a$, empty choice buffer, and the
+other loader tapes and output as prescribed by its loader configuration, reaches after
+exactly $2|x|+2$ steps parser state $3$, input head position $|pre|+2|x|+3$, input
+buffer $ax$, and empty choice buffer, with the other loader tapes and output as
+prescribed by that configuration.
 \end{lemma}
 
-\begin{lemma}[Whole-machine contract on encoded pairs]
+\begin{lemma}[Computation of the encoded pair predicate]
 \lean{Complexity.cont_pair_computes}
 \label{Complexity.cont_pair_computes}
 \leanok
 \uses{Complexity.choiceTapes, Complexity.contLoadCfg, Complexity.contPairTM, Complexity.cont_parse_run, Complexity.cont_suffix_run, Turing.Cfg.init, Turing.FinNDTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.pairEncode}
 \difficulty{5}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet and let $x$ and $u$ be binary strings. On the self-delimiting encoding of the pair $(x,u)$, the pair-loader machine of $N$ halts from blank tapes within $3(\ell + 1)$ steps, where $\ell$ is the length of the encoded pair, and outputs the single bit recording whether the run of $N$ on $x$ under choice word $u$ has halted with output the one-bit string $1$.
+For every finite nondeterministic Turing machine $N$ over the Boolean alphabet and all
+Boolean words $x$ and $u$, the pair-loader machine of $N$, started on the
+self-delimiting encoding of $(x,u)$ from its initial configuration, halts with output
+the one-bit word whose bit is $1$ exactly when the run of $N$ on $x$ under choice word
+$u$ halts with output $[1]$. It does so in exactly three times one more than the length
+of the encoded pair.
 \end{lemma}
 
-\begin{lemma}[One-step rejection of the empty word]
+\begin{lemma}[Rejection of the empty input]
 \lean{Complexity.cont_pair_empty}
 \label{Complexity.cont_pair_empty}
 \leanok
 \uses{Complexity.contPairTM, Turing.Cfg.init, Turing.Cfg.inputSymbol, Turing.FinNDTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
 \difficulty{2}
-For every nondeterministic Turing machine $N$ over the binary alphabet, the pair-loader machine of $N$ on the empty input halts within one step, and its output is the single bit $0$.
+For every finite nondeterministic Turing machine $N$ over the Boolean alphabet, the
+pair-loader machine of $N$, started on the empty input, halts after exactly one step and
+has output $[0]$.
 \end{lemma}
 
 \begin{definition}[Split emitter for the polynomial length equation]
@@ -372,40 +508,50 @@ For every nondeterministic Turing machine $N$ over the binary alphabet, the pair
 For natural numbers $C, c$ and a binary string $y$, the emitted word is the self-delimiting encoding of the pair formed by the first $i$ bits of $y$ and the remaining bits of $y$, when the split search solves $i + C\,(i+1)^c = |y|$; it is the empty word when the search fails.
 \end{definition}
 
-\begin{lemma}[Linear length bound on the emitted split]
+\begin{lemma}[Length Bound for the Emitted Split]
 \lean{Complexity.cont_split_length}
 \label{Complexity.cont_split_length}
 \leanok
 \uses{Complexity.certificateSplit_spec, Complexity.contSplitWord, Complexity.cont_split_bridge, Turing.pairEncode, Turing.solveSplit}
 \difficulty{3}
-For all natural numbers $C, c$ and every binary string $y$, the word emitted by the polynomial split emitter on $y$ has length at most $2|y| + 2$.
+For all natural numbers $C,c$ and every binary word $y$, the word emitted by the
+polynomial split procedure has length at most $2|y|+2$.
 \end{lemma}
 
-\begin{lemma}[The loader decides the verifier on emitted splits]
+\begin{lemma}[Pair Loader Computes the Verifier]
 \lean{Complexity.cont_split_answer}
 \label{Complexity.cont_split_answer}
 \leanok
 \uses{Complexity.certificateSplit_spec, Complexity.choiceVerifier, Complexity.choiceVerifier_append, Complexity.choiceVerifier_no_split, Complexity.contPairTM, Complexity.contSplitWord, Complexity.cont_pair_computes, Complexity.cont_pair_empty, Complexity.cont_split_bridge, Complexity.cont_split_length, Turing.FinNDTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.MultiTapeTM.indicator, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.solveSplit}
 \difficulty{5}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet and let $C, c$ be natural numbers. For every binary string $y$, the pair-loader machine of $N$, run on the word emitted by the polynomial split emitter for $y$, halts within $3(2|y|+3)$ steps, and its output is the indicator bit of membership of $y$ in the choice-word verifier language of $N$ with parameters $C, c$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$
+be natural numbers, and let $y$ be a binary word. The pair-loader machine, run on the
+word emitted by the polynomial split procedure for $y$, halts after exactly $3(2|y|+3)$
+steps and outputs the indicator of the following property: there are binary words $x,u$
+such that $|u|=C(|x|+1)^c$, $y=xu$, and running $N$ on $x$ under the choice word $u$
+halts with output the one-bit word $1$.
 \end{lemma}
 
-\begin{lemma}[The choice-word verifier is polynomial time]
+\begin{lemma}[Polynomial-Time Choice-Word Verifier]
 \lean{Complexity.cont_choiceVerifier_mem_P}
 \label{Complexity.cont_choiceVerifier_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.choiceVerifier, Complexity.contPairTM, Complexity.contSplitWord, Complexity.cont_split_answer, Complexity.cont_split_length, Complexity.mem_P_iff, Turing.Cfg.init, Turing.FinNDTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesFunInTime_splitSolve, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-For every nondeterministic Turing machine $N$ over the binary alphabet and all natural numbers $C$ and $c$, the choice-word verifier language of $N$ with parameters $C, c$ belongs to the class $\mathrm{P}$.
+For every nondeterministic Turing machine $N$ over the binary alphabet and all natural
+numbers $C,c$, the language consisting of words $y$ that can be written as $y=xu$, where
+$u$ has length $C(|x|+1)^c$ and some such choice word $u$ makes $N$ halt with output
+$[1]$ on input $x$, belongs to $\mathrm{P}$.
 \end{lemma}
 
-\begin{theorem}[Fixed-degree nondeterministic time lies in NP]
+\begin{theorem}[Polynomial nondeterministic time is contained in NP]
 \lean{Complexity.ntime_poly_subset_NP}
 \label{Complexity.ntime_poly_subset_NP}
 \leanok
 \uses{Complexity.NP, Complexity.NTIME, Complexity.choiceVerifier, Complexity.choice_certificate_iff, Complexity.cont_choiceVerifier_mem_P}
 \difficulty{2}
-For every natural number $c$, the nondeterministic time class $\mathrm{NTIME}(n^c + 1)$ is contained in $\mathrm{NP}$: every language decided by some nondeterministic Turing machine within time $a\,(n^c+1)$, for a constant $a$, admits a polynomial-time verifier with certificates of exact length $2a\,(n+1)^c$.
+For every $c \in \mathbb{N}$, every language decidable by a finite nondeterministic
+Turing machine in time at most a constant multiple of $n^c+1$ belongs to $\mathrm{NP}$.
 \end{theorem}
 
 \subsection{The scheduler-driven guessing phase}
@@ -417,22 +563,25 @@ For every natural number $c$, the nondeterministic time class $\mathrm{NTIME}(n^
 Given a mask and a word of physical choice bits, processed position by position, the selected word keeps the choice bit at every position where the mask is $1$ and drops it where the mask is $0$; positions beyond the shorter of the two lists contribute nothing.
 \end{definition}
 
-\begin{lemma}[Length of the selected word]
+\begin{lemma}[Length of the Selected Word]
 \lean{Complexity.cont_select_length}
 \label{Complexity.cont_select_length}
 \leanok
 \uses{Complexity.contSelect}
 \difficulty{3}
-For every mask $m$ and every choice word $w$ with $|w| = |m|$, the word selected from $w$ along $m$ has length equal to the number of $1$ entries of $m$.
+Let $m$ and $w$ be binary words of equal length. The length of the word selected from
+$w$ along $m$ is the number of entries of $m$ equal to $1$.
 \end{lemma}
 
-\begin{lemma}[Every word of the scheduled length is selected]
+\begin{lemma}[Surjectivity of Word Selection]
 \lean{Complexity.cont_select_surjective}
 \label{Complexity.cont_select_surjective}
 \leanok
 \uses{Complexity.contSelect}
 \difficulty{4}
-Let $m$ be a mask and let $u$ be a binary string whose length equals the number of $1$ entries of $m$. Then there is a choice word $w$ with $|w| = |m|$ whose selection along $m$ is exactly $u$.
+Let $m$ and $u$ be binary words, with $|u|$ equal to the number of entries of $m$ that
+are $1$. There is a binary word $w$ of length $|m|$ whose selection along $m$ is exactly
+$u$.
 \end{lemma}
 
 \begin{definition}[Emission schedule of a deterministic run]
@@ -443,22 +592,28 @@ Let $m$ be a mask and let $u$ be a binary string whose length equals the number 
 For a deterministic machine $M$, a configuration $d$ and a step count $t$, the emission mask is the length-$t$ bit list whose $i$-th entry records whether the machine emits an output symbol on the $(i+1)$-st step of its run from $d$.
 \end{definition}
 
-\begin{lemma}[One mask entry per transition]
+\begin{lemma}[Length of the emission mask]
 \lean{Complexity.cont_mask_length}
 \label{Complexity.cont_mask_length}
 \leanok
 \uses{Complexity.contEmissionMask, Turing.Cfg, Turing.FinTM}
 \difficulty{2}
-For every deterministic machine $M$, configuration $d$ and step count $t$, the emission mask of the run of $M$ from $d$ over $t$ steps has length exactly $t$.
+For every finite deterministic Turing machine $M$ over the Boolean alphabet, every input
+word $x$, every configuration $d$ of $M$ on $x$, and every $t \in \mathbb{N}$, the
+emission mask of the first $t$ steps from $d$ has length exactly $t$.
 \end{lemma}
 
-\begin{lemma}[Marked positions count the emissions]
+\begin{lemma}[Emission count and output length]
 \lean{Complexity.cont_mask_count}
 \label{Complexity.cont_mask_count}
 \leanok
 \uses{Complexity.contEmissionMask, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_output}
 \difficulty{4}
-Let $M$ be a deterministic machine, $d$ a configuration and $t$ a step count. The output length of $d$ plus the number of $1$ entries in the emission mask over $t$ steps equals the output length of the configuration reached after $t$ steps of $M$ from $d$.
+Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a
+binary input, let $d$ be a configuration of $M$ on $x$, and let $t\in\mathbb{N}$. The
+output length of $d$ plus the number of true entries in the emission mask for the first
+$t$ steps from $d$ equals the output length of the configuration reached after $t$ steps
+of $M$ from $d$.
 \end{lemma}
 
 \begin{definition}[Scheduler-driven nondeterministic guessing phase]
@@ -477,22 +632,33 @@ For a deterministic machine $M$ over the binary alphabet, a nondeterministic mac
 Given a configuration $d$ of a deterministic machine $M$ and a captured word $u$, the corresponding configuration of the guessing-phase machine of $M$ carries the state, input head and work tapes of $d$ unchanged, holds $u$ on the extra capture tape with its head at the right blank, and has empty physical output.
 \end{definition}
 
-\begin{lemma}[One guessing transition captures at most one bit]
+\begin{lemma}[One step of the guessing phase]
 \lean{Complexity.cont_guess_step}
 \label{Complexity.cont_guess_step}
 \leanok
 \uses{Complexity.contGuessCfg, Complexity.contGuessTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt, Turing.NDTM.stepWith, Turing.captureAction, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $M$ be a deterministic machine over the binary alphabet, $d$ one of its configurations, $u$ a captured word and $b$ a choice bit. One nondeterministic step of the guessing-phase machine of $M$ under $b$ maps the invariant configuration for $(d, u)$ to the invariant configuration for the stepped configuration of $M$, with $b$ appended to the captured word exactly when $M$ emits an output symbol at $d$.
+Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a
+binary input, let $d$ be a configuration of $M$ on $x$, let $u$ be a binary word, and
+let $b$ be a bit. One step of the guessing-phase machine for $M$ under choice bit $b$,
+from the invariant configuration corresponding to $(d,u)$, equals the invariant
+configuration corresponding to the one-step successor of $d$ and the word obtained by
+appending $b$ to $u$ if $M$ emits an output symbol from $d$, and otherwise leaving $u$
+unchanged.
 \end{lemma}
 
-\begin{lemma}[The guessing run realizes the emission mask]
+\begin{lemma}[Run of the guessing phase]
 \lean{Complexity.cont_guess_run}
 \label{Complexity.cont_guess_run}
 \leanok
 \uses{Complexity.contEmissionMask, Complexity.contGuessCfg, Complexity.contGuessTM, Complexity.contSelect, Complexity.cont_guess_step, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{4}
-Let $M$ be a deterministic machine over the binary alphabet, $d$ a configuration, $u$ a captured word and $w$ a word of choice bits. Running the guessing-phase machine of $M$ under $w$ from the invariant configuration for $(d,u)$ yields the invariant configuration for the $|w|$-step run of $M$ from $d$, with the selection of $w$ along the emission mask appended to the captured word.
+Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a
+binary input, let $d$ be a configuration of $M$ on $x$, and let $u,w$ be binary words.
+Running the guessing-phase machine for $M$ from the invariant configuration
+corresponding to $(d,u)$ under the choice word $w$ yields the invariant configuration
+for the configuration reached after $|w|$ steps of $M$ from $d$, with the bits of $w$
+selected at the steps when $M$ emits an output symbol appended to $u$.
 \end{lemma}
 
 \begin{lemma}[Initial configuration of the guessing phase]
@@ -501,43 +667,63 @@ Let $M$ be a deterministic machine over the binary alphabet, $d$ a configuration
 \leanok
 \uses{Complexity.contGuessCfg, Complexity.contGuessTM, Turing.Cfg.init, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.NDTM.initCfg}
 \difficulty{3}
-For every deterministic machine $M$ over the binary alphabet and every input $x$, the blank-tape initial configuration of the guessing-phase machine of $M$ on $x$ equals the invariant configuration for the initial configuration of $M$ on $x$ with empty captured word.
+Let $M$ be a finite deterministic Turing machine over the binary alphabet, and let $x$
+be a binary input. The initial configuration of the guessing-phase machine for $M$ on
+$x$ equals the invariant configuration corresponding to the initial configuration of $M$
+on $x$ with the empty captured word.
 \end{lemma}
 
-\begin{lemma}[Extraction and coverage of guessed words]
+\begin{lemma}[Coverage of Guessed Output Words]
 \lean{Complexity.cont_guess_coverage}
 \label{Complexity.cont_guess_coverage}
 \leanok
 \uses{Complexity.contEmissionMask, Complexity.contGuessCfg, Complexity.contGuessTM, Complexity.contSelect, Complexity.cont_guess_initial, Complexity.cont_guess_run, Complexity.cont_mask_count, Complexity.cont_mask_length, Complexity.cont_select_length, Complexity.cont_select_surjective, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith}
 \difficulty{5}
-Let $M$ be a deterministic machine over the binary alphabet that computes an output $v$ on input $x$ within $T$ steps. Then every choice word of length $T$ drives the guessing-phase machine of $M$ from its initial configuration on $x$ to the invariant configuration for the $T$-step run of $M$, with some captured word of length $|v|$; and conversely, every word $u$ with $|u| = |v|$ is the captured word of that configuration for some choice word of length $T$.
+Let $M$ be a finite deterministic Turing machine over the binary alphabet, and let $x,v$
+be finite Boolean words and $T$ a natural number; assume $M$ computes output $v$ on
+input $x$ in exactly $T$ steps. For every choice word $w$ of length $T$, there is a word
+$u$ of length $|v|$ such that the guessing-phase machine run under $w$ ends at the
+configuration formed from the $T$-step configuration of $M$ and the captured buffer $u$;
+conversely, every word $u$ of length $|v|$ occurs in such a configuration for some
+choice word $w$ of length $T$.
 \end{lemma}
 
-\begin{lemma}[Normalizing the compiled polynomial envelope]
+\begin{lemma}[Polynomial envelope bound]
 \lean{Complexity.cont_guess_time_bound}
 \label{Complexity.cont_guess_time_bound}
 \leanok
 \uses{Complexity.succ_pow_le}
 \difficulty{4}
-For all natural numbers $C, c, K, r$ and $n$, the bound $K\,(n + C(n+1)^c + 1)^r \le K\,(C+1)^r\, 2^{\,r \cdot \max(1,c)} \cdot (n^{\,r \cdot \max(1,c)} + 1)$ holds.
+For all $C,c,K,r,n\in\mathbb{N}$, $K\bigl(n+C(n+1)^c+1\bigr)^r\leq
+K(C+1)^r2^{r\max(1,c)}\bigl(n^{r\max(1,c)}+1\bigr)$.
 \end{lemma}
 
-\begin{lemma}[Landing a compiled decider in an NTIME component]
+\begin{lemma}[Polynomial time bound implies polynomial nondeterministic time]
 \lean{Complexity.cont_guess_normalize}
 \label{Complexity.cont_guess_normalize}
 \leanok
 \uses{Complexity.NTIME, Complexity.acceptsWithin_iff_of_halts, Complexity.cont_guess_time_bound, Turing.FinNDTM, Turing.FinNDTM.DecidesInTime, Turing.NDTM.HaltsWithin.mono}
 \difficulty{3}
-Let $L$ be a language over the binary alphabet and $C, c$ natural numbers. If some nondeterministic machine decides $L$ within time $K\,(n + C(n+1)^c + 1)^r$ for some constants $K$ and $r$, then $L$ belongs to $\bigcup_{e} \mathrm{NTIME}(n^e + 1)$.
+Let $L$ be a language of binary strings and let $C,c\in\mathbb{N}$. Suppose there are
+natural numbers $K,r$ and a finite nondeterministic Turing machine that decides $L$
+within time $K\bigl(n+C(n+1)^c+1\bigr)^r$. Then $L$ belongs to
+$\bigcup_{e\in\mathbb{N}}\mathrm{NTIME}(n^e+1)$.
 \end{lemma}
 
-\begin{lemma}[A concrete guessing phase for each polynomial length]
+\begin{lemma}[Polynomial-length choice scheduling]
 \lean{Complexity.cont_poly_guess_phase}
 \label{Complexity.cont_poly_guess_phase}
 \leanok
 \uses{Complexity.contGuessCfg, Complexity.contGuessTM, Complexity.cont_guess_coverage, Turing.FinTM, Turing.FinTM.computesFunInTime_polyUnary, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith}
 \difficulty{3}
-For all natural numbers $C$ and $c$ there exist a deterministic scheduler machine $M$ and a constant $A$ such that for every $n$, on the unary input of length $n$ and with $T = A(n+1)^{c+1}$: every choice word of length $T$ drives the guessing-phase machine of $M$ to the completed $T$-step configuration while capturing some word of length exactly $C(n+1)^c$, and every word of that length is captured by some choice word of length $T$.
+For all natural numbers $C$ and $c$, there exist a finite deterministic Turing machine
+$M$ over the Boolean alphabet and a natural number $A$ such that, for every
+$n\in\mathbb{N}$, if $x$ is the all-$1$ word of length $n$ and $T=A(n+1)^{c+1}$, then
+both of the following hold: every choice word of length $T$ drives the guessing-phase
+machine of $M$ from its initial configuration on $x$ to the configuration corresponding
+to the $T$-step run of $M$, with some captured word of length exactly $C(n+1)^c$; and
+every word of length exactly $C(n+1)^c$ is captured in such a configuration by some
+choice word of length $T$.
 \end{lemma}
 
 \subsection{Unary normalization of schedulers}
@@ -558,76 +744,106 @@ For a deterministic machine $M$ over the binary alphabet, a machine with the sam
 A configuration on an input $x$ is reinterpreted as a configuration on the all-ones word of length $|x|$, keeping its state, input head position, work tapes, work heads and output unchanged.
 \end{definition}
 
-\begin{lemma}[Reads after unary reinterpretation]
+\begin{lemma}[Input Read Under Unary Reinterpretation]
 \lean{Complexity.b2_unary_read}
 \label{Complexity.b2_unary_read}
 \leanok
 \uses{Complexity.b2UnaryCfg, Turing.Cfg, Turing.Cfg.inputSymbol}
 \difficulty{3}
-For every configuration $d$ on an input $x$, the input symbol read by the reinterpretation of $d$ over the all-ones word of length $|x|$ equals the symbol read by $d$ with every non-blank bit replaced by $1$.
+Let $x$ be a binary input and $c$ a configuration on $x$. The symbol read from the
+configuration reinterpreted on the all-ones input of length $|x|$ equals the symbol read
+from $c$ with each present symbol replaced by $1$; a blank read remains blank.
 \end{lemma}
 
-\begin{lemma}[Actions commute with unary reinterpretation]
+\begin{lemma}[Actions Commute with Unary Reinterpretation]
 \lean{Complexity.b2_unary_apply}
 \label{Complexity.b2_unary_apply}
 \leanok
 \uses{Complexity.b2UnaryCfg, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.moveInputPos}
 \difficulty{3}
-For every tape action $a$ and every configuration $d$ on an input $x$, reinterpreting the result of applying $a$ to $d$ over the all-ones word equals applying $a$ to the reinterpretation of $d$; input-head clamping depends only on the input length.
+Let $k$ be a natural number, $S$ a state set, $x$ a binary word, $a$ an action on $k$
+work tapes, and $c$ a configuration on input $x$. Reinterpreting the configuration
+obtained by applying $a$ to $c$ as a configuration on the all-ones word of length $|x|$
+gives the same result as applying $a$ to the unary reinterpretation of $c$.
 \end{lemma}
 
-\begin{lemma}[One normalized step equals one unary step]
+\begin{lemma}[One-Step Unary Normalization]
 \lean{Complexity.b2_unary_step}
 \label{Complexity.b2_unary_step}
 \leanok
 \uses{Complexity.b2UnaryCfg, Complexity.b2UnaryTM, Complexity.b2_unary_apply, Complexity.b2_unary_read, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $M$ be a deterministic machine over the binary alphabet and $d$ a configuration on an input $x$. The unary reinterpretation of one step of the input-normalized variant of $M$ at $d$ equals one native step of $M$ at the unary reinterpretation of $d$, including the absorbing halted case.
+Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a
+binary input, and let $c$ be a configuration of $M$ on $x$. Reinterpreting the successor
+configuration after one step of the input-normalized machine from $c$ on the all-ones
+input of length $|x|$ gives the successor after one step of $M$ from the unary
+reinterpretation of $c$.
 \end{lemma}
 
-\begin{lemma}[Exact unary lockstep at every time]
+\begin{lemma}[Unary Normalization Preserves Runs]
 \lean{Complexity.b2_unary_run}
 \label{Complexity.b2_unary_run}
 \leanok
 \uses{Complexity.b2UnaryCfg, Complexity.b2UnaryTM, Complexity.b2_unary_step, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step}
 \difficulty{3}
-Let $M$ be a deterministic machine over the binary alphabet, $d$ a configuration on an input $x$, and $t$ a step count. The unary reinterpretation of the $t$-step run of the input-normalized variant of $M$ from $d$ equals the $t$-step run of $M$ from the reinterpretation of $d$.
+Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a
+binary input, let $c$ be a configuration of $M$ on $x$, and let $t\in\mathbb{N}$.
+Reinterpreting the configuration reached after $t$ steps of the input-normalized machine
+from $c$ on the all-ones input of length $|x|$ gives exactly the configuration reached
+after $t$ steps of $M$ from the unary reinterpretation of $c$.
 \end{lemma}
 
-\begin{lemma}[Unary reinterpretation of the initial configuration]
+\begin{lemma}[Unary Reinterpretation of the Initial Configuration]
 \lean{Complexity.b2_unary_initial}
 \label{Complexity.b2_unary_initial}
 \leanok
 \uses{Complexity.b2UnaryCfg, Complexity.b2UnaryTM, Turing.Cfg.init, Turing.FinTM, Turing.MultiTapeTM.initCfg}
 \difficulty{2}
-For every deterministic machine $M$ over the binary alphabet and every input $x$, the reinterpretation of the initial configuration of the input-normalized variant of $M$ on $x$ equals the initial configuration of $M$ on the all-ones word of length $|x|$.
+Let $M$ be a finite deterministic machine over the binary alphabet and let $x$ be a
+binary word. Reinterpreting the initial configuration of the input-normalized machine
+associated with $M$ on $x$ as a configuration on the all-ones word of length $|x|$ gives
+the initial configuration of $M$ on that all-ones word.
 \end{lemma}
 
-\begin{lemma}[Emission schedule survives normalization]
+\begin{lemma}[Emission Schedule Under Unary Normalization]
 \lean{Complexity.b2_unary_mask}
 \label{Complexity.b2_unary_mask}
 \leanok
 \uses{Complexity.b2UnaryCfg, Complexity.b2UnaryTM, Complexity.b2_unary_read, Complexity.b2_unary_step, Complexity.contEmissionMask, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.outputSymbol}
 \difficulty{4}
-Let $M$ be a deterministic machine over the binary alphabet, $d$ a configuration and $t$ a step count. The emission mask of the input-normalized variant of $M$ over $t$ steps from $d$ equals the emission mask of $M$ over $t$ steps from the unary reinterpretation of $d$.
+Let $M$ be a finite deterministic Turing machine over the binary alphabet, let $x$ be a
+binary input, let $c$ be a configuration of $M$ on $x$, and let $t\in\mathbb{N}$. The
+length-$t$ emission schedule of the input-normalized machine from $c$ equals the
+length-$t$ emission schedule of $M$ from the configuration obtained by viewing $c$ on
+the all-ones input of length $|x|$.
 \end{lemma}
 
-\begin{lemma}[Transfer of unary computations to all inputs]
+\begin{lemma}[Transfer of a Unary Computation]
 \lean{Complexity.b2_unary_computes}
 \label{Complexity.b2_unary_computes}
 \leanok
 \uses{Complexity.b2UnaryTM, Complexity.b2_unary_initial, Complexity.b2_unary_run, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-Let $M$ be a deterministic machine over the binary alphabet and suppose $M$ computes an output $v$ within $t$ steps on the all-ones input of length $|x|$. Then the input-normalized variant of $M$ computes $v$ within $t$ steps on the input $x$ itself.
+Let $M$ be a finite deterministic machine over the binary alphabet, and let $x$ and $v$
+be binary words and $t$ a natural number. If $M$ computes output $v$ within $t$ steps on
+the all-ones word of length $|x|$, then the input-normalized machine associated with $M$
+computes output $v$ within $t$ steps on $x$.
 \end{lemma}
 
-\begin{lemma}[Length-indexed first halting times]
+\begin{lemma}[Length-Indexed First Halting Times]
 \lean{Complexity.b2_unary_first}
 \label{Complexity.b2_unary_first}
 \leanok
 \uses{Complexity.b2UnaryTM, Complexity.b2_unary_computes, Complexity.b2_unary_initial, Complexity.b2_unary_run, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_output_eq_of_halt}
 \difficulty{5}
-Let $M$ be a deterministic machine over the binary alphabet such that for every $n$, on the all-ones input of length $n$, $M$ computes a word $f(n)$ within $T(n)$ steps. Then there is a function $\tau$ with $\tau(n) \le T(n)$ for all $n$ such that on every input $x$, the input-normalized variant of $M$ computes $f(|x|)$ within $\tau(|x|)$ steps and is still live at every time before $\tau(|x|)$.
+Let $M$ be a finite deterministic machine over the binary alphabet, let $f$ assign a
+binary word to each natural number, and let $T$ assign a natural-number time bound to
+each natural number. Suppose that for every $n$, $M$ computes $f(n)$ within $T(n)$ steps
+on the all-ones word of length $n$. Then there is a function $\tau$ from the natural
+numbers to the natural numbers such that, for every binary word $x$, $\tau(|x|)\le
+T(|x|)$, the input-normalized machine associated with $M$ computes $f(|x|)$ within
+$\tau(|x|)$ steps on $x$, and the machine is not halted at any time $s<\tau(|x|)$ in
+that computation.
 \end{lemma}
 
 \subsection{The reverse host and Theorem 2.6}
@@ -656,31 +872,46 @@ For deterministic machines $S$ (a scheduler) and $V$ (a verifier) over the binar
 Given a scheduler configuration $d$ on an input $x$ and a guessed word $u$, the corresponding configuration is the host configuration that embeds the guessing-phase invariant for $d$ with captured word $x\,u$ in the scheduler bank and keeps the entire verifier bank blank.
 \end{definition}
 
-\begin{lemma}[Choice independence outside guessing states]
+\begin{lemma}[Choice Independence Outside Guessing States]
 \lean{Complexity.b2_tables_coincide}
 \label{Complexity.b2_tables_coincide}
 \leanok
 \uses{Complexity.b2Host, Turing.FinTM}
 \difficulty{2}
-Let $S$ and $V$ be deterministic machines and let $q$ be any control state of the reverse host built from $S$ and $V$ that is not a live guessing state. For every input symbol and every tuple of work-tape symbols, the two transition tables of the host agree at $q$.
+Let $S$ and $V$ be deterministic Turing machines over the binary alphabet, and let $q$
+be a state of the reverse host that is not a live scheduler state (a state of the form
+consisting of a scheduler state paired with an active scheduler phase). For every input
+symbol, possibly blank, and every tuple of work-tape symbols, the host's transition
+action is the same for choice bit $0$ as for choice bit $1$.
 \end{lemma}
 
-\begin{lemma}[A live host guessing step]
+\begin{lemma}[One step of the guessing phase]
 \lean{Complexity.b2_guess_step}
 \label{Complexity.b2_guess_step}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2UnaryTM, Complexity.contGuessCfg, Complexity.contGuessTM, Complexity.cont_guess_step, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.leftAction, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_apply, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.step, Turing.NDTM.stepWith}
 \difficulty{5}
-Let $S, V$ be deterministic machines, $d$ a non-halted scheduler configuration on an input $x$, $u$ a guessed word and $b$ a choice bit. One step of the reverse host under $b$ maps the guessing-phase configuration for $(d,u)$ to the guessing-phase configuration for the stepped configuration of the input-normalized variant of $S$, with $b$ appended to the guessed word exactly when that machine emits at $d$.
+Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let
+$x$ be a Boolean word, and let $c$ be an $S$-configuration on $x$ with an active state.
+For any guessed word $u$ and choice bit $b$, one host step from the guessing-phase
+configuration associated to $c$ and $u$ yields the guessing-phase configuration
+associated to the next configuration of the input-normalized machine derived from $S$,
+with $b$ appended to $u$ precisely when that machine emits a symbol from $c$.
 \end{lemma}
 
-\begin{lemma}[Host guessing run under a liveness guard]
+\begin{lemma}[Run of the guessing phase]
 \lean{Complexity.b2_guess_run}
 \label{Complexity.b2_guess_run}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2UnaryTM, Complexity.b2_guess_step, Complexity.contEmissionMask, Complexity.contSelect, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $d$ a scheduler configuration on an input $x$, $u$ a guessed word, and $w$ a word of choice bits such that the input-normalized scheduler is still live at every time before $|w|$. Running the reverse host under $w$ from the guessing-phase configuration for $(d,u)$ gives the guessing-phase configuration for the $|w|$-step scheduler run, with the selection of $w$ along the scheduler emission mask appended to the guessed word.
+Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let
+$x$ be a Boolean word, let $c$ be an $S$-configuration on $x$, and let $u,w$ be Boolean
+words. Suppose the input-normalized machine derived from $S$, started at $c$, remains
+active at every time before $|w|$. Running the host under $w$ from the guessing-phase
+configuration associated to $c$ and $u$ yields the guessing-phase configuration
+associated to the scheduler's configuration after $|w|$ steps and the word obtained by
+appending to $u$ the choice bits at the positions where the scheduler emits.
 \end{lemma}
 
 \begin{definition}[Loader configuration of the reverse host]
@@ -691,58 +922,85 @@ Let $S, V$ be deterministic machines, $d$ a scheduler configuration on an input 
 Given a loader state index, a physical input position, a copied prefix and an assembly head value, the corresponding host configuration has every scheduler and verifier tape blank, the copied prefix on the assembly buffer, and empty physical output; the physical input is retained verbatim.
 \end{definition}
 
-\begin{lemma}[One copy transition of the host]
+\begin{lemma}[One input-copying step]
 \lean{Complexity.b2_copy_step}
 \label{Complexity.b2_copy_step}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2LoadCfg, Complexity.b2Slots, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.NDTM.stepWith, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-Let $S, V$ be deterministic machines and $x$ an input with position index $i < |x|$. For every choice bit, one step of the reverse host from the copy-state loader configuration holding the first $i$ bits of $x$ appends the bit of $x$ at index $i$ to the assembly buffer and advances the input head by one.
+Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let
+$x$ be a Boolean word, and let $i<|x|$. For either choice bit, one host step from copy
+state at input position $i+1$, with the first $i$ symbols of $x$ on the assembly buffer,
+reaches copy state at input position $i+2$, with the first $i+1$ symbols of $x$ on the
+buffer.
 \end{lemma}
 
-\begin{lemma}[Choice-independent copying of a prefix]
+\begin{lemma}[Copying a prefix under a choice word]
 \lean{Complexity.b2_copy_run}
 \label{Complexity.b2_copy_run}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2LoadCfg, Complexity.b2_copy_step, Turing.FinTM, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $x$ an input, and $w$ any word of choice bits with $i + |w| \le |x|$. Running the reverse host under $w$ from the copy-state loader configuration holding the first $i$ bits of $x$ yields the copy-state configuration holding the first $i + |w|$ bits, one bit copied per step regardless of the choices.
+Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let
+$x$ and $w$ be Boolean words, and let $i$ be a natural number with $i+|w|\le |x|$.
+Starting in copy state at input position $i+1$, with the first $i$ symbols of $x$ on the
+assembly buffer, running the host under choice word $w$ ends in copy state at input
+position $i+|w|+1$, with the first $i+|w|$ symbols of $x$ on the assembly buffer.
 \end{lemma}
 
-\begin{lemma}[Dispatch from the left input blank]
+\begin{lemma}[Dispatch into the Guessing Phase]
 \lean{Complexity.b2_rewind_done}
 \label{Complexity.b2_rewind_done}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2LoadCfg, Complexity.b2Slots, Complexity.b2UnaryTM, Complexity.contGuessCfg, Turing.Action.apply, Turing.Cfg.init, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.controlAction_apply, Turing.FinTM.leftCfg, Turing.MultiTapeTM.initCfg, Turing.NDTM.stepWith, Turing.moveInputPos}
 \difficulty{4}
-Let $S, V$ be deterministic machines and $x$ an input. From the rewind-state loader configuration with input head at the left blank and assembly buffer exactly $x$, one host step (for any choice bit) yields the guessing-phase configuration for the initial configuration of the input-normalized scheduler on $x$ with empty guessed word.
+Let $S,V$ be finite deterministic machines over the Boolean alphabet, let $x$ be a
+Boolean input word, and let $b$ be a Boolean choice bit. One host step under $b$ from
+the loader configuration with state index $1$, input head at position $0$, assembly
+buffer containing $x$, and assembly head at cell $|x|$ equals the guessing-phase
+configuration for the initial configuration of the input-normalized scheduler on $x$
+with empty guessed word.
 \end{lemma}
 
-\begin{lemma}[One left move of the input rewind]
+\begin{lemma}[One Step of the Input Rewind]
 \lean{Complexity.b2_rewind_step}
 \label{Complexity.b2_rewind_step}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2LoadCfg, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.controlAction_apply, Turing.FinTM.moveInputPos_neg_val, Turing.NDTM.stepWith, Turing.inputSymbolInner, Turing.moveInputPos}
 \difficulty{3}
-Let $S, V$ be deterministic machines and $x$ an input with $j < |x|$. For any choice bit, one host step from the rewind-state loader configuration with input head at position $j+1$ and assembly buffer $x$ moves the input head to position $j$, leaving all tapes unchanged.
+Let $S$ and $V$ be deterministic Turing machines over the binary alphabet, let $x$ be a
+binary word, and let $j<|x|$. For either choice bit, one step of the reverse host from
+its loader configuration in state $1$, with input head at position $j+1$, assembly
+buffer containing $x$, and assembly head at position $|x|$, gives the loader
+configuration with input head at position $j$ and all other configuration data
+unchanged.
 \end{lemma}
 
-\begin{lemma}[Exact cost of the physical input rewind]
+\begin{lemma}[Rewinding to the Guessing Phase]
 \lean{Complexity.b2_rewind_run}
 \label{Complexity.b2_rewind_run}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2LoadCfg, Complexity.b2UnaryTM, Complexity.b2_rewind_done, Complexity.b2_rewind_step, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $x$ an input, $j \le |x|$, and $w$ any word of choice bits with $|w| = j + 1$. Running the reverse host under $w$ from the rewind-state loader configuration with input head at position $j$ and assembly buffer $x$ reaches the guessing-phase configuration for the initial normalized-scheduler configuration on $x$ with empty guessed word.
+Let $S$ and $V$ be deterministic Turing machines over the binary alphabet, let $x$ be a
+binary word, and let $j$ be a natural number with $j \le |x|$. For every binary word $w$
+of length $j+1$, running the reverse host for $S$ and $V$ on the choices in $w$, from
+its loader configuration in state $1$ with input head at position $j$, assembly buffer
+containing $x$, and assembly head at position $|x|$, yields the guessing-phase
+configuration for the input-normalized scheduler's initial configuration on $x$, with
+empty guessed word.
 \end{lemma}
 
-\begin{lemma}[Initial configuration of the reverse host]
+\begin{lemma}[Initial Configuration of the Reverse Host]
 \lean{Complexity.b2_initial}
 \label{Complexity.b2_initial}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2LoadCfg, Complexity.b2Slots, Turing.FinTM, Turing.NDTM.initCfg}
 \difficulty{3}
-For all deterministic machines $S, V$ and every input $x$, the blank-tape initial configuration of the reverse host built from $S$ and $V$ equals the copy-state loader configuration with empty assembly buffer, input head at position one and assembly head at zero.
+For finite deterministic machines $S$ and $V$ over the Boolean alphabet and any Boolean
+input word $x$, the initial configuration of the host built from $S$ and $V$ on $x$
+equals the loader configuration in state $0$, with input head at position $1$, empty
+assembly buffer, and assembly head at cell $0$.
 \end{lemma}
 
 \begin{lemma}[Boundary turn after copying]
@@ -751,34 +1009,54 @@ For all deterministic machines $S, V$ and every input $x$, the blank-tape initia
 \leanok
 \uses{Complexity.b2Host, Complexity.b2LoadCfg, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.FinTM.controlAction_apply, Turing.FinTM.inputSymbol_at, Turing.FinTM.moveInputPos_neg_val, Turing.NDTM.stepWith, Turing.moveInputPos}
 \difficulty{3}
-Let $S, V$ be deterministic machines and $x$ an input. For any choice bit, one host step from the copy-state loader configuration at the right input blank with assembly buffer $x$ yields the rewind-state configuration with the input head moved left to position $|x|$.
+Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let
+$x$ be a finite Boolean word, and let $b$ be a choice bit. Starting in the reverse
+host’s loader state $0$, with its input head at the right boundary blank (position
+$|x|+1$) and the assembly buffer containing $x$ with its head at position $|x|$, one
+host step under $b$ yields the loader state $1$, with the input head at position $|x|$,
+the same assembly buffer and head position, and all other tapes blank and the output
+empty.
 \end{lemma}
 
-\begin{lemma}[Startup contract of the reverse host]
+\begin{lemma}[Startup of the Reverse Host]
 \lean{Complexity.b2_start}
 \label{Complexity.b2_start}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2LoadCfg, Complexity.b2UnaryTM, Complexity.b2_copy_done, Complexity.b2_copy_run, Complexity.b2_initial, Complexity.b2_rewind_run, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_append, Turing.NDTM.runWith_cons}
 \difficulty{5}
-Let $S, V$ be deterministic machines, $x$ an input, and $w$ any word of choice bits with $|w| = 2|x| + 2$. Running the reverse host under $w$ from its blank-tape initial configuration on $x$ reaches the guessing-phase configuration for the initial configuration of the input-normalized scheduler on $x$ with empty guessed word; all startup choices are ignored.
+Let $S$ and $V$ be deterministic Turing machines over the binary alphabet, let $x$ be a
+binary word, and let $w$ be a binary word of length $2|x|+2$. Running the reverse host
+on the choices in $w$ from its initial configuration on $x$ yields the guessing-phase
+configuration for the input-normalized scheduler's initial configuration on $x$, with
+empty guessed word.
 \end{lemma}
 
-\begin{lemma}[The tape contents determine the captured word]
+\begin{lemma}[Injectivity of the Captured Word]
 \lean{Complexity.b2_guess_word_injective}
 \label{Complexity.b2_guess_word_injective}
 \leanok
 \uses{Complexity.contGuessCfg, Turing.Cfg, Turing.FinTM}
 \difficulty{3}
-Let $M$ be a deterministic machine, $d$ one of its configurations, and $u, v$ captured words. If the guessing-phase invariant configurations for $(d,u)$ and $(d,v)$ are equal, then $u = v$.
+Let $M$ be a finite deterministic machine over the Boolean alphabet, let $x$ be a
+Boolean word, and let $c$ be a configuration of $M$ on $x$. For Boolean words $u$ and
+$v$, if the corresponding guessing-phase configurations built from $c$ and $u$, and from
+$c$ and $v$, are equal, then $u=v$.
 \end{lemma}
 
-\begin{lemma}[Host-level extraction and coverage of guesses]
+\begin{lemma}[Coverage of scheduler guesses]
 \lean{Complexity.b2_guess_coverage}
 \label{Complexity.b2_guess_coverage}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2UnaryTM, Complexity.b2_guess_run, Complexity.b2_guess_word_injective, Complexity.contGuessCfg, Complexity.contGuessTM, Complexity.cont_guess_coverage, Complexity.cont_guess_initial, Complexity.cont_guess_run, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith}
 \difficulty{5}
-Let $S, V$ be deterministic machines and suppose the input-normalized scheduler on an input $x$ computes an output $v$ within $T$ steps while remaining live at all earlier times. Then every choice word of length $T$ drives the reverse host from the start-of-guessing configuration to the completed-scheduler guessing configuration with some guessed word of length $|v|$, and every word of length $|v|$ arises this way from some choice word of length $T$.
+Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, and
+let $x,v$ be Boolean words and $T$ a natural number. Suppose the input-normalized
+machine derived from $S$ halts on $x$ after exactly $T$ steps with output $v$, and
+remains active at every earlier time. Then every choice word $w$ of length $T$ drives
+the host from the initial guessing-phase configuration to the guessing-phase
+configuration of the scheduler's time-$T$ state with some guessed word $u$ of length
+$|v|$; conversely, every Boolean word $u$ of length $|v|$ occurs this way for some
+choice word of length $T$.
 \end{lemma}
 
 \begin{definition}[Verifier-phase configuration of the host]
@@ -797,129 +1075,207 @@ Given a verifier configuration $d$ on an assembled word $y$, a boundary tag, a p
 Given a completed scheduler configuration $d$ on an input $x$, an assembled word $y$ and an assembly head value, the corresponding host configuration is in the assembly-rewind control state, retains the scheduler bank of $d$ and the word $y$ on the assembly buffer, and keeps the verifier bank blank.
 \end{definition}
 
-\begin{lemma}[One relocated verifier step]
+\begin{lemma}[One Relocated Verifier Step]
 \lean{Complexity.b2_verify_step}
 \label{Complexity.b2_verify_step}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2Slots, Complexity.b2VerifyCfg, Complexity.captureEmission, Complexity.captureEmission_correct, Complexity.capturedSummary, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.FinTM.bufferTape_append, Turing.FinTM.bufferTape_inputSymbol, Turing.FinTM.virtualMove, Turing.FinTM.virtualMove_correct, Turing.FinTM.virtualNextTag, Turing.MultiTapeTM.step, Turing.NDTM.stepWith, Turing.moveInputPos_zero}
 \difficulty{6}
-Let $S, V$ be deterministic machines, $d$ a non-halted verifier configuration on an assembled word $y$ carrying a valid virtual boundary tag, and fix frozen scheduler data and a physical position. For every choice bit, one host step maps the verifier-phase configuration for $d$ to the verifier-phase configuration for the stepped verifier, with some valid updated tag; reads come from the assembly buffer and every emission of $V$ is captured, including one on a halting transition.
+Let $S$ and $V$ be finite deterministic Turing machines over the binary alphabet, let
+$x,y$ be binary inputs, and let $c$ be a nonhalted configuration of $V$ on $y$. Suppose
+a Boolean tag correctly marks the boundary whenever the virtual input head is at either
+endpoint. Choose any input-head position for $x$, any contents for the work tapes of
+$S$, any work-head positions for $S$, and any choice bit. There is a Boolean tag
+correctly marking the boundary for the virtual input-head position after one step of $V$
+such that one host step from the corresponding verifier-phase configuration equals the
+verifier-phase configuration formed from the successor of $c$, with the chosen scheduler
+data unchanged.
 \end{lemma}
 
-\begin{lemma}[Relocated verifier run under a liveness guard]
+\begin{lemma}[Relocated Verifier Run]
 \lean{Complexity.b2_verify_run}
 \label{Complexity.b2_verify_run}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2VerifyCfg, Complexity.b2_verify_step, Turing.Cfg, Turing.FinTM, Turing.FinTM.VirtualTag, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $d$ a verifier configuration with a valid boundary tag, and $w$ a choice word such that the verifier is live at every time before $|w|$. Running the host under $w$ from the verifier-phase configuration for $d$ yields the verifier-phase configuration for the $|w|$-step verifier run, with a valid tag; the choices are ignored.
+Let $S$ and $V$ be finite deterministic Turing machines over the binary alphabet, let
+$x,y$ be binary inputs, and let $c$ be a configuration of $V$ on $y$. Suppose a Boolean
+tag correctly marks the boundary whenever the virtual input head of $c$ is at either
+endpoint. Choose any input-head position for $x$, any contents for the work tapes of
+$S$, any work-head positions for $S$, and any finite choice word $w$. Suppose that at
+every time $s<|w|$, the configuration reached by $V$ after $s$ steps from $c$ is not
+halted. Then there is a Boolean tag correctly marking the boundary for the input-head
+position after $|w|$ steps such that running the host under $w$ from the corresponding
+verifier-phase configuration yields exactly the verifier-phase configuration formed from
+the $|w|$-step run of $V$, with the chosen scheduler data unchanged.
 \end{lemma}
 
-\begin{lemma}[Verdict transition after the verifier halts]
+\begin{lemma}[Verifier Halting Verdict]
 \lean{Complexity.b2_verify_finish}
 \label{Complexity.b2_verify_finish}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2VerifyCfg, Complexity.capturedSummary_true, Turing.Cfg, Turing.FinTM, Turing.NDTM.stepWith}
 \difficulty{2}
-Let $S, V$ be deterministic machines and $d$ a halted verifier configuration. For any choice bit, one host step from the verifier-phase configuration for $d$ halts the host and emits the single bit recording whether the complete output of $d$ is exactly the one-bit string $1$.
+Let $S$ and $V$ be finite deterministic Turing machines over the binary alphabet, let
+$x,y$ be binary inputs, and let $c$ be a configuration of $V$ on $y$ whose state is
+halted. Choose any Boolean boundary tag, any input-head position for $x$, any contents
+for the work tapes of $S$, any work-head positions for $S$, and any bit $b$. One step of
+the host machine from the corresponding verifier-phase configuration halts and has
+output the one-bit word whose bit is true exactly when $c$'s output is the one-bit word
+$[1]$.
 \end{lemma}
 
-\begin{lemma}[Dispatch from the scheduler-return state]
+\begin{lemma}[Return from the scheduler guessing phase]
 \lean{Complexity.b2_guess_return}
 \label{Complexity.b2_guess_return}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2ReadyCfg, Complexity.b2Slots, Complexity.b2UnaryTM, Complexity.contGuessCfg, Turing.Cfg, Turing.FinTM, Turing.FinTM.leftCfg, Turing.NDTM.stepWith, Turing.moveInputPos_zero}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $d$ a halted scheduler configuration on an input $x$, and $u$ a guessed word. For any choice bit, one host step from the guessing-phase configuration for $(d,u)$ yields the assembly-rewind configuration holding the assembled word $x\,u$ with assembly head at its last cell.
+Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, and
+let $x$ and $u$ be Boolean words. If $c$ is a configuration of $S$ on input $x$ whose
+state is absent, then for every bit $b$, one step of the reverse-host machine from the
+guessing-phase configuration determined by $c$ and $u$ produces the configuration in
+which the host is in its assembly phase, the assembly buffer contains the concatenation
+$xu$, and its head is at position $|xu|-1$.
 \end{lemma}
 
-\begin{lemma}[One left move of the assembly rewind]
+\begin{lemma}[One Leftward Assembly-Rewind Step]
 \lean{Complexity.b2_ready_step}
 \label{Complexity.b2_ready_step}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2ReadyCfg, Complexity.b2Slots, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.NDTM.stepWith, Turing.moveInputPos_zero}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $d$ a scheduler configuration, $y$ an assembled word and $j < |y|$. For any choice bit, one host step from the assembly-rewind configuration with head at cell $j$ moves the head to cell $j - 1$, preserving $y$ and the scheduler bank.
+Let $S,V$ be finite deterministic machines over the Boolean alphabet, let $x$ be a
+Boolean word, let $c$ be a configuration of $S$ on $x$, let $y$ be a Boolean word, and
+let $j$ be a natural number with $j<|y|$. For either Boolean choice bit $b$, one host
+step under $b$ from the assembly-rewind configuration with assembly head at cell $j$ is
+the assembly-rewind configuration with head at cell $j-1$, preserving the scheduler
+configuration and the assembled word $y$.
 \end{lemma}
 
-\begin{lemma}[Verifier startup from the assembly blank]
+\begin{lemma}[Verifier Startup from the Assembly Blank]
 \lean{Complexity.b2_ready_done}
 \label{Complexity.b2_ready_done}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2ReadyCfg, Complexity.b2Slots, Complexity.b2VerifyCfg, Turing.Action.apply, Turing.Cfg, Turing.Cfg.init, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.NDTM.stepWith, Turing.moveInputPos_zero}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $d$ a scheduler configuration and $y$ an assembled word. For any choice bit, one host step from the assembly-rewind configuration with head at cell $-1$ yields the verifier-phase configuration for the initial configuration of $V$ on $y$, with interior boundary tag, blank verifier tapes and empty captured output.
+Let $S,V$ be finite deterministic machines over the Boolean alphabet, let $x$ be a
+Boolean word, let $c$ be a configuration of $S$ on $x$, let $y$ be a Boolean word, and
+let $b$ be a Boolean choice bit. One host step under $b$ from the assembly-rewind
+configuration built from $c,y$ with assembly head at cell $-1$ equals the verifier-phase
+configuration for the initial configuration of $V$ on $y$, with boundary tag true, input
+head at the position of $c$, and the scheduler tapes and heads inherited from $c$.
 \end{lemma}
 
-\begin{lemma}[Exact cost of the assembly rewind]
+\begin{lemma}[Completion of the Assembly Rewind]
 \lean{Complexity.b2_ready_run}
 \label{Complexity.b2_ready_run}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2ReadyCfg, Complexity.b2VerifyCfg, Complexity.b2_ready_done, Complexity.b2_ready_step, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $d$ a scheduler configuration, $y$ an assembled word, $j \le |y|$, and $w$ any choice word with $|w| = j + 1$. Running the host under $w$ from the assembly-rewind configuration with head at cell $j - 1$ reaches the verifier-phase configuration for the initial configuration of $V$ on $y$.
+Let $S,V$ be finite deterministic machines over the Boolean alphabet, let $x$ be a
+Boolean word, let $c$ be a configuration of $S$ on $x$, and let $y$ be a Boolean word.
+If $j$ is a natural number with $j\le |y|$ and $w$ is a Boolean choice word of length
+$j+1$, then running the host built from $S,V$ under $w$ from the assembly-rewind
+configuration with assembly head at cell $j-1$ yields the verifier-phase configuration
+for the initial configuration of $V$ on $y$, with boundary tag true, input head at the
+position of $c$, and the scheduler tapes and heads inherited from $c$.
 \end{lemma}
 
-\begin{lemma}[From scheduler halt to relocated verifier start]
+\begin{lemma}[From scheduler halt to verifier start]
 \lean{Complexity.b2_assembly}
 \label{Complexity.b2_assembly}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2VerifyCfg, Complexity.b2_guess_return, Complexity.b2_ready_run, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_cons}
 \difficulty{3}
-Let $S, V$ be deterministic machines, $d$ a halted scheduler configuration on an input $x$, $u$ a guessed word, and $w$ any choice word with $|w| = |x\,u| + 2$. Running the host under $w$ from the guessing-phase configuration for $(d,u)$ installs the verifier-phase configuration for the initial configuration of $V$ on the assembled word $x\,u$.
+Let $S$ and $V$ be deterministic machines over bits, let $x$ be a finite bit string, and
+let $c$ be a configuration of $S$ on input $x$ whose state is halted. Let $u$ and $w$ be
+finite bit strings with $|w|=|x	ext{ followed by }u|+2$. Running the combined host
+machine on choice string $w$ from the guessing-phase configuration formed from $c$ and
+$u$ yields the verifier-phase configuration whose verifier component is the initial
+configuration of $V$ on input $x$ followed by $u$, whose boundary tag is true, and whose
+remaining tape and head data are those specified by $c$.
 \end{lemma}
 
-\begin{lemma}[All-branch timed completion of the verifier phase]
+\begin{lemma}[Timed Verifier Completion]
 \lean{Complexity.b2_verify_timed}
 \label{Complexity.b2_verify_timed}
 \leanok
 \uses{Complexity.b2Host, Complexity.b2VerifyCfg, Complexity.b2_verify_finish, Complexity.b2_verify_run, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.VirtualTag, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NDTM.runWith, Turing.NDTM.runWith_append, Turing.NDTM.runWith_cons, Turing.NDTM.runWith_of_halt, Turing.NDTM.stepWith}
 \difficulty{5}
-Let $S, V$ be deterministic machines and suppose $V$ computes the single-bit output $b$ on a word $y$ within $T$ steps. For every choice word $w$ with $|w| = T + 1$, running the host under $w$ from the verifier-phase start on $y$ halts with output exactly the one-bit string $b$.
+Let $S$ and $V$ be finite deterministic Turing machines over the binary alphabet, let
+$x,y$ be binary inputs, let $b$ be a bit, and let $T\in\mathbb{N}$. Suppose $V$, started
+in its initial configuration on $y$, halts within the specified time $T$ with output
+exactly the one-bit word $[b]$. Choose any input-head position for $x$, any contents for
+the work tapes of $S$, any work-head positions for $S$, and any choice word $w$ of
+length $T+1$. Running the host under $w$ from the verifier-phase configuration
+initialized from $V$ on $y$ halts with output exactly $[b]$.
 \end{lemma}
 
-\begin{lemma}[Timed completion of assembly plus verification]
+\begin{lemma}[Timed completion of verification]
 \lean{Complexity.b2_finish}
 \label{Complexity.b2_finish}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2_assembly, Complexity.b2_verify_timed, Turing.Cfg, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.NDTM.runWith, Turing.NDTM.runWith_append}
 \difficulty{4}
-Let $S, V$ be deterministic machines, $d$ a halted scheduler configuration on an input $x$, $u$ a guessed word, and suppose $V$ computes the single-bit output $b$ on $x\,u$ within $T$ steps. Then for every choice word $w$ with $|w| = |x\,u| + 2 + (T+1)$, running the host under $w$ from the guessing-phase configuration for $(d,u)$ halts with output exactly the one-bit string $b$.
+Let $S$ and $V$ be finite deterministic Turing machines over the Boolean alphabet, let
+$x$ and $u$ be Boolean words, and let $c$ be a configuration of $S$ on input $x$ whose
+state is empty. Suppose that, on input $x$ followed by $u$, machine $V$ is halted after
+$T$ steps and has output the one-bit word $[b]$, for some bit $b$. Then every Boolean
+choice word $w$ of length $|x|+|u|+2+(T+1)$ makes the host machine, started from the
+guessing-phase configuration determined by $c$ and $u$, halt with output $[b]$.
 \end{lemma}
 
-\begin{lemma}[Integrated extraction and coverage of the host]
+\begin{lemma}[Host Contract for Extracted Words]
 \lean{Complexity.b2_host_contract}
 \label{Complexity.b2_host_contract}
 \leanok
 \uses{Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2UnaryTM, Complexity.b2_finish, Complexity.b2_guess_coverage, Complexity.b2_start, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.DecidesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_append}
 \difficulty{6}
-Let $S$ and $M$ be deterministic machines, $V$ a language, and suppose the input-normalized scheduler on an input $x$ computes a word $v$ within $T$ steps while live earlier, and that $M$ decides $V$ within time $A(m+1)^d$ on inputs of length $m$. Set $H = 2|x| + 2 + T + (|x| + |v| + 2 + (A\,(|x|+|v|+1)^d + 1))$. Then every choice word of length $H$ makes the reverse host built from $S$ and $M$ halt with output the indicator bit of $x\,u \in V$ for some guessed word $u$ of length $|v|$; and conversely, for every $u$ of length $|v|$ some choice word of length $H$ produces a halted run with output the indicator bit of $x\,u \in V$.
+Let $S$ and $M$ be finite deterministic machines over the Boolean alphabet, let $V$ be a
+language of Boolean words, and let $x,v$ be Boolean words and $T,A,d$ natural numbers.
+Suppose the input-normalized machine derived from $S$ computes $v$ on $x$ in time $T$,
+and is live at every time $s<T$; suppose also that $M$ decides $V$ within time
+$A(m+1)^d$ on every input of length $m$. Set
+$H=2|x|+2+T+(|x|+|v|+2+(A(|x|+|v|+1)^d+1))$. Every Boolean choice word $w$ of length $H$
+makes the host built from $S$ and $M$ halt on input $x$ with output the one-bit
+indicator of $x\mathbin{+ }u\in V$ for some Boolean word $u$ of length $|v|$;
+conversely, for every such $u$, some choice word $w$ of length $H$ makes that host halt
+with that output.
 \end{lemma}
 
-\begin{lemma}[Polynomial envelope of the host ledger]
+\begin{lemma}[Polynomial Bound for the Host Ledger]
 \lean{Complexity.b2_host_bound}
 \label{Complexity.b2_host_bound}
 \leanok
 \difficulty{4}
-For all natural numbers $C, c, B, A, d, n$ and $T$ with $T \le B(n+1)^{c+1}$, the total $2n + 2 + T + (n + C(n+1)^c + 2 + (A\,(n + C(n+1)^c + 1)^d + 1))$ is at most $(B + A + 5)\,(n + C(n+1)^c + 1)^{c+d+1}$.
+For natural numbers $C,c,B,A,d,n,T$, if $T\le B(n+1)^{c+1}$, then
+$2n+2+T+(n+C(n+1)^c+2+(A(n+C(n+1)^c+1)^d+1))\le (B+A+5)(n+C(n+1)^c+1)^{c+d+1}$.
 \end{lemma}
 
-\begin{lemma}[Compiling a certificate language into an NDTM]
+\begin{lemma}[Polynomial-time certificate compilation]
 \lean{Complexity.b2_compile}
 \label{Complexity.b2_compile}
 \leanok
 \uses{Complexity.acceptsWithin_iff_of_halts, Complexity.b2Host, Complexity.b2_host_bound, Complexity.b2_host_contract, Complexity.b2_unary_first, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.DecidesInTime, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.FinTM.computesFunInTime_polyUnary, Turing.MultiTapeTM.indicator, Turing.NDTM.HaltsWithin, Turing.NDTM.HaltsWithin.mono}
 \difficulty{5}
-Let $L$ be a language over the binary alphabet such that $x \in L$ exactly when some binary string $u$ with $|u| = C\,(|x|+1)^c$ has $x\,u \in V$, and let $M$ be a deterministic machine deciding the verifier language $V$ within time $A(m+1)^d$. Then there are constants $K, r$ and a nondeterministic machine deciding $L$ within time $K\,(n + C(n+1)^c + 1)^r$.
+Let $L$ and $V$ be languages of finite bit strings, and let $C,c$ be natural numbers.
+Suppose that for every bit string $x$, membership $x\in L$ is equivalent to the
+existence of a bit string $u$ with $|u|=C(|x|+1)^c$ and the concatenation of $x$ and $u$
+belonging to $V$. Suppose also that a finite deterministic machine $M$ decides $V$ in
+time $A(m+1)^d$ for all input lengths $m$, for natural numbers $A,d$. Then there exist
+natural numbers $K,r$ and a finite nondeterministic machine $N$ that decides $L$ in time
+$K(n+C(n+1)^c+1)^r$ for all input lengths $n$.
 \end{lemma}
 
-\begin{theorem}[NP lies in the union of polynomial NTIME classes]
+\begin{theorem}[NP lies in the union of polynomial nondeterministic time classes]
 \lean{Complexity.NP_subset_iUnion_NTIME}
 \label{Complexity.NP_subset_iUnion_NTIME}
 \leanok
 \uses{Complexity.NP, Complexity.NTIME, Complexity.b2_compile, Complexity.cont_guess_normalize, Complexity.mem_P_iff}
 \difficulty{2}
-Every language in $\mathrm{NP}$ (given by a polynomial-time verifier with certificates of exact polynomial length) belongs to $\bigcup_{c} \mathrm{NTIME}(n^c + 1)$.
+Every language in $\mathrm{NP}$ belongs to
+$\bigcup_{c\in\mathbb{N}}\mathrm{NTIME}(n\mapsto n^c+1)$.
 \end{theorem}
 
 \begin{theorem}[Machine characterization of NP]
@@ -928,7 +1284,10 @@ Every language in $\mathrm{NP}$ (given by a polynomial-time verifier with certif
 \leanok
 \uses{Complexity.NP, Complexity.NP_subset_iUnion_NTIME, Complexity.NTIME, Complexity.ntime_poly_subset_NP}
 \difficulty{1}
-The class $\mathrm{NP}$, defined by polynomial-time verifiers with certificates of exact polynomial length, equals the union $\bigcup_{c} \mathrm{NTIME}(n^c + 1)$ of the fixed-degree nondeterministic time classes.
+The class of languages whose membership has polynomial-length certificates checked by a
+polynomial-time verifier is exactly the union, over natural numbers $c$, of the
+nondeterministic time classes with bounds $n^c+1$:
+$\mathrm{NP}=\bigcup_{c\in\mathbb{N}}\mathrm{NTIME}(n\mapsto n^c+1)$.
 \end{theorem}
 
 \subsection{The exponential split layer}
@@ -957,22 +1316,24 @@ Let $C, c$ be natural numbers and $x, u, y, v$ binary strings with $|u| = C\cdot
 For all natural numbers $C, c$ and $m$, the search scans all $n \le m$ and returns the least $n$ with $n + C\cdot 2^{(n+1)^c} = m$, or an explicit failure value when no such $n$ exists.
 \end{definition}
 
-\begin{lemma}[Soundness of the exponential split search]
+\begin{lemma}[Soundness of the split search]
 \lean{Complexity.e3_split_spec}
 \label{Complexity.e3_split_spec}
 \leanok
 \uses{Complexity.e3Split}
 \difficulty{2}
-For natural numbers $C, c, m, n$: if the exponential split search at length $m$ returns $n$, then $n \le m$ and $n + C \cdot 2^{(n+1)^c} = m$.
+For natural numbers $C,c,m,n$, if the exponential split search at length $m$ returns
+$n$, then $n\le m$ and $n+C\cdot 2^{(n+1)^c}=m$.
 \end{lemma}
 
-\begin{lemma}[Failure of the exponential split search]
+\begin{lemma}[Failure criterion for the split search]
 \lean{Complexity.e3_split_none_iff}
 \label{Complexity.e3_split_none_iff}
 \leanok
 \uses{Complexity.e3Split}
 \difficulty{3}
-For natural numbers $C, c$ and $m$, the exponential split search at length $m$ fails if and only if no natural number $n$ satisfies $n + C \cdot 2^{(n+1)^c} = m$.
+For natural numbers $C,c,m$, the exponential split search at length $m$ returns no value
+if and only if there is no natural number $n$ such that $n+C\cdot 2^{(n+1)^c}=m$.
 \end{lemma}
 
 \begin{definition}[Choice-word verifier with exponential width]
@@ -983,56 +1344,72 @@ For natural numbers $C, c$ and $m$, the exponential split search at length $m$ f
 Given a nondeterministic Turing machine $N$ over the binary alphabet and natural numbers $C, c$, the exponential choice-word verifier language consists of all strings $x\,u$ (concatenation) with $|u| = C\cdot 2^{(|x|+1)^c}$ such that the run of $N$ on $x$ under choice word $u$ has halted with output the one-bit string $1$.
 \end{definition}
 
-\begin{lemma}[Membership of a correctly split exponential word]
+\begin{lemma}[Membership for a correctly sized choice word]
 \lean{Complexity.e3_choice_append}
 \label{Complexity.e3_choice_append}
 \leanok
-\uses{Complexity.e3ChoiceVerifier, Complexity.e3_split_unique, Turing.FinNDTM, Turing.NDTM.initCfg, Turing.NDTM.runWith}
+\uses{Complexity.e3ChoiceVerifier, Turing.FinNDTM, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.append_split_unique, Turing.expCertificateLength_strictMono}
 \difficulty{3}
-Let $N$ be a nondeterministic Turing machine over the binary alphabet, $C, c$ natural numbers, and $x, u$ binary strings with $|u| = C \cdot 2^{(|x|+1)^c}$. Then $x\,u$ lies in the exponential choice-word verifier language of $N$ with parameters $C, c$ if and only if the run of $N$ on $x$ under $u$ has halted with output the one-bit string $1$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$
+be natural numbers, and let $x,u$ be binary strings with $|u|=C\cdot 2^{(|x|+1)^c}$.
+Then $xu$ belongs to the choice-word verifier language for $N,C,c$ if and only if
+running $N$ on $x$ under the choice word $u$ halts with output exactly the one-bit
+string $1$.
 \end{lemma}
 
-\begin{lemma}[Rejection without an exponential split]
+\begin{lemma}[No verifier membership without a valid split]
 \lean{Complexity.e3_choice_no_split}
 \label{Complexity.e3_choice_no_split}
 \leanok
 \uses{Complexity.e3ChoiceVerifier, Complexity.e3Split, Complexity.e3_split_none_iff, Turing.FinNDTM}
 \difficulty{3}
-Let $N$ be a nondeterministic Turing machine and $C, c$ natural numbers. If the exponential split search fails at the length of a string $y$, then $y$ is not in the exponential choice-word verifier language of $N$ with parameters $C, c$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$
+be natural numbers, and let $y$ be a binary string. If the bounded search for an integer
+$n$ with $n+C\cdot 2^{(n+1)^c}=|y|$ returns no value, then $y$ does not belong to the
+choice-word verifier language for $N,C,c$.
 \end{lemma}
 
-\begin{lemma}[The padded exponential covers the budget]
+\begin{lemma}[Monotonicity of the padded exponential budget]
 \lean{Complexity.e3_choice_budget}
 \label{Complexity.e3_choice_budget}
 \leanok
 \difficulty{1}
-For all natural numbers $a, c$ and $n$, the inequality $a \cdot 2^{n^c} \le a \cdot 2^{(n+1)^c}$ holds.
+For all natural numbers $a,c,n$, $a\cdot 2^{n^c}\le a\cdot 2^{(n+1)^c}$.
 \end{lemma}
 
-\begin{lemma}[Exponential certificates for the verifier]
+\begin{lemma}[Choice-word certificates for a decided language]
 \lean{Complexity.e3_choice_certificate}
 \label{Complexity.e3_choice_certificate}
 \leanok
 \uses{Complexity.acceptsWithin_iff_of_halts, Complexity.e3ChoiceVerifier, Complexity.e3_choice_append, Complexity.e3_choice_budget, Turing.FinNDTM, Turing.FinNDTM.DecidesInTime}
 \difficulty{3}
-Let $N$ be a nondeterministic Turing machine deciding a language $L$ within time $a \cdot 2^{n^c}$ on inputs of length $n$. For every binary string $x$: $x \in L$ if and only if there is a string $u$ with $|u| = a \cdot 2^{(|x|+1)^c}$ such that $x\,u$ lies in the exponential choice-word verifier language of $N$ with parameters $a, c$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $L$ be
+a language of binary strings, and let $a,c$ be natural numbers. Suppose that on every
+input $x$, every choice word of length $a\cdot 2^{|x|^c}$ makes $N$ halt, and that $x\in
+L$ if and only if some such choice word makes $N$ halt with output exactly $1$. Then,
+for every binary string $x$, $x\in L$ if and only if there is a binary string $u$ of
+length $a\cdot 2^{(|x|+1)^c}$ such that $xu$ belongs to the choice-word verifier
+language for $N,a,c$.
 \end{lemma}
 
-\begin{lemma}[Binary expansion of a shifted coefficient]
+\begin{lemma}[Binary expansion after multiplication by a power of two]
 \lean{Complexity.e3_bits_shift}
 \label{Complexity.e3_bits_shift}
 \leanok
 \difficulty{4}
-For natural numbers $C \ne 0$ and $p$, the little-endian binary expansion of $C \cdot 2^p$ equals $p$ zero bits followed by the binary expansion of $C$.
+For natural numbers $C$ and $p$ with $C\ne 0$, the binary expansion of $C\cdot 2^p$ is
+the list of $p$ zero bits followed by the binary expansion of $C$.
 \end{lemma}
 
-\begin{lemma}[Unconditional bit-length bound for the width]
+\begin{lemma}[Binary length bound for a scaled power of two]
 \lean{Complexity.e3_bits_length_bound}
 \label{Complexity.e3_bits_length_bound}
 \leanok
 \uses{Complexity.e3_bits_shift}
 \difficulty{3}
-For all natural numbers $C, c, n, m$ with $n \le m$, the binary expansion of $C \cdot 2^{(n+1)^c}$ has length at most $(m+1)^c$ plus the length of the binary expansion of $C$.
+For all natural numbers $C,c,n,m$ with $n\le m$, the length of the binary expansion of
+$C\cdot 2^{(n+1)^c}$ is at most $(m+1)^c$ plus the length of the binary expansion of
+$C$.
 \end{lemma}
 
 \begin{definition}[Zero-prefixing emitter for a fixed word]
@@ -1043,40 +1420,50 @@ For all natural numbers $C, c, n, m$ with $n \le m$, the binary expansion of $C 
 For a fixed binary word $w$, a deterministic machine with no work tapes is defined that outputs one $0$ bit per input symbol scanned and then, at the input blank, emits the fixed word $w$ and halts.
 \end{definition}
 
-\begin{lemma}[Scan invariant of the zero emitter]
+\begin{lemma}[Scan invariant of the zero-prefixing machine]
 \lean{Complexity.e3_shift_scan}
 \label{Complexity.e3_shift_scan}
 \leanok
 \uses{Complexity.e3ShiftTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-For every fixed word $w$, every input $x$ and every $t \le |x|$: after $t$ steps from the initial configuration, the zero-prefixing emitter for $w$ is still in its scanner state, its input head is at position $t + 1$, and its output so far is $t$ zero bits.
+For every pair of binary words $w,x$ and every natural number $t\le |x|$, after $t$
+steps from its initial configuration on input $x$, the machine defined from $w$ is in
+its scanning state, its input head is at position $t+1$, and its output consists of
+exactly $t$ zero bits.
 \end{lemma}
 
-\begin{lemma}[Exact output of the zero emitter]
+\begin{lemma}[Exact output of the zero-prefixing machine]
 \lean{Complexity.e3_shift_computes}
 \label{Complexity.e3_shift_computes}
 \leanok
 \uses{Complexity.e3ShiftTM, Complexity.e3_shift_scan, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.controlAction, Turing.FinTM.emit_halts, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{5}
-For every fixed word $w$ and every input $x$, the zero-prefixing emitter for $w$ halts within $|x| + |w| + 2$ steps, and its complete output is the word of $|x|$ zero bits followed by $w$.
+For any two finite binary words $w$ and $x$, the machine defined using $w$ halts with
+output equal to the concatenation of $|x|$ zero bits and $w$, after exactly $|x|+|w|+2$
+steps.
 \end{lemma}
 
-\begin{lemma}[Linear budget of the zero emitter]
+\begin{lemma}[Running time of the zero-prefixing machine]
 \lean{Complexity.e3_shift_timed}
 \label{Complexity.e3_shift_timed}
 \leanok
 \uses{Complexity.e3ShiftTM, Complexity.e3_shift_computes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono}
 \difficulty{2}
-For every fixed word $w$, the zero-prefixing emitter computes, on each input $x$, the word of $|x|$ zero bits followed by $w$; its running time is at most the monotone linear budget $(|w|+2)(n+1)$ on inputs of length $n$.
+For every fixed binary word $w$, the machine with no work tapes computes, on every
+binary input $x$, the word formed by $|x|$ zero bits followed by $w$ in exactly
+$(|w|+2)(|x|+1)$ steps.
 \end{lemma}
 
-\begin{lemma}[Polynomial-time binary evaluation of the width]
+\begin{lemma}[Polynomial-time computation of an exponential width]
 \lean{Complexity.e3_exp_bits_timed}
 \label{Complexity.e3_exp_bits_timed}
 \leanok
 \uses{Complexity.e3_bits_shift, Complexity.e3_shift_timed, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_comp, Turing.FinTM.computesFunInTime_const, Turing.FinTM.computesFunInTime_polyUnary}
 \difficulty{5}
-For all natural numbers $C$ and $c$ there exist a deterministic machine and a constant $A$ computing, on every input $x$, the little-endian binary expansion of $C \cdot 2^{(|x|+1)^c}$ within $A\,(|x|+1)^{c+1}$ steps.
+There exist a finite deterministic Turing machine $M$ over the binary alphabet and a
+natural number $A$ such that, for every binary input $x$, $M$ outputs the binary
+expansion of $C\cdot 2^{(|x|+1)^c}$ within $A(|x|+1)^{c+1}$ steps, for the given natural
+numbers $C,c$.
 \end{lemma}
 
 \begin{definition}[Split emitter for the exponential length equation]
@@ -1087,31 +1474,43 @@ For all natural numbers $C$ and $c$ there exist a deterministic machine and a co
 For natural numbers $C, c$ and a binary string $y$, the emitted word is the self-delimiting encoding of the pair formed by the first $i$ bits of $y$ and the remaining bits of $y$, when the exponential split search returns $i$ at length $|y|$; it is the empty word on failure.
 \end{definition}
 
-\begin{lemma}[Linear bound on the emitted exponential split]
+\begin{lemma}[Length Bound for the Split Encoding]
 \lean{Complexity.e3_split_length}
 \label{Complexity.e3_split_length}
 \leanok
 \uses{Complexity.e3Split, Complexity.e3SplitWord, Complexity.e3_split_spec, Turing.pairEncode}
 \difficulty{3}
-For all natural numbers $C, c$ and every binary string $y$, the word emitted by the exponential split emitter on $y$ has length at most $2|y| + 2$.
+Let $C,c$ be natural numbers and let $y$ be a finite binary string. The word emitted by
+the exponential split procedure on $y$ has length at most $2|y|+2$.
 \end{lemma}
 
-\begin{lemma}[The loader decides the exponential verifier]
+\begin{lemma}[Pair loader computes the verifier indicator]
 \lean{Complexity.e3_split_answer}
 \label{Complexity.e3_split_answer}
 \leanok
 \uses{Complexity.contPairTM, Complexity.cont_pair_computes, Complexity.cont_pair_empty, Complexity.e3ChoiceVerifier, Complexity.e3Split, Complexity.e3SplitWord, Complexity.e3_choice_append, Complexity.e3_choice_no_split, Complexity.e3_split_length, Complexity.e3_split_spec, Turing.FinNDTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.MultiTapeTM.indicator, Turing.NDTM.initCfg, Turing.NDTM.runWith}
 \difficulty{5}
-Let $N$ be a nondeterministic Turing machine and $C, c$ natural numbers. For every binary string $y$, the pair-loader machine of $N$, run on the word emitted by the exponential split emitter for $y$, halts within $3(2|y|+3)$ steps, and its output is the indicator bit of membership of $y$ in the exponential choice-word verifier language of $N$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$
+be natural numbers, and let $y$ be a binary word. The deterministic pair-loader machine
+associated with $N$, on input equal to the exponential split emitter’s output for
+$C,c,y$, computes the Boolean indicator of whether there exist binary words $x,u$ such
+that $|u|=C\cdot 2^{(|x|+1)^c}$, $y=xu$, and the run of $N$ on input $x$ using choice
+word $u$ halts with output consisting of the single bit $1$. It does so within exactly
+$3(2|y|+3)$ steps.
 \end{lemma}
 
-\begin{lemma}[Polynomial split recovery puts the verifier in P]
+\begin{lemma}[Polynomial-time decidability of the verifier language]
 \lean{Complexity.e3_verifier_of_split}
 \label{Complexity.e3_verifier_of_split}
 \leanok
 \uses{Complexity.P, Complexity.contPairTM, Complexity.e3ChoiceVerifier, Complexity.e3SplitWord, Complexity.e3_split_answer, Complexity.e3_split_length, Complexity.mem_P_iff, Turing.Cfg.init, Turing.FinNDTM, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $N$ be a nondeterministic Turing machine and $C, c$ natural numbers. If some deterministic machine computes the exponential split-emitter function within time $A(n+1)^{r+1}$ for constants $A, r$, then the exponential choice-word verifier language of $N$ with parameters $C, c$ belongs to $\mathrm{P}$.
+Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, and let
+$C,c,A,r$ be natural numbers. If a finite deterministic Turing machine computes the
+split-emitter function in time $A(n+1)^{r+1}$ on every binary input of length $n$, then
+the language of words $y$ for which there are binary strings $x,u$ with $y=xu$,
+$|u|=C\cdot 2^{(|x|+1)^c}$, and the computation of $N$ on input $x$ using choice string
+$u$ halts with output $1$ belongs to $mathrm{P}$.
 \end{lemma}
 
 \begin{definition}[One round of the bounded unary search]
@@ -1128,90 +1527,127 @@ Given an input word $w$ and a search state $s$ (a unary candidate), one round ap
 For all natural numbers $C, c$, the round test on an input word $w$ and a search state $s$ returns true exactly when $|s| + C \cdot 2^{(|s|+1)^c} = |w|$.
 \end{definition}
 
-\begin{lemma}[Invariance of the search-state bound]
+\begin{lemma}[Bound on one search round]
 \lean{Complexity.e3_step_inv}
 \label{Complexity.e3_step_inv}
 \leanok
 \uses{Complexity.e3SplitStep}
 \difficulty{2}
-For all words $w$ and $s$ with $|s| \le |w| + 1$, the state produced by one search round still has length at most $|w| + 1$.
+Let $w$ and $s$ be finite binary words with $|s|\le |w|+1$. The word obtained by
+appending a $1$ to $s$ when $|s|\le |w|$, and otherwise leaving $s$ unchanged, has
+length at most $|w|+1$.
 \end{lemma}
 
-\begin{lemma}[The search orbit is unary]
+\begin{lemma}[Unary search orbit]
 \lean{Complexity.e3_step_orbit}
 \label{Complexity.e3_step_orbit}
 \leanok
 \uses{Complexity.e3SplitStep}
 \difficulty{3}
-For every word $w$ and every $i \le |w| + 1$, iterating the search round $i$ times from the empty state yields the all-ones word of length $i$.
+For every binary string $w$ and natural number $i\le |w|+1$, iterating the search round
+$i$ times from the empty string yields the string consisting of $i$ copies of $1$.
 \end{lemma}
 
-\begin{lemma}[First-match search respects pointwise equality]
+\begin{lemma}[First-match search under predicate agreement]
 \lean{Complexity.e3_find_congr}
 \label{Complexity.e3_find_congr}
 \leanok
 \difficulty{3}
-Let $p$ and $q$ be Boolean predicates that agree on every element of a given list. Then the first element of the list satisfying $p$ equals the first element satisfying $q$.
+Let $\alpha$ be a type, let $xs$ be a finite list of elements of $\alpha$, and let $p,q
+: \alpha \to \{\mathrm{false},\mathrm{true}\}$ agree on every element of $xs$. Then the
+first element of $xs$ satisfying $p$, if any, is the same as the first element
+satisfying $q$; equivalently, the two searches return the same optional element.
 \end{lemma}
 
-\begin{lemma}[The orbit search equals the split search]
+\begin{lemma}[Orbit search equals split search]
 \lean{Complexity.e3_find_eq}
 \label{Complexity.e3_find_eq}
 \leanok
 \uses{Complexity.e3Split, Complexity.e3SplitAccept, Complexity.e3SplitStep, Complexity.e3_find_congr, Complexity.e3_step_orbit}
 \difficulty{3}
-For all natural numbers $C, c$ and every word $w$, searching the indices $i \le |w|$ for the first round state (the $i$-fold iterate from the empty state) that passes the round test returns exactly the result of the exponential split search at length $|w|$.
+For natural numbers $C,c$ and a binary word $w$, consider the search over indices $i$
+from $0$ through $|w|$ for the first state that passes the round test, where the state
+at index $i$ is obtained by applying the search step $i$ times to the empty word. The
+resulting optional index equals the bounded search at length $|w|$ for the least $n\le
+|w|$ satisfying $n+C\cdot 2^{(n+1)^c}=|w|$, with failure returned if no such $n$ exists.
 \end{lemma}
 
-\begin{lemma}[Loop payload agrees with the split emitter]
+\begin{lemma}[Loop output agrees with split emitter]
 \lean{Complexity.e3_loop_result}
 \label{Complexity.e3_loop_result}
 \leanok
 \uses{Complexity.e3Split, Complexity.e3SplitAccept, Complexity.e3SplitStep, Complexity.e3SplitWord, Complexity.e3_find_eq, Complexity.e3_split_spec, Complexity.e3_step_orbit, Turing.pairEncode}
 \difficulty{3}
-For natural numbers $C, c$ and a word $w$: taking the first accepted index of the bounded orbit search and emitting the encoded pair of the corresponding prefix and suffix of $w$ (or the empty word when the search is exhausted) yields exactly the word of the exponential split emitter on $w$.
+For natural numbers $C,c$ and a binary word $w$, search the indices from $0$ through
+$|w|$ for the first state passing the round test, using the state obtained by that many
+iterations of the search step from the empty word. If an index $i$ is found, encode the
+prefix of $w$ of length equal to that state’s length together with the remaining suffix;
+if none is found, return the empty word. This result equals the word produced by the
+exponential split emitter on $w$.
 \end{lemma}
 
-\begin{lemma}[Budget growth of the result-bearing loop]
+\begin{lemma}[Polynomial loop bound]
 \lean{Complexity.e3_loop_bound}
 \label{Complexity.e3_loop_bound}
 \leanok
 \difficulty{3}
-For all natural numbers $b, A, r$ and $n$, the product $b\,(A(n+1)^{r+1} + 1)(n+2)$ is at most $2b(A+1)\,(n+1)^{r+2}$.
+For all natural numbers $b,A,r,n$, one has
+\[
+b\bigl(A(n+1)^{r+1}+1\bigr)(n+2)\le 2b(A+1)(n+1)^{r+2}.
+\]
 \end{lemma}
 
-\begin{lemma}[A loop body yields polynomial split recovery]
+\begin{lemma}[Polynomial-time split recovery]
 \lean{Complexity.e3_split_of_body}
 \label{Complexity.e3_split_of_body}
 \leanok
 \uses{Complexity.e3SplitAccept, Complexity.e3SplitStep, Complexity.e3SplitWord, Complexity.e3_loop_bound, Complexity.e3_loop_result, Complexity.e3_step_inv, Turing.Cfg.ofWords, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.exists_loopFindTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.stateWord}
 \difficulty{5}
-Fix natural numbers $C, c$ and suppose a deterministic loop-body machine with a designated anchor state satisfies two timed contracts within $A(|w|+1)^{r+1}$ steps on every input $w$: a startup contract that first reaches the anchor with clean scratch, and a round contract that, from any anchored search state, either halts with the encoded pair payload when the round test accepts, or returns to the anchor with the stepped search state. Then some deterministic machine computes the exponential split-emitter function within $B(n+1)^{r+2}$ steps for a constant $B$.
+Let $C,c,A,r$ be natural numbers, let $M$ be a finite deterministic Turing machine over
+the binary alphabet, and let $q$ be one of its states. Suppose that on every binary
+input $w$, there is a time $t\le A(|w|+1)^{r+1}$ such that the machine started on $w$
+has not been in state $q$ at any earlier time and at time $t$ is in state $q$ with its
+first work tape empty and all other work tapes blank. Suppose also that for every pair
+of binary strings $w,s$ with $|s|\le |w|+1$, there is a positive time $t\le
+A(|w|+1)^{r+1}$ such that, starting from state $q$ on input $w$ with $s$ on the first
+work tape and all other work tapes blank, the machine does not return to state $q$ at
+any intermediate positive time. If $|s|+C\cdot 2^{(|s|+1)^c}=|w|$, it halts at time $t$
+with output equal to the self-delimiting encoding of the first $|s|$ bits of $w$ and the
+remaining bits; otherwise, at time $t$ it is in state $q$ with the first work tape
+containing the result of one search round on $w,s$ and all other work tapes blank. Then
+some finite deterministic Turing machine computes the split-emitter function in time
+$B(n+1)^{r+2}$ for every input length $n$, for some natural number $B$.
 \end{lemma}
 
-\begin{lemma}[Prefix equality extended by one position]
+\begin{lemma}[Equality of Successive Prefixes]
 \lean{Complexity.e3c_take_succ_eq}
 \label{Complexity.e3c_take_succ_eq}
 \leanok
 \difficulty{3}
-For all binary strings $u, v$ and every index $j$, the length-$(j+1)$ prefixes of $u$ and $v$ agree if and only if their length-$j$ prefixes agree and their optional bits at index $j$ agree, a missing bit counting as different from any present bit.
+For any two finite binary strings $u$ and $v$ and any $j\in\mathbb{N}$, their prefixes
+of length $j+1$ agree if and only if their prefixes of length $j$ agree and the optional
+entries at index $j$ agree.
 \end{lemma}
 
-\begin{lemma}[Injectivity of the binary expansion]
+\begin{lemma}[Injectivity of binary expansion]
 \lean{Complexity.e3c_bits_injective}
 \label{Complexity.e3c_bits_injective}
 \leanok
 \difficulty{4}
-The map sending a natural number to its little-endian binary expansion is injective: two numbers with the same bit list are equal.
+The map that sends a natural number to its little-endian binary expansion is injective:
+if two natural numbers have the same binary expansion, then they are equal.
 \end{lemma}
 
-\begin{theorem}[Fixed-exponent nondeterministic time lies in NEXP]
+\begin{theorem}[Exponential Nondeterministic Time Is in NEXP]
 \lean{Complexity.ntime_expPow_subset_NEXP}
 \label{Complexity.ntime_expPow_subset_NEXP}
 \leanok
 \uses{Complexity.NEXP, Complexity.NTIME, Complexity.e3ChoiceVerifier, Complexity.e3Split, Complexity.e3SplitWord, Complexity.e3_choice_certificate, Complexity.e3_exp_bits_timed, Complexity.e3_verifier_of_split, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_splitSolveWith, Turing.solveSplitWith}
 \difficulty{5}
-For every natural number $c$, the class $\mathrm{NTIME}(2^{n^c})$ is contained in the certificate-form class $\mathrm{NEXP}$: every language decided by some nondeterministic Turing machine within $a \cdot 2^{n^c}$ steps admits a polynomial-time verifier with certificates of exact length $a \cdot 2^{(n+1)^c}$.
+For every natural number $c$, $\mathrm{NTIME}(n\mapsto 2^{n^c})\subseteq\mathrm{NEXP}$.
+Here $\mathrm{NEXP}$ consists of languages for which there are natural numbers $C,c$ and
+a language $V\in\mathrm{P}$ such that membership of a string $x$ is equivalent to the
+existence of a string $u$ of length $C\cdot 2^{(|x|+1)^c}$ with $xu\in V$.
 \end{theorem}
 
 \subsection{The binary countdown and the exponential compilation}
@@ -1230,22 +1666,23 @@ For a binary word viewed as a little-endian counter, the decrement returns a wor
 For a binary word viewed as a little-endian counter, the borrow position is the number of leading $0$ bits, that is, the cells a decrement must traverse before finding a $1$ or the end of the word.
 \end{definition}
 
-\begin{lemma}[The borrow scan stays inside the word]
+\begin{lemma}[Borrow scan bounded by word length]
 \lean{Complexity.a2BorrowPos_le}
 \label{Complexity.a2BorrowPos_le}
 \leanok
 \uses{Complexity.a2BorrowPos}
 \difficulty{3}
-For every binary word $u$, the borrow position of $u$ is at most $|u|$.
+For every binary word $u$, its borrow position is at most its length.
 \end{lemma}
 
-\begin{lemma}[Width preservation of the decrement]
+\begin{lemma}[Width preservation of decrement]
 \lean{Complexity.a2Debit_length}
 \label{Complexity.a2Debit_length}
 \leanok
 \uses{Complexity.a2Debit}
 \difficulty{3}
-For every binary word $u$, the word part of the fixed-width decrement of $u$ has the same length as $u$, whether or not the decrement succeeds.
+For every Boolean word $u$, the word produced by the fixed-width decrement of $u$ has
+the same length as $u$.
 \end{lemma}
 
 \begin{definition}[Little-endian value of a counter word]
@@ -1255,22 +1692,23 @@ For every binary word $u$, the word part of the fixed-width decrement of $u$ has
 The value of a binary word read as a little-endian counter is defined recursively: the empty word has value $0$, and a word with first bit $b$ and tail $t$ has value twice the value of $t$, plus one exactly when $b$ is $1$.
 \end{definition}
 
-\begin{lemma}[The binary expansion has its declared value]
+\begin{lemma}[Value of a natural number’s binary expansion]
 \lean{Complexity.a2Value_bits}
 \label{Complexity.a2Value_bits}
 \leanok
 \uses{Complexity.a2Value}
 \difficulty{4}
-For every natural number $n$, the little-endian value of the binary expansion of $n$ equals $n$.
+For every natural number $n$, the little-endian value of its binary expansion is $n$.
 \end{lemma}
 
-\begin{lemma}[Arithmetic correctness of the decrement]
+\begin{lemma}[Arithmetic correctness of decrement]
 \lean{Complexity.a2Debit_value}
 \label{Complexity.a2Debit_value}
 \leanok
 \uses{Complexity.a2Debit, Complexity.a2Value}
 \difficulty{4}
-For every binary word $u$: if the fixed-width decrement of $u$ succeeds, the value of the resulting word plus one equals the value of $u$; if it fails, the value of $u$ is zero.
+For every Boolean word $u$, if the fixed-width decrement succeeds, the value of its
+resulting word plus one equals the value of $u$; if it fails, the value of $u$ is zero.
 \end{lemma}
 
 \begin{lemma}[Buffer read at a suffix boundary]
@@ -1279,7 +1717,9 @@ For every binary word $u$: if the fixed-width decrement of $u$ succeeds, the val
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat}
 \difficulty{2}
-For all binary words $p$ and $s$, reading the buffer tape holding $p\,s$ at cell $|p|$ returns the first bit of $s$, or blank when $s$ is empty.
+For any Boolean words $\mathrm{pre}$ and $\mathrm{bs}$, the buffer tape containing their
+concatenation, when read at cell $|\mathrm{pre}|$, returns the first bit of
+$\mathrm{bs}$, or blank if $\mathrm{bs}$ is empty.
 \end{lemma}
 
 \begin{lemma}[Buffer write at a suffix boundary]
@@ -1288,7 +1728,10 @@ For all binary words $p$ and $s$, reading the buffer tape holding $p\,s$ at cell
 \leanok
 \uses{Turing.FinTM.bufferTape}
 \difficulty{4}
-For all binary words $p$ and $s$ and all bits $b, b'$, overwriting cell $|p|$ of the buffer tape holding $p\,b\,s$ with the bit $b'$ yields exactly the buffer tape holding $p\,b'\,s$.
+For any Boolean words $\mathrm{pre}$ and $\mathrm{bs}$ and bits $\mathrm{old}$ and
+$\mathrm{new}$, overwriting cell $|\mathrm{pre}|$ of the buffer tape containing
+$\mathrm{pre}\,\mathrm{old}\,\mathrm{bs}$ with $\mathrm{new}$ gives the buffer tape
+containing $\mathrm{pre}\,\mathrm{new}\,\mathrm{bs}$.
 \end{lemma}
 
 \begin{definition}[Native binary countdown emitter]
@@ -1307,31 +1750,52 @@ A deterministic machine with one work tape is defined that copies its binary inp
 Given an already-emitted output word, a physical input with an arbitrary head position, a borrow-phase control state, a work-head value and a counter word, the corresponding configuration of the countdown emitter holds the counter on its single work tape and the emitted word as physical output.
 \end{definition}
 
-\begin{lemma}[One borrow transition]
+\begin{lemma}[Single borrow transition]
 \lean{Complexity.a2Borrow_step}
 \label{Complexity.a2Borrow_step}
 \leanok
 \uses{Complexity.a2Buffer_read, Complexity.a2Buffer_write, Complexity.a2DebitCfg, Complexity.a2DebitTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{5}
-For every emitted prefix, every input and position, and every counter word split as $p\,s$: one step of the countdown emitter in the borrow state with work head at cell $|p|$ clears a leading $1$ of $s$ and turns to rewind with success, converts a leading $0$ of $s$ to $1$ and advances, or, at the blank end of the word, turns to rewind with failure; in each case the width is preserved and nothing is emitted.
+Let $x$ be a Boolean input word, let $p$ be a valid input-head position, and let
+$\mathrm{out}$ and $\mathrm{pre}$ be Boolean words. If the borrow-phase machine has its
+work head at cell $|\mathrm{pre}|$ and its tape contains $\mathrm{pre}\,\mathrm{bs}$,
+one step leaves the input position and output unchanged and acts as follows. If
+$\mathrm{bs}$ is empty, it enters the borrow-result state with failure and moves the
+work head to $|\mathrm{pre}|-1$, leaving the tape unchanged. If $\mathrm{bs}$ begins
+with $1$, it enters the borrow-result state with success, changes that bit to $0$, and
+moves the head to $|\mathrm{pre}|-1$. If $\mathrm{bs}$ begins with $0$, it remains in
+the borrow state, changes that bit to $1$, and moves the head to $|\mathrm{pre}|+1$. No
+output is emitted in any case.
 \end{lemma}
 
-\begin{lemma}[Exact cost of the borrow phase]
+\begin{lemma}[Borrow scan computation]
 \lean{Complexity.a2Borrow_run}
 \label{Complexity.a2Borrow_run}
 \leanok
 \uses{Complexity.a2BorrowPos, Complexity.a2Borrow_step, Complexity.a2Debit, Complexity.a2DebitCfg, Complexity.a2DebitTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step}
 \difficulty{5}
-For every counter word $u$ and every prefix $p$: starting in the borrow state with work head at cell $|p|$ over the word $p\,u$, exactly $\beta + 1$ steps of the countdown emitter, where $\beta$ is the borrow position of $u$, reach the rewind state carrying the success flag of the decrement of $u$, with the work tape now holding $p$ followed by the decremented word.
+Let $x$ be a Boolean input word, let $p$ be any valid input-head position, and let
+$\mathrm{out}$ and $u$ be Boolean words. For every pair of Boolean words
+$\mathrm{pre},u$ used as the work-tape prefix and suffix, starting with the borrow-phase
+machine in its initial borrow state, its work head at cell $|\mathrm{pre}|$, and tape
+contents $\mathrm{pre}\,u$, after $\beta(u)+1$ steps it is in the borrow-result state
+carrying the success flag of the fixed-width decrement of $u$. Its work head is at
+position $|\mathrm{pre}|+\beta(u)-1$, its tape contains $\mathrm{pre}$ followed by the
+decremented word, and its input position and output word remain $p$ and $\mathrm{out}$,
+respectively; here $\beta(u)$ is the number of initial zero bits of $u$.
 \end{lemma}
 
-\begin{lemma}[Exact cost of the counter rewind]
+\begin{lemma}[Rewind from a given tape cell]
 \lean{Complexity.a2Borrow_rewind}
 \label{Complexity.a2Borrow_rewind}
 \leanok
 \uses{Complexity.a2DebitCfg, Complexity.a2DebitTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-For every counter word $u$, every flag $b$ and every $j \le |u|$: from the rewind state with work head at cell $j-1$, exactly $j+1$ steps of the countdown emitter reach the round-return state carrying $b$, with head at cell zero and the counter unchanged.
+For every output word, input word $x$, valid input-head position $p$, binary word $u$,
+and Boolean flag $b$, and for every integer $j$ with $0\le j\le |u|$, starting in the
+specified rewind configuration with work head at cell $j-1$, counter $u$, and flag $b$,
+the countdown machine reaches after exactly $j+1$ steps the configuration with work head
+at cell zero, the counter unchanged, and the same flag $b$.
 \end{lemma}
 
 \begin{lemma}[Complete decrement round]
@@ -1340,16 +1804,25 @@ For every counter word $u$, every flag $b$ and every $j \le |u|$: from the rewin
 \leanok
 \uses{Complexity.a2BorrowPos, Complexity.a2BorrowPos_le, Complexity.a2Borrow_rewind, Complexity.a2Borrow_run, Complexity.a2Debit, Complexity.a2DebitCfg, Complexity.a2DebitTM, Complexity.a2Debit_length, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-For every counter word $u$: a full borrow-and-rewind round of the countdown emitter from cell zero costs $2\beta + 2 \le 2|u| + 2$ steps, where $\beta$ is the borrow position of $u$, and ends at cell zero in the round-return state carrying the success flag, with the counter replaced by its fixed-width decrement and no output emitted.
+For every output word, input word $x$, valid input-head position $p$, and binary word
+$u$, the number of steps $2\beta+2$, where $\beta$ is the borrow position of $u$, is at
+most $2|u|+2$. Starting from the specified borrow-phase configuration with head at
+work-tape cell zero, counter $u$, and no change to the output, the countdown machine
+reaches after exactly $2\beta+2$ steps the configuration with head at cell zero, counter
+equal to the fixed-width decrement of $u$, and the corresponding success flag.
 \end{lemma}
 
-\begin{lemma}[The countdown emits exactly its value]
+\begin{lemma}[Countdown Halting and Output Bound]
 \lean{Complexity.a2_countdown}
 \label{Complexity.a2_countdown}
 \leanok
 \uses{Complexity.a2BorrowPos, Complexity.a2Borrow_correct, Complexity.a2Debit, Complexity.a2DebitCfg, Complexity.a2DebitTM, Complexity.a2Debit_length, Complexity.a2Debit_value, Complexity.a2Value, Turing.Action.apply, Turing.FinTM.controlAction, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{6}
-For every input, head position and counter word $u$ of value $n$, and every already-emitted word: within $(n+1)(2|u|+3)$ steps from the borrow state at cell zero, the countdown emitter halts with output equal to the already-emitted word followed by exactly $n$ ones.
+For every Boolean word $x$, every valid input-head position $p$ on $x$, and every
+natural number $n$, if a counter word $u$ has little-endian value $n$, then for every
+initial output word there is a time $t\le (n+1)(2|u|+3)$ at which the countdown emitter,
+started in its borrow phase with work head at position zero and counter $u$, has halted
+and its output is the initial word followed by exactly $n$ ones.
 \end{lemma}
 
 \begin{definition}[Startup configuration of the countdown]
@@ -1360,31 +1833,43 @@ For every input, head position and counter word $u$ of value $n$, and every alre
 Given a copy-phase flag, a physical input position, a copied word and a work-head value, the corresponding configuration of the countdown emitter is in its startup control state with the copied word on the work tape and empty output.
 \end{definition}
 
-\begin{lemma}[One input-copy step of the countdown]
+\begin{lemma}[One Input-Copy Step]
 \lean{Complexity.a2_copy_step}
 \label{Complexity.a2_copy_step}
 \leanok
 \uses{Complexity.a2DebitTM, Complexity.a2LoadCfg, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-For every input $x$ and every index $i < |x|$, one step of the countdown emitter from the copy configuration holding the first $i$ bits of $x$ appends the bit at index $i$ to the work tape and advances both heads, emitting nothing.
+For every Boolean word $x$ and every natural number $i<|x|$, one step from the
+copy-phase configuration with the first $i$ bits of $x$ on the work tape, input head at
+position $i+1$, and work head at position $i$ reaches the copy-phase configuration with
+the first $i+1$ bits copied, input head at position $i+2$, and work head at position
+$i+1$. The output remains empty.
 \end{lemma}
 
-\begin{lemma}[Startup copies the whole input]
+\begin{lemma}[Startup Copy Configuration]
 \lean{Complexity.a2_copy_run}
 \label{Complexity.a2_copy_run}
 \leanok
 \uses{Complexity.a2DebitTM, Complexity.a2LoadCfg, Complexity.a2_copy_step, Turing.Cfg.init, Turing.FinTM.bufferTape, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{3}
-For every input $x$ and every $i \le |x|$, the $i$-step run of the countdown emitter from its blank-tape initial configuration is the copy configuration holding the first $i$ bits of $x$ with input head at position $i+1$.
+For every Boolean word $x$ and every natural number $i$ with $i\le |x|$, after $i$ steps
+the countdown emitter started on $x$ is in its copy phase, with its input head at
+position $i+1$, its work tape containing the first $i$ bits of $x$, its work head at
+position $i$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Startup rewind of the copied counter]
+\begin{lemma}[Rewind to the borrow phase]
 \lean{Complexity.a2_load_rewind}
 \label{Complexity.a2_load_rewind}
 \leanok
 \uses{Complexity.a2DebitCfg, Complexity.a2DebitTM, Complexity.a2LoadCfg, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-For every input position, every counter word $u$ and every $j \le |u|$: from the startup-rewind configuration with work head at cell $j-1$, exactly $j+1$ steps of the countdown emitter reach the borrow state at cell zero with counter $u$ and empty output.
+Let $x$ be a binary input, let $p$ be any input-head position, let $u$ be a binary word,
+and let $j$ be a natural number with $j \le |u|$. Starting with the countdown machine in
+its startup state, with work tape containing $u$, work-head position $j-1$, input-head
+position $p$, and empty output, after exactly $j+1$ steps it is in the borrow phase with
+work-head position $0$, tape still containing $u$, input-head position still $p$, and
+empty output.
 \end{lemma}
 
 \begin{lemma}[Complete startup of the countdown]
@@ -1393,33 +1878,41 @@ For every input position, every counter word $u$ and every $j \le |u|$: from the
 \leanok
 \uses{Complexity.a2DebitCfg, Complexity.a2DebitTM, Complexity.a2LoadCfg, Complexity.a2_copy_run, Complexity.a2_load_rewind, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-For every input $x$, the $(2|x| + 2)$-step run of the countdown emitter from its blank-tape initial configuration is the borrow-state configuration at cell zero with the full input $x$ as counter, input head at the right boundary and empty output.
+For every binary input $x$, after exactly $2|x|+2$ steps from the countdown machine’s
+initial configuration on $x$, the machine is in its borrow phase with work tape
+containing $x$, work-head position $0$, input head at the right boundary position
+$|x|+1$, and empty output.
 \end{lemma}
 
-\begin{lemma}[Timed decoding contract of the countdown]
+\begin{lemma}[Timed decoding by a binary countdown]
 \lean{Complexity.a2_decode_computes}
 \label{Complexity.a2_decode_computes}
 \leanok
 \uses{Complexity.a2DebitTM, Complexity.a2Value, Complexity.a2_countdown, Complexity.a2_start, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
-For every binary input $x$, the countdown emitter computes the all-ones word whose length is the little-endian value $v$ of $x$, within $2|x| + 2 + (v+1)(2|x|+3)$ steps.
+For every finite Boolean word $x$, the countdown emitter computes the word consisting of
+$a2Value(x)$ copies of $1$ within $2|x|+2+(a2Value(x)+1)(2|x|+3)$ steps.
 \end{lemma}
 
-\begin{lemma}[Exponential unary scheduler via binary countdown]
+\begin{lemma}[Exponential Unary Scheduler]
 \lean{Complexity.a2_exp_scheduler}
 \label{Complexity.a2_exp_scheduler}
 \leanok
 \uses{Complexity.a2DebitTM, Complexity.a2Value_bits, Complexity.a2_decode_computes, Complexity.e3_exp_bits_timed, Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.output_length_le, Turing.MultiTapeTM.runFrom_add}
 \difficulty{6}
-For all natural numbers $C$ and $c$ there exist a deterministic machine $S$ and a constant $B$ such that on every input $x$, $S$ outputs the all-ones word of length $C \cdot 2^{(|x|+1)^c}$ within $B\,(|x| + C\cdot 2^{(|x|+1)^c} + 1)^{c+2}$ steps.
+For all natural numbers $C,c$, there exist a finite deterministic Turing machine $S$
+over the Boolean alphabet and a natural number $B$ such that, for every Boolean input
+word $x$, $S$ halts after exactly $B\bigl(|x|+C\cdot 2^{(|x|+1)^c}+1\bigr)^{c+2}$ steps
+and outputs the word of $C\cdot 2^{(|x|+1)^c}$ ones.
 \end{lemma}
 
-\begin{lemma}[Envelope of the exponential host ledger]
+\begin{lemma}[Host Ledger Bound]
 \lean{Complexity.a2_host_bound}
 \label{Complexity.a2_host_bound}
 \leanok
 \difficulty{4}
-For all natural numbers $Q, B, r, A, d, n$ and $T$ with $T \le B(n+Q+1)^r$: the total $2n + 2 + T + (n + Q + 2 + (A(n+Q+1)^d + 1))$ is at most $(B+A+5)(n+Q+1)^{r+d+1}$.
+For all natural numbers $Q,B,r,A,d,n,T$ such that $T\le B(n+Q+1)^r$, one has
+$2n+2+T+(n+Q+2+(A(n+Q+1)^d+1))\le (B+A+5)(n+Q+1)^{r+d+1}$.
 \end{lemma}
 
 \begin{lemma}[Compiling an exponential certificate language]
@@ -1428,80 +1921,100 @@ For all natural numbers $Q, B, r, A, d, n$ and $T$ with $T \le B(n+Q+1)^r$: the 
 \leanok
 \uses{Complexity.a2_exp_scheduler, Complexity.a2_host_bound, Complexity.acceptsWithin_iff_of_halts, Complexity.b2Host, Complexity.b2_host_contract, Complexity.b2_unary_first, Turing.FinNDTM, Turing.FinNDTM.AcceptsWithin, Turing.FinNDTM.DecidesInTime, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.MultiTapeTM.indicator, Turing.NDTM.HaltsWithin, Turing.NDTM.HaltsWithin.mono}
 \difficulty{5}
-Let $L$ be a language over the binary alphabet such that $x \in L$ exactly when some binary string $u$ with $|u| = C \cdot 2^{(|x|+1)^c}$ has $x\,u \in V$, and let $M$ be a deterministic machine deciding the verifier language $V$ within $A(m+1)^d$. Then there are constants $K, r$ and a nondeterministic machine deciding $L$ within $K\,(n + C\cdot 2^{(n+1)^c} + 1)^r$.
+Let $L$ and $V$ be languages over the Boolean alphabet, and let $C,c,A,d$ be natural
+numbers. Suppose that for every Boolean word $x$, membership $x\in L$ is equivalent to
+the existence of a Boolean word $u$ with $|u|=C\,(2^{|x|+1})^c$ and $xu\in V$. Suppose
+also that a finite deterministic Turing machine $M$ decides $V$ within time $A(m+1)^d$
+on inputs of length $m$. Then there exist natural numbers $K,r$ and a finite
+nondeterministic Turing machine $N$ that decides $L$ within time
+$K\bigl(n+C(2^{n+1})^c+1\bigr)^r$.
 \end{lemma}
 
-\begin{lemma}[Absorbing a polynomial exponent]
+\begin{lemma}[Absorbing a Polynomial Exponent]
 \lean{Complexity.a2_exponent_bound}
 \label{Complexity.a2_exponent_bound}
 \leanok
 \difficulty{4}
-For all natural numbers $K$ and $k$ there exist constants $A$ and $e$ such that $2^{K(n+1)^k} \le A \cdot 2^{n^e}$ for every natural number $n$.
+For all natural numbers $K,k$, there exist natural numbers $A,e$ such that for every
+natural number $n$, $2^{K(n+1)^k}\le A\cdot 2^{n^e}$.
 \end{lemma}
 
-\begin{lemma}[Exponential-time envelope of the compiled budget]
+\begin{lemma}[Exponential-Time Envelope]
 \lean{Complexity.a2_envelope}
 \label{Complexity.a2_envelope}
 \leanok
 \uses{Complexity.a2_exponent_bound}
 \difficulty{4}
-For all natural numbers $C, c, K, r$ there exist constants $A$ and $e$ with $K\,(n + C\cdot 2^{(n+1)^c} + 1)^r \le A \cdot 2^{n^e}$ for every natural number $n$.
+For all natural numbers $C,c,K,r$, there exist natural numbers $A,e$ such that for every
+natural number $n$, $K\bigl(n+C\cdot 2^{(n+1)^c}+1\bigr)^r\le A\cdot 2^{n^e}$.
 \end{lemma}
 
-\begin{lemma}[Landing a compiled exponential decider in NTIME]
+\begin{lemma}[Exponential time class normalization]
 \lean{Complexity.a2_normalize}
 \label{Complexity.a2_normalize}
 \leanok
 \uses{Complexity.NTIME, Complexity.a2_envelope, Complexity.acceptsWithin_iff_of_halts, Turing.FinNDTM, Turing.FinNDTM.DecidesInTime, Turing.NDTM.HaltsWithin.mono}
 \difficulty{3}
-Let $L$ be a language over the binary alphabet and $C, c$ natural numbers. If some nondeterministic machine decides $L$ within time $K(n + C\cdot 2^{(n+1)^c} + 1)^r$ for constants $K, r$, then $L$ belongs to $\bigcup_e \mathrm{NTIME}(2^{n^e})$.
+Let $L$ be a language of binary strings, and let $C,c\in\mathbb{N}$. Suppose there are
+natural numbers $K,r$ and a finite nondeterministic Turing machine $N$ over the binary
+alphabet that decides $L$ within time $K\bigl(n+C\cdot 2^{(n+1)^c}+1\bigr)^r$. Then $L$
+belongs to $\bigcup_{e\in\mathbb{N}}\mathrm{NTIME}(n\mapsto 2^{n^e})$.
 \end{lemma}
 
-\begin{theorem}[NEXP lies in the union of exponential NTIME classes]
+\begin{theorem}[NEXP lies in exponential nondeterministic time]
 \lean{Complexity.NEXP_subset_iUnion_NTIME}
 \label{Complexity.NEXP_subset_iUnion_NTIME}
 \leanok
 \uses{Complexity.NEXP, Complexity.NTIME, Complexity.a2_compile, Complexity.a2_normalize, Complexity.mem_P_iff}
 \difficulty{2}
-Every language in the certificate-form class $\mathrm{NEXP}$ (given by a polynomial-time verifier with certificates of exact exponential length) belongs to $\bigcup_c \mathrm{NTIME}(2^{n^c})$.
+Every language in the certificate-defined class $\mathrm{NEXP}$ belongs to
+$\bigcup_{c\in\mathbb{N}}\mathrm{NTIME}(n\mapsto 2^{n^c})$.
 \end{theorem}
 
-\begin{theorem}[The NTIME form of NEXP]
+\begin{theorem}[NEXP as a union of nondeterministic time classes]
 \lean{Complexity.NEXP_eq_iUnion_NTIME}
 \label{Complexity.NEXP_eq_iUnion_NTIME}
 \leanok
 \uses{Complexity.NEXP, Complexity.NEXP_subset_iUnion_NTIME, Complexity.NTIME, Complexity.ntime_expPow_subset_NEXP}
 \difficulty{1}
-The certificate-form class $\mathrm{NEXP}$ equals the union $\bigcup_c \mathrm{NTIME}(2^{n^c})$ of the fixed-exponent nondeterministic time classes.
+The certificate-defined class $\mathrm{NEXP}$ equals
+$\bigcup_{c\in\mathbb{N}}\mathrm{NTIME}(n\mapsto 2^{n^c})$.
 \end{theorem}
 
 \subsection{Polynomial-time calculus, padding, and Theorem 2.22}
 
-\begin{lemma}[Linear budgets are polynomial]
+\begin{lemma}[Linear time implies polynomial time]
 \lean{Complexity.a3n_poly_linear}
 \label{Complexity.a3n_poly_linear}
 \leanok
 \uses{Complexity.PolyTimeComputable, Turing.FinTM, Turing.FinTM.ComputesFunInTime}
 \difficulty{2}
-Let $f$ be a function on binary strings. If some deterministic machine computes $f$ within a budget $a(n+1)$ on inputs of length $n$, for a constant $a$, then $f$ is polynomial-time computable.
+Let $f : \{0,1\}^* \to \{0,1\}^*$ be computed by a finite Turing machine in time
+$a(n+1)$ on every input of length $n$, for some natural number $a$. Then $f$ is
+polynomial-time computable.
 \end{lemma}
 
-\begin{lemma}[Constant functions are polynomial time]
+\begin{lemma}[Constant Functions Are Polynomial-Time Computable]
 \lean{Complexity.a3n_poly_const}
 \label{Complexity.a3n_poly_const}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.a3n_poly_linear, Turing.FinTM.computesFunInTime_const}
 \difficulty{1}
-For every fixed binary word $w$, the constant function sending every input to $w$ is polynomial-time computable.
+For every finite Boolean word $w$, the function on finite Boolean words that returns $w$
+on every input is polynomial-time computable.
 \end{lemma}
 
-\begin{lemma}[Polynomial-time conditional branching]
+\begin{lemma}[Polynomial-Time Conditional Branching]
 \lean{Complexity.a3n_poly_cond}
 \label{Complexity.a3n_poly_cond}
 \leanok
 \uses{Complexity.PolyTimeComputable, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_cond}
 \difficulty{4}
-Let $p$ be a Boolean test whose single-bit indicator is polynomial-time computable, and let $f$ and $g$ be polynomial-time computable functions on binary strings. Then the function that returns $f(x)$ when $p(x)$ holds and $g(x)$ otherwise is polynomial-time computable.
+Let $p$ be a Boolean-valued test on finite Boolean words, and let $f,g$ be functions
+from finite Boolean words to finite Boolean words. If the function that outputs the
+single-bit word encoding $p(x)$ is polynomial-time computable, and both $f$ and $g$ are
+polynomial-time computable, then the function that returns $f(x)$ when $p(x)$ is true
+and $g(x)$ otherwise is polynomial-time computable.
 \end{lemma}
 
 \begin{definition}[Total first projection of an encoded pair]
@@ -1536,13 +2049,16 @@ For a binary string $z$, the result is the concatenation of the two components w
 Given a function $g$ on binary strings and a string $z$: when $z$ decodes as a pair $(a, b)$, the result is the encoding of the pair $(a, g(b))$, and otherwise the empty word.
 \end{definition}
 
-\begin{lemma}[The payload map preserves polynomial time]
+\begin{lemma}[Polynomial-time payload map]
 \lean{Complexity.a3n_poly_map}
 \label{Complexity.a3n_poly_map}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.a3n_map, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesFunInTime_pairMapSnd}
 \difficulty{4}
-Let $g$ be a polynomial-time computable function on binary strings. Then the function that decodes its input as a pair $(a,b)$ and re-encodes the pair $(a, g(b))$, returning the empty word on malformed input, is polynomial-time computable.
+Let $g : \{0,1\}^* \to \{0,1\}^*$ be polynomial-time computable. Define a function on
+binary words by decoding an input as a pair $(a,b)$ and returning the encoding of
+$(a,g(b))$ when decoding succeeds, and the empty word when it fails. This function is
+polynomial-time computable.
 \end{lemma}
 
 \begin{lemma}[Polynomial-time pairing of two functions]
@@ -1551,16 +2067,20 @@ Let $g$ be a polynomial-time computable function on binary strings. Then the fun
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.a3n_concat, Complexity.a3n_fst, Complexity.a3n_map, Complexity.a3n_poly_const, Complexity.a3n_poly_linear, Complexity.a3n_poly_map, Complexity.a3n_snd, Turing.FinTM.computesFunInTime_pairConcat, Turing.FinTM.computesFunInTime_pairDup, Turing.FinTM.computesFunInTime_pairFst, Turing.FinTM.computesFunInTime_pairSnd, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{5}
-Let $f$ and $g$ be polynomial-time computable functions on binary strings. Then the function sending $x$ to the self-delimiting encoding of the pair $(f(x), g(x))$ is polynomial-time computable.
+Let $f,g : \{0,1\}^* \to \{0,1\}^*$ be polynomial-time computable. The function that
+maps $x$ to the self-delimiting encoding of $(f(x),g(x))$ is polynomial-time computable.
 \end{lemma}
 
-\begin{lemma}[Timed buffered composition at the actual word]
+\begin{lemma}[Time bound for buffered composition]
 \lean{Complexity.a3n_comp_at}
 \label{Complexity.a3n_comp_at}
 \leanok
 \uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.VirtualTag, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedComp_start, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add}
 \difficulty{3}
-Let $F$ and $G$ be deterministic machines, and suppose $F$ computes $y$ from $x$ within $s$ steps and $G$ computes $z$ from $y$ within $t$ steps. Then the buffered composition of $F$ and $G$ computes $z$ from $x$ within $s + |y| + 2 + t$ steps.
+Let $F,G$ be finite Turing machines over the binary alphabet, and let $x,y,z$ be binary
+words and $s,t$ natural numbers. If $F$ computes $y$ from $x$ in exactly $s$ steps and
+$G$ computes $z$ from $y$ in exactly $t$ steps, then their buffered composition computes
+$z$ from $x$ in exactly $s+|y|+2+t$ steps.
 \end{lemma}
 
 \begin{definition}[Pair comparator machine]
@@ -1579,75 +2099,103 @@ A deterministic machine with one work tape is defined that, on a self-delimiting
 Given a control index, a comparison flag, a physical input position, a decoded word and a work-head value, the corresponding comparator configuration holds the decoded word on its single work tape, with empty physical output.
 \end{definition}
 
-\begin{lemma}[Two comparator steps decode a doubled bit]
+\begin{lemma}[Decoding a Doubled Bit]
 \lean{Complexity.a3n_eq_double}
 \label{Complexity.a3n_eq_double}
 \leanok
 \uses{Complexity.a3nEqCfg, Complexity.a3nEqTM, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Suppose the comparator input has the form $y = p\,b\,b\,r$ for a bit $b$ and words $p, r$. From the parser state at position $|p|+1$ with decoded word $u$, exactly two steps of the pair comparator append $b$ to the work tape and move to position $|p|+3$, emitting nothing.
+Let $y$, $pre$, $rest$, and $u$ be binary words, let $b$ be a bit, and suppose
+$y=pre\,b\,b\,rest$. Starting from the comparator configuration in parser state at input
+position $|pre|+1$, with decoded work word $u$ and work head at position $|u|$, after
+two steps it is in parser state at input position $|pre|+3$, with decoded work word $u$
+followed by $b$ and work head at position $|u b|$.
 \end{lemma}
 
-\begin{lemma}[The comparator recognizes the separator]
+\begin{lemma}[Recognizing the Pair Separator]
 \lean{Complexity.a3n_eq_separator}
 \label{Complexity.a3n_eq_separator}
 \leanok
 \uses{Complexity.a3nEqCfg, Complexity.a3nEqTM, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{4}
-Suppose the comparator input has the form $y = p\,0\,1\,v$ for words $p, v$. From the parser state at position $|p|+1$ with decoded word $u$, exactly two steps of the pair comparator enter the rewind state at position $|p|+3$, with the work tape and output untouched and the work head moved one cell left.
+Let $y,pre,v,u$ be binary words and suppose $y=pre\,0\,1\,v$. Starting from the
+comparator configuration in parser state at input position $|pre|+1$, with decoded work
+word $u$ and work head at position $|u|$, after two steps it is in rewind state at input
+position $|pre|+3$, with decoded work word $u$ and work head at position $|u|-1$.
 \end{lemma}
 
-\begin{lemma}[Exact parse by the comparator]
+\begin{lemma}[Parsing the Doubled Prefix]
 \lean{Complexity.a3n_eq_parse}
 \label{Complexity.a3n_eq_parse}
 \leanok
 \uses{Complexity.a3nEqCfg, Complexity.a3nEqTM, Complexity.a3n_eq_double, Complexity.a3n_eq_separator, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode}
 \difficulty{5}
-Suppose the comparator input has the form $y = p\,e$ where $e$ is the self-delimiting encoding of a pair $(u, v)$. From the parser state at position $|p|+1$ with decoded word $a$, exactly $2|u|+2$ steps of the pair comparator reach the rewind state at position $|p|+2|u|+3$ with decoded word $a\,u$.
+Let $y,u,v,pre,a$ be binary words and suppose $y=pre\,\langle u,v\rangle$, where
+$\langle u,v\rangle$ is the encoding formed by doubling the bits of $u$, appending $01$,
+and then appending $v$. Starting from the comparator configuration in parser state at
+input position $|pre|+1$, with decoded work word $a$ and work head at position $|a|$,
+after $2|u|+2$ steps it is in rewind state at input position $|pre|+2|u|+3$, with
+decoded work word $a u$ and work head at position $|a u|-1$.
 \end{lemma}
 
-\begin{lemma}[Comparator rewind of the decoded word]
+\begin{lemma}[Rewinding the Work-Tape Head]
 \lean{Complexity.a3n_eq_rewind}
 \label{Complexity.a3n_eq_rewind}
 \leanok
 \uses{Complexity.a3nEqCfg, Complexity.a3nEqTM, Turing.Action.apply, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_left, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.moveInputPos_zero}
 \difficulty{4}
-For every input, every decoded word $u$, every position and every $j \le |u|$: from the rewind state with work head at cell $j - 1$, exactly $j+1$ steps of the pair comparator reach the comparison state with work head at cell zero and all data unchanged.
+For every binary input $y$, binary word $u$, valid input-head position $p$ for $y$, and
+natural number $j\le |u|$, starting from the comparator configuration in rewind state
+with comparison flag true, work word $u$, work head at position $j-1$, and input-head
+position $p$, after $j+1$ steps it is in comparison state with flag true, the same
+input-head position and work word, and work head at position zero.
 \end{lemma}
 
-\begin{lemma}[Prefix-equality invariant of the comparison scan]
+\begin{lemma}[Comparison Scan Prefix Invariant]
 \lean{Complexity.a3n_eq_scan}
 \label{Complexity.a3n_eq_scan}
 \leanok
 \uses{Complexity.a3nEqCfg, Complexity.a3nEqTM, Complexity.e3c_take_succ_eq, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.inputSymbolInner, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{5}
-Suppose the comparator input has the form $y = p\,v$ and let $u$ be the decoded word. For every $j \le |v|$, after $j$ steps from the comparison state at position $|p|+1$, the comparator is at position $|p|+j+1$ with its flag recording whether the length-$j$ prefixes of $u$ and $v$ agree.
+Let $y,pre,u,v$ be binary words with $y=pre\,v$. For every natural number $j\le |v|$,
+starting from the comparator configuration in comparison state with flag true, work word
+$u$, work head at zero, and input-head position $|pre|+1$, after $j$ steps it is in
+comparison state at input-head position $|pre|+j+1$ with work word $u$, work head at
+position $j$, and comparison flag true exactly when the length-$j$ prefixes of $u$ and
+$v$ agree.
 \end{lemma}
 
-\begin{lemma}[Characterization of whole-word equality]
+\begin{lemma}[Characterization of Word Equality]
 \lean{Complexity.a3n_eq_end}
 \label{Complexity.a3n_eq_end}
 \leanok
 \difficulty{3}
-For all binary strings $u$ and $v$: the length-$|v|$ prefix of $u$ equals $v$ and $u$ has no bit at index $|v|$, if and only if $u = v$.
+For all binary words $u$ and $v$, the prefix of $u$ of length $|v|$ equals $v$ and there
+is no bit of $u$ at index $|v|$ if and only if $u=v$.
 \end{lemma}
 
-\begin{lemma}[Final verdict of the comparison scan]
+\begin{lemma}[Pair comparator output after a scan]
 \lean{Complexity.a3n_eq_compare}
 \label{Complexity.a3n_eq_compare}
 \leanok
 \uses{Complexity.a3nEqCfg, Complexity.a3nEqTM, Complexity.a3n_eq_end, Complexity.a3n_eq_scan, Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-Suppose the comparator input has the form $y = p\,v$ and let $u$ be the decoded word. After $|v| + 1$ steps from the comparison state at position $|p|+1$, the pair comparator has halted and its output is the single bit recording whether $u = v$.
+Let $y,p,u,v$ be binary words with $y=p$ followed by $v$. Start the pair comparator on
+input $y$ in control state $4$ with its comparison flag true, its input head at position
+$|p|+1$, and its work tape storing $u$ from cell zero with the head at cell zero. After
+$|v|+1$ steps, the machine is halted and its output is the single bit that is true
+exactly when $u=v$.
 \end{lemma}
 
-\begin{lemma}[Linear-time decision of pair equality]
+\begin{lemma}[Linear-Time Pair Equality Decision]
 \lean{Complexity.a3n_eq_computes}
 \label{Complexity.a3n_eq_computes}
 \leanok
 \uses{Complexity.a3nEqCfg, Complexity.a3nEqTM, Complexity.a3n_eq_compare, Complexity.a3n_eq_parse, Complexity.a3n_eq_rewind, Turing.Cfg.init, Turing.FinTM.ComputesInTime, Turing.FinTM.bufferTape, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode}
 \difficulty{4}
-For all binary strings $u$ and $v$, the pair comparator, on the self-delimiting encoding of the pair $(u,v)$, halts within $3|u| + |v| + 4$ steps with output the single bit recording whether $u = v$.
+For all binary words $u$ and $v$, the pair comparator, started on the encoding that
+doubles each bit of $u$, appends the separator $01$, and then appends $v$, halts within
+$3|u|+|v|+4$ steps and outputs the one-bit word whose bit is true exactly when $u=v$.
 \end{lemma}
 
 \begin{lemma}[Polynomial-time equality of computed words]
@@ -1656,7 +2204,9 @@ For all binary strings $u$ and $v$, the pair comparator, on the self-delimiting 
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.a3nEqTM, Complexity.a3n_comp_at, Complexity.a3n_eq_computes, Complexity.a3n_poly_pair, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferedCompTM, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.output_length_le, Turing.pairEncode}
 \difficulty{4}
-Let $f$ and $g$ be polynomial-time computable functions on binary strings. Then the single-bit function recording whether $f(x) = g(x)$ is polynomial-time computable.
+Let $f,g : \{0,1\}^* \to \{0,1\}^*$ be polynomial-time computable. The function that
+maps each binary word $x$ to the one-bit word recording whether $f(x)=g(x)$ is
+polynomial-time computable.
 \end{lemma}
 
 \begin{lemma}[Polynomial-time equality with a fixed word]
@@ -1665,43 +2215,49 @@ Let $f$ and $g$ be polynomial-time computable functions on binary strings. Then 
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.a3n_poly_linear, Turing.FinTM.computesFunInTime_ifEq}
 \difficulty{3}
-For every fixed binary word $w$, the single-bit function recording whether the input equals $w$ is polynomial-time computable.
+For every fixed binary word $w$, the function that maps each binary word $x$ to the
+one-bit word recording whether $x=w$ is polynomial-time computable.
 \end{lemma}
 
-\begin{lemma}[A fixed-width increment never returns the empty word]
+\begin{lemma}[Nonempty Output of Binary Increment]
 \lean{Complexity.a3n_inc_nonempty}
 \label{Complexity.a3n_inc_nonempty}
 \leanok
 \uses{Turing.incFixed}
 \difficulty{2}
-For every binary word $w$, a successful fixed-width increment of $w$ is never the empty word.
+For every finite Boolean word $w$, if its fixed-width binary increment is defined, then
+the resulting word is nonempty.
 \end{lemma}
 
-\begin{lemma}[Increment overflow characterizes the all-ones shape]
+\begin{lemma}[Characterization of Increment Overflow]
 \lean{Complexity.a3n_inc_none}
 \label{Complexity.a3n_inc_none}
 \leanok
 \uses{Turing.incFixed}
 \difficulty{3}
-For every binary word $w$, the fixed-width increment of $w$ overflows if and only if $w$ is the all-ones word of its own length, the empty word included.
+For every binary word $w$, its fixed-width binary increment overflows if and only if $w$
+is the all-true word of length $|w|$, including the empty word.
 \end{lemma}
 
-\begin{lemma}[Polynomial-time test for the all-ones shape]
+\begin{lemma}[Polynomial-time all-ones test]
 \lean{Complexity.a3n_poly_unary}
 \label{Complexity.a3n_poly_unary}
 \leanok
 \uses{Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.a3n_inc_none, Complexity.a3n_inc_nonempty, Complexity.a3n_poly_fixed_eq, Complexity.a3n_poly_linear, Turing.FinTM.computesFunInTime_incFixed, Turing.incFixed}
 \difficulty{4}
-The single-bit function recording whether the input is the all-ones word of its own length is polynomial-time computable.
+The function that maps each binary word $x$ to the one-bit word recording whether $x$
+consists entirely of ones is polynomial-time computable; equivalently, it tests whether
+$x$ equals the all-ones word of length $|x|$.
 \end{lemma}
 
-\begin{lemma}[Inversion of the pair decoder]
+\begin{lemma}[Inversion of the Pair Decoder]
 \lean{Complexity.a3n_pair_inverse}
 \label{Complexity.a3n_pair_inverse}
 \leanok
 \uses{Turing.pairDecode, Turing.pairEncode}
 \difficulty{5}
-For every binary string $z$ and all strings $a, b$: if the self-delimiting pair decoder returns the pair $(a, b)$ on $z$, then $z$ is exactly the pair encoding of $(a, b)$.
+For every finite Boolean word $z$ and all finite Boolean words $a,b$, if decoding $z$
+yields the pair $(a,b)$, then $z$ is the self-delimiting pair encoding of $a$ and $b$.
 \end{lemma}
 
 \begin{definition}[Verifier for the padded language]
@@ -1712,21 +2268,26 @@ For every binary string $z$ and all strings $a, b$: if the self-delimiting pair 
 Given natural numbers $C, c$ and a language $V$, the paired verifier language consists of the strings that decode as a pair $(x', u)$ whose first component decodes in turn as a pair $(x, p)$, such that $p$ is the all-ones word of length exactly $C\cdot 2^{(|x|+1)^c}$, the witness $u$ has exactly that same length, and the concatenation $x\,u$ belongs to $V$; strings failing either decoding are excluded.
 \end{definition}
 
-\begin{lemma}[Shape and length determine the pad]
+\begin{lemma}[Characterization of an All-Ones Word]
 \lean{Complexity.a3n_pad_eq}
 \label{Complexity.a3n_pad_eq}
 \leanok
 \difficulty{2}
-For every binary word $p$ and natural number $n$: $p$ is the all-ones word of its own length and $|p| = n$, if and only if $p$ is the all-ones word of length $n$.
+For every finite Boolean word $p$ and natural number $n$, $p$ consists entirely of ones
+and has length $n$ if and only if $p$ is the all-ones word of length $n$.
 \end{lemma}
 
-\begin{lemma}[The padded verifier is polynomial time]
+\begin{lemma}[Polynomial time for the padded verifier]
 \lean{Complexity.a3n_verifier_mem_P}
 \label{Complexity.a3n_verifier_mem_P}
 \leanok
 \uses{Complexity.P, Complexity.PolyTimeComputable, Complexity.PolyTimeComputable.comp, Complexity.a3nVerifier, Complexity.a3n_concat, Complexity.a3n_fst, Complexity.a3n_pad_eq, Complexity.a3n_poly_cond, Complexity.a3n_poly_const, Complexity.a3n_poly_eq, Complexity.a3n_poly_linear, Complexity.a3n_poly_pair, Complexity.a3n_poly_unary, Complexity.a3n_snd, Complexity.e3_exp_bits_timed, Complexity.e3c_bits_injective, Complexity.mem_P_iff, Turing.FinTM.computesFunInTime_lengthBits, Turing.FinTM.computesFunInTime_pairConcat, Turing.FinTM.computesFunInTime_pairFst, Turing.FinTM.computesFunInTime_pairSnd, Turing.FinTM.computesFunInTime_pairValid, Turing.MultiTapeTM.indicator, Turing.pairDecode, Turing.pairDecode_pairEncode}
 \difficulty{6}
-For all natural numbers $C, c$ and every language $V$ in $\mathrm{P}$, the paired verifier language for $C$, $c$ and $V$, which checks both pair decodings, the exact all-ones pad of length $C\cdot 2^{(|x|+1)^c}$, the exact witness length, and membership of the assembled word in $V$, belongs to $\mathrm{P}$.
+Let $C,c\in\mathbb{N}$ and let $V$ be a language of finite binary strings belonging to
+$\mathrm{P}$. The language of strings that decode as a pair $(x',u)$, with $x'$ decoding
+as $(x,p)$, such that $p$ is the all-ones string of length $C\cdot 2^{(|x|+1)^c}$,
+$|u|=C\cdot 2^{(|x|+1)^c}$, and the concatenation $xu$ belongs to $V$, belongs to
+$\mathrm{P}$.
 \end{lemma}
 
 \begin{definition}[The exponentially padded language]
@@ -1737,74 +2298,144 @@ For all natural numbers $C, c$ and every language $V$ in $\mathrm{P}$, the paire
 Given a language $L$ and natural numbers $C, c$, the padded language consists of the pair encodings of $(x, p)$ where $x \in L$ and $p$ is the all-ones word of length $C \cdot 2^{(|x|+1)^c}$.
 \end{definition}
 
-\begin{lemma}[Padded membership reflects original membership]
+\begin{lemma}[Membership in the Padded Language]
 \lean{Complexity.a3n_pad_member}
 \label{Complexity.a3n_pad_member}
 \leanok
 \uses{Complexity.a3nPadLanguage, Turing.pairEncode, Turing.pairEncode_injective}
 \difficulty{3}
-Let $L$ be a language and $C, c$ natural numbers. For every binary string $x$, the pair encoding of $x$ with the all-ones pad of length $C\cdot 2^{(|x|+1)^c}$ belongs to the exponentially padded language of $L$ if and only if $x \in L$.
+Let $L$ be a language of finite Boolean words, and let $C,c$ be natural numbers. For
+every finite Boolean word $x$, the pair encoding of $x$ and the all-ones word of length
+$C2^{(|x|+1)^c}$ belongs to the padded language of $L$ if and only if $x\in L$.
 \end{lemma}
 
-\begin{lemma}[The padded language is in NP]
+\begin{lemma}[Exponential Padding Preserves NP Membership]
 \lean{Complexity.a3n_pad_mem_NP}
 \label{Complexity.a3n_pad_mem_NP}
 \leanok
 \uses{Complexity.NP, Complexity.P, Complexity.a3nPadLanguage, Complexity.a3nVerifier, Complexity.a3n_pair_inverse, Complexity.a3n_verifier_mem_P, Complexity.mem_NP_iff_exists_length_le, Turing.pairDecode, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{5}
-Let $L$ and $V$ be languages with $V \in \mathrm{P}$, and let $C, c$ be natural numbers such that $x \in L$ if and only if some $u$ with $|u| = C \cdot 2^{(|x|+1)^c}$ has $x\,u \in V$. Then the exponentially padded language of $L$ belongs to $\mathrm{NP}$.
+Let $L$ and $V$ be languages of finite Boolean words, and let $C,c$ be natural numbers.
+Suppose $V$ belongs to $ \mathrm{P}$ and, for every word $x$, membership $x\in L$ is
+equivalent to the existence of a word $u$ of length $C(2^{|x|+1})^c$ such that $xu\in
+V$. Then the language of pair encodings of $x$ with the all-ones word of length
+$C2^{(|x|+1)^c}$, for $x\in L$, belongs to $ \mathrm{NP}$.
 \end{lemma}
 
-\begin{lemma}[Length bounds before validity checks]
+\begin{lemma}[Bounds from successful pair decoding]
 \lean{Complexity.a3n_prevalidation}
 \label{Complexity.a3n_prevalidation}
 \leanok
 \uses{Complexity.a3n_pair_inverse, Complexity.e3_bits_length_bound, Turing.pairDecode, Turing.pairEncode}
 \difficulty{3}
-Let $C, c$ be natural numbers and suppose a string $w$ decodes as a pair with first component $x'$, which in turn decodes as a pair with first component $x$. Then $|x| \le |w|$, and the binary expansion of $C \cdot 2^{(|x|+1)^c}$ has length at most $(|w|+1)^c$ plus the length of the binary expansion of $C$.
+Let $C,c$ be natural numbers and let $w,x',u,x,\mathrm{pad}$ be binary words. Suppose
+decoding $w$ yields $(x',u)$ and decoding $x'$ yields $(x,\mathrm{pad})$. Then $|x|\le
+|w|$, and the length of the binary expansion of $C\,(2^{|x|+1})^c$ is at most
+$(|w|+1)^c$ plus the length of the binary expansion of $C$.
 \end{lemma}
 
-\begin{lemma}[Envelope for a rescaled exponential width]
+\begin{lemma}[Exponential envelope for a scaled expression]
 \lean{Complexity.a3n_scaled_envelope}
 \label{Complexity.a3n_scaled_envelope}
 \leanok
 \uses{Complexity.a2_exponent_bound}
 \difficulty{4}
-For all natural numbers $C, c, K, r$ and $s$ there exist constants $A$ and $e$ such that $K\,(n + C\cdot 2^{(s(n+1))^c} + 1)^r \le A \cdot 2^{n^e}$ for every natural number $n$.
+For all natural numbers $C,c,K,r,s$, there exist natural numbers $A,e$ such that for
+every natural number $n$, $K\bigl(n+C\,(2^{s(n+1)})^c+1\bigr)^r\le A\,(2^n)^e$.
 \end{lemma}
 
-\begin{lemma}[Emitting the padded pair]
+\begin{lemma}[Polynomial-Time Padded Pair Emission]
 \lean{Complexity.a3n_pad_emit}
 \label{Complexity.a3n_pad_emit}
 \leanok
 \uses{Complexity.a2_exp_scheduler, Complexity.a3n_comp_at, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferedCompTM, Turing.FinTM.computesFunInTime_pairDup, Turing.FinTM.computesFunInTime_pairMapSnd, Turing.pairDecode_pairEncode, Turing.pairEncode}
 \difficulty{5}
-For all natural numbers $C$ and $c$ there exist a deterministic machine and a constant $K$ computing, on every input $x$, the pair encoding of $x$ with the all-ones pad of length $C \cdot 2^{(|x|+1)^c}$, within $K\,(n + C\cdot 2^{(3(n+1))^c} + 1)^{c+2}$ steps on inputs of length $n$.
+For all natural numbers $C$ and $c$, there exist a finite Turing machine over the
+Boolean alphabet and a natural number $K$ such that, on every input word $x$, the
+machine outputs the self-delimiting pair encoding of $x$ and the all-ones word of length
+$C(2^{|x|+1})^c$. On inputs of length $n$, it does so within
+$K\bigl(n+C(2^{3(n+1)})^c+1\bigr)^{c+2}$ steps.
 \end{lemma}
 
-\begin{lemma}[Unpadding a polynomial decider into EXP]
+\begin{lemma}[Unpadding into exponential time]
 \lean{Complexity.a3n_unpad_EXP}
 \label{Complexity.a3n_unpad_EXP}
 \leanok
 \uses{Complexity.EXP, Complexity.P, Complexity.a3nPadLanguage, Complexity.a3n_comp_at, Complexity.a3n_pad_emit, Complexity.a3n_pad_member, Complexity.a3n_scaled_envelope, Complexity.mem_P_iff, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.bufferedCompTM, Turing.MultiTapeTM.indicator, Turing.pairEncode}
 \difficulty{5}
-Let $L$ be a language over the binary alphabet and $C, c$ natural numbers. If the exponentially padded language of $L$ belongs to $\mathrm{P}$, then $L$ belongs to $\mathrm{EXP}$.
+Let $L$ be a language of finite binary strings and let $C,c\in\mathbb{N}$. If the
+language of encodings of pairs $(x,p)$ with $x\in L$ and $p$ the all-ones string of
+length $C\cdot 2^{(|x|+1)^c}$ belongs to $\mathrm{P}$, then $L\in\mathrm{EXP}$.
 \end{lemma}
 
-\begin{theorem}[P = NP collapses EXP to NEXP]
+\begin{theorem}[Equality of polynomial classes collapses exponential classes]
 \lean{Complexity.EXP_eq_NEXP_of_P_eq_NP}
 \label{Complexity.EXP_eq_NEXP_of_P_eq_NP}
 \leanok
 \uses{Complexity.EXP, Complexity.EXP_subset_NEXP, Complexity.NEXP, Complexity.NP, Complexity.P, Complexity.a3nPadLanguage, Complexity.a3n_pad_mem_NP, Complexity.a3n_unpad_EXP}
 \difficulty{2}
-If $\mathrm{P} = \mathrm{NP}$, then $\mathrm{EXP} = \mathrm{NEXP}$.
+If the polynomial-time class $\mathrm{P}$ equals the polynomially verifiable class
+$\mathrm{NP}$, then $\mathrm{EXP}=\mathrm{NEXP}$.
 \end{theorem}
 
-\begin{theorem}[Separations scale down by padding]
+\begin{theorem}[Polynomial time versus nondeterministic polynomial time]
 \lean{Complexity.P_ne_NP_of_EXP_ne_NEXP}
 \label{Complexity.P_ne_NP_of_EXP_ne_NEXP}
 \leanok
 \uses{Complexity.EXP, Complexity.EXP_eq_NEXP_of_P_eq_NP, Complexity.NEXP, Complexity.NP, Complexity.P}
 \difficulty{1}
-If $\mathrm{EXP} \ne \mathrm{NEXP}$, then $\mathrm{P} \ne \mathrm{NP}$.
+If the exponential-time class $\mathrm{EXP}$ differs from the certificate-defined class
+$\mathrm{NEXP}$, then the polynomial-time class $\mathsf{P}$ differs from the
+certificate-defined class $\mathsf{NP}$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Boolean mask selection]
+\lean{Complexity.maskSelect}
+\label{Complexity.maskSelect}
+\leanok
+Given two finite Boolean lists, scan them in order up to the length of the shorter list.
+Retain the Boolean from the second list at each position where the corresponding Boolean
+in the first list is true, and discard it where that Boolean is false.
+\end{definition}
+
+\begin{lemma}[Equality of Masked Selections]
+\lean{Complexity.contSelect_eq_maskSelect}
+\label{Complexity.contSelect_eq_maskSelect}
+\leanok
+\uses{Complexity.contSelect, Complexity.maskSelect}
+\difficulty{4}
+For any two finite Boolean words $m$ and $w$, the selection obtained by scanning them
+together, retaining each bit of $w$ where the corresponding bit of $m$ is true and
+stopping when either word ends, is the same for both specified selection procedures.
+\end{lemma}
+
+\begin{theorem}[Polynomial-Time Choice-Word Verifier]
+\lean{Complexity.exists_choiceVerifier_mem_P}
+\label{Complexity.exists_choiceVerifier_mem_P}
+\leanok
+\uses{Complexity.P, Complexity.choiceVerifier, Complexity.choiceVerifier_append, Complexity.cont_choiceVerifier_mem_P, Turing.FinNDTM, Turing.NDTM.initCfg, Turing.NDTM.runWith}
+\difficulty{1}
+Let $N$ be a nondeterministic Turing machine over the binary alphabet, and let $C,c$ be
+natural numbers. There is a language $V$ in polynomial time such that for every pair of
+binary strings $x,u$ with $|u|=C(|x|+1)^c$, the concatenation $xu$ belongs to $V$ if and
+only if the run of $N$ on input $x$ using choice word $u$ halts with output exactly
+$[1]$.
+\end{theorem}
+
+\begin{theorem}[Nondeterministic host for masked selection]
+\lean{Complexity.exists_maskSelect_host}
+\label{Complexity.exists_maskSelect_host}
+\leanok
+\uses{Complexity.P, Complexity.b2GuessCfg, Complexity.b2Host, Complexity.b2UnaryTM, Complexity.b2_finish, Complexity.b2_guess_run, Complexity.b2_host_bound, Complexity.b2_start, Complexity.b2_unary_first, Complexity.contEmissionMask, Complexity.contSelect_eq_maskSelect, Complexity.cont_guess_time_bound, Complexity.cont_mask_count, Complexity.cont_mask_length, Complexity.cont_select_length, Complexity.maskSelect, Complexity.mem_P_iff, Turing.Cfg.init, Turing.FinNDTM, Turing.FinTM.computesFunInTime_polyUnary, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.NDTM.initCfg, Turing.NDTM.runWith, Turing.NDTM.runWith_append, Turing.NDTM.runWith_of_halt}
+\difficulty{6}
+Let $V$ be a language of binary strings in $\mathrm{P}$, and let $C,c\in\mathbb{N}$.
+There exist $K,e\in\mathbb{N}$ and a nondeterministic finite Turing machine $N$ such
+that, for every binary string $x$, there are a natural number $s$ and a Boolean mask $m$
+with exactly $C(|x|+1)^c$ true entries and $s+|m|\le K(|x|^e+1)$. For every binary
+string $w$ of length $K(|x|^e+1)$, the computation of $N$ on $x$ using choices $w$ halts
+and outputs the single bit indicating whether $x$ followed by the subsequence selected
+by the true entries of $m$ among the first $|m|$ bits of $w$ belongs to $V$.
 \end{theorem}

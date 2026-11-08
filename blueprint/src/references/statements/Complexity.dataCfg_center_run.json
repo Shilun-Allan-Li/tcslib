@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.dataCfg_center_run",
+ "key": "306df8006e038647",
+ "kind": "lemma",
+ "title": "Return to the Guide Origin",
+ "statement": "Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural number, and let $x$ be a schedule-alphabet input. Suppose a schedule configuration has guide tape equal to the fixed guide of radius $R$. Starting in the return-to-centre phase with guide head at $-R$, unary head at $u$, and data register $(q,b,\\mathrm{read},\\mathrm{carry})$, after $R+1$ steps the simulator is in the macrostep-check phase with guide head at $0$ and unary head at $u+1$. Its state register is the successor state selected by the source action of $M$ from $q$ and $\\mathrm{read}$; its answer bit, saved reads, neighbor registers, data tapes, and output are unchanged.",
+ "hypotheses_covered": [
+  "$W,M$ are finite machines over Boolean symbols",
+  "$a\\in\\mathbb N$",
+  "$x$ is a schedule-alphabet input",
+  "the base guide tape equals the guide of radius $R$",
+  "the initial phase is return-to-centre",
+  "initial unary head is $u$ and guide head is $-R$",
+  "the data register is $(q,b,\\mathrm{read},\\mathrm{carry})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$.  Running the\nsimulator exactly $R + 1$ steps from the return phase with guide head at $-R$\nand unary head at $u$ reaches the counter-test phase with unary head $u + 1$ and\nguide head at the origin; the simulated state is replaced by the successor state\nof the source action selected from the saved state and reads, while the answer\nbit, reads, neighbor registers, data tapes, and output are unchanged."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.RoundContract.counterLoopDone_traj",
+ "key": "c988d3937b3f45db",
+ "kind": "theorem",
+ "title": "Head Trajectories of a Counter Loop",
+ "statement": "Let $k$ be a natural number, let $S$ and $\u0007amma$ be types with decidable equality, let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an injection, let $M$ be a $k$-tape Turing machine, and let $a\u0007in S$ and $\\mathrm{exit}:\\mathrm{Option}(S)$. Let $R$ be a round contract for $M$ with anchor $a$ and escape set $\\{\\mathrm{exit}\\}$, and fix an input $x$. For $p=(i,w)$ and a configuration $d$ of the counter-loop machine, suppose the last tape of $d$ stores the encoded word $w$ at offsets $q$ for $-1\\le q\\le |w|$, as specified by the buffer convention, and that every round with index $r< v(w)$, starting from the body configuration associated with $d$, satisfies $R$'s precondition and has an endpoint in state $a$. Then for every time $q$ up to the counter-loop contract's prescribed duration, there exist $r$ and $u$ such that either $r<v(w)$ and $u$ is at most the duration of round $r$, or $r=v(w)$ and $u=0$, and the first $k$ work-tape head positions at time $q$ equal those of the run of $M$ from the start of round $r$ at time $u$.",
+ "hypotheses_covered": [
+  "Types $S$ and $\\Gamma$ have decidable equality",
+  "An injection from the Boolean alphabet into $\\Gamma$",
+  "A $k$-tape machine $M$, anchor $a$, and optional exit state",
+  "A round contract for $M$ with anchor $a$ and escape set $\\{\\mathrm{exit}\\}$",
+  "A fixed input $x$",
+  "The counter-loop contract precondition for $p=(i,w)$ and $d$: the specified encoded buffer contents on the last tape",
+  "The binary value of $w$ is the number of rounds considered",
+  "Each round indexed by $r<v(w)$ satisfies the round precondition and returns to state $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $k$ be a natural number, let $\\Gamma$ and $S$ be types with decidable equality, let\n$e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$ be an injection, and let $M$\nbe a Turing machine with $k$ work tapes, anchor state $a$, and escape state\n$\\mathrm{exit}$. Let $R$ be a round contract for $M$ with anchor $a$ and escape set\n$\\{\\mathrm{exit}\\}$. For a parameter $p=(i,w)$, write $v(w)$ for the base-two value of\nthe Boolean word $w$, and let $d$ be a configuration of the counter-loop machine whose\nstate is the counter-decrement running phase. Assume that, on the last tape, the cells\nfrom the head position through the next $|w|-1$ cells encode $w$ via $e$ (with the\nspecified blank-buffer convention), and that for every $r<v(w)$ the $r$th round of $M$,\nstarting from the body configuration associated with $d$, satisfies $R$'s precondition\nand returns to state $a$. Then at every time $q$ up to the counter-loop contract's\nprescribed duration, there exist natural numbers $r,u$ such that either $r<v(w)$ and $u$\nis at most the duration of that round, or $r=v(w)$ and $u=0$, and the first $k$\nwork-tape head positions at time $q$ equal those in the run of $M$ from the start of\nround $r$ at time $u$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.taut_syntax_parse",
+ "key": "a713bfeedfe7e784",
+ "kind": "lemma",
+ "title": "Syntax scan and CNF parsing",
+ "statement": "For every finite binary string $x$, start the six-state syntax scanner in the formula-level state and apply its transition function successively to the bits of $x$. The scanner ends in the exact-end state if and only if the exact-consumption parser returns a CNF formula on input $x$.",
+ "hypotheses_covered": [
+  "$x$ is a finite binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $x$, the string $x$ is accepted by the six-state formula\nsyntax scan from the formula-level state if and only if the exact-consumption formula\nparser succeeds on $x$."
+}

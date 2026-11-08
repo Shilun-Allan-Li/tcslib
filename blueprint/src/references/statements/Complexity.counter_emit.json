@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.counter_emit",
+ "key": "dfcb39bd1f962934",
+ "kind": "lemma",
+ "title": "Emission halts with the stored word",
+ "statement": "Let $x$ and $b$ be finite binary words, and let $p$ be any input-head position among the $|x|+2$ positions. Starting the four-state counter machine in its emit state, with input head at $p$, work head at $0$, tape contents given by $b$, and empty output, after $|b|+1$ steps its state is halted and its output is $b$.",
+ "hypotheses_covered": [
+  "Finite binary input word $x$",
+  "Input-head position $p$ among $|x|+2$ positions",
+  "Finite binary work-tape word $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the four-state binary-counter machine is in its emit state with a\nbinary word $b$ on the nonnegative work-tape cells, work head at cell $0$, and\nempty output. Then after exactly $|b| + 1$ steps the machine has halted and its\noutput equals $b$."
+}

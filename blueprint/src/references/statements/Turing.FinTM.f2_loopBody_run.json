@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopBody_run",
+ "key": "a6487c152cec3372",
+ "kind": "lemma",
+ "title": "Run of the loop-body machine",
+ "statement": "Let $B$ be a finite Turing machine over the Boolean alphabet, let $a$ be a state of $B$, and let $x$ be a Boolean input. Let $c$ be a configuration of $B$ on $x$ whose state is present, let $r$ be a Boolean, and let $t\\in\\mathbb{N}$. Suppose that for every $u<t$, the configuration reached from $c$ after $u$ steps has a present state, and that its state is not $a$ except possibly when $u=0$ and $r$ is true. Then after $t$ steps, the machine formed by adding one work tape and a Boolean release flag to the control state has the configuration obtained from the base machine's configuration after $t$ steps: the release flag is $r$ if $t=0$ and false otherwise, and the added tape has true at cell zero exactly when the base machine has halted by time $t$, and is blank there otherwise.",
+ "hypotheses_covered": [
+  "A finite Turing machine over Booleans",
+  "A chosen anchor state",
+  "A Boolean input",
+  "An initial configuration of the base machine",
+  "The initial configuration has a present state",
+  "A Boolean release parameter",
+  "A natural-number time $t$",
+  "The base run has a present state at every time $u<t$",
+  "At times $u<t$, the state avoids the anchor unless $u=0$ and release is true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

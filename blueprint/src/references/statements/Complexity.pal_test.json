@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.pal_test",
+ "key": "ae31734e0a7172cd",
+ "kind": "lemma",
+ "title": "Palindrome test phase",
+ "statement": "Let $x$ be a binary word, and let $r,i\\in\\mathbb{N}$ satisfy $i\\le |x|$ and $|x|=i+r$. Starting in the three-state palindrome machine's test configuration on input $x$, with the input head at position $i+1$, the work head at integer position $|x|-1-i$, and the first $|x|$ bits copied, after $r+1$ steps the machine is halted and its output is the one-bit word whose bit is true exactly when $x$ agrees with its reversal at every position $j$ satisfying $i\\le j<|x|$.",
+ "hypotheses_covered": [
+  "$x$ is a binary word",
+  "$r$ and $i$ are natural numbers",
+  "$i\\le |x|$",
+  "$|x|=i+r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word of length $n$, and let $r$ and $i \\le n$ satisfy\n$n = i + r$. Running the three-state palindrome machine for $r+1$ steps from the\ntest-state configuration on input $x$ with input head at cell $i+1$, all $n$ bits\ncopied, and work head at the integer cell $n-1-i$ produces a halted\nconfiguration whose output is the single bit \\emph{true} if every opposing pair\nof $x$ at or after position $i$ agrees (the $j$-th bit of $x^{R}$ equals the\n$j$-th bit of $x$ for all $i \\le j < n$), and \\emph{false} otherwise."
+}

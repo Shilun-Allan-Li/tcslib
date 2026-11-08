@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.Codec.adStep",
+ "key": "04d36fea09fb627b",
+ "kind": "def",
+ "title": "Addressed cyclic update step",
+ "statement": "Let $\\delta$ map a state and a list of $\\alpha$-values to a state, and let an addressed state have state component $s$, pointer $i$, and array $A$ indexed by $0,\\ldots,w$. On input $a\\in\\alpha$, first replace $A(i)$ by $a$. If $i=w$, apply $\\delta$ to $s$ and the updated array read in index order as a list, then set the pointer to $0$; otherwise, keep $s$ unchanged and advance the pointer to $(i+1)\\bmod(w+1)$. In either case, the resulting array is the updated array.",
+ "hypotheses_covered": [
+  "$\\sigma$ and $\\alpha$ are types",
+  "$w$ is a natural number",
+  "$\\delta\\colon\\sigma\\to\\mathrm{List}(\\alpha)\\to\\sigma$",
+  "the input value $a\\in\\alpha$",
+  "the starting pointer $i$ lies in $\\{0,\\ldots,w\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

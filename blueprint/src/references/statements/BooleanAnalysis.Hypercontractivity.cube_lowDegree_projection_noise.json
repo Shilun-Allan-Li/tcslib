@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.cube_lowDegree_projection_noise",
+ "key": "04d197cfbd6f1d38",
+ "kind": "theorem",
+ "title": "Noisy Low Degree Projection Bound",
+ "statement": "Let $g:\\{0,1\\}^n\\to\\mathbb R$, let $k\\in\\mathbb N$, and let $0<\\rho\\le 1$. Then the fourth power mean of the Fourier truncation of $g$ to degrees at most $k$ satisfies $\\|g^{\\le k}\\|_4\\le (\\sqrt{3}/\\rho)^k\\|T_\\rho g\\|_4$, where $T_\\rho$ is the noise operator and the norms use uniform expectation on the Boolean cube.",
+ "hypotheses_covered": [
+  "A Boolean function g on the n-dimensional cube",
+  "k is a natural number",
+  "0 < ρ",
+  "ρ ≤ 1"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a function on the uniform Boolean cube, $k\\in\\mathbb N$, and $0<\\rho\\le1$. Then $\\|f^{\\le k}\\|_4\\le(\\sqrt3/\\rho)^k\\|T_\\rho f\\|_4$. For a real function $h$ on the cube, use $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$, $\\widehat h(S)=\\mathbb E_x[h(x)\\chi_S(x)]$, $h^{\\le k}=\\sum_{|S|\\le k}\\widehat h(S)\\chi_S$, $\\|h\\|_p=(\\mathbb E_x|h(x)|^p)^{1/p}$, $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}\\widehat h(S)\\chi_S$, with uniform expectation $\\mathbb E_x$ and natural powers $0^0=1$."
+}

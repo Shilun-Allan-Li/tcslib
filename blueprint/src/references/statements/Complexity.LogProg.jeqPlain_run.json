@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.LogProg.jeqPlain_run",
+ "key": "20facc3bb5dc7f7b",
+ "kind": "lemma",
+ "title": "Plain Binary Equality Run",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a register, and let $j_K,j_{K2},j_C,j_{RB}(b),j_{I1}(b),j_{I2}(b)$ be states, with designated states $j_C$ and $j_{RB}(b)$ depending on a Boolean $b$. Assume that at every input and work-tape reading, the machine transitions from these states are respectively the prescribed skip action, the action moving the input head right and register head right, the comparison action, the return action, the action moving the input head left and register head left, and the rewrite action entering the positive-answer state when $b$ is true and the negative-answer state otherwise. Assume none of these states is a call state. If the input is the pairing of a string of $n$ ones with a word $w$, and register $r$ initially contains the binary expansion of a natural number $a$ on a buffer tape, then for some time $T$ the run from state $j_K$, input-head position $1$, and register-head position $0$ reaches that same head-position configuration in the state selected by whether $w$ equals the binary expansion of $a$: the positive-answer state if they are equal, and the negative-answer state otherwise. At every earlier time $t<T$, the run is in a state that is not a call state, with the register head between $-1$ and the length of the binary expansion of $a$, inclusive.",
+ "hypotheses_covered": [
+  "The program and oracle are fixed.",
+  "A register index is fixed.",
+  "The designated states are fixed, including Boolean-indexed states.",
+  "The transition from the skip state has the prescribed skip action.",
+  "The transition from the second state has the prescribed input-right and register-right action.",
+  "The transition from the comparison state has the prescribed comparison action.",
+  "The transition from each return state has the prescribed return action.",
+  "The transition from each first intermediate state has the prescribed input-left and register-left action.",
+  "The transition from each final intermediate state has the prescribed rewrite action, choosing the answer state according to the Boolean.",
+  "None of the designated states is a call state.",
+  "The input is the pairing of $n$ ones and the word $w$.",
+  "Register $r$ initially contains the buffer-tape encoding of the binary expansion of $a$.",
+  "The initial run configuration has state $j_K$, input-head position $1$, and register-head position $0$."
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement refers to action constructions whose definitions are not included in the supplied material, so their operational details cannot be rendered more specifically.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

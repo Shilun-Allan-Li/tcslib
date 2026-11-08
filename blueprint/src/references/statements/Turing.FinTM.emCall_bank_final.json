@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_bank_final",
+ "key": "18515dc512bbcd1d",
+ "kind": "lemma",
+ "title": "Cleaner return advances the blank prefix",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $\\mathit{emit}\\in\\{\\mathrm{false},\\mathrm{true}\\}$, and let $x,\\mathit{arg},\\mathit{cap}$ be Boolean words. For any time $T$ and source tape $i$, take the bank frame with the first $i$ data, interval-marker, origin-marker, and head entries blank, and the remaining entries taken from the run of $M$ on $\\mathit{arg}$ at time $T$ (with the corresponding visited-span markers and head positions). Embedding the cleaner's three-tape configuration in cleaner state $3$, with its three tapes blank and heads at $0$, into the three slots for tape $i$ yields exactly the bank frame with the first $i+1$ entries blank and the cleaner in its return state for tape $i$.",
+ "hypotheses_covered": [
+  "finite-state Boolean machine $M$",
+  "Boolean mode $\\mathit{emit}$",
+  "Boolean input, argument, and capture words $x,\\mathit{arg},\\mathit{cap}$",
+  "time $T\\in\\mathbb N$",
+  "source tape index $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode, input, argument and capture words, time $T$, and source tape $i$:\nrelocating the interval cleaner's blank return endpoint into the cleanup frame whose\nfirst $i$ banks are blank yields the cleanup frame whose first $i + 1$ banks are blank,\nin the cleaner-return control state for bank $i$."
+}

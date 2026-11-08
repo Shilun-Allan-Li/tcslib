@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.desc1",
+ "key": "53baf4c39e4ad1c0",
+ "kind": "theorem",
+ "title": "First recursive descent branch",
+ "statement": "Let $E,s,w,i\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean oracle on four indices and Boolean words, let $x$ be a Boolean word, and let $\\mathrm{st}$ be a register state. Assume $s\\leq w$, $i+1\\leq w$, the recursive call property holds at level $i$, the state satisfies the level-$(i+1)$ invariant with parameters $s,w$, and its midpoint register $M$ is strictly less than $2^w$. Then there is an $M_1\\leq 2^w$ such that, starting at the midpoint-search loop with this state, the machine reaches the phase-1 push site if the level-$i$ reachability predicate holds from the source code $U$ to the current midpoint $M$, and otherwise reaches the phase-0 failure site. At the end, the target register is the old midpoint, the popped-endpoint register is the old target, and the midpoint register is $M_1$; throughout the run all configurations satisfy the guard bounding every register by $2^{w^2}$ and requiring valid instructions.",
+ "hypotheses_covered": [
+  "$s,w,i,E$ are natural numbers",
+  "$\\mathrm{orc}:\\mathrm{Fin}(4)\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{Bool}$",
+  "$x$ is a Boolean word",
+  "$s\\leq w$",
+  "$i+1\\leq w$",
+  "The recursive call property holds at level $i$",
+  "$\\mathrm{st}$ is a register state",
+  "$\\mathrm{st}$ satisfies the invariant at level $i+1$ for $s,w$",
+  "The midpoint register of $\\mathrm{st}$ is less than $2^w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

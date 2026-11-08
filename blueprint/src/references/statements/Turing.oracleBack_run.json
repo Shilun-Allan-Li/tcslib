@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.oracleBack_run",
+ "key": "7c5174948d71e8de",
+ "kind": "theorem",
+ "title": "Oracle Backward Run",
+ "statement": "Let $x$ be a finite Boolean input, let $f\\colon\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$ be a work-tape content function, and let $p\\in\\mathbb{Z}$. Choose a side $s\\in\\mathrm{Bool}$ and a verdict $v\\in\\mathrm{Bool}$, and assume $p$ lies on side $s$ of the origin: if $s$ is true then $0\\le p$, and if $s$ is false then $p\\le 0$. For any input-head position $ip$ and output string $out$, after every integer number $u$ of steps with $u\\le |p|-1$, the machine started in the backward-dispatch configuration at work-tape position $p$ has the same configuration as the one with unchanged input head and output, the same backward-dispatch state, and work-tape position $\\epsilon_s(1+u)$, where $\\epsilon_s=1$ if $s$ is true and $\\epsilon_s=-1$ if $s$ is false.",
+ "hypotheses_covered": [
+  "Boolean input string $x$",
+  "Work-tape content function $f:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{Bool})$",
+  "Integer position $p$",
+  "Side $s$ and verdict $v$ are Boolean",
+  "$p$ lies on the side of zero specified by $s$",
+  "Input-head position $ip$ is among the valid positions for $x$",
+  "Output string $out$",
+  "Natural step count $u$ satisfies $u\\le |p|-1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

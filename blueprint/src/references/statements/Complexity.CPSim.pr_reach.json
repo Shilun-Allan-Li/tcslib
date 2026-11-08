@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.CPSim.pr_reach",
+ "key": "c87e20bcfede18fd",
+ "kind": "lemma",
+ "title": "Reachability through a print simulation",
+ "statement": "Let a counter program $P$ have a print instruction at state $l$, printing register $r$ and continuing at state $l'$. Let its simulated register values be $\\rho$, and let $ps,o_0\\in\\mathbb{N}$. Suppose every value $\\rho(s)$ is at most $B$, $ps\\le B$, and $o_0+\\rho(r)\\le p$ and $o_0+\\rho(r)\\le B$. Suppose the two oracles on inputs pairing $n$ ones with the binary expansion of $h$ answer, respectively, whether $h$ is less than the length of a fixed word $u$, and the bit of $u$ at position $h$, defaulting to false beyond its end. For every $d,j\\in\\mathbb{N}$ with $j+d=\\rho(r)$, the compiled machine reaches the simulation state $l'$ from the print-processing state, on the input pairing $n$ ones with the binary expansion of $p$, starting with original registers $\\rho$, pointer value $ps$, output-position value $o_0+j$, and temporary value $j$, and satisfying the prescribed state and register bounds at every earlier step.",
+ "hypotheses_covered": [
+  "$P$ has a print instruction at $l$ on register $r$, continuing at $l'$",
+  "Every original register value under $\\rho$ is at most $B$",
+  "$ps\\le B$",
+  "$o_0+\\rho(r)\\le p$",
+  "$o_0+\\rho(r)\\le B$",
+  "Oracle 0 answers whether $h<|u|$ on the specified paired input",
+  "Oracle 1 returns the bit of $u$ at position $h$, defaulting to false",
+  "$d,j$ are natural numbers with $j+d=\\rho(r)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

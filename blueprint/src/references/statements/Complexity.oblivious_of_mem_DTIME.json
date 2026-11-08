@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.oblivious_of_mem_DTIME",
+ "key": "7f6dd66f9fd329f2",
+ "kind": "theorem",
+ "title": "Oblivious simulation with quadratic overhead",
+ "statement": "Let $T\\colon\\mathbb{N}\\to\\mathbb{N}$ be time-constructible, and let $L$ be a binary language in $\\mathrm{DTIME}(T)$. Then there are a finite-state binary Turing machine $M$ and a natural number $c$ such that $M$ is oblivious and decides $L$ within $c\\,(T(n)+1)^2$ steps on every input of length $n$.",
+ "hypotheses_covered": [
+  "$T$ is time-constructible",
+  "$L\\in\\mathrm{DTIME}(T)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T$ be a time-constructible bound and let $L$ be a binary language in\n$\\mathrm{DTIME}(T)$.  Then there exist an oblivious machine $M$ — one whose head\npositions at every time step depend only on the input length — and a constant\n$c$ such that $M$ decides $L$ within time $c\\,(T(n)+1)^2$.  This is the first\nassertion of Arora--Barak, Exercise~1.5."
+}

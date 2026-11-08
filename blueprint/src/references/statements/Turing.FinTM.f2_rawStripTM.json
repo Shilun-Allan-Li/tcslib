@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_rawStripTM",
+ "key": "ddd03aff3c1001b4",
+ "kind": "def",
+ "title": "Raw strip machine",
+ "statement": "This is a finite Turing machine over the Boolean alphabet with one work tape and four states, starting in state $0$. In state $0$, it moves right across the input, copying each scanned bit to the work tape and remaining in state $0$; at the right blank it moves the work head left and enters state $1$. In state $1$, it halts at a blank work cell, or erases the scanned bit, moves left, and enters state $2$ if that bit was true and state $1$ if it was false. In state $2$, it moves left across nonblank work cells; at a blank cell it moves right and enters state $3$. In state $3$, it outputs each scanned work bit while moving right, and halts at a blank cell.",
+ "hypotheses_covered": [
+  "Boolean tape alphabet",
+  "One work tape",
+  "Four states",
+  "Initial state is 0"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

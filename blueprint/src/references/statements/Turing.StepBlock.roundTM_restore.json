@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.StepBlock.roundTM_restore",
+ "key": "fd926769e89b9de4",
+ "kind": "lemma",
+ "title": "Restoring tapes at the end of a round",
+ "statement": "Let $k,n\\in\\mathbb{N}$, let $x$ be a finite binary input, let $c$ be a configuration of a $k$-tape machine with states indexed by $\\{0,\\ldots,n\\}$, and let $a$ be an action. Choose binary words $\\mathrm{table},\\mathrm{before},\\mathrm{tail},\\mathrm{word},\\mathrm{pre}$ and a Boolean flag $\\ell$, with $\\mathrm{table}=\\mathrm{before}$ followed by $\\mathrm{tail}$. The round machine runs from the table-tail configuration based on the post-action configuration $a(c)$, with the table head at $|\\mathrm{before}|$ and the summary head at $2+|\\mathrm{word}|$, to the configuration based on $a(c)$ with both auxiliary heads at $0$ and the exit label determined by $\\ell$. It takes $|\\mathrm{tail}|+|\\mathrm{table}|+|\\mathrm{word}|+15$ steps and satisfies the round-span property.",
+ "hypotheses_covered": [
+  "Natural numbers $k,n$ and finite binary input $x$",
+  "Configuration $c$ and action $a$",
+  "Binary words table, before, tail, word, and output prefix",
+  "Boolean flag $\\ell$",
+  "Table is the concatenation of before and tail"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

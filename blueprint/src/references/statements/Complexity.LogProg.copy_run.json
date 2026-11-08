@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.copy_run",
+ "key": "faf615078eb6f56f",
+ "kind": "theorem",
+ "title": "Bounded run of a register copy routine",
+ "statement": "Let $A$ be a register program with oracle and let $B$ be a natural number. Choose distinct registers $src,dst,z$ and states $l,l_1,l_2,l_3,l_4,l_5,l_6,l_x$. Suppose the program instructions at these states implement the following routine: at $l$, branch on whether $src=0$; if nonzero, decrement $src$, increment $dst$, and increment $z$, then return to $l$; if zero, branch on whether $z=0$; while $z$ is nonzero, decrement $z$, increment $src$, and repeat that branch; when $z=0$, proceed to $l_x$. For every initial register assignment $v$ with $v(z)=0$, all register values at most $B$, and $v(dst)+v(src)\\le B$, there is a finite run from state $l$ to state $l_x$ that changes only $dst$, setting it to $v(dst)+v(src)$, and leaves every register value at most $B$. Every configuration before the final one satisfies the program's guard: any equality-branch registers are distinct, any input-dependent checks are valid on $x$, and any call uses an argument list without repetitions.",
+ "hypotheses_covered": [
+  "Distinctness of $src,dst,z$",
+  "The seven instruction equations specifying the routine",
+  "The initial register assignment $v$",
+  "The initial value $v(z)=0$",
+  "Every initial register value is at most $B$",
+  "The bound $v(dst)+v(src)\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

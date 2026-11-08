@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.Invariance.eval_coordinate_split",
+ "key": "925143f368dc03df",
+ "kind": "lemma",
+ "title": "Coordinate decomposition of polynomial evaluation",
+ "statement": "Let $n$ be a natural number, let $F$ be a real multilinear polynomial on the Boolean cube of dimension $n$, let $i$ be a coordinate, and let $X_j:\\Omega\\to\\mathbb R$ be a family of real-valued functions on a type of inputs $\\Omega$. For every $\\omega\\in\\Omega$, the evaluation of $F$ at $X(\\omega)$ is the sum of its part omitting coordinate $i$ and $X_i(\\omega)$ times the evaluation of the coefficient polynomial of the cube derivative in coordinate $i$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$F$ is a multilinear polynomial on $n$ coordinates",
+  "$i$ is an index in the $n$-coordinate set",
+  "$\\Omega$ is a type",
+  "$X$ is a family of real-valued functions indexed by the $n$ coordinates",
+  "$\\omega\\in\\Omega$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{j\\in S}x_j$ be a real multilinear polynomial and fix $i\\in\\{1,\\ldots,n\\}$. Define $A_i(x)=\\sum_{S:i\\notin S}a_S\\prod_{j\\in S}x_j$ and $D_i(x)=\\sum_{S:i\\notin S}a_{S\\cup\\{i\\}}\\prod_{j\\in S}x_j$. For any functions $X_j\\colon\\Omega\\to\\mathbb R$ and $\\omega\\in\\Omega$, $F(X(\\omega))=A_i(X(\\omega))+X_i(\\omega)D_i(X(\\omega))$."
+}

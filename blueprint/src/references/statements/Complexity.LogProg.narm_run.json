@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.narm_run",
+ "key": "09f1e618a004a327",
+ "kind": "theorem",
+ "title": "Simulation of a Nondeterministic Register Program",
+ "statement": "Fix nonnegative integers $m,d,k_D$, sets $\\Lambda,SD$, an input bit string $x$, a nondeterministic register program $A$ with $m$ registers and $d$ oracle choices, an initial location $l_0$, an oracle, a deterministic $k_D$-tape machine $D$, initial decider states $q_0(j)$, and bounds $B,W$. For every $N\\ge 0$, location $l\\in\\Lambda$, register valuation $v:\\{0,\\ldots,m-1\\}\\to\\mathbb N$, and output bit string $\\mathrm{out}$, suppose every length-$N$ choice string makes the program halt from configuration $(l,v,\\text{no answer})$, and every configuration before halting satisfies the guard requiring the deterministic preconditions and the register bit-length bounds by $W$. Then there is a time $T$ such that, from the compiled machine configuration corresponding to $(l,v,\\mathrm{out})$, every choice string of length at most $T$ yields a configuration whose first $m$ work-tape heads stay between $-1$ and $W$ and whose remaining work-tape heads stay within distance $B$ of zero; every choice string of length exactly $T$ yields a halting configuration whose output is $\\mathrm{out}$ followed by an answer attainable by the register program in $N$ choices. Moreover, for every answer attainable by the register program in $N$ choices, some length-$T$ choice string makes the compiled machine output $\\mathrm{out}$ followed by that answer.",
+ "hypotheses_covered": [
+  "Nonnegative integers $m,d,k_D$; sets $\\Lambda,SD$; input bit string $x$",
+  "Nondeterministic register program $A$, initial location $l_0$, oracle, deterministic decider $D$, and initial states $q_0(j)$",
+  "Natural-number bounds $B,W$",
+  "For every $N$, location $l$, register valuation $v$, and output word, the stated halting-and-guard condition holds",
+  "All length-$N$ choice strings halt from $(l,v,\\text{no answer})$ and satisfy the guard at every earlier nonhalting prefix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

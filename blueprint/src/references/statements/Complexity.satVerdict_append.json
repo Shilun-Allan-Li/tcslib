@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satVerdict_append",
+ "key": "d3b6b1d16b1c8872",
+ "kind": "lemma",
+ "title": "Verdict on a concatenation of fixed lengths",
+ "statement": "Let $x$ and $u$ be Boolean words such that $|u|=|x|+1$. The verifier verdict on their concatenation equals the conjunction of the mode-guarded width-three test of the formula decoded from $x$ and the evaluation of that formula under the assignment carried by $u$.",
+ "hypotheses_covered": [
+  "$x$ and $u$ are Boolean words",
+  "$|u|=|x|+1$",
+  "the mode flag is either true or false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ and $u$ be binary words with $|u| = |x| + 1$. Then the verifier verdict on\nthe concatenation $x \\mathbin{+\\!\\!+} u$ equals the conjunction of the (mode-guarded)\nwidth-three test of the formula decoded from $x$ with the evaluation of that formula\nunder the assignment read off $u$."
+}

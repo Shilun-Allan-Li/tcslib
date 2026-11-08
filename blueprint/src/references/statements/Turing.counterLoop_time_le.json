@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.counterLoop_time_le",
+ "key": "7b7a5404a2e0c4f7",
+ "kind": "theorem",
+ "title": "Time bound for the counter loop",
+ "statement": "Let $M$ be a multi-tape Turing machine, let $x$ be an input word, let $c$ be a configuration of $M$ on $x$, and let $\\tau$ assign a natural-number time bound to each such configuration. For a Boolean word $w$ whose binary value is $d$, and a natural number $B$ such that $\\tau$ is at most $B$ on each configuration reached after $r$ counter-loop rounds for every $r<d$, the sum of these $d$ time bounds plus the counter overhead of $w$ through round $d$ is at most $dB+4d+2|w|+2$.",
+ "hypotheses_covered": [
+  "A natural number of work tapes and a multi-tape Turing machine over arbitrary symbol and state types",
+  "An input word and a configuration of the machine on that input",
+  "A time-bound function from configurations to natural numbers",
+  "A Boolean word and a natural number $d$ equal to its binary value",
+  "A natural-number bound $B$",
+  "For every $r<d$, the time bound on the configuration after $r$ counter-loop rounds is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

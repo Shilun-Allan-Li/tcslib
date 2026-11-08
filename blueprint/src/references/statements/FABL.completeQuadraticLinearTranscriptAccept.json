@@ -1,0 +1,15 @@
+{
+ "lean_name": "FABL.completeQuadraticLinearTranscriptAccept",
+ "key": "dd8440f75227b905",
+ "kind": "def",
+ "title": "Linear-check transcript acceptance",
+ "statement": "Given a seed and a transcript of three optional Boolean values, define acceptance as follows. An endpoint seed accepts exactly when the first value is present and is false for either Boolean endpoint alternative, or true for the singleton alternative. For a position seed with the false transition alternative, all three values must be present and their first two Boolean encodings must sum in $\\mathbb F_2$ to the third; with the true alternative, all three must be present and the third must be the conjunction of the first two; with the singleton alternative, all three must be present and the first and second encodings must sum in $\\mathbb F_2$ to the third. Missing required values cause rejection.",
+ "hypotheses_covered": [
+  "A seed of the specified endpoint-or-position form",
+  "A transcript of three optional Boolean values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

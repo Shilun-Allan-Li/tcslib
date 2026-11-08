@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.MachineFormat.canonBoolPopTM",
+ "key": "04ed478316fd43d2",
+ "kind": "def",
+ "title": "Canonical Boolean pop machine",
+ "statement": "For $k$ work tapes and a selected tape $i<k$, define a machine with states $\\{\\mathrm{halt},0,1\\}$ whose initial state is halt. In the halt state it stays on the input tape, writes blank on tape $i$, and outputs the bit currently scanned on tape $i$, treating a blank as $0$; in state $b\\in\\{0,1\\}$ it stays on the input tape and outputs $b$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "The selected work tape $i$ is one of the $k$ tapes"
+ ],
+ "confidence": "low",
+ "caveat": "The helper definitions for the two action constructors are omitted, so the precise movement, write, output, and successor-state behavior cannot be fully confirmed from this snippet alone.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

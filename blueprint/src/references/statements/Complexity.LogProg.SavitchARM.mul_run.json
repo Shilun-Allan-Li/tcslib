@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.mul_run",
+ "key": "fb354808b61f555f",
+ "kind": "theorem",
+ "title": "Bounded multiplication routine",
+ "statement": "Fix a natural number $E$, an oracle assigning a Boolean value to each pair of an index in a four-element set and a finite Boolean word, an input Boolean word $x$, and a natural-number bound $B$. For either Boolean choice $f$ and any register state $st$ whose counter, scratch accumulator, and copy-and-shift scratch register are all zero, suppose every register value is at most $B$ and the product of the power accumulator with itself when $f$ is true, and with the base register when $f$ is false, is at most $B$. Then the machine reaches the exit state of the corresponding transfer move, with the power accumulator equal to that product; at each configuration strictly before the endpoint, the machine's validity conditions hold and every register remains at most $B$.",
+ "hypotheses_covered": [
+  "$E$ is a natural number",
+  "The oracle has four indices and takes finite Boolean words",
+  "$x$ is a finite Boolean word",
+  "$B$ is a natural-number bound",
+  "$f$ is a Boolean choice",
+  "$st$ is a register state",
+  "The counter register is zero",
+  "The multiplication accumulator is zero",
+  "The copy-and-shift scratch register is zero",
+  "Every register value in $st$ is at most $B$",
+  "The specified product is at most $B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a Savitch register machine parameter $E$, an oracle, an input, and a register bound\n$B$. For either choice of multiplier—using the base register or the power register—if\nthe counter, product accumulator, and scratch register start at $0$, every register\ninitially is at most $B$, and the resulting product is at most $B$, then the\nmultiplication routine reaches its exit label with the power register equal to that\nproduct. At every configuration strictly before termination, the machine's validity\nconditions hold and every register is at most $B$."
+}

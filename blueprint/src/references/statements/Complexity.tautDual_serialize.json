@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.tautDual_serialize",
+ "key": "d9e85a3c7a963db2",
+ "kind": "lemma",
+ "title": "Serialization of the De Morgan dual",
+ "statement": "Let $\\varphi$ be a CNF formula over variables indexed by $\\mathbb{N}$. Scanning its binary serialization from the formula-level state and flipping the bit read in each polarity state yields exactly the binary serialization of the DNF obtained by negating every literal of $\\varphi$ in place.",
+ "hypotheses_covered": [
+  "$\\varphi$ is a CNF formula over variables indexed by $\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every CNF formula $\\varphi$, the polarity-flipping scan from the formula-level\nstate of the formula syntax scanner maps the serialization of $\\varphi$ to the\nserialization of its De Morgan dual, the DNF obtained from $\\varphi$ by negating every\nliteral in place."
+}

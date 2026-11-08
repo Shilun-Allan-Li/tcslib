@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.Internal.Inv",
+ "key": "a17f56e09ddaeeec",
+ "kind": "def",
+ "title": "Evaluation-state invariant",
+ "statement": "Let an evaluation state consist of a phase $\\phi$, a Boolean list $vals$, a list $M$ of natural numbers marking tape cells, and a natural-number work-head position $j$. The invariant requires $j\\le |vals|$, every $a\\in M$ to satisfy $a<|vals|$, and the main-phase predicate of $\\phi$ to be true; it also requires $j=0$ whenever the walk-phase predicate of $\\phi$ is false.",
+ "hypotheses_covered": [
+  "$j\\le |vals|$",
+  "Every marked position $a\\in M$ satisfies $a<|vals|$",
+  "The main-phase predicate of $\\phi$ is true",
+  "If the walk-phase predicate of $\\phi$ is false, then $j=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

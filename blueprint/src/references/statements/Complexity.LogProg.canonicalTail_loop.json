@@ -1,0 +1,33 @@
+{
+ "lean_name": "Complexity.LogProg.canonicalTail_loop",
+ "key": "06bfedec7d25be80",
+ "kind": "theorem",
+ "title": "Canonical tail loop",
+ "statement": "Let $A$ be a program with $m$ registers, control states in $\\Lambda$, and oracle deciders indexed by $d$, and choose pairwise distinct registers $\\mathsf{ptr},\\mathsf{limit},\\mathsf{cap}$. Suppose the loop compares the pointer with the limit, reads a decider answer at the binary encoding of the pointer value, halves the cap register, and advances the pointer by a fixed stride before repeating; on reaching the limit it reports done or fail according to a supplied final bit, while a zero cap or a failed length check leads to fail. Assume $\\mathsf{stride}>0$ and the stated transitions of $A$ implement these branches, query, halving, and stride increments exactly. Let $w$ be a Boolean word, let $\\mathit{last}$ be a Boolean bit, and suppose all initial registers are at most $B$, the limit equals the pointer plus $\\mathsf{stride}\\,|w|$, and each oracle query at pointer value plus $\\mathsf{stride}\\,i$ returns bit $i$ of $w$ for every $i<|w|$ (defaulting to false when absent). Then there are final register values, still bounded by $B$, with the pointer at most the limit and every register other than the pointer and cap unchanged, such that the program reaches the control state determined as follows: if $|w|$ is at most the bit length of the initial cap, it reports done when the last bit of $w$ (defaulting to $\\mathit{last}$ for an empty word) is true, and fail otherwise; if the length exceeds that bit length, it reports fail. Every intervening configuration satisfies the program’s safety conditions and keeps all registers bounded by $B$.",
+ "hypotheses_covered": [
+  "A is a program with m registers and control states Λ",
+  "oracle has d Boolean deciders on bit strings",
+  "ptr, limit, cap are pairwise distinct registers",
+  "j is a decider index",
+  "test maps Booleans to control states",
+  "check, read, fail, done are control states",
+  "halve maps Booleans to control states",
+  "advance maps a Boolean and natural index to a control state",
+  "stride and B are natural numbers",
+  "stride is positive",
+  "test b compares ptr and limit, branching to done when b is true and fail when b is false if equal, and check otherwise",
+  "check branches to fail if cap is zero and read otherwise",
+  "read calls decider j in whole-input mode with argument ptr and branches to halve true/false",
+  "halve b halves cap and continues at advance b 0",
+  "advance b i increments ptr for every i below stride",
+  "advance b stride equals test b",
+  "w is a Boolean word and last is a Boolean bit",
+  "initial register valuation v has every register at most B",
+  "initial limit value equals pointer value plus stride times the length of w",
+  "for each i below the length of w, the oracle answer on the paired input and binary encoding of pointer value plus stride times i equals bit i of w, defaulting to false"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

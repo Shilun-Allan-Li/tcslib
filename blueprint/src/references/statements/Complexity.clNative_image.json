@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clNative_image",
+ "key": "c21b0eba3baf76a1",
+ "kind": "lemma",
+ "title": "Polynomial-time computation on an image",
+ "statement": "Let $f$ be a polynomial-time computable function from binary words to binary words. Suppose a finite Boolean Turing machine $B$ has the following property: for every binary word $x$, it computes $g(x)$ from input $f(x)$ within $b(|f(x)|+1)^r$ steps, for natural numbers $b,r$. Then $g$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$B$ is a finite Boolean Turing machine",
+  "$b,r$ are natural numbers",
+  "for every $x$, $B$ computes $g(x)$ from $f(x)$ within the stated time bound"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f$ be polynomial-time computable, and let a machine compute $g(x)$ from $f(x)$ within $b\\,(|f(x)|+1)^r$ steps for every input $x$, correctness being required only on the image of $f$. Then $g$ is polynomial-time computable; the produced intermediate word is bounded by the first machine's runtime and the full buffered-composition ledger is charged."
+}

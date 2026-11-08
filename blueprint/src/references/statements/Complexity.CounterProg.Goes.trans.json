@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.CounterProg.Goes.trans",
+ "key": "b474af6de9035a96",
+ "kind": "theorem",
+ "title": "Composition of counter-program runs",
+ "statement": "Let $P$ be a counter program with $R$ natural-number registers and labels in $\\Lambda$, run on a binary input $x$. Suppose that every output word $o$ admits a run of at most $b$ steps from $\\ell,\\rho,p,o$ to $\u001b[0m\\ell',\\rho',p'$ with output $o$ followed by $e$, and that every output word admits a run of at most $b'$ steps from $\\ell',\\rho',p'$ to $\\ell''$ (a label or halt), $\\rho''$, and $p''$, appending $e'$. Then every $o$ admits a run of at most $b+b'$ steps from $\\ell,\\rho,p,o$ to $\\ell'',\\rho'',p''$, with output $o$ followed by the concatenation $e$ and $e'$.",
+ "hypotheses_covered": [
+  "A counter program $P$ with $R$ natural-number registers and label set $\\Lambda$",
+  "A binary input $x$",
+  "A first run relation from $\\ell,\\rho,p$ to the label $\\ell'$, assignment $\\rho'$, and position $p'$, appending $e$ within bound $b$",
+  "A second run relation from $\\ell',\\rho',p'$ to $\\ell''$, assignment $\\rho''$, and position $p''$, appending $e'$ within bound $b'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, let $\\ell, \\ell'$ be labels,\n$\\ell''$ a label or the halted state, $\\rho, \\rho', \\rho''$ register vectors and\n$p, p', p''$ input positions.  Suppose that from label $\\ell$ with registers\n$\\rho$ and $p$ symbols read, $P$ reaches label $\\ell'$ with registers $\\rho'$ and\n$p'$ symbols read within $b$ steps while appending $e$ to whatever output was\nprinted before, and that from $(\\ell', \\rho', p')$ it reaches $(\\ell'', \\rho'',\np'')$ within $b'$ steps while appending $e'$.  Then from $(\\ell, \\rho, p)$ it\nreaches $(\\ell'', \\rho'', p'')$ within $b + b'$ steps while appending the\nconcatenation $e\\,e'$."
+}

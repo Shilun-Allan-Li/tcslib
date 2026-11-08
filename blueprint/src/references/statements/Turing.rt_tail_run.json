@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.rt_tail_run",
+ "key": "9cf99a2704f57d76",
+ "kind": "theorem",
+ "title": "Bounded construction of a tail field",
+ "statement": "Let $m,k$ be nonnegative integers, let $\text{src}$ and $\text{dst}$ be distinct indices in $\text{Fin}(m)$, let $w$ be a finite word over an alphabet $\u000393$, and let $\text{last}$ be an alphabet symbol. Form the word $F$ by joining $k$ copies of $w$ followed by the one-symbol word $[\text{last}]$, with a blank separator between consecutive words. Suppose a configuration $d$ on a fixed input is in the prescribed entry state, the source tape contains the word $w$ at each offset $p$ with $-1\\le p\\le |w|$ (using blank cells outside the word), and the destination tape is blank at each offset $p$ with $-1\\le p\\le |F|$. The constructed machine reaches its prescribed exit state at some time $t\\le (k+1)(4|w|+12)$ and is not in that state at any earlier time. At every time $u\\le t$, each work-tape head is at distance at most $|F|+1$ from its initial position; at time $t$, the configuration agrees with $d$ except that its state is the exit state and the destination tape contains $F$ from its initial head position onward, with all other cells and tapes unchanged.",
+ "hypotheses_covered": [
+  "$m,k\\in\\mathbb N$",
+  "Distinct indices $\\text{src},\\text{dst}\\in\\text{Fin}(m)$",
+  "A symbol $\\text{last}$ in the alphabet $\\Gamma$",
+  "A word $w$ over $\\Gamma$",
+  "Initial configuration $d$ is in the prescribed entry state",
+  "Source tape agrees with the buffer containing $w$ at every offset $-1\\le p\\le |w|$",
+  "Destination tape is blank at every offset $-1\\le p\\le |F|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

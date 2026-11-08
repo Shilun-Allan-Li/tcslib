@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.guessRunTM_accepts_iff",
+ "key": "f3fe1633e29869be",
+ "kind": "theorem",
+ "title": "Acceptance criterion for the guess-and-run machine",
+ "statement": "Let $P$ and $Q$ be deterministic machines with Boolean work tapes, state sets $SP$ and $SQ$, and let $pexit$ be a state of $P$, $j$ a work-tape index, and $qentry$, $acc$, and $rej$ states of $Q$. Fix a finite Boolean input $z$, a time $TP$, and a configuration $cP$ such that running $P$ from its initial configuration on $z$ for $TP$ steps yields $cP$, whose state is $pexit$, and no earlier configuration has state $pexit$. Suppose that, for some natural number $m$, the $m$ cells starting at the head position of tape $j$ in $cP$ are all nonblank, the next cell is blank, and the cell immediately to their left is blank. Let $T$ be a natural number such that for every Boolean word $s$ of length $m$, machine $Q$, started in state $qentry$ with $s$ written on tape $j$ as prescribed by the guessed-run construction, reaches either $acc$ or $rej$ within some time $TQ\\le T$, and reaches neither verdict at any earlier time. For every natural number $B$ with $TP+2m+T+11\\le B$, there is a choice word of length $B$ that makes the guess-and-run machine halt with output $[\\mathrm{true}]$ if and only if there is a Boolean word $s$ of length $m$ and a time $TQ$ at which $Q$ reaches $acc$, reaches neither $acc$ nor $rej$ earlier, and has empty output at time $TQ$.",
+ "hypotheses_covered": [
+  "Natural number $k$ and state types $SP,SQ$ with decidable equality",
+  "Deterministic machines $P,Q$",
+  "States $pexit,qentry,acc,rej$ and a tape index $j<k$",
+  "A finite Boolean input $z$",
+  "A time $TP$ and configuration $cP$ with $P$ reaching $cP$ from its initial configuration at time $TP$",
+  "The state of $cP$ is $pexit$",
+  "No earlier run of $P$ has state $pexit$",
+  "A natural number $m$ such that the $m$ cells beginning at tape $j$'s head position are nonblank",
+  "The cell immediately following those $m$ cells is blank",
+  "The cell immediately preceding the block is blank",
+  "A natural number $T$ bounding the time to reach either verdict for every Boolean word of length $m$",
+  "Neither verdict occurs before the specified first-verdict time",
+  "A natural number $B$ with $TP+2m+T+11\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

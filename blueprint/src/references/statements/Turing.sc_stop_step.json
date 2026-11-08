@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.sc_stop_step",
+ "key": "5ab88e6fd353a2e1",
+ "kind": "theorem",
+ "title": "Stopping state triggers a finish step",
+ "statement": "Let $k$ be a natural number, let $\\Gamma$ and $S$ be types, let $e$ be an injection from the Boolean alphabet into $\\Gamma$, let $M$ be a Turing machine with $k$ work tapes, alphabet $\\Gamma$, and state set $S$, and let $\\mathrm{stopAt}:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$. For any finite input $x$ over $\\Gamma$, any configuration $c$ of $M$ on $x$, any state $s\\in S$ with $\\mathrm{stopAt}(s)=\\mathrm{true}$, any clock-tape contents $ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$, and any clock-head position $cp\\in\\mathbb Z$, one step of the clocked machine from the configuration with state $(s,\\mathrm{run})$, body configuration $c$, and clock data $ct,cp$ yields the configuration with state $\\mathrm{finish}(s)$ and the same body configuration and clock data.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$\\Gamma$ and $S$ are types",
+  "$e$ is an injection from the Boolean alphabet into $\\Gamma$",
+  "$M$ is a Turing machine with $k$ work tapes, alphabet $\\Gamma$, and state set $S$",
+  "$\\mathrm{stopAt}:S\\to\\{\\mathrm{false},\\mathrm{true}\\}$",
+  "$x$ is a finite input over $\\Gamma$",
+  "$c$ is a configuration on input $x$",
+  "$s\\in S$ and $\\mathrm{stopAt}(s)=\\mathrm{true}$",
+  "$ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$",
+  "$cp\\in\\mathbb Z$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

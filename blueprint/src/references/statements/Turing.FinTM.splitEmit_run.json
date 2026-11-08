@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.splitEmit_run",
+ "key": "42c9fdd08d1948d4",
+ "kind": "lemma",
+ "title": "Complete run of the split emitter",
+ "statement": "Let $k$ be a natural number and let $w,s$ be finite Boolean words with $|s|\\le |w|$. Starting from the specified initial emitter configuration, after exactly $|s|+|w|+3$ steps the machine is in its halted configuration, with input-head position $|w|$, counter-head position $|s|$, and output the self-delimiting pair encoding of the first $|s|$ bits of $w$ and the remaining suffix of $w$.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Finite Boolean words $w,s$",
+  "The length of $s$ is at most the length of $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the candidate's length $\\ell$ is at most $\\abs{w}$, then exactly\n$\\ell + \\abs{w} + 3$ steps of the split emitter from its start produce the\nself-delimiting pair encoding of the split of $w$ at position $\\ell$ (the\nfirst $\\ell$ bits paired with the rest) and halt; the candidate may contain\nany bit pattern."
+}

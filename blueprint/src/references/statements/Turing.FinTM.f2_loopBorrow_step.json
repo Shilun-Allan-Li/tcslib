@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopBorrow_step",
+ "key": "30d7951fc300b676",
+ "kind": "lemma",
+ "title": "One step of the borrow computation",
+ "statement": "Let $x$ be a Boolean input, let $p$ be an allowed input-head position, and let $v$ and $s$ be finite Boolean words. If the one-tape debit machine is in its initial search state, its head is at position $|v|$, and its tape contains $v s$, then one step yields the following configuration: if $s$ is empty, it enters the borrow-result state carrying false, moves its head to $|v|-1$, and leaves the tape as $v$; if $s$ begins with true, it enters the borrow-result state carrying true, moves its head to $|v|-1$, and changes that first symbol to false; if $s$ begins with false, it remains in the initial search state, moves its head to $|v|+1$, and changes that first symbol to true.",
+ "hypotheses_covered": [
+  "A Boolean input $x$",
+  "An allowed input-head position $p$",
+  "Finite Boolean words $v$ and $s$",
+  "The initial search state",
+  "The head position is $|v|$",
+  "The tape contains the concatenation $v s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

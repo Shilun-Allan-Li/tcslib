@@ -1,0 +1,14 @@
+{
+ "lean_name": "Light.exists_stablePass",
+ "key": "3eccbc626ea6763a",
+ "kind": "theorem",
+ "title": "Stable pass matching a memory segment",
+ "statement": "Let $\\mu':\\mathbb N\\to\\mathbb Z$, $dst\\in\\mathbb N$, and let $\\pi$ be a finite list of natural numbers; let $kd:\\mathbb N\\to\\mathbb N$. Suppose that for each index $j$ in $\\pi$, the memory value at $dst$ plus the sorting position of $j$ by the key $kd(\\pi[j])$ equals $\\pi[j]$. Then there is a list $\\pi'$ of the same length such that, at each such sorting position, $\\pi'$ contains the corresponding original entry $\\pi[j]$, and the memory segment beginning at $dst$ consists exactly of the entries of $\\pi'$ converted to integers.",
+ "hypotheses_covered": [
+  "For every $j<\\mathrm{length}(\\pi)$, $\\mu'(dst+\\mathrm{sortPos}(\\mathrm{keyAt}(kd,\\pi),\\mathrm{length}(\\pi),j))=\\pi[j]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

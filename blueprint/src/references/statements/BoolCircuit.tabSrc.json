@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.tabSrc",
+ "key": "01a7368e2d5c421f",
+ "kind": "def",
+ "title": "Tabulation source index",
+ "statement": "Let $\\kappa$ be finite, let $m,w,n\\in\\mathbb{N}$, let $F:\\kappa\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{List}(\\mathrm{Bool})$, and let $z$ be a Boolean list. For instruction index $i$ and source $s$, assign an index as follows when $s$ is valid for input bound $|z|+n$, block width $w$, and instruction index $i$: an input $k$ is assigned $n+2+k$ if $k<|z|$, and $k-|z|$ otherwise; a constant bit $b$ is assigned $n+1$ if true and $n$ if false; and block bit $(i',j)$ is assigned the base index of instruction $i'$ plus $m$, the gadget width, and $j$. If the source is invalid, assign $n$.",
+ "hypotheses_covered": [
+  "$\\kappa$ is finite",
+  "$m,w,n$ are natural numbers",
+  "$F:\\kappa\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{List}(\\mathrm{Bool})$",
+  "$z$ is a Boolean list",
+  "$i$ is a natural number",
+  "$s$ is a bit source"
+ ],
+ "confidence": "low",
+ "caveat": "The expression relies on the upstream validity predicate, base indices, and gadget width, whose defining constructions are not provided here.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

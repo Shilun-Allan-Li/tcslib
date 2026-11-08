@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.f2_scanTrues_run",
+ "key": "4a6fc75f93b4293c",
+ "kind": "lemma",
+ "title": "Scanning a true prefix",
+ "statement": "Let $M$ be a Turing machine with no work tapes, let $q$ be a state, and let $e$ be a Boolean bit. Suppose that whenever the input symbol is true, every work-tape reading gives a transition that moves the input head right, emits false if $e$ is true and emits nothing if $e$ is false, and remains in state $q$. For every Boolean word $x$ and every $j\\le |x|$ such that the first $j$ entries of $x$ are all true, after $j$ steps from the scan configuration at position zero in state $q$ with empty output, the machine is in state $q$ at position $j$; its output is the word of $j$ false entries if $e$ is true, and is empty if $e$ is false.",
+ "hypotheses_covered": [
+  "Machine $M$ has no work tapes",
+  "State $q$",
+  "Boolean bit $e$",
+  "The transition condition holds for every work-tape reading on input true",
+  "Boolean word $x$",
+  "$j\\le |x|$",
+  "The first $j$ entries of $x$ are all true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

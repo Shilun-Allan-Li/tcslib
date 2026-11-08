@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.recordStep_seek_read",
+ "key": "5f71813ca95b519e",
+ "kind": "theorem",
+ "title": "Bounded seek and read behavior",
+ "statement": "Let $Q,T,S$ be types with decidable equality, let $M$ be a Boolean multi-tape machine with $k$ work tapes, let $\\operatorname{upd}:T\\times\\operatorname{Option}(\\mathrm{Bool})\\to T$, and let $\\mathrm{seek}$ be a two-work-tape Boolean machine with designated states $\\mathrm{start},\\mathrm{finish}$ and a natural-number bound constant $C$. For every Boolean input $x$, configuration $c$ of $M$ on $x$, and Boolean word $w$, suppose that from every two-tape configuration $a$ on input $x$ in state $\\mathrm{start}$ whose first tape stores $w$ around its head at offsets $-1$ through $|w|$ and whose second tape is blank, there is a time $t\\le C(|w|+a_{\\mathrm{in}}+c_{\\mathrm{in}}+1)$ at which $\\mathrm{seek}$ first reaches $\\mathrm{finish}$; through time $t$ both work-tape heads stay within distance $C(|w|+1)$ of their initial positions, and at time $t$ the input-head position equals that of $c$, while both tapes, both work-head positions, and the output are unchanged. Suppose also that $d$ is a four-tape configuration over record symbols on the digit-embedded input, tape 2 is blank, and $\\mathrm{saved}$ is a record-symbol list with $\\mathrm{data}$ record data. Then there is a time $t\\le C(|w|+d_{\\mathrm{in}}+c_{\\mathrm{in}}+1)+3$ such that the record-step machine reaches the specified snapshot in the seek phase from the specified seek-start snapshot, does not reach either verdict phase earlier, and keeps every work-tape head within distance $C(|w|+1)$ of its initial position throughout.",
+ "hypotheses_covered": [
+  "Types Q, T, and S have decidable equality",
+  "Boolean machine M with k work tapes",
+  "Tag update function upd",
+  "Two-tape seek machine, start and finish states, and bound C",
+  "Seek specification for every qualifying initial configuration a",
+  "Boolean input x, configuration c, and word w",
+  "Configuration d over digit-embedded input, with tape 2 blank",
+  "Saved record-symbol list and record data"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

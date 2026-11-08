@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.sweep_step",
+ "key": "e5fcf562b2b9edd7",
+ "kind": "lemma",
+ "title": "One source step in a bounded burst",
+ "statement": "Let $M$ be a finite-state machine with $k>0$ work tapes over a finite alphabet, and let $c$ be a configuration with state $q$. Suppose every work-tape head lies in $[a,a+n)$, and every work tape is blank at both $a-1$ and $a+n$. For any natural number $n$ and integer $z$, after exactly $(2n+5)k+4$ steps from the canonical sweep configuration for $c$ with a zone of $n$ blocks starting at $a$, the simulator reaches the canonical sweep configuration for the one-step successor of $c$, with a zone of $n+2$ blocks starting at $a-1$ and frontier $z-k$.",
+ "hypotheses_covered": [
+  "$M$ has a finite state set and decidable state equality",
+  "$k>0$",
+  "$c$ is a configuration of $M$",
+  "$c$ has state $q$",
+  "Each work-tape head position is at least $a$ and less than $a+n$",
+  "Every work tape is blank at $a-1$",
+  "Every work tape is blank at $a+n$",
+  "$n$ is a natural number",
+  "$z$ is an integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k \\ge 1$ work tapes and let $c$ be a configuration in a\nnon-halted state $q$ whose work-tape heads all lie in the interval $[a, a+n)$ and whose\nwork tapes are blank at $a-1$ and at $a+n$. Then, from the canonical between-steps\nconfiguration for $c$ with a zone of $n$ blocks starting at $a$, exactly $(2n+5)k + 4$\ntransitions of the single-tape simulator reach the canonical between-steps configuration\nfor the configuration obtained by one step of $M$ from $c$, with a zone of $n+2$ blocks\nstarting at $a-1$ and the absolute work-head position lowered by $k$."
+}

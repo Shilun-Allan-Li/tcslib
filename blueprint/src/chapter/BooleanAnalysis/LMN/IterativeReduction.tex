@@ -14,8 +14,16 @@ at most $\varepsilon/2$.
 
 \begin{theorem}[Bernoulli restriction collapses DNF gates to narrow CNFs]
 \lean{LMN.subsequent_step_reduction}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p002-b003,
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p100-b005}
 \label{LMN.subsequent_step_reduction}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
@@ -970,7 +978,6 @@ at most $\varepsilon/2$.
   {direct}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b004}
-\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.one_step_reduction_failure_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn}
 \difficulty{1}
 Fix positive integers $n$ and $l$, and let $g_1,\dots,g_{s_i}$ be DNF formulas on $n$
 variables, each of width at most $l$, and each in reduced form: no term repeats a
@@ -989,14 +996,18 @@ g_i(\rho.\mathrm{extend}\,x)$ for every assignment $x$ — is at most
 
 \begin{theorem}[Decision-tree depth of restricted DNF gates]
 \lean{LMN.subsequent_step_dtDepth}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p098-b003,
+  pdf-ffbe9c7b3306-p100-b005
+}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b008}
 \label{LMN.subsequent_step_dtDepth}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, LMN.one_step_dtDepth_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
 }
-\uses{DNF, DNF.eval, DNF.width, LMN.one_step_dtDepth_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{1}
 Fix an integer $n \ge 1$ and a positive integer $l$, and let $\phi_1, \dots, \phi_s$ be
 DNF formulas on $n$ Boolean variables, each of width at most $l$ and each written so
@@ -1082,11 +1093,11 @@ $\rho_2$.
 \lean{LMN.abstract_iterative_reduction}
 \label{LMN.abstract_iterative_reduction}
 \leanok
+\uses{LMN.iterative_dominant_term_bound}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
 }
-\uses{LMN.iterative_dominant_term_bound}
 \difficulty{2}
 Let $m$ be a natural number and let $\ell_0,\dots,\ell_{m-1}$ be natural numbers (the
 layer sizes) whose sum is at most a positive integer $s$. Fix a real number

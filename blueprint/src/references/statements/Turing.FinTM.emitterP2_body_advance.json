@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_body_advance",
+ "key": "ee254f5e8b0d8e15",
+ "kind": "lemma",
+ "title": "Candidate advancement in the controller",
+ "statement": "Let $C$ and $D$ be finite-state Boolean Turing machines with positive numbers of work tapes, and choose states $c_e,c_x$ of $C$ and $d_e,d_x$ of $D$. For any Boolean input word $w$ and candidate word $s$, the controller formed from these machines has a time $t\\le 2|s|+|w|+5$ at which, starting in its advance phase with $s$ on the candidate tape and all other work tapes blank, it reaches the advance phase's return state with $s$ replaced by $s$ followed by one $1$ if $|s|\\le |w|$, and by $s$ otherwise. At every time $j\\le t$, the controller's state is different from its anchor state.",
+ "hypotheses_covered": [
+  "$C$ and $D$ are finite-state Boolean Turing machines",
+  "$0<C.k$ and $0<D.k$",
+  "$c_e,c_x$ are states of $C$",
+  "$d_e,d_x$ are states of $D$",
+  "$w$ and $s$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There is a time $t \\le 2\\abs{s} + \\abs{w} + 5$ after which the controller,\nfrom its advance seam carrying the candidate $s$, has replaced $s$ by one\nsplit-search step applied to $s$ (appending a $1$ exactly within the input\nrange, and stalling otherwise) and reached the advance phase's return seam;\nthe trace avoids the anchor."
+}

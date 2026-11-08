@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Codec.init_tail",
+ "key": "38561bc08c082b27",
+ "kind": "theorem",
+ "title": "Initialization-mode verifier tail",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input alphabet, and write $y$ as the paired encoding of Boolean words $x$ and the paired encoding of Boolean words $w$ and $r$. Let $R$ be a register assignment, $s$ a natural number, and $st$ a verifier-and-accumulator state. Suppose every register of $R$ is at most $(8W_N+8)(|y|+1)$, $R_A=2|x|+2$, $R_S=s$, and $R_T=0$; also suppose $s\u001c2|y|$ and $W_N(2s+1)\u001cw|$. Then the initialization-mode codec program, started at its verifier state $st$ with register values $R$, no answer yet, and input $y$, halts while satisfying the same register bound at every earlier time, and returns true exactly when the scan state passes the initialization checks, $R_{Pos}=1$, and either $N$ has no work tapes or the indicated bit of $w$ is true.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine over Boolean symbols",
+  "The input decomposition $y=\\langle x,\\langle w,r\\rangle\\rangle$",
+  "A register assignment bounded componentwise by $(8W_N+8)(|y|+1)$",
+  "The register equalities $R_A=2|x|+2$, $R_S=s$, and $R_T=0$",
+  "The bound $s\\le 2|y|$",
+  "The length bound $W_N(2s+1)\\le |w|$",
+  "A verifier-and-accumulator state $st"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion refers to the internal scan predicate and a particular bit of the encoded word; their tuple-level meanings are not supplied by the given informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

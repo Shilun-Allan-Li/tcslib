@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.BlockLoop.orbit",
+ "key": "57d62a4a849acdbe",
+ "kind": "theorem",
+ "title": "Orbit of a block countdown",
+ "statement": "Let $P,Q:\\mathbb{N}\\to\\{0,1\\}^*$, let $K\\in\\mathbb{N}$, and let $s_0$ be a bit string. Let $g$ be the block-loop step determined by update and next functions $\\mathrm{upd},\\mathrm{nxt}:\\{0,1\\}^*\\times\\{0,1\\}^*\\to\\{0,1\\}^*$, and write $\\langle u,v\\rangle$ for the self-delimiting pair encoding. Suppose $s_0=\\langle P(0),\\langle 1^K,Q(0)\\rangle\\rangle$, every $P(i)$ is nonempty for $i\\le K$, and for every $i<K$, $\\mathrm{upd}(P(i),Q(i))=P(i+1)$ and $\\mathrm{nxt}(P(i),Q(i))=Q(i+1)$. Then for each $i\\le K$, the $i$-th iterate of $g$ at $s_0$ is $\\langle P(i),\\langle 1^{K-i},Q(i)\\rangle\\rangle$.",
+ "hypotheses_covered": [
+  "$g$ is the block-loop step determined by $\\mathrm{upd},\\mathrm{nxt}$",
+  "$P,Q$ are functions from natural numbers to bit strings",
+  "$K$ is a natural number",
+  "Initial state is $\\langle P(0),\\langle 1^K,Q(0)\\rangle\\rangle$",
+  "$P(i)$ is nonempty for every $i\\le K$",
+  "Update recurrence holds for every $i<K$",
+  "Next recurrence holds for every $i<K$",
+  "Conclusion index satisfies $i\\le K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

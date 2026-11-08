@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.access_tail_run",
+ "key": "40c9153175859dcb",
+ "kind": "lemma",
+ "title": "Tail scan reaches its exit state",
+ "statement": "Let $y$ and $w$ be finite bit strings, let $i,k,p,q$ be natural numbers, let $e$ be a Boolean, and let $\text{last}$ be either a bit or absent. Suppose $y$ with its first $i$ bits removed is $w$, $i\\le |y|$, $k\\le |y|+1$, and $q\\le |\\mathrm{bits}(k)|$, where $\\mathrm{bits}(k)$ is the binary word for $k$. Starting from the configuration with input $y$, input head at position $1$, work tapes storing the binary words for $i,0,k,p$, and head positions $0,0,q,0$, there is a finite safe computation in the access machine (with parameter $\\mathrm{mode}$) to the configuration whose state is the exit determined by recursively scanning $w$ against the binary word for $k$ with its first $q$ bits removed, updating the Boolean comparison and last-bit data according to the scan; the final work tapes store the binary words for $0,0,k,p$ and all head positions are zero.",
+ "hypotheses_covered": [
+  "$y,w$ are finite bit strings",
+  "$i,k,p,q$ are natural numbers",
+  "$e$ is Boolean and last is optional Boolean",
+  "$y$ with its first $i$ bits removed equals $w$",
+  "$i\\le |y|$",
+  "$k\\le |y|+1$",
+  "$q\\le |\\mathrm{bits}(k)|$"
+ ],
+ "confidence": "low",
+ "caveat": "The private recursive scan and configuration-path predicates have no informal definitions supplied, so their transition details are summarized from the formal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

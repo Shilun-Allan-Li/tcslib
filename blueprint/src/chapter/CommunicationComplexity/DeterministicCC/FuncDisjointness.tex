@@ -48,6 +48,7 @@ $(X, X^c)$ where $X \subseteq [n]$, i.e.\ $\mathrm{foolingSet}(n) = \{(X, Y) \mi
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p011-b007}
 \label{CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet}
 \leanok
+\uses{CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.foolingSet, CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsRectangle_iff}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -279,7 +280,6 @@ $(X, X^c)$ where $X \subseteq [n]$, i.e.\ $\mathrm{foolingSet}(n) = \{(X, Y) \mi
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p011-b007}
-\uses{CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.foolingSet, CommunicationComplexity.Rectangle.IsFoolingSet, CommunicationComplexity.Rectangle.IsRectangle_iff}
 \difficulty{5}
 Fix $n \in \bbn$, and consider the set-disjointness function on subsets of $[n]$, namely
 the Boolean function $g(X, Y)$ that is $\mathtt{true}$ exactly when $X \cap Y =
@@ -294,6 +294,7 @@ with this collection contains at most one point.
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p012-b001}
 \label{CommunicationComplexity.Functions.Disjointness.foolingSet_card}
 \leanok
+\uses{CommunicationComplexity.Functions.Disjointness.foolingSet}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -499,7 +500,6 @@ with this collection contains at most one point.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p011-b007}
-\uses{CommunicationComplexity.Functions.Disjointness.foolingSet}
 \difficulty{4}
 For every $n \in \bbn$, the fooling set for disjointness — the collection of all pairs
 $(X, X^c)$ with $X \subseteq [n]$ — has exactly $2^n$ elements.
@@ -510,6 +510,7 @@ $(X, X^c)$ with $X \subseteq [n]$ — has exactly $2^n$ elements.
 \proofsource{raoyehudayoff-ch01-deterministic-protocols}{pdf-fa052d8c95c0-p008-b005}
 \label{CommunicationComplexity.Functions.Disjointness.communicationComplexity_le}
 \leanok
+\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha, CommunicationComplexity.Functions.Disjointness.clog_two_two, CommunicationComplexity.Functions.Disjointness.disjointness}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -760,7 +761,6 @@ $(X, X^c)$ with $X \subseteq [n]$ — has exactly $2^n$ elements.
   {direct}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p008-b005}
-\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.communicationComplexity_le_clog_card_X_alpha, CommunicationComplexity.Functions.Disjointness.disjointness}
 \difficulty{3}
 Fix $n \in \bbn$, and let both players' inputs range over subsets of $[n] = \{0, 1,
 \dots, n-1\}$, so that Alice holds $X \subseteq [n]$ and Bob holds $Y \subseteq [n]$.
@@ -777,6 +777,7 @@ returns $\mathtt{true}$ exactly when $X \cap Y = \emptyset$, is at most $n + 1$.
 }
 \label{CommunicationComplexity.Functions.Disjointness.le_communicationComplexity}
 \leanok
+\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.foolingSet, CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -1132,7 +1133,6 @@ returns $\mathtt{true}$ exactly when $X \cap Y = \emptyset$, is at most $n + 1$.
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p011-b007,
     pdf-fa052d8c95c0-p012-b001}
-\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Deterministic.le_communicationComplexity_of_forall_lt_ncard, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.foolingSet, CommunicationComplexity.Functions.Disjointness.foolingSet_isFoolingSet, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.Rectangle.monoPartition_values_eq}
 \difficulty{5}
 Fix an integer $n \ge 1$, and consider the set-disjointness function on subsets of
 $[n]$: it takes a pair of subsets $X, Y \subseteq [n]$ — Alice holding $X$ and Bob
@@ -1148,6 +1148,7 @@ deterministic communication complexity of this function is at least $n + 1$.
 }
 \label{CommunicationComplexity.Functions.Disjointness.communicationComplexity_eq}
 \leanok
+\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Functions.Disjointness.communicationComplexity_le, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.le_communicationComplexity}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -1550,7 +1551,6 @@ deterministic communication complexity of this function is at least $n + 1$.
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p012-b001,
     pdf-fa052d8c95c0-p011-b007}
-\uses{CommunicationComplexity.Deterministic.communicationComplexity, CommunicationComplexity.Functions.Disjointness.communicationComplexity_le, CommunicationComplexity.Functions.Disjointness.disjointness, CommunicationComplexity.Functions.Disjointness.le_communicationComplexity}
 \difficulty{1}
 Let $n \geq 1$, and let $\mathrm{disjointness}(n, \cdot, \cdot)$ denote the two-party
 Boolean function that, given subsets $X, Y \subseteq [n]$ held by Alice and Bob
@@ -1561,11 +1561,10 @@ deterministic communication complexity of this function is exactly $n + 1$.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{theorem}[Ceiling logarithm of two in base two]
+\begin{theorem}[Base-two ceiling logarithm of two]
 \lean{CommunicationComplexity.Functions.Disjointness.clog_two_two}
 \label{CommunicationComplexity.Functions.Disjointness.clog_two_two}
 \leanok
-The ceiling base-$2$ logarithm of $2$ equals $1$: $\lceil \log_2 2 \rceil = 1$, i.e.\
-$\texttt{Nat.clog}\,2\,2 = 1$. This is a small numerical fact used in the
-communication-complexity bounds of this module.
+\difficulty{1}
+The base-two ceiling logarithm of $2$ equals $1$: $\lceil\log_2 2\rceil=1$.
 \end{theorem}

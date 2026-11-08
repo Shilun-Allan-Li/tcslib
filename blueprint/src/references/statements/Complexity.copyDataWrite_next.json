@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.copyDataWrite_next",
+ "key": "a3d64dac9dc214ab",
+ "kind": "lemma",
+ "title": "Writing the Next Input Payload",
+ "statement": "Let $M$ be a finite deterministic machine over Booleans, let $x$ be a Boolean word, let $j\\in\\mathbb{N}$, and let a tape assignment give the contents of the $|M|+1$ data lanes at each integer coordinate. Suppose the current payload at each lane and coordinate is the copied payload of count $j$. After writing the virtual input payload of $x$ at coordinate $j$ on the input lane, the current payload at every lane and coordinate is the copied payload of count $j+1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite deterministic machine over Booleans",
+  "$x$ is a Boolean word",
+  "$j$ is a natural number",
+  "A tape assignment is given for all data lanes and integer coordinates",
+  "Every current payload equals the copied payload of count $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the current payloads of the data tapes are the copied payloads of count $j$,\nthen after the copy write placing the virtual input payload of $x$ at position\n$j$ at coordinate $j$, the current payloads are the copied payloads of count\n$j + 1$."
+}

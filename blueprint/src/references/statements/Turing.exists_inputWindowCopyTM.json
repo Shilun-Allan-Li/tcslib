@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.exists_inputWindowCopyTM",
+ "key": "0e311808aacb4f1a",
+ "kind": "theorem",
+ "title": "Copying an input window to a work tape",
+ "statement": "For every natural number $k$ and distinct work-tape indices $j,d$, there exist a finite state set, a deterministic $k$-work-tape Turing machine over the binary alphabet, entry and completion states, and a constant $C$. Given a configuration on input $z$ in the entry state with input head at position $p+1$ and tape $j$ storing a word $w$, let $y$ be the initial segment of $z$ starting at position $p$ whose length is the value of the base-two digits of $w$. The machine reaches its completion state at some time $T \\le C(|y|+1)+2|w|$, without reaching that state earlier; it advances the input head by $|y|$, writes $y$ on tape $d$ starting at that tape's initial head position, and leaves the output unchanged. Tape $j$ still contains a word $w'$ of length $|w|$ on the interval starting at its initial head position, and all other tape contents are preserved; the head on tape $d$ advances by $|y|$, while the other work-tape head positions are unchanged.",
+ "hypotheses_covered": [
+  "A natural number $k$ and distinct tape indices $j,d<k$",
+  "The initial configuration is in the entry state",
+  "The input head starts at position $p+1$",
+  "Tape $j$ stores the binary word $w$ on the specified interval",
+  "The copied word is the input segment of length equal to the digit value of $w$",
+  "The time bound is $C(|y|+1)+2|w|$",
+  "The completion state is not reached before time $T$",
+  "The final input position, destination-tape contents, source-tape contents, head positions, and output satisfy the stated conditions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

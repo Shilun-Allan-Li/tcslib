@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.regs_run",
+ "key": "4a2b88c1fae40778",
+ "kind": "lemma",
+ "title": "Returning after simulating a call",
+ "statement": "Let a register program $P$ call a decider at state $l$, with a call specification whose argument list has no repetitions. Let $s$ be a segment index, $dir$ and $b$ Boolean values, and $W$ the words supplied for the registers. Suppose the register tapes store these words in buffer form for every argument register, their initial head positions lie in the specified register box, and each argument register at a left endpoint forces the side predicate to be true while one at a right endpoint forces it to be false. For every pair of natural numbers $k,a$ with $a+k$ equal to the number of arguments, there is a time $T$ such that at every time through $T$ the simulated configuration's register-head positions remain in the register box and its decider-head positions equal the fixed initial decider-head positions. At time $T$, the compiled machine is in the ordinary program state corresponding to the call's positive-answer successor if $b$ is true and its negative-answer successor otherwise, with the original input head, register tapes, decider tapes, decider-head positions, and output, and with each argument register head reset according to the return-position rule for the full argument list.",
+ "hypotheses_covered": [
+  "Call state $l$ has the specified call specification",
+  "Argument-register list has no repetitions",
+  "$s$ is a segment index in $\\{0,\\ldots,m\\}$",
+  "Register tapes store each argument word in buffer form",
+  "Initial register-head positions lie in the specified register box",
+  "Each argument at the left endpoint satisfies the side-predicate implication",
+  "Each argument at the right endpoint satisfies the side-predicate implication",
+  "$k,a$ are natural numbers with $a+k$ equal to the argument-list length"
+ ],
+ "confidence": "high",
+ "caveat": "The statement quantifies over $k,a$ only through their sum condition; they do not otherwise affect the claimed run.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

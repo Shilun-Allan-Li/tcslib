@@ -1,0 +1,12 @@
+{
+ "lean_name": "BoolCircuit.TreeSpec",
+ "key": "e8627dab3335b694",
+ "kind": "structure",
+ "title": "Specification for a gate tree",
+ "statement": "For an input count $n$, gate kind $k$, vertex list $v_s$, existing gate list $g_s$, and proposed result $r=(r_g,r_v)$, the tree specification requires that $r_g$ extend $g_s$ by appending gates, that its gates be acyclic, and that $r_v<n+|r_g|$. For every Boolean input assignment, the value at $r_v$ must equal the value of a gate of kind $k$ on $v_s$ evaluated using the original gates and input assignment. The result list has length at most $|g_s|$ plus the tree cost of $|v_s|$, and the depth at $r_v$ is at most $\\lceil\\log_2 |v_s|\\rceil+1$ plus the maximum depth in the original circuit among vertices in $v_s$ (with maximum taken together with $0$). Every appended gate has kind $k$, has distinct arguments, and has at most two arguments.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

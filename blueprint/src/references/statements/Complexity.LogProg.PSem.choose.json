@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.choose",
+ "key": "fc6613729af43174",
+ "kind": "lemma",
+ "title": "Acceptance probability after a fair choice",
+ "statement": "Let $A$ be a machine with $m$ natural-number registers, control labels in $\u0001\u0001$, and instructions that may choose between two labels using a fair random bit; let $\u0001\u0001$ be an oracle, $x$ an input, and $G$ a guard on configurations. Suppose the instruction at label $l$ chooses between $l_1$ and $l_0$, and the configuration with label $l$, register values $v$, and no result satisfies $G$. If starting at $l_1$ with register values $v$ and no result terminates under $G$ with acceptance probability $p_1$, and starting at $l_0$ under the same conditions terminates under $G$ with acceptance probability $p_0$, then starting at $l$ terminates under $G$ with acceptance probability $(p_1+p_0)/2$.",
+ "hypotheses_covered": [
+  "The instruction at $l$ is a choice between $l_1$ and $l_0$.",
+  "The configuration $(l,v,\text{no result})$ satisfies $G$.",
+  "The configuration $(l_1,v,\text{no result})$ has probabilistic semantics with acceptance probability $p_1$.",
+  "The configuration $(l_0,v,\text{no result})$ has probabilistic semantics with acceptance probability $p_0$."
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement does not supply informal descriptions of the machine, oracle, guard, or probabilistic semantics; the statement characterizes these using their formal roles and the stated termination and acceptance properties.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.Ends.storeTo",
+ "key": "f9732032251418a8",
+ "kind": "theorem",
+ "title": "Store to a specified address and value",
+ "statement": "Let a program, depth bound, list $l$ of integers, memory map $\\mu:\\mathbb N\\to\\mathbb Z$, time bound $T\\in\\mathbb N$, postcondition $Q$, expressions $a,e$, address $b\\in\\mathbb N$, and value $z\\in\\mathbb Z$ be given. If $Q$ holds in the state with locations given by the frame of $l$ and memory updated at $b$ to $z$, if $a$ and $e$ are safe in the state with those locations and original memory and evaluate respectively to $b$ and $z$, and if $b$ is a valid address, then storing $e$ at address $a$ ends in a state satisfying $Q$ within time $T$, provided the store cost $\\operatorname{cost}(a)+\\operatorname{cost}(e)+1$ is at most $T$.",
+ "hypotheses_covered": [
+  "The postcondition holds after updating memory at $b$ to $z$",
+  "The address expression is safe and evaluates to $b$ in the original state",
+  "The value expression is safe and evaluates to $z$ in the original state",
+  "$b$ is less than the space bound",
+  "The store cost is at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

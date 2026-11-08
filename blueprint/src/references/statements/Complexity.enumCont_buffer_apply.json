@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_buffer_apply",
+ "key": "d51bb55479f02e59",
+ "kind": "lemma",
+ "title": "Administrative buffer action",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $x,y$ be Boolean words, let $c_0$ be a configuration of $M$ on input $x$, let $q,q'$ be optional states of the clean wrapper of $M$, let $p$ be an input-head position, and let $h$ be an integer. For any input-head displacement $m$ and capture-head displacement $d$, applying the buffer action with successor state $q'$ to the administrative configuration formed from $c_0,y,q,p,h$ gives the corresponding configuration with state $q'$, input-head position moved from $p$ by $m$ (with boundary clamping), and capture-head position $h+d$, with its other fields unchanged.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x,y$ are Boolean words",
+  "$c_0$ is a configuration of $M$ on input $x$",
+  "$q,q'$ are optional states of the clean wrapper of $M$",
+  "$p$ is an input-head position on $x$",
+  "$h$ is an integer",
+  "$m,d$ are head displacements"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any displacements $m, d$ and control states $q, q'$, applying the two-head\nadministrative action with displacements $m, d$ and next state $q'$ to an\nadministrative configuration of the clean wrapper in state $q$ yields the\nadministrative configuration with the same tapes, retained word and empty output,\nin state $q'$, with the native input head moved by $m$ and the capture head moved\nby $d$."
+}

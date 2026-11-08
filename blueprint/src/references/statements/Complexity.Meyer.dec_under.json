@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Meyer.dec_under",
+ "key": "53f40a6300801fc3",
+ "kind": "theorem",
+ "title": "Entering the Write-Decode State",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $y,x$ be Boolean words, let $bits$ be a selector-bit assignment for $M$, let $P$ be a valid input-head position for $y$, let $c$ be a configuration of $M$ on input $x$, and let $\\tau_C,\\tau_O$ be integer-indexed Boolean buffers with head positions $z_C,z_O$. If the $C$ buffer is blank at $z_C$, then one step of the simulator from its decode state yields its write-decode state, retaining $P$, $c$, both buffers, and both head positions.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machine $M$",
+  "Boolean words $y,x$",
+  "Selector-bit assignment $bits$",
+  "Valid input-head position $P$ for $y$",
+  "Configuration $c$ of $M$ on input $x$",
+  "Integer-indexed buffers $\\tau_C,\\tau_O$ and head positions $z_C,z_O$",
+  "Blank-buffer condition $\\tau_C(z_C)=\\mathrm{none}$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion relies on the simulator's decode and write-decode states and configuration constructor, which are not fully defined in the supplied informal descriptions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

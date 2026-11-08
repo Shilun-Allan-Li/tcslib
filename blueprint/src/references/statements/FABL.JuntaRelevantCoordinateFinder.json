@@ -1,0 +1,20 @@
+{
+ "lean_name": "FABL.JuntaRelevantCoordinateFinder",
+ "key": "096ec7a61e98aee9",
+ "kind": "structure",
+ "title": "Relevant coordinate finder",
+ "statement": "For natural numbers $n$ and $k$, a relevant coordinate finder assigns to every coordinate set $P$, fixed sign assignment on $P$, and rational failure parameter strictly between $0$ and $1/2$ a randomized-example learning program returning an optional node decision. It also specifies bounds, depending on the failure parameter, on the number of random examples and local-work units; every supported outcome must use at most those bounds and make zero membership queries. For every sign-valued Boolean function, every coordinate sets $J,P$ with $|J|\\le k$, every fixed assignment on $P$, and every inclusion $P\\subseteq J$, if the function depends only on coordinates in $J$, then the probability that the program returns no decision or an incorrect decision is at most the failure parameter.",
+ "hypotheses_covered": [
+  "Natural numbers $n,k$",
+  "A rational failure parameter in $(0,1/2]$ as encoded by $\\mathrm{Set.Ioc}(0,1/2)$",
+  "An arbitrary target Boolean function for the cost bound",
+  "A supported program outcome for the cost bound",
+  "Coordinate sets $J,P$ with $|J|\\le k$ for the failure guarantee",
+  "The target depends only on $J$",
+  "The inclusion $P\\subseteq J$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Codec.incChain",
+ "key": "ff3a9f9f5a063e6f",
+ "kind": "theorem",
+ "title": "A Chain of Register Increments",
+ "statement": "Let $A$ be a register program with $m$ registers and $d$ Boolean-oracle queries, let $y$ be its input, let $r$ be a register, and let $(\u00123_i\u00124)_{i\\in\\mathbb N}$ be a sequence of labels. Suppose that for every $i<k$, the instruction at label $\u00123_i\u00124$ increments register $r$ and proceeds to $\u00123_{i+1}\u00124$. If the initial register assignment $v$ has all values at most $B$ and $v(r)+k\\le B$, then the program reaches $\u00123_k\u00124$ from $\u00123_0\u00124$, with register $r$ increased by $k$ and all other registers unchanged; throughout the run, the prescribed safety condition holds and every register remains at most $B$.",
+ "hypotheses_covered": [
+  "Register program $A$ with $m$ registers and $d$ oracle queries",
+  "Oracle function from query indices and bit strings to Boolean answers",
+  "Input bit string $y$",
+  "Register $r$",
+  "Label sequence indexed by natural numbers",
+  "For every $i<k$, instruction at label $i$ increments $r$ and proceeds to label $i+1$",
+  "Natural numbers $k$ and $B$",
+  "Initial register assignment $v$ has every value at most $B$",
+  "$v(r)+k\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter09/HypercontractiveMomentSharpness.lean :: FABL.exists_positive_affine_test_of_evenMoment_gt_sharp -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Affine test from a moment gap
+
+**Claim.** Under the stated normalization, odd-moment vanishing, sharp lower even-moment equalities below order $2j$, and strict excess at order $2j$, there is a positive parameter $t$ for which the indicated $2r$-moment norm of the noisy affine function exceeds the $2$-norm of the centered affine function.
+
+**Proof.** For each even order indexed by $l<j$, the assumed sharp moment equality makes its coefficient gap vanish. At order $j$, the strict excess over the sharp bound makes the coefficient gap positive: the equivalence between a nonpositive gap and a moment at most its sharp bound rules out a nonpositive gap. The finite expansion of the difference between the noisy affine $2r$-moment and $(1+t^2)^r$ is the sum of these coefficient gaps times $t^{2l}$ (`affine_evenMoment_sub_eq_coefficientGap_sum`). After the vanishing lower terms are removed, this sum consists of the positive leading term at $j$ and the higher-order terms (`coefficientGap_mul_pow_add_higher`). The latter terms equal minus $t^{2j}$ times a tail quantity (`higher_sum_eq_neg_pow_mul_tail`). Along parameters $t=1/(n+1)$ that tail tends to zero (`higherEvenMomentCoefficientTail_tendsto_zero`), so choose $n$ making it smaller than the positive gap at order $j$. The whole coefficient sum is then positive, yielding a strict moment inequality for this positive $t`.
+
+The odd-moment hypothesis at order one gives mean zero. If the claimed norm inequality failed, the nonnegative norms could be raised to the power $2r$ while preserving the inequality. The even-power identity for the $2r$-norm identifies the left side with the affine $2r$-moment (`pmfLpNorm_even_pow_eq_pmfExpectation_even`). The centered affine $2$-norm formula, using mean zero and second moment one, identifies the other side with $\sqrt{1+t^2}$ (`pmfLpNorm_two_affine_centered`). Raising this to the power $2r$ gives $(1+t^2)^r$, contradicting the strict moment inequality just obtained. Nonnegativity of the norm, supplied by `pmfLpNorm_nonneg`, justifies the power comparison.
+
+**Key facts.** `FABL.pmfExpectation_const`, `FABL.evenMomentCoefficientGap_eq_zero_of_sharp`, `FABL.evenMomentCoefficientGap_le_zero_iff`, `FABL.higherEvenMomentCoefficientTail_tendsto_zero`, `FABL.coefficientGap_mul_pow_add_higher`, `FABL.higher_sum_eq_neg_pow_mul_tail`, `FABL.affine_evenMoment_sub_eq_coefficientGap_sum`, `FABL.pmfLpNorm_nonneg`, `FABL.pmfLpNorm_even_pow_eq_pmfExpectation_even`, `FABL.pmfLpNorm_two_affine_centered`.

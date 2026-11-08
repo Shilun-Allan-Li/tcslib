@@ -1,0 +1,23 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.regular_ltf_stability",
+ "key": "806eaad48032b7ca",
+ "kind": "theorem",
+ "title": "Stability of regular linear threshold functions",
+ "statement": "There is a real constant $C\\geq0$ such that for every $n\\in\\mathbb N$, every real-valued function $f$ on $\\{0,1\\}^n$, every coefficient family $(a_i)_{i\\in\\mathrm{Fin}\\,n}$, and every $\\varepsilon,\\rho\\in\\mathbb R$, the following holds. If $f(x)$ is the threshold sign, with zero assigned sign $1$, of $\\sum_i a_i\\sigma(x_i)$ for every $x$, this sum is nonzero for every $x$, $\\sum_i a_i^2=1$, $|a_i|\\leq\\varepsilon$ for every $i$, and $|\\rho|<1$, then\n\\[\\left|\\operatorname{Stab}_\\rho(f)-\\frac{2}{\\pi}\\arcsin\\rho\\right|\\leq\\frac{C\\sqrt{\\varepsilon}}{1-\\rho},\\]\nwhere $\\operatorname{Stab}_\\rho(f)$ is the inner product of $f$ with its noise operator at parameter $\\rho$.",
+ "hypotheses_covered": [
+  "There exists a real constant $C\\geq0$",
+  "$n\\in\\mathbb N$",
+  "A real-valued function $f$ on the Boolean cube",
+  "Real coefficients $a_i$ indexed by $\\mathrm{Fin}\\,n$",
+  "Real parameters $\\varepsilon,\\rho$",
+  "The function equals the threshold sign of the homogeneous linear form at every input",
+  "The homogeneous linear form is nonzero at every input",
+  "The sum of squared coefficients equals $1$",
+  "Every coefficient satisfies $|a_i|\\leq\\varepsilon$",
+  "$|\\rho|<1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nThere exists a universal real constant $C\\ge0$ with the following property. For every $n\\ge0$, real coefficients $a_i$, and real $\\varepsilon,\\rho$ with $\\sum_i a_i^2=1$, $|a_i|\\le\\varepsilon$ for every $i$, $|\\rho|<1$, and $\\sum_i a_i(-1)^{x_i}\\ne0$ for every $x\\in\\{0,1\\}^n$, let $f(x)$ equal $1$ when $\\sum_i a_i(-1)^{x_i}\\ge0$ and $-1$ otherwise. Then $|\\operatorname{Stab}_\\rho(f)-(2/\\pi)\\arcsin\\rho|\\le C\\sqrt{\\max(\\varepsilon,0)}/(1-\\rho)$. For a real function $h$ on a uniform bit cube, put $\\chi_S(x)=\\prod_{i\\in S}(-1)^{x_i}$, $\\widehat h(S)=\\mathbb E[h\\chi_S]$, and $\\operatorname{Stab}_\\rho(h)=\\sum_S\\rho^{|S|}\\widehat h(S)^2$."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_appendBit",
+ "key": "7837a6e2cc1e633a",
+ "kind": "theorem",
+ "title": "Linear-time bit appending",
+ "statement": "For each Boolean value $b$, there exist a finite Turing machine $M$ over the Boolean alphabet and a natural number $c$ such that, on every Boolean input word $x$, $M$ computes the word obtained by appending $b$ to $x$ in time $c(|x|+1)$.",
+ "hypotheses_covered": [
+  "Boolean value $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every fixed bit $b$ there exist a finite Turing machine $M$ and a\nconstant $c$ such that $M$ computes the function $x \\mapsto x b$ (append\nthe bit $b$ to the input word) within $c\\,(n+1)$ steps on inputs of length\n$n$."
+}

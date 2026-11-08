@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.b2b_hostedSource_run",
+ "key": "9dc1453d00b5a888",
+ "kind": "theorem",
+ "title": "Hosted source computation and space bound",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine with $k$ work tapes, let $y$ be a Boolean word, let $b$ be a Boolean value, and let $B\\in\\mathbb{N}$. Suppose the cleaned machine associated with $M$, started in its prescribed initialization state on input $y$, halts with output consisting of the single symbol $b$, leaves every work-tape cell blank and every work-tape head at position $0$, and keeps every work-tape head within distance $B$ of $0$ at every step up to halting. Then, from the hosted machine's initial configuration on $y$ with any valid input-head position among the $|y|+2$ positions, the hosted machine reaches a configuration with no state and output $[b]$ in finitely many steps; at every step up to and including that time, each work-tape head remains within distance $B$ of $0$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$y$ is a Boolean word",
+  "$b$ is a Boolean value",
+  "$B$ is a natural number",
+  "the cleaned machine started in its initialization state on $y$ halts with output $[b]$",
+  "at the cleaned machine's halting time, all work-tape cells are blank",
+  "at the cleaned machine's halting time, all work-tape heads are at position $0$",
+  "throughout the cleaned run up to halting, every work-tape head has absolute position at most $B$",
+  "the hosted run starts with any position in $\\mathrm{Fin}(|y|+2)$ for its input head"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

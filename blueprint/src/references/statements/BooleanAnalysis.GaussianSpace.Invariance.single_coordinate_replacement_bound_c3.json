@@ -1,0 +1,27 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.Invariance.single_coordinate_replacement_bound_c3",
+ "key": "11fc3dcaa46ae348",
+ "kind": "theorem",
+ "title": "Single-coordinate replacement bound",
+ "statement": "Let $(\\Omega,\\mu)$ be a probability space, let $F$ be a multilinear polynomial on the Boolean cube of dimension $n$ with degree at most $k$, and fix a coordinate $i$. Suppose $X_1,\\ldots,X_n$ are mutually independent random variables on this space, and likewise $Y_1,\\ldots,Y_n$ are mutually independent. Let $0<\\rho<1$, and assume every $X_j$ and $Y_j$ is $(2,3,\\rho)$-hypercontractive, has mean zero, and has second moment one. Suppose also that $X_j=Y_j$ for every $j\\ne i$. If $\\psi:\\mathbb R\\to\\mathbb R$ is three times continuously differentiable and $|\\psi'''(t)|\\le C$ for every $t\\in\\mathbb R$, where $C\\ge0$, then\n\\[\\left|\\mathbb E\\bigl[\\psi(F(X))\\bigr]-\\mathbb E\\bigl[\\psi(F(Y))\\bigr]\\right|\\le \\frac{C}{3}\\left(\\frac1\\rho\\right)^{3k}\\mathrm{Inf}_i[F]^{3/2},\\]\nwhere $F(X)$ and $F(Y)$ denote the polynomial evaluated on the respective random inputs, and $\\mathrm{Inf}_i[F]$ is the influence of the restriction of $F$ to Boolean sign inputs.",
+ "hypotheses_covered": [
+  "Probability space $(\\Omega,\\mu)$",
+  "Polynomial on the $n$-dimensional Boolean cube",
+  "Degree at most $k$",
+  "Fixed coordinate $i$",
+  "Mutual independence of the family $X$",
+  "Mutual independence of the family $Y$",
+  "$0<\\rho<1$",
+  "Each $X_j$ and $Y_j$ is $(2,3,\\rho)$-hypercontractive",
+  "Each $X_j$ and $Y_j$ has mean zero",
+  "Each $X_j$ and $Y_j$ has second moment one",
+  "$X_j=Y_j$ for all $j\\ne i$",
+  "$\u001b[3m\field\u001b[0m$-smoothness of $\\psi$",
+  "Uniform bound $|\\psi'''(t)|\\le C$",
+  "$C\\ge0$"
+ ],
+ "confidence": "low",
+ "caveat": "The formal statement defines influence by applying the Boolean-cube influence formula to the Walsh-basis evaluation of the coefficient family; the phrase “restriction of $F$ to Boolean sign inputs” is intended to describe that specific function.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

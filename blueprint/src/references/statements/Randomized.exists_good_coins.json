@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.exists_good_coins",
+ "key": "32692b6e992ae3e1",
+ "kind": "theorem",
+ "title": "A Good Shared Randomness String",
+ "statement": "Let $L$ and $C$ be languages of bit strings, let $f$ map bit strings to bit strings, and let $a,k$ be nonnegative integers. Suppose that for every bit string $x$, a uniformly random string $r$ of length $a(|x|+1)^k$ satisfies $f(\\langle x,r\\rangle)\\in C$ if and only if $x\\in L$ with probability at least $2/3$, where $\\langle x,r\\rangle$ is the pairing encoding described above. For every nonnegative integer $n$, put $M=36(n+1)$ and $q=a(n+1)^k$. There is a bit string $\\rho$ of length $Mq$ such that, for every bit string $v$ of length $n$, membership $v\\in L$ is equivalent to more than half of the $M$ strings formed by taking the $q$-bit blocks of $\\rho$ (starting with block $i$ for each $0\\le i<M$) making $f(\\langle v,\\text{block}_i\\rangle)$ belong to $C$.",
+ "hypotheses_covered": [
+  "$L,C$ are languages of bit strings",
+  "$f$ maps bit strings to bit strings",
+  "$a,k$ are nonnegative integers",
+  "For every input string, the randomized membership equivalence holds with probability at least $2/3$ using $a(|x|+1)^k$ random bits",
+  "$n$ is a nonnegative integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

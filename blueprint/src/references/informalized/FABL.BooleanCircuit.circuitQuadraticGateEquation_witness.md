@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter07/QuadraticCircuitReduction.lean :: FABL.BooleanCircuit.circuitQuadraticGateEquation_witness -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Gate Equations Hold on the Witness
+
+**Claim.** For each gate of the circuit, its homogeneous quadratic equation is satisfied by the witness that records the input bits and the circuit's gate evaluations.
+
+**Proof.** Fix a gate and split into its possible gate types. Satisfaction of an equation built from a list of terms is equivalent to the sum of the corresponding products of witness coordinates equaling its right-hand side (`homogeneousQuadraticEquationOfTerms_satisfiedBy_iff`). The witness has constant coordinate $1$, input coordinates equal to the input bits encoded in $\mathbb F_2$, and gate coordinates equal to the encoded gate evaluations (`circuitQuadraticWitness_constant`, `circuitQuadraticWitness_input`, and `circuitQuadraticWitness_gate`). For an input gate, the two terms therefore assert equality of the gate value and the input bit; the evaluation rule for that gate makes the sum zero in $\mathbb F_2$. For a constant gate, the equation reduces to the gate value being the specified constant, which its evaluation rule guarantees. For negation, the terms encode that the output plus its source plus $1$ is zero; the negation evaluation rule and the identity that Boolean negation maps to addition of $1$ in $\mathbb F_2$ establish this. For conjunction, the equation says the output equals the product of the two source bits, exactly the conjunction identity under the Boolean-to-$\mathbb F_2$ encoding. For disjunction, the equation says the output equals the sum of the source bits plus their product, the corresponding identity for Boolean disjunction. In every case the resulting equation has right-hand side zero and is satisfied.
+
+**Key facts.** `FABL.homogeneousQuadraticEquationOfTerms_satisfiedBy_iff`, `FABL.BooleanCircuit.circuitQuadraticWitness_gate`, `FABL.BooleanCircuit.circuitQuadraticWitness_constant`, `FABL.BooleanCircuit.circuitQuadraticWitness_input`, `FABL.BooleanCircuit.evalGate_eq_input`, `FABL.BooleanCircuit.evalGate_eq_const`, `FABL.BooleanCircuit.evalGate_eq_neg`, `FABL.pcppBoolF₂Equiv_not`, `FABL.BooleanCircuit.evalGate_eq_and`, `FABL.pcppBoolF₂Equiv_and`, `FABL.BooleanCircuit.evalGate_eq_or`, `FABL.pcppBoolF₂Equiv_or`.

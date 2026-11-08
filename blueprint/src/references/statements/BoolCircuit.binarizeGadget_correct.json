@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.binarizeGadget_correct",
+ "key": "34daa18c9336a73b",
+ "kind": "theorem",
+ "title": "Correctness of gate binarization",
+ "statement": "For every natural number $K$, every gate kind $k$, argument list of length $\\ell$, and acyclic existing gate list $gs$ relative to $n$, assume each argument index is less than $n+|gs|$, that $k=\\mathrm{NOT}$ implies $\\ell=1$, and that $\\ell\\le K$. Binarizing the gate produces a gate list and output vertex extending $gs$ and forming an acyclic circuit; the output vertex is less than $n$ plus the resulting list length and computes the original gate's value on the values produced by $gs$ for every Boolean input assignment. The resulting list has length at most $|gs|+\\ell+2$, its output depth is at most $\\lceil\\log_2 K\\rceil+1$ plus the maximum depth among the argument vertices in $gs$ (with empty maximum $0$), and every added gate is well formed with at most two arguments.",
+ "hypotheses_covered": [
+  "Natural numbers $n$ and $K$",
+  "Gate kind $k$ and its argument list, of length $\\ell$",
+  "Existing gate list $gs$ is acyclic relative to $n$",
+  "Every argument index is less than $n+|gs|$",
+  "If $k$ is NOT, then $\\ell=1$",
+  "$\\ell\\le K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

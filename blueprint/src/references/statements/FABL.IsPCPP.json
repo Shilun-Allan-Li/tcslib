@@ -1,0 +1,22 @@
+{
+ "lean_name": "FABL.IsPCPP",
+ "key": "780441ccb5c95c8e",
+ "kind": "def",
+ "title": "PCPP property",
+ "statement": "Let $\\mathcal A$ be a finite alphabet, let $n\\ge 1$, and let $V$ be a PCPP system with input length $n$, proof length $\\ell$, and query count $r$. For a property $P$ of length-$n$ words over $\\mathcal A$ and a real number $\\rho$, suppose $\\rho>0$. Every word $w$ satisfying $P$ has some proof that $V$ accepts with probability $1$; moreover, for every $\\varepsilon\\in[0,1]$, if every word satisfying $P$ is at distance at least $\\varepsilon$ from $w$, then every proof is rejected on $w$ with probability strictly greater than $\\rho\\varepsilon$.",
+ "hypotheses_covered": [
+  "Finite alphabet",
+  "Decidable equality on the alphabet",
+  "Input length n is positive",
+  "V is a PCPP system of input length n, proof length ℓ, and query count r",
+  "P is a property of length-n words",
+  "ρ is a real number and 0 < ρ",
+  "For every P-satisfying w, there exists a proof accepted with probability 1",
+  "ε lies in [0,1]",
+  "Every P-satisfying word w' is at distance at least ε from w"
+ ],
+ "confidence": "low",
+ "caveat": "The distance predicate IsFar is not defined in the supplied statement, so its precise distance convention cannot be stated.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.StepBlock.red",
+ "key": "f38a74e01a2ae991",
+ "kind": "def",
+ "title": "Control-phase reduction rule",
+ "statement": "For each natural number $k$, define a partial reduction from a control key and its phase state to a new control key and phase state as follows. Entry advances to lookup; lookup advances to state-tail precisely when its state is the empty-key done state; state-tail and state-home advance, on their done state, to state-home and clear-state, respectively; clear-state advances from done to to-summary at position $0$; to-summary advances from position $2$ to record; record advances from its halting state to to-state at position $0$; to-state advances from position $2$ to successor at the tag phase; a completed successor field advances to table-tail, which on completion advances to table-home, then to state-gap, then to state-restore, and finally to finish, preserving the live flag at each step; finish at position $2$ advances to the exit state determined by that flag. In every other case the reduction is undefined.",
+ "hypotheses_covered": [
+  "natural parameter $k$",
+  "control key and corresponding phase state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

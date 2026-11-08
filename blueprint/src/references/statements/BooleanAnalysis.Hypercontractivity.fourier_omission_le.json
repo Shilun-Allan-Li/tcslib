@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.fourier_omission_le",
+ "key": "cf29d6274abbc034",
+ "kind": "lemma",
+ "title": "Fourier omission under an influence bound",
+ "statement": "Let $n\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$ be $\\pm1$-valued, let $J\\subseteq[n]$, and let $k\\in\\mathbb N$ and $\\rho,\\tau\\in\\mathbb R$ satisfy $0\\le\\rho\\le1$ and $\\tau\\ge0$. If every coordinate $i\\notin J$ has influence at most $\\tau$, then $\\rho^k\\sum_{\\substack{S\\subseteq[n]\\\\|S|\\le k,\\ S\\nsubseteq J}}\\widehat f(S)^2\\le\\tau^{(1-\\rho)/(1+\\rho)} I[f]$, where $I[f]$ is the total influence of $f$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$f$ is $\\pm1$-valued",
+  "$J\\subseteq[n]$",
+  "$k\\in\\mathbb N$",
+  "$0\\le\\rho\\le1$",
+  "$\\tau\\ge0$",
+  "Every coordinate outside $J$ has influence at most $\\tau$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f:\\{0,1\\}^n\\to\\{-1,1\\}$ be a function on the uniform Boolean cube, $J\\subseteq[n]$, $k\\in\\mathbb N$, $0\\le\\rho\\le1$, and $\\tau\\ge0$. If $I_i(f)\\le\\tau$ for every $i\\notin J$, then $\\rho^k\\sum_{|S|\\le k,\\ S\\nsubseteq J}\\widehat f(S)^2\\le\\tau^{(1-\\rho)/(1+\\rho)}I(f)$, with $0^0=1$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation, and $I(h)=\\sum_{i=0}^{n-1}I_i(h)$."
+}

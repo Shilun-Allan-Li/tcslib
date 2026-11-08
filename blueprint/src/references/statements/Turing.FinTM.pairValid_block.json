@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.pairValid_block",
+ "key": "8c1446f90c20e273",
+ "kind": "lemma",
+ "title": "Two steps of the validity tester",
+ "statement": "Let $x$, $p$, and $r$ be Boolean words, let $b,c\\in\\{0,1\\}$, and suppose $x=p\\,b\\,c\\,r$. Starting in the block state at position $|p|$ with empty output, after two steps the tester is still in its block state at position $|p|+2$ with empty output if $b=c$; if $b\\ne c$, it has halted at position $|p|+2$ and output the single bit that is $1$ exactly when $b=0$ and $c=1$.",
+ "hypotheses_covered": [
+  "$x,p,r$ are Boolean words",
+  "$b,c$ are Boolean bits",
+  "$x=p\\,b\\,c\\,r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the input splits as $x = p\\, b\\, c\\, r$ with bits $b, c$, then two steps of\nthe validity tester from its block state at position $\\abs{p}$ continue\nsilently to the block state at position $\\abs{p}+2$ when $b = c$, and\notherwise halt at position $\\abs{p}+2$ with single-bit output that is $1$\nexactly when $(b,c) = (0,1)$."
+}

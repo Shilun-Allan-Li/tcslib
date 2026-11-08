@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.CsState.imp",
+ "key": "b5ec61ab1277f528",
+ "kind": "theorem",
+ "title": "Implication for count-sort states",
+ "statement": "Let $\\mu$ be an initial memory, $A$ counting-sort arguments, $e\\in\\mathbb{Z}$, $R,R'$ predicates on integer-valued memories, and $\\sigma$ a state. If $\\sigma$ can be represented using entry value $e$ and a memory $\\mu'$ that agrees with $\\mu$ outside the destination and scratch regions and satisfies $R$, and every memory satisfying $R$ also satisfies $R'$, then $\\sigma$ has such a representation with a memory satisfying $R'$.",
+ "hypotheses_covered": [
+  "$\\sigma$ satisfies the count-sort state predicate at entry $e$ with property $R$",
+  "Every memory satisfying $R$ satisfies $R'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a state be represented by a location function and a memory function, and let $A$\nspecify the count-sort array and scratch-cell layout. If the state has entry value $e$,\nsome associated integer parameters, and a memory that agrees with the initial memory\noutside the destination and counter ranges and satisfies a property $R$, and if every\nmemory satisfying $R$ also satisfies $R'$, then the same state has entry value $e$,\nagrees with the initial memory outside those ranges, and satisfies $R'$."
+}

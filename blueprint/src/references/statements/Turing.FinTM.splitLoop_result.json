@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitLoop_result",
+ "key": "9ce7317e5ad5a4e3",
+ "kind": "lemma",
+ "title": "Output of the split search loop",
+ "statement": "For natural numbers $C,e$ and every Boolean word $w$, encode the prefix and suffix of $w$ cut at the length of the first accepted iterate of the split step, if one exists, and return the empty word otherwise. The resulting word equals the encoding of the prefix and suffix cut at the index returned by the arithmetic split search, again returning the empty word if there is no such index.",
+ "hypotheses_covered": [
+  "$C,e\\in\\mathbb N$",
+  "$w$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Splitting $w$ at the length of the first accepted orbit candidate and pair\nencoding the two halves gives the same word as splitting $w$ at the index\nreturned by the arithmetic split search; when both searches fail, both sides\nare the empty word."
+}

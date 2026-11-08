@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.CodeFormat",
+ "key": "8773268da8cf4ecb",
+ "kind": "structure",
+ "title": "Machine Code Format",
+ "statement": "A code format specifies a type of machine codes, a type of transition tables for each natural number $n$, a state-count function, an assembly operation taking $n$, an initial state in $\\text{Fin}(n+1)$, and a table, and fixed serializations for codes and tables. It also provides table-reading and erased table-skipping operations, a natural-number guard, and a fallback code. These data satisfy the following conditions: assembled machines have state count $n$; their serialization is the pair encoding of the binary representation of $n$ followed by the unary encoding of the initial state and the table bits; every code is assembled from some such data; reading a table's bits followed by any suffix recovers that table and suffix; every successful table read splits its input into those table bits followed by the returned remainder; erasing the result of table reading agrees with skipping; and every table's bit length is at least the guard times $n+1$.",
+ "hypotheses_covered": [
+  "code type and table types indexed by natural numbers",
+  "state-count and assembly operations",
+  "code and table serializations",
+  "table-reading and table-skipping operations",
+  "natural-number guard and fallback code",
+  "assembled state count equals $n$",
+  "specified serialization of assembled codes",
+  "every code is assembled from some data",
+  "table reading succeeds on table bits followed by any suffix",
+  "successful reads reproduce the input as table bits followed by remainder",
+  "erasing a table read agrees with table skipping",
+  "table-bit length is at least $\\text{guard}(n+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -52,6 +52,7 @@ for $f$ at depth $d$.
 }
 \label{SwitchingBernoulli.switching_fixedSize_bound_small}
 \leanok
+\uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, DNF, DNF.eval, DNF.width, SwitchingBernoulli.fixedSizeRestrs_card, SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq, SwitchingLemma.Restriction.freeVars, SwitchingLemma.restrictFn, SwitchingLemma.switching_lemma, dtDepth}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \proofstep
   {BoolCircuit.Lit}
@@ -849,7 +850,6 @@ for $f$ at depth $d$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b001}
-\uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrs, DNF, DNF.eval, DNF.width, SwitchingBernoulli.fixedSizeRestrs_card, SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq, SwitchingLemma.Restriction.freeVars, SwitchingLemma.restrictFn, SwitchingLemma.switching_lemma, dtDepth}
 \difficulty{5}
 Let $f$ be a DNF formula on $n$ Boolean variables with $n \ge 1$, and suppose every term
 of $f$ has width at most $w$, so that $f$ is a disjunction of conjunctions of at most
@@ -878,6 +878,7 @@ where $\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $
 }
 \label{SwitchingBernoulli.switching_fixedSize_bound}
 \leanok
+\uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrProb_le_one, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound_small, SwitchingLemma.restrictFn, dtDepth}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \proofstep
   {BoolCircuit.Lit}
@@ -1688,7 +1689,6 @@ where $\mathrm{depth}(g)$ denotes the least depth of a decision tree computing $
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b008}
-\uses{BernoulliCost.fixedSizeRestrProb, BernoulliCost.fixedSizeRestrProb_le_one, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound_small, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{3}
 Let $f$ be a DNF formula on $n \ge 1$ variables in which every term has width at most
 $w$, where $w \ge 1$, and in which each term is reduced: no literal is repeated, and any
@@ -1717,6 +1717,7 @@ $\rho$ and keeping the $k$ free variables as inputs, one has
 }
 \label{SwitchingBernoulli.switching_fixedSize_bound_rescaled}
 \leanok
+\uses{BernoulliCost.fixedSizeRestrProb, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound, SwitchingLemma.restrictFn, dtDepth}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \proofstep
   {BoolCircuit.Lit}
@@ -2534,7 +2535,6 @@ $\rho$ and keeping the $k$ free variables as inputs, one has
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p001-b008}
-\uses{BernoulliCost.fixedSizeRestrProb, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{2}
 Let $f$ be a DNF formula on $n \ge 1$ Boolean variables whose width is at most $w$, with
 $w \ge 1$, and suppose that within each term of $f$ no variable occurs more than once —
@@ -2553,8 +2553,8 @@ greater than $d$ satisfies
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b008}
 \label{SwitchingBernoulli.switching_bernoulli_dtDepth_dnf}
 \leanok
-\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \uses{BernoulliCost.bernoulli_restriction_cost, DNF, DNF.eval, DNF.width, SwitchingBernoulli.switching_fixedSize_bound_rescaled, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.bernoulliRestrProb_le_one', SwitchingLemma.restrictFn, dtDepth}
+\statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \difficulty{4}
 Let $f$ be a DNF formula on $n \ge 1$ Boolean variables whose width is at most $w$,
 where $w \ge 1$, and suppose that no term of $f$ reads any variable more than once: each
@@ -2576,8 +2576,8 @@ tree computing it.
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p001-b008}
 \label{SwitchingBernoulli.switching_bernoulli_dtDepth_cnf}
 \leanok
+\uses{CNF, CNF.dual, CNF.dual_eval, CNF.dual_inj, CNF.dual_nodup, CNF.dual_width, CNF.eval, CNF.width, DNF.eval, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth, dtDepth_neg}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
-\uses{CNF, CNF.eval, CNF.width, DNF.eval, SwitchingBernoulli.switching_bernoulli_dtDepth_dnf, SwitchingLemma.Restriction, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, CNF.dual_inj, CNF.dual_nodup, CNF.dual, CNF.dual_eval, CNF.dual_width, dtDepth, dtDepth_neg}
 \difficulty{4}
 Let $f$ be a CNF formula on $n \ge 1$ variables whose width is at most $w$, where $w \ge
 1$, and suppose every clause of $f$ is proper: within any one clause, two literals

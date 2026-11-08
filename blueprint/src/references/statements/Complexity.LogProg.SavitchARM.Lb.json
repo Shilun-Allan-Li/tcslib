@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.Lb",
+ "key": "0fca59aa8e50cd3e",
+ "kind": "inductive",
+ "title": "Machine-program labels",
+ "statement": "For a natural number $E$, let the program-label type consist of the labels for the setup, search, recursion, return, and stack operations: input scanning and counter updates; power and multiplication loops; initialization and outer-search tests and queries; root, accept, and reject operations; recursive calls and base-case tests; midpoint iteration and phase handling; and the move, doubling, subtraction, halving, copy, and shift loops. The label for the $j$th exponent-counter increment is parameterized by $j$ in the range $0\\le j\\le E$, and the move, doubling, subtraction, halving, copy, and shift loop labels carry, respectively, a move site and phase in $\\{0,1,2\\}$, a Boolean and phase in $\\{0,1,2,3\\}$, a Boolean and phase in $\\{0,1,2\\}$, a Boolean and phase in $\\{0,1,2\\}$, a copy site and phase in $\\{0,1,\\ldots,6\\}$, or a shift site and phase in $\\{0,1,\\ldots,8\\}$.",
+ "hypotheses_covered": [
+  "Natural-number parameter E",
+  "Exponent-counter increment index j lies between 0 and E inclusive",
+  "Loop-phase ranges are 0 through 2, 0 through 3, 0 through 2, 0 through 2, 0 through 6, and 0 through 8 for the respective loop labels",
+  "Loop labels carry the stated sites and Boolean parameters"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

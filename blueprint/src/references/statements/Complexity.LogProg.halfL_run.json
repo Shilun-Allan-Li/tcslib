@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.halfL_run",
+ "key": "dff6fb7fc9f73786",
+ "kind": "lemma",
+ "title": "Register halving run",
+ "statement": "Let $P$ be a register program with oracle and input, let $r$ be a register, and let $h_R,h_0,h_F,h_T,$ and $next$ be states. Assume that at $h_R$ every transition is the specified end-marker action, at $h_0,h_F,h_T$ every transition is the specified halving action for the scanned symbol, and none of these four states is a call state. For any configuration $c$, Boolean word $w$, and integer $k$ with $k\\le |w|$, initialize the program in state $h_0$, $h_F$, or $h_T$ according as the bit of $w$ at index $k$ is absent, $0$, or $1$; place on register $r$ the word obtained by deleting that bit, with its head at $k-1$. After $k+1$ steps the configuration is in state $next$, register $r$ contains the tail of $w$ with its head at $0$, and all other configuration data agree with $c$. At each time $t<k+1$, the configuration has some state and contents for register $r$ and head position $q$ such that the state is not a call state and $-1\\le q\\le k-1$.",
+ "hypotheses_covered": [
+  "A register program, oracle, and input.",
+  "A register $r$ and states $h_R,h_0,h_F,h_T,next$.",
+  "The transition at $h_R$ is the specified end-marker action.",
+  "The transitions at $h_0,h_F,h_T$ are the specified halving actions for the scanned symbol.",
+  "None of $h_R,h_0,h_F,h_T$ is a call state.",
+  "A configuration $c$ and Boolean word $w$.",
+  "An integer $k$ with $k\\le |w|$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

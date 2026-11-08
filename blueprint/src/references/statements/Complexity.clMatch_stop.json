@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clMatch_stop",
+ "key": "08951d589d38eab5",
+ "kind": "lemma",
+ "title": "Exhausted Clock Stops the Matcher",
+ "statement": "For every $l\\in\\mathbb{N}$, every $pos,neg\\in\\text{Fin}(l)$, input word, row, target words, stream, cursor, clock length $N$, and flag word, if the matcher is in its initial search control with clock position $N$, one machine step puts it in the completed control. All tape contents and work-head positions remain as specified by that same search configuration.",
+ "hypotheses_covered": [
+  "$l,N\\in\\mathbb{N}$",
+  "$pos,neg\\in\\text{Fin}(l)$",
+  "Boolean input word",
+  "row indexed by $\\text{Fin}(l)$",
+  "two target words",
+  "stream word",
+  "integer cursor",
+  "flag word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every search seam whose query clock is exhausted, one matcher step reads the clock blank and enters the completed live control without reading any stream bit; this includes the empty time-zero query."
+}

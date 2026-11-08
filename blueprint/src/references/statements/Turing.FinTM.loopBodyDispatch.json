@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.loopBodyDispatch",
+ "key": "303f1c6acc44bb75",
+ "kind": "def",
+ "title": "Loop body dispatch action",
+ "statement": "Let $body$ and $F$ be finite Boolean-alphabet Turing machines, let $anchor$ be a state of $body$, and let $forward$, $startup$, and the second component of the body-call state be Boolean data. Given the current input symbol and the work-tape symbols for the combined machine, the loop body dispatch produces an action of that machine: in forward mode it routes the body machine's transition through the left-action and output-emission construction, and otherwise it routes that transition through the capture construction. In either case it maps the body state into the loop host's body-call states, recording the startup marker and selecting controller phase $6$ for startup or phase $7$ otherwise.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machines $body$ and $F$",
+  "anchor state of $body$",
+  "Boolean direction flag",
+  "Boolean startup flag",
+  "body state paired with a Boolean flag",
+  "optional current Boolean input symbol",
+  "work-tape symbols for the combined machine"
+ ],
+ "confidence": "low",
+ "caveat": "The full meanings of the left-action, emission, and capture constructions are not included in the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

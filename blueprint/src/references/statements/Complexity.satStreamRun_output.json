@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satStreamRun_output",
+ "key": "0269c2f86838597a",
+ "kind": "lemma",
+ "title": "Output as concatenated round chunks",
+ "statement": "For every bit string $x$, round count $k\\in\\mathbb{N}$, and initial streaming state $s$, the output of running $k$ rounds from $s$ is the concatenation, in order for $i=0,\\ldots,k-1$, of the chunk emitted by one round from the state reached after iterating the one-round state update $i$ times from $s$.",
+ "hypotheses_covered": [
+  "Input bit string $x$",
+  "Round count $k\\in\\mathbb{N}$",
+  "Initial streaming state $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input $x$, round count $k$, and seam state $s$, the output of $k$\nstreaming rounds equals the concatenation over $i < k$ of the chunk emitted by\nthe round applied to the $i$-fold iterate of the next-state map on $s$ — the\nrange-indexed form required by the emitting-loop contract."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.sh_run",
+ "key": "f71e803fe94cd04a",
+ "kind": "theorem",
+ "title": "Shift Run",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $\\mathcal O$ assign a Boolean to each of four query indices and each finite bit string, let $x$ be a finite bit string, let $q$ be one of the three search phases, let $S$ be a machine state, let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory function, and let $p\\in\\mathbb Z$. Suppose $0\\le p\\le P$, every register of $S$ is at most $B$, $S.Z=0$, and $S.K\\,2^{S.C}\\le B$. Then the machine has a finite run from shift phase $0$ for phase $q$ to the first copy phase for that same phase, with every configuration satisfying $G(x,B,P)$. At the endpoint the shift counter is zero, $K=S.K\\,2^{S.C}$ (using the initial values in $S$), and all other registers, the memory function, and the memory-head position are unchanged.",
+ "hypotheses_covered": [
+  "$K_0,B,P\\in\\mathbb N$",
+  "an oracle family on four query indices and bit strings",
+  "a finite bit string $x$",
+  "a phase $q$ among the three search phases",
+  "a state $S$",
+  "a Boolean-valued memory function $M$",
+  "a memory-head position $p\\in\\mathbb Z$ with $0\\le p\\le P$",
+  "every register of $S$ is at most $B$",
+  "$S.Z=0$",
+  "$S.K\\,2^{S.C}\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P\\in\\mathbb N$, let $\\mathcal O$ be a family of four Boolean oracles on bit\nstrings, let $x$ be a finite bit string, let $q$ be one of the three phases, let $S$ be\na register state, and let $M:\\mathbb Z\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory\ntape with head position $p\\in\\mathbb Z$. Assume $0\\le p\\le P$, every register of $S$ is\nat most $B$, the scratch register of $S$ is zero, and $S.K\\,2^{S.C}\\le B$. Then the\nmachine $A(K_0)$ has a finite run from shift phase $0$ in phase $q$, with every\nintermediate configuration satisfying $G(x,B,P)$, to the first copy phase for the same\nphase, with the shift counter reset to zero and the register $K$ set to its initial\nvalue times $2$ raised to its initial shift counter; all other registers, the tape, and\nthe head position are unchanged."
+}

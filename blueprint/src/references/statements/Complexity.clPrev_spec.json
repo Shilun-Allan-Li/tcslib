@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clPrev_spec",
+ "key": "12007ce709639582",
+ "kind": "lemma",
+ "title": "Characterization of the last previous visit",
+ "statement": "Let $M$ be a finite binary Turing machine, let $m,t$ be natural numbers, and let $\\tau$ be one of its work tapes. If the last previous visit to the position occupied by tape $\\tau$ at time $t$, during the computation on $0^m$, is $s$, then $s<t$, the head positions at times $s$ and $t$ agree, and every $r<t$ with that same head position satisfies $r\\le s$.",
+ "hypotheses_covered": [
+  "$M$ is a finite binary Turing machine",
+  "$m,t$ are natural numbers",
+  "$\\tau$ is a work-tape index of $M$",
+  "the last previous visit at time $t$ exists and equals $s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the last-visit function for input count $m$, time $t$, and tape $\\tau$ returns a time $s$. Then $s < t$, the work-head position on $\\tau$ at time $s$ equals the position at time $t$, and every time $r < t$ scanning the same position satisfies $r \\le s$."
+}

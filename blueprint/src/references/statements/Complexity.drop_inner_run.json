@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.drop_inner_run",
+ "key": "3a0536813794aae3",
+ "kind": "lemma",
+ "title": "Inner Lookup Run",
+ "statement": "Let $mode$ be a Boolean mode, let $u$ and $b'$ be bit strings, and let $q$ be a natural number satisfying $q\\le 2|\\langle\\langle u,b'\\rangle,\\mathrm{bits}(q)\\rangle|$, where $\\mathrm{bits}(q)$ is the binary bit string for $q$. Set $h=\\langle\\langle u,b'\\rangle,\\mathrm{bits}(q)\\rangle$ and $z=\\langle u,b'\\rangle$. Starting on input $h$ in state $copy(4,false)$, with register values $ptr=4|u|+4$, $zend=2|z|$, $query=q$, $tail=2|z|+2$, and all other registers zero, the machine halts with the length test $q<|dropIdx(z)|$ when $mode$ is true, and otherwise with the bit of $dropIdx(z)$ at position $q$, defaulting to false if out of range. Every configuration before halting satisfies the machine's safety condition and register bound.",
+ "hypotheses_covered": [
+  "mode is a Boolean machine mode",
+  "u and b' are bit strings",
+  "q is a natural number",
+  "q is at most twice the length of the paired input encoding"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

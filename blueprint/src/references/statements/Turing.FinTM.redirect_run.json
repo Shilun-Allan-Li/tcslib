@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.redirect_run",
+ "key": "33196c88cdddab3d",
+ "kind": "lemma",
+ "title": "Run correspondence for the redirected machine",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit, let $x$ be an input, and let $t \\in \\mathbb{N}$. After $t$ steps from its initial configuration on $x$, the machine that redirects halting computations whose last output bit is not $b$ to a loop state has the redirected image of the configuration reached by $M$ after $t$ steps from its own initial configuration on $x$.",
+ "hypotheses_covered": [
+  "A finite-state Turing machine $M$ over the Boolean alphabet",
+  "A bit $b$",
+  "An input $x$",
+  "A natural number $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine over the Boolean alphabet and $b$ a bit, and\nconsider the halt-redirected machine of $M$ and $b$, which simulates $M$ silently while\nrecording the last bit $M$ has emitted, halts when $M$ halts with that bit equal to $b$,\nand otherwise enters an idle loop state. For every input $x$ and every\n$t \\in \\mathbb{N}$, the configuration of the halt-redirected machine after $t$ steps from\nits initial configuration on $x$ is the redirected image of the configuration of $M$\nafter $t$ steps from its initial configuration on $x$: the same tapes and heads, empty\noutput, and state $(q, \\rho)$ if $M$ is in state $q$ and the last bit it has emitted is\n$\\rho$ (empty if none), or, if $M$ has halted, halted when $\\rho = b$ and in the loop\nstate otherwise."
+}

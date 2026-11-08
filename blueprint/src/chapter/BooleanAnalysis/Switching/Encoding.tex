@@ -14,6 +14,7 @@ to invert the process; the decoder recovers $\rho$ from $(\gamma, \mathrm{aux})$
 
 \begin{definition}[Free literals of a term under a restriction]
 \lean{SwitchingLemma.Term.freeLiterals}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b002}
 \label{SwitchingLemma.Term.freeLiterals}
 \leanok
 \uses{Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, Term}
@@ -26,11 +27,11 @@ sublist of $t$ obtained by keeping those literals $l$ with $l.\mathrm{var} \in \
 \lean{SwitchingLemma.processClauseLits}
 \label{SwitchingLemma.processClauseLits}
 \leanok
+\uses{Literal, SwitchingLemma.Restriction}
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b003,
   pdf-b5e074215b9e-p002-b004
 }
-\uses{Literal, SwitchingLemma.Restriction}
 Consumes the free literals of a single clause (each paired with its position index)
 against the canonical decision-tree path, one path entry per literal. For each free
 literal it fixes the literal's variable to its satisfying direction in $\sigma$,
@@ -42,14 +43,21 @@ $\sigma$, and the accumulated clause auxiliary data.
 
 \begin{definition}[Razborov encoding]
 \lean{SwitchingLemma.razborovEncode}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p003-b005,
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \label{SwitchingLemma.razborovEncode}
 \leanok
+\uses{DNF, DecisionTree.deepPath, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree}
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b002,
   pdf-b5e074215b9e-p002-b003,
   pdf-b5e074215b9e-p002-b004
 }
-\uses{DNF, DecisionTree.deepPath, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree}
 The Razborov encoding of a DNF $f$ and a restriction $\rho$ with parameters $w, d$.
 It takes the first $d$ steps of the deepest path of the canonical decision tree for
 $f|_\rho$, then repeatedly selects the first clause of $f$ not killed by the current
@@ -61,10 +69,15 @@ and $\mathrm{aux}$ consists of per-clause blocks separated by the termination ma
 
 \begin{definition}[Razborov decoding]
 \lean{SwitchingLemma.razborovDecode}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \label{SwitchingLemma.razborovDecode}
 \leanok
+\uses{DNF, SwitchingLemma.Restriction, Term}
 \statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b004}
-\uses{DNF, SwitchingLemma.Restriction}
 The inverse of the Razborov encoding: given the DNF $f$, parameter $w$, and a pair
 $(\gamma, \mathrm{aux})$ produced by the encoder, it recovers the original restriction
 $\rho$. It repeatedly finds the first clause not killed by the current restriction,

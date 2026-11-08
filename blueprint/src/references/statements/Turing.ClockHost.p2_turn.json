@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.ClockHost.p2_turn",
+ "key": "81740172dec24996",
+ "kind": "theorem",
+ "title": "Reset sweep turnaround",
+ "statement": "Let $S$ be a deterministic Turing machine over Boolean symbols, let $A$ be a nondeterministic Turing machine over Boolean symbols, let $\text{loop}$ be a Boolean, and let $x$ be a Boolean input word. For every choice bit $b$, input-head position $ip$ among the $|x|+2$ positions, contents and head positions of the work tapes of both machines, and natural number $m$, one step of the host machine from phase $p2$ with yard tape storing $m$ consecutive true symbols and its head at $-1$ leaves $S$'s work tapes and head positions unchanged, advances each of $A$'s work-tape heads by one without changing their contents, and leaves the output empty. It moves the input head one position to the right, clamped to the valid range, moves the yard head to $0$, and enters phase $run$ with $A$ in its initial state and no captured output.",
+ "hypotheses_covered": [
+  "Boolean-symbol deterministic machine $S$",
+  "Boolean-symbol nondeterministic machine $A$",
+  "Boolean loop parameter",
+  "Boolean input word $x$",
+  "Natural yard length $m$",
+  "Choice bit $b$",
+  "Valid input-head position $ip$",
+  "Arbitrary work-tape contents and head positions for $S$ and $A$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "empiricalJoint_col_deviation_le",
+ "key": "42388f56ab794252",
+ "kind": "lemma",
+ "title": "Column deviation bound from cumulative regret",
+ "statement": "Let $G$ be a two-player game with $M$ row actions and $N$ column actions, and let $T>0$. In each of $T$ rounds, let $p_t$ and $q_t$ be mixed strategies for the row and column players, respectively. For any $\\varepsilon\\in\\mathbb{R}$ and column action $j'$, if the cumulative utility from always choosing $j'$ against the row strategies, minus the cumulative expected column utility under the round-by-round strategy pairs, is at most $\\varepsilon T$, then under the empirical joint distribution of those pairs, the column player's expected utility from choosing $j'$ against the row marginal is at most the expected column utility plus $\\varepsilon$.",
+ "hypotheses_covered": [
+  "$M,N,T$ are natural numbers and $T>0$",
+  "$G$ is a game with $M$ row actions and $N$ column actions",
+  "Each round's row and column strategies are probability distributions on their respective action sets",
+  "$\\varepsilon\\in\\mathbb{R}$",
+  "$j'$ is a column action",
+  "The stated cumulative column deviation utility difference is at most $\\varepsilon T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $G$ be a finite two-player game with column utility $u_c$ over $M$ row actions and\n$N$ column actions, and consider $T > 0$ rounds of play in which the row player uses the\nmixed strategy $p_t$ and the column player the mixed strategy $q_t$ at round $t$. Fix\n$\\varepsilon \\in \\bbr$ and a pure column action $j'$, and suppose the column player's\ncumulative external regret against always playing $j'$ is at most $\\varepsilon T$:\n\\[\n  \\sum_{t=1}^{T}\\sum_{i}(p_t)_i\\, u_c(i,j')\n  \\;-\\; \\sum_{t=1}^{T}\\sum_{i,j}(p_t)_i (q_t)_j\\, u_c(i,j)\n  \\;\\le\\; \\varepsilon T.\n\\]\nThen in the empirical joint distribution $\\sigma$ of the play, deviating to $j'$ gains\nat most $\\varepsilon$ over the expected utility:\n$\\mathrm{colDevUtil}(\\sigma, G, j') \\le \\mathrm{colExpUtil}(\\sigma, G) + \\varepsilon$.\nThis is the column half of \\texttt{empiricalJoint\\_isApproxCCE}, mirroring\n\\texttt{empiricalJoint\\_row\\_deviation\\_le}."
+}

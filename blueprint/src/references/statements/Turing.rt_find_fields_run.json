@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.rt_find_fields_run",
+ "key": "f91b7f838f5da485",
+ "kind": "theorem",
+ "title": "Run through the remaining fields",
+ "statement": "Let $m>0$, let $\u0000\u0000\u0000\u0000$, $a_0$, and $\u0000\u0000\u0000\u0000$ be fixed. Let $fs$ be a list of fields and let $j<m$ satisfy $j+|fs|=m$. Let $a$ be a state and $d$ a configuration in the forward scan state with value $a$. Suppose tape $0$, relative to its head, agrees with the tape formed by joining $fs$ at every integer position from $-1$ through its length. Then there is a time $t$ no greater than five times one plus the joined tape length such that at every time $u<t$ the machine is in neither the read state with no stored Boolean value nor the exit state. At time $t$, the configuration is the original one with tape $0$'s head advanced by the offset of the last field of $fs$ if the acceptance predicate holds on the fold of the joined tape from $a$, and by the offset immediately after all fields otherwise; its state is respectively the exit state or the read state with no stored Boolean value.",
+ "hypotheses_covered": [
+  "$m>0$",
+  "The transition function $\u0000\u0000\u0000\u0000$, initial state $a_0$, and acceptance predicate $\u0000\u0000\u0000\u0000$",
+  "$fs$ is a list of fields",
+  "$j<m$ and $j+|fs|=m$",
+  "State $a$ and configuration $d$",
+  "Configuration $d$ is in forward scan state with value $a$",
+  "Tape $0$ agrees with the joined-fields tape for $-1\\le p\\le \\operatorname{length}(\\operatorname{joinFields}(fs))$",
+  "There exists $t\\le 5(\\operatorname{length}(\\operatorname{joinFields}(fs))+1)$",
+  "For every $u<t$, neither excluded endpoint state occurs",
+  "The final head offset and state depend on acceptance of the fold of the joined tape from $a$"
+ ],
+ "confidence": "low",
+ "caveat": "The mathematical content is readable, but parameter notation is malformed; the time bound does not assert that $t$ is positive.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

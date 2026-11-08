@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.lenStart",
+ "key": "9e4b44a7f41c6684",
+ "kind": "lemma",
+ "title": "Checker startup after simulation",
+ "statement": "Let $M$ be a finite Boolean Turing machine, and let $x,w$ be Boolean words. If $M$ computes $w$ from $x$ within $T$ steps, then there are a time $t\\le T+|x|+4$ and a configuration $c$ of $M$ on $x$ whose output is $w$, such that the captured-length checker for $M$, started on $x$, reaches after $t$ steps the length checker’s parse configuration at input position $0$ with counter $|w|$, retaining $c$ as its simulated configuration.",
+ "hypotheses_covered": [
+  "M is a finite Boolean Turing machine",
+  "x and w are Boolean words",
+  "T is a natural number",
+  "M computes w from x within T steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine that, on input $x$, halts within $T$ steps with output\n$w$. Then within $T + \\abs{x} + 4$ steps the length checker built over $M$\nreaches, without emitting any physical output, the checker configuration at\ninput position $0$ in its parse state, retaining a halted bank of $M$ whose\ncaptured output is $w$ and with all $\\abs{w}$ countdown cells available."
+}

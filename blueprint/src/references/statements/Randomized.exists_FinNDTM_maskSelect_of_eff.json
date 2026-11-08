@@ -1,0 +1,16 @@
+{
+ "lean_name": "Randomized.exists_FinNDTM_maskSelect_of_eff",
+ "key": "6b60dc28c4458118",
+ "kind": "theorem",
+ "title": "Efficient machine for masked selection",
+ "statement": "Let $M$ map pairs of bit strings to a bit, and suppose the verifier that returns $M(x,r)$ is efficient in the specified polynomial-time model. For any natural numbers $a,k$, there are natural numbers $K,e$ and a finite nondeterministic Turing machine $N$ such that, for every input $x$, there are a natural number $s$ and a Boolean mask whose number of true entries is $a(|x|+1)^k$, with $s+|\\mathrm{mask}|\\le K(|x|^e+1)$. On every choice word $w$ of length exactly $K(|x|^e+1)$, $N$ halts, outputs the one-bit word whose bit is $M(x,u)$ for $u$ obtained by applying the mask to the length-$|\\mathrm{mask}|$ segment of $w$ beginning at position $s$, and that selected word has length $a(|x|+1)^k$.",
+ "hypotheses_covered": [
+  "The verifier returning $M(x,r)$ is efficient in the specified polynomial-time model",
+  "$M$ is a map from pairs of bit strings to a bit",
+  "$a,k$ are natural numbers"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

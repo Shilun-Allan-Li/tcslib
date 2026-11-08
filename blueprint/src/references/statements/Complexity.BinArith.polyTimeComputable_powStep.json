@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.BinArith.polyTimeComputable_powStep",
+ "key": "1539666d6cadb86d",
+ "kind": "theorem",
+ "title": "Binary exponentiation step is polynomial-time computable",
+ "statement": "For a bit string $S$, define a function as follows. If the first component of the second component of $S$ is empty, or the binary value of the first component of $S$ is zero, return $S$. Otherwise, form a paired encoding whose first component is the first component of $S$ and whose second component encodes, in nested pairs, the tail of the second component of $S$, the modular product of the third component of $S$ with its second component modulo the first component of $S$, and either the modular product of the fourth component of $S$ with the second component of $S$ modulo the first component of $S$ (if the first bit of the second component of $S$ is $1$), or the third component of $S$ unchanged. Here components are obtained by successive pair decoding, failed decodings yield the empty word, and products and remainders are computed on the represented binary values and returned in binary. This function is polynomial-time computable.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

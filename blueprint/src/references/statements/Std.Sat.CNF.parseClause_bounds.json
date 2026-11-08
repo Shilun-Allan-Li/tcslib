@@ -1,0 +1,17 @@
+{
+ "lean_name": "Std.Sat.CNF.parseClause_bounds",
+ "key": "f0c8189b500ff0d1",
+ "kind": "theorem",
+ "title": "Bounds for a successful clause parse",
+ "statement": "Let $f\\in\\mathbb{N}$, let $x$ and $r$ be bit strings, and let $C$ be a clause of literals $(v,b)$. If parsing $x$ as a clause with fuel $f$ returns $C$ and remainder $r$, then $|r|\\le |x|$, and every literal $(v,b)$ in $C$ satisfies $v+1+|r|\\le |x|$.",
+ "hypotheses_covered": [
+  "$f\\in\\mathbb{N}$",
+  "$x$ and $r$ are bit strings",
+  "$C$ is a clause of literals",
+  "The clause parser with fuel $f$ returns $C$ and remainder $r$ on input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f \\in \\mathbb{N}$, let $x$ and $r$ be bit strings and let $C$ be a clause of literals\n$(v,b)$ with $v \\in \\mathbb{N}$ and $b \\in \\{0,1\\}$. Suppose the clause parser with fuel $f$\nsucceeds on $x$ and returns $C$ with remainder $r$. Then $|r| \\le |x|$, and every literal\n$(v,b)$ of $C$ satisfies $v + 1 + |r| \\le |x|$. Here the clause parser with fuel $f$ on $x$\nreturns the empty clause and remainder $y$ when $x = 0y$; when $f = g+1$ and\n$x = 1^{k+1}0cy$ it prepends the literal $(k,c)$ to the clause returned by the clause parser\nwith fuel $g$ on $y$, keeping that call's remainder and failing if it fails; and it fails on\nevery other input."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Randomized.BPLInP.dpVal_init",
+ "key": "671d43aeb26f8147",
+ "kind": "theorem",
+ "title": "Initial dynamic-programming value",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine over the Boolean alphabet, let $x$ be a finite bit string, and let $s,V$ be natural numbers. Suppose there is a function $sp:\\mathbb{N}\\to\\mathbb{N}$ such that on every input and every choice string, the total number of work-tape cells visited by $N$ is at most $sp$ of the input length; suppose $sp(|x|)\\le s$ and $2^{K(s+\\ell(|x|)+1)}\\le V$, where $K$ is the configuration-code constant of $N$ and $\\ell(n)=\\lfloor\\log_2 n\\rfloor+1$. If there is a natural number $T$ such that every choice string of length $T$ makes $N$ halt on input $x$, then the depth-$V$ dynamic-programming value at the code of the initial configuration, viewed as a rational number, equals $2^V$ times the probability that $N$ outputs exactly $[1]$ on input $x$ under a uniformly random choice string of length $V$.",
+ "hypotheses_covered": [
+  "N uses at most sp(n) work-tape cells on every input and choice string",
+  "sp(|x|) ≤ s",
+  "2^(K(N)(s + logSpace(|x|) + 1)) ≤ V",
+  "there exists T such that every length-T choice string halts N on x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.Tensorization.mixed_lintegral_le",
+ "key": "fbf704ac8c895875",
+ "kind": "theorem",
+ "title": "Comparison of mixed nonnegative integrals",
+ "statement": "Let $(A,\\mu)$ and $(B,\\nu)$ be probability spaces, let $g:A\\times B\\to[0,\\infty]$ be measurable, and let $p,q\\in\\mathbb R$ satisfy $0<p\\le q$. Then $\\left(\\int_B\\left(\\int_A g(x,y)^p\\,d\\mu(x)\\right)^{q/p}d\\nu(y)\\right)^{1/q}\\le\\left(\\int_A\\left(\\int_B g(x,y)^q\\,d\\nu(y)\\right)^{p/q}d\\mu(x)\\right)^{1/p}$, with integrals and powers taken in the nonnegative extended reals.",
+ "hypotheses_covered": [
+  "$(A,\\mu)$ and $(B,\\nu)$ are probability spaces",
+  "$g:A\\times B\\to[0,\\infty]$ is measurable",
+  "$p,q\\in\\mathbb R$",
+  "$0<p$",
+  "$p\\le q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $(A,\\mu)$ and $(B,\\nu)$ be probability spaces, let $g:A\\times B\\to[0,\\infty]$ be measurable, and let $0<p\\le q<\\infty$. Then $(\\int_B(\\int_A g^p\\,d\\mu)^{q/p}\\,d\\nu)^{1/q}\\le(\\int_A(\\int_B g^q\\,d\\nu)^{p/q}\\,d\\mu)^{1/p}$."
+}

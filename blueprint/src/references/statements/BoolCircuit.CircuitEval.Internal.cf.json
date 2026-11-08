@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.Internal.cf",
+ "key": "2afd969fcfa90a53",
+ "kind": "def",
+ "title": "Boolean tape configuration constructor",
+ "statement": "Given a finite Boolean input string $z$, an optional machine state $q$, an input-head position $p$ among the $|z|+2$ positions, two tape contents $v_t,m_t:\\mathbb{Z}\\to\\mathrm{Option}(\\\text{Bool})$, a work-tape head position $j\\in\\mathbb{Z}$, and a finite Boolean output string, this construction forms a configuration of a two-work-tape Turing machine with input $z$, state $q$, input-head position $p$, both work-tape head positions equal to $j$, and the given output. The work-tape contents are obtained from $v_t$ and $m_t$ by the construction used to combine them into the two tapes.",
+ "hypotheses_covered": [
+  "Boolean input string z",
+  "optional state q",
+  "input-head position p in Fin (|z|+2)",
+  "tape contents vt and mt from integers to optional Booleans",
+  "integer head position j shared by both work tapes",
+  "finite Boolean output string"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement refers to an auxiliary construction for combining the two tape contents, but its definition is not included, so their exact assignment to the two tapes cannot be specified.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

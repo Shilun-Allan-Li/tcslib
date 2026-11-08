@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.source_bounds",
+ "key": "203edf8f3ebc98eb",
+ "kind": "lemma",
+ "title": "Work tape bounds after a computation",
+ "statement": "Let $M$ be a finite Turing machine over an alphabet $\\Gamma$, let $x$ be an input word, and let $t\\in\\mathbb{N}$. After $t$ steps from its initial configuration on $x$, every work-tape head is at a position in $[-t,t]$, and every cell with integer coordinate $z<-t$ or $z>t$ on every work tape is blank.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$x$ is a finite input word",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite Turing machine over an alphabet $\\Gamma$ (a deterministic\nmulti-tape machine with finitely many states and some number of work tapes),\nlet $x$ be an input word, and let $t \\in \\mathbb{N}$. In the configuration\nreached by running $M$ for $t$ steps from its initial configuration on $x$:\nevery work-tape head position lies in the interval $[-t, t]$, and on every\nwork tape, every cell at a coordinate $z$ with $z < -t$ or $z > t$ is blank."
+}

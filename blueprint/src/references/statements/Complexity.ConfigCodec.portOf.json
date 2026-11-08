@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.ConfigCodec.portOf",
+ "key": "f0f3976cae8d3ea8",
+ "kind": "def",
+ "title": "Configuration port encoding",
+ "statement": "For a machine with $k$ work tapes, encode each natural-number index $j$ as follows: indices $0,1,2$ represent the state, input-head, and input-symbol ports; indices $3$ through $2+k$ represent work-head ports; and indices from $3+k$ up to but not including $3+3k$ represent work-symbol ports, with tape number $\bigl\floor{(j-3-k)/2}\bigr\rfloor$ and Boolean label given by whether $(j-3-k)$ is odd. The next two indices represent the false and true summary ports, followed by the old-bit and new-bit ports; every remaining index also represents the new-bit port.",
+ "hypotheses_covered": [
+  "natural numbers k and j",
+  "machine M with Boolean symbols"
+ ],
+ "confidence": "high",
+ "caveat": "The floor notation describes natural-number division.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

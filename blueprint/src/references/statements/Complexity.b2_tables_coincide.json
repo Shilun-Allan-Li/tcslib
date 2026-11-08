@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_tables_coincide",
+ "key": "7a0060889ae96952",
+ "kind": "lemma",
+ "title": "Choice Independence Outside Guessing States",
+ "statement": "Let $S$ and $V$ be deterministic Turing machines over the binary alphabet, and let $q$ be a state of the reverse host that is not a live scheduler state (a state of the form consisting of a scheduler state paired with an active scheduler phase). For every input symbol, possibly blank, and every tuple of work-tape symbols, the host's transition action is the same for choice bit $0$ as for choice bit $1$.",
+ "hypotheses_covered": [
+  "$S,V$ are finite deterministic machines over the binary alphabet",
+  "$q$ is a reverse-host state distinct from every live scheduler state",
+  "the input symbol is an optional Boolean symbol",
+  "the work-tape symbols are a tuple indexed by the host's work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ and $V$ be deterministic machines and let $q$ be any control state of the reverse host built from $S$ and $V$ that is not a live guessing state. For every input symbol and every tuple of work-tape symbols, the two transition tables of the host agree at $q$."
+}

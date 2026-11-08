@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.rt_fieldsCopy_reverse",
+ "key": "c3abdd639a5262ed",
+ "kind": "theorem",
+ "title": "Bounded reverse field copying",
+ "statement": "For every natural number $m$, there are a finite state set $P$ with decidable equality, a two-work-tape machine $R$ over an arbitrary symbol type $\\Gamma$, designated states $entry,exit\\in P$, and a natural number $C$ such that the following holds. For every input word $x$, list of fields $fs$ of length $m$, and configuration $d$ on input $x$, suppose $d$ begins in state $entry$, tape $1$ contains the joined fields in the specified field-tape representation at offsets from $-1$ through the total joined length relative to its head, and tape $0$ is blank throughout those offsets. Then in some time $t\\le C(L+1)$, where $L$ is the length of the joined fields, the machine reaches a configuration equal to $d$ except that its state is $exit$ and tape $0$ contains the joined fields in field-tape representation on the interval of length $L$ starting at its initial head position. It does not visit $exit$ earlier, and both tape heads remain within distance $C(L+1)$ of their initial positions through time $t$.",
+ "hypotheses_covered": [
+  "Natural number $m$",
+  "Finite state set $P$ with decidable equality exists",
+  "Two work tapes and arbitrary symbol type $\\Gamma$",
+  "Input word $x$",
+  "List $fs$ has length $m$",
+  "Initial state is $entry$",
+  "Tape $1$ satisfies the RecordAt condition for $fs$",
+  "Tape $0$ is blank over the specified interval",
+  "Time bound $C(L+1)$",
+  "No earlier visit to $exit$",
+  "Both head displacement bounds through time $t$",
+  "Final configuration with copied joined fields on tape $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

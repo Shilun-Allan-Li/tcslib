@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.sqrt_profile_sq_le",
+ "key": "8e56f2dc696bddd7",
+ "kind": "lemma",
+ "title": "Monotonicity after adding a squared coordinate",
+ "statement": "Let $n$ be a dimension, let $f$ be a real-valued function on the Boolean cube $\\{0,1\\}^n$, and let $d\\in\\mathbb R$. If the closed Gaussian profile at the expectation of $f$ is at most the Bobkov functional of $f$, then $\\sqrt{\\overline I(\\E[f])^2+d^2}\\le\\sqrt{B(f)^2+d^2}$, where $\\overline I$ denotes the closed Gaussian profile and $B(f)$ the Bobkov functional.",
+ "hypotheses_covered": [
+  "dimension $n\\in\\mathbb N$",
+  "real-valued function $f$ on $\\{0,1\\}^n$",
+  "real scalar $d$",
+  "closed Gaussian profile at $\\E[f]$ is at most $B(f)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a real function $f$ on the uniform Boolean cube $\\{0,1\\}^n$, write $D_i f(x)=(f(x^{i\\leftarrow0})-f(x^{i\\leftarrow1}))/2$ and $B(f)=\\mathbb E\\sqrt{\\overline I(f)^2+\\sum_i(D_i f)^2}$, where $\\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. If $d\\in\\mathbb R$ and $\\overline I(\\mathbb E f)\\le B(f)$, then $\\sqrt{\\overline I(\\mathbb E f)^2+d^2}\\le\\sqrt{B(f)^2+d^2}$."
+}

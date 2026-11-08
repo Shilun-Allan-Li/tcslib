@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.Codec.foldl_adStep_flatten",
+ "key": "af76daed435f1f40",
+ "kind": "theorem",
+ "title": "Processing full chunks of symbols",
+ "statement": "Let $\\sigma$ and $\\alpha$ be types, let $w$ be a natural number, let $\\delta$ assign an element of $\\sigma$ to each element of $\\sigma$ and each finite list of elements of $\\alpha$, and let $s\\in\\sigma$. Suppose $L$ is a finite list of finite lists of elements of $\\alpha$, each of length $w+1$, and let the initial buffer assign an element of $\\alpha$ to each of the $w+1$ positions. Processing the concatenation of the lists in $L$ one symbol at a time, updating the state by $\\delta$ whenever a full block of $w+1$ symbols has been processed, ends with state equal to the result of applying $\\delta$ successively to the lists in $L$, starting from $s$, and with position zero, for some final buffer.",
+ "hypotheses_covered": [
+  "$\\sigma$ and $\\alpha$ are types",
+  "$w$ is a natural number",
+  "$\\delta$ maps a state and a finite list of symbols to a state",
+  "$s$ is an element of $\\sigma$",
+  "$L$ is a finite list of finite lists of symbols",
+  "Each list in $L$ has length $w+1$",
+  "The initial buffer assigns a symbol to each of the $w+1$ positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_stableInfluence",
+ "key": "df1952e0d78c9e20",
+ "kind": "theorem",
+ "title": "Product stable-influence estimate",
+ "statement": "Let $n\\in\\mathbb{N}$, let $P$ be a finite product probability space with $n$ coordinates, and let $\\lambda,q,\\rho\\in\\mathbb{R}$ satisfy $0<\\lambda$, $\\lambda\\le 1$, $q\\ge 2$, $\\rho\\ge 0$, and $\\rho\\le \\frac{1}{q-1}\\lambda^{1-2/q}$. Suppose every coordinate atom has probability at least $\\lambda$. For every function $f$ taking values in $\\{-1,1\\}$ and every coordinate $i$, $\\rho I_i^{(\\rho)}(f)\\le I_i(f)^{2-2/q}$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb{N}$ and a finite product probability space $P$ with $n$ coordinates",
+  "$0<\\lambda$ and $\\lambda\\le 1$",
+  "Every coordinate atom has probability at least $\\lambda$",
+  "$q\\ge 2$",
+  "$\\rho\\ge 0$ and $\\rho\\le \\frac{1}{q-1}\\lambda^{1-2/q}$",
+  "$f$ takes values in $\\{-1,1\\}$",
+  "A coordinate $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ with every coordinate atom at least $0<\\lambda\\le1$, and let $q\\ge2$ and $0\\le\\rho\\le\\lambda^{1-2/q}/(q-1)$. For every $f:\\Omega\\to\\{-1,1\\}$ and coordinate $i$, $\\rho I_i^{(\\rho)}(f)\\le I_i(f)^{2-2/q}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $I_i(h)=\\mathbb E_P(h-E_{[n]\\setminus\\{i\\}}h)^2$; $I_i^{(a)}(h)=\\sum_{S\\ni i}a^{|S|-1}\\mathbb E_Ph_S^2$ for $a\\in\\mathbb R$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.a3_exp_bits_timed",
+ "key": "55b32c7d1f5b095d",
+ "kind": "lemma",
+ "title": "Binary output for an exponential value",
+ "statement": "For all natural numbers $C$ and $c$, there exist a finite Turing machine $M$ over the Boolean alphabet and a natural number $A$ such that, on every Boolean word $x$, $M$ outputs the list of binary digits of $C\\,2^{(\\operatorname{length}(x)+1)^c}$ within $A(\\operatorname{length}(x)+1)^{c+1}$ steps.",
+ "hypotheses_covered": [
+  "$C$ is a natural number",
+  "$c$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all constants $C, c$ there exist a finite machine and a constant $A$ such\nthat the machine computes, from each input $x$, the binary-digit list of\n$C \\cdot 2^{(|x|+1)^c}$ within time $A (|x| + 1)^{c+1}$."
+}

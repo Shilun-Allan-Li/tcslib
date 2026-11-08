@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitEmbed_cut",
+ "key": "e4410b4bbfc00650",
+ "kind": "lemma",
+ "title": "Safe embedded run to a stopped configuration",
+ "statement": "Let $k$ be a natural number, let $S$ and $H$ be state sets, let $w$ be a Boolean input word, and let $tm$ and $host$ be machines with $k$ work tapes over the Boolean alphabet. Suppose $emb:S\\to H$ and $anchor\\in H$ satisfy $emb(q)\\ne anchor$ for every $q\\in S$; suppose also that every configuration of $tm$ whose state is a stopped state is fixed by one step, and that for each non-stopped state $q$, the transition of $host$ at $emb(q)$ is the state-renaming of the transition of $tm$ at $q$, for every input symbol and tuple of work-tape symbols. If a configuration $d$ has a stopped state and is reached from a configuration $c$ of $tm$ after $T$ steps, then there is some $t\\le T$ such that running $host$ from the state-renaming of $c$ for $t$ steps gives the state-renaming of $d$, and at every time $j\\le t$ the state of that host computation is different from $anchor$.",
+ "hypotheses_covered": [
+  "Natural number $k$, state sets $S,H$, and Boolean input word $w$.",
+  "Machines $tm$ and $host$ with $k$ work tapes over Booleans.",
+  "State map $emb:S\\to H$ and anchor state $anchor\\in H$.",
+  "$emb(q)\\ne anchor$ for every $q\\in S$.",
+  "Every configuration of $tm$ in a stopped state is fixed by one step.",
+  "For every non-stopped $q$ and all input and work symbols, the host transition at $emb(q)$ equals the state-renamed transition of $tm$ at $q$.",
+  "Configurations $c,d$ and natural number $T$.",
+  "The state of $d$ is a stopped state.",
+  "Running $tm$ from $c$ for $T$ steps gives $d$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

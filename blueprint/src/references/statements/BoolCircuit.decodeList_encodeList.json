@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.decodeList_encodeList",
+ "key": "3a866171fce8e04c",
+ "kind": "theorem",
+ "title": "List encoding and decoding",
+ "statement": "Let $\\alpha$ be a type, let $f$ be a decoder from Boolean lists to either no result or an element of $\\alpha$ together with a remaining Boolean list, and let $g$ assign a Boolean list to each element of $\\alpha$. For a finite list $A$ in $\\alpha$, suppose that for every $a\\in A$ and every Boolean-list suffix $r$, decoding the concatenation of $g(a)$ with $r$ returns $(a,r)$. Then for every natural-number fuel bound strictly greater than the length of $A$ and every suffix $r$, decoding the encoding of $A$ followed by $r$ returns $(A,r)$.",
+ "hypotheses_covered": [
+  "a type $\\alpha$",
+  "decoder $f$ and encoder $g$",
+  "for each element of $A$, $f(g(a)\\mathbin{++}r)=(a,r)$ for every suffix $r$",
+  "the length of $A$ is strictly less than the fuel bound",
+  "an arbitrary Boolean-list suffix $r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

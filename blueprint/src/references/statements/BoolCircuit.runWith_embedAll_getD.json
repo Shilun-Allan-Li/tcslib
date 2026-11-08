@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.runWith_embedAll_getD",
+ "key": "21bc26c8f71a4f2d",
+ "kind": "theorem",
+ "title": "Evaluation of an embedded circuit",
+ "statement": "Let $D_1,\u001dots,D_k$ be a finite list of directed acyclic Boolean circuits, each with $m$ inputs, and let $s$ be a list of $m$ indices into an initial Boolean list $I$. Assume every index in $s$ is less than the length of $I$. For any $j<k$, after executing the gates obtained by embedding all the circuits using $s$, starting from $I$, the value at the index given by the length of $I$ plus the embedding offset of $D_{j+1}$ equals the output of $D_{j+1}$ on the input whose $i$th coordinate is the value of $I$ at the index specified by the $i$th entry of $s$, with out-of-range lookups interpreted as false.",
+ "hypotheses_covered": [
+  "Each circuit in the list has $m$ inputs",
+  "The source list has length $m$",
+  "Every source index is less than the length of the initial Boolean list",
+  "The selected index $j$ is less than the list length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

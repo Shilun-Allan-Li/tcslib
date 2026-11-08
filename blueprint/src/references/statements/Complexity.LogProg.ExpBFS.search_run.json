@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.search_run",
+ "key": "02432621d309054a",
+ "kind": "theorem",
+ "title": "Bounded reachability search",
+ "statement": "Let $K_0$ be a natural number, let $\\mathrm{orc}$ assign a Boolean to each of four query indices and each finite bit string, let $x$ be a finite bit string, and let $B,P$ be natural numbers. Let $\\varphi$ be a Boolean, let $S$ be a machine state, and let $M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory function. Suppose $S.U=S.V=S.T=S.T_2=S.Z=S.ch=S.c=0$, $S$ satisfies $\\mathrm{SBd}(B,P)$, and $M(S.Bs+v)=\\mathrm{false}$ for every natural number $v<S.K$. Then there is a memory function $M'$ such that the machine has a finite run from the initial configuration to the configuration at the second count-comparison label if $\\varphi$ is true, and at the first-search cleanup label otherwise; every configuration before the endpoint satisfies the guard $G(x,B,P)$. At the endpoint, $U=S.K$ and $c$ is the number of indices $v<S.K$ reachable from some $u<S.K$ with a true initial query by a finite sequence of true step queries whose successive indices remain below $S.K$; all other registers retain their values from $S$. Moreover, every position marked true by $M$ is marked true by $M'$, no memory cell outside $\\{S.Bs+v:v<S.K\\}$ changes, and for each $v<S.K$, $M'(S.Bs+v)$ is true exactly when $v$ has that reachability property.",
+ "hypotheses_covered": [
+  "$K_0\\in\\mathbb N$",
+  "An oracle assigning a Boolean to each of four query indices and bit strings",
+  "A finite bit string $x$",
+  "$B,P\\in\\mathbb N$",
+  "A Boolean $\\varphi$",
+  "A machine state $S$",
+  "A Boolean-valued memory function $M$",
+  "$S.U=S.V=S.T=S.T_2=S.Z=S.ch=S.c=0$",
+  "$S$ satisfies $\\mathrm{SBd}(B,P)$",
+  "$M(S.Bs+v)=\\mathrm{false}$ for every $v<S.K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $K_0$ be a natural number, let $orc$ assign a Boolean answer to each of four query\nindices and bit strings, and let $x$ be a bit string. Let $B,P$ be natural numbers, let\n$\\varphi$ be a Boolean, let $S$ be a machine state, and let\n$M:\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory function. Assume that the\ncoordinates $U,V,T,T_2,Z,ch,c$ of $S$ are all zero, that $S$ satisfies\n$\\mathrm{SBd}(B,P)$, and that $M(S.Bs+v)$ is false for every natural number $v<S.K$.\nThen there is a memory function $M'$ such that the machine reaches a configuration\nsatisfying its guard, at the label for the second count comparison when $\\varphi$ is\ntrue and at the label for the first count otherwise. In that configuration the counter\n$U$ equals $S.K$, the counter $c$ equals the number of indices $v<S.K$ for which $v$ is\nreachable from some $u<S.K$ with a true initial query, using finitely many true step\nqueries and keeping every resulting index below $S.K$, and the remaining register values\nare those of $S$; moreover, every bit marked in $M$ remains marked in $M'$, no memory\ncell outside $\\{S.Bs+v:v<S.K\\}$ changes, and for each $v<S.K$, $M'(S.Bs+v)$ is true\nexactly when $v$ has that reachability property."
+}

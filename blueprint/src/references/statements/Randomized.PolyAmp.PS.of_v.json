@@ -1,0 +1,23 @@
+{
+ "lean_name": "Randomized.PolyAmp.PS.of_v",
+ "key": "cf7a0a0b6cfeb94a",
+ "kind": "lemma",
+ "title": "Register-vector invariance of probabilistic semantics",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, let $o$ be a Boolean parameter, let $x$ be a Boolean input word, let $B$ be a natural-number register bound, let $l$ be a control label, let $p$ be rational, let $\\sigma'$ be a register state, and let $f$ be a function from the fifteen register indices to the natural numbers. If $f$ is the register vector of $\\sigma'$ and the polynomial-amplification program, started at $l$ with register vector $\\sigma'$ and no result, has every register at most $B$, terminates for every sequence of choice bits, and returns true and false with probabilities $p$ and $1-p$, respectively, for every number of choice bits for which every branch terminates, then the abstract program has the same termination and probability properties when started at $l$ with register vector $f$ and no result.",
+ "hypotheses_covered": [
+  "finite nondeterministic Turing machine over Boolean symbols",
+  "Boolean parameter $o$",
+  "Boolean input word $x$",
+  "natural register bound $B$",
+  "control label $l$",
+  "rational probability $p$",
+  "register state $\\sigma'$",
+  "function $f$ from fifteen register indices to natural numbers",
+  "$f$ equals the register vector of $\\sigma'$",
+  "probabilistic semantics from $\\sigma'$ holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a finite nondeterministic Turing machine $N$ over the binary alphabet, Boolean\nparameter $o$, input word $x$, register bound $B$, control label $l$, rational number\n$p$, register record $\\sigma'$, and register vector $f$. If $f$ is the register vector\nencoded by $\\sigma'$ and the polynomial-amplification program initialized at label $l$\nwith that record and no result yet, with all registers bounded by $B$, terminates along\nevery sequence of choice bits and has probabilities $p$ and $1-p$ of returning true and\nfalse, respectively, for every length at which all branches halt, then initializing it\nwith vector $f$ has the same termination and probability properties."
+}

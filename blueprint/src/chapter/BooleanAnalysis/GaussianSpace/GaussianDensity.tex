@@ -5,109 +5,158 @@ Translated Gaussian densities represent affine Gaussian indicator averages and a
 
 \section{Declarations}
 
-\begin{lemma}[Affine Gaussian indicator density formula]
+\begin{lemma}[Affine Gaussian Indicator Density Formula]
 \lean{BooleanAnalysis.GaussianSpace.integral_indicator_gaussian_affine}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{4}
-Let $A\subseteq\mathbb R$ be measurable, $c,s\in\mathbb R$, and $s\ne0$. For $Z\sim N(0,1)$ and the Gaussian density $p_{s^2}(c,z)$ with mean $c$ and variance $s^2$, $\mathbb E1_A(c+sZ)=\int_{\mathbb R}p_{s^2}(c,z)1_A(z)\,dz$.
+Let $A\subseteq\mathbb R$ be measurable, and let $c,s\in\mathbb R$ with $s\ne0$. Then
+\[
+\int_{\mathbb R}\mathbf 1_A(c+sy)\,d\gamma(y)=\int_{\mathbb R} q_{c,s^2}(z)\mathbf
+1_A(z)\,dz,
+\]
+where $q_{c,s^2}(z)$ is the Gaussian density with mean $c$ and variance $s^2$, and
+$\gamma$ is the standard Gaussian probability measure.
 \end{lemma}
 
-\begin{lemma}[Mean derivative of the Gaussian kernel]
+\begin{lemma}[Derivative of a Gaussian density in its mean]
 \lean{BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean}
 \leanok
 \difficulty{3}
-For $v\ge0$, put $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$ when $v>0$, and $p_0(c,z)=0$; take division by zero to be zero. For all real $c,z$, the derivative at $c$ of $m\mapsto p_v(m,z)$ is $((z-c)/v)p_v(c,z)$.
+For any real numbers $c,z$ and any nonnegative variance $v$, the function of the mean
+$m\mapsto p_v(m,z)$ has derivative at $m=c$ equal to $\frac{z-c}{v}p_v(c,z)$, where
+$p_v$ is the Gaussian density with mean $m$ and variance $v$ (with the zero-variance
+density taken to be zero).
 \end{lemma}
 
-\begin{lemma}[Integrable envelope for first mean derivatives]
+\begin{lemma}[Integrable envelope for the first mean derivative]
 \lean{BooleanAnalysis.GaussianSpace.gaussianPDFReal_meanDerivative_dominated}
 \leanok
 \difficulty{6}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. For every $M\ge0$, there exists a Lebesgue-integrable $b:\mathbb R\to\mathbb R$ such that $|((z-m)/v)p_v(m,z)|\le b(z)$ for all $z\in\mathbb R$ and all $m$ with $|m|\le M$.
+Let $v>0$ and $M\ge 0$, and write $p_v(m,z)=(2\pi v)^{-1/2}\exp(-(z-m)^2/(2v))$ for the
+Gaussian density with mean $m$ and variance $v$. There is a Lebesgue-integrable function
+$b:\mathbb R\to\mathbb R$ such that, for every $m,z\in\mathbb R$ with $|m|\le M$,
+$\left|\frac{z-m}{v}p_v(m,z)\right|\le b(z)$.
 \end{lemma}
 
-\begin{lemma}[Differentiation of bounded Gaussian averages]
+\begin{lemma}[Derivative of a bounded Gaussian average]
 \lean{BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_mean}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianPDFReal_meanDerivative_dominated,BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean}
+\uses{BooleanAnalysis.GaussianSpace.gaussianPDFReal_meanDerivative_dominated, BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean}
 \difficulty{5}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. Let $f:\mathbb R\to\mathbb R$ be measurable with $|f(z)|\le1$ for all $z$. For every $c\in\mathbb R$, the derivative at $c$ of $m\mapsto\int p_v(m,z)f(z)\,dz$ is $\int((z-c)/v)p_v(c,z)f(z)\,dz$.
+Let $f:\mathbb R\to\mathbb R$ be measurable and satisfy $|f(z)|\le1$ for every
+$z\in\mathbb R$. For any positive variance $v$ and real $c$, the function
+$m\mapsto\int_{\mathbb R}p_v(m,z)f(z)\,dz$ has derivative at $m=c$ equal to
+$\int_{\mathbb R}\frac{z-c}{v}p_v(c,z)f(z)\,dz$, where $p_v(m,z)$ is the Gaussian
+density with mean $m$ and variance $v$.
 \end{lemma}
 
-\begin{lemma}[Second mean derivative of the Gaussian kernel]
+\begin{lemma}[Derivative of the Gaussian mean score]
 \lean{BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_meanDerivative}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_mean}
 \difficulty{3}
-For $v\ge0$, put $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$ when $v>0$, and $p_0(c,z)=0$; take division by zero to be zero. For real $c,z$, the derivative at $c$ of $m\mapsto((z-m)/v)p_v(m,z)$ is $((z-c)^2/v^2-1/v)p_v(c,z)$.
+For any real numbers $c,z$ and any nonnegative variance $v$, the function $m\mapsto
+\frac{z-m}{v}p_v(m,z)$ has derivative at $m=c$ equal to
+$\left(\frac{(z-c)^2}{v^2}-\frac1v\right)p_v(c,z)$, where $p_v$ is the Gaussian density
+with mean $m$ and variance $v$ (with the zero-variance density taken to be zero).
 \end{lemma}
 
-\begin{lemma}[Integrable envelope for second mean derivatives]
+\begin{lemma}[Integrable envelope for the second mean derivative]
 \lean{BooleanAnalysis.GaussianSpace.gaussianPDFReal_secondMeanDerivative_dominated}
 \leanok
 \difficulty{6}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. For every $M\ge0$, there is a Lebesgue-integrable $b:\mathbb R\to\mathbb R$ such that $|((z-m)^2/v^2-1/v)p_v(m,z)|\le b(z)$ for all real $z$ and all $m$ with $|m|\le M$.
+Let $v>0$ and $M\ge0$, and write $p_v(m,z)=(2\pi v)^{-1/2}\exp(-(z-m)^2/(2v))$. There is
+a Lebesgue-integrable function $b:\mathbb R\to\mathbb R$ such that, for every
+$m,z\in\mathbb R$ with $|m|\le M$,
+\[\left|\left(\frac{(z-m)^2}{v^2}-\frac1v\right)p_v(m,z)\right|\le b(z).\]
 \end{lemma}
 
-\begin{lemma}[Second differentiation of bounded Gaussian averages]
+\begin{lemma}[Second derivative of a bounded Gaussian average]
 \lean{BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_meanDerivative}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.gaussianPDFReal_meanDerivative_dominated,BooleanAnalysis.GaussianSpace.gaussianPDFReal_secondMeanDerivative_dominated,BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_meanDerivative}
+\uses{BooleanAnalysis.GaussianSpace.gaussianPDFReal_meanDerivative_dominated, BooleanAnalysis.GaussianSpace.gaussianPDFReal_secondMeanDerivative_dominated, BooleanAnalysis.GaussianSpace.hasDerivAt_gaussianPDFReal_meanDerivative}
 \difficulty{5}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. If $f:\mathbb R\to\mathbb R$ is measurable and $|f|\le1$, then for each real $c$ the derivative at $c$ of $m\mapsto\int((z-m)/v)p_v(m,z)f(z)\,dz$ is $\int((z-c)^2/v^2-1/v)p_v(c,z)f(z)\,dz$.
+Let $f:\mathbb R\to\mathbb R$ be measurable and satisfy $|f(z)|\le1$ for every
+$z\in\mathbb R$. For any positive variance $v$ and real $c$, the function
+$m\mapsto\int_{\mathbb R}\frac{z-m}{v}p_v(m,z)f(z)\,dz$ has derivative at $m=c$ equal to
+$\int_{\mathbb R}\left(\frac{(z-c)^2}{v^2}-\frac1v\right)p_v(c,z)f(z)\,dz$, where
+$p_v(m,z)$ is the Gaussian density with mean $m$ and variance $v$.
 \end{lemma}
 
 \begin{lemma}[Centered second Gaussian moment]
 \lean{BooleanAnalysis.GaussianSpace.integral_centered_sq_gaussianReal}
 \leanok
 \difficulty{3}
-For every $c\in\mathbb R$ and $v\ge0$, a random variable $Z\sim N(c,v)$ satisfies $\mathbb E(Z-c)^2=v$, including the point-mass law when $v=0$.
+For every $c\in\mathbb R$ and $v\ge0$, the Gaussian measure $N(c,v)$ on $\mathbb R$
+satisfies
+\[
+\int_{\mathbb R}(z-c)^2\,dN(c,v)(z)=v.
+\]
 \end{lemma}
 
-\begin{lemma}[Absolute Gaussian density integral bound]
+\begin{lemma}[Gaussian density integral bound]
 \lean{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_mul_le}
 \leanok
 \difficulty{4}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. Let $c\in\mathbb R$ and $g,b:\mathbb R\to\mathbb R$. If $b$ is integrable for $N(c,v)$ and $|g(z)|\le b(z)$ for every $z$, then $|\int p_v(c,z)g(z)\,dz|\le\int b(z)\,dN(c,v)(z)$, with a nonintegrable integral on the left assigned value zero.
+Let $v$ be a nonzero nonnegative real number, let $c\in\mathbb R$, and let $g,b:\mathbb
+R\to\mathbb R$. Suppose $b$ is integrable with respect to the Gaussian measure of mean
+$c$ and variance $v$, and $|g(z)|\le b(z)$ for every $z$. Then \[\left|\int_{\mathbb
+R}p_{c,v}(z)g(z)\,dz\right|\le\int_{\mathbb R}b(z)\,dN(c,v)(z),\] where $p_{c,v}$ is the
+Gaussian density and $N(c,v)$ is that Gaussian measure.
 \end{lemma}
 
-\begin{lemma}[Uniform second mean-derivative bound]
+\begin{lemma}[Gaussian second mean derivative bound]
 \lean{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_secondMeanDerivative_le}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.integral_centered_sq_gaussianReal}
 \difficulty{5}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. For any function $f:\mathbb R\to\mathbb R$ with $|f|\le1$ and any real $c$, $|\int((z-c)^2/v^2-1/v)p_v(c,z)f(z)\,dz|\le2/v$, where nonintegrable integrals are assigned zero.
+Let $f:\mathbb R\to\mathbb R$ satisfy $|f(z)|\le1$ for every $z$. For a nonzero
+nonnegative real number $v$ and any $c\in\mathbb R$, \[\left|\int_{\mathbb
+R}\left(\frac{(z-c)^2}{v^2}-\frac1v\right)p_{c,v}(z)f(z)\,dz\right|\le\frac2v,\] where
+$p_{c,v}$ is the density of the Gaussian measure with mean $c$ and variance $v$.
 \end{lemma}
 
-\begin{lemma}[Uniform first mean-derivative bound]
+\begin{lemma}[Gaussian mean derivative integral bound]
 \lean{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_meanDerivative_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_mul_le,BooleanAnalysis.GaussianSpace.integral_centered_sq_gaussianReal}
+\uses{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_mul_le, BooleanAnalysis.GaussianSpace.integral_centered_sq_gaussianReal}
 \difficulty{5}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. For any function $f:\mathbb R\to\mathbb R$ with $|f|\le1$ and any real $c$, $|\int((z-c)/v)p_v(c,z)f(z)\,dz|\le1+1/v$, where nonintegrable integrals are assigned zero.
+Let $f:\mathbb R\to\mathbb R$ satisfy $|f(z)|\le1$ for every $z$. For a nonzero variance
+parameter $v\ge0$ and any $c\in\mathbb R$, \[\left|\int_{\mathbb
+R}\frac{z-c}{v}\,p_{c,v}(z)f(z)\,dz\right|\le 1+\frac1v,\] where $p_{c,v}$ is the
+density of the Gaussian measure with mean $c$ and variance $v$.
 \end{lemma}
 
-\begin{lemma}[Lipschitz first mean derivative]
+\begin{lemma}[Lipschitz continuity of the Gaussian mean derivative]
 \lean{BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianPDFReal_meanDerivative}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_secondMeanDerivative_le,BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_meanDerivative}
+\uses{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_secondMeanDerivative_le, BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_meanDerivative}
 \difficulty{3}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. For measurable $f:\mathbb R\to\mathbb R$ with $|f|\le1$, the function $c\mapsto\int((z-c)/v)p_v(c,z)f(z)\,dz$ is globally $2/v$-Lipschitz.
+Let $f:\mathbb R\to\mathbb R$ be measurable with $|f(z)|\le1$ for every $z$, and let
+$v>0$. The function $c\mapsto\int_{\mathbb R}\frac{z-c}{v}p_v(c,z)f(z)\,dz$, where
+$p_v(c,z)$ is the Gaussian density with mean $c$ and variance $v$, is Lipschitz with
+constant $2/v$.
 \end{lemma}
 
-\begin{lemma}[Lipschitz Gaussian averages in the mean]
+\begin{lemma}[Lipschitz continuity of Gaussian averages in the mean]
 \lean{BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianPDFReal_mean}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_meanDerivative_le,BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_mean}
+\uses{BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_meanDerivative_le, BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_mean}
 \difficulty{3}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. For measurable $f:\mathbb R\to\mathbb R$ with $|f|\le1$, the function $c\mapsto\int p_v(c,z)f(z)\,dz$ is globally $(1+1/v)$-Lipschitz.
+Let $f:\mathbb R\to\mathbb R$ be measurable with $|f(z)|\le1$ for every $z$, and let
+$v>0$. The function $c\mapsto\int_{\mathbb R}p_v(c,z)f(z)\,dz$, where $p_v(c,z)$ is the
+density of a Gaussian with mean $c$ and variance $v$, is Lipschitz with constant
+$1+1/v$.
 \end{lemma}
 
-\begin{lemma}[Continuous differentiability of Gaussian averages]
+\begin{lemma}[Differentiability of a Gaussian average]
 \lean{BooleanAnalysis.GaussianSpace.contDiff_one_integral_gaussianPDFReal_mean}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_mean,BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianPDFReal_meanDerivative}
+\uses{BooleanAnalysis.GaussianSpace.hasDerivAt_integral_gaussianPDFReal_mean, BooleanAnalysis.GaussianSpace.lipschitzWith_integral_gaussianPDFReal_meanDerivative}
 \difficulty{4}
-Let $v>0$ and $p_v(c,z)=(2\pi v)^{-1/2}\exp(-(z-c)^2/(2v))$. For measurable $f:\mathbb R\to\mathbb R$ with $|f|\le1$, the function $c\mapsto\int p_v(c,z)f(z)\,dz$ is continuously differentiable on $\mathbb R$.
+Let $f:\mathbb R\to\mathbb R$ be measurable and satisfy $|f(z)|\le 1$ for every
+$z\in\mathbb R$. For every variance $v>0$, the function $m\mapsto\int_{\mathbb
+R}p_v(m,z)f(z)\,dz$ is continuously differentiable, where $p_v(m,z)$ is the density at
+$z$ of the Gaussian distribution with mean $m$ and variance $v$.
 \end{lemma}

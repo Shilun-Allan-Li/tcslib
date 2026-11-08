@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.macroCfg_repeat",
+ "key": "5a87e1122f6df076",
+ "kind": "lemma",
+ "title": "Repeated macrosteps over a unary segment",
+ "statement": "Let $W$ be a finite binary Turing machine, let $a,R,B\\in\\mathbb{N}$, let $x$ be an input word over the schedule alphabet, and let $\\mathrm{base}$ be a schedule-machine configuration on $x$. Suppose its guide tape is the fixed guide of radius $R$ and, for every natural $j<B$, its unary tape contains a unit marker at coordinate $j+1$. Then for every natural $j\\le B$, starting in the macrostep-check phase with unary head at $1$ and guide head at $0$, after $j(6R+8)$ steps the machine is in the macrostep-check phase with unary head at $j+1$ and guide head at $0$.",
+ "hypotheses_covered": [
+  "$W$ is a finite binary Turing machine",
+  "$a,R,B$ are natural numbers",
+  "$x$ is an input word over the schedule alphabet",
+  "$\\mathrm{base}$ is a schedule-machine configuration on $x$",
+  "the base guide tape is the fixed guide of radius $R$",
+  "for every natural $j<B$, the unary tape contains a unit marker at coordinate $j+1",
+  "the conclusion holds for every natural $j\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$ and its unary tape\nholds unit markers at all coordinates $1, 2, \\dots, B$.  Then for every $j \\le B$,\nrunning the schedule controller for $j\\,(6R + 8)$ steps from the counter-test phase\nwith unary head at $1$ and guide head at the origin reaches the counter-test phase\nwith unary head at $j + 1$ and guide head at the origin, regardless of all simulated\ndata and of source halting behavior."
+}

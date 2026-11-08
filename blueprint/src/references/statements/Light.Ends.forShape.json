@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.Ends.forShape",
+ "key": "c78483d8e4bbda51",
+ "kind": "theorem",
+ "title": "Bounded execution of a shaped loop",
+ "statement": "Fix a program environment, resource limits, and execution depth. Let $S(j,s,\\mu)$ be a state for a counter value $j$, shape parameter $s$, and memory $\\mu$, and let $I(j,\\mu)$ be an invariant. Suppose $I(0,\\mu)$ holds, and for each $j<n$, each $s$, and each $\\mu'$ satisfying $I(j,\\mu')$, the body can execute from $S(j,s,\\mu')$ with cost at most $b$ to a state of the form $S(j,s',\\mu'')$ with $I(j+1,\\mu'')$. Suppose $Q(S(n,s,\\mu'))$ holds for every $s,\\mu'$ satisfying $I(n,\\mu')$. Also suppose the state obtained by setting local $i$ to zero in the initial local store $\\ell$ and using memory $\\mu$ equals $S(0,s_0,\\mu)$; for every $j\\le n$ and every $s,\\mu'$ satisfying $I(j,\\mu')$, the bound expression is safe in $S(j,s,\\mu')$ and evaluates there to $n$; the value of local $i$ in each $S(j,s,\\mu')$ is $j$; and setting local $i$ to $j+1$ in $S(j,s,\\mu')$ gives $S(j+1,s,\\mu')$. If $n\\le\\mathrm{word}$ and $n(\\mathrm{cost}(h)+b+7)+\\mathrm{cost}(h)+5\\le T$, then the counted loop starting from the state with locals $\\ell$ and memory $\\mu$ can finish with cost at most $T$ in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "Invariant holds initially: $I(0,\\mu)$",
+  "Each iteration for $j<n$ preserves the invariant and returns a state of the specified shape, with cost at most $b$",
+  "Every state of the specified shape at $j=n$ satisfying the invariant satisfies $Q$",
+  "The initial state with local $i$ set to zero equals $S(0,s_0,\\mu)$",
+  "For every $j\\le n$ satisfying the invariant, the bound expression is safe and evaluates to $n$ in $S(j,s,\\mu')$",
+  "Local $i$ in each $S(j,s,\\mu')$ equals $j$",
+  "Updating local $i$ to $j+1$ in $S(j,s,\\mu')$ gives $S(j+1,s,\\mu')$",
+  "$n\\le\\mathrm{word}$",
+  "$n(\\mathrm{cost}(h)+b+7)+\\mathrm{cost}(h)+5\\le T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

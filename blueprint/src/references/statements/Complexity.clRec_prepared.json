@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clRec_prepared",
+ "key": "03997810f8bf36c6",
+ "kind": "lemma",
+ "title": "Prepared recorder initialization",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $x$ and $y$ be Boolean words, and let $T$ be a natural number. The configuration formed from the recorder's initial control, empty counter words and record, a clock containing $T$ true bits, the word $y$, and blank source work tapes is exactly the recorder configuration encoding the source machine's initial configuration on $y$, zero movement counts, an empty record, and logical time zero.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over the Boolean alphabet",
+  "$x,y$ are Boolean words",
+  "$T$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, physical input, virtual input $y$, and horizon $T$, the configuration assembled from words, blank movement counters, empty record, a unary clock of $T$ true cells, the virtual input, and blank source work tapes, equals the recorder's prepared seam at logical time zero over the initial source configuration. No claim is made about native initialization from raw input."
+}

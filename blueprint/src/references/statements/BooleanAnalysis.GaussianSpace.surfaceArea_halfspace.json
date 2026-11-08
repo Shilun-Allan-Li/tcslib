@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.surfaceArea_halfspace",
+ "key": "0581a9d8b3ed3eb9",
+ "kind": "theorem",
+ "title": "Gaussian surface area of a halfspace",
+ "statement": "Let $n\\ge 0$, let $a\\in\\mathbb R^n$ satisfy $\\sum_{i=1}^n a_i^2=1$, and let $t\\in\\mathbb R$. The Gaussian surface area of the halfspace $\\{z\\in\\mathbb R^n:\\sum_{i=1}^n a_i z_i\\le t\\}$ is $\\varphi(t)$, the standard Gaussian density at $t$.",
+ "hypotheses_covered": [
+  "Natural number $n$",
+  "The squared coordinates of $a$ sum to $1$",
+  "Real threshold $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\ge0$, let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$, and let $G,G\\prime$ be independent vectors with law $\\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\\gamma_n\\otimes\\gamma_n)\\{(g,h):\\mathbf1_A(g)\\ne\\mathbf1_A(\\cos t\\,g+\\sin t\\,h)\\}$. Write $P_\\gamma(A)=\\liminf_{t\\to0^+}\\bigl[\\sqrt{\\pi/2}\\,s_A(t)/t\\bigr]_+$ in $[0,\\infty]$, where $[x]_+=\\max(x,0)$. For a vector $v\\in\\mathbb R^n$ with $\\sum_i v_i^2=1$ and real $t$, the halfspace $H=\\{z:\\sum_i v_i z_i\\le t\\}$ satisfies $P_\\gamma(H)=\\varphi(t)$, where $\\varphi(t)=(2\\pi)^{-1/2}e^{-t^2/2}$."
+}

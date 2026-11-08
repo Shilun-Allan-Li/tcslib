@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.branchTM_computes",
+ "key": "28c8002fcf6632b8",
+ "kind": "lemma",
+ "title": "Branch union computes the selected branch",
+ "statement": "Let $M_1$ and $M_2$ be finite Turing machines over the Boolean alphabet, let $b$ be a Boolean, and let $x,w$ be Boolean words and $t\\in\\mathbb{N}$. The branch union selected by $b$ computes output $w$ from input $x$ within $t$ steps if and only if $M_1$ does so when $b$ is true, and $M_2$ does so when $b$ is false.",
+ "hypotheses_covered": [
+  "$M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$b$ is a Boolean",
+  "$x,w$ are Boolean words",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M_1$ and $M_2$ be Turing machines over the Boolean alphabet with\nfinitely many states, let $b$ be a Boolean, let $x$ and $w$ be Boolean words,\nand let $t$ be a natural number.  The branch union of $M_1$ and $M_2$\nselected by $b$ halts on input $x$ within $t$ steps with output $w$ if and\nonly if the selected machine --- $M_1$ when $b$ is true, $M_2$ when $b$ is\nfalse --- halts on input $x$ within $t$ steps with output $w$."
+}

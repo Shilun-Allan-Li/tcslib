@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.drop_decrement_run",
+ "key": "a69d80fd89df098d",
+ "kind": "lemma",
+ "title": "Repeated Register Decrement Run",
+ "statement": "Let $h$ be a bit string, let $r$ be one of nine registers, let $count$ be a natural number, let $path : \\mathbb{N} \\to \\mathrm{DropState}$ be a sequence of machine states, and let $v$ assign a natural number to each register. Suppose every register initially holds at most $4|h|+4$, where $|h|$ is the length of $h$, and at each step $i<count$ the instruction in state $path(i)$ decrements register $r$ and moves to $path(i+1)$. Then the machine in mode $mode$, started with state $path(0)$, register values $v$, and no answer, reaches state $path(count)$ with register $r$ decreased by truncated subtraction of $count$, all other registers unchanged, and no answer; throughout the run, every preterminal configuration satisfies the machine's safety condition and every register remains at most $4|h|+4$.",
+ "hypotheses_covered": [
+  "mode is a Boolean machine mode",
+  "h is a bit string",
+  "r is one of nine registers",
+  "count is a natural number",
+  "path is a sequence of machine states",
+  "v assigns natural-number values to the nine registers",
+  "every initial register value is at most 4|h|+4",
+  "each step before count executes a decrement of r and advances along path"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

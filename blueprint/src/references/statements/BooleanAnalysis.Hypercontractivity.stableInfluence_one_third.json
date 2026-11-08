@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.stableInfluence_one_third",
+ "key": "1766f4b4e758033f",
+ "kind": "theorem",
+ "title": "One-third stable influence bound",
+ "statement": "Let $n\\\\in\\\\mathbb N$, let $f:\\\\{0,1\\\\}^n\\\\to\\\\mathbb R$ take values in $\\\\{-1,1\\\\}$, and let $i\\\\in[n]$. Then $I_i^{(1/3)}(f)\\\\le\\\\mathrm{Inf}_i(f)^{3/2}$, where $I_i^{(1/3)}(f)=\\\\sum_{S\\\\ni i}(1/3)^{|S|-1}\\\\widehat f(S)^2$ and $\\\\mathrm{Inf}_i(f)=\\\\mathbb E[(f(x)-f(x^i))^2/4]$ under the uniform cube measure.",
+ "hypotheses_covered": [
+  "$n\\\\in\\\\mathbb N$",
+  "$f$ takes values in $\\\\{-1,1\\\\}$",
+  "$i\\\\in[n]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $f:\\{0,1\\}^n\\to\\{-1,1\\}$ be a function on the uniform Boolean cube and $i\\in[n]$. Then $I_i^{(1/3)}(f)\\le I_i(f)^{3/2}$. For a real cube function $h$, define $I_i(h)=\\tfrac14\\mathbb E_x(h(x)-h(x^{(i)}))^2$, where $x^{(i)}$ flips coordinate $i$ and $\\mathbb E_x$ is uniform expectation."
+}

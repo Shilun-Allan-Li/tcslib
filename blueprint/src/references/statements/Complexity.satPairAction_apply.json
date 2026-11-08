@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.satPairAction_apply",
+ "key": "d6994ddc9a8ca0bb",
+ "kind": "lemma",
+ "title": "Pairing action on canonical configurations",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $x$ be a Boolean input word, let $s$ be a configuration of $M$ on $x$, let $u,o$ be Boolean words, let $q,q'$ be optional elements of the eight-state administrative set, and let $i,i'$ be natural numbers with $i,i'\\le |x|$. Let $j,j'\\in\\mathbb Z$, let $m,d\\in\\{-1,0,1\\}$, and let $b$ be an optional bit. If moving the input head from position $i+1$ by $m$ gives position $i'+1$, and $j+d=j'$, then applying the pairing administrative action specified by $m,d,b,q'$ to the canonical pairing configuration specified by $s,u,q,i,j,o$ gives the canonical pairing configuration specified by $s,u,q',i',j',o$ followed by $b$ when $b$ is present.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$x$ is a Boolean word",
+  "$s$ is a configuration of $M$ on $x$",
+  "$u,o$ are Boolean words",
+  "$q,q'$ are optional administrative states from the eight-state set",
+  "$i,i'$ are natural numbers with $i,i'\\le |x|$",
+  "$j,j'\\in\\mathbb Z$",
+  "$m,d\\in\\{-1,0,1\\}$",
+  "$b$ is an optional bit",
+  "The clamped input-head move from $i+1$ by $m$ equals $i'+1$",
+  "$j+d=j'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying a pairing administrative action to a canonical pairing configuration\nchanges only the control state, the two displayed head positions, and the output\n(appending the optionally emitted bit); the saved source bank and the captured\nword are preserved."
+}

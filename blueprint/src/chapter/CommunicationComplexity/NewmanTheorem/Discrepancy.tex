@@ -142,6 +142,7 @@ enumerating the leaf rectangles of $p$ if and only if $R$ is a leaf rectangle of
 \proofsource{raoyehudayoff-ch05-discrepancy}{pdf-4c44440f2aaa-p002-b001}
 \label{CommunicationComplexity.Deterministic.Protocol.sum_indicator_leafRectangles_eq}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.rectangleSign_eq_boolSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.monoPartition_part_unique, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.boolSign}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -1048,7 +1049,6 @@ enumerating the leaf rectangles of $p$ if and only if $R$ is a leaf rectangle of
   {context}
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p001-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isMonoPartition, CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.rectangleSign_eq_boolSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.monoPartition_part_unique, CommunicationComplexity.Rectangle.monoPartition_point_mem, CommunicationComplexity.boolSign}
 \difficulty{4}
 Let $X$ and $Y$ be input types whose product $X \times Y$ carries a finite probability
 space, and let $p$ be a deterministic Boolean two-party protocol over $X$ (Alice) and
@@ -1068,6 +1068,7 @@ where $p(x,y)$ denotes the Boolean value returned by running $p$ on inputs $x$ a
 \proofsource{raoyehudayoff-ch05-discrepancy}{pdf-4c44440f2aaa-p002-b001}
 \label{CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one, CommunicationComplexity.boolSign, CommunicationComplexity.boolSign_mul_boolSign_eq_sub_two_indicator}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -1869,7 +1870,6 @@ where $p(x,y)$ denotes the Boolean value returned by running $p$ on inputs $x$ a
   {context}
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p002-b002}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.FiniteProbabilitySpace.measureReal_eq_integral_indicator_one, CommunicationComplexity.boolSign, CommunicationComplexity.boolSign_mul_boolSign_eq_sub_two_indicator}
 \difficulty{4}
 Let $X$ and $Y$ be the input types of Alice and Bob, and let $\mu$ be a finite
 probability measure on $X \times Y$. Write $\sigma \colon \mathrm{Bool} \to \{\pm 1\}$
@@ -1891,6 +1891,7 @@ distributional error of $p$ against $g$ under $\mu$.
 \proofsource{raoyehudayoff-ch05-discrepancy}{pdf-4c44440f2aaa-p002-b001}
 \label{CommunicationComplexity.Deterministic.Protocol.signedBias_eq_sum_rectangles}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.sum_indicator_leafRectangles_eq, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -2809,7 +2810,6 @@ distributional error of $p$ against $g$ under $\mu$.
   {direct}
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p002-b001}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.sum_indicator_leafRectangles_eq, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy}
 \difficulty{5}
 Let $\mu$ be a finite probability space on $X \times Y$, let $p$ be a deterministic
 Boolean communication protocol with input types $X$ and $Y$, and let $g : X \to Y \to
@@ -2835,6 +2835,7 @@ the discrepancy of $g$ on $R$.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle, CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.nonneg_of_discrepancy_bound, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.rectangleSign_abs, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError, CommunicationComplexity.Deterministic.Protocol.signedBias_eq_sum_rectangles, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -3801,7 +3802,6 @@ the discrepancy of $g$ on $R$.
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p002-b001,
     pdf-4c44440f2aaa-p001-b002}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.leafRectangles, CommunicationComplexity.Deterministic.Protocol.leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.leafRectangles_card, CommunicationComplexity.Deterministic.Protocol.leafRectangles_isRectangle, CommunicationComplexity.Deterministic.Protocol.mem_leafRectanglesFinset, CommunicationComplexity.Deterministic.Protocol.nonneg_of_discrepancy_bound, CommunicationComplexity.Deterministic.Protocol.rectangleSign, CommunicationComplexity.Deterministic.Protocol.rectangleSign_abs, CommunicationComplexity.Deterministic.Protocol.run, CommunicationComplexity.Deterministic.Protocol.signedBias_eq_one_sub_two_distributionalError, CommunicationComplexity.Deterministic.Protocol.signedBias_eq_sum_rectangles, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.boolSign, CommunicationComplexity.discrepancy}
 \difficulty{5}
 Let $\mu$ be a finite probability measure on $X \times Y$, let $g : X \times Y \to
 \mathrm{Bool}$, and let $\gamma \in \bbr$ be such that every rectangle $R \subseteq X
@@ -3823,6 +3823,7 @@ $\mu$-probability that $p$ disagrees with $g$ (that is, the measure of $\{(x,y) 
 }
 \label{CommunicationComplexity.Deterministic.Protocol.logb_le_complexity_of_distributionalError}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -4782,7 +4783,6 @@ $\mu$-probability that $p$ disagrees with $g$ (that is, the measure of $\{(x,y) 
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p002-b001,
     pdf-4c44440f2aaa-p002-b002}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
 \difficulty{3}
 Let $\mu$ be a finite probability space on $X \times Y$, let $g : X \times Y \to
 \mathrm{Bool}$ be a Boolean function, and let $\gamma > 0$ be a real number such that
@@ -4806,6 +4806,7 @@ communication complexity of $p$ satisfies
 }
 \label{CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_discrepancy_bound}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {context}
@@ -5808,7 +5809,6 @@ communication complexity of $p$ satisfies
   {raoyehudayoff-ch05-discrepancy}
   {pdf-4c44440f2aaa-p002-b001,
     pdf-4c44440f2aaa-p002-b002}
-\uses{CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.Deterministic.Protocol.distributionalError, CommunicationComplexity.Deterministic.Protocol.one_sub_two_distributionalError_le_two_pow_mul, CommunicationComplexity.FiniteProbabilitySpace, CommunicationComplexity.PublicCoin.communicationComplexity, CommunicationComplexity.PublicCoin.lt_communicationComplexity_of_forall_distributionalError_gt, CommunicationComplexity.Rectangle.IsRectangle, CommunicationComplexity.discrepancy}
 \difficulty{4}
 Let $\mu$ be a finite probability space on $X \times Y$, let $g : X \to Y \to
 \mathrm{Bool}$, and let $\varepsilon, \gamma \in \bbr$ and $n \in \bbn$. Suppose that

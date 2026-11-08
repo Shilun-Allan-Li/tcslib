@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinNDTM.AbortDecidesInTime",
+ "key": "eb0152e2600c09da",
+ "kind": "def",
+ "title": "Abort decision within time bound",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input and output, let $L$ be a language of finite Boolean strings, and let $T$ assign a natural-number time bound to each natural number. For every input string $x$, every run halts within $T(|x|)$ steps; every choice string of length exactly $T(|x|)$ produces an output different from the one-symbol answer indicating whether $x$ belongs to $L$; and the probability that the output after $T(|x|)$ steps is that one-symbol answer is at least $1/2$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the Boolean alphabet",
+  "$L$ is a language of finite Boolean strings",
+  "$T$ maps natural numbers to natural numbers",
+  "the time bound is evaluated at the input length",
+  "all runs halt within the time bound",
+  "outputs at the exact time-bound length differ from the indicated answer",
+  "the indicated answer has output probability at least $1/2"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

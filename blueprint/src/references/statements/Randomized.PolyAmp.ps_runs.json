@@ -1,0 +1,23 @@
+{
+ "lean_name": "Randomized.PolyAmp.ps_runs",
+ "key": "efaa55f4bc4c9019",
+ "kind": "theorem",
+ "title": "Run-loop probabilistic semantics",
+ "statement": "Let $N$ be a finite-state nondeterministic Turing machine with Boolean input, let $x$ be a Boolean input word, and let $sp:\\mathbb{N}\\to\\mathbb{N}$ bound the space used by $N$ on every input and every choice word. Let $n,\\ell,S,K,B\\in\\mathbb{N}$ and let $os$ be a Boolean. Suppose $N$ uses at most $sp(|x|)$ space on every such run, $sp(|x|)\\le S$, the configuration-code bound for $N$, $|x|$, and $S$ is at most $K$, and $n+\\ell+S+2K+2\\le B$. For every $i,cnt,c,d\\in\\mathbb{N}$ with $cnt+i\\le K+1$, $c\\le K$, and $d\\le K$, the amplifier started at its run-loop label with registers initialized from $(n,\\ell,S,K,i,cnt,c,d,0)$ terminates for every sequence of choice bits, keeps each register at most $B$ while running, and has acceptance probability equal to the fraction of uniformly random choice words of length $iK$ for which the decision rule applied to $cnt$ plus the number of accepting length-$K$ blocks is true.",
+ "hypotheses_covered": [
+  "$N$ is a finite-state nondeterministic Turing machine with Boolean input",
+  "$x$ is a Boolean input word",
+  "$sp:\\mathbb{N}\\to\\mathbb{N}$ bounds space on every input and choice word",
+  "$sp(|x|)\\le S$",
+  "The configuration-code bound for $N,|x|,S$ is at most $K$",
+  "$n+\\ell+S+2K+2\\le B$",
+  "$i,cnt,c,d\\in\\mathbb{N}$",
+  "$cnt+i\\le K+1$",
+  "$c\\le K$",
+  "$d\\le K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite-state nondeterministic Turing machine on a Boolean input $x$, and\nlet $sp$ bound its space usage on every input and every choice word. Suppose $sp(|x|)\\le\nS$, the configuration-code bound for $N$, $|x|$, and $S$ is at most $K$, and\n$n+\\ell+S+2K+2\\le B$. Then for every $i,cnt,c,d\\in\\mathbb N$ with $cnt+i\\le K+1$, $c\\le\nK$, and $d\\le K$, the amplifier started at its run-loop label with registers initialized\nfrom $(n,\\ell,S,K,i,cnt,c,d,0)$ terminates along every sequence of choice bits, keeps\nevery register at most $B$, and has probability equal to the fraction of uniformly\nrandom choice words of length $iK$ for which the decision rule applied to $cnt$ plus the\nnumber of accepting length-$K$ blocks is true."
+}

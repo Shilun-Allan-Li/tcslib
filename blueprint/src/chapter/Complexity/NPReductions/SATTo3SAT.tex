@@ -13,14 +13,20 @@ its 3-CNF encoding is satisfiable.
 
 \begin{definition}[Clause]
 \lean{SATTo3SAT.Clause}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p093-b004,
+  pdf-ffbe9c7b3306-p094-b004
+}
 \label{SATTo3SAT.Clause}
 \leanok
+\uses{SATTo3SAT.Literal}
 A clause over variable type $V$ is a disjunction represented as a list of literals,
 i.e.\ $\mathtt{Clause}\,V = \mathtt{List}\,(\mathtt{Literal}\,V)$.
 \end{definition}
 
 \begin{definition}[CNF formula]
 \lean{SATTo3SAT.CNFFormula}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p094-b004}
 \label{SATTo3SAT.CNFFormula}
 \leanok
 \uses{SATTo3SAT.Clause}
@@ -32,6 +38,7 @@ $\mathtt{CNFFormula}\,V = \mathtt{List}\,(\mathtt{Clause}\,V)$.
 \lean{SATTo3SAT.evalLiteral}
 \label{SATTo3SAT.evalLiteral}
 \leanok
+\uses{SATTo3SAT.Assignment, SATTo3SAT.Literal}
 Given an assignment $\alpha : V \to \mathrm{Prop}$, \texttt{SATTo3SAT.evalLiteral} maps
 a literal to its truth value: a positive literal $\mathtt{pos}\,v$ is true iff $\alpha(v)$
 holds, and a negative literal $\mathtt{neg}\,v$ is true iff $\alpha(v)$ does not hold.
@@ -41,7 +48,7 @@ holds, and a negative literal $\mathtt{neg}\,v$ is true iff $\alpha(v)$ does not
 \lean{SATTo3SAT.clauseSatisfied}
 \label{SATTo3SAT.clauseSatisfied}
 \leanok
-\uses{SATTo3SAT.Clause, SATTo3SAT.evalLiteral}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.Clause, SATTo3SAT.evalLiteral}
 A clause $c$ is satisfied by assignment $\alpha$ if at least one literal in $c$ evaluates
 to true under $\alpha$, i.e.\ $\exists\, l \in c,\; \texttt{SATTo3SAT.evalLiteral}\,\alpha\,l$.
 \end{definition}
@@ -50,7 +57,7 @@ to true under $\alpha$, i.e.\ $\exists\, l \in c,\; \texttt{SATTo3SAT.evalLitera
 \lean{SATTo3SAT.formulaSatisfied}
 \label{SATTo3SAT.formulaSatisfied}
 \leanok
-\uses{SATTo3SAT.CNFFormula, SATTo3SAT.clauseSatisfied}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.CNFFormula, SATTo3SAT.clauseSatisfied}
 A CNF formula $f$ is satisfied by assignment $\alpha$ if every clause in $f$ is satisfied
 by $\alpha$.
 \end{definition}
@@ -59,21 +66,30 @@ by $\alpha$.
 \lean{SATTo3SAT.isSatisfiable}
 \label{SATTo3SAT.isSatisfiable}
 \leanok
-\uses{SATTo3SAT.CNFFormula, SATTo3SAT.formulaSatisfied}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.CNFFormula, SATTo3SAT.formulaSatisfied}
 A CNF formula $f$ is satisfiable if there exists an assignment $\alpha$ such that
 $\texttt{SATTo3SAT.formulaSatisfied}\,\alpha\,f$ holds.
 \end{definition}
 
 \begin{definition}[3-clause]
 \lean{SATTo3SAT.Clause3}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p196-b010,
+  pdf-ffbe9c7b3306-p197-b002
+}
 \label{SATTo3SAT.Clause3}
 \leanok
+\uses{SATTo3SAT.Literal}
 A 3-clause over $V$ is a structure carrying exactly three literals $l_1, l_2, l_3 :
 \mathtt{Literal}\,V$; a 3-clause is satisfied when at least one of the three literals is true.
 \end{definition}
 
 \begin{definition}[3-CNF formula]
 \lean{SATTo3SAT.Formula3}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p196-b010,
+  pdf-ffbe9c7b3306-p197-b002
+}
 \label{SATTo3SAT.Formula3}
 \leanok
 \uses{SATTo3SAT.Clause3}
@@ -85,7 +101,7 @@ $\mathtt{Formula3}\,V = \mathtt{List}\,(\mathtt{Clause3}\,V)$.
 \lean{SATTo3SAT.clause3Satisfied}
 \label{SATTo3SAT.clause3Satisfied}
 \leanok
-\uses{SATTo3SAT.Clause3, SATTo3SAT.evalLiteral}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.Clause3, SATTo3SAT.evalLiteral}
 A 3-clause $c$ is satisfied by assignment $\alpha$ if at least one of its three literals
 $c.l_1$, $c.l_2$, $c.l_3$ evaluates to true under $\alpha$.
 \end{definition}
@@ -94,7 +110,7 @@ $c.l_1$, $c.l_2$, $c.l_3$ evaluates to true under $\alpha$.
 \lean{SATTo3SAT.formula3Satisfied}
 \label{SATTo3SAT.formula3Satisfied}
 \leanok
-\uses{SATTo3SAT.Formula3, SATTo3SAT.clause3Satisfied}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.Formula3, SATTo3SAT.clause3Satisfied}
 A 3-CNF formula $f$ is satisfied by assignment $\alpha$ if every 3-clause in $f$ is
 satisfied by $\alpha$.
 \end{definition}
@@ -103,7 +119,7 @@ satisfied by $\alpha$.
 \lean{SATTo3SAT.is3Satisfiable}
 \label{SATTo3SAT.is3Satisfiable}
 \leanok
-\uses{SATTo3SAT.Formula3, SATTo3SAT.formula3Satisfied}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.Formula3, SATTo3SAT.formula3Satisfied}
 A 3-CNF formula $f$ is 3-satisfiable if there exists an assignment $\alpha$ such that
 $\texttt{SATTo3SAT.formula3Satisfied}\,\alpha\,f$ holds.
 \end{definition}
@@ -122,7 +138,7 @@ $i$ of length greater than three.
 \lean{SATTo3SAT.liftLit}
 \label{SATTo3SAT.liftLit}
 \leanok
-\uses{SATTo3SAT.AuxVar}
+\uses{SATTo3SAT.AuxVar, SATTo3SAT.Literal}
 \texttt{SATTo3SAT.liftLit} maps a literal over $V$ to the corresponding literal over
 $\mathtt{AuxVar}\,V$ by wrapping each variable with $\mathtt{orig}$, preserving polarity.
 \end{definition}
@@ -131,7 +147,7 @@ $\mathtt{AuxVar}\,V$ by wrapping each variable with $\mathtt{orig}$, preserving 
 \lean{SATTo3SAT.buildChain}
 \label{SATTo3SAT.buildChain}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3}
+\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3, SATTo3SAT.Literal}
 Given a clause index $c\_idx$, a lifting map $ml$, a suffix list of literals $\mathit{lits}$,
 and a chain counter $j \ge 1$, \texttt{SATTo3SAT.buildChain} produces the middle and final
 3-clauses of the chain encoding.  Each middle step emits $\langle \lnot y_{j-1},\, l_i,\, y_j\rangle$;
@@ -140,9 +156,13 @@ the final step emits $\langle \lnot y_{j-1},\, l_{n-1},\, l_n\rangle$ when only 
 
 \begin{definition}[Encode a single clause as 3-clauses]
 \lean{SATTo3SAT.transformClause}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p196-b010,
+  pdf-ffbe9c7b3306-p197-b002
+}
 \label{SATTo3SAT.transformClause}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3, SATTo3SAT.buildChain}
+\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3, SATTo3SAT.Literal, SATTo3SAT.buildChain}
 \texttt{SATTo3SAT.transformClause} maps a single clause (at index $c\_idx$) to a list of
 3-clauses: the empty clause becomes two contradictory 3-clauses (unsatisfiable), a
 1-literal clause becomes $\langle l_1,l_1,l_1\rangle$, a 2-literal clause becomes
@@ -163,6 +183,10 @@ counter to ensure each clause uses distinct auxiliary variables.
 
 \begin{definition}[SAT to 3-SAT encoding]
 \lean{SATTo3SAT.to3SAT}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p196-b010,
+  pdf-ffbe9c7b3306-p197-b002
+}
 \label{SATTo3SAT.to3SAT}
 \leanok
 \uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Formula3, SATTo3SAT.to3SATAux}
@@ -174,30 +198,30 @@ $\mathtt{AuxVar}\,V$ by calling \texttt{SATTo3SAT.to3SATAux} starting at index $
 \lean{SATTo3SAT.extraVal}
 \label{SATTo3SAT.extraVal}
 \leanok
-\uses{SATTo3SAT.evalLiteral}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.Literal, SATTo3SAT.evalLiteral}
 For a list of literals $\mathit{lits}$ and index $j$, $\texttt{SATTo3SAT.extraVal}\,\alpha\,\mathit{lits}\,j$
 holds iff every literal in $\mathit{lits}.\mathtt{take}(j + 2)$ is false under $\alpha$.
 This is the intended truth value of the auxiliary chain variable $y_j$ in the encoding
 of $\mathit{lits}$.
 \end{definition}
 
-\begin{lemma}[Auxiliary variable valuation as an all-false prefix]
+\begin{lemma}[Auxiliary valuation of a false prefix]
 \lean{SATTo3SAT.extraVal_iff_prefix_all_false}
 \label{SATTo3SAT.extraVal_iff_prefix_all_false}
 \leanok
-\uses{SATTo3SAT.evalLiteral, SATTo3SAT.extraVal}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.Literal, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal}
 \difficulty{1}
-Fix an assignment $\alpha$ and a list of literals $\mathit{lits}$, and let $j$ be an
-index with $j + 2 \le |\mathit{lits}|$. Then the auxiliary variable valuation associated
-with $\alpha$, $\mathit{lits}$, and $j$ holds if and only if every one of the first $j +
-2$ literals of $\mathit{lits}$ evaluates to false under $\alpha$.
+Let $\alpha$ be an assignment on $V$, let $L$ be a list of literals over $V$, and let
+$j$ satisfy $j+2\le |L|$. The auxiliary valuation associated with $\alpha$, $L$, and $j$
+holds if and only if every one of the first $j+2$ literals of $L$ is false under
+$\alpha$.
 \end{lemma}
 
 \begin{definition}[Global assignment lift]
 \lean{SATTo3SAT.globalAssignment}
 \label{SATTo3SAT.globalAssignment}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.extraVal}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.extraVal}
 Given $\alpha : \mathtt{Assignment}\,V$ and a formula $f$, \texttt{SATTo3SAT.globalAssignment}
 $\alpha\,f$ is the assignment on $\mathtt{AuxVar}\,V$ that maps each original variable
 $\mathtt{orig}\,v$ to $\alpha(v)$ and each auxiliary variable $\mathtt{extra}\,i\,j$ to
@@ -248,58 +272,51 @@ $n$ entries with $a$ appended: taking $n+1$ entries of $l$ gives (taking $n$ ent
 $l$) followed by $[a]$.
 \end{lemma}
 
-\begin{lemma}[Chain clauses satisfied by the completed assignment]
+\begin{lemma}[Satisfaction of the chain clauses]
 \lean{SATTo3SAT.buildChain_all_satisfied}
 \label{SATTo3SAT.buildChain_all_satisfied}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.List.take_succ_of_drop_cons, SATTo3SAT.buildChain, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.AuxVar, SATTo3SAT.List.take_succ_of_drop_cons, SATTo3SAT.Literal, SATTo3SAT.buildChain, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal}
 \difficulty{6}
-Fix a clause index $i$ and a clause presented as a list of literals over a variable type
-$V$, and let $\alpha : V \to \mathrm{Prop}$ be an assignment that makes at least one
-literal of the clause true. Let $ml$ be a map lifting each literal over $V$ to a literal
-over the extended type $\mathtt{AuxVar}\,V$, and let $\alpha_3$ be an assignment on
-$\mathtt{AuxVar}\,V$ such that: (i) for every $k$ the auxiliary variable $y_{i,k}$ is
-true under $\alpha_3$ exactly when all of the first $k+2$ literals of the clause are
-false under $\alpha$; and (ii) for every literal $\ell$, the lifted literal $ml(\ell)$
-is true under $\alpha_3$ if and only if $\ell$ is true under $\alpha$. Then for every
-chain counter $j \ge 1$, letting $\mathit{lits}$ be the suffix of the clause obtained by
-dropping its first $j+1$ literals, every 3-clause in the chain built for clause $i$ from
-$\mathit{lits}$ starting at counter $j$ is satisfied by $\alpha_3$.
+Let $\alpha$ be an assignment on $V$, let $c$ be a clause over $V$, and let $\alpha_3$
+be an assignment on the extended variable type. Suppose each auxiliary variable indexed
+by $c_{\mathrm{idx}}$ and $k$ is true under $\alpha_3$ exactly when every one of the
+first $k+2$ literals of $c$ is false under $\alpha$, and suppose a map $m$ sends each
+literal to one with the same truth value under $\alpha_3$ as the original has under
+$\alpha$. If at least one literal of $c$ is true under $\alpha$, then, for every $j\ge1$
+and every suffix equal to the result of dropping the first $j+1$ literals of $c$, each
+3-clause in the chain built from that suffix at counter $j$ is satisfied by $\alpha_3$.
 \end{lemma}
 
 \begin{definition}[Local literal predicate]
 \lean{SATTo3SAT.IsLocalVar}
 \label{SATTo3SAT.IsLocalVar}
 \leanok
-\uses{SATTo3SAT.AuxVar}
+\uses{SATTo3SAT.AuxVar, SATTo3SAT.Literal}
 A literal $l$ in $\mathtt{Literal}\,(\mathtt{AuxVar}\,V)$ is \emph{local to index $i$} if
 every auxiliary variable appearing in $l$ carries index $i$.  Literals over original
 variables are always local.
 \end{definition}
 
-\begin{lemma}[Local and global assignments agree on local literals]
+\begin{lemma}[Agreement on local literals]
 \lean{SATTo3SAT.eval_local_eq_global}
 \label{SATTo3SAT.eval_local_eq_global}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause, SATTo3SAT.IsLocalVar, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.globalAssignment}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause, SATTo3SAT.IsLocalVar, SATTo3SAT.Literal, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.globalAssignment}
 \difficulty{3}
-Let $\alpha$ be a truth assignment of the variables $V$, and let $f$ be a CNF formula
-over $V$ with clauses $C_0, \dots, C_{m-1}$. Fix an index $i$ with $0 \le i < m$ and
-write $C_i$ for the $i$-th clause. Let $l$ be a literal over the auxiliary variable type
-$\mathtt{AuxVar}\,V$ that is local to $i$, meaning that every auxiliary variable
-$y_{i',j}$ occurring in $l$ satisfies $i' = i$. Write $\hat\alpha$ for the global
-assignment determined by $\alpha$ and $f$, which sends each original variable to its
-value under $\alpha$ and each auxiliary variable $y_{i',j}$ to the truth of the
-assertion that the first $j+2$ literals of clause $C_{i'}$ are all false under $\alpha$;
-and write $\alpha_i$ for the corresponding local assignment, built from clause $C_i$
-alone. Then $l$ takes the same truth value under $\hat\alpha$ as under $\alpha_i$.
+Let $\alpha$ be an assignment on $V$, let $f$ be a CNF formula, and let $i$ be an index
+smaller than the number of clauses in $f$. Let $C$ be the clause at index $i$, and let
+$l$ be a literal over the extended variable type whose auxiliary variables, if any, all
+have index $i$. The assignment that uses $\alpha$ on original variables and the
+clause-specific all-false-prefix rule on auxiliary variables agrees with the assignment
+defined from $\alpha$ and all of $f$ on the truth value of $l$.
 \end{lemma}
 
 \begin{lemma}[Chain-encoding clauses stay local to their index]
 \lean{SATTo3SAT.buildChain_isLocal}
 \label{SATTo3SAT.buildChain_isLocal}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3, SATTo3SAT.IsLocalVar, SATTo3SAT.buildChain}
+\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause3, SATTo3SAT.IsLocalVar, SATTo3SAT.Literal, SATTo3SAT.buildChain}
 \difficulty{4}
 Let $i$ be a natural number and let $ml$ be a lifting map sending each literal over a
 variable type $V$ to a literal over $\mathtt{AuxVar}\,V$, and suppose that $ml(l)$ is
@@ -313,7 +330,7 @@ and counter $j$) has all three of its literals local to index $i$.
 \lean{SATTo3SAT.transformClause_isLocal}
 \label{SATTo3SAT.transformClause_isLocal}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.IsLocalVar, SATTo3SAT.buildChain_isLocal, SATTo3SAT.transformClause}
+\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.IsLocalVar, SATTo3SAT.Literal, SATTo3SAT.buildChain_isLocal, SATTo3SAT.transformClause}
 \difficulty{4}
 Fix a clause index $i$ and let $C$ be a clause over a variable type $V$. If a 3-clause
 occurs in the list produced by encoding $C$ at index $i$, then each of its three
@@ -322,78 +339,230 @@ carries the index $i$, while literals over original variables of $V$ are local
 automatically.
 \end{lemma}
 
-\begin{lemma}[Global and local assignments agree on an encoded clause]
+\begin{lemma}[Agreement on an encoded clause]
 \lean{SATTo3SAT.global_matches_local}
 \label{SATTo3SAT.global_matches_local}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.clause3Satisfied, SATTo3SAT.eval_local_eq_global, SATTo3SAT.extraVal, SATTo3SAT.globalAssignment, SATTo3SAT.transformClause, SATTo3SAT.transformClause_isLocal}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.AuxVar, SATTo3SAT.CNFFormula, SATTo3SAT.Clause, SATTo3SAT.Clause3, SATTo3SAT.clause3Satisfied, SATTo3SAT.eval_local_eq_global, SATTo3SAT.extraVal, SATTo3SAT.globalAssignment, SATTo3SAT.transformClause, SATTo3SAT.transformClause_isLocal}
 \difficulty{2}
-Fix an assignment $\alpha$ of truth values to the variables of a type $V$, a CNF formula
-$f$, and an index $i$ with $i < \mathrm{length}(f)$; let $C$ be the $i$-th clause of
-$f$, and let $c_3$ be any of the 3-clauses produced by encoding $C$ as clause number
-$i$. Consider the global lifted assignment on $\mathtt{AuxVar}\,V$, which sends each
-original variable $v$ to $\alpha(v)$ and each auxiliary chain variable $y_{i',j}$ to the
-truth value of the assertion ``the first $j+2$ literals of the $i'$-th clause of $f$ are
-all false under $\alpha$'', together with the local assignment that agrees with $\alpha$
-on original variables and sends $y_{i,j}$ to the truth value of ``the first $j+2$
-literals of $C$ are all false under $\alpha$''. Then $c_3$ is satisfied by the global
-assignment if and only if it is satisfied by the local assignment.
+Let $\alpha$ be an assignment on $V$, let $f$ be a CNF formula, and let $i$ be an index
+smaller than the number of clauses in $f$. Let $C$ be the clause at index $i$, and let
+$c_3$ be any 3-clause produced by encoding $C$ at index $i$. The assignment using
+$\alpha$ on original variables and the all-false-prefix rule for $C$ on auxiliary
+variables indexed by $i$ satisfies $c_3$ if and only if the assignment defined from
+$\alpha$ and $f$ satisfies $c_3$.
 \end{lemma}
 
-\begin{lemma}[Extended assignment satisfies the 3-clause encoding of a satisfied clause]
+\begin{lemma}[Satisfaction of the encoded clause]
 \lean{SATTo3SAT.transformClause_satisfied}
 \label{SATTo3SAT.transformClause_satisfied}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.buildChain_all_satisfied, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.transformClause}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Literal, SATTo3SAT.buildChain_all_satisfied, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.extraVal, SATTo3SAT.transformClause}
 \difficulty{5}
-Let $\alpha$ be a truth assignment on a variable set $V$, and let $C$ be a clause over
-$V$ — a finite list of literals read as their disjunction — carrying the index $i$.
-Assume $\alpha$ satisfies $C$, meaning at least one literal of $C$ is true under
-$\alpha$. Extend $\alpha$ to an assignment $\alpha_3$ on the enlarged variable set
-consisting of the original variables of $V$ together with the auxiliary chain variables
-$y_{i,j}$: leave each original variable at its value under $\alpha$, and set $y_{i,j}$
-to true exactly when the first $j+2$ literals of $C$ are all false under $\alpha$. Then
-every $3$-clause in the list obtained by encoding $C$ at index $i$ as $3$-clauses is
-satisfied by $\alpha_3$.
+Let $V$ be a variable type, let $\alpha:V\to\mathrm{Prop}$ be an assignment, let $i$ be
+a clause index, and let $C$ be a finite clause over $V$. Suppose some literal of $C$ is
+true under $\alpha$. Extend $\alpha$ to the original and auxiliary variables by giving
+each original variable its value under $\alpha$, assigning the auxiliary variable with
+indices $(r,j)$ the truth value that the first $j+2$ literals of $C$ are all false when
+$r=i$, and assigning it false when $r\ne i$. Then every 3-clause in the encoding of $C$
+at index $i$ is satisfied by this extended assignment.
 \end{lemma}
 
-\begin{theorem}[Completeness of the SAT to 3-SAT encoding]
+\begin{theorem}[Completeness of the SAT-to-3-SAT encoding]
 \lean{SATTo3SAT.SAT_to_3SAT_completeness}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p196-b010,
+  pdf-ffbe9c7b3306-p197-b002
+}
 \label{SATTo3SAT.SAT_to_3SAT_completeness}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.clauseSatisfied, SATTo3SAT.globalAssignment, SATTo3SAT.global_matches_local, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.mem_to3SAT_iff, SATTo3SAT.to3SAT, SATTo3SAT.transformClause_satisfied}
+\proofstep
+  {SATTo3SAT.Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {SATTo3SAT.Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {SATTo3SAT.CNFFormula}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {SATTo3SAT.Assignment}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p186-b001}
+\proofstep
+  {SATTo3SAT.evalLiteral}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {SATTo3SAT.clauseSatisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p186-b001}
+\proofstep
+  {SATTo3SAT.formulaSatisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p186-b001}
+\proofstep
+  {SATTo3SAT.isSatisfiable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p186-b001}
+\proofstep
+  {SATTo3SAT.Clause3}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p184-b003,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.Formula3}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p184-b003,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.clause3Satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p184-b003,
+    pdf-ffbe9c7b3306-p186-b001}
+\proofstep
+  {SATTo3SAT.formula3Satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p184-b003,
+    pdf-ffbe9c7b3306-p186-b001}
+\proofstep
+  {SATTo3SAT.is3Satisfiable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p186-b001}
+\proofstep
+  {SATTo3SAT.AuxVar}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.to3SATAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.to3SAT}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.extraVal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.globalAssignment}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.mem_to3SATAux_iff}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.mem_to3SAT_iff}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.List.take_succ_of_drop_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain_all_satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.IsLocalVar}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.eval_local_eq_global}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain_isLocal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause_isLocal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.global_matches_local}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause_satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
 \difficulty{3}
-Let $f$ be a CNF formula over a variable type $V$, and let $\mathrm{to3SAT}(f)$ be the
-3-CNF formula produced by the standard clause-splitting transformation, whose variables
-are those of $V$ together with fresh auxiliary chain variables introduced to break each
-long clause into a chain of three-literal clauses. If $f$ is satisfiable — that is, some
-assignment to $V$ makes every clause of $f$ true — then $\mathrm{to3SAT}(f)$ is
-3-satisfiable: there is an assignment to its variables under which every 3-clause is
-true.
+Let $V$ be a type of variables and let $f$ be a CNF formula over $V$. If $f$ is
+satisfiable, then the 3-CNF formula produced by the specified SAT-to-3-SAT
+transformation, whose variables are original variables together with indexed auxiliary
+variables, is satisfiable.
 \end{theorem}
 
-\begin{lemma}[Contradiction from a satisfied chain of all-false literals]
+\begin{lemma}[Contradiction from a false-literal chain]
 \lean{SATTo3SAT.buildChain_forced_false}
 \label{SATTo3SAT.buildChain_forced_false}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.buildChain, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.AuxVar, SATTo3SAT.Literal, SATTo3SAT.buildChain, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral}
 \difficulty{5}
-Fix a clause index $i$ and an assignment $\alpha$ of truth values to the auxiliary
-variables. Let $\ell \mapsto \widehat{\ell}$ be a map lifting each literal over the base
-variable type to a literal over the auxiliary-variable type, let $j \ge 1$, and let $L$
-be a list of at least two literals over the base type such that the lifted literal
-$\widehat{\ell}$ evaluates to false under $\alpha$ for every $\ell$ in $L$. If every
-3-clause of the chain encoding built from clause index $i$, the lifting $\ell \mapsto
-\widehat{\ell}$, the list $L$, and the counter $j$ is satisfied by $\alpha$, then
-$\alpha$ cannot also make the entry variable $y_{i,\,j-1}$ true; these hypotheses taken
-together are contradictory.
+Let $c_{\mathrm{idx}}$ be an index, let $\alpha_3$ be an assignment on the extended
+variable type, and let $m$ map literals over $V$ to literals over that type. For every
+$j\ge1$ and every list $L$ of at least two literals, if every lifted literal from $L$ is
+false under $\alpha_3$ and every 3-clause in the chain built from $L$ at counter $j$ is
+satisfied by $\alpha_3$, then the auxiliary variable indexed by $c_{\mathrm{idx}}$ and
+$j-1$ cannot be true under $\alpha_3$.
 \end{lemma}
 
 \begin{lemma}[Soundness of the clause-to-3-clause encoding]
 \lean{SATTo3SAT.transformClause_soundness}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p196-b010}
 \label{SATTo3SAT.transformClause_soundness}
 \leanok
-\uses{SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.buildChain_forced_false, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.transformClause}
+\uses{SATTo3SAT.Assignment, SATTo3SAT.AuxVar, SATTo3SAT.Clause, SATTo3SAT.Literal, SATTo3SAT.buildChain_forced_false, SATTo3SAT.clause3Satisfied, SATTo3SAT.evalLiteral, SATTo3SAT.transformClause}
 \difficulty{5}
 Fix a variable type $V$, a clause index $c \in \bbn$, and a clause $C$ over $V$ — a
 finite list of literals read as their disjunction. Let $\alpha$ be a truth assignment to
@@ -406,29 +575,332 @@ auxiliary variables, i.e.\ $v \mapsto \alpha(\mathrm{orig}\,v)$.
 
 \begin{theorem}[Soundness of the SAT-to-3-SAT encoding]
 \lean{SATTo3SAT.SAT_to_3SAT_soundness}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p196-b010}
 \label{SATTo3SAT.SAT_to_3SAT_soundness}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.mem_to3SAT_iff, SATTo3SAT.to3SAT, SATTo3SAT.transformClause_soundness}
+\proofstep
+  {SATTo3SAT.Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.CNFFormula}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.Assignment}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.evalLiteral}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.clauseSatisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {SATTo3SAT.formulaSatisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {SATTo3SAT.isSatisfiable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.Clause3}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.Formula3}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.clause3Satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.formula3Satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.is3Satisfiable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.AuxVar}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.to3SATAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.to3SAT}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.mem_to3SATAux_iff}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.mem_to3SAT_iff}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain_forced_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause_soundness}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
 \difficulty{3}
-Let $f$ be a CNF formula over a variable type $V$, and let its SAT-to-3-SAT encoding be
-the 3-CNF formula over the extended variable type (the original variables together with
-the fresh auxiliary chain variables). If this encoded 3-CNF formula is 3-satisfiable —
-that is, some assignment of the extended variables satisfies all of its 3-clauses — then
-$f$ itself is satisfiable.
+Let $f$ be a CNF formula over a variable type $V$. If the 3-CNF formula obtained by
+encoding $f$ has a satisfying assignment on the original and auxiliary variables, then
+$f$ has a satisfying assignment on $V$.
 \end{theorem}
 
-\begin{theorem}[SAT-to-3-SAT preserves satisfiability]
+\begin{theorem}[Satisfiability equivalence for the SAT-to-3-SAT encoding]
 \lean{SATTo3SAT.SAT_to_3SAT_equivalence}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p196-b010,
+  pdf-ffbe9c7b3306-p197-b002
+}
 \label{SATTo3SAT.SAT_to_3SAT_equivalence}
 \leanok
 \uses{SATTo3SAT.CNFFormula, SATTo3SAT.SAT_to_3SAT_completeness, SATTo3SAT.SAT_to_3SAT_soundness, SATTo3SAT.is3Satisfiable, SATTo3SAT.isSatisfiable, SATTo3SAT.to3SAT}
+\proofstep
+  {SATTo3SAT.Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.CNFFormula}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.Assignment}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.evalLiteral}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.clauseSatisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.formulaSatisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.isSatisfiable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.Clause3}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p184-b003,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.Formula3}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p184-b003,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.clause3Satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p184-b003,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.formula3Satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p184-b003,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.is3Satisfiable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.AuxVar}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.to3SATAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.to3SAT}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010,
+    pdf-ffbe9c7b3306-p197-b002}
+\proofstep
+  {SATTo3SAT.extraVal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.globalAssignment}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.mem_to3SATAux_iff}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.mem_to3SAT_iff}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.List.take_succ_of_drop_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain_all_satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.IsLocalVar}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.eval_local_eq_global}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain_isLocal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause_isLocal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.global_matches_local}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause_satisfied}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.SAT_to_3SAT_completeness}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.buildChain_forced_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.transformClause_soundness}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
+\proofstep
+  {SATTo3SAT.SAT_to_3SAT_soundness}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p196-b010}
 \difficulty{1}
-Let $f$ be a CNF formula over a variable type $V$, and let $\tau(f)$ denote its $3$-CNF
-encoding: the formula obtained by replacing each clause of $f$ with an equisatisfiable
-chain of $3$-clauses over an enlarged variable type that adjoins to $V$ a supply of
-fresh auxiliary variables (a clause of more than three literals is split into linked
-triples using these auxiliary variables, while shorter clauses are padded to three
-literals). Then $f$ is satisfiable if and only if $\tau(f)$ is $3$-satisfiable.
+Let $V$ be a type of variables and let $f$ be a CNF formula over $V$. Then $f$ is
+satisfiable if and only if the 3-CNF formula produced by the specified SAT-to-3-SAT
+transformation, whose variables are original variables together with indexed auxiliary
+variables, is satisfiable.
 \end{theorem}
 
 %%% added by the blueprint pipeline
@@ -436,9 +908,64 @@ literals). Then $f$ is satisfiable if and only if $\tau(f)$ is $3$-satisfiable.
 
 \begin{definition}[Literal over a variable type]
 \lean{SATTo3SAT.Literal}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p093-b004,
+  pdf-ffbe9c7b3306-p094-b004
+}
 \label{SATTo3SAT.Literal}
 \leanok
 A literal over a variable type $V$ is either a positive or a negative occurrence of a
 variable: for each variable $v \in V$ there is the positive literal $v$ and the negated
 literal $\lnot v$.
+\end{definition}
+
+\begin{theorem}[Length bound for the chain encoding]
+\lean{SATTo3SAT.length_buildChain_le}
+\label{SATTo3SAT.length_buildChain_le}
+\leanok
+\uses{SATTo3SAT.AuxVar, SATTo3SAT.Literal, SATTo3SAT.buildChain}
+\difficulty{4}
+For every variable type $V$, index $i$, map $m$ from literals over $V$ to literals over
+the extended type, list $L$ of literals, and counter $j$, the number of 3-clauses in the
+chain built from $L$ at counter $j$ is at most $|L|$.
+\end{theorem}
+
+\begin{theorem}[Length bound for clause encoding]
+\lean{SATTo3SAT.length_transformClause_le}
+\label{SATTo3SAT.length_transformClause_le}
+\leanok
+\uses{SATTo3SAT.Clause, SATTo3SAT.length_buildChain_le, SATTo3SAT.transformClause}
+\difficulty{4}
+For any variable type, clause index, and finite clause $C$, the encoding of $C$ as a
+list of 3-clauses has length at most $|C|+2$.
+\end{theorem}
+
+\begin{theorem}[Length bound for the recursive encoding]
+\lean{SATTo3SAT.length_to3SATAux_le}
+\label{SATTo3SAT.length_to3SATAux_le}
+\leanok
+\uses{SATTo3SAT.Clause, SATTo3SAT.length_transformClause_le, SATTo3SAT.to3SATAux}
+\difficulty{4}
+For every list $cs$ of clauses over $V$ and every starting index $i$, the number of
+3-clauses produced by recursively encoding $cs$ from index $i$ is at most the total
+number of literals in $cs$ plus twice the number of clauses in $cs$.
+\end{theorem}
+
+\begin{theorem}[Length to3 sat le]
+\lean{SATTo3SAT.length_to3SAT_le}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p196-b010}
+\label{SATTo3SAT.length_to3SAT_le}
+\leanok
+\uses{SATTo3SAT.CNFFormula, SATTo3SAT.length_to3SATAux_le, SATTo3SAT.to3SAT}
+\difficulty{1}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{definition}[Boolean Assignment]
+\lean{SATTo3SAT.Assignment}
+\label{SATTo3SAT.Assignment}
+\leanok
+For a type $V$, an assignment is a predicate on $V$, equivalently a choice of which
+elements of $V$ are assigned true.
 \end{definition}

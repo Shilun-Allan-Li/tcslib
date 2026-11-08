@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integral_productHessian_bound",
+ "key": "2af607c1e62ba375",
+ "kind": "lemma",
+ "title": "Gaussian Integral of a Quadratic Expression",
+ "statement": "Let $I$ be a finite type, let $c:I\\to\\mathbb R$, and let $v\\ge0$ with $v\\ne0$. For any $i,j\\in I$,\n\\[\n\\int_{\\mathbb R^I}\\left(\\frac{(z_i-c_i)^2+(z_j-c_j)^2}{2v^2}+\\frac1v\\right)\\,d\\Bigl(\\bigotimes_{k\\in I}N(c_k,v)\\Bigr)(z)=\\frac2v,\n\\]\nwhere each $N(c_k,v)$ is a Gaussian measure with mean $c_k$ and variance parameter $v$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$c:I\\to\\mathbb R$",
+  "$v\\in[0,\\infty)$",
+  "$v\\ne0$",
+  "$i,j\\in I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be a finite set, $c\\in\\mathbb R^I$, $v>0$, and $\\mu_{c,v}=\\bigotimes_{i\\in I}N(c_i,v)$. Put $B_{ij}(z)=((z_i-c_i)^2+(z_j-c_j)^2)/(2v^2)+1/v$. For all $i,j\\in I$, $\\int B_{ij}\\,d\\mu_{c,v}=2/v$."
+}

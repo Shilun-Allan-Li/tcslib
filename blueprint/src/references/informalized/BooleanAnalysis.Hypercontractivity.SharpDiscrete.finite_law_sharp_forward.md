@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/BooleanAnalysis/Hypercontractivity/RandomVariables/Sharp/FiniteLaw.lean :: BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_law_sharp_forward -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Sharp Contraction for Finite Laws
+
+**Claim.** For a mean-zero random variable supported on finitely many atoms, each of probability at least $\lambda$, the stated radius lies in $[0,1)$, the variable belongs to $L^q$, and the sharp affine contraction inequality holds.
+
+**Proof.** Choose a finite support set $S$ witnessing the atom lower bound, and assign each $x\in S$ its probability $w_x=\mu(X=x)$. The finite-law atom-weight identity shows that these weights sum to $1$ and each is at least $\lambda$, hence positive. The finite-law integral formula, applied to the identity function, identifies $\sum_x w_xx$ with the mean of $X$, so this weighted mean is zero. By the finite-noise sharp contraction theorem, these weights and the given parameters satisfy the required quadratic bound at the conjugate exponent $p=q/(q-1)$. Finite noise duality then gives, for every function $v$ on $S$, the bound on the $q$-moment of $\rho v+(1-\rho)\sum_xw_xv_x$ by its weighted second moment. Apply this with $v_x=a+bx$. The zero weighted mean and unit total mass make the averaged input equal to $a$, so the transformed value is $a+\rho b x$. The finite-law affine norm formula identifies the resulting moment sums with the squares of the corresponding real $L^q$ and $L^2$ norms; taking the nonnegative square roots yields the claimed norm inequality. The finite support also implies $X\in L^q$ by the finite-atom integrability result. Finally, the radius bound theorem gives $0<\rho<1$, and $q>2$ gives the required ordering of the exponents.
+
+**Key facts.** `BooleanAnalysis.Hypercontractivity.FiniteLaw.finite_probability_atom_weights`, `BooleanAnalysis.Hypercontractivity.FiniteLaw.finite_law_integral`, `BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_sharp_contraction`, `BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_duality`, `BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_pos_lt_one`, `BooleanAnalysis.Hypercontractivity.HasAtomLowerBound.memLp`, `BooleanAnalysis.Hypercontractivity.FiniteLaw.finite_law_affine_norm_sq`.

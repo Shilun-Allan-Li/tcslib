@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassPSPACE/TQBFHardParams.lean :: Complexity.TQBFHard.polyTimeComputable_levelBits -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Polynomial-Time Construction of Level Bits
+
+**Claim.** If the function producing $w(x)$ true bits is polynomial-time computable, then so is the function producing $w(x)$ copies of a block of $w(x)$ true bits followed by $2w(x)$ false bits.
+
+**Proof.** Use the block-loop construction with an initial encoded pair whose two components are both the unary string of length $w(x)$. This initial pair is polynomial-time computable by `PolyTimeComputable.pairEncode`. The loop state repeatedly applies a step that preserves the first component and removes one entry from the second; the step is polynomial-time computable by decoding the pair, taking the tail, and re-encoding. The output chunk checks whether that second component is empty: if it is, it returns the empty string; otherwise it returns the first component followed by two strings of false bits of the same length. The emptiness test, constant empty output, concatenation, and decoding are all polynomial-time operations, so the chunk function is polynomial-time computable. The step preserves a polynomial length bound along its orbit: each step's output length is at most the larger of the current length and $2$ (`length_lbStep`), so every iterate is bounded by the larger of the initial length and $2$. The loop theorem `polyTimeComputable_of_loop` now yields polynomial-time computability of the concatenation of chunks across the prescribed number of iterations. To identify that output, write $m=w(x)$. The initial encoded pair has second component of length $m$; its first $m$ loop states have nonempty tails, and hence each contributes a block of $m$ true bits followed by $2m$ false bits. All subsequent states have empty tails and contribute nothing (`lbStep_iterate`). Thus the concatenation is exactly the $m$-fold repetition defining the level-bit string.
+
+**Key facts.** `Complexity.PolyTimeComputable.pairEncode`, `Complexity.PolyTimeComputable.comp`, `Complexity.PolyTimeComputable.append`, `Complexity.polyTimeComputable_isNil`, `Complexity.polyTimeComputable_const`, `Complexity.polyTimeComputable_ite`, `Complexity.TQBFHard.length_lbStep`, `Complexity.BlockLoop.polyTimeComputable_of_loop`, `Complexity.TQBFHard.lbStep_iterate`.

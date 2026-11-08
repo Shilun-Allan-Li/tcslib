@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.virtualMove_correct",
+ "key": "e2b4165b6d8ed4d5",
+ "kind": "lemma",
+ "title": "Correctness of virtual head movement",
+ "statement": "Let $w$ be a Boolean string, $c$ a configuration on input $w$, $b\\in\\{\\mathrm{false},\\mathrm{true}\\}$ a tag that is false at the left boundary and true at the right boundary, and $m\\in\\{-1,0,1\\}$. The position of the virtual head, measured as the input-head position minus one, changes by the virtual movement using $b$, the scanned input symbol, and $m$ exactly as it changes under the native clamped movement. Moreover, the updated tag—false after a left move, true after a right move, and unchanged after a stationary move—satisfies the same boundary condition at the new position.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean string",
+  "$c$ is a configuration on input $w$",
+  "$b$ is a Boolean tag valid at the input-head position",
+  "$m$ is a sign movement in $\\{-1,0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a machine over the Boolean alphabet on input\n$w$, let $p \\in \\{0,\\dots,\\abs{w}+1\\}$ be its input-head position, let $b$ be\na Boolean tag valid for $p$ (forced false at the left boundary $p = 0$ and\ntrue at the right boundary $p = \\abs{w} + 1$), and let $m \\in \\{-1, 0, +1\\}$\nbe a requested movement.  Write $p'$ for the result of the native clamped\nmove of $p$ by $m$.  Then, as integers, $p - 1$ plus the virtual movement\ndetermined by $b$, the scanned input symbol of $c$, and $m$ equals $p' - 1$;\nand the updated tag --- false after a left move, true after a right move,\nunchanged when stationary --- is again valid for $p'$.  This holds for every\nword $w$, including the empty word."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Ends.storeLast",
+ "key": "543c0569a33f54ff",
+ "kind": "theorem",
+ "title": "Store statement with final state",
+ "statement": "Let a limit record, program, execution depth, local function $\\mathrm{loc}$, memory function $\\mu$, budget $T$, address expression $a$, value expression $e$, and postcondition $Q$ be given. Suppose $Q$ holds of the state with local function $\\mathrm{loc}$ and memory updated at the natural-number conversion of $a$'s value in $(\\mathrm{loc},\\mu)$ to $e$'s value in that state. Suppose also that $a$ and $e$ are safe in $(\\mathrm{loc},\\mu)$ and that the value of $a$ is a valid address, meaning it is nonnegative and less than the space bound. If $\\mathrm{cost}(a)+\\mathrm{cost}(e)+1\\le T$, then the store statement can execute from $(\\mathrm{loc},\\mu)$ with cost at most $T$ and end in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "Q holds of the state whose memory is updated at the natural-number conversion of a's value in (loc, μ) to e's value there.",
+  "a and e are safe in (loc, μ), and a's value is a valid address.",
+  "cost(a)+cost(e)+1 ≤ T."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

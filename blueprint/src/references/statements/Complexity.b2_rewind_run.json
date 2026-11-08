@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_rewind_run",
+ "key": "72dda470888f5e61",
+ "kind": "lemma",
+ "title": "Rewinding to the Guessing Phase",
+ "statement": "Let $S$ and $V$ be deterministic Turing machines over the binary alphabet, let $x$ be a binary word, and let $j$ be a natural number with $j \\le |x|$. For every binary word $w$ of length $j+1$, running the reverse host for $S$ and $V$ on the choices in $w$, from its loader configuration in state $1$ with input head at position $j$, assembly buffer containing $x$, and assembly head at position $|x|$, yields the guessing-phase configuration for the input-normalized scheduler's initial configuration on $x$, with empty guessed word.",
+ "hypotheses_covered": [
+  "$S,V$ are finite deterministic machines over the binary alphabet",
+  "$x$ is a binary word",
+  "$j$ is a natural number with $j \\le |x|$",
+  "$w$ is a binary word with length $j+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $x$ an input, $j \\le |x|$, and $w$ any word of choice bits with $|w| = j + 1$. Running the reverse host under $w$ from the rewind-state loader configuration with input head at position $j$ and assembly buffer $x$ reaches the guessing-phase configuration for the initial normalized-scheduler configuration on $x$ with empty guessed word."
+}

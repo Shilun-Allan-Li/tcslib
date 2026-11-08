@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clMatch_complete",
+ "key": "62acd81c8fb534f9",
+ "kind": "lemma",
+ "title": "Bounded completion of the row search",
+ "statement": "Let $l\\in\\mathbb{N}$, let $pos,neg\\in\\{0,\\ldots,l-1\\}$ be distinct, and choose a Boolean input word, a family of rows of Boolean words indexed by natural numbers, two target words, natural numbers $N,W$, and a Boolean trailer. Suppose each word in each of the first $N$ rows has length at most $W$, and each target word has length at most $W$. There is a natural number $t\\le N\\bigl(l(5W+7)+2W+5\\bigr)+1$ such that after $t$ steps the matcher is in its completed control, the candidate bank holds empty words if $N=0$ and otherwise row $N-1$, the stream and targets are unchanged, the cursor is at the length of the packed first $N$ rows, the clock is $N$, and the flags are the comparison results for rows $0$ through $N-1$ in order.",
+ "hypotheses_covered": [
+  "Natural number $l$",
+  "Distinct coordinates $pos$ and $neg$ in the range of length $l$",
+  "Boolean input word",
+  "Family of rows of Boolean words",
+  "Two target words",
+  "Natural numbers $N,W$",
+  "Boolean trailer",
+  "Each word in each row with index less than $N$ has length at most $W$",
+  "Each target word has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For distinct coordinates, a row family with fields of length at most $W$ among the first $N$ rows, target words of length at most $W$, and a trailer, there is a time $t \\le N(l(5W+7) + 2W + 5) + 1$ after which the matcher is in its completed control holding exactly the $N$ comparison flags in source-time order; the next row and the arbitrary tail are untouched, and at $N = 0$ only the silent stop executes."
+}

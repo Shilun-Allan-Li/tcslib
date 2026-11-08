@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.BinArith.divStep",
+ "key": "e1f4d34eba1ed285",
+ "kind": "def",
+ "title": "Binary division step",
+ "statement": "Represent a state $S$ by nested pair encodings, with outer first component $a$, and outer second component encoding a triple $(d,R,q)$; write $d=[h]\\mathbin{+\negthinspace+}t$, where $h$ is its first Boolean digit, taken to be false if $d$ is empty. If $d$ is empty, leave $S$ unchanged. Otherwise compare $a$ with the binary number represented by $[h]\\mathbin{+\negthinspace+}R$. If $a$ is no greater, return the nested encoding with components $a$, $t$, the binary subtraction of $[h]\\mathbin{+\negthinspace+}R$ by $a$, and the digit true prepended to $q$; if $a$ is greater, return the encoding with components $a$, $t$, the unchanged $[h]\\mathbin{+\negthinspace+}R$, and the digit false prepended to $q$.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "The pairing and decoding conventions, binary comparison, and binary subtraction are referenced but not defined in the supplied context.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

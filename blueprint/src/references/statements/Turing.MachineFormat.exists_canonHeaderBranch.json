@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.MachineFormat.exists_canonHeaderBranch",
+ "key": "fc897814448d201b",
+ "kind": "lemma",
+ "title": "Canonical Header Branch Machine",
+ "statement": "For every machine format $F$, there exist a finite Turing machine $C$ over the Boolean alphabet with at least one work tape, an entry state, an exit state, and a constant $a\\\\in\\\\mathbb N$. On every Boolean input $x$, it reaches within $t\\\\le a(|x|+1)$ steps, with $t>0$, the configuration in the exit state whose tape words consist of the canonical header of $x$ on tape zero and empty words on all other tapes; the input head is at position $1$ and the output is empty. At every time $u<t$ its state is not the exit state.",
+ "hypotheses_covered": [
+  "machine format $F$",
+  "finite Boolean-alphabet machine",
+  "positive number of work tapes",
+  "entry and exit states",
+  "constant $a\\\\in\\\\mathbb N$",
+  "every Boolean input $x$",
+  "$0<t\\\\le a(|x|+1)$",
+  "no state at times $u<t$ equals the exit state",
+  "final configuration has canonical header on tape zero, other tapes blank, input head at 1, and empty output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

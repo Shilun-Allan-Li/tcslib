@@ -1,0 +1,12 @@
+{
+ "lean_name": "Randomized.liarRound",
+ "key": "1d74c24c1de3414c",
+ "kind": "def",
+ "title": "Euler liar round predicate",
+ "statement": "Given a Boolean string $z$, decode it as a pair of Boolean strings and let $N$ be the binary value of the first component. Form the encoded arithmetic quantities specified by subtracting the encoding of $(N,[\\mathrm{true}])$ from the first component, reducing the binary value of the second component modulo that difference, adding the encoding of $([\\mathrm{true}],\\cdot)$ to obtain $A$, and then test both that the encoded greatest common divisor of $A$ and $N$ equals one and that the encoded Jacobi-symbol computation for $(A,N)$ equals the encoded modular power with base $A$ and exponent given by the tail of the difference, modulo $N$; return true exactly when both tests pass.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "The statement depends on the exact meanings of the pair-decoding, binary-arithmetic encodings, Jacobi-symbol algorithm, and modular-power algorithm, which are not described in the supplied definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

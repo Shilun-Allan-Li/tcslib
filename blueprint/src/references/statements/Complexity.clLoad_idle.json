@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clLoad_idle",
+ "key": "3a95f737fe0b866a",
+ "kind": "lemma",
+ "title": "The completed loader state is fixed",
+ "statement": "For any natural number $l$, binary input word $x$, and configuration of the row loader on $x$, if its state is the final field index $l$ paired with the fresh loader’s initial reset control, then one machine step leaves the entire configuration unchanged.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb N$",
+  "$x$ is a binary word",
+  "$c$ is a configuration of the row loader on $x$",
+  "the state of $c$ is the final field index $l$ paired with the fresh loader’s initial reset control"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every row-loader configuration whose control is the final field index with a fresh loader control is left entirely unchanged by one step, including the empty-row case."
+}

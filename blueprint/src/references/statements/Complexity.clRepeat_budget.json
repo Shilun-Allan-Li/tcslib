@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clRepeat_budget",
+ "key": "130f046b31742f30",
+ "kind": "lemma",
+ "title": "Polynomial repetition budget",
+ "statement": "For natural numbers $L,N,k,K,a,d$ with $N\\le L$, the quantity $2L+9+k(3L+7)+N\\bigl(a(K(L+1)^2+1)^d+2\\bigr)+K(L+1)^2$ is at most $(13+7k+a(K+1)^d+K)(L+1)^{2d+3}$.",
+ "hypotheses_covered": [
+  "$L,N,k,K,a,d$ are natural numbers",
+  "$N\\le L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all naturals with $N \\le L$, the complete repetition ledger, preparation $2L + 9 + k(3L+7)$, plus $N$ calls each costing the clean-call polynomial evaluated at the quadratic state bound $K(L+1)^2$, plus the final replay $K(L+1)^2$, is at most $(13 + 7k + a(K+1)^d + K)(L+1)^{2d+3}$."
+}

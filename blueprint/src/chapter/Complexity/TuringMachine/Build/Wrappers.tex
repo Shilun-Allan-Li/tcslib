@@ -47,46 +47,35 @@ last work tape holds the word $pu$ in cells $0, \dots, |pu|-1$, blank elsewhere,
 head at cell $|pu|$; and whose output tape holds $o$.
 \end{definition}
 
-\begin{lemma}[Capture transform commutes with applying an action]
+\begin{lemma}[Capture Transform Commutes with Applying an Action]
 \lean{Turing.capture_apply}
 \label{Turing.capture_apply}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.bufferTape_append, Turing.captureAction, Turing.captureCfg}
 \difficulty{4}
-Let $S$ and $H$ be sets of states, $\iota : S \to H$, $r \in H$, and $p$, $o$ Boolean
-words. For every action $a$ and every configuration $c$ of a Boolean Turing machine with
-$k$ work tapes and state set $S$ on an input $x$, applying the capture transform of $a$
-to the capture image of $c$ gives the capture image of the configuration obtained by
-applying $a$ to $c$. Here the capture transform of $a$ performs $a$ on the input and the
-first $k$ of $k+1$ work tapes, writes $a$'s emitted bit (if any) on the last tape and
-moves that head right, emits nothing, and maps the successor through $\iota$ with a halt
-replaced by $r$; and the capture image of $c$ has state $\iota(q)$ (or $r$ if $c$ is
-halted), the input head and work tapes of $c$ on the first $k$ tapes, the word $p$
-followed by the output of $c$ stored from cell $0$ of the last tape with that head just
-past its end, and output $o$.
+Let $S,H$ be sets, let $emb:S\to H$ be a map, let $ret\in H$, let $pre$ and $out_0$ be
+Boolean words, and let $c$ be a configuration of a Boolean machine with $k$ work tapes
+on input $input$. For every action $a$ of that machine, applying the capture transform
+of $a$ to the capture image of $c$ gives the capture image of the configuration obtained
+by applying $a$ to $c$.
 \end{lemma}
 
-\begin{theorem}[Capture contract: lockstep run with captured output]
+\begin{theorem}[Lockstep Run Under Output Capture]
 \lean{Turing.capture_run}
 \label{Turing.capture_run}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Halted, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.captureAction, Turing.captureCfg, Turing.capture_apply}
 \difficulty{5}
-Let $M$ be a Turing machine over the Boolean alphabet with $k$ work tapes and state set
-$S$, let $N$ be one with $k+1$ work tapes and state set $H$, and let $\iota : S \to H$
-and $r \in H$. Suppose that for every $s \in S$, every (possibly blank) input symbol
-$\sigma$ and every tuple $(w_0, \dots, w_k)$ of work-tape symbols, the transition of $N$
-at $(\iota(s), \sigma, w_0, \dots, w_k)$ is the capture transform of the transition of
-$M$ at $(s, \sigma, w_0, \dots, w_{k-1})$: $M$'s action on the input and first $k$ tapes,
-its emitted bit (if any) written on the last tape followed by a right move, no output,
-and a halt replaced by entering $r$. Let $p$, $o$ be Boolean words, $c_0$ a
-configuration of $M$ on an input $x$, and $t \in \mathbb{N}$ such that $M$ run from $c_0$
-is not halted at any time $t' < t$; then running $N$ for $t$ steps from the capture image
-of $c_0$ yields the capture image of the configuration $M$ reaches after $t$ steps from
-$c_0$, where the capture image of a configuration $c$ has state $\iota(q)$ (or $r$ if $c$
-is halted), the input head and work tapes of $c$ on the first $k$ tapes, the word $p$
-followed by the output of $c$ stored from cell $0$ of the last tape with that head just
-past its end, and output $o$.
+Let $M$ be a Boolean Turing machine with $k$ work tapes and states $S$, and let $N$ be a
+Boolean Turing machine with $k+1$ work tapes and states $H$. Fix a map $emb:S\to H$, a
+state $ret\in H$, and suppose that for every state $s\in S$, input symbol $inp$
+(possibly absent), and assignment $w$ of symbols to the $k+1$ work-tape heads, the
+transition of $N$ at $(emb(s),inp,w)$ is the capture transform of the transition of $M$
+at $(s,inp,w|_{k})$, using the first $k$ entries of $w$. For every Boolean input word,
+prefix word $pre$, output word $out_0$, initial configuration $c_0$ of $M$, and
+$t\in\mathbb N$, if $M$ is not halted at any time $t'<t$ when run from $c_0$, then
+running $N$ for $t$ steps from the capture image of $c_0$ equals the capture image of
+the configuration reached by running $M$ for $t$ steps from $c_0$.
 \end{theorem}
 
 \begin{definition}[Forwarding transform of a machine action]
@@ -116,39 +105,35 @@ position, work-tape contents and work-head positions are those of $c$, and whose
 tape holds $p$ followed by the output of $c$.
 \end{definition}
 
-\begin{lemma}[Forwarding transform commutes with applying an action]
+\begin{lemma}[Forwarding commutes with applying an action]
 \lean{Turing.emit_apply}
 \label{Turing.emit_apply}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.emitAction, Turing.emitCfg}
 \difficulty{2}
-Let $S$ and $H$ be sets of states, $\iota : S \to H$, $r \in H$, and $p$ a Boolean word.
-For every action $a$ and every configuration $c$ of a Boolean Turing machine with $k$
-work tapes and state set $S$ on an input $x$, applying the forwarding transform of $a$
-(same head moves, writes and emission as $a$, successor mapped through $\iota$, a halt
-replaced by $r$) to the forwarding image of $c$ (state mapped through $\iota$, or $r$ if
-$c$ is halted, the same tapes and heads, output $p$ followed by the output of $c$) gives
-the forwarding image of the configuration obtained by applying $a$ to $c$.
+Let $S$ and $H$ be state sets, let $\iota:S\to H$, choose $r\in H$, and let $p$ be a
+Boolean word. For any action $a$ and configuration $c$ of a Boolean machine with $k$
+work tapes and state set $S$, applying the action that preserves $a$'s tape operations
+and output and maps its successor state through $\iota$ (using $r$ if it halts) to the
+configuration that maps $c$'s state through $\iota$ (using $r$ if it is halted) and
+prefixes its output by $p$ yields the forwarded image of the result of applying $a$ to
+$c$.
 \end{lemma}
 
-\begin{theorem}[Forwarding contract: lockstep run with forwarded output]
+\begin{theorem}[Forwarding a run]
 \lean{Turing.emit_run}
 \label{Turing.emit_run}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Halted, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.emitAction, Turing.emitCfg, Turing.emit_apply}
 \difficulty{5}
-Let $M$ and $N$ be Turing machines over the Boolean alphabet with $k$ work tapes each and
-state sets $S$ and $H$, and let $\iota : S \to H$ and $r \in H$. Suppose that for every
-$s \in S$, every (possibly blank) input symbol $\sigma$ and every tuple $w$ of $k$
-work-tape symbols, the transition of $N$ at $(\iota(s), \sigma, w)$ is the forwarding
-transform of the transition of $M$ at $(s, \sigma, w)$: the same head moves, writes and
-emission, with the successor mapped through $\iota$ and a halt replaced by entering $r$.
-Let $p$ be a Boolean word, $c_0$ a configuration of $M$ on an input $x$, and
-$t \in \mathbb{N}$ such that $M$ run from $c_0$ is not halted at any time $t' < t$; then
-running $N$ for $t$ steps from the forwarding image of $c_0$ yields the forwarding image
-of the configuration $M$ reaches after $t$ steps from $c_0$, where the forwarding image of
-a configuration $c$ has state $\iota(q)$ (or $r$ if $c$ is halted), the input head, work
-tapes and work heads of $c$, and output $p$ followed by the output of $c$.
+Let $M$ and $H$ be machines with $k$ work tapes and Boolean tape alphabet, with state
+sets $S$ and $H_0$, respectively. Let $\iota:S\to H_0$, choose $r\in H_0$, and suppose
+that at every state $\iota(s)$ and every tuple of scanned symbols, the transition of the
+second machine is the forwarding transform of the transition of the first. For any
+Boolean input, prefix $p$, initial configuration $c_0$, and $t\in\mathbb N$, if the run
+of $M$ from $c_0$ is not halted at any time $t'<t$, then the run of the second machine
+for $t$ steps from the forwarded image of $c_0$ equals the forwarded image of the run of
+$M$ after $t$ steps.
 \end{theorem}
 
 \begin{definition}[Halt-redirected machine]
@@ -210,103 +195,83 @@ $(q, \rho)$ if $c$ is in state $q$, while if $c$ is halted it is halted when $\r
 and in $\ell$ otherwise.
 \end{definition}
 
-\begin{lemma}[The redirect loop state is a fixed point]
+\begin{lemma}[Fixed point in the redirect loop]
 \lean{Turing.FinTM.redirect_loop}
 \label{Turing.FinTM.redirect_loop}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.redirectTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{3}
-Let $M$ be a finite-state Turing machine over the Boolean alphabet and $b$ a bit, and
-consider the halt-redirected machine of $M$ and $b$, which simulates $M$ silently while
-recording the last bit $M$ has emitted, halts when $M$ halts with that bit equal to $b$,
-and otherwise enters a loop state $\ell$. For every configuration $c$ of the
-halt-redirected machine on an input $x$ whose control state is $\ell$, and every
-$t \in \mathbb{N}$, running the halt-redirected machine for $t$ steps from $c$ returns
-exactly $c$.
+Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit,
+and form the machine that redirects halting computations whose last output bit is not
+$b$ to a loop state. For any input $x$, any configuration $c$ of this redirected machine
+whose state is the loop state, and any $t \in \mathbb{N}$, running the machine for $t$
+steps from $c$ returns $c$.
 \end{lemma}
 
-\begin{lemma}[Redirection commutes with applying an action]
+\begin{lemma}[Redirection commutes with an action]
 \lean{Turing.FinTM.redirect_apply}
 \label{Turing.FinTM.redirect_apply}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.redirectAction, Turing.FinTM.redirectCfg}
 \difficulty{3}
-Let $M$ be a finite-state Turing machine over the Boolean alphabet with $k$ work tapes,
-$b$ a bit, $c$ a configuration of $M$ on an input $x$, $a$ an action of $M$, and $\rho$
-the last bit of the output of $c$ (empty if that output is empty). Applying the
-redirected action of $a$ with register $\rho$ (the moves and writes of $a$, no emission,
-register updated to $a$'s emitted bit if any, and on a halt of $a$ either halting when
-the updated register equals $b$ or entering the loop state otherwise) to the redirected
-image of $c$ (the tapes and heads of $c$, empty output, and state determined by $c$'s
-state and the last bit of its output in the same way) gives the redirected image of the
-configuration obtained by applying $a$ to $c$.
+Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit,
+let $x$ be a Boolean word, let $c$ be a configuration of $M$ on input $x$, and let $a$
+be an action for $M$. Applying the action obtained by redirecting $a$ with the register
+set to the last bit of $c$'s output (empty if that output is empty) to the redirected
+image of $c$ gives the redirected image of the configuration obtained by applying $a$ to
+$c$.
 \end{lemma}
 
-\begin{lemma}[One-step correspondence for the halt-redirected machine]
+\begin{lemma}[One-step correspondence for the redirected machine]
 \lean{Turing.FinTM.redirect_step}
 \label{Turing.FinTM.redirect_step}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.redirectAction, Turing.FinTM.redirectCfg, Turing.FinTM.redirectState, Turing.FinTM.redirectTM, Turing.FinTM.redirect_apply, Turing.FinTM.redirect_loop, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
 \difficulty{5}
-Let $M$ be a finite-state Turing machine over the Boolean alphabet and $b$ a bit, and
-consider the halt-redirected machine of $M$ and $b$, which simulates $M$ silently while
-recording the last bit $M$ has emitted, halts when $M$ halts with that bit equal to $b$,
-and otherwise enters an idle loop state. For a configuration $c$ of $M$ on an input $x$,
-let its redirected image carry the tapes and heads of $c$, empty output, and the state
-$(q, \rho)$ when $c$ is in state $q$ and $\rho$ is the last bit of its output (empty if
-none), or, when $c$ is halted, the halting state if $\rho = b$ and the loop state
-otherwise. Then for every such $c$, halted or not, one step of the halt-redirected
-machine from the redirected image of $c$ gives the redirected image of one step of $M$
-from $c$.
+Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit,
+let $x$ be an input, and let $c$ be a configuration of $M$ on $x$. Applying one step of
+the machine that redirects halting computations whose last output bit is not $b$ to a
+loop state, starting from the redirected image of $c$, gives the redirected image of the
+configuration obtained by one step of $M$ from $c$.
 \end{lemma}
 
-\begin{lemma}[Run correspondence for the halt-redirected machine]
+\begin{lemma}[Run correspondence for the redirected machine]
 \lean{Turing.FinTM.redirect_run}
 \label{Turing.FinTM.redirect_run}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.redirectCfg, Turing.FinTM.redirectTM, Turing.FinTM.redirect_step, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step}
 \difficulty{2}
-Let $M$ be a finite-state Turing machine over the Boolean alphabet and $b$ a bit, and
-consider the halt-redirected machine of $M$ and $b$, which simulates $M$ silently while
-recording the last bit $M$ has emitted, halts when $M$ halts with that bit equal to $b$,
-and otherwise enters an idle loop state. For every input $x$ and every
-$t \in \mathbb{N}$, the configuration of the halt-redirected machine after $t$ steps from
-its initial configuration on $x$ is the redirected image of the configuration of $M$
-after $t$ steps from its initial configuration on $x$: the same tapes and heads, empty
-output, and state $(q, \rho)$ if $M$ is in state $q$ and the last bit it has emitted is
-$\rho$ (empty if none), or, if $M$ has halted, halted when $\rho = b$ and in the loop
-state otherwise.
+Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit,
+let $x$ be an input, and let $t \in \mathbb{N}$. After $t$ steps from its initial
+configuration on $x$, the machine that redirects halting computations whose last output
+bit is not $b$ to a loop state has the redirected image of the configuration reached by
+$M$ after $t$ steps from its own initial configuration on $x$.
 \end{lemma}
 
-\begin{theorem}[Halt-redirect: the halting clause]
+\begin{theorem}[Redirected computation halts on the final bit]
 \lean{Turing.FinTM.redirectTM_computes}
 \label{Turing.FinTM.redirectTM_computes}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.FinTM.redirectCfg, Turing.FinTM.redirectState, Turing.FinTM.redirectTM, Turing.FinTM.redirect_run}
 \difficulty{3}
-Let $M$ be a finite-state Turing machine over the Boolean alphabet, $b$ a bit, $x$ and $w$
-Boolean words, and $t \in \mathbb{N}$. Consider the halt-redirected machine of $M$ and
-$b$, which simulates $M$ without emitting anything while recording the last bit $M$ has
-emitted, halts when $M$ halts with that bit equal to $b$, and otherwise enters an idle
-loop state. If $M$ on input $x$ halts within $t$ steps with output $w$, and $w$ is
-nonempty with last bit $b$, then the halt-redirected machine on input $x$ halts within $t$
-steps with empty output.
+Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit,
+and let $x,w$ be Boolean words and $t \in \mathbb{N}$. If $M$ computes $w$ from $x$ in
+exactly $t$ steps (halting at step $t$) and the last bit of $w$ is $b$, then the machine
+obtained by redirecting $M$ to halt on $b$ computes the empty output from $x$ in exactly
+$t$ steps.
 \end{theorem}
 
-\begin{theorem}[Halt-redirect: the live clause]
+\begin{theorem}[Redirected computation remains live]
 \lean{Turing.FinTM.redirectTM_live}
 \label{Turing.FinTM.redirectTM_live}
 \leanok
 \uses{Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.computesInTime_iff, Turing.FinTM.redirectState, Turing.FinTM.redirectTM, Turing.FinTM.redirect_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-Let $M$ be a finite-state Turing machine over the Boolean alphabet, $b$ a bit, $x$ and $w$
-Boolean words, and $t \in \mathbb{N}$. Consider the halt-redirected machine of $M$ and
-$b$, which simulates $M$ without emitting anything while recording the last bit $M$ has
-emitted, halts when $M$ halts with that bit equal to $b$, and otherwise enters an idle
-loop state. If $M$ on input $x$ halts within $t$ steps with output $w$, and either $w$ is
-empty or its last bit differs from $b$, then for every $u \in \mathbb{N}$ the
-halt-redirected machine, run for $u$ steps from its initial configuration on $x$, is not
-halted.
+Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit,
+and let $x,w$ be Boolean words and $t \in \mathbb{N}$. If $M$ computes $w$ from $x$ in
+exactly $t$ steps (halting at step $t$) and the last bit of $w$ is not $b$, then the
+machine obtained by redirecting $M$ to halt on $b$ is not halted after $u$ steps from
+its initial configuration on $x$, for every $u \in \mathbb{N}$.
 \end{theorem}
 
 \begin{definition}[Decider padded with idle tapes]
@@ -385,56 +350,45 @@ with every head at cell $0$; whose capture tape holds $u$ in cells $0, \dots, |u
 blank elsewhere, with its head at cell $|u|$; and whose output is empty.
 \end{definition}
 
-\begin{lemma}[Decider phase of the conditional controller]
+\begin{lemma}[Evolution during the decider phase]
 \lean{Turing.FinTM.timed_capture}
 \label{Turing.FinTM.timed_capture}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.Halted, Turing.FinTM, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_run, Turing.FinTM.timedCondTM, Turing.FinTM.timedControlCfg, Turing.FinTM.timedPadTM, Turing.MultiTapeTM.runFrom, Turing.capture_run}
 \difficulty{4}
-Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet, and
-consider the timed conditional controller for them, which first runs $D$ silently on a
-decider block of tapes while copying $D$'s output onto a capture tape. Let $c$ be a
-configuration of $D$ on an input $x$ and $t \in \mathbb{N}$ such that $D$ run from $c$ is
-not halted at any time $s < t$. Then running the controller for $t$ steps from the
-decider-phase configuration of $c$ (state of $c$, or the back state if $c$ is halted;
-$c$'s input head, work tapes and heads on the decider block; a blank branch block; $c$'s
-output stored from cell $0$ of the capture tape with that head just past it; empty
-output) yields the decider-phase configuration of the configuration $D$ reaches after $t$
-steps from $c$.
+Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let
+$x$ be a Boolean word, and let $c$ be a configuration of $D$ on $x$. Suppose that the
+computation of $D$ from $c$ is not halted at any time $s<t$, where $t\in\mathbb N$.
+Running the timed conditional controller for $t$ steps from the decider-phase
+configuration corresponding to $c$ yields the decider-phase configuration corresponding
+to the configuration reached by $D$ after $t$ steps from $c$.
 \end{lemma}
 
-\begin{lemma}[Initial configuration of the conditional controller]
+\begin{lemma}[Initial state of the conditional controller]
 \lean{Turing.FinTM.timed_control_init}
 \label{Turing.FinTM.timed_control_init}
 \leanok
 \uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.leftCfg, Turing.FinTM.timedCondTM, Turing.FinTM.timedControlCfg, Turing.MultiTapeTM.initCfg, Turing.captureCfg}
 \difficulty{4}
-Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet, and
-consider the timed conditional controller for them, with a decider block, a branch
-block and a capture tape as work tapes. For every input $x$, the initial configuration of
-the controller on $x$ equals the decider-phase configuration of $D$'s initial
-configuration on $x$: $D$'s initial state, the initial input-head position, every work
-tape of all three blocks blank with its head at cell $0$, and empty output.
+Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, and
+let $x$ be a Boolean word. The timed conditional controller's initial configuration on
+$x$ is exactly its decider-phase configuration corresponding to $D$'s initial
+configuration on $x$.
 \end{lemma}
 
-\begin{lemma}[Branch phase of the conditional controller]
+\begin{lemma}[Evolution in the selected branch phase]
 \lean{Turing.FinTM.timed_branch_run}
 \label{Turing.FinTM.timed_branch_run}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.branchTM, Turing.FinTM.bufferTape, Turing.FinTM.leftAction, Turing.FinTM.leftCfg, Turing.FinTM.leftCfg_apply, Turing.FinTM.rightAction, Turing.FinTM.rightCfg, Turing.FinTM.rightCfg_apply, Turing.FinTM.timedBranchCfg, Turing.FinTM.timedCondTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_comm_of_step, Turing.MultiTapeTM.step}
 \difficulty{5}
-Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet with
-$k_D$, $k_1$, $k_2$ work tapes, consider the timed conditional controller for them, and
-for a bit $\beta$ consider the two-branch union machine that runs $M_1$ or $M_2$ on
-disjoint blocks of $k_1$ and $k_2$ work tapes and starts in the initial state of $M_1$ if
-$\beta$ is $\mathrm{true}$ and of $M_2$ otherwise. Let $c$ be a configuration of the
-union machine on an input $x$, $\tau$ and $h$ contents and head positions for $k_D$
-tapes, and $t \in \mathbb{N}$. Then running the controller for $t$ steps from the
-branch-phase configuration of $(c, \tau, h, \beta)$ (the state, input head, output and
-work tapes of $c$ on the branch block, $\tau$ and $h$ on the decider block, and the bit
-$\beta$ in cell $0$ of the capture tape with that head at cell $0$) yields the
-branch-phase configuration of $(c', \tau, h, \beta)$, where $c'$ is the configuration the
-union machine reaches after $t$ steps from $c$.
+Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let
+$x$ be a Boolean word, and let $b$ be a bit. For any configuration $c$ of the two-branch
+machine on $x$, any contents and head positions for the $D$-tape block, and any
+$t\in\mathbb N$, running the timed conditional controller for $t$ steps from the
+corresponding branch-phase configuration yields the branch-phase configuration formed
+from the two-branch machine's configuration after $t$ steps from $c$, with the $D$-tape
+block and captured bit $b$ unchanged.
 \end{lemma}
 
 \begin{definition}[Controller configuration ready to rewind]
@@ -452,55 +406,92 @@ and heads, the branch block blank with every head at cell $0$, the capture tape 
 the bit $\beta$ in cell $0$, blank elsewhere, with its head at cell $0$, and empty output.
 \end{definition}
 
-\begin{lemma}[Reading the decider's one-bit verdict]
+\begin{lemma}[Reading the decider's output bit]
 \lean{Turing.FinTM.timed_read}
 \label{Turing.FinTM.timed_read}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.branchTM, Turing.FinTM.bufferTape, Turing.FinTM.controlAction, Turing.FinTM.controlAction_apply, Turing.FinTM.leftCfg, Turing.FinTM.rightCfg, Turing.FinTM.timedBranchCfg, Turing.FinTM.timedCondTM, Turing.FinTM.timedControlCfg, Turing.FinTM.timedReadyCfg, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.step, Turing.captureCfg, Turing.moveInputPos_zero}
 \difficulty{5}
-Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet, and
-consider the timed conditional controller for them, with a decider block, a branch block
-and a capture tape as work tapes. Let $c$ be a halted configuration of $D$ on an input
-$x$ whose output is the one-bit word $\beta$. Then two steps of the controller from the
-decider-phase configuration of $c$ (in the back state, with $c$'s input head and work
-tapes on the decider block, a blank branch block, $\beta$ in cell $0$ of the capture tape
-with that head at cell $1$, and empty output) reach the ready-to-rewind configuration of
-$c$ and $\beta$, which differs only in being in the rewind-start state for $\beta$ with the
-capture head at cell $0$.
+Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let
+$x$ be a Boolean word, and let $c$ be a halted configuration of $D$ on $x$ whose output
+is the one-bit word $[b]$. After two steps of the timed conditional controller from the
+decider-phase configuration corresponding to $c$, the controller is in the ready
+configuration for bit $b$.
 \end{lemma}
 
-\begin{lemma}[Reaching the selected branch within twice the decider budget]
+\begin{lemma}[Bound to reach the selected branch]
 \lean{Turing.FinTM.timed_start}
 \label{Turing.FinTM.timed_start}
 \leanok
 \uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.branchTM, Turing.FinTM.computesInTime_iff, Turing.FinTM.timedBranchCfg, Turing.FinTM.timedCondTM, Turing.FinTM.timedControlCfg, Turing.FinTM.timedReadyCfg, Turing.FinTM.timed_capture, Turing.FinTM.timed_control_init, Turing.FinTM.timed_read, Turing.FinTM.timed_rewind, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.timed_input_bound}
 \difficulty{5}
-Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet with
-$k_D$, $k_1$, $k_2$ work tapes, consider the timed conditional controller for them, let
-$x$ be a Boolean word, $\beta$ a bit and $T \in \mathbb{N}$, and suppose $D$ on input $x$
-halts within $T$ steps with output the one-bit word $\beta$. Then there exist
-$a \le 2T + 5$ and contents $\tau$ and head positions $h$ for $k_D$ tapes such that after
-$a$ steps from its initial configuration on $x$ the controller is in the branch-phase
-configuration built from the initial configuration on $x$ of the two-branch union machine
-selecting $\beta$: in the copy of the initial state of $M_1$ if $\beta$ is $\mathrm{true}$
-and of $M_2$ otherwise, with the initial input-head position, a blank branch block with
-every head at cell $0$, the decider block holding $\tau$ with heads $h$, the bit $\beta$ in
-cell $0$ of the capture tape with that head at cell $0$, and empty output.
+Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let
+$x$ be a Boolean word, let $b$ be a bit, and let $T\in\mathbb N$. Suppose $D$ computes
+output $[b]$ from $x$ in exactly $T$ steps. Then there is a time $a\le 2T+5$ and a
+choice of contents and head positions for the $D$-tape block such that after $a$ steps
+from the timed conditional controller's initial configuration on $x$, it is in the
+branch-phase configuration built from the initial configuration of the two-branch
+machine selecting $b$.
 \end{lemma}
 
-\begin{theorem}[Timed conditional composition of machines]
+\begin{theorem}[Timed conditional composition]
 \lean{Turing.FinTM.computesFunInTime_cond}
 \label{Turing.FinTM.computesFunInTime_cond}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.branchTM, Turing.FinTM.branchTM_computes, Turing.FinTM.computesInTime_iff, Turing.FinTM.leftCfg, Turing.FinTM.rightCfg, Turing.FinTM.timedBranchCfg, Turing.FinTM.timedCondTM, Turing.FinTM.timed_branch_run, Turing.FinTM.timed_start, Turing.MultiTapeTM.runFrom_add}
 \difficulty{4}
-Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet, let $p$
-be a Boolean predicate on Boolean words, $f_1$ and $f_2$ functions from Boolean words to
-Boolean words, and $T_0, T_1, T_2 : \mathbb{N} \to \mathbb{N}$. Suppose that on every input
-$x$, $D$ halts within $T_0(|x|)$ steps with output the one-bit word $p(x)$, $M_1$ halts
-within $T_1(|x|)$ steps with output $f_1(x)$, and $M_2$ halts within $T_2(|x|)$ steps with
-output $f_2(x)$. Then there exist a finite-state Turing machine $M$ over the Boolean
-alphabet and a constant $c \in \mathbb{N}$ such that on every input $x$, $M$ halts within
-$c \cdot (T_0(|x|) + \max(T_1(|x|), T_2(|x|)) + 1)$ steps with output $f_1(x)$ if $p(x)$
-holds and $f_2(x)$ otherwise.
+Let $D$, $M_1$, and $M_2$ be finite Turing machines over the Boolean alphabet, let $p$
+be a predicate on Boolean words, let $f_1,f_2$ map Boolean words to Boolean words, and
+let $T_0,T_1,T_2 : \mathbb{N} \to \mathbb{N}$. If $D$ computes the one-bit word $[p(x)]$
+on every input $x$ in time $T_0(|x|)$, and $M_i$ computes $f_i(x)$ in time $T_i(|x|)$
+for each $i\in\{1,2\}$, then there are a finite Turing machine $M$ over the Boolean
+alphabet and a constant $c\in\mathbb{N}$ such that $M$ computes $f_1(x)$ when $p(x)$ is
+true and $f_2(x)$ otherwise, in time $c\bigl(T_0(|x|)+\max(T_1(|x|),T_2(|x|))+1\bigr)$
+on every input $x$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Configuration under halt redirection]
+\lean{Turing.FinTM.redirectTM_runFrom}
+\label{Turing.FinTM.redirectTM_runFrom}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.redirectTM, Turing.FinTM.redirect_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
+\difficulty{4}
+Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit,
+let $x$ be a Boolean word, and let $t \in \mathbb{N}$. After $t$ steps, the redirected
+machine's state is the pair of the original machine's state and the last bit of its
+output if the original machine is still running; if it has halted, the redirected
+machine is halted exactly when that last bit equals $b$, and otherwise is in its loop
+state. At that time, the input head position, work-tape contents, and work-tape head
+positions agree with those of the original machine, while the redirected machine's
+output is empty.
+\end{theorem}
+
+\begin{theorem}[Time bound for a conditional computation]
+\lean{Turing.FinTM.timedCondTM_computes}
+\label{Turing.FinTM.timedCondTM_computes}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.timedCondTM}
+Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, and
+let $p$ be a Boolean-valued function on Boolean words. Suppose $D$ computes the one-bit
+output $[p(x)]$ from every input $x$ within $T_0(|x|)$ steps, and $M_1$ and $M_2$
+compute $f_1(x)$ and $f_2(x)$ within $T_1(|x|)$ and $T_2(|x|)$ steps, respectively. Then
+the timed conditional controller computes $f_1(x)$ when $p(x)$ is true and $f_2(x)$
+otherwise, within $5\bigl(T_0(|x|)+\max(T_1(|x|),T_2(|x|))+1\bigr)$ steps for every
+input $x$.
+\end{theorem}
+
+\begin{theorem}[Space bound for the timed conditional controller]
+\lean{Turing.FinTM.timedCondTM_spaceUsed}
+\label{Turing.FinTM.timedCondTM_spaceUsed}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.branchTM, Turing.FinTM.timedCondTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.spaceUsed}
+Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let
+$x$ be a Boolean word, let $b$ be a bit, and let $T,t\in\mathbb N$. Suppose $D$ computes
+output $[b]$ from $x$ in exactly $T$ steps, with some amount of space. Then by time $t$,
+the timed conditional controller uses at most the sum of the space used by $D$ on $x$
+through time $T$, the space used by the two-branch machine selecting $b$ on $x$ through
+time $t$, and $2$.
 \end{theorem}

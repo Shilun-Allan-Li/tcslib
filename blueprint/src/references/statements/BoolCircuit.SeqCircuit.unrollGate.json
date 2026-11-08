@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.SeqCircuit.unrollGate",
+ "key": "de80f72e7eb59f9d",
+ "kind": "def",
+ "title": "Gate in the unrolled circuit",
+ "statement": "Let $M$ be a sequential Boolean circuit with $n$ inputs and $r$ registers, and let $p$ be a nonnegative integer. Write $s$ for the circuit size, $q=\\lfloor p/s\\rfloor$ for the block number, and $j=p\\bmod s$ for the position within the block. If $j<r$ and $q=0$, the gate is an argument-free AND gate when register $j$ is initially true and an argument-free OR gate otherwise; if $j<r$ and $q>0$, it is an AND gate whose sole argument is the vertex for register $j$'s next value placed in block $q-1$. If $j\\ge r$, take the combinational gate at index $j-r$ (using an argument-free AND gate if that index is out of range); the resulting gate has that gate's kind and its arguments placed in block $q$.",
+ "hypotheses_covered": [
+  "$n$ and $r$ are nonnegative integers",
+  "$M$ is a sequential circuit with $n$ inputs and $r$ registers",
+  "$p$ is a nonnegative integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

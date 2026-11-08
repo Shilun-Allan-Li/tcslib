@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.tr",
+ "key": "08ad3d12a2413952",
+ "kind": "def",
+ "title": "Simulation transition function",
+ "statement": "For a Boolean-symbol machine $M$, define a transition function on pairs of states and phases, with an optional input symbol and the symbols scanned on its $k+1$ work tapes. In phase work$(a,lb)$, apply $M$'s transition using the first $k$ scanned symbols and the optional symbol $a$, then extend its action using $lb$ and taking $rb$ to be true exactly when $a$ is absent and $lb$ is false. In phase zt, leave the added tape unchanged and stationary, moving to work$(\\\\mathrm{none},\\\\mathrm{true})$ if that tape is blank and to dD otherwise. In phases iC, iB, dD, dL, dE, and dB, perform the corresponding counter action on the added tape: iC increments it, iB advances its head left over nonblank cells and right at a blank, dD decrements it while choosing dD or dL according to the scanned bit (and moves left to dB at a blank), dL moves left to dE at a blank and to dB otherwise, dE writes a blank and moves left to dB, and dB uses the same head movement as iB. The counter actions use the scanned bit to choose their specified write and successor behavior. In phases ask and bit, the transition halts without changing any tape.",
+ "hypotheses_covered": [
+  "A Boolean-symbol finite-tape Turing machine $M$",
+  "A current state and phase",
+  "An optional input symbol",
+  "A scanned-symbol function for the $k+1$ work tapes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

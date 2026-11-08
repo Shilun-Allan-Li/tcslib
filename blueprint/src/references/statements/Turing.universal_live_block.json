@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.universal_live_block",
+ "key": "ecedeb4ce4c9cc24",
+ "kind": "lemma",
+ "title": "One live interpreter step within the block bound",
+ "statement": "Let $M$ be a machine with $N$ states, whose serialized transition table has length $L$, let $\\alpha$ be a Boolean string, and let $x$ be a Boolean input. For a configuration $s$ of $M$ on $x$ with a successor state and a table cursor $p\\le L$, there exist a duration $d$ and a cursor $p'\\le L$ such that $1\\le d\\le 3L+5(N+1)+20$, and after $d$ steps the universal interpreter's configuration representing $s$ with cursor $p$ is exactly the one representing the configuration obtained by one step of $M$ from $s$, with cursor $p'$.",
+ "hypotheses_covered": [
+  "$M$ is a coded machine with $N+1$ possible states",
+  "$\\alpha$ is a Boolean string",
+  "$x$ is a Boolean input",
+  "$s$ is a configuration of $M$ on $x$",
+  "$p\\le L$, where $L$ is the serialized length of $M$",
+  "$s$ has not halted (its state is present)"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a coded machine with state count $N$ and canonical serialization\nof length $L$, let $\\alpha$ be a code string, let $s$ be a configuration of\n$M$'s one-work-tape form on an input $x$ that has not halted, and let\n$p \\le L$ be a table cursor.  Then there exist a duration $d$ with\n$1 \\le d \\le 3L + 5(N + 1) + 20$ and a cursor $p' \\le L$ such that running\nthe table interpreter for $d$ steps from the interpreter checkpoint of $s$\nwith table cursor $p$ yields exactly the interpreter checkpoint of the\nconfiguration obtained from $s$ by one step of $M$, with table cursor\n$p'$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.pre_scan",
+ "key": "7b12024924fff6bd",
+ "kind": "theorem",
+ "title": "Preprocessing scan bound",
+ "statement": "Let $x$ and $r$ be finite Boolean strings, let $i$ be a natural number, and let $c$ be a configuration of the zero-work-tape Boolean machine on input $x$. Suppose that removing the first $i$ bits of $x$ gives $r$, that $i\\leq |x|$, that $c$ is in state $\\mathrm{scan0}$, and that its input head is at position $i+1$. For the machine whose scan state emits each examined bit and, after examining two consecutive unequal bits, starts its rewrite phase, there is a time $t\\leq |r|+1$ when it is in state $\\mathrm{rwStart}$ and its output is the output already in $c$, followed by the string obtained from $r$ by retaining its first two bits and continuing recursively while each examined pair is equal (retaining a final singleton if present).",
+ "hypotheses_covered": [
+  "$x$ and $r$ are finite Boolean strings",
+  "$i$ is a natural number",
+  "$c$ is a zero-work-tape configuration on input $x",
+  "Removing the first $i$ bits of $x$ gives $r$",
+  "$i\\leq |x|$",
+  "$c$ is in state $\\mathrm{scan0}$",
+  "The input-head position of $c$ is $i+1$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet uses the machine `preTM` but does not include its definition, so its transition behavior cannot be fully verified from the stated ground truth.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

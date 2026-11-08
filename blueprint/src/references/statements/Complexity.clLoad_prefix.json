@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clLoad_prefix",
+ "key": "09e8d6d874a19636",
+ "kind": "lemma",
+ "title": "Loading a prefix of the row",
+ "statement": "Let $l$ be a natural number, let $x$ be a binary input word, and let $p$ be an input-head position for $x$. Suppose $old$ and $new$ assign a binary word to each of the $l$ fields, with old-word lengths at most $U$ and new-word lengths at most $W$. For any binary prefix and trailer and every $j\\le l$, the row loader started at field zero with the old fields and the stream containing the prefix, packed new fields, and trailer reaches in some time $t\\le j(2U+3W+7)$ a configuration at field index $j$, with fields below $j$ replaced by their new words and the rest still old, and with the stream cursor immediately after the packed first $j$ new fields.",
+ "hypotheses_covered": [
+  "$l\\in\\mathbb N$",
+  "$x$ is a binary word",
+  "$p$ is an input-head position for $x$",
+  "old and new assign words to the $l$ fields",
+  "each old word has length at most $U$",
+  "each new word has length at most $W$",
+  "$pre$ and $tail$ are binary words",
+  "$U,W\\in\\mathbb N$",
+  "$j\\le l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, old fields of length at most $U$, new fields of length at most $W$, stream prefix and trailer, and count $j \\le l$, there is a time $t \\le j\\,(2U + 3W + 7)$ after which the row loader, started at field zero with the stream holding the packed new row, has loaded exactly the first $j$ new fields, restored every field head to zero, and advanced the stream cursor by the exact length of the packed first $j$ fields. Every field is reset even when revisiting a short row after a longer one."
+}

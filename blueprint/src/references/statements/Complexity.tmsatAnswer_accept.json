@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.tmsatAnswer_accept",
+ "key": "959aa794080f9ee3",
+ "kind": "lemma",
+ "title": "Acceptance characterized by the bounded-run answer",
+ "statement": "Let $c$ be a machine-representation scheme, and let $\\alpha,x$ be binary strings and $t\\in\\mathbb{N}$. Run the machine decoded from $\\alpha$ on $x$ for $t$ steps, and form the answer word by prefixing its output with $1$ if it has halted by then, or by taking the one-bit word $0$ if it has not halted. This answer word is $11$ if and only if the decoded machine computes the one-bit output $1$ from $x$ within $t$ steps.",
+ "hypotheses_covered": [
+  "$c$ is a machine-representation scheme",
+  "$\\alpha,x$ are finite binary strings",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a machine-representation scheme, which assigns to every bit string $\\alpha$ a one-work-tape binary Turing machine $M_\\alpha$ (decoding is total). For all bit strings $\\alpha, x$ and $t \\in \\mathbb{N}$, let $A_c(\\alpha,x,t)$ be $1w$ if $M_\\alpha$ run on $x$ for $t$ steps has halted with output $w$, and the single bit $0$ otherwise. Then $A_c(\\alpha,x,t) = 11$ if and only if $M_\\alpha$ on input $x$ halts within $t$ steps with output exactly the single bit $1$."
+}

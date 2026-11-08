@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_layout_pair",
+ "key": "45eb35760fad2b39",
+ "kind": "lemma",
+ "title": "Values at the argument and capture slots",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $\\alpha$ be a type, and assign values $\\mathrm{arg},\\mathrm{cap}\\in\\alpha$ and data, visited-mark, and origin-mark values in $\\alpha$ to each source tape of $M$. For either of the two roles $i$ (argument or capture), the layout at that role's physical index is $\\mathrm{arg}$ when $i$ is the argument role and $\\mathrm{cap}$ otherwise.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$\\alpha$ is a type",
+  "argument and capture values lie in $\\alpha$",
+  "data, visited-mark, and origin-mark values in $\\alpha$ are assigned to every source tape",
+  "$i$ is one of the two roles"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every assignment of per-slot values, the clean-call layout evaluated at the argument\nslot gives the argument value and evaluated at the capture slot gives the capture value."
+}

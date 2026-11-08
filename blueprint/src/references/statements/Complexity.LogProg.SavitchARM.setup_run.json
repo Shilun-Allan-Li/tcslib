@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.setup_run",
+ "key": "a808dcff1a0969e3",
+ "kind": "theorem",
+ "title": "Savitch Procedure Setup Run",
+ "statement": "Let $E$ be a natural number with $1\\le E$, let $x$ be a finite Boolean word, let $B$ be a natural number, and let $\\mathrm{orc}$ be a Boolean oracle with four query types. Suppose that for every natural number $k\\le |x|$, query type $0$ on the encoding of $x$ and the binary word for $k$ returns true exactly when $k<|x|$, and suppose $2^{(|x|+2)^{2E}}\\le B$. The register program has a finite run from its scan state with all registers zero and no answer to its outer-search state with window radius $(|x|+2)^E$, code width $(|x|+2)^{2E}$, and code bound $2^{(|x|+2)^{2E}}$, with all other registers zero and no answer. Every configuration before the final one satisfies the guard that the instruction meets its stated preconditions and every register value is at most $B$.",
+ "hypotheses_covered": [
+  "$E$ is a natural number with $1\\le E$",
+  "$x$ is a finite Boolean word",
+  "$B$ is a natural number",
+  "$\\mathrm{orc}$ is a Boolean oracle with four query types",
+  "For all $k\\le |x|$, query type $0$ on the encoding of $x$ and the binary word for $k$ returns true exactly when $k<|x|$",
+  "$2^{(|x|+2)^{2E}}\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E$ be a natural number with $1\\le E$, let $x$ be a bit string, let $B$ be a natural\nnumber, and let $\\mathrm{orc}$ be a four-query Boolean oracle. Suppose the input-length\noracle query is correct for every $k\\le |x|$, returning true exactly when $k<|x|$, and\nsuppose $2^{(|x|+2)^{2E}}\\le B$. The program has a finite run from its scan state with\nall registers zero and no answer to the outer-search state with window radius\n$(|x|+2)^E$, code width $(|x|+2)^{2E}$, and code bound $2^{(|x|+2)^{2E}}$, with all\nother registers zero. Every configuration before the final one satisfies the program’s\nguard requiring its register values to be at most $B$ and its instruction to meet the\nprogram’s stated preconditions."
+}

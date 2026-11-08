@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.rt_findRedirect",
+ "key": "a5fc5d19f61b54ca",
+ "kind": "def",
+ "title": "Find-machine phase redirection",
+ "statement": "Let $\\Gamma$ and $A$ be types, let $m>0$, let $\\delta:A\\to\\mathrm{Option}(\\Gamma)\\to A$, choose $a_0\\in A$, and let $\\mathrm{acc}:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$. Define a partial redirection from a find-machine phase and its control state to a new phase and control state as follows: an empty read control halts, a false read control goes to exit, and a true read control begins a forward scan at index $0$ with state $a_0$; a completed scan either skips to the next index with updated state $\\delta(a,\\mathrm{none})$, goes to exit if it is the last index and $\\mathrm{acc}(a)$ holds, or skips at the last index with state $a$; a completed skip advances to the next scan index when one remains and otherwise returns to the read phase. All other phase-control combinations halt.",
+ "hypotheses_covered": [
+  "Types $\\Gamma$ and $A$",
+  "Positive natural number $m$",
+  "Function $\\delta:A\\to\\mathrm{Option}(\\Gamma)\\to A$",
+  "Initial element $a_0\\in A$",
+  "Acceptance predicate $\\mathrm{acc}:A\\to\\{\\mathrm{false},\\mathrm{true}\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

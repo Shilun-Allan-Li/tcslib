@@ -44,102 +44,120 @@ heads $u$ and $g$, carrying $d$, the data tapes, and the output.
 \leanok
 \uses{Complexity.OblData, Complexity.OblPhase, Complexity.OblSymbol, Complexity.dataCfg, Complexity.dataTM, Complexity.decoratedCfg, Complexity.decoratedCfg_step, Complexity.macroCfg, Complexity.obliviousDataInit, Complexity.obliviousSchedule, Complexity.obliviousVisit, Complexity.setupWrite, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{2}
-Let $W$ and $M$ be binary machines and $a$ a padding constant.  One step of the
-logical simulator on a macrostep configuration with data equals the decorated
-form of one schedule-controller step, where the new finite data register, the
-single cell written under the guide head on each data tape, and the appended
-emission are exactly those returned by the data transducer evaluated at the
-current phase, register, input read, schedule tape reads, and the data cells
-under the guide head.
+Let $W$ and $M$ be finite binary Turing machines, let $a\in\mathbb{N}$, and let a base
+schedule configuration, phase $q$, integers $u,g$, finite data state $d$, data tapes,
+and output word be given. Form the macrostep configuration $c$ from the base at phase
+$q$ with unary head $u$ and guide head $g$, and evaluate the data transducer on phase
+$q$, state $d$, the input symbol and schedule-tape reads of $c$, and the data-tape
+symbols at $g$. The simulator's one-step successor from the corresponding decorated
+configuration is exactly the decorated successor of the schedule controller's one-step
+successor from $c$, with the transducer's new finite state, its prescribed writes at
+$g$, and its prescribed output appended to the given output word.
 \end{lemma}
 
-\begin{lemma}[Forward visit on the data tapes]
+\begin{lemma}[Forward Scan Step]
 \lean{Complexity.dataCfg_forward_step}
 \label{Complexity.dataCfg_forward_step}
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.dataCell, Complexity.dataCfg, Complexity.dataCfg_step, Complexity.dataTM, Complexity.guideTape, Complexity.guideTape_right, Complexity.macroCfg_forward, Complexity.macroCfg_guide, Complexity.obliviousVisit, Complexity.setupWrite, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$ and the simulator
-is in the forward phase with guide head at $g \neq R + 1$.  One step keeps the
-saved state, answer bit, and reads, moves the guide head to $g+1$, replaces each
-neighbor register by the current payload decoded at $g$, and rewrites cell $g$
-of each data tape to a data cell carrying its unchanged current payload with the
-old neighbor register cached; no output is emitted.
+Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural
+number, and let $x$ be a schedule-alphabet input. Suppose the base guide tape equals the
+guide of radius $R$ and the guide head is at $g\ne R+1$. From the forward phase, one
+simulator step advances the guide head to $g+1$ and replaces each neighbor register by
+the current payload decoded at coordinate $g$. It updates each data tape only at $g$,
+writing a data cell whose current payload is the decoded current payload there and whose
+cached left-neighbor payload is the old neighbor register; the state, answer bit, saved
+reads, and output are unchanged.
 \end{lemma}
 
-\begin{lemma}[Forward boundary turn]
+\begin{lemma}[Forward Scan Boundary Turn]
 \lean{Complexity.dataCfg_forward_turn}
 \label{Complexity.dataCfg_forward_turn}
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCfg, Complexity.dataCfg_step, Complexity.dataTM, Complexity.guideTape, Complexity.guideTape_right, Complexity.macroCfg_forward, Complexity.macroCfg_guide, Complexity.obliviousVisit, Complexity.setupWrite, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$.  From the
-forward phase with guide head at $R + 1$, one simulator step enters the backward
-phase at position $R$, resets every neighbor register to the blank payload, and
-leaves the saved state, answer bit, reads, data tapes, and output unchanged.
+Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural
+number, and let $x$ be a schedule-alphabet input. Suppose the base guide tape equals the
+guide of radius $R$. From the forward phase with guide head at $R+1$, one simulator step
+enters the backward phase with guide head at $R$ and resets every neighbor register to
+the blank payload; the state, answer bit, saved reads, data tapes, and output are
+unchanged.
 \end{lemma}
 
-\begin{lemma}[Backward visit on the data tapes]
+\begin{lemma}[One backward sweep step]
 \lean{Complexity.dataCfg_backward_step}
 \label{Complexity.dataCfg_backward_step}
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCell, Complexity.dataCfg, Complexity.dataCfg_step, Complexity.dataTM, Complexity.guideTape, Complexity.guideTape_left, Complexity.macroCfg_backward, Complexity.macroCfg_guide, Complexity.obliviousSourceMove, Complexity.obliviousVisit, Complexity.setupWrite, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$ and the simulator
-is in the backward phase with guide head at $g \neq -R - 1$.  One step moves the
-guide head to $g - 1$, replaces each neighbor register by the current payload
-decoded at $g$, and rewrites cell $g$ of each data lane to a data cell with
-blank cached neighbor whose current payload is chosen by that lane's virtual
-head direction: the cached left neighbor for a leftward move, the unchanged
-current payload for a stationary move, and the carried register for a rightward
-move.
+Let $W$ and $M$ be finite binary Turing machines, let $a$ be a natural number, and let
+$x$ be a finite word over the schedule alphabet. Let $c$ be a schedule configuration,
+$u,g\in\mathbb{Z}$, $R\in\mathbb{N}$, an optional state $q$ of $M$, a bit $b$, payload
+vectors $\mathrm{read}$ and $\mathrm{carry}$, data-tape contents $T$, and output word
+$o$. Assume the guide tape of $c$ is the fixed guide of radius $R$ and $g\ne -R-1$. One
+step from the backward phase at guide position $g$, with registers $\mathrm{carry}$,
+leaves the base configuration, $u$, $q$, $b$, and output unchanged; it moves the guide
+head to $g-1$, replaces each register by the current payload decoded from $T$ at $g$,
+and updates cell $g$ on each lane to a data cell with blank cached neighbor. Its current
+payload is the decoded cached left neighbor when that lane's virtual-head movement
+selected from $q$ and $\mathrm{read}$ is left, the decoded current payload when the
+movement is stationary, and the prior carried register when the movement is right.
 \end{lemma}
 
-\begin{lemma}[Backward boundary turn]
+\begin{lemma}[Turning at the backward boundary]
 \lean{Complexity.dataCfg_backward_turn}
 \label{Complexity.dataCfg_backward_turn}
 \leanok
 \uses{Complexity.OblData, Complexity.OblPhase, Complexity.OblSymbol, Complexity.dataCfg, Complexity.dataCfg_step, Complexity.dataTM, Complexity.guideTape, Complexity.guideTape_left, Complexity.macroCfg_backward, Complexity.macroCfg_guide, Complexity.obliviousVisit, Complexity.setupWrite, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's guide tape is the fixed guide of radius $R$.  From the
-backward phase with guide head at $-R - 1$, one simulator step enters the return
-phase at position $-R$ and leaves the finite data register, data tapes, and
+Let $W$ and $M$ be finite binary Turing machines, let $a$ be a natural number, and let
+$x$ be a finite word over the schedule alphabet. Let $c$ be a schedule configuration,
+$u\in\mathbb{Z}$, $R\in\mathbb{N}$, a finite data register $d$, data-tape contents $T$,
+and output word $o$. Assume the guide tape of $c$ is the fixed guide of radius $R$. One
+step from the backward phase at guide position $-R-1$ enters the return-center phase at
+position $-R$, leaving the base configuration, $u$, data register, data tapes, and
 output unchanged.
 \end{lemma}
 
-\begin{lemma}[Invariant of the forward scan]
+\begin{lemma}[Forward Scan Invariant]
 \lean{Complexity.dataCfg_forward_prefix}
 \label{Complexity.dataCfg_forward_prefix}
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.dataCell, Complexity.dataCfg, Complexity.dataCfg_forward_step, Complexity.dataTM, Complexity.guideTape, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
-Suppose the base's guide tape is the fixed guide of radius $R$, let $f$ assign a
-payload vector to every integer coordinate, and suppose every current payload of
-the data tapes decodes to $f$.  For every $n \le 2R + 1$, running the simulator
-$n$ steps from the forward phase at $-R$ with neighbor registers $f(-R-1)$ stays
-in the forward phase, reaching position $-R+n$ with neighbor registers
-$f(-R+n-1)$, on tapes whose current payloads still decode to $f$ and whose
-cached left-neighbor payloads equal $f(z-1)$ at every visited coordinate
-$-R \le z < -R + n$.
+Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural
+number, and let $x$ be a schedule-alphabet input. Suppose the base guide tape is the
+guide of radius $R$, and let $f$ assign a payload vector to each integer coordinate.
+Assume that at every coordinate $z$, the current payload decoded from each data tape $i$
+is $f(z)(i)$. For every natural number $n\le 2R+1$, running the simulator for $n$ steps
+from the forward phase with guide head at $-R$ and neighbor registers $f(-R-1)$ yields a
+forward-phase configuration with guide head $-R+n$ and neighbor registers $f(-R+n-1)$.
+The resulting tapes still decode to $f$ in their current payloads at every coordinate,
+and their cached left-neighbor payload at each $z$ with $-R\le z<-R+n$ is $f(z-1)$.
 \end{lemma}
 
-\begin{lemma}[Invariant of the backward scan]
+\begin{lemma}[Invariant during the backward sweep]
 \lean{Complexity.dataCfg_backward_prefix}
 \label{Complexity.dataCfg_backward_prefix}
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCell, Complexity.dataCfg, Complexity.dataCfg_backward_step, Complexity.dataTM, Complexity.guideTape, Complexity.obliviousSourceMove, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero}
 \difficulty{5}
-Suppose the base's guide tape is the fixed guide of radius $R$, let $f$ assign a
-payload vector to every coordinate, and suppose the current payloads of the data
-tapes decode to $f$ while the cached left neighbors equal $f(z-1)$ throughout
-$[-R, R]$.  For every $n \le 2R + 1$, running the simulator $n$ steps from the
-backward phase at $R$ with neighbor registers $f(R+1)$ stays in the backward
-phase, reaching position $R - n$ with neighbor registers $f(R-n+1)$, on tapes
-whose current payload on lane $i$ at coordinate $z$ is the shifted value
-$f(z + m_i)$ for visited coordinates $R - n < z \le R$ — where $m_i$ is the
-virtual head direction of lane $i$ selected from the saved state and reads —
-and the unshifted value $f(z)$ elsewhere, while the cached left neighbors remain
-$f(z-1)$ for $-R \le z \le R - n$.
+Let $W$ and $M$ be finite binary Turing machines, let $a$ be a natural number, and let
+$x$ be a finite word over the schedule alphabet. Let $c$ be a configuration of the
+schedule machine, $u\in\mathbb{Z}$, $R,n\in\mathbb{N}$ with $n\le 2R+1$, an optional
+state $q$ of $M$, a bit $b$, payload vectors $\mathrm{read}$ and $f(z)$ for each
+$z\in\mathbb{Z}$, tape contents $T$, and output word $o$. Assume the guide tape of $c$
+is the fixed guide of radius $R$, every decoded current payload of $T$ at coordinate $z$
+and lane $i$ equals $f(z)_i$, and for $-R\le z\le R$ every decoded cached left-neighbor
+payload equals $f(z-1)_i$. Then there exist tape contents $T'$ such that after $n$ steps
+from the backward-phase configuration at guide position $R$, with neighbor registers
+$f(R+1)$, the configuration is in the backward phase at position $R-n$, with registers
+$f(R-n+1)$ and the same base configuration and output. For every lane $i$ and coordinate
+$z$, the decoded current payload in $T'$ is $f(z+m_i)_i$ when $R-n<z\le R$, and is
+$f(z)_i$ otherwise, where $m_i$ is the virtual-head movement selected from $q$ and
+$\mathrm{read}$. Moreover, for $-R\le z\le R-n$, the decoded cached left-neighbor
+payload in $T'$ is $f(z-1)_i$.
 \end{lemma}
 
 \begin{lemma}[Exact outward positioning scan]
@@ -148,82 +166,95 @@ $f(z-1)$ for $-R \le z \le R - n$.
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCfg, Complexity.dataCfg_step, Complexity.dataTM, Complexity.guideTape, Complexity.guideTape_left, Complexity.macroCfg_guide, Complexity.macroCfg_seek, Complexity.obliviousVisit, Complexity.setupWrite, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero}
 \difficulty{4}
-Suppose the base's guide tape is the fixed guide of radius $R$.  Running the
-simulator exactly $R + 2$ steps from the leftward-seek phase with guide head at
-the origin and blank neighbor registers reaches the forward phase at $-R$ with
-blank neighbor registers, leaving the saved state, answer bit, reads, data
-tapes, and output unchanged.
+Let $W$ and $M$ be finite binary Turing machines, let $a,R\in\mathbb{N}$, and let a base
+schedule configuration, an integer $u$, an optional state $q$ of $M$, a bit $b$, read
+registers, data tapes, and an output word be given. Suppose the base guide tape is the
+fixed guide of radius $R$. Starting from the seek-left phase with unary head at $u$,
+guide head at $0$, blank neighbor registers, and the given state, bit, reads, data
+tapes, and output, exactly $R+2$ simulator steps reach the forward phase with guide head
+at $-R$, leaving the other listed data and the output unchanged.
 \end{lemma}
 
-\begin{lemma}[Exact return to the origin]
+\begin{lemma}[Return to the Guide Origin]
 \lean{Complexity.dataCfg_center_run}
 \label{Complexity.dataCfg_center_run}
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.dataCfg, Complexity.dataCfg_step, Complexity.dataTM, Complexity.guideTape, Complexity.guideTape_origin, Complexity.macroCfg_center, Complexity.macroCfg_guide, Complexity.obliviousSourceAction, Complexity.obliviousVisit, Complexity.setupWrite, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero}
 \difficulty{4}
-Suppose the base's guide tape is the fixed guide of radius $R$.  Running the
-simulator exactly $R + 1$ steps from the return phase with guide head at $-R$
-and unary head at $u$ reaches the counter-test phase with unary head $u + 1$ and
-guide head at the origin; the simulated state is replaced by the successor state
-of the source action selected from the saved state and reads, while the answer
-bit, reads, neighbor registers, data tapes, and output are unchanged.
+Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural
+number, and let $x$ be a schedule-alphabet input. Suppose a schedule configuration has
+guide tape equal to the fixed guide of radius $R$. Starting in the return-to-centre
+phase with guide head at $-R$, unary head at $u$, and data register
+$(q,b,\mathrm{read},\mathrm{carry})$, after $R+1$ steps the simulator is in the
+macrostep-check phase with guide head at $0$ and unary head at $u+1$. Its state register
+is the successor state selected by the source action of $M$ from $q$ and
+$\mathrm{read}$; its answer bit, saved reads, neighbor registers, data tapes, and output
+are unchanged.
 \end{lemma}
 
-\begin{lemma}[The counter test starts a sweep]
+\begin{lemma}[Counter Test with a Unit Marker]
 \lean{Complexity.dataCfg_check}
 \label{Complexity.dataCfg_check}
 \leanok
 \uses{Complexity.OblData, Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCell, Complexity.dataCfg, Complexity.dataCfg_step, Complexity.dataTM, Complexity.macroCfg_check, Complexity.macroCfg_unary, Complexity.obliviousSourceAction, Complexity.obliviousVisit, Complexity.setupWrite, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-Suppose the base's unary tape holds a unit marker at $u$.  One simulator step
-from the counter-test phase saves the current payloads decoded at the origin as
-the new reads, updates the answer register to the bit emitted by the source
-action selected from the saved state and those reads (keeping the old answer
-when nothing is emitted), performs that action's optional work-lane writes at
-the origin, clears the neighbor registers to blank, and enters the leftward-seek
-phase; no output is emitted.
+Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural
+number, and let $x$ be a schedule-alphabet input. If the base unary tape contains a unit
+marker at coordinate $u$, then one simulator step from the macrostep-check phase enters
+the seek-left phase, keeping the unary head at $u$ and the guide head at $0$. The new
+data register contains the same source state, the answer selected from the source
+action's output (or the old answer if that output is absent), the payloads decoded from
+the data tapes at coordinate $0$ as its reads, and blank neighbor registers; each data
+tape is updated at coordinate $0$ according to the source action's optional write, and
+the output is unchanged.
 \end{lemma}
 
-\begin{lemma}[Origin writes decode to the source's writes]
+\begin{lemma}[Origin writes decode to the source writes]
 \lean{Complexity.dataCfg_written}
 \label{Complexity.dataCfg_written}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCell, Complexity.setupWrite, Complexity.sourcePayload, Complexity.sourceTotalAction, Complexity.sourceWrittenPayload, Turing.Cfg, Turing.FinTM}
 \difficulty{4}
-Let $M$ be a binary machine and $c$ a configuration of $M$, and suppose the
-current payloads of the data tapes decode to the head-centered payload vectors
-of $c$.  After writing at the origin of each work lane the symbol optionally
-written by the totalized action of $M$ at $c$ (with blank cached neighbor, the
-input lane untouched), the current payloads decode to the written payload
-vectors of $c$ under that action.
+Let $M$ be a finite binary Turing machine, let $c$ be a configuration of $M$ on a binary
+input word, and let data tapes encode the head-centered payload vectors of $c$. For
+every lane and coordinate, after the write at coordinate $0$ prescribed by the totalized
+action of $M$ at $c$—with each work-lane write encoded as a data cell with blank cached
+neighbor and the input lane left unwritten—the decoded current payload equals the
+payload after the action's writes at the old origin and before any head movement.
 \end{lemma}
 
-\begin{lemma}[One full pair of data sweeps]
+\begin{lemma}[One pair of data sweeps]
 \lean{Complexity.dataCfg_sweeps}
 \label{Complexity.dataCfg_sweeps}
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCell, Complexity.dataCfg, Complexity.dataCfg_backward_prefix, Complexity.dataCfg_backward_turn, Complexity.dataCfg_center_run, Complexity.dataCfg_forward_prefix, Complexity.dataCfg_forward_turn, Complexity.dataCfg_seek_run, Complexity.dataTM, Complexity.guideTape, Complexity.obliviousSourceAction, Complexity.obliviousSourceMove, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step}
 \difficulty{5}
-Suppose the base's guide tape is the fixed guide of radius $R$, the current
-payloads of the data tapes decode to $f$, and the boundary values $f(-R-1)$ and
-$f(R+1)$ are blank.  Then running the simulator exactly $6R + 7$ steps from the
-leftward-seek phase at the origin with unary head $u$ and blank neighbor
-registers reaches the counter-test phase with unary head $u + 1$, simulated
-state equal to the successor state of the source action selected from the saved
-state and reads, and neighbor registers $f(-R)$, on tapes whose current payload
-on lane $i$ at coordinate $z$ is $f(z + m_i)$ for $-R \le z \le R$ and $f(z)$
-outside, where $m_i$ is that lane's selected virtual head direction.
+Let $W$ and $M$ be finite Turing machines over the binary alphabet, let
+$a,R\in\mathbb{N}$, and fix a base configuration of the schedule machine, an integer
+$u$, a state $q$ of $M$ that may be absent if $M$ has halted, a bit $b$, read registers
+$r_i$ for the $M.k+1$ lanes, a payload function $f(z,i)$, data-tape contents, and an
+output word. Suppose the base guide tape is the fixed guide of radius $R$, the current
+payload on lane $i$ at coordinate $z$ is $f(z,i)$, and both boundary vectors
+$f(-R-1,\cdot)$ and $f(R+1,\cdot)$ consist entirely of blank payloads. Then there are
+updated data-tape contents such that, after exactly $6R+7$ steps from the configuration
+in the seek-left phase with guide head at $0$, unary head at $u$, and blank neighbor
+registers, the machine is in the macrostep-check phase with unary head at $u+1$, the
+source machine's state updated by its action on $q$ and the saved reads, and neighbor
+registers equal to $f(-R,\cdot)$. If $m_i$ is the virtual head movement selected for
+lane $i$ by that source action, the updated current payload at coordinate $z$ on lane
+$i$ is $f(z+m_i,i)$ for $-R\le z\le R$ and $f(z,i)$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Origin writes are local]
+\begin{lemma}[Agreement of payloads away from the origin]
 \lean{Complexity.sourceWrittenPayload_away}
 \label{Complexity.sourceWrittenPayload_away}
 \leanok
 \uses{Complexity.sourcePayload, Complexity.sourceTotalAction, Complexity.sourceWrittenPayload, Turing.Cfg, Turing.FinTM}
 \difficulty{2}
-For a binary machine $M$, a configuration $c$ of $M$, and any offset $z \neq 0$,
-the written payload vector of $c$ under the totalized action of $M$ agrees at
-$z$ with the head-centered payload vector of $c$.
+Let $M$ be a finite Turing machine over the binary alphabet, let $x$ be a binary input,
+and let $c$ be a configuration of $M$ on $x$. For every integer offset $z \ne 0$, the
+payload vector after the origin write under the totalized action of $M$ on $c$ equals
+the head-centered payload vector of $c$ at offset $z$.
 \end{lemma}
 
 \begin{lemma}[One macrostep simulates one source step]
@@ -232,15 +263,16 @@ $z$ with the head-centered payload vector of $c$.
 \leanok
 \uses{Complexity.OblPayload, Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCell, Complexity.dataCfg, Complexity.dataCfg_check, Complexity.dataCfg_sweeps, Complexity.dataCfg_written, Complexity.dataTM, Complexity.guideTape, Complexity.lastOutput_append, Complexity.obliviousSourceAction_correct, Complexity.obliviousSourceMove_correct, Complexity.setupWrite, Complexity.sourcePayload, Complexity.sourcePayload_apply, Complexity.sourceTotalAction, Complexity.sourceTotalAction_apply, Complexity.sourceWrittenPayload, Complexity.sourceWrittenPayload_away, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.step}
 \difficulty{5}
-Suppose the base's guide tape is the fixed guide of radius $R$ and its unary
-tape holds a unit marker at $u$, and let $c$ be a configuration of the source
-$M$ whose head-centered payload vectors are decoded by the data tapes and are
-blank outside $[-R, R]$, as are those of its one-step successor.  Then exactly
-$6R + 8$ simulator steps from the counter-test phase carrying the state and
-last-emitted bit of $c$ reach the counter-test phase at unary head $u + 1$
-carrying the state and last-emitted bit of the successor of $c$, with data tapes
-decoding the successor's head-centered payload vectors and an unchanged output
-stream.
+Let $W$ and $M$ be finite binary Turing machines, let $a,R\in\mathbb{N}$, and let $c$ be
+a configuration of $M$ on a binary input word. Suppose the base guide tape is the fixed
+guide of radius $R$, its unary tape has a unit marker at $u$, and the data tapes decode
+to the head-centered payload vectors of $c$. Assume those payload vectors are blank
+outside $[-R,R]$ for both $c$ and its one-step successor. Then there are new read and
+neighbor-register vectors and data tapes such that exactly $6R+8$ simulator steps from
+the macrostep-check phase at unary head $u$, carrying the state and last output bit of
+$c$, reach the macrostep-check phase at unary head $u+1$, carrying the state and last
+output bit of the successor configuration, with the new data tapes decoding to that
+successor's head-centered payload vectors and the output word unchanged.
 \end{lemma}
 
 \begin{definition}[Payloads of a partial input copy]
@@ -254,16 +286,15 @@ it is the virtual input payload of $x$ at $z$ when $z = -1$ (the copied left
 boundary) or $0 \le z < j$, and blank otherwise.
 \end{definition}
 
-\begin{lemma}[The full copy represents the initial configuration]
+\begin{lemma}[Full Copy of the Initial Input]
 \lean{Complexity.copiedPayload_full}
 \label{Complexity.copiedPayload_full}
 \leanok
 \uses{Complexity.blankPayload, Complexity.copiedPayload, Complexity.inputPayload_outside, Complexity.sourcePayload, Turing.Cfg.init, Turing.FinTM, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-For every binary machine $M$ and word $x$, the copied payloads of count
-$|x| + 1$ coincide with the head-centered payload vectors of the initial
-configuration of $M$ on $x$: the input lane carries the complete virtual input
-including both boundary tags, and every work lane is blank.
+Let $M$ be a finite deterministic machine over the Boolean alphabet and let $x$ be a
+Boolean word. The copied payload vector with count $|x|+1$ equals the head-centered
+payload vector of $M$'s initial configuration on $x$.
 \end{lemma}
 
 \begin{definition}[Input-lane copy write]
@@ -277,27 +308,32 @@ data cell with current payload $p$ and blank cached neighbor; the work lanes are
 unchanged.
 \end{definition}
 
-\begin{lemma}[Copying the left boundary]
+\begin{lemma}[Writing the Left Boundary Payload]
 \lean{Complexity.copyDataWrite_left}
 \label{Complexity.copyDataWrite_left}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.blankPayload, Complexity.copiedPayload, Complexity.copyDataWrite, Complexity.dataCell, Complexity.inputPayload, Complexity.setupWrite, Turing.FinTM, Turing.FinTM.bufferTape}
 \difficulty{3}
-If every current payload of the data tapes is blank, then after the copy write
-placing the left-boundary payload (blank content with tag $1$) at coordinate
-$-1$, the current payloads are exactly the copied payloads of count $0$.
+Let $M$ be a finite deterministic machine over Booleans, let $x$ be a Boolean word, and
+let a tape assignment give the contents of the $|M|+1$ data lanes at each integer
+coordinate. Suppose the current payload at every lane and coordinate is blank. After
+writing the left-boundary payload, with blank content and tag $1$, at coordinate $-1$ on
+the input lane, the current payload at every lane and coordinate equals the copied
+payload vector of count $0$.
 \end{lemma}
 
-\begin{lemma}[Copying one more input cell]
+\begin{lemma}[Writing the Next Input Payload]
 \lean{Complexity.copyDataWrite_next}
 \label{Complexity.copyDataWrite_next}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.copiedPayload, Complexity.copyDataWrite, Complexity.dataCell, Complexity.inputPayload, Complexity.setupWrite, Turing.FinTM}
 \difficulty{3}
-If the current payloads of the data tapes are the copied payloads of count $j$,
-then after the copy write placing the virtual input payload of $x$ at position
-$j$ at coordinate $j$, the current payloads are the copied payloads of count
-$j + 1$.
+Let $M$ be a finite deterministic machine over Booleans, let $x$ be a Boolean word, let
+$j\in\mathbb{N}$, and let a tape assignment give the contents of the $|M|+1$ data lanes
+at each integer coordinate. Suppose the current payload at each lane and coordinate is
+the copied payload of count $j$. After writing the virtual input payload of $x$ at
+coordinate $j$ on the input lane, the current payload at every lane and coordinate is
+the copied payload of count $j+1$.
 \end{lemma}
 
 \begin{definition}[Initial data assertions]
@@ -342,135 +378,148 @@ input head position, its unary and guide head positions, and its unary tape
 content, together with the given data register, data tapes, and output.
 \end{definition}
 
-\begin{lemma}[Blank input reads occur only at the boundaries]
+\begin{lemma}[Blank Input Reads Occur at the Boundaries]
 \lean{Complexity.inputSymbol_blank}
 \label{Complexity.inputSymbol_blank}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol}
 \difficulty{2}
-For any configuration of a multi-tape machine on an input word $x$, the input
-read is blank if and only if the input head is at position $0$ or at position
-$|x| + 1$.
+Let $x$ be a word over any alphabet and let $c$ be a configuration on $x$. The input
+head reads no symbol if and only if its position is $0$ or $|x|+1$.
 \end{lemma}
 
-\begin{lemma}[Input read at the copy position]
+\begin{lemma}[Symbol Read at the Copy Position]
 \lean{Complexity.copy_input_read}
 \label{Complexity.copy_input_read}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.inputSymbol_blank, Complexity.oblEmbed, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.inputSymbolInner}
 \difficulty{3}
-Let $x$ be a binary word embedded letterwise into the simulation alphabet, and
-let a configuration on this embedded input have its input head at position
-$j + 1$ with $j \le |x|$.  Then the input read is the bit symbol of $x_j$ when
-$j < |x|$, and blank when $j = |x|$; this includes the empty input.
+Let $S$ be a type, let $k$ be a natural number, let $x$ be a Boolean word, and let $c$
+be a configuration with $k$ work tapes on the input obtained by embedding each bit of
+$x$ into the simulation alphabet. If $j\le |x|$ and the input head is at position $j+1$,
+then the symbol read is the embedded bit at position $j$ when $j<|x|$, and is blank when
+$j=|x|$.
 \end{lemma}
 
-\begin{lemma}[Copied reads give the virtual input payload]
+\begin{lemma}[Payload at the Input Head]
 \lean{Complexity.copy_input_payload}
 \label{Complexity.copy_input_payload}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.clockBit, Complexity.copy_input_read, Complexity.inputPayload, Complexity.oblEmbed, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.bufferTape}
 \difficulty{3}
-Let $x$ be a binary word embedded into the simulation alphabet and let a
-configuration on the embedded input have its input head at position $j + 1$ with
-$j \le |x|$.  Then the payload whose content is the clock-bit decoding of the
-input read and whose tag is the right-boundary tag $2$ when the read is blank
-and the ordinary tag $0$ otherwise is exactly the virtual input payload of $x$
-at position $j$.
+Let $S$ be a type, let $k$ be a natural number, let $x$ be a Boolean word, and let $c$
+be a configuration with $k$ work tapes on the input obtained by embedding each bit of
+$x$ into the simulation alphabet. Suppose $j\le |x|$ and the input head of $c$ is at
+position $j+1$. The pair whose content is the decoded clock bit of the symbol read and
+whose tag is $2$ when that read is blank and $0$ otherwise equals the virtual input
+payload of $x$ at coordinate $j$.
 \end{lemma}
 
-\begin{lemma}[The invariant after a schedule action]
+\begin{lemma}[Preparation invariant under a schedule action]
 \lean{Complexity.prepInvariant_action}
 \label{Complexity.prepInvariant_action}
 \leanok
 \uses{Complexity.OblData, Complexity.OblPhase, Complexity.OblSymbol, Complexity.oblAction, Complexity.oblEmbed, Complexity.prepCondition, Complexity.prepInvariant, Complexity.setupWrite, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.moveInputPos}
 \difficulty{2}
-Applying to a schedule configuration a non-clock action of the schedule
-controller — with a target phase, an input move, and optional writes and moves
-on the three distinguished tapes — the preparation invariant of the resulting
-configuration equals the preparation condition at the target phase, the moved
-input position, the unary and guide head positions shifted by the action's
-moves, and the unary tape after the action's optional write, with the data
-register, data tapes, and output unchanged.
+Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $a$ be a natural
+number, and let $x$ be a binary word. For any schedule configuration $c$ on the bitwise
+embedded input, optional target phase $q$, input-head move, and write-and-move
+instructions $b,u,g$ for the budget, unary, and guide tapes, respectively, the
+preparation invariant of the configuration obtained by applying this schedule action to
+$c$ equals the preparation condition at phase $q$, at the clamped moved input position,
+at unary and guide head positions shifted by the moves in $u$ and $g$, and with the
+unary tape optionally updated at its scanned cell according to $u$; the data register,
+data tapes, and output are the specified unchanged arguments.
 \end{lemma}
 
-\begin{lemma}[The origin survives unit writes]
+\begin{lemma}[The origin marker survives a unit write]
 \lean{Complexity.unaryOrigin_update}
 \label{Complexity.unaryOrigin_update}
 \leanok
 \uses{Complexity.OblSymbol}
 \difficulty{2}
-If a tape carries the origin sentinel exactly at coordinate $0$, then after
-writing a unit marker at any coordinate $u \ge 1$ it still carries the origin
-sentinel exactly at coordinate $0$.
+Let $u:\mathbb Z\to\mathrm{Option}(\mathrm{OblSymbol})$ be a tape and let $v\in\mathbb
+Z$ satisfy $1\le v$. Suppose $u(z)$ is the origin marker exactly when $z=0$. After
+updating the tape at position $v$ to the unit marker, its value is still the origin
+marker exactly at position $0$.
 \end{lemma}
 
-\begin{lemma}[Preparation is invariant under transitions]
+\begin{lemma}[Preservation of the preparation invariant]
 \lean{Complexity.prepInvariant_step}
 \label{Complexity.prepInvariant_step}
 \leanok
 \uses{Complexity.OblData, Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.clockBit, Complexity.copyDataWrite, Complexity.copyDataWrite_left, Complexity.copyDataWrite_next, Complexity.copy_input_payload, Complexity.copy_input_read, Complexity.initialContent, Complexity.inputSymbol_blank, Complexity.oblEmbed, Complexity.obliviousSchedule, Complexity.obliviousVisit, Complexity.prepCondition, Complexity.prepInvariant, Complexity.prepInvariant_action, Complexity.setupWrite, Complexity.unaryOrigin_update, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.moveInputPos_neg_val, Turing.MultiTapeTM.step, Turing.moveInputPos, Turing.moveInputPos_pos_of_ne_right}
 \difficulty{6}
-Let a schedule configuration $c$ on the embedded input be in a live phase and
-satisfy the preparation invariant with a given data register, data tapes, and
-output.  Then the preparation invariant holds for the configuration after one
-step of the schedule controller, taken with the register, guide-position tape
-writes, and appended emission produced by the data transducer's visit at $c$.
+Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $a$ be a natural
+number, and let $x$ be a binary word. Suppose a schedule configuration $c$ is in a live
+phase $q$ and satisfies the preparation invariant with data register $d$, data tapes,
+and output list. Apply one step of the schedule controller to $c$, and at the current
+configuration let the data transducer's visit produce a new register, write instructions
+for the data tapes, and an optional output symbol. Then the preparation invariant holds
+for the resulting schedule configuration with the new register, the data tapes after
+those writes at the guide head's current position, and the output list extended by the
+optional symbol.
 \end{lemma}
 
-\begin{lemma}[The invariant holds at all times]
+\begin{lemma}[Preparation invariant along the run]
 \lean{Complexity.prepInvariant_run}
 \label{Complexity.prepInvariant_run}
 \leanok
 \uses{Complexity.dataCell, Complexity.dataTM, Complexity.decoratedCfg, Complexity.decoratedCfg_init, Complexity.decoratedCfg_step, Complexity.initialContent, Complexity.oblEmbed, Complexity.obliviousDataInit, Complexity.obliviousSchedule, Complexity.obliviousVisit, Complexity.prepCondition, Complexity.prepInvariant, Complexity.prepInvariant_step, Complexity.setupWrite, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
 \difficulty{5}
-For all binary machines $W$ and $M$, padding constant $a$, word $x$, and time
-$t$, there exist a data register, data tapes, and an output list such that the
-$t$-step run of the logical simulator from its initial configuration on the
-embedded input equals the decorated form of the schedule controller's $t$-step
-run with these components, and the preparation invariant holds for that schedule
-configuration with these components.
+Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $a$ be a natural
+number, and let $x$ be a binary word. At every time $t\in\mathbb{N}$, there exist a data
+register, data tapes, and an output list such that the logical simulator's configuration
+after $t$ steps on the embedded input is the decorated configuration formed from the
+schedule controller's configuration after $t$ steps and these components, and the
+preparation invariant holds for that schedule configuration with those components.
 \end{lemma}
 
-\begin{lemma}[Reassembling a configuration from its own heads]
+\begin{lemma}[Reconstruction from head positions]
 \lean{Complexity.macroCfg_self}
 \label{Complexity.macroCfg_self}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.finThree_cases, Complexity.macroCfg, Turing.Cfg, Turing.FinTM}
 \difficulty{3}
-Rebuilding a schedule configuration in macrostep form from its own state and its
-actual unary and guide head positions returns the configuration itself.
+Let $W$ be a finite machine over the Boolean alphabet, let $a$ be a natural number, let
+$x$ be a word over the schedule alphabet, and let $c$ be a configuration of the schedule
+controller on $x$. Reconstructing a macrostep configuration from $c$, using its own
+state and its actual unary-counter and guide head positions, gives $c$ itself.
 \end{lemma}
 
-\begin{lemma}[The schedule reaches the first macrostep]
+\begin{lemma}[Readiness for the first macrostep]
 \lean{Complexity.obliviousSchedule_ready}
 \label{Complexity.obliviousSchedule_ready}
 \leanok
 \uses{Complexity.budgetValue, Complexity.budgetValue_bits, Complexity.clockStageCfg, Complexity.clockStageCfg_captures, Complexity.clockStageCfg_setup, Complexity.guideTape, Complexity.oblEmbed, Complexity.obliviousSchedule, Complexity.setupCfg, Complexity.setupCfg_initializes, Complexity.unaryTape, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{5}
-Let $W$ compute on every input $x$ the binary expansion of $T(|x|)$ within
-$b\,(T(|x|)+1)$ steps, and suppose $n \le T(n)$ for all $n$.  Then for every
-word $x$ there is a time $t$ at which the schedule controller built from $W$ and
-$a$, run on the embedded input, is in the counter-test phase with unary head at
-$1$, guide head at the origin, unary counter tape with $(a+1)(T(|x|)+1)$
-markers, and guide tape of radius $3(a+1)(T(|x|)+1)$.
+Let $W$ be a finite Turing machine over the Boolean alphabet, let $a,b\in\mathbb{N}$,
+and let $T\colon\mathbb{N}\to\mathbb{N}$. Suppose that for every Boolean input $y$, $W$
+halts after exactly $b(T(|y|)+1)$ steps and outputs the little-endian binary expansion
+of $T(|y|)$, and suppose that $n\le T(n)$ for every $n\in\mathbb{N}$. For every Boolean
+input $x$, there is a time $t$ at which the schedule machine, started on the tagged
+encoding of $x$, is in the macrostep-check state, its unary-counter head is at position
+$1$, its guide head is at position $0$, its unary-counter tape has $(a+1)(T(|x|)+1)$
+markers, and its guide tape has radius $3(a+1)(T(|x|)+1)$.
 \end{lemma}
 
-\begin{lemma}[The simulator reaches the first macrostep]
+\begin{lemma}[The Simulator Reaches Its First Macrostep]
 \lean{Complexity.dataTM_ready}
 \label{Complexity.dataTM_ready}
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.copiedPayload_full, Complexity.dataCell, Complexity.dataCfg, Complexity.dataTM, Complexity.guideTape, Complexity.macroCfg_self, Complexity.oblEmbed, Complexity.obliviousDataInit, Complexity.obliviousSchedule, Complexity.obliviousSchedule_ready, Complexity.prepCondition, Complexity.prepInvariant, Complexity.prepInvariant_run, Complexity.sourcePayload, Complexity.unaryTape, Turing.Cfg, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-Let $W$ compute on every input $x$ the binary expansion of $T(|x|)$ within
-$b\,(T(|x|)+1)$ steps, and suppose $n \le T(n)$ for all $n$.  Then for every
-word $x$ there are a time $t$, a base schedule configuration whose unary tape
-has $(a+1)(T(|x|)+1)$ markers and whose guide tape has radius
-$3(a+1)(T(|x|)+1)$, and data tapes decoding the head-centered payload vectors of
-the initial configuration of the source $M$ on $x$, such that the $t$-step run
-of the logical simulator on the embedded input is the macrostep configuration
-with data at the counter-test phase, unary head $1$, guide head at the origin,
-initial data register, and empty output.
+Let $W$ and $M$ be finite Turing machines over the binary alphabet, and let $a,b$ be
+natural numbers and $T:\mathbb{N}\to\mathbb{N}$. Suppose that for every binary word $x$,
+$W$ outputs the binary expansion of $T(|x|)$ within $b(T(|x|)+1)$ steps, and that $n\le
+T(n)$ for every natural number $n$. For every binary word $x$, there exist a time $t$, a
+configuration of the schedule machine, and a family of data-tape contents such that the
+schedule configuration has unary tape encoding $(a+1)(T(|x|)+1)$, guide tape of radius
+$3(a+1)(T(|x|)+1)$, and the simulator's run at time $t$ is exactly the configuration
+formed from this schedule configuration in the macrostep-check phase, with unary head at
+coordinate $1$, guide head at coordinate $0$, initial data registers for $M$, the
+specified data tapes, and empty output; moreover, decoding each data-tape cell's current
+payload gives the corresponding payload of $M$'s initial configuration on $x$.
 \end{lemma}
 
 \begin{lemma}[Iterated macrosteps track the source run]
@@ -479,52 +528,59 @@ initial data register, and empty output.
 \leanok
 \uses{Complexity.OblPhase, Complexity.OblSymbol, Complexity.blankPayload, Complexity.dataCell, Complexity.dataCfg, Complexity.dataCfg_simulates, Complexity.dataTM, Complexity.guideTape, Complexity.oblEmbed, Complexity.obliviousDataInit, Complexity.sourcePayload, Complexity.sourcePayload_support, Complexity.unaryTape, Complexity.unaryTape_unit, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{5}
-Let the base configuration's unary tape have $B$ markers with $|x| + 1 \le B$
-and its guide tape have radius $3B$, and let the data tapes decode the
-head-centered payload vectors of the initial configuration of the source $M$ on
-$x$.  Then for every $j \le B$ there are reads, neighbor registers, and data
-tapes such that $j\,(18B + 8)$ simulator steps from the first counter-test
-configuration reach the counter-test phase with unary head $j + 1$, carrying the
-state and last-emitted bit of the $j$-step run of $M$ on $x$, with data tapes
-decoding that run's head-centered payload vectors and no output emitted.
+Let $W$ and $M$ be finite binary Turing machines, let $a,B\in\mathbb{N}$, and let $x$ be
+a binary word with $|x|+1\le B$. Suppose a schedule configuration has its unary tape
+equal to the unary tape with $B$ markers and its guide tape equal to the fixed guide of
+radius $3B$. Suppose also that data tapes encode the head-centered payload vectors of
+the initial configuration of $M$ on $x$. For every $j\le B$, there are read and
+neighbor-register vectors and new data tapes such that after $j(18B+8)$ simulator steps
+from the macrostep-check configuration with unary head at $1$, the simulator is again at
+the macrostep-check phase with unary head at $j+1$, its state and saved bit equal the
+state and last output bit (defaulting to false) of the $j$-step run of $M$ on $x$, and
+the new data tapes encode the head-centered payload vectors of that run.
 \end{lemma}
 
-\begin{lemma}[The failed counter test emits the answer]
+\begin{lemma}[Halt on an Exhausted Counter]
 \lean{Complexity.dataCfg_finish}
 \label{Complexity.dataCfg_finish}
 \leanok
 \uses{Complexity.OblData, Complexity.OblPhase, Complexity.OblSymbol, Complexity.dataCfg, Complexity.dataCfg_step, Complexity.dataTM, Complexity.decoratedCfg, Complexity.macroCfg, Complexity.macroCfg_check, Complexity.macroCfg_unary, Complexity.obliviousVisit, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{3}
-If the base's unary tape does not hold a unit marker at $u$, then for every data
-register and all data tapes, one simulator step from the counter-test phase with
-empty output halts, and its output is the single bit symbol carrying the saved
-answer bit of the register.
+Let $W$ and $M$ be finite Turing machines over Boolean symbols, let $a$ be a natural
+number, and let $x$ be a schedule-alphabet input. If the base unary tape does not
+contain a unit marker at coordinate $u$, then one simulator step from the
+macrostep-check phase, with unary head at $u$, guide head at $0$, and empty output,
+halts and has output consisting of the single symbol carrying the saved answer bit.
 \end{lemma}
 
-\begin{lemma}[The simulator computes the decision bit]
+\begin{lemma}[Correctness of the Oblivious Simulator]
 \lean{Complexity.dataTM_computes}
 \label{Complexity.dataTM_computes}
 \leanok
 \uses{Complexity.dataCfg_finish, Complexity.dataCfg_iterates, Complexity.dataTM, Complexity.dataTM_ready, Complexity.oblEmbed, Complexity.sourceAnswer_at_budget, Complexity.unaryTape_end, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.DecidesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Let $W$ compute on every input $x$ the binary expansion of $T(|x|)$ within
-$b\,(T(|x|)+1)$ steps, suppose $n \le T(n)$ for all $n$, and let $M$ decide the
-language $L$ within time $a\,T(n)$.  Then for every word $x$ there is a time $t$
-within which the logical simulator, on the embedded input, computes the
-one-symbol output consisting of the bit symbol of the indicator of $L$ at $x$.
+Let $W$ and $M$ be finite Turing machines over the binary alphabet, let $L$ be a binary
+language, and let $a,b$ be natural numbers and $T:\mathbb{N}\to\mathbb{N}$. Suppose that
+for every binary word $x$, $W$ outputs the binary expansion of $T(|x|)$ within
+$b(T(|x|)+1)$ steps; that $n\le T(n)$ for every $n$; and that $M$ decides $L$ within
+$aT(n)$ steps. Then for every binary word $x$, the simulator constructed from $W$, $M$,
+and $a$ on the input obtained by embedding each bit of $x$ into the schedule alphabet
+halts at some time $t$ with output consisting of the single schedule symbol whose bit
+tag is the indicator of whether $x\in L$.
 \end{lemma}
 
-\begin{lemma}[Quadratic decision by the candidate]
+\begin{lemma}[Quadratic time bound for the candidate]
 \lean{Complexity.obliviousCandidate_decides}
 \label{Complexity.obliviousCandidate_decides}
 \leanok
 \uses{Complexity.dataTM, Complexity.dataTM_computes, Complexity.oblEmbed, Complexity.obliviousCandidate, Complexity.obliviousCandidate_halts, Complexity.parallelTM_computes, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.ComputesInTime.output_unique, Turing.FinTM.DecidesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.indicator, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-Let $W$ compute on every input $x$ the binary expansion of $T(|x|)$ within
-$b\,(T(|x|)+1)$ steps, suppose $n \le T(n)$ for all $n$, and let $M$ decide the
-language $L$ within time $a\,T(n)$.  Then the candidate simulator built from
-$W$, $M$, and $a$ decides $L$ within time
-$\bigl(18(a+1)^2 + 23(a+1) + 3b + 25\bigr)\,(T(n)+1)^2$.
+Let $W$ and $M$ be finite machines over the binary alphabet, let $L$ be a language of
+binary strings, let $a,b \in \mathbb{N}$, and let $T:\mathbb{N}\to\mathbb{N}$. Suppose
+that on every binary input $x$, $W$ outputs the binary expansion of $T(|x|)$ within
+$b(T(|x|)+1)$ steps; suppose also that $n\le T(n)$ for every $n$, and that $M$ decides
+$L$ within $aT(n)$ steps. Then the candidate machine built from $W$, $M$, and $a$
+decides $L$ within $\bigl(18(a+1)^2+23(a+1)+3b+25\bigr)(T(n)+1)^2$ steps.
 \end{lemma}
 
 \begin{theorem}[Oblivious simulation with quadratic overhead]
@@ -533,9 +589,8 @@ $\bigl(18(a+1)^2 + 23(a+1) + 3b + 25\bigr)\,(T(n)+1)^2$.
 \leanok
 \uses{Complexity.DTIME, Complexity.TimeConstructible, Complexity.obliviousCandidate, Complexity.obliviousCandidate_decides, Complexity.obliviousCandidate_oblivious, Turing.FinTM, Turing.FinTM.DecidesInTime, Turing.FinTM.Oblivious}
 \difficulty{2}
-Let $T$ be a time-constructible bound and let $L$ be a binary language in
-$\mathrm{DTIME}(T)$.  Then there exist an oblivious machine $M$ — one whose head
-positions at every time step depend only on the input length — and a constant
-$c$ such that $M$ decides $L$ within time $c\,(T(n)+1)^2$.  This is the first
-assertion of Arora--Barak, Exercise~1.5.
+Let $T\colon\mathbb{N}\to\mathbb{N}$ be time-constructible, and let $L$ be a binary
+language in $\mathrm{DTIME}(T)$. Then there are a finite-state binary Turing machine $M$
+and a natural number $c$ such that $M$ is oblivious and decides $L$ within
+$c\,(T(n)+1)^2$ steps on every input of length $n$.
 \end{theorem}

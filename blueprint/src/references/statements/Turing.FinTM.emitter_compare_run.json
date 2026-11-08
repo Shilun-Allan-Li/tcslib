@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.emitter_compare_run",
+ "key": "f6d2f08f11f8c69b",
+ "kind": "lemma",
+ "title": "Complete comparator run",
+ "statement": "Let $w,u,v$ be Boolean words and let $p$ be a valid input-head position for $w$. Starting the comparator in its scan phase with register true and both word-tape heads at zero, after exactly $2(\\max(|u|,|v|)+1)$ steps it is in its return phase with register equal to the truth value of $u=v$ and both heads at zero; the other configuration data are as specified initially.",
+ "hypotheses_covered": [
+  "Boolean words $w,u,v$",
+  "valid input-head position $p$ for $w"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all words $u$ and $v$, whole-word comparison of $u$ and $v$ completes\nsilently in exactly $2(\\max(\\abs{u}, \\abs{v}) + 1)$ steps, ending in the\nreturn state with the register recording whether $u = v$, both word tapes\nunchanged, and both heads back at zero."
+}

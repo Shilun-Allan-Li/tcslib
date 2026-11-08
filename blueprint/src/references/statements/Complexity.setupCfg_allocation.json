@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.setupCfg_allocation",
+ "key": "f9738b20fe01f922",
+ "kind": "lemma",
+ "title": "Completion of the guide allocation",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, let $a \\in \\mathbb{N}$, and let $x$ be a finite word over the schedule alphabet. For any base configuration on $x$, input-head position $p$, integer budget-head position $b$, and budget tape contents $\\beta$, let $n,B \\in \\mathbb{N}$ satisfy $n+1 \\le B$. Starting from the setup configuration in the unary-start phase with unary head at $B+1$ over the unary tape with $B$ markers, unary head contents as specified by that tape, and guide head at $0$ over the partial guide with $n+1$ copied cells, after exactly $14B+10$ steps the machine is in the macrostep-check phase, with unary head at $1$ over the same unary tape and guide head at $0$ over the guide of radius $3B$; the clock tapes, budget tape and head, input-head position, and output are unchanged.",
+ "hypotheses_covered": [
+  "W is a finite Turing machine over the Boolean alphabet",
+  "a is a natural number",
+  "x is a finite word over the schedule alphabet",
+  "base configuration on x",
+  "input-head position p",
+  "budget-head position b and contents β",
+  "n and B are natural numbers",
+  "n + 1 ≤ B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n + 1 \\le B$.  From a setup configuration in the unary-start phase with unary head\nat cell $B+1$ over the unary tape with $B$ markers and guide head at cell $0$ over the\npartial guide with $n+1$ copied cells, exactly $14B + 10$ steps produce the completed\nguide of radius $3B$ and enter the macrostep-check phase with unary head at cell $1$\nand guide head at cell $0$; the budget tape and head and the parked input head are\nunchanged."
+}

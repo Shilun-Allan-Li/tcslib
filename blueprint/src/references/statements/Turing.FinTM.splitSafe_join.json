@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.splitSafe_join",
+ "key": "99c626438dc13938",
+ "kind": "lemma",
+ "title": "Joining anchor-free runs",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $a$ be a control state, let $c,d,f$ be configurations, and let $u,v$ be natural numbers. If the run from $c$ reaches $d$ after $u$ steps and avoids $a$ at every time from $0$ through $u$, and the run from $d$ reaches $f$ after $v$ steps and avoids $a$ at every time from $0$ through $v$, then the run from $c$ reaches $f$ after $u+v$ steps and avoids $a$ at every time from $0$ through $u+v$.",
+ "hypotheses_covered": [
+  "Boolean multi-tape machine $M$",
+  "anchor state $a$",
+  "configurations $c,d,f$",
+  "natural durations $u,v$",
+  "run from $c$ reaches $d$ after $u$ steps",
+  "run from $c$ avoids $a$ through time $u$",
+  "run from $d$ reaches $f$ after $v$ steps",
+  "run from $d$ avoids $a$ through time $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the run from $c$ reaches $d$ in exactly $u$ anchor-free steps and the run\nfrom $d$ reaches $f$ in exactly $v$ anchor-free steps, then the run from $c$\nreaches $f$ in exactly $u+v$ anchor-free steps."
+}

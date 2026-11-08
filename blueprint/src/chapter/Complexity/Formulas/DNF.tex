@@ -23,6 +23,11 @@ its literals satisfied.
 
 \begin{definition}[DNF formula]
 \lean{Std.Sat.DNF}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b002}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p006-b002,
+  pdf-ffbe9c7b3306-p093-b004
+}
 \label{Std.Sat.DNF}
 \leanok
 A DNF formula over variables indexed by $\mathbb{N}$ is a finite list of terms
@@ -35,6 +40,8 @@ carries this dual reading.
 
 \begin{definition}[Evaluation of a DNF formula]
 \lean{Std.Sat.DNF.eval}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p002-b002}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p093-b004}
 \label{Std.Sat.DNF.eval}
 \leanok
 \uses{Std.Sat.DNF}
@@ -94,47 +101,32 @@ where a term $(\ell_1, \dots, \ell_m)$ is encoded as
 $\mathrm{enc}(\ell_1)\cdots\mathrm{enc}(\ell_m)\,0$ and a literal $(v,b)$ as $1^{v+1}0b$.
 \end{definition}
 
-\begin{theorem}[Decoding inverts the DNF encoding]
+\begin{theorem}[Decoding inverts DNF serialization]
 \lean{Std.Sat.DNF.decode_serialize}
 \label{Std.Sat.DNF.decode_serialize}
 \leanok
 \uses{Std.Sat.CNF.decode_serialize, Std.Sat.DNF, Std.Sat.DNF.decode, Std.Sat.DNF.serialize}
 \difficulty{1}
-For every DNF formula $\psi$ over variables indexed by $\mathbb{N}$, decoding its binary
-encoding as a DNF formula returns $\psi$. Here a DNF formula $(T_1,\dots,T_k)$, each term a
-list of literals $(v,b)$ with $v \in \mathbb{N}$ and $b \in \{0,1\}$, is encoded as
-$1\,\mathrm{enc}(T_1)\cdots1\,\mathrm{enc}(T_k)\,0$, a term as the concatenation of its
-literal encodings $1^{v+1}0b$ followed by $0$; and a bit string $x$ is decoded as the DNF
-formula whose terms are the literal lists obtained by parsing $x$, with recursion fuel
-$|x|$, according to the grammar
-$\langle\text{formula}\rangle ::= 0 \mid 1\,\langle\text{clause}\rangle\,\langle\text{formula}\rangle$,
-$\langle\text{clause}\rangle ::= 0 \mid \langle\text{literal}\rangle\,\langle\text{clause}\rangle$,
-$\langle\text{literal}\rangle ::= 1^{k+1}\,0\,b$ (the literal $(k,b)$) when this parse
-consumes all of $x$, and as the formula with no terms otherwise.
+For every DNF formula $\psi$ over variables indexed by $\mathbb{N}$, decoding the binary
+serialization of $\psi$ returns $\psi$.
 \end{theorem}
 
-\begin{theorem}[Decoding a CNF encoding as a DNF formula]
+\begin{theorem}[Decoding a serialized DNF formula]
 \lean{Std.Sat.DNF.decode_cnf_serialize}
 \label{Std.Sat.DNF.decode_cnf_serialize}
 \leanok
 \uses{Std.Sat.CNF.decode_serialize, Std.Sat.CNF.serialize, Std.Sat.DNF.decode}
 \difficulty{1}
-Let $\varphi = (C_1, \dots, C_k)$ be a CNF formula over variables indexed by $\mathbb{N}$,
-each clause a list of literals $(v,b)$ with $v \in \mathbb{N}$ and $b \in \{0,1\}$, with
-binary encoding $\mathrm{enc}(\varphi) = 1\,\mathrm{enc}(C_1)\cdots1\,\mathrm{enc}(C_k)\,0$,
-where a clause is encoded as the concatenation of its literal encodings $1^{v+1}0b$
-followed by $0$. Then decoding $\mathrm{enc}(\varphi)$ as a DNF formula yields the DNF
-formula whose terms are exactly $C_1, \dots, C_k$. Here a bit string $x$ is decoded as the
-DNF formula whose terms are the literal lists obtained by parsing $x$, with recursion fuel
-$|x|$, according to the grammar
-$\langle\text{formula}\rangle ::= 0 \mid 1\,\langle\text{clause}\rangle\,\langle\text{formula}\rangle$,
-$\langle\text{clause}\rangle ::= 0 \mid \langle\text{literal}\rangle\,\langle\text{clause}\rangle$,
-$\langle\text{literal}\rangle ::= 1^{k+1}\,0\,b$ when this parse consumes all of $x$, and as
-the formula with no terms otherwise.
+For every DNF formula $\psi$ over variables indexed by $\mathbb{N}$, decoding its binary
+serialization as a DNF formula returns $\psi$.
 \end{theorem}
 
 \begin{definition}[De Morgan dual of a DNF formula]
 \lean{Std.Sat.DNF.dual}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b005,
+  pdf-ffbe9c7b3306-p107-b008
+}
 \label{Std.Sat.DNF.dual}
 \leanok
 \uses{Std.Sat.DNF}
@@ -148,6 +140,10 @@ $\bigwedge_i \bigvee_j \neg\ell_{ij}$, of the same size.
 
 \begin{definition}[De Morgan dual of a CNF formula]
 \lean{Std.Sat.CNF.dual}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p094-b005,
+  pdf-ffbe9c7b3306-p107-b008
+}
 \label{Std.Sat.CNF.dual}
 \leanok
 \uses{Std.Sat.DNF}
@@ -160,65 +156,47 @@ formula $\bigvee_i \bigwedge_j \neg\ell_{ij}$; no distributive expansion takes p
 the dual has the same size as $\varphi$.
 \end{definition}
 
-\begin{theorem}[Pointwise De Morgan law]
+\begin{theorem}[Evaluation of the dual formula]
 \lean{Std.Sat.CNF.eval_dual}
 \label{Std.Sat.CNF.eval_dual}
 \leanok
 \uses{Std.Sat.CNF.dual, Std.Sat.DNF.eval}
 \difficulty{4}
-Let $\varphi = (C_1, \dots, C_k)$ be a CNF formula over variables indexed by $\mathbb{N}$,
-each clause a finite list of literals $(v,b)$ with $v \in \mathbb{N}$ and
-$b \in \{0,1\}$, and let $\varphi^{\ast}$ be the DNF formula whose terms are obtained from
-$C_1, \dots, C_k$ by replacing every literal $(v,b)$ with $(v, \neg b)$. Then for every
-assignment $a : \mathbb{N} \to \{0,1\}$,
-\[
-  \varphi^{\ast}(a) = \neg\, \varphi(a),
-\]
-where $\varphi(a)$ is true when every clause of $\varphi$ contains a literal $(v,b)$ with
-$a(v) = b$, and $\varphi^{\ast}(a)$ is true when some term of $\varphi^{\ast}$ has all of
-its literals $(v,b)$ satisfying $a(v) = b$.
+For every CNF formula $\varphi$ over variables indexed by $\mathbb{N}$ and every Boolean
+assignment $a:\mathbb{N}\to\{0,1\}$, the DNF De Morgan dual of $\varphi$ evaluates to
+the Boolean negation of the evaluation of $\varphi$ under $a$.
 \end{theorem}
 
-\begin{theorem}[Dualizing a CNF formula twice]
+\begin{theorem}[Dualizing twice returns the original formula]
 \lean{Std.Sat.CNF.dual_dual}
 \label{Std.Sat.CNF.dual_dual}
 \leanok
 \uses{Std.Sat.CNF.dual, Std.Sat.DNF.dual}
 \difficulty{1}
-Let $\varphi$ be a CNF formula over variables indexed by $\mathbb{N}$, a finite list of
-clauses each a finite list of literals $(v,b)$ with $v \in \mathbb{N}$ and
-$b \in \{0,1\}$. Forming its De Morgan dual DNF formula, by replacing every literal
-$(v,b)$ with $(v,\neg b)$ and reading the clauses as terms, and then forming the De Morgan
-dual CNF formula of that DNF formula, by again replacing every literal $(v,b)$ with
-$(v,\neg b)$ and reading the terms as clauses, returns $\varphi$.
+For every CNF formula $\varphi$ over variables indexed by $\mathbb{N}$, taking its De
+Morgan dual as a DNF formula and then taking the De Morgan dual of that DNF formula
+returns $\varphi$.
 \end{theorem}
 
-\begin{theorem}[Dualizing a DNF formula twice]
+\begin{theorem}[Involutivity of DNF dualization]
 \lean{Std.Sat.DNF.dual_dual}
 \label{Std.Sat.DNF.dual_dual}
 \leanok
 \uses{Std.Sat.CNF.dual, Std.Sat.DNF, Std.Sat.DNF.dual}
 \difficulty{2}
-Let $\psi$ be a DNF formula over variables indexed by $\mathbb{N}$, a finite list of
-terms each a finite list of literals $(v,b)$ with $v \in \mathbb{N}$ and
-$b \in \{0,1\}$. Forming its De Morgan dual CNF formula, by replacing every literal
-$(v,b)$ with $(v,\neg b)$ and reading the terms as clauses, and then forming the De Morgan
-dual DNF formula of that CNF formula, by again replacing every literal $(v,b)$ with
-$(v,\neg b)$ and reading the clauses as terms, returns $\psi$.
+For every DNF formula $\psi$ over variables indexed by $\mathbb{N}$, take its De Morgan
+dual CNF by negating each literal and reading its terms as clauses, then take the De
+Morgan dual again. The resulting DNF formula is $\psi$.
 \end{theorem}
 
-\begin{theorem}[Dual tautology iff unsatisfiable]
+\begin{theorem}[Dual tautology and unsatisfiability]
 \lean{Std.Sat.CNF.tautology_dual_iff}
 \label{Std.Sat.CNF.tautology_dual_iff}
 \leanok
 \uses{Std.Sat.CNF.Satisfiable, Std.Sat.CNF.dual, Std.Sat.CNF.eval_dual, Std.Sat.DNF.Tautology}
 \difficulty{1}
-Let $\varphi = (C_1, \dots, C_k)$ be a CNF formula over variables indexed by $\mathbb{N}$,
-each clause a finite list of literals $(v,b)$ with $v \in \mathbb{N}$ and
-$b \in \{0,1\}$, and let $\varphi^{\ast}$ be the DNF formula whose terms are obtained from
-$C_1, \dots, C_k$ by replacing every literal $(v,b)$ with $(v, \neg b)$. Then
-$\varphi^{\ast}$ is a tautology, i.e.\ for every assignment $a : \mathbb{N} \to \{0,1\}$
-some term of $\varphi^{\ast}$ has all of its literals $(v,b)$ satisfying $a(v) = b$, if and
-only if $\varphi$ is unsatisfiable, i.e.\ no assignment makes every clause of $\varphi$
-contain a literal $(v,b)$ with $a(v) = b$ [AB09, Section~2.6.1, Example~2.21].
+Let $\varphi$ be a CNF formula over variables indexed by $\mathbb{N}$, and form its DNF
+dual by negating each literal while preserving the clause lists as terms. This dual is
+true under every Boolean assignment to $\mathbb{N}$ if and only if no such assignment
+makes $\varphi$ true.
 \end{theorem}

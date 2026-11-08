@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clNative_map",
+ "key": "09c2c7c5d6d38bbc",
+ "kind": "lemma",
+ "title": "Polynomial-time encoded payload map",
+ "statement": "Let $g$ be a polynomial-time computable function on finite bit strings. The function that parses an input as an encoded pair $(a,b)$ and returns the encoding of $(a,g(b))$, or the empty bit string if parsing fails, is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $g$ is a polynomial-time computable string function, then so is the function that decodes its input as an encoded pair $(a,b)$ and returns the encoded pair $(a, g(b))$, returning the empty string when the input is not an encoded pair. The first field is retained with its exact bytes."
+}

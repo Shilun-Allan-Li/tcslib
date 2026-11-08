@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.CounterProg.run_regs_le",
+ "key": "c030ba2f165abdbd",
+ "kind": "theorem",
+ "title": "Bound on Register Growth",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, and fix an input bit string $x$. For every abstract state $s$, register $r$, and $t\\in\\mathbb{N}$, the value of register $r$ after $t$ steps from $s$ is at most its initial value plus $t$.",
+ "hypotheses_covered": [
+  "$R\\in\\mathbb{N}$ and $\\Lambda$ is a set of labels.",
+  "$P$ is a counter program over $R$ registers and labels in $\\Lambda$.",
+  "An input bit string $x$ is fixed.",
+  "An abstract state $s$ is specified.",
+  "A register $r$ is specified.",
+  "$t\\in\\mathbb{N}$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, $x$ an input bit\nstring, $s$ an abstract state with registers $\\rho$, $r$ a register and $t \\in \\mathbb{N}$. If\n$\\rho'$ denotes the registers of the state reached from $s$ after $t$ steps of $P$ on $x$, then\n$\\rho'(r) \\le \\rho(r) + t$."
+}

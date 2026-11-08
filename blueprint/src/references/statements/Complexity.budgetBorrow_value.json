@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.budgetBorrow_value",
+ "key": "75f5b2d86f30a48c",
+ "kind": "lemma",
+ "title": "Borrow subtracts one from positive values",
+ "statement": "For every finite bit word $b$ whose little-endian value is positive, the little-endian value of the word produced by the borrow pass started with borrow bit $1$, plus $1$, equals the value of $b$.",
+ "hypotheses_covered": [
+  "Finite bit word",
+  "Little-endian value is positive",
+  "Initial borrow bit is true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every bit word $w$ whose little-endian value is positive, the word produced by the\nborrow pass entered with a set flag has little-endian value exactly one less than the\nvalue of $w$."
+}

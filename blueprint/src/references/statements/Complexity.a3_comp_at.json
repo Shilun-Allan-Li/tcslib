@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.a3_comp_at",
+ "key": "80d3b8832a60c85e",
+ "kind": "lemma",
+ "title": "Timed buffered composition",
+ "statement": "Let $F,G$ be finite Turing machines over the binary alphabet, let $x,y,z$ be binary words, and let $s,t\\in\\mathbb{N}$. If $F$ computes $y$ from $x$ within $s$ steps and $G$ computes $z$ from $y$ within $t$ steps, then their buffered sequential composition computes $z$ from $x$ within $s+|y|+2+t$ steps.",
+ "hypotheses_covered": [
+  "Finite binary machines $F,G$",
+  "Binary words $x,y,z$",
+  "Natural numbers $s,t$",
+  "$F$ computes $y$ from $x$ within $s$ steps",
+  "$G$ computes $z$ from $y$ within $t$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a machine $F$ computes $y$ from $x$ within $s$ steps and a machine $G$\ncomputes $z$ from $y$ within $t$ steps, then the buffered composition of $F$ and\n$G$ computes $z$ from $x$ within $s + |y| + 2 + t$ steps."
+}

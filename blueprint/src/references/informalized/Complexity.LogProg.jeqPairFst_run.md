@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Machines/ParseCmp.lean :: Complexity.LogProg.jeqPairFst_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Run of the First-Payload Equality Test
+
+**Claim.** On the paired input containing the unary prefix and the encoding of $u,w$, the specified routine compares $u$ with the register’s binary word, reaches the affirmative or negative state according to equality, and keeps the register head within the stated bounds before finishing.
+
+**Proof.** First rewrite the input using the pairing identity: it consists of $2n$ ones, the delimiter $[0,1]$, then the doubled word $u$, another delimiter, and $w$. The length calculation locates each of these segments precisely. The routine first skips the unary prefix, reaching the state just before the first delimiter (`Complexity.LogProg.skipPrefix_run`). The first-payload comparison routine then scans the doubled copy of $u$ against the register word. Its run lemma shows that it reaches a return state recording whether the two words agree, with the register head still within the length bound (`Complexity.LogProg.cmpDbl_run`). The return routine restores the input and register heads to their required positions and enters the affirmative state exactly in the equality case, otherwise the negative state (`Complexity.LogProg.cmpReturn`). Concatenate these three finite runs using the run-addition identity (`Complexity.LogProg.rrun_add`). The run bounds compose: during the prefix skip the register head stays at zero, during comparison it remains within the word-length bound, and during return it remains between $-1$ and that bound. The prefix and comparison input positions follow from the delimiter layout, using the doubled-unary identity (`Complexity.LogProg.dbl_replicate`), the pairing identity (`Turing.pairEncode_eq_dbl`), and the list-indexing facts for reading the concatenated segments (`Complexity.LogProg.inSym_succ`, `Complexity.LogProg.getElem?_append_len`).
+
+**Key facts.** `Complexity.LogProg.dbl_replicate`, `Turing.pairEncode_eq_dbl`, `Complexity.LogProg.skipPrefix_run`, `Complexity.LogProg.cmpDbl_run`, `Complexity.LogProg.cmpReturn`, `Complexity.LogProg.rrun_add`, `Complexity.LogProg.inSym_succ`, `Complexity.LogProg.getElem?_append_len`.

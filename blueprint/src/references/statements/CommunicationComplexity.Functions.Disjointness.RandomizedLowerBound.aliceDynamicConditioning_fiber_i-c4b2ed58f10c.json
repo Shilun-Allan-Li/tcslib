@@ -1,16 +1,16 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.aliceDynamicConditioning_fiber_info_eq_fixedAliceInfoTerm",
- "key": "e71950f7a0fa29e1",
+ "key": "c9b61e78c4475a9b",
  "kind": "theorem",
- "title": "Dynamic Alice information at a fixed special coordinate",
- "statement": "Let $n$ be a positive integer and let $p$ be a deterministic communication protocol for the disjointness problem on the $n$ coordinates, in which each player holds a subset of $\\{0,\\dots,n-1\\}$ and the protocol outputs a Boolean value. Running $p$ on the input pair $(X(\\omega),Y(\\omega))$ determined by a hard sample $\\omega$ produces a transcript $M(\\omega)$. Write $\\mu$ for the hard distribution conditioned on the event that $X(\\omega)$ and $Y(\\omega)$ are disjoint, and for a sample $\\omega$ let $T$ be its special coordinate and $x_T$ Alice's bit there; the dynamic conditioning of $\\omega$ is the pair $(x_{<T},\\,y_{\\ge T})$ recording Alice's bits at coordinates below $T$ and Bob's bits at coordinates at or above $T$, with every remaining coordinate set to $\\mathrm{false}$. Then for each coordinate $i$,\n\\[\nI\\!\\left(x_T ; M \\,\\middle|\\, (x_{<T},\\,y_{\\ge T})\\right)_{\\mu(\\,\\cdot\\,\\mid T=i)}\n\\;=\\;\nI\\!\\left(x_i ; M \\,\\middle|\\, (x_{<i},\\,y_{\\ge i})\\right)_{\\mu},\n\\]\nwhere the left-hand conditional mutual information is taken under $\\mu$ further conditioned on the event $\\{T=i\\}$, and the right-hand one under $\\mu$ with the fixed-coordinate conditioning $(x_{<i},\\,y_{\\ge i})$ (Alice's bits at coordinates below $i$ and Bob's bits at coordinates at or above $i$, all other coordinates $\\mathrm{false}$) and Alice's bit $x_i$ at coordinate $i$.",
+ "title": "Dynamic and fixed-coordinate information",
+ "statement": "Fix a positive integer $n$, a deterministic disjointness protocol $p$ on length-$n$ inputs, and a coordinate $i$. Under the hard-sample law conditioned on disjoint inputs and then on the special coordinate being $i$, the conditional mutual information between Alice's bit at the special coordinate and the protocol transcript, given Alice's bits before the special coordinate and Bob's bits from that coordinate onward, equals the conditional mutual information under the disjoint-input-conditioned law between Alice's bit at coordinate $i$ and the transcript, given Alice's bits before $i$ and Bob's bits from $i$ onward.",
  "hypotheses_covered": [
-  "n is a positive integer",
-  "p is a deterministic protocol of the disjointness protocol type on n coordinates",
-  "i is a coordinate in Fin n"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic disjointness protocol on length-$n$ inputs",
+  "$i$ is a coordinate in $\\{0,\\ldots,n-1\\}$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Uniformity/independence step for the special coordinate: after conditioning on $T=i$, the random-coordinate Alice information term is the fixed-coordinate summand."
+ "replaced": "Let $n$ be a positive integer and let $p$ be a deterministic communication protocol for\nthe disjointness problem on the $n$ coordinates, in which each player holds a subset of\n$\\{0,\\dots,n-1\\}$ and the protocol outputs a Boolean value. Running $p$ on the input\npair $(X(\\omega),Y(\\omega))$ determined by a hard sample $\\omega$ produces a transcript\n$M(\\omega)$. Write $\\mu$ for the hard distribution conditioned on the event that\n$X(\\omega)$ and $Y(\\omega)$ are disjoint, and for a sample $\\omega$ let $T$ be its\nspecial coordinate and $x_T$ Alice's bit there; the dynamic conditioning of $\\omega$ is\nthe pair $(x_{<T},\\,y_{\\ge T})$ recording Alice's bits at coordinates below $T$ and\nBob's bits at coordinates at or above $T$, with every remaining coordinate set to\n$\\mathrm{false}$. Then for each coordinate $i$,\n\\[\nI\\!\\left(x_T ; M \\,\\middle|\\, (x_{<T},\\,y_{\\ge T})\\right)_{\\mu(\\,\\cdot\\,\\mid T=i)}\n\\;=\\;\nI\\!\\left(x_i ; M \\,\\middle|\\, (x_{<i},\\,y_{\\ge i})\\right)_{\\mu},\n\\]\nwhere the left-hand conditional mutual information is taken under $\\mu$ further\nconditioned on the event $\\{T=i\\}$, and the right-hand one under $\\mu$ with the\nfixed-coordinate conditioning $(x_{<i},\\,y_{\\ge i})$ (Alice's bits at coordinates below\n$i$ and Bob's bits at coordinates at or above $i$, all other coordinates\n$\\mathrm{false}$) and Alice's bit $x_i$ at coordinate $i$."
 }

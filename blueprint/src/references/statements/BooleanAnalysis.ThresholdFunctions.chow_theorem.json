@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.chow_theorem",
+ "key": "e909ad60f056828e",
+ "kind": "theorem",
+ "title": "Uniqueness of linear threshold functions",
+ "statement": "Let $n\\in\\mathbb N$ and let $f,g:\\{0,1\\}^n\\to\\mathbb R$ be $\\pm1$-valued. Suppose $f$ is a polynomial threshold function of degree at most one. If their Fourier–Walsh coefficients agree at every subset $S\\subseteq\\{1,\\ldots,n\\}$ with $|S|\\le1$, then $g=f$.",
+ "hypotheses_covered": [
+  "dimension n is a natural number",
+  "f is a polynomial threshold function of degree at most one",
+  "f takes values in {−1,1}",
+  "g takes values in {−1,1}",
+  "Fourier–Walsh coefficients of f and g agree for every subset of size at most one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\in\\mathbb N$ and $f,g:\\{0,1\\}^n\\to\\{-1,1\\}$, and define $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\mathbb E_x[h(x)\\chi_S(x)]$ for uniform $x$, subsets $S\\subseteq\\{1,\\ldots,n\\}$, and $h:\\{0,1\\}^n\\to\\mathbb R$.\nSuppose $f(x)=\\operatorname{sgn}(a_\\varnothing+\\sum_{i=1}^na_i(-1)^{x_i})$ for real coefficients, where $\\operatorname{sgn}(t)=1$ for $t\\ge0$ and $-1$ for $t<0$.\nIf $\\widehat g(S)=\\widehat f(S)$ whenever $|S|\\le1$, then $g=f$."
+}

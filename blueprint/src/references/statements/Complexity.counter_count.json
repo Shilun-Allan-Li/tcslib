@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.counter_count",
+ "key": "12d95a073014a26d",
+ "kind": "lemma",
+ "title": "Amortized counter invariant",
+ "statement": "For every finite binary input word $x$ and every natural number $i$ with $i\\le |x|$, there is a natural number $t$ such that $t+2w(i)\\le4i$, where $w(i)$ is the number of $1$ bits in the least-significant-bit-first binary representation of $i$, and after $t$ steps from the machine's initial configuration on $x$, the machine is in state $0$ with input-head position $i+1$, work-head position $0$, the tape holding the binary representation of $i$, and empty output.",
+ "hypotheses_covered": [
+  "$x$ is a finite binary input word",
+  "$i$ is a natural number",
+  "$i\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary input word and $i \\le |x|$, and let $w(i)$ denote the\nnumber of $1$ bits in the binary representation of $i$. Then there is a step\ncount $t$ with $t + 2\\,w(i) \\le 4i$ such that, after $t$ steps from its initial\nconfiguration on $x$, the four-state binary-counter machine is in the count\nstate having consumed exactly the first $i$ input symbols, with the work tape\nholding the binary representation of $i$ (least-significant bit first), the\nwork head at cell $0$, and empty output."
+}

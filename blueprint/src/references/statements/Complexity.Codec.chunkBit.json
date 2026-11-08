@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Codec.chunkBit",
+ "key": "3ffa16b105d56f54",
+ "kind": "def",
+ "title": "Bit encoding of a cell",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with $k$ work tapes, and let a cell value contain an optional head descriptor and, for each tape, an optional Boolean symbol and a Boolean marker. For each natural number $t$, define its encoded bit as follows: if $t<h$, it records whether the head descriptor's index is $t$; otherwise, for tape index $i=\frac{t-h}{3}$ when $i<k$, the remainder of $t-h$ upon division by $3$ selects, respectively, whether that tape's symbol is present, its symbol with absence interpreted as false, or its marker. If the resulting tape index is at least $k$, the bit is true.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine $N$",
+  "A cell value of the specified type",
+  "A natural-number bit index $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

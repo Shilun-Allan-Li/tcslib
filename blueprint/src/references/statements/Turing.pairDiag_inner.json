@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.pairDiag_inner",
+ "key": "a4586c3ece53fb14",
+ "kind": "lemma",
+ "title": "Scanned Symbol at an Interior Position",
+ "statement": "For every bit string $x$, control state $q$ among the six states or the halting state, output string $w$, and natural number $j<|x|$, a configuration with input head at position $j+1$ scans the bit $x_j$.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$q$ is an optional state among the six states",
+  "$w$ is a bit string",
+  "$j$ is a natural number",
+  "$j<|x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For the six-state diagonal pairing machine on an input string $x$, in any\nconfiguration whose input head sits at position $j + 1$ with $j < |x|$, the\nscanned input symbol is the $j$-th bit of $x$, for every control state and\nevery output string."
+}

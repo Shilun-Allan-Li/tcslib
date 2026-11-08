@@ -8,15 +8,974 @@ Fourth-order invariance compares independent input laws through squared influenc
 \begin{theorem}[Fourth-order invariance principle]
 \lean{BooleanAnalysis.GaussianSpace.basic_invariance_principle}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.HasInvarianceMoments.identDistrib, BooleanAnalysis.GaussianSpace.Invariance.identDistrib_of_independent_coordinates, BooleanAnalysis.GaussianSpace.Invariance.invariance_of_independent_pair, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.influence}
+\uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.HasInvarianceMoments.identDistrib, BooleanAnalysis.GaussianSpace.Invariance.independent_polynomial_coupling, BooleanAnalysis.GaussianSpace.Invariance.invariance_of_independent_pair, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.influence}
+\proofsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LitList}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LitList.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Depth2}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Depth2.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_sq_eq_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.has_degree_at_most}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.parseval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.plancherel}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.influence}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_flipBit_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsBReasonable}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p038-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.threshold}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.IsPolynomialThresholdRepresentation}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_add}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const_mul}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p038-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p038-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p038-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.mul_thresholdSign_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsHypercontractive}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p007-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsHypercontractive.identDistrib}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p007-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rvLpNorm}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsSymmetricRV}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p007-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsRademacherRV}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.evalMultilinearRV}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.HasAtomLowerBound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rvLpNorm_const}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rvLpNorm_const_mul}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rvLpNorm_rpow}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.rvLpNorm_affine_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsHypercontractive.affine_three_norm_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p007-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsRademacherRV.map_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsHypercontractive.conjugate}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p007-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsHypercontractive.const_mul}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p007-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.IsHypercontractive.mono_radius}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p007-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.HasAtomLowerBound.memLp}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp_nat}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.reasonable_moment_algebra}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.multilinear_sum_insert}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.integrable_mul_pow_of_memLp}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.HasInvarianceMoments}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.HasInvarianceMoments.identDistrib}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.has_degree_at_most_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.innerProduct_eval_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.expect_eval_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.innerProduct_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.abs_coeff_le_expect_abs}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.sum_sq_pos}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.expect_abs_eval_eq_innerProduct}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_of_degree_le_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_monomial_mul}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001,
+    pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.monomial_memLp_nat}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.monomial_memLp}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_eval_mul}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001,
+    pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_eval_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001,
+    pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_supported}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_eq_of_off_coordinate}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.affine_moments}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001,
+    pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.cauchy_schwarz}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.MultilinearMoments.indep_sum_of_notMem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.independent_multilinear_reasonable}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001,
+    pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.fourierCoeff_derivative}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.update_eq_ite_flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.derivative_eq_flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.influence_eq_expect_derivative_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_empty}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.affinePoly_singleton}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinateFree}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_coeff}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_degree}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_sum_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinateFree_eval_sum}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_eval_sum}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.coordinate_parts_eq_of_off_coordinate}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.eval_coordinate_split}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.indep_coordinate_parts}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.invariance_polynomial_fourth_moment}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001,
+    pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.invariance_coordinate_fourth_moment}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001,
+    pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.abs_sub_taylor_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.abs_sub_taylor_cubic_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.integrable_test_of_memLp}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.integrable_test_of_memLp_four}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.integral_taylor_polynomial}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.integral_taylor_cubic}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001,
+    pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_polynomial_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.abs_integral_sub_taylor_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001,
+    pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.affine_replacement_bound_c3}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.affine_replacement_bound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.independent_affine_integral}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.independent_affine_comparison_bound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.independent_affine_replacement_bound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.single_coordinate_replacement_bound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.hybridIndex}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.hybridInput}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.hybridIndex_injective}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.hybridInput_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.hybridInput_all}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.hybridInput_succ_off}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.hybrid_expectation_bound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.invariance_of_independent_pair}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.independent_input_coupling}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.identDistrib_of_independent_coordinates}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.identDistrib_evalMultilinearRV}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.Invariance.independent_polynomial_coupling}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b002}
 \difficulty{5}
-Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{i\in S}x_i$ be a real multilinear polynomial of degree at most $k$; let $I_i(F)=\sum_{S\ni i}a_S^2$. Let $X=(X_i)$ and $Y=(Y_i)$ be families of independent real inputs on probability spaces $(\Omega,\mu)$ and $(\Xi,\nu)$, respectively. Each input is measurable up to a null set, has finite fourth absolute moment, and has first, second, and third moments $0,1,0$ and fourth moment at most $9$. If $\psi\colon\mathbb R\to\mathbb R$ is $C^4$ and $C\ge0$ satisfies $|\psi^{(4)}(t)|\le C$ for every $t$, then $|\mathbb E_\mu\psi(F(X))-\mathbb E_\nu\psi(F(Y))|\le (C/12)9^k\sum_i I_i(F)^2$.
+Let $n,k\in\mathbb N$, and let $F$ be a multilinear polynomial on $\{0,1\}^n$ of degree
+at most $k$, written in the Walsh basis as $F(x)=\sum_{S\subseteq[n]}F(S)\chi_S(x)$. Let
+$X_i\colon\Omega\to\mathbb R$ and $Y_i\colon\Xi\to\mathbb R$ be independent families
+under probability measures $\mu$ and $\nu$, respectively. Suppose every input has mean
+zero, second moment one, third moment zero, finite fourth moment, and fourth moment at
+most $9$. If $\psi\colon\mathbb R\to\mathbb R$ is four times continuously
+differentiable, $C\ge0$, and $|\psi^{(4)}(t)|\le C$ for all $t\in\mathbb R$, then
+\[
+\left|\mathbb E_\mu\psi\!\left(\sum_{S\subseteq[n]}F(S)\prod_{i\in S}X_i\right)-\mathbb
+E_\nu\psi\!\left(\sum_{S\subseteq[n]}F(S)\prod_{i\in S}Y_i\right)\right|
+\le \frac C{12}9^k\sum_{i=1}^n \mathrm{Inf}_i[F]^2,
+\]
+where $\mathrm{Inf}_i[F]$ is the uniform-cube expectation of $(F(x)-F(x^i))^2/4$, with
+$x^i$ obtained by flipping coordinate $i$.
 \end{theorem}
 
 \begin{theorem}[Smooth invariance under small influences]
 \lean{BooleanAnalysis.GaussianSpace.invariance_small_influences}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.basic_invariance_principle, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.Hypercontractivity.sum_sq_influences_le_degree_mul, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.has_degree_at_most_eval, BooleanAnalysis.influence}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p035-b001}
 \difficulty{3}
 Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{i\in S}x_i$ be a real multilinear polynomial of degree at most $k$; let $I_i(F)=\sum_{S\ni i}a_S^2$. Let $X=(X_i)$ and $Y=(Y_i)$ be families of independent real inputs on probability spaces $(\Omega,\mu)$ and $(\Xi,\nu)$, respectively. Each input is measurable up to a null set, has finite fourth absolute moment, and has first, second, and third moments $0,1,0$ and fourth moment at most $9$. Suppose $\sum_{S\ne\varnothing}a_S^2\le1$, $\varepsilon\ge0$, and $I_i(F)\le\varepsilon$ for every $i$. If $\psi\in C^4(\mathbb R)$ and $C\ge0$ bounds $|\psi^{(4)}|$ everywhere, then $|\mathbb E_\mu\psi(F(X))-\mathbb E_\nu\psi(F(Y))|\le (C/12)k9^k\varepsilon$.
 \end{theorem}
@@ -25,21 +984,33 @@ Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{i\in S}x_i$ be a real multili
 \lean{BooleanAnalysis.GaussianSpace.degree_mul_nine_pow_le_sixteen_pow}
 \leanok
 \difficulty{4}
-For every integer $k\ge0$, the real-number inequality $k9^k\le16^k$ holds.
+For every natural number $k$, the real inequality $k\,9^k\le 16^k$ holds.
 \end{theorem}
 
-\begin{theorem}[Fourth root of the invariance scale]
+\begin{theorem}[Fourth-root scale inequality]
 \lean{BooleanAnalysis.GaussianSpace.invariance_quarter_power_le}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.degree_mul_nine_pow_le_sixteen_pow}
 \difficulty{4}
-For every integer $k\ge0$ and real $\varepsilon\ge0$, the inequality $(k9^k\varepsilon)^{1/4}\le2^k\varepsilon^{1/4}$ holds.
+For every integer $k\ge 0$ and every real number $\varepsilon\ge 0$, we have
+$(k\,9^k\varepsilon)^{1/4}\le 2^k\varepsilon^{1/4}$.
 \end{theorem}
 
-\begin{theorem}[Universal Lipschitz invariance estimate]
+\begin{theorem}[Lipschitz invariance estimate]
 \lean{BooleanAnalysis.GaussianSpace.invariance_lipschitz}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.HasInvarianceMoments, BooleanAnalysis.GaussianSpace.Invariance.lipschitz_expectation_bound_of_fourth_derivative, BooleanAnalysis.GaussianSpace.invariance_quarter_power_le, BooleanAnalysis.GaussianSpace.invariance_small_influences, BooleanAnalysis.Hypercontractivity.cubeVariance, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.HasDegreeAtMost, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval, BooleanAnalysis.influence}
+\proofsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p035-b002}
 \difficulty{5}
-There exists a universal real constant $K>0$ with the following property. Let $F(x)=\sum_{S\subseteq\{1,\ldots,n\}}a_S\prod_{i\in S}x_i$ be a real multilinear polynomial of degree at most $k$; let $I_i(F)=\sum_{S\ni i}a_S^2$. Let $X=(X_i)$ and $Y=(Y_i)$ be families of independent real inputs on probability spaces $(\Omega,\mu)$ and $(\Xi,\nu)$, respectively. Each input is measurable up to a null set, has finite fourth absolute moment, and has first, second, and third moments $0,1,0$ and fourth moment at most $9$. If $\sum_{S\ne\varnothing}a_S^2\le1$, $\varepsilon\ge0$, $I_i(F)\le\varepsilon$ for every $i$, and $\psi\colon\mathbb R\to\mathbb R$ is $c$-Lipschitz with $c\ge0$, then $|\mathbb E_\mu\psi(F(X))-\mathbb E_\nu\psi(F(Y))|\le Kc2^k\varepsilon^{1/4}$.
+There is a constant $K>0$ such that the following holds. Let $n,k\in\mathbb N$, let
+$(\Omega,\mu)$ and $(\Xi,\nu)$ be probability spaces, and let $F$ be a multilinear
+coefficient family of degree at most $k$ whose Boolean-cube evaluation has variance at
+most $1$. For $\varepsilon\ge0$, suppose every coordinate influence is at most
+$\varepsilon$. Let $X$ and $Y$ be independent coordinate families on the respective
+spaces, each coordinate satisfying the fourth-order invariance moment conditions. For
+any $c\ge0$ and any $c$-Lipschitz function $\psi:\mathbb R\to\mathbb R$,
+\[
+\left|\mathbb E_\mu\psi(F(X))-\mathbb E_\nu\psi(F(Y))\right|
+\le Kc\,2^k\varepsilon^{1/4}.
+\]
 \end{theorem}

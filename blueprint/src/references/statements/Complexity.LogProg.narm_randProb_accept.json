@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.narm_randProb_accept",
+ "key": "ceb963203474abcf",
+ "kind": "theorem",
+ "title": "Compiled and Program Acceptance Probabilities",
+ "statement": "Let $m,d,k_D,N,T$ be nonnegative integers, let $\\Lambda$ and $SD$ be finite sets, let $A$ be a nondeterministic register program with $m$ registers and $d$ oracle choices, and let $l_0$ be its initial location. Fix an input bit string $x$, an oracle assigning a Boolean answer to each of the $d$ indices and each bit string, a deterministic $k_D$-tape machine $D$, a choice of initial state $q_0(j)$ for each oracle index, and bounds $B,W$. Suppose every length-$N$ choice string makes the program halt, and every configuration before halting satisfies the guard requiring its deterministic preconditions and register bit-length bounds by $W$. If the compiled nondeterministic machine halts on $x$ after every choice string of length $T$, then the probability that a uniformly chosen length-$T$ choice string makes the compiled machine halt with output exactly the single bit $1$ equals the probability that a uniformly chosen length-$N$ choice string makes the register program return true.",
+ "hypotheses_covered": [
+  "Finite program-location and decider-state sets",
+  "Nondeterministic register program, initial location, and oracle",
+  "Deterministic decider machine and its initial state for each oracle index",
+  "Natural-number bounds $B,W,N$ and input bit string $x$",
+  "All length-$N$ choice strings halt and satisfy the guard at every prior nonhalting configuration",
+  "Compiled machine halts on $x$ for every choice string of length $T"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

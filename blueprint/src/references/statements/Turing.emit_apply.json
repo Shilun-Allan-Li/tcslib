@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.emit_apply",
+ "key": "7a4b8185b3956eae",
+ "kind": "lemma",
+ "title": "Forwarding commutes with applying an action",
+ "statement": "Let $S$ and $H$ be state sets, let $\\iota:S\\to H$, choose $r\\in H$, and let $p$ be a Boolean word. For any action $a$ and configuration $c$ of a Boolean machine with $k$ work tapes and state set $S$, applying the action that preserves $a$'s tape operations and output and maps its successor state through $\\iota$ (using $r$ if it halts) to the configuration that maps $c$'s state through $\\iota$ (using $r$ if it is halted) and prefixes its output by $p$ yields the forwarded image of the result of applying $a$ to $c$.",
+ "hypotheses_covered": [
+  "State sets $S,H$",
+  "A map $\\iota:S\\to H$ and designated state $r\\in H$",
+  "A Boolean prefix word $p$",
+  "An action $a$ and configuration $c$ with $k$ work tapes, Boolean alphabet, and state set $S"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S$ and $H$ be sets of states, $\\iota : S \\to H$, $r \\in H$, and $p$ a Boolean word.\nFor every action $a$ and every configuration $c$ of a Boolean Turing machine with $k$\nwork tapes and state set $S$ on an input $x$, applying the forwarding transform of $a$\n(same head moves, writes and emission as $a$, successor mapped through $\\iota$, a halt\nreplaced by $r$) to the forwarding image of $c$ (state mapped through $\\iota$, or $r$ if\n$c$ is halted, the same tapes and heads, output $p$ followed by the output of $c$) gives\nthe forwarding image of the configuration obtained by applying $a$ to $c$."
+}

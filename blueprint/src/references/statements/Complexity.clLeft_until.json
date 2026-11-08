@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.clLeft_until",
+ "key": "2c3b271a3f0b9410",
+ "kind": "lemma",
+ "title": "Lifting a computation before an exit state",
+ "statement": "Let $k,l$ be natural numbers, let $S,S'$ be state sets, let $x$ be a Boolean input word, and let $M$ and $H$ be deterministic Turing machines with $k$ and $k+l$ work tapes, respectively. Fix a map $e:S\\to S'$, an exit state $q_{\\mathrm{exit}}\\in S$, a starting configuration $c$ of $M$, and contents and head positions for the additional $l$ tapes. Suppose that at every state $q\\ne q_{\\mathrm{exit}}$, for every input symbol and every tuple of work-tape symbols, the transition of $H$ at state $e(q)$ is the action of $M$ on its first $k$ tapes, extended by leaving the additional tapes unchanged and mapping the successor state by $e$. If the run of $M$ from $c$ is not in state $q_{\\mathrm{exit}}$ at any time $j<t$, then at every time $j\\le t$, the run of $H$ from the configuration formed by embedding $c$ via $e$ and adjoining the chosen additional tapes equals the embedded configuration of $M$ at time $j$.",
+ "hypotheses_covered": [
+  "Natural numbers $k,l$",
+  "State sets $S,S'$",
+  "Boolean input word $x$",
+  "Machines with $k$ and $k+l$ work tapes",
+  "State map $e:S\\to S'$",
+  "Exit state $q_{\\mathrm{exit}}\\in S$",
+  "Transition agreement at every non-exit state, for every input symbol and work-tape tuple",
+  "Starting configuration $c$ of $M$",
+  "Contents and head positions for the additional $l$ tapes",
+  "Natural-number horizon $t$",
+  "The run of $M$ is not in the exit state at any time $j<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a host machine agrees, on every embedded non-exit control, with the disjoint-bank lift of a smaller machine acting on the left tapes. Then for every start configuration of the smaller machine, every retained right-bank contents and heads, and every horizon $t$ such that the smaller machine does not reach the exit control before $t$, the host run agrees with the lifted run of the smaller machine at every time up to $t$. No agreement is required after the first exit."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.wr_prefix",
+ "key": "756cb8a74e57972d",
+ "kind": "theorem",
+ "title": "Agreement before a timeout",
+ "statement": "Let $H$ be a Turing machine with state set $Q$, let $S$ be a finite type, and let $\\mathrm{timeout}:\\mathrm{Option}(S)\\to Q$. If a run of $H$ from configuration $a$ avoids every state $\\mathrm{timeout}(r)$ for all times strictly before $t$, then for every $u\\le t$, the runner machine started from $a$ with its active-mode flag set agrees with the run of $H$ through time $u$, including the configuration state with that flag set.",
+ "hypotheses_covered": [
+  "$k$ is a natural number and $\\Gamma,Q,S$ are types",
+  "$H$ is a $k$-tape machine over $\\Gamma$ with states $Q$",
+  "$S$ is finite",
+  "A timeout map from $\\mathrm{Option}(S)$ to $Q$ is given",
+  "$x$ is an input list and $a$ is a configuration of $H$ on $x$",
+  "$t$ is a natural number",
+  "At every $u<t$, the run of $H$ from $a$ has state different from $\\mathrm{timeout}(r)$ for every $r\\in\\mathrm{Option}(S)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

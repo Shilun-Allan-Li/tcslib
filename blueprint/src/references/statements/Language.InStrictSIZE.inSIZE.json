@@ -1,0 +1,18 @@
+{
+ "lean_name": "Language.InStrictSIZE.inSIZE",
+ "key": "ee61dc69afa429ad",
+ "kind": "theorem",
+ "title": "Strict size classes lie in size classes",
+ "statement": "For a function $T : \\mathbb{N} \\to \\mathbb{N}$ and a language $L$ over Boolean strings, if $L$ is recognized by a family of circuits whose zero-input-length circuit is well formed with fan-in at most two, whose circuits for every positive input length have distinct inputs to each gate with exactly one input for NOT gates and exactly two for AND and OR gates, and in which every vertex other than the output is used by some gate, with size at most $T(n)$ at every input length $n$, then $L$ is recognized by a family of well-formed fan-in-two circuits of size at most $T(n)$ at every input length $n$.",
+ "hypotheses_covered": [
+  "$L$ belongs to the strict size class with bound $T$",
+  "The circuit at input length zero is well formed with fan-in at most two",
+  "At each positive input length, every gate has distinct arguments and the prescribed argument count (one for NOT, two otherwise)",
+  "At each positive input length, every non-output vertex below the circuit size has positive fan-out",
+  "Every circuit in the family has size at most $T(n)$ at length $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

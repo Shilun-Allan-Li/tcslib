@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.capture_visitedByTapeHead",
+ "key": "d801c5423fe70cdd",
+ "kind": "theorem",
+ "title": "Capture tape visitation and space",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes and Boolean output, and let $H$ be a machine with $k+1$ work tapes and a Boolean output. Suppose a map from the states of $M$ to those of $H$ and a return state are chosen, and at every mapped state the transition of $H$ agrees with the capture transform of the transition of $M$. For any Boolean input, initial configuration $c_0$, Boolean words $p,o$, and time $t$, suppose $M$ is not halted at any time strictly less than $t$. Then each of the first $k$ work tapes of $H$, started from the capture image of $c_0$, visits exactly the same head positions through time $t$ as the corresponding tape of $M$, and uses the same amount of space; the additional tape of $H$ uses at most the output length of $M$ at time $t$ minus its initial output length, plus one.",
+ "hypotheses_covered": [
+  "Two machines with $k$ and $k+1$ work tapes, respectively",
+  "State map and designated return state",
+  "Transition agreement with the capture transform for every state, input symbol, and work-tape reading",
+  "Boolean words $p,o$ and initial configuration $c_0$",
+  "Time $t\\in\\mathbb{N}$",
+  "The original machine is not halted at any time $t'<t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

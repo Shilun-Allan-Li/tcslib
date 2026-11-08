@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.ConfigCodec.portWire",
+ "key": "ba0061468cdbfa49",
+ "kind": "def",
+ "title": "Wire assigned to each port",
+ "statement": "For a finite Turing machine $M$, natural numbers $n,s,p,h,v$, and a machine case $q$, assign wires to ports as follows. The state port uses the wire for the state in $q$; the input-head port uses the wire for position $p$; and the input-symbol port uses the wire for input cell $p-1$ when $0<p\\le n$, otherwise the non-dead summary wire. A work-head port for tape $i$ uses the wire for the encoded head cell of tape $i$ and its head marker; a work-symbol port for tape $i$ and symbol $t$ uses the corresponding symbol wire at that cell. A summary port uses the wire for its Boolean flag, the old-bit port uses wire $v$, and the new-bit port uses wire $v$ shifted by the total width.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$",
+  "Natural numbers $n,s,p,h,v$",
+  "A machine case $q$"
+ ],
+ "confidence": "low",
+ "caveat": "The wire-numbering conventions are expressed using auxiliary offsets and widths whose definitions are embedded in the snippet but have no supplied informal descriptions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

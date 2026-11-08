@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clTableau_chunks",
+ "key": "9c5d600790064a23",
+ "kind": "lemma",
+ "title": "Chunked serialization of the tableau",
+ "statement": "Let $M$ be a finite Turing machine over Boolean symbols, let a binary code be fixed for its optional states, let $C,e,T$ be natural numbers, and let $x$ be a finite Boolean word. Form the ordered list of clause groups for the tableau with these parameters, and let $R=|x|+(k+3)T+k+1$, where $k$ is the number of work tapes of $M$. Concatenating, for each round from $0$ through $R$, the serialization of that round's clause group, followed by a terminating false bit exactly in round $R$, gives the serialization of the flattened tableau formula.",
+ "hypotheses_covered": [
+  "A finite Turing machine over Boolean symbols",
+  "A binary code for its optional states",
+  "Natural numbers $C,e,T$",
+  "A finite Boolean word $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every verifier machine with a state code, certificate parameters, instance, and horizon, concatenating the round chunks of the tableau's ordered group list over all rounds yields exactly the serialization of the tableau formula, including the empty-template and final-terminator cases."
+}

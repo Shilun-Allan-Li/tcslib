@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.skipPrefix_run",
+ "key": "907e667c668b7b65",
+ "kind": "lemma",
+ "title": "Run across a paired-input prefix",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a register, and let $j_K,j_{K2},n_x$ be states. Suppose that at $j_K$ the transition scans the input and advances the head on register $r$ by one, moving to $j_K$ when the scanned bit is true and to $j_{K2}$ otherwise; at $j_{K2}$ it advances that register head by one and moves to $n_x$. Suppose neither $j_K$ nor $j_{K2}$ is an oracle-call state. If the input is $1^{2n}01$ followed by a word $\\mathrm{rest}$, then the run from the configuration with the tapes and output of $c$, state $j_K$, input-head position $1$, and register-head position $p$ reaches the configuration with the same tapes and output, state $n_x$, input-head position $3+2n$, and register-head position $p$; before that endpoint, each run state has the form specified by the reachability relation, with no oracle call.",
+ "hypotheses_covered": [
+  "Register program $P$ and oracle",
+  "Register $r$",
+  "States $j_K,j_{K2},n_x$",
+  "Transition at $j_K$ has the specified scan-dependent behavior",
+  "Transition at $j_{K2}$ has the specified behavior",
+  "Neither $j_K$ nor $j_{K2}$ is a call state",
+  "Configuration $c$",
+  "Integer position $p$",
+  "Natural number $n$",
+  "Suffix word $\\mathrm{rest}$",
+  "Input equality $x=1^{2n}01\\,\\mathrm{rest}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

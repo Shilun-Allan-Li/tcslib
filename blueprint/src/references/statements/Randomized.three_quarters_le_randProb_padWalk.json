@@ -1,0 +1,17 @@
+{
+ "lean_name": "Randomized.three_quarters_le_randProb_padWalk",
+ "key": "44ef359ef8082a9a",
+ "kind": "theorem",
+ "title": "Success probability of a padded graph walk",
+ "statement": "Let $n$ be a natural number, let $r$ be a symmetric relation on the vertices $\\{0,\\ldots,n-1\\}$, and let $s,t$ be vertices such that $t$ is reachable from $s$ by a finite sequence of $r$-steps. Set $D=2^{\\operatorname{size}(n)}$, where $\\operatorname{size}(n)$ is the binary size of $n$, and fix a bijection from the binary words of length $\\operatorname{size}(n)$ to the $D$ edge slots. Choose uniformly a binary word of length $100n^4\\operatorname{size}(n)$, decode it into $100n^4$ edge slots using this bijection, and walk from $s$ in the padded undirected regular multigraph determined by $r$, accepting if the visited vertices include $t$. The probability of acceptance is at least $3/4$.",
+ "hypotheses_covered": [
+  "$r$ is symmetric",
+  "$s,t$ are vertices in the $n$-vertex set",
+  "$t$ is reachable from $s$ by finitely many $r$-steps",
+  "There is a bijection from length-$\\operatorname{size}(n)$ binary words to the $2^{\\operatorname{size}(n)}$ edge slots"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

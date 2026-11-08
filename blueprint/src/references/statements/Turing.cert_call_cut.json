@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.cert_call_cut",
+ "key": "a7e57f0ef4408663",
+ "kind": "theorem",
+ "title": "Cutting a Machine Call",
+ "statement": "Let $k$ be a natural number, let $S$ be a finite state set, and let $M$ be a $k$-tape Boolean machine with states in $S$. Suppose that for every parameter $a$ there is a time $t$ no greater than a prescribed natural-number budget, with $t>0$, such that the run from state $\\mathrm{en}$ and tape words $\\mathrm{before}(a)$ does not visit state $\\mathrm{ex}$ at any positive time strictly before $t$, and at time $t$ reaches state $\\mathrm{ex}$ with tape words $\\mathrm{after}(a)$. Then there exist a finite state set and a $k$-tape Boolean machine, together with start and finish states, such that for every $a$ some time within the same budget reaches the finish state with tape words $\\mathrm{after}(a)$ from the start state and words $\\mathrm{before}(a)$, and the finish state is not visited at any earlier time.",
+ "hypotheses_covered": [
+  "A natural-number tape count $k$",
+  "A finite state set $S$ with decidable equality",
+  "A $k$-tape Boolean machine $M$",
+  "States $\\mathrm{en}$ and $\\mathrm{ex}$",
+  "A parameter type $A$",
+  "Input words indexed by $A$",
+  "Before and after tape-word assignments indexed by $A$",
+  "A natural-number budget indexed by $A$",
+  "For each parameter, a time within budget, positive, with no visit to $\\mathrm{ex}$ at positive earlier times and with the specified final configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

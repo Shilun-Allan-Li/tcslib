@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clA5Iter_shrinking",
+ "key": "e85ed61829afd8ee",
+ "kind": "lemma",
+ "title": "Polynomial-time iteration of shrinking functions",
+ "statement": "Let $f$ and $s$ be polynomial-time computable functions on Boolean words, and let $N$ be a natural-valued function whose unary encoding is polynomial-time computable. If $f$ never increases word length, then the function mapping $x$ to the $N(x)$-fold iterate of $f$ applied to $s(x)$ is polynomial-time computable.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$s$ is polynomial-time computable",
+  "the unary encoding of $N(x)$ is polynomial-time computable",
+  "$|f(w)|\\le |w|$ for every Boolean word $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a polynomial-time computable step function never increases word length, then for any polynomial-time initial-word and unary-count producers, the counted iterate is polynomial-time computable; repeated sequential projections and tail scans therefore need no random access."
+}

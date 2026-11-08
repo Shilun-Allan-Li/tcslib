@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.emCall_pair_triple",
+ "key": "42d3e611bc330dcc",
+ "kind": "lemma",
+ "title": "Tracked slots are not selected",
+ "statement": "For every finite Boolean Turing machine $M$, every source tape $i$, and every tracked component $r$ among data, visited marks, and origin marks, the partial selection of a physical call-layout index is undefined at the index assigned to component $r$ of tape $i$.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean Turing machine",
+  "$i$ is a source tape of $M$",
+  "$r$ is one of the three tracked components"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source tape $i$ and component $r$, the pair selection of the finalizer is\nundefined at the physical index of component $r$ of bank $i$."
+}

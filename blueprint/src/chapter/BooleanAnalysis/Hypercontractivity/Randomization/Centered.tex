@@ -9,14 +9,20 @@ Absolute-power remainders yield a uniform scalar reflected contraction for every
 \lean{BooleanAnalysis.Hypercontractivity.CenteredContraction.remainder_lower}
 \leanok
 \difficulty{4}
-For every $q\ge2$ and $x\in\mathbb R$, $x^2\le|1+x|^q-1-qx$.
+For every $q\ge2$ and every $x\in\mathbb R$,
+\[
+x^2\le |1+x|^q-1-qx.
+\]
 \end{theorem}
 
-\begin{theorem}[Integer remainder upper bound]
+\begin{theorem}[Integer-power remainder bound]
 \lean{BooleanAnalysis.Hypercontractivity.CenteredContraction.pow_remainder_bound}
 \leanok
 \difficulty{4}
-For every $m\in\mathbb N$ and $x\in\mathbb R$ with $|x|\le1$, $(1+x)^m-1-mx\le(2^m-1-m)x^2$.
+For every natural number $m$ and every real $x$ with $|x|\le1$,
+\[
+(1+x)^m-1-mx\le (2^m-1-m)x^2.
+\]
 \end{theorem}
 
 \begin{theorem}[Local real-power remainder bound]
@@ -24,22 +30,27 @@ For every $m\in\mathbb N$ and $x\in\mathbb R$ with $|x|\le1$, $(1+x)^m-1-mx\le(2
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.CenteredContraction.pow_remainder_bound}
 \difficulty{5}
-For every $q\ge2$, an integer $m\ge q$, and $|x|\le1$, $|1+x|^q-1-qx\le2^m x^2$.
+Let $q\ge2$, let $m\in\mathbb N$ satisfy $q\le m$, and let $x\in\mathbb R$ satisfy
+$|x|\le1$. Then
+\[
+|1+x|^q-1-qx\le 2^m x^2.
+\]
 \end{theorem}
 
-\begin{theorem}[Global remainder upper bound]
+\begin{theorem}[Global remainder bound]
 \lean{BooleanAnalysis.Hypercontractivity.CenteredContraction.remainder_upper}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.CenteredContraction.remainder_local_upper}
 \difficulty{5}
-For every real $q\ge2$, there is $M>0$ such that $|1+x|^q-1-qx\le M(x^2+|x|^q)$ for every real $x$.
+For every real $q\ge 2$, there is a constant $M>0$ such that, for every real $x$,
+$|1+x|^q-1-qx\le M(x^2+|x|^q)$.
 \end{theorem}
 
 \begin{theorem}[Translated absolute-power bound]
 \lean{BooleanAnalysis.Hypercontractivity.CenteredContraction.translated_power_bound}
 \leanok
 \difficulty{4}
-For every $q\ge0$ and $x\in\mathbb R$, $|x|^q\le2^q(|1+x|^q+1)$.
+For every real $q\ge 0$ and every real $x$, $|x|^q\le 2^q(|1+x|^q+1)$.
 \end{theorem}
 
 \begin{theorem}[Power controlled by affine remainder]
@@ -47,7 +58,10 @@ For every $q\ge0$ and $x\in\mathbb R$, $|x|^q\le2^q(|1+x|^q+1)$.
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.CenteredContraction.remainder_lower, BooleanAnalysis.Hypercontractivity.CenteredContraction.translated_power_bound}
 \difficulty{5}
-For every $q\ge2$ and $x\in\mathbb R$, $|x|^q\le2^q(q+3)(|1+x|^q-1-qx)$.
+For every $q\ge2$ and every $x\in\mathbb R$,
+\[
+|x|^q\le 2^q(q+3)\bigl(|1+x|^q-1-qx\bigr).
+\]
 \end{theorem}
 
 \begin{theorem}[Uniform scalar reflected contraction]
@@ -55,28 +69,43 @@ For every $q\ge2$ and $x\in\mathbb R$, $|x|^q\le2^q(q+3)(|1+x|^q-1-qx)$.
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.CenteredContraction.remainder_lower, BooleanAnalysis.Hypercontractivity.CenteredContraction.remainder_power_lower, BooleanAnalysis.Hypercontractivity.CenteredContraction.remainder_upper}
 \difficulty{5}
-For every $q\ge2$ there is $0<c\le1$ such that $|1-cz|^q\le|1+z|^q-q(1+c)z$ for every real $z$.
+For every real $q\ge 2$, there is a real $c$ with $0<c\le 1$ such that, for every real
+$x$, $|1-cx|^q\le |1+x|^q-q(1+c)x$.
 \end{theorem}
 
-\begin{theorem}[Reflected contraction with quartic constant]
+\begin{theorem}[Reflected scalar contraction]
 \lean{BooleanAnalysis.Hypercontractivity.CenteredContraction.scalar_contraction}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.CenteredContraction.scalar_contraction_generic}
 \difficulty{4}
-For every $q\ge2$ there is $0<c\le1$, with $c=2/5$ when $q=4$, such that $|1-cz|^q\le|1+z|^q-q(1+c)z$ for every real $z$.
+For every real $q\ge 2$, there is a real $c$ with $0<c\le 1$ such that, for every real
+$x$, $|1-cx|^q\le |1+x|^q-q(1+c)x$. The constant can be chosen to satisfy $c=2/5$ when
+$q=4$.
 \end{theorem}
 
-\begin{theorem}[Affine scalar reflected contraction]
+\begin{theorem}[Affine scalar contraction]
 \lean{BooleanAnalysis.Hypercontractivity.CenteredContraction.scalar_affine}
 \leanok
 \difficulty{4}
-Let $q>0$ and $0\le c\le1$ satisfy $|1-cz|^q\le|1+z|^q-q(1+c)z$ for every real $z$. Then for all real $a,x$, $|a-cx|^q\le|a+x|^q-[q(1+c)|a|^q/a]x$, with the quotient interpreted as zero when $a=0$.
+Let $q>0$ and $0\le c\le 1$, and suppose that $|1-cz|^q\le |1+z|^q-q(1+c)z$ for every
+real $z$. Then, for all real $a$ and $x$, $|a-cx|^q\le |a+x|^q-[q(1+c)|a|^q/a]x$, where
+the quotient is interpreted as zero when $a=0$.
 \end{theorem}
 
-\begin{theorem}[Centered random-variable contraction]
+\begin{theorem}[Centered random-variable norm contraction]
 \lean{BooleanAnalysis.Hypercontractivity.CenteredContraction.norm_le_of_scalar}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.CenteredContraction.scalar_affine, BooleanAnalysis.Hypercontractivity.rvLpNorm, BooleanAnalysis.Hypercontractivity.rvLpNorm_rpow}
 \difficulty{5}
-Let $(\Omega,\mu)$ be a probability space, $q\ge2$, and $0\le c\le1$ satisfy $|1-cz|^q\le|1+z|^q-q(1+c)z$ for every real $z$. If $X\in L^q(\mu)$ is real with $\int X\,d\mu=0$, then for every $a\in\mathbb R$, $\|a-cX\|_{L^q(\mu)}\le\|a+X\|_{L^q(\mu)}$.
+Let $(\Omega,\mu)$ be a probability space, let $q\ge2$, and let $c\in[0,1]$. Suppose
+that for every $z\in\mathbb R$,
+\[
+|1-cz|^q\le |1+z|^q-q(1+c)z.
+\]
+If $X\in L^q(\mu)$ has mean zero, then for every $a\in\mathbb R$, the real-valued
+random-variable norms defined by converting the extended $L^q$ norm to a real number
+satisfy
+\[
+N_q(a-cX)\le N_q(a+X).
+\]
 \end{theorem}

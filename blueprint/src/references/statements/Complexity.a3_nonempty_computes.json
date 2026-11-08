@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.a3_nonempty_computes",
+ "key": "f4d3625add664691",
+ "kind": "lemma",
+ "title": "Guarded computation on nonempty input",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, and let $x$ and $y$ be Boolean words with $x$ nonempty. If $M$ computes $y$ from $x$ within $t$ steps, then the machine that guards against empty input computes $y$ from $x$ within $t+1$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$x$ and $y$ are Boolean words",
+  "$x$ is nonempty",
+  "$t$ is a natural number",
+  "$M$ computes $y$ from $x$ within $t$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $x$ is nonempty and $M$ computes $y$ from $x$ within $t$ steps, then the\nguarded machine computes $y$ from $x$ within $t + 1$ steps."
+}

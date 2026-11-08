@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.app_walk",
+ "key": "99ae19495151f781",
+ "kind": "theorem",
+ "title": "Appending a value to the computation tape",
+ "statement": "Let $e$ be the exactness flag, let $z$ be a Boolean input word, let $v$ be a Boolean value, and let $p$ be a valid input-head position for $z$. For any lists of previously computed values and output symbols, and any natural numbers $r,h$ satisfying $h+r=|\\mathrm{vals}|$, starting in the append state with value $v$, input-head position $p$, value tape storing $\\mathrm{vals}$, mark tape $m$, work-head position $h$, and output $\\mathrm{out}$, after $r+1$ machine steps the state is the value-rewind state returning to the gate-reading phase, the value tape stores $\\mathrm{vals}$ followed by $v$, the mark tape is erased on the integer interval from $h$ through $|\\mathrm{vals}|$ inclusive, the input-head position and output are unchanged, and both work-head positions equal $|\\mathrm{vals}|-1$.",
+ "hypotheses_covered": [
+  "An exactness flag $e\\in\\{\\mathrm{false},\\mathrm{true}\\)",
+  "A Boolean input word $z$",
+  "A Boolean value $v$",
+  "A valid input-head position $p$ for $z$",
+  "A list of computed Boolean values",
+  "A list of output symbols",
+  "Natural numbers $r,h$ with $h+r=|\\mathrm{vals}|$",
+  "An arbitrary mark-tape content function $m:\\mathbb{Z}\\to\\mathrm{Option}(\\{\\mathrm{false},\\mathrm{true}\\})$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

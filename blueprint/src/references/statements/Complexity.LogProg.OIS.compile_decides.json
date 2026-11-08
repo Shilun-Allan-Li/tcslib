@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.compile_decides",
+ "key": "bc13ceb84d326055",
+ "kind": "theorem",
+ "title": "Space bound for compiled decisions",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $M_0,M_1$ be finite Boolean Turing machines, and let $A_0,A_1$ be languages of Boolean words. Suppose that each $M_j$ decides $A_j$ with space bound $s_j$. For Boolean words $x,v,w$, assume that for every $i\\le |v|$, the encoding of $x$ paired with the binary expansion of $i$ belongs to $A_0$ if and only if $i<|v|$, and for every $i<|v|$, that encoding belongs to $A_1$ if and only if the $i$th bit of $v$, taken to be false when absent, is true. Suppose that $M$ on input $v$ halts after $t$ steps with output $w$, and that $B$ is a natural number such that, for both $j=0,1$ and every $i\\le |v|$, the maximum of $s_j$ at the length of the encoded input and $1$ is at most $B$. Then the compiled machine constructed from $M$ and the two deciders halts on input $x$ with output $w$ at some time $T$, and its space usage by time $T$ is at most $M.k\\bigl(2\\,\\mathrm{space}_M(v,t)+1\\bigr)+\\bigl(|\\mathrm{bits}(|v|+1)|+2\\bigr)+2K(2B+1)$, where $K$ is the maximum number of work tapes of $M_0$ and $M_1$.",
+ "hypotheses_covered": [
+  "Two finite Boolean Turing machines $M_0,M_1$ and languages $A_0,A_1$",
+  "Each $M_j$ decides $A_j$ with space bound $s_j$",
+  "Boolean words $x,v,w$",
+  "For every $i\\le |v|$, the encoded input belongs to $A_0$ iff $i<|v|$",
+  "For every $i<|v|$, the encoded input belongs to $A_1$ iff the $i$th bit of $v$, defaulting to false when absent, is true",
+  "A time $t$ at which $M$ halts on $v$ with output $w$",
+  "A natural number $B$ bounding the maximum of $1$ and each stated space bound at each encoded-input length for every $i\\le |v|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Compiler.agreeOutside_poolCode",
+ "key": "e55ff4280566e0f1",
+ "kind": "theorem",
+ "title": "Memory preserved outside the pool",
+ "statement": "Let $W$ be a word width, $N\\in\\bbn$, and let $m:\\bbr\\to\\text{BitVec}(W)$ be a memory. The pool-initialization program sets the pool cell at index $0$ and then fills the cells at indices $1$ through $N$; after executing it, the resulting memory agrees with $m$ at every integer address outside the set of pool addresses $-(25+4n)$ for $0\\le n\\le N$.",
+ "hypotheses_covered": [
+  "word width $W$",
+  "$N\\in\\bbn$",
+  "arbitrary initial memory $m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

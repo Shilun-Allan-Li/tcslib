@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.RulerAt",
+ "key": "53dc22089b8b4bff",
+ "kind": "def",
+ "title": "Ruler tape configuration",
+ "statement": "Let $K$ be a natural number, let $y$ and $z$ be finite Boolean strings, let $d$ be a configuration of a $K$-tape machine on input $z$, let $r$ be one of its work-tape indices, let $i$ be an input-head position among the $|y|+2$ positions, and let $\u0012$ be a natural number. The ruler condition holds if $0<\u0012\\le |z|$, the string obtained from $z$ by deleting its first $\u0012$ symbols is $y$, and the input head is at position $\u0012+i$. In addition, for every integer $p$ with $-1\\le p\\le \u0012$, the selected work tape at offset $p$ from its head agrees with the tape encoding a string of $\u0012$ true symbols.",
+ "hypotheses_covered": [
+  "$K$ is a natural number",
+  "$y$ and $z$ are finite Boolean strings",
+  "$d$ is a machine configuration on input $z$ with $K$ work tapes",
+  "$r$ is a work-tape index among the $K$ tapes",
+  "$i$ is an input position among the $|y|+2$ positions",
+  "$\u0012$ is a natural number",
+  "$0<\u0012$",
+  "$\u0012\\le |z|$",
+  "Deleting the first $\u0012$ symbols of $z$ yields $y$",
+  "The input head position is $\u0012+i$",
+  "Tape agreement holds for every integer $p$ with $-1\\le p\\le \u0012$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

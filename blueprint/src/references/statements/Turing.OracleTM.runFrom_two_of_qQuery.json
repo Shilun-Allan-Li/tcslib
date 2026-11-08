@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.OracleTM.runFrom_two_of_qQuery",
+ "key": "1f53d3537fc2b2e6",
+ "kind": "theorem",
+ "title": "Two-step behavior after an oracle query",
+ "statement": "Let $M$ be an oracle machine with $k$ ordinary work tapes whose query state and two answer states are pairwise distinct. Suppose that in the positive-answer state its transition emits a fixed symbol $y$ and halts, for every scanned input symbol and tuple of scanned work-tape symbols; suppose likewise that in the negative-answer state it emits a fixed symbol $z$ and halts. Let $O$ be a language over the symbol alphabet, and let $c$ be a configuration whose state is the query state. After two steps relative to $O$, the machine is halted, and its output is the original output followed by $y$ if the query string belongs to $O$, and by $z$ otherwise; all other components of the configuration are unchanged.",
+ "hypotheses_covered": [
+  "An oracle machine $M$ with $k$ ordinary work tapes",
+  "The query state differs from the positive-answer state",
+  "The query state differs from the negative-answer state",
+  "The positive-answer state differs from the negative-answer state",
+  "Symbols $y$ and $z$",
+  "In every positive-answer transition, emit $y$ and halt",
+  "In every negative-answer transition, emit $z$ and halt",
+  "An oracle language $O$",
+  "A configuration $c$ with $k+1$ work tapes",
+  "The state of $c$ is the query state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

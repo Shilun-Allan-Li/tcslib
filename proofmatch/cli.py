@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import json
 from dataclasses import asdict
 from decimal import Decimal
@@ -59,6 +60,7 @@ def build_parser() -> argparse.ArgumentParser:
     match = subcommands.add_parser("match")
     match.add_argument("source", type=Path)
     match.add_argument("--dataset", type=Path, default=DEFAULT_DATASET)
+    match.add_argument("--jobs", type=int, default=1, help="maximum concurrent routing/comparison requests")
     match.add_argument("--dry-run", action="store_true")
     _add_budget(match)
 
@@ -189,11 +191,14 @@ def _extract(
     local_only: bool,
 ) -> Path:
     raw = source.with_suffix(".raw.md")
-    report = extract_pdf(source, raw)
-    print(
-        f"Extracted {report.page_count} pages to {raw} "
-        f"({sum(bool(item.reasons) for item in report.diagnostics)} suspect pages)"
-    )
+    if raw.exists() and f"source-pdf-sha256: {sha256_file(source)}" in raw.read_text()[:300]:
+        print(f"Reusing matching local extraction: {raw}", flush=True)
+    else:
+        report = extract_pdf(source, raw)
+        print(
+            f"Extracted {report.page_count} pages to {raw} "
+            f"({sum(bool(item.reasons) for item in report.diagnostics)} suspect pages)", flush=True
+        )
     if local_only:
         return raw
     output = source.with_suffix(".md")
@@ -203,6 +208,8 @@ def _extract(
         ClaudeAgent(model=DEFAULT_MODEL),
         budget,
         pdf_path=source,
+        cache_dir=WORK_ROOT / "extraction",
+        jobs=int(os.environ.get("PROOFMATCH_EXTRACT_JOBS", "1")),
     )
     print(f"Validated Markdown: {output}")
     return output
@@ -214,6 +221,7 @@ def _match(
     budget: Budget,
     *,
     dry_run: bool,
+    jobs: int = 1,
 ) -> str:
     index = parse_validated_markdown(source)
     result = run_chapter_match(
@@ -224,6 +232,7 @@ def _match(
         DEFAULT_BLUEPRINT_ROOT,
         budget,
         dry_run=dry_run,
+        jobs=jobs,
     )
     run_id = index.source_fingerprint[:12]
     if dry_run:
@@ -688,7 +697,7 @@ def main(argv: list[str] | None = None) -> int:
         _extract(args.source, budget, local_only=args.local_only)
         return 0
     if args.command == "match":
-        _match(args.source, args.dataset, budget, dry_run=args.dry_run)
+        _match(args.source, args.dataset, budget, dry_run=args.dry_run, jobs=args.jobs)
         return 0
     if args.command == "run":
         if args.dry_run:

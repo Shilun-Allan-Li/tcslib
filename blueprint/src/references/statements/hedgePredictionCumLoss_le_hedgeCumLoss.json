@@ -1,6 +1,6 @@
 {
  "lean_name": "hedgePredictionCumLoss_le_hedgeCumLoss",
- "key": "35af96d031185eb3",
+ "key": "608a8cddf4de9a7f",
  "kind": "lemma",
  "title": "Jensen bound for Hedge's averaged predictions",
  "statement": "Fix a learning rate $\\eta \\in \\bbr$, a loss function $\\ell : \\bbr \\to \\Omega \\to \\bbr$, expert predictions $p : \\mathrm{Fin}\\,T \\to \\mathrm{Fin}\\,N \\to \\bbr$ (with $N \\ge 1$), and a sequence of outcomes $o : \\mathrm{Fin}\\,T \\to \\Omega$. Suppose $S \\subseteq \\bbr$ is convex, every expert prediction $p_t(i)$ lies in $S$, and for each round $t$ the map $x \\mapsto \\ell(x, o_t)$ is convex on $S$. Then the cumulative loss of Hedge's weighted-average predictions is at most the cumulative Hedge loss computed on the induced loss sequence:\n\\[\n  \\sum_{t=0}^{T-1} \\ell\\!\\left(\\widehat{x}_t,\\, o_t\\right)\n  \\;\\le\\;\n  \\sum_{t=0}^{T-1} \\sum_{i=1}^{N} p_t(i)\\,\\ell\\!\\left(p_t(i), o_t\\right),\n\\]\nwhere $\\widehat{x}_t = \\sum_{i} p_t(i)\\, p_t(i)$ is the Hedge weighted-average prediction at round $t$ and $p_t$ is the Hedge distribution at that round.",

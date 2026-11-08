@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.argsSkip",
+ "key": "cc18f1c8ebb66972",
+ "kind": "lemma",
+ "title": "Skipping an encoded argument list",
+ "statement": "Let $n$ be a natural number, let $w,E$ be bit strings, and let $o$ be an oracle on bit strings. Suppose that on every encoding of a natural number $p$, the oracle returns the $p$th bit of $E$, defaulting to false beyond its end, and that $E$ has length at most $B$. For every list $as$ and every register state $p,c,a$ such that $E$ after position $p$ consists of the encoding of $as$ followed by a suffix, with $c,a\\le B$, there is an $a'\\le B$ such that the machine can move from its argument-list scan state with registers $(p,c,a)$ to the gate scan state with registers $(p+|\\operatorname{encode}(as)|,c,a')$, while all configurations before the endpoint keep every register at most $B$.",
+ "hypotheses_covered": [
+  "Oracle answers on encoded natural numbers equal the corresponding E bit, defaulting to false",
+  "E.length ≤ B",
+  "E.drop p equals the encoding of as followed by rest",
+  "c ≤ B",
+  "a ≤ B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

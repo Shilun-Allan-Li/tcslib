@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.stableCubeGraph_properties",
+ "key": "2d2be406bae4e951",
+ "kind": "theorem",
+ "title": "Properties of the stable cube weights",
+ "statement": "Let $n\\\\in\\\\mathbb N$ and $-1\\\\le\\\\rho\\\\le1$. On the Boolean cube $\\\\{0,1\\\\}^n$, assign the ordered pair $(x,y)$ weight $W(x,y)=2^{-n}\\\\prod_{i=1}^n(1+\\\\rho\\\\sigma(x_i)\\\\sigma(y_i))/2$, where $\\\\sigma(0)=1$ and $\\\\sigma(1)=-1$. These weights are nonnegative and symmetric, each row sums to $2^{-n}$, and the sum over all ordered pairs is one.",
+ "hypotheses_covered": [
+  "$n\\\\in\\\\mathbb N$",
+  "$\\\\rho\\\\in[-1,1]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $n\\in\\mathbb N$ and $-1\\le\\rho\\le1$, and put $W(x,y)=2^{-n}\\prod_{i=0}^{n-1}[(1+\\rho(-1)^{x_i+y_i})/2]$ for cube points $x,y$. Then $W(x,y)\\ge0$, $W(x,y)=W(y,x)$, $\\sum_yW(x,y)=2^{-n}$ for every $x$, and $\\sum_{x,y}W(x,y)=1$."
+}

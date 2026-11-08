@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.dataCfg_iterates",
+ "key": "13347b3ee7281713",
+ "kind": "lemma",
+ "title": "Iterated macrosteps track the source run",
+ "statement": "Let $W$ and $M$ be finite binary Turing machines, let $a,B\\in\\mathbb{N}$, and let $x$ be a binary word with $|x|+1\\le B$. Suppose a schedule configuration has its unary tape equal to the unary tape with $B$ markers and its guide tape equal to the fixed guide of radius $3B$. Suppose also that data tapes encode the head-centered payload vectors of the initial configuration of $M$ on $x$. For every $j\\le B$, there are read and neighbor-register vectors and new data tapes such that after $j(18B+8)$ simulator steps from the macrostep-check configuration with unary head at $1$, the simulator is again at the macrostep-check phase with unary head at $j+1$, its state and saved bit equal the state and last output bit (defaulting to false) of the $j$-step run of $M$ on $x$, and the new data tapes encode the head-centered payload vectors of that run.",
+ "hypotheses_covered": [
+  "$W,M$ are finite binary Turing machines",
+  "$a,B$ are natural numbers",
+  "$x$ is a binary word",
+  "$|x|+1\\le B$",
+  "base unary tape equals the unary tape with $B$ markers",
+  "base guide tape equals the guide of radius $3B$",
+  "initial data tapes decode to the source payloads of $M$ on $x$",
+  "$j\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the base configuration's unary tape have $B$ markers with $|x| + 1 \\le B$\nand its guide tape have radius $3B$, and let the data tapes decode the\nhead-centered payload vectors of the initial configuration of the source $M$ on\n$x$.  Then for every $j \\le B$ there are reads, neighbor registers, and data\ntapes such that $j\\,(18B + 8)$ simulator steps from the first counter-test\nconfiguration reach the counter-test phase with unary head $j + 1$, carrying the\nstate and last-emitted bit of the $j$-step run of $M$ on $x$, with data tapes\ndecoding that run's head-centered payload vectors and no output emitted."
+}

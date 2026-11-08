@@ -5,18 +5,26 @@ Two-valued vectors reduce weighted finite-noise contraction to a two-point estim
 
 \section{Declarations}
 
-\begin{theorem}[Grouping a two-valued weighted sum]
+\begin{theorem}[Weighted sum of a two-valued function]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_sum}
 \leanok
 \difficulty{4}
-Let $I$ be finite, let real weights satisfy $\sum_iw_i=1$, and let $f:I\to\bbr$ take values in $\{a,b\}$, where $a,b\in\bbr$. For any $\varphi:\bbr\to\bbr$, setting $\gamma=\sum_{i:f_i=a}w_i$ gives $\sum_iw_i\varphi(f_i)=\gamma\varphi(a)+(1-\gamma)\varphi(b)$.
+Let $I$ be a finite set with real weights satisfying $\sum_iw_i=1$. Suppose
+$f:I\to\mathbb{R}$ takes only the values $a$ and $b$, for some $a,b\in\mathbb{R}$, and
+let $\varphi:\mathbb{R}\to\mathbb{R}$. With $\gamma=\sum_{i:f_i=a}w_i$, one has
+\[
+\sum_iw_i\varphi(f_i)=\gamma\varphi(a)+(1-\gamma)\varphi(b).
+\]
 \end{theorem}
 
-\begin{theorem}[Mass of two nonconstant level sets]
+\begin{theorem}[Mass dichotomy for two-valued functions]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_mass_dichotomy}
 \leanok
 \difficulty{4}
-Let $I$ be finite, $w_i>0$, $\sum_iw_i=1$, and $0<\lambda\le w_i$ for every $i$. If $f:I\to\bbr$ takes values in $\{a,b\}$, then either $f$ is identically $a$, or identically $b$, or $\lambda\le\sum_{i:f_i=a}w_i\le1-\lambda$.
+Let $I$ be a finite set with weights $w_i>0$ and $\sum_iw_i=1$. Suppose $\lambda>0$,
+$w_i\ge\lambda$ for every $i$, and $f:I\to\mathbb{R}$ takes only the values $a$ and $b$,
+where $a,b\in\mathbb{R}$. Let $\gamma=\sum_{i:f_i=a}w_i$. Then either $f$ is identically
+$a$, $f$ is identically $b$, or $\lambda\le\gamma\le1-\lambda$.
 \end{theorem}
 
 \begin{theorem}[Extending a normalized noise bound]
@@ -24,13 +32,23 @@ Let $I$ be finite, $w_i>0$, $\sum_iw_i=1$, and $0<\lambda\le w_i$ for every $i$.
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_normalization}
 \difficulty{4}
-Let $I$ be finite, $w_i>0$, $p>0$, and $\rho\in\bbr$. Define $G(f)=\sum_iw_i|f_i|^p$ and $F(f)=\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2$. If $G(f)=1$ implies $F(f)\le1$ for every real vector $f$, then $F(f)\le G(f)^{2/p}$ for every $f$.
+Let $I$ be finite, let $w_i>0$ for every $i	extrm{ in }I$, and let $p>0$ and $rho
+einbr$. Define $G(f)=sum_iw_i|f_i|^p$ and
+$F(f)=rho^2sum_iw_if_i^2+(1-rho^2)(sum_iw_if_i)^2$. If $F(f)
+earrow1$ for every $f:I	obr$ with $G(f)=1$, then $F(f)
+earrow G(f)^{2/p}$ for every $f:I	obr$.
 \end{theorem}
 
-\begin{theorem}[Sharp weighted finite-noise contraction]
+\begin{theorem}[Sharp finite noise contraction]
 \lean{BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_sharp_contraction}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.SharpDiscrete.exists_nonnegative_noise_maximizer, BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_contraction_of_unit_bound, BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_noise_maximizer_two_values, BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_mass_dichotomy, BooleanAnalysis.Hypercontractivity.SharpDiscrete.finite_two_value_sum, BooleanAnalysis.Hypercontractivity.SharpDiscrete.radius_pos_lt_one, BooleanAnalysis.Hypercontractivity.SharpDiscrete.weighted_two_point_le_of_atom_bound, BooleanAnalysis.Hypercontractivity.sharpDiscreteRadius}
 \difficulty{6}
-Let $I$ be finite, let $\sum_iw_i=1$, let $q>2$, $0<\lambda<1/2$, and assume $w_i\ge\lambda$ for all $i$. Put $p=q/(q-1)$ and $\rho=\rho_*(q,\lambda)$. Every real vector $f$ satisfies $\rho^2\sum_iw_if_i^2+(1-\rho^2)(\sum_iw_if_i)^2\le(\sum_iw_i|f_i|^p)^{2/p}$. Here $\rho_*(q,\lambda)=\sqrt{\sinh(\ell/q)/\sinh(\ell/(q/(q-1)))}$ with $\ell=\log((1-\lambda)/\lambda)$.
+Let $I$ be a finite set with real weights satisfying $\sum_iw_i=1$, and let $q>2$ and
+$0<\lambda<1/2$, with $w_i\ge\lambda$ for every $i$. Put $p=q/(q-1)$ and let $\rho$ be
+the sharp discrete radius at $(q,\lambda)$. Then every $f:I\to\mathbb{R}$ satisfies
+\[
+\rho^2\sum_iw_i f_i^2+(1-\rho^2)\left(\sum_iw_i
+f_i\right)^2\le\left(\sum_iw_i|f_i|^p\right)^{2/p}.
+\]
 \end{theorem}

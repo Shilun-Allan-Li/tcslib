@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.rt_expand_run",
+ "key": "62a79b681e2011f0",
+ "kind": "theorem",
+ "title": "Exact execution of the expanded machine",
+ "statement": "Let $x$, $pat$, and $ws$ be finite Boolean words, and let $s\\in\\mathbb{N}$ satisfy $\\operatorname{Nat.ofDigits}_2(ws)=s$. For each $j\\in\\mathbb{N}$, let $w_j$ be the word obtained from $ws$ by applying $j$ times the operation that subtracts one from a nonempty binary word and leaves the word unchanged when subtraction is undefined; let $C(ws,r)=\\sum_{j=0}^{r-1}(2\\ell_j+2)$, where $\\ell_j$ is the length of the initial string of false entries in $w_j$. Suppose a configuration $d$ of the three-work-tape machine constructed from $pat$, on input $x$, has state equal to the counter-decrement running state, and its third work tape at every offset $p$ from its head with $-1\\le p\\le |ws|$ contains the buffer representation of $ws$ at offset $p$. Set $t=s(|pat|+1)+C(ws,s+1)$. After $t$ steps, the machine is in its done state; the third work tape contains true throughout the interval of $|ws|$ cells beginning at its initial head position, the second work tape contains $s$ consecutive copies of $pat$ throughout the interval of $s|pat|$ cells beginning at its initial head position, and every other tape cell retains its initial content. The machine is not in the done state at any time $u<t$, and at every time $u\\le t$ each work-tape head is at distance at most $s|pat|+|ws|+1$ from its initial position.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Boolean words $pat$ and $ws$",
+  "Natural number $s$ with binary value of $ws$ equal to $s$",
+  "Initial configuration state is the counter-decrement running state",
+  "Third work tape matches the buffer representation of $ws$ for every integer offset $p$ with $-1\\le p\\le |ws|$",
+  "Execution time $t=s(|pat|+1)+C(ws,s+1)$",
+  "Exact final state, tape contents, and second-tape head position after $t$ steps",
+  "No earlier visit to the done state",
+  "Every work-tape head remains within distance $s|pat|+|ws|+1$ of its initial position through time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

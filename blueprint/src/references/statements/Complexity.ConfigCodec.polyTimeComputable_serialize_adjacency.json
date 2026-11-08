@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.ConfigCodec.polyTimeComputable_serialize_adjacency",
+ "key": "cbe24eeeb08ecbf9",
+ "kind": "theorem",
+ "title": "Polynomial-Time Adjacency Encoding",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean tape symbols, and let $n,s,o$ assign a natural number to each Boolean string. Suppose the functions $x\\mapsto 1^{n(x)}$, $x\\mapsto 1^{s(x)}$, and $x\\mapsto 1^{o(x)}$ are each computable in polynomial time by finite-state Turing machines. Then the function mapping $x$ to the serialized CNF obtained from the adjacency constraints for parameters $n(x),s(x)$ by shifting every variable index by $o(x)$ is computable in polynomial time.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine with Boolean tape symbols",
+  "$x\\mapsto 1^{n(x)}$ is polynomial-time computable",
+  "$x\\mapsto 1^{s(x)}$ is polynomial-time computable",
+  "$x\\mapsto 1^{o(x)}$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine with Boolean tape symbols, and let\n$n,s,o:\\{0,1\text{-strings}\to\\mathbb N\\}$ be functions such that each of the three maps\n$x\\mapsto 1^{n(x)}$, $x\\mapsto 1^{s(x)}$, and $x\\mapsto 1^{o(x)}$ is computable in\npolynomial time in the stated machine model. Then the map sending $x$ to the binary\nencoding of the adjacency CNF for parameters $n(x),s(x)$, with every variable index\nshifted by $o(x)$, is polynomial-time computable."
+}

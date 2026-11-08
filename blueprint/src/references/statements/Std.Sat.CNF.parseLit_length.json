@@ -1,0 +1,16 @@
+{
+ "lean_name": "Std.Sat.CNF.parseLit_length",
+ "key": "26cfcda99758b500",
+ "kind": "theorem",
+ "title": "Length consumed by a literal parse",
+ "statement": "Let $x$ and $r$ be bit strings, and let $\\ell=(v,b)$ be a literal. If parsing $x$ as a literal returns $\\ell$ and remainder $r$, then $v+3+|r|=|x|$.",
+ "hypotheses_covered": [
+  "$x$ and $r$ are bit strings",
+  "$\\ell=(v,b)$ is a literal",
+  "The literal parser returns $\\ell$ and remainder $r$ on input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ and $r$ be bit strings and let $(v, b)$ be a literal with $v \\in \\mathbb{N}$ and\n$b \\in \\{0,1\\}$. If the literal parser, which on an input $1^{k+1}0cy$ returns the literal\n$(k,c)$ with remainder $y$ and fails on every other input, returns $(v,b)$ with remainder\n$r$ when applied to $x$, then $v + 3 + |r| = |x|$."
+}

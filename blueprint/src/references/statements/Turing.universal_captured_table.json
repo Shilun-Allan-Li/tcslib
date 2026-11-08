@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.universal_captured_table",
+ "key": "36e4cfc7e9db3cb3",
+ "kind": "lemma",
+ "title": "Capture of the canonical transition table",
+ "statement": "Let $S$ be a finite type with decidable equality, let $c$ be an effective machine-coding scheme, let $D$ be a four-work-tape Turing machine over the binary alphabet, and let $\\alpha$ and $x$ be finite bit strings. There is a natural number $t \\le 3|\\alpha|+5+c.\\mathrm{canonizerTime}(|\\alpha|)$ such that, after $t$ steps of the capture machine formed from the prefix machine and the canonizer of $c$, started on the paired encoding of $\\alpha$ and $x$, its state is $D$’s initial state, its input-head position is $2|\\alpha|+3$, the tape corresponding to the captured transition table stores the buffer encoding of the serialization of the machine decoded from $\\alpha$, and its output is empty.",
+ "hypotheses_covered": [
+  "$S$ is finite",
+  "Equality on $S$ is decidable",
+  "$c$ is an effective machine-coding scheme",
+  "$D$ is a four-work-tape binary Turing machine",
+  "$\\alpha$ and $x$ are finite bit strings",
+  "There exists a natural number $t$ with $t \\le 3|\\alpha|+5+c.\\mathrm{canonizerTime}(|\\alpha|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $S$ be a finite type with decidable equality, let $c$ be an effective machine-coding\nscheme, let $D$ be a four-tape binary machine with initial state $q_0$, and let\n$\\alpha,x$ be bit strings. Starting the capture machine built from the composed\nprefix-extraction and canonizer machine for $c$, with interpreter $D$, on the paired\ninput $\\langle\\alpha,x\\rangle$, there is a time $t\\le 3|\\alpha|+5+T_c(|\\alpha|)$ at\nwhich its state is the interpreter state $q_0$, its input head is at position\n$2|\\alpha|+3$, its captured table tape contains the buffer-tape encoding of the\ncanonical serialization of the machine decoded from $\\alpha$, and its output is empty."
+}

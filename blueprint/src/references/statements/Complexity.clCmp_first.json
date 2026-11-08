@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCmp_first",
+ "key": "afcdaee270f938d7",
+ "kind": "lemma",
+ "title": "The comparator reaches its completed verdict",
+ "statement": "For any Boolean input word, any valid input-head position, four finite Boolean words, and any natural number $W$ bounding all four lengths, there are a time $t$ and a Boolean value $b$ such that $0<t\\le 2W+2$, and $b$ is true exactly when the sum of the first two words’ values equals the sum of the last two. At every time $j<t$, the machine is not in a completed control; at time $t$, it is in the completed control carrying $b$, with the original words intact and all work-tape heads at zero.",
+ "hypotheses_covered": [
+  "a Boolean input word $x$",
+  "a valid input-head position for $x$",
+  "four Boolean words",
+  "a natural-number bound $W$",
+  "each word has length at most $W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, four words of length at most $W$, there is a time $t$ with $0 < t \\le 2W + 2$ and a bit $b$, true exactly when the value of the first word plus the second equals the value of the third plus the fourth, such that no completed control appears before $t$ and at $t$ the comparator sits in the completed control carrying $b$ with all four words unchanged and heads at zero."
+}

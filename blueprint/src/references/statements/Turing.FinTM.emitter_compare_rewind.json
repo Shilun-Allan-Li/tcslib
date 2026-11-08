@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emitter_compare_rewind",
+ "key": "26f3c5c74e265a55",
+ "kind": "lemma",
+ "title": "Comparator rewind",
+ "statement": "Let $w,u,v$ be Boolean words, let $p$ be a valid input-head position for $w$, let $b$ be a Boolean register value, and let $j\\le\\max(|u|,|v|)$. Starting in the comparator's rewind phase with both word-tape heads at displacement $j-1$ and register $b$, after $j+1$ steps it is in the return phase with both heads at displacement zero and the register still equal to $b$.",
+ "hypotheses_covered": [
+  "Boolean words $w,u,v$",
+  "valid input-head position $p$ for $w$",
+  "Boolean register value $b$",
+  "$j\\le\\max(|u|,|v|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the comparator's rewind state with both heads at displacement $j-1$,\nfor any $j \\le \\max(\\abs{u}, \\abs{v})$, exactly $j+1$ steps restore both\nheads to displacement $0$ and enter the return state, preserving the\ncomparison register."
+}

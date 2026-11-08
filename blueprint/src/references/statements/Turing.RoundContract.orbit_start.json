@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.RoundContract.orbit_start",
+ "key": "7abe326f08a88b7f",
+ "kind": "theorem",
+ "title": "Initial Heads in the Orbit Envelope",
+ "statement": "Let $M$ be a $k$-tape Turing machine, let $a\\in S$, and let $R$ be a round contract for $M$ with anchor $a$. Suppose $c$ starts in state $a$, the precondition holds at every orbit configuration with index $r<n$, and each round endpoint with $r+1<n$ returns to state $a$. Then the vector of work-tape head positions in $c$ lies in the coordinatewise box whose lower and upper endpoints are, respectively, the minimum and maximum of the contract bounds at orbit indices below $n$ together with the head positions at orbit index $n$.",
+ "hypotheses_covered": [
+  "A round contract $R$ for machine $M$ with anchor $a$",
+  "The initial configuration $c$ has state $a$",
+  "The precondition holds at every orbit index $r<n$",
+  "Every round endpoint with $r+1<n$ has state $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape machine and let $R$ be a round contract with anchor $a$. Suppose\na configuration $c$ starts in state $a$, the round precondition holds at each orbit\nconfiguration with index $r<n$, and every round endpoint with $r+1<n$ returns to $a$.\nThen each work-head position of $c$ lies between the minimum and maximum, respectively,\nof the contract bounds at orbit indices below $n$ together with the head positions at\norbit index $n$."
+}

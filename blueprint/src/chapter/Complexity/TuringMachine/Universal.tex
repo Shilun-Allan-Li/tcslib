@@ -22,51 +22,34 @@ cells $0,\dots,|w|-1$ and blanks elsewhere.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[The universal machine]
+\begin{theorem}[Linear-time universal simulation]
 \lean{Turing.universal}
 \label{Turing.universal}
 \leanok
-\uses{Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM,
-  Turing.FinTM.ComputesInTime, Turing.FinTM.rightCfg,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_of_halt,
-  Turing.MultiTapeTM.step_of_halt, Turing.pairEncode,
-  Turing.universalBlockBound, Turing.universalCanonTM,
-  Turing.universalCaptureTM, Turing.universalCapture_interpreter_run,
-  Turing.universalInterpreter, Turing.universalRelation,
-  Turing.universalRelation_halt, Turing.universalRelation_output,
-  Turing.universalRelation_start, Turing.universalSimulationCfg,
-  Turing.universalStartupBound, Turing.universalTM,
-  Turing.universal_from_blocks, Turing.universal_live_block}
+\uses{Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.rightCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.step_of_halt, Turing.pairEncode, Turing.universalBlockBound, Turing.universalCanonTM, Turing.universalCaptureTM, Turing.universalCapture_interpreter_run, Turing.universalInterpreter, Turing.universalRelation, Turing.universalRelation_halt, Turing.universalRelation_output, Turing.universalRelation_start, Turing.universalSimulationCfg, Turing.universalStartupBound, Turing.universalTM, Turing.universal_from_blocks, Turing.universal_live_block}
 \difficulty{4}
-For every effective machine-coding scheme there is a single finite-tape
-machine $U$ over the alphabet $\{0,1\}$ such that for every code string
-$\alpha$ there is a constant $C$ (depending on $\alpha$) with the following
-two properties for every input string $x$.  Forward: whenever the coded
-machine denoted by $\alpha$ halts on $x$ within $t$ steps with output $w$, the
-machine $U$ on the pair encoding $\langle \alpha, x\rangle$ (each bit of
-$\alpha$ doubled, the delimiter $01$, then $x$ verbatim) halts with the same
-output $w$ within $C \cdot (t+1)$ steps.  Converse: every output that $U$
-produces on $\langle \alpha, x\rangle$ upon halting is an output the denoted
-machine produces on $x$ upon halting, so divergence is preserved.
+For every effective machine coding scheme $c$, there is a finite-tape machine $U$ over
+the Boolean alphabet such that for every Boolean code word $\alpha$ there is a natural
+number $C$ that works for every Boolean input $x$. If the machine decoded from $\alpha$
+computes output $y$ on $x$ in exactly $t$ steps, then $U$ computes $y$ on
+$\langle\alpha,x\rangle$ in exactly $C(t+1)$ steps. Conversely, if $U$ computes an
+output $y$ on $\langle\alpha,x\rangle$ in some number of steps, then the machine decoded
+from $\alpha$ computes $y$ on $x$ in some number of steps.
 \end{theorem}
 
-\begin{theorem}[Quadratic universal simulation of total functions]
+\begin{theorem}[Quadratic universal simulation]
 \lean{Turing.universal_quadratic}
 \label{Turing.universal_quadratic}
 \leanok
-\uses{Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM,
-  Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime,
-  Turing.FinTM.ComputesInTime.mono, Turing.FinTM.one_work_tape_binary,
-  Turing.MachineCode.decode_encode, Turing.exists_codeTM, Turing.pairEncode,
-  Turing.universal}
+\uses{Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.one_work_tape_binary, Turing.MachineCode.decode_encode, Turing.exists_codeTM, Turing.pairEncode, Turing.universal}
 \difficulty{4}
-For every effective machine-coding scheme there is a single machine $U$ over
-$\{0,1\}$ with the following property: whenever a finite-tape binary machine
-computes a total function $f$ on bit strings within a time bound
-$T \colon \mathbb{N} \to \mathbb{N}$, there are a code string $\alpha$ and a
-constant $C$ such that for every input $x$, the machine $U$ on the pair
-encoding $\langle \alpha, x\rangle$ halts with output $f(x)$ within
-$C \cdot (T(|x|)+1)^2$ steps.
+Let $c$ be an effective machine-coding scheme. There is a finite-tape machine $U$ over
+the Boolean alphabet such that, for every finite-tape Boolean machine $M_0$, function
+$f$ on finite Boolean strings, and time bound $T\colon\mathbb{N}\to\mathbb{N}$, if $M_0$
+computes $f(x)$ within $T(|x|)$ steps for every input $x$, then there are a Boolean
+string $\alpha$ and a constant $C\in\mathbb{N}$ such that, for every Boolean string $x$,
+$U$ computes $f(x)$ on the paired encoding of $\alpha$ and $x$ within $C\,(T(|x|)+1)^2$
+steps.
 \end{theorem}
 
 \begin{definition}[The stopped table interpreter]
@@ -84,99 +67,88 @@ its transition function agrees with the original interpreter.
 \lean{Turing.timedCut_Eval_reads}
 \label{Turing.timedCut_Eval_reads}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape,
-  Turing.UniversalControl, Turing.universalEvalCfg, Turing.universalFour}
+\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.UniversalControl, Turing.universalEvalCfg, Turing.universalFour}
 \difficulty{3}
-Consider an interpreter evaluation configuration, whose four work tapes are: a
-table tape holding the buffer of a bit string $T$ with cursor $p$, a state
-tape $\sigma \colon \mathbb{Z} \to \{0,1,\text{blank}\}$ with cursor $s$, and
-a mirrored work tape and a boundary-marker tape taken from a base
-configuration.  The four symbols under its work heads are, in order, the table
-symbol at $p$, the state symbol $\sigma(s)$, and the two symbols read on the
-corresponding tapes of the base configuration.
+Let $x$ be a Boolean input word, $B$ a four-tape configuration, $q$ a control state, $T$
+a Boolean table word, $p\in\mathbb Z$ a table cursor, and $\sigma\colon\mathbb
+Z\to\{0,1,\mathrm{blank}\}$ a state tape with cursor $s\in\mathbb Z$. The four symbols
+read by the work-tape heads of the evaluation configuration are, in order, the symbol of
+the buffer of $T$ at $p$, the symbol $\sigma(s)$, and the symbols read by tapes 2 and 3
+of $B$.
 \end{lemma}
 
-\begin{lemma}[Effect of one administrative action]
+\begin{lemma}[Effect of an administrative action]
 \lean{Turing.timedCut_Admin_apply}
 \label{Turing.timedCut_Admin_apply}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.UniversalControl,
-  Turing.moveInputPos_zero, Turing.universalAdmin, Turing.universalEvalCfg}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.UniversalControl, Turing.moveInputPos_zero, Turing.universalAdmin, Turing.universalEvalCfg}
 \difficulty{3}
-Applying an administrative interpreter action --- one that moves the table
-cursor by $d_t \in \{-1,0,1\}$, optionally writes a symbol at the state-tape
-cursor, moves the state cursor by $d_s$, and passes to a control state $q'$
---- to an interpreter evaluation configuration changes exactly the two
-designated cursors and, when a write is present, the state-tape cell at the
-cursor; the input head, the mirrored data, and the accumulated output are
-unchanged.
+Let $x$ be a Boolean input word, let $B$ be a four-tape configuration for that input,
+and choose control states $q,q'$, a Boolean table word $T$, a table cursor $p\in\mathbb
+Z$, a state tape $\sigma\colon\mathbb Z\to\{0,1,\mathrm{blank}\}$ with cursor
+$s\in\mathbb Z$, table and state movements $d_t,d_s\in\{-1,0,1\}$, and an optional
+state-tape write $w\in\mathrm{Option}(\mathrm{Option}(\{0,1\}))$. Applying the
+administrative action with target control $q'$, table movement $d_t$, state instruction
+$(w,d_s)$ to the evaluation configuration determined by $(B,q,T,p,\sigma,s)$ gives the
+evaluation configuration with control $q'$, table cursor $p+d_t$, state cursor $s+d_s$,
+and state tape unchanged if $w$ is absent or updated at $s$ to the value specified by
+$w$ if present.
 \end{lemma}
 
-\begin{lemma}[Administrative step rule]
+\begin{lemma}[Administrative interpreter step]
 \lean{Turing.timedCut_Eval_step}
 \label{Turing.timedCut_Eval_step}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol,
-  Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.MultiTapeTM.step,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Admin_apply, Turing.timedCut_Eval_reads,
-  Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalFour}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Admin_apply, Turing.timedCut_Eval_reads, Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalFour}
 \difficulty{3}
-If, on the symbols read in an interpreter evaluation configuration, the
-transition function of the stopped table interpreter returns the
-administrative action with table move $d_t$, optional state-tape write, state
-move $d_s$, and next control $q'$, then one machine step from that
-configuration yields exactly the evaluation configuration with control $q'$,
-table cursor shifted by $d_t$, and state tape and state cursor updated
-accordingly.
+Let $x$ be a Boolean input word, $B$ a four-tape configuration, $q,q'$ control states,
+$T$ a Boolean table word with cursor $p\in\mathbb Z$, and $\sigma\colon\mathbb
+Z\to\{0,1,\mathrm{blank}\}$ a state tape with cursor $s\in\mathbb Z$. Suppose the
+stopped interpreter's transition at control $q$, on the input symbol read from $B$ and
+the four symbols read from the evaluation configuration determined by
+$(B,q,T,p,\sigma,s)$, is the administrative action with target control $q'$, table
+movement $d_t$, and state instruction $(w,d_s)$, where $d_t,d_s\in\{-1,0,1\}$ and $w$ is
+an optional state-tape write. Then one interpreter step gives the evaluation
+configuration with control $q'$, table cursor $p+d_t$, state cursor $s+d_s$, and state
+tape unchanged if no write is specified or updated at $s$ to the specified value
+otherwise.
 \end{lemma}
 
-\begin{lemma}[Reading the first unconsumed table cell]
+\begin{lemma}[Reading the next table cell]
 \lean{Turing.timedCut_table_read}
 \label{Turing.timedCut_table_read}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat}
 \difficulty{2}
-For all bit strings $l$ and $r$ and every bit $b$, the buffer tape of the
-concatenation of $l$, the single bit $b$, and $r$ reads the symbol $b$ at
-position $|l|$.
+For Boolean lists $l$ and $r$ and a bit $b$, the buffer tape storing the concatenation
+of $l$, $b$, and $r$ contains $b$ at integer position $|l|$.
 \end{lemma}
 
-\begin{lemma}[Exact-cost table rewind]
+\begin{lemma}[Exact-Cost Table Rewind]
 \lean{Turing.timedCut_table_rewind}
 \label{Turing.timedCut_table_rewind}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl,
-  Turing.timedCutInterpreter, Turing.timedCut_Eval_step,
-  Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
 \difficulty{4}
-Suppose the stopped table interpreter is in its table-rewind phase with the
-table cursor at $j-1$, where $j$ is at most the table length.  Then exactly
-$j+1$ steps bring it to the count-parsing phase with the table cursor at $0$,
-leaving the state tape, the mirrored data, the input head, and the accumulated
-output unchanged.
+Let $x$ be a Boolean input word, $B$ a four-tape configuration, $i\in\{0,\ldots,8\}$,
+and let $T$ be a Boolean table. For every natural number $j\le |T|$, starting in the
+table-rewind control with table cursor $j-1$, after $j+1$ steps the interpreter is in
+the count-first control with the same initial flag and index and table cursor $0$.
 \end{lemma}
 
-\begin{lemma}[Skipping the doubled count field]
+\begin{lemma}[Skipping a doubled count field]
 \lean{Turing.timedCut_count_run}
 \label{Turing.timedCut_count_run}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Eval_step, Turing.timedCut_table_read,
-  Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.timedCut_table_read, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
 \difficulty{5}
-Suppose the table holds, starting at the cursor position $|l|$, the doubling
-$b_1 b_1 b_2 b_2 \cdots$ of a count string of $n$ bits followed by the
-delimiter pair $01$.  Then the count-parsing phase of the stopped table
-interpreter traverses this field in exactly $2n+2$ steps, advancing the cursor
-past the delimiter and entering the initial-state copier (when copying was
-requested) or the initial-state skipper; no binary arithmetic on the count's
-value is performed.
+Let $x$ be a Boolean input word, $B$ a four-tape configuration, $i$ a Boolean flag, $j$
+an index among nine records, $T$ a Boolean table, $\sigma$ a state tape with cursor $s$,
+and $b,l,r$ Boolean words. Suppose $T$ is the concatenation of $l$, the word formed by
+repeating each bit of $b$ twice in order, the delimiter $01$, and $r$. Starting in the
+count-first phase with flag $i$, index $j$, and table cursor $|l|$, after $2|b|+2$ steps
+the evaluation configuration has cursor $|l|+2|b|+2$ and control phase initial-copy if
+$i$ is true, or initial-skip with index $j$ if $i$ is false.
 \end{lemma}
 
 \begin{lemma}[Appending a unary state symbol]
@@ -185,96 +157,82 @@ value is performed.
 \leanok
 \uses{Turing.FinTM.bufferTape_append, Turing.universalStateTape}
 \difficulty{2}
-Writing the symbol $1$ into cell $n+1$ of the unary state tape representing
-$n$ (a marker $0$ in cell $0$ followed by $n$ ones) yields the unary state
-tape representing $n+1$.
+For every natural number $n$, updating the unary state tape encoding $n$ at cell $n+1$
+to contain $1$ gives the unary state tape encoding $n+1$.
 \end{lemma}
 
-\begin{lemma}[Blank after the last unary state symbol]
+\begin{lemma}[Blank after the unary state encoding]
 \lean{Turing.timedCut_StateTape_end}
 \label{Turing.timedCut_StateTape_end}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.universalStateTape}
 \difficulty{1}
-The unary state tape representing $n$ (a marker $0$ in cell $0$ followed by
-$n$ ones) reads a blank at cell $n+1$.
+For every natural number $n$, the unary state tape encoding $n$ is blank at cell $n+1$.
 \end{lemma}
 
-\begin{lemma}[Marker-directed state rewind]
+\begin{lemma}[Marker-Directed State Rewind]
 \lean{Turing.timedCut_state_rewind}
 \label{Turing.timedCut_state_rewind}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Eval_step, Turing.universalAdmin, Turing.universalEvalCfg,
-  Turing.universalFour}
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalFour}
 \difficulty{4}
-Suppose the state tape holds the marker symbol $0$ at cell $0$ and no cell at
-a positive position holds $0$, and suppose the current control of the stopped
-table interpreter moves the state head left on every non-marker read while, on
-reading the marker, it moves right once and transfers to a designated
-continuation control $q'$.  Then from state cursor $j \in \mathbb{N}$ the
-interpreter reaches $q'$ with state cursor $1$ in exactly $j+1$ steps, without
-changing any tape contents, the input head, or the output; the premise is
-independent of whether the traversed cells are erased blanks or retained unary
-symbols.
+Let $x$ be a Boolean input word, $B$ a four-tape configuration, and $q,q'$ interpreter
+controls. Let the state tape $sigma:\mathbb{Z}\to\{0,1,\mathrm{blank}\}$ satisfy
+$sigma(0)=0$ and $sigma(j)\ne0$ for every positive natural number $j$. Suppose that in
+control $q$, reading $0$ on work tape $1$ causes a transition to $q'$ with a one-cell
+right state-head move, while any other read causes the machine to remain in $q$ with a
+one-cell left move. Then, for every $j\in\mathbb{N}$, from the interpreter configuration
+with state head at $j$, after $j+1$ steps the control is $q'$ and the state head is at
+$1$.
 \end{lemma}
 
-\begin{lemma}[Skipping the initial-state field]
+\begin{lemma}[Skipping the Initial State Field]
 \lean{Turing.timedCut_initial_skip}
 \label{Turing.timedCut_initial_skip}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour,
-  Turing.universalInterpreter}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
 \difficulty{4}
-If the table holds $n$ ones followed by a zero starting at the cursor position
-$|l|$, then the initial-state-skipping phase of the stopped table interpreter
-traverses this unary field in exactly $n+1$ steps and enters record-group
-selection with the table cursor at $|l|+n+1$.
+Let $x$ be a Boolean word, let $b$ be a four-tape interpreter configuration for input
+$x$, let $i$ be an index in $\\{0,\\ldots,8\\}$, let $T$ be a Boolean table, let
+$\\sigma\\colon\\mathbb{Z}\\to\\{0,1,\\mathrm{blank}\\}$ be a state tape, and let
+$s\\in\\mathbb{Z}$. If $T=l\\,1^n\\,0\\,r$ for Boolean words $l,r$ and
+$n\\in\\mathbb{N}$, then after exactly $n+1$ steps the stopped interpreter, started in
+the initial-state-skipping phase with table cursor $|l|$ and state tape $\\sigma$ with
+cursor $s$, is in the record-group selection phase with index $i$ and table cursor
+$|l|+n+1$, with all other configuration fields as specified by the interpreter
+evaluation configuration.
 \end{lemma}
 
-\begin{lemma}[Copying a unary field onto the state tape]
+\begin{lemma}[Copying a Unary Table Field]
 \lean{Turing.timedCut_unary_copy}
 \label{Turing.timedCut_unary_copy}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Eval_step, Turing.timedCut_StateTape_append,
-  Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalFour,
-  Turing.universalStateTape}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.timedCut_StateTape_append, Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalFour, Turing.universalStateTape}
 \difficulty{4}
-Suppose the current control $q$ of the stopped table interpreter appends one
-unary symbol to the state tape and advances both cursors whenever the table
-reads $1$, and on reading $0$ transfers to a continuation control $q'$ with a
-designated final table move.  If the table holds $n$ ones followed by a zero
-at cursor position $|l|$, then $n+1$ steps transform the unary state tape for
-$j$ (state cursor $j+1$) into the unary state tape for $j+n$ (state cursor
-$j+n+1$), with the table cursor ending at $|l|+n$ plus the final move.  This
-single gadget serves both initial-state extraction and successor-state
-replacement.
+Let $x$ be a Boolean input word, $B$ a four-tape configuration, and $q,q'$ interpreter
+controls. Suppose that in control $q$, reading $1$ writes $1$ on the state tape and
+advances both the table and state heads by one; reading $0$ transfers to $q'$, moves the
+table head by $m$, and leaves the state head fixed. If the table is $l$ followed by $n$
+copies of $1$, then $0$, then $r$, then after $n+1$ steps from table position $|l|$ and
+state tape encoding $j$ with state head at $j+1$, the table head is at $|l|+n+m$, the
+state tape encodes $j+n$, and its head is at $j+n+1$.
 \end{lemma}
 
-\begin{lemma}[Installing a marker on a blank tape]
+\begin{lemma}[Installing a Marker on a Blank Tape]
 \lean{Turing.timedCut_install_marker}
 \label{Turing.timedCut_install_marker}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_append}
 \difficulty{1}
-Writing a single symbol $b$ into cell $0$ of the all-blank tape yields the
-buffer tape of the one-character string $b$.
+For either Boolean symbol $b$, writing $b$ at cell $0$ of the tape that is blank at
+every integer cell produces the tape storing the one-symbol word $[b]$ from cell zero.
 \end{lemma}
 
 \begin{definition}[Interpreter entry configuration]
 \lean{Turing.timedCut_InterpreterInitial}
 \label{Turing.timedCut_InterpreterInitial}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.UniversalControl,
-  Turing.universalFour}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.UniversalControl, Turing.universalFour}
 The configuration of the stopped table interpreter at entry: control in the
 start phase, the captured table held on the first work tape as a buffer with
 its cursor at the right blank, three blank auxiliary tapes, empty output, and
@@ -285,8 +243,7 @@ the input head already parked at a given position of the input.
 \lean{Turing.timedCut_InterpreterBase}
 \label{Turing.timedCut_InterpreterBase}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.UniversalControl,
-  Turing.universalFour}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.UniversalControl, Turing.universalFour}
 The inactive part of an interpreter configuration during initialization: the
 input head parked at a given position, a blank mirrored work tape, the
 virtual-input left-boundary marker installed at cell $0$ of its tape with its
@@ -297,150 +254,127 @@ head at $1$ (also correct for an empty input suffix), and empty output.
 \lean{Turing.timedCut_Interpreter_first}
 \label{Turing.timedCut_Interpreter_first}
 \leanok
-\uses{Turing.MultiTapeTM.step, Turing.moveInputPos_zero,
-  Turing.timedCutInterpreter, Turing.timedCut_InterpreterBase,
-  Turing.timedCut_InterpreterInitial, Turing.timedCut_install_marker,
-  Turing.universalEvalCfg, Turing.universalStateTape}
+\uses{Turing.MultiTapeTM.step, Turing.moveInputPos_zero, Turing.timedCutInterpreter, Turing.timedCut_InterpreterBase, Turing.timedCut_InterpreterInitial, Turing.timedCut_install_marker, Turing.universalEvalCfg, Turing.universalStateTape}
 \difficulty{3}
-The first step of the stopped table interpreter from its entry configuration
-installs the two permanent markers (the state-tape origin marker and the
-virtual-input boundary marker) and enters the unconditional table rewind with
-the table cursor on the last table cell.
+Let $x$ be a Boolean input word, let $p$ be one of its input-head positions, and let $T$
+be a Boolean table word. One step of the stopped table interpreter from its entry
+configuration with input head at $p$ and table $T$ yields the evaluation configuration
+based on the inactive base data at $p$, in control phase “rewind table” with its initial
+flag set, table cursor $|T|-1$, state tape encoding state $0$, and state cursor $1$.
 \end{lemma}
 
 \begin{lemma}[Exact interpreter initialization]
 \lean{Turing.timedCut_Interpreter_initialize}
 \label{Turing.timedCut_Interpreter_initialize}
 \leanok
-\uses{Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add,
-  Turing.MultiTapeTM.step, Turing.pairEncode, Turing.timedCutInterpreter,
-  Turing.timedCut_InterpreterBase, Turing.timedCut_InterpreterInitial,
-  Turing.timedCut_Interpreter_first, Turing.timedCut_count_run,
-  Turing.timedCut_state_rewind, Turing.timedCut_table_rewind,
-  Turing.timedCut_unary_copy, Turing.universalEvalCfg,
-  Turing.universalInterpreter, Turing.universalStateTape,
-  Turing.universalStateTape_marker, Turing.universal_pair_length}
+\uses{Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.step, Turing.pairEncode, Turing.timedCutInterpreter, Turing.timedCut_InterpreterBase, Turing.timedCut_InterpreterInitial, Turing.timedCut_Interpreter_first, Turing.timedCut_count_run, Turing.timedCut_state_rewind, Turing.timedCut_table_rewind, Turing.timedCut_unary_copy, Turing.universalEvalCfg, Turing.universalInterpreter, Turing.universalStateTape, Turing.universalStateTape_marker, Turing.universal_pair_length}
 \difficulty{5}
-Suppose the captured table $T$ is the pair encoding of a count string of $m$
-bits with a body consisting of $n$ ones, a terminator zero, and a record
-region.  Then exactly $|T| + 2m + 2n + 7$ steps of the stopped table
-interpreter bring the entry configuration to the main simulation phase, with
-the table cursor at $2m + 2 + n + 1$ (just past the header) and the state tape
-holding the unary representation of $n$ with cursor $1$; every intermediate
-configuration keeps the input head fixed and the output empty, and no
-transition-record lookup is involved.
+Let $x$ be a Boolean input word, let $p$ be an input-head position, and let $T$, $b$,
+and $r$ be Boolean words with $T$ equal to the pair encoding of $b$ and the
+concatenation of $n$ ones, a zero terminator, and $r$. After exactly $|T|+2|b|+2n+7$
+steps from the stopped interpreter's entry configuration with table $T$ and input head
+at $p$, the configuration is the evaluation configuration based on the inactive base
+data at $p$, in the main phase, with table cursor $2|b|+2+n+1$, state tape encoding
+state $n$, and state cursor $1$.
 \end{lemma}
 
-\begin{lemma}[Skipping the fixed action fields]
+\begin{lemma}[Skipping fixed action fields]
 \lean{Turing.timedCut_skip_fixed}
 \label{Turing.timedCut_skip_fixed}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Eval_step, Turing.universalEvalCfg,
-  Turing.universalInterpreter}
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalInterpreter}
 \difficulty{4}
-In the fixed-field-skipping phase of the stopped table interpreter, with
-current field index $i$ and $n$ further fields remaining (so $i + n = 7$),
-exactly $n+1$ steps advance the table cursor by $n+1$ cells and enter the
-unary-tail scanner; no tape content is inspected or modified.
+Let $x$ be a binary input, and let a base configuration, destination, bounded counter,
+binary table, state tape, and state-tape cursor be given. For every nonnegative integer
+$n$, field index $f\in\{0,\ldots,7\}$, and table cursor $p$, if $f+n=7$, then starting
+in the fixed-field-skipping phase at field $f$ and cursor $p$, after $n+1$ steps the
+stopped interpreter is in the unary-tail-scanning phase with the same destination and
+remaining counter, table cursor $p+n+1$, and unchanged state tape and state-tape cursor.
 \end{lemma}
 
-\begin{lemma}[Skipping a record's unary tail]
+\begin{lemma}[Unary Skip Across a Delimited Block]
 \lean{Turing.timedCut_skip_unary}
 \label{Turing.timedCut_skip_unary}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour,
-  Turing.universalInterpreter, Turing.universalSkipDone}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter, Turing.universalSkipDone}
 \difficulty{4}
-If the table holds $n$ ones followed by a zero at cursor position $|l|$, the
-unary-skipping phase of the stopped table interpreter traverses them in
-exactly $n+1$ steps, ending with the cursor at $|l|+n+1$; on the terminator it
-completes the skip request when the bounded record counter is zero, and
-otherwise decrements the counter and re-enters fixed-field skipping.
+Let $x$ be a Boolean word, let $B$ be a four-tape configuration on input $x$, let $d$ be
+an optional record destination, and let $r$ be a counter in $	ext{Fin}(9)$. Suppose the
+table is a concatenation of words $l$ and $r_0$ with $n$ copies of $1$ followed by $0$
+between them. Starting in the unary-skip control with table cursor $|l|$, after $n+1$
+steps the table cursor is $|l|+n+1$; the control is the skip continuation for $d$ if the
+counter is zero, and otherwise the fixed-field skip control with counter decreased by
+one.
 \end{lemma}
 
 \begin{lemma}[Skipping one serialized record]
 \lean{Turing.timedCut_skip_record}
 \label{Turing.timedCut_skip_record}
 \leanok
-\uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.UniversalControl,
-  Turing.timedCutInterpreter, Turing.timedCut_skip_fixed,
-  Turing.timedCut_skip_unary, Turing.universalActionBits,
-  Turing.universalEvalCfg, Turing.universalNextOnes,
-  Turing.universalRecordBits, Turing.universalSkipDone,
-  Turing.universal_record_shape}
+\uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_skip_fixed, Turing.timedCut_skip_unary, Turing.universalActionBits, Turing.universalEvalCfg, Turing.universalNextOnes, Turing.universalRecordBits, Turing.universalSkipDone, Turing.universal_record_shape}
 \difficulty{4}
-If a complete serialized transition record --- eight fixed bits followed by a
-unary successor field and its terminator --- occupies the table starting at
-the cursor, then the skipping phase of the stopped table interpreter traverses
-it in exactly its serialized length, decrementing the bounded record counter,
-or completing the skip request when the counter is zero, with the cursor moved
-past the record.
+Let $x$ be a binary input, let $n$ be a nonnegative integer, and let a base
+configuration, destination, bounded counter, binary table $T$, state tape, state-tape
+cursor, and action $a$ be given. Suppose $T$ is the concatenation of a prefix, the
+serialized record of $a$, and a suffix. Starting in the fixed-field-skipping phase with
+counter value $r$ and table cursor at the end of the prefix, after exactly the length of
+that record in steps the interpreter has its table cursor just past the record. Its
+state tape and state-tape cursor are unchanged; its control continues the skip request
+if $r>0$, with counter reduced by one, and otherwise enters the continuation specified
+by the destination.
 \end{lemma}
 
 \begin{lemma}[Skipping a list of records]
 \lean{Turing.timedCut_skip_records}
 \label{Turing.timedCut_skip_records}
 \leanok
-\uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.UniversalControl,
-  Turing.timedCutInterpreter, Turing.timedCut_skip_record,
-  Turing.universalEvalCfg, Turing.universalRecordBits,
-  Turing.universalSkipDone}
+\uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_skip_record, Turing.universalEvalCfg, Turing.universalRecordBits, Turing.universalSkipDone}
 \difficulty{4}
-If the table holds, at the cursor, the concatenated serializations of a
-nonempty list of transition records whose length is one more than the bounded
-record counter, then the skipping phase of the stopped table interpreter
-traverses all of them in exactly the total serialized length and finishes in
-the requested continuation with the cursor past the last record; no extra
-transition occurs between consecutive records.
+Let $x$ be a binary input, let $n$ be a nonnegative integer, and let a base
+configuration, destination, binary table $T$, state tape, state-tape cursor, and list
+$A$ of actions be given. Suppose $A$ has length one more than the bounded record
+counter, and $T$ is the concatenation of a prefix, the serialized records of all actions
+in $A$, and a suffix. Starting in the fixed-field-skipping phase with that counter and
+table cursor at the end of the prefix, after exactly the total serialized length of the
+records of $A$ steps the stopped interpreter reaches the continuation specified by the
+destination, with its table cursor just past those records and its state tape and cursor
+unchanged.
 \end{lemma}
 
-\begin{lemma}[Skipping state groups while erasing the unary state]
+\begin{lemma}[Skipping state groups]
 \lean{Turing.timedCut_skip_groups}
 \label{Turing.timedCut_skip_groups}
 \leanok
-\uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Eval_step, Turing.timedCut_skip_records,
-  Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter,
-  Turing.universalRecordBits, Turing.universalSkipDone,
-  Turing.universalStateWindow, Turing.universalStateWindow_end,
-  Turing.universalStateWindow_erase, Turing.universalStateWindow_read}
+\uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.timedCut_skip_records, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter, Turing.universalRecordBits, Turing.universalSkipDone, Turing.universalStateWindow, Turing.universalStateWindow_end, Turing.universalStateWindow_erase, Turing.universalStateWindow_read}
 \difficulty{5}
-Suppose the table holds, at the cursor, the concatenated records of a list of
-$g$ state groups, each consisting of nine records, and the state tape holds a
-partially erased unary state whose remaining ones number exactly $g$.  Then in
-exactly $g$ plus the total serialized length plus one steps, the stopped table
-interpreter erases one unary state symbol per group, skips all of the groups'
-records, and enters the state rewind, with the table cursor past the traversed
-records and all erasures recorded on the state tape.
+Let $x$ be a binary input, let $n$ be a nonnegative integer, and let a base
+configuration, index $i\in\{0,\ldots,8\}$, binary table $T$, lists $G,L,R$, and
+nonnegative integer $j$ be given. Suppose every group in $G$ has nine actions and $T$ is
+the concatenation of $L$, the serialized records of all actions in $G$, and $R$.
+Starting in the group phase at index $i$, with table cursor at the end of $L$, state
+tape encoding a window with $j$ unary symbols already consumed and $|G|$ remaining, and
+state cursor at $j+1$, after $|G|$ plus the total serialized length of those records
+plus $1$ steps the interpreter is in the state-rewind phase at index $i$. Its table
+cursor is past those records, its state tape encodes the window with $j+|G|$ symbols
+consumed and none remaining, and its state cursor is $j+|G|+1$.
 \end{lemma}
 
-\begin{lemma}[Reading the eight fixed action bits]
+\begin{lemma}[Reading the Eight Fixed Action Bits]
 \lean{Turing.timedCut_read_fixed}
 \label{Turing.timedCut_read_fixed}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl,
-  Turing.timedCutInterpreter, Turing.timedCut_Eval_step,
-  Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter}
 \difficulty{5}
-Suppose the table holds a word $b$ of eight bits starting at position $|l|$,
-the action-reading phase of the stopped table interpreter is at field index
-$i$ with $n = 7-i$ fields left, and the accumulated eight-bit register agrees
-with $b$ on all indices below $i$.  Then exactly $n+1$ steps fill the register
-with all of $b$ and enter the successor-decoding phase, with the table cursor
-at $|l|+8$.
+Let $x$ be a Boolean input word, $b$ a four-tape interpreter configuration on input $x$,
+$T$ a Boolean table, $\\sigma$ an integer-indexed optional Boolean state tape with
+cursor $s$, and $a$ a function assigning a Boolean bit to each of the eight fixed
+action-bit positions. Suppose $T=l\\,a(0)a(1)\\cdots a(7)\\,r$. For every
+$n\\in\\mathbb{N}$, field index $i\\in\\{0,\\ldots,7\\}$, and accumulated register $a_0$
+satisfying $i+n=7$ and $a_0(j)=a(j)$ for every index $j<i$, the stopped interpreter
+starting in the action-reading phase with register $a_0$ and table cursor $|l|+i$
+reaches the successor-decoding phase carrying all of $a$ after exactly $n+1$ steps, with
+table cursor $|l|+8$; the other fields are those of the specified evaluation
+configuration.
 \end{lemma}
 
 \begin{definition}[Successor-preparation cost]
@@ -452,28 +386,22 @@ install and rewind its unary state before the action is applied: $1$ for a
 halting successor, and $2q + 4$ for a live successor of index $q$.
 \end{definition}
 
-\begin{lemma}[Preparing the successor state]
+\begin{lemma}[Preparing a Successor State]
 \lean{Turing.timedCut_prepare_next}
 \label{Turing.timedCut_prepare_next}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_Eval_step, Turing.timedCut_NextCost,
-  Turing.timedCut_state_rewind, Turing.timedCut_unary_copy,
-  Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter,
-  Turing.universalNextOnes, Turing.universalStateTape,
-  Turing.universalStateTape_marker}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.timedCut_NextCost, Turing.timedCut_state_rewind, Turing.timedCut_unary_copy, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInterpreter, Turing.universalNextOnes, Turing.universalStateTape, Turing.universalStateTape_marker}
 \difficulty{5}
-Suppose the table holds, at the cursor, the unary successor field of a record
-(its number of ones encoding the optional successor state) followed by its
-terminator, and the state tape is the unary tape for $0$ with cursor $1$.
-Then within exactly the successor-preparation cost, the stopped table
-interpreter installs the unary representation of the successor index (or of
-$0$ in the halting case) on the state tape with cursor $1$ and enters the
-pending-action phase carrying the eight decoded bits and the halting flag,
-with the table cursor stopped on the field's terminator.
+Let $x$ be a Boolean word, $b$ a four-tape interpreter configuration on input $x$, $T$ a
+Boolean table, $a$ a function assigning a Boolean bit to each of the eight fixed
+action-bit positions, and $v$ either no successor state or a state index in
+$\\{0,\\ldots,n\\}$. If $T=l\\,1^m\\,0\\,r$, where $m$ is the unary length associated
+with $v$, then after the successor-preparation duration (one step when $v$ is absent and
+$2q+4$ steps when $v=q$ is present), the stopped interpreter is in the pending-action
+phase carrying $a$ and the flag indicating that $v$ is absent. Its table cursor is
+$|l|+m$, its state tape is the unary representation of the successor index (or zero if
+absent), and its state cursor is $1$; the remaining fields are those of the specified
+evaluation configuration.
 \end{lemma}
 
 \begin{definition}[The nine actions of a state]
@@ -491,13 +419,13 @@ key and the work read (in the same order) as the minor key.
 \lean{Turing.timedCut_Actions_lookup}
 \label{Turing.timedCut_Actions_lookup}
 \leanok
-\uses{Turing.CodeTM, Turing.timedCut_Actions,
-  Turing.universalRecordIndex}
+\uses{Turing.CodeTM, Turing.timedCut_Actions, Turing.universalRecordIndex}
 \difficulty{2}
-For every coded machine, state $q$, and pair of optional input and work reads,
-the nine-action list of $q$ has length $9$, and its entry at the record index
-determined by the two reads (a number in $\{0,\dots,8\}$) is exactly the
-machine's transition action for $q$ on those reads.
+Let $M$ be a machine in code normal form, let $q$ be one of its states, and let $u$ and
+$v$ each be either blank, $0$, or $1$. The list of the nine transition actions for $q$
+has length $9$, and its entry at the index determined by the ordered pair $(u,v)$ is the
+transition action of $M$ at state $q$ when the input read is $u$ and the work-tape read
+is $v$.
 \end{lemma}
 
 \begin{definition}[Serialization header]
@@ -511,143 +439,107 @@ ones as the initial state's index) and its terminator zero; the transition
 records are excluded.
 \end{definition}
 
-\begin{lemma}[Serialization as header plus grouped records]
+\begin{lemma}[Serialization by state groups]
 \lean{Turing.timedCut_serialization_actions}
 \label{Turing.timedCut_serialization_actions}
 \leanok
-\uses{Turing.CodeTM, Turing.CodeTM.serialize, Turing.pairEncode,
-  Turing.timedCut_Actions, Turing.timedCut_Header,
-  Turing.universalRecordBits, Turing.universalRecords}
+\uses{Turing.CodeTM, Turing.CodeTM.serialize, Turing.pairEncode, Turing.timedCut_Actions, Turing.timedCut_Header, Turing.universalRecordBits, Turing.universalRecords}
 \difficulty{5}
-The canonical serialization of a coded machine equals its header followed by
-the concatenation, over its states in increasing order, of the serialized
-nine-action record lists of each state.
+For every coded machine $M$, its canonical serialization is its header followed by the
+concatenation, in increasing state order, of the serialized transition records for the
+nine read-symbol pairs at each state.
 \end{lemma}
 
-\begin{lemma}[Decomposing the table at a selected action]
+\begin{lemma}[Serialization split at a transition record]
 \lean{Turing.timedCut_lookup_parts}
 \label{Turing.timedCut_lookup_parts}
 \leanok
-\uses{Turing.Action, Turing.CodeTM, Turing.CodeTM.serialize,
-  Turing.timedCut_Actions, Turing.timedCut_Actions_lookup,
-  Turing.timedCut_Header, Turing.timedCut_serialization_actions,
-  Turing.universalRecordBits, Turing.universalRecordIndex}
+\uses{Turing.Action, Turing.CodeTM, Turing.CodeTM.serialize, Turing.timedCut_Actions, Turing.timedCut_Actions_lookup, Turing.timedCut_Header, Turing.timedCut_serialization_actions, Turing.universalRecordBits, Turing.universalRecordIndex}
 \difficulty{5}
-For every coded machine, state $q$, and pair of optional input and work reads,
-the serialization splits as: the header, then the record groups of the $q$
-states preceding $q$ (each a list of nine records), then the records of $q$'s
-group preceding the read offset selected by the two reads, then the serialized
-record of the machine's transition action for $q$ on those reads, then a
-remainder.
+Let $M$ be a coded machine, let $q$ be a state of $M$, and let
+$u,v\in\{	ext{absent},0,1\}$ be the input and work-tape reads. There are a list $G$ of
+lists of transition actions, a list $B$ of transition actions, and a Boolean word $R$
+such that $G$ has length equal to the index of $q$, every list in $G$ has length nine,
+and $B$ has length equal to the record index of $(u,v)$. The serialization of $M$ is the
+concatenation of its header, the records in the lists of $G$ in order, the records in
+$B$ in order, the record for $M$'s transition from state $q$ on reads $u,v$, and $R$.
 \end{lemma}
 
 \begin{lemma}[Decoding the fixed action bits]
 \lean{Turing.timedCut_ActionBits_decode}
 \label{Turing.timedCut_ActionBits_decode}
 \leanok
-\uses{Turing.Action, Turing.universalActionBits, Turing.universalSign,
-  Turing.universalWrite}
+\uses{Turing.Action, Turing.universalActionBits, Turing.universalSign, Turing.universalWrite}
 \difficulty{2}
-Decoding the four fixed two-bit pairs of a transition action's eight-bit
-serialization recovers, in order, the action's input-head movement, its
-optional work-tape write, its work-head movement, and its optional emission.
+Let $n$ be a natural number, and let $a$ be a one-work-tape action with Boolean symbols
+and states in $\mathrm{Fin}(n+1)$. Its eight fixed action bits decode to its input-head
+movement, work-tape write instruction, work-head movement, and optional output symbol,
+respectively.
 \end{lemma}
 
-\begin{lemma}[Selecting the source record]
+\begin{lemma}[Selecting a transition record]
 \lean{Turing.timedCut_select}
 \label{Turing.timedCut_select}
 \leanok
-\uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.UniversalControl,
-  Turing.timedCutInterpreter, Turing.timedCut_skip_groups,
-  Turing.timedCut_skip_records, Turing.timedCut_state_rewind,
-  Turing.universalEvalCfg, Turing.universalInterpreter,
-  Turing.universalRecordBits, Turing.universalSkipDone,
-  Turing.universalStateTape, Turing.universalStateTape_marker,
-  Turing.universalStateWindow_empty, Turing.universalStateWindow_zero}
+\uses{Turing.Action, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_skip_groups, Turing.timedCut_skip_records, Turing.timedCut_state_rewind, Turing.universalEvalCfg, Turing.universalInterpreter, Turing.universalRecordBits, Turing.universalSkipDone, Turing.universalStateTape, Turing.universalStateTape_marker, Turing.universalStateWindow_empty, Turing.universalStateWindow_zero}
 \difficulty{5}
-Suppose the table holds, at the cursor, the concatenated records of $g$
-preceding state groups (nine records each) followed by the records preceding
-the selected read offset, and the state tape is the unary tape for $g$ with
-cursor $1$.  Then in exactly $2g$ plus the total serialized length of the
-traversed records plus $3$ steps, the stopped table interpreter destructively
-counts down the unary state while skipping its groups, rewinds the erased
-state tape, skips the read-offset prefix (entering the action reader directly
-when the offset is zero), and arrives in the action-reading phase with a
-cleared register, the table cursor at the selected record, and the state tape
-reset to the unary tape for $0$.
+Let $x$ be a binary input, let $n$ be a nonnegative integer, and let the base
+configuration, a record index $i\in\{0,\ldots,8\}$, a binary table $T$, a list $G$ of
+lists of actions, a list $B$ of actions, and binary strings $L,R$ be given. Suppose
+every group in $G$ has nine actions, $B$ has $i$ actions, and $T$ is the concatenation
+of $L$, the serialized records of all actions in all groups of $G$, the serialized
+records of the actions in $B$, and $R$. Starting with the stopped interpreter in the
+group phase at index $i$, with table cursor at the end of $L$ and state tape encoding
+the unary number of groups in $G$ with cursor at $1$, after $2|G|$ plus the serialized
+length of those groups’ records plus the serialized length of $B$’s records plus $3$
+steps, it is in the action-reading phase with its eight-bit register cleared, table
+cursor at the beginning of the selected record, and state tape reset to the unary
+encoding of zero with cursor at $1$.
 \end{lemma}
 
-\begin{lemma}[Concatenating two run equalities]
+\begin{lemma}[Concatenating two run segments]
 \lean{Turing.timedCut_run_join}
 \label{Turing.timedCut_run_join}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add}
+\uses{Turing.Cfg, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add}
 \difficulty{1}
-For any multi-tape machine, if running $s$ steps from a configuration $a$
-yields $b$ and running $t$ steps from $b$ yields $c$, then running $s+t$ steps
-from $a$ yields $c$.
+Let $M$ be a multi-tape Turing machine, and let $a,b,c$ be configurations and $s,t$
+nonnegative integers. If running $M$ for $s$ steps from $a$ yields $b$, and running it
+for $t$ steps from $b$ yields $c$, then running it for $s+t$ steps from $a$ yields $c$.
 \end{lemma}
 
-\begin{lemma}[Applying the decoded record]
+\begin{lemma}[Applying a decoded transition record]
 \lean{Turing.timed_apply_record}
 \label{Turing.timed_apply_record}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol,
-  Turing.Cfg.workTapeSymbols, Turing.CodeTM, Turing.CodeTM.serialize,
-  Turing.FinTM.bufferTape, Turing.FinTM.virtualMove, Turing.MultiTapeTM.step,
-  Turing.UniversalControl, Turing.timedCut_ActionBits_decode,
-  Turing.universalActionBits, Turing.universalEvalCfg, Turing.universalFour,
-  Turing.universalInput_move, Turing.universalInput_read,
-  Turing.universalInterpreter, Turing.universalSimulationCfg,
-  Turing.universalStateTape}
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.CodeTM, Turing.CodeTM.serialize, Turing.FinTM.bufferTape, Turing.FinTM.virtualMove, Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedCut_ActionBits_decode, Turing.universalActionBits, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInput_move, Turing.universalInput_read, Turing.universalInterpreter, Turing.universalSimulationCfg, Turing.universalStateTape}
 \difficulty{5}
-Let $M$ be a coded machine, let $\mathrm{src}$ be a configuration of $M$, and
-let $a$ be a transition action of $M$.  One step of the (unstopped) four-tape
-table interpreter from the pending-action evaluation configuration --- built
-over the interpreter checkpoint of $\mathrm{src}$, carrying the eight decoded
-bits of $a$ and the halting flag of its successor, with the serialized table,
-any table cursor $p$, and the unary tape of the successor index installed ---
-equals exactly the interpreter checkpoint of the configuration obtained by
-applying $a$ to $\mathrm{src}$, with table cursor $p$; this includes the
-correct virtual-input head movement, optional write, emission, and the halting
-case.
+Let $M$ be a coded machine, let $\alpha$ and $x$ be Boolean words, let $\mathrm{src}$ be
+a configuration of $M$ on input $x$, let $p$ and $p_0$ be natural numbers, and let $a$
+be any action for $M$. One step of the universal interpreter from the evaluation
+configuration built from the simulation configuration of $\mathrm{src}$ at table
+position $p_0$, with the record-application control carrying the eight bits of $a$ and
+its halting flag, table $M$'s serialization at cursor $p$, and the unary state tape for
+$a$'s successor state, equals the simulation configuration of the result of applying $a$
+to $\mathrm{src}$ at table position $p$.
 \end{lemma}
 
-\begin{lemma}[One live simulation block]
+\begin{lemma}[A Bounded Live Simulation Block]
 \lean{Turing.timedCut_live_block}
 \label{Turing.timedCut_live_block}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol,
-  Turing.Cfg.workTapeSymbols, Turing.CodeTM, Turing.CodeTM.serialize,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step,
-  Turing.UniversalControl, Turing.pairEncode,
-  Turing.timedCutInterpreter, Turing.timedCut_Eval_step,
-  Turing.timedCut_Header, Turing.timedCut_NextCost,
-  Turing.timedCut_count_run, Turing.timedCut_initial_skip,
-  Turing.timedCut_lookup_parts, Turing.timedCut_prepare_next,
-  Turing.timedCut_read_fixed, Turing.timedCut_run_join,
-  Turing.timedCut_select, Turing.timedCut_table_rewind,
-  Turing.timed_apply_record, Turing.universalActionBits,
-  Turing.universalAdmin, Turing.universalEvalCfg,
-  Turing.universalInput_read, Turing.universalInterpreter,
-  Turing.universalNextOnes, Turing.universalRecordBits,
-  Turing.universalRecordIndex, Turing.universalSimulationCfg,
-  Turing.universalStateTape, Turing.universal_pair_length,
-  Turing.universal_record_shape}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.CodeTM, Turing.CodeTM.serialize, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.pairEncode, Turing.timedCutInterpreter, Turing.timedCut_Eval_step, Turing.timedCut_Header, Turing.timedCut_NextCost, Turing.timedCut_count_run, Turing.timedCut_initial_skip, Turing.timedCut_lookup_parts, Turing.timedCut_prepare_next, Turing.timedCut_read_fixed, Turing.timedCut_run_join, Turing.timedCut_select, Turing.timedCut_table_rewind, Turing.timed_apply_record, Turing.universalActionBits, Turing.universalAdmin, Turing.universalEvalCfg, Turing.universalInput_read, Turing.universalInterpreter, Turing.universalNextOnes, Turing.universalRecordBits, Turing.universalRecordIndex, Turing.universalSimulationCfg, Turing.universalStateTape, Turing.universal_pair_length, Turing.universal_record_shape}
 \difficulty{6}
-Let $M$ be a coded machine with serialization of length $L$ and state count
-$N+1$, let $\mathrm{src}$ be a non-halted configuration of $M$, and let the
-table cursor $p$ satisfy $p \le L$.  Then there exist a duration
-$d \le 3L + 5(N+1) + 20$, a new cursor $p' \le L$, and a configuration
-$\mathrm{ready}$ whose control is a pending-action state, such that the
-stopped table interpreter runs from the interpreter checkpoint of
-$\mathrm{src}$ to $\mathrm{ready}$ in exactly $d$ steps, and one step of the
-unstopped interpreter from $\mathrm{ready}$ is the interpreter checkpoint of
-the configuration obtained by one step of $M$ from $\mathrm{src}$, with table
-cursor $p'$.
+Let $M$ be a coded machine with serialization length $L$, let $\\alpha$ and $x$ be
+Boolean words, and let $c$ be a configuration of $M$ on input $x$ whose state is
+present. If $p\\in\\mathbb{N}$ satisfies $p\\le L$, then there are natural numbers
+$d,p'$, and a four-tape interpreter configuration $r$ on the paired input
+$\\langle\\alpha,x\\rangle$ such that $d\\le 3L+5(N+1)+20$, $p'\\le L$, the control
+state of $r$ is a pending-action state, the stopped interpreter reaches $r$ from the
+simulation configuration for $M,\\alpha,c,p$ in exactly $d$ steps, and one step of the
+ordinary interpreter from $r$ equals the simulation configuration for the result of one
+step of $M$ from $c$ with table cursor $p'$. Here $N$ is the state-count parameter of
+$M$.
 \end{lemma}
 
 \begin{definition}[Physical clock prefix]
@@ -659,16 +551,15 @@ encoding: each bit of $b$ repeated four times, followed by the four delimiter
 cells $0011$.
 \end{definition}
 
-\begin{lemma}[Nested pairing splits off the clock]
+\begin{lemma}[Layout of the nested input encoding]
 \lean{Turing.timed_input_layout}
 \label{Turing.timed_input_layout}
 \leanok
 \uses{Turing.pairEncode, Turing.timedClockPrefix}
 \difficulty{3}
-For all bit strings $b$, $\alpha$, $x$, the nested pair encoding
-$\langle \langle b, \alpha\rangle, x\rangle$ equals the physical clock prefix
-of $b$ (each bit quadrupled, then the four cells $0011$) followed by the pair
-encoding $\langle \alpha, x\rangle$.
+For bit strings $b,\alpha,x$, the nested pair encoding $\langle\langle
+b,\alpha\rangle,x\rangle$ is the physical clock prefix for $b$ followed by the pair
+encoding $\langle\alpha,x\rangle$.
 \end{lemma}
 
 \begin{lemma}[Length of the clock prefix]
@@ -677,7 +568,8 @@ encoding $\langle \alpha, x\rangle$.
 \leanok
 \uses{Turing.timedClockPrefix}
 \difficulty{3}
-The physical clock prefix of a string $b$ has length $4|b| + 4$.
+For every Boolean word $b$, the physical clock prefix formed by repeating each bit of
+$b$ four times and then appending $0011$ has length $4|b|+4$.
 \end{lemma}
 
 \begin{definition}[Prefix-parser control states]
@@ -705,8 +597,7 @@ reading any of the input suffix.
 \lean{Turing.timedPrefixCfg}
 \label{Turing.timedPrefixCfg}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.TimedPrefixControl,
-  Turing.pairEncode}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.TimedPrefixControl, Turing.pairEncode}
 The configuration of the prefix parser on the nested pair encoding
 $\langle \langle b, \alpha\rangle, x\rangle$ with a given control state and
 input position, the captured clock string held on its work tape as a buffer
@@ -719,107 +610,97 @@ with head at the right blank, and a given accumulated output.
 \leanok
 \uses{Turing.pairEncode, Turing.universal_pair_length}
 \difficulty{2}
-For all bit strings $b$, $\alpha$, $x$, the nested pair encoding
-$\langle \langle b, \alpha\rangle, x\rangle$ has length
-$4|b| + 2|\alpha| + 6 + |x|$.
+For bit strings $b$, $\alpha$, and $x$, the nested pair encoding $\langle\langle
+b,\alpha\rangle,x\rangle$ has length $4|b|+2|\alpha|+6+|x|$.
 \end{lemma}
 
-\begin{lemma}[Cells of a quadrupled clock bit]
+\begin{lemma}[Entries of the quadrupled clock word]
 \lean{Turing.timed_clock_get}
 \label{Turing.timed_clock_get}
 \leanok
 \uses{Turing.pairEncode, Turing.timedClockPrefix, Turing.timed_input_layout}
 \difficulty{4}
-For every $j < |b|$ and every $r < 4$, cell $4j + r$ of the nested pair
-encoding $\langle \langle b, \alpha\rangle, x\rangle$ holds the clock bit
-$b_j$.
+Let $bs$, $\alpha$, and $x$ be finite Boolean words. For every index $j<|bs|$ and every
+$r<4$, the entry at index $4j+r$ of the nested pair encoding $\langle\langle
+bs,\alpha\rangle,x\rangle$ is $bs_j$.
 \end{lemma}
 
-\begin{lemma}[The doubled inner separator]
+\begin{lemma}[Cells of the inner separator]
 \lean{Turing.timed_clock_separator}
 \label{Turing.timed_clock_separator}
 \leanok
 \uses{Turing.pairEncode, Turing.timedClockPrefix, Turing.timed_input_layout}
 \difficulty{3}
-For every $r < 4$, cell $4|b| + r$ of the nested pair encoding
-$\langle \langle b, \alpha\rangle, x\rangle$ holds the $r$-th symbol of the
-four-cell separator $0011$.
+Let $bs$, $\alpha$, and $x$ be finite Boolean words. For every $r<4$, the entry at index
+$4|bs|+r$ of the nested pair encoding $\langle\langle bs,\alpha\rangle,x\rangle$ equals
+the entry at index $r$ of the four-bit word $0011$.
 \end{lemma}
 
-\begin{lemma}[One advancing parser step]
+\begin{lemma}[Advancing parser step]
 \lean{Turing.timedPrefix_advance}
 \label{Turing.timedPrefix_advance}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg.inputSymbol,
-  Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.step,
-  Turing.TimedPrefixControl, Turing.moveInputPos_pos_of_ne_right,
-  Turing.pairEncode, Turing.timedPrefixCfg, Turing.timedPrefixTM}
+\uses{Turing.Action.apply, Turing.Cfg.inputSymbol, Turing.FinTM.inputSymbol_at, Turing.MultiTapeTM.step, Turing.TimedPrefixControl, Turing.moveInputPos_pos_of_ne_right, Turing.pairEncode, Turing.timedPrefixCfg, Turing.timedPrefixTM}
 \difficulty{3}
-Suppose the prefix parser's transition in control $q$, on the input symbol
-found at physical position $p$ of the nested pair encoding, moves the input
-head right, writes nothing to the work tape, optionally emits one bit, and
-passes to a control $q'$.  Then one machine step from the corresponding parser
-configuration advances the physical input position by one, appends the
-optional emission to the output, keeps the stored clock unchanged, and enters
-$q'$.
+Let $b_s,\alpha,x,\mathrm{clock},\mathrm{out}$ be Boolean words, let $q$ be a parser
+control state, let $q'$ be an optional parser control state, and let $e$ be an optional
+Boolean output. Suppose $p$ is a position strictly before the end of the nested pair
+encoding $\langle\langle b_s,\alpha\rangle,x\rangle$, and its bit at position $p$ is
+$b$. If, for every work-tape reading, the parser in state $q$ on input bit $b$ moves
+right, leaves its work tape unchanged, emits $e$, and enters $q'$, then from the
+configuration at input position $p+1$, with clock buffer $\mathrm{clock}$ and output
+$\mathrm{out}$, one step reaches the configuration at position $p+2$, with the same
+clock buffer and output $\mathrm{out}$ followed by $e$; the state is $q'$.
 \end{lemma}
 
-\begin{lemma}[The clock-writing parser step]
+\begin{lemma}[Clock-Bit Writing Step]
 \lean{Turing.timedPrefix_write}
 \label{Turing.timedPrefix_write}
 \leanok
-\uses{Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.step,
-  Turing.moveInputPos_pos_of_ne_right, Turing.pairEncode,
-  Turing.timedPrefixCfg, Turing.timedPrefixTM}
+\uses{Turing.FinTM.bufferTape_append, Turing.MultiTapeTM.step, Turing.moveInputPos_pos_of_ne_right, Turing.pairEncode, Turing.timedPrefixCfg, Turing.timedPrefixTM}
 \difficulty{3}
-In the fourth phase of a clock bit $b$, one step of the prefix parser advances
-the input head one cell and appends the single bit $b$ to the clock string
-stored on its work tape, returning to the first clock phase with no output.
+Let $b_s,\alpha,x,$ and $c$ be finite Boolean strings, let $b$ be a bit, and let $p$ be
+a natural number with $p<|\langle\langle b_s,\alpha\rangle,x\rangle|$. When the prefix
+parser is in the fourth clock phase for $b$, with input head at position $p+1$, clock
+string $c$, and empty output, one step advances the input head to position $p+2$,
+appends $b$ to the clock string, returns to the first clock phase, and leaves the output
+empty.
 \end{lemma}
 
-\begin{lemma}[Clock extraction]
+\begin{lemma}[Clock extraction after partial scan]
 \lean{Turing.timedPrefix_clock}
 \label{Turing.timedPrefix_clock}
 \leanok
-\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode,
-  Turing.timedPrefixCfg, Turing.timedPrefixTM, Turing.timedPrefix_advance,
-  Turing.timedPrefix_write, Turing.timed_clock_get,
-  Turing.timed_input_length}
+\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode, Turing.timedPrefixCfg, Turing.timedPrefixTM, Turing.timedPrefix_advance, Turing.timedPrefix_write, Turing.timed_clock_get, Turing.timed_input_length}
 \difficulty{4}
-For every $j \le |b|$, running the prefix parser $4j$ steps from its initial
-configuration on the nested pair encoding
-$\langle \langle b, \alpha\rangle, x\rangle$ stores exactly the first $j$
-clock bits on its work tape, leaves the output empty, and places the input
-head just past the $4j$ consumed cells, still in the first clock phase.
+Let $b_s,\alpha,x$ be Boolean words. For every integer $j$ with $j\le |b_s|$, after $4j$
+steps of the prefix parser on $\langle\langle b_s,\alpha\rangle,x\rangle$, its state is
+the first clock-reading phase, its input head is at position $4j+1$, its work tape
+stores the prefix of $b_s$ of length $j$, and its output is empty.
 \end{lemma}
 
-\begin{lemma}[Consuming the clock delimiter]
+\begin{lemma}[Clock delimiter consumed]
 \lean{Turing.timedPrefix_clock_end}
 \label{Turing.timedPrefix_clock_end}
 \leanok
-\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode,
-  Turing.timedPrefixCfg, Turing.timedPrefixTM, Turing.timedPrefix_advance,
-  Turing.timedPrefix_clock, Turing.timed_clock_separator,
-  Turing.timed_input_length}
+\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode, Turing.timedPrefixCfg, Turing.timedPrefixTM, Turing.timedPrefix_advance, Turing.timedPrefix_clock, Turing.timed_clock_separator, Turing.timed_input_length}
 \difficulty{4}
-Running the prefix parser $4|b| + 4$ steps from its initial configuration on
-the nested pair encoding $\langle \langle b, \alpha\rangle, x\rangle$ consumes
-the entire quadrupled clock and its four separator cells, stores exactly $b$
-on the work tape, produces no output, and enters the code-extraction phase.
+For Boolean words $b_s,\alpha,x$, after $4|b_s|+4$ steps of the prefix parser on
+$\langle\langle b_s,\alpha\rangle,x\rangle$, its state is the first code-reading phase,
+its input head is at position $4|b_s|+5$, its work tape stores all of $b_s$, and its
+output is empty.
 \end{lemma}
 
-\begin{lemma}[Indexing past the clock prefix]
+\begin{lemma}[Entries after the clock prefix]
 \lean{Turing.timed_code_get}
 \label{Turing.timed_code_get}
 \leanok
-\uses{Turing.pairEncode, Turing.timedClockPrefix_length,
-  Turing.timed_input_layout}
+\uses{Turing.pairEncode, Turing.timedClockPrefix_length, Turing.timed_input_layout}
 \difficulty{2}
-For every $j$, cell $4|b| + 4 + j$ of the nested pair encoding
-$\langle \langle b, \alpha\rangle, x\rangle$ equals cell $j$ of the inner pair
-encoding $\langle \alpha, x\rangle$.
+Let $bs$, $\alpha$, and $x$ be finite Boolean words. For every $j\in\mathbb{N}$, the
+entry at index $4|bs|+4+j$ of the nested pair encoding $\langle\langle
+bs,\alpha\rangle,x\rangle$ equals the entry at index $j$ of $\langle\alpha,x\rangle$,
+with out-of-range entries interpreted as absent.
 \end{lemma}
 
 \begin{lemma}[Cells of a doubled code bit]
@@ -828,53 +709,44 @@ encoding $\langle \alpha, x\rangle$.
 \leanok
 \uses{Turing.pairEncode}
 \difficulty{3}
-For every $j < |\alpha|$, cells $2j$ and $2j+1$ of the pair encoding
-$\langle \alpha, x\rangle$ both hold the code bit $\alpha_j$.
+For Boolean words $\alpha,x$ and a natural number $j<|\alpha|$, the bits at positions
+$2j$ and $2j+1$ in the pair encoding $\langle\alpha,x\rangle$ both equal $\alpha_j$.
 \end{lemma}
 
-\begin{lemma}[The aligned separator]
+\begin{lemma}[Position of the Pair Separator]
 \lean{Turing.timed_pair_separator}
 \label{Turing.timed_pair_separator}
 \leanok
 \uses{Turing.pairEncode}
 \difficulty{3}
-Cells $2|\alpha|$ and $2|\alpha| + 1$ of the pair encoding
-$\langle \alpha, x\rangle$ hold $0$ and $1$ respectively.
+For any Boolean words $\alpha$ and $x$, the encoding formed by doubling each bit of
+$\alpha$, appending $01$, and then appending $x$ has $0$ at zero-based position
+$2|\alpha|$ and $1$ at position $2|\alpha|+1$.
 \end{lemma}
 
-\begin{lemma}[Code extraction]
+\begin{lemma}[Code extraction after partial scan]
 \lean{Turing.timedPrefix_code}
 \label{Turing.timedPrefix_code}
 \leanok
-\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode,
-  Turing.timedPrefixCfg, Turing.timedPrefixTM, Turing.timedPrefix_advance,
-  Turing.timedPrefix_clock_end, Turing.timed_code_get,
-  Turing.timed_input_length, Turing.timed_pair_get}
+\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode, Turing.timedPrefixCfg, Turing.timedPrefixTM, Turing.timedPrefix_advance, Turing.timedPrefix_clock_end, Turing.timed_code_get, Turing.timed_input_length, Turing.timed_pair_get}
 \difficulty{4}
-For every $j \le |\alpha|$, running the prefix parser $4|b| + 4 + 2j$ steps
-from its initial configuration on the nested pair encoding
-$\langle \langle b, \alpha\rangle, x\rangle$ keeps the stored clock $b$
-intact, emits exactly the first $j$ code bits as output, and remains in the
-code-extraction phase with the input head just past the consumed cells.
+Let $b_s,\alpha,x$ be Boolean words. For every integer $j$ with $j\le |\alpha|$, after
+$4|b_s|+4+2j$ steps of the prefix parser on $\langle\langle b_s,\alpha\rangle,x\rangle$,
+its state is the first code-reading phase, its input head is at position
+$4|b_s|+4+2j+1$, its work tape stores all of $b_s$, and its output is the prefix of
+$\alpha$ of length $j$.
 \end{lemma}
 
-\begin{lemma}[Completed parser run]
+\begin{lemma}[Completed prefix parsing]
 \lean{Turing.timedPrefix_complete}
 \label{Turing.timedPrefix_complete}
 \leanok
-\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode,
-  Turing.timedPrefixCfg, Turing.timedPrefixTM, Turing.timedPrefix_advance,
-  Turing.timedPrefix_code, Turing.timed_code_get, Turing.timed_input_length,
-  Turing.timed_pair_separator}
+\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode, Turing.timedPrefixCfg, Turing.timedPrefixTM, Turing.timedPrefix_advance, Turing.timedPrefix_code, Turing.timed_code_get, Turing.timed_input_length, Turing.timed_pair_separator}
 \difficulty{4}
-Running the prefix parser $4|b| + 2|\alpha| + 6$ steps from its initial
-configuration on the nested pair encoding
-$\langle \langle b, \alpha\rangle, x\rangle$ halts it with the full clock $b$
-stored on the work tape, output exactly $\alpha$, and the input head parked at
-the start of the suffix region holding $x$; both delimiters are consumed, also
-when $b$ or $\alpha$ is empty.
+For Boolean words $b_s,\alpha,x$, after $4|b_s|+2|\alpha|+6$ steps of the prefix parser
+on $\langle\langle b_s,\alpha\rangle,x\rangle$, the machine is halted, its input head is
+at position $4|b_s|+2|\alpha|+7$, its work tape stores $b_s$, and its output is
+$\alpha$.
 \end{lemma}
 
 \begin{definition}[Value of a clock word]
@@ -886,14 +758,14 @@ has value $0$, and the word with first bit $b$ and tail $w$ has value
 $2 \cdot \mathrm{value}(w) + b$.
 \end{definition}
 
-\begin{lemma}[Canonical clock words]
+\begin{lemma}[Value of the binary representation]
 \lean{Turing.timedValue_bits}
 \label{Turing.timedValue_bits}
 \leanok
 \uses{Turing.timedValue}
 \difficulty{3}
-For every natural number $t$, the little-endian value of the binary
-representation of $t$ is $t$.
+For every natural number $t$, the little-endian value of the binary representation of
+$t$ is $t$.
 \end{lemma}
 
 \begin{definition}[Fixed-width borrow subtraction]
@@ -907,46 +779,45 @@ and the result is the final (underflow) borrow flag together with a word of
 the same width.
 \end{definition}
 
-\begin{lemma}[A cleared borrow is the identity]
+\begin{lemma}[Borrow with a clear flag]
 \lean{Turing.timedBorrow_false}
 \label{Turing.timedBorrow_false}
 \leanok
 \uses{Turing.timedBorrow}
 \difficulty{3}
-Subtracting a cleared borrow flag from a word leaves the word unchanged and
-reports no underflow.
+For every Boolean word, subtracting an incoming borrow flag set to false returns a false
+final borrow flag and leaves the word unchanged.
 \end{lemma}
 
-\begin{lemma}[Borrow subtraction preserves width]
+\begin{lemma}[Borrow subtraction preserves length]
 \lean{Turing.timedBorrow_length}
 \label{Turing.timedBorrow_length}
 \leanok
 \uses{Turing.timedBorrow}
 \difficulty{3}
-For every incoming borrow flag and word, the word returned by the fixed-width
-borrow subtraction has the same length as the input word.
+For every incoming Boolean borrow flag and Boolean word, the output word produced by
+fixed-width borrow subtraction has the same length as the input word.
 \end{lemma}
 
-\begin{lemma}[Underflow detects a zero budget]
+\begin{lemma}[Borrow underflow criterion]
 \lean{Turing.timedBorrow_underflow}
 \label{Turing.timedBorrow_underflow}
 \leanok
 \uses{Turing.timedBorrow, Turing.timedBorrow_false, Turing.timedValue}
 \difficulty{3}
-Subtracting a set borrow flag from a word underflows if and only if the word's
-little-endian value is $0$.
+For every Boolean word, subtracting an incoming borrow flag set to true produces a final
+borrow flag equal to true if and only if the word's little-endian value is zero.
 \end{lemma}
 
-\begin{lemma}[A successful borrow decrements the value]
+\begin{lemma}[Borrow subtraction decrements value]
 \lean{Turing.timedBorrow_value}
 \label{Turing.timedBorrow_value}
 \leanok
-\uses{Turing.timedBorrow, Turing.timedBorrow_false,
-  Turing.timedValue}
+\uses{Turing.timedBorrow, Turing.timedBorrow_false, Turing.timedValue}
 \difficulty{4}
-If a word has positive little-endian value, then the value of the word
-obtained by subtracting a set borrow flag is exactly one less than the value
-of the original word.
+For every Boolean word of positive little-endian value, subtracting an incoming borrow
+flag set to true produces a word whose little-endian value plus one equals the original
+word's value.
 \end{lemma}
 
 \begin{definition}[Timed-interpreter control states]
@@ -974,8 +845,7 @@ index $4$ to the clock value, and index $5$ to the buffer value.
 \lean{Turing.timedAction}
 \label{Turing.timedAction}
 \leanok
-\uses{Turing.Action, Turing.TimedControl, Turing.UniversalControl,
-  Turing.timedSix}
+\uses{Turing.Action, Turing.TimedControl, Turing.UniversalControl, Turing.timedSix}
 The lift of a four-tape interpreter action to six tapes: the four core lanes
 act as before, the clock lane is untouched, any emission is written to the
 output-buffer lane (advancing its head) instead of being emitted, and a
@@ -998,8 +868,7 @@ a designated control.
 \lean{Turing.timedInterpreter}
 \label{Turing.timedInterpreter}
 \leanok
-\uses{Turing.MultiTapeTM, Turing.TimedControl, Turing.timedAction,
-  Turing.timedAdmin, Turing.universalInterpreter}
+\uses{Turing.MultiTapeTM, Turing.TimedControl, Turing.timedAction, Turing.timedAdmin, Turing.universalInterpreter}
 The six-tape interpreter with a countdown clock: it follows the table
 interpreter, buffering all emissions, until a decoded action is pending; it
 then rewinds the clock lane and performs one fixed-width borrow pass.  A
@@ -1013,8 +882,7 @@ halting.
 \lean{Turing.timedLift}
 \label{Turing.timedLift}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.TimedControl,
-  Turing.UniversalControl, Turing.timedSix}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.TimedControl, Turing.UniversalControl, Turing.timedSix}
 The six-tape configuration representing a four-tape interpreter configuration
 together with a clock word: the four core lanes are copied, the clock lane
 holds the clock word as a buffer with head at its right blank, the buffer lane
@@ -1022,101 +890,87 @@ holds the four-tape configuration's accumulated output, and the real output is
 empty; a halted four-tape control maps to the emission-start phase.
 \end{definition}
 
-\begin{lemma}[Non-record states are unaffected by stopping]
+\begin{lemma}[Agreement outside record states]
 \lean{Turing.timedCut_regular}
 \label{Turing.timedCut_regular}
 \leanok
-\uses{Turing.UniversalControl,
-  Turing.timedCutInterpreter, Turing.universalInterpreter}
+\uses{Turing.UniversalControl, Turing.timedCutInterpreter, Turing.universalInterpreter}
 \difficulty{2}
-For every control state that is not a pending-action state, the transition
-function of the stopped table interpreter agrees with that of the original
-table interpreter on all reads.
+For any control state $q$ that is not of the form holding a fully decoded transition
+record, and for every input symbol and four-tape read tuple, the stopped interpreter and
+the original interpreter have the same transition action.
 \end{lemma}
 
-\begin{lemma}[Liveness propagates backwards]
+\begin{lemma}[Backward Persistence of Liveness]
 \lean{Turing.timedCut_live_before}
 \label{Turing.timedCut_live_before}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add,
-  Turing.MultiTapeTM.runFrom_of_halt, Turing.UniversalControl, Turing.timedCutInterpreter}
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.UniversalControl, Turing.timedCutInterpreter}
 \difficulty{3}
-If the stopped table interpreter has not halted after $t$ steps from a
-configuration, then it has not halted after any $s \le t$ steps from that
-configuration (halting is absorbing).
+Let $x$ be a Boolean input word and $c$ a configuration of the stopped four-tape
+interpreter on input $x$. For natural numbers $s\\le t$, if the interpreter has not
+halted after $t$ steps from $c$, then it has not halted after $s$ steps from $c$.
 \end{lemma}
 
-\begin{lemma}[No record before a live endpoint]
+\begin{lemma}[No Pending Action Before a Live Endpoint]
 \lean{Turing.timedCut_no_record}
 \label{Turing.timedCut_no_record}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step,
-  Turing.UniversalControl, Turing.timedCutInterpreter,
-  Turing.timedCut_live_before}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_live_before}
 \difficulty{3}
-If the stopped table interpreter has not halted after $t$ steps from a
-configuration, then at every time $s < t$ its control is not a pending-action
-state, because the stopped interpreter halts one step after reaching such a
-state.
+Let $x$ be a Boolean input word and $c$ a configuration of the stopped four-tape
+interpreter on input $x$. If $s<t$ and the interpreter has not halted at time $t$ from
+$c$, then at time $s$ its control state is not any pending-action state, for every
+choice of the eight action bits and halting flag.
 \end{lemma}
 
-\begin{lemma}[Core reads of the six-lane assembly]
+\begin{lemma}[Core lanes of the six-lane assembly]
 \lean{Turing.timedSix_core}
 \label{Turing.timedSix_core}
 \leanok
 \uses{Turing.timedSix}
 \difficulty{2}
-Restricting the six-lane assembly of four core values, a clock value, and a
-buffer value to the first four indices returns the four core values.
+Let $A$ be a type, let $a$ assign an element of $A$ to each of the four core indices,
+and let $b,c\in A$. For every core index $i$, the six-lane assembly evaluated at the
+corresponding index among the six lanes equals $a(i)$.
 \end{lemma}
 
 \begin{lemma}[Applying a lifted action]
 \lean{Turing.timedAction_apply}
 \label{Turing.timedAction_apply}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg,
-  Turing.FinTM.bufferTape_append, Turing.UniversalControl,
-  Turing.timedAction, Turing.timedLift, Turing.timedSix}
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.bufferTape_append, Turing.UniversalControl, Turing.timedAction, Turing.timedLift, Turing.timedSix}
 \difficulty{3}
-Applying the six-tape lift of a four-tape interpreter action to the six-tape
-lift of a four-tape configuration (with any clock word) equals the lift of the
-configuration obtained by applying the action: the clock word is unchanged and
-any emission is captured on the buffer lane, including an emission on the
-action's halting transition.
+Let $x$ be a Boolean input word, $c$ a configuration of the four-tape interpreter on
+$x$, $clock$ a Boolean word, and $a$ an action of that interpreter. Applying the
+six-tape lift of $a$ to the six-tape lift of $c$ with clock word $clock$ gives exactly
+the lift of the configuration obtained by applying $a$ to $c$, with the same clock word.
 \end{lemma}
 
-\begin{lemma}[One regular step replays]
+\begin{lemma}[One-Step Replay on Regular States]
 \lean{Turing.timed_regular_step}
 \label{Turing.timed_regular_step}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols,
-  Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedAction,
-  Turing.timedAction_apply, Turing.timedCutInterpreter,
-  Turing.timedCut_regular, Turing.timedInterpreter, Turing.timedLift,
-  Turing.universalInterpreter}
+\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedAction, Turing.timedAction_apply, Turing.timedCutInterpreter, Turing.timedCut_regular, Turing.timedInterpreter, Turing.timedLift, Turing.universalInterpreter}
 \difficulty{4}
-For every live four-tape configuration whose control is not a pending-action
-state, one step of the timed interpreter from its six-tape lift (with any
-clock word) equals the lift of one step of the stopped table interpreter, with
-the same clock word.
+Let $x$ be a Boolean input, let $c$ be a four-tape configuration of the table
+interpreter on $x$, and let $w$ be a Boolean clock word. If $c$ is live and its control
+is not a state carrying a decoded transition record, then one step of the timed
+interpreter from the six-tape lift of $c$ with clock word $w$ equals the six-tape lift,
+with the same clock word, of one step of the stopped table interpreter from $c$.
 \end{lemma}
 
-\begin{lemma}[Replaying a stopped run]
+\begin{lemma}[Replay of a Nonhalting Run]
 \lean{Turing.timed_replay}
 \label{Turing.timed_replay}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.UniversalControl,
-  Turing.timedCutInterpreter, Turing.timedCut_live_before,
-  Turing.timedCut_no_record, Turing.timedInterpreter, Turing.timedLift,
-  Turing.timed_regular_step}
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.UniversalControl, Turing.timedCutInterpreter, Turing.timedCut_live_before, Turing.timedCut_no_record, Turing.timedInterpreter, Turing.timedLift, Turing.timed_regular_step}
 \difficulty{4}
-If the stopped table interpreter has not halted after $t$ steps from a
-four-tape configuration, then $t$ steps of the timed interpreter from the
-six-tape lift of that configuration equal the lift of the $t$-step stopped
-run, with an unchanged clock word; no countdown or output phase is visited in
-the interior of the run.
+Let $x$ be a Boolean input, $c$ a four-tape configuration of the table interpreter on
+$x$, $w$ a Boolean clock word, and $t\in\mathbb{N}$. If the stopped table interpreter's
+configuration after $t$ steps is live, then the timed interpreter's configuration after
+$t$ steps from the lift of $c$ with clock word $w$ equals the lift, with clock word $w$,
+of the stopped interpreter's configuration after $t$ steps from $c$.
 \end{lemma}
 
 \begin{definition}[Single active lane configuration]
@@ -1144,115 +998,121 @@ stationary, and passes to a given control state.
 \lean{Turing.timed_laneCfg_read}
 \label{Turing.timed_laneCfg_read}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepTape_read,
-  Turing.timed_laneCfg}
+\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepTape_read, Turing.timed_laneCfg}
 \difficulty{1}
-In a single-active-lane configuration, the active lane reads the first entry
-of the unprocessed zipper list, or a blank when that list is empty.
+Let $A$ and $S$ be types, let $x$ be a finite list over $A$, and let $base$ be a
+configuration with $k$ work tapes. For a lane $lane<k$, an optional state $q$, an
+integer frontier $z$, and finite lists $l,r$ of optional symbols over $A$, the
+configuration obtained by replacing that lane with the zipper determined by $z,l,r$ and
+placing its head at $z$ reads the head entry of $r$, or blank if $r$ is empty.
 \end{lemma}
 
 \begin{lemma}[Right-moving zipper step on one lane]
 \lean{Turing.timed_laneCfg_right}
 \label{Turing.timed_laneCfg_right}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM.sweepTape_right,
-  Turing.moveInputPos_zero, Turing.timed_laneAction, Turing.timed_laneCfg}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.FinTM.sweepTape_right, Turing.moveInputPos_zero, Turing.timed_laneAction, Turing.timed_laneCfg}
 \difficulty{3}
-Applying a right-moving single-lane action that writes a symbol $b$ to a
-single-active-lane configuration whose unprocessed list begins with a cell $a$
-consumes $a$, pushes $b$ onto the processed stack, advances the frontier by
-one, and passes to the designated control; all inactive data is unchanged.
+Let $base$ be a configuration with $k$ work tapes, choose a lane $lane<k$, optional
+state $q$, state $q'$, integer $z$, lists $l,r$ of optional symbols, and optional
+symbols $a,b$. Applying the action that writes $b$ on lane $lane$, moves that head one
+cell right, and enters state $q'$ to the zipper configuration at frontier $z$ with left
+list $l$ and right list $a::r$ yields the zipper configuration at frontier $z+1$ with
+left list $b::l$ and right list $r$, state $q'$, and all other configuration data as
+specified by the base configuration.
 \end{lemma}
 
-\begin{lemma}[Generic one-lane transduction]
+\begin{lemma}[One-lane finite-state transduction]
 \lean{Turing.timed_lane_run}
 \label{Turing.timed_lane_run}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols,
-  Turing.FinTM.sweepFold, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero,
-  Turing.timed_laneAction, Turing.timed_laneCfg, Turing.timed_laneCfg_read,
-  Turing.timed_laneCfg_right}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.sweepFold, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.timed_laneAction, Turing.timed_laneCfg, Turing.timed_laneCfg_read, Turing.timed_laneCfg_right}
 \difficulty{5}
-Suppose a machine's transitions, on a family of control states indexed by a
-register type, always perform a right-moving single-lane write determined by a
-local visit function of the register and the symbol read on the designated
-lane.  Then running the machine for exactly the length of a word laid out on
-that lane's zipper computes the left fold of the visit function over the word:
-the final control carries the folded register, the frontier advances by the
-word's length, the processed stack holds the rewritten word reversed, and all
-inactive tapes are unchanged.
+Let $M$ be a deterministic machine with $k$ work tapes, choose a lane $lane<k$, and let
+$R,C$ be types with maps $state:R\to S$ and $symbol:C\to A$ and a visit rule
+$visit:R\times C\to R\times C$. Suppose that whenever the selected lane reads
+$symbol(c)$, the transition from state $state(s)$, for any input and work-tape reads, is
+the single-lane action that writes $symbol$ of the updated cell, moves that lane right,
+and enters the state indexed by the updated register. Then, for any base configuration,
+word $as$ over $C$, initial register $s$, integer frontier $z$, and lists $l,r$ of
+optional symbols, running $M$ for $|as|$ steps from the zipper configuration whose right
+list begins with the encoded word $as$ followed by $r$ yields the zipper configuration
+whose frontier is $z+|as|$, register is the final register from the left-to-right
+transduction of $as$, and left list is the reversed encoded rewritten word prepended to
+$l$, with right list $r$.
 \end{lemma}
 
-\begin{lemma}[Clock writes are single-lane actions]
+\begin{lemma}[Clock-lane administrative action]
 \lean{Turing.timedAdmin_clock}
 \label{Turing.timedAdmin_clock}
 \leanok
 \uses{Turing.TimedControl, Turing.timedAdmin, Turing.timed_laneAction}
 \difficulty{2}
-A timed administrative action that writes and moves only on the clock lane
-coincides with the generic single-lane action on lane $4$ of the six-tape
-machine.
+For any timed control state $q$, optional Boolean value $b$, and movement sign $d$, the
+administrative action with successor state $q$, clock-lane instruction $(b,d)$, and no
+buffer-lane instruction equals the single-lane action that writes $b$ and moves by $d$
+on lane $4$ of the six-tape machine.
 \end{lemma}
 
-\begin{lemma}[Borrow as a local fold]
+\begin{lemma}[Borrow subtraction as a fold]
 \lean{Turing.timedBorrow_fold}
 \label{Turing.timedBorrow_fold}
 \leanok
 \uses{Turing.FinTM.sweepFold, Turing.timedBorrow}
 \difficulty{3}
-The fixed-width borrow subtraction equals the left fold of the local rule
-sending a carry flag $c$ and a bit $b$ to the new carry $c \wedge \lnot b$ and
-the output bit $b \oplus c$.
+For every incoming Boolean borrow flag and Boolean word, sweeping the word from left to
+right with the local rule that sends a carry $c$ and bit $b$ to carry $c \wedge \lnot b$
+and output bit $b \oplus c$ yields the same final carry and output word as the
+fixed-width borrow subtraction.
 \end{lemma}
 
-\begin{lemma}[Exact borrow transduction]
+\begin{lemma}[Borrow phase over a clock word]
 \lean{Turing.timed_borrow_run}
 \label{Turing.timed_borrow_run}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.TimedControl,
-  Turing.timedAdmin_clock, Turing.timedBorrow, Turing.timedBorrow_fold,
-  Turing.timedInterpreter, Turing.timed_laneCfg, Turing.timed_lane_run}
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.TimedControl, Turing.timedAdmin_clock, Turing.timedBorrow, Turing.timedBorrow_fold, Turing.timedInterpreter, Turing.timed_laneCfg, Turing.timed_lane_run}
 \difficulty{3}
-From the borrow phase with a given carry flag and the clock word laid out on
-the clock lane's zipper, the timed interpreter processes the word in exactly
-its length: the final control carries the resulting underflow flag, the
-processed stack holds the borrowed word, and neither the four simulation lanes
-nor the buffered output is touched.
+Let $x$ be a Boolean word, let $c$ be a base configuration of the timed interpreter on
+input $x$, let $u$ assign eight Boolean action bits, and let $h$ and $r$ be Boolean
+flags. For every Boolean word $b_s$, integer frontier $z$, and finite lists $l,r_s$ of
+possibly blank bits, running the interpreter for $|b_s|$ steps from the borrow phase
+with flag $r$ and zipper state $(z,l,b_s\mathbin{+}r_s)$ yields the borrow phase with
+flag equal to the final borrow from subtracting $r$ from $b_s$, frontier $z+|b_s|$,
+processed stack the reversed resulting word followed by $l$, and unprocessed list $r_s$.
 \end{lemma}
 
-\begin{lemma}[Shifting a zipper frontier]
+\begin{lemma}[Tape Invariance Under a Frontier Shift]
 \lean{Turing.timed_sweep_shift}
 \label{Turing.timed_sweep_shift}
 \leanok
-\uses{Turing.FinTM.sweepTape, Turing.FinTM.sweepTape_read,
-  Turing.FinTM.sweepTape_right}
+\uses{Turing.FinTM.sweepTape, Turing.FinTM.sweepTape_read, Turing.FinTM.sweepTape_right}
 \difficulty{4}
-Moving the frontier of a finite zipper across a segment $w$ --- pushing the
-reversal of $w$ onto the processed stack and advancing the frontier by $|w|$
---- leaves the represented tape unchanged.
+For any integer $z$ and finite lists $l,w,r$ of possibly blank Boolean symbols, the tape
+represented with frontier $z$, left list $l$, and right list $w$ followed by $r$ is the
+same function of tape position as the tape represented with frontier $z+|w|$, left list
+given by the reversal of $w$ followed by $l$, and right list $r$.
 \end{lemma}
 
-\begin{lemma}[A buffer is a zipper]
+\begin{lemma}[Buffer tape as a zipper]
 \lean{Turing.timed_buffer_zipper}
 \label{Turing.timed_buffer_zipper}
 \leanok
 \uses{Turing.FinTM.bufferTape, Turing.FinTM.sweepTape}
 \difficulty{3}
-The buffer tape of a word equals the zipper with frontier $0$, empty processed
-stack, and the word as the unprocessed list.
+For every Boolean word $b_s$, its buffer tape equals the zipper tape with frontier at
+$0$, empty processed stack, and unprocessed list consisting of the bits of $b_s$ in
+order.
 \end{lemma}
 
-\begin{lemma}[A buffer as a fully processed zipper]
+\begin{lemma}[Buffer tape as a processed zipper]
 \lean{Turing.timed_buffer_zipper_end}
 \label{Turing.timed_buffer_zipper_end}
 \leanok
-\uses{Turing.FinTM.bufferTape, Turing.FinTM.sweepTape,
-  Turing.timed_buffer_zipper, Turing.timed_sweep_shift}
+\uses{Turing.FinTM.bufferTape, Turing.FinTM.sweepTape, Turing.timed_buffer_zipper, Turing.timed_sweep_shift}
 \difficulty{2}
-The buffer tape of a word also equals the zipper with frontier at the word's
-length, the reversed word as the processed stack, and an empty unprocessed
-list.
+For every Boolean word $b_s$, its buffer tape equals the zipper tape with frontier at
+$|b_s|$, processed stack consisting of the bits of $b_s$ in reverse order, and empty
+unprocessed list.
 \end{lemma}
 
 \begin{definition}[Clock-phase configuration]
@@ -1269,142 +1129,125 @@ of a given word with the head at a given position.
 \lean{Turing.timedClock_step}
 \label{Turing.timedClock_step}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols,
-  Turing.FinTM.bufferTape, Turing.MultiTapeTM.step, Turing.TimedControl,
-  Turing.moveInputPos_zero, Turing.timedAdmin, Turing.timedClockCfg,
-  Turing.timedInterpreter, Turing.timedSix}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.MultiTapeTM.step, Turing.TimedControl, Turing.moveInputPos_zero, Turing.timedAdmin, Turing.timedClockCfg, Turing.timedInterpreter, Turing.timedSix}
 \difficulty{3}
-Suppose that, whenever the clock lane reads its designated symbol, the timed
-interpreter's transition in control $q$ is a pure clock move by
-$d \in \{-1,0,1\}$ (no writes, no emission) into a control $q'$.  Then one
-step from the clock-phase configuration moves only the clock head by $d$ and
-enters $q'$.
+Let $B$ be a six-tape timed-interpreter configuration on a Boolean input word, let
+$q,q'$ be timed control states, let $b$ be a Boolean word, let $p$ be an integer, and
+let $d\in\{-1,0,1\}$. Suppose that for every scanned input symbol and every tuple of
+work-tape reads whose clock-tape read is the symbol stored at position $p$ of the buffer
+tape for $b$, the transition in control $q$ is the administrative action that enters
+$q'$, moves the clock head by $d$, and makes no write or output. Then one step from the
+configuration obtained by setting $B$'s control to $q$ and its clock lane to the buffer
+tape for $b$ with head at $p$ equals the configuration obtained by setting that control
+to $q'$ and moving the clock head to $p+d$, with the other fields retained.
 \end{lemma}
 
-\begin{lemma}[Rewinding the clock]
+\begin{lemma}[Clock rewind to the borrow phase]
 \lean{Turing.timed_clock_back}
 \label{Turing.timed_clock_back}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_zero, Turing.TimedControl,
-  Turing.timedClockCfg, Turing.timedClock_step, Turing.timedInterpreter}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.TimedControl, Turing.timedClockCfg, Turing.timedClock_step, Turing.timedInterpreter}
 \difficulty{4}
-For every $j$ at most the clock word's length, from the clock-rewind phase
-with the clock head at $j-1$, exactly $j+1$ steps of the timed interpreter
-reach the borrow phase with the borrow flag set and the clock head at $0$; the
-retained action bits and halting flag are unchanged.
+Let $x$ be a Boolean word and let $c$ be a base configuration of the timed interpreter
+on input $x$. Let $u$ be a function assigning eight Boolean action bits, let $h$ be a
+Boolean halting flag, and let $b_s$ be a Boolean clock word. For every natural number
+$j\le |b_s|$, starting in the clock-rewind phase with clock word $b_s$ and clock head at
+position $j-1$, after exactly $j+1$ steps the interpreter is in the borrow phase with
+borrow flag true, the same clock word, and clock head at $0$.
 \end{lemma}
 
-\begin{lemma}[One borrow pass over the clock]
+\begin{lemma}[Borrow pass over the clock word]
 \lean{Turing.timed_clock_borrow}
 \label{Turing.timed_clock_borrow}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.TimedControl,
-  Turing.timedBorrow, Turing.timedBorrow_length, Turing.timedClockCfg,
-  Turing.timedInterpreter, Turing.timed_borrow_run,
-  Turing.timed_buffer_zipper, Turing.timed_buffer_zipper_end,
-  Turing.timed_laneCfg}
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.TimedControl, Turing.timedBorrow, Turing.timedBorrow_length, Turing.timedClockCfg, Turing.timedInterpreter, Turing.timed_borrow_run, Turing.timed_buffer_zipper, Turing.timed_buffer_zipper_end, Turing.timed_laneCfg}
 \difficulty{4}
-From the borrow phase with a given carry flag and the clock head at $0$,
-exactly as many steps of the timed interpreter as the clock word's length
-replace the word by its borrow subtraction, ending at the right blank with the
-resulting underflow flag in the control; the word's width is preserved.
+Let $x$ and $bs$ be finite Boolean words, let $base$ be a six-tape configuration over
+input $x$, let $bits$ assign a Boolean to each index below $8$, and let $halt$ and
+$carry$ be Boolean flags. Starting from the clock-phase configuration with control
+$(borrow(bits,halt,carry))$, clock word $bs$, and clock head at $0$, after exactly
+$|bs|$ steps the timed interpreter reaches the clock-phase configuration with the same
+base data, control $(borrow(bits,halt,c'))$, clock word $bs'$, and head at $|bs|$, where
+$(c',bs')$ is the fixed-width subtraction of the incoming borrow flag from $bs$.
 \end{lemma}
 
-\begin{lemma}[Entering the clock rewind]
+\begin{lemma}[Entering the clock rewind phase]
 \lean{Turing.timed_clock_start}
 \label{Turing.timed_clock_start}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.MultiTapeTM.step,
-  Turing.UniversalControl, Turing.moveInputPos_zero, Turing.timedAdmin,
-  Turing.timedClockCfg, Turing.timedInterpreter, Turing.timedLift,
-  Turing.timedSix}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.moveInputPos_zero, Turing.timedAdmin, Turing.timedClockCfg, Turing.timedInterpreter, Turing.timedLift, Turing.timedSix}
 \difficulty{3}
-From the six-tape lift of a four-tape configuration whose control is a
-pending-action state, one step of the timed interpreter enters the
-clock-rewind phase --- retaining the action's decoded bits and halting flag
---- with the clock head moved to the last clock bit, and without applying any
-source transition.
+Let $x$ be a finite Boolean input word, let $cfg$ be a four-tape configuration over $x$,
+let $bs$ be a finite Boolean clock word, let $bits$ assign a Boolean to each index below
+$8$, and let $halt$ be a Boolean flag. If $cfg$ has the pending-action control carrying
+$bits$ and $halt$, then one step of the timed interpreter from its six-tape lift with
+clock word $bs$ reaches the clock-rewind phase carrying the same $bits$ and $halt$, with
+the clock word unchanged and its head at $|bs|-1$.
 \end{lemma}
 
-\begin{lemma}[The complete countdown pass]
+\begin{lemma}[Complete clock countdown pass]
 \lean{Turing.timed_clock_pass}
 \label{Turing.timed_clock_pass}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.UniversalControl,
-  Turing.timedBorrow, Turing.timedClockCfg, Turing.timedCut_run_join,
-  Turing.timedInterpreter, Turing.timedLift, Turing.timed_clock_back,
-  Turing.timed_clock_borrow, Turing.timed_clock_start}
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.UniversalControl, Turing.timedBorrow, Turing.timedClockCfg, Turing.timedCut_run_join, Turing.timedInterpreter, Turing.timedLift, Turing.timed_clock_back, Turing.timed_clock_borrow, Turing.timed_clock_start}
 \difficulty{4}
-From the six-tape lift of a pending-action configuration with clock word $w$,
-exactly $2|w| + 2$ steps of the timed interpreter complete the clock rewind
-and the borrow pass, reaching the borrow phase at the right blank with the
-subtracted word and its underflow flag in the control.
+Let $x$ be a finite Boolean input word, let $cfg$ be a four-tape configuration over $x$,
+let $bs$ be a finite Boolean clock word, let $bits$ assign a Boolean to each index below
+$8$, and let $halt$ be a Boolean flag. Assume the control of $cfg$ is the pending-action
+state carrying $bits$ and $halt$. Starting from the six-tape lift of $cfg$ with clock
+word $bs$, after exactly $2|bs|+2$ steps the timed interpreter reaches the clock-phase
+configuration with control $(borrow(bits,halt,c))$, clock word $bs'$, and head at
+$|bs|$, where $(c,bs')$ is the fixed-width subtraction of an incoming borrow from $bs$.
 \end{lemma}
 
-\begin{lemma}[Executing the retained action]
+\begin{lemma}[Execution of a retained action]
 \lean{Turing.timed_execute}
 \label{Turing.timed_execute}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol,
-  Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.step,
-  Turing.UniversalControl, Turing.timedAction, Turing.timedAction_apply,
-  Turing.timedInterpreter, Turing.timedLift, Turing.universalInterpreter}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedAction, Turing.timedAction_apply, Turing.timedInterpreter, Turing.timedLift, Turing.universalInterpreter}
 \difficulty{3}
-From the six-tape lift of a pending-action configuration, with the control
-replaced by the execute phase, one step of the timed interpreter applies the
-retained source action: the result equals the lift of one step of the
-unstopped table interpreter from the four-tape configuration, with the clock
-word unchanged.
+Let $x$ be a bit string, $c$ a four-tape interpreter configuration on input $x$, $b$ a
+clock word, and suppose the control state of $c$ is the pending-action state carrying
+action bits $a$ and halting flag $h$. If the six-tape timed interpreter is started from
+the lift of $c$ with clock word $b$, but with its control set to the execute phase
+carrying $a$ and $h$, then one step produces the lift of the result of one step of the
+four-tape table interpreter from $c$, with clock word $b$ unchanged.
 \end{lemma}
 
-\begin{lemma}[A positive budget executes one transition]
+\begin{lemma}[Executing a transition with positive budget]
 \lean{Turing.timed_clock_success}
 \label{Turing.timed_clock_success}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol,
-  Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.MultiTapeTM.step, Turing.UniversalControl,
-  Turing.moveInputPos_zero, Turing.timedAdmin, Turing.timedBorrow,
-  Turing.timedBorrow_length, Turing.timedBorrow_underflow,
-  Turing.timedClockCfg, Turing.timedInterpreter, Turing.timedLift,
-  Turing.timedSix, Turing.timedValue, Turing.timed_clock_pass,
-  Turing.timed_execute, Turing.universalInterpreter}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.moveInputPos_zero, Turing.timedAdmin, Turing.timedBorrow, Turing.timedBorrow_length, Turing.timedBorrow_underflow, Turing.timedClockCfg, Turing.timedInterpreter, Turing.timedLift, Turing.timedSix, Turing.timedValue, Turing.timed_clock_pass, Turing.timed_execute, Turing.universalInterpreter}
 \difficulty{5}
-If the clock word $w$ has positive little-endian value, then from the six-tape
-lift of a pending-action configuration, exactly $2|w| + 4$ steps of the timed
-interpreter decrement the budget once and apply the retained action: the
-result is the lift of one step of the unstopped table interpreter, with clock
-word the borrow subtraction of $w$.
+Let $x$ be a finite Boolean input word, let $cfg$ be a four-tape configuration over $x$,
+let $bs$ be a finite Boolean clock word, let $bits$ assign a Boolean to each index below
+$8$, and let $halt$ be a Boolean flag. Suppose $cfg$ has the pending-action control
+carrying $bits$ and $halt$, and the little-endian value of $bs$ is positive. After
+exactly $2|bs|+4$ steps from the six-tape lift of $cfg$ with clock word $bs$, the timed
+interpreter reaches the lift of one step of the four-tape interpreter from $cfg$, with
+clock word the fixed-width subtraction of an incoming borrow from $bs$.
 \end{lemma}
 
-\begin{lemma}[A zero budget times out]
+\begin{lemma}[Timeout at zero budget]
 \lean{Turing.timed_clock_timeout}
 \label{Turing.timed_clock_timeout}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol,
-  Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step',
-  Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedAdmin,
-  Turing.timedBorrow, Turing.timedBorrow_length,
-  Turing.timedBorrow_underflow, Turing.timedClockCfg,
-  Turing.timedInterpreter, Turing.timedLift, Turing.timedValue,
-  Turing.timed_clock_pass}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step, Turing.UniversalControl, Turing.timedAdmin, Turing.timedBorrow, Turing.timedBorrow_length, Turing.timedBorrow_underflow, Turing.timedClockCfg, Turing.timedInterpreter, Turing.timedLift, Turing.timedValue, Turing.timed_clock_pass}
 \difficulty{4}
-If the clock word $w$ has little-endian value $0$, then after $2|w| + 3$ steps
-of the timed interpreter from the six-tape lift of a pending-action
-configuration, the machine has halted with real output exactly the single
-timeout tag $0$, regardless of any emissions buffered so far.
+Let $x$ be a finite Boolean input word, let $cfg$ be a four-tape configuration over $x$,
+let $bs$ be a finite Boolean clock word, let $bits$ assign a Boolean to each index below
+$8$, and let $halt$ be a Boolean flag. Suppose $cfg$ has the pending-action control
+carrying $bits$ and $halt$, and the little-endian value of $bs$ is zero. After exactly
+$2|bs|+3$ steps from the six-tape lift of $cfg$ with clock word $bs$, the timed
+interpreter is halted and its real output is exactly the one-bit word $[0]$.
 \end{lemma}
 
 \begin{definition}[Output-phase configuration]
 \lean{Turing.timedOutputCfg}
 \label{Turing.timedOutputCfg}
 \leanok
-\uses{Turing.Cfg, Turing.TimedControl, Turing.UniversalControl,
-  Turing.timedLift}
+\uses{Turing.Cfg, Turing.TimedControl, Turing.UniversalControl, Turing.timedLift}
 The configuration obtained from the six-tape lift of a four-tape configuration
 and a clock word by overriding the finite control, the output-buffer head
 position, and the real output; all simulation and clock tapes are retained.
@@ -1414,97 +1257,88 @@ position, and the real output; all simulation and clock tapes are retained.
 \lean{Turing.timed_output_step}
 \label{Turing.timed_output_step}
 \leanok
-\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols,
-  Turing.FinTM.bufferTape, Turing.MultiTapeTM.step, Turing.TimedControl,
-  Turing.UniversalControl, Turing.moveInputPos_zero, Turing.timedAdmin,
-  Turing.timedInterpreter, Turing.timedLift, Turing.timedOutputCfg,
-  Turing.timedSix}
+\uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.bufferTape, Turing.MultiTapeTM.step, Turing.TimedControl, Turing.UniversalControl, Turing.moveInputPos_zero, Turing.timedAdmin, Turing.timedInterpreter, Turing.timedLift, Turing.timedOutputCfg, Turing.timedSix}
 \difficulty{3}
-Suppose that, whenever the output-buffer lane reads its designated symbol, the
-timed interpreter's transition in control $q$ is a pure buffer move by
-$d \in \{-1,0,1\}$ with an optional real emission.  Then one step from the
-output-phase configuration moves only the buffer head by $d$, appends the
-optional emission to the real output, and passes to the designated control.
+Let $x$ be a Boolean word, and let $c$ be a four-tape interpreter configuration on input
+$x$. Let $b$ be a Boolean word, $q$ a timed-interpreter control, $q'$ an optional
+timed-interpreter control, $p\in\mathbb{Z}$ a buffer-head position, $o$ a Boolean output
+word, $d\in\{-1,0,1\}$ a head movement, and $e$ an optional Boolean. Suppose that for
+every input symbol and every tuple of work-tape symbols, whenever lane $5$ contains at
+its head the symbol stored in $c$'s output buffer at position $p$, the transition from
+$q$ is an administrative action that leaves the clock lane unchanged, moves the buffer
+lane by $d$, emits $e$, and enters control $q'$. Then one step from the lifted
+configuration in control $q$, with buffer head at $p$ and real output $o$, yields the
+lifted configuration in control $q'$, with buffer head at $p+d$ and real output $o$
+followed by $e$, if present.
 \end{lemma}
 
-\begin{lemma}[Rewinding the output buffer]
+\begin{lemma}[Output-buffer rewind]
 \lean{Turing.timed_output_back}
 \label{Turing.timed_output_back}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl,
-  Turing.timedInterpreter, Turing.timedOutputCfg, Turing.timed_output_step}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.UniversalControl, Turing.timedInterpreter, Turing.timedOutputCfg, Turing.timed_output_step}
 \difficulty{4}
-For every $j$ at most the buffered output's length, from the buffer-rewind
-phase with the buffer head at $j-1$, exactly $j+1$ steps of the timed
-interpreter reach the flush phase with the buffer head at $0$, emitting the
-success tag $1$ at the left blank before any data bit.
+Let $x$ be a Boolean input word, and let $c$ be a configuration of the four-tape
+interpreter on input $x$. For Boolean words $b$ and $o$, and a natural number $j$ with
+$j\leq |c.output|$, start the timed interpreter in its output-buffer rewind phase, with
+clock word $b$, the output buffer initialized from $c.output$ and its head at position
+$j-1$, and real output $o$. After $j+1$ steps it is in the flush phase with the buffer
+head at position $0$ and real output $o$ followed by the bit $1$.
 \end{lemma}
 
-\begin{lemma}[Flushing the buffer]
+\begin{lemma}[Flushing the output buffer]
 \lean{Turing.timed_output_forward}
 \label{Turing.timed_output_forward}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step,
-  Turing.UniversalControl, Turing.timedInterpreter, Turing.timedOutputCfg,
-  Turing.timed_output_step, Turing.universal_table_read}
+\uses{Turing.Cfg, Turing.FinTM.bufferTape, Turing.FinTM.bufferTape_nat, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.UniversalControl, Turing.timedInterpreter, Turing.timedOutputCfg, Turing.timed_output_step, Turing.universal_table_read}
 \difficulty{4}
-If the buffered output splits as a processed prefix $l$ followed by a
-remainder $r$, with the buffer head at $|l|$, then the flush phase of the
-timed interpreter emits exactly the bits of $r$, in order, in $|r| + 1$ steps
-and halts at the right blank without a further emission.
+Let $x$ be a Boolean input word, and let $c$ be a configuration of the four-tape
+interpreter on input $x$. For Boolean words $b,r,l,o$ with the interpreter’s output
+equal to the concatenation of $l$ and $r$, starting in the flush phase with the
+output-buffer head at position $|l|$ and real output $o$, after $|r|+1$ steps the
+machine is halted, the output-buffer head is at position $|c.output|$, and the real
+output is the concatenation of $o$ and $r$.
 \end{lemma}
 
-\begin{lemma}[Halting flushes tag and buffer]
+\begin{lemma}[Flushing buffered output after halting]
 \lean{Turing.timed_flush}
 \label{Turing.timed_flush}
 \leanok
-\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.UniversalControl,
-  Turing.timedCut_run_join, Turing.timedInterpreter, Turing.timedLift,
-  Turing.timedOutputCfg, Turing.timed_output_back,
-  Turing.timed_output_forward, Turing.timed_output_step}
+\uses{Turing.Cfg, Turing.MultiTapeTM.runFrom, Turing.UniversalControl, Turing.timedCut_run_join, Turing.timedInterpreter, Turing.timedLift, Turing.timedOutputCfg, Turing.timed_output_back, Turing.timed_output_forward, Turing.timed_output_step}
 \difficulty{4}
-From the six-tape lift of a halted four-tape configuration whose buffered
-output is a word $w$, exactly $2|w| + 3$ steps of the timed interpreter halt
-the machine with real output the success tag $1$ followed by exactly $w$.
+Let $x$ be a finite Boolean word, and let $c$ be a four-tape interpreter configuration
+on input $x$ with no active state. For any Boolean clock word $b$, after
+$2|c.	ext{output}|+3$ steps of the timed interpreter from the six-tape lift of $c$ with
+clock word $b$, the machine has no active state and its real output is the one-bit word
+$1$ followed by $c.	ext{output}$.
 \end{lemma}
 
-\begin{lemma}[The parser is live at the penultimate step]
+\begin{lemma}[The prefix parser remains active]
 \lean{Turing.timedPrefix_penultimate}
 \label{Turing.timedPrefix_penultimate}
 \leanok
-\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode,
-  Turing.timedPrefixTM, Turing.timedPrefix_advance, Turing.timedPrefix_code,
-  Turing.timed_code_get, Turing.timed_input_length,
-  Turing.timed_pair_separator}
+\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.pairEncode, Turing.timedPrefixTM, Turing.timedPrefix_advance, Turing.timedPrefix_code, Turing.timed_code_get, Turing.timed_input_length, Turing.timed_pair_separator}
 \difficulty{3}
-After $4|b| + 2|\alpha| + 5$ steps on the nested pair encoding
-$\langle \langle b, \alpha\rangle, x\rangle$ --- one step before consuming
-the final separator cell --- the prefix parser has not halted.
+For any three finite bit strings $b$, $\alpha$, and $x$, the prefix parser on the nested
+pair encoding $\langle\langle b,\alpha\rangle,x\rangle$ is still in a nonhalting state
+after $4|b|+2|\alpha|+5$ steps.
 \end{lemma}
 
-\begin{lemma}[The parser is live before completion]
+\begin{lemma}[Parser remains live before completion]
 \lean{Turing.timedPrefix_live}
 \label{Turing.timedPrefix_live}
 \leanok
-\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt,
-  Turing.pairEncode, Turing.timedPrefixTM, Turing.timedPrefix_penultimate}
+\uses{Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.pairEncode, Turing.timedPrefixTM, Turing.timedPrefix_penultimate}
 \difficulty{3}
-At every time strictly before $4|b| + 2|\alpha| + 6$ steps on the nested pair
-encoding $\langle \langle b, \alpha\rangle, x\rangle$, the prefix parser has
-not halted.
+For Boolean words $b_s,\alpha,x$, at every natural-number time $s<4|b_s|+2|\alpha|+6$,
+the prefix parser on $\langle\langle b_s,\alpha\rangle,x\rangle$ has not halted.
 \end{lemma}
 
 \begin{definition}[The composed clock-preserving canonizer]
 \lean{Turing.timedCanonTM}
 \label{Turing.timedCanonTM}
 \leanok
-\uses{Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.bufferedCompTM,
-  Turing.timedPrefixTM}
+\uses{Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.bufferedCompTM, Turing.timedPrefixTM}
 The buffered composition of the prefix parser with the coding scheme's
 canonizer: the parser extracts the code string from the nested pair encoding,
 and only that extracted code is supplied as virtual input to the canonizer.
@@ -1520,60 +1354,47 @@ prefix parser's unique work tape, on which the extracted clock word is
 retained.
 \end{definition}
 
-\begin{lemma}[Entering the canonizer]
+\begin{lemma}[Timed canonizer startup]
 \lean{Turing.timedCanon_start}
 \label{Turing.timedCanon_start}
 \leanok
-\uses{Turing.EffectiveMachineCode, Turing.FinTM.bufferTape,
-  Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg_init,
-  Turing.FinTM.bufferedFirstCfg_rewind, Turing.FinTM.bufferedFirstCfg_run,
-  Turing.FinTM.bufferedSecondCfg, Turing.MultiTapeTM.initCfg,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add,
-  Turing.pairEncode, Turing.timedCanonTM, Turing.timedPrefixTM,
-  Turing.timedPrefix_complete, Turing.timedPrefix_live,
-  Turing.timed_input_length}
+\uses{Turing.EffectiveMachineCode, Turing.FinTM.bufferTape, Turing.FinTM.bufferedCompTM, Turing.FinTM.bufferedFirstCfg_init, Turing.FinTM.bufferedFirstCfg_rewind, Turing.FinTM.bufferedFirstCfg_run, Turing.FinTM.bufferedSecondCfg, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.timedCanonTM, Turing.timedPrefixTM, Turing.timedPrefix_complete, Turing.timedPrefix_live, Turing.timed_input_length}
 \difficulty{3}
-On the nested pair encoding $\langle \langle b, \alpha\rangle, x\rangle$,
-exactly $4|b| + 3|\alpha| + 8$ steps of the composed clock-preserving
-canonizer complete the parse and hand the extracted code $\alpha$ to the
-canonizer in its initial configuration, with the clock word $b$ preserved on
-its lane (head at $|b|$) and the physical input head parked at the start of
-the suffix region.
+Let $c$ be an effective machine code and let $b$, $\alpha$, and $x$ be finite Boolean
+strings. After exactly $4|b|+3|\alpha|+8$ steps, the timed canonizer started on
+$\langle\langle b,\alpha\rangle,x\rangle$ is in the buffered second-phase configuration
+formed from the canonizer's initial configuration on $\alpha$, with tag true, input-head
+position $4|b|+2|\alpha|+7$, buffer tapes containing $b$, and their heads at position
+$|b|$.
 \end{lemma}
 
-\begin{lemma}[Running the canonizer in place]
+\begin{lemma}[Timed canonizer run correspondence]
 \lean{Turing.timedCanon_run}
 \label{Turing.timedCanon_run}
 \leanok
-\uses{Turing.EffectiveMachineCode, Turing.FinTM.VirtualTag,
-  Turing.FinTM.bufferTape, Turing.FinTM.bufferedSecondCfg,
-  Turing.FinTM.bufferedSecondCfg_run, Turing.MultiTapeTM.initCfg,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add,
-  Turing.pairEncode, Turing.timedCanonTM, Turing.timedCanon_start,
-  Turing.timedPrefixTM, Turing.timed_input_length}
+\uses{Turing.EffectiveMachineCode, Turing.FinTM.VirtualTag, Turing.FinTM.bufferTape, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.bufferedSecondCfg_run, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.timedCanonTM, Turing.timedCanon_start, Turing.timedPrefixTM, Turing.timed_input_length}
 \difficulty{3}
-For every $t$, running the composed clock-preserving canonizer
-$4|b| + 3|\alpha| + 8 + t$ steps on the nested pair encoding equals, for some
-internal rewind flag, the buffered second-phase configuration of the canonizer
-run for $t$ steps on virtual input $\alpha$; the physical input head and the
-retained clock word $b$ remain stationary.
+Let $c$ be an effective machine code, let $b$, $\alpha$, and $x$ be finite Boolean
+strings, and let $t\in\mathbb{N}$. After $4|b|+3|\alpha|+8+t$ steps, the timed canonizer
+started on $\langle\langle b,\alpha\rangle,x\rangle$ is in the buffered second-phase
+configuration formed from the canonizer's configuration after $t$ steps on $\alpha$,
+together with some Boolean tag, input-head position $4|b|+2|\alpha|+7$, buffer tapes
+containing $b$, and their heads at position $|b|$.
 \end{lemma}
 
-\begin{lemma}[Canonizer completion]
+\begin{lemma}[Timed canonizer completion]
 \lean{Turing.timedCanon_complete}
 \label{Turing.timedCanon_complete}
 \leanok
-\uses{Turing.CodeTM.serialize, Turing.EffectiveMachineCode,
-  Turing.FinTM.bufferTape, Turing.FinTM.bufferedSecondCfg,
-  Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg,
-  Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.timedCanonClock,
-  Turing.timedCanonTM, Turing.timedCanon_run}
+\uses{Turing.CodeTM.serialize, Turing.EffectiveMachineCode, Turing.FinTM.bufferTape, Turing.FinTM.bufferedSecondCfg, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.timedCanonClock, Turing.timedCanonTM, Turing.timedCanon_run}
 \difficulty{3}
-After $4|b| + 3|\alpha| + 8$ plus the canonizer's time bound at $|\alpha|$
-steps on the nested pair encoding, the composed clock-preserving canonizer has
-halted; its output is the serialization of the machine decoded from $\alpha$,
-its input head is parked at position $4|b| + 2|\alpha| + 7$, and its retained
-clock lane still holds the buffer of $b$ with head at $|b|$.
+Let $c$ be an effective machine code, and let $b$, $\alpha$, and $x$ be finite Boolean
+strings. Run the machine that parses a clock prefix and then executes $c$’s canonizer on
+the nested pair encoding $\langle\langle b,\alpha\rangle,x\rangle$. After exactly
+$4|b|+3|\alpha|+8+c.\mathrm{canonizerTime}(|\alpha|)$ steps, it has halted, its output
+is the serialization of the machine decoded from $\alpha$, and its input head is at
+position $4|b|+2|\alpha|+7$; its clock tape contains $b$ starting at cell zero, with the
+tape head at position $|b|$.
 \end{lemma}
 
 \begin{definition}[Deadline-inclusive answer]
@@ -1586,33 +1407,25 @@ $t$ steps: the success tag $1$ followed by the accumulated output when the
 machine has halted within $t$ steps, and the single timeout tag $0$ otherwise.
 \end{definition}
 
-\begin{lemma}[The timed interpreter finishes uniformly]
+\begin{lemma}[Uniform completion of the timed interpreter]
 \lean{Turing.timed_interpret_finishes}
 \label{Turing.timed_interpret_finishes}
 \leanok
-\uses{Turing.Cfg, Turing.CodeTM, Turing.CodeTM.serialize,
-  Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt,
-  Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero,
-  Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_output,
-  Turing.timedAnswer, Turing.timedBorrow, Turing.timedBorrow_length,
-  Turing.timedBorrow_value, Turing.timedCut_live_block,
-  Turing.timedInterpreter, Turing.timedLift, Turing.timedValue,
-  Turing.timed_clock_success, Turing.timed_clock_timeout, Turing.timed_flush,
-  Turing.timed_replay, Turing.universalSimulationCfg}
+\uses{Turing.Cfg, Turing.CodeTM, Turing.CodeTM.serialize, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.runFrom_succ_eq_step, Turing.MultiTapeTM.runFrom_zero, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_output, Turing.timedAnswer, Turing.timedBorrow, Turing.timedBorrow_length, Turing.timedBorrow_value, Turing.timedCut_live_block, Turing.timedInterpreter, Turing.timedLift, Turing.timedValue, Turing.timed_clock_success, Turing.timed_clock_timeout, Turing.timed_flush, Turing.timed_replay, Turing.universalSimulationCfg}
 \difficulty{6}
-Let $M$ be a coded machine with serialization of length $L$ and state count
-$N+1$, let $\mathrm{src}$ be any configuration of $M$, let the table cursor be
-at most $L$, and let the clock word have width $w$ and little-endian value
-$r$.  Then the timed interpreter, started from the six-tape lift of the
-interpreter checkpoint of $\mathrm{src}$ with that clock word, halts within
+Let $M$ be a coded machine, let $\alpha$ and $x$ be finite Boolean words, and let $r$ be
+a natural number. For every configuration $\mathrm{src}$ of $M$ on input $x$, every
+natural number $p$, and every finite Boolean word $bs$ such that $p\leq
+|M.\mathrm{serialize}|$ and the little-endian value of $bs$ is $r$, there is a natural
+number $d$ satisfying
 \[
-  \bigl(3L + 5(N+1) + 20 + 2w + 8\bigr)\,(r+1)
-    + 2\,\lvert \text{output of } \mathrm{src}\rvert
+d\leq
+\bigl(3|M.\mathrm{serialize}|+5(M.\mathrm{numStates}+1)+20+2|bs|+8\bigr)(r+1)+2|\mathrm{src.output}|,
 \]
-steps, and its real output is exactly the deadline-inclusive answer of
-$\mathrm{src}$ at budget $r$: halting on the final allowed transition counts
-as success.
+such that after $d$ steps the timed interpreter started from the six-tape lift of the
+interpreter configuration for $M$, $\alpha$, $\mathrm{src}$, and $p$, with clock word
+$bs$, is halted and its output is the deadline-inclusive answer for $\mathrm{src}$ after
+$r$ steps of $M$.
 \end{lemma}
 
 \begin{definition}[Five-lane assembly]
@@ -1640,9 +1453,7 @@ lanes are left untouched.
 \lean{Turing.timedCaptureTM}
 \label{Turing.timedCaptureTM}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.tapeBlocks,
-  Turing.TimedControl, Turing.timedFrameAction, Turing.timedInterpreter,
-  Turing.timedSix}
+\uses{Turing.FinTM, Turing.FinTM.controlAction, Turing.FinTM.tapeBlocks, Turing.TimedControl, Turing.timedFrameAction, Turing.timedInterpreter, Turing.timedSix}
 The capture wrapper of a machine $M$ with a designated clock tape: it runs $M$
 in lockstep while writing $M$'s emissions to a fresh table lane instead of the
 output; when $M$ halts, control transfers to the timed interpreter, which runs
@@ -1653,8 +1464,7 @@ on the captured table, the retained clock lane, and four further fresh lanes.
 \lean{Turing.timedCaptureCfg}
 \label{Turing.timedCaptureCfg}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape,
-  Turing.FinTM.tapeBlocks, Turing.timedCaptureTM}
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.tapeBlocks, Turing.timedCaptureTM}
 The first-phase configuration of the capture wrapper corresponding to a
 configuration of the base machine $M$: $M$'s tapes and heads are embedded, the
 captured-table lane holds $M$'s accumulated output as a buffer with head at
@@ -1662,97 +1472,88 @@ its right blank, the remaining fresh lanes are blank, and the real output is
 empty.
 \end{definition}
 
-\begin{lemma}[Capture starts blank]
+\begin{lemma}[Capture wrapper initialization]
 \lean{Turing.timedCapture_init}
 \label{Turing.timedCapture_init}
 \leanok
-\uses{Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.initCfg,
-  Turing.timedCaptureCfg, Turing.timedCaptureTM}
+\uses{Turing.FinTM, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.initCfg, Turing.timedCaptureCfg, Turing.timedCaptureTM}
 \difficulty{3}
-On every input, the initial configuration of the capture wrapper equals the
-first-phase embedding of the base machine's initial configuration, with a
-blank captured table and blank interpreter lanes.
+Let $M$ be a finite Boolean-alphabet Turing machine with $k$ work tapes, let $i$ be one
+of its work-tape indices, and let $x$ be a finite Boolean input. The capture machine
+initialized on $x$ has exactly the configuration obtained by embedding $M$'s initial
+configuration on $x$: its state is the embedded initial state, its original work tapes
+and head positions are retained, its added buffer tape stores the initial output word
+with its head at that word's length, its remaining added tapes are blank with heads at
+zero, and its output is empty.
 \end{lemma}
 
 \begin{lemma}[One captured step]
 \lean{Turing.timedCapture_step}
 \label{Turing.timedCapture_step}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol,
-  Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_append,
-  Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.timedCaptureCfg,
-  Turing.timedCaptureTM}
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.bufferTape_append, Turing.FinTM.tapeBlocks, Turing.MultiTapeTM.step, Turing.timedCaptureCfg, Turing.timedCaptureTM}
 \difficulty{5}
-For every live configuration of the base machine, one step of the capture
-wrapper from its first-phase embedding equals the embedding of one step of the
-base machine: the input head and the original work tapes move in lockstep, any
-emission --- including one on the base machine's halting transition --- is
-appended to the captured table rather than the real output, and the later
-fresh lanes stay untouched; administrative states remain live.
+Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be one of its work
+tapes, let $x$ be a Boolean input word, and let $C$ be a configuration of $M$ on $x$
+whose state is present. One step of the capture machine from the capture configuration
+associated with $C$ equals the capture configuration associated with the result of one
+step of $M$ from $C$.
 \end{lemma}
 
-\begin{lemma}[Lockstep capture of a run]
+\begin{lemma}[Lockstep capture of a machine run]
 \lean{Turing.timedCapture_run}
 \label{Turing.timedCapture_run}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.timedCaptureCfg,
-  Turing.timedCaptureTM, Turing.timedCapture_step}
+\uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.timedCaptureCfg, Turing.timedCaptureTM, Turing.timedCapture_step}
 \difficulty{3}
-If the base machine remains live at every time strictly below $t$, then $t$
-steps of the capture wrapper from an embedded configuration equal the
-embedding of $t$ steps of the base machine.
+Let $M$ be a finite Boolean-alphabet Turing machine with $k$ work tapes, let $i$ be one
+of its work-tape indices, let $x$ be a finite Boolean input, and let $c$ be a
+configuration of $M$ on $x$. If $M$'s run from $c$ is not halted at any time $s<t$, then
+after $t$ steps the capture machine started from the embedding of $c$ has exactly the
+configuration obtained by embedding the configuration of $M$ after $t$ steps from $c$.
 \end{lemma}
 
 \begin{definition}[Interpreter-entry capture configuration]
 \lean{Turing.timedCapturedCfg}
 \label{Turing.timedCapturedCfg}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.timedCaptureCfg,
-  Turing.timedCaptureTM, Turing.timedInterpreter}
+\uses{Turing.Cfg, Turing.FinTM, Turing.timedCaptureCfg, Turing.timedCaptureTM, Turing.timedInterpreter}
 The interpreter-entry configuration of the capture wrapper for a halted
 configuration of the base machine: identical to its first-phase embedding
 except that the finite control is the timed interpreter's initial state; the
 retained clock lane becomes active again during interpretation.
 \end{definition}
 
-\begin{lemma}[Transferring to the interpreter]
+\begin{lemma}[Transfer from a halted configuration]
 \lean{Turing.timedCapture_transfer}
 \label{Turing.timedCapture_transfer}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step,
-  Turing.moveInputPos_zero, Turing.timedCaptureCfg, Turing.timedCaptureTM,
-  Turing.timedCapturedCfg}
+\uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step, Turing.moveInputPos_zero, Turing.timedCaptureCfg, Turing.timedCaptureTM, Turing.timedCapturedCfg}
 \difficulty{2}
-From the first-phase embedding of a halted configuration of the base machine,
-one step of the capture wrapper transfers control to the interpreter entry,
-changing no tape contents, head positions, or output.
+Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be one of its work
+tapes, let $x$ be a Boolean input word, and let $C$ be a configuration of $M$ on $x$. If
+$C$ is halted, then one step of the capture machine from the capture configuration
+associated with $C$ equals the interpreter-entry configuration associated with $C$.
 \end{lemma}
 
 \begin{lemma}[Reaching the interpreter after capture]
 \lean{Turing.timedCapture_start}
 \label{Turing.timedCapture_start}
 \leanok
-\uses{Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.timedCaptureTM,
-  Turing.timedCapture_init, Turing.timedCapture_run,
-  Turing.timedCapture_transfer, Turing.timedCapturedCfg}
+\uses{Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.timedCaptureTM, Turing.timedCapture_init, Turing.timedCapture_run, Turing.timedCapture_transfer, Turing.timedCapturedCfg}
 \difficulty{4}
-If the base machine halts on input $x$ within $T$ steps, then for some
-$t \le T + 1$, running the capture wrapper $t$ steps from its initial
-configuration on $x$ reaches the interpreter-entry configuration for the base
-machine's configuration at time $T$; since halting is absorbing, all fields of
-that configuration --- including the parked input head --- are retained, not
-merely the completed output.
+Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be one of its work
+tapes, let $x$ be a Boolean input word, and let $T$ be a natural number. If the
+configuration of $M$ after $T$ steps from its initial configuration on $x$ is halted,
+then there is a time $t\le T+1$ at which the capture machine, started on $x$, is in the
+interpreter-entry configuration associated with that time-$T$ configuration.
 \end{lemma}
 
 \begin{definition}[Framed interpreter configuration]
 \lean{Turing.timedFrame}
 \label{Turing.timedFrame}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.TimedControl, Turing.timedCaptureTM,
-  Turing.timedFive}
+\uses{Turing.Cfg, Turing.FinTM, Turing.TimedControl, Turing.timedCaptureTM, Turing.timedFive}
 The configuration of the assembled capture machine determined by a six-tape
 timed-interpreter configuration together with inactive tapes and heads for the
 old block: the interpreter's clock lane is placed at the retained clock index
@@ -1760,83 +1561,83 @@ of the old block, its remaining five lanes occupy the fresh indices, and every
 other old lane carries the given inactive data.
 \end{definition}
 
-\begin{lemma}[Reads of a framed configuration]
+\begin{lemma}[Reads of a Framed Configuration]
 \lean{Turing.timedFrame_reads}
 \label{Turing.timedFrame_reads}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM,
-  Turing.TimedControl, Turing.timedFive, Turing.timedFrame, Turing.timedSix}
+\uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.TimedControl, Turing.timedFive, Turing.timedFrame, Turing.timedSix}
 \difficulty{2}
-The six symbols read by a framed configuration on the interpreter's active
-lanes (the four core lanes, the retained clock lane, and the buffer lane)
-coincide with the reads of the underlying six-tape interpreter configuration.
+Let $M$ be a finite Boolean-alphabet Turing machine, choose a clock tape among its work
+tapes, and let $x$ be a Boolean input word. For any six-tape configuration $c$ and any
+contents and head positions for the $M$ tapes, the six symbols read on the framed
+configuration's four core tapes, clock tape, and buffer tape, assembled in that order,
+equal the six symbols read from $c$.
 \end{lemma}
 
-\begin{lemma}[Applying a framed action]
+\begin{lemma}[Applying a Framed Action]
 \lean{Turing.timedFrame_apply}
 \label{Turing.timedFrame_apply}
 \leanok
-\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM,
-  Turing.TimedControl, Turing.timedFive, Turing.timedFrame,
-  Turing.timedFrameAction}
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.TimedControl, Turing.timedFive, Turing.timedFrame, Turing.timedFrameAction}
 \difficulty{4}
-Applying the framed lift of a six-tape action to a framed configuration equals
-the frame of the six-tape configuration obtained by applying the action; the
-inactive lanes of the old block are unchanged.
+Let $M$ be a finite Boolean-alphabet Turing machine, choose one of its work tapes as the
+clock tape, and let $x$ be a Boolean input word. For any six-tape configuration $c$,
+tape contents and head positions for the original $M$-tapes, and six-tape action $a$,
+applying the framed action to the framed configuration gives the frame of the
+configuration obtained by applying $a$ to $c$.
 \end{lemma}
 
-\begin{lemma}[One framed step]
+\begin{lemma}[One-step correspondence for framed configurations]
 \lean{Turing.timedFrame_step}
 \label{Turing.timedFrame_step}
 \leanok
-\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM,
-  Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt,
-  Turing.TimedControl, Turing.timedCaptureTM, Turing.timedFrame,
-  Turing.timedFrame_apply, Turing.timedFrame_reads, Turing.timedInterpreter}
+\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt, Turing.TimedControl, Turing.timedCaptureTM, Turing.timedFrame, Turing.timedFrame_apply, Turing.timedFrame_reads, Turing.timedInterpreter}
 \difficulty{3}
-One step of the assembled capture machine from a framed configuration equals
-the frame of one step of the timed interpreter, including the final halting
-transition.
+Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $j$ be one of
+its work-tape indices, let $x$ be a finite Boolean input, and let $c$ be a six-tape
+configuration of the timed interpreter on $x$. Choose arbitrary contents and head
+positions for the work tapes of $M$. Form a configuration of the capture machine by
+keeping $c$’s input-head position and output, placing $c$’s fifth work tape in tape $j$,
+and placing its other five work tapes in the five added tapes in their prescribed order;
+label its control state by the timed-interpreter component of the capture machine’s
+state space. One step of the capture machine from this configuration equals the
+configuration formed in the same way from the timed interpreter’s one-step successor of
+$c$.
 \end{lemma}
 
-\begin{lemma}[Framed runs]
+\begin{lemma}[Runs of the Framed Machine]
 \lean{Turing.timedFrame_run}
 \label{Turing.timedFrame_run}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.TimedControl,
-  Turing.timedCaptureTM, Turing.timedFrame, Turing.timedFrame_step,
-  Turing.timedInterpreter}
+\uses{Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.TimedControl, Turing.timedCaptureTM, Turing.timedFrame, Turing.timedFrame_step, Turing.timedInterpreter}
 \difficulty{3}
-For every $t$, running the assembled capture machine $t$ steps from a framed
-configuration equals the frame of the $t$-step timed-interpreter run, with the
-inactive frame unchanged.
+Let $M$ be a finite Boolean-alphabet Turing machine, choose a clock tape among its work
+tapes, and let $x$ be a Boolean input word. For every six-tape configuration $c$,
+contents and head positions for the $M$ tapes, and number of steps $t$, running the
+capture machine from the framed configuration for $t$ steps yields the frame of the
+timed-interpreter run from $c$ for $t$ steps.
 \end{lemma}
 
 \begin{lemma}[The captured entry is a frame]
 \lean{Turing.timedCaptured_frame}
 \label{Turing.timedCaptured_frame}
 \leanok
-\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape,
-  Turing.FinTM.tapeBlocks, Turing.timedCaptureCfg, Turing.timedCapturedCfg,
-  Turing.timedCut_InterpreterInitial, Turing.timedFive, Turing.timedFrame,
-  Turing.timedLift, Turing.timedSix,
-  Turing.universalFour}
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.bufferTape, Turing.FinTM.tapeBlocks, Turing.timedCaptureCfg, Turing.timedCapturedCfg, Turing.timedCut_InterpreterInitial, Turing.timedFive, Turing.timedFrame, Turing.timedLift, Turing.timedSix, Turing.universalFour}
 \difficulty{4}
-Let a halted configuration of the base machine hold, on the designated clock
-tape, the buffer of a clock word with head at the word's length.  Then its
-interpreter-entry capture configuration equals the frame --- over the base
-configuration's tapes and heads --- of the six-tape lift, with that clock
-word, of the stopped interpreter's entry configuration on the captured table
-(the base configuration's accumulated output) with the same parked input head.
+Let $M$ be a finite Turing machine over the Boolean alphabet, let $c$ be one of its work
+tapes, let $x$ be a Boolean input word, let $C$ be a configuration of $M$ on $x$, and
+let $b$ be a Boolean word. Suppose the contents of tape $c$ in $C$ are the buffer tape
+holding $b$, and its head is at position $|b|$. Then the interpreter-entry capture
+configuration associated with $C$ equals the frame, over $C$'s tapes and heads, of the
+six-tape lift of the stopped interpreter's entry configuration for the table given by
+$C$'s output, using clock word $b$ and the same input-head position.
 \end{lemma}
 
 \begin{definition}[The timed universal machine]
 \lean{Turing.timedUniversalTM}
 \label{Turing.timedUniversalTM}
 \leanok
-\uses{Turing.EffectiveMachineCode, Turing.FinTM, Turing.timedCanonClock,
-  Turing.timedCanonTM, Turing.timedCaptureTM}
+\uses{Turing.EffectiveMachineCode, Turing.FinTM, Turing.timedCanonClock, Turing.timedCanonTM, Turing.timedCaptureTM}
 The complete timed universal machine of an effective coding scheme: the
 capture wrapper of the composed clock-preserving canonizer, with its retained
 clock lane.  It has finite control and finitely many tapes.
@@ -1854,133 +1655,93 @@ plus twice the width of its binary state count, plus twice its initial state
 index, plus $16$.
 \end{definition}
 
-\begin{lemma}[The header lies inside the serialization]
+\begin{lemma}[Header length within the serialization]
 \lean{Turing.timed_header_bound}
 \label{Turing.timed_header_bound}
 \leanok
-\uses{Turing.CodeTM, Turing.CodeTM.serialize, Turing.universal_pair_length,
-  Turing.universal_serialization_header}
+\uses{Turing.CodeTM, Turing.CodeTM.serialize, Turing.universal_pair_length, Turing.universal_serialization_header}
 \difficulty{2}
-For every coded machine, the header endpoint --- twice the width of the binary
-state count, plus $2$, plus the initial state index, plus $1$ --- is at most
-the length of the machine's serialization.
+For every machine $M$ in code normal form, twice the number of bits in the binary
+representation of its state-count parameter, plus $2$, plus its initial state index,
+plus $1$, is at most the length of its canonical serialization.
 \end{lemma}
 
-\begin{lemma}[Exact startup of the timed machine]
+\begin{lemma}[Timed interpreter startup]
 \lean{Turing.timed_initialized}
 \label{Turing.timed_initialized}
 \leanok
-\uses{Turing.CodeTM.serialize, Turing.EffectiveMachineCode,
-  Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom,
-  Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.timedCanonClock,
-  Turing.timedCanonTM, Turing.timedCanon_complete, Turing.timedCaptureTM,
-  Turing.timedCapture_start, Turing.timedCaptured_frame,
-  Turing.timedCut_InterpreterBase, Turing.timedCut_InterpreterInitial,
-  Turing.timedCut_Interpreter_initialize, Turing.timedFrame,
-  Turing.timedFrame_run, Turing.timedLift, Turing.timedStartupBound,
-  Turing.timedUniversalTM, Turing.timed_replay, Turing.universalEvalCfg,
-  Turing.universalFour, Turing.universalInputPos,
-  Turing.universalSimulationCfg, Turing.universal_pair_length,
-  Turing.universal_serialization_header}
+\uses{Turing.CodeTM.serialize, Turing.EffectiveMachineCode, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.pairEncode, Turing.timedCanonClock, Turing.timedCanonTM, Turing.timedCanon_complete, Turing.timedCaptureTM, Turing.timedCapture_start, Turing.timedCaptured_frame, Turing.timedCut_InterpreterBase, Turing.timedCut_InterpreterInitial, Turing.timedCut_Interpreter_initialize, Turing.timedFrame, Turing.timedFrame_run, Turing.timedLift, Turing.timedStartupBound, Turing.timedUniversalTM, Turing.timed_replay, Turing.universalEvalCfg, Turing.universalFour, Turing.universalInputPos, Turing.universalSimulationCfg, Turing.universal_pair_length, Turing.universal_serialization_header}
 \difficulty{5}
-On the nested pair encoding $\langle \langle b, \alpha\rangle, x\rangle$, the
-timed universal machine reaches, within $4|b|$ plus the code-only startup
-bound steps, a framed configuration over some inactive tapes and heads: the
-six-tape lift, with clock word $b$, of the interpreter checkpoint of the
-decoded machine's initial configuration on $x$, with the table cursor just
-past the serialization header (at twice the binary state-count width, plus
-$2$, plus the initial state index, plus $1$).
+Let $c$ be an effective machine coding scheme, and let $bs$, $\alpha$, and $x$ be
+Boolean words. There exist a time $t$, work-tape contents, and work-tape head positions
+for the auxiliary tapes such that $t \le 4|bs|+S_c(\alpha)$, where $S_c(\alpha)$ is the
+timed startup bound for $c$ and $\alpha$, and the timed universal machine on input
+$\langle\langle bs,\alpha\rangle,x\rangle$ is then in the configuration obtained by
+lifting the decoded machine's initial configuration on $x$ to the timed interpreter,
+with clock word $bs$ and table cursor $2|\operatorname{bin}(N)|+2+q+1$. Here $N$ is the
+decoded machine's state-count parameter and $q$ is its initial-state index.
 \end{lemma}
 
-\begin{lemma}[Quadratic cost absorption]
+\begin{lemma}[Quadratic cost bound]
 \lean{Turing.timed_cost_bound}
 \label{Turing.timed_cost_bound}
 \leanok
 \difficulty{4}
-For all natural numbers $S$, $B$, $t$, $w$, $s$, $d$: if $w \le t$,
-$s \le 4w + S$, and $d \le (B + 2w + 8)(t+1)$, then
-$s + d \le (S + B + 14)(t+1)^2$.
+For natural numbers $S,B,t,w,s,d$, suppose $w\le t$, $s\le 4w+S$, and $d\le
+(B+2w+8)(t+1)$. Then $s+d\le (S+B+14)(t+1)^2$.
 \end{lemma}
 
-\begin{lemma}[The timed machine computes the bounded answer]
+\begin{lemma}[Timed computation of a bounded answer]
 \lean{Turing.timed_computes}
 \label{Turing.timed_computes}
 \leanok
-\uses{Turing.Cfg.init, Turing.EffectiveMachineCode,
-  Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono,
-  Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg,
-  Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add,
-  Turing.pairEncode, Turing.timedAnswer, Turing.timedCanonClock,
-  Turing.timedCanonTM, Turing.timedCaptureTM, Turing.timedFrame,
-  Turing.timedFrame_run, Turing.timedStartupBound, Turing.timedUniversalTM,
-  Turing.timedValue_bits, Turing.length_bits_le_self, Turing.timed_cost_bound,
-  Turing.timed_header_bound, Turing.timed_initialized,
-  Turing.timed_interpret_finishes, Turing.universalBlockBound}
+\uses{Turing.Cfg.init, Turing.EffectiveMachineCode, Turing.FinTM.ComputesInTime, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.length_bits_le_self, Turing.pairEncode, Turing.timedAnswer, Turing.timedCanonClock, Turing.timedCanonTM, Turing.timedCaptureTM, Turing.timedFrame, Turing.timedFrame_run, Turing.timedStartupBound, Turing.timedUniversalTM, Turing.timedValue_bits, Turing.timed_cost_bound, Turing.timed_header_bound, Turing.timed_initialized, Turing.timed_interpret_finishes, Turing.universalBlockBound}
 \difficulty{4}
-For every effective coding scheme, code string $\alpha$, input $x$, and
-deadline $t$, the timed universal machine on the nested pair encoding of the
-binary representation of $t$, the code $\alpha$, and the input $x$ halts with
-output the deadline-inclusive answer of the decoded machine's initial
-configuration at budget $t$, within
-$(\text{startup bound} + \text{block bound} + 14)\,(t+1)^2$ steps, where both
-bounds depend only on $\alpha$.
+Let $c$ be an effective machine code, let $\alpha$ and $x$ be finite Boolean strings,
+and let $t\in\mathbb{N}$. The timed universal machine, started on
+$\langle\langle\operatorname{bin}(t),\alpha\rangle,x\rangle$, halts after exactly
+$((S+B+14)(t+1)^2)$ steps and outputs $1$ followed by the decoded machine's output after
+$t$ steps if that machine has halted by then; otherwise, it outputs the single bit $0$.
+Here $S$ is the timed startup bound for $c,\alpha$, and $B$ is the block bound for
+$c,\alpha$.
 \end{lemma}
 
-\begin{theorem}[The time-bounded universal machine]
+\begin{theorem}[Timed universal simulation with timeout]
 \lean{Turing.timed_universal}
 \label{Turing.timed_universal}
 \leanok
-\uses{Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM,
-  Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff,
-  Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode,
-  Turing.timedAnswer, Turing.timedStartupBound, Turing.timedUniversalTM,
-  Turing.timed_computes, Turing.universalBlockBound}
+\uses{Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.timedAnswer, Turing.timedStartupBound, Turing.timedUniversalTM, Turing.timed_computes, Turing.universalBlockBound}
 \difficulty{4}
-For every effective machine-coding scheme there is a single finite-tape
-machine $U$ over $\{0,1\}$ such that for every code string $\alpha$ there is a
-constant $C$ with the following two properties for every input $x$ and every
-deadline $t \in \mathbb{N}$.  If the machine denoted by $\alpha$ halts on $x$
-within $t$ steps with output $w$, then $U$ on the nested pair encoding of the
-binary representation of $t$, the code $\alpha$, and the input $x$ halts with
-output $1$ followed by $w$ within $C (t+1)^2$ steps.  If instead the denoted
-machine produces no output on $x$ within $t$ steps, then $U$ halts with output
-the single timeout tag $0$ within the same bound.  Halting is checked after
-every simulated transition including the $t$-th, so halting exactly at the
-deadline counts as success.
+For every effective machine coding scheme $c$, there is a finite-tape machine $U$ over
+the Boolean alphabet such that for every Boolean code word $\alpha$ there is a natural
+number $C$, and for every Boolean input $x$ and deadline $t$, both of the following
+hold. If the machine decoded from $\alpha$ computes an output $y$ on $x$ in exactly $t$
+steps, then $U$ computes $1$ followed by $y$ on
+$\langle\langle\operatorname{bin}(t),\alpha\rangle,x\rangle$ in exactly $C(t+1)^2$
+steps; if it computes no output on $x$ in exactly $t$ steps, then $U$ computes the
+one-bit output $0$ on that input in exactly $C(t+1)^2$ steps.
 \end{theorem}
 
 %%% added by the blueprint pipeline
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Additional declarations}
 
-\begin{theorem}[Time-bounded universal machine with explicit constant]
+\begin{theorem}[Concrete timed simulation bound]
 \lean{Turing.timed_universal_concrete}
 \label{Turing.timed_universal_concrete}
 \leanok
-\uses{Turing.CodeTM.serialize, Turing.CodeTM.toFinTM,
-  Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.ComputesInTime,
-  Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg,
-  Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.timedAnswer,
-  Turing.timedUniversalTM, Turing.timed_computes, Turing.universalBlockBound}
+\uses{Turing.CodeTM.serialize, Turing.CodeTM.toFinTM, Turing.EffectiveMachineCode, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.pairEncode, Turing.timedAnswer, Turing.timedUniversalTM, Turing.timed_computes, Turing.universalBlockBound}
 \difficulty{4}
-Let $c$ be an effective machine-coding scheme whose canonizer runs in time
-$T \colon \mathbb{N} \to \mathbb{N}$; for a bit string $\alpha$ let $M_\alpha$
-be the machine $\alpha$ decodes to, $L_\alpha$ the length of its canonical
-serialization, $N_\alpha$ its number of states and $q_\alpha$ the index of its
-initial state, write $\mathrm{bin}(n)$ for the binary representation of $n$
-(least significant bit first) and $\langle a, b\rangle$ for the pair encoding
-of bit strings (each bit of $a$ doubled, then $01$, then $b$), and set
-\[
-  C_\alpha = \bigl(3|\alpha| + T(|\alpha|) + L_\alpha
-    + 2\,|\mathrm{bin}(N_\alpha)| + 2q_\alpha + 16\bigr)
-    + \bigl(3L_\alpha + 5(N_\alpha + 1) + 20\bigr) + 14 .
-\]
-Then there is a single finite-tape machine $U$ over $\{0,1\}$ such that for
-every bit string $\alpha$, input $x$ and deadline $t \in \mathbb{N}$: if
-$M_\alpha$ halts on $x$ within $t$ steps with output $w$, then $U$ on
-$\langle\langle \mathrm{bin}(t), \alpha\rangle, x\rangle$ halts within
-$C_\alpha (t+1)^2$ steps with output $1$ followed by $w$; and if there is no
-string $w$ such that $M_\alpha$ halts on $x$ within $t$ steps with output $w$,
-then $U$ on $\langle\langle \mathrm{bin}(t), \alpha\rangle, x\rangle$ halts
-within $C_\alpha (t+1)^2$ steps with output the single bit $0$.
+For every effective machine coding scheme $c$, there is a finite-tape machine $U$ over
+the Boolean alphabet such that for every Boolean code word $\alpha$, Boolean input $x$,
+and natural number $t$, both of the following hold. Write $L$ for the length of the
+canonical serialization of the machine decoded from $\alpha$, $N$ for its state-count
+parameter, $q$ for its initial-state index, and $T(n)$ for the canonizer's time bound.
+If the decoded machine computes output $y$ on $x$ in exactly $t$ steps, then $U$
+computes $1$ followed by $y$ on
+$\langle\langle\operatorname{bin}(t),\alpha\rangle,x\rangle$ in exactly
+$C_{c,\alpha}(t+1)^2$ steps; if it computes no output on $x$ in exactly $t$ steps, then
+$U$ computes the one-bit output $0$ on that input in exactly the same number of steps,
+where
+$C_{c,\alpha}=(3|\alpha|+T(|\alpha|)+L+2|\operatorname{bin}(N)|+2q+16)+(3L+5(N+1)+20)+14$.
 \end{theorem}

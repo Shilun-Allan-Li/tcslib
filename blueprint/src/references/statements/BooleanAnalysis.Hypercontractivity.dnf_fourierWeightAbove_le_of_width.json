@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.dnf_fourierWeightAbove_le_of_width",
+ "key": "f712c05f76938077",
+ "kind": "lemma",
+ "title": "Fourier Tail Bound for Bounded Width DNF",
+ "statement": "Let $d$ be a disjunctive normal form on $n$ Boolean variables, let $w,t\\in\\mathbb N$, and suppose the width of $d$ is at most $w$ and $w>0$. For the real-valued function $f$ that equals $-1$ where $d$ evaluates to true and $1$ where it evaluates to false, the Fourier weight on levels strictly above $120w(t+1)$ satisfies $\\sum_{|S|>120w(t+1)}\\widehat f(S)^2\\le 8(1/2)^t$, with Fourier coefficients and expectation taken under the uniform cube measure.",
+ "hypotheses_covered": [
+  "d is a DNF on n Boolean variables",
+  "The width of d is at most w",
+  "w > 0",
+  "t is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $d$ be a DNF on $n$ variables of width at most a positive integer $w$, and let $t\\in\\mathbb N$. Its sign encoding $f(x)=(-1)^{d(x)}$ satisfies $\\sum_{|S|>120w(t+1)}\\widehat f(S)^2\\le8\\,2^{-t}$ under the uniform cube law."
+}

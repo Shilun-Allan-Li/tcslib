@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.NDTM.stepWith_mapState_of_agreeOn",
+ "key": "b1040497a10d2466",
+ "kind": "theorem",
+ "title": "State renaming preserves a step",
+ "statement": "Let $S$ and $H$ be state sets, let $\\Gamma$ be a symbol alphabet, and let $M_S$ and $M_H$ be nondeterministic machines with $k$ work tapes and state sets $S$ and $H$, respectively. Let $e:S\\hookrightarrow H$ be an embedding and let $G\\subseteq S$. Suppose that for each choice bit, every state $q\\in G$, and every input and work-tape observation, the transition of $M_H$ at $e(q)$ is the state-renamed transition of $M_S$ at $q$. If $c$ is a configuration of $M_S$ on input $x$ and every state present in $c$ belongs to $G$, then stepping the renamed configuration $e(c)$ in $M_H$ gives the state-renamed result of stepping $c$ in $M_S$, for every choice bit.",
+ "hypotheses_covered": [
+  "State sets $S$ and $H$",
+  "Symbol alphabet $\\Gamma$",
+  "Two nondeterministic machines with $k$ work tapes",
+  "An embedding $e:S\\hookrightarrow H$",
+  "A subset $G\\subseteq S$",
+  "Transition agreement for both choice bits, every $q\\in G$, and all input and work-tape observations",
+  "Input word $x$",
+  "Configuration $c$ on $x$",
+  "Every state present in $c$ belongs to $G$",
+  "A choice bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

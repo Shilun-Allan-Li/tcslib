@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.counter_span_append",
+ "key": "4f3b81db4007fb64",
+ "kind": "lemma",
+ "title": "Concatenating counter spans",
+ "statement": "Let $k$ be a natural number, let $\\Gamma$ and $S$ be types, let $x$ be a finite input word over $\\Gamma$, and let $H$ be a machine with $k+1$ work tapes and states of the counter-loop form over $S$. For an initial configuration $z$, natural times $s,t$, an integer counter position $cp$, a natural width, and predicates $R_1,R_2,R$ on the positions of the first $k$ work heads, suppose the run from $z$ spans time $s$ with invariant $R_1$, and the run from its time-$s$ configuration spans time $t$ with invariant $R_2$. If each of $R_1$ and $R_2$ implies $R$, then the run from $z$ spans time $s+t$ with invariant $R$: it avoids both exit anchors before that time, keeps the final work-head position in the interval from $cp-1$ to $cp+\\mathrm{width}$ at every time up to it, and satisfies $R$ for the first $k$ head positions throughout.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$\\Gamma$ and $S$ are types",
+  "$x$ is a finite input word over $\\Gamma$",
+  "$H$ has $k+1$ work tapes and counter-loop states over $S$",
+  "$z$ is a configuration",
+  "$s,t$ are natural numbers",
+  "$cp$ is an integer",
+  "$\\mathrm{width}$ is a natural number",
+  "$R_1,R_2,R$ are predicates on the positions of the first $k$ work heads",
+  "the run from $z$ spans time $s$ with invariant $R_1$",
+  "the run from the time-$s$ configuration spans time $t$ with invariant $R_2$",
+  "$R_1$ implies $R$",
+  "$R_2$ implies $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

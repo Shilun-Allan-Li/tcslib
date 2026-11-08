@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.a2_loop_start_prefix",
+ "key": "0c7ea3a52f96d61e",
+ "kind": "lemma",
+ "title": "Bounded heads during loop startup",
+ "statement": "Let $body$ and $F$ be finite Boolean Turing machines, let $anchor$ be a state of $body$, let $x$ and $s$ be Boolean words, let $t$ and $B$ be natural numbers, and let $fuel$ be a configuration of $F$ on input $x$. Suppose that the run of $body$ from its initial configuration on $x$ is never in state $anchor$ at any time $u<t$, that at time $t$ it is exactly the seam configuration with state $anchor$ and word $s$, that its space use is at most $B$ at every time $u\\le t$, and that every work-tape head of $fuel$ lies between $-B$ and $B$. Then, for the loop-host machine in non-search mode started in its ready configuration with fuel $fuel$, every work-tape head lies between $-(B+2)$ and $B+2$ at each time $u\\le t+2$.",
+ "hypotheses_covered": [
+  "body and F are finite Boolean Turing machines",
+  "anchor is a body state",
+  "x and s are Boolean words",
+  "t and B are natural numbers",
+  "fuel is an F configuration on input x",
+  "no visit to anchor at any time u < t",
+  "body configuration at time t is the seam configuration for anchor and s",
+  "body space use is at most B at all times u ≤ t",
+  "fuel heads are bounded by B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.rewind_from_any",
+ "key": "f6f73d20750f2349",
+ "kind": "lemma",
+ "title": "Rewind from any input position",
+ "statement": "Let $k \\in \\mathbb{N}$, let $S$ be a state set, let $x$ be a Boolean input, and let $M$ be a $k$-work-tape Turing machine over the Boolean alphabet with states in $S$. Suppose there are states $r,s \\in S$ and an optional destination state $d \\in \\mathrm{Option}(S)$ such that, for every input symbol and tuple of work-tape symbols, state $r$ prescribes a left input-head move with successor state $s$, while state $s$ prescribes a left move with successor $s$ when an input symbol is scanned and a right move with successor $d$ when a blank is scanned; these actions write nothing on the work tapes, move no work-tape heads, and emit no output. From every configuration $c$ on input $x$ whose state is $r$, there exists $t \\in \\mathbb{N}$ such that after $t$ steps the configuration has state $d$ and input-head position $1$, with every other component equal to that of $c$.",
+ "hypotheses_covered": [
+  "A natural number $k$ of work tapes",
+  "A state set $S",
+  "A Boolean input $x$",
+  "A machine over the Boolean alphabet with states in $S$",
+  "Start state $r$ and scan state $s$",
+  "Optional destination state $d$",
+  "For every input and work symbols, the transition from $r$ is the leftward control action to $s$",
+  "For every input and work symbols, the transition from $s$ is leftward to $s$ on a symbol and rightward to $d$ on a blank",
+  "A configuration $c$ on $x$ with state $r"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet on input\n$x$, with a start state $r$, a scanning state $s$, and an optional dispatch\nstate $d$, such that regardless of the symbols read: from $r$ the machine\nalways moves the input head left and enters $s$; from $s$ it moves left and\nstays in $s$ when an input symbol is scanned, and moves right and passes to\n$d$ when a blank is scanned; and none of these transitions touches a work\ntape or the output.  Then from any configuration $c$ in state $r$ there\nexists a number of steps $t$ such that after $t$ steps the configuration\nagrees with $c$ in every component except that its state is $d$ and its input\nhead is at position $1$.  This holds even when $x$ is empty or the input head\nof $c$ starts at a boundary blank."
+}

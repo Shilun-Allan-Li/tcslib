@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_counter_count_space",
+ "key": "7ddf329b895cd20f",
+ "kind": "lemma",
+ "title": "Space bounds during counter execution",
+ "statement": "For every finite Boolean word $x$ and every natural number $i \\le |x|$, there is a time $t$ with $t + 2\\,\\mathrm{count}_{\\mathrm{true}}(i.bits) \\le 4i$ such that, after $t$ steps, the counter machine started on $x$ is in state $0$, its input head is at position $i+1$, its work-tape head is at position $0$, its work tape contains the binary expansion of $i$, and its output is empty. At every time $u \\le t$, the work-tape head position lies between $-2(\\mathrm{size}(|x|)+1)$ and $2(\\mathrm{size}(|x|)+1)$, inclusive.",
+ "hypotheses_covered": [
+  "Boolean word x",
+  "Natural number i with i ≤ |x|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

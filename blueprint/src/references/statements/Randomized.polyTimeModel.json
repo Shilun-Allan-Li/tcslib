@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.polyTimeModel",
+ "key": "382c37ab5597c373",
+ "kind": "def",
+ "title": "Polynomial-time verifier model",
+ "statement": "A verifier model consists of a notion of efficiency for option-valued two-input verifiers and a notion of efficiency for Boolean-valued three-input predicates. In the polynomial-time model, an option-valued verifier is efficient exactly when there are languages $V_1,V_0$ in $P$ such that, for every input $x$ and string $r$, it returns true exactly when the pair encoding of $(x,r)$ belongs to $V_1$, and returns false exactly when that encoding belongs to $V_0$; a three-input predicate is efficient exactly when there is a language $V$ in $P$ such that its value on $(x,u,v)$ is true exactly when the nested pair encoding of $(x,u,v)$ belongs to $V$.",
+ "hypotheses_covered": [
+  "Verifier model has an efficiency predicate for option-valued two-input verifiers",
+  "Verifier model has an efficiency predicate for Boolean-valued three-input predicates",
+  "For option-valued efficiency, existence of $V_1,V_0\\in P$",
+  "Exact equivalences between true/false outputs and membership of encoded pairs",
+  "For three-input efficiency, existence of $V\\in P$",
+  "Exact equivalence between true output and membership of the nested pair encoding"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

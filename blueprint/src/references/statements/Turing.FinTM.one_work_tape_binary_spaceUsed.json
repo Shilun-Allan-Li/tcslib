@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.one_work_tape_binary_spaceUsed",
+ "key": "73c0b1e130fb37d9",
+ "kind": "theorem",
+ "title": "One-tape simulation with a space bound",
+ "statement": "Let $\\Gamma$ be a finite alphabet with decidable equality, let $M$ be a finite Turing machine over $\\Gamma$, let $f$ map words over $\\Gamma$ to words over $\\Gamma$, and let $T,S\\colon\\mathbb N\\to\\mathbb N$. Suppose $M$ computes $f$ in time $T$, and for every input $x$ and every time $t$ its space usage is at most $S(|x|)$. Then there are a finite alphabet $\\Gamma'$ with decidable equality, an injection $e\\colon\\Gamma\\hookrightarrow\\Gamma'$, a finite Turing machine $M'$ over $\\Gamma'$, and a constant $c\\in\\mathbb N$ such that $M'$ has one work tape, computes $f$ on symbolwise encoded inputs via $e$ within $c(T(n)+1)^2$ steps, and for every input $x$ and time $t$ uses at most $c(S(|x|)+1)$ work-tape cells.",
+ "hypotheses_covered": [
+  "finite alphabet $\\Gamma$",
+  "decidable equality on $\\Gamma$",
+  "finite Turing machine $M$ over $\\Gamma$",
+  "word function $f$ over $\\Gamma$",
+  "time bounds $T,S\\colon\\mathbb N\\to\\mathbb N$",
+  "$M$ computes $f$ in time $T$",
+  "for all inputs $x$ and times $t$, space usage is at most $S(|x|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

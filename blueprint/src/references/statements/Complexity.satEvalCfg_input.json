@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.satEvalCfg_input",
+ "key": "1b5bdb51d29e756e",
+ "kind": "lemma",
+ "title": "Input Symbol in a Canonical Configuration",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, let $w,u$ be Boolean words, and choose a saved configuration of $M$ on input $w$, a semantic state $q$, an integer $j$, and $i\\le |w|$. The symbol under the input head in the canonical evaluation configuration at input offset $i$ is the optional $i$-th bit of $w$.",
+ "hypotheses_covered": [
+  "finite Boolean machine $M$ with $k$ work tapes",
+  "saved configuration on input $w$",
+  "Boolean word $u$",
+  "semantic state $q$",
+  "$i\\le |w|$",
+  "integer offset $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "In the canonical evaluation configuration at input position $i$ on input $w$, the\nsymbol read by the input head is the optional $i$-th entry of $w$; it does not\ndepend on the saved extractor bank."
+}

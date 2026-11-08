@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.compile_space",
+ "key": "8ff944eeb4d4df81",
+ "kind": "theorem",
+ "title": "Space bound for compiled computation",
+ "statement": "Let the program state set and decider state set be finite. Let $P$ be a register program with $m$ registers and $d$ oracle deciders, and let $D$ be a decider machine with $k_D$ work tapes. Choose a start state, initial decider states, an oracle, register-head bounds $lo,hi$, and natural numbers $B,N$; let $w$ be a bit word. Suppose the register-program run on $x$ is halted at time $N$ with output $w$, its register heads stay between $lo$ and $hi$ through time $N$, and at every earlier time its calls satisfy the conditions that argument registers are distinct, the input head is at position $1$, each argument register stores its represented word from cell $0$ with head at $0$ and word length within the bounds, and the corresponding decider run halts with the oracle's answer, clears its work tapes, returns their heads to $0$, and keeps each decider head within distance $B$ of $0$. Then the compiled finite machine halts on $x$ with output $w$ after some time $T$, and its total space use is at most $\\sum_r (hi(r)-lo(r)+1) + k_D(2B+1)$.",
+ "hypotheses_covered": [
+  "The program and decider state sets are finite",
+  "The program $P$, start state, decider $D$, initial decider states $q_0$, and oracle",
+  "Register-head bounds $lo,hi$",
+  "The numbers $B,N$ and output word $w$",
+  "The register-program run halts at time $N$",
+  "Its output at time $N$ equals $w$",
+  "The register-head box bound at all times $t\\le N$",
+  "The call conditions at all times $t<N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

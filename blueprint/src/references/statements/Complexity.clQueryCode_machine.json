@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.clQueryCode_machine",
+ "key": "e31fdc06b66a63c3",
+ "kind": "lemma",
+ "title": "Machine for querying comparison flags",
+ "statement": "Let $l,N,W,U$ be natural numbers, let $p,n\\in\\{0,\\ldots,l-1\\}$ be distinct, let $r_s(i)$ be a family of bit words indexed by times $s$ and coordinates $i$, let $y_0,y_1$ be target bit words, and let $v$ be a bit-word tail. Suppose $|r_s(i)|\\le W$ for every $s<N$ and every $i$, $|y_j|\\le W$ for each $j\\in\\{0,1\\}$, and each of the $l+5$ query words formed from the targets, the stream of packed rows followed by $v$, and the unary clock of length $N$ has length at most $U$. There exist a finite binary Turing machine $Q$ and natural numbers $c,e$ such that, on the packed query argument, $Q$ outputs in at most $2(2|a|+9+(l+5)(3U+7)+N(l(5W+7)+2W+7))+c(N+1)^e+2$ steps the optional-time code of the greatest $s<N$ for which the value of $r_s(p)$ plus the value of $y_1$ equals the value of $y_0$ plus the value of $r_s(n)$; if no such $s$ exists, it outputs the code for absence. Here $a$ denotes that packed argument and each word is interpreted as a little-endian binary numeral.",
+ "hypotheses_covered": [
+  "$l,N,W,U$ are natural numbers",
+  "$p,n$ are coordinates in a set of size $l$ and are distinct",
+  "$r_s(i)$ is a family of bit words",
+  "$y_0,y_1$ are bit words",
+  "$v$ is a bit-word tail",
+  "all row words with $s<N$ have length at most $W$",
+  "both target words have length at most $W$",
+  "all query words have length at most $U$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For distinct positive and negative coordinates, there exist a single machine $Q$ and constants $c, e$ such that on every canonical query argument, a packed row family, target words, and strict-prefix clock, $Q$ computes the optional-time code of the last row whose cross-sums match the targets, within twice the query ledger plus $c(N+1)^e + 2$ steps. Only canonical inputs are promised; callers must establish them."
+}

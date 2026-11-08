@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_pt_take",
+ "key": "0cf83d704dbd6eef",
+ "kind": "lemma",
+ "title": "Truncation to a computed length",
+ "statement": "If $f,g : \\{0,1\\}^* \\to \\{0,1\\}^*$ are polynomial-time computable, then the function sending each bit string $x$ to the prefix of $g(x)$ of length $|f(x)|$ is polynomial-time computable; if $g(x)$ is shorter, this prefix is all of $g(x)$.",
+ "hypotheses_covered": [
+  "$f$ is polynomial-time computable",
+  "$g$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $f$ and $g$ are polynomial-time computable functions on bit strings, then so is the function sending $x$ to the first $|f(x)|$ bits of $g(x)$ (all of $g(x)$ when it is shorter)."
+}

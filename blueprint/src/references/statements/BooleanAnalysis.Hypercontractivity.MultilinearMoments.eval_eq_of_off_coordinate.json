@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_eq_of_off_coordinate",
+ "key": "bc3ead9149eeefc7",
+ "kind": "theorem",
+ "title": "Evaluation Is Unchanged by an Unused Coordinate",
+ "statement": "Let $n$ be a natural number, let $F$ assign a real coefficient to each subset of $\\{0,\\ldots,n-1\\}$, and let $X_j,Y_j:\\Omega\\to\\bbr$ be two families of real-valued functions. If $F(S)=0$ for every subset $S$ containing a fixed coordinate $i$, and $X_j=Y_j$ for every $j\\ne i$, then the multilinear evaluations of $F$ on the two families are equal as functions on $\\Omega$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$F$ is a real coefficient family on subsets of the $n$-coordinate set",
+  "$i$ is a coordinate in that set",
+  "$F(S)=0$ whenever $i\\in S$",
+  "$X_j$ and $Y_j$ are real-valued functions on $\\Omega$",
+  "$X_j=Y_j$ for every $j\\ne i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ be real multilinear coefficients on $n$ inputs and let $i\\in[n]$ satisfy $F(S)=0$ for every $S$ containing $i$. If functions $X_j,Y_j:\\Omega\\to\\bbr$ agree for every $j\\ne i$, then $\\sum_S F(S)\\prod_{j\\in S}X_j=\\sum_S F(S)\\prod_{j\\in S}Y_j$ as functions on $\\Omega$."
+}

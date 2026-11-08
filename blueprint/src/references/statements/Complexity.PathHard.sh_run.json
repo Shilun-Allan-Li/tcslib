@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.PathHard.sh_run",
+ "key": "ebd039e405caee8f",
+ "kind": "theorem",
+ "title": "Bounded shift run",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $mode$ be Boolean, let $o$ be an oracle assigning a Boolean value to each of five indices and each Boolean word, let $y$ be a Boolean word, and let $st$ be a state of fifteen natural-number registers. Suppose every register of $st$ is at most $B$, its shift scratch register is zero, and the register selected by the shift operation $k$, multiplied by $2^{c}$ where $c$ is the loop-counter register of $st$, is at most $B$. Then the register program has a finite run from phase zero of shift operation $k$ with register values $st$ to its exit phase, with the loop-counter register cleared and the selected register replaced by its original value times $2^{c}$; all other registers retain their original values. The guard holds at every configuration before the endpoint.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "Boolean mode",
+  "oracle on five indices and Boolean words",
+  "Boolean input word $y$",
+  "each register of $st$ is at most $B$",
+  "shift scratch register of $st$ equals zero",
+  "selected register value times $2^c$ is at most $B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let the mode be Boolean, let $o$ be an oracle\nassigning a Boolean answer to each of five indices and binary words, and let $y$ be a\nbinary word. Suppose a register state $st$ has each of its fifteen coordinates at most\n$B$, its scratch register $z$ is zero, and the coordinate selected by the shift\noperation $k$, multiplied by $2^c$, is at most $B$. Then the specified register program\nhas a finite run, guarded at every configuration before its endpoint, from phase zero of\nshift operation $k$ with registers $st$ to the exit phase of $k$, with the counter\nregister cleared and the selected coordinate replaced by its original value times $2^c$;\nall other registers retain their original values."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.ConfigCodec.expectOf",
+ "key": "aa71b703a572441e",
+ "kind": "def",
+ "title": "Expected bit at a wire",
+ "statement": "For a finite Turing machine $M$, natural numbers $n,s,p,h,v$, and a machine case $q$, let the action be the one prescribed by $q$. The expectation at wire $v$ is a copy when $v<n$. For $n\\le v<2n+2$, it is the constant asserting that the moved input-head position equals $v-n$; for $2n+2\\le v<2n+2+\\lvert M.\\mathrm{State}\\rvert+1$, it is the constant asserting that the action’s state index equals the offset of $v$ from $2n+2$. In the work-tape region, decode the tape number, cell, and one of three wire types from the offset of $v$: out-of-range tape numbers are copied; for the first two wire types, cells other than the encoded head position are copied, and at that position the result is copied for an unchanged symbol or is the constant specifying the action’s written symbol; for the third wire type, the result is the constant asserting that the head position after the action’s signed move equals the decoded cell. At every remaining wire, the expectation is the summary expectation whose flag is true exactly when $v$ is one more than the summary-region offset.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$",
+  "Natural numbers $n,s,p,h,v$",
+  "A machine case $q$"
+ ],
+ "confidence": "low",
+ "caveat": "The statement relies on machine-action and offset/index conventions whose defining declarations are not included in the supplied definitions; the intervals and piecewise construction are transcribed from the formal expression.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

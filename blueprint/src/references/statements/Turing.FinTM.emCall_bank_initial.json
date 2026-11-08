@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_bank_initial",
+ "key": "b2b3d2d717c78ee0",
+ "kind": "lemma",
+ "title": "Cleaner entry reproduces the bank frame",
+ "statement": "Let $M$ be a finite-state Boolean Turing machine, let $\\mathit{emit}\\in\\{\\mathrm{false},\\mathrm{true}\\}$, and let $x,\\mathit{arg},\\mathit{cap}$ be Boolean words. For any time $T$ and source tape $i$, embedding the cleaner's entry configuration for tape $i$—with that tape's data, visited-span marker, origin marker, and head position taken from the run of $M$ on $\\mathit{arg}$ at time $T$—into the three slots for tape $i$ in the bank frame with the first $i$ banks blank gives exactly that bank frame, with the cleaner in state $0$ for tape $i$.",
+ "hypotheses_covered": [
+  "finite-state Boolean machine $M$",
+  "Boolean mode $\\mathit{emit}$",
+  "Boolean input, argument, and capture words $x,\\mathit{arg},\\mathit{cap}$",
+  "time $T\\in\\mathbb N$",
+  "source tape index $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every mode, input, argument and capture words, time $T$, and source tape $i$:\nrelocating the interval cleaner's entry configuration for bank $i$ (actual data, visited\nspan, origin marker, actual head) into the cleanup frame whose first $i$ banks are blank\nyields exactly that frame, with every other bank and both administrative tapes retained."
+}

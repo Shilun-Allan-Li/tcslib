@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.rawStrip_copy",
+ "key": "38f7e29729561dc2",
+ "kind": "lemma",
+ "title": "Forward copying phase",
+ "statement": "Let $x$ be a Boolean word and let $j$ be a natural number with $j\\le |x|$. After $j$ steps from its initial configuration on input $x$, the raw marker-stripping machine is in state $0$, has copied the first $j$ bits of $x$ to its work tape, has its input head at position $j+1$ and work-tape head at position $j$, and has emitted no output.",
+ "hypotheses_covered": [
+  "$x$ is a Boolean word",
+  "$j\\in\\mathbb{N}$",
+  "$j\\le |x|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le \\abs{x}$, after $j$ steps from its initial configuration on\ninput $x$ the stripping machine holds the first $j$ bits of $x$ on its work\ntape with both heads advanced by $j$, and has emitted nothing."
+}

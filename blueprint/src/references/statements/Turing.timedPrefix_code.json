@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.timedPrefix_code",
+ "key": "595da867b4b006cb",
+ "kind": "lemma",
+ "title": "Code extraction after partial scan",
+ "statement": "Let $b_s,\\alpha,x$ be Boolean words. For every integer $j$ with $j\\le |\\alpha|$, after $4|b_s|+4+2j$ steps of the prefix parser on $\\langle\\langle b_s,\\alpha\\rangle,x\\rangle$, its state is the first code-reading phase, its input head is at position $4|b_s|+4+2j+1$, its work tape stores all of $b_s$, and its output is the prefix of $\\alpha$ of length $j$.",
+ "hypotheses_covered": [
+  "Boolean words $b_s,\\alpha,x$",
+  "Integer $j$ satisfies $j\\le |\\alpha|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j \\le |\\alpha|$, running the prefix parser $4|b| + 4 + 2j$ steps\nfrom its initial configuration on the nested pair encoding\n$\\langle \\langle b, \\alpha\\rangle, x\\rangle$ keeps the stored clock $b$\nintact, emits exactly the first $j$ code bits as output, and remains in the\ncode-extraction phase with the input head just past the consumed cells."
+}

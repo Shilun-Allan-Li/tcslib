@@ -1,0 +1,29 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_contracts",
+ "key": "c0b3348d61bd2ecf",
+ "kind": "lemma",
+ "title": "Loop Host Configuration Contracts",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, let $I$ be a predicate on pairs of Boolean words, and let $g$, $A$, and $O$ be functions assigning respectively a next word, an acceptance bit, and an output word to each pair of Boolean words. Choose a Boolean mode `findMode`, an initial-word function $s_0$, and functions $R,T:\\mathbb N\\to\\mathbb N$. Assume that $F$ computes the binary digits of $R(|x|)$ on every input $x$ within time $T(|x|)$; that $I(x,s_0(x))$ holds and $I(x,s)$ implies $I(x,g(x,s))$; and that for each $x$ there is a time $t\\le T(|x|)$ at which $B$, started on $x$ in its initial configuration, first reaches the seam configuration in state $a$ with tape contents given by $s_0(x)$ (it is not in state $a$ at any earlier time). Assume also that for every $x,s$ with $I(x,s)$ there is a time $t$ with $0<t\\le T(|x|)$ such that, strictly between times $0$ and $t$, the run of $B$ from the seam configuration $(a,s)$ does not revisit state $a$; at time $t$, if $A(x,s)$ holds, the machine is halted with output $O(x,s)$, and otherwise it is at the seam configuration $(a,g(x,s))$. Then there is a constant $c$ such that for every input $x$ there are a family of loop-host configurations $C_i$ and a startup time $u$ with $u\\le c(T(|x|)+1)$, the host reaches $C_0$ from its initial configuration in exactly $u$ steps, and $C_i$ has empty output for every $i\\le R(|x|)$. The configuration $C_{R(|x|)+1}$ is halted, with empty output in find mode and output $[\\mathrm{false}]$ otherwise. For every $i\\le R(|x|)$ there is a time $t\\le c(T(|x|)+1)$ such that, if $A(x,g^{[i]}(x,s_0(x)))$ holds, running the host for $t$ steps from $C_i$ halts with output $O(x,g^{[i]}(x,s_0(x)))$ in find mode and $[\\mathrm{true}]$ otherwise; if it does not hold, that run reaches exactly $C_{i+1}$. Here $g^{[i]}(x,s_0(x))$ denotes $i$ iterations of the update $s\\mapsto g(x,s)$ starting at $s_0(x)$.",
+ "hypotheses_covered": [
+  "Boolean finite machines $B,F$",
+  "anchor state $a$ of $B$",
+  "predicate $I$ on word pairs",
+  "functions $g,A,O$ on word pairs",
+  "Boolean mode `findMode`",
+  "initial word function $s_0$",
+  "natural-number functions $R,T$",
+  "$F$ computes $R(|x|)$ in binary within time $T(|x|)$ for every $x$",
+  "$I(x,s_0(x))$ for every $x$",
+  "$I(x,s)\\Rightarrow I(x,g(x,s))$ for every $x,s$",
+  "bounded startup time $t\\le T(|x|)$ reaching the seam configuration $(a,s_0(x))$",
+  "no visit to state $a$ before that startup time",
+  "for each invariant pair $(x,s)$, a round time $0<t\\le T(|x|)$",
+  "no state-$a$ revisit strictly between times $0$ and $t$ during a round",
+  "accepting round halts with output $O(x,s)$",
+  "nonaccepting round reaches seam configuration $(a,g(x,s))"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a loop body with anchor, a fuel machine computing the binary digits of $R(|x|)$ in\ntime $T$, an invariant preserved from the initial word by the step function, a bounded\nanchor-free startup, and a per-round contract (positive duration at most $T(|x|)$, no\nearly anchor revisit, and accept-with-output or advance-to-stepped-seam) be given,\ntogether with an output mode. Then there is a constant $c$ such that for every input $x$\nthe loop host has a round-configuration family: a startup segment of at most $c (T(|x|)\n+ 1)$ steps reaching round zero, empty output at every round configuration up to\n$R(|x|)$, a halted terminal at index $R(|x|) + 1$ with output empty in find mode and the\nbit $\\mathrm{false}$ in decision mode, and for each round $i \\le R(|x|)$ a segment of at\nmost $c (T(|x|) + 1)$ steps that halts with the declared output when round $i$ accepts\nand reaches round $i + 1$ otherwise."
+}

@@ -1,0 +1,25 @@
+{
+ "lean_name": "Complexity.PathHard.check_decode_run",
+ "key": "77538178aac3e3a2",
+ "kind": "theorem",
+ "title": "Decoding run dichotomy",
+ "statement": "Let $a,b,f,B\\in\\mathbb{N}$, let $m$ be a Boolean mode, let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, and let $x,\\beta,y$ be Boolean words. Suppose $y$ is the pair encoding of $x$ and $\\beta$, and let $st$ be a register record whose fifteen entries are at most $B$. Assume that the query-length register of $st$ equals $|y|$, its pair-scan pointer is $2|x|+2$, its width-check pointer equals that pair-scan pointer, its index and decoding scratch registers are zero, and its width cap $k$ satisfies $1\\le k$ and $2k\\le B$. Then either $|\\beta|\\le |\\mathrm{bits}(k)|$ and $\\beta$ is canonical, in which case there exist $q',k'\\le B$ such that the machine $A(a,b,f,m)$ with the oracle determined by $N$ reaches the label for the $2n\\le i$ comparison from the state labeled by the true width-check test, with register values $st$ and no result recorded, while satisfying its guard at every earlier time; the final register values are those of $st$ with the query-length register set to the pair-scan pointer, the index set to the binary value of $\\beta$, and the width-check pointer and cap set to $q'$ and $k'$. Or the conjunction of that length bound and canonicity fails, and the same initial configuration halts with result false while satisfying its guard at every earlier time.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$x,\\beta,y$ are Boolean words",
+  "$y$ is the pair encoding of $x$ and $\\beta$",
+  "Every one of the fifteen entries of $st$ is at most $B$",
+  "The query-length register of $st$ equals $|y|$",
+  "The pair-scan pointer of $st$ equals $2|x|+2$",
+  "The width-check pointer equals the pair-scan pointer",
+  "The index and decoding scratch registers are zero",
+  "The width cap $k$ satisfies $1\\le k$",
+  "The width cap satisfies $2k\\le B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B\\in\\mathbb{N}$, let $N$ be a finite nondeterministic Turing machine over the\nBoolean alphabet, let $x,\\beta,y$ be Boolean words, and let $\\mathrm{mode}$ be a\nBoolean. Suppose $y$ is the pair encoding of $x$ and $\\beta$, and let $\\mathrm{st}$ be a\nregister record whose fifteen entries are all at most $B$. Assume its query pointer\nequals $|y|$, its pair-scan pointer equals $2|x|+2$, its width-check pointer equals its\npair-scan pointer, its index and decoding scratch are zero, and its width cap $k$\nsatisfies $1\\le k$ and $2k\\le B$. Then either $\\beta$ has length at most the length of\nthe binary expansion of $k$ and is canonical (every nonempty canonical word ends in\ntrue), in which case there are $q',k'\\le B$ such that the register machine $A$ with\noracle determined by $N$ reaches the decoding-comparison label from the initial label\nand registers $\\mathrm{st}$, with no answer recorded, while satisfying its guard\nthroughout; the final registers are obtained from $\\mathrm{st}$ by setting the query\npointer to the pair-scan pointer, the index to the value of $\\beta$, and the width-check\npointer and cap to $q'$ and $k'$. Or that length bound and canonicity condition fails,\nand the machine halts with answer false from the same initial configuration while\nsatisfying the guard throughout."
+}

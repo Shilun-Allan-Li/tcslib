@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.universalPrefix_bits",
+ "key": "fe94083827507761",
+ "kind": "lemma",
+ "title": "Prefix parser after an even number of steps",
+ "statement": "Let $\\alpha$ and $x$ be finite bit strings, and let $j$ be a natural number with $j\\le |\\alpha|$. Starting on the encoding that doubles each bit of $\\alpha$, then appends $01$ and $x$, the prefix parser after $2j$ steps is in the state expecting the first half of a pair, with its input head at position $2j+1$ and output equal to the first $j$ bits of $\\alpha$.",
+ "hypotheses_covered": [
+  "$\\alpha$ and $x$ are finite bit strings",
+  "$j\\in\\mathbb N$",
+  "$j\\le |\\alpha|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\alpha$ and $x$ be bit strings and let $j \\le \\abs{\\alpha}$.  Started on\nthe self-delimiting pairing $\\langle \\alpha, x\\rangle$ (each bit of $\\alpha$\ndoubled, then the separator pair $01$, then $x$ verbatim), the doubled-bit\nprefix parser is, after exactly $2j$ transitions, in the ``expecting a first\nhalf'' state with its input head at position $2j+1$ --- head positions count\nthe left boundary blank as position $0$, so the head stands on the cell of\nindex $2j$ --- having emitted precisely the first $j$ bits of $\\alpha$."
+}

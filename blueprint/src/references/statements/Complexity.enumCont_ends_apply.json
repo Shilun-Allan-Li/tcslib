@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.enumCont_ends_apply",
+ "key": "a53157dbfd04f554",
+ "kind": "lemma",
+ "title": "Effect of a two-ended action",
+ "statement": "Let $L>0$, let $q,q'$ be optional states, let $u,v$ be tape contents indexed by the integers, let $h$ be an integer head position, and let $a,b$ be optional writes and $d\\in\\{-1,0,1\\}$ a displacement. Applying the two-ended action to the configuration with tape contents $u,v$ at the two ends, all intermediate tapes blank, and both end heads at $h$ gives the corresponding configuration in state $q'$, with the end cells at $h$ changed according to the writes and the heads at $h+d$. An absent write leaves that cell unchanged; a present write may place either a Boolean symbol or a blank, while the input-head position and empty output remain as in the two-ended configuration.",
+ "hypotheses_covered": [
+  "$L>0$",
+  "Optional states $q,q'$",
+  "Integer-indexed tape contents $u,v$",
+  "Integer head position $h$",
+  "Optional writes $a,b$",
+  "Displacement $d$ of sign type"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L > 0$, and consider a two-ended configuration on $L + 1$ work tapes whose\ntape zero holds $u$ and whose last tape holds $v$, with common head position $h$.\nApplying the two-ended action with optional writes $a$, $b$, displacement $d$ and\nnext state $q'$ yields the two-ended configuration in state $q'$ whose tape zero is\n$u$ with cell $h$ overwritten by $a$ (if $a$ writes), whose last tape is $v$ with\ncell $h$ overwritten by $b$ (if $b$ writes), and whose common head position is\n$h + d$; the input head and the empty output are unchanged."
+}

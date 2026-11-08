@@ -1,0 +1,20 @@
+{
+ "lean_name": "Language.InNPPoly",
+ "key": "832d7cf9fad690aa",
+ "kind": "def",
+ "title": "Polynomial-size nondeterministic circuit recognition",
+ "statement": "A language $L$ of Boolean strings belongs to the class described here if there are natural numbers $a,k$, a function $m:\\mathbb{N}\\to\\mathbb{N}$, and a Boolean circuit $C_n$ for each input length $n$, with $n+m(n)$ input bits, such that each circuit has fan-in at most two and size at most $a(n+1)^k$. For every Boolean string $x$, membership $x\\in L$ is equivalent to the existence of a witness of length $m(|x|)$ for which $C_{|x|}$ outputs true on the concatenation of $x$ and that witness.",
+ "hypotheses_covered": [
+  "$L$ is a language of Boolean lists",
+  "There exist natural numbers $a$ and $k$",
+  "There exists a function $m:\\mathbb{N}\\to\\mathbb{N}$",
+  "There is a circuit $C_n$ with $n+m(n)$ input bits for each $n$",
+  "Each circuit has fan-in two",
+  "Each circuit has size at most $a(n+1)^k$",
+  "Membership is equivalent to the existence of an accepting witness of length $m(|x|)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

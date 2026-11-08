@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.noiseOp_nonneg",
+ "key": "8953e1726d0cc5b5",
+ "kind": "lemma",
+ "title": "Noise preserves nonnegativity",
+ "statement": "Let $n$ be a nonnegative integer, let $0\\le\\rho\\le1$, and let $f\\colon\\{0,1\\}^n\\to\\mathbb R$ satisfy $f(x)\\ge0$ at every point $x$. Then $T_\\rho f(x)\\ge0$ at every point of the cube.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$0\\le\\rho$",
+  "$\\rho\\le1$",
+  "$f(x)\\ge0$ for every cube point $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $0\\le\\rho\\le1$ and $f:\\{0,1\\}^n\\to[0,\\infty)$. Then $T_\\rho f(x)\\ge0$ at every cube point $x$. For $d\\in\\mathbb N$, $h:\\{0,1\\}^d\\to\\bbr$, and $\\tau\\in\\bbr$, the spectral noise operator is $T_\\tau h(x)=\\sum_{S\\subseteq[d]}\\tau^{|S|}\\widehat h(S)\\chi_S(x)$, where $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat h(S)=\\E[h\\chi_S]$ under the uniform measure."
+}

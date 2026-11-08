@@ -1,16 +1,17 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_eq_prod_of_zFiberMeasure_factorization",
- "key": "64ffbc7abe4e67f7",
+ "key": "8fb6c8133c400a25",
  "kind": "theorem",
- "title": "Product law from singleton factorization of the special pair",
- "statement": "Fix a deterministic disjointness protocol $p$ on inputs of length $n$ and an achievable value $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$, and let $\\mu_z$ denote the law of the hard-distribution sample conditioned on the fiber $\\{Z = z\\}$. Suppose that for every pair of bits $(b_1, b_2) \\in \\mathrm{Bool} \\times \\mathrm{Bool}$ the $\\mu_z$-probability that the special-coordinate bits of Alice and Bob equal $(b_1, b_2)$ is the product of the $\\mu_z$-probability that Alice's special bit is $b_1$ and the $\\mu_z$-probability that Bob's special bit is $b_2$. Then the conditional law of the special bit-pair under $\\mu_z$ equals the product of the conditional law of Alice's special bit and the conditional law of Bob's special bit.",
+ "title": "Product law from fiber-event factorization",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on inputs of length $n$, and let $z$ be an achievable value of its summary $Z=(M,T,X_{<T},Y_{>T})$. Write $\\mu$ for the hard-distribution measure conditioned on the fiber $Z=z$, and let $\\mu_{XY}$, $\\mu_X$, and $\\mu_Y$ be its pushforward laws under the special-bit-pair map and the two individual special-bit maps. Suppose that for every $b=(b_1,b_2)\\in\\{0,1\\}^2$, the measure of the event that the special pair equals $b$ is the product of the measures of the events that the respective individual bits equal $b_1$ and $b_2$. Then $\\mu_{XY}=\\mu_X\\otimes\\mu_Y$.",
  "hypotheses_covered": [
-  "a deterministic disjointness protocol $p$ on inputs of length $n$",
-  "an achievable value $z$ of the $Z$-variable",
-  "singleton factorization: for each bit-pair $(b_1,b_2)$, the fiber-conditional probability of the special pair equals the product of the fiber-conditional probabilities of Alice's and Bob's special bits"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic length-$n$ disjointness protocol",
+  "$z$ is an achievable summary value",
+  "for every Boolean pair, the fiber measure of its special-pair preimage equals the product of the two fiber-measure marginal preimages"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Singleton factorization can be proved directly on the underlying $Z=z$ fiber measure."
+ "replaced": "Fix a deterministic disjointness protocol $p$ on inputs of length $n$ and an achievable\nvalue $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$, and let $\\mu_z$ denote the law\nof the hard-distribution sample conditioned on the fiber $\\{Z = z\\}$. Suppose that for\nevery pair of bits $(b_1, b_2) \\in \\mathrm{Bool} \\times \\mathrm{Bool}$ the\n$\\mu_z$-probability that the special-coordinate bits of Alice and Bob equal $(b_1, b_2)$\nis the product of the $\\mu_z$-probability that Alice's special bit is $b_1$ and the\n$\\mu_z$-probability that Bob's special bit is $b_2$. Then the conditional law of the\nspecial bit-pair under $\\mu_z$ equals the product of the conditional law of Alice's\nspecial bit and the conditional law of Bob's special bit."
 }

@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopCall",
+ "key": "6b9efe74c936357b",
+ "kind": "def",
+ "title": "Loop-call configuration",
+ "statement": "Given Boolean finite Turing machines $B$ and $F$, a state $a$ of $B$, an input word $x$, a Boolean $s$, a configuration $c$ of $B$ on $x$, a Boolean $r$, an optional Boolean $f$, a Boolean word $w$, and a configuration $g$ of $F$ on $x$, the construction returns a configuration on $x$ with $B.k+F.k+3$ work tapes and state set $F.State\\oplus((\\{0,1\\}\\times(B.State\\times\\{0,1\\}))\\oplus\\{0,1,\\ldots,13\\})$. Its state is encoded from $s$ and the state of the padded loop-body configuration; the additional tag is $6$ if $s$ is true and $7$ otherwise.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines $B$ and $F$",
+  "A state $a$ of $B$",
+  "An input word $x$",
+  "A Boolean $s$",
+  "A configuration $c$ of $B$ on $x$",
+  "A Boolean $r$",
+  "An optional Boolean $f$",
+  "A Boolean word $w$",
+  "A configuration $g$ of $F$ on $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied snippet does not define the capture operation or padded loop-body configuration, so the construction's full tape contents, head positions, and state behavior cannot be stated.",
+ "rubric": [
+  "anaphora",
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.certificateSplit_zero",
+ "key": "0a9509afe7c87929",
+ "kind": "lemma",
+ "title": "No split for zero input",
+ "statement": "For all $C,c\\in\\mathbb{N}$, the value $\\mathrm{split}_{C,c}(0)$ is undefined; equivalently, there is no $n\\in\\{0\\}$ such that $n+(C+1)(n+1)^c=0$.",
+ "hypotheses_covered": [
+  "$C\\in\\mathbb{N}$",
+  "$c\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $C, c, m \\in \\mathbb{N}$ let $\\mathrm{split}_{C,c}(m)$ be the least\n$n \\le m$ with $n + (C+1)(n+1)^c = m$, and undefined if there is none. Then for\nall $C, c \\in \\mathbb{N}$, $\\mathrm{split}_{C,c}(0)$ is undefined."
+}

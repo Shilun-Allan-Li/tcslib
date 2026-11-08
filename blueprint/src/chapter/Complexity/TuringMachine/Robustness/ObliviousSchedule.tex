@@ -41,16 +41,16 @@ control state, the same numerical input-head position, the same work-tape conten
 and head positions, and the same output stream as $c$.
 \end{definition}
 
-\begin{lemma}[Input read of the masked configuration]
+\begin{lemma}[Input symbol after masking]
 \lean{Complexity.maskedCfg_input}
 \label{Complexity.maskedCfg_input}
 \leanok
 \uses{Complexity.maskedCfg, Turing.Cfg, Turing.Cfg.inputSymbol}
 \difficulty{3}
-Let $z$ be a symbol and $c$ a configuration of a $k$-tape machine on an input word
-$x$. The symbol scanned by the input head of the masked configuration on
-$z^{\abs{x}}$ is blank exactly when the symbol scanned in $c$ is blank, and equals
-$z$ whenever $c$ scans any nonblank symbol.
+Let $k$ be a natural number, $A,S$ be types, $x$ a word over $A$, $z\in A$, and $c$ a
+configuration on $x$. The symbol read by the input head after replacing the input by the
+constant word of $|x|$ copies of $z$ is the image of the symbol read by $c$ under the
+map sending every symbol to $z$ and preserving absence of a symbol.
 \end{lemma}
 
 \begin{lemma}[Masking commutes with actions]
@@ -59,10 +59,11 @@ $z$ whenever $c$ scans any nonblank symbol.
 \leanok
 \uses{Complexity.maskedCfg, Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.moveInputPos}
 \difficulty{3}
-Let $z$ be a symbol, $a$ an action (an input-head move, a write and a move for each
-work tape, an optional emitted symbol, and a next state), and $c$ a configuration on
-an input word $x$. Then masking the input by $z$ after applying $a$ yields the same
-configuration as applying $a$ to the masked configuration.
+Let $k$ be a natural number, $A$ and $S$ be types, $x$ be a word over $A$, $z\in A$, $c$
+a configuration on $x$, and $a$ an action for a $k$-tape machine over $A$ with states in
+$S$. Applying $a$ to $c$ and then replacing the input by the constant word consisting of
+$|x|$ copies of $z$ gives the same configuration as first replacing the input of $c$ by
+that constant word and then applying $a$.
 \end{lemma}
 
 \begin{definition}[Masked clock machine]
@@ -78,71 +79,73 @@ table. Its behaviour on any input therefore matches $W$'s behaviour on the const
 input of the same length.
 \end{definition}
 
-\begin{lemma}[One masked step matches one witness step]
+\begin{lemma}[Masked machine step correspondence]
 \lean{Complexity.maskedClock_step}
 \label{Complexity.maskedClock_step}
 \leanok
 \uses{Complexity.maskedCfg, Complexity.maskedCfg_apply, Complexity.maskedCfg_input, Complexity.maskedClock, Turing.Cfg, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-Let $W$ be a machine over an alphabet $A$, let $z \in A$, and let $c$ be a
-configuration of the masked clock of $W$ on an input word $x$. Masking the result of
-one step of the masked clock at $c$ yields the same configuration as performing one
-step of $W$ at the masked configuration of $c$; this includes the absorbing case in
-which $c$ is already halted.
+Let $A$ be an alphabet, $W$ a finite Turing machine over $A$, $z\in A$, $x$ a finite
+input word, and $c$ a configuration of $W$ on $x$. Regard $c$ as a configuration on the
+constant word consisting of $|x|$ copies of $z$, preserving its state, input-head
+position, work tapes and heads, and output. Then masking the result of one step of the
+masked machine from $c$ gives exactly the result of one step of $W$ from the masked
+configuration of $c$, including when $c$ is halted.
 \end{lemma}
 
-\begin{lemma}[Lockstep of the masked clock with its witness]
+\begin{lemma}[Masked clock runs in lockstep]
 \lean{Complexity.maskedClock_lockstep}
 \label{Complexity.maskedClock_lockstep}
 \leanok
 \uses{Complexity.maskedCfg, Complexity.maskedClock, Complexity.maskedClock_step, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Let $W$ be a machine over an alphabet $A$, let $z \in A$, let $x$ be an input word,
-and let $t \in \mathbb{N}$. Masking the configuration reached by the masked clock of
-$W$ after $t$ steps from its initial configuration on $x$ yields exactly the
-configuration reached by $W$ after $t$ steps from its initial configuration on the
-constant input $z^{\abs{x}}$ — an equality of all five configuration components
-(state, input position, work tapes, work-head positions, and output), at live and
-halted times alike.
+Let $A$ be a type, $W$ a finite machine over $A$, $z\in A$, $x$ a word over $A$, and
+$t\in\mathbb{N}$. The configuration reached after $t$ steps by the machine obtained by
+masking input symbols to $z$, when started on $x$, becomes exactly the configuration
+reached after $t$ steps by $W$ when started on the constant input consisting of $|x|$
+copies of $z$, after replacing the first configuration's input by that same constant
+input.
 \end{lemma}
 
-\begin{lemma}[The masked clock is oblivious]
+\begin{lemma}[Obliviousness of the masked clock]
 \lean{Complexity.maskedClock_oblivious}
 \label{Complexity.maskedClock_oblivious}
 \leanok
 \uses{Complexity.maskedCfg, Complexity.maskedClock, Complexity.maskedClock_lockstep, Turing.FinTM, Turing.FinTM.Oblivious, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{4}
-For every machine $W$ over an alphabet $A$ and every symbol $z \in A$, the masked
-clock of $W$ with mask $z$ is oblivious: on any two inputs of the same length its
-input-head position and all of its work-head positions agree at every time. No
-halting hypothesis is required.
+Let $A$ be an alphabet, $W$ a finite Turing machine over $A$, and $z\in A$. The machine
+obtained from $W$ by replacing every nonblank symbol read on the input tape by $z$
+before applying $W$’s transition function is oblivious: for any two inputs of equal
+length and every time $t\in\mathbb N$, its input-head positions and all its work-tape
+head positions agree. No halting assumption is required.
 \end{lemma}
 
-\begin{lemma}[Input-insensitive machines are oblivious]
+\begin{lemma}[Input-Insensitive Machines Are Oblivious]
 \lean{Complexity.inputInsensitive_oblivious}
 \label{Complexity.inputInsensitive_oblivious}
 \leanok
 \uses{Complexity.maskedClock, Complexity.maskedClock_oblivious, Turing.FinTM, Turing.FinTM.Oblivious}
 \difficulty{4}
-Let $P$ be a machine over an alphabet $A$ and let $z \in A$. Suppose the transition
-table of $P$ is insensitive to nonblank input contents: for every state $q$, scanned
-input symbol $s$, and tuple of work-tape reads $w$, the transition of $P$ on the read
-obtained from $s$ by replacing any nonblank symbol with $z$ coincides with the
-transition of $P$ on $s$ itself. Then $P$ is oblivious.
+Let $A$ be an alphabet, let $z\in A$, and let $P$ be a finite-state-set Turing machine
+over $A$. Suppose that for every state $q$, optional input symbol $s$, and tuple $w$ of
+work-tape reads, the transition of $P$ on input symbol obtained from $s$ by replacing
+each present symbol by $z$ is the same as its transition on $s$. Then for any two inputs
+of equal length and every time $t$, the input-head positions and the tuples of work-tape
+head positions of the configurations reached after $t$ steps are equal.
 \end{lemma}
 
-\begin{lemma}[The masked clock retains its computation]
+\begin{lemma}[Masked clock preserves computation bounds]
 \lean{Complexity.maskedClock_computes}
 \label{Complexity.maskedClock_computes}
 \leanok
 \uses{Complexity.maskedClock, Complexity.maskedClock_lockstep, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff}
 \difficulty{3}
-Let $W$ be a machine over the Boolean alphabet, $T : \mathbb{N} \to \mathbb{N}$, and
-$b \in \mathbb{N}$. Suppose that on every input $x$, after $b \cdot (T(\abs{x}) + 1)$
-steps $W$ has halted with output exactly the list of binary digits of $T(\abs{x})$.
-Then the masked clock of $W$ (with mask the symbol $\mathsf{false}$) satisfies the
-same specification: on every input $x$ it halts within $b \cdot (T(\abs{x}) + 1)$
-steps with output the binary digits of $T(\abs{x})$.
+Let $W$ be a finite machine over the Boolean alphabet, let $T:\mathbb{N}\to\mathbb{N}$,
+and let $b\in\mathbb{N}$. Suppose that for every input word $x$, $W$ halts after exactly
+$T(|x|)$'s binary digits have been written, within $b(T(|x|)+1)$ steps, and uses exactly
+$b(T(|x|)+1)$ work cells. Then the machine obtained by masking scanned input symbols to
+false has the same guarantee on every input word $x$, with output the binary digits of
+$T(|x|)$ and exactly that time bound and space usage.
 \end{lemma}
 
 \begin{definition}[Schedule decoration by a data transducer]
@@ -175,46 +178,48 @@ the control state (halted projects to halted), the input-head position, and the 
 $k$ work tapes with their head positions, and whose output stream is empty.
 \end{definition}
 
-\begin{lemma}[One decorated step projects to one schedule step]
+\begin{lemma}[Projection commutes with one step]
 \lean{Complexity.decorateTM_step}
 \label{Complexity.decorateTM_step}
 \leanok
 \uses{Complexity.decorateTM, Complexity.scheduleCfg, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
 \difficulty{5}
-Let $P$ be a machine over an alphabet $A$ whose transition table never emits an
-output symbol, and consider its decoration by any data transducer with $l$ extra
-tapes, designated head, initial data state, and visit function. For every
-configuration $c$ of the decorated machine, the schedule projection of one step of
-the decorated machine at $c$ equals one step of $P$ at the schedule projection of
-$c$. This is an equality of entire configurations, not merely a correspondence at
-macrostep boundaries.
+Let $P$ be a finite Turing machine over an alphabet $A$, let $l$ be a natural number,
+choose a work-tape index $h$ of $P$, a finite data-state set $D$ with initial state
+$d_0$, and any visit function of the specified type. Suppose every transition of $P$
+emits no output symbol. For every input word $x$ and every configuration $c$ of the
+decorated machine on $x$, projecting the result of one decorated-machine step from $c$
+onto the schedule equals the result of one step of $P$ from the schedule projection of
+$c$.
 \end{lemma}
 
-\begin{lemma}[Exact schedule projection at every time]
+\begin{lemma}[Exact projection of decorated runs]
 \lean{Complexity.decorateTM_run}
 \label{Complexity.decorateTM_run}
 \leanok
 \uses{Complexity.decorateTM, Complexity.decorateTM_step, Complexity.scheduleCfg, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Let $P$ be a machine over an alphabet $A$ whose transition table never emits an
-output symbol, decorated by any data transducer. For every input word $x$ and every
-time $t \in \mathbb{N}$, the schedule projection of the decorated machine's
-configuration after $t$ steps from its initial configuration on $x$ equals the
-configuration of $P$ after $t$ steps from its initial configuration on $x$.
+Let $P$ be a finite Turing machine over an alphabet $A$, let $l$ be a natural number,
+choose a work-tape index $h$ of $P$, a finite data-state set $D$ with initial state
+$d_0$, and any visit function of the specified type. Suppose every transition of $P$
+emits no output symbol. For every input word $x$ and time $t\in\mathbb N$, projecting
+the decorated machine's configuration after $t$ steps from its initial configuration on
+$x$ onto the schedule yields exactly the configuration of $P$ after $t$ steps from its
+initial configuration on $x$.
 \end{lemma}
 
-\begin{lemma}[Data heads follow the designated schedule head]
+\begin{lemma}[Extra heads follow the designated head]
 \lean{Complexity.decorateTM_heads}
 \label{Complexity.decorateTM_heads}
 \leanok
 \uses{Complexity.decorateTM, Turing.Action.apply, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
 \difficulty{4}
-Let a machine $P$ over an alphabet $A$ be decorated by any data transducer with $l$
-extra tapes and designated head $h$. For every input word $x$, every time
-$t \in \mathbb{N}$, and every extra-tape index $i < l$, the head position of the
-$i$-th data tape of the decorated machine after $t$ steps equals the head position of
-the designated schedule head $h$ at the same time — including at all times after
-halting. Consequently no data-selected write can alter a head trajectory.
+Let $P$ be a finite Turing machine over an alphabet $A$ with $k$ work tapes, let $l$ be
+a natural number, choose a designated work-tape index $h<k$, a finite data-state set $D$
+with initial state $d_0$, and any visit function of the specified type. For every input
+word $x$, time $t\in\mathbb N$, and extra-tape index $i<l$, the head position of extra
+tape $i$ in the decorated machine after $t$ steps from its initial configuration equals
+the position of head $h$ at that time.
 \end{lemma}
 
 \begin{lemma}[Decoration preserves obliviousness]
@@ -223,13 +228,13 @@ halting. Consequently no data-selected write can alter a head trajectory.
 \leanok
 \uses{Complexity.decorateTM, Complexity.decorateTM_heads, Complexity.decorateTM_run, Turing.FinTM, Turing.FinTM.Oblivious}
 \difficulty{5}
-Let $P$ be a machine over an alphabet $A$ whose transition table never emits an
-output symbol, and suppose $P$ is oblivious. Then for every choice of data
-transducer — number of extra tapes, designated head, finite data-state set with
-initial element, and visit function — the decorated machine is oblivious. The data
-states, emitted answers, and data-selected writes may depend arbitrarily on the
-actual input; none of them can choose a head movement or terminate the schedule
-early.
+Let $P$ be a finite Turing machine over an alphabet $A$, let $l$ be a natural number,
+choose a work-tape index $h$ of $P$, a finite data-state set $D$ with initial state
+$d_0$, and any visit function of the specified type. Suppose every transition of $P$
+emits no output symbol, and suppose that for any two inputs of equal length and every
+time, the input-head positions and all work-tape head positions of $P$ agree. Then the
+decorated machine has this same property: for any two inputs of equal length and every
+time, its input-head positions and all its work-tape head positions agree.
 \end{lemma}
 
 \begin{definition}[Transverse binary encoding of a symbol]
@@ -256,14 +261,15 @@ encoding it returns the unique preimage, and on malformed families it returns a 
 chosen value. Initialized simulations only ever read encoded blocks.
 \end{definition}
 
-\begin{lemma}[Decoding inverts the transverse encoding]
+\begin{lemma}[Decoding the transverse encoding]
 \lean{Complexity.parallelDecode_code}
 \label{Complexity.parallelDecode_code}
 \leanok
 \uses{Complexity.parallelCode, Complexity.parallelDecode}
 \difficulty{1}
-For every possibly-blank symbol $a$ over an alphabet $A$ with decidable equality,
-decoding the transverse encoding of $a$ returns $a$; this includes the blank block.
+For every set $A$ with decidable equality and every possibly blank symbol $a\in
+A\cup\{\bot\}$, decoding the transverse encoding of $a$ returns $a$, including when $a$
+is blank.
 \end{lemma}
 
 \begin{definition}[Output-bit decoder]
@@ -275,14 +281,14 @@ the decoded bit of a symbol $a \in A$ is $\mathsf{true}$ exactly when
 $a = e(\mathsf{true})$.
 \end{definition}
 
-\begin{lemma}[The output-bit decoder is correct on embedded bits]
+\begin{lemma}[Decoding embedded bits]
 \lean{Complexity.parallelBit_embed}
 \label{Complexity.parallelBit_embed}
 \leanok
 \uses{Complexity.parallelBit}
 \difficulty{2}
-For every embedding $e$ of the Booleans into an alphabet $A$ with decidable equality
-and every bit $b$, decoding the embedded symbol $e(b)$ recovers $b$.
+Let $A$ be a type with decidable equality, let $e$ be an embedding of the Booleans into
+$A$, and let $b$ be a Boolean. Decoding the symbol $e(b)$ returns $b$.
 \end{lemma}
 
 \begin{definition}[Transverse binary realization of a machine]
@@ -316,68 +322,70 @@ equal to $c$'s head position on tape $i$, and output stream obtained from $c$'s 
 decoding each symbol to a bit.
 \end{definition}
 
-\begin{lemma}[The encoded configuration reads the same input]
+\begin{lemma}[Input symbol under configuration encoding]
 \lean{Complexity.parallelCfg_input}
 \label{Complexity.parallelCfg_input}
 \leanok
 \uses{Complexity.parallelCfg, Turing.Cfg, Turing.Cfg.inputSymbol}
 \difficulty{3}
-Let $c$ be a configuration of a machine over a finite alphabet $A$ on the symbolwise
-embedding of a binary word $x$ under an embedding $e$ of the Booleans into $A$.
-Mapping the (possibly blank) input bit scanned by the encoded configuration through
-$e$ recovers exactly the (possibly blank) input symbol scanned by $c$.
+Let $A$ be a finite alphabet with decidable equality, let $e$ embed the Booleans into
+$A$, let $k$ be a natural number, let $x$ be a binary word, and let $c$ be a
+configuration on the input obtained by applying $e$ to each bit of $x$. Applying $e$ to
+the possibly blank symbol read under the input head of the encoded configuration gives
+exactly the possibly blank symbol read under the input head of $c$.
 \end{lemma}
 
-\begin{lemma}[Scanned tracks decode to the scanned symbol]
+\begin{lemma}[Decoding scanned tape tracks]
 \lean{Complexity.parallelCfg_read}
 \label{Complexity.parallelCfg_read}
 \leanok
 \uses{Complexity.parallelCfg, Complexity.parallelDecode, Complexity.parallelDecode_code, Turing.Cfg, Turing.Cfg.workTapeSymbols}
 \difficulty{2}
-Let $c$ be a configuration of a $k$-tape machine over a finite alphabet $A$ on the
-symbolwise embedding of a binary word. For every logical tape index $i < k$, decoding
-the family of bits scanned on the tracks of block $i$ in the encoded configuration
-yields exactly the symbol scanned by $c$ on tape $i$.
+Let $A$ be a finite alphabet with decidable equality, let $e$ embed the Booleans into
+$A$, let $k$ be a natural number, let $x$ be a binary word, and let $c$ be a
+configuration over $A$ on the input obtained by applying $e$ to each bit of $x$. For
+every tape index $i<k$, decoding the family of bits read from the encoded
+configuration's tracks indexed by symbols of $A$ recovers exactly the possibly blank
+symbol under tape $i$'s head in $c$.
 \end{lemma}
 
-\begin{lemma}[One-step binary correspondence]
+\begin{lemma}[One-step correspondence of configurations]
 \lean{Complexity.parallelTM_step}
 \label{Complexity.parallelTM_step}
 \leanok
-\uses{Complexity.parallelCfg, Complexity.parallelCfg_input, Complexity.parallelCfg_read, Complexity.parallelDecode, Complexity.parallelTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step}
+\uses{Complexity.parallelCfg, Complexity.parallelCfg_input, Complexity.parallelCfg_read, Complexity.parallelDecode, Complexity.parallelTM, Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{5}
-Let $P$ be a machine over a finite alphabet $A$, $e$ an embedding of the Booleans
-into $A$, and $c$ a configuration of $P$ on the symbolwise embedding of a binary word
-$x$. Then one step of the transverse binary realization of $P$ at the encoded
-configuration of $c$ equals the encoded configuration of one step of $P$ at $c$: both
-the read and the write of a logical cell happen simultaneously across its fixed
-collection of tracks, and the halted case is absorbing on both sides.
+Let $A$ be a finite alphabet, let $e$ embed the Booleans into $A$, let $P$ be a finite
+Turing machine over $A$, let $x$ be a binary word, and let $c$ be a configuration of $P$
+on the symbolwise image of $x$. One step of the transverse binary realization from the
+encoded configuration of $c$ equals the encoding of the configuration obtained by taking
+one step of $P$ from $c$.
 \end{lemma}
 
-\begin{lemma}[The transverse code preserves initial configurations]
+\begin{lemma}[Encoding initial configurations]
 \lean{Complexity.parallelCfg_init}
 \label{Complexity.parallelCfg_init}
 \leanok
 \uses{Complexity.parallelCfg, Complexity.parallelTM, Turing.FinTM, Turing.MultiTapeTM.initCfg}
 \difficulty{2}
-Let $P$ be a machine over a finite alphabet $A$, $e$ an embedding of the Booleans
-into $A$, and $x$ a binary word. Encoding the initial configuration of $P$ on the
-symbolwise embedding of $x$ yields exactly the initial configuration of the
-transverse binary realization of $P$ on $x$.
+Let $A$ be a finite alphabet with decidable equality, let $P$ be a finite Turing machine
+over $A$, let $e$ embed the Booleans into $A$, and let $x$ be a binary word. Encoding
+the initial configuration of $P$ on the word obtained by applying $e$ to each bit of $x$
+gives exactly the initial configuration of the transverse binary realization of $P$ on
+$x$.
 \end{lemma}
 
-\begin{lemma}[Exact binary correspondence at every time]
+\begin{lemma}[Exact correspondence of computation configurations]
 \lean{Complexity.parallelTM_run}
 \label{Complexity.parallelTM_run}
 \leanok
 \uses{Complexity.parallelCfg, Complexity.parallelCfg_init, Complexity.parallelTM, Complexity.parallelTM_step, Turing.FinTM, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Let $P$ be a machine over a finite alphabet $A$, $e$ an embedding of the Booleans
-into $A$, $x$ a binary word, and $t \in \mathbb{N}$. The configuration of the
-transverse binary realization of $P$ after $t$ steps from its initial configuration
-on $x$ equals the encoding of the configuration of $P$ after $t$ steps from its
-initial configuration on the symbolwise embedding of $x$ — with no intermediate
-coding states and no variable-duration memory accesses.
+Let $A$ be a finite alphabet, let $e$ embed the Booleans into $A$, let $P$ be a finite
+Turing machine over $A$, let $x$ be a binary word, and let $t\in\mathbb N$. The
+configuration of the transverse binary realization of $P$ after $t$ steps on $x$ is
+exactly the transverse encoding of the configuration of $P$ after $t$ steps on the
+symbolwise image of $x$.
 \end{lemma}
 
 \begin{lemma}[Transverse coding preserves obliviousness]
@@ -386,22 +394,24 @@ coding states and no variable-duration memory accesses.
 \leanok
 \uses{Complexity.parallelTM, Complexity.parallelTM_run, Turing.FinTM, Turing.FinTM.Oblivious}
 \difficulty{3}
-Let $P$ be a machine over a finite alphabet $A$ and $e$ an embedding of the Booleans
-into $A$. If $P$ is oblivious, then the transverse binary realization of $P$ is
-oblivious — at all intermediate physical times and at all times after halting.
+Let $A$ be a finite alphabet, let $e$ embed the Booleans into $A$, and let $P$ be a
+finite Turing machine over $A$. If, on any two inputs of equal length and at every time
+$t\in\mathbb N$, $P$ has the same input-head position and the same work-tape head
+positions, then its transverse binary realization has this same property on every pair
+of equal-length binary inputs, at every time.
 \end{lemma}
 
-\begin{lemma}[Transverse coding preserves computed outputs]
+\begin{lemma}[Transverse coding preserves computation]
 \lean{Complexity.parallelTM_computes}
 \label{Complexity.parallelTM_computes}
 \leanok
 \uses{Complexity.parallelBit, Complexity.parallelBit_embed, Complexity.parallelTM, Complexity.parallelTM_run, Turing.FinTM, Turing.FinTM.ComputesInTime, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.runFrom}
 \difficulty{3}
-Let $P$ be a machine over a finite alphabet $A$, $e$ an embedding of the Booleans
-into $A$, $x$ and $w$ binary words, and $t \in \mathbb{N}$. If, started on the
-symbolwise embedding of $x$, the machine $P$ has halted after $t$ steps with output
-exactly the symbolwise embedding of $w$, then the transverse binary realization of
-$P$, started on $x$, has halted after the same $t$ steps with output exactly $w$.
+Let $A$ be a finite alphabet, let $e:\{\mathsf{false},\mathsf{true}\}\hookrightarrow A$
+be an embedding, and let $P$ be a finite Turing machine over $A$. For binary words $x,w$
+and $t\in\mathbb N$, if $P$ on the symbolwise image of $x$ halts after $t$ steps with
+output the symbolwise image of $w$, then the transverse binary realization of $P$ on $x$
+halts after $t$ steps with output $w$.
 \end{lemma}
 
 \begin{definition}[The schedule alphabet]
@@ -492,28 +502,26 @@ advancing the unary counter, halting when the markers are exhausted. All of thes
 actions are independent of the source decider and of all decorated data tapes.
 \end{definition}
 
-\begin{lemma}[The schedule emits no output]
+\begin{lemma}[Output of the schedule transition]
 \lean{Complexity.obliviousSchedule_output}
 \label{Complexity.obliviousSchedule_output}
 \leanok
 \uses{Complexity.OblSymbol, Complexity.oblAction, Complexity.obliviousSchedule, Turing.FinTM}
 \difficulty{3}
-For every clock witness $W$ over the Boolean alphabet, every parameter
-$a \in \mathbb{N}$, every state $q$ of the length-only schedule, every scanned input
-symbol, and every tuple of work-tape reads, the transition of the length-only
-schedule emits no output symbol. A decoration supplies the final answer at the
-schedule's final halting transition.
+For every finite Turing machine $W$ over the Boolean alphabet, every $a\in\mathbb{N}$,
+every state $q$ of the schedule machine determined by $W$ and $a$, every scanned input
+symbol (possibly blank), and every tuple of work-tape symbols (each possibly blank), the
+transition emits no output symbol.
 \end{lemma}
 
-\begin{lemma}[Trajectory certificate for the schedule]
+\begin{lemma}[Obliviousness of the schedule]
 \lean{Complexity.obliviousSchedule_oblivious}
 \label{Complexity.obliviousSchedule_oblivious}
 \leanok
 \uses{Complexity.inputInsensitive_oblivious, Complexity.obliviousSchedule, Turing.FinTM, Turing.FinTM.Oblivious}
 \difficulty{2}
-For every clock witness $W$ over the Boolean alphabet and every parameter
-$a \in \mathbb{N}$, the length-only schedule built from $W$ and $a$ is oblivious: on
-arbitrary equal-length inputs over the schedule alphabet, its input head and every
-clock, budget, counter, and guide head occupy the same position at every time. No
-computation or halting hypothesis is needed.
+For every finite Turing machine $W$ over the Boolean alphabet and every
+$a\in\mathbb{N}$, the schedule machine determined by $W$ and $a$ is oblivious: for any
+two inputs over its schedule alphabet of equal length and every time $t\in\mathbb{N}$,
+the input-head positions agree, and the entire tuples of work-tape head positions agree.
 \end{lemma}

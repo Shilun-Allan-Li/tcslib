@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.drop_nested_run",
+ "key": "c6354a65f4c7cfc0",
+ "kind": "lemma",
+ "title": "Nested Drop Computation",
+ "statement": "Let $m\\in\\{\\mathrm{false},\\mathrm{true}\\}$, let $z$ be a bit string, and let $q\\in\\mathbb N$ satisfy $q\\le 2|\\langle z,\\mathrm{bits}(q)\\rangle|$. On input $h=\\langle z,\\mathrm{bits}(q)\\rangle$, the specified computation starting in its copy state, with pointer register $2|z|+2$, query register $q$, tail register $2|z|+2$, all other registers zero, and no answer, halts with the answer that is true exactly when either $q$ is less than the length of the transformed word (if $m$ is true) or its $q$-th bit is $1$ (if $m$ is false). Every configuration before halting satisfies the stated computation invariant and has each register at most $4|h|+4$.",
+ "hypotheses_covered": [
+  "mode is a Boolean",
+  "$z$ is a bit string",
+  "$q$ is a natural number",
+  "$q\\le 2|\\langle z,\\mathrm{bits}(q)\\rangle|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

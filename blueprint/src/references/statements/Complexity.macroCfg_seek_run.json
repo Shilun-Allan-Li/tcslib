@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.macroCfg_seek_run",
+ "key": "3187c2c4d82f1e54",
+ "kind": "lemma",
+ "title": "Prefix of the leftward seek",
+ "statement": "Let $W$ be a finite binary Turing machine, let $a,R,n\\in\\mathbb{N}$ with $n\\le R+1$, let $x$ be an input word over the schedule alphabet, and let $u\\in\\mathbb{Z}$. For a base configuration of the schedule machine on $x$, suppose its guide tape is the fixed guide of radius $R$. Starting in the leftward-seek phase with guide head at $0$, after $n$ steps the machine remains in the leftward-seek phase and its guide head is at $-n$.",
+ "hypotheses_covered": [
+  "$W$ is a finite binary Turing machine",
+  "$a,R,n$ are natural numbers",
+  "$n\\le R+1$",
+  "$x$ is an input word over the schedule alphabet",
+  "$u$ is an integer",
+  "$\\mathrm{base}$ is a schedule-machine configuration on $x$",
+  "the base guide tape is the fixed guide of radius $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$ and let $n \\le R + 1$.\nRunning the schedule controller for $n$ steps from the leftward-seek phase with guide\nhead at the origin stays in the seek phase and moves the guide head to $-n$."
+}

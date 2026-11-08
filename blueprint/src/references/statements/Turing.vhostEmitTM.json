@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.vhostEmitTM",
+ "key": "e4742f41d7f2415f",
+ "kind": "def",
+ "title": "Virtual host transition machine",
+ "statement": "Let $M$ be a deterministic machine with $m$ work tapes, Boolean symbols, and states in $S$. The constructed machine has $m+1$ work tapes and states in $S\\times\\{\\mathrm{false},\\mathrm{true}\\}$, and starts in $(q_0,\\mathrm{true})$. On a transition, it reads the symbol on the first work tape as the simulated input symbol and reads the remaining tapes as $M$’s work tapes; it uses $M$’s transition and the current tag to determine the input-head movement and the next tag. It leaves the first tape unwritten, applies the resulting movement to each of the remaining tapes, and preserves the simulated output and successor state, pairing that state with the next tag when there is a successor.",
+ "hypotheses_covered": [
+  "$M$ is a deterministic machine with $m$ work tapes, Boolean symbols, and states in $S$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

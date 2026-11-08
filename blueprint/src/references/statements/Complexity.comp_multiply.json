@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.comp_multiply",
+ "key": "10fd03f4ee038572",
+ "kind": "lemma",
+ "title": "Register multiplication run",
+ "statement": "Let $C,e$ be natural numbers, let $m$ and $o$ be Booleans, let $f$ map finite bit strings to finite bit strings, let $h$ be a finite bit string, let $k$ be an element of $\text{Fin}(e+2)$, let $B$ be a natural number, and let $v$ assign a natural number to each of fourteen registers. Suppose every register value is at most $B$, registers $6$, $10$, and $11$ are $0$, and the product of the values in registers $7$ and $8$ is at most $B$. Then the computation can run from the product-copy state with parameters $o,k$ and register vector $v$ to the power state with parameters $o,k-1$ and register vector obtained by replacing register $7$ with the product of its initial value and register $8$, while the result remains empty and every configuration before the endpoint satisfies the program’s instruction-side conditions and register bound $B$.",
+ "hypotheses_covered": [
+  "$C,e$ are natural numbers",
+  "$m,o$ are Boolean parameters",
+  "$f$ maps finite bit strings to finite bit strings",
+  "$h$ is a finite bit string",
+  "$k$ belongs to $\text{Fin}(e+2)$",
+  "$B$ is a natural number",
+  "$v$ assigns natural-number values to fourteen registers",
+  "Every register value is at most $B$",
+  "Registers $6$, $10$, and $11$ are $0$",
+  "The product of registers $7$ and $8$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C,e,B$ be natural numbers, let $m$ and $o$ be Boolean parameters, let $f$ be a\nfunction from bit strings to bit strings, let $h$ be a bit string, let $k<e+2$, and let\n$v$ assign a natural number to each of the fourteen registers. Suppose every register\nvalue is at most $B$, registers $6$, $10$, and $11$ are zero, and the product of the\nvalues in registers $7$ and $8$ is at most $B$. In the counter program parameterized by\n$C,e,m$, there is a run from state “product copy” with parameters $o,k$ and register\nvector $v$ to state “power” with parameters $o,k-1$ and register vector obtained by\nreplacing register $7$ by the product of its initial value and register $8$; the result\nfield remains empty, and every configuration before the endpoint satisfies the program's\nsafety condition and register bound $B$."
+}

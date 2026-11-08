@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.incStmt_ends",
+ "key": "d126753d34743be9",
+ "kind": "theorem",
+ "title": "Execution of a digit increment statement",
+ "statement": "Let $\\mathrm{lim}$ be machine limits, $P$ a program, $d,v_b,v_n,\\mathrm{base},n,j\\in\\mathbb N$, and let $l$ be a list of natural numbers. Let $\\mu,\\mathrm{loc}:\\mathbb N\\to\\mathbb Z$. Suppose the space limit is at most the word limit, $n$ is at most the word limit, $\\mathrm{loc}(v_b)=\\mathrm{base}$, and $\\mathrm{loc}(v_n)=n$. Suppose also that the segment beginning at $\\mathrm{base}+j$ with length $|l|$ fits within the space limit, every entry of $l$ is less than $n$, and memory $\\mu$ on that segment agrees with the integer-valued list obtained by viewing each entry of $l$ as an integer. Then the statement that increments the digits of this segment has an execution from state $(\\mathrm{loc},\\mu)$ with cost at most $14|l|+5$ whose final state preserves $\\mathrm{loc}$, has the incremented digit list on that segment, and agrees with $\\mu$ at every address outside the segment.",
+ "hypotheses_covered": [
+  "Space limit is at most word limit",
+  "$n$ is at most word limit",
+  "Location $v_b$ contains $\\mathrm{base}$",
+  "Location $v_n$ contains $n$",
+  "The segment of length $|l|$ starting at $\\mathrm{base}+j$ fits in the space limit",
+  "Every entry of $l$ is less than $n$",
+  "Initial memory agrees with the integer-valued list $l$ on the segment"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

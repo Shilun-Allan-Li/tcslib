@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.polyTimeComputable_pairFstD",
+ "key": "e2741548566c1600",
+ "kind": "theorem",
+ "title": "First projection is polynomial-time computable",
+ "statement": "The total first projection on bit strings, which returns the first component parsed from aligned doubled-bit blocks terminated by the separator $01$ and returns the empty word if parsing fails, is polynomial-time computable.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The total first projection $\\pi_1$, which sends a bit string of the form $\\langle a,b\\rangle$ (the self-delimiting pair encoding: every bit of $a$ doubled, then $01$, then $b$) to $a$ and any other bit string to the empty word, is polynomial-time computable, i.e.\\ some finite binary Turing machine computes it within $C(n+1)^c$ steps on every input of length $n$, for some constants $C, c \\in \\mathbb{N}$."
+}

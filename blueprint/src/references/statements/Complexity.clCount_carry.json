@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clCount_carry",
+ "key": "5b64422c45b0a8ed",
+ "kind": "lemma",
+ "title": "The Carry Phase of Increment",
+ "statement": "For every bit-list input $x$, valid input-head position $p$, and bit lists $b$ and $s$, and for every prefix $u$, running the increment machine for one more step than the carry count of $s$, from carry control with input head at $p$, work head at the cell indexed by $|u|$, work tape holding $u$ followed by $s$, and empty output, yields carry control replaced by rewind control. The resulting input-head position remains $p$, the work head is at $|u|+\\operatorname{carry}(s)-1$, the tape holds $u$ followed by the increment of $s$, and the output is empty.",
+ "hypotheses_covered": [
+  "$x$ is a bit list",
+  "$p$ is a valid input-head position for $x$",
+  "$b$ and $s$ are bit lists (the formal statement uses only $s$)",
+  "$u$ is an arbitrary bit-list prefix"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, prefix $u$, and suffix $v$, running the increment machine in carry control at cell $|u|$ for one more step than the carry count of $v$ replaces $v$ by its increment and leaves the machine in rewind control one cell left of the last written position. Exactly the initial true bits of $v$ are cleared before the final true bit is written."
+}

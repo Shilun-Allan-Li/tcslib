@@ -1,0 +1,27 @@
+{
+ "lean_name": "Complexity.LogProg.mdet_halt",
+ "key": "c5f8b807a009817c",
+ "kind": "theorem",
+ "title": "Halting simulation of a deterministic instruction",
+ "statement": "Let $m,d,k_D$ be nonnegative integers, let $\\Lambda$ and $SD$ be state sets, and fix a Boolean input $x$, an augmented register machine $A$ with $m$ registers and $d$ deciders, an initial label $l_0$, an oracle, a $k_D$-work-tape Turing machine $D$, initial decider states $q_0$, bounds $B,W,P$, a label $l$, register contents $v$, a Boolean memory tape $M$ with head position $p$, an output word $out$, and a bit $b_0$. Suppose the instruction at $l$ is the deterministic instruction $i$, and the ordinary register-machine execution from $(l,v)$ with no prior answer halts with unchanged registers $v$ and answer $b_0$. Suppose also that the stated precondition holds at this configuration, every register satisfies $|\\mathrm{bits}(v(r)+1)|\\le W$, and $|p|\\le P$. Then the compiled Turing machine, started with input $x$, register contents $v$, memory tape $M$ at position $p$, and output $out$, reaches a halting configuration whose output is $out$ followed by $b_0$, and every configuration up to that time satisfies the register, decider-work-tape, and memory-head bounds $W,B,P$ encoded by $\\mathrm{MBox}$.",
+ "hypotheses_covered": [
+  "A is an augmented register machine with m registers and d deciders",
+  "l₀ is the compiled machine's initial label",
+  "oracle maps each decider and Boolean word to a Boolean answer",
+  "D is a k_D-work-tape Boolean Turing machine",
+  "q₀ assigns an initial state to each decider",
+  "B, W, P are natural-number bounds",
+  "l is a program label and A(l) is the deterministic instruction i",
+  "v assigns a natural-number value to each register",
+  "M is a Boolean-valued memory tape and p is its integer head position",
+  "out is the initial output word and b₀ is a Boolean answer",
+  "the abstract execution from (l,v) with no answer halts with registers v and answer b₀",
+  "the precondition Pre holds at (l,v) with no answer",
+  "each register's v(r)+1 binary representation has length at most W",
+  "the absolute value of p is at most P"
+ ],
+ "confidence": "low",
+ "caveat": "The auxiliary notions Pre and MBox are supplied only as Lean definitions; the statement describes their roles but their detailed conjunctions are not expanded.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

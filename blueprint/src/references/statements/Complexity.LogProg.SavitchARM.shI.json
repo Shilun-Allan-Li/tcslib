@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.shI",
+ "key": "092727fc8901587b",
+ "kind": "def",
+ "title": "Shift-loop instruction",
+ "statement": "For a natural number $E$, a register $r$ among $18$ registers, an exit label $e$, a function $m$ assigning a label to each of nine phases, and a phase $j\\in\\{0,1,\\ldots,8\\}$, define the instruction by these cases: at phase $0$, branch on whether the loop counter $c$ is zero, going to $e$ if so and to $m(1)$ otherwise; at phase $1$, decrement $c$ and go to $m(2)$; at phase $2$, branch on whether $r=0$, going to $m(6)$ if so and to $m(3)$ otherwise; at phase $3$, decrement $r$ and go to $m(4)$; at phase $4$, increment the scratch register $z$ and go to $m(5)$; at phase $5$, increment $z$ and go to $m(2)$; at phase $6$, branch on whether $z=0$, going to $m(0)$ if so and to $m(7)$ otherwise; at phase $7$, decrement $z$ and go to $m(8)$; at phase $8$, increment $r$ and go to $m(6)$.",
+ "hypotheses_covered": [
+  "Natural number $E$",
+  "Register $r$ among 18 registers",
+  "Exit label $e$",
+  "Label function $m$ on nine phases",
+  "Phase $j$ among nine phases"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

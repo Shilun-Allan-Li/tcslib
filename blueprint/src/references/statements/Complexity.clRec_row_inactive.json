@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.clRec_row_inactive",
+ "key": "17e9c685f29aa18c",
+ "kind": "lemma",
+ "title": "Invariance of the inactive row frame",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, and let $x$ and $y$ be Boolean words. Let $c$ be a configuration of $M$ on input $y$, let $b$ be a Boolean tag, and let $n$ assign a natural number to each of the $2(1+M.k)$ counter fields. Choose two record words, two control states of the row-copying machine with $2(1+M.k)$ work tapes, natural numbers $T$ and $t$, and a configuration $z$ of that row-copying machine on input $x$. Relocating $z$ into the row's designated tapes while retaining the other tape contents and head positions gives the same configuration for either choice of record word and row control state.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over the Boolean alphabet",
+  "$x,y$ are Boolean words",
+  "$c$ is a configuration of $M$ on input $y$",
+  "$b$ is a Boolean tag",
+  "$n$ assigns a natural number to each of the $2(1+M.k)$ counter fields",
+  "the records are Boolean words",
+  "the row controls are states of the row-copying machine",
+  "$T,t$ are natural numbers",
+  "$z$ is a configuration of the row-copying machine on input $x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "For every source configuration, tag, movement counts, clock budget, and logical time, the retained inactive tapes and heads used when relocating a row-copy configuration into the recorder are the same for any two record contents and row controls, so consecutive fields and rows can append to the record without changing source time."
+}

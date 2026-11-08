@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.OracleTM.step_eq_of_ne_qQuery",
+ "key": "00423bc77e6212c6",
+ "kind": "theorem",
+ "title": "Step Independence Away from the Query State",
+ "statement": "Let $M$ be an oracle Turing machine, let $O_1,O_2$ be languages over its symbol alphabet, and let $c$ be a configuration. If the state of $c$ is not the query state of $M$, then one step from $c$ relative to $O_1$ equals one step from $c$ relative to $O_2$.",
+ "hypotheses_covered": [
+  "An oracle Turing machine $M$",
+  "Two oracle languages $O_1,O_2$ over the symbol alphabet",
+  "A configuration $c$ whose state is not the query state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be an oracle machine with $k$ ordinary work tapes and let $c$ be a\nconfiguration whose current state is not the query state of $M$ (in\nparticular, $c$ may be halted).  Then for any two oracle languages $O_1$ and\n$O_2$, one step of $M$ from $c$ relative to $O_1$ equals one step of $M$ from\n$c$ relative to $O_2$."
+}

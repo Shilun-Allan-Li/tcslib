@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.seekStartTM_run_ofCfg",
+ "key": "d5f32f818d46b377",
+ "kind": "theorem",
+ "title": "Seeking the start of a field sequence",
+ "statement": "Let $k$ be a nonnegative integer, let $i<k$ index a work tape, and let $x$ be an input word. Let $ws$ be a finite list of nonempty words, and let $L$ be the sum of their lengths plus one per word. Consider a configuration $d$ in the running phase whose scanned cell on tape $i$ is nonblank. Suppose that for every integer $p$ with $-2\\le p<L$, tape $i$ at position $d_i-L+p$ contains the symbol at position $p$ of the concatenation of the words in $ws$, with blank separators between consecutive words and blanks outside the concatenation. After $L+4$ steps, the seeking machine is in the done phase with tape head $i$ at $d_i-L$; it is not in the done phase at any earlier time. At every time up to and including $L+4$, the head on tape $i$ lies between $d_i-L-2$ and its initial position, inclusive, and every other work-tape head remains at its initial position.",
+ "hypotheses_covered": [
+  "$i$ indexes one of the $k$ work tapes",
+  "Every word in $ws$ is nonempty",
+  "The initial configuration is in the running phase",
+  "The scanned cell on tape $i$ is nonblank",
+  "Tape $i$ agrees with the specified concatenation-with-separators tape for every integer $p$ from $-2$ up to but excluding $L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

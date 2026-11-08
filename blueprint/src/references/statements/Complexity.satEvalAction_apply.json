@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.satEvalAction_apply",
+ "key": "d6c37844d2ec9256",
+ "kind": "lemma",
+ "title": "Administrative Action on Canonical Configurations",
+ "statement": "Let $M$ be a finite Boolean Turing machine with $k$ work tapes, and let $w,u$ be Boolean words. Choose a saved configuration of $M$ on input $w$, semantic states $q,q'$, natural numbers $i,i'$ with $i,i'\\le |w|$, integer offsets $j,j'$, and signs $m,d\\in\\{-1,0,1\\}$. If moving the input head from position $i+1$ by $m$ gives position $i'+1$, and $j+d=j'$, then applying the administrative action with input move $m$, certificate-head move $d$, no emitted bit, and target state $q'$ to the canonical evaluation configuration determined by the saved configuration, $u,q,i,j$ gives the canonical configuration determined by the same saved configuration and $u$, with state $q'$, input position $i'$, certificate-head offset $j'$, and empty output.",
+ "hypotheses_covered": [
+  "finite Boolean machine $M$ with $k$ work tapes",
+  "saved configuration on input $w$",
+  "Boolean word $u$",
+  "semantic states $q,q'$",
+  "$i,i'\\le |w|$",
+  "integer offsets $j,j'$",
+  "signs $m,d\\in\\{-1,0,1\\}$",
+  "the stated input-head movement equality",
+  "$j+d=j'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying a non-emitting administrative evaluator action to a canonical evaluation\nconfiguration yields the canonical configuration with the prescribed new control\nstate, the input position moved as stated, and the certificate head displaced by\nthe stated amount; the saved extractor bank and the empty output are preserved."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.embedSilentRetTM_run",
+ "key": "afd818b852eef852",
+ "kind": "theorem",
+ "title": "Run of the silent return machine",
+ "statement": "Let $\\iota$ embed the $m$ tape indices into the $k$ tape indices, and let the distinguished tape index $\\mathrm{cap}$ lie outside the image of $\\iota$. For an $m$-tape machine $M$ and configuration $c$ whose state is present, suppose that $M$ is still in a state at every time $t<T$ and has halted at time $T$. Starting from the embedded configuration with its state mapped into the left summand, the return machine's run agrees, at every time $t<T$, with the embedding of $M$'s configuration at time $t$ (again with state in the left summand); at time $T$ it is the embedded halted configuration with state set to the right-summand return state. At every time before $T$, its state is not that return state.",
+ "hypotheses_covered": [
+  "An embedding $\\iota$ from the $m$ tape indices into the $k$ tape indices",
+  "The distinguished index $\\mathrm{cap}$ is outside the image of $\\iota$",
+  "An $m$-tape machine $M$",
+  "Background tape contents and head positions, a prefix and initial output, and an initial configuration $c$",
+  "The initial state of $c$ is present",
+  "A natural number $T$",
+  "The run of $M$ is nonhalted at every time $t<T$",
+  "The run of $M$ is halted at time $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

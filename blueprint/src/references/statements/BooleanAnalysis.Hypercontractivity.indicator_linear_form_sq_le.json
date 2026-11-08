@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.indicator_linear_form_sq_le",
+ "key": "f8f8514f25bfb9bb",
+ "kind": "lemma",
+ "title": "Indicator correlation with linear forms",
+ "statement": "Let $n\\in\\mathbb N$, and let $f:\\{0,1\\}^n\\to\\mathbb R$ take only the values $0$ and $1$, with uniform expectation $\\alpha=\\mathbb E f>0$. For real coefficients $(a_i)_{i=1}^n$ satisfying $\\sum_i a_i^2=1$, the squared correlation with the sign-valued linear form obeys\n\\[\\left(\\mathbb E\\left[f(x)\\sum_i a_i(-1)^{x_i}\\right]\\right)^2\\le2\\alpha^2\\log(1/\\alpha).\\]",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$",
+  "$f(x)\\in\\{0,1\\}$ for every $x$",
+  "$\\mathbb E f>0$",
+  "The coefficients $a_i$ are real",
+  "$\\sum_i a_i^2=1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f:\\{0,1\\}^n\\to\\{0,1\\}$ have uniform mean $\\alpha>0$, and let $a_i\\in\\mathbb R$ satisfy $\\sum_ia_i^2=1$. Then $\\big(\\mathbb E[f(x)\\sum_i a_i(-1)^{x_i}]\\big)^2\\le2\\alpha^2\\log(1/\\alpha)$."
+}

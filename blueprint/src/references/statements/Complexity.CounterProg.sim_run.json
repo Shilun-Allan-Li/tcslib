@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.CounterProg.sim_run",
+ "key": "72bae070da6f81e9",
+ "kind": "theorem",
+ "title": "Bounded-run Turing machine simulation",
+ "statement": "Let $R,B\\in\\mathbb{N}$, let $\\Lambda$ be a finite set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, choose a start label $\\ell_0\\in\\Lambda$, and let $x$ be an input bit string. For every $t\\in\\mathbb{N}$ and abstract state $s$ whose read position is at most $|x|$ and whose registers satisfy $s(r)+t\\le B$ for every register $r$, there is a number of machine steps $t'\\le t(2B+3)$ such that the compiled machine started at $\\ell_0$, run on input $x$ from the encoding of $s$, reaches the encoding of the state obtained by running $P$ on $x$ from $s$ for $t$ steps.",
+ "hypotheses_covered": [
+  "A natural-number register count $R$",
+  "A natural-number bound $B$",
+  "A finite label set $\\Lambda$",
+  "A counter program $P$ over $R$ registers and $\\Lambda$",
+  "A chosen start label $\\ell_0\\in\\Lambda$",
+  "An input bit string $x$",
+  "A step count $t\\in\\mathbb{N}$",
+  "An abstract state $s$ with read position at most $|x|$",
+  "Every register value of $s$ plus $t$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ registers with a finite label set\n$\\Lambda$, let $\\ell_0 \\in \\Lambda$, let $x$ be a binary input, and let $M$ be the\nmulti-tape Turing machine compiled from $P$ with start label $\\ell_0$, which keeps\neach register on its own work tape in unary.  For an abstract state $s$ (label or\nhalted, registers $\\rho_s$, number $\\mathrm{pos}(s)$ of input symbols read,\noutput so far) let $\\mathrm{enc}(s)$ be the configuration of $M$ in the control\nstate for the label of $s$ (or halted), with the input head on the next unread\nsymbol, work tape $r$ holding $1^{\\rho_s(r)}$ with its head on cell\n$\\rho_s(r)$, and output equal to that of $s$.  Let $B \\in \\mathbb{N}$.  Then for\nevery $t \\in \\mathbb{N}$ and every abstract state $s$ with\n$\\mathrm{pos}(s) \\le |x|$ and $\\rho_s(r) + t \\le B$ for every register $r$,\nthere is $t' \\le t(2B+3)$ such that running $M$ for $t'$ steps from\n$\\mathrm{enc}(s)$ yields $\\mathrm{enc}(s_t)$, where $s_t$ is the state reached\nby $t$ steps of $P$ on $x$ from $s$."
+}

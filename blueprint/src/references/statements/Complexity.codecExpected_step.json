@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.codecExpected_step",
+ "key": "85bdd3438984b856",
+ "kind": "theorem",
+ "title": "Expected encoding of a machine step",
+ "statement": "Let $M$ be a finite-state Turing machine with $k$ work tapes, let $n,s$ be natural numbers, and let $x$ be a Boolean input of length $n$. Let $c$ be a configuration on input $x$ whose work-tape heads lie within distance $s$ of the origin and whose work tapes are blank outside that window. Let $t$ be a codec row, $p$ a tuple of an input-head position and work-head positions, $q$ a case consisting of an optional state, an optional input symbol, and one optional symbol per work tape, and $a$ a Boolean assignment to the codec ports. If the wired port values satisfy the codec guard for $p$ and $q$, then for every codec bit $b$, its expected value under the action determined by $q$ equals its observed value in the successor configuration of $c$ under one step of $M$.",
+ "hypotheses_covered": [
+  "A finite Turing machine $M$",
+  "Natural numbers $n,s$",
+  "A Boolean input $x$ of length $n$",
+  "A configuration $c$ on input $x$",
+  "All work-tape heads of $c$ have absolute position at most $s$",
+  "Every work tape of $c$ is blank at positions of absolute value greater than $s$",
+  "A codec row $t$",
+  "A tuple $p$ of input-head and work-head positions",
+  "A case $q$ containing an optional state, optional input symbol, and optional work-tape symbols",
+  "A codec bit $b$",
+  "The wired port assignment satisfies the codec guard for $p$ and $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clObliviousVerifier",
+ "key": "0667cbadf584d80f",
+ "kind": "lemma",
+ "title": "Oblivious polynomial-time verifier",
+ "statement": "Let $V$ be a language in $\\mathrm{P}$. There exist a finite Turing machine $M$ and positive natural numbers $c,A,d$ such that $M$ is oblivious and decides $V$ within $c\\bigl(A(n+1)^d+1\\bigr)^2$ steps on every input of length $n$.",
+ "hypotheses_covered": [
+  "$V$ belongs to $\\mathrm{P}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $V$ be a language in $\\mathrm{P}$. Then there exist a finite machine $M$ and constants $c, A, d > 0$ such that $M$ is oblivious, meaning its head positions depend only on the input length and the time, and $M$ decides $V$ within time $c\\,(A(n+1)^d + 1)^2$ on inputs of length $n$. Only the time bound is enlarged; the language, and hence the certificate relation, is unchanged."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.timed_clock_back",
+ "key": "3047d8d444c60590",
+ "kind": "lemma",
+ "title": "Clock rewind to the borrow phase",
+ "statement": "Let $x$ be a Boolean word and let $c$ be a base configuration of the timed interpreter on input $x$. Let $u$ be a function assigning eight Boolean action bits, let $h$ be a Boolean halting flag, and let $b_s$ be a Boolean clock word. For every natural number $j\\le |b_s|$, starting in the clock-rewind phase with clock word $b_s$ and clock head at position $j-1$, after exactly $j+1$ steps the interpreter is in the borrow phase with borrow flag true, the same clock word, and clock head at $0$.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Base timed-interpreter configuration $c$",
+  "Eight Boolean action bits",
+  "Boolean halting flag $h$",
+  "Boolean clock word $b_s$",
+  "Natural number $j\\le |b_s|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $j$ at most the clock word's length, from the clock-rewind phase\nwith the clock head at $j-1$, exactly $j+1$ steps of the timed interpreter\nreach the borrow phase with the borrow flag set and the clock head at $0$; the\nretained action bits and halting flag are unchanged."
+}

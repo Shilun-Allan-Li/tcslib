@@ -1,0 +1,22 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_le_endpoint",
+ "key": "29c238b373200bef",
+ "kind": "lemma",
+ "title": "Symmetric endpoint length comparison",
+ "statement": "Let $P:\\mathbb R\\to\\mathbb R$ be continuous on $[0,1]$ and nonnegative there, and suppose that whenever $a+b,a-b\\in[0,1]$, $P(a)\\le\\frac12\\bigl(\\sqrt{P(a+b)^2+b^2}+\\sqrt{P(a-b)^2+b^2}\\bigr)$. For real $a,b,t,c$ with $a+b,a-b,t\\in[0,1]$ and $c\\ge0$, and vectors $u,v\\in\\mathbb R^m$, one has $L(t,c)\\le L(1,c+b^2(1-t^2))$.",
+ "hypotheses_covered": [
+  "$m$ is a natural number",
+  "$P$ is continuous on $[0,1]$",
+  "$P$ is nonnegative on $[0,1]$",
+  "For all real $a,b$ with $a+b,a-b\\in[0,1]$, the stated inequality for $P(a)$ holds",
+  "$a+b\\in[0,1]$",
+  "$a-b\\in[0,1]$",
+  "$t\\in[0,1]$",
+  "$c\\ge0$",
+  "$u,v\\in\\mathbb R^m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a profile $P:\\mathbb R\\to\\mathbb R$, $a,b,t,c\\in\\mathbb R$, and $u,v\\in\\mathbb R^m$, define $L(t,c)=\\frac12\\bigl(\\sqrt{P(a+tb)^2+c+\\|u+tv\\|_2^2}+\\sqrt{P(a-tb)^2+c+\\|u-tv\\|_2^2}\\bigr)$. Assume $P\\ge0$ on $[0,1]$ and, whenever $z\\pm d\\in[0,1]$, $P(z)\\le\\bigl(\\sqrt{P(z+d)^2+d^2}+\\sqrt{P(z-d)^2+d^2}\\bigr)/2$. If $P$ is also continuous on $[0,1]$, $a\\pm b\\in[0,1]$, $0\\le t\\le1$, and $c\\ge0$, then $L(t,c)\\le L(1,c+b^2(1-t^2))$."
+}

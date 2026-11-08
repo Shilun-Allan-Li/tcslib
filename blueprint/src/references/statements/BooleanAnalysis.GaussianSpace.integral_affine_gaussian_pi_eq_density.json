@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.integral_affine_gaussian_pi_eq_density",
+ "key": "1b3407229bddce3e",
+ "kind": "lemma",
+ "title": "Affine Gaussian density integration",
+ "statement": "Let $I$ be a finite index set, let $c=(c_i)_{i\\in I}\\in\\mathbb R^I$, let $s\\in\\mathbb R$ be nonzero, and let $f:\\mathbb R^I\\to\\mathbb R$ be measurable. Then\n\\[\n\\int_{\\mathbb R^I} f(c+sY)\\,d\\gamma_I(Y)=\\int_{\\mathbb R^I}\\left(\\prod_{i\\in I} p_{c_i,s^2}(z_i)\\right)f(z)\\,dz,\n\\]\nwhere $\\gamma_I$ is the product of standard Gaussian measures, $dz$ is product Lebesgue measure, and $p_{m,v}$ is the Gaussian density with mean $m$ and variance $v$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$c_i$ is real for each $i\\in I$",
+  "$s\\in\\mathbb R$ and $s\\ne0$",
+  "$f:\\mathbb R^I\\to\\mathbb R$ is measurable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $I$ be finite, $c\\in\\mathbb R^I$, $s\\ne0$, and $f:\\mathbb R^I\\to\\mathbb R$ measurable. For a standard Gaussian vector $Y$, $\\mathbb E f(c+sY)=\\int_{\\mathbb R^I}(\\prod_i p_{s^2}(c_i,z_i))f(z)\\,dz$, where $p_{s^2}$ is the scalar Gaussian density and nonintegrable integrals are assigned zero."
+}

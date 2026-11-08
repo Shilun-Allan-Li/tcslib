@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satRed_maxOnes",
+ "key": "07ecd323ca90d2c1",
+ "kind": "lemma",
+ "title": "Scan of a unary run",
+ "statement": "Let $x$ be a Boolean word containing a run of $v$ true bits between a prefix and suffix. For every counter length $n$ and head position $j\\le n$, arbitrary second-tape content, second-tape head position $b$, and output word $o$, starting in state $4$ with the counter head at $j$, after exactly $v$ steps the machine is again in state $4$ at the input position just after the run. The counter head is at $j+v$, the counter length is $\\max(n,j+v)$, and the second tape, its head, and the output are unchanged.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "run of $v$ true bits in $x$",
+  "counter length $n$",
+  "counter head position $j\\le n$",
+  "arbitrary second-tape content",
+  "second-tape head position $b$",
+  "arbitrary output word $o$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the input contains a unary run $1^v$ at the current position and the\ntransducer is in its index-scanning state with counter length $n$ and counter head\nat $j \\le n$. Then exactly $v$ steps consume the run, advancing the input by $v$,\nmoving the counter head to $j + v$, and extending the counter length to\n$\\max(n,\\, j + v)$."
+}

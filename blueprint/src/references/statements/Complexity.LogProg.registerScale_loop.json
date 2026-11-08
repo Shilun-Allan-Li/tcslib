@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.registerScale_loop",
+ "key": "73ffcfebe511156f",
+ "kind": "theorem",
+ "title": "Scaling one register by a loop",
+ "statement": "Let a register program $A$ have distinct source and destination registers. At state $test$ it branches to $done$ if the source is zero and otherwise to $down$; at $down$ it decrements the source and enters $inc(0)$. For every $i<factor$, state $inc(i)$ increments the destination and enters $inc(i+1)$, and $inc(factor)=test$. If every initial register value is at most $B$ and the initial destination value plus $factor$ times the initial source value is at most $B$, then from the configuration at $test$ the program can reach $done$ with the source set to zero and the destination increased by $factor$ times the initial source value. Throughout the configurations before the final one, the precondition invariant holds and every register value is at most $B$.",
+ "hypotheses_covered": [
+  "Source and destination registers are distinct",
+  "Instruction at $test$ is the specified zero test",
+  "Instruction at $down$ decrements the source and enters $inc(0)$",
+  "For every $i<factor$, $inc(i)$ increments the destination and enters $inc(i+1)$",
+  "$inc(factor)=test$",
+  "Every initial register value is at most $B$",
+  "Initial destination value plus $factor$ times initial source value is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

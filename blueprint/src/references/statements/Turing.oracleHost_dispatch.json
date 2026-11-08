@@ -1,0 +1,26 @@
+{
+ "lean_name": "Turing.oracleHost_dispatch",
+ "key": "34d4336f1e960763",
+ "kind": "theorem",
+ "title": "Oracle host dispatch simulation",
+ "statement": "Let $M$ be a finite Boolean oracle Turing machine and let $C$ be a finite Boolean Turing machine with at least one work tape; choose states $en$ and $ex$ of $C$, and fix a Boolean input word $x$. Consider two configurations $c,c'$ of the four-tape dispatch machine on $x$, and let $T$ be a natural number. If the dispatch machine run from $c$ for $T$ steps is $c'$, the state of $c'$ is $s'$, the host construction redirects dispatch state $s'$ to phase state $q'$, and every state occurring in the dispatch run at a time $u<T$ is internal (that is, neither ready, copy, nor an answer state), then the host machine run for $T+1$ steps from the phase-tagged embedding of $c$ reaches the phase-tagged embedding of $c'$, with its state replaced by the constant phase state $q'$. This holds for every choice of host-tape contents and head positions used in those embeddings.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean oracle Turing machine",
+  "$C$ is a finite Boolean Turing machine",
+  "$C$ has at least one work tape",
+  "$en$ and $ex$ are states of $C$",
+  "$x$ is a Boolean input word",
+  "host-tape contents and head positions are specified",
+  "$c$ and $c'$ are four-tape dispatch configurations on $x$",
+  "$T$ is a natural number",
+  "the dispatch run from $c$ for $T$ steps equals $c'$",
+  "$c'$ has state $s'$",
+  "$q'$ is a phase-tagged host state",
+  "dispatch state $s'$ redirects to $q'$",
+  "every state at each time $u<T$ is internal, meaning neither ready, copy, nor an answer state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

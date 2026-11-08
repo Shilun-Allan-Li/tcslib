@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.ups_tcmp",
+ "key": "84bfb00e678aed0f",
+ "kind": "lemma",
+ "title": "Transition through the target comparison",
+ "statement": "Let $x$ be a finite Boolean word, $B$ a natural number, and $q$ a rational number. Let $\\sigma$ be a register state and $w$ a natural number with $\\sigma.tmp=w$, all registers of $\\sigma$ at most $B$, $2|x|+2\\le B$, and $\\sigma.p\\le |x|$. If the word of binary digits of $w$ occurs at position $\\sigma.p$ in $x$ and ends exactly at the end of $x$, assume that the program started at the target-test stage with pointer $|x|$ and scratch value zero has semantics with acceptance probability $q$. If this occurrence condition fails, assume that for every $p',tmp'\\le B$, the program started at the next search stage with pointer $p'$ and scratch value $tmp'$ has semantics with acceptance probability $q$. Then the program started at the target-comparison stage in state $\\sigma$ has semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "$x$ is a finite Boolean word",
+  "$B$ is natural",
+  "$q$ is rational",
+  "$w$ is natural and equals $\\sigma.tmp$",
+  "Every register of $\\sigma$ is at most $B$",
+  "$2|x|+2\\le B$",
+  "$\\sigma.p\\le |x|$",
+  "If the binary word of $w$ occurs at $\\sigma.p$ and ends at $|x|$, the stated target-test configuration has semantics with acceptance probability $q$",
+  "If it does not occur there and end at $|x|$, every next-search configuration with pointer and scratch value at most $B$ has semantics with acceptance probability $q$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, and $q$ a rational number. Suppose that\n$w$ is the scratch-register value of a register state $\\sigma$, every register of\n$\\sigma$ is at most $B$, $2|x|+2\\le B$, and the input pointer $p$ of $\\sigma$ is at most\n$|x|$. If the bits of $x$ starting at position $p$ encode the binary expansion of $w$\nand end exactly at the end of $x$, then the program started at the target-test stage\nwith pointer $|x|$ and scratch value zero has acceptance probability $q$ and satisfies\nthe termination and register-bound conditions for $B$. If this encoding condition fails,\nassume instead that for every $p',w'$ at most $B$, the program started at the next\nsearch stage with those pointer and scratch values has the same semantics with\nacceptance probability $q$. Then the program started at the target-comparison stage in\nstate $\\sigma$ has those semantics with acceptance probability $q$."
+}

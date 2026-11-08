@@ -8,86 +8,2614 @@ Bobkov's functional measures the expected Euclidean length of a Gaussian profile
 \begin{definition}[Expected profile-gradient length]
 \lean{BooleanAnalysis.GaussianSpace.bobkovFunctional}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.derivative,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.derivative, BooleanAnalysis.expect}
+\statementsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p021-b001}
 For a real function $f$ on the uniform Boolean cube $\{0,1\}^n$, write $D_i f(x)=(f(x^{i\leftarrow0})-f(x^{i\leftarrow1}))/2$ and $B(f)=\mathbb E\sqrt{\overline I(f)^2+\sum_i(D_i f)^2}$, where $\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. The Bobkov functional assigns the value $B(f)$ to $f$.
 \end{definition}
 
 \begin{theorem}[Bobkov two-point inequality]
 \lean{BooleanAnalysis.GaussianSpace.bobkov_two_point}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.closedGaussianProfile_one,BooleanAnalysis.GaussianSpace.closedGaussianProfile_two_point_of_mem_Ioo,BooleanAnalysis.GaussianSpace.closedGaussianProfile_zero}
+\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.closedGaussianProfile_one, BooleanAnalysis.GaussianSpace.closedGaussianProfile_two_point_of_mem_Ioo, BooleanAnalysis.GaussianSpace.closedGaussianProfile_zero}
+\proofsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Literal.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {LitList}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {LitList.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Term}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Clause}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Term.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Clause.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Depth2}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Depth2.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DNF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {CNF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DNF.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DNF.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {CNF.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {CNF.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p033-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_lt_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.exists_standardGaussianCDF_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_strictMonoOn}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuousAt_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF_reflection_sum}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_sq_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric_le_of_le_of_add_le_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.convexOn_standardGaussianQuantile_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric_mul_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002,
+    pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002,
+    pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001,
+    pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001,
+    pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002,
+    pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.tendsto_closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002,
+    pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousAt_closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousAt_closedGaussianProfile_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002,
+    pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.sqrt_average_of_sq_difference_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.shifted_probabilities_mem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_profile_sq_pair}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_profile_sq_pair_derivative}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.concaveOn_profile_sq_difference}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.profile_sq_difference_bound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.convexOn_profile_sq_deficit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.profile_sq_central_deficit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior_half}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.contracted_probability_mem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.tendsto_closedGaussianProfile_affine_left}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_two_point_of_mem_Ioo}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
 \difficulty{4}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. For real $a,b$ with $a+b,a-b\in[0,1]$, $\overline I(a)\le\bigl(\sqrt{\overline I(a+b)^2+b^2}+\sqrt{\overline I(a-b)^2+b^2}\bigr)/2$.
+Let $a,b\in\mathbb R$ satisfy $a+b\in[0,1]$ and $a-b\in[0,1]$. Then the closed Gaussian
+profile satisfies
+\[
+U(a)\le \frac{\sqrt{U(a+b)^2+b^2}+\sqrt{U(a-b)^2+b^2}}{2}.
+\]
 \end{theorem}
 
-\begin{lemma}[Mean in the unit interval]
+\begin{lemma}[Mean of a bounded Boolean function]
 \lean{BooleanAnalysis.GaussianSpace.expect_mem_unitInterval}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.ThresholdFunctions.expect_const,BooleanAnalysis.ThresholdFunctions.expect_mono,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.expect_const, BooleanAnalysis.ThresholdFunctions.expect_mono, BooleanAnalysis.expect}
 \difficulty{4}
-If $f:\{0,1\}^n\to[0,1]$, then its uniform mean satisfies $\mathbb E f\in[0,1]$.
+For $n\in\mathbb N$, let $f:\{0,1\}^n\to\mathbb R$ satisfy $0\le f(x)\le1$ for every
+$x\in\{0,1\}^n$. Then its uniform expectation satisfies $0\le\E[f]\le1$.
 \end{lemma}
 
-\begin{lemma}[Zero-dimensional Bobkov functional]
+\begin{lemma}[Bobkov functional in dimension zero]
 \lean{BooleanAnalysis.GaussianSpace.bobkovFunctional_zero_dim}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.bobkovFunctional,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg,BooleanAnalysis.expect,BooleanAnalysis.uniformWeight}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.bobkovFunctional, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg, BooleanAnalysis.expect, BooleanAnalysis.uniformWeight}
 \difficulty{1}
-For a real function $f$ on the uniform Boolean cube $\{0,1\}^n$, write $D_i f(x)=(f(x^{i\leftarrow0})-f(x^{i\leftarrow1}))/2$ and $B(f)=\mathbb E\sqrt{\overline I(f)^2+\sum_i(D_i f)^2}$, where $\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. In dimension $n=0$, $B(f)=\overline I(\mathbb E f)$.
+For every real-valued function $f$ on the zero-dimensional Boolean cube, $B(f)=\overline
+I(\mathbb E f)$, where $\overline I$ is the closed Gaussian profile and the expectation
+is under the uniform measure on that cube.
 \end{lemma}
 
-\begin{lemma}[Profile of the restricted means]
+\begin{lemma}[Profile inequality for restricted means]
 \lean{BooleanAnalysis.GaussianSpace.profile_mean_restrictions_le}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.bobkov_two_point,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.expect_diffLast,BooleanAnalysis.GaussianSpace.expect_mem_unitInterval,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.expect_succ_eq,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.bobkov_two_point, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.expect_diffLast, BooleanAnalysis.GaussianSpace.expect_mem_unitInterval, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.expect_succ_eq, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.expect}
 \difficulty{4}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. Let $f:\{0,1\}^{n+1}\to[0,1]$, put $f_b(x)=f(x,b)$ for $b\in\{0,1\}$, and set $d=(f_0-f_1)/2$. Then $\overline I(\mathbb E f)\le\bigl(\sqrt{\overline I(\mathbb E f_0)^2+(\mathbb E d)^2}+\sqrt{\overline I(\mathbb E f_1)^2+(\mathbb E d)^2}\bigr)/2$.
+Let $n$ be a natural number and let $f:\{0,1\}^{n+1}\to\bbr$ take values in $[0,1]$. For
+$b\in\{0,1\}$, let $f_b(x)=f(x,b)$ and let $d(x)=\tfrac12(f_0(x)-f_1(x))$. If $U$ is the
+Gaussian profile that equals $\varphi(\Phi^{-1}(p))$ for $0<p<1$ and $0$ otherwise, then
+\[
+U(\mathbb E f)\le\frac{\sqrt{U(\mathbb E f_0)^2+(\mathbb E d)^2}+\sqrt{U(\mathbb E
+f_1)^2+(\mathbb E d)^2}}{2},
+\]
+where all expectations are uniform on the corresponding Boolean cube.
 \end{lemma}
 
-\begin{lemma}[Adding a squared scalar coordinate]
+\begin{lemma}[Monotonicity after adding a squared coordinate]
 \lean{BooleanAnalysis.GaussianSpace.sqrt_profile_sq_le}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.bobkovFunctional,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.bobkovFunctional, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg, BooleanAnalysis.expect}
 \difficulty{3}
-For a real function $f$ on the uniform Boolean cube $\{0,1\}^n$, write $D_i f(x)=(f(x^{i\leftarrow0})-f(x^{i\leftarrow1}))/2$ and $B(f)=\mathbb E\sqrt{\overline I(f)^2+\sum_i(D_i f)^2}$, where $\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. If $d\in\mathbb R$ and $\overline I(\mathbb E f)\le B(f)$, then $\sqrt{\overline I(\mathbb E f)^2+d^2}\le\sqrt{B(f)^2+d^2}$.
+Let $n$ be a dimension, let $f$ be a real-valued function on the Boolean cube
+$\{0,1\}^n$, and let $d\in\mathbb R$. If the closed Gaussian profile at the expectation
+of $f$ is at most the Bobkov functional of $f$, then $\sqrt{\overline
+I(\E[f])^2+d^2}\le\sqrt{B(f)^2+d^2}$, where $\overline I$ denotes the closed Gaussian
+profile and $B(f)$ the Bobkov functional.
 \end{lemma}
 
-\begin{lemma}[Length identity for a restriction]
+\begin{lemma}[Length identity under coordinate restriction]
 \lean{BooleanAnalysis.GaussianSpace.restricted_length_identity}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.derivative}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.derivative}
 \difficulty{3}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. Let $f:\{0,1\}^{n+1}\to\mathbb R$, $f_b(x)=f(x,b)$, and $d=(f_0-f_1)/2$. For every $b\in\{0,1\}$ and $x\in\{0,1\}^n$, $\sqrt{(\sqrt{\overline I(f_b(x))^2+\sum_{i<n}(D_i f_b(x))^2})^2+d(x)^2}=\sqrt{\overline I(f(x,b))^2+\sum_{i<n+1}(D_i f(x,b))^2}$, where $D_i$ denotes the coordinate half-difference.
+Let $n$ be a natural number and let $f:\{0,1\}^{n+1}\to\mathbb R$. For $b\in\{0,1\}$ and
+$x\in\{0,1\}^n$, let $f_b$ be the restriction of $f$ to last coordinate $b$, let $D_i$
+denote the coordinate half-difference, and let $U$ be the Gaussian profile equal to
+$\varphi(\Phi^{-1}(p))$ for $0<p<1$ and zero otherwise. Then the Euclidean length formed
+from $U(f_b(x))$, the derivatives $D_i f_b(x)$ for $i<n$, and the half-difference
+$(f_0(x)-f_1(x))/2$ equals the Euclidean length formed from $U(f(x,b))$ and all
+derivatives $D_i f(x,b)$ for $i<n+1$.
 \end{lemma}
 
-\begin{lemma}[Contribution of one restriction]
+\begin{lemma}[Bound for a restricted contribution]
 \lean{BooleanAnalysis.GaussianSpace.restriction_contribution_le}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.bobkovFunctional,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.restricted_length_identity,BooleanAnalysis.GaussianSpace.sqrt_expect_sq_add_sq_le_expect_sqrt,BooleanAnalysis.GaussianSpace.sqrt_profile_sq_le,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.derivative,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.bobkovFunctional, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.restricted_length_identity, BooleanAnalysis.GaussianSpace.sqrt_expect_sq_add_sq_le_expect_sqrt, BooleanAnalysis.GaussianSpace.sqrt_profile_sq_le, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.derivative, BooleanAnalysis.expect}
 \difficulty{4}
-For a real function $h$ on a uniform Boolean cube, put $B(h)=\mathbb E\sqrt{\overline I(h)^2+\sum_i(D_i h)^2}$, where $D_i$ is the coordinate half-difference and $\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. For $f:\{0,1\}^{n+1}\to\mathbb R$, put $f_b(x)=f(x,b)$ and $d=(f_0-f_1)/2$. If $\overline I(\mathbb E f_b)\le B(f_b)$, then $\sqrt{\overline I(\mathbb E f_b)^2+(\mathbb E d)^2}\le\mathbb E_x\sqrt{\overline I(f(x,b))^2+\sum_{i<n+1}(D_i f(x,b))^2}$.
+Let $n$ be a natural number, let $f:\{0,1\}^{n+1}\to\mathbb R$, and choose
+$b\in\{0,1\}$. Let $f_b$ be the restriction to last coordinate $b$, let
+$d(x)=(f(x,0)-f(x,1))/2$, and let $U$ be the Gaussian profile equal to
+$\varphi(\Phi^{-1}(p))$ for $0<p<1$ and zero otherwise. If $U(\mathbb E f_b)\le B(f_b)$,
+where expectation is uniform on the cube and $B(g)=\mathbb E_x\sqrt{U(g(x))^2+\sum_i(D_i
+g(x))^2}$, then $\sqrt{U(\mathbb E f_b)^2+(\mathbb E d)^2}\le\mathbb
+E_x\sqrt{U(f(x,b))^2+\sum_{i<n+1}(D_i f(x,b))^2}$.
 \end{lemma}
 
-\begin{theorem}[Bobkov inequality on the cube]
+\begin{theorem}[Bobkov inequality on the Boolean cube]
 \lean{BooleanAnalysis.GaussianSpace.bobkov_inequality}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.bobkovFunctional,BooleanAnalysis.GaussianSpace.bobkovFunctional_zero_dim,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.profile_mean_restrictions_le,BooleanAnalysis.GaussianSpace.restriction_contribution_le,BooleanAnalysis.Hypercontractivity.expect_succ_eq,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.bobkovFunctional, BooleanAnalysis.GaussianSpace.bobkovFunctional_zero_dim, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.profile_mean_restrictions_le, BooleanAnalysis.GaussianSpace.restriction_contribution_le, BooleanAnalysis.Hypercontractivity.expect_succ_eq, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.expect}
+\proofsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LitList}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LitList.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Depth2}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Depth2.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_mono}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_lt_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.exists_standardGaussianCDF_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.restrictLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.diffLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sum_boolCube_succ}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformWeight_succ}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_succ_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.derivative_restrictLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.derivative_last_snoc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.expect_diffLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.sqrt_expect_sq_add_sq_le_expect_sqrt}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_strictMonoOn}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuousAt_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF_reflection_sum}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_sq_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric_le_of_le_of_add_le_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.convexOn_standardGaussianQuantile_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric_mul_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002,
+    pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.tendsto_closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousAt_closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousAt_closedGaussianProfile_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.sqrt_average_of_sq_difference_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.shifted_probabilities_mem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_profile_sq_pair}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_profile_sq_pair_derivative}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.concaveOn_profile_sq_difference}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.profile_sq_difference_bound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.convexOn_profile_sq_deficit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.profile_sq_central_deficit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior_half}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.contracted_probability_mem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.tendsto_closedGaussianProfile_affine_left}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_two_point_of_mem_Ioo}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.bobkovFunctional}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.bobkov_two_point}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.expect_mem_unitInterval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.bobkovFunctional_zero_dim}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.profile_mean_restrictions_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001,
+    pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.sqrt_profile_sq_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.restricted_length_identity}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.restriction_contribution_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
 \difficulty{5}
-For a real function $f$ on the uniform Boolean cube $\{0,1\}^n$, write $D_i f(x)=(f(x^{i\leftarrow0})-f(x^{i\leftarrow1}))/2$ and $B(f)=\mathbb E\sqrt{\overline I(f)^2+\sum_i(D_i f)^2}$, where $\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. For every $n\ge0$ and $f:\{0,1\}^n\to[0,1]$, $\overline I(\mathbb E f)\le B(f)$.
+Let $f:\{0,1\}^n\to\mathbb R$ take values in $[0,1]$. Then the closed Gaussian profile
+evaluated at the uniform expectation of $f$ is at most its Bobkov functional: $\overline
+I(\mathbb E f)\le B(f)$.
 \end{theorem}
 
-\begin{lemma}[Noise contracts the Bobkov functional]
+\begin{lemma}[Noise contraction of the Bobkov functional]
 \lean{BooleanAnalysis.GaussianSpace.bobkovFunctional_noise_le}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional,BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_le,BooleanAnalysis.GaussianSpace.bobkovFunctional,BooleanAnalysis.GaussianSpace.bobkov_two_point,BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg,BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional, BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_le, BooleanAnalysis.GaussianSpace.bobkovFunctional, BooleanAnalysis.GaussianSpace.bobkov_two_point, BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg, BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile, BooleanAnalysis.noiseOp}
 \difficulty{1}
-For a real function $f$ on the uniform Boolean cube $\{0,1\}^n$, write $D_i f(x)=(f(x^{i\leftarrow0})-f(x^{i\leftarrow1}))/2$ and $B(f)=\mathbb E\sqrt{\overline I(f)^2+\sum_i(D_i f)^2}$, where $\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. For $f:\{0,1\}^n\to[0,1]$ and $0\le\rho\le1$, $B(T_\rho f)\le B(f)$, where $T_\rho$ is the Boolean noise operator with correlation $\rho$.
+Let $f:\{0,1\}^n\to\mathbb R$ take values in $[0,1]$, and let $0\le\rho\le1$. Then the
+Bobkov functional of the Boolean noise operator applied to $f$ satisfies $B(T_\rho f)\le
+B(f)$.
 \end{lemma}
 
-\begin{theorem}[Monotonicity in the noise correlation]
+\begin{theorem}[Monotonicity of the Bobkov functional under noise]
 \lean{BooleanAnalysis.GaussianSpace.bobkovFunctional_noise_monotone}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.bobkovFunctional,BooleanAnalysis.GaussianSpace.bobkovFunctional_noise_le,BooleanAnalysis.GaussianSpace.noiseOp_mem_unitInterval,BooleanAnalysis.Hypercontractivity.noiseOp_compose,BooleanAnalysis.noiseOp}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.bobkovFunctional, BooleanAnalysis.GaussianSpace.bobkovFunctional_noise_le, BooleanAnalysis.GaussianSpace.noiseOp_mem_unitInterval, BooleanAnalysis.Hypercontractivity.noiseOp_compose, BooleanAnalysis.noiseOp}
+\proofsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LitList}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LitList.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Depth2}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Depth2.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.width}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.derivative}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.derivative_add}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.derivative_smul}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.noiseOp}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.noiseOp_fourier}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001,
+    pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p017-b001,
+    pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_mono}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p017-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p017-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p017-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p017-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_pos}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianPDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_sq_atBot}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianPDF_atBot}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_eq_integral}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuous_standardGaussianCDF}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_strictMono}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_pos}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_lt_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.exists_standardGaussianCDF_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_quantile}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.tendsto_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b001,
+    pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.restrictLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.avgLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.diffLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.restrictLast_false_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.restrictLast_true_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sum_boolCube_succ}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.uniformWeight_succ}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.fourierCoeff_avgLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.fourierCoeff_diffLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_succ_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.derivative_restrictLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.derivative_last_snoc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.carried_midpoint}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.derivative_linear_combination}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairDeficit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.nonpos_of_bddAbove_of_half_step}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.sqrt_add_le_add_sqrt}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_abs}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.probability_mem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.concaveOn_pairLength_clock}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.continuousOn_pairLength_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_clock_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_adaptive_midpoint}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001,
+    pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.sqrt_clock_le_pairLength}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.bddAbove_pairDeficit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairDeficit_half_step}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_le_endpoint}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.pairLength_contraction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.chiS_snoc_castSucc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.chiS_snoc_with_last}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.finset_fin_succ_sum_partition}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.card_image_castSucc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.card_image_castSucc_union_last}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseOp_snoc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001,
+    pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseOp_compose}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseKernel}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p004-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseKernel_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p004-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.sum_fourier_kernel}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p004-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseOp_eq_kernel_sum}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p004-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.expect_succ_eq_iterated}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p032-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseKernel_sum_right}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p004-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.noiseOp_mem_unitInterval}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p004-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.noiseOp_linear_combination}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p004-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p004-b001,
+    pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.derivative_last_noise_snoc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.restrictLast_noiseOp_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq_fun}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.noise_restriction_endpoints_mem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001,
+    pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.noiseOp_dim_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001,
+    pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001,
+    pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.sum_sq_lengthVector}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.extended_length_snoc}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_linear_combination}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_noise_restriction}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.lengthVector_restrictLast_noiseOp}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_restrictLast}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_pair}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.expect_pairLength_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_noise_le}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_strictMonoOn}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.continuousAt_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianPDF_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_standardGaussianCDF_reflection_sum}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianCDF_neg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianQuantile_sq_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.gaussianIsoperimetric_le_of_le_of_add_le_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.convexOn_standardGaussianQuantile_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric_mul_standardGaussianQuantile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.hasDerivAt_gaussianIsoperimetric_sq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_eq}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_one_sub}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.tendsto_closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousAt_closedGaussianProfile_zero}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousAt_closedGaussianProfile_one}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p019-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.sqrt_average_of_sq_difference_le}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.shifted_probabilities_mem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_profile_sq_pair}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.hasDerivAt_profile_sq_pair_derivative}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.concaveOn_profile_sq_difference}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.profile_sq_difference_bound}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.convexOn_profile_sq_deficit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.profile_sq_central_deficit}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior_half}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior_nonneg}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.two_point_interior}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.contracted_probability_mem}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.tendsto_closedGaussianProfile_affine_left}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.closedGaussianProfile_two_point_of_mem_Ioo}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.bobkovFunctional}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p021-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.bobkov_two_point}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p022-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.bobkovFunctional_noise_le}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p024-b001}
 \difficulty{4}
-For a real function $f$ on the uniform Boolean cube $\{0,1\}^n$, write $D_i f(x)=(f(x^{i\leftarrow0})-f(x^{i\leftarrow1}))/2$ and $B(f)=\mathbb E\sqrt{\overline I(f)^2+\sum_i(D_i f)^2}$, where $\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. For $f:\{0,1\}^n\to[0,1]$, the map $\rho\mapsto B(T_\rho f)$ is increasing on $[0,1]$, where $T_\rho$ is Boolean noise with correlation $\rho$.
+Let $f:\{0,1\}^n\to\mathbb R$ take values in $[0,1]$. The map $\rho\mapsto B(T_\rho f)$
+is nondecreasing on $[0,1]$; that is, whenever $0\le\rho_1\le\rho_2\le1$, one has
+$B(T_{\rho_1}f)\le B(T_{\rho_2}f)$.
 \end{theorem}

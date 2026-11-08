@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.PSem.acc",
+ "key": "bbcaef5a60fd6b54",
+ "kind": "lemma",
+ "title": "Acceptance of a deterministic true return",
+ "statement": "Let $m,d$ be natural numbers, let $\\Lambda$ be a type of machine states, let $x$ be a bit string, and let $A$ be a nondeterministic register machine with oracle $\\mathcal O$ and guard $G$ on configurations. If, at a state $l\\in\\Lambda$, the machine executes the deterministic instruction that returns true, and $G$ holds at the configuration with state $l$, register contents $v\\colon\\mathrm{Fin}(m)\\to\\mathbb N$, and no result yet, then this initial configuration has guarded terminating semantics with acceptance probability $1$.",
+ "hypotheses_covered": [
+  "$m,d$ are natural numbers",
+  "$\\Lambda$ is a type of machine states",
+  "$x$ is a bit string",
+  "$A$ is a nondeterministic register machine and $\\mathcal O$ is its oracle",
+  "$l$ is a machine state",
+  "At $l$, $A$ executes the deterministic instruction returning true",
+  "$v$ assigns a natural number to each of the $m$ registers",
+  "The guard $G$ holds at the initial live configuration with no result"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

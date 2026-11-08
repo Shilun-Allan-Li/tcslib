@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.splitPoly_loop_end",
+ "key": "e83fca25e8602137",
+ "kind": "lemma",
+ "title": "End of the unary generator loop",
+ "statement": "Let $c,C,q$ be natural numbers with $q>0$. On empty input, start the unary polynomial generator in the loop state at level $c$, with every work-head position at $0$ and empty output, and with each work tape holding the unary word of length $q$. After $T_{c+1}(q,C)+1$ steps, where $T_0(q,C)=C+1$ and $T_{r+1}(q,C)=q(T_r(q,C)+2)+q+2$, the machine is halted, all work-head positions are again $0$, the work tapes still hold their initial contents, and the output consists of $Cq^{c+1}$ ones.",
+ "hypotheses_covered": [
+  "$c,C,q\\in\\mathbb N$",
+  "$q>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "On the empty input, with every unary loop tape of side $q > 0$ already\ninstalled and all heads at $0$, the unary polynomial generator runs for\nexactly one more step than the exact nest cost at level $c+1$ and halts,\nhaving emitted $C\\,q^{c+1}$ ones, with every loop head back at $0$."
+}

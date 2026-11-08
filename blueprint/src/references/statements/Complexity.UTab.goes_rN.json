@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.UTab.goes_rN",
+ "key": "102e284c5d71ee13",
+ "kind": "theorem",
+ "title": "Unary input scan",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean input, let $w$, $pre$, and $rest$ be Boolean lists, let $a$ be a natural number, and let $e$ be an eleven-register configuration record. If $w = pre \\, ++ \\, (1^a \\, ++ \\, rest)$, then for every prior output list $o$, the counter program for $M$, started at label $rN$, with registers given by $e$, input position $|pre|$, and output $o$, reaches label $rN$ with the register record obtained from $e$ by increasing its input-count register by $a$, input position $|pre|+a$, and output $o \\, ++ \\, 1^a$, in at most $3a$ steps.",
+ "hypotheses_covered": [
+  "A finite-state Turing machine M with Boolean input",
+  "Boolean lists w, pre, and rest",
+  "Natural number a",
+  "Register record e",
+  "Input decomposition w = pre ++ (replicate a true ++ rest)",
+  "Arbitrary initial output list o, as required by Goes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

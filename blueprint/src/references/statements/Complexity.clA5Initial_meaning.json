@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clA5Initial_meaning",
+ "key": "10ca851f5b6aea79",
+ "kind": "lemma",
+ "title": "Initial Snapshot Characterization",
+ "statement": "Let $M$ be a finite Boolean Turing machine with a binary state code, let $m\\in\\mathbb N$, let $a:\\mathbb N\\to\\{0,1\\}$, and let $y$ be a Boolean word of length $m$. Suppose $a(j)$ agrees with the bit of $y$ at zero-based position $j$ for every $j<m$. Then the initial-template condition for the assignment at time zero holds if and only if the raw block at time zero equals the encoding of $M$'s initial snapshot on $y$.",
+ "hypotheses_covered": [
+  "A finite Boolean Turing machine $M$",
+  "A binary code for optional states of $M$",
+  "A natural number $m$",
+  "A total bit assignment $a:\\mathbb N\\to\\{0,1\\}$",
+  "A Boolean word $y$ with $|y|=m$",
+  "For every $j<m$, $a(j)$ equals the $j$-th bit of $y$, defaulting to false if absent"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $y$ be a word of length $m$ and let the assignment agree with $y$ on the first $m$ variables. Then the initial meaning holds exactly when the raw block at time zero equals the encoding of the machine's genuine initial snapshot on $y$, with the empty-input case included."
+}

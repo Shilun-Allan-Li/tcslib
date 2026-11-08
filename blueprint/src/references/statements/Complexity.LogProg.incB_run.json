@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.incB_run",
+ "key": "6f6d4d7a1f80c970",
+ "kind": "lemma",
+ "title": "Run of the increment carry phase",
+ "statement": "Let $P$ be a register program with oracle, and suppose its transition at label $c_B$ is the increment-carry action on register $r$, continuing at $c_B$ when the scanned symbol is present and otherwise proceeding to the next label. Suppose also that $c_B$ is not an oracle-call label. For any configuration $c$, word $w$, natural number $n$, and integer $p$ with $p+1=n$ and $p<|w|$, starting with the head at $p$ on a tape containing $w$ reaches after $n+1$ steps the same tape with the head at $0$ and state `next`. At every earlier time $t<n+1$, the configuration has state $c_B$, the same tape, and some head position $q$ with $-1\\le q\\le p$.",
+ "hypotheses_covered": [
+  "Program $P$, its oracle, register $r$, labels $c_B$ and `next`",
+  "Transition at $c_B$ is the specified increment-carry action",
+  "$c_B$ is not an oracle-call label",
+  "Configuration $c$ and word $w$",
+  "Natural number $n$ and integer $p$ satisfying $p+1=n$ and $p<|w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

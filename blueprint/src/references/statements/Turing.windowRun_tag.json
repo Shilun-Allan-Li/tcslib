@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.windowRun_tag",
+ "key": "c117e390487480a7",
+ "kind": "theorem",
+ "title": "Accumulator tracks the output word",
+ "statement": "Let $M$ be a multi-tape Turing machine with Boolean symbols, let $s\\in\\mathbb{N}$, and let $\\mathrm{upd}$ update an auxiliary value from an optional Boolean symbol. Suppose $\\sigma$ assigns an auxiliary value to each Boolean word and satisfies $\\sigma(u\\mathbin{+\u0002}b)=\\mathrm{upd}(\\sigma(u),b)$ for every Boolean word $u$ and optional Boolean symbol $b$, where $u\\mathbin{+\u0002}b$ denotes appending $b$ when present. For every clock bound $N$ and configuration $c$, the auxiliary value returned by the windowed run started with $\\sigma$ of the initial output word equals $\\sigma$ of the output word in the returned configuration.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine over Boolean symbols",
+  "A window radius $s\\in\\mathbb{N}$",
+  "An update function on auxiliary values and optional Boolean symbols",
+  "A summary function $\\sigma$ on Boolean words",
+  "The recurrence $\\sigma(u\\mathbin{+\u0002}b)=\\mathrm{upd}(\\sigma(u),b)$ for all words $u$ and optional symbols $b$",
+  "A clock bound $N$",
+  "An initial configuration $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

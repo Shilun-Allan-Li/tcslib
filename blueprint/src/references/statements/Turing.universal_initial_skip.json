@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.universal_initial_skip",
+ "key": "12001e5fe2ae4af6",
+ "kind": "lemma",
+ "title": "Exact cost of skipping the initial state",
+ "statement": "Let $x$ be a bit string, let $b$ be a four-tape interpreter configuration on input $x$, let $i$ be a record index below $9$, and suppose the table is $l\\,1^n\\,0\\,r$ for bit strings $l,r$ and $n\\in\\mathbb{N}$. Starting in the initial-state skipper with table head at $|l|$, after exactly $n+1$ steps the interpreter is in the record-group phase carrying $i$, with table head at $|l|+n+1$; all other configuration data are unchanged.",
+ "hypotheses_covered": [
+  "$x,l,r$ are bit strings",
+  "$b$ is a four-tape interpreter configuration on input $x$",
+  "$i$ is an index below $9$",
+  "$n\\in\\mathbb{N}$",
+  "the table equals $l\\,1^n\\,0\\,r$",
+  "the initial-state skipper starts at table cursor $|l|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table is $l \\cdot 1^n \\cdot 0 \\cdot r$.  From the interpreter's\ninitial-state skipping phase (carrying a record index) with table cursor\n$|l|$, exactly $n + 1$ steps move the table cursor past the unary field and\nits terminating $0$ to position $|l| + n + 1$ and enter the record-group\nphase with the carried index; the state tape, state cursor, and all other\ndata are unchanged."
+}

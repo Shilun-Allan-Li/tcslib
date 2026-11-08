@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedCut_run_join",
+ "key": "251fa9e7c22fd0fe",
+ "kind": "lemma",
+ "title": "Concatenating two run segments",
+ "statement": "Let $M$ be a multi-tape Turing machine, and let $a,b,c$ be configurations and $s,t$ nonnegative integers. If running $M$ for $s$ steps from $a$ yields $b$, and running it for $t$ steps from $b$ yields $c$, then running it for $s+t$ steps from $a$ yields $c$.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine $M$",
+  "Configurations $a,b,c$",
+  "Nonnegative step counts $s,t$",
+  "The $s$-step run from $a$ equals $b$",
+  "The $t$-step run from $b$ equals $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For any multi-tape machine, if running $s$ steps from a configuration $a$\nyields $b$ and running $t$ steps from $b$ yields $c$, then running $s+t$ steps\nfrom $a$ yields $c$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clA5Fragment_exact",
+ "key": "fa118a4dcab02e7f",
+ "kind": "lemma",
+ "title": "Exact serialized tableau fragment",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $c$ be a binary code for its optional states, let $C,e,c_0,A,d$ be natural-number parameters, let $x$ be a bit string, and let $j$ be a natural number. When the body word is formed by packing the preparation header, the machine's trajectory records, and its visit records, the native fragment selector at position $j$ equals the serialized fragment of the group at position $j$ in the ordered tableau list with horizon $c_0\\bigl(A(|x|+C(|x|+1)^e+1)^d+1\\bigr)^2$, using the empty formula when that position is out of range.",
+ "hypotheses_covered": [
+  "A finite Turing machine over the binary alphabet",
+  "A binary code for its optional states",
+  "Natural-number parameters $C,e,c_0,A,d$",
+  "An input bit string $x$",
+  "A selector position $j$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every source machine, state code, parameters, instance $x$, and cursor $j$, the native fragment selector on the body word at $j$ agrees word for word with the serialized fragment of the $j$-th member of the unchanged pure tableau group list at the producer horizon; the guarded offsets are precisely list lookup, and a work ordinal's quotient and remainder name its time and tape in the original order."
+}

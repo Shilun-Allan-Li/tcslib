@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.exists_recordTestTM",
+ "key": "a0390b9975d034e7",
+ "kind": "theorem",
+ "title": "Machine for Testing a Configuration Record",
+ "statement": "For finite decidable types $Q,T$ and any predicate $P$ on an optional state in $Q$ and a tag in $T$, there are a finite decidable state type $P'$, a deterministic one-work-tape machine $R$ over the record alphabet, entry and distinct yes/no states, and a constant $C$ with the following property. Given any binary input $x$, natural number $s$, configuration $c$ over $x$, tag $\\tau$, and initial configuration $d$ in the entry state whose work tape encodes the joined record of $c$ and $\\tau$, the machine reaches after at most $C(|\\langle\\operatorname{record}(c,\\tau)\\rangle|+1)$ steps the same configuration except that its state is yes if $P$ holds of the state of $c$ and tag $\\tau$, and no otherwise. It visits neither decision state earlier, and its work-tape head remains within distance $C(|\\langle\\operatorname{record}(c,\\tau)\\rangle|+1)$ of its initial position throughout.",
+ "hypotheses_covered": [
+  "Finite decidable types $Q,T$",
+  "Predicate on an optional $Q$-state and a $T$-tag",
+  "Binary input $x$",
+  "Natural number $s$",
+  "Configuration $c$ over $x$ and tag $\\tau$",
+  "Entry-state configuration $d$ whose work tape encodes the joined record of $c$ and $\\tau$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.oblivious_schedule_eq",
+ "key": "15af04052b4ebb58",
+ "kind": "theorem",
+ "title": "Head positions follow the zero-input schedule",
+ "statement": "Let $M$ be an oblivious finite-state Turing machine over the binary alphabet, let $x$ be a binary input, and let $t\\in\\mathbb{N}$. After $t$ steps on $x$, the input-head position equals its position after $t$ steps on the all-zero input of length $|x|$, and the tuple of work-tape head positions also equals the corresponding tuple on that all-zero input.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state binary Turing machine",
+  "$M$ is oblivious",
+  "$x$ is a binary input",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a binary multi-tape Turing machine with $k$ work tapes that is oblivious: for any\ntwo inputs of the same length and every $t \\in \\mathbb{N}$, the input-head position and all\nwork-head positions after $t$ steps agree on the two inputs. Then for every input\n$x \\in \\{0,1\\}^*$ and every $t \\in \\mathbb{N}$, the input-head position after $t$ steps of\n$M$ on $x$ equals the input-head position after $t$ steps of $M$ on the all-zeros input\n$0^{|x|}$, and for every work tape $\\tau$ the head position of tape $\\tau$ after $t$ steps on\n$x$ equals its head position after $t$ steps on $0^{|x|}$."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "CommunicationComplexity.Deterministic.communicationComplexity_le_of_finiteMessage_protocol",
+ "key": "4a17a9773fabb8b2",
+ "kind": "theorem",
+ "title": "Communication complexity upper bound",
+ "statement": "Let $f:X\\times Y\\to\\alpha$ be a function and let $p$ be a finite-message deterministic protocol whose execution on each input pair $(x,y)$ returns $f(x,y)$. If the communication cost of $p$ is at most $c\\in\\mathbb N\\cup\\{\\infty\\}$, then the deterministic communication complexity of $f$ is at most $c$.",
+ "hypotheses_covered": [
+  "A function $f:X\\times Y\\to\\alpha$",
+  "A finite-message protocol $p$ over $X,Y$ with output in $\\alpha$",
+  "The run of $p$ equals $f$",
+  "$c\\in\\mathbb N\\cup\\{\\infty\\}$",
+  "The complexity of $p$ is at most $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $f : X \\to Y \\to \\alpha$ and let $p$ be a finite-message protocol over $X$, $Y$,\n$\\alpha$ whose run function equals $f$. Then for every $c \\in \\mathbb{N} \\cup \\{\\infty\\}$\nwith $\\texttt{FiniteMessage.Protocol.complexity}\\,(p) \\le c$, the deterministic\ncommunication complexity of $f$ satisfies $D(f) \\le c$. Each of the three public bounds\nabove is a single application of this lemma to an explicit two-message protocol."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tmsat_result_accept",
+ "key": "2de347a1b45fb1dc",
+ "kind": "lemma",
+ "title": "Acceptance characterizes the verifier language",
+ "statement": "Let $c$ be a machine representation scheme and $z$ a bit string. The result produced from $z$ by the guarded computation equals the two-bit word $11$ if and only if $z$ belongs to the verifier language: the set of words $y'w'$ such that $|w'|=|y'|+1$ and there exist bit strings $\\beta,v$ and natural numbers $n',t'$ with $y'=\\langle\\beta,\\langle v,\\langle1^{n'},1^{t'}\\rangle\\rangle\\rangle$, for which the machine decoded from $\\beta$ halts within $t'$ steps on input $\\langle v,w'_{[:n'] }\\rangle$ with output exactly $1$.",
+ "hypotheses_covered": [
+  "$c$ is a machine representation scheme",
+  "$z$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a machine-representation scheme, which assigns to every bit string $\\alpha$ a one-work-tape binary Turing machine $M_\\alpha$ (decoding is total). For a bit string $z$, write $s(z)$ for its odd split (the self-delimiting pair encoding $\\langle z_{[:i]}, z_{[i:]}\\rangle$ when $|z| = 2i+1$, and the empty word when $|z|$ is even), $\\pi_1, \\pi_2$ for the two components of a pair encoding (the empty word when parsing fails), $Y = \\pi_1(s(z))$ and $W = \\pi_2(s(z))$; the code, input, width and clock fields of $z$ are $\\pi_1(Y)$, $\\pi_1(\\pi_2(Y))$, $\\pi_1(\\pi_2(\\pi_2(Y)))$ and $\\pi_2(\\pi_2(\\pi_2(Y)))$. The guard $G(z)$ holds when $s(z)$, $Y$, $\\pi_2(Y)$ and $\\pi_2(\\pi_2(Y))$ all parse as pair encodings and the width and clock fields consist only of ones, and the result for $z$ is $A_c(\\alpha, \\langle x, W_{[:n]}\\rangle, t)$ when $G(z)$ holds, with $\\alpha$, $x$ the code and input fields, $n$, $t$ the lengths of the width and clock fields and $W_{[:n]}$ the first $n$ bits of $W$, and $A_c(\\varepsilon,\\varepsilon,0)$ otherwise; here $A_c(\\beta, v, t')$ is $1w'$ if $M_\\beta$ run on $v$ for $t'$ steps has halted with output $w'$, and the single bit $0$ if it has not halted. Then for every bit string $z$, the result for $z$ equals $11$ if and only if $z \\in V_c$, where $V_c$ is the set of strings $y'w'$ with $|w'| = |y'| + 1$ for which there are bit strings $\\beta, v$ and $n', t' \\in \\mathbb{N}$ with $y' = \\langle\\beta,\\langle v,\\langle 1^{n'},1^{t'}\\rangle\\rangle\\rangle$ such that $M_\\beta$ halts on $\\langle v, w'_{[:n']}\\rangle$ within $t'$ steps with output exactly $1$, $w'_{[:n']}$ being the first $n'$ bits of $w'$."
+}

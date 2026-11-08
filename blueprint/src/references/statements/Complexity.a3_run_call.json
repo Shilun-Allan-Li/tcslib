@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.a3_run_call",
+ "key": "abfb413eb998e612",
+ "kind": "lemma",
+ "title": "Wrapper follows a first return",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet with at least one work tape, and let $\\mathrm{entry}$ and $\\mathrm{exit}$ be states of $C$. Let $x,y$ be Boolean words and let $t$ be a positive natural number. Suppose that, starting from the configuration in state $\\mathrm{entry}$ with $x$ on tape zero, the run of $C$ is not in state $\\mathrm{exit}$ at any time $j$ with $0<j<t$, and at time $t$ it reaches the canonical configuration in state $\\mathrm{exit}$ with $y$ on tape zero. Then the wrapper, started in phase $2$ with $x$ on tape zero, reaches the state-renamed canonical configuration in state $\\mathrm{exit}$ with $y$ on tape zero after exactly $t$ steps.",
+ "hypotheses_covered": [
+  "$C$ is a finite Turing machine over the Boolean alphabet",
+  "$C$ has at least one work tape",
+  "entry and exit are states of $C$",
+  "$x$ and $y$ are Boolean words",
+  "$t>0$",
+  "At each integer time $j$ with $0<j<t$, the run from the specified entry configuration is not in state exit",
+  "At time $t$, the run from the specified entry configuration equals the canonical exit configuration with $y$ on tape zero"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the inner machine, started in its entry state at the seam carrying $x$\non tape zero, first reaches the exit state at a positive time $t$ (no visit at\nany earlier positive time), in the canonical configuration carrying a word $y$\non tape zero. Then the decider wrapper, from its dispatch seam, reaches the\nrenamed exit configuration in exactly $t$ steps; this covers the case where the\nentry and exit states coincide."
+}

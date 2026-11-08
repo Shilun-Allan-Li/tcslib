@@ -1,0 +1,12 @@
+{
+ "lean_name": "Randomized.eff_compositeVerifier",
+ "key": "642276be23586d58",
+ "kind": "theorem",
+ "title": "Efficiency of the composite verifier",
+ "statement": "For Boolean strings $x$ and $r$, interpret each string as a nonnegative integer by reading its bits in the order in which they occur, with the first bit having weight $1$. The composite verifier accepts automatically when the integer represented by $x$ is less than $2$, rejects when it equals $2$, and accepts when it is even. Otherwise it rejects exactly when two successive Euler-liar rounds, each using $|x|+3$ bits of $r$ per round, both identify the sampled value as an Euler liar for the integer represented by $x$. This verifier, viewed as returning its Boolean decision as an optional Boolean value, is efficient in the polynomial-time verifier model.",
+ "hypotheses_covered": [],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the verifier model or its efficiency predicate. The acceptance description follows the provided definitions of the composite verifier and its two Euler-liar rounds.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

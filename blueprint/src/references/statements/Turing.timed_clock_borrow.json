@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.timed_clock_borrow",
+ "key": "0919e244704ce3c2",
+ "kind": "lemma",
+ "title": "Borrow pass over the clock word",
+ "statement": "Let $x$ and $bs$ be finite Boolean words, let $base$ be a six-tape configuration over input $x$, let $bits$ assign a Boolean to each index below $8$, and let $halt$ and $carry$ be Boolean flags. Starting from the clock-phase configuration with control $(borrow(bits,halt,carry))$, clock word $bs$, and clock head at $0$, after exactly $|bs|$ steps the timed interpreter reaches the clock-phase configuration with the same base data, control $(borrow(bits,halt,c'))$, clock word $bs'$, and head at $|bs|$, where $(c',bs')$ is the fixed-width subtraction of the incoming borrow flag from $bs$.",
+ "hypotheses_covered": [
+  "A six-tape configuration over an arbitrary finite Boolean input",
+  "A Boolean action-bit function indexed below 8",
+  "Boolean halt and carry flags",
+  "An arbitrary finite Boolean clock word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the borrow phase with a given carry flag and the clock head at $0$,\nexactly as many steps of the timed interpreter as the clock word's length\nreplace the word by its borrow subtraction, ending at the right blank with the\nresulting underflow flag in the control; the word's width is preserved."
+}

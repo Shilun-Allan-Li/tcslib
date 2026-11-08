@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.inRP_of_zeroError",
+ "key": "522fd26cf92d9a5c",
+ "kind": "theorem",
+ "title": "Converting a zero-error partial verifier to RP",
+ "statement": "Let $E$ be a verifier model with two closure properties: it can efficiently turn an efficient partial verifier into the Boolean test that its output equals a fixed bit, and it can efficiently take the specified disjunction of polynomially many tests on disjoint random-tape blocks. Suppose $M$ is efficient, $a,k$ are natural numbers, $L'$ is a language, and $b$ is a bit. For each $x\\in L'$, assume that on every random tape of length $a(|x|+1)^k$, $M$ never outputs the bit opposite to $b$ and the probability it outputs no answer is at most $1/2$; for each $x\\notin L'$, assume that on every such tape it never outputs $b$. Then $L'$ has an efficient one-sided randomized verifier in $E$, accepting members with probability at least $2/3$ and rejecting nonmembers with certainty.",
+ "hypotheses_covered": [
+  "$E$ is closed under efficiently testing whether a verifier's output equals a fixed bit.",
+  "$E$ is closed under the specified polynomially many-test disjunction construction.",
+  "$M$ is efficient according to $E$.",
+  "$a,k$ are natural numbers specifying random-string length $a(|x|+1)^k$.",
+  "$L'$ is a language of bit strings.",
+  "$b$ is a Boolean value.",
+  "On each member, every random string avoids outputting $!b$, and the no-answer probability is at most $1/2$.",
+  "On each nonmember, every random string avoids outputting $b$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

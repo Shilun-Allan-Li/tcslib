@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.extract_replay",
+ "key": "f1fb2f7f91a39ce3",
+ "kind": "lemma",
+ "title": "Replay of the buffered word",
+ "statement": "Let $first,second$ be Boolean flags, let $x,a$ be Boolean words, and let $i\\in\\mathbb N$ satisfy $i\\le |x|$. From the pair extractor's replay state at input position $i$, with buffer $a$, work head at zero, and empty output, after any $j\\le |a|$ steps the machine is still in the replay state, its work head is at $j$, and its output is the first $j$ symbols of $a$ if $first$ is true and is empty otherwise.",
+ "hypotheses_covered": [
+  "first and second are Boolean flags",
+  "x and a are Boolean words",
+  "i is natural",
+  "i≤|x|",
+  "j is natural",
+  "j≤|a|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the extractor's replay state with buffer $a$ and work head at\ndisplacement $0$, for any $j \\le \\abs{a}$, exactly $j$ steps move the work\nhead to displacement $j$ and emit the first $j$ bits of $a$ when the\nfirst-component flag is set, and nothing otherwise."
+}

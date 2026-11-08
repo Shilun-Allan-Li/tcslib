@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.wl_loopTM",
+ "key": "20cbc3f31c8ecf4d",
+ "kind": "def",
+ "title": "Window-loop machine construction",
+ "statement": "Given a natural number $K$, types $Q,T,P_t,P_s$, Turing machines $R_t$ with one work tape and $R_s$ with $K+1$ work tapes, and states $t_e,t_y,t_n\\in P_t$ and $s_e,s_y,s_n\\in P_s$, assume that equality is decidable on $P_t$ and $P_s$. The definition constructs a Turing machine with $K+1$ work tapes over the record alphabet and control states in the dependent sum of the four phases (anchor, test, step, and stop); its initial control is the anchor phase with unit value, and its transitions use the phase-specific machines and phase changes determined by the given states.",
+ "hypotheses_covered": [
+  "Natural number $K$",
+  "Types $Q,T,P_t,P_s$",
+  "Decidable equality on $P_t$ and $P_s$",
+  "Machine $R_t$ with one work tape over the record alphabet",
+  "Machine $R_s$ with $K+1$ work tapes over the record alphabet",
+  "States $t_e,t_y,t_n\\in P_t$ and $s_e,s_y,s_n\\in P_s$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement refers to the phase-row construction and phase-redirection function without including their definitions, so their precise transition behavior cannot be specified from the payload.",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

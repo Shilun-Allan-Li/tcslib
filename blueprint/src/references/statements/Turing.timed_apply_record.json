@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timed_apply_record",
+ "key": "5481d67fd82346e4",
+ "kind": "lemma",
+ "title": "Applying a decoded transition record",
+ "statement": "Let $M$ be a coded machine, let $\\alpha$ and $x$ be Boolean words, let $\\mathrm{src}$ be a configuration of $M$ on input $x$, let $p$ and $p_0$ be natural numbers, and let $a$ be any action for $M$. One step of the universal interpreter from the evaluation configuration built from the simulation configuration of $\\mathrm{src}$ at table position $p_0$, with the record-application control carrying the eight bits of $a$ and its halting flag, table $M$'s serialization at cursor $p$, and the unary state tape for $a$'s successor state, equals the simulation configuration of the result of applying $a$ to $\\mathrm{src}$ at table position $p$.",
+ "hypotheses_covered": [
+  "A coded machine $M$",
+  "Boolean words $\\alpha,x$",
+  "A source configuration $\\mathrm{src}$ on input $x$",
+  "Natural numbers $p_0,p$",
+  "An action $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a coded machine, let $\\mathrm{src}$ be a configuration of $M$, and\nlet $a$ be a transition action of $M$.  One step of the (unstopped) four-tape\ntable interpreter from the pending-action evaluation configuration --- built\nover the interpreter checkpoint of $\\mathrm{src}$, carrying the eight decoded\nbits of $a$ and the halting flag of its successor, with the serialized table,\nany table cursor $p$, and the unary tape of the successor index installed ---\nequals exactly the interpreter checkpoint of the configuration obtained by\napplying $a$ to $\\mathrm{src}$, with table cursor $p$; this includes the\ncorrect virtual-input head movement, optional write, emission, and the halting\ncase."
+}

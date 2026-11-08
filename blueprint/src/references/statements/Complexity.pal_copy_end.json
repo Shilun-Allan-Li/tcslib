@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.pal_copy_end",
+ "key": "8793c7f644e46104",
+ "kind": "lemma",
+ "title": "Transition from Copy to Rewind",
+ "statement": "Let $x$ be a binary word. From state $0$, with the input head at position $|x|+1$, all bits of $x$ copied onto the work tape, and the work head at cell $|x|$, one step of the three-state palindrome machine reaches state $1$ with the input head at position $|x|$. The work tape and work-head position are unchanged, and the output remains empty.",
+ "hypotheses_covered": [
+  "$x$ is a binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word of length $n$. From the configuration of the three-state\npalindrome machine on input $x$ in copy state with the input head on the right\nboundary blank (cell $n+1$), all $n$ bits copied, and work head at cell $n$, one\ntransition switches to the rewind state and moves the input head left to cell\n$n$, leaving the work tape and the work head unchanged."
+}

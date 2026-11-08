@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.FiniteNorms.selfAdjoint_contraction",
+ "key": "46ca191c239832fe",
+ "kind": "theorem",
+ "title": "Contraction from self-adjointness",
+ "statement": "Let $I$ be a finite set with weights $w_i\\ge0$, and let $T$ be an operator from real-valued functions on $I$ to real-valued functions on $I$. Suppose that $\\sum_{i\\in I}w_i(Tf)_i g_i=\\sum_{i\\in I}w_i f_i(Tg)_i$ for all functions $f,g:I\\to\\mathbb R$. For $q>1$, suppose also that $\\left(\\sum_iw_i|(Tg)_i|^{q/(q-1)}\\right)^{1/(q/(q-1))}\\le\\left(\\sum_iw_i|g_i|^{q/(q-1)}\\right)^{1/(q/(q-1))}$ for every $g:I\\to\\mathbb R$. Then $\\left(\\sum_iw_i|(Tf)_i|^q\\right)^{1/q}\\le\\left(\\sum_iw_i|f_i|^q\\right)^{1/q}$ for every $f:I\\to\\mathbb R$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$w_i\\ge0$ for every $i$",
+  "$T$ maps real-valued functions on $I$ to real-valued functions on $I$",
+  "The weighted self-adjointness identity holds for all $f,g$",
+  "$q>1$",
+  "The stated weighted norm contraction holds for every $g$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be a finite set with nonnegative weights $w_i$ and define $\\|f\\|_{r,w}=(\\sum_iw_i|f_i|^r)^{1/r}$. If an operator $T$ satisfies $\\sum_iw_i(Tf)_ig_i=\\sum_iw_if_i(Tg)_i$ for all $f,g$ and $\\|Tg\\|_{q/(q-1),w}\\le\\|g\\|_{q/(q-1),w}$ for every $g$, where $q>1$, then $\\|Tf\\|_{q,w}\\le\\|f\\|_{q,w}$ for every $f$."
+}

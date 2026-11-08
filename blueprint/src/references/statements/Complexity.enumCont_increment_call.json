@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_increment_call",
+ "key": "696114d4086c66ec",
+ "kind": "lemma",
+ "title": "Time bound for an increment call",
+ "statement": "Let $I$ be a finite Boolean-alphabet Turing machine and let $j$ be a natural number. Suppose that on every Boolean input $u$, machine $I$ halts within $j(|u|+1)$ steps and outputs the fixed-width increment of $u$, using the empty word when that increment overflows. Then for any Boolean words $x$ and $s$, there is a time $t\\le (j+3)(|s|+1)$ at which the buffered composition of the assembly machine with $I$, started in its candidate phase with $s$ on its first work tape and input $x$, is halted and has output equal to the fixed-width increment of $s$, with overflow represented by the empty word.",
+ "hypotheses_covered": [
+  "Finite Boolean-alphabet machine $I$",
+  "Natural number $j$",
+  "For every Boolean input, $I$ computes the defaulted fixed-width increment within $j(|u|+1)$ steps",
+  "Boolean words $x,s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a machine $I$ computes, within time $j(n+1)$ on inputs of length $n$, the\noutput word of the fixed-width binary increment (the successor word, or the empty\nword on overflow). Then from the candidate seam in the candidate phase with\ncandidate $s$ on input $x$, the buffered composition of the assembly machine\nwith $I$ halts within $(j+3)(|s|+1)$ steps and outputs the increment result of\n$s$, which is empty exactly on overflow."
+}

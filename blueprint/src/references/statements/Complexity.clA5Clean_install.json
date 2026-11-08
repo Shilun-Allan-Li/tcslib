@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.clA5Clean_install",
+ "key": "5436a0d65fc7dc3d",
+ "kind": "lemma",
+ "title": "Clean installation of a polynomial-time function",
+ "statement": "Every polynomial-time computable function $f$ on binary words has a finite Turing machine $M$ and natural numbers $A,d$ such that, for every binary input $x$ and argument word, the computation first halts at a positive time no greater than $A(n+1)^d$, where $n$ is the argument length; at that time its tape words encode $f$ of the argument and its output is empty.",
+ "hypotheses_covered": [
+  "$f$ is a polynomial-time computable function on binary words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Every polynomial-time computable string function $f$ has a first-halting clean module that replaces the argument word by $f$ of the argument, emits nothing, and runs within $A(n+1)^d$ steps of the argument length for some constants $A, d$."
+}

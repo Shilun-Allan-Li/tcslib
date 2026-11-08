@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.loopControl_payload",
+ "key": "344ab7b9527a14b9",
+ "kind": "lemma",
+ "title": "Payload-Only Controller Actions",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, and choose an input-head direction, an optional emitted bit, a payload-head direction, and an optional loop-host successor state. The controller action with no flag or counter operation and with the payload head moving by the chosen direction equals the right-block extension of the one-tape action that makes no write, moves its head by that direction, emits the chosen bit, and has the chosen successor state.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines $B$ and $F$",
+  "input-head direction",
+  "optional emitted bit",
+  "payload-head direction",
+  "optional loop-host successor state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every head direction $d$, optional emitted bit, and successor state, the loop-\ncontroller action that only moves the payload head by $d$ and emits that bit equals the\nright-block extension (leaving all earlier tapes stationary) of the corresponding one-\ntape action."
+}

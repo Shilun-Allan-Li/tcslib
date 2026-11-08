@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.CounterProg.goes_pr",
+ "key": "6e533348d8df2110",
+ "kind": "theorem",
+ "title": "Unary register printing in one step",
+ "statement": "Let $P$ be a counter program on a binary input $x$, with registers $\rho$ and labels $\u0005Lambda$. If the instruction at label $\u0005ell$ prints register $r$ in unary and then goes to $\u0005ell'$, then from any output string $o$, the program reaches label $\u0005ell'$ within one step, with registers and input position unchanged and with $1^{\u0005rho(r)}$ appended to the output.",
+ "hypotheses_covered": [
+  "The instruction at $\u0005ell$ prints register $r$ and goes to $\u0005ell'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program on a binary input $x$, $r$ a register and $\\ell$ a\nlabel whose instruction is $\\mathsf{pr}(r, \\ell')$, ``print the value of\nregister $r$ in unary, then go to $\\ell'$''.  Then for all registers $\\rho$ and\ninput positions $p$, from label $\\ell$ with registers $\\rho$ and $p$ symbols read\nthe program reaches label $\\ell'$ with registers $\\rho$ and $p$ symbols read\nwithin one step, appending the string $1^{\\rho(r)}$ of $\\rho(r)$ ones to its\noutput."
+}

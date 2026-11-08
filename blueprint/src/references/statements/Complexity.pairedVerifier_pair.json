@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.pairedVerifier_pair",
+ "key": "dc3c5b034de8a1b2",
+ "kind": "lemma",
+ "title": "Membership of an Encoded Pair",
+ "statement": "Let $C,c\\in\\mathbb{N}$, let $V$ be a language of binary strings, and let $x,u$ be binary strings. The encoding of $(x,u)$ belongs to the paired verifier language exactly when $|u|=C(|x|+1)^c$ and the concatenation $xu$ belongs to $V$.",
+ "hypotheses_covered": [
+  "$C,c\\in\\mathbb{N}$",
+  "$V$ is a language of binary strings",
+  "$x,u$ are binary strings"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c \\in \\mathbb{N}$ and $V \\subseteq \\{0,1\\}^{*}$, write\n$\\langle x, u\\rangle$ for the self-delimiting pair encoding of binary strings $x$\nand $u$ ($x$ with every bit doubled, then the separator $01$, then $u$), and let\n$V^{\\mathrm{pair}}_{C,c}$ be the set of strings that the aligned pair parser\ndecodes as a pair $(x, u)$ with $|u| = C(|x|+1)^c$ and $xu \\in V$. Then for all\nbinary strings $x$ and $u$, $\\langle x, u\\rangle \\in V^{\\mathrm{pair}}_{C,c}$ if\nand only if $|u| = C(|x|+1)^c$ and $xu \\in V$."
+}

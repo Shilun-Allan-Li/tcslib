@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.satStreamRun_fallback",
+ "key": "21ed754d802cab3f",
+ "kind": "lemma",
+ "title": "Fallback output",
+ "statement": "For every bit string $x$ and every $k\\in\\mathbb{N}$, running $k+1$ rounds from the state with fresh cursor $0$, consumed length $|x|$, and formula phase emits exactly the one-bit string $0$.",
+ "hypotheses_covered": [
+  "Input bit string $x$",
+  "Round parameter $k\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Any positive number of streaming rounds from the right-boundary fallback state\nemits exactly the single bit $0$: no prefix of the malformed string is emitted,\nincluding on trailing-data failures."
+}

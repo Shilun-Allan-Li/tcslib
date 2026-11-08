@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.FinTM.computesFunInTime_incFixed",
+ "key": "c75ae77bb7cbb493",
+ "kind": "theorem",
+ "title": "Fixed-width binary increment in linear time",
+ "statement": "There are a finite Turing machine $M$ over the Boolean alphabet and a constant $c\\in\\mathbb{N}$ such that, on every Boolean input word $x$, $M$ outputs the fixed-width binary increment of $x$, read least-significant bit first, and halts within $c(|x|+1)$ steps; when incrementing overflows, the output is the empty word.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exist a finite Turing machine $M$ and a constant $c$ such that $M$\ncomputes, within $c\\,(n+1)$ steps on inputs of length $n$, the fixed-width\nbinary successor of its input read least-significant bit first, with empty\noutput on overflow (an all-ones input)."
+}

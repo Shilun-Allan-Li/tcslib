@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.pairSkip_run",
+ "key": "b4027bd79579f76c",
+ "kind": "lemma",
+ "title": "Paired-word skip execution",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a register, and let $j_{P1},j_{P2F},j_{P2T},j_C$ be states. Assume that at every input and work-tape reading, the transition at $j_{P1}$ is the prescribed first skip action on register $r$, and the transitions at $j_{P2F}$ and $j_{P2T}$ are the prescribed second skip actions on register $r$, with the false and true cases respectively; assume also that none of these three states is an oracle-call state. For any configuration $c$, integer $p$, Boolean word $u$, and natural number $q$ satisfying $q+2|u|+2\\le |x|+1$, suppose that for every $k<2|u|+2$ the input symbol at position $q+k$ equals the $k$th symbol of the doubled word $u$ followed by $01$ (with out-of-range symbols interpreted as absent). Starting from the configuration obtained from $c$ by setting the state to $j_{P1}$, the input-head position to $q$, and register $r$'s head position to $p$, the program reaches the configuration obtained from $c$ by setting the state to $j_C$ and the input-head position to $q+2|u|+2$, with register $r$'s head position still $p$. At every earlier time in this run, the configuration is obtained from $c$ by changing only the state and input-head position and setting register $r$'s head position to $p$, and that state is not an oracle-call state.",
+ "hypotheses_covered": [
+  "The transition at $j_{P1}$ equals the prescribed first skip action on register $r$ for every input and work-tape reading.",
+  "The transitions at $j_{P2F}$ and $j_{P2T}$ equal the prescribed second skip actions on register $r$, for the false and true cases respectively, for every input and work-tape reading.",
+  "The states $j_{P1}$, $j_{P2F}$, and $j_{P2T}$ are not oracle-call states.",
+  "The input word $u$ is Boolean and $q$ is a natural number with $q+2|u|+2\\le |x|+1$.",
+  "At each $k<2|u|+2$, the input symbol at position $q+k$ equals the corresponding symbol of the doubled word followed by $01$.",
+  "The starting configuration is formed from $c$ with state $j_{P1}$, input-head position $q$, and register $r$'s head position $p$.",
+  "The final configuration is formed from $c$ with state $j_C$, input-head position $q+2|u|+2$, and register $r$'s head position $p$.",
+  "At every time before the final time, the configuration differs from $c$ only in state, input-head position, and register $r$'s head position, which is $p$; its state is not an oracle-call state."
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement refers to the prescribed skip actions but omits their definitions, so their exact transition behavior cannot be described more specifically from the given ground truth.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

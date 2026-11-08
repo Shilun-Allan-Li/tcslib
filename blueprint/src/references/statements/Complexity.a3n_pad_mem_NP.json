@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a3n_pad_mem_NP",
+ "key": "e81fa83b65e74d4f",
+ "kind": "lemma",
+ "title": "Exponential Padding Preserves NP Membership",
+ "statement": "Let $L$ and $V$ be languages of finite Boolean words, and let $C,c$ be natural numbers. Suppose $V$ belongs to $\u0000\\mathrm{P}$ and, for every word $x$, membership $x\\in L$ is equivalent to the existence of a word $u$ of length $C(2^{|x|+1})^c$ such that $xu\\in V$. Then the language of pair encodings of $x$ with the all-ones word of length $C2^{(|x|+1)^c}$, for $x\\in L$, belongs to $\u0000\\mathrm{NP}$.",
+ "hypotheses_covered": [
+  "$L$ and $V$ are languages of finite Boolean words",
+  "$C,c$ are natural numbers",
+  "$V\\in\\mathrm{P}$",
+  "For every $x$, $x\\in L$ iff there is $u$ with $|u|=C(2^{|x|+1})^c$ and $xu\\in V$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L$ and $V$ be languages with $V \\in \\mathrm{P}$, and let $C, c$ be natural numbers such that $x \\in L$ if and only if some $u$ with $|u| = C \\cdot 2^{(|x|+1)^c}$ has $x\\,u \\in V$. Then the exponentially padded language of $L$ belongs to $\\mathrm{NP}$."
+}

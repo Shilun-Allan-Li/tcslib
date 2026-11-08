@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.PathHard.shI",
+ "key": "29758d6842c23937",
+ "kind": "def",
+ "title": "Shift-site instruction",
+ "statement": "For natural numbers $a,b,f$, a register $r$, an exit label $e$, a map $m$ from the nine phases to labels, and a phase $j\\in\\{0,1,\\ldots,8\\}$, define the instruction as follows: phase $0$ tests whether the designated counter register is zero, going to $e$ if so and to phase $1$ otherwise; phase $1$ decrements that counter and goes to phase $2$. Phase $2$ tests whether $r$ is zero, going to phase $6$ if so and to phase $3$ otherwise; phase $3$ decrements $r$ and goes to phase $4$; phases $4$ and $5$ increment the designated register and go to phases $5$ and $2$, respectively. Phase $6$ tests whether the designated register is zero, going to phase $0$ if so and to phase $7$ otherwise; phase $7$ decrements it and goes to phase $8$; phase $8$ increments $r$ and goes to phase $6$.",
+ "hypotheses_covered": [
+  "Natural parameters $a,b,f$",
+  "Register $r$",
+  "Exit label $e$",
+  "Map $m$ from nine phases to labels",
+  "Phase $j\\in\\{0,1,\\ldots,8\\}"
+ ],
+ "confidence": "low",
+ "caveat": "The designated registers used in the instruction are referenced by names whose definitions are absent from the supplied context, so their mathematical roles cannot be stated precisely.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

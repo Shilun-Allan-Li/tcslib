@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.sum_fourier_sq_eq_sum_weightLevel",
+ "key": "b4150e339bdcb270",
+ "kind": "lemma",
+ "title": "Fourier sums grouped by degree",
+ "statement": "Let $n\\ge 0$, let $f:\\{0,1\\}^n\\to\\mathbb R$, and let $g:\\mathbb N\\to\\mathbb R$. For each $S\\subseteq\\{0,\\ldots,n-1\\}$, let $\\widehat f(S)$ be the Fourier–Walsh coefficient of $f$, and let $W_k[f]$ be its Fourier weight at level $k$. Then $\\sum_{S\\subseteq\\{0,\\ldots,n-1\\}}g(|S|)\\widehat f(S)^2=\\sum_{k=0}^{n}g(k)W_k[f]$.",
+ "hypotheses_covered": [
+  "The dimension $n$ is a natural number",
+  "$g$ is a real-valued function on the natural numbers",
+  "$f$ is a real-valued function on the Boolean cube"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$ and $f:\\{\\pm1\\}^n\\to\\mathbb R$; for\n$S\\subseteq\\{1,\\ldots,n\\}$ define\n$\\widehat f(S)=2^{-n}\\sum_{x\\in\\{\\pm1\\}^n}f(x)\\prod_{i\\in S}x_i$, and for every\n$k\\in\\mathbb N$ define $W_k(f)=\\sum_{|S|=k}\\widehat f(S)^2$.\nFor every $g:\\mathbb N\\to\\mathbb R$,\n\\[\n \\sum_{S\\subseteq\\{1,\\ldots,n\\}}g(|S|)\\widehat f(S)^2\n =\\sum_{k=0}^n g(k)W_k(f).\n\\]"
+}

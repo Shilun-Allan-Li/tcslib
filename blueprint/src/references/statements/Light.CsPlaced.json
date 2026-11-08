@@ -1,0 +1,15 @@
+{
+ "lean_name": "Light.CsPlaced",
+ "key": "c1d721b6aab38072",
+ "kind": "structure",
+ "title": "Placement in Counting Sort",
+ "statement": "Let $n$, $d_0$, $b$, and $c$ be natural numbers, where $n$ is the number of items, $d_0$ is the base address of the destination region, $b$ is the key bound, and $c$ is the base address of the counter region. Let $k(j)$ be the key of item $j$, let $x(j)$ specify the item at index $j$, and let $m$ be a memory map. For every $t<b$, the counter cell at address $c+t$ contains the number of indices $j<n$ with $k(j)<t$, plus the number of indices $j<i$ with $k(j)=t$. For every $j<i$, the destination cell at address $d_0+\text{sortPos}(k,n,j)$ contains $x(j)$, where $\text{sortPos}(k,n,j)$ denotes the sorted position used for item $j$ among the first $n$ items.",
+ "hypotheses_covered": [
+  "For every natural number t < A.nb, μ'(A.cnt + t) equals cntLt kf t A.n plus cntEq kf t i.",
+  "For every natural number j < i, μ'(A.dst + sortPos kf A.n j) equals it j."
+ ],
+ "confidence": "low",
+ "caveat": "The provided snippet does not include definitions of cntLt, cntEq, or sortPos, so their intended counting and ordering meanings cannot be confirmed from the formal statement alone.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

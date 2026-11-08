@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satStream_output_identity",
+ "key": "0be854cc479db59f",
+ "kind": "lemma",
+ "title": "Output of the streaming emitter",
+ "statement": "For every bit string $x$, concatenate the emitted chunks from rounds $i=0$ through $|x|$, where each round uses the encoded next-state iterate after $i$ steps starting from the encoded startup state for $x$. This concatenation equals the serialization of the clause-splitting transform of the decoded CNF formula for $x$.",
+ "hypotheses_covered": [
+  "input bit string $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $x$, concatenating over $i < |x| + 1$ the chunks produced\nby the encoded chunk function at the $i$-fold iterate of the encoded next-state\nfunction on the encoded startup word equals the image of $x$ under the\nstring-level SAT-to-3SAT reduction — exactly the expression returned by the\nemitting-loop constructor with round budget $R(n) = n$."
+}

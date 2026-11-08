@@ -1,0 +1,15 @@
+{
+ "lean_name": "CommunicationComplexity.Functions.Indexing.div_ten_lt_publicCoinOneWay_communicationComplexity_one_ninth",
+ "key": "b6ff7a36c3a42982",
+ "kind": "theorem",
+ "title": "Linear public-coin lower bound for Index",
+ "statement": "For every positive integer $n \\ge 300$, the one-way public-coin communication complexity of the Index function on $n$-bit strings and indices in $[n]$, at error $1/9$, is strictly greater than $\\lfloor n/10\\rfloor$.",
+ "hypotheses_covered": [
+  "$n$ is a positive integer",
+  "$300 \\le n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $n \\ge 300$, the public-coin one-way communication complexity of $\\mathrm{IND}_n$ at error\n$1/9$ is strictly greater than $\\lfloor n/10 \\rfloor$:\n\\[\n  R^{\\to,\\mathrm{pub}}_{1/9}(\\mathrm{IND}_n) > \\lfloor n/10 \\rfloor .\n\\]\nThis is the Kremer--Nisan--Ron linear lower bound with explicit constants."
+}

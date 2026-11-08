@@ -1,0 +1,12 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.lact",
+ "key": "d61555699d92714e",
+ "kind": "def",
+ "title": "Circuit-evaluation machine transition",
+ "statement": "The transition is a function of a phase and three optional Boolean tape readings. In phase $n0$, a true value writes true on the mark tape, moves both heads positively, and enters $rd1(n0)$; a false value enters $rd1(sep)$. In phase $sep$, a present value enters $rd1(sep)$, while an absent value moves both heads negatively and enters $rewM$. In phase $skipN$, true continues in that phase and false enters $rd1(g)$; in phase $g$, true enters $rd1(k1)$ and false enters $rd1(o)$. In phase $k1$, a present bit $b$ enters $rd1(k2(b))$. In phase $k2$, with stored bit $b_1$ and current bit $b_2$, the transition rejects if both are true; otherwise it enters $rd1(a(k,0,accInit(k)))$, where $k$ is the gate kind determined by $(b_1,b_2)$. In phase $a(k,c,acc)$, a true value rejects if $c=2$ and otherwise enters $rd1(u(k,c,acc))$; a false value rejects when $k$ is NOT and $c\\ne1$, and otherwise enters $app(accFin(k,acc))$. In phase $u(k,c,acc)$, a true value together with a present mark reading moves both heads positively and continues in $rd1(u(k,c,acc))$; a false value together with a present value reading $v$ and absent third reading writes true on the mark tape, moves both heads negatively, and enters $rewV(a(k,c+1,accComb(k,acc,v)))$. In phase $o$, a true value together with a present mark reading moves both heads positively and continues in $rd1(o)$; a false value together with a present value reading $v$ enters $rd1(fin(v))$. In phase $fin(v)$ with no value reading, the machine emits $v$ and halts. Every input pattern not specified above produces the rejecting action.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

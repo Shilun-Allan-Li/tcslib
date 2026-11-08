@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.briberySetsTo_odds_invariant",
+ "key": "4a2f16bf3a474620",
+ "kind": "theorem",
+ "title": "Bribery-set odds invariant",
+ "statement": "Let $n\\ge 2$, and let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be monotone with positive bias $p=\\Pr[f(x)=1]>0$ under the uniform distribution. Fix a real target $q<1$. Starting from $J_0=\\varnothing$, define $J_{t+1}$ by leaving $J_t$ unchanged if the uniform mean of $x\\mapsto f(x^{J_t})$ is at least $q$, and otherwise adjoining to $J_t$ a coordinate of maximum influence for that function; here $x^{J_t}$ is obtained by setting every coordinate in $J_t$ to $1$. For every integer $t\\ge0$, if $p_t=\\Pr[f(x^{J_t})=1]$ and $r=\\frac{\\log n}{100n}$, then $(1+2r)^{|J_t|}p(1-p_t)\\le p_t(1-p)$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number with $2\\le n$",
+  "$f$ is a Boolean function on sign vectors of length $n$",
+  "$f$ is monotone",
+  "The real target satisfies $q<1$",
+  "The positive bias of $f$ is positive",
+  "$t$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

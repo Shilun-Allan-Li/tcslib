@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.universal_table_read",
+ "key": "c6bfc0e162fb0a82",
+ "kind": "lemma",
+ "title": "Reading the next tape cell",
+ "statement": "For Boolean lists $l$ and $r$ and a Boolean $b$, the tape storing the concatenated word $l$ followed by $b$ and then $r$ contains $b$ at the integer position equal to the length of $l$.",
+ "hypotheses_covered": [
+  "$l$ is a Boolean list",
+  "$r$ is a Boolean list",
+  "$b$ is a Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For bit strings $l, r$ and a bit $b$, the buffer tape of the concatenation\n$l \\cdot b \\cdot r$ (holding the string in cells $0, 1, \\dots$ with blanks\nelsewhere) reads exactly $b$ at position $|l|$."
+}

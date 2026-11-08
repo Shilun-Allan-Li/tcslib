@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.clCmp_forward",
+ "key": "9b5ef9468f283d61",
+ "kind": "lemma",
+ "title": "The comparator’s aligned forward scan",
+ "statement": "For any Boolean input word, any valid input-head position, and four finite Boolean words, running the comparator for $j$ steps from its initial scanning configuration reaches the scanning control after $j$ columns, with all work-tape heads at position $j$, whenever $j$ is at most the maximum word length.",
+ "hypotheses_covered": [
+  "a Boolean input word $x$",
+  "a valid input-head position for $x$",
+  "four Boolean words",
+  "a natural-number position $j$",
+  "$j$ is at most the maximum word length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, four words, and $j$ at most the common width, running the comparator for $j$ steps from the start reaches the scanning control after $j$ columns with all heads at $j$; every prefix of the forward scan is an actual aligned native run."
+}

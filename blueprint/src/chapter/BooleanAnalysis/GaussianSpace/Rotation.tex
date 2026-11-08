@@ -10,53 +10,195 @@ Gaussian rotations preserve the joint Gaussian law. Their disagreement probabili
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $n\ge0$, let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$, and let $G,G\prime$ be independent vectors with law $\gamma_n$. For any real $t$, the map $(g,h)\mapsto(\cos t\,g+\sin t\,h,-\sin t\,g+\cos t\,h)$ preserves $\gamma_n\otimes\gamma_n$.
+Let $n$ be a natural number and let $t\in\mathbb R$. The planar rotation by $t$, applied
+coordinatewise to a pair of vectors in $\mathbb R^n$, preserves the product of two
+standard Gaussian measures on $\mathbb R^n$.
 \end{theorem}
 
-\begin{theorem}[Subadditivity of Gaussian disagreement]
+\begin{theorem}[Subadditivity of rotation sensitivity]
 \lean{BooleanAnalysis.GaussianSpace.rotationSensitivity_subadditive}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation, BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\proofsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p016-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b001}
 \difficulty{5}
-Let $n\ge0$, let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$, and let $G,G\prime$ be independent vectors with law $\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\gamma_n\otimes\gamma_n)\{(g,h):\mathbf1_A(g)\ne\mathbf1_A(\cos t\,g+\sin t\,h)\}$. If $A\subseteq\mathbb R^n$ is measurable, then $s_A(s+t)\le s_A(s)+s_A(t)$ for all real $s,t$.
+Let $n\ge 0$, let $A\subseteq\mathbb R^n$ be measurable, and let $s,t\in\mathbb R$. The
+rotation sensitivity of $A$ at angle $s+t$ is at most the sum of its rotation
+sensitivities at angles $s$ and $t$.
 \end{theorem}
 
-\begin{theorem}[Disagreement at a sum of angles]
+\begin{theorem}[Sensitivity bound for sums of angles]
 \lean{BooleanAnalysis.GaussianSpace.rotationSensitivity_sum_le}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.GaussianSpace.rotationSensitivity_subadditive}
+\proofsource{mossel-neeman-gaussian-noise-stability}{
+  pdf-b53c1a5aa27d-p031-b005,
+  pdf-b53c1a5aa27d-p032-b001
+}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p003-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity}
+  {context}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p003-b002,
+    pdf-b53c1a5aa27d-p031-b005}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation}
+  {context}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p003-b002,
+    pdf-b53c1a5aa27d-p031-b005}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity_subadditive}
+  {direct}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p031-b005,
+    pdf-b53c1a5aa27d-p032-b001}
 \difficulty{1}
-Let $n\ge0$, let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$, and let $G,G\prime$ be independent vectors with law $\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\gamma_n\otimes\gamma_n)\{(g,h):\mathbf1_A(g)\ne\mathbf1_A(\cos t\,g+\sin t\,h)\}$. For any measurable $A\subseteq\mathbb R^n$, integer $\ell\ge0$, and real angles $\delta_1,\ldots,\delta_\ell$, $s_A(\sum_{j=1}^\ell\delta_j)\le\sum_{j=1}^\ell s_A(\delta_j)$.
+Let $n\ge 0$, let $A\subseteq\mathbb R^n$ be measurable, let $\ell\ge 0$ be an integer,
+and let $\delta_1,\ldots,\delta_\ell\in\mathbb R$. The rotation sensitivity of $A$ at
+angle $\sum_{j=1}^{\ell}\delta_j$ is at most $\sum_{j=1}^{\ell}s_A(\delta_j)$, where
+$s_A(u)$ denotes the rotation sensitivity at angle $u$.
 \end{theorem}
 
-\begin{theorem}[Equal-step rotation bound]
+\begin{theorem}[Sensitivity bound by equal rotation steps]
 \lean{BooleanAnalysis.GaussianSpace.rotationSensitivity_div_nat}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.GaussianSpace.rotationSensitivity_sum_le}
+\proofsource{mossel-neeman-gaussian-noise-stability}{
+  pdf-b53c1a5aa27d-p031-b005,
+  pdf-b53c1a5aa27d-p032-b001
+}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p003-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity}
+  {context}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p031-b005}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation}
+  {context}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p031-b005}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity_subadditive}
+  {context}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p031-b005,
+    pdf-b53c1a5aa27d-p032-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity_sum_le}
+  {context}
+  {mossel-neeman-gaussian-noise-stability}
+  {pdf-b53c1a5aa27d-p032-b002}
 \difficulty{3}
-Let $n\ge0$, let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$, and let $G,G\prime$ be independent vectors with law $\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\gamma_n\otimes\gamma_n)\{(g,h):\mathbf1_A(g)\ne\mathbf1_A(\cos t\,g+\sin t\,h)\}$. For any measurable $A\subseteq\mathbb R^n$, real $\delta$, and positive integer $\ell$, $s_A(\delta)\le\ell\,s_A(\delta/\ell)$.
+Let $n$ be a natural number, let $A\subseteq\mathbb R^n$ be measurable, let
+$\delta\in\mathbb R$, and let $\ell$ be a positive natural number. Then the Gaussian
+rotation sensitivity satisfies $$s_A(\delta)\le \ell\,s_A(\delta/\ell).$$
 \end{theorem}
 
-\begin{lemma}[Disagreement between independent Gaussian endpoints]
+\begin{lemma}[Sensitivity at a right angle]
 \lean{BooleanAnalysis.GaussianSpace.rotationSensitivity_pi_div_two}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\proofsource{boolean-ch11-gaussian-invariance}{pdf-8b2c50cf9621-p016-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b001}
 \difficulty{4}
-Let $n\ge0$, let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$, and let $G,G\prime$ be independent vectors with law $\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\gamma_n\otimes\gamma_n)\{(g,h):\mathbf1_A(g)\ne\mathbf1_A(\cos t\,g+\sin t\,h)\}$. If $A\subseteq\mathbb R^n$ is measurable and $\alpha=\gamma_n(A)$, then $s_A(\pi/2)=2\alpha(1-\alpha)$.
+Let $n\ge 0$ and let $A\subseteq\mathbb R^n$ be measurable. The rotation sensitivity of
+$A$ at angle $\pi/2$ is $2\gamma_n(A)\bigl(1-\gamma_n(A)\bigr)$, where $\gamma_n$ is
+standard Gaussian measure on $\mathbb R^n$.
 \end{lemma}
 
 \begin{theorem}[Balanced-set disagreement on an angular grid]
 \lean{BooleanAnalysis.GaussianSpace.rotationSensitivity_balanced_grid}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.GaussianSpace.rotationSensitivity_div_nat, BooleanAnalysis.GaussianSpace.rotationSensitivity_pi_div_two, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\proofsource{boolean-ch11-gaussian-invariance}{
+  pdf-8b2c50cf9621-p016-b002,
+  pdf-8b2c50cf9621-p016-b003
+}
+\statementsource{mossel-neeman-gaussian-noise-stability}{
+  pdf-b53c1a5aa27d-p031-b004,
+  pdf-b53c1a5aa27d-p031-b005,
+  pdf-b53c1a5aa27d-p032-b001
+}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p002-b001,
+    pdf-8b2c50cf9621-p016-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation}
+  {context}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b001}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity_subadditive}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity_sum_le}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity_div_nat}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b002}
+\proofstep
+  {BooleanAnalysis.GaussianSpace.rotationSensitivity_pi_div_two}
+  {direct}
+  {boolean-ch11-gaussian-invariance}
+  {pdf-8b2c50cf9621-p016-b003}
 \difficulty{3}
+
 Let $n\ge0$, let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$, and let $G,G\prime$ be independent vectors with law $\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\gamma_n\otimes\gamma_n)\{(g,h):\mathbf1_A(g)\ne\mathbf1_A(\cos t\,g+\sin t\,h)\}$. If $A\subseteq\mathbb R^n$ is measurable with $\gamma_n(A)=1/2$, then $s_A(\pi/(2\ell))\ge1/(2\ell)$ for every positive integer $\ell$.
 \end{theorem}
 
-\begin{lemma}[Continuity of disagreement at zero angle]
+\begin{lemma}[Continuity of rotation sensitivity at zero]
 \lean{BooleanAnalysis.GaussianSpace.rotationSensitivity_tendsto_zero}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.measurePreserving_gaussianRotation, BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $n\ge0$, let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$, and let $G,G\prime$ be independent vectors with law $\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\gamma_n\otimes\gamma_n)\{(g,h):\mathbf1_A(g)\ne\mathbf1_A(\cos t\,g+\sin t\,h)\}$. For any measurable $A\subseteq\mathbb R^n$, $s_A(t)\to0$ as the real angle $t\to0$.
+Let $n\ge 0$ and let $A\subseteq\mathbb R^n$ be measurable. The rotation sensitivity of
+$A$ tends to $0$ as the real angle tends to $0$.
 \end{lemma}

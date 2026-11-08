@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clReplay_back",
+ "key": "cb191e793c3f12e4",
+ "kind": "lemma",
+ "title": "Backward rewind of the replay machine",
+ "statement": "Let $x$ and $w$ be Boolean words, let $p$ be an input-head position for $x$, let $out$ be an output word, and let $j$ be a natural number with $j\\le |w|$. Starting with the replay machine in rewind state at work-tape head position $j-1$, it reaches after $j+1$ steps the emitting state with the same buffer $w$, output $out$, and work-tape head at position zero; the input-head position remains $p$.",
+ "hypotheses_covered": [
+  "Boolean words $x,w,out$",
+  "An input-head position $p$ for $x$",
+  "A natural number $j$",
+  "$j\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, buffer $w$, output, and count $j \\le |w|$, running the replay machine in its rewind control at cell $j - 1$ for $j + 1$ steps restores the buffer head to zero and enters the emitting control; each occupied prefix cell is read once and the empty-buffer case is included."
+}

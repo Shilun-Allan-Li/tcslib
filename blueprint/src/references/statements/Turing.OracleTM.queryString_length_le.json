@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.OracleTM.queryString_length_le",
+ "key": "0745738cc2621d8a",
+ "kind": "theorem",
+ "title": "Query length bounded by running time",
+ "statement": "Let $M$ be an oracle Turing machine with $k$ ordinary work tapes, let $O$ be an oracle language, let $x$ be an input word, and let $t$ be a natural number. The query string in the configuration reached after $t$ steps from the initial configuration on $x$ has length at most $t$.",
+ "hypotheses_covered": [
+  "An oracle Turing machine with $k$ ordinary work tapes",
+  "An oracle language $O$",
+  "An input word $x$",
+  "A natural number $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be an oracle machine with $k$ ordinary work tapes, $O$ an oracle\nlanguage, $x$ an input word, and $t \\in \\mathbb{N}$.  In the configuration\nreached by running $M$ with oracle $O$ for $t$ steps from its initial\nconfiguration on $x$, the query string --- the contents of the query tape from\ncell $0$ up to the first blank cell --- has length at most $t$."
+}

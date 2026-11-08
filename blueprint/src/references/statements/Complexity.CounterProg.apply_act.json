@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.CounterProg.apply_act",
+ "key": "6967aa9991ff6f14",
+ "kind": "theorem",
+ "title": "Applying an action on one work tape",
+ "statement": "Let $x$ be a binary input, let the set of control labels be finite, and consider a configuration with an arbitrary control state, input-head position $p$, work tapes $T_i:\\mathbb{Z}\\to\\{0,1,\\text{blank}\text{ as an absent symbol}\\}$, work-head positions $h_i\\in\\mathbb{Z}$, and output word $w$. For a work-tape index $t$, input-head move $i$, optional write instruction $\\omega$, work-head move $m$, optional output bit $o$, and optional next state $q$, applying the action that performs these operations only on tape $t$ gives state $q$, input position the clamped move of $p$ by $i$, tape $t$ written at $h_t$ according to $\\omega$ (or unchanged if there is no write), and head position $h_t+m$. Every other tape and head is unchanged, and the output is $w$ followed by $o$ when present.",
+ "hypotheses_covered": [
+  "A binary input $x$",
+  "A finite set of control labels",
+  "A work-tape index $t$ among $R$ tapes",
+  "An input-head move $i\\in\\{-1,0,1\\}$",
+  "An optional write instruction, including writing a symbol or blank",
+  "A work-head move $m\\in\\{-1,0,1\\}$",
+  "An optional output bit $o$",
+  "An optional next control state $q$",
+  "An arbitrary initial configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input bit string and consider a configuration on $x$, with $R$ work tapes and the\ncompiled control states, having an arbitrary state, input-head position $p$, work tapes $(T_i)$,\nwork heads $(h_i)$ and output $w$. Applying to it the action on the single work tape $t$ with\ninput-head move $i$, write instruction $\\omega$, head move $m$, optional output bit $o$ and\noptional next state $q$ yields the configuration with state $q$, input-head position the clamped\nmove of $p$ by $i$, tape $t$ replaced by $T_t$ with cell $h_t$ overwritten as prescribed by\n$\\omega$ (and unchanged if $\\omega$ writes nothing), head $t$ moved to $h_t + m$, all other\ntapes and heads unchanged, and output $w$ followed by $o$ if $o$ is present."
+}

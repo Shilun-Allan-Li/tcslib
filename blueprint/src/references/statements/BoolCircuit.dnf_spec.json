@@ -1,0 +1,15 @@
+{
+ "lean_name": "BoolCircuit.dnf_spec",
+ "key": "f5f0453bdbe0fdf8",
+ "kind": "theorem",
+ "title": "Specification of the DNF construction",
+ "statement": "For every natural number $n$ and Boolean function $f\\colon\\{0,1\\}^n\\to\\{0,1\\}$, the DNF construction satisfies the following specification. Starting with one negation gate for each input, it first emits conjunction trees for the minterm leaves of each satisfying assignment, then emits an OR tree on the resulting vertices; the final gate list extends the initial negation gates and is acyclic, and its output is a valid vertex. On every input, that output has the same value as an OR gate applied to the values of the satisfying-assignment minterms, evaluated using the initial negation gates. The final list has at most the initial list length plus the tree cost of the number of those minterms, and the output depth is at most the ceiling of the base-two logarithm of that number plus one plus the maximum depth of the minterm vertices in the initial list. Every gate added after the initial list is an OR gate with distinct arguments and at most two inputs.",
+ "hypotheses_covered": [
+  "A natural number $n$",
+  "A Boolean function $f$ on $n$ Boolean inputs"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

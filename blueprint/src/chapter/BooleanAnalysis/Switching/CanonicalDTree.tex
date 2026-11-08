@@ -38,10 +38,14 @@ exists an index $v \in \mathrm{Fin}\,n$ with $\rho(v)$ unset.
 
 \begin{definition}[Branch variable selection]
 \lean{SwitchingLemma.selectBranchVar}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002
+}
 \label{SwitchingLemma.selectBranchVar}
 \leanok
-\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{DNF, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.killedBy}
+\statementsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 Given a DNF $f$ and restriction $\rho$, returns an optional variable in $\mathrm{Fin}\,n$:
 the variable on which the canonical tree should next branch, drawn from the free variables
 of the first term not killed by $\rho$.
@@ -51,6 +55,7 @@ of the first term not killed by $\rho$.
 \lean{SwitchingLemma.selectBranchVar_spec}
 \label{SwitchingLemma.selectBranchVar_spec}
 \leanok
+\uses{DNF, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.selectBranchVar}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \proofstep
   {BoolCircuit.Lit}
@@ -107,7 +112,6 @@ of the first term not killed by $\rho$.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
-\uses{DNF, SwitchingLemma.Literal.killedBy, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.canonicalDTree, SwitchingLemma.selectBranchVar}
 \difficulty{5}
 Let $f$ be a DNF formula on $n$ variables and $\rho$ a restriction. Suppose that at
 least one term of $f$ is not killed by $\rho$, and that no term of $f$ is fixed by
@@ -117,13 +121,17 @@ returning a variable $v$ that is free in $\rho$.
 
 \begin{definition}[Sub-tree for a term]
 \lean{SwitchingLemma.termSubTree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002
+}
 \label{SwitchingLemma.termSubTree}
 \leanok
+\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b002,
   pdf-b5e074215b9e-p002-b003
 }
-\uses{DecisionTree, Literal, SwitchingLemma.Restriction, SwitchingLemma.Restriction.freeVars}
 Builds a complete sub-tree for a term, queried as a list of literals: it branches on each
 free variable of the term in order, and at every leaf invokes a continuation
 $\mathrm{cont} : \mathrm{Restriction}\,n \to \mathrm{DecisionTree}\,n$ with the restriction updated
@@ -132,13 +140,19 @@ along that root-to-leaf path. Non-free literals are skipped.
 
 \begin{definition}[Canonical decision tree]
 \lean{SwitchingLemma.canonicalDTree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p003-b004,
+  pdf-52929dbaa962-p004-b001,
+  pdf-52929dbaa962-p004-b002,
+  pdf-52929dbaa962-p005-b001
+}
 \label{SwitchingLemma.canonicalDTree}
 \leanok
+\uses{DNF, DecisionTree, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree}
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p002-b002,
   pdf-b5e074215b9e-p002-b003
 }
-\uses{DNF, DecisionTree, SwitchingLemma.Restriction, SwitchingLemma.Restriction.numFree}
 The canonical decision tree for $f|_\rho$, following Razborov's construction. It is defined
 through a fuel-driven helper $\mathrm{canonicalDTree.go}$ initialized with fuel
 $\rho.\mathrm{numFree} + \text{(positive)}$, repeatedly selecting the first non-killed term and
@@ -247,8 +261,8 @@ $\rho$, then $\rho'$ has strictly fewer free variables than $\rho$.
 \lean{SwitchingLemma.canonicalDTree_go_correct}
 \label{SwitchingLemma.canonicalDTree_go_correct}
 \leanok
-\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Literal.fixedBy_eval_true, SwitchingLemma.Literal.killedBy, SwitchingLemma.Literal.killedBy_eval_false, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.Restriction.freeVars, SwitchingLemma.Restriction.numFree, SwitchingLemma.Term.fixedBy, SwitchingLemma.Term.killedBy, SwitchingLemma.list_all_eq_false_of_mem, SwitchingLemma.list_any_eq_false, SwitchingLemma.restrictFn, SwitchingLemma.termSubTree_eval, SwitchingLemma.termSubTree_extend_eq, SwitchingLemma.termSubTree_foldl_numFree_lt, Term.eval}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \difficulty{6}
 Let $f$ be a DNF formula on $n$ Boolean variables, let $\rho$ be a restriction of those
 variables, and let $m$ be a natural number strictly greater than the number of free
@@ -264,6 +278,7 @@ and $x$'s value on each free coordinate.
 \lean{SwitchingLemma.canonicalDTree_correct}
 \label{SwitchingLemma.canonicalDTree_correct}
 \leanok
+\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_go_correct, SwitchingLemma.restrictFn}
 \proofsource{switching-lemma}{pdf-b5e074215b9e-p002-b002}
 \proofstep
   {BoolCircuit.Lit}
@@ -405,7 +420,6 @@ and $x$'s value on each free coordinate.
   {direct}
   {switching-lemma}
   {pdf-b5e074215b9e-p002-b002}
-\uses{DNF, DNF.eval, DecisionTree.eval, SwitchingLemma.Restriction, SwitchingLemma.canonicalDTree, SwitchingLemma.canonicalDTree_go_correct, SwitchingLemma.restrictFn}
 \difficulty{1}
 Let $f$ be a DNF formula on $n$ Boolean variables and let $\rho$ be a restriction of
 those variables. Then the canonical decision tree of $f$ under $\rho$ computes exactly
@@ -678,8 +692,8 @@ $\mathit{rest}$ alone under the same restriction and the same continuation.
 \lean{SwitchingLemma.depth_ge_dtDepth}
 \label{SwitchingLemma.depth_ge_dtDepth}
 \leanok
-\proofsource{switching-lemma}{pdf-b5e074215b9e-p001-b005}
 \uses{DecisionTree, DecisionTree.depth, DecisionTree.eval, dtDepth}
+\proofsource{switching-lemma}{pdf-b5e074215b9e-p001-b005}
 \difficulty{1}
 Let $f : (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be a Boolean function,
 and let $T$ be a decision tree on $n$ Boolean variables that computes $f$, in the sense

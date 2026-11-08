@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.narm_space",
+ "key": "807e856ed54be25a",
+ "kind": "theorem",
+ "title": "Space bound for compiled nondeterministic programs",
+ "statement": "Let $A$ be a nondeterministic register program with initial label $l_0$, oracle, and decider machine $D$ with initial states $q_0$, and let $B,W,N$ be natural numbers. Suppose every sequence of $N$ choice bits makes the program halt, and each configuration before halting satisfies the guard: its applicable instruction preconditions hold, every decider call has distinct argument registers and a clean run using at most $B$ work-head cells, and each register value $z$ satisfies $|\\text{the binary length of }z+1|\\le W$. Then there is a number $T$ such that the compiled machine halts for every length-$T$ choice sequence and uses at most $m(W+2)+k_D(2B+1)$ work-tape cells on each such run. Moreover, there exists a length-$N$ choice sequence on which the register program's answer is true if and only if the compiled machine has an accepting run of length $T$.",
+ "hypotheses_covered": [
+  "Finite label set and finite decider-state set",
+  "Nondeterministic register program and initial label l₀",
+  "Oracle, decider machine, initial-state map, and bounds B, W, N",
+  "Every length-N choice sequence halts",
+  "Every active proper-prefix configuration satisfies NGuard, including instruction preconditions, clean bounded-space decider calls, and register binary-length bounds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

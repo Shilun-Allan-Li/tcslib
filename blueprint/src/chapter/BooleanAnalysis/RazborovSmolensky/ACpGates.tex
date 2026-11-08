@@ -16,9 +16,11 @@ fraction of the random seeds produce a wrong value.
 
 \begin{definition}[The $\mathrm{AC}^0$ gate set]
 \lean{BoolCircuit.stdGateOps}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p001-b003}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p001-b005}
 \label{BoolCircuit.stdGateOps}
 \leanok
-\uses{BoolCircuit.LayeredCircuit.GateOp.id}
+\uses{BoolCircuit.GateOp, BoolCircuit.LayeredCircuit.GateOp.id}
 The set of plain $\mathrm{AC}^0$ gate operations on the alphabet $\mathrm{Fin}\,2$: the
 identity gate, the NOT gate $x \mapsto 1 - x_0$, and, for every arity $n$, the unbounded
 fan-in AND gate $x \mapsto \prod_{i} x_i$.
@@ -37,6 +39,10 @@ P(b)\,\}}^{\abs{\iota}}$.
 
 \begin{lemma}[Averaging for the probabilistic method]
 \lean{RazborovSmolensky.prob_method_averaging}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p006-b005,
+  pdf-988dc9f0ae91-p007-b001
+}
 \label{RazborovSmolensky.prob_method_averaging}
 \leanok
 \difficulty{5}
@@ -99,6 +105,8 @@ $1$ when $a = 1$ and $0$ when $a = 0$.
 
 \begin{definition}[Unbounded $\mathrm{MOD}_p$ gate]
 \lean{RazborovSmolensky.modGateOp}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p001-b004}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p004-b004}
 \label{RazborovSmolensky.modGateOp}
 \leanok
 The gate operation of arity \texttt{width} on Boolean inputs that outputs $1$ when the sum
@@ -107,6 +115,12 @@ of its inputs, cast into $\mathbb{Z}/p$, is $0$, and outputs $0$ otherwise.
 
 \begin{definition}[{The $\mathrm{AC}^0[p]$ gate set}]
 \lean{RazborovSmolensky.ACp_GateOps}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p005-b005}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p001-b004,
+  pdf-d3f464808105-p001-b005
+}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p004-b004}
 \label{RazborovSmolensky.ACp_GateOps}
 \leanok
 \uses{BoolCircuit.stdGateOps, RazborovSmolensky.modGateOp}
@@ -116,6 +130,15 @@ together with the unbounded $\mathrm{MOD}_p$ gate of every arity.
 
 \begin{definition}[Randomized OR-approximating polynomial]
 \lean{RazborovSmolensky.approxOr}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p004-b002}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p006-b004
+}
 \label{RazborovSmolensky.approxOr}
 \leanok
 Given polynomials $P_1,\dots,P_{\mathrm{width}}$ over $\mathbb{Z}/p$ and a random seed
@@ -127,6 +150,7 @@ consisting of $\ell$ subsets $S_1,\dots,S_\ell$ of the input positions, the appr
 
 \begin{definition}[Exact $\mathrm{MOD}_p$ polynomial]
 \lean{RazborovSmolensky.exactMod}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p002-b003}
 \label{RazborovSmolensky.exactMod}
 \leanok
 The polynomial $1 - \bigl(\sum_i P_i\bigr)^{p-1}$ over $\mathbb{Z}/p$, which computes the
@@ -135,6 +159,7 @@ $\mathrm{MOD}_p$ predicate exactly on Boolean values.
 
 \begin{definition}[Value-level OR approximator]
 \lean{RazborovSmolensky.approxOr_val}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p006-b003}
 \label{RazborovSmolensky.approxOr_val}
 \leanok
 The value-level analogue of the randomized OR approximator: for $v : \mathrm{Fin}\,
@@ -155,6 +180,12 @@ nonzero.
 
 \begin{theorem}[Degree bound for the OR-approximating polynomial]
 \lean{RazborovSmolensky.approxOr_totalDegree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p004-b002}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p006-b003}
 \label{RazborovSmolensky.approxOr_totalDegree}
 \leanok
 \uses{RazborovSmolensky.approxOr}
@@ -188,6 +219,10 @@ the supremum being taken over all $i$ (and read as $0$ when $\mathrm{width}=0$).
 
 \begin{lemma}[At most half of subset sums vanish]
 \lean{RazborovSmolensky.subset_sum_zero_bound}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
 \label{RazborovSmolensky.subset_sum_zero_bound}
 \leanok
 \difficulty{5}
@@ -221,6 +256,11 @@ P_i(y)\bigr)^{p-1}\Bigr).
 
 \begin{lemma}[Failure characterization of the value-level OR approximator]
 \lean{RazborovSmolensky.approxOr_failure_iff}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001
+}
 \label{RazborovSmolensky.approxOr_failure_iff}
 \leanok
 \uses{RazborovSmolensky.OR_val, RazborovSmolensky.approxOr_val, RazborovSmolensky.one_sub_pow_card_sub_one}
@@ -234,6 +274,14 @@ in $\bbz/p$ for every index $k$.
 
 \begin{lemma}[Bad-seed count for a nonzero input]
 \lean{RazborovSmolensky.count_bad_S}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001
+}
 \label{RazborovSmolensky.count_bad_S}
 \leanok
 \uses{RazborovSmolensky.OR_val, RazborovSmolensky.approxOr_failure_iff, RazborovSmolensky.approxOr_val}
@@ -261,6 +309,14 @@ $\{0,\dots,\mathrm{width}-1\}$ has exactly $2^{\mathrm{width}\cdot\ell}$ element
 
 \begin{lemma}[Bad-seed bound for the value-level OR approximator]
 \lean{RazborovSmolensky.count_bad_S_or}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001
+}
 \label{RazborovSmolensky.count_bad_S_or}
 \leanok
 \uses{RazborovSmolensky.OR_val, RazborovSmolensky.approxOr_failure_iff, RazborovSmolensky.approxOr_val, RazborovSmolensky.count_bad_S}
@@ -302,6 +358,14 @@ length $2^{\mathrm{width}\cdot\ell}$, the number of such seeds.
 
 \begin{theorem}[Few seeds miss the true OR at a point]
 \lean{RazborovSmolensky.approxOr_pointwise_bad_count}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p006-b005,
+  pdf-988dc9f0ae91-p007-b001
+}
 \label{RazborovSmolensky.approxOr_pointwise_bad_count}
 \leanok
 \uses{RazborovSmolensky.OR_val, RazborovSmolensky.approxOr, RazborovSmolensky.approxOr_eval_eq, RazborovSmolensky.approxSeed_card, RazborovSmolensky.count_bad_S_or}
@@ -322,6 +386,18 @@ are bad at $y$.
 
 \begin{theorem}[Existence of a good OR-approximating polynomial list]
 \lean{RazborovSmolensky.exists_good_approxOr}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p006-b005,
+  pdf-988dc9f0ae91-p007-b001
+}
 \label{RazborovSmolensky.exists_good_approxOr}
 \leanok
 \uses{RazborovSmolensky.approxOr, RazborovSmolensky.approxOrPolyList, RazborovSmolensky.approxOrPolyList_length, RazborovSmolensky.approxOr_pointwise_bad_count, RazborovSmolensky.approxOr_totalDegree}
@@ -342,6 +418,7 @@ $Ps$.
 
 \begin{definition}[Randomized AND-approximating polynomial]
 \lean{RazborovSmolensky.approxAnd}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p007-b002}
 \label{RazborovSmolensky.approxAnd}
 \leanok
 \uses{RazborovSmolensky.approxOr}
@@ -351,6 +428,11 @@ approximator is applied to the negated inputs $i \mapsto 1 - P_i$.
 
 \begin{theorem}[Total-degree bound for the AND approximator]
 \lean{RazborovSmolensky.approxAnd_totalDegree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p007-b002}
 \label{RazborovSmolensky.approxAnd_totalDegree}
 \leanok
 \uses{RazborovSmolensky.approxAnd, RazborovSmolensky.approxOr_totalDegree}
@@ -389,6 +471,7 @@ $2^{\mathrm{width}\cdot\ell}$.
 
 \begin{theorem}[Pointwise bad-seed count for the AND approximator]
 \lean{RazborovSmolensky.approxAnd_pointwise_bad_count}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p007-b002}
 \label{RazborovSmolensky.approxAnd_pointwise_bad_count}
 \leanok
 \uses{RazborovSmolensky.approxAnd, RazborovSmolensky.approxOr, RazborovSmolensky.approxOr_pointwise_bad_count}
@@ -406,6 +489,14 @@ N \cdot 2^{\ell} \le 2^{\mathrm{width}\cdot\ell}.
 
 \begin{theorem}[Existence of a good AND-approximating polynomial family]
 \lean{RazborovSmolensky.exists_good_approxAnd}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p007-b001,
+  pdf-988dc9f0ae91-p007-b002
+}
 \label{RazborovSmolensky.exists_good_approxAnd}
 \leanok
 \uses{RazborovSmolensky.approxAnd, RazborovSmolensky.approxAndPolyList, RazborovSmolensky.approxAndPolyList_length, RazborovSmolensky.approxAnd_pointwise_bad_count, RazborovSmolensky.approxAnd_totalDegree}
@@ -428,6 +519,8 @@ A_S(y)\ \neq\ \prod_{k=1}^{\mathrm{width}}\Bigl(1-\bigl(1-P_k(y)\bigr)^{p-1}\Big
 
 \begin{lemma}[{Case analysis on the $\mathrm{AC}^0[p]$ gate set}]
 \lean{RazborovSmolensky.ACp_GateOps_cases}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p005-b005}
+\statementsource{goldreich-approximation-method}{pdf-988dc9f0ae91-p004-b004}
 \label{RazborovSmolensky.ACp_GateOps_cases}
 \leanok
 \uses{BoolCircuit.stdGateOps, RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit.GateOp.id, RazborovSmolensky.modGateOp}
@@ -442,6 +535,7 @@ some arity $n$.
 
 \begin{lemma}[Exact $\mathrm{MOD}_p$ on Boolean inputs]
 \lean{RazborovSmolensky.exactMod_on_bits}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p002-b003}
 \label{RazborovSmolensky.exactMod_on_bits}
 \leanok
 \uses{RazborovSmolensky.bitify, RazborovSmolensky.cast_bitify_eq, RazborovSmolensky.modGateOp, RazborovSmolensky.one_sub_pow_card_sub_one}
@@ -478,6 +572,24 @@ expression on the left evaluates to the Boolean AND of the inputs.
 
 \begin{lemma}[{Low-degree approximating polynomials for an $\mathrm{AC}^0[p]$ gate}]
 \lean{RazborovSmolensky.exists_poly_for_gate}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p006-b001,
+  pdf-988dc9f0ae91-p006-b002,
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p007-b001,
+  pdf-988dc9f0ae91-p007-b002
+}
 \label{RazborovSmolensky.exists_poly_for_gate}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, RazborovSmolensky.ACp_GateOps_cases, RazborovSmolensky.approxAnd, RazborovSmolensky.approxAnd_pointwise_bad_count, RazborovSmolensky.approxAnd_totalDegree, RazborovSmolensky.approxSeed_card, RazborovSmolensky.bitify, RazborovSmolensky.cast_bitify_eq, RazborovSmolensky.exactAnd_on_bits, RazborovSmolensky.exactMod, RazborovSmolensky.exactMod_on_bits, RazborovSmolensky.exactMod_totalDegree, RazborovSmolensky.modGateOp}
@@ -494,4 +606,373 @@ $\mathrm{Fin}\,2\hookrightarrow\mathbb{Z}/p$; then, provided every value $P_i(y)
 in $\{0,1\}$, the number of seeds $s\in\mathrm{Seed}$ for which $P_s(y)$ differs from
 the gate output $\mathrm{op}\bigl(i\mapsto\mathrm{bitify}(P_i(y))\bigr)$, multiplied by
 $2^\ell$, is at most $\abs{\mathrm{Seed}}$.
+\end{lemma}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{lemma}[Ac gate ops]
+\lean{ACP.AC_GateOps}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p001-b003}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p001-b005}
+\label{ACP.AC_GateOps}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Tuple fail count]
+\lean{ACP.tuple_fail_count}
+\label{ACP.tuple_fail_count}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Prob method averaging]
+\lean{ACP.prob_method_averaging}
+\label{ACP.prob_method_averaging}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{definition}[Bitify]
+\lean{ACP.bitify}
+\label{ACP.bitify}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{lemma}[Cast bitify eq]
+\lean{ACP.cast_bitify_eq}
+\label{ACP.cast_bitify_eq}
+\leanok
+\uses{ACP.bitify}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[One sub pow card sub one]
+\lean{ACP.one_sub_pow_card_sub_one}
+\label{ACP.one_sub_pow_card_sub_one}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Bit indicator eq bitify]
+\lean{ACP.bit_indicator_eq_bitify}
+\label{ACP.bit_indicator_eq_bitify}
+\leanok
+\uses{ACP.bitify}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{definition}[Mod gate op]
+\lean{ACP.modGateOp}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p001-b004}
+\label{ACP.modGateOp}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{definition}[A cp gate ops]
+\lean{ACP.ACp_GateOps}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p005-b005}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p001-b004,
+  pdf-d3f464808105-p001-b005
+}
+\label{ACP.ACp_GateOps}
+\leanok
+\uses{ACP.AC_GateOps, ACP.modGateOp}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{definition}[Approx or]
+\lean{ACP.approxOr}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p004-b002}
+\label{ACP.approxOr}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{definition}[Exact mod]
+\lean{ACP.exactMod}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p002-b003}
+\label{ACP.exactMod}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{definition}[Approx or val]
+\lean{ACP.approxOr_val}
+\label{ACP.approxOr_val}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{definition}[Or val]
+\lean{ACP.OR_val}
+\label{ACP.OR_val}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{theorem}[Approx or total degree]
+\lean{ACP.approxOr_totalDegree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p004-b002}
+\label{ACP.approxOr_totalDegree}
+\leanok
+\uses{ACP.approxOr}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{theorem}[Exact mod total degree]
+\lean{ACP.exactMod_totalDegree}
+\label{ACP.exactMod_totalDegree}
+\leanok
+\uses{ACP.exactMod}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{lemma}[Subset sum zero bound]
+\lean{ACP.subset_sum_zero_bound}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\label{ACP.subset_sum_zero_bound}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Approx or eval eq]
+\lean{ACP.approxOr_eval_eq}
+\label{ACP.approxOr_eval_eq}
+\leanok
+\uses{ACP.approxOr, ACP.approxOr_val}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Approx or failure iff]
+\lean{ACP.approxOr_failure_iff}
+\label{ACP.approxOr_failure_iff}
+\leanok
+\uses{ACP.OR_val, ACP.approxOr_val, ACP.one_sub_pow_card_sub_one}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Count bad s]
+\lean{ACP.count_bad_S}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\label{ACP.count_bad_S}
+\leanok
+\uses{ACP.OR_val, ACP.approxOr_failure_iff, ACP.approxOr_val}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Approx seed card]
+\lean{ACP.approxSeed_card}
+\label{ACP.approxSeed_card}
+\leanok
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Count bad s or]
+\lean{ACP.count_bad_S_or}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\label{ACP.count_bad_S_or}
+\leanok
+\uses{ACP.OR_val, ACP.approxOr_failure_iff, ACP.approxOr_val, ACP.count_bad_S}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{definition}[Approx or poly list]
+\lean{ACP.approxOrPolyList}
+\label{ACP.approxOrPolyList}
+\leanok
+\uses{ACP.approxOr}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{lemma}[Approx or poly list length]
+\lean{ACP.approxOrPolyList_length}
+\label{ACP.approxOrPolyList_length}
+\leanok
+\uses{ACP.approxOrPolyList, ACP.approxSeed_card}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{theorem}[Approx or pointwise bad count]
+\lean{ACP.approxOr_pointwise_bad_count}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\label{ACP.approxOr_pointwise_bad_count}
+\leanok
+\uses{ACP.OR_val, ACP.approxOr, ACP.approxOr_eval_eq, ACP.approxSeed_card, ACP.count_bad_S_or}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{theorem}[Exists good approx or]
+\lean{ACP.exists_good_approxOr}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\label{ACP.exists_good_approxOr}
+\leanok
+\uses{ACP.approxOr, ACP.approxOrPolyList, ACP.approxOrPolyList_length, ACP.approxOr_pointwise_bad_count, ACP.approxOr_totalDegree}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{definition}[Approx and]
+\lean{ACP.approxAnd}
+\label{ACP.approxAnd}
+\leanok
+\uses{ACP.approxOr}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{theorem}[Approx and total degree]
+\lean{ACP.approxAnd_totalDegree}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\label{ACP.approxAnd_totalDegree}
+\leanok
+\uses{ACP.approxAnd, ACP.approxOr_totalDegree}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{definition}[Approx and poly list]
+\lean{ACP.approxAndPolyList}
+\label{ACP.approxAndPolyList}
+\leanok
+\uses{ACP.approxAnd}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{definition}
+
+\begin{lemma}[Approx and poly list length]
+\lean{ACP.approxAndPolyList_length}
+\label{ACP.approxAndPolyList_length}
+\leanok
+\uses{ACP.approxAndPolyList, ACP.approxSeed_card}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{theorem}[Approx and pointwise bad count]
+\lean{ACP.approxAnd_pointwise_bad_count}
+\label{ACP.approxAnd_pointwise_bad_count}
+\leanok
+\uses{ACP.approxAnd, ACP.approxOr, ACP.approxOr_pointwise_bad_count}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{theorem}[Exists good approx and]
+\lean{ACP.exists_good_approxAnd}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\label{ACP.exists_good_approxAnd}
+\leanok
+\uses{ACP.approxAnd, ACP.approxAndPolyList, ACP.approxAndPolyList_length, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{theorem}
+
+\begin{lemma}[A cp gate ops cases]
+\lean{ACP.ACp_GateOps_cases}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p005-b005}
+\label{ACP.ACp_GateOps_cases}
+\leanok
+\uses{ACP.AC_GateOps, ACP.ACp_GateOps, ACP.modGateOp}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Exact mod on bits]
+\lean{ACP.exactMod_on_bits}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p002-b003}
+\label{ACP.exactMod_on_bits}
+\leanok
+\uses{ACP.bitify, ACP.cast_bitify_eq, ACP.modGateOp, ACP.one_sub_pow_card_sub_one}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Exact and on bits]
+\lean{ACP.exactAnd_on_bits}
+\label{ACP.exactAnd_on_bits}
+\leanok
+\uses{ACP.bitify}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
+\end{lemma}
+
+\begin{lemma}[Exists poly for gate]
+\lean{ACP.exists_poly_for_gate}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\label{ACP.exists_poly_for_gate}
+\leanok
+\uses{ACP.ACp_GateOps, ACP.ACp_GateOps_cases, ACP.approxAnd, ACP.approxAnd_pointwise_bad_count, ACP.approxAnd_totalDegree, ACP.approxSeed_card, ACP.bitify, ACP.cast_bitify_eq, ACP.exactAnd_on_bits, ACP.exactMod, ACP.exactMod_on_bits, ACP.exactMod_totalDegree, ACP.modGateOp}
+% dataset-pipeline: stub -- prose pending build_informal_statements.py
+Statement pending regeneration.
 \end{lemma}

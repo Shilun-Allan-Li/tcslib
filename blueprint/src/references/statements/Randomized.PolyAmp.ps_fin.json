@@ -1,0 +1,17 @@
+{
+ "lean_name": "Randomized.PolyAmp.ps_fin",
+ "key": "194cbc4d5e026a3a",
+ "kind": "theorem",
+ "title": "Probabilistic semantics of the final test",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine, let $os$ be a Boolean, let $x$ be a Boolean word, and let $n,\\ell,S,K,B,\\mathrm{cnt},c,d$ be natural numbers. Suppose $n+\\ell+S+2K+2\\le B$, $\\mathrm{cnt}\\le K+1$, and $c,d\\le K$. Then the final-test configuration, initialized with register values $(n,\\ell,S,K,0,\\mathrm{cnt},c,d,0)$, has probabilistic semantics with probability $1$ if the decision rule is true and probability $0$ otherwise; that rule is $1\\le\\mathrm{cnt}$ when $os$ is true, and $K+1<2\\mathrm{cnt}$ when $os$ is false.",
+ "hypotheses_covered": [
+  "$n+\\ell+S+2K+2\\le B$",
+  "$\\mathrm{cnt}\\le K+1$",
+  "$c\\le K$",
+  "$d\\le K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite-state nondeterministic Turing machine, let $x$ be a Boolean word,\nand let $n,\\ell,S,K,B,\\mathrm{cnt},c,d$ be natural numbers. Suppose $n+\\ell+S+2K+2\\le\nB$, $\\mathrm{cnt}\\le K+1$, and $c,d\\le K$. Then the final-test configuration with the\nregister tuple initialized from $(n,\\ell,S,K,0,\\mathrm{cnt},c,d,0)$ has probabilistic\nsemantics with probability $1$ when $os$ is true and $\\mathrm{cnt}\\ge1$, or when $os$ is\nfalse and $K+1<2\\mathrm{cnt}$; otherwise it has probability $0$."
+}

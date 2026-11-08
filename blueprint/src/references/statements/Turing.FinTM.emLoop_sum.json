@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.emLoop_sum",
+ "key": "d540859af7f01ebb",
+ "kind": "lemma",
+ "title": "Concatenating outputs of successive runs",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet on input $x$, let $N$ be a positive natural number, and let $B$ be a natural number. Suppose $c_i$ is a configuration and $u_i$ a Boolean word for each $i<N$, and every $c_i$ has empty output. Assume that for each $i<N$ there is a time at most $B$ such that the run from $c_i$ reaches $c_{i+1}$ with output $u_i$ when $i+1<N$, and halts with output $u_i$ when $i+1\\ge N$. Then for every Boolean word $p$, the run from $c_0$ with output replaced by $p$ halts within $NB$ steps and its output is $p$ followed by $u_0u_1\\cdots u_{N-1}$.",
+ "hypotheses_covered": [
+  "Boolean multi-tape machine and common input $x$",
+  "Sequence of configurations $c_i$ and words $u_i$",
+  "Natural-number bound $B$",
+  "Every $c_i$ for $i<N$ has empty output",
+  "Each segment takes at most $B$ steps",
+  "Nonfinal segments reach the next configuration with the prescribed output",
+  "Final segment halts with the prescribed output",
+  "$N>0$",
+  "Arbitrary prefix $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c_0, \\dots,\nc_{N-1}$ be configurations on a common input with empty outputs, let $u_0, \\dots,\nu_{N-1}$ be chunk words, and suppose $N > 0$ and that for each $i < N$, within $B$\nsteps, the machine run from $c_i$ reaches $c_{i+1}$ with output exactly $u_i$ when $i +\n1 < N$, and halts with output exactly $u_i$ when $i + 1 = N$. Then for every accumulated\nprefix $p$, the machine run from $c_0$ with output $p$ halts within $N \\cdot B$ steps\nwith output $p$ followed by the concatenation $u_0 u_1 \\cdots u_{N-1}$ in order."
+}

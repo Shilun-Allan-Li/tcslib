@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.PathHard.walk_halt",
+ "key": "5ec2962bb38926d5",
+ "kind": "theorem",
+ "title": "Halting During the Walk Phase",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean, let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, and let $x$ and $\\beta$ be Boolean strings. Suppose a state $st$ of fifteen natural-number registers has every register at most $B$, and its registers $d,u,t,c,z,n,m$ satisfy $st.d=st.u=st.t=st.c=st.z=0$, $st.n=2\\cdot 2^{st.e}$, and $st.m=2(2^{st.e})^2$. The register program started on the pair encoding of $x$ and $\\beta$, at the comparison instruction for the unary-block length, with registers given by $st$ and no answer yet, halts with the following answer, and every configuration before it halts satisfies the program’s instruction preconditions and has all registers at most $B$. If the mode is true, the answer is true exactly when $st.i<2(2^{st.e})^2+2\\cdot2^{st.e}+7$. If the mode is false, the answer is true when $st.i<2\\cdot2^{st.e}$, false when $st.i=2\\cdot2^{st.e}$, true when $st.i=2\\cdot2^{st.e}+1$, and otherwise is determined by the following rule: put $q=st.i-(2\\cdot2^{st.e}+2)$; for $q<2(2^{st.e})^2$, it is the edge predicate for source $\\lfloor q/2^{st.e}\\rfloor$ and target $q\\bmod 2^{st.e}$, using $N$, input $x$, and radius $st.s$; for larger $q$, it is the entry at offset $q-2(2^{st.e})^2$ in the string $(0,1,0,1,1)$, with out-of-range entries false. The edge predicate holds when the source is $0$ and the target encodes an initial configuration of $N$, when the target is $1$ and the source encodes an accepting configuration, or when both are at least $2$ and the corresponding configuration codes are related by one nondeterministic step; these encodings use input $x$ and radius $st.s$.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$N$ is a finite nondeterministic Turing machine with Boolean input symbols",
+  "$x,\\beta$ are Boolean strings",
+  "Every register of $st$ is at most $B$",
+  "$st.d=st.u=st.t=st.c=st.z=0$",
+  "$st.n=2\\cdot2^{st.e}$",
+  "$st.m=2(2^{st.e})^2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $\\mathrm{mode}$ be a Boolean, let $N$ be a\nfinite-state nondeterministic Turing machine over bits, and let $x,\\beta$ be bit\nstrings. Suppose the register state $\\mathrm{st}$ has all fifteen registers at most $B$,\nand satisfies $\\mathrm{st}.d=\\mathrm{st}.u=\\mathrm{st}.t=\\mathrm{st}.c=\\mathrm{st}.z=0$,\n$\\mathrm{st}.n=2\\cdot 2^{\\mathrm{st}.e}$, and $\\mathrm{st}.m=2(2^{\\mathrm{st}.e})^2$.\nWith the oracle determined by $N$, the program on the paired encoding of $x$ and\n$\\beta$, started in the walk phase with register values given by $\\mathrm{st}$ and no\nanswer yet, halts with answer\n$\\mathrm{wAns}(N,x,\\mathrm{mode},\\mathrm{st}.s,\\mathrm{st}.e,\\mathrm{st}.i)$; every\nconfiguration before halting satisfies the guard requiring the instruction's\nprecondition and all registers to be at most $B$."
+}

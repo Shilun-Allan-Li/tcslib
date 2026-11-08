@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satWidth_index",
+ "key": "15ee2a2d095778b2",
+ "kind": "lemma",
+ "title": "Index bits leave the width state unchanged",
+ "statement": "For every $n\\in\\mathbb{N}$, every counter value $c\\in\\{0,1,2,3\\}$, and every Boolean flag $g$, folding the width-pass transition over a string of $n$ consecutive $1$ bits, starting in state $2$ with counter $c$ and flag $g$, returns the same state, counter, and flag.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$c$ is one of $0,1,2,3$",
+  "$g$ is a Boolean flag"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every $n \\in \\mathbb{N}$, every counter value $c$, and every flag $g$, folding\nthe width-pass transition over the unary run $1^n$ from the index position with\ncounter $c$ and flag $g$ returns exactly the same state: index bits change neither\nthe position, nor the counter, nor the flag."
+}

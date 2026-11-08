@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.StepBlock.seekTM_lookup",
+ "key": "18fb43932084a561",
+ "kind": "lemma",
+ "title": "Lookup from the initial search state",
+ "statement": "Let $k,n$ be nonnegative integers, let $x$ be a finite binary input, let $G$ be a list of groups of transition actions, and let $R$ be a list of remaining actions. Suppose every group has length $3^{k+1}$, the length of $R$ equals the rank read from the input symbol and the symbols under the first $k$ work-tape heads of a configuration $d$, and $d$ is in the recording machine's initial state. Suppose the summary tape, starting two cells beyond its head, marks precisely the group positions: at offset $2+s$ it contains $1$ exactly when $s<|G|$, for $0\\le s\\le |G|$. Suppose the table tape stores the encoding of the flattened groups followed by $R$, consecutively from its head. Put $A=G\\mathbin{\\|}R$ and $T=|G|+3+\\operatorname{cost}(A)$. Starting the search machine in its observe control state, after $T$ steps it reaches the done control state, with its table and summary heads shifted forward respectively by the encoding length of $A$ and by $|G|+2$. It does not reach the done control state earlier, and through time $T$ its input-head position, tape contents, and output remain unchanged, while every other work-tape head stays fixed. Moreover, $T\\le 5$ times the encoding length of $A$, plus $3$.",
+ "hypotheses_covered": [
+  "$k,n\\in\\mathbb{N}$ and finite binary input $x$",
+  "group list $G$ and remaining action list $R$",
+  "each group has length $3^{k+1}$",
+  "$|R|$ equals the rank of the observed input and work-tape symbols",
+  "configuration $d$",
+  "$d$ starts in the recording machine's initial state",
+  "summary-tape cells at offsets $2$ through $|G|+2$ mark precisely the group positions",
+  "table-tape cells store the encoding of the flattened groups followed by $R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

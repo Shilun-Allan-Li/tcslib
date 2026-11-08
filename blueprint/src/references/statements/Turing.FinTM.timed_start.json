@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.timed_start",
+ "key": "7a8401894ec741e5",
+ "kind": "lemma",
+ "title": "Bound to reach the selected branch",
+ "statement": "Let $D$, $M_1$, and $M_2$ be finite-state Turing machines over the Boolean alphabet, let $x$ be a Boolean word, let $b$ be a bit, and let $T\\in\\mathbb N$. Suppose $D$ computes output $[b]$ from $x$ in exactly $T$ steps. Then there is a time $a\\le 2T+5$ and a choice of contents and head positions for the $D$-tape block such that after $a$ steps from the timed conditional controller's initial configuration on $x$, it is in the branch-phase configuration built from the initial configuration of the two-branch machine selecting $b$.",
+ "hypotheses_covered": [
+  "$D,M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$b$ is a bit",
+  "$T$ is a natural number",
+  "$D$ computes output $[b]$ from $x$ in exactly $T$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D$, $M_1$, $M_2$ be finite-state Turing machines over the Boolean alphabet with\n$k_D$, $k_1$, $k_2$ work tapes, consider the timed conditional controller for them, let\n$x$ be a Boolean word, $\\beta$ a bit and $T \\in \\mathbb{N}$, and suppose $D$ on input $x$\nhalts within $T$ steps with output the one-bit word $\\beta$. Then there exist\n$a \\le 2T + 5$ and contents $\\tau$ and head positions $h$ for $k_D$ tapes such that after\n$a$ steps from its initial configuration on $x$ the controller is in the branch-phase\nconfiguration built from the initial configuration on $x$ of the two-branch union machine\nselecting $\\beta$: in the copy of the initial state of $M_1$ if $\\beta$ is $\\mathrm{true}$\nand of $M_2$ otherwise, with the initial input-head position, a blank branch block with\nevery head at cell $0$, the decider block holding $\\tau$ with heads $h$, the bit $\\beta$ in\ncell $0$ of the capture tape with that head at cell $0$, and empty output."
+}

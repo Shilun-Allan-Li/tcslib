@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.arCfg_input",
+ "key": "322e51a902ad66e7",
+ "kind": "lemma",
+ "title": "Input symbol under encoding",
+ "statement": "Let $\\Gamma$ be an alphabet, let $E$ injectively code optional $\u001b[0m\u001b[0m\\Gamma$ symbols as blocks of $N+1$ optional bits, and let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an embedding. For a binary input $x$ and a configuration $c$ over the letterwise $e$-image of $x$, the symbol scanned by the input head in the encoded configuration, mapped through $e$, equals the symbol scanned by $c$.",
+ "hypotheses_covered": [
+  "Alphabet $\\Gamma$ with decidable equality",
+  "Natural numbers $k,N$",
+  "Injective code $E$ of optional $\u001b[0m\u001b[0m\\Gamma$ symbols into $(N+1)$-entry optional-bit blocks",
+  "Bit embedding $e:\\{0,1\\}\\hookrightarrow\\Gamma$",
+  "Binary input $x$",
+  "Configuration $c$ over the letterwise $e$-image of $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $e : \\{0,1\\} \\hookrightarrow \\Gamma$ be a bit embedding, $x$ a binary string, and\n$c$ a configuration of a $\\Gamma$-machine on the letterwise $e$-image of $x$. The input\nsymbol scanned by the encoded simulator configuration of $c$ (which reads the genuine\nbinary input $x$ at the same input-head position), mapped through $e$, equals the input\nsymbol scanned by $c$; in particular both are absent for the same head positions."
+}

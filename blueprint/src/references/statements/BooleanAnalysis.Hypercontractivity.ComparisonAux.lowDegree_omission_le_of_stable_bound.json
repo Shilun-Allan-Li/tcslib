@@ -1,0 +1,21 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.ComparisonAux.lowDegree_omission_le_of_stable_bound",
+ "key": "a09c9bc8f2cc84a4",
+ "kind": "theorem",
+ "title": "Low degree mass outside a coordinate set",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, let $f$ be a real-valued function on its outcome space, let $J$ be a set of coordinates, and let $k$ be a nonnegative integer. Suppose $0\\le\\rho\\le1$ and $\\tau\\ge0$, every coordinate $i\\notin J$ has influence at most $\\tau$, and for every coordinate $i$ the sum of $\\rho^{|S|}\\mathbb E_P f_S^2$ over coordinate sets $S$ containing $i$ is at most $I_i(f)^{3/2}$. Then $\\rho^k$ times the sum of $\\mathbb E_P f_S^2$ over sets $S$ with $|S|\\le k$ that are not contained in $J$ is at most $\\sqrt{\\tau}\\,I(f)$, where $f_S$ denotes the $S$-component, $I_i(f)$ the coordinate influence, and $I(f)$ the total influence.",
+ "hypotheses_covered": [
+  "$P$ is a product of $n$ finite probability spaces with strictly positive atom masses",
+  "$f$ is real-valued on the product outcome space",
+  "$J$ is a set of coordinates",
+  "$k$ is a nonnegative integer",
+  "$0\\le\\rho\\le1$",
+  "$\\tau\\ge0$",
+  "For every $i\\notin J$, $I_i(f)\\le\\tau$",
+  "For every coordinate $i$, $\\sum_{S\\ni i}\\rho^{|S|}\\mathbb E_P f_S^2\\le I_i(f)^{3/2}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $f:\\Omega\\to\\mathbb R$, $J\\subseteq[n]$, $k\\in\\mathbb N$, $0\\le\\rho\\le1$, and $\\tau\\ge0$. If $I_i(f)\\le\\tau$ for $i\\notin J$ and $\\sum_{S\\ni i}\\rho^{|S|}\\mathbb E_Pf_S^2\\le I_i(f)^{3/2}$ for every $i$, then $\\rho^k\\sum_{|S|\\le k,\\ S\\nsubseteq J}\\mathbb E_Pf_S^2\\le\\sqrt\\tau\\,I(f)$."
+}

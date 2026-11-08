@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emit_run",
+ "key": "297021a8fe5b2b3f",
+ "kind": "lemma",
+ "title": "Partial run of an emission chain",
+ "statement": "Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean alphabet on input $x$, let $w$ be a Boolean word, and let $e$ map the indices $0,\\ldots,|w|$ to states of $M$. Suppose that from every state $e(i)$, for every scanned input symbol and tuple of work-tape symbols, the transition is the emission action for $w$ at index $i$. If a configuration $c$ is in state $e(0)$, then for every $t\\le |w|$, after $t$ steps the machine is in state $e(t)$ and its output is the output of $c$ followed by the first $t$ symbols of $w$.",
+ "hypotheses_covered": [
+  "Machine with $k$ work tapes over the Boolean alphabet and input $x$",
+  "Boolean word $w$",
+  "State map $e$ on indices $0,\\ldots,|w|$",
+  "Transition agrees with the specified emission action for all scanned symbols and tape symbols",
+  "Starting configuration has state $e(0)$",
+  "Time $t\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine with $k$ work tapes over the Boolean\nalphabet running on some input $x$, let $w$ be a Boolean word, and let $e$ be\na map from $\\{0,\\dots,\\abs{w}\\}$ into the states of $M$ such that from each\nstate $e(i)$, regardless of the symbols read, the transition of $M$ is the\nemission action for $w$ at index $i$: while $i < \\abs{w}$ it appends the\n$i$-th symbol of $w$ to the output and passes to $e(i+1)$, and at\n$i = \\abs{w}$ it halts, in both cases leaving the input head and all work\ntapes fixed.  If a configuration $c$ is in state $e(0)$, then for every\n$t \\le \\abs{w}$, after $t$ steps from $c$ the machine is in state $e(t)$ and\nits output is the output of $c$ followed by the first $t$ symbols of $w$."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.TreeCircuit.reidx_depth",
+ "key": "c55e0373245d2279",
+ "kind": "theorem",
+ "title": "Reindexing preserves circuit depth",
+ "statement": "Let $m,m'$ be natural numbers, let $c$ be a Boolean circuit on $m$ variables, and let $f$ map the $m$ input indices to the $m'$ input indices. Replacing each input index of $c$ by its image under $f$ preserves depth.",
+ "hypotheses_covered": [
+  "$m,m'$ are natural numbers",
+  "$c$ is a Boolean circuit on $m$ variables",
+  "$f : \\mathrm{Fin}\\,m \\to \\mathrm{Fin}\\,m'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a Boolean circuit on $m$ variables and let $f : \\mathrm{Fin}\\,m \\to\n\\mathrm{Fin}\\,m'$ be any map of variable indices. Then re-indexing $c$ along $f$ leaves\nits depth unchanged: $\\mathrm{depth}(\\mathrm{reidx}(c, f)) = \\mathrm{depth}(c)$."
+}

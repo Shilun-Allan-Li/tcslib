@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.le_fourierWeightUpTo_of_l1_l2",
+ "key": "b137c0202219042d",
+ "kind": "lemma",
+ "title": "Norm bounds imply low-degree Fourier weight",
+ "statement": "Let $n,k\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$, and let $c\\in\\mathbb R$ satisfy $c\\le1$. Suppose $f$ is the threshold sign of a multilinear polynomial of degree at most $k$. Suppose also that every coefficient family $p$ of degree at most $k$ satisfies\n\\[c\\sum_{S\\subseteq[n]}p(S)^2\\le\\left(\\mathbb E_x\\left|\\sum_{S\\subseteq[n]}p(S)\\chi_S(x)\\right|\\right)^2,\\]\nwhere $x$ is uniform on the Boolean cube and $\\chi_S$ is the Walsh character. Then $c\\le\\sum_{|S|\\le k}\\widehat f(S)^2$, the Fourier weight of $f$ on levels at most $k$.",
+ "hypotheses_covered": [
+  "$n,k$ are natural numbers",
+  "$c\\le1$",
+  "$f$ is a degree-at-most-$k$ polynomial threshold function",
+  "For every coefficient family of degree at most $k$, the stated coefficient-square-sum bound by squared expected absolute polynomial value holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n,k\\in\\mathbb N$, $c\\in\\mathbb R$ with $c\\le1$, and $f:\\{0,1\\}^n\\to\\mathbb R$, and define $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat f(S)=\\mathbb E_x[f(x)\\chi_S(x)]$ for uniform $x$ and $S\\subseteq\\{1,\\ldots,n\\}$.\nSuppose $f$ is the sign of some real multilinear polynomial of degree at most $k$, with $\\operatorname{sgn}(t)=1$ for $t\\ge0$ and $-1$ for $t<0$, and assume that every real polynomial $p(x)=\\sum_{|S|\\le k}a_S\\chi_S(x)$ satisfies\n\\[\n c\\sum_{|S|\\le k}a_S^2\\le\\bigl(\\mathbb E_x|p(x)|\\bigr)^2.\n\\]\nThen $c\\le\\sum_{|S|\\le k}\\widehat f(S)^2$."
+}

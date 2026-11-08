@@ -51,37 +51,36 @@ $j \in \mathbb{N}$, the integer tape position $(N+1)z + j$ of the $j$-th cell of
 $z$-th length-$(N+1)$ block.
 \end{definition}
 
-\begin{lemma}[Coordinates of a combined position]
+\begin{lemma}[Block coordinates of a tape position]
 \lean{Turing.FinTM.arCoords}
 \label{Turing.FinTM.arCoords}
 \leanok
 \uses{Turing.FinTM.arCell, Turing.FinTM.arIndex, Turing.FinTM.arPos}
 \difficulty{3}
-For every $N \in \mathbb{N}$, every $z \in \mathbb{Z}$, and every
-$j \in \{0,\dots,N\}$, the position $p = (N+1)z + j$ satisfies
-$\lfloor p/(N+1) \rfloor = z$ and $p \bmod (N+1) = j$.
+For $N\in\mathbb{N}$, $z\in\mathbb{Z}$, and an offset $j\in\{0,\ldots,N\}$, the position
+$p=(N+1)z+j$ lies in block $z$ at offset $j$: its quotient on division by $N+1$ is $z$,
+and its remainder is $j$.
 \end{lemma}
 
-\begin{lemma}[Recombining the coordinates of a position]
+\begin{lemma}[Reconstructing a tape position]
 \lean{Turing.FinTM.arPos_coords}
 \label{Turing.FinTM.arPos_coords}
 \leanok
 \uses{Turing.FinTM.arCell, Turing.FinTM.arIndex, Turing.FinTM.arPos}
 \difficulty{3}
-For every $N \in \mathbb{N}$ and every $p \in \mathbb{Z}$,
-\[
-(N+1)\left\lfloor \frac{p}{N+1} \right\rfloor + \left(p \bmod (N+1)\right) = p .
-\]
+For every $N\in\mathbb{N}$ and $p\in\mathbb{Z}$, writing $p=(N+1)q+s$ with $q=\lfloor
+p/(N+1)\rfloor$ and $s$ the remainder in $\{0,\ldots,N\}$ gives the original position
+$p$.
 \end{lemma}
 
-\begin{lemma}[Injectivity of block coordinates]
+\begin{lemma}[Uniqueness of block coordinates]
 \lean{Turing.FinTM.arPos_eq}
 \label{Turing.FinTM.arPos_eq}
 \leanok
 \uses{Turing.FinTM.arCell, Turing.FinTM.arCoords, Turing.FinTM.arIndex, Turing.FinTM.arPos}
 \difficulty{3}
-For $N \in \mathbb{N}$, $z, z' \in \mathbb{Z}$, and $j, j' \in \{0,\dots,N\}$, one has
-$(N+1)z + j = (N+1)z' + j'$ if and only if $z = z'$ and $j = j'$.
+For $N\in\mathbb{N}$, integers $z,z'$, and offsets $j,j'\in\{0,\ldots,N\}$, the
+positions $(N+1)z+j$ and $(N+1)z'+j'$ are equal if and only if $z=z'$ and $j=j'$.
 \end{lemma}
 
 \begin{definition}[Binary tape induced by a family of blocks]
@@ -99,12 +98,11 @@ $F(\lfloor p/(N+1) \rfloor)$.
 \lean{Turing.FinTM.arTape_at}
 \label{Turing.FinTM.arTape_at}
 \leanok
-\uses{Turing.FinTM.arCoords, Turing.FinTM.arPos, Turing.FinTM.arTape}
+\uses{Turing.FinTM.ArBlock, Turing.FinTM.arCoords, Turing.FinTM.arPos, Turing.FinTM.arTape}
 \difficulty{1}
-Let $F$ assign to every integer a block of $N+1$ optional bits. The binary tape induced
-by $F$ (position $p$ holding entry $p \bmod (N+1)$ of block
-$F(\lfloor p/(N+1)\rfloor)$) reads, at position $(N+1)z + j$ with $z \in \mathbb{Z}$
-and $j \in \{0,\dots,N\}$, exactly the entry $j$ of $F(z)$.
+Let $N\in\mathbb{N}$, let $F$ assign to each integer a block of $N+1$ optional bits, and
+let $z\in\mathbb{Z}$ and $j\in\{0,\ldots,N\}$. The tape induced by $F$ has at position
+$(N+1)z+j$ exactly the entry at offset $j$ of the block $F(z)$.
 \end{lemma}
 
 \begin{lemma}[Extensionality along block coordinates]
@@ -113,22 +111,22 @@ and $j \in \{0,\dots,N\}$, exactly the entry $j$ of $F(z)$.
 \leanok
 \uses{Turing.FinTM.arCell, Turing.FinTM.arIndex, Turing.FinTM.arPos, Turing.FinTM.arPos_coords}
 \difficulty{1}
-Fix $N \in \mathbb{N}$. Two binary tapes $u, v : \mathbb{Z} \to \{0,1\} \cup
-\{\text{blank}\}$ that agree at every position of the form $(N+1)z + j$ with
-$z \in \mathbb{Z}$ and $j \in \{0,\dots,N\}$ are equal.
+Let $N\in\mathbb{N}$, and let $u,v:\mathbb{Z}\to\{0,1,\text{blank}\}$ be tapes. If $u$
+and $v$ agree at every position $(N+1)z+j$, for every $z\in\mathbb{Z}$ and
+$j\in\{0,\ldots,N\}$, then $u=v$.
 \end{lemma}
 
 \begin{lemma}[Pointwise update of an induced tape]
 \lean{Turing.FinTM.arTape_update}
 \label{Turing.FinTM.arTape_update}
 \leanok
-\uses{Turing.FinTM.arPos, Turing.FinTM.arPos_eq, Turing.FinTM.arTape, Turing.FinTM.arTape_at, Turing.FinTM.arTape_ext}
+\uses{Turing.FinTM.ArBlock, Turing.FinTM.arPos, Turing.FinTM.arPos_eq, Turing.FinTM.arTape, Turing.FinTM.arTape_at, Turing.FinTM.arTape_ext}
 \difficulty{2}
-Let $F$ assign to every integer a block of $N+1$ optional bits, let $z \in \mathbb{Z}$,
-$j \in \{0,\dots,N\}$, and let $b$ be an optional bit. Overwriting the binary tape
-induced by $F$ at position $(N+1)z + j$ with the value $b$ yields the binary tape
-induced by the family that agrees with $F$ everywhere except that entry $j$ of block
-$z$ becomes $b$.
+Let $N\in\mathbb{N}$, let $F$ assign a block of $N+1$ optional bits to each integer, and
+choose $z\in\mathbb{Z}$, $j\in\{0,\ldots,N\}$, and an optional bit $b$. Updating the
+induced tape at position $(N+1)z+j$ to $b$ gives the tape induced by the family obtained
+from $F$ by replacing entry $j$ of block $z$ by $b$ and leaving every other entry
+unchanged.
 \end{lemma}
 
 \begin{definition}[One-hot block code]
@@ -153,15 +151,15 @@ bits, a total decoding map from blocks to $\Gamma \cup \{\text{blank}\}$ chosen 
 left inverse of $E$: every block in the image of $E$ is sent to its unique preimage.
 \end{definition}
 
-\begin{lemma}[Decoding inverts coding]
+\begin{lemma}[Decoding an encoded symbol]
 \lean{Turing.FinTM.arDecode_code}
 \label{Turing.FinTM.arDecode_code}
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arDecode}
 \difficulty{1}
-Let $E$ be an injection of $\Gamma \cup \{\text{blank}\}$ into blocks of $N+1$ optional
-bits, and let the decoder be the associated left inverse of $E$. Then for every
-$a \in \Gamma \cup \{\text{blank}\}$, decoding the block $E(a)$ returns $a$.
+Let $\Gamma$ be a type, let $N\in\mathbb{N}$, and let $E$ be an injection from optional
+$\Gamma$-symbols into blocks of $N+1$ optional bits. For every optional symbol $a$,
+decoding its code $E(a)$ returns $a$.
 \end{lemma}
 
 \begin{definition}[Total bit decoder]
@@ -173,15 +171,15 @@ $\Gamma$ and a symbol $a \in \Gamma$, the bit that is $1$ exactly when
 $a = e(1)$; in particular every symbol outside the image of $e$ decodes to $0$.
 \end{definition}
 
-\begin{lemma}[Bit decoding inverts the bit embedding]
+\begin{lemma}[Bit decoding on embedded bits]
 \lean{Turing.FinTM.arBit_embed}
 \label{Turing.FinTM.arBit_embed}
 \leanok
 \uses{Turing.FinTM.arBit}
 \difficulty{2}
-Let $e : \{0,1\} \hookrightarrow \Gamma$ be an embedding of the bits into an alphabet
-$\Gamma$. For every bit $b$, applying the total bit decoder (which sends $a \in \Gamma$
-to $1$ exactly when $a = e(1)$) to $e(b)$ returns $b$.
+Let $\Gamma$ be a type with decidable equality and let $e:\{0,1\}\hookrightarrow\Gamma$
+be an embedding. For every bit $b$, the decoder that returns true exactly on $e(1)$
+sends $e(b)$ to $b$.
 \end{lemma}
 
 \begin{definition}[Pending transition record]
@@ -264,17 +262,17 @@ sits at offset $0$ of the block of its source head position; and the output of $
 decoded bitwise (a symbol $a$ becoming $1$ exactly when $a = e(1)$).
 \end{definition}
 
-\begin{lemma}[Scanned input symbol of the encoded configuration]
+\begin{lemma}[Input symbol under encoding]
 \lean{Turing.FinTM.arCfg_input}
 \label{Turing.FinTM.arCfg_input}
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.FinTM.ArBlock, Turing.FinTM.arCfg}
 \difficulty{3}
-Let $e : \{0,1\} \hookrightarrow \Gamma$ be a bit embedding, $x$ a binary string, and
-$c$ a configuration of a $\Gamma$-machine on the letterwise $e$-image of $x$. The input
-symbol scanned by the encoded simulator configuration of $c$ (which reads the genuine
-binary input $x$ at the same input-head position), mapped through $e$, equals the input
-symbol scanned by $c$; in particular both are absent for the same head positions.
+Let $\Gamma$ be an alphabet, let $E$ injectively code optional $[0m[0m\Gamma$ symbols
+as blocks of $N+1$ optional bits, and let $e:\{0,1\}\hookrightarrow\Gamma$ be an
+embedding. For a binary input $x$ and a configuration $c$ over the letterwise $e$-image
+of $x$, the symbol scanned by the input head in the encoded configuration, mapped
+through $e$, equals the symbol scanned by $c$.
 \end{lemma}
 
 \begin{definition}[Partially filled read buffer]
@@ -296,18 +294,20 @@ are blank.
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arBuffer}
 \difficulty{1}
-After zero reading steps the per-tape buffer (entries at offsets below the count taken
-from the coded scanned symbols, blank elsewhere) is the all-blank block on every tape.
+Let $E$ be an injective code from optional $[0m[0m\Gamma$ symbols into blocks of $N+1$
+optional bits, and let $r$ assign a scanned symbol or blank to each of $k$ tapes. After
+zero reading steps, every buffer entry on every tape is blank.
 \end{lemma}
 
-\begin{lemma}[Full read buffer]
+\begin{lemma}[Complete read buffer]
 \lean{Turing.FinTM.arBuffer_full}
 \label{Turing.FinTM.arBuffer_full}
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arBuffer}
 \difficulty{1}
-After $N+1$ reading steps the per-tape buffer holds, on each tape $i$, the complete
-code of the symbol scanned on tape $i$.
+Let $E$ be an injective code from $	ext{Option }[0m[0m\Gamma$ into blocks of $N+1$
+optional bits, and let $r$ assign a scanned symbol or blank to each of $k$ tapes. After
+$N+1$ reading steps, the buffer is the complete coded block $E(r(i))$ on every tape $i$.
 \end{lemma}
 
 \begin{lemma}[One buffer fill step]
@@ -316,9 +316,11 @@ code of the symbol scanned on tape $i$.
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arBuffer}
 \difficulty{4}
-For $j \in \{0,\dots,N\}$, overwriting entry $j$ of the $j$-step buffer of each tape
-with entry $j$ of the code of that tape's scanned symbol yields the $(j+1)$-step
-buffer.
+Let $E$ be an injective code from optional $[0m[0m\Gamma$ symbols into blocks of $N+1$
+optional bits, and let $r$ assign a scanned symbol or blank to each of $k$ tapes. For an
+offset $j\in\{0,\ldots,N\}$, updating entry $j$ of each tape's buffer after $j$ reading
+steps to the corresponding entry of its coded symbol produces the buffer after $j+1$
+reading steps.
 \end{lemma}
 
 \begin{definition}[Configuration during the read sweep]
@@ -339,9 +341,11 @@ each work head sits at offset $j$ of the block of its source head position.
 \leanok
 \uses{Turing.Cfg, Turing.FinTM.ArBlock, Turing.FinTM.arBuffer_zero, Turing.FinTM.arCfg, Turing.FinTM.arReadCfg, Turing.FinTM.arReady}
 \difficulty{1}
-If the source configuration $c$ is in state $q$ (in particular not halted), then the
-read-sweep configuration of $c$ at counter $0$ coincides with the encoded configuration
-of $c$.
+Let $\Gamma$ be an alphabet, let $E$ inject the symbols of $\Gamma$ together with blank
+into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into $\Gamma$.
+For a binary input $x$, a configuration $c$ on the letterwise $e$-image of $x$, and a
+state $q$ such that $c$ is in state $q$, the read-sweep configuration of $c$ at counter
+zero equals its encoded configuration.
 \end{lemma}
 
 \begin{lemma}[Symbols scanned during the read sweep]
@@ -350,9 +354,12 @@ of $c$.
 \leanok
 \uses{Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM.ArBlock, Turing.FinTM.arReadCfg, Turing.FinTM.arTape_at}
 \difficulty{1}
-For a counter $j \le N$, the work-tape symbols scanned by the read-sweep configuration
-of a source configuration $c$ at counter $j$ are, on each tape $i$, the entry at offset
-$j$ of the code of the symbol scanned by $c$ on tape $i$.
+Let $\Gamma$ be an alphabet, let $E$ inject the symbols of $\Gamma$ together with blank
+into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into $\Gamma$.
+For a binary input $x$, a configuration $c$ on the letterwise $e$-image of $x$, a state
+$q$, and a valid counter $j<N+1$, the symbol scanned on each work tape $i$ in the
+read-sweep configuration at counter $j$ is the entry at offset $j$ in the block code of
+the symbol scanned on tape $i$ by $c$.
 \end{lemma}
 
 \begin{lemma}[One step of the read sweep]
@@ -361,21 +368,28 @@ $j$ of the code of the symbol scanned by $c$ on tape $i$.
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.ArState, Turing.FinTM.arBuffer_update, Turing.FinTM.arCfg, Turing.FinTM.arPos, Turing.FinTM.arReadCfg, Turing.FinTM.arReadCfg_symbols, Turing.FinTM.arTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-For a counter $j \le N$, one transition of the binary block-code simulator applied to
-the read-sweep configuration of a source configuration $c$ with source state $q$ at
-counter $j$ yields the read-sweep configuration at counter $j+1$: the scanned code bits
-enter the buffers and every work head moves one cell right.
+Let $\Gamma$ be a finite alphabet, let $E$ inject the symbols of $\Gamma$ together with
+blank into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into
+$\Gamma$. For a machine $M$ over $\Gamma$, a binary input $x$, a configuration $c$ of
+$M$ on the letterwise $e$-image of $x$, a state $q$ of $M$, and a counter
+$j\in\{0,\ldots,N+1\}$ with $j<N+1$, one step of the binary block-code simulator from
+the read-sweep configuration at counter $j$ is the read-sweep configuration at counter
+$j+1$.
 \end{lemma}
 
-\begin{lemma}[Running the read sweep]
+\begin{lemma}[Evolution through the read sweep]
 \lean{Turing.FinTM.arReadCfg_run}
 \label{Turing.FinTM.arReadCfg_run}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arReadCfg, Turing.FinTM.arReadCfg_step, Turing.FinTM.arReadCfg_zero, Turing.FinTM.arTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
 \difficulty{4}
-Let $c$ be a source configuration in state $q$ (not halted). For every $j \le N+1$,
-running the binary block-code simulator for $j$ steps from the encoded configuration of
-$c$ reaches the read-sweep configuration of $c$ at counter $j$.
+Let $\Gamma$ be a finite alphabet, let $E$ inject the symbols of $\Gamma$ together with
+blank into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into
+$\Gamma$. For a machine $M$ over $\Gamma$, a binary input $x$, a configuration $c$ of
+$M$ on the letterwise $e$-image of $x$, and a state $q$ with $c$ in state $q$, for every
+integer $j$ with $j\le N+1$, running the binary block-code simulator for $j$ steps from
+the encoded configuration of $c$ gives the read-sweep configuration of $c$ at counter
+$j$.
 \end{lemma}
 
 \begin{definition}[Block family during the write sweep]
@@ -392,39 +406,44 @@ offsets $\ge r$ from the code of $w$ and its entries at offsets $< r$ from the c
 $t(p)$.
 \end{definition}
 
-\begin{lemma}[Write-sweep family at full counter]
+\begin{lemma}[Completed write-sweep family]
 \lean{Turing.FinTM.arTail_full}
 \label{Turing.FinTM.arTail_full}
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arTail}
 \difficulty{2}
-At counter $N+1$ (before anything is written) the partially rewritten block family for
-tape $t$, write position $p$, and new symbol $w$ is simply the blockwise coding
-$z \mapsto E(t(z))$ of the unmodified tape.
+Let $Ninmathbb{N}$, let $E$ inject the symbols of an alphabet $Gamma$ together with
+blank into blocks of $N+1$ optional bits, let $t:bb{Z}tomathrm{Option}Gamma$ be a
+tape, and let $pinbb{Z}$ and $winmathrm{Option}Gamma$. At counter $N+1$, the
+write-sweep block family is the original tape coded blockwise: at every position $z$,
+its block is $E(t(z))$.
 \end{lemma}
 
-\begin{lemma}[Write-sweep family at counter zero]
+\begin{lemma}[Initial write-sweep family]
 \lean{Turing.FinTM.arTail_zero}
 \label{Turing.FinTM.arTail_zero}
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arTail}
 \difficulty{2}
-At counter $0$ (after the write is complete) the partially rewritten block family for
-tape $t$, write position $p$, and new symbol $w$ is the blockwise coding of the updated
-tape that agrees with $t$ everywhere except that position $p$ now holds $w$.
+Let $Ninmathbb{N}$, let $E$ inject the symbols of an alphabet $Gamma$ together with
+blank into blocks of $N+1$ optional bits, let $t:bb{Z}tomathrm{Option}Gamma$ be a
+tape, and let $pinbb{Z}$ and $winmathrm{Option}Gamma$. At counter $0$, the
+write-sweep block family is the blockwise coding of the tape that agrees with $t$ except
+that its value at $p$ is $w$.
 \end{lemma}
 
-\begin{lemma}[One leftward write extends the completed suffix]
+\begin{lemma}[Single-cell update during write sweep]
 \lean{Turing.FinTM.arTail_update}
 \label{Turing.FinTM.arTail_update}
 \leanok
 \uses{Turing.FinTM.ArBlock, Turing.FinTM.arPos, Turing.FinTM.arPos_eq, Turing.FinTM.arTail, Turing.FinTM.arTape, Turing.FinTM.arTape_at, Turing.FinTM.arTape_ext}
 \difficulty{4}
-For $j \in \{0,\dots,N\}$, overwriting the binary tape induced by the counter-$(j+1)$
-partially rewritten block family (tape $t$, write position $p$, new symbol $w$) at
-tape position $(N+1)p + j$ with entry $j$ of the code of $w$ yields the binary tape
-induced by the counter-$j$ family: blocks other than $p$ are unchanged, and within
-block $p$ the only new entry is the one at offset $j$.
+Let $Ninmathbb{N}$, let $E$ inject the symbols of an alphabet $Gamma$ together with
+blank into blocks of $N+1$ optional bits, let $t:bb{Z}tomathrm{Option}Gamma$ be a
+tape, and let $pinbb{Z}$ and $winmathrm{Option}Gamma$. For any offset
+$jin{0,dots,N}$, replacing the binary tape induced by the counter-$(j+1)$ write-sweep
+family at position $(N+1)p+j$ with the $j$th bit-or-blank entry of $E(w)$ gives exactly
+the binary tape induced by the counter-$j$ family.
 \end{lemma}
 
 \begin{definition}[Configuration during the move sweep]
@@ -461,22 +480,28 @@ the encoded configuration of the result of applying $a$ to $c$.
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.ArState, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg, Turing.FinTM.arPending, Turing.FinTM.arTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-For a counter $r \neq 0$, one transition of the binary block-code simulator applied to
-the move-sweep configuration (source configuration $c$, source action $a$) at counter
-$r$ yields the move-sweep configuration at counter $r-1$: each work head advances one
-cell in its pending direction.
+Let $\Gamma$ be a finite alphabet with decidable equality, let $N\in\mathbb{N}$, let $E$
+inject optional $\Gamma$-symbols into blocks of $N+1$ optional bits, and let
+$e:\{0,1\}\hookrightarrow\Gamma$ be an injection. For a finite Turing machine $M$ over
+$\Gamma$, a binary word $x$, a configuration $c$ on its letterwise $e$-image, an action
+$a$ of $M$, and a move-sweep counter $r\in\{0,\ldots,N+1\}$ with $r\ne0$, one step of
+the simulator from the move-sweep configuration at counter $r$ yields the move-sweep
+configuration at counter $r-1$.
 \end{lemma}
 
-\begin{lemma}[Finishing the move sweep]
+\begin{lemma}[Completion of the move sweep]
 \lean{Turing.FinTM.arMoveCfg_finish}
 \label{Turing.FinTM.arMoveCfg_finish}
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg, Turing.FinTM.arPending, Turing.FinTM.arPos, Turing.FinTM.arTM, Turing.MultiTapeTM.step}
 \difficulty{4}
-One transition of the binary block-code simulator applied to the move-sweep
-configuration (source configuration $c$, source action $a$) at counter $0$ yields the
-encoded configuration of the result of applying $a$ to $c$; in particular the
-simulator halts exactly when the next state of $a$ is absent.
+Let $\Gamma$ be a finite alphabet with decidable equality, let $N\in\mathbb{N}$, let $E$
+inject optional $\Gamma$-symbols into blocks of $N+1$ optional bits, and let
+$e:\{0,1\}\hookrightarrow\Gamma$ be an injection. For a finite Turing machine $M$ over
+$\Gamma$, a binary word $x$, a configuration $c$ on the input obtained by applying $e$
+letterwise to $x$, and an action $a$ of $M$, one step of the binary simulator from the
+move-sweep configuration at counter zero equals the encoded configuration of the result
+of applying $a$ to $c$.
 \end{lemma}
 
 \begin{lemma}[Running the move sweep]
@@ -485,9 +510,13 @@ simulator halts exactly when the next state of $a$ is absent.
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg, Turing.FinTM.arMoveCfg_finish, Turing.FinTM.arMoveCfg_step, Turing.FinTM.arTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step}
 \difficulty{4}
-For every counter $r \le N+1$, running the binary block-code simulator for $r+1$ steps
-from the move-sweep configuration (source configuration $c$, source action $a$) at
-counter $r$ reaches the encoded configuration of the result of applying $a$ to $c$.
+Let $\Gamma$ be a finite alphabet with decidable equality, let $N\in\mathbb{N}$, let $E$
+inject optional $\Gamma$-symbols into blocks of $N+1$ optional bits, and let
+$e:\{0,1\}\hookrightarrow\Gamma$ be an injection. For a finite Turing machine $M$ over
+$\Gamma$, a binary word $x$, a configuration $c$ on its letterwise $e$-image, and an
+action $a$ of $M$, for every $r\in\mathbb{N}$ with $r\le N+1$, running the binary
+simulator for $r+1$ steps from the move-sweep configuration at counter $r$ yields the
+encoded configuration of the result of applying $a$ to $c$.
 \end{lemma}
 
 \begin{lemma}[One step of the write sweep]
@@ -496,11 +525,14 @@ counter $r$ reaches the encoded configuration of the result of applying $a$ to $
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.ArState, Turing.FinTM.arCfg, Turing.FinTM.arPending, Turing.FinTM.arPos, Turing.FinTM.arTM, Turing.FinTM.arTail_update, Turing.FinTM.arWriteCfg, Turing.MultiTapeTM.step}
 \difficulty{4}
-For a counter $j \neq 0$, one transition of the binary block-code simulator applied to
-the write-sweep configuration (source configuration $c$, source action $a$) at counter
-$j$ yields the write-sweep configuration at counter $j-1$: on each tape the entry at
-offset $j$ of the code of the effective new symbol is written and the head moves one
-cell left.
+Let $\Gamma$ be a finite alphabet, $N\in\mathbb{N}$, let $E$ inject the symbols of
+$\Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:\{0,1\}\hookrightarrow\Gamma$ be an embedding. Let $M$ be a finite Turing machine
+over $\Gamma$, let $x$ be a Boolean input word, let $c$ be a configuration of $M$ on the
+letterwise $e$-image of $x$, and let $a$ be an action over $\Gamma$ with the same number
+of work tapes as $M$. For $j\in\{0,\ldots,N\}$ with $j\ne 0$, one step of the binary
+block-code simulator from the write-sweep configuration at counter $j$ equals the
+write-sweep configuration at counter $j-1$, for the same $c$ and $a$.
 \end{lemma}
 
 \begin{lemma}[Finishing the write sweep]
@@ -509,11 +541,14 @@ cell left.
 \leanok
 \uses{Turing.Action, Turing.Action.apply, Turing.Action.apply_workTapes, Turing.Cfg, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg, Turing.FinTM.arPending, Turing.FinTM.arPos, Turing.FinTM.arTM, Turing.FinTM.arTail_update, Turing.FinTM.arTail_zero, Turing.FinTM.arTape, Turing.FinTM.arWriteCfg, Turing.MultiTapeTM.step}
 \difficulty{5}
-One transition of the binary block-code simulator applied to the write-sweep
-configuration (source configuration $c$, source action $a$) at counter $0$ writes the
-last code entry in place and yields the move-sweep configuration at counter $N+1$: the
-work tapes now hold the complete blockwise coding of the tapes of the result of
-applying $a$ to $c$.
+Let $\Gamma$ be a finite alphabet, let $N\in\mathbb{N}$, let $E$ inject the symbols of
+$\Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:\{0,1\}\hookrightarrow\Gamma$ be an embedding. Let $M$ be a finite Turing machine
+over $\Gamma$, let $x$ be a Boolean input word, let $c$ be a configuration of $M$ on the
+letterwise $e$-image of $x$, and let $a$ be an action over $\Gamma$ with the same number
+of work tapes as $M$. One step of the binary block-code simulator from the write-sweep
+configuration at counter $0$ equals the move-sweep configuration at counter $N+1$, for
+the same $c$ and $a$.
 \end{lemma}
 
 \begin{lemma}[Running the write sweep]
@@ -522,110 +557,270 @@ applying $a$ to $c$.
 \leanok
 \uses{Turing.Action, Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arMoveCfg, Turing.FinTM.arTM, Turing.FinTM.arWriteCfg, Turing.FinTM.arWriteCfg_finish, Turing.FinTM.arWriteCfg_step, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step}
 \difficulty{4}
-For every counter $j \le N$, running the binary block-code simulator for $j+1$ steps
-from the write-sweep configuration (source configuration $c$, source action $a$) at
-counter $j$ reaches the move-sweep configuration at counter $N+1$.
+Let $\Gamma$ be a finite alphabet, $N\in\mathbb{N}$, let $E$ inject the symbols of
+$\Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:\{0,1\}\hookrightarrow\Gamma$ be an embedding. Let $M$ be a finite Turing machine
+over $\Gamma$, let $x$ be a Boolean input word, let $c$ be a configuration of $M$ on the
+letterwise $e$-image of $x$, and let $a$ be an action over $\Gamma$ with the same number
+of work tapes as $M$. For every $j\in\mathbb{N}$ with $j\le N$, running the binary
+block-code simulator for $j+1$ steps from the write-sweep configuration at counter $j$
+reaches the move-sweep configuration at counter $N+1$, for the same $c$ and $a$.
 \end{lemma}
 
-\begin{lemma}[Dispatch step between the read and write sweeps]
+\begin{lemma}[Dispatch from reading to writing]
 \lean{Turing.FinTM.arReadCfg_dispatch}
 \label{Turing.FinTM.arReadCfg_dispatch}
 \leanok
 \uses{Turing.Action.apply, Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arBuffer_full, Turing.FinTM.arCfg, Turing.FinTM.arCfg_input, Turing.FinTM.arDecode_code, Turing.FinTM.arPos, Turing.FinTM.arReadCfg, Turing.FinTM.arTM, Turing.FinTM.arTail_full, Turing.FinTM.arWriteCfg, Turing.MultiTapeTM.step, Turing.moveInputPos}
 \difficulty{5}
-Let $M$ be a Turing machine over a finite alphabet $\Gamma$, $c$ a configuration of $M$
-on the letterwise $e$-image of a binary string, and $q$ a source state. One transition
-of the binary block-code simulator applied to the read-sweep configuration of $c$ at
-the full counter $N+1$ (all blocks buffered) yields the write-sweep configuration at
-counter $N$ for the action produced by the transition function of $M$ on the state $q$,
-the input symbol scanned by $c$, and the work-tape symbols scanned by $c$: the buffers
-are decoded, the input head moves and any emission is bit-decoded and emitted, and each
-work head steps left onto the last entry of its block.
+Let $\Gamma$ be a finite alphabet, let $E$ inject the symbols of $\Gamma$ together with
+blank into blocks of $N+1$ optional bits, and let $e$ embed the binary alphabet into
+$\Gamma$. For a machine $M$ over $\Gamma$, a binary input $x$, a configuration $c$ of
+$M$ on the letterwise $e$-image of $x$, and a state $q$ of $M$, one step of the binary
+block-code simulator from the read-sweep configuration of $c$ at counter $N+1$ is the
+write-sweep configuration for the action prescribed by $M$ at state $q$, using the input
+and work-tape symbols scanned by $c$, with write counter $N$.
 \end{lemma}
 
-\begin{lemma}[One macro cycle simulates one source step]
+\begin{lemma}[One simulator cycle]
 \lean{Turing.FinTM.arCfg_cycle}
 \label{Turing.FinTM.arCfg_cycle}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg_run, Turing.FinTM.arReadCfg, Turing.FinTM.arReadCfg_dispatch, Turing.FinTM.arReadCfg_run, Turing.FinTM.arTM, Turing.FinTM.arWriteCfg_run, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
 \difficulty{5}
-Let $M$ be a Turing machine over a finite alphabet $\Gamma$ and $c$ a configuration of
-$M$ on the letterwise $e$-image of a binary string. Running the binary block-code
-simulator for $3(N+1)+2$ steps from the encoded configuration of $c$ yields the
-encoded configuration of the result of one step of $M$ from $c$; when $c$ is halted
-both encoded configurations are fixed points, so the identity holds in that case as
-well.
+Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $[0m[0m\Gamma$
+symbols as blocks of $N+1$ optional bits, and let $e:\{0,1\}\hookrightarrow\Gamma$ be an
+embedding. For a finite-state $k$-tape machine $M$, a binary input $x$, and a
+configuration $c$ of $M$ on the letterwise $e$-image of $x$, running the binary
+block-code simulator for $3(N+1)+2$ steps from the encoding of $c$ yields the encoding
+of the configuration after one step of $M$ from $c$.
 \end{lemma}
 
-\begin{lemma}[Running the simulator for many macro cycles]
+\begin{lemma}[Simulation over multiple cycles]
 \lean{Turing.FinTM.arCfg_run}
 \label{Turing.FinTM.arCfg_run}
 \leanok
 \uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arCfg_cycle, Turing.FinTM.arTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.runFrom_zero}
 \difficulty{4}
-Let $M$ be a Turing machine over a finite alphabet $\Gamma$ and $c$ a configuration of
-$M$ on the letterwise $e$-image of a binary string. For every $t \in \mathbb{N}$,
-running the binary block-code simulator for $(3(N+1)+2)\cdot t$ steps from the encoded
-configuration of $c$ yields the encoded configuration of the configuration reached by
-$M$ after $t$ steps from $c$.
+Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $[0m[0m\Gamma$
+symbols as blocks of $N+1$ optional bits, and let $e:\{0,1\}\hookrightarrow\Gamma$ be an
+embedding. For a finite-state $k$-tape machine $M$, a binary input $x$, a configuration
+$c$ of $M$ on the letterwise $e$-image of $x$, and $t\in\mathbb{N}$, running the binary
+block-code simulator for $(3(N+1)+2)t$ steps from the encoding of $c$ yields the
+encoding of the configuration reached after $t$ steps of $M$ from $c$.
 \end{lemma}
 
-\begin{lemma}[Encoding of the initial configuration]
+\begin{lemma}[Encoding the initial configuration]
 \lean{Turing.FinTM.arCfg_init}
 \label{Turing.FinTM.arCfg_init}
 \leanok
 \uses{Turing.Cfg.init, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arPos, Turing.FinTM.arTM, Turing.FinTM.arTape, Turing.MultiTapeTM.initCfg}
 \difficulty{3}
-Suppose the injective block code $E$ sends the blank to the all-blank block. Then for
-every Turing machine $M$ over a finite alphabet $\Gamma$, every bit embedding
-$e : \{0,1\} \hookrightarrow \Gamma$, and every binary string $x$, the initial
-configuration of the binary block-code simulator on input $x$ equals the encoded
+Let $\Gamma$ be a finite alphabet, let $E$ injectively code optional $[0m[0m\Gamma$
+symbols as blocks of $N+1$ optional bits, and suppose the blank symbol is coded as the
+all-blank block. Let $e:\{0,1\}\hookrightarrow\Gamma$ be an embedding, $M$ a
+finite-state $k$-tape machine over $\Gamma$, and $x$ a binary input. The initial
+configuration of the binary block-code simulator on $x$ equals the encoding of the
 initial configuration of $M$ on the letterwise $e$-image of $x$.
 \end{lemma}
 
-\begin{lemma}[Emitted symbols lie in the bit embedding's image]
+\begin{lemma}[Emitted symbols lie in the embedding image]
 \lean{Turing.FinTM.arEmission_in_image}
 \label{Turing.FinTM.arEmission_in_image}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesFunInTimeVia, Turing.FinTM.computesInTime_iff, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.outputSymbol, Turing.MultiTapeTM.outputSymbol_of_halt, Turing.MultiTapeTM.output_prefix, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_add, Turing.MultiTapeTM.runFrom_of_halt, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step_output}
 \difficulty{5}
-Let $M$ be a Turing machine over an alphabet $\Gamma$ and $e : \{0,1\}
-\hookrightarrow \Gamma$ a bit embedding, and suppose $M$ computes the string function
-$f : \{0,1\}^* \to \{0,1\}^*$ via $e$ within time $T$: for every binary string $x$,
-the run of $M$ on the letterwise $e$-image of $x$ halts within $T(\abs{x})$ steps with
-output the letterwise $e$-image of $f(x)$. If, in the run of $M$ on the $e$-image of
-some binary input $x$, the transition taken from the configuration reached after $t$
-steps emits a symbol $a \in \Gamma$, then $a = e(b)$ for some bit $b$.
+Let $\Gamma$ be a type with decidable equality, let $e:\{0,1\}\hookrightarrow\Gamma$ be
+an injection, and let $M$ be a finite Turing machine over $\Gamma$. Suppose that for
+every binary word $x$, the machine on the letterwise $e$-image of $x$ halts within
+$T(|x|)$ steps with the letterwise $e$-image of $f(x)$ as output. If, after $t$ steps on
+the input obtained from a binary word $x$ by applying $e$ letterwise, the machine's next
+transition emits a symbol $a\in\Gamma$, then $a=e(b)$ for some $b\in\{0,1\}$.
 \end{lemma}
 
-\begin{lemma}[The simulator computes with constant-factor slowdown]
+\begin{lemma}[Simulation time bound]
 \lean{Turing.FinTM.arTM_computes}
 \label{Turing.FinTM.arTM_computes}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.ComputesInTime, Turing.FinTM.arBit_embed, Turing.FinTM.arCfg, Turing.FinTM.arCfg_init, Turing.FinTM.arCfg_run, Turing.FinTM.arTM, Turing.FinTM.computesInTime_iff}
 \difficulty{3}
-Let $\Gamma$ be a finite alphabet, $E$ an injective block code of $\Gamma \cup
-\{\text{blank}\}$ into blocks of $N+1$ optional bits that sends the blank to the
-all-blank block, $e : \{0,1\} \hookrightarrow \Gamma$ a bit embedding, and $M$ a
-Turing machine over $\Gamma$. If, started on the letterwise $e$-image of a binary
-string $x$, $M$ halts within $t$ steps with output the letterwise $e$-image of a
-binary string $w$, then the binary block-code simulator, started on the input $x$
-itself, halts within $(3(N+1)+2)\cdot t$ steps with output $w$.
+Let $Gamma$ be a finite alphabet, let $Ninmathbb{N}$, let $E$ inject the symbols of
+$Gamma$ together with blank into blocks of $N+1$ optional bits and encode blank by the
+all-blank block, and let $e:{0,1}hookrightarrowGamma$ be an embedding. If a machine
+$M$ on the letterwise $e$-image of a binary word $x$ halts after exactly $t$ steps,
+outputs the letterwise $e$-image of a binary word $w$, and uses some amount of space,
+then the binary simulator on input $x$ computes output $w$ at time $(3(N+1)+2)t$.
 \end{lemma}
 
-\begin{theorem}[Alphabet reduction]
+\begin{theorem}[Reduction to the binary alphabet]
 \lean{Turing.FinTM.alphabet_reduction}
 \label{Turing.FinTM.alphabet_reduction}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesFunInTimeVia, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.arCode, Turing.FinTM.arTM, Turing.FinTM.arTM_computes}
 \difficulty{2}
-[AB09, Claim 1.5]. Let $\Gamma$ be a finite alphabet, $e : \{0,1\} \hookrightarrow
-\Gamma$ an embedding of the two bits, $M$ a Turing machine over $\Gamma$ (with a
-read-only input tape, a write-only output tape, and $k$ work tapes), $f$ a function on
-binary strings, and $T : \mathbb{N} \to \mathbb{N}$. Suppose $M$ computes $f$ via $e$
-within time $T$: for every binary string $x$, the run of $M$ on the letterwise
-$e$-image of $x$ halts within $T(\abs{x})$ steps with output the letterwise $e$-image
-of $f(x)$. Then there exist a constant $c \in \mathbb{N}$ and a Turing machine $M'$
-over the binary alphabet with the same number $k$ of work tapes such that $M'$
-computes $f$ within time $n \mapsto c\,(T(n)+1)$.
+Let $\Gamma$ be a finite alphabet, let $e:\{0,1\}\hookrightarrow\Gamma$ be an embedding,
+let $M$ be a finite Turing machine over $\Gamma$, and let $f$ map binary strings to
+binary strings. Let $T:\mathbb{N}\to\mathbb{N}$. Suppose that on every binary input $x$,
+$M$ computes the letterwise $e$-image of $f(x)$ from the letterwise $e$-image of $x$
+within $T(|x|)$ steps. Then there are a natural number $c$ and a finite binary-alphabet
+machine $M'$ with the same number of work tapes as $M$ such that $M'$ computes $f$
+within $n\mapsto c(T(n)+1)$ steps.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{definition}[Phases in the space simulation]
+\lean{Turing.FinTM.arSpacePhase}
+\label{Turing.FinTM.arSpacePhase}
+\leanok
+\uses{Turing.Cfg, Turing.Cfg.inputSymbol, Turing.Cfg.workTapeSymbols, Turing.FinTM.ArBlock, Turing.FinTM.ArState, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg, Turing.FinTM.arReadCfg, Turing.FinTM.arWriteCfg, Turing.MultiTapeTM}
+Let $\Gamma$ be a symbol alphabet with decidable equality, let $N$ and $k$ be
+nonnegative integers, let $Q$ be a state type, let $E$ embed the optional symbols of
+$\Gamma$ into blocks of $N+1$ optional bits, and let $e$ embed bits into $\Gamma$. Given
+a $k$-tape Turing machine over $\Gamma$ with state set $Q$, an input bit string $x$, a
+configuration $c$ of that machine on the encoded input $e(x)$, and a configuration $d$
+of the simulator on $x$, the predicate holds exactly when either $d$ is the encoded
+configuration corresponding to $c$, or $c$ has a state $q$ and $d$ is one of the
+simulator configurations obtained by reading the encoded tape contents, writing the
+encoded transition's tape symbols, or moving the heads according to that transition.
+\end{definition}
+
+\begin{lemma}[Simulator phase after one step]
+\lean{Turing.FinTM.arSpacePhase_step}
+\label{Turing.FinTM.arSpacePhase_step}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.ArState, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg_finish, Turing.FinTM.arMoveCfg_step, Turing.FinTM.arReadCfg_dispatch, Turing.FinTM.arReadCfg_step, Turing.FinTM.arReadCfg_zero, Turing.FinTM.arSpacePhase, Turing.FinTM.arTM, Turing.FinTM.arWriteCfg_finish, Turing.FinTM.arWriteCfg_step, Turing.MultiTapeTM.step, Turing.MultiTapeTM.step_of_halt}
+\difficulty{6}
+Let $Gamma$ be a finite alphabet, let $N,kinmathbb{N}$, let $E$ inject the symbols of
+$Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:{0,1}hookrightarrowGamma$ be an embedding. For a machine $M$ over $Gamma$, a
+binary input $x$, a source configuration $c$ on its letterwise $e$-image, and a
+simulator configuration $d$ that is in a phase associated with $c$, the simulator's next
+configuration is either still in a phase associated with $c$, or is in a phase
+associated with the next source configuration, with the relevant source transition taken
+from the state of $c$.
+\end{lemma}
+
+\begin{lemma}[Simulator phase along a run]
+\lean{Turing.FinTM.arSpacePhase_run}
+\label{Turing.FinTM.arSpacePhase_run}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arSpacePhase, Turing.FinTM.arSpacePhase_step, Turing.FinTM.arTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step'}
+\difficulty{4}
+Let $Gamma$ be a finite alphabet, let $N,kinmathbb{N}$, let $E$ inject the symbols of
+$Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:{0,1}hookrightarrowGamma$ be an embedding. For a machine $M$ over $Gamma$, a
+binary input $x$, and a configuration $c$ of $M$ on the letterwise $e$-image of $x$, for
+every $tinmathbb{N}$ there are $sle t$ such that the simulator's configuration after
+$t$ steps is either the encoding of $M$'s configuration after $s$ steps, or is in a
+reading, writing, or moving phase associated with that source configuration and some
+nonhalting source state.
+\end{lemma}
+
+\begin{lemma}[Head positions during the move sweep]
+\lean{Turing.FinTM.arMoveCfg_position}
+\label{Turing.FinTM.arMoveCfg_position}
+\leanok
+\uses{Turing.Action, Turing.Action.apply, Turing.Cfg, Turing.FinTM.ArBlock, Turing.FinTM.arMoveCfg, Turing.FinTM.arPos}
+\difficulty{4}
+Let $\Gamma$ be a type with decidable equality, let $N,k\in\mathbb{N}$, let $E$ inject
+optional $\Gamma$-symbols into blocks of $N+1$ optional bits, and let
+$e:\{0,1\}\hookrightarrow\Gamma$ be an injection. For a binary word $x$, a configuration
+$c$ on its letterwise $e$-image, an action $a$, a move-sweep counter
+$r\in\{0,\ldots,N+1\}$, and a work tape $i<k$, the head position in the move-sweep
+configuration is either the position with block index equal to the original head
+position and some offset $j\le N+1$, or the position with block index equal to the head
+position after applying $a$ and some offset $j\le N+1$.
+\end{lemma}
+
+\begin{lemma}[Simulator head positions lie in encoded blocks]
+\lean{Turing.FinTM.arTM_position_visited}
+\label{Turing.FinTM.arTM_position_visited}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arMoveCfg_position, Turing.FinTM.arPos, Turing.FinTM.arSpacePhase_run, Turing.FinTM.arTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.step}
+\difficulty{5}
+Let $Gamma$ be a finite alphabet, let $N,kinmathbb{N}$, let $E$ inject the symbols of
+$Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:{0,1}hookrightarrowGamma$ be an embedding. For a machine $M$ over $Gamma$, a
+binary input $x$, a source configuration $c$ on its letterwise $e$-image, a time
+$tinmathbb{N}$, and a work tape $i$, there are $sle t+1$ and $jle N+1$ such that the
+simulator's head position on tape $i$ at time $t$ is $(N+1)$ times the source head
+position on tape $i$ at time $s$, plus $j$.
+\end{lemma}
+
+\begin{definition}[Integer Space Block]
+\lean{Turing.FinTM.arSpaceBlock}
+\label{Turing.FinTM.arSpaceBlock}
+\leanok
+\uses{Turing.FinTM.arPos}
+For $N \in \mathbb{N}$ and $z \in \mathbb{Z}$, write $a_{N,z}(k)$ for the integer
+position obtained from $N$, $z$, and $k$. The space block associated with $N$ and $z$ is
+the set of integers in the inclusive interval from $a_{N,z}(0)$ to $a_{N,z}(N+1)$.
+\end{definition}
+
+\begin{lemma}[Cardinality of a block interval]
+\lean{Turing.FinTM.arSpaceBlock_card}
+\label{Turing.FinTM.arSpaceBlock_card}
+\leanok
+\uses{Turing.FinTM.arPos, Turing.FinTM.arSpaceBlock}
+\difficulty{3}
+For every natural number $N$ and integer $z$, the interval of integers from $(N+1)z$
+through $(N+1)z+N+1$, inclusive, has cardinality $N+2$.
+\end{lemma}
+
+\begin{lemma}[Intersection of neighboring block intervals]
+\lean{Turing.FinTM.arSpaceBlock_inter}
+\label{Turing.FinTM.arSpaceBlock_inter}
+\leanok
+\uses{Turing.FinTM.arPos, Turing.FinTM.arSpaceBlock}
+\difficulty{4}
+For every natural number $N$ and integers $p,q$ with $|p-q|\le 1$, the intervals from
+$(N+1)p$ through $(N+1)p+N+1$ and from $(N+1)q$ through $(N+1)q+N+1$, inclusive, have
+nonempty intersection.
+\end{lemma}
+
+\begin{lemma}[Cardinality bound for block coverage]
+\lean{Turing.FinTM.arSpaceCover_card}
+\label{Turing.FinTM.arSpaceCover_card}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM.arSpaceBlock, Turing.FinTM.arSpaceBlock_card, Turing.FinTM.arSpaceBlock_inter, Turing.MultiTapeTM, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.runFrom_succ_eq_step', Turing.MultiTapeTM.spaceUsedByTape, Turing.MultiTapeTM.visitedByTapeHead, Turing.MultiTapeTM.workTapePos_step_le}
+\difficulty{6}
+Let $\Gamma$ and $Q$ be types, let $k$ be a natural number, let $x$ be a finite input
+over $\Gamma$, and let $M$ be a $k$-work-tape machine with state type $Q$. For any
+configuration $c$, work-tape index $i$, and natural numbers $N,t$, the union of the
+block intervals indexed by the tape-head positions visited from $c$ through step $t$ has
+cardinality at most $(N+1)$ times the number of distinct positions visited, plus one.
+\end{lemma}
+
+\begin{lemma}[Simulator space bound]
+\lean{Turing.FinTM.arTM_spaceUsed}
+\label{Turing.FinTM.arTM_spaceUsed}
+\leanok
+\uses{Turing.Cfg, Turing.FinTM, Turing.FinTM.ArBlock, Turing.FinTM.arCfg, Turing.FinTM.arPos, Turing.FinTM.arSpaceBlock, Turing.FinTM.arSpaceCover_card, Turing.FinTM.arTM, Turing.FinTM.arTM_position_visited, Turing.MultiTapeTM.runFrom, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape, Turing.MultiTapeTM.visitedByTapeHead}
+\difficulty{5}
+Let $Gamma$ be a finite alphabet, let $N,kinmathbb{N}$, let $E$ inject the symbols of
+$Gamma$ together with blank into blocks of $N+1$ optional bits, and let
+$e:{0,1}hookrightarrowGamma$ be an embedding. For a machine $M$ over $Gamma$, a
+binary input $x$, a source configuration $c$ on its letterwise $e$-image, and
+$tinmathbb{N}$, the simulator's space used through time $t$ is at most $(N+1)$ times
+the source machine's space used through time $t+1$, plus the number $k$ of work tapes.
+\end{lemma}
+
+\begin{theorem}[Alphabet reduction with a space bound]
+\lean{Turing.FinTM.alphabet_reduction_spaceUsed}
+\label{Turing.FinTM.alphabet_reduction_spaceUsed}
+\leanok
+\uses{Turing.FinTM, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesFunInTimeVia, Turing.FinTM.ComputesInTime.mono, Turing.FinTM.arCfg_init, Turing.FinTM.arCode, Turing.FinTM.arTM, Turing.FinTM.arTM_computes, Turing.FinTM.arTM_spaceUsed, Turing.MultiTapeTM.initCfg, Turing.MultiTapeTM.spaceUsed, Turing.MultiTapeTM.spaceUsedByTape, Turing.MultiTapeTM.visitedByTapeHead}
+\difficulty{4}
+Let $\Gamma$ be a finite alphabet, let $e:\{0,1\}\hookrightarrow\Gamma$ be an embedding,
+let $M$ be a finite Turing machine over $\Gamma$, let $f$ map binary strings to binary
+strings, and let $T,S:\mathbb{N}\to\mathbb{N}$. Suppose that on every binary input $x$,
+$M$ computes the letterwise $e$-image of $f(x)$ from the letterwise $e$-image of $x$
+within $T(|x|)$ steps. Suppose also that on every input word $y$ over $\Gamma$ and at
+every time $t$, the space used by $M$ from its initial configuration on $y$ is at most
+$S(|y|)$. Then there are a natural number $c$ and a finite binary-alphabet machine $M'$
+with the same number of work tapes as $M$ such that $M'$ computes $f$ within $n\mapsto
+c(T(n)+1)$ steps and, on every binary input $x$ and at every time $t$, uses at most
+$c(S(|x|)+1)$ space.
 \end{theorem}

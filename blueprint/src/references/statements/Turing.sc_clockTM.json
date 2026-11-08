@@ -1,0 +1,12 @@
+{
+ "lean_name": "Turing.sc_clockTM",
+ "key": "9694dfc10002cf10",
+ "kind": "def",
+ "title": "Clocked machine construction",
+ "statement": "Given an alphabet embedding that marks emitted symbols, a $k$-work-tape machine $M$, and a Boolean stopping predicate on its states, construct a machine with $k+1$ work tapes and the clock simulation states. Its initial state is the finish state carrying no body state. In a decrement state, if the phase is run and the stopping predicate holds, it enters the finish state carrying the current body state; otherwise it performs the embedded decrement-machine transition and maps its successor state through the decrement-phase exit map. In a body state it performs the embedded transition of $M$ and maps the result to the clock simulation states. In finish and timeout states it stays in the same state without moving heads, writing symbols, or emitting output.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

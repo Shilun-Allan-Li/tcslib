@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.nsem_copy",
+ "key": "0648dffce697bb5c",
+ "kind": "theorem",
+ "title": "Semantics of copying a register",
+ "statement": "Let $A$ be a nondeterministic register program with $m$ registers, oracle family $O$, input $x$, and space bound $B$. Let $\\mathrm{dst}$ and $\\mathrm{src}$ be distinct registers, and suppose the instruction at $\\mathrm{test}$ compares them, branching to $\\mathrm{ex}$ on equality and to $\\mathrm{bump}$ otherwise, while the instruction at $\\mathrm{bump}$ increments $\\mathrm{dst}$ and returns to $\\mathrm{test}$. If every current register value is at most $B$ and $v(\\mathrm{dst})\\le v(\\mathrm{src})$, then for any proposition $P$, terminating semantics under the register bound $B$ and acceptance equivalent to $P$ at the configuration with $\\mathrm{dst}$ replaced by $v(\\mathrm{src})$ imply the same semantics at the original configuration $(\\mathrm{test},v,\\mathrm{none})$.",
+ "hypotheses_covered": [
+  "$\\mathrm{dst}$ and $\\mathrm{src}$ are distinct registers",
+  "The instruction at $\\mathrm{test}$ compares them, branching to $\\mathrm{ex}$ on equality and $\\mathrm{bump}$ otherwise",
+  "The instruction at $\\mathrm{bump}$ increments $\\mathrm{dst}$ and returns to $\\mathrm{test}$",
+  "Every current register value is at most $B$",
+  "$v(\\mathrm{dst})\\le v(\\mathrm{src})$",
+  "The configuration with $\\mathrm{dst}$ replaced by $v(\\mathrm{src})$ has terminating semantics under the register bound $B$ and acceptance equivalent to $P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.abs_integral_gaussianPDFReal_mul_le",
+ "key": "b123fb031d5627c4",
+ "kind": "lemma",
+ "title": "Gaussian density integral bound",
+ "statement": "Let $v$ be a nonzero nonnegative real number, let $c\\in\\mathbb R$, and let $g,b:\\mathbb R\\to\\mathbb R$. Suppose $b$ is integrable with respect to the Gaussian measure of mean $c$ and variance $v$, and $|g(z)|\\le b(z)$ for every $z$. Then \\[\\left|\\int_{\\mathbb R}p_{c,v}(z)g(z)\\,dz\\right|\\le\\int_{\\mathbb R}b(z)\\,dN(c,v)(z),\\] where $p_{c,v}$ is the Gaussian density and $N(c,v)$ is that Gaussian measure.",
+ "hypotheses_covered": [
+  "$v$ is a nonzero nonnegative real number",
+  "$c\\in\\mathbb R$",
+  "$b$ is integrable with respect to the Gaussian measure of mean $c$ and variance $v$",
+  "$|g(z)|\\le b(z)$ for every $z\\in\\mathbb R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $v>0$ and $p_v(c,z)=(2\\pi v)^{-1/2}\\exp(-(z-c)^2/(2v))$. Let $c\\in\\mathbb R$ and $g,b:\\mathbb R\\to\\mathbb R$. If $b$ is integrable for $N(c,v)$ and $|g(z)|\\le b(z)$ for every $z$, then $|\\int p_v(c,z)g(z)\\,dz|\\le\\int b(z)\\,dN(c,v)(z)$, with a nonintegrable integral on the left assigned value zero."
+}

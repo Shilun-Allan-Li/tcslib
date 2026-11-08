@@ -1,0 +1,29 @@
+{
+ "lean_name": "Turing.FinTM.a2_call_prefix",
+ "key": "361be58134cee635",
+ "kind": "lemma",
+ "title": "Head bounds during a captured loop prefix",
+ "statement": "Let $B,t$ be natural numbers, let $\\mathrm{body}$ and $F$ be finite Turing machines over the Boolean alphabet, let $a$ be a state of $\\mathrm{body}$, and let $x$ be a Boolean word. Take a Boolean value $\\mathrm{startup}$, a configuration $c$ of $\\mathrm{body}$ on $x$, a Boolean value $\\mathrm{release}$, a Boolean word $\\mathrm{word}$, and a configuration $\\mathrm{fuel}$ of $F$ on $x$. Assume that $c$ is not halted, all its work-tape heads start at position zero, the computation from $c$ is not halted at any time $u<t$, and for every $u<t$ either $u=0$ and $\\mathrm{release}$ is true or the state at time $u$ is not $a$. Assume also that the computation from $c$ uses at most $B$ work-tape cells through every time $u\\le t$, all work-tape heads of $\\mathrm{fuel}$ lie in $[-B,B]$, and the output at time $t$ has length at most $B$. Then throughout every time $u\\le t$, every work-tape head in the loop host computation started from the captured call with startup value $\\mathrm{startup}$, release value $\\mathrm{release}$, no flag, word $\\mathrm{word}$, and fuel configuration $\\mathrm{fuel}$ lies in $[-B,B]$.",
+ "hypotheses_covered": [
+  "natural numbers $t,B$",
+  "finite Boolean machines $\\mathrm{body}$ and $F$",
+  "state $a$ of $\\mathrm{body}$",
+  "Boolean input word $x$",
+  "Boolean value $\\mathrm{startup}$",
+  "configuration $c$ of $\\mathrm{body}$ on $x$",
+  "Boolean value $\\mathrm{release}$",
+  "Boolean word $\\mathrm{word}$",
+  "configuration $\\mathrm{fuel}$ of $F$ on $x$",
+  "$c$ is not halted",
+  "all heads in $c$ start at zero",
+  "the body computation is not halted for every $u<t$",
+  "for every $u<t$, either $u=0$ and release is true, or the body state at time $u$ is not $a$",
+  "space used by the body computation through every $u\\le t$ is at most $B$",
+  "all fuel heads lie in $[-B,B]$",
+  "body output length at time $t$ is at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

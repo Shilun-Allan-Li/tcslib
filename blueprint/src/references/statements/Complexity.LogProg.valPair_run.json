@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.valPair_run",
+ "key": "145fc42bb89462ca",
+ "kind": "lemma",
+ "title": "Validation of a paired input",
+ "statement": "Let $P$ be a register program with oracle $\\mathcal O$, $r$ a register, $p\\in\\mathbb Z$, and $c$ a machine configuration on input $x$. Assume the program's transitions at the specified states implement the prescribed validation procedure: the states $vU0,vU1,vS,vP1,vP2,vW0,vWF,vWT,rw_1,rw_2$ have the transition identities $hU0,hU1,hS,hP1,hP2,hW0,hWF,hWT,h_1,h_2$, respectively, and none of these states is an oracle-call state, as expressed by $cU0,cU1,cS,cP1,cP2,cW0,cWF,cWT,c_1,c_2$. Then, if $x$ is a valid paired encoding, the run from the configuration based on $c$ at state $vU0$, input-head position $1$, and register-head position $p$ reaches the corresponding configuration at state $next$, input-head position $1$, and register-head position $p$. If $x$ is not a valid paired encoding, that run instead halts with a rejecting output, preserving the indicated register-head positions and avoiding oracle-call states before halting.",
+ "hypotheses_covered": [
+  "Specified transition identities hU0, hU1, hS, hP1, hP2, hW0, hWF, hWT, h₁, and h₂",
+  "No oracle calls at the specified states, as asserted by cU0, cU1, cS, cP1, cP2, cW0, cWF, cWT, c₁, and c₂",
+  "c is a configuration on input x",
+  "r is a register and p is an integer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

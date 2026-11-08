@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.eqB_run",
+ "key": "e51ec92de3db6718",
+ "kind": "lemma",
+ "title": "Run through a binary register",
+ "statement": "Let $P$ be a register program with oracle, and let $r_1,r_2$ be distinct registers. Suppose the transition at state $e_B$ performs the binary comparison step for $r_1$, leading to $l$ when the scanned bit is blank and otherwise moving left while remaining at $e_B$, and suppose $e_B$ is not a call state. If the contents of register $r_1$ initially store the word $w_1$, then for every natural number $n$ and integer $p$ with $p+1=n$ and $p<|w_1|$, running for $n+1$ steps from state $e_B$ with both register heads at position $p$ reaches state $l$ with both heads at position zero. At every earlier time $t<n+1$, the configuration has state $e_B$ and both heads at some integer position $q$ with $-1\\le q\\le p$.",
+ "hypotheses_covered": [
+  "Registers $r_1$ and $r_2$ are distinct",
+  "Transition at $e_B$ has the specified binary-comparison behavior",
+  "$e_B$ is not a call state",
+  "Register $r_1$ stores $w_1$",
+  "$p+1=n$",
+  "$p<|w_1|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

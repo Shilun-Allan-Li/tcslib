@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.embedEmitCfg",
+ "key": "dc3ba9d4c3ce5119",
+ "kind": "def",
+ "title": "Embedding an Emitting Configuration",
+ "statement": "Let $m,k$ be nonnegative integers, let $\\iota$ be an injective map from the $m$ work-tape indices into the $k$ work-tape indices, and choose tape contents $T_j:\\mathbb Z\\to\\mathrm{Option}(\\mathrm{Symbol})$ and head positions $h_j\\in\\mathbb Z$ for the $k$ tapes. Given a symbol list $p$ and an $m$-tape configuration $C$ on input $x$, form a $k$-tape configuration on the same input. It keeps $C$’s state and input-head position, places each of its work tapes and heads at the index specified by $\\iota$, uses $T_j$ and $h_j$ at every unused index, and has output equal to the concatenation of $p$ and $C$’s output.",
+ "hypotheses_covered": [
+  "Natural numbers $m,k$ of work tapes",
+  "An injection from the $m$ tape indices into the $k$ tape indices",
+  "Supplied tape contents and head positions for the $k$ tapes",
+  "A prefix list",
+  "An $m$-tape configuration on the fixed input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

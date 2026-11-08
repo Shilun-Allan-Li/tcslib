@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.copy_input_payload",
+ "key": "2af8ba60dad5dd93",
+ "kind": "lemma",
+ "title": "Payload at the Input Head",
+ "statement": "Let $S$ be a type, let $k$ be a natural number, let $x$ be a Boolean word, and let $c$ be a configuration with $k$ work tapes on the input obtained by embedding each bit of $x$ into the simulation alphabet. Suppose $j\\le |x|$ and the input head of $c$ is at position $j+1$. The pair whose content is the decoded clock bit of the symbol read and whose tag is $2$ when that read is blank and $0$ otherwise equals the virtual input payload of $x$ at coordinate $j$.",
+ "hypotheses_covered": [
+  "$S$ is a type",
+  "$k$ is a natural number",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration on the letterwise embedded input, with $k$ work tapes",
+  "$j\\le |x|$",
+  "The input-head position is $j+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary word embedded into the simulation alphabet and let a\nconfiguration on the embedded input have its input head at position $j + 1$ with\n$j \\le |x|$.  Then the payload whose content is the clock-bit decoding of the\ninput read and whose tag is the right-boundary tag $2$ when the read is blank\nand the ordinary tag $0$ otherwise is exactly the virtual input payload of $x$\nat position $j$."
+}

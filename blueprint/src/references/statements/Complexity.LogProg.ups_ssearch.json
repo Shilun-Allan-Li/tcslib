@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ups_ssearch",
+ "key": "01e48c66033d9abb",
+ "kind": "lemma",
+ "title": "Candidate Search Loop Invariant",
+ "statement": "Let $x$ be a Boolean string, $B$ a natural-number register bound, and $q$ a rational number. For every natural number $dd$ and register state $\\sigma$, suppose the vertex count minus the candidate counter, with truncated natural subtraction, equals $dd$; every register is at most $B$; the candidate counter $u$ is at most the vertex count $n$; the current-vertex register is zero; and the saved pointer $q_0$ plus $2n+2$ is at most $B$. For every $j\\ge u$ with $j<n$, if the binary expansion of $j$ is doubled at position $q_0$ in $x$, then the configuration at the specified state with candidate and current-vertex registers set to $j$, pointer set to $q_0+2|\\mathrm{bits}(j)|+2$, and scratch register cleared has probabilistic semantics with acceptance probability $q$. If there is no $j$ with $u\\le j<n$ whose binary expansion is doubled at position $q_0$ in $x$, then $q=0$. The configuration at the search-loop state with register state $\\sigma$ has probabilistic semantics with acceptance probability $q$.",
+ "hypotheses_covered": [
+  "Boolean-string input $x$",
+  "natural-number bound $B$",
+  "rational number $q$",
+  "natural number $dd$",
+  "truncated difference of vertex count and candidate counter equals $dd$",
+  "all registers are at most $B$",
+  "candidate counter is at most vertex count",
+  "current-vertex register equals zero",
+  "saved pointer plus twice the vertex count plus two is at most $B$",
+  "for every $j$ at least the candidate counter and less than the vertex count, if its binary expansion is doubled at the saved pointer, the specified configuration has probabilistic semantics with acceptance probability $q$",
+  "if no such candidate exists, $q=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a bit-string input $x$, a register bound $B$, and a rational number $q$. For every\nnatural number $dd$ and register state $\\sigma$, assume that the vertex count minus the\ncandidate counter, using truncated subtraction, equals $dd$; every register is at most\n$B$; the candidate counter is at most the vertex count; the current-vertex register is\nzero; and the saved pointer plus twice the vertex count, plus two, is at most $B$.\nSuppose that for every $j$ between the candidate counter inclusive and the vertex count\nexclusive, if the input has the required doubled-word pattern at the saved pointer for\nthe binary expansion of $j$, then the specified configuration—with candidate and\ncurrent-vertex registers set to $j$, pointer set to the saved pointer plus twice the\nlength of that expansion plus two, and scratch register cleared—has probabilistic\nsemantics with acceptance probability $q$. Also suppose that if there is no such $j$,\nthen $q=0$. The search-loop configuration with register state $\\sigma$ has probabilistic\nsemantics with acceptance probability $q$."
+}

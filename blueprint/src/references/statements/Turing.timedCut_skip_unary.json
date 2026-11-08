@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.timedCut_skip_unary",
+ "key": "3be3387492fe104e",
+ "kind": "lemma",
+ "title": "Unary Skip Across a Delimited Block",
+ "statement": "Let $x$ be a Boolean word, let $B$ be a four-tape configuration on input $x$, let $d$ be an optional record destination, and let $r$ be a counter in $\text{Fin}(9)$. Suppose the table is a concatenation of words $l$ and $r_0$ with $n$ copies of $1$ followed by $0$ between them. Starting in the unary-skip control with table cursor $|l|$, after $n+1$ steps the table cursor is $|l|+n+1$; the control is the skip continuation for $d$ if the counter is zero, and otherwise the fixed-field skip control with counter decreased by one.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "base four-tape configuration $B$",
+  "optional destination $d$",
+  "counter $r\\in\\text{Fin}(9)$",
+  "table factorization $T=l\\mathbin{+\u001er}1^n\\mathbin{+\u001er}0::r_0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the table holds $n$ ones followed by a zero at cursor position $|l|$, the\nunary-skipping phase of the stopped table interpreter traverses them in\nexactly $n+1$ steps, ending with the cursor at $|l|+n+1$; on the terminator it\ncompletes the skip request when the bounded record counter is zero, and\notherwise decrements the counter and re-enters fixed-field skipping."
+}

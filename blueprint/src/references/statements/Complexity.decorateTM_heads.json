@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.decorateTM_heads",
+ "key": "ede7caf5dc5973b0",
+ "kind": "lemma",
+ "title": "Extra heads follow the designated head",
+ "statement": "Let $P$ be a finite Turing machine over an alphabet $A$ with $k$ work tapes, let $l$ be a natural number, choose a designated work-tape index $h<k$, a finite data-state set $D$ with initial state $d_0$, and any visit function of the specified type. For every input word $x$, time $t\\in\\mathbb N$, and extra-tape index $i<l$, the head position of extra tape $i$ in the decorated machine after $t$ steps from its initial configuration equals the position of head $h$ at that time.",
+ "hypotheses_covered": [
+  "$D$ is finite and has decidable equality",
+  "$P$ is a finite Turing machine over $A$",
+  "$l$ is a natural number",
+  "$h$ is a work-tape index of $P$",
+  "$d_0$ is an element of $D$",
+  "The visit function has the stated type",
+  "$x$ is an input word over $A$",
+  "$t$ is a natural number",
+  "$i$ is an extra-tape index less than $l$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine $P$ over an alphabet $A$ be decorated by any data transducer with $l$\nextra tapes and designated head $h$. For every input word $x$, every time\n$t \\in \\mathbb{N}$, and every extra-tape index $i < l$, the head position of the\n$i$-th data tape of the decorated machine after $t$ steps equals the head position of\nthe designated schedule head $h$ at the same time — including at all times after\nhalting. Consequently no data-selected write can alter a head trajectory."
+}

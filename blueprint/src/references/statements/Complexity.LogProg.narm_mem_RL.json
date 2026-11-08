@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.narm_mem_RL",
+ "key": "50741850d891cb3d",
+ "kind": "theorem",
+ "title": "Register Programs in Randomized Logarithmic Space",
+ "statement": "Let $L$ be a language of binary strings, and let a nondeterministic register program with $m$ registers and $d$ oracle languages have a finite control-state set with decidable equality. Suppose every oracle language belongs to $\text{LOGSPACE}$, and let $C_0,c_0$ be natural numbers and $\\delta$ a positive rational. Assume that for each input $x$ there is a length $N$ such that every choice string of length $N$ makes the program halt, every pre-final configuration satisfies its validity conditions and has each register value at most $C_0(|x|+1)^{c_0}$, and the following probability conditions hold: if $x\\in L$, the probability of answering yes is at least $\\delta$; if $x\\notin L$, the probability of answering no is $1$. Then $L$ belongs to $\text{RL}$, the class decidable by a randomized machine using logarithmic space with one-sided error.",
+ "hypotheses_covered": [
+  "$L$ is a language of binary strings",
+  "The program has $m$ registers and $d$ oracle languages",
+  "The finite control-state set has decidable equality",
+  "Every oracle language is in LOGSPACE",
+  "$C_0,c_0$ are natural numbers",
+  "$\\delta$ is a positive rational",
+  "For each input, some length $N$ makes every choice string of that length halt",
+  "Every pre-final run configuration satisfies the program's validity conditions",
+  "Every register value is at most $C_0(|x|+1)^{c_0}$",
+  "For inputs in $L$, the yes-answer probability is at least $\\delta$",
+  "For inputs outside $L$, the no-answer probability is exactly $1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

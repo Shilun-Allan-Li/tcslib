@@ -13,6 +13,18 @@ vanishes as $T \to \infty$ when $\eta = \sqrt{2 \ln N / T}$.
 
 \begin{definition}[Loss sequence]
 \lean{LossSeq}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p001-b004,
+  pdf-eda737ce3103-p002-b001
+}
+\statementsource{freund-schapire-hedge}{
+  pdf-01f49de027c4-p001-b004,
+  pdf-01f49de027c4-p003-b002
+}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p002-b003,
+  pdf-9c61a2f1ecc1-p003-b001
+}
 \label{LossSeq}
 \leanok
 A \emph{loss sequence} $\ell$ for $N$ experts over $T$ rounds is a function
@@ -23,6 +35,9 @@ whose values are intended to lie in $[0,1]$.
 
 \begin{definition}[Valid loss sequence]
 \lean{LossSeq.Valid}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p001-b004}
+\statementsource{freund-schapire-hedge}{pdf-01f49de027c4-p001-b004}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p002-b003}
 \label{LossSeq.Valid}
 \leanok
 \uses{LossSeq}
@@ -32,6 +47,12 @@ $\forall t\,i,\; 0 \le \ell_t(i) \le 1$.
 
 \begin{definition}[Cumulative loss]
 \lean{cumLoss}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p002-b005}
+\statementsource{freund-schapire-hedge}{
+  pdf-01f49de027c4-p001-b004,
+  pdf-01f49de027c4-p004-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p003-b005}
 \label{cumLoss}
 \leanok
 \uses{LossSeq}
@@ -44,6 +65,15 @@ where the sum ranges over all rounds $s \in \mathrm{Fin}\,T$ with $s < t$.
 
 \begin{definition}[Hedge weight]
 \lean{hedgeWeight}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p005-b001,
+  pdf-eda737ce3103-p005-b002
+}
+\statementsource{freund-schapire-hedge}{
+  pdf-01f49de027c4-p003-b001,
+  pdf-01f49de027c4-p003-b002
+}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p003-b004}
 \label{hedgeWeight}
 \leanok
 \uses{LossSeq, cumLoss}
@@ -57,6 +87,19 @@ Experts with smaller cumulative loss receive larger weight.
 
 \begin{definition}[Potential]
 \lean{potential}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p005-b004,
+  pdf-eda737ce3103-p006-b001,
+  pdf-eda737ce3103-p006-b002
+}
+\statementsource{freund-schapire-hedge}{
+  pdf-01f49de027c4-p003-b003,
+  pdf-01f49de027c4-p003-b004
+}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p003-b004,
+  pdf-9c61a2f1ecc1-p004-b001
+}
 \label{potential}
 \leanok
 \uses{LossSeq, hedgeWeight}
@@ -70,6 +113,12 @@ expert's loss.
 
 \begin{definition}[Hedge distribution]
 \lean{hedgeDist}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p005-b001}
+\statementsource{freund-schapire-hedge}{pdf-01f49de027c4-p003-b002}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p002-b003,
+  pdf-9c61a2f1ecc1-p003-b004
+}
 \label{hedgeDist}
 \leanok
 \uses{LossSeq, hedgeWeight, potential}
@@ -82,6 +131,12 @@ vector:
 
 \begin{definition}[Expected loss of Hedge]
 \lean{hedgeLoss}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p006-b002}
+\statementsource{freund-schapire-hedge}{
+  pdf-01f49de027c4-p001-b004,
+  pdf-01f49de027c4-p003-b002
+}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p003-b001}
 \label{hedgeLoss}
 \leanok
 \uses{LossSeq, hedgeDist}
@@ -94,6 +149,15 @@ distribution is
 
 \begin{definition}[Cumulative loss of Hedge]
 \lean{hedgeCumLoss}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p006-b002,
+  pdf-eda737ce3103-p007-b001
+}
+\statementsource{freund-schapire-hedge}{pdf-01f49de027c4-p001-b004}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p003-b005,
+  pdf-9c61a2f1ecc1-p004-b004
+}
 \label{hedgeCumLoss}
 \leanok
 \uses{LossSeq, hedgeLoss}
@@ -105,6 +169,15 @@ The \emph{cumulative loss} of the Hedge algorithm over all $T$ rounds is
 
 \begin{definition}[Best expert loss]
 \lean{bestExpertLoss}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p002-b004,
+  pdf-eda737ce3103-p006-b001
+}
+\statementsource{freund-schapire-hedge}{
+  pdf-01f49de027c4-p001-b004,
+  pdf-01f49de027c4-p004-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p003-b005}
 \label{bestExpertLoss}
 \leanok
 \uses{LossSeq, cumLoss}
@@ -117,6 +190,12 @@ achieved by any single expert:
 
 \begin{definition}[Regret]
 \lean{regret}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p002-b005}
+\statementsource{freund-schapire-hedge}{pdf-01f49de027c4-p001-b004}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p003-b005,
+  pdf-9c61a2f1ecc1-p004-b004
+}
 \label{regret}
 \leanok
 \uses{LossSeq, bestExpertLoss, hedgeCumLoss}
@@ -170,6 +249,8 @@ first $t$ rounds.
 
 \begin{lemma}[Chord bound for the exponential on the unit interval]
 \lean{exp_neg_le_linear}
+\proofsource{freund-schapire-hedge}{pdf-01f49de027c4-p003-b004}
+\statementsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p004-b003}
 \label{exp_neg_le_linear}
 \leanok
 \difficulty{4}
@@ -211,9 +292,30 @@ loss through the first $T$ rounds equals the total loss over all rounds: $L_T(i)
 
 \begin{lemma}[Recursion for the Hedge weight]
 \lean{hedgeWeight_succ}
+\proofsource{freund-schapire-hedge}{pdf-01f49de027c4-p003-b002}
 \label{hedgeWeight_succ}
 \leanok
 \uses{LossSeq, cumLoss_succ, hedgeWeight}
+\proofstep
+  {LossSeq}
+  {context}
+  {freund-schapire-hedge}
+  {pdf-01f49de027c4-p003-b002}
+\proofstep
+  {cumLoss}
+  {context}
+  {freund-schapire-hedge}
+  {pdf-01f49de027c4-p003-b004}
+\proofstep
+  {hedgeWeight}
+  {context}
+  {freund-schapire-hedge}
+  {pdf-01f49de027c4-p003-b004}
+\proofstep
+  {cumLoss_succ}
+  {context}
+  {freund-schapire-hedge}
+  {pdf-01f49de027c4-p003-b004}
 \difficulty{2}
 Fix a learning rate $\eta \in \bbr$ and a loss sequence $\ell$ for $N$ experts over $T$
 rounds. For every round $t \in \mathrm{Fin}\,T$ and every expert $i \in
@@ -240,9 +342,75 @@ so it is a probability distribution on the $N$ experts.
 
 \begin{lemma}[Potential ratio bound for Hedge]
 \lean{potential_ratio_le}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p006-b002}
+\proofsource{freund-schapire-adaptive-game-playing}{pdf-9c61a2f1ecc1-p004-b003}
 \label{potential_ratio_le}
 \leanok
 \uses{LossSeq, LossSeq.Valid, exp_neg_le_linear, hedgeDist, hedgeLoss, hedgeWeight, hedgeWeight_pos, hedgeWeight_succ, potential, potential_pos}
+\proofstep
+  {LossSeq}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p002-b003,
+    pdf-9c61a2f1ecc1-p003-b001}
+\proofstep
+  {LossSeq.Valid}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p002-b003}
+\proofstep
+  {cumLoss}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p003-b001,
+    pdf-9c61a2f1ecc1-p003-b004}
+\proofstep
+  {hedgeWeight}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p003-b004}
+\proofstep
+  {potential}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p004-b001,
+    pdf-9c61a2f1ecc1-p004-b003}
+\proofstep
+  {hedgeDist}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p003-b004}
+\proofstep
+  {hedgeLoss}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p003-b001}
+\proofstep
+  {hedgeWeight_pos}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p004-b003}
+\proofstep
+  {potential_pos}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p004-b003}
+\proofstep
+  {exp_neg_le_linear}
+  {direct}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p004-b003}
+\proofstep
+  {cumLoss_succ}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p003-b004,
+    pdf-9c61a2f1ecc1-p004-b003}
+\proofstep
+  {hedgeWeight_succ}
+  {context}
+  {freund-schapire-adaptive-game-playing}
+  {pdf-9c61a2f1ecc1-p003-b004}
 \difficulty{5}
 Fix $N \ge 1$ experts, a horizon of $T$ rounds, a learning rate $\eta > 0$, and a valid
 loss sequence $\ell$. Then for every round $t$ with $t < T$, the consecutive potentials
@@ -256,6 +424,11 @@ learner under the Hedge distribution at round $t$.
 
 \begin{lemma}[One-step logarithmic potential bound for Hedge]
 \lean{log_potential_step}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p006-b002}
+\statementsource{freund-schapire-hedge}{
+  pdf-01f49de027c4-p003-b003,
+  pdf-01f49de027c4-p003-b004
+}
 \label{log_potential_step}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedgeLoss, potential, potential_pos, potential_ratio_le}
@@ -298,9 +471,41 @@ second-order Taylor expansion at the origin:
 
 \begin{lemma}[Potential lower bound via the best expert]
 \lean{potential_ge_best_expert}
+\proofsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p006-b001}
 \label{potential_ge_best_expert}
 \leanok
 \uses{LossSeq, bestExpertLoss, cumLoss, hedgeWeight, potential}
+\proofstep
+  {LossSeq}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004,
+    pdf-eda737ce3103-p002-b001}
+\proofstep
+  {cumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001,
+    pdf-eda737ce3103-p007-b001}
+\proofstep
+  {hedgeWeight}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p005-b004}
+\proofstep
+  {potential}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p006-b002,
+    pdf-eda737ce3103-p006-b003}
+\proofstep
+  {bestExpertLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001,
+    pdf-eda737ce3103-p007-b001}
 \difficulty{4}
 Fix $N \ge 1$ experts and $T$ rounds, a loss sequence $\ell$, and a learning rate $\eta
 > 0$. Then the final potential is at least the unnormalized Hedge weight of the best
@@ -348,9 +553,21 @@ distribution is nonnegative, $\widehat{\ell}_t \ge 0$.
 
 \begin{theorem}[Regret bound for the Hedge algorithm]
 \lean{hedge_regret_bound}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p006-b001,
+  pdf-eda737ce3103-p006-b002,
+  pdf-eda737ce3103-p006-b003,
+  pdf-eda737ce3103-p007-b001
+}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p003-b005,
+  pdf-9c61a2f1ecc1-p004-b002,
+  pdf-9c61a2f1ecc1-p004-b003,
+  pdf-9c61a2f1ecc1-p004-b004
+}
 \label{hedge_regret_bound}
 \leanok
-\uses{LossSeq, LossSeq.Valid, bestExpertLoss, hedgeCumLoss, hedgeLoss, hedgeLoss_le_one, hedgeLoss_nonneg, log_potential_step, one_sub_exp_neg_ge, potential, potential_ge_best_expert, potential_zero, regret}
+\uses{LossSeq, LossSeq.Valid, hedgeLoss, hedgeLoss_le_one, hedgeLoss_nonneg, log_potential_step, one_sub_exp_neg_ge, potential, regret, regret_le_of_log_potential_step}
 \difficulty{5}
 Fix $N \ge 1$ experts and $T$ rounds, and let $\ell$ be a valid loss sequence, so that
 $0 \le \ell_t(i) \le 1$ for every round $t$ and expert $i$. Then for any learning rate
@@ -362,6 +579,11 @@ $\eta$ with $0 < \eta \le 1$, the regret of the Hedge algorithm satisfies
 
 \begin{definition}[Optimal learning rate]
 \lean{optimalEta}
+\statementsource{roughgarden-agt-l17-noregret}{pdf-eda737ce3103-p007-b001}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p005-b004,
+  pdf-9c61a2f1ecc1-p005-b005
+}
 \label{optimalEta}
 \leanok
 The \emph{optimal learning rate} balancing the two terms of the Hedge regret
@@ -373,9 +595,25 @@ bound is
 
 \begin{theorem}[Optimal-rate regret bound for Hedge]
 \lean{hedge_regret_optimal}
+\statementsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p006-b001,
+  pdf-eda737ce3103-p006-b002,
+  pdf-eda737ce3103-p006-b003,
+  pdf-eda737ce3103-p007-b001
+}
+\statementsource{freund-schapire-hedge}{
+  pdf-01f49de027c4-p002-b001,
+  pdf-01f49de027c4-p004-b008
+}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p003-b005,
+  pdf-9c61a2f1ecc1-p004-b004,
+  pdf-9c61a2f1ecc1-p005-b004,
+  pdf-9c61a2f1ecc1-p005-b005
+}
 \label{hedge_regret_optimal}
 \leanok
-\uses{LossSeq, LossSeq.Valid, hedge_regret_bound, optimalEta, regret}
+\uses{LossSeq, LossSeq.Valid, hedge_regret_bound, optimalEta, optimalEta_balance, regret}
 \difficulty{5}
 Consider the Hedge algorithm run on $N > 1$ experts over $T > 0$ rounds against a valid
 loss sequence $\ell$, that is, one with $0 \le \ell_t(i) \le 1$ for every round $t$ and
@@ -389,9 +627,186 @@ the best single expert in hindsight—satisfies
 
 \begin{theorem}[Hedge achieves vanishing average regret]
 \lean{hedge_no_regret}
+\proofsource{roughgarden-agt-l17-noregret}{
+  pdf-eda737ce3103-p004-b005,
+  pdf-eda737ce3103-p007-b001
+}
+\statementsource{freund-schapire-hedge}{pdf-01f49de027c4-p004-b008}
+\statementsource{freund-schapire-adaptive-game-playing}{
+  pdf-9c61a2f1ecc1-p005-b003,
+  pdf-9c61a2f1ecc1-p005-b004,
+  pdf-9c61a2f1ecc1-p005-b005
+}
 \label{hedge_no_regret}
 \leanok
 \uses{LossSeq, LossSeq.Valid, hedge_regret_optimal, optimalEta, regret}
+\proofstep
+  {LossSeq}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004,
+    pdf-eda737ce3103-p005-b001}
+\proofstep
+  {LossSeq.Valid}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004}
+\proofstep
+  {cumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001}
+\proofstep
+  {hedgeWeight}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p006-b001}
+\proofstep
+  {potential}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeDist}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeCumLoss}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b001}
+\proofstep
+  {bestExpertLoss}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001}
+\proofstep
+  {regret}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p002-b005,
+    pdf-eda737ce3103-p007-b001}
+\proofstep
+  {potential_zero}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001,
+    pdf-eda737ce3103-p006-b003}
+\proofstep
+  {hedgeWeight_pos}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {potential_pos}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {exp_neg_le_linear}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b002}
+\proofstep
+  {cumLoss_succ}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001}
+\proofstep
+  {hedgeWeight_succ}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {hedgeDist_sum}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {potential_ratio_le}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b002}
+\proofstep
+  {log_potential_step}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b002,
+    pdf-eda737ce3103-p007-b001}
+\proofstep
+  {exp_neg_le_quadratic}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b001}
+\proofstep
+  {one_sub_exp_neg_ge}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b001}
+\proofstep
+  {potential_ge_best_expert}
+  {direct}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001}
+\proofstep
+  {hedgeDist_nonneg}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p005-b001}
+\proofstep
+  {hedgeLoss_le_one}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004,
+    pdf-eda737ce3103-p006-b002}
+\proofstep
+  {hedgeLoss_nonneg}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p001-b004,
+    pdf-eda737ce3103-p006-b002}
+\proofstep
+  {log_potential_telescope}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b003}
+\proofstep
+  {regret_le_of_log_potential_step}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p006-b001,
+    pdf-eda737ce3103-p006-b003,
+    pdf-eda737ce3103-p007-b001}
+\proofstep
+  {hedge_regret_bound}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b001}
+\proofstep
+  {optimalEta}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b001}
+\proofstep
+  {optimalEta_balance}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p007-b001}
+\proofstep
+  {hedge_regret_optimal}
+  {context}
+  {roughgarden-agt-l17-noregret}
+  {pdf-eda737ce3103-p004-b005,
+    pdf-eda737ce3103-p007-b001}
 \difficulty{4}
 Fix $N > 1$ experts and $T$ rounds with $T > 0$, and suppose $2\ln N \le T$. Let $\ell$
 be a valid loss sequence for $N$ experts over $T$ rounds, so that every individual loss
@@ -435,7 +850,7 @@ the Hedge distribution. Then for every round $t$ (with $0 \le t < T$),
 \lean{hedge_regret_bound_tight}
 \label{hedge_regret_bound_tight}
 \leanok
-\uses{LossSeq, LossSeq.Valid, bestExpertLoss, hedgeCumLoss, hedgeLoss, log_potential_step_tight, potential, potential_ge_best_expert, potential_zero, regret}
+\uses{LossSeq, LossSeq.Valid, hedgeLoss, log_potential_step_tight, potential, regret, regret_le_of_log_potential_step}
 \difficulty{5}
 Fix $N \ge 1$ experts and a horizon of $T$ rounds, and run the Hedge algorithm with a
 learning rate $\eta > 0$. For every valid loss sequence $\ell$ — one whose losses
@@ -460,7 +875,7 @@ The learning rate that optimizes the tight Hedge bound is
 \lean{hedge_regret_tight_optimal}
 \label{hedge_regret_tight_optimal}
 \leanok
-\uses{LossSeq, LossSeq.Valid, hedge_regret_bound_tight, optimalEtaTight, regret}
+\uses{LossSeq, LossSeq.Valid, hedge_regret_bound_tight, optimalEtaTight, optimalEta_balance, regret}
 \difficulty{4}
 Consider the Hedge algorithm run against a valid loss sequence for $N > 1$ experts over
 $T \ge 1$ rounds, so that every individual loss lies in $[0,1]$. If the learning rate is

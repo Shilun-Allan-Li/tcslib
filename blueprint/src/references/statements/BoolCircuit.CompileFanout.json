@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.CompileFanout",
+ "key": "49dd707ec11371ad",
+ "kind": "structure",
+ "title": "Single-root fan-out conditions",
+ "statement": "Let $n$ be a natural number, let $G$ and $E$ be finite gate lists, and let $r$ be a natural number. The single-root fan-out conditions require that every old vertex $v$ with $n\\le v<n+|G|$ has fan-out zero in $E$, and every vertex $v\\ge n$ has fan-out at most one in $E$. If $r\\ge n$, then $r$ has fan-out zero; moreover, either $r<n$ or $r\\ge n+|G|$. Every vertex $v$ with $n+|G|\\le v<n+|G|+|E|$ other than $r$ has fan-out exactly one in $E$.",
+ "hypotheses_covered": [
+  "natural number n",
+  "old gate list G and extension gate list E",
+  "root vertex r",
+  "old vertices in [n,n+|G|) have fan-out zero in E",
+  "every vertex at least n has fan-out at most one in E",
+  "if r is at least n then its fan-out is zero",
+  "r is below n or at least n+|G|",
+  "new vertices in [n+|G|, n+|G|+|E|) other than r have fan-out one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

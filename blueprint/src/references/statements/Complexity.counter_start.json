@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.counter_start",
+ "key": "bfc915ae8969e809",
+ "kind": "lemma",
+ "title": "Equality of count and carry successors",
+ "statement": "Let $x$ and $b$ be finite binary words, and let $i<|x|$. The one-step successor of the configuration with count state, input head at position $i+1$, work head at $0$, tape contents $b$, and empty output equals the one-step successor of the configuration with carry state, input head at position $i+2$, work head at $0$, the same tape contents, and empty output.",
+ "hypotheses_covered": [
+  "Finite binary input word $x$",
+  "Natural number $i$ with $i<|x|$",
+  "Finite binary work-tape word $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input word and $i < |x|$. Taking one step of the four-state\nbinary-counter machine from the count state — with the input head scanning the\n$i$-th input symbol, the work head at cell $0$ over a stored binary word $b$,\nand empty output — produces the same configuration as taking one step from the\ncarry state with the input head advanced by one position and the same work tape\nand output."
+}

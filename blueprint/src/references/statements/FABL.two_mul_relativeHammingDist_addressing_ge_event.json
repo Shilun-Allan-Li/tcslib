@@ -1,0 +1,17 @@
+{
+ "lean_name": "FABL.two_mul_relativeHammingDist_addressing_ge_event",
+ "key": "f14b81e47cb6ee02",
+ "kind": "theorem",
+ "title": "Addressing function error bound",
+ "statement": "Let $m$ be a nonnegative integer. Encode an input as an address in $\\{-1,1\\}^m$ together with one sign-valued data bit for each of the $2^m$ addresses, and let $A_m$ return the data bit at the encoded address. For a set $J$ of coordinates among these $m+2^m$ input coordinates, let $g:\\{-1,1\\}^{m+2^m}\\to\\{-1,1\\}$ depend only on coordinates in $J$. Under the uniform input distribution, the probability that the coordinate selected by the address is outside $J$ is at most twice the fraction of inputs on which $A_m$ and $g$ disagree.",
+ "hypotheses_covered": [
+  "$m$ is a nonnegative integer",
+  "$J$ is a finite set of coordinates among the $m+2^m$ input coordinates",
+  "$g$ is a Boolean function on the sign cube",
+  "$g$ depends only on coordinates in $J$"
+ ],
+ "confidence": "low",
+ "caveat": "The formal addressing construction uses specific finite equivalences to encode address and data coordinates; the informal description treats these as the usual address-and-data encoding.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

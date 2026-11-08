@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.Codec.validLang_iff",
+ "key": "de5c09da1101897b",
+ "kind": "theorem",
+ "title": "Characterization of valid configuration codes",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input and work-tape symbols, let $x,w$ be finite bit strings, and let $s$ be a natural number. Encode a pair of bit strings by doubling every bit of the first string, appending the separator $01$, and then appending the second string. The encoding of $x$ paired with the encoding of $w$ and the binary expansion of $s$ belongs to the language of codes for configurations of $N$ whose work-tape heads and nonblank cells lie within distance $s$ of the origin if and only if the following conditions hold: $w$ has length $W_N(2s+1)+P(|x|)+1$, where $W_N$ is the fixed cell-code width determined by $N$ and $P(n)$ is the length of the binary expansion of $n+1$; scanning the first $W_N(2s+1)$ bits yields an accepting scan state; the value of the next $P(|x|)$ bits, interpreted as a binary expansion, is at most $|x|+1$; and the final bit is $1$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over Boolean symbols",
+  "$x$ and $w$ are finite bit strings",
+  "$s$ is a natural number"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied definitions do not explain the scan-state acceptance condition or the cell-code width in informal terms; the statement identifies their roles without expanding their encodings.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

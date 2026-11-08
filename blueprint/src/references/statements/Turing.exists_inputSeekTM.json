@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.exists_inputSeekTM",
+ "key": "7d5c1f586abd1924",
+ "kind": "theorem",
+ "title": "Machine seeking an input position",
+ "statement": "There exist a finite state set, a deterministic Turing machine with two work tapes over the Boolean alphabet, entry and exit states, and a natural-number constant $C$ with the following property. For every Boolean input word $x$, natural number $p$, and Boolean word $w$ such that the base-two value of the digits of $w$ is $p$ and $p\\le |x|+1$, consider any configuration $d$ on input $x$ whose state is the entry state, whose first work tape agrees with the tape storing $w$ from one cell to the left of its head through one cell beyond the word (and is blank elsewhere), and whose second work tape is blank everywhere. There is a time $t\\le C(|w|+s+p+1)$, where $s$ is the input-head position in $d$, such that the machine is not in the exit state at any earlier time, and at time $t$ it is in the exit state with input-head position $p$. At every time $u\\le t$, each work-tape head has moved from its initial position by at most $C(|w|+1)$, and at time $t$ both work tapes, both work-tape head positions, and the output word are unchanged from $d$.",
+ "hypotheses_covered": [
+  "There exist a finite state set, a deterministic two-work-tape machine over Boolean symbols, entry and exit states, and a natural-number constant C",
+  "The input x is a Boolean word; p is a natural number; w is a Boolean word",
+  "The base-two value of w's digits equals p",
+  "p ≤ |x| + 1",
+  "The initial configuration d is on input x and is in the entry state",
+  "For every integer q from −1 through |w|, tape 0 at its head position plus q agrees with the tape storing w from cell 0, with blanks outside w",
+  "Tape 1 is blank at every integer cell",
+  "The time t is at most C(|w| + initial input-head position + p + 1)",
+  "The exit state is not reached at any time u < t",
+  "For every u ≤ t, each work-tape head displacement is at most C(|w| + 1)",
+  "At time t the state is the exit state and the input-head position is p",
+  "At time t the work tapes, work-tape head positions, and output word equal their initial values"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

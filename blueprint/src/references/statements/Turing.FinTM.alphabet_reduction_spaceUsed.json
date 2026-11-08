@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.alphabet_reduction_spaceUsed",
+ "key": "f85eae098cfcef09",
+ "kind": "theorem",
+ "title": "Alphabet reduction with a space bound",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an embedding, let $M$ be a finite Turing machine over $\\Gamma$, let $f$ map binary strings to binary strings, and let $T,S:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every binary input $x$, $M$ computes the letterwise $e$-image of $f(x)$ from the letterwise $e$-image of $x$ within $T(|x|)$ steps. Suppose also that on every input word $y$ over $\\Gamma$ and at every time $t$, the space used by $M$ from its initial configuration on $y$ is at most $S(|y|)$. Then there are a natural number $c$ and a finite binary-alphabet machine $M'$ with the same number of work tapes as $M$ such that $M'$ computes $f$ within $n\\mapsto c(T(n)+1)$ steps and, on every binary input $x$ and at every time $t$, uses at most $c(S(|x|)+1)$ space.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite and has decidable equality",
+  "An embedding of the Boolean alphabet into $\\Gamma$",
+  "A finite Turing machine $M$ over $\\Gamma$",
+  "Functions $f$, $T$, and $S$ on binary strings or natural numbers, as specified",
+  "$M$ computes the embedded input-output function within the stated time bound",
+  "For every $\\Gamma$-alphabet input and every time, space used is at most $S$ of the input length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

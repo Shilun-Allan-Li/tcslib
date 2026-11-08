@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.cont",
+ "key": "e80366c75dda1c64",
+ "kind": "lemma",
+ "title": "Reachability from Equal Register States",
+ "statement": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}\\colon\\{0,1,2,3\\}\\times\\{0,1\\}^*\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be an oracle, let $x$ be a finite Boolean word, and let $l$ be a label of the program $A(E)$. If register states $\\mathrm{st}$ and $\\mathrm{st}'$ are equal, then every configuration reachable in finitely many steps from label $l$ with the register vector of $\\mathrm{st}'$ and no answer, with each earlier configuration satisfying the program’s safety condition and all register values at most $B$, is also reachable under those same conditions from label $l$ with the register vector of $\\mathrm{st}$ and no answer.",
+ "hypotheses_covered": [
+  "$E,B$ are natural numbers",
+  "$\\mathrm{orc}$ is an oracle on four indices and Boolean words",
+  "$x$ is a Boolean word",
+  "$l$ is a label for $A(E)$",
+  "$\\mathrm{st}=\\mathrm{st}'$",
+  "there is a finite guarded execution from $(l,\\mathrm{st}'.toV,\\mathrm{none})$ to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $E,B\\in\\mathbb{N}$, let $\\mathrm{orc}$ be a Boolean oracle on four families of\nbinary words, let $x$ be a binary word, and let $l$ be a program label. If two register\nstates $\\mathrm{st}$ and $\\mathrm{st}'$ are equal and there is a finite execution of\n$A(E)$ from label $l$, starting with the register vector of $\\mathrm{st}'$ and no\nanswer, to a configuration $c$, with every earlier configuration satisfying the safety\nconditions and having all registers at most $B$, then there is such an execution from\nthe register vector of $\\mathrm{st}$ to the same $c$."
+}

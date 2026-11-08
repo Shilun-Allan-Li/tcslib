@@ -30,34 +30,27 @@ $i$ holds the word $w_i$ in cells $0, \dots, \abs{w_i} - 1$ and is blank at ever
 integer cell, whose work-tape heads are all at cell $0$, and whose output tape is empty.
 \end{definition}
 
-\begin{lemma}[Initial configuration is a blank seam]
+\begin{lemma}[Initial configuration with blank work tapes]
 \lean{Turing.initCfg_ofWords}
 \label{Turing.initCfg_ofWords}
 \leanok
 \uses{Turing.Cfg.init, Turing.Cfg.ofWords, Turing.FinTM.bufferTape_nil, Turing.MultiTapeTM, Turing.MultiTapeTM.initCfg}
 \difficulty{1}
-Let $M$ be a deterministic Turing machine with $k$ work tapes over the Boolean alphabet,
-with start state $q_0$, and let $x$ be a Boolean input word. Then the initial
-configuration of $M$ on $x$ equals the seam configuration $\mathrm{seam}(q_0, w)$
-with $w_i = \varepsilon$ the empty word for every work tape $i$; that is, the
-configuration in state $q_0$ with the input head on the first input cell, every work
-tape entirely blank with its head at cell $0$, and empty output.
+Let $M$ be a multi-tape Turing machine over the Boolean alphabet, with initial state
+$q_0$, and let $x$ be a Boolean input word. Its initial configuration on $x$ equals the
+configuration in state $q_0$ with empty work words on every tape.
 \end{lemma}
 
-\begin{lemma}[Work tapes of a seam configuration]
+\begin{lemma}[Work Tape Contents of a Word Configuration]
 \lean{Turing.Cfg.ofWords_workTapes}
 \label{Turing.Cfg.ofWords_workTapes}
 \leanok
 \uses{Turing.Cfg.ofWords, Turing.FinTM.bufferTape}
 \difficulty{1}
-Let $k \ge 0$ be a number of work tapes, $x$ a Boolean input word, $q$ a state,
-$w = (w_0, \dots, w_{k-1})$ a family of Boolean words, and $i < k$ a work-tape index.
-In the seam configuration $\mathrm{seam}(q, w)$ of a $k$-work-tape machine over the
-Boolean alphabet on input $x$ (state $q$, input head on the first input cell, work tape
-$j$ holding $w_j$ from cell $0$, all work heads at cell $0$, empty output), work tape $i$
-is exactly the buffer tape of $w_i$: for every integer cell $z$, its content is the
-$z$-th letter of $w_i$ (counting from $0$) when $0 \le z < \abs{w_i}$, and blank
-otherwise.
+Let $k$ be a nonnegative integer, let $x$ be a Boolean input word, let $q$ be a state,
+and let $w$ assign a Boolean word to each of the $k$ work tapes. For every work-tape
+index $i$, the content function of tape $i$ in the configuration determined by $q$ and
+$w$ is the buffer tape storing $w_i$.
 \end{lemma}
 
 \begin{definition}[Split at the last true]
@@ -113,3 +106,29 @@ with $m \ge 0$, the result is $(\mathrm{true}^m \, \mathrm{false}, \, r)$, and i
 $v = \mathrm{true}^m$ contains no $\mathrm{false}$ (including $v$ empty), the result is
 $(\mathrm{true}^m, \varepsilon)$ with $\varepsilon$ the empty word.
 \end{definition}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Increment after a prefix of true bits]
+\lean{Turing.incFixed_replicate_true_append}
+\label{Turing.incFixed_replicate_true_append}
+\leanok
+\uses{Turing.incFixed}
+\difficulty{4}
+For every natural number $n$ and Boolean word $w$, incrementing the concatenation of $n$
+true bits with $w$ gives the result of incrementing $w$ and, when that result exists,
+prefixing it with $n$ false bits. If incrementing $w$ overflows, both sides are
+undefined.
+\end{theorem}
+
+\begin{theorem}[Overflow characterisation for fixed-width increment]
+\lean{Turing.incFixed_eq_none_iff_replicate}
+\label{Turing.incFixed_eq_none_iff_replicate}
+\leanok
+\uses{Turing.incFixed}
+\difficulty{4}
+For every finite Boolean word $u$, the fixed-width binary increment overflows exactly
+when every entry of $u$ is true; equivalently, this occurs exactly when $u$ is the word
+of length $|u|$ consisting entirely of true entries.
+\end{theorem}

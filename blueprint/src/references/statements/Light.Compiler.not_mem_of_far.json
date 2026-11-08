@@ -1,0 +1,23 @@
+{
+ "lean_name": "Light.Compiler.not_mem_of_far",
+ "key": "213b91efec4df4ea",
+ "kind": "theorem",
+ "title": "Addresses outside the reserved regions",
+ "statement": "Let $W$ be a natural number, let $\text{lim}$ be a record of word, space, and depth limits, let $P$ be a light program, let $p_0$ be a natural number, and let $\text{dec}$ be a Boolean. Assume the word size fits the limits, the pool bound $\text{dispPos}(P,\text{dec})$, and the stack size $\text{mainFrame}+(\text{frameSize}(P)+1)(\text{lim.depth}+1)$. For any integer $a$, if $a<-\text{lowCell}(P,\text{dec},\text{lim})$ or $\text{lim.space}\\le a$, then $a$ belongs to none of the following: the union of the constants for pool bound $\text{dispPos}(P,\text{dec})$, the frame pointer and main-frame addresses for frame size $\text{frameSize}(P)$, the writable addresses of the generated size configuration at stack index $\text{mainFrame}$, and the result and difference-register addresses.",
+ "hypotheses_covered": [
+  "$W$ is a natural number",
+  "$\text{lim}$ is a limits record",
+  "$P$ is a light program",
+  "$p_0$ is a natural number",
+  "$\text{dec}$ is a Boolean",
+  "The fit condition holds for word size $W$, limits $\text{lim}$, pool bound $\text{dispPos}(P,\text{dec})$, and stack size $\text{mainFrame}+(\text{frameSize}(P)+1)(\text{lim.depth}+1)$",
+  "$a$ is an integer",
+  "Either $a<-\text{lowCell}(P,\text{dec},\text{lim})$ or $\text{lim.space}\\le a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

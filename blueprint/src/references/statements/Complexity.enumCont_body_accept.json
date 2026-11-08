@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_body_accept",
+ "key": "d04a9ea7da0682da",
+ "kind": "lemma",
+ "title": "Acceptance emits the true bit",
+ "statement": "Let $B$ be a finite machine over the Boolean alphabet, with designated states $q_v,q_i$ and a Boolean parameter $stop$. For any Boolean words $x$ and $s$, start the corresponding body machine in its administrative state $3$ on input $x$, with tape zero containing $s$, the last tape containing the one-letter word consisting of true, all other tapes blank, both endpoint heads at cell $0$, and empty output. After one step its state is halted and its output is exactly the one-letter word consisting of true.",
+ "hypotheses_covered": [
+  "A finite Boolean machine $B$",
+  "Designated states $q_v,q_i$ and Boolean parameter $stop$",
+  "Boolean words $x,s$",
+  "Initial administrative state $3$",
+  "Tape zero stores $s$ and the last tape stores the one-letter word true",
+  "Other tapes are blank; endpoint heads are at cell $0$",
+  "Initial output is empty"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every candidate word $s$, after one step of the enumerator body (active or\nstopped) from the two-ended configuration in the verdict state with tape zero $s$\nand the captured word consisting of a single true bit, the machine is halted and\nits output is exactly the single bit true."
+}

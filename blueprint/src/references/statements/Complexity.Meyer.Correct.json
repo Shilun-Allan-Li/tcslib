@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.Meyer.Correct",
+ "key": "db81dec22b369347",
+ "kind": "def",
+ "title": "Correctness of the answer table",
+ "statement": "Let $M$ be a finite Turing machine with Boolean tape symbols, let $x$ be a finite Boolean input, let $W,t\\in\\mathbb{N}$, and let $\\mathrm{Ans}$ be an answer function for selectors of $M$. The predicate holds when, after $t$ steps from the initial configuration on $x$, the answer function on every state and output-register pair agrees with whether that pair is the machine’s actual state and output; for each work tape $h$ and offset $d\\in\\mathbb{Z}$ with $|d|+t\\le 2^W-1$, the table’s work-tape value agrees with the machine’s symbol at that offset from the tape head; and for every $d\\in\\mathbb{Z}$ with $|d|\\le |x|+1$, its input-tape value agrees with the machine’s input symbol at that offset from the input head.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine with Boolean symbols",
+  "$\\mathrm{Ans}$ is an answer function for selectors of $M$",
+  "$W,t\\in\\mathbb{N}$",
+  "$x$ is a finite Boolean input",
+  "the work-tape clause applies when $|d|+t\\le 2^W-1$",
+  "the input-tape clause applies when $|d|\\le |x|+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_extract_run",
+ "key": "cf0f0d2f5aa88283",
+ "kind": "lemma",
+ "title": "Halting of the pair extraction machine",
+ "statement": "Let $first$ and $second$ be Boolean flags, and let $x$ and $rest$ be Boolean words. For every pair of Boolean words $pre$ and $a$ satisfying $x=pre\\mathbin{++}rest$, the pair extraction machine started with input head just after $pre$, work tape containing $a$ with its head at position $|a|$, and empty output reaches a halting configuration after some number $t$ of steps with $t\\le 3|rest|+2|a|+5$. Its output is $(a\\mathbin{++}b$ if $first$ is true, and the empty word otherwise$)\\mathbin{++}(c$ if $second$ is true, and the empty word otherwise$)$ when pair decoding of $rest$ yields $(b,c)$, and is empty when that decoding is undefined.",
+ "hypotheses_covered": [
+  "Boolean flags first and second",
+  "Boolean words x and rest",
+  "For every Boolean word pre and Boolean word a",
+  "Equality x = pre ++ rest"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

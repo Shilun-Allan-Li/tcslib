@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.oracleChoice_exhaust",
+ "key": "fab4c73d90153325",
+ "kind": "theorem",
+ "title": "Halting of the oracle choice machine",
+ "statement": "Let $N$ be a finite-state nondeterministic oracle Turing machine over the Boolean alphabet, let $O$ be a language of Boolean strings, and fix an input $x$ and a configuration $c$ of $N$ on $x$. Let $tape$ assign an optional Boolean symbol to each integer cell, and let $p$ be an integer such that cell $p$ is blank. Then, starting from the configuration obtained by adding this tape with its head at $p$, the oracle choice machine built from $N$ halts after some $s \\le 2$ steps. Its output at that time is $c$'s original output if $c$ is already halted, and otherwise is the original output followed by the Boolean symbol $false$.",
+ "hypotheses_covered": [
+  "N is a finite-state nondeterministic oracle Turing machine over Bool",
+  "O is a language over Bool",
+  "x is a Boolean input string",
+  "c is a configuration of N on x",
+  "tape assigns an optional Boolean symbol to every integer cell",
+  "p is an integer",
+  "tape is blank at p"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

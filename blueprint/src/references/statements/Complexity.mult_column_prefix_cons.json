@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.mult_column_prefix_cons",
+ "key": "12a7bde80b7c2a20",
+ "kind": "lemma",
+ "title": "Leading-bit recurrence for multiplication columns",
+ "statement": "Let $t$ be a bit, let $a,b$ be finite bit strings, and let $n\\ge 0$. If $C_j(a,b)=\\sum_{p=0}^{|a|-1} [p\\le j]a_p b_{j-p}$, where out-of-range bits are zero, and $V(w)=\\sum_{i=0}^{|w|-1}2^i w_i$, then\n\\[\\sum_{j=0}^{n}2^j C_j(t::a,b)=t\\,V(b\\mathbin{\\upharpoonright}(n+1))+2\\sum_{j=0}^{n-1}2^j C_j(a,b).\\]\nHere $b\\mathbin{\\upharpoonright}(n+1)$ denotes the prefix of $b$ of length at most $n+1$.",
+ "hypotheses_covered": [
+  "$t$ is a bit",
+  "$a,b$ are finite bit strings",
+  "$n$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

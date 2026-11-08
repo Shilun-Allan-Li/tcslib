@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.e3_choice_no_split",
+ "key": "bbd80e5a55781961",
+ "kind": "lemma",
+ "title": "No verifier membership without a valid split",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$ be natural numbers, and let $y$ be a binary string. If the bounded search for an integer $n$ with $n+C\\cdot 2^{(n+1)^c}=|y|$ returns no value, then $y$ does not belong to the choice-word verifier language for $N,C,c$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$C,c$ are natural numbers",
+  "$y$ is a binary string",
+  "the split search at $|y|$ returns no value"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine and $C, c$ natural numbers. If the exponential split search fails at the length of a string $y$, then $y$ is not in the exponential choice-word verifier language of $N$ with parameters $C, c$."
+}

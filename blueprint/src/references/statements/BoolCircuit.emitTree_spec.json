@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.emitTree_spec",
+ "key": "c4db58c6cb97e722",
+ "kind": "theorem",
+ "title": "Correctness and bounds for tree emission",
+ "statement": "Let $n$ be a natural number, let $k$ be an AND or OR gate kind, and let $v_1,\\ldots,v_m$ be a list of vertex indices. Let $G$ be an acyclic list of Boolean gates, and suppose each $v_j<n+|G|$. The procedure that emits a binary tree of gates of kind $k$ returns an extended acyclic gate list and a root index less than $n$ plus the length of that list. On every Boolean input to the original $n$ vertices, the root value equals the value of a single gate of kind $k$ applied to the listed vertices' values in $G$. The resulting gate list has length at most $|G|+c(m)$, where $c(0)=1$ and $c(m)=m-1$ for $m>0$; the root depth is at most $\\lceil\\log_2 m\\rceil+1$ plus the maximum depth of the listed vertices in $G$, with that maximum taken as $0$ for an empty list. Every appended gate has kind $k$, has distinct input indices, and reads at most two vertices.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "The gate kind is not negation (it is AND or OR)",
+  "The original gate list is acyclic",
+  "Every listed vertex index is less than $n$ plus the original gate-list length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

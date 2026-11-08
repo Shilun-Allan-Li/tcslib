@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.MachineFormat.canonGuard_run",
+ "key": "1d10a326af2c60f1",
+ "kind": "lemma",
+ "title": "Bounded run of the canonicality guard",
+ "statement": "Let $F$ be a machine format, and let $\\alpha$, $bits$, and $rest$ be Boolean words such that parsing $\\alpha$ as a paired encoding returns $(bits,rest)$. Set $B=\\max\\{F.\\mathrm{guard},(4F.\\mathrm{k}+5)3^{F.\\mathrm{k}+1}\\}$ and $j=2|bits|+2$. There exist a position bound $j\\le|\\alpha|$ and a time $T\\le(B+4)(|\\alpha|+1)+2(|bits|+1)$ such that the binary guard machine with block parameter $B-1$, started at position $j$ with empty output and counter tape containing the fixed-width increment of $bits$ followed by a zero, is in its done state at time $T$ if $B(\\operatorname{value}(bits)+1)\\le|rest|$, and in its escape state otherwise; its output is empty, and its input-head position is respectively $j+B(\\operatorname{value}(bits)+1)+1$ or $|\\alpha|+1$. Neither terminal state occurs at any time strictly before $T$.",
+ "hypotheses_covered": [
+  "$F$ is a machine format",
+  "$\\alpha$, $bits$, and $rest$ are Boolean words",
+  "Parsing $\\alpha$ returns $(bits,rest)$",
+  "The position bound $j\\le|\\alpha|$ holds",
+  "$T\\le(B+4)(|\\alpha|+1)+2(|bits|+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

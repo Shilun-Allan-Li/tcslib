@@ -1,0 +1,20 @@
+{
+ "lean_name": "Light.Ends.callLast",
+ "key": "20c92ca126ef3553",
+ "kind": "theorem",
+ "title": "Cost bound for a procedure call",
+ "statement": "Let $P$ be a program, let $\text{lim}$ be execution limits, and let $d,p,x,T,T'$ be natural numbers. Suppose there is a procedure body for $p$ whose execution at depth $d+1$, starting with local variables initialized from the argument values $\text{vals}$ and memory $\u0000mu$, has cost at most $T'$ and ends in a state with return value $r$ and memory $\u0000mu'$ satisfying $R(r,\u0000mu')$. Assume every pair $(r,\u0000mu')$ satisfying $R$ gives a state with local variable $x$ set to $r$ and memory $\u0000mu'$ that satisfies $Q$; the call arguments are safe in the initial state and evaluate to $\text{vals}$; $d<\\text{lim.depth}$; and their total expression cost plus $2+T'$ is at most $T$. Then calling $p$ with those arguments from the initial state has an execution of cost at most $T$ ending in a state satisfying $Q$.",
+ "hypotheses_covered": [
+  "The procedure body for $p$ exists and its execution from the frame of $\text{vals}$ and memory $\u0000mu$ has cost at most $T'$ with return value and memory satisfying $R$",
+  "Every result satisfying $R$ yields a state with local variable $x$ set to the return value and the final memory that satisfies $Q$",
+  "Each argument expression is safe in the initial state and the argument values equal $\text{vals}$",
+  "$d<\\text{lim.depth}$",
+  "The sum of argument expression costs plus $2+T'$ is at most $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

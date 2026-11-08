@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.mult_outer_loop",
+ "key": "8be455046733336d",
+ "kind": "lemma",
+ "title": "Outer multiplication loop",
+ "statement": "Let $x,a,b$ be bit strings and let $v$ be a register assignment bounded by $4(|x|+1)$ in every register. Suppose $v(4)=v(0)+2|a|$, $v(5)=v(2)+2|b|$, the input bits at positions $v(0)+2p$ and $v(2)+2q$ reproduce respectively the bits of $a$ and $b$ for every $p<|a|$ and $q<|b|$ (with out-of-range bits treated as $0$), and $v(8)+|a|+|b|\\le 4(|x|+1)$. Define $S=\\sum_{p<|a|}\\sum_{q<|b|} [v(7)=v(8)+p+q]a_p b_q$, where bits are identified with $0$ or $1$, and suppose $v(11)+S\\le 4(|x|+1)$. Then there is a final register assignment, still bounded by $4(|x|+1)$, in which registers $0$, $8$, and $11$ equal respectively $v(0)+2|a|$, $v(8)+|a|$, and $v(11)+S$, and every register other than $0,8,9,10,11$ retains its initial value. The fixed multiplication program reaches its result-test state with this assignment and no answer recorded, with all earlier configurations satisfying its instruction side conditions and register bound.",
+ "hypotheses_covered": [
+  "Bit strings x, a, and b",
+  "Register assignment v",
+  "All registers are bounded by 4(|x|+1)",
+  "v(4)=v(0)+2|a|",
+  "v(5)=v(2)+2|b|",
+  "Input-bit readings reproduce a and b at the stated positions, with out-of-range bits treated as 0",
+  "v(8)+|a|+|b|≤4(|x|+1)",
+  "v(11)+S≤4(|x|+1), with S the specified diagonal sum"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

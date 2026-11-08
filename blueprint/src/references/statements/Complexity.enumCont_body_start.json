@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.enumCont_body_start",
+ "key": "03e21ee9bbeb278f",
+ "kind": "lemma",
+ "title": "Body initialization",
+ "statement": "Let $B$ be a finite Boolean Turing machine with at least one work tape, let $q_v,q_i$ be states of $B$, let $stop$ be a Boolean flag, and let $x$ be a Boolean input word. Suppose that, from its initial configuration on $x$, with all work tapes blank, $B$ halts at time $T$ and outputs $w$ consecutive true bits. Then for some $t\\le 3T+|x|+3w+10$, the body machine with parameters $B,q_v,q_i,stop$, started in its own initial configuration on $x$, is at the anchor on the seam carrying $w$ false bits on tape zero and blank contents on all other tapes.",
+ "hypotheses_covered": [
+  "$B$ is a finite Boolean Turing machine",
+  "$B$ has at least one work tape",
+  "$q_v,q_i$ are states of $B$",
+  "$stop$ is a Boolean flag",
+  "$x$ is a Boolean word",
+  "$w,T$ are natural numbers",
+  "the run of $B$ from its initial configuration on $x$ halts at time $T$",
+  "that run outputs $w$ copies of true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $B$ be a source machine with at least one work tape that, started at the\nempty seam on input $x$, halts within $T$ steps emitting $w$ consecutive true\nmarks. Then within $3T + |x| + 3w + 10$ steps from its initial configuration on\n$x$, the enumerator body reaches the anchor state over the canonical seam\ncarrying the all-false candidate of width $w$."
+}

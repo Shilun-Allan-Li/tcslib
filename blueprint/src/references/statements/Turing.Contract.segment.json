@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.Contract.segment",
+ "key": "d50077c4fa9ecd08",
+ "kind": "theorem",
+ "title": "A Contract Run Forms a Segment",
+ "statement": "Let $C$ be a contract for a machine $M$ with entry state $e$ and exit set $F$. For any data value $i$ and configuration $d$ in state $e$ satisfying the contract precondition, the run from $d$ reaches the prescribed endpoint at time $C$’s assigned time, its state lies outside $F$ at every strictly earlier time, and at every time up to and including the assigned time each work-tape head position lies between the corresponding lower and upper bounds specified by $C$.",
+ "hypotheses_covered": [
+  "$C$ is a contract for $M$ with entry state $e$ and exit set $F$",
+  "$d$ has state $e$",
+  "$d$ satisfies the contract precondition for $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C$ be a contract with entry state $\\mathrm{entry}$ and exit set $F$, and take an\nindex $i$ and configuration $d$ that starts in the entry state and satisfies the\ncontract precondition. The run from $d$ reaches $C$’s prescribed endpoint at time\n$C.\\mathrm{time}(i,d)$, visits no state in $F$ at any earlier time, and has every\nwork-tape head position at every time up to and including that endpoint inside the\ncoordinatewise intervals from $C.\\mathrm{lo}(i,d)$ to $C.\\mathrm{hi}(i,d)$."
+}

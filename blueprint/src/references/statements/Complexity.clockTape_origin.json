@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.clockTape_origin",
+ "key": "ce70458b057e157e",
+ "kind": "lemma",
+ "title": "Unique origin on the captured tape",
+ "statement": "For every Boolean word $w$ and integer coordinate $z$, the captured clock tape has the origin marker at $z$ if and only if $z=0$.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$z\\in\\mathbb{Z}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a bit word and consider its captured clock tape: the tape with the origin\nsentinel at cell $0$, the $i$-th bit of $w$ at cell $i+1$ for $0 \\le i < |w|$, and\nblanks elsewhere.  A cell of this tape carries the origin mark if and only if it is\ncell $0$."
+}

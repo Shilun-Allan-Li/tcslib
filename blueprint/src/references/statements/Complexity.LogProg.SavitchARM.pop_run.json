@@ -1,0 +1,29 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.pop_run",
+ "key": "a5d525040a81f829",
+ "kind": "theorem",
+ "title": "Execution of the Endpoint-Stack Pop Routine",
+ "statement": "Let $E$ and $B$ be natural numbers, let $\\mathrm{orc}$ assign a Boolean answer to each of four decider indices and Boolean words, let $x$ be a Boolean word, and let $b$ be a Boolean phase. For a machine register state $st$, suppose its loop counter, time scratch register, copy-and-shift scratch register, pop scratch register, and popped-endpoint register are all zero; every register is at most $B$; and its saved-endpoints stack has value $q2^{st.w}+e$, where $q,e$ are natural numbers and $e<2^{st.w}$. Starting with state $st$, no recorded answer, and the instruction that begins popping the saved endpoint for phase $b$, the abstract machine reaches the instruction that increments the level for phase $b$, with the saved-endpoints stack changed to $q$, the popped-endpoint register changed to $e$, all other registers unchanged, and no answer recorded. Every configuration before the final one satisfies the program guard with bound $B$.",
+ "hypotheses_covered": [
+  "$E$ is a natural number",
+  "$\\mathrm{orc}$ is an oracle on four deciders and Boolean words",
+  "$x$ is a Boolean word",
+  "$B$ is a natural-number register bound",
+  "$b$ is a Boolean phase",
+  "$st$ is a machine register state",
+  "the loop counter is zero",
+  "the time scratch register is zero",
+  "the copy-and-shift scratch register is zero",
+  "the pop scratch register is zero",
+  "the popped-endpoint register is zero",
+  "every register of $st$ is at most $B$",
+  "the saved-endpoints stack equals $q2^{st.w}+e$",
+  "$e<2^{st.w}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Fix a natural number $E$, an oracle on four deciders and Boolean-string inputs, an input\nstring $x$, and a natural-number register bound $B$. For either phase bit $b$, suppose a\nmachine state has counter $C$, scratch registers $T,Z,Q$, and endpoint register $E$ all\nequal to zero; all its registers are at most $B$; and its endpoint stack has the form\n$q2^w+e$ with $e<2^w$. Then the machine starting at the pop routine for phase $b$, with\nthis state and no answer recorded, reaches the state at the increment-level instruction\nwith the same registers except that the endpoint stack is $q$ and the endpoint register\nis $e$, with no answer recorded; throughout the run, each visited configuration\nsatisfies the guard requiring the program’s precondition and all registers to be at most\n$B$."
+}

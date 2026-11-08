@@ -1,15 +1,15 @@
 {
  "lean_name": "CommunicationComplexity.Deterministic.Protocol.mem_transcript",
- "key": "7fdcff5ee5f3646d",
+ "key": "e36d2eb601510a27",
  "kind": "theorem",
- "title": "Every input lies in the input set of its own transcript",
- "statement": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice) and $Y$ (Bob) with output type $\\alpha$, and let $(x, y) \\in X \\times Y$ be an input pair. Executing $p$ on $(x, y)$ yields a syntactic transcript, and the pair $(x, y)$ itself belongs to the input set of that transcript.",
+ "title": "Input membership in its transcript set",
+ "statement": "For every deterministic two-party protocol $p$ and every input pair $(x,y)\\in X\\times Y$, the pair $(x,y)$ belongs to the input set of the transcript produced by executing $p$ on $(x,y)$.",
  "hypotheses_covered": [
-  "p is a deterministic protocol over X, Y with output type α",
-  "an input pair (x,y) ∈ X × Y"
+  "$p$ is a deterministic two-party protocol",
+  "$(x,y)\\in X\\times Y$"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)\nand $Y$ (Bob) with output type $\\alpha$. For every input pair $(x,y) \\in X \\times Y$,\nexecuting $p$ on $(x,y)$ produces a syntactic transcript $t$, and the pair $(x,y)$\nbelongs to the input set of that transcript: $(x,y) \\in \\mathrm{inputSet}(t)$."
+ "replaced": "Let $p$ be a deterministic two-party communication protocol over input types $X$ (Alice)\nand $Y$ (Bob) with output type $\\alpha$, and let $(x, y) \\in X \\times Y$ be an input\npair. Executing $p$ on $(x, y)$ yields a syntactic transcript, and the pair $(x, y)$\nitself belongs to the input set of that transcript."
 }

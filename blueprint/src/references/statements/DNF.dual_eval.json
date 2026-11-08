@@ -1,0 +1,16 @@
+{
+ "lean_name": "DNF.dual_eval",
+ "key": "2abcef1b53a9eb32",
+ "kind": "lemma",
+ "title": "Evaluation of the dual formula",
+ "statement": "For a DNF formula $\\varphi$ on $n$ variables and an assignment $x\\in\\{0,1\\}^n$, the De Morgan dual CNF evaluates to the Boolean negation of the value of $\\varphi$ at $x$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$\\varphi$ is a DNF formula on $n$ variables",
+  "$x$ is an assignment to those variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $\\varphi$ be a DNF formula on $n$ variables — a disjunction of terms, each term a\nconjunction of literals — and let $x \\in \\{0,1\\}^n$ be an assignment. Form its De~Morgan\ndual CNF by negating every literal of every term of $\\varphi$ and reading each resulting\nterm as a clause (a disjunction of literals), so that the whole is a conjunction of\nclauses. Then this dual CNF evaluates on $x$ to the negation of the value of $\\varphi$\non $x$."
+}

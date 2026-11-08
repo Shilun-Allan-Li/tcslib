@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.b2b_round_run",
+ "key": "8f7c9afa605bf2b3",
+ "kind": "theorem",
+ "title": "One round of the Boolean computation",
+ "statement": "Let $M_V,M_I,M_P$ be finite Turing machines over the Boolean alphabet, let $x,u,v$ be Boolean words, and let $b$ be a Boolean value. Suppose that $M_I$ halts on $x$ with output $x$ after $t_I$ steps and uses at most $s_I$ work-tape cells; the cleaned simulation of $M_V$ on the concatenation of $x$ and $u$ halts with output $[b]$, has blank work tapes and all work-head positions zero at termination, and keeps every work-head position within absolute value $s_V$ throughout; and the fixed-width increment of $u$ is $v$ with $|v|=|u|$. Start the round-body machine at its test-anchor configuration with first tape storing $u$, all other tapes blank, input-head position $1$, and the specified work-head positions zero. There is a positive time $T$ such that, if $b$ is true, the machine ends at the true-verdict configuration with the same first tape and with the second tape storing $x$ followed by $u$; if $b$ is false, it ends at the test-anchor configuration with first tape storing $v$ and all other tapes blank. At every intermediate time $r$ with $0<r<T$, its state is neither endpoint state, and through time $T$ every work-tape head position has absolute value at most $|x|+|u|+s_V+s_I+1$.",
+ "hypotheses_covered": [
+  "$M_V,M_I,M_P$ are finite Turing machines over the Boolean alphabet",
+  "$x,u,v$ are Boolean words",
+  "$b$ is Boolean",
+  "$M_I$ computes $x$ from $x$ in time $t_I$",
+  "The space used by $M_I$ on $x$ is at most $s_I$",
+  "The cleaned simulation of $M_V$ on $x$ concatenated with $u$ satisfies the stated output, cleanup, and head-position bound with $s_V$",
+  "The fixed-width increment of $u$ is $v$",
+  "$|v|=|u|$"
+ ],
+ "confidence": "low",
+ "caveat": "The round-body machine and its endpoint states are specialized constructions; the prose records the formal endpoint and intermediate bounds.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

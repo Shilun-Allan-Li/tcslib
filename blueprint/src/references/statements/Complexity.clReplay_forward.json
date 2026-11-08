@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.clReplay_forward",
+ "key": "0a205c566a386d05",
+ "kind": "lemma",
+ "title": "Forward replay of a buffer suffix",
+ "statement": "Let $x,w,out$ be Boolean words, let $p$ be an input-head position for $x$, and let $j$ be a natural number with $j\\le |w|$. Starting with the replay machine in its emitting state, its work-tape head at position $j$, and output $out$, after $|w|-j+1$ steps it halts with the work-tape head at position $|w|$ and output $out$ followed by the suffix of $w$ beginning at position $j$; the input-head position remains $p$.",
+ "hypotheses_covered": [
+  "Boolean words $x,w,out$",
+  "An input-head position $p$ for $x$",
+  "A natural number $j$",
+  "$j\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, buffer $w$, position $j \\le |w|$, and output prefix, running the replay machine in its emitting control for $|w| - j + 1$ steps appends exactly the suffix of $w$ from position $j$ to the output and halts on the right blank, without any spurious trailing bit."
+}

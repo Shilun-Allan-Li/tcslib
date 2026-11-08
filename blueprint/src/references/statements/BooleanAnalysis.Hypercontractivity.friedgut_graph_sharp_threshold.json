@@ -1,0 +1,23 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.friedgut_graph_sharp_threshold",
+ "key": "90799f7d6d344ad4",
+ "kind": "theorem",
+ "title": "Graph Sharp-Threshold Approximation by Monotone DNF",
+ "statement": "There is a function $w:\\mathbb R\\times\\mathbb R\\to\\mathbb N$ with the following property. For all $v,n\\in\\mathbb N$, every bijection from the $n$ coordinates to the two-element subsets of a labeled $v$-vertex set, and every increasing Boolean graph property $f:\\{0,1\\}^n\\to\\{0,1\\}$ invariant under permutations of the vertices, let $p,K,\\varepsilon\\in\\mathbb R$ satisfy $0<p\\le\\tfrac12$, $K>0$, and $0<\\varepsilon<1$. If the biased total influence of $f$ at parameter $p$ is at most $K$, then there is a monotone DNF formula $d$ of width at most $w(K,\\varepsilon)$ whose probability of disagreement with $f$ under the Bernoulli-$p$ product weights is at most $\\varepsilon$.",
+ "hypotheses_covered": [
+  "There exists $w:\\mathbb R\\times\\mathbb R\\to\\mathbb N$",
+  "$v,n\\in\\mathbb N$",
+  "A bijection from the $n$ coordinates to the two-element subsets of the labeled $v$-vertex set",
+  "$f:\\{0,1\\}^n\\to\\{0,1\\}$ is increasing",
+  "$f$ is invariant under every vertex permutation acting on the edge coordinates",
+  "$p,K,\\varepsilon\\in\\mathbb R$",
+  "$0<p\\le\\tfrac12$",
+  "$K>0$",
+  "$0<\\varepsilon<1$",
+  "Biased total influence of $f$ at $p$ is at most $K$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exists $w:\\mathbb R\\times\\mathbb R\\to\\mathbb N$ such that whenever the $n$ variables bijectively index the edges of a labeled simple graph on $v$ vertices, $f:\\{0,1\\}^n\\to\\{0,1\\}$ is an increasing graph property, $0<p\\le1/2$, $K>0$, $0<\\varepsilon<1$, and $I_p(f)\\le K$, there is a monotone DNF $d$ of width at most $w(K,\\varepsilon)$ with $\\Pr_p(f\\ne d)\\le\\varepsilon$. Here $I_p(f)=4p(1-p)$ times the sum of pivotal probabilities."
+}

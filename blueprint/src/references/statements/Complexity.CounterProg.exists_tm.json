@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.CounterProg.exists_tm",
+ "key": "6093a1436fa88079",
+ "kind": "theorem",
+ "title": "Turing machine simulation of a halted run",
+ "statement": "Let $R$ be a number of registers, let $\\Lambda$ be a finite label set, let $P$ be a counter program over those registers and labels, let $\\ell_0\\in\\Lambda$ be its start label, and let $x$ be a bit string. If the counter program started in its initial state is halted after $t$ steps, then the machine compiled from $P$ with start label $\\ell_0$ computes the output of that run on input $x$ in exactly $t(2t+3)$ steps, with some space usage.",
+ "hypotheses_covered": [
+  "Number of registers $R$",
+  "Finite label set $\\Lambda$",
+  "Counter program $P$",
+  "Start label $\\ell_0\\in\\Lambda$",
+  "Input bit string $x$",
+  "Natural number $t$",
+  "The $t$-step run from the initial state is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ registers with a finite label set\n$\\Lambda$ and start label $\\ell_0$, let $x$ be a binary input and\n$t \\in \\mathbb{N}$.  Suppose that $t$ steps of $P$ on $x$, started from the\ninitial state (label $\\ell_0$, all registers $0$, nothing read, empty output),\nreach a halted state, and let $y$ be its output.  Then the multi-tape Turing\nmachine compiled from $P$ with start label $\\ell_0$, which keeps each register\non its own work tape in unary, computes $y$ on input $x$ in time $t(2t+3)$:\nafter $t(2t+3)$ steps from its initial configuration on $x$ it is halted with\noutput $y$."
+}

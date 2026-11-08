@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.cont_write_apply",
+ "key": "0b5fa628c8f51d07",
+ "kind": "lemma",
+ "title": "Appending Bits by a Write Action",
+ "statement": "Let $N$ be a finite nondeterministic machine over the Boolean alphabet, let $y,x,u$ be Boolean words, let $q,q'\\in\\{0,1,2,3,4,5\\}$, and let $p$ be an input-head position among the $|y|+2$ positions. For any input-head movement $m\\in\\{-1,0,1\\}$ and optional bits $b_x,b_u$, applying the action that writes each present bit at its respective buffer head and advances that head exactly when it writes, while moving the input head by $m$, to the loader configuration with buffers $x,u$ and head positions $|x|,|u|$ yields the loader configuration with state index $q'$, buffers $x$ and $u$ extended by $b_x$ and $b_u$, input-head position obtained by the clamped move from $p$, and buffer-head positions equal to the lengths of the extended buffers.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic machine over Booleans",
+  "$y,x,u$ are Boolean words",
+  "$q,q'$ are in the six-element loader state set",
+  "$p$ is a valid input-head position for input $y$",
+  "$m$ is an input-head movement sign",
+  "$b_x,b_u$ are optional Boolean symbols"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine and consider a loader configuration whose two buffer heads stand at the right blanks of the buffer words $x$ and $u$. Applying an action that optionally writes one bit at each of the two buffer heads (advancing a head exactly when it writes) produces the loader configuration whose buffers are $x$ and $u$ with the respective optional bits appended, with the physical input head moved by the action's input move and all other tapes unchanged."
+}

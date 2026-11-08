@@ -1,0 +1,24 @@
+{
+ "lean_name": "Turing.StepBlock.RoundSpan.add",
+ "key": "f4d323a60b474e7e",
+ "kind": "lemma",
+ "title": "Concatenating round spans",
+ "statement": "Let $k,n$ be natural numbers, let $x$ be a finite Boolean word, let $c$ be a configuration of a $k$-tape machine with states in $\\mathrm{Fin}(n+1)$, and let $a$ be an action for that machine. Suppose configurations $d,e,f$ of the associated $(k+2)$-tape round machine satisfy the following: the run from $d$ reaches $e$ after $T$ steps, and at every earlier time its state is present and is neither the entry state nor the halt state, while its input-head position and each of its first $k$ work-tape head positions agree with either the corresponding position in $c$ or the position after applying $a$ to $c$; and the run from $e$ reaches $f$ after $U$ steps with those same intermediate-time conditions. Then the run from $d$ reaches $f$ after $T+U$ steps and satisfies those conditions at every time strictly before $T+U$.",
+ "hypotheses_covered": [
+  "$k,n$ are natural numbers and $x$ is a finite Boolean word",
+  "$c$ is a $k$-tape configuration with states in $\\mathrm{Fin}(n+1)$",
+  "$a$ is an action for that machine",
+  "The run from $d$ reaches $e$ after $T$ steps",
+  "At each time before $T$, the state is present and neither the entry nor halt state",
+  "At each time before $T$, the input-head position is its position in $c$ or after applying $a$ to $c$",
+  "At each time before $T$, each of the first $k$ work-tape head positions is its position in $c$ or after applying $a$ to $c$",
+  "The run from $e$ reaches $f$ after $U$ steps",
+  "At each time before $U$, the state is present and neither the entry nor halt state",
+  "At each time before $U$, the input-head position is its position in $c$ or after applying $a$ to $c$",
+  "At each time before $U$, each of the first $k$ work-tape head positions is its position in $c$ or after applying $a$ to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_finish_arg",
+ "key": "cc0390fbf949ee97",
+ "kind": "lemma",
+ "title": "The Argument Scan of the Finalizer",
+ "statement": "Let $\\mathrm{emit}$ be a Boolean mode, let $x$, $\\mathrm{arg}$, and $\\mathrm{cap}$ be Boolean words, and let $p$ be a physical input-head position on $x$. For any Boolean words $\\mathrm{pre}$ and $\\mathrm{suf}$ with $\\mathrm{arg}=\\mathrm{pre}\\,\\mathrm{suf}$, start the two-tape finalizer in state $1$, with its argument tape storing $\\mathrm{arg}$ when $\\mathrm{emit}$ is true and $\\mathrm{pre}$ otherwise, its argument head at $|\\mathrm{pre}|-1$, its capture tape storing $\\mathrm{cap}$ with its head at $|\\mathrm{cap}|$, and empty output. After exactly $|\\mathrm{pre}|+1$ steps it is in state $2$, with the argument tape storing $\\mathrm{arg}$ when $\\mathrm{emit}$ is true and the empty word otherwise, the argument head at the origin, the capture tape still storing $\\mathrm{cap}$ with its head at $|\\mathrm{cap}|-1$, and empty output.",
+ "hypotheses_covered": [
+  "emit is a Boolean mode",
+  "x, arg, and cap are Boolean words",
+  "p is a valid physical input-head position on x",
+  "pre and suf are Boolean words",
+  "arg equals pre concatenated with suf"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let the finalizer run in a fixed mode on an argument word $a$ and a capture word $c$,\nand let $p$ be a prefix of $a$. Starting from its argument-scan state with the argument\nhead at cell $|p| - 1$ -- the argument tape holding $a$ in emit mode and only $p$ in\ninstall mode -- after exactly $|p| + 1$ steps it is in the capture-rewind state with the\nargument tape holding $a$ in emit mode and empty in install mode, the argument head at\nthe origin, and the capture head one cell left of $|c|$."
+}

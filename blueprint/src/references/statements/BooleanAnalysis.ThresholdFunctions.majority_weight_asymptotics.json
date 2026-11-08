@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_weight_asymptotics",
+ "key": "046e5968f3ed77a5",
+ "kind": "theorem",
+ "title": "Uniform majority spectral asymptotics",
+ "statement": "There is a constant $C\\ge 0$ such that, for all natural numbers $m$ and $k$ with $k$ odd, $k>0$, and $2k^2\\le 2m+1$, the majority function on $\\{0,1\\}^{2m+1}$ has Fourier weight $W_k$ at level $k$ and Fourier weight $W_{>k}$ on levels strictly greater than $k$ satisfying\n\\[\n\\left|\\frac{W_k}{(2/\\pi)^{3/2}k^{-3/2}}-1\\right|\\le \\frac{C}{k},\\qquad\n\\left|\\frac{W_{>k}}{(2/\\pi)^{3/2}k^{-1/2}}-1\\right|\\le \\frac{C}{k}.\n\\]",
+ "hypotheses_covered": [
+  "There exists a real constant $C$",
+  "$C\\ge 0$",
+  "$m,k$ are natural numbers",
+  "$k$ is odd",
+  "$k>0$",
+  "$2k^2\\le 2m+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor each $m\\in\\mathbb N$, define $M_m:\\{\\pm1\\}^{2m+1}\\to\\mathbb R$ to equal $1$ when\nmore than $m$ coordinates equal $1$, and $-1$ otherwise; for\n$S\\subseteq\\{1,\\ldots,2m+1\\}$ define\n$\\widehat M_m(S)=2^{-(2m+1)}\\sum_{x\\in\\{\\pm1\\}^{2m+1}}M_m(x)\\prod_{i\\in S}x_i$,\n$W_k(M_m)=\\sum_{|S|=k}\\widehat M_m(S)^2$, and\n$W_{>k}(M_m)=\\sum_{|S|>k}\\widehat M_m(S)^2$ for $k\\in\\mathbb N$, and put\n$A=(2/\\pi)^{3/2}$.\nThere exists one real constant $C\\ge0$ such that for every $m,k\\in\\mathbb N$ with\n$k$ odd, $k>0$, and $2k^2\\le2m+1$, both estimates hold:\n\\[\n \\left|\\frac{W_k(M_m)}{A k^{-3/2}}-1\\right|\\le\\frac Ck,\n \\qquad\n \\left|\\frac{W_{>k}(M_m)}{A k^{-1/2}}-1\\right|\\le\\frac Ck.\n\\]"
+}

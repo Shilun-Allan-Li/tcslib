@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.setup_scan",
+ "key": "e1aba342b7468ea3",
+ "kind": "theorem",
+ "title": "Scanning a doubled bit string",
+ "statement": "Let $z$ and $w$ be finite bit strings, let $r$ be a natural number, and let $\u0000phi$ be either the initial scan phase or the separator phase. Suppose $z$ is the concatenation of a prefix, the string obtained by repeating each bit of $w$ twice, and a suffix. Starting with the input head at the end of the prefix, the first work tape empty, the second work tape containing $r$ marks from cell zero, both work heads at cell $r$, and empty output, after $2|w|$ steps the machine is in the configuration prescribed by folding the scan update over $w$: its phase and mark count are the resulting pair, its input head has advanced by $2|w|$ positions, and its work tapes, heads, and output are as initially specified.",
+ "hypotheses_covered": [
+  "$\\phi$ is the initial scan phase or separator phase",
+  "$z$ is a prefix followed by the doubled word $w$ and a suffix",
+  "the prefix length is a valid input position",
+  "the prefix length plus $2|w|$ is a valid input position",
+  "$\\mathsf{exact}$ is an arbitrary Boolean parameter"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

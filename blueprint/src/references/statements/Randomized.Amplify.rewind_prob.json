@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.Amplify.rewind_prob",
+ "key": "e75a8522bebaf6f3",
+ "kind": "theorem",
+ "title": "Output probability during rewind",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over Boolean inputs, let $x$ be an input, and let $r,T$ be natural numbers. Suppose every length-$T$ choice word makes $N$ halt on $x$ from its initial configuration. For any Boolean value $v$, any $i\\in\\mathbb N$, and any $j$ with $0\\le j\\le r$ and $j+i=r$, take a counter $c$ with $0\\le c\\le r+1$ and an augmented configuration $C$ in rewind phase at $(j,c)$ with empty output and all later blocks blank with their heads at $0$. If $c\\le j+1$, then the probability that a uniformly chosen Boolean word of length $i(T+|x|+2)+1$ makes the amplified machine from $C$ output exactly the one-symbol word $[v]$ equals the probability that, for a uniformly chosen Boolean word of length $iT$, the decision function applied to $c$ plus the number of its $i$ consecutive length-$T$ blocks on which $N$ outputs exactly $[\\mathrm{true}]$ equals $v$.",
+ "hypotheses_covered": [
+  "Every length-$T$ choice word makes $N$ halt on $x$ from its initial configuration",
+  "$v$ is a Boolean value",
+  "$j+i=r$",
+  "$j$ ranges from $0$ to $r$",
+  "$c$ ranges from $0$ to $r+1$",
+  "$C$ is in rewind phase at $(j,c)$, has empty output, and all later blocks are blank with head position $0$",
+  "$c\\le j+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

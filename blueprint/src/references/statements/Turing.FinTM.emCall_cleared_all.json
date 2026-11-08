@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.emCall_cleared_all",
+ "key": "16ff6d215fb93d94",
+ "kind": "lemma",
+ "title": "Erasing the entire marked interval",
+ "statement": "Let $d$ be a tape of optional Boolean symbols, let $\\ell$ be an integer, and let $m$ be a nonnegative integer. If $d$ is blank outside $[\\ell,\\ell+m)$, then erasing the first $m$ cells of that interval leaves the tape blank everywhere.",
+ "hypotheses_covered": [
+  "$d$ is a tape of optional Boolean symbols",
+  "$\\ell$ is an integer",
+  "$m$ is a natural number",
+  "$d$ is blank outside $[\\ell,\\ell+m)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $d$ be a data tape that is blank outside the interval of width $m$ starting at\n$\\ell$. Then erasing all $m$ interval cells of $d$ yields the completely blank tape,\nwith no assumption on the values inside the interval."
+}

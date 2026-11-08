@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.emCall_clear_run",
+ "key": "de8d3b668ac85970",
+ "kind": "lemma",
+ "title": "Bounded cleanup of a marked interval",
+ "statement": "Let $w$ be a Boolean word, let $p$ be an input-head position for $w$, let $d$ be a data tape, let $\\ell$ be an integer, and let $m,j$ be nonnegative integers. Assume $\\ell\\le 0$, $0<\\ell+m$, $j<m$, and $d$ is blank outside $[\\ell,\\ell+m)$. Start the cleaner in state $0$ with data tape $d$, the marker true exactly on $[\\ell,\\ell+m)$, the origin marker at $0$, and all heads at $\\ell+j$. There is a time $t$ with $0<t\\le 3m+4$ at which it is in state $3$ with all three tapes blank and all heads at the origin.",
+ "hypotheses_covered": [
+  "$w$ is a Boolean word",
+  "$p$ is an input-head position for $w$",
+  "$d$ is a data tape",
+  "$\\ell$ is an integer with $\\ell\\le 0$",
+  "$m,j$ are natural numbers with $0<\\ell+m$ and $j<m$",
+  "$d$ is blank outside $[\\ell,\\ell+m)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $d$ be a data tape blank outside an interval of width $m$ starting at $\\ell$, with\n$\\ell \\le 0 < \\ell + m$, and let the heads start at $\\ell + j$ for some $j < m$. Then\nthere is a positive time $t \\le 3m + 4$ after which the interval cleaner, started in its\ninitial state on $d$, the interval marker, and the origin marker, is in its silent\nreturn state with all three tapes blank and all heads at the origin."
+}

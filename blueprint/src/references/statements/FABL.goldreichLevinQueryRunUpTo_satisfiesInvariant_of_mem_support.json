@@ -1,0 +1,19 @@
+{
+ "lean_name": "FABL.goldreichLevinQueryRunUpTo_satisfiesInvariant_of_mem_support",
+ "key": "b0440ada373fa575",
+ "kind": "theorem",
+ "title": "Invariant of a failure-free Goldreich–Levin run",
+ "statement": "Let $n$ be a natural number, let $f:\\{-1,1\\}^n\\to\\{-1,1\\}$ be a Boolean function, and let $0<\\tau\\le 1$. For every $k\\le n$ and every state-and-cost outcome in the support of the randomized query procedure run through stage $k$, if the state’s trace contains no estimate whose error in restricted Fourier weight is at least $\\tau^2/4$, then there is an active family $\\mathcal A$ of subsets of $\\{0,\\ldots,n-1\\}$ such that the state records $\\mathcal A$ as its active family, every member of $\\mathcal A$ is contained in $\\{0,\\ldots,k-1\\}$, and every Fourier coefficient of $f$ with magnitude at least $\\tau$ has its intersection with $\\{0,\\ldots,k-1\\}$ in $\\mathcal A$. Moreover, when $k>0$, every $S\\in\\mathcal A$ has restricted Fourier weight greater than $\\tau^2/4$ for the first $k$ coordinates and frequency $S\\cap\\{0,\\ldots,k-1\\}$, and $|\\mathcal A|\\le\\lceil4/\\tau^2\\rceil$.",
+ "hypotheses_covered": [
+  "natural dimension $n$",
+  "Boolean target function on the $n$-dimensional sign cube",
+  "threshold $0<\\tau\\le1$",
+  "stage index $k$ is a natural number with $k\\le n$",
+  "state-and-cost outcome lies in the run’s support",
+  "the state’s trace contains no inaccurate estimate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\n% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

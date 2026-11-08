@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.eval_congr_of_lt_numVars",
+ "key": "40f2875eb3296e39",
+ "kind": "theorem",
+ "title": "Evaluation depends only on occurring variables",
+ "statement": "Let $\\varphi$ be a CNF formula with natural-number variable indices, and let $N(\\varphi)$ be its variable count. If two Boolean assignments agree on every variable $v<N(\\varphi)$, then they give the same truth value to $\\varphi$.",
+ "hypotheses_covered": [
+  "The assignments agree for every variable index less than the variable count of the formula"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula whose variables are indexed by natural numbers, and let\n$N(\\varphi)$ be one plus the largest variable index occurring in $\\varphi$ ($0$ if no\nvariable occurs). If two assignments $a, b : \\mathbb{N} \\to \\{0,1\\}$ satisfy\n$a(v) = b(v)$ for every $v < N(\\varphi)$, then $\\varphi$ evaluates to the same truth\nvalue under $a$ as under $b$."
+}

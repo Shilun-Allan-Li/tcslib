@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.dataCfg_simulates",
+ "key": "a70798001585ab5f",
+ "kind": "lemma",
+ "title": "One macrostep simulates one source step",
+ "statement": "Let $W$ and $M$ be finite binary Turing machines, let $a,R\\in\\mathbb{N}$, and let $c$ be a configuration of $M$ on a binary input word. Suppose the base guide tape is the fixed guide of radius $R$, its unary tape has a unit marker at $u$, and the data tapes decode to the head-centered payload vectors of $c$. Assume those payload vectors are blank outside $[-R,R]$ for both $c$ and its one-step successor. Then there are new read and neighbor-register vectors and data tapes such that exactly $6R+8$ simulator steps from the macrostep-check phase at unary head $u$, carrying the state and last output bit of $c$, reach the macrostep-check phase at unary head $u+1$, carrying the state and last output bit of the successor configuration, with the new data tapes decoding to that successor's head-centered payload vectors and the output word unchanged.",
+ "hypotheses_covered": [
+  "$W,M$ are finite binary Turing machines",
+  "$a,R$ are natural numbers",
+  "$c$ is a configuration of $M$ on a binary input word",
+  "base guide tape equals the guide of radius $R$",
+  "base unary tape has a unit marker at $u$",
+  "data tapes decode to the head-centered payload vectors of $c$",
+  "the payload vectors of $c$ are blank outside $[-R,R]$",
+  "the payload vectors of the one-step successor are blank outside $[-R,R]$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the base's guide tape is the fixed guide of radius $R$ and its unary\ntape holds a unit marker at $u$, and let $c$ be a configuration of the source\n$M$ whose head-centered payload vectors are decoded by the data tapes and are\nblank outside $[-R, R]$, as are those of its one-step successor.  Then exactly\n$6R + 8$ simulator steps from the counter-test phase carrying the state and\nlast-emitted bit of $c$ reach the counter-test phase at unary head $u + 1$\ncarrying the state and last-emitted bit of the successor of $c$, with data tapes\ndecoding the successor's head-centered payload vectors and an unchanged output\nstream."
+}

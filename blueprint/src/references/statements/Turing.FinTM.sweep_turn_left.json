@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.sweep_turn_left",
+ "key": "1a43902782bc10f8",
+ "kind": "lemma",
+ "title": "Turning from a forward into a backward scan",
+ "statement": "Let $q,q'$ be optional states of a one-work-tape machine over alphabet $A$, let $p$ be a valid input-head position, $z$ an integer, $l,r$ finite lists of possibly blank symbols, and $o$ an output word. For any possibly blank symbol $b$, optional emitted symbol $e$, and input-head movement $d\\in\\{-1,0,1\\}$, applying the action that writes $b$, moves the work head left, moves the input head by $d$, emits $e$, and enters state $q'$ to the forward-facing zipper configuration with state $q$, frontier $z$, stacks $l,r$, and output $o$ gives the backward-facing zipper configuration with state $q'$, input-head position moved by $d$, frontier $z-1$, right stack $b$ followed by the tail of $r$, left stack $l$, and output $o$ followed by $e$ when present.",
+ "hypotheses_covered": [
+  "$q,q'$ are optional states",
+  "$p$ is a valid input-head position",
+  "$z$ is an integer",
+  "$l,r$ are finite lists of possibly blank symbols",
+  "$o$ is a finite output word",
+  "$b$ is a possibly blank symbol",
+  "$e$ is an optional emitted symbol",
+  "$d$ is an input-head movement in $\\{-1,0,1\\}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider a one-work-tape configuration in forward-facing zipper form: work head at cell\n$z$, a list $r$ occupying cells $z, z+1, \\dots$, a list $l$ occupying cells\n$z-1, z-2, \\dots$, an input-head position, and an accumulated output. Applying an action\nthat writes a symbol $b$ at the current cell, moves the work head left, moves the input\nhead in a given direction, optionally emits one output symbol, and enters a given\noptional state produces the backward-facing zipper at $z-1$: cells $z, z+1, \\dots$ hold\n$b$ followed by the tail of $r$, cells $z-1, z-2, \\dots$ hold $l$, the input head has\nmoved in the given direction, and the output is extended by the emitted symbol."
+}

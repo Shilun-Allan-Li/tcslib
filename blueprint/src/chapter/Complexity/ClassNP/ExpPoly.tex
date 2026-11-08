@@ -22,91 +22,83 @@ A function $T : \mathbb{N} \to \mathbb{N}$ is \emph{exponential-polynomial} if t
 constants $K, k \in \mathbb{N}$ such that $T(n) \le 2^{K(n+1)^k}$ for every $n \in \mathbb{N}$.
 \end{definition}
 
-\begin{theorem}[Monotonicity of powers in the degree]
+\begin{theorem}[Monotonicity of powers in the exponent]
 \lean{Complexity.pow_mono_deg}
 \label{Complexity.pow_mono_deg}
 \leanok
 \difficulty{1}
-For all natural numbers $n$, $k$ and $k'$ with $k \le k'$, we have $(n+1)^k \le (n+1)^{k'}$.
+For all $n,k,k'\in\mathbb{N}$ with $k\le k'$, we have $(n+1)^k\le(n+1)^{k'}$.
 \end{theorem}
 
-\begin{theorem}[Closure under domination]
+\begin{theorem}[Closure Under Pointwise Domination]
 \lean{Complexity.ExpPoly.of_le}
 \label{Complexity.ExpPoly.of_le}
 \leanok
 \uses{Complexity.ExpPoly}
 \difficulty{1}
-Let $T, T' : \mathbb{N} \to \mathbb{N}$ satisfy $T(n) \le T'(n)$ for every $n$. If $T'$ is
-exponential-polynomial, i.e.\ $T'(n) \le 2^{K(n+1)^k}$ for all $n$ and some constants
-$K, k \in \mathbb{N}$, then $T$ is exponential-polynomial as well.
+Let $T,T':\mathbb{N}\to\mathbb{N}$ satisfy $T(n)\le T'(n)$ for every $n\in\mathbb{N}$.
+If $T'$ is exponential-polynomial, then $T$ is exponential-polynomial.
 \end{theorem}
 
-\begin{theorem}[Exponentials are exponential-polynomial]
+\begin{theorem}[Exponential-polynomial bound for exponentials]
 \lean{Complexity.expPoly_exp}
 \label{Complexity.expPoly_exp}
 \leanok
 \uses{Complexity.ExpPoly}
 \difficulty{4}
-For all constants $c, e \in \mathbb{N}$, the function $n \mapsto c \cdot 2^{n^e}$ is
-exponential-polynomial: there exist constants $K, k \in \mathbb{N}$ such that
-$c \cdot 2^{n^e} \le 2^{K(n+1)^k}$ for every $n \in \mathbb{N}$.
+For all $c,e\in\mathbb{N}$, the function $n\mapsto c\,2^{n^e}$ is
+exponential-polynomial: there exist $K,k\in\mathbb{N}$ such that $c\,2^{n^e}\le
+2^{K(n+1)^k}$ for every $n\in\mathbb{N}$.
 \end{theorem}
 
-\begin{theorem}[Polynomials are exponential-polynomial]
+\begin{theorem}[Exponential-polynomial bound for polynomials]
 \lean{Complexity.expPoly_poly}
 \label{Complexity.expPoly_poly}
 \leanok
 \uses{Complexity.ExpPoly}
 \difficulty{4}
-For all constants $a, d \in \mathbb{N}$, the function $n \mapsto a(n+1)^d$ is
-exponential-polynomial: there exist constants $K, k \in \mathbb{N}$ such that
-$a(n+1)^d \le 2^{K(n+1)^k}$ for every $n \in \mathbb{N}$.
+For all $a,d\in\mathbb{N}$, the function $n\mapsto a(n+1)^d$ is exponential-polynomial:
+there exist $K,k\in\mathbb{N}$ such that $a(n+1)^d\le 2^{K(n+1)^k}$ for every
+$n\in\mathbb{N}$.
 \end{theorem}
 
-\begin{theorem}[Closure under sums]
+\begin{theorem}[Closure Under Sums]
 \lean{Complexity.ExpPoly.add}
 \label{Complexity.ExpPoly.add}
 \leanok
 \uses{Complexity.ExpPoly, Complexity.pow_mono_deg}
 \difficulty{4}
-Let $T_1, T_2 : \mathbb{N} \to \mathbb{N}$ both be exponential-polynomial, i.e.\ each is
-bounded by $2^{K(n+1)^k}$ for all $n$ and some constants $K, k \in \mathbb{N}$. Then the sum
-$n \mapsto T_1(n) + T_2(n)$ is exponential-polynomial.
+Let $T_1,T_2:\mathbb{N}\to\mathbb{N}$ be exponential-polynomial functions, meaning that
+each is bounded by $2^{K(n+1)^k}$ for all $n$ and some natural-number constants $K,k$.
+Then the function $n\mapsto T_1(n)+T_2(n)$ is exponential-polynomial.
 \end{theorem}
 
-\begin{theorem}[Closure under products]
+\begin{theorem}[Closure Under Products]
 \lean{Complexity.ExpPoly.mul}
 \label{Complexity.ExpPoly.mul}
 \leanok
 \uses{Complexity.ExpPoly, Complexity.pow_mono_deg}
 \difficulty{4}
-Let $T_1, T_2 : \mathbb{N} \to \mathbb{N}$ both be exponential-polynomial, i.e.\ each is
-bounded by $2^{K(n+1)^k}$ for all $n$ and some constants $K, k \in \mathbb{N}$. Then the
-product $n \mapsto T_1(n) \cdot T_2(n)$ is exponential-polynomial.
+Let $T_1,T_2:\mathbb{N}\to\mathbb{N}$ be exponential-polynomial functions. Then the
+function $n\mapsto T_1(n)T_2(n)$ is exponential-polynomial.
 \end{theorem}
 
-\begin{theorem}[Composition with a polynomial argument]
+\begin{theorem}[Composition With a Polynomial Argument]
 \lean{Complexity.ExpPoly.comp_poly}
 \label{Complexity.ExpPoly.comp_poly}
 \leanok
 \uses{Complexity.ExpPoly}
 \difficulty{4}
-Let $T : \mathbb{N} \to \mathbb{N}$ be exponential-polynomial, i.e.\ $T(n) \le 2^{K(n+1)^k}$
-for all $n$ and some constants $K, k \in \mathbb{N}$. Then for all constants
-$a, d \in \mathbb{N}$, the function $n \mapsto T\bigl(a(n+1)^d\bigr)$ is also
-exponential-polynomial.
+Let $T:\mathbb{N}\to\mathbb{N}$ be exponential-polynomial, and let $a,d\in\mathbb{N}$.
+Then the function $n\mapsto T\bigl(a(n+1)^d\bigr)$ is exponential-polynomial.
 \end{theorem}
 
-\begin{theorem}[Exponential-polynomial time lies in $\mathrm{EXP}$]
+\begin{theorem}[Exponential-Polynomial Time Lies in EXP]
 \lean{Complexity.ExpPoly.mem_EXP}
 \label{Complexity.ExpPoly.mem_EXP}
 \leanok
 \uses{Complexity.DTIME, Complexity.EXP, Complexity.ExpPoly, Turing.FinTM.ComputesInTime.mono}
 \difficulty{5}
-Let $T : \mathbb{N} \to \mathbb{N}$ be exponential-polynomial, i.e.\ $T(n) \le 2^{K(n+1)^k}$
-for all $n$ and some constants $K, k \in \mathbb{N}$, and let $L$ be a language over the
-binary alphabet in $\mathrm{DTIME}(T)$, i.e.\ decided by some finite multi-tape Turing machine
-within $c \cdot T(n)$ steps on inputs of length $n$, for some constant $c$. Then
-$L \in \mathrm{EXP}$, that is, $L \in \mathrm{DTIME}(2^{n^{c'}})$ for some constant
-$c' \in \mathbb{N}$.
+Let $T:\mathbb{N}\to\mathbb{N}$ be exponential-polynomial, and let $L$ be a language of
+finite binary strings in $\mathrm{DTIME}(T)$. Then $L\in\mathrm{EXP}$.
 \end{theorem}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_splitBody_count",
+ "key": "863401a884a6757d",
+ "kind": "lemma",
+ "title": "A bounded safe split-body simulation",
+ "statement": "Let $M$ be a finite Turing machine over Boolean symbols, let $a$ be one of its states, let $w,s$ be Boolean words, and let $o$ be a Boolean output word. Suppose that the run of $M$ on the empty input, started in state $a$ with the bank tape initialized from $s$ and empty output, halts after exactly $T$ steps with output $o$. Then the constructed split-body machine, started in its count configuration encoding this initial run together with $w$ and $s$, reaches the corresponding count configuration encoding the halted run and output $o$ after some $t\\\\le T$ steps; throughout steps $0$ through $t$, it never enters its anchor state.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$a$ is a state of $M$",
+  "$w,s,o$ are Boolean words",
+  "The run from the bank configuration with state $a$ and empty output reaches the halted bank configuration with output $o$ after exactly $T$ steps"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion concerns private machine and configuration constructions whose supplied informal descriptions are placeholders, so their exact construction cannot be fully stated from the provided prose.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

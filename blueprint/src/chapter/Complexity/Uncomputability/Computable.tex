@@ -12,21 +12,17 @@ it within some time bound.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Declarations}
 
-\begin{theorem}[Existence of a time bound for a computing machine]
+\begin{theorem}[A time bound for computed functions]
 \lean{Turing.FinTM.Computes.exists_computesFunInTime}
 \label{Turing.FinTM.Computes.exists_computesFunInTime}
 \leanok
 \uses{Turing.FinTM, Turing.FinTM.Computes, Turing.FinTM.ComputesFunInTime, Turing.FinTM.ComputesInTime.mono}
 \difficulty{4}
-Let $\Sigma$ be a finite alphabet, let $M$ be a finite Turing machine over
-$\Sigma$, and let $f$ be a total function from strings over $\Sigma$ to strings
-over $\Sigma$. If $M$ computes $f$ --- on every input $x$ it halts, after some
-finite number of steps, with $f(x)$ on its output tape, with no stated time
-bound --- then there exists a function $T : \mathbb{N} \to \mathbb{N}$ such that
-$M$ computes $f$ within time $T$, i.e.\ on every input $x$ the machine $M$
-halts with output $f(x)$ within $T(\abs{x})$ steps, where $\abs{x}$ is the
-length of $x$. No monotonicity, positivity, or constructibility of $T$ is
-claimed.
+Let $\Sigma$ be a finite alphabet, let $M$ be a finite Turing machine over $\Sigma$, and
+let $f$ map words over $\Sigma$ to words over $\Sigma$. If $M$ computes $f$, meaning
+that on every input it eventually halts with output $f(x)$, then there is a function
+$T:\mathbb{N}\to\mathbb{N}$ such that on every input $x$, $M$ halts with output $f(x)$
+within $T(|x|)$ steps.
 \end{theorem}
 
 \begin{definition}[Computable string function]

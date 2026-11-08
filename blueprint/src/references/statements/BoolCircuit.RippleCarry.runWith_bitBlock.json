@@ -1,0 +1,21 @@
+{
+ "lean_name": "BoolCircuit.RippleCarry.runWith_bitBlock",
+ "key": "de3e21183eb824bd",
+ "kind": "theorem",
+ "title": "Evaluation of a ripple-carry bit block",
+ "statement": "Let $vs$ be a Boolean list and let $a,b,c,cin,acc,L$ be natural numbers. Suppose $vs$ has length $L$ and each of $a,b,c,cin,acc$ is less than $L$. Running the bit block with these indices appends $15$ values to $vs$. The resulting value at index $L+8$ is $(vs[a]\\land vs[b])\\lor((vs[a]\\mathbin{\\mathrm{xor}}vs[b])\\land vs[cin])$, where an out-of-range list lookup is false. The value at index $L+14$ is $vs[acc]\\land\\neg(((vs[a]\\mathbin{\\mathrm{xor}}vs[b])\\mathbin{\\mathrm{xor}}vs[cin])\\mathbin{\\mathrm{xor}}vs[c])$, with the same convention for out-of-range lookups.",
+ "hypotheses_covered": [
+  "$vs$ is a Boolean list",
+  "$a,b,c,cin,acc,L$ are natural numbers",
+  "$vs$ has length $L$",
+  "$a<L$",
+  "$b<L$",
+  "$c<L$",
+  "$cin<L$",
+  "$acc<L$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

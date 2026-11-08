@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.timeConstructible_id",
+ "key": "a60b64a43f0fcd6d",
+ "kind": "theorem",
+ "title": "Identity Is Time Constructible",
+ "statement": "The identity function $n\\mapsto n$ on the natural numbers is time constructible: for every natural number $n$, $n\\le n$, and there exist a positive natural number $c$ and a finite binary Turing machine that, on every binary input $x$, outputs the binary representation of $|x|$ within $c(|x|+1)$ steps.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The identity function $n \\mapsto n$ on the natural numbers is time\nconstructible: trivially $n \\le n$ for all $n$, and there are a positive\ninteger constant $c$ and a finite Turing machine over the binary alphabet that,\non every input word $x \\in \\{0,1\\}^{*}$, outputs the binary representation of\n$|x|$ (least-significant bit first, empty for $|x| = 0$) within at most\n$c \\cdot (|x| + 1)$ steps."
+}

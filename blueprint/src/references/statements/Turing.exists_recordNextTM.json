@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.exists_recordNextTM",
+ "key": "dbc59186d285b33f",
+ "kind": "theorem",
+ "title": "Enumeration and Successor of Valid Records",
+ "statement": "For every natural number $k$ and finite decidable types $Q,T$, there is a family of finite lists $E_{n,s}$ of records, with no repetitions, such that a record belongs to $E_{n,s}$ exactly when it encodes a configuration on a binary input of length $n$, together with a tag, whose work-tape heads and nonblank cells lie within distance $s$ of the origin. There are also a natural number $K$, a finite decidable state type $P$, a deterministic machine $R$ with $K+2$ work tapes over the record alphabet, distinct decision states $\\mathrm{yes},\\mathrm{no}$, designated states $\\mathrm{first},\\mathrm{next}$, and a constant $C$ that perform the following bounded transitions. On a configuration in state $\\mathrm{first}$ with the prescribed blank first tape, the machine writes the first record of $E_{n,s}$ on that tape and enters $\\mathrm{yes}$, or enters $\\mathrm{no}$ if the list is empty. On a configuration in state $\\mathrm{next}$ whose first tape encodes its $i$th record, it writes the next record and enters $\\mathrm{yes}$, or enters $\\mathrm{no}$ when there is no next record. In both cases it preserves all other configuration data, avoids both decision states before the final time, and keeps every head within distance $C(L+|\\langle H\\rangle|+1)$ of its initial position through that time, where $L$ is the prescribed record length and $H$ is the fixed template record; the time is at most $C^{L+|\\langle H\\rangle|+1}$. The input record is encoded on work tape $1$ according to the template, and all tapes of index at least $2$ are blank.",
+ "hypotheses_covered": [
+  "Natural number $k$",
+  "Finite decidable types $Q,T$",
+  "For the first-record transition: state $\\mathrm{first}$ and blank first tape over the prescribed interval",
+  "For the successor transition: index $i$ is within the enumeration, state $\\mathrm{next}$, and tape $0$ stores the $i$th record",
+  "Tape $1$ stores the prescribed template",
+  "All work tapes of index at least $2$ are blank"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

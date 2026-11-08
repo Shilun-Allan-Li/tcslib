@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.codeReadFin_sound",
+ "key": "d10196d0b471ba26",
+ "kind": "lemma",
+ "title": "Bounded-index reader soundness",
+ "statement": "For every natural number $n$, bit string $x$, index $i\\in\\{0,\\ldots,n-1\\}$, and bit string $r$, if the range-checked unary index reader of bound $n$ succeeds on $x$ with result $(i,r)$, then $x$ consists of $i$ ones followed by a zero, and then $r$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$x$ is a bit string",
+  "$i$ is an index less than $n$",
+  "$r$ is a bit string",
+  "the range-checked unary index reader of bound $n$ succeeds on $x$ with result $(i,r)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the range-checked unary reader with bound $n$ succeeds on a bit string $x$,\nreturning an index $i < n$ and a suffix $r$, then $x$ is exactly the\nself-delimiting unary code of $i$ ($i$ ones and a closing zero) followed by\n$r$."
+}

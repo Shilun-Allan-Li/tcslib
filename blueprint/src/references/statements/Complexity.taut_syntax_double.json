@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.taut_syntax_double",
+ "key": "e99441b66ae91efa",
+ "kind": "lemma",
+ "title": "Two Steps for a Doubled Bit",
+ "statement": "Let $x$ be a binary string, $s$ a syntax-scanner state, $i$ a natural number, and $b$ a bit. Suppose $i+2\\le |x|$ and the bits of $x$ at positions $i$ and $i+1$ are both $b$. Starting from the verifier configuration on $x$ in the syntax state carrying $s$, with $i$ input bits consumed, empty work tape, and work head at $0$, after two steps the configuration is in the syntax state carrying the state reached by applying two syntax transitions on the doubled bit $bb$, with $i+2$ input bits consumed, empty work tape, and work head at $0$.",
+ "hypotheses_covered": [
+  "$x$ is a binary string",
+  "$s$ is a syntax-scanner state",
+  "$i$ is a natural number",
+  "$i+2\\le |x|$",
+  "$x[i]=b$",
+  "$x[i+1]=b$",
+  "$b$ is a bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input with $i + 2 \\le |x|$ whose bits at positions $i$ and $i + 1$ both\nequal $b$, and let $s$ be a formula-scanner state with transition $\\delta$. Started in\nthe syntax state carrying $s$ with $i$ input bits consumed, empty work tape, work head\n$0$, and empty output, the non-tautology verifier reaches, after exactly two steps,\nthe syntax state carrying $\\delta(s, b)$ with $i + 2$ bits consumed and all else\nunchanged."
+}

@@ -5,49 +5,78 @@ First and second coordinate Gaussian derivative kernels admit integrable quadrat
 
 \section{Declarations}
 
-\begin{lemma}[First coordinate-score integral bound]
+\begin{lemma}[First coordinate Gaussian score bound]
 \lean{BooleanAnalysis.GaussianSpace.gaussianCoordinate_first_kernel_integrable_bound}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.integrable_centered_sq_gaussianCoordinate,BooleanAnalysis.GaussianSpace.integral_centered_sq_gaussianCoordinate}
+\uses{BooleanAnalysis.GaussianSpace.integrable_centered_sq_gaussianCoordinate, BooleanAnalysis.GaussianSpace.integral_centered_sq_gaussianCoordinate}
 \difficulty{5}
-Let $I$ be a finite set, $c\in\mathbb R^I$, $v>0$, and $\mu_{c,v}=\bigotimes_{i\in I}N(c_i,v)$. If $f:\mathbb R^I\to\mathbb R$ is measurable with $|f|\le1$ and $i\in I$, then $z\mapsto((z_i-c_i)/v)f(z)$ is $\mu_{c,v}$-integrable and $|\int((z_i-c_i)/v)f(z)\,d\mu_{c,v}(z)|\le1+1/v$.
+Let $I$ be a finite set, let $c=(c_j)_{j\in I}\in\mathbb R^I$, and let $v>0$. Equip
+$\mathbb R^I$ with the product Gaussian measure whose coordinate at $j$ has mean $c_j$
+and variance parameter $v$. If $f:\mathbb R^I\to\mathbb R$ is measurable and satisfies
+$|f(z)|\le1$ for every $z$, then for each $i\in I$ the function $z\mapsto
+((z_i-c_i)/v)f(z)$ is integrable, and its integral has absolute value at most $1+1/v$.
 \end{lemma}
 
 \begin{lemma}[Quadratic majorant for a Hessian score]
 \lean{BooleanAnalysis.GaussianSpace.abs_productHessian_mul_le}
 \leanok
 \difficulty{4}
-Let $I$ be a set, $c,z\in\mathbb R^I$, $v>0$, $i,j\in I$, and $a\in\mathbb R$ with $|a|\le1$. Then $|(((z_i-c_i)(z_j-c_j)/v^2-\delta_{ij}/v)a)|\le((z_i-c_i)^2+(z_j-c_j)^2)/(2v^2)+1/v$, where $\delta_{ij}=1$ if $i=j$ and zero otherwise.
+Let $\iota$ be a set, let $c,z\colon\iota\to\mathbb R$, and let $v>0$. For any
+$i,j\in\iota$ and any $a\in\mathbb R$ with $|a|\le1$, one has
+\[\left|\left(\frac{(z_i-c_i)(z_j-c_j)}{v^2}-\frac{\delta_{ij}}{v}\right)a\right|\le\frac{(z_i-c_i)^2+(z_j-c_j)^2}{2v^2}+\frac1v,\]
+where $\delta_{ij}=1$ if $i=j$ and $0$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Integrability of the quadratic Hessian majorant]
+\begin{lemma}[Integrability of a Gaussian quadratic bound]
 \lean{BooleanAnalysis.GaussianSpace.integrable_productHessian_bound}
 \leanok
 \uses{BooleanAnalysis.GaussianSpace.integrable_centered_sq_gaussianCoordinate}
 \difficulty{1}
-Let $I$ be finite, $c\in\mathbb R^I$, $v\ge0$, and $i,j\in I$. The function $z\mapsto((z_i-c_i)^2+(z_j-c_j)^2)/(2v^2)+1/v$ is integrable under $\bigotimes_kN(c_k,v)$, with division by zero interpreted as zero.
+Let $I$ be a finite set, let $c\in\mathbb R^I$, let $v\ge 0$, and let $i,j\in I$. The
+function $z\mapsto\bigl((z_i-c_i)^2+(z_j-c_j)^2\bigr)/(2v^2)+1/v$ is integrable under
+the product measure whose $k$th coordinate has Gaussian law with mean $c_k$ and variance
+$v$; at $v=0$, the quotients are interpreted using the usual convention that division by
+zero is zero.
 \end{lemma}
 
-\begin{lemma}[Integral of the quadratic Hessian majorant]
+\begin{lemma}[Gaussian Integral of a Quadratic Expression]
 \lean{BooleanAnalysis.GaussianSpace.integral_productHessian_bound}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.integrable_centered_sq_gaussianCoordinate,BooleanAnalysis.GaussianSpace.integral_centered_sq_gaussianCoordinate}
+\uses{BooleanAnalysis.GaussianSpace.integrable_centered_sq_gaussianCoordinate, BooleanAnalysis.GaussianSpace.integral_centered_sq_gaussianCoordinate}
 \difficulty{4}
-Let $I$ be a finite set, $c\in\mathbb R^I$, $v>0$, and $\mu_{c,v}=\bigotimes_{i\in I}N(c_i,v)$. Put $B_{ij}(z)=((z_i-c_i)^2+(z_j-c_j)^2)/(2v^2)+1/v$. For all $i,j\in I$, $\int B_{ij}\,d\mu_{c,v}=2/v$.
+Let $I$ be a finite type, let $c:I\to\mathbb R$, and let $v\ge0$ with $v\ne0$. For any
+$i,j\in I$,
+\[
+\int_{\mathbb
+R^I}\left(\frac{(z_i-c_i)^2+(z_j-c_j)^2}{2v^2}+\frac1v\right)\,d\Bigl(\bigotimes_{k\in
+I}N(c_k,v)\Bigr)(z)=\frac2v,
+\]
+where each $N(c_k,v)$ is a Gaussian measure with mean $c_k$ and variance parameter $v$.
 \end{lemma}
 
-\begin{lemma}[Integrability of bounded Hessian-score products]
+\begin{lemma}[Integrability of Gaussian Hessian products]
 \lean{BooleanAnalysis.GaussianSpace.integrable_productHessian_mul}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_productHessian_mul_le,BooleanAnalysis.GaussianSpace.integrable_productHessian_bound}
+\uses{BooleanAnalysis.GaussianSpace.abs_productHessian_mul_le, BooleanAnalysis.GaussianSpace.integrable_productHessian_bound}
 \difficulty{3}
-Let $I$ be a finite set, $c\in\mathbb R^I$, $v>0$, and $\mu_{c,v}=\bigotimes_{i\in I}N(c_i,v)$. For $i,j\in I$, put $H_{ij}(z)=(z_i-c_i)(z_j-c_j)/v^2-\delta_{ij}/v$, where $\delta_{ij}$ is one if $i=j$ and zero otherwise. If $f:\mathbb R^I\to\mathbb R$ is measurable and $|f|\le1$, then $H_{ij}f$ is $\mu_{c,v}$-integrable for every $i,j\in I$.
+Let $I$ be a finite set, let $c\in\mathbb R^I$, and let $v>0$. If $f:\mathbb
+R^I\to\mathbb R$ is measurable and satisfies $|f(z)|\le 1$ for every $z$, then for every
+$i,j\in I$ the function
+\[z\longmapsto \left(\frac{(z_i-c_i)(z_j-c_j)}{v^2}-\frac{\delta_{ij}}{v}\right)f(z)
+\]
+is integrable under the product Gaussian measure with independent coordinates of means
+$c_k$ and variance parameter $v$, where $\delta_{ij}=1$ if $i=j$ and $0$ otherwise.
 \end{lemma}
 
-\begin{lemma}[Uniform Hessian-score integral bound]
+\begin{lemma}[Product Gaussian Hessian integral bound]
 \lean{BooleanAnalysis.GaussianSpace.abs_integral_productHessian_mul_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.abs_productHessian_mul_le,BooleanAnalysis.GaussianSpace.integrable_productHessian_bound,BooleanAnalysis.GaussianSpace.integral_productHessian_bound}
+\uses{BooleanAnalysis.GaussianSpace.abs_productHessian_mul_le, BooleanAnalysis.GaussianSpace.integrable_productHessian_bound, BooleanAnalysis.GaussianSpace.integral_productHessian_bound}
 \difficulty{4}
-Let $I$ be a finite set, $c\in\mathbb R^I$, $v>0$, and $\mu_{c,v}=\bigotimes_{i\in I}N(c_i,v)$. For $i,j\in I$, put $H_{ij}(z)=(z_i-c_i)(z_j-c_j)/v^2-\delta_{ij}/v$, where $\delta_{ij}$ is one if $i=j$ and zero otherwise. For any $f:\mathbb R^I\to\mathbb R$ with $|f|\le1$ and $i,j\in I$, $|\int H_{ij}f\,d\mu_{c,v}|\le2/v$, assigning zero to a nonintegrable integral.
+Let $I$ be a finite set, let $c\in\mathbb R^I$, and let $v$ be a nonzero nonnegative
+real number. Let $f:\mathbb R^I\to\mathbb R$ satisfy $|f(z)|\le1$ for every $z$. For any
+$i,j\in I$, under the product of Gaussian measures with means $c_k$ and common variance
+$v$, \[\left|\int_{\mathbb
+R^I}\left(\frac{(z_i-c_i)(z_j-c_j)}{v^2}-\frac{\delta_{ij}}{v}\right)f(z)\,d\mu(z)\right|\le\frac2v,\]
+where $\delta_{ij}=1$ when $i=j$ and $0$ otherwise.
 \end{lemma}

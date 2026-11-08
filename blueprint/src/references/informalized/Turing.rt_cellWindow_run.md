@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/RecordTable.lean :: Turing.rt_cellWindow_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Cell-Window Machine Run
+
+**Claim.** Starting from the specified sweep configuration, the cell-window machine reaches its designated exit state within $18(s+|w|)+32$ steps, avoids that state at every earlier time, and keeps every work-tape head within distance $2s+|w|+3$ of its initial position. Its final tape 1 contains the prescribed centered buffer, with the remaining configuration data as stated.
+
+**Proof.** Write $w_0$ for the list of length $2s+1$ consisting of $s$ false values, one true value, and then $s$ false values. First apply the window-machine run theorem (`rt_window_run`). It constructs this Boolean buffer on tape 1, reaches the window stage's exit with the given time and radius bounds, and avoids that exit earlier. Lift this run from Boolean symbols into the record-symbol alphabet; the run-lifting theorem (`MultiTapeTM.liftSymbols_runFrom`) transports the execution step for step, while the lifted configuration has the same state and head positions (`Cfg.liftSymbols_state`, `Cfg.liftSymbols_workTapePos`). The buffer identity (`FinTM.bufferTape_map`) ensures that the tape contents are the corresponding encoded buffer. The machine then scans this finite interval forward and backward. The scan theorem (`scanTM_run_ofCfg`) gives completion after $2|w_0|+2$ further steps, overwrites the scanned digits by cell symbols, and bounds the scan's head positions. Its computed transformation is identified as the desired one by `scanResult_map`. To combine the two stages, use the run-seam theorem (`rt_copy_seam`): it joins their times, preserves the earlier-exit property, and combines their head bounds. The first stage costs at most $14(s+|w|)+27$, and $|w_0|=2s+1$, so the total is at most $18(s+|w|)+32$. The combined head bound remains $2s+|w|+3$. The final configuration equality follows by matching the state, positions, tape contents, and output after the two stages.
+
+**Key facts.** `Turing.rt_window_run`, `Turing.MultiTapeTM.liftSymbols_runFrom`, `Turing.Cfg.liftSymbols_state`, `Turing.Cfg.liftSymbols_workTapePos`, `Turing.FinTM.bufferTape_map`, `Turing.scanTM_run_ofCfg`, `Turing.scanResult_map`, `Turing.rt_copy_seam`.

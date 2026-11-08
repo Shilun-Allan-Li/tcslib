@@ -1,0 +1,14 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_erase_back",
+ "key": "f6fe7816d8726d5e",
+ "kind": "lemma",
+ "title": "Backward erasure",
+ "statement": "For Boolean words $w$ and $u$, starting in eraser state $1$ with $u$ on the tape and its head at displacement $|u|-1$, after exactly $|u|+1$ steps the machine is in state $2$ with a blank tape and its head at displacement $0$. The input remains $w$ and the output is empty.",
+ "hypotheses_covered": [
+  "Boolean words $w$ and $u$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the eraser's backward state with the word $u$ and head at displacement\n$\\abs{u} - 1$, exactly $\\abs{u} + 1$ steps erase every cell of $u$ right to\nleft and restore the head to the origin, reaching the return state with a\nblank tape."
+}

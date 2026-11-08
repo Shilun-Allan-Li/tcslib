@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.valP2Act",
+ "key": "6a2d2fa57e644c8c",
+ "kind": "def",
+ "title": "Action for the second verifier",
+ "statement": "Given a register index $r$, states $v_F,v_T,v_0$, a previous optional Boolean value $\text{last}$, a Boolean $b_1$, and an optional Boolean answer, define an action as follows. If the answer is absent, use the rejection action. If it is $b_2$, then when $b_1$ is false and $b_2$ is true, use the rejection action if $\text{last}$ is false, and otherwise use the action prescribed by $r$ and $v_0$; when $b_1=b_2$, use the action prescribed by $r$ and $v_T$ if $b_1$ is true and by $r$ and $v_F$ if $b_1$ is false; in the remaining case use the rejection action.",
+ "hypotheses_covered": [
+  "A register index among $m$ registers",
+  "Three states $v_F,v_T,v_0$",
+  "A previous optional Boolean value",
+  "A Boolean $b_1$",
+  "An optional Boolean answer",
+  "A Boolean input string $x$ (implicit in the action construction)"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the action constructors used for the selected and rejection actions, so their machine-level effects cannot be rendered more explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

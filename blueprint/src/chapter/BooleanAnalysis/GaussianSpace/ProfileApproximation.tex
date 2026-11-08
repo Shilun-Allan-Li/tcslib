@@ -5,26 +5,39 @@ Continuity and vanishing endpoint values control the Gaussian profile by distanc
 
 \section{Declarations}
 
-\begin{lemma}[Profile bound by distance to endpoints]
+\begin{lemma}[Endpoint bound for the Gaussian profile]
 \lean{BooleanAnalysis.GaussianSpace.closedGaussianProfile_endpoint_bound}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg,BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile}
+\uses{BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg, BooleanAnalysis.GaussianSpace.continuousOn_closedGaussianProfile}
 \difficulty{5}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. For every $\varepsilon>0$ there exists $C>0$ such that $\overline I(p)\le\varepsilon+C|p-b|$ for all $p\in[0,1]$ and $b\in\{0,1\}$.
+For every $\varepsilon>0$, there is a constant $C>0$ such that for all $p\in[0,1]$, all
+real $b$ equal to $0$ or $1$, the closed Gaussian profile satisfies $U(p)\le
+\varepsilon+C|p-b|$.
 \end{lemma}
 
-\begin{lemma}[Integral profile bounded by rotation sensitivity]
+\begin{lemma}[Gaussian profile and rotation sensitivity]
 \lean{BooleanAnalysis.GaussianSpace.integral_profile_averagedGaussianIndicator_le}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_mem_unitInterval,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.closedGaussianProfile_endpoint_bound,BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg,BooleanAnalysis.GaussianSpace.integrable_averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.integral_abs_averagedGaussianIndicator_sub_indicator,BooleanAnalysis.GaussianSpace.rotationSensitivity,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.averagedGaussianIndicator_mem_unitInterval, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.closedGaussianProfile_endpoint_bound, BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg, BooleanAnalysis.GaussianSpace.integrable_averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.integral_abs_averagedGaussianIndicator_sub_indicator, BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For a measurable $A\subseteq\mathbb R^n$, let $u_\theta(x)=\mathbb E_Y1_A(\cos\theta\,x+\sin\theta\,Y)$ with $Y\sim\gamma_n$, and put $R_A(\theta)=\Pr(1_A(X)\ne1_A(\cos\theta\,X+\sin\theta\,Y))$ for independent $X,Y\sim\gamma_n$. For every $\varepsilon>0$ there exists $C>0$ such that $\int\overline I(u_\theta(x))\,d\gamma_n(x)\le\varepsilon+CR_A(\theta)$ for every real $\theta$.
+Let $n\ge 0$, let $A\subseteq\mathbb R^n$ be measurable, and let $\varepsilon>0$. For
+each real $\theta$, define $u_\theta(x)=\int
+1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$, where $\gamma_n$ is standard Gaussian
+measure on $\mathbb R^n$. There is a constant $C>0$ such that, for every
+$\theta\in\mathbb R$, $\int \overline I(u_\theta(x))\,d\gamma_n(x)\le \varepsilon+C
+R_A(\theta)$, where $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$ and is zero
+otherwise, and $R_A(\theta)$ is the probability that $1_A(X)\ne 1_A(\cos\theta
+X+\sin\theta Y)$ for independent $X,Y\sim\gamma_n$.
 \end{lemma}
 
-\begin{lemma}[Vanishing integral profile of averaged indicators]
+\begin{lemma}[Vanishing integral of the closed Gaussian profile]
 \lean{BooleanAnalysis.GaussianSpace.tendsto_integral_profile_averagedGaussianIndicator}
 \leanok
-\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator,BooleanAnalysis.GaussianSpace.closedGaussianProfile,BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg,BooleanAnalysis.GaussianSpace.integral_profile_averagedGaussianIndicator_le,BooleanAnalysis.GaussianSpace.rotationSensitivity,BooleanAnalysis.GaussianSpace.rotationSensitivity_tendsto_zero,BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
+\uses{BooleanAnalysis.GaussianSpace.averagedGaussianIndicator, BooleanAnalysis.GaussianSpace.closedGaussianProfile, BooleanAnalysis.GaussianSpace.closedGaussianProfile_nonneg, BooleanAnalysis.GaussianSpace.integral_profile_averagedGaussianIndicator_le, BooleanAnalysis.GaussianSpace.rotationSensitivity, BooleanAnalysis.GaussianSpace.rotationSensitivity_tendsto_zero, BooleanAnalysis.ThresholdFunctions.standardGaussianMeasure}
 \difficulty{5}
-Let $\Phi,\varphi$ be the standard Gaussian distribution function and density, and let $\overline I(p)=\varphi(\Phi^{-1}(p))$ for $0<p<1$, with $\overline I(p)=0$ elsewhere. Let $\gamma_n$ be standard Gaussian measure on $\mathbb R^n$. For a measurable $A\subseteq\mathbb R^n$, let $u_\theta(x)=\mathbb E_Y1_A(\cos\theta\,x+\sin\theta\,Y)$ with $Y\sim\gamma_n$, and put $R_A(\theta)=\Pr(1_A(X)\ne1_A(\cos\theta\,X+\sin\theta\,Y))$ for independent $X,Y\sim\gamma_n$. Then $\int\overline I(u_\theta(x))\,d\gamma_n(x)\to0$ as $\theta\to0$ through real values.
+Let $n\ge0$ and let $A\subseteq\mathbb R^n$ be measurable. For $u_\theta(x)=\int
+1_A(\cos\theta\,x+\sin\theta\,y)\,d\gamma_n(y)$, the integral $\int
+U(u_\theta(x))\,d\gamma_n(x)$ tends to $0$ as $\theta\to0$, where
+$U(\alpha)=\varphi(\Phi^{-1}(\alpha))$ for $0<\alpha<1$ and $U(\alpha)=0$ otherwise,
+with $\varphi$ and $\Phi$ the standard Gaussian density and distribution function.
 \end{lemma}

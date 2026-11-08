@@ -1,0 +1,23 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.step_cf",
+ "key": "9e1b34c6a3c459b2",
+ "kind": "theorem",
+ "title": "One-step configuration update",
+ "statement": "Let $z$ be a finite bit string, and consider a configuration with state $q$, input-head position $p$, two tape contents $v$ and $m$, both work heads at the integer position $j$, and output string $o$. For any input-head movement $i$ and local action $a$, if the machine transition on this configuration's scanned input symbol and the symbols on its two tapes equals the action encoded by $a$ with input movement $i$, then one machine step yields state and input-head position prescribed by $a$ and the clamped movement of $p$ by $i$; it updates the two tape contents at $j$ according to their respective writes, moves both work heads by the movement prescribed by $a$, and appends its optional output symbol to $o$.",
+ "hypotheses_covered": [
+  "arbitrary Boolean parameter $\\mathsf{exact}$",
+  "input word $z$",
+  "state $q$",
+  "valid input-head position $p$",
+  "tape contents $v,m:\\mathbb{Z}\\to\\mathrm{Option}(\\{0,1\\})$",
+  "work-head position $j\\in\\mathbb{Z}$",
+  "output word $o$",
+  "input-head movement $i$",
+  "local action $a$",
+  "the transition at the given configuration equals the action encoded by $a$ and movement $i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

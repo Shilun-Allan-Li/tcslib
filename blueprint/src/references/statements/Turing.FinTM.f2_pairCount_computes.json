@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_pairCount_computes",
+ "key": "3b4d40ddea864f7e",
+ "kind": "lemma",
+ "title": "Pair count computation",
+ "statement": "Let $M$ be a finite Turing machine over $\\\\{0,1\\\\}$, let $g$ map finite bit strings to finite bit strings, and let $T : \\\\mathbb{N} \\\\to \\\\mathbb{N}$. Suppose that on every bit string $x$, $M$ computes $g(x)$ within $T(|x|)$ steps. Then the constructed machine computes, on every $x$, the one-bit output that is $1$ exactly when the pair parser succeeds with second component $b$ satisfying $|b| \\\\le |g(x)|$, and is $0$ otherwise, within $T(|x|)+2|x|+5$ steps.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the Boolean alphabet",
+  "$g$ maps bit strings to bit strings",
+  "$T$ maps natural numbers to natural numbers",
+  "$M$ computes $g(x)$ within $T(|x|)$ steps for every bit string $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

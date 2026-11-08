@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.lintegral_gaussianRotation_derivative_le",
+ "key": "7c9f18280eb32285",
+ "kind": "lemma",
+ "title": "Directional derivative bound from rotation variation",
+ "statement": "Let $n\\ge 0$, let $f:\\mathbb R^n\\to\\mathbb R$ have derivative at every $x$ given by the linear functional $L(x)$, and let $C\\in[0,\\infty]$. Suppose that for every $\\theta>0$, the product Gaussian integral of $|f(\\cos\\theta X+\\sin\\theta Y)-f(X)|/\\theta$ is at most $C$, where $X$ and $Y$ are independent standard Gaussian vectors in $\\mathbb R^n$. Then the product Gaussian integral of $|L(X)Y|$ is at most $C$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$f$ has derivative $L(x)$ at every $x$",
+  "$C$ is an extended nonnegative real",
+  "The stated rotation difference integral is at most $C$ for every positive $\\theta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$ and $X,Y$ independent with that law. Let $f:\\mathbb R^n\\to\\mathbb R$ be differentiable everywhere with derivative $L(x)$, and put $|L(x)|_2=\\sqrt{\\sum_i(L(x)e_i)^2}$, where $e_i$ is the canonical basis. Let $C\\in[0,\\infty]$. If $\\mathbb E(|f(\\cos\\theta\\,X+\\sin\\theta\\,Y)-f(X)|/\\theta)\\le C$ for every $\\theta>0$, then $\\mathbb E|L(X)Y|\\le C$, with both expectations interpreted as nonnegative extended integrals."
+}

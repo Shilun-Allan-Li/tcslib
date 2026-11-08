@@ -12,6 +12,11 @@ radius $r$ has size $\mathrm{ballVol}(n,r,q) = \sum_{i=0}^{r}\binom{n}{i}(q-1)^i
 
 \begin{definition}[Word]
 \lean{CommunicationComplexity.Word}
+\statementsource{Vad12}{pdf-bf2ce5422088-p135-b001}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p092-b005,
+  pdf-681b6f3d947f-p095-b001
+}
 \label{CommunicationComplexity.Word}
 \leanok
 A \emph{word} of length $n$ over alphabet $\alpha$ is a function
@@ -21,10 +26,15 @@ length-$n$ codewords used throughout this module.
 
 \begin{definition}[Hamming ball]
 \lean{CommunicationComplexity.hammingBall}
+\statementsource{Vad12}{pdf-bf2ce5422088-p136-b003}
+\statementsource{vershynin-hdp-book}{
+  pdf-681b6f3d947f-p092-b005,
+  pdf-681b6f3d947f-p095-b001
+}
 \label{CommunicationComplexity.hammingBall}
 \leanok
-\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p029-b006}
 \uses{CommunicationComplexity.Word}
+\statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p029-b006}
 The \emph{Hamming ball} of radius $r$ centred at $u \in \alpha^n$ is the finset
 \[
   B_r(u) = \{v \in \alpha^n : \mathrm{hammingDist}(u,v) \le r\}.
@@ -44,6 +54,7 @@ The \emph{Hamming sphere} of radius $r$ centred at $u \in \alpha^n$ is the finse
 
 \begin{definition}[Ball volume]
 \lean{CommunicationComplexity.ballVol}
+\statementsource{vershynin-hdp-book}{pdf-681b6f3d947f-p092-b006}
 \label{CommunicationComplexity.ballVol}
 \leanok
 \statementsource{ada-coding-book}{pdf-7251cb8e4bc5-p070-b003}
@@ -103,17 +114,17 @@ where the two words differ:
 $\mathrm{support}(u,v) = \{i \in \mathrm{Fin}\,n : u_i \ne v_i\}$.
 \end{definition}
 
-\begin{lemma}[Hamming distance as the size of the support]
+\begin{lemma}[Hamming distance and support size]
 \lean{CommunicationComplexity.support_dist}
 \label{CommunicationComplexity.support_dist}
 \leanok
 \uses{CommunicationComplexity.Word, CommunicationComplexity.support}
 \difficulty{1}
-Let $u,v$ be words of length $n$ over a finite alphabet $\alpha$, that is, functions
-$\mathrm{Fin}\,n \to \alpha$. Then the Hamming distance between them equals the number
-of coordinates on which they differ:
+Let $u$ and $v$ be words of length $n$ over a finite alphabet $\alpha$, so each is a
+function from $\mathrm{Fin}\,n$ to $\alpha$. Their Hamming distance equals the number of
+coordinates where they differ:
 \[
-d(u,v) = \abs{\{i \in \mathrm{Fin}\,n : u_i \ne v_i\}}.
+d(u,v)=\#\{i\in\mathrm{Fin}\,n:u(i)\ne v(i)\}.
 \]
 \end{lemma}
 
@@ -215,8 +226,8 @@ over $S$, that is, the words differing from $u$ at exactly the positions in $S$.
 \lean{CommunicationComplexity.card_supportFiber}
 \label{CommunicationComplexity.card_supportFiber}
 \leanok
-\proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \uses{CommunicationComplexity.Word, CommunicationComplexity.choices_card, CommunicationComplexity.choices_partition_supportFiber, CommunicationComplexity.piece_card, CommunicationComplexity.support, CommunicationComplexity.supportFiber}
+\proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \difficulty{5}
 Let $\alpha$ be a finite alphabet, fix a word $u \colon \{1,\dots,n\} \to \alpha$ of
 length $n$, and let $S \subseteq \{1,\dots,n\}$ be a set of coordinate positions. Then
@@ -232,6 +243,7 @@ is
 \lean{CommunicationComplexity.hammingSphere_card}
 \label{CommunicationComplexity.hammingSphere_card}
 \leanok
+\uses{CommunicationComplexity.Word, CommunicationComplexity.card_supportFiber, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_eq_biUnion, CommunicationComplexity.supportFiber_disjoint}
 \proofsource{ada-coding-book}{pdf-7251cb8e4bc5-p032-b001}
 \proofstep
   {CommunicationComplexity.Word}
@@ -289,7 +301,6 @@ is
   {direct}
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p032-b001}
-\uses{CommunicationComplexity.Word, CommunicationComplexity.card_supportFiber, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_eq_biUnion, CommunicationComplexity.supportFiber_disjoint}
 \difficulty{3}
 Let $\alpha$ be a finite alphabet and fix a word $u \in \alpha^n$ of length $n$, where
 the Hamming distance $d(x,y)$ between two words counts the coordinates in which they
@@ -304,6 +315,7 @@ d(u,v) = k\}$ of words at Hamming distance exactly $k$ from $u$ has cardinality
 \lean{CommunicationComplexity.hammingBall_card}
 \label{CommunicationComplexity.hammingBall_card}
 \leanok
+\uses{CommunicationComplexity.Word, CommunicationComplexity.ballVol, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingBall_eq_hammingSpheres, CommunicationComplexity.hammingSphere_card}
 \proofsource{ada-coding-book}{
   pdf-7251cb8e4bc5-p032-b001,
   pdf-7251cb8e4bc5-p070-b003
@@ -380,7 +392,6 @@ d(u,v) = k\}$ of words at Hamming distance exactly $k$ from $u$ has cardinality
   {direct}
   {ada-coding-book}
   {pdf-7251cb8e4bc5-p032-b001}
-\uses{CommunicationComplexity.Word, CommunicationComplexity.ballVol, CommunicationComplexity.hammingBall, CommunicationComplexity.hammingSphere, CommunicationComplexity.hammingSphere_card}
 \difficulty{5}
 Let $\alpha$ be a finite alphabet, and consider words of length $n$ over $\alpha$. For
 any centre word $u \in \alpha^n$ and any radius $r$, the Hamming ball $B_r(u)$ has

@@ -16,6 +16,10 @@ For $n\ge0$, $x\in\{0,1\}^n$, and $S\subseteq[n]$, the setwise flip $x^S$ is def
 \lean{BooleanAnalysis.ThresholdFunctions.xorVec}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p015-b008,
+  pdf-ffbe9c7b3306-p031-b002
+}
 Let $n\ge0$ and $z,c\in\{0,1\}^n$. Their exclusive-or vector $z\oplus c$ has coordinate $(z\oplus c)_i=z_i+c_i\pmod2$.
 \end{definition}
 
@@ -30,71 +34,888 @@ For integers $n,m\ge0$, a coloring $\pi\colon[n]\to[m]$, and a color $j\in[m]$, 
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.fiber}
 \difficulty{1}
-Let $n,m\ge0$, $\pi\colon[n]\to[m]$, $j\in[m]$, and $i\in[n]$. For $F_j(\pi)=\{u\in[n]:\pi(u)=j\}$, one has $i\in F_j(\pi)$ if and only if $\pi(i)=j$.
+Let $n,m$ be natural numbers, let $\\pi:\\{0,\\ldots,n-1\\}\\to\\{0,\\ldots,m-1\\}$ be a
+map, and let $j$ and $i$ belong to the respective sets of indices. Then $i$ belongs to
+the color class of $j$ if and only if $\\pi(i)=j$.
 \end{lemma}
 
-\begin{lemma}[Flipping all bits gives the antipodal vector]
+\begin{lemma}[Flipping every coordinate]
 \lean{BooleanAnalysis.ThresholdFunctions.flipSet_univ}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.flipSet}
 \difficulty{3}
-For $n\ge0$ and $x\in\{0,1\}^n$, flipping all coordinates gives the vector $\bar x$ with $\bar x_i=1-x_i$ for every $i\in[n]$.
+Let $n\in\mathbb N$ and $x\in\{0,1\}^n$. Flipping every coordinate of $x$ gives the
+vector whose $i$th coordinate is $1-x_i$ for each $i\in\{0,\ldots,n-1\}$.
 \end{lemma}
 
-\begin{lemma}[A fixed setwise flip is an involution]
+\begin{lemma}[Involution of a coordinate flip]
 \lean{BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.flipSet}
 \difficulty{4}
-Let $n\ge0$, $x\in\{0,1\}^n$, and $S\subseteq[n]$, and write $x^S$ for the vector formed by flipping exactly the bits in $S$. Then $(x^S)^S=x$.
+Let $n\in\mathbb N$, let $x\in\{0,1\}^n$, and let $S\subseteq\{0,\ldots,n-1\}$. Flipping
+the coordinates in $S$ twice returns $x$.
 \end{lemma}
 
-\begin{lemma}[A fixed exclusive-or translation is an involution]
+\begin{lemma}[Applying an exclusive-or translation twice]
 \lean{BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.xorVec}
 \difficulty{3}
-For $n\ge0$ and $z,c\in\{0,1\}^n$, let $\oplus$ denote coordinatewise addition modulo two. Then $(z\oplus c)\oplus c=z$.
+Let $n$ be a nonnegative integer and let $z,c\in\{0,1\}^n$. Translating $z$
+coordinatewise by exclusive-or with $c$ twice returns $z$: $(z\oplus c)\oplus c=z$.
 \end{lemma}
 
-\begin{lemma}[Setwise flips preserve sums over the cube]
+\begin{lemma}[Setwise flips preserve cube sums]
 \lean{BooleanAnalysis.ThresholdFunctions.sum_comp_flipSet}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.flipSet, BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
 \difficulty{1}
-Let $n\ge0$, $F\colon\{0,1\}^n\to\mathbb R$, and $S\subseteq[n]$; write $x^S$ for the vector formed by flipping the coordinates in $S$. Then $\sum_{x\in\{0,1\}^n}F(x^S)=\sum_{x\in\{0,1\}^n}F(x)$.
+Let $n\ge 0$, let $F:\{0,1\}^n\to\mathbb R$, and let $S\subseteq\{0,\ldots,n-1\}$. For
+$x\in\{0,1\}^n$, let $x^S$ be obtained by flipping precisely the coordinates in $S$.
+Then $\sum_{x\in\{0,1\}^n}F(x^S)=\sum_{x\in\{0,1\}^n}F(x)$.
 \end{lemma}
 
-\begin{lemma}[Exclusive-or translations preserve cube sums]
+\begin{lemma}[XOR translations preserve cube sums]
 \lean{BooleanAnalysis.ThresholdFunctions.sum_comp_xorVec}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.xorVec, BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
 \difficulty{1}
-Let $n\ge0$, $F\colon\{0,1\}^n\to\mathbb R$, and $c\in\{0,1\}^n$, with $\oplus$ denoting coordinatewise addition modulo two. Then $\sum_{z\in\{0,1\}^n}F(z\oplus c)=\sum_{x\in\{0,1\}^n}F(x)$.
+Let $n\ge 0$, let $F:\{0,1\}^n\to\mathbb R$, and let $c\in\{0,1\}^n$. Write $z\oplus c$
+for coordinatewise addition modulo two. Then $\sum_{z\in\{0,1\}^n}F(z\oplus
+c)=\sum_{x\in\{0,1\}^n}F(x)$.
 \end{lemma}
 
 \begin{lemma}[Walsh character under a setwise flip]
 \lean{BooleanAnalysis.ThresholdFunctions.chiS_flipSet}
 \leanok
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.ThresholdFunctions.flipSet, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p023-b001,
+  pdf-ffbe9c7b3306-p078-b001
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
 \difficulty{4}
-Let $n\ge0$ and equip $\{0,1\}^n$ with its uniform probability measure; write $\mathbb E$ for uniform expectation. For $S\subseteq[n]$, put $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ and $\widehat h(S)=\mathbb E[h\chi_S]$ for real cube functions $h$. For $S\subseteq[n]$, let $x^S$ be the bit vector obtained by flipping exactly the coordinates in $S$. For all $S,T\subseteq[n]$ and $x\in\{0,1\}^n$, $\chi_T(x^S)=(-1)^{|T\cap S|}\chi_T(x)$.
+Let $n\ge0$, let $T,S$ be subsets of the $n$ coordinates, and let $x$ be a Boolean
+vector of length $n$. If $x^S$ is obtained by flipping precisely the coordinates in $S$,
+then $\chi_T(x^S)=(-1)^{|T\cap S|}\chi_T(x)$.
 \end{lemma}
 
-\begin{lemma}[Fourier coefficients under setwise flips]
+\begin{lemma}[Fourier coefficients under coordinate flips]
 \lean{BooleanAnalysis.ThresholdFunctions.fourierCoeff_comp_flipSet}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.chiS_flipSet, BooleanAnalysis.ThresholdFunctions.flipSet, BooleanAnalysis.ThresholdFunctions.flipSet_flipSet, BooleanAnalysis.ThresholdFunctions.sum_comp_flipSet, BooleanAnalysis.chiS, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p078-b001}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_univ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.flipSet_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.xorVec_xorVec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.sum_comp_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.chiS_flipSet}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
 \difficulty{3}
-Let $n\ge0$ and equip $\{0,1\}^n$ with its uniform probability measure; write $\mathbb E$ for uniform expectation. For $S\subseteq[n]$, put $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ and $\widehat h(S)=\mathbb E[h\chi_S]$ for real cube functions $h$. For $S\subseteq[n]$, let $x^S$ be the bit vector obtained by flipping exactly the coordinates in $S$. For every real cube function $f$ and sets $S,T\subseteq[n]$, $\widehat{(x\mapsto f(x^S))}(T)=(-1)^{|T\cap S|}\widehat f(T)$.
+Let $n\in\mathbb N$, let $f:\{0,1\}^n\to\mathbb R$, and let
+$S,T\subseteq\{0,\ldots,n-1\}$. If $x^S$ denotes the vector obtained by flipping the
+coordinates in $S$, then the Fourier coefficient at $T$ of the function $x\mapsto
+f(x^S)$ equals $(-1)^{|T\cap S|}\widehat f(T)$, where Fourier coefficients are taken
+with respect to the uniform measure on the Boolean cube.
 \end{lemma}
 
-\begin{lemma}[Fourier formula for setwise-flip correlation]
+\begin{lemma}[Fourier formula for flip correlation]
 \lean{BooleanAnalysis.ThresholdFunctions.expect_mul_flipSet}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.flipSet, BooleanAnalysis.ThresholdFunctions.fourierCoeff_comp_flipSet, BooleanAnalysis.expect, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct, BooleanAnalysis.plancherel}
 \difficulty{3}
-Let $n\ge0$ and equip $\{0,1\}^n$ with its uniform probability measure; write $\mathbb E$ for uniform expectation. For $S\subseteq[n]$, put $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ and $\widehat h(S)=\mathbb E[h\chi_S]$ for real cube functions $h$. For $S\subseteq[n]$, let $x^S$ be the bit vector obtained by flipping exactly the coordinates in $S$. For every real cube function $f$ and $S\subseteq[n]$, $\mathbb E[f(x)f(x^S)]=\sum_{T\subseteq[n]}(-1)^{|T\cap S|}\widehat f(T)^2$.
+Let $n$ be a nonnegative integer, let $f\colon\{0,1\}^n\to\mathbb R$, and let
+$S\subseteq[n]$. If $x^S$ denotes the vector obtained from $x$ by flipping exactly the
+coordinates in $S$, then
+\[
+\E_x[f(x)f(x^S)] = \sum_{T\subseteq[n]}(-1)^{|T\cap S|}\widehat f(T)^2,
+\]
+where $\widehat f(T)=\E_x[f(x)\chi_T(x)]$ and $\chi_T(x)=\prod_{i\in T}\sigma(x_i)$.
 \end{lemma}
 
 \begin{definition}[Quadratic disagreement under a setwise flip]
@@ -109,15 +930,25 @@ Let $n\ge0$ and equip $\{0,1\}^n$ with its uniform probability measure; write $\
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.ThresholdFunctions.expect_add, BooleanAnalysis.ThresholdFunctions.expect_const, BooleanAnalysis.ThresholdFunctions.expect_const_mul, BooleanAnalysis.ThresholdFunctions.expect_mul_flipSet, BooleanAnalysis.ThresholdFunctions.flipDisagreement, BooleanAnalysis.ThresholdFunctions.flipSet, BooleanAnalysis.fourierCoeff, BooleanAnalysis.isPmOne}
 \difficulty{4}
-Let $n\ge0$ and equip $\{0,1\}^n$ with its uniform probability measure; write $\mathbb E$ for uniform expectation. For $S\subseteq[n]$, put $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ and $\widehat h(S)=\mathbb E[h\chi_S]$ for real cube functions $h$. For $S\subseteq[n]$, let $x^S$ be the bit vector obtained by flipping exactly the coordinates in $S$. If $f\colon\{0,1\}^n\to\{-1,1\}$, then $\Pr[f(x)\ne f(x^S)]=(1-\sum_{T\subseteq[n]}(-1)^{|T\cap S|}\widehat f(T)^2)/2$ for each $S\subseteq[n]$; equivalently, this is $\tfrac14\mathbb E[(f(x)-f(x^S))^2]$.
+Let $n$ be a nonnegative integer, let $f\colon\{0,1\}^n\to\mathbb R$ take values in
+$\{-1,1\}$, and let $S\subseteq[n]$. If $x^S$ is obtained by flipping the coordinates in
+$S$, then
+\[
+\frac14\E_x[(f(x)-f(x^S))^2]
+=\frac{1-\displaystyle\sum_{T\subseteq[n]}(-1)^{|T\cap S|}\widehat f(T)^2}{2},
+\]
+where $\widehat f(T)=\E_x[f(x)\chi_T(x)]$ and $\chi_T(x)=\prod_{i\in T}\sigma(x_i)$.
 \end{lemma}
 
-\begin{lemma}[Color-class intersection parity as a product]
+\begin{lemma}[Parity product over a color class]
 \lean{BooleanAnalysis.ThresholdFunctions.neg_one_pow_card_inter_fiber}
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.fiber}
 \difficulty{4}
-Let $n,m\ge0$, $j_0\in[m]$, $T\subseteq[n]$, and $\pi\colon[n]\to[m]$, and put $F_{j_0}(\pi)=\{i:\pi(i)=j_0\}$. Then $(-1)^{|T\cap F_{j_0}(\pi)|}=\prod_{i=1}^n b_i$, where $b_i=-1$ if $i\in T$ and $\pi(i)=j_0$, and $b_i=1$ otherwise.
+Let $n,m$ be nonnegative integers, let $j_0\in[m]$, let $T\subseteq[n]$, and let
+$\pi\colon[n]\to[m]$. If $F_{j_0}(\pi)=\{i\in[n]:\pi(i)=j_0\}$, then $$(-1)^{|T\cap
+F_{j_0}(\pi)|}=\prod_{i\in[n]} b_i,$$ where $b_i=-1$ if $i\in T$ and $\pi(i)=j_0$, and
+$b_i=1$ otherwise.
 \end{lemma}
 
 \begin{lemma}[Parity sum over coordinate colorings]
@@ -125,5 +956,9 @@ Let $n,m\ge0$, $j_0\in[m]$, $T\subseteq[n]$, and $\pi\colon[n]\to[m]$, and put $
 \leanok
 \uses{BooleanAnalysis.ThresholdFunctions.fiber, BooleanAnalysis.ThresholdFunctions.neg_one_pow_card_inter_fiber}
 \difficulty{5}
-Let $n\ge0$, $m>0$ be integers, $j_0\in[m]$, and $T\subseteq[n]$. For $F_{j_0}(\pi)=\{i\in[n]:\pi(i)=j_0\}$, the sum over all colorings satisfies $\sum_{\pi:[n]\to[m]}(-1)^{|T\cap F_{j_0}(\pi)|}=m^n(1-2/m)^{|T|}$.
+Let $n\ge 0$ and $m>0$ be integers, let $j_0\in\{0,\ldots,m-1\}$, and let
+$T\subseteq\{0,\ldots,n-1\}$. For each coloring
+$\pi:\{0,\ldots,n-1\}\to\{0,\ldots,m-1\}$, let $F_{j_0}(\pi)=\{i:\pi(i)=j_0\}$. Then
+$\sum_{\pi}(-1)^{|T\cap F_{j_0}(\pi)|}=m^n(1-2/m)^{|T|}$, where the sum is over all such
+colorings.
 \end{lemma}

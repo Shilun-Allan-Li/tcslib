@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_catalogRewind",
+ "key": "a57a6e048a31b0b1",
+ "kind": "lemma",
+ "title": "Bounded input-head rewind",
+ "statement": "Let $x$ be a Boolean input, let $M$ be a machine with $k$ work tapes and state set $S$, and let $s,t \\in S$ and $d \\in \\mathrm{Option}(S)$. Suppose that from state $s$, on every input and work-tape reading, $M$ moves the input head left and enters state $t$ without changing any work tape or output; and from state $t$, it moves left and stays in $t$ whenever it reads a symbol, while on a blank input cell it moves right and enters state $d$. For every configuration $c$ on input $x$ whose state is $s$, there is an $r \\le c$'s input-head position plus $2$ such that after $r$ steps the configuration has state $d$ and input-head position $1$, with all other configuration components unchanged.",
+ "hypotheses_covered": [
+  "Natural number $k$ and state set $S$",
+  "Boolean input $x$",
+  "Machine $M$ with the specified transition rule in state $s$ for every input and work reading",
+  "Machine $M$ with the specified transition rule in state $t$ for every input and work reading",
+  "States $s,t$ and optional destination state $d$",
+  "Configuration $c$ on input $x$ with state $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

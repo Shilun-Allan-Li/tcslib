@@ -1,0 +1,20 @@
+{
+ "lean_name": "FABL.isInnerProductModTwoOne_of_linearChecks",
+ "key": "d120f3b553aa5948",
+ "kind": "theorem",
+ "title": "Linear checks certify a mod-two inner product",
+ "statement": "Let $m$ be a nonnegative integer, let $w$ be a Boolean string of length $2m$, and let $p$ be a Boolean string of length $2m+1$. Suppose the following checks hold for every seed: the seed selecting the first prefix position requires its bit in $p$ to be false; the seed selecting the final prefix position requires its bit to be true; for each $i<m$, one seed requires the product bit of $p$ at position $i$ to equal the AND of the two corresponding bits of $w$; and another requires the two successive prefix bits of $p$, interpreted in $\\mathbb F_2$, to differ by the product bit at position $i$. Then the inner product modulo two of the two length-$m$ blocks of $w$, interpreted as a field element, is $1$.",
+ "hypotheses_covered": [
+  "$m$ is a natural number",
+  "$w$ is a Boolean string of length $2m$",
+  "$p$ is a Boolean string of length $2m+1$",
+  "The first-prefix check requires false",
+  "The final-prefix check requires true",
+  "Every product-bit check equates the proof bit with the AND of the corresponding two bits of $w$",
+  "Every prefix check imposes the stated addition relation in $\\mathbb F_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

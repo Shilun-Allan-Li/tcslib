@@ -1,0 +1,14 @@
+{
+ "lean_name": "Std.Sat.CNF.decode_serialize",
+ "key": "147da0d37b558f73",
+ "kind": "theorem",
+ "title": "Decoding a serialized CNF formula",
+ "statement": "For every CNF formula $\\varphi$ over variables indexed by $\\mathbb{N}$, decoding its binary serialization returns $\\varphi$.",
+ "hypotheses_covered": [
+  "A CNF formula over variables indexed by $\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every CNF formula $\\varphi$ over variables indexed by $\\mathbb{N}$,\n$\\mathrm{dec}(\\mathrm{enc}(\\varphi)) = \\varphi$. Here a literal $(v,b)$ is encoded as\n$1^{v+1}0b$, a clause as the concatenation of its literal encodings followed by $0$, and a\nformula $(C_1,\\dots,C_k)$ as $1\\,\\mathrm{enc}(C_1)\\cdots1\\,\\mathrm{enc}(C_k)\\,0$; and\n$\\mathrm{dec}(x)$ is the formula obtained by parsing the bit string $x$, with recursion fuel\n$|x|$, according to the grammar\n$\\langle\\text{formula}\\rangle ::= 0 \\mid 1\\,\\langle\\text{clause}\\rangle\\,\\langle\\text{formula}\\rangle$,\n$\\langle\\text{clause}\\rangle ::= 0 \\mid \\langle\\text{literal}\\rangle\\,\\langle\\text{clause}\\rangle$,\n$\\langle\\text{literal}\\rangle ::= 1^{k+1}\\,0\\,b$ (the literal $(k,b)$) when this parse\nconsumes all of $x$, and the empty formula otherwise."
+}

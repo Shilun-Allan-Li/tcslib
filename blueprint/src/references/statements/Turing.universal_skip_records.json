@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.universal_skip_records",
+ "key": "a51af7014eb7e948",
+ "kind": "lemma",
+ "title": "Exact-Cost Skip of a List of Records",
+ "statement": "Let $x$ be a Boolean input string, $b$ a four-tape interpreter configuration on $x$, $d$ a destination control index or no destination, and $T$ a table decomposed as $T=lAr$, where $A$ is the concatenation of the serialized records for a list of actions and the list has length $m+1$ for some $m$ from $0$ through $8$. Starting in the fixed-field skipping phase with remaining count $m$, field index $0$, table cursor $|l|$, state tape $\\sigma$, and state cursor $s$, after $|A|$ interpreter steps the cursor is $|l|+|A|$ and the control is the continuation for $d$; the state tape and cursor are unchanged.",
+ "hypotheses_covered": [
+  "Boolean input string $x$",
+  "Base configuration $b$ of the four-tape interpreter on $x$",
+  "Destination $d$ is an optional index from $0$ through $8$",
+  "Table $T$ and state tape $\\sigma$ with state cursor $s$",
+  "List of actions $A$",
+  "Lists $l,r$",
+  "Length equation $|A|=m+1$ for an index $m$ from $0$ through $8$",
+  "Table decomposition $T=l++\\operatorname{records}(A)++r$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a_1, \\dots, a_{m+1}$ be one-work-tape machine actions over $\\{0,1\\}$\nwhose serialized transition records appear consecutively in the table after\na prefix $l$, and consider the interpreter's fixed-field skipping phase\ncarrying a destination and the remaining-record count $m \\in \\{0, \\dots,\n8\\}$, with field register $0$ and table cursor $|l|$.  Then exactly as many\ninterpreter steps as the total length of the $m + 1$ serialized records\nadvance the table cursor past all of them and enter the continuation after\na skip request for the destination; the state tape, state cursor, and all\nother data are unchanged."
+}

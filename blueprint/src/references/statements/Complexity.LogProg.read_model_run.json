@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.read_model_run",
+ "key": "5a1012bd54b1d7c2",
+ "kind": "theorem",
+ "title": "A complete read-model run",
+ "statement": "Let $c$ be a configuration with $m$ registers, let $r\\ne s$ be register indices, and let $i$ be a natural number. Suppose register $r$ contains the binary word for $i$ and its head is at position $0$. Starting with register $s$ loaded with the binary word for $0$, its head at $0$, the input head at position $1$, and the state at the initial read phase, the read model reaches a configuration with register $s$ containing the symbol of the input at index $i$ (or blank if that index is out of range), its head at $0$, and the exit state carrying that symbol. There is a natural number $T$ at which this occurs such that, at every time $n<T$, the configuration has the original output, register $s$'s tape may have changed, and the heads of registers $s$ and $r$ are at positions $p$ and $q$ satisfying $-1\\le p,q\\le \\operatorname{length}(\\operatorname{bits}(\\operatorname{length}(x)+1))$.",
+ "hypotheses_covered": [
+  "$c$ is a configuration",
+  "$r,s$ are register indices and $r\\ne s$",
+  "$i$ is a natural number",
+  "Register $r$ contains the binary word for $i$",
+  "The head of register $r$ is at position $0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.mult_scan",
+ "key": "562e321cbdcd0a09",
+ "kind": "lemma",
+ "title": "Scanning a paired bit string",
+ "statement": "Let $x,w$ be finite bit strings, let $b$ be either true or false, and let $v$ assign a natural-number counter to each of the program’s 13 registers. Suppose every counter is at most $4(|x|+1)$, register $1$ equals register $0$ plus $|w|$, and for every $j<|w|$ the bit of $x$ at position $v(0)+j$ (taken to be false when out of range) equals the bit of $w$ at position $j$ (also taken to be false when out of range). If the paired-string parser fails on $w$, the program can reach its false-answer state after advancing register $0$ by some $t\\le |w|$, while maintaining its safety conditions at every earlier step. If the parser returns $(a,\\_)$, it can reach the copy state indexed by $b$ after advancing register $0$ by $2|a|+2$, again maintaining those conditions at every earlier step.",
+ "hypotheses_covered": [
+  "Finite bit strings $x,w$",
+  "Boolean parameter $b$",
+  "Initial register assignment $v$",
+  "All registers bounded by $4(|x|+1)$",
+  "Register $1=v(0)+|w|$",
+  "The stated position-by-position agreement between $x$ and $w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

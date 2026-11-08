@@ -69,6 +69,7 @@ subtree of $t$ and $t$ is a subtree of $u$, then $s$ is a subtree of $u$.
 }
 \label{CommunicationComplexity.tree_balanced_subtree_aux}
 \leanok
+\uses{CommunicationComplexity.TreeIsSubtree, CommunicationComplexity.TreeIsSubtree.trans}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -129,7 +130,6 @@ subtree of $t$ and $t$ is a subtree of $u$, then $s$ is a subtree of $u$.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p004-b003}
-\uses{CommunicationComplexity.TreeIsSubtree, CommunicationComplexity.TreeIsSubtree.trans}
 \difficulty{5}
 Let $t$ be a binary tree, and write $\ell(t)$ for its number of leaves. Let $n$ be a
 natural number with $n > 1$, and suppose that $3\,\ell(t) \ge 2n$. Then $t$ has a
@@ -147,6 +147,7 @@ n \le 3\,\ell(s) < 2n.
 }
 \label{CommunicationComplexity.tree_balanced_subtree}
 \leanok
+\uses{CommunicationComplexity.TreeIsSubtree, CommunicationComplexity.tree_balanced_subtree_aux}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -213,7 +214,6 @@ n \le 3\,\ell(s) < 2n.
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p004-b003,
     pdf-fa052d8c95c0-p004-b004}
-\uses{CommunicationComplexity.TreeIsSubtree, CommunicationComplexity.TreeIsSubtree.trans, CommunicationComplexity.tree_balanced_subtree_aux}
 \difficulty{5}
 Let $t$ be a binary tree with more than one leaf, and write $\abs{u}$ for the number of
 leaves of a tree $u$. Then $t$ has a subtree $s$ whose leaf count satisfies

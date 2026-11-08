@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.Meyer.wdec_fire",
+ "key": "892ed7d0fe94eeec",
+ "kind": "theorem",
+ "title": "Firing the decision sweep",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean symbols, let $x,y$ be Boolean words, let $bits$ be a Boolean selector encoding, let $P$ be a valid input-head position for $y$, and let $c$ be a configuration of $M$ on $x$. Given auxiliary tape contents $\\tau_C,\\tau_O$, positions $z_C,z_O$, an optional state $oq$, an output register $r$, and a Boolean tag $b$ that correctly marks the boundary position of $c$'s input head, if $\\tau_O(z_O)$ contains true, then there is a tag $b'$ correctly marking the boundary position after one decoded-selector walk step on $c$ such that one step of the constructed machine gives the waiting-return configuration with that walked configuration, with $\\tau_O(z_O)$ changed to false and the auxiliary head moved to $z_O-1$.",
+ "hypotheses_covered": [
+  "M is a finite-state Turing machine over Boolean symbols",
+  "x and y are Boolean words",
+  "bits is a Boolean selector encoding",
+  "P is a valid input-head position for y",
+  "c is a configuration of M on x",
+  "τC and τO are auxiliary tape contents",
+  "zC and zO are integer positions",
+  "oq is an optional state",
+  "r is an output register",
+  "b correctly tags c's input-head boundary position",
+  "τO(zO)=some true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

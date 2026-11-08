@@ -1,0 +1,26 @@
+{
+ "lean_name": "Complexity.Meyer.loop_run",
+ "key": "f9b25a627f943916",
+ "kind": "theorem",
+ "title": "Bounded simulation of a machine run",
+ "statement": "Let $M$ be a deterministic Turing machine with Boolean symbols, and let $x,y,w$ be finite Boolean words. Let $P$ be an input-head position for $y$, let $bits$ assign a Boolean value to each of the $nbits(M)$ positions, and let $\\tau_O:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$ and $z_O\\in\\mathbb{Z}$. For every natural number $v$, configuration $c$ of $M$ on input $x$, state $q$ of $M$, and Boolean tag $b$ such that $ctrVal(w)=v$, the state of $c$ is $q$, and $b$ satisfies the boundary-tag condition for the input-head position of $c$, there are a natural number $s\\le (v+1)(2|w|+3)$, a tape content function $\\tau_C:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$, an integer head position $z_C$, and a Boolean tag $b'$ such that $b'$ satisfies the boundary-tag condition for the input-head position of the configuration reached by $M$ from $c$ after $v$ steps. After $s$ steps, the tabulated machine started from the specified encoded configuration in its decode state reaches the specified encoded configuration in its write-decode state, carrying the machine's state and output register after those $v$ steps, its resulting configuration, and the tag $b'$, while using $\\tau_C,z_C$ for the auxiliary tape and head and retaining $\\tau_O,z_O$.",
+ "hypotheses_covered": [
+  "M is a Turing machine with Boolean symbols and finite state set",
+  "x and y are Boolean words",
+  "bits assigns Boolean values to the nbits(M) positions",
+  "P is an input-head position for y",
+  "τO is an integer-indexed optional Boolean tape and zO is an integer",
+  "v is a natural number",
+  "w is a Boolean word with ctrVal(w)=v",
+  "c is a configuration of M on input x and its state is q",
+  "q is a state of M",
+  "b satisfies the boundary-tag condition for c's input-head position",
+  "The simulation length s is at most (v+1)(2|w|+3)",
+  "τC is an integer-indexed optional Boolean tape, zC is an integer, and b' is a Boolean tag",
+  "b' satisfies the boundary-tag condition for the input-head position after v steps"
+ ],
+ "confidence": "low",
+ "caveat": "The endpoint is defined through the encoded-configuration construction; the prose summarizes the fields of those configurations.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

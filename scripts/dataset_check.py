@@ -66,6 +66,7 @@ BASE = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(BASE))
 
 from proofmatch.dataset_io import open_dataset, resolve_dataset  # noqa: E402
+from scripts import dataset_projects as dp  # noqa: E402
 from scripts.informal_sources import is_tactic_transcript, statement_part  # noqa: E402
 
 DEFAULT_DATASET = BASE / "dataset" / "tcslib_theorems.jsonl"
@@ -129,6 +130,25 @@ def leaked_line(line: str) -> bool:
     return False
 
 
+def formal_context_lines(text: str) -> list[str]:
+    """Group parenthesized multiline `open` commands before checking their syntax."""
+    lines = text.splitlines()
+    grouped = []
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        i += 1
+        if line.startswith("open "):
+            balance = line.count("(") - line.count(")")
+            while balance > 0 and i < len(lines):
+                following = lines[i]
+                balance += following.count("(") - following.count(")")
+                line += " " + following.strip()
+                i += 1
+        grouped.append(line)
+    return grouped
+
+
 def area_of(record: dict) -> str:
     parts = record.get("source_module", "").split(".")
     return parts[1] if len(parts) > 1 else parts[0]
@@ -152,8 +172,20 @@ def lean_check_sample(records: list[dict], n: int, seed: int) -> list[tuple[str,
         for record in sample:
             path = Path(tmp) / (record["id"].replace(".", "_") + ".lean")
             path.write_text(record["formal_statement"], encoding="utf-8")
-            proc = subprocess.run(["zsh", str(LEAN_CHECK), str(path)],
-                                  capture_output=True, text=True)
+            project = dp.project_name(record["source_module"])
+            if project == "TCSlib":
+                command, root = ["zsh", str(LEAN_CHECK), str(path)], BASE
+            else:
+                root = dp.projects().get(project)
+                if root is None:
+                    failures.append((record["id"], 1, f"Unregistered project: {project}"))
+                    continue
+                command = ["lake", "env", "lean", str(path)]
+            expected = record.get("provenance", {}).get("lean_toolchain")
+            if expected and (root / "lean-toolchain").read_text().strip() != expected:
+                failures.append((record["id"], 1, f"Toolchain differs from record provenance: {expected}"))
+                continue
+            proc = subprocess.run(command, cwd=root, capture_output=True, text=True)
             errors = [l for l in proc.stdout.splitlines() if "error:" in l]
             if proc.returncode != 0 or errors:
                 failures.append((record["id"], len(errors),
@@ -193,7 +225,9 @@ def main() -> int:
                 findings["schema"].append(f"{rid}: missing {key}")
             elif not isinstance(record[key], types):
                 findings["schema"].append(f"{rid}: {key} is {type(record[key]).__name__}")
-        extra = set(record) - set(SCHEMA)
+        if "provenance" in record and not isinstance(record["provenance"], dict):
+            findings["schema"].append(f"{rid}: provenance is not an object")
+        extra = set(record) - set(SCHEMA) - {"provenance"}
         if extra:
             findings["schema"].append(f"{rid}: unexpected columns {sorted(extra)}")
         if rid in seen:
@@ -205,7 +239,7 @@ def main() -> int:
         rid = record["id"]
         fs = record.get("formal_statement", "")
         lines = fs.splitlines()
-        leaks = [l for l in lines if leaked_line(l)]
+        leaks = [l for l in formal_context_lines(fs) if leaked_line(l)]
         if leaks:
             # A sorried record's module may be absent from dep_graph.json (unbuilt), so
             # its statement cannot be regenerated; report it, but do not fail on it.
@@ -278,7 +312,7 @@ def main() -> int:
     # lean sample
     if args.lean_check:
         print(f"compiling {args.lean_check} sampled formal statements ...")
-        complete = [r for r in records if not any(leaked_line(l) for l in r["formal_statement"].splitlines())]
+        complete = [r for r in records if not any(leaked_line(l) for l in formal_context_lines(r["formal_statement"]))]
         for rid, nerr, first in lean_check_sample(complete, args.lean_check, args.seed):
             findings["lean-error"].append(f"{rid}: {nerr} error(s): {first[:120]}")
 

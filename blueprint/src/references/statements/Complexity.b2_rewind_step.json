@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.b2_rewind_step",
+ "key": "0b92a9ae0baa8cfc",
+ "kind": "lemma",
+ "title": "One Step of the Input Rewind",
+ "statement": "Let $S$ and $V$ be deterministic Turing machines over the binary alphabet, let $x$ be a binary word, and let $j<|x|$. For either choice bit, one step of the reverse host from its loader configuration in state $1$, with input head at position $j+1$, assembly buffer containing $x$, and assembly head at position $|x|$, gives the loader configuration with input head at position $j$ and all other configuration data unchanged.",
+ "hypotheses_covered": [
+  "$S,V$ are finite deterministic machines over the binary alphabet",
+  "$x$ is a binary word",
+  "$j$ is a natural number with $j<|x|$",
+  "the choice bit is Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines and $x$ an input with $j < |x|$. For any choice bit, one host step from the rewind-state loader configuration with input head at position $j+1$ and assembly buffer $x$ moves the input head to position $j$, leaving all tapes unchanged."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.recordStep_map_snapshot",
+ "key": "bb683e81cc33ed43",
+ "kind": "theorem",
+ "title": "Mapped scan snapshot",
+ "statement": "Let $d$ be a four-tape configuration over an alphabet $\\Gamma$, let $p\\in\\mathbb Z$, and let $b,e,w$ be words over $\\Gamma$. For a function $f:\\Gamma\\to\\Gamma$ and a destination tape $j$ equal to either tape $1$ or tape $3$, assume that $b=w$ if $j=1$ and $e=w$ if $j=3$. Starting from the snapshot of $d$ in the forward scan state, with offset $p$ and buffers $b,e$, the scan machine that applies $f$ to symbols on tape $j$ reaches after $2|w|+2$ steps the done-state snapshot with offset $p$, with that tape's buffer replaced by the word obtained by applying $f$ entrywise to $w$ and the other buffer unchanged. Before that time it is never in a done state; at every time up to and including that time, the head on tape $j$ lies between the initial head position minus one and the initial head position plus $|w|$, inclusive, and every other work-tape head remains at its position in the initial snapshot.",
+ "hypotheses_covered": [
+  "$d$ is a four-tape configuration over $\\Gamma$",
+  "$p\\in\\mathbb Z$",
+  "$b,e,w$ are words over $\\Gamma$",
+  "$f:\\Gamma\\to\\Gamma$",
+  "$j$ is a tape index in a four-tape machine",
+  "$j=1$ or $j=3$",
+  "if $j=1$, then $b=w$",
+  "if $j=3$, then $e=w$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

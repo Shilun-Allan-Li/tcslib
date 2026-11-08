@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/TuringMachine/Build/EmitIterBody.lean :: Turing.FinTM.exists_emitIterTM -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Iterated Emission Machine
+
+**Claim.** Under the polynomial running-time bounds for $G$ and $E$ and the polynomial bound on every iterate’s length, a finite machine computes the concatenation $e(w),e(g(w)),\ldots,e(g^{a'(|w|+1)^{k'}}(w))$ in polynomial time.
+
+**Proof.** First turn the computations of $E$ and $G$ into clean calls: each call emits $e(s)$ or installs $g(s)$, respectively, and has a first-exit guarantee. The binary counter machine computes the bits of the desired iteration count $a'(|w|+1)^{k'}$ in polynomial time. The output-length bound for a run, together with the timed-computation characterization, bounds $|e(s)|$ and $|g(s)|$ by their respective running-time budgets. Set $L(n)=b(n+1)^l$, which bounds every iterate’s length, and choose budgets for the two calls using $L(n)$ as the input-length bound. A round consists of emitting $e(s)$, installing $g(s)$, and restoring the host’s loop state. The round construction combines the two clean calls, preserving the input and ensuring the required endpoint; its duration is bounded by the two call budgets together with the word-copying overhead. The orbit-invariant lemma ensures that every successive iterate remains in the domain where the round argument applies. The loop theorem then runs the body for the requested number of rounds, concatenating each emitted chunk and halting after the final one. Its total budget is the number of rounds times the chosen uniform round budget, plus startup overhead. Finally, since $L(n)$ is polynomial, each call budget is polynomial in $n$; bounding the resulting sum by a single power of $n+1$ yields an exponent such as $D+k'$ and a constant coefficient. Increasing that coefficient by the stated factors absorbs the startup and round-count terms, giving the claimed polynomial running time.
+
+**Key facts.** `Turing.FinTM.exists_emitCallTM`, `Turing.FinTM.exists_installCallTM`, `Turing.FinTM.computesFunInTime_polyBits`, `Turing.FinTM.computesInTime_iff`, `Turing.MultiTapeTM.output_length_le`, `Turing.body_start`, `Turing.body_round`, `Turing.FinTM.loop_orbit_inv`, `Turing.FinTM.exists_emitLoopTM`, `Turing.FinTM.ComputesInTime.mono`.

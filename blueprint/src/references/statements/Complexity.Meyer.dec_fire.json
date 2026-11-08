@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Meyer.dec_fire",
+ "key": "aafa2c9960c56b94",
+ "kind": "theorem",
+ "title": "One Simulated Machine Step During a Sweep",
+ "statement": "Let $M$ be a finite Boolean Turing machine, let $y,x$ be Boolean words, let $bits$ be a selector-bit assignment for $M$, let $P$ be a valid input-head position for $y$, let $c$ be a configuration of $M$ on input $x$, and let $\\tau_C,\\tau_O:\\mathbb{Z}\\to\\{\\mathrm{none},\\mathrm{some} (\\mathrm{false}),\\mathrm{some} (\\mathrm{true})\\}$ with head positions $z_C,z_O\\in\\mathbb{Z}$. If $c$ is in state $q$, the Boolean tag $b$ correctly marks the input-head boundary of $c$, and the $C$ buffer contains true at position $z_C$, then there is a tag $b'$ correctly marking the input-head boundary after one step of $M$ such that one step of the simulator, started in its decode state with the output register obtained from $c$'s output, produces the lcfg configuration for that successor machine configuration. In that resulting configuration, the $C$ buffer is updated at $z_C$ to false and its head moves to $z_C-1$; the $O$ buffer and its head position are retained.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machine $M$",
+  "Boolean words $y,x$",
+  "Selector-bit assignment $bits$",
+  "Valid input-head position $P$ for $y$",
+  "Configuration $c$ of $M$ on input $x$",
+  "Integer-indexed buffers $\\tau_C,\\tau_O$ and head positions $z_C,z_O$",
+  "State condition $c.state=\\mathrm{some}(q)$",
+  "Boundary-tag condition for $c.inputPos$ and $b$",
+  "Buffer condition $\\tau_C(z_C)=\\mathrm{some}(\\mathrm{true})$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion relies on the simulator's defined configuration constructors and transition states, whose full meanings are not supplied as informal definitions.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

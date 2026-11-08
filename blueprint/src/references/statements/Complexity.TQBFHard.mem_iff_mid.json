@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.TQBFHard.mem_iff_mid",
+ "key": "ef4f492b90694136",
+ "kind": "theorem",
+ "title": "Language Membership and Midpoint Chains",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the Boolean alphabet, let $L$ be a language of Boolean strings, and let $sp:\\mathbb{N}\\to\\mathbb{N}$. Suppose that for every input string $y$ there is a time $T$ such that every choice string of length $T$ makes $N$ halt, uses at most $sp(|y|)$ work-tape cells, and $y\\in L$ exactly when some such choice string makes $N$ halt with output $[\\mathrm{true}]$. For any Boolean string $x$ and natural numbers $s,w$ satisfying $sp(|x|)\\le s$, $\\mathrm{codeLen}(N,|x|,s)\\le w$, and $\\mathrm{configBound}(|x|,s)\\le 2^w$, membership $x\\in L$ is equivalent to the existence of length-$w$ bit strings $A,B$ such that the initial configuration of $N$ on $x$ is encoded by the first $\\mathrm{codeLen}(N,|x|,s)$ bits of $A$, $B$ encodes a halting configuration with output $[\\mathrm{true}]$, and $A$ and $B$ are related by $w$ levels of midpoint subdivision using the relation that holds when two strings agree or encode a single machine step within the space window $s$.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the Boolean alphabet",
+  "$L$ is a language of Boolean strings",
+  "$sp:\\mathbb{N}\\to\\mathbb{N}$",
+  "$N$ decides $L$ within space $sp$",
+  "$x$ is a Boolean string",
+  "$s,w\\in\\mathbb{N}$",
+  "$sp(|x|)\\le s$",
+  "$\\mathrm{codeLen}(N,|x|,s)\\le w$",
+  "$\\mathrm{configBound}(|x|,s)\\le 2^w$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion has been paraphrased via the supplied encoding definitions; midpoint subdivision and the block relations have dataset descriptions pending, so their exact decoding conventions are not available in the payload.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

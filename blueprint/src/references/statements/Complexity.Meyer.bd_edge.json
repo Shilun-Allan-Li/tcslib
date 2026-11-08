@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Meyer.bd_edge",
+ "key": "7ab59788f4d58252",
+ "kind": "theorem",
+ "title": "Input boundary consistency",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean input, let $x$ be a Boolean word, and let $\\mathrm{Ans}$ be a Boolean-valued table on machine selectors and two natural-number indices. Suppose that every local checker condition holds for all times $t<2^W$, addresses $a<2^W$, and input indices $j\\le |x|+1$, and that at time $t$ the table correctly represents the machine's state and output, work-tape reads within distance $2^W-1-t$, and input reads within distance $|x|+1$. If $t+1<2^W$, then in the machine configuration $c$ after $t$ steps, a halting state or a stationary input-head move satisfies the boundary claim automatically. For a nonhalting configuration whose transition moves the input head right, either the current input read is blank and the table predicts no symbol at that position, or the table predicts no symbol at the right boundary after $t+1$ steps; for a move left, the analogous alternative holds at the left boundary.",
+ "hypotheses_covered": [
+  "A finite-tape Turing machine $M$ with Boolean input",
+  "A Boolean input word $x$",
+  "A Boolean-valued table $\\mathrm{Ans}$",
+  "All local checker conditions hold for $t<2^W$, $a<2^W$, and $j\\le |x|+1$",
+  "The table correctly represents machine state and output at time $t$",
+  "The table correctly represents work-tape reads within distance $2^W-1-t$",
+  "The table correctly represents input reads within distance $|x|+1$",
+  "$t+1<2^W$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

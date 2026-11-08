@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.a3n_eq_double",
+ "key": "caf0686f076b51e8",
+ "kind": "lemma",
+ "title": "Decoding a Doubled Bit",
+ "statement": "Let $y$, $pre$, $rest$, and $u$ be binary words, let $b$ be a bit, and suppose $y=pre\\,b\\,b\\,rest$. Starting from the comparator configuration in parser state at input position $|pre|+1$, with decoded work word $u$ and work head at position $|u|$, after two steps it is in parser state at input position $|pre|+3$, with decoded work word $u$ followed by $b$ and work head at position $|u b|$.",
+ "hypotheses_covered": [
+  "$y$, $pre$, $rest$, and $u$ are binary words",
+  "$b$ is a bit",
+  "$y=pre\\,b\\,b\\,rest$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the comparator input has the form $y = p\\,b\\,b\\,r$ for a bit $b$ and words $p, r$. From the parser state at position $|p|+1$ with decoded word $u$, exactly two steps of the pair comparator append $b$ to the work tape and move to position $|p|+3$, emitting nothing."
+}

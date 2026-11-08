@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.bobkovFunctional_noise_le",
+ "key": "63f4fcdeab4ada8c",
+ "kind": "lemma",
+ "title": "Noise contraction of the Bobkov functional",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ take values in $[0,1]$, and let $0\\le\\rho\\le1$. Then the Bobkov functional of the Boolean noise operator applied to $f$ satisfies $B(T_\\rho f)\\le B(f)$.",
+ "hypotheses_covered": [
+  "A Boolean function on the n-dimensional Boolean cube",
+  "The function takes values in [0,1]",
+  "The noise parameter lies in [0,1]"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a real function $f$ on the uniform Boolean cube $\\{0,1\\}^n$, write $D_i f(x)=(f(x^{i\\leftarrow0})-f(x^{i\\leftarrow1}))/2$ and $B(f)=\\mathbb E\\sqrt{\\overline I(f)^2+\\sum_i(D_i f)^2}$, where $\\overline I$ is the Gaussian profile extended by zero outside $(0,1)$. For $f:\\{0,1\\}^n\\to[0,1]$ and $0\\le\\rho\\le1$, $B(T_\\rho f)\\le B(f)$, where $T_\\rho$ is the Boolean noise operator with correlation $\\rho$."
+}

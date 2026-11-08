@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.NTIME_eq_empty_of_exists_zero",
+ "key": "323926bb5bffd590",
+ "kind": "theorem",
+ "title": "A zero time bound gives the empty class",
+ "statement": "Let $T:\\mathbb{N}\\to\\mathbb{N}$, and suppose $T(n)=0$ for at least one $n\\in\\mathbb{N}$. Then $\\mathrm{NTIME}(T)=\\varnothing$.",
+ "hypotheses_covered": [
+  "$T:\\mathbb{N}\\to\\mathbb{N}$",
+  "There exists $n\\in\\mathbb{N}$ such that $T(n)=0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T : \\mathbb{N} \\to \\mathbb{N}$ be a time bound with $T(n) = 0$ for at least one\ninput length $n$. Then $\\mathrm{NTIME}(T) = \\emptyset$: no language of binary strings\nis decided by a finite nondeterministic multi-tape machine within $c \\cdot T(|x|)$\nsteps on every input $x$, for any constant $c$."
+}

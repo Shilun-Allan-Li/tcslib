@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.sweep_generate",
+ "key": "7e764102a2cde640",
+ "kind": "lemma",
+ "title": "Iterating a local generation rule",
+ "statement": "Let $M$ be a one-work-tape Turing machine over alphabet $A$, let $w$ be a finite word over $A$, and let $\\mathit{cfg}$ assign a configuration to each counter $i$ from $0$ through $|w|$, integer coordinate $z$, and pair of finite lists $l,r$ of possibly blank symbols. Fix $d\\in\\mathbb{Z}$, and suppose that for every $i<|w|$ and all $z,l,r$, one step from $\\mathit{cfg}(i,z,l,r)$ yields $\\mathit{cfg}(i+1,z+d,\\,w_i::l,\\,\\operatorname{tail}(r))$. Then for every $n\\leq |w|$, running the machine for exactly $n$ steps from $\\mathit{cfg}(0,z,l,r)$ yields $\\mathit{cfg}$ at counter $n$, coordinate $z+dn$, left list formed by prepending the first $n$ symbols of $w$ in reverse order to $l$, and right list formed by dropping the first $n$ entries of $r$.",
+ "hypotheses_covered": [
+  "Types $A,S$ and word $x$ (the configuration input)",
+  "One-work-tape machine $M$",
+  "Word $w$ over $A$",
+  "Configuration family indexed by counters through $|w|$, integers, and two lists",
+  "Integer displacement $d$",
+  "The stated one-step rule for every counter below $|w|$ and all coordinates and lists",
+  "Integer starting coordinate $z$",
+  "Finite lists $l,r$ of possibly blank symbols",
+  "Natural number $n$ with $n\\leq |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a one-work-tape Turing machine over alphabet $A$, let $w$ be a word\nover $A$ to be written, let $d$ be a fixed integer displacement, and let\n$\\mathit{cfg}$ be a family of configurations of $M$ indexed by a step counter\n$i \\in \\{0, \\dots, |w|\\}$, an integer coordinate $z$, and two lists $l$, $r$\nof possibly-blank symbols. Assume the local one-step rule: for every\n$i < |w|$ and all $z$, $l$, $r$, a single step of $M$ from\n$\\mathit{cfg}(i, z, l, r)$ yields\n$\\mathit{cfg}(i+1,\\, z + d,\\, w_i \\mathbin{::} l,\\, \\mathrm{tail}(r))$, where\n$w_i$ is the $i$-th symbol of $w$, pushed as a nonblank cell. Then for every\n$n \\le |w|$, running $M$ for exactly $n$ steps from $\\mathit{cfg}(0, z, l, r)$\nyields $\\mathit{cfg}$ at counter $n$, coordinate $z + dn$, first list the\nfirst $n$ symbols of $w$, reversed, prepended to $l$, and second list $r$ with\nits first $n$ entries removed. The hypothesis is purely local and carries no\npremise about the global run."
+}

@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.scanStep_right",
+ "key": "34835bc40223db2b",
+ "kind": "lemma",
+ "title": "Single right-moving scan step",
+ "statement": "Let $M$ be a machine with no work tapes over the Boolean alphabet. Let $x$ be a finite Boolean string, let $q$ be a state, let $q'$ be an optional state, let $i<|x|$, let $o$ be a finite Boolean output string, and let $e$ be an optional Boolean symbol. Suppose that for every work-tape tuple, the transition from $q$ on the symbol $x[i]?$ is the action that moves right, has no work-tape actions, emits $e$, and enters state $q'$. Then one step from the scan configuration at position $i$ in state $q$ with output $o$ gives the scan configuration at position $i+1$ in state $q'$ with output $o$ followed by $e$ when present.",
+ "hypotheses_covered": [
+  "$M$ has no work tapes and uses the Boolean alphabet",
+  "$x$ is a finite Boolean string",
+  "$q$ is a state",
+  "$q'$ is an optional state",
+  "$i<|x|$",
+  "$o$ is a finite Boolean output string",
+  "$e$ is an optional Boolean symbol",
+  "For every work-tape tuple, the transition at $q$ on $x[i]?$ moves right, has no work-tape actions, emits $e$, and enters $q'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If at control state $q$ and input position $i < \\abs{x}$ the transition of a\nmachine without work tapes moves right, optionally emits a bit $e$, and passes\nto state $q'$, then one step from the scan configuration at $i$ with output\n$o$ yields the scan configuration at $i+1$ in state $q'$ with output $o$\nextended by $e$ when present."
+}

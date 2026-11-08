@@ -1,0 +1,16 @@
+{
+ "lean_name": "BoolCircuit.compileTree",
+ "key": "ec33941afedff470",
+ "kind": "def",
+ "title": "Tree circuit compilation",
+ "statement": "Given a Boolean circuit tree on $n$ variables and an existing list of gates, compile the tree by processing its children in order. A positive literal returns its variable index and leaves the gate list unchanged; a negative literal appends a NOT gate reading that variable and returns the index $n$ plus the resulting gate-list length. At a node, append an AND or OR gate according to its Boolean label, reading the deduplicated list of compiled child outputs, and return $n$ plus the final gate-list length as the output index.",
+ "hypotheses_covered": [
+  "A natural number $n$ of input variables",
+  "A Boolean circuit tree on $n$ variables",
+  "An existing list of gates"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% simultaneous-definitions: BoolCircuit.compileTrees\n% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

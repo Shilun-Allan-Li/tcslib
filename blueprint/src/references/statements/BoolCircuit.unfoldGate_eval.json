@@ -1,0 +1,19 @@
+{
+ "lean_name": "BoolCircuit.unfoldGate_eval",
+ "key": "cdacad08a1438259",
+ "kind": "theorem",
+ "title": "Evaluation of an unfolded gate",
+ "statement": "Let $n$ be a natural number, let $g$ be a well-formed gate, let $t$ assign a Boolean circuit on $n$ variables to each gate argument and polarity, let $v$ be a list of Boolean values, and let $x$ be an assignment to the $n$ variables. Suppose that for every argument $a$ of $g$ and each polarity $q$, the circuit $t(a,q)$ evaluates under $x$ to the value of $v$ at index $a$ (using false when that index is out of range) if $q$ is true, and to its negation if $q$ is false. Then unfolding $g$ at polarity $p$ evaluates under $x$ to the value of $g$ on $v$ if $p$ is true, and to its negation if $p$ is false.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$g$ is well formed: its argument list has no repetitions and, if it is a NOT gate, has length one",
+  "$v$ is a list of Boolean values",
+  "$x$ assigns a Boolean value to each of the $n$ variables",
+  "For every gate argument and polarity, the assigned circuit evaluates to the corresponding default-false list value or its negation according to the polarity",
+  "$p$ is a Boolean polarity"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

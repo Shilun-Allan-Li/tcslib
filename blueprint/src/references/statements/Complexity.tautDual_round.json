@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.tautDual_round",
+ "key": "47159d85f36c3cf5",
+ "kind": "lemma",
+ "title": "One complete transducer round",
+ "statement": "For every binary string $x$, there is a positive integer $t$ with $t\\le 4|x|+5$ such that, starting from the dual transducer's anchor configuration on $x$ with input head at position $1$ and empty output, the configuration after $t$ steps has the same state, head position, and tape contents as the starting configuration, and its output is the guarded dual output of $x$. At every time $j$ with $0<j<t$, the transducer is not in the anchor state.",
+ "hypotheses_covered": [
+  "An arbitrary binary string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $x$, let $c$ be the dual transducer's configuration on $x$ in\nthe anchor state with input head at position $1$ and empty output. There is a time $t$\nwith $0 < t \\le 4|x| + 5$ such that the configurations at all times $j$ with\n$0 < j < t$ are not in the anchor state, and the configuration at time $t$ equals $c$\nexcept that its output is the guarded dual output of $x$: the polarity-flipping scan\nof $x$ if $x$ passes the formula syntax scan, and the single bit $0$ otherwise."
+}

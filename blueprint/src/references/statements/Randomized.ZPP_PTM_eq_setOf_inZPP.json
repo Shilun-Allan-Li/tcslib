@@ -1,0 +1,18 @@
+{
+ "lean_name": "Randomized.ZPP_PTM_eq_setOf_inZPP",
+ "key": "abc65dcf185ce52c",
+ "kind": "theorem",
+ "title": "Verifier characterization of zero-error polynomial time",
+ "statement": "A language over binary strings belongs to zero-error expected polynomial time exactly when there are a polynomial-time verifier and natural numbers $a,k$ such that, on every input $x$, the verifier never returns false if $x$ is in the language and never returns true if $x$ is outside it, for every random string of length $a(|x|+1)^k$, and returns no answer with probability at most $1/2$ under a uniformly random string of that length. Here polynomial time for the verifier means that its true and false outputs are each recognized by a language in polynomial time using the specified self-delimiting pairing of input and random string.",
+ "hypotheses_covered": [
+  "The verifier is efficient in the specified polynomial-time model",
+  "There exist natural numbers $a$ and $k$",
+  "The no-false-output condition holds on every member and every random string of the prescribed length",
+  "The no-true-output condition holds on every nonmember and every random string of the prescribed length",
+  "The probability of returning no answer is at most $1/2$ on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

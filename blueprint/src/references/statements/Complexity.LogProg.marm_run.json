@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.marm_run",
+ "key": "580d453701c4af6a",
+ "kind": "theorem",
+ "title": "Simulation of a memory-augmented program",
+ "statement": "Fix a bit string $x$, a memory-augmented register program $A$ with start label $l_0$, an oracle, a Boolean multi-tape decider $D$ with initial states $q_0$, and natural-number bounds $B,W,P$. Suppose that after $N$ steps, the run of $A$ from label $l$, register values $v$, memory contents $M$, and memory-head position $p$ has halted with answer $b$, and that every configuration at time $t<N$ satisfies the memory guard: its decider calls meet the stated cleanliness and distinct-argument conditions, its register encodings have bit-length at most $W$, and its memory head has absolute position at most $P$. Then the compiled Turing machine, started from the corresponding configuration with register values zero, memory contents $M$, head position $p$, and output word $out$, halts after some number $T$ of steps with output $out$ followed by $b$, and throughout those steps every register head lies between $-1$ and $W$, every decider-work-tape head has absolute position at most $B$, and the memory head has absolute position at most $P$.",
+ "hypotheses_covered": [
+  "Fixed bit string $x$",
+  "Memory-augmented register program $A$ and start label $l_0$",
+  "Oracle and decider $D$ with initial-state map $q_0$",
+  "Natural-number bounds $B,W,P$",
+  "Natural number of simulated steps $N$",
+  "Initial label $l$, register-value map $v$, memory $M$, memory-head position $p$, output word $out$, and Boolean answer $b$",
+  "The run from $(l,v,M,p)$ halts at time $N$",
+  "The run's result at time $N$ is $b$",
+  "The memory guard holds at every time $t<N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "WordRAM.steps_store",
+ "key": "6b427ba165fd2ee6",
+ "kind": "theorem",
+ "title": "One-step store",
+ "statement": "Let $W$ be a word width, $P$ a program, $m$ a memory, and $i,j,a$ integers. Suppose the program at position $pos$ begins with the instruction that stores the word at address $j$ at the address held in $i$, the word at $i$ represents $a$, and $a$ satisfies $-2^W \\le 2a < 2^W$. Then one step from $(pos,m)$ reaches program counter $pos+1$ and memory obtained by updating $m$ at address $a$ with the word $m(j)$.",
+ "hypotheses_covered": [
+  "The program at pos begins with store i j",
+  "m(i) is the W-bit representation of a",
+  "-2^W ≤ 2a < 2^W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

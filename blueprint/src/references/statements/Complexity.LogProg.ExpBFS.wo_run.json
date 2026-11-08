@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.wo_run",
+ "key": "d580f37f15694444",
+ "kind": "theorem",
+ "title": "Bounded outward walk",
+ "statement": "For the designated machine with parameter $K_0$, oracle $\\mathrm{orc}:\\{0,\\ldots,3\\}\\times\\{0,1\\}^*\\to\\{0,1\\}$, input $x$, and natural bounds $B,P$, let $st$ be a memory access site, $k$ a natural number, $S$ a machine state, $M:\\mathbb Z\\to\\{0,1\\}$ a memory marking, and $p\\in\\mathbb Z$. If $S.T=k$, every register of $S$ is at most $B$, $S.T_2+k\\le B$, $0\\le p$, and $p+k\\le P$, then the machine has a finite run from the outward-walk configuration at $st$, with state $S$, marking $M$, and head position $p$, to the memory-operation configuration at $st$, with the same marking, head position $p+k$, and state obtained by setting $T$ to zero and $T_2$ to $S.T_2+k$, leaving every other state component unchanged. Every configuration strictly before the endpoint satisfies the register-instruction precondition, has all registers at most $B$, and has memory head between $0$ and $P$.",
+ "hypotheses_covered": [
+  "Natural parameter $K_0$ and the designated machine with that parameter",
+  "Oracle from four indices and Boolean strings to Booleans",
+  "Input $x$ and natural bounds $B,P$",
+  "Memory access site $st$",
+  "Natural number $k$",
+  "Machine state $S$ with $S.T=k$",
+  "Memory marking $M:\\mathbb Z\\to\\{0,1\\}$",
+  "Integer head position $p$ with $0\\le p$ and $p+k\\le P$",
+  "Every register of $S$ is at most $B$",
+  "$S.T_2+k\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the designated machine, oracle, input, and natural bounds $B,P$. For every memory\naccess site $st$, walk length $k$, register state $S$, marking $M:\\mathbb\nZ\\to\\{\\mathrm{false},\\mathrm{true}\\}$, and head position $p$, suppose $S.T=k$, every\nregister of $S$ is at most $B$, $S.T2+k\\le B$, $0\\le p$, and $p+k\\le P$. Then the\nmachine can run from the outward-walk configuration at $st$ with state $S$, marking $M$,\nand head $p$, to the memory-operation configuration at $st$ with the same marking, state\n$S$ except that $T$ is set to zero and $T2$ to $S.T2+k$, and head position $p+k$. Every\nconfiguration before the endpoint satisfies the guard: its register-instruction\nprecondition holds and all register values are at most $B$, while its memory head lies\nbetween $0$ and $P$."
+}

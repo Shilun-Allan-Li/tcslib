@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.controlCfg_run",
+ "key": "4a40a816278364ff",
+ "kind": "lemma",
+ "title": "Controller simulation before halting",
+ "statement": "Let $D,M_1,M_2$ be finite Turing machines over the Boolean alphabet, let $x$ be a Boolean word, let $c$ be a configuration of $D$ on input $x$, and let $t\\in\\mathbb{N}$. Suppose that the run of $D$ from $c$ is not halted at every time $s<t$. Then the conditional machine's run for $t$ steps from the corresponding embedded controller configuration equals the embedded configuration reached by running $D$ from $c$ for $t$ steps.",
+ "hypotheses_covered": [
+  "$D,M_1,M_2$ are finite Turing machines over the Boolean alphabet",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration of $D$ on input $x$",
+  "$t\\in\\mathbb{N}$",
+  "For every $s<t$, the run of $D$ from $c$ is not halted at time $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D$, $M_1$, $M_2$ be machines over the Boolean alphabet, let $c$ be a\nconfiguration of $D$ on an input $x$, and let $t$ be a number of steps such\nthat the run of $D$ from $c$ has not halted at any time $s < t$.  Then the\n$t$-step run of the conditional-dispatch machine from the embedded controller\nconfiguration of $c$ equals the embedded controller configuration of the\n$t$-step run of $D$ from $c$."
+}

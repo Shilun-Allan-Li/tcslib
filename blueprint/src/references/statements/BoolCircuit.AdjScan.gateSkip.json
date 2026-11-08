@@ -1,0 +1,24 @@
+{
+ "lean_name": "BoolCircuit.AdjScan.gateSkip",
+ "key": "f494d353bb60eae8",
+ "kind": "lemma",
+ "title": "Bounded gate scan step",
+ "statement": "Let $\\tau$ be a scan task, let $n$ be a natural number, let $w$ and $E$ be finite bit strings, and let $o$ assign a Boolean answer to each bit string at the sole oracle index. Suppose that for every natural number $q$, the oracle answer on the pairing of the unary string of length $n$ with the binary expansion of $q$ equals the bit of $E$ at position $q$, taking the answer to be false beyond the end of $E$. Let $B$ be a natural number with $|E|\\le B$, let $g$ be a directed acyclic graph gate, and let $p,c,a$ be natural numbers such that the suffix of $E$ beginning at position $p$ is the concatenation of $1$, the encoding of $g$, and a remainder, with $c+1\\le B$ and $a\\le B$. Then there is a natural number $a'\\le B$ such that the scan for task $\\tau$, started in its gate-reading state with registers $(p,c,a)$ and no answer yet, reaches its next gate-reading state with registers $(p+1+|\\mathrm{encode}(g)|,c+1,a')$ and no answer yet, with every register at most $B$ in each configuration strictly before arrival.",
+ "hypotheses_covered": [
+  "$\\tau$ is a scan task",
+  "$n$ is a natural number",
+  "$w$ and $E$ are finite bit strings",
+  "$o$ assigns Boolean answers to bit strings at the sole oracle index",
+  "For every natural number $q$, the oracle answer on the pairing of the unary string of length $n$ with the binary expansion of $q$ equals the bit of $E$ at position $q$, taking out-of-range bits to be false",
+  "$B$ is a natural number and $|E|\\le B$",
+  "$g$ is a directed acyclic graph gate",
+  "$p,c,a$ are natural numbers",
+  "The suffix of $E$ beginning at $p$ is $1$ followed by the encoding of $g$ and a remainder",
+  "$c+1\\le B$",
+  "$a\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

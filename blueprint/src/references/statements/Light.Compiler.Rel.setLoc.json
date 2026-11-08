@@ -1,0 +1,17 @@
+{
+ "lean_name": "Light.Compiler.Rel.setLoc",
+ "key": "2ff96e4a9c90df0e",
+ "kind": "theorem",
+ "title": "Updating a local variable",
+ "statement": "Let $W$ be a word size, let $Z$ specify a layout with $F$ local variables per frame, and suppose $m$ satisfies the storage relation for a state $\\sigma$ and frame pointer $q$. If $1\\le q$, then for any local index $x$ and integer value $v$, the state obtained from $\\sigma$ by replacing its $x$th local value with $v$, together with the memory map obtained from $m$ by replacing the value at stack address $q+x$ with the encoding of $v$, satisfies the same storage relation at frame pointer $q$.",
+ "hypotheses_covered": [
+  "The relation between $m$, $Z$, $\\sigma$, and $q$",
+  "Frame lower bound: $1\\le q$",
+  "Natural-number local index $x$",
+  "Integer replacement value $v$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

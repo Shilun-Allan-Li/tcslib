@@ -1,0 +1,20 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.RandomizationAux.exists_boolean_junta_of_energy_bounds",
+ "key": "39d809f785a65d08",
+ "kind": "theorem",
+ "title": "Boolean junta approximation from energy bounds",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, and let $f$ take values in $\\{-1,1\\}$ on its outcome space. For a coordinate set $J\\subseteq\\{0,\\ldots,n-1\\}$, an integer $k\\ge 0$, and real numbers $a,b$, suppose the total expected squared component energy over sets $S$ with $|S|>k$ is at most $a$, and the corresponding total over sets with $|S|\\le k$ but $S\\nsubseteq J$ is at most $b$. Then there is a function $g$ taking values in $\\{-1,1\\}$, depending only on coordinates in $J$, such that $\\Pr_P(f\\ne g)\\le a+b$.",
+ "hypotheses_covered": [
+  "$P$ is a product of $n$ finite probability spaces with strictly positive atom masses",
+  "$f$ is Boolean-valued",
+  "$J$ is a subset of the coordinate set",
+  "$k$ is a natural number",
+  "$a,b$ are real numbers",
+  "component energy above degree $k$ is at most $a$",
+  "component energy of degree at most $k$ on sets not contained in $J$ is at most $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $f:\\Omega\\to\\{-1,1\\}$, $J\\subseteq[n]$, $k\\in\\mathbb N$, and $a,b\\in\\mathbb R$. If $\\sum_{|S|>k}\\mathbb E_Pf_S^2\\le a$ and $\\sum_{|S|\\le k,\\ S\\nsubseteq J}\\mathbb E_Pf_S^2\\le b$, then there exists $g:\\Omega\\to\\{-1,1\\}$ depending only on $J$ with $\\Pr_P(f\\ne g)\\le a+b$."
+}

@@ -1,0 +1,23 @@
+{
+ "lean_name": "Complexity.setupCfg_apply",
+ "key": "c9abb2e3989d3114",
+ "kind": "lemma",
+ "title": "Action on a setup configuration",
+ "statement": "Let $W$ be a finite Turing machine over the Boolean alphabet with $k$ work tapes, let $a\\in\\mathbb{N}$, and fix an input word $x$ over the schedule alphabet. Given a base configuration $c$ on $x$, phases $q,q'$, an input-head position $p\\in\\{0,\\ldots,|x|+1\\}$, head positions $b,u,g\\in\\mathbb{Z}$, and tape contents $\\beta,\\mu,\\gamma\\colon\\mathbb{Z}\\to\\mathrm{Option}(\\text{schedule alphabet})$, apply an action with next phase $q'$, input-head move $d\\in\\{-1,0,+1\\}$, and write–move instructions $(w_b,m_b),(w_u,m_u),(w_g,m_g)$ on the three controller tapes. The result is the setup configuration with phase $q'$, input-head position obtained by moving $p$ by $d$ with clamping to $\\{0,\\ldots,|x|+1\\}$, controller heads at $b+m_b,u+m_u,g+m_g$, and controller tapes updated at their respective old head positions according to the optional writes; its first $k$ work tapes, their head positions, and its output agree with $c$.",
+ "hypotheses_covered": [
+  "$W$ is a finite Turing machine over Boolean symbols",
+  "$a$ is a natural number",
+  "$x$ is a list of schedule symbols",
+  "$c$ is a base configuration on $x$",
+  "$q,q'$ are optional controller phases",
+  "$p$ is an input-head position in the range of $x$",
+  "$b,u,g$ are integer controller-head positions",
+  "$\\beta,\\mu,\\gamma$ are controller-tape contents",
+  "$d$ is an input-head movement sign",
+  "each controller instruction consists of an optional write and a movement sign"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider a setup configuration of the oblivious schedule machine built from a Boolean\nmachine $W$ with $k$ work tapes and padding parameter $a$, with input head at $p$ and\ncontroller tapes $\\beta, \\mu, \\gamma$ with heads at $b, u, g$.  Applying a schedule\naction with next phase $q'$, input-head move $d \\in \\{-1,0,+1\\}$, and one (optional\nwrite, move) pair for each controller tape yields exactly the setup configuration with\nphase $q'$, input head moved by $d$ (clamped to $\\{0,\\dots,|x|+1\\}$), each controller\ntape updated by its optional write at the old head position, and each controller head\nshifted by its move; the first $k$ work tapes and the output are untouched."
+}

@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.e3_split_answer",
+ "key": "0bc90e6dea6c98c5",
+ "kind": "lemma",
+ "title": "Pair loader computes the verifier indicator",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $C,c$ be natural numbers, and let $y$ be a binary word. The deterministic pair-loader machine associated with $N$, on input equal to the exponential split emitter’s output for $C,c,y$, computes the Boolean indicator of whether there exist binary words $x,u$ such that $|u|=C\\cdot 2^{(|x|+1)^c}$, $y=xu$, and the run of $N$ on input $x$ using choice word $u$ halts with output consisting of the single bit $1$. It does so within exactly $3(2|y|+3)$ steps.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine $N$ over the binary alphabet",
+  "Natural numbers $C,c$",
+  "A binary word $y$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine and $C, c$ natural numbers. For every binary string $y$, the pair-loader machine of $N$, run on the word emitted by the exponential split emitter for $y$, halts within $3(2|y|+3)$ steps, and its output is the indicator bit of membership of $y$ in the exponential choice-word verifier language of $N$."
+}

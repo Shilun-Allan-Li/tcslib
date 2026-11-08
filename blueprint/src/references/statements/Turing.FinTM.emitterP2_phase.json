@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_phase",
+ "key": "ac5c374e8f0cae9b",
+ "kind": "lemma",
+ "title": "Simulation of an Embedded Phase",
+ "statement": "Let $k,l$ be natural numbers, $S,H$ types, and $x$ a Boolean input word. Let a source machine with $k$ work tapes and a host machine with $l$ work tapes be given, along with a tape embedding $\\iota:\\text{Fin}(k)\\hookrightarrow\\text{Fin}(l)$, a state embedding $e:S\\hookrightarrow H$, an anchor state $a\\in H$, and a predicate $P$ on source states. Suppose no state in the image of $e$ is $a$, and whenever $P(q)$ holds, the host transition at $e(q)$ agrees, for every input symbol and work-tape reading, with the embedded source transition followed by the state map $e$. For background tape contents and head positions, source configurations $c,d$, and $t\\in\\mathbb{N}$, suppose every source state reached at a time $j<t$ satisfies $P$, and the source run from $c$ reaches $d$ at time $t$. Then the host run from the embedded, state-mapped configuration of $c$ reaches the corresponding embedded, state-mapped configuration of $d$ at time $t$, and none of its configurations at times $0$ through $t$ has state $a$.",
+ "hypotheses_covered": [
+  "Natural numbers $k,l$",
+  "Types $S,H$ and Boolean input word $x$",
+  "Source machine with $k$ tapes and host machine with $l$ tapes",
+  "Tape embedding $\\iota:\\text{Fin}(k)\\hookrightarrow\\text{Fin}(l)$",
+  "State embedding $e:S\\hookrightarrow H$",
+  "Anchor state $a\\in H$ and predicate $P:S\\to\\mathrm{Prop}$",
+  "No image state $e(q)$ equals $a$",
+  "Transition agreement for every $P$-state, input, and work-tape reading",
+  "Background host tape contents and head positions",
+  "Source configurations $c,d$ and duration $t\\in\\mathbb{N}$",
+  "Every source state at each time $j<t$ satisfies $P$",
+  "Source run from $c$ equals $d$ at time $t$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

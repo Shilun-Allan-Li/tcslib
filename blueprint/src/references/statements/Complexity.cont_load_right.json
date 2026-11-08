@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.cont_load_right",
+ "key": "fdee050862585c3d",
+ "kind": "lemma",
+ "title": "Right-moving loader transition",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine over the binary alphabet, let $y$ be a binary input, let $q,q'\\in\\mathrm{Fin}(6)$, and let $x,u$ be binary words. Suppose $i<|y|$, and let $b_x,b_u$ be optional bits. If the transition of the pair-loader machine in state $q$, reading $y[i]$ with buffers $x,u$ and their heads at the right blanks, is a right move that writes $b_x$ to the first buffer when present, writes $b_u$ to the second buffer when present, leaves the third private tape unchanged, emits nothing, and enters state $q'$, then one step of the machine from that loader configuration reaches the loader configuration at physical input position $i+2$, in state $q'$, with buffers $x$ and $u$ extended by the respective optional bits and their heads at the new right blanks.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the binary alphabet",
+  "$y$ is a binary input",
+  "$q,q'\\in\\mathrm{Fin}(6)$",
+  "$x,u$ are binary words",
+  "$i<|y|$",
+  "$b_x,b_u$ are optional bits",
+  "The specified transition table equality holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic machine, let $y$ be a physical input with position index $i < |y|$, and suppose the transition table of the pair-loader machine, applied in a loader state $q$ to the bit of $y$ at index $i$, yields a right input move that optionally appends one bit to each buffer and enters a loader state $q'$. Then one physical step from the loader configuration at position $i+1$ with buffers $x$ and $u$ (heads at their right blanks) produces the loader configuration at position $i+2$ in state $q'$ with the appended buffers."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.BinArith.length_le_of_divInv",
+ "key": "d4aded5c1d234fc4",
+ "kind": "theorem",
+ "title": "Length bound from a division invariant",
+ "statement": "Let $z$ and $S$ be finite bit strings. Suppose there are finite bit strings $R,r,q$ such that $S$ is the nested self-delimiting encoding of the second decoded component of $z$, paired with the encoding of $R$ paired with the encoding of $r$ and $q$. Suppose also that $|r|+|R|≤|\u0001|$ and $|q|+|R|≤|\u0001|$, where $|\u0001|$ denotes the length of the first decoded component of $z$ (taken to be empty if parsing fails). If the binary value of the second decoded component of $z$ is positive, then $(\\operatorname{val}(q)\\operatorname{val}(b)+\\operatorname{val}(r))2^{|R|}+\\operatorname{val}(R^{\\mathrm{rev}})=\\operatorname{val}(a)$ and $\\operatorname{val}(r)<\\operatorname{val}(b)$, where $a$ and $b$ are respectively the first and second decoded components of $z$ and $\\operatorname{val}$ is the binary value of a bit string. Then $|S|≤7(|z|+1)$.",
+ "hypotheses_covered": [
+  "$z,S$ are finite bit strings",
+  "There exist finite bit strings $R,r,q$ witnessing the nested encoding of the second decoded component of $z$",
+  "$|r|+|R|$ is at most the length of the first decoded component of $z$",
+  "$|q|+|R|$ is at most the length of the first decoded component of $z$",
+  "If the binary value of the second decoded component is positive, the stated quotient-remainder reconstruction identity holds",
+  "If the binary value of the second decoded component is positive, the binary value of $r$ is less than that of the second decoded component"
+ ],
+ "confidence": "low",
+ "caveat": "The encoded nested pairing and conditional arithmetic invariant are rendered from the formal definition; the symbols $a,b$ denote the decoded components, with empty defaults on parse failure.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

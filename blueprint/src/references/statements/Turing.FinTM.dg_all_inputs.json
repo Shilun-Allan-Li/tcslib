@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.dg_all_inputs",
+ "key": "e3112dbbd1909999",
+ "kind": "lemma",
+ "title": "Single-tape simulation of all inputs",
+ "statement": "Let $\\Gamma$ be a finite, decidable alphabet, let $M$ be a finite Turing machine with a positive number $k$ of work tapes, and choose a default symbol $a_0\\in\\Gamma$. Suppose that $M$ computes a function $f$ on every input in time $T$ of the input length, and that for every input word $y$ and every time $t$, the space used by $M$ on $y$ through time $t$ is at most $S(|y|)$. Then the single-tape simulator associated with $M$ and $a_0$ computes, on each encoded input $x$, the encoding of $f$ applied to the word obtained by replacing each symbol of $x$ by its image under the retraction that sends internal simulator symbols to $a_0$, within $(9k+6)(T(|x|)+1)^2$ steps; at every time $t$, its space use is at most $(9k+6)(S(|x|)+1)$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite and has decidable equality.",
+  "$M$ is a finite Turing machine and $0<k$, where $k$ is its number of work tapes.",
+  "A default symbol $a_0\\in\\Gamma$ is chosen.",
+  "$f$ maps words over $\\Gamma$ to words over $\\Gamma$; $T,S$ map natural numbers to natural numbers.",
+  "For every input, $M$ computes $f$ in time $T$ of its length.",
+  "For every word $y$ and every time $t$, the space used by $M$ on $y$ through time $t$ is at most $S(|y|)$.",
+  "An input word $x$ over the enlarged simulator alphabet is given."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.rt_succTM",
+ "key": "de58bbd12d0bbc73",
+ "kind": "def",
+ "title": "Successor machine",
+ "statement": "For a natural number $k$ and a work-tape index $i<k$, define a deterministic Turing machine with $k$ work tapes, Boolean symbols, and states consisting of a phase together with its corresponding control data: the increment phase has flag controls, the extend phase has controls in the disjoint union of seek controls and a nested union of four indices with seek controls, and the exit phase has a single control. Its initial state is the running control in the increment phase, and its transitions are obtained by hosting the phase-specific machine parts and using the phase-dependent redirects.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$i$ is an index among the $k$ work tapes"
+ ],
+ "confidence": "low",
+ "caveat": "The phase-specific machine parts and the hosting construction are not defined in the supplied statement, so their transition behavior cannot be described more explicitly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

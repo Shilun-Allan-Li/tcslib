@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.MultiTapeTM.not_halts_of_repeat_nonhalt",
+ "key": "8a5f06c726891dcd",
+ "kind": "lemma",
+ "title": "A repeated nonhalting configuration precludes halting",
+ "statement": "Let $tm$ be a multi-tape Turing machine, and let $c$ be a configuration whose state is not empty. If, for some $t\\\\in\\\\mathbb{N}$, the configuration reached after $t+1$ steps from $c$ equals $c$, then the configuration reached after every $t'\\\\in\\\\mathbb{N}$ steps from $c$ has a nonempty state.",
+ "hypotheses_covered": [
+  "A multi-tape Turing machine",
+  "A configuration $c$ with nonempty state",
+  "A natural number $t$",
+  "The run from $c$ returns to $c$ after $t+1$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine and let $c$ be a configuration that is\nnot halted.  If running $M$ for $t + 1$ steps from $c$ returns to $c$ itself,\nthen the computation of $M$ from $c$ never halts: for every number of steps\n$t'$, the configuration reached after $t'$ steps from $c$ is not halted."
+}

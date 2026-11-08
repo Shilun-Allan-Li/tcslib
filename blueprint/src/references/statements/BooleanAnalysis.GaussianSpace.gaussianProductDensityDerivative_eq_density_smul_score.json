@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.gaussianProductDensityDerivative_eq_density_smul_score",
+ "key": "279edb9b1ce82280",
+ "kind": "lemma",
+ "title": "Derivative as density times score",
+ "statement": "Let $I$ be a finite set, let $v\\ge 0$, and let $c,z\\in\\mathbb R^I$. The derivative of the product Gaussian density with respect to its mean, viewed as a linear functional on $\\mathbb R^I$, equals the product density multiplied by the linear functional $h\\mapsto\\sum_{i\\in I}((z_i-c_i)/v)h_i$.",
+ "hypotheses_covered": [
+  "$I$ is finite",
+  "$v\\ge 0$",
+  "$c,z\\in\\mathbb R^I$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $I$ be finite and $v\\ge0$. Write $p_v(c,z)$ for the $N(c,v)$ density when $v>0$ and set $p_0(c,z)=0$; define $G_v(c,z)=\\prod_{i\\in I}p_v(c_i,z_i)$ and interpret division by zero as zero. Let $A_v(c,z)$ be the linear functional $h\\mapsto\\sum_i\\bigl(\\prod_{j\\ne i}p_v(c_j,z_j)\\bigr)((z_i-c_i)/v)p_v(c_i,z_i)h_i$. For $c,z,h\\in\\mathbb R^I$, $A_v(c,z)[h]=G_v(c,z)\\sum_i((z_i-c_i)/v)h_i$."
+}

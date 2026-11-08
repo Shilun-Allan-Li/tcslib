@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.UTab.goes_rT",
+ "key": "971eeb303c51ac7f",
+ "kind": "theorem",
+ "title": "Unary step-count scan",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean input, let $w$, $pre$, and $rest$ be Boolean lists, let $b$ be a natural number, and let $e$ be an eleven-register configuration record. If $w = pre \\, ++ \\, (1^b \\, ++ \\, rest)$, then for every prior output list $o$, the counter program for $M$, started at label $rT$, with registers given by $e$, input position $|pre|$, and output $o$, reaches label $rT$ with the register record obtained from $e$ by increasing its step-count register by $b$, input position $|pre|+b$, and unchanged output $o$, in at most $2b$ steps.",
+ "hypotheses_covered": [
+  "A finite-state Turing machine M with Boolean input",
+  "Boolean lists w, pre, and rest",
+  "Natural number b",
+  "Register record e",
+  "Input decomposition w = pre ++ (replicate b true ++ rest)",
+  "Arbitrary initial output list o, as required by Goes"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

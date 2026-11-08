@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.clockTM_spec",
+ "key": "e8a4c220fbac9a44",
+ "kind": "theorem",
+ "title": "Clock machine diagonal specification",
+ "statement": "Let $K$ and $W$ be finite Turing machines over the Boolean alphabet, and let $x$ and $s$ be finite Boolean words. If $K$ halts on input $x$ with output $s$ after exactly $t_K$ steps, then the clock machine built from $K$ and $W$ halts on input $x$, outputs the one-symbol word whose value is the negation of the proposition that $W$ halts on $x$ within exactly the number of steps represented by $s$ and outputs the one-symbol word containing true, and does so after exactly $t_K+4|s|+|x|+4\\,\\operatorname{ctrVal}(s)+6$ steps.",
+ "hypotheses_covered": [
+  "$K$ and $W$ are finite Turing machines over the Boolean alphabet",
+  "$x$ and $s$ are finite Boolean words",
+  "$t_K$ is a natural number",
+  "$K$ halts on input $x$ with output $s$ after exactly $t_K$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

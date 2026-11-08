@@ -1,0 +1,27 @@
+{
+ "lean_name": "BoolCircuit.FoInv",
+ "key": "65957f47b6fe34aa",
+ "kind": "structure",
+ "title": "Fan-out expansion invariant",
+ "statement": "For a natural number $n$, an old list of gates, and a state $(G,t,N)$, the fan-out expansion invariant consists of the following properties. The counter is $n$ plus the length of the old list; $G$ is acyclic; for every $v<n+|\text{old}|$, its image $t(v)$ is less than $n+|G|$, and $t$ is injective on those indices. For every Boolean input $x$ of length $n$ and every such $v$, the value at vertex $t(v)$ in $G$ equals the value of vertex $v$ when the old gates are run on $x$. Every vertex has fan-out at most $2$, and each $t(v)$ in that range has fan-out $0$. Every gate in $G$ has distinct arguments, a NOT gate has exactly one argument, and every gate has at most two arguments. Finally, $|G|\\le 3|\\text{old}|$.",
+ "hypotheses_covered": [
+  "natural number n",
+  "old gate list",
+  "state (gate list G, map t, counter N)",
+  "counter equals n plus old-list length",
+  "G is acyclic",
+  "t maps indices below n plus old-list length below n plus |G|",
+  "t is injective on those indices",
+  "vertex-value preservation for every Boolean input of length n and each index in range",
+  "every vertex has fan-out at most 2",
+  "each image under t in range has fan-out 0",
+  "each gate has distinct arguments",
+  "NOT gates have exactly one argument",
+  "each gate has at most two arguments",
+  "|G| is at most three times the old-list length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

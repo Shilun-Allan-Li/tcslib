@@ -16,6 +16,7 @@ and proves both completeness and soundness of that correspondence.
 \lean{NAEtoColor.SatisfiesClause}
 \label{NAEtoColor.SatisfiesClause}
 \leanok
+\uses{NAEtoColor.NAEclause}
 Given a Boolean assignment $\mathit{assign} : V \to \mathtt{Bool}$ and a
 Not-All-Equal clause $c$ with three variables $c.v_0, c.v_1, c.v_2$,
 $\texttt{NAEtoColor.SatisfiesClause}$ returns $\mathtt{true}$ if and only if
@@ -28,6 +29,7 @@ differ.
 \lean{NAEtoColor.NAESat3}
 \label{NAEtoColor.NAESat3}
 \leanok
+\uses{NAEtoColor.NAEclause}
 A NAE-SAT instance over variable type $V$ is defined as a list of NAE clauses,
 i.e.\ $\texttt{NAEtoColor.NAESat3}\;V = \mathtt{List}\;(\mathtt{NAEclause}\;V)$.
 \end{definition}
@@ -85,6 +87,7 @@ color.
 \lean{NAEtoColor.OutputVertex}
 \label{NAEtoColor.OutputVertex}
 \leanok
+\uses{NAEtoColor.NAEclause}
 The vertex set of the reduction graph is an inductive type with three
 constructors:
 \begin{itemize}
@@ -164,7 +167,7 @@ admits a proper coloring with the three colors $\{0, 1, 2\}$.
 \lean{NAEtoColor.NAEtoColorSoundness}
 \label{NAEtoColor.NAEtoColorSoundness}
 \leanok
-\uses{NAEtoColor.EdgeRelation, NAEtoColor.Is3Colorable, NAEtoColor.IsSatisfiable, NAEtoColor.NAESat3, NAEtoColor.OutputVertex, NAEtoColor.ReductionGraph, NAEtoColor.SatisfiesClause, NAEtoColor.SatisfiesNAE3}
+\uses{NAEtoColor.EdgeRelation, NAEtoColor.Is3Colorable, NAEtoColor.IsSatisfiable, NAEtoColor.NAESat3, NAEtoColor.NAEclause, NAEtoColor.OutputVertex, NAEtoColor.ReductionGraph, NAEtoColor.SatisfiesClause, NAEtoColor.SatisfiesNAE3}
 \difficulty{6}
 Let $f$ be a NAE-SAT instance over a variable type $V$, that is, a list of Not-All-Equal
 clauses, each clause naming three variables. Form the reduction graph associated to $f$:

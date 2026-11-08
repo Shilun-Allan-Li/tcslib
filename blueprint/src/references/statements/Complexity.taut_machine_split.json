@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.taut_machine_split",
+ "key": "a8f650a89cdb72db",
+ "kind": "lemma",
+ "title": "Verifier behavior on every input split",
+ "statement": "For every binary word $z$, the non-tautology verifier computes the one-bit output $B(z)$ on the split encoding of $z$ within $40(|z|+1)$ steps. Here, if there is an $i$ with $|z|=i+(i+1)$, the split encoding is the pair encoding of the first $i$ bits of $z$ and the remaining bits, and $B(z)$ is the negation of the truth value of the DNF decoded from the first part under the certificate assignment determined by the remaining part. If there is no such $i$, the split encoding is empty and $B(z)=0$.",
+ "hypotheses_covered": [
+  "$z$ is any binary word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $z$, let $z'$ be the pair encoding of the first $i$ bits of $z$\nwith the rest if $|z| = 2i + 1$, and the empty word if $|z|$ is even. The\nnon-tautology verifier, run on $z'$, halts within $40(|z| + 1)$ steps with output the\nsingle bit that is $0$ if $|z|$ is even and otherwise negates the truth value of the\nDNF decoded from the first $i$ bits of $z$ under the assignment read off the remaining\nbits."
+}

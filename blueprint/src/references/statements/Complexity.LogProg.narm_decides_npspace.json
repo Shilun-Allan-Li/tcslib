@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.narm_decides_npspace",
+ "key": "a2c065e262534b9a",
+ "kind": "theorem",
+ "title": "Polynomial Space from Register Computations",
+ "statement": "Let $L$ be a language of binary strings, let $\\Lambda$ be a finite state set with decidable equality, let $A$ be a nondeterministic register machine with start state $l_0$, and let $(A_j)_{j<d}$ be oracle languages, each decidable in polynomial space. Suppose there are natural numbers $C_0,c_0$ such that for every input $x$ there is a natural number $N$ for which every choice sequence of length $N$ from the initial configuration (state $l_0$, all registers zero, and no answer recorded) halts, and every active configuration at each earlier prefix satisfies both the machine's required precondition and the bound $|\\mathrm{bits}(r+1)|\\le C_0(|x|+1)^{c_0}$ for every register $r$. Suppose also that $x\\in L$ exactly when some such length-$N$ choice sequence leaves answer true. Then $L$ belongs to nondeterministic polynomial space.",
+ "hypotheses_covered": [
+  "language L",
+  "finite state set Λ with decidable equality",
+  "nondeterministic register machine A and start state l₀",
+  "family of oracle languages indexed by Fin d",
+  "each oracle language belongs to PSPACE",
+  "natural numbers C₀ and c₀",
+  "for every input x, some natural number N satisfies NHalts from the stated initial configuration with the stated predicate",
+  "the predicate requires NPreS and the bit-length bound for every register",
+  "membership in L is equivalent to existence of a length-N run leaving true"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

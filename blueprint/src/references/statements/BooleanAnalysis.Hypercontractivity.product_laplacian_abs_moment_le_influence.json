@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_laplacian_abs_moment_le_influence",
+ "key": "d1ef42121be3c89c",
+ "kind": "theorem",
+ "title": "Laplacian moments bounded by influence",
+ "statement": "Let $P$ be a finite product probability space, let $f$ take values in $\\{-1,1\\}$ at every product outcome, and choose a coordinate $i$. For every real $p$ with $1\\le p\\le2$, the expectation of the $p$th absolute moment of the coordinate Laplacian is at most the influence of that coordinate: $\\mathbb E_P|L_i f|^p\\le I_i(f)$.",
+ "hypotheses_covered": [
+  "$P$ is a finite product probability space with strictly positive coordinate weights summing to one",
+  "$f$ takes values in $\\{-1,1\\}$ at every outcome",
+  "$i$ is a coordinate",
+  "$p\\in\\mathbb R$",
+  "$1\\le p$",
+  "$p\\le2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $f:\\Omega\\to\\{-1,1\\}$, a coordinate $i$, and $1\\le p\\le2$. Then $\\mathbb E_P|L_if|^p\\le I_i(f)$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $L_i h=h-E_{[n]\\setminus\\{i\\}}h$; $I_i(h)=\\mathbb E_P(h-E_{[n]\\setminus\\{i\\}}h)^2$."
+}

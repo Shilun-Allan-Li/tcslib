@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_pad_words",
+ "key": "676d23136e3a046d",
+ "kind": "lemma",
+ "title": "Padding preserves a one-word seam",
+ "statement": "Let $k,K$ be natural numbers with $0<k$ and $k\\le K$, let $S,H$ be types, let $\text{emb}:S\\to H$ be a map, let $q:S$, and let $x,s$ be Boolean words. Padding the seam configuration on input $x$ with state $q$, word $s$ on tape zero, and empty words on all other tapes of the $k$-tape bank gives the seam configuration on the $K$-tape bank with state $\text{emb}(q)$, word $s$ on tape zero, and empty words on all other tapes.",
+ "hypotheses_covered": [
+  "natural numbers k and K with 0 < k",
+  "natural numbers k and K with k ≤ K",
+  "types S and H",
+  "map emb from S to H",
+  "state q ∈ S",
+  "Boolean input word x",
+  "Boolean word s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $0 < k \\le K$: padding the canonical configuration whose only nonblank tape\nis tape zero carrying a word $s$ from a $k$-tape bank to a $K$-tape bank yields\nthe canonical configuration with $s$ on tape zero of the larger bank, all added\ntapes blank and parked at zero."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.tmsat_split_exists",
+ "key": "712f80573014b6b0",
+ "kind": "lemma",
+ "title": "Split search finds the solution",
+ "statement": "For natural numbers $N$ and $i$ satisfying $i+(i+1)=N$, the bounded search for the least $j\\in\\{0,\\ldots,N\\}$ satisfying $j+(j+1)=N$ returns $i$.",
+ "hypotheses_covered": [
+  "$N,i\\in\\mathbb{N}$",
+  "$i+(i+1)=N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "unbound-variable"
+ ],
+ "replaced": "For all $N, i \\in \\mathbb{N}$ with $i + (i+1) = N$, the bounded search for the least $j \\in \\{0,\\dots,N\\}$ satisfying $j + 1\\cdot(j+1)^1 = N$ returns exactly $i$."
+}

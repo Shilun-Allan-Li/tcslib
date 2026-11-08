@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.isPmOne_thresholdSign",
+ "key": "74b8259fbeec0b8d",
+ "kind": "lemma",
+ "title": "Threshold signs are unit-valued",
+ "statement": "For every natural number $n$ and every function $g:\\{0,1\\}^n\\to\\mathbb R$, the function obtained by applying the threshold sign (which equals $1$ on nonnegative inputs and $-1$ on negative inputs) to $g$ takes values in $\\{-1,1\\}$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$g$ is a real-valued function on the Boolean cube of dimension $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\in\\mathbb N$ and $g:\\{0,1\\}^n\\to\\mathbb R$, and define\n$\\sigma(t)=1$ when $t\\ge0$ and $\\sigma(t)=-1$ when $t<0$.\nThen the function $x\\mapsto\\sigma(g(x))$ takes values in $\\{-1,1\\}$ at every point of the cube."
+}

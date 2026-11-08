@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.enumCont_log_run",
+ "key": "109adac684dc86dd",
+ "kind": "lemma",
+ "title": "Lockstep simulation with a complete history",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be an input word, let $c_0$ be any configuration of $M$ on $x$, and let $t$ be a natural number. After $t$ steps, the logging machine started from the logged configuration of $c_0$ with empty history is exactly the logged configuration of the source machine's configuration after $t$ steps, together with the history recorded during those $t$ steps.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine M",
+  "input word x",
+  "starting configuration c₀ on x",
+  "time t ∈ ℕ"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every finite machine $M$, start configuration $c_0$ (possibly prepared, not\nnecessarily initial), and time $t$: running the logging machine of $M$ for $t$\nsteps from the logged configuration of $c_0$ with empty history yields the logged\nconfiguration of $M$'s time-$t$ configuration together with the history of the\nfirst $t$ steps. In particular the source's input, output, and halting time are\nunchanged by the instrumentation."
+}

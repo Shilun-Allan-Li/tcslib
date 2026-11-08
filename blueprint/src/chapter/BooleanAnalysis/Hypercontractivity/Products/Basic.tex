@@ -11,31 +11,49 @@ Finite probability products are equipped with coordinate conditional expectation
 For a finite set $S$ and a real function $g$ on finite subsets of an ambient set, define $E_S(g)=\sum_{A,B\subseteq S}(-1)^{|S|-|A|}(-1)^{|S|-|B|}g(A\cap B)$.
 \end{definition}
 
-\begin{theorem}[Insertion recurrence]
+\begin{theorem}[Insertion recurrence for intersection energy]
 \lean{BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy_insert}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy}
 \difficulty{5}
-For a finite set $S$, an element $i\notin S$, and a real function $g$ on finite subsets, put $E_T(g)=\sum_{A,B\subseteq T}(-1)^{|T|-|A|}(-1)^{|T|-|B|}g(A\cap B)$. Then $E_{S\cup\{i\}}(g)=E_S(T\mapsto g(T\cup\{i\}))-E_S(g)$.
+Let $S$ be a finite set, let $i$ be an element not in $S$, and let $g$ be a real-valued
+function on the finite subsets of the ambient set. For finite $T$, define
+$E_T(g)=\\sum_{A,B\\subseteq T}(-1)^{|T|-|A|}(-1)^{|T|-|B|}g(A\\cap B)$. Then
+$E_{S\\cup\\{i\\}}(g)=E_S(T\\mapsto g(T\\cup\\{i\\}))-E_S(g)$.
 \end{theorem}
 
-\begin{theorem}[Subset energy cancellation]
+\begin{theorem}[Subset intersection cancellation]
 \lean{BooleanAnalysis.Hypercontractivity.sum_powerset_signed_inter}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy, BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy_insert}
 \difficulty{5}
-For a finite set $U$ and a real function $g$ on finite subsets, put $E_S(g)=\sum_{A,B\subseteq S}(-1)^{|S|-|A|}(-1)^{|S|-|B|}g(A\cap B)$. Then $\sum_{S\subseteq U}E_S(g)=g(U)$.
+Let $\alpha$ be a set, let $U\subseteq\alpha$ be finite, and let $g$ assign a real
+number to every finite subset of $\alpha$. For each finite $S\subseteq\alpha$, define
+$E_S(g)=\sum_{A,B\subseteq S}(-1)^{|S|-|A|}(-1)^{|S|-|B|}g(A\cap B)$. Then
+$\sum_{S\subseteq U}E_S(g)=g(U)$.
 \end{theorem}
 
 \begin{definition}[Finite probability product]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct}
 \leanok
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p006-b006,
+  pdf-ffbe9c7b3306-p007-b002,
+  pdf-ffbe9c7b3306-p207-b002,
+  pdf-ffbe9c7b3306-p207-b005,
+  pdf-ffbe9c7b3306-p261-b002,
+  pdf-ffbe9c7b3306-p261-b004
+}
 For every $n\in\mathbb N$, a finite probability product consists of finite sets $\Omega_i$ for $i\in\{0,\ldots,n-1\}$ and real weights $w_i(a)>0$ satisfying $\sum_{a\in\Omega_i}w_i(a)=1$. The coordinate sets and weights may depend on $i$.
 \end{definition}
 
 \begin{definition}[Product outcomes]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
 \leanok
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p006-b006,
+  pdf-ffbe9c7b3306-p207-b005
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$. Its outcome space is $\Omega=\prod_{i=0}^{n-1}\Omega_i$.
 \end{definition}
 
@@ -43,6 +61,7 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p207-b005}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, with coordinate weights $w_i$. The mass of $x\in\prod_i\Omega_i$ is $m(x)=\prod_iw_i(x_i)$.
 \end{definition}
 
@@ -50,6 +69,7 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p207-b005}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, with product masses $m(x)$. For $f:\prod_i\Omega_i\to\mathbb R$, define $\mathbb E_Pf=\sum_xm(x)f(x)$.
 \end{definition}
 
@@ -71,6 +91,10 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.norm}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p208-b003,
+  pdf-ffbe9c7b3306-p211-b005
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $q\in\mathbb R$, and $f:\prod_i\Omega_i\to\mathbb R$. Define $\|f\|_{q,P}=(\mathbb E_P|f|^q)^{1/q}$ using real powers and division; for $q>0$ this is the usual moment expression.
 \end{definition}
 
@@ -78,6 +102,11 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.variance}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p018-b006,
+  pdf-ffbe9c7b3306-p209-b003,
+  pdf-ffbe9c7b3306-p211-b005
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $f:\prod_i\Omega_i\to\mathbb R$. Define $\operatorname{Var}_P(f)=\mathbb E_P(f-\mathbb E_Pf)^2$.
 \end{definition}
 
@@ -85,6 +114,10 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.DependsOn}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p212-b002,
+  pdf-ffbe9c7b3306-p213-b002
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $S\subseteq\{0,\ldots,n-1\}$, and $f:\prod_i\Omega_i\to\mathbb R$. Say that $f$ depends only on $S$ if $f(x)=f(y)$ whenever $x_i=y_i$ for every $i\in S$.
 \end{definition}
 
@@ -92,6 +125,10 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p015-b001,
+  pdf-ffbe9c7b3306-p212-b002
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $S\subseteq\{0,\ldots,n-1\}$, and $f:\prod_i\Omega_i\to\mathbb R$. Define $E_Sf(x)=\mathbb E_{Y\sim P}f(z)$, where $z_i=x_i$ for $i\in S$ and $z_i=Y_i$ otherwise.
 \end{definition}
 
@@ -99,6 +136,14 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.component}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p007-b002,
+  pdf-ffbe9c7b3306-p217-b002,
+  pdf-ffbe9c7b3306-p218-b001,
+  pdf-ffbe9c7b3306-p218-b002,
+  pdf-ffbe9c7b3306-p262-b003,
+  pdf-ffbe9c7b3306-p268-b001
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $S\subseteq\{0,\ldots,n-1\}$, and $f:\prod_i\Omega_i\to\mathbb R$. Its $S$-component is $f_S=\sum_{T\subseteq S}(-1)^{|S|-|T|}E_Tf$, where $E_T$ conditions on the coordinates in $T$.
 \end{definition}
 
@@ -106,6 +151,13 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.HasDegreeLE}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p015-b014,
+  pdf-ffbe9c7b3306-p215-b009,
+  pdf-ffbe9c7b3306-p215-b010,
+  pdf-ffbe9c7b3306-p219-b003,
+  pdf-ffbe9c7b3306-p262-b003
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $k\in\mathbb N$, and $f:\prod_i\Omega_i\to\mathbb R$. The predicate that $f$ has degree at most $k$ means that every orthogonal component $f_S$ with $|S|>k$ vanishes identically.
 \end{definition}
 
@@ -113,6 +165,14 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.lowDegree}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p007-b002,
+  pdf-ffbe9c7b3306-p015-b014,
+  pdf-ffbe9c7b3306-p220-b002,
+  pdf-ffbe9c7b3306-p262-b003,
+  pdf-ffbe9c7b3306-p264-b005,
+  pdf-ffbe9c7b3306-p264-b006
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $k\in\mathbb N$, and $f:\prod_i\Omega_i\to\mathbb R$. Define $f^{\le k}(x)=\sum_{|S|\le k}f_S(x)$, where $f_S$ is the orthogonal component indexed by $S$.
 \end{definition}
 
@@ -120,6 +180,15 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.noise}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p007-b002,
+  pdf-ffbe9c7b3306-p055-b002,
+  pdf-ffbe9c7b3306-p055-b003,
+  pdf-ffbe9c7b3306-p214-b006,
+  pdf-ffbe9c7b3306-p219-b006,
+  pdf-ffbe9c7b3306-p264-b001,
+  pdf-ffbe9c7b3306-p268-b001
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $\rho\in\mathbb R$, and $f:\prod_i\Omega_i\to\mathbb R$. Define $T_\rho f(x)=\sum_S\rho^{|S|}f_S(x)$, where $f_S$ are the orthogonal components and the powers have natural exponents.
 \end{definition}
 
@@ -127,6 +196,11 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p016-b008,
+  pdf-ffbe9c7b3306-p049-b002,
+  pdf-ffbe9c7b3306-p213-b005
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, a coordinate $i$, and $f:\prod_j\Omega_j\to\mathbb R$. Define $L_if=f-E_{[n]\setminus\{i\}}f$, where $E_S$ conditions on the coordinates in $S$.
 \end{definition}
 
@@ -134,6 +208,13 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.influence}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.laplacian}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p047-b004,
+  pdf-ffbe9c7b3306-p047-b005,
+  pdf-ffbe9c7b3306-p213-b005,
+  pdf-ffbe9c7b3306-p265-b003,
+  pdf-ffbe9c7b3306-p268-b001
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, a coordinate $i$, and $f:\prod_j\Omega_j\to\mathbb R$. Define $I_i(f)=\mathbb E_P(L_if)^2$, where $L_if$ subtracts the conditional expectation over coordinate $i$.
 \end{definition}
 
@@ -141,6 +222,12 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.totalInfluence}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.influence}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p049-b005,
+  pdf-ffbe9c7b3306-p213-b005,
+  pdf-ffbe9c7b3306-p267-b001,
+  pdf-ffbe9c7b3306-p268-b001
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $f:\prod_i\Omega_i\to\mathbb R$. Define $I(f)=\sum_{i=0}^{n-1}I_i(f)$.
 \end{definition}
 
@@ -148,6 +235,13 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.stableInfluence}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p057-b001,
+  pdf-ffbe9c7b3306-p215-b005,
+  pdf-ffbe9c7b3306-p264-b003,
+  pdf-ffbe9c7b3306-p268-b001,
+  pdf-ffbe9c7b3306-p269-b001
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $\rho\in\mathbb R$, a coordinate $i$, and $f:\prod_j\Omega_j\to\mathbb R$. Define $I_i^{(\rho)}(f)=\sum_{S\ni i}\rho^{|S|-1}\mathbb E_Pf_S^2$, with natural exponents, including $\rho=0$.
 \end{definition}
 
@@ -155,6 +249,13 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.stability}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.noise}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p056-b001,
+  pdf-ffbe9c7b3306-p056-b002,
+  pdf-ffbe9c7b3306-p214-b006,
+  pdf-ffbe9c7b3306-p264-b001,
+  pdf-ffbe9c7b3306-p268-b001
+}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $\rho\in\mathbb R$, and $f:\prod_i\Omega_i\to\mathbb R$. Define $\operatorname{Stab}_\rho(f)=\mathbb E_P[fT_\rho f]$.
 \end{definition}
 
@@ -168,85 +269,162 @@ Let $P$ be a product of $n$ finite probability spaces with strictly positive ato
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p020-b001}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $f:\prod_i\Omega_i\to\mathbb R$. The Boolean-valued predicate means $f(x)\in\{-1,1\}$ at every outcome $x$.
 \end{definition}
 
-\begin{theorem}[Product mass normalization]
+\begin{theorem}[Normalization of product mass]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.mass_sum}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
 \difficulty{1}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, with product masses $m(x)$. Then $\sum_xm(x)=1$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$, and let $m(x)$ be the product mass of an outcome $x$. Then the
+sum of $m(x)$ over all product outcomes is $1$.
 \end{theorem}
 
-\begin{theorem}[Exchange of independent samples]
+\begin{theorem}[Exchange of product samples]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $S\subseteq[n]$, and $F:\Omega\times\Omega\to\mathbb R$, where $\Omega=\prod_i\Omega_i$. For independent $X,Y\sim P$, let $X\mathbin{\star_S}Y$ keep $X_i$ on $S$ and $Y_i$ elsewhere; then $\mathbb E F(X\mathbin{\star_S}Y,Y\mathbin{\star_S}X)=\mathbb EF(X,Y)$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$, and let $S\subseteq\{0,\ldots,n-1\}$. For any function $F$ of
+two product outcomes, the expectation over independent $x,y$ drawn from $P$ of $F$
+evaluated on the pair that uses $x_i,y_i$ on $S$ and $y_i,x_i$ off $S$ equals the
+expectation of $F(x,y)$ over independent $x,y$ drawn from $P$.
 \end{theorem}
 
-\begin{theorem}[Expectation of constants]
+\begin{theorem}[Expectation of a Constant]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.mass_sum}
 \difficulty{1}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $c\in\mathbb R$. Then $\mathbb E_P[c]=c$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$, and let $c\in\mathbb R$. The product expectation of the constant
+function with value $c$ is $c$.
 \end{theorem}
 
-\begin{theorem}[Expectation of linear combinations]
+\begin{theorem}[Expectation of Finite Linear Combinations]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
 \difficulty{3}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, let $s$ be a finite index set, and let $a_j\in\mathbb R$ and $F_j:\Omega\to\mathbb R$. Then $\mathbb E_P\sum_{j\in s}a_jF_j=\sum_{j\in s}a_j\mathbb E_PF_j$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$. For any finite set $s$, real coefficients $a_i$, and real-valued
+functions $F_i$ on the product outcome space, $\mathbb E_P[\sum_{i\in
+s}a_iF_i]=\sum_{i\in s}a_i\mathbb E_PF_i$.
 \end{theorem}
 
-\begin{theorem}[Composition of conditional expectations]
+\begin{theorem}[Composition of Conditional Expectations]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $S,T\subseteq[n]$, $f:\Omega\to\mathbb R$, and $x\in\Omega$. For coordinate conditional expectations, $E_S(E_Tf)(x)=E_{S\cap T}f(x)$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$. For subsets $S,T\subseteq\{0,\ldots,n-1\}$, a function $f$ on
+the product outcome space, and an outcome $x$, applying conditional expectation first
+over the coordinates outside $T$ and then over those outside $S$ gives the conditional
+expectation over the coordinates outside $S\cap T$: $E_S(E_Tf)(x)=E_{S\cap T}f(x)$.
 \end{theorem}
 
-\begin{theorem}[Self-adjoint conditional expectation]
+\begin{theorem}[Self-Adjointness of Conditional Expectation]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_selfAdjoint}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_swap_samples}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $S\subseteq[n]$, and $f,g:\Omega\to\mathbb R$. For conditional expectation $E_S$ onto $S$, $\mathbb E_P[fE_Sg]=\mathbb E_P[(E_Sf)g]$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$, and let $S$ be a subset of the coordinate indices. For any
+real-valued functions $f,g$ on the product outcome space, their product expectation
+satisfies $\mathbb E_P[fE_Sg]=\mathbb E_P[(E_Sf)g]$.
 \end{theorem}
 
-\begin{theorem}[Expectation of finite sums]
+\begin{theorem}[Expectation of Finite Sums]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum_mul}
 \difficulty{1}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, a finite index set $s$, and functions $F_j:\Omega\to\mathbb R$. Then $\mathbb E_P\sum_{j\in s}F_j=\sum_{j\in s}\mathbb E_PF_j$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$. For any finite set $s$ and any family of real-valued functions
+$F_i$ on the product outcome space, the expectation of their sum over $s$ equals the sum
+of their expectations: $\mathbb E_P[\sum_{i\in s}F_i]=\sum_{i\in s}\mathbb E_PF_i$.
 \end{theorem}
 
-\begin{theorem}[Expectation of scalar multiples]
+\begin{theorem}[Expectation of a Scalar Multiple]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
 \difficulty{1}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $a\in\mathbb R$, and $f:\Omega\to\mathbb R$. Then $\mathbb E_P[af]=a\mathbb E_Pf$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$, let $a\in\mathbb R$, and let $f$ be a real-valued function on
+the product outcome space. Then $\mathbb E_P[af]=a\mathbb E_Pf$.
 \end{theorem}
 
 \begin{theorem}[Product Parseval identity]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.parseval}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.component, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_comp, BooleanAnalysis.Hypercontractivity.FiniteProduct.condExp_selfAdjoint, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_const_mul, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect_sum, BooleanAnalysis.Hypercontractivity.signedIntersectionEnergy, BooleanAnalysis.Hypercontractivity.sum_powerset_signed_inter}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p211-b005,
+  pdf-ffbe9c7b3306-p212-b001
+}
 \difficulty{6}
 Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$ and $f:\Omega\to\mathbb R$ with orthogonal components $f_S$. Then $\mathbb E_Pf^2=\sum_{S\subseteq[n]}\mathbb E_Pf_S^2$.
 \end{theorem}
 
-\begin{theorem}[Boolean rounding on fixed coordinates]
+\begin{theorem}[Boolean Rounding on Fixed Coordinates]
 \lean{BooleanAnalysis.Hypercontractivity.FiniteProduct.exists_boolean_rounding}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.FiniteProduct, BooleanAnalysis.Hypercontractivity.FiniteProduct.DependsOn, BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean, BooleanAnalysis.Hypercontractivity.FiniteProduct.Point, BooleanAnalysis.Hypercontractivity.FiniteProduct.expect, BooleanAnalysis.Hypercontractivity.FiniteProduct.indicator, BooleanAnalysis.Hypercontractivity.FiniteProduct.prob}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p269-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.Point}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.mass}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p017-b006,
+    pdf-ffbe9c7b3306-p207-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.expect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.indicator}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b006}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.prob}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b006,
+    pdf-ffbe9c7b3306-p207-b005}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.DependsOn}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b003,
+    pdf-ffbe9c7b3306-p213-b002}
+\proofstep
+  {BooleanAnalysis.Hypercontractivity.FiniteProduct.IsBoolean}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b001}
 \difficulty{5}
-Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\Omega=\prod_i\Omega_i$, $J\subseteq[n]$, and functions $f,h:\Omega\to\mathbb R$. If $f$ takes values in $\{-1,1\}$ and $h$ depends only on $J$, there exists $g:\Omega\to\{-1,1\}$ depending only on $J$ such that $\Pr_P(f\ne g)\le\mathbb E_P(f-h)^2$.
+Let $P$ be a product of $n$ finite probability spaces, with strictly positive coordinate
+weights summing to $1$, and let $J$ be a subset of the coordinate indices. Suppose $f,h$
+are real-valued functions on the product outcome space, $f$ takes values in $\{-1,1\}$,
+and $h$ depends only on the coordinates in $J$. Then there is a function $g$ taking
+values in $\{-1,1\}$ and depending only on the coordinates in $J$ such that $\Pr_P(f\ne
+g)\leq\mathbb E_P[(f-h)^2]$.
 \end{theorem}

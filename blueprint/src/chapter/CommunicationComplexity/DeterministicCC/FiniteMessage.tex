@@ -137,31 +137,28 @@ A noncomputable function that converts a finite-message protocol $p$ into a bina
 encoding each $\beta$-valued message as $\lceil \log_2 |\beta| \rceil$ bits.
 \end{definition}
 
-\begin{theorem}[Conversion to binary protocol preserves output]
+\begin{theorem}[Conversion preserves protocol output]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.run, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
-Let $p$ be a finite-message deterministic two-party protocol over input types $X$ and
-$Y$ with output type $\alpha$, and let $q$ be the binary protocol obtained by converting
-$p$ (encoding each message drawn from a finite nonempty type $\beta$ as $\lceil \log_2
-\abs{\beta} \rceil$ bits). Then $q$ computes the same function as $p$: for every pair of
-inputs $x \in X$ and $y \in Y$, running $q$ on $(x, y)$ returns the same value in
-$\alpha$ as running $p$ on $(x, y)$.
+Let $p$ be a deterministic finite-message two-party protocol with input types $X$ and
+$Y$ and output type $\alpha$, where each message is drawn from a finite nonempty type.
+For every input pair $(x,y)\in X\times Y$, the binary protocol obtained by converting
+$p$ returns the same output as $p$.
 \end{theorem}
 
-\begin{theorem}[Conversion to a binary protocol preserves complexity]
+\begin{theorem}[Conversion preserves communication complexity]
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_exists, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{1}
-Let $p$ be a finite-message deterministic two-party communication protocol over input
-types $X$ (Alice) and $Y$ (Bob) with outputs in $\alpha$, in which each message is an
-element of an arbitrary finite nonempty type. Its conversion into a binary protocol,
-obtained by encoding every $\beta$-valued message as $\lceil \log_2 \abs{\beta} \rceil$
-bits, has communication complexity equal to that of $p$.
+Let $p$ be a deterministic finite-message two-party protocol with input types $X$ and
+$Y$ and output type $\alpha$, where each message is drawn from a finite nonempty type.
+The binary protocol obtained by converting $p$ has the same communication complexity as
+$p$.
 \end{theorem}
 
 \begin{definition}[Embedding binary protocols as finite-message protocols]
@@ -192,7 +189,7 @@ in $\alpha$ as executing $p$ directly on $x$ and $y$.
 \lean{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol_complexity}
 \leanok
-\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity}
+\uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.clog_two_two, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.ofProtocol, CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.complexity}
 \difficulty{2}
 Let $p$ be a deterministic binary two-party communication protocol over input types $X$
 and $Y$ with output type $\alpha$, and let its embedding into the finite-message
@@ -264,7 +261,5 @@ complexity as $p$.
 \label{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.clog_two_two}
 \leanok
 \difficulty{1}
-The ceiling base-$2$ logarithm of $2$ equals $1$: $\lceil \log_2 2 \rceil = 1$, i.e.\ 
-\texttt{Nat.clog 2 2 = 1}. This is a numeric fact used when comparing the
-complexity of a binary protocol with its finite-message reformulation.
+The least natural number $k$ such that $2 \leq 2^k$ is $1$.
 \end{theorem}

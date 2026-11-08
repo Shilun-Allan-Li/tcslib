@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.satStop_step",
+ "key": "f5d52490be783e2e",
+ "kind": "lemma",
+ "title": "Step of the call-stopping wrapper",
+ "statement": "Let $C$ be a finite Turing machine over the Boolean alphabet, with designated states $\\mathrm{entry}$ and $\\mathrm{exit}$. For a Boolean input word $x$, a configuration $c$ of $C$ on $x$, and a flag $b\\in\\{0,1\\}$, suppose that $c$ is live and that $c$ is not in state $\\mathrm{exit}$ whenever $b=1$. One step of the wrapper machine, from the configuration formed by adjoining flag $b$ to $c$, yields the configuration formed by adjoining flag $1$ to the result of one step of $C$ from $c$.",
+ "hypotheses_covered": [
+  "$C$ is a finite Turing machine over the Boolean alphabet",
+  "Designated entry and exit states of $C$",
+  "Boolean input word $x$",
+  "Configuration $c$ of $C$ on input $x$",
+  "Flag $b\\in\\{0,1\\}$",
+  "$c$ is live",
+  "If $b=1$, $c$ is not in state $\\mathrm{exit}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If the embedded configuration is live and not (with the flag raised) at the\ndesignated exit, then one step of the call-stopping wrapper performs the same\nphysical step as the wrapped machine and raises the release flag."
+}

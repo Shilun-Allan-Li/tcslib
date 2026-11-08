@@ -49,7 +49,11 @@ real exponent $s \ge 1$ and every point $x \in \{0,1\}^n$,
   \abs{(T_\rho f)(x)}^{s} \;\le\; \sum_{y \in \{0,1\}^n} K_\rho(x,y)\,\abs{f(y)}^{s},
 \]
 where $K_\rho(x,y) = \prod_{i} \tfrac{1 + \rho\,\sigma(x_i)\,\sigma(y_i)}{2}$ is the
-noise kernel, with $\sigma(0)=1$ and $\sigma(1)=-1$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+noise kernel, with $\sigma(0)=1$ and $\sigma(1)=-1$. For $d\in\mathbb N$,
+$h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau
+h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{lemma}
 
 \begin{lemma}[Contractivity of the noise operator in $L^s$]
@@ -58,14 +62,18 @@ noise kernel, with $\sigma(0)=1$ and $\sigma(1)=-1$. For $d\in\mathbb N$, $h:\{0
 \uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.noiseKernel, BooleanAnalysis.Hypercontractivity.noiseKernel_sum_left, BooleanAnalysis.Hypercontractivity.noiseOp_abs_rpow_le_kernel_avg, BooleanAnalysis.expect, BooleanAnalysis.noiseOp}
 \difficulty{4}
 \label{BooleanAnalysis.Hypercontractivity.trivial_contractivity}
-Let $n$ be a natural number, let $s \ge 1$ and $\rho \in [0,1]$, and let $f : \{0,1\}^n \to \bbr$ be a Boolean
+Let $n$ be a natural number, let $s \ge 1$ and $\rho \in [0,1]$, and let $f : \{0,1\}^n
+\to \bbr$ be a Boolean
 function. Then, with expectations taken under the uniform measure on the cube, the noise
 operator $T_\rho$ satisfies
 \[
   \bigl(\E\bigl[\abs{T_\rho f}^{s}\bigr]\bigr)^{1/s}
   \;\le\;
   \bigl(\E\bigl[\abs{f}^{s}\bigr]\bigr)^{1/s}.
-\] For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+\] For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise
+operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{lemma}
 
 \begin{lemma}[Duality of noise-operator norm bounds]
@@ -192,7 +200,8 @@ operator $T_\rho$ satisfies
   {direct}
   {boolean-ch09-hypercontractivity-kkl}
   {pdf-4ba63c9394e5-p016-b006}
-Fix a natural number $n$, exponents $p,q>1$ and a noise parameter $\rho$ with $0 \le \rho \le 1$, and write
+Fix a natural number $n$, exponents $p,q>1$ and a noise parameter $\rho$ with $0 \le
+\rho \le 1$, and write
 $p' = p/(p-1)$ and $q' = q/(q-1)$ for the H\"older conjugates. Then the noise operator
 $T_\rho$ on Boolean functions $f : \{0,1\}^n \to \bbr$ satisfies the $(p \to q)$ bound
 \[
@@ -206,7 +215,11 @@ if and only if it satisfies the conjugate $(q' \to p')$ bound
 \bigl(\E\bigl[\,\abs{f}^{q'}\,\bigr]\bigr)^{1/q'}
   \qquad \text{for every } f,
 \]
-where all norms are taken with respect to the uniform measure on $\{0,1\}^n$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+where all norms are taken with respect to the uniform measure on $\{0,1\}^n$. For
+$d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is
+$T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{lemma}
 
 \begin{lemma}[Square root of a ratio bounded by one]
@@ -233,6 +246,12 @@ Let $p, u \in \bbr$ with $u > 1$. Then
 \lean{BooleanAnalysis.Hypercontractivity.bridging_hypercontractivity}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.Interpolation.sqrt_div_le_one, BooleanAnalysis.Hypercontractivity.noise_param_eq, BooleanAnalysis.Hypercontractivity.one_function_iff_two_function_hypercontractivity, BooleanAnalysis.Hypercontractivity.weak_two_function_hypercontractivity, BooleanAnalysis.expect, BooleanAnalysis.innerProduct, BooleanAnalysis.noiseOp}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p247-b002,
+  pdf-ffbe9c7b3306-p273-b004,
+  pdf-ffbe9c7b3306-p260-b005,
+  pdf-ffbe9c7b3306-p261-b005
+}
 \difficulty{4}
 \proofsource{boolean-ch10-advanced-hypercontractivity}{
   pdf-9d1751394783-p004-b007,
@@ -544,7 +563,8 @@ Let $p, u \in \bbr$ with $u > 1$. Then
   {context}
   {boolean-ch10-advanced-hypercontractivity}
   {pdf-9d1751394783-p003-b007}
-Fix a natural number $n$. Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, and let $p,u\in\bbr$ satisfy $1\le p\le
+Fix a natural number $n$. Let $f:\{0,1\}^n\to\bbr$ be a Boolean function, and let
+$p,u\in\bbr$ satisfy $1\le p\le
 2\le u$. Set $\rho=\sqrt{(p-1)/(u-1)}$ and let $T_\rho$ denote the noise operator with
 parameter $\rho$. Then
 \[
@@ -552,7 +572,11 @@ parameter $\rho$. Then
   \;\le\;
   \bigl(\E\bigl[\,\abs{f}^{\,p}\,\bigr]\bigr)^{1/p},
 \]
-where the expectations are taken with respect to the uniform measure on $\{0,1\}^n$. For $d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is $T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where $\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform measure.
+where the expectations are taken with respect to the uniform measure on $\{0,1\}^n$. For
+$d\in\mathbb N$, $h:\{0,1\}^d\to\bbr$, and $\tau\in\bbr$, the spectral noise operator is
+$T_\tau h(x)=\sum_{S\subseteq[d]}\tau^{|S|}\widehat h(S)\chi_S(x)$, where
+$\chi_S(x)=(-1)^{\sum_{i\in S}x_i}$ and $\widehat h(S)=\E[h\chi_S]$ under the uniform
+measure.
 \end{theorem}
 
 \begin{lemma}[Interpolation parameters for the low-norms case]

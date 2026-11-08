@@ -1,0 +1,21 @@
+{
+ "lean_name": "Randomized.halted_rounds",
+ "key": "d966c57ad9f0587a",
+ "kind": "theorem",
+ "title": "Rounds until a halted run satisfies a property",
+ "statement": "Let $M$ be a nondeterministic Turing machine with $k$ work tapes, Boolean input, and state set $S$. Let $R$ be a natural number, and let $P$ and $\text{Ready}$ be properties of configurations on a fixed Boolean input. Suppose that from every ready configuration, every choice word of length $R$ leads either to a halted configuration satisfying $P$, or to another ready configuration. Suppose also that every ready configuration is nonhalted. Then, for every natural number $j$, every ready initial configuration, and every choice word of length $Rj$, if the resulting run is halted, its final configuration satisfies $P$.",
+ "hypotheses_covered": [
+  "A natural number of work tapes and a state set with decidable equality.",
+  "A fixed Boolean input and a nondeterministic machine on it.",
+  "Properties Ready and P of configurations, and a natural number R.",
+  "Every length-R choice word from a ready configuration ends halted with P, or ends ready.",
+  "Every ready configuration is nonhalted.",
+  "A natural number j and a ready starting configuration.",
+  "A choice word of length R times j.",
+  "The resulting run is halted."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

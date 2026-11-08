@@ -15,6 +15,10 @@ the circuit at any fixed input except on a small fraction of seeds.
 
 \begin{definition}[Boolean input cast to the prime field]
 \lean{RazborovSmolensky.boolInput}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b002,
+  pdf-d3f464808105-p002-b003
+}
 \label{RazborovSmolensky.boolInput}
 \leanok
 For a Boolean input $x : \mathrm{Fin}\,n \to \mathrm{Fin}\,2$, the map
@@ -24,6 +28,7 @@ $\bbz/p$.
 
 \begin{definition}[Field value of a bit]
 \lean{RazborovSmolensky.boolVal}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p002-b002}
 \label{RazborovSmolensky.boolVal}
 \leanok
 The value in $\bbz/p$ represented by a bit $b : \mathrm{Fin}\,2$, namely the image of the natural
@@ -69,6 +74,15 @@ node to which slot $i$ is wired.
 
 \begin{definition}[Degree target after $d$ layers]
 \lean{RazborovSmolensky.circuitDegreeBound}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{pdf-d3f464808105-p002-b005}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p007-b003
+}
 \label{RazborovSmolensky.circuitDegreeBound}
 \leanok
 The degree budget for the approximating polynomials after $d$ layers, defined as
@@ -222,6 +236,17 @@ the cardinality of the subset $\{x \in s : q(x)\}$.
 
 \begin{definition}[Gate approximator family]
 \lean{BoolCircuit.GatePolyFamily}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b005,
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
 \label{BoolCircuit.GatePolyFamily}
 \leanok
 \uses{RazborovSmolensky.bitify, RazborovSmolensky.boolInput}
@@ -236,6 +261,20 @@ type depends only on the gate, not on the incoming polynomials.
 
 \begin{lemma}[Existence of a gate approximator family]
 \lean{RazborovSmolensky.exists_gate_poly_family}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{pdf-52929dbaa962-p006-b001}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p006-b001,
+  pdf-988dc9f0ae91-p006-b002,
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001,
+  pdf-988dc9f0ae91-p007-b002
+}
 \label{RazborovSmolensky.exists_gate_poly_family}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, RazborovSmolensky.ACp_GateOps_cases, BoolCircuit.GatePolyFamily, RazborovSmolensky.approxAnd, RazborovSmolensky.approxAnd_pointwise_bad_count, RazborovSmolensky.approxAnd_totalDegree, RazborovSmolensky.approxSeed_card, RazborovSmolensky.bitify, RazborovSmolensky.boolInput, RazborovSmolensky.cast_bitify_eq, RazborovSmolensky.exactAnd_on_bits, RazborovSmolensky.exactMod, RazborovSmolensky.exactMod_on_bits, RazborovSmolensky.exactMod_totalDegree, RazborovSmolensky.modGateOp}
@@ -264,6 +303,14 @@ preceding existence statement.
 
 \begin{definition}[Layer polynomial family]
 \lean{RazborovSmolensky.LayerPolyFamily}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b005,
+  pdf-d3f464808105-p004-b003
+}
 \label{RazborovSmolensky.LayerPolyFamily}
 \leanok
 \uses{BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.evalNode, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
@@ -285,6 +332,26 @@ the corresponding variable $X_i$, so that no seed is ever bad.
 
 \begin{definition}[Inductive layer step]
 \lean{RazborovSmolensky.stepLayerFamily}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b007,
+  pdf-988dc9f0ae91-p006-b001,
+  pdf-988dc9f0ae91-p006-b002,
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001,
+  pdf-988dc9f0ae91-p007-b002,
+  pdf-988dc9f0ae91-p007-b003
+}
 \label{RazborovSmolensky.stepLayerFamily}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.evalNode, BoolCircuit.LayeredCircuit.onlyUsesGates, BoolCircuit.GatePolyFamily, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.bitify, RazborovSmolensky.bitify_boolVal, RazborovSmolensky.boolInput, RazborovSmolensky.boolVal_mem, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.evalNode_succ_eq, RazborovSmolensky.gateCountBefore, RazborovSmolensky.gatePolyFamily, RazborovSmolensky.pi_exists_bad_card_mul_le, RazborovSmolensky.prod_filter_fiber_mul_le, RazborovSmolensky.prod_left_filter_card}
@@ -296,6 +363,10 @@ approximator applied to the layer-$d$ polynomials of its inputs.
 
 \begin{definition}[Layer family built by recursion on depth]
 \lean{RazborovSmolensky.buildLayerFamily}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
 \label{RazborovSmolensky.buildLayerFamily}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.onlyUsesGates, RazborovSmolensky.LayerPolyFamily, RazborovSmolensky.inputLayerFamily, RazborovSmolensky.stepLayerFamily}
@@ -306,6 +377,28 @@ step $d$ times.
 
 \begin{theorem}[{Polynomial approximation of the outputs of an AC⁰[p] circuit}]
 \lean{RazborovSmolensky.exists_poly_distribution_for_circuit_outputs}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b005,
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p005-b007,
+  pdf-988dc9f0ae91-p006-b001,
+  pdf-988dc9f0ae91-p006-b002,
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001,
+  pdf-988dc9f0ae91-p007-b002,
+  pdf-988dc9f0ae91-p007-b003
+}
 \label{RazborovSmolensky.exists_poly_distribution_for_circuit_outputs}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval, BoolCircuit.LayeredCircuit.evalNode, BoolCircuit.LayeredCircuit.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.buildLayerFamily, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
@@ -332,6 +425,28 @@ $o$ on input $x$.
 
 \begin{theorem}[{Polynomial approximation of a single-output AC⁰[p] circuit}]
 \lean{RazborovSmolensky.exists_poly_distribution_for_circuit_one}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b005,
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p005-b007,
+  pdf-988dc9f0ae91-p006-b001,
+  pdf-988dc9f0ae91-p006-b002,
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001,
+  pdf-988dc9f0ae91-p007-b002,
+  pdf-988dc9f0ae91-p007-b003
+}
 \label{RazborovSmolensky.exists_poly_distribution_for_circuit_one}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval, BoolCircuit.LayeredCircuit.evalNode, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.buildLayerFamily, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.gateCountBefore}
@@ -357,6 +472,28 @@ nodes across layers $1,\dots,d$.
 
 \begin{theorem}[{Polynomial list approximating a single-output $\mathrm{AC}^0[p]$ circuit}]
 \lean{RazborovSmolensky.exists_poly_list_for_circuit_one}
+\statementsource{arora-barak-ch13-circuit-lowerbounds}{
+  pdf-52929dbaa962-p005-b007,
+  pdf-52929dbaa962-p006-b001
+}
+\statementsource{mit-18405-razborov-smolensky}{
+  pdf-d3f464808105-p002-b005,
+  pdf-d3f464808105-p003-b003,
+  pdf-d3f464808105-p004-b001,
+  pdf-d3f464808105-p004-b002,
+  pdf-d3f464808105-p004-b003
+}
+\statementsource{goldreich-approximation-method}{
+  pdf-988dc9f0ae91-p005-b006,
+  pdf-988dc9f0ae91-p005-b007,
+  pdf-988dc9f0ae91-p006-b001,
+  pdf-988dc9f0ae91-p006-b002,
+  pdf-988dc9f0ae91-p006-b003,
+  pdf-988dc9f0ae91-p006-b004,
+  pdf-988dc9f0ae91-p007-b001,
+  pdf-988dc9f0ae91-p007-b002,
+  pdf-988dc9f0ae91-p007-b003
+}
 \label{RazborovSmolensky.exists_poly_list_for_circuit_one}
 \leanok
 \uses{RazborovSmolensky.ACp_GateOps, BoolCircuit.LayeredCircuit, BoolCircuit.LayeredCircuit.eval₁, BoolCircuit.LayeredCircuit.onlyUsesGates, RazborovSmolensky.boolInput, RazborovSmolensky.circuitDegreeBound, RazborovSmolensky.exists_poly_distribution_for_circuit_one, RazborovSmolensky.finset_toList_filter_length_eq_card, RazborovSmolensky.gateCountBefore, RazborovSmolensky.list_filter_map_length}

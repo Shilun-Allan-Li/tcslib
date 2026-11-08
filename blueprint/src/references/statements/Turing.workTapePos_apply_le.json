@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.workTapePos_apply_le",
+ "key": "2d12023de6d26849",
+ "kind": "lemma",
+ "title": "Bound on work-head movement",
+ "statement": "For every single-step action, configuration, and work-tape index $i$, the absolute difference between the head position after applying the action and its position before is at most $1$.",
+ "hypotheses_covered": [
+  "A single-step action is given",
+  "A configuration on the fixed input is given",
+  "A work-tape index $i$ is given"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every action of a $k$-tape machine, every configuration, and every work tape index\n$i < k$, the head position of tape $i$ after applying the action differs from its\nposition before by at most one: $\\abs{p' - p} \\le 1$, where $p$ and $p'$ are the\npositions of the head of tape $i$ before and after the action is applied."
+}

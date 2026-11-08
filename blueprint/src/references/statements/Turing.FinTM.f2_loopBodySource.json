@@ -1,0 +1,16 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopBodySource",
+ "key": "b34e03c0c56538b7",
+ "kind": "def",
+ "title": "Loop Body Source Machine",
+ "statement": "Let $B$ and $F$ be finite Turing machines over the Boolean alphabet, with $k_B$ and $k_F$ work tapes, respectively, and let $a$ be a state of $B$. The loop body source machine has $k_B+1+(1+k_F)$ work tapes and states in $Q_B\\times\\{\\mathrm{false},\\mathrm{true}\\}$; its initial state is $(q_0^B,\\mathrm{false})$. On a transition, it applies the transition of the loop body machine to the input and the first $k_B+1$ work tapes, using the corresponding initial segment of the larger machine's work-tape contents, and extends that action by the specified left-action operation over the remaining $1+k_F$ tapes.",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machine $B$",
+  "Finite Boolean Turing machine $F$",
+  "A state $a$ of $B$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not define the loop body machine or the left-action operation, so their precise transition behavior cannot be stated from this snippet.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

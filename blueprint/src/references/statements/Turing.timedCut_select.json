@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.timedCut_select",
+ "key": "1409357b3e85f182",
+ "kind": "lemma",
+ "title": "Selecting a transition record",
+ "statement": "Let $x$ be a binary input, let $n$ be a nonnegative integer, and let the base configuration, a record index $i\\in\\{0,\\ldots,8\\}$, a binary table $T$, a list $G$ of lists of actions, a list $B$ of actions, and binary strings $L,R$ be given. Suppose every group in $G$ has nine actions, $B$ has $i$ actions, and $T$ is the concatenation of $L$, the serialized records of all actions in all groups of $G$, the serialized records of the actions in $B$, and $R$. Starting with the stopped interpreter in the group phase at index $i$, with table cursor at the end of $L$ and state tape encoding the unary number of groups in $G$ with cursor at $1$, after $2|G|$ plus the serialized length of those groups’ records plus the serialized length of $B$’s records plus $3$ steps, it is in the action-reading phase with its eight-bit register cleared, table cursor at the beginning of the selected record, and state tape reset to the unary encoding of zero with cursor at $1$.",
+ "hypotheses_covered": [
+  "A binary input $x$ and nonnegative integer $n$",
+  "A base four-tape configuration",
+  "A record index $i\\in\\{0,\\ldots,8\\}$",
+  "A binary table $T$",
+  "A list $G$ of action groups, each of length nine",
+  "A list $B$ of actions with length equal to $i$",
+  "Binary strings $L,R$ and the stated concatenation decomposition of $T$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose the table holds, at the cursor, the concatenated records of $g$\npreceding state groups (nine records each) followed by the records preceding\nthe selected read offset, and the state tape is the unary tape for $g$ with\ncursor $1$.  Then in exactly $2g$ plus the total serialized length of the\ntraversed records plus $3$ steps, the stopped table interpreter destructively\ncounts down the unary state while skipping its groups, rewinds the erased\nstate tape, skips the read-offset prefix (entering the action reader directly\nwhen the offset is zero), and arrives in the action-reading phase with a\ncleared register, the table cursor at the selected record, and the state tape\nreset to the unary tape for $0$."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.space_universal",
+ "key": "802512bc96faa61b",
+ "kind": "theorem",
+ "title": "Universal Simulation with a Space Bound",
+ "statement": "There exists a finite-state binary Turing machine $S$ such that for every binary word $\\alpha$ there is a positive integer $C$ with the following property: for every $s,t\\in\\mathbb{N}$ and binary words $x,y$, if the machine decoded from $\\alpha$ halts on input $x$ after exactly $t$ steps with output $y$ and uses at most $s$ work-tape cells by that time, then $S$ halts on input $\\langle \\mathrm{bin}(s),\\langle\\alpha,x\\rangle\\rangle$ with output $y$ at some time and uses at most $Cs$ work-tape cells by then. Here $\\mathrm{bin}(s)$ is the little-endian binary representation of $s$, and $\\langle\\cdot,\\cdot\\rangle$ is the specified self-delimiting pairing of binary words.",
+ "hypotheses_covered": [
+  "A fixed effective machine code with its specified decoded machine for each binary word",
+  "For every code word $\\alpha$, a positive integer $C$ may be chosen",
+  "$s,t$ are natural numbers",
+  "$x,y$ are binary words",
+  "The decoded machine halts on $x$ at exactly time $t$ with output $y$",
+  "The decoded machine's space use at time $t$ is at most $s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "There exists a finite Turing machine $S$ such that, for every binary word $\\alpha$,\nthere is a positive integer $C$ with the following property. For every natural number\n$s$ and binary words $x,y$, if the machine encoded by $\\alpha$ halts on input $x$ with\noutput $y$ after $t$ steps and uses at most $s$ work-tape cells, then $S$ halts on the\npaired input encoding of the binary representation of $s$ and the pair of $\\alpha$ with\n$x$, outputs $y$, and uses at most $Cs$ work-tape cells."
+}

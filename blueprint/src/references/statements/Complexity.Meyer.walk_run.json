@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.Meyer.walk_run",
+ "key": "b566b8b30679f8ad",
+ "kind": "theorem",
+ "title": "Bounded simulation of a walk",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean input and work-tape symbols, let $x,y$ be Boolean words, let $bits$ be a Boolean encoding of the selectors of $M$, and let $P$ be an input-head position for $y$. For any proposed output state $oq$, output register $r$, auxiliary tape content $\\tau_C$ and position $z_C$, natural number $v$, Boolean word $w$, configuration $c$ of $M$ on $x$, and tag $b$, if $w$ has counter value $v$ and $b$ correctly marks the boundary position of $c$'s input head, then the machine constructed from $M$, started in its waiting-decision state with these data, halts within $(v+1)(2|w|+3)$ steps and outputs the single bit that answers the decoded selector using $oq$, $r$, and the symbols read from $c$ after $v$ simulated selector-walk steps.",
+ "hypotheses_covered": [
+  "M is a finite-state Turing machine over Boolean symbols",
+  "x and y are Boolean words",
+  "bits is a Boolean selector encoding",
+  "P is a valid input-head position for y",
+  "oq is an optional state and r is an output register",
+  "τC is an auxiliary tape content and zC an integer position",
+  "v is a natural number and w is a Boolean word with ctrVal(w)=v",
+  "c is a configuration of M on x",
+  "b correctly tags c's input-head boundary position"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

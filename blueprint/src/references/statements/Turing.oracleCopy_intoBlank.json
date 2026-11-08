@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.oracleCopy_intoBlank",
+ "key": "e6df4da6c4d38a5c",
+ "kind": "theorem",
+ "title": "Copying a word into a blank tape",
+ "statement": "Let $k\\ge 0$, let $x$ and $z$ be Boolean words, and let $src,dst$ be distinct work-tape indices. Suppose a configuration $d$ on input $x$ is in the sweep phase, the destination head is at cell $0$, the destination tape is blank everywhere, and the source tape agrees with the buffer storing $z$ throughout the window from cell $-1$ through cell $|z|$. After $2|z|+2$ steps of the copy machine, the destination tape stores $z$ and the machine is in the done phase. At every earlier time $s<2|z|+2$, it is not in the done phase.",
+ "hypotheses_covered": [
+  "natural number k indexing tapes",
+  "Boolean input word x",
+  "Boolean word z",
+  "src and dst are work-tape indices",
+  "src differs from dst",
+  "configuration d on input x",
+  "d is in the sweep phase",
+  "destination head is at 0",
+  "destination tape is blank at every integer cell",
+  "source tape agrees with the buffer of z for every integer p from -1 through |z|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

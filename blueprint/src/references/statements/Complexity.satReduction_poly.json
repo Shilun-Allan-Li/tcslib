@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.satReduction_poly",
+ "key": "35810ceb09a92a8f",
+ "kind": "lemma",
+ "title": "Polynomial-Time Computability of the Reduction",
+ "statement": "There exist a finite Turing machine $M$ over the Boolean alphabet and natural numbers $C,c$ such that, for every Boolean word $x$, $M$ halts after exactly $C(|x|+1)^c$ steps with output equal to the string-level reduction of $x$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The string-level SAT-to-3SAT reduction — decode, apply the clause-splitting\ntransform, and serialize, with the empty-formula fallback on malformed inputs —\nis polynomial-time computable: a finite host of six clean modules (startup\nappend and install, then the recurring pack, append, emit, and install calls)\ndrives the normalized streaming schedule through an emitting loop with round\nbudget $R(n) = n$, every request being linearly bounded in the original input."
+}

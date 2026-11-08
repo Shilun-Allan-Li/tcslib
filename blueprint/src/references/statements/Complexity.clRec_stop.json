@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clRec_stop",
+ "key": "699baa60d5a5bd07",
+ "kind": "lemma",
+ "title": "Exhausted clock dispatches to completion",
+ "statement": "Let $M$ be a finite-state Turing machine with Boolean symbols, and let $x$ and $y$ be Boolean words. For any configuration $c$ of $M$ on input $y$, Boolean tag $b$, function $n$ assigning a natural number to each of the recorder’s counter fields, Boolean word $record$, and natural number $T$, one step of the recorder from its clock-test control, with clock time $T$, produces its completion control configuration, preserving $c$, $n$, $record$, and $T$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state Turing machine over Boolean symbols",
+  "$x$ and $y$ are Boolean words",
+  "$c$ is a configuration of $M$ on input $y$",
+  "$b$ is a Boolean tag",
+  "$n$ assigns a natural number to each recorder counter field",
+  "$record$ is a Boolean word",
+  "$T$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "no-claim"
+ ],
+ "replaced": "For every source configuration, tag, movement counts, record, and clock budget $T$, one recorder step from the clock-test phase at logical time $T$ reads the exhausted clock blank and yields the completed live control, silently; no further source transition can occur."
+}

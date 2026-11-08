@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.Lockstep",
+ "key": "d2dca139223f7099",
+ "kind": "structure",
+ "title": "Lockstep simulation between machines",
+ "statement": "Let $M$ and $N$ be multi-tape Turing machines, let $e$ map configurations of $M$ to configurations of $N$, and let $c\\mapsto t(c)$ assign a nonnegative integer to each configuration $c$ of $M$. Let $X$ and $X'$ be sets of states, allowing the halting state to be represented by absence of a state. If the state of $c$ is outside $X$, then running $N$ from $e(c)$ for $t(c)$ steps yields the encoding of the configuration reached by one step of $M$ from $c$; at every time $v<t(c)$, the state reached by $N$ is outside $X'$. If the state of $c$ belongs to $X$, then the state of $e(c)$ belongs to $X'$.",
+ "hypotheses_covered": [
+  "Machines M and N",
+  "A configuration encoding from M to N",
+  "A nonnegative integer cost assigned to each configuration of M",
+  "Sets X and X' of optional states",
+  "Outside X, N run for the assigned cost reaches the encoding of M's one-step successor",
+  "Inside X, the encoded configuration's state belongs to X'",
+  "Outside X, at each time strictly below the assigned cost, N's state lies outside X'"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

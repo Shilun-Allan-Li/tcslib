@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satStreamRun_serialize",
+ "key": "46b3c1004e4041a8",
+ "kind": "lemma",
+ "title": "Serialized schedule emits the transform",
+ "statement": "For every CNF formula $\\varphi$ over natural-numbered variables, running $|\\mathrm{enc}(\\varphi)|+1$ rounds on its encoding, starting with fresh cursor equal to its variable count, consumed length zero, and formula phase, emits the encoding of the clause-splitting transform of $\\varphi$.",
+ "hypotheses_covered": [
+  "CNF formula $\\varphi$ over natural-numbered variables"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\varphi$ be a CNF formula with serialization $\\mathrm{ser}(\\varphi)$ and\nits variable bound $N(\\varphi)$ (one more than the largest variable index occurring in $\\varphi$, or $0$ if no variable occurs). Running $|\\mathrm{ser}(\\varphi)| + 1$ streaming rounds on input\n$\\mathrm{ser}(\\varphi)$, starting from the formula phase with fresh cursor\n$N(\\varphi)$ and nothing consumed, emits a word equal to the serialization of the\nclause-splitting transform of $\\varphi$: the semantic schedule finishes within the\nbudget and all remaining rounds are empty."
+}

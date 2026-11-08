@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.TimeHierarchy.wstep",
+ "key": "0c38a3f23f9c49ce",
+ "kind": "lemma",
+ "title": "Clock simulation step",
+ "statement": "Let $K$ and $W$ be finite Turing machines over the Boolean alphabet, let $x$ be an input bit string, and let $c$ be a configuration of $W$ on $x$ whose state is $q$. Let $r$ be an output register, let $\\tau$ be a tape content function with $\\tau(z)=1$, and let $z$ be an integer; for any fixed contents and head positions of the other tapes, one step of the clock machine from the configuration encoding $c$, with clock state indicating that it is simulating $W$ in its decoding phase, equals the encoded configuration after one step of $W$: the simulated state is updated according to $W$'s transition, the clock cell at $z$ is changed to blank and its head moves to $z-1$, and the output is the one-bit value indicating whether the updated register is not exactly the register containing only $1$ if $W$'s transition halts, and is empty otherwise.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machines $K$ and $W$",
+  "input bit string $x$ and configuration $c$ of $W$ on $x$",
+  "configuration state is $q$",
+  "arbitrary output register $r$",
+  "arbitrary other-tape contents and head positions",
+  "integer clock position $z$ with $\\tau(z)=1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

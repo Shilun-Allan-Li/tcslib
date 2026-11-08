@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.OIS.Represents",
+ "key": "33ba918da0e6beda",
+ "kind": "def",
+ "title": "Representation by a simulated configuration",
+ "statement": "Let $M$ be a finite-tape Turing machine with Boolean tape symbols, let $v,x$ be finite Boolean strings, let $c$ be a configuration of $M$ on input $v$, and let $d$ be a configuration of the simulator on input $x$. Say that $d$ represents $c$ if there is a natural number $i\\leq |v|$ such that $d$ is the simulated encoding of $c$ using index $i$ and phase “work” with no Boolean value and flag true when the input-head position of $c$ is $0$, and phase “ask” otherwise; moreover, if $c$ is nonhalting, then $i$ equals its input-head position minus one.",
+ "hypotheses_covered": [
+  "$M$ is a finite-tape Turing machine with Boolean tape symbols",
+  "$v,x$ are finite Boolean strings",
+  "$c$ is a configuration on input $v$",
+  "$d$ is a simulator configuration on input $x",
+  "There exists $i\\leq |v|$",
+  "When $c$ is nonhalting, $i=c$’s input-head position minus one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

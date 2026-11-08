@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.enumCont_undo_back",
+ "key": "e952848c5c1db634",
+ "kind": "lemma",
+ "title": "First restoration transition",
+ "statement": "Let $k$ be a natural number, let $S$ be a state type, let $x$ be a finite Boolean input, let $c$ be a configuration of a $k$-work-tape machine on input $x$, let $a$ be an action, let $h$ be a finite history list, and let $p$ be an input-head position among the $|x|+2$ positions. Starting the restoration machine at the checkpoint for the configuration obtained by applying $a$ to $c$, with history $h$ extended by the entry recording the symbols under the work heads of $c$ and the work-head moves prescribed by $a$, one step gives the intermediate restoration configuration for $c$, $a$, $h$, and $p$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$S$ is a state type",
+  "$x$ is a finite Boolean input",
+  "$c$ is a configuration of a $k$-work-tape machine on input $x$",
+  "$a$ is an action",
+  "$h$ is a finite list of history entries for $k$ work tapes",
+  "$p$ is a valid input-head position among the $|x|+2$ positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a source configuration, $a$ an action, $h$ a history list, and $p$ an\ninput-head position. One step of the restoration machine from the checkpoint at\n$p$ for the configuration obtained by applying $a$ to $c$, whose history is $h$\nextended by the entry recording $a$ (the symbols under the work heads of $c$ and\nthe head moves of $a$), equals the mid-restoration configuration for $c$, $a$, $h$\nand $p$: the recorded head moves are reversed, the overwritten symbols are\nretained in finite control, and the cells of that history entry are erased."
+}

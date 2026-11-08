@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.AdjWalk.kindEm",
+ "key": "4bde6ebb0cededff",
+ "kind": "lemma",
+ "title": "Encoded Gate Kind Walk",
+ "statement": "Let $C$ be a family of Boolean circuits, and fix Boolean $\\ell_m$ and natural numbers $n,i,B$. Suppose a gate $g$ occurs at index $V-n$ in the circuit for input length $n$, with $n\\le V\\le B$. If $k\\le i$, $k+2\\le B$, and $U,W\\le B$, then the walk initialized in state $kA$ with registers $(k,V,U,W)$ and no result has the following behavior on the input encoding $n$ and $i$: for $k\\le i<k+2$, it halts with answer $\\ell_m$ or the corresponding bit of the two-bit encoding of $g$'s kind; for $k+2\\le i$, it reaches the specified postcondition, with every register bounded by $B$ throughout the run before reaching it.",
+ "hypotheses_covered": [
+  "$g$ occurs at index $V-n$ in the circuit for input length $n$",
+  "$n\\le V$",
+  "$V\\le B$",
+  "$k\\le i$",
+  "$k+2\\le B$",
+  "$U\\le B$",
+  "$W\\le B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

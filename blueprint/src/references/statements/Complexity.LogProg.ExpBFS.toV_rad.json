@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.toV_rad",
+ "key": "dcb70f37ef436dbb",
+ "kind": "lemma",
+ "title": "Selected Radius Component",
+ "statement": "Let $S$ be an exponential BFS machine state and let $\\phi$ be a Boolean. The entry of the 17-component counter vector of $S$ at the index assigned to $\\phi$ by the phase-radius rule equals $S.s_1$ when $\\phi$ is true and $S.s$ when $\\phi$ is false.",
+ "hypotheses_covered": [
+  "$S$ is an exponential BFS machine state",
+  "$\\phi$ is a Boolean"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "Let $S$ be a register state and let $\\phi$ be a Boolean. The component of the vector\nassociated to $S$ at index $2$ when $\\phi$ is false, and at index $3$ when $\\phi$ is\ntrue, equals the radius field $s$ of $S$ when $\\phi$ is false and the field $s1$ when\n$\\phi$ is true."
+}

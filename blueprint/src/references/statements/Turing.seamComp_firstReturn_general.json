@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.seamComp_firstReturn_general",
+ "key": "b8cb494f518e15bc",
+ "kind": "lemma",
+ "title": "No Early Visit to the Second Exit State",
+ "statement": "Let $M_1$ and $M_2$ be machines with $k$ work tapes over a common alphabet, with state sets $S_1,S_2$. Choose $exit\\in S_1$ and $entry,q_2\\in S_2$. Suppose the run of $M_1$ from configuration $c_0$ reaches configuration $c_1$ at time $T_1$, with state $exit$, and avoids $exit$ at every time $t<T_1$. Suppose also that the run of $M_2$ from $c_1$ with its state replaced by $entry$ avoids $q_2$ at every time $t<T_2$. Then the seam-composed run from $c_0$ with state embedded in the left component does not have state $q_2$ embedded in the right component at any time $t<T_1+1+T_2$.",
+ "hypotheses_covered": [
+  "$k$ work tapes and a common symbol alphabet and input",
+  "Machines $M_1,M_2$ with state sets $S_1,S_2$",
+  "States $exit\\in S_1$ and $entry,q_2\\in S_2$",
+  "Configurations $c_0,c_1$ of $M_1$ and natural numbers $T_1,T_2$",
+  "The run from $c_0$ reaches $c_1$ at time $T_1$",
+  "The state of $c_1$ is $exit$",
+  "The run of $M_1$ avoids $exit$ at all times $t<T_1$",
+  "The run of $M_2$ from $c_1$ with state replaced by $entry$ avoids $q_2$ at all times $t<T_2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

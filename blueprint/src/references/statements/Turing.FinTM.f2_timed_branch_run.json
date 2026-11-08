@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.f2_timed_branch_run",
+ "key": "292da240224d9325",
+ "kind": "lemma",
+ "title": "Timed Simulation of a Selected Branch",
+ "statement": "Let $D,M_1,M_2$ be finite-state Boolean Turing machines, let $x$ be a Boolean input, and let $c$ be a configuration of the branch machine combining $M_1$ and $M_2$ on $x$. For any contents and head positions on $D$’s work tapes, any Boolean $b$, and any $t\\in\\mathbb N$, running the timed conditional machine for $t$ steps from the configuration embedding $c$, those tapes and head positions, and the bit $b$ yields exactly the embedded configuration obtained by running the branch machine, started in branch $b$, for $t$ steps.",
+ "hypotheses_covered": [
+  "Finite Boolean machines D, M₁, and M₂",
+  "Input x and a configuration of the branch machine on x",
+  "Contents and head positions for D’s work tapes",
+  "Boolean b and natural number t"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $D,M_1,M_2$ be finite Turing machines over the Boolean alphabet, let $x$ be an\ninput, and let $c$ be a configuration of the branch machine combining $M_1$ and $M_2$.\nFor any contents and head positions on $D$'s work tapes, any Boolean $b$, and any\n$t\\in\\mathbb N$, running the timed conditional machine for $t$ steps from the\nconfiguration that embeds $c$ together with those tapes and the bit $b$ yields exactly\nthe embedded configuration obtained by running the branch machine started in branch $b$\nfor $t$ steps."
+}

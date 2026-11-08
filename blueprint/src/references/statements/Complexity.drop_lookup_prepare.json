@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.drop_lookup_prepare",
+ "key": "441b44581bc568d4",
+ "kind": "lemma",
+ "title": "Prepare Registers for Lookup",
+ "statement": "Let $mode$ be a Boolean mode, let $h$ be a bit string, and let $zlen, ulen, wlen, q$ be natural numbers such that $2zlen+2\\le |h|$, $2ulen+2\\le zlen$, $2wlen+2\\le ulen$, and $q\\le 2|h|$. Starting with state $copy(6,false)$, no answer, and register values $ptr=8wlen+8$, $zend=2zlen$, $retained=4ulen+4$, $inner=4ulen$, $query=q$, $tail=2zlen+2$, and all remaining registers zero, the machine reaches state $seek(false)$ with no answer and register values $zend=2zlen$, $retained=4ulen+4$, $inner=4ulen$, $kept=8wlen+8$, $query=q$, $tail=2zlen+2$, and all remaining registers zero. Every configuration before the endpoint satisfies the machine's safety condition and register bound.",
+ "hypotheses_covered": [
+  "mode is a Boolean machine mode",
+  "h is a bit string",
+  "zlen, ulen, wlen, and q are natural numbers",
+  "2zlen+2 is at most the length of h",
+  "2ulen+2 is at most zlen",
+  "2wlen+2 is at most ulen",
+  "q is at most twice the length of h"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.mem_P_of_decidesInTimeVia_poly",
+ "key": "9ff2bf413abfc648",
+ "kind": "theorem",
+ "title": "Binary polynomial-time membership via an encoded alphabet",
+ "statement": "Let $\\Gamma$ be a finite alphabet, let $e$ be an injective map from the binary alphabet into $\\Gamma$, let $M$ be a finite-state Turing machine over $\\Gamma$, and let $L$ be a language of binary strings. If, on every binary input $x$, the machine run on the symbolwise image $e(x)$ halts within $C(|x|+1)^d$ steps and outputs the one-symbol string containing $e(1)$ when $x\\in L$ and $e(0)$ otherwise, for natural numbers $C,d$, then $L$ belongs to $\\mathsf{P}$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ is finite",
+  "$e$ injectively maps binary symbols into $\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$L$ is a language of binary strings",
+  "$C,d$ are natural numbers",
+  "For every binary input, $M$ decides membership in $L$ via $e$ within $C(|x|+1)^d$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Gamma$ be a finite alphabet, let\n$e : \\{0,1\\} \\hookrightarrow \\Gamma$ be an injective embedding of the binary\nsymbols, let $L \\subseteq \\{0,1\\}^{*}$ be a language over the binary alphabet,\nand let $C$ and $d$ be natural numbers. If some deterministic finite Turing\nmachine over $\\Gamma$ decides $L$ via $e$ within $C \\cdot (n+1)^d$ steps on\nevery input of length $n$, then $L \\in \\mathsf{P}$. In particular, polynomial-time\ndecidability over any finite alphabet already places a language in the\nbinary-alphabet class $\\mathsf{P}$."
+}

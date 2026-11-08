@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.Cfg.ofWords_workTapes",
+ "key": "7172ad8141aa1bd2",
+ "kind": "lemma",
+ "title": "Work Tape Contents of a Word Configuration",
+ "statement": "Let $k$ be a nonnegative integer, let $x$ be a Boolean input word, let $q$ be a state, and let $w$ assign a Boolean word to each of the $k$ work tapes. For every work-tape index $i$, the content function of tape $i$ in the configuration determined by $q$ and $w$ is the buffer tape storing $w_i$.",
+ "hypotheses_covered": [
+  "A nonnegative number $k$ of work tapes",
+  "A Boolean input word $x$",
+  "A state $q$",
+  "A family of Boolean words indexed by the work tapes",
+  "A work-tape index"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $k \\ge 0$ be a number of work tapes, $x$ a Boolean input word, $q$ a state,\n$w = (w_0, \\dots, w_{k-1})$ a family of Boolean words, and $i < k$ a work-tape index.\nIn the seam configuration $\\mathrm{seam}(q, w)$ of a $k$-work-tape machine over the\nBoolean alphabet on input $x$ (state $q$, input head on the first input cell, work tape\n$j$ holding $w_j$ from cell $0$, all work heads at cell $0$, empty output), work tape $i$\nis exactly the buffer tape of $w_i$: for every integer cell $z$, its content is the\n$z$-th letter of $w_i$ (counting from $0$) when $0 \\le z < \\abs{w_i}$, and blank\notherwise."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.certCoreTM",
+ "key": "16aee510a1892e80",
+ "kind": "def",
+ "title": "Certificate core machine construction",
+ "statement": "Given a finite Turing machine $P$ over the Boolean alphabet with $P.k$ work tapes, an injection from the indices of $1+P.k$ tapes into the indices of $k$ tapes, and a designated tape index among those $k$ tapes, the construction produces a finite Boolean Turing machine with $k$ work tapes and state set $((P.State\\times\\{\\mathrm{false},\\mathrm{true}\\})\\sqcup\\{\\ast\\})\\sqcup\\{0,1,2\\}$. Its transition machine is obtained by composing the embedded virtual-host emission machine for $P$ with the certificate-verdict machine on the designated tape, using the unit state and parameter $0$.",
+ "hypotheses_covered": [
+  "A finite Turing machine $P$ over the Boolean alphabet",
+  "An injection from the indices of $1+P.k$ tapes into the indices of $k$ tapes",
+  "A designated tape index among the $k$ tapes"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied definitions do not explain the virtual-host emission, embedding, or composition constructions, so their operational meaning cannot be stated more explicitly from the formal statement alone.",
+ "rubric": [
+  "anaphora",
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.mem_P_of_test",
+ "key": "31d290ce89238f34",
+ "kind": "theorem",
+ "title": "Polynomial-time tests define languages in P",
+ "statement": "Let $b$ be a Boolean-valued function on finite binary strings. If the function sending each string $z$ to the one-bit word $[b(z)]$ is polynomial-time computable, then the language of strings $z$ for which $b(z)=1$ belongs to $\\mathsf{P}$.",
+ "hypotheses_covered": [
+  "The Boolean-valued function $b$ on finite binary strings",
+  "The map $z\\mapsto [b(z)]$ is polynomial-time computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $b : \\{0,1\\}^* \\to \\{0,1\\}$ be a Boolean test on bit strings such that the map sending $z$ to the one-bit word $b(z)$ is polynomial-time computable (computed by some finite binary Turing machine within $C(n+1)^c$ steps on inputs of length $n$, for some constants $C, c$). Then the language $\\{z \\in \\{0,1\\}^* : b(z) = 1\\}$ belongs to $\\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time."
+}

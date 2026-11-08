@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.recordStep_copyback_run",
+ "key": "b523f7d50fca25c5",
+ "kind": "theorem",
+ "title": "Copyback Run Bound",
+ "statement": "Let $M$ be a deterministic machine with $k$ Boolean work tapes and state set $Q$, let $T$ be a type of tags, let $S$ be a state type for a two-work-tape seeking machine, and let $\\mathrm{upd}:T\\times\\mathrm{Option}(\\mathrm{Bool})\\to T$ be a tag update function. For any encoded input word $x$, four-tape configuration $d$, word $w$ over the record-symbol alphabet, and record data, form the initial snapshot in the copyback phase with source buffer $w$ and empty destination buffer. After $4|w|+6$ steps of the assembled record-step machine, the configuration is the snapshot formed from $d$ with its first work tape replaced by the buffer containing $w$, in the skip-new-position phase with empty buffers. At every earlier step neither designated verdict state has been reached, and throughout the run every work-tape head stays within distance $|w|+1$ of its position in $d$.",
+ "hypotheses_covered": [
+  "Machine $M$ with $k$ Boolean work tapes and state set $Q$",
+  "Tag type $T$ and update function $\\mathrm{upd}$",
+  "Two-work-tape seeking machine with state type $S$",
+  "Start and finish states for the seeking machine",
+  "Encoded input word $x$",
+  "Four-tape configuration $d$",
+  "Record-symbol word $w$ and record data",
+  "Exact run length $4|w|+6$",
+  "No designated verdict state before the final step",
+  "All work-tape heads stay within radius $|w|+1$ of their base positions"
+ ],
+ "confidence": "low",
+ "caveat": "The statement depends on the assembled record-step machine and snapshot construction, whose full defining behavior is not supplied as informal definitions in this request.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

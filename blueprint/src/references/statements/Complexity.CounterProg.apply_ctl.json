@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.apply_ctl",
+ "key": "f4954a166ff21b9d",
+ "kind": "theorem",
+ "title": "Effect of a control-only action",
+ "statement": "Let $x$ be a finite bit string, and let a configuration on $x$ have state $q'$, input-head position $p$, work tapes $T_i$, work-head positions $h_i$, and output word $w$. For any input-head move $i\\in\\{-1,0,1\\}$, optional output bit $o$, and optional next state $q$, applying the action that makes no work-tape writes or movements gives the configuration with state $q$, input-head position the clamped move of $p$ by $i$, unchanged work tapes and work-head positions, and output $w$ followed by $o$ if present.",
+ "hypotheses_covered": [
+  "Finite bit string $x$",
+  "Input-head move $i\\in\\{-1,0,1\\}$",
+  "Optional output bit $o$",
+  "Optional next state $q$",
+  "Initial state $q'$ and configuration data $p$, work tapes, work-head positions, and output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be an input bit string and consider a configuration on $x$, with $R$ work tapes and the\ncompiled control states, having an arbitrary state, input-head position $p$, work tapes $(T_i)$,\nwork heads $(h_i)$ and output $w$. Applying to it the action that touches no work tape, with\ninput-head move $i$, optional output bit $o$ and optional next state $q$, yields the\nconfiguration with state $q$, input-head position the clamped move of $p$ by $i$, the same work\ntapes $(T_i)$ and heads $(h_i)$, and output $w$ followed by $o$ if $o$ is present."
+}

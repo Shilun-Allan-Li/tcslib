@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.cp_run",
+ "key": "4f4a5f650b3d84ac",
+ "kind": "theorem",
+ "title": "Execution of a register-copy routine",
+ "statement": "Fix a finite nondeterministic Turing machine $N$ over Boolean symbols and a computation mode, and let $y$ be an input word, $B$ a register bound, $c$ a copy instruction, and $v$ an initial assignment of natural numbers to the $21$ registers. If every register value in $v$ is at most $B$, and the destination register's initial value is at most the source register's initial value, then the specified register program has a guarded execution from the copy instruction and assignment $v$ to its prescribed continuation, with the destination assigned the source's initial value and all other registers unchanged.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine over Boolean symbols",
+  "A computation mode",
+  "An input word $y$",
+  "A natural-number bound $B$",
+  "A copy instruction $c$",
+  "An assignment $v$ of natural numbers to $21$ registers",
+  "Every initial register value is at most $B$",
+  "The initial destination value is at most the initial source value"
+ ],
+ "confidence": "low",
+ "caveat": "The claim's Reach predicate depends on a large instruction table and guarded-execution definition; the available definitions do not explain that program informally.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

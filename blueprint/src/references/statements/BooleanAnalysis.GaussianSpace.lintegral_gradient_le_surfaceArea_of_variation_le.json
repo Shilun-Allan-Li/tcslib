@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.lintegral_gradient_le_surfaceArea_of_variation_le",
+ "key": "4255677755f6ac73",
+ "kind": "theorem",
+ "title": "Gradient integral bounded by Gaussian surface area",
+ "statement": "Let $n\\ge 0$, let $A\\subseteq\\mathbb R^n$ be measurable, and let $f:\\mathbb R^n\\to\\mathbb R$ have derivative $D(x)$ at every $x$, with $D$ continuous and $0\\le f(x)\\le1$ for all $x$. Suppose that for every real $\\theta$, the Gaussian product integral of $|f(X)-f(\\cos\\theta X+\\sin\\theta Y)|$ is at most the rotation sensitivity of $A$ at $\\theta$, where $X,Y$ are independent standard Gaussian vectors. Then the Gaussian integral of $\\sqrt{\\sum_{i=1}^n(D(x)e_i)^2}$ is at most the Gaussian surface area of $A$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$A$ is measurable",
+  "$f$ has derivative $D(x)$ at every $x$",
+  "$D$ is continuous",
+  "$f(x)\\in[0,1]$ for every $x$",
+  "The rotation variation integral is at most the rotation sensitivity of $A$ for every real $\\theta$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n\\ge0$, let $\\gamma_n$ be standard Gaussian measure on $\\mathbb R^n$, and let $G,G\\prime$ be independent vectors with law $\\gamma_n$. Write $s_A(t)$ for the real value of the product-measure mass $(\\gamma_n\\otimes\\gamma_n)\\{(g,h):\\mathbf1_A(g)\\ne\\mathbf1_A(\\cos t\\,g+\\sin t\\,h)\\}$. Write $P_\\gamma(A)=\\liminf_{t\\to0^+}\\bigl[\\sqrt{\\pi/2}\\,s_A(t)/t\\bigr]_+$ in $[0,\\infty]$, where $[x]_+=\\max(x,0)$. Let $A\\subseteq\\mathbb R^n$ be measurable and $f\\colon\\mathbb R^n\\to[0,1]$ be differentiable with continuous derivative $D(x)$. If $\\mathbb E|f(G)-f(\\cos\\theta\\,G+\\sin\\theta\\,G\\prime)|\\le s_A(\\theta)$ for every real $\\theta$, then $\\int\\|\\nabla f(x)\\|_2\\,d\\gamma_n(x)\\le P_\\gamma(A)$ as a nonnegative extended integral."
+}

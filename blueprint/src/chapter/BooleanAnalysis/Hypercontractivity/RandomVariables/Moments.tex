@@ -5,33 +5,486 @@ Multilinear monomials in independent centered inputs of unit second moment are o
 
 \section{Declarations}
 
-\begin{theorem}[Orthonormality of multilinear monomials]
+\begin{theorem}[Orthogonality of product monomials]
 \lean{BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_monomial_mul}
 \leanok
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p210-b005,
+  pdf-ffbe9c7b3306-p024-b004,
+  pdf-ffbe9c7b3306-p024-b005,
+  pdf-ffbe9c7b3306-p025-b001
+}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.expect_eq_fintypeExpect}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b005,
+    pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.expect_const}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_of_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.thresholdSign_pm_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.abs_thresholdSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b002}
+\proofstep
+  {DecisionTree.fourierCoeff_sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004,
+    pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.fourierCoeff_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_fourierCoeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002,
+    pdf-ffbe9c7b3306-p023-b004}
+\proofstep
+  {BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial.eval_sub}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
 \difficulty{5}
-Let $(X_i)_{i\in I}$ be mutually independent real random variables on a probability space, with $I$ finite, $X_i\in L^2$, $\E X_i=0$, and $\E X_i^2=1$ for every $i$. For $S,T\subseteq I$, $\E[(\prod_{i\in S}X_i)(\prod_{i\in T}X_i)]=1$ if $S=T$, and $0$ otherwise.
+Let $I$ be a finite set, let $(\Omega,\mu)$ be a probability space, and let $(X_i)_{i\in
+I}$ be mutually independent real random variables in $L^2$, each with mean zero and
+second moment one. For subsets $S,T\subseteq I$, $\mathbb E\big[(\prod_{i\in
+S}X_i)(\prod_{i\in T}X_i)\big]$ equals $1$ if $S=T$ and $0$ otherwise.
 \end{theorem}
 
-\begin{theorem}[Fourth moment of a monomial]
+\begin{theorem}[Fourth integrability of monomials]
 \lean{BooleanAnalysis.Hypercontractivity.MultilinearMoments.monomial_memLp}
 \leanok
-\uses{BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp}
+\uses{BooleanAnalysis.Hypercontractivity.MultilinearMoments.monomial_memLp_nat}
 \difficulty{3}
-Let $X_1,\ldots,X_n$ be mutually independent real random variables on a probability space, each in $L^4$. Every monomial $\prod_{i\in S}X_i$, $S\subseteq[n]$, belongs to $L^4$.
+Let $n$ be a nonnegative integer, let $(\Omega,\mu)$ be a probability space, and let
+$X_1,\ldots,X_n$ be mutually independent real random variables in $L^4$. For every
+subset $S\subseteq\{0,\ldots,n-1\}$, the monomial $\prod_{i\in S}X_i$ belongs to $L^4$.
 \end{theorem}
 
-\begin{theorem}[Inner product of multilinear evaluations]
+\begin{theorem}[Inner product of polynomial evaluations]
 \lean{BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_eval_mul}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_monomial_mul, BooleanAnalysis.Hypercontractivity.MultilinearMoments.monomial_memLp, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b003,
+  pdf-ffbe9c7b3306-p024-b004,
+  pdf-ffbe9c7b3306-p025-b001,
+  pdf-ffbe9c7b3306-p212-b001
+}
 \difficulty{5}
-Let $X_1,\ldots,X_n$ be mutually independent real random variables on a probability space, each in $L^4$, centered, and with second moment $1$. For real coefficient families $F,G$ indexed by subsets of $[n]$, writing $F(X)=\sum_S F(S)\prod_{i\in S}X_i$ and similarly for $G$, one has $\E[F(X)G(X)]=\sum_S F(S)G(S)$.
+Let $n$ be a nonnegative integer, let $(\Omega,\mu)$ be a probability space, and let
+$X_1,\ldots,X_n$ be mutually independent real random variables with finite fourth
+moments, mean zero, and second moment one. For coefficient families $F,G: \mathcal
+P(\{0,\ldots,n-1\})\to\mathbb R$, define $F(X)=\sum_S F(S)\prod_{i\in S}X_i$ and
+likewise $G(X)$. Then $\mathbb E[F(X)G(X)]=\sum_S F(S)G(S)$.
 \end{theorem}
 
 \begin{theorem}[Second moment from squared coefficients]
 \lean{BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_eval_sq}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_eval_mul, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b003,
+  pdf-ffbe9c7b3306-p024-b004,
+  pdf-ffbe9c7b3306-p025-b001,
+  pdf-ffbe9c7b3306-p025-b006,
+  pdf-ffbe9c7b3306-p211-b005,
+  pdf-ffbe9c7b3306-p212-b001
+}
 \difficulty{1}
 Let $X_1,\ldots,X_n$ be mutually independent real random variables on a probability space, each in $L^4$, centered, and with second moment $1$. For $F(X)=\sum_{S\subseteq[n]}F(S)\prod_{i\in S}X_i$ with real coefficients, $\E[F(X)^2]=\sum_S F(S)^2$.
 \end{theorem}
@@ -40,22 +493,52 @@ Let $X_1,\ldots,X_n$ be mutually independent real random variables on a probabil
 \lean{BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_eval}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_eval_mul, BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p211-b005,
+  pdf-ffbe9c7b3306-p212-b001,
+  pdf-ffbe9c7b3306-p026-b006,
+  pdf-ffbe9c7b3306-p026-b007
+}
 \difficulty{3}
 Let $X_1,\ldots,X_n$ be mutually independent real random variables on a probability space, each in $L^4$, centered, and with second moment $1$. For arbitrary real coefficients $F(S)$, $\E[\sum_{S\subseteq[n]}F(S)\prod_{i\in S}X_i]=F(\varnothing)$.
 \end{theorem}
 
-\begin{theorem}[Evaluation on an active coordinate set]
+\begin{theorem}[Evaluation on a Supported Coordinate Set]
 \lean{BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_supported}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
 \difficulty{4}
-Let $F$ be a real coefficient family indexed by subsets of $[n]$, let $X_i:\Omega\to\bbr$, and let $s\subseteq[n]$. If $F(T)=0$ whenever $T\nsubseteq s$, then for every $\omega$, $\sum_{T\subseteq[n]}F(T)\prod_{j\in T}X_j(\omega)=\sum_{T\subseteq s}F(T)\prod_{j\in T}X_j(\omega)$.
+Let $n$ be a natural number, let $F$ assign a real coefficient to every subset of
+$\{0,\ldots,n-1\}$, and let $X_j:\Omega\to\bbr$ be real-valued functions. For a subset
+$s$ of the coordinate set, suppose $F(T)=0$ whenever $T$ is not contained in $s$. Then,
+for every $\omega\in\Omega$, the multilinear evaluation
+$\sum_{T\subseteq\{0,\ldots,n-1\}}F(T)\prod_{j\in T}X_j(\omega)$ equals
+$\sum_{T\subseteq s}F(T)\prod_{j\in T}X_j(\omega)$.
 \end{theorem}
 
-\begin{theorem}[Changing an unused input]
+\begin{theorem}[Evaluation Is Unchanged by an Unused Coordinate]
 \lean{BooleanAnalysis.Hypercontractivity.MultilinearMoments.eval_eq_of_off_coordinate}
 \leanok
 \uses{BooleanAnalysis.Hypercontractivity.evalMultilinearRV, BooleanAnalysis.ThresholdFunctions.MultilinearPolynomial}
 \difficulty{4}
-Let $F$ be real multilinear coefficients on $n$ inputs and let $i\in[n]$ satisfy $F(S)=0$ for every $S$ containing $i$. If functions $X_j,Y_j:\Omega\to\bbr$ agree for every $j\ne i$, then $\sum_S F(S)\prod_{j\in S}X_j=\sum_S F(S)\prod_{j\in S}Y_j$ as functions on $\Omega$.
+Let $n$ be a natural number, let $F$ assign a real coefficient to each subset of
+$\{0,\ldots,n-1\}$, and let $X_j,Y_j:\Omega\to\bbr$ be two families of real-valued
+functions. If $F(S)=0$ for every subset $S$ containing a fixed coordinate $i$, and
+$X_j=Y_j$ for every $j\ne i$, then the multilinear evaluations of $F$ on the two
+families are equal as functions on $\Omega$.
+\end{theorem}
+
+%%% added by the blueprint pipeline
+\section{Additional declarations}
+
+\begin{theorem}[Finite integrability of monomials]
+\lean{BooleanAnalysis.Hypercontractivity.MultilinearMoments.monomial_memLp_nat}
+\label{BooleanAnalysis.Hypercontractivity.MultilinearMoments.monomial_memLp_nat}
+\leanok
+\uses{BooleanAnalysis.Hypercontractivity.evalMultilinearRV_memLp_nat}
+\difficulty{3}
+Let $n$ be a nonnegative integer, let $p$ be a positive integer, and let $(\Omega,\mu)$
+be a probability space. If $X_1,\ldots,X_n$ are mutually independent real random
+variables in $L^p$, then for every subset $S\subseteq\{0,\ldots,n-1\}$ the monomial
+$\prod_{i\in S}X_i$ belongs to $L^p$.
 \end{theorem}

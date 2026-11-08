@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.UC_computable_of_HALT_computable",
+ "key": "e023f90e3464f8b0",
+ "kind": "theorem",
+ "title": "Computability reduction from halting to the diagonal function",
+ "statement": "Let $c$ be an effective machine representation scheme, and suppose the function that maps each bit string $s$ to the one-bit string whose bit is the halting value of $c$ on $s$ is computable. Then the function mapping each bit string $\\alpha$ to the one-bit string whose bit is the diagonal value of $c$ at $\\alpha$ is computable.",
+ "hypotheses_covered": [
+  "effective machine representation scheme $c$",
+  "the one-bit halting function for $c$ is computable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be an effective coding scheme for Turing machines, i.e.\\ one admitting a\nuniversal evaluator machine. Write $\\mathrm{HALT}_c$ for the halting function of\n$c$: it is true on a bit string $s$ exactly when $s$ is the pairing encoding\n$\\langle \\alpha, x \\rangle$ of two bit strings and the machine denoted by $\\alpha$\nunder $c$ halts on input $x$, and false otherwise. Write $\\mathrm{UC}_c$ for the\ndiagonal function that maps a bit string $\\alpha$ to false when the machine\ndenoted by $\\alpha$ under $c$ outputs the single bit true on input $\\alpha$\nwithin some finite number of steps, and to true otherwise. If the function\nmapping $s$ to the one-bit string carrying $\\mathrm{HALT}_c(s)$ is computable by\na Turing machine, then so is the function mapping $\\alpha$ to the one-bit string\ncarrying $\\mathrm{UC}_c(\\alpha)$ [AB09, proof of Theorem 1.11]."
+}

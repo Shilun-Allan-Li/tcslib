@@ -1,0 +1,19 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.MultilinearMoments.integral_eval_mul",
+ "key": "401a017d4ee3cc89",
+ "kind": "theorem",
+ "title": "Inner product of polynomial evaluations",
+ "statement": "Let $n$ be a nonnegative integer, let $(\\Omega,\\mu)$ be a probability space, and let $X_1,\\ldots,X_n$ be mutually independent real random variables with finite fourth moments, mean zero, and second moment one. For coefficient families $F,G: \\mathcal P(\\{0,\\ldots,n-1\\})\\to\\mathbb R$, define $F(X)=\\sum_S F(S)\\prod_{i\\in S}X_i$ and likewise $G(X)$. Then $\\mathbb E[F(X)G(X)]=\\sum_S F(S)G(S)$.",
+ "hypotheses_covered": [
+  "$n$ is a nonnegative integer",
+  "$(\\Omega,\\mu)$ is a probability space",
+  "the random variables are mutually independent",
+  "each random variable belongs to $L^4$",
+  "each random variable has mean zero",
+  "each random variable has second moment one"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $X_1,\\ldots,X_n$ be mutually independent real random variables on a probability space, each in $L^4$, centered, and with second moment $1$. For real coefficient families $F,G$ indexed by subsets of $[n]$, writing $F(X)=\\sum_S F(S)\\prod_{i\\in S}X_i$ and similarly for $G$, one has $\\E[F(X)G(X)]=\\sum_S F(S)G(S)$."
+}

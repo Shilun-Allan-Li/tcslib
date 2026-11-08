@@ -14,6 +14,13 @@ Walsh expansion, Parseval's identity, and the convolution theorem.
 
 \begin{definition}[Hypercube]
 \lean{BoolFourier.hypercube}
+\statementsource{Vad12}{
+  pdf-bf2ce5422088-p308-b002,
+  pdf-bf2ce5422088-p308-b005
+}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p003-b006}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p020-b002}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.hypercube}
 \leanok
 \uses{BooleanAnalysis.BoolCube}
@@ -23,6 +30,9 @@ abbreviation for \texttt{BooleanAnalysis.BoolCube} $n$.
 
 \begin{definition}[Boolean function type]
 \lean{BoolFourier.BoolFun}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p003-b006}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p019-b003}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.BoolFun}
 \leanok
 \uses{BooleanAnalysis.BooleanFunc}
@@ -32,6 +42,13 @@ defined as an abbreviation for \texttt{BooleanAnalysis.BooleanFunc} $n$.
 
 \begin{definition}[Bool-to-$\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1}
+\statementsource{Vad12}{pdf-bf2ce5422088-p308-b002}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p003-b006}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p014-b002,
+  pdf-ffbe9c7b3306-p020-b001
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.BoolToPM1}
 \leanok
 \uses{BooleanAnalysis.boolToSign}
@@ -60,6 +77,9 @@ as the additive identity of the group $(\mathbb{F}_2)^n$.
 
 \begin{definition}[Componentwise XOR]
 \lean{BoolFourier.xor_vec}
+\statementsource{Vad12}{pdf-bf2ce5422088-p308-b002}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p023-b001}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.xor_vec}
 \leanok
 \uses{BoolFourier.hypercube}
@@ -93,9 +113,340 @@ zero:
 
 \begin{lemma}[Square of the Bool-to-$\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1_sq}
+\proofsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p003-b006}
 \label{BoolFourier.BoolToPM1_sq}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign_mul_self}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LitList}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Term}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Clause}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Depth2.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DNF}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p011-b006}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p011-b006}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.BoolToPM1}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
 \difficulty{1}
 For every Boolean value $b$, the image $\mathrm{BoolToPM1}(b)$ under the map sending
 $\mathtt{false}$ to $1$ and $\mathtt{true}$ to $-1$ satisfies
@@ -119,9 +470,348 @@ value $b$, negating $b$ flips the sign of its image:
 
 \begin{lemma}[XOR as multiplication under the $\pm 1$ embedding]
 \lean{BoolFourier.BoolToPM1_xor}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p020-b001,
+  pdf-ffbe9c7b3306-p023-b001
+}
 \label{BoolFourier.BoolToPM1_xor}
 \leanok
 \uses{BoolFourier.BoolToPM1, BooleanAnalysis.boolToSign}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.BoolToPM1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
 \difficulty{2}
 Let $\mathrm{BoolToPM1} : \mathrm{Bool} \to \bbr$ be the map sending $\mathtt{false}$ to
 $1$ and $\mathtt{true}$ to $-1$. Then for all Booleans $a$ and $b$,
@@ -134,6 +824,12 @@ $\{-1,1\}\subset\bbr$.
 
 \begin{definition}[Uniform expectation]
 \lean{BoolFourier.expectation}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p003-b006}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b001,
+  pdf-ffbe9c7b3306-p024-b002,
+  pdf-ffbe9c7b3306-p207-b005
+}
 \label{BoolFourier.expectation}
 \leanok
 \uses{BoolFourier.BoolFun}
@@ -145,6 +841,7 @@ For $f : \{0,1\}^n \to \mathbb{R}$, the uniform expectation is
 
 \begin{lemma}[Factorisation of expectation over product functions]
 \lean{BoolFourier.expectation_factorizes}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p209-b002}
 \label{BoolFourier.expectation_factorizes}
 \leanok
 \uses{BoolFourier.expectation, BoolFourier.hypercube}
@@ -160,6 +857,12 @@ over the Boolean hypercube factorises as
 
 \begin{definition}[Inner product of Boolean functions]
 \lean{BoolFourier.inner_product}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p003-b006}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b001,
+  pdf-ffbe9c7b3306-p207-b005
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.inner_product}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation}
@@ -172,6 +875,12 @@ The inner product of $f, g : \{0,1\}^n \to \mathbb{R}$ is
 
 \begin{definition}[$L^2$ norm squared]
 \lean{BoolFourier.L2_norm_sq}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p004-b001}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b001,
+  pdf-ffbe9c7b3306-p207-b005,
+  pdf-ffbe9c7b3306-p211-b005
+}
 \label{BoolFourier.L2_norm_sq}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation}
@@ -184,10 +893,14 @@ The squared $L^2$ norm of $f : \{0,1\}^n \to \mathbb{R}$ is
 
 \begin{definition}[Convolution on the hypercube]
 \lean{BoolFourier.convolution}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p030-b001,
+  pdf-ffbe9c7b3306-p229-b003
+}
 \label{BoolFourier.convolution}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b004}
 \uses{BoolFourier.BoolFun, BoolFourier.expectation, BoolFourier.xor_vec}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b004}
 The convolution of $f, g : \{0,1\}^n \to \mathbb{R}$ is the function
 \[
   (f * g)(x) = \mathbb{E}_{y}\bigl[f(y)\,g(x \oplus y)\bigr].
@@ -196,10 +909,18 @@ The convolution of $f, g : \{0,1\}^n \to \mathbb{R}$ is the function
 
 \begin{definition}[Walsh--Fourier character]
 \lean{BoolFourier.char_S}
+\statementsource{Vad12}{pdf-bf2ce5422088-p308-b005}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p004-b002}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p023-b001,
+  pdf-ffbe9c7b3306-p023-b004,
+  pdf-ffbe9c7b3306-p209-b005
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.char_S}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p002-b007}
 \uses{BoolFourier.BoolFun, BooleanAnalysis.chiS}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p002-b007}
 For a set $S \subseteq [n]$, the Walsh character
 $\chi_S : \{0,1\}^n \to \mathbb{R}$ is
 \[
@@ -226,7 +947,7 @@ every coordinate is $\mathtt{false}$) gives
 \lean{BoolFourier.char_S_sq}
 \label{BoolFourier.char_S_sq}
 \leanok
-\uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_sq_eq_one}
+\uses{BoolFourier.char_S, BoolFourier.char_S_sq_aux_h, BoolFourier.hypercube}
 \difficulty{2}
 Let $n$ be a natural number, let $S \subseteq [n]$, and let $x \in \{0,1\}^n$. Then the
 Walsh–Fourier character $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ satisfies
@@ -248,10 +969,362 @@ that is, $\chi_\emptyset(x) = 1$ for every $x \in \{0,1\}^n$.
 
 \begin{lemma}[Product of Walsh characters]
 \lean{BoolFourier.char_S_times_char_T}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b005,
+  pdf-ffbe9c7b3306-p024-b006
+}
 \proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b002}
 \label{BoolFourier.char_S_times_char_T}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.hypercube, BooleanAnalysis.chiS_mul_chiS}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p015-b010,
+    pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
 \difficulty{1}
 For any two subsets $S, T \subseteq [n]$ and any point $x \in \{0,1\}^n$,
 \[
@@ -263,9 +1336,365 @@ is the symmetric difference of $S$ and $T$.
 
 \begin{lemma}[Summing all Walsh characters at the origin]
 \lean{BoolFourier.sum_char_S_at_zero}
+\proofsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.sum_char_S_at_zero}
 \leanok
-\uses{BoolFourier.char_S, BoolFourier.char_S_of_zero, BoolFourier.hypercube, BoolFourier.zero_vec}
+\uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.sum_char_S_at_zero_aux_h, BoolFourier.zero_vec}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LitList}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LitList.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Depth2}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Depth2.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.zero_vec}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S_of_zero}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.sum_char_S_at_zero_aux_h}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
 \difficulty{1}
 Fix $n \in \bbn$, and for each subset $S \subseteq [n]$ let $\chi_S \colon \{0,1\}^n \to
 \bbr$ denote the Walsh--Fourier character $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$.
@@ -279,9 +1708,10 @@ the number of points of the Boolean hypercube.
 
 \begin{lemma}[Vanishing of the character sum at a nonzero point]
 \lean{BoolFourier.sum_char_S_ne_zero}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.sum_char_S_ne_zero}
 \leanok
-\uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.zero_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\uses{BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.sum_char_S_ne_zero_aux_h_pair, BoolFourier.zero_vec}
 \difficulty{4}
 Fix $n\in\bbn$ and a point $x\in\{0,1\}^n$, and for each subset $S\subseteq[n]$ let
 $\chi_S(x)=\prod_{i\in S}(-1)^{x_i}$ be the Walsh–Fourier character. If $x$ is not the
@@ -294,9 +1724,356 @@ the sum ranging over all $2^n$ subsets of $[n]$.
 
 \begin{lemma}[Expectation of the empty Walsh character]
 \lean{BoolFourier.expectation_char_empty}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p024-b007}
 \label{BoolFourier.expectation_char_empty}
 \leanok
 \uses{BoolFourier.char_S, BoolFourier.expectation}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BoolFourier.char_S}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
 \difficulty{1}
 For every $n \in \bbn$, the Walsh character $\chi_\emptyset$ associated to the empty
 subset of $[n]$ has uniform expectation equal to one:
@@ -307,17 +2084,397 @@ subset of $[n]$ has uniform expectation equal to one:
 
 \begin{lemma}[Non-trivial characters have mean zero]
 \lean{BoolFourier.expectation_char_nonempty}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p025-b001,
+  pdf-ffbe9c7b3306-p024-b007
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p022-b002,
   pdf-50833afe7403-p022-b003
 }
 \label{BoolFourier.expectation_char_nonempty}
 \leanok
+\uses{BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_char_nonempty_aux_h_exp}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003,
+    pdf-ffbe9c7b3306-p020-b001}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p015-b010,
+    pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004,
+    pdf-ffbe9c7b3306-p023-b001}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007,
+    pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.BoolToPM1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BoolFourier.expectation_factorizes}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004,
+    pdf-ffbe9c7b3306-p023-b001}
+\proofstep
+  {BoolFourier.expectation_char_nonempty_aux_h_exp}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b006,
   pdf-50833afe7403-p003-b003
 }
-\uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
 \difficulty{1}
 Let $n$ be a natural number and let $S \subseteq [n]$ be a nonempty set of coordinates.
 Then the Walsh--Fourier character $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ has vanishing
@@ -329,17 +2486,387 @@ uniform expectation over the Boolean hypercube $\{0,1\}^n$:
 
 \begin{lemma}[Self inner product of a Walsh character]
 \lean{BoolFourier.inner_product_char_self}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b003,
+  pdf-ffbe9c7b3306-p024-b004
+}
+\proofsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \statementsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b006,
   pdf-50833afe7403-p004-b005
 }
 \label{BoolFourier.inner_product_char_self}
 \leanok
+\uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.expectation, BoolFourier.inner_product}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LitList}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LitList.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Depth2}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Depth2.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_sq_eq_one}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S_sq_aux_h}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S_sq}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b006,
   pdf-50833afe7403-p004-b005
 }
-\uses{BoolFourier.char_S, BoolFourier.char_S_sq, BoolFourier.expectation, BoolFourier.inner_product}
 \difficulty{3}
 Let $n$ be a natural number and let $S \subseteq [n]$. Then the Walsh--Fourier character
 $\chi_S(x) = \prod_{i \in S}(-1)^{x_i}$ satisfies
@@ -354,6 +2881,7 @@ where the inner product is the uniform expectation of the pointwise product.
 \lean{BoolFourier.inner_product_char_nonself}
 \label{BoolFourier.inner_product_char_nonself}
 \leanok
+\uses{BoolFourier.char_S, BoolFourier.char_S_times_char_T, BoolFourier.expectation_char_nonempty, BoolFourier.inner_product}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p004-b006,
   pdf-50833afe7403-p004-b005
@@ -623,7 +3151,6 @@ where the inner product is the uniform expectation of the pointwise product.
   {boolean-ch08-generalized-domains}
   {pdf-50833afe7403-p022-b002,
     pdf-50833afe7403-p003-b003}
-\uses{BoolFourier.char_S, BoolFourier.char_S_times_char_T, BoolFourier.expectation_char_nonempty, BoolFourier.inner_product}
 \difficulty{3}
 Fix $n \in \bbn$, and let $S, T \subseteq [n]$ be two distinct subsets. Then the
 Walsh--Fourier characters $\chi_S$ and $\chi_T$ are orthogonal with respect to the
@@ -636,10 +3163,17 @@ uniform inner product on $\{0,1\}^n$:
 
 \begin{definition}[Fourier coefficient]
 \lean{BoolFourier.fourier_coeff}
+\statementsource{Vad12}{pdf-bf2ce5422088-p308-b005}
+\statementsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p004-b003}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p025-b004,
+  pdf-ffbe9c7b3306-p211-b002
+}
+\statementsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.fourier_coeff}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.inner_product}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 The Fourier coefficient of $f : \{0,1\}^n \to \mathbb{R}$ at $S \subseteq [n]$ is
 \[
   \hat f(S) = \langle f, \chi_S \rangle.
@@ -648,10 +3182,390 @@ The Fourier coefficient of $f : \{0,1\}^n \to \mathbb{R}$ at $S \subseteq [n]$ i
 
 \begin{lemma}[Self-Fourier coefficient of a Walsh character]
 \lean{BoolFourier.fourier_coeff_char_self}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p025-b004,
+  pdf-ffbe9c7b3306-p025-b005
+}
+\proofsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.fourier_coeff_char_self}
 \leanok
-\proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_self}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LitList}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LitList.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Depth2}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Depth2.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_sq_eq_one}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S_sq_aux_h}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S_sq}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.inner_product_char_self}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.fourier_coeff}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \difficulty{1}
 For every subset $S \subseteq [n]$, the Fourier coefficient of the Walsh character
 $\chi_S$ at the same set $S$ equals $1$; that is,
@@ -662,10 +3576,402 @@ $\chi_S$ at the same set $S$ equals $1$; that is,
 
 \begin{lemma}[Orthogonality of Walsh characters]
 \lean{BoolFourier.fourier_coeff_char_of_ne}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p025-b004,
+  pdf-ffbe9c7b3306-p025-b005
+}
+\proofsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.fourier_coeff_char_of_ne}
 \leanok
-\proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \uses{BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.inner_product_char_nonself}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Literal}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Literal.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {LitList}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {LitList.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Term}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Clause}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Term.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Clause.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Depth2}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Depth2.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {CNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {CNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {CNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DecisionTree}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b001}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002,
+    pdf-6bd33ae73ade-p007-b009}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p007-b009,
+    pdf-6bd33ae73ade-p008-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.BoolToPM1}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.expectation}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.expectation_factorizes}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S_times_char_T}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.expectation_char_nonempty_aux_h_exp}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.expectation_char_nonempty}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.inner_product_char_nonself}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.fourier_coeff}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p004-b006}
 \difficulty{1}
 Let $S, T \subseteq [n]$ be distinct subsets of coordinates. Then the Fourier
 coefficient of the Walsh character $\chi_S : \{0,1\}^n \to \bbr$ at $T$ vanishes:
@@ -689,9 +3995,376 @@ arity $n$. Then the two forms of the uniform expectation of $f$ coincide, namely
 
 \begin{lemma}[Agreement of two Fourier coefficient definitions]
 \lean{BoolFourier.fourier_coeff_eq}
+\proofsource{lmn-constant-depth-fourier}{
+  pdf-63759bd909d5-p004-b003,
+  pdf-63759bd909d5-p004-b004
+}
 \label{BoolFourier.fourier_coeff_eq}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.inner_product, BooleanAnalysis.fourierCoeff, BooleanAnalysis.innerProduct}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LitList}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LitList.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Term}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Clause}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Term.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Clause.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Depth2}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Depth2.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DNF}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007,
+    pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007,
+    pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DNF.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {CNF.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {CNF.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DecisionTree}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b001,
+    pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p011-b006}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p011-b006}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.char_S}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.fourier_coeff}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BoolFourier.expectation_eq_expect}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
 \difficulty{2}
 Let $f : \{0,1\}^n \to \bbr$ be a Boolean function of arity $n$, and let $S \subseteq
 [n]$. Then the two definitions of the Fourier–Walsh coefficient $\hat f(S)$ coincide:
@@ -704,10 +4377,397 @@ f(x)\,\chi_S(x).
 
 \begin{lemma}[Fourier–Walsh expansion]
 \lean{BoolFourier.fourier_expansion}
+\proofsource{lmn-constant-depth-fourier}{pdf-63759bd909d5-p004-b003}
+\proofsource{ghsz-combinatorial-list-decoding}{pdf-6bd33ae73ade-p005-b002}
 \label{BoolFourier.fourier_expansion}
 \leanok
-\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BoolFourier.hypercube, BooleanAnalysis.walsh_expansion}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LitList}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LitList.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Depth2}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Depth2.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.width}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.fourierCoeff}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_prod_subset_eq_prod_one_add}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS_mul_eq}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.walsh_expansion}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.char_S}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.fourier_coeff}
+  {direct}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.expectation_eq_expect}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\proofstep
+  {BoolFourier.fourier_coeff_eq}
+  {context}
+  {ghsz-combinatorial-list-decoding}
+  {pdf-6bd33ae73ade-p005-b002}
+\statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p005-b001}
 \difficulty{2}
 Let $f : \{0,1\}^n \to \bbr$ be a Boolean function and let $x \in \{0,1\}^n$. Then $f$
 agrees pointwise with the sum of its Walsh characters weighted by its Fourier
@@ -724,6 +4784,7 @@ character of $S$.
 \lean{BoolFourier.parseval_identity}
 \label{BoolFourier.parseval_identity}
 \leanok
+\uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BoolFourier.parseval_identity_aux_hL2, BooleanAnalysis.parseval}
 \proofsource{boolean-ch08-generalized-domains}{
   pdf-50833afe7403-p005-b006,
   pdf-50833afe7403-p006-b001
@@ -1028,7 +5089,6 @@ character of $S$.
   {context}
   {boolean-ch08-generalized-domains}
   {pdf-50833afe7403-p005-b006}
-\uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_eq, BooleanAnalysis.innerProduct, BooleanAnalysis.parseval}
 \difficulty{2}
 Let $f : \{0,1\}^n \to \bbr$ be a real-valued function on the Boolean hypercube, and for
 each subset $S \subseteq [n]$ let $\hat f(S) = \langle f, \chi_S\rangle$ be its Fourier
@@ -1042,10 +5102,409 @@ $L^2$ norm of $f$:
 
 \begin{lemma}[Convolution theorem on the Boolean cube]
 \lean{BoolFourier.fourier_coeff_convolution}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p030-b005,
+  pdf-ffbe9c7b3306-p030-b006,
+  pdf-ffbe9c7b3306-p229-b003,
+  pdf-ffbe9c7b3306-p229-b004
+}
 \statementsource{boolean-ch08-generalized-domains}{pdf-50833afe7403-p023-b006}
 \label{BoolFourier.fourier_coeff_convolution}
 \leanok
-\uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.hypercube, BoolFourier.inner_product, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.convolution, BoolFourier.expectation, BoolFourier.fourier_coeff, BoolFourier.fourier_coeff_convolution_aux_h_char, BoolFourier.fourier_coeff_convolution_aux_h_fubini, BoolFourier.hypercube, BoolFourier.inner_product, BoolFourier.xor_vec}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004,
+    pdf-ffbe9c7b3306-p023-b001}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004,
+    pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b007}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p046-b002}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BoolFourier.xor_vec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b001}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BoolFourier.inner_product}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BoolFourier.convolution}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b001}
+\proofstep
+  {BoolFourier.char_S}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b001,
+    pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BoolFourier.fourier_coeff}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b004}
+\proofstep
+  {BoolFourier.fourier_coeff_convolution_aux_h_fubini}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b005,
+    pdf-ffbe9c7b3306-p030-b006}
+\proofstep
+  {BoolFourier.fourier_coeff_convolution_aux_h_split}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b001}
+\proofstep
+  {BoolFourier.fourier_coeff_convolution_aux_h_char}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p030-b006}
 \difficulty{4}
 Let $n$ be a natural number, and let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions.
 Then for every subset $S \subseteq [n]$, the Fourier coefficient of the convolution $f *
@@ -1104,9 +5563,375 @@ all-zeros point $\mathbf{0}$, and suppose $i$ is a coordinate at which $x_i =
 
 \begin{lemma}[Expectation of a Walsh character as a coordinate product]
 \lean{BoolFourier.expectation_char_nonempty_aux_h_exp}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p024-b007,
+  pdf-ffbe9c7b3306-p025-b001
+}
 \label{BoolFourier.expectation_char_nonempty_aux_h_exp}
 \leanok
 \uses{BoolFourier.BoolToPM1, BoolFourier.char_S, BoolFourier.expectation, BoolFourier.expectation_factorizes}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004,
+    pdf-ffbe9c7b3306-p023-b001}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b002}
+\proofstep
+  {BoolFourier.BoolToPM1}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001,
+    pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BoolFourier.expectation_factorizes}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b002}
+\proofstep
+  {BoolFourier.char_S}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004,
+    pdf-ffbe9c7b3306-p023-b001}
 \difficulty{5}
 Let $n$ be a natural number and let $S \subseteq [n]$ be a nonempty set of coordinates.
 Then the uniform expectation of the Walsh character $\chi_S$ over the Boolean hypercube
@@ -1121,9 +5946,358 @@ where $\mathrm{BoolToPM1}$ sends $\mathtt{false}$ to $1$ and $\mathtt{true}$ to 
 
 \begin{lemma}[$L^2$ norm squared as a self inner product]
 \lean{BoolFourier.parseval_identity_aux_hL2}
+\proofsource{lmn-constant-depth-fourier}{
+  pdf-63759bd909d5-p003-b006,
+  pdf-63759bd909d5-p004-b001
+}
 \label{BoolFourier.parseval_identity_aux_hL2}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.L2_norm_sq, BoolFourier.expectation_eq_expect, BooleanAnalysis.innerProduct}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Literal.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LitList}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {LitList.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b007}
+\proofstep
+  {Term}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Clause}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.width}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DecisionTree}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.depth}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b001}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b001}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p002-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p005-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p006-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p011-b006}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p011-b006}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.expectation}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
+\proofstep
+  {BoolFourier.L2_norm_sq}
+  {direct}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p004-b001}
+\proofstep
+  {BoolFourier.expectation_eq_expect}
+  {context}
+  {lmn-constant-depth-fourier}
+  {pdf-63759bd909d5-p003-b006}
 \difficulty{3}
 Let $f : \{0,1\}^n \to \bbr$ be a real-valued function on the Boolean hypercube, and
 equip such functions with the uniform-measure inner product $\langle g, h \rangle =
@@ -1153,9 +6327,359 @@ the following identity holds:
 
 \begin{lemma}[Multiplicative splitting of a Walsh character along XOR]
 \lean{BoolFourier.fourier_coeff_convolution_aux_h_split}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p023-b001}
 \label{BoolFourier.fourier_coeff_convolution_aux_h_split}
 \leanok
 \uses{BoolFourier.BoolFun, BoolFourier.char_S, BoolFourier.hypercube, BoolFourier.xor_vec, BooleanAnalysis.boolToSign, BooleanAnalysis.chiS}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.mergeGates}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_castAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.mergeGates_natAdd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {BooleanAnalysis.BoolCube}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BooleanAnalysis.BooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.uniformWeight}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.expect}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b001}
+\proofstep
+  {BooleanAnalysis.innerProduct}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p015-b010}
+\proofstep
+  {BooleanAnalysis.boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BooleanAnalysis.boolToSign_sq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.boolToSign_mul_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b004}
+\proofstep
+  {BooleanAnalysis.chiS_empty}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p022-b001}
+\proofstep
+  {BooleanAnalysis.chiS_singleton}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p044-b002}
+\proofstep
+  {BooleanAnalysis.chiS_mul_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b005,
+    pdf-ffbe9c7b3306-p024-b006}
+\proofstep
+  {BooleanAnalysis.sum_boolToSign}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.sum_chiS}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b007,
+    pdf-ffbe9c7b3306-p025-b001}
+\proofstep
+  {BooleanAnalysis.fourier_coeff_chi}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003,
+    pdf-ffbe9c7b3306-p024-b004}
+\proofstep
+  {BooleanAnalysis.innerProduct_chi_self}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p024-b003}
+\proofstep
+  {BooleanAnalysis.flipBit}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.flipBit_flipBit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p018-b007}
+\proofstep
+  {BooleanAnalysis.instAddCommGroupBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BooleanAnalysis.instModuleRealBooleanFunc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b005}
+\proofstep
+  {BooleanAnalysis.boolToSign_not}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p014-b002}
+\proofstep
+  {BoolFourier.hypercube}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p020-b002}
+\proofstep
+  {BoolFourier.BoolFun}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p019-b003}
+\proofstep
+  {BoolFourier.xor_vec}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003,
+    pdf-ffbe9c7b3306-p023-b001}
+\proofstep
+  {BoolFourier.char_S}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p023-b001}
 \difficulty{4}
 Let $S \subseteq [n]$, let $f, g : \{0,1\}^n \to \bbr$ be Boolean functions, and suppose
 the interchange-of-summation identity

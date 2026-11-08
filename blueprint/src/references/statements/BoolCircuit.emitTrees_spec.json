@@ -1,0 +1,17 @@
+{
+ "lean_name": "BoolCircuit.emitTrees_spec",
+ "key": "548be4e34ca4b348",
+ "kind": "theorem",
+ "title": "Correctness and size bound for tree emission",
+ "statement": "Let $n$ be a natural number, let $k$ be an AND or OR gate kind, and let $V_1,\\ldots,V_r$ be lists of vertex indices. Let $G$ be an acyclic list of Boolean gates, and suppose every index in every $V_j$ is less than $n+|G|$. Emitting a tree of gates of kind $k$ for each list returns an extended acyclic gate list and one output index per list, each less than $n$ plus the length of the resulting gate list. On every Boolean input to the original $n$ vertices, the output values equal the values of the corresponding single gates of kind $k$ applied to the vertices in each original list. The resulting gate list has length at most $|G|+\\sum_{j=1}^r c(|V_j|)$, where $c(0)=1$ and $c(s)=s-1$ for $s>0$; every appended gate has kind $k$, has distinct input indices, and reads at most two vertices.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "The gate kind is not negation (it is AND or OR)",
+  "The original gate list is acyclic",
+  "Every index in every input list is less than $n$ plus the original gate-list length"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

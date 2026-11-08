@@ -1,0 +1,30 @@
+{
+ "lean_name": "Turing.counter_rounds",
+ "key": "897c057323ca65c3",
+ "kind": "lemma",
+ "title": "Counter loop rounds",
+ "statement": "Let $k$ be a natural number, let $\\Gamma$ and $S$ be types with decidable equality, let $x$ be a finite input word over $\\Gamma$, let $e:\\{\\mathrm{false},\\mathrm{true}\\}\\hookrightarrow\\Gamma$, and let $M$ be a $k$-work-tape machine over $\\Gamma$ with states in $S$. Fix a state $a\\in S$, an optional exit state, a time function $\\tau$ on configurations, an initial configuration $c$, a Boolean word $w$, a tape $ct:\\mathbb Z\\to\\mathrm{Option}(\\Gamma)$, a position $cp\\in\\mathbb Z$, and a natural number $n$; suppose that for every integer $p$ with $-1\\le p\\le |w|$, the tape cell $ct(cp+p)$ contains the symbol stored at offset $p$ in the word $w$ with its bits mapped by $e$ (and is blank when that offset is outside the word), and that $n$ is at most the natural number represented by the binary digits of $w$. Suppose also that, for every $r<n$, the configuration after $r$ counter-loop rounds has state $a$, its prescribed duration is positive, and at each strictly intermediate positive time the machine is in a state different from $a$ and different from the designated exit state. Then after the sum of those $n$ durations plus the counter overhead, the counter-loop machine started with counter state in its initial decrement phase is in the configuration obtained from the $n$-round orbit of $c$ by redirecting its state (with the initial decrement phase used when $n=0$), and by replacing the counter segment of $ct$ with the word obtained after $n$ fixed-width decrements, mapped by $e$. Throughout this run, before the final time the machine has not reached either exit anchor; at every time up to and including the final time, the counter head remains between $cp-1$ and $cp+|w|$, inclusive, and the other work-head positions satisfy the stated round-by-round condition: at each such time they equal those of the base machine at some time within one of the first $n$ rounds, or at time zero of round $n$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$\\Gamma$ and $S$ have decidable equality",
+  "$x$ is a finite word over $\\Gamma$",
+  "$e$ embeds the Boolean alphabet into $\\Gamma$",
+  "$M$ is a $k$-work-tape machine over $\\Gamma$ with states in $S$",
+  "$a$ is a state in $S$",
+  "the exit is an optional state in $S$",
+  "$\\tau$ assigns a natural-number duration to each configuration",
+  "$c$ is an initial configuration",
+  "$w$ is a Boolean word",
+  "$ct$ is an integer-indexed tape over optional $\\Gamma$ symbols",
+  "$cp$ is an integer counter position",
+  "the tape agrees with the embedded word for every offset from $-1$ through $|w|$",
+  "$n$ is at most the number represented by the binary digits of $w$",
+  "for every $r<n$, the round-orbit configuration has state $a$",
+  "for every $r<n$, its duration is positive",
+  "at every strictly intermediate positive time in each such round, the state is neither $a$ nor the designated exit state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

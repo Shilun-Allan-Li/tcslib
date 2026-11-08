@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emCall_clear_first",
+ "key": "30c018650ef04d11",
+ "kind": "lemma",
+ "title": "Bounded cleanup of a visited tape",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ and $w$ be Boolean words, let $p$ be an input-head position for $w$, let $T$ be a nonnegative integer, and let $i$ be a work-tape index of $M$. Write $d$ for the content of tape $i$ after $M$ runs on $x$ for $T$ steps, write $\\ell$ and $h$ for the least and greatest head positions of that tape up to time $T$, and let the interval marker be true on $[\\ell,h]$ and blank elsewhere; place a single origin marker at cell $0$, and start the three-tape cleaner with all heads at the head position of tape $i$ at time $T$. There is a time $t$ with $0<t\\le 6T+7$ such that the cleaner is not in state $3$ at any time $j<t$, and at time $t$ it is in state $3$ with all three tapes blank and all heads at the origin.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Booleans",
+  "$x,w$ are Boolean words",
+  "$p$ is an input-head position for $w$",
+  "$T$ is a natural number",
+  "$i$ is a work-tape index of $M$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine, $x$ an input, $T$ a time, and $i$ a work tape. Then there is a\npositive time $t \\le 6T + 7$ such that the interval cleaner, started on the actual tape\n$i$ of the run of $M$ at time $T$ with its visited-span and origin markers, does not\nvisit its return state before $t$ and at time $t$ is exactly the blank-endpoint return\nconfiguration with all heads at the origin."
+}

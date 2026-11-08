@@ -1,0 +1,16 @@
+{
+ "lean_name": "WordRAM.stepsIn_straight",
+ "key": "2d8fc9c725fdd0ec",
+ "kind": "theorem",
+ "title": "Execution of a straight code segment within a set",
+ "statement": "Let $W$ be a word width, $P$ a program, $K$ a set of integer addresses, $l$ a list of instructions, $pc$ a program counter, and $m$ a memory. Suppose $l$ is a prefix of the program beginning at $pc$, every instruction in $l$ is straight, and for every instruction in $l$ and every memory, all addresses that instruction touches belong to $K$. Then executing $|l|$ steps from configuration $(pc,m)$ ends at program counter $pc+|l|$ with memory obtained by applying the effects of the instructions in $l$ successively to $m$, and every step's touched addresses lie in $K$.",
+ "hypotheses_covered": [
+  "l is a prefix of P.drop pc",
+  "Every instruction in l is straight",
+  "For every instruction in l and every memory, its touched addresses are contained in K"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

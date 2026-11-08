@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clA5Host_call",
+ "key": "e397d6e3a3992883",
+ "kind": "lemma",
+ "title": "A Module Call Within the Host",
+ "statement": "Let $M_0,\\ldots,M_4$ be five finite Boolean Turing machines, let $K$ bound each machine's number of work tapes, and fix a module $i$ with $0<(M_i).k$. Suppose that, on input $x$ with argument word $\\mathrm{arg}$ on tape zero, machine $M_i$ starts in its initial state, does not halt at any time $v<t$, and at time $t$ is halted with result word $\\mathrm{result}$ on tape zero and output $\\mathrm{out}$. Then the host started at module $i$'s entry with the same argument and output prefix $\\mathrm{pre}$ does not reach the loop anchor at any time $v<t$; at time $t$ it is in module $i$'s resolved return state, with result word on tape zero and output $\\mathrm{pre}$ followed by $\\mathrm{out}$.",
+ "hypotheses_covered": [
+  "Five Boolean finite Turing machines indexed by $\\mathrm{Fin}(5)$",
+  "A shared tape bound $K$ with $(M_j).k\\le K$ for every $j$",
+  "A fixed index $i\\in\\mathrm{Fin}(5)$",
+  "$(M_i).k>0$",
+  "Words $x,\\mathrm{arg},\\mathrm{result},\\mathrm{out},\\mathrm{pre}$",
+  "A state $q$ of $M_i$",
+  "A time $t\\in\\mathbb N$",
+  "The module run does not halt at any time $v<t$",
+  "At time $t$ the module run equals the halted canonical configuration with state $q$, tape word $\\mathrm{result}$, and output $\\mathrm{out}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Suppose a module runs from its start over an argument word to a halted canonical seam with a result word and output chunk in time $t$, never halting earlier. Then the host, started at that module's entry over the shared bank with an output prefix, never shows the loop anchor before $t$, and at $t$ sits at the module's resolved return over the result word with the output prefix extended by exactly the module's chunk."
+}

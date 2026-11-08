@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.loopReplay_step",
+ "key": "4a2b60985f551a9d",
+ "kind": "lemma",
+ "title": "One step of payload replay",
+ "statement": "Let $x,P,R,O$ be Boolean words and let $p$ be an input-head position among the $|x|+2$ positions. From the live replay configuration with work tape holding $PR$, head at cell $|P|$, and output $O$, one step halts without changing the configuration's tape or output if $R$ is empty. If $R=b::R'$ for a bit $b$, one step leaves the stored word unchanged, advances the head to cell $|P|+1$, appends $b$ to the output, and remains live.",
+ "hypotheses_covered": [
+  "Boolean input x and words P, R, and O",
+  "input-head position among |x|+2 positions"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $p$ and $r$ be Boolean words. One step of the one-tape replay machine from its live\nstate at cell $|p|$ of the buffer tape holding $p$ followed by $r$ either halts without\nwriting when $r$ is empty, or, when $r$ starts with a bit $b$, appends $b$ to the output\nand advances the head by one, leaving the stored word unchanged."
+}

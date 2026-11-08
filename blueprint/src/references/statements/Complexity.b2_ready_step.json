@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.b2_ready_step",
+ "key": "b21c512e3d55f097",
+ "kind": "lemma",
+ "title": "One Leftward Assembly-Rewind Step",
+ "statement": "Let $S,V$ be finite deterministic machines over the Boolean alphabet, let $x$ be a Boolean word, let $c$ be a configuration of $S$ on $x$, let $y$ be a Boolean word, and let $j$ be a natural number with $j<|y|$. For either Boolean choice bit $b$, one host step under $b$ from the assembly-rewind configuration with assembly head at cell $j$ is the assembly-rewind configuration with head at cell $j-1$, preserving the scheduler configuration and the assembled word $y$.",
+ "hypotheses_covered": [
+  "Finite deterministic Boolean machines $S,V$",
+  "Boolean input word $x$",
+  "Configuration $c$ of $S$ on $x$",
+  "Boolean word $y$",
+  "Natural number $j$ with $j<|y|$",
+  "Boolean choice bit $b$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $S, V$ be deterministic machines, $d$ a scheduler configuration, $y$ an assembled word and $j < |y|$. For any choice bit, one host step from the assembly-rewind configuration with head at cell $j$ moves the head to cell $j - 1$, preserving $y$ and the scheduler bank."
+}

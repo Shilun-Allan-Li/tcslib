@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.LogProg.HaltsWith",
+ "key": "df06f4ba4ebd5856",
+ "kind": "def",
+ "title": "Bounded halting with output",
+ "statement": "Let $P$ be a program with $m$ work tapes and states in $\fLambda\\times\\mathrm{Ph}$, let an oracle assign a Boolean answer to each of $d$ deciders and Boolean-word queries, and let $c$ be a configuration on input $x$ with output word $v$. The machine must halt after some number $T$ of steps with output $v$ followed by the single symbol $b$; at that time every work-tape head position must lie between $-1$ and $W$, inclusive, and every configuration at a time $t<T$ must satisfy the condition $\\mathrm{Mid}(P,W,\\cdot)$.",
+ "hypotheses_covered": [
+  "Program $P$ with $m$ work tapes and states in $\\Lambda\\times\\mathrm{Ph}$",
+  "Oracle $\\mathrm{Fin}(d)\\to\\mathrm{List}(\\mathrm{Bool})\\to\\mathrm{Bool}$",
+  "Integer bound $W$",
+  "Configuration $c$ on input $x$",
+  "Boolean output symbol $b$"
+ ],
+ "confidence": "low",
+ "caveat": "The provided statement does not define $\\mathrm{Mid}$, so its intermediate-configuration condition cannot be expanded self-containedly.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.mapBuffer_rewind",
+ "key": "917453b2ba8fe3f3",
+ "kind": "lemma",
+ "title": "Capture-head rewind of the threaded map",
+ "statement": "Let $M$ be a finite Turing machine over the Boolean alphabet, let $x$ be a Boolean input word, and let $c$ be a configuration of $M$ on $x$. For any valid input-head position $p$ and any natural number $j$ no greater than the length of the output in $c$, running the threaded-map controller for $j+1$ steps from the configuration that preserves $c$'s tape bank, has the controller in its capture-rewind state, places the input head at $p$ and the capture head at displacement $j-1$, and has empty output, yields the configuration with the controller in its input-rewind state, input head still at $p$, capture head at displacement $0$, and empty output.",
+ "hypotheses_covered": [
+  "M is a finite Turing machine over the Boolean alphabet",
+  "x is a Boolean word",
+  "c is a configuration of M on x",
+  "p is a valid input-head position",
+  "j is a natural number with j no greater than the length of c's output"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From the controller's capture-rewind state with the capture head at\ndisplacement $j-1$, for any $j$ at most the captured word's length, exactly\n$j+1$ silent steps return the capture head to displacement $0$ and enter the\ninput-rewind phase, with the input position unchanged."
+}

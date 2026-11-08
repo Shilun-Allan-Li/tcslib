@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.PathHard.hv_run",
+ "key": "8313055e2c15165a",
+ "kind": "theorem",
+ "title": "Halving the source register",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $o$ be an oracle on five deciders and bit strings, and let $y$ be a bit string. For any fifteen-register state $st$ whose register values are all at most $B$, the program reaches a configuration from the initial one with label the halving routine in phase $0$, register values $st$, and no result, whose label is the copy routine transferring the source register to the scratch register, whose loop counter is $0$, whose source register is the original source value divided by $2$ raised to the original loop-counter value, and whose other registers agree with $st$. Every configuration strictly before the reached configuration satisfies the guard requiring all registers to be at most $B$ and the instruction-specific preconditions to hold.",
+ "hypotheses_covered": [
+  "$a,b,f,B$ are natural numbers",
+  "$m$ is a Boolean mode",
+  "$o$ is an oracle on five deciders and bit strings",
+  "$y$ is a bit string",
+  "$st$ has all fifteen registers at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix natural numbers $a,b,f,B$, a Boolean mode, an oracle assigning a Boolean answer to\neach of five deciders and each bit string, and an input bit string. For every register\nstate whose fifteen register values are all at most $B$, the program started at its\nhalving routine in phase $0$ reaches the copy routine that transfers the source register\nto the scratch register, with the loop counter reset to $0$ and the source register\nreplaced by its original value divided by $2$ to the power of its original loop-counter\nvalue. Every configuration before the reached configuration satisfies the program's\nguard requiring all registers to remain at most $B$ and all instruction-specific\npreconditions to hold."
+}

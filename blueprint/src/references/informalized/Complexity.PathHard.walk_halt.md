@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/SpaceComplexity/Logspace/PathHardWalk.lean :: Complexity.PathHard.walk_halt -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Halting During the Walk Phase
+
+**Claim.** Under the stated register bounds and zero-register and size relations, the program started in the walk phase halts with answer $\mathrm{wAns}(N,x,\mathrm{mode},\mathrm{st}.s,\mathrm{st}.e,\mathrm{st}.i)$, and every pre-halting configuration satisfies the guard.
+
+**Proof.** Unpack the register state and use the hypotheses to set the scratch registers $d,u,t,c,z$ to zero, $n=2\cdot2^e$, and $m=2(2^e)^2$. The comparison routine for the unary-block boundary first runs: the comparison lemma says it reaches either the walk phase with the index unchanged when $2\cdot2^e\le i$, or the immediate answer phase otherwise. In the latter case the index lies within the initial unary block, where the definition of $\mathrm{wAns}$ gives true, so the answer routine finishes the proof. In the former case, subtract the unary-block length. If the remaining offset is zero, the program answers according to the mode, as prescribed at the first separator position. If it is one, it answers true, matching the second separator bit. For larger offsets it proceeds to compare the offset with the adjacency-block length $2(2^e)^2$. If the offset reaches or exceeds that length, the comparison and subtraction routines move to the tail phase with the residual tail index; the tail-halting result proves termination there, and a case check of the five tail positions shows its answer equals the tail clause of $\mathrm{wAns}$ in either mode. If the offset is smaller than the adjacency-block length, the matrix-halting result applies after the program clears its scratch register: it returns true in length mode and, in bit mode, the edge predicate at the matrix coordinates. These are precisely the corresponding clauses of $\mathrm{wAns}$. Throughout, the cited reachability and halting lemmas preserve the guard; the explicitly traversed transitions are also justified with the bounded-register hypotheses.
+
+**Key facts.** `Complexity.PathHard.le_run`, `Complexity.PathHard.sb_run`, `Complexity.PathHard.tail_halt`, `Complexity.PathHard.matrix_halt`, `Complexity.PathHard.stepH_of`, `Complexity.PathHard.ans_halt`.

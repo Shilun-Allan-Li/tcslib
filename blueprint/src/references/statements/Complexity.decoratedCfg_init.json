@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.decoratedCfg_init",
+ "key": "1f67098406ec57c5",
+ "kind": "lemma",
+ "title": "Initial decorated configuration",
+ "statement": "Let $P$ be a finite Turing machine over an alphabet $A$, let $l$ be a natural number, choose a work-tape index $h$ of $P$, a finite data-state set $D$ with initial state $d_0$, and any visit function of the specified type. For every input word $x$, the decorated machine's initial configuration on $x$ is the decorated configuration formed from $P$'s initial configuration, data state $d_0$, blank contents on all extra tapes, and empty output.",
+ "hypotheses_covered": [
+  "$D$ is finite and has decidable equality",
+  "$P$ is a finite Turing machine over $A$",
+  "$l$ is a natural number",
+  "$h$ is a work-tape index of $P$",
+  "$d_0$ is an element of $D$",
+  "The visit function has the stated type",
+  "$x$ is an input word over $A$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a machine over an alphabet $A$, decorated by a data transducer with $l$\nextra tapes, designated head index $h$, a finite data-state set with initial element\n$d_0$, and a visit function.  For every input word $x$, the initial configuration of\nthe decorated machine on $x$ equals the decorated configuration built from the\ninitial configuration of $P$ on $x$, the initial data state $d_0$, entirely blank\nextra tapes, and the empty output: the data tapes begin blank and aligned with the\nschedule's origin."
+}

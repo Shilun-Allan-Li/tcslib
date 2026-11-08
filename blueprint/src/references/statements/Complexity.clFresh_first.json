@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.clFresh_first",
+ "key": "5fa474dfe75fddaa",
+ "kind": "lemma",
+ "title": "First completion of the field loader",
+ "statement": "For every Boolean input word $x$, input-head position $p$ among its $|x|+2$ positions, stream prefix $\\mathrm{pre}$, field $w$, stream tail, and old target word, there is a time $t$ with $0<t\\le 2|\\mathrm{old}|+3|w|+6$ such that, at every earlier time $j<t$, the machine is not in its completed control. At time $t$ it is in the completed reading control, with target contents exactly $w$ and target head at zero, stream head at $|\\mathrm{pre}|+2|w|+2$, the original input position, stream contents, and input unchanged, and empty physical output.",
+ "hypotheses_covered": [
+  "Boolean input word $x$",
+  "Valid input-head position $p$ among $|x|+2$ positions",
+  "Stream prefix $\\mathrm{pre}$",
+  "Field word $w$",
+  "Stream tail",
+  "Old target word $\\mathrm{old}$",
+  "Existence of a positive time bounded by $2|\\mathrm{old}|+3|w|+6$",
+  "No earlier time $j<t$ is in the completed control",
+  "At time $t$, exact equality with the specified completed reader configuration"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every input word, input position, stream prefix, field word $w$, stream tail, and old target, there is a strictly positive time, at most twice the old target length plus $3|w| + 6$, at which the unrestricted loader first reaches its completed control, holding exactly $w$ with restored target head and advanced stream cursor; no bound relating the old and new lengths is assumed."
+}

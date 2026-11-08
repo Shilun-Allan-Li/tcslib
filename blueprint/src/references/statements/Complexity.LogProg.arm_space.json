@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.arm_space",
+ "key": "52d18cccaf40b13d",
+ "kind": "theorem",
+ "title": "Space bound for compiled register programs",
+ "statement": "Let $A$ be a register program with $m$ registers and access to $d$ Boolean oracles, let $x$ be a Boolean input, and let $D$ be a $k_D$-work-tape machine with designated initial states $q_0(j)$ for each oracle. Suppose the run of $A$ from its initial state, zeroed registers, and no stored answer halts after $N$ steps with answer $b$. Suppose also that at every time $t<N$, its configuration satisfies the precondition for $A$, and every register value $v(r)$ satisfies $\\lvert\\mathrm{bits}(v(r)+1)\\rvert\\le W$. Then the compiled machine halts on $x$ with output $b$ at some time, and its total space use is at most $m(W+2)+k_D(2B+1)$.",
+ "hypotheses_covered": [
+  "A has finitely many states with decidable equality",
+  "D has finitely many states with decidable equality",
+  "The abstract run from the initial state and zeroed registers halts after N steps",
+  "The answer stored at time N is some Boolean b",
+  "At each time t < N, the configuration satisfies Pre(A, oracle, D, q0, B, x)",
+  "At each time t < N, every register r satisfies the stated bit-length bound by W"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

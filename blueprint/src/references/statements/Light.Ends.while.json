@@ -1,0 +1,16 @@
+{
+ "lean_name": "Light.Ends.while",
+ "key": "baa5e18cfbe06334",
+ "kind": "theorem",
+ "title": "Bounded loop from an invariant",
+ "statement": "Let a program, depth bound, condition $c$, body $s$, initial state $\\sigma$, postcondition $Q$, invariant predicates $I_i$ on states for natural numbers $i$, iteration count $n\\in\\mathbb N$, and per-iteration bounds $b_i\\in\\mathbb N$ be given. If $I_0$ holds at $\\sigma$, then for every $i<n$, every state satisfying $I_i$ has a safe condition that holds and admits an execution of $s$ within time $b_i$ to a state satisfying $I_{i+1}$. If every state satisfying $I_n$ has a safe condition that does not hold and satisfies $Q$, then the loop with condition $c$ and body $s$ ends in a state satisfying $Q$ within time $\\sum_{i=0}^{n-1}\\bigl((\\operatorname{cost}(c)+1+b_i)+(\\operatorname{cost}(c)+1)\\bigr)$.",
+ "hypotheses_covered": [
+  "The invariant $I_0$ holds at the initial state",
+  "For every $i<n$ and state satisfying $I_i$, the condition is safe and holds, and the body reaches a state satisfying $I_{i+1}$ within $b_i$",
+  "For every state satisfying $I_n$, the condition is safe and false and $Q$ holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

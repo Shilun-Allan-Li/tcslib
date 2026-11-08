@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.bridge_statement",
+ "key": "6f02e43a92ef251c",
+ "kind": "lemma",
+ "title": "Simulation of One Stack-Machine Step",
+ "statement": "Let $c$ be a partial-recursive program, $x$ a word over the bridge alphabet, $p$ an input-head position among the $|x|+2$ permitted positions, $out$ an output word over the bridge alphabet, and $q$ a compiled stack-machine statement. For every optional register value $v$ and assignment $st$ of a stack word to each of the four stack names, if $q$ belongs to the finite statement support of the compilation of $c$, then the bridging machine for $c$ reaches in finitely many steps the bridge configuration with the same input-head position and output, with stacks and optional register equal to those produced by one stack-machine step from $(q,v,st)$, and with control state determined by translating the step's optional next statement (or absent if it is outside the support).",
+ "hypotheses_covered": [
+  "A partial-recursive program $c$",
+  "A bridge-alphabet word $x$",
+  "A valid input-head position $p$ for $x$",
+  "An output word over the bridge alphabet",
+  "A compiled statement $q$",
+  "An arbitrary optional register value $v$",
+  "An arbitrary stack assignment $st$",
+  "The membership hypothesis that $q$ lies in the program's finite statement support"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a program in Mathlib's partial-recursive language, $q$ a stack-machine\nstatement in the finite statement support of $c$'s compilation, $v$ an optional\nregister value, and $st$ a stack assignment.  Executing $q$ on $v$ and $st$ in the\nstack-machine semantics produces a next optional label, register value, and stacks.\nFrom the bridge configuration in the execution state for $q$ and $v$ over $st$, the\nbridging machine of $c$ reaches, in finitely many steps, the bridge configuration in\nthe optional execution state determined by the translation of that next label and by\nthat register value, over those resulting stacks, with the input position and output\nunchanged."
+}

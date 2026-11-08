@@ -1,0 +1,22 @@
+{
+ "lean_name": "FABL.isCompleteQuadraticOne_of_linearChecks",
+ "key": "8aed56386aee4e74",
+ "kind": "theorem",
+ "title": "Quadratic parity from linear checks",
+ "statement": "Let $n$ be a natural number, let $w:\text{Fin}(n)\to\text{Bool}$, and let $P$ be a Boolean-valued table indexed by $\text{Fin}(n+2(n+1))$. Suppose that every endpoint, linear-transition, product, and quadratic-prefix check holds for $w$ and $P$: the linear and quadratic prefix bits start at $0$, the final quadratic prefix bit is $1$, each linear prefix advances by adding the corresponding bit of $w$ modulo $2$, each product bit is the conjunction of the preceding linear prefix bit and the corresponding bit of $w$, and each quadratic prefix advances by adding the corresponding product bit modulo $2$. Then the sum of $w_iw_j$ over $i<j$ equals $1$ in $\bbr/2\bbr$.",
+ "hypotheses_covered": [
+  "Natural number $n$",
+  "Boolean vector $w$ indexed by $\\text{Fin}(n)$",
+  "Boolean-valued table indexed by $\\text{Fin}(n+2(n+1))$",
+  "Every endpoint check holds: initial linear and quadratic prefixes are false and the final quadratic prefix is true",
+  "Every linear-prefix transition check holds",
+  "Every product check holds",
+  "Every quadratic-prefix transition check holds"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [
+  "anaphora"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

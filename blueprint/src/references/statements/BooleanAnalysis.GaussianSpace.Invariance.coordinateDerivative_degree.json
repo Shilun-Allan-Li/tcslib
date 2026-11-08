@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.Invariance.coordinateDerivative_degree",
+ "key": "95832c51d9fb4016",
+ "kind": "lemma",
+ "title": "Degree reduction under coordinate differentiation",
+ "statement": "Let $F$ be a real coefficient family on subsets of $[n]$, let $i\\in[n]$, and let $k\\in\\mathbb N$. If $F(S)=0$ whenever $|S|>k+1$, then the coefficient family formed from the Fourier coefficients of the Boolean-cube derivative of $F$ has degree at most $k$; that is, its coefficient at $S$ vanishes whenever $|S|>k$.",
+ "hypotheses_covered": [
+  "$F$ is a real coefficient family on subsets of $[n]$",
+  "$i\\in[n]$",
+  "$k\\in\\mathbb N$",
+  "$F$ has degree at most $k+1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F(x)=\\sum_{S\\subseteq\\{1,\\ldots,n\\}}a_S\\prod_{j\\in S}x_j$ be a real multilinear polynomial and fix $i\\in\\{1,\\ldots,n\\}$. Define $A_i(x)=\\sum_{S:i\\notin S}a_S\\prod_{j\\in S}x_j$ and $D_i(x)=\\sum_{S:i\\notin S}a_{S\\cup\\{i\\}}\\prod_{j\\in S}x_j$. If $F$ has degree at most $k+1$, where $k\\ge0$ is an integer, then $D_i$ has degree at most $k$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.oracleHost_prepare",
+ "key": "a1740857c92fcd1f",
+ "kind": "theorem",
+ "title": "Preparing the oracle service phase",
+ "statement": "Let $M$ be a finite Boolean oracle Turing machine, let $C$ be a finite Boolean Turing machine with at least one work tape, and choose states $en,ex$ of $C$. For every Boolean input word $x$, configuration $c$ of $M$ on $x$, and Boolean $side$, if $c$ is in the query state and its query-head position lies on the side specified by $side$, then there is a time $t$ no greater than the absolute value of that position plus $5$ at which the host machine, started from the stable configuration determined by $c$ and $side$, is in the service phase sweeping from the ready configuration formed using $c$’s query-tape contents and query-head position, with empty argument word and output unchanged.",
+ "hypotheses_covered": [
+  "$M$ is a finite Boolean oracle Turing machine",
+  "$C$ is a finite Boolean Turing machine",
+  "$C$ has at least one work tape",
+  "$en$ and $ex$ are states of $C$",
+  "$x$ is a Boolean input word",
+  "$c$ is a configuration of $M$ on $x$",
+  "$side$ is a Boolean",
+  "$c$ is in $M$'s query state",
+  "the query-head position lies on the side specified by $side$"
+ ],
+ "confidence": "low",
+ "caveat": "The conclusion’s host configuration is a precise machine encoding; the prose describes its service phase and ready configuration, including the empty argument and unchanged output.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

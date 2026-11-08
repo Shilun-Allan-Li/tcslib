@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.majority_fourierCoeff_even",
+ "key": "d70cfdb573820835",
+ "kind": "theorem",
+ "title": "Vanishing even majority coefficients",
+ "statement": "Let $m\\in\\mathbb N$ and let $S\\subseteq[2m+1]$ have even cardinality. For the majority function on $\\{0,1\\}^{2m+1}$, whose value is $1$ when more than $m$ coordinates are false and $-1$ otherwise, the Fourier--Walsh coefficient at $S$ is zero: $\\widehat M_m(S)=0$.",
+ "hypotheses_covered": [
+  "$m\\in\\mathbb N$",
+  "$S\\subseteq[2m+1]$",
+  "$|S|$ is even"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nLet $m\\in\\mathbb N$, put $n=2m+1$, and define $M_m:\\{\\pm1\\}^n\\to\\mathbb R$ by\n$M_m(x)=1$ when more than $m$ coordinates equal $1$, and $M_m(x)=-1$ otherwise.\nFor $S\\subseteq\\{1,\\ldots,n\\}$ define\n$\\widehat M_m(S)=2^{-n}\\sum_{x\\in\\{\\pm1\\}^n}M_m(x)\\prod_{i\\in S}x_i$.\nIf $S\\subseteq\\{1,\\ldots,n\\}$ has even cardinality, then $\\widehat M_m(S)=0$."
+}

@@ -1,0 +1,22 @@
+{
+ "lean_name": "Turing.FinTM.lenAction_apply",
+ "key": "8935bb3f45ed3ab4",
+ "kind": "lemma",
+ "title": "Administrative action on a checker configuration",
+ "statement": "Let $M$ be a finite Turing machine over Boolean symbols, let $x$ be a Boolean word, and let $c$ be a configuration of $M$ on $x$. Choose checker states $q,q'$, natural numbers $i,j,r,s$ with $i,j\\le |x|$, signs $m,d\\in\\{-1,0,1\\}$, and an optional bit $b$. Suppose moving the input head from position $i+1$ by $m$ gives position $j+1$, and $(r-1)+d=s-1$. Applying the administrative action with these movements, output $b$, and successor state $q'$ to the checker configuration indexed by $c,q,i,r$ yields the checker configuration indexed by $c,q',j,s$, except that its output is $b$ when present and empty otherwise.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over Boolean symbols",
+  "$x$ is a Boolean word and $c$ is a configuration on $x$",
+  "$q,q'$ are optional checker states",
+  "$i,j,r,s$ are natural numbers",
+  "$i,j\\le |x|$",
+  "$m,d$ are signs in $\\{-1,0,1\\}$",
+  "$b$ is an optional Boolean bit",
+  "the clamped input-head move from $i+1$ by $m$ reaches $j+1$",
+  "$(r-1)+d=s-1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Applying an administrative action with compatible input-head and\ncountdown-head moves to a length-checker configuration yields the checker\nconfiguration with the correspondingly updated input position and countdown\ncounter, with output equal to the action's optional emission and all work\ntapes unchanged."
+}

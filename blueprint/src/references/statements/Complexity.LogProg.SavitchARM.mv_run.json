@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.SavitchARM.mv_run",
+ "key": "8705cb7fc762ebeb",
+ "kind": "theorem",
+ "title": "Bounded register transfer",
+ "statement": "Fix a natural number $E$, an oracle on four indices and Boolean words, an input Boolean word $x$, and a register bound $B$. For every move operation $k$ and register state $st$ with all eighteen register values at most $B$ and with the sum of the destination and source register values at most $B$, the machine has a finite run from the phase-zero state for $k$ with registers $st$ to its exit state. The endpoint registers are obtained by first setting the source register to zero and then setting the destination register to the sum of its original value and the original source value; every configuration strictly before the endpoint satisfies the machine's validity conditions and has all register values at most $B$.",
+ "hypotheses_covered": [
+  "$E$ is a natural number",
+  "the oracle has four indices and takes Boolean words",
+  "$x$ is a Boolean word",
+  "$B$ is a natural-number register bound",
+  "$k$ is a move operation",
+  "$st$ is a register state",
+  "every register of $st$ is at most $B$",
+  "the destination and source register values in $st$ sum to at most $B$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix the Savitch register machine parameters $E$, oracle $\\mathrm{orc}$, input $x$, and\nregister bound $B$. For every move operation $k$ and register state $st$, suppose every\nregister of $st$ is at most $B$ and the sum of the destination and source register\nvalues is at most $B$. Then the machine can run from the phase-zero state for $k$ with\nregisters $st$ to the exit state for $k$, setting the source register to zero and adding\nits original value to the destination register, while every configuration before\ntermination satisfies the guard requiring valid preconditions and all registers at most\n$B$."
+}

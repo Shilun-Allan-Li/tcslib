@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.alignedPair_loop",
+ "key": "2776a0a1a5173674",
+ "kind": "theorem",
+ "title": "Aligned-pair scan loop",
+ "statement": "Let $A$ be a register program with oracle, let $x,w$ be finite bit strings, and let $r$ and $\\ell$ be distinct registers. Choose an oracle index $j$, program states $\\mathrm{scan},\\mathrm{first},\\mathrm{fail},\\mathrm{done}$ and states $\\mathrm{test}(b),\\mathrm{read}(b)$ for each bit $b$, and states $\\mathrm{advance}(k,i)$ for $k\\in\\{0,1,2,3\\}$ and natural numbers $i$. Suppose the scan instruction compares registers $r$ and $\\ell$, the first instruction calls oracle $j$ on the whole input and the word in register $r$, each test compares those registers, and each read calls the oracle on that same input, branching as specified by the bit being tested; each advance instruction increments register $r$ and proceeds to the next advance state. Assume the four advance states at offset $\\mathrm{stride}$ lead respectively to $\\mathrm{test}(\\mathrm{false})$, $\\mathrm{test}(\\mathrm{true})$, $\\mathrm{scan}$, and $\\mathrm{done}$; also assume $0<\\mathrm{stride}$, every register value in the initial vector $v$ is at most $B$, $v(\\ell)=v(r)+\\mathrm{stride}|w|$, and for every $i<|w|$ the oracle answer on $\\langle x,\\mathrm{bits}(v(r)+\\mathrm{stride}i)\\rangle$ is the $i$-th bit of $w$ (defaulting to false past the end). Then the program reaches a failure state with register $r$ increased by $\\mathrm{stride}t$ for some $t\\le |w|$ if the aligned-pair parser rejects $w$; if it parses $w$ as $(a,b)$, it reaches $\\mathrm{done}$ with register $r$ increased by $\\mathrm{stride}(2|a|+2)$. In either case, throughout the finite run every intermediate configuration satisfies the program's precondition—equality tests use distinct registers, input-word tests occur on valid encodings, and call argument lists have no repetitions—and every register remains at most $B$.",
+ "hypotheses_covered": [
+  "$A$ is a register program and $\\mathrm{oracle}$ is an oracle",
+  "$x,w$ are finite bit strings",
+  "$r,\\ell$ are registers with $r\\ne\\ell$",
+  "$j$ is an oracle index",
+  "The stated scan, first, test, read, advance, and terminal instruction equations hold",
+  "$\\mathrm{stride},B$ are natural numbers and $0<\\mathrm{stride}$",
+  "$v$ is a register vector with every value at most $B$",
+  "$v(\\ell)=v(r)+\\mathrm{stride}|w|$",
+  "For every $i<|w|$, the specified oracle query returns the $i$-th bit of $w$"
+ ],
+ "confidence": "low",
+ "caveat": "The statement includes the exact state-transition equations and the program precondition encoded by the supplied definitions; these have been summarized in prose.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

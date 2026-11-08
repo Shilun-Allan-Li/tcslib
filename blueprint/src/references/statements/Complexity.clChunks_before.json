@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.clChunks_before",
+ "key": "0d092cd6dc556d91",
+ "kind": "lemma",
+ "title": "Chunks before the final round",
+ "statement": "Let $R$ be a natural number and let $G$ assign a CNF formula over natural-number variables to each natural-number index. For every natural number $j\\le R$, concatenating the chunks at indices $0,\\ldots,j-1$ gives exactly the fragment formed from the concatenation of the formulas $G(0),\\ldots,G(j-1)$.",
+ "hypotheses_covered": [
+  "A natural number $R$",
+  "A family $G$ of CNF formulas indexed by natural numbers",
+  "A natural number $j$ satisfying $j\\le R$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $R$ be the last round index and let a family assign a clause group to each round. For every $j \\le R$, the concatenation of the chunks of rounds $0,\\dots,j-1$ equals the serialized fragment of the concatenation of the first $j$ groups, so no formula terminator appears in a proper prefix of the rounds."
+}

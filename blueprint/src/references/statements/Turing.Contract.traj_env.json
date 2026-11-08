@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.Contract.traj_env",
+ "key": "9c6637a3d74b936e",
+ "kind": "theorem",
+ "title": "Trajectory Within the Head Envelope",
+ "statement": "Let $M$ be a multi-tape Turing machine and $C$ a contract for $M$, with lower and upper head bounds for each work tape. For every parameter $i$ and starting configuration $d$ in the contract entry state and satisfying its precondition, at every time $u$ up to and including the prescribed running time, the vector of work-tape head positions lies in the box determined by those bounds; that is, each head position lies between its corresponding lower and upper bounds.",
+ "hypotheses_covered": [
+  "$C$ is a contract for $M$",
+  "$i$ is a parameter and $d$ is a starting configuration",
+  "$d$ is in the contract entry state",
+  "$d$ satisfies the contract precondition for $i$",
+  "$u$ is at most the prescribed running time"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine and let $C$ be a contract for $M$, with lower and\nupper head bounds $\\mathrm{lo}$ and $\\mathrm{hi}$. For every parameter $i$ and\nconfiguration $d$ starting in the contract entry state and satisfying its precondition,\nat every time $u\\le C.\\mathrm{time}(i,d)$, each work-tape head position lies between its\ncorresponding lower and upper bounds."
+}

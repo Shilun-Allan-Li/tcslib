@@ -43,6 +43,7 @@ transitive.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.balanced_aux}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.alice_child, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.bob_child, CommunicationComplexity.Deterministic.Protocol.balanced_children, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -164,7 +165,6 @@ transitive.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p004-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{5}
 Let $p$ be a deterministic two-party communication protocol, and let $n$ be a natural
 number with $n > 1$. Write $\ell(q)$ for the number of leaves of a protocol $q$, and
@@ -183,6 +183,7 @@ n \le 3\,\ell(s) < 2n.
 }
 \label{CommunicationComplexity.Deterministic.Protocol.balanced_subprotocol}
 \leanok
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.alice_child, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.bob_child, CommunicationComplexity.Deterministic.Protocol.balanced_aux, CommunicationComplexity.Deterministic.Protocol.balanced_children, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \proofstep
   {CommunicationComplexity.Deterministic.Protocol}
   {direct}
@@ -307,7 +308,6 @@ n \le 3\,\ell(s) < 2n.
   {context}
   {raoyehudayoff-ch01-deterministic-protocols}
   {pdf-fa052d8c95c0-p004-b005}
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.balanced_aux, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{5}
 Let $p$ be a deterministic two-party communication protocol, and for any such protocol
 $q$ write $\ell(q)$ for its number of leaves (its output nodes). Suppose $\ell(p) > 1$.
@@ -345,7 +345,7 @@ structural recursion on the path.
 \lean{CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
 \label{CommunicationComplexity.Deterministic.Protocol.path_exists_of_isSubprotocol}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.reachXPath}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath}
 \difficulty{3}
 Let $s$ and $p$ be deterministic two-party communication protocols over the same input
 types $X$ and $Y$ and output type $\alpha$. If $s$ is a subprotocol of $p$ — that is,
@@ -495,7 +495,7 @@ $\texttt{chooseOutput}\;s$ (the leftmost leaf of $s$).
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves}
 \label{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves_step, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
 \difficulty{5}
 Let $p$ be a deterministic two-party communication protocol, and let $s$ be a
 subprotocol of $p$, witnessed by a subprotocol path recording the sequence of branch
@@ -510,7 +510,7 @@ subtraction is truncated subtraction of natural numbers.
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside}
 \label{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside_branch, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{5}
 Let $p$ be a deterministic two-party communication protocol over Alice's inputs $X$ and
 Bob's inputs $Y$, let $s$ be a rooted subprotocol of $p$ recorded by a subprotocol path
@@ -645,7 +645,7 @@ $p$; that is, $s = p$.
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.shape}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_branch, CommunicationComplexity.Deterministic.Protocol.numLeaves}
 \difficulty{5}
 Let $p$ be a deterministic communication protocol and let $s$ be a rooted subtree of
 $p$, witnessed by a subprotocol path from the root of $p$ down to the root of $s$. Write
@@ -655,17 +655,18 @@ rather than the empty result of the root case — then \[ \ell(q) = \ell(p) - \e
 where the subtraction is truncated subtraction on $\bbn$.
 \end{lemma}
 
-\begin{lemma}[Leaf count after pruning a subprotocol path]
+\begin{lemma}[Leaf count after path pruning]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \label{CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_of_some, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath, CommunicationComplexity.Deterministic.Protocol.prunePath_spec}
 \difficulty{1}
-Let $s$ and $p$ be deterministic two-party communication protocols, and let $s$ lie
-along a subprotocol path inside $p$, so that $s$ occurs as a rooted subtree of $p$. If
-$s$ has strictly fewer leaves than $p$, that is, if the number of leaves of $s$ is less
-than the number of leaves of $p$, then the protocol obtained by pruning this path from
-$p$ has exactly $\text{numLeaves}(p) - \text{numLeaves}(s)$ leaves.
+Let $X$, $Y$, and $\alpha$ be types, and let $s$ and $p$ be deterministic two-party
+communication protocols with inputs in $X$ and $Y$ and outputs in $\alpha$. Suppose a
+specified sequence of branch choices in $p$ leads to the subtree $s$, and $s$ has
+strictly fewer output leaves than $p$. Then deleting that path by splicing out the
+branch to $s$ yields a protocol with $\mathrm{numLeaves}(p)-\mathrm{numLeaves}(s)$
+output leaves.
 \end{lemma}
 
 \begin{lemma}[Trivial path is reached by every input]
@@ -686,7 +687,7 @@ Alice's choices along $\pi$ and $y$ is consistent with all of Bob's choices alon
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.run}
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_branch, CommunicationComplexity.Deterministic.Protocol.reachXPath, CommunicationComplexity.Deterministic.Protocol.reachYPath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{5}
 Let $p$ be a deterministic two-party communication protocol on input types $X$ (Alice)
 and $Y$ (Bob), and let $s$ be a rooted subprotocol of $p$ witnessed by a subprotocol
@@ -698,20 +699,18 @@ is not a reachable Bob input for that path — executing $q$ on $(x,y)$ produces
 output as executing $p$ on $(x,y)$.
 \end{lemma}
 
-\begin{lemma}[Pruned protocol agrees off the pruned path]
+\begin{lemma}[Pruning preserves execution outside a path]
 \lean{CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt}
 \label{CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_of_some, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prunePath, CommunicationComplexity.Deterministic.Protocol.prunePath_spec, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
-Let $p$ be a deterministic two-party communication protocol with Alice inputs in $X$ and
-Bob inputs in $Y$, and let $s$ be a rooted subprotocol of $p$, witnessed by a
-subprotocol path from the root of $p$ down to the root of $s$. Suppose $s$ has strictly
-fewer leaves than $p$, so that pruning this path yields a protocol $p'$. Then for every
-input pair $(x,y)$ that does not reach $s$ along this path — that is, $x$ is not among
-the Alice inputs consistent with all of Alice's branching choices on the path, or $y$ is
-not among the Bob inputs consistent with all of Bob's choices on it — the pruned
-protocol $p'$ and the original protocol $p$ return the same value on $(x,y)$.
+Let $X$, $Y$, and $\alpha$ be types, and let $s$ and $p$ be deterministic two-party
+communication protocols with inputs in $X$ and $Y$ and outputs in $\alpha$. Suppose a
+specified subprotocol path witnesses that $s$ lies below $p$, and that $s$ has strictly
+fewer leaves than $p$. For any inputs $x\in X$ and $y\in Y$ such that either Alice's
+input or Bob's input is inconsistent with the corresponding branching choices along this
+path, pruning the path from $p$ returns the same output on $(x,y)$ as $p$.
 \end{lemma}
 
 \begin{definition}[Prune a subprotocol (propositional version)]
@@ -730,26 +729,25 @@ The noncomputable variant of \texttt{prunePath} taking an \texttt{IsSubprotocol}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prunePath_numLeaves_of_lt}
 \difficulty{1}
-Let $p$ be a deterministic two-party communication protocol and let $s$ be a subprotocol
-of $p$, that is, a rooted subtree of $p$. Write $L(q)$ for the number of leaves (output
-nodes) of a protocol $q$, and suppose that $L(s) < L(p)$. Then the protocol obtained by
-pruning $s$ out of $p$ has exactly $L(p) - L(s)$ leaves.
+Let $X$, $Y$, and $\alpha$ be types, and let $s$ and $p$ be deterministic two-party
+communication protocols with inputs in $X$ and $Y$ and outputs in $\alpha$. Suppose $s$
+is a rooted subtree of $p$ and has strictly fewer leaves than $p$. Then pruning $s$ from
+$p$ yields a protocol with exactly $L(p)-L(s)$ leaves, where $L(q)$ denotes the number
+of leaves of protocol $q$.
 \end{lemma}
 
-\begin{lemma}[Pruning preserves outputs on inputs that miss the subprotocol]
+\begin{lemma}[Pruning preserves outputs outside a subprotocol]
 \lean{CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt}
 \label{CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.choosePath, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune, CommunicationComplexity.Deterministic.Protocol.prunePath_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reachX, CommunicationComplexity.Deterministic.Protocol.reachY, CommunicationComplexity.Deterministic.Protocol.reaches, CommunicationComplexity.Deterministic.Protocol.run}
 \difficulty{1}
-Let $s$ and $p$ be deterministic two-party communication protocols over Alice's inputs
-$X$, Bob's inputs $Y$, and output type $\alpha$, and suppose $s$ is a subprotocol of $p$
-(a rooted subtree) whose leaf count is strictly smaller than that of $p$. Form the
-pruned protocol obtained by deleting the subtree $s$ from $p$. Then for every pair of
-inputs $x \in X$ and $y \in Y$ that does not reach $s$ — that is, $(x,y)$ fails to be
-consistent with all of the branching choices along the path from the root of $p$ down to
-$s$ — the pruned protocol and $p$ produce the same output on $(x,y)$: running the pruned
-protocol on $x$ and $y$ yields exactly $p$'s output on $x$ and $y$.
+Let $X$, $Y$, and $\alpha$ be types, and let $s$ and $p$ be deterministic two-party
+communication protocols with inputs in $X$ and $Y$ and outputs in $\alpha$. Suppose $s$
+is a subprotocol of $p$ and has strictly fewer leaves than $p$. For any $x\in X$ and
+$y\in Y$ such that the pair $(x,y)$ does not reach $s$ (that is, $x$ or $y$ fails one of
+the corresponding branching conditions along the path to $s$), deleting the branch
+leading to $s$ from $p$ leaves its output on $(x,y)$ unchanged.
 \end{lemma}
 
 \begin{definition}[Test subprotocol construction]
@@ -813,102 +811,106 @@ on $(x, y)$ yields the same output as executing $q_{\mathrm{out}}$ on $(x, y)$.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Children of an Alice node are subprotocols]
+\begin{lemma}[Alice node children are subprotocols]
 \lean{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.alice_child}
 \label{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.alice_child}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
-Let $f : X \to \{0,1\}$ be an Alice decision function and let $P$ assign a protocol
-$P(b)$ to each bit $b$. Then for every bit $b$, the child $P(b)$ is a subprotocol of the
-Alice node $\texttt{alice}\; f\; P$.
+\difficulty{4}
+Let $X,Y,	ext{ and }[0m\alpha$ be types, let $f:X\to\{0,1\}$, and let $P$ assign a
+protocol over these types to each bit. For every bit $b$, the child protocol $P(b)$ is a
+subprotocol of the Alice node determined by $f$ and $P$.
 \end{lemma}
 
-\begin{lemma}[Children of a Bob node are subprotocols]
+\begin{lemma}[Bob node children are subprotocols]
 \lean{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.bob_child}
 \label{CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.bob_child}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol}
-Let $f : Y \to \{0,1\}$ be a Bob decision function and let $P$ assign a protocol $P(b)$
-to each bit $b$. Then for every bit $b$, the child $P(b)$ is a subprotocol of the Bob
-node $\texttt{bob}\; f\; P$.
+\difficulty{4}
+Let $X,Y,	ext{ and }[0m\alpha$ be types, let $f:Y\to\{0,1\}$, and let $P$ assign a
+protocol over these types to each bit. For every bit $b$, the child protocol $P(b)$ is a
+subprotocol of the Bob node determined by $f$ and $P$.
 \end{lemma}
 
-\begin{lemma}[Balanced child-selection step]
+\begin{lemma}[Balanced subprotocol selection]
 \lean{CommunicationComplexity.Deterministic.Protocol.balanced_children}
 \label{CommunicationComplexity.Deterministic.Protocol.balanced_children}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol, CommunicationComplexity.Deterministic.Protocol.IsSubprotocol.trans, CommunicationComplexity.Deterministic.Protocol.numLeaves}
-Let $p$ be a protocol, let $P(\mathrm{false})$ and $P(\mathrm{true})$ be two protocols
-that are both subprotocols of $p$, and let $n$ be a natural number with
-$3\,(\ell(P(\mathrm{false})) + \ell(P(\mathrm{true}))) \ge 2n$, where $\ell(\cdot)$ denotes
-the number of leaves. Suppose further that for each bit $b$ with $3\,\ell(P(b)) \ge 2n$
-there is a subprotocol $s$ of $P(b)$ with $n \le 3\,\ell(s) < 2n$. Then there is a
-subprotocol $s$ of $p$ with $n \le 3\,\ell(s) < 2n$.
+\difficulty{5}
+Let $p$ be a deterministic two-party protocol, let $P(\mathrm{false})$ and
+$P(\mathrm{true})$ be subprotocols of $p$, and let $n$ be a natural number. Suppose that
+three times the sum of their numbers of leaves is at least $2n$. Suppose also that for
+each bit $b$, whenever $3$ times the number of leaves of $P(b)$ is at least $2n$, there
+is a subprotocol $s$ of $P(b)$ whose number of leaves, multiplied by $3$, is at least
+$n$ and strictly less than $2n$. Then $p$ has a subprotocol $s$ whose number of leaves,
+multiplied by $3$, is at least $n$ and strictly less than $2n$.
 \end{lemma}
 
-\begin{lemma}[Leaf-count step for path erasure]
+\begin{lemma}[Leaf count identity for path erasure]
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves_step}
 \label{CommunicationComplexity.Deterministic.Protocol.erasePath_numLeaves_step}
 \leanok
 \uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.numLeaves}
-Let $P$ assign a protocol to each bit, let $b$ be a bit, and let $s$ be a subprotocol of
-$P(b)$ witnessed by a subprotocol path. If $e = \ell(P(b)) - \ell(s) + 1$ (truncated
-subtraction on $\mathbb{N}$), then replacing the leaf count of branch $b$ by $e$ in the sum
-of the two children's leaf counts gives
-\[
-  \ell(P(\mathrm{false})) + \ell(P(\mathrm{true})) - \ell(s) + 1 ,
-\]
-i.e.\ $\ell(P(\mathrm{false})) + e = \ell(P(\mathrm{false})) + \ell(P(\mathrm{true})) - \ell(s) + 1$
-when $b = \mathrm{true}$, and $e + \ell(P(\mathrm{true}))$ equals the same quantity when
-$b = \mathrm{false}$.
+\difficulty{3}
+Let $P$ be a family of protocols indexed by bits, let $b$ be a bit, and let $s$ have a
+subprotocol path into $P(b)$. If $e=\ell(P(b))-\ell(s)+1$, with subtraction truncated on
+the natural numbers, then replacing the leaf count of branch $b$ by $e$ in the sum of
+the two branch leaf counts gives
+$\ell(P(\mathrm{false}))+\ell(P(\mathrm{true}))-\ell(s)+1$, again using truncated
+subtraction.
 \end{lemma}
 
-\begin{lemma}[One-branch step: erasure preserves runs off the path]
+\begin{lemma}[Erasure preserves runs outside the path]
 \lean{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside_branch}
 \label{CommunicationComplexity.Deterministic.Protocol.erasePath_run_outside_branch}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.erase_numLeaves, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
-Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $(x,y)$ be an input
-pair, and let $N$ be a node constructor (an Alice or Bob node) such that for every
-family $Q$ of children, running $N(Q)$ on $(x,y)$ is the same as running $Q(c)$ on $(x,y)$
-for a fixed bit $c$. Let $P$ be a family of children with $P(b) = r$, and let $Q$ be the
-family obtained from $P$ by replacing the branch $b$ by the erasure of $h_s$ while keeping
-the sibling $Q(\neg b) = P(\neg b)$. Assume that if $(x,y)$ reaches $s$ along the path
-then $c \ne b$, and that (inductively) if $(x,y)$ does not reach $s$ along the path then
-the erasure of $h_s$ runs like $r$ on $(x,y)$. Then $N(Q)$ and $N(P)$ produce the same
-output on $(x,y)$.
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.erasePath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.run}
+\difficulty{4}
+Let $s$ have a subprotocol path into $r$, and fix inputs $x\in X$ and $y\in Y$. Let $P$
+be a family of protocols indexed by bits with $P(b)=r$, and let $N$ be a protocol
+constructor on such families. Fix a bit $c$ such that for every family $Q$, running
+$N(Q)$ on $(x,y)$ gives the same output as running $Q(c)$ on $(x,y)$. Let $Q$ be a
+family satisfying $Q(b)=E$ and $Q(\neg b)=P(\neg b)$, where $E$ is the protocol obtained
+by collapsing the path from $r$ to $s$ to a leaf carrying the canonical output of $s$.
+Assume that if $(x,y)$ follows the path to $s$, then $c\ne b$, and that if $(x,y)$ does
+not follow the path to $s$, then $E$ and $r$ give the same output on $(x,y)$. Then
+$N(Q)$ and $N(P)$ give the same output on $(x,y)$.
 \end{lemma}
 
-\begin{lemma}[One-branch step: leaf count after path deletion]
+\begin{lemma}[Leaf count after path deletion]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_branch}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_numLeaves_branch}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.numLeaves, CommunicationComplexity.Deterministic.Protocol.prune_numLeaves_of_lt}
-Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $P$ be a family of
-children with $P(b) = r$, and let $N$ be a node constructor whose leaf count is the sum of
-its two children's leaf counts. Let $Q$ be a rebuilding map with $Q(q_c)(b) = q_c$ and
-$Q(q_c)(\neg b) = P(\neg b)$, and suppose $q$ is the result of deleting along the path
-inside branch $b$: $q = P(\neg b)$ if the deletion of $h_s$ returns nothing, and
-$q = N(Q(q_c))$ if it returns $q_c$. Assume (inductively) that whenever the deletion of
-$h_s$ returns some $q'$ one has $\ell(q') = \ell(r) - \ell(s)$. Then
-\[
-  \ell(q) = \ell(N(P)) - \ell(s) .
-\]
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath.numLeaves_le, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.eq_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.numLeaves}
+\difficulty{5}
+Let $s$ be a protocol with a subprotocol path into $r$, let $P$ be a family of protocols
+indexed by bits, and let $b$ be a bit such that $P(b)=r$. Let $N$ be a constructor on
+protocol families, and let $Q$ assign a protocol family to each protocol, with
+$Q(q_c)(b)=q_c$ and $Q(q_c)(\neg b)=P(\neg b)$ for every $q_c$. Suppose the result $q$
+of the following case distinction is specified by $q=P(\neg b)$ if deleting the path
+from $r$ to $s$ returns nothing, and by $q=N(Q(q_c))$ if deletion returns $q_c$. Assume
+$N$ has leaf count equal to the sum of the leaf counts of its two children, and that
+whenever deletion returns some protocol $q'$, its leaf count is $\ell(r)-\ell(s)$. Then
+$\ell(q)=\ell(N(P))-\ell(s)$, where subtraction is truncated subtraction on the natural
+numbers.
 \end{lemma}
 
-\begin{lemma}[One-branch step: deletion preserves runs off the path]
+\begin{lemma}[Run preservation outside a deleted branch]
 \lean{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_branch}
 \label{CommunicationComplexity.Deterministic.Protocol.deletePath_run_outside_branch}
 \leanok
-\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.prune_run_outside_of_lt, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.run}
-Let $s$ be a subprotocol of $r$ via a subprotocol path $h_s$, let $(x,y)$ be an input
-pair, let $P$ be a family of children with $P(b) = r$, and let $N$ be a node constructor
-such that running $N(Q)$ on $(x,y)$ is the same as running $Q(c)$ on $(x,y)$ for a fixed
-bit $c$ and every family $Q$. Let $Q$ be a rebuilding map with $Q(q_c)(b) = q_c$ and
-$Q(q_c)(\neg b) = P(\neg b)$, and suppose $q$ is the result of deleting along the path
-inside branch $b$: $q = P(\neg b)$ if the deletion of $h_s$ returns nothing, and
-$q = N(Q(q_c))$ if it returns $q_c$. Assume that if $(x,y)$ reaches $s$ along the path
-then $c \ne b$, and (inductively) that whenever the deletion of $h_s$ returns some $q'$
-and $(x,y)$ does not reach $s$ along the path, $q'$ runs like $r$ on $(x,y)$. Then $q$
-and $N(P)$ produce the same output on $(x,y)$.
+\uses{CommunicationComplexity.Deterministic.Protocol, CommunicationComplexity.Deterministic.Protocol.SubprotocolPath, CommunicationComplexity.Deterministic.Protocol.deletePath, CommunicationComplexity.Deterministic.Protocol.reachesPath, CommunicationComplexity.Deterministic.Protocol.reachesPath_of_deletePath_none, CommunicationComplexity.Deterministic.Protocol.run}
+\difficulty{5}
+Let $s$ have a subprotocol path into $r$, and fix inputs $x\in X$ and $y\in Y$. Let $P$
+be a family of protocols indexed by bits, with $P(b)=r$, and let $N$ be a constructor on
+such families. Fix a bit $c$ such that, for every family $Q$, running $N(Q)$ on $(x,y)$
+gives the same output as running $Q(c)$ on $(x,y)$. Let $Q$ assign a family to each
+protocol, with $Q(q_c)(b)=q_c$ and $Q(q_c)(\neg b)=P(\neg b)$ for every $q_c$. Suppose
+$q$ is given by the deletion case distinction: $q=P(\neg b)$ if deleting the path from
+$r$ to $s$ returns nothing, and $q=N(Q(q_c))$ if it returns $q_c$. Assume that if
+$(x,y)$ follows the path to $s$, then $c\ne b$, and that whenever deletion returns $q'$,
+if $(x,y)$ does not follow that path then $q'$ and $r$ give the same output on $(x,y)$.
+Then $q$ and $N(P)$ give the same output on $(x,y)$.
 \end{lemma}

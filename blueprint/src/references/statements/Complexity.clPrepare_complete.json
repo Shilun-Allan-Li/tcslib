@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clPrepare_complete",
+ "key": "f7bcdb64d10d8c26",
+ "kind": "lemma",
+ "title": "Completion of field preparation",
+ "statement": "Let $l,W\\in\\mathbb{N}$, let $w$ assign a Boolean word to each of the $l$ field indices, with every word having length at most $W$, and let $\\mathrm{tail}$ be any Boolean word. Form $x$ by concatenating the packed encoding of the list of fields $w$ with $\\mathrm{tail}$. There is a time $t\\le 2|x|+3+l(3W+7)$ at which the preparation machine started on $x$ has exactly the configuration whose input head is at position $1$, whose counter is at its final value, whose loader is in its entry state, whose field tapes contain their respective words, and whose stream tape contains $x$ with its head at position equal to the length of the packed fields; the output is empty.",
+ "hypotheses_covered": [
+  "A natural number $l$ of fields",
+  "A function assigning a Boolean word to each field index",
+  "Each field word has length at most $W$",
+  "A natural number $W$",
+  "An arbitrary Boolean trailer",
+  "The input is the packed fields followed by the trailer"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a row of field words of length at most $W$ and an arbitrary trailer be given, and let the native input be the packed encoding of the row followed by the trailer. Then there is a time $t \\le 2|x| + 3 + l(3W + 7)$, where $x$ is that input, after which the preparation machine holds every parsed field at head zero, retains the original encoded input on its stream tape, and sits with the cursor immediately before the trailer."
+}

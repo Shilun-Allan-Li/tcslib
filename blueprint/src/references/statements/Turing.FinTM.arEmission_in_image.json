@@ -1,0 +1,23 @@
+{
+ "lean_name": "Turing.FinTM.arEmission_in_image",
+ "key": "674cb9e560b20648",
+ "kind": "lemma",
+ "title": "Emitted symbols lie in the embedding image",
+ "statement": "Let $\\Gamma$ be a type with decidable equality, let $e:\\{0,1\\}\\hookrightarrow\\Gamma$ be an injection, and let $M$ be a finite Turing machine over $\\Gamma$. Suppose that for every binary word $x$, the machine on the letterwise $e$-image of $x$ halts within $T(|x|)$ steps with the letterwise $e$-image of $f(x)$ as output. If, after $t$ steps on the input obtained from a binary word $x$ by applying $e$ letterwise, the machine's next transition emits a symbol $a\\in\\Gamma$, then $a=e(b)$ for some $b\\in\\{0,1\\}$.",
+ "hypotheses_covered": [
+  "$\\Gamma$ has decidable equality",
+  "$e$ is an injection from bits to $\\Gamma$",
+  "$M$ is a finite Turing machine over $\\Gamma$",
+  "$f$ maps binary words to binary words",
+  "$T:\\mathbb{N}\\to\\mathbb{N}$",
+  "$M$ computes $f$ via $e$ within time $T$ on every binary word",
+  "$x$ is a binary word",
+  "$t\\in\\mathbb{N}$",
+  "$a\\in\\Gamma$",
+  "the transition after $t$ steps on the encoded input emits $a$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a Turing machine over an alphabet $\\Gamma$ and $e : \\{0,1\\}\n\\hookrightarrow \\Gamma$ a bit embedding, and suppose $M$ computes the string function\n$f : \\{0,1\\}^* \\to \\{0,1\\}^*$ via $e$ within time $T$: for every binary string $x$,\nthe run of $M$ on the letterwise $e$-image of $x$ halts within $T(\\abs{x})$ steps with\noutput the letterwise $e$-image of $f(x)$. If, in the run of $M$ on the $e$-image of\nsome binary input $x$, the transition taken from the configuration reached after $t$\nsteps emits a symbol $a \\in \\Gamma$, then $a = e(b)$ for some bit $b$."
+}

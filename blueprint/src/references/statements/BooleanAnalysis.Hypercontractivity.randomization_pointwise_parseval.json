@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.randomization_pointwise_parseval",
+ "key": "55a6c046be3caf35",
+ "kind": "theorem",
+ "title": "Pointwise randomization Parseval identity",
+ "statement": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses, let $f$ be a real-valued function on its outcome space, and fix an outcome $x$. The uniform average over $r\\in\\{0,1\\}^n$ of the square of the randomized orthogonal expansion of $f$ at $x$ equals the sum of the squares of its orthogonal components at $x$; that is, $\\mathbb E_r[(R_rf(x))^2]=\\sum_{S\\subseteq[n]} f_S(x)^2$.",
+ "hypotheses_covered": [
+  "A product of n finite probability spaces",
+  "Strictly positive atom masses",
+  "A real-valued function on the product outcome space",
+  "A fixed outcome x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$, $f:\\Omega\\to\\mathbb R$, and $x\\in\\Omega$. If $R_rf(x)=\\sum_S\\chi_S(r)f_S(x)$ and $r$ is uniform on the Boolean cube, then $\\mathbb E_r(R_rf(x))^2=\\sum_Sf_S(x)^2$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $\\chi_S(r)=\\prod_{i\\in S}(-1)^{r_i}$ for $r\\in\\{0,1\\}^n$."
+}

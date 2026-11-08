@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.eval_node_iff_of_gateClauses",
+ "key": "3d3b140485c59f2a",
+ "kind": "theorem",
+ "title": "Gate evaluation from satisfied gate clauses",
+ "statement": "Let $n$ be a natural number, let $\\alpha$ assign a truth proposition to every input or gate variable of a tree circuit on $n$ inputs, and let $u$ be a Boolean assignment to its inputs. For a gate label $b$ and a list $cs$ of child circuits, suppose all clauses associated with that gate and child list are satisfied by $\\alpha$. Suppose also that each child circuit $c$ evaluates to true under $u$ exactly when $\\alpha$ makes its gate variable true. Then the circuit with gate label $b$ and children $cs$ evaluates to true under $u$ exactly when $\\alpha$ makes its gate variable true.",
+ "hypotheses_covered": [
+  "An assignment $\\alpha$ to circuit variables",
+  "A Boolean input assignment $u$",
+  "A gate label $b$ and child list $cs$",
+  "The clauses associated with $b$ and $cs$ are satisfied by $\\alpha$",
+  "For every child $c$, its evaluation under $u$ agrees with $\\alpha$'s truth value for its gate variable"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

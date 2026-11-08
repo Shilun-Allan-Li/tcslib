@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.noiseOp_restrictLast_eq",
+ "key": "4fe2371f356a26f2",
+ "kind": "lemma",
+ "title": "Noise decomposition of a coordinate restriction",
+ "statement": "Let $n$ be a natural number, $f\\colon\\{0,1\\}^{n+1}\\to\\mathbb{R}$, $\\rho\\in\\mathbb{R}$, $b\\in\\{0,1\\}$, and $x\\in\\{0,1\\}^n$. Write $f_b(x)=f(x,b)$, $a_f(x)=\\tfrac12(f(x,0)+f(x,1))$, $d_f(x)=\\tfrac12(f(x,0)-f(x,1))$, and $\\sigma(0)=1$, $\\sigma(1)=-1$. Applying the noise operator on the first $n$ coordinates gives $(T_\\rho f_b)(x)=(T_\\rho a_f)(x)+\\sigma(b)(T_\\rho d_f)(x)$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$\\rho\\in\\mathbb{R}$",
+  "$f\\colon\\{0,1\\}^{n+1}\\to\\mathbb{R}$",
+  "$b\\in\\{0,1\\}$",
+  "$x\\in\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $T_\\rho$ denote Boolean noise with real correlation $\\rho$, whose Fourier multiplier on a set of size $k$ is $\\rho^k$. For $f:\\{0,1\\}^{n+1}\\to\\mathbb R$, put $f_b(x)=f(x,b)$, $a_f=(f_0+f_1)/2$, and $d_f=(f_0-f_1)/2$, and let $s_0=1$, $s_1=-1$. For every $x,b$ and real $\\rho$, $(T_\\rho f_b)(x)=(T_\\rho a_f)(x)+s_b(T_\\rho d_f)(x)$, where noise on the right acts on the first $n$ coordinates."
+}

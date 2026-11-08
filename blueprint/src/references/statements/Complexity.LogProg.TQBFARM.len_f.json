@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.len_f",
+ "key": "00b9e6412f8b23ec",
+ "kind": "lemma",
+ "title": "Reachability through an out-of-range length query",
+ "statement": "Let $x$ be a finite bit string, $B$ a natural number, $l,l_1,l_0$ machine labels, $st$ a seven-register state, and $c$ an abstract machine configuration. Suppose the instruction at $l$ queries whether the whole input length exceeds the pointer register, with $l_1$ the positive-answer label and $l_0$ the negative-answer label. If every register of $st$ is at most $B$, the pointer value in $st$ is at least $|x|$, and there is a run from label $l_0$ with register values given by $st$ to $c$, with the guard satisfied at every earlier step, then there is such a guarded run from label $l$ with the same register values to $c$.",
+ "hypotheses_covered": [
+  "The instruction at $l$ is a whole-input query to the input-length decider using the pointer register, with branches $l_1$ and $l_0$",
+  "Every register of $st$ is at most $B$",
+  "The pointer value in $st$ is not less than $|x|$",
+  "There is a guarded run from $(l_0,st)$ to $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a finite bit string, $B$ a natural-number register bound,\n$\\ell,\\ell_1,\\ell_0$ machine labels, $t$ a machine state, and $c$ a machine\nconfiguration. If the instruction at $\\ell$ is a whole-input query to the input-length\ndecider using the pointer register, every register of $t$ is at most $B$, the pointer\nvalue in $t$ is not less than $|x|$, and there is a guarded run from label $\\ell_0$ with\nstate $t$ to $c$, then there is such a guarded run from label $\\ell$ with state $t$ to\n$c$."
+}

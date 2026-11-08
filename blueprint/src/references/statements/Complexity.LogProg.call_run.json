@@ -1,0 +1,27 @@
+{
+ "lean_name": "Complexity.LogProg.call_run",
+ "key": "793fb9394929a43f",
+ "kind": "theorem",
+ "title": "Correctness of a decider call",
+ "statement": "Let $P$ be a register program with $m$ registers and $d$ available deciders, let $D$ be a $k_D$-work-tape Boolean Turing machine, and choose its initial state for each decider. Suppose the initial program configuration is at state $l$, where the call specification selects decider $j$, a virtual input mode, an ordered list of register arguments, and the positive- and negative-answer successor states. Let $W$ assign a Boolean word to each register. Assume each argument register contains its assigned word on a tape initialized from cell zero, each such tape head is at zero, the argument registers are pairwise distinct, and the input head is at its initial position. If the selected decider, started on the virtual input formed from the call specification and the register words, halts with exactly the single output bit $b$, blank work tapes, work-tape heads returned to zero, and all work-tape head displacements bounded in absolute value by $B$ throughout the run, then the compiled machine has a time $T$ at which it reaches the original program configuration with the input head at its initial position and the control state set to the successor selected by $b$. At every time through $T$, each original register head remains in its prescribed region (outside the argument registers it stays at its initial position; on argument registers it lies between $-1$ and the word length), and each simulated decider work-tape head remains within distance $B$ of zero.",
+ "hypotheses_covered": [
+  "P is a register program with m registers and d deciders",
+  "l₀ is a starting program state",
+  "D is a Boolean Turing machine with k_D work tapes and state set SD",
+  "q0 assigns a starting state to each decider",
+  "c0 is an initial program configuration and l is a program state",
+  "c0 is at state l",
+  "the call specification at l is cs",
+  "W assigns a Boolean word to each register",
+  "every argument register's tape in c0 stores its assigned word",
+  "every argument register's head in c0 is at zero",
+  "the call arguments contain no repetitions",
+  "the input head position in c0 is one",
+  "b is a Boolean answer and B is a natural bound",
+  "the selected decider run from q0(cs.dec) on the constructed virtual input halts with output [b], blank work tapes, all work-tape heads at zero, and every head displacement through the halting time has absolute value at most B"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

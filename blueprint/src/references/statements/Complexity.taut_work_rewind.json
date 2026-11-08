@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.taut_work_rewind",
+ "key": "e18a5019a935ce0f",
+ "kind": "lemma",
+ "title": "Work Tape Rewind",
+ "statement": "Let $q$ and $d$ be control states of the verifier. Suppose that in state $q$, for every input symbol and work-tape reading, the machine moves the work head one cell left and remains in $q$ when the scanned work cell is nonblank; when it is blank, it moves the work head one cell right and enters $d$. For every binary input $x$, every $i\\le |x|$, every binary word $u$, and every natural number $n\\le |u|$, starting in state $q$ with input head having consumed $i$ bits, work tape containing $u$, and work head at $n-1$, after exactly $n+1$ steps the machine is in state $d$ with work head at $0$, while the input head, tape contents, and output remain unchanged.",
+ "hypotheses_covered": [
+  "$q,d$ are control states",
+  "transition behavior is specified for every input symbol and work-tape reading",
+  "$x$ is a binary input",
+  "$i$ is a natural number with $i\\le |x|$",
+  "$u$ is a binary word",
+  "$n$ is a natural number with $n\\le |u|",
+  "initial work head position is $n-1$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $q$ and $d$ be control states of the non-tautology verifier such that, in state\n$q$, it silently moves the work head left with the input head fixed whenever the work\ncell is nonblank, and otherwise moves the work head right and enters $d$. Then for\nevery input $x$, index $i \\le |x|$, work word $u$, and $n \\le |u|$, starting in state\n$q$ with work head at cell $n - 1$, exactly $n + 1$ steps reach state $d$ with work\nhead at cell $0$, all other components unchanged."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.scanTM",
+ "key": "cd194265810724f3",
+ "kind": "def",
+ "title": "Two-pass scan machine",
+ "statement": "Let $\\Gamma$ be a symbol alphabet, $A$ a state type, $k$ a natural number, and $i$ one of the $k$ work tapes. Given forward and backward transition functions $\\delta_f,\\delta_b:A\\times\\Gamma\\to A\\times\\Gamma$ and an initial state $a_0$, define a machine that starts in the forward phase carrying $a_0$. On each nonblank symbol of tape $i$, the forward phase applies $\\delta_f$, writes its output symbol on that tape, moves right, and carries the new state. At a blank it moves left into the backward phase, carrying the current state. The backward phase applies $\\delta_b$ to each nonblank symbol, writes the resulting symbol, moves left, and carries the new state; at a blank it moves right into the done phase. In the done phase it stays in place. The input head does not move, and no output symbols are emitted.",
+ "hypotheses_covered": [
+  "A symbol alphabet $\\Gamma$",
+  "A state type $A$",
+  "A natural number $k$ of work tapes",
+  "A selected tape $i$ among the $k$ work tapes",
+  "Forward and backward transition functions $A\\times\\Gamma\\to A\\times\\Gamma$",
+  "An initial state $a_0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

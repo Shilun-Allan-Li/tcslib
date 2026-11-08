@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.sat_call_first_halt",
+ "key": "8a7bc53b4f4ab4ea",
+ "kind": "lemma",
+ "title": "First halt in a padded run",
+ "statement": "Let $M$ be a deterministic multi-tape Turing machine, let $x$ be a finite binary input, and let $c$ be a configuration of $M$ on $x$. If $c$ is not halted and the run from $c$ is halted after $t$ steps, then there is a time $u$ with $0<u\\le t$ such that the run is not halted at any time $v<u$, and the configuration at time $u$ equals the configuration at time $t$.",
+ "hypotheses_covered": [
+  "$k$ is a natural number of work tapes",
+  "$M$ is a multi-tape Turing machine with Boolean symbols and state set $S$",
+  "$x$ is a finite list of Boolean input symbols",
+  "$c$ is a configuration of $M$ on $x$",
+  "$t$ is a natural number",
+  "$c$ is not halted",
+  "the configuration after $t$ steps is halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a multi-tape machine, started in a live configuration, be halted after $t$\nsteps. Then there is a positive time $u \\le t$ such that the machine is not\nhalted at any earlier time, and the $u$-step run equals the $t$-step run in\nevery field: a padded halting run can be cut at its first halt without changing\nany endpoint."
+}

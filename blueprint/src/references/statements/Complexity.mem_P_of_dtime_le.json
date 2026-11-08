@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.mem_P_of_dtime_le",
+ "key": "bde6aef289c9efdd",
+ "kind": "theorem",
+ "title": "Polynomial time from a pointwise time bound",
+ "statement": "Let $L$ be a language of binary strings and let $T:\\mathbb{N}\\to\\mathbb{N}$ be a time bound such that $L\\in\\mathrm{DTIME}(T)$. If there are natural numbers $c,d$ with $T(n)\\le c(n^d+1)$ for every natural number $n$, then $L\\in\\mathsf{P}$.",
+ "hypotheses_covered": [
+  "$L$ belongs to $\\mathrm{DTIME}(T)$",
+  "$T$ is a natural-number-valued time bound",
+  "$c,d$ are natural numbers",
+  "For every $n$, $T(n)\\le c(n^d+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $L$ be a language over the binary alphabet, let $T : \\mathbb{N} \\to \\mathbb{N}$\nbe a time bound with $L \\in \\mathrm{DTIME}(T)$, and let $c$ and $d$ be natural\nnumbers such that $T(n) \\le c \\cdot (n^d + 1)$ for every $n$. Then\n$L \\in \\mathsf{P}$. (The domination is required pointwise, at every input\nlength, not merely for all sufficiently large $n$.)"
+}

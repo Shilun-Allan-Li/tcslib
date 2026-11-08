@@ -1,0 +1,25 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopHost_round",
+ "key": "e0a51455349e47a9",
+ "kind": "lemma",
+ "title": "F2 Loop Round Behavior",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, and choose a mode, an input word, words $s$, $s'$, $p$, and $w$, a Boolean acceptance value, a configuration of $F$, and a positive integer $t$. Suppose that, starting from the configuration with state $a$ and tape contents given by placing $s$ on tape $0$ and leaving the other tapes blank, the run of $B$ never visits state $a$ at any time strictly between $0$ and $t$. Suppose also that at time $t$ the run has halted with output $p$ if it is accepted, and otherwise is exactly the configuration with state $a$ and tape contents given by placing $s'$ on tape $0$ and leaving the other tapes blank. Then the loop host, started from the corresponding call configuration with the given word $w$ and fuel configuration, reaches within $3t+2|w|+5$ steps either a halted configuration whose output is $p$ in find mode and $[\\mathrm{true}]$ otherwise (in the accepted case); the next call configuration with word equal to the debit of $w$ (if the run was not accepted and the debit reports success); or a halted configuration with output $[]$ in find mode and $[\\mathrm{false}]$ otherwise (if the run was not accepted and the debit reports failure).",
+ "hypotheses_covered": [
+  "Finite Boolean Turing machines $B$ and $F",
+  "A state $a$ of $B$",
+  "A Boolean mode",
+  "A Boolean input word $x$",
+  "Words $s$, $s'$, $p$, and $w$",
+  "A Boolean acceptance value",
+  "A configuration of $F$ on input $x$",
+  "A positive integer $t$",
+  "No visit to $a$ at times $u$ with $0<u<t$ in the run from the seam configuration for $s$",
+  "At time $t$, acceptance means the machine is halted with output $p$",
+  "At time $t$, nonacceptance means the configuration is the seam configuration for $s'$",
+  "The bound $v\\le 3t+2|w|+5"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

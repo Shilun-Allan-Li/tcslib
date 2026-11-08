@@ -1,0 +1,24 @@
+{
+ "lean_name": "Complexity.LogProg.ps_row",
+ "key": "4e015033af2b03fc",
+ "kind": "lemma",
+ "title": "Matrix row scan",
+ "statement": "Let $x$ be a finite bit string, $B$ a natural number, $P$ a proposition, and $\u001bσ=(p,n,a,b,s,t,tmp,st,nx)$ a program register state. Suppose $2|x|+2\\le B$, every register of $\u001bσ$ is at most $B$, $a\\le s<n$, $p=2n+2+2an$, $b\\le n$, and $2n+2+2n^2\\le |x|$. Assume that for every $b'\\le n$, the program started at the column-check stage with row register $s$, column register $b'$, and pointer $2n+2+2sn$ terminates with all registers bounded by $B$ and has an accepting computation exactly when $P$ holds. Then the program started at the row-scan stage in state $\u001bσ$ terminates with all registers bounded by $B$ and has an accepting computation exactly when $P$ holds.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string",
+  "$B$ is a natural number",
+  "$P$ is a proposition",
+  "$2|x|+2\\le B$",
+  "all nine registers of $\\u001bσ$ are at most $B$",
+  "$a\\le s$",
+  "$s<n$",
+  "$p=2n+2+2an$",
+  "$b\\le n$",
+  "$2n+2+2n^2\\le |x|$",
+  "for every $b'\\le n$, the stated column-check configuration has the specified termination, register bound, and acceptance semantics"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a bit string, $B$ a natural number, $P$ a proposition, and $σ$ a register\nconfiguration whose nine register values are all at most $B$. Suppose $2|x|+2\\le B$, the\nrow register $a$ is at most the source register $s$, $s<n$, the input pointer is\n$2n+2+2an$, the column register $b$ is at most $n$, and $2n+2+2n^2\\le |x|$. If, for\nevery column $b'\\le n$, starting the fixed path program at its column-check stage with\nrow register $s$, column register $b'$, and input pointer $2n+2+2sn$ terminates within\nthe register bound and accepts exactly when $P$ holds, then starting at its row-scan\nstage with configuration $σ$ terminates within the register bound and accepts exactly\nwhen $P$ holds."
+}

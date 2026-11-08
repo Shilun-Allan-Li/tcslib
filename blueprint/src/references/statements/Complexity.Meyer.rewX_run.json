@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Meyer.rewX_run",
+ "key": "64c207ff1b503c0e",
+ "kind": "theorem",
+ "title": "Rewinding the First Auxiliary Tape",
+ "statement": "Let $M$ be a finite Turing machine with Boolean symbols, let $y$ be a Boolean input word, let $P$ be one of the $|y|+2$ input-head positions, and let $b$ be a Boolean vector with one coordinate for each selector bit of $M$. Let $w$ be a Boolean word, let $\\tau_1,\\tau_2:\\mathbb{Z}\\to\\mathrm{Option}(\\mathrm{Bool})$ be tape contents, and let $z_1,z_2\\in\\mathbb{Z}$. For every natural number $j\\le |w|$, after $j+1$ steps from the configuration whose state is the first-tape-rewinding state, whose three auxiliary tapes contain respectively $w$ starting at cell zero, $\\tau_1$, and $\\tau_2$, and whose auxiliary head positions are $j-1,z_1,z_2$, the machine is in the next-tape-rewinding state. The resulting tapes still contain those same contents, the input head remains at $P$, the auxiliary head positions are $0,z_1-1,z_2$, and the output is empty.",
+ "hypotheses_covered": [
+  "A finite Turing machine M with Boolean symbols",
+  "A Boolean input word y",
+  "An input-head position P among the |y|+2 positions",
+  "A Boolean vector b of length nbits(M)",
+  "A Boolean word w",
+  "Integer-indexed optional Boolean tape contents τ₁ and τ₂",
+  "Integer auxiliary head positions z₁ and z₂",
+  "A natural number j with j ≤ |w|"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

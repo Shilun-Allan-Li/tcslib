@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.universal_live_before",
+ "key": "0e9111e717050f0b",
+ "kind": "lemma",
+ "title": "Backward persistence of liveness",
+ "statement": "Let $M$ be a multi-tape Turing machine over the Boolean alphabet, let $c$ be a configuration of $M$ on a Boolean input, and let $s\\le t$ be natural numbers. If the configuration reached after $t$ steps has not halted, then the configuration reached after $s$ steps has not halted.",
+ "hypotheses_covered": [
+  "$M$ is a multi-tape Turing machine over the Boolean alphabet",
+  "$c$ is a configuration on a Boolean input",
+  "$s,t$ are natural numbers with $s\\le t$",
+  "The configuration reached after $t$ steps is not halted"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a multi-tape Turing machine, $c$ one of its configurations on some\ninput, and $s \\le t$ natural numbers.  If the configuration reached from $c$\nafter $t$ steps is not halted, then neither is the configuration reached\nafter $s$ steps: since halting is absorbing, a live later configuration\nexcludes all earlier halts."
+}

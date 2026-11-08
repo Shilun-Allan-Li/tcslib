@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.BinArith.length_le_of_mulInv",
+ "key": "2dfbaf301cf05934",
+ "kind": "theorem",
+ "title": "Length bound for multiplication witnesses",
+ "statement": "Let $z$ and $S$ be bit strings, and let $u$ and $v$ be the total first and second projections of $z$. Suppose there are bit strings $A,B,C$ such that $S$ encodes the pair $(A,\text{the pair }(B,C))$, the value of $C$ plus the product of the values of $A$ and $B$ equals the product of the values of $u$ and $v$, $C$ is the canonical bit representation of its value, and $|A|+|B|\\le |u|+|v|$. Then $|S|\\le 4(|z|+1)$, where $|\\cdot|$ denotes bit-string length and the value of a bit string is its little-endian binary value.",
+ "hypotheses_covered": [
+  "$z,S$ are bit strings",
+  "Existence of bit strings $A,B,C$ with the specified nested encoding of $S$",
+  "Value equation $\\operatorname{val}(C)+\\operatorname{val}(A)\\operatorname{val}(B)=\\operatorname{val}(u)\\operatorname{val}(v)$",
+  "$C$ is the canonical bit representation of its value",
+  "Length constraint $|A|+|B|\\le |u|+|v|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

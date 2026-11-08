@@ -138,7 +138,7 @@ basis vector supported at coordinate $y$, one then has
 \lean{OnlineLearning.finite_sublevel_intersections_by_separation}
 \label{OnlineLearning.finite_sublevel_intersections_by_separation}
 \leanok
-\uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_convex, OnlineLearning.finiteUpperImage_isOpen, OnlineLearning.minimaxSublevel, OnlineLearning.separating_coordinate_nonpos, OnlineLearning.separating_weight_sum_pos}
+\uses{OnlineLearning.ConvexCompactMinimaxHypotheses, OnlineLearning.finiteUpperImage, OnlineLearning.finiteUpperImage_convex, OnlineLearning.finiteUpperImage_isOpen, OnlineLearning.minimaxSublevel, OnlineLearning.separating_coordinate_nonpos, OnlineLearning.separating_functional_normalized_le, OnlineLearning.separating_weight_sum_pos}
 \difficulty{7}
 Let $X, Y \subseteq \bbr$ and $f : \bbr \times \bbr \to \bbr$ satisfy the convex-compact
 minimax hypotheses, and write $v = \sup_{y \in Y} \inf_{x \in X} f(x,y)$ for the lower
@@ -192,21 +192,16 @@ holds.
 %%% added by the blueprint pipeline
 \section{Additional declarations}
 
-\begin{lemma}[Normalized separator bounds the constant by the average payoff]
+\begin{lemma}[Normalized separator payoff bound]
 \lean{OnlineLearning.separating_functional_normalized_le}
 \label{OnlineLearning.separating_functional_normalized_le}
 \leanok
 \uses{OnlineLearning.continuousLinearMap_pi_apply_eq_sum_single, OnlineLearning.finiteUpperImage}
 \difficulty{5}
-Let $X, Y \subseteq \bbr$, let $f : \bbr \to \bbr \to \bbr$ be a payoff, let $u$ be a
-finite sample of columns from $Y$, and let $c \in \bbr$. Suppose $L : \bbr^u \to \bbr$
-is a continuous linear functional separating the constant vector $(c,\dots,c)$ from the
-finite upper image, i.e.\ $L(z) < L(c,\dots,c)$ for every $z \in U(X,f,u)$, and that
-the total weight $W = \sum_{y \in u} \bigl(-L(e_y)\bigr)$ is strictly positive, where
-$e_y$ is the standard basis vector at $y$. Then for every row $x \in X$,
-\[
-  c \;\le\; \sum_{y \in u} \frac{-L(e_y)}{W}\, f(x,y),
-\]
-that is, $c$ is at most the payoff of $x$ averaged under the normalized weights
-$-L(e_y)/W$.
+Let $X,Y\subseteq\mathbb{R}$, let $f:\mathbb{R}\times\mathbb{R}\to\mathbb{R}$, and let
+$u\subseteq Y$ be finite. Suppose $L:\mathbb{R}^{u}\to\mathbb{R}$ is a continuous linear
+functional such that $L(z)<L(c\mathbf{1})$ for every vector $z$ that strictly exceeds
+the payoff vector of some $x\in X$ in every coordinate of $u$. Let $W=\sum_{y\in
+u}-L(e_y)>0$, where $e_y$ is the coordinate unit vector. Then for every $x\in X$,
+$c\le\sum_{y\in u}\frac{-L(e_y)}{W}f(x,y)$.
 \end{lemma}

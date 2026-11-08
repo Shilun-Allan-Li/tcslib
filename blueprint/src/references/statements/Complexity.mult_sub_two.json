@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.mult_sub_two",
+ "key": "f59f25fd959cf287",
+ "kind": "lemma",
+ "title": "Two decrements in succession",
+ "statement": "Let $x$ be a finite bit string, let $v$ assign a natural number to each of the 13 registers, let $r$ be a register, and let $\\ell_0,\\ell_1$ be two program states, with a destination state $d$. Suppose the program instruction at $\\ell_0$ decrements register $r$ and moves to $\\ell_1$, and the instruction at $\\ell_1$ decrements register $r$ and moves to $d$. If every register initially has value at most $4(|x|+1)$, then the program can reach state $d$ from state $\\ell_0$ with register $r$ equal to its initial value truncated after subtracting two, all other registers unchanged, and the safety conditions maintained at every earlier step.",
+ "hypotheses_covered": [
+  "Finite bit string $x$",
+  "Initial register assignment $v$",
+  "Register $r$",
+  "State assignment $\\ell_0,\\ell_1$ and destination state $d$",
+  "The two specified decrement instructions",
+  "All registers bounded by $4(|x|+1)$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

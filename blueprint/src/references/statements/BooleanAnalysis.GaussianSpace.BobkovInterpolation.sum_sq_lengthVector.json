@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.sum_sq_lengthVector",
+ "key": "fa753fde1fa4b050",
+ "kind": "lemma",
+ "title": "Squared length decomposition",
+ "statement": "Let $f:\\{0,1\\}^n\\to\\mathbb R$ be a Boolean function, let $g_1,\\ldots,g_m:\\{0,1\\}^n\\to\\mathbb R$, and let $x\\in\\{0,1\\}^n$. If $V(f,g)(x)=(D_1f(x),\\ldots,D_nf(x),g_1(x),\\ldots,g_m(x))$, where $D_i$ is the coordinate half-difference, then $\\sum_{j=1}^{n+m}V(f,g)(x)_j^2=\\sum_{i=1}^n(D_if(x))^2+\\sum_{j=1}^m g_j(x)^2$.",
+ "hypotheses_covered": [
+  "$n,m$ are natural numbers",
+  "$f$ is a real-valued function on $\\{0,1\\}^n$",
+  "$g$ is a family of $m$ real-valued functions on $\\{0,1\\}^n$",
+  "$x\\in\\{0,1\\}^n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $P:\\mathbb R\\to\\mathbb R$, $f:\\{0,1\\}^n\\to\\mathbb R$, and $g=(g_1,\\ldots,g_m)$ of real functions on the cube, write $V(f,g)(x)=(D_1f(x),\\ldots,D_nf(x),g_1(x),\\ldots,g_m(x))$ and $F_P(f,g)=\\mathbb E\\sqrt{P(f)^2+\\|V(f,g)\\|_2^2}$, with $D_i$ the coordinate half-difference. For every $x$, $\\|V(f,g)(x)\\|_2^2=\\sum_i(D_i f(x))^2+\\sum_jg_j(x)^2$."
+}

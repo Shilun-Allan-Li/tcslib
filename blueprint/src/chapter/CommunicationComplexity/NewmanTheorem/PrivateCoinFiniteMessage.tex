@@ -131,35 +131,28 @@ protocol by delegating to
 \texttt{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol}.
 \end{definition}
 
-\begin{theorem}[Execution is preserved under conversion to a binary private-coin protocol]
+\begin{theorem}[Execution preserved by binary conversion]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_rrun}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_run, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.rrun, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol, CommunicationComplexity.PrivateCoin.Protocol.rrun}
 \difficulty{1}
-Let $p$ be a private-coin finite-message protocol with private-randomness spaces
-$\Omega_X$ and $\Omega_Y$, input spaces $X$ and $Y$, and output type $\alpha$, in which
-each message is an element of an arbitrary finite nonempty type. Fix inputs $x \in X$
-and $y \in Y$ together with private coins $\omega_x \in \Omega_X$ and $\omega_y \in
-\Omega_Y$. Then converting $p$ to a binary private-coin protocol leaves its randomized
-execution unchanged: running the converted protocol on $x, y$ with coins $\omega_x,
-\omega_y$ returns the same element of $\alpha$ as running $p$ itself on the same inputs
-and coins.
+Let $p$ be a public-coin finite-message protocol with shared-randomness space $\Omega$,
+input spaces $X$ and $Y$, and output type $\alpha$. For every $x\in X$, $y\in Y$, and
+pair of private coins $\omega_x\in\Omega_X$, $\omega_y\in\Omega_Y$, converting $p$ to a
+binary private-coin protocol preserves its output: the converted protocol run on
+$(x,y,\omega_x,\omega_y)$ returns the same value as $p$.
 \end{theorem}
 
-\begin{theorem}[Complexity is preserved by the binary conversion]
+\begin{theorem}[Complexity under private-coin conversion]
 \lean{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity}
 \label{CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol_complexity}
 \leanok
 \uses{CommunicationComplexity.Deterministic.FiniteMessage.Protocol.complexity, CommunicationComplexity.Deterministic.FiniteMessage.Protocol.toProtocol_complexity, CommunicationComplexity.Deterministic.Protocol.complexity, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol, CommunicationComplexity.PrivateCoin.FiniteMessage.Protocol.toProtocol}
 \difficulty{1}
 Let $p$ be a private-coin finite-message protocol with private randomness spaces
-$\Omega_X$ and $\Omega_Y$, input types $X$ and $Y$, and output type $\alpha$, in which
-each message is an element of an arbitrary finite nonempty type $\beta$ costing $\lceil
-\log_2 \abs{\beta} \rceil$ bits. Converting $p$ into the associated binary private-coin
-protocol, in which every message is encoded as a string of bits, leaves the worst-case
-communication complexity unchanged: the complexity of the converted binary protocol
-equals the complexity of $p$.
+$\Omega_X$ and $\Omega_Y$, input spaces $X$ and $Y$, and output type $\alpha$. The
+complexity of its associated binary protocol equals the complexity of $p$.
 \end{theorem}
 
 \begin{definition}[Embedding of binary private-coin protocol]

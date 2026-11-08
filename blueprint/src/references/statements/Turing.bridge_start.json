@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.bridge_start",
+ "key": "889f2bd7a5c5fc4b",
+ "kind": "lemma",
+ "title": "Startup of the bridging machine",
+ "statement": "For every program $c$ in the partial-recursive language and every Boolean word $x$, the four-work-tape bridging machine associated with $c$, started on the input obtained by embedding each bit of $x$ in the Boolean part of its alphabet, reaches after finitely many steps the configuration with input-head position $0$, empty output, and stack assignment holding the stack word of $x$ on the main stack and empty words on the other three stacks. Its control state is the execution state for the translated initial statement of $c$'s compilation, paired with its membership in the finite statement support, and the register is empty.",
+ "hypotheses_covered": [
+  "A program c in the partial-recursive language",
+  "A Boolean word x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "From its initial configuration on the embedded Boolean input $x$, the bridging\nmachine of a partial-recursive program $c$ reaches the bridge configuration at input\nposition $0$ whose main stack holds the full stack word of $x$ (other stacks empty,\nempty output), in the execution state at the translated initial statement of $c$'s\ncompilation, with empty register."
+}

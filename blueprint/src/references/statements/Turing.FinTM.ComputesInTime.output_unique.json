@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.ComputesInTime.output_unique",
+ "key": "0adf5a5642d560c0",
+ "kind": "theorem",
+ "title": "Uniqueness of the completed output",
+ "statement": "Let $M$ be a finite Turing machine over an alphabet $\\Sigma$, and let $x,w,w'$ be words over $\\Sigma$. If $M$ computes $w$ from $x$ within $t$ steps and computes $w'$ from $x$ within $t'$ steps, then $w=w'$.",
+ "hypotheses_covered": [
+  "finite Turing machine over alphabet $\\Sigma$",
+  "input and output words $x,w,w'$ over $\\Sigma$",
+  "computes $w$ from $x$ within $t$ steps",
+  "computes $w'$ from $x$ within $t'$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite Turing machine over an alphabet $\\Sigma$ and let $x$ be a\nword over $\\Sigma$.  If $M$, started on $x$, halts within $t$ steps with $w$\non its output tape and also halts within $t'$ steps with $w'$ on its output\ntape, then $w = w'$.  In other words, a machine has at most one completed\noutput on a given input."
+}

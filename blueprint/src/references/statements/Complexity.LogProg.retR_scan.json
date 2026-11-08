@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.LogProg.retR_scan",
+ "key": "49e239ebc17bf340",
+ "kind": "lemma",
+ "title": "Completing a register scan",
+ "statement": "Let $P$ be a register program with $m$ registers and $d$ deciders, let $D$ be a Boolean multi-tape Turing machine with $k_D$ work tapes, and let $x$ be a Boolean input. Suppose node $l$ has call specification $cs$, the register selected by argument position $a$ is $rr$, and register $rr$ contains the buffer tape for a Boolean word $w$. If the machine starts in the scanning return phase for this register and its head positions $rp$ satisfy $rp(rr)+1=n$ for a natural number $n\\le |w|$, then at time $n+1$ it has advanced to the return successor for argument position $a+1$, with register $rr$'s head at zero and all other register head positions unchanged. At every time $t\\le n+1$, each register head either remains at its initial position or, for register $rr$, lies between $-1$ and the maximum of its initial position and $0$; the decider tape head positions remain unchanged throughout.",
+ "hypotheses_covered": [
+  "$P,l_0,D,q_0$ are fixed; $x$ is a Boolean input",
+  "$P.call(l)=some\\ cs$",
+  "$s\\in Fin(m+1)$ and $dir,b$ are Boolean values",
+  "$a,rr\\in Fin(m)$ and $cs.args.getD(a,a)=rr$",
+  "$w$ is a Boolean word; register $rr$ contains its buffer tape",
+  "$rt,dt,dp,out,ip$ are supplied register and decider tapes, decider head positions, output, and input-head position",
+  "For every natural $n$ and register head-position function $rp$, $rp(rr)+1=n$",
+  "$n\\le |w|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

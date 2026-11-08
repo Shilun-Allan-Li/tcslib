@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.scalar_rotation_disagreement_eq_integral",
+ "key": "e4a7abb35d636abe",
+ "kind": "lemma",
+ "title": "Scalar Gaussian threshold disagreement",
+ "statement": "Let $t,\\theta\\in\\mathbb R$ with $\\cos\\theta>0$, and let $X,Y$ be independent standard Gaussian variables. The probability that exactly one of $X\\le t$ and $\\cos\\theta\\,X+\\sin\\theta\\,Y\\le t$ holds is $\\displaystyle\\int_{\\mathbb R}\\left|\\Phi\\!\\left(\\frac{t-\\sin\\theta\\,y}{\\cos\\theta}\\right)-\\Phi(t)\\right|\\,d\\gamma(y)$, where $\\gamma$ and $\\Phi$ are the standard Gaussian measure and distribution function.",
+ "hypotheses_covered": [
+  "$t,\\theta$ are real numbers",
+  "$\\cos\\theta>0$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\Phi,\\varphi$ denote the standard Gaussian distribution function and density. For $t,y\\in\\mathbb R$, define $q_{t,y}(\\theta)=\\Phi((t-\\sin\\theta\\,y)/\\cos\\theta)-\\Phi(t)$. If $\\cos\\theta>0$ and $X,Y$ are independent standard Gaussian variables, then $\\Pr(1_{(-\\infty,t]}(X)\\ne1_{(-\\infty,t]}(\\cos\\theta\\,X+\\sin\\theta\\,Y))=\\mathbb E_Y|q_{t,Y}(\\theta)|$."
+}

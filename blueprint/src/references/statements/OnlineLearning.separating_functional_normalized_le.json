@@ -1,0 +1,20 @@
+{
+ "lean_name": "OnlineLearning.separating_functional_normalized_le",
+ "key": "a062a764fa2cc689",
+ "kind": "lemma",
+ "title": "Normalized separator payoff bound",
+ "statement": "Let $X,Y\\subseteq\\mathbb{R}$, let $f:\\mathbb{R}\\times\\mathbb{R}\\to\\mathbb{R}$, and let $u\\subseteq Y$ be finite. Suppose $L:\\mathbb{R}^{u}\\to\\mathbb{R}$ is a continuous linear functional such that $L(z)<L(c\\mathbf{1})$ for every vector $z$ that strictly exceeds the payoff vector of some $x\\in X$ in every coordinate of $u$. Let $W=\\sum_{y\\in u}-L(e_y)>0$, where $e_y$ is the coordinate unit vector. Then for every $x\\in X$, $c\\le\\sum_{y\\in u}\\frac{-L(e_y)}{W}f(x,y)$.",
+ "hypotheses_covered": [
+  "$X,Y\\subseteq\\mathbb{R}$ and payoff $f$",
+  "finite set $u\\subseteq Y$",
+  "continuous linear functional $L$",
+  "$L(z)<L(c\\mathbf{1})$ for every vector in the finite upper image",
+  "$W=\\sum_{y\\in u}-L(e_y)$",
+  "$W>0$",
+  "$x\\in X$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $X, Y \\subseteq \\bbr$, let $f : \\bbr \\to \\bbr \\to \\bbr$ be a payoff, let $u$ be a\nfinite sample of columns from $Y$, and let $c \\in \\bbr$. Suppose $L : \\bbr^u \\to \\bbr$\nis a continuous linear functional separating the constant vector $(c,\\dots,c)$ from the\nfinite upper image, i.e.\\ $L(z) < L(c,\\dots,c)$ for every $z \\in U(X,f,u)$, and that\nthe total weight $W = \\sum_{y \\in u} \\bigl(-L(e_y)\\bigr)$ is strictly positive, where\n$e_y$ is the standard basis vector at $y$. Then for every row $x \\in X$,\n\\[\n  c \\;\\le\\; \\sum_{y \\in u} \\frac{-L(e_y)}{W}\\, f(x,y),\n\\]\nthat is, $c$ is at most the payoff of $x$ averaged under the normalized weights\n$-L(e_y)/W$."
+}

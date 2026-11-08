@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.tautDual_valid",
+ "key": "41f5c026c9bc5b40",
+ "kind": "lemma",
+ "title": "Run on a Well-Formed Input",
+ "statement": "Let $x$ be a binary string whose syntax scan from the formula state ends in the exact-end state. Starting in the scanning state with the formula scanner at position $1$ and empty output, the dual transducer reaches the anchor state at position $1$ with output equal to the polarity-flipping scan of $x$, after exactly $4|x|+4$ steps. At every time strictly before that, it is not in the anchor state.",
+ "hypotheses_covered": [
+  "$x$ is a binary string",
+  "Scanning $x$ from the formula state ends in the exact-end state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $x$ be a binary string on which the six-state formula syntax scan from formula\nlevel ends in the exact-end state. Started in the formula-level scanning state at head\nposition $1$ with empty output, the dual transducer reaches the anchor state at\nposition $1$ with output the polarity-flipping scan of $x$, in exactly $4|x| + 4$ steps\nand without visiting the anchor before then."
+}

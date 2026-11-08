@@ -1,0 +1,18 @@
+{
+ "lean_name": "BoolCircuit.unfoldVertex",
+ "key": "fb50cd4e9c6f9612",
+ "kind": "def",
+ "title": "Fuel-bounded vertex unfolding",
+ "statement": "Given a natural number $n$, a list of gates, a fuel bound, a vertex $v$, and a polarity $p$, unfold the vertex recursively as follows. With zero fuel, return an empty AND node. With positive fuel, if $v<n$, return the literal at variable $v$ with polarity $p$; otherwise unfold the gate at index $v-n$, using an empty AND gate if that index is outside the list, and recursively unfold its argument vertices with one less unit of fuel.",
+ "hypotheses_covered": [
+  "A natural number $n$ of input variables",
+  "A list of gates",
+  "A natural-number fuel bound",
+  "A natural-number vertex $v$",
+  "A Boolean polarity $p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.obliviousCandidate_halts",
+ "key": "99d0610eae09427e",
+ "kind": "lemma",
+ "title": "Quadratic halting bound for the candidate",
+ "statement": "Let $W$ and $M$ be finite machines over the binary alphabet, let $a,b\\in\\mathbb{N}$, and let $T:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every binary input $x$, $W$ outputs the binary expansion of $T(|x|)$ within $b(T(|x|)+1)$ steps, and that $n\\le T(n)$ for every $n$. Then, for every binary input $x$, the candidate built from $W$, $M$, and $a$ reaches a halting state by some time $t\\le\\bigl(18(a+1)^2+23(a+1)+3b+25\\bigr)(T(|x|)+1)^2$.",
+ "hypotheses_covered": [
+  "Finite binary machines $W$ and $M$",
+  "$a,b\\in\\mathbb{N}$",
+  "A time function $T:\\mathbb{N}\\to\\mathbb{N}$",
+  "For every binary input $x$, $W$ computes the binary digits of $T(|x|)$ within $b(T(|x|)+1)$ steps",
+  "For every $n$, $n\\le T(n)$",
+  "A binary input $x$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ and $M$ be machines over the Boolean alphabet, let $a, b \\in \\bbn$, and let\n$T \\colon \\bbn \\to \\bbn$ satisfy $n \\le T(n)$ for every $n$.  Suppose that on every\nBoolean input $x$ the machine $W$ halts within $b\\,(T(\\abs{x})+1)$ steps with output\nexactly the list of (little-endian) binary digits of $T(\\abs{x})$.  Then for every\nBoolean input $x$, the candidate oblivious simulator built from $W$, $M$, and $a$ ---\nthe length-only schedule decorated by the data transducer for $M$ and realized over\nthe binary alphabet by transverse binary blocks --- halts on $x$ within the same\nuniform quadratic budget: there exists a time\n\\[\n  t \\;\\le\\; \\bigl(18\\,(a+1)^2 + 23\\,(a+1) + 3b + 25\\bigr)\\,\\bigl(T(\\abs{x})+1\\bigr)^2\n\\]\nafter which its control state is the halting state.  No hypothesis on the computation\nof the source machine $M$ is needed, and the bound does not depend on $M$."
+}

@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.recordStep_transport",
+ "key": "ed52a16b3a9860dc",
+ "kind": "theorem",
+ "title": "Transport under symbol and tape embeddings",
+ "statement": "Let $R$ be a deterministic machine with $m$ Boolean work tapes and state set $S$, let $e$ embed the Boolean alphabet into an alphabet $\\Gamma$, and let $\\iota$ embed the $m$ tape indices into $K$ tape indices. Suppose $d$ is a configuration on input obtained by applying $e$ to each symbol of a Boolean word $x$, and every nonblank symbol on each embedded tape $\\iota(i)$ belongs to the image of $e$. Decode those embedded tapes using $e$, run $R$ for $t\\in\\mathbb{N}$ steps, and then lift its symbols by $e$. The resulting configuration, with the original embedded tapes and head positions retained on unused tape indices and the original output prefixed to the lifted output, is exactly the configuration reached after $t$ steps by the machine obtained from $R$ by lifting its symbols and embedding its tapes.",
+ "hypotheses_covered": [
+  "$R$ is a machine with $m$ Boolean work tapes and state set $S$",
+  "$e$ embeds Boolean symbols into $\\Gamma$ and equality on $\\Gamma$ is decidable",
+  "$\\iota$ embeds $m$ tape indices into $K$ tape indices",
+  "$x$ is a Boolean word",
+  "$d$ is a configuration on the symbolwise image of $x$",
+  "Every nonblank symbol on each embedded tape is in the image of $e$",
+  "$t\\in\\mathbb{N}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

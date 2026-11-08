@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_borrow",
+ "key": "876c0abd7f8dd758",
+ "kind": "lemma",
+ "title": "Counter borrow operation",
+ "statement": "Let $B$ and $F$ be finite Boolean Turing machines, let $a$ be a state of $B$, choose Boolean forwarding and find modes, and let $x$ be a Boolean input word. Let $C$ be a base configuration of the loop host on $x$, let $p$ be an input-head position, and let $w$ be a Boolean counter word. Write $j$ for the length of the initial string of false bits in $w$. Then $2j+2\\le 2|w|+2$, and after exactly $2j+2$ steps from controller phase $8$, with empty flag and payload tracks and counter track holding $w$ with head at zero, the host has the decremented counter word and head at zero. Its control is the next-anchor call with release true if decrement succeeds, and phase $11$ if it underflows; the input position and all other tracks retain the values prescribed by the frame.",
+ "hypotheses_covered": [
+  "$B,F$ are finite Boolean Turing machines",
+  "$a$ is a state of $B",
+  "Forwarding and find modes are Boolean",
+  "$x$ is a Boolean input word",
+  "$C$ is a base loop-host configuration on $x$",
+  "$p$ is an input-head position for $x$",
+  "$w$ is a Boolean word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $w$ be a counter word and $j$ the length of its maximal $\\mathrm{false}$ prefix.\nThen $2j + 2 \\le 2|w| + 2$, and running the loop host for exactly $2j + 2$ steps from\nits borrow phase on a frame whose counter track is the buffer tape of $w$ with head at\nzero ends with the counter track holding the decremented word, head at zero, in the\nreleased next-anchor call state on success and in the exhaustion phase on underflow."
+}

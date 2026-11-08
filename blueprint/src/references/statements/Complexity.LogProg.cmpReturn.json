@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.cmpReturn",
+ "key": "bde9ecb36b019780",
+ "kind": "lemma",
+ "title": "Comparison return run",
+ "statement": "Let $P$ be a register program with oracle, let $r$ be a register, and let $j_{RB}(b),j_{I1}(b),j_{I2}(b)$ be states for each Boolean $b$, with designated states $yes$ and $no$. Suppose that the ordinary transitions at these states perform, respectively, the specified return action, a one-cell left move, and the specified register-clearing action into $yes$ when $b$ is true and into $no$ otherwise; suppose none of these states is a call state. Let $c$ be a configuration whose register $r$ stores the word $w_r$ from cell $0$. For any $b$, input-head position $ip$, and integer $k$ with $0\\le k\\le |w_r|$, there is a time $T$ such that the run beginning in state $j_{RB}(b)$ with input-head position $ip$ and register-head position $k-1$ reaches state $yes$ if $b$ is true and $no$ otherwise, at input position $1$ and register-head position $0$. At every earlier time $t<T$, it is in some state $s$ that is not a call state, with register-head position $q$ satisfying $-1\\le q\\le |w_r|$.",
+ "hypotheses_covered": [
+  "The transition rule at each $j_{RB}(b)$",
+  "The transition rule at each $j_{I1}(b)$",
+  "The transition rule at each $j_{I2}(b)$",
+  "These states are not call states",
+  "Register $r$ stores $w_r$ from cell $0$ in $c$",
+  "The Boolean $b$ and input-head position $ip$",
+  "The integer bounds $0\\le k\\le |w_r|$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

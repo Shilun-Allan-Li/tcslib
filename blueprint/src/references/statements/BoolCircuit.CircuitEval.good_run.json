@@ -1,0 +1,20 @@
+{
+ "lean_name": "BoolCircuit.CircuitEval.good_run",
+ "key": "12cbe98f947bcade",
+ "kind": "theorem",
+ "title": "A bounded halting run produces the verdict",
+ "statement": "For either Boolean mode, and for Boolean words $c$, $x$, and $z$ satisfying $z=\text{dbl}(c)\\,\text{++}\\,[0,1]$ followed by $x$, there is a time $t\\le 12(|z|+1)^2$ at which the associated machine started on $z$ has halted and has output the singleton word containing its verdict on $z$.",
+ "hypotheses_covered": [
+  "the mode parameter is Boolean",
+  "$c$, $x$, and $z$ are Boolean words",
+  "$z$ is the bitwise doubling of $c$, then $[0,1]$, then $x$",
+  "there exists a natural time $t$ within the stated bound",
+  "the machine is run from its initial configuration on $z$",
+  "the machine is halted at time $t$",
+  "the output at time $t$ is the singleton verdict word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

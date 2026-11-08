@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.narm_decides_npspace_of_logspace",
+ "key": "d14811af7149c750",
+ "kind": "theorem",
+ "title": "Logspace Oracles Yield Polynomial Space",
+ "statement": "Let $L$ be a language of binary strings, let $\u0001$ be a nondeterministic register program with $m$ registers and access to $d$ oracle languages $A_j$, and suppose its finite set of control states has decidable equality. Assume every $A_j$ is in $\text{LOGSPACE}$. For some natural numbers $C_0,c_0$, suppose that for every input $x$ there is a length $N$ such that every choice string of length $N$ makes the program halt, and every configuration before step $N$ along such a run satisfies the program's validity conditions and has each register's binary representation (of the register value plus one) of length at most $C_0(|x|+1)^{c_0}$. Suppose also that $x\\in L$ exactly when some choice string of length $N$ makes the program answer yes. Then $L$ belongs to $\text{NPSPACE}$, the union over natural $c$ of languages decidable in nondeterministic space $n^c+1$.",
+ "hypotheses_covered": [
+  "$L$ is a language of binary strings",
+  "The program has $m$ registers and $d$ oracle languages",
+  "The finite control-state set has decidable equality",
+  "Every oracle language is in LOGSPACE",
+  "There are natural constants $C_0,c_0$",
+  "For each input, some length $N$ makes every choice string of that length halt",
+  "Every pre-final run configuration satisfies the program's validity conditions",
+  "Each register's binary representation of its value plus one has length at most $C_0(|x|+1)^{c_0}$",
+  "Membership in $L$ is equivalent to existence of a length-$N$ accepting choice string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

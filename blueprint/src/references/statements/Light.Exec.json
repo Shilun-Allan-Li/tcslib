@@ -1,0 +1,22 @@
+{
+ "lean_name": "Light.Exec",
+ "key": "6cec42a995d65e93",
+ "kind": "inductive",
+ "title": "Bounded-depth execution relation",
+ "statement": "For fixed limits and a program (a list of statements), the execution relation records that a statement, started at depth $d$ in an initial state, terminates in a final state with cost $k$. A skip leaves the state unchanged at cost zero; assignment and store require safe expressions (and a valid address for a store) and update the corresponding location or memory entry, at expression cost plus one. Sequential composition adds the two execution costs. A conditional requires a safe condition and executes the branch selected by whether the condition holds, at condition cost plus one plus the branch cost. A loop requires a safe condition and either exits immediately when the condition does not hold, at condition cost plus one, or executes its body and then the loop again when the condition holds, adding both execution costs to the condition cost plus one. A procedure call requires every argument expression to be safe, the program entry at index $p$ to be the called body, and $d < \text{depth limit}$; it executes that body at depth $d+1$ in a state whose locations are initialized from the evaluated arguments (with missing entries zero) and whose memory is unchanged, then updates location $x$ with the body's final location zero and adopts its final memory. Its cost is the sum of argument-expression costs plus two plus the body's execution cost.",
+ "hypotheses_covered": [
+  "Fixed limits and program",
+  "Execution at depth d from an initial state to a final state with cost k",
+  "Store expressions safe and store address valid",
+  "Conditional condition safe and branch selected by truth",
+  "Loop condition safe and selected exit or recursive execution",
+  "Call arguments all safe",
+  "Program entry at p equals the call body",
+  "Call depth d is strictly less than the depth limit",
+  "Call body executes at depth d + 1 in the initialized argument frame with unchanged memory"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

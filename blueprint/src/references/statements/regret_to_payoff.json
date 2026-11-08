@@ -1,6 +1,6 @@
 {
  "lean_name": "regret_to_payoff",
- "key": "063ee6a3c1baa991",
+ "key": "9847a80646714888",
  "kind": "lemma",
  "title": "Regret-to-payoff bridge for zero-sum games",
  "statement": "Consider a finite two-player zero-sum game with $M \\ge 1$ row actions and $N$ column actions and payoff matrix $A$, every entry of which satisfies $0 \\le A_{ij} \\le 1$, played over $T \\ge 1$ rounds. Suppose that in each round $t$ the row player commits to a probability distribution $p_t$ over the row actions (so $\\sum_i p_t(i) = 1$) while the column player chooses an action $j_t$, and that the cumulative loss regret is bounded by $R$:\n\\[\n  \\sum_t \\sum_i p_t(i)\\,\\bigl(1 - A_{i,j_t}\\bigr)\n  \\;-\\; \\min_i \\sum_t \\bigl(1 - A_{i,j_t}\\bigr) \\;\\le\\; R,\n\\]\nwhere the minimum runs over the row actions. Then the row player's cumulative expected payoff satisfies\n\\[\n  \\sum_t \\sum_i p_t(i)\\,A_{i,j_t}\n  \\;\\ge\\;\n  \\max_i \\sum_t A_{i,j_t} \\;-\\; R,\n\\]\nwith the maximum taken over the row actions.",

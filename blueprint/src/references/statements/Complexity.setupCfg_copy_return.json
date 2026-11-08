@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.setupCfg_copy_return",
+ "key": "dd017ef6d0d47a8c",
+ "kind": "lemma",
+ "title": "Return across the copied guide",
+ "statement": "Let $W$ be a finite Turing machine over Boolean symbols, let $a,n,j\\in\\mathbb{N}$, and let $x$ be a finite schedule-alphabet word. For any base configuration on $x$, input-head position, integers $b,u$, and budget and unary tapes, starting in copy-return phase with guide head at cell $j$ and guide tape equal to the partial guide with $n+1$ copied cells, after $j+1$ steps the machine is in budget-start phase with guide head at cell $0$ and the same guide tape; the base data, input-head position, budget tape and head, and unary tape and head are unchanged.",
+ "hypotheses_covered": [
+  "finite Boolean-alphabet machine W",
+  "natural parameters a,n,j",
+  "schedule input x and base configuration",
+  "input-head position p",
+  "integers b and u",
+  "budget and unary tapes",
+  "initial copy-return phase",
+  "initial guide-head coordinate j",
+  "partial guide with n+1 copied cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all $n, j \\in \\bbn$: from a setup configuration in the copy-return phase with guide\nhead at $j$ over the partial guide with $n+1$ copied cells, exactly $j+1$ steps reach\nthe budget-start phase with guide head at the origin (cell $0$); all tapes and all\nother heads are unchanged."
+}

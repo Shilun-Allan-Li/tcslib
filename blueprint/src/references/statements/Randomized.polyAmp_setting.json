@@ -1,0 +1,20 @@
+{
+ "lean_name": "Randomized.polyAmp_setting",
+ "key": "6d591ebaf17b3bdb",
+ "kind": "theorem",
+ "title": "Polynomial amplification setting",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, and let $c,F$ be natural numbers. Fix a Boolean parameter $os$, and suppose that on every input and every choice word, $N$ visits at most $c$ times the logarithmic space bound for the input length, and that the configuration-code width of $N$, multiplied by $c+2$, is at most $F$. For a Boolean input word $x$, suppose every computation of $N$ on $x$ halts within $T_0$ steps, and set $K=2^{F\\ell(|x|)}$. Then every computation on $x$ halts within $K$ steps, and for every output word the probability of that output after $K$ random bits equals its probability after $T_0$ random bits. The probability that a uniformly random $K$-bit choice word makes $N$ accept equals the probability that its output is the one-bit word $[\\mathrm{true}]$. Moreover, there is a natural number $N_c$ such that the amplification program halts after $N_c$ random bits and its register values, at each live step before halting, are bounded by $(c+F+6+2\\cdot4^F)(|x|+1)^{F+1}$; its probabilities of returning true and false are respectively the value obtained by applying the stated decision rule to the block count in the amplification experiment and one minus that value.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine with Boolean input symbols",
+  "$c,F$ are natural numbers",
+  "$os$ is a Boolean parameter",
+  "$N$ uses at most $c$ times the logarithmic space bound on every input and choice word",
+  "The configuration-code width of $N$ times $c+2$ is at most $F$",
+  "$x$ is a Boolean input word",
+  "Every computation on $x$ halts within $T_0$ steps"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a finite nondeterministic Turing machine, and let $c,F$ be natural numbers.\nSuppose that on every input, the total number of work-tape cells visited by any\ncomputation of $N$ is at most $c(\\lfloor\\log_2 n\\rfloor+1)$ when the input has length\n$n$, and that $\\mathrm{codeK}(N)(c+2)\\le F$. For a Boolean parameter $os$, an input word\n$x$, and a natural number $T_0$ such that every computation of $N$ on $x$ halts within\n$T_0$ steps, set $K=2^{F\\ell(|x|)}$. Then every computation on $x$ halts within $K$\nsteps, its output distribution after $K$ steps agrees with that after $T_0$ steps, and\nthe probability that a uniformly random $K$-bit string makes $N$ accept equals the\nprobability that its output is the one-bit word $[1]$. Moreover, there is a natural\nnumber $N_c$ such that the amplification program halts after $N_c$ random bits on every\nsuch string, and before halting all its registers are bounded by\n$(c+F+6+2\\cdot4^F)(|x|+1)^{F+1}$; its probabilities of returning true and false are\nrespectively $\\mathrm{runVal}(N,x,os,K,K+1,0)$ and one minus this quantity."
+}

@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.ntime_expPow_subset_NEXP",
+ "key": "533156836c92cd2e",
+ "kind": "theorem",
+ "title": "Exponential Nondeterministic Time Is in NEXP",
+ "statement": "For every natural number $c$, $\\mathrm{NTIME}(n\\mapsto 2^{n^c})\\subseteq\\mathrm{NEXP}$. Here $\\mathrm{NEXP}$ consists of languages for which there are natural numbers $C,c$ and a language $V\\in\\mathrm{P}$ such that membership of a string $x$ is equivalent to the existence of a string $u$ of length $C\\cdot 2^{(|x|+1)^c}$ with $xu\\in V$.",
+ "hypotheses_covered": [
+  "A natural-number exponent $c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every natural number $c$, the class $\\mathrm{NTIME}(2^{n^c})$ is contained in the certificate-form class $\\mathrm{NEXP}$: every language decided by some nondeterministic Turing machine within $a \\cdot 2^{n^c}$ steps admits a polynomial-time verifier with certificates of exact length $a \\cdot 2^{(n+1)^c}$."
+}

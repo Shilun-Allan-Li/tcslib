@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.GaussianSpace.BobkovInterpolation.extendedFunctional_restrictLast",
+ "key": "566975e986c5cdb0",
+ "kind": "lemma",
+ "title": "Last-coordinate splitting of the functional",
+ "statement": "Let $n,m\\ge0$, let $P:\\mathbb R\\to\\mathbb R$, and let $f,g_1,\\ldots,g_m$ be real-valued functions on $\\{0,1\\}^{n+1}$. If $f_0,f_1$ and $g_{j,0},g_{j,1}$ denote their restrictions to the last coordinate and $d_f=(f_0-f_1)/2$, then $F_P(f,(g_j)_j)$ equals $\\bigl(F_P(f_0,(d_f,g_{j,0})_j)+F_P(f_1,(d_f,g_{j,1})_j)\\bigr)/2$.",
+ "hypotheses_covered": [
+  "$n,m$ are natural numbers",
+  "$P:\\mathbb R\\to\\mathbb R$",
+  "$f$ is real-valued on $\\{0,1\\}^{n+1}$",
+  "$g$ is an $m$-tuple of real-valued functions on $\\{0,1\\}^{n+1}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For a profile $P:\\mathbb R\\to\\mathbb R$, a real function $h$ on a uniform Boolean cube, and a vector $k$ of real functions on that cube, put $V(h,k)(x)=((D_i h(x))_i,(k_j(x))_j)$ and $F_P(h,k)=\\mathbb E\\sqrt{P(h)^2+\\|V(h,k)\\|_2^2}$, where $D_i$ is the coordinate half-difference. Let $f$ be a real function and $g$ a vector of $m$ real functions on $\\{0,1\\}^{n+1}$. Put $f_b(x)=f(x,b)$, $g_b(x)=g(x,b)$, $a_f=(f_0+f_1)/2$, $d_f=(f_0-f_1)/2$, and define $a_g,d_g$ componentwise. Then $F_P(f,g)=\\bigl(F_P(f_0,(d_f,g_0))+F_P(f_1,(d_f,g_1))\\bigr)/2$, where $(d_f,g_b)$ adjoins $d_f$ to the additional coordinates."
+}

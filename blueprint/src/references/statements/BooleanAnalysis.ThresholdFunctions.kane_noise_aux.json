@@ -1,0 +1,16 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.kane_noise_aux",
+ "key": "024c9dc93f662167",
+ "kind": "lemma",
+ "title": "Block-count polylogarithmic estimate",
+ "statement": "Let $k,d\\in\\mathbb N$ and $E,\\delta\\in\\mathbb R$ satisfy $0\\le E\\le d$ and $0<\\delta\\le1/2$. Set $m=\\max\\{0,\\lfloor\\delta^{-1}\\rfloor\\}$. Then\n\\[\\frac{\\sqrt m\\,\\operatorname{rpow}\\!\\left(2^k\\log(\\max\\{m,2\\}),E\\right)}{m}\\le\\sqrt2\\,(2^k)^E(\\log2)^{-d}\\sqrt\\delta\\,\\bigl(\\log(1/\\delta)\\bigr)^d,\\]\nwhere $\\log$ is the natural logarithm and $\\operatorname{rpow}(a,b)$ denotes the real power of $a$ to exponent $b$.",
+ "hypotheses_covered": [
+  "$k,d$ are natural numbers",
+  "$0\\le E\\le d$",
+  "$0<\\delta\\le1/2$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For $k,d\\in\\mathbb N$ and real $E,\\delta$ with $0\\leq E\\leq d$ and $0<\\delta\\leq1/2$, setting $m=\\lfloor1/\\delta\\rfloor$ gives\n\\[\n\\frac{\\sqrt m\\,\\bigl(2^k\\log(\\max\\{m,2\\})\\bigr)^E}{m}\n\\leq\\sqrt2\\,(2^k)^E(\\log2)^{-d}\\sqrt\\delta\\,\\bigl(\\log(1/\\delta)\\bigr)^d,\n\\]\nwhere $\\log$ is the natural logarithm and the powers with real exponents have positive bases."
+}

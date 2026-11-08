@@ -1,0 +1,17 @@
+{
+ "lean_name": "FABL.lowDegreeJuntaNodeRandomExamples_le_linearConfidence",
+ "key": "592cd362eff91e77",
+ "kind": "theorem",
+ "title": "Node Random Example Bound",
+ "statement": "For every natural number $n$, every subset $P\\subseteq[n]$, and all natural numbers $k,b$, the node's random-example count for $P$, using failure parameter $\\delta_{k,b}$, is at most $A_k(n+1)^{\\lfloor 3k/4\\rfloor+3}(b+1)$. Define $T_0=1$, $T_{j+1}=1+2T_j$, $c_k=\\lfloor3k/4\\rfloor$, $d_k=k-c_k$, $L_k=\\lceil\\log_2 T_k\\rceil+2(c_k+1)+5$, $B_k=(c_k+1)(36\\cdot4^kL_k)+2^{d_k}(d_k+1+L_k)$, and $A_k=2^{k+1}B_k+16\\cdot4^kL_k$; the per-call failure parameter is $\\delta_{k,b}=T_k^{-1}2^{-(b+1)}$, and the node's random-example count uses the restriction sample count with failure parameter $\\delta_{k,b}/2$.",
+ "hypotheses_covered": [
+  "$n$ is a natural number",
+  "$P$ is a subset of $[n]$",
+  "$k,b$ are natural numbers",
+  "the failure parameter is the specified dyadic per-call failure parameter"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

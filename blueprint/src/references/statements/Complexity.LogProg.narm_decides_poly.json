@@ -1,0 +1,22 @@
+{
+ "lean_name": "Complexity.LogProg.narm_decides_poly",
+ "key": "e2f23d27739285df",
+ "kind": "theorem",
+ "title": "Polynomially Bounded Registers Yield Nondeterministic Logspace",
+ "statement": "Let $L$ be a language of binary strings, and let a nondeterministic register program with $m$ registers and $d$ oracle languages have a finite control-state set with decidable equality. Suppose every oracle language belongs to $\text{LOGSPACE}$. For some natural numbers $C_0,c_0$, assume that for every input $x$ there is a length $N$ such that every choice string of length $N$ makes the program halt, and each configuration before step $N$ along such a run satisfies the program's validity conditions and has every register value at most $C_0(|x|+1)^{c_0}$. Assume further that $x\\in L$ exactly when some length-$N$ choice string makes the program answer yes. Then $L$ belongs to $\text{NL}$, the class of languages decidable in nondeterministic logarithmic space.",
+ "hypotheses_covered": [
+  "$L$ is a language of binary strings",
+  "The program has $m$ registers and $d$ oracle languages",
+  "The finite control-state set has decidable equality",
+  "Every oracle language is in LOGSPACE",
+  "There are natural constants $C_0,c_0$",
+  "For each input, some length $N$ makes every choice string of that length halt",
+  "Every pre-final run configuration satisfies the program's validity conditions",
+  "Every register value is at most $C_0(|x|+1)^{c_0}$",
+  "Membership in $L$ is equivalent to existence of a length-$N$ accepting choice string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

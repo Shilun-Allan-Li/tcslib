@@ -1,0 +1,19 @@
+{
+ "lean_name": "Turing.FinTM.f2_loopReady",
+ "key": "c2acf12bc8e152cc",
+ "kind": "def",
+ "title": "Ready configuration for the F2 loop",
+ "statement": "Let $body$ and $F$ be finite Turing machines over the Boolean alphabet, let $x$ be a Boolean input string, and let $c$ be a configuration of $F$ on input $x$. The ready configuration is obtained by capturing the fuel of $c$ and applying the loop-frame construction with initial host state in the $body$ branch, body state $body.tm.q₀$, Boolean flag true, fuel parameter $1$, the specified buffer tapes for the empty string, the output of $c$, and the empty string, head-position parameters $0,0$, and empty output; it has $body.k+1+(1+F.k)+1$ work tapes and state set $F.State\\oplus((Bool\\times(body.State\\times Bool))\\oplus Fin(14))$.",
+ "hypotheses_covered": [
+  "$body$ is a finite Turing machine over Booleans",
+  "$F$ is a finite Turing machine over Booleans",
+  "$x$ is a Boolean input string",
+  "$c$ is a configuration of $F$ on input $x$"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include definitions of the fuel-capture, buffer-tape, or loop-frame constructions, so their precise mathematical meaning cannot be stated from the provided information.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

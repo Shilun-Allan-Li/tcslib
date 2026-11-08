@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.satChain_cursor",
+ "key": "40f700a1a65ebee9",
+ "kind": "lemma",
+ "title": "Monotonicity of the chain cursor",
+ "statement": "For every Boolean literal $h$, every finite list $R$ of Boolean literals, and every natural number $n$, the cursor returned by the clause-splitting chain starting at $h$, with remainder $R$ and cursor $n$, is at least $n$.",
+ "hypotheses_covered": [
+  "Boolean literal $h$",
+  "finite remainder list $R$",
+  "natural-number starting cursor $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every head literal, remaining clause, and starting cursor $n$, the cursor\nreturned by the chain construction is at least $n$: the fresh-variable allocator\nnever moves backwards."
+}

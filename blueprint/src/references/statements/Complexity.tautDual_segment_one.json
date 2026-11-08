@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.tautDual_segment_one",
+ "key": "72794fbfe494a8be",
+ "kind": "lemma",
+ "title": "Single-Step Anchor-Free Segment",
+ "statement": "Let $x$ be a binary input and let $c,d$ be configurations of the dual transducer on $x$. If one step from $c$ reaches $d$ and $c$ is not in the anchor state, then the run from $c$ reaches $d$ after one step and does not visit the anchor state at any time strictly before then; hence it is an anchor-free segment of length $1$.",
+ "hypotheses_covered": [
+  "$c$ and $d$ are configurations of the dual transducer on a common binary input",
+  "One step from $c$ reaches $d$",
+  "$c$ is not in the anchor state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ and $d$ be configurations of the dual transducer such that one step takes $c$\nto $d$ and $c$ is not in the anchor state. Then one step from $c$ reaches $d$ with no\nanchor visit before it, i.e.\\ $c$ to $d$ is an anchor-free segment of length $1$."
+}

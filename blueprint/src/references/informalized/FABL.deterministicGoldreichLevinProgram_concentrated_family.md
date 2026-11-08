@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: ../FABL/FABL/Chapter06/LearningAndTesting/DeterministicGoldreichLevin.lean :: FABL.deterministicGoldreichLevinProgram_concentrated_family -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Concentration of the output family
+
+**Claim.** For the deterministic Goldreich–Levin program, the family recorded by its active output is nonempty, has size at most the active cap, and captures all but at most half the input accuracy of the target’s Fourier weight.
+
+**Proof.** The program’s correctness theorem supplies an output family and shows that the program ends with this family active, that it contains every frequency whose coefficient reaches the algorithm’s threshold, and that its size is at most the active cap (\(`deterministicGoldreichLevinProgram_isCorrectOutput`\)). To show that this family captures enough Fourier weight, begin with the family of largest Fourier coefficients selected to concentrate all but one quarter of the accuracy. Its concentration follows from the concentration property of the $\ell^1$-concentrating family (\(`isFourierSpectrumConcentratedOn_l1ConcentratingFourierFamily`\)); positivity of the accuracy parameter ensures the stated tolerance is positive (\(`positiveLearningParameter_toReal_mem_Ioc`\)). The size bound for that initial family is at most the input’s family-size bound, by the cardinality theorem for $\ell^1$-concentrating families (\(`card_l1ConcentratingFourierFamily_le_familySizeBound`\)). The output family contains every coefficient at least the Kushilevitz–Mansour threshold, so the completeness principle for Goldreich–Levin upgrades the initial one-quarter concentration to concentration outside the output family at most one half the accuracy (\(`isFourierSpectrumConcentratedOn_of_goldreichLevin_complete`\)). Finally, any finite family with this concentration property is nonempty (\(`finiteFamily_nonempty_of_spectrum_concentrated`\)). Together with the active-output and size conclusions from correctness, this gives all the required properties.
+
+**Key facts.** `FABL.deterministicGoldreichLevinProgram_isCorrectOutput`, `FABL.positiveLearningParameter_toReal_mem_Ioc`, `FABL.isFourierSpectrumConcentratedOn_l1ConcentratingFourierFamily`, `FABL.card_l1ConcentratingFourierFamily_le_familySizeBound`, `FABL.isFourierSpectrumConcentratedOn_of_goldreichLevin_complete`, `FABL.finiteFamily_nonempty_of_spectrum_concentrated`.

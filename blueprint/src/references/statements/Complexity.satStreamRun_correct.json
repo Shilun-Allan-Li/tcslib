@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.satStreamRun_correct",
+ "key": "2150db366b666b5f",
+ "kind": "lemma",
+ "title": "Streaming schedule computes the reduction",
+ "statement": "For every finite bit string $x$, the output emitted by running $|x|+1$ streaming rounds from the startup state determined by $x$ is exactly the string-level SAT-to-3SAT reduction applied to $x$.",
+ "hypotheses_covered": [
+  "$x$ is a finite bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every binary string $x$, running $|x| + 1$ streaming rounds from the startup\nseam state of $x$ emits exactly the image of $x$ under the string-level\nSAT-to-3SAT reduction. This is an exact output identity on every string, prior to\nany machine-computability claim."
+}

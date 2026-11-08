@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.mem_P_of_atoms",
+ "key": "183047659c78dc60",
+ "kind": "theorem",
+ "title": "Polynomial-time closure under finite Boolean combinations",
+ "statement": "Let $I$ be a finite index set, let $b_i$ be a Boolean-valued function on finite binary strings for each $i\\in I$, and suppose the language of strings $z$ with $b_i(z)=1$ belongs to $\\mathsf{P}$ for every $i$. For any Boolean function $F$ on assignments of bits to $I$, the language of strings $z$ for which $F((b_i(z))_{i\\in I})=1$ belongs to $\\mathsf{P}$.",
+ "hypotheses_covered": [
+  "$I$ is a finite index set",
+  "Each $b_i$ maps binary strings to bits",
+  "For every $i$, the language recognized by $b_i$ belongs to $\\mathsf{P}$",
+  "$F$ maps bit assignments on $I$ to a bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $\\iota$ be a finite index set and, for each $i \\in \\iota$, let $b_i : \\{0,1\\}^* \\to \\{0,1\\}$ be a Boolean test on bit strings such that the language $\\{z : b_i(z) = 1\\}$ belongs to $\\mathsf{P}$, the class of languages decidable by a deterministic Turing machine in polynomial time. Then for every Boolean function $F : \\{0,1\\}^{\\iota} \\to \\{0,1\\}$, the language\n\\[ \\{\\, z \\in \\{0,1\\}^* : F\\big((b_i(z))_{i \\in \\iota}\\big) = 1 \\,\\} \\]\nalso belongs to $\\mathsf{P}$."
+}

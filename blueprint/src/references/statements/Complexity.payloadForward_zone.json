@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.payloadForward_zone",
+ "key": "27fb3c08b6613cb0",
+ "kind": "lemma",
+ "title": "Full forward sweep",
+ "statement": "Let $I$ be an index type, let $f:\\mathbb Z\\to I\\to\\mathrm{OblPayload}$ be a payload family, let $z\\in\\mathbb Z$, and let $n\\in\\mathbb N$. Folding the forward row transducer over the uncached zone of length $n$ starting at $z$, with initial register $f(z-1)$, yields register $f(z+n-1)$ and the cached zone of length $n$ starting at $z$.",
+ "hypotheses_covered": [
+  "A payload family $f:\\mathbb Z\\to I\\to\\mathrm{OblPayload}$",
+  "An integer starting coordinate $z$",
+  "A natural-number length $n$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every payload family, coordinate $z$, and length $n$, folding the forward\ntransducer with initial register the payloads at $z - 1$ over the uncached zone of $n$\nrows starting at $z$ ends with register the payloads at $z + n - 1$ and produces the\ncached zone of the same $n$ rows; all left-neighbor caches are installed."
+}

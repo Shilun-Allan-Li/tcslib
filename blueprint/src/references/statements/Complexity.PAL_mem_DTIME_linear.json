@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.PAL_mem_DTIME_linear",
+ "key": "45b7e6f4af37fe22",
+ "kind": "theorem",
+ "title": "Linear-Time Decidability of Palindromes",
+ "statement": "The language of binary words equal to their reversals is decidable in time $c(n+1)$ for some constant $c\\in\\mathbb{N}$: there is a finite deterministic multi-tape Turing machine that, on every binary input of length $n$, halts within that many steps and outputs $1$ exactly for palindromes and $0$ otherwise.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "The language of binary palindromes — the set of words $x \\in \\{0,1\\}^*$ with\n$x^{R} = x$ — lies in $\\mathrm{DTIME}(n+1)$: there exist a constant $c$ and a\nmulti-tape Turing machine over the binary alphabet that, on every input of length\n$n$, halts within $c\\,(n+1)$ steps and outputs true exactly when the input is a\npalindrome, and false otherwise."
+}

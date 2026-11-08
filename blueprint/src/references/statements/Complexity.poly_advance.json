@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.poly_advance",
+ "key": "76d2446917114281",
+ "kind": "lemma",
+ "title": "Advancing a loop head",
+ "statement": "Let $c,C,q\\in\\mathbb{N}$, let $x$ be a bit string, let $h:\\{0,\\ldots,c\\}\\to\\mathbb{Z}$ be a head-position function, let $o$ be an output word, and let $i\\in\\{0,\\ldots,c\\}$. One step of the unary box-enumeration machine from the configuration on input $x$ in state $\\mathrm{advance}_i$, with tape contents $1^q$ and head positions $h$, reaches the configuration in state $\\mathrm{loop}_i$ with the same tape contents and output, and with head positions equal to $h$ except that head $i$ is at $h(i)+1$.",
+ "hypotheses_covered": [
+  "$c,C,q$ are natural numbers",
+  "$x$ is a bit string",
+  "$h$ assigns integer head positions to indices $0,\\ldots,c$",
+  "$o$ is an output word",
+  "$i\\le c$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c, C, q \\in \\mathbb{N}$, $x$ a bit string, $h \\colon \\{0,\\dots,c\\} \\to \\mathbb{Z}$, $o$ an output word and $i \\in \\{0,\\dots,c\\}$. One step of $\\mathcal{P}_{c,C}$ from $\\Gamma_q(\\mathrm{advance}_i, h, o)$ yields $\\Gamma_q(\\mathrm{loop}_i, h[i \\mapsto h(i)+1], o)$; here $\\mathcal{P}_{c,C}$ is the unary box-enumeration machine with $c+1$ work tapes, which writes $1^{|x|+1}$ on every work tape and then runs $c+1$ nested unary loops, emitting $C$ ones per innermost iteration, and $\\mathrm{loop}_i$, $\\mathrm{rewind}_i$, $\\mathrm{advance}_i$, $\\mathrm{emit}_j$ are its control states, $\\Gamma_q(s,h,o)$ denotes its configuration on input $x$ in control state $s$, with the input head on the blank cell right of the input, every work tape holding $1^q$ in cells $0,\\dots,q-1$ and blanks elsewhere, work head $k$ at position $h(k)$, and output $o$, and $h[i \\mapsto v]$ is $h$ with its $i$-th entry replaced by $v$."
+}

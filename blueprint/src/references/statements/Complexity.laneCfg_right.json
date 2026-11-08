@@ -1,0 +1,12 @@
+{
+ "lean_name": "Complexity.laneCfg_right",
+ "key": "0906662f9ec06de6",
+ "kind": "lemma",
+ "title": "Rightward update of a lane configuration",
+ "statement": "Let a base configuration, work tape, optional state $q$, state $q'$, integer $z$, lists $l,r$, and optional symbols $a,b$ be given. Applying the action that writes $b$ on the designated tape, moves its head right, and enters state $q'$ to the lane configuration with frontier $z$, left list $l$, and right list $a::r$ gives the lane configuration with state $q'$, frontier $z+1$, left list $b::l$, and right list $r$.",
+ "hypotheses_covered": [],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a single-lane configuration be given whose unprocessed list begins with an entry\n$s$.  Applying the single-lane action that writes an entry $s'$ on the lane, moves\nright, and enters a state $q$ yields again a single-lane configuration: the state\nbecomes $q$, the coordinate advances by one, $s'$ is pushed onto the processed list,\n$s$ is removed from the unprocessed list, and all other tapes and heads are unchanged."
+}

@@ -1,0 +1,17 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.fourierWeightUpTo_of_rep_zero",
+ "key": "ab9f9dbbc7771683",
+ "kind": "lemma",
+ "title": "Fourier weight of a zero polynomial threshold",
+ "statement": "Let $n,k\\in\\mathbb N$, let $f:\\{0,1\\}^n\\to\\mathbb R$, and suppose $f$ is the threshold function represented by the identically zero multilinear polynomial, with threshold sign equal to $1$ at zero. Then the Fourier weight of $f$ on levels at most $k$ is $1$.",
+ "hypotheses_covered": [
+  "$n\\in\\mathbb N$",
+  "$k\\in\\mathbb N$",
+  "$f:\\{0,1\\}^n\\to\\mathbb R$",
+  "$f$ is represented by the zero polynomial threshold"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $n,k\\in\\mathbb N$, and let $f:\\{0,1\\}^n\\to\\mathbb R$ satisfy $f(x)=\\operatorname{sgn}(0)=1$ for every $x$, with the convention $\\operatorname{sgn}(t)=1$ for $t\\ge0$ and $-1$ for $t<0$.\nFor $S\\subseteq\\{1,\\ldots,n\\}$ define $\\chi_S(x)=(-1)^{\\sum_{i\\in S}x_i}$ and $\\widehat f(S)=\\mathbb E_x[f(x)\\chi_S(x)]$ using uniform expectation; then\n\\[\n \\sum_{|S|\\le k}\\widehat f(S)^2=1.\n\\]"
+}

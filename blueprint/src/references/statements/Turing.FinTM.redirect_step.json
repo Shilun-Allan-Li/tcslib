@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.redirect_step",
+ "key": "f1f513fd9f8eeed8",
+ "kind": "lemma",
+ "title": "One-step correspondence for the redirected machine",
+ "statement": "Let $M$ be a finite-state Turing machine over the Boolean alphabet, let $b$ be a bit, let $x$ be an input, and let $c$ be a configuration of $M$ on $x$. Applying one step of the machine that redirects halting computations whose last output bit is not $b$ to a loop state, starting from the redirected image of $c$, gives the redirected image of the configuration obtained by one step of $M$ from $c$.",
+ "hypotheses_covered": [
+  "A finite-state Turing machine $M$ over the Boolean alphabet",
+  "A bit $b$",
+  "An input $x$",
+  "A configuration $c$ of $M$ on $x"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a finite-state Turing machine over the Boolean alphabet and $b$ a bit, and\nconsider the halt-redirected machine of $M$ and $b$, which simulates $M$ silently while\nrecording the last bit $M$ has emitted, halts when $M$ halts with that bit equal to $b$,\nand otherwise enters an idle loop state. For a configuration $c$ of $M$ on an input $x$,\nlet its redirected image carry the tapes and heads of $c$, empty output, and the state\n$(q, \\rho)$ when $c$ is in state $q$ and $\\rho$ is the last bit of its output (empty if\nnone), or, when $c$ is halted, the halting state if $\\rho = b$ and the loop state\notherwise. Then for every such $c$, halted or not, one step of the halt-redirected\nmachine from the redirected image of $c$ gives the redirected image of one step of $M$\nfrom $c$."
+}

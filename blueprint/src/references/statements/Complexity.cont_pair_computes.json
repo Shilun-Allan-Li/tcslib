@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.cont_pair_computes",
+ "key": "23f20376eac0d2da",
+ "kind": "lemma",
+ "title": "Computation of the encoded pair predicate",
+ "statement": "For every finite nondeterministic Turing machine $N$ over the Boolean alphabet and all Boolean words $x$ and $u$, the pair-loader machine of $N$, started on the self-delimiting encoding of $(x,u)$ from its initial configuration, halts with output the one-bit word whose bit is $1$ exactly when the run of $N$ on $x$ under choice word $u$ halts with output $[1]$. It does so in exactly three times one more than the length of the encoded pair.",
+ "hypotheses_covered": [
+  "$N$ is a finite nondeterministic Turing machine over the Boolean alphabet",
+  "$x$ and $u$ are Boolean words"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $N$ be a nondeterministic Turing machine over the binary alphabet and let $x$ and $u$ be binary strings. On the self-delimiting encoding of the pair $(x,u)$, the pair-loader machine of $N$ halts from blank tapes within $3(\\ell + 1)$ steps, where $\\ell$ is the length of the encoded pair, and outputs the single bit recording whether the run of $N$ on $x$ under choice word $u$ has halted with output the one-bit string $1$."
+}

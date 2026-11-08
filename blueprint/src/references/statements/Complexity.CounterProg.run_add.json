@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.CounterProg.run_add",
+ "key": "fe2f5e5b1de7fd09",
+ "kind": "theorem",
+ "title": "Composition of Counter-Program Runs",
+ "statement": "Let $R\\in\\mathbb{N}$, let $\\Lambda$ be a set of labels, let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, and fix an input bit string $x$. For every abstract state $s$ and $a,b\\in\\mathbb{N}$, running for $a+b$ steps from $s$ gives the same state as running for $a$ steps and then for $b$ further steps.",
+ "hypotheses_covered": [
+  "$R\\in\\mathbb{N}$ and $\\Lambda$ is a set of labels.",
+  "$P$ is a counter program over $R$ registers and labels in $\\Lambda$.",
+  "An input bit string $x$ is fixed.",
+  "An abstract state $s$ is specified.",
+  "$a,b\\in\\mathbb{N}$."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a counter program over $R$ registers with labels in $\\Lambda$, $x$ an input bit\nstring and $s$ an abstract state. For all $a, b \\in \\mathbb{N}$, running $a + b$ steps from $s$\nis the same as running $a$ steps and then $b$ further steps:\n$\\mathrm{run}_{P,x}(s, a + b) = \\mathrm{run}_{P,x}(\\mathrm{run}_{P,x}(s, a), b)$."
+}

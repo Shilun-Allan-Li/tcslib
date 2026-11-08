@@ -1,0 +1,12 @@
+<!-- generated-by: proofmatch informalization (uncited) -->
+<!-- lean-source: TCSlib/Complexity/ClassPSPACE/TQBFARM/Leaf.lean :: Complexity.LogProg.TQBFARM.formula_run -->
+<!-- origin: no source citation; informalized directly from the Lean proof -->
+<!-- model: gpt-6-luna; confidence: high -->
+
+# Evaluation of a Serialized CNF Matrix
+
+**Claim.** Starting at the matrix instruction with the serialization of a CNF formula at the input pointer, the machine reaches the return instruction with the formula’s truth value under the assignment determined by $K$ and $S$, and with the pointer cleared. The run obeys the guard and register bound throughout.
+
+**Proof.** We induct on the list of clauses in $\varphi$. If there are no clauses, the serialized formula begins with the terminating false bit. The machine reads that bit at the matrix instruction and returns true, which is the value of the empty conjunction; the register state is otherwise unchanged, as required. For a nonempty formula $Cl :: \varphi$, its serialization begins with a true clause marker, followed by the encoding of $Cl$ and its false terminator, then the serialization of $\varphi$. The machine reads the marker and enters the clause instruction. The clause evaluation run (\texttt{clause_run}) scans the encoded literals and terminator, computes whether the clause is satisfied under the assignment, and leaves the pointer at the next formula marker. The input-drop identities (\texttt{drop_succ_of_drop} and \texttt{drop_add_of_drop}) establish this remaining suffix, while the length bound for a nonempty dropped prefix (\texttt{le_of_drop}) supplies the pointer bound needed along the way. If the clause is false, the machine returns false, matching the conjunction’s value. If it is true, the induction hypothesis evaluates the remaining formula from the updated pointer; composing the clause run with that run gives the desired result, and the final equality identifies its endpoint with the stated register state. At each initial read, transition, and composed run, the cited run lemmas preserve the guard and register bounds.
+
+**Key facts.** `Complexity.LogProg.TQBFARM.read_f`, `Complexity.LogProg.TQBFARM.step_of`, `Complexity.LogProg.TQBFARM.clause_run`, `Complexity.drop_succ_of_drop`, `Complexity.LogProg.AReach.trans`, `Complexity.drop_add_of_drop`, `Complexity.LogProg.reach_of_eq`, `Complexity.le_of_drop`, `Complexity.LogProg.TQBFARM.fin_of`.

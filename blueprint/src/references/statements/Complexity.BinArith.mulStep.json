@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.BinArith.mulStep",
+ "key": "7f2ef4c2452a1fad",
+ "kind": "def",
+ "title": "Multiplication step",
+ "statement": "For a list state $S$, write its nested pair decomposition as $(A,(B,C))$. If $B$ is empty, the step returns $S$; otherwise it returns the encoding of $(\text{false} :: A,(\text{drop}_1(B),R))$, where $R$ is the binary sum of the encoding of $(C,A)$ when the first bit of $B$ is true, and is $C$ when that bit is false. An empty $B$ has default first bit false.",
+ "hypotheses_covered": [
+  "Input state is a list of Booleans"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement omits the definitions of the pair encoding, its defaulted projections, and binary addition, so their exact conventions cannot be stated more precisely.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

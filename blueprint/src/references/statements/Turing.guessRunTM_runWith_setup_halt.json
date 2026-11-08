@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.guessRunTM_runWith_setup_halt",
+ "key": "32c821e4f006a3ab",
+ "kind": "theorem",
+ "title": "Halting during the setup phase",
+ "statement": "Let $P$ be a deterministic machine with $k$ Boolean work tapes, and let $Q$ be another such machine. Choose a state $p_{\\mathrm{exit}}$ of $P$, a work tape index $j$, and states $q_{\\mathrm{entry}},q_{\\mathrm{acc}},q_{\\mathrm{rej}}$ of $Q$. If $P$ is halted after $T_P$ steps on Boolean input $z$, and has not visited $p_{\\mathrm{exit}}$ at any earlier time, then for every Boolean word $w$ of length at least $T_P$, running the guess-and-run machine on $w$ from its initial configuration gives exactly the configuration reached by $P$ after $T_P$ steps, with its state placed in the pre-phase of the combined machine.",
+ "hypotheses_covered": [
+  "$P,Q$ are deterministic machines with $k$ Boolean work tapes",
+  "$p_{\\mathrm{exit}}$ is a state of $P",
+  "$j$ is a work tape index",
+  "$q_{\\mathrm{entry}},q_{\\mathrm{acc}},q_{\\mathrm{rej}}$ are states of $Q$",
+  "$z$ is a Boolean input and $T_P$ is a natural number",
+  "The configuration reached by $P$ after $T_P$ steps is halted",
+  "No earlier time $u<T_P$ has state $p_{\\mathrm{exit}}$",
+  "$w$ is a Boolean word of length at least $T_P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

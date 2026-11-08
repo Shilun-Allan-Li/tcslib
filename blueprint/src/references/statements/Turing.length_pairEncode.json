@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.length_pairEncode",
+ "key": "7d98adfafca59e3b",
+ "kind": "theorem",
+ "title": "Length of a paired bit-string encoding",
+ "statement": "For any bit strings $x$ and $y$, encode them by writing every bit of $x$ twice, then the separator $01$, then $y$. The resulting string has length $2|x|+2+|y|$.",
+ "hypotheses_covered": [
+  "$x$ is a bit string",
+  "$y$ is a bit string"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all bit strings $x$ and $y$, the pair encoding $\\langle x, y\\rangle$\n(each bit of $x$ written twice, then the separator bits $0$ then $1$, then\n$y$ verbatim) has length\n$\\abs{\\langle x, y\\rangle} = 2\\abs{x} + 2 + \\abs{y}$."
+}

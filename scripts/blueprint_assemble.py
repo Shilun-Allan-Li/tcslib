@@ -13,11 +13,14 @@ Usage:
 
 import argparse
 import re
+import sys
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parent.parent
 CHAPTER_DIR = BASE / "blueprint" / "src" / "chapter"
 MAIN_TEX = CHAPTER_DIR / "main.tex"
+sys.path.insert(0, str(BASE))
+from scripts import dataset_projects as dp
 MARKER = "% --- auto-added by blueprint_assemble.py ---"
 
 INPUT_RE = re.compile(r"\\input\{chapter/([^}]+)\}")
@@ -27,11 +30,20 @@ def existing_inputs(text: str) -> set[str]:
     return {m.group(1) for m in INPUT_RE.finditer(text)}
 
 
+def dataset_only(rel: str) -> bool:
+    """External projects supply dataset metadata, never TCSlib website chapters."""
+    return rel.split("/", 1)[0] in (set(dp.projects()) - {"TCSlib"})
+
+
+def published_inputs(text: str) -> str:
+    return INPUT_RE.sub(lambda m: "" if dataset_only(m.group(1)) else m.group(0), text)
+
+
 def all_chapter_files() -> list[str]:
     rels = []
     for tex in CHAPTER_DIR.rglob("*.tex"):
         rel = tex.relative_to(CHAPTER_DIR).as_posix()
-        if rel == "main.tex":
+        if rel == "main.tex" or dataset_only(rel):
             continue
         rels.append(rel)
     return sorted(rels)
@@ -43,6 +55,13 @@ def main():
     args = ap.parse_args()
 
     text = MAIN_TEX.read_text(encoding="utf-8") if MAIN_TEX.exists() else ""
+    excluded = sorted(rel for rel in existing_inputs(text) if dataset_only(rel))
+    if excluded:
+        print(f"Removing {len(excluded)} dataset-only external chapter input(s) from the published blueprint.")
+        if args.check:
+            return 1
+        text = published_inputs(text)
+        MAIN_TEX.write_text(text, encoding="utf-8")
     have = existing_inputs(text)
     missing = [rel for rel in all_chapter_files() if rel not in have]
 

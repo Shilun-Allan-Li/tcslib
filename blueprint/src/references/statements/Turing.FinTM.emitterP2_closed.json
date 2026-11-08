@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.emitterP2_closed",
+ "key": "88c79dd5d666747c",
+ "kind": "lemma",
+ "title": "Computing a width-parametric split",
+ "statement": "Let $f:\\mathbb N\\to\\mathbb N$, and let $E$ be a finite Turing machine over the Boolean alphabet with time bound $T_E:\\mathbb N\\to\\mathbb N$. Suppose $T_E$ is monotone and, on every Boolean word $s$, $E$ halts within $T_E(|s|)$ steps with output the binary representation of $f(|s|)$. Then there are a finite Boolean-alphabet Turing machine $M$ and a natural number $c$ such that, on every Boolean word $w$, $M$ halts within $c(|w|+1)(T_E(|w|+1)+|w|+2)$ steps and outputs the pair encoding of the prefix and suffix of $w$ cut at the least $i\\le |w|$ satisfying $i+f(i)=|w|$; if no such $i$ exists, it outputs the empty word.",
+ "hypotheses_covered": [
+  "f is a function from natural numbers to natural numbers",
+  "E is a finite Turing machine over the Boolean alphabet",
+  "TE is a natural-number-valued time bound",
+  "TE is monotone",
+  "E computes the binary representation of f(input length) within TE(input length) on every input"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let a machine $E$ compute the binary representation of $f$ applied to the\ninput length within a monotone time bound $T_E$. Then there exist a machine\n$M$ and a constant $c$ computing, within\n$c\\,(n+1)(T_E(n+1) + n + 2)$ steps, the function sending $w$ to the pair\nencoding of the split of $w$ at the least $i$ with $i + f(i) = \\abs{w}$,\nand to the empty word when no such $i$ exists."
+}

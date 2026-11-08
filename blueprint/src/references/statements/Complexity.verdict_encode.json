@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.verdict_encode",
+ "key": "854a82e579cd541f",
+ "kind": "lemma",
+ "title": "Circuit evaluation from its encoding",
+ "statement": "Let $C$ be a Boolean directed acyclic circuit with $m$ input vertices, with distinct arguments at each gate, exactly one argument at every NOT gate, and at most two arguments at every gate. For every bit string $x$ of length $m$, the circuit evaluator applied to the encoding of $C$ paired with $x$ returns the same Boolean value as evaluating $C$ on the input assignment that gives input $i$ the bit at position $i$ of $x$ (using $0$ when that position is absent).",
+ "hypotheses_covered": [
+  "m is a natural number",
+  "C is a DAG circuit with m inputs",
+  "C is well formed: each gate's argument list has no duplicates and each NOT gate has exactly one argument",
+  "every gate has at most two arguments",
+  "x is a bit string",
+  "|x| = m"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

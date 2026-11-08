@@ -83,6 +83,11 @@ individually restricted functions $f_1|_\rho, \dots, f_k|_\rho$.
 
 \begin{theorem}[One-step depth-3 compression under a random restriction]
 \lean{LMN.depth3_compression}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
@@ -94,6 +99,1171 @@ individually restricted functions $f_1|_\rho, \dots, f_k|_\rho$.
 \label{LMN.depth3_compression}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, DNF.width, LMN.compression_and_of_cnfs, LMN.listAnd, LMN.one_step_reduction_with_compression, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.length_deepPath}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.buildFull}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.buildFull_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.buildFull_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {dtDepth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Restriction.freeVars}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Restriction.numFree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Restriction.extend}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b004}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.IsRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Literal.killedBy}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.Literal.fixedBy}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.Term.killedBy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p099-b006}
+\proofstep
+  {SwitchingLemma.Term.fixedBy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.restrictFn}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b004}
+\proofstep
+  {SwitchingLemma.IsBadRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.numSRestrictions}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Literal.killedBy_eval_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p099-b006}
+\proofstep
+  {SwitchingLemma.Literal.fixedBy_eval_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.dtDepth_le_of_tree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.list_any_eq_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {SwitchingLemma.list_all_eq_false_of_mem}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {SwitchingLemma.fixedTerm_implies_dtDepth_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b004}
+\proofstep
+  {SwitchingLemma.killedAll_implies_dtDepth_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p099-b006,
+    pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.killedBy_of_nonfree_agree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.first_clause_preserved}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.term_length_le_width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {SwitchingLemma.zipIdx_drop_spec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.bernoulliRestrWeight}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.bernoulliRestrProb}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.bernoulliRestrWeight_nonneg'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.bernoulliRestrWeight_sum_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.bernoulliRestrProb_le_one'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.numFree_update_lt}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.termSubTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.extend_update_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b004}
+\proofstep
+  {SwitchingLemma.termSubTree_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_extend_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b004}
+\proofstep
+  {SwitchingLemma.termSubTree_foldl_preserves_nonnone}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.termSubTree_foldl_sets_member}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_foldl_numFree_lt}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_go_correct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_correct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.numFree_update_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.termSubTree_cont_congr}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.termSubTree_cont_congr_strict}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.canonicalDTree_go_fuel_invariant}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.cont_eq_canonicalDTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.termSubTree_cons_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_cons_nonfree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_deepPath_head_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p074-b003}
+\proofstep
+  {SwitchingLemma.filter_free_update_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_deepPath_var_match}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p074-b003}
+\proofstep
+  {SwitchingLemma.canonicalDTree_alive_eq_termSubTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_alive_eq_termSubTree'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.depth_ge_dtDepth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.canonicalDTree_depth_ge}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.dtDepth_restrictFn_le_numFree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004,
+    pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.processClauseLits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.razborovEncode}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.razborovDecode}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.processClauseLits_path_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_stable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_rho_stable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_rho_ne_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_fst_nonfree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_acc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_fst_acc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_indep}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_snd_sigma_indep}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_aux_entries_from_lits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_aux_ne_nonfree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.foldl_sigma_stable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.foldl_rho_stable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.foldl_sigma_preserves_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_foldl_sigma_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_foldl_rho_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_foldl_rho_eq_of_set}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_at_v}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_none_of_rho_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_fst_sigma_indep_at_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processEntries_of_processClauseLits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_ne_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_not_kills_first_clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.roundtrip_base}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.pcl_none_implies_rho_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.find_clause_preserved_in_encode}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.mem_filter_freeVars_zipIdx}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.processClauseLits_aux_ne_of_pcl_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.roundtrip_inv_hC'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.roundtrip_inv_hD'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.go_roundtrip_gen}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.go_roundtrip}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.razborovDecode_encode}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.razborovEncode_injective}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.triplesToAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_cons_marker}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_cons_nonmarker}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_triplesToAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.triplesToAux_append}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_len_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.markLast}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.triplesToAux_markLast}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.markLast_ne_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.markLast_length}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.markLast_getLast_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toFinBlock}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toFinBlock_length}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toFinBlock_map}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toFinBlock_ne_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_aux_idx_lt}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_wellformed}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p100-b006}
+\proofstep
+  {SwitchingLemma.exists_aux_injection}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.aux_image_card_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.fiber_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.card_filter_numFree_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.numFree_update_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_freeVars_agree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.processClauseLits_numFree_σ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.canonicalDTree_deepPath_length_ge}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.razborovEncode_path_length}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.processClauseLits_path_length_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.canonicalDTree_depth_zero_of_killed}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.canonicalDTree_depth_zero_of_fixed}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.IsCanonicalPath}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.zipIdx_filter_length}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.zipIdx_filter_getElem_fst}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.canonicalDTree_deepPath_match_freeLits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.processClauseLits_fst_eq_drop}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.processClauseLits_numFree_ρ_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.processClauseLits_termSubTree_drop}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.canonicalPath_preserve_processClauseLits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.processClauseLits_freeLits_pairwise_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.razborovEncode_go_numFree_invariant}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b001}
+\proofstep
+  {SwitchingLemma.razborovEncode_fst_numFree_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.bad_count_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.bad_filter_empty_of_d_ge_s}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.choose_mul_pow_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.switching_lemma}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toTerms}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toClauses}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toDNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toCNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toTerms_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toClauses_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.dtDepth_witness}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002,
+    pdf-ffbe9c7b3306-p074-b004}
+\proofstep
+  {SwitchingLemma.dtDepth_le_implies_small_dnf_cnf}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {BernoulliCost.fixedSizeRestrs}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.fixedSizeRestrProb}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.binomialPMF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.fixedSizeRestrProb_le_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.binomialPMF_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.binomialPMF_sum_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.bernoulli_decompose}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003,
+    pdf-ffbe9c7b3306-p099-b001}
+\proofstep
+  {BernoulliCost.chernoff_binomial_upper_tail}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {BernoulliCost.bernoulli_restriction_cost}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.fixedSizeRestrs_card}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound_small}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound_rescaled}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_bernoulli_dtDepth_dnf}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {LMN.bernoulliRestrProb_mono}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {LMN.restricted_has_small_cnf_of_dtDepth_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {LMN.switching_bernoulli_union_bound}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {LMN.layer2_cnf_replaceability_union_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b004,
+    pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.listConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.width_le_iff_forall}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.mem_listConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cnfConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.cnf_concat_width_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.cnf_concat_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.compression_and_of_cnfs}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005,
+    pdf-ffbe9c7b3306-p105-b001}
+\proofstep
+  {LMN.one_step_reduction_failure_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b004,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {LMN.one_step_reduction_with_compression}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b004,
+    pdf-ffbe9c7b3306-p104-b005,
+    pdf-ffbe9c7b3306-p105-b001}
+\proofstep
+  {LMN.listAnd}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p013-b003,
+    pdf-ffbe9c7b3306-p103-b002}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
 \difficulty{6}
 Fix $n \ge 1$, and let $D_1,\dots,D_{s_2}$ be DNF formulas on $n$ variables, each of
 width at most $w$ with $w \ge 1$, subject to the two syntactic conditions that within
@@ -115,6 +1285,7 @@ leaving the free coordinates to $x$, one has $\Psi(x) = \bigwedge_{i=1}^{s_2}
 
 \begin{definition}[Tautological clause]
 \lean{LMN.clauseIsTaut}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p094-b004}
 \label{LMN.clauseIsTaut}
 \leanok
 \uses{Literal}
@@ -212,7 +1383,7 @@ within each remaining clause.
 \lean{LMN.cleanCNF_D3_eval}
 \label{LMN.cleanCNF_D3_eval}
 \leanok
-\uses{CNF, CNF.eval, Clause.eval, LMN.clauseIsTaut, LMN.clauseIsTaut_eval_true, LMN.cleanCNF_D3}
+\uses{CNF, CNF.eval, Clause.eval, LMN.clauseIsTaut, LMN.clauseIsTaut_eval_true, LMN.cleanCNF_D3, LMN.dedupClauseVars_eval_of_not_taut}
 \difficulty{4}
 Let $\psi$ be a CNF formula over $n$ Boolean variables — a conjunction of clauses, each
 clause a disjunction of literals — and let $x \in \{0,1\}^n$ be an assignment. Form the
@@ -227,7 +1398,7 @@ same Boolean value on $x$.
 \lean{LMN.cleanCNF_D3_width_le}
 \label{LMN.cleanCNF_D3_width_le}
 \leanok
-\uses{CNF, CNF.width, LMN.cleanCNF_D3, LMN.dedupClauseVars_length_le, Term, LitList.width}
+\uses{CNF, CNF.width, Clause, Depth2.width, LMN.cleanCNF_D3, LMN.dedupClauseVars_length_le, LitList.width}
 \difficulty{5}
 Let $\psi$ be a CNF formula over $n$ variables, and form its cleaned version by
 discarding every tautological clause (one containing two literals on the same variable
@@ -285,6 +1456,7 @@ variable.
 }
 \label{LMN.dtDepth_le_implies_nice_cnf}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, LMN.exists_nice_cnf_of_cnf, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -492,7 +1664,6 @@ variable.
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b004,
     pdf-b5e074215b9e-p001-b004}
-\uses{CNF, CNF.eval, CNF.width, LMN.exists_nice_cnf_of_cnf, SwitchingLemma.dtDepth_le_implies_small_dnf_cnf, dtDepth}
 \difficulty{2}
 Let $f\colon (\mathrm{Fin}\,n \to \bbf_2) \to \{0,1\}$ be a Boolean function on $n$
 variables, and let $d$ be a natural number. If the decision-tree depth of $f$ is at most
@@ -510,6 +1681,7 @@ repeated, and no two literals share the same underlying variable.
 }
 \label{LMN.dtDepth_le_implies_nice_dnf}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -625,7 +1797,6 @@ repeated, and no two literals share the same underlying variable.
   {context}
   {switching-lemma}
   {pdf-b5e074215b9e-p003-b002}
-\uses{DNF, DNF.eval, DNF.width, dtDepth}
 Let $f : (\mathrm{Fin}\,n \to \bbf_2)$ — more precisely $f$ a Boolean function on $n$
 variables — have decision-tree depth at most $d$. Then $f$ is computed by a DNF formula
 $\varphi$ (a disjunction of terms, each term a conjunction of literals) of width at most
@@ -638,6 +1809,7 @@ fixed polarity).
 
 \begin{theorem}[Functional switching lemma under Bernoulli restrictions]
 \lean{LMN.switching_bernoulli_dtDepth_function}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{pdf-ffbe9c7b3306-p100-b005}
 \statementsource{boolean-ch04-dnf-switching-lmn}{pdf-fc447f326910-p008-b005}
 \statementsource{switching-lemma}{
   pdf-b5e074215b9e-p001-b008,
@@ -649,6 +1821,1197 @@ fixed polarity).
 \label{LMN.switching_bernoulli_dtDepth_function}
 \leanok
 \uses{CNF.eval, LMN.dtDepth_congr, LMN.dtDepth_le_implies_nice_cnf, LMN.restrictFn_congr, SwitchingBernoulli.switching_bernoulli_dtDepth_cnf, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p013-b003}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {Depth2.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.deepPath}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.length_deepPath}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.buildFull}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.buildFull_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.buildFull_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {dtDepth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Restriction.freeVars}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Restriction.numFree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Restriction.extend}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b004}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.IsRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Literal.killedBy}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.Literal.fixedBy}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.Term.killedBy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p099-b006}
+\proofstep
+  {SwitchingLemma.Term.fixedBy}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.restrictFn}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b004}
+\proofstep
+  {SwitchingLemma.IsBadRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.numSRestrictions}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.Literal.killedBy_eval_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p099-b006}
+\proofstep
+  {SwitchingLemma.Literal.fixedBy_eval_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.dtDepth_le_of_tree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.list_any_eq_false}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {SwitchingLemma.list_all_eq_false_of_mem}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {SwitchingLemma.fixedTerm_implies_dtDepth_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b004}
+\proofstep
+  {SwitchingLemma.killedAll_implies_dtDepth_zero}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p099-b006,
+    pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.killedBy_of_nonfree_agree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.first_clause_preserved}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.term_length_le_width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {SwitchingLemma.zipIdx_drop_spec}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.bernoulliRestrWeight}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.bernoulliRestrProb}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.bernoulliRestrWeight_nonneg'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.bernoulliRestrWeight_sum_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.bernoulliRestrProb_le_one'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.numFree_update_lt}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.termSubTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.extend_update_self}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b004}
+\proofstep
+  {SwitchingLemma.termSubTree_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_extend_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b004}
+\proofstep
+  {SwitchingLemma.termSubTree_foldl_preserves_nonnone}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.termSubTree_foldl_sets_member}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_foldl_numFree_lt}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_go_correct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_correct}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.numFree_update_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.termSubTree_cont_congr}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.termSubTree_cont_congr_strict}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.canonicalDTree_go_fuel_invariant}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.cont_eq_canonicalDTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.termSubTree_cons_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_cons_nonfree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_deepPath_head_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p074-b003}
+\proofstep
+  {SwitchingLemma.filter_free_update_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.termSubTree_deepPath_var_match}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p074-b003}
+\proofstep
+  {SwitchingLemma.canonicalDTree_alive_eq_termSubTree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_alive_eq_termSubTree'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.depth_ge_dtDepth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.canonicalDTree_depth_ge}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.dtDepth_restrictFn_le_numFree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004,
+    pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.processClauseLits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.razborovEncode}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.razborovDecode}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p101-b002}
+\proofstep
+  {SwitchingLemma.processClauseLits_path_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_stable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_rho_stable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_rho_ne_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_fst_nonfree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_acc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_fst_acc}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_indep}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_snd_sigma_indep}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_aux_entries_from_lits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_aux_ne_nonfree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.foldl_sigma_stable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.foldl_rho_stable}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.foldl_sigma_preserves_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_foldl_sigma_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_foldl_rho_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_foldl_rho_eq_of_set}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_at_v}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_none_of_rho_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_fst_sigma_indep_at_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processEntries_of_processClauseLits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.processClauseLits_sigma_ne_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_path_nil_of_rho_none_and_mem}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_not_kills_first_clause}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.roundtrip_base}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.pcl_none_implies_rho_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.find_clause_preserved_in_encode}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.mem_filter_freeVars_zipIdx}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003}
+\proofstep
+  {SwitchingLemma.processClauseLits_aux_ne_of_pcl_none}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.roundtrip_inv_hC'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.roundtrip_inv_hD'}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.go_roundtrip_gen}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.go_roundtrip}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.razborovDecode_encode}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.razborovEncode_injective}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.triplesToAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_cons_marker}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_cons_nonmarker}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_singleton}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.parseAux_triplesToAux}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.triplesToAux_append}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_len_add}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.markLast}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.triplesToAux_markLast}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.markLast_ne_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.markLast_length}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.markLast_getLast_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toFinBlock}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toFinBlock_length}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toFinBlock_map}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toFinBlock_ne_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_aux_idx_lt}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.encode_go_wellformed}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p100-b006}
+\proofstep
+  {SwitchingLemma.exists_aux_injection}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.aux_image_card_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.fiber_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.card_filter_numFree_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.numFree_update_free}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_freeVars_agree}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_numFree_σ}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_deepPath_length_ge}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.razborovEncode_path_length}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_path_length_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_depth_zero_of_killed}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_depth_zero_of_fixed}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.IsCanonicalPath}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.zipIdx_filter_length}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.zipIdx_filter_getElem_fst}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalDTree_deepPath_match_freeLits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_fst_eq_drop}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_numFree_ρ_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_termSubTree_drop}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.canonicalPath_preserve_processClauseLits}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.processClauseLits_freeLits_pairwise_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.razborovEncode_go_numFree_invariant}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.razborovEncode_fst_numFree_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.bad_count_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.bad_filter_empty_of_d_ge_s}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.choose_mul_pow_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.switching_lemma}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingLemma.toTerms}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toClauses}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toDNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004,
+    pdf-ffbe9c7b3306-p094-b006}
+\proofstep
+  {SwitchingLemma.toCNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p094-b006}
+\proofstep
+  {SwitchingLemma.toTerms_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toClauses_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.dtDepth_witness}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004,
+    pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.dtDepth_le_implies_small_dnf_cnf}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {Literal.flipNeg_injective}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {CNF.dual}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {CNF.dual_width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {CNF.dual_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {dtDepth_neg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p087-b005}
+\proofstep
+  {CNF.dual_nodup}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {CNF.dual_inj}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b005,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {BernoulliCost.fixedSizeRestrs}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.fixedSizeRestrProb}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.binomialPMF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.fixedSizeRestrProb_le_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.binomialPMF_nonneg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.binomialPMF_sum_one}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.bernoulli_decompose}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.chernoff_binomial_upper_tail}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {BernoulliCost.bernoulli_restriction_cost}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003,
+    pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.fixedSizeRestrs_card}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingBernoulli.fixedSizeRestrs_filter_bad_eq}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound_small}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_fixedSize_bound_rescaled}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_bernoulli_dtDepth_dnf}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {SwitchingBernoulli.switching_bernoulli_dtDepth_cnf}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p094-b005}
+\proofstep
+  {LMN.dtDepth_congr}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {LMN.restrictFn_congr}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.clauseIsTaut_eval_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p094-b006}
+\proofstep
+  {LMN.dedupClauseVars}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.dedupClauseVars_var_inj}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.dedupClauseVars_nodup}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.dedupClauseVars_length_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.dedupClauseVars_eval_of_not_taut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cleanCNF_D3}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p094-b006}
+\proofstep
+  {LMN.cleanCNF_D3_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cleanCNF_D3_width_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cleanCNF_D3_nodup}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cleanCNF_D3_var_inj}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.exists_nice_cnf_of_cnf}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004,
+    pdf-ffbe9c7b3306-p094-b006}
+\proofstep
+  {LMN.dtDepth_le_implies_nice_cnf}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
 \difficulty{4}
 Fix an integer $n \ge 1$ and a Boolean function $f : \{0,1\}^n \to \{0,1\}$ whose
 decision-tree depth is at most $w$, for some integer $w \ge 1$. Let $p$ be a real
@@ -684,12 +3047,17 @@ $\rho_1$ for which $A(\rho_1)$ fails, one has $\Pr_{p_2}[\,E(\rho_1 \circ \rho_2
 
 \begin{lemma}[A bounded-width CNF for a conjunction of restricted gates]
 \lean{LMN.and_of_gates_has_cnf}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
 }
 \label{LMN.and_of_gates_has_cnf}
 \leanok
+\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.all_gates_have_small_cnf, LMN.compression_and_of_cnfs, LMN.exists_nice_cnf_of_cnf, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -936,7 +3304,6 @@ $\rho_1$ for which $A(\rho_1)$ fails, one has $\Pr_{p_2}[\,E(\rho_1 \circ \rho_2
   {context}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b001}
-\uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.compression_and_of_cnfs, LMN.exists_nice_cnf_of_cnf, SwitchingLemma.Restriction, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Fix natural numbers $n$, $s_2$, and $l$, a restriction $\rho_1$ on $n$ variables, and a
 family of DNF formulas $g_0, g_1, \dots, g_{s_2-1}$ on $n$ variables. For each index
@@ -953,6 +3320,10 @@ two distinct literals sharing a variable, such that for every assignment $x$,
 
 \begin{lemma}[Restricted conjunction of DNFs has a low-width simple CNF]
 \lean{LMN.depth3_restricted_has_nice_cnf}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p013-b002
@@ -960,6 +3331,391 @@ two distinct literals sharing a variable, such that for every assignment $x$,
 \label{LMN.depth3_restricted_has_nice_cnf}
 \leanok
 \uses{CNF, CNF.eval, CNF.width, DNF, DNF.eval, LMN.and_of_gates_has_cnf, SwitchingLemma.Restriction, SwitchingLemma.Restriction.extend, SwitchingLemma.restrictFn, dtDepth}
+\proofstep
+  {BoolCircuit.Lit}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {BoolCircuit.Lit.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LitList.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002,
+    pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Depth2}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Depth2.width}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002,
+    pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {DNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.width}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {CNF.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Term.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Term.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Clause.eval_nil}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {Clause.eval_cons}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {CNF.eval_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b002}
+\proofstep
+  {CNF.width_mk}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {DecisionTree}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.depth}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.buildFull}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004,
+    pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.buildFull_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {DecisionTree.buildFull_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {dtDepth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.Restriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003,
+    pdf-ffbe9c7b3306-p075-b002}
+\proofstep
+  {SwitchingLemma.Restriction.extend}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p075-b002}
+\proofstep
+  {SwitchingLemma.instFintypeRestriction}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p098-b003}
+\proofstep
+  {SwitchingLemma.restrictFn}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p075-b002}
+\proofstep
+  {SwitchingLemma.toTerms}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toClauses}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toDNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toCNF}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toTerms_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.toClauses_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {SwitchingLemma.dtDepth_witness}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {SwitchingLemma.dtDepth_le_implies_small_dnf_cnf}
+  {direct}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b006,
+    pdf-ffbe9c7b3306-p094-b007}
+\proofstep
+  {Literal.flipNeg}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {Literal.flipNeg_var}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {DecisionTree.negateLeaves}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p073-b004}
+\proofstep
+  {DecisionTree.negateLeaves_depth}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p074-b002}
+\proofstep
+  {LMN.restricted_has_small_cnf_of_dtDepth_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005}
+\proofstep
+  {LMN.all_gates_have_small_cnf}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p100-b005,
+    pdf-ffbe9c7b3306-p104-b004}
+\proofstep
+  {LMN.listConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.width_le_iff_forall}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.mem_listConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cnfConcat}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cnf_concat_width_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cnf_concat_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.compression_and_of_cnfs}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
+\proofstep
+  {LMN.clauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.instDecidableClauseIsTaut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.clauseIsTaut_eval_true}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.dedupClauseVars}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.dedupClauseVars_var_inj}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.dedupClauseVars_nodup}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.dedupClauseVars_length_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.dedupClauseVars_eval_of_not_taut}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p093-b004}
+\proofstep
+  {LMN.cleanCNF_D3}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cleanCNF_D3_eval}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cleanCNF_D3_width_le}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cleanCNF_D3_nodup}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.cleanCNF_D3_var_inj}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.exists_nice_cnf_of_cnf}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p094-b004}
+\proofstep
+  {LMN.and_of_gates_has_cnf}
+  {context}
+  {Analysis-of-Boolean-Functions-by-Ryan-ODonnell}
+  {pdf-ffbe9c7b3306-p104-b005}
 \difficulty{4}
 Let $g_1,\dots,g_s$ be DNF formulas in $n$ Boolean variables, and let $f :
 (\mathrm{Fin}\,n \to \mathrm{Bool}) \to \mathrm{Bool}$ be their conjunction, so that
@@ -976,6 +3732,13 @@ for all $x$.
 
 \begin{lemma}[Second-stage switching bound for an AND of DNFs]
 \lean{LMN.depth3_second_stage_bound}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p100-b005,
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001,
+  pdf-ffbe9c7b3306-p106-b002
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p014-b001
@@ -1003,6 +3766,12 @@ and then $\rho_2$ on the coordinates left free by $\rho_1$, we have
 
 \begin{theorem}[Depth-3 two-stage switching bound]
 \lean{LMN.depth3_switching_bound}
+\statementsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001,
+  pdf-ffbe9c7b3306-p106-b002
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b004,
   pdf-fc447f326910-p012-b003,
@@ -1015,6 +3784,7 @@ and then $\rho_2$ on the coordinates left free by $\rho_1$, we have
 }
 \label{LMN.depth3_switching_bound}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, LMN.depth3_second_stage_bound, LMN.switching_bernoulli_union_bound, LMN.two_stage_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -2192,7 +4962,6 @@ and then $\rho_2$ on the coordinates left free by $\rho_1$, we have
   {pdf-fc447f326910-p014-b001,
     pdf-fc447f326910-p012-b004,
     pdf-fc447f326910-p008-b005}
-\uses{DNF, DNF.eval, DNF.width, LMN.depth3_second_stage_bound, LMN.switching_bernoulli_union_bound, LMN.two_stage_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{5}
 Let $n \ge 1$, and let $f : \{0,1\}^n \to \{0,1\}$ be the conjunction of $s_2$ DNF
 formulas $g_1, \dots, g_{s_2}$ on $n$ variables, so that $f(x) = \mathrm{true}$ exactly
@@ -2226,6 +4995,7 @@ $f\restriction_\rho$ for the restricted function $x \mapsto f(\rho\text{-extensi
 }
 \label{LMN.circuit_reduction_depth3}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, LMN.composedDelta, LMN.depth3_switching_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -3378,7 +6148,6 @@ $f\restriction_\rho$ for the restricted function $x \mapsto f(\rho\text{-extensi
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b003,
     pdf-fc447f326910-p012-b004}
-\uses{DNF, DNF.eval, DNF.width, LMN.composedDelta, LMN.depth3_switching_bound, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{4}
 Fix $n \ge 1$, and let $f\colon \{0,1\}^n \to \{0,1\}$ be the conjunction of $s_2$ DNF
 formulas $g_1,\dots,g_{s_2}$, so that $f(x)=1$ if and only if $g_i(x)=1$ for every $i$.
@@ -3399,6 +6168,12 @@ function has decision-tree depth exceeding $t$ obeys
 
 \begin{theorem}[Depth-three circuit reduction with error at most $\varepsilon$]
 \lean{LMN.circuit_reduction_depth3_le_eps}
+\proofsource{Analysis-of-Boolean-Functions-by-Ryan-ODonnell}{
+  pdf-ffbe9c7b3306-p104-b004,
+  pdf-ffbe9c7b3306-p104-b005,
+  pdf-ffbe9c7b3306-p105-b001,
+  pdf-ffbe9c7b3306-p106-b002
+}
 \proofsource{boolean-ch04-dnf-switching-lmn}{
   pdf-fc447f326910-p012-b003,
   pdf-fc447f326910-p012-b004
@@ -3409,6 +6184,7 @@ function has decision-tree depth exceeding $t$ obeys
 }
 \label{LMN.circuit_reduction_depth3_le_eps}
 \leanok
+\uses{DNF, DNF.eval, DNF.width, LMN.circuit_reduction_depth3, LMN.composedDelta, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \proofstep
   {BoolCircuit.Lit}
   {context}
@@ -4578,7 +7354,6 @@ function has decision-tree depth exceeding $t$ obeys
   {direct}
   {boolean-ch04-dnf-switching-lmn}
   {pdf-fc447f326910-p012-b003}
-\uses{DNF, DNF.eval, DNF.width, LMN.circuit_reduction_depth3, LMN.composedDelta, SwitchingLemma.bernoulliRestrProb, SwitchingLemma.restrictFn, dtDepth}
 \difficulty{2}
 Let $f:\{0,1\}^n\to\{0,1\}$ with $n\ge 1$, and suppose $f$ is the conjunction of $s_2$
 DNF formulas $D_1,\dots,D_{s_2}$, so that $f(x)=1$ exactly when $D_i(x)=1$ for every

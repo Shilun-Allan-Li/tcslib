@@ -1,0 +1,19 @@
+{
+ "lean_name": "hedgeResponseNat_isBestResponse",
+ "key": "e51e6ddc68bea5a9",
+ "kind": "lemma",
+ "title": "Online response minimizes mixed payoff",
+ "statement": "Let $G$ be a finite zero-sum game with $M\\ge1$ row actions and $N\\ge1$ column actions, and with every payoff in $[0,1]$. For any learning rate $\\eta\\in\\bbr$, horizon $T$, round $t<T$, and column action $j$, let $j_s$ be the online column response at round $s$, and let the Hedge distribution at round $t$ be formed from the losses $1-G(i,j_s)$ for $s<T$. Then the payoff against the response $j_t$ under this distribution is at most the payoff against $j$; that is, $\\sum_i p_t(i)G(i,j_t)\\le\\sum_i p_t(i)G(i,j)$.",
+ "hypotheses_covered": [
+  "$M,N$ are positive",
+  "$G$ is a zero-sum game with payoffs in $[0,1]$",
+  "$\\eta\\in\\bbr$",
+  "$T$ is a natural-number horizon",
+  "$t\\in\\mathrm{Fin}\\,T$",
+  "$j\\in\\mathrm{Fin}\\,N$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $G$ be a finite zero-sum game with $M \\ge 1$ row actions and $N \\ge 1$ column\nactions, let $\\eta \\in \\mathbb{R}$ be a learning rate, and let $T$ be a horizon.\nWrite $j_s = \\texttt{hedgeResponseNat}(G, \\eta, s)$ for the online column\nresponse at round $s$, and let $\\ell = \\texttt{ZeroSumGame.toLossSeq}(G, (j_s)_{s < T})$\nbe the loss sequence it induces for the row player.  Then for every round\n$t < T$ and every fixed column $j$,\n\\[\n  \\sum_{i} \\texttt{hedgeDist}(\\eta, \\ell, t)_i \\, A(i, j_t)\n  \\;\\le\\;\n  \\sum_{i} \\texttt{hedgeDist}(\\eta, \\ell, t)_i \\, A(i, j),\n\\]\ni.e.\\ the played column $j_t$ gives the row player, mixing according to the\nHedge distribution at round $t$, no more payoff than any other column."
+}

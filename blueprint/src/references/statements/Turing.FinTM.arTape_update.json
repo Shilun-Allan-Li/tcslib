@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.arTape_update",
+ "key": "73304f5c4ed0318a",
+ "kind": "lemma",
+ "title": "Pointwise update of an induced tape",
+ "statement": "Let $N\\in\\mathbb{N}$, let $F$ assign a block of $N+1$ optional bits to each integer, and choose $z\\in\\mathbb{Z}$, $j\\in\\{0,\\ldots,N\\}$, and an optional bit $b$. Updating the induced tape at position $(N+1)z+j$ to $b$ gives the tape induced by the family obtained from $F$ by replacing entry $j$ of block $z$ by $b$ and leaving every other entry unchanged.",
+ "hypotheses_covered": [
+  "$N\\in\\mathbb{N}$",
+  "$F$ assigns a block of $N+1$ optional bits to each integer",
+  "$z\\in\\mathbb{Z}$",
+  "$j\\in\\{0,\\ldots,N\\}$",
+  "$b$ is an optional bit"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $F$ assign to every integer a block of $N+1$ optional bits, let $z \\in \\mathbb{Z}$,\n$j \\in \\{0,\\dots,N\\}$, and let $b$ be an optional bit. Overwriting the binary tape\ninduced by $F$ at position $(N+1)z + j$ with the value $b$ yields the binary tape\ninduced by the family that agrees with $F$ everywhere except that entry $j$ of block\n$z$ becomes $b$."
+}

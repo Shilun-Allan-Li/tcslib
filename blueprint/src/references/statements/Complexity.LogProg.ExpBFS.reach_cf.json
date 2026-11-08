@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.reach_cf",
+ "key": "dc5cc196633a9d15",
+ "kind": "lemma",
+ "title": "Reachability under equal endpoint data",
+ "statement": "Fix a natural parameter $K_0$, an oracle, a Boolean string $x$, and natural numbers $B,P$. If a configuration $a$ reaches the configuration with label $l$, register state $st$, memory $M$, and head position $p$, with the guard holding at every time strictly before arrival, then whenever $st=st'$ and $p=p'$, $a$ also reaches the configuration with label $l$, register state $st'$, memory $M$, and head position $p'$, with the same guard condition.",
+ "hypotheses_covered": [
+  "fixed natural parameter $K_0$",
+  "fixed oracle and Boolean string $x$",
+  "fixed natural numbers $B,P$",
+  "guarded reachability from $a$ to the configuration with label $l$, state $st$, memory $M$, and head position $p$",
+  "equality $st=st'$",
+  "equality $p=p'$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If a configuration $a$ reaches the configuration with label $l$, register state $st$,\nmemory $M$, and head position $p$, then, whenever $st=st'$ and $p=p'$, the same initial\nconfiguration $a$ reaches the configuration with label $l$, state $st'$, memory $M$, and\nhead position $p'$. The reachability condition requires the guard to hold at every\nintermediate time before arrival."
+}

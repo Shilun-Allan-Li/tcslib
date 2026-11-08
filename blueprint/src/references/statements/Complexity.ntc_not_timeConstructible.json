@@ -1,0 +1,14 @@
+{
+ "lean_name": "Complexity.ntc_not_timeConstructible",
+ "key": "a72003e7e99909f2",
+ "kind": "theorem",
+ "title": "Failure of time constructibility",
+ "statement": "Define $T(n)=n+1$ if the halting predicate for the fixed time-hierarchy code accepts the binary string associated to $n$, and define $T(n)=n$ otherwise. Then $T$ is not time-constructible: it is false that both $n\\le T(n)$ for every natural number $n$ and that there exist a positive natural number $c$ and a finite-state Turing machine $M$ over the binary alphabet such that, for every finite binary input $x$, $M$ halts with output the binary expansion of $T(|x|)$ within $c(T(|x|)+1)$ steps.",
+ "hypotheses_covered": [
+  "$T$ is the specified function defined using the fixed time-hierarchy code and its halting predicate"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix an effective coding of binary Turing machines, with a decoder that assigns a machine\nto every binary string, and let $H(s)$ be true exactly when $s$ encodes a machine\ndescription followed by an input on which the decoded machine halts. For each\n$n\\in\\mathbb{N}$, let $w_n$ be the binary bit list of $n+1$ with its last bit removed,\nand define $T(n)=n+1$ if $H(w_n)$ is true and $T(n)=n$ otherwise. There is no positive\ninteger $c$ and no finite-state Turing machine over the binary alphabet that, on every\nbinary input $x$, halts with output the binary expansion of $T(|x|)$ within\n$c(T(|x|)+1)$ steps while $n\\leq T(n)$ for every $n\\in\\mathbb{N}$."
+}

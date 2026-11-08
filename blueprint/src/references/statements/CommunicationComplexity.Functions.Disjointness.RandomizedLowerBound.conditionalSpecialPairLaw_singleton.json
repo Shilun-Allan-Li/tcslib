@@ -1,17 +1,17 @@
 {
  "lean_name": "CommunicationComplexity.Functions.Disjointness.RandomizedLowerBound.conditionalSpecialPairLaw_singleton",
- "key": "1d8fb8de5989ba2b",
+ "key": "00167af182cec0ac",
  "kind": "theorem",
- "title": "Singleton mass of the conditional special-pair law",
- "statement": "Fix a positive length $n$, a deterministic disjointness protocol $p$ on inputs of length $n$, and an achievable value $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$. Let $\\mu_z$ be the conditional distribution of a hard-distribution sample given $Z = z$, and for a sample $\\omega$ write its special pair as $(x_T(\\omega), y_T(\\omega))$, the two players' bits at the special coordinate $T = T(\\omega)$. Then for every bit-pair $b \\in \\{0,1\\} \\times \\{0,1\\}$, the conditional law of the special pair — the pushforward of $\\mu_z$ along the special-pair map — assigns to the singleton $\\{b\\}$ exactly the $\\mu_z$-probability of the event that the special pair equals $b$; that is, its real-valued mass at $\\{b\\}$ equals the $\\mu_z$-measure of the set of samples $\\omega$ with $(x_T(\\omega), y_T(\\omega)) = b$.",
+ "title": "Singleton mass of the special-pair law",
+ "statement": "Let $n$ be a positive integer, let $p$ be a deterministic protocol for disjointness on inputs of length $n$, let $z$ be an achievable value of its summary $Z=(M,T,X_{<T},Y_{>T})$, and let $b\\in\\{0,1\\}^2$. The conditional law of the special-bit pair on the fiber $Z=z$ assigns to $\\{b\\}$ the same real mass as the fiber measure assigns to the event that the special-bit pair equals $b$.",
  "hypotheses_covered": [
-  "positive length n",
-  "a deterministic disjointness protocol p on inputs of length n",
-  "z an achievable value of the Z-variable",
-  "b an arbitrary bit-pair in Bool × Bool"
+  "$n$ is a positive integer",
+  "$p$ is a deterministic length-$n$ disjointness protocol",
+  "$z$ is an achievable summary value",
+  "$b$ is a Boolean pair"
  ],
  "confidence": "high",
  "caveat": "",
  "rubric": [],
- "replaced": "On a positive-mass $Z=z$ fiber, the conditional \\texttt{specialPair} singleton mass is the corresponding preimage probability under the fiber measure."
+ "replaced": "Fix a positive length $n$, a deterministic disjointness protocol $p$ on inputs of length\n$n$, and an achievable value $z$ of the variable $Z = (M, T, X_{<T}, Y_{>T})$. Let\n$\\mu_z$ be the conditional distribution of a hard-distribution sample given $Z = z$, and\nfor a sample $\\omega$ write its special pair as $(x_T(\\omega), y_T(\\omega))$, the two\nplayers' bits at the special coordinate $T = T(\\omega)$. Then for every bit-pair $b \\in\n\\{0,1\\} \\times \\{0,1\\}$, the conditional law of the special pair — the pushforward of\n$\\mu_z$ along the special-pair map — assigns to the singleton $\\{b\\}$ exactly the\n$\\mu_z$-probability of the event that the special pair equals $b$; that is, its\nreal-valued mass at $\\{b\\}$ equals the $\\mu_z$-measure of the set of samples $\\omega$\nwith $(x_T(\\omega), y_T(\\omega)) = b$."
 }

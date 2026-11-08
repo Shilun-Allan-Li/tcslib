@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.dataCfg_step",
+ "key": "5b5634959e8e0669",
+ "kind": "lemma",
+ "title": "Exact form of one simulator step",
+ "statement": "Let $W$ and $M$ be finite binary Turing machines, let $a\\in\\mathbb{N}$, and let a base schedule configuration, phase $q$, integers $u,g$, finite data state $d$, data tapes, and output word be given. Form the macrostep configuration $c$ from the base at phase $q$ with unary head $u$ and guide head $g$, and evaluate the data transducer on phase $q$, state $d$, the input symbol and schedule-tape reads of $c$, and the data-tape symbols at $g$. The simulator's one-step successor from the corresponding decorated configuration is exactly the decorated successor of the schedule controller's one-step successor from $c$, with the transducer's new finite state, its prescribed writes at $g$, and its prescribed output appended to the given output word.",
+ "hypotheses_covered": [
+  "$W,M$ are finite binary Turing machines",
+  "$a$ is a natural number",
+  "a base schedule configuration is given",
+  "a phase $q$, integers $u,g$, finite data state $d$, data tapes, and output word are given"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $W$ and $M$ be binary machines and $a$ a padding constant.  One step of the\nlogical simulator on a macrostep configuration with data equals the decorated\nform of one schedule-controller step, where the new finite data register, the\nsingle cell written under the guide head on each data tape, and the appended\nemission are exactly those returned by the data transducer evaluated at the\ncurrent phase, register, input read, schedule tape reads, and the data cells\nunder the guide head."
+}

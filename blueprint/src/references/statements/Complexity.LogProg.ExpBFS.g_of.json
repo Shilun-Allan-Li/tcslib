@@ -1,0 +1,15 @@
+{
+ "lean_name": "Complexity.LogProg.ExpBFS.g_of",
+ "key": "bd26e75449ba224d",
+ "kind": "lemma",
+ "title": "Bounded Initial Configuration",
+ "statement": "Let $K_0,B,P$ be natural numbers, let $x$ be a Boolean word, let $\\text{orc}$ assign a Boolean answer to each of four indices and each Boolean word, and let $M\\colon\\mathbb{Z}\\to\\{\\mathrm{false},\\mathrm{true}\\}$ be a memory marking. Suppose a machine state $st$ has all 17 register values at most $B$, and an integer $p$ satisfies $0\\le p\\le P$. Then, for every program label $l$, the configuration with label $l$, registers from $st$, no answer yet, memory $M$, and memory head at $p$ satisfies the invariant: its instruction safety condition holds, all register values are at most $B$, and the head lies between $0$ and $P$, inclusive.",
+ "hypotheses_covered": [
+  "Each of the 17 register values in $st$ is at most $B$",
+  "$0\\le p\\le P$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $K_0,B,P\\in\\mathbb N$, let $x$ be a bit string, and let $M:\\mathbb\nZ\\to\\{\\mathrm{false},\\mathrm{true}\\}$. If every one of the 17 register values in a state\n$S$ is at most $B$, and the memory-head position $p$ satisfies $0\\le p\\le P$, then, for\nevery program label $l$, the configuration with label $l$, register values from $S$,\nempty answer, memory $M$, and head at $p$ satisfies the invariant $G(x,B,P)$."
+}

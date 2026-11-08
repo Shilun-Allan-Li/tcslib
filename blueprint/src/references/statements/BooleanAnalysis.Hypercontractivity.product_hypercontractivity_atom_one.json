@@ -1,0 +1,18 @@
+{
+ "lean_name": "BooleanAnalysis.Hypercontractivity.product_hypercontractivity_atom_one",
+ "key": "db6e35e91f0bf7cc",
+ "kind": "theorem",
+ "title": "Hypercontractive bounds for unit atoms",
+ "statement": "Let $P$ be a finite product probability space with coordinate atom weights at least $1$, and let $q>2$, $\rho\\in\\mathbb R$, and $f$ be a real-valued function on its product outcome space. Then the product noise operator satisfies both $\\|T_\\rho f\\|_{q,P}\\le \\|f\\|_{2,P}$ and $\\|T_\\rho f\\|_{2,P}\\le \\|f\\|_{q/(q-1),P}$.",
+ "hypotheses_covered": [
+  "A finite product probability space with strictly positive coordinate weights summing to one",
+  "Every coordinate atom has weight at least $1$",
+  "$q>2$",
+  "$\\rho\\in\\mathbb R$",
+  "$f$ is a real-valued function on the product outcome space"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $P$ be a product of $n$ finite probability spaces with strictly positive atom masses and outcome space $\\Omega=\\prod_i\\Omega_i$ with every coordinate atom at least $1$, and let $q>2$ and $\\rho\\in\\mathbb R$. For every $f:\\Omega\\to\\mathbb R$, $\\|T_\\rho f\\|_{q,P}\\le\\|f\\|_{2,P}$ and $\\|T_\\rho f\\|_{2,P}\\le\\|f\\|_{q/(q-1),P}$. For a real function $h$ on $\\Omega$, use $E_Uh(x)=\\mathbb E_P[h(X)\\mid X_U=x_U]$ for $X\\sim P$ and $U\\subseteq[n]$; $h_S=\\sum_{U\\subseteq S}(-1)^{|S|-|U|}E_Uh$ for $S\\subseteq[n]$ (the Hoeffding--Efron--Stein components); $T_a h=\\sum_{S\\subseteq[n]}a^{|S|}h_S$ for every real rate $a$; $\\|h\\|_{p,P}=(\\mathbb E_P|h|^p)^{1/p}$ for $p>0$. The powers indexed by subset cardinalities are natural powers, including $0^0=1$."
+}

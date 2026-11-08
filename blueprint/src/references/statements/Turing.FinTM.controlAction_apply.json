@@ -1,0 +1,18 @@
+{
+ "lean_name": "Turing.FinTM.controlAction_apply",
+ "key": "8caa548e04797d5a",
+ "kind": "lemma",
+ "title": "Effect of an input-head control action",
+ "statement": "Let $x$ be a Boolean word, let $c$ be a configuration on input $x$ with $k$ work tapes, let $m\\in\\{-1,0,1\\}$, and let $q$ be an optional state. Applying the control action with movement $m$ and successor state $q$ leaves all work-tape contents, work-tape head positions, and output unchanged, sets the state to $q$, and moves the input head by $m$ with clamping at the boundary positions.",
+ "hypotheses_covered": [
+  "$k$ is a natural number",
+  "$x$ is a Boolean word",
+  "$c$ is a configuration on input $x$ with $k$ work tapes",
+  "$m$ is a sign in $\\{-1,0,1\\}$",
+  "$q$ is an optional state"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $c$ be a configuration of a machine with $k$ work tapes over the Boolean\nalphabet on input $x$, let $m \\in \\{-1, 0, +1\\}$ be a movement, and let $q$\nbe an optional state.  Applying the control action for $m$ and $q$ to $c$\nyields the configuration that agrees with $c$ on all work-tape contents,\nwork-head positions, and output, whose state is $q$, and whose input head is\nthat of $c$ moved by $m$ with clamping at the two boundary blanks."
+}

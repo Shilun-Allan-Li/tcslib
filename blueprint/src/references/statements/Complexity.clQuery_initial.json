@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.clQuery_initial",
+ "key": "2a57a1d472609308",
+ "kind": "lemma",
+ "title": "Initial configuration of the query machine",
+ "statement": "Let $l$ be a natural number, let $p,n$ be coordinates in a set of size $l$, and let $x$, $y_0,y_1$, and $v$ be bit words, with $N$ a natural number. The machine's initial configuration on the packed query words has its initial control state, empty candidate fields and flag tape, stream $v$ with cursor at zero, both targets in place, a unary clock of length $N$ with its head at zero, all other work-tape cells blank, and empty output.",
+ "hypotheses_covered": [
+  "$l$ is a natural number",
+  "$p,n$ are coordinates in a set of size $l$",
+  "$x$ is a bit word",
+  "$y_0,y_1$ are bit words",
+  "$v$ is a bit word",
+  "$N$ is a natural number"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For all coordinates, input word, target words, stream, and bound $N$, the configuration assembled from the query argument words at the matcher's start control equals the search seam with empty candidates, cursor zero, full clock, and no flags, including every scratch tape and head."
+}

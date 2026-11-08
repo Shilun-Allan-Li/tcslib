@@ -1,0 +1,21 @@
+{
+ "lean_name": "Complexity.Codec.halt_rej",
+ "key": "5ae1bfc374fa2eef",
+ "kind": "lemma",
+ "title": "Reaching rejection gives a rejecting halt",
+ "statement": "Let $N$ be a finite nondeterministic Turing machine with Boolean input symbols, let a computation mode, input bit string $y$, register bound $B$, control label $l$, and register valuation $v$ be given. Suppose the codec machine determined by $N$ and the mode reaches its rejection label from configuration $(l,v)$, with all intermediate configurations satisfying the execution guard, and suppose every register in the resulting valuation $v'$ is at most $B$. Then the machine halts with answer false from $(l,v)$, with every configuration before halting satisfying that same guard.",
+ "hypotheses_covered": [
+  "A finite nondeterministic Turing machine $N$ with Boolean input symbols",
+  "A computation mode",
+  "An input bit string $y$",
+  "A natural number bound $B$",
+  "A control label $l$",
+  "Initial register valuation $v$",
+  "A reachable execution from $(l,v)$ to the rejection label, guarded at every earlier step",
+  "Final register valuation $v'$ with every register at most $B$"
+ ],
+ "confidence": "low",
+ "caveat": "The guard includes a machine-specific precondition as well as the register bound; the supplied definitions do not give an informal description of that precondition.",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

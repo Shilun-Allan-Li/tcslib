@@ -1,0 +1,17 @@
+{
+ "lean_name": "Turing.FinTM.ComputesInSpace.computesFunInTime_and_forall_spaceUsed_le",
+ "key": "40a91c5f557fb5e2",
+ "kind": "theorem",
+ "title": "Time and space bounds from space-bounded computation",
+ "statement": "Let $M$ be a finite Turing machine over the binary alphabet, let $f$ map binary words to binary words, and let $s:\\mathbb{N}\\to\\mathbb{N}$. Suppose that on every input $x$, $M$ halts with output $f(x)$ at some time while using at most $s(|x|)$ work-tape cells. Then $M$ computes $f$ within time $B(|x|,s(|x|))$, where $B(n,r)=(|Q|+1)(n+2)3^{k(2r+1)}(2r+1)^k$, $k$ is the number of work tapes, and $Q$ is its state set. Moreover, for every binary input $x$ and every time $t$, the computation from the initial configuration on $x$ uses at most $s(|x|)$ work-tape cells.",
+ "hypotheses_covered": [
+  "$M$ is a finite Turing machine over the binary alphabet",
+  "$f$ maps binary words to binary words",
+  "$s:\\mathbb{N}\\to\\mathbb{N}$",
+  "For every binary input $x$, $M$ halts with output $f(x)$ at some time using at most $s(|x|)$ cells"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

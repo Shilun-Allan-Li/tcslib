@@ -1,0 +1,20 @@
+{
+ "lean_name": "Complexity.LogProg.TQBFARM.formula_run",
+ "key": "31ff29b83a8d29b7",
+ "kind": "theorem",
+ "title": "Evaluation of a Serialized CNF Matrix",
+ "statement": "Let $x$ be a Boolean input word, $B$ a natural number, $r$ a suffix, $\u0003varphi$ a CNF formula over natural-number variables, and $\text{st}$ a machine state. Suppose that deleting the first $\text{st}.P$ bits of $x$ leaves the serialization of $\u0003varphi$ followed by $r$, each of the seven registers of $\text{st}$ is at most $B$, the length of $x$ is at most $B$, and $\text{st}.T=\text{st}.Z=\text{st}.C=\text{st}.V=0$. Then the machine can reach the return label with value $\u0003varphi$ evaluated under the assignment determined by $\text{st}.K$ and $\text{st}.S$, in a configuration obtained from $\text{st}$ by setting only $P$ to zero. Every configuration before the endpoint satisfies the machine guard and has every register at most $B$.",
+ "hypotheses_covered": [
+  "The input suffix after the first st.P bits is the serialization of φ followed by rest.",
+  "Every register of st is at most B.",
+  "The input length is at most B.",
+  "st.T = 0.",
+  "st.Z = 0.",
+  "st.C = 0.",
+  "st.V = 0."
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "For every suffix $r$, CNF formula $\\varphi$, and register state $\\mathrm{st}$, if\ndropping the first $P$ bits of the input $x$ leaves the serialization of $\\varphi$\nfollowed by $r$, all seven registers of $\\mathrm{st}$ are at most $B$, $|x|\\le B$, and\n$T=Z=C=V=0$, then the machine can reach the return instruction with the truth value of\n$\\varphi$ under the assignment determined by $K$ and $S$, with $P=0$ and all other\nregisters unchanged. Every configuration before the final step satisfies the machine's\npreconditions and has all register values at most $B$."
+}

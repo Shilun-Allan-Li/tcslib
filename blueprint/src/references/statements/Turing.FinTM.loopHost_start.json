@@ -1,0 +1,21 @@
+{
+ "lean_name": "Turing.FinTM.loopHost_start",
+ "key": "58ab2ace28be2e3f",
+ "kind": "lemma",
+ "title": "Startup reaches the first anchor seam",
+ "statement": "Let $B$ and $F$ be Boolean finite Turing machines, let $a$ be a state of $B$, let $r$ and $m$ be Boolean modes, let $x,s$ be Boolean words, let $t$ be a natural number, and let $f$ be a configuration of $F$ on input $x$. Suppose that at every time $u<t$, the run of $B$ from its initial configuration on $x$ is not in state $a$, and that at time $t$ it is exactly the clean configuration with state $a$ and word $s$ on tape zero. Then after $t+2$ steps from the prepared startup configuration, the loop host with modes $r,m$ is exactly the released startup call on that clean configuration, with no flag, counter word equal to the output of $f$, and fuel residue $f$.",
+ "hypotheses_covered": [
+  "Boolean finite Turing machines B and F",
+  "anchor state of B",
+  "Boolean modes forward and findMode",
+  "Boolean input x and word s",
+  "natural number t",
+  "fuel configuration f on input x",
+  "for every u<t, the body run from its initial configuration is not in state a",
+  "at time t, the body run is exactly the clean anchor configuration carrying s"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $s$ be a word, $f$ a fuel configuration, and $t$ a time such that the body, run from\nits initial configuration, first visits the anchor at time $t$, arriving at the clean\nseam that carries $s$ on work tape zero with all other work tapes blank. Then the loop\nhost, run for $t + 2$ steps from the prepared startup configuration, reaches the active\nreleased call on that seam with counter word the output of $f$ and fuel residue $f$."
+}

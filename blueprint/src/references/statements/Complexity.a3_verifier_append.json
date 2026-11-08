@@ -1,0 +1,17 @@
+{
+ "lean_name": "Complexity.a3_verifier_append",
+ "key": "da3d6afc42515297",
+ "kind": "lemma",
+ "title": "Verifier on padded concatenations",
+ "statement": "Let $L$ be a language of binary words, let $c$ be a natural number, and let $x,u$ be binary words with $|u|=2^{(|x|+1)^c}$. Then $x$ followed by $u$ belongs to the padding verifier for $L$ at degree $c$ if and only if $x\\in L$.",
+ "hypotheses_covered": [
+  "$L$ is a language over the binary alphabet",
+  "$c\\in\\mathbb{N}$",
+  "$x,u$ are binary words",
+  "$|u|=2^{(|x|+1)^c}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "If $|u| = 2^{(|x|+1)^c}$, then the concatenation $x \\mathbin{+\\!\\!+} u$ belongs\nto the padding verifier of $L$ at degree $c$ if and only if $x \\in L$."
+}

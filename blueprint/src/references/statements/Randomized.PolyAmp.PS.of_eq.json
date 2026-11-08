@@ -1,0 +1,15 @@
+{
+ "lean_name": "Randomized.PolyAmp.PS.of_eq",
+ "key": "500a90a0e6fec3c5",
+ "kind": "lemma",
+ "title": "Invariance Under Register-State Equality",
+ "statement": "Fix a finite nondeterministic Turing machine $N$ with Boolean input symbols, a Boolean parameter $o$, a Boolean input word $x$, a natural-number register bound $B$, a control label $l$, and a rational number $p$. For register states $\\sigma$ and $\\sigma'$, if $\\sigma=\\sigma'$ and the polynomial-amplification program initialized at $l$ with register state $\\sigma'$ has all registers bounded by $B$, terminates for every sequence of choice bits, and has probabilities $p$ and $1-p$ of returning true and false, respectively, at every choice-sequence length for which all branches halt, then the same properties hold when it is initialized with $\\sigma$.",
+ "hypotheses_covered": [
+  "The register states satisfy σ = σ'",
+  "The probabilistic-semantics property holds for σ': bounded registers, termination for every choice-bit sequence, and the stated true and false probabilities at every length for which all branches halt"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Fix a finite nondeterministic Turing machine $N$ over the binary alphabet, Boolean\nparameter $o$, input word $x$, register bound $B$, control label $l$, rational number\n$p$, and register records $\\sigma,\\sigma'$. If $\\sigma=\\sigma'$ and the\npolynomial-amplification program started at label $l$ with the register vector encoded\nby $\\sigma'$, no result yet, and all registers bounded by $B$, terminates along every\nsequence of choice bits and has probabilities $p$ and $1-p$ of returning true and false,\nrespectively, for every length at which all branches halt, then the same claim holds\nwhen initialized from $\\sigma$."
+}

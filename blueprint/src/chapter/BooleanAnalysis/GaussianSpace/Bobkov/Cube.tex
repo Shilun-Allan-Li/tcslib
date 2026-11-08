@@ -8,54 +8,79 @@ Coordinate restrictions respect discrete derivatives and split the squared gradi
 \begin{lemma}[Derivative under last-coordinate restriction]
 \lean{BooleanAnalysis.GaussianSpace.derivative_restrictLast}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.derivative}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.derivative}
 \difficulty{1}
-Let $f:\{0,1\}^{n+1}\to\mathbb R$ and $f_b(x)=f(x,b)$. For $i<n$, $b\in\{0,1\}$, and $x\in\{0,1\}^n$, $D_i f_b(x)=D_i f(x,b)$, where $D_i$ is the coordinate half-difference.
+Let $n$ be a natural number, let $f:\{0,1\}^{n+1}\to\mathbb R$, let $i$ be a coordinate
+in $\{0,\ldots,n-1\}$, let $b$ be a bit, and let $x\in\{0,1\}^n$. The discrete
+derivative in direction $i$ of the restriction of $f$ to last coordinate $b$, evaluated
+at $x$, equals the discrete derivative of $f$ in coordinate $i$ at the point obtained by
+appending $b$ to $x$.
 \end{lemma}
 
-\begin{lemma}[Last derivative of a restricted point]
+\begin{lemma}[Last derivative at an appended point]
 \lean{BooleanAnalysis.GaussianSpace.derivative_last_snoc}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.derivative}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.derivative}
 \difficulty{1}
-Let $f:\{0,1\}^{n+1}\to\mathbb R$, $f_b(x)=f(x,b)$, and $d=(f_0-f_1)/2$. Then $D_n f(x,b)=d(x)$ for all $x$ and $b$, where $D_n$ is the last-coordinate half-difference.
+Let $n$ be a natural number and let $f:\{0,1\}^{n+1}\to\mathbb R$. For every bit $b$ and
+every $x\in\{0,1\}^n$, the discrete derivative of $f$ in the last coordinate at the
+point obtained by appending $b$ to $x$ equals the last-coordinate half-difference of $f$
+at $x$.
 \end{lemma}
 
-\begin{lemma}[Squared gradient under restriction]
+\begin{lemma}[Squared derivatives under last-coordinate restriction]
 \lean{BooleanAnalysis.GaussianSpace.sum_sq_derivative_snoc}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.GaussianSpace.derivative_last_snoc,BooleanAnalysis.GaussianSpace.derivative_restrictLast,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.derivative}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.GaussianSpace.derivative_last_snoc, BooleanAnalysis.GaussianSpace.derivative_restrictLast, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.derivative}
 \difficulty{3}
-Let $f:\{0,1\}^{n+1}\to\mathbb R$, $f_b(x)=f(x,b)$, and $d=(f_0-f_1)/2$. Then $\sum_{i<n+1}(D_i f(x,b))^2=\sum_{i<n}(D_i f_b(x))^2+d(x)^2$ for every $x,b$, with $D_i$ the coordinate half-difference.
+Let $n\ge 0$, let $f:\{0,1\}^{n+1}\to\mathbb R$, let $b\in\{0,1\}$, and let
+$x\in\{0,1\}^n$. The sum of the squares of all coordinate half-differences of $f$ at
+$(x,b)$ equals the sum of the squares of the coordinate half-differences of the
+restriction $f_b(z)=f(z,b)$ at $x$, plus the square of the last-coordinate
+half-difference of $f$ at $x$:
+\[\sum_{i=0}^{n}(D_i f(x,b))^2=\sum_{i=0}^{n-1}(D_i f_b(x))^2+\left(\frac{f(x,0)-f(x,1)}{2}\right)^2.\]
 \end{lemma}
 
-\begin{lemma}[Mean of the last half-difference]
+\begin{lemma}[Expectation of the last-coordinate half-difference]
 \lean{BooleanAnalysis.GaussianSpace.expect_diffLast}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.Hypercontractivity.diffLast,BooleanAnalysis.Hypercontractivity.restrictLast,BooleanAnalysis.expect}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.Hypercontractivity.diffLast, BooleanAnalysis.Hypercontractivity.restrictLast, BooleanAnalysis.expect}
 \difficulty{3}
-Let $f:\{0,1\}^{n+1}\to\mathbb R$, $f_b(x)=f(x,b)$, and $d=(f_0-f_1)/2$. Uniform expectation satisfies $\mathbb E d=(\mathbb E f_0-\mathbb E f_1)/2$.
+Let $n$ be a natural number and let $f\colon\{0,1\}^{n+1}\to\mathbb R$. For
+$b\in\{0,1\}$, write $f_b(x)=f(x,b)$ for $x\in\{0,1\}^n$, and set
+$d(x)=\tfrac12(f_0(x)-f_1(x))$. With expectation taken uniformly over the Boolean cube,
+$\mathbb E[d]=\tfrac12(\mathbb E[f_0]-\mathbb E[f_1])$.
 \end{lemma}
 
-\begin{lemma}[Length of an expected pair]
+\begin{lemma}[Convexity of the Euclidean norm under expectation]
 \lean{BooleanAnalysis.GaussianSpace.sqrt_expect_sq_add_sq_le_expect_sqrt}
 \leanok
-\uses{BooleanAnalysis.BoolCube,BooleanAnalysis.BooleanFunc,BooleanAnalysis.expect,BooleanAnalysis.expect_eq_fintypeExpect}
+\uses{BooleanAnalysis.BoolCube, BooleanAnalysis.BooleanFunc, BooleanAnalysis.expect, BooleanAnalysis.expect_eq_fintypeExpect}
 \difficulty{4}
-For any real functions $u,v$ on a uniform Boolean cube, $\sqrt{(\mathbb E u)^2+(\mathbb E v)^2}\le\mathbb E\sqrt{u^2+v^2}$.
+For every dimension $n$ and real-valued functions $u,v$ on the Boolean cube
+$\\{0,1\}^n$, the Euclidean norm of their expectations is at most the expectation of
+their pointwise Euclidean norm: $\sqrt{(\E[u])^2+(\E[v])^2}\le\E[\sqrt{u^2+v^2}]$.
 \end{lemma}
 
-\begin{lemma}[Midpoint with additional Euclidean coordinates]
+\begin{lemma}[Midpoint inequality with Euclidean coordinates]
 \lean{BooleanAnalysis.GaussianSpace.carried_midpoint}
 \leanok
 \difficulty{5}
-Let $m\ge0$, $u,v\in\mathbb R^m$, and $A,B,C\in\mathbb R$. If $0\le A\le(B+C)/2$, then $\sqrt{A^2+\sum_j u_j^2}\le\bigl(\sqrt{B^2+\sum_j(u_j+v_j)^2}+\sqrt{C^2+\sum_j(u_j-v_j)^2}\bigr)/2$.
+Let $m$ be a natural number, let $u,v\in\mathbb R^m$, and let $A,B,C\in\mathbb R$
+satisfy $A\ge0$ and $A\le(B+C)/2$. Then
+\[
+\sqrt{A^2+\sum_{j=1}^m
+u_j^2}\le\frac{\sqrt{B^2+\sum_{j=1}^m(u_j+v_j)^2}+\sqrt{C^2+\sum_{j=1}^m(u_j-v_j)^2}}{2}.
+\]
 \end{lemma}
 
-\begin{lemma}[Linearity of discrete differentiation]
+\begin{lemma}[Linearity of the discrete derivative]
 \lean{BooleanAnalysis.GaussianSpace.derivative_linear_combination}
 \leanok
-\uses{BooleanAnalysis.BooleanFunc,BooleanAnalysis.derivative,BooleanAnalysis.derivative_add,BooleanAnalysis.derivative_smul}
+\uses{BooleanAnalysis.BooleanFunc, BooleanAnalysis.derivative, BooleanAnalysis.derivative_add, BooleanAnalysis.derivative_smul}
 \difficulty{3}
-For any real functions $f,g$ on $\{0,1\}^n$, real scalars $c,d$, and a coordinate $i<n$, $D_i(cf+dg)=cD_i f+dD_i g$, where $D_i f(x)=(f(x^{i\leftarrow0})-f(x^{i\leftarrow1}))/2$.
+Let $n$ be a natural number, let $i$ be a coordinate in $\{0,\ldots,n-1\}$, let
+$f,g:\{0,1\}^n\to\mathbb R$, and let $c,d\in\mathbb R$. The discrete derivative in
+direction $i$ of the function $x\mapsto c f(x)+d g(x)$ is the function $x\mapsto c(D_i
+f)(x)+d(D_i g)(x)$.
 \end{lemma}

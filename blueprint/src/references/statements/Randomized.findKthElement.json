@@ -1,0 +1,16 @@
+{
+ "lean_name": "Randomized.findKthElement",
+ "key": "c31a01c8c4be1563",
+ "kind": "def",
+ "title": "Randomized kth-element search",
+ "statement": "Let $\\alpha$ be a linearly ordered type, let $k$ be a natural number, and let $l$ be a finite list of elements of $\\alpha$. Define a probability distribution on pairs consisting of an optional element of $\\alpha$ and a natural-number cost as follows: for the empty list it returns no element with cost zero. For a nonempty list, it chooses an index uniformly at random; if fewer than $k$ entries are strictly below the chosen pivot, it recursively searches the entries strictly below it, and if fewer than $k$ entries are at most the pivot, it recursively searches the entries strictly above it with the rank reduced by the number at most the pivot. In either recursive case it adds the length of the current list to the returned cost; otherwise it returns the pivot with cost equal to the current list length.",
+ "hypotheses_covered": [
+  "$\\alpha$ has a linear order",
+  "$k$ is a natural number",
+  "$l$ is a list in $\\alpha$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

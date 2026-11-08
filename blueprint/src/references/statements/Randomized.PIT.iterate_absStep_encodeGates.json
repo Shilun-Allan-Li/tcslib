@@ -1,0 +1,19 @@
+{
+ "lean_name": "Randomized.PIT.iterate_absStep_encodeGates",
+ "key": "12b2f72e7f6c9e89",
+ "kind": "theorem",
+ "title": "Iteration of gate decoding",
+ "statement": "Fix an input width $n$, a modulus $k\\in\\mathbb{N}$, an assignment $a:\\mathbb{N}\\to\\mathbb{N}$, a list $g_1,\\ldots,g_m$ of arithmetic gates on $n$ inputs, and an initial list $v$ of natural numbers. Suppose that each gate's references point only to earlier values: for every $i<m$, the gate at position $i$ has all references below $|v|+i$. Then applying the decoding step $m$ times to the encoding of the gate list and the initial values yields the terminal marker together with the list obtained by evaluating the gates in order, appending each gate's value to the values already computed.",
+ "hypotheses_covered": [
+  "input width $n\\in\\mathbb{N}$",
+  "modulus $k\\in\\mathbb{N}$",
+  "assignment $a:\\mathbb{N}\\to\\mathbb{N}$",
+  "finite list of gates $gs$",
+  "initial value list $vs$",
+  "for every $i<|gs|$, gate $gs[i]$ has references below $|vs|+i$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

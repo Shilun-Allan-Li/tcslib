@@ -1,0 +1,18 @@
+{
+ "lean_name": "Light.CountSort.Post",
+ "key": "ebf9f97989b4c266",
+ "kind": "structure",
+ "title": "Counting sort postconditions",
+ "statement": "Let $A$ specify the item count, source and destination locations, key layout, key bound, and counter storage; let $\u0003bc$ and $\u0003bc'$ be the initial and final memories, and let $it$ and $kf$ give the items and their keys. Every item with index $j<A.n$ is stored in the final memory at destination address $A.dst$ plus its sorted position among the $A.n$ items, with the key values given by $kf$. For every $t\\le A.nb$, the counter at address $A.cnt+t$ stores the number of those items whose key is less than $t$, and the two memories satisfy the relation specified by $A.Same$.",
+ "hypotheses_covered": [
+  "For every j < A.n, the final memory at A.dst + sortPos kf A.n j equals it j",
+  "For every t ≤ A.nb, the final memory at A.cnt + t equals cntLt kf t A.n",
+  "A.Same μ μ'"
+ ],
+ "confidence": "low",
+ "caveat": "The supplied statement does not include the definitions of sortPos, cntLt, or A.Same, so their precise meanings—especially the memory relation—cannot be confirmed from the given payload.",
+ "rubric": [
+  "lean-notation"
+ ],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}

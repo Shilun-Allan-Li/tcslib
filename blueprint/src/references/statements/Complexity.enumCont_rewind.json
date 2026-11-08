@@ -1,0 +1,18 @@
+{
+ "lean_name": "Complexity.enumCont_rewind",
+ "key": "3406d77a6c0005a7",
+ "kind": "lemma",
+ "title": "Bounded Input Rewind",
+ "statement": "Let $M$ be a deterministic machine with $k$ work tapes over Boolean symbols, with states $q_s,q_c$, and a possible destination state $d$ (which may be absent). Suppose every transition from $q_s$ moves the input head left and enters $q_c$, without changing work tapes or output. Suppose every transition from $q_c$ moves left and remains in $q_c$ when it reads a Boolean symbol, and moves right and enters $d$ when it reads a blank; these transitions also leave work tapes and output unchanged. From any configuration $c$ whose state is $q_s$, there is a time $r\\le p+2$, where $p$ is the current input-head position, such that after $r$ steps the configuration agrees with $c$ in every field except that its state is $d$ and its input head is at position one.",
+ "hypotheses_covered": [
+  "A machine with $k$ work tapes over Boolean symbols",
+  "States $q_s$ and $q_c$, and an optional destination state $d$",
+  "The stated transition rule from $q_s$ for every input and work-tape reading",
+  "The stated transition rule from $q_c$ for every input and work-tape reading",
+  "A configuration $c$ whose state is $q_s$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Consider a machine with a start state whose transition unconditionally steps the\ninput head left into a scanning state, and a scanning state that keeps stepping\nleft over input symbols and exits right into a destination state at the left\nblank. Then from any configuration in the start state there is a number of steps,\nat most the current input position plus $2$, after which the configuration equals\nthe original one with control transferred to the destination state and the input\nhead at cell one."
+}

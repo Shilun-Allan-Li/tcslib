@@ -1,0 +1,15 @@
+{
+ "lean_name": "Turing.FinTM.sweep_init",
+ "key": "468f11c0eb0d7731",
+ "kind": "lemma",
+ "title": "Initialization reaches the canonical start",
+ "statement": "Let $M$ be a finite-state machine with $k$ work tapes over a finite alphabet, and let $x$ be an input word. After exactly $2k+2$ steps, the single-tape simulator started on the symbol-wise encoded input is in the canonical configuration representing the initial configuration of $M$ on $x$: its zone consists of one block starting at coordinate $0$, and its work head is at coordinate $-1$.",
+ "hypotheses_covered": [
+  "$M$ is a finite-state machine over a finite alphabet",
+  "$x$ is an input word"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $M$ be a machine with $k$ work tapes over a finite alphabet $\\Gamma$ and let $x$ be\nan input word. Running the single-tape simulator for exactly $2k+2$ transitions from its\ninitial configuration on the symbol-wise encoded input reaches the canonical\nbetween-steps configuration representing the initial configuration of $M$ on $x$, with a\nzone of one block at coordinate $0$ and work head at absolute cell $-1$."
+}

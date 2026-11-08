@@ -1,0 +1,16 @@
+{
+ "lean_name": "Complexity.pairedVerifier_mem_P",
+ "key": "2b009d14a421e834",
+ "kind": "lemma",
+ "title": "Polynomial-time closure of the paired verifier",
+ "statement": "Let $C,c\\in\\mathbb{N}$ and let $V$ be a language of finite bit strings. If $V$ is decidable in polynomial time, then the paired verifier language defined by $C,c,$ and $V$ is also decidable in polynomial time.",
+ "hypotheses_covered": [
+  "$C,c\\in\\mathbb{N}$",
+  "$V$ is a language of finite bit strings",
+  "$V$ belongs to $\\mathsf{P}$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $C, c \\in \\mathbb{N}$ and let $V \\subseteq \\{0,1\\}^{*}$ be a language in\n$\\mathsf{P}$. Then the language of binary strings $y$ that are well-formed\nself-delimiting pair encodings $y = \\langle x, u\\rangle$ ($x$ with every bit\ndoubled, then the separator $01$, then $u$ verbatim) with $|u| = C(|x|+1)^c$ and\n$xu \\in V$ also belongs to $\\mathsf{P}$."
+}

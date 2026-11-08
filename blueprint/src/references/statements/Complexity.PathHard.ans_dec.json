@@ -1,0 +1,19 @@
+{
+ "lean_name": "Complexity.PathHard.ans_dec",
+ "key": "7f0a60168152192d",
+ "kind": "lemma",
+ "title": "Halting with a prescribed Boolean answer",
+ "statement": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean, let $y$ be a Boolean word, and let $o$ assign a Boolean answer to each of five oracle indices and each Boolean word. Let $st$ be a configuration of fifteen natural-number registers, each at most $B$, and let $q,p$ be Booleans with $q=p$. Starting with input $y$, register vector given by $st$, the answer state labeled true if and only if $q$ is true, and no recorded result, the abstract machine $A(a,b,f,m)$ halts with result $p$; at every earlier time its configuration satisfies the guard requiring its prescribed precondition and all register values to be at most $B$.",
+ "hypotheses_covered": [
+  "$a,b,f,B\\in\\mathbb{N}$",
+  "Boolean mode $m$",
+  "oracle $o$ on five indices and Boolean words",
+  "input word $y$",
+  "initial register configuration $st$ has every register at most $B$",
+  "Booleans $q,p$ satisfy $q=p$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "Let $a,b,f,B$ be natural numbers, let $m$ be a Boolean mode, let $o$ be an oracle on\nfive Boolean-word inputs, and let $y$ be a Boolean word. Suppose a state $st$ has all\nfifteen register values at most $B$, and let $q,p$ be Booleans with $q=p$. The machine\n$A(a,b,f,m)$, started on $y$ in the state labeled by the Boolean answer that is true\nexactly when $q$ is true, with register vector $st$ and no recorded result, halts with\nresult $p$; at every earlier time its configuration satisfies the guard requiring the\nprescribed precondition and all registers to be at most $B$."
+}

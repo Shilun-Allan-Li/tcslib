@@ -1,0 +1,15 @@
+{
+ "lean_name": "BooleanAnalysis.ThresholdFunctions.hammingBall_degreeOne_limit",
+ "key": "7284991e5381410f",
+ "kind": "theorem",
+ "title": "Hamming ball first-level limits",
+ "statement": "For every $t\\in\\mathbb R$, as $n\\to\\infty$ through the natural numbers, the uniform expectation of the indicator of the normalized Hamming halfspace converges to the standard Gaussian upper tail $\\overline\\Phi(t)$, and its Fourier weight at level one converges to the square of the standard Gaussian density at $t$: $\\mathbb E[h_{n,t}]\\to\\overline\\Phi(t)$ and $W_1[h_{n,t}]\\to\\varphi(t)^2$.",
+ "hypotheses_covered": [
+  "$t\\in\\mathbb R$",
+  "$n$ ranges over $\\mathbb N$ and tends to infinity"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "\nFor $t\\in\\mathbb R$ and $n\\in\\mathbb N$, define the $\\{0,1\\}$-valued function\n\\[\nh_{n,t}(x)=\\mathbf 1_{\\left\\{t\\le\\frac{\\sum_{i<n}(-1)^{x_i}}{\\sqrt n}\\right\\}},\n\\qquad x\\in\\{0,1\\}^n,\n\\]\nwhere the quotient at $n=0$ is taken to be $0$.\nWrite $\\mathbb E_n[h]=2^{-n}\\sum_{x\\in\\{0,1\\}^n}h(x)$, $\\widehat h(\\{i\\})=\\mathbb E_n[h(x)(-1)^{x_i}]$, and $W^1[h]=\\sum_{i<n}\\widehat h(\\{i\\})^2$ for the degree-one Fourier weight; let $\\varphi(u)=(2\\pi)^{-1/2}e^{-u^2/2}$ and $\\overline\\Phi(t)=\\int_t^\\infty\\varphi(u)\\,du$ be the standard Gaussian density and upper tail.\nFor every real $t$, both limits hold as $n\\to\\infty$ through the natural numbers:\n\\[\n\\mathbb E_n[h_{n,t}]\\longrightarrow\\overline\\Phi(t)\n\\quad\\text{and}\\quad\nW^1[h_{n,t}]\\longrightarrow\\varphi(t)^2.\n\\]"
+}

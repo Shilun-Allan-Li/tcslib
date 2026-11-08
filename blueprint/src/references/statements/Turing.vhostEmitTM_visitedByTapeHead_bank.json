@@ -1,0 +1,20 @@
+{
+ "lean_name": "Turing.vhostEmitTM_visitedByTapeHead_bank",
+ "key": "9f9c22b0119b868d",
+ "kind": "theorem",
+ "title": "Visited cells on embedded work tapes",
+ "statement": "Let $M$ be a Boolean-input multi-tape Turing machine with $m$ work tapes, and let $c$ be a configuration of $M$ on input $y$. Suppose the Boolean tag $b$ marks the boundary of the input-head position of $c$: at position $0$ it is false, and at position $|y|+1$ it is true. For any Boolean word $x$, position $p$ on its input tape, output prefix, time $t$, and work-tape index $i<m$, the cells visited by the head on bank tape $i$ of the virtual-host machine from the corresponding virtual-host configuration through time $t$ are exactly the cells visited by work-tape head $i$ of $M$ from $c$ through time $t$.",
+ "hypotheses_covered": [
+  "Boolean machine $M$ with $m$ work tapes",
+  "configuration $c$ on input $y$",
+  "Boolean tag $b$ satisfying the two boundary implications for $c$'s input-head position",
+  "Boolean word $x$ and input-head position $p$ among its $|x|+2$ positions",
+  "output prefix",
+  "time $t\\in\\mathbb{N}$",
+  "work-tape index $i<m$"
+ ],
+ "confidence": "high",
+ "caveat": "",
+ "rubric": [],
+ "replaced": "% dataset-pipeline: stub -- prose pending build_informal_statements.py\nStatement pending regeneration."
+}
