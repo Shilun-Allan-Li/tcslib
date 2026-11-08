@@ -521,7 +521,12 @@ theorem pushesUniform_pbOf {n M kk : ℕ} (h : n * kk ≤ n * M) :
   have h₁ : HardcoreBit.PushesUniform fun a : Fin (n * M) → Bool => (e₁ a).1 :=
     (HardcoreBit.pushesUniform_equiv e₁).comp HardcoreBit.pushesUniform_fst
   have h₂ := h₁.comp (HardcoreBit.pushesUniform_equiv (blocksE n kk))
-  convert h₂ using 1
+  have hfun : pbOf (M := M) h = fun ω => blocksE n kk (e₁ ω).1 := by
+    funext ω t j
+    rw [blocksE_apply]
+    rfl
+  rw [hfun]
+  exact h₂
 
 /-- The typed coins of a round read off the raw round coins: the position by rejection, the
 fresh inputs as `m` blocks of `k` bits, and the coins of `A'`. -/
@@ -806,7 +811,9 @@ theorem yaoRaw'_layout (y : Fin (D.outLen.eval n) → Bool)
     rw [ρPEquiv_ofFn]
     conv_lhs => rw [← List.take_append_drop ((ρP D).eval n) ((List.ofFn r).drop (i * (ρP D).eval n))]
     congr 1
-    exact (ofFn_block_eq_take_drop r ⟨i, h⟩).symm
+    rw [blocksE_eq]
+    exact (ofFn_block_eq_take_drop r ⟨i, h⟩).symm.trans
+      (congrArg List.ofFn (funext fun j => (FunFamily.blocks_apply _ _ r ⟨i, h⟩ j).symm))
   have hacc : ∀ i : ℕ, acc D ((g D)^[i] x₀) =
       if h : i < T.eval n + 1 then
         decide (f (yaoTry f (yaoB D.inLen D.outLen D.m D.A' n) y (sampleAll T n hM r ⟨i, h⟩)) = y)
