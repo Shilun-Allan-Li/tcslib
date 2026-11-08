@@ -28,6 +28,8 @@ def main():
     parser.add_argument('--check-only', action='store_true')
     args = parser.parse_args()
     record = json.loads((HERE / 'review-publication.json').read_text())
+    if record.get('returned_delivery') and not args.check_only:
+        raise SystemExit('This source job has returned. Do not redispatch it; read SCOPED-REVIEW.md for the revised scope.')
     publisher = Path(record['publisher_checkout'])
     assert publisher == ROOT.parent / 'tcslib-exchange-lwe-sis-publish'
     assert (publisher / '.git').is_dir()

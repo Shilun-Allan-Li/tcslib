@@ -1,5 +1,13 @@
 # Source-policy consolidation for the first four PRs
 
+The first job has returned partial, proposed artifacts; `intake-r1/` preserves
+the original ZIP, report and verified identity/format checks. All 59 substantive
+candidate records cite seven repaired pages. On the user's subsequent direction,
+bulk transcription is postponed and review focuses on consumed PDF passages;
+see `SCOPED-REVIEW.md`. The original full-document request below and issued JOB.md
+describe historical preparation, not a current requirement to transcribe all
+196 pages. No source or matching approval follows from the intake.
+
 The independent 31-proof audit passes 0/0/1/4, with its F02 overview correction
 checked separately. Ten scoped gates now pass, but no code merge is clear yet.
 This preparation targets the source-policy work needed for #236–#239, ahead of
@@ -36,11 +44,12 @@ new Lean proof, native/cache job, external dispatch or merge occurs in preparati
 The existing two-tag registry proposal remains data only and needs coordination
 after the validated delivery and matching review.
 
-After delivery: verify checksums and exact raw/PDF identity, parse all reference
-and matching formats with complete page/name coverage, review mathematical fidelity
-and unresolved issues, obtain matching/shared-file approval, prepare the narrow
-ingestion change, then perform exact-target landing checks. The source job alone
-does not mark the first code PR or the whole five-primitive campaign clear to merge.
+The intake verifies checksums, exact raw/PDF identity, reference/matching formats
+and the disclosed page/name coverage. Next review the consumed-source fidelity
+and relevant ambiguities, obtain matching/shared-file approval, prepare the
+applicable scoped reference integration, then perform exact-target landing checks.
+Whole-document Markdown preparation is deferred. The source job alone does not
+mark the first code PR or the whole five-primitive campaign clear to merge.
 
 **Not yet clear to merge — source validation/ingestion, approved matching,
 shared-registry coordination, landing checks and user approval remain.**

@@ -10,8 +10,8 @@ The audited independent proof fill completes **31 obligations in seven modules**
 `f293b63200ee3c6de6e709925f67c4d60fdc7b4a`, leaving **70 owned admissions**. The
 same isolated branch/worktree is used; no additional PR branch is created.
 The fills are published and their combined Codex proof audit passes. Its sole
-F02 overview repair is locally checked at
-`af54d28f6d412bc56844e7371e2b0b9b394c494c`, pending client publication. The user
+F02 overview repair is checked at
+`af54d28f6d412bc56844e7371e2b0b9b394c494c`. The user
 dispatches source work, approves matching and approves all merges.
 
 | Part | Current progress | Remaining work |
@@ -35,9 +35,11 @@ baseline. No whole-library root elaboration or complete security endpoint is cla
 
 Published dependency drafts #236, #237, #238 and #239, and current draft #250,
 all target `cryptography/lwe-sis-constructions`. Their integration stays with the
-user. The latest remotely verified #250 head at intake is
-`ba903806484bcbe7b95a981b3e4dbb68b7f487fd`; only the new comment repair/intake
-and source-policy preparation remain local.
+user. At the preceding proof-audit intake, #250 head
+`ba903806484bcbe7b95a981b3e4dbb68b7f487fd` was remotely verified. The source-policy
+exchange commit `a4e19bd3cf029b9bf5fb2e53989ddc0d61006ac1` is now verified too;
+the current feature head was not freshly retrieved during this source intake.
+The returned-data intake and revised source-review plan are local records.
 Original statement source `17b2a282b545c6ebca3fccc88d518d18ae78f485` and exchange
 `64e245b345d908d835030efede1c91312a4e6cce` remain immutable historical inputs.
 
@@ -48,12 +50,17 @@ physical/native attestations, landing checks and final consumer bridges remain.
 No short lattice basis, Gaussian preimage sampler or worst-case/search/decision/
 SIS–LWE reduction is introduced. See `fills/04-construction-independent/`.
 
-The next prepared job is `continuation/landing-source-policy/`: Pei16/Wu24
-validation and proposed matching for the earlier #236–#239 stack, 161 declarations
-in 20 modules at `ec72ed773a690c17ac253707350935cc9e0acb34`. It targets the first
-incremental merge path without waiting for #250's remaining construction proofs.
-PW10 and later source obligations remain outside that job. No shared registry,
-blueprint/dataset, paid pipeline or source approval is changed by preparation.
+The source-policy job at `continuation/landing-source-policy/` returned partial
+work for the earlier #236–#239 stack, 161 declarations in 20 modules at
+`ec72ed773a690c17ac253707350935cc9e0acb34`. All returned checksums, four original
+assets, 191 frozen blobs and 703 typed matching records pass local intake. The
+59 proposed matches use seven already-repaired PDF pages and remain unapproved.
+The user asked to postpone unrelated transcription; the root has narrowed future
+work to consumed source passages, accurate adaptation notes and reviewed matching.
+The remaining 186 transcription pages are not missing formalization or a landing
+prerequisite. Scoped reference integration/coordination and landing checks remain.
+PW10 and later source obligations stay separate. No shared registry, blueprint,
+dataset, code, paid pipeline or source approval is changed by intake.
 
 **Not yet clear to merge — source-policy closure and landing checks remain for
 the earlier PRs; #250 also retains seventy admissions and shared-owner holds.

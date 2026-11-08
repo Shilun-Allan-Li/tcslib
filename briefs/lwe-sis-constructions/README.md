@@ -14,13 +14,19 @@ Its F02 flat-generator overview is corrected separately at
 module/style check. No mathematical repair is required. Seventy owned admissions
 and all N01–N04 obligations remain. No merge is clear yet.
 
-The consolidation priority is source policy for the earlier #236–#239 stack.
-`continuation/landing-source-policy/` prepares a Codex validation/ingestion-artifact
-and proposed-matching job over 161 declarations in 20 modules, using exactly the
-Pei16/Wu24 PDFs and raw files (196 pages). It adds the audited scalar slice to the
-earlier source inventory. Later #250/PW10 source work is deferred. No source
-approval, shared registry edit, blueprint/dataset mutation or worker dispatch is
-claimed. The user dispatches and approves matching, coordination and merges.
+The source-policy job for the earlier #236–#239 stack has returned a partial
+delivery at exchange `a4e19bd3cf029b9bf5fb2e53989ddc0d61006ac1`. Its local intake
+verifies 58 delivery checksums, 191 frozen source/record blobs, four primary
+assets and 703 typed matching records. All 161 declarations have dispositions;
+59 proposed matches cite seven already-repaired pages. They remain unapproved.
+
+Following the user's feedback, bulk PDF-to-Markdown transcription is postponed.
+Review now targets the consumed PDF passages, adaptations and matching records;
+the 186 other unvalidated transcription pages are not missing Lean work or an
+additional landing requirement. See `continuation/landing-source-policy/SCOPED-REVIEW.md`
+and its `intake-r1/` records. Applicable scoped reference integration and landing
+checks remain. Later #250/PW10 source work stays separate. No shared registry,
+blueprint/dataset or code is changed by this intake or scope decision.
 
 The current code remains on the same isolated #250 worktree/branch. The 31 fills,
 589-constant axiom inventory and fresh 144-module scope pass; all 575 earlier

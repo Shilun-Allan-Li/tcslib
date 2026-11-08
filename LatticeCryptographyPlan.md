@@ -102,8 +102,14 @@ verified as draft PR #250 at exchange `64e245b345d908d835030efede1c91312a4e6cce`
 The independent proof fill was published at exchange
 `8efc0e669ed3ed004616c4aab81317ebf5fa17e6` and its Codex audit passes
 0 blockers/0 majors/1 documentation minor/4 notes. The F02 overview repair at
-`af54d28f6d412bc56844e7371e2b0b9b394c494c` is checked locally; its publication
-and the earlier-stack source-policy packet are being prepared together.
+`af54d28f6d412bc56844e7371e2b0b9b394c494c` is checked. The earlier-stack
+source-policy inputs were published at exchange
+`a4e19bd3cf029b9bf5fb2e53989ddc0d61006ac1`; their partial return is preserved
+and verified under `continuation/landing-source-policy/intake-r1/` in the briefs.
+Following the user's feedback, review targets consumed PDF passages and proposed
+matches. Unrelated whole-document transcription is postponed and does not expand
+the formalization scope or block independent work. Matching/source integration
+and landing checks remain; full-reference validation is not claimed.
 See `briefs/lwe-sis-constructions/gates/08-construction-statements/`.
 
 ## Historical construction-core and arithmetic gates (passed)
@@ -489,3 +495,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-08 (UTC) | Isolated combined draft from central `2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited/intake stack `307cfdd1d6cadfda2ae9cca5367705ad770c5f42`. Mathematics `2bf9dd52882bcafbce9eab48a5bab796275f2094`, separate exports/freeze `17b2a282b545c6ebca3fccc88d518d18ae78f485`: 19 modules, 220 declarations, 101 admissions; final fresh 144-module sweep (288.743 s), 575 constants and 48 backing contracts reconciled, style 0/2/41, finite models pass. Two internal agents supplied read-only research; root native work stayed serial. | Combined Codex statement review prepared; no external dispatch, central push or merge; shared reader/catalogue proposals remain unapplied and dependent fills paused; N01–N03 retained |
 | 2026-11-08 (Pacific) | Combined statement audit PASS 0/0/1/4 at exchange `64e245b345d908d835030efede1c91312a4e6cce`, PR #250 verified open/draft. F01 comment-only repair `f1b75a7d17dc7ef5fddd7403a2d7c740ba365c9c` passes native/style/source invariance checks. Independent fill `f293b63200ee3c6de6e709925f67c4d60fdc7b4a` closes 31 obligations in seven modules; 70 remain. Fresh 144-module sweep 303.792 s, 589 constants and 48 backing contracts reconciled, selected fills sorry-free; all 575 prior elaborated types preserved, two compiler-origin migrations disclosed. | One combined Codex proof review prepared on existing #250; no shared proposal, external dispatch, central push or merge; N01–N04 retained |
 | 2026-11-08 (Pacific) | Independent 31-proof audit PASS 0/0/1/4 at exchange `8efc0e669ed3ed004616c4aab81317ebf5fa17e6`, PR #250 verified open/draft. F02 overview-only repair `af54d28f6d412bc56844e7371e2b0b9b394c494c` passes module/style and unchanged-code checks. Rehashed 153 sources, 2796 attachments and all 12 nested checksum sets (2411 entries). Prepared first-landing source-policy job: 161 declarations/20 modules at audited earlier-stack source `ec72ed773a690c17ac253707350935cc9e0acb34`, Pei16/Wu24 PDFs/raws, 196 pages. | Ten gates pass; user dispatch and source/matching review required. No new proof wave, registry/dataset edit, paid pipeline, external dispatch or merge; N01–N04 retained |
+| 2026-11-08 (Pacific) | User supplies the source-policy ZIP locally. Intake verifies 58 delivery and 10 input checksums, four exact primary assets, 191 frozen blobs and 703 typed matching records; all 161 names are accounted for. Original PARTIAL report and bytes are preserved. User asks to defer PDF-to-Markdown work for material not being formalized; root narrows review to consumed passages. All 59 proposed matches cite seven already-repaired pages. | Bulk transcription deferred, not an additional landing prerequisite. No whole-reference validation, approved matching, registry/blueprint/dataset or Lean edit, new dispatch, push or merge; scoped source integration and landing checks remain |

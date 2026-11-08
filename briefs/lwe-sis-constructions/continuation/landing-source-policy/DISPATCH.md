@@ -1,5 +1,11 @@
 # Earlier-stack source policy: client publication and Codex dispatch
 
+**Historical handoff: this job was published, dispatched and has returned.**
+Its partial delivery is preserved in `intake-r1/`. Do not redispatch the old
+whole-document transcription request. The user has postponed bulk transcription;
+`SCOPED-REVIEW.md` describes the current consumed-passage review scope. The
+commands and original packet identities below are retained as publication records.
+
 The independent 31-proof audit passes 0 blockers/0 majors/1 documentation minor/
 4 continuing notes. Its F02 overview correction is checked at
 `af54d28f6d412bc56844e7371e2b0b9b394c494c`; no proof repair was needed.
