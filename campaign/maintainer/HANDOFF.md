@@ -9,6 +9,17 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**LATEST: #235 merged; MAC6 adopted. Final current audit publication running.**
+
+Seyoon merged#235 atdf4341236e04a861e65e29d58b35a713f14c819c, all1003Leanblobs exactly073; wholeMF63 renamedMAC6/895hashes preserved, no newelaboration/splice. Gate120CLOSED PASS0/0/0/20.
+
+**Not yet clear to merge: #215.** Pushedb12902832c67210acd737d87d2d0c761bd5b35eb; actualMSG9PASS2/static0/0 wholeMSG8tail, full329/0/static66 remainsactual078/MAC5. CodexR4canonical/completeinputlist adopted, allpeer/context checksPASS; finalstage/push/prompt next.
+
+**Not yet clear to merge: #233.** Pushed55df52da9754f04b0c71646df29f83f33ec3aa52; actualMMIG4PASS2/static0/0 wholeMMIG3tail, full394/0/static60 remainsactualEAecd/MAC5. Codex118canonical/two-partlists adopted; peer scope-label minor corrected; allsource/type/AX/screen/context checksPASS. Finalstage/push/prompt next.
+
+Contextvalidity14files verifies100unchanged endpointblobs and unchangedownerimportclosures excludingHierarchy. No ownLean/screen jobsremain. Finalrecords/exchangepins notyetissued. Nextfree121. All older checkpoints below are historical.
+
+
 **LATEST: Clear to merge #235; SG1R4 and MIG118 publication next.**
 
 - **Clear to merge: #235.** Gate120CLOSED PASS0/0/0/20, allnotes accepted after root and independent review. Source073 unchanged; latestcampaignLean==MAC5/bf64, cleanprospectivemergeLean==passedMF63. ActualPASS2/static0/0 valid. PR235 is verified non-draft/open at073; readiness complete. Seyoonmerges. No new ruling/sourcefix.

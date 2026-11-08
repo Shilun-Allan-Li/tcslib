@@ -1,5 +1,3 @@
-# Gate106 — F4 source repair; current replay and25-source screens pass
+# Gate106 round4 — final verified publication preparing
 
-**Not yet clear to merge: #215.** Independent review confirms round3 HOLD0/1/0/26.
-Both backward-live-prefix copies directly cite the existing public theorem at pushed078.
-Their literal private headers/imports/machines stay frozen; the84-candidate bounded sweep finds no further exact implementation in the five touched files. FreshMSG8 PASS329/static0/66 and actualfull25BASE/HEAD screens2019→1991 are frozen. Current scoped/compiled refresh and selectedCodex round4 remain before Ready to dispatch. No new debt acceptance; original packets/findings remain immutable.
+**Not yet clear to merge: #215 — Codex round4 open.** Current pushedb129 includes mergedF6; actualMSG9 PASS2/static0/0 chains from wholeMSG8, whose full329/0/static66 remains at078/MAC5. Exactsource25/owner-import contexts are preserved. Complete current source/compiler/seal checks and independent compact-packet peer review pass. Final mixed-Git render and publication next; not yet dispatched.
