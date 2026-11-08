@@ -1,0 +1,40 @@
+{
+  "method": "Run the real helper entry point with gh/mutating-git stubs; real local identity/source/payload guards run. Root clean status is simulated until handoff commit.",
+  "actual_network_calls": 0,
+  "actual_pushes": 0,
+  "actual_pr_writes": 0,
+  "actual_rebases": 0,
+  "actual_merges": 0,
+  "results": [
+    {
+      "scenario": "check-only",
+      "passed": true,
+      "expected_rejection": false,
+      "simulated_pushes": 0
+    },
+    {
+      "scenario": "update-draft",
+      "passed": true,
+      "expected_rejection": false,
+      "simulated_pushes": 2
+    },
+    {
+      "scenario": "reject-non-draft",
+      "passed": true,
+      "expected_rejection": true,
+      "simulated_pushes": 0
+    },
+    {
+      "scenario": "reject-closed",
+      "passed": true,
+      "expected_rejection": true,
+      "simulated_pushes": 0
+    },
+    {
+      "scenario": "reject-foreign-exchange-path",
+      "passed": true,
+      "expected_rejection": true,
+      "simulated_pushes": 1
+    }
+  ]
+}
