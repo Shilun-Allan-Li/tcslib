@@ -1,0 +1,92 @@
+/-- **R8.3, skip back, framed** (design §12.8a). If the delimited word `u` of
+tape `i` ends one blank before the head, that is, `u` starts at
+`pos - |u| - 1`, then skip back reaches `done` at exactly `|u| + 3` and not
+earlier, with the head of tape `i` at `pos - |u| - 1` and nothing else
+changed. The current cell and the cells left of `u`'s delimiter are
+arbitrary. Up to the exit the head of tape `i` stays within
+`[pos - |u| - 2, pos]`, and every other head is fixed. After
+`Turing.skipTM_run_ofCfg` over `u`, this returns the head to where it was.
+
+**Proof sketch.** Two unconditional left steps reach the last cell of `u`, or
+its left delimiter when `u = []`. Then `|u|` left steps in `back` cross `u`,
+and the delimiter at relative position `-1` is one right step into `done`. -/
+theorem skipBackTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (i : Fin k)
+    (u : List Symbol) (d : Cfg k Symbol SeekPhase x) (hstate : d.state = some .run)
+    (hu : ∀ p : ℤ, -1 ≤ p → p ≤ (u.length : ℤ) →
+      d.workTapes i (d.workTapePos i - u.length - 1 + p) = FinTM.bufferTape u p) :
+    (skipBackTM k i).runFrom d (u.length + 3) =
+        { d with
+          state := some .done
+          workTapePos := Function.update d.workTapePos i
+            (d.workTapePos i - u.length - 1) } ∧
+      (∀ t < u.length + 3, ((skipBackTM k i).runFrom d t).state ≠ some .done) ∧
+      (∀ (j : Fin k) (t : ℕ), t ≤ u.length + 3 →
+        if j = i then
+          ((skipBackTM k i).runFrom d t).workTapePos j ∈
+            Finset.Icc (d.workTapePos j - u.length - 2) (d.workTapePos j)
+        else ((skipBackTM k i).runFrom d t).workTapePos j = d.workTapePos j) := by
+  let F := fun r : ℕ => catalogSeekCfg i d
+    (if r = 0 then .run else if r = 1 then .gap else .back) (-(r : ℤ))
+  let D : Cfg k Symbol SeekPhase x := { d with
+    state := some .done
+    workTapePos := Function.update d.workTapePos i (d.workTapePos i - u.length - 1) }
+  have h0 : F 0 = d := by
+    apply Cfg.ext <;> simp [F, catalogSeekCfg, hstate]
+  have hF (r : ℕ) (hr : r < u.length + 2) : (skipBackTM k i).step (F r) = F (r + 1) := by
+    rcases r with _ | r
+    · simpa [F, SignType.cast] using
+        catalog_seek_step (skipBackTM k i) i d .run .gap 0 .neg rfl
+    rcases r with _ | r
+    · simpa [F, SignType.cast] using
+        catalog_seek_step (skipBackTM k i) i d .gap .back (-1) .neg rfl
+    have hp0 : 0 ≤ (u.length : ℤ) - r - 1 := by omega
+    have hp : ((u.length : ℤ) - r - 1).toNat < u.length := by omega
+    have hs : (catalogSeekCfg i d .back (-((r + 2 : ℕ) : ℤ))).workTapeSymbols i =
+        some u[((u.length : ℤ) - r - 1).toNat] := by
+      have h := hu ((u.length : ℤ) - r - 1) (by omega) (by omega)
+      rw [show d.workTapePos i - u.length - 1 + ((u.length : ℤ) - r - 1) =
+        d.workTapePos i + (-((r + 2 : ℕ) : ℤ)) by omega] at h
+      simpa only [catalogSeekCfg, Cfg.workTapeSymbols, Function.update_self,
+        FinTM.bufferTape, if_pos hp0, List.getElem?_eq_getElem hp] using h
+    have h := catalog_seek_step (skipBackTM k i) i d .back .back
+      (-((r + 2 : ℕ) : ℤ)) .neg (by simp only [skipBackTM, hs])
+    have hz : -((r + 2 : ℕ) : ℤ) + (SignType.neg : ℤ) = -((r + 3 : ℕ) : ℤ) := by
+      simp only [SignType.cast]
+      omega
+    rw [hz] at h
+    change (skipBackTM k i).step (catalogSeekCfg i d .back (-((r + 2 : ℕ) : ℤ))) =
+      catalogSeekCfg i d .back (-((r + 3 : ℕ) : ℤ))
+    exact h
+  have hexit : (skipBackTM k i).step (F (u.length + 2)) = D := by
+    have hs : (catalogSeekCfg i d .back (-((u.length + 2 : ℕ) : ℤ))).workTapeSymbols i = none := by
+      have h := hu (-1) (by omega) (by omega)
+      rw [show d.workTapePos i - u.length - 1 + (-1) =
+        d.workTapePos i + (-((u.length + 2 : ℕ) : ℤ)) by omega] at h
+      simpa [catalogSeekCfg, Cfg.workTapeSymbols] using h
+    have h := catalog_seek_step (skipBackTM k i) i d .back .done
+      (-((u.length + 2 : ℕ) : ℤ)) .pos (by simp only [skipBackTM, hs])
+    change (skipBackTM k i).step (catalogSeekCfg i d .back (-((u.length + 2 : ℕ) : ℤ))) = D
+    rw [h]
+    apply Cfg.ext <;> simp [D, catalogSeekCfg, SignType.cast]
+    congr 1
+    omega
+  have hD : (skipBackTM k i).step D = D := by
+    rw [step_of_inputMoveAction (skipBackTM k i) D 0 rfl rfl, moveInputPos_zero]
+  have result := catalog_pass_contract (skipBackTM k i) F D (u.length + 2) hF hexit hD
+    (fun c => c.state ≠ some .done)
+    (fun c => ∀ j : Fin k, if j = i then
+      c.workTapePos j ∈ Finset.Icc (d.workTapePos j - u.length - 2) (d.workTapePos j)
+      else c.workTapePos j = d.workTapePos j)
+    (by intro r _; simp only [F, catalogSeekCfg]; split_ifs <;> simp)
+    (by
+      intro r hr j
+      rcases eq_or_ne j i with rfl | hj
+      · simp [F, catalogSeekCfg, Finset.mem_Icc]; omega
+      · simp [F, catalogSeekCfg, hj])
+    (by
+      intro j
+      rcases eq_or_ne j i with rfl | hj
+      · simp [D, Finset.mem_Icc]; omega
+      · simp [D, hj])
+  rw [h0] at result
+  exact ⟨result.1, result.2.1, fun j t ht => result.2.2 t ht j⟩

@@ -1,0 +1,87 @@
+{
+  "consumer_scopes": [
+    {
+      "root": "Turing.FinTM.one_work_tape",
+      "fragment": "one_work_tape-CANDIDATE.lean.txt",
+      "complete_doc_header_body": true,
+      "source_bytes": 3871,
+      "source_sha256": "0f9792f3d94746c5d06e3c04f8e4cf338a59f9c6b2d8ac8d9d32c7ca0d8c810a",
+      "ordinary_heads": [
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.FinTM.ComputesFunInTimeVia",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.sweepAct",
+        "Turing.FinTM.indexedVisit",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.FinTM.sweepRevCfg"
+      ],
+      "actual_definition_simp_rows_removed": [
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    },
+    {
+      "root": "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape.0.Turing.FinTM.dg_all_inputs",
+      "fragment": "dg_all_inputs-CANDIDATE.lean.txt",
+      "complete_doc_header_body": true,
+      "source_bytes": 4610,
+      "source_sha256": "d3a0e13a414efa87f07592875d2d3d039e9388f0ed02fcd6636e9035ff24577b",
+      "ordinary_heads": [
+        "Turing.FinTM.ComputesFunInTime",
+        "Turing.MultiTapeTM.spaceUsed",
+        "Turing.MultiTapeTM.initCfg",
+        "Turing.FinTM.ComputesInTime",
+        "Turing.FinTM.sweepAct",
+        "Turing.FinTM.indexedVisit",
+        "Turing.Action.mapState",
+        "Turing.MultiTapeTM.runFrom",
+        "Turing.FinTM.sweepRevCfg",
+        "Turing.MultiTapeTM.visitedByTapeHead",
+        "Turing.MultiTapeTM.spaceUsedByTape"
+      ],
+      "actual_definition_simp_rows_removed": [
+        "Turing.MultiTapeTM.initCfg"
+      ]
+    }
+  ],
+  "selected_new_reader_scopes": [
+    {
+      "root": "Turing.FinTM.sweepRevCfg_state",
+      "foreign_ordinary_count": 0,
+      "proof": "rfl reads only own sweepRevCfg; recursive owned sweepTape value included by metadata",
+      "seal_controls": "vacuous0 foreign ordinary obligations; actual full native owner compiled, no separate empty-opacity test claimed"
+    },
+    {
+      "root": "Turing.FinTM.sweepRevCfg_output",
+      "foreign_ordinary_count": 0,
+      "proof": "rfl reads only own sweepRevCfg; recursive owned sweepTape value included by metadata",
+      "seal_controls": "vacuous0 foreign ordinary obligations; actual full native owner compiled, no separate empty-opacity test claimed"
+    }
+  ],
+  "ordinary_union": [
+    "Turing.FinTM.ComputesFunInTime",
+    "Turing.FinTM.ComputesFunInTimeVia",
+    "Turing.FinTM.ComputesInTime",
+    "Turing.FinTM.sweepAct",
+    "Turing.FinTM.indexedVisit",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.FinTM.sweepRevCfg",
+    "Turing.MultiTapeTM.spaceUsed",
+    "Turing.Action.mapState",
+    "Turing.MultiTapeTM.visitedByTapeHead",
+    "Turing.MultiTapeTM.spaceUsedByTape"
+  ],
+  "ordinary_union_count": 12,
+  "controls_expected_positive_negative_pairs": 24,
+  "scope_options": {
+    "maxHeartbeats": 0,
+    "maxRecDepth": 4096,
+    "smartUnfolding": false,
+    "autoImplicit": false,
+    "relaxedAutoImplicit": false
+  },
+  "guard_source_sha256": "38a01cbeeabc33abc00e1ac71830ca76f71dd12d5d6b1687c90734c19771f9bb",
+  "full_other_source_context": "Complete candidate owner; only two full target sections are sealed. All earlier/later declarations remain unsealed context; original source outside two repaired bodies unchanged.",
+  "metadata_boundary": "Selected full type/value plus recursive referenced-constant types and own definition-helper values; foreign definition values and all other theorem proof values stop, including same-owner generated theorems. No unrestricted theorem-value closure."
+}

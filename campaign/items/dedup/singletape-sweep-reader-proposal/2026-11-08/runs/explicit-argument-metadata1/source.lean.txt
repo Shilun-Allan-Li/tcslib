@@ -1,0 +1,20 @@
+import Lean
+import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+open Lean Elab Command in
+run_cmd do
+  let env ← getEnv
+  let privateBase := Name.str (Name.str
+    (Name.num "_private.TCSlib.Complexity.TuringMachine.Robustness.SingleTape".toName 0)
+    "Turing") "FinTM"
+  let names : List Name := ["Function.Embedding.coe_refl".toName, "List.map_id".toName, "one_mul".toName, "pow_two".toName, "Turing.FinTM.sweepRevCfg_state".toName, "Option.map_none".toName, "Turing.FinTM.sweepRevCfg_output".toName, "Turing.MultiTapeTM.runFrom_add".toName, "Turing.MultiTapeTM.runFrom_of_halt".toName, "List.length_map".toName, "Int.card_Icc".toName, "Int.toNat_natCast".toName, "Turing.MultiTapeTM.spaceUsed_eq_sum".toName, "Finset.sum_const".toName, "Finset.card_univ".toName, "Fintype.card_fin".toName, "Nat.nsmul_eq_mul".toName, "Turing.MultiTapeTM.spaceUsedByTape_eq_card".toName,
+    Name.str privateBase "sweepStart", Name.str privateBase "dgStart"]
+  for n in names do
+    let some ci := env.find? n | throwError "missing explicit argument {n}"
+    let kind := match ci with
+      | .thmInfo _ => "theorem"
+      | .defnInfo _ => "definition"
+      | _ => "other"
+    let owner := match env.getModuleIdxFor? n with
+      | some i => env.header.moduleNames[i.toNat]!.toString
+      | none => "<current>"
+    logInfo m!"ARGUMENT|{(Json.mkObj [("name",toJson n.toString),("kind",toJson kind),("owner",toJson owner)]).compress}"

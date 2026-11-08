@@ -1,0 +1,64 @@
+{
+  "scopes": [
+    {
+      "scope": "proposed-boot-reader.lean.txt",
+      "sha256": "8f4e092666c77d571426b427fbf7628b97d9b47acb8fc6ecd7a2ff36544a6b15",
+      "all_raw_tactic_lines": [
+        {
+          "line": 7,
+          "literal": "  simp only [bootCfg, hc, Option.map_none, Option.getD_none]"
+        }
+      ]
+    },
+    {
+      "scope": "proposed-run-reader.lean.txt",
+      "sha256": "ea168e1b19c95637a4e18bf85104c5773bb52ac470de40122d562260cf5f547d",
+      "all_raw_tactic_lines": [
+        {
+          "line": 9,
+          "literal": "    rw [NDTM.initCfg_eq, Cfg.init_workTapes]"
+        },
+        {
+          "line": 12,
+          "literal": "    rw [NDTM.initCfg_eq, Cfg.init_workTapePos]"
+        },
+        {
+          "line": 13,
+          "literal": "  rw [runCfg, hw, hp]"
+        },
+        {
+          "line": 14,
+          "literal": "  simp only [NDTM.initCfg_eq, Cfg.init_state, Cfg.init_inputPos, Cfg.init_output, capOf]"
+        }
+      ]
+    },
+    {
+      "scope": "startup-target-CANDIDATE.lean.txt",
+      "sha256": "4adfb841bc31e45d208d725ed4eb0c8218a27b53a94185bb25a0283b0be7e254",
+      "all_raw_tactic_lines": [
+        {
+          "line": 24,
+          "literal": "  rw [ht] at hboot"
+        },
+        {
+          "line": 25,
+          "literal": "  rw [initCfg_eq_bootCfg, \u2190 List.take_append_drop tS w, NDTM.runWith_append, hboot,"
+        },
+        {
+          "line": 27,
+          "literal": "    rewind_run m _ _ _ _ _ (w.drop tS) (by simp only [List.length_drop, hw]; omega),"
+        }
+      ]
+    }
+  ],
+  "complete_scope_captures": true,
+  "consumer_ordinary_foreign_definition_arguments": [],
+  "reader_owned_definitions_passed_to_simp_rw": [
+    "Turing.ClockHost.bootCfg",
+    "Turing.ClockHost.runCfg",
+    "Turing.capOf"
+  ],
+  "reader_ordinary_foreign_definition_arguments": [],
+  "Core_Mathlib_definition_arguments": [],
+  "allowed_abbreviation_conversion": "yard is an imported reducible abbrev; it is not passed explicitly to simp/rw/unfold and no unsafe irreducibility is used."
+}

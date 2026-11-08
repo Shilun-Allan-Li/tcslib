@@ -1,0 +1,24 @@
+private lemma clRecord_idle (M : FinTM Bool) {x : List Bool}
+    (c : Cfg (clRecordTM M).k Bool (clRecordTM M).State x)
+    (hc : c.state = some (.inr (.inr (.inr (.inr (.inr ())))))) :
+    (clRecordTM M).tm.step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clRecordTM, clRecTM]
+  let slots := clRecordSelect M
+  let q : (clRecTM M).State := .inr (.inr (.inr (.inr ())))
+  let d : Cfg (clRecTM M).k Bool (clRecTM M).State x :=
+    ⟨some q, c.inputPos, (fun i => c.workTapes (slots.index i)),
+      (fun i => c.workTapePos (slots.index i)), c.output⟩
+  have hd : clPlacedCfg slots (Sum.inr : (clRecTM M).State → (clRecordTM M).State)
+      c.workTapes c.workTapePos d = c := by
+    rw [clPlacedCfg_eq]
+    refine Cfg.ext hc.symm rfl ?_ ?_ rfl
+    · funext j
+      cases hs : slots.select j with
+      | none => rfl
+      | some i => exact congrArg c.workTapes ((slots.exact i j).mp hs)
+    · funext j
+      cases hs : slots.select j with
+      | none => rfl
+      | some i => exact congrArg c.workTapePos ((slots.exact i j).mp hs)
+  rw [← hd, clPlaced_apply, FinTM.controlAction_apply, moveInputPos_zero]

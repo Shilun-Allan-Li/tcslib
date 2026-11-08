@@ -1,0 +1,20 @@
+import TCSlib.Complexity.CookLevin.Hardness
+set_option maxHeartbeats 0
+set_option autoImplicit false
+set_option relaxedAutoImplicit false
+open Turing
+namespace Complexity
+open private clRowTM from TCSlib.Complexity.CookLevin.Hardness
+section
+attribute [-simp] Turing.Action.apply
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.FinTM.controlAction Turing.Action.apply Turing.moveInputPos
+private lemma clRow_idle {l : ℕ} {x : List Bool}
+    (c : Cfg (clRowTM l).k Bool (clRowTM l).State x)
+    (hc : c.state = some (Fin.last l, (0 : Fin 5))) : (clRowTM l).tm.step c = c := by
+  rw [MultiTapeTM.step_of_some hc]
+  simp only [clRowTM, Fin.val_last, Nat.lt_irrefl, dite_false]
+  rw [FinTM.controlAction_apply, moveInputPos_zero]
+  cases c
+  simp_all
+end
+end Complexity

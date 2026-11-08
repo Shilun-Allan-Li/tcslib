@@ -1,0 +1,80 @@
+/-- The native-input copier instantiates the public two-pass trace.
+
+**Proof sketch.** Interior input reads supply the symbols for the shared write
+step. The right marker turns both heads left, interior reads guide the return,
+and the left marker moves both heads right into the fixed exit. No destination
+delimiter is used. Apply the public trace theorem to these five equations. -/
+private theorem scan_copy_trace {Symbol : Type*} {k : ℕ} {x : List Symbol}
+    (i : Fin k) (d : Cfg k Symbol SweepPhase x)
+    (hstate : d.state = some .sweep) (hin : d.inputPos = 1) (t : ℕ) :
+    (inputCopyTM k i).runFrom d t =
+      catalogTrace (scanCopyF i d) (scanCopyR i d) (scanCopyD i d) x.length t := by
+  have h0 : scanCopyF i d 0 = d := by
+    apply Cfg.ext
+    case inputPos => rw [hin]; apply Fin.ext; simp [scanCopyF, scanWriteCfg]
+    case workTapes => funext j z; simp [scanCopyF, scanWriteCfg]
+    all_goals simp [scanCopyF, scanWriteCfg, hstate]
+  conv_lhs => rw [← h0]
+  apply catalog_trace_run
+  · intro r hr
+    have hs : (scanCopyF i d r).inputSymbol = some x[r] :=
+      inputSymbolInner r (by simp [scanCopyF, scanWriteCfg]; omega) hr
+    unfold scanCopyF
+    rw [scan_write_step (inputCopyTM k i) i x d .sweep .sweep _ 1 r hr
+      (by
+        change (inputCopyTM k i).tr .sweep (scanCopyF i d r).inputSymbol
+          (scanCopyF i d r).workTapeSymbols = _
+        simp only [inputCopyTM, hs])]
+    congr 1
+    rw [← SignType.pos_eq_one, moveInputPos_pos_of_ne_right _ (by simp; omega)]
+    simp
+    omega
+  · have hs : (scanCopyF i d x.length).inputSymbol = none := by
+      simp [Cfg.inputSymbol, scanCopyF, scanWriteCfg]
+    rw [step_of_tapeAction_move _ _ i (-1) .neg rfl (q' := .rewind)
+      (by simp only [inputCopyTM, hs])]
+    apply Cfg.ext
+    case inputPos =>
+      simp only [scanCopyF, scanCopyR, scanWriteCfg]
+      apply Fin.ext
+      rw [← SignType.neg_eq_neg_one, FinTM.moveInputPos_neg_val]
+      simp
+    case workTapePos =>
+      funext j
+      by_cases hj : j = i <;>
+        simp [scanCopyF, scanCopyR, scanWriteCfg, hj, Function.update_apply] <;> omega
+    all_goals simp [scanCopyF, scanCopyR, scanWriteCfg]
+  · intro r hr
+    have hs : (scanCopyR i d (r + 1)).inputSymbol = some x[r] :=
+      inputSymbolInner r (by simp [scanCopyR, scanWriteCfg]; omega) hr
+    rw [step_of_tapeAction_move _ _ i (-1) .neg rfl (q' := .rewind)
+      (by simp only [inputCopyTM, hs])]
+    apply Cfg.ext
+    case inputPos =>
+      simp only [scanCopyR, scanWriteCfg]
+      apply Fin.ext
+      rw [← SignType.neg_eq_neg_one, FinTM.moveInputPos_neg_val]
+      simp
+      omega
+    case workTapePos =>
+      funext j
+      by_cases hj : j = i <;>
+        simp [scanCopyR, scanWriteCfg, hj, Function.update_apply] <;> omega
+    all_goals simp [scanCopyR, scanWriteCfg]
+  · have hs : (scanCopyR i d 0).inputSymbol = none := by
+      simp [Cfg.inputSymbol, scanCopyR, scanWriteCfg]
+    rw [step_of_tapeAction_move _ _ i 1 .pos rfl (q' := .done)
+      (by simp only [inputCopyTM, hs])]
+    apply Cfg.ext
+    case inputPos =>
+      simp only [scanCopyR, scanCopyD, scanWriteCfg, hin]
+      rw [← SignType.pos_eq_one, moveInputPos_pos_of_ne_right _ (by simp)]
+      apply Fin.ext
+      simp
+    case workTapePos =>
+      funext j
+      by_cases hj : j = i <;>
+        simp [scanCopyR, scanCopyD, scanWriteCfg, hj, Function.update_apply]
+    all_goals simp [scanCopyR, scanCopyD, scanCopyF, scanWriteCfg]
+  · rw [step_of_inputMoveAction _ _ 0 rfl (q' := .done) rfl]
+    simp [scanCopyD]

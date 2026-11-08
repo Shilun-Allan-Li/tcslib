@@ -1,0 +1,52 @@
+TCSlib/Complexity/Randomized/ZPPHosts.lean:254:  set c₀ := runCfg (S := S) mm (A.tm.initCfg x) 0 sT sP
+TCSlib/Complexity/Randomized/ZPPHosts.lean:358:        (hostTM S A false).runWith (w.drop s₀) (runCfg mm (A.tm.initCfg x) 0 sT sP) := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:311:def bootCfg (c : Cfg S.k Bool S.State x) :
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:322:    (hostTM S A loop).stepWith b (bootCfg (A := A) c) = bootCfg (S.tm.step c) := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:323:  have hst : (bootCfg (A := A) c).state = some (.boot q) := by simp [bootCfg, hostCfg, hq]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:325:  have hsym : ∀ i, (bootCfg (A := A) c).workTapeSymbols (sI i) = c.workTapeSymbols i :=
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:326:    fun i => by simp [bootCfg, hostCfg, Cfg.workTapeSymbols]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:327:  have hin : (bootCfg (A := A) c).inputSymbol = c.inputSymbol := rfl
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:332:  unfold bootCfg
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:347:    (hostTM S A loop).runWith w (bootCfg (A := A) c) = bootCfg (S.tm.runFrom c w.length) := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:361:theorem initCfg_eq_bootCfg :
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:362:    (hostTM S A loop).initCfg x = bootCfg (A := A) (S.tm.initCfg x) := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:366:    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;> simp [bootCfg, hostCfg, Cfg.init]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:369:    refine slots_cases (fun i => ?_) (fun i => ?_) ?_ <;> simp [bootCfg, hostCfg, Cfg.init]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:479:def runCfg (a : Cfg A.k Bool A.State x) (j : ℤ) (sT : Fin S.k → ℤ → Option Bool)
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:490:    (hostTM S A loop).stepWith b (runCfg m a j sT sP) =
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:491:      runCfg m (A.tm.stepWith b a) ((j + 1 : ℕ) : ℤ) sT sP := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:492:  have hY : (runCfg (S := S) (A := A) m a j sT sP).workTapeSymbols yI = some true := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:493:    simp only [runCfg, hostCfg_symbols_yI]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:497:    have hst : (runCfg (S := S) m a j sT sP).state = some (.run none (capOf a.output)) := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:498:      simp [runCfg, hostCfg, hq]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:501:    unfold runCfg
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:505:    have hst : (runCfg (S := S) m a j sT sP).state = some (.run (some qa) (capOf a.output)) := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:506:      simp [runCfg, hostCfg, hq]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:508:    have hsym : (fun i => (runCfg (S := S) m a j sT sP).workTapeSymbols (aI i)) =
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:509:        a.workTapeSymbols := funext fun i => by simp [runCfg, hostCfg, Cfg.workTapeSymbols]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:510:    have hin : (runCfg (S := S) m a j sT sP).inputSymbol = a.inputSymbol := rfl
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:513:    unfold runCfg
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:525:    (hostTM S A loop).runWith u (runCfg m a j sT sP) =
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:526:      runCfg m (A.tm.runWith u a) ((j + u.length : ℕ) : ℤ) sT sP := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:538:    (hostTM S A loop).runWith u (runCfg m a 0 sT sP) =
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:539:      runCfg m (A.tm.runWith u a) u.length sT sP := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:547:    (hostTM S A loop).stepWith b (runCfg m a m sT sP) =
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:549:  have hst : (runCfg (S := S) m a m sT sP).state = some (.run none (some (some v))) := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:550:    simp [runCfg, hostCfg, ha, ho, capOf]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:552:  simp only [hostTM, clockTr, runCfg, hostCfg_symbols_yI, yard_len]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:562:    (hostTM S A loop).stepWith b (runCfg m a m sT sP) =
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:566:  have hst : (runCfg (S := S) m a m sT sP).state = some (.run a.state (capOf a.output)) := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:567:    simp [runCfg, hostCfg]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:569:  have hY : (runCfg (S := S) (A := A) m a m sT sP).workTapeSymbols yI = none := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:570:    simp [runCfg]
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:574:      (runCfg (S := S) m a m sT sP).inputSymbol (runCfg (S := S) m a m sT sP).workTapeSymbols =
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:588:    unfold runCfg
+TCSlib/Complexity/TuringMachine/Build/NDClockHost.lean:592:    unfold runCfg
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:288:    ReadyAt m a ∧ c = runCfg m a 0 sT sP
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:294:  simp [runCfg, hostCfg]
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:309:          runCfg m (A.tm.initCfg x) 0 sT sP := by
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:324:  rw [initCfg_eq_bootCfg, ← List.take_append_drop (Nat.find hex) w, NDTM.runWith_append, hboot]
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:325:  have hb : bootCfg (A := A) cS = hostCfg (some .rew) cS.inputPos cS.workTapes cS.workTapePos
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:327:    simp [bootCfg, hcS, hout]
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:340:    ((hostTM S A false).runWith w (runCfg m (A.tm.initCfg x) 0 sT sP)).state = none ∧
+TCSlib/Complexity/TuringMachine/Build/NDClockHostRun.lean:341:      ∀ v, ((hostTM S A false).runWith w (runCfg m (A.tm.initCfg x) 0 sT sP)).output = [v] ↔

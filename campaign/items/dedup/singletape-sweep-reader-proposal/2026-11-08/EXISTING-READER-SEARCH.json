@@ -1,0 +1,450 @@
+{
+  "source": "f3c8c050ef98375bc237c72bde74f83d33833374",
+  "source_population": 1003,
+  "all_raw_candidates": [
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 392,
+      "text": "  sweepRevCfg (c.state.map (fun q => .growLeft q 0)) (sweepPos M.k c.inputPos) z"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 416,
+      "text": "    sweepRevCfg q' (moveInputPos p di) (z - 1) (b :: r.tail) l (out ++ emit.toList) := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 427,
+      "text": "    (sweepAct q' b .pos).apply (sweepRevCfg q p z l r out) ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 469,
+      "text": "    (sweepTM M).tm.runFrom (sweepRevCfg (some (.growLeft q 0)) p z l r out) M.k ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 470,
+      "text": "      sweepRevCfg (some (.growLeft q \u27e8M.k, by omega\u27e9)) p (z - M.k)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 476,
+      "text": "    (fun i z l r => sweepRevCfg (some (.growLeft q \u27e8i.val, by simpa [hw] using i.isLt\u27e9))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 481,
+      "text": "    change (sweepTM M).tm.step (sweepRevCfg (some (.growLeft q \u27e8i, by omega\u27e9)) p z l r out) = _"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 487,
+      "text": "    exact sweepRevCfg_left_any _ _ p z l r out _"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 525,
+      "text": "private lemma sweepRevCfg_write {A S : Type} {x : List A} (q : Option S) (q' : S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 528,
+      "text": "    (sweepAct q' b .zero).apply (sweepRevCfg q p z l r out) ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 529,
+      "text": "      sweepRevCfg (some q') p z l (b :: r.tail) out := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 557,
+      "text": "      sweepRevCfg (some .back) p ((M.k : \u2124) - 1) [some sweepBoundary] B.reverse [] := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 569,
+      "text": "      (sweepRevCfg (some .back) p ((M.k : \u2124) - 1) [some sweepBoundary] B.reverse []) M.k ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 570,
+      "text": "      sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] [] := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 573,
+      "text": "      (sweepRevCfg (some .back) p (-1) (B ++ [some sweepBoundary]) [] []) ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 574,
+      "text": "      sweepRevCfg (some (.growLeft M.tm.q\u2080 0)) p (-1)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 576,
+      "text": "    have hr : (sweepRevCfg (some (SweepState.back (\u0393 := \u0393) (S := M.State) (k := M.k)))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 579,
+      "text": "      simp [Cfg.workTapeSymbols, sweepRevCfg, sweepTape]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 582,
+      "text": "    exact sweepRevCfg_write _ _ _ _ _ _ _ _"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 598,
+      "text": "private lemma sweepRevCfg_stay {A S : Type} {x : List A} (q q' : Option S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 600,
+      "text": "    (sweepMove q' .zero).apply (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l r out := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 601,
+      "text": "  apply Cfg.ext <;> simp [sweepMove, sweepRevCfg, Action.apply]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 641,
+      "text": "      (sweepRevCfg (some (.growLeft q \u27e8M.k, by omega\u27e9)) p (z - M.k)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 684,
+      "text": "    ((sweepTM M).tm.step (sweepRevCfg (some (.growLeft q \u27e8M.k, by omega\u27e9)) p (z - M.k)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 746,
+      "text": "      sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun _ => false)))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 781,
+      "text": "      (sweepRevCfg (some (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i (a - 1))))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 786,
+      "text": "    have hsym : (sweepRevCfg"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 795,
+      "text": "    exact sweepRevCfg_stay _ _ _ _ _ _ _"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1132,
+      "text": "      (sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i (a + n)))))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1135,
+      "text": "      sweepRevCfg (some (.inl (.write q inp reads (fun i => headAt c i a))))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1173,
+      "text": "    (tm.runFrom (sweepRevCfg (some (state s)) p z l"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1178,
+      "text": "  simpa only [List.length_take, Nat.min_eq_left hu, sweepRevCfg] using"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1216,
+      "text": "  sweepRevCfg (c.state.map (fun q => .inl (.growLeft q 0))) (dgPos a\u2080 c.inputPos) z"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1261,
+      "text": "    DGSpan tm (sweepRevCfg (some (state 0)) p z l r out)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1262,
+      "text": "      (sweepRevCfg (some (state \u27e8n, by omega\u27e9)) p (z - n)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1264,
+      "text": "  let cfg := fun i z l r => sweepRevCfg (some (state i)) p z l r out"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1269,
+      "text": "      simpa only [sub_eq_add_neg] using sweepRevCfg_left_any _ _ p z l r out _)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1274,
+      "text": "  change (tm.runFrom (sweepRevCfg (some (state 0)) p z l r out) u).workTapePos 0 = z + -1 * u at hp"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1324,
+      "text": "    sweepRevCfg (some (.inl .back)) 1 ((M.k : \u2124) - 1) [some sweepBoundary] L.reverse []"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1335,
+      "text": "    dgSpan_one turn (by dsimp [c\u2081, sweepCfg]; omega) (by dsimp [c\u2082, sweepRevCfg]; omega)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1337,
+      "text": "    sweepRevCfg (some (.inl .back)) 1 (-1) (L ++ [some sweepBoundary]) [] []"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1358,
+      "text": "      simp [c\u2083, Cfg.workTapeSymbols, sweepRevCfg, sweepTape]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1363,
+      "text": "    rw [show c\u2083 = sweepRevCfg (some (.inl .back)) 1 (-1)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1364,
+      "text": "      (L ++ [some sweepBoundary]) [] [] from rfl, sweepRevCfg_write]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1367,
+      "text": "  have hlast := dgSpan_one last (by dsimp [c\u2083, sweepRevCfg]; omega)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1370,
+      "text": "        dsimp [dgStart, sweepRevCfg]; omega)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1413,
+      "text": "      (sweepRevCfg (some (.inr (q, heads, 0))) p z l r out)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1414,
+      "text": "      (sweepRevCfg (some (.inr (q, heads, \u27e8M.k, by omega\u27e9))) p (z - M.k)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1461,
+      "text": "    simp only [dgStart, MultiTapeTM.step, sweepRevCfg, hs, Option.map_some]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1464,
+      "text": "        (sweepRevCfg (some (.inl (.growLeft q 0))) p z"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1471,
+      "text": "    dgSpan_one step (by dsimp [dgStart, sweepRevCfg]; constructor <;> omega)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1504,
+      "text": "      sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1553,
+      "text": "      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1572,
+      "text": "    (by dsimp [sweepRevCfg]; constructor <;> omega)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1590,
+      "text": "      (sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1635,
+      "text": "      (sweepRevCfg q p z l r out) = sweepRevCfg q' p z l (b :: r.tail) out := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1636,
+      "text": "  have h := sweepRevCfg_write q dummy p z l r out b"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1653,
+      "text": "      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1654,
+      "text": "      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1659,
+      "text": "    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1666,
+      "text": "  exact sweepRevCfg_stay _ _ _ _ _ _ _"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1680,
+      "text": "      (sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1681,
+      "text": "      (sweepRevCfg ((M.tm.tr q inp reads).state.map (fun q => .inl (.growLeft q 0)))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1689,
+      "text": "    sweepRevCfg (some (.inl (.write q inp reads right))) p z l [some sweepBoundary] out"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1691,
+      "text": "    sweepRevCfg (some (.inr (act.state, heads, 0))) p z l [some sweepBoundary] out"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1699,
+      "text": "    exact sweepRevCfg_stay _ _ _ _ _ _ _"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1701,
+      "text": "    dgSpan_one step (by dsimp [d, sweepRevCfg]; constructor <;> omega)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1702,
+      "text": "      (by dsimp [e, sweepRevCfg]; constructor <;> omega)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1709,
+      "text": "      (sweepRevCfg (some (.inr (act.state, heads, \u27e8M.k, by omega\u27e9))) p (z - M.k) L [] out) ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1710,
+      "text": "      sweepRevCfg (act.state.map (fun q => .inl (.growLeft q 0))) p (z - M.k) L [some sweepBoundary] out := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1788,
+      "text": "    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun _ => false))))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "line": 1792,
+      "text": "    sweepRevCfg (some (.inl (.write q c.inputSymbol c.workTapeSymbols (fun i => headAt c i a))))"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 27,
+      "text": "* **Tape zippers** (`Turing.FinTM.sweepTape`, `sweepCfg`, `sweepRevCfg`, with"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 153,
+      "text": "def sweepRevCfg {A S : Type} {x : List A} (q : Option S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 159,
+      "text": "lemma sweepRevCfg_left {A S : Type} {x : List A} (q : Option S) (q' : S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 162,
+      "text": "    (sweepAct q' b .neg).apply (sweepRevCfg q p z l (a :: r) out) ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 163,
+      "text": "      sweepRevCfg (some q') p (z - 1) (b :: l) r out := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 182,
+      "text": "    tm.runFrom (sweepRevCfg (some (state s)) p z l"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 184,
+      "text": "    sweepRevCfg (some (state (sweepFold visit s as).1)) p (z - as.length)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 192,
+      "text": "    have hr : (sweepRevCfg (some (state s)) p z l"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 198,
+      "text": "    rw [hr, htr, sweepRevCfg_left, ih]"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 314,
+      "text": "lemma sweepRevCfg_left_any {A S : Type} {x : List A} (q : Option S) (q' : S)"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 317,
+      "text": "    (sweepAct q' b .neg).apply (sweepRevCfg q p z l r out) ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 318,
+      "text": "      sweepRevCfg (some q') p (z - 1) (b :: l) r.tail out := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 320,
+      "text": "  | cons a r => exact sweepRevCfg_left q q' p z l r out a b"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 322,
+      "text": "    have hc : sweepRevCfg q p z l ([] : List (Option A)) out ="
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 323,
+      "text": "        sweepRevCfg q p z l [none] out := by"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Sweep.lean",
+      "line": 328,
+      "text": "    exact sweepRevCfg_left q q' p z l [] out none b"
+    }
+  ],
+  "initial_disposition": "Existing sweepRevCfg_left and sweepRevCfg_left_any are action/transition contracts, not the state/output field equations needed by these complete consumers. No equivalent public standalone state/output reader located. Work-head reader not introduced because existing DGSpan already carries required final head bounds. Search plus inspection, not semantic exhaustive absence.",
+  "additional_available_refs": "git/SWEEP-READERS-ALL-AVAILABLE-REFS.json",
+  "all_raw_matches": "git/SWEEP-READERS-ALL-AVAILABLE-REFS.raw.txt",
+  "disposition": "All25344 matches across428 captured available refs/298 distinct commit heads reduce to188 path/line/source rows, in Sweep and SingleTape. Named candidates are sweepRevCfg itself, published left/left_any action lemmas, and private write/stay action lemmas; no state/output field reader located. No remote fetch, no semantic completeness claim. Source inspection and successful complete seals certify this two-reader route, without a work-head equation."
+}

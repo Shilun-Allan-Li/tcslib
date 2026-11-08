@@ -1,18 +1,18 @@
 {
-  "utc": "2026-11-08T19:34:47.164228+00:00",
+  "utc": "2026-11-08T20:38:21.490367+00:00",
   "campaign_lean": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
   "records_checkpoint": "94f6e87de950472928eb9d0c5eb970e70e824638",
   "auditors": "Codex, selected by Seyoon for morning batch",
   "mathematical_fills": "Leave holes; not dispatched by maintainer",
-  "next_free_gate": 130,
+  "next_free_gate": 131,
   "gates": [
     {
       "gate": 121,
       "pr": 241,
       "slug": "fe-live1-cleanup",
       "branch": "codex/ab34-fe-live1",
-      "head": "5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd",
-      "status": "Comparator reader repair pushed; remaining idle/InputLength major fronts and final replay/follow-up pending; not yet clear to merge"
+      "head": "46edaeef3f2215347412cadb5e7af6a1a4b0b545",
+      "status": "Comparator+nine stationary+EXP absorb reader repairs pushed; three composite idle/InputLength fronts and final validation/follow-up remain open; not yet clear to merge"
     },
     {
       "gate": 122,
@@ -108,7 +108,9 @@
     "SAT BlockLoop import: exact proposal pushed, user ruling pending, unapplied",
     "RO1 home revision to Deterministic: two complete proposals pushed, user ruling pending, unapplied",
     "SAT_exists_linear_verifier public owner-reader: exact proposed owner and consumers pass, user ruling pending, unapplied",
-    "ConfigCount.core_eq: one non-simp four-field equation; full MARMTime proof/native5-headseal/10pairs pass privately; exact258-payload proposal awaiting Seyoon public-API ruling and auditor choice"
+    "NDClockHost.bootCfg_of_halt/runCfg_initCfg: exact153-payload proposal, public2API approval pending",
+    "Sweep.sweepRevCfg_state/output: exact152-payload proposal, public2API approval pending",
+    "Hardness CfgFacts import: exact154-payload hypothesis, two complete proofs pass, frozen-import approval pending"
   ],
   "replays": {
     "FE121": "Current d64 full157 PASS/static0/35; original11-root a93 full163/static49 historical",
@@ -237,12 +239,14 @@
   "approved_reader_prerequisite": {
     "gate": 129,
     "pr": 251,
-    "head": "0201e3c420f5bdef94a67b80cee08a1673f2c3fb",
+    "head": "0f926779de590194f5222277dc038d2ad097ff91",
     "auditor": "Codex",
     "source_only_three_readers": true,
-    "replay": "nread4 fresh wholeMAC8/394 running; nread3 superseded invalid",
+    "replay": "actual0201/394PASS/static59 + actual0f926/3 provider refreshPASS/static0; strict compiled reuse certificate finalizing",
     "clear_to_merge": false,
-    "canonical_action_reader": "controlAction_def"
+    "canonical_action_reader": "controlAction_def",
+    "proof_scopes": "3 new readers+6 old proof repairs",
+    "current_HEAD50_screen": "running"
   },
   "gate122_governance_major": "M1: exposed shared121 step reads plus seven held operational/type-boundary fronts remain unacknowledged; selected13 technicalPASS preserved",
   "gate121_comparator_repair": {
@@ -275,5 +279,29 @@
     "new_complete_replay": "nread4",
     "source_merged": false
   },
-  "gate129_context_repairs": "Three exposed unchanged helper proofs and same-kind simple step companions are being privately repaired through existing readers; no blanketlegacyRule10permission; final129scope/evidence waits for those dispositions"
+  "gate129_context_repairs": "Three exposed unchanged helper proofs and same-kind simple step companions are being privately repaired through existing readers; no blanketlegacyRule10permission; final129scope/evidence waits for those dispositions",
+  "gate121_stationary_repairs": {
+    "utc": "2026-11-08T20:06:05.119088+00:00",
+    "before": "5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd",
+    "head": "46edaeef3f2215347412cadb5e7af6a1a4b0b545",
+    "pr": 241,
+    "gate": 121,
+    "nine_stationary_and_one_EXP_body_repairs": true,
+    "only_two_sketch_updates_and_body_comment_move": true,
+    "comparator_repair_preserved": true,
+    "no_API_import_header_def_attribute_change": true,
+    "nine_guard_heads": 15,
+    "nine_effective_paired_identities": 30,
+    "EXP_guard_heads": 7,
+    "EXP_effective_paired_identities": 14,
+    "exact_literal_executions_are_frozen_private_candidates": true,
+    "later_sketch_only_difference_disclosed": true,
+    "no_current_downstream_replay_or_screen_or_gate_closure_claim": true
+  },
+  "approved_core_reader": {
+    "gate": 130,
+    "API": "Turing.MultiTapeTM.ConfigCount.core_eq",
+    "auditor": "Codex",
+    "source_adopted": false
+  }
 }

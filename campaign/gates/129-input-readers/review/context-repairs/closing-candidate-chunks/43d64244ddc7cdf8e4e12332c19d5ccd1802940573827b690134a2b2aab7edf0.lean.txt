@@ -1,0 +1,13 @@
+/-- Extending an action commutes with the right configuration embedding. -/
+lemma rightCfg_apply {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+    (a : Action l Bool S) (c : Cfg l Bool S x)
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) :
+    (rightAction k f a).apply (rightCfg f c tapes heads) =
+      rightCfg f (a.apply c) tapes heads := by
+  refine Cfg.ext rfl rfl ?_ ?_ rfl
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp [rightAction, rightCfg, Action.apply]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp [rightAction, rightCfg, Action.apply]

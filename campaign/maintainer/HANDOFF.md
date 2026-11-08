@@ -18,7 +18,7 @@ validation; #243/#244/#245/#246/#247/#249 are **Clear to merge**. #241/#242 rema
 
 Campaign Lean remains `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / **whole MAC8**:895 objects and1003 tracked Lean blobs.
 All subsequent campaign pushes are records only. #215/#222/#223/#228/#229/#230/#233/#234/#235
-are merged; the eight overnight source PRs remain unmerged. Next free gate:**130**;129 is reserved for approved reader PR#251.
+are merged; the eight overnight source PRs remain unmerged. Next free gate:**131**;129 is reader PR#251,130 reserved for approvedcore reader/Codex.
 The prior replay/copy-screen jobs are complete. A three-reader InputLength proposal
 passes the complete consumer and guards; Seyoon approved all three equations.
 Its source-only prerequisite PR#251/gate129 is open and the full394 replay is running. Two private
@@ -42,7 +42,7 @@ without adopting unapproved APIs or inferring debt permission. Six Ladner holes 
 
 | PR | Gate | Pushed source HEAD | Checks and current status |
 |---|---:|---|---|
-| #241 |121|`5abe015a1327d6d0869ae46d2f3a0cf8b5cc1abd`|Original9 first-entry proofs + comparator existing-reader repair; original157 replay historicald64; new comparator fullnative/18-headseal36pairs/typeAX pass; final replay/audit pending; **Not yet clear to merge** |
+| #241 |121|`46edaeef3f2215347412cadb5e7af6a1a4b0b545`|20 proof-only root changes: original9 + comparator +9 stationary +EXP absorb; full private guards/types/AX pass per frozen generation; composite/InputLength holds and final replay/follow-up pending; **Not yet clear to merge** |
 | #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|10 first-halt +3 mandatory backwards-live proofs;222→153/static0/31,13types,23heads/46pairs;44screen0new19gone4scores/all23reviewed; Selected13 technicalPASS; rootM1 governance major open; **Not yet clear to merge** |
 | #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`|5 public run-law forwards;80/static0/31,12pairs;33screen0new2gone; Gate CLOSED; **Clear to merge** |
 | #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`|3 SafeRun closures +1 private bridge;80/static0/31,14pairs;33screen0new0gone; Gate CLOSED; **Clear to merge** |
@@ -51,7 +51,7 @@ without adopting unapproved APIs or inferring debt permission. Six Ladner holes 
 | #247 |127|`e16049ad20823b3e6abba171e328489746062080`|2 existing readers in1 private proof;23/static0/0,full target6pairs;48screen0new0gone0scores; Gate CLOSED; **Clear to merge** |
 | #249 |128|`1096e50b4e105392737ec52939b1db0cdbd9316d`|17 approved Ladner declarations/6mathholes;2/static0/6,895→896,18pairs/6edges;49screen0new0gone0scores; Gate CLOSED; **Clear to merge** |
 
-| #251 |129|`0201e3c420f5bdef94a67b80cee08a1673f2c3fb`|Approved3readers with shared Def name; fresh394 replay active; old-context reader repairs/preflight dispositions in progress; **Not yet clear to merge** |
+| #251 |129|`0f926779de590194f5222277dc038d2ad097ff91`|3 approvedreaders+6 oldproofrepairs; actual0201/394PASS/static59 +final3providerPASS/static0; compiled compatibility cert/final50screen pending; **Not yet clear to merge** |
 
 The source scopes remain separate family PRs. WORKFLOW§3 required the three mechanical
 backwards-live companions in #242's already touched owners; their statements/imports/definitions
@@ -145,6 +145,16 @@ to the actual campaign and apply the standing replay-validity rule or whole-over
 Continue existing-reader121 repairs and precise122 held-front disposition; prepare
 approved reader gate129 for Codex dispatch when complete evidence passes. Preserve reports verbatim and pause
 other unresolved design fronts. No new fill dispatch follows from an audit PASS.
+
+### Latest checked reader proposals and explicit ruling
+
+Seyoon approved core_eq and Codex gate130. Exact153-payload ND two-reader and152-payload
+Sweep two-reader proposals close four of the seven held122 consumers privately, but await
+API approval. A154-payload single CfgFacts import hypothesis closes Prepare and reuses
+the canonical comparator map identity; frozen-import ruling pending. Their full native,
+complete scopes, effective controls and type/AX limits are under campaign/items/dedup/.
+No unapproved source/API/import is adopted. Source129 is now0f926; full394 execution
+is0201 and separate final-provider3 is0f926, not a relabelled final394.
 
 ### Machine and preservation constraints
 

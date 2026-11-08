@@ -1,3 +1,3 @@
 **Not yet clear to merge: #251.**
 
-Seyoon approved reusing exact shared FinTM.controlAction_def instead of controlAction_eq; other two approved readers are unchanged. Fresh exact-head nread4/394 replay is active from a whole MAC8 clone. Superseded old-name nread3 was stopped and its output is invalid and never reused. Codex selected; no audit pack/prompt issued yet.
+Three approved non-simp readers plus six mandatory exact-header helper repairs. Actual0201/394 replayPASS/static59, actual final0f926 three-provider refreshPASS/static0; strict compiled proof-body-only downstream reuse certificate is finalizing. Final HEAD50 copy screen running. Four selected closures add existing standardClassical.choice; no new axiom/admission. Codex selected; pack/prompt not issued.

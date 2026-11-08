@@ -1,0 +1,15 @@
+AbsorbBoundaryV1.lean:2000:12: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom c 0
+is not definitionally equal to the right-hand side
+  c
+
+case zero
+k : ℕ
+S : Type
+x : List Bool
+tm : MultiTapeTM k Bool S
+qa : S
+ha : ∀ (inp : Option Bool) (work : Fin k → Option Bool), tm.tr qa inp work = controlAction 0 (some qa)
+c : Cfg k Bool S x
+hc : c.state = some qa
+⊢ MultiTapeTM.runFrom c 0 = c

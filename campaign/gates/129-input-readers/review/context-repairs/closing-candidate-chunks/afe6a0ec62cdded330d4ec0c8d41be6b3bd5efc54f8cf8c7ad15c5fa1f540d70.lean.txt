@@ -1,0 +1,95 @@
+/-- Increment's exact framed phase invariant. **Proof sketch.** Each carry
+step resets one true bit. The first false is changed on the left turn, so the
+cell beyond it is never visited. Overflow turns at the right blank without a
+write. Both branches return over the reset prefix to the unchanged left blank,
+then enter the live exit after exactly `2p+2` steps, preserving the outer frame. -/
+private lemma catalog_increment_trace (i : Fin k) (w : List Bool)
+    (d : Cfg k Bool FlagPhase x) (hstate : d.state = some .run)
+    (hw : ∀ q : ℤ, -1 ≤ q → q ≤ (w.length : ℤ) →
+      d.workTapes i (d.workTapePos i + q) = FinTM.bufferTape w q)
+    (p : ℕ) (tail : Option (List Bool))
+    (hsplit : w = List.replicate p true ++ tail.elim [] (false :: ·)) (t : ℕ) :
+    (incrementTM k i).runFrom d t =
+      catalogTrace (catalogIncF i d p tail) (catalogIncR i d p tail)
+        { d with state := some (.done tail.isSome)
+                 workTapes := (catalogIncR i d p tail 0).workTapes } p t := by
+  have h0 : catalogIncF i d p tail 0 = d := by
+    apply Cfg.ext <;> simp [catalogIncF, hstate, ← hsplit]
+    funext j
+    by_cases hj : j = i
+    · subst j
+      funext q
+      simp only [ite_true, catalogTape]
+      split_ifs with h
+      · simpa using (hw (q - d.workTapePos i) (by omega) (by omega)).symm
+      · rfl
+    · simp [hj]
+  conv_lhs => rw [← h0]
+  apply catalog_trace_run
+  · intro r hr
+    have hpr : p - r = (p - (r + 1)) + 1 := by omega
+    have hs : (catalogIncF i d p tail r).workTapeSymbols i = some true := by
+      simp [catalogIncF, catalogTape, Cfg.workTapeSymbols, hpr,
+        List.replicate_succ, List.append_assoc]
+      omega
+    change ((incrementTM k i).tr .run _ _).apply _ = _
+    simp only [incrementTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogIncF]
+    · funext j
+      by_cases hj : j = i
+      · subst j
+        have hh := catalog_write_middle (d.workTapes i) (d.workTapePos i)
+          (List.replicate r false)
+          (List.replicate (p - (r + 1)) true ++ tail.elim [] (false :: ·)) true false
+        simp only [ite_true]
+        rw [hpr, List.replicate_succ, List.cons_append]
+        simpa only [List.length_replicate, List.replicate_succ',
+          List.append_assoc, List.singleton_append] using hh
+      · simp [hj]
+    · funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · cases tail with
+    | none =>
+      have hs : (catalogIncF i d p none p).workTapeSymbols i = none := by
+        have hh := hw p (by omega) (by simp [hsplit])
+        simpa [catalogIncF, catalogTape, Cfg.workTapeSymbols, hsplit] using hh
+      change ((incrementTM k i).tr .run _ _).apply _ = _
+      simp only [incrementTM, hs]
+      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR]
+      all_goals
+        funext j
+        split_ifs <;> simp_all [SignType.cast] <;> omega
+    | some v =>
+      have hs : (catalogIncF i d p (some v) p).workTapeSymbols i = some false := by
+        simp [catalogIncF, catalogTape, Cfg.workTapeSymbols]
+      change ((incrementTM k i).tr .run _ _).apply _ = _
+      simp only [incrementTM, hs]
+      apply Cfg.ext <;> simp [Action.apply, catalogIncF, catalogIncR]
+      · funext j
+        by_cases hj : j = i
+        · subst j
+          simpa using catalog_write_middle (d.workTapes i) (d.workTapePos i)
+            (List.replicate p false) v false true
+        · simp [hj]
+      · funext j
+        split_ifs <;> simp_all [SignType.cast] <;> omega
+  · intro r hr
+    have hs : (catalogIncR i d p tail (r + 1)).workTapeSymbols i = some false := by
+      have hb : (r : ℤ) < p + (tail.elim [] (true :: ·)).length := by omega
+      simp [catalogIncR, catalogTape, Cfg.workTapeSymbols, List.getElem?_append, hr, hb]
+    change ((incrementTM k i).tr (.rewind _) _ _).apply _ = _
+    simp only [incrementTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogIncR]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · have hs : (catalogIncR i d p tail 0).workTapeSymbols i = none := by
+      simpa [catalogIncR, catalogTape, Cfg.workTapeSymbols] using
+        hw (-1) (by omega) (by omega)
+    change ((incrementTM k i).tr (.rewind _) _ _).apply _ = _
+    simp only [incrementTM, hs]
+    apply Cfg.ext <;> simp [Action.apply, catalogIncR]
+    all_goals
+      funext j
+      split_ifs <;> simp_all [SignType.cast] <;> omega
+  · apply Cfg.ext <;> simp [MultiTapeTM.step, incrementTM, Action.apply]

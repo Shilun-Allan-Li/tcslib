@@ -1,0 +1,16 @@
+private lemma enumCont_absorb {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (qa : S)
+    (ha : ∀ inp work, tm.tr qa inp work = controlAction 0 (some qa))
+    (c : Cfg k Bool S x) (hc : c.state = some qa) (t : ℕ) : tm.runFrom c t = c := by
+  induction t with
+  | zero => rfl
+  | succ t ih =>
+    rw [MultiTapeTM.runFrom_succ_eq_step', ih]
+    simp only [MultiTapeTM.step, hc, ha, controlAction_apply]
+    apply Cfg.ext
+    · exact hc.symm
+    · exact moveInputPos_zero _
+    · rfl
+    · rfl
+    · rfl
+

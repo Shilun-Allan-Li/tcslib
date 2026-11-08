@@ -1,0 +1,764 @@
+{
+  "count": 18,
+  "definitions": [
+    {
+      "hints": "regular",
+      "name": "Turing.Action.apply",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "simp": false,
+      "unfold": true
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.Action.mapState",
+      "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.Cfg.init",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "simp": false,
+      "unfold": true
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.Cfg.inputSymbol",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.Cfg.mapState",
+      "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.Cfg.ofWords",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Convention",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.Cfg.workTapeSymbols",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.FinTM.ComputesInTime",
+      "owner": "TCSlib.Complexity.TuringMachine.Finite",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.FinTM.bufferTape",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.FinTM.controlAction",
+      "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.MultiTapeTM.initCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "simp": false,
+      "unfold": true
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.MultiTapeTM.runFrom",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.MultiTapeTM.step",
+      "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.embedEmitCfg",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.embedEmitTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.moveInputPos",
+      "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.pairEncode",
+      "owner": "TCSlib.Complexity.TuringMachine.Encoding",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    },
+    {
+      "hints": "regular",
+      "name": "Turing.seamCompTM",
+      "owner": "TCSlib.Complexity.TuringMachine.Build.Seam",
+      "projection": false,
+      "simp": false,
+      "unfold": false
+    }
+  ],
+  "actual_HYP_object_matches_all18_guard_names": true,
+  "required_defaultSimp_removals": [
+    "Turing.Action.apply",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg"
+  ],
+  "roots": [
+    {
+      "foreign_definition_mentions": [
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.k",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.State",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.controlAction",
+          "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.fintypeState",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.decEqState",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.seamCompTM",
+          "owner": "TCSlib.Complexity.TuringMachine.Build.Seam",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.tm",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Action.mapState",
+          "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.MultiTapeTM.tr",
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.embedEmitTM",
+          "owner": "TCSlib.Complexity.TuringMachine.Build.Embed",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.state",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.step",
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Action.apply",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.inputSymbol",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.workTapeSymbols",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.inputPos",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.workTapes",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.workTapePos",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.output",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.mapState",
+          "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.moveInputPos",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        }
+      ],
+      "local_definition_helpers": [
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clFreshTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clInputTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clLoadSelect",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clLoadTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacedAction",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepareSelect",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepareTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clReadTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowSelect",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clTwo",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clWipeTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCopyTM.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.index",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.ofInverse",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.permute",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.select",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.trailing",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepareTM.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clReadTM.match_1"
+      ],
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "root": "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepare_idle",
+      "theorem_value_boundaries": [
+        "congrArg",
+        "dite_congr",
+        "Eq.mpr_not",
+        "Eq.mpr_prop",
+        "Eq.symm",
+        "Nat.instNeZeroSucc",
+        "Turing.moveInputPos_zero",
+        "Turing.Cfg.mapState_apply",
+        "Turing.Cfg.mapState_eq_of_fields",
+        "Turing.FinTM.controlAction_apply",
+        "Turing.MultiTapeTM.step_of_some",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clLoadTM._proof_2",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepare_idle._simp_1_3",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRefAction._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowSelect._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowSelect._proof_2",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowTM._proof_2",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clSymbolDecode._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clWipeTM._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.ofInverse._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.ofInverse._proof_2",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.permute._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.trailing._proof_2"
+      ],
+      "visited_constants": 168
+    },
+    {
+      "foreign_definition_mentions": [
+        {
+          "hints": "regular",
+          "name": "Turing.pairEncode",
+          "owner": "TCSlib.Complexity.TuringMachine.Encoding",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.ComputesInTime",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.k",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.State",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.controlAction",
+          "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.fintypeState",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.decEqState",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.seamCompTM",
+          "owner": "TCSlib.Complexity.TuringMachine.Build.Seam",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.FinTM.tm",
+          "owner": "TCSlib.Complexity.TuringMachine.Finite",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Action.mapState",
+          "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.MultiTapeTM.tr",
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.embedEmitTM",
+          "owner": "TCSlib.Complexity.TuringMachine.Build.Embed",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.MultiTapeTM.q\u2080",
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.runFrom",
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.initCfg",
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.mapState",
+          "owner": "TCSlib.Complexity.TuringMachine.StateRenaming",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.embedEmitCfg",
+          "owner": "TCSlib.Complexity.TuringMachine.Build.Embed",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.FinTM.bufferTape",
+          "owner": "TCSlib.Complexity.TuringMachine.Simulation",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.ofWords",
+          "owner": "TCSlib.Complexity.TuringMachine.Build.Convention",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.state",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.inputPos",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.workTapes",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.workTapePos",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Cfg.output",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.MultiTapeTM.step",
+          "owner": "TCSlib.Complexity.TuringMachine.Deterministic",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Action.workTapes",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Action.inputTape",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Action.output",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "abbrev",
+          "name": "Turing.Action.state",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": true,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.init",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Action.apply",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": true
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.inputSymbol",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.Cfg.workTapeSymbols",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        },
+        {
+          "hints": "regular",
+          "name": "Turing.moveInputPos",
+          "owner": "TCSlib.Complexity.TuringMachine.Configuration",
+          "projection": false,
+          "simp": false,
+          "unfold": false
+        }
+      ],
+      "local_definition_helpers": [
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5CompareTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clAddColumn",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmpCfg",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmpOrbit",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmpSize",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmpTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmpUpdate",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmpVerdict",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clFields",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clFreshTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clInputTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clKeepLastPlacement",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clLoadSelect",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clLoadTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clNum",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacedAction",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacedCfg",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepareSelect",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepareTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPreparedCfg",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPreparedTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clReadTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowSelect",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clTwo",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clWipeTM",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5CompareTM.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmpTM.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCopyTM.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clFields.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacedAction_eq.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.index",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.ofInverse",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.permute",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.select",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.trailing",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepareTM.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clReadTM.match_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowPrefix.match_1"
+      ],
+      "owner": "TCSlib.Complexity.CookLevin.Hardness",
+      "root": "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5Compare_compute",
+      "theorem_value_boundaries": [
+        "add_zero",
+        "congrArg",
+        "congrFun",
+        "decide_eq_true_eq",
+        "funext",
+        "instNeZeroNatHAdd_1",
+        "And.left",
+        "And.right",
+        "Bool.eq_iff_iff",
+        "Decidable.byContradiction",
+        "Eq.symm",
+        "Finset.sup_le",
+        "Function.update_eq_self",
+        "Iff.mpr",
+        "List.append_nil",
+        "List.mem_ofFn",
+        "Nat.instNeZeroSucc",
+        "Option.getD_none",
+        "Option.map_id",
+        "Turing.moveInputPos_zero",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmpVerdict_spec",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCmp_run",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clFields_width",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacedCfg_eq",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepared_idle",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPrepared_run",
+        "Turing.Action.apply_inputPos",
+        "Turing.Action.apply_output",
+        "Turing.Action.apply_state",
+        "Turing.Action.apply_workTapePos",
+        "Turing.Action.apply_workTapes",
+        "Turing.Action.mapState_inputTape",
+        "Turing.Action.mapState_output",
+        "Turing.Action.mapState_state",
+        "Turing.Action.mapState_workTapes",
+        "Turing.Cfg.ext",
+        "Turing.Cfg.mapState_eq_of_fields",
+        "Turing.Cfg.ofWords_inputPos",
+        "Turing.Cfg.ofWords_output",
+        "Turing.Cfg.ofWords_state",
+        "Turing.Cfg.ofWords_workTapePos",
+        "Turing.Cfg.ofWords_workTapes",
+        "Turing.Cfg.workTapeSymbols_eq",
+        "Turing.FinTM.computesInTime_iff",
+        "Turing.MultiTapeTM.exists_first_entry_of_fixed",
+        "Turing.MultiTapeTM.initCfg_eq",
+        "Turing.MultiTapeTM.runFrom_mapState_of_agreeOn",
+        "Turing.MultiTapeTM.runFrom_succ_eq_step'",
+        "Turing.MultiTapeTM.step_of_some",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clA5Compare_compute._proof_1_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clCountBump._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clKeepLastPlacement._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clLoadTM._proof_2",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRefAction._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowSelect._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowSelect._proof_2",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clRowTM._proof_2",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clSymbolDecode._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clWipeTM._proof_1",
+        "Turing.FinTM.ComputesInTime.mono",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.ofInverse._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.ofInverse._proof_2",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.permute._proof_1",
+        "_private.TCSlib.Complexity.CookLevin.Hardness.0.Complexity.clPlacement.trailing._proof_2"
+      ],
+      "visited_constants": 352
+    }
+  ],
+  "scope": "Selected full root type/value seed, recursive constant types and same-owner ordinary helper values; every encountered theorem proof value stops after its type; foreign ordinary values remain opaque boundaries."
+}

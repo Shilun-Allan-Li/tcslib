@@ -1,0 +1,109 @@
+{
+  "full_scopes": [
+    {
+      "scope": "proposed-state-reader.lean.txt",
+      "sha256": "58c7f817c54dad142d12c0d979cac8c8cad10fd1f779d70dff65aca43d0495c5",
+      "all_literal_tactic_lines": []
+    },
+    {
+      "scope": "proposed-output-reader.lean.txt",
+      "sha256": "0a8c3f32cc74c260a204876c15b80f0fbf8f5adcd0d8c5e3069f64430228a8ee",
+      "all_literal_tactic_lines": []
+    },
+    {
+      "scope": "one_work_tape-CANDIDATE.lean.txt",
+      "sha256": "0f9792f3d94746c5d06e3c04f8e4cf338a59f9c6b2d8ac8d9d32c7ca0d8c810a",
+      "all_literal_tactic_lines": [
+        {
+          "line": 37,
+          "literal": "    simpa only [Function.Embedding.coe_refl, List.map_id, one_mul] using"
+        },
+        {
+          "line": 40,
+          "literal": "        (show T x.length \u2264 (T x.length + 1) ^ 2 from"
+        },
+        {
+          "line": 42,
+          "literal": "            rw [pow_two]"
+        },
+        {
+          "line": 59,
+          "literal": "      rw [hrun]"
+        },
+        {
+          "line": 61,
+          "literal": "      \u00b7 simp only [sweepStart, sweepRevCfg_state, h\u03c4, Option.map_none]"
+        },
+        {
+          "line": 62,
+          "literal": "      \u00b7 rw [sweepStart, sweepRevCfg_output, hout\u03c4]"
+        }
+      ]
+    },
+    {
+      "scope": "dg_all_inputs-CANDIDATE.lean.txt",
+      "sha256": "d3a0e13a414efa87f07592875d2d3d039e9388f0ed02fcd6636e9035ff24577b",
+      "all_literal_tactic_lines": [
+        {
+          "line": 29,
+          "literal": "    simp only [final, dgStart, sweepRevCfg_state, h\u03c4, Option.map_none]"
+        },
+        {
+          "line": 32,
+          "literal": "    rw [span.1]"
+        },
+        {
+          "line": 35,
+          "literal": "    \u00b7 rw [dgStart, sweepRevCfg_output, hout\u03c4]"
+        },
+        {
+          "line": 42,
+          "literal": "      rw [he, MultiTapeTM.runFrom_add, span.1, MultiTapeTM.runFrom_of_halt _ hf]"
+        },
+        {
+          "line": 44,
+          "literal": "      rw [span.1] at h"
+        },
+        {
+          "line": 53,
+          "literal": "        simpa only [y, List.length_map] using Nat.add_le_add_right htime 1"
+        },
+        {
+          "line": 63,
+          "literal": "      rw [Int.card_Icc]"
+        },
+        {
+          "line": 67,
+          "literal": "      rw [he, Int.toNat_natCast]"
+        },
+        {
+          "line": 69,
+          "literal": "      rw [MultiTapeTM.spaceUsed_eq_sum]"
+        },
+        {
+          "line": 72,
+          "literal": "      simp only [hz, Finset.sum_const, Finset.card_univ, Fintype.card_fin, hk_one,"
+        },
+        {
+          "line": 74,
+          "literal": "      rw [MultiTapeTM.spaceUsedByTape_eq_card, \u2190 hcard]"
+        },
+        {
+          "line": 78,
+          "literal": "      simpa only [y, List.length_map] using h"
+        }
+      ]
+    }
+  ],
+  "owned_private_definitions_used_explicitly": [
+    "sweepStart",
+    "dgStart"
+  ],
+  "owned_local_lets_used_explicitly": [
+    "final",
+    "y"
+  ],
+  "foreign_definition_arguments": [],
+  "Core_Mathlib_definition_arguments": [],
+  "owned_k_field_read": "hk_one is rfl on the unchanged private dgTM machine, no imported resource definition is unfolded."
+}

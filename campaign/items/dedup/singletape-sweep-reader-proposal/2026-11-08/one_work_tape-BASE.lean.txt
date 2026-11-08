@@ -1,0 +1,67 @@
+/-- **One work tape suffices** [AB09, Claim 1.6]: a `Γ`-machine computing `f` within
+`T` is simulated by a machine with a single work tape, over an enlarged finite
+alphabet, within `c · (T n + 1)²`.
+
+**Proof sketch.** For `k = 0`, simulate `M` directly with one unused work tape.
+For `k ≥ 1`, the single work tape of `M'` stores the `k` tapes of `M` interleaved:
+cell `j·k + i` of the simulated layout holds cell `j` of tape `i` (centered at `0` in
+both directions). The alphabet is enlarged to cells carrying a *tagged payload*
+`Option Γ` — so a marked blank is representable, which a bare `Γ × flag` product
+would miss — together with a "head here" flag and zone-boundary tags; `Γ` embeds via
+`e` as an unmarked non-blank payload. To simulate one step of `M`, `M'` sweeps its work tape once
+left-to-right across the visited zone recording the `k` marked symbols in its state,
+computes `M`'s transition, and sweeps back right-to-left updating the marked cells and
+moving the marks. After `t` steps of `M` the visited zone spans `O(k · (t + 1))`
+cells, so each simulated step costs `O(k · (T n + 1))` and the total is
+`c · (T n + 1)²`. Input reads and output emissions pass through unchanged.
+
+**Implementation note.** The forward pass records the preceding block's head
+flags in the cells; the return pass carries the following block's flags in its
+finite control. This implements both movement directions using exactly the two
+stated sweeps. Each macro-step extends the zone by one blank block at each end.
+For positive `k`, initialization costs `2k + 2` transitions and source step `t`
+costs `(4t + 7)k + 4`; `sweepTime_le` supplies the constant `9k + 6`.
+The zero-tape branch is a separate lockstep embedding with constant `1`. -/
+theorem one_work_tape {Γ : Type} [Fintype Γ] [DecidableEq Γ]
+    (M : FinTM Γ) (f : List Γ → List Γ) (T : ℕ → ℕ)
+    (hM : M.ComputesFunInTime f T) :
+    ∃ (Γ' : Type) (_ : Fintype Γ') (_ : DecidableEq Γ') (e : Γ ↪ Γ')
+      (M' : FinTM Γ') (c : ℕ),
+      M'.k = 1 ∧ M'.ComputesFunInTimeVia e f fun n => c * (T n + 1) ^ 2 := by
+  by_cases hk : M.k = 0
+  · refine ⟨Γ, inferInstance, inferInstance, Function.Embedding.refl Γ,
+      unusedTapeTM M hk, 1, rfl, ?_⟩
+    intro x
+    simpa only [Function.Embedding.coe_refl, List.map_id, one_mul] using
+      ((unusedTape_computes M hk f T hM) x).mono
+        (show T x.length ≤ (T x.length + 1) ^ 2 from
+          (Nat.le_succ _).trans (by
+            rw [pow_two]
+            exact Nat.le_mul_of_pos_right _ (Nat.succ_pos _)))
+  · refine ⟨SweepAlphabet Γ M.k, inferInstance, inferInstance, sweepEmbed Γ M.k,
+      sweepTM M, 9 * M.k + 6, rfl, ?_⟩
+    intro x
+    obtain ⟨hhalt, hout⟩ := (computesInTime_iff M x (f x) (T x.length)).mp (hM x)
+    have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T x.length, hhalt⟩
+    let τ := Nat.find hex
+    have hτ : (M.tm.runFrom (M.tm.initCfg x) τ).state = none := Nat.find_spec hex
+    have ht : τ ≤ T x.length := Nat.find_min' hex hhalt
+    have hlive : ∀ t < τ, (M.tm.runFrom (M.tm.initCfg x) t).state ≠ none :=
+      fun _ h => Nat.find_min hex h
+    have hrun := sweep_run_to_halt M (Nat.pos_of_ne_zero hk) x τ hlive τ (le_refl _)
+    have houtτ : (M.tm.runFrom (M.tm.initCfg x) τ).output = f x := by
+      have h := M.tm.runFrom_output_eq_of_halt (M.tm.initCfg x) ht hτ
+      exact h.symm.trans hout
+    have hc : (sweepTM M).ComputesInTime (x.map (sweepEmbed Γ M.k))
+        ((f x).map (sweepEmbed Γ M.k)) (sweepTime M.k τ) := by
+      apply (computesInTime_iff _ _ _ _).mpr
+      rw [hrun]
+      constructor
+      · change (M.tm.runFrom (M.tm.initCfg x) τ).state.map (fun q => SweepState.growLeft q 0) = none
+        rw [hτ]
+        rfl
+      · change (M.tm.runFrom (M.tm.initCfg x) τ).output.map (sweepEmbed Γ M.k) = _
+        rw [houtτ]
+    exact hc.mono ((sweepTime_le M.k τ).trans
+      (Nat.mul_le_mul_left _ (Nat.pow_le_pow_left (Nat.add_le_add_right ht 1) 2)))
+

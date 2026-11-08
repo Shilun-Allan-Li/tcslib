@@ -1,0 +1,27 @@
+/-- **One step of a writing one-tape action** (design §12.8a). If the machine's table
+gives `Turing.tapeAction i inp (some s) m q'` at the current state and reads, one step
+rewrites the scanned cell of tape `i` to `s`, moves the input head by `inp` and head `i`
+by `m`, enters `q'`, and changes nothing else.
+
+**Proof sketch.** As for `Turing.step_of_tapeAction_move`, with the written cell. -/
+theorem step_of_tapeAction_write {Symbol State : Type*} {k : ℕ} {x : List Symbol}
+    (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k)
+    (inp : SignType) (s : Option Symbol) (m : SignType) (hq : c.state = some q)
+    (htr : M.tr q c.inputSymbol c.workTapeSymbols = tapeAction i inp (some s) m q') :
+    M.step c =
+      { c with
+        state := some q'
+        inputPos := moveInputPos c.inputPos inp
+        workTapes := Function.update c.workTapes i
+          (Function.update (c.workTapes i) (c.workTapePos i) s)
+        workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
+  simp only [MultiTapeTM.step, hq, htr]
+  apply Cfg.ext <;> simp [Action.apply, tapeAction]
+  · funext j
+    by_cases hj : j = i
+    · subst hj; simp
+    · simp [hj]
+  · funext j
+    by_cases hj : j = i
+    · subst hj; simp
+    · simp [hj]

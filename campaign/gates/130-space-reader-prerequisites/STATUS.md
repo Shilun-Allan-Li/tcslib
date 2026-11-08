@@ -1,0 +1,1 @@
+Gate130 reserved: Seyoon approved ConfigCount.core_eq and selected Codex. No source PR or audit prompt yet. AdditionalND/Sweep reader proposals are independently validated and awaiting exact API approval; no approval is inferred.
