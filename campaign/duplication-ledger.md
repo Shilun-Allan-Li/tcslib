@@ -1809,7 +1809,7 @@ status/2026-11-08-overnight/queue.json.
 |---|---|---|
 | FE-LIVE-1:9 private helpers in4 owners | #241/gate121 | existing exists_first_entry_of_fixed; comparator/InputLength candidates held and baseline-restored; no whole-family retirement |
 | FH-1:10 current consumers in8 owners | #242/gate122 | existing exists_first_halt;7 other implementations restored and held; ordinary halt selection remains distinct from fixed-live entry |
-| BLIVE-REUSE-1:3 newly identified helpers in Universal/UniversalStartup | #242 companion preflight | existing runFrom_state_ne_none_of_le and timedPrefix_penultimate; mandatory mechanical handling under WORKFLOW§3, not a debt waiver; source not yet adopted |
+| BLIVE-REUSE-1:3 newly identified helpers in Universal/UniversalStartup | #242/gate122 | existing runFrom_state_ne_none_of_le and timedPrefix_penultimate; mandatory mechanical handling under WORKFLOW§3, not a debt waiver; adopted in currentf3c8, finaltail/44comparison pending |
 | Five Bool-facing public run-law implementations | #243/gate123 | public generic output-prefix/extension, halt-absorption and backward-live contracts; names/headers retained; runFrom_one belongs to the paused RO1 front |
 | SafeRun zero/cons/trans implementations | #244/gate124 | public Segment operations through1 new private, non-simp own-definition conversion;3 public headers retained; no added public API |
 | Two private Hardness head/tail implementations | #245/gate125 | existing polyTimeComputable_tail/take1; SAT counterparts wait for the separate pending import decision |

@@ -1,0 +1,8 @@
+/-- No prefix extraction step before the separator's second bit can halt. -/
+private lemma universalPrefix_live (α x : List Bool) (s : ℕ)
+    (hs : s < 2 * α.length + 2) :
+    (universalPrefixTM.tm.runFrom
+      (universalPrefixTM.tm.initCfg (pairEncode α x)) s).state ≠ none := by
+  apply universal_live_before universalPrefixTM.tm _ (show s ≤ 2 * α.length + 1 by omega)
+  rw [universalPrefix_penultimate]
+  exact Option.some_ne_none _

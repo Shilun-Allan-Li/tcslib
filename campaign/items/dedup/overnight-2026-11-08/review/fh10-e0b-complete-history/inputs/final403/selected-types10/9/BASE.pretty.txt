@@ -1,0 +1,5 @@
+∀ {k : ℕ} {S : Type} {x : List Bool} (tm : Turing.MultiTapeTM k Bool S) (c₀ : Turing.Cfg k Bool S x) (T : ℕ),
+  (Turing.MultiTapeTM.runFrom c₀ T).state = none →
+    ∃ t ≤ T,
+      (∀ j < t, ¬(Turing.MultiTapeTM.runFrom c₀ j).Halted) ∧
+        Turing.MultiTapeTM.runFrom c₀ t = Turing.MultiTapeTM.runFrom c₀ T

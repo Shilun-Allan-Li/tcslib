@@ -1,0 +1,13 @@
+/-- The parser is live immediately before consuming the final separator cell. -/
+private lemma timedPrefix_penultimate (bs α x : List Bool) :
+    (timedPrefixTM.tm.runFrom (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x))
+      (4 * bs.length + 2 * α.length + 5)).state ≠ none := by
+  have hlen := timed_input_length bs α x
+  have h0 := timedPrefix_advance bs α x bs α .codeFirst (some (.codeSecond false)) none
+    (4 * bs.length + 4 + 2 * α.length) (by omega) false
+    (by rw [timed_code_get]; exact (timed_pair_separator α x).1) (by intro ws; rfl)
+  rw [show 4 * bs.length + 2 * α.length + 5 =
+      (4 * bs.length + 4 + 2 * α.length) + 1 by omega,
+    MultiTapeTM.runFrom_succ_eq_step', timedPrefix_code bs α x α.length (le_refl _),
+    List.take_length, h0]
+  exact Option.some_ne_none _

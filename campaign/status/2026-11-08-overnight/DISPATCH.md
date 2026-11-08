@@ -110,7 +110,7 @@ content in your reply.
 ## Still preparing
 
 - Gate121/#241: current33 copy comparison pending; nine-proof source/replay/metadata checks pass.
-- Gate122/#242: three mandatory live-prefix companion repairs under private preflight; preserve completed ten-root generation as historical.
+- Gate122/#242: thirteen-target source now adopted; current153tail and final44comparison pending. Ten-root generation stays historical.
 - Gate127/#247: current48 copy comparison pending; final reader source/replay/full target checks pass.
 - Gate128/#249: current49 copy comparison pending; approved statement skeleton with six holes and reading/replay checks pass.
 

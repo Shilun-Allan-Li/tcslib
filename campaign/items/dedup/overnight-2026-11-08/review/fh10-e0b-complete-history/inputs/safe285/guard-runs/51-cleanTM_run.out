@@ -1,0 +1,193 @@
+TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean:410:21: error: Tactic `rfl` failed: The left-hand side
+  (ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output).state
+is not definitionally equal to the right-hand side
+  none
+
+case refine_1
+k : ℕ
+S : Type
+M : MultiTapeTM k Bool S
+q₁ q : S
+V : List Bool
+T : ℕ
+hT : (MultiTapeTM.runFrom (Cfg.init q V) T).state = none
+s : ℕ
+hs : ∀ (i : Fin k), (MultiTapeTM.visitedByTapeHead (Cfg.init q V) T i).card ≤ s
+M' : MultiTapeTM k Bool S := { q₀ := q, tr := M.tr }
+hM' : M' = { q₀ := q, tr := M.tr }
+hinit : MultiTapeTM.initCfg V = Cfg.init q V
+hrun : ∀ (t : ℕ), MultiTapeTM.runFrom (Cfg.init q V) t = MultiTapeTM.runFrom (Cfg.init q V) t
+T0 : ℕ
+hT0le : T0 ≤ T
+hlive : ∀ v < T0, ¬(MultiTapeTM.runFrom (Cfg.init q V) v).Halted
+hvisit :
+  ∀ (t : ℕ) (j : Fin k),
+    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg V) t j = MultiTapeTM.visitedByTapeHead (Cfg.init q V) t j
+hvis : ∀ (j : Fin k), ∀ z ∈ MultiTapeTM.visitedByTapeHead (Cfg.init q V) T0 j, |z| + 1 ≤ ↑s
+hsim : ∀ t ≤ T0, MultiTapeTM.runFrom (simCfg M q V 0) t = simCfg M q V t
+hstart : MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) 1 = simCfg M q V 0
+c : Cfg k Bool S V := MultiTapeTM.runFrom (Cfg.init q V) T0
+hcut : c = MultiTapeTM.runFrom (Cfg.init q V) T
+hT0 : c.state = none
+hfinT : MultiTapeTM.runFrom (Cfg.init q V) T = c
+hc : c = MultiTapeTM.runFrom (Cfg.init q V) T0
+htape :
+  ∀ (j : Fin k),
+    ∃ a b,
+      a ≤ 0 ∧
+        0 ≤ b ∧
+          -↑s ≤ a - 1 ∧
+            b + 1 ≤ ↑s ∧
+              a ≤ c.workTapePos j ∧
+                c.workTapePos j ≤ b ∧
+                  wr (if markSet (visB M q V T0 j) (c.workTapePos j) = some true then none else some (some false))
+                        (markSet (visB M q V T0 j)) (c.workTapePos j) =
+                      markI a b ∧
+                    ∀ (z : ℤ), c.workTapes j z ≠ none → a ≤ z ∧ z ≤ b
+hstg0 : simCfg M q V T0 = stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output
+T₂ : ℕ
+hb₂ :
+  ∀ t ≤ T₂,
+    PB (↑s)
+      (MultiTapeTM.runFrom (stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output) t)
+hr₂ :
+  MultiTapeTM.runFrom (stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output) T₂ =
+    stg k c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output
+hfinal :
+  stg k c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output =
+    ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output
+hrun_total :
+  MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) (1 + (T0 + T₂)) =
+    ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output
+⊢ (ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output).state = none
+TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean:411:28: error: Tactic `rfl` failed: The left-hand side
+  (ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output).output
+is not definitionally equal to the right-hand side
+  c.output
+
+case refine_2
+k : ℕ
+S : Type
+M : MultiTapeTM k Bool S
+q₁ q : S
+V : List Bool
+T : ℕ
+hT : (MultiTapeTM.runFrom (Cfg.init q V) T).state = none
+s : ℕ
+hs : ∀ (i : Fin k), (MultiTapeTM.visitedByTapeHead (Cfg.init q V) T i).card ≤ s
+M' : MultiTapeTM k Bool S := { q₀ := q, tr := M.tr }
+hM' : M' = { q₀ := q, tr := M.tr }
+hinit : MultiTapeTM.initCfg V = Cfg.init q V
+hrun : ∀ (t : ℕ), MultiTapeTM.runFrom (Cfg.init q V) t = MultiTapeTM.runFrom (Cfg.init q V) t
+T0 : ℕ
+hT0le : T0 ≤ T
+hlive : ∀ v < T0, ¬(MultiTapeTM.runFrom (Cfg.init q V) v).Halted
+hvisit :
+  ∀ (t : ℕ) (j : Fin k),
+    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg V) t j = MultiTapeTM.visitedByTapeHead (Cfg.init q V) t j
+hvis : ∀ (j : Fin k), ∀ z ∈ MultiTapeTM.visitedByTapeHead (Cfg.init q V) T0 j, |z| + 1 ≤ ↑s
+hsim : ∀ t ≤ T0, MultiTapeTM.runFrom (simCfg M q V 0) t = simCfg M q V t
+hstart : MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) 1 = simCfg M q V 0
+c : Cfg k Bool S V := MultiTapeTM.runFrom (Cfg.init q V) T0
+hcut : c = MultiTapeTM.runFrom (Cfg.init q V) T
+hT0 : c.state = none
+hfinT : MultiTapeTM.runFrom (Cfg.init q V) T = c
+hc : c = MultiTapeTM.runFrom (Cfg.init q V) T0
+htape :
+  ∀ (j : Fin k),
+    ∃ a b,
+      a ≤ 0 ∧
+        0 ≤ b ∧
+          -↑s ≤ a - 1 ∧
+            b + 1 ≤ ↑s ∧
+              a ≤ c.workTapePos j ∧
+                c.workTapePos j ≤ b ∧
+                  wr (if markSet (visB M q V T0 j) (c.workTapePos j) = some true then none else some (some false))
+                        (markSet (visB M q V T0 j)) (c.workTapePos j) =
+                      markI a b ∧
+                    ∀ (z : ℤ), c.workTapes j z ≠ none → a ≤ z ∧ z ≤ b
+hstg0 : simCfg M q V T0 = stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output
+T₂ : ℕ
+hb₂ :
+  ∀ t ≤ T₂,
+    PB (↑s)
+      (MultiTapeTM.runFrom (stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output) t)
+hr₂ :
+  MultiTapeTM.runFrom (stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output) T₂ =
+    stg k c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output
+hfinal :
+  stg k c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output =
+    ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output
+hrun_total :
+  MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) (1 + (T0 + T₂)) =
+    ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output
+⊢ (ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output).output = c.output
+TCSlib/Complexity/SpaceComplexity/Machines/Clean.lean:418:4: error: Tactic `apply` failed: could not unify the conclusion of `runFrom_forall_append`
+  (∀ t ≤ ?m.1082, PB (↑s) (MultiTapeTM.runFrom (MultiTapeTM.runFrom ?m.1080 ?m.1081) t)) →
+    ∀ t ≤ ?m.1081 + ?m.1082, PB (↑s) (MultiTapeTM.runFrom ?m.1080 t)
+with the goal
+  ∀ t ≤ 1 + (T0 + T₂), ∀ (j : Fin (k + k)), |(MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) t).workTapePos j| ≤ ↑s
+
+Note: The full type of `runFrom_forall_append` is
+  (∀ t ≤ ?m.1081, PB (↑s) (MultiTapeTM.runFrom ?m.1080 t)) →
+    (∀ t ≤ ?m.1082, PB (↑s) (MultiTapeTM.runFrom (MultiTapeTM.runFrom ?m.1080 ?m.1081) t)) →
+      ∀ t ≤ ?m.1081 + ?m.1082, PB (↑s) (MultiTapeTM.runFrom ?m.1080 t)
+
+case refine_5
+k : ℕ
+S : Type
+M : MultiTapeTM k Bool S
+q₁ q : S
+V : List Bool
+T : ℕ
+hT : (MultiTapeTM.runFrom (Cfg.init q V) T).state = none
+s : ℕ
+hs : ∀ (i : Fin k), (MultiTapeTM.visitedByTapeHead (Cfg.init q V) T i).card ≤ s
+M' : MultiTapeTM k Bool S := { q₀ := q, tr := M.tr }
+hM' : M' = { q₀ := q, tr := M.tr }
+hinit : MultiTapeTM.initCfg V = Cfg.init q V
+hrun : ∀ (t : ℕ), MultiTapeTM.runFrom (Cfg.init q V) t = MultiTapeTM.runFrom (Cfg.init q V) t
+T0 : ℕ
+hT0le : T0 ≤ T
+hlive : ∀ v < T0, ¬(MultiTapeTM.runFrom (Cfg.init q V) v).Halted
+hvisit :
+  ∀ (t : ℕ) (j : Fin k),
+    MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg V) t j = MultiTapeTM.visitedByTapeHead (Cfg.init q V) t j
+hvis : ∀ (j : Fin k), ∀ z ∈ MultiTapeTM.visitedByTapeHead (Cfg.init q V) T0 j, |z| + 1 ≤ ↑s
+hsim : ∀ t ≤ T0, MultiTapeTM.runFrom (simCfg M q V 0) t = simCfg M q V t
+hstart : MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) 1 = simCfg M q V 0
+c : Cfg k Bool S V := MultiTapeTM.runFrom (Cfg.init q V) T0
+hcut : c = MultiTapeTM.runFrom (Cfg.init q V) T
+hT0 : c.state = none
+hfinT : MultiTapeTM.runFrom (Cfg.init q V) T = c
+hc : c = MultiTapeTM.runFrom (Cfg.init q V) T0
+htape :
+  ∀ (j : Fin k),
+    ∃ a b,
+      a ≤ 0 ∧
+        0 ≤ b ∧
+          -↑s ≤ a - 1 ∧
+            b + 1 ≤ ↑s ∧
+              a ≤ c.workTapePos j ∧
+                c.workTapePos j ≤ b ∧
+                  wr (if markSet (visB M q V T0 j) (c.workTapePos j) = some true then none else some (some false))
+                        (markSet (visB M q V T0 j)) (c.workTapePos j) =
+                      markI a b ∧
+                    ∀ (z : ℤ), c.workTapes j z ≠ none → a ≤ z ∧ z ≤ b
+hstg0 : simCfg M q V T0 = stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output
+T₂ : ℕ
+hb₂ :
+  ∀ t ≤ T₂,
+    PB (↑s)
+      (MultiTapeTM.runFrom (stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output) t)
+hr₂ :
+  MultiTapeTM.runFrom (stg 0 c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output) T₂ =
+    stg k c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output
+hfinal :
+  stg k c.inputPos c.workTapes (fun j => markSet (visB M q V T0 j)) c.workTapePos c.output =
+    ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output
+hrun_total :
+  MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) (1 + (T0 + T₂)) =
+    ccfg none c.inputPos (fun x x_1 => none) (fun x => 0) (fun x x_1 => none) (fun x => 0) c.output
+⊢ ∀ t ≤ 1 + (T0 + T₂), ∀ (j : Fin (k + k)), |(MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) t).workTapePos j| ≤ ↑s
+GUARD_OK|51|[{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.runFrom"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.Cfg.init"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.visitedByTapeHead"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.cleanTM"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.initCfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.ccfg"},{"definition_simp_unfold":false,"irreducible":true,"name":"Turing.MultiTapeTM.step"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.wr"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.markI"},{"definition_simp_unfold":false,"irreducible":true,"name":"Complexity.LogProg.PB"}]

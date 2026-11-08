@@ -24,7 +24,7 @@ No overnight source PR is merged. Next free gate: **129**;128 is reserved for La
 | PR | Gate | Pushed source HEAD | Current state |
 |---|---:|---|---|
 | #241 |121|`d64dff4fbef865d815c6a561ce8037ea1bae07a2`|9 FE helpers/4 owners; actual157 PASS/static0/35,50 selected exact types/all owned AX standard,9 full proof boundaries/22pairs; current33 screen pending |
-| #242 |122|`e0b7fd50ca81d9b8f3dd486f120292da1b4fb880`|10 FH consumers/8 owners; actual222 PASS/static0/31,10 exact selected types/44pairs,43 screen PASS0new/13gone;3 newly found mandatory BLIVE companions are in private preflight, so final scope/packet is held |
+| #242 |122|`f3c8c050ef98375bc237c72bde74f83d33833374`|FH10 plus3 mandatory BLIVE companions/8 owners;5 fresh+8 source-exact retained targets,23heads/46pairs and QA pass; actual153 tail fromwholeFH10/222 and final44 comparison running |
 | #243 |123|`7c4b1a3e15b800cc4a98624f71a3b27458a41340`|5 public run-law forwards;80 PASS/static0/31, full5 proof boundaries/12pairs and33 screen complete; **Ready to dispatch** |
 | #244 |124|`cfa6a3ee327b03e601b25fd5f0535e85fd18f897`|3 public SafeRun closures plus1 private bridge;80 PASS/static0/31,4 full boundaries/14pairs, public3 exact/private1 standard,33 screen0new0gone; **Ready to dispatch** |
 | #245 |125|`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`|2 private Hardness head/tail closures;26 PASS/static0/0,2 exact types/30pairs,33 screen0new10gone; **Ready to dispatch** |
@@ -35,8 +35,10 @@ No overnight source PR is merged. Next free gate: **129**;128 is reserved for La
 All source branches use `codex/`; fresh exact heads/status are in
 `campaign/status/2026-11-08-overnight/queue.json`. Keep each family PR separate. Mandatory
 mechanical older reproofs found in touched files go in that PR under WORKFLOW§3.
-For #242, inspect `timedCut_live_before`, `timedPrefix_live` and
-`universal_live_before` before finalizing gate122; do not label their old proofs retired.
+For #242, the three body-only `timedCut_live_before`, `timedPrefix_live` and
+`universal_live_before` re-points are now adopted. Their complete candidate/native/type/guard
+checks and the bounded39-chunk/380-hit sweep pass; actual source binding is current.
+Only gates/merges retire implementations. Old FH10/e0b/43 results remain historical.
 
 ### Published morning audit inputs
 
@@ -70,8 +72,9 @@ logs, input/output maps, all compiled source captures, source maps and local mer
 All input trees are unchanged and physically hash verified; no snapshot composition.
 Local validation merge commits are not pushed campaign merges. NJ2's raw generic log header
 keeps an old MAC8 label; its separate erratum and actual request/895 input maps identify NJ1.
-Any forthcoming #242 companion repairs need a fresh whole-snapshot tail and updated source
-bindings. Do not adopt a campaign snapshot until Seyoon's actual merged Lean blobs match it.
+Current #242 companion repairs have advanced source to f3c8. Fresh current-seven/current-eight
+tails run from the whole NJ2/NJ3 respectively; their pending results must not be inferred from
+this prior chain. Do not adopt a campaign snapshot until Seyoon's actual merged Lean blobs match it.
 
 ### Ladner and paused decisions
 
@@ -99,9 +102,9 @@ Three actual Seyoon questions remain **pending**, never inferred approved from e
 
 ### Running work and ordered continuation
 
-1. Finish the three private BLIVE preflights for #242; apply only mechanical existing-reader
-   repairs if all complete proof/header boundaries pass. Preserve full FH10/e0b results as
-   historical; refresh current replay/metadata/source QA and43 HEAD comparison after changes.
+1. Finish the current #242153-module tail and current-seven/current-eight tails, keeping whole
+   inputs. All three BLIVE companions are source-bound/checked; preserve FH10/e0b/43 results
+   as historical. Final comparison is fresh BASE44/HEAD44 including Encoding/pairEncode.
 2. Finish serialized copy screens and packets121/122/127/128. Live outputs are
    `/private/tmp/ab34-fe9-screen`, `/private/tmp/ab34-fh10-screen`, and
    `/private/tmp/ab34-late-context-screen` (BASE/Nat48;Ladner49). Late original47 waiter was
@@ -112,8 +115,8 @@ Three actual Seyoon questions remain **pending**, never inferred approved from e
    or obtain the required ruling, then give **Clear to merge** only after gate closure and a
    current merged-tree replay/validity check. Preserve incoming Markdown verbatim.
 
-Local3 Lean slots/machine5, nice10/j4 and one global screen lock still bind. No current root
-Lean job remains. Use only leanelab/leanelab-o; never lake build. Every shell sources S/env.sh;
+Local3 Lean slots/machine5, nice10/j4 and one global screen lock still bind. Three current
+root tails are running under that local budget. Use only leanelab/leanelab-o; never lake build. Every shell sources S/env.sh;
 Python only-I. Use whole APFS clones and unlink module outputs before compilation.
 
 R=`/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4`;S is the original

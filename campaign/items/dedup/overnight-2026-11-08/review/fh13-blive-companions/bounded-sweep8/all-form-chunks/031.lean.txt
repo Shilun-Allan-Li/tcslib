@@ -1,0 +1,16 @@
+/-- Every interpreter transition lifts to the assembled machine, including final halting. -/
+private lemma timedFrame_step (M : FinTM Bool) (clock : Fin M.k) {x : List Bool}
+    (cfg : Cfg 6 Bool TimedControl x) (tapes : Fin M.k → ℤ → Option Bool)
+    (heads : Fin M.k → ℤ) :
+    (timedCaptureTM M clock).tm.step (timedFrame M clock cfg tapes heads) =
+      timedFrame M clock (timedInterpreter.step cfg) tapes heads := by
+  cases hs : cfg.state with
+  | none =>
+    rw [MultiTapeTM.step_of_halt hs,
+      MultiTapeTM.step_of_halt (show (timedFrame M clock cfg tapes heads).state = none by simp [timedFrame, hs])]
+  | some q =>
+    have hstate : (timedFrame M clock cfg tapes heads).state = some (.inr q) := by simp [timedFrame, hs]
+    conv_lhs => unfold MultiTapeTM.step; rw [hstate]; dsimp only [timedCaptureTM]
+    have hi : (timedFrame M clock cfg tapes heads).inputSymbol = cfg.inputSymbol := rfl
+    rw [timedFrame_reads, hi, timedFrame_apply]
+    simp only [MultiTapeTM.step, hs]

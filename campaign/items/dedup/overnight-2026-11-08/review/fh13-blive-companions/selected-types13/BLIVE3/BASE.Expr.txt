@@ -1,0 +1,113 @@
+Lean.Expr.forallE
+  `k
+  (Lean.Expr.const `Nat [])
+  (Lean.Expr.forallE
+    `S
+    (Lean.Expr.sort (Lean.Level.succ (Lean.Level.zero)))
+    (Lean.Expr.forallE
+      `x
+      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+      (Lean.Expr.forallE
+        `tm
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app (Lean.Expr.const `Turing.MultiTapeTM [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 2))
+            (Lean.Expr.const `Bool []))
+          (Lean.Expr.bvar 1))
+        (Lean.Expr.forallE
+          `cfg
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app (Lean.Expr.const `Turing.Cfg [Lean.Level.zero, Lean.Level.zero]) (Lean.Expr.bvar 3))
+                (Lean.Expr.const `Bool []))
+              (Lean.Expr.bvar 2))
+            (Lean.Expr.bvar 1))
+          (Lean.Expr.forallE
+            `s
+            (Lean.Expr.const `Nat [])
+            (Lean.Expr.forallE
+              `t
+              (Lean.Expr.const `Nat [])
+              (Lean.Expr.forallE
+                `hst
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                      (Lean.Expr.const `instLENat []))
+                    (Lean.Expr.bvar 1))
+                  (Lean.Expr.bvar 0))
+                (Lean.Expr.forallE
+                  `ht
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Ne [Lean.Level.succ (Lean.Level.zero)])
+                        (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 6)))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Turing.Cfg.state [Lean.Level.zero, Lean.Level.zero])
+                                (Lean.Expr.bvar 7))
+                              (Lean.Expr.const `Bool []))
+                            (Lean.Expr.bvar 6))
+                          (Lean.Expr.bvar 5))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `Turing.MultiTapeTM.runFrom [Lean.Level.zero, Lean.Level.zero])
+                                      (Lean.Expr.bvar 7))
+                                    (Lean.Expr.bvar 6))
+                                  (Lean.Expr.const `Bool []))
+                                (Lean.Expr.bvar 5))
+                              (Lean.Expr.bvar 4))
+                            (Lean.Expr.bvar 3))
+                          (Lean.Expr.bvar 1))))
+                    (Lean.Expr.app (Lean.Expr.const `Option.none [Lean.Level.zero]) (Lean.Expr.bvar 6)))
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.app
+                        (Lean.Expr.const `Ne [Lean.Level.succ (Lean.Level.zero)])
+                        (Lean.Expr.app (Lean.Expr.const `Option [Lean.Level.zero]) (Lean.Expr.bvar 7)))
+                      (Lean.Expr.app
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.const `Turing.Cfg.state [Lean.Level.zero, Lean.Level.zero])
+                                (Lean.Expr.bvar 8))
+                              (Lean.Expr.const `Bool []))
+                            (Lean.Expr.bvar 7))
+                          (Lean.Expr.bvar 6))
+                        (Lean.Expr.app
+                          (Lean.Expr.app
+                            (Lean.Expr.app
+                              (Lean.Expr.app
+                                (Lean.Expr.app
+                                  (Lean.Expr.app
+                                    (Lean.Expr.app
+                                      (Lean.Expr.const `Turing.MultiTapeTM.runFrom [Lean.Level.zero, Lean.Level.zero])
+                                      (Lean.Expr.bvar 8))
+                                    (Lean.Expr.bvar 7))
+                                  (Lean.Expr.const `Bool []))
+                                (Lean.Expr.bvar 6))
+                              (Lean.Expr.bvar 5))
+                            (Lean.Expr.bvar 4))
+                          (Lean.Expr.bvar 3))))
+                    (Lean.Expr.app (Lean.Expr.const `Option.none [Lean.Level.zero]) (Lean.Expr.bvar 7)))
+                  (Lean.BinderInfo.default))
+                (Lean.BinderInfo.default))
+              (Lean.BinderInfo.implicit))
+            (Lean.BinderInfo.implicit))
+          (Lean.BinderInfo.default))
+        (Lean.BinderInfo.default))
+      (Lean.BinderInfo.implicit))
+    (Lean.BinderInfo.implicit))
+  (Lean.BinderInfo.implicit)
