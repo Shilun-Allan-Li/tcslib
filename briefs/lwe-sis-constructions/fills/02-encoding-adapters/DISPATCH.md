@@ -1,9 +1,8 @@
-# Encoding-adapter proof review: prepared, not dispatched
+# Encoding-adapter proof review: Codex selected, not dispatched
 
-This is a new external job. The completed adapter statement audit's Codex choice
-does not select a reviewer for this proof gate. The user freshly selects Codex
-or Claude, publishes the inputs and dispatches the review. No new worker has
-been selected or dispatched by this preparation.
+The user freshly selected **Codex** for this proof gate. This is a separate
+external job from the completed adapter statement audit. Publication and user
+dispatch remain pending; this preparation launches no worker.
 
 | Item | Prepared identity |
 |---|---|
@@ -29,16 +28,15 @@ The prepared exchange commit is local. No proof-update publication, remote proof
 audit input, draft PR title/body update, dispatch or merge is claimed yet.
 Earlier exchange gate folders and other namespaces remain unchanged.
 
-After the fresh reviewer choice, use `publish_review.py --worker codex` or
-`--worker claude` as selected. The full client path is:
+Publish the selected Codex handoff with the full client command:
 
 ```sh
-python3 -I /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-adapters/briefs/lwe-sis-constructions/fills/02-encoding-adapters/publish_review.py --check-only
+python3 -I /Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-adapters/briefs/lwe-sis-constructions/fills/02-encoding-adapters/publish_review.py --worker codex
 ```
 
-`--check-only` verifies local readiness without network access or mutation.
-Replace it with the explicitly selected `--worker` argument to publish. The
-command pushes only this PR's draft branch, updates #238's title/body, rebases
+Replacing `--worker codex` with `--check-only` verifies local readiness without
+network access or mutation. The publication command pushes only this PR's draft
+branch, updates #238's title/body, rebases
 the private sparse publisher before pushing only this namespace, and prints
 the exact immutable GitHub kickoff. It never merges or pushes a central/campaign
 ref, changes another checkout or uses the shared exchange checkout/index.
@@ -47,5 +45,5 @@ The auditor reads GitHub directly and returns
 `lwe-sis-adapter-proofs-findings.md` as Markdown in chat. No ZIP is required.
 Keep all Lean/root/pin bytes fixed while this proof gate is pending.
 
-**Not yet clear to merge — proof audit selection/publication/dispatch,
+**Not yet clear to merge — proof audit publication/dispatch,
 source-policy work, applicable landing checks and user approval remain.**

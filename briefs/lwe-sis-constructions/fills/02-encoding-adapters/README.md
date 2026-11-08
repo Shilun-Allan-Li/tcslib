@@ -6,7 +6,8 @@ passes with zero owned admissions and 17 inherited warnings. All 284 owned
 constants and the nine backing contracts use only standard axioms. The exact
 fourteen-body freeze and scoped style checks pass. See REPORT.md and evidence/.
 The proof-review pack is `audits/lwe-sis-adapter-proofs-pack.md`.
-This new job still needs its own Codex/Claude selection and user dispatch.
+The user freshly selected Codex for this new proof audit. Client publication
+and user dispatch remain pending.
 
 The prepared bundle has 1009 sections, 5,711,128 bytes and SHA-256
 `24de3637321750a0ad12ec46120e32d28db102fd4cd77f0b56621e5e4bd16225`.

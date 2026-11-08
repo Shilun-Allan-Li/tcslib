@@ -20,8 +20,8 @@ compiler arithmetic auxiliary disclosed. Its statement audit passes 0/0/0/3.
 Draft PR
 [#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238) and exchange input
 `a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4` are remotely verified; findings
-pass 0/0/0/3. The subsequent proof review is a new job, not yet selected or
-dispatched. Definitions/signatures and issued statement inputs remain frozen.
+pass 0/0/0/3. Codex is selected for the subsequent proof review; publication and
+user dispatch remain pending. Definitions/signatures and issued inputs remain frozen.
 
 See `fills/02-encoding-adapters/` for the current proof-review preparation and
 `gates/04-encoding-adapters/` for the passing statement gate;
