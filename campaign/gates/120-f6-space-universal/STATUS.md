@@ -1,13 +1,19 @@
-# Gate120 — F6 proof landing, validation underway
+# Gate120 — post-234 current-base validation underway, not issued
 
-**Not yet clear to merge: #235.** Codex selected by Seyoon; no audit dispatched.
-Current source `f72a807e2376a2b986675c992745d6affc23b96f` preserves the target header/public statements/imports. The reviewed
-six-patch Claude series is imported with original authorship; one mechanical visited-set
-repoint and two sketch corrections are committed as Codex. Fresh owner validation passes
-with zero errors/sorry warnings. Full229 replay PASSED0failures/static0/21 inherited admissions;
-Hierarchy has0admissions. All229 artifact hashes equal the native1 context. Fresh unfiltered
-owner census138→193 has all193standardAX, unchanged authoredpublic4;19 scoped sections and
-72paired effective control identities pass. Two actual regular Fintype controls remain
-ineffective, separately assessed by a passing arbitrary-witness diagnostic. Expanded23-file
-BASE/HEAD source screens are running; packet completion and external audit remain required.
-No gate closure, new API permission or completed audit is inferred. Next free121.
+**Not yet clear to merge: #235.** New pushed source073baa518700adc3d4b241cb48d2c78401549309
+contains user-merged#234/basebf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c. Hierarchy proof bytes
+remain exact550c59; PRdelta remainsHierarchyonly. Premerge23/193/full229→2 evidence and
+peerreview are complete but historical. FreshMAC5-based2module replay, metadata/scoped
+checks and full25BASE/HEAD screen are underway; no new pass inferred. Codex selected,
+not dispatched. Prior canonical adoption history follows.
+
+## Historical premerge preparation
+
+# Gate120 — current F6 proof validation passes; final packet review/publication underway
+
+**Not yet clear to merge: #235.** Codex selected. Current0d source proves the existing
+space_universal with18private helpers/public4unchanged. Native/current193AX/scoped19proofs/
+72pairedcontrols/witness diagnostic/final23source comparison pass. Actual replaychain is
+full229 atf72 then current2 at0d, whole snapshots throughout;21inherited admissions remain.
+Canonical pack and full input list adopted; peer input review/finalrender/publication remain
+before Ready to dispatch. No external gate verdict or merger authorization is inferred.

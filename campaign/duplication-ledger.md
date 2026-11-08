@@ -1674,7 +1674,8 @@ this kind, as is the distinct first-None-halt family.
 replace remaining existing instances in the next12.2c consolidation after active MIG-1 and
 before further SAT/Hardness fills. No new API/import/statement or future-copy permission is
 created. Exact answer: **Accept this scheduled debt (Recommended)**. Gate119 resolutions and
-`ruling-live-stop.json` preserve the finding/ruling; follow-up Codex audit is still required.
+`ruling-live-stop.json` preserve the finding/ruling. Gate119 follow-up closed PASS0/0/0/17
+and #234 merged; the implementation cleanup remains scheduled.
 
 At gate119 source, verified family-specific lower bound: **14 distinct authored declarations,
 including the canonical theorem** — Finite1/27, Loop1/204, Primitives3/288, Catalog2/504,

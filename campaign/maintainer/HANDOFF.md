@@ -9,6 +9,27 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**Latest user steering/current state:** Seyoon merged#234 at
+`bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c` and dispatched gate106r3. Gate119 is CLOSED
+PASS0/0/0/17 and MERGED. Its exactF1Lean permits wholeMFup2→mac5 adoption (401/static0/77,
+895objects); receipt in status/2026-11-08-followup119-merge. No new elaboration/splice.
+
+- #215 remains79; selectedCodex106r3 is DISPATCHED at immutableexchangef37. Original
+  source79/recordsf078/1614sectionSHA104d packet stays untouched; await findings. Not clear.
+- #235 now pushed073baa518700adc3d4b241cb48d2c78401549309 after campaign merge. Owned
+  Hierarchybytes550c59 unchanged, diffnewbaseHierarchyonly. FreshMF63two-module replay
+  from wholemac5 and post234metadata/seals are underway. Freshfull25screen (old23 plus
+  Primitives/Wrappers) BASEstarted03:45:43UTC; HEADqueued. All old193/23/pre234packet/
+  peerreview evidence remains historical. Gate120selectedCodex, NOTissued. Not clear.
+- #233 is stillb1 while read-only scopedintegration plan completes. Two mechanical merge
+  conflicts: preserveMIGoldf2_timed removals/removeCatalogredirect (canonicalWrapper1043
+  body retained); preserveMIGbranchTM_initCfg helpers with identical approvedpublicrows.
+  Then14bodyrepoints in6files plus approvedsketch/indexsync; the15th priorchange is the
+  duplicate removal duringmerge. Actualowner/AX/seal/replay precede selectedgate118. Not clear.
+
+Current records checkout may be rebased onto this merge after the checkpoint. Local3 slots,
+machine5; fullcopy/no lakebuild/one sharedscreen rules continue. Nextfree121.
+
 **Current F6/SG1 validation supplement:** F6 source is now `0d0950caeb39300b5cc9bf41e5f07392fb26d3e5`.
 An additional exact seam reconstruction now cites public seamCompTM_step; native owner
 passes and MF62 current2-module tail PASS0/static0/0 from whole passedMF61. Full229 at

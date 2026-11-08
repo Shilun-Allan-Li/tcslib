@@ -1,3 +1,26 @@
+# Gate106 round3 — dispatched to Codex
+
+**Not yet clear to merge: #215 — external round3 audit open.** Seyoon confirmed dispatch
+of the exact published1614-sectionf37 packet; its source79/recordsf078 pins and body hash
+remain immutable. #234 subsequentlymerged, so current merged-tree validity is assessed
+separately without rewriting the dispatched packet. Earlier publication history follows.
+
+## Prior publication status
+
+# Gate106 round3 — Ready to dispatch to Codex
+
+**Not yet clear to merge: #215 — external audit open.**
+
+The complete packet is published at exchange `f37dab00e3e04b396eb9cf130d3a738385653f71`;
+1614sections/100,861,434bytes, SHA256 `104d4805fc8e1b53fdc8aa1e8ac7e611b09034398f46887fdc0be4d4e7aeb5d8`.
+All sections match exact source/records Git bytes, all521JSON parse, standard rebuild and
+Gitarchive report0problems; independent renderedpeerQA passes. Source `79e7c63a6bfa5f002663924f5c7d4e72db705026`;
+records `f07808363a5fc839de9cdb1c90e05158826bbf57`. Full indexed pins/checksums/prompt/publication receipts
+are saved. **Ready to dispatch: gate106 round3, Codex.** Seyoon has not confirmed dispatch.
+Prior validation/adoption chronology follows.
+
+## Historical preparation
+
 # Gate106 round3 — final inputs adopted, rendering/publication underway
 
 **Not yet clear to merge: #215.** Final79 source, compiled7101→7063 and full25source screen

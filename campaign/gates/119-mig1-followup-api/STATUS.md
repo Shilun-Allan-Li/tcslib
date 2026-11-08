@@ -1,3 +1,12 @@
+# Gate119 — CLOSED PASS0/0/0/17; PR#234 merged
+
+Seyoon merged#234 at `bf6418fabea9cbb9d9bcdf2b3e40487a6f9f718c`.
+Its entire Lean tree exactly matches passedF1; whole401/static0/77 MFup2 snapshot is renamed
+mac5. No new elaboration or splice is claimed. FE-LIVE cleanup remains scheduled; actual
+MIG consumer integration/checks/gate118 are next. Earlier readiness history follows.
+
+## Historical premerge status
+
 # Gate119 — CLOSED PASS0/0/0/17
 
 All17Codex round2 notes accepted after independent review; no blocker/major/minor remains.
