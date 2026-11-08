@@ -522,7 +522,15 @@ theorem PermFamily.ofFn_glHalf_f (P : PermFamily) (n : ℕ) (z : Fin n → Bool)
 
 /-- **The balanced permutation is easy to compute** from an evaluator `F` of `f` on `⟨1^n, x⟩`:
 on `⟨1^n, z⟩` halve the parameter (`unaryHalf`), cut `z` after `⌊n/2⌋` bits, apply `F` to the
-first block at parameter `⌊n/2⌋` and copy the rest. -/
+first block at parameter `⌊n/2⌋` and copy the rest.
+
+**Proof sketch.** The evaluator `w ↦ F ⟨1^{⌊n/2⌋}, z.take ⌊n/2⌋⟩ ++ z.drop ⌊n/2⌋` is
+polynomial-time (`unaryHalf_poly`, `takeLen_poly`, `dropLen_poly`). On `⟨1^n, ofFn z⟩` the
+input of the family is read through its domain equivalence (`toFunFamily_domEquiv_ofFn`) and
+the output through its range equivalence (`toFunFamily_codEquiv_ofFn`,
+`toFunFamily_f_domEquiv`); the first block is `ofFn` of the restriction of `z`
+(`take_ofFn_castLE`), where `F` computes `f (⌊n/2⌋)`, and `ofFn_glHalf_f` is the same
+concatenation. -/
 theorem PermFamily.glHalf_easy (P : PermFamily) {F : List Bool → List Bool}
     (hF : PolyTimeComputable F)
     (hFx : ∀ n (x : Fin n → Bool), F (NUPPT.advInput n (List.ofFn x)) = List.ofFn (P.f n x)) :

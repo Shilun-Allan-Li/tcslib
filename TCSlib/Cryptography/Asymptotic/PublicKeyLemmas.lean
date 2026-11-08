@@ -735,7 +735,14 @@ def tdpPredFun (D : NUPPT) (flip : Bool) (z : List Bool) : List Bool :=
 
 /-- The raw predictor is polynomial-time (`polyTimeComputable_headD`, `Complexity.polyTimeComputable_tail`,
 `polyTimeComputable_pairEq` for the verdict,
-`BinArith.polyTimeComputable_xor`/`polyTimeComputable_not`). -/
+`BinArith.polyTimeComputable_xor`/`polyTimeComputable_not`).
+
+**Proof sketch.** The first coin `c` is the head of the coin projection; `D` runs on the
+layout with argument `⟨fst y, ⟨snd y, [c]⟩⟩`, the advice and the remaining coins (the tail,
+`polyTimeComputable_tail` through `List.drop_one`), which is `D.polyTimeComputable_output`
+after `NUPPT.polyTimeComputable_layout`; the verdict `[D's output = [true]]` is
+`polyTimeComputable_pairEq`; the output `c ⊕ ¬verdict ⊕ flip` is two
+`BinArith.polyTimeComputable_xor` with `polyTimeComputable_not` and a constant. -/
 theorem tdpPredFun_poly (D : NUPPT) (flip : Bool) : PolyTimeComputable (tdpPredFun D flip) := by
   have hc : PolyTimeComputable fun z => [(NUPPT.inCoins z).headD false] :=
     polyTimeComputable_headD.comp NUPPT.polyTimeComputable_inCoins

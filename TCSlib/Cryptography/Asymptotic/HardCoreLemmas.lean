@@ -299,7 +299,13 @@ theorem owpPredPre_poly : PolyTimeComputable owpPredPre :=
 
 /-- The post-processing of the predictor is polynomial-time (`polyTimeComputable_pairEq` for
 the verdict test, `polyTimeComputable_headD` for the two bits, `polyTimeComputable_ite`,
-`BinArith.polyTimeComputable_xor`). -/
+`BinArith.polyTimeComputable_xor`).
+
+**Proof sketch.** On `v = ⟨w, out⟩` the verdict bit `[out = [true]]` is `polyTimeComputable_pairEq`
+against the constant `[true]`; the advice bit `σ` and the coin bit `flip` are heads of the
+advice and coin projections of `w` (`polyTimeComputable_headD`); the selected bit
+`if out = [true] then σ else !σ` is `polyTimeComputable_ite` with `polyTimeComputable_not`;
+the output is its `xor` with `flip` (`BinArith.polyTimeComputable_xor`). -/
 theorem owpPredPost_poly : PolyTimeComputable owpPredPost := by
   have htest : PolyTimeComputable fun v : List Bool => [decide (pairSndD v = [true])] := by
     convert polyTimeComputable_pairEq.comp
