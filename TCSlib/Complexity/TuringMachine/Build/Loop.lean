@@ -3024,7 +3024,8 @@ private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
     rw [heq]
     exact hspec.2
   have htag : VirtualTag (M.tm.initCfg s).inputPos true := by
-    simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]
+    rw [VirtualTag_iff, MultiTapeTM.initCfg_eq, Cfg.init_inputPos]
+    simp
   obtain ⟨b, hb, hr⟩ := emCall_eval_run M (M.tm.initCfg s) true htag
     (1 : Fin (w.length + 2)) t hlive
   refine ⟨t, ht, b, hb, hh, hout, ?_, hr⟩
@@ -3035,9 +3036,8 @@ private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
   cases hs : (M.tm.runFrom (M.tm.initCfg s) j).state with
   | none => exact False.elim (hlive j hj hs)
   | some q =>
-    dsimp only [emCallEvalCfg, captureCfg, bufferedSecondCfg]
-    rw [hs]
-    simp
+    simp only [emCallEvalCfg, captureCfg_state, bufferedSecondCfg_state, hs]
+    simp [Option.map]
 
 /-- A contiguous visited interval, marked independently of the simulated data.
 The bounds are proof data; the cleaner reads only the marker tape. -/
@@ -3806,7 +3806,17 @@ private lemma emCall_right_endpoint (M : FinTM Bool) (x : List Bool) (T : ℕ)
     rw [heq]
     exact hc
   have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := heq.symm
-  have hi : (emCallRightTM M).tm.initCfg x = emCallRightCfg M (M.tm.initCfg x) := rfl
+  have hi : (emCallRightTM M).tm.initCfg x = emCallRightCfg M (M.tm.initCfg x) := by
+    apply Cfg.ext
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_state, emCallRightCfg,
+        Option.map_some, Option.getD_some]
+      rfl
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, emCallRightCfg]
+    · funext i z
+      simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, emCallRightCfg]
+    · funext i
+      simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, emCallRightCfg]
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_output, emCallRightCfg]
   have hr := emCall_right_run M (M.tm.initCfg x) t hlive
   obtain ⟨r, hrle, hfinish⟩ := emCall_right_finish M c hs
   have hrun : (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (t + r) =

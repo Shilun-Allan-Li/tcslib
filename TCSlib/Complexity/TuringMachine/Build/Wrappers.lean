@@ -722,8 +722,19 @@ private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) 
     (hD : D.ComputesInTime x [b] T) :
     ∃ a ≤ 2 * T + 5, ∃ (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
       (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) a =
-        timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads b := by
+        timedBranchCfg D M₁ M₂ (show Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x from by
+          simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)) tapes heads b := by
   classical
+  let branchInit : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x := by
+    simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)
+  let branchStart : M₁.State ⊕ M₂.State := by
+    simpa only [branchTM_State] using (branchTM M₁ M₂ b).tm.q₀
+  have hbranchInit : branchInit = Cfg.init branchStart x := by
+    simpa only [branchInit, branchStart, branchTM_k, branchTM_State] using
+      (MultiTapeTM.initCfg_eq (tm := (branchTM M₁ M₂ b).tm) x)
+  change ∃ a ≤ 2 * T + 5, ∃ (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+    (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) a =
+      timedBranchCfg D M₁ M₂ branchInit tapes heads b
   have hspec := (computesInTime_iff D x [b] T).mp hD
   obtain ⟨t, ht, hlive, heq⟩ :=
     MultiTapeTM.exists_first_halt D.tm (D.tm.initCfg x) hspec.1
@@ -742,18 +753,25 @@ private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) 
     exact timed_capture D M₁ M₂ _ t hlive
   obtain ⟨r, hrle, hr⟩ := timed_rewind (timedCondTM D M₁ M₂).tm
     (.inr (.inr (.inl (b, false)))) (.inr (.inr (.inl (b, true))))
-    (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))
+    (some (.inr (.inr (.inr branchStart))))
     (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
     (timedReadyCfg D M₁ M₂ c b) rfl
   refine ⟨t + 2 + r, ?_, c.workTapes, c.workTapePos, ?_⟩
   · have hp : c.inputPos.val ≤ 1 + t := by
-      simpa only [MultiTapeTM.initCfg, Cfg.init, Fin.val_one] using
+      simpa only [c, MultiTapeTM.initCfg_eq, Cfg.init_inputPos, Fin.val_one] using
         MultiTapeTM.timed_input_bound (tm := D.tm) (D.tm.initCfg x) t
     change r ≤ c.inputPos.val + 2 at hrle
     omega
   · rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_add, hcap,
       timed_read D M₁ M₂ c b hs ho, hr]
-    rfl
+    apply Cfg.ext
+    · simp only [timedBranchCfg, leftCfg_state, rightCfg_state,
+        hbranchInit, Cfg.init_state, Option.map_some, id_eq]
+    · simp only [timedBranchCfg, leftCfg_inputPos, rightCfg_inputPos,
+        hbranchInit, Cfg.init_inputPos]
+    · rfl
+    · rfl
+    · rfl
 
 /-- **The timed conditional's time**. If `D` computes the verdict `[p x]` within `T₀` and `M₁`, `M₂`
 compute `f₁`, `f₂` within `T₁`, `T₂`, the timed conditional computes `if p x then f₁ x else f₂ x`

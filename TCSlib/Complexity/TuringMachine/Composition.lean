@@ -680,8 +680,19 @@ private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
     (hD : ∃ t, D.ComputesInTime x [b] t) :
     ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
       (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
-        rightCfg (fun q => .inr (.inr q)) ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads := by
+        rightCfg (fun q => .inr (.inr q)) (show Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x from by
+          simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)) tapes heads := by
   classical
+  let branchInit : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x := by
+    simpa only [branchTM_k, branchTM_State] using ((branchTM M₁ M₂ b).tm.initCfg x)
+  let branchStart : M₁.State ⊕ M₂.State := by
+    simpa only [branchTM_State] using (branchTM M₁ M₂ b).tm.q₀
+  have hbranchInit : branchInit = Cfg.init branchStart x := by
+    simpa only [branchInit, branchStart, branchTM_k, branchTM_State] using
+      (MultiTapeTM.initCfg_eq (tm := (branchTM M₁ M₂ b).tm) x)
+  change ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
+    (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
+      rightCfg (fun q => .inr (.inr q)) branchInit tapes heads
   obtain ⟨tD, hDc⟩ := hD
   have hspec := (computesInTime_iff D x [b] tD).mp hDc
   obtain ⟨t, _ht, hlive, heq⟩ :=
@@ -696,23 +707,42 @@ private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
     rw [heq]
     exact hspec.2
   have hi : (condTM D M₁ M₂).tm.initCfg x = controlCfg D M₁ M₂ (D.tm.initCfg x) := by
-    refine Cfg.ext rfl rfl ?_ ?_ rfl
+    apply Cfg.ext
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_state, controlCfg, Cfg.init_output]
+      rfl
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, controlCfg]
+    · funext i z
+      refine Fin.addCases ?_ ?_ i <;> intro j <;>
+        simp only [controlCfg, Fin.addCases_left, Fin.addCases_right,
+          MultiTapeTM.initCfg_eq, Cfg.init_workTapes]
     · funext i
-      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]
-    · funext i
-      refine Fin.addCases ?_ ?_ i <;> intro j <;> simp [controlCfg]
+      refine Fin.addCases ?_ ?_ i <;> intro j <;>
+        simp only [controlCfg, Fin.addCases_left, Fin.addCases_right,
+          MultiTapeTM.initCfg_eq, Cfg.init_workTapePos]
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_output, controlCfg]
   have hrun : (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
       controlCfg D M₁ M₂ cf := by
     rw [hi]
     exact controlCfg_run D M₁ M₂ (D.tm.initCfg x) t hlive
   obtain ⟨r, hr⟩ := rewind_from_any (condTM D M₁ M₂).tm
     (.inl (none, some b)) (.inr (.inl (some b)))
-    (some (.inr (.inr (branchTM M₁ M₂ b).tm.q₀)))
+    (some (.inr (.inr branchStart)))
     (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl)
     (controlCfg D M₁ M₂ cf) (by simp [controlCfg, hstop, hout])
   refine ⟨t + r, cf.workTapes, cf.workTapePos, ?_⟩
   rw [MultiTapeTM.runFrom_add, hrun, hr]
-  rfl
+  apply Cfg.ext
+  · simp only [rightCfg_state, hbranchInit, Cfg.init_state, Option.map_some]
+  · simp only [rightCfg_inputPos, hbranchInit, Cfg.init_inputPos]
+  · funext i z
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp only [controlCfg, rightCfg_workTapes, Fin.addCases_left, Fin.addCases_right,
+        hbranchInit, Cfg.init_workTapes]
+  · funext i
+    refine Fin.addCases ?_ ?_ i <;> intro j <;>
+      simp only [controlCfg, rightCfg_workTapePos, Fin.addCases_left, Fin.addCases_right,
+        hbranchInit, Cfg.init_workTapePos]
+  · simp only [controlCfg, rightCfg_output, hbranchInit, Cfg.init_output]
 
 /-- After dispatch, the conditional follows the selected branch on its common tape and
 state carrier, while the controller bank remains fixed.

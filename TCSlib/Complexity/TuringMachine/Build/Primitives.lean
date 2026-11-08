@@ -1849,9 +1849,22 @@ private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
   let emb : M.State → (pairCountTM M).State := Sum.inl
   let ret : (pairCountTM M).State := .inr (.inl 0)
   have hinit : (pairCountTM M).tm.initCfg x = captureCfg emb ret [] [] (M.tm.initCfg x) := by
-    refine Cfg.ext rfl rfl ?_ ?_ rfl
-    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
-    · funext i; simp [captureCfg, MultiTapeTM.initCfg, Cfg.init]
+    apply Cfg.ext
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_state, captureCfg_state,
+        Option.map_some, Option.getD_some]
+      rfl
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_inputPos, captureCfg_inputPos]
+    · funext i z
+      simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapes, captureCfg_workTapes,
+        Cfg.init_output, List.nil_append, bufferTape_nil]
+      split <;> simp only [Cfg.init_workTapes]
+    · funext i
+      by_cases hi : i.val < M.k
+      · simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, captureCfg_workTapePos,
+          dif_pos hi]
+      · simp only [MultiTapeTM.initCfg_eq, Cfg.init_workTapePos, captureCfg_workTapePos,
+          dif_neg hi, Cfg.init_output, List.nil_append, List.length_nil, Nat.cast_zero]
+    · simp only [MultiTapeTM.initCfg_eq, Cfg.init_output, captureCfg_output]
   have hcap : (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =
       captureCfg emb ret [] [] c := by
     rw [hinit]
@@ -1861,17 +1874,25 @@ private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
     {lenCfg M c (some (.inr (.inl 1))) 0 (by omega) c.output.length with
       inputPos := c.inputPos}
   have hback : (pairCountTM M).tm.step (captureCfg emb ret [] [] c) = ready := by
-    have hstate : (captureCfg emb ret [] [] c).state = some ret := by simp [captureCfg, hs]
-    simp only [MultiTapeTM.step, hstate]
+    have hstate : (captureCfg emb ret [] [] c).state = some ret := by
+      simp only [captureCfg_state, hs, Option.map_none, Option.getD_none]
+    rw [MultiTapeTM.step_of_some hstate]
     apply Cfg.ext
-    · rfl
-    · exact moveInputPos_zero _
-    · rfl
+    · rw [Action.apply_state]
+      rfl
+    · simp only [pairCountTM, ret, lenAction, Action.apply_inputPos,
+        captureCfg_inputPos, ready, moveInputPos_zero]
+    · funext i z
+      simp only [pairCountTM, ret, lenAction, Action.apply_workTapes,
+        Cfg.workTapeSymbols_eq, Option.getD_none, Function.update_eq_self]
+      simp only [captureCfg_workTapes, ready, lenCfg, List.nil_append]
     · funext i
+      rw [Action.apply_workTapePos]
       by_cases hi : i.val < M.k <;>
-        simp [pairCountTM, ret, lenAction, Action.apply, captureCfg, ready, lenCfg, hi,
+        simp [pairCountTM, ret, lenAction, captureCfg_workTapePos, ready, lenCfg, hi,
           sub_eq_add_neg]
-    · rfl
+    · rw [Action.apply_output, captureCfg_output]
+      simp [pairCountTM, ret, lenAction, captureCfg_output, ready, lenCfg]
   obtain ⟨r, hrle, hr⟩ := timed_rewind (pairCountTM M).tm
     (.inr (.inl 1)) (.inr (.inl 2)) (some (.inr (.inr none)))
     (fun _ _ => rfl) (fun inp _ => by cases inp <;> rfl) ready rfl
@@ -4701,7 +4722,7 @@ private lemma splitEmbed_cut {k : ℕ} {S H : Type} {w : List Bool}
   have hp : ∀ j ≤ t, host.runFrom (c.mapState emb) j = (tm.runFrom c j).mapState emb := by
     intro j
     induction j with
-    | zero => intro hj; rfl
+    | zero => intro hj; simp only [MultiTapeTM.runFrom_zero]
     | succ j ih =>
       intro hj
       rw [MultiTapeTM.runFrom_succ_eq_step', ih (by omega),
@@ -4709,18 +4730,36 @@ private lemma splitEmbed_cut {k : ℕ} {S H : Type} {w : List Bool}
       let z := tm.runFrom c j
       change host.step (z.mapState emb) = (tm.step z).mapState emb
       cases hz : z.state with
-      | none => simp [MultiTapeTM.step, Cfg.mapState, hz]
+      | none =>
+        have hm : (z.mapState emb).state = none := by
+          simp only [Cfg.mapState_state, hz, Option.map_none]
+        rw [host.step_of_halt hm, tm.step_of_halt hz]
       | some q =>
         have hn : ¬stop q := fun hq => hcut j (by omega) ⟨q, hz, hq⟩
-        simp only [MultiTapeTM.step, Cfg.mapState, hz, Option.map_some]
-        rw [hagree q hn]
-        rfl
+        have hm : (z.mapState emb).state = some (emb q) := by
+          simp only [Cfg.mapState_state, hz, Option.map_some]
+        have hin : (z.mapState emb).inputSymbol = z.inputSymbol := by
+          have hp : (z.mapState emb).inputPos = z.inputPos := Cfg.mapState_inputPos emb z
+          by_cases h0 : z.inputPos = 0
+          · rw [Cfg.inputSymbol_of_zero (hp.trans h0), Cfg.inputSymbol_of_zero h0]
+          · by_cases he : z.inputPos.val = w.length + 1
+            · rw [Cfg.inputSymbol_of_end (by rw [hp]; exact he), Cfg.inputSymbol_of_end he]
+            · have hlt := z.inputPos.isLt
+              have hn : z.inputPos.val ≠ 0 := fun h => h0 (Fin.ext h)
+              rw [inputSymbolInner (z.inputPos.val - 1) (by rw [hp]; omega) (by omega),
+                inputSymbolInner (cfg := z) (z.inputPos.val - 1) (by omega) (by omega)]
+        have hw : (z.mapState emb).workTapeSymbols = z.workTapeSymbols := by
+          funext i
+          rw [Cfg.workTapeSymbols_eq, Cfg.mapState_workTapes, Cfg.mapState_workTapePos,
+            Cfg.workTapeSymbols_eq]
+        rw [host.step_of_some hm, tm.step_of_some hz, hin, hw, hagree q hn]
+        exact Cfg.mapState_apply emb _ z
   refine ⟨t, ht, by rw [hp t (le_refl _), he], ?_⟩
   intro j hj
   rw [hp j hj]
   cases hs : (tm.runFrom c j).state with
-  | none => simp [Cfg.mapState, hs]
-  | some q => simpa [Cfg.mapState, hs] using haway q
+  | none => simp [Cfg.mapState_state, hs]
+  | some q => simpa [Cfg.mapState_state, hs] using haway q
 
 /-- A standalone native-input rewind, with an absorbing return at state two. -/
 private def splitRewindTM (k : ℕ) : FinTM Bool where
