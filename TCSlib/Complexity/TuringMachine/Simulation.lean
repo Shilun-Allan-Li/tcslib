@@ -1192,10 +1192,10 @@ lemma bufferedFirstCfg_rewind (M₁ M₂ : FinTM Bool) {x : List Bool}
 /-- Any completed first computation reaches the second phase within
 `t₁ + |y| + 2` steps, with a fresh second work block and virtual input `y`.
 
-**Proof sketch.** Choose the first halting time, which is at most `t₁`.
-First-phase lockstep reaches its completed configuration, and determinism
-identifies the output with `y`. The exact rewind lemma supplies `|y| + 2` more
-steps, retaining the first block and parked native input head. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the first halt by `t₁` and
+transport the complete output `y` from the deadline. First-phase lockstep reaches that completed
+configuration; the exact rewind lemma supplies `|y| + 2` more steps while retaining the first
+block and parked native input head. -/
 lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)
     (h₁ : M₁.ComputesInTime x y t₁) :
     ∃ (a : ℕ) (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
@@ -1203,18 +1203,21 @@ lemma bufferedComp_start (M₁ M₂ : FinTM Bool) (x y : List Bool) (t₁ : ℕ)
       (bufferedCompTM M₁ M₂).tm.runFrom ((bufferedCompTM M₁ M₂).tm.initCfg x) a =
         bufferedSecondCfg M₁ M₂ (M₂.tm.initCfg y) true p tapes heads := by
   classical
-  have hh : ∃ t, (M₁.tm.runFrom (M₁.tm.initCfg x) t).state = none :=
-    ⟨t₁, ((computesInTime_iff M₁ x y t₁).mp h₁).1⟩
-  let t := Nat.find hh
+  have hspec := (computesInTime_iff M₁ x y t₁).mp h₁
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt M₁.tm (M₁.tm.initCfg x) hspec.1
   let c := M₁.tm.runFrom (M₁.tm.initCfg x) t
-  have hs : c.state = none := Nat.find_spec hh
-  have ht : t ≤ t₁ := Nat.find_min' hh ((computesInTime_iff M₁ x y t₁).mp h₁).1
-  have hc : M₁.ComputesInTime x c.output t :=
-    (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
-  have ho : c.output = y := hc.output_unique h₁
+  have hs : c.state = none := by
+    change (M₁.tm.runFrom (M₁.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hspec.1
+  have ho : c.output = y := by
+    change (M₁.tm.runFrom (M₁.tm.initCfg x) t).output = y
+    rw [heq]
+    exact hspec.2
   refine ⟨t + (y.length + 2), c.inputPos, c.workTapes, c.workTapePos, by omega, ?_⟩
   rw [MultiTapeTM.runFrom_add, bufferedFirstCfg_init,
-    bufferedFirstCfg_run M₁ M₂ _ t (fun s hs => Nat.find_min hh hs)]
+    bufferedFirstCfg_run M₁ M₂ _ t hlive]
   have hf := bufferedFirstCfg_rewind M₁ M₂ c hs
   cases ho
   exact hf

@@ -714,28 +714,32 @@ private lemma timed_read (D M₁ M₂ : FinTM Bool) {x : List Bool}
 
 /-- A singleton-output decider reaches the selected branch's genuine
 initial configuration in at most twice its budget plus five steps.
-**Proof sketch.** Choose the first source halt, which is within the supplied
-budget. Capture until that halt, read the singleton in two steps, and rewind
-in at most the current input position plus two. The head-position bound
-charges this rewind to the decider's elapsed steps, not the input length. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the first source halt within
+budget and its exact completed singleton output. Capture until that halt, read the singleton in
+two steps, and rewind in at most the current input position plus two. Charge this rewind to the
+decider's elapsed steps using the head-position bound. -/
 private lemma timed_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool) (T : ℕ)
     (hD : D.ComputesInTime x [b] T) :
     ∃ a ≤ 2 * T + 5, ∃ (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
       (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) a =
         timedBranchCfg D M₁ M₂ ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads b := by
   classical
-  have hh : ∃ t, (D.tm.runFrom (D.tm.initCfg x) t).state = none :=
-    ⟨T, ((computesInTime_iff _ _ _ _).mp hD).1⟩
-  let t := Nat.find hh
+  have hspec := (computesInTime_iff D x [b] T).mp hD
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt D.tm (D.tm.initCfg x) hspec.1
   let c := D.tm.runFrom (D.tm.initCfg x) t
-  have ht : t ≤ T := Nat.find_min' hh ((computesInTime_iff _ _ _ _).mp hD).1
-  have hs : c.state = none := Nat.find_spec hh
-  have hc : D.ComputesInTime x c.output t := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
-  have ho : c.output = [b] := hc.output_unique hD
+  have hs : c.state = none := by
+    change (D.tm.runFrom (D.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hspec.1
+  have ho : c.output = [b] := by
+    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]
+    rw [heq]
+    exact hspec.2
   have hcap : (timedCondTM D M₁ M₂).tm.runFrom ((timedCondTM D M₁ M₂).tm.initCfg x) t =
       timedControlCfg D M₁ M₂ c := by
     rw [timed_control_init]
-    exact timed_capture D M₁ M₂ _ t (fun s hst => Nat.find_min hh hst)
+    exact timed_capture D M₁ M₂ _ t hlive
   obtain ⟨r, hrle, hr⟩ := timed_rewind (timedCondTM D M₁ M₂).tm
     (.inr (.inr (.inl (b, false)))) (.inr (.inr (.inl (b, true))))
     (some (.inr (.inr (.inr (branchTM M₁ M₂ b).tm.q₀))))

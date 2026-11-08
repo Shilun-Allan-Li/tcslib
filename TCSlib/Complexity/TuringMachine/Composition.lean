@@ -672,10 +672,10 @@ private lemma controlCfg_run (D M₁ M₂ : FinTM Bool) {x : List Bool}
 /-- A completed singleton controller computation reaches the selected branch's
 fresh initial configuration after a finite prefix.
 
-**Proof sketch.** Choose the first halting time of `D` and use controller lockstep.
-Output uniqueness identifies its completed output with `[b]`, so the register is
-`some b`, including when that bit was emitted early. Rewind from the resulting
-input position; the branch tapes and real output have remained untouched. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the strict source liveness cut
+and complete configuration equality with the given deadline. Transport the completed output `[b]`
+along that equality, then apply controller lockstep and rewind. The branch tapes and physical
+output stay untouched. -/
 private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
     (hD : ∃ t, D.ComputesInTime x [b] t) :
     ∃ (t : ℕ) (tapes : Fin D.k → ℤ → Option Bool) (heads : Fin D.k → ℤ),
@@ -683,14 +683,18 @@ private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
         rightCfg (fun q => .inr (.inr q)) ((branchTM M₁ M₂ b).tm.initCfg x) tapes heads := by
   classical
   obtain ⟨tD, hDc⟩ := hD
-  have hh : ∃ t, (D.tm.runFrom (D.tm.initCfg x) t).state = none :=
-    ⟨tD, ((computesInTime_iff D x [b] tD).mp hDc).1⟩
-  let t := Nat.find hh
+  have hspec := (computesInTime_iff D x [b] tD).mp hDc
+  obtain ⟨t, _ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt D.tm (D.tm.initCfg x) hspec.1
   let cf := D.tm.runFrom (D.tm.initCfg x) t
-  have hstop : cf.state = none := Nat.find_spec hh
-  have hc : D.ComputesInTime x cf.output t :=
-    (computesInTime_iff D x cf.output t).mpr ⟨hstop, rfl⟩
-  have hout : cf.output = [b] := hc.output_unique hDc
+  have hstop : cf.state = none := by
+    change (D.tm.runFrom (D.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hspec.1
+  have hout : cf.output = [b] := by
+    change (D.tm.runFrom (D.tm.initCfg x) t).output = [b]
+    rw [heq]
+    exact hspec.2
   have hi : (condTM D M₁ M₂).tm.initCfg x = controlCfg D M₁ M₂ (D.tm.initCfg x) := by
     refine Cfg.ext rfl rfl ?_ ?_ rfl
     · funext i
@@ -700,7 +704,7 @@ private lemma condTM_start (D M₁ M₂ : FinTM Bool) (x : List Bool) (b : Bool)
   have hrun : (condTM D M₁ M₂).tm.runFrom ((condTM D M₁ M₂).tm.initCfg x) t =
       controlCfg D M₁ M₂ cf := by
     rw [hi]
-    exact controlCfg_run D M₁ M₂ (D.tm.initCfg x) t (fun s hs => Nat.find_min hh hs)
+    exact controlCfg_run D M₁ M₂ (D.tm.initCfg x) t hlive
   obtain ⟨r, hr⟩ := rewind_from_any (condTM D M₁ M₂).tm
     (.inl (none, some b)) (.inr (.inl (some b)))
     (some (.inr (.inr (branchTM M₁ M₂ b).tm.q₀)))

@@ -1823,9 +1823,10 @@ private lemma lenParse_run (M : FinTM Bool) {x : List Bool}
 
 /-- A completed generator is captured without physical output, then its
 last cell and the first physical input cell are exposed for comparison.
-**Proof sketch.** Use the least source halting time to discharge `capture_run`'s
-liveness guard. One step moves the capture head left; quantitative rewind
-restores the input head while preserving the completed generator bank. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` to supply the strict liveness guard
+to `Turing.capture_run` and to transport the specified output through complete configuration
+equality. One native step moves the capture head left; quantitative rewind restores the input head
+while preserving the completed generator bank. -/
 private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
     (hM : M.ComputesInTime x w T) :
     ∃ t ≤ T + x.length + 4, ∃ c : Cfg M.k Bool M.State x,
@@ -1833,14 +1834,18 @@ private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
       (pairCountTM M).tm.runFrom ((pairCountTM M).tm.initCfg x) t =
         lenCfg M c (some (.inr (.inr none))) 0 (by omega) c.output.length := by
   classical
-  have hh : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none :=
-    ⟨T, ((computesInTime_iff _ _ _ _).mp hM).1⟩
-  let t := Nat.find hh
+  have hspec := (computesInTime_iff M x w T).mp hM
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hspec.1
   let c := M.tm.runFrom (M.tm.initCfg x) t
-  have ht : t ≤ T := Nat.find_min' hh ((computesInTime_iff _ _ _ _).mp hM).1
-  have hs : c.state = none := Nat.find_spec hh
-  have hc : M.ComputesInTime x c.output t := (computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
-  have ho : c.output = w := hc.output_unique hM
+  have hs : c.state = none := by
+    change (M.tm.runFrom (M.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hspec.1
+  have ho : c.output = w := by
+    change (M.tm.runFrom (M.tm.initCfg x) t).output = w
+    rw [heq]
+    exact hspec.2
   let emb : M.State → (pairCountTM M).State := Sum.inl
   let ret : (pairCountTM M).State := .inr (.inl 0)
   have hinit : (pairCountTM M).tm.initCfg x = captureCfg emb ret [] [] (M.tm.initCfg x) := by
@@ -1851,7 +1856,7 @@ private lemma lenStart (M : FinTM Bool) (x w : List Bool) (T : ℕ)
       captureCfg emb ret [] [] c := by
     rw [hinit]
     exact capture_run M.tm (pairCountTM M).tm emb ret (fun _ _ _ => rfl)
-      [] [] _ t (fun s hst => Nat.find_min hh hst)
+      [] [] _ t hlive
   let ready : Cfg (M.k + 1) Bool (pairCountTM M).State x :=
     {lenCfg M c (some (.inr (.inl 1))) 0 (by omega) c.output.length with
       inputPos := c.inputPos}
@@ -3438,10 +3443,11 @@ operational host. The stationary setup seam identifies this first entry
 with the complete validating/buffering/emission endpoint, so no payload
 work is hidden in the administrative time bound.
 
-**Proof sketch.** Choose the first time the absorbing setup view enters a virtual payload state.
-Guarded setup agreement identifies every real prefix through that time. Absorption identifies
-this first-entry configuration with the already bounded final setup configuration, retaining the
-same linear bound. -/
+**Proof sketch.** The existing stationary-setup contract at one step proves that every
+virtual-payload stop configuration is fixed. Apply
+`Turing.MultiTapeTM.exists_first_entry_of_fixed` to that stop predicate and the bounded setup
+endpoint. Guarded setup agreement then identifies every operational prefix through the returned
+first entry, with the same complete endpoint and linear bound. -/
 private lemma fwdMap_launch (M : FinTM Bool) (x a b : List Bool)
     (hd : pairDecode x = some (a, b)) :
     ∃ u ≤ 5 * (x.length + 1),
@@ -3452,29 +3458,31 @@ private lemma fwdMap_launch (M : FinTM Bool) (x a b : List Bool)
   classical
   obtain ⟨t, ht, he⟩ := fwdMap_setup M x
   simp only [hd] at he
-  have hex : ∃ u, fwdMapEntered M
-      ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) u) := by
-    refine ⟨t, M.tm.q₀, true, ?_⟩
-    rw [he]
+  let stop : FwdMapState M.State → Prop := fun r => ∃ q tag, r = .run q tag
+  have hfix : ∀ z : Cfg (1 + (1 + M.k)) Bool (FwdMapState M.State) x,
+      (∃ r, z.state = some r ∧ stop r) → (fwdMapTM M false).tm.step z = z := by
+    rintro z ⟨r, hr, q, tag, hq⟩
+    have hentered : fwdMapEntered M z := ⟨q, tag, by rw [hr, hq]⟩
+    have hs := fwdMapSetup_stationary M z hentered 1
+    simpa only [MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_zero] using hs
+  have hdstop : ∃ r,
+      (fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
+        (pairEncode a [])).state = some r ∧ stop r := by
+    refine ⟨.run M.tm.q₀ true, ?_, M.tm.q₀, true, rfl⟩
     simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some]
-  let u := Nat.find hex
-  have hu : u ≤ t := Nat.find_min' hex (by
-    rw [he]
-    refine ⟨M.tm.q₀, true, ?_⟩
-    simp only [fwdMapVirtual, MultiTapeTM.initCfg_eq, Cfg.init_state, Option.map_some])
+  obtain ⟨u, hu, hcut, hefirst⟩ := MultiTapeTM.exists_first_entry_of_fixed
+    (fwdMapTM M false).tm stop ((fwdMapTM M false).tm.initCfg x)
+    (fwdMapVirtual M (M.tm.initCfg b) true ⟨x.length + 1, by omega⟩ a
+      (pairEncode a [])) t hfix hdstop he
   have hg : ∀ v < u, ¬fwdMapEntered M
-      ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v) :=
-    fun v hv => Nat.find_min hex hv
+      ((fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) v) := by
+    rintro v hv ⟨q, tag, hq⟩
+    exact hcut v hv ⟨.run q tag, hq, q, tag, rfl⟩
   have hprefix (v : ℕ) (hv : v ≤ u) := fwdMapSetup_run M x v
     (fun w hw => hg w (by omega))
   refine ⟨u, hu.trans ht, ?_, hprefix⟩
   rw [hprefix u (le_refl _)]
-  have hs := fwdMapSetup_stationary M _ (Nat.find_spec hex) (t - u)
-  have hh : (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) t =
-      (fwdMapTM M false).tm.runFrom ((fwdMapTM M false).tm.initCfg x) u := by
-    rw [show t = u + (t - u) by omega, MultiTapeTM.runFrom_add]
-    exact hs
-  rw [← hh, he]
+  exact hefirst
 
 /-- A malformed encoding never reaches a payload state, since such a setup
 state would remain live forever. Hence its entire operational trajectory
@@ -4469,24 +4477,22 @@ private lemma splitPoly_loop_end (c C q : ℕ) (hq : 0 < q) :
 
 /-- A run reaching an absorbing control state has a least such entry, and its
 configuration at that first entry is already the final configuration.
-**Proof sketch.** Choose the least hit. Absorption makes its entire suffix
-constant, so the bounded endpoint identifies the first-hit configuration. -/
+**Proof sketch.** Specialize `Turing.MultiTapeTM.exists_first_entry_of_fixed` to equality with the
+selected control state, then project its predicate cut to the required singleton-state cut. -/
 private lemma catalogFirstEntry {k : ℕ} {S : Type} {w : List Bool}
     (tm : MultiTapeTM k Bool S) (q : S) (c d : Cfg k Bool S w) (T : ℕ)
     (hfix : ∀ z : Cfg k Bool S w, z.state = some q → tm.step z = z)
     (hd : d.state = some q) (hT : tm.runFrom c T = d) :
     ∃ t ≤ T, (∀ j < t, (tm.runFrom c j).state ≠ some q) ∧ tm.runFrom c t = d := by
-  classical
-  have hh : ∃ t, (tm.runFrom c t).state = some q := ⟨T, by rw [hT, hd]⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT, hd])
-  have hs : (tm.runFrom c t).state = some q := Nat.find_spec hh
-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
-    Function.iterate_fixed (hfix _ hs) _
-  have he := tm.runFrom_add c t (T - t)
-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
-  exact he.symm
+  obtain ⟨t, ht, hcut, he⟩ := MultiTapeTM.exists_first_entry_of_fixed tm (fun r => r = q) c d T
+    (by
+      rintro z ⟨r, hz, hr⟩
+      subst r
+      exact hfix z hz)
+    ⟨q, hd, rfl⟩ hT
+  refine ⟨t, ht, ?_, he⟩
+  intro j hj hq
+  exact hcut j hj ⟨q, hq, rfl⟩
 
 /-- The cleanup's return seam is absorbing, so its exact restoration can be
 exported with positive duration and no earlier return-state visit. -/
@@ -4674,10 +4680,10 @@ private lemma splitSafe_add {k : ℕ} {S : Type} {w : List Bool}
 
 /-- Cut an absorbing source phase at its first terminal control state and
 embed the entire prefix into a disjoint host phase.
-**Proof sketch.** Take the least terminal visit. Absorption identifies its
-configuration with the known endpoint. Induct on the prefix length using
-transition agreement only before that visit; every mapped control state,
-including a halted state, is different from the host anchor. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_entry_of_fixed` with the supplied stop
+predicate, fixed-step hypothesis and complete endpoint. Induct on the host prefix using transition
+agreement only before the returned strict cut; every mapped control state, including a halted
+state, stays away from the host anchor. -/
 private lemma splitEmbed_cut {k : ℕ} {S H : Type} {w : List Bool}
     (tm : MultiTapeTM k Bool S) (host : MultiTapeTM k Bool H)
     (emb : S → H) (anchor : H) (stop : S → Prop) [DecidablePred stop]
@@ -4690,16 +4696,8 @@ private lemma splitEmbed_cut {k : ℕ} {S H : Type} {w : List Bool}
     ∃ t ≤ T, host.runFrom (c.mapState emb) t = d.mapState emb ∧
       splitSafe host anchor (c.mapState emb) t := by
   classical
-  have hex : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q :=
-    ⟨T, by rw [hT]; exact hd⟩
-  let t := Nat.find hex
-  have ht : t ≤ T := Nat.find_min' hex (by rw [hT]; exact hd)
-  have he : tm.runFrom c t = d := by
-    have hh := tm.runFrom_add c t (T - t)
-    have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
-      Function.iterate_fixed (hfix _ (Nat.find_spec hex)) _
-    rw [Nat.add_sub_of_le ht, hT, hconst] at hh
-    exact hh.symm
+  obtain ⟨t, ht, hcut, he⟩ :=
+    MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
   have hp : ∀ j ≤ t, host.runFrom (c.mapState emb) j = (tm.runFrom c j).mapState emb := by
     intro j
     induction j with
@@ -4713,7 +4711,7 @@ private lemma splitEmbed_cut {k : ℕ} {S H : Type} {w : List Bool}
       cases hz : z.state with
       | none => simp [MultiTapeTM.step, Cfg.mapState, hz]
       | some q =>
-        have hn : ¬stop q := fun hq => Nat.find_min hex (by omega) ⟨q, hz, hq⟩
+        have hn : ¬stop q := fun hq => hcut j (by omega) ⟨q, hz, hq⟩
         simp only [MultiTapeTM.step, Cfg.mapState, hz, Option.map_some]
         rw [hagree q hn]
         rfl
@@ -4893,9 +4891,10 @@ private lemma splitBody_prepare (M : FinTM Bool) (start : M.State) (w s : List B
 
 /-- Counted evaluation reaches its first source halt; every prefix remains
 in a count or check state and therefore cannot revisit the round anchor.
-**Proof sketch.** Choose the least source halt and remove its constant halted
-suffix. Apply the counted correspondence to every prefix through that halt;
-its control image is disjoint from the anchor, including the return state. -/
+**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_halt` to the arbitrary source bank, then
+compose its complete endpoint equality with the supplied counted-run endpoint. Apply the counted
+correspondence to every prefix through that halt; its control image is disjoint from the anchor,
+including the return state. -/
 private lemma splitBody_count (M : FinTM Bool) (start : M.State) (w s : List Bool)
     (out : List Bool) (T : ℕ)
     (hT : M.tm.runFrom (splitBank M s (some start) []) T = splitBank M s none out) :
@@ -4907,16 +4906,12 @@ private lemma splitBody_count (M : FinTM Bool) (start : M.State) (w s : List Boo
   classical
   let c := splitBank M s (some start) []
   let d := splitBank M s none out
-  have hh : ∃ t, (M.tm.runFrom c t).state = none := ⟨T, by rw [hT]; rfl⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; rfl)
-  have he : M.tm.runFrom c t = d := by
-    have h := M.tm.runFrom_add c t (T - t)
-    rw [Nat.add_sub_of_le ht, hT, M.tm.runFrom_of_halt _ (Nat.find_spec hh)] at h
-    exact h.symm
+  have hhalt : (M.tm.runFrom c T).state = none := by rw [hT]; rfl
+  obtain ⟨t, ht, hlive, heq⟩ := MultiTapeTM.exists_first_halt M.tm c hhalt
+  have he : M.tm.runFrom c t = d := heq.trans hT
   have hp (j : ℕ) (hj : j ≤ t) := splitCount_run M.tm (splitBodyTM M start).tm
     SplitBodyState.count SplitBodyState.check (fun _ _ _ _ => rfl) w s c j
-    (fun l hl => Nat.find_min hh (by omega))
+    (fun l hl => hlive l (by omega))
   refine ⟨t, ht, ?_, ?_⟩
   · rw [hp t (le_refl _), he]
   · intro j hj
@@ -5882,9 +5877,9 @@ private lemma emitter_compare_run (w u v : List Bool) (p : Fin (w.length + 2)) :
 
 /-- A phase with an absorbing return state can be cut at its actual first
 return while retaining its complete configuration endpoint.
-**Proof sketch.** Choose the least return-state visit. Absorption identifies
-its configuration with the known bounded endpoint. The bound proves existence
-and bounds the first visit; it is never used to dispatch native control. -/
+**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_entry_of_fixed` to the same stop
+predicate and complete absorbing-configuration hypothesis. The public contract supplies the
+first-entry cut and the exact bounded endpoint. -/
 private lemma emitter_first_entry {k : ℕ} {S : Type} {w : List Bool}
     (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
     (c d : Cfg k Bool S w) (T : ℕ)
@@ -5892,17 +5887,7 @@ private lemma emitter_first_entry {k : ℕ} {S : Type} {w : List Bool}
     (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
     ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
       tm.runFrom c t = d := by
-  classical
-  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
-  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
-    Function.iterate_fixed (hfix _ hs) _
-  have he := tm.runFrom_add c t (T - t)
-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
-  exact he.symm
+  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
 
 /-- The silent comparator reaches its exact endpoint on its first visit to
 either Boolean return state, after a positive number of steps.

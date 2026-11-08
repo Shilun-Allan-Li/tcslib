@@ -2998,10 +2998,10 @@ private lemma emCall_eval_initial (M : FinTM Bool) (w s : List Bool) :
 
 /-- A timed evaluator reaches the actual first source halt, with no earlier
 visit to the live return state and with the exact complete capture buffer.
-**Proof sketch.** Take the least halting time justified by totality. Absorption
-identifies the output there with the specified output at the deadline. Apply
-captured virtual lockstep through that time and through every earlier prefix.
-The deadline is used only for the inequality, never as a native clock. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` for the first source halt and
+complete configuration equality with the supplied deadline. This equality transports the specified
+output unchanged. Apply captured virtual lockstep through that halt and every earlier prefix; the
+deadline supplies only an inequality, never a native clock. -/
 private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
     (hM : M.ComputesInTime s out T) :
     ∃ t ≤ T, ∃ b,
@@ -3015,14 +3015,14 @@ private lemma emCall_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ)
           emCallEvalCfg (w := w) M (M.tm.runFrom (M.tm.initCfg s) t) b 1 := by
   classical
   have hspec := (computesInTime_iff M s out T).mp hM
-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg s) t).state = none := ⟨T, hspec.1⟩
-  let t := Nat.find hex
-  have ht : t ≤ T := Nat.find_min' hex hspec.1
-  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := Nat.find_spec hex
-  have hlive : ∀ j < t, (M.tm.runFrom (M.tm.initCfg s) j).state ≠ none :=
-    fun j hj => Nat.find_min hex hj
-  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out :=
-    ((computesInTime_iff M s _ t).mpr ⟨hh, rfl⟩).output_unique hM
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg s) hspec.1
+  have hh : (M.tm.runFrom (M.tm.initCfg s) t).state = none := by
+    rw [heq]
+    exact hspec.1
+  have hout : (M.tm.runFrom (M.tm.initCfg s) t).output = out := by
+    rw [heq]
+    exact hspec.2
   have htag : VirtualTag (M.tm.initCfg s).inputPos true := by
     simp [VirtualTag, MultiTapeTM.initCfg, Cfg.init]
   obtain ⟨b, hb, hr⟩ := emCall_eval_run M (M.tm.initCfg s) true htag
@@ -3614,9 +3614,9 @@ private lemma emCall_track_clearable (M : FinTM Bool) (x w : List Bool)
 
 /-- A phase with an absorbing return state can be cut at its actual first
 return while retaining its complete configuration endpoint.
-**Proof sketch.** Choose the least return-state visit. Absorption identifies
-its configuration with the known bounded endpoint. The bound proves existence
-and bounds the first visit; it is never used to dispatch native control. -/
+**Proof sketch.** Apply `Turing.MultiTapeTM.exists_first_entry_of_fixed` to the same stop
+predicate and complete absorbing-configuration hypothesis. The public contract supplies the
+first-entry cut and the exact bounded endpoint. -/
 private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
     (tm : MultiTapeTM k Bool S) (stop : S → Prop) [DecidablePred stop]
     (c d : Cfg k Bool S w) (T : ℕ)
@@ -3624,17 +3624,7 @@ private lemma emCall_first_entry {k : ℕ} {S : Type} {w : List Bool}
     (hd : ∃ q, d.state = some q ∧ stop q) (hT : tm.runFrom c T = d) :
     ∃ t ≤ T, (∀ j < t, ¬∃ q, (tm.runFrom c j).state = some q ∧ stop q) ∧
       tm.runFrom c t = d := by
-  classical
-  have hh : ∃ t, ∃ q, (tm.runFrom c t).state = some q ∧ stop q := ⟨T, by rw [hT]; exact hd⟩
-  let t := Nat.find hh
-  have ht : t ≤ T := Nat.find_min' hh (by rw [hT]; exact hd)
-  have hs : ∃ q, (tm.runFrom c t).state = some q ∧ stop q := Nat.find_spec hh
-  refine ⟨t, ht, fun j hj => Nat.find_min hh hj, ?_⟩
-  have hconst : tm.runFrom (tm.runFrom c t) (T - t) = tm.runFrom c t :=
-    Function.iterate_fixed (hfix _ hs) _
-  have he := tm.runFrom_add c t (T - t)
-  rw [Nat.add_sub_of_le ht, hT, hconst] at he
-  exact he.symm
+  exact MultiTapeTM.exists_first_entry_of_fixed tm stop c d T hfix hd hT
 
 /-- Each tracked tape's native cleanup can dispatch at its actual positive
 first return with the exact blank endpoint, never at the analysis deadline.
@@ -3799,25 +3789,25 @@ private lemma emCall_right_finish (M : FinTM Bool) {x : List Bool}
 
 /-- Right-boundary normalization preserves the entire completed source
 configuration, not just its output. This retains the tracked cleanup witnesses.
-**Proof sketch.** Choose the actual first source halt. The native right scan
-then costs at most `|x|+2`; absorb only the completed run to the advertised
-budget. Source absorption identifies its work tapes with those at the original
-deadline, including when that deadline exceeds the actual halt. -/
+**Proof sketch.** Use `Turing.MultiTapeTM.exists_first_halt` to retain the completed source
+configuration and strict earlier-time liveness. The native right scan then costs at most `|x|+2`;
+absorb only that completed run to the advertised budget. The public complete endpoint equality
+retains the work tapes at the original deadline. -/
 private lemma emCall_right_endpoint (M : FinTM Bool) (x : List Bool) (T : ℕ)
     (hc : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
     (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (T + x.length + 2) =
       emCallRightScan M (M.tm.runFrom (M.tm.initCfg x) T) none x.length (le_refl _) := by
   classical
-  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hc⟩
-  let t := Nat.find hex
+  obtain ⟨t, ht, hlive, heq⟩ :=
+    MultiTapeTM.exists_first_halt M.tm (M.tm.initCfg x) hc
   let c := M.tm.runFrom (M.tm.initCfg x) t
-  have ht : t ≤ T := Nat.find_min' hex hc
-  have hs : c.state = none := Nat.find_spec hex
-  have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := by
-    rw [show T = t + (T - t) by omega, MultiTapeTM.runFrom_add,
-      MultiTapeTM.runFrom_of_halt _ hs]
+  have hs : c.state = none := by
+    change (M.tm.runFrom (M.tm.initCfg x) t).state = none
+    rw [heq]
+    exact hc
+  have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := heq.symm
   have hi : (emCallRightTM M).tm.initCfg x = emCallRightCfg M (M.tm.initCfg x) := rfl
-  have hr := emCall_right_run M (M.tm.initCfg x) t (fun j hj => Nat.find_min hex hj)
+  have hr := emCall_right_run M (M.tm.initCfg x) t hlive
   obtain ⟨r, hrle, hfinish⟩ := emCall_right_finish M c hs
   have hrun : (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (t + r) =
       emCallRightScan M c none x.length (le_refl _) := by

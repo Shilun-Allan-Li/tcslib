@@ -119,7 +119,7 @@ a consumer reads a seam-to-seam run from the framed form; the catalog space rows
 `Turing.FinTM.computesFunInTime_*_spaceUsed` (P1–P15 as realized,
 including the threaded-map row with its payload space hypothesis); and
 the control-layer rows `Turing.capture_visitedByTapeHead` (W1),
-`Turing.FinTM.redirectTM_spaceUsedByTape` (W2),
+`Turing.FinTM.redirectTM_spaceUsedByTape` (W2, imported from `Build/Wrappers`),
 `Turing.FinTM.computesFunInTime_cond_spaceUsed` (W3), and
 `Turing.FinTM.exists_loopTM_spaceUsed` (L).
 
@@ -2227,8 +2227,9 @@ R3; annotates `Turing.FinTM.computesFunInTime_pairDup`). The duplication
 encoder runs in constant work-tape space: both passes re-read the input
 tape, nothing is buffered.
 
-**Proof sketch.** The witness `Turing.pairDiagTM` (time `Turing.pairDiagTM_computes`) has no work tapes
-(`k = 0`), so `spaceUsed` is identically `0`. -/
+**Proof sketch.** Retain the witness `Turing.pairDiagTM` and the time coefficient from
+`Turing.pairDiagTM_computes`. The published `Turing.pairDiagTM_spaceUsed` gives zero space
+directly, so the existing constant-space witness bounds it. -/
 theorem computesFunInTime_pairDup_spaceUsed :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => pairEncode x x)
@@ -2237,7 +2238,7 @@ theorem computesFunInTime_pairDup_spaceUsed :
         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
   ⟨pairDiagTM, 6, (computesFunInTime_iff _ _ _).mpr fun x =>
     (pairDiagTM_computes x).mono (by omega), fun x t => by
-    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+    rw [pairDiagTM_spaceUsed]; omega⟩
 
 /-- **P8 space row, threaded length check** (design
 §12 R3; annotates `Turing.FinTM.computesFunInTime_pairLenCheck`). The
@@ -2328,8 +2329,9 @@ string-function counterpart of `Turing.incrementTM`). The incrementer
 runs in constant work-tape space: it validates and emits from two native
 input scans with the carry resident in control.
 
-**Proof sketch.** The existing witness `incFixedTM` has no work tapes
-(`k = 0`), so `spaceUsed` is identically `0`. -/
+**Proof sketch.** Retain the existing witness `Turing.FinTM.incFixedTM` and its time coefficient.
+The published `Turing.FinTM.incFixedTM_spaceUsed` gives zero space directly, so the existing
+constant-space witness bounds it. -/
 theorem computesFunInTime_incFixed_spaceUsed :
     ∃ (M : FinTM Bool) (c : ℕ),
       M.ComputesFunInTime (fun x => (incFixed x).getD [])
@@ -2337,7 +2339,7 @@ theorem computesFunInTime_incFixed_spaceUsed :
       ∀ (x : List Bool) (t : ℕ),
         M.tm.spaceUsed (M.tm.initCfg x) t ≤ c :=
   ⟨incFixedTM, 3, (computesFunInTime_iff _ _ _).mpr incFixedTM_computes, fun x t => by
-    rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]; omega⟩
+    rw [incFixedTM_spaceUsed]; omega⟩
 
 /-- **Threaded-map space row** (design §12 R3;
 annotates `Turing.FinTM.computesFunInTime_pairMapSnd`, the round-2
