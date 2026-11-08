@@ -92,7 +92,12 @@ No shared-owner API or pin is changed. The user dispatched Codex for its externa
 statement gate. Draft PR #238 targets the central branch; the exact published
 exchange input is `a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4`. The returned
 statement audit now passes 0/0/0/3. Its report is preserved verbatim from the user
-paste; fill only the 14 audited theorem bodies, with the trusted surface fixed.
+paste. All 14 audited theorem bodies are now filled at
+`b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`, with the trusted surface fixed.
+A fresh 93-module sweep and 284-constant standard-axiom inventory pass, including
+one disclosed arithmetic compiler auxiliary; all 100 other frozen paths are
+unchanged. The separate adapter proof audit is prepared next, requiring a fresh
+worker selection and user dispatch. Source-policy and integration remain open.
 
 The exact Pei16 and Wu24 PDFs were retrieved directly over HTTPS, independently
 hashed and text-extracted in this worktree's source archive. Their provenance is
@@ -407,3 +412,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 | Created isolated adapter draft from central base `2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited stack `ff8345b1d2ac2f605d81cdf6c23216aadb918abb`; 20 statements/14 admissions, 93 fresh modules, 9 consumed FP contracts axiom-clean. One required Mathlib cache root added without changing pins. | Statement gate prepared, user selection/dispatch pending; no merge |
 | 2026-11-07 (Pacific) | User selects and dispatches Codex for the adapter statement audit. GitHub verifies draft PR #238 at `a3eb3627f3b26b78613a41367221788057ca4142`, central target, exchange `a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4`, and #237 records intake at `ff8345b1d2ac2f605d81cdf6c23216aadb918abb`. Rechecked 101 frozen source hashes, 199 evidence entries and seven payload hashes. | Findings pending; Lean/root/pins and issued bundle frozen; no native rerun or merge |
 | 2026-11-07 (Pacific) | Adapter statement audit PASS 0/0/0/3 at `6eec97be8f54d9990340900a5595dab32fb477f5`; retained the complete pasted report and rechecked 101 frozen sources plus 199/174/106/86/82/9 nested evidence entries. Prepared an undispatched source-validation scope covering 143 declarations, 19 modules and all 196 raw PDF pages. | Only the 14 audited adapter theorem bodies enter fill on PR #238; source-policy, proof audit and integration remain open |
+| 2026-11-07 (Pacific) | Filled all 14 audited adapter proofs at `b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`; 20 declarations and trusted surface fixed, 100 other frozen paths unchanged. Fresh 93-module sweep (194.383 s), 284 owned constants and nine backing contracts only standard axioms, scoped style 0/2/19. One arithmetic compiler auxiliary disclosed; nine development runs retain two failures. | Separate proof-review preparation on existing PR #238; fresh worker choice/user dispatch, source-policy and landing obligations remain; no push or merge |

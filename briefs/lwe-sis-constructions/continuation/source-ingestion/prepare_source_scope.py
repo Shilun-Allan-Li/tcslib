@@ -44,10 +44,8 @@ def main():
     modules = []
     for module in sorted({row["module"] for row in declarations}):
         relative = module + ".lean"
-        raw = (ROOT / relative).read_bytes()
-        frozen = subprocess.check_output(["git", "show", SOURCE + ":" + relative],
-                                         cwd=ROOT)
-        assert raw == frozen, relative
+        raw = subprocess.check_output(["git", "show", SOURCE + ":" + relative],
+                                      cwd=ROOT)
         text = raw.decode("utf-8")
         citations = [{"tag": match[1], "text": match[0],
                       "line": text.count("\n", 0, match.start()) + 1}

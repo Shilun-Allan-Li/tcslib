@@ -10,19 +10,21 @@ report supplied as a user paste. All 31 core obligations are proved, with 263
 owned constants free of sorryAx. Their code and records stay fixed on #237;
 source-policy and relevant landing checks remain open for #236/#237.
 
-The next isolated adapter draft is now checked in `tcslib-lwe-sis-adapters`,
-branch `cryptography/lwe-sis-adapter-statements`, source
-`6eec97be8f54d9990340900a5595dab32fb477f5`. It has 20 declarations and 14
-explicitly admitted obligations; only its three complete defining equations
-are proved. A fresh 93-module sweep passes; all 263 old constants are unchanged,
-and nine consumed machine contracts have only standard axioms. Its statement
-audit is dispatched to Codex. Draft PR
+The isolated adapter draft is now proved in `tcslib-lwe-sis-adapters`,
+branch `cryptography/lwe-sis-adapter-statements`, filled source
+`b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`. All 14 audited obligations are
+filled, with the same 20 source declarations. A fresh 93-module sweep passes;
+all 284 owned constants and nine consumed machine contracts have only standard
+axioms. All 263 earlier constants retain exact identity/axiom sets, with one new
+compiler arithmetic auxiliary disclosed. Its statement audit passes 0/0/0/3.
+Draft PR
 [#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238) and exchange input
 `a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4` are remotely verified; findings
-now pass 0/0/0/3. Only the 14 audited theorem bodies may be filled next;
-definitions/signatures and issued review inputs remain frozen.
+pass 0/0/0/3. The subsequent proof review is a new job, not yet selected or
+dispatched. Definitions/signatures and issued statement inputs remain frozen.
 
-See `gates/04-encoding-adapters/` for the current review packet and
+See `fills/02-encoding-adapters/` for the current proof-review preparation and
+`gates/04-encoding-adapters/` for the passing statement gate;
 `progress.md` for the campaign pulse. The one Encoding facade edit is in a
 separate commit. Shared owner APIs, probability readers, source registry and
 pins remain unchanged. Reference validation/ingestion/matching and the eventual
@@ -117,7 +119,6 @@ acquisition is now complete for Pei16/Wu24, with exact hashes and version checks
 ingestion/source matching, landing checks and future sampler/profile/machine
 obligations remain open under N01–N03.
 
-**Not yet clear to merge — the foundation and construction-core statement gates
-pass, including the construction-core proof gate. The new adapter statement
+**Not yet clear to merge — all five earlier scoped gates pass. The adapter proof
 gate, source ingestion/matching and relevant integration checks remain open.
 The user approves and merges PRs.**
