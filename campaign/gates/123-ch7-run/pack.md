@@ -58,7 +58,7 @@ No final records/exchange/bundle SHA or external dispatch is inferred.
 ## Evidence and its limits
 
 - Replay: Root-owned exact 80/80 replay PASS at 7c4b1a3e15b800cc4a98624f71a3b27458a41340; static exit 0; whole 895 input/output; source unchanged. Bound folder: /private/tmp/ab34-nchr1-replay. This is not automatic validity after other source PRs merge.
-- Selected compiled ABI/AX: Fresh BASE and exact replay-bound HEAD selected metadata executed for 5 roots. See selected-ABI-comparison.json; every raw/normalized type, universe, privacy/kind, simp and AX difference is explicit. No theorem proof-value equality is inferred.
+- Selected compiled ABI/AX: Fresh BASE and exact replay-bound HEAD selected metadata executed for 5 roots. See `review/selected-ABI-comparison.json`; every raw/normalized type, universe, privacy/kind, simp and AX difference is explicit. No theorem proof-value equality is inferred.
 - Rule-10 scope: Six ordinary foreign definitions; complete five literal doc/header/body scopes in the original import context. Action.apply default simp unfolding removed in both variants. Twelve fresh positive and twelve expected-negative identities (12 pairs). The unpinned first fixture is quarantined and is NOT evidence.
 - Source/QA freeze: `review/qa/source-freeze.json`, exact complete BASE/HEAD owner and
   full 33-file source population under `review/source/`, plus declaration-freeze stdout.
@@ -163,3 +163,7 @@ companions were removed earlier. Structural embedding/host debt and other kinds 
 their recorded owner/window; this packet grants no new exception. Test t=0, halted starts,
 nonempty output/prefix, zero tapes, and j=0/j=t at a live endpoint. Restate the arbitrary
 configuration convention rather than silently specializing to initialized runs.
+
+Independent input provenance is supplied in `campaign/status/2026-11-08-mig1-merge/receipt.json`, `object-hashes.json` and `Lean-tree.json` there. The895 recorded replay input hashes equal that published anchor. Actual static helper and diagnostic helper/context are in `reproduction-tools/`; the replay leanelab-o helper is self-contained. These sources are included for verification, without a new elaboration claim.
+
+Exact screen/lint/freeze/comparison helpers and toolchain/package context are in `reproduction-tools/`. The copied screen source matches the recorded execution SHA. Other context files are current reproduction inputs, not a newly invented historical byte attestation.
