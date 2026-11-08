@@ -233,10 +233,7 @@ private lemma universal_live_before {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) {s t : ℕ}
     (hst : s ≤ t) (ht : (tm.runFrom cfg t).state ≠ none) :
     (tm.runFrom cfg s).state ≠ none := by
-  intro hs
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hst
-  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at ht
-  exact ht hs
+  exact MultiTapeTM.runFrom_state_ne_none_of_le tm cfg t ht s hst
 
 /-- No prefix extraction step before the separator's second bit can halt. -/
 private lemma universalPrefix_live (α x : List Bool) (s : ℕ)

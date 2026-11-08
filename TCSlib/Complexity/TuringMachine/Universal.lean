@@ -1731,10 +1731,7 @@ The same absorption argument also excludes earlier native halts. -/
 private lemma timedCut_live_before {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)
     {s t : ℕ} (hst : s ≤ t) (ht : (timedCutInterpreter.runFrom cfg t).state ≠ none) :
     (timedCutInterpreter.runFrom cfg s).state ≠ none := by
-  intro hs
-  obtain ⟨d, rfl⟩ := Nat.exists_eq_add_of_le hst
-  rw [MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hs] at ht
-  exact ht hs
+  exact MultiTapeTM.runFrom_state_ne_none_of_le timedCutInterpreter cfg t ht s hst
 
 /-- Every transition strictly before a live endpoint avoids record application. -/
 private lemma timedCut_no_record {x : List Bool} (cfg : Cfg 4 Bool UniversalControl x)
@@ -2230,11 +2227,9 @@ private lemma timedPrefix_penultimate (bs α x : List Bool) :
 private lemma timedPrefix_live (bs α x : List Bool) (s : ℕ)
     (hs : s < 4 * bs.length + 2 * α.length + 6) :
     (timedPrefixTM.tm.runFrom (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x)) s).state ≠ none := by
-  intro h
-  obtain ⟨d, hd⟩ := Nat.exists_eq_add_of_le (show s ≤ 4 * bs.length + 2 * α.length + 5 by omega)
-  have hp := timedPrefix_penultimate bs α x
-  rw [hd, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ h] at hp
-  exact hp h
+  exact MultiTapeTM.runFrom_state_ne_none_of_le timedPrefixTM.tm
+    (timedPrefixTM.tm.initCfg (pairEncode (pairEncode bs α) x))
+    (4 * bs.length + 2 * α.length + 5) (timedPrefix_penultimate bs α x) s (by omega)
 
 /-- Only the extracted code is supplied to the scheme's canonizer. -/
 private def timedCanonTM (c : EffectiveMachineCode) : FinTM Bool :=
