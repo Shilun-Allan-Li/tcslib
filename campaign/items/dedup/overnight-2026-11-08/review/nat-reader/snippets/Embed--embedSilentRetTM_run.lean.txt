@@ -1,0 +1,26 @@
+theorem embedSilentRetTM_run (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (hcap : cap ∉ Set.range ι) (M : MultiTapeTM m Symbol S)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre out₀ : List Symbol) (c : Cfg m Symbol S x) (T : ℕ)
+    (hc : c.state ≠ none)
+    (hlive : ∀ t < T, (M.runFrom c t).state ≠ none)
+    (hhalt : (M.runFrom c T).state = none) :
+    (∀ t < T,
+      (embedSilentRetTM ι cap M).runFrom
+          ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t =
+        (embedSilentCfg ι cap tapes heads pre out₀
+          (M.runFrom c t)).mapState Sum.inl) ∧
+    (embedSilentRetTM ι cap M).runFrom
+        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) T =
+      { embedSilentCfg ι cap tapes heads pre out₀ (M.runFrom c T) with
+          state := some (Sum.inr ()) } ∧
+    ∀ t < T,
+      ((embedSilentRetTM ι cap M).runFrom
+          ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl)
+          t).state ≠ some (Sum.inr ()) := by
+  exact embedThroughHalt M (embedSilentRetTM ι cap M)
+    (embedSilentCfg ι cap tapes heads pre out₀) (fun _ => rfl)
+    (embedSilentRet_step ι cap M tapes heads pre out₀) c T hc hlive hhalt
+
+/-- The forwarding returning step preserves the complete source action,
+including its final emission, and changes only the successor encoding. -/

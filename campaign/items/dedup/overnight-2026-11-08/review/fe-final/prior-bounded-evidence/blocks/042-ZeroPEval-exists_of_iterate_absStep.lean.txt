@@ -1,0 +1,46 @@
+theorem exists_of_iterate_absStep (k : ℕ) (a : ℕ → ℕ) :
+    ∀ (T : ℕ) (w : List Bool) (vs vs' : List ℕ),
+      (absStep n k a)^[T] (w, vs) = ([false], vs') →
+      ∃ gs : List (AlgGate n), w = encodeGates gs ∧
+        (∀ i (h : i < gs.length), gs[i].refsBelow (vs.length + i) = true) ∧
+        vs' = evalVals k a gs vs := by
+  have hnil : ∀ T (vs : List ℕ), (absStep n k a)^[T] ([], vs) = ([], vs) :=
+    fun T vs => Function.iterate_fixed rfl T
+  intro T
+  induction T with
+  | zero =>
+    intro w vs vs' h
+    simp only [Function.iterate_zero, id, Prod.mk.injEq] at h
+    obtain ⟨rfl, rfl⟩ := h
+    exact ⟨[], rfl, by simp, rfl⟩
+  | succ T ih =>
+    intro w vs vs' h
+    rw [Function.iterate_succ_apply] at h
+    match w, h with
+    | [], h => rw [show absStep n k a ([], vs) = ([], vs) from rfl, hnil] at h; simp at h
+    | [false], h =>
+      rw [show absStep n k a ([false], vs) = ([false], vs) from rfl,
+        Function.iterate_fixed rfl] at h
+      simp only [Prod.mk.injEq, true_and] at h
+      exact ⟨[], rfl, by simp, h.symm⟩
+    | false :: _ :: _, h =>
+      rw [show absStep n k a (false :: _ :: _, vs) = ([], vs) from rfl, hnil] at h; simp at h
+    | true :: l, h =>
+      cases hp : AlgGate.parse n l with
+      | none =>
+        rw [show absStep n k a (true :: l, vs) = ([], vs) by simp [absStep, hp], hnil] at h
+        simp at h
+      | some p =>
+        obtain ⟨g, l'⟩ := p
+        by_cases hr : g.refsBelow vs.length = true
+        · rw [show absStep n k a (true :: l, vs) = (l', vs ++ [gateVal k a vs g]) by
+            simp [absStep, hp, hr]] at h
+          obtain ⟨gs, hgs, href, hvs⟩ := ih _ _ _ h
+          refine ⟨g :: gs, by rw [parse_eq_some hp, hgs]; rfl, fun i hi => ?_, hvs⟩
+          cases i with
+          | zero => simpa using hr
+          | succ i =>
+            have := href i (by simp at hi; omega)
+            simpa [Nat.add_assoc, Nat.add_comm 1 i] using this
+        · rw [show absStep n k a (true :: l, vs) = ([], vs) by simp [absStep, hp, hr], hnil] at h
+          simp at h

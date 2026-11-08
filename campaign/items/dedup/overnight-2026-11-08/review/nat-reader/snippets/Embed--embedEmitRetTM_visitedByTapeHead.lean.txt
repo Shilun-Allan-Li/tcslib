@@ -1,0 +1,24 @@
+theorem embedEmitRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k)
+    (M : MultiTapeTM m Symbol S)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre : List Symbol) (c : Cfg m Symbol S x) (t : ℕ) (j : Fin k) :
+    (embedEmitRetTM ι M).visitedByTapeHead
+        ((embedEmitCfg ι tapes heads pre c).mapState Sum.inl) t j =
+      (embedEmitTM ι M).visitedByTapeHead
+        (embedEmitCfg ι tapes heads pre c) t j := by
+  exact embedReturn_visited (embedEmitTM ι M) (embedEmitRetTM ι M)
+    (fun _ _ _ => rfl) (fun _ _ => rfl) (embedEmitCfg ι tapes heads pre c) t j
+
+
+/-! ### Selected-tape exports (§13 Z1 rider, decision D-R1)
+
+The retrofit inventories (`audits/retrofit-inventory/`) found, three times
+independently, that no old-code R1 consumer can be proved from this file's
+public surface: the frame lemmas cover only unselected tapes, and
+`embedSlot_selected` is private. These four projections export the
+selected-tape fields of the two configuration transports; `Turing.embedSilentCfg_cap`, after
+them, exports the silent transport's capture field (the C1-A assembly gate, finding M1). They are
+skeleton-time proofs (statement-phase additions flagged for the A-S1
+audit): each is definitional at `embedSlot_selected`. -/
+
+/-- The silent transport holds the source's tape `i` on host tape `ι i`. -/

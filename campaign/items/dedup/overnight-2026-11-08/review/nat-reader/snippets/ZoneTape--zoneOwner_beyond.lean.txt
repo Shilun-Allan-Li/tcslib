@@ -1,0 +1,14 @@
+theorem zoneOwner_beyond {ℓ n : ℕ} (h : zoneStart ℓ - 1 ≤ n) : zoneOwner ℓ n = none := by
+  apply zoneOwner_of_not_mem
+  intro j ⟨_, h₂⟩
+  have := zoneStart_mono (show j.val + 1 ≤ ℓ by omega)
+  have := zoneStart_succ j.val
+  omega
+
+/-! ### The carrier -/
+
+/-- **The physical cells of zone `i` on one side** (`side = true` the right), inner end first:
+cell `p` holds, in track `t`'s slot, the `p`-th stored cell of track `t`'s zone word, or `⊠`
+beyond its length. Stored cells are thus **packed at the inner end** of each zone, so a zone is
+empty on a track exactly when its innermost slot is `⊠`. Every cell is a zone cell, hence
+nonblank: each zone is a nonblank word of length `zoneCapacity i`. -/

@@ -1,0 +1,53 @@
+lemma rewind_scan {k : ℕ} {S : Type} {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (scan : S) (dest : Option S)
+    (htr : ∀ inp work, tm.tr scan inp work =
+      match inp with
+      | some _ => controlAction .neg (some scan)
+      | none => controlAction .pos dest) :
+    ∀ (cfg : Cfg k Bool S x), cfg.state = some scan → cfg.inputPos.val ≤ x.length →
+      tm.runFrom cfg (cfg.inputPos.val + 1) = {cfg with state := dest, inputPos := 1} := by
+  have aux : ∀ (j : ℕ) (cfg : Cfg k Bool S x), cfg.state = some scan →
+      cfg.inputPos.val = j → j ≤ x.length →
+      tm.runFrom cfg (j + 1) = {cfg with state := dest, inputPos := 1} := by
+    intro j
+    induction j with
+    | zero =>
+      intro cfg hs hj _
+      have hz : cfg.inputPos = 0 := Fin.ext hj
+      have hsym : cfg.inputSymbol = none := by
+        unfold Cfg.inputSymbol
+        rw [dif_pos hz]
+      change tm.step cfg = _
+      unfold MultiTapeTM.step
+      rw [hs]
+      dsimp only
+      rw [htr, hsym]
+      dsimp only
+      rw [controlAction_apply]
+      have hm : moveInputPos cfg.inputPos .pos = 1 := by
+        apply Fin.ext
+        rw [hz, moveInputPos_pos_of_ne_right _ (by simp)]
+        simp
+      rw [hm]
+    | succ j ih =>
+      intro cfg hs hj hlen
+      have hsym : cfg.inputSymbol = some (x[j]'(by omega)) :=
+        inputSymbolInner j (by omega) (by omega)
+      have hstep : tm.step cfg =
+          {cfg with state := some scan, inputPos := moveInputPos cfg.inputPos .neg} := by
+        unfold MultiTapeTM.step
+        rw [hs]
+        dsimp only
+        rw [htr, hsym]
+        dsimp only
+        rw [controlAction_apply]
+      have hp : (moveInputPos cfg.inputPos .neg).val = j := by
+        rw [moveInputPos_neg_val]
+        omega
+      rw [MultiTapeTM.runFrom_succ_eq_step, hstep]
+      exact ih _ rfl hp (by omega)
+  intro cfg hs hp
+  exact aux cfg.inputPos.val cfg hs rfl hp
+
+/-- The rewind's mandatory first step: a left move into the scan state, which leaves the head
+at most at the last input symbol, so that `rewind_scan` applies. -/

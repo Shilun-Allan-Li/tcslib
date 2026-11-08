@@ -1,0 +1,56 @@
+/private/tmp/ab34-ladner-readers-v2/runtime/FourHeadControlsSealed.lean:21:75: error: Tactic `rfl` failed: The left-hand side
+  SAT
+is not definitionally equal to the right-hand side
+  {x | (Std.Sat.CNF.decode x).Satisfiable}
+
+⊢ SAT = {x | (Std.Sat.CNF.decode x).Satisfiable}
+/private/tmp/ab34-ladner-readers-v2/runtime/FourHeadControlsSealed.lean:22:74: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.5 ↔ ?m.5
+but is expected to have type
+  x ∈ SAT ↔ (Std.Sat.CNF.decode x).Satisfiable
+/private/tmp/ab34-ladner-readers-v2/runtime/FourHeadControlsSealed.lean:23:69: error: Tactic `rfl` failed: The left-hand side
+  expCode
+is not definitionally equal to the right-hand side
+  Classical.choice exists_uniformMachineCode
+
+⊢ expCode = Classical.choice exists_uniformMachineCode
+/private/tmp/ab34-ladner-readers-v2/runtime/FourHeadControlsSealed.lean:24:91: error: Tactic `rfl` failed: The left-hand side
+  expCode.simDegree
+is not definitionally equal to the right-hand side
+  (Classical.choice exists_uniformMachineCode).simDegree
+
+⊢ expCode.simDegree = (Classical.choice exists_uniformMachineCode).simDegree
+/private/tmp/ab34-ladner-readers-v2/runtime/FourHeadControlsSealed.lean:26:78: error: Tactic `rfl` failed: The left-hand side
+  M.ComputesInTime x y t
+is not definitionally equal to the right-hand side
+  ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+
+M : FinTM Bool
+x y : List Bool
+t : ℕ
+⊢ M.ComputesInTime x y t = ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/ab34-ladner-readers-v2/runtime/FourHeadControlsSealed.lean:28:75: error: Type mismatch
+  Iff.rfl
+has type
+  ?m.8 ↔ ?m.8
+but is expected to have type
+  M.ComputesInTime x y t ↔ ∃ s, M.tm.ComputesInTimeAndSpace x y t s
+/private/tmp/ab34-ladner-readers-v2/runtime/FourHeadControlsSealed.lean:30:65: error: Tactic `rfl` failed: The left-hand side
+  M.toFinTM
+is not definitionally equal to the right-hand side
+  { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+    decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }
+
+M : CodeTM
+⊢ M.toFinTM =
+    { k := 1, State := Fin (M.numStates + 1), fintypeState := Fin.fintype (M.numStates + 1),
+      decEqState := instDecidableEqFin (M.numStates + 1), tm := M.tm }
+/private/tmp/ab34-ladner-readers-v2/runtime/FourHeadControlsSealed.lean:31:45: error: Tactic `rfl` failed: The left-hand side
+  M.toFinTM.k
+is not definitionally equal to the right-hand side
+  1
+
+M : CodeTM
+⊢ M.toFinTM.k = 1

@@ -1,0 +1,16 @@
+theorem embedEmitTM_runFrom (ι : Fin m ↪ Fin k) (M : MultiTapeTM m Symbol S)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre : List Symbol) (c : Cfg m Symbol S x) (t : ℕ) :
+    (embedEmitTM ι M).runFrom (embedEmitCfg ι tapes heads pre c) t =
+      embedEmitCfg ι tapes heads pre (M.runFrom c t) := by
+  exact MultiTapeTM.runFrom_comm_of_step (embedEmitCfg ι tapes heads pre)
+    (embedEmit_step ι M tapes heads pre) c t
+
+/-- **R1 frame, forwarding flavor** (design §12).
+Along the whole transported run, every host tape outside the selected
+bank is byte-identical to its ambient frame with its head unmoved, the
+input position tracks the source's, and the host's physical output is
+`pre` followed by the source's output so far.
+
+**Proof sketch.** Project `embedEmitTM_runFrom` componentwise, as in the
+suppressing flavor; the output clause is the transport's definition. -/

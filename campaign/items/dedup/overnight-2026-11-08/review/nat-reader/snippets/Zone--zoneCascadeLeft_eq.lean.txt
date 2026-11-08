@@ -1,0 +1,12 @@
+theorem zoneCascadeLeft_eq {ℓ : ℕ} (j : ℕ) (z : ZoneContents ℓ) :
+    zoneCascadeLeft j z = (zoneCascadeRight j z.swap).swap :=
+  rfl
+
+/-- **The left cascade realizes one virtual left move** under the mirrored classical
+pre-state: left zones below `j` empty, right zones below `j` full, the left donor `j`
+nonempty, and the top-right room for one pass. The old home joins the right word's inner end
+and the left word loses its inner cell. [AB09, §1.7]
+
+**Proof sketch.** `Turing.zoneSide_cascadeRight` applied to the mirror; the mirror's stacks
+are the original's exchanged, so its hypotheses and conclusions are these, read through
+`Turing.ZoneContents.swap`. -/

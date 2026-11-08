@@ -1,30 +1,111 @@
 {
-  "utc": "2026-11-08T10:53:57.736287+00:00",
+  "utc": "2026-11-08T11:26:48.084893+00:00",
   "campaign_lean": "9b5dcf46408db681bcbc721930ef2203fa6bc47d",
   "records_checkpoint": "8e5f2266b6ababbd0784f717e65a4903a0e3a0f0",
   "auditors": "Codex, selected by Seyoon for morning batch",
   "mathematical_fills": "Leave holes; not dispatched by maintainer",
-  "next_free_gate": 123,
+  "next_free_gate": 128,
   "gates": [
     {
       "gate": 121,
-      "slug": "fe-live1-cleanup",
       "pr": 241,
-      "head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "slug": "fe-live1-cleanup",
       "branch": "codex/ab34-fe-live1",
-      "status": "Draft PR; actual163-module replay running; external audit not dispatched"
+      "head": "a93d1867d6ed9700f2fd89a28092e39a45db2dd2",
+      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
     },
     {
       "gate": 122,
+      "pr": 242,
       "slug": "first-halt-reuse",
-      "head": "0387cc734e7990966f481669307291067bea48de",
       "branch": "codex/ab34-first-halt-reuse",
-      "status": "Pushed; actual50-module replay running; draft PR creation next"
+      "head": "2c85a68a73f74b79ac19ab2f824a17ddf2432962",
+      "status": "Not yet clear to merge: final validation/audit packet and external audit pending",
+      "note": "Four source readers published;13 more in11 source owners pass native checks, uncommitted while final review freezes. Earlier0387 full50 replay is historical, not the17-consumer final replay."
+    },
+    {
+      "slug": "ch7-run",
+      "wt": "ab34-natbits",
+      "branch": "codex/ab34-ch7-run-reuse",
+      "title": "Reuse public deterministic run laws in emit-loop embedding",
+      "detail": "The five acknowledged ch7 run-infrastructure proofs now consume the public output-prefix, output-extension, halt-absorption and live-prefix equations. All existing statements, definitions and imports are preserved. Loop\u2019s older companion copies were already removed by the merged SG-1 cleanup.",
+      "gate": 123,
+      "head": "7c4b1a3e15b800cc4a98624f71a3b27458a41340",
+      "pr": 243,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/243",
+      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
+    },
+    {
+      "slug": "safe-run",
+      "wt": "ab34-safe-run",
+      "branch": "codex/ab34-safe-run-segments",
+      "patch": "/private/tmp/ab34-overnight-sg1-extras/extras-only.patch",
+      "include": [
+        "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean"
+      ],
+      "title": "Reuse Segment contracts for safe-run closure",
+      "detail": "The three existing SafeRun zero/cons/trans proofs now specialize Segment with the singleton avoided control and a trivial invariant. The public SafeRun definition and all headers remain exact; no import or bridge API is added.",
+      "gate": 124,
+      "head": "535c0043310bb3ad6efd9359aef62518699b7de8",
+      "pr": 244,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/244",
+      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
+    },
+    {
+      "slug": "word-leaves",
+      "wt": "ab34-word-leaves",
+      "branch": "codex/ab34-word-leaves",
+      "patch": "/private/tmp/ab34-overnight-sg1-extras/extras-only.patch",
+      "include": [
+        "TCSlib/Complexity/CookLevin/Hardness.lean"
+      ],
+      "title": "Reuse public polynomial-time head and tail closures",
+      "detail": "The two existing private clA5 head/tail proofs cite the public take1/tail closures already in the import context. List.tail agrees with drop1 by Core reduction. No machine, literal statement, import or public declaration changes.",
+      "gate": 125,
+      "head": "b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80",
+      "pr": 245,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/245",
+      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
+    },
+    {
+      "slug": "restart-reader",
+      "wt": "ab34-campaign",
+      "branch": "codex/ab34-restart-reader",
+      "title": "Read universal startup configuration through its shared equation",
+      "detail": "The local five-field hinit proof now cites MultiTapeTM.initCfg_eq_mapState from the existing UniversalParts import. All literal headers, the initial machine and the exact mapped configuration are preserved. This retires only this inspected RS-1 implementation; import-dependent sibling cases remain held.",
+      "gate": 126,
+      "head": "48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10",
+      "pr": 246,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/246",
+      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
+    },
+    {
+      "slug": "nat-reader",
+      "wt": "ab34-nat-reader",
+      "branch": "codex/ab34-canonoffset-bit-reader",
+      "patch": "/private/tmp/ab34-mig24-existing-api/canonOffset-bit-equation.patch",
+      "include": [
+        "TCSlib/Complexity/TuringMachine/CodeSimulator.lean"
+      ],
+      "title": "Read Nat.bit through its published value equation",
+      "detail": "The existing canonOffset_spec value argument uses Nat.bit_val and Bool.toNat_true instead of explicitly unfolding Nat.bit. Its statement, imports, machine definitions and the already-shared NatBits length bound remain exact.",
+      "gate": 127,
+      "head": "d725e9fa76c81623e95c350250853bec511ddc3c",
+      "pr": 247,
+      "url": "https://github.com/Shilun-Allan-Li/tcslib/pull/247",
+      "status": "Not yet clear to merge: final validation/audit packet and external audit pending"
     }
   ],
   "held_decisions": [
-    "SAT PolyTimeBlockLoop import concrete proposal; no import applied",
-    "RO1 necessary CfgFacts import effects under review; generic API/home/all-sites already approved",
-    "Ladner quantitative-host readiness; six substantive holes remain"
-  ]
+    "SAT BlockLoop import; exactproposalpushed/questionpending; unapplied",
+    "RO1 CfgFacts cycle and eight heldimports; alternate Deterministic home preflight in progress; approvedgenericAPI/allsite scope unchanged",
+    "Ladner sharp linear SAT verifier owner-reader proposal; fullownerpreflight passes, no public API approved/applied"
+  ],
+  "replays": {
+    "FE121": "actual163/0/static0/49 from wholeMAC8; passeda93 snapshot; fullproof boundary followup in progress",
+    "ch7_123": "actual80/0; completionreceipt retained",
+    "FH122_historical": "actual50/0/static0/21 at original3-root0387 only; finalscope expansion pending",
+    "remaining": "safe80 thenword26/restart18/nat23 queued sequentially"
+  },
+  "QA": "33-file full before/after screens running oneatatime; six source freezes/lints materialized; all captures remain data"
 }

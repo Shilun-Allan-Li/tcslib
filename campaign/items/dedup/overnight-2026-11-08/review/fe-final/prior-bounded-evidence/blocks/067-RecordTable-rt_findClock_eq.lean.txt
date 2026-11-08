@@ -1,0 +1,17 @@
+private theorem rt_findClock_eq {Γ A : Type} {m : ℕ} (hm : 0 < m)
+    (δ : A → Option Γ → A) (a₀ : A) (acc : A → Bool)
+    {x : List Γ} (d : Cfg 2 Γ (Σ p : rt_findPhase m A, rt_findControl p) x)
+    (t : ℕ) (ht : 0 < t)
+    (he : ((rt_findRound hm δ a₀ acc).runFrom d t).state = some ⟨.read, none⟩ ∨
+      ((rt_findRound hm δ a₀ acc).runFrom d t).state = some ⟨.exit, ()⟩)
+    (hc : ∀ u, 0 < u → u < t →
+      ((rt_findRound hm δ a₀ acc).runFrom d u).state ≠ some ⟨.read, none⟩ ∧
+        ((rt_findRound hm δ a₀ acc).runFrom d u).state ≠ some ⟨.exit, ()⟩) :
+    rt_findClock hm δ a₀ acc d = t := by
+  classical
+  unfold rt_findClock
+  rw [dif_pos ⟨t, ht, he⟩]
+  apply (Nat.find_eq_iff _).mpr
+  refine ⟨⟨ht, he⟩, ?_⟩
+  intro u hu h
+  exact h.2.elim (hc u h.1 hu).1 (hc u h.1 hu).2

@@ -1,0 +1,11 @@
+theorem zoneRebalance_false {ℓ : ℕ} (z : ZoneContents ℓ) :
+    zoneRebalance false z = (zoneRebalance true z.swap).swap := by
+  have hi : zoneShiftIndex false z = zoneShiftIndex true z.swap := rfl
+  by_cases h : zoneShiftIndex true z.swap < ℓ <;>
+    simp [zoneRebalance, zoneCascade, zoneCascadeLeft, hi, h]
+
+/-- **The rebalance keeps every level above its scanned index**, on both sides and in both
+directions: the zones a rebalance may change are those of levels `0` to the index.
+
+**Proof sketch.** A guarded identity changes nothing; otherwise this is
+`Turing.zoneCascadeRight_frame` at the index, read through the mirror for `dir = false`. -/

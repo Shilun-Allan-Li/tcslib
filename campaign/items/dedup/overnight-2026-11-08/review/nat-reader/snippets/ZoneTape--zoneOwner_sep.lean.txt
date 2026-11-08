@@ -1,0 +1,12 @@
+theorem zoneOwner_sep (ℓ i : ℕ) : zoneOwner ℓ (zoneStart i - 1) = none := by
+  apply zoneOwner_of_not_mem
+  intro j ⟨h₁, h₂⟩
+  have h2 := two_le_zoneStart i
+  rcases Nat.lt_or_ge j.val i with hj | hj
+  · have := zoneStart_mono (show j.val + 1 ≤ i by omega)
+    have := zoneStart_succ j.val
+    omega
+  · have := zoneStart_mono hj
+    omega
+
+/-- Past the last laid-out zone nothing has an owner. -/

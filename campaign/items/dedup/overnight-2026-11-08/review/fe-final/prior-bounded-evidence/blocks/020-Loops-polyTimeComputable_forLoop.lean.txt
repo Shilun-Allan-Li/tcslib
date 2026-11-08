@@ -1,0 +1,34 @@
+theorem polyTimeComputable_forLoop {f : List Bool → List Bool} (hf : PolyTimeComputable f)
+    (B b : ℕ) (hbound : ∀ c d j, j ≤ c.length →
+      (f^[j] d).length ≤ B * ((pairEncode c d).length + 1) ^ b) :
+    PolyTimeComputable (forLoop f) := by
+  have hstep : PolyTimeComputable (forStep f) := by
+    unfold forStep
+    exact polyTimeComputable_ite (polyTimeComputable_isNil.comp polyTimeComputable_pairFstD)
+      polyTimeComputable_id
+      ((polyTimeComputable_tail.comp polyTimeComputable_pairFstD).pairEncode
+        (hf.comp polyTimeComputable_pairSndD))
+  refine polyTimeComputable_iterate hstep polyTimeComputable_id 1 1 (B + 2) (b + 1)
+    (fun S i _ => ?_)
+  simp only [id]
+  have hP : 1 ≤ (S.length + 1) ^ b := Nat.one_le_pow _ _ (by omega)
+  have hpow : (S.length + 1) ^ (b + 1) = (S.length + 1) ^ b * (S.length + 1) := pow_succ _ _
+  have h5 : S.length + 1 ≤ (S.length + 1) ^ b * (S.length + 1) := Nat.le_mul_of_pos_left _ hP
+  rw [hpow]
+  cases hd : pairDecode S with
+  | none =>
+    have h0 : pairFstD S = [] := by simp [pairFstD, hd]
+    rw [Function.iterate_fixed (forStep_of_fst_nil f h0)]
+    nlinarith
+  | some cd =>
+    obtain ⟨c, d⟩ := cd
+    have hS := eq_pairEncode_of_pairDecode S c d hd
+    have h1 := hbound c d (min i c.length) (by omega)
+    rw [← hS] at h1
+    rw [hS, iterate_forStep, length_pairEncode]
+    rw [← hS]
+    have h2 : (c.drop i).length ≤ c.length := by simp
+    have h3 : 2 * c.length + 2 ≤ S.length := by rw [hS]; simp [length_pairEncode]
+    have h6 : B * (S.length + 1) ^ b ≤ B * ((S.length + 1) ^ b * (S.length + 1)) :=
+      Nat.mul_le_mul_left _ (Nat.le_mul_of_pos_right _ (by omega))
+    nlinarith

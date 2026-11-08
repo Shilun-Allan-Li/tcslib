@@ -1,0 +1,67 @@
+[
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+    "name": "SafeRun.zero",
+    "original_source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+    "old_chunk": "/-- The empty run is safe. -/\ntheorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}\n    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c :=\n  ⟨rfl, fun t' ht' => absurd ht' (by omega)⟩",
+    "new_chunk": "/-- The empty run is safe. -/\ntheorem SafeRun.zero {H : MultiTapeTM k Bool B} {avoid : B}\n    {c : Cfg k Bool B x} : SafeRun H avoid c 0 c := by\n  have hs : Segment H {some avoid} (fun _ => True) c c 0 := Segment.zero True.intro\n  have hp := (segment_iff H {some avoid} (fun _ => True) c c 0).mp hs\n  exact ⟨hp.1, fun j hj hq => hp.2.1 j hj (Set.mem_singleton_iff.mpr hq)⟩",
+    "old_chunk_sha256": "351727acedaf49b42c02c6d3eeab28a3eac7f22f006ce2d6b1fafc8780e12c07",
+    "new_chunk_sha256": "07b1235079ff718ab1840ee8b79ed6e496a766d24685315b5eab0b98d3a3bc5c",
+    "full_header_sha256": "c97503b75349cc71cb7fe42f092c8a4549b3af59a575f642dcb54dcc36c9b9cd",
+    "header_exact": true,
+    "no_new_import_or_public_API": true,
+    "status": "Actual full-owner native/AX and complete-body native/sealed scope PASS; fresh controls PASS"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+    "name": "SafeRun.cons",
+    "original_source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+    "old_chunk": "/-- Prepend one non-avoided step to a safe run. -/\ntheorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c' := by\n  have hone : H.runFrom c 1 = c₁ := by\n    simp [runFrom, hstep]\n  refine ⟨?_, ?_⟩\n  · rw [show t + 1 = 1 + t by omega, runFrom_add, hone]\n    exact h.1\n  · intro t' ht'\n    cases t' with\n    | zero => simpa using hc\n    | succ u =>\n      rw [show u + 1 = 1 + u by omega, runFrom_add, hone]\n      exact h.2 u (by omega)",
+    "new_chunk": "/-- Prepend one non-avoided step to a safe run. -/\ntheorem SafeRun.cons {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t : ℕ} (hstep : H.step c = c₁)\n    (hc : c.state ≠ some avoid) (h : SafeRun H avoid c₁ t c') :\n    SafeRun H avoid c (t + 1) c' := by\n  have hs : Segment H {some avoid} (fun _ => True) c₁ c' t :=\n    (segment_iff H {some avoid} (fun _ => True) c₁ c' t).mpr\n      ⟨h.1, fun j hj hq => h.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩\n  have hg := Segment.cons hstep\n    (by simpa only [Set.mem_singleton_iff] using hc) True.intro hs\n  have hp := (segment_iff H {some avoid} (fun _ => True) c c' (1 + t)).mp hg\n  refine ⟨?_, ?_⟩\n  · simpa only [Nat.add_comm 1 t] using hp.1\n  · intro j hj hq\n    exact hp.2.1 j (by omega) (Set.mem_singleton_iff.mpr hq)",
+    "old_chunk_sha256": "c27733949ffe22cbf1c5c0fd640113231756172d401874b3a60a3e516752a905",
+    "new_chunk_sha256": "8c87124208292f42c5b1febbfe28d3fc53d105e6d1795c16666acc0b736fd7b7",
+    "full_header_sha256": "0a0e16c5eb0c9c89a6e40920e1152323bc35f4fd46862a389aad4f4f2af6d670",
+    "header_exact": true,
+    "no_new_import_or_public_API": true,
+    "status": "Actual full-owner native/AX and complete-body native/sealed scope PASS; fresh controls PASS"
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+    "name": "SafeRun.trans",
+    "original_source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+    "old_chunk": "/-- Concatenate safe runs. -/\ntheorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)\n    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by\n  refine ⟨?_, ?_⟩\n  · rw [runFrom_add, h₁.1]\n    exact h₂.1\n  · intro t' ht'\n    by_cases hlt : t' < t₁\n    · exact h₁.2 t' hlt\n    · obtain ⟨u, rfl⟩ : ∃ u, t' = t₁ + u := ⟨t' - t₁, by omega⟩\n      rw [runFrom_add, h₁.1]\n      exact h₂.2 u (by omega)",
+    "new_chunk": "/-- Concatenate safe runs. -/\ntheorem SafeRun.trans {H : MultiTapeTM k Bool B} {avoid : B}\n    {c c₁ c' : Cfg k Bool B x} {t₁ t₂ : ℕ} (h₁ : SafeRun H avoid c t₁ c₁)\n    (h₂ : SafeRun H avoid c₁ t₂ c') : SafeRun H avoid c (t₁ + t₂) c' := by\n  have hs₁ : Segment H {some avoid} (fun _ => True) c c₁ t₁ :=\n    (segment_iff H {some avoid} (fun _ => True) c c₁ t₁).mpr\n      ⟨h₁.1, fun j hj hq => h₁.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩\n  have hs₂ : Segment H {some avoid} (fun _ => True) c₁ c' t₂ :=\n    (segment_iff H {some avoid} (fun _ => True) c₁ c' t₂).mpr\n      ⟨h₂.1, fun j hj hq => h₂.2 j hj (Set.mem_singleton_iff.mp hq), fun _ _ => True.intro⟩\n  have hp := (segment_iff H {some avoid} (fun _ => True) c c' (t₁ + t₂)).mp\n    (Segment.trans hs₁ hs₂)\n  exact ⟨hp.1, fun j hj hq => hp.2.1 j hj (Set.mem_singleton_iff.mpr hq)⟩",
+    "old_chunk_sha256": "bb11ef1e684471da9e6ca8970ce231ea9588c1115574c0670ff5f9d113818bed",
+    "new_chunk_sha256": "7e3056ba0d380a9393e5e32f9fe8322005e8a036944ef8e5465db673d0fcc5c5",
+    "full_header_sha256": "9b1fa446b43cd0a5299fb1dcf8012528abf548049269ba42bcc7e5248f2ebc1a",
+    "header_exact": true,
+    "no_new_import_or_public_API": true,
+    "status": "Actual full-owner native/AX and complete-body native/sealed scope PASS; fresh controls PASS"
+  },
+  {
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_pt_tail",
+    "original_source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+    "old_chunk": "/-- Removing the first bit is a two-state finite transduction. -/\nprivate lemma clA5_pt_tail : PolyTimeComputable List.tail := by\n  let emit (q b : Bool) : Option Bool := if q then some b else none\n  have h := clA5Map_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false\n  have hc (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = x := by\n    induction x with\n    | nil => rfl\n    | cons b r ih => simp [clA5MapWord, emit, ih]\n  have he (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.tail := by\n    cases x <;> simp [clA5MapWord, emit, hc]\n  convert h using 1\n  funext x\n  exact (he x).symm",
+    "new_chunk": "/-- Removing the first bit is polynomial-time by the public tail closure. -/\nprivate lemma clA5_pt_tail : PolyTimeComputable List.tail := by\n  convert polyTimeComputable_tail using 1\n  funext x\n  cases x <;> rfl",
+    "old_chunk_sha256": "d5719b2e482d69fd2cb725e738b8fd124b0b1f7fdeeb4bc68d84cafcf331bbb6",
+    "new_chunk_sha256": "ddd5edcdecf8aa511afaf5c2e127bf7cc4228389a256694527a885231495ec97",
+    "full_header_sha256": "4a927e74761375c01ad2dfcea7d03d3c1192b8526194015454b07978383ee3fe",
+    "header_exact": true,
+    "no_new_import_or_public_API": true,
+    "status": "Actual full-owner native/AX and complete-body native/sealed scope PASS; fresh controls PASS"
+  },
+  {
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "name": "clA5_pt_head",
+    "original_source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+    "old_chunk": "/-- Extracting at most the first bit is also a two-state finite transduction. -/\nprivate lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by\n  let emit (q b : Bool) : Option Bool := if q then none else some b\n  have h := clA5Map_poly (fun (_ : Bool) _ => true) emit (fun _ => none) false\n  have hc (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) true x = [] := by\n    induction x with\n    | nil => rfl\n    | cons b r ih => simp [clA5MapWord, emit, ih]\n  have he (x : List Bool) : clA5MapWord (fun (_ : Bool) _ => true) emit (fun _ => none) false x = x.take 1 := by\n    cases x <;> simp [clA5MapWord, emit, hc]\n  convert h using 1\n  funext x\n  exact (he x).symm",
+    "new_chunk": "/-- Extracting at most the first bit is polynomial-time by the public prefix closure. -/\nprivate lemma clA5_pt_head : PolyTimeComputable (fun x => x.take 1) := by\n  exact polyTimeComputable_take1",
+    "old_chunk_sha256": "88e5fbc72bcbed64d5fe03ea00b925d079262f1bf87d3c7519420a2010051a99",
+    "new_chunk_sha256": "92523ad26eab8fa1b492d13169116e13efcb683b7974282ba3f0003f92185bc8",
+    "full_header_sha256": "5a0588ac6d8569e5057fe91f25488b4f80a272019b4ef7b1c0127875064b3803",
+    "header_exact": true,
+    "no_new_import_or_public_API": true,
+    "status": "Actual full-owner native/AX and complete-body native/sealed scope PASS; fresh controls PASS"
+  }
+]

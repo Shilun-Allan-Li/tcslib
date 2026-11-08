@@ -1,0 +1,2 @@
+theorem stage_of_le_two (f : ℕ → ℕ) {n : ℕ} (hn : n ≤ 2) : stage f n = 0 :=
+  (Nat.find_eq_zero (exists_le_ladder_succ f n)).2 (le_trans (by omega) (le_ladder f 1))

@@ -1,0 +1,5 @@
+private lemma dtDepth_le_of_tree {n : ℕ} {f : (Fin n → Bool) → Bool}
+    (T : DecisionTree n) (d : ℕ) (hd : T.depth ≤ d)
+    (heval : ∀ x, T.eval x = f x) : dtDepth f ≤ d := by
+  unfold dtDepth
+  exact Nat.find_min' _ ⟨T, hd, heval⟩

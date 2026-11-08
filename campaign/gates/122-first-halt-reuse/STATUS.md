@@ -1,9 +1,9 @@
 # Gate 122 — first-halt-reuse
 
-PREPARING for morning Codex audit; NOT DISPATCHED; no gate verdict.
+PREPARING for morning Codex audit; NOT DISPATCHED; no verdict.
 
-Source `0387cc734e7990966f481669307291067bea48de`; campaign Lean `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / whole MAC8.
+**Not yet clear to merge: #242 — final validation/packet and external audit pending.**
 
-Three first-None halt selectors in SAT/Hardness; whole MAC8 replay in progress. No new header/import/API/definition/simp changes. Seyoon alone dispatches and merges.
+Pushed source `2c85a68a73f74b79ac19ab2f824a17ddf2432962`; campaign Lean `9b5dcf46408db681bcbc721930ef2203fa6bc47d` / whole MAC8.
 
-Not yet clear to merge: validation and external audit pending.
+Four source readers published;13 more in11 source owners pass native checks, uncommitted while final review freezes. Earlier0387 full50 replay is historical, not the17-consumer final replay.

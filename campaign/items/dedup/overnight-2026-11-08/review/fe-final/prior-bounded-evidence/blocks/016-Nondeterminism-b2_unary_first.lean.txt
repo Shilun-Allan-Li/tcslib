@@ -1,0 +1,24 @@
+private lemma b2_unary_first (M : FinTM Bool) (f : ℕ → List Bool) (T : ℕ → ℕ)
+    (hM : ∀ n, M.ComputesInTime (List.replicate n true) (f n) (T n)) :
+    ∃ τ : ℕ → ℕ, ∀ x : List Bool,
+      τ x.length ≤ T x.length ∧
+      (b2UnaryTM M).ComputesInTime x (f x.length) (τ x.length) ∧
+      ∀ s < τ x.length, ((b2UnaryTM M).tm.runFrom
+        ((b2UnaryTM M).tm.initCfg x) s).state ≠ none := by
+  classical
+  have hex (n : ℕ) : ∃ t, (M.tm.runFrom
+      (M.tm.initCfg (List.replicate n true)) t).state = none :=
+    ⟨T n, ((computesInTime_iff _ _ _ _).mp (hM n)).1⟩
+  refine ⟨fun n => Nat.find (hex n), fun x => ?_⟩
+  have hh := Nat.find_spec (hex x.length)
+  have ht := Nat.find_min' (hex x.length)
+    ((computesInTime_iff _ _ _ _).mp (hM x.length)).1
+  have ho := M.tm.runFrom_output_eq_of_halt
+    (M.tm.initCfg (List.replicate x.length true)) ht hh
+  have hc : M.ComputesInTime (List.replicate x.length true) (f x.length)
+      (Nat.find (hex x.length)) := (computesInTime_iff _ _ _ _).mpr
+    ⟨hh, ho.symm.trans ((computesInTime_iff _ _ _ _).mp (hM x.length)).2⟩
+  refine ⟨ht, b2_unary_computes M x _ _ hc, fun s hs hh' => ?_⟩
+  have hr := congrArg Cfg.state (b2_unary_run M ((b2UnaryTM M).tm.initCfg x) s)
+  rw [b2_unary_initial] at hr
+  exact Nat.find_min (hex x.length) hs (hr.symm.trans hh')

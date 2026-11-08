@@ -1,0 +1,27 @@
+private lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}
+    (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : ℕ)
+    (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)
+    (hstart : start.state ≠ some ret)
+    (hidle : ∀ c : Cfg k Bool S x, c.state = some ret → tm.step c = c) :
+    ∃ t ≤ B, 0 < t ∧ (∀ j < t, (tm.runFrom start j).state ≠ some ret) ∧
+      tm.runFrom start t = finish := by
+  have hex : ∃ t, t ≤ B ∧ (tm.runFrom start t).state = some ret :=
+    ⟨B, le_rfl, by rw [hrun]; exact hret⟩
+  let t := Nat.find hex
+  have ht := Nat.find_spec hex
+  have hp : 0 < t := by
+    by_contra hn
+    have hz : t = 0 := by omega
+    have hh := ht.2
+    change (tm.runFrom start t).state = some ret at hh
+    rw [hz, MultiTapeTM.runFrom_zero] at hh
+    exact hstart hh
+  refine ⟨t, ht.1, hp, ?_, ?_⟩
+  · intro j hj hs
+    have := Nat.find_min' hex (show j ≤ B ∧ (tm.runFrom start j).state = some ret
+      from ⟨by omega, hs⟩)
+    omega
+  · have stay := Function.iterate_fixed (hidle _ ht.2) (B - t)
+    change tm.runFrom (tm.runFrom start t) (B - t) = tm.runFrom start t at stay
+    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1, hrun] at stay
+    exact stay.symm

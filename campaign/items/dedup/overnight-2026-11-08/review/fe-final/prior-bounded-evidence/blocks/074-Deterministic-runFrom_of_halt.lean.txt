@@ -1,0 +1,4 @@
+@[simp]
+lemma runFrom_of_halt (cfg : Cfg k Symbol State input) (h : cfg.state = none) {n : ℕ} :
+    tm.runFrom cfg n = cfg :=
+  Function.iterate_fixed (step_of_halt h) n

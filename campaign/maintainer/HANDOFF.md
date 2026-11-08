@@ -9,19 +9,31 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
-**LATEST — #233 MERGED; MAC8 current; overnight approved backlog work active.**
+**LATEST — #233 merged/MAC8; overnight work ACTIVE; seven family draft PRs.**
 
-Seyoon merged#233 at `9b5dcf46408db681bcbc721930ef2203fa6bc47d`. Exact1003 Lean blob equality with public50ab/localpassed11b and all895 passedMJOINT1 hashes verified; wholeMJOINT1→MAC8 rename, no new elaboration/splicing. MAIN/records fast-forwarded, user untracked3sumexample preserved. Gate118 CLOSED PASS0/0/0/18; scoped MIG retirements recorded, wider FE-LIVE-1/seven SG1 kinds remain scheduled. Adoption: status/2026-11-08-mig1-merge/.
+Campaign Lean `9b5dcf46408db681bcbc721930ef2203fa6bc47d`/wholeMAC8 remains current. Exact1003Lean/895object adoption and scoped MIG retirement are in status/2026-11-08-mig1-merge. No new source merge; Seyoon alone merges/dispatches. Source parents contain records only beyond9b5.
 
-Seyoon is sleeping and explicitly requested continued useful work, leaving mathematical sorries for fills; all morning auditors are Codex. This is the batch's agent choice, no redundant per-item question. Gates wait for his morning dispatch; all Lean still by PR and he alone merges. New API/header/name/import/home/route/debt decisions still require input, and only that front pauses. Do not revive old overnight autonomous-fill rule.
+Seyoon requested useful overnight work with mathematical holes left for fills; all morning auditors are Codex. No external audit dispatched. Gate121–127 sources are separate family PRs; every one remains NOT yet clear. Nextfree128. The factual queue/source hashes are status/2026-11-08-overnight/queue.json.
 
-Small separate family PRs remain the dedup-window rule (historical§3 below). Read-only/native peer harvest has26 mechanical candidate roots: FE-LIVE11 in5 owners, FH3, outputprefix3, Nonehalt1, BLIVE1, SafeRun3, Hardnesshead/tail2, UniversalKhinit1, CodeSimulatorNat.bit reader1. Root is partitioning these into family branches rather than publishing a mixed PR. All are existing-API/header/import-preserving; each actual integration still needs its exact final validation/gate. Current staging F1 branch codex/ab34-next122c-mechanical has only the first8 reviewed source edits, uncommitted; do not treat it as a finished PR.
+- **Not yet clear to merge: #241 — gate121, fe-live1-cleanup; finalvalidation/pack/external audit pending.** Source`a93d1867d6ed9700f2fd89a28092e39a45db2dd2`.
+- **Not yet clear to merge: #242 — gate122, first-halt-reuse; finalvalidation/pack/external audit pending.** Source`2c85a68a73f74b79ac19ab2f824a17ddf2432962`.
+- **Not yet clear to merge: #243 — gate123, ch7-run; finalvalidation/pack/external audit pending.** Source`7c4b1a3e15b800cc4a98624f71a3b27458a41340`.
+- **Not yet clear to merge: #244 — gate124, safe-run; finalvalidation/pack/external audit pending.** Source`535c0043310bb3ad6efd9359aef62518699b7de8`.
+- **Not yet clear to merge: #245 — gate125, word-leaves; finalvalidation/pack/external audit pending.** Source`b8bb1f194b86c1b0c1d56e6c3f57e1defec37e80`.
+- **Not yet clear to merge: #246 — gate126, restart-reader; finalvalidation/pack/external audit pending.** Source`48d715acefaa9eb1c6b1ffc8656fb79cc0ab1b10`.
+- **Not yet clear to merge: #247 — gate127, nat-reader; finalvalidation/pack/external audit pending.** Source`d725e9fa76c81623e95c350250853bec511ddc3c`.
 
-RO1 generic runFrom_one/CfgFacts, Bool-only copy replacement and EVERY site including colleagues are already explicitly user-approved in§3, with FYI-only mechanical edits. Do not ask again. The generic API has not yet landed; prepare that family using the recorded ruling. SAT's extra BlockLoop import remains a real pending decision; exact hypothetical4-proof native/seal/30paired controls and full44-module context are ready in /private/tmp/ab34-overnight-sat-import-proposal/. No import applied. Seven structural SG1 interfaces remain unimplemented decision proposals.
+Actual FE163/0/static0/49 and ch7_80/0 are passed; full40-consumer campaign count is not yet published: FH grows4→17 after13 additional native passes, still uncommitted during final freeze. Other replay queue is safe80→word26→restart18→nat23. Original FH3/50 execution stays historical. Full FE metadata/proof-aux dispositions are preserved, not a blanket raw publictype equality claim. Stronger full touched-proof opacity review is checking inherited reader arguments before FE gate preparation.
 
-Book-formT31 is already#223/gate113, F6 already#235/gate120, deepening already#208; do not redo them. Ladner approvedLD1–7 proposal is typed with9 explicit holes (6substantive+3reading obligations); source/host readiness still needs honest resolution. Its planned home is in the original architecture; distinguish already-authorized layout/readers from genuinely new host/API design. Root investigating primaryAB source.
+Local3/machine5/j4/nice10 and one shared screen still bind. QA source is /private/tmp/ab34-overnight-qa;33-file fullscreens running. Root replay driver /private/tmp/ab34-family-replay.py, live sessions in toolhistory; outputs ab34-{nchr1,nsafe1,nword1,nrs1,nnat1}-replay/. Full FE passed output remains /private/tmp/ab34-fe-live1-final-validation/live/oleans-fe1 (895whole). Do not splice.
 
-Peer frozen folders: /private/tmp/ab34-overnight-fe1/EXPORT/; ab34-overnight-sg1-harvest/; ab34-overnight-sg1-extras/; ab34-rs1-hinit/; ab34-mig24-existing-api/; ab34-overnight-backlog/; ab34-overnight-sat-import-proposal/; ab34-overnight-ro1-harvest/. Preserve/copy complete manifests before staging. Nextfree121, no new gate allocated yet. Current local3/machine5/j4/nice10, one shared screen. No current formalization fill dispatched. Older readiness/checkpoint passages below are historical.
+Frozen complete evidence adopted under campaign/items/dedup/overnight-2026-11-08/review/{sg-harvest,sg-extras,rs1,nat-reader,fe-final,ladner-v2}; all manifest payloads hashchecked. Byte-identical .lean→.lean.txt path maps explicit; no live package symlinks/PDF included. FE first review remains items/dedup/fe-live1/review. Preserve all superseded runs/failed fixture receipts.
+
+Real held fronts: SAT BlockLoop import exact preflight already pushed/questionpending; RO1 generic/home/all-sites approved but CfgFacts→StateRenaming→Simulation makes one site cyclic and60-owner draft needs8newdirectimports. Both candidate imports and alternate same-name Deterministic home remain unapproved; final alternative preflight will support one concrete ruling. No source publication of unapprovedimports/home.
+
+Ladner v2 has exactly6 substantive sorries; all3 required readings proved,17selectedAX and8effective controls/conditionalhostprobes pass. No main math filled/sourcePR. Sharp public SAT n+1 verifier contract is missing; owner-reader proposal fullnativepasses and is being prepared for a genuine API ruling. Memo prep/budget/size remain fill obligations. LD1–7 approved; do not invent an extra LD10 layout question. Primarysource edition limits/fallback are campaign/items/ladner/2026-11-08-source-check.md. F6/T31/deepening are already merged.
+
+Reused appworktree ab34-campaign/Swt-camp currently hosts RS1 source branch (not detachedcampaign); other7 PR worktrees mapped by queue. Root-only R records checkout pushesdirect/rebase; MAIN user3sum file must remain SHA14eb21e97204139a6ca3080245a40547002de3e9e870b8d35d0f5ef60c016a84. Other chat shares exchange; only AB subtree and pull/rebase before push. Older checkpoints below are historical.
 
 **RELOCATION CHECKPOINT — Seyoon confirmed dispatch of BOTH Codex audits and is closing this chat. Resume only when he returns.**
 

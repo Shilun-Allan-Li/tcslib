@@ -1,0 +1,9 @@
+theorem zonedTape_right_sep {k ℓ : ℕ} (z : Fin k → ZoneContents ℓ) (i : ℕ) :
+    zonedTape z ((zoneStart i : ℤ) - 1) = none := by
+  have h2 := two_le_zoneStart i
+  simp only [zonedTape, zoneCellAt]
+  rw [if_neg (by omega), if_pos (by omega), show ((zoneStart i : ℤ) - 1).toNat =
+    zoneStart i - 1 by omega, zoneOwner_sep]
+  rfl
+
+/-- The left separator before zone `i` is blank. -/

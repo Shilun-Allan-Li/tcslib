@@ -1,0 +1,20 @@
+theorem embedSilentRetTM_visitedByTapeHead (ι : Fin m ↪ Fin k) (cap : Fin k)
+    (M : MultiTapeTM m Symbol S)
+    (tapes : Fin k → ℤ → Option Symbol) (heads : Fin k → ℤ)
+    (pre out₀ : List Symbol) (c : Cfg m Symbol S x) (t : ℕ) (j : Fin k) :
+    (embedSilentRetTM ι cap M).visitedByTapeHead
+        ((embedSilentCfg ι cap tapes heads pre out₀ c).mapState Sum.inl) t j =
+      (embedSilentTM ι cap M).visitedByTapeHead
+        (embedSilentCfg ι cap tapes heads pre out₀ c) t j := by
+  exact embedReturn_visited (embedSilentTM ι cap M) (embedSilentRetTM ι cap M)
+    (fun _ _ _ => rfl) (fun _ _ => rfl)
+    (embedSilentCfg ι cap tapes heads pre out₀ c) t j
+
+/-- **R1′ space, forwarding flavor** (round-1 repair
+R1): the forwarding analogue of
+`Turing.embedSilentRetTM_visitedByTapeHead`.
+
+**Proof sketch.** As the suppressing flavor: identical tape actions through
+the first source halt, then the live idle and the halted absorption are
+both stationary, freezing both visited sets — the trajectories coincide at
+every time. -/

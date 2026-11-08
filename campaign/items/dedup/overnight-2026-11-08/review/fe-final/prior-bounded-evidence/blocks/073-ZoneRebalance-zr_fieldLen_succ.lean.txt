@@ -1,0 +1,8 @@
+private lemma zr_fieldLen_succ (i : ℕ) : zr_fieldLen (zoneStart (i + 1)) = zoneCapacity i := by
+  have h : ∃ j, (zoneStart (j + 1) : ℤ) = zoneStart (i + 1) := ⟨i, rfl⟩
+  rw [zr_fieldLen, dif_pos h]
+  congr 1
+  rw [Nat.find_eq_iff]
+  refine ⟨rfl, fun n hn he => ?_⟩
+  have := zoneStart_add_lt (show n + 1 < i + 1 by omega)
+  omega

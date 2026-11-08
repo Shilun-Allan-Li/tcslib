@@ -1,0 +1,13 @@
+theorem zoneSide_cascadeLeft {ℓ : ℕ} (j : ℕ) (hj : j < ℓ) (z : ZoneContents ℓ)
+    (hl : ∀ k (hk : k < j), z.left ⟨k, by omega⟩ = [])
+    (hr : ∀ k (hk : k < j), (z.right ⟨k, by omega⟩).length = zoneCapacity k)
+    (hdonor : z.left ⟨j, hj⟩ ≠ [])
+    (hroom : (z.right ⟨j, hj⟩).length + 2 ^ (j - 1) ≤ zoneCapacity j) :
+    zoneSide (zoneCascadeLeft j z).right = z.home :: zoneSide z.right ∧
+    zoneSide (zoneCascadeLeft j z).left = (zoneSide z.left).tail :=
+  zoneSide_cascadeRight j hj z.swap hl hr hdonor hroom
+
+/-- **The left cascade restores the half-full discipline below its index**: the mirror of
+`Turing.zoneCascadeRight_lengths`. [AB09, §1.7]
+
+**Proof sketch.** `Turing.zoneCascadeRight_lengths` applied to the mirror. -/

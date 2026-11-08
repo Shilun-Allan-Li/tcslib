@@ -1,0 +1,6 @@
+lemma exists_dtree_of_dtDepth (f : (Fin n → Bool) → Bool) :
+    ∃ T : DecisionTree n, T.depth ≤ dtDepth f ∧ ∀ x, T.eval x = f x := by
+  classical
+  unfold dtDepth
+  exact Nat.find_spec
+    (p := fun d => ∃ T : DecisionTree n, T.depth ≤ d ∧ ∀ x, T.eval x = f x) _

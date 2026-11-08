@@ -1,0 +1,9 @@
+noncomputable def FinTM.toCodeTM : (M : FinTM Bool) → M.k = 1 → CodeTM
+  | @FinTM.mk _ _ Q _hQ _dQ tm, rfl =>
+    ⟨Fintype.card Q - 1, tm.relabelState (FinTM.stateEquivFin ⟨1, Q, tm⟩)⟩
+
+/-- **The code normal form is equivalent**. For a one-work-tape binary machine `M`, its code normal
+form halts on `x` with output `w` within `t` steps if and only if `M` does. [AB09, §1.4]
+
+**Proof sketch.** The relabelled machine's run is the image of `M`'s run under the state
+bijection (`Turing.MultiTapeTM.relabelState_runFrom_init`); halting and output are preserved. -/

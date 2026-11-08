@@ -1,0 +1,31 @@
+private lemma pairDiag_double (x : List Bool) : ∀ t, (ht : t ≤ x.length) →
+    pairDiagTM.tm.runFrom (pairDiagTM.tm.initCfg x) (2 * t) =
+      pairDiagCfg x (some 0) ⟨t + 1, by omega⟩ ((x.take t).flatMap fun b => [b, b]) := by
+  intro t
+  induction t with
+  | zero =>
+    intro _
+    apply Cfg.ext_zero_tapes <;> simp [pairDiagTM, pairDiagCfg, MultiTapeTM.runFrom]
+  | succ t ih =>
+    intro ht
+    rw [show 2 * (t + 1) = 2 * t + 1 + 1 by omega,
+      MultiTapeTM.runFrom_succ_eq_step', MultiTapeTM.runFrom_succ_eq_step', ih (by omega)]
+    rw [pairDiag_step _ _ _ _ _ (pairDiag_inner x (some 0) _ t (by omega))]
+    simp only [pairDiagTM, SignType.zero_eq_zero, moveInputPos_zero, Option.toList_some]
+    rw [pairDiag_step _ _ _ _ _ (pairDiag_inner x (some 1) _ t (by omega))]
+    simp only [pairDiagTM, Option.toList_some]
+    rw [moveInputPos_pos_of_ne_right _ (by change t + 1 ≠ x.length + 1; omega)]
+    apply Cfg.ext_zero_tapes
+    · rfl
+    · rfl
+    · change (((x.take t).flatMap fun b => [b, b]) ++ [x[t]]) ++ [x[t]] =
+        (x.take (t + 1)).flatMap fun b => [b, b]
+      rw [List.take_succ, List.getElem?_eq_getElem (by omega)]
+      simp only [Option.toList_some, List.flatMap_append, List.flatMap_cons,
+        List.flatMap_nil, List.append_nil, List.append_assoc, List.cons_append, List.nil_append]
+
+/-- Rewinding from position `j ≤ n` takes `j + 1` steps and preserves the output.
+
+**Proof sketch.** At position zero, move right and enter the copy state. At a
+positive position at most `n`, the read is a symbol, so move left and apply the
+induction hypothesis. The preceding unconditional left step reaches this range. -/

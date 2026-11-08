@@ -1,0 +1,10 @@
+theorem exists_first_halt (tm : MultiTapeTM k Symbol State) (cfg : Cfg k Symbol State input)
+    {t : ℕ} (h : (tm.runFrom cfg t).state = none) :
+    ∃ u ≤ t, (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧
+      tm.runFrom cfg u = tm.runFrom cfg t := by
+  classical
+  have hex : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, h⟩
+  have hle : Nat.find hex ≤ t := Nat.find_min' hex h
+  refine ⟨Nat.find hex, hle, fun v hv => Nat.find_min hex hv, ?_⟩
+  rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add,
+    MultiTapeTM.runFrom_of_halt _ (Nat.find_spec hex)]

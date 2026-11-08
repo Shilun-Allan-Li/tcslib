@@ -1,0 +1,176 @@
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:158:42: error(lean.unknownIdentifier): Unknown identifier `hglobal`
+case pos
+n : ℕ
+previous : ℕ → ℕ := fun m => if hm : m < n then ladnerH m else 0
+localTest : ℕ → Prop :=
+  fun i =>
+    i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT previous)
+globalTest : ℕ → Prop :=
+  fun i =>
+    i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH)
+hpad : n ≠ 0 → ∀ (x : List Bool), x.length ≤ Nat.log 2 n → (x ∈ padSAT previous ↔ x ∈ padSAT ladnerH)
+hnonzero : ∀ i < Nat.log 2 (Nat.log 2 n), n ≠ 0
+htests : localTest = globalTest
+hexists : (∃ i, localTest i) ↔ ∃ i, globalTest i
+hlocal :
+  ∃ i < Nat.log 2 (Nat.log 2 n),
+    ∀ (x : List Bool),
+      x.length ≤ Nat.log 2 n →
+        ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+          x ∈
+            padSAT fun m =>
+              if hm : m < n then
+                ⋯.fix
+                  (fun n prev =>
+                    if hex :
+                        ∃ i < Nat.log 2 (Nat.log 2 n),
+                          ∀ (x : List Bool),
+                            x.length ≤ Nat.log 2 n →
+                              ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+                                x ∈ padSAT fun m => if hm : m < n then prev m hm else 0) then
+                      Nat.find hex
+                    else Nat.log 2 (Nat.log 2 n))
+                  m
+              else 0)
+hglobal :
+  ∃ i < Nat.log 2 (Nat.log 2 n),
+    ∀ (x : List Bool),
+      x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH)
+⊢ Nat.find hlocal = Nat.find hglobal
+case neg
+n : ℕ
+previous : ℕ → ℕ := fun m => if hm : m < n then ladnerH m else 0
+localTest : ℕ → Prop :=
+  fun i =>
+    i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT previous)
+globalTest : ℕ → Prop :=
+  fun i =>
+    i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH)
+hpad : n ≠ 0 → ∀ (x : List Bool), x.length ≤ Nat.log 2 n → (x ∈ padSAT previous ↔ x ∈ padSAT ladnerH)
+hnonzero : ∀ i < Nat.log 2 (Nat.log 2 n), n ≠ 0
+htests : localTest = globalTest
+hexists : (∃ i, localTest i) ↔ ∃ i, globalTest i
+hlocal :
+  ∃ i < Nat.log 2 (Nat.log 2 n),
+    ∀ (x : List Bool),
+      x.length ≤ Nat.log 2 n →
+        ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+          x ∈
+            padSAT fun m =>
+              if hm : m < n then
+                ⋯.fix
+                  (fun n prev =>
+                    if hex :
+                        ∃ i < Nat.log 2 (Nat.log 2 n),
+                          ∀ (x : List Bool),
+                            x.length ≤ Nat.log 2 n →
+                              ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+                                x ∈ padSAT fun m => if hm : m < n then prev m hm else 0) then
+                      Nat.find hex
+                    else Nat.log 2 (Nat.log 2 n))
+                  m
+              else 0)
+hglobal :
+  ¬∃ i < Nat.log 2 (Nat.log 2 n),
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH)
+⊢ Nat.find hlocal = Nat.log 2 (Nat.log 2 n)
+case pos
+n : ℕ
+previous : ℕ → ℕ := fun m => if hm : m < n then ladnerH m else 0
+localTest : ℕ → Prop :=
+  fun i =>
+    i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT previous)
+globalTest : ℕ → Prop :=
+  fun i =>
+    i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH)
+hpad : n ≠ 0 → ∀ (x : List Bool), x.length ≤ Nat.log 2 n → (x ∈ padSAT previous ↔ x ∈ padSAT ladnerH)
+hnonzero : ∀ i < Nat.log 2 (Nat.log 2 n), n ≠ 0
+htests : localTest = globalTest
+hexists : (∃ i, localTest i) ↔ ∃ i, globalTest i
+hlocal :
+  ¬∃ i < Nat.log 2 (Nat.log 2 n),
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n →
+          ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+            x ∈
+              padSAT fun m =>
+                if hm : m < n then
+                  ⋯.fix
+                    (fun n prev =>
+                      if hex :
+                          ∃ i < Nat.log 2 (Nat.log 2 n),
+                            ∀ (x : List Bool),
+                              x.length ≤ Nat.log 2 n →
+                                ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+                                  x ∈ padSAT fun m => if hm : m < n then prev m hm else 0) then
+                        Nat.find hex
+                      else Nat.log 2 (Nat.log 2 n))
+                    m
+                else 0)
+h✝ :
+  ∃ i < Nat.log 2 (Nat.log 2 n),
+    ∀ (x : List Bool),
+      x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH)
+⊢ Nat.log 2 (Nat.log 2 n) = Nat.find h✝
+case neg
+n : ℕ
+previous : ℕ → ℕ := fun m => if hm : m < n then ladnerH m else 0
+localTest : ℕ → Prop :=
+  fun i =>
+    i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT previous)
+globalTest : ℕ → Prop :=
+  fun i =>
+    i < Nat.log 2 (Nat.log 2 n) ∧
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH)
+hpad : n ≠ 0 → ∀ (x : List Bool), x.length ≤ Nat.log 2 n → (x ∈ padSAT previous ↔ x ∈ padSAT ladnerH)
+hnonzero : ∀ i < Nat.log 2 (Nat.log 2 n), n ≠ 0
+htests : localTest = globalTest
+hexists : (∃ i, localTest i) ↔ ∃ i, globalTest i
+hlocal :
+  ¬∃ i < Nat.log 2 (Nat.log 2 n),
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n →
+          ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+            x ∈
+              padSAT fun m =>
+                if hm : m < n then
+                  ⋯.fix
+                    (fun n prev =>
+                      if hex :
+                          ∃ i < Nat.log 2 (Nat.log 2 n),
+                            ∀ (x : List Bool),
+                              x.length ≤ Nat.log 2 n →
+                                ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔
+                                  x ∈ padSAT fun m => if hm : m < n then prev m hm else 0) then
+                        Nat.find hex
+                      else Nat.log 2 (Nat.log 2 n))
+                    m
+                else 0)
+h✝ :
+  ¬∃ i < Nat.log 2 (Nat.log 2 n),
+      ∀ (x : List Bool),
+        x.length ≤ Nat.log 2 n → ((ladnerMachine i).ComputesInTime x [true] (i * x.length ^ i) ↔ x ∈ padSAT ladnerH)
+⊢ Nat.log 2 (Nat.log 2 n) = Nat.log 2 (Nat.log 2 n)
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:162:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:180:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:188:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:197:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:207:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:218:8: warning: declaration uses 'sorry'
+/private/tmp/ab34-ladner-readers-v2/runtime/LadnerReaders.lean:229:8: warning: declaration uses 'sorry'

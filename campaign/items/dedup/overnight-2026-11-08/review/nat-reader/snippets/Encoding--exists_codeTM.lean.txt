@@ -1,0 +1,7 @@
+theorem exists_codeTM (M : FinTM Bool) (hk : M.k = 1) :
+    ∃ M' : CodeTM, ∀ (x output : List Bool) (t : ℕ),
+      M'.toFinTM.ComputesInTime x output t ↔ M.ComputesInTime x output t := by
+  obtain ⟨M', h, -⟩ := exists_codeTM_spaceUsed M hk
+  exact ⟨M', h⟩
+
+end Turing

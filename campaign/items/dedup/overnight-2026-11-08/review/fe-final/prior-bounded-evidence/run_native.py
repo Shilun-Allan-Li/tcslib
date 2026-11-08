@@ -1,0 +1,8 @@
+from pathlib import Path
+import os,subprocess,json,datetime,time,hashlib,re,sys
+O=Path(__file__).parent;R=Path('/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4');S=Path(os.environ['TCSLIB_SCRATCH']);project=O/'project';out=O/'native';out.mkdir(exist_ok=True);rows=[]
+files=sorted({d['path'] for d in json.loads((O/'DRAFT-SOURCE-MAP.json').read_text())})
+if sys.argv[1:]:files=[p for p in files if Path(p).stem in sys.argv[1:]]
+for p in files:
+ f=project/p;argv=['bash',str(R/'devtools/seyoon/leanelab.sh'),str(project),str(S/'oleans-mac8'),str(f)];start=datetime.datetime.now(datetime.timezone.utc).isoformat();t=time.monotonic();r=subprocess.run(argv,cwd=project,stdout=subprocess.PIPE,stderr=subprocess.STDOUT);raw=r.stdout;label=Path(p).stem;(out/(label+'.out')).write_bytes(raw);d={'label':label,'file':p,'argv':argv,'start_utc':start,'seconds':time.monotonic()-t,'exit':r.returncode,'errors':len(re.findall(r': error(?:\([^\n]*?\))?:',raw.decode(errors='replace'))),'sorry_warnings':raw.count(b"declaration uses 'sorry'"),'input_sha256':hashlib.sha256(f.read_bytes()).hexdigest(),'output_sha256':hashlib.sha256(raw).hexdigest(),'output_bytes':len(raw),'one_own_Lean_at_a_time':True,'source':'9b5dcf46408db681bcbc721930ef2203fa6bc47d','whole_snapshot':'oleans-mac8','source_only_draft':True};(out/(label+'-run.json')).write_text(json.dumps(d,indent=2)+'\n');rows.append(d);print(json.dumps(d),flush=True)
+(O/'NATIVE-RESULTS.json').write_text(json.dumps(rows,indent=2)+'\n')

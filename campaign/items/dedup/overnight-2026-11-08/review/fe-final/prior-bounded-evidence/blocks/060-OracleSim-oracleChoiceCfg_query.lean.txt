@@ -1,0 +1,16 @@
+private theorem oracleChoiceCfg_query {k : ℕ} {S : Type} {x : List Bool}
+    (c : Cfg (k + 1) Bool S x) (tape : ℤ → Option Bool) (p : ℤ) :
+    OracleTM.queryString (oracleChoiceCfg c tape p) = OracleTM.queryString c := by
+  classical
+  letI : DecidableEq Bool := fun a b => Classical.propDecidable (a = b)
+  have hlast : (oracleChoiceSlot k).succAbove (Fin.last k) = Fin.last (k + 1) :=
+    Fin.succAbove_ne_last_last (Fin.castSucc_ne_last _)
+  have ht : (oracleChoiceCfg c tape p).workTapes (OracleTM.queryTapeIdx (k + 1)) =
+      c.workTapes (OracleTM.queryTapeIdx k) := by
+    change Fin.insertNth (α := fun _ => ℤ → Option Bool)
+      (oracleChoiceSlot k) tape c.workTapes (Fin.last (k + 1)) = c.workTapes (Fin.last k)
+    rw [← hlast, Fin.insertNth_apply_succAbove]
+  exact congrArg (fun f : ℤ → Option Bool =>
+    if h : ∃ n : ℕ, f (n : ℤ) = none then
+      (List.range (Nat.find h)).filterMap fun n => f (n : ℤ)
+    else []) ht

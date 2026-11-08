@@ -1,0 +1,274 @@
+[
+  {
+    "module": "TCSlib.Complexity.TuringMachine.CodeSimulator",
+    "direct_imports": [
+      "TCSlib.Complexity.TuringMachine.CodeFormat",
+      "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "TCSlib.Complexity.TuringMachine.Build.Seam",
+      "TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+      "TCSlib.Complexity.TuringMachine.Build.StepBlock",
+      "TCSlib.Complexity.TuringMachine.Build.StepBlockLoop",
+      "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "TCSlib.Complexity.TuringMachine.Build.InputCall",
+      "TCSlib.Complexity.TuringMachine.Build.InputRewind",
+      "TCSlib.Complexity.TuringMachine.Nondeterministic",
+      "TCSlib.Complexity.TuringMachine.Build.InterpreterStartup"
+    ],
+    "complete_internal_import_closure": [
+      "TCSlib.Complexity.ClassP.TimeConstructible",
+      "TCSlib.Complexity.TuringMachine.BufferWords",
+      "TCSlib.Complexity.TuringMachine.Build.Catalog",
+      "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "TCSlib.Complexity.TuringMachine.Build.Convention",
+      "TCSlib.Complexity.TuringMachine.Build.CounterLoop",
+      "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "TCSlib.Complexity.TuringMachine.Build.InputCall",
+      "TCSlib.Complexity.TuringMachine.Build.InputDevice",
+      "TCSlib.Complexity.TuringMachine.Build.InputRewind",
+      "TCSlib.Complexity.TuringMachine.Build.InputWindow",
+      "TCSlib.Complexity.TuringMachine.Build.InterpreterStartup",
+      "TCSlib.Complexity.TuringMachine.Build.Loop",
+      "TCSlib.Complexity.TuringMachine.Build.Primitives",
+      "TCSlib.Complexity.TuringMachine.Build.Rewind",
+      "TCSlib.Complexity.TuringMachine.Build.Scan",
+      "TCSlib.Complexity.TuringMachine.Build.Seam",
+      "TCSlib.Complexity.TuringMachine.Build.SeamLayout",
+      "TCSlib.Complexity.TuringMachine.Build.StepBlock",
+      "TCSlib.Complexity.TuringMachine.Build.StepBlockLoop",
+      "TCSlib.Complexity.TuringMachine.Build.VirtualInput",
+      "TCSlib.Complexity.TuringMachine.Build.Wrappers",
+      "TCSlib.Complexity.TuringMachine.CfgFacts",
+      "TCSlib.Complexity.TuringMachine.CodeFormat",
+      "TCSlib.Complexity.TuringMachine.CodeParser",
+      "TCSlib.Complexity.TuringMachine.CodeSimulator",
+      "TCSlib.Complexity.TuringMachine.Composition",
+      "TCSlib.Complexity.TuringMachine.Configuration",
+      "TCSlib.Complexity.TuringMachine.Deterministic",
+      "TCSlib.Complexity.TuringMachine.Encoding",
+      "TCSlib.Complexity.TuringMachine.Finite",
+      "TCSlib.Complexity.TuringMachine.NatBits",
+      "TCSlib.Complexity.TuringMachine.Nondeterministic",
+      "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+      "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "TCSlib.Complexity.TuringMachine.Simulation",
+      "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "TCSlib.Complexity.TuringMachine.Sweep",
+      "TCSlib.Complexity.TuringMachine.SymbolLift",
+      "TCSlib.Complexity.TuringMachine.UniversalStartup"
+    ],
+    "external_boundaries": [
+      "Mathlib.Algebra.BigOperators.Fin",
+      "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "Mathlib.Algebra.Order.Group.Abs",
+      "Mathlib.Algebra.Order.Group.Int",
+      "Mathlib.Data.Finset.Dedup",
+      "Mathlib.Data.Finset.Max",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Data.Fintype.EquivFin",
+      "Mathlib.Data.Fintype.Option",
+      "Mathlib.Data.Fintype.Pi",
+      "Mathlib.Data.Fintype.Prod",
+      "Mathlib.Data.Fintype.Sum",
+      "Mathlib.Data.Int.Interval",
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.List.Induction",
+      "Mathlib.Data.Nat.Bits",
+      "Mathlib.Data.Nat.Digits.Defs",
+      "Mathlib.Data.Nat.Log",
+      "Mathlib.Data.Nat.Size",
+      "Mathlib.Data.Sigma.Basic",
+      "Mathlib.Data.Sign.Defs",
+      "Mathlib.Logic.Embedding.Basic",
+      "Mathlib.Logic.Equiv.Bool",
+      "Mathlib.Order.Monotone.Defs",
+      "Mathlib.Tactic.DeriveFintype",
+      "Mathlib.Tactic.FinCases",
+      "Mathlib.Tactic.Linarith",
+      "Mathlib.Tactic.Ring"
+    ],
+    "no_import_change": true
+  },
+  {
+    "module": "TCSlib.Complexity.TuringMachine.NatBits",
+    "direct_imports": [
+      "Mathlib.Data.Nat.Size",
+      "Mathlib.Data.Nat.Log",
+      "Mathlib.Data.Nat.Digits.Defs"
+    ],
+    "complete_internal_import_closure": [
+      "TCSlib.Complexity.TuringMachine.NatBits"
+    ],
+    "external_boundaries": [
+      "Mathlib.Data.Nat.Digits.Defs",
+      "Mathlib.Data.Nat.Log",
+      "Mathlib.Data.Nat.Size"
+    ],
+    "no_import_change": true
+  },
+  {
+    "module": "TCSlib.Complexity.TuringMachine.Build.Zone",
+    "direct_imports": [
+      "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "Mathlib.Data.List.FinRange"
+    ],
+    "complete_internal_import_closure": [
+      "TCSlib.Complexity.TuringMachine.Build.Zone"
+    ],
+    "external_boundaries": [
+      "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "Mathlib.Data.List.FinRange"
+    ],
+    "no_import_change": true
+  },
+  {
+    "module": "TCSlib.Complexity.TuringMachine.Build.ZoneTape",
+    "direct_imports": [
+      "TCSlib.Complexity.TuringMachine.Build.Zone",
+      "TCSlib.Complexity.TuringMachine.Simulation"
+    ],
+    "complete_internal_import_closure": [
+      "TCSlib.Complexity.TuringMachine.Build.Zone",
+      "TCSlib.Complexity.TuringMachine.Build.ZoneTape",
+      "TCSlib.Complexity.TuringMachine.Configuration",
+      "TCSlib.Complexity.TuringMachine.Deterministic",
+      "TCSlib.Complexity.TuringMachine.Finite",
+      "TCSlib.Complexity.TuringMachine.Simulation"
+    ],
+    "external_boundaries": [
+      "Mathlib.Algebra.BigOperators.Fin",
+      "Mathlib.Algebra.BigOperators.Group.Finset.Basic",
+      "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "Mathlib.Algebra.Order.Group.Abs",
+      "Mathlib.Algebra.Order.Group.Int",
+      "Mathlib.Data.Finset.Dedup",
+      "Mathlib.Data.Finset.Max",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Data.Fintype.Option",
+      "Mathlib.Data.Fintype.Prod",
+      "Mathlib.Data.Fintype.Sum",
+      "Mathlib.Data.Int.Interval",
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Sign.Defs",
+      "Mathlib.Logic.Embedding.Basic"
+    ],
+    "no_import_change": true
+  },
+  {
+    "module": "TCSlib.Complexity.TuringMachine.Build.Embed",
+    "direct_imports": [
+      "Mathlib.Data.List.FinRange",
+      "TCSlib.Complexity.TuringMachine.Simulation",
+      "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "TCSlib.Complexity.TuringMachine.Build.Convention"
+    ],
+    "complete_internal_import_closure": [
+      "TCSlib.Complexity.TuringMachine.Build.Convention",
+      "TCSlib.Complexity.TuringMachine.Build.Embed",
+      "TCSlib.Complexity.TuringMachine.Configuration",
+      "TCSlib.Complexity.TuringMachine.Deterministic",
+      "TCSlib.Complexity.TuringMachine.Finite",
+      "TCSlib.Complexity.TuringMachine.Simulation",
+      "TCSlib.Complexity.TuringMachine.StateRenaming"
+    ],
+    "external_boundaries": [
+      "Mathlib.Algebra.BigOperators.Fin",
+      "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "Mathlib.Algebra.Order.Group.Abs",
+      "Mathlib.Algebra.Order.Group.Int",
+      "Mathlib.Data.Finset.Dedup",
+      "Mathlib.Data.Finset.Max",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Data.Fintype.Option",
+      "Mathlib.Data.Fintype.Prod",
+      "Mathlib.Data.Fintype.Sum",
+      "Mathlib.Data.Int.Interval",
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Sign.Defs",
+      "Mathlib.Logic.Embedding.Basic"
+    ],
+    "no_import_change": true
+  },
+  {
+    "module": "TCSlib.Complexity.TuringMachine.Simulation",
+    "direct_imports": [
+      "Mathlib.Algebra.BigOperators.Fin",
+      "Mathlib.Data.Fintype.Sum",
+      "Mathlib.Data.Fintype.Prod",
+      "Mathlib.Data.Fintype.Option",
+      "TCSlib.Complexity.TuringMachine.Finite"
+    ],
+    "complete_internal_import_closure": [
+      "TCSlib.Complexity.TuringMachine.Configuration",
+      "TCSlib.Complexity.TuringMachine.Deterministic",
+      "TCSlib.Complexity.TuringMachine.Finite",
+      "TCSlib.Complexity.TuringMachine.Simulation"
+    ],
+    "external_boundaries": [
+      "Mathlib.Algebra.BigOperators.Fin",
+      "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "Mathlib.Algebra.Order.Group.Abs",
+      "Mathlib.Algebra.Order.Group.Int",
+      "Mathlib.Data.Finset.Dedup",
+      "Mathlib.Data.Finset.Max",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Data.Fintype.Option",
+      "Mathlib.Data.Fintype.Prod",
+      "Mathlib.Data.Fintype.Sum",
+      "Mathlib.Data.Int.Interval",
+      "Mathlib.Data.Sign.Defs",
+      "Mathlib.Logic.Embedding.Basic"
+    ],
+    "no_import_change": true
+  },
+  {
+    "module": "TCSlib.Complexity.TuringMachine.Encoding",
+    "direct_imports": [
+      "Mathlib.Data.Fintype.EquivFin",
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Nat.Bits",
+      "TCSlib.Complexity.TuringMachine.NatBits",
+      "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "TCSlib.Complexity.TuringMachine.Robustness.SingleTape"
+    ],
+    "complete_internal_import_closure": [
+      "TCSlib.Complexity.TuringMachine.Build.Contract.Basic",
+      "TCSlib.Complexity.TuringMachine.Configuration",
+      "TCSlib.Complexity.TuringMachine.Deterministic",
+      "TCSlib.Complexity.TuringMachine.Encoding",
+      "TCSlib.Complexity.TuringMachine.Finite",
+      "TCSlib.Complexity.TuringMachine.NatBits",
+      "TCSlib.Complexity.TuringMachine.Robustness.AlphabetReduction",
+      "TCSlib.Complexity.TuringMachine.Robustness.SingleTape",
+      "TCSlib.Complexity.TuringMachine.Simulation",
+      "TCSlib.Complexity.TuringMachine.StateRenaming",
+      "TCSlib.Complexity.TuringMachine.Sweep"
+    ],
+    "external_boundaries": [
+      "Mathlib.Algebra.BigOperators.Fin",
+      "Mathlib.Algebra.Order.BigOperators.Group.Finset",
+      "Mathlib.Algebra.Order.Group.Abs",
+      "Mathlib.Algebra.Order.Group.Int",
+      "Mathlib.Data.Finset.Dedup",
+      "Mathlib.Data.Finset.Max",
+      "Mathlib.Data.Fintype.Basic",
+      "Mathlib.Data.Fintype.EquivFin",
+      "Mathlib.Data.Fintype.Option",
+      "Mathlib.Data.Fintype.Pi",
+      "Mathlib.Data.Fintype.Prod",
+      "Mathlib.Data.Fintype.Sum",
+      "Mathlib.Data.Int.Interval",
+      "Mathlib.Data.List.FinRange",
+      "Mathlib.Data.Nat.Bits",
+      "Mathlib.Data.Nat.Digits.Defs",
+      "Mathlib.Data.Nat.Log",
+      "Mathlib.Data.Nat.Size",
+      "Mathlib.Data.Sigma.Basic",
+      "Mathlib.Data.Sign.Defs",
+      "Mathlib.Logic.Embedding.Basic",
+      "Mathlib.Tactic.DeriveFintype",
+      "Mathlib.Tactic.Linarith",
+      "Mathlib.Tactic.Ring"
+    ],
+    "no_import_change": true
+  }
+]

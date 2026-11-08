@@ -1,0 +1,184 @@
+{
+  "scope": "Complete lexical declaration chunks in assigned SAT/Hardness/EmitIterEmbed owners; patterns include inline/rewrite closings; not exhaustive semantic global absence",
+  "rows": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "sat_first_halt",
+      "line": 685,
+      "matched_patterns": [
+        "Nat.find",
+        "runFrom_of_halt"
+      ],
+      "complete_chunk": "/-- Select the actual first halting transition, retaining its final emission. -/\nprivate lemma sat_first_halt (M : FinTM Bool) (x y : List Bool) (T : ℕ)\n    (h : M.ComputesInTime x y T) :\n    ∃ t ≤ T, (∀ r < t, (M.tm.runFrom (M.tm.initCfg x) r).state ≠ none) ∧\n      (M.tm.runFrom (M.tm.initCfg x) t).state = none ∧\n      (M.tm.runFrom (M.tm.initCfg x) t).output = y := by\n  classical\n  have hh := (FinTM.computesInTime_iff _ _ _ _).mp h\n  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hh.1⟩\n  let t := Nat.find hex\n  have ht : t ≤ T := Nat.find_min' hex hh.1\n  have hs : (M.tm.runFrom (M.tm.initCfg x) t).state = none := Nat.find_spec hex\n  have he := M.tm.runFrom_add (M.tm.initCfg x) t (T - t)\n  rw [Nat.add_sub_of_le ht, MultiTapeTM.runFrom_of_halt _ hs] at he\n  exact ⟨t, ht, fun r hr => Nat.find_min hex hr, hs, by rw [← he]; exact hh.2⟩\n\n/-- Capture and both rewinds establish the evaluator's empty-output seam.\n\n**Proof sketch.** Capture through the extractor's first halt (including a\nhalting emission), rewind the native input using the audited contract, then\nrewind the immutable certificate buffer. Only the final evaluator emits. -/\n",
+      "source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "disposition": "Exact FH-1 None selector; proposed mechanical body; native validation receipt separate"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "satAppend_rewind",
+      "line": 3718,
+      "matched_patterns": [
+        "Nat.find"
+      ],
+      "complete_chunk": "/-- Rewind exactly the occupied prefix, using its left blank only locally.\n**Proof sketch.** Induction on the number of cells to the left of the head;\nthe blank at minus one is never written, and the final head is zero. -/\nprivate lemma satAppend_rewind (x w : List Bool) (i : Fin (x.length + 2)) :\n    ∀ r, r ≤ w.length → satAppendTM.tm.runFrom\n      (satAppendCfg x (some 2) i w ((r : ℤ) - 1)) (r + 1) =\n        satAppendCfg x (some 3) i w 0 := by\n  intro r\n  induction r with\n  | zero =>\n    intro _\n    simp only [Nat.zero_add, MultiTapeTM.runFrom_succ_eq_step, MultiTapeTM.runFrom_zero]\n    unfold MultiTapeTM.step\n    change (satAppendTM.tm.tr (2 : Fin 5) _ _).apply _ = _\n    have hr : (satAppendCfg x (some 2) i w ((0 : ℤ) - 1)).workTapeSymbols 0 = none := by\n      simp [satAppendCfg, Cfg.workTapeSymbols, FinTM.bufferTape]\n    simp only [satAppendTM]\n    simp only [Nat.cast_zero]\n    rw [hr]\n    simp [satAppendCfg, Action.apply, SignType.cast, sub_eq_add_neg, add_assoc]\n  | succ r ih =>\n    intro hr\n    have hs : satAppendTM.tm.step (satAppendCfg x (some 2) i w (((r + 1 : ℕ) : ℤ) - 1)) =\n        satAppendCfg x (some 2) i w ((r : ℤ) - 1) := by\n      have hw : ((satAppendCfg x (some 2) i w (((r + 1 : ℕ) : ℤ) - 1)).workTapeSymbols 0).isSome = true := by\n        simp [satAppendCfg, Cfg.workTapeSymbols, FinTM.bufferTape_nat, List.getElem?_eq_getElem (by omega : r < w.length)]\n      unfold MultiTapeTM.step\n      change (satAppendTM.tm.tr (2 : Fin 5) _ _).apply _ = _\n      simp only [satAppendTM]\n      rw [hw]\n      simp [satAppendCfg, Action.apply, SignType.cast, sub_eq_add_neg, add_assoc]\n    rw [MultiTapeTM.runFrom_succ_eq_step, hs]\n    exact ih (by omega)\n\n/-- A padded halting run can be cut at its first halt without changing any\nendpoint field. This is the local instance of the engine's minimal-halt\nargument: use `Nat.find` and the absorbing-halt law. -/\n",
+      "source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "disposition": "Retained context/reference hit; no additional exact FH-1 None-selection reconstruction identified by this bounded source inspection"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "sat_call_first_halt",
+      "line": 3752,
+      "matched_patterns": [
+        "Nat.find",
+        "runFrom_of_halt"
+      ],
+      "complete_chunk": "/-- A padded halting run can be cut at its first halt without changing any\nendpoint field. This is the local instance of the engine's minimal-halt\nargument: use `Nat.find` and the absorbing-halt law. -/\nprivate lemma sat_call_first_halt {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)\n    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :\n    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧\n      tm.runFrom cfg u = tm.runFrom cfg t := by\n  classical\n  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩\n  have hu := Nat.find_spec h\n  have hle := Nat.find_min' h hhalt\n  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩\n  · by_contra hn\n    have hz : Nat.find h = 0 := by omega\n    rw [hz, MultiTapeTM.runFrom_zero] at hu\n    exact hstart hu\n  · symm\n    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]\n\n/-- The appender has a full clean return, in linear time in the native input\nand existing word. Both input and work heads return to their canonical origins.\n**Proof sketch.** Compose seek, copy, work rewind, and the audited native\nrewind. Choose the first halt so forwarding wrappers may use the run directly. -/\n",
+      "source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "disposition": "Exact FH-1 None selector; proposed mechanical body; native validation receipt separate"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "satStop_step",
+      "line": 3890,
+      "matched_patterns": [
+        "runFrom_state_ne_none_of_le"
+      ],
+      "complete_chunk": "/-- Before the designated positive exit, the stopped source takes the same\nphysical step as the module and raises the release flag. -/\nprivate lemma satStop_step (C : FinTM Bool) (entry exit : C.State)\n    {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)\n    (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :\n    (satStopTM C entry exit).tm.step (satStopCfg b c) = satStopCfg true (C.tm.step c) := by\n  cases hs : c.state with\n  | none => exact False.elim (hlive hs)\n  | some q =>\n    have hq : ¬(b = true ∧ q = exit) := by\n      rintro ⟨hb, rfl⟩; exact hg hb hs\n    simp only [MultiTapeTM.step, satStopCfg, hs, Option.map_some]\n    simp only [satStopTM, hq, ↓reduceIte]\n    rfl\n\n/-- Live endpoints force earlier module states to be live by\n`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/\n",
+      "source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "disposition": "Retained context/reference hit; no additional exact FH-1 None-selection reconstruction identified by this bounded source inspection"
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "name": "sat_live_prefix",
+      "line": 3905,
+      "matched_patterns": [
+        "runFrom_state_ne_none_of_le"
+      ],
+      "complete_chunk": "/-- Live endpoints force earlier module states to be live by\n`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/\nprivate lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)\n    (ht : (tm.runFrom c t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by\n  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht\n\n/-- Stop a clean call one silent step after its certified first positive exit.\n**Proof sketch.** Induct on prefixes, keeping the release flag false only at\ntime zero. The supplied guard prevents early stopping; a final silent halt\nretains every canonical seam field and every emitted bit. -/\n",
+      "source_sha256": "a0447bfd9cf3dac04dbd41f2bf87255481373ac3129faea16e2a6ecca3bbc158",
+      "disposition": "Already direct public backward-liveness citation after merged#215; unchanged"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clBank_first",
+      "line": 1246,
+      "matched_patterns": [
+        "Nat.find"
+      ],
+      "complete_chunk": "/-- Cut the simultaneous bank at its observed first all-returned state.\nThis duration may be zero when no displacement needs a counter update;\nthe surrounding source-step/dispatch controller supplies positivity.\n**Proof sketch.** Minimize the all-returned occurrence before the common\nproved deadline. Absorption implies that its first occurrence already has\nthe exact endpoint and restored heads. -/\nprivate lemma clBank_first {l : ℕ} (x : List Bool) (p : Fin (x.length + 2))\n    (a : Fin l → Bool) (n : Fin l → ℕ) (W : ℕ)\n    (hW : ∀ i, (n i).bits.length ≤ W) :\n    ∃ t ≤ 2 * W + 2,\n      (∀ j, j < t → ((clBankTM l).tm.runFrom\n        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) j).state ≠\n          some (fun _ => some (0 : Fin 4))) ∧\n      (clBankTM l).tm.runFrom\n        (clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])) t =\n        clBankCfg p (fun i => clCountCfg x 0 p 0 (n i + if a i then 1 else 0).bits []) := by\n  let start := clBankCfg p (fun i => clCountCfg x (clBankStart (a i)) p 0 (n i).bits [])\n  have finish := clBank_finish x p a n W hW\n  have hex : ∃ t, t ≤ 2 * W + 2 ∧\n      ((clBankTM l).tm.runFrom start t).state = some (fun _ => some (0 : Fin 4)) :=\n    ⟨2 * W + 2, le_rfl, by rw [finish]; rfl⟩\n  let t := Nat.find hex\n  have ht := Nat.find_spec hex\n  refine ⟨t, ht.1, ?_, ?_⟩\n  · intro j hj hs\n    have := Nat.find_min' hex (show j ≤ 2 * W + 2 ∧\n      ((clBankTM l).tm.runFrom start j).state = some (fun _ => some (0 : Fin 4)) from\n        ⟨by omega, hs⟩)\n    omega\n  · have hstay := Function.iterate_fixed (clBank_idle _ ht.2) (2 * W + 2 - t)\n    change (clBankTM l).tm.runFrom ((clBankTM l).tm.runFrom start t)\n      (2 * W + 2 - t) = (clBankTM l).tm.runFrom start t at hstay\n    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay\n    exact hstay.symm.trans finish\n\n/-- Actual source-head displacements. The input component is the clamped\nvirtual displacement, not the source's requested (possibly blocked) move.\nA halted source contributes zero on every coordinate. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "LIVE-stop first-entry; exclusively agent118; excluded from edits/probes"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clCopy_first",
+      "line": 1720,
+      "matched_patterns": [
+        "Nat.find"
+      ],
+      "complete_chunk": "/-- The exact recorded field is available at the copier's observed first\npositive return, with both the untouched source and the new record head\nspecified. This permits a host to dispatch without knowing field length.\n**Proof sketch.** Choose the first completed-control occurrence below the exact copying bound. Since completion is absorbing on the whole configuration, its first occurrence already has the final record and restored source head. Initial and completed controls are distinct. -/\nprivate lemma clCopy_first (x : List Bool) (p : Fin (x.length + 2))\n    (w record : List Bool) :\n    ∃ t ≤ 3 * w.length + 3, 0 < t ∧\n      (∀ j, j < t → (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state ≠ some (4 : Fin 5)) ∧\n      clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t =\n        clCopyCfg x 4 p 0 w (record ++ pairEncode w []) := by\n  have finish := clCopy_run x p w record\n  have hex : ∃ t, t ≤ 3 * w.length + 3 ∧\n      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) :=\n    ⟨3 * w.length + 3, le_rfl, by rw [finish]; rfl⟩\n  let t := Nat.find hex\n  have ht := Nat.find_spec hex\n  have hp : 0 < t := by\n    by_contra h\n    have hz : t = 0 := by omega\n    have hs := ht.2\n    change (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t).state = some (4 : Fin 5) at hs\n    rw [hz, MultiTapeTM.runFrom_zero] at hs\n    have hh := congrArg (fun z => z.map Fin.val) hs\n    norm_num [clCopyCfg] at hh\n  refine ⟨t, ht.1, hp, ?_, ?_⟩\n  · intro j hj hs\n    have := Nat.find_min' hex (show j ≤ 3 * w.length + 3 ∧\n      (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) j).state = some (4 : Fin 5) from ⟨by omega, hs⟩)\n    omega\n  · have hstay := Function.iterate_fixed (clCopy_idle _ ht.2) (3 * w.length + 3 - t)\n    change clCopyTM.tm.runFrom (clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t)\n      (3 * w.length + 3 - t) = clCopyTM.tm.runFrom (clCopyCfg x 0 p 0 w record) t at hstay\n    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay\n    exact hstay.symm.trans finish\n\n/-- A concrete physical layout, with an exact selector and no aliased slot. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "LIVE-stop first-entry; exclusively agent118; excluded from edits/probes"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clRow_first",
+      "line": 2146,
+      "matched_patterns": [
+        "Nat.find"
+      ],
+      "complete_chunk": "/-- A row is completely stored at the actual first end-of-row return.\nThe fixed positive field count makes that return strictly positive.\n**Proof sketch.** Minimize the completed-control occurrence below the\nproved copying bound. The completed controller is absorbing, so its\nfirst occurrence has the exact word and all the restored counter heads. -/\nprivate lemma clRow_first {l : ℕ} (hl : 0 < l) (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin l → List Bool) (record : List Bool) (W : ℕ)\n    (hW : ∀ i, (w i).length ≤ W) :\n    ∃ t ≤ l * (3 * W + 4), 0 < t ∧\n      (∀ j, j < t → ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state ≠\n        some (Fin.last l, (0 : Fin 5))) ∧\n      (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t =\n        clRowCfg x p (Fin.last l) 0 w (record ++ clRowPrefix w l) := by\n  obtain ⟨B, hB, he⟩ := clRow_stored x p w record W hW\n  have hex : ∃ t, t ≤ B ∧ ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =\n      some (Fin.last l, (0 : Fin 5)) := ⟨B, le_rfl, by rw [he]; rfl⟩\n  let t := Nat.find hex\n  have ht := Nat.find_spec hex\n  have hp : 0 < t := by\n    by_contra hn\n    have hz : t = 0 := by omega\n    have hs := ht.2\n    change ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t).state =\n      some (Fin.last l, (0 : Fin 5)) at hs\n    rw [hz, MultiTapeTM.runFrom_zero] at hs\n    have hh := congrArg (fun z => z.map (fun q => q.1.val)) hs\n    simp [clRowCfg] at hh\n    omega\n  refine ⟨t, ht.1.trans hB, hp, ?_, ?_⟩\n  · intro j hj hs\n    have := Nat.find_min' hex (show j ≤ B ∧\n      ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) j).state =\n        some (Fin.last l, (0 : Fin 5)) from ⟨by omega, hs⟩)\n    omega\n  · have hstay := Function.iterate_fixed (clRow_idle _ ht.2) (B - t)\n    change (clRowTM l).tm.runFrom ((clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t)\n      (B - t) = (clRowTM l).tm.runFrom (clRowCfg x p 0 0 w record) t at hstay\n    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay\n    exact hstay.symm.trans he\n\n/-- A row's stored field lengths have their exact doubled-bit-plus-separator\nledger, independently of the native copying runtime. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "LIVE-stop first-entry; exclusively agent118; excluded from edits/probes"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clCmp_first",
+      "line": 2992,
+      "matched_patterns": [
+        "Nat.find"
+      ],
+      "complete_chunk": "/-- The native comparator returns at its first observed completion, within\nits scan bound, with the correct arithmetic verdict and all four heads restored.\n**Proof sketch.** Cut the exact completed run at its first completed-state\noccurrence. Whole-configuration absorption preserves both the verdict and\nall read-only words. The disjoint initial phase excludes zero duration. -/\nprivate lemma clCmp_first (x : List Bool) (p : Fin (x.length + 2))\n    (w : Fin 4 → List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) :\n    ∃ t ≤ 2 * W + 2, 0 < t ∧ ∃ b,\n      (b = true ↔ clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3)) ∧\n      (∀ j, j < t → ∀ d, (clCmpTM.tm.runFrom\n        (clCmpCfg x p (.inl (false, false, true)) w 0) j).state ≠ some (.inr (.inr d))) ∧\n      clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t =\n        clCmpCfg x p (.inr (.inr b)) w 0 := by\n  let b := clCmpVerdict (clCmpOrbit w (clCmpSize w))\n  have finish := clCmp_run x p w\n  have hex : ∃ t, t ≤ 2 * clCmpSize w + 2 ∧\n      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =\n        some (.inr (.inr b)) := ⟨2 * clCmpSize w + 2, le_rfl, by rw [finish]; rfl⟩\n  let t := Nat.find hex\n  have ht := Nat.find_spec hex\n  have hw : clCmpSize w ≤ W := Finset.sup_le (fun i _ => hW i)\n  have hp : 0 < t := by\n    by_contra hn\n    have hz : t = 0 := by omega\n    have hh := ht.2\n    change (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t).state =\n      some (.inr (.inr b)) at hh\n    rw [hz, MultiTapeTM.runFrom_zero] at hh\n    cases hh\n  refine ⟨t, by omega, hp, b, clCmpVerdict_spec w, ?_, ?_⟩\n  · intro j hj d hd\n    have hstay := Function.iterate_fixed (clCmp_idle _ d hd) (2 * clCmpSize w + 2 - j)\n    change clCmpTM.tm.runFrom\n      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j)\n      (2 * clCmpSize w + 2 - j) =\n        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j at hstay\n    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le (by omega)] at hstay\n    have hh := congrArg Cfg.state (finish.symm.trans hstay)\n    rw [hd] at hh\n    have hbd : b = d := Sum.inr.inj (Sum.inr.inj (Option.some.inj hh))\n    have hs : (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =\n        some (.inr (.inr b)) := by rw [hbd]; exact hd\n    have := Nat.find_min' hex (show j ≤ 2 * clCmpSize w + 2 ∧\n      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) j).state =\n        some (.inr (.inr b)) from ⟨by omega, hs⟩)\n    omega\n  · have hstay := Function.iterate_fixed (clCmp_idle _ b ht.2) (2 * clCmpSize w + 2 - t)\n    change clCmpTM.tm.runFrom\n      (clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t)\n      (2 * clCmpSize w + 2 - t) =\n        clCmpTM.tm.runFrom (clCmpCfg x p (.inl (false, false, true)) w 0) t at hstay\n    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1] at hstay\n    exact hstay.symm.trans finish\n\n/-- Specializing stored positions to the public all-false schedule recovers\nthe exact input and work coordinates, including the shifted input origin. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "LIVE-stop first-entry; exclusively agent118; excluded from edits/probes"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clFirst",
+      "line": 3283,
+      "matched_patterns": [
+        "Nat.find"
+      ],
+      "complete_chunk": "/-- Cut a proved bounded run to its first visit to a fresh absorbing return.\n**Proof sketch.** Minimize the return-control occurrence. Absorption makes\nits whole configuration identical to the known endpoint, not just its state. -/\nprivate lemma clFirst {k : ℕ} {S : Type} [DecidableEq S] {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (start finish : Cfg k Bool S x) (ret : S) (B : ℕ)\n    (hrun : tm.runFrom start B = finish) (hret : finish.state = some ret)\n    (hstart : start.state ≠ some ret)\n    (hidle : ∀ c : Cfg k Bool S x, c.state = some ret → tm.step c = c) :\n    ∃ t ≤ B, 0 < t ∧ (∀ j < t, (tm.runFrom start j).state ≠ some ret) ∧\n      tm.runFrom start t = finish := by\n  have hex : ∃ t, t ≤ B ∧ (tm.runFrom start t).state = some ret :=\n    ⟨B, le_rfl, by rw [hrun]; exact hret⟩\n  let t := Nat.find hex\n  have ht := Nat.find_spec hex\n  have hp : 0 < t := by\n    by_contra hn\n    have hz : t = 0 := by omega\n    have hh := ht.2\n    change (tm.runFrom start t).state = some ret at hh\n    rw [hz, MultiTapeTM.runFrom_zero] at hh\n    exact hstart hh\n  refine ⟨t, ht.1, hp, ?_, ?_⟩\n  · intro j hj hs\n    have := Nat.find_min' hex (show j ≤ B ∧ (tm.runFrom start j).state = some ret\n      from ⟨by omega, hs⟩)\n    omega\n  · have stay := Function.iterate_fixed (hidle _ ht.2) (B - t)\n    change tm.runFrom (tm.runFrom start t) (B - t) = tm.runFrom start t at stay\n    rw [← MultiTapeTM.runFrom_add, Nat.add_sub_of_le ht.1, hrun] at stay\n    exact stay.symm\n\n/-- Clearing the last occupied cell leaves exactly the shorter buffer.\nLocally harvested from the audited bridge's `emCall_erase_last` proof. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "LIVE-stop first-entry; exclusively agent118; excluded from edits/probes"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clPackedRecords_machine",
+      "line": 6099,
+      "matched_patterns": [
+        "Nat.find"
+      ],
+      "complete_chunk": "/-- One native machine returns the full exact packed result within one\npolynomial ledger from the original input. The complete stored answer's\nlength is separately bounded by that same actual runtime.\n**Proof sketch.** Unpack the completed native polynomial construction and\napply its one-bit-per-transition output bound. All clocked outer iterations,\nindividual searches, explicit resets and clean-call cleanups lie inside this\nproducer; no unproved final-buffer or installation seam is a hypothesis. -/\nprivate lemma clPackedRecords_machine (M : FinTM Bool) (C e c A d : ℕ) :\n    ∃ (H : FinTM Bool) (a r : ℕ),\n      H.ComputesFunInTime (clPackedRecords M C e c A d) (fun n => a * (n + 1) ^ r) ∧\n      ∀ x, (clPackedRecords M C e c A d x).length ≤ a * (x.length + 1) ^ r := by\n  obtain ⟨H, a, r, hH⟩ := clPackedRecords_native M C e c A d\n  refine ⟨H, a, r, hH, ?_⟩\n  intro x\n  have ho := ((FinTM.computesInTime_iff _ _ _ _).mp (hH x)).2\n  simpa only [ho] using H.tm.output_length_le x (a * (x.length + 1) ^ r)\n\n/-! E4-A5 continuation: installation and ordered emission. The clean\nmodule host below is locally harvested from `ClassNP/SAT.lean`, with five\nphases: native copy, complete producer, cursor initialization, emission,\nand cursor update. All inherited A/A2/A3/A4 declarations remain frozen. -/\n\n/-- A padded halting run can be cut at its first halt without changing any\nendpoint field. This is the local instance of the engine's minimal-halt\nargument: use `Nat.find` and the absorbing-halt law. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "Retained context/reference hit; no additional exact FH-1 None-selection reconstruction identified by this bounded source inspection"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clA5_call_first_halt",
+      "line": 6117,
+      "matched_patterns": [
+        "Nat.find",
+        "runFrom_of_halt"
+      ],
+      "complete_chunk": "/-- A padded halting run can be cut at its first halt without changing any\nendpoint field. This is the local instance of the engine's minimal-halt\nargument: use `Nat.find` and the absorbing-halt law. -/\nprivate lemma clA5_call_first_halt {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (cfg : Cfg k Bool S x) (t : ℕ)\n    (hstart : cfg.state ≠ none) (hhalt : (tm.runFrom cfg t).state = none) :\n    ∃ u, 0 < u ∧ u ≤ t ∧ (∀ v < u, ¬(tm.runFrom cfg v).Halted) ∧\n      tm.runFrom cfg u = tm.runFrom cfg t := by\n  classical\n  let h : ∃ u, (tm.runFrom cfg u).state = none := ⟨t, hhalt⟩\n  have hu := Nat.find_spec h\n  have hle := Nat.find_min' h hhalt\n  refine ⟨Nat.find h, ?_, hle, fun v hv => Nat.find_min h hv, ?_⟩\n  · by_contra hn\n    have hz : Nat.find h = 0 := by omega\n    rw [hz, MultiTapeTM.runFrom_zero] at hu\n    exact hstart hu\n  · symm\n    rw [← Nat.add_sub_of_le hle, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hu]\n\n/-- Pad a callable module into a shared bank, keeping unused tapes stationary. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "Exact FH-1 None selector; proposed mechanical body; native validation receipt separate"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clA5Stop_step",
+      "line": 6215,
+      "matched_patterns": [
+        "runFrom_state_ne_none_of_le"
+      ],
+      "complete_chunk": "/-- Before the designated positive exit, the stopped source takes the same\nphysical step as the module and raises the release flag. -/\nprivate lemma clA5Stop_step (C : FinTM Bool) (entry exit : C.State)\n    {x : List Bool} (b : Bool) (c : Cfg C.k Bool C.State x)\n    (hlive : c.state ≠ none) (hg : b = true → c.state ≠ some exit) :\n    (clA5StopTM C entry exit).tm.step (clA5StopCfg b c) = clA5StopCfg true (C.tm.step c) := by\n  cases hs : c.state with\n  | none => exact False.elim (hlive hs)\n  | some q =>\n    have hq : ¬(b = true ∧ q = exit) := by\n      rintro ⟨hb, rfl⟩; exact hg hb hs\n    simp only [MultiTapeTM.step, clA5StopCfg, hs, Option.map_some]\n    simp only [clA5StopTM, hq, ↓reduceIte]\n    rfl\n\n/-- Live endpoints force earlier module states to be live by\n`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "Retained context/reference hit; no additional exact FH-1 None-selection reconstruction identified by this bounded source inspection"
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "name": "clA5_live_prefix",
+      "line": 6230,
+      "matched_patterns": [
+        "runFrom_state_ne_none_of_le"
+      ],
+      "complete_chunk": "/-- Live endpoints force earlier module states to be live by\n`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/\nprivate lemma clA5_live_prefix {k : ℕ} {S : Type} {x : List Bool}\n    (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)\n    (ht : (tm.runFrom c t).state ≠ none) :\n    ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by\n  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht\n\n/-- Stop a clean call one silent step after its certified first positive exit.\n**Proof sketch.** Induct on prefixes, keeping the release flag false only at\ntime zero. The supplied guard prevents early stopping; a final silent halt\nretains every canonical seam field and every emitted bit. -/\n",
+      "source_sha256": "5edd51e6190c39240edf2ddabeeb841ff03b8d00b31a3288cfa02cff31a393d0",
+      "disposition": "Already direct public backward-liveness citation after merged#215; unchanged"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "name": "runFrom_of_halted",
+      "line": 160,
+      "matched_patterns": [
+        "runFrom_of_halt"
+      ],
+      "complete_chunk": "/-- A halted configuration never changes. -/\ntheorem runFrom_of_halted (H : MultiTapeTM k Bool B)\n    {c : Cfg k Bool B x} (h : c.state = none) (t : ℕ) : H.runFrom c t = c := by\n  induction t with\n  | zero => simp\n  | succ t ih =>\n    rw [runFrom_add, ih]\n    simp [runFrom, step_of_halt h]\n\n/-- Every configuration strictly before a live endpoint is live. -/\n",
+      "source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "disposition": "Assigned EmitIterEmbed existing-public-API repair"
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/EmitIterEmbed.lean",
+      "name": "state_isSome_of_runFrom",
+      "line": 169,
+      "matched_patterns": [
+        "runFrom_of_halt"
+      ],
+      "complete_chunk": "/-- Every configuration strictly before a live endpoint is live. -/\ntheorem state_isSome_of_runFrom (H : MultiTapeTM k Bool B)\n    {c : Cfg k Bool B x} {t : ℕ} {qf : B}\n    (hf : (H.runFrom c t).state = some qf) {j : ℕ} (hj : j ≤ t) :\n    ∃ q, (H.runFrom c j).state = some q := by\n  cases hq : (H.runFrom c j).state with\n  | some q => exact ⟨q, rfl⟩\n  | none =>\n    exfalso\n    have hstat : H.runFrom c t = H.runFrom c j := by\n      obtain ⟨u, rfl⟩ : ∃ u, t = j + u := ⟨t - j, by omega⟩\n      rw [runFrom_add, runFrom_of_halted H hq]\n    rw [hstat, hq] at hf\n    exact Option.noConfusion hf\n\n/-! ### Tape-padding, state-injecting embedding\n\nA clean-call module over `m ≤ k` tapes runs inside the `k`-tape body on its\nfirst `m` work tapes, with its states injected into the body's state type;\nthe extra tapes stay blank and their heads stay at the origin. -/\n\n/-- Pad a module action to the host: act on the first `m` tapes, leave the\nrest alone, and map the successor state. -/\n",
+      "source_sha256": "1a7d25619fb88b51d012e48fb66b758ce08c199e7d3aad219c25f18a7e741b4d",
+      "disposition": "Assigned EmitIterEmbed existing-public-API repair"
+    }
+  ]
+}
