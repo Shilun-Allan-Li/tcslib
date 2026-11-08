@@ -41,6 +41,9 @@ published exchange input is `a0b0d03b5694a0e9ab3df3ff6dfdd88ed7326ef4`;
 its statement freeze remains `6eec97be8f54d9990340900a5595dab32fb477f5`.
 The filled Lean/root is `b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`;
 publication of this proof update is not yet claimed.
+The separate proof-review packet is locally prepared and checked in 1009
+sections; its fresh reviewer selection, client publication and user dispatch
+remain pending. See `fills/02-encoding-adapters/DISPATCH.md`.
 
 No search/decision/worst-case lattice bridge, SIS–LWE reduction, short lattice
 basis or Gaussian preimage sampling has been introduced. The exact proposed

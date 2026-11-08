@@ -8,6 +8,13 @@ fourteen-body freeze and scoped style checks pass. See REPORT.md and evidence/.
 The proof-review pack is `audits/lwe-sis-adapter-proofs-pack.md`.
 This new job still needs its own Codex/Claude selection and user dispatch.
 
+The prepared bundle has 1009 sections, 5,711,128 bytes and SHA-256
+`24de3637321750a0ad12ec46120e32d28db102fd4cd77f0b56621e5e4bd16225`.
+Its bundled records are `223713ba5ea15ac98dc5efedaad5a7208854e3d1`;
+all sections and exact revision-qualified Git blobs were checked. See
+DISPATCH.md and review-publication.json. These are local preparation identities;
+remote proof-update publication and dispatch are not claimed.
+
 ## Authorized fill scope and method
 
 Fill the 14 admitted theorem bodies in
