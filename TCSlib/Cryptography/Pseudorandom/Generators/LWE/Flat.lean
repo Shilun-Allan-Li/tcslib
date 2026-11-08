@@ -24,7 +24,7 @@ set_option autoImplicit false
 
 The generator accepts one word of exactly the full seed budget and outputs one word
 of exactly the matrix-and-value budget. Its advantage equals the actual DLWE advantage
-of the explicitly re-encoded test. Nontrivial claims remain admitted.
+of the explicitly re-encoded test. These identities are proved below.
 
 ## References
 
