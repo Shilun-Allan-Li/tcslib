@@ -1,0 +1,127 @@
+DETAIL|Turing.splitAtLastTrue|TCSlib.Complexity.TuringMachine.Build.Convention|def|private=false|internal=false|simp=false|unfold=false
+TYPE_REPR|Turing.splitAtLastTrue|Lean.Expr.forallE
+  `v
+  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+  (Lean.Expr.app
+    (Lean.Expr.const `Option [Lean.Level.zero])
+    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+  (Lean.BinderInfo.default)
+VALUE_REPR|Turing.splitAtLastTrue|some (Lean.Expr.lam
+  `v
+  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.const `Turing.splitAtLastTrue.match_1 [Lean.Level.succ (Lean.Level.zero)])
+          (Lean.Expr.lam
+            (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Build.Convention 2184749481) "_hygCtx") "_hyg") 31)
+            (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+            (Lean.Expr.app
+              (Lean.Expr.const `Option [Lean.Level.zero])
+              (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+            (Lean.BinderInfo.default)))
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app (Lean.Expr.const `List.dropWhile [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+            (Lean.Expr.lam
+              `b
+              (Lean.Expr.const `Bool [])
+              (Lean.Expr.app (Lean.Expr.const `Bool.not []) (Lean.Expr.bvar 0))
+              (Lean.BinderInfo.default)))
+          (Lean.Expr.app
+            (Lean.Expr.app (Lean.Expr.const `List.reverse [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+            (Lean.Expr.bvar 0))))
+      (Lean.Expr.lam
+        `rest
+        (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.const `Option.some [Lean.Level.zero])
+            (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+          (Lean.Expr.app
+            (Lean.Expr.app (Lean.Expr.const `List.reverse [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+            (Lean.Expr.bvar 0)))
+        (Lean.BinderInfo.default)))
+    (Lean.Expr.lam
+      (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Build.Convention 2184749481) "_hygCtx") "_hyg") 46)
+      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+      (Lean.Expr.app
+        (Lean.Expr.const `Option.none [Lean.Level.zero])
+        (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+      (Lean.BinderInfo.default)))
+  (Lean.BinderInfo.default))
+PRETTY_TYPE|Turing.splitAtLastTrue|(v : List.{0} Bool) → Option.{0} (List.{0} Bool)
+AXIOMS|Turing.splitAtLastTrue|[]
+DETAIL|Turing.splitAtLastTrue.eq_1|TCSlib.Complexity.TuringMachine.Build.Primitives|theorem|private=false|internal=true|simp=false|unfold=false
+TYPE_REPR|Turing.splitAtLastTrue.eq_1|Lean.Expr.forallE
+  `v
+  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)])
+        (Lean.Expr.app
+          (Lean.Expr.const `Option [Lean.Level.zero])
+          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))))
+      (Lean.Expr.app (Lean.Expr.const `Turing.splitAtLastTrue []) (Lean.Expr.bvar 0)))
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.const `Turing.splitAtLastTrue.match_1 [Lean.Level.succ (Lean.Level.zero)])
+            (Lean.Expr.lam
+              (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Build.Convention 2184749481) "_hygCtx") "_hyg") 31)
+              (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+              (Lean.Expr.app
+                (Lean.Expr.const `Option [Lean.Level.zero])
+                (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+              (Lean.BinderInfo.default)))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `List.dropWhile [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+              (Lean.Expr.lam
+                `b
+                (Lean.Expr.const `Bool [])
+                (Lean.Expr.app (Lean.Expr.const `Bool.not []) (Lean.Expr.bvar 0))
+                (Lean.BinderInfo.default)))
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `List.reverse [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+              (Lean.Expr.bvar 0))))
+        (Lean.Expr.lam
+          `rest
+          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const `Option.some [Lean.Level.zero])
+              (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `List.reverse [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+              (Lean.Expr.bvar 0)))
+          (Lean.BinderInfo.default)))
+      (Lean.Expr.lam
+        (Lean.Name.mkNum (Lean.Name.mkStr (Lean.Name.mkStr (Lean.Name.mkNum `x.«_@».TCSlib.Complexity.TuringMachine.Build.Convention 2184749481) "_hygCtx") "_hyg") 46)
+        (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+        (Lean.Expr.app
+          (Lean.Expr.const `Option.none [Lean.Level.zero])
+          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+        (Lean.BinderInfo.default))))
+  (Lean.BinderInfo.default)
+VALUE_REPR|Turing.splitAtLastTrue.eq_1|some (Lean.Expr.lam
+  `v
+  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.const `Eq.refl [Lean.Level.succ (Lean.Level.zero)])
+      (Lean.Expr.app
+        (Lean.Expr.const `Option [Lean.Level.zero])
+        (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))))
+    (Lean.Expr.app (Lean.Expr.const `Turing.splitAtLastTrue []) (Lean.Expr.bvar 0)))
+  (Lean.BinderInfo.default))
+PRETTY_TYPE|Turing.splitAtLastTrue.eq_1|∀ (v : List.{0} Bool),
+  @Eq.{1} (Option.{0} (List.{0} Bool)) (Turing.splitAtLastTrue v)
+    (Turing.splitAtLastTrue.match_1.{1} (fun (x : List.{0} Bool) => Option.{0} (List.{0} Bool))
+      (@List.dropWhile.{0} Bool (fun (b : Bool) => Bool.not b) (@List.reverse.{0} Bool v))
+      (fun (rest : List.{0} Bool) => @Option.some.{0} (List.{0} Bool) (@List.reverse.{0} Bool rest))
+      fun (x : List.{0} Bool) => @Option.none.{0} (List.{0} Bool))
+AXIOMS|Turing.splitAtLastTrue.eq_1|[]

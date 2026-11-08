@@ -1,34 +1,37 @@
-# Gate118: MIG-1 proof/migration landing — reserved, Codex
+# Gate118: MIG-1 landing — reserved, Codex
 
-**Not yet clear to merge: #233.** Draft source branch `lean/mig1-mega-landing`,
-head `0d6b6f842a48be813dcde7fdfd2a1a161fab2383`, targets the campaign and includes prerequisite #230 (gate117 pending).
-Seyoon explicitly selected Codex for this audit, findings Markdown attached and pasted.
-No gate118 packet is ready or dispatched and no gate closes here. Next free119.
+**Not yet clear to merge: #233.** Clean pushed draft `lean/mig1-mega-landing`,
+head `b1f553b315f31b949076e91119473ce4070e7d53`, targets the campaign and includes prerequisite #230.
+Codex was selected; eventual findings Markdown must be attached and pasted. No packet is
+ready or dispatched, no gate closes here, and next free gate is119.
 
-The verified partial Claude final equals cp07:2152 payload checksums, independently checked
-supplied641-module logs. Five producer commits are preserved with Claude author/Codex
-committer attribution; maintainer interface/factoring repairs are separate Codex commits.
-All17 targets and two forwarding proofs are delivered; no fill admission is proved internally.
-The three RAM admissions remain frozen. The delivery is still PARTIAL.
+All seventeen original target proofs plus two forwarding proofs were delivered externally.
+Only the exact frozen RAM3 admissions remain. Imported Claude authorship is preserved;
+maintainer interface/factoring repairs are separately attributed to Codex.
 
-Completed actual checks: all11 modules in a native complete dependency chain; all4,372
-owned constant axiom walks standard except RAM3; all140 changed proof roots plus228
-descendants standard; full source freeze and compiled132-addition179-removal nonprivate
-accounting. The authored export delta relative to API `1160c18f03fd318f0dec25738790935fa61379d4` is exactly+3/-6.
-Two pre-existing reserved Convention equations materialize in Primitives; independent
-Convention-only opacity probes and the precise policy assessment boundary are retained.
-Completed repair scopes pass effective seals/paired controls, with three Catalog HOLDs
-excluded and the generated rewind matcher's ineffective attribute explicit.
+Final twelve-module native chain passes, including the five affected tail reruns after
+the final private-body change. Independent final source QA verifies clean committed blobs,
+public headers/homes/imports/runtime data and the exactly+3/-6 authored export delta.
+Final compiler accounting5698→4413 constants reconciles398 additions/1683 removals, with
+nonprivate+129/-179. All4413 axiom walks have only the three frozen RAM admissions; all144
+changed proof roots and224 descendants use standard axioms. Reserved/generated Convention
+equation materialization is explicitly investigated, not a blanket API/home exemption.
 
-The complete394-module merged-tree replay mmig1 PASSED at the pushed head, static0/60,
-from complete mac3. Expanded25-file screens passed1696→628; all60new candidates have bounded
-source dispositions. Their additional tested terminal/bank/rewind/endpoint/invariant repairs
-are now adopted in six uncommitted source files. The actual12-module fresh chain passes;
-full-header/source and compiler reviews plus a refreshed headscreen are underway. No pending
-API/home proposal is applied, and the older replay is not relabeled for these newer blobs.
+The final25-file screen is1696→622 candidates,54new/1128gone, all new pairs classified.
+The three core tagged-run drivers reuse existing Mathlib iteration, with all six directed
+concrete-instance scaffold matches retained for assessment. Factoring dispositions, complete
+source populations and lint diagnostics remain in `campaign/fills/mig1/landing/`.
 
-Human-dependent leaves: two exact zero-space facts and the shared first-entry lemma
-(unapproved additional APIs; separate audit-agent choice pending); the exact redirect-space
-home move (public-home/order exception pending). The unchanged T7 tagged-simulation
-candidate remains under bounded API review and is not silently accepted as debt.
-Full relevant evidence and proposal limitations live in `campaign/fills/mig1/landing/`.
+The earlier generation's complete mmig1 replay PASSED394/0, static0/60. The fresh final
+mmig2 replay at the head above **PASSED394/0, static0/60**, pipeline exit0, from complete mac3.
+Its12-file downstream closure has394 modules and the source is clean/exact at receipt.
+
+The later Claude R2 partial delivery is preserved and independently reviewed offline:4028
+payload checksums,864 supplied attempts and418 carried source closures reconcile. Strict
+seal gaps remain; no source is adopted, and supplied runs do not replace native evidence.
+
+Seyoon approved the pairDiag/incFixed zero-space APIs, shared first-entry API and exact
+redirect-space home exception; Codex gate119 implementation/validation is underway. The two constant
+rows and redirect header remain three Catalog HOLDs. Effective seals cover completed scopes;
+the generated rewind matcher's ineffective attribute is disclosed. No new debt acceptance
+or broad global seal is inferred. Gate117 is CLOSED and #230 is clear to merge; its merge and gate119 still precede landing.

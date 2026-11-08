@@ -1,0 +1,43 @@
+--- r2/TCSlib/Complexity/TuringMachine/Encoding.lean
++++ current/TCSlib/Complexity/TuringMachine/Encoding.lean
+@@ -6,7 +6,7 @@
+ import Mathlib.Data.Fintype.EquivFin
+ import Mathlib.Data.List.FinRange
+ import Mathlib.Data.Nat.Bits
+-import Mathlib.Data.Nat.Size
++import TCSlib.Complexity.TuringMachine.NatBits
+ import TCSlib.Complexity.TuringMachine.StateRenaming
+ import TCSlib.Complexity.TuringMachine.Robustness.SingleTape
+ 
+@@ -72,7 +72,6 @@
+ * `Turing.length_pairEncode`, `Turing.pairEncode_eq_dbl`, `Turing.pairDecode_eq_none`,
+   `Turing.eq_pairEncode_of_pairDecode`, `Turing.pairEncode_replicate_inj` — the shape of
+   the pairing, shared by the machine-side developments.
+-* `Turing.length_bits_le_self` — `|bits m| ≤ m`.
+ * `Turing.bits_two_pow_mul`, `Turing.bits_two_pow_eq_replicate` — the `Nat.bits` shift law
+   `(2^j·m).bits = 0^j ++ m.bits` and its case `m = 1` (CH34-D4).
+ * `Turing.computesFunInTime_pairEncode_diag` — the diagonal pairing `α ↦ ⟨α, α⟩` is
+@@ -117,6 +116,11 @@
+   k := 1
+   State := Fin (M.numStates + 1)
+   tm := M.tm
++
++/-- A coded machine's bundled form has one work tape, its canonical finite state type,
++and the same underlying machine. -/
++theorem CodeTM.toFinTM_eq (M : CodeTM) :
++    M.toFinTM = { k := 1, State := Fin (M.numStates + 1), tm := M.tm } := rfl
+ 
+ /-- The bundled form of a coded machine has exactly one work tape. -/
+ @[simp]
+@@ -284,11 +288,6 @@
+   simp only [Prod.mk.injEq] at this
+   obtain ⟨h1, h2⟩ := this
+   exact ⟨by simpa using congrArg List.length h1, h2⟩
+-
+-/-- The binary expansion of `m` has at most `m` bits. -/
+-lemma length_bits_le_self (m : ℕ) : m.bits.length ≤ m := by
+-  rw [Nat.size_eq_bits_len]
+-  exact Nat.size_le.mpr Nat.lt_two_pow_self
+ 
+ /-- **The `Nat.bits` shift law**: multiplying a positive `m` by `2 ^ j`
+ prepends `j` low zero bits to its little-endian binary expansion,

@@ -1,0 +1,14 @@
+{
+  "utc": "2026-11-07T14:30:07.646494+00:00",
+  "delivery_ref": "refs/remotes/deliver/mig1-mega-r2",
+  "verified_head": "246d81d2ce247d9e76dcc0ffbfc5080fd1d8fde5",
+  "base": "83ac315ed9e7089466bd16a32f3b71fbadc556d2",
+  "prior_delivery": "cbfdba8102e6a5d956a1fdd2be7518b490a5abac",
+  "sweep2_head": "0b88b8e35aff030ec962078316554dc7484adf82",
+  "all11_delivered_source_blobs_exact": true,
+  "last_commit_only_Lean_change": [
+    "TCSlib/Complexity/TuringMachine/Build/Primitives.lean"
+  ],
+  "new_commits": "16d61dcd203d0190290d34359c824c684539013f\nAuthor: Claude <noreply@anthropic.com>\nCommitter: Claude <noreply@anthropic.com>\nMIG-1 follow-up: MIG-24 T1 (Primitives) and T3, seal repairs\n\nT1, Primitives part: the private catalogRewind was statement-identical to\nthe public Turing.FinTM.timed_rewind; it is retired and its four call\nsites use timed_rewind. T3: the twelve frame-exactness side proofs of\nemCall_bank_initial / emCall_bank_final now cite two private lemmas,\nemCall_pair_not_mem and emCall_triple_not_mem. CertShell and\nCodeSimulator read the canonical seam's state through Cfg.ofWords_state\ninstead of rfl. Primitives: several moved forwarding-map and poly-space\nsteps read runFrom 0 / runFrom 2, initCfg and Action.apply through the\npublished equations.\n\n0b88b8e35aff030ec962078316554dc7484adf82\nAuthor: Claude <noreply@anthropic.com>\nCommitter: Claude <noreply@anthropic.com>\nMIG-1 follow-up: read unselected embedded tapes through embedEmitCfg_unselected\n\nThe T3-factored bank lemmas emCall_bank_initial / emCall_bank_final cite the\npublished Turing.embedEmitCfg_unselected instead of the time-0 instance of\nembedEmitTM_frame (which read runFrom 0 definitionally). CodeSimulator's\nseam composition reads the copied seam's state through Cfg.ofWords_state.\n\n246d81d2ce247d9e76dcc0ffbfc5080fd1d8fde5\nAuthor: Claude <noreply@anthropic.com>\nCommitter: Claude <noreply@anthropic.com>\nMIG-1 follow-up: read pairEncode through pairEncode_eq in the forwarding map\n\npairMapSndTM_computes and the moved fwdMap_finish no longer pass Encoding's\npairEncode (nor initCfg/Cfg.init) to simp; they rewrite with the published\nTuring.pairEncode_eq.\n\n",
+  "scope": "Objects imported only to dedicated deliveryref for provenance/data checks. No source/index/worktree change, no sourcebranch integration/merge or delivered script execution."
+}

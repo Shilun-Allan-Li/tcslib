@@ -700,6 +700,73 @@ F1's cut-only implementations are being repointed in #215 and retire on its merg
 supplied SAT/Hardness directional candidates are classified separately in gate106's incoming
 review; widerRO1 and statement-specific candidates keep their existing separate dispositions.
 
+**Gate106 round2/R3 generic closure repairs (2026-11-07; retirement on #215 merge).**
+The six adapter/dispatcher acknowledgments above do not cover general polynomial-time
+closure reconstructions. Mechanical repair commit `6d3903f7ba3dbdee3ad233c8d908427f3324be2f` handles16 private
+source declarations, retaining their headers/names as citations:
+
+- SAT5: sat_pt_pair_input, sat_pt_mapSnd, sat_pt_pair, sat_pt_append, sat_pt_unaryLength.
+- Hardness11: clNative_linear, clNative_map, clNative_pair, clNative_append,
+  clNative_unary, clA5_pt_const, clA5_pt_cond, clA5_pt_and, clA5Pair_sizes,
+  clA5Le_native, clA5Drop_native.
+
+The14 closure/comparison members use10 distinct public PolyTimePairing source statements:
+of_linear, const, pairMapSnd, pairEncode, append, unary, polyUnary, ite, and, lenLe.
+The pre-repair source-inclusive union is therefore at least10/26(38.5%), crossing
+onefifth; it is a bounded lower bound, not an exhaustive count or accepted retention.
+The remaining two repairs use Encoding's public inverse/length facts and PolyTimePrefix's
+published prefix remover. Existing serialized pairMapSnd.eq_1/drop.eq_1 suffice.
+Seyoon approved only the latter's single new import; no new API or debt extension.
+
+**Generation chronology/current scope (2026-11-08 UTC).** The preceding description belongs
+to the initial16-site repair generation. Final pair-size proof at `63a3ce018e96c8c114b9c82f8d5fce6021c7d03c`
+uses the existing stronger `Complexity.length_pair_components_le` from PolyTimeBlockLoop,
+through Encoding's inverse and public pair projections, including malformed inputs. Seyoon
+separately approved that exact additional import; both PolyTimePrefix and PolyTimeBlockLoop
+imports are authorized. Final source `79e7c63a6bfa5f002663924f5c7d4e72db705026`
+adds the seventeenth repair, `taut_comp_on_image`→`FinTM.exists_comp_on_image`, under the
+separate IMG-COMP-1 disposition below. No original execution is relabeled as this final
+generation. Complete source/current compiler/seals/25-file screen and the MSG5→MSG6→MSG7
+chain are in gate106's final review evidence. FE-LIVE-1 is a separate acknowledged kind,
+not an eighth SG1 adapter/host ruling. Its five Hardness names are disjoint from the
+previous49 named affected declarations, giving54/544 as a bounded named set union only;
+not54 confirmed copies, exhaustive accounting or clearance of class-level image closure.
+
+Actual final native/scoped-seal evidence is in gate106/review; current replay and Codex
+round3 remain pending. These implementations retire only when #215 merges.
+
+The older retained named unions34/270(SAT),32/544(Hardness) did not include this general
+closure family; do not subtract16 from them. Separately, the inspected fixed-bit
+clFillTM/clFill_run/clNative_fill trio is an exact Unit-state constant-emission instance
+of the already acknowledged one-way transducer kind. Accounting it once raises the
+Hardness retained named lower bound to35/544; SAT remains34/270. Original correspondence
+sets and all candidate rows remain preserved. Image-only composition remains a separate
+bounded class-contract comparison; no exact public class-row match, unavoidable new API,
+retention acknowledgment or global clearance is inferred. Historical widerRO1/live-prefix/
+watch statuses remain distinct. Source counts, canonical originals, raw screen edges and
+compiler auxiliaries are different measurements.
+
+**Unary-clock clean-call host retention (separate seventh kind; Seyoon,2026-11-07).**
+Seyoon explicitly accepted existing unary-clock repetition of arbitrary positive clean calls
+anywhere in TCSlib, including matching frame/call/run/clock/output/budget proofs and actual-orbit
+polynomial iteration wrappers. This is an existing-private-host retention exception, separate
+from the six adapter/dispatcher kinds. Exact user answer/scope and source are in
+gate106/review/unary-host-ruling-proposal/RULING.md and ruling.json; the pre-ruling proposal/
+independent review remain historical data.
+
+Fourteen current Hardness members are12clRepeat* declarations plus clA5Iter_native and
+clA5Iter_shrinking (4private definitions/10private lemmas), disjoint from all35 earlier named
+members. The named affected-declaration lower bound is therefore49/544; this is not49confirmed
+duplicates. SAT remains34/270. Full names and independent disjointness checks are in
+review/round3-host-accounting-addon/. No import, statement, new public API, future private-host
+construction or route change is approved by this acknowledgment.
+
+Owner/window: maintainer(Codex), next12.2c consolidation after activeMIG1 and before further
+SAT/Hardness fills. Design/gate the shared host contract, including resource/head-envelope
+clauses, and replace the private implementations there. The on-image class wrapper is outside
+this ruling; the14 repaired Pairing closure/comparison implementations retain their distinct
+retirement-on-merge disposition above.
+
 **BL-2, the binary width of an incremented register value** (gate 101's finding 1,
 2026-11-06). The bound `m ≤ 2 ^ e + 1 → |Nat.bits (m + 1)| ≤ e + 2`, through
 `m + 1 < 4 · 2 ^ e = 2 ^ (e + 2)` and BL-1 (i)'s `length_bits_le`, was proved three times:
@@ -1565,3 +1632,91 @@ have published characterizations (`acceptChk_iff`, `initChk_iff`). **Resolution:
 consumers to them in the dedup window (mechanical, Hydroxyi's files, FYI); the seal then adds the
 two predicates.
 
+
+
+## MIG-1 proof factoring proposed in #233 (2026-11-07)
+
+**Proposed, not retired on the campaign branch; gate118 open.** The partial fill and subsequent
+maintainer review identify the following kinds, with canonical reuse implemented in draft#233:
+input/work-buffer rewind variants; selected/unselected bank and phase frames; buffer replay;
+split-orbit/erase/embedding variants; startup-plus-halted-segment computation certificates;
+clean-bank boundary reconstruction; canonical tape-update/clipping and framed increment
+endpoints; projection-space corollaries; and unrestricted equal-time tagged-step propagation.
+The last uses Mathlib's existing invariant iterator, with no new public host/API/import.
+
+Canonical statements, exact remaining scope and references to each tested implementation are
+in `campaign/fills/mig1/landing/factoring-dispositions-final.md`. Full source-inclusive screens
+retain every new and weighted-existing candidate, including data matches and let-header parser
+limits. This is bounded candidate enumeration plus inspection, not a global optimality claim.
+The two superseded private selector helpers are removed once the whole bank reconstruction
+uses its existing shared equation. Short constructor/field-reader packages already call the
+canonical API; their remaining source similarity is disclosed rather than converted into a
+new blanket exception.
+
+**Still open:** the exact first-entry twin (`emCall_first_entry`/`emitter_first_entry`) awaits
+the approved shared absorbing-stop API, now being implemented/gated separately as gate119. The two constant-space reader gaps and
+redirect-space public-home exception are separate gate holds. No new debt is acknowledged here,
+and the older SAT/Hardness scheduled-kind rulings are not extended to these leaves. Final
+retirement accounting is updated only after the gated PR merges.
+
+## FE-LIVE-1 — fixed-live-stop first-entry proofs (Seyoon, 2026-11-08 UTC)
+
+**Acknowledged by kind across TCSlib; cleanup remains scheduled.** Existing proofs selecting
+first entry into whole-configuration absorbing live stop states may temporarily remain,
+including singleton/predicate, initial-exclusion positive-time and inline specializations.
+Canonical contract: `Turing.MultiTapeTM.exists_first_entry_of_fixed` in Finite. A run reaches
+a specified live P-stop endpoint by T, and every P-stop configuration is fixed by one step;
+select u≤T with no earlier P-stop and preserve the complete endpoint. The comparison predicate
+includes both completed verdicts. State-only absorption or a nonabsorbing visit is outside
+this kind, as is the distinct first-None-halt family.
+
+**Owner/window:** maintainer(Codex). Keep the staged MIG conversions in #233 before gate118;
+replace remaining existing instances in the next12.2c consolidation after active MIG-1 and
+before further SAT/Hardness fills. No new API/import/statement or future-copy permission is
+created. Exact answer: **Accept this scheduled debt (Recommended)**. Gate119 resolutions and
+`ruling-live-stop.json` preserve the finding/ruling. Gate119 follow-up closed PASS0/0/0/17
+and #234 merged; the implementation cleanup remains scheduled.
+
+At gate119 source, verified family-specific lower bound: **14 distinct authored declarations,
+including the canonical theorem** — Finite1/27, Loop1/204, Primitives3/288, Catalog2/504,
+Hardness5/544, ExhaustiveReplay2/183. These are not14 new copies or all-family cumulative totals;
+semantic fragments count once, directed screen edges are not added. No new one-fifth crossing
+is established. Full named blocks and hashes: gate119/review/audit-return-review/first-entry-family.json.
+C1E-1(g) already scheduled `xr_firstArrival'` promotion when a second consumer is briefed;
+that prior schedule remains relevant but did not acknowledge this wider kind. The seven
+SG1 adapter/dispatcher/unary-host acknowledgments retain their own separate scopes.
+
+## IMG-COMP-1 — raw on-image composition reconstruction (proposed retirement in #215)
+
+Canonical contract: `Turing.FinTM.exists_comp_on_image` in Composition, composing one
+finite machine with a second contract only on its actual image and original-input budgets,
+with time2*T1+T2+2. The final five-touched-file sweep found Tautology.taut_comp_on_image
+reconstructing this exact statement; it now directly cites the public theorem, with its
+private full header unchanged and only the obsolete sketch updated. SAT.sat_comp_on_image
+already directly cited it. Hardness.clNative_image is different class-level packaging,
+not charged or silently discharged here. Full candidate blocks/dispositions are in gate106's
+final screen sweep and round3-image-repoint evidence. Native/sealed14definitions/28paired
+controls and finalMSG7dependent replay pass. Retired only when #215 merges; this bounded
+candidate enumeration does not claim no further instance anywhere in TCSlib.
+
+
+## F6-REUSE-1 — visited-set monotonicity and live seam composition (proposed retirement in #235)
+
+Two mechanical reuse kinds are repaired in the new space-universal proof, without new
+public API, import, machine, statement or debt permission.
+
+- Visited-head-set monotonicity: `MultiTapeTM.visitedByTapeHead_mono` (ConfigCount) replaces
+  the explicit existential-witness subset construction inside `Complexity.f6_loop` at
+  `f72a807e2376a2b986675c992745d6affc23b96f`. Its local header and application remain unchanged.
+- Live seam composition: `Turing.seamCompTM_step` (InterpreterStartup) replaces the entire
+  private `Complexity.f6_seam` reconstruction at `0d0950caeb39300b5cc9bf41e5f07392fb26d3e5`.
+  Its complete private header and budget remain unchanged; the proof now directly cites the
+  existing theorem through the already imported closure. Same-kind review covers all19 new
+  proof chunks, inline/rewrite closings and supplied published comparisons.
+
+The initial fill review missed these exact re-derivations. Actual corrected native/scoped
+checks and current chained replay receipts are preserved separately from producer/earlier
+maintainer evidence. See fills/f6/landing/seam-step-repoint-preflight,
+seam-step-repoint-applied, replay-mf62 and source-screen23-resumed. Each kind is proposed
+retired only on #235 merge. This bounded enumeration/inspection is not whole-library absence
+or a generic duplication exception; inherited source candidates retain their own dispositions.

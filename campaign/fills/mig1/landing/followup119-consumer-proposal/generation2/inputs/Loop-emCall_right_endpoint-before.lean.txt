@@ -1,0 +1,24 @@
+private lemma emCall_right_endpoint (M : FinTM Bool) (x : List Bool) (T : ℕ)
+    (hc : (M.tm.runFrom (M.tm.initCfg x) T).state = none) :
+    (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (T + x.length + 2) =
+      emCallRightScan M (M.tm.runFrom (M.tm.initCfg x) T) none x.length (le_refl _) := by
+  classical
+  have hex : ∃ t, (M.tm.runFrom (M.tm.initCfg x) t).state = none := ⟨T, hc⟩
+  let t := Nat.find hex
+  let c := M.tm.runFrom (M.tm.initCfg x) t
+  have ht : t ≤ T := Nat.find_min' hex hc
+  have hs : c.state = none := Nat.find_spec hex
+  have hcT : M.tm.runFrom (M.tm.initCfg x) T = c := by
+    rw [show T = t + (T - t) by omega, MultiTapeTM.runFrom_add,
+      MultiTapeTM.runFrom_of_halt _ hs]
+  have hi : (emCallRightTM M).tm.initCfg x = emCallRightCfg M (M.tm.initCfg x) := rfl
+  have hr := emCall_right_run M (M.tm.initCfg x) t (fun j hj => Nat.find_min hex hj)
+  obtain ⟨r, hrle, hfinish⟩ := emCall_right_finish M c hs
+  have hrun : (emCallRightTM M).tm.runFrom ((emCallRightTM M).tm.initCfg x) (t + r) =
+      emCallRightScan M c none x.length (le_refl _) := by
+    rw [hi, MultiTapeTM.runFrom_add, hr]
+    exact hfinish
+  have hle : t + r ≤ T + x.length + 2 := by omega
+  rw [show T + x.length + 2 = (t + r) + (T + x.length + 2 - (t + r)) by omega,
+    MultiTapeTM.runFrom_add, hrun, MultiTapeTM.runFrom_of_halt _ (by rfl), hcT]
+

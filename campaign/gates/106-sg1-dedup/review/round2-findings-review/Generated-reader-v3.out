@@ -1,0 +1,29 @@
+BEFORE|Complexity.pairMapSnd|present
+BEFORE|Complexity.pairMapSnd.eq_def|absent
+BEFORE|Complexity.pairMapSnd.eq_1|present
+Complexity.pairMapSnd.eq_def (g : List Bool → List Bool) (z : List Bool) :
+  Complexity.pairMapSnd g z =
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []
+Complexity.pairMapSnd.eq_1 (g : List Bool → List Bool) (z : List Bool) :
+  Complexity.pairMapSnd g z =
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []
+AFTER|Complexity.pairMapSnd.eq_def|absent
+AFTER|Complexity.pairMapSnd.eq_1|owner=some (TCSlib.Complexity.ClassNP.PolyTimePairing)|type=∀
+  (g : List Bool → List Bool) (z : List Bool),
+  Complexity.pairMapSnd g z =
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []|AX=[]
+'G106FPReaderCheck.map_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'G106FPReaderCheck.pair_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'G106FPReaderCheck.append_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'G106FPReaderCheck.pair_input_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'G106FPReaderCheck.unary_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'G106FPReaderCheck.unary_length_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'G106FPReaderCheck.const_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'G106FPReaderCheck.cond_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]
+'G106FPReaderCheck.and_consumer' depends on axioms: [propext, Classical.choice, Quot.sound]

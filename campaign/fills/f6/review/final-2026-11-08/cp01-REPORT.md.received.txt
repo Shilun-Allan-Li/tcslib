@@ -1,0 +1,39 @@
+# F6 `space_universal` fill — checkpoint cp01 (Claude)
+
+**Status: CHECKPOINT. Target still admitted (`sorry`).** Cumulative from the pinned base.
+
+| Item | Value |
+|---|---|
+| Proof base | `3023dc1408c3d216fc07a7cbba9ae30135b861ed` (`complexity/arora-barak-ch3-4`) |
+| Work branch / cp01 head | `fill/f6-space-universal` @ `27638178fecd194a63b812143c317ae38c89d18e` |
+| Records commit / bundle | `f41bdaea207724606d8934bfc2c9a823c5dd1e2f`; exchange `2adb80788611696d2cad6f907285c0c5a197ae09`, bundle SHA-256 `8fa482702846898f7fa04c4e1b0aa012300b4febaa6385ee8caa869cf14740be`, 624 sections, 8707327 bytes (verified; 624/624 sections extracted, order-equal) |
+| Owned file | `TCSlib/Complexity/SpaceComplexity/Hierarchy.lean` (base SHA-256 `1d7e0c7d…8069f`, see `SOURCE-SHA256.txt`) |
+
+## Proven at cp01 (checked)
+
+Twelve private `f6_` theorems inserted before `Complexity.space_universal`, all elaborated in the
+owned module (log `evidence/logs/elab/cp01-Hierarchy.out`: exit 0, 0 errors, 1 warning = the target's
+own `sorry`) and axiom-audited (`evidence/axioms/Ax_cp01.out`: every `f6_` declaration and auxiliary
+uses only `propext`/`Classical.choice`/`Quot.sound` or fewer; only `space_universal` has `sorryAx`):
+
+* `f6_native_halt` — `exists_selfStartupTM` seamed to the stationary silent halt leaf; first halt at `T_α+2`, installed bank, live before.
+* `f6_header` — first header row (`headerRulerTM_run`) from the physical start: ruler `true^ℓ₁` rewound, input at `ℓ₁+1`, cut.
+* `f6_hosted` — H5 (`exists_rulerHostTM`) of the halting composite on the suffix + identity returning embedding (`embedEmitRetTM_run`): fresh live return at the host's first halt, strict cut, endpoint `bank`/ruler/heads/input/output; `t' ≤ C(ℓ₁+1)T`.
+* `f6_skip`, `f6_correction` (one-step selected-ruler left move via `step_of_tapeAction_move`), `f6_scan` (`headerScanTM_run` + `headerScanCfg_ruler` at prefix `ℓ₁`), `f6_rewind` (`rewindTM_run_ofCfg`).
+* `f6_prefix` — **OWN-1**: one fixed control on `K+4` tapes chosen before `α`, five public seams; for every `α,u,x` an exact run to the literal installed last-ruler endpoint, strict first-return cut, `T ≤ C(ℓ+1)(T_α+2)+4ℓ+11`.
+* glue: `f6_pair_geometry`, `f6_full_embed`, `f6_seam`, `f6_mapState_mk`.
+
+## Checks at cp01
+
+* Preflight (addendum v2.6): PASS (21.55 GiB disk, 15.38 GiB headroom) — `evidence/logs/preflight.log`.
+* Cache: narrowed `lake exe cache get` of exactly the 65 issued roots (`cache-get.log`, `mathlib-roots.txt`), store logged, 11/11 manifest packages match, 0 empty oleans, probe PASS.
+* Bootstrap 132 at base: all exit 0 (`bootstrap-base/summary.log`; deviation D1: host cleanup killed the first launch at module 73, resumed there — `deviations.log`).
+* Remaining 96 final-order modules: all exit 0 (`remaining-final/`). Facade `TCSlib/Complexity/SpaceComplexity` on the cp01 olean: exit 0 (`elab/cp01-SpaceComplexity.out`; deviation D2 records an earlier import-only failure before its prerequisites existed).
+* Static census (229 final-order files): 22 admitted declarations, identical to the issued baseline.
+
+**NOT RUN — not yet at final stage:** final 229 sweep at the final head, seal + paired controls of the
+Hierarchy sections, argument scan, lints, base/head copy-text screens, boundary write-up.
+
+Scratch development file (not on the branch): `evidence/logs/dev/dev07.lean.txt` already elaborates the
+whole assembly, including a copy of the exact target statement, natively and sealed (`devseal02`); cp02 and
+final commit it in stages.

@@ -1,0 +1,6 @@
+
+/-- The fixed-width incrementer uses zero work space on every input at every time,
+because it has no work tapes. -/
+theorem incFixedTM_spaceUsed (x : List Bool) (t : ℕ) :
+    incFixedTM.tm.spaceUsed (incFixedTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl

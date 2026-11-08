@@ -1,0 +1,65 @@
+{
+  "native_and_seal_runs": [
+    {
+      "name": "Hypothetical-native-v1",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 10.052021026611328,
+      "source_sha256": "579eb02d2531c87a9a166e747cfa598224018a0da450ef721ba6c3e8c3a1f4d6",
+      "log_sha256": "18689cd0487fcd0a778070665ff0e9acf385e4b45a5f8118914cf0524e30063e"
+    },
+    {
+      "name": "Hypothetical-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 9.564755201339722,
+      "source_sha256": "ba65ca5dcbecae14f94c8cad8ed15779522952900e8d92c7b485cc89e9bee5dc",
+      "log_sha256": "18689cd0487fcd0a778070665ff0e9acf385e4b45a5f8118914cf0524e30063e"
+    },
+    {
+      "name": "Tautology-actual-native-v1",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 10.433913230895996,
+      "source_sha256": "21fe133282107379e8ec086277b95459c75d8e23facf851ea583fa83c1ab85b6",
+      "log_sha256": "18689cd0487fcd0a778070665ff0e9acf385e4b45a5f8118914cf0524e30063e"
+    },
+    {
+      "name": "Tautology-actual-sealed-v1",
+      "exit": 0,
+      "errors": 0,
+      "seconds": 10.025579929351807,
+      "source_sha256": "e83245aa2e785bf0ea45eb95e79af07952204648aefd7bf49d5edd70ed9b05bd",
+      "log_sha256": "18689cd0487fcd0a778070665ff0e9acf385e4b45a5f8118914cf0524e30063e"
+    }
+  ],
+  "controls": {
+    "definitions": 14,
+    "pointwise_and_abstracted_pairs": 28,
+    "positive_exit": 0,
+    "negative_exit": 1,
+    "negative_lean_diagnostics": 28,
+    "all_exact_multiplicities_match": true,
+    "checker_negative_cases": {
+      "duplicate_diagnostic_identity_preserving_count": "rejected",
+      "missing_diagnostic_identity": "rejected",
+      "unexpected_positive_outcome": "rejected",
+      "zero_negative_exit": "rejected"
+    }
+  },
+  "full_source_exactly_pinned": true,
+  "all_explicit_changed_proof_arguments_reviewed": true,
+  "explicit_argument_scan": "Only exact FinTM.exists_comp_on_image M U f g T\u2081 T\u2082 hM hU. No rw/simp/unfold/change/Def argument, compiler-generated equation or private alias.",
+  "direct_ordinary_inventory_complete_for_selected_header_and_value": true,
+  "inventory": "Both directly reached foreign ordinary TCSlib definitions are guarded; the fourteen-definition guard also covers model operations without recursively opening the imported theorem proof. FinTM itself is an inductive structure, not a guarded ordinary definition.",
+  "guard_before_doc_header_and_body": true,
+  "fresh_control_imports_exact_actual_imports": true,
+  "default_model_simp_rules_removed": [
+    "Turing.Action.apply",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg"
+  ],
+  "no_bare_Lean_no_Lake_no_compiled_output_no_screen_no_Git_mutation": true,
+  "source_unchanged_legacy_regions_not_claimed_sealed": true,
+  "full_module_census_and_merged_chain_left_to_parent": true
+}

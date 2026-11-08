@@ -1,0 +1,44 @@
+/-- Skip, then the fixed one-cell correction, yields a literal next-scan presentation.
+The full prefix run, dispatches and global space ledger remain Claude OWN obligations.
+
+**Proof sketch.** Specialize the framed skip equation, relabel its live endpoint for the
+already checked correction leaf, and use its actual one-step result. Public state-map fields
+show the next scan starts at zero while every tape, native head and output is preserved. -/
+theorem skip_correction_connection (K : ℕ) :
+    ∃ C : MultiTapeTM (K + 4) Bool Bool, C.q₀ = false ∧
+      ∀ (z : List Bool) (d : Cfg (K + 4) Bool SeekPhase z) (ell1 : ℕ),
+        d.state = some .run → d.workTapePos (Fin.last (K + 3)) = 0 →
+        (∀ a, d.workTapes (Fin.last (K + 3)) a =
+          FinTM.bufferTape (List.replicate ell1 true) a) →
+        let s := (skipTM (K + 4) (Fin.last (K + 3))).runFrom d (ell1 + 1)
+        let e := s.mapState (fun _ => false)
+        let f := (C.runFrom e 1).mapState (fun _ => (0 : Fin 4))
+        f.state = some 0 ∧ f.workTapePos (Fin.last (K + 3)) = (ell1 : ℤ) ∧
+          f.workTapes = d.workTapes ∧ f.inputPos = d.inputPos ∧ f.output = d.output := by
+  obtain ⟨C, q, correct⟩ := last_ruler_correction K
+  refine ⟨C, q, ?_⟩
+  intro z d ell1 hs hh hw s e f
+  have skip := (skip_endpoint (Fin.last (K + 3)) d ell1 hs hh hw).1
+  change s = _ at skip
+  have es : e.state = some false := by
+    rw [Cfg.mapState_state, skip]
+    rfl
+  have eh : e.workTapePos (Fin.last (K + 3)) = (ell1 : ℤ) + 1 := by
+    rw [Cfg.mapState_workTapePos, skip]
+    exact Function.update_self _ _ _
+  obtain ⟨run, cut, head⟩ := correct z e es
+  refine ⟨?_, ?_, ?_, ?_, ?_⟩
+  · rw [Cfg.mapState_state, run]
+    rfl
+  · rw [Cfg.mapState_workTapePos]
+    exact head ell1 eh
+  · funext j a
+    rw [Cfg.mapState_workTapes, run]
+    change e.workTapes j a = d.workTapes j a
+    rw [Cfg.mapState_workTapes, skip]
+  · rw [Cfg.mapState_inputPos, run]
+    change e.inputPos = d.inputPos
+    rw [Cfg.mapState_inputPos, skip]
+  · rw [Cfg.mapState_output, run]
+    change e.output = d.output
+    rw [Cfg.mapState_output, skip]

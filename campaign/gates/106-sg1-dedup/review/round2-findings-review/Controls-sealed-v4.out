@@ -1,0 +1,71 @@
+CONTROL|Complexity.pairMapSnd|point|FAIL
+/private/tmp/tcslib-g106-r2-fp-l2_n69yi/Controls_sealed_v4.lean:73:0: error: RFL_CONTROL|Complexity.pairMapSnd|point|Tactic `rfl` failed: equality lhs
+  Complexity.pairMapSnd g z
+is not definitionally equal to rhs
+  match Turing.pairDecode z with
+  | some (a, b) => Turing.pairEncode a (g b)
+  | none => []
+
+g : List Bool → List Bool
+z : List Bool
+⊢ Complexity.pairMapSnd g z =
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []
+CONTROL|Complexity.pairMapSnd|abstract|FAIL
+/private/tmp/tcslib-g106-r2-fp-l2_n69yi/Controls_sealed_v4.lean:73:0: error: RFL_CONTROL|Complexity.pairMapSnd|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.pairMapSnd
+is not definitionally equal to rhs
+  fun g z =>
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []
+
+⊢ Complexity.pairMapSnd = fun g z =>
+    match Turing.pairDecode z with
+    | some (a, b) => Turing.pairEncode a (g b)
+    | none => []
+CONTROL|Complexity.PolyTimeComputable|point|FAIL
+/private/tmp/tcslib-g106-r2-fp-l2_n69yi/Controls_sealed_v4.lean:73:0: error: RFL_CONTROL|Complexity.PolyTimeComputable|point|Tactic `rfl` failed: equality lhs
+  Complexity.PolyTimeComputable f
+is not definitionally equal to rhs
+  ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+
+f : List Bool → List Bool
+⊢ Complexity.PolyTimeComputable f = ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+CONTROL|Complexity.PolyTimeComputable|abstract|FAIL
+/private/tmp/tcslib-g106-r2-fp-l2_n69yi/Controls_sealed_v4.lean:73:0: error: RFL_CONTROL|Complexity.PolyTimeComputable|abstract|Tactic `rfl` failed: equality lhs
+  Complexity.PolyTimeComputable
+is not definitionally equal to rhs
+  fun f => ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+
+⊢ Complexity.PolyTimeComputable = fun f => ∃ M C c, M.ComputesFunInTime f fun n => C * (n + 1) ^ c
+CONTROL|Turing.pairEncode|point|FAIL
+/private/tmp/tcslib-g106-r2-fp-l2_n69yi/Controls_sealed_v4.lean:73:0: error: RFL_CONTROL|Turing.pairEncode|point|Tactic `rfl` failed: equality lhs
+  Turing.pairEncode x α
+is not definitionally equal to rhs
+  List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+
+x α : List Bool
+⊢ Turing.pairEncode x α = List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+CONTROL|Turing.pairEncode|abstract|FAIL
+/private/tmp/tcslib-g106-r2-fp-l2_n69yi/Controls_sealed_v4.lean:73:0: error: RFL_CONTROL|Turing.pairEncode|abstract|Tactic `rfl` failed: equality lhs
+  Turing.pairEncode
+is not definitionally equal to rhs
+  fun x α => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+
+⊢ Turing.pairEncode = fun x α => List.flatMap (fun b => [b, b]) x ++ [false, true] ++ α
+CONTROL|Turing.pairDecode|point|FAIL
+/private/tmp/tcslib-g106-r2-fp-l2_n69yi/Controls_sealed_v4.lean:73:0: error: RFL_CONTROL|Turing.pairDecode|point|Tactic `rfl` failed: equality lhs
+  Turing.pairDecode []
+is not definitionally equal to rhs
+  none
+
+⊢ Turing.pairDecode [] = none
+CONTROL|Turing.pairDecode|abstract|FAIL
+/private/tmp/tcslib-g106-r2-fp-l2_n69yi/Controls_sealed_v4.lean:73:0: error: RFL_CONTROL|Turing.pairDecode|abstract|Tactic `rfl` failed: equality lhs
+  fun rest => Turing.pairDecode (false :: true :: rest)
+is not definitionally equal to rhs
+  fun rest => some ([], rest)
+
+⊢ (fun rest => Turing.pairDecode (false :: true :: rest)) = fun rest => some ([], rest)

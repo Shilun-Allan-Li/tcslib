@@ -1,0 +1,123 @@
+[
+  {
+    "name": "sat_pt_mapSnd",
+    "body": "  have he : Complexity.pairMapSnd g = (fun z => match pairDecode z with\n      | some (a, b) => pairEncode a (g b)\n      | none => []) := funext (Complexity.pairMapSnd.eq_1 g)\n  rw [\u2190 he]\n  exact PolyTimeComputable.pairMapSnd hg\n",
+    "rewrite_args": [
+      "local equality he"
+    ],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": true,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "sat_pt_pair",
+    "body": "  exact PolyTimeComputable.pairEncode hf hg\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "sat_pt_append",
+    "body": "  exact PolyTimeComputable.append hf hg\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "sat_pt_pair_input",
+    "body": "  exact PolyTimeComputable.pairEncode hf polyTimeComputable_id\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "sat_pt_unaryLength",
+    "body": "  exact polyTimeComputable_unary\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "clNative_map",
+    "body": "  have he : Complexity.pairMapSnd g = (fun z => match pairDecode z with\n      | some (a, b) => pairEncode a (g b)\n      | none => []) := funext (Complexity.pairMapSnd.eq_1 g)\n  rw [\u2190 he]\n  exact PolyTimeComputable.pairMapSnd hg\n",
+    "rewrite_args": [
+      "local equality he"
+    ],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": true,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "clNative_pair",
+    "body": "  exact PolyTimeComputable.pairEncode hf hg\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "clNative_append",
+    "body": "  exact PolyTimeComputable.append hf hg\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "clNative_unary",
+    "body": "  exact polyTimeComputable_polyUnary C e\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "clNative_linear",
+    "body": "  exact polyTimeComputable_of_linear h\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "clA5_pt_const",
+    "body": "  exact polyTimeComputable_const w\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "clA5_pt_cond",
+    "body": "  exact polyTimeComputable_ite hp hf hg\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  },
+  {
+    "name": "clA5_pt_and",
+    "body": "  exact polyTimeComputable_and hp hq\n",
+    "rewrite_args": [],
+    "foreign_definition_arguments": [],
+    "uses_existing_serialized_eq_1": false,
+    "uses_eq_def": false,
+    "production_guard_attributes": false
+  }
+]

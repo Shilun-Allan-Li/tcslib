@@ -1,0 +1,6 @@
+{
+  "base_raw_header": "theorem space_universal :\n    ∃ SU : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧\n      ∀ (s : ℕ) (x output : List Bool) (t : ℕ),\n        ((TimeHierarchy.code).decode α).toFinTM.ComputesInTime x output t →\n        ((TimeHierarchy.code).decode α).toFinTM.tm.spaceUsed\n            (((TimeHierarchy.code).decode α).toFinTM.tm.initCfg x) t ≤ s →\n          ∃ t' : ℕ,\n            SU.ComputesInTime (pairEncode (Nat.bits s) (pairEncode α x)) output t' ∧\n            SU.tm.spaceUsed\n                (SU.tm.initCfg (pairEncode (Nat.bits s) (pairEncode α x))) t'\n              ≤ C * s:=",
+  "head_raw_header": "theorem space_universal :\n    ∃ SU : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧\n      ∀ (s : ℕ) (x output : List Bool) (t : ℕ),\n        ((TimeHierarchy.code).decode α).toFinTM.ComputesInTime x output t →\n        ((TimeHierarchy.code).decode α).toFinTM.tm.spaceUsed\n            (((TimeHierarchy.code).decode α).toFinTM.tm.initCfg x) t ≤ s →\n          ∃ t' : ℕ,\n            SU.ComputesInTime (pairEncode (Nat.bits s) (pairEncode α x)) output t' ∧\n            SU.tm.spaceUsed\n                (SU.tm.initCfg (pairEncode (Nat.bits s) (pairEncode α x))) t'\n              ≤ C * s:=",
+  "exact_raw_header_identical": true,
+  "sha256": "5bde8826718968fbc3ea2ba324282e2ebf20d64d71d7066f9371a482658ef91b"
+}

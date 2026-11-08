@@ -3688,6 +3688,26 @@ bit-accounted space bound in the compile theorem was declined.
 and MIG-21, or lapsed, as recorded at the head of the 12.2c tasklist. **MIG-0 and MIG-1 now
 precede §13d G2** (user, 2026-10-12), reversing "G2 comes before the Catalog split".
 
+**Scheduled unary-clock host extraction (Seyoon,2026-11-07; SG1-UH).** Existing arbitrary
+positive clean-call repetition with a protected unary clock, its run/frame/output/budget
+proofs and actual-orbit polynomial wrappers have a separate by-kind retention exception.
+Maintainer(Codex) owns shared-host design/gating (time and resource/head-envelope contract)
+and replacement in the next12.2c SAT/Hardness consolidation, after activeMIG1 and before
+further fills in those files. Fourteen Hardness members are enumerated in the gate106 ruling;
+no API/import or future private-host construction is granted. See campaign/backlog.md§1
+SG1-UH and campaign/duplication-ledger.md. This deferral is distinct from H6's private-kit
+promotion status and the earlier six adapter/dispatcher acknowledgments.
+
+**Scheduled fixed-live-stop consumer consolidation (Seyoon,2026-11-08UTC; FE-LIVE-1).**
+The canonical first-entry theorem is `MultiTapeTM.exists_first_entry_of_fixed` in Finite,
+under gate119. Existing singleton/predicate/positive-time/inline consumer reproofs across
+TCSlib have an explicit temporary by-kind retention ruling. Maintainer(Codex) owns the staged
+MIG conversions in #233 before gate118, then all remaining existing instances in next12.2c
+after activeMIG1 and before further SAT/Hardness fills. Full configuration fixedness and exact
+endpoint are essential; no None-halt extension, new API/import/statement or future-copy grant.
+The14-declaration family-specific lower bound includes the canonical theorem. Full exact
+ruling/member records are FE-LIVE-1 in campaign/duplication-ledger.md and backlog§1.
+
 New and unfinished work is written in the new style from the start. Deliveries now in flight
 in the old style (record tables, W2-S, B5a canonizer and H1, B4, S1b) join step 3.
 

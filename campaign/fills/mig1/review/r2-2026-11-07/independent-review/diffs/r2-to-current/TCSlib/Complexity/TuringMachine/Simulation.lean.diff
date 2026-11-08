@@ -1,0 +1,113 @@
+--- r2/TCSlib/Complexity/TuringMachine/Simulation.lean
++++ current/TCSlib/Complexity/TuringMachine/Simulation.lean
+@@ -20,9 +20,9 @@
+ `TCSlib.Complexity.TuringMachine.Composition` at the epoch-1/epoch-2 boundary
+ (epoch-1 audit, findings 5 and 11, and the policy file-size standard): the
+ machines of the composition file, and the heavier constructions of later
+-epochs, are assembled from these. Everything here is public — it is shared
+-audited surface — and carries no finiteness assumptions beyond what each
+-gadget needs.
++epochs, are assembled from these. The constructions and their specification API are
++public shared surface, with local proof helpers for their intrinsic bounds.
++Each gadget carries only the finiteness assumptions it needs.
+ 
+ ## Contents
+ 
+@@ -213,6 +213,12 @@
+   workTapePos := Fin.addCases heads c.workTapePos
+   output := c.output
+ 
++-- Field equations for the two configuration embeddings.
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  Turing.FinTM.leftCfg
++attribute [simps (config := { isSimp := false }) state inputPos workTapes workTapePos output]
++  Turing.FinTM.rightCfg
++
+ /-- Extending an action commutes with the left configuration embedding. -/
+ lemma leftCfg_apply {k l : ℕ} {S S' : Type} {x : List Bool} (f : S → S')
+     (a : Action k Bool S) (c : Cfg k Bool S x)
+@@ -322,6 +328,14 @@
+             (M₁.tm.tr q inp (fun i => work (Fin.castAdd M₂.k i)))
+         | .inr q => rightAction M₁.k Sum.inr
+             (M₂.tm.tr q inp (fun i => work (Fin.natAdd M₁.k i))) }
++
++/-- A branch union has the sum of the two component tape counts. -/
++theorem branchTM_k (M₁ M₂ : FinTM Bool) (b : Bool) :
++    (branchTM M₁ M₂ b).k = M₁.k + M₂.k := rfl
++
++/-- A branch union's state type is the disjoint union of the component state types. -/
++theorem branchTM_State (M₁ M₂ : FinTM Bool) (b : Bool) :
++    (branchTM M₁ M₂ b).State = (M₁.State ⊕ M₂.State) := rfl
+ 
+ /-- The branch union selecting the second machine starts as that machine's initial
+ configuration in the right bank, with the first bank blank at the origin. -/
+@@ -1050,7 +1064,11 @@
+           · intro j; simp [bufferedSecondCfg, Action.apply, a]
+ 
+ /-- Every second-phase run has a matching virtual run at the same time and a
+-valid arrival tag. This preserves completed outputs and absorbing halting. -/
++valid arrival tag. This preserves completed outputs and absorbing halting.
++
++**Proof sketch.** The one-step correspondence preserves the set of times with a
++valid arrival tag and matching configurations. The general invariant iterator
++propagates the initial correspondence to every time. -/
+ lemma bufferedSecondCfg_run (M₁ M₂ : FinTM Bool) {x y : List Bool}
+     (c : Cfg M₂.k Bool M₂.State y) (b : Bool) (hb : VirtualTag c.inputPos b)
+     (p : Fin (x.length + 2)) (tapes : Fin M₁.k → ℤ → Option Bool)
+@@ -1058,14 +1076,23 @@
+     ∃ b', VirtualTag (M₂.tm.runFrom c t).inputPos b' ∧
+       (bufferedCompTM M₁ M₂).tm.runFrom (bufferedSecondCfg M₁ M₂ c b p tapes heads) t =
+         bufferedSecondCfg M₁ M₂ (M₂.tm.runFrom c t) b' p tapes heads := by
+-  induction t with
+-  | zero => exact ⟨b, hb, rfl⟩
+-  | succ t ih =>
+-    obtain ⟨b', hb', he⟩ := ih
+-    obtain ⟨b'', hb'', he'⟩ := bufferedSecondCfg_step M₁ M₂ _ b' hb' p tapes heads
+-    refine ⟨b'', ?_, ?_⟩
+-    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using hb''
++  let P : Set ℕ := {u | ∃ tag, VirtualTag (M₂.tm.runFrom c u).inputPos tag ∧
++    (bufferedCompTM M₁ M₂).tm.runFrom (bufferedSecondCfg M₁ M₂ c b p tapes heads) u =
++      bufferedSecondCfg M₁ M₂ (M₂.tm.runFrom c u) tag p tapes heads}
++  have preserve : Set.MapsTo (fun u : ℕ => u + 1) P P := by
++    intro u hu
++    obtain ⟨tag, htag, he⟩ := hu
++    obtain ⟨tag', htag', he'⟩ := bufferedSecondCfg_step M₁ M₂ _ tag htag p tapes heads
++    refine ⟨tag', ?_, ?_⟩
++    · simpa only [MultiTapeTM.runFrom_succ_eq_step'] using htag'
+     · rw [MultiTapeTM.runFrom_succ_eq_step', he, he', MultiTapeTM.runFrom_succ_eq_step']
++  have initial : 0 ∈ P := by
++    refine ⟨b, ?_, ?_⟩
++    · simpa only [MultiTapeTM.runFrom_zero] using hb
++    · simp only [MultiTapeTM.runFrom_zero]
++  have endpoint := preserve.iterate t initial
++  change t ∈ P
++  simpa only [add_right_iterate, nsmul_eq_mul, mul_one, zero_add] using endpoint
+ 
+ /-- The rewind scan configuration, with buffer head at `j - 1` and all second
+ machine tapes still blank. The scan state is always live, including at `j = 0`. -/
+@@ -1266,3 +1293,25 @@
+     exact step_eq_of_agreeOn h _ (hq t (by omega))
+ 
+ end Turing.MultiTapeTM
++
++namespace Turing.FinTM
++
++/-- From a fixed configuration, a branch union has the same run for either Boolean
++initial-state choice. Both machines are explicitly transported to their common tape
++count and state type before comparing configurations. -/
++theorem branchTM_runFrom_independent (M₁ M₂ : FinTM Bool) (b b' : Bool)
++    {x : List Bool}
++    (c : Cfg (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) x) (t : ℕ) :
++    let view : Bool → MultiTapeTM (M₁.k + M₂.k) Bool (M₁.State ⊕ M₂.State) :=
++      fun tag => by
++        rw [← branchTM_k M₁ M₂ tag, ← branchTM_State M₁ M₂ tag]
++        exact (branchTM M₁ M₂ tag).tm
++    (view b).runFrom c t = (view b').runFrom c t := by
++  exact MultiTapeTM.runFrom_eq_of_agreeOn (Q := Set.univ)
++    (by
++      rw [MultiTapeTM.agreeOn_iff]
++      intro q _ inp work
++      rfl)
++    c t (fun _ _ q _ => Set.mem_univ q)
++
++end Turing.FinTM

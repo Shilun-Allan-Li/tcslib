@@ -1,0 +1,169 @@
+{
+  "at_utc": "2026-11-07T22:33:25.815921+00:00",
+  "baseline": "b1f553b315f31b949076e91119473ce4070e7d53",
+  "actual_all12_source_and_clean_Lean_unchanged": true,
+  "six_changes_byte_freeze": [
+    {
+      "file": "Loop",
+      "all_nontarget_source_bytes_exact": true,
+      "before_sha256": "82f86dcb80ad1f25cf06f164f0b16edbbdf548773dfe8841162d3cfbdee2dd22",
+      "after_six_body_proposal_sha256": "6b401ea8f91133d08bb2bc14e08f77039cfd87568b8eb97e1041444d3071247a"
+    },
+    {
+      "file": "Primitives",
+      "all_nontarget_source_bytes_exact": true,
+      "before_sha256": "72226a291b0c7e9189883a0ebd75a88ca49bb1f19d0487e54316e542b847ee71",
+      "after_six_body_proposal_sha256": "b481847ebe8c6d603ec1bba4730a5045313b5621e1623dd5f55772013a0ffe27"
+    },
+    {
+      "file": "Catalog",
+      "all_nontarget_source_bytes_exact": true,
+      "before_sha256": "a55066f71a5c94f27c8767e0cdada2baabcb65ee7c3c59a14e8bc58ffaceacba",
+      "after_six_body_proposal_sha256": "35bdbd6defce24820aa79a28d8ec1a862d5b09403b99e2dffdf15800e8fc0660"
+    }
+  ],
+  "seventh_exact_header_and_suffix_preserved": true,
+  "native_scope": "3 exact private headers + 2 zero-space proof leaves; not seventh/full Catalog rows/full MIG module/integrated replay",
+  "runs": {
+    "Consumers-native": {
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "seconds": 242.90869784355164,
+      "input_sha256": "bc343f6914c0fada0cb208a677d62ea5ccdf9bfc41bf9f25b32ee45a785bc359",
+      "output_sha256": "829b26c9f93c2284e4ed49fcb8ece58757c1d9ae44c9dd2bdd72eeb28328fa34"
+    },
+    "Consumers-sealed": {
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "seconds": 2.1771111488342285,
+      "input_sha256": "d31423fe585ac24583afdd2e90ffc22bf6ccc39b082cacf4b2a1724b3c6e945c",
+      "output_sha256": "829b26c9f93c2284e4ed49fcb8ece58757c1d9ae44c9dd2bdd72eeb28328fa34"
+    },
+    "Controls-native": {
+      "exit": 0,
+      "errors": 0,
+      "warnings": 0,
+      "seconds": 1.6499390602111816,
+      "input_sha256": "21bd2388f51764b9905e6b83ac6b2f79a20830af717cf59c2833a92dfedaf696",
+      "output_sha256": "cf5523cb94b0e8fb4f7b8c297b98ad258b64ee0b38743739faf9e4fd683b288b"
+    },
+    "Controls-sealed": {
+      "exit": 1,
+      "errors": 14,
+      "warnings": 0,
+      "seconds": 1.6624820232391357,
+      "input_sha256": "c1e569dd2a3b1665321a101729e68a7dbd4fd85481e708cbf0dfa99ab8f96ff8",
+      "output_sha256": "3002827f773351145b1474a438693162cf461b19c8b19f39110a3797822de1cc"
+    }
+  },
+  "control_pairs": 14,
+  "control_expected_sealed_negative_errors": 14,
+  "controls_exact_identity_and_multiplicity": true,
+  "synthetic_corruption_rejected": [
+    {
+      "case": "drop-native",
+      "rejected": true
+    },
+    {
+      "case": "duplicate-native",
+      "rejected": true
+    },
+    {
+      "case": "drop-sealed-marker",
+      "rejected": true
+    },
+    {
+      "case": "duplicate-sealed-marker",
+      "rejected": true
+    }
+  ],
+  "AX": {
+    "proof_roots": 5,
+    "proof_descendants": 2,
+    "standard_only": true,
+    "all_rows": [
+      {
+        "name": "_private._stdin.0.MIGFollowup119ConsumerCheck.emCall_first_entry",
+        "axioms": [
+          "propext",
+          "Classical.choice",
+          "Quot.sound"
+        ]
+      },
+      {
+        "name": "_private._stdin.0.MIGFollowup119ConsumerCheck.pairDup_zero_space_leaf._proof_1_1",
+        "axioms": [
+          "propext",
+          "Quot.sound"
+        ]
+      },
+      {
+        "name": "_private._stdin.0.MIGFollowup119ConsumerCheck.catalogFirstEntry",
+        "axioms": [
+          "propext",
+          "Classical.choice",
+          "Quot.sound"
+        ]
+      },
+      {
+        "name": "_private._stdin.0.MIGFollowup119ConsumerCheck.pairDup_zero_space_leaf",
+        "axioms": [
+          "propext",
+          "Classical.choice",
+          "Quot.sound"
+        ]
+      },
+      {
+        "name": "_private._stdin.0.MIGFollowup119ConsumerCheck.emitter_first_entry",
+        "axioms": [
+          "propext",
+          "Classical.choice",
+          "Quot.sound"
+        ]
+      },
+      {
+        "name": "_private._stdin.0.MIGFollowup119ConsumerCheck.incFixed_zero_space_leaf",
+        "axioms": [
+          "propext",
+          "Classical.choice",
+          "Quot.sound"
+        ]
+      },
+      {
+        "name": "_private._stdin.0.MIGFollowup119ConsumerCheck.incFixed_zero_space_leaf._proof_1_1",
+        "axioms": [
+          "propext",
+          "Quot.sound"
+        ]
+      }
+    ]
+  },
+  "ordinary_foreign_TCSlib_definitions_reached": [
+    "Turing.FinTM.incFixedTM",
+    "Turing.MultiTapeTM.initCfg",
+    "Turing.MultiTapeTM.runFrom",
+    "Turing.MultiTapeTM.spaceUsed",
+    "Turing.MultiTapeTM.step",
+    "Turing.pairDiagTM"
+  ],
+  "guarded_conservative_extra_definitions": [
+    "Turing.Cfg.init"
+  ],
+  "excluded_compiled_abbrev_projections": [
+    "Turing.Cfg.state",
+    "Turing.FinTM.State",
+    "Turing.FinTM.k",
+    "Turing.FinTM.tm"
+  ],
+  "explicit_tactic_arguments": "Only two rw arguments, both published theorem facts; no foreign definition as a named tactic argument. Singleton rfl proves q=q. Instrumentation attributes are outside production proofs.",
+  "strong_guard_before_all_headers": true,
+  "sealed_default_simp_removals": [
+    "Turing.Action.apply",
+    "Turing.Cfg.init",
+    "Turing.MultiTapeTM.initCfg"
+  ],
+  "no_source_Git_snapshot_cache_screen_mutation": true,
+  "elapsed_note": "Consumers-native elapsed242.91seconds includes managed slot waiting; no pure elaboration-time claim."
+}

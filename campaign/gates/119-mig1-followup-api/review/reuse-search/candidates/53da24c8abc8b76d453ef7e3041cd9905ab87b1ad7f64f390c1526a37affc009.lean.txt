@@ -1,0 +1,15 @@
+private theorem qy_emit_stop {K : ℕ} {x : List Bool} (i : Fin K) (pre suf : List Bool) (rr : ℕ)
+    (dl : Bool) (ip : Fin (x.length + 2)) (T : Fin K → ℤ → Option Bool) (P : Fin K → ℤ)
+    (o : List Bool) (w : List Bool) (hT : T i = FinTM.bufferTape w) (hP : P i = 0) :
+    ∃ t ≤ pre.length + suf.length + 4 + w.length * (rr + 3),
+      ((qyEmitTM K i pre suf rr dl).runFrom (qyC (.pre 0) ip T P o) t).state = none ∧
+      ((qyEmitTM K i pre suf rr dl).runFrom (qyC (.pre 0) ip T P o) t).output =
+        o ++ pre ++ qyBody dl rr w ++ suf := by
+  obtain ⟨t, ht, hrun, -⟩ := qy_emit_run (x := x) i pre suf rr dl ip T P o w hT hP
+  have h1 := qy_emit_halt (x := x) i pre suf rr dl ip T
+    (Function.update P i w.length) (o ++ pre ++ qyBody dl rr w ++ suf)
+  refine ⟨t + 1, by omega, ?_⟩
+  rw [MultiTapeTM.runFrom_add, hrun]
+  exact h1
+
+/-- `g`'s call bank tapes other than tape `0` are off the named tapes. -/

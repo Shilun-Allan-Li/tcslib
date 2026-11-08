@@ -1,0 +1,452 @@
+[
+  {
+    "label": "Catalog.lean::f2_loop_input_run_le",
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "offset": 245039,
+    "name": "f2_loop_input_run_le",
+    "kind": "proof",
+    "normalized_body": "byhavestepBound(d:CfgkBoolSx):(tm.stepd).inputPos.val≤d.inputPos.val+1:=bycaseshd:d.statewith|none=>simp[MultiTapeTM.step,hd]|someq=>simpaonly[MultiTapeTM.step,hd,Action.apply]usingf2_loop_input_move_led.inputPos(tm.trqd.inputSymbold.workTapeSymbols).inputTapeinductiontwith|zero=>simp|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step']exact(stepBound_).trans(byomega)",
+    "body_chars": 364
+  },
+  {
+    "label": "Catalog.lean::f2_loop_live_prefix",
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "offset": 242318,
+    "name": "f2_loop_live_prefix",
+    "kind": "proof",
+    "normalized_body": "byintrouhuhhhavehe:tm.runFromcfgt=tm.runFromcfgu:=byrw[←Nat.add_sub_of_lehu,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hh]exactht(byrw[he];exacthh)",
+    "body_chars": 156
+  },
+  {
+    "label": "Configuration.lean::moveInputPos_neg_of_ne_left",
+    "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+    "offset": 1946,
+    "name": "moveInputPos_neg_of_ne_left",
+    "kind": "proof",
+    "normalized_body": "byhavehlt:=p.isLtapplyFin.extsimponly[moveInputPos,SignType.neg_eq_neg_one,SignType.coe_neg_one]split<;>simp<;>omega",
+    "body_chars": 116
+  },
+  {
+    "label": "Configuration.lean::moveInputPos_pos_of_ne_right",
+    "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+    "offset": 2233,
+    "name": "moveInputPos_pos_of_ne_right",
+    "kind": "proof",
+    "normalized_body": "byhavehlt:=p.isLtapplyFin.extsimponly[moveInputPos,SignType.pos_eq_one,SignType.coe_one]split<;>simp<;>omega",
+    "body_chars": 108
+  },
+  {
+    "label": "Configuration.lean::moveInputPos_rightBoundary",
+    "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+    "offset": 1723,
+    "name": "moveInputPos_rightBoundary",
+    "kind": "proof",
+    "normalized_body": "byapplyFin.extsimponly[moveInputPos,SignType.coe_one]split<;>simp<;>omega",
+    "body_chars": 73
+  },
+  {
+    "label": "CounterProg.lean::apply_act",
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "offset": 5737,
+    "name": "apply_act",
+    "kind": "proof",
+    "normalized_body": "byrefineCfg.extrflrfl?_?_rfl·funextiby_caseshi:i=t·substhi;caseswr<;>simp[act,Action.apply,wrT]·simp[act,Action.apply,hi]·funextiby_caseshi:i=t·substhi;simp[act,Action.apply]·simp[act,Action.apply,hi]omit[FintypeΛ][DecidableEqΛ]in",
+    "body_chars": 230
+  },
+  {
+    "label": "CounterProg.lean::back_walk",
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "offset": 8416,
+    "name": "back_walk",
+    "kind": "proof",
+    "normalized_body": "byintrodinductiondwith|zero=>intro_rw[MultiTapeTM.runFrom_succ_eq_step,MultiTapeTM.runFrom_zero,step_some]havehb:tpr(Function.updatehdr(((m-0:ℕ):ℤ))r)=none:=bysimp[htp,ones_ge]simponly[tr,hb,Option.isSome_none,Bool.false_eq_true,if_false]rw[apply_ctl]simp[moveInputPos_zero]|succdih=>introhd'rw[MultiTapeTM.runFrom_succ_eq_step,step_some]havehb:tpr(Function.updatehdr(((m-(d+1):ℕ):ℤ))r)=sometrue:=bysimponly[Function.update_self,htp]exactones_lt(byomega)(byomega)simponly[tr,hb,Option.isSome_some,if_true]rw[apply_act]simponly[wrT,Function.update_eq_self,moveInputPos_zero,Function.update_idem,Function.update_self,Option.toList_none,List.append_nil]rw[show(((m-(d+1):ℕ):ℤ)+((SignType.pos:SignType):ℤ))=(((m-d:ℕ):ℤ))bysimp[SignType.cast];omega]exactih(byomega)omit[FintypeΛ][DecidableEqΛ]in",
+    "body_chars": 790
+  },
+  {
+    "label": "CounterProg.lean::heads_update",
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "offset": 10124,
+    "name": "heads_update",
+    "kind": "proof",
+    "normalized_body": "byfunextiby_caseshi:i=t·substhi;simp·simp[hi]omit[FintypeΛ][DecidableEqΛ]in",
+    "body_chars": 75
+  },
+  {
+    "label": "CounterProg.lean::print_walk",
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "offset": 6981,
+    "name": "print_walk",
+    "kind": "proof",
+    "normalized_body": "byintrojinductionjwith|zero=>introout_rw[MultiTapeTM.runFrom_succ_eq_step,MultiTapeTM.runFrom_zero,step_some]havehb:tpr(Function.updatehdr((0:ℕ)-1:ℤ)r)=none:=bysimp[htp,ones_neg]simponly[tr,hb,Option.isSome_none,Bool.false_eq_true,if_false]rw[apply_act]simp[wrT,moveInputPos_zero]|succjih=>introouthjrw[MultiTapeTM.runFrom_succ_eq_step,step_some]havehb:tpr(Function.updatehdr(((j+1:ℕ):ℤ)-1)r)=sometrue:=bysimponly[Function.update_self,htp]exactones_lt(byomega)(byomega)simponly[tr,hb,Option.isSome_some,if_true]rw[apply_act]simponly[wrT,Function.update_eq_self,moveInputPos_zero,Function.update_idem,Function.update_self]rw[show(((j+1:ℕ):ℤ)-1+((SignType.neg:SignType):ℤ))=(j:ℤ)-1bysimp[SignType.cast];omega]rw[ih_(byomega)]simp[List.replicate_succ',←List.replicate_succ]",
+    "body_chars": 770
+  },
+  {
+    "label": "CounterProg.lean::run_regs_le",
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "offset": 2880,
+    "name": "run_regs_le",
+    "kind": "proof",
+    "normalized_body": "byinductiontgeneralizingswith|zero=>simp[run_zero]|succtih=>rw[run_succ]have:=ih(stepPxs)have:=step_regs_lePxsromega",
+    "body_chars": 116
+  },
+  {
+    "label": "CounterProg.lean::tapes_update",
+    "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+    "offset": 9854,
+    "name": "tapes_update",
+    "kind": "proof",
+    "normalized_body": "byfunextiby_caseshi:i=t·substhi;simp·simp[hi]omit[FintypeΛ][DecidableEqΛ]in",
+    "body_chars": 75
+  },
+  {
+    "label": "CounterProgRun.lean::run_pos_le",
+    "path": "TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+    "offset": 11067,
+    "name": "run_pos_le",
+    "kind": "proof",
+    "normalized_body": "byinductiontgeneralizingswith|zero=>simp[run_zero]|succtih=>rw[run_succ]have:=ih(stepPxs)have:(stepPxs).pos≤s.pos+1:=byunfoldstep;split·omega·split<;>(trysplit)<;>simpomega",
+    "body_chars": 172
+  },
+  {
+    "label": "Deterministic.lean::ComputesInTimeAndSpace",
+    "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "offset": 7837,
+    "name": "ComputesInTimeAndSpace",
+    "kind": "term",
+    "normalized_body": "(tm.runFrom(tm.initCfginput)t).state=none∧(tm.runFrom(tm.initCfginput)t).output=output∧tm.spaceUsed(tm.initCfginput)t=s",
+    "body_chars": 119
+  },
+  {
+    "label": "Deterministic.lean::haltsAtStep",
+    "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "offset": 10070,
+    "name": "haltsAtStep",
+    "kind": "term",
+    "normalized_body": "(tm.runFrom(tm.initCfginput)t).state.isNone&&!(tm.runFrom(tm.initCfginput)(t-1)).state.isNone",
+    "body_chars": 93
+  },
+  {
+    "label": "Deterministic.lean::outputSymbol",
+    "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "offset": 882,
+    "name": "outputSymbol",
+    "kind": "term",
+    "normalized_body": "matchcfg.statewith|none=>none|someq=>(tm.trqcfg.inputSymbolcfg.workTapeSymbols).output",
+    "body_chars": 86
+  },
+  {
+    "label": "Deterministic.lean::step",
+    "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "offset": 696,
+    "name": "step",
+    "kind": "term",
+    "normalized_body": "matchcfg.statewith|none=>cfg|someq=>(tm.trqcfg.inputSymbolcfg.workTapeSymbols).applycfg",
+    "body_chars": 87
+  },
+  {
+    "label": "Deterministic.lean::timed_input_bound",
+    "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "offset": 2355,
+    "name": "timed_input_bound",
+    "kind": "proof",
+    "normalized_body": "byhavehm(p:Fin(input.length+2))(m:SignType):(moveInputPospm).val≤p.val+1:=bydsimponly[moveInputPos]split<;>dsimp<;>casesm<;>simp_all[SignType.cast]<;>omegahavehstep(d:CfgkSymbolStateinput):(tm.stepd).inputPos.val≤d.inputPos.val+1:=bycaseshs:d.statewith|none=>simponly[MultiTapeTM.step,hs];omega|someq=>simpaonly[MultiTapeTM.step,hs,Action.apply]usinghmd.inputPos(tm.trqd.inputSymbold.workTapeSymbols).inputTapeinductiontwith|zero=>simp|succtih=>rw[MultiTapeTM.runFrom_succ_eq_step']exact(hstep_).trans(byomega)",
+    "body_chars": 510
+  },
+  {
+    "label": "Deterministic.lean::visitedByTapeHead_step_subset",
+    "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+    "offset": 6716,
+    "name": "visitedByTapeHead_step_subset",
+    "kind": "proof",
+    "normalized_body": "byintrophpsimponly[MultiTapeTM.visitedByTapeHead,Finset.mem_insert,Finset.mem_image,Finset.mem_range]athp⊢rcaseshpwithrfl|⟨v,hv,rfl⟩·exact⟨0,byomega,byrw[MultiTapeTM.runFrom_zero]⟩·exact⟨v+1,byomega,byrw[MultiTapeTM.runFrom_succ_eq_step]⟩endSpaceopenCfg",
+    "body_chars": 253
+  },
+  {
+    "label": "Encoding.lean::FinTM.toCodeTM_computesInTime_iff",
+    "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "offset": 18640,
+    "name": "FinTM.toCodeTM_computesInTime_iff",
+    "kind": "proof",
+    "normalized_body": "byrcasesMwith@⟨k,Q,hQ,dQ,tm⟩dsimponlyathksubstkexactFinTM.computesInTime_relabelState⟨1,Q,tm⟩_xoutputt",
+    "body_chars": 102
+  },
+  {
+    "label": "Encoding.lean::exists_codeTM_spaceUsed",
+    "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "offset": 17808,
+    "name": "exists_codeTM_spaceUsed",
+    "kind": "proof",
+    "normalized_body": "byrcasesMwith@⟨k,Q,hQ,dQ,tm⟩dsimponlyathksubstkletM₀:FinTMBool:=⟨1,Q,tm⟩exact⟨⟨Fintype.cardQ-1,tm.relabelStateM₀.stateEquivFin⟩,M₀.computesInTime_relabelStateM₀.stateEquivFin,funxt=>MultiTapeTM.relabelState_spaceUsedtmM₀.stateEquivFinxt⟩",
+    "body_chars": 237
+  },
+  {
+    "label": "Encoding.lean::pairDiag_copy",
+    "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "offset": 9905,
+    "name": "pairDiag_copy",
+    "kind": "proof",
+    "normalized_body": "byintrotinductiontwith|zero=>intro_applyCfg.ext_zero_tapes<;>simp[pairDiagCfg]|succtih=>introhtrw[MultiTapeTM.runFrom_succ_eq_step',ih(byomega),pairDiag_step_____(pairDiag_innerx(some5)_t(byomega))]simponly[pairDiagTM,Option.toList_some]rw[moveInputPos_pos_of_ne_right_(bychanget+1≠x.length+1;omega)]applyCfg.ext_zero_tapes·rfl·rfl·change(out++x.taket)++[x[t]]=out++x.take(t+1)rw[List.take_succ,List.getElem?_eq_getElem(byomega)]simponly[Option.toList_some,List.append_assoc]",
+    "body_chars": 475
+  },
+  {
+    "label": "Encoding.lean::pairDiag_double",
+    "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "offset": 7683,
+    "name": "pairDiag_double",
+    "kind": "proof",
+    "normalized_body": "byintrotinductiontwith|zero=>intro_applyCfg.ext_zero_tapes<;>simp[pairDiagTM,pairDiagCfg,MultiTapeTM.runFrom]|succtih=>introhtrw[show2*(t+1)=2*t+1+1byomega,MultiTapeTM.runFrom_succ_eq_step',MultiTapeTM.runFrom_succ_eq_step',ih(byomega)]rw[pairDiag_step_____(pairDiag_innerx(some0)_t(byomega))]simponly[pairDiagTM,SignType.zero_eq_zero,moveInputPos_zero,Option.toList_some]rw[pairDiag_step_____(pairDiag_innerx(some1)_t(byomega))]simponly[pairDiagTM,Option.toList_some]rw[moveInputPos_pos_of_ne_right_(bychanget+1≠x.length+1;omega)]applyCfg.ext_zero_tapes·rfl·rfl·change(((x.taket).flatMapfunb=>[b,b])++[x[t]])++[x[t]]=(x.take(t+1)).flatMapfunb=>[b,b]rw[List.take_succ,List.getElem?_eq_getElem(byomega)]simponly[Option.toList_some,List.flatMap_append,List.flatMap_cons,List.flatMap_nil,List.append_nil,List.append_assoc,List.cons_append,List.nil_append]",
+    "body_chars": 852
+  },
+  {
+    "label": "Encoding.lean::pairDiag_rewind",
+    "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "offset": 8999,
+    "name": "pairDiag_rewind",
+    "kind": "proof",
+    "normalized_body": "byintrojinductionjwith|zero=>intro_rw[MultiTapeTM.runFrom_succ_eq_step',MultiTapeTM.runFrom_zero,pairDiag_step____none(bysimp[pairDiagCfg,Cfg.inputSymbol])]simponly[pairDiagTM,Option.toList_none,List.append_nil]rw[moveInputPos_pos_of_ne_right_(bysimp)]applyCfg.ext_zero_tapes·rfl·applyFin.ext;simp[pairDiagCfg]·rfl|succjih=>introhjrw[MultiTapeTM.runFrom_succ_eq_step,pairDiag_step_____(pairDiag_innerx(some4)outj(byomega))]simponly[pairDiagTM,Option.toList_none,List.append_nil]rw[moveInputPos_neg_of_ne_left_(bysimp[Fin.ext_iff])]simpausingih(byomega)",
+    "body_chars": 552
+  },
+  {
+    "label": "Encoding.lean::pairDiag_separator",
+    "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "offset": 10743,
+    "name": "pairDiag_separator",
+    "kind": "proof",
+    "normalized_body": "byrw[show3=(0+1)+1+1fromrfl,MultiTapeTM.runFrom_succ_eq_step',MultiTapeTM.runFrom_succ_eq_step',MultiTapeTM.runFrom_succ_eq_step',MultiTapeTM.runFrom_zero]rw[pairDiag_step_____(pairDiag_rightx(some0)out)]simponly[pairDiagTM,SignType.zero_eq_zero,moveInputPos_zero,Option.toList_some]rw[pairDiag_step_____(pairDiag_rightx(some2)_)]simponly[pairDiagTM,SignType.zero_eq_zero,moveInputPos_zero,Option.toList_some]rw[pairDiag_step_____(pairDiag_rightx(some3)_)]simponly[pairDiagTM,Option.toList_none,List.append_nil]rw[moveInputPos_neg_of_ne_left_(bysimp[Fin.ext_iff])]applyCfg.ext_zero_tapes<;>simp[pairDiagCfg,List.append_assoc]",
+    "body_chars": 625
+  },
+  {
+    "label": "Finite.lean::exists_first_halt",
+    "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+    "offset": 3354,
+    "name": "exists_first_halt",
+    "kind": "proof",
+    "normalized_body": "byclassicalhavehex:∃u,(tm.runFromcfgu).state=none:=⟨t,h⟩havehle:Nat.findhex≤t:=Nat.find_min'hexhrefine⟨Nat.findhex,hle,funvhv=>Nat.find_minhexhv,?_⟩rw[←Nat.add_sub_of_lehle,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_(Nat.find_spechex)]",
+    "body_chars": 244
+  },
+  {
+    "label": "Finite.lean::runFrom_state_ne_none_of_le",
+    "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+    "offset": 2950,
+    "name": "runFrom_state_ne_none_of_le",
+    "kind": "proof",
+    "normalized_body": "byintrouhuhhhavehe:tm.runFromcfgt=tm.runFromcfgu:=byrw[←Nat.add_sub_of_lehu,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hh]exactht(byrw[he];exacthh)",
+    "body_chars": 156
+  },
+  {
+    "label": "Hardness.lean::clA5_call_first_halt",
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "offset": 249117,
+    "name": "clA5_call_first_halt",
+    "kind": "proof",
+    "normalized_body": "byclassicalleth:∃u,(tm.runFromcfgu).state=none:=⟨t,hhalt⟩havehu:=Nat.find_spechhavehle:=Nat.find_min'hhhaltrefine⟨Nat.findh,?_,hle,funvhv=>Nat.find_minhhv,?_⟩·by_contrahnhavehz:Nat.findh=0:=byomegarw[hz,MultiTapeTM.runFrom_zero]athuexacthstarthu·symmrw[←Nat.add_sub_of_lehle,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hu]",
+    "body_chars": 330
+  },
+  {
+    "label": "Hardness.lean::clA5_live_prefix",
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "offset": 253563,
+    "name": "clA5_live_prefix",
+    "kind": "proof",
+    "normalized_body": "byintrouhuhhhavehe:tm.runFromct=tm.runFromcu:=byrw[←Nat.add_sub_of_lehu,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hh]exactht(byrw[he];exacthh)",
+    "body_chars": 152
+  },
+  {
+    "label": "Hardness.lean::clCmp_forward",
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "offset": 109285,
+    "name": "clCmp_forward",
+    "kind": "proof",
+    "normalized_body": "byintrojinductionjwith|zero=>intro_;rfl|succjih=>introhjrw[MultiTapeTM.runFrom_succ_eq_step',ih(byomega),clCmp_forward_stepxpwj(byomega)]simp",
+    "body_chars": 141
+  },
+  {
+    "label": "Hardness.lean::clNative_linear",
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "offset": 18615,
+    "name": "clNative_linear",
+    "kind": "proof",
+    "normalized_body": "byobtain⟨M,a,hM⟩:=hexact⟨M,a,1,bysimpaonly[Nat.pow_one]usinghM⟩",
+    "body_chars": 63
+  },
+  {
+    "label": "Hardness.lean::clNative_map",
+    "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+    "offset": 18874,
+    "name": "clNative_map",
+    "kind": "proof",
+    "normalized_body": "byobtain⟨G,C,e,hG⟩:=hgobtain⟨M,a,hM⟩:=FinTM.computesFunInTime_pairMapSndhG(byintromnh;exactNat.mul_le_mul_leftC(Nat.pow_le_pow_left(byomega)e))refine⟨M,a*(C+1),e+1,funx=>(hMx).mono?_⟩havehlin:x.length+1≤(x.length+1)^(e+1):=bysimpaonly[Nat.pow_one]usingNat.pow_le_pow_right(Nat.succ_posx.length)(show1≤e+1byomega)havehp:=Nat.mul_le_mul_leftC(Nat.pow_le_pow_right(Nat.succ_posx.length)(Nat.le_succe))calc_≤a*((x.length+1)^(e+1)+C*(x.length+1)^(e+1)):=Nat.mul_le_mul_lefta(Nat.add_le_addhlinhp)_=_:=byring",
+    "body_chars": 502
+  },
+  {
+    "label": "PolyTime.lean::PolyTimeComputable.output_length_le",
+    "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+    "offset": 610,
+    "name": "PolyTimeComputable.output_length_le",
+    "kind": "proof",
+    "normalized_body": "byobtain⟨M,C,c,hM⟩:=hrefine⟨C,c,funx=>?_⟩havehout:=((FinTM.computesInTime_iff____).mp(hMx)).2simpaonly[hout]usingM.tm.output_length_lex(C*(x.length+1)^c)",
+    "body_chars": 153
+  },
+  {
+    "label": "PolyTimePairing.lean::PolyTimeComputable.append",
+    "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+    "offset": 4084,
+    "name": "PolyTimeComputable.append",
+    "kind": "proof",
+    "normalized_body": "byhavehc:=polyTimeComputable_of_linearFinTM.computesFunInTime_pairConcatconverthc.comp(hf.pairEncodehg)using1funextxsimp[pairDecode_pairEncode]",
+    "body_chars": 143
+  },
+  {
+    "label": "PolyTimePairing.lean::PolyTimeComputable.pairEncode",
+    "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+    "offset": 1983,
+    "name": "PolyTimeComputable.pairEncode",
+    "kind": "proof",
+    "normalized_body": "byhavehd:=polyTimeComputable_of_linearFinTM.computesFunInTime_pairDuphavehp:=polyTimeComputable_of_linearFinTM.computesFunInTime_pairFsthavehs:=polyTimeComputable_of_linearFinTM.computesFunInTime_pairSndhavehc:=polyTimeComputable_of_linearFinTM.computesFunInTime_pairConcathavehH:=(((polyTimeComputable_const[]).pairMapSnd).comphd).comphfhavehS:=hH.pairMapSnd.comphdhavehT:=((hg.comphp).pairMapSnd.comphd).comphShaveh:=hs.comp(hc.comphT)converthusing1funextxsimponly[Function.comp_apply,pairMapSnd_pairEncode,pairDecode_pairEncode,Option.map_some,Option.getD_some]rw[pairEncode_append,pairEncode_append]simp[pairDecode_pairEncode]",
+    "body_chars": 630
+  },
+  {
+    "label": "PolyTimePairing.lean::PolyTimeComputable.pairMapSnd",
+    "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+    "offset": 997,
+    "name": "PolyTimeComputable.pairMapSnd",
+    "kind": "proof",
+    "normalized_body": "byobtain⟨G,C,c,hG⟩:=hgobtain⟨M,K,hM⟩:=FinTM.computesFunInTime_pairMapSndhG(byintromnhexactNat.mul_le_mul_leftC(Nat.pow_le_pow_left(Nat.add_le_add_righth1)c))refine⟨M,K*(C+1),c+1,funx=>(hMx).mono?_⟩havehn:x.length+1≤(x.length+1)^(c+1):=bysimpaonly[Nat.pow_one]usingNat.pow_le_pow_right(Nat.succ_posx.length)(show1≤c+1byomega)havehc:=Nat.mul_le_mul_leftC(Nat.pow_le_pow_right(Nat.succ_posx.length)(Nat.le_succc))calc_≤K*((x.length+1)^(c+1)+C*(x.length+1)^(c+1)):=Nat.mul_le_mul_leftK(Nat.add_le_addhnhc)_=_:=byring",
+    "body_chars": 512
+  },
+  {
+    "label": "PolyTimePairing.lean::polyTimeComputable_of_linear",
+    "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+    "offset": 233,
+    "name": "polyTimeComputable_of_linear",
+    "kind": "proof",
+    "normalized_body": "byobtain⟨M,a,hM⟩:=hexact⟨M,a,1,bysimpaonly[Nat.pow_one]usinghM⟩",
+    "body_chars": 63
+  },
+  {
+    "label": "PolyTimePairing.lean::polyTimeComputable_pairConcat",
+    "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+    "offset": 6097,
+    "name": "polyTimeComputable_pairConcat",
+    "kind": "proof",
+    "normalized_body": "byhaveh:=polyTimeComputable_of_linearFinTM.computesFunInTime_pairConcatconverthusing1funextzcaseshz:pairDecodezwith|none=>simp[pairFstD,pairSndD,hz]|somep=>casesp;simp[pairFstD,pairSndD,hz]",
+    "body_chars": 189
+  },
+  {
+    "label": "PolyTimePrefix.lean::polyTimeComputable_dropPrefixByLength",
+    "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+    "offset": 12816,
+    "name": "polyTimeComputable_dropPrefixByLength",
+    "kind": "proof",
+    "normalized_body": "byapplyCounterProg.polyTimeComputable_of_goes(PrefixByLength.programfalse)PrefixByLength.Label.scanPrefixByLength.drop51introzsimpausingPrefixByLength.goes_totalfalsezendComplexity",
+    "body_chars": 180
+  },
+  {
+    "label": "PolyTimePrefix.lean::polyTimeComputable_takePrefixByLength",
+    "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+    "offset": 12529,
+    "name": "polyTimeComputable_takePrefixByLength",
+    "kind": "proof",
+    "normalized_body": "byapplyCounterProg.polyTimeComputable_of_goes(PrefixByLength.programtrue)PrefixByLength.Label.scanPrefixByLength.take51introzsimpausingPrefixByLength.goes_totaltruez",
+    "body_chars": 165
+  },
+  {
+    "label": "Primitives.lean::emitterToken_separator",
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "offset": 278186,
+    "name": "emitterToken_separator",
+    "kind": "proof",
+    "normalized_body": "byrw[show2=1+1byomega,MultiTapeTM.runFrom_succ_eq_step',MultiTapeTM.runFrom_succ_eq_step',MultiTapeTM.runFrom_zero]applyCfg.ext_zero_tapes<;>simp[MultiTapeTM.step,unaryTokenTM,Action.apply,scanCfg,List.append_assoc]",
+    "body_chars": 215
+  },
+  {
+    "label": "Primitives.lean::pairMap_computes",
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "offset": 112961,
+    "name": "pairMap_computes",
+    "kind": "proof",
+    "normalized_body": "byintroxhavehlen:(fx).length≤Tx.length:=byhavehout:=((computesInTime_iff____).mp(hMx)).2simpaonly[hout]usingM.tm.output_length_lex(Tx.length)obtain⟨t,ht,c,ho,hstart⟩:=mapStartMx(fx)(Tx.length)(hMx)obtain⟨u,hu,hval⟩:=mapValidateMcx[](bysimp)simponly[List.length_nil,Nat.zero_add]athvalhavehpos:(⟨1,byomega⟩:Fin(x.length+2))=1:=byapplyFin.extsimprw[hpos]athvalhavehclen:c.output.length=(fx).length:=congrArgList.lengthhocaseshd:pairDecodexwith|none=>simponly[hd,Option.isSome_none,Bool.false_eq_true,↓reduceIte]athval⊢havehc:(pairMapTMM).ComputesInTimex[](t+u):=byapply(computesInTime_iff____).mprrw[MultiTapeTM.runFrom_add,hstart]exacthvalexacthc.mono(byomega)|someab=>rcasesabwith⟨a,b⟩simponly[hd,Option.isSome_some,↓reduceIte]athval⊢obtain⟨p,hp⟩:=hvalobtain⟨r,hrle,hr⟩:=catalogRewind(pairMapTMM).tm(.inr(.inl4))(.inr(.inl5))(some(.inr(.inr(true,none))))(fun__=>rfl)(funinp_=>bycasesinp<;>rfl)(mapCfgMc(some(.inr(.inl4)))p0[])rflhavehr':(pairMapTMM).tm.runFrom(mapCfgMc(some(.inr(.inl4)))p0[])r=mapCfgMc(some(.inr(.inr(true,none))))10[]:=hrobtain⟨p',hp'⟩:=mapPrefix_replayMcab[][](bysimpausingTuring.eq_pairEncode_of_pairDecodexabhd)simponly[List.length_nil,Nat.zero_add,List.nil_append]athp'rw[hpos]athp'havehprefix:(pairMapTMM).tm.runFrom((pairMapTMM).tm.initCfgx)((t+u+r)+(2*a.length+2))=mapCfgMc(some(.inr(.inl6)))p'0(pairEncodea[]):=byrw[MultiTapeTM.runFrom_add__(2*a.length+2),MultiTapeTM.runFrom_add__r,MultiTapeTM.runFrom_add_tu,hstart,hp,hr',hp']havehc:(pairMapTMM).ComputesInTimex(pairEncodea(fx))(((t+u+r)+(2*a.length+2))+(c.output.length+1)):=byapply(computesInTime_iff____).mprrw[MultiTapeTM.runFrom_add__(c.output.length+1),hprefix]obtain⟨hs,hout⟩:=mapPayload_finishMcp'(pairEncodea[])refine⟨hs,?_⟩simpa[ho,pairEncode,List.append_assoc]usinghoutapplyhc.monohavehpbound:=p.isLtchanger≤p.val+2athrlehavehxlen:x.length=2*a.length+2+b.length:=byrw[Turing.eq_pairEncode_of_pairDecodexabhd,Turing.length_pairEncode]omega",
+    "body_chars": 1928
+  },
+  {
+    "label": "SAT.lean::satPair_computes",
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "offset": 108115,
+    "name": "satPair_computes",
+    "kind": "proof",
+    "normalized_body": "byintroxobtain⟨saved,s,hs,hstart⟩:=satPair_startMx(fx)(Tx.length)(hMx)havehrep:=satPair_replayMsaved(fx)(fx)[][](bysimp)havehcopy:=satPair_copyMsaved(fx)x[](satBits(fx)++[false,true])(bysimp)simponly[List.length_nil,Int.natCast_zero,List.nil_append]athrephcopyhaveht:(fx).length≤Tx.length:=byhaveho:=((FinTM.computesInTime_iff____).mp(hMx)).2simpaonly[ho]usingM.tm.output_length_lex(Tx.length)havehc:(satPairTMM).ComputesInTimex(pairEncode(fx)x)(s+(2*(fx).length+2)+(x.length+1)):=byapply(FinTM.computesInTime_iff____).mprrw[MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_add_s(2*(fx).length+2),hstart,hrep,hcopy]exact⟨rfl,rfl⟩exacthc.mono(bydsimponly;omega)",
+    "body_chars": 655
+  },
+  {
+    "label": "SAT.lean::satRed_one",
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "offset": 61009,
+    "name": "satRed_one",
+    "kind": "proof",
+    "normalized_body": "byrw[MultiTapeTM.runFrom_succ_eq_step,MultiTapeTM.runFrom_zero]",
+    "body_chars": 63
+  },
+  {
+    "label": "SAT.lean::satSafeValue_poly",
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "offset": 34229,
+    "name": "satSafeValue_poly",
+    "kind": "proof",
+    "normalized_body": "byobtain⟨E,A,hE⟩:=satEval_computesobtain⟨M,C,e,hM⟩:=sat_pipeline_poly.2.2.2haveheval(z:ListBool):E.ComputesInTime(satSafez)[satSafeValuez](A*(C*(z.length+1)^e+1)):=byobtain⟨φ,u,hrequest,hvars,hvalue⟩:=satSafe_speczhaveh:=hEφuhvarsrw[←hrequest,hvalue]athhavehlen:(satSafez).length≤C*(z.length+1)^e:=byhavehout:=((FinTM.computesInTime_iff____).mp(hMz)).2simpaonly[hout]usingM.tm.output_length_lez(C*(z.length+1)^e)exacth.mono(Nat.mul_le_mul_leftA(byomega))obtain⟨N,hN⟩:=FinTM.exists_comp_on_imageMEsatSafe(funz=>[satSafeValuez])(funn=>C*(n+1)^e)(funn=>A*(C*(n+1)^e+1))hMhevalrefine⟨N,2*C+A*(C+1)+2,e,funz=>(hNz).mono?_⟩havehp:1≤(z.length+1)^e:=Nat.one_le_pow__(Nat.succ_pos_)haveha:A≤A*(z.length+1)^e:=bysimpausingNat.mul_le_mul_leftAhpdsimponlysimponly[Nat.add_mul,Nat.mul_add,Nat.mul_one,Nat.mul_assoc]omega",
+    "body_chars": 807
+  },
+  {
+    "label": "SAT.lean::sat_call_first_halt",
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "offset": 156634,
+    "name": "sat_call_first_halt",
+    "kind": "proof",
+    "normalized_body": "byclassicalleth:∃u,(tm.runFromcfgu).state=none:=⟨t,hhalt⟩havehu:=Nat.find_spechhavehle:=Nat.find_min'hhhaltrefine⟨Nat.findh,?_,hle,funvhv=>Nat.find_minhhv,?_⟩·by_contrahnhavehz:Nat.findh=0:=byomegarw[hz,MultiTapeTM.runFrom_zero]athuexacthstarthu·symmrw[←Nat.add_sub_of_lehle,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hu]",
+    "body_chars": 330
+  },
+  {
+    "label": "SAT.lean::sat_live_prefix",
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "offset": 163060,
+    "name": "sat_live_prefix",
+    "kind": "proof",
+    "normalized_body": "byintrouhuhhhavehe:tm.runFromct=tm.runFromcu:=byrw[←Nat.add_sub_of_lehu,MultiTapeTM.runFrom_add,MultiTapeTM.runFrom_of_halt_hh]exactht(byrw[he];exacthh)",
+    "body_chars": 152
+  },
+  {
+    "label": "SAT.lean::sat_pt_fields",
+    "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+    "offset": 138649,
+    "name": "sat_pt_fields",
+    "kind": "proof",
+    "normalized_body": "⟨sat_pt_linear_FinTM.computesFunInTime_pairFst,sat_pt_linear_FinTM.computesFunInTime_pairSnd⟩",
+    "body_chars": 93
+  },
+  {
+    "label": "Tautology.lean::taut_comp_on_image",
+    "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+    "offset": 37746,
+    "name": "taut_comp_on_image",
+    "kind": "proof",
+    "normalized_body": "byrefine⟨FinTM.bufferedCompTMMU,?_⟩introxobtain⟨a,p,tapes,heads,ha,hstart⟩:=FinTM.bufferedComp_startMUx(fx)(T₁x.length)(hMx)havehlen:(fx).length≤T₁x.length:=byhaveho:=((FinTM.computesInTime_iff____).mp(hMx)).2simpaonly[ho]usingM.tm.output_length_lex(T₁x.length)obtain⟨b,_,hr⟩:=FinTM.bufferedSecondCfg_runMU(U.tm.initCfg(fx))true(bysimp[FinTM.VirtualTag,MultiTapeTM.initCfg,Cfg.init])ptapesheads(T₂x.length)havehu:=(FinTM.computesInTime_iff____).mp(hUx)havehbase:(FinTM.bufferedCompTMMU).ComputesInTimex(gx)(a+T₂x.length):=byapply(FinTM.computesInTime_iff____).mprrw[MultiTapeTM.runFrom_add,hstart,hr]exact⟨bysimpaonly[FinTM.bufferedSecondCfg,Option.map_eq_none_iff]usinghu.1,hu.2⟩exacthbase.mono(bydsimponly;omega)",
+    "body_chars": 714
+  },
+  {
+    "label": "UnaryTape.lean::update_ones_pred",
+    "path": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+    "offset": 938,
+    "name": "update_ones_pred",
+    "kind": "proof",
+    "normalized_body": "byfunextcsimponly[Function.update_apply,ones]split_ifs<;>first|rfl|(exfalso;omega)",
+    "body_chars": 82
+  },
+  {
+    "label": "UnaryTape.lean::update_ones_succ",
+    "path": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+    "offset": 731,
+    "name": "update_ones_succ",
+    "kind": "proof",
+    "normalized_body": "byfunextcsimponly[Function.update_apply,ones]split_ifs<;>first|rfl|(exfalso;omega)",
+    "body_chars": 82
+  }
+]

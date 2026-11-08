@@ -1,0 +1,46 @@
+private lemma emCall_track_run (M : FinTM Bool) (x : List Bool) :
+    ∀ t, (emCallTrackTM M).tm.runFrom ((emCallTrackTM M).tm.initCfg x) (1 + 2 * t) =
+      emCallTrackCfg M (M.tm.runFrom (M.tm.initCfg x) t) (emCallLo M x t) (emCallHi M x t) := by
+  intro t
+  induction t with
+  | zero => simpa [emCallLo, emCallHi] using emCall_track_initial M x
+  | succ t ih =>
+    let c := M.tm.runFrom (M.tm.initCfg x) t
+    have hb := emCall_track_extent M x t
+    have hnext : M.tm.runFrom (M.tm.initCfg x) (t + 1) = M.tm.step c := by
+      rw [MultiTapeTM.runFrom_succ_eq_step']
+    rw [show 1 + 2 * (t + 1) = (1 + 2 * t) + 2 by omega, MultiTapeTM.runFrom_add, ih]
+    cases hs : c.state with
+    | none =>
+      have hl : emCallLo M x (t + 1) = emCallLo M x t := by
+        funext i
+        simp only [emCallLo, MultiTapeTM.runFrom_succ_eq_step']
+        change min (emCallLo M x t i) ((M.tm.step c).workTapePos i) = _
+        rw [MultiTapeTM.step_of_halt hs, min_eq_left (hb i).2.2.1]
+      have hr : emCallHi M x (t + 1) = emCallHi M x t := by
+        funext i
+        simp only [emCallHi, MultiTapeTM.runFrom_succ_eq_step']
+        change max (emCallHi M x t i) ((M.tm.step c).workTapePos i) = _
+        rw [MultiTapeTM.step_of_halt hs, max_eq_left (hb i).2.2.2.1]
+      have hhalt : (emCallTrackCfg M c (emCallLo M x t) (emCallHi M x t)).state = none := by
+        simp only [emCallTrackCfg, hs, Option.map_none]
+      rw [hl, hr, hnext]
+      change (emCallTrackTM M).tm.runFrom (emCallTrackCfg M c _ _) 2 = emCallTrackCfg M (M.tm.step c) _ _
+      rw [MultiTapeTM.runFrom_of_halt _ hhalt, MultiTapeTM.step_of_halt hs]
+    | some q =>
+      have hlive : c.state ≠ none := by rw [hs]; simp
+      have hnear (i : Fin M.k) : emCallLo M x t i - 1 ≤ (M.tm.step c).workTapePos i ∧
+          (M.tm.step c).workTapePos i ≤ emCallHi M x t i + 1 := by
+        have hm := M.tm.workTapePos_step_le c i
+        rw [abs_le] at hm
+        have hh := hb i
+        dsimp only [c] at hm ⊢
+        omega
+      change (emCallTrackTM M).tm.step ((emCallTrackTM M).tm.step (emCallTrackCfg M c _ _)) = _
+      rw [emCall_track_action M c _ _ hlive,
+        emCall_track_stamp M (M.tm.step c) _ _ (fun i => by have hh := hb i; omega) hnear]
+      dsimp only [emCallLo, emCallHi]
+      rw [hnext]
+
+/-- The trace markers cost exactly two native steps per source step and one
+initialization step. The output and halting judgment are unchanged. -/

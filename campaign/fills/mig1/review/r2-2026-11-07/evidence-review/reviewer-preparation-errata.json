@@ -1,0 +1,11 @@
+{
+  "attempt": "metadata-v1.out + reconcile_metadata-v1.py.txt",
+  "issue": "Legacy revision1 census footer is exit=0 secs=8, while base/final-r3 footers are exit=0. Initial reviewer parser required uniform bare exit=0 and stopped.",
+  "correction": "Accept exactly exit=0 with optional numeric secs suffix; continue independently checking full rows and error-free raw transcript. This is a reviewer parser assumption, not a delivered validation discrepancy.",
+  "no_delivered_script_or_Lean_execution": true,
+  "additional_reviewer_parser_correction": {
+    "attempt": "finish-v1.out + finish_checks-v1.py.txt",
+    "issue": "Supplied per-file screen table writes Catalog.lean: with a trailing label colon. Reviewer initial basename match retained colon and stopped.",
+    "correction": "Strip exactly the trailing label colon before matching the16file population; no source/evidence claim is relaxed."
+  }
+}

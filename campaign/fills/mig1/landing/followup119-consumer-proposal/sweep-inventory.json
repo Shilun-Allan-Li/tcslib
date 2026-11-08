@@ -1,0 +1,775 @@
+{
+  "at_utc": "2026-11-07T22:28:58.863856+00:00",
+  "baseline": "b1f553b315f31b949076e91119473ce4070e7d53",
+  "scope": "All12currentMIGchangedLeanfiles; comments/strings masked; full matching declarations retained; static candidate enumeration+inspection, not semantic completeness/debt acknowledgment",
+  "source_files": [
+    {
+      "file": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "bytes": 28697,
+      "sha256": "d7c722756c6d40c9616e3490b7fa0962dc7be70dc18bca9cd0cda50f0e120cda"
+    },
+    {
+      "file": "TCSlib/Complexity/RAMSimulation/WordSize.lean",
+      "bytes": 5233,
+      "sha256": "d2cae4833ec8645c0f935206d2ccdb478ec0a8ae65929db07dd171e806722d4e"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "bytes": 209631,
+      "sha256": "a55066f71a5c94f27c8767e0cdada2baabcb65ee7c3c59a14e8bc58ffaceacba"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/CertShell.lean",
+      "bytes": 49745,
+      "sha256": "7e291596dd6af5173af437ae20eca7d35b1d75f6a6f9d501c3372ecb00b68f40"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "bytes": 289088,
+      "sha256": "82f86dcb80ad1f25cf06f164f0b16edbbdf548773dfe8841162d3cfbdee2dd22"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "bytes": 419602,
+      "sha256": "72226a291b0c7e9189883a0ebd75a88ca49bb1f19d0487e54316e542b847ee71"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/VirtualInput.lean",
+      "bytes": 27317,
+      "sha256": "8cf6b4469661b82a828a721e7504794b4240bbb338817a95fac8ca43eacee2aa"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "bytes": 58654,
+      "sha256": "3846089b096822f7e9233da0afb648b7f2bc0097dcd63245bdf75657d4f88bb9"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/CodeSimulator.lean",
+      "bytes": 475327,
+      "sha256": "57e7dc52dedf3d146499ad5694270d1c6fee7255cad74338d4174c5cce3e1a73"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "bytes": 46919,
+      "sha256": "72db4da9cff279bfae399dd3b79e2e5f56eb19bf010125f9b4a834f7c55b4b20"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "bytes": 41069,
+      "sha256": "263057adff72390645a86ae716be6bc4d9dc021548797912dc5cc46a4af6e6e2"
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "bytes": 66475,
+      "sha256": "fed2edd6274d95adc6d6cecc036c8ab234bb578387e10531a05714a11cca2b12"
+    }
+  ],
+  "matching_declarations": [
+    {
+      "file": "TCSlib/Complexity/ClassP/TimeConstructible.lean",
+      "declaration": "_root_.Turing.FinTM.lengthBitsTM_spaceUsed",
+      "start_line": 522,
+      "end_line": 575,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "published_absorption_and_run_composition_context_review",
+      "full_declaration_snapshot": "sweep-declarations/01-_root__Turing_FinTM_lengthBitsTM_spaceUsed.lean.txt",
+      "source_declaration_sha256": "86e4d1ab0b1e60274b36e89f43258862299b393ae9bea1e1360587dffe2cc4d2",
+      "hits": [
+        {
+          "line": 536,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 551,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 552,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "declaration": "compareStop_unique",
+      "start_line": 927,
+      "end_line": 938,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": true,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "canonical_list_stop_uniqueness_not_TM_first_entry",
+      "full_declaration_snapshot": "sweep-declarations/02-compareStop_unique.lean.txt",
+      "source_declaration_sha256": "c137bb0a6eeb360f65f945616ccaa70e3f35b6e89ebf5d15305f7e814d6c4fb0",
+      "hits": [
+        {
+          "line": 931,
+          "term": "Nat.lt_trichotomy"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "declaration": "segment_heads",
+      "start_line": 2276,
+      "end_line": 2318,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "published_absorption_and_run_composition_context_review",
+      "full_declaration_snapshot": "sweep-declarations/03-segment_heads.lean.txt",
+      "source_declaration_sha256": "8df7c6724211710bb4b5039bfa27f6893e2d9f413944cb85baa3e46dda76c562",
+      "hits": [
+        {
+          "line": 2290,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        },
+        {
+          "line": 2303,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 2305,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "declaration": "emCall_eval_first",
+      "start_line": 3005,
+      "end_line": 3044,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "seventh_existing_NONE_first_halt_proposal",
+      "full_declaration_snapshot": "sweep-declarations/04-emCall_eval_first.lean.txt",
+      "source_declaration_sha256": "38960a87702be8a02717bf6df536edf6782dfc2358a88543a5ea9a64affbf62a",
+      "hits": [
+        {
+          "line": 3019,
+          "term": "Nat.find"
+        },
+        {
+          "line": 3020,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 3021,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 3023,
+          "term": "Nat.find_min"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "declaration": "emCall_track_run",
+      "start_line": 3507,
+      "end_line": 3553,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "published_absorption_and_run_composition_context_review",
+      "full_declaration_snapshot": "sweep-declarations/05-emCall_track_run.lean.txt",
+      "source_declaration_sha256": "a8c3eea39dfde7b810a198e5112ff2b368be232acc9b26975c33ee3372844ca3",
+      "hits": [
+        {
+          "line": 3518,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 3535,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "declaration": "emCall_first_entry",
+      "start_line": 3620,
+      "end_line": 3644,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "assigned119_predicate_forward",
+      "full_declaration_snapshot": "sweep-declarations/06-emCall_first_entry.lean.txt",
+      "source_declaration_sha256": "b8ad8add02c71ed488b5946296c91be3c04a56c55012855b9949c9a23bc5d018",
+      "hits": [
+        {
+          "line": 3629,
+          "term": "Nat.find"
+        },
+        {
+          "line": 3630,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 3631,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 3632,
+          "term": "Nat.find_min"
+        },
+        {
+          "line": 3635,
+          "term": "runFrom_add"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "declaration": "emCall_right_endpoint",
+      "start_line": 3806,
+      "end_line": 3832,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "additional_existing_NONE_first_halt_candidate",
+      "full_declaration_snapshot": "sweep-declarations/07-emCall_right_endpoint.lean.txt",
+      "source_declaration_sha256": "b71345825b90efa51bf2ef4242e49e1bf92b46dc4911f00dd61299084088d1c0",
+      "hits": [
+        {
+          "line": 3812,
+          "term": "Nat.find"
+        },
+        {
+          "line": 3814,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 3815,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 3817,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 3818,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        },
+        {
+          "line": 3820,
+          "term": "Nat.find_min"
+        },
+        {
+          "line": 3824,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 3828,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 3828,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "declaration": "emCall_prepared_eval_first",
+      "start_line": 3856,
+      "end_line": 3889,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "published_absorption_and_run_composition_context_review",
+      "full_declaration_snapshot": "sweep-declarations/08-emCall_prepared_eval_first.lean.txt",
+      "source_declaration_sha256": "2bd8663b0e66d5a31472134b4381d8290272696c7b772f8a0392c3c69ff8925a",
+      "hits": [
+        {
+          "line": 3879,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 3880,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "pairExtractTM_fst_run_budget",
+      "start_line": 1110,
+      "end_line": 1129,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "published_absorption_and_run_composition_context_review",
+      "full_declaration_snapshot": "sweep-declarations/09-pairExtractTM_fst_run_budget.lean.txt",
+      "source_declaration_sha256": "09ca9963eaa169b23aa9421d446c15bc7bfe01f0225c2ff4a9c3a9005c7a9c3d",
+      "hits": [
+        {
+          "line": 1121,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 1121,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "lenStart",
+      "start_line": 1823,
+      "end_line": 1880,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "additional_existing_NONE_first_halt_candidate",
+      "full_declaration_snapshot": "sweep-declarations/10-lenStart.lean.txt",
+      "source_declaration_sha256": "ad8ffef0a3329292519b16bc4069bc3dbd4108f05860ec05c0ebb51e7101d80d",
+      "hits": [
+        {
+          "line": 1832,
+          "term": "Nat.find"
+        },
+        {
+          "line": 1834,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 1835,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 1848,
+          "term": "Nat.find_min"
+        },
+        {
+          "line": 1871,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 1871,
+          "term": "MultiTapeTM.runFrom_add"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "fwdMap_launch",
+      "start_line": 3439,
+      "end_line": 3481,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "additional119_inline_live_stop_candidate",
+      "full_declaration_snapshot": "sweep-declarations/11-fwdMap_launch.lean.txt",
+      "source_declaration_sha256": "796310247c701ee1fcef2ff4a6b8eb12ac9d6619b9823840de114ccfbab7ef88",
+      "hits": [
+        {
+          "line": 3454,
+          "term": "Nat.find"
+        },
+        {
+          "line": 3455,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 3461,
+          "term": "Nat.find_min"
+        },
+        {
+          "line": 3466,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 3469,
+          "term": "MultiTapeTM.runFrom_add"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "fwdMap_reject",
+      "start_line": 3481,
+      "end_line": 3519,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "published_absorption_and_run_composition_context_review",
+      "full_declaration_snapshot": "sweep-declarations/12-fwdMap_reject.lean.txt",
+      "source_declaration_sha256": "26b29887d5addb559352bb140388d62826125371f56270d0afe3074d8bc5f10f",
+      "hits": [
+        {
+          "line": 3497,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 3504,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 3505,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "pairMapSndTM_spaceUsed",
+      "start_line": 3633,
+      "end_line": 3752,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "published_absorption_and_run_composition_context_review",
+      "full_declaration_snapshot": "sweep-declarations/13-pairMapSndTM_spaceUsed.lean.txt",
+      "source_declaration_sha256": "57b01b8086820b91976afd00ebd4e06746a711db8d246c501276fdf2c710dc73",
+      "hits": [
+        {
+          "line": 3662,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 3663,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        },
+        {
+          "line": 3694,
+          "term": "MultiTapeTM.runFrom_add"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "catalogFirstEntry",
+      "start_line": 4468,
+      "end_line": 4487,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "assigned119_singleton_forward",
+      "full_declaration_snapshot": "sweep-declarations/14-catalogFirstEntry.lean.txt",
+      "source_declaration_sha256": "6f94bfe04fe4ac1ca3ba639bc6b3880ef58a806864f38ada0c4a661d10662d4a",
+      "hits": [
+        {
+          "line": 4475,
+          "term": "Nat.find"
+        },
+        {
+          "line": 4476,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 4477,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 4478,
+          "term": "Nat.find_min"
+        },
+        {
+          "line": 4481,
+          "term": "runFrom_add"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "splitEmbed_cut",
+      "start_line": 4675,
+      "end_line": 4722,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "additional119_inline_live_stop_candidate",
+      "full_declaration_snapshot": "sweep-declarations/15-splitEmbed_cut.lean.txt",
+      "source_declaration_sha256": "8fb1ee1e7c4925ef22c0ec99ca3b94db0eddd3a8bb8b49ebf10ee4e25d3eccf9",
+      "hits": [
+        {
+          "line": 4689,
+          "term": "Nat.find"
+        },
+        {
+          "line": 4690,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 4692,
+          "term": "runFrom_add"
+        },
+        {
+          "line": 4694,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 4710,
+          "term": "Nat.find_min"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "splitBody_count",
+      "start_line": 4893,
+      "end_line": 4924,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "additional_existing_NONE_first_halt_candidate",
+      "full_declaration_snapshot": "sweep-declarations/16-splitBody_count.lean.txt",
+      "source_declaration_sha256": "96d25244dac024d1298a7857f80387f5e9be6bcfebe0cd88a5b222884ff528e3",
+      "hits": [
+        {
+          "line": 4905,
+          "term": "Nat.find"
+        },
+        {
+          "line": 4906,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 4908,
+          "term": "runFrom_add"
+        },
+        {
+          "line": 4909,
+          "term": "runFrom_of_halt"
+        },
+        {
+          "line": 4909,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 4913,
+          "term": "Nat.find_min"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "declaration": "emitter_first_entry",
+      "start_line": 5882,
+      "end_line": 5906,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "assigned119_predicate_forward",
+      "full_declaration_snapshot": "sweep-declarations/17-emitter_first_entry.lean.txt",
+      "source_declaration_sha256": "38cd58c1ece1aeaf818357c16481dde3f4b91aa13b30f355786e08e23f12143b",
+      "hits": [
+        {
+          "line": 5891,
+          "term": "Nat.find"
+        },
+        {
+          "line": 5892,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 5893,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 5894,
+          "term": "Nat.find_min"
+        },
+        {
+          "line": 5897,
+          "term": "runFrom_add"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+      "declaration": "timed_start",
+      "start_line": 701,
+      "end_line": 743,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "additional_existing_NONE_first_halt_candidate",
+      "full_declaration_snapshot": "sweep-declarations/18-timed_start.lean.txt",
+      "source_declaration_sha256": "0ca94c411e8cb09e9bda0e85ac4d19322fe1cbbc81df1480afdaee521c63a8ca",
+      "hits": [
+        {
+          "line": 709,
+          "term": "Nat.find"
+        },
+        {
+          "line": 711,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 712,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 718,
+          "term": "Nat.find_min"
+        },
+        {
+          "line": 730,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 730,
+          "term": "MultiTapeTM.runFrom_add"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "declaration": "condTM_start",
+      "start_line": 679,
+      "end_line": 720,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "additional_existing_NONE_first_halt_candidate",
+      "full_declaration_snapshot": "sweep-declarations/19-condTM_start.lean.txt",
+      "source_declaration_sha256": "84fa75e8f2d38e88d34bad1f6fb3e5f5ebfefd739d24c8cf58f30563593c9365",
+      "hits": [
+        {
+          "line": 688,
+          "term": "Nat.find"
+        },
+        {
+          "line": 690,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 703,
+          "term": "Nat.find_min"
+        },
+        {
+          "line": 710,
+          "term": "MultiTapeTM.runFrom_add"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "declaration": "ComputesInTime.spaceUsed_le",
+      "start_line": 398,
+      "end_line": 431,
+      "patterns": {
+        "Nat.find": false,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": true
+      },
+      "classification": "published_absorption_and_run_composition_context_review",
+      "full_declaration_snapshot": "sweep-declarations/20-ComputesInTime_spaceUsed_le.lean.txt",
+      "source_declaration_sha256": "51b4e2fcb76f1f64b57d901035c8d5535f3fdfa9f31ea5cb992621e934f4f1e7",
+      "hits": [
+        {
+          "line": 411,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 412,
+          "term": "MultiTapeTM.runFrom_of_halt"
+        }
+      ]
+    },
+    {
+      "file": "TCSlib/Complexity/TuringMachine/Simulation.lean",
+      "declaration": "bufferedComp_start",
+      "start_line": 1199,
+      "end_line": 1244,
+      "patterns": {
+        "Nat.find": true,
+        "Nat.exists_eq_add_of_le": false,
+        "lt_trichotomy": false,
+        "runFrom_add_and_runFrom_of_halt": false
+      },
+      "classification": "additional_existing_NONE_first_halt_candidate",
+      "full_declaration_snapshot": "sweep-declarations/21-bufferedComp_start.lean.txt",
+      "source_declaration_sha256": "c7b89d8f30cfa8706ddb5b0e0e37344e60d63cc3d8503403b0a1a911102d59c4",
+      "hits": [
+        {
+          "line": 1208,
+          "term": "Nat.find"
+        },
+        {
+          "line": 1210,
+          "term": "Nat.find_spec"
+        },
+        {
+          "line": 1211,
+          "term": "Nat.find_min'"
+        },
+        {
+          "line": 1216,
+          "term": "MultiTapeTM.runFrom_add"
+        },
+        {
+          "line": 1217,
+          "term": "Nat.find_min"
+        }
+      ]
+    }
+  ],
+  "Nat_find_declarations": 12,
+  "Nat_exists_eq_add_of_le_declarations": 0,
+  "lt_trichotomy_declarations": 1,
+  "combined_run_add_halt_declarations": 10,
+  "no_actual_source_or_native_screen_Git_action": true
+}

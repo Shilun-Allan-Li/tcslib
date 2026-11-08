@@ -339,6 +339,13 @@ def pairDiagTM : FinTM Bool where
           | some b => ⟨.pos, fun i => i.elim0, some b, some 5⟩
           | none => ⟨.zero, fun i => i.elim0, none, none⟩ }
 
+/-- The diagonal pairing machine uses zero work-tape space on every input at every time.
+It has no work tapes, so `Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero` applies.
+[AB09, §4.1] -/
+theorem pairDiagTM_spaceUsed (x : List Bool) (t : ℕ) :
+    pairDiagTM.tm.spaceUsed (pairDiagTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
 /-- A pairing-machine configuration, with its vacuous work-tape fields suppressed. -/
 private def pairDiagCfg (x : List Bool) (q : Option (Fin 6))
     (p : Fin (x.length + 2)) (out : List Bool) : Cfg 0 Bool (Fin 6) x :=

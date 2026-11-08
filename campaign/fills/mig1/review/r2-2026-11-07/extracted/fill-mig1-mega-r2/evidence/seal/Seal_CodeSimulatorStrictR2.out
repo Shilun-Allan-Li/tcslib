@@ -1,0 +1,22 @@
+ScratchProbes/Seal_CodeSimulatorStrictR2.lean:1307:34: error: Type mismatch
+  second
+has type
+  MultiTapeTM.runFrom (Cfg.ofWords enter copied) t₁ = Cfg.ofWords leave result
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.mapState (fun x => enter) (Cfg.ofWords SweepPhase.done copied)) t₁ = Cfg.ofWords leave result
+ScratchProbes/Seal_CodeSimulatorStrictR2.lean:1310:49: error: Type mismatch
+  secondCut u hu
+has type
+  (MultiTapeTM.runFrom (Cfg.ofWords enter copied) u).state ≠ some leave
+but is expected to have type
+  (MultiTapeTM.runFrom (Cfg.mapState (fun x => enter) (Cfg.ofWords SweepPhase.done copied)) u).state ≠ some leave
+ScratchProbes/Seal_CodeSimulatorStrictR2.lean:1313:46: error: Application type mismatch: The argument
+  rfl
+has type
+  ?m.649 = ?m.649
+but is expected to have type
+  (Cfg.ofWords leave result).state = some leave
+in the application
+  seamCompTM_firstReturn_ofCfg P SweepPhase.done E enter leave run₀
+    (Cfg.ofWords_state SweepPhase.done (Function.update w dst arg)) cut₀ second' rfl
+exit=1

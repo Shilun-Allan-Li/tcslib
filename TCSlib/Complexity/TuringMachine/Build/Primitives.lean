@@ -400,6 +400,12 @@ def incFixedTM : FinTM Bool where
           | some b => ⟨.pos, fun j => j.elim0, some b, some 3⟩
           | none => ⟨0, fun j => j.elim0, none, none⟩ }
 
+/-- The fixed-width incrementer uses zero work space on every input at every time,
+because it has no work tapes. -/
+theorem incFixedTM_spaceUsed (x : List Bool) (t : ℕ) :
+    incFixedTM.tm.spaceUsed (incFixedTM.tm.initCfg x) t = 0 := by
+  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl
+
 /-- **The incrementer's time**. On every input the incrementer halts within `3·(|x| + 1)` steps with
 output `(incFixed x).getD []`.
 

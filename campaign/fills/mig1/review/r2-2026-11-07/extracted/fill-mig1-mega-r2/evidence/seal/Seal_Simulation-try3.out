@@ -1,0 +1,99 @@
+ScratchProbes/Seal_Simulation.lean:337:4: error: Tactic `rfl` failed: The left-hand side
+  some (M₁.branchTM M₂ false).tm.q₀
+is not definitionally equal to the right-hand side
+  (rightCfg Sum.inr (Cfg.init M₂.tm.q₀ x) (fun x x_1 => none) fun x => 0).state
+
+case refine_1
+M₁ M₂ : FinTM Bool
+x : List Bool
+⊢ some (M₁.branchTM M₂ false).tm.q₀ = (rightCfg Sum.inr (Cfg.init M₂.tm.q₀ x) (fun x x_1 => none) fun x => 0).state
+ScratchProbes/Seal_Simulation.lean:339:4: error: Tactic `rfl` failed: The left-hand side
+  1
+is not definitionally equal to the right-hand side
+  (rightCfg Sum.inr (Cfg.init M₂.tm.q₀ x) (fun x x_1 => none) fun x => 0).inputPos
+
+case refine_2
+M₁ M₂ : FinTM Bool
+x : List Bool
+⊢ 1 = (rightCfg Sum.inr (Cfg.init M₂.tm.q₀ x) (fun x x_1 => none) fun x => 0).inputPos
+ScratchProbes/Seal_Simulation.lean:347:4: error: Tactic `rfl` failed: The left-hand side
+  []
+is not definitionally equal to the right-hand side
+  (rightCfg Sum.inr (Cfg.init M₂.tm.q₀ x) (fun x x_1 => none) fun x => 0).output
+
+case refine_5
+M₁ M₂ : FinTM Bool
+x : List Bool
+⊢ [] = (rightCfg Sum.inr (Cfg.init M₂.tm.q₀ x) (fun x x_1 => none) fun x => 0).output
+ScratchProbes/Seal_Simulation.lean:362:4: error: Tactic `rfl` failed: The left-hand side
+  some (M₁.branchTM M₂ true).tm.q₀
+is not definitionally equal to the right-hand side
+  (leftCfg Sum.inl (Cfg.init M₁.tm.q₀ x) (fun x x_1 => none) fun x => 0).state
+
+case refine_1
+M₁ M₂ : FinTM Bool
+x : List Bool
+⊢ some (M₁.branchTM M₂ true).tm.q₀ = (leftCfg Sum.inl (Cfg.init M₁.tm.q₀ x) (fun x x_1 => none) fun x => 0).state
+ScratchProbes/Seal_Simulation.lean:364:4: error: Tactic `rfl` failed: The left-hand side
+  1
+is not definitionally equal to the right-hand side
+  (leftCfg Sum.inl (Cfg.init M₁.tm.q₀ x) (fun x x_1 => none) fun x => 0).inputPos
+
+case refine_2
+M₁ M₂ : FinTM Bool
+x : List Bool
+⊢ 1 = (leftCfg Sum.inl (Cfg.init M₁.tm.q₀ x) (fun x x_1 => none) fun x => 0).inputPos
+ScratchProbes/Seal_Simulation.lean:372:4: error: Tactic `rfl` failed: The left-hand side
+  []
+is not definitionally equal to the right-hand side
+  (leftCfg Sum.inl (Cfg.init M₁.tm.q₀ x) (fun x x_1 => none) fun x => 0).output
+
+case refine_5
+M₁ M₂ : FinTM Bool
+x : List Bool
+⊢ [] = (leftCfg Sum.inl (Cfg.init M₁.tm.q₀ x) (fun x x_1 => none) fun x => 0).output
+ScratchProbes/Seal_Simulation.lean:611:2: error: 'change' tactic failed, pattern
+  MultiTapeTM.runFrom (MultiTapeTM.step cfg) ?m.110 = ?m.112
+is not definitionally equal to target
+  MultiTapeTM.runFrom (MultiTapeTM.runFrom cfg 1) (↑(moveInputPos cfg.inputPos SignType.neg) + 1) =
+    { state := dest, inputPos := 1, workTapes := cfg.workTapes, workTapePos := cfg.workTapePos, output := cfg.output }
+ScratchProbes/Seal_Simulation.lean:636:4: error: 'change' tactic failed, pattern
+  MultiTapeTM.runFrom (MultiTapeTM.step c) ?m.135 = ?m.137
+is not definitionally equal to target
+  MultiTapeTM.runFrom (MultiTapeTM.runFrom c 1) (↑(moveInputPos c.inputPos SignType.neg) + 1) =
+    { state := dest, inputPos := 1, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+ScratchProbes/Seal_Simulation.lean:701:4: error: 'change' tactic failed, pattern
+  MultiTapeTM.runFrom (MultiTapeTM.step c) ?m.154 = ?m.156
+is not definitionally equal to target
+  MultiTapeTM.runFrom (MultiTapeTM.runFrom c 1) (↑(moveInputPos c.inputPos SignType.neg) + 1) =
+    { state := dest, inputPos := 1, workTapes := c.workTapes, workTapePos := c.workTapePos, output := c.output }
+ScratchProbes/Seal_Simulation.lean:705:14: error: Tactic `rfl` failed: The left-hand side
+  (MultiTapeTM.runFrom c 0).workTapePos
+is not definitionally equal to the right-hand side
+  c.workTapePos
+
+case refine_3.zero
+k : ℕ
+S : Type
+x : List Bool
+tm : MultiTapeTM k Bool S
+start scan : S
+dest : Option S
+hstart :
+  ∀ (inp : Option Bool) (work : Fin k → Option Bool), tm.tr start inp work = controlAction SignType.neg (some scan)
+hscan :
+  ∀ (inp : Option Bool) (work : Fin k → Option Bool),
+    tm.tr scan inp work =
+      match inp with
+      | some val => controlAction SignType.neg (some scan)
+      | none => controlAction SignType.pos dest
+c : Cfg k Bool S x
+hs : c.state = some start
+hstep :
+  MultiTapeTM.step c =
+    { state := some scan, inputPos := moveInputPos c.inputPos SignType.neg, workTapes := c.workTapes,
+      workTapePos := c.workTapePos, output := c.output }
+hp : ↑(moveInputPos c.inputPos SignType.neg) ≤ x.length
+hu : 0 ≤ 1 + (↑(moveInputPos c.inputPos SignType.neg) + 1)
+⊢ (MultiTapeTM.runFrom c 0).workTapePos = c.workTapePos
+exit=1

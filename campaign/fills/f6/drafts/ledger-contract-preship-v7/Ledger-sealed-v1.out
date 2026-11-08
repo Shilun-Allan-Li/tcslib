@@ -1,0 +1,28 @@
+/private/tmp/tcslib-f6-ledger-egepwidm/Ledger_sealed_v1.lean:60:4: error: Tactic `subst` failed: did not find equation for eliminating 'i'
+
+case pos
+K s D ℓ : ℕ
+Q : Type
+z : List Bool
+M : CodeTM
+x output : List Bool
+t t0 : ℕ
+hspace : MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) t ≤ s
+ht0 : t0 ≤ t
+own_source_halt : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t0).state = none
+own_source_first : ∀ u < t0, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).state ≠ none
+own_source_output : (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) t0).output = output
+L : MultiTapeTM (K + 4) Bool Q
+c : Cfg (K + 4) Bool Q z
+r : ℕ
+own_loop_halt : (MultiTapeTM.runFrom c r).state = none
+own_loop_first : ∀ u < r, (MultiTapeTM.runFrom c u).state ≠ none
+own_loop_output : (MultiTapeTM.runFrom c r).output = output
+own_mirror : MultiTapeTM.visitedByTapeHead c r ⟨0, ⋯⟩ = MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg x) t0 0
+own_aux : ∀ (i : Fin (K + 4)), ↑i = 1 ∨ ↑i = 2 → ∀ u ≤ r, (MultiTapeTM.runFrom c u).workTapePos i ∈ Finset.Icc (-↑D) ↑D
+own_idle : ∀ (i : Fin (K + 4)), 3 ≤ ↑i → ↑i < K + 3 → MultiTapeTM.visitedByTapeHead c r i = {0}
+own_ruler : ∀ u ≤ r, (MultiTapeTM.runFrom c u).workTapePos (Fin.last (K + 3)) ∈ Finset.Icc (-1) ↑ℓ
+i : Fin (K + 4)
+h0 : ↑i = 0
+hi : i = ⟨0, ⋯⟩
+⊢ MultiTapeTM.spaceUsedByTape c r i ≤ s + (2 * D + 1) + ℓ + 3

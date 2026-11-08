@@ -1,0 +1,33 @@
+theorem ComputesInTime.spaceUsed_le {M : FinTM Bool} {x y : List Bool} {T : ℕ}
+    (h : M.ComputesInTime x y T) (t : ℕ) :
+    M.tm.spaceUsed (M.tm.initCfg x) t ≤ M.k * (T + 1) := by
+  have hh := ((computesInTime_iff _ _ _ _).mp h).1
+  have hsub (i : Fin M.k) :
+      M.tm.visitedByTapeHead (M.tm.initCfg x) t i ⊆
+        M.tm.visitedByTapeHead (M.tm.initCfg x) T i := by
+    intro z hz
+    obtain ⟨u, _, rfl⟩ := Finset.mem_image.mp hz
+    by_cases hu : u ≤ T
+    · exact Finset.mem_image.mpr ⟨u, Finset.mem_range.mpr (by omega), rfl⟩
+    · have hr : M.tm.runFrom (M.tm.initCfg x) u =
+          M.tm.runFrom (M.tm.initCfg x) T := by
+        rw [show u = T + (u - T) by omega, MultiTapeTM.runFrom_add,
+          MultiTapeTM.runFrom_of_halt _ hh]
+      exact Finset.mem_image.mpr ⟨T, Finset.mem_range.mpr (by omega),
+        congrArg (fun c => c.workTapePos i) hr.symm⟩
+  calc
+    _ ≤ ∑ _i : Fin M.k, (T + 1) := by
+      apply Finset.sum_le_sum
+      intro i _
+      exact (Finset.card_le_card (hsub i)).trans (by
+        unfold MultiTapeTM.visitedByTapeHead
+        exact (Finset.card_image_le).trans (by rw [Finset.card_range]))
+    _ = _ := by simp
+
+/-- **The branch union's space**. The branch union selecting `b` uses exactly the selected machine's
+space plus one origin cell for each tape of the idle bank.
+
+**Proof sketch.** The branch union runs the selected machine on its own bank (`leftCfg_run`,
+`rightCfg_run`) and never moves the other bank's heads, whose visited sets stay the origin
+singletons, while each selected tape visits exactly the cells of the corresponding tape of the
+selected machine. Split the sum over the two banks with `Fin.sum_univ_add`. -/

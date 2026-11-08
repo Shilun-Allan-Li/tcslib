@@ -1,0 +1,73 @@
+import TCSlib.Complexity.Formulas.DNF
+import TCSlib.Complexity.Formulas.CNFEncoding
+import TCSlib.Complexity.ClassNP.CoNP
+import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import Mathlib.Data.Sigma.Basic
+set_option maxHeartbeats 0
+set_option relaxedAutoImplicit false
+set_option autoImplicit false
+namespace Complexity
+open Turing
+
+section G106ImageSeal
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+/-- Quantitative buffered composition with a second-stage contract only on
+the actual first-stage image.
+
+**Proof sketch.** Apply the public image-composition theorem with the two
+given machine contracts and their original-input time budgets. -/
+private lemma taut_comp_on_image (M U : FinTM Bool) (f g : List Bool → List Bool)
+    (T₁ T₂ : ℕ → ℕ) (hM : M.ComputesFunInTime f T₁)
+    (hU : ∀ x, U.ComputesInTime (f x) (g x) (T₂ x.length)) :
+    ∃ N : FinTM Bool, N.ComputesFunInTime g (fun n => 2*T₁ n+T₂ n+2) := by
+  exact FinTM.exists_comp_on_image M U f g T₁ T₂ hM hU
+
+end G106ImageSeal
+
+end Complexity
+
+
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  let kenv := env.toKernelEnv
+  let mut roots : Array Name := #[]
+  for (n, _) in env.constants.toList do
+    match n with
+    | .str _ "taut_comp_on_image" =>
+      if (env.getModuleIdxFor? n).isNone then roots := roots.push n
+    | _ => pure ()
+  unless roots.size == 1 do throwError "root count mismatch {roots.size}"
+  let kind := fun (ci : ConstantInfo) => match ci with
+    | .defnInfo _ => "definition" | .thmInfo _ => "theorem" | .axiomInfo _ => "axiom"
+    | .opaqueInfo _ => "opaque" | .ctorInfo _ => "constructor" | .recInfo _ => "recursor"
+    | .inductInfo _ => "inductive" | .quotInfo _ => "quotient"
+  for n in roots do
+    unless isPrivateName n do throwError "root unexpectedly public {n}"
+    logInfo m!"ROOT|{n}|private={isPrivateName n}"
+  for (n, _) in env.constants.toList.toArray.qsort (fun a b => a.1.toString < b.1.toString) do
+    unless roots.any (fun root => root.isPrefixOf n) do continue
+    let some ci := kenv.find? n | throwError "missing actual constant {n}"
+    let ax ← liftCoreM <| Lean.collectAxioms n
+    logInfo m!"PROOFAX|{n}|kind={kind ci}|{(ax.qsort Name.lt).toList}"
+    let used := ci.type.getUsedConstants ++ (ci.value?.map (·.getUsedConstants)).getD #[]
+    let mut seen : Array Name := #[]
+    for usedName in used do
+      if seen.contains usedName then continue
+      seen := seen.push usedName
+      match env.getModuleIdxFor? usedName, kenv.find? usedName with
+      | some idx, some usedInfo =>
+        let owner := env.header.moduleNames[idx.toNat]!
+        if (`TCSlib).isPrefixOf owner then
+          logInfo m!"CITED|{n}|{usedName}|{owner}|kind={kind usedInfo}|private={isPrivateName usedName}"
+          if let .defnInfo d := usedInfo then
+            let hint := match d.hints with
+              | .regular _ => "regular" | .abbrev => "abbrev" | .opaque => "opaque"
+            logInfo m!"FOREIGNDEF|{n}|{usedName}|{owner}|hints={hint}"
+      | none, some (.defnInfo _) => logInfo m!"HOMEDEF|{n}|{usedName}"
+      | _, _ => pure ()

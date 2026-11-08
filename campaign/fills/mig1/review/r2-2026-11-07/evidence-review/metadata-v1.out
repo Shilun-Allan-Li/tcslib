@@ -1,0 +1,8 @@
+Traceback (most recent call last):
+  File "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/campaign/fills/mig1/review/r2-2026-11-07/evidence-review/reconcile_metadata.py", line 36, in <module>
+    base=census(ev/'logs/census-base.out');head=census(ev/'logs/census-head-final-r3.out');rev1=census(ev/'logs/census-head.out');assert len(base)==1234 and len(head)==1205;A=sorted(set(head)-set(base));R=sorted(set(base)-set(head));assert set(head)==set(rev1);assert len(A)==130 and len(R)==159
+                                                                                                ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/seyoonr/.codex/worktrees/ab34-records/tcslib-arora-barak-ch3-4/campaign/fills/mig1/review/r2-2026-11-07/evidence-review/reconcile_metadata.py", line 35, in census
+    t=read(path).decode();rows=[tuple(m) for m in re.findall(r'^CENSUS (\S+) (\S+) (\S+)$',t,re.M)];assert len(rows)==len(set(rows));assert t.splitlines()[-1]=='exit=0' and 'error:' not in t;assert all(not n.startswith('_private.') for _,_,n in rows);assert {o.replace('.','/')+'.lean' for o,_,_ in rows}==set(owned);return rows
+                                                                                                                                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError

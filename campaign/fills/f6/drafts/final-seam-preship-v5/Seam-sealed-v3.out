@@ -1,0 +1,91 @@
+/private/tmp/tcslib-f6-final-seam-fsvhoysj/Seam_sealed_v3.lean:128:6: error: Tactic `rewrite` failed: motive is not type correct:
+  fun _a =>
+    ∀ (R : MultiTapeTM _a Bool P) (exit : P) (L : MultiTapeTM (K + 2 + 2) Bool V) (entry : V) {x : List Bool}
+      (c : Cfg (K + 2 + 2) Bool V x) (d : Cfg _a Bool P x) (T : ℕ),
+      MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T = d →
+        d.state = some exit →
+          (∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).state ≠ some exit) →
+            Cfg.mapState (fun x => entry) d = embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] c →
+              ∀ (t : ℕ),
+                MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (T + 1 + t) =
+                  Cfg.mapState Sum.inr
+                    (embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] (MultiTapeTM.runFrom c t))
+Error: Application type mismatch: The argument
+  a✝
+has type
+  ¬K + 2 + 2 ≤ _a
+but is expected to have type
+  ¬K + 2 + 2 ≤ 0 + (K + 2 + 2)
+in the application
+  embedEmitCfg_forwardLoop_init._proof_1 a✝
+
+Explanation: The rewrite tactic rewrites an expression 'e' using an equality 'a = b' by the following process. First, it looks for all 'a' in 'e'. Second, it tries to abstract these occurrences of 'a' to create a function 'm := fun _a => ...', called the *motive*, with the property that 'm a' is definitionally equal to 'e'. Third, we observe that 'congrArg' implies that 'm a = m b', which can be used with lemmas such as 'Eq.mpr' to change the goal. However, if 'e' depends on specific properties of 'a', then the motive 'm' might not typecheck.
+
+Possible solutions: use rewrite's 'occs' configuration option to limit which occurrences are rewritten, or use 'simp' or 'conv' mode, which have strategies for certain kinds of dependencies (these tactics can handle proofs and 'Decidable' instances whose types depend on the rewritten term, and 'simp' can apply user-defined '@[congr]' theorems as well).
+
+K n ℓ : ℕ
+P Q V : Type
+inst✝ : DecidableEq P
+A : MultiTapeTM (K + 4) Bool P
+finish : P
+H : MultiTapeTM (K + 4) Bool V
+entry : Q
+inj : Q → Bool → V
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x z : List Bool
+hz : z.length = ℓ + x.length
+σ : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+ec : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg σ (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+bank : Cfg (K + 3) Bool P x :=
+  { state := some finish, inputPos := 1,
+    workTapes := fun j =>
+      if j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+      else if j = 2 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+    workTapePos := fun x => 0, output := [] }
+d : Cfg (K + 4) Bool P z :=
+  { state := some finish, inputPos := ⟨ℓ + 1, ⋯⟩,
+    workTapes := fun i =>
+      Fin.lastCases (motive := fun x => ℤ → Option Bool) (FinTM.bufferTape (List.replicate ℓ true)) bank.workTapes i,
+    workTapePos := fun x => 0, output := [] }
+c : Cfg (K + 3 + 1) Bool V z :=
+  rulerHostCfg ℓ hz (Option.map (fun q => inj q false) ec.state) ec (FinTM.bufferTape (List.replicate ℓ true)) 0
+T t B S : ℕ
+aRun : MultiTapeTM.runFrom (MultiTapeTM.initCfg z) T = d
+aCut : ∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg z) u).state ≠ some finish
+hB : MultiTapeTM.spaceUsed (MultiTapeTM.initCfg z) T ≤ B
+hS : 1 ≤ S
+hloop : ∀ (i : Fin (K + 4)), MultiTapeTM.spaceUsedByTape c t i ≤ S
+A0 : MultiTapeTM (0 + (K + 2 + 2)) Bool P := ⋯.mpr A
+U : MultiTapeTM (K + 4) Bool (P ⊕ V) := ⋯.mp (startupLoopTM A0 finish H (inj entry false))
+hexit : d.state = some finish
+hphysical : Cfg.mapState (fun x => inj entry false) d = c
+hcfg : Cfg.mapState (fun x => inj entry false) d = embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] c
+run0 :
+  ∀ (R : MultiTapeTM (0 + (K + 2 + 2)) Bool P) (exit : P) (L : MultiTapeTM (K + 2 + 2) Bool V) (entry : V)
+    {x : List Bool} (c : Cfg (K + 2 + 2) Bool V x) (d : Cfg (0 + (K + 2 + 2)) Bool P x) (T : ℕ),
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T = d →
+      d.state = some exit →
+        (∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).state ≠ some exit) →
+          Cfg.mapState (fun x => entry) d = embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] c →
+            ∀ (t : ℕ),
+              MultiTapeTM.runFrom (MultiTapeTM.initCfg x) (T + 1 + t) =
+                Cfg.mapState Sum.inr
+                  (embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] (MultiTapeTM.runFrom c t))
+space0 :
+  ∀ (R : MultiTapeTM (0 + (K + 2 + 2)) Bool P) (exit : P) (L : MultiTapeTM (K + 2 + 2) Bool V) (entry : V)
+    {x : List Bool} (c : Cfg (K + 2 + 2) Bool V x) (d : Cfg (0 + (K + 2 + 2)) Bool P x) (T : ℕ),
+    MultiTapeTM.runFrom (MultiTapeTM.initCfg x) T = d →
+      d.state = some exit →
+        (∀ u < T, (MultiTapeTM.runFrom (MultiTapeTM.initCfg x) u).state ≠ some exit) →
+          Cfg.mapState (fun x => entry) d = embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) [] c →
+            ∀ (t B S : ℕ),
+              MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) T ≤ B →
+                1 ≤ S →
+                  (∀ (i : Fin (K + 2 + 2)), MultiTapeTM.spaceUsedByTape c t i ≤ S) →
+                    MultiTapeTM.spaceUsed (MultiTapeTM.initCfg x) (T + 1 + t) ≤ B + (0 + (K + 2 + 2)) * S
+⊢ MultiTapeTM.runFrom (MultiTapeTM.initCfg z) (T + 1 + t) = Cfg.mapState Sum.inr (MultiTapeTM.runFrom c t) ∧
+    MultiTapeTM.spaceUsed (MultiTapeTM.initCfg z) (T + 1 + t) ≤ B + (K + 4) * S
+'F6SeamPreship.last_ruler_layout' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.full_bank_embedding' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6SeamPreship.conditional_final_seam' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

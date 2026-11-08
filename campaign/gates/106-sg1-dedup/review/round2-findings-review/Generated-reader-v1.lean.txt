@@ -1,0 +1,45 @@
+import TCSlib.Complexity.ClassNP.NP
+set_option maxHeartbeats 0
+set_option autoImplicit false
+open Lean Elab Command Meta in
+run_cmd do
+  for n in [`Complexity.pairMapSnd, `Complexity.pairMapSnd.eq_def, `Complexity.pairMapSnd.eq_1] do
+    match (← getEnv).find? n with
+    | none => logInfo m!"BEFORE|{n}|absent"
+    | some _ => logInfo m!"BEFORE|{n}|present"
+#check Complexity.pairMapSnd.eq_def
+#check Complexity.pairMapSnd.eq_1
+open Lean Elab Command Meta in
+run_cmd do
+  let env ← getEnv
+  for n in [`Complexity.pairMapSnd.eq_def, `Complexity.pairMapSnd.eq_1] do
+    match env.find? n with
+    | none => logInfo m!"AFTER|{n}|absent"
+    | some ci =>
+      let axs ← liftCoreM <| Lean.collectAxioms n
+      let owner := (env.getModuleIdxFor? n).map (fun i => env.header.moduleNames[i.toNat]!)
+      logInfo m!"AFTER|{n}|owner={owner}|type={ci.type}|AX={axs}"
+attribute [local irreducible] Complexity.pairMapSnd Complexity.PolyTimeComputable Turing.pairEncode Turing.pairDecode
+namespace G106FPReaderCheck
+open Complexity Turing
+ theorem map_consumer {g : List Bool → List Bool} (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun z => match pairDecode z with
+      | some (a,b) => pairEncode a (g b)
+      | none => []) := by
+  simpa only [Complexity.pairMapSnd.eq_def] using PolyTimeComputable.pairMapSnd hg
+ theorem pair_consumer {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => pairEncode (f x) (g x)) :=
+  PolyTimeComputable.pairEncode hf hg
+ theorem append_consumer {f g : List Bool → List Bool}
+    (hf : PolyTimeComputable f) (hg : PolyTimeComputable g) :
+    PolyTimeComputable (fun x => f x ++ g x) := PolyTimeComputable.append hf hg
+ theorem pair_input_consumer {f : List Bool → List Bool} (hf : PolyTimeComputable f) :
+    PolyTimeComputable (fun x => pairEncode (f x) x) :=
+  PolyTimeComputable.pairEncode hf polyTimeComputable_id
+ theorem unary_consumer (C e : ℕ) :
+    PolyTimeComputable (fun x => List.replicate (C * (x.length + 1)^e) true) :=
+  polyTimeComputable_polyUnary C e
+ theorem unary_length_consumer :
+    PolyTimeComputable (fun x => List.replicate x.length true) := polyTimeComputable_unary
+end G106FPReaderCheck

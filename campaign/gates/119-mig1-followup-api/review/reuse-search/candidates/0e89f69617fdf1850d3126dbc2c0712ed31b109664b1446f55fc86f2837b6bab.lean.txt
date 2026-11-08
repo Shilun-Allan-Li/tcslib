@@ -1,0 +1,23 @@
+theorem computesFunInTime_incFixed_spaceUsed :
+    ∃ (M : FinTM Bool) (c : ℕ),
+      M.ComputesFunInTime (fun x => (incFixed x).getD [])
+        (fun n => c * (n + 1)) ∧
+      ∀ (x : List Bool) (t : ℕ),
+        M.tm.spaceUsed (M.tm.initCfg x) t ≤ c := by
+  refine ⟨f2_incFixedTM, 3, f2_incFixed_computes, ?_⟩
+  intro x t
+  rw [MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl]
+  omega
+
+/-- Control of the forwarding map: silent pair validation and buffering,
+separate buffer rewinds, doubled-prefix emission, and clamped virtual input. -/
+private inductive a2_MapState (Q : Type) where
+  | parse (pending : Option Bool)
+  | copyB | backB | backA | emitA | emitAgain (b : Bool) | separator
+  | run (q : Q) (tag : Bool)
+  deriving DecidableEq
+
+private instance a2_mapStateFintype (Q : Type) [Fintype Q] : Fintype (a2_MapState Q) :=
+  derive_fintype% _
+
+/-- Administration touches only the two input buffers, and never a payload tape. -/

@@ -1,0 +1,62 @@
+[
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+    "delta": {
+      "tag": "delete",
+      "before_start": 10469,
+      "before_end": 10492,
+      "after_start": 10469,
+      "after_end": 10469,
+      "old_text": "/-- **W2 space row** (design \u00a712 R3, decision 12.3;\nannotates `Turing.FinTM.redirectTM` beside its\n`redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs\nno space, per tape and exactly: the redirected machine's tape actions are\nthe source's verbatim, before and after the source halt.\n\n**Proof sketch.** `redirect_run`'s configuration correspondence preserves\nwork tapes and heads at every time (the live loop is stationary and the\nsimulation phase copies the source's tape actions), so the two head\ntrajectories coincide pointwise and the visited images agree. -/\ntheorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)\n    (x : List Bool) (t : \u2115) (i : Fin M.k) :\n    (redirectTM M haltOn).tm.spaceUsedByTape\n        ((redirectTM M haltOn).tm.initCfg x) t i\n      = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by\n  unfold MultiTapeTM.spaceUsedByTape MultiTapeTM.visitedByTapeHead\n  congr 1\n  apply Finset.image_congr\n  intro u _\n  dsimp only\n  rw [catalog_redirect_run]\n  rfl\n\n",
+      "new_text": ""
+    }
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+    "delta": {
+      "tag": "insert",
+      "before_start": 505,
+      "before_end": 505,
+      "after_start": 505,
+      "after_end": 511,
+      "old_text": "",
+      "new_text": "\n/-- The fixed-width incrementer uses zero work space on every input at every time,\nbecause it has no work tapes. -/\ntheorem incFixedTM_spaceUsed (x : List Bool) (t : \u2115) :\n    incFixedTM.tm.spaceUsed (incFixedTM.tm.initCfg x) t = 0 := by\n  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl\n"
+    }
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Build/Wrappers.lean",
+    "delta": {
+      "tag": "insert",
+      "before_start": 504,
+      "before_end": 504,
+      "after_start": 504,
+      "after_end": 524,
+      "old_text": "",
+      "new_text": "/-- **W2 space row** (design \u00a712 R3, decision 12.3;\nannotates `Turing.FinTM.redirectTM` beside its\n`redirectTM_computes`/`redirectTM_live` contract pair). Redirection costs\nno space, per tape and exactly: the redirected machine's tape actions are\nthe source's verbatim, before and after the source halt.\n\n**Proof sketch.** `redirect_run`'s configuration correspondence preserves\nwork tapes and heads at every time (the live loop is stationary and the\nsimulation phase copies the source's tape actions), so the two head\ntrajectories coincide pointwise and the visited images agree. -/\ntheorem redirectTM_spaceUsedByTape (M : FinTM Bool) (haltOn : Bool)\n    (x : List Bool) (t : \u2115) (i : Fin M.k) :\n    (redirectTM M haltOn).tm.spaceUsedByTape\n        ((redirectTM M haltOn).tm.initCfg x) t i\n      = M.tm.spaceUsedByTape (M.tm.initCfg x) t i := by\n  rw [MultiTapeTM.spaceUsedByTape_eq_card, MultiTapeTM.spaceUsedByTape_eq_card]\n  congr 1\n  ext p\n  simp only [MultiTapeTM.mem_visitedByTapeHead_iff, (redirectTM_runFrom M haltOn x _).2.2.2.1]\n\n"
+    }
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+    "delta": {
+      "tag": "insert",
+      "before_start": 341,
+      "before_end": 341,
+      "after_start": 341,
+      "after_end": 348,
+      "old_text": "",
+      "new_text": "\n/-- The diagonal pairing machine uses zero work-tape space on every input at every time.\nIt has no work tapes, so `Turing.MultiTapeTM.spaceUsed_zero_tapes_eq_zero` applies.\n[AB09, \u00a74.1] -/\ntheorem pairDiagTM_spaceUsed (x : List Bool) (t : \u2115) :\n    pairDiagTM.tm.spaceUsed (pairDiagTM.tm.initCfg x) t = 0 := by\n  exact MultiTapeTM.spaceUsed_zero_tapes_eq_zero _ _ rfl\n"
+    }
+  },
+  {
+    "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+    "delta": {
+      "tag": "insert",
+      "before_start": 227,
+      "before_end": 227,
+      "after_start": 227,
+      "after_end": 258,
+      "old_text": "",
+      "new_text": "\n/-- A run ending in a designated live stop state first enters the stop states by its deadline,\nand that first entry is already the final configuration, provided every stop configuration is\nfixed by one step.\n\n**Proof sketch.** Choose the least stop-state time with `Nat.find`. Minimality gives the\nstrict earlier-time cut. The fixed-step hypothesis keeps every subsequent configuration equal\nto that first entry; `runFrom_add` then identifies it with the given final configuration. -/\ntheorem exists_first_entry_of_fixed {k : \u2115} {Symbol State : Type*}\n    {input : List Symbol} (tm : MultiTapeTM k Symbol State)\n    (stop : State \u2192 Prop) (c d : Cfg k Symbol State input) (T : \u2115)\n    (hfix : \u2200 z : Cfg k Symbol State input,\n      (\u2203 q, z.state = some q \u2227 stop q) \u2192 tm.step z = z)\n    (hd : \u2203 q, d.state = some q \u2227 stop q) (hT : tm.runFrom c T = d) :\n    \u2203 t \u2264 T, (\u2200 j < t, \u00ac\u2203 q, (tm.runFrom c j).state = some q \u2227 stop q) \u2227\n      tm.runFrom c t = d := by\n  classical\n  have hh : \u2203 t, \u2203 q, (tm.runFrom c t).state = some q \u2227 stop q :=\n    \u27e8T, by rw [hT]; exact hd\u27e9\n  let t := Nat.find hh\n  have ht : t \u2264 T := Nat.find_min' hh (by rw [hT]; exact hd)\n  have hs : \u2203 q, (tm.runFrom c t).state = some q \u2227 stop q := Nat.find_spec hh\n  have hfixed : tm.step (tm.runFrom c t) = tm.runFrom c t := hfix _ hs\n  have hconst (n : \u2115) : tm.runFrom (tm.runFrom c t) n = tm.runFrom c t := by\n    induction n with\n    | zero => exact runFrom_zero\n    | succ n ih => rw [runFrom_succ_eq_step, hfixed]; exact ih\n  refine \u27e8t, ht, fun j hj => Nat.find_min hh hj, ?_\u27e9\n  have he := tm.runFrom_add c t (T - t)\n  rw [Nat.add_sub_of_le ht, hT, hconst] at he\n  exact he.symm\n"
+    }
+  }
+]

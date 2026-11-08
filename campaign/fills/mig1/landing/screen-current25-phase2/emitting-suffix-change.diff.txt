@@ -1,0 +1,26 @@
+--- previous noncomment emitting proof
++++ phase2 noncomment emitting proof
+@@ -47,20 +47,8 @@
+     refine Cfg.ext rfl rfl rfl rfl ?_
+     simp only [candidate, loopCall, captureCfg_output]
+   rw [hclean] at hhalt houtput
+-  have hrun := E.tm.runFrom_add (E.tm.initCfg x) startup t
+-  rw [hinit] at hrun
+-  have hcompute : E.ComputesInTime x
+-      ((List.range (R x.length + 1)).flatMap (fun i => emitF x ((stepF x)^[i] (s0 x))))
+-      (startup + t) := by
+-    refine (computesInTime_iff _ _ _ _).mpr ⟨?_, ?_⟩
+-    · rw [hrun]; exact hhalt
+-    · rw [hrun]; simpa only [List.nil_append, orbit] using houtput
+-  apply hcompute.mono
+-  calc startup + t ≤ 10 * (T x.length + 1) +
+-        (R x.length + 1) * (10 * (T x.length + 1)) := Nat.add_le_add hs ht
+-    _ = 10 * (T x.length + 1) * (R x.length + 2) := by
+-      rw [Nat.mul_comm (R x.length + 1)]
+-      simp only [Nat.mul_add, Nat.mul_one, Nat.mul_two]
+-      omega
++  exact loop_computes_of_startup E x _ (candidate 0) startup t
++    (10 * (T x.length + 1)) (R x.length + 1) hs hinit ht hhalt
++    (by simpa only [List.nil_append, orbit] using houtput)
+ 
+ 

@@ -1,0 +1,71 @@
+"""Full unfiltered native owner comparison and bounded two-instance diagnostics."""
+from pathlib import Path
+import base64,collections,datetime,gzip,hashlib,json,re
+p=Path(__file__).resolve().parent;root=p.parents[4];H=lambda b:hashlib.sha256(b).hexdigest();std={'propext','Classical.choice','Quot.sound'}
+archives=[]
+def raw(name):
+ r=json.loads((p/(name+'-run.json')).read_text());z=(p/(name+'.out.gz')).read_bytes();assert (len(z),H(z))==(r['gzip_bytes'],r['gzip_sha256']);b=gzip.decompress(z);assert (len(b),H(b))==(r['raw_stdout_stderr_bytes'],r['raw_stdout_stderr_sha256'])
+ f=p/(name+'.out.gz.base64.txt')
+ if f.exists():
+  encoded=f.read_bytes();assert (len(encoded),H(encoded))==(r['utf8_base64_bytes'],r['utf8_base64_sha256']);assert base64.b64decode(b''.join(encoded.split()),validate=True)==z
+ archives.append({'name':name,'run_exit':r['exit'],'raw_bytes':len(b),'raw_sha256':H(b),'gzip_bytes':len(z),'gzip_sha256':H(z),'encoded_UTF8_file':f.name if f.exists() else None,'encoded_bytes':r['utf8_base64_bytes'],'encoded_sha256':r['utf8_base64_sha256'],'lossless_verified':True})
+ return b.decode(),r
+endpoints={}
+for label in ['Base','Head']:
+ text,run=raw(label);assert run['exit']==run['errors']==run['warnings']==0
+ rows={}
+ for prefix in ['CENSUS','ALLAX','PUBLICAX','TARGET','TARGETAX']:
+  data=[json.loads(l[len(prefix)+1:]) for l in text.splitlines() if l.startswith(prefix+'|')];assert len({r['name'] for r in data})==len(data);rows[prefix]={r['name']:r for r in data}
+ c,a,public,t,ta=[rows[k] for k in ['CENSUS','ALLAX','PUBLICAX','TARGET','TARGETAX']]
+ assert set(c)==set(a);assert set(public)=={n for n,r in c.items() if not r['private']};assert all(public[n]==a[n] for n in public)
+ assert set(t)==set(ta)=={n for n in c if n=='Complexity.space_universal' or n.startswith('Complexity.space_universal.') or '.f6_' in n};assert all(t[n]==c[n] and ta[n]==a[n] for n in t)
+ complete=re.findall(r'^COMPLETE\|(\d+)\|owners=1$',text,re.M);assert complete==[str(len(c))]
+ assert not re.search(r'^(?:MISSING_TARGET|.*error:)',text,re.M)
+ for field,items in rows.items():(p/(field.lower()+'-'+label.lower()+'.json')).write_text(json.dumps(list(items.values()),indent=2)+'\n')
+ (p/('names-'+label.lower()+'.txt')).write_text('\n'.join(sorted(c))+'\n')
+ endpoints[label]=rows
+base=endpoints['Base'];head=endpoints['Head'];a=base['CENSUS'];b=head['CENSUS'];added=sorted(set(b)-set(a));removed=sorted(set(a)-set(b));shared=sorted(set(a)&set(b));fields=[];axchanges=[]
+for n in shared:
+ d={k:{'base':a[n][k],'head':b[n][k]} for k in a[n] if a[n][k]!=b[n][k]}
+ if d:fields.append({'name':n,'changes':d})
+ if base['ALLAX'][n]!=head['ALLAX'][n]:axchanges.append({'name':n,'before':base['ALLAX'][n],'after':head['ALLAX'][n]})
+authored=json.loads((root/'campaign/fills/f6/review/final-2026-11-08/source-freeze.json').read_text())['added_private'];short=[r['name'] for r in authored];rootnames={n for n in b if any(n.endswith('.'+s) for s in short)};assert len(rootnames)==18
+classification=[]
+for n in added:
+ r=b[n]
+ if n in rootnames:kind='authored-private-proof'
+ elif any(n.startswith(rn+'.') for rn in rootnames):kind='generated-private-proof-descendant'
+ elif n.startswith('Complexity.space_universal.'):kind='generated-target-proof-descendant'
+ else:kind='UNEXPECTED-new-owned-constant'
+ classification.append({'name':n,'classification':kind,'kind':r['kind'],'private':r['private'],'internal':r['internal'],'simp':r['simp'],'unfold':r['unfold'],'axioms':head['ALLAX'][n]['axioms']})
+assert not removed and not fields;assert len(added)==55 and collections.Counter(r['classification'] for r in classification)=={'authored-private-proof':18,'generated-private-proof-descendant':28,'generated-target-proof-descendant':9}
+assert all(r['kind']=='theorem' and not r['simp'] and not r['unfold'] and set(r['axioms'])<=std for r in classification)
+assert all(b[n]['private'] for n in rootnames);assert all(r['private'] or r['internal'] for r in classification)
+assert len(axchanges)==1 and axchanges[0]['name']=='Complexity.space_universal'
+newbad=[n for n in shared if set(base['ALLAX'][n]['axioms'])<=std and not set(head['ALLAX'][n]['axioms'])<=std];assert not newbad
+assert all(set(row['axioms'])<=std for row in head['ALLAX'].values())
+assert [n for n,r in base['ALLAX'].items() if 'sorryAx' in r['axioms']]==['Complexity.space_universal']
+subset=head['TARGETAX'];assert len(subset)==56 and all(set(r['axioms'])<=std for r in subset.values())
+original9=['Complexity.space_universal._proof_1_'+str(i) for i in range(1,10)];assert all(n in head['ALLAX'] and set(head['ALLAX'][n]['axioms'])<=std for n in original9)
+# Fresh controls deliberately diagnose failure of effective opacity, not a passing seal.
+native,_=raw('Fintype-native');sealed,_=raw('Fintype-sealed');control=re.compile(r'^CONTROL\|([^|]+)\|(point|abstract)\|(PASS|FAIL)(?:\|kernelChecked=([^\s]+))?$',re.M);nr=control.findall(native);sr=control.findall(sealed);instances={'Turing.instFintypeRewindPhase','Turing.instFintypeSeekPhase'};wanted={(n,m) for n in instances for m in ['point','abstract']}
+assert len(nr)==len(sr)==4 and {(n,m) for n,m,_,_ in nr}==wanted=={(n,m) for n,m,_,_ in sr};assert all(r[2]=='PASS' and r[3] for r in nr+sr);assert native==sealed
+# Bounded constant-use aggregation: never render theorem proof values.
+text,run=raw('Fintype-uses-v3');assert run['exit']==run['errors']==run['warnings']==0
+meta=[json.loads(l[len('FINTYPEMETA|'):]) for l in text.splitlines() if l.startswith('FINTYPEMETA|')];uses=[json.loads(l[len('FINTYPEUSE|'):]) for l in text.splitlines() if l.startswith('FINTYPEUSE|')];uselines=re.findall(r'^INSTUSE\|([^|]+)\|([^|]+)\|inType=(true|false)\|inValue=(true|false)$',text,re.M)
+assert {r['name'] for r in meta}==instances and len(meta)==2 and len(uses)==2 and len(uselines)==3
+assert {r['name'].rsplit('.Complexity.',1)[1] for r in uses}=={'f6_prefix','sph_valid_machine'};assert all(r[2:] == ('false','true') for r in uselines)
+current_use=next(r for r in uses if r['name'].endswith('.Complexity.f6_prefix'));legacy_use=next(r for r in uses if r['name'].endswith('.Complexity.sph_valid_machine'));assert legacy_use['name'] in shared
+assert all(r['instance'] and not r['private'] and r['reducibility']=='Lean.ReducibilityStatus.semireducible' for r in meta)
+fieldnames={r['name']:[n for n in r['allDirectValueConstantNames'] if any(x in n for x in ['Fintype','Finset.univ'])] for r in uses}
+(p/'fintype-structural.json').write_text(json.dumps({'metadata':meta,'owned_use_rows':[{'owned_name':n,'instance':i,'in_type':t=='true','in_value':v=='true'} for n,i,t,v in uselines],'complete_direct_constant_name_sets':uses,'typeclass_or_enum_related_direct_names':fieldnames,'scope':'Direct structural constant dependencies in compiled type/value; not a theorem-value equivalence or proof that no instance body reduced during elaboration.','controls':{'identities':4,'native_PASS':4,'irreducible_marked_PASS':4,'effective_negative_control':False},'no_abbrev_exception_or_unsafe_override':True},indent=2)+'\n')
+# Optional/rejected attempts are retained with truthful statuses; avoid decompressing980MB here.
+_,failure=raw('Fintype-uses');assert failure['exit']==1 and failure['errors']==2
+optional=json.loads((p/'optional-value-dump-provenance.json').read_text());assert optional['actual_status'].startswith('Completed exit0')
+(p/'utf8-archive-verification.json').write_text(json.dumps({'scope':'Complete unfiltered required raw native outputs and small diagnostics, strict Base64/gzip/fullraw hashes verified; optional980MB proof-value dump separately preserved as gzip/provenance.','archives':archives},indent=2)+'\n')
+(p/'delta.json').write_text(json.dumps({'added':classification,'removed':removed,'all_shared_metadata_field_changes':fields,'all_shared_axiom_changes':axchanges,'formerly_proved_acquired_nonstandard':newbad},indent=2)+'\n')
+stats={}
+for label,d in endpoints.items():
+ c=d['CENSUS'];stats[label]={'all':len(c),'nonprivate':sum(not r['private'] for r in c.values()),'nonprivate_noninternal':sum(not r['private'] and not r['internal'] for r in c.values()),'private':sum(r['private'] for r in c.values()),'ALLAX':len(d['ALLAX']),'PUBLICAX':len(d['PUBLICAX']),'sorry_dependent_ALLAX':sum('sorryAx' in r['axioms'] for r in d['ALLAX'].values()),'sorry_dependent_PUBLICAX':sum('sorryAx' in r['axioms'] for r in d['PUBLICAX'].values()),'kind_counts':dict(collections.Counter(r['kind'] for r in c.values()))}
+result={'checked_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'candidate_head':'f72a807e2376a2b986675c992745d6affc23b96f','endpoints':stats,'every_owned_constant_type_privacy_kind_attributes_and_AXIOMS_unfiltered':True,'shared_metadata_type_owner_privacy_kind_attributes_changes':0,'all_added_classified':dict(collections.Counter(r['classification'] for r in classification)),'removed_constants':0,'authored_public_API_additions':0,'generated_nonprivate_internal_additions':9,'all_new55and_target_subset56_standard_AXIOMS':True,'all_current193owner_AXIOMS_standard':True,'all_original9_target_auxiliaries_individually_accounted':True,'formerly_proved_acquired_nonstandard':0,'shared_AXIOM_delta_only_target_sorry_to_standard':True,'Fintype_controls_effective':False,'Fintype_direct_owned_use':'Within new F6: only f6_prefix value, not type. Unfiltered owner also has unchanged legacy sph_valid_machine/RewindPhase instance use. Full direct-name sets and actual witness types retained, no theorem-value equivalence/blanket opacity claim','failed_attempts':'Initial witness diagnostic used reserved name matches (2 parser errors); corrected full-value diagnostic completed but was overly large; final bounded structural probe passed. All inputs/outputs/provenance preserved.','scope':'Fresh managed import-only compiled metadata/ALLAX and bounded diagnostics; no source/Git/cache/snapshot changes or full229 replay. Root owns actual source native chain and replay.'}
+(p/'summary.json').write_text(json.dumps(result,indent=2)+'\n');print(json.dumps(result,indent=2))

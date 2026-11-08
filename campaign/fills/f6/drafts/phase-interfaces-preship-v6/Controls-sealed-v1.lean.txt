@@ -1,0 +1,99 @@
+import TCSlib.Complexity.SpaceComplexity.Hierarchy
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead Turing.FinTM.controlAction Turing.FinTM.leftAction Turing.FinTM.rightAction Turing.FinTM.emitAction Turing.FinTM.bufferTape Turing.Cfg.mapState Turing.seamCompTM Turing.embedEmitTM Turing.embedEmitRetTM Turing.embedEmitCfg Turing.rulerHostCfg Turing.StepBlock.forwardLoopCfg Turing.startupLoopTM Turing.CodeTM.toFinTM Turing.pairEncode Turing.tableBitsK Turing.unaryFin Turing.tapeAction Turing.headerRulerTM Turing.headerScanTM Turing.headerScanCfg Turing.skipTM Turing.rewindTM
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+
+/-! Kernel-checked direct Eq.refl controls. Pointwise goals project a data field
+for structure-valued definitions; abstracted goals compare the whole defining function.
+Every failure has its own definition/mode identifier; no failed proof is admitted. -/
+open Lean Elab Command Meta in
+elab "#f6_phase_controls" : command => do
+  let names : List Name := [`Turing.MultiTapeTM.step,
+    `Turing.MultiTapeTM.runFrom,
+    `Turing.MultiTapeTM.initCfg,
+    `Turing.Cfg.init,
+    `Turing.Action.apply,
+    `Turing.Cfg.inputSymbol,
+    `Turing.Cfg.workTapeSymbols,
+    `Turing.moveInputPos,
+    `Turing.FinTM.ComputesInTime,
+    `Turing.FinTM.ComputesFunInTime,
+    `Turing.FinTM.Computes,
+    `Turing.MultiTapeTM.spaceUsed,
+    `Turing.MultiTapeTM.spaceUsedByTape,
+    `Turing.MultiTapeTM.visitedByTapeHead,
+    `Turing.FinTM.controlAction,
+    `Turing.FinTM.leftAction,
+    `Turing.FinTM.rightAction,
+    `Turing.FinTM.emitAction,
+    `Turing.FinTM.bufferTape,
+    `Turing.Cfg.mapState,
+    `Turing.seamCompTM,
+    `Turing.embedEmitTM,
+    `Turing.embedEmitRetTM,
+    `Turing.embedEmitCfg,
+    `Turing.rulerHostCfg,
+    `Turing.StepBlock.forwardLoopCfg,
+    `Turing.startupLoopTM,
+    `Turing.CodeTM.toFinTM,
+    `Turing.pairEncode,
+    `Turing.tableBitsK,
+    `Turing.unaryFin,
+    `Turing.tapeAction,
+    `Turing.headerRulerTM,
+    `Turing.headerScanTM,
+    `Turing.headerScanCfg,
+    `Turing.skipTM,
+    `Turing.rewindTM]
+  let mut index := 0
+  for n in names do
+    let some (.defnInfo di) := (← getEnv).find? n | throwError "not a definition {n}"
+    for mode in ["point", "abstract"] do
+      index := index + 1
+      let pair ← liftTermElabM do
+        let levels := di.levelParams.map Level.param
+        let head := mkConst n levels
+        let solve := fun (lhs rhs : Expr) => do
+          let goalType ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar goalType
+          try
+            goal.mvarId!.refl
+            let value ← instantiateMVars goal
+            pure (some (goalType, value))
+          catch ex =>
+            logInfo m!"CONTROL|{n}|{mode}|FAIL"
+            logError m!"RFL_CONTROL|{n}|{mode}|{ex.toMessageData}"
+            pure none
+        if mode == "abstract" then
+          solve head di.value
+        else
+          forallTelescope di.type fun xs resultType => do
+            let mut lhs := mkAppN head xs
+            let mut rhs := (mkAppN di.value xs).headBeta
+            -- Projection goals are distinct from the complete equation even for nullary data.
+            match resultType.getAppFn with
+            | .const ``Turing.FinTM _ =>
+              lhs := mkProj ``Turing.FinTM 0 lhs
+              rhs := mkProj ``Turing.FinTM 0 rhs
+            | .const ``Turing.Cfg _ =>
+              lhs := mkProj ``Turing.Cfg 0 lhs
+              rhs := mkProj ``Turing.Cfg 0 rhs
+            | .const ``Turing.MultiTapeTM _ =>
+              lhs := mkProj ``Turing.MultiTapeTM 0 lhs
+              rhs := mkProj ``Turing.MultiTapeTM 0 rhs
+            | .const ``Turing.Action _ =>
+              lhs := mkProj ``Turing.Action 0 lhs
+              rhs := mkProj ``Turing.Action 0 rhs
+            | _ => pure ()
+            match ← solve lhs rhs with
+            | none => pure none
+            | some (type, value) =>
+              pure (some (← mkForallFVars xs type, ← mkLambdaFVars xs value))
+      match pair with
+      | none => pure ()
+      | some (type, value) =>
+        let declName := Name.mkSimple s!"F6PhaseRflControl_{index}_{mode}"
+        liftCoreM <| addDecl (.thmDecl {
+          name := declName, levelParams := di.levelParams, type := type, value := value })
+        logInfo m!"CONTROL|{n}|{mode}|PASS|kernelChecked={declName}"
+
+#f6_phase_controls

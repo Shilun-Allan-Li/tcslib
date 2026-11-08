@@ -1,0 +1,171 @@
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:512:8: warning: declaration uses 'sorry'
+CONTROL|Turing.pairDiagTM|point|FAIL
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:868:0: error: RFL_CONTROL|Turing.pairDiagTM|point|Tactic `rfl` failed: equality lhs
+  Turing.pairDiagTM.1
+is not definitionally equal to rhs
+  { k := 0, State := Fin 6, fintypeState := Fin.fintype 6, decEqState := instDecidableEqFin 6,
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            match q with
+            | 0 =>
+              match inp with
+              | some b =>
+                { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some b, state := some 1 }
+              | none =>
+                { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some false, state := some 2 }
+            | 1 => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := inp, state := some 0 }
+            | 2 => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some true, state := some 3 }
+            | 3 => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+            | 4 =>
+              match inp with
+              | some val =>
+                { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+              | none => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := none, state := some 5 }
+            | x =>
+              match inp with
+              | some b =>
+                { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some 5 }
+              | none =>
+                { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }.1
+
+⊢ Turing.pairDiagTM.1 =
+    { k := 0, State := Fin 6, fintypeState := Fin.fintype 6, decEqState := instDecidableEqFin 6,
+        tm :=
+          { q₀ := 0,
+            tr := fun q inp x =>
+              match q with
+              | 0 =>
+                match inp with
+                | some b =>
+                  { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some b, state := some 1 }
+                | none =>
+                  { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some false, state := some 2 }
+              | 1 => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := inp, state := some 0 }
+              | 2 => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some true, state := some 3 }
+              | 3 => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+              | 4 =>
+                match inp with
+                | some val =>
+                  { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+                | none => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := none, state := some 5 }
+              | x =>
+                match inp with
+                | some b =>
+                  { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some 5 }
+                | none =>
+                  { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }.1
+CONTROL|Turing.pairDiagTM|abstract|FAIL
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:868:0: error: RFL_CONTROL|Turing.pairDiagTM|abstract|Tactic `rfl` failed: equality lhs
+  Turing.pairDiagTM
+is not definitionally equal to rhs
+  { k := 0, State := Fin 6, fintypeState := Fin.fintype 6, decEqState := instDecidableEqFin 6,
+    tm :=
+      { q₀ := 0,
+        tr := fun q inp x =>
+          match q with
+          | 0 =>
+            match inp with
+            | some b => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some b, state := some 1 }
+            | none =>
+              { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some false, state := some 2 }
+          | 1 => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := inp, state := some 0 }
+          | 2 => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some true, state := some 3 }
+          | 3 => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+          | 4 =>
+            match inp with
+            | some val => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+            | none => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := none, state := some 5 }
+          | x =>
+            match inp with
+            | some b => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some 5 }
+            | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+
+⊢ Turing.pairDiagTM =
+    { k := 0, State := Fin 6, fintypeState := Fin.fintype 6, decEqState := instDecidableEqFin 6,
+      tm :=
+        { q₀ := 0,
+          tr := fun q inp x =>
+            match q with
+            | 0 =>
+              match inp with
+              | some b =>
+                { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some b, state := some 1 }
+              | none =>
+                { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some false, state := some 2 }
+            | 1 => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := inp, state := some 0 }
+            | 2 => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := some true, state := some 3 }
+            | 3 => { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+            | 4 =>
+              match inp with
+              | some val =>
+                { inputTape := SignType.neg, workTapes := fun i => i.elim0, output := none, state := some 4 }
+              | none => { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := none, state := some 5 }
+            | x =>
+              match inp with
+              | some b =>
+                { inputTape := SignType.pos, workTapes := fun i => i.elim0, output := some b, state := some 5 }
+              | none => { inputTape := SignType.zero, workTapes := fun i => i.elim0, output := none, state := none } } }
+CONTROL|Turing.MultiTapeTM.spaceUsed|point|FAIL
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:868:0: error: RFL_CONTROL|Turing.MultiTapeTM.spaceUsed|point|Tactic `rfl` failed: equality lhs
+  Turing.MultiTapeTM.spaceUsed cfg t
+is not definitionally equal to rhs
+  ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+input : List Symbol
+tm : Turing.MultiTapeTM k Symbol State
+cfg : Turing.Cfg k Symbol State input
+t : ℕ
+⊢ Turing.MultiTapeTM.spaceUsed cfg t = ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+CONTROL|Turing.MultiTapeTM.spaceUsed|abstract|FAIL
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:868:0: error: RFL_CONTROL|Turing.MultiTapeTM.spaceUsed|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.spaceUsed
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {input} {tm} cfg t => ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+
+⊢ @Turing.MultiTapeTM.spaceUsed = fun {k} {State} {Symbol} {input} {tm} cfg t =>
+    ∑ i, Turing.MultiTapeTM.spaceUsedByTape cfg t i
+CONTROL|Turing.MultiTapeTM.initCfg|point|FAIL
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:868:0: error: RFL_CONTROL|Turing.MultiTapeTM.initCfg|point|Tactic `rfl` failed: equality lhs
+  (Turing.MultiTapeTM.initCfg input).1
+is not definitionally equal to rhs
+  (Turing.Cfg.init tm.q₀ input).1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+tm : Turing.MultiTapeTM k Symbol State
+input : List Symbol
+⊢ (Turing.MultiTapeTM.initCfg input).1 = (Turing.Cfg.init tm.q₀ input).1
+CONTROL|Turing.MultiTapeTM.initCfg|abstract|FAIL
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:868:0: error: RFL_CONTROL|Turing.MultiTapeTM.initCfg|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.MultiTapeTM.initCfg
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} {tm} input => Turing.Cfg.init tm.q₀ input
+
+⊢ @Turing.MultiTapeTM.initCfg = fun {k} {State} {Symbol} {tm} input => Turing.Cfg.init tm.q₀ input
+CONTROL|Turing.Cfg.init|point|FAIL
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:868:0: error: RFL_CONTROL|Turing.Cfg.init|point|Tactic `rfl` failed: equality lhs
+  (Turing.Cfg.init q₀ input).1
+is not definitionally equal to rhs
+  { state := some q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }.1
+
+k : ℕ
+State : Type u_1
+Symbol : Type u_2
+q₀ : State
+input : List Symbol
+⊢ (Turing.Cfg.init q₀ input).1 =
+    { state := some q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }.1
+CONTROL|Turing.Cfg.init|abstract|FAIL
+/private/tmp/tcslib-g119-pairdiag-gsiaec43/Controls_sealed_v1.lean:868:0: error: RFL_CONTROL|Turing.Cfg.init|abstract|Tactic `rfl` failed: equality lhs
+  @Turing.Cfg.init
+is not definitionally equal to rhs
+  fun {k} {State} {Symbol} q₀ input =>
+    { state := some q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }
+
+⊢ @Turing.Cfg.init = fun {k} {State} {Symbol} q₀ input =>
+    { state := some q₀, inputPos := 1, workTapes := fun x x_1 => none, workTapePos := fun x => 0, output := [] }

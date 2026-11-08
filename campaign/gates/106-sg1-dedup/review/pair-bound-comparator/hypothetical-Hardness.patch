@@ -1,0 +1,23 @@
+--- current Hardness.lean
++++ UNAPPROVED hypothetical Hardness.lean
+@@ -3,6 +3,7 @@
+ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Seyoon Ragavan
+ -/
++import TCSlib.Complexity.ClassNP.PolyTimeBlockLoop
+ import TCSlib.Complexity.ClassNP.PolyTimePrefix
+ import TCSlib.Complexity.ClassNP.SAT
+ import TCSlib.Complexity.ClassNP.TMSAT
+@@ -6844,8 +6845,10 @@
+     exact ⟨Nat.zero_le _, Nat.zero_le _⟩
+   | some p =>
+     rcases p with ⟨a, b⟩
+-    have hlen := congrArg List.length (eq_pairEncode_of_pairDecode w a b hd)
+-    rw [length_pairEncode] at hlen
++    have heq := eq_pairEncode_of_pairDecode w a b hd
++    have hbound := length_pair_components_le w
++    have hab : 2 * a.length + b.length ≤ w.length := by
++      simpa only [heq, pairFstD_pairEncode, pairSndD_pairEncode] using hbound
+     simp only [Option.map_some, Option.getD_some]
+     constructor <;> omega
+ 

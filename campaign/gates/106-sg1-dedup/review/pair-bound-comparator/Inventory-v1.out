@@ -1,0 +1,149 @@
+READER|Complexity.length_pair_components_le|TCSlib.Complexity.ClassNP.PolyTimeBlockLoop|theorem|private=false|[propext,
+ Quot.sound]
+TYPE_REPR|Complexity.length_pair_components_le|Lean.Expr.forallE
+  `y
+  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+  (Lean.Expr.app
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.app (Lean.Expr.const `LE.le [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+        (Lean.Expr.const `instLENat []))
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `HAdd.hAdd [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
+                  (Lean.Expr.const `Nat []))
+                (Lean.Expr.const `Nat []))
+              (Lean.Expr.const `Nat []))
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `instHAdd [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+              (Lean.Expr.const `instAddNat [])))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.app
+                      (Lean.Expr.const `HMul.hMul [Lean.Level.zero, Lean.Level.zero, Lean.Level.zero])
+                      (Lean.Expr.const `Nat []))
+                    (Lean.Expr.const `Nat []))
+                  (Lean.Expr.const `Nat []))
+                (Lean.Expr.app
+                  (Lean.Expr.app (Lean.Expr.const `instHMul [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                  (Lean.Expr.const `instMulNat [])))
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app (Lean.Expr.const `OfNat.ofNat [Lean.Level.zero]) (Lean.Expr.const `Nat []))
+                  (Lean.Expr.lit (Lean.Literal.natVal 2)))
+                (Lean.Expr.app (Lean.Expr.const `instOfNatNat []) (Lean.Expr.lit (Lean.Literal.natVal 2)))))
+            (Lean.Expr.app
+              (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+              (Lean.Expr.app (Lean.Expr.const `Complexity.pairFstD []) (Lean.Expr.bvar 0)))))
+        (Lean.Expr.app
+          (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+          (Lean.Expr.app (Lean.Expr.const `Complexity.pairSndD []) (Lean.Expr.bvar 0)))))
+    (Lean.Expr.app
+      (Lean.Expr.app (Lean.Expr.const `List.length [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+      (Lean.Expr.bvar 0)))
+  (Lean.BinderInfo.default)
+READER|Complexity.pairFstD_pairEncode|TCSlib.Complexity.ClassNP.PolyTimePairing|theorem|private=false|[propext,
+ Quot.sound]
+TYPE_REPR|Complexity.pairFstD_pairEncode|Lean.Expr.forallE
+  `a
+  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+  (Lean.Expr.forallE
+    `b
+    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)])
+          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+        (Lean.Expr.app
+          (Lean.Expr.const `Complexity.pairFstD [])
+          (Lean.Expr.app
+            (Lean.Expr.app (Lean.Expr.const `Turing.pairEncode []) (Lean.Expr.bvar 1))
+            (Lean.Expr.bvar 0))))
+      (Lean.Expr.bvar 1))
+    (Lean.BinderInfo.default))
+  (Lean.BinderInfo.default)
+READER|Complexity.pairSndD_pairEncode|TCSlib.Complexity.ClassNP.PolyTimePairing|theorem|private=false|[propext,
+ Quot.sound]
+TYPE_REPR|Complexity.pairSndD_pairEncode|Lean.Expr.forallE
+  `a
+  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+  (Lean.Expr.forallE
+    `b
+    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+    (Lean.Expr.app
+      (Lean.Expr.app
+        (Lean.Expr.app
+          (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)])
+          (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+        (Lean.Expr.app
+          (Lean.Expr.const `Complexity.pairSndD [])
+          (Lean.Expr.app
+            (Lean.Expr.app (Lean.Expr.const `Turing.pairEncode []) (Lean.Expr.bvar 1))
+            (Lean.Expr.bvar 0))))
+      (Lean.Expr.bvar 0))
+    (Lean.BinderInfo.default))
+  (Lean.BinderInfo.default)
+READER|Turing.eq_pairEncode_of_pairDecode|TCSlib.Complexity.TuringMachine.Encoding|theorem|private=false|[propext]
+TYPE_REPR|Turing.eq_pairEncode_of_pairDecode|Lean.Expr.forallE
+  `z
+  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+  (Lean.Expr.forallE
+    `a
+    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+    (Lean.Expr.forallE
+      `b
+      (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))
+      (Lean.Expr.forallE
+        `h
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)])
+              (Lean.Expr.app
+                (Lean.Expr.const `Option [Lean.Level.zero])
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Prod [Lean.Level.zero, Lean.Level.zero])
+                    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+                  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))))
+            (Lean.Expr.app (Lean.Expr.const `Turing.pairDecode []) (Lean.Expr.bvar 2)))
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const `Option.some [Lean.Level.zero])
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.const `Prod [Lean.Level.zero, Lean.Level.zero])
+                  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+                (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool []))))
+            (Lean.Expr.app
+              (Lean.Expr.app
+                (Lean.Expr.app
+                  (Lean.Expr.app
+                    (Lean.Expr.const `Prod.mk [Lean.Level.zero, Lean.Level.zero])
+                    (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+                  (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+                (Lean.Expr.bvar 1))
+              (Lean.Expr.bvar 0))))
+        (Lean.Expr.app
+          (Lean.Expr.app
+            (Lean.Expr.app
+              (Lean.Expr.const `Eq [Lean.Level.succ (Lean.Level.zero)])
+              (Lean.Expr.app (Lean.Expr.const `List [Lean.Level.zero]) (Lean.Expr.const `Bool [])))
+            (Lean.Expr.bvar 3))
+          (Lean.Expr.app (Lean.Expr.app (Lean.Expr.const `Turing.pairEncode []) (Lean.Expr.bvar 2)) (Lean.Expr.bvar 1)))
+        (Lean.BinderInfo.default))
+      (Lean.BinderInfo.default))
+    (Lean.BinderInfo.default))
+  (Lean.BinderInfo.default)
+ORDINARY|Turing.pairEncode|simp=false|unfold=false
+ORDINARY|Turing.pairDecode|simp=false|unfold=false
+ORDINARY|Complexity.pairFstD|simp=false|unfold=false
+ORDINARY|Complexity.pairSndD|simp=false|unfold=false

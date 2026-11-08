@@ -1,17 +1,12 @@
-# Gate117: #230 preparing for Codex audit
+# Gate117 — CLOSED PASS0/0/0/14
 
-Seyoon approved23 non-simp theorems: CodeTM bundle equation1, left/right fields10,
-capture fields5, branch shape/run equations3, and four canonical zero-space facts4.
-PR **#230**, draft, head `1160c18f03fd318f0dec25738790935fa61379d4`, base `e3adffac67377a8b6e23bed74bfdbb44a123dd86`.
+**Clear to merge: #230.** Exact audited head `1160c18f03fd318f0dec25738790935fa61379d4`, campaign base.
+Seyoon dispatched Codex and received0blockers/0majors/0minors/14notes; all notes
+are accepted in resolutions.md. Verbatim findings and independent review remain.
 
-Five full owner-module preflights pass; the fresh current merged-tree replay **mra2** passes
-**394 modules /0 failures /0 static mismatches** on a complete copy of oleans-mac3.
-The initial failed forward-reference preflight is preserved; only the new branch lemma's
-placement changed, leaving all surviving source bytes identical. Independent source/search/
-lint/eight-file screen finds no new pair; compiled census adds exactly23 public theorems,
-no auxiliary/private changes, all non-simp and standard axioms. Owner-scoped seals and32 paired
-controls pass in their stated scopes; no global legacy seal or full condTM repair is claimed.
-Complete raw evidence is in evidence/ and review/.
-
-Codex selected (findings Markdown attached and pasted). The verified169-section packet is published; exact pins are in dispatch.json.
-**Ready to dispatch**, using prompt.md; **no audit dispatched yet**. **Not yet clear to merge: #230.** Gate118 is reserved for MIG-1 landing; next free119.
+Five owner preflights, scoped seals/controls/compiler checks and actual mra2
+394/0/static0/77 pass. The campaign's Lean is unchanged from mac3 through
+`7e5aa5f61ec05161b2fc5e5a8a2903b76ce01ac6`, preserving replay validity without a new run.
+PR is now non-draft and mergeable/clean per authenticated GitHub check. No source
+changed after dispatch. The23theorem scope excludes the separate gate119 changes
+and MIG-1 landing. Seyoon merges; no merge is performed here.

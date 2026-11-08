@@ -1,0 +1,138 @@
+/private/tmp/tcslib-f6-preship-wyuwe7yo/Phases_v1.lean:67:34: error: unexpected identifier; expected '}'
+/private/tmp/tcslib-f6-preship-wyuwe7yo/Phases_v1.lean:126:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+    (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+in the target expression
+  e.state = some entry
+
+case refine_1
+K n : ℕ
+Q : Type
+entry : Q
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x : List Bool
+sigma : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+e : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg sigma (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+h :
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+      (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x)) =
+    Cfg.mapState (fun x => entry)
+      { state := some (), inputPos := 1,
+        workTapes := fun j =>
+          if ↑j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if ↑j = 1 + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+        workTapePos := fun x => 0, output := [] }
+⊢ e.state = some entry
+/private/tmp/tcslib-f6-preship-wyuwe7yo/Phases_v1.lean:127:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+    (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+in the target expression
+  ↑e.inputPos = 1
+
+case refine_2
+K n : ℕ
+Q : Type
+entry : Q
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x : List Bool
+sigma : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+e : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg sigma (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+h :
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+      (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x)) =
+    Cfg.mapState (fun x => entry)
+      { state := some (), inputPos := 1,
+        workTapes := fun j =>
+          if ↑j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if ↑j = 1 + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+        workTapePos := fun x => 0, output := [] }
+⊢ ↑e.inputPos = 1
+/private/tmp/tcslib-f6-preship-wyuwe7yo/Phases_v1.lean:128:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+    (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+in the target expression
+  e.workTapePos j = 0
+
+case refine_3
+K n : ℕ
+Q : Type
+entry : Q
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x : List Bool
+sigma : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+e : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg sigma (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+h :
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+      (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x)) =
+    Cfg.mapState (fun x => entry)
+      { state := some (), inputPos := 1,
+        workTapes := fun j =>
+          if ↑j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if ↑j = 1 + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+        workTapePos := fun x => 0, output := [] }
+j : Fin (K + 3)
+⊢ e.workTapePos j = 0
+/private/tmp/tcslib-f6-preship-wyuwe7yo/Phases_v1.lean:129:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+    (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+in the target expression
+  e.output = []
+
+case refine_4
+K n : ℕ
+Q : Type
+entry : Q
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x : List Bool
+sigma : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+e : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg sigma (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+h :
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+      (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x)) =
+    Cfg.mapState (fun x => entry)
+      { state := some (), inputPos := 1,
+        workTapes := fun j =>
+          if ↑j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if ↑j = 1 + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+        workTapePos := fun x => 0, output := [] }
+⊢ e.output = []
+/private/tmp/tcslib-f6-preship-wyuwe7yo/Phases_v1.lean:130:8: error: Tactic `rewrite` failed: Did not find an occurrence of the pattern
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+    (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+in the target expression
+  e.workTapes j a =
+    if ↑j = 1 then FinTM.bufferTape (tableBitsK M.tr) a
+    else if ↑j = 2 then FinTM.bufferTape (unaryFin M.q₀) (a - 2) else none
+
+case refine_5
+K n : ℕ
+Q : Type
+entry : Q
+M : MultiTapeTM 1 Bool (Fin (n + 1))
+x : List Bool
+sigma : Fin 3 ↪ Fin (K + 3) := Fin.castLEEmb ⋯
+e : Cfg (K + 3) Bool Q x :=
+  embedEmitCfg sigma (fun x x_1 => none) (fun x => 0) [] (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x))
+h :
+  embedEmitCfg (Fin.castLEEmb ⋯) (fun x x_1 => none) (fun x => 0) []
+      (StepBlock.forwardLoopCfg entry M (MultiTapeTM.initCfg x)) =
+    Cfg.mapState (fun x => entry)
+      { state := some (), inputPos := 1,
+        workTapes := fun j =>
+          if ↑j = 1 then FinTM.bufferTape (tableBitsK M.tr)
+          else if ↑j = 1 + 1 then fun p => FinTM.bufferTape (unaryFin M.q₀) (p - 2) else fun x => none,
+        workTapePos := fun x => 0, output := [] }
+j : Fin (K + 3)
+a : ℤ
+⊢ e.workTapes j a =
+    if ↑j = 1 then FinTM.bufferTape (tableBitsK M.tr) a
+    else if ↑j = 2 then FinTM.bufferTape (unaryFin M.q₀) (a - 2) else none
+'F6PhaseInterfaces.second_scan' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6PhaseInterfaces.skip_endpoint' depends on axioms: [propext, sorryAx, Quot.sound]
+'F6PhaseInterfaces.final_rewind' depends on axioms: [propext, Classical.choice, Quot.sound]
+'F6PhaseInterfaces.to_rewind' depends on axioms: [propext]
+'F6PhaseInterfaces.installed_bank' depends on axioms: [propext, sorryAx, Classical.choice, Quot.sound]

@@ -1,0 +1,26 @@
+--- f72-diagnostic
++++ 0d-diagnostic
+@@ -110,8 +110,8 @@
+ attribute [local irreducible] Complexity.TimeHierarchy.code Turing.Action.apply Turing.Cfg.init Turing.Cfg.inputSymbol Turing.Cfg.mapState Turing.Cfg.workTapeSymbols Turing.CodeTM.toFinTM Turing.FinTM.ComputesInTime Turing.FinTM.bufferTape Turing.FinTM.controlAction Turing.MultiTapeTM.initCfg Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.step Turing.MultiTapeTM.visitedByTapeHead Turing.StepBlock.forwardLoopCfg Turing.embedEmitCfg Turing.embedEmitRetTM Turing.embedEmitTM Turing.headerRulerTM Turing.headerScanCfg Turing.headerScanTM Turing.instDecidableEqRewindPhase Turing.instDecidableEqSeekPhase Turing.moveInputPos Turing.pairEncode Turing.rewindTM Turing.rulerHostCfg Turing.seamCompTM Turing.skipTM Turing.startupLoopTM Turing.tableBitsK Turing.unaryFin Turing.walkTM Nat.bits
+ attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+ 
+-/-- One seam of the prefix: `Turing.seamCompTM_run_ofCfg` and
+-`Turing.seamCompTM_firstReturn_ofCfg` together, with the composite's exit control. -/
++/-- One seam of the prefix: the public `Turing.seamCompTM_step` supplies the run, endpoint
++control and first-return cut. -/
+ private theorem f6_seam {k : ℕ} {S₁ S₂ : Type} [DecidableEq S₁] {x : List Bool}
+     (M₁ : MultiTapeTM k Bool S₁) (exit : S₁) (M₂ : MultiTapeTM k Bool S₂) (entry q₂ : S₂)
+     {c₀ c₁ : Cfg k Bool S₁ x} {c₃ : Cfg k Bool S₂ x} {T₁ T₂ : ℕ}
+@@ -124,10 +124,8 @@
+       (c₃.mapState (Sum.inr : S₂ → S₁ ⊕ S₂)).state = some (Sum.inr q₂) ∧
+       ∀ t < T₁ + 1 + T₂,
+         ((seamCompTM M₁ exit M₂ entry).runFrom (c₀.mapState Sum.inl) t).state ≠
+-          some (Sum.inr q₂) :=
+-  ⟨seamCompTM_run_ofCfg M₁ exit M₂ entry h₁ hexit hcut h₂,
+-    by rw [Cfg.mapState_state, hq, Option.map_some],
+-    seamCompTM_firstReturn_ofCfg M₁ exit M₂ entry q₂ h₁ hexit hcut h₂ hq hcut₂⟩
++          some (Sum.inr q₂) := by
++  exact seamCompTM_step M₁ exit M₂ entry q₂ h₁ hexit hcut h₂ hq hcut₂
+ end F6LandingSeal02
+ 
+ section F6LandingSeal03

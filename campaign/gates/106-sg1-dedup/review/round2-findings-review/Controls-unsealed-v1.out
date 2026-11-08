@@ -1,0 +1,48 @@
+CONTROL|Complexity.pairMapSnd|point|PASS|kernelChecked=G106PolyRflControl_1_point
+CONTROL|Complexity.pairMapSnd|abstract|PASS|kernelChecked=G106PolyRflControl_2_abstract
+CONTROL|Complexity.PolyTimeComputable|point|PASS|kernelChecked=G106PolyRflControl_3_point
+CONTROL|Complexity.PolyTimeComputable|abstract|PASS|kernelChecked=G106PolyRflControl_4_abstract
+CONTROL|Turing.pairEncode|point|PASS|kernelChecked=G106PolyRflControl_5_point
+CONTROL|Turing.pairEncode|abstract|PASS|kernelChecked=G106PolyRflControl_6_abstract
+CONTROL|Turing.pairDecode|point|FAIL
+/private/tmp/tcslib-g106-r2-fp-c1kgldw4/Controls_unsealed_v1.lean:63:0: error: RFL_CONTROL|Turing.pairDecode|point|Tactic `rfl` failed: equality lhs
+  Turing.pairDecode a✝
+is not definitionally equal to rhs
+  List.brecOn a✝ fun x f =>
+    (match (motive := (x : List Bool) → List.below x → Option (List Bool × List Bool)) x with
+      | false :: false :: rest => fun x => Option.map (fun p => (false :: p.1, p.2)) x.2.1
+      | true :: true :: rest => fun x => Option.map (fun p => (true :: p.1, p.2)) x.2.1
+      | false :: true :: rest => fun x => some ([], rest)
+      | x => fun x => none)
+      f
+
+a✝ : List Bool
+⊢ Turing.pairDecode a✝ =
+    List.brecOn a✝ fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool × List Bool)) x with
+        | false :: false :: rest => fun x => Option.map (fun p => (false :: p.1, p.2)) x.2.1
+        | true :: true :: rest => fun x => Option.map (fun p => (true :: p.1, p.2)) x.2.1
+        | false :: true :: rest => fun x => some ([], rest)
+        | x => fun x => none)
+        f
+CONTROL|Turing.pairDecode|abstract|FAIL
+/private/tmp/tcslib-g106-r2-fp-c1kgldw4/Controls_unsealed_v1.lean:63:0: error: RFL_CONTROL|Turing.pairDecode|abstract|Tactic `rfl` failed: equality lhs
+  Turing.pairDecode
+is not definitionally equal to rhs
+  fun x =>
+    List.brecOn x fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool × List Bool)) x with
+        | false :: false :: rest => fun x => Option.map (fun p => (false :: p.1, p.2)) x.2.1
+        | true :: true :: rest => fun x => Option.map (fun p => (true :: p.1, p.2)) x.2.1
+        | false :: true :: rest => fun x => some ([], rest)
+        | x => fun x => none)
+        f
+
+⊢ Turing.pairDecode = fun x =>
+    List.brecOn x fun x f =>
+      (match (motive := (x : List Bool) → List.below x → Option (List Bool × List Bool)) x with
+        | false :: false :: rest => fun x => Option.map (fun p => (false :: p.1, p.2)) x.2.1
+        | true :: true :: rest => fun x => Option.map (fun p => (true :: p.1, p.2)) x.2.1
+        | false :: true :: rest => fun x => some ([], rest)
+        | x => fun x => none)
+        f

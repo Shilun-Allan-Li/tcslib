@@ -1,0 +1,214 @@
+{
+  "no_sorry_admit_unsafe_axiom_unfold_in_four_roots": true,
+  "guard_removal_exact_byte_identity": true,
+  "guard_before_first_header": true,
+  "explicit_simp_dsimp_rw_rows": [
+    {
+      "line": 20,
+      "text": "rw [CodeTM.toFinTM_eq] at hcomp hspace"
+    },
+    {
+      "line": 60,
+      "text": "rw [hi, MultiTapeTM.spaceUsedByTape_eq_card, own_mirror]"
+    },
+    {
+      "line": 64,
+      "text": "rw [MultiTapeTM.mem_visitedByTapeHead_iff] at hp \u22a2"
+    },
+    {
+      "line": 68,
+      "text": "rw [MultiTapeTM.spaceUsedByTape_eq_card] at hb"
+    },
+    {
+      "line": 75,
+      "text": "rw [he] at hb"
+    },
+    {
+      "line": 81,
+      "text": "rw [he] at hb"
+    },
+    {
+      "line": 85,
+      "text": "rw [MultiTapeTM.spaceUsedByTape_eq_card, hidle, Finset.card_singleton]"
+    },
+    {
+      "line": 104,
+      "text": "refine \u27e8C, by dsimp only [C]; omega, ?_\u27e9"
+    },
+    {
+      "line": 110,
+      "text": "dsimp only [a]"
+    },
+    {
+      "line": 113,
+      "text": "simpa only [d, Nat.mul_one] using Nat.mul_le_mul_left (2 * D \u03b1 + 4) hs"
+    },
+    {
+      "line": 120,
+      "text": "dsimp only [C]"
+    }
+  ],
+  "named_argument_rows": [
+    {
+      "line": 18,
+      "text": "M.tm.spaceUsed (M.tm.initCfg x) t \u2264 s := by"
+    },
+    {
+      "line": 19,
+      "text": "have hs := (CodeTM.one_le_spaceUsed M x t).trans hspace"
+    },
+    {
+      "line": 22,
+      "text": "{ k := 1, State := Fin (M.numStates + 1), tm := M.tm } x output t).mp hcomp"
+    },
+    {
+      "line": 54,
+      "text": "\u2200 i, L.spaceUsedByTape c r i \u2264 s + (2 * D + 1) + \u2113 + 3 := by"
+    },
+    {
+      "line": 62,
+      "text": "M.tm.visitedByTapeHead (M.tm.initCfg x) t 0 := by"
+    },
+    {
+      "line": 67,
+      "text": "have hb := (M.tm.spaceUsedByTape_le_spaceUsed (M.tm.initCfg x) t 0).trans hspace"
+    },
+    {
+      "line": 69,
+      "text": "have hm := (Finset.card_le_card hsub).trans hb"
+    },
+    {
+      "line": 72,
+      "text": "\u00b7 have hb := L.spaceUsedByTape_le_card_Icc c r i (-(D : \u2124)) (D : \u2124)"
+    },
+    {
+      "line": 74,
+      "text": "have he : ((D : \u2124) + 1 - -(D : \u2124)).toNat = 2 * D + 1 := by omega"
+    },
+    {
+      "line": 79,
+      "text": "have hb := L.spaceUsedByTape_le_card_Icc c r (Fin.last (K + 3)) (-1) \u2113 own_ruler"
+    },
+    {
+      "line": 80,
+      "text": "have he : ((\u2113 : \u2124) + 1 - -1).toNat = \u2113 + 2 := by omega"
+    },
+    {
+      "line": 83,
+      "text": "\u00b7 have hv : i.val \u2260 K + 3 := fun h => hr (Fin.ext h)"
+    },
+    {
+      "line": 84,
+      "text": "have hidle := own_idle i (by omega) (by omega)"
+    },
+    {
+      "line": 99,
+      "text": "(2 * (Nat.bits s).length + 2 * \u03b1.length + 4) + 3) \u2264 C * s := by"
+    },
+    {
+      "line": 101,
+      "text": "let a := 2 * \u03b1.length + 6"
+    },
+    {
+      "line": 102,
+      "text": "let d := 2 * D \u03b1 + 4"
+    },
+    {
+      "line": 103,
+      "text": "let C := p \u03b1 + q \u03b1 * a + (K + 4) * (1 + d + a) + 1"
+    },
+    {
+      "line": 106,
+      "text": "have hs := (CodeTM.one_le_spaceUsed (Complexity.TimeHierarchy.code.decode \u03b1) x t).trans hspace"
+    },
+    {
+      "line": 107,
+      "text": "have hbits := Turing.length_bits_le_self s"
+    },
+    {
+      "line": 108,
+      "text": "have ha : 2 * (Nat.bits s).length + 2 * \u03b1.length + 4 \u2264 a * s := by"
+    },
+    {
+      "line": 109,
+      "text": "have hconst := Nat.mul_le_mul_left (2 * \u03b1.length + 4) hs"
+    },
+    {
+      "line": 112,
+      "text": "have hd : 2 * D \u03b1 + 4 \u2264 d * s := by"
+    },
+    {
+      "line": 114,
+      "text": "have hp := Nat.mul_le_mul_left (p \u03b1) hs"
+    },
+    {
+      "line": 115,
+      "text": "have hq := Nat.mul_le_mul_left (q \u03b1) ha"
+    },
+    {
+      "line": 117,
+      "text": "(2 * (Nat.bits s).length + 2 * \u03b1.length + 4) + 3 \u2264 (1 + d + a) * s := by"
+    },
+    {
+      "line": 119,
+      "text": "have hN := Nat.mul_le_mul_left (K + 4) hS"
+    },
+    {
+      "line": 138,
+      "text": "have hv := congrArg Fin.val he"
+    },
+    {
+      "line": 140,
+      "text": "have := i.isLt"
+    },
+    {
+      "line": 153,
+      "text": "let wanted : List String := [\"source_bundle_budget\", \"conditional_ledger\","
+    },
+    {
+      "line": 155,
+      "text": "let kind := fun (ci : ConstantInfo) => match ci with"
+    },
+    {
+      "line": 159,
+      "text": "let mut roots : Array Name := #[]"
+    },
+    {
+      "line": 162,
+      "text": "| .str _ base => if wanted.contains base then roots := roots.push n"
+    },
+    {
+      "line": 168,
+      "text": "let mut selected : Array Name := #[]"
+    },
+    {
+      "line": 170,
+      "text": "if roots.any (fun r => r.isPrefixOf n) then selected := selected.push n"
+    },
+    {
+      "line": 172,
+      "text": "let some ci := env.find? n | throwError \"selected constant missing {n}\""
+    },
+    {
+      "line": 175,
+      "text": "let used := ci.type.getUsedConstants ++ (ci.value?.map (\u00b7.getUsedConstants)).getD #[]"
+    },
+    {
+      "line": 176,
+      "text": "let mut seen : Array Name := #[]"
+    },
+    {
+      "line": 179,
+      "text": "seen := seen.push c"
+    },
+    {
+      "line": 182,
+      "text": "let owner := env.header.moduleNames[j.toNat]!"
+    },
+    {
+      "line": 184,
+      "text": "let hint := match di.hints with"
+    }
+  ],
+  "manual_named_argument_disposition": "The bundle constructor has only k:=1, State:=Fin(M.numStates+1), tm:=M.tm; these are projections of the published bundle RHS. No foreign definition is passed to simplifier/unfold tactics. Instrumentation reads compiled constants separately from the four proof roots."
+}
