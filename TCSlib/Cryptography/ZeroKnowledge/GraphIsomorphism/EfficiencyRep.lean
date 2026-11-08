@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
 import TCSlib.Cryptography.ZeroKnowledge.GraphIsomorphism.Efficiency
 
 set_option maxHeartbeats 0
@@ -344,13 +345,24 @@ theorem lastMsg_poly : PolyTimeComputable fun w => pairFstD (pairSndD^[lastSteps
 
 /-! ### Unary multiplication and coin blocks -/
 
-/-- Unary multiplication `⟨u, v⟩ ↦ 1^{|u| · |v|}` is polynomial-time
-(`Turing.FinTM.computesFunInTime_unaryMul`). -/
+/-- Unary multiplication `⟨u, v⟩ ↦ 1^{|u| · |v|}` is polynomial-time.
+Pair the total projections, apply `BinArith.mulU`, and normalize by unary length
+(`BinArith.length_mulU`); public projection equations give `[]` on malformed words. -/
 theorem unaryMul_poly : PolyTimeComputable fun z => match pairDecode z with
     | some (u, v) => List.replicate (u.length * v.length) true
     | none => [] := by
-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
-  exact ⟨M, c, 2, hM⟩
+  have h := polyTimeComputable_unary.comp
+    (BinArith.polyTimeComputable_mulU.comp
+      (polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD))
+  refine h.congr fun z => ?_
+  cases hz : pairDecode z with
+  | none =>
+    simp only [Function.comp_apply, BinArith.length_mulU, pairFstD_eq, pairSndD_eq, hz,
+      Option.map_none, Option.getD_none, List.length_nil, Nat.zero_mul, List.replicate_zero]
+  | some ab =>
+    rcases ab with ⟨a, b⟩
+    simp only [Function.comp_apply, BinArith.length_mulU, pairFstD_eq, pairSndD_eq, hz,
+      Option.map_some, Option.getD_some]
 
 /-- The product of two unary counts given by polynomial-time maps. -/
 theorem unaryMul_comp {f g : List Bool → ℕ} (hf : PolyTimeComputable fun w => List.replicate (f w) true)

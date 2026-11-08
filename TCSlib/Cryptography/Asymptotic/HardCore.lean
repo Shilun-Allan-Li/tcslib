@@ -263,8 +263,7 @@ theorem not_hardCore_const (𝓕 : FunFamily) (b : Bool) : ¬ HardCore 𝓕 (fun
       ⟨(fun _ => false, fun _ => false)⟩
     refine HardcoreBit.uprob_eq_one_of_forall fun z => ?_
     simp only [NUPPT.predictor_eq, NUPPT.distinguisher_eq, NUPPT.distinguisherL_eq, NUPPT.runAt_eq,
-        NUPPT.runAtL_eq, NUPPT.ofPolyTimeUniform_def,
-      NUPPT.output_ofPolyTime]
+        NUPPT.runAtL_eq, NUPPT.output_ofPolyTimeUniform]
     cases b <;> simp
   obtain ⟨n₀, hn₀⟩ := (negligible_iff ε).1 hε 1
   have h1 := h (max n₀ 2)

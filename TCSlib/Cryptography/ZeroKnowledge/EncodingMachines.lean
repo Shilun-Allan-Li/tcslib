@@ -3,7 +3,9 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Complexity.Randomized.Closure
 import TCSlib.Complexity.Randomized.Repetition
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
 import Mathlib.Data.Nat.Sqrt
 import Mathlib.Data.Nat.Find
 
@@ -82,20 +84,17 @@ theorem unaryAdd_poly {f g : List Bool → ℕ}
     PolyTimeComputable fun x => List.replicate (f x + g x) true := by
   simpa only [List.replicate_add] using hf.append hg
 
-/-- The product of two unary functions is a unary function: pair the two unary strings and
-apply the unary-multiplication machine `Turing.FinTM.computesFunInTime_unaryMul` (a copy of the
-private `Complexity.polyTimeComputable_unaryMulFun` of `Randomized/Primitives.lean`). -/
+/-- The product of two unary functions is unary: pair the strings and apply
+`BinArith.mulU`, then normalize its output by the unary length map. The public
+`BinArith.length_mulU` equation gives output length `f x * g x`. -/
 theorem unaryMul_poly {f g : List Bool → ℕ}
     (hf : PolyTimeComputable fun x => List.replicate (f x) true)
     (hg : PolyTimeComputable fun x => List.replicate (g x) true) :
     PolyTimeComputable fun x => List.replicate (f x * g x) true := by
-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
-  have hmul : PolyTimeComputable (fun z => match pairDecode z with
-      | some (u, v) => List.replicate (u.length * v.length) true
-      | none => []) := (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
-  convert hmul.comp (hf.pairEncode hg) using 1
-  funext x
-  simp [pairDecode_pairEncode]
+  have h := polyTimeComputable_unary.comp
+    (BinArith.polyTimeComputable_mulU.comp (hf.pairEncode hg))
+  refine h.congr fun x => ?_
+  simp only [Function.comp_apply, BinArith.length_mulU, List.length_replicate]
 
 /-- The truncated difference of two unary functions is a unary function: drop `g x` tokens
 from `1^{f x}` (`Complexity.polyTimeComputable_pairDropPoly` at the variable length,

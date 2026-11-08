@@ -1020,7 +1020,7 @@ theorem glPadSample_runAt (m : PolyExpr) (n : ℕ) (i : List Bool)
     (NUPPT.ofPolyTimeUniform (glPadSampleFun_poly F) (.add F.sample.coins m)).runAt n i s =
       pairEncode (F.sample.runAtL n i ((List.ofFn s).take (F.sample.coinLen n)))
         ((List.ofFn s).drop (F.sample.coinLen n)) := by
-  simp only [NUPPT.runAt_eq, NUPPT.ofPolyTimeUniform_def, NUPPT.output_ofPolyTime,
+  simp only [NUPPT.runAt_eq, NUPPT.output_ofPolyTimeUniform,
     glPadSampleFun, NUPPT.inParam_eq, NUPPT.inArg_eq, NUPPT.inCoins_eq, NUPPT.advInput_eq, NUPPT.layout_eq,
     pairFstD_pairEncode, pairSndD_pairEncode, List.length_replicate, F.sample_uniform.advice_eq n,
     NUPPT.coinLen_eq, NUPPT.runAtL_eq]

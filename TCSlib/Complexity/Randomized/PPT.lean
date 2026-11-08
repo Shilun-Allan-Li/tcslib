@@ -399,12 +399,6 @@ noncomputable def ofPolyTimeUniform {f : List Bool → List Bool} (hf : PolyTime
     (coins : PolyExpr) : NUPPT :=
   ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)
 
-/-- The defining equation of `ofPolyTimeUniform`: `ofPolyTimeUniform hf coins = ofPolyTime hf coins
-(.const 0) (fun _ => []) (fun _ => by simp)`. -/
-theorem ofPolyTimeUniform_def {f : List Bool → List Bool} (hf : PolyTimeComputable f) (coins : PolyExpr) :
-    (ofPolyTimeUniform hf coins : NUPPT) =
-      (ofPolyTime hf coins (.const 0) (fun _ => []) (fun _ => by simp)) := rfl
-
 /-- `ofPolyTimeUniform hf coins` is uniform. -/
 theorem ofPolyTimeUniform_uniform {f : List Bool → List Bool} (hf : PolyTimeComputable f)
     (coins : PolyExpr) : (ofPolyTimeUniform hf coins).Uniform := fun _ => rfl

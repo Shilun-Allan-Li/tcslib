@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
 import TCSlib.Complexity.Randomized.Closure
 import TCSlib.Complexity.Randomized.Repetition
 import TCSlib.Cryptography.Asymptotic.Adversary
@@ -324,19 +325,11 @@ theorem statClose_pi {σ τ γ : Type*} [Fintype σ] [Fintype τ] {X : σ → γ
 projections, so `[]` on malformed words). -/
 theorem polyTimeComputable_unaryMulPair :
     PolyTimeComputable fun z => List.replicate ((pairFstD z).length * (pairSndD z).length) true := by
-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
-  have h : PolyTimeComputable (fun z => match pairDecode z with
-      | some (u, v) => List.replicate (u.length * v.length) true
-      | none => []) := (polyTimeComputable_iff _).2 ⟨M, c, 2, hM⟩
-  convert h using 1
-  funext z
-  cases hz : pairDecode z with
-  | none => simp [pairFstD_eq, pairSndD_eq, hz]
-  | some p =>
-    obtain ⟨u, v⟩ := p
-    have := eq_pairEncode_of_pairDecode z u v hz
-    subst this
-    simp
+  have h := polyTimeComputable_unary.comp
+    (BinArith.polyTimeComputable_mulU.comp
+      (polyTimeComputable_pairFstD.pairEncode polyTimeComputable_pairSndD))
+  refine h.congr fun z => ?_
+  simp only [Function.comp_apply, BinArith.length_mulU]
 
 /-! ### The blockwise evaluator -/
 

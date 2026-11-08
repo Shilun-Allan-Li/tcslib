@@ -3,6 +3,7 @@ Copyright (c) 2026 TCSlib contributors. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: TCSlib contributors
 -/
+import TCSlib.Complexity.ClassP.BinaryArith.Loops
 import TCSlib.Cryptography.Asymptotic.PRFLemmas
 
 set_option maxHeartbeats 0
@@ -910,18 +911,15 @@ theorem rawFun_def :
 
 /-! ### Polynomial time -/
 
-/-- Unary multiplication of two polynomial-time unary lengths
-(`Turing.FinTM.computesFunInTime_unaryMul`). -/
+/-- Unary multiplication of two polynomial-time word lengths: pair the words,
+apply `BinArith.mulU`, and normalize by the unary length map (`BinArith.length_mulU`). -/
 theorem unaryMul_poly {f g : List Bool → List Bool} (hf : PolyTimeComputable f)
     (hg : PolyTimeComputable g) :
     PolyTimeComputable fun w => List.replicate ((f w).length * (g w).length) true := by
-  obtain ⟨M, c, hM⟩ := Turing.FinTM.computesFunInTime_unaryMul
-  have hmul : PolyTimeComputable (fun z => match pairDecode z with
-      | some (u, v) => List.replicate (u.length * v.length) true
-      | none => []) := ⟨M, c, 2, hM⟩
-  convert hmul.comp (hf.pairEncode hg) using 1
-  funext w
-  simp [pairDecode_pairEncode]
+  have h := polyTimeComputable_unary.comp
+    (BinArith.polyTimeComputable_mulU.comp (hf.pairEncode hg))
+  refine h.congr fun w => ?_
+  simp only [Function.comp_apply, BinArith.length_mulU]
 
 /-- The retained input of the state word is polynomial-time. -/
 theorem inX_poly : PolyTimeComputable inX := polyTimeComputable_pairFstD
