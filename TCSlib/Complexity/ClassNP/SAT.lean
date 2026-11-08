@@ -3900,15 +3900,13 @@ private lemma satStop_step (C : FinTM Bool) (entry exit : C.State)
     simp only [satStopTM, hq, ↓reduceIte]
     rfl
 
-/-- Live endpoints force every earlier module state to be live. -/
+/-- Live endpoints force earlier module states to be live by
+`Turing.MultiTapeTM.runFrom_state_ne_none_of_le`. -/
 private lemma sat_live_prefix {k : ℕ} {S : Type} {x : List Bool}
     (tm : MultiTapeTM k Bool S) (c : Cfg k Bool S x) (t : ℕ)
     (ht : (tm.runFrom c t).state ≠ none) :
     ∀ u ≤ t, (tm.runFrom c u).state ≠ none := by
-  intro u hu hh
-  have he : tm.runFrom c t = tm.runFrom c u := by
-    rw [← Nat.add_sub_of_le hu, MultiTapeTM.runFrom_add, MultiTapeTM.runFrom_of_halt _ hh]
-  exact ht (by rw [he]; exact hh)
+  exact Turing.MultiTapeTM.runFrom_state_ne_none_of_le tm c t ht
 
 /-- Stop a clean call one silent step after its certified first positive exit.
 **Proof sketch.** Induct on prefixes, keeping the release flag false only at
