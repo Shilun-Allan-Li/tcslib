@@ -1,0 +1,406 @@
+{
+  "method": "Canonical namespace/anonymous-instance chunks; bracket-aware delimiter additionally skips top-level let/letI initializer assignments in result types. Four Python delimiter controls passed. Source-only text comparison, not a Lean parser or compiled/type census.",
+  "all25_common_headers_public_names_visibility_preserved": true,
+  "files": [
+    {
+      "path": "TCSlib/Complexity/ClassNP/CounterProgPolyTime.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTime.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimeBlockLoop.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimePairing.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/PolyTimePrefix.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/SAT.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [
+        {
+          "name": "Complexity.satStreamRun_add",
+          "header": "private lemma satStreamRun_add (x : List Bool) (m n : ℕ) (s : SatStreamState) : satStreamRun x (m + n) s = let a := satStreamRun x m s let b := satStreamRun x n a.1 (b.1, a.2 ++ b.2) :="
+        }
+      ],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/ClassNP/Tautology.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [
+        "Complexity.tautDualSegment_iff_segment"
+      ],
+      "private_removed": [
+        "Complexity.tautDual_segment_add"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/ClassP/BinaryArith/Iterate.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/CookLevin/Hardness.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [
+        {
+          "name": "Complexity.clA5Compare_compute",
+          "header": "private lemma clA5Compare_compute (w : Fin 4 → List Bool) : let arg := clFields (List.ofFn w) ++ [] clA5CompareTM.ComputesInTime arg [decide (clNum (w 0) + clNum (w 1) = clNum (w 2) + clNum (w 3))] (35 * (arg.length + 1)) :="
+        },
+        {
+          "name": "Complexity.clA5Copy_clean",
+          "header": "private lemma clA5Copy_clean (x : List Bool) : let D := clA5StopTM clInputTM (0 : Fin 3) (2 : Fin 3) ∃ t, 0 < t ∧ t ≤ 2 * x.length + 3 ∧ (∀ j < t, ¬(D.tm.runFrom (Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k [])) j).Halted) ∧ D.tm.runFrom (Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k [])) t = {Cfg.ofWords (input := x) D.tm.q₀ (stateWord D.k x) with state := none} :="
+        },
+        {
+          "name": "Complexity.clA5Data_exact",
+          "header": "private lemma clA5Data_exact (M : FinTM Bool) (C e c A d : ℕ) (x : List Bool) (i : ℕ) : let z := clA5Pack M C e c A d x i let m := x.length + C * (x.length + 1) ^ e let T := clProducerHorizon C e c A d x.length clA5InputSize z = m ∧ clA5Horizon z = T ∧ clA5Trajectory z = clRecords M (List.replicate m false) (T + 1) ∧ clA5Visits z = clVisitRows M C e x (T + 1) :="
+        },
+        {
+          "name": "Complexity.clA5Round",
+          "header": "private lemma clA5Round (S J E I : FinTM Bool) (emit next : List Bool → List Bool) (BE BI : ℕ → ℕ) (hE : CLA5Clean E id emit BE) (hI : CLA5Clean I next (fun _ => []) BI) (x w : List Bool) : let bank := clA5Modules S J E I let H := clA5HostTM bank (1 + S.k + J.k + E.k + I.k) (clA5Modules_bound S J E I) ∃ t, 0 < t ∧ t ≤ 1 + BE w.length + BI w.length ∧ (∀ v, 0 < v → v < t → (H.tm.runFrom (Cfg.ofWords (input := x) (.inl ()) (stateWord H.k w)) v).state ≠ some (.inl ())) ∧ H.tm.runFrom (Cfg.ofWords (input := x) (.inl ()) (stateWord H.k w)) t = {Cfg.ofWords (.inl ()) (stateWord H.k (next w)) with output := emit w} :="
+        },
+        {
+          "name": "Complexity.clA5Startup",
+          "header": "private lemma clA5Startup (M : FinTM Bool) (C e c A d : ℕ) : ∃ (S J : FinTM Bool) (aS dS aJ dJ aH dH : ℕ), (∀ x, (clPackedRecords M C e c A d x).length ≤ aH * (x.length + 1) ^ dH) ∧ ∀ E I : FinTM Bool, let bank := clA5Modules S J E I let H := clA5HostTM bank (1 + S.k + J.k + E.k + I.k) (clA5Modules_bound S J E I) ∀ x : List Bool, ∃ t ≤ 2 * x.length + 3 + aS * (x.length + 1) ^ dS + aJ * (aH * (x.length + 1) ^ dH + 1) ^ dJ, (∀ j < t, (H.tm.runFrom (H.tm.initCfg x) j).state ≠ some (.inl ())) ∧ H.tm.runFrom (H.tm.initCfg x) t = Cfg.ofWords (.inl ()) (stateWord H.k (clA5Pack M C e c A d x 0)) :="
+        },
+        {
+          "name": "Complexity.clA5Tableau_eval",
+          "header": "private lemma clA5Tableau_eval (M : FinTM Bool) (code : CLFieldCode (Option M.State)) (C e : ℕ) (x : List Bool) (T : ℕ) (a : ℕ → Bool) : let m := x.length + C * (x.length + 1) ^ e (clTableau M code C e x T).eval a = true ↔ (∀ j < x.length, a j = x[j]?.getD false) ∧ clA5Meaning M code (CLTemplateKind.initial (decide (0 < m))) m 0 0 0 a ∧ (∀ t < T, clA5Meaning M code CLTemplateKind.state m t (t + 1) 0 a) ∧ (∀ t ≤ T, (clInputGroup M code m t).eval a = true) ∧ (∀ t ≤ T, ∀ τ : Fin M.k, (clWorkGroup M code m t τ).eval a = true) ∧ (∀ t < T, clA5Meaning M code CLTemplateKind.accept m t 0 0 a) :="
+        },
+        {
+          "name": "Complexity.clCountOutput_quadratic",
+          "header": "private lemma clCountOutput_quadratic (M : FinTM Bool) (i : Fin (clRecFields M)) (y : List Bool) (T : ℕ) (keep : Fin 4 → List Bool) : let x := clFields (List.ofFn (Fin.addCases (clRecWords M y T) keep)) ++ [] (clCountOutputTM M i).ComputesInTime x (clCounts M y T i).bits ((10 + 10 * ((clRecTM M).k + 4) + (8 * clRecFields M + 7)) * (x.length + 1) ^ 2) :="
+        },
+        {
+          "name": "Complexity.clGroups_serialize",
+          "header": "private lemma clGroups_serialize (n k T : ℕ) (pin : ℕ → Std.Sat.CNF ℕ) (initial : Std.Sat.CNF ℕ) (state input : ℕ → Std.Sat.CNF ℕ) (work : ℕ → ℕ → Std.Sat.CNF ℕ) (accept : ℕ → Std.Sat.CNF ℕ) : let gs := clGroups n k T pin initial state input work accept (List.range (clLastRound n k T + 1)).flatMap (clChunk (clLastRound n k T) (fun i => gs[i]?.getD [])) = Std.Sat.CNF.serialize gs.flatten :="
+        },
+        {
+          "name": "Complexity.clHeaderLayout_exact",
+          "header": "private lemma clHeaderLayout_exact (M : FinTM Bool) (C e c A d : ℕ) (x : List Bool) : let Q := C * (x.length + 1) ^ e let m := x.length + Q let T := c * (A * (m + 1) ^ d + 1) ^ 2 clHeaderLayout M (clPrepHeader C e c A d x) = Fin.addCases (clRecWords M (List.replicate m false) T) (fun i : Fin 4 => if i = 0 then x else if i = 1 then Q.bits else if i = 2 then m.bits else T.bits) :="
+        },
+        {
+          "name": "Complexity.clPrepare_complete",
+          "header": "private lemma clPrepare_complete {l : ℕ} (w : Fin l → List Bool) (tail : List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) : let x := clFields (List.ofFn w) ++ tail ∃ t ≤ 2 * x.length + 3 + l * (3 * W + 7), (clPrepareTM l).tm.runFrom ((clPrepareTM l).tm.initCfg x) t = (clLoadCfg x 1 (Fin.last l) (.inl 0) w x (clFields (List.ofFn w)).length).mapState Sum.inr :="
+        },
+        {
+          "name": "Complexity.clPrepare_first",
+          "header": "private lemma clPrepare_first {l : ℕ} (w : Fin l → List Bool) (tail : List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) : let x := clFields (List.ofFn w) ++ tail ∃ t ≤ 2 * x.length + 3 + l * (3 * W + 7), 0 < t ∧ (∀ j < t, ((clPrepareTM l).tm.runFrom ((clPrepareTM l).tm.initCfg x) j).state ≠ some (.inr (Fin.last l, .inl 0))) ∧ (clPrepareTM l).tm.runFrom ((clPrepareTM l).tm.initCfg x) t = (clLoadCfg x 1 (Fin.last l) (.inl 0) w x (clFields (List.ofFn w)).length).mapState Sum.inr :="
+        },
+        {
+          "name": "Complexity.clPrepared_run",
+          "header": "private lemma clPrepared_run (A : FinTM Bool) (w : Fin A.k → List Bool) (tail : List Bool) (W : ℕ) (hW : ∀ i, (w i).length ≤ W) (b : ℕ) : let x := clFields (List.ofFn w) ++ tail ∃ a ≤ 2 * x.length + 4 + A.k * (3 * W + 7), (clPreparedTM A).tm.runFrom ((clPreparedTM A).tm.initCfg x) (a + b) = clPreparedCfg A x (clFields (List.ofFn w)).length (A.tm.runFrom (Cfg.ofWords (input := x) A.tm.q₀ w) b) :="
+        },
+        {
+          "name": "Complexity.clQueryCode_machine",
+          "header": "private lemma clQueryCode_machine {l : ℕ} (pos neg : Fin l) (hne : pos ≠ neg) : ∃ (Q : FinTM Bool) (c e : ℕ), ∀ (row : ℕ → Fin l → List Bool) (target : Fin 2 → List Bool) (N W U : ℕ) (tail : List Bool), (∀ s < N, ∀ i, (row s i).length ≤ W) → (∀ i, (target i).length ≤ W) → (∀ i, (clQueryWords l target (clRows row N ++ tail) N i).length ≤ U) → let arg := clFields (List.ofFn (clQueryWords l target (clRows row N ++ tail) N)) ++ [] Q.ComputesInTime arg (clLastCode ((List.range N).map (fun s => clMatchFlag pos neg (row s) target))) (2 * (2 * arg.length + 9 + (l + 5) * (3 * U + 7) + N * (l * (5 * W + 7) + 2 * W + 7)) + c * (N + 1) ^ e + 2) :="
+        },
+        {
+          "name": "Complexity.clQueryFlags_compute",
+          "header": "private lemma clQueryFlags_compute {l : ℕ} (pos neg : Fin l) (hne : pos ≠ neg) (row : ℕ → Fin l → List Bool) (target : Fin 2 → List Bool) (N W U : ℕ) (tail : List Bool) (hRow : ∀ s < N, ∀ i, (row s i).length ≤ W) (hTarget : ∀ i, (target i).length ≤ W) (hWords : ∀ i, (clQueryWords l target (clRows row N ++ tail) N i).length ≤ U) : let arg := clFields (List.ofFn (clQueryWords l target (clRows row N ++ tail) N)) ++ [] (clQueryFlagsTM pos neg).ComputesInTime arg ((List.range N).map (fun s => clMatchFlag pos neg (row s) target)) (2 * arg.length + 9 + (l + 5) * (3 * U + 7) + N * (l * (5 * W + 7) + 2 * W + 7)) :="
+        },
+        {
+          "name": "Complexity.clRecordOutput_compute",
+          "header": "private lemma clRecordOutput_compute (M : FinTM Bool) (y : List Bool) (T : ℕ) (keep : Fin 4 → List Bool) (W : ℕ) (hW : ∀ i : Fin ((clRecTM M).k + 4), ((Fin.addCases (clRecWords M y T) keep : Fin ((clRecTM M).k + 4) → List Bool) i).length ≤ W) : let x := clFields (List.ofFn (Fin.addCases (clRecWords M y T) keep)) ++ [] (clRecordOutputTM M).ComputesInTime x (clRecords M y (T + 1)) (2 * x.length + 8 + ((clRecTM M).k + 4) * (3 * W + 7) + (8 * clRecFields M + 7) * (T + 1) ^ 2) :="
+        },
+        {
+          "name": "Complexity.clRecordOutput_quadratic",
+          "header": "private lemma clRecordOutput_quadratic (M : FinTM Bool) (y : List Bool) (T : ℕ) (keep : Fin 4 → List Bool) : let x := clFields (List.ofFn (Fin.addCases (clRecWords M y T) keep)) ++ [] (clRecordOutputTM M).ComputesInTime x (clRecords M y (T + 1)) ((10 + 10 * ((clRecTM M).k + 4) + (8 * clRecFields M + 7)) * (x.length + 1) ^ 2) :="
+        },
+        {
+          "name": "Complexity.clRecord_complete",
+          "header": "private lemma clRecord_complete (M : FinTM Bool) (y : List Bool) (T : ℕ) (keep : Fin 4 → List Bool) (W : ℕ) (hW : ∀ i : Fin ((clRecTM M).k + 4), ((Fin.addCases (clRecWords M y T) keep : Fin ((clRecTM M).k + 4) → List Bool) i).length ≤ W) : let x := clFields (List.ofFn (Fin.addCases (clRecWords M y T) keep)) ++ [] ∃ t ≤ 2 * x.length + 4 + ((clRecTM M).k + 4) * (3 * W + 7) + (4 * clRecFields M + 7) * (T + 1) ^ 2, (clRecordTM M).tm.runFrom ((clRecordTM M).tm.initCfg x) t = clRecordCfg M x keep (clRecCfg M (x := x) (.inr (.inr (.inr (.inr ())))) (M.tm.runFrom (M.tm.initCfg y) T) (clCounts M y T) (clRecords M y (T + 1)) T T) :="
+        },
+        {
+          "name": "Complexity.clRecords_native",
+          "header": "private lemma clRecords_native (M : FinTM Bool) (C e c A d : ℕ) : PolyTimeComputable (fun x => let m := x.length + C * (x.length + 1) ^ e let T := c * (A * (m + 1) ^ d + 1) ^ 2 clRecords M (List.replicate m false) (T + 1)) :="
+        },
+        {
+          "name": "Complexity.clRepeatOutput_compute",
+          "header": "private lemma clRepeatOutput_compute (C : FinTM Bool) (entry exit : C.State) (hk : 0 < C.k) (f : List Bool → List Bool) (a d : ℕ) (hcall : ∀ x arg, ∃ t ≤ a * (arg.length + 1) ^ d, 0 < t ∧ (∀ j, 0 < j → j < t → (C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) j).state ≠ some exit) ∧ C.tm.runFrom (Cfg.ofWords (input := x) entry (stateWord C.k arg)) t = Cfg.ofWords exit (stateWord C.k (f arg))) (s : List Bool) (N W : ℕ) (hW : ∀ j ≤ N, (f^[j] s).length ≤ W) : let arg := clFields (List.ofFn (clRepeatWords C s N)) ++ [] (clRepeatOutputTM C entry exit hk).ComputesInTime arg (f^[N] s) (2 * arg.length + 9 + (C.k + 1) * (3 * arg.length + 7) + N * (a * (W + 1) ^ d + 2) + W) :="
+        }
+      ],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/SpaceComplexity/Machines/Frag.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Catalog.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [
+        {
+          "name": "Turing.FinTM.f2_counter_emit",
+          "header": "private lemma f2_counter_emit (x : List Bool) (p : Fin (x.length + 2)) (bs : List Bool) : let c := f2_counterTM.tm.runFrom (f2_counterCfg x 3 p 0 bs []) (bs.length + 1) c.state = none ∧ c.output = bs :="
+        },
+        {
+          "name": "Turing.FinTM.f2_loopHost_frame_replay",
+          "header": "private lemma f2_loopHost_frame_replay (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) {x : List Bool} (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (f2_LoopHostState body F) x) (p : Fin (x.length + 2)) (flag counter : ℤ → Option Bool) (ch : ℤ) (word : List Bool) : let c := f2_loopFrame body F base (some (.inr (.inr 13))) p flag counter (bufferTape word) ch 0 [] ((f2_loopHost body F anchor findMode).tm.runFrom c (word.length + 1)).state = none ∧ ((f2_loopHost body F anchor findMode).tm.runFrom c (word.length + 1)).output = word :="
+        },
+        {
+          "name": "Turing.FinTM.f2_loopHost_round",
+          "header": "private lemma f2_loopHost_round (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) {x : List Bool} (s next payload : List Bool) (accepted : Bool) (word : List Bool) (fuel : Cfg F.k Bool F.State x) (t : ℕ) (ht : 0 < t) (hanchor : ∀ u, 0 < u → u < t → (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) u).state ≠ some anchor) (hend : if accepted then (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none ∧ (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = payload else body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t = Cfg.ofWords anchor (stateWord body.k next)) : ∃ v ≤ 3 * t + 2 * word.length + 5, let start := f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel if accepted then ((f2_loopHost body F anchor findMode).tm.runFrom start v).state = none ∧ ((f2_loopHost body F anchor findMode).tm.runFrom start v).output = (if findMode then payload else [true]) else if (f2_loopDebit word).2 then (f2_loopHost body F anchor findMode).tm.runFrom start v = f2_loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k next)) true none (f2_loopDebit word).1 fuel else ((f2_loopHost body F anchor findMode).tm.runFrom start v).state = none ∧ ((f2_loopHost body F anchor findMode).tm.runFrom start v).output = (if findMode then [] else [false]) :="
+        }
+      ],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Contract/Basic.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/CounterLoop.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [
+        {
+          "name": "Turing.counter_debit",
+          "header": "private lemma counter_debit {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ} (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (a : S) (exit : Option S) (c : Cfg k Γ S x) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ) (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) : let cost := 2 * (w.takeWhile not).length + 2 let v := (decFixed w).getD (List.replicate w.length true) let q : CounterLoopState S := if (decFixed w).isSome then .body a else .done (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) cost = counterLoopCfg (some q) c (counterPatch ct cp (v.map e)) cp ∧ counterSpan (counterLoopTMVia e M a exit) (counterLoopCfg (some (.dec .run)) c ct cp) cost cp w.length (fun p => ∀ j, p j = c.workTapePos j) :="
+        },
+        {
+          "name": "Turing.counter_rounds",
+          "header": "private lemma counter_rounds {k : ℕ} {Γ S : Type} [DecidableEq S] [DecidableEq Γ] {x : List Γ} (e : Bool ↪ Γ) (M : MultiTapeTM k Γ S) (a : S) (exit : Option S) (τ : Cfg k Γ S x → ℕ) (c : Cfg k Γ S x) (w : List Bool) (ct : ℤ → Option Γ) (cp : ℤ) (hw : ∀ p : ℤ, -1 ≤ p → p ≤ (w.length : ℤ) → ct (cp + p) = FinTM.bufferTape (w.map e) p) (n : ℕ) (hn : n ≤ Nat.ofDigits 2 (w.map Bool.toNat)) (hround : ∀ r < n, (counterLoopOrbit M τ c r).state = some a ∧ 0 < τ (counterLoopOrbit M τ c r) ∧ (∀ u, 0 < u → u < τ (counterLoopOrbit M τ c r) → ∃ s, (M.runFrom (counterLoopOrbit M τ c r) u).state = some s ∧ s ≠ a ∧ exit ≠ some s)) : let elapsed := ∑ r ∈ Finset.range n, τ (counterLoopOrbit M τ c r) + counterOverhead w n (counterLoopTMVia e M a exit).runFrom (counterLoopCfg (some (.dec .run)) c ct cp) elapsed = counterLoopCfg (if n = 0 then some (.dec .run) else (counterLoopOrbit M τ c n).state.map (counterLoopRedirect a exit)) (counterLoopOrbit M τ c n) (counterPatch ct cp ((counterWord w n).map e)) cp ∧ counterSpan (counterLoopTMVia e M a exit) (counterLoopCfg (some (.dec .run)) c ct cp) elapsed cp w.length (fun p => ∃ r u, ((r < n ∧ u ≤ τ (counterLoopOrbit M τ c r)) ∨ (r = n ∧ u = 0)) ∧ ∀ j, p j = (M.runFrom (counterLoopOrbit M τ c r) u).workTapePos j) :="
+        }
+      ],
+      "private_added": [
+        "Turing.counterSpan_iff_segment"
+      ],
+      "private_removed": [
+        "Turing.counter_span_append"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Loop.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [
+        {
+          "name": "Turing.FinTM.emCall_bank_final",
+          "header": "private lemma emCall_bank_final (M : FinTM Bool) (emit : Bool) (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) : let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0))) emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q))) frame.workTapes frame.workTapePos (emCallClearCfg x 1 3 (fun _ => none) (fun _ => none) (fun _ => none) 0) = emCallBankFrame M emit x arg cap T (i.val + 1) (.inr (.inl (i.castSucc, 3))) :="
+        },
+        {
+          "name": "Turing.FinTM.emCall_bank_initial",
+          "header": "private lemma emCall_bank_initial (M : FinTM Bool) (emit : Bool) (x arg cap : List Bool) (T : ℕ) (i : Fin M.k) : let frame := emCallBankFrame M emit x arg cap T i.val (.inr (.inl (i.castSucc, 0))) emCallEmbeddedCfg (emCallTripleEmbedding M i) (fun q => .inr (.inl (i.castSucc, q))) frame.workTapes frame.workTapePos (emCallClearCfg x 1 0 ((M.tm.runFrom (M.tm.initCfg arg) T).workTapes i) (emCallSpan (emCallLo M arg T i) (emCallHi M arg T i)) (bufferTape [true]) ((M.tm.runFrom (M.tm.initCfg arg) T).workTapePos i)) = frame :="
+        },
+        {
+          "name": "Turing.FinTM.emCall_prepare_initial",
+          "header": "private lemma emCall_prepare_initial (M : FinTM Bool) (emit : Bool) (x arg : List Bool) : let R := emCallRightTM (emCallTrackTM M) emCallEmbeddedCfg (Function.Embedding.refl _) (Sum.inl : (emCallSource M).State → emCallState M) (fun _ _ => none) (fun _ => 0) (emCallEvalCfg (w := x) R (R.tm.initCfg arg) true 1) = Cfg.ofWords (callTM M emit).tm.q₀ (stateWord (callTM M emit).k arg) :="
+        },
+        {
+          "name": "Turing.FinTM.emCall_prepared_eval_first",
+          "header": "private lemma emCall_prepared_eval_first (M : FinTM Bool) (w s out : List Bool) (T : ℕ) (hM : M.ComputesInTime s out T) : let R := emCallRightTM (emCallTrackTM M) ∃ t, 0 < t ∧ t ≤ 1 + 2 * T + s.length + 2 ∧ (∀ j < t, ((emCallEvalTM R).tm.runFrom (emCallEvalCfg (w := w) R (R.tm.initCfg s) true 1) j).state ≠ some (.inr ())) ∧ (emCallEvalTM R).tm.runFrom (emCallEvalCfg (w := w) R (R.tm.initCfg s) true 1) t = emCallEvalCfg (w := w) R (emCallRightScan (emCallTrackTM M) (emCallTrackCfg M (M.tm.runFrom (M.tm.initCfg s) T) (emCallLo M s T) (emCallHi M s T)) none s.length (le_refl _)) false 1 :="
+        },
+        {
+          "name": "Turing.FinTM.loopHost_frame_replay",
+          "header": "private lemma loopHost_frame_replay (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) {x : List Bool} (base : Cfg (body.k + 1 + (1 + F.k) + 1) Bool (LoopHostState body F) x) (p : Fin (x.length + 2)) (flag counter : ℤ → Option Bool) (ch : ℤ) (word : List Bool) : let c := loopFrame body F base (some (.inr (.inr 13))) p flag counter (bufferTape word) ch 0 [] ((loopHostTM body F anchor findMode).tm.runFrom c (word.length + 1)).state = none ∧ ((loopHostTM body F anchor findMode).tm.runFrom c (word.length + 1)).output = word :="
+        },
+        {
+          "name": "Turing.FinTM.loopHost_round",
+          "header": "private lemma loopHost_round (body F : FinTM Bool) (anchor : body.State) (findMode : Bool) {x : List Bool} (s next payload : List Bool) (accepted : Bool) (word : List Bool) (fuel : Cfg F.k Bool F.State x) (t : ℕ) (ht : 0 < t) (hanchor : ∀ u, 0 < u → u < t → (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) u).state ≠ some anchor) (hend : if accepted then (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).state = none ∧ (body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t).output = payload else body.tm.runFrom (Cfg.ofWords (input := x) anchor (stateWord body.k s)) t = Cfg.ofWords anchor (stateWord body.k next)) : ∃ v ≤ 3 * t + 2 * word.length + 5, let start := loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k s)) true none word fuel if accepted then ((loopHostTM body F anchor findMode).tm.runFrom start v).state = none ∧ ((loopHostTM body F anchor findMode).tm.runFrom start v).output = (if findMode then payload else [true]) else if (loopDebit word).2 then (loopHostTM body F anchor findMode).tm.runFrom start v = loopCall body F anchor false (Cfg.ofWords anchor (stateWord body.k next)) true none (loopDebit word).1 fuel else ((loopHostTM body F anchor findMode).tm.runFrom start v).state = none ∧ ((loopHostTM body F anchor findMode).tm.runFrom start v).output = (if findMode then [] else [false]) :="
+        }
+      ],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Build/Primitives.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [
+        {
+          "name": "Turing.FinTM.emitterP2_body_advance",
+          "header": "private lemma emitterP2_body_advance (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s : List Bool) : let B := emitterP2BodyTM C D hk hl ce cx de dx ∃ t ≤ 2 * s.length + w.length + 5, B.tm.runFrom (Cfg.ofWords (input := w) (.advance (0, false)) (emitterP2Words C.k D.k s [] [])) t = Cfg.ofWords (.advance (4, false)) (emitterP2Words C.k D.k (splitStep w s) [] []) ∧ splitSafe B.tm .anchor (Cfg.ofWords (input := w) (.advance (0, false)) (emitterP2Words C.k D.k s [] [])) t :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_compare",
+          "header": "private lemma emitterP2_body_compare (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s u v : List Bool) : let B := emitterP2BodyTM C D hk hl ce cx de dx ∃ t ≤ 2 * (max u.length v.length + 1), B.tm.runFrom (Cfg.ofWords (input := w) (.compare (0, true)) (emitterP2Words C.k D.k s u v)) t = Cfg.ofWords (.compare (2, decide (u = v))) (emitterP2Words C.k D.k s u v) ∧ splitSafe B.tm .anchor (Cfg.ofWords (input := w) (.compare (0, true)) (emitterP2Words C.k D.k s u v)) t :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_emit",
+          "header": "private lemma emitterP2_body_emit (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s : List Bool) (hs : s.length ≤ w.length) : let B := emitterP2BodyTM C D hk hl ce cx de dx let z := Cfg.ofWords (input := w) (.emit 0) (emitterP2Words C.k D.k s [] []) (B.tm.runFrom z (s.length + w.length + 3)).state = none ∧ (B.tm.runFrom z (s.length + w.length + 3)).output = pairEncode (w.take s.length) (w.drop s.length) ∧ splitSafe B.tm .anchor z (s.length + w.length + 3) :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_erase_left",
+          "header": "private lemma emitterP2_body_erase_left (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s u v : List Bool) (ok : Bool) : let B := emitterP2BodyTM C D hk hl ce cx de dx ∃ t ≤ 2 * (u.length + 1), B.tm.runFrom (Cfg.ofWords (input := w) (.eraseLeft ok 0) (emitterP2Words C.k D.k s u v)) t = Cfg.ofWords (.eraseLeft ok 2) (emitterP2Words C.k D.k s [] v) ∧ splitSafe B.tm .anchor (Cfg.ofWords (input := w) (.eraseLeft ok 0) (emitterP2Words C.k D.k s u v)) t :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_erase_right",
+          "header": "private lemma emitterP2_body_erase_right (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s u v : List Bool) (ok : Bool) : let B := emitterP2BodyTM C D hk hl ce cx de dx ∃ t ≤ 2 * (v.length + 1), B.tm.runFrom (Cfg.ofWords (input := w) (.eraseRight ok 0) (emitterP2Words C.k D.k s u v)) t = Cfg.ofWords (.eraseRight ok 2) (emitterP2Words C.k D.k s u []) ∧ splitSafe B.tm .anchor (Cfg.ofWords (input := w) (.eraseRight ok 0) (emitterP2Words C.k D.k s u v)) t :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_finish",
+          "header": "private lemma emitterP2_body_finish (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s u v : List Bool) (ok : Bool) (hok : ok = true → s.length ≤ w.length) : let B := emitterP2BodyTM C D hk hl ce cx de dx let z := Cfg.ofWords (input := w) (.eraseLeft ok 0) (emitterP2Words C.k D.k s u v) ∃ t ≤ 2 * u.length + 2 * v.length + 2 * s.length + w.length + 12, (∀ j < t, (B.tm.runFrom z j).state ≠ some .anchor) ∧ if ok then (B.tm.runFrom z t).state = none ∧ (B.tm.runFrom z t).output = pairEncode (w.take s.length) (w.drop s.length) else B.tm.runFrom z t = Cfg.ofWords .anchor (emitterP2Words C.k D.k (splitStep w s) [] []) :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_length",
+          "header": "private lemma emitterP2_body_length (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s u v z : List Bool) (t : ℕ) (ht : 0 < t) (hf : ∀ j, 0 < j → j < t → (D.tm.runFrom (Cfg.ofWords (input := w) de (stateWord D.k v)) j).state ≠ some dx) (hr : D.tm.runFrom (Cfg.ofWords (input := w) de (stateWord D.k v)) t = Cfg.ofWords dx (stateWord D.k z)) : let B := emitterP2BodyTM C D hk hl ce cx de dx B.tm.runFrom (Cfg.ofWords (input := w) .lengthStart (emitterP2Words C.k D.k s u v)) t = Cfg.ofWords (.length dx) (emitterP2Words C.k D.k s u z) ∧ splitSafe B.tm .anchor (Cfg.ofWords (input := w) .lengthStart (emitterP2Words C.k D.k s u v)) t :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_prepare",
+          "header": "private lemma emitterP2_body_prepare (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s : List Bool) : let B := emitterP2BodyTM C D hk hl ce cx de dx ∃ t ≤ 5 * (s.length + w.length + 3), B.tm.runFrom (Cfg.ofWords (input := w) (.prepare (0, false)) (emitterP2Words C.k D.k s [] [])) t = Cfg.ofWords (.prepare (8, decide (w.length < s.length))) (emitterP2Words C.k D.k s s (w.drop s.length)) ∧ splitSafe B.tm .anchor (Cfg.ofWords (input := w) (.prepare (0, false)) (emitterP2Words C.k D.k s [] [])) t :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_round",
+          "header": "private lemma emitterP2_body_round (f : ℕ → ℕ) (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s : List Bool) (a b : ℕ) (ha : 0 < a) (hb : 0 < b) (hfC : ∀ j, 0 < j → j < a → (C.tm.runFrom (Cfg.ofWords (input := w) ce (stateWord C.k s)) j).state ≠ some cx) (hrC : C.tm.runFrom (Cfg.ofWords (input := w) ce (stateWord C.k s)) a = Cfg.ofWords cx (stateWord C.k (Nat.bits (f s.length)))) (hfD : ∀ j, 0 < j → j < b → (D.tm.runFrom (Cfg.ofWords (input := w) de (stateWord D.k (w.drop s.length))) j).state ≠ some dx) (hrD : D.tm.runFrom (Cfg.ofWords (input := w) de (stateWord D.k (w.drop s.length))) b = Cfg.ofWords dx (stateWord D.k (Nat.bits (w.drop s.length).length))) : let B := emitterP2BodyTM C D hk hl ce cx de dx let z := Cfg.ofWords (input := w) .anchor (stateWord B.k s) ∃ t, 0 < t ∧ t ≤ a + b + 10 * (s.length + w.length + (Nat.bits (f s.length)).length + (Nat.bits (w.drop s.length).length).length + 10) ∧ (∀ j, 0 < j → j < t → (B.tm.runFrom z j).state ≠ some .anchor) ∧ if emitterSplitAccept f w s then (B.tm.runFrom z t).state = none ∧ (B.tm.runFrom z t).output = pairEncode (w.take s.length) (w.drop s.length) else B.tm.runFrom z t = Cfg.ofWords .anchor (stateWord B.k (splitStep w s)) :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_test",
+          "header": "private lemma emitterP2_body_test (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s u v : List Bool) (a b : ℕ) (ha : 0 < a) (hb : 0 < b) (hfC : ∀ j, 0 < j → j < a → (C.tm.runFrom (Cfg.ofWords (input := w) ce (stateWord C.k s)) j).state ≠ some cx) (hrC : C.tm.runFrom (Cfg.ofWords (input := w) ce (stateWord C.k s)) a = Cfg.ofWords cx (stateWord C.k u)) (hfD : ∀ j, 0 < j → j < b → (D.tm.runFrom (Cfg.ofWords (input := w) de (stateWord D.k (w.drop s.length))) j).state ≠ some dx) (hrD : D.tm.runFrom (Cfg.ofWords (input := w) de (stateWord D.k (w.drop s.length))) b = Cfg.ofWords dx (stateWord D.k v)) : let B := emitterP2BodyTM C D hk hl ce cx de dx let z := Cfg.ofWords (input := w) (.prepare (8, false)) (emitterP2Words C.k D.k s s (w.drop s.length)) ∃ t ≤ a + b + 2 * (max u.length v.length + 1) + 4, B.tm.runFrom z t = Cfg.ofWords (.eraseLeft (decide (u = v)) 0) (emitterP2Words C.k D.k s u v) ∧ splitSafe B.tm .anchor z t :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_body_width",
+          "header": "private lemma emitterP2_body_width (C D : FinTM Bool) (hk : 0 < C.k) (hl : 0 < D.k) (ce cx : C.State) (de dx : D.State) (w s u v : List Bool) (t : ℕ) (ht : 0 < t) (hf : ∀ j, 0 < j → j < t → (C.tm.runFrom (Cfg.ofWords (input := w) ce (stateWord C.k s)) j).state ≠ some cx) (hr : C.tm.runFrom (Cfg.ofWords (input := w) ce (stateWord C.k s)) t = Cfg.ofWords cx (stateWord C.k u)) : let B := emitterP2BodyTM C D hk hl ce cx de dx B.tm.runFrom (Cfg.ofWords (input := w) .widthStart (emitterP2Words C.k D.k s s v)) t = Cfg.ofWords (.width cx) (emitterP2Words C.k D.k s u v) ∧ splitSafe B.tm .anchor (Cfg.ofWords (input := w) .widthStart (emitterP2Words C.k D.k s s v)) t :="
+        },
+        {
+          "name": "Turing.FinTM.emitterP2_call_phase",
+          "header": "private lemma emitterP2_call_phase {k l : ℕ} {S H : Type} {x : List Bool} (src : MultiTapeTM k Bool S) (host : MultiTapeTM l Bool H) (index : Fin k ↪ Fin l) (emb : S ↪ H) (enter anchor : H) (henter : enter ≠ anchor) (haway : ∀ q, emb q ≠ anchor) (entry exit : S) (hstart : ∀ inp work, host.tr enter inp work = ((embedEmitTM index src).tr entry inp work).mapState emb) (hagree : ∀ q, q ≠ exit → ∀ inp work, host.tr (emb q) inp work = ((embedEmitTM index src).tr q inp work).mapState emb) (tapes : Fin l → ℤ → Option Bool) (heads : Fin l → ℤ) (c d : Cfg k Bool S x) (hc : c.state = some entry) (t : ℕ) (ht : 0 < t) (hguard : ∀ j, 0 < j → j < t → (src.runFrom c j).state ≠ some exit) (hr : src.runFrom c t = d) : let z := {(embedEmitCfg index tapes heads [] c).mapState emb with state := some enter} host.runFrom z t = (embedEmitCfg index tapes heads [] d).mapState emb ∧ splitSafe host anchor z t :="
+        },
+        {
+          "name": "Turing.FinTM.pairExtractTM_fst_run_budget",
+          "header": "theorem pairExtractTM_fst_run_budget (a b : List Bool) : let M := pairExtractTM true false let d := M.tm.runFrom (M.tm.initCfg (pairEncode a b)) (5 * ((pairEncode a b).length + 1)) d.state = none ∧ d.output = a ∧ d.inputPos.val = 2 * a.length + 3 ∧ ∀ j : Fin M.k, d.workTapes j = bufferTape a ∧ d.workTapePos j = (a.length : ℤ) :="
+        }
+      ],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Composition.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Configuration.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProg.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProgInput.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/CounterProgRun.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Deterministic.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Encoding.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [
+        {
+          "name": "Turing.pairDiag_step",
+          "header": "private lemma pairDiag_step (x : List Bool) (q : Fin 6) (p : Fin (x.length + 2)) (out : List Bool) (b : Option Bool) (hb : (pairDiagCfg x (some q) p out).inputSymbol = b) : pairDiagTM.tm.step (pairDiagCfg x (some q) p out) = let a := pairDiagTM.tm.tr q b (fun i => i.elim0) pairDiagCfg x a.state (moveInputPos p a.inputTape) (out ++ a.output.toList) :="
+        }
+      ],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Finite.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/Robustness/SingleTape.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [
+        "Turing.FinTM.dgSpan_iff_segment"
+      ],
+      "private_removed": [
+        "Turing.FinTM.dgSpan_add"
+      ]
+    },
+    {
+      "path": "TCSlib/Complexity/TuringMachine/UnaryTape.lean",
+      "all_common_headers_identical": true,
+      "all_public_names_visibility_identical": true,
+      "top_level_type_let_headers": [],
+      "private_added": [],
+      "private_removed": []
+    }
+  ],
+  "previous_limit": "Initial source-freeze.json used bracket depth only; this supplement is primary for complete type-let headers. Earlier source artifacts/lints are preserved; no new lints or tiling were run."
+}

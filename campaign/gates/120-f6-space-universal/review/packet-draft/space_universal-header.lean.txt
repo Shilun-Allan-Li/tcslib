@@ -1,0 +1,11 @@
+theorem space_universal :
+    ∃ SU : FinTM Bool, ∀ α : List Bool, ∃ C : ℕ, 0 < C ∧
+      ∀ (s : ℕ) (x output : List Bool) (t : ℕ),
+        ((TimeHierarchy.code).decode α).toFinTM.ComputesInTime x output t →
+        ((TimeHierarchy.code).decode α).toFinTM.tm.spaceUsed
+            (((TimeHierarchy.code).decode α).toFinTM.tm.initCfg x) t ≤ s →
+          ∃ t' : ℕ,
+            SU.ComputesInTime (pairEncode (Nat.bits s) (pairEncode α x)) output t' ∧
+            SU.tm.spaceUsed
+                (SU.tm.initCfg (pairEncode (Nat.bits s) (pairEncode α x))) t'
+              ≤ C * s 

@@ -1,0 +1,91 @@
+import TCSlib.Complexity.Formulas.DNF
+import TCSlib.Complexity.Formulas.CNFEncoding
+import TCSlib.Complexity.ClassNP.CoNP
+import TCSlib.Complexity.ClassNP.Reductions
+import TCSlib.Complexity.CookLevin.Hardness
+import TCSlib.Complexity.TuringMachine.Build.Primitives
+import TCSlib.Complexity.TuringMachine.Build.Contract.Basic
+import Mathlib.Data.Sigma.Basic
+attribute [local irreducible] Turing.MultiTapeTM.step Turing.MultiTapeTM.runFrom Turing.MultiTapeTM.initCfg Turing.Cfg.init Turing.Action.apply Turing.Cfg.inputSymbol Turing.Cfg.workTapeSymbols Turing.moveInputPos Turing.FinTM.ComputesInTime Turing.FinTM.ComputesFunInTime Turing.FinTM.Computes Turing.MultiTapeTM.spaceUsed Turing.MultiTapeTM.spaceUsedByTape Turing.MultiTapeTM.visitedByTapeHead
+attribute [-simp] Turing.Action.apply Turing.Cfg.init Turing.MultiTapeTM.initCfg
+/-! Kernel-checked direct Eq.refl controls. Pointwise goals project a data field
+for structure-valued definitions; abstracted goals compare the whole defining function.
+Every failure has its own definition/mode identifier; no failed proof is admitted. -/
+open Lean Elab Command Meta in
+elab "#g106_image_controls" : command => do
+  let names : List Name := [`Turing.MultiTapeTM.step,
+    `Turing.MultiTapeTM.runFrom,
+    `Turing.MultiTapeTM.initCfg,
+    `Turing.Cfg.init,
+    `Turing.Action.apply,
+    `Turing.Cfg.inputSymbol,
+    `Turing.Cfg.workTapeSymbols,
+    `Turing.moveInputPos,
+    `Turing.FinTM.ComputesInTime,
+    `Turing.FinTM.ComputesFunInTime,
+    `Turing.FinTM.Computes,
+    `Turing.MultiTapeTM.spaceUsed,
+    `Turing.MultiTapeTM.spaceUsedByTape,
+    `Turing.MultiTapeTM.visitedByTapeHead]
+  let mut index := 0
+  for n in names do
+    let some (.defnInfo di) := (← getEnv).find? n | throwError "not a definition {n}"
+    for mode in ["point", "abstract"] do
+      index := index + 1
+      let pair ← liftTermElabM do
+        let levels := di.levelParams.map Level.param
+        let head := mkConst n levels
+        let solve := fun (lhs rhs : Expr) => do
+          let goalType ← mkEq lhs rhs
+          let goal ← mkFreshExprSyntheticOpaqueMVar goalType
+          try
+            goal.mvarId!.refl
+            let value ← instantiateMVars goal
+            pure (some (← instantiateMVars goalType, value))
+          catch ex =>
+            logInfo m!"CONTROL|{n}|{mode}|FAIL"
+            logError m!"RFL_CONTROL|{n}|{mode}|{ex.toMessageData}"
+            pure none
+        if n == ``Turing.pairDecode then
+          if mode == "point" then
+            let lhs ← Term.elabTerm (← `(Turing.pairDecode ([] : List Bool))) none
+            let rhs ← Term.elabTerm (← `((none : Option (List Bool × List Bool)))) none
+            solve lhs rhs
+          else
+            let lhs ← Term.elabTerm (← `(fun rest : List Bool => Turing.pairDecode (false :: true :: rest))) none
+            let rhs ← Term.elabTerm (← `(fun rest : List Bool => (some ([], rest) : Option (List Bool × List Bool)))) none
+            solve lhs rhs
+        else if mode == "abstract" then
+          solve head di.value
+        else
+          forallTelescope di.type fun xs resultType => do
+            let mut lhs := mkAppN head xs
+            let mut rhs := (mkAppN di.value xs).headBeta
+            -- Projection goals are distinct from the complete equation even for nullary data.
+            match resultType.getAppFn with
+            | .const ``Turing.FinTM _ =>
+              lhs := mkProj ``Turing.FinTM 0 lhs
+              rhs := mkProj ``Turing.FinTM 0 rhs
+            | .const ``Turing.Cfg _ =>
+              lhs := mkProj ``Turing.Cfg 0 lhs
+              rhs := mkProj ``Turing.Cfg 0 rhs
+            | .const ``Turing.MultiTapeTM _ =>
+              lhs := mkProj ``Turing.MultiTapeTM 0 lhs
+              rhs := mkProj ``Turing.MultiTapeTM 0 rhs
+            | .const ``Turing.Action _ =>
+              lhs := mkProj ``Turing.Action 0 lhs
+              rhs := mkProj ``Turing.Action 0 rhs
+            | _ => pure ()
+            match ← solve lhs rhs with
+            | none => pure none
+            | some (type, value) =>
+              pure (some (← mkForallFVars xs type, ← mkLambdaFVars xs value))
+      match pair with
+      | none => pure ()
+      | some (type, value) =>
+        let declName := Name.mkSimple s!"G106ImageRflControl_{index}_{mode}"
+        liftCoreM <| addDecl (.thmDecl {
+          name := declName, levelParams := di.levelParams, type := type, value := value })
+        logInfo m!"CONTROL|{n}|{mode}|PASS|kernelChecked={declName}"
+
+#g106_image_controls

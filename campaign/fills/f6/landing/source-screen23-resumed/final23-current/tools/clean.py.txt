@@ -1,0 +1,24 @@
+def clean(text):
+    """Remove nested comments while retaining newlines and string contents."""
+    a = list(text); i = 0; depth = 0; string = False
+    while i < len(text):
+        if depth:
+            if text.startswith('/-', i):
+                a[i:i+2] = '  '; i += 2; depth += 1
+            elif text.startswith('-/', i):
+                a[i:i+2] = '  '; i += 2; depth -= 1
+            else:
+                if a[i] != '\n': a[i] = ' '
+                i += 1
+        elif string:
+            if text[i] == '\\': i += 2
+            elif text[i] == '"': string = False; i += 1
+            else: i += 1
+        elif text.startswith('/-', i):
+            a[i:i+2] = '  '; i += 2; depth = 1
+        elif text.startswith('--', i):
+            while i < len(text) and text[i] != '\n': a[i] = ' '; i += 1
+        elif text[i] == '"': string = True; i += 1
+        else: i += 1
+    assert depth == 0 and not string
+    return ''.join(a)

@@ -1,0 +1,154 @@
+{
+  "seals": [
+    {
+      "folder": "round3-pair-bound-applied",
+      "guarded_definitions": 21,
+      "paired_controls": 42,
+      "exact_positive_kernel_checked_identities": 42,
+      "exact_negative_diagnostic_identities": 42,
+      "native_and_scoped_seal_receipts_zero_errors": true,
+      "guard_and_append_removal_recovers_exact_source": true,
+      "independently_executed_Lean": false
+    },
+    {
+      "folder": "round3-image-repoint",
+      "guarded_definitions": 14,
+      "paired_controls": 28,
+      "exact_positive_kernel_checked_identities": 28,
+      "exact_negative_diagnostic_identities": 28,
+      "native_and_scoped_seal_receipts_zero_errors": true,
+      "guard_and_append_removal_recovers_exact_source": true,
+      "independently_executed_Lean": false
+    }
+  ],
+  "helpers": [
+    {
+      "path": "devtools/seyoon/mkdownmulti.py",
+      "bytes": 1163,
+      "sha256": "a8c40d9bbcf40d43c16328fdfc6129c215be33af8418b65ff50fbd612f9806a6",
+      "imports": [
+        "graph",
+        "os",
+        "sys"
+      ]
+    },
+    {
+      "path": "devtools/seyoon/graph.py",
+      "bytes": 4784,
+      "sha256": "c4c1aa599a091c88f77062fd2fca4482ed8017e683819a650e343760ac78d72c",
+      "imports": [
+        "os",
+        "sys"
+      ]
+    },
+    {
+      "path": "devtools/seyoon/mkreplay.py",
+      "bytes": 3844,
+      "sha256": "80c3c788e325c3e8682a92e35fa8ad89712738c044ce38a8ea3d3a4c36d205d8",
+      "imports": [
+        "os",
+        "sys"
+      ]
+    },
+    {
+      "path": "devtools/seyoon/mkbundle-mixed.py",
+      "bytes": 1247,
+      "sha256": "fe6d64e4fedd62cef5711a2a4ebfc97958a4ab3a3442d7c85800b10c8e7161c7",
+      "imports": [
+        "subprocess",
+        "sys"
+      ]
+    },
+    {
+      "path": "devtools/seyoon/verifybundle.py",
+      "bytes": 950,
+      "sha256": "3efcb8247bd73d32592060765da4f7b3cf713a8438e688d1cc85e15117d5a4b8",
+      "imports": [
+        "re",
+        "sys"
+      ]
+    },
+    {
+      "path": "devtools/seyoon/declfreeze.py",
+      "bytes": 4830,
+      "sha256": "4f38f38b9c07778bc3e90037bab7b3653d320e6766b231db936f0366c6a9a700",
+      "imports": [
+        "re",
+        "sys"
+      ]
+    },
+    {
+      "path": "devtools/seyoon/pairdiff.py",
+      "bytes": 823,
+      "sha256": "4c7ddc82d6c15c1a2331ef46eb3981e302955d7968eb19f0f9f010211112a844",
+      "imports": [
+        "re",
+        "sys"
+      ]
+    },
+    {
+      "path": "scripts/copy-text-screen-v3.py",
+      "bytes": 6493,
+      "sha256": "f4feac91d3a1ec036f3bbcaafde83e6855a1bf1a62d31dac31a40a40d878f181",
+      "imports": [
+        "os",
+        "re",
+        "sys"
+      ]
+    },
+    {
+      "path": "scripts/style_lint.py",
+      "bytes": 4783,
+      "sha256": "e7f8da764a22bd61c3b2cecca7920436f20bf172d24c81648cfee81a5862c144",
+      "imports": [
+        "__future__",
+        "argparse",
+        "pathlib",
+        "re",
+        "sys"
+      ]
+    },
+    {
+      "path": "scripts/campaign_style_lint.py",
+      "bytes": 16127,
+      "sha256": "65c420ea2f33165c674c13bf181995543133cd4b63290631655e31a4b3b29e2e",
+      "imports": [
+        "pathlib",
+        "re",
+        "sys"
+      ]
+    }
+  ],
+  "transitive_local_dependency": "mkdownmulti.py\u2192graph.py\u2192stdlib(os,sys); graph.py is sole missing local import in frozen candidate. All screen/freeze/lint/metadata checker local file dependencies are included.",
+  "actual_generation_helper_copy_checks": [
+    {
+      "actual_path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/tools/graph.py",
+      "included_or_required_path": "devtools/seyoon/graph.py",
+      "bytes": 4784,
+      "sha256": "c4c1aa599a091c88f77062fd2fca4482ed8017e683819a650e343760ac78d72c",
+      "exact": true
+    },
+    {
+      "actual_path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/tools/mkdownmulti.py",
+      "included_or_required_path": "devtools/seyoon/mkdownmulti.py",
+      "bytes": 1163,
+      "sha256": "a8c40d9bbcf40d43c16328fdfc6129c215be33af8418b65ff50fbd612f9806a6",
+      "exact": true
+    },
+    {
+      "actual_path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/tools/mkreplay.py",
+      "included_or_required_path": "devtools/seyoon/mkreplay.py",
+      "bytes": 3844,
+      "sha256": "80c3c788e325c3e8682a92e35fa8ad89712738c044ce38a8ea3d3a4c36d205d8",
+      "exact": true
+    },
+    {
+      "actual_path": "/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-scratch/tools/mk-next.sh",
+      "included_or_required_path": "campaign/status/2026-11-06-mac-bootstrap/mk-next-codex.sh",
+      "bytes": 2645,
+      "sha256": "307e4589665c967bd4cfde8d72645096cfdc7bf4e2e9a4e03ea123ee59b81f4e",
+      "exact": true,
+      "note": "Actual Codex generator matches included bootstrap variant, not the generic devtools/seyoon/mk-next.sh."
+    }
+  ]
+}

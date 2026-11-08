@@ -1,0 +1,6 @@
+
+variable [hF6Rewind : Fintype RewindPhase] [hF6Seek : Fintype SeekPhase]
+include hF6Rewind hF6Seek
+
+example : (inferInstance : Fintype RewindPhase) = hF6Rewind := rfl
+example : (inferInstance : Fintype SeekPhase) = hF6Seek := rfl

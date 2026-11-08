@@ -1,0 +1,9 @@
+private theorem b2b_embed_refl {k : ℕ} {S : Type} {x : List Bool}
+    (tapes : Fin k → ℤ → Option Bool) (heads : Fin k → ℤ) (c : Cfg k Bool S x) :
+    embedEmitCfg (Function.Embedding.refl _) tapes heads [] c = c := by
+  apply Cfg.ext <;> try rfl
+  · funext i
+    exact embedEmitCfg_selected_tape (Function.Embedding.refl _) tapes heads [] c i
+  · funext i
+    exact embedEmitCfg_selected_pos (Function.Embedding.refl _) tapes heads [] c i
+
