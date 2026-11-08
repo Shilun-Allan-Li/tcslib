@@ -76,14 +76,29 @@ to a new continuation directory; the stopped original run remains unchanged.
 The publication snapshot records actual progress at this checkpoint, not final
 acceptance. No full root/Checks/Rule10 result is yet established by these records.
 
-**Narrow policy ruling pending:** six existing global simp attributes were new
+**Historical pending request (now explicitly approved below):** six existing global simp attributes were new
 relative to the PR base and unchanged from the audited source. Their statements
 passed Gate06, but global attribute registration was not explicitly approved.
 The [six-rule request](simp-ruling-request-r1.md) asks the user to approve exactly
 these normalizations (recommended), or remove/reverify them. No approval or
 broad exception is inferred. Statement-gate closures remain unchanged.
 
+**Current ruling update:** [Seyoon approved](simp-ruling-resolution-r1.md) exactly
+the six existing simp attributes and explicitly permits this maintainer to run
+alongside other host jobs. One native process per own tree, resource floors and
+own-process-only signalling remain. Earlier PENDING_USER and strict-host records
+are preserved history; neither question remains open.
+
+The [bootstrap is complete](bootstrap-complete-checkpoint-r1/README.md):36 required
+successes/37 retained native attempts, all31 PFR modules, the ordinary-PATH
+module/owner probe, and all three source/object byte reproductions pass.
+Root/peer validate the250-file native manifest; all252 complete phase files are
+backed up (ZIP SHA256fca7b6b59f3a4b9715d3fba7a79d59a149e15e1bc1689684f7488b872f2b2866).
+The437 warm local objects may now be used under the recorded provenance limits.
+A separately versioned local coordinator will apply the approved process scope
+for638 fresh local checks; no full root/Checks/Rule10 pass is yet asserted.
+
 The user merges accepted Lean through PRs into cryptography/pass-shelat-ch2-4.
 Existing #248 remains draft/deferred; its cleanup code is not in this source.
 
-**Not yet clear to merge — combined native/seal/axiom/export verification and the six-rule decision remain.**
+**Not yet clear to merge — combined local replay and Rule10/axiom/export acceptance remain.**
