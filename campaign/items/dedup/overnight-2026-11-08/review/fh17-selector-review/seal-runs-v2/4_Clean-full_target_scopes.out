@@ -1,0 +1,62 @@
+/private/tmp/ab34-first-halt-reuse-remaining/live/project-v2/FH1Sealed_4_Clean.lean:339:70: error: Application type mismatch: The argument
+  hz
+has type
+  z ∈ MultiTapeTM.visitedByTapeHead (Cfg.init q V) T0 j
+but is expected to have type
+  z ∈ MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg V) T0 j
+in the application
+  MultiTapeTM.abs_pos_lt_card_visited M' V T0 j hz
+/private/tmp/ab34-first-halt-reuse-remaining/live/project-v2/FH1Sealed_4_Clean.lean:342:4: error: 'change' tactic failed, pattern
+  |z| < ↑(MultiTapeTM.visitedByTapeHead (Cfg.init q V) T0 j).card
+is not definitionally equal to target
+  |z| < ↑(MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg V) T0 j).card
+/private/tmp/ab34-first-halt-reuse-remaining/live/project-v2/FH1Sealed_4_Clean.lean:348:23: error: Tactic `rfl` failed: The left-hand side
+  MultiTapeTM.runFrom (simCfg M q V 0) 0
+is not definitionally equal to the right-hand side
+  simCfg M q V 0
+
+case zero
+k : ℕ
+S : Type
+M : MultiTapeTM k Bool S
+q₁ q : S
+V : List Bool
+T : ℕ
+hT : (MultiTapeTM.runFrom (Cfg.init q V) T).state = none
+s : ℕ
+hs : ∀ (i : Fin k), (MultiTapeTM.visitedByTapeHead (Cfg.init q V) T i).card ≤ s
+M' : MultiTapeTM k Bool S := { q₀ := q, tr := M.tr }
+hM' : M' = { q₀ := q, tr := M.tr }
+hinit : MultiTapeTM.initCfg V = Cfg.init q V
+hrun : ∀ (t : ℕ), MultiTapeTM.runFrom (Cfg.init q V) t = MultiTapeTM.runFrom (Cfg.init q V) t
+T0 : ℕ
+hT0le : T0 ≤ T
+hlive : ∀ v < T0, ¬(MultiTapeTM.runFrom (Cfg.init q V) v).Halted
+hcut : MultiTapeTM.runFrom (Cfg.init q V) T0 = MultiTapeTM.runFrom (Cfg.init q V) T
+hT0 : (MultiTapeTM.runFrom (Cfg.init q V) T0).state = none
+hfinT : MultiTapeTM.runFrom (Cfg.init q V) T = MultiTapeTM.runFrom (Cfg.init q V) T0
+hvis : ∀ (j : Fin k), ∀ z ∈ MultiTapeTM.visitedByTapeHead (Cfg.init q V) T0 j, |z| + 1 ≤ ↑s
+a✝ : 0 ≤ T0
+⊢ MultiTapeTM.runFrom (simCfg M q V 0) 0 = simCfg M q V 0
+/private/tmp/ab34-first-halt-reuse-remaining/live/project-v2/FH1Sealed_4_Clean.lean:354:4: error: Type mismatch
+  init_step M q₁ q V
+has type
+  MultiTapeTM.step (Cfg.init (CleanSt.init q) V) = simCfg M q V 0
+but is expected to have type
+  MultiTapeTM.runFrom (Cfg.init (CleanSt.init q) V) 1 = simCfg M q V 0
+/private/tmp/ab34-first-halt-reuse-remaining/live/project-v2/FH1Sealed_4_Clean.lean:380:61: error: Application type mismatch: The argument
+  hz
+has type
+  c.workTapes j z ≠ none
+but is expected to have type
+  (MultiTapeTM.runFrom (MultiTapeTM.initCfg V) T0).workTapes j z ≠ none
+in the application
+  MultiTapeTM.mem_visited_of_ne_none M' V T0 j z hz
+/private/tmp/ab34-first-halt-reuse-remaining/live/project-v2/FH1Sealed_4_Clean.lean:381:22: error: Application type mismatch: The argument
+  this
+has type
+  z ∈ MultiTapeTM.visitedByTapeHead (MultiTapeTM.initCfg V) T0 j
+but is expected to have type
+  z ∈ MultiTapeTM.visitedByTapeHead (Cfg.init q V) T0 j
+in the application
+  (hU z).mp this

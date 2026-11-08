@@ -1,0 +1,21 @@
+lemma clockStageCfg_captures (W : FinTM Bool) (a b : ℕ) (T : ℕ → ℕ)
+    (hW : ∀ x, W.ComputesInTime x (T x.length).bits (b * (T x.length + 1))) (x : List Bool) :
+    ∃ τ ≤ b * (T x.length + 1), ∃ c : Cfg W.k Bool W.State x,
+      c.state = none ∧ c.output = (T x.length).bits ∧
+      (obliviousSchedule W a).tm.runFrom
+        ((obliviousSchedule W a).tm.initCfg (x.map oblEmbed)) (τ + 1) = clockStageCfg W a c := by
+  classical
+  have hm := maskedClock_computes W T b hW x
+  have hhalt := ((FinTM.computesInTime_iff _ _ _ _).mp hm).1
+  have hex : ∃ t, ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) t).state = none :=
+    ⟨_, hhalt⟩
+  let τ := Nat.find hex
+  have hs : ((maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ).state = none :=
+    Nat.find_spec hex
+  have ht : τ ≤ b * (T x.length + 1) := Nat.find_min' hex hhalt
+  have hlive : ∀ t < τ, ((maskedClock W false).tm.runFrom
+      ((maskedClock W false).tm.initCfg x) t).state ≠ none := fun _ h => Nat.find_min hex h
+  let c := (maskedClock W false).tm.runFrom ((maskedClock W false).tm.initCfg x) τ
+  have hc : (maskedClock W false).ComputesInTime x c.output τ :=
+    (FinTM.computesInTime_iff _ _ _ _).mpr ⟨hs, rfl⟩
+  exact ⟨τ, ht, c, hs, hc.output_unique hm, clockStageCfg_run W a x τ hlive τ (le_refl _)⟩

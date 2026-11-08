@@ -9,6 +9,16 @@ long-form state is in `campaign/backlog.md`, and the duplication debt in
 
 ## 0. Current state (2026-11-08 UTC; read this first)
 
+**LIVE OVERNIGHT SUPPLEMENT — gate123 published/issued; other gates preparing.**
+
+Queue.json is authoritative for the current seven PR heads. #241 is now9 roots/d64: actual157/0/static0/35, full9 ordinary-boundaries/22pairs, fresh compact50 exact types and all2573→2561 ownedAX standard; omitted private/generatedtypes are NOT exact-compared (Expr.hash is32-bit). Old11/a93 full163/static49 stayshistorical. #242 is17/70ab but fullboundaryreview found10 hold/repair candidates; currently7eligible, finalscope/replay notyetfixed. #244 nowcfa addsONEprivate SafeRun↔Segment bridge/public3headersfrozen; new80replay running, old535c3newscreenpairs historical.
+
+Gate123/#243 Ready todispatch; verified359sections/15,310,852bytes/SHA7fae374f79e2b93f7581cd2df8f2ff7d92a4a6033aa5b82645acfd2d492f673c. Source7c4/records453/exchange810 fullpins inpublication.json. Prompt savedandissuedinchat; usernotdispatched; #243NOTclear. AllotherPRsNOTclear. Other settledactualreplays word26/restart18/nat23 andCH7_80passed; exactinput895MAC8checks preserved. Screens33v3 BASE/obsolete121/current123/currentold124done;125→126→127running. NewFE9screen waits samegloballock; newSafeRunQA/export beingprepared. Neverreuseoldheadsascurrent.
+
+All3realuserquestions are pending: SATBlockLoopimport; SAT_exists_linear_verifier; RO1home revisiontoDeterministic. CompleteRO1CFG+alternateerrata/proposals, FH17boundedreview, newFE9compactcensus andSafeRunbridgeproofs are inreview/ adoptedmanifests. No home/import/APIapproval inferred. Ladner6mathholes remainprivateproposal; no mathfilldispatched.
+
+S/wt-camp nowproperdetachedcampaign-current; oldappab34-campaign isRS1source andS/wt-restart-reader. NewS/wt-night-joint isisolatedforprospectivemergedreplayonceFHfinalscopeclear. Keep source7branches distinct, everyLeanbyPR/Seyoonmerges. Records direct fetch/rebase beforepush; exchange onlyABsubtree/pullrebasebeforepush/shareduntrackedRootinbox untouched. Nextfree128. ExistingMACTreecurrentMAC8/9b5 unchanged. No completedwork/Gitsourcechangedbythissupplement.
+
 **LATEST — #233 merged/MAC8; overnight work ACTIVE; seven family draft PRs.**
 
 Campaign Lean `9b5dcf46408db681bcbc721930ef2203fa6bc47d`/wholeMAC8 remains current. Exact1003Lean/895object adoption and scoped MIG retirement are in status/2026-11-08-mig1-merge. No new source merge; Seyoon alone merges/dispatches. Source parents contain records only beyond9b5.

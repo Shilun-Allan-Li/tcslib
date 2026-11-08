@@ -1,0 +1,37 @@
+{
+  "patch_sha256": "ac498b844a5fe40fa946132955dee50ff65d57b2ec7d895c9c89ed717db4c653",
+  "scope": "All newly added explicit simp/rw/unfold/change lines, compared with exact2c85 patch; inherited unchanged uses are not globally certified.",
+  "added_explicit_lines": [
+    "    rw [hcSdef, hcut]",
+    "    rw [hcSdef, hcut]",
+    "  rw [initCfg_eq_bootCfg, \u2190 List.take_append_drop t w, NDTM.runWith_append, hboot]",
+    "  rw [hb, rewind_run m _ _ _ _ _ (w.drop t) (by simp; omega),"
+  ],
+  "manual_dispositions": [
+    {
+      "line": "    rw [hcSdef, hcut]",
+      "disposition": "Only local configuration-equality witnesses hcSdef/hcut; no foreign/Core/Mathlib definition argument."
+    },
+    {
+      "line": "    rw [hcSdef, hcut]",
+      "disposition": "Only local configuration-equality witnesses hcSdef/hcut; no foreign/Core/Mathlib definition argument."
+    },
+    {
+      "line": "  rw [initCfg_eq_bootCfg, \u2190 List.take_append_drop t w, NDTM.runWith_append, hboot]",
+      "disposition": "Only local configuration-equality witnesses hcSdef/hcut; no foreign/Core/Mathlib definition argument."
+    },
+    {
+      "line": "  rw [hb, rewind_run m _ _ _ _ _ (w.drop t) (by simp; omega),",
+      "disposition": "Only local configuration-equality witnesses hcSdef/hcut; no foreign/Core/Mathlib definition argument."
+    }
+  ],
+  "new_forbidden_definition_arguments": 0,
+  "new_calls": [
+    "MultiTapeTM.exists_first_halt",
+    "computesInTime_iff/FinTM.computesInTime_iff",
+    "congrArg Cfg.state",
+    "congrArg Cfg.output"
+  ],
+  "Cfg_fields_are_projections": true,
+  "all_imports_literal_exact": true
+}
