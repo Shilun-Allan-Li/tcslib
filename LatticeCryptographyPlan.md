@@ -25,10 +25,12 @@ new LWE/SIS construction PRs. Drafts may use separate branches/worktrees.
 
 | Item | Identity |
 |---|---|
-| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-dyadic-arithmetic` |
-| Active draft PR branch | `cryptography/lwe-sis-dyadic-arithmetic` |
+| Active worktree | `/Users/seyoonr/phd_experiments/tcslib_all_branches/tcslib-lwe-sis-construction-statements` |
+| Active draft PR branch | `cryptography/lwe-sis-construction-statements` |
 | Central integration branch / PR target | `cryptography/lwe-sis-constructions` |
 | Observed central head | `2c37f3f486822a52f4a9e337c6b742e995ebb118` |
+| Current audited stack / intake baseline | `307cfdd1d6cadfda2ae9cca5367705ad770c5f42`, PRs #236/#237/#238/#239 |
+| Combined statement Lean / root freeze | `17b2a282b545c6ebca3fccc88d518d18ae78f485` |
 | Audited dependency / phase-1 baseline | `0769cba3e44c56700349f954190fc99d9e622270`, PR #236 |
 | Phase-1 statement freeze | `a1f1b2e0d9315dff2a8dc36e2a6f8339c0a5abdf` |
 | Construction-core proof freeze | `690217cc1aaefe411158808a8b0797fd887a8abc` |
@@ -43,7 +45,7 @@ through the GitHub connector and fast-forwarded in this worktree only. Its Lean 
 root exports, toolchain and manifest match the original baseline. Shell GitHub fetch is
 blocked by DNS restrictions; no successful shell fetch is claimed.
 
-The active draft was initially created from the remote-verified campaign context and
+The phase-1 draft was initially created from the remote-verified campaign context and
 the audited foundation. When the user selected a central LWE/SIS integration branch,
 its two unpublished code/export commits were replayed onto the audited dependency,
 removing unrelated campaign-record ancestry. Every checked Lean/pin byte was unchanged.
@@ -59,7 +61,34 @@ metadata. The returned construction-core proof audit now passes 0/0/0/3; the
 pasted report and separate gate resolutions are preserved under `audits/`. No
 proof repair was needed, and the issued input packet remains unchanged.
 
-## Current construction-core proof phase (passed)
+## Current combined construction statements
+
+The larger overnight draft has 19 mathematical modules and 220 source declarations:
+57 definitions, 163 theorems, 62 closed `rfl` readers and 101 explicit admissions
+for later fills. Its mathematical commit is
+`2bf9dd52882bcafbce9eab48a5bab796275f2094`; the separate export commit and frozen
+Lean/root are `17b2a282b545c6ebca3fccc88d518d18ae78f485`. It covers exact dyadic
+sampling and bit-noise laws, encoded matrix arithmetic, SIS universality/raw-output
+and asymptotic adapters, Regev PKE algorithms/concrete bounds, direct DLWE generators,
+and secret-matrix lossy/all-but-one trapdoor mathematics for the later CCA2 endpoint.
+
+The final fresh serial seven-facade sweep covers 144 modules with zero errors,
+101 new and 17 inherited admission warnings. All 575 owned constants reconcile:
+302 earlier constants, 220 source declarations, 40 generated non-simp projection
+readers and 13 compiler auxiliaries. Exactly the intended 101 admissions use
+`sorryAx`; all 48 selected backing contracts are standard-axiom only. Scoped style
+is 0 FAIL/2 unchanged WARN over 41 files. No whole-library root elaboration or
+completed primitive endpoint is claimed.
+
+Six existing export files overlap with shared facades, in the separate export
+commit. No old mathematical declaration or shared owner API changes. Exact proposals
+for a random-bit reading lemma and registration of the existing public counted
+loop remain data only; dependent proof routes await coordination. The user
+preselects Codex and dispatches one combined statement audit. The new branch is
+locally prepared, with no new PR number or remote publication claimed here.
+See `briefs/lwe-sis-constructions/gates/08-construction-statements/`.
+
+## Historical construction-core and arithmetic gates (passed)
 
 The separate phase-1 draft contains eight mathematical modules: explicit polynomial
 sample replacement, canonical modular parsing, bounded-error bit decoding, direct
@@ -439,3 +468,4 @@ not been changed by preparing phase 1; the user controls approval and merging.
 | 2026-11-07 (Pacific) | Filled all twelve audited scalar proofs at `ec72ed773a690c17ac253707350935cc9e0acb34`, with eighteen declarations and all definitions/signatures fixed. Fresh 94-module sweep (251.162 s), 302 constants and sixteen backing contracts only standard axioms; no new compiler auxiliary. Three passing development runs retained. | Separate proof audit prepared next on existing PR #239; no export/shared API/pin edit, push or merge; N01–N03 retained |
 | 2026-11-08 | User freshly selects Codex for the separate scalar proof audit. Filled source `ec72ed773a690c17ac253707350935cc9e0acb34`, bundled records `a9b97213c616ef7afe80dcaa57eb5a503cf6b110` and the 1301-section packet remain fixed. | Codex selected; client publication and user dispatch pending; no code change or merge |
 | 2026-11-08 | Scalar proof audit PASS 0/0/0/3 at `ec72ed773a690c17ac253707350935cc9e0acb34`; full pasted report retained, 102 frozen sources and all nine nested checksum sets rehashed. Published #239 head and exact exchange input verified. User authorizes a larger combined overnight statement draft with sorries for later fills and preselects Codex for morning audits. | Eight scoped gates pass; no merge; pause only dependent fronts requiring user input and continue independent work |
+| 2026-11-08 (UTC) | Isolated combined draft from central `2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited/intake stack `307cfdd1d6cadfda2ae9cca5367705ad770c5f42`. Mathematics `2bf9dd52882bcafbce9eab48a5bab796275f2094`, separate exports/freeze `17b2a282b545c6ebca3fccc88d518d18ae78f485`: 19 modules, 220 declarations, 101 admissions; final fresh 144-module sweep (288.743 s), 575 constants and 48 backing contracts reconciled, style 0/2/41, finite models pass. Two internal agents supplied read-only research; root native work stayed serial. | Combined Codex statement review prepared; no external dispatch, central push or merge; shared reader/catalogue proposals remain unapplied and dependent fills paused; N01–N03 retained |

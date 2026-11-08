@@ -1,70 +1,63 @@
 # Campaign pulse
 
-Checkpoint: eight scoped gates pass 0 blockers, 0 majors, 0 minors and 3 continuing
-notes each. The construction-core proof gate closes all 31 core obligations;
-all 263 constants in that audited core have only standard axioms. The latest
-adapter statement gate approves its 20-declaration surface. All 14 adapter proof
-obligations are now filled, checked and approved by their separate scoped proof audit.
-It does not certify the entire five-primitive campaign.
+Eight earlier scoped statement/proof gates pass with zero blockers, majors or
+minors and three continuing notes each. The newest closed gate is the dyadic
+scalar proof audit: all twelve obligations are discharged at
+`ec72ed773a690c17ac253707350935cc9e0acb34`. No repair was needed. Those audits do
+not certify the whole five-primitive campaign or approve a merge.
+
+The larger overnight **statement draft** is frozen at
+`17b2a282b545c6ebca3fccc88d518d18ae78f485`: 19 mathematical modules, 220 source
+declarations and 101 admitted obligations for later fills. Codex is preselected
+for one combined audit, dispatched by the user. Preparation does not dispatch it.
 
 | Part | Current progress | Remaining work |
 |---|---|---|
-| DLWE/SIS foundations | Parameterized assumptions, actual finite-noise law, experiments, faithful encodings and parsers are defined; representation/core proofs pass their audits | Source-policy completion, honest samplers and implemented parameter schedules |
-| Direct Regev symmetric encryption | Mathematical algorithms, every-seed bounded-error correctness and the concrete two-DLWE-advantage bound are proved and audited | Efficient machine/encoding implementations, uniform message bounds and existing primitive/game bridges |
-| SIS collision-resistant hashing | Binary matrix hash, collision-to-SIS reduction, compression/solution existence, dyadic profile and bit budgets are proved and audited | Efficient implementation and exact raw collision-output/CRH bridge, under the independent SIS assumption |
-| Regev CPA PKE | Source comparison, quantitative correctness and strong leftover-hash preflight are recorded | Formal algorithm/universality/security statement gates, proofs and machine/primitive bridge |
-| PRGs | Seed-allocation, noise entropy and indexing obligations are planned | Formal construction, quantitative/efficiency proofs and existing API bridge |
-| CCA2 PKE | Peikert–Waters route and supporting cryptographic trapdoors/strong one-time signature dependencies are planned | Supporting statement/proof gates and the final construction/security bridge |
+| DLWE/SIS foundations and sampling | Assumptions/faithful representations are audited; new exact dyadic samplers and centered-binomial laws are drafted | New statement/proof gates, efficient family sampling and implemented schedules |
+| Direct Regev symmetric encryption | Mathematical algorithms, bounded-error correctness and concrete two-DLWE bound are proved and audited | Efficient machine/encoding implementations, uniform message bounds and existing game bridge |
+| SIS collision-resistant hashing | Core hash, collision reduction and dyadic profile are audited; universality, evaluator, raw-output and negligible-collision consumers are drafted | Combined audit/fills, shared loop disposition, final CRH interface bridge under independent SIS hardness |
+| Regev CPA PKE | Algorithms, every-coin correctness, DLWE hybrid and strong leftover-hash bounds are drafted | Combined audit/fills, efficiency and existing CPA primitive/game bridge |
+| PRGs | Structured, encoded and flat direct generators with full seed budgets and advantage equations are drafted | Combined audit/fills, efficient family schedules and standard exact-seed asymptotic PRG bridge |
+| CCA2 PKE | Secret-matrix lossy gadgets/matrices, DLWE column hybrids and all-but-one algebra are drafted | Combined audit/fills, shared reader disposition, all-but-one inverse, strong one-time signatures and final CCA2 construction/game proof |
 
-The binary representation adapter module has 20 unchanged source declarations
-and all 14 audited obligations proved. Its fresh 93-module check passes, all 284
-owned constants use only standard axioms, and the nine public machine contracts
-it consumes are axiom-clean. The separate proof audit passes 0/0/0/3. The next
-implementation slice is scalar modular arithmetic using these adapters and
-the existing public arithmetic machines. Its isolated statement draft now
-typechecks at `dbacd91218c19f0df106d316ce4ff0e22b869e66`: eighteen declarations,
-twelve admissions, 94 fresh modules and sixteen axiom-clean backing contracts.
-This branch is published as draft PR #239; the returned scalar statement audit
-passes 0/0/0/3. Its twelve audited obligations are now filled and locally checked.
-The statements and their proof fill are kept separate from the audited #237 code.
+The final newly empty own object tree passes a serial 144-module scoped sweep:
+zero errors, 101 new and 17 unchanged inherited admission warnings, 288.743 seconds.
+The separate axiom probe records 44.702 seconds. All 575 owned constants reconcile:
+302 preserved earlier constants, 220 source declarations, 40 generated non-simp
+readers and 13 compiler auxiliaries. Exactly the intended 101 admissions use
+`sorryAx`; all 48 selected backing contracts use only standard axioms. Style is
+0 FAIL/2 unchanged WARN over 41 files; independent finite models pass. This is
+neither a whole-library root elaboration nor proof completion.
 
-## PRs and user action
+## Branches, PRs and user action
 
-The four campaign draft PRs target
-`cryptography/lwe-sis-constructions`:
+The four published draft PRs target `cryptography/lwe-sis-constructions`:
 
 * [#236](https://github.com/Shilun-Allan-Li/tcslib/pull/236): representation proofs.
-* [#237](https://github.com/Shilun-Allan-Li/tcslib/pull/237): direct Regev/SIS
-  mathematical core, now with a passing proof audit.
-* [#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238): binary representation
-  adapter proofs; both Codex statement and proof audits pass, with all 14
-  obligations discharged.
-* [#239](https://github.com/Shilun-Allan-Li/tcslib/pull/239): dyadic scalar arithmetic;
-  its statement audit passes, with all twelve proof obligations now filled
-  and approved by their separate scoped proof audit.
+* [#237](https://github.com/Shilun-Allan-Li/tcslib/pull/237): direct Regev/SIS core.
+* [#238](https://github.com/Shilun-Allan-Li/tcslib/pull/238): binary arithmetic adapters.
+* [#239](https://github.com/Shilun-Allan-Li/tcslib/pull/239): dyadic scalar arithmetic.
 
-All four have passing scoped statement audits, but none is marked clear to merge: source
-validation/ingestion/matching and applicable landing checks remain. No merge
-action is requested now. The user alone approves and merges. The adapter's exact
-published proof-review exchange input is `228c265d642013da76afa6cec976eaf11a8eb1b9`;
-its statement freeze remains `6eec97be8f54d9990340900a5595dab32fb477f5`.
-The filled Lean/root is `b9ce3521e7f5a15d80e71bf5e9be4c48bc73010e`;
-its published draft head is `3350700f054ba07b31bcf23cab9f590afd998e28`.
-The separate 1009-section proof-review packet was published and dispatched to
-Codex, whose returned report now passes. See `fills/02-encoding-adapters/`.
+Their scoped statement/proof audits pass; applicable source-policy and landing
+checks remain. No merge action is requested now. The user alone approves/merges.
 
-No search/decision/worst-case lattice bridge, SIS–LWE reduction, short lattice
-basis or Gaussian preimage sampling has been introduced. The exact proposed
-shared probability-reader and source-registry diffs remain unapplied.
+The new local draft is `cryptography/lwe-sis-construction-statements` in
+`tcslib-lwe-sis-construction-statements`, based on remote-verified central
+`2c37f3f486822a52f4a9e337c6b742e995ebb118` plus audited/intake stack
+`307cfdd1d6cadfda2ae9cca5367705ad770c5f42`. No new PR number is claimed before
+client publication. Its mathematical and export commits are separate. No central
+branch is pushed, and no earlier PR is merged by drafting on this stack.
 
-The current scalar proof source is `ec72ed773a690c17ac253707350935cc9e0acb34`: a
-fresh 94-module sweep has zero owned admissions and seventeen inherited warnings;
-all 302 owned constants and sixteen backing contracts have only standard axioms.
-The returned Codex scalar proof audit passes 0/0/0/3 at exchange
-`083448cef9229dc95b96ef45686ce7f3768992ab`. No proof repair is required.
-The user authorizes a larger combined overnight statement draft with sorries
-for later fills, and preselects Codex for all morning external audits.
+The six shared export overlaps and exact unapplied random-bit reader/loop-catalogue
+proposals are listed in `gates/08-construction-statements/COORDINATION.md`. Dependent
+fills await those dispositions; no shared-owner patch is applied. The earlier
+probability-reader and source-registry proposals remain unapplied too.
 
-**Not yet clear to merge — scoped audits pass; source-policy work, landing checks
-and user approval remain. Both adapter and scalar proof gates are closed;
-the next combined statement draft needs its own audit.**
+All earlier findings and issued packets are retained. Source validation,
+ingestion/approved matching and execution/landing provenance remain open. No
+search/decision/worst-case lattice bridge, SIS–LWE reduction, short lattice basis
+or Gaussian preimage sampling is introduced.
+
+**Not yet clear to merge — the combined statement gate, 101 proof fills,
+shared-owner dispositions, source-policy work, landing checks and user approval
+remain.**
