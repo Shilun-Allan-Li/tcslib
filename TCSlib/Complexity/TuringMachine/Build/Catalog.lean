@@ -2577,8 +2577,9 @@ theorem inputMoveAction_eq {k : ℕ} {Symbol State : Type*} (inp : SignType) (q 
 gives `Turing.tapeAction i inp none m q'` at the current state and reads, one step moves
 the input head by `inp` and head `i` by `m`, enters `q'`, and changes nothing else.
 
-**Proof sketch.** Unfold `MultiTapeTM.step` and `Action.apply`; the work-tape fields are
-pointwise updates at `i`. -/
+**Proof sketch.** Use the live-step equation and the published action-field
+equations. Only head `i` moves among the work heads, and every tape cell is
+preserved. -/
 theorem step_of_tapeAction_move {Symbol State : Type*} {k : ℕ} {x : List Symbol}
     (M : MultiTapeTM k Symbol State) (c : Cfg k Symbol State x) {q q' : State} (i : Fin k)
     (inp m : SignType) (hq : c.state = some q)
@@ -2588,16 +2589,23 @@ theorem step_of_tapeAction_move {Symbol State : Type*} {k : ℕ} {x : List Symbo
         state := some q'
         inputPos := moveInputPos c.inputPos inp
         workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
-  simp only [MultiTapeTM.step, hq, htr]
-  apply Cfg.ext <;> simp [Action.apply, tapeAction]
+  rw [MultiTapeTM.step_of_some hq, htr]
+  apply Cfg.ext
+  · simp only [Action.apply_state, tapeAction]
+  · simp only [Action.apply_inputPos, tapeAction]
+  · funext j
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    by_cases hj : j = i
+    · subst j
+      simp only [tapeAction, ↓reduceIte, Option.getD_none, Function.update_eq_self]
+    · simp only [tapeAction, hj, ↓reduceIte, Option.getD_none, Function.update_eq_self]
   · funext j
     by_cases hj : j = i
-    · subst hj; simp
-    · simp [hj]
-  · funext j
-    by_cases hj : j = i
-    · subst hj; simp
-    · simp [hj]
+    · subst j
+      simp only [Action.apply_workTapePos, tapeAction, ↓reduceIte, Function.update_self]
+    · simp only [Action.apply_workTapePos, tapeAction, hj, ↓reduceIte, SignType.coe_zero,
+        add_zero, Function.update_of_ne hj]
+  · simp only [Action.apply_output, tapeAction, Option.toList_none, List.append_nil]
 
 /-- **One step of a writing one-tape action** (design §12.8a). If the machine's table
 gives `Turing.tapeAction i inp (some s) m q'` at the current state and reads, one step
@@ -2616,16 +2624,24 @@ theorem step_of_tapeAction_write {Symbol State : Type*} {k : ℕ} {x : List Symb
         workTapes := Function.update c.workTapes i
           (Function.update (c.workTapes i) (c.workTapePos i) s)
         workTapePos := Function.update c.workTapePos i (c.workTapePos i + m) } := by
-  simp only [MultiTapeTM.step, hq, htr]
-  apply Cfg.ext <;> simp [Action.apply, tapeAction]
+  rw [MultiTapeTM.step_of_some hq, htr]
+  apply Cfg.ext
+  · simp only [Action.apply_state, tapeAction]
+  · simp only [Action.apply_inputPos, tapeAction]
+  · funext j
+    rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+    by_cases hj : j = i
+    · subst j
+      simp only [tapeAction, ↓reduceIte, Option.getD_some, Function.update_self]
+    · simp only [tapeAction, hj, ↓reduceIte, Option.getD_none, Function.update_eq_self,
+        Function.update_of_ne hj]
   · funext j
     by_cases hj : j = i
-    · subst hj; simp
-    · simp [hj]
-  · funext j
-    by_cases hj : j = i
-    · subst hj; simp
-    · simp [hj]
+    · subst j
+      simp only [Action.apply_workTapePos, tapeAction, ↓reduceIte, Function.update_self]
+    · simp only [Action.apply_workTapePos, tapeAction, hj, ↓reduceIte, SignType.coe_zero,
+        add_zero, Function.update_of_ne hj]
+  · simp only [Action.apply_output, tapeAction, Option.toList_none, List.append_nil]
 
 /-- **One step of an input-only action** (design §12.8a). If the machine's table gives
 `Turing.inputMoveAction inp q'` at the current state and reads, one step moves the input
@@ -2638,8 +2654,16 @@ theorem step_of_inputMoveAction {Symbol State : Type*} {k : ℕ} {x : List Symbo
     (inp : SignType) (hq : c.state = some q)
     (htr : M.tr q c.inputSymbol c.workTapeSymbols = inputMoveAction inp q') :
     M.step c = { c with state := some q', inputPos := moveInputPos c.inputPos inp } := by
-  simp only [MultiTapeTM.step, hq, htr]
-  apply Cfg.ext <;> simp [Action.apply, inputMoveAction]
+  rw [MultiTapeTM.step_of_some hq, htr]
+  apply Cfg.ext
+  · simp only [Action.apply_state, inputMoveAction_eq]
+  · simp only [Action.apply_inputPos, inputMoveAction_eq]
+  · funext j
+    rw [Action.apply_workTapes, inputMoveAction_eq, Option.getD_none,
+      Cfg.workTapeSymbols_eq, Function.update_eq_self]
+  · funext j
+    simp only [Action.apply_workTapePos, inputMoveAction_eq, SignType.coe_zero, add_zero]
+  · simp only [Action.apply_output, inputMoveAction_eq, Option.toList_none, List.append_nil]
 
 /-! ### The field layout -/
 
@@ -3062,32 +3086,35 @@ theorem walkTM_run_ofCfg {Symbol : Type*} {k : ℕ} {x : List Symbol} (src : Fin
         ⟨0, fun j => if moved j then (none, dir) else (none, 0), none, some q⟩) :
       M.step (F r) = { F (r + 1) with state := some q } := by
     have hst : (F r).state = some .run := hstate
-    simp only [MultiTapeTM.step, hst, htr]
+    rw [MultiTapeTM.step_of_some hst, htr]
     apply Cfg.ext
-    · rfl
-    · simp [Action.apply, F, moveInputPos_zero]
+    · simp only [Action.apply_state]
+    · simp only [Action.apply_inputPos, F, moveInputPos_zero]
     · funext j
-      by_cases hj : moved j <;> simp [Action.apply, F, hj]
+      rw [Action.apply_workTapes, Cfg.workTapeSymbols_eq]
+      by_cases hj : moved j
+      · simp only [F, hj, if_true, Option.getD_none, Function.update_eq_self]
+      · simp only [F, hj, if_false, Option.getD_none, Function.update_eq_self]
     · funext j
       by_cases hj : moved j
-      · simp only [Action.apply, F, hj, if_true]
+      · simp only [Action.apply_workTapePos, F, hj, if_true]
         push_cast
         ring
-      · simp [Action.apply, F, hj]
-    · simp [Action.apply, F]
+      · simp only [Action.apply_workTapePos, F, hj, if_false, SignType.coe_zero, add_zero]
+    · simp only [Action.apply_output, F, Option.toList_none, List.append_nil]
   have hsym (r : ℕ) : (F r).workTapeSymbols src = d.workTapes src
       (d.workTapePos src + (dir : ℤ) * (r : ℤ)) := by
-    simp [F, Cfg.workTapeSymbols, hsrc]
+    simp [F, Cfg.workTapeSymbols_eq, hsrc]
   have hF (r : ℕ) (hr : r < w.length) : M.step (F r) = F (r + 1) := by
     have hs : (F r).workTapeSymbols src = some w[r] := by
       rw [hsym, hw r (by omega)]
-      simp [FinTM.bufferTape, List.getElem?_eq_getElem hr]
+      simp [FinTM.bufferTape_nat, List.getElem?_eq_getElem hr]
     rw [hstep r .run (by simp only [M, walkTM, hs])]
     apply Cfg.ext <;> simp [F, hstate]
   have hexit : M.step (F w.length) = D := by
     have hs : (F w.length).workTapeSymbols src = none := by
       rw [hsym, hw w.length le_rfl]
-      simp [FinTM.bufferTape]
+      simp [FinTM.bufferTape_nat]
     exact (hstep w.length .done (by simp only [M, walkTM, hs])).trans rfl
   have hD : M.step D = D := by
     rw [step_of_inputMoveAction M D 0 rfl rfl, moveInputPos_zero]

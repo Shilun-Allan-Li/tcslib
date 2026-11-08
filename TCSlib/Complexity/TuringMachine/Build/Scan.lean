@@ -605,7 +605,8 @@ private theorem scan_fold_trace {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
       omega
     all_goals simp [scanFoldF]
   · have hs : (scanFoldF δ a₀ d x.length).inputSymbol = none := by
-      simp [Cfg.inputSymbol, scanFoldF]
+      apply Cfg.inputSymbol_of_end
+      simp [scanFoldF]
     rw [step_of_inputMoveAction _ _ (-1) rfl
       (q' := .bwd ((x.take x.length).foldl δ a₀)) (by simp only [inputFoldTM, hs])]
     apply Cfg.ext
@@ -629,7 +630,8 @@ private theorem scan_fold_trace {Γ : Type*} {A : Type} {k : ℕ} {x : List Γ}
       omega
     all_goals simp [scanFoldR]
   · have hs : (scanFoldR δ a₀ d 0).inputSymbol = none := by
-      simp [Cfg.inputSymbol, scanFoldR]
+      apply Cfg.inputSymbol_of_zero
+      simp [scanFoldR]
     rw [step_of_inputMoveAction _ _ 1 rfl
       (q' := .done (x.foldl δ a₀)) (by simp only [inputFoldTM, hs])]
     apply Cfg.ext
